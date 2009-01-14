@@ -1,0 +1,2076 @@
+2009-01-03  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_update_type): replaced with flags.
+
+2009-01-02  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_column): returns sen_accessor when cascade name passed.
+	(like "column_A.column_B.column_C")
+
+2008-12-29  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_get_value): support meta-request.
+
+2008-12-29  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.h (sen_ctx_impl): cut off obsolete members.
+	* bindings/ruby/lib/senna.rb (Ctx::send): force message.to_s.
+
+2008-12-28  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c: removed deprecated rountines.
+
+2008-12-27  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (ha_snip): use column_exp_*
+
+2008-12-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_setoperation): copy table values.
+	* lib/ql.c (ha_table): ::group returns list of result tables.
+
+2008-12-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_get_accessor): fixed a memory leak bug.
+
+2008-12-25  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (ha_table): use column_exp_*.
+
+2008-12-25  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (disp_j): fixed a memory leak bug.
+
+2008-12-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (disp_t): use column_exp_*.
+
+2008-12-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (column_exp_*): add.
+
+2008-12-21  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_group): modified.
+
+2008-12-21  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_sort): modified both spec. and implementation.
+
+2008-12-18  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (ha_table): fixed a bug in ::load.
+
+2008-12-17  Tasuku SUENAGA <a at razil.jp>
+
+	* lib/str.c (sen_bulk_esc): changed len type from int to unsigned int.
+	* lib/str.c (sen_bulk_urlenc): removed useless strlen.
+
+2008-12-17  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_spec_save): add.
+
+2008-12-16  Tasuku SUENAGA <a at razil.jp>
+
+	* bindings/python/context/sennactx.c: follow up changes of constants(SEN_CTX_USEQL -> SEN_CTX_USE_QL and SEN_CTX_BATCHMODE -> SEN_CTX_BATCH_MODE).
+	* lib/str.c (sen_bulk_urlenc): add.
+
+2008-12-16  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_get_range): returns sen_id.
+
+2008-12-16  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_ctx_get): add.
+
+2008-12-16  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_CTX_*): modified some flags.
+
+2008-12-16  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.c (sen_ja_open): fixed a bug (uninitialized pointer causes segv)
+
+2008-12-15  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_space_lookup): -> sen_ctx_lookup.
+
+2008-12-15  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: modified some flag values.
+	* lib/db.c (sen_accessor_set_value): add.
+
+2008-12-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_group): fixed a memory leak bug.
+
+2008-12-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_get_accessor): :key support.
+
+2008-12-11  Poe MORITA  <morita at razil.jp>
+
+	* ql.c: fix a bug causes table::group return wrong result.
+
+2008-12-10  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_ACCESSOR): add.
+
+2008-12-09  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_table_group): modified the signature.
+
+2008-12-09  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_COLUMN_TABLE_HASH_KEY): -> SEN_OBJ_COLUMN_POSTINGS
+	* senna.h (SEN_OBJ_COLUMN_TABLE_NO_KEY): -> SEN_OBJ_COLUMN_ARRAY
+
+2008-12-08  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_obj_header): swap id and domain.
+
+2008-12-08  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_COLUMN_ARRAY): -> SEN_OBJ_COLUMN_TABLE_NO_KEY
+	* senna.h (SEN_OBJ_COLUMN_HASH): -> SEN_OBJ_COLUMN_TABLE_HASH_KEY
+	* senna.h (SEN_OBJ_INDEX_SCALAR): -> SEN_OBJ_COLUMN_INDEX_SCALAR
+	* senna.h (SEN_OBJ_KEY_STRING): -> SEN_OBJ_KEY_VAR_SIZE
+	* senna.h (SEN_OBJ_*): -> SEN_*
+
+2008-12-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (ha_verses): verses::sexp add.
+
+2008-12-05  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_column_create): handle SEN_OBJ_COLUMN_VERSES correctly.
+
+2008-12-05  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_COLUMN_VECTOR): -> SEN_OBJ_COLUMN_ARRAY.
+	* senna.h (SEN_OBJ_COLUMN_VERSES, SEN_OBJ_COLUMN_HASH): add.
+	* senna.h (SEN_OBJ_KEY_NUMERIC): removed.
+	* senna.h (SEN_OBJ_SCALAR): -> SEN_OBJ_BULK.
+
+2008-12-05  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_INT, SEN_OBJ_FLOAT): cut off.
+	* senna.h (sen_rbuf): renamed to sen_bulk.
+
+2008-12-03  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: cut off ql specific types.
+
+2008-12-03  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_get_value): modified the signature (returns sen_obj *).
+	* lib/db.c (sen_obj_get_info): modified the signature (returns sen_obj *).
+	* lib/db.c (sen_obj_get_element_info): modified the signature (returns sen_obj *).
+	* lib/db.c (sen_obj_open): modified the signature (cut off obj argument).
+
+2008-12-03  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_open): add.
+
+2008-12-02  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.h (SEN_OBJ_ALLOCATED): moved from ql.h
+
+2008-12-02  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (x->verses): add.
+
+2008-11-28  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c: fix a bug in disp. (json output was wrong)
+
+2008-11-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c: fix a bug in table::sort.
+	(compare functions didn't return boolean value)
+
+2008-11-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c: support DBAPI based column access.
+
+2008-11-25  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (sen_obj_delete_by_id): add.
+
+2008-11-24  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/lib/sen-test-hash-assertions.[ch]: add.
+	* test/unit/core/test-hash.h: use sen_test_assert_*_hash().
+
+	* test/unit/lib/sen-test-hash-factory.h
+	(sen_test_hash_factory_add_cursor_flags): add.
+
+	* test/unit/core/test-hash-cursor.c, test/unit/core/test-hash.h:
+	remove needless variables.
+
+	* test/unit/lib/sen-test-hash-factory.[ch]: keep sen_ctx and
+	sen_hash_cursor.
+	* test/unit/core/test-hash.[ch], test/unit/core/test-hash-*.c:
+	follow the above change.
+
+	* test/unit/core/test-patricia-trie.h (setup_trie_common): use
+	SEN_OBJ_KEY_STRING as default patricia trie flags.
+
+	* test/unit/core/test-context.c (malloc_always_fail): suppress a
+	warning on no --enable-dynamic-malloc-change configuration.
+
+	* test/unit/core/test-*.[ch]: add terminated NULL to cut_remove_path().
+
+2008-11-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_type_create): returns error when the name was alread used.
+
+2008-11-23  Poe MORITA  <morita at razil.jp>
+
+	* lib/pat.c: numeric key support.
+
+2008-11-22  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: SEN_OBJ_KEY_* -> SEN_OBJ_TOKEN_*
+	* senna.h(SEN_OBJ_KEY_UINT) : add.
+	* senna.h(SEN_OBJ_KEY_INT) : add.
+	* senna.h(SEN_OBJ_KEY_FLOAT) : add.
+
+2008-11-21  Poe MORITA  <morita at razil.jp>
+
+	* lib/senna_in.h (sen_hton): add.
+
+2008-11-21  Yutaro Shimamura  <yu@irx.jp>
+
+	* bindings/ruby/lib/senna.rb (Ctx::connect): Exception support when sen_ctx_connect failed.
+
+2008-11-17  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: (SEN_TABLE_SORT_BY_ID): add.
+	* senna.h: (sen_table_sort_optarg): add 'ctx' argument.
+
+2008-11-14  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_add_subrec): add.
+
+2008-11-14  Poe MORITA  <morita at razil.jp>
+
+	* query abortion support (Thanks to Kazuho Oku.)
+
+2008-11-14  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_UNIT_*): add.
+
+2008-11-13  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_TABLE_EACH): add.
+
+2008-11-13  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (_sen_array_get_value): add.
+
+2008-11-13  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_get_key2): add.
+
+2008-11-12  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_next): add.
+
+2008-11-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/lex.c (sen_mecab_open): no retry on mecab error.
+	* lib/token.c (sen_mecab_init): no retry on mecab error.
+	Thanks to Kazuho Oku.
+
+2008-11-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_search): SEN_SEARCH_TERM_EXTRACT support.
+
+2008-11-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (column_value): add.
+
+2008-11-08  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (sen_ql_def_builtin_types): add.
+
+2008-11-08  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_obj_is_locked): add.
+	* lib/io.c (sen_io_lock): add.
+	* lib/pat.c (sen_pat_lock): removed.
+	* lib/hash.c (sen_hash_lock): removed.
+
+2008-11-07  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/core/test-query.c: add a test for a bug of broken
+	UTF-8 may cause infinite loop. [Senna-dev 1070]
+
+	* test/unit/util/test-string.c: add a test for
+	sen_str_charlen_nonnull() returns 0 for broken UTF-8 string.
+
+2008-11-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/query.c (get_phrase): fixed bug with malformed multibyte string.
+	Thanks to Kazuho Oku.
+	* lib/ctx.c (sen_ctx_impl_init): fixed a problem with sen_ctx_impl_init_malloc.
+	Thanks to Kouhei Sutou.
+
+2008-11-06  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/lib/Makefile.am (AM_CFLAGS): add -DCUT_RELATIVE_PATH
+	to guess correct backtrace. (Cutter 1.0.6 feature)
+
+2008-11-06  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c: sen_db replaced with sen_space.
+	* CAUTION!! senna-ql is not available in this revision.
+	* CAUTION!! sen_store file format changed. it's not compatible.
+
+
+2008-11-05  Poe MORITA  <morita at razil.jp>
+
+	* lib/scm.c: sen_set replaced with sen_hash.
+
+2008-11-04  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_CLOSE): add.
+
+2008-11-04  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_INITIALIZER): remove
+	* senna.h (SEN_OBJ_INIT): add.
+	* senna.h (SEN_OBJ_SCALAR): renamed to SEN_OBJ_STR.
+
+2008-11-03  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/lib/sen-test-hash-factory.[ch]: add for cleaning up
+	hash test. (experimental yet)
+
+	* test/unit/core/test-hash.h: use SenTestHashFactory partially.
+
+2008-11-01  Tasuku SUENAGA <a at razil.jp>
+
+	* lib/io.c (sen_io_close): fixed bug from rev.942(use calloc instead of MAP_ANONYMOUS in WIN32 env.).
+  * lib/str.c (sen_rbuf_ftoa): passes ctx to ftoa_() in Windows environment.
+	* lib/io.c: implements sen_dl_open()/sen_dl_close()/sen_dl_sym() in Windows environment.
+	* vcc/senna.vcproj: removed inv08/sym08 and added some sources.
+	* vcc/libsenna.vcproj: removed inv08/sym08 and added some sources.
+	* vcc/sennachk.vcproj: removed inv08/sym08 and added some sources.
+
+2008-10-31  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: SEN_OBJ_VALUES -> SEN_OBJ_VERSES.
+
+2008-10-30  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.c (sen_get, sen_del): fixed a bug causes errror.
+
+2008-10-30  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_table_size): add.
+
+2008-10-29  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: moved deprecated api declarations to senna_old.h.
+	* senna.h (SEN_INFO_NGRAM_UNIT_SIZE): add.
+
+2008-10-29  Tasuku SUENAGA <a at razil.jp>
+
+	* lib/io.c: removed compiler warnings that fail_malloc_check() is not declared.
+	* bindings/python/sennadb/src/sennadb.pyx: removed closed flag on Ctx class.
+	* bindings/python/sennadb/sample/webserver.py: added sample webserver with Senna.
+
+2008-10-28  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_CTX_INITIALIZER): add.
+
+2008-10-27  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_column_create, sen_column_open): removed 'space' argument.
+
+2008-10-27  Tasuku SUENAGA <a at razil.jp>
+
+	* bindings/python/sennadb: fixed bug without cython.
+	* bindings/python/sennadb: fixed bug about useless sen_fin() call.
+	* bindings/python/sennadb: fixed problem which _object_factory() returns None object.
+	* bindings/python/sennadb: use SEN_TABLE_MAX_KEY_SIZE.
+
+2008-10-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/io.c (sen_io_expire): enhanced.
+
+2008-10-25  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_TABLE_MAX_KEY_SIZE): add.
+
+2008-10-24  Tasuku SUENAGA <a at razil.jp>
+
+	* bindings/python/sennadb: added python bindings of senna DB API.
+
+2008-10-23  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: shrank sen_ii_ginfo size to 4KB.
+
+2008-10-23  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: expanded chunk segment size to 4MB.
+
+2008-10-22  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: use sen_io_win_map2.
+
+2008-10-21  Poe MORITA  <morita at razil.jp>
+
+	* lib/io.h (SEN_IO_SEG_MAP2): add.
+
+2008-10-21  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.c (sen_ja_*): huge record support.
+
+2008-10-20  Poe MORITA  <morita at razil.jp>
+
+	* lib/io.c (sen_io_win_map2): add.
+
+2008-10-20  Tasuku SUENAGA <a at razil.jp>
+
+	* lib/senna_in.h: fixed bug in SEN_SET_64BIT.
+
+2008-10-19  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.c (sen_ja_*): enhanced space usage.
+
+2008-10-19  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.c (sen_ja_*): gc implemented.
+
+2008-10-17  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.c (sen_db_*): fix some bugs which occurs when malloc failed.
+	* lib/hash.c (sen_hash_cursor_*): fix some bugs which occurs when malloc failed.
+
+2008-10-16  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/: cut_assert_*_sen_*() -> sen_test_assert_*().
+
+2008-10-16  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.c: enabled USE_JA01.
+
+2008-10-15  Kouhei Sutou  <kou@cozmixng.org>
+
+	* ./: add .gitignore.
+
+2008-10-14  Poe MORITA  <morita at razil.jp>
+
+	* bindings/ruby/senna_api_wrap.c: follow senna_api.i
+	* lib/db.c (sen_obj_open): columns can be opend using sen_obj_open.
+
+2008-10-14  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/run-test.sh: support valgrind.
+
+2008-10-14  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_column_create): Path generated automatically,
+	if SEN_OBJ_PERSISTENT assigned as flags and path is null.
+	* lib/db.c (sen_table_create): Path generated automatically,
+	if SEN_OBJ_PERSISTENT assigned as flags and path is null.
+
+2008-10-13  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/fixtures/stress/test-stress-patricia-trie.c,
+	test/unit/fixtures/stress/test-stress-hash.c: suppress warnings.
+
+	* test/unit/:
+	- '_' -> '-'. need 'make clean'.
+	- move test-string.c and test/unit/test-snip.c to util/.
+	- move other test-*.c to core/.
+
+2008-10-12  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/stress/, test/unit/performance/: move to ...
+	* test/unit/fixtures/: ... here.
+
+	* configure.ac, test/unit/Makefile.am, test/unit/test-stress.c,
+	test/unit-test-performance.c: follow the above changes.
+
+2008-10-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.c (sen_tiny_array): enhanced.
+
+2008-10-09  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_INFO_SOURCE): add.
+	* senna.h (sen_rbuf_*): signatured modified.
+
+2008-10-08  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_INITIALIZER): add.
+	* senna.h (SEN_TABLE_EXACT): renamed to SEN_SEARCH_EXACT.
+	* senna.h (SEN_TABLE_LCPS): renamed to SEN_SEARCH_LCP.
+	* senna.h (SEN_TABLE_SUFFIX): renamed to SEN_SEARCH_SUFFIX.
+	* senna.h (SEN_TABLE_PREFIX): renamed to SEN_SEARCH_PREFIX.
+	* senna.h (SEN_SEARCH_PARTIAL): add.
+	* senna.h (SEN_SEARCH_NEAR): add.
+	* senna.h (SEN_SEARCH_NEAR2): add.
+	* senna.h (SEN_SEARCH_SIMILAR): add.
+	* senna.h (SEN_SEARCH_TERM_EXTRACT): add.
+	* senna.h (sen_table_search_flags): renamed to sen_search_flags.
+	* senna.h (sen_table_get_value): renamed to sen_obj_get_value.
+	* senna.h (sen_table_set_value): renamed to sen_obj_set_value.
+	* senna.h (sen_table_delete_by_id): add.
+	* senna.h (sen_table_search): renamed to sen_obj_search.
+	* senna.h (sen_column_set_value): renamed to sen_obj_set_value.
+	* senna.h (sen_column_get_value): renamed to sen_obj_get_value.
+	* senna.h (sen_string_search): removed.
+	* senna.h (sen_query_search): removed.
+
+2008-10-07  Poe MORITA  <morita at razil.jp>
+
+	* configure.ac: enable-v2index option removed.
+	* lib/index.c (sen_index2, sen_records2): add.
+
+2008-10-07  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-inverted-index.c (teardown): lexicon isn't needed
+	to free.
+
+2008-10-07  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_TABLE_SUBSET): add.
+
+2008-10-07  Poe MORITA  <morita at razil.jp>
+
+	* configure.ac: enable-v2index option add.
+
+2008-10-04  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_hook_unpack): add.
+
+2008-10-03  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_obj_add_hook): implemented.
+
+2008-10-02  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_proc_func): changed the signature.
+
+2008-10-02  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_hook_entry): add
+
+2008-09-30  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: enhanced error handling.
+	* lib/store.c: enhanced error handling.
+	* lib/hash.c: enhanced error handling.
+	* lib/ctx.c: enhanced error handling.
+
+2008-09-30  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_TOKENIZER_*): -> SEN_OBJ_KEY_*
+
+2008-09-29  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-inverted-index.c (setup): add NULL check for
+	sen_ctx_open().
+
+2008-09-28  Tasuku SUENAGA <a at razil.jp>
+
+	* fail_malloc.rbx: added some macros to MEMORY_FUNCS.
+	* fail_malloc.rbx: made it overwrite output script.
+	* fail_malloc.rbx: added auto MEMORY_FUNCS detection.
+	* fail_malloc.rbx: added SEN_STRDUP/SEN_GSTRDUP to MEMORY_FUNCS.
+
+2008-09-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (sen_ii_column_update): added.
+
+2008-09-28  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-public-context.c: rename from test-context.c.
+
+	* configure.ac, lib/ctx.[ch], test/unit/test-context.c: support
+	dynamic memory allocation functions change.
+
+	* test/unit/test-patricia-trie.h (trie_test_data_newv): add NULL
+	check. maybe fix [Senna-dev 1038].
+
+2008-09-26  Tasuku SUENAGA <a at razil.jp>
+
+	* fail_malloc.rbx: set fail probability to 1.0
+	* ctx.c: default value of sen_fmalloc_prob set to 0.0.
+	         so if you enabled failmalloc,
+	         all memory function works well as default.
+	* ctx.c: type of sen_fmalloc_prob changed to int.
+	* fail_malloc.rbx: not execute test program directly,
+	                   but output test shell script.
+
+2008-09-26  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_column_index_update): added
+	* senna.h (SEN_OBJ_COLUMN_BUFFERED_VECTOR): renamed to SEN_OBJ_COLUMN_INDEX.
+
+2008-09-26  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_column_set_value): modified the signature.
+	* senna.h (sen_column_get_value): modified the signature.
+
+2008-09-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/set.c: return error when set->index is null.
+
+2008-09-26  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_OBJ_OBJECT): exported.
+	* CAUTION!! format of sen_store has been changed from this revision. and
+	it's not compatible.
+
+2008-09-25  Tasuku SUENAGA <a at razil.jp>
+
+	* io.h (sen_fail_malloc): fixed off_t size in format string.
+	* index.c (sen_index_select): added argument check.
+	* index.c (sen_index_sel): added argument check.
+	* fail_malloc.rbx: added auto fail malloc check with ruby test
+	* senna.rb: fixed bug in ruby bindings on Index::rename
+
+2008-09-24  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_proc_func): modified the signature.
+
+2008-09-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/set.h (SEN_SET_INT_ADD): calloc/malloc error handling.
+
+2008-09-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_space_load): added.
+
+2008-09-23  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_proc_create): implemented.
+
+2008-09-18  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-inverted-index.c (teardown): type isn't needed to close.
+
+2008-09-18  Poe MORITA  <morita at razil.jp>
+
+	* sample/hatenapo.c: call sen_init().
+
+2008-09-16  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_space_create): changed the signature.
+	* senna.h (sen_space_open): changed the signature.
+	* senna.h (sen_space_child): removed.
+	* senna.h (sen_space_sibling): removed.
+
+2008-09-16  Poe MORITA  <morita at razil.jp>
+
+	* lib/str.c (sen_rbuf_itoh_len): renamed to sen_rbuf_itoh.
+
+2008-09-16  Tasuku SUENAGA <a at razil.jp>
+
+	* lib/str.c (sen_rbuf_str_esc): improved json string encoding.
+	* lib/str.c (sen_rbuf_itoh_len): added.
+
+2008-09-16  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-inverted-index.c (test_crud_may_be_bug): remove
+	needless test.
+
+	* test/unit/test-performance.c (teardown),
+	test/unit/test-inverted-index.c (teardown): closed opened objects.
+
+	* test/unit/test-snip.c (open_snip): close opened snip before
+	opening if it is needed.
+
+2008-09-16  Poe MORITA  <morita at razil.jp>
+
+	* lib/snip.c (sen_snip_open): Fixed a memory leak bug.
+	* lib/db.c (sen_obj_close): sen_space can be freed by sen_obj_close,
+	and, all objects belong to the space are freed recursively.
+
+2008-09-15  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_delete_by_id): Changed the signature.
+	added optarg argument.
+
+2008-09-14  Kouhei Sutou  <kou@cozmixng.org>
+
+	* Makefile.am, configure.ac, test/benchmark/: add a small GLib
+	based benchmark framework.
+
+2008-09-12  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-inverted-index.c (test_crud_may_be_bug): add.
+
+	* test/unit/test-inverted-index.c (test_crud): add a case for two
+	matched sections in a record.
+
+	* test/unit/test-inverted-index.c (test_crud): use
+	section. Now, assertion is failed. Is this wrong test?
+
+	* test/unit/lib/sen-test-utils.h (gcut_take_new_list_string):
+	backport from Cutter trunk.
+
+	* test/unit/test-inverted-index.c (test_crud): add a test for
+	create/reference/update/delete inverted index operations.
+
+	* configure.ac, test/unit/fixtures/: add test data.
+
+	* test/unit/stress/test-stress-patricia-trie.c (test_read_write),
+	test/unit/stress/test-stress-hash.c (test_read_write): don't call
+	Cutter related functions in lock/unlock block. Sorry. This was my
+	problem...
+
+2008-09-11  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/: follow the below changes.
+
+2008-09-11  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: Unified sen_obj_flags and sen_type_type.
+	* lib/ii.c (sen_column_create): implemented.
+
+2008-09-11  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-trie.c
+	(test_delete_by_id_sis_short, test_delete_by_id_sis_long): add
+	tests for [Senna-dev 1010].
+
+	* test/unit/test-patricia-trie-cursor.c: use
+	sen_test_pat_cursor_get_keys() and sen_test_pat_cursor_get_pairs().
+
+	* test/unit/lib/sen-test-utils.[ch]
+	(sen_test_pat_cursor_get_keys, sen_test_pat_get_keys)
+	(sen_test_pat_cursor_get_pairs, sen_test_pat_get_pairs): add
+	utilities for dumping patricia trie.
+
+2008-09-10  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-trie.c (test_add_and_delete): add a large
+	addition and then all remove test.
+
+	* test/unit/test-hash.h: add increment func data.
+	* test/unit/test-hash-sort.c, test/unit/test-hash-cursor.c: follow
+	the above change.
+
+	* test/unit/stress/test-stress-patricia-trie.c: don't use lock timeout.
+
+	* test/unit/stress/test-stress-patricia-trie.c (N_THREADS): 100 -> 10.
+
+	* test/unit/stress/test-stress-hash.c: don't use lock timeout.
+
+	* test/unit/stress/test-stress-hash.c (N_THREADS): 100 -> 10.
+
+2008-09-09  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash.c (test_add_and_delete): add a large
+	addition and then all remove test.
+
+	* test/unit/test-hash.h, test/unit/test-hash-sort.c,
+	test/unit/test-hash-cursor.c: setup/teardown not uint32 size key
+	on startup/shutdown.
+
+	* test/unit/run-test.sh: re-enable stress test.
+
+	* test/unit/stress/test-stress-patricia-trie.c (data_read_write),
+	test/unit/stress/test-stress-hash.c (test_read_write): lock/unlock.
+
+	* test/unit/test-hash.c: remove reset test.
+
+	* test/unit/test-performance.c (test_read_write): add TODO.
+
+2008-09-08  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-inverted-index.c
+	(test_open_invalid_segment_file, test_open_invalid_chunk_file): add.
+
+	* test/unit/test-inverted-index.c (test_open_with_null_lexicon): add.
+
+	* test/unit/test-store.c (test_create_with_long_path): use
+	sen_long_path_new().
+
+	* test/unit/lib/sen-test-utils.[ch] (sen_long_path_new): add.
+
+	* test/unit/test-inverted-index.c (test_create_with_long_path)
+	(test_create_with_null_path, test_create_with_null_lexicon): add
+	tests for fail case.
+
+	* test/unit/test-inverted-index.c (test_open): add.
+
+	* test/unit/test-performance.c (run_test): use sizeof(sen_id) as
+	key size.
+
+	* test/unit/performance/test-read-write.c,
+	test/unit/test-performance.c, test/unit/lib/sen-test-utils.h: pass
+	table type.
+
+2008-09-08  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (sen_type_create): fixed a typo.
+
+2008-09-08  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-inverted-index.c, test/unit/Makefile.am: add a
+	test for inverted index.
+
+	* test/unit/test-performance.c (run_test): follow the below
+	sen_table_create() API change.
+
+2008-09-08  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_create): changed the signature. added encoding argument.
+
+2008-09-03  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash.c (test_reset): use omit not pending. should
+	be confirmed.
+
+	* test/unit/: patricia tree -> patricia trie.
+
+2008-09-03  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: keep track of df (document frequency) value in chunk area.
+
+2008-09-03  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: SEN_II_WO_SID, SEN_II_WO_SCORE and SEN_II_WO_POS options
+	are available as sen_ii_create() flags, which customize the layout of
+	each inverted index.
+
+2008-09-01  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: made ii->header->chunks bitmaps.
+	* lib/io.c (SEN_IO_WO_NREF): add.
+	* lib/hash.c (sen_hash_lock): defined, but not used yet.
+
+2008-09-01  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (sen_ii_cursor_open): Changed the signature.
+	Certain limited part of inverted index entry can be fetched.
+
+2008-08-31  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (CHUNK_SPLIT_THRESHOLD): add.
+
+2008-08-28  Poe MORITA  <morita at razil.jp>
+
+	* ii.c: Expanded maximum buffer size to 16GB.
+
+2008-08-28  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/run-test.sh: don't run stress test and performance for
+	now.
+
+	* test/unit/test-performance.c, test/unit/performance/: add
+	performance test. beta.
+
+2008-08-27  Poe MORITA  <morita at razil.jp>
+
+	* io.h (SEN_IO_DISABLE_SEGREF): add.
+	* ii.c: Fixed maximum index size to 1TB,
+	independent from initial_n_segments value.
+
+2008-08-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash.c (test_reset): mark as pending because I
+	don't have any idea how to test sen_hash_reset() is called.
+
+2008-08-26  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/lib/sen-test-utils.h: define environment variable names.
+	* test/unit/stress/test-stress-hash.c: use the above environment
+	variable names.
+
+	* test/unit/test-stress.c,
+	test/unit/stress/test-stress-patricia-tree.c,
+	test/unit/stress/Makefile.am: add a stress test for patricia tree.
+
+2008-08-25  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/run-test.sh (CUTTER_ARGS): test/unit/stress directory
+	should not be ran by run-test.sh. It should be ran from
+	test-stress.c.
+
+	* test/unit/test-stress.c: add tests for n-processes and
+	n-threads. Cutter 1.0.4 should be released soon.
+
+	* test/unit/stress/test-stress-hash.c: consider process number.
+
+2008-08-21  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/stress/test-stress-hash.c (test_read_write): close
+	hash and context in test and check the result of it.
+
+	* test/unit/test-stress.c, test/unit/stress/: add a stress test
+	for hash. It requires Cutter 1.0.4 but it's not released
+	yet. Sorry. It fails but I don't know about the problem is derived
+	from Senna, Cutter or test case.
+
+	* test/unit/lib/sen-test-utils.c (sen_test_get_base_dir): return
+	absolute path.
+
+2008-08-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree.h (cut_assert_open_tree): follow
+	the recent changes.
+
+2008-08-19  Poe MORITA  <morita at razil.jp>
+
+	* senna.h (SEN_TYPE_VARIABLE_SIZE): changed into (1L<<17)
+
+2008-08-19  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash-sort.c (test_sort_by_value): add tests for
+	SEN_TABLE_SORT_BY_VALUE.
+
+	* test/unit/test-hash-sort.c: add tests for no options case.
+
+	* test/unit/test-hash-sort.c (sort_options_new): add.
+
+	* test/unit/test-hash-sort.c
+	(add_sort_by_variable_size_key_data_many): add tests for many keys case.
+
+	* test/unit/test-hash-sort.c: use array_cursor not direct access.
+
+	* test/unit/test-hash-sort.c (compare_string): should return
+	boolean not strcmp() like result.
+
+	* test/unit/test-patricia-tree*: SEN_PAT_WITH_SYS ->
+	SEN_TABLE_KEY_WITH_SIS.
+
+2008-08-18  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.h: export SEN_ARRAY_TINY.
+	* senna.h (sen_table_sort_optarg): added size args to compar function.
+
+2008-08-18  Poe MORITA  <morita at razil.jp>
+
+	* lib/token.c: add.
+
+2008-08-18  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash*, test/unit/test-patricia-tree*: make sample
+	value taken string.
+
+	* test/unit/test-hash-sort.c (test_sort_by_variable_size_key): add
+	a test for sen_hash_sort() by sorting variable size key. But this is
+	crashed...
+
+	* test/unit/test-hash-sort.c (test_sort_by_int_key): add a test
+	for sen_hash_sort() by sorting signed int key.
+
+	* test/unit/Makefile.am: add a test-hash-sort.c entry.
+
+	* test/unit/test-hash-cursor.c: add test data for tiny hash.
+
+	* test/unit/test-hash.c: move sort related test to ...
+	* test/unit/test-hash-sort.c: ... here.
+
+	* test/unit/test-hash.h (set_tiny_flags): move from test-hash.c.
+
+	* test/unit/test-hash.h (cut_assert_lookup_add_with_value): add.
+
+	* test/unit/test-hash.c: add tests for sen_hash_sort() by sorting
+	unsigned int key.
+
+2008-08-04  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: add.
+
+2008-08-04  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_group): added (but not completed yet).
+
+2008-08-04  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_sort): enhanced.
+
+2008-08-04  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_sort): export.
+
+2008-08-02  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.h (SEN_TINY_ARRAY_BIT_AT): fix a bug that caused segv.
+
+2008-08-02  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_sort): refined.
+
+2008-08-01  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_sort): enhanced.
+
+2008-07-31  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/Makefile.am: add test-hash-cursor.c and test-hash.h.
+
+	* test/unit/test-hash.c: extract common code to ...
+	* test/unit/test-hash.h: ... here. (new file)
+
+	* test/unit/test-hash-cursor.c: add tests for sen_hash_cursor_*.
+
+	* test/unit/test-patricia-tree*: follow the below change.
+
+	* test/unit/test-patricia-tree.h: move set_parameters_func to ...
+	* test/unit/lib/sen-test-utils.h: ... here and rename to
+	sen_test_set_parameters_func.
+
+2008-07-31  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.h (sen_hash_sort): export.
+
+2008-07-30  Poe MORITA  <morita at razil.jp>
+
+	* configure.ac: add NSL_LIBS and SOCKET_LIBS.
+
+2008-07-30  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree-search.c (data_suffix_search):
+	follow the current behavior.
+
+2008-07-29  Poe MORITA  <morita at razil.jp>
+
+	* ATOMIC ADD support on Solaris (applied patch from <sunos at saita. ma>)
+
+2008-07-29  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree.h: move hash related codes to ...
+	* test/unit/test-patricia-tree-search.c: ... here because hash
+	related codes are used by only this.
+
+	* test/unit/test-patricia-tree*.c: move common routines to ...
+	* test/unit/test-patricia-tree.h: ... here.
+
+	* test/unit/Makefile.am (noinst_HEADERS): add.
+
+2008-07-28  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree-search.c: add tests for
+	sen_pat_suffix_search(). But they are still broken because I don't
+	understand correct behavior of sen_pat_suffix_search(). It seems
+	sen_pat_suffix_search() has bugs...
+
+	* test/unit/test-patricia-tree-search.c: add tests for
+	sen_pat_prefix_search().
+
+2008-07-28  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_sort): add.
+
+2008-07-28  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/ql/init.scm, test/ql/Makefile.am (EXTRA_DIST): add init script.
+
+	* test/unit/test-patricia-tree-cursor.c: SEN_PAT_* -> SEN_CURSOR_*.
+
+2008-07-27  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.h (sen_array_*): export.
+
+2008-07-27  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (BITMAP_AT): add.
+	* lib/store.c (BITMAP_AT): add.
+
+2008-07-27  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c: use SEN_TINY_ARRAY_BIT* macros.
+
+2008-07-27  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.h (SEN_TINY_ARRAY_BIT*): add.
+
+2008-07-27  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.c (sen_array): renamed sen_array into sen_tiny_array.
+	* lib/store.c (sen_array): add.
+
+2008-07-26  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_get_key): always returns 0 if invalid id passed.
+
+2008-07-25  Poe MORITA  <morita at razil.jp>
+
+	* senna.h: SEN_PAT_ASCENDING -> SEN_CURSOR_ASCENDING.
+
+	* lib/hash.c (sen_hash_cursor*): add.
+
+2008-07-25  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.ac: remove needless libcutter check.
+
+	* test/ql/unittest.scm, test/ql/quasiquote.scm,
+	test/ql/functional.scm: remove needless files.
+
+	* test/hatenapo.c, test/ql/bookmark.scm, test/ql/bookmark.result,
+	test/ql/dump.scm, test/ql/init.scm: move to sample/.
+
+	* test/unit/test-patricia-tree.c (test_remove_with_null_as_path): add.
+
+	* test/unit/test-patricia-tree-search.c: add a test for
+	sen_pat_lcp_search().
+
+	* test/unit/Makefile.am: add test-patricia-tree-search.c.
+
+	* test/unit/test-patricia-tree-cursor.c: remove '+ 1' from strlen().
+
+2008-07-24  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash.c: follow the recent changes.
+
+2008-07-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_*): changed the signatures.
+
+2008-07-24  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree.c (test_get_value): add SIS pattern.
+
+2008-07-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/pat.c (sen_pat_delete_by_id): fixed a bug which returns wrong results.
+	* lib/pat.c (sen_pat_delete*): returns sen_invalid_argument
+	when no corresponding key is found.
+
+2008-07-23  Poe MORITA  <morita at razil.jp>
+
+	* lib/pat.c (sen_pat_cursor_open): fixed a bug which returns wrong results.
+
+2008-07-23  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree-cursor.c: add tests for
+	sen_pat_cursor_delete().
+
+	* test/unit/test-patricia-tree-cursor.c: add tests for
+	sen_pat_cursor_get_value() and sen_pat_cursor_set_value().
+
+	* test/unit/test-patricia-tree-cursor.c (retrieve_all_keys): use
+	sen_pat_cursor_get_key().
+
+	* test/unit/test-patricia-tree.c (cut_assert_delete): don't add
+	key before deleting.
+
+	* test/unit/test-patricia-tree.c: add tests for
+	sen_pat_delete_by_id().
+
+	* test/unit/test-hash.c: follow the recent changes.
+
+2008-07-23  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c: use sen_ctx_alloc when SEN_HASH_TINY assigned.
+
+2008-07-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree-cursor.c: add tests for no-range cursor.
+
+	* test/unit/test-patricia-tree-cursor.c: fix tests: min/max values
+	are independent with cursor order.
+
+	* test/unit/test-patricia-tree.c,
+	test/unit/test-patricia-tree-cursor.c: follow the recent API changes.
+
+	* test/unit/test-patricia-tree-cursor.c: follow the recent changes.
+
+2008-07-17  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree-cursor.c: use functions to set
+	parameters.
+
+2008-07-17  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.c (sen_ctx_alloc): add.
+	* senna.h: add DB API funcstions.
+
+2008-07-17  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash.c (test_reset): add. coverage of hash.c > 90.
+
+	* test/unit/test-hash.c:
+	- run same tests for tiny hash.
+	- remove codes for get_key()/get_value() with nonexistence key.
+	- add test cases for short/long length variable key size cases.
+
+	* test/unit/test-hash.c (test_lookup_add, test_delete_by_id)
+	(test_delete): use data-driven testing style.
+
+	* test/unit/test-patricia-tree.c: use setup default value function.
+
+	* test/unit/test-hash.c (test_create, test_open): use data-driven
+	testing style.
+
+	* test/unit/test-patricia-tree.c (test_open_success)
+	(test_open_without_path): use data-driven testing style.
+
+	* test/unit/test-hash.c, test/unit/test-patricia-tree.c: follow
+	the recent log changes.
+
+2008-07-17  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.c (sen_ctx_alloc_lifo): add.
+
+2008-07-16  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree.c (test_delete)
+	(test_lookup_and_delete_for_same_prefix_key): use data-driven
+	test style.
+
+	* test/unit/lib/Makefile.am (AM_LDFLAGS): make
+	libsen_test_utils.so and use it.
+
+	* test/unit/test-hash.c, test/unit/test-patricia-tree.c: follow
+	the recent log changes.
+
+	* test/unit/: use gcut_list_string_new()/gcut_list_string_free()
+	not sen_test_string_list_new()/sen_test_string_list_free().
+
+2008-07-16  Poe MORITA  <morita at razil.jp>
+
+	* lib/io.c (sen_io_anon_map): add.
+
+2008-07-16  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree.c (test_create, test_lookup_add):
+	use data-driven test style.
+
+	* test/unit/test-hash.c, test/unit/test-patricia-tree.c: comment
+	out notify.
+
+	* test/unit/test-string.c: fix wrong type.
+
+2008-07-15  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree-cursor.c: use data-driven test
+	style. requires Cutter > 1.0.3.
+
+	* test/unit/test-hash.c (test_get_key, test_get_value):
+	sen_hash_get_key() and sen_hash_get_value() for nonexistence ID is
+	undefined.
+
+	* test/unit/test-patricia-tree.c (test_get_key, test_get_value):
+	sen_pat_get_key() and sen_pat_get_value() for nonexistence ID is
+	undefined.
+
+2008-07-15  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.h: add backtrace.
+
+2008-07-14  Poe MORITA  <morita at razil.jp>
+
+	* (sen_ctx_init, sen_ctx_fin): add.
+
+2008-07-08  Poe MORITA  <morita at razil.jp>
+
+	* lib/pat.c (sen_pat_lookup): fixed a bug around SEN_PAT_WITH_SIS.
+
+2008-07-08  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree-cursor.c
+	(test_multi_entries_ascending, test_multi_entries_ascending_sis)
+	(test_multi_entries_descending)
+	(test_multi_entries_descending_sis): add.
+
+	* test/unit/test-patricia-tree.c: cleanup.
+
+	* test/unit/test-patricia-tree-cursor.c
+	(test_one_entry_ascending, test_one_entry_ascending_sis)
+	(test_one_entry_descending, test_one_entry_descending_sis): add.
+
+	* test/unit/test-patricia-tree-cursor.c: add.
+
+	* test/unit/Makefile.am: test-patricia-tree-cursor.c.
+
+	* test/unit/test-hash.c, test/unit/test-patricia-tree.c: use
+	strcpy() not memcpy().
+
+	* test/unit/test-patricia-tree.c (test_delete_same_prefix_key)
+	(test_delete_same_prefix_key_sis): add.
+
+	* test/unit/test-patricia-tree.c
+	(test_lookup_sis_with_multi_byte_key): add.
+
+	* test/unit/test-hash.c (test_open_without_path): add.
+
+	* test/unit/test-patricia-tree.c
+	(test_remove, test_open_without_path): add.
+
+	* test/unit/test-patricia-tree.c: use sen_test_string_list_*().
+
+	* test/unit/test-hash.c: fix an index bug.
+
+	* test/unit/test-db.c: rename to ...
+	* test/unit/test-store.c: ... this.
+
+	* test/unit/Makefile.am: follow the above changes.
+
+	* test/unit/test-hash.c, test/unit/test-patricia-tree.c: follow
+	the recent changes.
+
+2008-07-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (sen_table_cursor_open): add.
+
+2008-07-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_get_key): occasionally, returns 0 when invalid id passed.
+
+2008-07-07  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-patricia-tree.c: add.
+	* test/unit/Makefile.am: add test-patricia-tree.c.
+
+	* test/unit/test-hash.c (test_set_value): add.
+
+	* test/unit/test-hash.c (test_set_value_with_null_value): add.
+
+	* test/unit/test-hash.c (test_get_value, test_get_key): add.
+
+	* test/unit/test-hash.c (test_delete_tiny_hash)
+	(test_delete_variable_size, test_delete_variable_size_tiny_hash)
+	(test_delete_not_uint32_t_size)
+	(test_delete_not_uint32_t_size_tiny_hash): add.
+
+2008-07-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (sen_hash_delete_by_id): fixed a bug causing segv.
+
+2008-07-07  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-string.c: add.
+	* test/unit/Makefile.am: add test-string.c.
+
+	* test/unit/test-hash.c (test_lookup_not_uint32_t_size)
+	(test_lookup_not_uint32_t_size_tiny_hash): add.
+
+	* test/unit/test-hash.c (test_lookup_tiny_hash)
+	(test_lookup_variable_size, test_lookup_variable_size_tiny_hash): add.
+
+	* test/unit/test-hash.c (test_delete_by_id): add.
+
+	* test/unit/test-hash.c (test_lookup_add): add.
+
+	* test/unit/lib/sen-assertions.h (cut_assert_sen_nil)
+	(cut_assert_not_sen_nil): add.
+
+2008-07-06  Poe MORITA  <morita at razil.jp>
+
+	* lib/index.c: sen_index_rename() error handling.
+
+2008-07-06  Poe MORITA  <morita at razil.jp>
+
+	* lib/pat.c: added sen_pat_lookup.
+
+2008-07-06  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/ql/test-table.scm, test/ql/ql-test-utils.scm: fix typos...:
+	row -> raw
+
+2008-07-05  Poe MORITA  <morita at razil.jp>
+
+	* lib/pat.c use SEN_IO_ARRAY.
+
+2008-07-04  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash.c: follow the recent hash changes.
+
+	* lib/str.c (sen_atoi, sen_str_itoa): support INT_MIN.
+
+2008-07-03  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/ql/test-table.scm (test-iterator): add.
+
+	* test/ql/ql-test-utils.scm (send-ql): add row-input option.
+
+	* test/ql/ql-assertions.scm (assert-ql-equal-disp-json): add.
+
+	* test/ql/Makefile.am (EXTRA_DIST): add test-disp.scm.
+
+	* test/ql/test-disp.scm: add.
+
+	* test/ql/test-slot.scm: add tests for <text>, <shorttext>,
+	<longtext> and <time> slot.
+
+	* test/ql/ql-test-utils.scm (send-ql): add prepare-output option.
+
+	* test/ql/ql-assertions.scm (assert-ql-send-error): add.
+
+2008-07-02  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/ql/ql-assertions.scm: assert-*-ql-* -> assert-ql-*.
+
+	* test/ql/test-*.scm: follow the above changes.
+
+	* lib/senna_in.h: define fallback INT64_MAX and INT64_MIN.
+
+	* lib/str.c (sen_str_lltoa): suooprt INT64_MIN.
+
+	* test/ql/Makefile.am (EXTRA_DIST): add test-slot.scm.
+
+	* test/ql/test-slot.scm: add.
+
+	* test/ql/ql-assertions.scm (assert-in-delta-ql): add.
+
+2008-07-02  Poe MORITA  <morita at razil.jp>
+
+	* support environments without fpclassify
+
+2008-07-02  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/ql/Makefile.am (EXTRA_DIST): add test-table.scm.
+
+	* test/ql/test-table.scm: add.
+
+	* test/ql/ql-test-utils.scm (send-ql): use error not raise.
+
+	* test/ql/ql-assertions.scm (assert-equal-send-ql)
+	(assert-match-send-ql, assert-ql): add.
+
+	* test/ql/Makefile.am (EXTRA_DIST): add test-base.scm.
+
+	* test/ql/test-base.scm: add.
+
+	* test/ql/test-quasiquote.scm: add.
+
+	* test/ql/ql-test-utils.scm: detect error.
+
+	* test/ql/Makefile.am (EXTRA_DIST): add.
+
+	* test/ql/ql-assertions.scm (assert-equal-ql): add.
+
+	* test/ql/test-bookmark.scm: use assert-equal-ql.
+
+2008-07-01  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-hash.c (test_create_with_zero_key_size): add.
+
+	* test/unit/test-db.c (test_create_with_long_pat): check error message.
+
+	* test/unit/lib/sen-test-utils.[ch] (sen_test_string_list_new,
+	sen_test_string_list_free): add.
+
+	* test/unit/test-hash.c: use {setup,teardown}_sen_logger.
+
+	* test/unit/lib/sen-test-utils.c (setup_sen_logger,
+	teardown_sen_logger): add.
+
+	* test/unit/test-hash.c (test_open_with_io, test_open_without_io): add.
+
+	* test/unit/lib/sen-test-utils.[ch]: add log handler.
+
+	* test/unit/Makefile.am: add test-hash.c.
+
+	* test/unit/test-hash.c: add.
+
+2008-06-30  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/ql/test-bookmark.scm (test-union): add.
+
+	* test/ql/test-bookmark.scm (test-sort): add.
+
+	* test/ql/ql-assertions.scm (assert-equal-ql-disp-tsv): add.
+
+	* lib/scm.c (sen_ctx_load): fix inverted return value.
+
+	* test/ql/test-bookmark.scm (test-function, test-disp): add.
+
+	* test/ql/ql-test-utils.scm: improve SennaQL interaction.
+
+	* test/ql/ql-assertions.scm (assert-equal-ql-disp): add.
+
+	* test/ql/test-bookmark.scm: add tests from bookmark.scm.
+
+	* test/ql/ql-test-utils.scm (format-ql-expression): add because
+	Gauche escapes wired symbol name with "|...|" format but SennaQL
+	doesn't support the format.
+
+	* test/ql/ql-assertions.scm: add. require GaUnit 0.1.5.
+
+	* test/ql/test-bookmark.scm (test-get): add a test for getter.
+
+	* test/unit/test-context.c: add.
+
+	* test/unit/Makefile.am: add test-context.c.
+
+	* test/unit/test-snip.c, test/unit/test-db.c: add "lib/".
+
+2008-06-29  Poe MORITA  <morita at razil.jp>
+
+	* Added DBAPI skelton.
+	* lib/hash.c: add.
+	* lib/pat.c: add.
+
+2008-06-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.ac, test/unit/: cleanup test/unit/.
+
+	* lib/set.c (sen_pset_bin_get): declare variables at the head of
+	block.
+
+	* test/unit/Makefile.am (libsen_test_utils.la): just a convenience
+	library.
+
+	* test/unit/test-db.c: add. require cutter >= 1.0.2.
+
+	* test/unit/sen-test-utils.[ch] (sen_test_get_base_dir): add.
+
+	* test/unit/Makefile.am: add test-db.c.
+
+2008-06-23  Poe MORITA  <morita at razil.jp>
+
+	* sen_pset appeared.
+
+2008-06-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* autogen.sh: accept user specified ACLOCAL_ARGS.
+
+2008-06-19  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-snip.c (test_customized_tag): add.
+
+	* test/unit/test-snip.c (test_exec_with_normalize): add.
+
+	* test/unit/test-snip.c (test_exec_with_invalid_argument): add.
+
+	* lib/snip.c (sen_snip_exec): add nresults and max_tagged_len check.
+
+	* test/unit/test-snip.c (test_simple_exec_sjis): add.
+
+	* test/unit/test-snip.c (test_simple_exec_euc_jp): add.
+
+	* lib/snip.c (sen_snip_strndup): abstract copy string function.
+	* lib/snip.c (sen_snip_cond_set_tag): use sen_snip_strndup().
+
+	* lib/snip.c (sen_snip_set_default_tag): abstract set default tag
+	function.
+	* lib/snip.c (sen_snip_open): use sen_snip_set_default_tag().
+
+	* lib/snip.c (sen_snip_cond_set_tag): abstract set tag function.
+
+	* lib/snip.c (sen_snip_add_cond): use sen_snip_cond_set_tag().
+
+	* test/unit/test-snip.c (test_add_cond_with_copy_tag): add.
+
+	* test/unit/test-snip.c (test_add_cond_with_too_large_keyword): add.
+
+	* test/unit/test-snip.c (test_add_cond_with_invalid_argument): add.
+
+2008-06-18  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-snip.c (test_html_mapping_escape): add.
+
+	* lib/snip.c (sen_snip_open): accept NULL for defaultopentag and
+	defaultclosetag on SEN_SNIP_COPY_TAG flag or should return NULL?
+
+	* test/unit/test-snip.c	(test_open_with_copy_tag): add.
+
+	* test/unit/test-snip.c	(test_open_with_invalid_max_results): add.
+
+	* test/unit/test-snip.c	(test_close_with_null): add.
+
+2008-06-16  Poe MORITA  <morita at razil.jp>
+
+	* Cut off support for v08 format index.
+	* Added *_bin functions to sym.c
+
+2008-06-13  Kouhei Sutou  <kou@cozmixng.org>
+
+	* Makefile.am: remove coverage related rules.
+	* configure.ac:
+	- use Cutter's coverage m4 macro.
+	- remove needless flags from senna-cfg.
+	- remove coverage related cflags from global CFLAGS.
+	* lib/configure.ac: add coverage related cflags.
+
+2008-06-12  Tasuku SUENAGA <a at razil.jp>
+
+	* Encapsulated the definition of sen_sym_cursor.
+	* Fixed a bug in sen_sym_prefix_search_with_set, which hit deleted terms
+	occasionally.
+	* Added sen_lex_set_mecab_args.
+	* lib/snip.c: too large max tagged len is returned when mapping == -1
+	* Added nfkc.h
+	* modified snip.c: assert -> SEN_ASSERT
+	* Fixed a continuation bug.
+	* Fixed a bug in class::delete.
+	* Refactoring tests for ruby bindings.
+	* Fixed encoding mixture in test for ruby binding.
+	* Fixed a bug in sen_inv_term_extract. (by Kouhei Sutou)
+	* Added an assertion to test_index_advanced.rb corresponding to the
+	sen_inv_term_extract bug.
+	* Added senna.pc.in (by Kouhei Sutou)
+	* pkg-config support (by Kouhei Sutou)
+	* Fixed a bug in sen_inv_update which returns wrong return code (by Kouhei
+	Sutou)
+	* Fixed a bug in match_exec which causes memory leak.
+	* Fixed a bug in nf_neq.
+	* Fixed a bug in nf_snippet.
+	* Fixed a bug in exec_query.
+	* Unified sen_records and sen_set.
+	* Added new API sen_inv_select, sen_inv_select, sen_query_select.
+	* Fixed a bug in match_exec.
+	* Added nf_query.
+	* Fixed a bug ql.c:nf_snippet.
+	* Added do macro.
+	* Added some sample scripts.
+	* nf_object accepts multiple key and value pairs.
+	* Modified x->number. default value changed into zero.
+	* Fixed bug on sen_snip_exec with a SEN_SNIP_SKIP_LEADING_SPACES
+	flag.Multiple results are not able to be processed properlly.
+	* Export sen_sym_cursor.
+	* Enhanced disp function.
+	* Enhanced sen_sym_cursor_init.
+	* Added sen_sym_cursor_init_from.
+	* Enhanced sen_obj_new
+	* Enhanced class::extract method.
+	* Added x->b32h and intern to sennaql.
+	* Enhanced class::scan method.
+	* Added sen_sym_cursor.
+	* Modified the behavior of sen_com_event_poll. continue when returned a
+	closed fd.
+	* Added ::extract.
+	* Added symsnip.
+	* Added log info around sen_cursor_next.
+	* Added epoll_ctl log.
+	* ql supports escape sequence (\n, \t, \\).
+	* Fixed a bug. sen_io_size returns incorrect value.
+	* Added compare-function argument to (records ::sort).
+	* Fixed a bug in sen_sym_scan.
+	* Fixed a bug in <, >, <=, >= operator of sennaql.
+
+2008-06-04  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/ql/run-test.scm: use sys-glob instead of glob as fallback.
+
+2008-06-03  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.ac, test/Makefile.am (SUBDIRS), test/ql/Makefile.am:
+	support SennaQL test with GaUnit.
+
+	* test/ql/test-bookmark.scm, test/ql/run-test.scm,
+	test/ql/ql-test-utils.scm: add.
+
+	* test/unit/sen-test-utils.h: use <glib.h> not <gcutter.h>
+
+	* lib/io.c: use <sys/mman.h> not <bits/mman.h>. See mmap(2).
+
+2008-05-28  Poe MORITA  <morita at razil.jp>
+
+	* store.c: zlib/lzo support. (applied patch from <sunos at saita. ma>)
+
+2008-05-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.ac: disable Cutter if libcutter can't be found.
+
+2008-05-21  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-snip.c: fix tests to adapt to correct specification.
+
+	* configure.ac: remove a workaround for Cutter 0.9.0. require
+	Cutter >= 1.0.
+
+2008-05-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/unit/test-snip.c (test_html_mapping): add a test for HTML mapping.
+
+	* lib/snip.c (sen_snip_get_result): fix an invalid index access bug.
+
+	* test/unit/test-snip.c (test_invalid_result_index): add a test
+	for invalid result index access.
+
+	* test/unit/sen-assertions.h (cut_assert_equal_sen_rc): add.
+
+	* test/unit/test-snip.c (test_multi_conditions): add a test for
+	multiple sen_snip_add_cond() calls.
+
+	* test/unit/test-snip.c (test_customized_tag): add a test for
+	sen_snip_add_cond() with tag.
+
+	* test/unit/Makefile.am, test/unit/test-snip.c: add a test for
+	sen_snip.
+
+	* test/unit/sen-test-utils.[ch] (sen_rc_to_string): add.
+
+	* test/unit/sen-assertions.h (cut_assert_sen): add.
+
+2008-05-14  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.ac: really support Cutter.
+
+	* test/unit/, test/Makefile.am: add.
+
+2008-03-10  Tasuku SUENAGA <a at razil.jp>
+
+	* Added shutdown function to sennaql
+	* Bug fixed: cannot build php bindings
+	* Modified timeout value of sen_com_event_poll in senna.c
+	* bug fixed: sen_query_scan fails with a query like 'word1 +word2'
+	* Enhanced slot_value_ra.
+	* CAUTION!! format of sen_store has been changed from this revision. and
+	it's not compatible.
+	* Exported sen_str_charlen.
+	* Fixed a bug in sen_records_next.
+	* Fixed a problem in sen_ja, accessing a record which exists across file
+	boundaries.
+	* Added ::defrag method to sen_ja_slot.
+	* Added :normalize option to ptable function.
+	* Fixed a bug in compar_expr.
+	* Added ::get-ddl
+	* default open/close tag are copied on sen_snip_open with SEN_SNIP_COPY_TAG
+	flags
+	* added sen_str_normalize
+	* Added ::schema method.
+	* When 0 is assigned as limit value of ::sort and ::disp method, it's
+	regarded as nrecords.
+	* compare functions (<, =, >, <=, >=) supports more than 2 values.
+	* Added substrb function.
+	* Added sen_sym_scan.
+	* removed strptime for windows
+	* Modified sen_fin. output alloc_count.
+	* Fix a bug in nf_records
+	* Added sen_sel_near2
+	* Fixed a memory leak bug in disp, nf_records.
+	* Added flags SEN_SKIP_LEADING_SPACES for sen_snip_open.
+
+2008-02-07  Tasuku SUENAGA <a at razil.jp>
+
+	* Made sen_ql_eval GC safe.
+	* Fixed a bug in nf_class::sort. time value comaprison was wrong.
+	* Fitted ruby binding in new sen_index_info signature.
+	* changed libsenna to senna in spec file
+	* enabled warnings about inline
+	* Modified sen_ja to use sen_io_win_map.
+	* Modified the signature of an API sen_index_info.
+	* Modified the behavior of sen_query. Leading expressions with '-' operator are ignored.
+	* Fixed a bug in clearlock.
+	* Fixed bug in sen_timeval2str().
+	* sen_snip_exec allow zero length string.
+	* fixed bug: cannot handle "c" properlly if snippet condition made from query "a -(b) c" by sen_query_snip
+	* Enhanced snip.
+	* Fixed a problem causing segv when illegal snip cond asigned.
+	* added quasiquote test on test/ql/quasiquote.scm
+	* changed listp -> pairp
+	* Fixed a bug in quasiquote.
+	* Added SEN_SNIP_COPY_TAG.
+	* Fixed a bug in sen_timeval.
+	* Fixed a bug in sen_ql_eval which cause segv when evaluated code raise error.
+	* Added (class ::clearlock).
+	* Added iterator to <db>.
+	* Made snip_cond gc free.
+	* Fixed a bug in <time> operation.
+	* Enhanced snip in sennaql.
+	* change strtime format.
+	* Added x->time
+	* Enhanced error handling in ruby binding.
+	* Fixed some bugs about list operation.
+	* Added CALLBACK.
+	* added __stdcall for thread functions on Windows
+	* Fixed a bug in sen_timeval.
+	* Added THREAD_CREATE.
+	* Added bogus COND_SIGNAL.
+
+2008-01-22  Tasuku SUENAGA <a at razil.jp>
+
+	* Enabled sen_inv_seg_expire().
+	* added error handler.
+	* fixed a buffer overflow bug on sen_snip_exec
+	* Fixed API documentation bugs.
+	* Enhanced SEN_INDEX_SHARED_LEXICON mode.
+	* Enhanced SEN_INDEX_SHARED_LEXICON. entries in a lexicon is actually deleted when pocket value == 0.
+	* Enhanced SEN_INDEX_SHARED_LEXICON. ignore sen_sym_del when (sym->flags & SEN_SYM_WITH_SIS).
+	* show warning message when sen_sym_del invoked to sen_sym with SEN_SYM_WITH_SIS
+	* sen_nstr_open now accepts empty string
+	* Fixed a bug which cause deadlock in SEN_IO_SEG_MAP.
+	* Enhanced sen_set algorithm.
+	* Fixed a bug in index.c: after sorted, sen_records rewind when sen_records_next invoked.
+	* Fixed a bug in ql.c: disp function had output empty packet in paticular situation.
+	* Fixed two bugs which cause segv.  1. sen_sym_get 2. sen_set_close
+	* removed waste comparison on snip.c
+	* Enhanced error handling.
+	* Enhanced buffer_flush. it doesn't corrupt the inv index even if array_at failed.
+	* Enhanced buffer_flush. directy calculate pos_ value using tp.
+	* Fixed a problem about sen_index_similar_search.
+	* Added sen_index_expire() which expires unsed memory when memory allocation failed.
+	* fixed bug of sennachk buffer over writing on senchk_filelist
+	* fixed bug on initializing snip_cond after released
+	* removed discarded tests
+	* Modified sen_realloc. use free() instead of realloc when size == 0.
+	* added stress test tool
+	* make sennachk only unlock inv files when --unlock options specified
+	* invalid nstr->checks stored when a handakuon/dakuon of a half-width kana are normalized
+	* deleted a unused variable on normalize_utf8
+	* Added SEN_INV_MAX_TF.
+	* Added regression test about SEN_INV_MAX_TF.
+	* change a type of nstr->checks from int8_least_t to int16_t for string given to sen_nstr_open which contains many spaces
+	* "senna.conf" file become obsolete.
+	* fixed double free problems on memory allocation failed for members of structs
+	* Fixed a bug in sen_query_term().
+	* Applied fail-malloc patch!
+	* Modified library dependency.
+	* Commented out swig
+	* Added sen_inv_max_section.
+	* added escape string \ on query expression
+	* added new error codes. - sen_internal_error - sen_external_error - sen_abnormal_error
+
+2007-09-26  Tasuku SUENAGA  <a at razil.jp>
+
+	* changed mode parameter of sen_io_win_map() only in WIN32 environment. sen_io_win_map no longer call mmap.
+	* fixed a bug in inv.c: when inv_cursor_open() and inv_update() run simultanously in a same process, nref info sommtimes corrupted and cause deadlock.
+	* appeared sen_query_snip
+	* fixed an incorrect test about n_subrecs.
+	* fixed bug: error count is not initialized on sennachk
+	* fixed a bug in sen_index_select(), returning duplicate records, when multi-section used.
+
+2007-08-01  Tasuku SUENAGA  <a at razil.jp>
+
+	* enhanced autogen.sh
+	* sen_query_scan appeared
+	* bug fix: now configure option --without-nfkc works
+
+2007-05-29  Tasuku SUENAGA  <a at razil.jp>
+
+	* compile well on FreeBSD/Windows/Mac OS X
+	* refined configure.ac
+
+2007-05-22  Tasuku SUENAGA  <a at razil.jp>
+
+	* modified configure.ac. mecab-config check is executed only when mecab is required.
+	* fixed a bug: configure fails if mecab.h doesn't exist on a search path for include
+	* replace isspace into sen_isspace in lex.c
+	* added force_prefix
+	* modified test suites for supporting force_prefix
+	* fixed a bug in sen_set_get. when reuse a entry from garabages, value was not zero-cleared.
+	* null check in sen_inv_close
+	* sennachk appeared
+
+2007-04-27  Tasuku SUENAGA  <a at razil.jp>
+
+	* added more described instructions about sen_index_select
+	* fixed problem in snippet udf when realloc fails
+	* get rid of strlen call in query.c
+	* added sen_index_create_with_keys_lexicon
+	* merged the multisection-query branch
+	* fixed bug about configure options gotten from sen_info
+	* added lines for gcov/lcov and ruby binding and deleted waste lines on files for autotools
+	* now you can specify path of mecab-config
+	* now you can specify default parameters on configure time
+	* get not linker options but a link path on configure.ac
+	* added configure options on Windows environment
+	* call read_conf() in sen_info()
+	* made ruby bindings call sen_fin() at exit
+	* fixed a bug in sen_sym_next
+	* fixed ctype which is wrong on sen_enc_utf8
+	* added sen_sel_prefix and sen_sel_suffix to sen_sel_mode
+	* made compiler options of gcc show more detailed warnings
+
+2007-04-02  Tasuku SUENAGA  <a at razil.jp>
+
+	* add -c option (consistency check) to itest
+	* fixed a bug in inv.c: deleteing records with score corrupt index
+	* fixed bug buffer over read on snippet function
+	* fixed a bug in sen_set_reset. garbages was not cleared when gc.
+	* kick out UINT_MAX
+	* itest -u option added. u is for unlock
+
+2007-03-20  Tasuku SUENAGA  <a at razil.jp>
+
+	* fixed stack over run in sen_io_open
+	* fixed bugs in test suite on 32bit environment
+	* stack smashing bug fixed
+	* delete mysql bindings for version 5.0
+
+2007-03-14  Tasuku SUENAGA  <a at razil.jp>
+
+	* fixed bugs: delete strlen function of which argument is non-null terminated string on index.c
+	* compile sym08 on windows
+	* moved pat_node declarations to top of the blocks in sym.c
+	* updated mysql bindings for new versions
+	* modified mysql bindings
+	* fixed a bug in sen_set_str_get()
+	* added sen_info API
+	* fixed prototype declaration of sen_info on senna.h
+	* fse added
+	* fixed mysql bindings bug on alter/create/drop index
+	* set CONFIGURE_OPTION on windows
+
+2007-02-28  Tasuku SUENAGA  <a at razil.jp>
+
+	* fix a bug which cause segfault when sen_query_exec() run
+	* sen_inv_estimate_size(): fixed estimation for size.
+
+2007-02-22  Tasuku SUENAGA  <a at razil.jp>
+
+	* version 1.0.0
+	* compile inv08 in windows
+	* fixed some bugs in snippet functions
+	* fix multi section bug
+	* fixed a bug in sen_sym_del_with_sis()
+	* fixed a bug in sen_inv_update()
+	* added regression test for ruby bindings
+	* fixed bug about sen_sym_info in ruby binding
+	* added some constants and methods in ruby binding
+	* fixed bug in Sym::info method(ruby binding)
+	* added sen_sym test in ruby bindings
+	* sen_sym file format modified
+	* sen_sym file format refined
+	* make senna able to handle non-null-terminated strings
+	* kickout waste copy on mysql bindings
+	* added str_len to sen_values
+	* modify stest for new sen_nstr
+	* changed signature of sen_query_rest API
+	* added sen_query_term API
+	* size_t -> unsigned
+	* include string.h on tests
+	* deleted null check of string with length
+	* changed mysql bindings because of sen_query_rest API
+	* changed ruby bindings because of sen_query_rest API
+	* modified qtest to use a correct argument type for sen_query_rest
+	* itest supports new (1.0 type) index format
+	* fill zero in surplus area in index.
+	* fixed a bug: ngram-index corrput after rev295
+	* modified api document (japanese)
+	* modified api document (english)
+	* 64bit based index is now compatible with 32bit based index.
+	* get rid of unused routines from sym.c
+
+2006-12-29  Tasuku SUENAGA  <a at razil.jp>
+
+	* version 0.9.0
+	* change the default format of indices. From now, new format will be default.
+	* changed the format of indices.
+	* sen_io: moved io.nref into index file.
+	* change signatures of functions to handle non-null-terminated strings
+	* move ainfo, binfo arrays into sen_inv_header
+	* sen_sym: key area become sharable and slightly space-efficient.
+	* fixed bugs in checking first byte of characters encoded with shift_jis
+	* changed the format of invered index file.
+	* format errno with strerror when mmap failed.
+	* changed format string used for formatting total size of mmaped memory from %d to %z
+	* fixed sign of a argument for isspace
+
+2006-10-20  Tasuku SUENAGA  <a at razil.jp>
+
+	* version 0.8.2
+	* sen_sym bug fixed
+	* replace AC_FUNC_MALLOC/REALLOC to AC_CHECK_FUNCS for the environments
+	  without glibc.
+	* fix key size in a test suite of ruby bindings.
+	* fixed bug that sen_index_lock remains persistently
+	* fixed bug in normalize_utf8(). when sen_select_optarg.weight_vector == NULL
+	  and sen_select_optarg.vector_size > 0, it works as sen_wv_constant.
+	* made a keyword not tagged which gets accross the end bound of a snippet
+	* fixed absence of 'touch sql/sql_yacc.yy' in install documents.
+
+2006-09-12  Tasuku SUENAGA  <a at razil.jp>
+
+	* version 0.8.1
+	* implement expiring caches.
+	* inverted index is broken in environment where uintptr_t is not 32bit.
+	* support latin1 and koi8r.
+	* records.curr_rec was broken when sen_records_find() invoked.
+	* CREATE INDEX handles parameters properly.
+	* remove dependency on pkg.m4.
+	* fix misc bugs.
+
+2006-06-27  Tasuku Suenaga  <a at razil.jp>
+
+	* sen_index_info() enhanced (applied patch from <koizumi at gree.co.jp>)
+
+2006-04-05  Poe MORITA  <morita at razil.jp>
+
+	* snip.c bug fixed (applied patch from <ko at yappo.ne.jp>)
+
+2006-03-08  Poe MORITA  <morita at razil.jp>
+
+	* query.c added (for boolean search)
+
+2006-02-16  Poe MORITA  <morita at razil.jp>
+
+	* io.c bug fixed. index format has modified.
+
+2006-02-13  Poe MORITA  <morita at razil.jp>
+
+	* AIO/DIO based cache from Takuo Kitame <kitame at valinux. co. jp>
+	* --enable-aio, --enable-gatomic, --enable-nfkc, --with-mecab option added
+
+2006-01-12  Poe MORITA  <morita at razil.jp>
+
+	* windows porting released
+
+2005-12-22  Poe MORITA  <morita at razil.jp>
+
+	* support unpatched version of mecab (0.81, 0.82pre, 0.90)
+	  no longer depends on mecab mte patch.
+
+2005-12-14  Poe MORITA  <morita at razil.jp>
+
+	* windows porting (alpha version)
+
+2005-11-17  Poe MORITA  <morita at razil.jp>
+
+	* set.c modified which depended on particular structure alignment
+	* change the delimiter of column value to '\n' in mysql binding
+
+2005-11-14  Poe MORITA  <morita at razil.jp>
+
+	* API changed (keys are deep copied)
+	* garabages in symbol tables are collected
+	* sen_index_sel escalated unsplit, then partial
+
+2005-10-28  Poe MORITA  <morita at razil.jp>
+
+	* myisamchk bug fixed
+
+2005-10-27  Poe MORITA  <morita at razil.jp>
+
+	* mysql binding updated
+	* myisamchk supported
+	* sen_index_sel query escalation supports sen_sel_unsplit
+
+2005-09-17  Poe MORITA  <morita at razil.jp>
+
+	* mysql-5.0.12-beta binding from <tasuku at hottolink.co.jp>
+
+2005-09-17  Poe MORITA  <morita at razil.jp>
+
+	* Ruby binding memory leak fixed by <phuna at users.sourceforge.net>
+
+2005-09-08  Poe MORITA  <morita at razil.jp>
+
+	* utf-8 support enhanced. (SEN_INDEX_NORMALIZE become available)
+
+2005-08-16  Poe MORITA  <morita at razil.jp>
+
+	* SJIS support enhanced. (SEN_INDEX_NORMALIZE become available)
+
+2005-08-16  Poe MORITA  <morita at razil.jp>
+
+	* advanced API revised
+	* Ruby binding has rewrited using SWIG and supports advanced API.
+
+2005-07-05  Poe MORITA  <morita at razil.jp>
+
+	* the license has changed to LGPL from GPL.
+	* all of advanced API function implemented
+	* sen_skipmode_set patch applied to mysql binding
+
+2005-06-23  Poe MORITA  <morita at razil.jp>
+
+	* advanced API functions implemented
+
+2005-04-12  Poe MORITA  <morita at razil.jp>
+
+	* applied ftb patch for mysql binding from <ko at yappo.ne.jp>
+	'IN BOOLEAN MODE' supported
+
+2005-04-07  Poe MORITA  <morita at razil.jp>
+
+	* applied darwin patch from <oyama at module.jp>
+	working on Mac OS X 10.3.8.
+
+	* mysql binding updated by <ko at yappo.ne.jp>
+	working on MySQL 4.0.23, 4.0.24

@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+bindir=${exec_prefix}/bin
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+groonga=${bindir}/groonga
+
+Name: Groonga
+Description: An Embeddable Fulltext Search Engine
+Version: 0.0.1
+Libs: -L${libdir} -lgroonga
+Cflags: -I${includedir}/groonga

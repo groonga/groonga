@@ -1,0 +1,144 @@
+/* -*- c-basic-offset: 2 -*- */
+/* Copyright(C) 2009 Brazil
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License version 2.1 as published by the Free Software Foundation.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+#ifndef GRN_STORE_H
+#define GRN_STORE_H
+
+#ifndef GROONGA_H
+#include "groonga_in.h"
+#endif /* GROONGA_H */
+
+#ifndef GRN_CTX_H
+#include "ctx.h"
+#endif /* GRN_CTX_H */
+
+#ifndef GRN_HASH_H
+#include "hash.h"
+#endif /* GRN_HASH_H */
+
+#ifndef GRN_IO_H
+#include "io.h"
+#endif /* GRN_IO_H */
+
+#ifndef GRN_DB_H
+#include "db.h"
+#endif /* GRN_DB_H */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define GRN_ST_APPEND 1
+
+/**** fixed sized elements ****/
+
+typedef struct _grn_ra grn_ra;
+
+struct _grn_ra {
+  grn_db_obj obj;
+  grn_io *io;
+  int element_width;
+  int element_mask;
+  struct grn_ra_header *header;
+};
+
+struct grn_ra_header {
+  char idstr[16];
+  unsigned element_size;
+  grn_id curr_max;
+  uint32_t nrecords; /* nrecords is not maintained by default */
+  uint32_t reserved[9];
+};
+
+grn_ra *grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size);
+grn_ra *grn_ra_open(grn_ctx *ctx, const char *path);
+grn_rc grn_ra_info(grn_ctx *ctx, grn_ra *ra, unsigned int *element_size, grn_id *curr_max);
+grn_rc grn_ra_close(grn_ctx *ctx, grn_ra *ra);
+grn_rc grn_ra_remove(grn_ctx *ctx, const char *path);
+void *grn_ra_get(grn_ctx *ctx, grn_ra *ra, grn_id id);
+void *grn_ra_at(grn_ctx *ctx, grn_ra *ra, grn_id id);
+
+/**** variable sized elements ****/
+
+typedef struct _grn_ja grn_ja;
+
+struct _grn_ja {
+  grn_db_obj obj;
+  grn_io *io;
+  struct grn_ja_header *header;
+  uint32_t *dsegs;
+  uint32_t *esegs;
+};
+
+grn_ja *grn_ja_create(grn_ctx *ctx, const char *path,
+                      unsigned int max_element_size, uint32_t flags);
+grn_ja *grn_ja_open(grn_ctx *ctx, const char *path);
+grn_rc grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size);
+grn_rc grn_ja_close(grn_ctx *ctx, grn_ja *ja);
+grn_rc grn_ja_remove(grn_ctx *ctx, const char *path);
+grn_rc grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id,
+                  void *value, int value_len, int flags);
+int grn_ja_at(grn_ctx *ctx, grn_ja *ja, grn_id id, void *valbuf, int buf_size);
+
+void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len);
+grn_rc grn_ja_unref(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len);
+int grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold);
+
+grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags);
+
+/*
+
+typedef struct _grn_vgram_vnode
+{
+  struct _grn_vgram_vnode *car;
+  struct _grn_vgram_vnode *cdr;
+  grn_id tid;
+  grn_id vid;
+  int freq;
+  int len;
+} grn_vgram_vnode;
+
+typedef struct _grn_vgram grn_vgram;
+struct _grn_vgram {
+  void *vgram;
+};
+
+struct _grn_vgram_buf {
+  size_t len;
+  grn_id *tvs;
+  grn_id *tvp;
+  grn_id *tve;
+  grn_vgram_vnode *vps;
+  grn_vgram_vnode *vpp;
+  grn_vgram_vnode *vpe;
+};
+
+grn_vgram *grn_vgram_create(const char *path);
+grn_vgram *grn_vgram_open(const char *path);
+grn_rc grn_vgram_close(grn_vgram *vgram);
+grn_rc grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms);
+
+grn_vgram_buf *grn_vgram_buf_open(size_t len);
+grn_rc grn_vgram_buf_add(grn_vgram_buf *b, grn_id tid);
+grn_rc grn_vgram_buf_close(grn_vgram_buf *b);
+
+*/
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GRN_STORE_H */
