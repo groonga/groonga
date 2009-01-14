@@ -1,5 +1,9 @@
 2009-01-15  Poe MORITA  <morita at razil.jp>
 
+	* src/groonga.c: fixed some bugs, cause ql interpreter quit.
+
+2009-01-15  Poe MORITA  <morita at razil.jp>
+
 	* added test/*, but haven't follow groonga yet.
 
 2009-01-14  Poe MORITA  <morita at razil.jp>
