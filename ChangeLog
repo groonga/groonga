@@ -1,3 +1,7 @@
+2009-01-15  Poe MORITA  <morita at razil.jp>
+
+	* added test/*, but haven't follow groonga yet.
+
 2009-01-14  Poe MORITA  <morita at razil.jp>
 
 	* It can be compiled now!

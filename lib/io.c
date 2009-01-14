@@ -428,7 +428,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   {
     io_header h;
     int fd = open(path, O_RDWR);
-    if (fd == -1) { GSERR(path); return NULL; }
+    if (fd == -1) { SERR(path); return NULL; }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(io_header)) {
       if (read(fd, &h, sizeof(io_header)) == sizeof(io_header)) {
         if (memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
@@ -606,7 +606,7 @@ grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
   for (fno = 0; fno < nfiles; fno++) {
     gen_pathname(io->path, buffer, fno);
     if (stat(buffer, &s)) {
-      GSERR(buffer);
+      SERR(buffer);
     } else {
       tsize += s.st_size;
     }
@@ -623,7 +623,7 @@ grn_io_remove(grn_ctx *ctx, const char *path)
     GRN_LOG(grn_log_info, "stat failed '%s' (%s)", path, strerror(errno));
     return grn_file_operation_error;
   } else if (unlink(path)) {
-    GSERR(path);
+    SERR(path);
     return grn_file_operation_error;
   } else {
     int fno;
@@ -631,7 +631,7 @@ grn_io_remove(grn_ctx *ctx, const char *path)
     for (fno = 1; ; fno++) {
       gen_pathname(path, buffer, fno);
       if (!stat(buffer, &s)) {
-        if (unlink(buffer)) { GSERR(buffer); }
+        if (unlink(buffer)) { SERR(buffer); }
       } else {
         break;
       }
@@ -648,7 +648,7 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
     GRN_LOG(grn_log_info, "stat failed '%s' (%s)", old_name, strerror(errno));
     return grn_file_operation_error;
   } else if (rename(old_name, new_name)) {
-    GSERR(old_name);
+    SERR(old_name);
     return grn_file_operation_error;
   } else {
     int fno;
@@ -658,7 +658,7 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
       gen_pathname(old_name, old_buffer, fno);
       if (!stat(old_buffer, &s)) {
         gen_pathname(new_name, new_buffer, fno);
-        if (rename(old_buffer, new_buffer)) { GSERR(old_buffer); }
+        if (rename(old_buffer, new_buffer)) { SERR(old_buffer); }
       } else {
         break;
       }
@@ -1441,7 +1441,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
                       FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                       OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
-    GERR(grn_file_operation_error, "CreateFile failed");
+    ERR(grn_file_operation_error, "CreateFile failed");
     return grn_file_operation_error;
   }
   if ((flags & O_TRUNC)) {
@@ -1450,7 +1450,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
-      GERR(grn_file_operation_error, "CreateFile failed");
+      ERR(grn_file_operation_error, "CreateFile failed");
       return grn_file_operation_error;
     }
   }
@@ -1524,7 +1524,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
                       FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                       OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
-    GERR(grn_file_operation_error, "CreateFile failed");
+    ERR(grn_file_operation_error, "CreateFile failed");
     return grn_file_operation_error;
   }
   if ((flags & O_TRUNC)) {
@@ -1534,7 +1534,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
-      GERR(grn_file_operation_error, "CreateFile failed");
+      ERR(grn_file_operation_error, "CreateFile failed");
       return grn_file_operation_error;
     }
   }
@@ -1564,7 +1564,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     GRN_LOG(grn_log_alert, "failed to get FileMappingObject #%d", GetLastError());
   }
   CloseHandle(fi->fh);
-  GERR(grn_file_operation_error, "OpenFileMapping failed");
+  ERR(grn_file_operation_error, "OpenFileMapping failed");
   return grn_file_operation_error;
 }
 
@@ -1758,11 +1758,11 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
 {
   struct stat st;
   if ((fi->fd = open(path, flags, 0666)) == -1) {
-    GSERR(path);
+    SERR(path);
     return grn_file_operation_error;
   }
   if (fstat(fi->fd, &st) == -1) {
-    GSERR(path);
+    SERR(path);
     return grn_file_operation_error;
   }
   fi->dev = st.st_dev;
@@ -1787,7 +1787,7 @@ grn_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fd != -1) {
     if (close(fi->fd) == -1) {
-      GSERR("close");
+      SERR("close");
       return grn_file_operation_error;
     }
     fi->fd = -1;
@@ -1852,7 +1852,7 @@ inline static int
 grn_msync(grn_ctx *ctx, void *start, size_t length)
 {
   int r = msync(start, length, MS_SYNC);
-  if (r == -1) { GSERR("msync"); }
+  if (r == -1) { SERR("msync"); }
   return r;
 }
 
@@ -1875,9 +1875,9 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
   ssize_t r = pread(fi->fd, buf, count, offset);
   if (r != count) {
     if (r == -1) {
-      GSERR("pread");
+      SERR("pread");
     } else {
-      GERR(grn_file_operation_error, "pread returned %d != %d", r, count);
+      ERR(grn_file_operation_error, "pread returned %d != %d", r, count);
     }
     return grn_file_operation_error;
   }
@@ -1890,9 +1890,9 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
   ssize_t r = pwrite(fi->fd, buf, count, offset);
   if (r != count) {
     if (r == -1) {
-      GSERR("pwrite");
+      SERR("pwrite");
     } else {
-      GERR(grn_file_operation_error, "pwrite returned %d != %d", r, count);
+      ERR(grn_file_operation_error, "pwrite returned %d != %d", r, count);
     }
     return grn_file_operation_error;
   }

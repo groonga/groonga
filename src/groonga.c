@@ -193,6 +193,7 @@ do_msg(grn_com_event *ev, grn_com_sqtp *cs)
       return;
     }
     grn_ql_recv_handler_set(ctx, output, cs);
+    grn_ctx_use(ctx, (grn_obj *)ev->userdata);
     grn_ql_load(ctx, NULL);
     cs->userdata = ctx;
   }
@@ -356,6 +357,7 @@ server(char *path)
   } else {
     fprintf(stderr, "grn_com_event_init failed\n");
   }
+  grn_ctx_fin(ctx);
   return rc;
 }
 

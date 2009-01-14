@@ -87,14 +87,14 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_encoding encoding)
           char buffer[PATH_MAX];
           gen_pathname(path, buffer, 0);
           if ((s->specs = grn_ja_create(ctx, buffer, 65536, 0))) {
-            ctx->impl->db = (grn_obj *)s;
+            grn_ctx_use(ctx, (grn_obj *)s);
             GRN_API_RETURN((grn_obj *)s);
           } else {
             ERR(grn_memory_exhausted, "ja create failed");
           }
         } else {
           s->specs = NULL;
-          ctx->impl->db = (grn_obj *)s;
+          grn_ctx_use(ctx, (grn_obj *)s);
           GRN_API_RETURN((grn_obj *)s);
         }
         grn_pat_close(ctx, s->keys);
@@ -131,8 +131,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
           MUTEX_INIT(s->lock);
           GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
           grn_db_obj_init(ctx, NULL, GRN_ID_NIL, &s->obj);
-          // prepare builtin classes and load builtin plugins.
-          ctx->impl->db = (grn_obj *)s;
+          grn_ctx_use(ctx, (grn_obj *)s);
           GRN_API_RETURN((grn_obj *)s);
         } else {
           ERR(grn_memory_exhausted, "ja open failed");
@@ -199,6 +198,7 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
   GRN_API_ENTER;
   if (ctx->impl && (!db || DB_P(db))) {
     ctx->impl->db = db;
+    if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
   } else {
     rc = grn_invalid_argument;
   }

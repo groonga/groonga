@@ -20,8 +20,8 @@
 /libtool
 /ltmain.sh
 /missing
-/senappy.pc
-/senappy.spec
+/groonga.pc
+/groonga.spec
 /stamp-h1
 /src/groonga
 Makefile
