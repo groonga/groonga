@@ -644,7 +644,6 @@ grn_cell *
 grn_get(const char *key)
 {
   grn_cell *obj;
-  grn_ctx *ctx = &grn_gctx;
   grn_search_flags f = GRN_TABLE_ADD;
   if (!grn_gctx.impl || !grn_gctx.impl->symbols ||
       !grn_hash_get(&grn_gctx, grn_gctx.impl->symbols, key, strlen(key),
@@ -674,7 +673,6 @@ grn_at(const char *key)
 grn_rc
 grn_del(const char *key)
 {
-  grn_ctx *ctx = &grn_gctx;
   if (!grn_gctx.impl || !grn_gctx.impl->symbols) {
     GRN_LOG(grn_log_warning, "grn_del(%s) failed", key);
     return grn_invalid_argument;
@@ -993,7 +991,6 @@ grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     if (res) {
       alloc_count++;
     } else {
-      grn_index_expire();
       if (!(res = malloc(size))) {
         MERR("malloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
       }
@@ -1011,7 +1008,6 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     if (res) {
       alloc_count++;
     } else {
-      grn_index_expire();
       if (!(res = calloc(size, 1))) {
         MERR("calloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
       }
@@ -1050,7 +1046,6 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
     res = realloc(ptr, size);
     if (!ptr && res) { alloc_count++; }
     if (size && !res) {
-      grn_index_expire();
       if (!(res = realloc(ptr, size))) {
         MERR("realloc fail (%p,%zu)=%p (%s:%d) <%d>", ptr, size, res, file, line, alloc_count);
       }
@@ -1078,7 +1073,6 @@ grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, cons
     if (res) {
       alloc_count++;
     } else  {
-      grn_index_expire();
       if (!(res = strdup(s))) {
         MERR("strdup(%p)=%p (%s:%d) <%d>", s, res, file, line, alloc_count);
       }
@@ -1108,7 +1102,6 @@ grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const cha
   if (fail_malloc_check(size, file, line, func)) {
     return grn_malloc_default(ctx, size, file, line, func);
   } else {
-    grn_index_expire();
     MERR("fail_malloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
     return NULL;
   }
@@ -1120,7 +1113,6 @@ grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const cha
   if (fail_malloc_check(size, file, line, func)) {
     return grn_calloc_default(ctx, size, file, line, func);
   } else {
-    grn_index_expire();
     MERR("fail_calloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
     return NULL;
   }
@@ -1133,7 +1125,6 @@ grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int lin
   if (fail_malloc_check(size, file, line, func)) {
     return grn_realloc_default(ctx, ptr, size, file, line, func);
   } else {
-    grn_index_expire();
     MERR("fail_realloc (%p,%zu) (%s:%d@%s) <%d>", ptr, size, file, line, func, alloc_count);
     return NULL;
   }
@@ -1145,7 +1136,6 @@ grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const c
   if (fail_malloc_check(strlen(s), file, line, func)) {
     return grn_strdup_default(ctx, s, file, line, func);
   } else {
-    grn_index_expire();
     MERR("fail_strdup(%p) (%s:%d@%s) <%d>", s, file, line, func, alloc_count);
     return NULL;
   }

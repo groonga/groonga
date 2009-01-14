@@ -43,7 +43,7 @@ grn_ngram_next(grn_token *token)
     if (token->uni_alpha && GRN_NSTR_CTYPE(*cp) == grn_str_alpha) {
       for (len = 1, r = p;;len++) {
         size_t cl;
-        if (!(cl = grn_str_charlen((char *)r, token->encoding))) { break; }
+        if (!(cl = grn_str_charlen(ctx, (char *)r, token->encoding))) { break; }
         r += cl;
         if (GRN_NSTR_ISBLANK(*cp)) { break; }
         if (GRN_NSTR_CTYPE(*++cp) != grn_str_alpha) { break; }
@@ -62,7 +62,7 @@ grn_ngram_next(grn_token *token)
     } else if (token->uni_digit && GRN_NSTR_CTYPE(*cp) == grn_str_digit) {
       for (len = 1, r = p;;len++) {
         size_t cl;
-        if (!(cl = grn_str_charlen((char *)r, token->encoding))) { break; }
+        if (!(cl = grn_str_charlen(ctx, (char *)r, token->encoding))) { break; }
         r += cl;
         if (GRN_NSTR_ISBLANK(*cp)) { break; }
         if (GRN_NSTR_CTYPE(*++cp) != grn_str_digit) { break; }
@@ -81,7 +81,7 @@ grn_ngram_next(grn_token *token)
     } else if (token->uni_symbol && GRN_NSTR_CTYPE(*cp) == grn_str_symbol) {
       for (len = 1, r = p;;len++) {
         size_t cl;
-        if (!(cl = grn_str_charlen((char *)r, token->encoding))) { break; }
+        if (!(cl = grn_str_charlen(ctx, (char *)r, token->encoding))) { break; }
         r += cl;
         if (GRN_NSTR_ISBLANK(*cp)) { break; }
         if (GRN_NSTR_CTYPE(*++cp) != grn_str_symbol) { break; }
@@ -110,7 +110,7 @@ grn_ngram_next(grn_token *token)
           }
           len = grn_str_len(key, token->encoding, NULL);
         }
-        r = p + grn_str_charlen(p, token->encoding);
+        r = p + grn_str_charlen(ctx, p, token->encoding);
         if (tid && (len > 1 || r == p)) {
           if (r != p && pos + len - 1 <= token->tail) { continue; }
           p += strlen(key);
@@ -118,7 +118,7 @@ grn_ngram_next(grn_token *token)
         }
       }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
-      if (!(cl = grn_str_charlen((char *)p, token->encoding))) {
+      if (!(cl = grn_str_charlen(ctx, (char *)p, token->encoding))) {
         token->status = grn_token_done;
         return GRN_ID_NIL;
       }
@@ -130,7 +130,7 @@ grn_ngram_next(grn_token *token)
             if (GRN_NSTR_ISBLANK(*cp)) { blankp++; break; }
             cp++;
           }
-          if (!(cl = grn_str_charlen((char *)q, token->encoding)) ||
+          if (!(cl = grn_str_charlen(ctx, (char *)q, token->encoding)) ||
               (token->uni_alpha && GRN_NSTR_CTYPE(*cp) == grn_str_alpha) ||
               (token->uni_digit && GRN_NSTR_CTYPE(*cp) == grn_str_digit) ||
               (token->uni_symbol && GRN_NSTR_CTYPE(*cp) == grn_str_symbol)) {
@@ -253,7 +253,7 @@ grn_mecab_next(grn_token *token)
   if (token->status == grn_token_done) { return GRN_ID_NIL; }
   for (p = token->next, len = 0;;) {
     size_t cl;
-    if (!(cl = grn_str_charlen((char *)p, token->encoding)) ||
+    if (!(cl = grn_str_charlen(ctx, (char *)p, token->encoding)) ||
         grn_isspace((const char *)p, token->encoding)) {
       break;
     }
@@ -284,7 +284,7 @@ grn_mecab_next(grn_token *token)
 }
 
 grn_rc
-grn_token_set_mecab_args(int argc, char **argv)
+grn_token_set_mecab_args(grn_ctx *ctx, int argc, char **argv)
 {
   grn_token_mecab_argc = argc;
   grn_token_mecab_argv = argv;
@@ -329,7 +329,7 @@ grn_delimited_next(grn_token *token)
   if (token->status == grn_token_done) { return GRN_ID_NIL; }
   for (p = token->next, len = 0;;) {
     size_t cl;
-    if (!(cl = grn_str_charlen((char *)p, token->encoding)) ||
+    if (!(cl = grn_str_charlen(ctx, (char *)p, token->encoding)) ||
         grn_isspace((const char *)p, token->encoding)) {
       break;
     }

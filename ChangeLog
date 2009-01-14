@@ -1,3 +1,11 @@
+2009-01-14  Poe MORITA  <morita at razil.jp>
+
+	* It can be compiled now!
+
+2009-01-14  Poe MORITA  <morita at razil.jp>
+
+	* senna -> groonga
+
 2009-01-03  Poe MORITA  <morita at razil.jp>
 
 	* senna.h (sen_update_type): replaced with flags.

@@ -2717,7 +2717,6 @@ static grn_cell *
 nf_gc(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_ctx_mgc(ctx);
-  // grn_index_expire();
   return T;
 }
 static grn_cell *

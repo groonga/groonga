@@ -101,19 +101,19 @@
 #define NO_ZLIB 1
 
 /* Name of package */
-#define PACKAGE "senappy"
+#define PACKAGE "groonga"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "senna@razil.jp"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "senappy"
+#define PACKAGE_NAME "groonga"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "senappy 0.0.1"
+#define PACKAGE_STRING "groonga 0.0.1"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "senappy"
+#define PACKAGE_TARNAME "groonga"
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.0.1"

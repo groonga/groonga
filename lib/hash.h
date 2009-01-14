@@ -382,7 +382,7 @@ typedef enum {
 
 int grn_rec_unit_size(grn_rec_unit unit, int rec_size);
 
-const char * _grn_hash_key(grn_hash *hash, grn_id id, uint32_t *key_size);
+const char * _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size);
 
 int grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                            void *keybuf, int bufsize, void *valuebuf);

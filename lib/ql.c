@@ -1827,7 +1827,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         /*
         {
           char *p, buf[GRN_PAT_MAX_KEY_SIZE];
-          strcpy(buf, _grn_pat_key(ctx->impl->db->keys, base));
+          strcpy(buf, _grn_pat_key(ctx, ctx->impl->db->keys, base));
           if (!(p = strchr(buf, '.'))) { QLERR("invalid columnname %s", buf); }
           *p = ':';
           res = CONS(INTERN("::def"), CONS(INTERN(p), res));
@@ -1953,7 +1953,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           grn_id *rid;
           GRN_HASH_EACH(r, id, &rid, NULL, NULL, {
             uint32_t key_size;
-            const char *key = _grn_pat_key(keys, *rid, &key_size);
+            const char *key = _grn_pat_key(ctx, keys, *rid, &key_size);
             while (key_size--) {
               if (*key++ == '.') {
                 grn_hash_delete(ctx, r, rid, sizeof(grn_id), NULL);

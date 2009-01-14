@@ -86,7 +86,7 @@ struct _grn_com {
 };
 
 struct _grn_com_event {
-  grn_hash *hash;
+  struct _grn_hash *hash;
   int max_nevents;
   void *userdata;
 #ifndef USE_SELECT

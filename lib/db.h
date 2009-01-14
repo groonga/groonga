@@ -63,7 +63,7 @@ struct _grn_table_delete_optarg {
   void *func_arg;
 };
 
-grn_rc grn_db_close(grn_ctx *ctx, grn_db *s);
+grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
 
 grn_obj *grn_db_keys(grn_obj *s);
 

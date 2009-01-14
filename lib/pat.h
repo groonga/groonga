@@ -142,7 +142,7 @@ grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
 } while (0)
 
 /* private */
-const char *_grn_pat_key(grn_pat *pat, grn_id id, uint32_t *key_size);
+const char *_grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size);
 grn_id grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id);
 const char *grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size);
 

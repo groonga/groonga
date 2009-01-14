@@ -17,7 +17,6 @@
 
 #include "lib/com.h"
 #include "lib/ql.h"
-#include "lib/set.h"
 #include <string.h>
 #include <stdio.h>
 #ifdef HAVE_SYS_WAIT_H
@@ -60,35 +59,32 @@ static int
 do_alone(char *path)
 {
   int rc = -1;
-  grn_db *db = NULL;
-  if (path) { db = grn_db_open(path); }
-  if (!db) { db = grn_db_create(path, 0, enc); }
+  grn_obj *db = NULL;
+  grn_ctx ctx_, *ctx = &ctx_;
+  grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0), enc);
+  if (path) { db = grn_db_open(ctx, path); }
+  if (!db) { db = grn_db_create(ctx, path, enc); }
   if (db) {
-    grn_ctx *ctx;
-    if ((ctx = grn_ctx_open(db, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0)))) {
-      char *buf = GRN_MALLOC(BUFSIZE);
-      if (buf) {
-        grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
-        grn_ql_load(ctx, NULL);
-        while (prompt(), fgets(buf, BUFSIZE, stdin)) {
-          uint32_t size = strlen(buf) - 1;
-          buf[size] = '\0';
-          grn_ql_send(ctx, buf, size, 0);
-          if (ctx->stat == GRN_QL_QUIT) { break; }
-        }
-        GRN_FREE(buf);
-        rc = 0;
-      } else {
-        fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
+    char *buf = GRN_MALLOC(BUFSIZE);
+    if (buf) {
+      grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
+      grn_ql_load(ctx, NULL);
+      while (prompt(), fgets(buf, BUFSIZE, stdin)) {
+        uint32_t size = strlen(buf) - 1;
+        buf[size] = '\0';
+        grn_ql_send(ctx, buf, size, 0);
+        if (ctx->stat == GRN_QL_QUIT) { break; }
       }
-      grn_ctx_close(ctx);
+      GRN_FREE(buf);
+      rc = 0;
     } else {
-      fprintf(stderr, "db_ctx open failed (%s)\n",  path);
+      fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
     }
-    grn_db_close(db);
+    grn_db_close(ctx, db);
   } else {
     fprintf(stderr, "db open failed (%s)\n", path);
   }
+  grn_ctx_fin(ctx);
   return rc;
 }
 
@@ -108,8 +104,9 @@ static int
 do_client(char *hostname)
 {
   int rc = -1;
-  grn_ctx *ctx;
-  if ((ctx = grn_ql_connect(hostname, port, 0))) {
+  grn_ctx ctx_, *ctx = &ctx_;
+  grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0), enc);
+  if (!grn_ql_connect(ctx, hostname, port, 0)) {
     grn_ql_info info;
     grn_ql_info_get(ctx, &info);
     if (!grn_bulk_reinit(ctx, info.outbuf, BUFSIZE)) {
@@ -138,10 +135,10 @@ do_client(char *hostname)
     } else {
       fprintf(stderr, "grn_bulk_reinit failed (%d)\n", BUFSIZE);
     }
-    grn_ctx_close(ctx);
   } else {
     fprintf(stderr, "grn_ql_connect failed (%s:%d)\n", hostname, port);
   }
+  grn_ctx_fin(ctx);
 exit :
   return rc;
 }
@@ -162,18 +159,25 @@ output(grn_ctx *ctx, int flags, void *arg)
   header.status = 0;
   header.info = info++; /* for debug */
   if (ctx->stat == GRN_QL_QUIT) { cs->com.status = grn_com_closing; }
-  grn_com_sqtp_send(cs, &header, GRN_BULK_HEAD(buf));
+  grn_com_sqtp_send(ctx, cs, &header, GRN_BULK_HEAD(buf));
   GRN_BULK_REWIND(buf);
 }
 
 static void
-errout(grn_com_sqtp *cs, char *msg)
+errout(grn_ctx *ctx, grn_com_sqtp *cs, char *msg)
 {
   grn_com_sqtp_header header;
   header.size = strlen(msg);
   header.flags = GRN_QL_TAIL;
-  grn_com_sqtp_send(cs, &header, msg);
+  grn_com_sqtp_send(ctx, cs, &header, msg);
   GRN_LOG(grn_log_error, "errout: %s", msg);
+}
+
+static void
+grn_ctx_close(grn_ctx *ctx)
+{
+  grn_ctx_fin(ctx);
+  GRN_GFREE(ctx);
 }
 
 inline static void
@@ -181,10 +185,11 @@ do_msg(grn_com_event *ev, grn_com_sqtp *cs)
 {
   grn_ctx *ctx = (grn_ctx *)cs->userdata;
   if (!ctx) {
-    ctx = grn_ctx_open((grn_db *)ev->userdata, GRN_CTX_USE_QL);
+    ctx = GRN_GMALLOC(sizeof(grn_ctx));
+    grn_ctx_init(ctx, GRN_CTX_USE_QL, enc);
     if (!ctx) {
       cs->com.status = grn_com_closing;
-      errout(cs, "*** ERROR: ctx open failed");
+      errout(ctx, cs, "*** ERROR: ctx open failed");
       return;
     }
     grn_ql_recv_handler_set(ctx, output, cs);
@@ -268,24 +273,24 @@ thread_start(void *arg)
 }
 
 static void
-msg_handler(grn_com_event *ev, grn_com *c)
+msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
 {
   grn_com_sqtp *cs = (grn_com_sqtp *)c;
   if (cs->rc) {
     grn_ctx *ctx = (grn_ctx *)cs->userdata;
     GRN_LOG(grn_log_notice, "connection closed..");
     if (ctx) { grn_ctx_close(ctx); }
-    grn_com_sqtp_close(ev, cs);
+    grn_com_sqtp_close(ctx, ev, cs);
     return;
   }
   {
     int i = 0;
     while (queue_enque(&qq, (grn_com_sqtp *)c)) {
       if (i) {
-        GRN_LOG(grn_log_notice, "queue is full try=%d qq(%d-%d) thd(%d/%d) %d", i, qq.head, qq.tail, nfthreads, nthreads, ev->set->n_entries);
+        GRN_LOG(grn_log_notice, "queue is full try=%d qq(%d-%d) thd(%d/%d) %d", i, qq.head, qq.tail, nfthreads, nthreads, *ev->hash->n_entries);
       }
       if (++i == 100) {
-        errout((grn_com_sqtp *)c, "*** ERROR: query queue is full");
+        errout(ctx, (grn_com_sqtp *)c, "*** ERROR: query queue is full");
         return;
       }
       usleep(1000);
@@ -309,18 +314,20 @@ server(char *path)
 {
   int rc = -1;
   grn_com_event ev;
+  grn_ctx ctx_, *ctx = &ctx_;
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
+  grn_ctx_init(ctx, 0, enc);
   queue_init(&qq);
-  if (!grn_com_event_init(&ev, MAX_CON, sizeof(grn_com_sqtp))) {
-    grn_db *db = NULL;
-    if (path) { db = grn_db_open(path); }
-    if (!db) { db = grn_db_create(path, 0, enc); }
+  if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com_sqtp))) {
+    grn_obj *db = NULL;
+    if (path) { db = grn_db_open(ctx, path); }
+    if (!db) { db = grn_db_create(ctx, path, enc); }
     if (db) {
       grn_com_sqtp *cs;
       ev.userdata = db;
-      if ((cs = grn_com_sqtp_sopen(&ev, port, msg_handler))) {
-        while (!grn_com_event_poll(&ev, 3000) && grn_gctx.stat != GRN_QL_QUIT) ;
+      if ((cs = grn_com_sqtp_sopen(ctx, &ev, port, msg_handler))) {
+        while (!grn_com_event_poll(ctx, &ev, 3000) && grn_gctx.stat != GRN_QL_QUIT) ;
         for (;;) {
           MUTEX_LOCK(q_mutex);
           if (nthreads == nfthreads) { break; }
@@ -329,22 +336,23 @@ server(char *path)
         }
         {
           grn_sock *pfd;
+          int key_size;
           grn_com_sqtp *com;
-          GRN_SET_EACH(ev.set, eh, &pfd, &com, {
+          GRN_HASH_EACH(ev.hash, id, &pfd, &key_size, &com, {
             grn_ctx *ctx = (grn_ctx *)com->userdata;
             if (ctx) { grn_ctx_close(ctx); }
-            grn_com_sqtp_close(&ev, com);
+            grn_com_sqtp_close(ctx, &ev, com);
           });
         }
         rc = 0;
       } else {
         fprintf(stderr, "grn_com_sqtp_sopen failed (%d)\n", port);
       }
-      grn_db_close(db);
+      grn_db_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
     }
-    grn_com_event_fin(&ev);
+    grn_com_event_fin(ctx, &ev);
   } else {
     fprintf(stderr, "grn_com_event_init failed\n");
   }
@@ -394,7 +402,7 @@ enum {
   info.flags = GRN_LOG_TIME|GRN_LOG_MESSAGE;\
   info.func = NULL;\
   info.func_arg = NULL;\
-  grn_logger_info_set(&info);\
+  grn_logger_info_set(&grn_gctx, &info);\
 } while(0)
 
 int

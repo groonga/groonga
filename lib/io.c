@@ -1469,7 +1469,6 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
   if (!*fmo) { return NULL; }
   res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    grn_index_expire();
     res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
     if (!res) {
       MERR("MapViewOfFile failed #%d <%d>", GetLastError(), mmap_size);
@@ -1592,7 +1591,6 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   */
   res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    grn_index_expire();
     res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
     if (!res) {
       MERR("MapViewOfFile failed #%d  <%d>", GetLastError(), mmap_size);
@@ -1823,7 +1821,6 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   }
   res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
   if (MAP_FAILED == res) {
-    grn_index_expire();
     res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
     if (MAP_FAILED == res) {
       MERR("mmap(%zu,%d,%d)=%s <%zu>", length, fd, offset, strerror(errno), mmap_size);
@@ -1844,7 +1841,6 @@ grn_fail_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length,
   if (fail_malloc_check(length, file, line, func)) {
     return grn_mmap(ctx, fi, offset, length);
   } else {
-    grn_index_expire();
     MERR("fail_mmap(%zu,%d,%llu) (%s:%d@%s) <%zu>",
           length, fi ? fi->fd : 0, offset, file, line, func, mmap_size);
     return NULL;

@@ -23,5 +23,6 @@
 /senappy.pc
 /senappy.spec
 /stamp-h1
+/src/groonga
 Makefile
 Makefile.in
