@@ -1,0 +1,21 @@
+if WITH_CUTTER
+noinst_LTLIBRARIES =				\
+	test-read-write.la
+endif
+
+INCLUDES =				\
+	-I$(srcdir)			\
+	-I$(top_srcdir)/test/unit/lib	\
+	-I$(top_srcdir)			\
+	-I$(top_srcdir)/lib		\
+	$(GROONGA_INCLUDEDIR)
+
+AM_CFLAGS = $(GCUTTER_CFLAGS)
+AM_LDFLAGS = -module -rpath $(libdir) -avoid-version
+
+LIBS =								\
+	$(top_builddir)/lib/libgroonga.la				\
+	$(GCUTTER_LIBS)						\
+	$(top_builddir)/test/unit/lib/libsen-test-utils.la
+
+test_read_write_la_SOURCES = test-read-write.c

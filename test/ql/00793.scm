@@ -1,0 +1,13 @@
+(ptable '<oya>)
+(<oya> ::def :code <shorttext>)
+(<oya> ::def :ext <int>)
+(ptable '<kodomo>)
+(<kodomo> ::def :oya  <oya>)
+(<kodomo> ::def :code <int>)
+(<kodomo> ::def :ext  <shorttext>)
+(<oya> ::new "hoge" :code "foo" :ext 1)
+(<kodomo> ::new "piyo" :oya "hoge" :code 1 :ext "foo")
+(disp `(: ,(<kodomo> ::prefix "") (.:key :oya :oya.code :oya.ext :code :ext)) :json)
+(disp `(: ,(<kodomo> ::prefix "") (.:key .oya .oya.code .oya.ext .code .ext)) :json)
+(disp `(: ,(<kodomo> ::prefix "") (.:key .oya.:key .oya.code .oya.ext .code .ext)) :json)
+
