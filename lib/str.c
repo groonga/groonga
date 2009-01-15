@@ -1084,10 +1084,9 @@ normalize_koi8r(grn_nstr *nstr)
 }
 
 grn_nstr *
-grn_nstr_open(const char *str, size_t str_len, grn_encoding encoding, int flags)
+grn_nstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags)
 {
   grn_rc rc;
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
   grn_nstr *nstr;
   if (!str) { return NULL; }
   if (!(nstr = GRN_MALLOC(sizeof(grn_nstr)))) {
@@ -1135,12 +1134,10 @@ grn_nstr_open(const char *str, size_t str_len, grn_encoding encoding, int flags)
 }
 
 grn_nstr *
-grn_fakenstr_open(const char *str, size_t str_len, grn_encoding encoding, int flags)
+grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags)
 {
   /* TODO: support GRN_STR_REMOVEBLANK flag and ctypes */
   grn_nstr *nstr;
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
-
   if (!(nstr = GRN_MALLOC(sizeof(grn_nstr)))) {
     GRN_LOG(grn_log_alert, "memory allocation on grn_fakenstr_open failed !");
     return NULL;
@@ -1965,7 +1962,7 @@ grn_str_normalize(grn_ctx *ctx, const char *str, unsigned int str_len,
 {
   int len;
   grn_nstr *nstr;
-  if (!(nstr = grn_nstr_open(str, str_len, encoding, flags))) {
+  if (!(nstr = grn_nstr_open(ctx, str, str_len, encoding, flags))) {
     return -1;
   }
   /* if the buffer size is short to store for the normalized string,

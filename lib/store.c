@@ -23,7 +23,6 @@
 
 /* rectangular arrays */
 
-#define GRN_RA_IDSTR "GROONGA:RA:0001"
 #define GRN_RA_SEGMENT_SIZE (1 << 22)
 
 grn_ra *
@@ -44,7 +43,6 @@ grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
                      GRN_RA_SEGMENT_SIZE, max_segments, grn_io_auto, 0);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  memcpy(header->idstr, GRN_RA_IDSTR, 16);
   grn_io_set_type(io, GRN_COLUMN_FIX_SIZE);
   header->element_size = actual_size;
   header->curr_max = 0;
@@ -72,8 +70,8 @@ grn_ra_open(grn_ctx *ctx, const char *path)
   io = grn_io_open(ctx, path, grn_io_auto);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  if (memcmp(header->idstr, GRN_RA_IDSTR, 16)) {
-    GRN_LOG(grn_log_error, "ra_idstr (%s)", header->idstr);
+  if (grn_io_get_type(io) != GRN_COLUMN_FIX_SIZE) {
+    ERR(grn_invalid_format, "file type unmatch");
     grn_io_close(ctx, io);
     return NULL;
   }
@@ -151,8 +149,6 @@ grn_ra_at(grn_ctx *ctx, grn_ra *ra, grn_id id)
 
 #ifdef USE_JA01
 
-#define GRN_JA_IDSTR "GROONGA:JA:0001"
-
 #define W_OF_JA_MAX 38
 #define W_OF_JA_SEGMENT 22
 #define W_OF_JA_MAX_SEGMENTS (W_OF_JA_MAX - W_OF_JA_SEGMENT)
@@ -209,7 +205,6 @@ typedef struct {
 } grn_ja_ginfo;
 
 struct grn_ja_header {
-  char idstr[16];
   unsigned max_element_size;
   unsigned max_segments;
   ja_pos free_elements[N_ELEMENT_VARIATION];
@@ -250,7 +245,6 @@ grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uin
                      JA_SEGMENT_SIZE, max_segments, grn_io_auto, 0);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  memcpy(header->idstr, GRN_JA_IDSTR, 16);
   grn_io_set_type(io, GRN_COLUMN_VAR_SIZE);
   for (i = 0; i < JA_N_ESEGMENTS; i++) { header->esegs[i] = SEG_NOT_ASSIGNED; }
   //  for (i = 0; i < JA_N_BSEGMENTS; i++) { header->bsegs[i] = SEG_NOT_ASSIGNED; }
@@ -277,8 +271,8 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   io = grn_io_open(ctx, path, grn_io_auto);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  if (memcmp(header->idstr, GRN_JA_IDSTR, 16)) {
-    GRN_LOG(grn_log_error, "ja_idstr (%s)", header->idstr);
+  if (grn_io_get_type(io) != GRN_COLUMN_VAR_SIZE) {
+    ERR(grn_invalid_format, "file type unmatch");
     grn_io_close(ctx, io);
     return NULL;
   }
@@ -607,10 +601,7 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 
 #else /* USE_JA01 */
 
-#define GRN_JA_IDSTR "GROONGA:JA:0001"
-
 struct grn_ja_header {
-  char idstr[16];
   uint32_t flags;
   uint32_t align_width;
   uint32_t segment_width;
@@ -659,7 +650,6 @@ grn_ja_create(grn_ctx *ctx, const char *path,
                      1 << segment_width, max_dsegs, grn_io_auto, 0);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  memcpy(header->idstr, GRN_JA_IDSTR, 16);
   grn_io_set_type(io, GRN_COLUMN_VAR_SIZE);
   header->flags = flags;
   header->align_width = align_width;
@@ -688,9 +678,9 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   io = grn_io_open(path, grn_io_auto);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  if (memcmp(header->idstr, GRN_JA_IDSTR, 16)) {
-    GRN_LOG(grn_log_error, "ja_idstr (%s)", header->idstr);
-    grn_io_close(io);
+  if (grn_io_get_type(io) != GRN_COLUMN_VAR_SIZE) {
+    ERR(grn_invalid_format, "file type unmatch");
+    grn_io_close(ctx, io);
     return NULL;
   }
   if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
@@ -760,7 +750,6 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 inline static void *
 grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 {
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
   z_stream zstream;
   void *value, *zvalue;
   uint32_t zvalue_len = *value_len + sizeof (uint64_t);
@@ -810,7 +799,6 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 inline static void *
 grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 {
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
   void *value, *lvalue;
   uint32_t lvalue_len = *value_len + sizeof (uint64_t);
   lzo_uint loutlen;
@@ -983,7 +971,6 @@ inline static grn_rc
 grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, int value_len, int flags)
 {
   grn_rc rc;
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
   z_stream zstream;
   void *zvalue;
   int zvalue_len;
@@ -1016,7 +1003,6 @@ inline static grn_rc
 grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, int value_len, int flags)
 {
   grn_rc rc;
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
   void *lvalue, *lwork;
   lzo_uint lvalue_len = value_len + value_len / 16 + 64 + 3;
   if (!(lvalue = GRN_MALLOC(lvalue_len + sizeof (uint64_t)))) { return grn_memory_exhausted; }

@@ -252,7 +252,6 @@ struct _grn_hash {
 };
 
 struct grn_hash_header {
-  char idstr[16];
   uint32_t flags;
   grn_encoding encoding;
   uint32_t key_size;

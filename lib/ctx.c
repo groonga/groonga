@@ -483,7 +483,6 @@ grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags)
       ctx->impl->com = com;
       return grn_success;
     }
-    grn_com_sqtp_close(ctx, NULL, com);
   }
   return ctx->rc;
 }

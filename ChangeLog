@@ -1,5 +1,9 @@
 2009-01-15  Poe MORITA  <morita at razil.jp>
 
+	* lib/io.c: cut off v08 format support.
+
+2009-01-15  Poe MORITA  <morita at razil.jp>
+
 	* src/groonga.c: fixed some bugs, cause ql interpreter quit.
 
 2009-01-15  Poe MORITA  <morita at razil.jp>

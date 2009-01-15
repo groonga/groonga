@@ -315,9 +315,8 @@ get_expr(grn_ctx *ctx, grn_query *q)
 }
 
 static const char *
-get_weight_vector(grn_query *query, const char *source)
+get_weight_vector(grn_ctx *ctx, grn_query *query, const char *source)
 {
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
   const char *p;
 
   if (!query->opt.weight_vector &&
@@ -367,7 +366,7 @@ get_weight_vector(grn_query *query, const char *source)
 }
 
 inline static void
-get_pragma(grn_query *q)
+get_pragma(grn_ctx *ctx, grn_query *q)
 {
   char *start, *end = q->cur;
   while (end < q->str_end && *end == GRN_QUERY_PREFIX) {
@@ -408,7 +407,7 @@ get_pragma(grn_query *q)
       break;
     case 'W' :
       start = ++end;
-      end = (char *)get_weight_vector(q, start);
+      end = (char *)get_weight_vector(ctx, q, start);
       q->cur = end;
       break;
     }
@@ -454,7 +453,7 @@ grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
   q->weight_offset = 0;
   q->opt.weight_vector = NULL;
   q->weight_set = NULL;
-  get_pragma(q);
+  get_pragma(ctx, q);
   q->expr = get_expr(ctx, q);
   q->opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
   q->opt.func = q->weight_set ? section_weight_cb : NULL;
@@ -626,9 +625,8 @@ scan_query(grn_ctx *ctx, grn_query *q, grn_nstr *nstr, grn_id section, grn_cell 
 }
 
 static grn_rc
-alloc_snip_conds(grn_query *q)
+alloc_snip_conds(grn_ctx *ctx, grn_query *q)
 {
-  grn_ctx *ctx = &grn_gctx; /* todo : replace it with the local ctx */
   if (!(q->snip_conds = GRN_CALLOC(sizeof(snip_cond) * q->cur_expr))) {
     GRN_LOG(grn_log_alert, "snip_cond allocation failed");
     return grn_memory_exhausted;
@@ -645,7 +643,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
   if (!q || !strs || !nstrs) { return grn_invalid_argument; }
   *found = *score = 0;
   if (!q->snip_conds) {
-    if ((rc = alloc_snip_conds(q))) { return rc; }
+    if ((rc = alloc_snip_conds(ctx, q))) { return rc; }
     flags |= GRN_QUERY_SCAN_ALLOCCONDS;
   } else if (flags & GRN_QUERY_SCAN_ALLOCCONDS) {
     GRN_LOG(grn_log_warning, "invalid flags specified on grn_query_scan")
@@ -655,10 +653,10 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     grn_nstr *n;
     snip_cond *sc = q->snip_conds;
     if (flags & GRN_QUERY_SCAN_NORMALIZE) {
-      n = grn_nstr_open(*(strs + i), *(str_lens + i), q->encoding,
+      n = grn_nstr_open(ctx, *(strs + i), *(str_lens + i), q->encoding,
                         GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK);
     } else {
-      n = grn_fakenstr_open(*(strs + i), *(str_lens + i), q->encoding,
+      n = grn_fakenstr_open(ctx, *(strs + i), *(str_lens + i), q->encoding,
                         GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK);
     }
     if (!n) { return grn_memory_exhausted; }

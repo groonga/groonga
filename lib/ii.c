@@ -27,7 +27,6 @@
 #include "pat.h"
 #include "db.h"
 
-#define GRN_II_IDSTR             "GROONGA:II:01.000"
 #define MAX_LSEG                 0x10000
 #define MAX_PSEG                 0x20000
 #define W_CHUNK                  22
@@ -59,7 +58,6 @@
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
 struct grn_ii_header {
-  char idstr[16];
   uint32_t flags;
   uint32_t total_chunk_size;
   uint32_t amax;
@@ -3090,7 +3088,6 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
     return NULL;
   }
   header = grn_io_header(seg);
-  memcpy(header->idstr, GRN_II_IDSTR, 16);
   grn_io_set_type(seg, GRN_COLUMN_INDEX);
   for (i = 0; i < MAX_LSEG; i++) {
     header->ainfo[i] = NOT_ASSIGNED;
@@ -3158,8 +3155,8 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
     return NULL;
   }
   header = grn_io_header(seg);
-  if (memcmp(header->idstr, GRN_II_IDSTR, 16)) {
-    GRN_LOG(grn_log_notice, "invalid ii file. ii_idstr (%s)", header->idstr);
+  if (grn_io_get_type(seg) != GRN_COLUMN_INDEX) {
+    ERR(grn_invalid_format, "file type unmatch");
     grn_io_close(ctx, seg);
     grn_io_close(ctx, chunk);
     return NULL;
@@ -5163,7 +5160,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   if (!ii || !string || !string_len || !s || !optarg) {
     return grn_invalid_argument;
   }
-  if (!(nstr = grn_nstr_open(string, string_len, ii->encoding, 0))) {
+  if (!(nstr = grn_nstr_open(ctx, string, string_len, ii->encoding, 0))) {
     return grn_invalid_argument;
   }
   policy = optarg->max_interval;

@@ -56,7 +56,6 @@ struct _grn_ra {
 };
 
 struct grn_ra_header {
-  char idstr[16];
   unsigned element_size;
   grn_id curr_max;
   uint32_t nrecords; /* nrecords is not maintained by default */

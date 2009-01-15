@@ -252,13 +252,13 @@ grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned in
   size_t norm_blen;
   memset(sc, 0, sizeof(snip_cond));
   if (flags & GRN_SNIP_NORMALIZE) {
-    if (!(sc->keyword = grn_nstr_open(keyword, keyword_len,
+    if (!(sc->keyword = grn_nstr_open(ctx, keyword, keyword_len,
                                       enc, GRN_STR_REMOVEBLANK))) {
       GRN_LOG(grn_log_alert, "grn_nstr_open on snip_cond_init failed !");
       return grn_memory_exhausted;
     }
   } else {
-    if (!(sc->keyword = grn_fakenstr_open(keyword, keyword_len,
+    if (!(sc->keyword = grn_fakenstr_open(ctx, keyword, keyword_len,
                                           enc, GRN_STR_REMOVEBLANK))) {
       GRN_LOG(grn_log_alert, "grn_fakenstr_open on snip_cond_init failed !");
       return grn_memory_exhausted;
@@ -536,11 +536,11 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
   *nresults = 0;
   if (snip->flags & GRN_SNIP_NORMALIZE) {
     snip->nstr =
-      grn_nstr_open(string, string_len, snip->encoding,
+      grn_nstr_open(ctx, string, string_len, snip->encoding,
                     GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK);
   } else {
     snip->nstr =
-      grn_fakenstr_open(string, string_len, snip->encoding,
+      grn_fakenstr_open(ctx, string, string_len, snip->encoding,
                         GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK);
   }
   if (!snip->nstr) {

@@ -323,6 +323,7 @@ void *grn_io_anon_map(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length);
 void grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length);
 uint32_t grn_io_detect_type(grn_ctx *ctx, const char *path);
 grn_rc grn_io_set_type(grn_io *io, uint32_t type);
+uint32_t grn_io_get_type(grn_io *io);
 
 grn_rc grn_io_init(void);
 grn_rc grn_io_fin(void);

@@ -400,12 +400,12 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   type = table_flags & GRN_OBJ_TOKEN_MASK;
   nflag = (type == GRN_OBJ_TOKEN_NGRAM ? GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES : 0);
   if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
-    if (!(nstr = grn_nstr_open(str, str_len, encoding, nflag))) {
+    if (!(nstr = grn_nstr_open(ctx, str, str_len, encoding, nflag))) {
       GRN_LOG(grn_log_alert, "grn_nstr_open failed at grn_token_open");
       return NULL;
     }
   } else {
-    if (!(nstr = grn_fakenstr_open(str, str_len, encoding, nflag))) {
+    if (!(nstr = grn_fakenstr_open(ctx, str, str_len, encoding, nflag))) {
       GRN_LOG(grn_log_alert, "grn_fakenstr_open failed at grn_token_open");
       return NULL;
     }

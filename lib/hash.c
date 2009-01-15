@@ -78,11 +78,9 @@ grn_tiny_array_id(grn_tiny_array *a, void *p)
 /* grn_array */
 
 #define GRN_ARRAY_HEADER_SIZE 0x9000
-#define GRN_ARRAY_IDSTR "GROONGA:AR:01.000"
 #define GRN_ARRAY_SEGMENT_SIZE 0x400000
 
 struct grn_array_header {
-  char idstr[16];
   uint32_t flags;
   uint32_t curr_rec;
   uint32_t value_size;
@@ -160,7 +158,6 @@ io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   }
   if (!io) { return grn_memory_exhausted; }
   header = grn_io_header(io);
-  memcpy(header->idstr, GRN_ARRAY_IDSTR, 16);
   grn_io_set_type(io, GRN_TABLE_NO_KEY);
   header->flags = flags;
   header->curr_rec = 0;
@@ -203,7 +200,7 @@ grn_array_open(grn_ctx *ctx, const char *path)
     grn_io *io = grn_io_open(ctx, path, grn_io_auto);
     if (io) {
       struct grn_array_header *header = grn_io_header(io);
-      if (!memcmp(header->idstr, GRN_ARRAY_IDSTR, 16)) {
+      if (grn_io_get_type(io) == GRN_TABLE_NO_KEY) {
         grn_array *array = GRN_MALLOC(sizeof(grn_array));
         if (array) {
           if (!(header->flags & GRN_ARRAY_TINY)) {
@@ -223,7 +220,7 @@ grn_array_open(grn_ctx *ctx, const char *path)
           GRN_FREE(array);
         }
       } else {
-        GRN_LOG(grn_log_notice, "invalid array file. array_idstr (%s)", header->idstr);
+        ERR(grn_invalid_format, "file type unmatch");
       }
       grn_io_close(ctx, io);
     }
@@ -499,7 +496,6 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 
 #define GRN_HASH_MAX_SEGMENT 0x400
 #define GRN_HASH_HEADER_SIZE 0x9000
-#define GRN_IDSTR "GROONGA:HSH:001"
 #define GRN_HASH_SEGMENT_SIZE 0x400000
 #define W_OF_KEY_IN_A_SEGMENT 22
 #define IDX_MASK_IN_A_SEGMENT 0xfffff
@@ -733,7 +729,6 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   if (!io) { return grn_memory_exhausted; }
   if (encoding == grn_enc_default) { encoding = ctx->encoding; }
   header = grn_io_header(io);
-  memcpy(header->idstr, GRN_IDSTR, 16);
   grn_io_set_type(io, GRN_TABLE_HASH_KEY);
   header->flags = flags;
   header->encoding = encoding;
@@ -832,7 +827,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
   grn_io *io = grn_io_open(ctx, path, grn_io_auto);
   if (io) {
     struct grn_hash_header *header = grn_io_header(io);
-    if (!memcmp(header->idstr, GRN_IDSTR, 16)) {
+    if (grn_io_get_type(io) == GRN_TABLE_HASH_KEY) {
       grn_hash *hash = GRN_MALLOC(sizeof(grn_hash));
       if (hash) {
         if (!(header->flags & GRN_HASH_TINY)) {
@@ -857,7 +852,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
         GRN_FREE(hash);
       }
     } else {
-      GRN_LOG(grn_log_notice, "invalid hash file. hash_idstr (%s)", header->idstr);
+      ERR(grn_invalid_format, "file type unmatch");
     }
     grn_io_close(ctx, io);
   }

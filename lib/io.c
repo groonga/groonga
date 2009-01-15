@@ -30,7 +30,7 @@
 #include "io.h"
 #include "hash.h"
 
-#define GRN_IO_IDSTR "GROONGA:IO:0001"
+#define GRN_IO_IDSTR "GROONGA:IO:00001"
 
 /* VA hack */
 /* max aio request (/proc/sys/fs/aio-max-nr) */
@@ -51,13 +51,6 @@ typedef struct _grn_io_fileinfo {
   ino_t inode;
 #endif /* WIN32 */
 } fileinfo;
-
-typedef struct _grn_io_header08 {
-  char idstr[16];
-  uint32_t header_size;
-  uint32_t segment_size;
-  uint32_t max_segment;
-} io_header08;
 
 typedef struct _grn_io_header {
   char idstr[16];
@@ -103,9 +96,7 @@ inline static int grn_msync(grn_ctx *ctx, void *start, size_t length);
 inline static grn_rc grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 
-#define V08      1
 #define TEMPORAL 2
-#define V08P(io) ((io)->flags & V08)
 
 static grn_hash *grn_dls = NULL;
 
@@ -423,7 +414,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   uint32_t flags = 0;
   unsigned int b, max_nfiles;
   uint32_t total_header_size;
-  uint32_t header_size = 0, segment_size = 0, max_segment = 0, bs, v08p = 0;
+  uint32_t header_size = 0, segment_size = 0, max_segment = 0, bs;
   if (!path || !*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   {
     io_header h;
@@ -431,21 +422,19 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     if (fd == -1) { SERR(path); return NULL; }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(io_header)) {
       if (read(fd, &h, sizeof(io_header)) == sizeof(io_header)) {
-        if (memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
-          /* regard as v0.8 format */
-          v08p = 1;
+        if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
+          header_size = h.header_size;
+          segment_size = h.segment_size;
+          max_segment = h.max_segment;
+          flags = h.flags;
         }
-        header_size = h.header_size;
-        segment_size = h.segment_size;
-        max_segment = h.max_segment;
-        flags = h.flags;
       }
     }
     close(fd);
     if (!segment_size) { return NULL; }
   }
   total_header_size = IO_HEADER_SIZE + header_size;
-  if (!v08p && !(flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF))) {
+  if (!(flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF))) {
     total_header_size += max_segment * sizeof(uint32_t);
   }
   b = (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
@@ -464,17 +453,12 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
             (maps = GRN_GCALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
           strncpy(io->path, path, PATH_MAX);
           io->header = header;
-          if (v08p) {
-            io->nrefs = GRN_GCALLOC(sizeof(uint32_t) * max_segment);
-            io->user_header = ((byte *) header) + sizeof(io_header08);
+          if (header->flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF)) {
+            io->nrefs = NULL;
+            io->user_header = (((byte *) header) + IO_HEADER_SIZE);
           } else {
-            if (header->flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF)) {
-              io->nrefs = NULL;
-              io->user_header = (((byte *) header) + IO_HEADER_SIZE);
-            } else {
-              io->nrefs = (uint32_t *)(((byte *) header) + IO_HEADER_SIZE);
-              io->user_header = ((byte *) io->nrefs) + max_segment * sizeof(uint32_t);
-            }
+            io->nrefs = (uint32_t *)(((byte *) header) + IO_HEADER_SIZE);
+            io->user_header = ((byte *) io->nrefs) + max_segment * sizeof(uint32_t);
           }
           if ((header->flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF)) || io->nrefs) {
             io->maps = maps;
@@ -486,7 +470,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
             io->max_map_seg = 0;
             io->nmaps = 0;
             io->count = 0;
-            io->flags = V08;
+            io->flags = 0;
             io->lock = &header->lock;
             if (!array_init(io, io->header->n_arrays)) {
               return io;
@@ -571,6 +555,13 @@ grn_io_set_type(grn_io *io, uint32_t type)
   }
   io->header->type = type;
   return grn_success;
+}
+
+uint32_t
+grn_io_get_type(grn_io *io)
+{
+  if (!io || !io->header) { return GRN_VOID; }
+  return io->header->type;
 }
 
 inline static void
@@ -906,7 +897,7 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
       if (!(p = GRN_MMAP(&grn_gctx, &iw->fmo, fi, pos, (uint64_t)segment_size * nseg))) {
         return NULL;
       }
-      if (!V08P(io)) {
+      {
         uint64_t tail = io->base + (uint64_t)segment_size * segment + offset + size;
         if (tail > io->header->curr_size) { io->header->curr_size = tail; }
       }
@@ -1145,7 +1136,7 @@ grn_io_win_unmap(grn_io_win *iw)
       }
       if (!rc) {
         if (!(rc = grn_pwrite(ctx, fi, iw->addr, iw->size, iw->pos))) {
-          if (!V08P(io)) {
+          {
             uint64_t tail = io->base + (uint64_t)segment_size * iw->segment + iw->offset + iw->size;
             if (tail > io->header->curr_size) { io->header->curr_size = tail; }
           }
@@ -1260,7 +1251,7 @@ grn_io_win_unmap2(grn_io_win *iw)
     uint32_t nmaps;\
     if (io->max_map_seg < segno) { io->max_map_seg = segno; }\
     GRN_ATOMIC_ADD_EX(&io->nmaps, 1, nmaps);\
-    if (!V08P(io)) {\
+    {\
       uint64_t tail = io->base + (uint64_t)(size) * ((segno) + 1);\
       if (tail > io->header->curr_size) { io->header->curr_size = tail; }\
     }\

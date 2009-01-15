@@ -20,7 +20,6 @@
 #include "ctx.h"
 #include "pat.h"
 
-#define GRN_IDSTR "GROONGA:PAT:001"
 #define GRN_PAT_DELETED (GRN_ID_MAX + 1)
 
 #define GRN_PAT_SEGMENT_SIZE 0x400000
@@ -45,7 +44,6 @@ typedef struct {
 } grn_pat_delinfo;
 
 struct grn_pat_header {
-  char idstr[16];
   uint32_t flags;
   grn_encoding encoding;
   uint32_t key_size;
@@ -407,7 +405,6 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   if (!io) { return NULL; }
   if (encoding == grn_enc_default) { encoding = grn_gctx.encoding; }
   header = grn_io_header(io);
-  memcpy(header->idstr, GRN_IDSTR, 16);
   grn_io_set_type(io, GRN_TABLE_PAT_KEY);
   header->flags = flags;
   header->encoding = encoding;
@@ -453,8 +450,8 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   io = grn_io_open(ctx, path, grn_io_auto);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  if (memcmp(header->idstr, GRN_IDSTR, 16)) {
-    GRN_LOG(grn_log_notice, "invalid pat file. pat_idstr (%s)", header->idstr);
+  if (grn_io_get_type(io) != GRN_TABLE_PAT_KEY) {
+    ERR(grn_invalid_format, "file type unmatch");
     grn_io_close(ctx, io);
     return NULL;
   }
@@ -1356,7 +1353,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   int n = 0;
   grn_id tid;
   if (pat->obj.flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_nstr *nstr = grn_nstr_open(str, str_len, pat->encoding, GRN_STR_WITH_CHECKS);
+    grn_nstr *nstr = grn_nstr_open(ctx, str, str_len, pat->encoding, GRN_STR_WITH_CHECKS);
     if (nstr) {
       int16_t *cp = nstr->checks;
       unsigned int offset = 0, offset0 = 0;

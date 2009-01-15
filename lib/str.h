@@ -57,8 +57,8 @@ typedef struct {
   grn_str_getopt_op op;
 } grn_str_getopt_opt;
 
-grn_nstr *grn_nstr_open(const char *str, size_t str_len, grn_encoding encoding, int flags);
-grn_nstr *grn_fakenstr_open(const char *str, size_t str_len, grn_encoding encoding, int flags);
+grn_nstr *grn_nstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags);
+grn_nstr *grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags);
 grn_rc grn_nstr_close(grn_nstr *nstr);
 
 size_t grn_str_charlen_nonnull(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
