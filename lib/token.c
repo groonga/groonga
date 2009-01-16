@@ -290,10 +290,10 @@ grn_token_set_mecab_args(grn_ctx *ctx, int argc, char **argv)
   grn_token_mecab_argv = argv;
   if (sole_mecab) {
     GRN_LOG(grn_log_alert, "mecab already initialized");
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   SOLE_MECAB_CONFIRM;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 #endif /* NO_MECAB */
@@ -366,11 +366,11 @@ grn_token_init(void)
 {
 #ifndef NO_MECAB
   // char *arg[] = {"", "-Owakati"};
-  // return mecab_load_dictionary(2, arg) ? grn_success : grn_external_error;
+  // return mecab_load_dictionary(2, arg) ? GRN_SUCCESS : grn_external_error;
   sole_mecab = NULL;
   MUTEX_INIT(sole_mecab_lock);
 #endif /* NO_MECAB */
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -383,7 +383,7 @@ grn_token_fin(void)
   }
   MUTEX_DESTROY(sole_mecab_lock);
 #endif /* NO_MECAB */
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_token *
@@ -461,11 +461,11 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
 grn_rc
 grn_token_next(grn_token *token)
 {
-  /* if (!token) { return grn_invalid_argument; } */
+  /* if (!token) { return GRN_INVALID_ARGUMENT; } */
   switch ((token->table_flags & GRN_OBJ_TOKEN_MASK)) {
   case GRN_OBJ_TOKEN_MECAB :
 #ifdef NO_MECAB
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
 #else /* NO_MECAB */
     return grn_mecab_next(token);
 #endif /* NO_MECAB */
@@ -474,7 +474,7 @@ grn_token_next(grn_token *token)
   case GRN_OBJ_TOKEN_DELIMITED :
     return grn_delimited_next(token);
   default :
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
 }
 
@@ -487,9 +487,9 @@ grn_token_close(grn_token *token)
     // if (token->mecab) { mecab_destroy(token->mecab); }
     if (token->buf) { GRN_FREE(token->buf); }
     GRN_FREE(token);
-    return grn_success;
+    return GRN_SUCCESS;
   } else {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
 }
 
@@ -543,5 +543,5 @@ grn_token_validate(grn_ctx *ctx, grn_obj *table)
   }
 #endif /* USE_MECAB_DICINFO */
 #endif /* NO_MECAB */
-  return grn_success;
+  return GRN_SUCCESS;
 }

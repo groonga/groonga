@@ -239,7 +239,7 @@ queue_enque(queue *q, grn_com_sqtp *c)
   if (i == q->head) { return grn_other_error; }
   q->v[q->tail] = c;
   q->tail = i;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 static queue qq;

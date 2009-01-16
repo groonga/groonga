@@ -237,12 +237,12 @@ grn_rc
 grn_snip_cond_close(snip_cond *cond)
 {
   if (!cond) {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   if (cond->keyword) {
     grn_nstr_close(cond->keyword);
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -255,26 +255,26 @@ grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned in
     if (!(sc->keyword = grn_nstr_open(ctx, keyword, keyword_len,
                                       enc, GRN_STR_REMOVEBLANK))) {
       GRN_LOG(grn_log_alert, "grn_nstr_open on snip_cond_init failed !");
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   } else {
     if (!(sc->keyword = grn_fakenstr_open(ctx, keyword, keyword_len,
                                           enc, GRN_STR_REMOVEBLANK))) {
       GRN_LOG(grn_log_alert, "grn_fakenstr_open on snip_cond_init failed !");
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   norm_blen = sc->keyword->norm_blen; /* byte length, not cond->keyword->length */
   if (!norm_blen) {
     grn_snip_cond_close(sc);
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   if (norm_blen != 1) {
     grn_bm_preBmBc((unsigned char *)sc->keyword->norm, norm_blen, sc->bmBc);
     sc->shift = sc->bmBc[(unsigned char)sc->keyword->norm[norm_blen - 1]];
     sc->bmBc[(unsigned char)sc->keyword->norm[norm_blen - 1]] = 0;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 void
@@ -316,7 +316,7 @@ grn_snip_cond_set_tag(grn_ctx *ctx,
       char *copied_tag;
       copied_tag = grn_snip_strndup(ctx, tag, tag_len);
       if (!copied_tag) {
-        return grn_memory_exhausted;
+        return GRN_NO_MEMORY_AVAILABLE;
       }
       *dest_tag = copied_tag;
     } else {
@@ -327,7 +327,7 @@ grn_snip_cond_set_tag(grn_ctx *ctx,
     *dest_tag = default_tag;
     *dest_tag_len = default_tag_len;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -341,7 +341,7 @@ grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
   snip_cond *cond;
 
   if (!snip || !keyword || !keyword_len || snip->cond_len >= MAX_SNIP_COND_COUNT) {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   cond = snip->cond + snip->cond_len;
   if ((rc = grn_snip_cond_init(ctx, cond, keyword, keyword_len,
@@ -350,7 +350,7 @@ grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
   }
   if (cond->keyword->norm_blen > snip->width) {
     grn_snip_cond_close(cond);
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
 
   copy_tag = snip->flags & GRN_SNIP_COPY_TAG;
@@ -378,7 +378,7 @@ grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
   }
 
   snip->cond_len++;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 static size_t
@@ -414,14 +414,14 @@ grn_snip_set_default_tag(grn_ctx *ctx,
     char *copied_tag;
     copied_tag = grn_snip_strndup(ctx, tag, tag_len);
     if (!copied_tag) {
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
     *dest_tag = copied_tag;
   } else {
     *dest_tag = tag;
   }
   *dest_tag_len = tag_len;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_snip *
@@ -494,14 +494,14 @@ exec_clean(grn_snip *snip)
        cond < cond_end; cond++) {
     grn_snip_cond_reinit(cond);
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_snip_close(grn_ctx *ctx, grn_snip *snip)
 {
   snip_cond *cond, *cond_end;
-  if (!snip) { return grn_invalid_argument; }
+  if (!snip) { return GRN_INVALID_ARGUMENT; }
   if (snip->flags & GRN_SNIP_COPY_TAG) {
     int i;
     snip_cond *sc;
@@ -521,7 +521,7 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
     grn_snip_cond_close(cond);
   }
   GRN_FREE(snip);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -530,7 +530,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
 {
   size_t i;
   if (!snip || !string || !nresults || !max_tagged_len) {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   exec_clean(snip);
   *nresults = 0;
@@ -546,7 +546,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
   if (!snip->nstr) {
     exec_clean(snip);
     GRN_LOG(grn_log_alert, "grn_nstr_open on grn_snip_exec failed !");
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
   for (i = 0; i < snip->cond_len; i++) {
     grn_bm_tunedbm(snip->cond + i, snip->nstr, snip->flags);
@@ -696,7 +696,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
 
   snip->max_tagged_len = *max_tagged_len;
 
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -707,7 +707,7 @@ grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int index, char
   _snip_result *sres;
 
   if (snip->snip_count <= index || !snip->nstr) {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
 
   GRN_ASSERT(snip->snip_count != 0 && snip->tag_count != 0);
@@ -778,5 +778,5 @@ grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int index, char
   if(result_len) { *result_len = (unsigned int)(p - result); }
   GRN_ASSERT((unsigned int)(p - result) <= snip->max_tagged_len);
 
-  return grn_success;
+  return GRN_SUCCESS;
 }

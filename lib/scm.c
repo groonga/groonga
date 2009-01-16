@@ -120,7 +120,7 @@ rplacd(grn_ctx *ctx, grn_cell *a, grn_cell *b)
 grn_rc
 grn_obj2int(grn_ctx *ctx, grn_cell *o)
 {
-  grn_rc rc = grn_invalid_argument;
+  grn_rc rc = GRN_INVALID_ARGUMENT;
   if (o) {
     switch (o->header.type) {
     case GRN_CELL_STR :
@@ -130,12 +130,12 @@ grn_obj2int(grn_ctx *ctx, grn_cell *o)
         if (rest == end) {
           grn_cell_clear(ctx, o);
           SETINT(o, i);
-          rc = grn_success;
+          rc = GRN_SUCCESS;
         }
       }
       break;
     case GRN_CELL_INT :
-      rc = grn_success;
+      rc = GRN_SUCCESS;
       break;
     default :
       break;
@@ -295,7 +295,7 @@ grn_ql_obj_mark(grn_ctx *ctx, grn_cell *o)
   grn_cell *t, *q, *p;
   t = NULL;
   p = o;
-  if (MARK2P(o)) { return grn_invalid_argument; }
+  if (MARK2P(o)) { return GRN_INVALID_ARGUMENT; }
 E2:
   p->header.impl_flags |= GRN_CELL_MARK2;
   if (!REFERERP(p)) { goto E6; }
@@ -316,7 +316,7 @@ E5:
     goto E2;
   }
 E6:
-  if (!t) { return grn_success; }
+  if (!t) { return GRN_SUCCESS; }
   q = t;
   if (!REFERERP(q)) {
     SETREFERER(q);
@@ -330,7 +330,7 @@ E6:
     p = q;
     goto E6;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -339,7 +339,7 @@ grn_ql_obj_unmark(grn_ctx *ctx, grn_cell *o)
   grn_cell *t, *q, *p;
   t = NULL;
   p = o;
-  if (!MARK2P(o)) { return grn_invalid_argument; }
+  if (!MARK2P(o)) { return GRN_INVALID_ARGUMENT; }
 E2:
   p->header.impl_flags &= ~GRN_CELL_MARK2;
   if (!REFERERP(p)) { goto E6; }
@@ -360,7 +360,7 @@ E5:
     goto E2;
   }
 E6:
-  if (!t) { return grn_success; }
+  if (!t) { return GRN_SUCCESS; }
   q = t;
   if (!REFERERP(q)) {
     SETREFERER(q);
@@ -374,14 +374,14 @@ E6:
     p = q;
     goto E6;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ctx_mgc(grn_ctx *ctx)
 {
   /*
-  if (!(sc = grn_set_cursor_open(ctx->impl->symbols))) { return grn_memory_exhausted; }
+  if (!(sc = grn_set_cursor_open(ctx->impl->symbols))) { return GRN_NO_MEMORY_AVAILABLE; }
   {
     grn_cell *o;
     while (grn_set_cursor_next(sc, NULL, (void **) &o)) { obj_mark(o); }
@@ -425,7 +425,7 @@ grn_ctx_mgc(grn_ctx *ctx)
   ctx->impl->lseqno = ctx->impl->seqno;
   ctx->impl->nbinds = 0;
   ctx->impl->nunbinds = 0;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 inline static void Eval_Cycle(grn_ctx *ctx);
@@ -793,12 +793,12 @@ mk_const(grn_ctx *ctx, char *name, unsigned int len)
 grn_rc
 grn_ql_load(grn_ctx *ctx, const char *filename)
 {
-  if (!ctx || !ctx->impl) { return grn_invalid_argument; }
+  if (!ctx || !ctx->impl) { return GRN_INVALID_ARGUMENT; }
   if (!filename) { filename = InitFile; }
   ctx->impl->args = CONS(mk_const_string(ctx, filename), NIL);
   ctx->stat = GRN_QL_TOPLEVEL;
   ctx->impl->op = OP_LOAD;
-  return grn_ql_feed(ctx, "init", 4, 0) == F ? grn_internal_error : grn_success;
+  return grn_ql_feed(ctx, "init", 4, 0) == F ? grn_internal_error : GRN_SUCCESS;
 }
 
 /* ========== Routines for Reading ========== */

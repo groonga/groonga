@@ -111,7 +111,7 @@ void grn_logger_fin(void);
       grn_bulk_write((ctx), (bulk), (const char *)(str), (unsigned int)(len));\
     }\
   } else {\
-    (ctx)->rc = grn_invalid_argument;\
+    (ctx)->rc = GRN_INVALID_ARGUMENT;\
   }\
 }
 

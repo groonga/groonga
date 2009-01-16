@@ -59,9 +59,9 @@ obj2str(grn_cell *o, char *buf, uint16_t *size)
     *size = rest - buf;
     *rest = '\0';
   } else {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 enum {
@@ -331,7 +331,7 @@ column_exp_exec(grn_ctx *ctx, column_exp *ce, grn_id id)
     obj2cell(ctx, vp, c);
   }
   grn_obj_close(ctx, &v);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 static grn_rc
@@ -345,7 +345,7 @@ column_exp_close(grn_ctx *ctx, column_exp *ce)
   if (ce->keys) { GRN_FREE(ce->keys); }
   if (ce->cells) { GRN_FREE(ce->cells); }
   GRN_FREE(ce);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 static grn_cell *
@@ -522,7 +522,7 @@ ha_verses(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   return res;
 }
 
-#define QLWARN(...) ERRSET(ctx, GRN_WARN, grn_invalid_argument, __VA_ARGS__)
+#define QLWARN(...) ERRSET(ctx, GRN_WARN, GRN_INVALID_ARGUMENT, __VA_ARGS__)
 
 #define STR2DBL(str,len,val) do {\
   char *end, buf0[128], *buf = (len) < 128 ? buf0 : GRN_MALLOC((len) + 1);\
@@ -3037,7 +3037,7 @@ grn_ql_def_builtin_types(grn_ctx *ctx)
   obj = deftype(ctx, "<longtext>",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_QL_LONGTEXT) { return grn_invalid_format; }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -3051,5 +3051,5 @@ grn_ql_def_db_funcs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "json-read", nf_json_read);
   grn_ql_def_native_func(ctx, "x->query", nf_toquery);
   grn_ql_def_native_func(ctx, "x->verses", nf_toverses);
-  return (ctx->impl->db) ? grn_ql_def_builtin_types(ctx) : grn_success;
+  return (ctx->impl->db) ? grn_ql_def_builtin_types(ctx) : GRN_SUCCESS;
 }

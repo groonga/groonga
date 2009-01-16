@@ -114,14 +114,14 @@ grn_com_fin(void)
 grn_rc
 grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_size)
 {
-  grn_rc rc = grn_memory_exhausted;
+  grn_rc rc = GRN_NO_MEMORY_AVAILABLE;
   ev->max_nevents = max_nevents;
   if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0, grn_enc_none))) {
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
     if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {
       if ((ev->epfd = epoll_create(max_nevents)) != -1) {
-        rc = grn_success;
+        rc = GRN_SUCCESS;
         goto exit;
       } else {
         LOG_SOCKERR("epoll_create");
@@ -131,7 +131,7 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     }
 #else /* USE_EPOLL */
     if ((ev->events = GRN_MALLOC(sizeof(struct pollfd) * max_nevents))) {
-      rc = grn_success;
+      rc = GRN_SUCCESS;
       goto exit;
     }
 #endif /* USE_EPOLL */
@@ -139,7 +139,7 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     ev->hash = NULL;
     ev->events = NULL;
 #else /* USE_SELECT */
-    rc = grn_success;
+    rc = GRN_SUCCESS;
 #endif /* USE_SELECT */
   }
 exit :
@@ -153,7 +153,7 @@ grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev)
 #ifndef USE_SELECT
   if (ev->events) { GRN_FREE(ev->events); }
 #endif /* USE_SELECT */
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -163,7 +163,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   /* todo : expand events */
   if (!ev || *ev->hash->n_entries == ev->max_nevents) {
     if (ev) { GRN_LOG(grn_log_error, "too many connections (%d)", ev->max_nevents); }
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
 #ifdef USE_EPOLL
   {
@@ -183,7 +183,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
       c->fd = fd;
       c->events = events;
       if (com) { *com = c; }
-      return grn_success;
+      return GRN_SUCCESS;
     }
   }
   return grn_internal_error;
@@ -193,7 +193,7 @@ grn_rc
 grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_com **com)
 {
   grn_com *c;
-  if (!ev) { return grn_invalid_argument; }
+  if (!ev) { return GRN_INVALID_ARGUMENT; }
   if (grn_hash_at(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c)) {
     if (c->fd != fd) {
       GRN_LOG(grn_log_error, "grn_com_event_mod fd unmatch %d != %d", c->fd, fd);
@@ -213,7 +213,7 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
 #endif /* USE_EPOLL*/
       c->events = events;
     }
-    return grn_success;
+    return GRN_SUCCESS;
   }
   return grn_internal_error;
 }
@@ -221,7 +221,7 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
 grn_rc
 grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
 {
-  if (!ev) { return grn_invalid_argument; }
+  if (!ev) { return GRN_INVALID_ARGUMENT; }
   {
     grn_com *c;
     grn_id id = grn_hash_at(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c);
@@ -269,9 +269,9 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   nevents = select(nfds + 1, &rfds, &wfds, NULL, (timeout >= 0) ? &tv : NULL);
   if (nevents < 0) {
 #ifdef WIN32
-    if (WSAGetLastError() == WSAEINTR) { return grn_success; }
+    if (WSAGetLastError() == WSAEINTR) { return GRN_SUCCESS; }
 #else /* WIN32 */
-    if (errno == EINTR) { return grn_success; }
+    if (errno == EINTR) { return GRN_SUCCESS; }
 #endif /* WIN32 */
     LOG_SOCKERR("select");
     return grn_external_error;
@@ -299,7 +299,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   nevents = poll(ev->events, nfd, timeout);
 #endif /* USE_EPOLL */
   if (nevents < 0) {
-    if (errno == EINTR) { return grn_success; }
+    if (errno == EINTR) { return GRN_SUCCESS; }
     LOG_SOCKERR("poll");
     return grn_external_error;
   }
@@ -335,7 +335,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #endif /* USE_EPOLL */
   }
 #endif /* USE_SELECT */
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 /******* grn_com_sqtp ********/
@@ -402,7 +402,7 @@ grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, c
     cs->rc = grn_external_error;
     goto exit;
   }
-  cs->rc = grn_success;
+  cs->rc = GRN_SUCCESS;
 exit :
   return cs->rc;
 }
@@ -485,7 +485,7 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
     }
     *buf->u.b.curr = '\0';
   }
-  cs->rc = grn_success;
+  cs->rc = GRN_SUCCESS;
 exit :
   return cs->rc;
 }
@@ -654,5 +654,5 @@ grn_com_sqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_sqtp *cs)
     LOG_SOCKERR("close");
     return grn_external_error;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }

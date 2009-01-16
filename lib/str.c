@@ -202,14 +202,14 @@ normalize_euc(grn_nstr *nstr)
   size_t size = nstr->orig_blen, length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size * 2 + 1))) {
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
   d0 = (unsigned char *) nstr->norm;
   if (nstr->flags & GRN_STR_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC(size * 2 * sizeof(int16_t) + 1))) {
       GRN_FREE(nstr->norm);
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   ch = nstr->checks;
@@ -219,7 +219,7 @@ normalize_euc(grn_nstr *nstr)
       GRN_FREE(nstr->norm);
       nstr->checks = NULL;
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   cp = ctypes = nstr->ctypes;
@@ -409,7 +409,7 @@ normalize_euc(grn_nstr *nstr)
   *d = '\0';
   nstr->length = length;
   nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 #ifndef NO_NFKC
@@ -428,13 +428,13 @@ normalize_utf8(grn_nstr *nstr)
   size_t length = 0, ls, lp, size = nstr->orig_blen;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size * 5 + 1))) { /* todo: realloc unless enough */
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
   if (nstr->flags & GRN_STR_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC(size * 5 * sizeof(int16_t) + 1))) { /* todo: realloc unless enough */
       GRN_FREE(nstr->norm);
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   ch = nstr->checks;
@@ -444,7 +444,7 @@ normalize_utf8(grn_nstr *nstr)
       GRN_FREE(nstr->norm);
       nstr->checks = NULL;
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   cp = ctypes = nstr->ctypes;
@@ -502,7 +502,7 @@ normalize_utf8(grn_nstr *nstr)
   *d = '\0';
   nstr->length = length;
   nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 #endif /* NO_NFKC */
 
@@ -536,14 +536,14 @@ normalize_sjis(grn_nstr *nstr)
   size_t size = nstr->orig_blen, length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size * 2 + 1))) {
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
   d0 = (unsigned char *) nstr->norm;
   if (nstr->flags & GRN_STR_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC(size * 2 * sizeof(int16_t) + 1))) {
       GRN_FREE(nstr->norm);
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   ch = nstr->checks;
@@ -553,7 +553,7 @@ normalize_sjis(grn_nstr *nstr)
       GRN_FREE(nstr->norm);
       nstr->checks = NULL;
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   cp = ctypes = nstr->ctypes;
@@ -734,7 +734,7 @@ normalize_sjis(grn_nstr *nstr)
   *d = '\0';
   nstr->length = length;
   nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 inline static grn_rc
@@ -748,14 +748,14 @@ normalize_none(grn_nstr *nstr)
   size_t size = nstr->orig_blen, length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size + 1))) {
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
   d0 = (unsigned char *) nstr->norm;
   if (nstr->flags & GRN_STR_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC(size * sizeof(int16_t) + 1))) {
       GRN_FREE(nstr->norm);
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   ch = nstr->checks;
@@ -765,7 +765,7 @@ normalize_none(grn_nstr *nstr)
       GRN_FREE(nstr->norm);
       nstr->checks = NULL;
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   cp = ctypes = nstr->ctypes;
@@ -830,7 +830,7 @@ normalize_none(grn_nstr *nstr)
   *d = '\0';
   nstr->length = length;
   nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 /* use cp1252 as latin1 */
@@ -845,14 +845,14 @@ normalize_latin1(grn_nstr *nstr)
   size_t size = strlen(nstr->orig), length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size + 1))) {
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
   d0 = (unsigned char *) nstr->norm;
   if (nstr->flags & GRN_STR_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC(size * sizeof(int16_t) + 1))) {
       GRN_FREE(nstr->norm);
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   ch = nstr->checks;
@@ -862,7 +862,7 @@ normalize_latin1(grn_nstr *nstr)
       GRN_FREE(nstr->norm);
       nstr->checks = NULL;
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   cp = ctypes = nstr->ctypes;
@@ -961,7 +961,7 @@ normalize_latin1(grn_nstr *nstr)
   *d = '\0';
   nstr->length = length;
   nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 inline static grn_rc
@@ -975,14 +975,14 @@ normalize_koi8r(grn_nstr *nstr)
   size_t size = strlen(nstr->orig), length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size + 1))) {
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
   d0 = (unsigned char *) nstr->norm;
   if (nstr->flags & GRN_STR_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC(size * sizeof(int16_t) + 1))) {
       GRN_FREE(nstr->norm);
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   ch = nstr->checks;
@@ -992,7 +992,7 @@ normalize_koi8r(grn_nstr *nstr)
       GRN_FREE(nstr->norm);
       nstr->checks = NULL;
       nstr->norm = NULL;
-      return grn_memory_exhausted;
+      return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   cp = ctypes = nstr->ctypes;
@@ -1080,7 +1080,7 @@ normalize_koi8r(grn_nstr *nstr)
   *d = '\0';
   nstr->length = length;
   nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_nstr *
@@ -1226,9 +1226,9 @@ grn_nstr_close(grn_nstr *nstr)
     if (nstr->ctypes) { GRN_FREE(nstr->ctypes); }
     if (nstr->checks) { GRN_FREE(nstr->checks); }
     GRN_FREE(nstr);
-    return grn_success;
+    return GRN_SUCCESS;
   } else {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
 }
 
@@ -1428,7 +1428,7 @@ grn_rc
 grn_itoa(int i, char *p, char *end, char **rest)
 {
   char *q;
-  if (p >= end) { return grn_invalid_argument; }
+  if (p >= end) { return GRN_INVALID_ARGUMENT; }
   q = p;
   if (i < 0) {
     *p++ = '-';
@@ -1440,7 +1440,7 @@ grn_itoa(int i, char *p, char *end, char **rest)
     i = -i;
   }
   do {
-    if (p >= end) { return grn_invalid_argument; }
+    if (p >= end) { return GRN_INVALID_ARGUMENT; }
     *p++ = i % 10 + '0';
   } while ((i /= 10) > 0);
   if (rest) { *rest = p; }
@@ -1449,14 +1449,14 @@ grn_itoa(int i, char *p, char *end, char **rest)
     *q = *p;
     *p = t;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_lltoa(int64_t i, char *p, char *end, char **rest)
 {
   char *q;
-  if (p >= end) { return grn_invalid_argument; }
+  if (p >= end) { return GRN_INVALID_ARGUMENT; }
   q = p;
   if (i < 0) {
     *p++ = '-';
@@ -1468,7 +1468,7 @@ grn_lltoa(int64_t i, char *p, char *end, char **rest)
     i = -i;
   }
   do {
-    if (p >= end) { return grn_invalid_argument; }
+    if (p >= end) { return GRN_INVALID_ARGUMENT; }
     *p++ = i % 10 + '0';
   } while ((i /= 10) > 0);
   if (rest) { *rest = p; }
@@ -1477,7 +1477,7 @@ grn_lltoa(int64_t i, char *p, char *end, char **rest)
     *q = *p;
     *p = t;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 #define I2B(i) \
@@ -1662,7 +1662,7 @@ grn_bulk_init(grn_ctx *ctx, grn_obj *buf, unsigned int size)
   buf->u.b.head = NULL;
   buf->u.b.curr = NULL;
   buf->u.b.tail = NULL;
-  return size ? grn_bulk_resize(ctx, buf, size) : grn_success;
+  return size ? grn_bulk_resize(ctx, buf, size) : GRN_SUCCESS;
 }
 
 grn_rc
@@ -1672,11 +1672,11 @@ grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
   newsize += grn_bulk_margin_size + 1;
   newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
   head = buf->u.b.head - (buf->u.b.head ? grn_bulk_margin_size : 0);
-  if (!(head = GRN_REALLOC(head, newsize))) { return grn_memory_exhausted; }
+  if (!(head = GRN_REALLOC(head, newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
   buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
   buf->u.b.head = head + grn_bulk_margin_size;
   buf->u.b.tail = head + newsize;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -1689,7 +1689,7 @@ grn_bulk_reinit(grn_ctx *ctx, grn_obj *buf, unsigned int size)
 grn_rc
 grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
@@ -1701,7 +1701,7 @@ grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
 grn_rc
 grn_bulk_reserve(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
@@ -1719,7 +1719,7 @@ grn_bulk_space(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 grn_rc
 grn_bulk_itoa(grn_ctx *ctx, grn_obj *buf, int i)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   while (grn_itoa(i, buf->u.b.curr, buf->u.b.tail, &buf->u.b.curr)) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
   }
@@ -1729,7 +1729,7 @@ grn_bulk_itoa(grn_ctx *ctx, grn_obj *buf, int i)
 grn_rc
 grn_bulk_lltoa(grn_ctx *ctx, grn_obj *buf, long long int i)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   while (grn_lltoa(i, buf->u.b.curr, buf->u.b.tail, &buf->u.b.curr)) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
   }
@@ -1759,7 +1759,7 @@ ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
 grn_rc
 grn_bulk_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < 32) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + 32))) { return rc; }
   }
@@ -1792,7 +1792,7 @@ grn_bulk_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 grn_rc
 grn_bulk_itoh(grn_ctx *ctx, grn_obj *buf, int i, unsigned int len)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
@@ -1805,7 +1805,7 @@ grn_rc
 grn_bulk_itob(grn_ctx *ctx, grn_obj *buf, grn_id id)
 {
   size_t len = 5;
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
@@ -1818,7 +1818,7 @@ grn_rc
 grn_bulk_lltob32h(grn_ctx *ctx, grn_obj *buf, long long int i)
 {
   size_t len = 13;
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
@@ -1832,7 +1832,7 @@ grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len, grn_en
 {
   const char *e;
   unsigned int l;
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
 
   GRN_BULK_PUTC(ctx, buf, '"');
   for (e = s + len; s < e; s += l) {
@@ -1888,7 +1888,7 @@ grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len, grn_en
 grn_rc
 grn_bulk_benc(grn_ctx *ctx, grn_obj *buf, unsigned int v)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < 5) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + 5))) { return rc; }
   }
@@ -1923,7 +1923,7 @@ grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
       GRN_BULK_PUTC(ctx, buf, *s);
     }
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -1933,7 +1933,7 @@ grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
     GRN_REALLOC(buf->u.b.head - grn_bulk_margin_size, 0);
     buf->u.b.head = NULL;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -1945,14 +1945,14 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
   for (i = 0; s < e; i++, s += l) {
     if (i == start) { *str = s; }
     if (!(l = grn_str_charlen_nonnull(ctx, s, e, encoding))) {
-      return grn_invalid_argument;
+      return GRN_INVALID_ARGUMENT;
     }
     if (i == end) {
       *str_end = s;
       break;
     }
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 int

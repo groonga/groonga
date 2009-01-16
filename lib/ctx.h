@@ -42,7 +42,7 @@ extern "C" {
 #define GRN_API_ENTER \
 {\
   (ctx)->errlvl = GRN_OK;\
-  (ctx)->rc = grn_success;\
+  (ctx)->rc = GRN_SUCCESS;\
   if ((ctx)->seqno & 1) {\
     (ctx)->subno++;\
   } else {\
@@ -76,10 +76,10 @@ extern "C" {
 #define ERRCLR(ctx) do {\
   if (ctx) {\
     ((grn_ctx *)ctx)->errlvl = GRN_OK;\
-    ((grn_ctx *)ctx)->rc = grn_success;\
+    ((grn_ctx *)ctx)->rc = GRN_SUCCESS;\
   }\
   grn_gctx.errlvl = GRN_OK;\
-  grn_gctx.rc = grn_success;\
+  grn_gctx.rc = GRN_SUCCESS;\
 } while (0)
 
 #ifdef HAVE_EXECINFO_H
@@ -106,7 +106,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
 #define ERRP(ctx,lvl) (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
 
 #define QLERR(...) do {\
-  ERRSET(ctx, GRN_WARN, grn_invalid_argument, __VA_ARGS__);\
+  ERRSET(ctx, GRN_WARN, GRN_INVALID_ARGUMENT, __VA_ARGS__);\
   return F;\
 } while (0)
 
@@ -115,11 +115,11 @@ void grn_ctx_impl_err(grn_ctx *ctx);
 } while (0)
 
 #define ERR(rc,...) ERRSET(ctx, GRN_ERROR, (rc),  __VA_ARGS__)
-#define MERR(...) ERRSET(ctx, GRN_ALERT, grn_memory_exhausted,  __VA_ARGS__)
+#define MERR(...) ERRSET(ctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
 #define SERR(str) ERR(grn_other_error, "syscall error '%s' (%s)", str, strerror(errno))
 
 #define GERR(rc,...) ERRSET(&grn_gctx, GRN_ERROR, (rc),  __VA_ARGS__)
-#define GMERR(...) ERRSET(&grn_gctx, GRN_ALERT, grn_memory_exhausted,  __VA_ARGS__)
+#define GMERR(...) ERRSET(&grn_gctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
 #define GSERR(str) GERR(grn_other_error, "syscall error '%s' (%s)", str, strerror(errno))
 
 #define GRN_MALLOC(s) grn_malloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)

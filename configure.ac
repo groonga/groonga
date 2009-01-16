@@ -105,9 +105,9 @@ int main(int argc, char **argv)
 # will deprecated
 AC_ARG_WITH(groongahome,
   [AC_HELP_STRING([--with-groongahome=DIR],
-    [specify Groonga home directory(will deprecated)])],
+    [specify Groonga home directory])],
   GROONGA_HOME="$withval",
-  GROONGA_HOME="/var/groonga")
+  GROONGA_HOME="${prefix}/lib/groonga/$PACKAGE_VERSION")
 AC_DEFINE_UNQUOTED(GROONGA_HOME, "$GROONGA_HOME", "specified home directory")
 
 # log directory
@@ -115,7 +115,7 @@ AC_ARG_WITH(log,
   [AC_HELP_STRING([--with-log=PATH],
     [specify Groonga log path.])],
   GROONGA_LOG_PATH="$withval",
-  GROONGA_LOG_PATH="$GROONGA_HOME/log/groonga.log")
+  GROONGA_LOG_PATH="/var/log/groonga/groonga.log")
 AC_DEFINE_UNQUOTED(GROONGA_LOG_PATH, "$GROONGA_LOG_PATH", "specified log directory")
 
 # default encoding

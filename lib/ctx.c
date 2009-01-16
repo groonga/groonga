@@ -42,10 +42,10 @@ grn_timeval_now(grn_timeval *tv)
   _ftime(&tb);
   tv->tv_sec = (int32_t) t;
   tv->tv_usec = tb.millitm * 1000;
-  return grn_success;
+  return GRN_SUCCESS;
 #else /* WIN32 */
   struct timeval t;
-  grn_rc rc = gettimeofday(&t, NULL) ? grn_external_error : grn_success;
+  grn_rc rc = gettimeofday(&t, NULL) ? grn_external_error : GRN_SUCCESS;
   if (!rc) {
     tv->tv_sec = (int32_t) t.tv_sec;
     tv->tv_usec = t.tv_usec;
@@ -71,7 +71,7 @@ grn_timeval2str(grn_timeval *tv, char *buf)
            ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
            ltm->tm_hour, ltm->tm_min, ltm->tm_sec, (int) tv->tv_usec);
   buf[GRN_TIMEVAL_STR_SIZE - 1] = '\0';
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -84,45 +84,45 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
 
   tm.tm_year = (int)grn_atoui(str, rend, &r1) - 1900;
   if ((r1 + 1) >= rend || (*r1 != '/' && *r1 != '-') ||
-      tm.tm_year < 0) { return grn_invalid_argument; }
+      tm.tm_year < 0) { return GRN_INVALID_ARGUMENT; }
   r1++;
   tm.tm_mon = (int)grn_atoui(r1, rend, &r1) - 1;
   if ((r1 + 1) >= rend || (*r1 != '/' && *r1 != '-') ||
-      tm.tm_mon < 0 || tm.tm_mon >= 12) { return grn_invalid_argument; }
+      tm.tm_mon < 0 || tm.tm_mon >= 12) { return GRN_INVALID_ARGUMENT; }
   r1++;
   tm.tm_mday = (int)grn_atoui(r1, rend, &r1);
   if ((r1 + 1) >= rend || *r1 != ' ' ||
-      tm.tm_mday < 1 || tm.tm_mday > 31) { return grn_invalid_argument; }
+      tm.tm_mday < 1 || tm.tm_mday > 31) { return GRN_INVALID_ARGUMENT; }
 
   tm.tm_hour = (int)grn_atoui(++r1, rend, &r2);
   if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
       tm.tm_hour < 0 || tm.tm_hour >= 24) {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   r1 = r2 + 1;
   tm.tm_min = (int)grn_atoui(r1, rend, &r2);
   if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
       tm.tm_min < 0 || tm.tm_min >= 60) {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   r1 = r2 + 1;
   tm.tm_sec = (int)grn_atoui(r1, rend, &r2);
   if (r1 == r2 ||
       tm.tm_sec < 0 || tm.tm_sec > 61 /* leap 2sec */) {
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   r1 = r2;
 
-  if ((tv->tv_sec = (int32_t) mktime(&tm)) == -1) { return grn_invalid_argument; }
+  if ((tv->tv_sec = (int32_t) mktime(&tm)) == -1) { return GRN_INVALID_ARGUMENT; }
   if ((r1 + 1) < rend && *r1 == '.') { r1++; }
   uv = grn_atoi(r1, rend, &r2);
   while (r2 < r1 + 6) {
     uv *= 10;
     r2++;
   }
-  if (uv >= 1000000) { return grn_invalid_argument; }
+  if (uv >= 1000000) { return GRN_INVALID_ARGUMENT; }
   tv->tv_usec = uv;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 #ifdef USE_FAIL_MALLOC
@@ -255,8 +255,8 @@ grn_ctx_ql_init(grn_ctx *ctx, int flags)
 grn_rc
 grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
 {
-  if (!ctx) { return grn_invalid_argument; }
-  // if (ctx->stat != GRN_QL_FIN) { return grn_invalid_argument; }
+  if (!ctx) { return GRN_INVALID_ARGUMENT; }
+  // if (ctx->stat != GRN_QL_FIN) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   ctx->flags = flags;
   ctx->stat = GRN_QL_WAIT_EXPR;
@@ -284,9 +284,9 @@ grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
 grn_rc
 grn_ctx_fin(grn_ctx *ctx)
 {
-  grn_rc rc = grn_success;
-  if (!ctx) { return grn_invalid_argument; }
-  if (ctx->stat == GRN_QL_FIN) { return grn_invalid_argument; }
+  grn_rc rc = GRN_SUCCESS;
+  if (!ctx) { return GRN_INVALID_ARGUMENT; }
+  if (ctx->stat == GRN_QL_FIN) { return GRN_INVALID_ARGUMENT; }
   MUTEX_LOCK(grn_glock);
   ctx->next->prev = ctx->prev;
   ctx->prev->next = ctx->next;
@@ -437,7 +437,7 @@ grn_rc
 grn_fin(void)
 {
   grn_ctx *ctx = &grn_gctx;
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   grn_io_fin();
   grn_ctx_fin(ctx);
   grn_token_fin();
@@ -481,7 +481,7 @@ grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags)
     grn_com_sqtp *com = grn_com_sqtp_copen(ctx, NULL, host, port);
     if (com) {
       ctx->impl->com = com;
-      return grn_success;
+      return GRN_SUCCESS;
     }
   }
   return ctx->rc;
@@ -498,7 +498,7 @@ grn_ctx_close(grn_ctx *ctx)
 grn_rc
 grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
 {
-  if (!ctx) { return grn_invalid_argument; }
+  if (!ctx) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   if (ctx->impl) {
     if (ctx->impl->com) {
@@ -529,7 +529,7 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       }
     }
   }
-  ERR(grn_invalid_argument, "invalid ctx assigned");
+  ERR(GRN_INVALID_ARGUMENT, "invalid ctx assigned");
 exit :
   return ctx->rc;
 }
@@ -537,7 +537,7 @@ exit :
 grn_rc
 grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 {
-  if (!ctx) { return grn_invalid_argument; }
+  if (!ctx) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   if (ctx->stat == GRN_QL_QUIT) {
     *flags = GRN_QL_QUIT;
@@ -570,7 +570,7 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         unsigned int head, tail;
         unsigned int *offsets = (unsigned int *) ctx->impl->subbuf.u.b.head;
         int npackets = GRN_BULK_VSIZE(&ctx->impl->subbuf) / sizeof(unsigned int);
-        if (npackets < ctx->impl->bufcur) { return grn_invalid_argument; }
+        if (npackets < ctx->impl->bufcur) { return GRN_INVALID_ARGUMENT; }
         head = ctx->impl->bufcur ? offsets[ctx->impl->bufcur - 1] : 0;
         tail = ctx->impl->bufcur < npackets ? offsets[ctx->impl->bufcur] : GRN_BULK_VSIZE(buf);
         *str = buf->u.b.head + head;
@@ -580,7 +580,7 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       }
     }
   }
-  ERR(grn_invalid_argument, "invalid ctx assigned");
+  ERR(GRN_INVALID_ARGUMENT, "invalid ctx assigned");
 exit :
   return ctx->rc;
 }
@@ -621,7 +621,7 @@ grn_ql_recv_handler_set(grn_ctx *ctx, void (*func)(grn_ctx *, int, void *), void
 grn_rc
 grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info)
 {
-  if (!ctx || !ctx->impl) { return grn_invalid_argument; }
+  if (!ctx || !ctx->impl) { return GRN_INVALID_ARGUMENT; }
   if (ctx->impl->com) {
     info->fd = ctx->impl->com->com.fd;
     info->com_status = ctx->impl->com_status;
@@ -635,7 +635,7 @@ grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info)
     info->outbuf = &ctx->impl->outbuf;
     info->stat = ctx->stat;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 
@@ -674,7 +674,7 @@ grn_del(const char *key)
 {
   if (!grn_gctx.impl || !grn_gctx.impl->symbols) {
     GRN_LOG(grn_log_warning, "grn_del(%s) failed", key);
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   return grn_hash_delete(&grn_gctx, grn_gctx.impl->symbols, key, strlen(key), NULL);
 }
@@ -751,13 +751,13 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
 {
   if (!ctx) { return; }
   if (!ctx->impl) {
-    ERR(grn_invalid_argument,"ctx without impl passed.");
+    ERR(GRN_INVALID_ARGUMENT,"ctx without impl passed.");
     return;
   }
   {
     uint64_t *header = &((uint64_t *)ptr)[-1];
     if (*header >= N_SEGMENTS) {
-      ERR(grn_invalid_argument,"invalid ptr passed. ptr=%p seg=%zu", ptr, *header);
+      ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%zu", ptr, *header);
       return;
     }
     {
@@ -765,7 +765,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
       grn_io_mapinfo *mi = &ctx->impl->segs[i];
       if (mi->count & SEGMENT_VLEN) {
         if (mi->map != header) {
-          ERR(grn_invalid_argument,"invalid ptr passed. ptr=%p seg=%d", ptr, i);
+          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%d", ptr, i);
           return;
         }
         //GRN_LOG(grn_log_notice, "umap i=%d (%d)", i, mi->nref * grn_pagesize);
@@ -773,7 +773,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
         mi->map = NULL;
       } else {
         if (!mi->map) {
-          ERR(grn_invalid_argument,"invalid ptr passed. ptr=%p seg=%d", ptr, i);
+          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%d", ptr, i);
           return;
         }
         mi->count--;
@@ -849,14 +849,14 @@ grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
 {
   if (!ctx) { return; }
   if (!ctx->impl) {
-    ERR(grn_invalid_argument,"ctx without impl passed.");
+    ERR(GRN_INVALID_ARGUMENT,"ctx without impl passed.");
     return;
   }
   {
     int32_t i = ctx->impl->lifoseg, done = 0;
     grn_io_mapinfo *mi = &ctx->impl->segs[i];
     if (i < 0) {
-      ERR(grn_invalid_argument, "lifo buffer is void");
+      ERR(GRN_INVALID_ARGUMENT, "lifo buffer is void");
       return;
     }
     for (; i >= 0; i--, mi--) {
@@ -1289,7 +1289,7 @@ grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info)
   } else {
     grn_logger = &default_logger;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 int

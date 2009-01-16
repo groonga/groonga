@@ -219,7 +219,7 @@ pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node *n)
 inline static grn_rc
 pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, unsigned int len)
 {
-  if (!key || !len) { return grn_invalid_argument; }
+  if (!key || !len) { return GRN_INVALID_ARGUMENT; }
   PAT_LEN_SET(n, len);
   if (len <= sizeof(uint32_t)) {
     PAT_IMD_ON(n);
@@ -228,7 +228,7 @@ pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, un
     PAT_IMD_OFF(n);
     n->key = key_put(ctx, pat, key, len);
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 /* delinfo operation */
@@ -261,12 +261,12 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
   grn_id d, *p = NULL;
   pat_node *ln, *dn;
   // grn_log("delinfo_turn_2> di->d=%d di->ld=%d stat=%d", di->d, di->ld, di->stat);
-  if (di->stat != DL_PHASE1) { return grn_success; }
+  if (di->stat != DL_PHASE1) { return GRN_SUCCESS; }
   PAT_AT(pat, di->ld, ln);
-  if (!ln) { return grn_invalid_argument; }
-  if (!(d = di->d)) { return grn_invalid_argument; }
+  if (!ln) { return GRN_INVALID_ARGUMENT; }
+  if (!(d = di->d)) { return GRN_INVALID_ARGUMENT; }
   PAT_AT(pat, d, dn);
-  if (!dn) { return grn_invalid_argument; }
+  if (!dn) { return GRN_INVALID_ARGUMENT; }
   PAT_DEL_OFF(ln);
   PAT_DEL_OFF(dn);
   {
@@ -275,7 +275,7 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
     int c0 = -1, c;
     uint32_t len = PAT_LEN(dn) * 16;
     const uint8_t *key = pat_node_get_key(ctx, pat, dn);
-    if (!key) { return grn_invalid_argument; }
+    if (!key) { return GRN_INVALID_ARGUMENT; }
     PAT_AT(pat, 0, rn);
     p0 = &rn->lr[1];
     while ((r = *p0)) {
@@ -323,7 +323,7 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
   di->stat = DL_PHASE2;
   di->d = d;
   // grn_log("delinfo_turn_2< di->d=%d di->ld=%d", di->d, di->ld);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 inline static grn_rc
@@ -331,9 +331,9 @@ delinfo_turn_3(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
 {
   pat_node *dn;
   uint32_t size;
-  if (di->stat != DL_PHASE2) { return grn_success; }
+  if (di->stat != DL_PHASE2) { return GRN_SUCCESS; }
   PAT_AT(pat, di->d, dn);
-  if (!dn) { return grn_invalid_argument; }
+  if (!dn) { return GRN_INVALID_ARGUMENT; }
   if (di->shared) {
     PAT_IMD_ON(dn);
     size = 0;
@@ -348,7 +348,7 @@ delinfo_turn_3(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
   //  dn->lr[1] = GRN_PAT_DELETED;
   dn->lr[0] = pat->header->garbages[size];
   pat->header->garbages[size] = di->d;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 inline static grn_pat_delinfo *
@@ -492,8 +492,8 @@ grn_rc
 grn_pat_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) {
-    ERR(grn_invalid_argument, "path is null");
-    return grn_invalid_argument;
+    ERR(GRN_INVALID_ARGUMENT, "path is null");
+    return GRN_INVALID_ARGUMENT;
   }
   return grn_io_remove(ctx, path);
 }
@@ -857,11 +857,11 @@ grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
         grn_search_flags flags = GRN_TABLE_ADD;
         grn_hash_lookup(ctx, h, &r, sizeof(grn_id), NULL, &flags);
       }
-      return grn_success;
+      return GRN_SUCCESS;
     }
     break;
   }
-  return grn_end_of_data;
+  return GRN_END_OF_DATA;
 }
 
 grn_hash *
@@ -889,10 +889,10 @@ grn_pat_suffix_search(grn_ctx *ctx, grn_pat *pat,
     if (grn_hash_lookup(ctx, h, &r, sizeof(grn_id), (void **) &offset, &flags)) {
       *offset = 0;
       if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) { sis_collect(ctx, pat, h, r, 1); }
-      return grn_success;
+      return GRN_SUCCESS;
     }
   }
-  return grn_end_of_data;
+  return GRN_END_OF_DATA;
 }
 
 grn_hash *
@@ -960,17 +960,17 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
   c = -1;
   p = &rn->lr[1];
   for (;;) {
-    if (!(r = *p)) { return grn_invalid_argument; }
+    if (!(r = *p)) { return GRN_INVALID_ARGUMENT; }
     PAT_AT(pat, r, rn);
     if (!rn) { return grn_invalid_format; }
     ch = PAT_CHK(rn);
-    if (len <= ch) { return grn_invalid_argument; }
+    if (len <= ch) { return GRN_INVALID_ARGUMENT; }
     if (c >= ch) {
       const uint8_t *k = pat_node_get_key(ctx, pat, rn);
-      if (!k) { return grn_invalid_argument; }
+      if (!k) { return GRN_INVALID_ARGUMENT; }
       if (key_size == PAT_LEN(rn) && !memcmp(k, key, key_size)) {
         break; /* found */
-      } else {  return grn_invalid_argument; }
+      } else {  return GRN_INVALID_ARGUMENT; }
     }
     c0 = c;
     p0 = p;
@@ -983,7 +983,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
   }
   if (optarg && optarg->func &&
       !optarg->func(ctx, (grn_obj *)pat, r, optarg->func_arg)) {
-    return grn_success;
+    return GRN_SUCCESS;
   }
   direction = (rn0->lr[1] == r);
   otherside = direction ? rn0->lr[0] : rn0->lr[1];
@@ -1065,7 +1065,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
     }
   }
   pat->header->nrecords--;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 static grn_rc
@@ -1075,9 +1075,9 @@ _grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) {
     grn_id id = grn_pat_at(ctx, pat, key, key_size, NULL);
     if (id && grn_pat_delete_with_sis(ctx, pat, id, optarg)) {
-      return grn_success;
+      return GRN_SUCCESS;
     }
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   return __grn_pat_del(ctx, pat, key, key_size, 0, optarg);
 }
@@ -1087,7 +1087,7 @@ grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
                grn_table_delete_optarg *optarg)
 {
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  if (!pat || !key || !key_size) { return grn_invalid_argument; }
+  if (!pat || !key || !key_size) { return GRN_INVALID_ARGUMENT; }
   KEY_ENCODE(pat, keybuf, key, key_size);
   return _grn_pat_delete(ctx, pat, key, key_size, optarg);
 }
@@ -1095,7 +1095,7 @@ grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
 uint32_t
 grn_pat_size(grn_ctx *ctx, grn_pat *pat)
 {
-  if (!pat) { return grn_invalid_argument; }
+  if (!pat) { return GRN_INVALID_ARGUMENT; }
   return pat->header->nrecords;
 }
 
@@ -1113,7 +1113,7 @@ grn_rc
 grn_pat_delete_by_id(grn_ctx *ctx, grn_pat *pat, grn_id id,
                      grn_table_delete_optarg *optarg)
 {
-  if (!pat || !id) { return grn_invalid_argument; }
+  if (!pat || !id) { return GRN_INVALID_ARGUMENT; }
   {
     uint32_t key_size;
     const char *key = _grn_pat_key(ctx, pat, id, &key_size);
@@ -1127,7 +1127,7 @@ grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize
   int len;
   uint8_t *key;
   pat_node *node;
-  if (!pat) { return grn_invalid_argument; }
+  if (!pat) { return GRN_INVALID_ARGUMENT; }
   PAT_AT(pat, id, node);
   if (!node) { return 0; }
   if (!(key = pat_node_get_key(ctx, pat, node))) { return 0; }
@@ -1148,7 +1148,7 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
   uint32_t len;
   uint8_t *key;
   pat_node *node;
-  if (!pat) { return grn_invalid_argument; }
+  if (!pat) { return GRN_INVALID_ARGUMENT; }
   PAT_AT(pat, id, node);
   if (!node) { return 0; }
   if (!(key = pat_node_get_key(ctx, pat, node))) { return 0; }
@@ -1217,17 +1217,17 @@ grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *value, int flags)
         switch ((flags & GRN_OBJ_SET_MASK)) {
         case GRN_OBJ_SET :
           memcpy(v, value, value_size);
-          return grn_success;
+          return GRN_SUCCESS;
         default :
           // todo : support other types.
-          return grn_invalid_argument;
+          return GRN_INVALID_ARGUMENT;
         }
       } else {
-        return grn_memory_exhausted;
+        return GRN_NO_MEMORY_AVAILABLE;
       }
     }
   }
-  return grn_invalid_argument;
+  return GRN_INVALID_ARGUMENT;
 }
 
 grn_rc
@@ -1235,7 +1235,7 @@ grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned *flags,
              grn_encoding *encoding, unsigned *nrecords, unsigned *file_size)
 {
   ERRCLR(NULL);
-  if (!pat) { return grn_invalid_argument; }
+  if (!pat) { return GRN_INVALID_ARGUMENT; }
   if (key_size) { *key_size = pat->key_size; }
   if (flags) { *flags = pat->obj.flags; }
   if (encoding) { *encoding = pat->encoding; }
@@ -1248,7 +1248,7 @@ grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned *flags,
     }
     *file_size = (unsigned) tmp; /* FIXME: inappropriate cast */
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 int
@@ -1588,7 +1588,7 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
     }
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 inline static grn_rc
@@ -1656,7 +1656,7 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
     }
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_pat_cursor *

@@ -475,7 +475,7 @@ grn_query_rest(grn_ctx *ctx, grn_query *q, const char ** const rest)
 grn_rc
 grn_query_close(grn_ctx *ctx, grn_query *q)
 {
-  if (!q) { return grn_invalid_argument; }
+  if (!q) { return GRN_INVALID_ARGUMENT; }
   if (q->opt.weight_vector) {
     GRN_FREE(q->opt.weight_vector);
   }
@@ -490,7 +490,7 @@ grn_query_close(grn_ctx *ctx, grn_query *q)
     GRN_FREE(q->snip_conds);
   }
   GRN_FREE(q);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 /* FIXME: for test */
@@ -499,7 +499,7 @@ grn_query_str(grn_query *q, const char **str, unsigned int *len)
 {
   if (str) { *str = q->str; }
   if (len) { *len = q->str_end - q->str; }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 static void
@@ -621,7 +621,7 @@ scan_query(grn_ctx *ctx, grn_query *q, grn_nstr *nstr, grn_id section, grn_cell 
   default :
     break;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 static grn_rc
@@ -629,9 +629,9 @@ alloc_snip_conds(grn_ctx *ctx, grn_query *q)
 {
   if (!(q->snip_conds = GRN_CALLOC(sizeof(snip_cond) * q->cur_expr))) {
     GRN_LOG(grn_log_alert, "snip_cond allocation failed");
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -640,14 +640,14 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
 {
   unsigned int i;
   grn_rc rc;
-  if (!q || !strs || !nstrs) { return grn_invalid_argument; }
+  if (!q || !strs || !nstrs) { return GRN_INVALID_ARGUMENT; }
   *found = *score = 0;
   if (!q->snip_conds) {
     if ((rc = alloc_snip_conds(ctx, q))) { return rc; }
     flags |= GRN_QUERY_SCAN_ALLOCCONDS;
   } else if (flags & GRN_QUERY_SCAN_ALLOCCONDS) {
     GRN_LOG(grn_log_warning, "invalid flags specified on grn_query_scan")
-    return grn_invalid_argument;
+    return GRN_INVALID_ARGUMENT;
   }
   for (i = 0; i < nstrs; i++) {
     grn_nstr *n;
@@ -659,7 +659,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
       n = grn_fakenstr_open(ctx, *(strs + i), *(str_lens + i), q->encoding,
                         GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK);
     }
-    if (!n) { return grn_memory_exhausted; }
+    if (!n) { return GRN_NO_MEMORY_AVAILABLE; }
     if ((rc = scan_query(ctx, q, n, i + 1, q->expr, &sc, grn_sel_or, flags, found, score))) {
       grn_nstr_close(n);
       return rc;
@@ -667,7 +667,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     flags &= ~GRN_QUERY_SCAN_ALLOCCONDS;
     grn_nstr_close(n);
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 /* TODO: delete overlapping logic with exec_query */
@@ -714,7 +714,7 @@ snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_oper
     ope = NIL;
     op1 = q->default_op;
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_snip *
@@ -843,7 +843,7 @@ grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_sel_ope
     exec_search(ctx, i, q, q->expr, r, op);
     GRN_LOG(grn_log_info, "hits(partial)=%d", *r->n_entries);
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 #ifdef DEBUG

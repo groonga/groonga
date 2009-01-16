@@ -92,17 +92,17 @@ grn_ra_open(grn_ctx *ctx, const char *path)
 grn_rc
 grn_ra_info(grn_ctx *ctx, grn_ra *ra, unsigned int *element_size, grn_id *curr_max)
 {
-  if (!ra) { return grn_invalid_argument; }
+  if (!ra) { return GRN_INVALID_ARGUMENT; }
   if (element_size) { *element_size = ra->header->element_size; }
   if (curr_max) { *curr_max = ra->header->curr_max; }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_ra_close(grn_ctx *ctx, grn_ra *ra)
 {
   grn_rc rc;
-  if (!ra) { return grn_invalid_argument; }
+  if (!ra) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ctx, ra->io);
   GRN_GFREE(ra);
   return rc;
@@ -111,7 +111,7 @@ grn_ra_close(grn_ctx *ctx, grn_ra *ra)
 grn_rc
 grn_ra_remove(grn_ctx *ctx, const char *path)
 {
-  if (!path) { return grn_invalid_argument; }
+  if (!path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(ctx, path);
 }
 
@@ -289,16 +289,16 @@ grn_ja_open(grn_ctx *ctx, const char *path)
 grn_rc
 grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size)
 {
-  if (!ja) { return grn_invalid_argument; }
+  if (!ja) { return GRN_INVALID_ARGUMENT; }
   if (max_element_size) { *max_element_size = ja->header->max_element_size; }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
-  if (!ja) { return grn_invalid_argument; }
+  if (!ja) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ctx, ja->io);
   GRN_GFREE(ja);
   return rc;
@@ -307,7 +307,7 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 grn_rc
 grn_ja_remove(grn_ctx *ctx, const char *path)
 {
-  if (!path) { return grn_invalid_argument; }
+  if (!path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(ctx, path);
 }
 
@@ -342,10 +342,10 @@ grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 grn_rc
 grn_ja_unref(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len)
 {
-  if (!value) { return grn_invalid_argument; }
+  if (!value) { return GRN_INVALID_ARGUMENT; }
   // todo : depend on grn_io_win_map2 implementation. unmap2 should be used
   if (value_len > JA_SEGMENT_SIZE) { GRN_FREE(value); }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -353,13 +353,13 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
 {
   grn_ja_ginfo *ginfo;
   uint32_t seg, pos, element_size, size, m, *gseg;
-  if (!einfo->size) { return grn_success; }
-  if (einfo->tail[1] & JA_IMMEDIATE) { return grn_success; }
+  if (!einfo->size) { return GRN_SUCCESS; }
+  if (einfo->tail[1] & JA_IMMEDIATE) { return GRN_SUCCESS; }
   EINFO_GET(einfo, seg, pos, element_size);
   if (element_size > JA_SEGMENT_SIZE) {
     int n = (pos + element_size + JA_SEGMENT_SIZE - 1) >> W_OF_JA_SEGMENT;
     for (; n--; seg++) { HEADER_SEGMENTS_OFF(ja, seg); }
-    return grn_success;
+    return GRN_SUCCESS;
   }
   {
     int es = element_size - 1;
@@ -370,19 +370,19 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
   gseg = &ja->header->garbages[m - W_OF_JA_EINFO];
   while (*gseg) {
     GRN_IO_SEG_MAP(ja->io, *gseg, ginfo);
-    if (!ginfo) { return grn_memory_exhausted; }
+    if (!ginfo) { return GRN_NO_MEMORY_AVAILABLE; }
     if (ginfo->nrecs < N_GARBAGES) { break; }
     gseg = &ginfo->next;
   }
   if (!*gseg) {
     uint32_t i = 0;
     while (HEADER_SEGMENTS_AT(ja, i)) {
-      if (++i >= ja->header->max_segments) { return grn_memory_exhausted; }
+      if (++i >= ja->header->max_segments) { return GRN_NO_MEMORY_AVAILABLE; }
     }
     HEADER_SEGMENTS_ON(ja, i);
     *gseg = i;
     GRN_IO_SEG_MAP(ja->io, *gseg, ginfo);
-    if (!ginfo) { return grn_memory_exhausted; }
+    if (!ginfo) { return GRN_NO_MEMORY_AVAILABLE; }
     ginfo->head = 0;
     ginfo->tail = 0;
     ginfo->nrecs = 0;
@@ -393,7 +393,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
   if (++ginfo->head == N_GARBAGES) { ginfo->head = 0; }
   ginfo->nrecs++;
   ja->header->ngarbages[m - W_OF_JA_EINFO]++;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -407,18 +407,18 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei)
   if (*pseg == SEG_NOT_ASSIGNED) {
     int i = 0;
     while (HEADER_SEGMENTS_AT(ja, i)) {
-      if (++i >= ja->header->max_segments) { return grn_memory_exhausted; }
+      if (++i >= ja->header->max_segments) { return GRN_NO_MEMORY_AVAILABLE; }
     }
     HEADER_SEGMENTS_ON(ja, i);
     *pseg = i;
   }
   GRN_IO_SEG_MAP(ja->io, *pseg, einfo);
-  if (!einfo) { return grn_memory_exhausted; }
+  if (!einfo) { return GRN_NO_MEMORY_AVAILABLE; }
   eback = einfo[pos];
   einfo[pos] = *ei;
   GRN_SET_64BIT(&einfo[pos], *ei);
   grn_ja_free(ctx, ja, &eback);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 #define N_GARBAGES_TH 10
@@ -434,7 +434,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
   if (element_size < 8) {
     einfo->tail[1] = element_size * 2 + JA_IMMEDIATE;
     iw->addr = (void *)einfo;
-    return grn_success;
+    return GRN_SUCCESS;
   }
   if (element_size > JA_SEGMENT_SIZE) {
     int i, j, n = (element_size + JA_SEGMENT_SIZE - 1) >> W_OF_JA_SEGMENT;
@@ -445,16 +445,16 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
         if (i == j + n) {
           j++;
           addr = grn_io_win_map2(ja->io, ctx, iw, j, 0, element_size, grn_io_wronly);
-          if (!addr) { return grn_memory_exhausted; }
+          if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
           EINFO_SET(einfo, j, 0, element_size);
           // einfo->tail[1] = JA_HUGE;
           for (; j <= i; j++) { HEADER_SEGMENTS_ON(ja, j); }
-          return grn_success;
+          return GRN_SUCCESS;
         }
       }
     }
     GRN_LOG(grn_log_crit, "ja full. requested element_size=%d.", element_size);
-    return grn_memory_exhausted;
+    return GRN_NO_MEMORY_AVAILABLE;
   } else {
     ja_pos *vp;
     int m, aligned_size, es = element_size - 1;
@@ -467,12 +467,12 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
       gseg = &ja->header->garbages[m - W_OF_JA_EINFO];
       while (*gseg) {
         GRN_IO_SEG_MAP(ja->io, *gseg, ginfo);
-        if (!ginfo) { return grn_memory_exhausted; }
+        if (!ginfo) { return GRN_NO_MEMORY_AVAILABLE; }
         if (ginfo->next || ginfo->nrecs > N_GARBAGES_TH) {
           seg = ginfo->recs[ginfo->tail].seg;
           pos = ginfo->recs[ginfo->tail].pos;
           GRN_IO_SEG_MAP(ja->io, seg, addr);
-          if (!addr) { return grn_memory_exhausted; }
+          if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
           EINFO_SET(einfo, seg, pos, element_size);
           iw->addr = (byte *)addr + pos;
           if (++ginfo->tail == N_GARBAGES) { ginfo->tail = 0; }
@@ -482,7 +482,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
             HEADER_SEGMENTS_OFF(ja, *gseg);
             *gseg = ginfo->next;
           }
-          return grn_success;
+          return GRN_SUCCESS;
         }
         gseg = &ginfo->next;
       }
@@ -491,7 +491,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
     if (!vp->seg) {
       int i = 0;
       while (HEADER_SEGMENTS_AT(ja, i)) {
-        if (++i >= ja->header->max_segments) { return grn_memory_exhausted; }
+        if (++i >= ja->header->max_segments) { return GRN_NO_MEMORY_AVAILABLE; }
       }
       HEADER_SEGMENTS_ON(ja, i);
       vp->seg = i;
@@ -500,13 +500,13 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
     EINFO_SET(einfo, vp->seg, vp->pos, element_size);
     GRN_IO_SEG_MAP(ja->io, vp->seg, addr);
     // printf("addr=%p seg=%d pos=%d\n", addr, vp->seg, vp->pos);
-    if (!addr) { return grn_memory_exhausted; }
+    if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
     iw->addr = (byte *)addr + vp->pos;
     if ((vp->pos += aligned_size) == JA_SEGMENT_SIZE) {
       vp->seg = 0;
       vp->pos = 0;
     }
-    return grn_success;
+    return GRN_SUCCESS;
   }
 }
 
@@ -550,7 +550,7 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
 {
   grn_obj header;
   uint32_t last = 0;
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   grn_vector *v = (grn_vector *)vector;
   int i, n = grn_vector_size(ctx, vector);
   GRN_OBJ_INIT(&header, GRN_BULK, 0);
@@ -698,16 +698,16 @@ grn_ja_open(grn_ctx *ctx, const char *path)
 grn_rc
 grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size)
 {
-  if (!ja) { return grn_invalid_argument; }
+  if (!ja) { return GRN_INVALID_ARGUMENT; }
   if (max_element_size) { *max_element_size = 4294967295U; }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
-  if (!ja) { return grn_invalid_argument; }
+  if (!ja) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ja->io);
   GRN_GFREE(ja);
   return rc;
@@ -716,7 +716,7 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 grn_rc
 grn_ja_remove(grn_ctx *ctx, const char *path)
 {
-  if (!path) { return grn_invalid_argument; }
+  if (!path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(path);
 }
 
@@ -849,7 +849,7 @@ grn_rc
 grn_ja_unref(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len)
 {
   GRN_FREE((void *)(((uintptr_t) value) - sizeof(grn_io_ja_ehead)));
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 #define SEG_ESEG 0xffffffff
@@ -866,7 +866,7 @@ assign_eseg(grn_ja *ja, uint32_t lseg)
       }
       ja->dsegs[i] = SEG_ESEG;
       ja->esegs[lseg] = i;
-      return grn_success;
+      return GRN_SUCCESS;
     }
   }
   return grn_internal_error;
@@ -878,7 +878,7 @@ assign_rec(grn_ja *ja, int value_len)
   if (ja->header->curr_pos) {
     uint32_t doff = (ja->header->curr_pos & JA_EPOS_MASK) << JA_ALIGN_WIDTH;
     if (doff + value_len + sizeof(grn_io_ja_ehead) <= (1 << JA_DSEG_WIDTH)) {
-      return grn_success;
+      return GRN_SUCCESS;
     }
   }
   {
@@ -891,7 +891,7 @@ assign_rec(grn_ja *ja, int value_len)
         if (ja->dsegs[i] == 0) {
           if (++j == nseg) {
             ja->header->curr_pos = (i + 1 - j) << JA_EPOS_WIDTH;
-            return grn_success;
+            return GRN_SUCCESS;
           }
         } else {
           j = 0;
@@ -905,7 +905,7 @@ assign_rec(grn_ja *ja, int value_len)
 inline static grn_rc
 grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, int value_len, int flags)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   uint32_t newpos = 0;
   grn_io_ja_einfo *ep;
   {
@@ -981,7 +981,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, int value_len,
   if (deflateInit2(&zstream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15 /* windowBits */,
                    8 /* memLevel */, Z_DEFAULT_STRATEGY) != Z_OK) { return grn_other_error; }
   zvalue_len = deflateBound(&zstream, value_len);
-  if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof (uint64_t)))) { deflateEnd(&zstream); return grn_memory_exhausted; }
+  if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof (uint64_t)))) { deflateEnd(&zstream); return GRN_NO_MEMORY_AVAILABLE; }
   zstream.next_out = (Bytef *)((uint64_t *)zvalue + 1);
   zstream.avail_out = zvalue_len;
   if (deflate(&zstream, Z_FINISH) != Z_STREAM_END) {
@@ -1005,8 +1005,8 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, int value_len, 
   grn_rc rc;
   void *lvalue, *lwork;
   lzo_uint lvalue_len = value_len + value_len / 16 + 64 + 3;
-  if (!(lvalue = GRN_MALLOC(lvalue_len + sizeof (uint64_t)))) { return grn_memory_exhausted; }
-  if (!(lwork = GRN_MALLOC(LZO1X_1_MEM_COMPRESS))) { GRN_FREE(lvalue); return grn_memory_exhausted; }
+  if (!(lvalue = GRN_MALLOC(lvalue_len + sizeof (uint64_t)))) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (!(lwork = GRN_MALLOC(LZO1X_1_MEM_COMPRESS))) { GRN_FREE(lvalue); return GRN_NO_MEMORY_AVAILABLE; }
   if (lzo1x_1_compress(value, value_len, (lzo_bytep)((uint64_t *)lvalue + 1), &lvalue_len, lwork) != LZO_E_OK) {
     GRN_FREE(lwork);
     GRN_FREE(lvalue);
@@ -1039,7 +1039,7 @@ grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, int value_len, int 
 static grn_rc
 grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t dseg)
 {
-  grn_rc rc = grn_success;
+  grn_rc rc = GRN_SUCCESS;
   grn_io_win iw;
   uint32_t epos = dseg << JA_EPOS_WIDTH;
   uint32_t segsize = (1 << JA_DSEG_WIDTH);
@@ -1163,7 +1163,7 @@ grn_vgram_buf_add(grn_vgram_buf *b, grn_id tid)
   dummyp = dummybuf;
   GRN_B_ENC(tid, dummyp);
   simple_sum += dummyp - dummybuf;
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 typedef struct {
@@ -1209,7 +1209,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
     }
     {
       grn_set *th = grn_set_open(sizeof(grn_id), sizeof(int), 0);
-      if (!th) { return grn_memory_exhausted; }
+      if (!th) { return GRN_NO_MEMORY_AVAILABLE; }
       if (t0 == b->tvp) { GRN_LOG(grn_log_debug, "t0 == tvp"); }
       for (t0 = b->tvs; t0 < b->tvp; t0++) {
         grn_id vid, vid0 = *t0, vid1 = 0;
@@ -1246,7 +1246,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
             key.tid = v2->tid;
             if (!(v2->vid = grn_sym_get(vgram->vgram, (char *)&key))) {
               grn_set_close(th);
-              return grn_memory_exhausted;
+              return GRN_NO_MEMORY_AVAILABLE;
             }
           }
           vid = *t0 = v2->vid * 2 + 1;
@@ -1259,7 +1259,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
           int *tf;
           if (!grn_set_get(th, &vid, (void **) &tf)) {
             grn_set_close(th);
-            return grn_memory_exhausted;
+            return GRN_NO_MEMORY_AVAILABLE;
           }
           (*tf)++;
         }
@@ -1273,7 +1273,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
         uint8_t *ps = GRN_GMALLOC(b->len * 2), *pp, *pe;
         if (!ps) {
           grn_set_close(th);
-          return grn_memory_exhausted;
+          return GRN_NO_MEMORY_AVAILABLE;
         }
         pp = ps;
         pe = ps + b->len * 2;
@@ -1284,7 +1284,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
         if (!ehs) {
           GRN_GFREE(ps);
           grn_set_close(th);
-          return grn_memory_exhausted;
+          return GRN_NO_MEMORY_AVAILABLE;
         }
         GRN_B_ENC(th->n_entries, pp);
         for (ehp = ehs, ehe = ehs + th->n_entries; ehp < ehe; ehp++, j++) {
@@ -1312,26 +1312,26 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
       grn_set_close(th);
     }
   }
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_vgram_buf_close(grn_vgram_buf *b)
 {
-  if (!b) { return grn_invalid_argument; }
+  if (!b) { return GRN_INVALID_ARGUMENT; }
   if (b->tvs) { GRN_GFREE(b->tvs); }
   if (b->vps) { GRN_GFREE(b->vps); }
   GRN_GFREE(b);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_vgram_close(grn_vgram *vgram)
 {
-  if (!vgram) { return grn_invalid_argument; }
+  if (!vgram) { return GRN_INVALID_ARGUMENT; }
   GRN_LOG(grn_log_debug, "len=%d img=%d skip=%d simple=%d", len_sum, img_sum, skip_sum, simple_sum);
   grn_sym_close(vgram->vgram);
   GRN_GFREE(vgram);
-  return grn_success;
+  return GRN_SUCCESS;
 }
 */

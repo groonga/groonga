@@ -27,16 +27,66 @@ typedef unsigned grn_id;
 #define GRN_ID_MAX 0x3fffffff
 
 typedef enum {
-  grn_success = 0,
-  grn_memory_exhausted,
+  GRN_SUCCESS = 0,
+  GRN_END_OF_DATA = 1,
+  GRN_UNKNOWN_ERROR = -1,
+  GRN_OPERATION_NOT_PERMITTED = -2,
+  GRN_NO_SUCH_FILE_OR_DIRECTORY = -3,
+  GRN_NO_SUCH_PROCESS = -4,
+  GRN_INTERRUPTED_FUNCTION_CALL = -5,
+  GRN_INPUT_OUTPUT_ERROR = -6,
+  GRN_NO_SUCH_DEVICE_OR_ADDRESS = -7,
+  GRN_ARG_LIST_TOO_LONG = -8,
+  GRN_EXEC_FORMAT_ERROR = -9,
+  GRN_BAD_FILE_DESCRIPTOR = -10,
+  GRN_NO_CHILD_PROCESSES = -11,
+  GRN_RESOURCE_TEMPORARILY_UNAVAILABLE = -12,
+  GRN_NOT_ENOUGH_SPACE = -13,
+  GRN_PERMISSION_DENIED = -14,
+  GRN_BAD_ADDRESS = -15,
+  GRN_RESOURCE_DEVICE = -16,
+  GRN_FILE_EXISTS = -17,
+  GRN_IMPROPER_LINK = -18,
+  GRN_NO_SUCH_DEVICE = -19,
+  GRN_NOT_A_DIRECTORY = -20,
+  GRN_IS_A_DIRECTORY = -21,
+  GRN_INVALID_ARGUMENT = -22,
+  GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM = -23,
+  GRN_TOO_MANY_OPEN_FILES = -24,
+  GRN_INAPPROPRIATE_I_O_CONTROL_OPERATION = -25,
+  GRN_FILE_TOO_LARGE = -26,
+  GRN_NO_SPACE_LEFT_ON_DEVICE = -27,
+  GRN_INVALID_SEEK = -28,
+  GRN_READ_ONLY_FILE_SYSTEM = -29,
+  GRN_TOO_MANY_LINKS = -30,
+  GRN_BROKEN_PIPE = -31,
+  GRN_DOMAIN_ERROR = -32,
+  GRN_RESULT_TOO_LARGE = -33,
+  GRN_RESOURCE_DEADLOCK_AVOIDED = -34,
+  GRN_NO_MEMORY_AVAILABLE = -35,
+  GRN_FILENAME_TOO_LONG = -36,
+  GRN_NO_LOCKS_AVAILABLE = -37,
+  GRN_FUNCTION_NOT_IMPLEMENTED = -38,
+  GRN_DIRECTORY_NOT_EMPTY = -39,
+  GRN_ILLEGAL_BYTE_SEQUENCE = -40,
+  GRN_SOCKET_NOT_INITIALISED = -41,
+  GRN_OPERATION_WOULD_BLOCK = -42,
+  GRN_ADDRESS_IS_NOT_AVAILABLE = -43,
+  GRN_NETWORK_IS_DOWN = -44,
+  GRN_NO_BUFFER = -45,
+  GRN_SOCKET_IS_ALREADY_CONNECTED = -46,
+  GRN_SOCKET_IS_NOT_CONNECTED = -47,
+  GRN_SOCKET_IS_ALREADY_SHUTDOWNED = -48,
+  GRN_OPERATION_TIMEOUT = -49,
+  GRN_CONNECTION_REFUSED = -50,
+  GRN_RESOURCE_BUSY = -51,
+  GRN_RANGE_ERROR = -52,
   grn_invalid_format,
   grn_file_operation_error,
-  grn_invalid_argument,
   grn_other_error,
   grn_external_error,
   grn_internal_error,
-  grn_abnormal_error,
-  grn_end_of_data
+  grn_abnormal_error
 } grn_rc;
 
 grn_rc grn_init(void);
@@ -91,7 +141,7 @@ struct _grn_ctx {
 };
 
 #define GRN_CTX_INITIALIZER \
-  { grn_success, 0, grn_enc_default, 0, grn_log_notice,\
+  { GRN_SUCCESS, 0, grn_enc_default, 0, grn_log_notice,\
     GRN_CTX_FIN, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL }
 
 #define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
@@ -478,7 +528,7 @@ int grn_table_get_key(grn_ctx *ctx, grn_obj *table,
  * @key_size: 検索keyのサイズ
  *
  * tableのkeyに対応するレコードを削除する。
- * 対応するレコードが存在しない場合はgrn_invalid_argumentを返す。
+ * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
                         const void *key, unsigned key_size);
@@ -489,7 +539,7 @@ grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
  * @id: レコードID
  *
  * tableのkeyに対応するレコードを削除する。
- * 対応するレコードが存在しない場合はgrn_invalid_argumentを返す。
+ * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
 
@@ -568,7 +618,7 @@ int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value)
  * @flags: grn_obj_set_valueのflagsと同様の値を指定できる。
  *
  * cursorのカレントレコードのvalueを引数の内容に置き換える。
- * cursorのカレントレコードが存在しない場合はgrn_invalid_argumentを返す。
+ * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
                                   void *value, int flags);
@@ -578,13 +628,13 @@ grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
  * @tc: 対象cursor
  *
  * cursorのカレントレコードを削除する。
- * cursorのカレントレコードが存在しない場合はgrn_invalid_argumentを返す。
+ * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 
 #define GRN_TABLE_EACH(ctx,table,head,tail,id,key,key_size,value,block) { \
   (ctx)->errlvl = GRN_OK;\
-  (ctx)->rc = grn_success;\
+  (ctx)->rc = GRN_SUCCESS;\
   if ((ctx)->seqno & 1) {\
     (ctx)->subno++;\
   } else {\
@@ -889,7 +939,7 @@ grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value
  *  GRN_OBJ_UNLOCK: 当該レコードのロックを解除する。
  *
  * objのIDに対応するレコードの値を更新する。
- * 対応するレコードが存在しない場合はgrn_invalid_argumentを返す。
+ * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 
 #define GRN_OBJ_SET_MASK   (0x07L)
