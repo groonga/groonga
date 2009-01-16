@@ -107,7 +107,7 @@ AC_ARG_WITH(groongahome,
   [AC_HELP_STRING([--with-groongahome=DIR],
     [specify Groonga home directory])],
   GROONGA_HOME="$withval",
-  GROONGA_HOME="${prefix}/lib/groonga/$PACKAGE_VERSION")
+  GROONGA_HOME="${prefix}/lib/$PACKAGE_NAME/$PACKAGE_VERSION")
 AC_DEFINE_UNQUOTED(GROONGA_HOME, "$GROONGA_HOME", "specified home directory")
 
 # log directory
@@ -115,7 +115,7 @@ AC_ARG_WITH(log,
   [AC_HELP_STRING([--with-log=PATH],
     [specify Groonga log path.])],
   GROONGA_LOG_PATH="$withval",
-  GROONGA_LOG_PATH="/var/log/groonga/groonga.log")
+  GROONGA_LOG_PATH="/var/log/$PACKAGE_NAME/$PACKAGE_NAME.log")
 AC_DEFINE_UNQUOTED(GROONGA_LOG_PATH, "$GROONGA_LOG_PATH", "specified log directory")
 
 # default encoding
@@ -125,14 +125,6 @@ AC_ARG_WITH(encoding,
   GROONGA_DEFAULT_ENCODING="$withval",
   GROONGA_DEFAULT_ENCODING="euc_jp")
 AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_ENCODING, "$GROONGA_DEFAULT_ENCODING", "specified default encoding")
-
-# default initial_n_segments
-AC_ARG_WITH(initial_n_segments,
-  [AC_HELP_STRING([--with-initial-n-segments=NUMBER],
-    [specify Groonga default initial_n_segments])],
-  GROONGA_DEFAULT_INITIAL_N_SEGMENTS="$withval",
-  GROONGA_DEFAULT_INITIAL_N_SEGMENTS="512")
-AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_INITIAL_N_SEGMENTS, $GROONGA_DEFAULT_INITIAL_N_SEGMENTS, "specified default initial_n_segments")
 
 # default query escalation threshold
 AC_ARG_WITH(query_escalation_threshold,

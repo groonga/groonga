@@ -121,9 +121,6 @@
 /* "specified default encoding" */
 #define SENAPPY_DEFAULT_ENCODING "euc_jp"
 
-/* "specified default initial_n_segments" */
-#define SENAPPY_DEFAULT_INITIAL_N_SEGMENTS 512
-
 /* "specified query escalation threshold" */
 #define SENAPPY_DEFAULT_QUERY_ESCALATION_THRESHOLD 0
 
