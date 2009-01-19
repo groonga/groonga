@@ -88,6 +88,10 @@ grn_rc grn_token_close(grn_token *ng);
 grn_rc grn_token_fin(void);
 grn_rc grn_token_validate(grn_ctx *ctx, grn_obj *table);
 
+grn_rc bigram_init(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv);
+grn_rc bigram_next(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv);
+grn_rc bigram_fin(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv);
+
 #ifdef __cplusplus
 }
 #endif

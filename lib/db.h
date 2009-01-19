@@ -187,6 +187,8 @@ const char *grn_vector_fetch(grn_ctx *ctx, grn_obj *vector, int i, unsigned int 
 int grn_vector_delimit(grn_ctx *ctx, grn_obj *vector);
 int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 
+grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
+
 /* flag values used for grn_obj.header.impl_flags */
 
 #define GRN_OBJ_ALLOCATED              (1L<<0) /* allocated by ctx */
@@ -203,15 +205,15 @@ int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 #define GRN_OBJ_KEY_SPLIT_SYMBOL       (1L<<10)
 
 enum {
-  GRN_QL_INT = 1,
-  GRN_QL_UINT,
-  GRN_QL_INT64,
-  GRN_QL_FLOAT,
-  GRN_QL_TIME,
-  GRN_QL_SHORTTEXT,
-  GRN_QL_TEXT,
-  GRN_QL_LONGTEXT,
-  GRN_QL_BIGRAM
+  GRN_DB_INT = 1,
+  GRN_DB_UINT,
+  GRN_DB_INT64,
+  GRN_DB_FLOAT,
+  GRN_DB_TIME,
+  GRN_DB_SHORTTEXT,
+  GRN_DB_TEXT,
+  GRN_DB_LONGTEXT,
+  GRN_DB_BIGRAM
 };
 
 #ifdef __cplusplus

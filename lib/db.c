@@ -20,6 +20,7 @@
 #include "pat.h"
 #include "ii.h"
 #include "ql.h"
+#include "token.h"
 #include <string.h>
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
@@ -70,8 +71,9 @@ grn_obj *
 grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
 {
   grn_db *s;
+  grn_encoding encoding;
   GRN_API_ENTER;
-  grn_encoding encoding = ctx->encoding;
+  encoding = ctx->encoding;
   if (!path || strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
       grn_tiny_array_init(&s->values, ctx, sizeof(grn_obj *),
@@ -2167,7 +2169,7 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
       case GRN_ACCESSOR_GET_VALUE :
       case GRN_ACCESSOR_GET_SCORE :
       case GRN_ACCESSOR_GET_NSUBRECS :
-        range = 1; /* todo : fix it (GRN_QL_INT) */
+        range = GRN_DB_INT;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->range; }
@@ -3706,4 +3708,47 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
   }
 exit :
   GRN_API_RETURN(i);
+}
+
+static grn_obj *
+deftype(grn_ctx *ctx, const char *name,
+        grn_obj_flags flags,  unsigned int size)
+{
+  grn_obj *o = grn_ctx_lookup(ctx, name, strlen(name));
+  if (!o) { o = grn_type_create(ctx, name, strlen(name), flags, size); }
+  return o;
+}
+
+grn_rc
+grn_db_init_builtin_types(grn_ctx *ctx)
+{
+  grn_obj *obj;
+  obj = deftype(ctx, "<int>",
+                GRN_OBJ_KEY_INT, sizeof(int32_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT) { return grn_invalid_format; }
+  obj = deftype(ctx, "<uint>",
+                GRN_OBJ_KEY_UINT, sizeof(uint32_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT) { return grn_invalid_format; }
+  obj = deftype(ctx, "<int64>",
+                GRN_OBJ_KEY_INT, sizeof(int64_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT64) { return grn_invalid_format; }
+  obj = deftype(ctx, "<float>",
+                GRN_OBJ_KEY_FLOAT, sizeof(double));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT) { return grn_invalid_format; }
+  obj = deftype(ctx, "<time>",
+                GRN_OBJ_KEY_UINT, sizeof(grn_timeval));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_TIME) { return grn_invalid_format; }
+  obj = deftype(ctx, "<shorttext>",
+                GRN_OBJ_KEY_VAR_SIZE, GRN_TABLE_MAX_KEY_SIZE);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_SHORTTEXT) { return grn_invalid_format; }
+  obj = deftype(ctx, "<text>",
+                GRN_OBJ_KEY_VAR_SIZE, 1 << 16);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_TEXT) { return grn_invalid_format; }
+  obj = deftype(ctx, "<longtext>",
+                GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_LONGTEXT) { return grn_invalid_format; }
+  obj = grn_proc_create(ctx, "<token:bigram>", 14, NULL, GRN_PROC_HOOK,
+                        bigram_init, bigram_next, bigram_fin);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_BIGRAM) { return grn_invalid_format; }
+  return GRN_SUCCESS;
 }

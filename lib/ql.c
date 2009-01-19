@@ -102,19 +102,19 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
       grn_obj *range = grn_ctx_get(ctx, rid);
       if (range && range->header.type == GRN_TYPE) {
         switch (rid) {
-        case GRN_QL_INT :
+        case GRN_DB_INT :
           SETINT(cell, *((int32_t *)v));
           break;
-        case GRN_QL_UINT :
+        case GRN_DB_UINT :
           SETINT(cell, *((uint32_t *)v));
           break;
-        case GRN_QL_INT64 :
+        case GRN_DB_INT64 :
           SETINT(cell, *((int64_t *)v));
           break;
-        case GRN_QL_FLOAT :
+        case GRN_DB_FLOAT :
           SETFLOAT(cell, *((double *)v));
           break;
-        case GRN_QL_TIME :
+        case GRN_DB_TIME :
           SETTIME(cell, v);
           break;
         default :
@@ -536,7 +536,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
     grn_obj *range = grn_ctx_get(ctx, rid);
     if (range && range->header.type == GRN_TYPE) {
       switch (rid) {
-      case GRN_QL_INT :
+      case GRN_DB_INT :
         {
           int32_t v;
           switch (cell->header.type) {
@@ -560,7 +560,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
           grn_bulk_write(ctx, obj, (const char *)(&v), sizeof(int32_t));
         }
         break;
-      case GRN_QL_UINT :
+      case GRN_DB_UINT :
         {
           uint32_t v;
           switch (cell->header.type) {
@@ -584,7 +584,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
           grn_bulk_write(ctx, obj, (const char *)(&v), sizeof(uint32_t));
         }
         break;
-      case GRN_QL_INT64 :
+      case GRN_DB_INT64 :
         {
           int64_t v;
           switch (cell->header.type) {
@@ -605,7 +605,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
           grn_bulk_write(ctx, obj, (const char *)(&v), sizeof(int64_t));
         }
         break;
-      case GRN_QL_FLOAT :
+      case GRN_DB_FLOAT :
         {
           double v;
           switch (cell->header.type) {
@@ -630,7 +630,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
           grn_bulk_write(ctx, obj, (const char *)(&v), sizeof(double));
         }
         break;
-      case GRN_QL_TIME :
+      case GRN_DB_TIME :
         {
           grn_timeval v;
           switch (cell->header.type) {
@@ -2022,7 +2022,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
   uint32_t value_size = 0;
   grn_obj_flags flags = (name && name_size) ? GRN_OBJ_PERSISTENT : GRN_OBJ_TEMPORARY;
   grn_encoding encoding = grn_enc_default;
-  grn_obj *domain = grn_ctx_get(ctx, GRN_QL_SHORTTEXT);
+  grn_obj *domain = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
   grn_cell *car;
   char msg[STRBUF_SIZE];
   uint16_t msg_size;
@@ -2989,67 +2989,6 @@ nf_json_read(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   return F;
 }
 
-static grn_obj *
-deftype(grn_ctx *ctx, const char *name,
-        grn_obj_flags flags,  unsigned int size)
-{
-  grn_obj *o = grn_ctx_lookup(ctx, name, strlen(name));
-  if (!o) { o = grn_type_create(ctx, name, strlen(name), flags, size); }
-  return o;
-}
-
-grn_rc
-bigram_init(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
-{
-  return GRN_SUCCESS;
-}
-
-grn_rc
-bigram_next(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
-{
-  return GRN_SUCCESS;
-}
-
-grn_rc
-bigram_fin(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
-{
-  return GRN_SUCCESS;
-}
-
-grn_rc
-grn_ql_def_builtin_types(grn_ctx *ctx)
-{
-  grn_obj *obj;
-  obj = deftype(ctx, "<int>",
-                GRN_OBJ_KEY_INT, sizeof(int32_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_INT) { return grn_invalid_format; }
-  obj = deftype(ctx, "<uint>",
-                GRN_OBJ_KEY_UINT, sizeof(uint32_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_UINT) { return grn_invalid_format; }
-  obj = deftype(ctx, "<int64>",
-                GRN_OBJ_KEY_INT, sizeof(int64_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_INT64) { return grn_invalid_format; }
-  obj = deftype(ctx, "<float>",
-                GRN_OBJ_KEY_FLOAT, sizeof(double));
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_FLOAT) { return grn_invalid_format; }
-  obj = deftype(ctx, "<time>",
-                GRN_OBJ_KEY_UINT, sizeof(grn_timeval));
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_TIME) { return grn_invalid_format; }
-  obj = deftype(ctx, "<shorttext>",
-                GRN_OBJ_KEY_VAR_SIZE, GRN_TABLE_MAX_KEY_SIZE);
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_SHORTTEXT) { return grn_invalid_format; }
-  obj = deftype(ctx, "<text>",
-                GRN_OBJ_KEY_VAR_SIZE, 1 << 16);
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_TEXT) { return grn_invalid_format; }
-  obj = deftype(ctx, "<longtext>",
-                GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_LONGTEXT) { return grn_invalid_format; }
-  obj = grn_proc_create(ctx, "<token:bigram>", 14, NULL, GRN_PROC_HOOK,
-                        bigram_init, bigram_next, bigram_fin);
-  if (!obj || DB_OBJ(obj)->id != GRN_QL_BIGRAM) { return grn_invalid_format; }
-  return GRN_SUCCESS;
-}
-
 grn_rc
 grn_ql_def_db_funcs(grn_ctx *ctx)
 {
@@ -3061,5 +3000,5 @@ grn_ql_def_db_funcs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "json-read", nf_json_read);
   grn_ql_def_native_func(ctx, "x->query", nf_toquery);
   grn_ql_def_native_func(ctx, "x->verses", nf_toverses);
-  return (ctx->impl->db) ? grn_ql_def_builtin_types(ctx) : GRN_SUCCESS;
+  return (ctx->impl->db) ? grn_db_init_builtin_types(ctx) : GRN_SUCCESS;
 }
