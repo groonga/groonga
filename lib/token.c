@@ -395,8 +395,8 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   grn_token *token;
   grn_encoding encoding;
   grn_obj_flags table_flags;
-  uint8_t ngram_unit;
-  if (grn_table_get_info(ctx, table, &table_flags, &encoding, &ngram_unit)) { return NULL; }
+  grn_obj *tokenizer;
+  if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer)) { return NULL; }
   type = table_flags & GRN_OBJ_TOKEN_MASK;
   nflag = (type == GRN_OBJ_TOKEN_NGRAM ? GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES : 0);
   if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
@@ -436,7 +436,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->uni_digit = (nstr->ctypes && !(table_flags & GRN_OBJ_KEY_SPLIT_DIGIT));
   token->uni_symbol = (nstr->ctypes && !(table_flags & GRN_OBJ_KEY_SPLIT_SYMBOL));
   token->force_prefix = 0;
-  token->ngram_unit = ngram_unit;
+  token->ngram_unit = GRN_TABLE_DEFAULT_NGRAM_UNIT_SIZE;
   token->offset = 0;
   token->len = 0;
 
@@ -499,8 +499,8 @@ grn_token_validate(grn_ctx *ctx, grn_obj *table)
   grn_rc rc;
   grn_encoding encoding;
   grn_obj_flags table_flags;
-  uint8_t ngram_unit;
-  if ((rc = grn_table_get_info(ctx, table, &table_flags, &encoding, &ngram_unit))) {
+  grn_obj *tokenizer;
+  if ((rc = grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer))) {
     return rc;
   }
 #ifndef NO_MECAB

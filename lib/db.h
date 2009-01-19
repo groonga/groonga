@@ -75,7 +75,7 @@ grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
 grn_id grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                      void **value, grn_search_flags *flags);
 grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
-                          grn_encoding *encoding, uint8_t *ngram_unit);
+                          grn_encoding *encoding, grn_obj **tokenizer);
 const char *_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size);
 
 grn_proc_data *grn_proc_ctx_get_local_data(grn_proc_ctx *pctx);
@@ -162,6 +162,7 @@ typedef struct {
    (DB_OBJ(obj)->header.type <= GRN_DB))
 
 struct _grn_proc_ctx {
+  grn_proc_data local_data;
   grn_ctx *ctx;
   grn_obj *obj;
   grn_hook *hooks;
@@ -190,6 +191,28 @@ int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 
 #define GRN_OBJ_ALLOCATED              (1L<<0) /* allocated by ctx */
 #define GRN_OBJ_CUSTOM_NAME            (1L<<1) /* db_obj which has custom name */
+
+#define GRN_OBJ_TOKEN_MASK             (0x07L<<3)
+#define GRN_OBJ_TOKEN_MECAB            (0x00L<<3)
+#define GRN_OBJ_TOKEN_NGRAM            (0x01L<<3)
+#define GRN_OBJ_TOKEN_DELIMITED        (0x02L<<3)
+#define GRN_OBJ_TOKEN_USER_DEFINED     (0x07L<<3)
+
+#define GRN_OBJ_KEY_SPLIT_ALPHA        (1L<<8)
+#define GRN_OBJ_KEY_SPLIT_DIGIT        (1L<<9)
+#define GRN_OBJ_KEY_SPLIT_SYMBOL       (1L<<10)
+
+enum {
+  GRN_QL_INT = 1,
+  GRN_QL_UINT,
+  GRN_QL_INT64,
+  GRN_QL_FLOAT,
+  GRN_QL_TIME,
+  GRN_QL_SHORTTEXT,
+  GRN_QL_TEXT,
+  GRN_QL_LONGTEXT,
+  GRN_QL_BIGRAM
+};
 
 #ifdef __cplusplus
 }

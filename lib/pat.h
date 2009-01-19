@@ -40,8 +40,33 @@ struct _grn_pat {
   grn_encoding encoding;
   uint32_t key_size;
   uint32_t value_size;
-  uint8_t ngram_unit;
-  uint32_t nref; // not in use
+  grn_obj *tokenizer;
+};
+
+#define GRN_PAT_NDELINFOS 0x100
+
+typedef struct {
+  grn_id d;
+  grn_id ld;
+  uint32_t stat;
+  uint32_t shared;
+} grn_pat_delinfo;
+
+struct grn_pat_header {
+  uint32_t flags;
+  grn_encoding encoding;
+  uint32_t key_size;
+  uint32_t value_size;
+  grn_id tokenizer;
+  uint32_t nrecords;
+  uint32_t curr_rec;
+  int32_t curr_key;
+  int32_t curr_del;
+  int32_t curr_del2;
+  int32_t curr_del3;
+  uint32_t reserved[1006];
+  grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
+  grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
 };
 
 struct _grn_pat_scan_hit {

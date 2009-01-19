@@ -224,7 +224,7 @@ struct _grn_hash {
   uint32_t *n_garbages;
   uint32_t *n_entries;
   uint32_t *max_offset;
-  uint8_t ngram_unit;
+  grn_obj *tokenizer;
   /* portions for io_hash */
   grn_io *io;
   struct grn_hash_header *header;
@@ -255,17 +255,17 @@ struct grn_hash_header {
   uint32_t flags;
   grn_encoding encoding;
   uint32_t key_size;
+  uint32_t value_size;
+  grn_id tokenizer;
   uint32_t curr_rec;
   int32_t curr_key;
   uint32_t idx_offset;
-  uint32_t value_size;
   uint32_t entry_size;
   uint32_t max_offset;
   uint32_t n_entries;
   uint32_t n_garbages;
   uint32_t lock;
-  uint8_t ngram_unit;
-  uint32_t reserved[17];
+  uint32_t reserved[16];
   grn_id garbages[GRN_HASH_MAX_KEY_SIZE];
 };
 

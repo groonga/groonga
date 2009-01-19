@@ -3070,8 +3070,8 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   struct grn_ii_header *header;
   grn_obj_flags lflags;
   grn_encoding encoding;
-  uint8_t ngram_unit;
-  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &ngram_unit)) { return NULL; }
+  grn_obj *tokenizer;
+  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer)) { return NULL; }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
   seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
                       S_SEGMENT, MAX_LSEG, grn_io_auto, GRN_IO_WO_NREF);
@@ -3142,8 +3142,8 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   struct grn_ii_header *header;
   grn_obj_flags lflags;
   grn_encoding encoding;
-  uint8_t ngram_unit;
-  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &ngram_unit)) { return NULL; }
+  grn_obj *tokenizer;
+  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer)) { return NULL; }
   if (strlen(path) + 6 >= PATH_MAX) { return NULL; }
   strcpy(path2, path);
   strcat(path2, ".c");

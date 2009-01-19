@@ -189,17 +189,8 @@ typedef unsigned int grn_obj_flags;
 #define GRN_OBJ_KEY_INT                (0x01L<<3)
 #define GRN_OBJ_KEY_FLOAT              (0x02L<<3)
 
-#define GRN_OBJ_TOKEN_MASK             (0x07L<<3)
-#define GRN_OBJ_TOKEN_MECAB            (0x00L<<3)
-#define GRN_OBJ_TOKEN_NGRAM            (0x01L<<3)
-#define GRN_OBJ_TOKEN_DELIMITED        (0x02L<<3)
-#define GRN_OBJ_TOKEN_USER_DEFINED     (0x07L<<3)
-
 #define GRN_OBJ_KEY_WITH_SIS           (1L<<6)
 #define GRN_OBJ_KEY_NORMALIZE          (1L<<7)
-#define GRN_OBJ_KEY_SPLIT_ALPHA        (1L<<8)
-#define GRN_OBJ_KEY_SPLIT_DIGIT        (1L<<9)
-#define GRN_OBJ_KEY_SPLIT_SYMBOL       (1L<<10)
 
 #define GRN_OBJ_COLUMN_TYPE_MASK       (0x07L)
 #define GRN_OBJ_COLUMN_SCALAR          (0x00L)
@@ -381,6 +372,8 @@ grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
 grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                          grn_obj_flags flags, unsigned int size);
 
+grn_rc grn_db_load(grn_ctx *ctx, const char *path);
+
 /**
  * grn_proc_create:
  * @name: 作成するprocの名前。
@@ -435,11 +428,6 @@ grn_obj *grn_proc_create(grn_ctx *ctx,
  *         のいずれかを指定する。
  *         GRN_OBJ_KEY_NORMALIZEを指定すると正規化された文字列がkeyとなる。
  *         GRN_OBJ_KEY_WITH_SISを指定するとkey文字列の全suffixが自動的に登録される。
- *         GRN_OBJ_TOKEN_MECAB,GRN_OBJ_TOKEN_NGRAM,GRN_OBJ_TOKEN_DELIMITEDは、
- *         作成するtableを語彙表として用いる場合のtokenizeの方法を指定する。
- *         GRN_OBJ_TOKEN_NGRAMを指定した場合に限り、
- *         GRN_OBJ_KEY_SPLIT_ALPHA,GRN_OBJ_KEY_SPLIT_DIGIT,GRN_OBJ_KEY_SPLIT_SYMBOL
- *         を指定して、文字列をN-GRAMに区切る際の方針を指定できる。
  * @key_type: keyの型を指定する。GRN_OBJ_TABLE_NO_KEYが指定された場合は無効。
  *            既存のtypeあるいはtableを指定できる。
  *            key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなる。
@@ -838,6 +826,7 @@ grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
 typedef enum {
   GRN_INFO_ENCODING = 0,
   GRN_INFO_SOURCE,
+  GRN_INFO_DEFAULT_TOKENIZER,
   GRN_INFO_ELEMENT_SIZE,
   GRN_INFO_CURR_MAX,
   GRN_INFO_MAX_ELEMENT_SIZE,

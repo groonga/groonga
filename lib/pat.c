@@ -31,34 +31,9 @@
 #define SIS_MASK_IN_A_SEGMENT 0x7ffff
 #define SEG_NOT_ASSIGNED 0xffff
 #define GRN_PAT_MAX_SEGMENT 0x1000
-#define GRN_PAT_NDELINFOS 0x100
 #define GRN_PAT_MDELINFOS (GRN_PAT_NDELINFOS - 1)
 
 #define GRN_PAT_BIN_KEY 0x70000
-
-typedef struct {
-  grn_id d;
-  grn_id ld;
-  uint32_t stat;
-  uint32_t shared;
-} grn_pat_delinfo;
-
-struct grn_pat_header {
-  uint32_t flags;
-  grn_encoding encoding;
-  uint32_t key_size;
-  uint32_t value_size;
-  uint32_t nrecords;
-  uint32_t curr_rec;
-  int32_t curr_key;
-  int32_t curr_del;
-  int32_t curr_del2;
-  int32_t curr_del3;
-  uint8_t ngram_unit;
-  uint32_t reserved[1007];
-  grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
-  grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
-};
 
 typedef struct {
   grn_id lr[2];
@@ -416,7 +391,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   header->curr_del = 0;
   header->curr_del2 = 0;
   header->curr_del3 = 0;
-  header->ngram_unit = GRN_TABLE_DEFAULT_NGRAM_UNIT_SIZE;
+  header->tokenizer = GRN_QL_BIGRAM;
   if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
     grn_io_close(ctx, io);
     return NULL;
@@ -426,7 +401,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   pat->header = header;
   pat->key_size = key_size;
   pat->value_size = value_size;
-  pat->ngram_unit = header->ngram_unit;
+  pat->tokenizer = grn_ctx_get(ctx, header->tokenizer);
   pat->encoding = encoding;
   pat->obj.flags = flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
@@ -466,7 +441,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->value_size = header->value_size;
   pat->encoding = header->encoding;
   pat->obj.flags = header->flags;
-  pat->ngram_unit = header->ngram_unit;
+  pat->tokenizer = grn_ctx_get(ctx, header->tokenizer);
   PAT_AT(pat, 0, node0);
   if (!node0) {
     grn_io_close(ctx, io);

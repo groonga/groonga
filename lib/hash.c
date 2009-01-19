@@ -742,7 +742,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   header->max_offset = m - 1;
   header->n_entries = 0;
   header->n_garbages = 0;
-  header->ngram_unit = GRN_TABLE_DEFAULT_NGRAM_UNIT_SIZE;
+  header->tokenizer = GRN_QL_BIGRAM;
   GRN_DB_OBJ_SET_TYPE(ih, GRN_TABLE_HASH_KEY);
   ih->obj.flags = flags;
   ih->ctx = ctx;
@@ -756,7 +756,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   ih->io = io;
   ih->header = header;
   ih->lock = &header->lock;
-  ih->ngram_unit = header->ngram_unit;
+  ih->tokenizer = grn_ctx_get(ctx, header->tokenizer);
   return GRN_SUCCESS;
 }
 
@@ -798,7 +798,7 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
   ah->n_garbages_ = 0;
   ah->n_entries_ = 0;
   ah->garbages = GRN_ID_NIL;
-  ah->ngram_unit = GRN_TABLE_DEFAULT_NGRAM_UNIT_SIZE;
+  ah->tokenizer = grn_ctx_get(ctx, GRN_QL_BIGRAM);
   grn_tiny_array_init(&ah->a, ctx, entry_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_array_init(&ah->bitmap, ctx, 1, GRN_TINY_ARRAY_CLEAR);
   return GRN_SUCCESS;
@@ -844,7 +844,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
           hash->io = io;
           hash->header = header;
           hash->lock = &header->lock;
-          hash->ngram_unit = header->ngram_unit;
+          hash->tokenizer = grn_ctx_get(ctx, header->tokenizer);
           return (grn_hash *)hash;
         } else {
           GRN_LOG(grn_log_notice, "invalid hash flag. (%x)", header->flags);

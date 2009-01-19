@@ -214,10 +214,12 @@ grn_ctx_db(grn_ctx *ctx)
 #define GRN_PROC_INIT_PREFIX "grn_init_"
 
 grn_rc
-grn_db_load(grn_ctx *ctx, grn_obj *db, const char *path)
+grn_db_load(grn_ctx *ctx, const char *path)
 {
   grn_id id;
+  grn_obj *db;
   GRN_API_ENTER;
+  db = ctx->impl->db;
   if (DB_P(db)) {
     if ((id = grn_dl_open(ctx, path))) {
       grn_proc_init_func *func;
@@ -777,22 +779,22 @@ grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
 
 grn_rc
 grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
-                   grn_encoding *encoding, uint8_t *ngram_unit)
+                   grn_encoding *encoding, grn_obj **tokenizer)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (table) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      if (flags ) { *flags = ((grn_pat *)table)->obj.flags; }
-      if (encoding ) { *encoding = ((grn_pat *)table)->encoding; }
-      if (ngram_unit ) { *ngram_unit = ((grn_pat *)table)->ngram_unit; }
+      if (flags) { *flags = ((grn_pat *)table)->obj.flags; }
+      if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
+      if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer; }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_HASH_KEY :
-      if (flags ) { *flags = ((grn_hash *)table)->obj.flags; }
-      if (encoding ) { *encoding = ((grn_hash *)table)->encoding; }
-      if (ngram_unit ) { *ngram_unit = ((grn_hash *)table)->ngram_unit; }
+      if (flags) { *flags = ((grn_hash *)table)->obj.flags; }
+      if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
+      if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer; }
       rc = GRN_SUCCESS;
       break;
     }
@@ -2402,7 +2404,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     }
     if (hooks) {
       // todo : grn_proc_ctx_open()
-      grn_proc_ctx pctx = { ctx, obj, hooks, hooks, PROC_INIT, 4, 4};
+      grn_proc_ctx pctx = {{0}, ctx, obj, hooks, hooks, PROC_INIT, 4, 4};
       pctx.data[0].id = id;
       pctx.data[1].ptr = oldvalue;
       pctx.data[2].ptr = value;
@@ -2820,6 +2822,21 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
     grn_obj_spec_save(ctx, DB_OBJ(obj));
     rc = GRN_SUCCESS;
     break;
+  case GRN_INFO_DEFAULT_TOKENIZER :
+    if (value && DB_OBJ(value)->header.type == GRN_PROC) {
+      switch (DB_OBJ(obj)->header.type) {
+      case GRN_TABLE_HASH_KEY :
+        ((grn_hash *)obj)->tokenizer = value;
+        ((grn_hash *)obj)->header->tokenizer = DB_OBJ(value)->id;
+        rc = GRN_SUCCESS;
+        break;
+      case GRN_TABLE_PAT_KEY :
+        ((grn_pat *)obj)->tokenizer = value;
+        ((grn_pat *)obj)->header->tokenizer = DB_OBJ(value)->id;
+        rc = GRN_SUCCESS;
+        break;
+      }
+    }
   default :
     /* todo */
     break;
@@ -2847,7 +2864,7 @@ grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
 grn_proc_data *
 grn_proc_ctx_get_local_data(grn_proc_ctx *pctx)
 {
-  return &pctx->data[pctx->offset];
+  return &pctx->local_data;
 }
 
 static void

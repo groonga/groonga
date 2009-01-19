@@ -64,17 +64,6 @@ obj2str(grn_cell *o, char *buf, uint16_t *size)
   return GRN_SUCCESS;
 }
 
-enum {
-  GRN_QL_INT = 1,
-  GRN_QL_UINT,
-  GRN_QL_INT64,
-  GRN_QL_FLOAT,
-  GRN_QL_TIME,
-  GRN_QL_SHORTTEXT,
-  GRN_QL_TEXT,
-  GRN_QL_LONGTEXT
-};
-
 static void
 obj_obj_bind(grn_cell *obj, grn_id domain, grn_id self)
 {
@@ -1346,12 +1335,12 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           {
             grn_obj_flags flags;
             grn_encoding encoding;
-            uint8_t ngram_unit;
+            grn_obj *tokenizer;
             res = NIL;
             if (!(msg_size = grn_obj_name(ctx, table, msg, STRBUF_SIZE))) {
               return F;
             }
-            if (grn_table_get_info(ctx, table, &flags, &encoding, &ngram_unit)) {
+            if (grn_table_get_info(ctx, table, &flags, &encoding, &tokenizer)) {
               return F;
             }
             if (flags & GRN_OBJ_TOKEN_DELIMITED) { res = CONS(INTERN(":delimited"), res); }
@@ -3010,6 +2999,24 @@ deftype(grn_ctx *ctx, const char *name,
 }
 
 grn_rc
+bigram_init(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
+{
+  return GRN_SUCCESS;
+}
+
+grn_rc
+bigram_next(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
+{
+  return GRN_SUCCESS;
+}
+
+grn_rc
+bigram_fin(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
+{
+  return GRN_SUCCESS;
+}
+
+grn_rc
 grn_ql_def_builtin_types(grn_ctx *ctx)
 {
   grn_obj *obj;
@@ -3037,6 +3044,9 @@ grn_ql_def_builtin_types(grn_ctx *ctx)
   obj = deftype(ctx, "<longtext>",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_QL_LONGTEXT) { return grn_invalid_format; }
+  obj = grn_proc_create(ctx, "<token:bigram>", 14, NULL, GRN_PROC_HOOK,
+                        bigram_init, bigram_next, bigram_fin);
+  if (!obj || DB_OBJ(obj)->id != GRN_QL_BIGRAM) { return grn_invalid_format; }
   return GRN_SUCCESS;
 }
 
