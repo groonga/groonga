@@ -63,7 +63,7 @@ do_alone(char *path)
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0), enc);
   if (path) { db = grn_db_open(ctx, path); }
-  if (!db) { db = grn_db_create(ctx, path, enc); }
+  if (!db) { db = grn_db_create(ctx, path, NULL); }
   if (db) {
     char *buf = GRN_MALLOC(BUFSIZE);
     if (buf) {
@@ -323,7 +323,7 @@ server(char *path)
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com_sqtp))) {
     grn_obj *db = NULL;
     if (path) { db = grn_db_open(ctx, path); }
-    if (!db) { db = grn_db_create(ctx, path, enc); }
+    if (!db) { db = grn_db_create(ctx, path, NULL); }
     if (db) {
       grn_com_sqtp *cs;
       ev.userdata = db;

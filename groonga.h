@@ -312,7 +312,16 @@ struct _grn_obj {
  *
  * 新たなdbを作成する。
  **/
-grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_encoding encoding);
+
+typedef struct _grn_db_create_optarg grn_db_create_optarg;
+
+struct _grn_db_create_optarg {
+  grn_encoding encoding;
+  char **builtin_type_names;
+  int n_builtin_type_names;
+};
+
+grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
 
 /**
  * grn_db_open:
@@ -1050,7 +1059,7 @@ grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
  * @query: 検索クエリ
  * @res: 検索結果を格納するテーブル
  * @op: grn_sel_or, grn_sel_and, grn_sel_but, grn_sel_adjustのいずれかを指定する
- * @optargs: 詳細検索条件
+ * @optarg: 詳細検索条件
  *
  * objを対象としてqueryにマッチするレコードを検索し、
  * opの指定に従ってresにレコードを追加あるいは削除する。

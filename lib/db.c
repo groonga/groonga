@@ -67,10 +67,11 @@ gen_pathname(const char *path, char *buffer, int fno)
 #define PERSISTENT_DB_P(s) (((grn_db *)s)->specs)
 
 grn_obj *
-grn_db_create(grn_ctx *ctx, const char *path, grn_encoding encoding)
+grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
 {
   grn_db *s;
   GRN_API_ENTER;
+  grn_encoding encoding = ctx->encoding;
   if (!path || strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
       grn_tiny_array_init(&s->values, ctx, sizeof(grn_obj *),
