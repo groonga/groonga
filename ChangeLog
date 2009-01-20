@@ -1,3 +1,7 @@
+2009-01-21  Poe MORITA  <morita at razil.jp>
+
+	* lib/token.c (grn_ngram_tokenizer): add.
+
 2009-01-20  Poe MORITA  <morita at razil.jp>
 
 	* lib/com.c (grn_com_event_poll): fixed compile error. (Thanks to Moriyoshi Koizumi)

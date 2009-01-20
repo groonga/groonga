@@ -71,6 +71,8 @@ typedef struct {
   uint8_t ngram_unit;
   grn_obj_flags table_flags;
   grn_encoding encoding;
+  grn_obj *tokenizer;
+  grn_proc_ctx pctx;
 } grn_token;
 
 enum {
@@ -79,6 +81,10 @@ enum {
   grn_token_not_found
 };
 
+#define GRN_TOKEN_LAST      (1L<<0)
+#define GRN_TOKEN_OVERLAP   (1L<<1)
+#define GRN_TOKEN_UNMATURED (1L<<2)
+
 grn_rc grn_token_init(void);
 grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
                           size_t str_len, grn_search_flags flags);
@@ -86,7 +92,6 @@ grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
 grn_id grn_token_next(grn_token *ng);
 grn_rc grn_token_close(grn_token *ng);
 grn_rc grn_token_fin(void);
-grn_rc grn_token_validate(grn_ctx *ctx, grn_obj *table);
 
 grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
 

@@ -78,8 +78,6 @@ grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
                           grn_encoding *encoding, grn_obj **tokenizer);
 const char *_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size);
 
-grn_proc_data *grn_proc_ctx_get_local_data(grn_proc_ctx *pctx);
-
 grn_rc grn_table_search(grn_ctx *ctx, grn_obj *table,
                         const void *key, uint32_t key_size,
                         grn_search_flags flags, grn_obj *res, grn_sel_operator op);
@@ -161,9 +159,9 @@ typedef struct {
    (GRN_TABLE_HASH_KEY <= DB_OBJ(obj)->header.type) &&\
    (DB_OBJ(obj)->header.type <= GRN_DB))
 
+typedef struct _grn_proc_ctx grn_proc_ctx;
 struct _grn_proc_ctx {
-  grn_proc_data local_data;
-  grn_ctx *ctx;
+  grn_proc_data user_data;
   grn_obj *obj;
   grn_hook *hooks;
   grn_hook *currh;
@@ -171,6 +169,11 @@ struct _grn_proc_ctx {
   unsigned short nargs;
   unsigned short offset;
   grn_proc_data data[16];
+};
+
+struct _grn_proc {
+  grn_db_obj obj;
+  grn_proc_func *funcs[3];
 };
 
 /* vector */

@@ -394,15 +394,13 @@ grn_rc grn_db_load(grn_ctx *ctx, const char *path);
  * nameに対応する新たなproc(手続き)をctxが使用するdbに定義する。
  **/
 
-typedef struct _grn_proc_ctx grn_proc_ctx;
-
 typedef union {
   int int_value;
   grn_id id;
   void *ptr;
 } grn_proc_data;
 
-typedef grn_rc grn_proc_func(grn_ctx *ctx, grn_proc_ctx *pctx,
+typedef grn_rc grn_proc_func(grn_ctx *ctx, grn_obj *obj, grn_proc_data *user_data,
                              int argc, grn_proc_data *argv);
 
 typedef grn_rc grn_proc_init_func(grn_ctx *ctx, const char *path);

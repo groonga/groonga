@@ -319,11 +319,6 @@ grn_type_open(grn_ctx *ctx, grn_obj_spec *spec)
   return (grn_obj *)res;
 }
 
-struct _grn_proc {
-  grn_db_obj obj;
-  grn_proc_func *funcs[3];
-};
-
 grn_obj *
 grn_proc_create(grn_ctx *ctx,
                 const char *name, unsigned name_size,
@@ -1743,9 +1738,10 @@ typedef struct {
 } default_set_value_hook_data;
 
 static grn_rc
-default_set_value_hook(grn_ctx *ctx, grn_proc_ctx *pctx,
+default_set_value_hook(grn_ctx *ctx, grn_obj *obj, grn_proc_data *user_data,
                        int argc, grn_proc_data *argv)
 {
+  grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (!pctx || argc != 4) {
     ERR(GRN_INVALID_ARGUMENT, "default_set_value_hook failed");
     return GRN_INVALID_ARGUMENT;
@@ -2407,7 +2403,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     }
     if (hooks) {
       // todo : grn_proc_ctx_open()
-      grn_proc_ctx pctx = {{0}, ctx, obj, hooks, hooks, PROC_INIT, 4, 4};
+      grn_proc_ctx pctx = {{0}, obj, hooks, hooks, PROC_INIT, 4, 4};
       pctx.data[0].id = id;
       pctx.data[1].ptr = oldvalue;
       pctx.data[2].ptr = value;
@@ -2415,9 +2411,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       while (hooks) {
         pctx.currh = hooks;
         if (hooks->proc) {
-          rc = hooks->proc->funcs[PROC_INIT](ctx, &pctx, 4, pctx.data);
+          rc = hooks->proc->funcs[PROC_INIT](ctx, obj, &pctx.user_data, 4, pctx.data);
         } else {
-          rc = default_set_value_hook(ctx, &pctx, 4, pctx.data);
+          rc = default_set_value_hook(ctx, obj, &pctx.user_data, 4, pctx.data);
         }
         if (rc) { goto exit; }
         hooks = hooks->next;
@@ -2862,12 +2858,6 @@ grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
 {
   GRN_API_ENTER;
   GRN_API_RETURN(GRN_SUCCESS);
-}
-
-grn_proc_data *
-grn_proc_ctx_get_local_data(grn_proc_ctx *pctx)
-{
-  return &pctx->local_data;
 }
 
 static void
