@@ -83,14 +83,12 @@ grn_rc grn_token_init(void);
 grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
                           size_t str_len, grn_search_flags flags);
 
-grn_rc grn_token_next(grn_token *ng);
+grn_id grn_token_next(grn_token *ng);
 grn_rc grn_token_close(grn_token *ng);
 grn_rc grn_token_fin(void);
 grn_rc grn_token_validate(grn_ctx *ctx, grn_obj *table);
 
-grn_rc bigram_init(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv);
-grn_rc bigram_next(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv);
-grn_rc bigram_fin(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv);
+grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }

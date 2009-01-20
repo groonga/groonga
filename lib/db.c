@@ -3747,8 +3747,5 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   obj = deftype(ctx, "<longtext>",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONGTEXT) { return grn_invalid_format; }
-  obj = grn_proc_create(ctx, "<token:bigram>", 14, NULL, GRN_PROC_HOOK,
-                        bigram_init, bigram_next, bigram_fin);
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_BIGRAM) { return grn_invalid_format; }
-  return GRN_SUCCESS;
+  return grn_db_init_builtin_tokenizers(ctx);
 }

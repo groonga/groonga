@@ -458,7 +458,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   }
 }
 
-grn_rc
+grn_id
 grn_token_next(grn_token *token)
 {
   /* if (!token) { return GRN_INVALID_ARGUMENT; } */
@@ -546,20 +546,32 @@ grn_token_validate(grn_ctx *ctx, grn_obj *table)
   return GRN_SUCCESS;
 }
 
-grn_rc
+static grn_rc
 bigram_init(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
 {
   return GRN_SUCCESS;
 }
 
-grn_rc
+static grn_rc
 bigram_next(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
 {
   return GRN_SUCCESS;
 }
 
-grn_rc
+static grn_rc
 bigram_fin(grn_ctx *ctx, grn_proc_ctx *pctx, int argc, grn_proc_data *argv)
 {
+  return GRN_SUCCESS;
+}
+
+#define DB_OBJ(obj) ((grn_db_obj *)obj)
+
+grn_rc
+grn_db_init_builtin_tokenizers(grn_ctx *ctx)
+{
+  grn_obj *obj;
+  obj = grn_proc_create(ctx, "<token:bigram>", 14, NULL, GRN_PROC_HOOK,
+                        bigram_init, bigram_next, bigram_fin);
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_BIGRAM) { return grn_invalid_format; }
   return GRN_SUCCESS;
 }

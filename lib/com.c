@@ -250,6 +250,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   int nevents;
   grn_com *com;
 #ifdef USE_SELECT
+  uint32_t dummy;
   grn_sock *pfd;
   int nfds = 0;
   fd_set rfds;
@@ -261,7 +262,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   }
   FD_ZERO(&rfds);
   FD_ZERO(&wfds);
-  GRN_SET_EACH(ev->set, eh, &pfd, &com, {
+  GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
     if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
     if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
     if (*pfd > nfds) { nfds = *pfd; }
@@ -277,7 +278,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     return grn_external_error;
   }
   if (timeout < 0 && !nevents) { GRN_LOG(grn_log_notice, "select returns 0 events"); }
-  GRN_SET_EACH(ev->set, eh, &pfd, &com, {
+  GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
     if (FD_ISSET(*pfd, &rfds)) { com->ev_in(ev, com); }
     if (FD_ISSET(*pfd, &wfds)) { com->ev_out(ev, com); }
   });
@@ -288,7 +289,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #else /* USE_EPOLL */
   int nfd = 0, *pfd;
   struct pollfd *ep = ev->events;
-  GRN_SET_EACH(ev->set, eh, &pfd, &com, {
+  GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
     ep->fd = *pfd;
     //    ep->events =(short) com->events;
     ep->events = POLLIN;
@@ -311,7 +312,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     nevents--;
     if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       struct epoll_event e;
-      GRN_LOG(grn_log_error, "fd(%d) not found in ev->set", efd);
+      GRN_LOG(grn_log_error, "fd(%d) not found in ev->hash", efd);
       memset(&e, 0, sizeof(struct epoll_event));
       e.data.fd = efd;
       e.events = ep->events;
@@ -325,8 +326,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     efd = ep->fd;
     if (!(ep->events & ep->revents)) { continue; }
     nevents--;
-    if (!grn_set_at(ev->set, &efd, (void *)&com)) {
-      GRN_LOG(grn_log_error, "fd(%d) not found in ev->set", efd);
+    if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
+      GRN_LOG(grn_log_error, "fd(%d) not found in ev->hash", efd);
       if (grn_sock_close(efd) == -1) { LOG_SOCKERR("close"); }
       continue;
     }
