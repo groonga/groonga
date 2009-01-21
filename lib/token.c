@@ -18,6 +18,8 @@
 #include <string.h>
 #include <ctype.h>
 #include "token.h"
+#include "pat.h"
+#include "hash.h"
 
 /* ngram */
 
@@ -616,7 +618,16 @@ grn_token_next(grn_token *token)
         if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
       }
     }
-    tid = grn_table_lookup(ctx, table, token->curr, token->curr_size, &token->flags);
+    switch (table->header.type) {
+    case GRN_TABLE_PAT_KEY :
+      tid = grn_pat_lookup(ctx, (grn_pat *)table, token->curr, token->curr_size,
+                           NULL, &token->flags);
+      break;
+    case GRN_TABLE_HASH_KEY :
+      tid = grn_hash_lookup(ctx, (grn_hash *)table, token->curr, token->curr_size,
+                            NULL, &token->flags);
+      break;
+    }
     if (tid == GRN_ID_NIL) { token->status = grn_token_not_found; }
     token->pos++;
     break;
