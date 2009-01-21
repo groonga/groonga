@@ -451,7 +451,7 @@ bigram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
       if (!*p && !(token->flags & GRN_TABLE_ADD)) { token->status = grn_token_done; }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
-    if ((cl = grn_str_charlen(ctx, (char *)p, token->encoding))) {
+    if ((cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
       token->next = r;
@@ -475,7 +475,7 @@ bigram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   token->pos = pos;
   token->len = len;
   token->tail = pos + len - 1;
-  if (p == e || p == r) {
+  if (p == r || r == e) {
     token->skip = 0;
     status |= GRN_TOKEN_LAST;
   } else {

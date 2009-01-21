@@ -1,5 +1,10 @@
 2009-01-21  Poe MORITA  <morita at razil.jp>
 
+	* lib/token.c (grn_ngram_tokenizer): fixed a bug.
+	GRN_TOKEN_LAST was not detected correctly.
+
+2009-01-21  Poe MORITA  <morita at razil.jp>
+
 	* lib/token.c (grn_ngram_tokenizer): add.
 
 2009-01-20  Poe MORITA  <morita at razil.jp>

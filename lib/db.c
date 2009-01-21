@@ -568,7 +568,7 @@ grn_table_lookup(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
 {
   grn_id id = GRN_ID_NIL;
   GRN_API_ENTER;
-  if (table) {
+  if (table && key_size) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       WITH_NORMALIZE((grn_pat *)table, key, key_size, {
@@ -3278,6 +3278,10 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_COLUMN_INDEX :
       rc = grn_ii_close(ctx, (grn_ii *)obj);
+      break;
+    case GRN_PROC :
+      GRN_FREE(obj);
+      rc = GRN_SUCCESS;
       break;
     }
   }
