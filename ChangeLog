@@ -1,5 +1,9 @@
 2009-01-21  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (grn_proc_open): add.
+
+2009-01-21  Poe MORITA  <morita at razil.jp>
+
 	* lib/token.c (grn_token_next): call grn_pat_lookup/grn_hash_lookup directly.
 
 2009-01-21  Poe MORITA  <morita at razil.jp>

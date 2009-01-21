@@ -347,11 +347,15 @@ grn_proc_create(grn_ctx *ctx,
       GRN_API_RETURN(NULL);
     }
     if (!(f & GRN_TABLE_ADDED)) {
-      ERR(GRN_INVALID_ARGUMENT, "already used name");
-      GRN_API_RETURN(NULL);
+      res = (grn_proc *)grn_ctx_get(ctx, id);
+      if (res && res->funcs[PROC_INIT]) {
+        ERR(GRN_INVALID_ARGUMENT, "already used name");
+        GRN_API_RETURN(NULL);
+      }
     }
   }
-  if ((res = GRN_MALLOCN(grn_proc, 1))) {
+  if (!res) { res = GRN_MALLOCN(grn_proc, 1); }
+  if (res) {
     GRN_DB_OBJ_SET_TYPE(res, GRN_PROC);
     res->obj.db = db;
     res->obj.id = id;
@@ -369,6 +373,24 @@ grn_proc_create(grn_ctx *ctx,
     }
   }
   GRN_API_RETURN((grn_obj *)res);
+}
+
+static grn_obj *
+grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec)
+{
+  grn_proc *res;
+  res = GRN_MALLOC(sizeof(grn_proc));
+  if (res) {
+    GRN_DB_OBJ_SET_TYPE(res, GRN_PROC);
+    res->funcs[PROC_INIT] = NULL;
+    res->funcs[PROC_NEXT] = NULL;
+    res->funcs[PROC_FIN] = NULL;
+    res->obj.header = spec->header;
+    if (res->obj.header.domain) {
+      // todo : grn_dl_load should be called.
+    }
+  }
+  return (grn_obj *)res;
 }
 
 /* grn_table */
@@ -3119,6 +3141,9 @@ grn_ctx_get(grn_ctx *ctx, grn_id id)
                   if (!*vp) { *vp = (grn_obj *)grn_ii_open(ctx, buffer, table); }
                   MUTEX_UNLOCK(s->lock);
                 }
+                break;
+              case GRN_PROC :
+                if (!*vp) { *vp = grn_proc_open(ctx, spec); }
                 break;
               }
               if (*vp) {
