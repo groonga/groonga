@@ -788,6 +788,24 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
   }
 }
 
+#define DB_P(s) ((s) && (s)->header.type == GRN_DB)
+
+grn_rc
+grn_ctx_use(grn_ctx *ctx, grn_obj *db)
+{
+  GRN_API_ENTER;
+  if (!db || !DB_P(db)) {
+    ctx->rc = GRN_INVALID_ARGUMENT;
+  } else {
+    if (!ctx->impl) { grn_ctx_impl_init(ctx); }
+    if (!ctx->rc) {
+      ctx->impl->db = db;
+      if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
+    }
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
 void *
 grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size, int flags,
                    const char* file, int line, const char *func)

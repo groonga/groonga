@@ -3000,5 +3000,5 @@ grn_ql_def_db_funcs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "json-read", nf_json_read);
   grn_ql_def_native_func(ctx, "x->query", nf_toquery);
   grn_ql_def_native_func(ctx, "x->verses", nf_toverses);
-  return (ctx->impl->db) ? grn_db_init_builtin_types(ctx) : GRN_SUCCESS;
+  return GRN_SUCCESS;
 }

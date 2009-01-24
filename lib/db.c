@@ -91,6 +91,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
           gen_pathname(path, buffer, 0);
           if ((s->specs = grn_ja_create(ctx, buffer, 65536, 0))) {
             grn_ctx_use(ctx, (grn_obj *)s);
+            grn_db_init_builtin_types(ctx);
             GRN_API_RETURN((grn_obj *)s);
           } else {
             ERR(GRN_NO_MEMORY_AVAILABLE, "ja create failed");
@@ -98,6 +99,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
         } else {
           s->specs = NULL;
           grn_ctx_use(ctx, (grn_obj *)s);
+          grn_db_init_builtin_types(ctx);
           GRN_API_RETURN((grn_obj *)s);
         }
         grn_pat_close(ctx, s->keys);
@@ -135,6 +137,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
           GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
           grn_db_obj_init(ctx, NULL, GRN_ID_NIL, &s->obj);
           grn_ctx_use(ctx, (grn_obj *)s);
+          grn_db_init_builtin_tokenizers(ctx);
           GRN_API_RETURN((grn_obj *)s);
         } else {
           ERR(GRN_NO_MEMORY_AVAILABLE, "ja open failed");
@@ -192,20 +195,6 @@ grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size)
     }
   }
   GRN_API_RETURN(obj);
-}
-
-grn_rc
-grn_ctx_use(grn_ctx *ctx, grn_obj *db)
-{
-  grn_rc rc = GRN_SUCCESS;
-  GRN_API_ENTER;
-  if (ctx->impl && (!db || DB_P(db))) {
-    ctx->impl->db = db;
-    if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
-  } else {
-    rc = GRN_INVALID_ARGUMENT;
-  }
-  GRN_API_RETURN(rc);
 }
 
 grn_obj *

@@ -1,5 +1,9 @@
 2009-01-24  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (grn_db_init_builtin_types): invoked from grn_db_create.
+
+2009-01-24  Poe MORITA  <morita at razil.jp>
+
 	* lib/ii.c (verses2updspecs): -> grn_verses2updspecs.
 
 2009-01-21  Poe MORITA  <morita at razil.jp>
