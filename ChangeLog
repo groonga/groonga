@@ -1,3 +1,7 @@
+2009-01-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (verses2updspecs): -> grn_verses2updspecs.
+
 2009-01-21  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_proc_open): add.

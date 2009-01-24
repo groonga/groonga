@@ -4389,8 +4389,8 @@ exit :
 }
 #endif /* USE_VGRAM */
 
-grn_rc
-verses2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
+static grn_rc
+grn_verses2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                 grn_obj *in, grn_obj *out, grn_search_flags flags)
 {
   int j;
@@ -4465,7 +4465,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_LOG(grn_log_alert, "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = verses2updspecs(ctx, ii, rid, section, new_, new, GRN_TABLE_ADD);
+        rc = grn_verses2updspecs(ctx, ii, rid, section, new_, new, GRN_TABLE_ADD);
       }
       if (new_ != newvalue) { grn_obj_close(ctx, new_); }
       if (rc) { goto exit; }
@@ -4500,7 +4500,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_LOG(grn_log_alert, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = verses2updspecs(ctx, ii, rid, section, old_, old, GRN_TOKEN_UPD);
+        rc = grn_verses2updspecs(ctx, ii, rid, section, old_, old, GRN_TOKEN_UPD);
       }
       if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
       if (rc) { goto exit; }
@@ -5114,7 +5114,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
       }
       grn_ii_cursor_close(ctx, c);
     }
-    GRN_FREE(sorted);
+    grn_array_close(ctx, sorted);
   }
   grn_hash_close(ctx, h);
   if (op == grn_sel_and) {
