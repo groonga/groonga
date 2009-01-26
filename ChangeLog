@@ -1,5 +1,9 @@
 2009-01-26  Poe MORITA  <morita at razil.jp>
 
+	* lib/token.c: "<token:mecab>" add.
+
+2009-01-26  Poe MORITA  <morita at razil.jp>
+
 	* lib/ql.h (grn_ql_def_native_func): return grn_cell pointer.
 
 2009-01-24  Poe MORITA  <morita at razil.jp>

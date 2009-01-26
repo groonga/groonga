@@ -21,286 +21,7 @@
 #include "pat.h"
 #include "hash.h"
 
-/* ngram */
-
-inline static grn_token *
-grn_ngram_init(grn_token *token)
-{
-  return token;
-}
-
-inline static grn_id
-grn_ngram_next(grn_token *token)
-{
-  grn_id tid;
-  grn_obj *table = token->table;
-  grn_ctx *ctx = token->ctx;
-  uint_least8_t *cp = NULL;
-  int32_t len = 0, pos;
-  const unsigned char *p, *q, *r;
-  if (token->status == grn_token_done) { return GRN_ID_NIL; }
-  token->force_prefix = 0;
-  for (p = token->next, pos = token->pos + token->skip; *p; p = r, pos++) {
-    if (token->nstr->ctypes) { cp = token->nstr->ctypes + pos; }
-    if (token->uni_alpha && GRN_NSTR_CTYPE(*cp) == grn_str_alpha) {
-      for (len = 1, r = p;;len++) {
-        size_t cl;
-        if (!(cl = grn_str_charlen(ctx, (char *)r, token->encoding))) { break; }
-        r += cl;
-        if (GRN_NSTR_ISBLANK(*cp)) { break; }
-        if (GRN_NSTR_CTYPE(*++cp) != grn_str_alpha) { break; }
-      }
-      {
-        size_t blen = r - p;
-        if (!blen) {
-          token->status = grn_token_done;
-          return GRN_ID_NIL;
-        }
-        token->curr = p;
-        token->curr_size = blen;
-        tid = grn_table_lookup(ctx, table, p, blen, &token->flags);
-        token->skip = len;
-      }
-    } else if (token->uni_digit && GRN_NSTR_CTYPE(*cp) == grn_str_digit) {
-      for (len = 1, r = p;;len++) {
-        size_t cl;
-        if (!(cl = grn_str_charlen(ctx, (char *)r, token->encoding))) { break; }
-        r += cl;
-        if (GRN_NSTR_ISBLANK(*cp)) { break; }
-        if (GRN_NSTR_CTYPE(*++cp) != grn_str_digit) { break; }
-      }
-      {
-        size_t blen = r - p;
-        if (!blen) {
-          token->status = grn_token_done;
-          return GRN_ID_NIL;
-        }
-        token->curr = p;
-        token->curr_size = (uint32_t)blen;
-        tid = grn_table_lookup(ctx, table, p, blen, &token->flags);
-        token->skip = len;
-      }
-    } else if (token->uni_symbol && GRN_NSTR_CTYPE(*cp) == grn_str_symbol) {
-      for (len = 1, r = p;;len++) {
-        size_t cl;
-        if (!(cl = grn_str_charlen(ctx, (char *)r, token->encoding))) { break; }
-        r += cl;
-        if (GRN_NSTR_ISBLANK(*cp)) { break; }
-        if (GRN_NSTR_CTYPE(*++cp) != grn_str_symbol) { break; }
-      }
-      {
-        size_t blen = r - p;
-        if (!blen) {
-          token->status = grn_token_done;
-          return GRN_ID_NIL;
-        }
-        token->curr = p;
-        token->curr_size = (uint32_t)blen;
-        tid = grn_table_lookup(ctx, table, p, blen, &token->flags);
-        token->skip = len;
-      }
-    } else {
-      size_t cl;
-#ifdef PRE_DEFINED_UNSPLIT_WORDS
-      {
-        const unsigned char *key = NULL;
-        // todo : grn_pat_lcp_search
-        if ((tid = grn_sym_common_prefix_search(sym, p))) {
-          if (!(key = _grn_sym_key(sym, tid))) {
-            token->status = grn_token_not_found;
-            return GRN_ID_NIL;
-          }
-          len = grn_str_len(key, token->encoding, NULL);
-        }
-        r = p + grn_str_charlen(ctx, p, token->encoding);
-        if (tid && (len > 1 || r == p)) {
-          if (r != p && pos + len - 1 <= token->tail) { continue; }
-          p += strlen(key);
-          if (!*p && !(token->flags & GRN_TABLE_ADD)) { token->status = grn_token_done; }
-        }
-      }
-#endif /* PRE_DEFINED_UNSPLIT_WORDS */
-      if (!(cl = grn_str_charlen(ctx, (char *)p, token->encoding))) {
-        token->status = grn_token_done;
-        return GRN_ID_NIL;
-      }
-      r = p + cl;
-      {
-        int blankp = 0;
-        for (len = 1, q = r; len < token->ngram_unit; len++) {
-          if (cp) {
-            if (GRN_NSTR_ISBLANK(*cp)) { blankp++; break; }
-            cp++;
-          }
-          if (!(cl = grn_str_charlen(ctx, (char *)q, token->encoding)) ||
-              (token->uni_alpha && GRN_NSTR_CTYPE(*cp) == grn_str_alpha) ||
-              (token->uni_digit && GRN_NSTR_CTYPE(*cp) == grn_str_digit) ||
-              (token->uni_symbol && GRN_NSTR_CTYPE(*cp) == grn_str_symbol)) {
-            break;
-          }
-          q += cl;
-        }
-        if (blankp && !(token->flags & GRN_TABLE_ADD)) { continue; }
-      }
-      if ((!cl || !*q) && !(token->flags & GRN_TABLE_ADD)) { token->status = grn_token_done; }
-      if (len < token->ngram_unit) { token->force_prefix = 1; }
-      {
-        size_t blen = q - p;
-        if (!blen) {
-          token->status = grn_token_done;
-          return GRN_ID_NIL;
-        }
-        token->curr = p;
-        token->curr_size = (uint32_t)blen;
-        tid = grn_table_lookup(ctx, table, p, blen, &token->flags);
-        token->skip = 1;
-      }
-    }
-    token->pos = pos;
-    token->len = len;
-    token->tail = pos + len - 1;
-    token->next = r;
-    // printf("tid=%d pos=%d tail=%d (%s) %s\n", tid, token->pos, token->tail, _grn_sym_key(sym, tid), r);
-    // printf("tid=%d pos=%d tail=%d (%s)\n", tid, token->pos, token->tail, _grn_sym_key(sym, tid));
-    if (!tid) {
-      token->status = grn_token_not_found;
-    } else {
-      if (!*r) { token->status = grn_token_done; }
-    }
-    return tid;
-  }
-  token->status = grn_token_done;
-  return GRN_ID_NIL;
-}
-
-/* mecab */
-
-#ifndef NO_MECAB
-
-static mecab_t *sole_mecab;
-static grn_mutex sole_mecab_lock;
-
-static char *grn_token_default_mecab_argv[] = {"", "-Owakati"};
-
-static int grn_token_mecab_argc = 2;
-static char **grn_token_mecab_argv = grn_token_default_mecab_argv;
-
-#define SOLE_MECAB_CONFIRM do {\
-  if (!sole_mecab) {\
-    MUTEX_LOCK(sole_mecab_lock);\
-    if (!sole_mecab) { sole_mecab = mecab_new(grn_token_mecab_argc, grn_token_mecab_argv); }\
-    MUTEX_UNLOCK(sole_mecab_lock);\
-  }\
-} while(0)
-
-inline static grn_token *
-grn_mecab_init(grn_token *token)
-{
-  grn_ctx *ctx = token->ctx;
-  unsigned int bufsize, maxtrial = 10, len;
-  grn_nstr *nstr = token->nstr;
-  char *buf, *s, *p;
-  char mecab_err[256];
-  // grn_log("(%s)", str);
-  SOLE_MECAB_CONFIRM;
-  if (!sole_mecab) {
-    GRN_LOG(grn_log_alert, "mecab_new failed on grn_mecab_init");
-    return NULL;
-  }
-  token->mecab = sole_mecab;
-  // if (!(token->mecab = mecab_new3())) {
-  len = nstr->norm_blen;
-  mecab_err[sizeof(mecab_err) - 1] = '\0';
-  for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
-    if(!(buf = GRN_MALLOC(bufsize + 1))) {
-      GRN_LOG(grn_log_alert, "buffer allocation on grn_mecab_init failed !");
-      GRN_FREE(token);
-      return NULL;
-    }
-    MUTEX_LOCK(sole_mecab_lock);
-    s = mecab_sparse_tostr3(token->mecab, (char *)nstr->norm, len, buf, bufsize);
-    if (!s) {
-      strncpy(mecab_err, mecab_strerror(token->mecab), sizeof(mecab_err) - 1);
-    }
-    MUTEX_UNLOCK(sole_mecab_lock);
-    if (s) { break; }
-    GRN_FREE(buf);
-    if (strstr(mecab_err, "output buffer overflow") == NULL) {
-      break;
-    }
-  }
-  if (!s) {
-    GRN_LOG(grn_log_alert, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s", len, bufsize, mecab_err);
-    grn_token_close(token);
-    return NULL;
-  }
-  // certain version of mecab returns trailing lf or spaces.
-  for (p = buf + strlen(buf) - 1; buf <= p && (*p == '\n' || isspace(*(unsigned char *)p)); p--) { *p = '\0'; }
-  //grn_log("sparsed='%s'", s);
-  token->orig = (unsigned char *)nstr->norm;
-  token->buf = (unsigned char *)buf;
-  token->next = (unsigned char *)buf;
-  token->force_prefix = 0;
-  return token;
-}
-
-inline static grn_id
-grn_mecab_next(grn_token *token)
-{
-  grn_id tid;
-  grn_obj *table = token->table;
-  grn_ctx *ctx = token->ctx;
-  int32_t len, offset = token->offset + token->len;
-  const unsigned char *p;
-  if (token->status == grn_token_done) { return GRN_ID_NIL; }
-  for (p = token->next, len = 0;;) {
-    size_t cl;
-    if (!(cl = grn_str_charlen(ctx, (char *)p, token->encoding)) ||
-        grn_isspace((const char *)p, token->encoding)) {
-      break;
-    }
-    p += cl;
-    len++;
-  }
-  if (!len) {
-    token->status = grn_token_done;
-    return GRN_ID_NIL;
-  }
-  token->curr = token->next;
-  token->curr_size = (uint32_t)(p - token->next);
-  tid = grn_table_lookup(ctx, table, token->curr, token->curr_size, &token->flags);
-  {
-    int cl;
-    while ((cl = grn_isspace((const char *)p, token->encoding))) { p += cl; }
-    token->next = p;
-    token->offset = offset;
-    token->len = len;
-  }
-  if (tid == GRN_ID_NIL) {
-    token->status = grn_token_not_found;
-  } else {
-    if (!*p) { token->status = grn_token_done; }
-  }
-  token->pos++;
-  return tid;
-}
-
-grn_rc
-grn_token_set_mecab_args(grn_ctx *ctx, int argc, char **argv)
-{
-  grn_token_mecab_argc = argc;
-  grn_token_mecab_argv = argv;
-  if (sole_mecab) {
-    GRN_LOG(grn_log_alert, "mecab already initialized");
-    return GRN_INVALID_ARGUMENT;
-  }
-  SOLE_MECAB_CONFIRM;
-  return GRN_SUCCESS;
-}
-
-#endif /* NO_MECAB */
-
-/* delimited */
+/*
 
 inline static grn_token *
 grn_delimited_init(grn_token *token)
@@ -360,6 +81,127 @@ grn_delimited_next(grn_token *token)
   token->pos++;
   return tid;
 }
+ delimited */
+
+/**** new tokenizer ****/
+
+/* mecab tokenizer */
+
+#ifndef NO_MECAB
+
+static mecab_t *sole_mecab;
+static grn_mutex sole_mecab_lock;
+
+#define SOLE_MECAB_CONFIRM do {\
+  if (!sole_mecab) {\
+    static char *argv[] = {"", "-Owakati"};\
+    MUTEX_LOCK(sole_mecab_lock);\
+    if (!sole_mecab) { sole_mecab = mecab_new(2, argv); }\
+    MUTEX_UNLOCK(sole_mecab_lock);\
+  }\
+} while(0)
+
+typedef struct {
+  mecab_t *mecab;
+  unsigned char *buf;
+  unsigned char *next;
+  unsigned char *end;
+  grn_encoding encoding;
+} grn_mecab_tokenizer;
+
+static grn_rc
+mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+           int argc, grn_proc_data *argv)
+{
+  char *buf, *s, *p;
+  char mecab_err[256];
+  grn_mecab_tokenizer *token;
+  unsigned int bufsize, maxtrial = 10, len;
+  SOLE_MECAB_CONFIRM;
+  if (!sole_mecab) {
+    GRN_LOG(grn_log_alert, "mecab_new failed on grn_mecab_init");
+    return GRN_TOKENIZER_ERROR;
+  }
+  if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return ctx->rc; }
+  user_data->ptr = token;
+  token->mecab = sole_mecab;
+  // if (!(token->mecab = mecab_new3())) {
+  len = argv[1].int_value;
+  mecab_err[sizeof(mecab_err) - 1] = '\0';
+  for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
+    if(!(buf = GRN_MALLOC(bufsize + 1))) {
+      GRN_LOG(grn_log_alert, "buffer allocation on mecab_init failed !");
+      GRN_FREE(token);
+      return ctx->rc;
+    }
+    MUTEX_LOCK(sole_mecab_lock);
+    s = mecab_sparse_tostr3(token->mecab, (char *)argv[0].ptr, len, buf, bufsize);
+    if (!s) {
+      strncpy(mecab_err, mecab_strerror(token->mecab), sizeof(mecab_err) - 1);
+    }
+    MUTEX_UNLOCK(sole_mecab_lock);
+    if (s) { break; }
+    GRN_FREE(buf);
+    if (strstr(mecab_err, "output buffer overflow") == NULL) { break; }
+  }
+  if (!s) {
+    GRN_LOG(grn_log_alert, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
+            len, bufsize, mecab_err);
+    GRN_FREE(token);
+    return GRN_TOKENIZER_ERROR;
+  }
+  // certain version of mecab returns trailing lf or spaces.
+  for (p = buf + strlen(buf) - 1;
+       buf <= p && (*p == '\n' || isspace(*(unsigned char *)p));
+       p--) { *p = '\0'; }
+  //grn_log("sparsed='%s'", s);
+  token->buf = (unsigned char *)buf;
+  token->next = (unsigned char *)buf;
+  token->end = (unsigned char *)buf + strlen(buf);
+  grn_table_get_info(ctx, table, NULL, &token->encoding, NULL);
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+mecab_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+           int argc, grn_proc_data *argv)
+{
+  size_t cl;
+  grn_mecab_tokenizer *token = user_data->ptr;
+  const unsigned char *p = token->next, *r;
+  const unsigned char *e = token->end;
+  for (r = p; r < e; r += cl) {
+    if (!(cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
+      token->next = (unsigned char *)r;
+      break;
+    }
+    if (grn_isspace((const char *)r, token->encoding)) {
+      const unsigned char *q = r;
+      while ((cl = grn_isspace((const char *)q, token->encoding))) { q += cl; }
+      token->next = (unsigned char *)q;
+      break;
+    }
+  }
+  argv[0].ptr = (void *)p;
+  argv[1].int_value = r - p;
+  argv[2].int_value = r == e ? GRN_TOKEN_LAST : 0;
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+mecab_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+          int argc, grn_proc_data *argv)
+{
+  grn_mecab_tokenizer *token = user_data->ptr;
+  // if (token->mecab) { mecab_destroy(token->mecab); }
+  GRN_FREE(token->buf);
+  GRN_FREE(token);
+  return GRN_SUCCESS;
+}
+
+#endif /* NO_MECAB */
+
+/* ngram tokenizer */
 
 typedef struct {
   uint8_t uni_alpha;
@@ -378,8 +220,8 @@ typedef struct {
 } grn_ngram_tokenizer;
 
 static grn_rc
-bigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
-            int argc, grn_proc_data *argv)
+ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+           int argc, grn_proc_data *argv, uint8_t ngram_unit)
 {
   grn_ngram_tokenizer *token;
   if (!(token = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) { return ctx->rc; }
@@ -387,7 +229,7 @@ bigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   token->uni_alpha = 1;
   token->uni_digit = 1;
   token->uni_symbol = 1;
-  token->ngram_unit = GRN_TABLE_DEFAULT_NGRAM_UNIT_SIZE;
+  token->ngram_unit = ngram_unit;
   token->overlap = 0;
   token->pos = 0;
   token->skip = 0;
@@ -400,7 +242,22 @@ bigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
 }
 
 static grn_rc
-bigram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+unigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+             int argc, grn_proc_data *argv)
+{ return ngram_init(ctx, table, user_data, argc, argv, 1); }
+
+static grn_rc
+bigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+            int argc, grn_proc_data *argv)
+{ return ngram_init(ctx, table, user_data, argc, argv, 2); }
+
+static grn_rc
+trigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+             int argc, grn_proc_data *argv)
+{ return ngram_init(ctx, table, user_data, argc, argv, 3); }
+
+static grn_rc
+ngram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
             int argc, grn_proc_data *argv)
 {
   size_t cl;
@@ -446,7 +303,7 @@ bigram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
       }
       len = grn_str_len(key, token->encoding, NULL);
     }
-    r = p + grn_str_charlen(ctx, p, token->encoding);
+    r = p + grn_str_charlen_nonnull(ctx, p, e, token->encoding);
     if (tid && (len > 1 || r == p)) {
       if (r != p && pos + len - 1 <= token->tail) { continue; }
       p += strlen(key);
@@ -490,7 +347,7 @@ bigram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
 }
 
 static grn_rc
-bigram_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+ngram_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
            int argc, grn_proc_data *argv)
 {
   GRN_FREE(user_data->ptr);
@@ -557,27 +414,13 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->table_flags = table_flags;
   token->encoding = encoding;
   token->tokenizer = tokenizer;
-
-#ifndef NO_MECAB
-  token->mecab = NULL;
-#endif /* NO_MECAB */
-  token->buf = NULL;
   token->curr = NULL;
   token->curr_size = 0;
   token->pos = -1;
-  token->skip = 1;
-  token->tail = 0;
   token->status = grn_token_doing;
   token->orig = (unsigned char *)nstr->norm;
   token->orig_blen = nstr->norm_blen;
-  token->next = (unsigned char *)nstr->norm;
-  token->uni_alpha = (nstr->ctypes && !(table_flags & GRN_OBJ_KEY_SPLIT_ALPHA));
-  token->uni_digit = (nstr->ctypes && !(table_flags & GRN_OBJ_KEY_SPLIT_DIGIT));
-  token->uni_symbol = (nstr->ctypes && !(table_flags & GRN_OBJ_KEY_SPLIT_SYMBOL));
   token->force_prefix = 0;
-  token->ngram_unit = GRN_TABLE_DEFAULT_NGRAM_UNIT_SIZE;
-  token->offset = 0;
-  token->len = 0;
   token->pctx.user_data.ptr = NULL;
   token->pctx.obj = table;
   token->pctx.hooks = NULL;
@@ -641,8 +484,9 @@ grn_token_close(grn_token *token)
   if (token) {
     grn_ctx *ctx = token->ctx;
     if (token->nstr) { grn_nstr_close(token->nstr); }
-    ((grn_proc *)token->tokenizer)->funcs[PROC_FIN](ctx, token->table, &token->pctx.user_data,
-                                             0, token->pctx.data);
+    ((grn_proc *)token->tokenizer)->funcs[PROC_FIN](ctx, token->table,
+                                                    &token->pctx.user_data,
+                                                    0, token->pctx.data);
     GRN_FREE(token);
     return GRN_SUCCESS;
   } else {
@@ -650,14 +494,23 @@ grn_token_close(grn_token *token)
   }
 }
 
-#define DB_OBJ(obj) ((grn_db_obj *)obj)
-
 grn_rc
 grn_db_init_builtin_tokenizers(grn_ctx *ctx)
 {
   grn_obj *obj;
+  obj = grn_proc_create(ctx, "<token:unigram>", 15, NULL, GRN_PROC_HOOK,
+                        unigram_init, ngram_next, ngram_fin);
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_UNIGRAM) { return grn_invalid_format; }
   obj = grn_proc_create(ctx, "<token:bigram>", 14, NULL, GRN_PROC_HOOK,
-                        bigram_init, bigram_next, bigram_fin);
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_BIGRAM) { return grn_invalid_format; }
+                        bigram_init, ngram_next, ngram_fin);
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_BIGRAM) { return grn_invalid_format; }
+  obj = grn_proc_create(ctx, "<token:trigram>", 15, NULL, GRN_PROC_HOOK,
+                        trigram_init, ngram_next, ngram_fin);
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) { return grn_invalid_format; }
+#ifndef NO_MECAB
+  obj = grn_proc_create(ctx, "<token:mecab>", 13, NULL, GRN_PROC_HOOK,
+                        mecab_init, mecab_next, mecab_fin);
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return grn_invalid_format; }
+#endif /* NO_MECAB */
   return GRN_SUCCESS;
 }

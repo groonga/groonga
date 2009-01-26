@@ -47,28 +47,15 @@ extern "C" {
 typedef struct {
   grn_ctx *ctx;
   grn_obj *table;
-  unsigned char *buf;
   const unsigned char *orig;
-  const unsigned char *next;
   const unsigned char *curr;
   uint32_t orig_blen;
   uint32_t curr_size;
   grn_nstr *nstr;
-#ifndef NO_MECAB
-  mecab_t *mecab;
-#endif /* NO_MECAB */
   int32_t pos;
-  int32_t len;
-  uint32_t skip;
-  uint32_t tail;
-  uint32_t offset;
   grn_search_flags flags;
   uint8_t status;
-  uint8_t uni_alpha;
-  uint8_t uni_digit;
-  uint8_t uni_symbol;
   uint8_t force_prefix;
-  uint8_t ngram_unit;
   grn_obj_flags table_flags;
   grn_encoding encoding;
   grn_obj *tokenizer;

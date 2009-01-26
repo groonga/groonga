@@ -49,10 +49,6 @@ typedef struct {
 #define GRN_RSET_SUBRECS_COPY(subrecs,size,n,src) \
   (memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, size + GRN_RSET_SCORE_SIZE))
 
-
-
-#define GRN_TABLE_DEFAULT_NGRAM_UNIT_SIZE 2
-
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
 typedef struct _grn_table_delete_optarg grn_table_delete_optarg;
@@ -216,7 +212,10 @@ enum {
   GRN_DB_SHORTTEXT,
   GRN_DB_TEXT,
   GRN_DB_LONGTEXT,
-  GRN_DB_BIGRAM
+  GRN_DB_UNIGRAM,
+  GRN_DB_BIGRAM,
+  GRN_DB_TRIGRAM,
+  GRN_DB_MECAB,
 };
 
 #ifdef __cplusplus

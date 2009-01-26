@@ -81,6 +81,7 @@ typedef enum {
   GRN_CONNECTION_REFUSED = -50,
   GRN_RESOURCE_BUSY = -51,
   GRN_RANGE_ERROR = -52,
+  GRN_TOKENIZER_ERROR = -53,
   grn_invalid_format,
   grn_file_operation_error,
   grn_other_error,
