@@ -193,7 +193,7 @@ grn_ql_at(grn_ctx *ctx, const char *key)
   return o;
 }
 
-void
+grn_cell *
 grn_ql_def_native_func(grn_ctx *ctx, const char *name, grn_ql_native_func *func)
 {
   grn_cell *o = INTERN(name);
@@ -202,6 +202,7 @@ grn_ql_def_native_func(grn_ctx *ctx, const char *name, grn_ql_native_func *func)
     o->header.impl_flags |= GRN_CELL_NATIVE;
     o->u.o.func = func;
   }
+  return o;
 }
 
 /*

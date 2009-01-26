@@ -228,7 +228,7 @@ grn_rc grn_ql_def_db_funcs(grn_ctx *c);
 #define GRN_OBJ_INSPECT_SYMBOL_AS_STR 2
 
 void grn_obj_inspect(grn_ctx *c, grn_cell *obj, grn_obj *buf, int flags);
-void grn_ql_def_native_func(grn_ctx *c, const char *name, grn_ql_native_func *func);
+grn_cell *grn_ql_def_native_func(grn_ctx *c, const char *name, grn_ql_native_func *func);
 grn_cell *grn_ql_feed(grn_ctx *c, char *str, uint32_t str_size, int mode);
 grn_cell *grn_ql_eval(grn_ctx *c, grn_cell *code, grn_cell *objs);
 grn_rc grn_obj2int(grn_ctx *c, grn_cell *o);
