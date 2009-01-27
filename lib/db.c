@@ -314,7 +314,7 @@ grn_proc_create(grn_ctx *ctx,
                 const char *path, grn_proc_type type,
                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin)
 {
-  grn_proc *res;
+  grn_proc *res = NULL;
   grn_id id = GRN_ID_NIL;
   grn_id domain;
   grn_search_flags f = GRN_TABLE_ADD;
