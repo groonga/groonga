@@ -1,5 +1,9 @@
 2009-01-27  Poe MORITA  <morita at razil.jp>
 
+	* lib/ql.c (ha_table): multi-column index support.
+
+2009-01-27  Poe MORITA  <morita at razil.jp>
+
 	* lib/db.c (grn_proc_create): fixed a bug.
 
 2009-01-26  Poe MORITA  <morita at razil.jp>

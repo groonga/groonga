@@ -1048,10 +1048,13 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             while (PAIRP(args)) {
               POP(car, args);
               if (PAIRP(car)) {
-                car = CAR(car);
-                if (!obj2str(car, msg, &msg_size)) {
-                  grn_obj *source = grn_table_column(ctx, type, msg, msg_size);
-                  if (source) { sources[nsources++] = DB_OBJ(source)->id; }
+                grn_cell *col;
+                while (PAIRP(car) && nsources < MAXCOLUMNS) {
+                  POP(col, car);
+                  if (!obj2str(col, msg, &msg_size)) {
+                    grn_obj *source = grn_table_column(ctx, type, msg, msg_size);
+                    if (source) { sources[nsources++] = DB_OBJ(source)->id; }
+                  }
                 }
               } else {
                 if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
