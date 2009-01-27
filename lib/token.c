@@ -102,6 +102,7 @@ static grn_mutex sole_mecab_lock;
 } while(0)
 
 typedef struct {
+  grn_str *nstr;
   mecab_t *mecab;
   unsigned char *buf;
   unsigned char *next;
@@ -113,8 +114,10 @@ static grn_rc
 mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
            int argc, grn_proc_data *argv)
 {
+  int nflags = 0;
   char *buf, *s, *p;
   char mecab_err[256];
+  grn_obj_flags table_flags;
   grn_mecab_tokenizer *token;
   unsigned int bufsize, maxtrial = 10, len;
   SOLE_MECAB_CONFIRM;
@@ -126,7 +129,14 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   user_data->ptr = token;
   token->mecab = sole_mecab;
   // if (!(token->mecab = mecab_new3())) {
-  len = argv[1].int_value;
+  grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
+  nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
+  if (!(token->nstr = grn_str_open(ctx, (char *)argv[0].ptr, argv[1].int_value,
+                                   token->encoding, nflags))) {
+    GRN_LOG(grn_log_alert, "grn_str_open failed at grn_token_open");
+    return GRN_TOKENIZER_ERROR;
+  }
+  len = token->nstr->norm_blen;
   mecab_err[sizeof(mecab_err) - 1] = '\0';
   for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
     if(!(buf = GRN_MALLOC(bufsize + 1))) {
@@ -135,7 +145,7 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
       return ctx->rc;
     }
     MUTEX_LOCK(sole_mecab_lock);
-    s = mecab_sparse_tostr3(token->mecab, (char *)argv[0].ptr, len, buf, bufsize);
+    s = mecab_sparse_tostr3(token->mecab, token->nstr->norm, len, buf, bufsize);
     if (!s) {
       strncpy(mecab_err, mecab_strerror(token->mecab), sizeof(mecab_err) - 1);
     }
@@ -158,7 +168,6 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   token->buf = (unsigned char *)buf;
   token->next = (unsigned char *)buf;
   token->end = (unsigned char *)buf + strlen(buf);
-  grn_table_get_info(ctx, table, NULL, &token->encoding, NULL);
   return GRN_SUCCESS;
 }
 
@@ -171,7 +180,7 @@ mecab_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   const unsigned char *p = token->next, *r;
   const unsigned char *e = token->end;
   for (r = p; r < e; r += cl) {
-    if (!(cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
+    if (!(cl = grn_charlen(ctx, (char *)r, (char *)e, token->encoding))) {
       token->next = (unsigned char *)r;
       break;
     }
@@ -194,6 +203,7 @@ mecab_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
 {
   grn_mecab_tokenizer *token = user_data->ptr;
   // if (token->mecab) { mecab_destroy(token->mecab); }
+  grn_str_close(ctx, token->nstr);
   GRN_FREE(token->buf);
   GRN_FREE(token);
   return GRN_SUCCESS;
@@ -204,6 +214,7 @@ mecab_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
 /* ngram tokenizer */
 
 typedef struct {
+  grn_str *nstr;
   uint8_t uni_alpha;
   uint8_t uni_digit;
   uint8_t uni_symbol;
@@ -223,7 +234,9 @@ static grn_rc
 ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
            int argc, grn_proc_data *argv, uint8_t ngram_unit)
 {
+  int nflags = GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES;
   grn_ngram_tokenizer *token;
+  grn_obj_flags table_flags;
   if (!(token = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) { return ctx->rc; }
   user_data->ptr = token;
   token->uni_alpha = 1;
@@ -233,11 +246,17 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   token->overlap = 0;
   token->pos = 0;
   token->skip = 0;
-  grn_table_get_info(ctx, table, NULL, &token->encoding, NULL);
-  token->next = argv[0].ptr;
-  token->end = token->next + argv[1].int_value;
-  token->ctypes = argv[2].ptr;
-  token->len = argv[3].int_value;
+  grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
+  nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
+  if (!(token->nstr = grn_str_open(ctx, (char *)argv[0].ptr, argv[1].int_value,
+                                   token->encoding, nflags))) {
+    GRN_LOG(grn_log_alert, "grn_str_open failed at grn_token_open");
+    return GRN_TOKENIZER_ERROR;
+  }
+  token->next = token->nstr->norm;
+  token->end = token->next + token->nstr->norm_blen;
+  token->ctypes = token->nstr->ctypes;
+  token->len = token->nstr->length;
   return GRN_SUCCESS;
 }
 
@@ -265,30 +284,30 @@ ngram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   const unsigned char *p = token->next, *r = p, *e = token->end;
   int32_t len = 0, pos = token->pos + token->skip, status = 0;
   uint_least8_t *cp = token->ctypes ? token->ctypes + pos : NULL;
-  if (cp && token->uni_alpha && GRN_NSTR_CTYPE(*cp) == grn_str_alpha) {
-    while ((cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
+  if (cp && token->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) {
+    while ((cl = grn_charlen(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (GRN_NSTR_ISBLANK(*cp)) { break; }
-      if (GRN_NSTR_CTYPE(*++cp) != grn_str_alpha) { break; }
+      if (GRN_STR_ISBLANK(*cp)) { break; }
+      if (GRN_STR_CTYPE(*++cp) != grn_str_alpha) { break; }
     }
     token->next = r;
     token->overlap = 0;
-  } else if (cp && token->uni_digit && GRN_NSTR_CTYPE(*cp) == grn_str_digit) {
-    while ((cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
+  } else if (cp && token->uni_digit && GRN_STR_CTYPE(*cp) == grn_str_digit) {
+    while ((cl = grn_charlen(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (GRN_NSTR_ISBLANK(*cp)) { break; }
-      if (GRN_NSTR_CTYPE(*++cp) != grn_str_digit) { break; }
+      if (GRN_STR_ISBLANK(*cp)) { break; }
+      if (GRN_STR_CTYPE(*++cp) != grn_str_digit) { break; }
     }
     token->next = r;
     token->overlap = 0;
-  } else if (cp && token->uni_symbol && GRN_NSTR_CTYPE(*cp) == grn_str_symbol) {
-    while ((cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
+  } else if (cp && token->uni_symbol && GRN_STR_CTYPE(*cp) == grn_str_symbol) {
+    while ((cl = grn_charlen(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (GRN_NSTR_ISBLANK(*cp)) { break; }
-      if (GRN_NSTR_CTYPE(*++cp) != grn_str_symbol) { break; }
+      if (GRN_STR_ISBLANK(*cp)) { break; }
+      if (GRN_STR_CTYPE(*++cp) != grn_str_symbol) { break; }
     }
     token->next = r;
     token->overlap = 0;
@@ -303,25 +322,25 @@ ngram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
       }
       len = grn_str_len(key, token->encoding, NULL);
     }
-    r = p + grn_str_charlen_nonnull(ctx, p, e, token->encoding);
+    r = p + grn_charlen(ctx, p, e, token->encoding);
     if (tid && (len > 1 || r == p)) {
       if (r != p && pos + len - 1 <= token->tail) { continue; }
       p += strlen(key);
       if (!*p && !(token->flags & GRN_TABLE_ADD)) { token->status = grn_token_done; }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
-    if ((cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
+    if ((cl = grn_charlen(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
       token->next = r;
       while (len < token->ngram_unit &&
-             (cl = grn_str_charlen_nonnull(ctx, (char *)r, (char *)e, token->encoding))) {
+             (cl = grn_charlen(ctx, (char *)r, (char *)e, token->encoding))) {
         if (cp) {
-          if (GRN_NSTR_ISBLANK(*cp)) { break; }
+          if (GRN_STR_ISBLANK(*cp)) { break; }
           cp++;
-          if ((token->uni_alpha && GRN_NSTR_CTYPE(*cp) == grn_str_alpha) ||
-              (token->uni_digit && GRN_NSTR_CTYPE(*cp) == grn_str_digit) ||
-              (token->uni_symbol && GRN_NSTR_CTYPE(*cp) == grn_str_symbol)) { break; }
+          if ((token->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) ||
+              (token->uni_digit && GRN_STR_CTYPE(*cp) == grn_str_digit) ||
+              (token->uni_symbol && GRN_STR_CTYPE(*cp) == grn_str_symbol)) { break; }
         }
         len++;
         r += cl;
@@ -350,7 +369,9 @@ static grn_rc
 ngram_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
            int argc, grn_proc_data *argv)
 {
-  GRN_FREE(user_data->ptr);
+  grn_ngram_tokenizer *token = user_data->ptr;
+  grn_str_close(ctx, token->nstr);
+  GRN_FREE(token);
   return GRN_SUCCESS;
 }
 
@@ -385,62 +406,39 @@ grn_token *
 grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
                grn_search_flags flags)
 {
-  grn_nstr *nstr;
-  int nflag, type;
   grn_token *token;
   grn_encoding encoding;
-  grn_obj_flags table_flags;
   grn_obj *tokenizer;
-  if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer)) { return NULL; }
+  if (grn_table_get_info(ctx, table, NULL, &encoding, &tokenizer)) { return NULL; }
   if (!tokenizer) { return NULL; }
-  type = table_flags & GRN_OBJ_TOKEN_MASK;
-  nflag = (type == GRN_OBJ_TOKEN_NGRAM ? GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES : 0);
-  if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
-    if (!(nstr = grn_nstr_open(ctx, str, str_len, encoding, nflag))) {
-      GRN_LOG(grn_log_alert, "grn_nstr_open failed at grn_token_open");
-      return NULL;
-    }
-  } else {
-    if (!(nstr = grn_fakenstr_open(ctx, str, str_len, encoding, nflag))) {
-      GRN_LOG(grn_log_alert, "grn_fakenstr_open failed at grn_token_open");
-      return NULL;
-    }
-  }
   if (!(token = GRN_MALLOC(sizeof(grn_token)))) { return NULL; }
-  token->ctx = ctx;
   token->table = table;
   token->flags = flags;
-  token->nstr = nstr;
-  token->table_flags = table_flags;
   token->encoding = encoding;
   token->tokenizer = tokenizer;
   token->curr = NULL;
   token->curr_size = 0;
   token->pos = -1;
   token->status = grn_token_doing;
-  token->orig = (unsigned char *)nstr->norm;
-  token->orig_blen = nstr->norm_blen;
   token->force_prefix = 0;
   token->pctx.user_data.ptr = NULL;
   token->pctx.obj = table;
   token->pctx.hooks = NULL;
   token->pctx.currh = NULL;
   token->pctx.phase = PROC_INIT;
-  token->pctx.data[0].ptr = nstr->norm;
-  token->pctx.data[1].int_value = nstr->norm_blen;
-  token->pctx.data[2].ptr = nstr->ctypes;
-  token->pctx.data[3].int_value = nstr->length;
+  token->pctx.data[0].ptr = (void *)str;
+  token->pctx.data[1].int_value = str_len;
+  token->pctx.data[2].int_value = 0;
   ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, table, &token->pctx.user_data,
-                                            4, token->pctx.data);
+                                            3, token->pctx.data);
   return token;
 }
 
 grn_id
-grn_token_next(grn_token *token)
+grn_token_next(grn_ctx *ctx, grn_token *token)
 {
   int status;
   grn_id tid = GRN_ID_NIL;
-  grn_ctx *ctx = token->ctx;
   grn_obj *table = token->table;
   grn_obj *tokenizer = token->tokenizer;
   while (token->status != grn_token_done) {
@@ -479,11 +477,9 @@ grn_token_next(grn_token *token)
 }
 
 grn_rc
-grn_token_close(grn_token *token)
+grn_token_close(grn_ctx *ctx, grn_token *token)
 {
   if (token) {
-    grn_ctx *ctx = token->ctx;
-    if (token->nstr) { grn_nstr_close(token->nstr); }
     ((grn_proc *)token->tokenizer)->funcs[PROC_FIN](ctx, token->table,
                                                     &token->pctx.user_data,
                                                     0, token->pctx.data);

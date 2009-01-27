@@ -394,7 +394,7 @@ unesc(grn_ctx *ctx, grn_cell *obj)
   char *src, *dest, *end = STRVALUE(obj) + STRSIZE(obj);
   for (src = dest = STRVALUE(obj);;) {
     unsigned int len;
-    if (!(len = grn_str_charlen_nonnull(ctx, src, end, ctx->encoding))) { break; }
+    if (!(len = grn_charlen(ctx, src, end, ctx->encoding))) { break; }
     if (src[0] == '\\' && src + 1 < end && len == 1) {
       src++;
       switch (*src) {
@@ -779,11 +779,12 @@ register_cell(grn_ctx *ctx, grn_obj *db_obj, const char *name, unsigned name_siz
 static grn_cell *
 table_create(grn_ctx *ctx, const char *name, unsigned name_size,
              grn_obj_flags flags, grn_obj *domain,
-             unsigned value_size, grn_encoding encoding)
+             unsigned value_size, grn_encoding encoding, grn_id tokenizer)
 {
   grn_obj *table = grn_table_create(ctx, name, name_size,
                                     NULL, flags, domain, value_size, encoding);
   if (!table) { QLERR("table create failed"); }
+  grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, grn_ctx_get(ctx, tokenizer));
   return register_cell(ctx, table, name, name_size);
 }
 
@@ -791,7 +792,7 @@ static grn_cell *
 rec_obj_new(grn_ctx *ctx, grn_obj *domain, unsigned value_size)
 {
   return table_create(ctx, NULL, 0, GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                      domain, value_size, grn_enc_none);
+                      domain, value_size, grn_enc_none, GRN_DB_BIGRAM);
 }
 
 typedef struct {
@@ -1388,7 +1389,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           POP(res, args);
           if (!RECORDSP(res)) {
             res = table_create(ctx, NULL, 0, GRN_OBJ_TABLE_NO_KEY,
-                               table, sizeof(grn_id), grn_enc_none);
+                               table, sizeof(grn_id), grn_enc_none, GRN_DB_BIGRAM);
           }
           if (ce) {
             grn_table_sort(ctx, table, limit, get_obj(ctx, res), ce->keys, ce->n_keys);
@@ -2027,6 +2028,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
   grn_encoding encoding = grn_enc_default;
   grn_obj *domain = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
   grn_cell *car;
+  grn_id tokenizer = GRN_DB_BIGRAM;
   char msg[STRBUF_SIZE];
   uint16_t msg_size;
   while (PAIRP(args)) {
@@ -2049,7 +2051,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
         switch (msg[2]) {
         case 'l' :  /* delimited */
         case 'L' :
-          flags |= GRN_OBJ_TOKEN_DELIMITED;
+          /* tokenizer = GRN_DB_DELIMITED; */
           break;
         case 'f' :  /* default */
         case 'F' :
@@ -2069,12 +2071,16 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
       case 'L' :
         encoding = grn_enc_latin1;
         break;
+      case 'm' : /* mecab */
+      case 'M' :
+        tokenizer = GRN_DB_MECAB;
+        break;
       case 'n' :
       case 'N' :
         switch (msg[1]) {
         case 'g' : /* ngram */
         case 'G' :
-          flags |= GRN_OBJ_TOKEN_NGRAM;
+          tokenizer = GRN_DB_BIGRAM;
           break;
         case 'o' : /* normalize */
         case 'O' :
@@ -2132,7 +2138,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
       }
     }
   }
-  return table_create(ctx, name, name_size, flags, domain, value_size, encoding);
+  return table_create(ctx, name, name_size, flags, domain, value_size, encoding, tokenizer);
 }
 
 static grn_cell *
@@ -2667,7 +2673,7 @@ bulk_tsv_esc(grn_ctx *ctx, grn_obj *buf, const char *s, int len, grn_encoding en
   const char *e;
   unsigned int l;
   for (e = s + len; s < e; s += l) {
-    if (!(l = grn_str_charlen_nonnull(ctx, s, e, encoding))) { break; }
+    if (!(l = grn_charlen(ctx, s, e, encoding))) { break; }
     if (l == 1) {
       switch (*s) {
       case '\t' :
@@ -2874,7 +2880,7 @@ json_readstr(grn_ctx *ctx, jctx *jc)
   for (start = end = jc->cur;;) {
     unsigned int len;
     /* null check and length check */
-    if (!(len = grn_str_charlen_nonnull(ctx, end, jc->str_end, jc->encoding))) {
+    if (!(len = grn_charlen(ctx, end, jc->str_end, jc->encoding))) {
       jc->cur = jc->str_end;
       break;
     }
@@ -2902,7 +2908,7 @@ json_readstrexp(grn_ctx *ctx, jctx *jc, int keyp)
   for (start = src = dest = jc->cur;;) {
     unsigned int len;
     /* null check and length check */
-    if (!(len = grn_str_charlen_nonnull(ctx, src, jc->str_end, jc->encoding))) {
+    if (!(len = grn_charlen(ctx, src, jc->str_end, jc->encoding))) {
       jc->cur = jc->str_end;
       if (start < dest) {
         res = keyp

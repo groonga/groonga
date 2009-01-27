@@ -26,7 +26,7 @@
 #endif /* _ISOC99_SOURCE */
 #include <math.h>
 
-inline static size_t
+inline static int
 grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
 {
   /* MEMO: This function allows non-null-terminated string as str. */
@@ -35,7 +35,7 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
   if (!*p || p >= end) { return 0; }
   if (*p & 0x80) {
     int b, w;
-    size_t size;
+    int size;
     for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
     if (!w) {
       GRN_LOG(grn_log_warning, "invalid utf8 string(1) on grn_str_charlen_utf8");
@@ -117,8 +117,8 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
   return 0;
 }
 
-size_t
-grn_str_charlen_nonnull(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding)
+int
+grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding)
 {
   /* MEMO: This function allows non-null-terminated string as str. */
   /*       But requires the end of string. */
@@ -131,7 +131,7 @@ grn_str_charlen_nonnull(grn_ctx *ctx, const char *str, const char *end, grn_enco
         return 2;
       } else {
         /* This is invalid character */
-        GRN_LOG(grn_log_warning, "invalid euc-jp string end on grn_str_charlen_nonnull");
+        GRN_LOG(grn_log_warning, "invalid euc-jp string end on grn_charlen");
         return 0;
       }
     }
@@ -148,7 +148,7 @@ grn_str_charlen_nonnull(grn_ctx *ctx, const char *str, const char *end, grn_enco
         return 1;
       } else if (++p >= (unsigned char *)end) {
         /* This is invalid character */
-        GRN_LOG(grn_log_warning, "invalid sjis string end on grn_str_charlen_nonnull");
+        GRN_LOG(grn_log_warning, "invalid sjis string end on grn_charlen");
         return 0;
       } else {
         return 2;
@@ -173,7 +173,7 @@ static unsigned char symbol[] = {
 };
 
 inline static grn_rc
-normalize_euc(grn_nstr *nstr)
+normalize_euc(grn_ctx *ctx, grn_str *nstr)
 {
   static uint16_t hankana[] = {
     0xa1a1, 0xa1a3, 0xa1d6, 0xa1d7, 0xa1a2, 0xa1a6, 0xa5f2, 0xa5a1, 0xa5a3,
@@ -195,7 +195,6 @@ normalize_euc(grn_nstr *nstr)
     0xd1, 0, 0, 0xd4, 0, 0, 0xd7, 0, 0, 0xda, 0, 0, 0xdd
   };
   int16_t *ch;
-  grn_ctx *ctx = nstr->ctx;
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_, b;
   uint_least8_t *cp, *ctypes, ctype;
@@ -281,11 +280,11 @@ normalize_euc(grn_nstr *nstr)
               break;
             case 0xa1 :
               if (removeblankp) {
-                if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+                if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
                 continue;
               } else {
                 *d = ' ';
-                ctype = GRN_NSTR_BLANK|grn_str_symbol;
+                ctype = GRN_STR_BLANK|grn_str_symbol;
               }
               break;
             default :
@@ -354,16 +353,16 @@ normalize_euc(grn_nstr *nstr)
       case 0 :
       case 1 :
         /* skip unprintable ascii */
-        if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+        if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
         continue;
       case 2 :
         if (c == 0x20) {
           if (removeblankp) {
-            if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+            if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
             continue;
           } else {
             *d = ' ';
-            ctype = GRN_NSTR_BLANK|grn_str_symbol;
+            ctype = GRN_STR_BLANK|grn_str_symbol;
           }
         } else {
           *d = c;
@@ -418,10 +417,9 @@ const char *grn_nfkc_map1(const unsigned char *str);
 const char *grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix);
 
 inline static grn_rc
-normalize_utf8(grn_nstr *nstr)
+normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
-  grn_ctx *ctx = nstr->ctx;
   const unsigned char *s, *s_, *s__, *p, *p2, *pe, *e;
   unsigned char *d, *d_;
   uint_least8_t *cp, *ctypes;
@@ -477,7 +475,7 @@ normalize_utf8(grn_nstr *nstr)
       }
       if ((*p == ' ' && removeblankp)
           || *p < 0x20  /* skip unprintable ascii */ ) {
-        if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+        if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
       } else {
         memcpy(d, p, lp);
         d_ = d;
@@ -507,7 +505,7 @@ normalize_utf8(grn_nstr *nstr)
 #endif /* NO_NFKC */
 
 inline static grn_rc
-normalize_sjis(grn_nstr *nstr)
+normalize_sjis(grn_ctx *ctx, grn_str *nstr)
 {
   static uint16_t hankana[] = {
     0x8140, 0x8142, 0x8175, 0x8176, 0x8141, 0x8145, 0x8392, 0x8340, 0x8342,
@@ -529,7 +527,6 @@ normalize_sjis(grn_nstr *nstr)
     0x70, 0, 0, 0x73, 0, 0, 0x76, 0, 0, 0x79, 0, 0, 0x7c
   };
   int16_t *ch;
-  grn_ctx *ctx = nstr->ctx;
   const unsigned char *s, *s_;
   unsigned char *d, *d0, *d_, b, *e;
   uint_least8_t *cp, *ctypes, ctype;
@@ -605,11 +602,11 @@ normalize_sjis(grn_nstr *nstr)
                 break;
               case 0x40 :
                 if (removeblankp) {
-                  if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+                  if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
                   continue;
                 } else {
                   *d = ' ';
-                  ctype = GRN_NSTR_BLANK|grn_str_symbol;
+                  ctype = GRN_STR_BLANK|grn_str_symbol;
                 }
                 break;
               default :
@@ -679,16 +676,16 @@ normalize_sjis(grn_nstr *nstr)
       case 0 :
       case 1 :
         /* skip unprintable ascii */
-        if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+        if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
         continue;
       case 2 :
         if (c == 0x20) {
           if (removeblankp) {
-            if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+            if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
             continue;
           } else {
             *d = ' ';
-            ctype = GRN_NSTR_BLANK|grn_str_symbol;
+            ctype = GRN_STR_BLANK|grn_str_symbol;
           }
         } else {
           *d = c;
@@ -738,10 +735,9 @@ normalize_sjis(grn_nstr *nstr)
 }
 
 inline static grn_rc
-normalize_none(grn_nstr *nstr)
+normalize_none(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
-  grn_ctx *ctx = nstr->ctx;
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
@@ -776,16 +772,16 @@ normalize_none(grn_nstr *nstr)
     case 0 :
     case 1 :
       /* skip unprintable ascii */
-      if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+      if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
       continue;
     case 2 :
       if (c == 0x20) {
         if (removeblankp) {
-          if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+          if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_NSTR_BLANK|grn_str_symbol;
+          ctype = GRN_STR_BLANK|grn_str_symbol;
         }
       } else {
         *d = c;
@@ -835,10 +831,9 @@ normalize_none(grn_nstr *nstr)
 
 /* use cp1252 as latin1 */
 inline static grn_rc
-normalize_latin1(grn_nstr *nstr)
+normalize_latin1(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
-  grn_ctx *ctx = nstr->ctx;
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
@@ -873,16 +868,16 @@ normalize_latin1(grn_nstr *nstr)
     case 0 :
     case 1 :
       /* skip unprintable ascii */
-      if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+      if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
       continue;
     case 2 :
       if (c == 0x20) {
         if (removeblankp) {
-          if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+          if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_NSTR_BLANK|grn_str_symbol;
+          ctype = GRN_STR_BLANK|grn_str_symbol;
         }
       } else {
         *d = c;
@@ -965,10 +960,9 @@ normalize_latin1(grn_nstr *nstr)
 }
 
 inline static grn_rc
-normalize_koi8r(grn_nstr *nstr)
+normalize_koi8r(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
-  grn_ctx *ctx = nstr->ctx;
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
@@ -1003,16 +997,16 @@ normalize_koi8r(grn_nstr *nstr)
     case 0 :
     case 1 :
       /* skip unprintable ascii */
-      if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+      if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
       continue;
     case 2 :
       if (c == 0x20) {
         if (removeblankp) {
-          if (cp > ctypes) { *(cp - 1) |= GRN_NSTR_BLANK; }
+          if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_NSTR_BLANK|grn_str_symbol;
+          ctype = GRN_STR_BLANK|grn_str_symbol;
         }
       } else {
         *d = c;
@@ -1083,62 +1077,12 @@ normalize_koi8r(grn_nstr *nstr)
   return GRN_SUCCESS;
 }
 
-grn_nstr *
-grn_nstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags)
-{
-  grn_rc rc;
-  grn_nstr *nstr;
-  if (!str) { return NULL; }
-  if (!(nstr = GRN_MALLOC(sizeof(grn_nstr)))) {
-    GRN_LOG(grn_log_alert, "memory allocation on grn_nstr_open failed !");
-    return NULL;
-  }
-  nstr->orig = str;
-  nstr->orig_blen = str_len;
-  nstr->norm = NULL;
-  nstr->norm_blen = 0;
-  nstr->checks = NULL;
-  nstr->ctypes = NULL;
-  nstr->encoding = encoding;
-  nstr->flags = flags;
-  nstr->ctx = ctx;
-  switch (encoding) {
-  case grn_enc_euc_jp :
-    rc = normalize_euc(nstr);
-    break;
-  case grn_enc_utf8 :
-#ifdef NO_NFKC
-    rc = normalize_none(nstr);
-#else /* NO_NFKC */
-    rc = normalize_utf8(nstr);
-#endif /* NO_NFKC */
-    break;
-  case grn_enc_sjis :
-    rc = normalize_sjis(nstr);
-    break;
-  case grn_enc_latin1 :
-    rc = normalize_latin1(nstr);
-    break;
-  case grn_enc_koi8r :
-    rc = normalize_koi8r(nstr);
-    break;
-  default :
-    rc = normalize_none(nstr);
-    break;
-  }
-  if (rc) {
-    grn_nstr_close(nstr);
-    return NULL;
-  }
-  return nstr;
-}
-
-grn_nstr *
+static grn_str *
 grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags)
 {
   /* TODO: support GRN_STR_REMOVEBLANK flag and ctypes */
-  grn_nstr *nstr;
-  if (!(nstr = GRN_MALLOC(sizeof(grn_nstr)))) {
+  grn_str *nstr;
+  if (!(nstr = GRN_MALLOC(sizeof(grn_str)))) {
     GRN_LOG(grn_log_alert, "memory allocation on grn_fakenstr_open failed !");
     return NULL;
   }
@@ -1154,7 +1098,6 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
   nstr->norm_blen = str_len;
   nstr->ctypes = NULL;
   nstr->flags = flags;
-  nstr->ctx = ctx;
 
   if (flags & GRN_STR_WITH_CHECKS) {
     int16_t f = 0;
@@ -1217,11 +1160,64 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
   return nstr;
 }
 
+grn_str *
+grn_str_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags)
+{
+  grn_rc rc;
+  grn_str *nstr;
+  if (!str) { return NULL; }
+
+  if (!(flags & GRN_STR_NORMALIZE)) {
+    return grn_fakenstr_open(ctx, str, str_len, encoding, flags);
+  }
+
+  if (!(nstr = GRN_MALLOC(sizeof(grn_str)))) {
+    GRN_LOG(grn_log_alert, "memory allocation on grn_str_open failed !");
+    return NULL;
+  }
+  nstr->orig = str;
+  nstr->orig_blen = str_len;
+  nstr->norm = NULL;
+  nstr->norm_blen = 0;
+  nstr->checks = NULL;
+  nstr->ctypes = NULL;
+  nstr->encoding = encoding;
+  nstr->flags = flags;
+  switch (encoding) {
+  case grn_enc_euc_jp :
+    rc = normalize_euc(ctx, nstr);
+    break;
+  case grn_enc_utf8 :
+#ifdef NO_NFKC
+    rc = normalize_none(ctx, nstr);
+#else /* NO_NFKC */
+    rc = normalize_utf8(ctx, nstr);
+#endif /* NO_NFKC */
+    break;
+  case grn_enc_sjis :
+    rc = normalize_sjis(ctx, nstr);
+    break;
+  case grn_enc_latin1 :
+    rc = normalize_latin1(ctx, nstr);
+    break;
+  case grn_enc_koi8r :
+    rc = normalize_koi8r(ctx, nstr);
+    break;
+  default :
+    rc = normalize_none(ctx, nstr);
+    break;
+  }
+  if (rc) {
+    grn_str_close(ctx, nstr);
+    return NULL;
+  }
+  return nstr;
+}
+
 grn_rc
-grn_nstr_close(grn_nstr *nstr)
+grn_str_close(grn_ctx *ctx, grn_str *nstr)
 {
   if (nstr) {
-    grn_ctx *ctx = nstr->ctx;
     if (nstr->norm) { GRN_FREE(nstr->norm); }
     if (nstr->ctypes) { GRN_FREE(nstr->ctypes); }
     if (nstr->checks) { GRN_FREE(nstr->checks); }
@@ -1836,7 +1832,7 @@ grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len, grn_en
 
   GRN_BULK_PUTC(ctx, buf, '"');
   for (e = s + len; s < e; s += l) {
-    if (!(l = grn_str_charlen_nonnull(ctx, s, e, encoding))) { break; }
+    if (!(l = grn_charlen(ctx, s, e, encoding))) { break; }
     if (l == 1) {
       switch (*s) {
       case '"' :
@@ -1944,7 +1940,7 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
   char *s = *str, *e = *str_end;
   for (i = 0; s < e; i++, s += l) {
     if (i == start) { *str = s; }
-    if (!(l = grn_str_charlen_nonnull(ctx, s, e, encoding))) {
+    if (!(l = grn_charlen(ctx, s, e, encoding))) {
       return GRN_INVALID_ARGUMENT;
     }
     if (i == end) {
@@ -1953,28 +1949,4 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
     }
   }
   return GRN_SUCCESS;
-}
-
-int
-grn_str_normalize(grn_ctx *ctx, const char *str, unsigned int str_len,
-                  grn_encoding encoding, int flags,
-                  char *nstrbuf, int buf_size)
-{
-  int len;
-  grn_nstr *nstr;
-  if (!(nstr = grn_nstr_open(ctx, str, str_len, encoding, flags))) {
-    return -1;
-  }
-  /* if the buffer size is short to store for the normalized string,
-     the required size is returned
-     (to inform the caller to cast me again). */
-  len = (int)nstr->norm_blen;
-  if (buf_size > len) {
-    memcpy(nstrbuf, nstr->norm, len + 1);
-  } else if (buf_size == len) {
-    /* NB: non-NULL-terminated */
-    memcpy(nstrbuf, nstr->norm, len);
-  }
-  grn_nstr_close(nstr);
-  return len;
 }

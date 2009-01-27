@@ -29,19 +29,6 @@
 extern "C" {
 #endif
 
-typedef struct {
-  const char *orig;
-  size_t orig_blen;
-  char *norm;
-  size_t norm_blen;
-  uint_least8_t *ctypes;
-  int16_t *checks;
-  size_t length;
-  int flags;
-  grn_ctx *ctx;
-  grn_encoding encoding;
-} grn_nstr;
-
 typedef enum {
   getopt_op_none = 0,
   getopt_op_on,
@@ -57,16 +44,11 @@ typedef struct {
   grn_str_getopt_op op;
 } grn_str_getopt_opt;
 
-grn_nstr *grn_nstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags);
-grn_nstr *grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags);
-grn_rc grn_nstr_close(grn_nstr *nstr);
-
-size_t grn_str_charlen_nonnull(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
 size_t grn_str_len(grn_ctx *ctx, const char *str, grn_encoding encoding, const char **last);
 
-#define GRN_NSTR_BLANK 0x80
-#define GRN_NSTR_ISBLANK(c) (c & 0x80)
-#define GRN_NSTR_CTYPE(c) (c & 0x7f)
+#define GRN_STR_BLANK 0x80
+#define GRN_STR_ISBLANK(c) (c & 0x80)
+#define GRN_STR_CTYPE(c) (c & 0x7f)
 
 int grn_isspace(const char *s, grn_encoding encoding);
 int grn_atoi(const char *nptr, const char *end, const char **rest);

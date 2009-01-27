@@ -325,7 +325,7 @@ void grn_obj_patsnip_spec_close(grn_ctx *ctx, patsnip_spec *ss);
 #define SKIPSPACE(c) do {\
   unsigned int len;\
   while ((c)->cur < (c)->str_end && grn_isspace((c)->cur, (c)->encoding)) {\
-    if (!(len = grn_str_charlen_nonnull(ctx, (c)->cur, (c)->str_end, (c)->encoding))) { \
+    if (!(len = grn_charlen(ctx, (c)->cur, (c)->str_end, (c)->encoding))) { \
       (c)->cur = (c)->str_end;\
       break;\
     }\

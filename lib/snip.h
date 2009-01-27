@@ -48,7 +48,7 @@ typedef struct _snip_cond
   const char *closetag;
   size_t opentag_len;
   size_t closetag_len;
-  grn_nstr *keyword;
+  grn_str *keyword;
 
   /* Tuned BM pre */
   size_t bmBc[ASIZE];
@@ -105,7 +105,7 @@ struct _grn_snip
   unsigned int snip_count;
 
   const char *string;
-  grn_nstr *nstr;
+  grn_str *nstr;
 
   _snip_result snip_result[MAX_SNIP_RESULT_COUNT];
   _snip_tag_result tag_result[MAX_SNIP_TAG_COUNT];
@@ -116,8 +116,8 @@ struct _grn_snip
 grn_rc grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned int keyword_len,
                           grn_encoding enc, int flags);
 void grn_snip_cond_reinit(snip_cond *cond);
-grn_rc grn_snip_cond_close(snip_cond *cond);
-void grn_bm_tunedbm(snip_cond *cond, grn_nstr *object, int flags);
+grn_rc grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond);
+void grn_bm_tunedbm(snip_cond *cond, grn_str *object, int flags);
 
 #ifdef __cplusplus
 }

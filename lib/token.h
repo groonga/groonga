@@ -45,13 +45,11 @@ extern "C" {
 #define GRN_TOKEN_UPD 2
 
 typedef struct {
-  grn_ctx *ctx;
   grn_obj *table;
   const unsigned char *orig;
   const unsigned char *curr;
   uint32_t orig_blen;
   uint32_t curr_size;
-  grn_nstr *nstr;
   int32_t pos;
   grn_search_flags flags;
   uint8_t status;
@@ -68,17 +66,18 @@ enum {
   grn_token_not_found
 };
 
-#define GRN_TOKEN_LAST      (1L<<0)
-#define GRN_TOKEN_OVERLAP   (1L<<1)
-#define GRN_TOKEN_UNMATURED (1L<<2)
+#define GRN_TOKEN_LAST      (0x01L<<0)
+#define GRN_TOKEN_OVERLAP   (0x01L<<1)
+#define GRN_TOKEN_UNMATURED (0x01L<<2)
 
 grn_rc grn_token_init(void);
+grn_rc grn_token_fin(void);
+
 grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
                           size_t str_len, grn_search_flags flags);
 
-grn_id grn_token_next(grn_token *ng);
-grn_rc grn_token_close(grn_token *ng);
-grn_rc grn_token_fin(void);
+grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
+grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);
 
 grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
 

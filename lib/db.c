@@ -29,12 +29,12 @@
 
 #define WITH_NORMALIZE(table,key,key_size,block) {\
   if ((table)->obj.flags & GRN_OBJ_KEY_NORMALIZE) {\
-    grn_nstr *nstr;\
-    if ((nstr = grn_nstr_open(ctx, key, key_size, (table)->encoding, 0))) { \
+    grn_str *nstr;\
+    if ((nstr = grn_str_open(ctx, key, key_size, (table)->encoding, 0))) { \
       char *key = nstr->norm;\
       unsigned key_size = nstr->norm_blen;\
       block\
-      grn_nstr_close(nstr);\
+      grn_str_close(ctx, nstr);\
     }\
   } else {\
     block\
@@ -1173,7 +1173,7 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
                 grn_table_lookup(ctx, res, &tid, sizeof(grn_id), &fl);
                 /* todo : nsubrec++ if GRN_OBJ_TABLE_SUBSET assigned */
               }
-              if (!(len = grn_str_charlen_nonnull(ctx, sp, se, pat->encoding))) { break; }
+              if (!(len = grn_charlen(ctx, sp, se, pat->encoding))) { break; }
             }
           }
           // todo : support op;
@@ -2012,7 +2012,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
     size_t len;
     const char *sp, *se = name + name_size;
     if (*name == GRN_DB_DELIMITER) { name++; }
-    for (sp = name; (len = grn_str_charlen_nonnull(ctx, sp, se, ctx->encoding)); sp += len) {
+    for (sp = name; (len = grn_charlen(ctx, sp, se, ctx->encoding)); sp += len) {
       if (*sp == GRN_DB_DELIMITER) { break; }
     }
     if (!(len = sp - name)) { goto exit; }

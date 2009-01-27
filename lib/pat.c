@@ -596,7 +596,7 @@ _grn_pat_get(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
 inline static int
 chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lkey)
 {
-  size_t len = grn_str_charlen_nonnull(ctx, *key, end, pat->encoding);
+  size_t len = grn_charlen(ctx, *key, end, pat->encoding);
   if (len) {
     *lkey += len;
     *key += len;
@@ -1328,7 +1328,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   int n = 0;
   grn_id tid;
   if (pat->obj.flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_nstr *nstr = grn_nstr_open(ctx, str, str_len, pat->encoding, GRN_STR_WITH_CHECKS);
+    grn_str *nstr = grn_str_open(ctx, str, str_len, pat->encoding, GRN_STR_WITH_CHECKS);
     if (nstr) {
       int16_t *cp = nstr->checks;
       unsigned int offset = 0, offset0 = 0;
@@ -1354,7 +1354,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
         if (se <= sp) { offset = str_len; break; }
       }
       if (rest) { *rest = nstr->orig + offset; }
-      grn_nstr_close(nstr);
+      grn_str_close(ctx, nstr);
     } else {
       n = -1;
       if (rest) { *rest = str; }
@@ -1370,7 +1370,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
         sh[n].length = len;
         n++;
       } else {
-        len = grn_str_charlen_nonnull(ctx, sp, se, pat->encoding);
+        len = grn_charlen(ctx, sp, se, pat->encoding);
       }
       if (!len) { break; }
     }

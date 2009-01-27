@@ -124,7 +124,7 @@ skip_space(grn_ctx *ctx, grn_query *q)
   unsigned int len;
   while (q->cur < q->str_end && grn_isspace(q->cur, q->encoding)) {
     /* null check and length check */
-    if (!(len = grn_str_charlen_nonnull(ctx, q->cur, q->str_end, q->encoding))) {
+    if (!(len = grn_charlen(ctx, q->cur, q->str_end, q->encoding))) {
       q->cur = q->str_end;
       break;
     }
@@ -143,7 +143,7 @@ get_phrase(grn_ctx *ctx, grn_query *q)
       q->cur = s;
       break;
     }
-    len = grn_str_charlen_nonnull(ctx, s, q->str_end, q->encoding);
+    len = grn_charlen(ctx, s, q->str_end, q->encoding);
     if (len == 0) {
       /* invalid string containing malformed multibyte char */
       return NULL;
@@ -153,7 +153,7 @@ get_phrase(grn_ctx *ctx, grn_query *q)
         break;
       } else if (*s == GRN_QUERY_ESCAPE && s + 1 < q->str_end) {
         s++;
-        len = grn_str_charlen_nonnull(ctx, s, q->str_end, q->encoding);
+        len = grn_charlen(ctx, s, q->str_end, q->encoding);
       }
     }
     while (len--) { *d++ = *s++; }
@@ -168,7 +168,7 @@ get_word(grn_ctx *ctx, grn_query *q, int *prefixp)
   unsigned int len;
   for (end = q->cur;; ) {
     /* null check and length check */
-    if (!(len = grn_str_charlen_nonnull(ctx, end, q->str_end, q->encoding))) {
+    if (!(len = grn_charlen(ctx, end, q->str_end, q->encoding))) {
       q->cur = q->str_end;
       break;
     }
@@ -485,7 +485,7 @@ grn_query_close(grn_ctx *ctx, grn_query *q)
   if (q->snip_conds) {
     snip_cond *sc;
     for (sc = q->snip_conds; sc < q->snip_conds + q->cur_expr; sc++) {
-      grn_snip_cond_close(sc);
+      grn_snip_cond_close(ctx, sc);
     }
     GRN_FREE(q->snip_conds);
   }
@@ -503,7 +503,7 @@ grn_query_str(grn_query *q, const char **str, unsigned int *len)
 }
 
 static void
-scan_keyword(snip_cond *sc, grn_nstr *str, grn_id section,
+scan_keyword(snip_cond *sc, grn_str *str, grn_id section,
              grn_sel_operator op, grn_select_optarg *optarg,
              int *found, int *score)
 {
@@ -547,7 +547,7 @@ scan_keyword(snip_cond *sc, grn_nstr *str, grn_id section,
 
 /* TODO: delete overlapping logic with exec_query */
 static grn_rc
-scan_query(grn_ctx *ctx, grn_query *q, grn_nstr *nstr, grn_id section, grn_cell *c, snip_cond **sc,
+scan_query(grn_ctx *ctx, grn_query *q, grn_str *nstr, grn_id section, grn_cell *c, snip_cond **sc,
            grn_sel_operator op, int flags, int *found, int *score)
 {
   int _found = 0, _score = 0;
@@ -650,22 +650,18 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     return GRN_INVALID_ARGUMENT;
   }
   for (i = 0; i < nstrs; i++) {
-    grn_nstr *n;
+    grn_str *n;
     snip_cond *sc = q->snip_conds;
-    if (flags & GRN_QUERY_SCAN_NORMALIZE) {
-      n = grn_nstr_open(ctx, *(strs + i), *(str_lens + i), q->encoding,
-                        GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK);
-    } else {
-      n = grn_fakenstr_open(ctx, *(strs + i), *(str_lens + i), q->encoding,
-                        GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK);
-    }
+    int f = GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK;
+    if (flags & GRN_QUERY_SCAN_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
+    n = grn_str_open(ctx, *(strs + i), *(str_lens + i), q->encoding, f);
     if (!n) { return GRN_NO_MEMORY_AVAILABLE; }
     if ((rc = scan_query(ctx, q, n, i + 1, q->expr, &sc, grn_sel_or, flags, found, score))) {
-      grn_nstr_close(n);
+      grn_str_close(ctx, n);
       return rc;
     }
     flags &= ~GRN_QUERY_SCAN_ALLOCCONDS;
-    grn_nstr_close(n);
+    grn_str_close(ctx, n);
   }
   return GRN_SUCCESS;
 }

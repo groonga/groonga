@@ -194,7 +194,6 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 #define GRN_OBJ_CUSTOM_NAME            (1L<<1) /* db_obj which has custom name */
 
 #define GRN_OBJ_TOKEN_MASK             (0x07L<<3)
-#define GRN_OBJ_TOKEN_MECAB            (0x00L<<3)
 #define GRN_OBJ_TOKEN_NGRAM            (0x01L<<3)
 #define GRN_OBJ_TOKEN_DELIMITED        (0x02L<<3)
 #define GRN_OBJ_TOKEN_USER_DEFINED     (0x07L<<3)
