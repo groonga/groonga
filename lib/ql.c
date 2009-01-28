@@ -650,7 +650,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
                     QLWARN("illegal time format '%s'", str);
                   }
                 } else {
-                  double dval;
+                  double dval = 0.0;
                   char *str = STRVALUE(cell);
                   int len = cell->u.b.size;
                   STR2DBL(str, len, dval);

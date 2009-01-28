@@ -2982,7 +2982,7 @@ inline static uint32_t
 buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
            buffer_term **bt, buffer_rec **br, buffer **bp, grn_id id, grn_hash *h)
 {
-  buffer *b;
+  buffer *b = NULL;
   grn_id tid;
   uint16_t offset;
   unsigned key_size;

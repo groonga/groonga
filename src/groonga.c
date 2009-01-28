@@ -337,7 +337,7 @@ server(char *path)
         }
         {
           grn_sock *pfd;
-          int key_size;
+          uint32_t key_size;
           grn_com_sqtp *com;
           GRN_HASH_EACH(ev.hash, id, &pfd, &key_size, &com, {
             grn_ctx *ctx = (grn_ctx *)com->userdata;

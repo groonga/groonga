@@ -1341,7 +1341,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
 {
   grn_rc rc = GRN_SUCCESS;
   void *key, *value1, *value2;
-  uint32_t value_size;
+  uint32_t value_size = 0;
   uint32_t key_size;
   if (table1 != res) {
     if (table2 == res) {
@@ -1854,7 +1854,7 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *vector, const char *data, uint32_t data
       v->offsets[i] = o;
     }
   }
-  return grn_bulk_write(ctx, vector, p, pe - p);
+  return grn_bulk_write(ctx, vector, (char *)p, pe - p);
 }
 
 /**** grn_verses ****/
@@ -1919,7 +1919,7 @@ grn_vector_to_verses(grn_ctx *ctx, grn_obj *vector, grn_obj *verses)
     verses->u.v.src = vector;
     for (i = 0; i < n; i++) {
       unsigned int size;
-      const char *pe, *p = grn_vector_fetch(ctx, vector, i, &size);
+      const uint8_t *pe, *p = (uint8_t *)grn_vector_fetch(ctx, vector, i, &size);
       if (p) {
         grn_id domain;
         unsigned int weight;
@@ -1929,7 +1929,7 @@ grn_vector_to_verses(grn_ctx *ctx, grn_obj *vector, grn_obj *verses)
           if (p < pe) {
             GRN_B_DEC(domain, p);
             if (p <= pe) {
-              grn_verses_add(ctx, verses, p, pe - p, weight, domain);
+              grn_verses_add(ctx, verses, (char *)p, pe - p, weight, domain);
             }
           }
         }
@@ -2198,7 +2198,7 @@ const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *
 const char *
 grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size)
 {
-  const char *value;
+  const char *value = NULL;
   for (;;) {
     switch (a->action) {
     case GRN_ACCESSOR_GET_KEY :
@@ -2246,8 +2246,8 @@ static grn_obj *
 grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
 {
   grn_obj buf;
-  void *vp;
-  size_t vs;
+  void *vp = NULL;
+  size_t vs = 0;
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (;;) {
     GRN_BULK_REWIND(&buf);
@@ -2316,7 +2316,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
   if (!value) { value = grn_obj_open(ctx, GRN_BULK, 0); }
   if (value) {
     grn_obj buf;
-    void *vp;
+    void *vp = NULL;
     size_t vs;
     GRN_OBJ_INIT(&buf, GRN_BULK, 0);
     for (;;) {
@@ -2489,7 +2489,7 @@ exit :
 const char *
 grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
 {
-  const char *value;
+  const char *value = NULL;
   switch (obj->header.type) {
   case GRN_ACCESSOR :
     value = grn_accessor_get_value_(ctx, (grn_accessor *)obj, id, size);
@@ -2718,7 +2718,7 @@ grn_hook_pack(grn_ctx *ctx, grn_db_obj *obj, grn_obj *buf)
       grn_id id = hooks->proc ? hooks->proc->obj.id : 0;
       if ((rc = grn_bulk_benc(ctx, buf, id + 1))) { goto exit; }
       if ((rc = grn_bulk_benc(ctx, buf, hooks->hld_size))) { goto exit; }
-      if ((rc = grn_bulk_write(ctx, buf, NEXT_ADDR(hooks), hooks->hld_size))) { goto exit; }
+      if ((rc = grn_bulk_write(ctx, buf, (char *)NEXT_ADDR(hooks), hooks->hld_size))) { goto exit; }
     }
     if ((rc = grn_bulk_benc(ctx, buf, 0))) { goto exit; }
   }
@@ -2730,7 +2730,7 @@ static grn_rc
 grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_size)
 {
   grn_hook_entry e;
-  const char *p = buf, *pe = p + buf_size;
+  const uint8_t *p = (uint8_t *)buf, *pe = p + buf_size;
   for (e = 0; e < N_HOOK_ENTRIES; e++) {
     grn_hook *new, **last = &obj->hooks[e];
     for (;;) {
@@ -2891,7 +2891,7 @@ grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
     rc = GRN_INVALID_ARGUMENT;
   } else {
     int i;
-    void *hld_value;
+    void *hld_value = NULL;
     uint32_t hld_size = 0;
     grn_hook *new, **last = &DB_OBJ(obj)->hooks[entry];
     if (hld) {
@@ -2930,7 +2930,7 @@ grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
       if (!hook) { return NULL; }
     }
     res = (grn_obj *)hook->proc;
-    grn_bulk_write(ctx, hldbuf, NEXT_ADDR(hook), hook->hld_size);
+    grn_bulk_write(ctx, hldbuf, (char *)NEXT_ADDR(hook), hook->hld_size);
   }
   GRN_API_RETURN(res);
 }
@@ -2941,7 +2941,7 @@ grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset
   GRN_API_ENTER;
   {
     int i;
-    grn_hook *h, **last = &DB_OBJ(obj)->hooks[entry];
+    grn_hook *h = NULL, **last = &DB_OBJ(obj)->hooks[entry];
     for (i = 0; i < offset; i++) {
       if (!(h = *last)) { return GRN_INVALID_ARGUMENT; }
       last = &(*last)->next;
@@ -3418,7 +3418,7 @@ grn_obj_db(grn_ctx *ctx, grn_obj *obj)
 
 typedef struct {
   grn_id id;
-  int32_t size;
+  uint32_t size;
   const void *value;
 } sort_entry;
 

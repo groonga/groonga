@@ -912,8 +912,8 @@ grn_rc
 grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
 {
   entry *ee;
-  grn_id e, *index, *sp, *dp;
-  uint32_t n, n0 = *hash->n_entries, offs, offd;
+  grn_id e, *index = NULL, *sp = NULL, *dp;
+  uint32_t n, n0 = *hash->n_entries, offs = 0, offd = 0;
   if (!ne) { ne = n0 * 2; }
   if (ne > INT_MAX) { return GRN_NO_MEMORY_AVAILABLE; }
   for (n = INITIAL_INDEX_SIZE; n <= ne; n *= 2);
