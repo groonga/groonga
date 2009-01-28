@@ -415,7 +415,6 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei)
   GRN_IO_SEG_MAP(ja->io, *pseg, einfo);
   if (!einfo) { return GRN_NO_MEMORY_AVAILABLE; }
   eback = einfo[pos];
-  einfo[pos] = *ei;
   GRN_SET_64BIT(&einfo[pos], *ei);
   grn_ja_free(ctx, ja, &eback);
   return GRN_SUCCESS;

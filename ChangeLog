@@ -1,5 +1,9 @@
 2009-01-28  Poe MORITA  <morita at razil.jp>
 
+	* lib/groonga_in.h (GRN_SET_64BIT): fixed 32bit version.
+
+2009-01-28  Poe MORITA  <morita at razil.jp>
+
 	* lib/token.c: grn_str_open called from each tokenizer.
 	* lib/str.c (grn_str_charlen_nonnull): -> grn_charlen.
 

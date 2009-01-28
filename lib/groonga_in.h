@@ -255,7 +255,7 @@ typedef int grn_cond;
 
 # ifdef __i386__ /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
-  __asm__ __volatile__ ("\txchgl %%esi, %%ebx\n1:\n\txchgl %%esi, %%ebx\n\tmovl (%0), %%eax\n\tmovl 4(%0), %%edx\n\tlock; cmpxchg8b (%0)\n\tjnz 1b\n\txchgl %%ebx, %%esi" : : "D"(p), "S"(*(((uint32_t *)&(v))+0)), "c"(*(((uint32_t *)&(v))+1)) : "ax", "dx", "memory");
+  __asm__ __volatile__ ("\txchgl %%esi, %%ebx\n1:\n\tmovl (%0), %%eax\n\tmovl 4(%0), %%edx\n\tlock; cmpxchg8b (%0)\n\tjnz 1b\n\txchgl %%ebx, %%esi" : : "D"(p), "S"(*(((uint32_t *)&(v))+0)), "c"(*(((uint32_t *)&(v))+1)) : "ax", "dx", "memory");
 # elif defined(__x86_64__) /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
   *(p) = (v);
