@@ -348,7 +348,7 @@ grn_ja_unref(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_le
   return GRN_SUCCESS;
 }
 
-grn_rc
+static grn_rc
 grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
 {
   grn_ja_ginfo *ginfo;

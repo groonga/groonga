@@ -420,7 +420,7 @@ inline static grn_rc
 normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
-  const unsigned char *s, *s_, *s__, *p, *p2, *pe, *e;
+  const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
   unsigned char *d, *d_;
   uint_least8_t *cp, *ctypes;
   size_t length = 0, ls, lp, size = nstr->orig_blen;
@@ -1161,7 +1161,8 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
 }
 
 grn_str *
-grn_str_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags)
+grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
+             grn_encoding encoding, int flags)
 {
   grn_rc rc;
   grn_str *nstr;
@@ -1885,10 +1886,13 @@ grn_rc
 grn_bulk_benc(grn_ctx *ctx, grn_obj *buf, unsigned int v)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t *p;
   if (GRN_BULK_REST(buf) < 5) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + 5))) { return rc; }
   }
-  GRN_B_ENC(v, buf->u.b.curr);
+  p = (uint8_t *)buf->u.b.curr;
+  GRN_B_ENC(v, p);
+  buf->u.b.curr = (char *)p;
   return rc;
 }
 

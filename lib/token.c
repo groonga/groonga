@@ -253,7 +253,7 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
     GRN_LOG(grn_log_alert, "grn_str_open failed at grn_token_open");
     return GRN_TOKENIZER_ERROR;
   }
-  token->next = token->nstr->norm;
+  token->next = (unsigned char *)token->nstr->norm;
   token->end = token->next + token->nstr->norm_blen;
   token->ctypes = token->nstr->ctypes;
   token->len = token->nstr->length;

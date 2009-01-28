@@ -1302,7 +1302,7 @@ typedef struct {
 #define GRN_STR_WITH_CHECKS            (0x01L<<2)
 #define GRN_STR_NORMALIZE              GRN_OBJ_KEY_NORMALIZE
 
-grn_str *grn_str_open(grn_ctx *ctx, const char *str, size_t str_len,
+grn_str *grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
                       grn_encoding encoding, int flags);
 grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 

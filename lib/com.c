@@ -494,7 +494,7 @@ exit :
 grn_com_sqtp *
 grn_com_sqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 {
-  grn_sock fd;
+  grn_sock fd = -1;
   grn_com_sqtp *cs = NULL;
   struct hostent *he;
   struct sockaddr_in addr;
@@ -507,7 +507,7 @@ grn_com_sqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
   addr.sin_port = htons(port);
   if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     LOG_SOCKERR("socket");
-    goto exit;
+    return NULL;
   }
   {
     int v = 1;
