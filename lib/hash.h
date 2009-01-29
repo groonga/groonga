@@ -211,9 +211,6 @@ void *_grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id);
 #define GRN_HASH_TINY (1L<<1)
 #define GRN_HASH_MAX_KEY_SIZE GRN_TABLE_MAX_KEY_SIZE
 
-typedef struct _grn_hash grn_hash;
-typedef struct _grn_hash_cursor grn_hash_cursor;
-
 struct _grn_hash {
   grn_db_obj obj;
   grn_ctx *ctx;
@@ -307,45 +304,9 @@ struct _grn_table_sort_optarg {
   int offset;
 };
 
-
-grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size,
-                          uint32_t value_size, uint32_t flags, grn_encoding encoding);
-
-grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
-
-grn_rc grn_hash_close(grn_ctx *ctx, grn_hash *hash);
-
-grn_id grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
-                       void **value, grn_search_flags *flags);
-
-int grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize);
-int grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk);
-int grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf);
-grn_rc grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *value,
-                          int flags);
-
-grn_rc grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
-                             grn_table_delete_optarg *optarg);
-grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size,
-                       grn_table_delete_optarg *optarg);
-
-grn_hash_cursor *grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
-                                      const void *min, uint32_t min_size,
-                                      const void *max, uint32_t max_size, int flags);
-grn_id grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c);
-void grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c);
-
-int grn_hash_cursor_get_key(grn_ctx *ctx, grn_hash_cursor *c, void **key);
-int grn_hash_cursor_get_value(grn_ctx *ctx, grn_hash_cursor *c, void **value);
-grn_rc grn_hash_cursor_set_value(grn_ctx *ctx, grn_hash_cursor *c,
-                                 void *value, int flags);
-grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
-                              grn_table_delete_optarg *optarg);
 int grn_hash_sort(grn_ctx *ctx, grn_hash *hash, int limit,
                   grn_array *result, grn_table_sort_optarg *optarg);
 
-int grn_hash_cursor_get_key_value(grn_ctx *ctx, grn_hash_cursor *c,
-                                  void **key, uint32_t *key_size, void **value);
 grn_id grn_hash_at(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
                    void **value);
 grn_id grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
@@ -354,19 +315,6 @@ grn_id grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
 grn_rc grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout);
 grn_rc grn_hash_unlock(grn_ctx *ctx, grn_hash *hash);
 grn_rc grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash);
-
-#define GRN_HASH_EACH(hash,id,key,key_size,value,block) do {\
-  grn_hash_cursor *_sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0);\
-  if (_sc) {\
-    grn_id id;\
-    while ((id = grn_hash_cursor_next(ctx, _sc))) {\
-      grn_hash_cursor_get_key_value(ctx, _sc, (void **)(key),\
-                                    (key_size), (void **)(value));\
-      block\
-    }\
-    grn_hash_cursor_close(ctx, _sc);\
-  }\
-} while (0)
 
 #define GRN_HASH_SIZE(hash) (*((hash)->n_entries))
 

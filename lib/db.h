@@ -51,13 +51,6 @@ typedef struct {
 
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
-typedef struct _grn_table_delete_optarg grn_table_delete_optarg;
-
-struct _grn_table_delete_optarg {
-  int flags;
-  int (*func)(grn_ctx *ctx, grn_obj *, grn_id, void *);
-  void *func_arg;
-};
 
 grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
 

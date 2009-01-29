@@ -1,3 +1,7 @@
+2009-01-29  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h: export grn_hash and grn_pat.
+
 2009-01-28  Poe MORITA  <morita at razil.jp>
 
 	* lib/groonga_in.h (GRN_SET_64BIT): fixed 32bit version.
