@@ -1,3 +1,7 @@
+2009-01-31  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_BULK_SET): export.
+
 2009-01-29  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h: export grn_hash and grn_pat.

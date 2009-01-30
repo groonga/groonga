@@ -195,21 +195,6 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 #define GRN_OBJ_KEY_SPLIT_DIGIT        (1L<<9)
 #define GRN_OBJ_KEY_SPLIT_SYMBOL       (1L<<10)
 
-enum {
-  GRN_DB_INT = 1,
-  GRN_DB_UINT,
-  GRN_DB_INT64,
-  GRN_DB_FLOAT,
-  GRN_DB_TIME,
-  GRN_DB_SHORTTEXT,
-  GRN_DB_TEXT,
-  GRN_DB_LONGTEXT,
-  GRN_DB_UNIGRAM,
-  GRN_DB_BIGRAM,
-  GRN_DB_TRIGRAM,
-  GRN_DB_MECAB,
-};
-
 #ifdef __cplusplus
 }
 #endif

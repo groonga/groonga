@@ -379,6 +379,22 @@ grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
  * nameに対応する新たなtype(型)をdbに定義する。
  * (todo: 複合keyを定義するための構造)
  **/
+
+enum {
+  GRN_DB_INT = 1,
+  GRN_DB_UINT,
+  GRN_DB_INT64,
+  GRN_DB_FLOAT,
+  GRN_DB_TIME,
+  GRN_DB_SHORTTEXT,
+  GRN_DB_TEXT,
+  GRN_DB_LONGTEXT,
+  GRN_DB_UNIGRAM,
+  GRN_DB_BIGRAM,
+  GRN_DB_TRIGRAM,
+  GRN_DB_MECAB,
+};
+
 grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                          grn_obj_flags flags, unsigned int size);
 
@@ -1282,6 +1298,22 @@ grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
 #define GRN_BULK_VSIZE(bulk) ((bulk)->u.b.curr - (bulk)->u.b.head)
 #define GRN_BULK_EMPTYP(bulk) ((bulk)->u.b.curr == (bulk)->u.b.head)
 #define GRN_BULK_HEAD(bulk) ((bulk)->u.b.head)
+
+#define GRN_BULK_SET(ctx,bulk,str,len) {\
+  if ((bulk)->header.type == GRN_VOID) {\
+    GRN_OBJ_INIT((bulk), GRN_BULK, 0);\
+  }\
+  if ((bulk)->header.type == GRN_BULK) {\
+    if ((bulk)->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {\
+      (bulk)->u.b.head = (char *)(str);\
+      (bulk)->u.b.curr = (char *)(str) + len;\
+    } else {\
+      grn_bulk_write((ctx), (bulk), (const char *)(str), (unsigned int)(len));\
+    }\
+  } else {\
+    (ctx)->rc = GRN_INVALID_ARGUMENT;\
+  }\
+}
 
 /* grn_str */
 
