@@ -1339,8 +1339,9 @@ grn_rc grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info);
 typedef struct _grn_hash grn_hash;
 typedef struct _grn_hash_cursor grn_hash_cursor;
 
-grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size,
-                          uint32_t value_size, uint32_t flags, grn_encoding encoding);
+grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                          unsigned int value_size, unsigned int flags,
+                          grn_encoding encoding);
 
 grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
 
@@ -1365,12 +1366,13 @@ struct _grn_table_delete_optarg {
 
 grn_rc grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
                              grn_table_delete_optarg *optarg);
-grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size,
+grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash,
+                       const void *key, unsigned int key_size,
                        grn_table_delete_optarg *optarg);
 
 grn_hash_cursor *grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
-                                      const void *min, uint32_t min_size,
-                                      const void *max, uint32_t max_size, int flags);
+                                      const void *min, unsigned int min_size,
+                                      const void *max, unsigned int max_size, int flags);
 grn_id grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c);
 void grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c);
 
@@ -1380,7 +1382,7 @@ grn_rc grn_hash_cursor_set_value(grn_ctx *ctx, grn_hash_cursor *c,
                                  void *value, int flags);
 
 int grn_hash_cursor_get_key_value(grn_ctx *ctx, grn_hash_cursor *c,
-                                  void **key, uint32_t *key_size, void **value);
+                                  void **key, unsigned int *key_size, void **value);
 
 grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
                               grn_table_delete_optarg *optarg);
@@ -1403,8 +1405,9 @@ grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
 typedef struct _grn_pat grn_pat;
 typedef struct _grn_pat_cursor grn_pat_cursor;
 
-grn_pat *grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
-                        uint32_t value_size, uint32_t flags, grn_encoding encoding);
+grn_pat *grn_pat_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                        unsigned int value_size, unsigned int flags,
+                        grn_encoding encoding);
 
 grn_pat *grn_pat_open(grn_ctx *ctx, const char *path);
 
@@ -1423,7 +1426,7 @@ grn_rc grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
 
 grn_rc grn_pat_delete_by_id(grn_ctx *ctx, grn_pat *pat, grn_id id,
                             grn_table_delete_optarg *optarg);
-grn_rc grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
+grn_rc grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, unsigned int key_size,
                       grn_table_delete_optarg *optarg);
 int grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
                       grn_table_delete_optarg *optarg);
@@ -1440,16 +1443,17 @@ int grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_l
                  grn_pat_scan_hit *sh, unsigned int sh_size, const char **rest);
 
 grn_rc grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
-                             const void *key, uint32_t key_size, grn_hash *h);
+                             const void *key, unsigned int key_size, grn_hash *h);
 grn_rc grn_pat_suffix_search(grn_ctx *ctx, grn_pat *pat,
-                             const void *key, uint32_t key_size, grn_hash *h);
-grn_id grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size);
+                             const void *key, unsigned int key_size, grn_hash *h);
+grn_id grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat,
+                          const void *key, unsigned int key_size);
 
-uint32_t grn_pat_size(grn_ctx *ctx, grn_pat *pat);
+unsigned int grn_pat_size(grn_ctx *ctx, grn_pat *pat);
 
 grn_pat_cursor *grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
-                                    const void *min, uint32_t min_size,
-                                    const void *max, uint32_t max_size, int flags);
+                                    const void *min, unsigned int min_size,
+                                    const void *max, unsigned int max_size, int flags);
 grn_id grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c);
 void grn_pat_cursor_close(grn_ctx *ctx, grn_pat_cursor *c);
 
@@ -1457,7 +1461,7 @@ int grn_pat_cursor_get_key(grn_ctx *ctx, grn_pat_cursor *c, void **key);
 int grn_pat_cursor_get_value(grn_ctx *ctx, grn_pat_cursor *c, void **value);
 
 int grn_pat_cursor_get_key_value(grn_ctx *ctx, grn_pat_cursor *c,
-                                 void **key, uint32_t *key_size, void **value);
+                                 void **key, unsigned int *key_size, void **value);
 grn_rc grn_pat_cursor_set_value(grn_ctx *ctx, grn_pat_cursor *c,
                                 void *value, int flags);
 grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
