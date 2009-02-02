@@ -169,24 +169,51 @@ grn_ra_at(grn_ctx *ctx, grn_ra *ra, grn_id id)
 typedef struct _grn_ja_einfo grn_ja_einfo;
 
 struct _grn_ja_einfo {
-  uint16_t seg;
-  uint16_t pos;
-  uint16_t size;
-  uint8_t tail[2];
+  union {
+    struct {
+      uint16_t seg;
+      uint16_t pos;
+      uint16_t size;
+      uint8_t c1;
+      uint8_t c2;
+    } n;
+    struct {
+      uint32_t size;
+      uint16_t seg;
+      uint8_t c1;
+      uint8_t c2;
+    } h;
+    uint8_t c[8];
+  } u;
 };
 
-#define EINFO_SET(e,_seg,_pos,_size) {\
-  (e)->seg = _seg;\
-  (e)->pos = (_pos) >> 4;\
-  (e)->size = _size;\
-  (e)->tail[0] = (((_pos) >> 14) & 0xc0) + ((_size) >> 16);\
-  (e)->tail[1] = 0;\
+#define ETINY (0x80)
+#define EHUGE (0x40)
+#define ETINY_P(e) ((e)->u.c[7] & ETINY)
+#define ETINY_ENC(e,_size) ((e)->u.c[7] = (_size) + ETINY)
+#define ETINY_DEC(e,_size) ((_size) = (e)->u.c[7] & ~(ETINY|EHUGE))
+#define EHUGE_P(e) ((e)->u.c[7] & EHUGE)
+#define EHUGE_ENC(e,_seg,_size) {\
+  (e)->u.h.c1 = 0;\
+  (e)->u.h.c2 = EHUGE;\
+  (e)->u.h.seg = (_seg);\
+  (e)->u.h.size = (_size);\
 }
-
-#define EINFO_GET(e,_seg,_pos,_size) {\
-  _seg = (e)->seg;\
-  _pos = ((e)->pos + (((e)->tail[0] & 0xc0) << 10)) << 4;\
-  _size = (e)->size + (((e)->tail[0] & 0x3f) << 16);\
+#define EHUGE_DEC(e,_seg,_size) {\
+  (_seg) = (e)->u.h.seg;\
+  (_size) = (e)->u.h.size;\
+}
+#define EINFO_ENC(e,_seg,_pos,_size) {\
+  (e)->u.n.c1 = (_pos) >> 16;\
+  (e)->u.n.c2 = ((_size) >> 16);\
+  (e)->u.n.seg = (_seg);\
+  (e)->u.n.pos = (_pos);\
+  (e)->u.n.size = (_size);\
+}
+#define EINFO_DEC(e,_seg,_pos,_size) {\
+  (_seg) = (e)->u.n.seg;\
+  (_pos) = ((e)->u.n.c1 << 16) + (e)->u.n.pos;\
+  (_size) = ((e)->u.n.c2 << 16) + (e)->u.n.size;\
 }
 
 typedef struct {
@@ -214,13 +241,6 @@ struct grn_ja_header {
   uint32_t esegs[JA_N_ESEGMENTS];
   //  uint32_t bsegs[JA_N_BSEGMENTS];
 };
-
-#define JA_SEG_ESEG 1 /* entry info */
-#define JA_SEG_GSEG 2 /* garbage info */
-#define JA_SEG_HSEG 3 /* huge records */
-
-#define JA_IMMEDIATE 1
-#define JA_HUGE      2
 
 #define HEADER_SEGMENTS_AT(ja,offset) \
   ((((ja)->header->segments[((offset) >> 3)]) >> ((offset) & 7)) & 1)
@@ -314,7 +334,7 @@ grn_ja_remove(grn_ctx *ctx, const char *path)
 void *
 grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 {
-  grn_ja_einfo *einfo;
+  grn_ja_einfo *einfo, *ei;
   uint32_t lseg, *pseg, pos;
   lseg = id >> W_OF_JA_EINFO_IN_A_SEGMENT;
   pos = id & JA_EINFO_MASK;
@@ -322,17 +342,18 @@ grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
   if (*pseg == SEG_NOT_ASSIGNED) { *value_len = 0; return NULL; }
   GRN_IO_SEG_MAP(ja->io, *pseg, einfo);
   if (!einfo) { *value_len = 0; return NULL; }
-  if (einfo[pos].tail[1] & JA_IMMEDIATE) {
-    *value_len = einfo[pos].tail[1] >> 1;
-    return (void *) &einfo[pos];
+  ei = &einfo[pos];
+  if (ETINY_P(ei)) {
+    ETINY_DEC(ei, *value_len);
+    return (void *)ei;
   }
+  if (EHUGE_P(ei)) { /* todo */ }
   {
     void *value;
     grn_io_win iw;
     uint32_t jag, vpos, vsize;
-    EINFO_GET(&einfo[pos], jag, vpos, vsize);
+    EINFO_DEC(ei, jag, vpos, vsize);
     value = grn_io_win_map2(ja->io, ctx, &iw, jag, vpos, vsize, grn_io_rdonly);
-    // printf("at id=%d value=%p jag=%d vpos=%d ei=%p(%d:%d)\n", id, value, jag, vpos, &einfo[pos], einfo[pos].pos, einfo[pos].tail[0]);
     if (!value) { *value_len = 0; return NULL; }
     *value_len = vsize;
     return value;
@@ -353,14 +374,16 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
 {
   grn_ja_ginfo *ginfo;
   uint32_t seg, pos, element_size, size, m, *gseg;
-  if (!einfo->size) { return GRN_SUCCESS; }
-  if (einfo->tail[1] & JA_IMMEDIATE) { return GRN_SUCCESS; }
-  EINFO_GET(einfo, seg, pos, element_size);
-  if (element_size > JA_SEGMENT_SIZE) {
-    int n = (pos + element_size + JA_SEGMENT_SIZE - 1) >> W_OF_JA_SEGMENT;
+  if (ETINY_P(einfo)) { return GRN_SUCCESS; }
+  if (EHUGE_P(einfo)) {
+    uint32_t n;
+    EHUGE_DEC(einfo, seg, element_size);
+    n = ((element_size + JA_SEGMENT_SIZE - 1) >> W_OF_JA_SEGMENT);
     for (; n--; seg++) { HEADER_SEGMENTS_OFF(ja, seg); }
     return GRN_SUCCESS;
   }
+  EINFO_DEC(einfo, seg, pos, element_size);
+  if (!element_size) { return GRN_SUCCESS; }
   {
     int es = element_size - 1;
     GRN_BIT_SCAN_REV(es, m);
@@ -431,7 +454,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
   iw->ctx = ctx;
   iw->cached = 1;
   if (element_size < 8) {
-    einfo->tail[1] = element_size * 2 + JA_IMMEDIATE;
+    ETINY_ENC(einfo, element_size);
     iw->addr = (void *)einfo;
     return GRN_SUCCESS;
   }
@@ -445,8 +468,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
           j++;
           addr = grn_io_win_map2(ja->io, ctx, iw, j, 0, element_size, grn_io_wronly);
           if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
-          EINFO_SET(einfo, j, 0, element_size);
-          // einfo->tail[1] = JA_HUGE;
+          EHUGE_ENC(einfo, j, element_size);
           for (; j <= i; j++) { HEADER_SEGMENTS_ON(ja, j); }
           return GRN_SUCCESS;
         }
@@ -472,7 +494,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
           pos = ginfo->recs[ginfo->tail].pos;
           GRN_IO_SEG_MAP(ja->io, seg, addr);
           if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
-          EINFO_SET(einfo, seg, pos, element_size);
+          EINFO_ENC(einfo, seg, pos, element_size);
           iw->addr = (byte *)addr + pos;
           if (++ginfo->tail == N_GARBAGES) { ginfo->tail = 0; }
           ginfo->nrecs--;
@@ -496,7 +518,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, int element_size, grn_ja_einfo *einfo, gr
       vp->seg = i;
       vp->pos = 0;
     }
-    EINFO_SET(einfo, vp->seg, vp->pos, element_size);
+    EINFO_ENC(einfo, vp->seg, vp->pos, element_size);
     GRN_IO_SEG_MAP(ja->io, vp->seg, addr);
     // printf("addr=%p seg=%d pos=%d\n", addr, vp->seg, vp->pos);
     if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -574,22 +596,28 @@ exit :
   return rc;
 }
 
-int
+uint32_t
 grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id)
 {
-  grn_ja_einfo *einfo;
-  uint32_t lseg, *pseg, pos;
+  grn_ja_einfo *einfo, *ei;
+  uint32_t lseg, *pseg, pos, size;
   lseg = id >> W_OF_JA_EINFO_IN_A_SEGMENT;
   pos = id & JA_EINFO_MASK;
   pseg = &ja->header->esegs[lseg];
   if (*pseg == SEG_NOT_ASSIGNED) { return -1; }
   GRN_IO_SEG_MAP(ja->io, *pseg, einfo);
   if (!einfo) { return -1; }
-  if (einfo[pos].tail[1] & JA_IMMEDIATE) {
-    return einfo[pos].tail[1] >> 1;
+  ei = &einfo[pos];
+  if (ETINY_P(ei)) {
+    ETINY_DEC(ei, size);
   } else {
-    return einfo[pos].size + ((einfo[pos].tail[0] & 0x3f) << 16);
+    if (EHUGE_P(ei)) {
+      size = ei->u.h.size;
+    } else {
+      size = (ei->u.n.c2 << 16) + ei->u.n.size;
+    }
   }
+  return size;
 }
 
 int
