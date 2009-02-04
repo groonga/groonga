@@ -539,7 +539,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         while (SEGMENTS_AT(ja, i)) {
           if (++i >= JA_N_DSEGMENTS) { return GRN_NO_MEMORY_AVAILABLE; }
         }
-        SEGMENTS_SEGRE_ON(ja, i, m - JA_W_EINFO);
+        SEGMENTS_SEGRE_ON(ja, i, m);
         vp->seg = i;
         vp->pos = 0;
       }
