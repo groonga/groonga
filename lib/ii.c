@@ -1973,7 +1973,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
     }
     if (id_curr.rid < id_post.rid ||
         (id_curr.rid == id_post.rid && id_curr.sid < id_post.sid)) {
-      rc = grn_invalid_format;
+      rc = GRN_FILE_CORRUPT;
       ERRSET(ctx, GRN_CRIT, rc, "loop found!!! (%d:%d)->(%d:%d)",
               id_post.rid, id_post.sid, id_curr.rid, id_curr.sid);
       buffer_term_dump(ctx, ii, b, bt);
@@ -2286,7 +2286,7 @@ typedef struct {
     if (cid.tf) {\
       if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {\
         GRN_LOG(ctx, GRN_LOG_CRIT, "brokenc!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
-        rc = grn_invalid_format;\
+        rc = GRN_FILE_CORRUPT;\
         break;\
       }\
       PUTNEXT_(cid);\
@@ -2299,7 +2299,7 @@ typedef struct {
       }\
     } else {\
       GRN_LOG(ctx, GRN_LOG_CRIT, "invalid chunk(%d,%d)", bt->tid, cid.rid);\
-      rc = grn_invalid_format;\
+      rc = GRN_FILE_CORRUPT;\
       break;\
     }\
   }\
@@ -2318,7 +2318,7 @@ typedef struct {
     }\
     if (lrid > bid.rid || (lrid == bid.rid && lsid >= bid.sid)) {\
       GRN_LOG(ctx, GRN_LOG_CRIT, "brokeng!! (%d:%d) -> (%d:%d)", lrid, lsid, bid.rid, bid.sid);\
-      rc = grn_invalid_format;\
+      rc = GRN_FILE_CORRUPT;\
       break;\
     }\
     nextb = br->step;\
@@ -2332,7 +2332,7 @@ typedef struct {
     if (bid.tf > 0) {\
       if (lid.rid > bid.rid || (lid.rid == bid.rid && lid.sid >= bid.sid)) {\
         GRN_LOG(ctx, GRN_LOG_CRIT, "brokenb!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
-        rc = grn_invalid_format;\
+        rc = GRN_FILE_CORRUPT;\
         break;\
       }\
       if (!(ii->header->flags & GRN_OBJ_NO_SCORE)) { GRN_B_DEC(bid.score, sbp); }\
@@ -2722,7 +2722,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   buffer *sb, *db = NULL;
   uint8_t *dc, *sc = NULL;
   uint32_t ds, pseg, scn, dcn;
-  if (ii->header->binfo[seg] == NOT_ASSIGNED) { return grn_invalid_format; }
+  if (ii->header->binfo[seg] == NOT_ASSIGNED) { return GRN_FILE_CORRUPT; }
   if ((ds = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
   pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
   if (pseg != NOT_ASSIGNED) {
@@ -2866,7 +2866,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   buffer *sb, *db0 = NULL, *db1 = NULL;
   uint8_t *sc = NULL, *dc0, *dc1;
   uint32_t dps0, dps1, dls0, dls1, sps, scn, dcn0, dcn1;
-  if (ii->header->binfo[seg] == NOT_ASSIGNED) { return grn_invalid_format; }
+  if (ii->header->binfo[seg] == NOT_ASSIGNED) { return GRN_FILE_CORRUPT; }
   if ((rc = buffer_segment_reserve(ctx, ii, &dls0, &dps0, &dls1, &dps1))) {
     return rc;
   }
@@ -3156,7 +3156,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   }
   header = grn_io_header(seg);
   if (grn_io_get_type(seg) != GRN_COLUMN_INDEX) {
-    ERR(grn_invalid_format, "file type unmatch");
+    ERR(GRN_INVALID_FORMAT, "file type unmatch");
     grn_io_close(ctx, seg);
     grn_io_close(ctx, chunk);
     return NULL;

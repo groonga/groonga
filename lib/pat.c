@@ -259,7 +259,7 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
         break;
       }
       PAT_AT(pat, r, rn);
-      if (!rn) { return grn_invalid_format; }
+      if (!rn) { return GRN_FILE_CORRUPT; }
       c = PAT_CHK(rn);
       if (c <= c0 || len <= c) { break; }
       if (c & 1) {
@@ -426,7 +426,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   if (!io) { return NULL; }
   header = grn_io_header(io);
   if (grn_io_get_type(io) != GRN_TABLE_PAT_KEY) {
-    ERR(grn_invalid_format, "file type unmatch");
+    ERR(GRN_INVALID_FORMAT, "file type unmatch");
     grn_io_close(ctx, io);
     return NULL;
   }
@@ -812,7 +812,7 @@ grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
   r = rn->lr[1];
   while (r) {
     PAT_AT(pat, r, rn);
-    if (!rn) { return grn_invalid_format; }
+    if (!rn) { return GRN_FILE_CORRUPT; }
     c = PAT_CHK(rn);
     if (c0 < c && c < len - 1) {
       if (c & 1) {
@@ -937,7 +937,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
   for (;;) {
     if (!(r = *p)) { return GRN_INVALID_ARGUMENT; }
     PAT_AT(pat, r, rn);
-    if (!rn) { return grn_invalid_format; }
+    if (!rn) { return GRN_FILE_CORRUPT; }
     ch = PAT_CHK(rn);
     if (len <= ch) { return GRN_INVALID_ARGUMENT; }
     if (c >= ch) {
@@ -1514,10 +1514,10 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   PAT_AT(pat, 0, node);
   for (id = node->lr[1]; id;) {
     PAT_AT(pat, id, node);
-    if (!node) { return grn_invalid_format; }
+    if (!node) { return GRN_FILE_CORRUPT; }
     ch = PAT_CHK(node);
     if (ch <= check) {
-      if (!(k = pat_node_get_key(ctx, pat, node))) { return grn_invalid_format; }
+      if (!(k = pat_node_get_key(ctx, pat, node))) { return GRN_FILE_CORRUPT; }
       {
         uint32_t l = PAT_LEN(node);
         if (l == key_size) {
@@ -1536,7 +1536,7 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     }
     c2 = len < ch ? len : ch;
     if ((check += 2) < c2) {
-      if (!(k = pat_node_get_key(ctx, pat, node))) { return grn_invalid_format; }
+      if (!(k = pat_node_get_key(ctx, pat, node))) { return GRN_FILE_CORRUPT; }
       if ((r = bitcmp(key, k, check >> 1, (c2 - check) >> 1))) {
         if (r < 0) {
           push(c, node->lr[1], ch);
@@ -1580,10 +1580,10 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   PAT_AT(pat, 0, node);
   for (id = node->lr[1]; id;) {
     PAT_AT(pat, id, node);
-    if (!node) { return grn_invalid_format; }
+    if (!node) { return GRN_FILE_CORRUPT; }
     ch = PAT_CHK(node);
     if (ch <= check) {
-      if (!(k = pat_node_get_key(ctx, pat, node))) { return grn_invalid_format; }
+      if (!(k = pat_node_get_key(ctx, pat, node))) { return GRN_FILE_CORRUPT; }
       {
         uint32_t l = PAT_LEN(node);
         if (l <= key_size) {
@@ -1600,7 +1600,7 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     }
     c2 = len < ch ? len : ch;
     if ((check += 2) < c2) {
-      if (!(k = pat_node_get_key(ctx, pat, node))) { return grn_invalid_format; }
+      if (!(k = pat_node_get_key(ctx, pat, node))) { return GRN_FILE_CORRUPT; }
       if ((r = bitcmp(key, k, check >> 1, (c2 - check) >> 1))) {
         if (r >= 0) {
           push(c, node->lr[0], ch);

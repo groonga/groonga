@@ -225,7 +225,7 @@ grn_db_load(grn_ctx *ctx, const char *path)
       if ((func = grn_dl_sym(ctx, id, buffer))) {
         ctx->rc = func(ctx, path);
       } else {
-        ERR(grn_invalid_format, "init_func not found(%s)", buffer);
+        ERR(GRN_INVALID_FORMAT, "init_func not found(%s)", buffer);
       }
     }
   } else {
@@ -2738,9 +2738,9 @@ grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_siz
       uint32_t hld_size;
       GRN_B_DEC(id, p);
       if (!id--) { break; }
-      if (p >= pe) { return grn_invalid_format; }
+      if (p >= pe) { return GRN_FILE_CORRUPT; }
       GRN_B_DEC(hld_size, p);
-      if (p >= pe) { return grn_invalid_format; }
+      if (p >= pe) { return GRN_FILE_CORRUPT; }
       if (!(new = GRN_MALLOC(sizeof(grn_hook) + hld_size))) {
         return GRN_NO_MEMORY_AVAILABLE;
       }
@@ -2759,7 +2759,7 @@ grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_siz
       }
       *last = new;
       last = &new->next;
-      if (p >= pe) { return grn_invalid_format; }
+      if (p >= pe) { return GRN_FILE_CORRUPT; }
     }
     *last = NULL;
   }
@@ -3049,7 +3049,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
 #define GET_PATH(spec,buffer,s,id) {\
   if (spec->header.impl_flags & GRN_OBJ_CUSTOM_NAME) {\
     const char *path = grn_vector_fetch(ctx, v, 1, &size);\
-    if (size > PATH_MAX) { ERR(grn_invalid_format, "too long path"); }\
+    if (size > PATH_MAX) { ERR(GRN_FILENAME_TOO_LONG, "too long path"); }\
     memcpy(buffer, path, size);\
     buffer[size] = '\0';\
   } else {\
@@ -3733,27 +3733,27 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   grn_obj *obj;
   obj = deftype(ctx, "<int>",
                 GRN_OBJ_KEY_INT, sizeof(int32_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<uint>",
                 GRN_OBJ_KEY_UINT, sizeof(uint32_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<int64>",
                 GRN_OBJ_KEY_INT, sizeof(int64_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT64) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT64) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<float>",
                 GRN_OBJ_KEY_FLOAT, sizeof(double));
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<time>",
                 GRN_OBJ_KEY_UINT, sizeof(grn_timeval));
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_TIME) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_TIME) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<shorttext>",
                 GRN_OBJ_KEY_VAR_SIZE, GRN_TABLE_MAX_KEY_SIZE);
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_SHORTTEXT) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_SHORTTEXT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<text>",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 16);
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_TEXT) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_TEXT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<longtext>",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_LONGTEXT) { return grn_invalid_format; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_LONGTEXT) { return GRN_FILE_CORRUPT; }
   return grn_db_init_builtin_tokenizers(ctx);
 }

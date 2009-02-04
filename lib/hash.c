@@ -220,7 +220,7 @@ grn_array_open(grn_ctx *ctx, const char *path)
           GRN_FREE(array);
         }
       } else {
-        ERR(grn_invalid_format, "file type unmatch");
+        ERR(GRN_INVALID_FORMAT, "file type unmatch");
       }
       grn_io_close(ctx, io);
     }
@@ -852,7 +852,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
         GRN_FREE(hash);
       }
     } else {
-      ERR(grn_invalid_format, "file type unmatch");
+      ERR(GRN_INVALID_FORMAT, "file type unmatch");
     }
     grn_io_close(ctx, io);
   }

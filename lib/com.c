@@ -197,7 +197,7 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   if (grn_hash_at(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c)) {
     if (c->fd != fd) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "grn_com_event_mod fd unmatch %d != %d", c->fd, fd);
-      return grn_invalid_format;
+      return GRN_OBJECT_CORRUPT;
     }
     if (com) { *com = c; }
     if (c->events != events) {
@@ -453,7 +453,7 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
     size_t whole_size = sizeof(grn_com_sqtp_header) + value_size;
     if (proto != GRN_COM_PROTO_SQTP) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "illegal header: %d", proto);
-      cs->rc = grn_invalid_format;
+      cs->rc = GRN_INVALID_FORMAT;
       *status = grn_com_eproto;
       *info = proto;
       goto exit;

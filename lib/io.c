@@ -390,13 +390,13 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
         if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
           res = h.type;
         } else {
-          ERR(grn_invalid_format, "grn_io_detect_type failed");
+          ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
         }
       } else {
         SERR(path);
       }
     } else {
-      ERR(grn_invalid_format, "grn_io_detect_type failed");
+      ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
     }
     close(fd);
   } else {
@@ -721,14 +721,14 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos, 
     *value = NULL;
     *value_len = 0;
     GRN_FREE(v);
-    return grn_invalid_format;
+    return GRN_INVALID_FORMAT;
   }
   if (v->head.size != *value_len) {
     GRN_LOG(ctx, GRN_LOG_ERROR, "ehead size unmatch %d => %d", *value_len, v->head.size);
     *value = NULL;
     *value_len = 0;
     GRN_FREE(v);
-    return grn_invalid_format;
+    return GRN_INVALID_FORMAT;
   }
   if (rest) {
     byte *vr = (byte *)v + size;

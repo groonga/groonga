@@ -71,7 +71,7 @@ grn_ra_open(grn_ctx *ctx, const char *path)
   if (!io) { return NULL; }
   header = grn_io_header(io);
   if (grn_io_get_type(io) != GRN_COLUMN_FIX_SIZE) {
-    ERR(grn_invalid_format, "file type unmatch");
+    ERR(GRN_INVALID_FORMAT, "file type unmatch");
     grn_io_close(ctx, io);
     return NULL;
   }
@@ -285,7 +285,7 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   if (!io) { return NULL; }
   header = grn_io_header(io);
   if (grn_io_get_type(io) != GRN_COLUMN_VAR_SIZE) {
-    ERR(grn_invalid_format, "file type unmatch");
+    ERR(GRN_INVALID_FORMAT, "file type unmatch");
     grn_io_close(ctx, io);
     return NULL;
   }
