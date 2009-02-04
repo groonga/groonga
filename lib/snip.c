@@ -254,7 +254,7 @@ grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned in
   memset(sc, 0, sizeof(snip_cond));
   if (flags & GRN_SNIP_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
   if (!(sc->keyword = grn_str_open(ctx, keyword, keyword_len, enc, f))) {
-    GRN_LOG(ctx, grn_log_alert, "grn_str_open on snip_cond_init failed !");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open on snip_cond_init failed !");
     return GRN_NO_MEMORY_AVAILABLE;
   }
   norm_blen = sc->keyword->norm_blen; /* byte length, not cond->keyword->length */
@@ -379,15 +379,15 @@ grn_snip_find_firstbyte(const char *string, grn_encoding encoding, size_t offset
                         size_t doffset)
 {
   switch (encoding) {
-  case grn_enc_euc_jp:
+  case GRN_ENC_EUC_JP:
     while (!(grn_bm_check_euc((unsigned char *) string, offset)))
       offset += doffset;
     break;
-  case grn_enc_sjis:
+  case GRN_ENC_SJIS:
     if (!(grn_bm_check_sjis((unsigned char *) string, offset)))
       offset += doffset;
     break;
-  case grn_enc_utf8:
+  case GRN_ENC_UTF8:
     while (string[offset] <= (char)0xc0)
       offset += doffset;
     break;
@@ -427,11 +427,11 @@ grn_snip_open(grn_ctx *ctx, grn_encoding encoding, int flags, unsigned int width
   int copy_tag;
   grn_snip *ret = NULL;
   if (!(ret = GRN_MALLOC(sizeof(grn_snip)))) {
-    GRN_LOG(ctx, grn_log_alert, "grn_snip allocation failed on grn_snip_open");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_snip allocation failed on grn_snip_open");
     return NULL;
   }
   if (max_results > MAX_SNIP_RESULT_COUNT || max_results == 0) {
-    GRN_LOG(ctx, grn_log_warning, "max_results is invalid on grn_snip_open");
+    GRN_LOG(ctx, GRN_LOG_WARNING, "max_results is invalid on grn_snip_open");
     GRN_FREE(ret);
     return NULL;
   }
@@ -532,7 +532,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
   snip->nstr = grn_str_open(ctx, string, string_len, snip->encoding, f);
   if (!snip->nstr) {
     exec_clean(ctx, snip);
-    GRN_LOG(ctx, grn_log_alert, "grn_str_open on grn_snip_exec failed !");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open on grn_snip_exec failed !");
     return GRN_NO_MEMORY_AVAILABLE;
   }
   for (i = 0; i < snip->cond_len; i++) {

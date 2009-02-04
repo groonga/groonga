@@ -129,15 +129,15 @@ grn_rc grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
 typedef struct _grn_select_optarg grn_select_optarg;
 
 typedef enum {
-  grn_sel_exact = 0,
-  grn_sel_partial,
-  grn_sel_unsplit,
-  grn_sel_near,
-  grn_sel_near2,
-  grn_sel_similar,
-  grn_sel_term_extract,
-  grn_sel_prefix,
-  grn_sel_suffix
+  GRN_SEL_EXACT = 0,
+  GRN_SEL_PARTIAL,
+  GRN_SEL_UNSPLIT,
+  GRN_SEL_NEAR,
+  GRN_SEL_NEAR2,
+  GRN_SEL_SIMILAR,
+  GRN_SEL_TERM_EXTRACT,
+  GRN_SEL_PREFIX,
+  GRN_SEL_SUFFIX
 } grn_sel_mode;
 
 struct _grn_select_optarg {

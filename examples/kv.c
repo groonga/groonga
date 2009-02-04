@@ -5,7 +5,7 @@
 
 grn_ctx ctx;
 grn_obj *db;
-grn_encoding enc = grn_enc_default;
+grn_encoding enc = GRN_ENC_DEFAULT;
 
 int nloops = 1000000;
 unsigned key_size = 8;

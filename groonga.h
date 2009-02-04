@@ -95,26 +95,26 @@ grn_rc grn_init(void);
 grn_rc grn_fin(void);
 
 typedef enum {
-  grn_enc_default = 0,
-  grn_enc_none,
-  grn_enc_euc_jp,
-  grn_enc_utf8,
-  grn_enc_sjis,
-  grn_enc_latin1,
-  grn_enc_koi8r
+  GRN_ENC_DEFAULT = 0,
+  GRN_ENC_NONE,
+  GRN_ENC_EUC_JP,
+  GRN_ENC_UTF8,
+  GRN_ENC_SJIS,
+  GRN_ENC_LATIN1,
+  GRN_ENC_KOI8R
 } grn_encoding;
 
 typedef enum {
-  grn_log_none = 0,
-  grn_log_emerg,
-  grn_log_alert,
-  grn_log_crit,
-  grn_log_error,
-  grn_log_warning,
-  grn_log_notice,
-  grn_log_info,
-  grn_log_debug,
-  grn_log_dump
+  GRN_LOG_NONE = 0,
+  GRN_LOG_EMERG,
+  GRN_LOG_ALERT,
+  GRN_LOG_CRIT,
+  GRN_LOG_ERROR,
+  GRN_LOG_WARNING,
+  GRN_LOG_NOTICE,
+  GRN_LOG_INFO,
+  GRN_LOG_DEBUG,
+  GRN_LOG_DUMP
 } grn_log_level;
 
 typedef struct _grn_ctx grn_ctx;
@@ -143,7 +143,7 @@ struct _grn_ctx {
 };
 
 #define GRN_CTX_INITIALIZER \
-  { GRN_SUCCESS, 0, grn_enc_default, 0, grn_log_notice,\
+  { GRN_SUCCESS, 0, GRN_ENC_DEFAULT, 0, GRN_LOG_NOTICE,\
     GRN_CTX_FIN, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL }
 
 #define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
@@ -720,10 +720,10 @@ typedef unsigned int grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_AVG       (0x01L<<7)
 
 typedef enum {
-  grn_sel_or = 0,
-  grn_sel_and,
-  grn_sel_but,
-  grn_sel_adjust
+  GRN_SEL_OR = 0,
+  GRN_SEL_AND,
+  GRN_SEL_BUT,
+  GRN_SEL_ADJUST
 } grn_sel_operator;
 
 struct _grn_table_group_result {
@@ -1261,7 +1261,7 @@ void grn_logger_put(grn_ctx *ctx, grn_log_level level,
 int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 #ifndef GRN_LOG_DEFAULT_LEVEL
-#define GRN_LOG_DEFAULT_LEVEL grn_log_notice
+#define GRN_LOG_DEFAULT_LEVEL GRN_LOG_NOTICE
 #endif /* GRN_LOG_DEFAULT_LEVEL */
 
 #define GRN_LOG(ctx,level,...) do {\

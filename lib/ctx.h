@@ -66,12 +66,12 @@ extern "C" {
 #define GRN_OP_T0LVL 0
 #define GRN_OP_ERR0  1
 
-#define  GRN_EMERG  grn_log_emerg
-#define  GRN_ALERT  grn_log_alert
-#define  GRN_CRIT   grn_log_crit
-#define  GRN_ERROR  grn_log_error
-#define  GRN_WARN   grn_log_warning
-#define  GRN_OK     grn_log_notice
+#define  GRN_EMERG  GRN_LOG_EMERG
+#define  GRN_ALERT  GRN_LOG_ALERT
+#define  GRN_CRIT   GRN_LOG_CRIT
+#define  GRN_ERROR  GRN_LOG_ERROR
+#define  GRN_WARN   GRN_LOG_WARNING
+#define  GRN_OK     GRN_LOG_NOTICE
 
 #define ERRCLR(ctx) do {\
   if (ctx) {\

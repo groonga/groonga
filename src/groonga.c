@@ -28,7 +28,7 @@
 
 static int port = DEFAULT_PORT;
 static int batchmode;
-static grn_encoding enc = grn_enc_default;
+static grn_encoding enc = GRN_ENC_DEFAULT;
 
 static void
 usage(void)
@@ -170,7 +170,7 @@ errout(grn_ctx *ctx, grn_com_sqtp *cs, char *msg)
   header.size = strlen(msg);
   header.flags = GRN_QL_TAIL;
   grn_com_sqtp_send(ctx, cs, &header, msg);
-  GRN_LOG(ctx, grn_log_error, "errout: %s", msg);
+  GRN_LOG(ctx, GRN_LOG_ERROR, "errout: %s", msg);
 }
 
 static void
@@ -254,7 +254,7 @@ static void * CALLBACK
 thread_start(void *arg)
 {
   grn_com_sqtp *cs;
-  GRN_LOG(&grn_gctx, grn_log_notice, "thread start (%d/%d)", nfthreads, nthreads + 1);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
   MUTEX_LOCK(q_mutex);
   nthreads++;
   do {
@@ -269,7 +269,7 @@ thread_start(void *arg)
   } while (nfthreads < MAX_NFTHREADS);
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
-  GRN_LOG(&grn_gctx, grn_log_notice, "thread end (%d/%d)", nfthreads, nthreads);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
   return NULL;
 }
 
@@ -279,7 +279,7 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
   grn_com_sqtp *cs = (grn_com_sqtp *)c;
   if (cs->rc) {
     grn_ctx *ctx = (grn_ctx *)cs->userdata;
-    GRN_LOG(ctx, grn_log_notice, "connection closed..");
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "connection closed..");
     if (ctx) { grn_ctx_close(ctx); }
     grn_com_sqtp_close(ctx, ev, cs);
     return;
@@ -288,7 +288,7 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
     int i = 0;
     while (queue_enque(&qq, (grn_com_sqtp *)c)) {
       if (i) {
-        GRN_LOG(ctx, grn_log_notice, "queue is full try=%d qq(%d-%d) thd(%d/%d) %d", i, qq.head, qq.tail, nfthreads, nthreads, *ev->hash->n_entries);
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "queue is full try=%d qq(%d-%d) thd(%d/%d) %d", i, qq.head, qq.tail, nfthreads, nthreads, *ev->hash->n_entries);
       }
       if (++i == 100) {
         errout(ctx, (grn_com_sqtp *)c, "*** ERROR: query queue is full");
@@ -433,27 +433,27 @@ main(int argc, char **argv)
     switch (*encstr) {
     case 'n' :
     case 'N' :
-      enc = grn_enc_none;
+      enc = GRN_ENC_NONE;
       break;
     case 'e' :
     case 'E' :
-      enc = grn_enc_euc_jp;
+      enc = GRN_ENC_EUC_JP;
       break;
     case 'u' :
     case 'U' :
-      enc = grn_enc_utf8;
+      enc = GRN_ENC_UTF8;
       break;
     case 's' :
     case 'S' :
-      enc = grn_enc_sjis;
+      enc = GRN_ENC_SJIS;
       break;
     case 'l' :
     case 'L' :
-      enc = grn_enc_latin1;
+      enc = GRN_ENC_LATIN1;
       break;
     case 'k' :
     case 'K' :
-      enc = grn_enc_koi8r;
+      enc = GRN_ENC_KOI8R;
       break;
     }
   }

@@ -194,36 +194,36 @@ get_op(grn_query *q, grn_sel_operator op, int weight)
   int mode, option;
   switch (*end) {
   case 'S' :
-    mode = grn_sel_similar;
+    mode = GRN_SEL_SIMILAR;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_SIMILARITY_THRESHOLD; }
     q->cur = end;
     break;
   case 'N' :
-    mode = grn_sel_near;
+    mode = GRN_SEL_NEAR;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
     break;
   case 'n' :
-    mode = grn_sel_near2;
+    mode = GRN_SEL_NEAR2;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
     break;
   case 'T' :
-    mode = grn_sel_term_extract;
+    mode = GRN_SEL_TERM_EXTRACT;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_TERM_EXTRACT_POLICY; }
     q->cur = end;
     break;
   case 'X' : /* force exact mode */
-    op = grn_sel_and;
-    mode = grn_sel_exact;
+    op = GRN_SEL_AND;
+    mode = GRN_SEL_EXACT;
     option = 0;
     start = ++end;
     q->cur = end;
@@ -265,25 +265,25 @@ get_token(grn_ctx *ctx, grn_query *q)
       break;
     case GRN_QUERY_AND :
       q->cur++;
-      token = op_new(q, grn_sel_and, weight, mode, option);
+      token = op_new(q, GRN_SEL_AND, weight, mode, option);
       break;
     case GRN_QUERY_BUT :
       q->cur++;
-      token = op_new(q, grn_sel_but, weight, mode, option);
+      token = op_new(q, GRN_SEL_BUT, weight, mode, option);
       break;
     case GRN_QUERY_ADJ_INC :
       q->cur++;
       if (weight < 127) { weight++; }
-      token = op_new(q, grn_sel_adjust, weight, mode, option);
+      token = op_new(q, GRN_SEL_ADJUST, weight, mode, option);
       break;
     case GRN_QUERY_ADJ_DEC :
       q->cur++;
       if (weight > -128) { weight--; }
-      token = op_new(q, grn_sel_adjust, weight, mode, option);
+      token = op_new(q, GRN_SEL_ADJUST, weight, mode, option);
       break;
     case GRN_QUERY_ADJ_NEG :
       q->cur++;
-      token = op_new(q, grn_sel_adjust, -1, mode, option);
+      token = op_new(q, GRN_SEL_ADJUST, -1, mode, option);
       break;
     case GRN_QUERY_PARENL :
       q->cur++;
@@ -296,7 +296,7 @@ get_token(grn_ctx *ctx, grn_query *q)
           token->u.b.size == 2) {
         cell_del(q);
         q->cur_expr--;
-        token = op_new(q, grn_sel_or, weight, mode, option);
+        token = op_new(q, GRN_SEL_OR, weight, mode, option);
       }
       break;
     }
@@ -322,7 +322,7 @@ get_weight_vector(grn_ctx *ctx, grn_query *query, const char *source)
   if (!query->opt.weight_vector &&
       !query->weight_set &&
       !(query->opt.weight_vector = GRN_CALLOC(sizeof(int) * DEFAULT_WEIGHT_VECTOR_SIZE))) {
-    GRN_LOG(ctx, grn_log_alert, "get_weight_vector malloc fail");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "get_weight_vector malloc fail");
     return source;
   }
   for (p = source; p < query->str_end; ) {
@@ -353,7 +353,7 @@ get_weight_vector(grn_ctx *ctx, grn_query *query, const char *source)
       GRN_FREE(query->opt.weight_vector);
       query->opt.weight_vector = NULL;
       if (!(query->weight_set = grn_hash_create(ctx, NULL, sizeof(unsigned int), sizeof(int),
-                                                0, grn_enc_none))) {
+                                                0, GRN_ENC_NONE))) {
         return source;
       }
       p = source;           /* reparse */
@@ -390,16 +390,16 @@ get_pragma(grn_ctx *ctx, grn_query *q)
       if (end > start) {
         switch (*start) {
         case 'O' :
-          q->default_op = grn_sel_or;
+          q->default_op = GRN_SEL_OR;
           break;
         case GRN_QUERY_AND :
-          q->default_op = grn_sel_and;
+          q->default_op = GRN_SEL_AND;
           break;
         case GRN_QUERY_BUT :
-          q->default_op = grn_sel_but;
+          q->default_op = GRN_SEL_BUT;
           break;
         case GRN_QUERY_ADJ_INC :
-          q->default_op = grn_sel_adjust;
+          q->default_op = GRN_SEL_ADJUST;
           break;
         }
       }
@@ -433,7 +433,7 @@ grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
   grn_query *q;
   int max_cells = max_exprs * 4;
   if (!(q = GRN_MALLOC(sizeof(grn_query) + max_cells * sizeof(grn_cell) + str_len + 1))) {
-    GRN_LOG(ctx, grn_log_alert, "grn_query_open malloc fail");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_query_open malloc fail");
     return NULL;
   }
   q->header.type = GRN_QUERY;
@@ -522,25 +522,25 @@ scan_keyword(snip_cond *sc, grn_str *str, grn_id section,
     }
   }
   switch (op) {
-  case grn_sel_or :
+  case GRN_SEL_OR :
     if (tf) {
       *found = 1;
       *score += w * tf;
     }
     break;
-  case grn_sel_and :
+  case GRN_SEL_AND :
     if (tf) {
       *score += w * tf;
     } else {
       *found = 0;
     }
     break;
-  case grn_sel_but :
+  case GRN_SEL_BUT :
     if (tf) {
       *found = 0;
     }
     break;
-  case grn_sel_adjust :
+  case GRN_SEL_ADJUST :
     *score += w * tf;
   }
 }
@@ -552,12 +552,12 @@ scan_query(grn_ctx *ctx, grn_query *q, grn_str *nstr, grn_id section, grn_cell *
 {
   int _found = 0, _score = 0;
   grn_cell *e, *ope = NIL;
-  grn_sel_operator op0 = grn_sel_or, *opp = &op0, op1 = q->default_op;
+  grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
   while (c != NIL) {
     POP(e, c);
     switch (e->header.type) {
     case GRN_CELL_OP :
-      if (opp == &op0 && e->u.op.op == grn_sel_but) {
+      if (opp == &op0 && e->u.op.op == GRN_SEL_BUT) {
         POP(e, c);
       } else {
         ope = e;
@@ -596,7 +596,7 @@ scan_query(grn_ctx *ctx, grn_query *q, grn_str *nstr, grn_id section, grn_cell *
       scan_query(ctx, q, nstr, section, e, sc, *opp, flags, &_found, &_score);
       break;
     default :
-      GRN_LOG(ctx, grn_log_notice, "invalid object assigned in query! (%d)", e->header.type);
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid object assigned in query! (%d)", e->header.type);
       break;
     }
     opp = &op1;
@@ -604,18 +604,18 @@ scan_query(grn_ctx *ctx, grn_query *q, grn_str *nstr, grn_id section, grn_cell *
     op1 = q->default_op;
   }
   switch (op) {
-  case grn_sel_or :
+  case GRN_SEL_OR :
     *found |= _found;
     *score += _score;
     break;
-  case grn_sel_and :
+  case GRN_SEL_AND :
     *found &= _found;
     *score += _score;
     break;
-  case grn_sel_but :
+  case GRN_SEL_BUT :
     *found &= !_found;
     break;
-  case grn_sel_adjust :
+  case GRN_SEL_ADJUST :
     *score += _score;
     break;
   default :
@@ -628,7 +628,7 @@ static grn_rc
 alloc_snip_conds(grn_ctx *ctx, grn_query *q)
 {
   if (!(q->snip_conds = GRN_CALLOC(sizeof(snip_cond) * q->cur_expr))) {
-    GRN_LOG(ctx, grn_log_alert, "snip_cond allocation failed");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "snip_cond allocation failed");
     return GRN_NO_MEMORY_AVAILABLE;
   }
   return GRN_SUCCESS;
@@ -646,7 +646,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     if ((rc = alloc_snip_conds(ctx, q))) { return rc; }
     flags |= GRN_QUERY_SCAN_ALLOCCONDS;
   } else if (flags & GRN_QUERY_SCAN_ALLOCCONDS) {
-    GRN_LOG(ctx, grn_log_warning, "invalid flags specified on grn_query_scan");
+    GRN_LOG(ctx, GRN_LOG_WARNING, "invalid flags specified on grn_query_scan");
     return GRN_INVALID_ARGUMENT;
   }
   for (i = 0; i < nstrs; i++) {
@@ -656,7 +656,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     if (flags & GRN_QUERY_SCAN_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
     n = grn_str_open(ctx, *(strs + i), *(str_lens + i), q->encoding, f);
     if (!n) { return GRN_NO_MEMORY_AVAILABLE; }
-    if ((rc = scan_query(ctx, q, n, i + 1, q->expr, &sc, grn_sel_or, flags, found, score))) {
+    if ((rc = scan_query(ctx, q, n, i + 1, q->expr, &sc, GRN_SEL_OR, flags, found, score))) {
       grn_str_close(ctx, n);
       return rc;
     }
@@ -674,7 +674,7 @@ snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_oper
            const char **closetags, unsigned int *closetag_lens)
 {
   grn_cell *e, *ope = NIL;
-  grn_sel_operator op0 = grn_sel_or, *opp = &op0, op1 = q->default_op;
+  grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
   while (c != NIL) {
     POP(e, c);
     switch (e->header.type) {
@@ -688,7 +688,7 @@ snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_oper
       } else {
         q->opt.mode = q->default_mode;
       }
-      if (!(c_but ^ (*opp == grn_sel_but))) {
+      if (!(c_but ^ (*opp == GRN_SEL_BUT))) {
         grn_rc rc;
         unsigned int i = snip->cond_len % n_tags;
         if ((rc = grn_snip_add_cond(ctx, snip, e->u.b.value, e->u.b.size,
@@ -699,11 +699,11 @@ snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_oper
       }
       break;
     case GRN_CELL_LIST :
-      snip_query(ctx, q, snip, e, *opp, n_tags, (*opp == grn_sel_but) ? c_but ^ 1 : c_but,
+      snip_query(ctx, q, snip, e, *opp, n_tags, (*opp == GRN_SEL_BUT) ? c_but ^ 1 : c_but,
                  opentags, opentag_lens, closetags, closetag_lens);
       break;
     default :
-      GRN_LOG(ctx, grn_log_notice, "invalid object assigned in query!! (%d)", e->header.type);
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid object assigned in query!! (%d)", e->header.type);
       break;
     }
     opp = &op1;
@@ -726,7 +726,7 @@ grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
                             NULL, 0, NULL, 0, mapping))) {
     return NULL;
   }
-  if (snip_query(ctx, query, res, query->expr, grn_sel_or, n_tags, 0,
+  if (snip_query(ctx, query, res, query->expr, GRN_SEL_OR, n_tags, 0,
                  opentags, opentag_lens, closetags, closetag_lens)) {
     grn_snip_close(ctx, res);
     return NULL;
@@ -741,8 +741,8 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
   grn_hash *s;
   grn_cell *e, *ope = NIL;
   int n = *r->n_entries;
-  grn_sel_operator op0 = grn_sel_or, *opp = &op0, op1 = q->default_op;
-  if (!n && op != grn_sel_or) { return; }
+  grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
+  if (!n && op != GRN_SEL_OR) { return; }
   if (n) {
     s = grn_hash_create(ctx, NULL, r->key_size, r->value_size, r->obj.flags, r->encoding);
     // s->keys = r->keys; need ?
@@ -753,7 +753,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
     POP(e, c);
     switch (e->header.type) {
     case GRN_CELL_OP :
-      if (opp == &op0 && e->u.op.op == grn_sel_but) {
+      if (opp == &op0 && e->u.op.op == GRN_SEL_BUT) {
         POP(e, c);
       } else {
         ope = e;
@@ -767,7 +767,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
         if (!q->opt.weight_vector) {
           q->opt.vector_size = ope->u.op.weight + q->weight_offset;
         }
-        if (ope->u.op.mode == grn_sel_similar) {
+        if (ope->u.op.mode == GRN_SEL_SIMILAR) {
           q->opt.max_interval = q->default_mode;
         }
       } else {
@@ -779,7 +779,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
         }
       }
       if (grn_ii_select(ctx, i, e->u.b.value, e->u.b.size, s, *opp, &q->opt)) {
-        GRN_LOG(ctx, grn_log_error, "grn_inv_select on exec_search failed !");
+        GRN_LOG(ctx, GRN_LOG_ERROR, "grn_inv_select on exec_search failed !");
         return;
       }
       break;
@@ -787,7 +787,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
       exec_search(ctx, i, q, e, s, *opp);
       break;
     default :
-      GRN_LOG(ctx, grn_log_notice, "invalid object assigned in query (%d)", e->header.type);
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid object assigned in query (%d)", e->header.type);
       break;
     }
     opp = &op1;
@@ -796,17 +796,17 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
   }
   if (n) {
     switch (op) {
-    case grn_sel_or :
+    case GRN_SEL_OR :
       // todo   if (!grn_records_union(r, s)) { grn_records_close(s); }
       break;
-    case grn_sel_and :
+    case GRN_SEL_AND :
       // todo   if (!grn_records_intersect(r, s)) { grn_records_close(s); }
       break;
-    case grn_sel_but :
+    case GRN_SEL_BUT :
       // todo   if (!grn_records_subtract(r, s)) { grn_records_close(s); }
       break;
       /* todo: adjust
-    case grn_sel_adjust :
+    case GRN_SEL_ADJUST :
       break;
       */
     default :
@@ -823,21 +823,21 @@ grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_sel_ope
   // dump_query(q, q->expr, 0);
   // grn_log("escalation_threshold=%d", p);
   if (p >= 0 || (-p & 1)) {
-    q->default_mode = grn_sel_exact;
+    q->default_mode = GRN_SEL_EXACT;
     exec_search(ctx, i, q, q->expr, r, op);
-    GRN_LOG(ctx, grn_log_info, "hits(exact)=%d", *r->n_entries);
+    GRN_LOG(ctx, GRN_LOG_INFO, "hits(exact)=%d", *r->n_entries);
   }
   if ((p >= 0) ? (p >= *r->n_entries) : (-p & 2)) {
     q->weight_offset -= q->escalation_decaystep;
-    q->default_mode = grn_sel_unsplit;
+    q->default_mode = GRN_SEL_UNSPLIT;
     exec_search(ctx, i, q, q->expr, r, op);
-    GRN_LOG(ctx, grn_log_info, "hits(unsplit)=%d", *r->n_entries);
+    GRN_LOG(ctx, GRN_LOG_INFO, "hits(unsplit)=%d", *r->n_entries);
   }
   if ((p >= 0) ? (p >= *r->n_entries) : (-p & 4)) {
     q->weight_offset -= q->escalation_decaystep;
-    q->default_mode = grn_sel_partial;
+    q->default_mode = GRN_SEL_PARTIAL;
     exec_search(ctx, i, q, q->expr, r, op);
-    GRN_LOG(ctx, grn_log_info, "hits(partial)=%d", *r->n_entries);
+    GRN_LOG(ctx, GRN_LOG_INFO, "hits(partial)=%d", *r->n_entries);
   }
   return GRN_SUCCESS;
 }

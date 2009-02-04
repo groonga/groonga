@@ -77,7 +77,7 @@ inline static void
 obj_unref(grn_cell *o)
 {
   if (!o->nrefs) {
-    GRN_LOG(ctx, grn_log_error, "o->nrefs corrupt");
+    GRN_LOG(ctx, GRN_LOG_ERROR, "o->nrefs corrupt");
     return;
   }
   if (o->nrefs < 0xffff) { o->nrefs--; }
@@ -244,7 +244,7 @@ obj_mark(grn_ctx *ctx, grn_cell *o)
   // if (MARKP(o)) { return; }
 E2:
   p->header.impl_flags |= GRN_CELL_MARKED;
-  // if (!o->nrefs) { GRN_LOG(ctx, grn_log_error, "obj->nrefs corrupt"); }
+  // if (!o->nrefs) { GRN_LOG(ctx, GRN_LOG_ERROR, "obj->nrefs corrupt"); }
   if (BULKP(o) && !(o->header.impl_flags & GRN_OBJ_ALLOCATED)) {
     char *b = GRN_MALLOC(o->u.b.size + 1);
     if (b) {
@@ -1320,12 +1320,12 @@ opexe(grn_ctx *ctx)
       grn_bulk_init(ctx, &buf, 0);
       grn_obj_inspect(ctx, ctx->impl->envir, &buf, GRN_OBJ_INSPECT_ESC);
       *buf.u.b.curr = '\0';
-      GRN_LOG(ctx, grn_log_notice, "mgc > ncells=%d envir=<%s>", ctx->impl->n_entries, buf.u.b.head);
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "mgc > ncells=%d envir=<%s>", ctx->impl->n_entries, buf.u.b.head);
       grn_bulk_fin(ctx, &buf);
     }
     grn_ctx_mgc(ctx);
     if (ctx->impl->gc_verbose) {
-      GRN_LOG(ctx, grn_log_notice, "mgc < ncells=%d", ctx->impl->n_entries);
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "mgc < ncells=%d", ctx->impl->n_entries);
     }
     ctx->impl->ncells = ctx->impl->n_entries;
   }
@@ -1890,7 +1890,7 @@ opexe(grn_ctx *ctx)
     }
 
   case OP_SDOWN:   /* shutdown */
-    GRN_LOG(ctx, grn_log_notice, "shutting down..");
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "shutting down..");
     grn_gctx.stat = GRN_QL_QUIT;
     s_goto(ctx, OP_QUIT);
 
@@ -2100,7 +2100,7 @@ opexe(grn_ctx *ctx)
     ctx->impl->code = CDR(ctx->impl->code);
     s_goto(ctx, OP_QQUOTE1);
   }
-  GRN_LOG(ctx, grn_log_error, "illegal op (%d)", ctx->impl->op);
+  GRN_LOG(ctx, GRN_LOG_ERROR, "illegal op (%d)", ctx->impl->op);
   return NIL;
 }
 

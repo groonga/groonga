@@ -1,5 +1,9 @@
 2009-02-05  Poe MORITA  <morita at razil.jp>
 
+	* groonga.h: capitalized all constants.
+
+2009-02-05  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (GRN_LOG): add 'ctx' argument.
 
 2009-02-04  Poe MORITA  <morita at razil.jp>

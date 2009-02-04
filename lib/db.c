@@ -1381,26 +1381,26 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
     break;
   }
   switch (op) {
-  case grn_sel_or :
+  case GRN_SEL_OR :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       grn_search_flags f = GRN_TABLE_ADD;
       grn_table_get(ctx, table1, key, key_size, &value1, &f);
       memcpy(value1, value2, value_size);
     });
     break;
-  case grn_sel_and :
+  case GRN_SEL_AND :
     GRN_TABLE_EACH(ctx, table1, 0, 0, id, &key, &key_size, &value1, {
       if (!grn_table_at(ctx, table2, key, key_size, &value2)) {
         _grn_table_delete_by_id(ctx, table1, id, NULL);
       }
     });
     break;
-  case grn_sel_but :
+  case GRN_SEL_BUT :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       grn_table_delete(ctx, table1, key, key_size);
     });
     break;
-  case grn_sel_adjust :
+  case GRN_SEL_ADJUST :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       if (grn_table_at(ctx, table1, key, key_size, &value1)) {
         memcpy(value1, value2, value_size);
@@ -1868,7 +1868,7 @@ grn_verses_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
   grn_verse *vp;
   if (!str_len) { return GRN_SUCCESS; }
   if (!v || !str) {
-    GRN_LOG(ctx, grn_log_warning, "grn_verses_add: invalid argument");
+    GRN_LOG(ctx, GRN_LOG_WARNING, "grn_verses_add: invalid argument");
     return GRN_INVALID_ARGUMENT;
   }
   if (!(v->u.v.n_verses & (INITIAL_VERSES_SIZE - 1))) {
@@ -3625,7 +3625,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
   if (limit <= 0) {
     limit += n;
     if (limit <= 0) {
-      GRN_LOG(ctx, grn_log_alert, "limit is too small in grn_table_sort !");
+      GRN_LOG(ctx, GRN_LOG_ALERT, "limit is too small in grn_table_sort !");
       goto exit;
     }
   }

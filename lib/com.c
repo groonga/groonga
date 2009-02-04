@@ -73,14 +73,14 @@ log_sockerr(const char *msg)
   case WSAETIMEDOUT: m = "connection time out"; break;
   case WSAECONNREFUSED: m = "connection refused"; break;
   default:
-    GRN_LOG(ctx, grn_log_error, "%s: socket error (%d)", msg, e);
+    GRN_LOG(ctx, GRN_LOG_ERROR, "%s: socket error (%d)", msg, e);
     return;
   }
-  GRN_LOG(ctx, grn_log_error, "%s: %s", msg, m);
+  GRN_LOG(ctx, GRN_LOG_ERROR, "%s: %s", msg, m);
 }
 #define LOG_SOCKERR(m) log_sockerr((m))
 #else /* WIN32 */
-#define LOG_SOCKERR(m) GRN_LOG(ctx, grn_log_error, "%s: %s", (m), strerror(errno))
+#define LOG_SOCKERR(m) GRN_LOG(ctx, GRN_LOG_ERROR, "%s: %s", (m), strerror(errno))
 #endif /* WIN32 */
 
 /******* grn_com ********/
@@ -116,7 +116,7 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
 {
   grn_rc rc = GRN_NO_MEMORY_AVAILABLE;
   ev->max_nevents = max_nevents;
-  if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0, grn_enc_none))) {
+  if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0, GRN_ENC_NONE))) {
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
     if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {
@@ -162,7 +162,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   grn_com *c;
   /* todo : expand events */
   if (!ev || *ev->hash->n_entries == ev->max_nevents) {
-    if (ev) { GRN_LOG(ctx, grn_log_error, "too many connections (%d)", ev->max_nevents); }
+    if (ev) { GRN_LOG(ctx, GRN_LOG_ERROR, "too many connections (%d)", ev->max_nevents); }
     return GRN_INVALID_ARGUMENT;
   }
 #ifdef USE_EPOLL
@@ -196,7 +196,7 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   if (!ev) { return GRN_INVALID_ARGUMENT; }
   if (grn_hash_at(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c)) {
     if (c->fd != fd) {
-      GRN_LOG(ctx, grn_log_error, "grn_com_event_mod fd unmatch %d != %d", c->fd, fd);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "grn_com_event_mod fd unmatch %d != %d", c->fd, fd);
       return grn_invalid_format;
     }
     if (com) { *com = c; }
@@ -238,7 +238,7 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
 #endif /* USE_EPOLL*/
       return grn_hash_delete_by_id(ctx, ev->hash, id, NULL);
     } else {
-      GRN_LOG(ctx, grn_log_error, "%04x| fd(%d) not found in ev(%p)", getpid(), fd, ev);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "%04x| fd(%d) not found in ev(%p)", getpid(), fd, ev);
       return grn_internal_error;
     }
   }
@@ -277,7 +277,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     LOG_SOCKERR("select");
     return grn_external_error;
   }
-  if (timeout < 0 && !nevents) { GRN_LOG(ctx, grn_log_notice, "select returns 0 events"); }
+  if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "select returns 0 events"); }
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
     if (FD_ISSET(*pfd, &rfds)) { com->ev_in(ev, com); }
     if (FD_ISSET(*pfd, &wfds)) { com->ev_out(ev, com); }
@@ -304,7 +304,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     LOG_SOCKERR("poll");
     return grn_external_error;
   }
-  if (timeout < 0 && !nevents) { GRN_LOG(ctx, grn_log_notice, "poll returns 0 events"); }
+  if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "poll returns 0 events"); }
   for (ep = ev->events; nevents; ep++) {
     int efd;
 #ifdef USE_EPOLL
@@ -312,7 +312,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     nevents--;
     if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       struct epoll_event e;
-      GRN_LOG(ctx, grn_log_error, "fd(%d) not found in ev->hash", efd);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->hash", efd);
       memset(&e, 0, sizeof(struct epoll_event));
       e.data.fd = efd;
       e.events = ep->events;
@@ -327,7 +327,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     if (!(ep->events & ep->revents)) { continue; }
     nevents--;
     if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
-      GRN_LOG(ctx, grn_log_error, "fd(%d) not found in ev->hash", efd);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->hash", efd);
       if (grn_sock_close(efd) == -1) { LOG_SOCKERR("close"); }
       continue;
     }
@@ -347,7 +347,7 @@ grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, c
   ssize_t ret, whole_size = sizeof(grn_com_sqtp_header) + header->size;
   header->proto = GRN_COM_PROTO_SQTP;
   if (cs->com.status == grn_com_closing) { header->flags |= GRN_QL_QUIT; }
-  GRN_LOG(ctx, grn_log_info, "send (%d,%x,%d,%02x,%02x,%04x,%08x)", header->size, header->flags, header->proto, header->qtype, header->level, header->status, header->info);
+  GRN_LOG(ctx, GRN_LOG_INFO, "send (%d,%x,%d,%02x,%02x,%04x,%08x)", header->size, header->flags, header->proto, header->qtype, header->level, header->status, header->info);
 
   if (header->size) {
 #ifdef WIN32
@@ -399,7 +399,7 @@ grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, c
     }
   }
   if (ret != whole_size) {
-    GRN_LOG(ctx, grn_log_error, "sendmsg: %d < %d", ret, whole_size);
+    GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg: %d < %d", ret, whole_size);
     cs->rc = grn_external_error;
     goto exit;
   }
@@ -444,7 +444,7 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
     rest -= ret, buf->u.b.curr += ret;
   } while (rest);
   header = GRN_COM_SQTP_MSG_HEADER(buf);
-  GRN_LOG(ctx, grn_log_info, "recv (%d,%x,%d,%02x,%02x,%04x,%08x)", header->size, header->flags, header->proto, header->qtype, header->level, header->status, header->info);
+  GRN_LOG(ctx, GRN_LOG_INFO, "recv (%d,%x,%d,%02x,%02x,%04x,%08x)", header->size, header->flags, header->proto, header->qtype, header->level, header->status, header->info);
   *status = header->status;
   *info = header->info;
   {
@@ -452,7 +452,7 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
     size_t value_size = header->size;
     size_t whole_size = sizeof(grn_com_sqtp_header) + value_size;
     if (proto != GRN_COM_PROTO_SQTP) {
-      GRN_LOG(ctx, grn_log_error, "illegal header: %d", proto);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "illegal header: %d", proto);
       cs->rc = grn_invalid_format;
       *status = grn_com_eproto;
       *info = proto;
@@ -522,7 +522,7 @@ grn_com_sqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
     if (errno == ECONNREFUSED)
 #endif /* WIN32 */
     {
-      GRN_LOG(ctx, grn_log_notice, "connect retrying..");
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "connect retrying..");
       sleep(2);
       continue;
     }
@@ -551,7 +551,7 @@ grn_com_sqtp_receiver(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
     return;
   }
   if (cs->com.status != grn_com_idle) {
-    GRN_LOG(ctx, grn_log_info, "waiting to be idle.. (%d) %d", c->fd, *ev->hash->n_entries);
+    GRN_LOG(ctx, GRN_LOG_INFO, "waiting to be idle.. (%d) %d", c->fd, *ev->hash->n_entries);
     usleep(1000);
     return;
   }
@@ -611,7 +611,7 @@ grn_com_sqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *
         if (errno == EADDRINUSE)
 #endif /* WIN32 */
         {
-          GRN_LOG(ctx, grn_log_notice, "bind retrying..(%d)", port);
+          GRN_LOG(ctx, GRN_LOG_NOTICE, "bind retrying..(%d)", port);
           if (++retry < 10) { sleep(2); continue; }
         }
         LOG_SOCKERR("bind");

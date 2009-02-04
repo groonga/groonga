@@ -38,12 +38,12 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
     int size;
     for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
     if (!w) {
-      GRN_LOG(ctx, grn_log_warning, "invalid utf8 string(1) on grn_str_charlen_utf8");
+      GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(1) on grn_str_charlen_utf8");
       return 0;
     }
     for (size = 1; w--; size++) {
       if (++p >= end || !*p || (*p & 0xc0) != 0x80) {
-        GRN_LOG(ctx, grn_log_warning, "invalid utf8 string(2) on grn_str_charlen_utf8");
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(2) on grn_str_charlen_utf8");
         return 0;
       }
     }
@@ -61,30 +61,30 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
   unsigned char *p = (unsigned char *) str;
   if (!*p) { return 0; }
   switch (encoding) {
-  case grn_enc_euc_jp :
+  case GRN_ENC_EUC_JP :
     if (*p & 0x80) {
       if (*(p + 1)) {
         return 2;
       } else {
         /* This is invalid character */
-        GRN_LOG(ctx, grn_log_warning, "invalid euc-jp string end on grn_str_charlen");
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid euc-jp string end on grn_str_charlen");
         return 0;
       }
     }
     return 1;
     break;
-  case grn_enc_utf8 :
+  case GRN_ENC_UTF8 :
     if (*p & 0x80) {
       int b, w;
       size_t size;
       for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
       if (!w) {
-        GRN_LOG(ctx, grn_log_warning, "invalid utf8 string(1) on grn_str_charlen");
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(1) on grn_str_charlen");
         return 0;
       }
       for (size = 1; w--; size++) {
         if (!*++p || (*p & 0xc0) != 0x80) {
-          GRN_LOG(ctx, grn_log_warning, "invalid utf8 string(2) on grn_str_charlen");
+          GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(2) on grn_str_charlen");
           return 0;
         }
       }
@@ -93,7 +93,7 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
       return 1;
     }
     break;
-  case grn_enc_sjis :
+  case GRN_ENC_SJIS :
     if (*p & 0x80) {
       /* we regard 0xa0 as JIS X 0201 KANA. adjusted to other tools. */
       if (0xa0 <= *p && *p <= 0xdf) {
@@ -101,7 +101,7 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
         return 1;
       } else if (!(*(p + 1))) {
         /* This is invalid character */
-        GRN_LOG(ctx, grn_log_warning, "invalid sjis string end on grn_str_charlen");
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid sjis string end on grn_str_charlen");
         return 0;
       } else {
         return 2;
@@ -125,22 +125,22 @@ grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encodin
   unsigned char *p = (unsigned char *) str;
   if (p >= (unsigned char *)end) { return 0; }
   switch (encoding) {
-  case grn_enc_euc_jp :
+  case GRN_ENC_EUC_JP :
     if (*p & 0x80) {
       if ((p + 1) < (unsigned char *)end) {
         return 2;
       } else {
         /* This is invalid character */
-        GRN_LOG(ctx, grn_log_warning, "invalid euc-jp string end on grn_charlen");
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid euc-jp string end on grn_charlen");
         return 0;
       }
     }
     return 1;
     break;
-  case grn_enc_utf8 :
+  case GRN_ENC_UTF8 :
     return grn_str_charlen_utf8(ctx, p, (unsigned char *)end);
     break;
-  case grn_enc_sjis :
+  case GRN_ENC_SJIS :
     if (*p & 0x80) {
       /* we regard 0xa0 as JIS X 0201 KANA. adjusted to other tools. */
       if (0xa0 <= *p && *p <= 0xdf) {
@@ -148,7 +148,7 @@ grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encodin
         return 1;
       } else if (++p >= (unsigned char *)end) {
         /* This is invalid character */
-        GRN_LOG(ctx, grn_log_warning, "invalid sjis string end on grn_charlen");
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid sjis string end on grn_charlen");
         return 0;
       } else {
         return 2;
@@ -1083,11 +1083,11 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
   /* TODO: support GRN_STR_REMOVEBLANK flag and ctypes */
   grn_str *nstr;
   if (!(nstr = GRN_MALLOC(sizeof(grn_str)))) {
-    GRN_LOG(ctx, grn_log_alert, "memory allocation on grn_fakenstr_open failed !");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "memory allocation on grn_fakenstr_open failed !");
     return NULL;
   }
   if (!(nstr->norm = GRN_MALLOC(str_len + 1))) {
-    GRN_LOG(ctx, grn_log_alert, "memory allocation for keyword on grn_snip_add_cond failed !");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "memory allocation for keyword on grn_snip_add_cond failed !");
     GRN_FREE(nstr);
     return NULL;
   }
@@ -1109,7 +1109,7 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
       return NULL;
     }
     switch (encoding) {
-    case grn_enc_euc_jp:
+    case GRN_ENC_EUC_JP:
       for (i = 0; i < str_len; i++) {
         if (!f) {
           c = (unsigned char) str[i];
@@ -1122,7 +1122,7 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
         f--;
       }
       break;
-    case grn_enc_sjis:
+    case GRN_ENC_SJIS:
       for (i = 0; i < str_len; i++) {
         if (!f) {
           c = (unsigned char) str[i];
@@ -1134,7 +1134,7 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
         f--;
       }
       break;
-    case grn_enc_utf8:
+    case GRN_ENC_UTF8:
       for (i = 0; i < str_len; i++) {
         if (!f) {
           c = (unsigned char) str[i];
@@ -1173,7 +1173,7 @@ grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
   }
 
   if (!(nstr = GRN_MALLOC(sizeof(grn_str)))) {
-    GRN_LOG(ctx, grn_log_alert, "memory allocation on grn_str_open failed !");
+    GRN_LOG(ctx, GRN_LOG_ALERT, "memory allocation on grn_str_open failed !");
     return NULL;
   }
   nstr->orig = str;
@@ -1185,23 +1185,23 @@ grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
   nstr->encoding = encoding;
   nstr->flags = flags;
   switch (encoding) {
-  case grn_enc_euc_jp :
+  case GRN_ENC_EUC_JP :
     rc = normalize_euc(ctx, nstr);
     break;
-  case grn_enc_utf8 :
+  case GRN_ENC_UTF8 :
 #ifdef NO_NFKC
     rc = normalize_none(ctx, nstr);
 #else /* NO_NFKC */
     rc = normalize_utf8(ctx, nstr);
 #endif /* NO_NFKC */
     break;
-  case grn_enc_sjis :
+  case GRN_ENC_SJIS :
     rc = normalize_sjis(ctx, nstr);
     break;
-  case grn_enc_latin1 :
+  case GRN_ENC_LATIN1 :
     rc = normalize_latin1(ctx, nstr);
     break;
-  case grn_enc_koi8r :
+  case GRN_ENC_KOI8R :
     rc = normalize_koi8r(ctx, nstr);
     break;
   default :
@@ -1252,7 +1252,7 @@ grn_enctostr(grn_encoding enc)
 grn_encoding
 grn_strtoenc(const char *str)
 {
-  grn_encoding e = grn_enc_euc_jp;
+  grn_encoding e = GRN_ENC_EUC_JP;
   int i = sizeof(grn_enc_string) / sizeof(grn_enc_string[0]);
   while (i--) {
     if (!strcmp(str, grn_enc_string[i])) {
@@ -1292,13 +1292,13 @@ grn_isspace(const char *str, grn_encoding encoding)
   case '\v' :
     return 1;
   case 0x81 :
-    if (encoding == grn_enc_sjis && s[1] == 0x40) { return 2; }
+    if (encoding == GRN_ENC_SJIS && s[1] == 0x40) { return 2; }
     break;
   case 0xA1 :
-    if (encoding == grn_enc_euc_jp && s[1] == 0xA1) { return 2; }
+    if (encoding == GRN_ENC_EUC_JP && s[1] == 0xA1) { return 2; }
     break;
   case 0xE3 :
-    if (encoding == grn_enc_utf8 && s[1] == 0x80 && s[2] == 0x80) { return 3; }
+    if (encoding == GRN_ENC_UTF8 && s[1] == 0x80 && s[2] == 0x80) { return 3; }
     break;
   default :
     break;

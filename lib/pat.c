@@ -280,7 +280,7 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
     int j;
     grn_id dd;
     grn_pat_delinfo *ddi;
-    GRN_LOG(ctx, grn_log_debug, "failed to find d=%d", d);
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "failed to find d=%d", d);
     for (j = (pat->header->curr_del2 + 1) & GRN_PAT_MDELINFOS;
          j != pat->header->curr_del;
          j = (j + 1) & GRN_PAT_MDELINFOS) {
@@ -290,7 +290,7 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
       if (!ln) { continue; }
       if (!(dd = ddi->d)) { continue; }
       if (d == ddi->ld) {
-        GRN_LOG(ctx, grn_log_debug, "found!!!, d(%d) become ld of (%d)", d, dd);
+        GRN_LOG(ctx, GRN_LOG_DEBUG, "found!!!, d(%d) become ld of (%d)", d, dd);
       }
     }
     /* debug */
@@ -335,13 +335,13 @@ delinfo_new(grn_ctx *ctx, grn_pat *pat)
             - (GRN_PAT_NDELINFOS / 2);
   while (gap-- > 0) {
     if (delinfo_turn_2(ctx, pat, &pat->header->delinfos[pat->header->curr_del2])) {
-      GRN_LOG(ctx, grn_log_crit, "d2 failed: %d", pat->header->delinfos[pat->header->curr_del2].ld);
+      GRN_LOG(ctx, GRN_LOG_CRIT, "d2 failed: %d", pat->header->delinfos[pat->header->curr_del2].ld);
     }
     pat->header->curr_del2 = (pat->header->curr_del2 + 1) & GRN_PAT_MDELINFOS;
   }
   if (n == pat->header->curr_del3) {
     if (delinfo_turn_3(ctx, pat, &pat->header->delinfos[pat->header->curr_del3])) {
-      GRN_LOG(ctx, grn_log_crit, "d3 failed: %d", pat->header->delinfos[pat->header->curr_del3].ld);
+      GRN_LOG(ctx, GRN_LOG_CRIT, "d3 failed: %d", pat->header->delinfos[pat->header->curr_del3].ld);
     }
     pat->header->curr_del3 = (pat->header->curr_del3 + 1) & GRN_PAT_MDELINFOS;
   }
@@ -378,7 +378,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
                                   GRN_PAT_SEGMENT_SIZE, grn_io_auto, 3, array_spec);
   }
   if (!io) { return NULL; }
-  if (encoding == grn_enc_default) { encoding = grn_gctx.encoding; }
+  if (encoding == GRN_ENC_DEFAULT) { encoding = grn_gctx.encoding; }
   header = grn_io_header(io);
   grn_io_set_type(io, GRN_TABLE_PAT_KEY);
   header->flags = flags;
@@ -969,7 +969,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
       PAT_AT(pat, otherside, rno);
       if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
         if (!delinfo_search(pat, otherside)) {
-          GRN_LOG(ctx, grn_log_error, "no delinfo found %d", otherside);
+          GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
         }
         PAT_CHK_SET(rno, 0);
       }
@@ -987,7 +987,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
         ddi->stat = DL_PHASE2;
         if (ddi == ldi) {
           if (r != ddi->ld) {
-            GRN_LOG(ctx, grn_log_error, "r(%d) != ddi->ld(%d)", r, ddi->ld);
+            GRN_LOG(ctx, GRN_LOG_ERROR, "r(%d) != ddi->ld(%d)", r, ddi->ld);
           }
           di->d = r;
         } else {
@@ -1003,7 +1003,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
       PAT_DEL_ON(rn);
       if (ddi) {
         if (ddi->d != *p0) {
-          GRN_LOG(ctx, grn_log_error, "ddi->d(%d) != *p0(%d)", ddi->d, *p0);
+          GRN_LOG(ctx, GRN_LOG_ERROR, "ddi->d(%d) != *p0(%d)", ddi->d, *p0);
         }
         PAT_DEL_OFF(rn0);
         ddi->stat = DL_PHASE2;
@@ -1031,7 +1031,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
         PAT_AT(pat, otherside, rno);
         if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
           if (!delinfo_search(pat, otherside)) {
-            GRN_LOG(ctx, grn_log_error, "no delinfo found %d", otherside);
+            GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
           }
           PAT_CHK_SET(rno, 0);
         }

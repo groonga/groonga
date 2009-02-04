@@ -168,7 +168,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
     if (nref >= GRN_IO_MAX_REF) {\
       GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
       if (retry >= GRN_IO_MAX_RETRY) {\
-	GRN_LOG(ctx, grn_log_crit, "deadlock detected! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
+	GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
         *pnref = 0; /* force reset */ \
 	break;\
       }\
@@ -176,13 +176,13 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
       continue;\
     }\
     if (nref > 10000) {\
-      GRN_LOG(ctx, grn_log_alert, "strange nref value! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
+      GRN_LOG(ctx, GRN_LOG_ALERT, "strange nref value! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
     }\
     if (!info->map) {\
       if (nref) {\
 	GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
 	if (retry >= GRN_IO_MAX_RETRY) {\
-	  GRN_LOG(ctx, grn_log_crit, "deadlock detected!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
+	  GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
 	  break;\
 	}\
 	usleep(1000);\
@@ -191,7 +191,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
 	grn_io_seg_map_(ctx, io, segno, info);\
         if (!info->map) {\
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
-          GRN_LOG(ctx, grn_log_crit, "mmap failed!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
+          GRN_LOG(ctx, GRN_LOG_CRIT, "mmap failed!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
         }\
       }\
     }\
@@ -223,7 +223,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
     if (nref) {\
       GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
       if (retry >= GRN_IO_MAX_RETRY) {\
-        GRN_LOG(ctx, grn_log_crit, "deadlock detected!! in GRN_IO_SEG_MAP(%p, %u)", io, segno);\
+        GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!! in GRN_IO_SEG_MAP(%p, %u)", io, segno);\
         break;\
       }\
       usleep(1000);\
@@ -232,7 +232,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
       if (!info->map) {\
         grn_io_seg_map_(ctx, io, segno, info);\
         if (!info->map) {\
-          GRN_LOG(ctx, grn_log_crit, "mmap failed!! in GRN_IO_SEG_MAP(%p, %u)", io, segno);\
+          GRN_LOG(ctx, GRN_LOG_CRIT, "mmap failed!! in GRN_IO_SEG_MAP(%p, %u)", io, segno);\
         }\
       }\
       GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
