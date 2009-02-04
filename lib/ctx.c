@@ -1322,7 +1322,7 @@ grn_logger_pass(grn_ctx *ctx, grn_log_level level)
 
 void
 grn_logger_put(grn_ctx *ctx, grn_log_level level,
-               const char *file, int line, const char *func, char *fmt, ...)
+               const char *file, int line, const char *func, const char *fmt, ...)
 {
   if (level <= grn_logger->max_level) {
     char tbuf[TBUFSIZE];
@@ -1344,8 +1344,7 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
       mbuf[0] = '\0';
     }
     if (grn_logger->flags & GRN_LOG_LOCATION) {
-      snprintf(lbuf, LBUFSIZE - 1, "%04x %s:%d %s()",
-               getpid(), file, line, func);
+      snprintf(lbuf, LBUFSIZE - 1, "%d %s:%d %s()", getpid(), file, line, func);
       lbuf[LBUFSIZE - 1] = '\0';
     } else {
       lbuf[0] = '\0';

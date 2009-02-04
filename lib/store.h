@@ -78,18 +78,16 @@ struct _grn_ja {
   grn_db_obj obj;
   grn_io *io;
   struct grn_ja_header *header;
-  uint32_t *dsegs;
-  uint32_t *esegs;
 };
 
 grn_ja *grn_ja_create(grn_ctx *ctx, const char *path,
-                      unsigned int max_element_size, uint32_t flags);
+                      uint32_t max_element_size, uint32_t flags);
 grn_ja *grn_ja_open(grn_ctx *ctx, const char *path);
 grn_rc grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size);
 grn_rc grn_ja_close(grn_ctx *ctx, grn_ja *ja);
 grn_rc grn_ja_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id,
-                  void *value, int value_len, int flags);
+                  void *value, uint32_t value_len, int flags);
 int grn_ja_at(grn_ctx *ctx, grn_ja *ja, grn_id id, void *valbuf, int buf_size);
 
 void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len);

@@ -302,6 +302,8 @@ typedef int grn_cond;
 
 typedef uint8_t byte;
 
+#define GRN_ID_WIDTH 30
+
 #ifdef __GNUC__
 inline static int
 grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)

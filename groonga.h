@@ -82,6 +82,7 @@ typedef enum {
   GRN_RESOURCE_BUSY = -51,
   GRN_RANGE_ERROR = -52,
   GRN_TOKENIZER_ERROR = -53,
+  GRN_FILE_CORRUPT = -54,
   grn_invalid_format,
   grn_file_operation_error,
   grn_other_error,
@@ -1255,7 +1256,7 @@ struct _grn_logger_info {
 grn_rc grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info);
 
 void grn_logger_put(grn_ctx *ctx, grn_log_level level,
-                    const char *file, int line, const char *func, char *fmt, ...);
+                    const char *file, int line, const char *func, const char *fmt, ...);
 
 int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
@@ -1263,7 +1264,7 @@ int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 #define GRN_LOG_DEFAULT_LEVEL grn_log_notice
 #endif /* GRN_LOG_DEFAULT_LEVEL */
 
-#define GRN_LOG(level,...) \
+#define GRN_LOG(level,...)\
 if (grn_logger_pass(&grn_gctx, level)) {\
   grn_logger_put(&grn_gctx, (level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
 }
