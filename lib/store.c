@@ -34,7 +34,7 @@ grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
   struct grn_ra_header *header;
   unsigned actual_size;
   if (element_size > GRN_RA_SEGMENT_SIZE) {
-    GRN_LOG(grn_log_error, "element_size too large (%d)", element_size);
+    GRN_LOG(ctx, grn_log_error, "element_size too large (%d)", element_size);
     return NULL;
   }
   for (actual_size = 1; actual_size < element_size; actual_size *= 2) ;
@@ -478,7 +478,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         }
       }
     }
-    GRN_LOG(grn_log_crit, "ja full. requested element_size=%d.", element_size);
+    GRN_LOG(ctx, grn_log_crit, "ja full. requested element_size=%d.", element_size);
     return GRN_NO_MEMORY_AVAILABLE;
   } else {
     ja_pos *vp;
@@ -846,7 +846,7 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
     v += sizeof(uint32_t) + element_size;
   }
   if (*segusage != SEG_SEQ) {
-    GRN_LOG(grn_log_error, "dseges[%d] = %d after defrag", seg, *segusage);
+    GRN_LOG(ctx, grn_log_error, "dseges[%d] = %d after defrag", seg, *segusage);
     return GRN_FILE_CORRUPT;
   }
   *segusage = 0;
@@ -973,7 +973,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
     {
       grn_set *th = grn_set_open(sizeof(grn_id), sizeof(int), 0);
       if (!th) { return GRN_NO_MEMORY_AVAILABLE; }
-      if (t0 == b->tvp) { GRN_LOG(grn_log_debug, "t0 == tvp"); }
+      if (t0 == b->tvp) { GRN_LOG(ctx, grn_log_debug, "t0 == tvp"); }
       for (t0 = b->tvs; t0 < b->tvp; t0++) {
         grn_id vid, vid0 = *t0, vid1 = 0;
         grn_vgram_vnode *v, *v2 = NULL, **vp;
@@ -1027,7 +1027,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
           (*tf)++;
         }
       }
-      if (!th->n_entries) { GRN_LOG(grn_log_debug, "th->n_entries == 0"); }
+      if (!th->n_entries) { GRN_LOG(ctx, grn_log_debug, "th->n_entries == 0"); }
       {
         int j = 0;
         int skip = 0;
@@ -1059,7 +1059,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
           if (*t0) {
             int *id;
             if (!grn_set_at(th, t0, (void **) &id)) {
-              GRN_LOG(grn_log_error, "lookup error (%d)", *t0);
+              GRN_LOG(ctx, grn_log_error, "lookup error (%d)", *t0);
             }
             GRN_B_ENC(*id, pp);
           } else {
@@ -1092,7 +1092,7 @@ grn_rc
 grn_vgram_close(grn_vgram *vgram)
 {
   if (!vgram) { return GRN_INVALID_ARGUMENT; }
-  GRN_LOG(grn_log_debug, "len=%d img=%d skip=%d simple=%d", len_sum, img_sum, skip_sum, simple_sum);
+  GRN_LOG(ctx, grn_log_debug, "len=%d img=%d skip=%d simple=%d", len_sum, img_sum, skip_sum, simple_sum);
   grn_sym_close(vgram->vgram);
   GRN_GFREE(vgram);
   return GRN_SUCCESS;

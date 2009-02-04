@@ -322,7 +322,7 @@ get_weight_vector(grn_ctx *ctx, grn_query *query, const char *source)
   if (!query->opt.weight_vector &&
       !query->weight_set &&
       !(query->opt.weight_vector = GRN_CALLOC(sizeof(int) * DEFAULT_WEIGHT_VECTOR_SIZE))) {
-    GRN_LOG(grn_log_alert, "get_weight_vector malloc fail");
+    GRN_LOG(ctx, grn_log_alert, "get_weight_vector malloc fail");
     return source;
   }
   for (p = source; p < query->str_end; ) {
@@ -433,7 +433,7 @@ grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
   grn_query *q;
   int max_cells = max_exprs * 4;
   if (!(q = GRN_MALLOC(sizeof(grn_query) + max_cells * sizeof(grn_cell) + str_len + 1))) {
-    GRN_LOG(grn_log_alert, "grn_query_open malloc fail");
+    GRN_LOG(ctx, grn_log_alert, "grn_query_open malloc fail");
     return NULL;
   }
   q->header.type = GRN_QUERY;
@@ -596,7 +596,7 @@ scan_query(grn_ctx *ctx, grn_query *q, grn_str *nstr, grn_id section, grn_cell *
       scan_query(ctx, q, nstr, section, e, sc, *opp, flags, &_found, &_score);
       break;
     default :
-      GRN_LOG(grn_log_notice, "invalid object assigned in query! (%d)", e->header.type);
+      GRN_LOG(ctx, grn_log_notice, "invalid object assigned in query! (%d)", e->header.type);
       break;
     }
     opp = &op1;
@@ -628,7 +628,7 @@ static grn_rc
 alloc_snip_conds(grn_ctx *ctx, grn_query *q)
 {
   if (!(q->snip_conds = GRN_CALLOC(sizeof(snip_cond) * q->cur_expr))) {
-    GRN_LOG(grn_log_alert, "snip_cond allocation failed");
+    GRN_LOG(ctx, grn_log_alert, "snip_cond allocation failed");
     return GRN_NO_MEMORY_AVAILABLE;
   }
   return GRN_SUCCESS;
@@ -646,7 +646,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     if ((rc = alloc_snip_conds(ctx, q))) { return rc; }
     flags |= GRN_QUERY_SCAN_ALLOCCONDS;
   } else if (flags & GRN_QUERY_SCAN_ALLOCCONDS) {
-    GRN_LOG(grn_log_warning, "invalid flags specified on grn_query_scan")
+    GRN_LOG(ctx, grn_log_warning, "invalid flags specified on grn_query_scan");
     return GRN_INVALID_ARGUMENT;
   }
   for (i = 0; i < nstrs; i++) {
@@ -703,7 +703,7 @@ snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_oper
                  opentags, opentag_lens, closetags, closetag_lens);
       break;
     default :
-      GRN_LOG(grn_log_notice, "invalid object assigned in query!! (%d)", e->header.type);
+      GRN_LOG(ctx, grn_log_notice, "invalid object assigned in query!! (%d)", e->header.type);
       break;
     }
     opp = &op1;
@@ -779,7 +779,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
         }
       }
       if (grn_ii_select(ctx, i, e->u.b.value, e->u.b.size, s, *opp, &q->opt)) {
-        GRN_LOG(grn_log_error, "grn_inv_select on exec_search failed !");
+        GRN_LOG(ctx, grn_log_error, "grn_inv_select on exec_search failed !");
         return;
       }
       break;
@@ -787,7 +787,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
       exec_search(ctx, i, q, e, s, *opp);
       break;
     default :
-      GRN_LOG(grn_log_notice, "invalid object assigned in query (%d)", e->header.type);
+      GRN_LOG(ctx, grn_log_notice, "invalid object assigned in query (%d)", e->header.type);
       break;
     }
     opp = &op1;
@@ -825,19 +825,19 @@ grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_sel_ope
   if (p >= 0 || (-p & 1)) {
     q->default_mode = grn_sel_exact;
     exec_search(ctx, i, q, q->expr, r, op);
-    GRN_LOG(grn_log_info, "hits(exact)=%d", *r->n_entries);
+    GRN_LOG(ctx, grn_log_info, "hits(exact)=%d", *r->n_entries);
   }
   if ((p >= 0) ? (p >= *r->n_entries) : (-p & 2)) {
     q->weight_offset -= q->escalation_decaystep;
     q->default_mode = grn_sel_unsplit;
     exec_search(ctx, i, q, q->expr, r, op);
-    GRN_LOG(grn_log_info, "hits(unsplit)=%d", *r->n_entries);
+    GRN_LOG(ctx, grn_log_info, "hits(unsplit)=%d", *r->n_entries);
   }
   if ((p >= 0) ? (p >= *r->n_entries) : (-p & 4)) {
     q->weight_offset -= q->escalation_decaystep;
     q->default_mode = grn_sel_partial;
     exec_search(ctx, i, q, q->expr, r, op);
-    GRN_LOG(grn_log_info, "hits(partial)=%d", *r->n_entries);
+    GRN_LOG(ctx, grn_log_info, "hits(partial)=%d", *r->n_entries);
   }
   return GRN_SUCCESS;
 }

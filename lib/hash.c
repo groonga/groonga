@@ -215,7 +215,7 @@ grn_array_open(grn_ctx *ctx, const char *path)
             array->lock = &header->lock;
             return (grn_array *)array;
           } else {
-            GRN_LOG(grn_log_notice, "invalid array flag. (%x)", header->flags);
+            GRN_LOG(ctx, grn_log_notice, "invalid array flag. (%x)", header->flags);
           }
           GRN_FREE(array);
         }
@@ -847,7 +847,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
           hash->tokenizer = grn_ctx_get(ctx, header->tokenizer);
           return (grn_hash *)hash;
         } else {
-          GRN_LOG(grn_log_notice, "invalid hash flag. (%x)", header->flags);
+          GRN_LOG(ctx, grn_log_notice, "invalid hash flag. (%x)", header->flags);
         }
         GRN_FREE(hash);
       }
@@ -1025,7 +1025,7 @@ grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout)
         if (_ncolls < 0 || _ncalls < 0) {
           _ncolls = 0; _ncalls = 0;
         } else {
-          GRN_LOG(grn_log_notice, "hash(%p) collisions(%d/%d)", hash, _ncolls, _ncalls);
+          GRN_LOG(ctx, grn_log_notice, "hash(%p) collisions(%d/%d)", hash, _ncolls, _ncalls);
         }
       }
       usleep(1000);
@@ -1848,13 +1848,13 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
   entry **res;
   if (!result || !*hash->n_entries) { return 0; }
   if (!(res = GRN_MALLOC(sizeof(entry *) * *hash->n_entries))) {
-    GRN_LOG(grn_log_alert, "allocation of entries failed on grn_hash_sort !");
+    GRN_LOG(ctx, grn_log_alert, "allocation of entries failed on grn_hash_sort !");
     return 0;
   }
   if (limit <= 0) {
     limit += *hash->n_entries;
     if (limit <= 0) {
-      GRN_LOG(grn_log_alert, "limit is too small in grn_hash_sort !");
+      GRN_LOG(ctx, grn_log_alert, "limit is too small in grn_hash_sort !");
       return 0;
     }
   }
@@ -1870,7 +1870,7 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
       if (sizeof(entry *) != sizeof(val32)) {
         GRN_FREE(res);
         if (!(res = GRN_MALLOC(sizeof(val32) * *hash->n_entries))) {
-          GRN_LOG(grn_log_alert, "allocation of entries failed on grn_hash_sort !");
+          GRN_LOG(ctx, grn_log_alert, "allocation of entries failed on grn_hash_sort !");
           return 0;
         }
       }
@@ -2095,14 +2095,14 @@ grn_rhash_group(grn_hash *s, int limit, grn_group_optarg *optarg)
   if (funcp) {
     gkey = GRN_MALLOC(rsize ? rsize : 8192);
     if (!gkey) {
-      GRN_LOG(grn_log_alert, "allocation for gkey failed !");
+      GRN_LOG(ctx, grn_log_alert, "allocation for gkey failed !");
       return NULL;
     }
   } else {
     if (s->key_size <= rsize) { return NULL; }
   }
   if (!(c = grn_hash_cursor_open(s->ctx, s, NULL, 0, NULL, 0, 0))) {
-    GRN_LOG(grn_log_alert, "grn_hash_cursor_open on grn_hash_group failed !");
+    GRN_LOG(ctx, grn_log_alert, "grn_hash_cursor_open on grn_hash_group failed !");
     if (gkey) { GRN_FREE(gkey); }
     return NULL;
   }
@@ -2110,7 +2110,7 @@ grn_rhash_group(grn_hash *s, int limit, grn_group_optarg *optarg)
   g = s;
   s = &h;
   if (grn_rhash_init(ctx, g, unit, rsize, s->record_unit, s->key_size, limit)) {
-    GRN_LOG(grn_log_alert, "grn_rhash_init in grn_hash_group failed !");
+    GRN_LOG(ctx, grn_log_alert, "grn_rhash_init in grn_hash_group failed !");
     grn_hash_cursor_close(s->ctx, c);
     if (gkey) { GRN_FREE(gkey); }
     return NULL;

@@ -201,7 +201,7 @@ grn_ii_seg_expire(grn_ctx *ctx, grn_ii *ii, int32_t threshold)
       if (info->map && !*pnref) { grn_io_seg_expire(ctx, ii->seg, pseg, 0); }
     }
   }
-  GRN_LOG(grn_log_notice, "expired(%d) (%u -> %u)", threshold, nmaps, ii->seg->nmaps);
+  GRN_LOG(ctx, grn_log_notice, "expired(%d) (%u -> %u)", threshold, nmaps, ii->seg->nmaps);
 }
 
 /* chunk */
@@ -251,7 +251,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
         }
       }
     }
-    GRN_LOG(grn_log_crit, "index full. requested chunk_size=%d.", size);
+    GRN_LOG(ctx, grn_log_crit, "index full. requested chunk_size=%d.", size);
     return GRN_NO_MEMORY_AVAILABLE;
   } else {
     uint32_t *vp;
@@ -380,7 +380,7 @@ chunk_new(grn_ii *ii, uint32_t *res, uint32_t size)
           (i + base_seg + 1) / N_CHUNKS_PER_FILE) { j = i; }
     }
   }
-  GRN_LOG(grn_log_crit, "index full.");
+  GRN_LOG(ctx, grn_log_crit, "index full.");
   return GRN_NO_MEMORY_AVAILABLE;
 }
 
@@ -1725,7 +1725,7 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     }
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
-      GRN_LOG(grn_log_notice, "data_size=%d, %d", data_size, dpe - dp);
+      GRN_LOG(ctx, grn_log_notice, "data_size=%d, %d", data_size, dpe - dp);
     }
   }
   return rp - dv[0].data;
@@ -1806,7 +1806,7 @@ inline static grn_rc
 buffer_close(grn_ctx *ctx, grn_ii *ii, uint32_t pseg)
 {
   if (pseg >= MAX_PSEG) {
-    GRN_LOG(grn_log_notice, "invalid pseg buffer_close(%d)", pseg);
+    GRN_LOG(ctx, grn_log_notice, "invalid pseg buffer_close(%d)", pseg);
     return GRN_INVALID_ARGUMENT;
   }
   GRN_IO_SEG_UNREF(ii->seg, pseg);
@@ -1847,9 +1847,9 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
   int pos, rid, sid;
   uint8_t *p;
   buffer_rec *r;
-  GRN_LOG(grn_log_debug,
+  GRN_LOG(ctx, grn_log_debug,
           "b=(%x %u %u %u)", b->header.chunk, b->header.chunk_size, b->header.buffer_free, b->header.nterms);
-  GRN_LOG(grn_log_debug,
+  GRN_LOG(ctx, grn_log_debug,
           "bt=(%u %u %u %u %u)", bt->tid, bt->size_in_chunk, bt->pos_in_chunk, bt->size_in_buffer, bt->pos_in_buffer);
   for (pos = bt->pos_in_buffer; pos; pos = r->step) {
     r = BUFFER_REC_AT(b, pos);
@@ -1860,7 +1860,7 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
     } else {
       sid = 1;
     }
-    GRN_LOG(grn_log_debug, "%d=(%d:%d),(%d:%d)", pos, r->jump, r->step, rid, sid);
+    GRN_LOG(ctx, grn_log_debug, "%d=(%d:%d),(%d:%d)", pos, r->jump, r->step, rid, sid);
   }
 }
 
@@ -1880,7 +1880,7 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
     id.sid = 1;
   }
   if (j == 1) {
-    GRN_LOG(grn_log_debug, "deleting! %d(%d:%d)", i, id.rid, id.sid);
+    GRN_LOG(ctx, grn_log_debug, "deleting! %d(%d:%d)", i, id.rid, id.sid);
     return GRN_SUCCESS;
   }
   r2 = BUFFER_REC_AT(b, j);
@@ -1892,11 +1892,11 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
     id2.sid = 1;
   }
   if (r2->step == i) {
-    GRN_LOG(grn_log_emerg, "cycle! %d(%d:%d)<->%d(%d:%d)", i, id.rid, id.sid, j, id2.rid, id2.sid);
+    GRN_LOG(ctx, grn_log_emerg, "cycle! %d(%d:%d)<->%d(%d:%d)", i, id.rid, id.sid, j, id2.rid, id2.sid);
     return grn_abnormal_error;
   }
   if (id2.rid < id.rid || (id2.rid == id.rid && id2.sid <= id.sid)) {
-    GRN_LOG(grn_log_crit, "invalid jump! %d(%d:%d)(%d:%d)->%d(%d:%d)(%d:%d)", i, r->jump, r->step, id.rid, id.sid, j, r2->jump, r2->step, id2.rid, id2.sid);
+    GRN_LOG(ctx, grn_log_crit, "invalid jump! %d(%d:%d)(%d:%d)->%d(%d:%d)(%d:%d)", i, r->jump, r->step, id.rid, id.sid, j, r2->jump, r2->step, id2.rid, id2.sid);
     return grn_abnormal_error;
   }
   return GRN_SUCCESS;
@@ -2285,7 +2285,7 @@ typedef struct {
   if (cid.rid) {\
     if (cid.tf) {\
       if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {\
-        GRN_LOG(grn_log_crit, "brokenc!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
+        GRN_LOG(ctx, grn_log_crit, "brokenc!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
         rc = grn_invalid_format;\
         break;\
       }\
@@ -2298,7 +2298,7 @@ typedef struct {
         }\
       }\
     } else {\
-      GRN_LOG(grn_log_crit, "invalid chunk(%d,%d)", bt->tid, cid.rid);\
+      GRN_LOG(ctx, grn_log_crit, "invalid chunk(%d,%d)", bt->tid, cid.rid);\
       rc = grn_invalid_format;\
       break;\
     }\
@@ -2317,7 +2317,7 @@ typedef struct {
       bid.sid = 1;\
     }\
     if (lrid > bid.rid || (lrid == bid.rid && lsid >= bid.sid)) {\
-      GRN_LOG(grn_log_crit, "brokeng!! (%d:%d) -> (%d:%d)", lrid, lsid, bid.rid, bid.sid);\
+      GRN_LOG(ctx, grn_log_crit, "brokeng!! (%d:%d) -> (%d:%d)", lrid, lsid, bid.rid, bid.sid);\
       rc = grn_invalid_format;\
       break;\
     }\
@@ -2331,7 +2331,7 @@ typedef struct {
     GRN_B_DEC(bid.tf, sbp);\
     if (bid.tf > 0) {\
       if (lid.rid > bid.rid || (lid.rid == bid.rid && lid.sid >= bid.sid)) {\
-        GRN_LOG(grn_log_crit, "brokenb!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
+        GRN_LOG(ctx, grn_log_crit, "brokenb!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
         rc = grn_invalid_format;\
         break;\
       }\
@@ -2610,7 +2610,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       grn_id tid = bt->tid & GRN_ID_MAX;
       uint32_t *a = array_at(ctx, ii, tid);
       if (!a) {
-        GRN_LOG(grn_log_notice, "array_entry not found tid=%d", tid);
+        GRN_LOG(ctx, grn_log_notice, "array_entry not found tid=%d", tid);
         memset(bt, 0, sizeof(buffer_term));
         nterms_void++;
       } else {
@@ -2674,7 +2674,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               GRN_B_ENC(cinfo[i].size, dcp);
               GRN_B_ENC(cinfo[i].dgap, dcp);
             }
-            GRN_LOG(grn_log_notice, "split (%d) encsize=%d", bt->tid, encsize);
+            GRN_LOG(ctx, grn_log_notice, "split (%d) encsize=%d", bt->tid, encsize);
             bt->tid |= CHUNK_SPLIT;
           } else {
             dcp += encsize;
@@ -2834,7 +2834,7 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
     (*nt)++;
   }
   GRN_FREE(ts);
-  GRN_LOG(grn_log_notice, "d0=%d d1=%d", db0->header.nterms, db1->header.nterms);
+  GRN_LOG(ctx, grn_log_notice, "d0=%d d1=%d", db0->header.nterms, db1->header.nterms);
   return GRN_SUCCESS;
 }
 
@@ -2851,7 +2851,7 @@ array_update(grn_ctx *ctx, grn_ii *ii, uint32_t dls, buffer *db)
         a[0] = pos;
         array_unref(ii, tid);
       } else {
-        GRN_LOG(grn_log_warning, "array_at failed (%d)", tid);
+        GRN_LOG(ctx, grn_log_warning, "array_at failed (%d)", tid);
       }
     }
     pos += sizeof(buffer_term) >> 2;
@@ -3006,7 +3006,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
           if ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
               b->header.chunk_size) {
-            GRN_LOG(grn_log_notice, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
+            GRN_LOG(ctx, grn_log_notice, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
             if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
           } else {
             if (buffer_flush(ctx, ii, LSEG(pos), h)) { break; }
@@ -3031,7 +3031,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
       if (!b->terms[offset].tid) { break; }
     }
     if (offset == b->header.nterms) {
-      GRN_LOG(grn_log_notice, "inconsistent buffer(%d)", lseg);
+      GRN_LOG(ctx, grn_log_notice, "inconsistent buffer(%d)", lseg);
       b->header.nterms_void = 0;
       b->header.nterms++;
       b->header.buffer_free -= size + sizeof(buffer_term);
@@ -3254,32 +3254,32 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         }
         if (b->header.buffer_free < size) {
           int bfb = b->header.buffer_free;
-          GRN_LOG(grn_log_debug, "flushing a[0]=%d seg=%d(%p) free=%d",
+          GRN_LOG(ctx, grn_log_debug, "flushing a[0]=%d seg=%d(%p) free=%d",
                   a[0], LSEG(a[0]), b, b->header.buffer_free);
           buffer_close(ctx, ii, pseg);
           if ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
               b->header.chunk_size) {
-            GRN_LOG(grn_log_notice, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
+            GRN_LOG(ctx, grn_log_notice, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
             if ((rc = buffer_split(ctx, ii, LSEG(pos), h))) { goto exit; }
             continue;
           }
           if ((rc = buffer_flush(ctx, ii, LSEG(pos), h))) { goto exit; }
           if (a[0] != pos) {
-            GRN_LOG(grn_log_debug, "grn_ii_update_one: a[0] changed %d->%d", a[0], pos);
+            GRN_LOG(ctx, grn_log_debug, "grn_ii_update_one: a[0] changed %d->%d", a[0], pos);
             continue;
           }
           if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == NOT_ASSIGNED) {
-            GRN_LOG(grn_log_crit, "buffer not found a[0]=%d", a[0]);
+            GRN_LOG(ctx, grn_log_crit, "buffer not found a[0]=%d", a[0]);
             rc = GRN_NO_MEMORY_AVAILABLE;
             goto exit;
           }
-          GRN_LOG(grn_log_debug, "flushed  a[0]=%d seg=%d(%p) free=%d->%d nterms=%d v=%d",
+          GRN_LOG(ctx, grn_log_debug, "flushed  a[0]=%d seg=%d(%p) free=%d->%d nterms=%d v=%d",
                   a[0], LSEG(a[0]), b, bfb, b->header.buffer_free,
                   b->header.nterms, b->header.nterms_void);
           if (b->header.buffer_free < size) {
             buffer_close(ctx, ii, pseg);
-            GRN_LOG(grn_log_crit, "buffer(%d) is full (%d < %d) in grn_ii_update_one",
+            GRN_LOG(ctx, grn_log_crit, "buffer(%d) is full (%d < %d) in grn_ii_update_one",
                     a[0], b->header.buffer_free, size);
             /* todo: direct merge */
             rc = GRN_NO_MEMORY_AVAILABLE;
@@ -3308,7 +3308,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         if (u2.rid != u->rid || u2.sid != u->sid) {
           uint8_t *bs2 = encode_rec(ctx, ii, &u2, &size2, 0);
           if (!bs2) {
-            GRN_LOG(grn_log_alert, "encode_rec on grn_ii_update_one failed !");
+            GRN_LOG(ctx, grn_log_alert, "encode_rec on grn_ii_update_one failed !");
             rc = GRN_NO_MEMORY_AVAILABLE;
             goto exit;
           }
@@ -3363,7 +3363,7 @@ exit :
   array_unref(ii, tid);
   if (bs) { GRN_FREE(bs); }
   if (u->tf != u->atf) {
-    GRN_LOG(grn_log_warning, "too many postings(%d) on %u. discarded %d.", u->atf, tid, u->atf - u->tf);
+    GRN_LOG(ctx, grn_log_warning, "too many postings(%d) on %u. discarded %d.", u->atf, tid, u->atf - u->tf);
   }
   return rc;
 }
@@ -3407,20 +3407,20 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     if (b->header.buffer_free < size) {
       uint32_t _a = a[0];
-      GRN_LOG(grn_log_debug, "flushing! b=%p free=%d, seg(%d)", b, b->header.buffer_free, LSEG(a[0]));
+      GRN_LOG(ctx, grn_log_debug, "flushing! b=%p free=%d, seg(%d)", b, b->header.buffer_free, LSEG(a[0]));
       buffer_close(ctx, ii, pseg);
       if ((rc = buffer_flush(ctx, ii, LSEG(a[0]), h))) { goto exit; }
       if (a[0] != _a) {
-        GRN_LOG(grn_log_debug, "grn_ii_delete_one: a[0] changed %d->%d)", a[0], _a);
+        GRN_LOG(ctx, grn_log_debug, "grn_ii_delete_one: a[0] changed %d->%d)", a[0], _a);
         continue;
       }
       if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == NOT_ASSIGNED) {
         rc = GRN_NO_MEMORY_AVAILABLE;
         goto exit;
       }
-      GRN_LOG(grn_log_debug, "flushed!  b=%p free=%d, seg(%d)", b, b->header.buffer_free, LSEG(a[0]));
+      GRN_LOG(ctx, grn_log_debug, "flushed!  b=%p free=%d, seg(%d)", b, b->header.buffer_free, LSEG(a[0]));
       if (b->header.buffer_free < size) {
-        GRN_LOG(grn_log_crit, "buffer(%d) is full (%d < %d) in grn_ii_delete_one",
+        GRN_LOG(ctx, grn_log_crit, "buffer(%d) is full (%d < %d) in grn_ii_delete_one",
                 a[0], b->header.buffer_free, size);
         rc = GRN_NO_MEMORY_AVAILABLE;
         buffer_close(ctx, ii, pseg);
@@ -3971,7 +3971,7 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
   if (h->n_entries >= h->n_bins) {
     int max = h->n_bins * 2;
     grn_ii_cursor **bins = GRN_REALLOC(h->bins, sizeof(grn_ii_cursor *) * max);
-    GRN_LOG(grn_log_debug, "expanded cursor_heap to %d,%p", max, bins);
+    GRN_LOG(ctx, grn_log_debug, "expanded cursor_heap to %d,%p", max, bins);
     if (!bins) { return GRN_NO_MEMORY_AVAILABLE; }
     h->n_bins = max;
     h->bins = bins;
@@ -3979,7 +3979,7 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
 #ifdef USE_AIO
   if (grn_aio_enabled) {
     if (!(c = grn_ii_cursor_openv1(ii, tid))) {
-      GRN_LOG(grn_log_error, "cursor open failed");
+      GRN_LOG(ctx, grn_log_error, "cursor open failed");
       return grn_internal_error;
     }
     h->bins[h->n_entries++] = c;
@@ -3988,7 +3988,7 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
   {
     if (!(c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
                                  ii->max_n_elements, 0))) {
-      GRN_LOG(grn_log_error, "cursor open failed");
+      GRN_LOG(ctx, grn_log_error, "cursor open failed");
       return grn_internal_error;
     }
     if (!grn_ii_cursor_next(ctx, c)) {
@@ -3996,7 +3996,7 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
       return grn_internal_error;
     }
     if (!grn_ii_cursor_next_pos(ctx, c)) {
-      GRN_LOG(grn_log_error, "invalid ii_cursor b");
+      GRN_LOG(ctx, grn_log_error, "invalid ii_cursor b");
       grn_ii_cursor_close(ctx, c);
       return grn_internal_error;
     }
@@ -4031,7 +4031,7 @@ cursor_heap_push2(cursor_heap *h)
           continue;
         }
         if (!grn_ii_cursor_next_pos(ctx, c)) {
-          GRN_LOG(grn_log_error, "invalid ii_cursor b");
+          GRN_LOG(ctx, grn_log_error, "invalid ii_cursor b");
           grn_ii_cursor_close(ctx, c);
           continue;
         }
@@ -4099,7 +4099,7 @@ cursor_heap_pop(grn_ctx *ctx, cursor_heap *h)
       grn_ii_cursor_close(ctx, c);
       h->bins[0] = h->bins[--h->n_entries];
     } else if (!grn_ii_cursor_next_pos(ctx, c)) {
-      GRN_LOG(grn_log_error, "invalid ii_cursor c");
+      GRN_LOG(ctx, grn_log_error, "invalid ii_cursor c");
       grn_ii_cursor_close(ctx, c);
       h->bins[0] = h->bins[--h->n_entries];
     }
@@ -4117,7 +4117,7 @@ cursor_heap_pop_pos(grn_ctx *ctx, cursor_heap *h)
         grn_ii_cursor_close(ctx, c);
         h->bins[0] = h->bins[--h->n_entries];
       } else if (!grn_ii_cursor_next_pos(ctx, c)) {
-        GRN_LOG(grn_log_error, "invalid ii_cursor d");
+        GRN_LOG(ctx, grn_log_error, "invalid ii_cursor d");
         grn_ii_cursor_close(ctx, c);
         h->bins[0] = h->bins[--h->n_entries];
       }
@@ -4156,7 +4156,7 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   if (vgram) { sbuf = grn_vgram_buf_open(value_len); }
   h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), 0, grn_enc_none);
   if (!h) {
-    GRN_LOG(grn_log_alert, "grn_hash_create on index_add failed !");
+    GRN_LOG(ctx, grn_log_alert, "grn_hash_create on index_add failed !");
     grn_token_close(ctx, token);
     if (sbuf) { grn_vgram_buf_close(sbuf); }
     return GRN_NO_MEMORY_AVAILABLE;
@@ -4167,12 +4167,12 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
       if (!grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
       if (!*u) {
         if (!(*u = grn_ii_updspec_open(ctx, rid, 1))) {
-          GRN_LOG(grn_log_error, "grn_ii_updspec_open on index_add failed!");
+          GRN_LOG(ctx, grn_log_error, "grn_ii_updspec_open on index_add failed!");
           goto exit;
         }
       }
       if (grn_ii_updspec_add(ctx, *u, token->pos, 0)) {
-        GRN_LOG(grn_log_error, "grn_ii_updspec_add on index_add failed!");
+        GRN_LOG(ctx, grn_log_error, "grn_ii_updspec_add on index_add failed!");
         goto exit;
       }
       if (sbuf) { grn_vgram_buf_add(sbuf, tid); }
@@ -4209,7 +4209,7 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   }
   h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), 0, grn_enc_none);
   if (!h) {
-    GRN_LOG(grn_log_alert, "grn_hash_create on index_del failed !");
+    GRN_LOG(ctx, grn_log_alert, "grn_hash_create on index_del failed !");
     grn_token_close(ctx, token);
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -4218,7 +4218,7 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
       if (!grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
       if (!*u) {
         if (!(*u = grn_ii_updspec_open(ctx, rid, 0))) {
-          GRN_LOG(grn_log_alert, "grn_ii_updspec_open on index_del failed !");
+          GRN_LOG(ctx, grn_log_alert, "grn_ii_updspec_open on index_del failed !");
           grn_hash_close(ctx, h);
           grn_token_close(ctx, token);
           return GRN_NO_MEMORY_AVAILABLE;
@@ -4247,7 +4247,7 @@ grn_ii_upd(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
   if (!rid) { return GRN_INVALID_ARGUMENT; }
   if (oldvalue && *oldvalue) {
     if ((rc = index_del(ctx, rid, lexicon, ii, vgram, oldvalue, oldvalue_len))) {
-      GRN_LOG(grn_log_error, "index_del on grn_ii_upd failed !");
+      GRN_LOG(ctx, grn_log_error, "index_del on grn_ii_upd failed !");
       goto exit;
     }
   }
@@ -4271,13 +4271,13 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
   grn_ii_updspec **u, **un;
   grn_obj *lexicon = ii->lexicon;
   if (!lexicon || !ii || !rid) {
-    GRN_LOG(grn_log_warning, "grn_ii_update: invalid argument");
+    GRN_LOG(ctx, grn_log_warning, "grn_ii_update: invalid argument");
     return GRN_INVALID_ARGUMENT;
   }
   if (newvalues) {
     new = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, grn_enc_none);
     if (!new) {
-      GRN_LOG(grn_log_alert, "grn_hash_create on grn_ii_update failed !");
+      GRN_LOG(ctx, grn_log_alert, "grn_hash_create on grn_ii_update failed !");
       rc = GRN_NO_MEMORY_AVAILABLE;
       goto exit;
     }
@@ -4290,7 +4290,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
             }
             if (!*u) {
               if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-                GRN_LOG(grn_log_alert, "grn_ii_updspec_open on grn_ii_update failed!");
+                GRN_LOG(ctx, grn_log_alert, "grn_ii_updspec_open on grn_ii_update failed!");
                 grn_token_close(ctx, token);
                 grn_hash_close(ctx, new);
                 rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4298,7 +4298,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
               }
             }
             if (grn_ii_updspec_add(ctx, *u, token->pos, v->weight)) {
-              GRN_LOG(grn_log_alert, "grn_ii_updspec_add on grn_ii_update failed!");
+              GRN_LOG(ctx, grn_log_alert, "grn_ii_updspec_add on grn_ii_update failed!");
               grn_token_close(ctx, token);
               grn_hash_close(ctx, new);
               rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4319,7 +4319,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
   if (oldvalues) {
     old = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), 0, grn_enc_none);
     if (!old) {
-      GRN_LOG(grn_log_alert, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
+      GRN_LOG(ctx, grn_log_alert, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
       if (new) { grn_hash_close(ctx, new); }
       rc = GRN_NO_MEMORY_AVAILABLE;
       goto exit;
@@ -4333,7 +4333,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
             }
             if (!*u) {
               if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-                GRN_LOG(grn_log_alert, "grn_ii_updspec_open on grn_ii_update failed!");
+                GRN_LOG(ctx, grn_log_alert, "grn_ii_updspec_open on grn_ii_update failed!");
                 grn_token_close(ctx, token);
                 if (new) { grn_hash_close(ctx, new); };
                 grn_hash_close(ctx, old);
@@ -4342,7 +4342,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
               }
             }
             if (grn_ii_updspec_add(ctx, *u, token->pos, v->weight)) {
-              GRN_LOG(grn_log_alert, "grn_ii_updspec_add on grn_ii_update failed!");
+              GRN_LOG(ctx, grn_log_alert, "grn_ii_updspec_add on grn_ii_update failed!");
               grn_token_close(ctx, token);
               if (new) { grn_hash_close(ctx, new); };
               grn_hash_close(ctx, old);
@@ -4409,13 +4409,13 @@ grn_verses2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
           }
           if (!*u) {
             if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-              GRN_LOG(grn_log_alert, "grn_ii_updspec_open on grn_ii_update failed!");
+              GRN_LOG(ctx, grn_log_alert, "grn_ii_updspec_open on grn_ii_update failed!");
               grn_token_close(ctx, token);
               return GRN_NO_MEMORY_AVAILABLE;
             }
           }
           if (grn_ii_updspec_add(ctx, *u, token->pos, v->weight)) {
-            GRN_LOG(grn_log_alert, "grn_ii_updspec_add on grn_ii_update failed!");
+            GRN_LOG(ctx, grn_log_alert, "grn_ii_updspec_add on grn_ii_update failed!");
             grn_token_close(ctx, token);
             return GRN_NO_MEMORY_AVAILABLE;
           }
@@ -4462,7 +4462,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY, grn_enc_none);
       if (!new) {
-        GRN_LOG(grn_log_alert, "grn_hash_create on grn_ii_update failed !");
+        GRN_LOG(ctx, grn_log_alert, "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
         rc = grn_verses2updspecs(ctx, ii, rid, section, new_, new, GRN_TABLE_ADD);
@@ -4497,7 +4497,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY, grn_enc_none);
       if (!old) {
-        GRN_LOG(grn_log_alert, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
+        GRN_LOG(ctx, grn_log_alert, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
         rc = grn_verses2updspecs(ctx, ii, rid, section, old_, old, GRN_TOKEN_UPD);
@@ -5042,7 +5042,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   {
     grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0);
     if (!c) {
-      GRN_LOG(grn_log_alert, "grn_hash_cursor_open on grn_ii_similar_search failed !");
+      GRN_LOG(ctx, grn_log_alert, "grn_hash_cursor_open on grn_ii_similar_search failed !");
       grn_hash_close(ctx, h);
       return GRN_NO_MEMORY_AVAILABLE;
     }
@@ -5071,7 +5071,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_table_sort_optarg arg = {GRN_TABLE_SORT_DESC, NULL, (void *)sizeof(grn_id), 0};
     grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
     if (!sorted) {
-      GRN_LOG(grn_log_alert, "grn_hash_sort on grn_ii_similar_search failed !");
+      GRN_LOG(ctx, grn_log_alert, "grn_hash_sort on grn_ii_similar_search failed !");
       grn_hash_close(ctx, h);
       return GRN_NO_MEMORY_AVAILABLE;
     }
@@ -5092,7 +5092,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
                                            rep
                                            ? ii->max_n_elements
                                            : ii->max_n_elements - 1, 0))) {
-        GRN_LOG(grn_log_error, "cursor open failed (%d)", *tp);
+        GRN_LOG(ctx, grn_log_error, "cursor open failed (%d)", *tp);
         continue;
       }
       if (rep) {
@@ -5122,7 +5122,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_rset_recinfo *ri;
     grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0);
     if (!c) {
-      GRN_LOG(grn_log_alert, "grn_hash_cursor_open on grn_ii_similar_search failed!");
+      GRN_LOG(ctx, grn_log_alert, "grn_hash_cursor_open on grn_ii_similar_search failed!");
       return GRN_NO_MEMORY_AVAILABLE;
     }
     while ((eid = grn_hash_cursor_next(ctx, c))) {
@@ -5187,7 +5187,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
                                    rep
                                    ? ii->max_n_elements
                                    : ii->max_n_elements - 1, 0))) {
-        GRN_LOG(grn_log_error, "cursor open failed (%d)", tid);
+        GRN_LOG(ctx, grn_log_error, "cursor open failed (%d)", tid);
         continue;
       }
       if (rep) {
@@ -5279,7 +5279,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
     grn_log("o=%d n=%d s=%d r=%d", ti->offset, ti->ntoken, ti->size, ti->rid);
   }
   */
-  GRN_LOG(grn_log_info, "n=%d (%s)", n, string);
+  GRN_LOG(ctx, grn_log_info, "n=%d (%s)", n, string);
   /* todo : array as result
   if (n == 1 && (*tis)->cursors->n_entries == 1 && op == grn_sel_or
       && !GRN_HASH_SIZE(s) && !s->garbages
@@ -5399,7 +5399,7 @@ exit :
       grn_hash_cursor_close(ctx, c);
     }
     else {
-      GRN_LOG(grn_log_alert, "grn_hash_cursor_open on grn_ii_select failed !");
+      GRN_LOG(ctx, grn_log_alert, "grn_hash_cursor_open on grn_ii_select failed !");
     }
   }
   //  grn_hash_cursor_clear(r);
@@ -5409,7 +5409,7 @@ exit :
     uint32_t segno = MAX_LSEG, nnref = 0;
     grn_io_mapinfo *info = ii->seg->maps;
     for (; segno; segno--, info++) { if (info->nref) { nnref++; } }
-    GRN_LOG(grn_log_info, "nnref=%d", nnref);
+    GRN_LOG(ctx, grn_log_info, "nnref=%d", nnref);
   }
 #endif /* DEBUG */
   return rc;
@@ -5420,7 +5420,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
            grn_hash *s)
 {
   ERRCLR(ctx);
-  GRN_LOG(grn_log_info, "grn_ii_sel > (%s)", string);
+  GRN_LOG(ctx, grn_log_info, "grn_ii_sel > (%s)", string);
   {
     grn_select_optarg arg = {grn_sel_exact, 0, 0, NULL, 0, NULL, NULL};
     if (!s) { return GRN_INVALID_ARGUMENT; }
@@ -5428,27 +5428,27 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);
     */
     if (grn_ii_select(ctx, ii, string, string_len, s, grn_sel_or, &arg)) {
-      GRN_LOG(grn_log_error, "grn_ii_select on grn_ii_sel(1) failed !");
+      GRN_LOG(ctx, grn_log_error, "grn_ii_select on grn_ii_sel(1) failed !");
       return ctx->rc;
     }
-    GRN_LOG(grn_log_info, "exact: %d", GRN_HASH_SIZE(s));
+    GRN_LOG(ctx, grn_log_info, "exact: %d", GRN_HASH_SIZE(s));
     if (GRN_HASH_SIZE(s) <= GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD) {
       arg.mode = grn_sel_unsplit;
       if (grn_ii_select(ctx, ii, string, string_len, s, grn_sel_or, &arg)) {
-        GRN_LOG(grn_log_error, "grn_ii_select on grn_ii_sel(2) failed !");
+        GRN_LOG(ctx, grn_log_error, "grn_ii_select on grn_ii_sel(2) failed !");
         return ctx->rc;
       }
-      GRN_LOG(grn_log_info, "unsplit: %d", GRN_HASH_SIZE(s));
+      GRN_LOG(ctx, grn_log_info, "unsplit: %d", GRN_HASH_SIZE(s));
     }
     if (GRN_HASH_SIZE(s) <= GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD) {
       arg.mode = grn_sel_partial;
       if (grn_ii_select(ctx, ii, string, string_len, s, grn_sel_or, &arg)) {
-        GRN_LOG(grn_log_error, "grn_ii_select on grn_ii_sel(3) failed !");
+        GRN_LOG(ctx, grn_log_error, "grn_ii_select on grn_ii_sel(3) failed !");
         return ctx->rc;
       }
-      GRN_LOG(grn_log_info, "partial: %d", GRN_HASH_SIZE(s));
+      GRN_LOG(ctx, grn_log_info, "partial: %d", GRN_HASH_SIZE(s));
     }
-    GRN_LOG(grn_log_info, "hits=%d", GRN_HASH_SIZE(s));
+    GRN_LOG(ctx, grn_log_info, "hits=%d", GRN_HASH_SIZE(s));
     return GRN_SUCCESS;
   }
 }

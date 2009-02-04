@@ -98,7 +98,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   ctx_->errline = __LINE__;\
   ctx_->errfunc = __FUNCTION__;\
   grn_ctx_impl_err(ctx);\
-  GRN_LOG(lvl, __VA_ARGS__);\
+  GRN_LOG(ctx, lvl, __VA_ARGS__);\
   grn_ctx_log((grn_ctx *)ctx, __VA_ARGS__);\
   BACKTRACE(ctx);\
 } while (0)

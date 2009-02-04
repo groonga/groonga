@@ -1868,7 +1868,7 @@ grn_verses_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
   grn_verse *vp;
   if (!str_len) { return GRN_SUCCESS; }
   if (!v || !str) {
-    GRN_LOG(grn_log_warning, "grn_verses_add: invalid argument");
+    GRN_LOG(ctx, grn_log_warning, "grn_verses_add: invalid argument");
     return GRN_INVALID_ARGUMENT;
   }
   if (!(v->u.v.n_verses & (INITIAL_VERSES_SIZE - 1))) {
@@ -3625,7 +3625,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
   if (limit <= 0) {
     limit += n;
     if (limit <= 0) {
-      GRN_LOG(grn_log_alert, "limit is too small in grn_table_sort !");
+      GRN_LOG(ctx, grn_log_alert, "limit is too small in grn_table_sort !");
       goto exit;
     }
   }

@@ -81,22 +81,6 @@ void grn_logger_fin(void);
 #define GRN_BULK_LEN(bulk) \
  (((bulk)->header.type == GRN_BULK) ? GRN_BULK_VSIZE(bulk) : 0)
 
-#define GRN_BULK_SET(ctx,bulk,str,len) {\
-  if ((bulk)->header.type == GRN_VOID) {\
-    GRN_OBJ_INIT((bulk), GRN_BULK, 0);\
-  }\
-  if ((bulk)->header.type == GRN_BULK) {\
-    if ((bulk)->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {\
-      (bulk)->u.b.head = (char *)(str);\
-      (bulk)->u.b.curr = (char *)(str) + len;\
-    } else {\
-      grn_bulk_write((ctx), (bulk), (const char *)(str), (unsigned int)(len));\
-    }\
-  } else {\
-    (ctx)->rc = GRN_INVALID_ARGUMENT;\
-  }\
-}
-
 #ifdef __cplusplus
 }
 #endif

@@ -170,7 +170,7 @@ errout(grn_ctx *ctx, grn_com_sqtp *cs, char *msg)
   header.size = strlen(msg);
   header.flags = GRN_QL_TAIL;
   grn_com_sqtp_send(ctx, cs, &header, msg);
-  GRN_LOG(grn_log_error, "errout: %s", msg);
+  GRN_LOG(ctx, grn_log_error, "errout: %s", msg);
 }
 
 static void
@@ -254,7 +254,7 @@ static void * CALLBACK
 thread_start(void *arg)
 {
   grn_com_sqtp *cs;
-  GRN_LOG(grn_log_notice, "thread start (%d/%d)", nfthreads, nthreads + 1);
+  GRN_LOG(&grn_gctx, grn_log_notice, "thread start (%d/%d)", nfthreads, nthreads + 1);
   MUTEX_LOCK(q_mutex);
   nthreads++;
   do {
@@ -269,7 +269,7 @@ thread_start(void *arg)
   } while (nfthreads < MAX_NFTHREADS);
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
-  GRN_LOG(grn_log_notice, "thread end (%d/%d)", nfthreads, nthreads);
+  GRN_LOG(&grn_gctx, grn_log_notice, "thread end (%d/%d)", nfthreads, nthreads);
   return NULL;
 }
 
@@ -279,7 +279,7 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
   grn_com_sqtp *cs = (grn_com_sqtp *)c;
   if (cs->rc) {
     grn_ctx *ctx = (grn_ctx *)cs->userdata;
-    GRN_LOG(grn_log_notice, "connection closed..");
+    GRN_LOG(ctx, grn_log_notice, "connection closed..");
     if (ctx) { grn_ctx_close(ctx); }
     grn_com_sqtp_close(ctx, ev, cs);
     return;
@@ -288,7 +288,7 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
     int i = 0;
     while (queue_enque(&qq, (grn_com_sqtp *)c)) {
       if (i) {
-        GRN_LOG(grn_log_notice, "queue is full try=%d qq(%d-%d) thd(%d/%d) %d", i, qq.head, qq.tail, nfthreads, nthreads, *ev->hash->n_entries);
+        GRN_LOG(ctx, grn_log_notice, "queue is full try=%d qq(%d-%d) thd(%d/%d) %d", i, qq.head, qq.tail, nfthreads, nthreads, *ev->hash->n_entries);
       }
       if (++i == 100) {
         errout(ctx, (grn_com_sqtp *)c, "*** ERROR: query queue is full");

@@ -1555,7 +1555,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         if (grn_str_tok(args->u.b.value, STRSIZE(args), '\t', tokbuf, MAXCOLUMNS, NULL) == stat->ncolumns) {
           grn_cell *o;
           if (grn_obj_lock(ctx, ctx->impl->db, GRN_ID_NIL, -1)) {
-            GRN_LOG(grn_log_crit, "ha_table::load lock failed");
+            GRN_LOG(ctx, grn_log_crit, "ha_table::load lock failed");
           } else {
             o = grn_ql_table_at(ctx, table, args->u.b.value,
                                 tokbuf[0] - args->u.b.value,

@@ -611,7 +611,7 @@ grn_io_remove(grn_ctx *ctx, const char *path)
 {
   struct stat s;
   if (stat(path, &s)) {
-    GRN_LOG(grn_log_info, "stat failed '%s' (%s)", path, strerror(errno));
+    GRN_LOG(ctx, grn_log_info, "stat failed '%s' (%s)", path, strerror(errno));
     return grn_file_operation_error;
   } else if (unlink(path)) {
     SERR(path);
@@ -636,7 +636,7 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
 {
   struct stat s;
   if (stat(old_name, &s)) {
-    GRN_LOG(grn_log_info, "stat failed '%s' (%s)", old_name, strerror(errno));
+    GRN_LOG(ctx, grn_log_info, "stat failed '%s' (%s)", old_name, strerror(errno));
     return grn_file_operation_error;
   } else if (rename(old_name, new_name)) {
     SERR(old_name);
@@ -703,28 +703,28 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos, 
     return grn_file_operation_error;
   }
   if (einfo->pos != epos) {
-    GRN_LOG(grn_log_warning, "einfo pos changed %x => %x", einfo->pos, epos);
+    GRN_LOG(ctx, grn_log_warning, "einfo pos changed %x => %x", einfo->pos, epos);
     *value = NULL;
     *value_len = 0;
     GRN_FREE(v);
     return grn_internal_error;
   }
   if (einfo->size != *value_len) {
-    GRN_LOG(grn_log_warning, "einfo size changed %d => %d", einfo->size, *value_len);
+    GRN_LOG(ctx, grn_log_warning, "einfo size changed %d => %d", einfo->size, *value_len);
     *value = NULL;
     *value_len = 0;
     GRN_FREE(v);
     return grn_internal_error;
   }
   if (v->head.key != key) {
-    GRN_LOG(grn_log_error, "ehead key unmatch %x => %x", key, v->head.key);
+    GRN_LOG(ctx, grn_log_error, "ehead key unmatch %x => %x", key, v->head.key);
     *value = NULL;
     *value_len = 0;
     GRN_FREE(v);
     return grn_invalid_format;
   }
   if (v->head.size != *value_len) {
-    GRN_LOG(grn_log_error, "ehead size unmatch %d => %d", *value_len, v->head.size);
+    GRN_LOG(ctx, grn_log_error, "ehead size unmatch %d => %d", *value_len, v->head.size);
     *value = NULL;
     *value_len = 0;
     GRN_FREE(v);
@@ -902,7 +902,7 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
         if (tail > io->header->curr_size) { io->header->curr_size = tail; }
       }
     } else {
-      GRN_LOG(grn_log_alert, "nseg == 0! in grn_io_win_map(%p, %u, %u, %u)", io, segment, offset, size);
+      GRN_LOG(ctx, grn_log_alert, "nseg == 0! in grn_io_win_map(%p, %u, %u, %u)", io, segment, offset, size);
       // GRN_IO_SEG_REF(io, segment, p); if (!p) { return NULL; }
       return NULL;
     }
@@ -1304,7 +1304,7 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
     if (nref) {
       GRN_ATOMIC_ADD_EX(pnref, -1, nref);
       if (retry >= GRN_IO_MAX_RETRY) {
-        GRN_LOG(grn_log_crit, "deadlock detected! in grn_io_seg_expire(%p, %u, %u)", io, segno, nref);
+        GRN_LOG(ctx, grn_log_crit, "deadlock detected! in grn_io_seg_expire(%p, %u, %u)", io, segno, nref);
         return grn_abnormal_error;
       }
     } else {
@@ -1312,7 +1312,7 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
       if (nref > 1) {
         GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
         if (retry >= GRN_IO_MAX_RETRY) {
-          GRN_LOG(grn_log_crit, "deadlock detected!! in grn_io_seg_expire(%p, %u, %u)", io, segno, nref);
+          GRN_LOG(ctx, grn_log_crit, "deadlock detected!! in grn_io_seg_expire(%p, %u, %u)", io, segno, nref);
           return grn_abnormal_error;
         }
       } else {
@@ -1350,7 +1350,7 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
       }
     }
   }
-  GRN_LOG(grn_log_info, "expired:%08x max=%d (%d/%d)",
+  GRN_LOG(ctx, grn_log_info, "expired:%08x max=%d (%d/%d)",
           grn_gtick, io->max_map_seg, n, ln);
   return n;
 }
@@ -1385,7 +1385,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
         if (_ncolls < 0 || _ncalls < 0) {
           _ncolls = 0; _ncalls = 0;
         } else {
-          GRN_LOG(grn_log_notice, "io(%p) collisions(%d/%d)", io, _ncolls, _ncalls);
+          GRN_LOG(ctx, grn_log_notice, "io(%p) collisions(%d/%d)", io, _ncolls, _ncalls);
         }
       }
       usleep(1000);
@@ -1496,7 +1496,7 @@ inline static grn_rc
 grn_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fmo != NULL) {
-    GRN_LOG(grn_log_alert, "file mapping object exists");
+    GRN_LOG(ctx, grn_log_alert, "file mapping object exists");
   }
   if (fi->fh != INVALID_HANDLE_VALUE) {
     CloseHandle(fi->fh);
@@ -1548,11 +1548,11 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
       MUTEX_INIT(fi->mutex);
       return GRN_SUCCESS;
     } else {
-      GRN_LOG(grn_log_error, "fmo object already exists! handle=%d", fi->fh);
+      GRN_LOG(ctx, grn_log_error, "fmo object already exists! handle=%d", fi->fh);
       CloseHandle(fi->fmo);
     }
   } else {
-    GRN_LOG(grn_log_alert, "failed to get FileMappingObject #%d", GetLastError());
+    GRN_LOG(ctx, grn_log_alert, "failed to get FileMappingObject #%d", GetLastError());
   }
   CloseHandle(fi->fh);
   ERR(grn_file_operation_error, "OpenFileMapping failed");
@@ -1651,13 +1651,13 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
   r = SetFilePointer(fi->fh, offset, NULL, FILE_BEGIN);
   if (r == INVALID_SET_FILE_POINTER) {
     rc = grn_file_operation_error;
-    GRN_LOG(grn_log_alert, "SetFilePointer error(%d)", GetLastError());
+    GRN_LOG(ctx, grn_log_alert, "SetFilePointer error(%d)", GetLastError());
   } else {
     if (!ReadFile(fi->fh, buf, (DWORD)count, &len, NULL)) {
       rc = grn_file_operation_error;
-      GRN_LOG(grn_log_alert, "ReadFile error(%d)", GetLastError());
+      GRN_LOG(ctx, grn_log_alert, "ReadFile error(%d)", GetLastError());
     } else if (len != count) {
-      GRN_LOG(grn_log_alert, "ReadFile %d != %d", count, len);
+      GRN_LOG(ctx, grn_log_alert, "ReadFile %d != %d", count, len);
       rc = grn_file_operation_error;
     }
   }
@@ -1674,13 +1674,13 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
   r = SetFilePointer(fi->fh, offset, NULL, FILE_BEGIN);
   if (r == INVALID_SET_FILE_POINTER) {
     rc = grn_file_operation_error;
-    GRN_LOG(grn_log_alert, "SetFilePointer error(%d)", GetLastError());
+    GRN_LOG(ctx, grn_log_alert, "SetFilePointer error(%d)", GetLastError());
   } else {
     if (!WriteFile(fi->fh, buf, (DWORD)count, &len, NULL)) {
-      GRN_LOG(grn_log_alert, "WriteFile error(%d)", GetLastError());
+      GRN_LOG(ctx, grn_log_alert, "WriteFile error(%d)", GetLastError());
       rc = grn_file_operation_error;
     } else if (len != count) {
-      GRN_LOG(grn_log_alert, "WriteFile %d != %d", count, len);
+      GRN_LOG(ctx, grn_log_alert, "WriteFile %d != %d", count, len);
       rc = grn_file_operation_error;
     }
   }

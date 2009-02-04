@@ -295,7 +295,7 @@ struct _grn_obj {
   } u;
 };
 
-#define GRN_OBJ_INIT(obj,obj_type,obj_flags) {\
+#define GRN_OBJ_INIT(obj,obj_type,obj_flags) do {\
   (obj)->header.type = (obj_type);\
   (obj)->header.flags = (obj_flags);\
   (obj)->header.impl_flags = 0;\
@@ -303,7 +303,7 @@ struct _grn_obj {
   (obj)->u.b.head = NULL;\
   (obj)->u.b.curr = NULL;\
   (obj)->u.b.tail = NULL;\
-}
+} while (0)
 
 #define GRN_OBJ_FIN(ctx,obj) (grn_obj_close((ctx), (obj)))
 
@@ -644,7 +644,7 @@ grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
  **/
 grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 
-#define GRN_TABLE_EACH(ctx,table,head,tail,id,key,key_size,value,block) { \
+#define GRN_TABLE_EACH(ctx,table,head,tail,id,key,key_size,value,block) do {\
   (ctx)->errlvl = GRN_OK;\
   (ctx)->rc = GRN_SUCCESS;\
   if ((ctx)->seqno & 1) {\
@@ -670,7 +670,7 @@ grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
   } else {\
     ctx->seqno++;\
   }\
-}
+} while (0)
 
 /**
  * grn_table_sort:
@@ -1264,10 +1264,11 @@ int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 #define GRN_LOG_DEFAULT_LEVEL grn_log_notice
 #endif /* GRN_LOG_DEFAULT_LEVEL */
 
-#define GRN_LOG(level,...)\
-if (grn_logger_pass(&grn_gctx, level)) {\
-  grn_logger_put(&grn_gctx, (level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
-}
+#define GRN_LOG(ctx,level,...) do {\
+  if (grn_logger_pass(ctx, level)) {\
+    grn_logger_put(ctx, (level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
+  }\
+} while (0)
 
 /* string & bulk */
 
@@ -1292,7 +1293,9 @@ grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
                        const char *str, unsigned int len);
 
 #define GRN_BULK_PUTS(ctx,bulk,str) (grn_bulk_write((ctx), (bulk), (str), strlen(str)))
-#define GRN_BULK_PUTC(ctx,bulk,c) { char _c = (c); grn_bulk_write((ctx), (bulk), &_c, 1); }
+#define GRN_BULK_PUTC(ctx,bulk,c) do {\
+  char _c = (c); grn_bulk_write((ctx), (bulk), &_c, 1);\
+} while (0)
 #define GRN_BULK_REWIND(bulk) ((bulk)->u.b.curr = (bulk)->u.b.head)
 #define GRN_BULK_WSIZE(bulk) ((bulk)->u.b.tail - (bulk)->u.b.head)
 #define GRN_BULK_REST(bulk) ((bulk)->u.b.tail - (bulk)->u.b.curr)
@@ -1300,7 +1303,7 @@ grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
 #define GRN_BULK_EMPTYP(bulk) ((bulk)->u.b.curr == (bulk)->u.b.head)
 #define GRN_BULK_HEAD(bulk) ((bulk)->u.b.head)
 
-#define GRN_BULK_SET(ctx,bulk,str,len) {\
+#define GRN_BULK_SET(ctx,bulk,str,len) do {\
   if ((bulk)->header.type == GRN_VOID) {\
     GRN_OBJ_INIT((bulk), GRN_BULK, 0);\
   }\
@@ -1314,7 +1317,7 @@ grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
   } else {\
     (ctx)->rc = GRN_INVALID_ARGUMENT;\
   }\
-}
+} while (0)
 
 /* grn_str */
 

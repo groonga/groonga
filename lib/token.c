@@ -122,7 +122,7 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   unsigned int bufsize, maxtrial = 10, len;
   SOLE_MECAB_CONFIRM;
   if (!sole_mecab) {
-    GRN_LOG(grn_log_alert, "mecab_new failed on grn_mecab_init");
+    GRN_LOG(ctx, grn_log_alert, "mecab_new failed on grn_mecab_init");
     return GRN_TOKENIZER_ERROR;
   }
   if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return ctx->rc; }
@@ -133,14 +133,14 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open(ctx, (char *)argv[0].ptr, argv[1].int_value,
                                    token->encoding, nflags))) {
-    GRN_LOG(grn_log_alert, "grn_str_open failed at grn_token_open");
+    GRN_LOG(ctx, grn_log_alert, "grn_str_open failed at grn_token_open");
     return GRN_TOKENIZER_ERROR;
   }
   len = token->nstr->norm_blen;
   mecab_err[sizeof(mecab_err) - 1] = '\0';
   for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
     if(!(buf = GRN_MALLOC(bufsize + 1))) {
-      GRN_LOG(grn_log_alert, "buffer allocation on mecab_init failed !");
+      GRN_LOG(ctx, grn_log_alert, "buffer allocation on mecab_init failed !");
       GRN_FREE(token);
       return ctx->rc;
     }
@@ -155,7 +155,7 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
     if (strstr(mecab_err, "output buffer overflow") == NULL) { break; }
   }
   if (!s) {
-    GRN_LOG(grn_log_alert, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
+    GRN_LOG(ctx, grn_log_alert, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
             len, bufsize, mecab_err);
     GRN_FREE(token);
     return GRN_TOKENIZER_ERROR;
@@ -250,7 +250,7 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open(ctx, (char *)argv[0].ptr, argv[1].int_value,
                                    token->encoding, nflags))) {
-    GRN_LOG(grn_log_alert, "grn_str_open failed at grn_token_open");
+    GRN_LOG(ctx, grn_log_alert, "grn_str_open failed at grn_token_open");
     return GRN_TOKENIZER_ERROR;
   }
   token->next = (unsigned char *)token->nstr->norm;
