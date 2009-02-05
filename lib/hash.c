@@ -1033,7 +1033,8 @@ grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout)
     }
     return GRN_SUCCESS;
   }
-  return grn_other_error;
+  ERR(GRN_RESOURCE_DEADLOCK_AVOIDED, "grn_hash_lock");
+  return ctx->rc;
 }
 
 grn_rc
@@ -1059,10 +1060,16 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void *
   uint32_t h, i, m, s;
   grn_id e, *ep, *np = NULL;
   if (hash->obj.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (key_size > hash->key_size) { return GRN_ID_NIL; }
+    if (key_size > hash->key_size) {
+      ERR(GRN_INVALID_ARGUMENT, "too long key");
+      return GRN_ID_NIL;
+    }
     h = bin_hash((unsigned char *)key, key_size);
   } else {
-    if (key_size != hash->key_size) { return GRN_ID_NIL; }
+    if (key_size != hash->key_size) {
+      ERR(GRN_INVALID_ARGUMENT, "key size unmatch");
+      return GRN_ID_NIL;
+    }
     if (key_size == sizeof(uint32_t)) {
       h = *((uint32_t *)key);
     } else {
@@ -1282,8 +1289,8 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *value, int fla
         memcpy(v, value, hash->value_size);
         return GRN_SUCCESS;
       default :
-        // todo : support other types
-        return GRN_INVALID_ARGUMENT;
+        ERR(GRN_INVALID_ARGUMENT, "flags = %d", flags);
+        return ctx->rc;
       }
     } else {
       return GRN_NO_MEMORY_AVAILABLE;
@@ -1930,7 +1937,7 @@ grn_hash_group(grn_ctx *ctx, grn_hash *hash,
     if (!exist) { continue; }
     n--;
     ENTRY_AT(hash, id, e, 0);
-    if (!e) { return grn_internal_error; }
+    if (!e) { return GRN_END_OF_DATA; }
     PREPARE_VAL(e, ep, es);
     {
       uint32_t *val;
@@ -1938,7 +1945,7 @@ grn_hash_group(grn_ctx *ctx, grn_hash *hash,
       grn_id gid = (args->result->header.type == GRN_TABLE_PAT_KEY)
         ? grn_pat_lookup(ctx, (grn_pat *)args->result, ep, es, (void **)&val, &flags)
         : grn_hash_lookup(ctx, (grn_hash *)args->result, ep, es, (void **)&val, &flags);
-      if (!gid) { return grn_internal_error; }
+      if (!gid) { return ctx->rc; }
       if (args->flags & GRN_TABLE_GROUP_CALC_COUNT) {
         *val += 1;
         val++;

@@ -44,7 +44,7 @@ typedef enum {
   GRN_NOT_ENOUGH_SPACE = -13,
   GRN_PERMISSION_DENIED = -14,
   GRN_BAD_ADDRESS = -15,
-  GRN_RESOURCE_DEVICE = -16,
+  GRN_RESOURCE_BUSY = -16,
   GRN_FILE_EXISTS = -17,
   GRN_IMPROPER_LINK = -18,
   GRN_NO_SUCH_DEVICE = -19,
@@ -79,17 +79,17 @@ typedef enum {
   GRN_SOCKET_IS_ALREADY_SHUTDOWNED = -48,
   GRN_OPERATION_TIMEOUT = -49,
   GRN_CONNECTION_REFUSED = -50,
-  GRN_RESOURCE_BUSY = -51,
-  GRN_RANGE_ERROR = -52,
-  GRN_TOKENIZER_ERROR = -53,
-  GRN_FILE_CORRUPT = -54,
-  GRN_INVALID_FORMAT = -55,
-  GRN_OBJECT_CORRUPT = -56,
-  grn_file_operation_error,
-  grn_other_error,
-  grn_external_error,
-  grn_internal_error,
-  grn_abnormal_error
+  GRN_RANGE_ERROR = -51,
+  GRN_TOKENIZER_ERROR = -52,
+  GRN_FILE_CORRUPT = -53,
+  GRN_INVALID_FORMAT = -54,
+  GRN_OBJECT_CORRUPT = -55,
+  GRN_TOO_MANY_SYMBOLIC_LINKS = -56,
+  GRN_NOT_SOCKET = -57,
+  GRN_OPERATION_NOT_SUPPORTED = -58,
+  GRN_ADDRESS_IS_IN_USE = -59,
+  GRN_ZLIB_ERROR = -60,
+  GRN_LZO_ERROR = -61,
 } grn_rc;
 
 grn_rc grn_init(void);
@@ -1033,7 +1033,8 @@ int grn_obj_check(grn_ctx *ctx, grn_obj *obj);
  * grn_obj_lock:
  * @obj: 対象object
  *
- * objをlockする。timeout(秒)経過してもlockを取得できない場合はgrn_other_errorを返す。
+ * objをlockする。timeout(秒)経過してもlockを取得できない場合は
+ * GRN_RESOURCE_DEADLOCK_AVOIDEDを返す。
  **/
 grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
 

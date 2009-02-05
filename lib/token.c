@@ -382,7 +382,7 @@ grn_token_init(void)
 {
 #ifndef NO_MECAB
   // char *arg[] = {"", "-Owakati"};
-  // return mecab_load_dictionary(2, arg) ? GRN_SUCCESS : grn_external_error;
+  // return mecab_load_dictionary(2, arg) ? GRN_SUCCESS : GRN_TOKENIZER_ERROR;
   sole_mecab = NULL;
   MUTEX_INIT(sole_mecab_lock);
 #endif /* NO_MECAB */

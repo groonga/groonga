@@ -1738,7 +1738,8 @@ default_column_set_value(grn_ctx *ctx, grn_proc_ctx *pctx, grn_obj *in, grn_obj 
     }
     return GRN_SUCCESS;
   } else {
-    return grn_other_error;
+    ERR(GRN_OBJECT_CORRUPT, "grn_proc_ctx_get_local_data failed");
+    return ctx->rc;
   }
 }
 */

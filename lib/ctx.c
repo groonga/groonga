@@ -33,7 +33,7 @@ uint32_t grn_gtick;
 /* fixme by 2038 */
 
 grn_rc
-grn_timeval_now(grn_timeval *tv)
+grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
 {
 #ifdef WIN32
   time_t t;
@@ -45,17 +45,18 @@ grn_timeval_now(grn_timeval *tv)
   return GRN_SUCCESS;
 #else /* WIN32 */
   struct timeval t;
-  grn_rc rc = gettimeofday(&t, NULL) ? grn_external_error : GRN_SUCCESS;
-  if (!rc) {
+  if (gettimeofday(&t, NULL)) {
+    SERR("gettimeofday");
+  } else {
     tv->tv_sec = (int32_t) t.tv_sec;
     tv->tv_usec = t.tv_usec;
   }
-  return rc;
+  return ctx->rc;
 #endif /* WIN32 */
 }
 
 grn_rc
-grn_timeval2str(grn_timeval *tv, char *buf)
+grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
 {
   struct tm *ltm;
 #ifdef WIN32
@@ -66,12 +67,12 @@ grn_timeval2str(grn_timeval *tv, char *buf)
   time_t t = tv->tv_sec;
   ltm = localtime_r(&t, &tm);
 #endif /* WIN32 */
-  if (!ltm) { return grn_external_error; }
+  if (!ltm) { SERR("localtime"); }
   snprintf(buf, GRN_TIMEVAL_STR_SIZE - 1, GRN_TIMEVAL_STR_FORMAT,
            ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
            ltm->tm_hour, ltm->tm_min, ltm->tm_sec, (int) tv->tv_usec);
   buf[GRN_TIMEVAL_STR_SIZE - 1] = '\0';
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
 grn_rc
@@ -361,8 +362,8 @@ grn_init(void)
   }
 #else /* WIN32 */
   if ((grn_pagesize = sysconf(_SC_PAGESIZE)) == -1) {
-    GSERR("_SC_PAGESIZE");
-    return grn_other_error;
+    SERR("_SC_PAGESIZE");
+    return ctx->rc;
   }
 #endif /* WIN32 */
   if (grn_pagesize & (grn_pagesize - 1)) {
@@ -1328,11 +1329,11 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
     char tbuf[TBUFSIZE];
     char mbuf[MBUFSIZE];
     char lbuf[LBUFSIZE];
+    tbuf[0] = '\0';
     if (grn_logger->flags & GRN_LOG_TIME) {
       grn_timeval tv;
-      if (grn_timeval_now(&tv) || grn_timeval2str(&tv, tbuf)) { tbuf[0] = '\0'; }
-    } else {
-      tbuf[0] = '\0';
+      grn_timeval_now(ctx, &tv);
+      grn_timeval2str(ctx, &tv, tbuf);
     }
     if (grn_logger->flags & GRN_LOG_MESSAGE) {
       va_list argp;

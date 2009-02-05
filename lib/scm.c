@@ -799,7 +799,8 @@ grn_ql_load(grn_ctx *ctx, const char *filename)
   ctx->impl->args = CONS(mk_const_string(ctx, filename), NIL);
   ctx->stat = GRN_QL_TOPLEVEL;
   ctx->impl->op = OP_LOAD;
-  return grn_ql_feed(ctx, "init", 4, 0) == F ? grn_internal_error : GRN_SUCCESS;
+  grn_ql_feed(ctx, "init", 4, 0);
+  return ctx->rc;
 }
 
 /* ========== Routines for Reading ========== */
@@ -2832,7 +2833,7 @@ nf_now(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_cell *x;
   grn_timeval tv;
-  if (grn_timeval_now(&tv)) { QLERR("sysdate failed"); }
+  if (grn_timeval_now(ctx, &tv)) { QLERR("sysdate failed"); }
   GRN_CELL_NEW(ctx, x);
   SETTIME(x, &tv);
   return x;
@@ -2861,7 +2862,7 @@ nf_timestr(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   default :
     QLERR("can't convert into time");
   }
-  if (grn_timeval2str(&tv, buf)) { QLERR("timeval2str failed"); }
+  if (grn_timeval2str(ctx, &tv, buf)) { QLERR("timeval2str failed"); }
   return grn_ql_mk_string(ctx, buf, strlen(buf));
 }
 static grn_cell *

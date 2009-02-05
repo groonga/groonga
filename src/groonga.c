@@ -236,7 +236,7 @@ static grn_rc
 queue_enque(queue *q, grn_com_sqtp *c)
 {
   uint8_t i = q->tail + 1;
-  if (i == q->head) { return grn_other_error; }
+  if (i == q->head) { return GRN_END_OF_DATA; }
   q->v[q->tail] = c;
   q->tail = i;
   return GRN_SUCCESS;
@@ -301,7 +301,7 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
   if (!nfthreads && nthreads < MAX_NFTHREADS) {
     grn_thread thread;
     MUTEX_UNLOCK(q_mutex);
-    if (THREAD_CREATE(thread, thread_start, ev)) { GSERR("pthread_create"); }
+    if (THREAD_CREATE(thread, thread_start, ev)) { SERR("pthread_create"); }
     return;
   }
   COND_SIGNAL(q_cond);

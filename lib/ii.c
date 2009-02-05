@@ -1893,11 +1893,11 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
   }
   if (r2->step == i) {
     GRN_LOG(ctx, GRN_LOG_EMERG, "cycle! %d(%d:%d)<->%d(%d:%d)", i, id.rid, id.sid, j, id2.rid, id2.sid);
-    return grn_abnormal_error;
+    return GRN_FILE_CORRUPT;
   }
   if (id2.rid < id.rid || (id2.rid == id.rid && id2.sid <= id.sid)) {
     GRN_LOG(ctx, GRN_LOG_CRIT, "invalid jump! %d(%d:%d)(%d:%d)->%d(%d:%d)(%d:%d)", i, r->jump, r->step, id.rid, id.sid, j, r2->jump, r2->step, id2.rid, id2.sid);
-    return grn_abnormal_error;
+    return GRN_FILE_CORRUPT;
   }
   return GRN_SUCCESS;
 }
@@ -1913,10 +1913,13 @@ set_jump_r(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *from, int to)
     if (BUFFER_REC_DELETED(r2)) { break; }
     if (j == (i = r->jump)) { break; }
     if (j == r->step) { break; }
-    if (check_jump(ctx, ii, b, r, j)) { return grn_internal_error; }
+    if (check_jump(ctx, ii, b, r, j)) {
+      ERR(GRN_FILE_CORRUPT, "check_jump failed");
+      return ctx->rc;
+    }
     r->jump = j;
     j = i;
-    if (!r->step) { return grn_abnormal_error; }
+    if (!r->step) { return GRN_FILE_CORRUPT; }
   }
   return GRN_SUCCESS;
 }
@@ -3723,7 +3726,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
             c->pb.sid = 1;
           }
           if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
-            ERR(grn_abnormal_error, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
+            ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
           }
           c->nextb = br->step;
           GRN_B_DEC(c->pb.tf, c->bp);
@@ -3980,7 +3983,7 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
   if (grn_aio_enabled) {
     if (!(c = grn_ii_cursor_openv1(ii, tid))) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed");
-      return grn_internal_error;
+      return ctx->rc;
     }
     h->bins[h->n_entries++] = c;
   } else
@@ -3989,16 +3992,16 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
     if (!(c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
                                  ii->max_n_elements, 0))) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed");
-      return grn_internal_error;
+      return ctx->rc;
     }
     if (!grn_ii_cursor_next(ctx, c)) {
       grn_ii_cursor_close(ctx, c);
-      return grn_internal_error;
+      return GRN_END_OF_DATA;
     }
     if (!grn_ii_cursor_next_pos(ctx, c)) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "invalid ii_cursor b");
       grn_ii_cursor_close(ctx, c);
-      return grn_internal_error;
+      return GRN_END_OF_DATA;
     }
     n = h->n_entries++;
     while (n) {
@@ -4712,7 +4715,7 @@ token_info_skip(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid)
   grn_ii_cursor *c;
   grn_ii_posting *p;
   for (;;) {
-    if (!(c = cursor_heap_min(ti->cursors))) { return grn_internal_error; }
+    if (!(c = cursor_heap_min(ti->cursors))) { return GRN_END_OF_DATA; }
     p = c->post;
     if (p->rid > rid || (p->rid == rid && p->sid >= sid)) { break; }
     cursor_heap_pop(ctx, ti->cursors);
@@ -4729,7 +4732,7 @@ token_info_skip_pos(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid, ui
   grn_ii_posting *p;
   pos += ti->offset;
   for (;;) {
-    if (!(c = cursor_heap_min(ti->cursors))) { return grn_internal_error; }
+    if (!(c = cursor_heap_min(ti->cursors))) { return GRN_END_OF_DATA; }
     p = c->post;
     if (p->rid != rid || p->sid != sid || p->pos >= pos) { break; }
     cursor_heap_pop_pos(ctx, ti->cursors);
@@ -4753,7 +4756,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
   token_info *ti;
   const char *key;
   uint32_t size;
-  grn_rc rc = grn_internal_error;
+  grn_rc rc = GRN_END_OF_DATA;
   grn_token *token = grn_token_open(ctx, lexicon, string, string_len, 0);
   if (!token) { return GRN_NO_MEMORY_AVAILABLE; }
   if (mode == GRN_SEL_UNSPLIT) {

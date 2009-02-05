@@ -116,11 +116,140 @@ void grn_ctx_impl_err(grn_ctx *ctx);
 
 #define ERR(rc,...) ERRSET(ctx, GRN_ERROR, (rc),  __VA_ARGS__)
 #define MERR(...) ERRSET(ctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
-#define SERR(str) ERR(grn_other_error, "syscall error '%s' (%s)", str, strerror(errno))
+
+#ifdef WIN32
+#define SERR(str) {\
+  grn_rc rc;\
+  const char *m;\
+  int e = WSAGetLastError();\
+  switch (e) {\
+  case WSANOTINITIALISED :\
+    rc = GRN_SOCKET_NOT_INITIALISED;\
+    m = "please call grn_com_init first";\
+    break;\
+  case WSAEFAULT :\
+    rc = GRN_BAD_ADDRESS;\
+    m = "bad address";\
+    break;\
+  case WSAEINVAL :\
+    rc = GRN_INVALID_ARGUMENT;\
+    m = "invalid argument";\
+    break;\
+  case WSAEMFILE :\
+    rc = GRN_TOO_MANY_OPEN_FILES;\
+    m = "too many sockets";\
+    break;\
+  case WSAEWOULDBLOCK :\
+    rc = GRN_OPERATION_WOULD_BLOCK;\
+    m = "operation would block";\
+    break;\
+  case WSAENOTSOCK :\
+    rc = GRN_NOT_SOCKET;\
+    m = "given fd is not socket fd";\
+    break;\
+  case WSAEOPNOTSUPP :\
+    rc = GRN_OPERATION_NOT_SUPPORTED;\
+    m = "operation is not supported";\
+    break;\
+  case WSAEADDRINUSE :\
+    rc = GRN_ADDRESS_IS_IN_USE;\
+    m = "address is already in use";\
+    break;\
+  case WSAEADDRNOTAVAIL :\
+    rc = GRN_ADDRESS_IS_NOT_AVAILABLE;\
+    m = "address is not available";\
+    break;\
+  case WSAENETDOWN :\
+    rc = GRN_NETWORK_IS_DOWN;\
+    m = "network is down";\
+    break;\
+  case WSAENOBUFS :\
+    rc = GRN_NO_BUFFER;\
+    m = "no buffer";\
+    break;\
+  case WSAEISCONN :\
+    rc = GRN_SOCKET_IS_ALREADY_CONNECTED;\
+    m = "socket is already connected";\
+    break;\
+  case WSAENOTCONN :\
+    rc = GRN_SOCKET_IS_NOT_CONNECTED;\
+    m = "socket is not connected";\
+    break;\
+  case WSAESHUTDOWN :\
+    rc = GRN_SOCKET_IS_ALREADY_SHUTDOWNED;\
+    m = "socket is already shutdowned";\
+    break;\
+  case WSAETIMEDOUT :\
+    rc = GRN_OPERATION_TIMEOUT;\
+    m = "connection time out";\
+    break;\
+  case WSAECONNREFUSED :\
+    rc = GRN_CONNECTION_REFUSED;\
+    m = "connection refused";\
+    break;\
+  default:\
+    rc = GRN_UNKNOWN_ERROR;\
+    m = "unknown error";\
+    break;\
+  }\
+  ERR(rc, "syscall error '%s' (%s)", str, m);\
+}
+#else /* WIN32 */
+#define SERR(str) {\
+  grn_rc rc;\
+  switch (errno) {\
+  case ELOOP : rc = GRN_TOO_MANY_SYMBOLIC_LINKS; break;\
+  case ENAMETOOLONG : rc = GRN_FILENAME_TOO_LONG; break;\
+  case ENOENT : rc = GRN_NO_SUCH_FILE_OR_DIRECTORY; break;\
+  case ENOMEM : rc = GRN_NO_MEMORY_AVAILABLE; break;\
+  case ENOTDIR : rc = GRN_NOT_A_DIRECTORY; break;\
+  case EPERM : rc = GRN_OPERATION_NOT_PERMITTED; break;\
+  case ESRCH : rc = GRN_NO_SUCH_PROCESS; break;\
+  case EINTR : rc = GRN_INTERRUPTED_FUNCTION_CALL; break;\
+  case EIO : rc = GRN_INPUT_OUTPUT_ERROR; break;\
+  case ENXIO : rc = GRN_NO_SUCH_DEVICE_OR_ADDRESS; break;\
+  case E2BIG : rc = GRN_ARG_LIST_TOO_LONG; break;\
+  case ENOEXEC : rc = GRN_EXEC_FORMAT_ERROR; break;\
+  case EBADF : rc = GRN_BAD_FILE_DESCRIPTOR; break;\
+  case ECHILD : rc = GRN_NO_CHILD_PROCESSES; break;\
+  case EACCES : rc = GRN_PERMISSION_DENIED; break;\
+  case EFAULT : rc = GRN_BAD_ADDRESS; break;\
+  case EBUSY : rc = GRN_RESOURCE_BUSY; break;\
+  case EEXIST : rc = GRN_FILE_EXISTS; break;\
+  case ENODEV : rc = GRN_NO_SUCH_DEVICE; break;\
+  case EISDIR : rc = GRN_IS_A_DIRECTORY; break;\
+  case EINVAL : rc = GRN_INVALID_ARGUMENT; break;\
+  case EMFILE : rc = GRN_TOO_MANY_OPEN_FILES; break;\
+  case EFBIG : rc = GRN_FILE_TOO_LARGE; break;\
+  case ENOSPC : rc = GRN_NO_SPACE_LEFT_ON_DEVICE; break;\
+  case EROFS : rc = GRN_READ_ONLY_FILE_SYSTEM; break;\
+  case EMLINK : rc = GRN_TOO_MANY_LINKS; break;\
+  case EPIPE : rc = GRN_BROKEN_PIPE; break;\
+  case EDOM : rc = GRN_DOMAIN_ERROR; break;\
+  case ERANGE : rc = GRN_RANGE_ERROR; break;\
+  case ENOTSOCK : rc = GRN_NOT_SOCKET; break;\
+  case EADDRINUSE : rc = GRN_ADDRESS_IS_IN_USE; break;\
+  case ENETDOWN : rc = GRN_NETWORK_IS_DOWN; break;\
+  case ENOBUFS : rc = GRN_NO_BUFFER; break;\
+  case EISCONN : rc = GRN_SOCKET_IS_ALREADY_CONNECTED; break;\
+  case ENOTCONN : rc = GRN_SOCKET_IS_NOT_CONNECTED; break;\
+    /*\
+  case ESOCKTNOSUPPORT :\
+  case EOPNOTSUPP :\
+  case EPFNOSUPPORT :\
+    */\
+  case EPROTONOSUPPORT : rc = GRN_OPERATION_NOT_SUPPORTED; break;\
+  case ESHUTDOWN : rc = GRN_SOCKET_IS_ALREADY_SHUTDOWNED; break;\
+  case ETIMEDOUT : rc = GRN_OPERATION_TIMEOUT; break;\
+  case ECONNREFUSED: rc = GRN_CONNECTION_REFUSED; break;\
+  default : rc = GRN_UNKNOWN_ERROR; break;\
+  }\
+  ERR(rc, "syscall error '%s' (%s)", str, strerror(errno));\
+}
+#endif /* WIN32 */
 
 #define GERR(rc,...) ERRSET(&grn_gctx, GRN_ERROR, (rc),  __VA_ARGS__)
 #define GMERR(...) ERRSET(&grn_gctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
-#define GSERR(str) GERR(grn_other_error, "syscall error '%s' (%s)", str, strerror(errno))
 
 #define GRN_MALLOC(s) grn_malloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_CALLOC(s) grn_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
@@ -221,8 +350,8 @@ typedef struct {
 #define GRN_TIMEVAL_STR_FORMAT "%04d-%02d-%02d %02d:%02d:%02d.%06d"
 #endif /* GRN_TIMEVAL_STR_FORMAT */
 
-grn_rc grn_timeval_now(grn_timeval *tv);
-grn_rc grn_timeval2str(grn_timeval *tv, char *buf);
+grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
+grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
 grn_rc grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv);
 
 void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);

@@ -1,5 +1,9 @@
 2009-02-05  Poe MORITA  <morita at razil.jp>
 
+	* groonga.h (grn_rc): refined.
+
+2009-02-05  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (grn_invalid_format): devided into
 	GRN_INVALID_FORMAT and GRN_OBJECT_CORRUPT.
 

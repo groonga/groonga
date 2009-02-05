@@ -49,40 +49,6 @@
 #define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
 
-#ifdef WIN32
-void
-log_sockerr(const char *msg)
-{
-  int e = WSAGetLastError();
-  const char *m;
-  switch (e) {
-  case WSANOTINITIALISED: m = "please call grn_com_init first"; break;
-  case WSAEFAULT: m = "bad address"; break;
-  case WSAEINVAL: m = "invalid argument"; break;
-  case WSAEMFILE: m = "too many sockets"; break;
-  case WSAEWOULDBLOCK: m = "operation would block"; break;
-  case WSAENOTSOCK: m = "given fd is not socket fd"; break;
-  case WSAEOPNOTSUPP: m = "operation is not supported"; break;
-  case WSAEADDRINUSE: m = "address is already in use"; break;
-  case WSAEADDRNOTAVAIL: m = "address is not available"; break;
-  case WSAENETDOWN: m = "network is down"; break;
-  case WSAENOBUFS: m = "no buffer"; break;
-  case WSAEISCONN: m = "socket is already connected"; break;
-  case WSAENOTCONN: m = "socket is not connected"; break;
-  case WSAESHUTDOWN: m = "socket is already shutdowned"; break;
-  case WSAETIMEDOUT: m = "connection time out"; break;
-  case WSAECONNREFUSED: m = "connection refused"; break;
-  default:
-    GRN_LOG(ctx, GRN_LOG_ERROR, "%s: socket error (%d)", msg, e);
-    return;
-  }
-  GRN_LOG(ctx, GRN_LOG_ERROR, "%s: %s", msg, m);
-}
-#define LOG_SOCKERR(m) log_sockerr((m))
-#else /* WIN32 */
-#define LOG_SOCKERR(m) GRN_LOG(ctx, GRN_LOG_ERROR, "%s: %s", (m), strerror(errno))
-#endif /* WIN32 */
-
 /******* grn_com ********/
 
 grn_rc
@@ -91,12 +57,14 @@ grn_com_init(void)
 #ifdef WIN32
   WSADATA wd;
   if (WSAStartup(MAKEWORD(2, 0), &wd) != 0) {
-    GERR(grn_external_error, "WSAStartup failed");
+    grn_ctx *ctx = &grn_gctx;
+    WSERR("WSAStartup");
   }
 #else /* WIN32 */
 #ifndef USE_MSG_NOSIGNAL
   if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-    GERR(grn_external_error, "signal");
+    grn_ctx *ctx = &grn_gctx;
+    SERR("signal");
   }
 #endif /* USE_MSG_NOSIGNAL */
 #endif /* WIN32 */
@@ -114,24 +82,20 @@ grn_com_fin(void)
 grn_rc
 grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_size)
 {
-  grn_rc rc = GRN_NO_MEMORY_AVAILABLE;
   ev->max_nevents = max_nevents;
   if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0, GRN_ENC_NONE))) {
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
     if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {
       if ((ev->epfd = epoll_create(max_nevents)) != -1) {
-        rc = GRN_SUCCESS;
         goto exit;
       } else {
-        LOG_SOCKERR("epoll_create");
-        rc = grn_external_error;
+        SERR("epoll_create");
       }
       GRN_FREE(ev->events);
     }
 #else /* USE_EPOLL */
     if ((ev->events = GRN_MALLOC(sizeof(struct pollfd) * max_nevents))) {
-      rc = GRN_SUCCESS;
       goto exit;
     }
 #endif /* USE_EPOLL */
@@ -139,11 +103,11 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     ev->hash = NULL;
     ev->events = NULL;
 #else /* USE_SELECT */
-    rc = GRN_SUCCESS;
+
 #endif /* USE_SELECT */
   }
 exit :
-  return rc;
+  return ctx->rc;
 }
 
 grn_rc
@@ -172,8 +136,8 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
     e.data.fd = (fd);
     e.events = (__uint32_t) events;
     if (epoll_ctl(ev->epfd, EPOLL_CTL_ADD, (fd), &e) == -1) {
-      LOG_SOCKERR("epoll_ctl");
-      return grn_external_error;
+      SERR("epoll_ctl");
+      return ctx->rc;
     }
   }
 #endif /* USE_EPOLL*/
@@ -183,10 +147,9 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
       c->fd = fd;
       c->events = events;
       if (com) { *com = c; }
-      return GRN_SUCCESS;
     }
   }
-  return grn_internal_error;
+  return ctx->rc;
 }
 
 grn_rc
@@ -207,15 +170,15 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
       e.data.fd = (fd);
       e.events = (__uint32_t) events;
       if (epoll_ctl(ev->epfd, EPOLL_CTL_MOD, (fd), &e) == -1) {
-        LOG_SOCKERR("epoll_ctl");
-        return grn_external_error;
+        SERR("epoll_ctl");
+        return ctx->rc;
       }
 #endif /* USE_EPOLL*/
       c->events = events;
     }
     return GRN_SUCCESS;
   }
-  return grn_internal_error;
+  return GRN_INVALID_ARGUMENT;
 }
 
 grn_rc
@@ -232,14 +195,14 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
       e.data.fd = fd;
       e.events = c->events;
       if (epoll_ctl(ev->epfd, EPOLL_CTL_DEL, fd, &e) == -1) {
-        LOG_SOCKERR("epoll_ctl");
-        return grn_external_error;
+        SERR("epoll_ctl");
+        return ctx->rc;
       }
 #endif /* USE_EPOLL*/
       return grn_hash_delete_by_id(ctx, ev->hash, id, NULL);
     } else {
       GRN_LOG(ctx, GRN_LOG_ERROR, "%04x| fd(%d) not found in ev(%p)", getpid(), fd, ev);
-      return grn_internal_error;
+      return GRN_INVALID_ARGUMENT;
     }
   }
 }
@@ -274,8 +237,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #else /* WIN32 */
     if (errno == EINTR) { return GRN_SUCCESS; }
 #endif /* WIN32 */
-    LOG_SOCKERR("select");
-    return grn_external_error;
+    SERR("select");
+    return ctx->rc;
   }
   if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "select returns 0 events"); }
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
@@ -301,8 +264,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #endif /* USE_EPOLL */
   if (nevents < 0) {
     if (errno == EINTR) { return GRN_SUCCESS; }
-    LOG_SOCKERR("poll");
-    return grn_external_error;
+    SERR("poll");
+    return ctx->rc;
   }
   if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "poll returns 0 events"); }
   for (ep = ev->events; nevents; ep++) {
@@ -316,8 +279,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       memset(&e, 0, sizeof(struct epoll_event));
       e.data.fd = efd;
       e.events = ep->events;
-      if (epoll_ctl(ev->epfd, EPOLL_CTL_DEL, efd, &e) == -1) { LOG_SOCKERR("epoll_ctl"); }
-      if (grn_sock_close(efd) == -1) { LOG_SOCKERR("close"); }
+      if (epoll_ctl(ev->epfd, EPOLL_CTL_DEL, efd, &e) == -1) { SERR("epoll_ctl"); }
+      if (grn_sock_close(efd) == -1) { SERR("close"); }
       continue;
     }
     if ((ep->events & GRN_COM_POLLIN)) { com->ev_in(ctx, ev, com); }
@@ -328,7 +291,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     nevents--;
     if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->hash", efd);
-      if (grn_sock_close(efd) == -1) { LOG_SOCKERR("close"); }
+      if (grn_sock_close(efd) == -1) { SERR("close"); }
       continue;
     }
     if ((ep->revents & GRN_COM_POLLIN)) { com->ev_in(ctx, ev, com); }
@@ -353,13 +316,13 @@ grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, c
 #ifdef WIN32
     ssize_t reth;
     if ((reth = send(cs->com.fd, header, sizeof(grn_com_sqtp_header), 0)) == -1) {
-      LOG_SOCKERR("send size");
-      cs->rc = grn_external_error;
+      SERR("send size");
+      cs->rc = ctx->rc;
       goto exit;
     }
     if ((ret = send(cs->com.fd, body, header->size, 0)) == -1) {
-      LOG_SOCKERR("send body");
-      cs->rc = grn_external_error;
+      SERR("send body");
+      cs->rc = ctx->rc;
       goto exit;
     }
     ret += reth;
@@ -378,9 +341,9 @@ grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, c
     msg_iov[1].iov_base = body;
     msg_iov[1].iov_len = header->size;
     while ((ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1) {
-      LOG_SOCKERR("sendmsg");
+      SERR("sendmsg");
       if (errno == EAGAIN || errno == EINTR) { continue; }
-      cs->rc = grn_external_error;
+      cs->rc = ctx->rc;
       goto exit;
     }
 #endif /* WIN32 */
@@ -388,19 +351,19 @@ grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, c
     while ((ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
 #ifdef WIN32
       int e = WSAGetLastError();
-      LOG_SOCKERR("send");
+      SERR("send");
       if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
 #else /* WIN32 */
-      LOG_SOCKERR("send");
+      SERR("send");
       if (errno == EAGAIN || errno == EINTR) { continue; }
 #endif /* WIN32 */
-      cs->rc = grn_external_error;
+      cs->rc = ctx->rc;
       goto exit;
     }
   }
   if (ret != whole_size) {
     GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg: %d < %d", ret, whole_size);
-    cs->rc = grn_external_error;
+    cs->rc = ctx->rc;
     goto exit;
   }
   cs->rc = GRN_SUCCESS;
@@ -428,16 +391,16 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
       if (ret < 0) {
 #ifdef WIN32
         int e = WSAGetLastError();
-        LOG_SOCKERR("recv size");
+        SERR("recv size");
         if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
         *info = e;
 #else /* WIN32 */
-        LOG_SOCKERR("recv size");
+        SERR("recv size");
         if (errno == EAGAIN || errno == EINTR) { continue; }
         *info = errno;
 #endif /* WIN32 */
       }
-      cs->rc = grn_external_error;
+      cs->rc = ctx->rc;
       *status = grn_com_erecv_head;
       goto exit;
     }
@@ -469,16 +432,16 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
         if (ret < 0) {
 #ifdef WIN32
           int e = WSAGetLastError();
-          LOG_SOCKERR("recv body");
+          SERR("recv body");
           if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
           *info = e;
 #else /* WIN32 */
-          LOG_SOCKERR("recv body");
+          SERR("recv body");
           if (errno == EAGAIN || errno == EINTR) { continue; }
           *info = errno;
 #endif /* WIN32 */
         }
-        cs->rc = grn_external_error;
+        cs->rc = ctx->rc;
         *status = grn_com_erecv_body;
         goto exit;
       }
@@ -499,20 +462,20 @@ grn_com_sqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
   struct hostent *he;
   struct sockaddr_in addr;
   if (!(he = gethostbyname(dest))) {
-    LOG_SOCKERR("gethostbyname");
+    SERR("gethostbyname");
     goto exit;
   }
   addr.sin_family = AF_INET;
   memcpy(&addr.sin_addr, he->h_addr, he->h_length);
   addr.sin_port = htons(port);
   if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    LOG_SOCKERR("socket");
+    SERR("socket");
     return NULL;
   }
   {
     int v = 1;
     if (setsockopt(fd, 6, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
-      LOG_SOCKERR("setsockopt");
+      SERR("setsockopt");
     }
   }
   while (connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1) {
@@ -526,7 +489,7 @@ grn_com_sqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
       sleep(2);
       continue;
     }
-    LOG_SOCKERR("connect");
+    SERR("connect");
     goto exit;
   }
   if (ev) {
@@ -566,7 +529,7 @@ grn_com_sqtp_acceptor(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
   grn_com_sqtp *cs = (grn_com_sqtp *)c, *ncs;
   grn_sock fd = accept(cs->com.fd, NULL, NULL);
   if (fd == -1) {
-    LOG_SOCKERR("accept");
+    SERR("accept");
     return;
   }
   if (grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, (grn_com **)&ncs)) {
@@ -591,13 +554,13 @@ grn_com_sqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *
   addr.sin_addr.s_addr = INADDR_ANY;
   addr.sin_port = htons(port);
   if ((lfd = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
-    LOG_SOCKERR("socket");
+    SERR("socket");
     return NULL;
   }
   {
     int v = 1;
     if (setsockopt(lfd, 6, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
-      LOG_SOCKERR("setsockopt");
+      SERR("setsockopt");
       goto exit;
     }
   }
@@ -614,14 +577,14 @@ grn_com_sqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *
           GRN_LOG(ctx, GRN_LOG_NOTICE, "bind retrying..(%d)", port);
           if (++retry < 10) { sleep(2); continue; }
         }
-        LOG_SOCKERR("bind");
+        SERR("bind");
         goto exit;
       }
       break;
     }
   }
   if (listen(lfd, LISTEN_BACKLOG) < 0) {
-    LOG_SOCKERR("listen");
+    SERR("listen");
     goto exit;
   }
   if (ev) {
@@ -650,10 +613,10 @@ grn_com_sqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_sqtp *cs)
   } else {
     GRN_FREE(cs);
   }
-  if (shutdown(fd, SHUT_RDWR) == -1) { /* LOG_SOCKERR("shutdown"); */ }
+  if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
   if (grn_sock_close(fd) == -1) {
-    LOG_SOCKERR("close");
-    return grn_external_error;
+    SERR("close");
+    return ctx->rc;
   }
   return GRN_SUCCESS;
 }

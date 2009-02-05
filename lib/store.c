@@ -766,8 +766,13 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   zstream.avail_in = value_len;
   zstream.zalloc = Z_NULL;
   zstream.zfree = Z_NULL;
-  if (deflateInit2(&zstream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15 /* windowBits */,
-                   8 /* memLevel */, Z_DEFAULT_STRATEGY) != Z_OK) { return grn_other_error; }
+  if (deflateInit2(&zstream, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
+                   15 /* windowBits */,
+                   8 /* memLevel */,
+                   Z_DEFAULT_STRATEGY) != Z_OK) {
+    ERR(GRN_ZLIB_ERROR, "deflateInit2 failed");
+    return ctx->rc;
+  }
   zvalue_len = deflateBound(&zstream, value_len);
   if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof (uint64_t)))) { deflateEnd(&zstream); return GRN_NO_MEMORY_AVAILABLE; }
   zstream.next_out = (Bytef *)((uint64_t *)zvalue + 1);
@@ -775,10 +780,15 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (deflate(&zstream, Z_FINISH) != Z_STREAM_END) {
     deflateEnd(&zstream);
     GRN_FREE(zvalue);
-    return grn_other_error;
+    ERR(GRN_ZLIB_ERROR, "deflate failed");
+    return ctx->rc;
   }
   zvalue_len = zstream.total_out;
-  if (deflateEnd(&zstream) != Z_OK) { GRN_FREE(zvalue); return grn_other_error; }
+  if (deflateEnd(&zstream) != Z_OK) {
+    GRN_FREE(zvalue);
+    ERR(GRN_ZLIB_ERROR, "deflateEnd failed");
+    return ctx->rc;
+  }
   *(uint64_t *)zvalue = value_len;
   rc = grn_ja_put_raw(ctx, ja, id, zvalue, zvalue_len + sizeof (uint64_t), flags);
   GRN_FREE(zvalue);
@@ -799,7 +809,8 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (lzo1x_1_compress(value, value_len, (lzo_bytep)((uint64_t *)lvalue + 1), &lvalue_len, lwork) != LZO_E_OK) {
     GRN_FREE(lwork);
     GRN_FREE(lvalue);
-    return grn_other_error;
+    ERR(GRN_LZO_ERROR, "lzo1x_1_compress");
+    return ctx->rc;
   }
   GRN_FREE(lwork);
   *(uint64_t *)lvalue = value_len;
