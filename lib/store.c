@@ -143,7 +143,7 @@ grn_ra_at(grn_ctx *ctx, grn_ra *ra, grn_id id)
 
 /**** jagged arrays ****/
 
-#define GRN_JA_W_SEGREGATE_THRESH      8
+#define GRN_JA_W_SEGREGATE_THRESH      7
 #define GRN_JA_W_CAPACITY              38
 #define GRN_JA_W_SEGMENT               22
 
