@@ -345,10 +345,10 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
     grn_io_win iw;
     uint32_t jag, vpos, vsize;
     if (EHUGE_P(ei)) {
-      EINFO_DEC(ei, jag, vpos, vsize);
-    } else {
-      vpos = 0;
       EHUGE_DEC(ei, jag, vsize);
+      vpos = 0;
+    } else {
+      EINFO_DEC(ei, jag, vpos, vsize);
     }
     value = grn_io_win_map2(ja->io, ctx, &iw, jag, vpos, vsize, grn_io_rdonly);
     if (!value) { *value_len = 0; return NULL; }
