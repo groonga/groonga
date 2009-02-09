@@ -125,7 +125,7 @@ column_get(void)
           fprintf(stderr, "grn_obj_get_value failed\n");
         } else {
           if (GRN_BULK_VSIZE(p) != v) {
-            fprintf(stderr, "value_size unmatch %d (%ld:%u)\n", i, GRN_BULK_VSIZE(p), v + key_size);
+            fprintf(stderr, "value_size unmatch %d (%ld:%u)\n", i, GRN_BULK_VSIZE(p), v);
           } else {
             if (v && GRN_BULK_HEAD(p)[v-1] != GRN_BULK_HEAD(&buf)[0]) {
               fprintf(stderr, "value unmatch\n");

@@ -1,3 +1,7 @@
+2009-02-09  Poe MORITA  <morita at razil.jp>
+
+	* lib/store.c (grn_ja_*): support huge (more than 4MB) records.
+
 2009-02-08  Poe MORITA  <morita at razil.jp>
 
 	* lib/store.c (GRN_JA_W_SEGREGATE_THRESH): 8 -> 7.
