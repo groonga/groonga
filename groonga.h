@@ -23,8 +23,8 @@ extern "C" {
 
 typedef unsigned grn_id;
 
-#define GRN_ID_NIL                     (0x00L)
-#define GRN_ID_MAX                     (0x3fffffffL)
+#define GRN_ID_NIL                     (0x00)
+#define GRN_ID_MAX                     (0x3fffffff)
 
 typedef enum {
   GRN_SUCCESS = 0,
