@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,69 +19,61 @@
 
 #include <cutter/cut-helper.h>
 #include <gcutter.h>
-#include "sen-assertions.h"
+#include "grn-assertions.h"
 
 void
-sen_test_assert_helper(sen_rc rc, const gchar *expression,
-                       const gchar *user_message_format, ...)
+grn_test_assert_helper(grn_rc rc, const gchar *expression)
 {
-  if (rc == sen_success) {
+  if (rc == GRN_SUCCESS) {
     cut_test_pass();
   } else {
-    cut_test_fail_va_list(cut_take_printf("expected: <%s> == sen_success\n"
-                                          " but was: <%s>",
-                                          expression,
-                                          sen_rc_to_string(rc)),
-                          user_message_format);
+    cut_test_fail(cut_take_printf("expected: <%s> == grn_success\n"
+                                  " but was: <%s>",
+                                  expression,
+                                  grn_rc_to_string(rc)));
   }
 }
 
 void
-sen_test_assert_equal_rc_helper(sen_rc expected, sen_rc actual,
+grn_test_assert_equal_rc_helper(grn_rc expected, grn_rc actual,
                                 const gchar *expression_expected,
-                                const gchar *expression_actual,
-                                const gchar *user_message_format, ...)
+                                const gchar *expression_actual)
 {
   if (expected == actual) {
     cut_test_pass();
   } else {
-    cut_test_fail_va_list(cut_take_printf("<%s> == <%s>\n"
-                                          "expected: <%s>\n"
-                                          " but was: <%s>",
-                                          expression_expected,
-                                          expression_actual,
-                                          sen_rc_to_string(expected),
-                                          sen_rc_to_string(actual)),
-                          user_message_format);
+    cut_test_fail(cut_take_printf("<%s> == <%s>\n"
+                                  "expected: <%s>\n"
+                                  " but was: <%s>",
+                                  expression_expected,
+                                  expression_actual,
+                                  grn_rc_to_string(expected),
+                                  grn_rc_to_string(actual)));
   }
 }
 
 void
-sen_test_assert_nil_helper(sen_id id, const gchar *expression,
-                           const gchar *user_message_format, ...)
+grn_test_assert_nil_helper(grn_id id, const gchar *expression)
 {
-  if (id == SEN_ID_NIL) {
+  if (id == GRN_ID_NIL) {
     cut_test_pass();
   } else {
-    cut_test_fail_va_list(cut_take_printf("<%s> == <SEN_ID_NI>\n"
-                                          "expected: <%u>\n"
-                                          " but was: <%u>",
-                                          expression,
-                                          SEN_ID_NIL, id),
-                          user_message_format);
+    cut_test_fail(cut_take_printf("<%s> == <GRN_ID_NIL>\n"
+                                  "expected: <%u>\n"
+                                  " but was: <%u>",
+                                  expression,
+                                  GRN_ID_NIL, id));
   }
 }
 
 void
-sen_test_assert_not_nil_helper(sen_id id, const gchar *expression,
-                               const gchar *user_message_format, ...)
+grn_test_assert_not_nil_helper(grn_id id, const gchar *expression)
 {
-  if (id != SEN_ID_NIL) {
+  if (id != GRN_ID_NIL) {
     cut_test_pass();
   } else {
-    cut_test_fail_va_list(cut_take_printf("<%s> != <SEN_ID_NIL>\n"
-                                          "expected: <%u> is not <%u>",
-                                          expression, id, SEN_ID_NIL),
-                          user_message_format);
+    cut_test_fail(cut_take_printf("<%s> != <GRN_ID_NIL>\n"
+                                  "expected: <%u> is not <%u>",
+                                  expression, id, GRN_ID_NIL));
   }
 }

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,54 +17,42 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef __SEN_ASSERTIONS_H__
-#define __SEN_ASSERTIONS_H__
+#ifndef __GRN_ASSERTIONS_H__
+#define __GRN_ASSERTIONS_H__
 
-#include "sen-test-utils.h"
+#include "grn-test-utils.h"
 
-#define sen_test_assert(expression, ...)                \
+#define grn_test_assert(expression)                     \
   cut_trace_with_info_expression(                       \
-    sen_test_assert_helper((expression), #expression,   \
-                          ## __VA_ARGS__, NULL),        \
-    sen_test_assert(expression, ## __VA_ARGS__))
+    grn_test_assert_helper((expression), #expression),  \
+    grn_test_assert(expression))
 
-#define sen_test_assert_equal_rc(expected, actual, ...)         \
+#define grn_test_assert_equal_rc(expected, actual)              \
   cut_trace_with_info_expression(                               \
-    sen_test_assert_equal_rc_helper((expected), (actual),       \
-                                    #expected, #actual,         \
-                                    ## __VA_ARGS__, NULL),      \
-    sen_test_assert_equal_rc(expected, actual, ## __VA_ARGS__))
+    grn_test_assert_equal_rc_helper((expected), (actual),       \
+                                    #expected, #actual),        \
+    grn_test_assert_equal_rc(expected, actual))
 
-#define sen_test_assert_nil(expression, ...)                    \
+#define grn_test_assert_nil(expression)                         \
   cut_trace_with_info_expression(                               \
-    sen_test_assert_nil_helper((expression), #expression,       \
-                              ## __VA_ARGS__, NULL),            \
-    sen_test_assert_nil(expression, ## __VA_ARGS__))
+    grn_test_assert_nil_helper((expression), #expression),      \
+    grn_test_assert_nil(expression))
 
-#define sen_test_assert_not_nil(expression, ...)                \
+#define grn_test_assert_not_nil(expression)                     \
   cut_trace_with_info_expression(                               \
-    sen_test_assert_not_nil_helper((expression), #expression,   \
-                                  ## __VA_ARGS__, NULL),        \
-    sen_test_assert_not_nil(expression, ## __VA_ARGS__))
+    grn_test_assert_not_nil_helper((expression), #expression),  \
+    grn_test_assert_not_nil(expression))
 
 
-void     sen_test_assert_helper         (sen_rc       rc,
-                                         const gchar *expression,
-                                         const gchar *user_message_format,
-                                         ...);
-void     sen_test_assert_equal_rc_helper(sen_rc       expected,
-                                         sen_rc       actual,
+void     grn_test_assert_helper         (grn_rc       rc,
+                                         const gchar *expression);
+void     grn_test_assert_equal_rc_helper(grn_rc       expected,
+                                         grn_rc       actual,
                                          const gchar *expression_expected,
-                                         const gchar *expression_actual,
-                                         const gchar *user_message_format,
-                                         ...);
-void     sen_test_assert_nil_helper     (sen_id       id,
-                                         const gchar *expression,
-                                         const gchar *user_message_format,
-                                         ...);
-void     sen_test_assert_not_nil_helper (sen_id       id,
-                                         const gchar *expression,
-                                         const gchar *user_message_format,
-                                         ...);
+                                         const gchar *expression_actual);
+void     grn_test_assert_nil_helper     (grn_id       id,
+                                         const gchar *expression);
+void     grn_test_assert_not_nil_helper (grn_id       id,
+                                         const gchar *expression);
 
 #endif
