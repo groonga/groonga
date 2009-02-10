@@ -1366,7 +1366,6 @@ typedef struct _grn_ql_info grn_ql_info;
 struct _grn_ql_info {
   int fd;
   unsigned int com_status;
-  unsigned int com_info;
   grn_obj *outbuf;
   unsigned char stat;
 };

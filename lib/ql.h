@@ -173,7 +173,6 @@ struct _grn_ctx_impl {
   void (*output)(grn_ctx *, int, void *);
   grn_com_sqtp *com;
   unsigned int com_status;
-  unsigned int com_info;
   union {
     void *ptr;
     int fd;

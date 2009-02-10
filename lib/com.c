@@ -372,15 +372,15 @@ exit :
 }
 
 grn_rc
-grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
-                  unsigned int *status, unsigned int *info)
+grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf, unsigned int *status)
 {
   ssize_t ret;
   grn_com_sqtp_header *header;
   size_t rest = sizeof(grn_com_sqtp_header);
   if (GRN_BULK_WSIZE(buf) < rest) {
     if ((cs->rc = grn_bulk_reinit(ctx, buf, rest))) {
-      *status = grn_com_emem; *info = 1; goto exit;
+      *status = grn_com_emem;
+      goto exit;
     }
   } else {
     GRN_BULK_REWIND(buf);
@@ -393,11 +393,9 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
         int e = WSAGetLastError();
         SERR("recv size");
         if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
-        *info = e;
 #else /* WIN32 */
         SERR("recv size");
         if (errno == EAGAIN || errno == EINTR) { continue; }
-        *info = errno;
 #endif /* WIN32 */
       }
       cs->rc = ctx->rc;
@@ -409,7 +407,6 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
   header = GRN_COM_SQTP_MSG_HEADER(buf);
   GRN_LOG(ctx, GRN_LOG_INFO, "recv (%d,%x,%d,%02x,%02x,%04x,%08x)", header->size, header->flags, header->proto, header->qtype, header->level, header->status, header->info);
   *status = header->status;
-  *info = header->info;
   {
     uint16_t proto = header->proto;
     size_t value_size = header->size;
@@ -418,12 +415,11 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
       GRN_LOG(ctx, GRN_LOG_ERROR, "illegal header: %d", proto);
       cs->rc = GRN_INVALID_FORMAT;
       *status = grn_com_eproto;
-      *info = proto;
       goto exit;
     }
     if (GRN_BULK_WSIZE(buf) < whole_size) {
       if ((cs->rc = grn_bulk_resize(ctx, buf, whole_size))) {
-        *status = grn_com_emem; *info = 2;
+        *status = grn_com_emem;
         goto exit;
       }
     }
@@ -434,11 +430,9 @@ grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
           int e = WSAGetLastError();
           SERR("recv body");
           if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
-          *info = e;
 #else /* WIN32 */
           SERR("recv body");
           if (errno == EAGAIN || errno == EINTR) { continue; }
-          *info = errno;
 #endif /* WIN32 */
         }
         cs->rc = ctx->rc;
@@ -507,7 +501,7 @@ exit :
 static void
 grn_com_sqtp_receiver(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
 {
-  unsigned int status, info;
+  unsigned int status;
   grn_com_sqtp *cs = (grn_com_sqtp *)c;
   if (cs->com.status == grn_com_closing) {
     grn_com_sqtp_close(ctx, ev, cs);
@@ -518,7 +512,7 @@ grn_com_sqtp_receiver(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
     usleep(1000);
     return;
   }
-  grn_com_sqtp_recv(ctx, cs, &cs->msg, &status, &info);
+  grn_com_sqtp_recv(ctx, cs, &cs->msg, &status);
   cs->com.status = grn_com_doing;
   cs->msg_in(ctx, ev, c);
 }

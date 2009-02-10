@@ -141,8 +141,7 @@ grn_com_sqtp *grn_com_sqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_
 grn_rc grn_com_sqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_sqtp *cs);
 
 grn_rc grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, char *body);
-grn_rc grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
-                         unsigned int *status, unsigned int *info);
+grn_rc grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf, unsigned int *status);
 
 #define GRN_COM_SQTP_MSG_HEADER(buf) ((grn_com_sqtp_header *)(buf)->u.b.head)
 #define GRN_COM_SQTP_MSG_BODY(buf) ((buf)->u.b.head + sizeof(grn_com_sqtp_header))

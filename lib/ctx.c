@@ -546,7 +546,7 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
   }
   if (ctx->impl) {
     if (ctx->impl->com) {
-      if (grn_com_sqtp_recv(ctx, ctx->impl->com, &ctx->impl->com->msg, &ctx->impl->com_status, &ctx->impl->com_info)) {
+      if (grn_com_sqtp_recv(ctx, ctx->impl->com, &ctx->impl->com->msg, &ctx->impl->com_status)) {
         *str = NULL;
         *str_len = 0;
         *flags = 0;
@@ -626,13 +626,11 @@ grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info)
   if (ctx->impl->com) {
     info->fd = ctx->impl->com->com.fd;
     info->com_status = ctx->impl->com_status;
-    info->com_info = ctx->impl->com_info;
     info->outbuf = &ctx->impl->com->msg;
     info->stat = ctx->stat;
   } else {
     info->fd = -1;
     info->com_status = 0;
-    info->com_info = 0;
     info->outbuf = &ctx->impl->outbuf;
     info->stat = ctx->stat;
   }

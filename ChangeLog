@@ -1,5 +1,9 @@
 2009-02-10  Poe MORITA  <morita at razil.jp>
 
+	* groonga.h (grn_ql_info): cut off com_info;
+
+2009-02-10  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (GRN_DB_DELIMIT): add.
 	* lib/db.c (GRN_OBJ_COLUMN_ARRAY): support.
 
