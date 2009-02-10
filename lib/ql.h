@@ -171,9 +171,8 @@ struct _grn_ctx_impl {
   grn_obj subbuf;
   unsigned int bufcur;
   void (*output)(grn_ctx *, int, void *);
-  grn_com_sqtp *com;
+  grn_com_gqtp *com;
   unsigned int com_status;
-  unsigned int com_info;
   union {
     void *ptr;
     int fd;

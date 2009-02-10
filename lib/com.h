@@ -110,24 +110,28 @@ grn_rc grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd);
 grn_rc grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout);
 grn_rc grn_com_event_each(grn_ctx *ctx, grn_com_event *ev, grn_com_callback *func);
 
-/******* grn_com_sqtp ********/
+/******* grn_com_gqtp ********/
 
-#define GRN_COM_PROTO_SQTP 20819
+#define GRN_COM_PROTO_GQTP   0x47
+#define GRN_COM_PROTO_MBREQ  0x80
+#define GRN_COM_PROTO_MBRES  0x81
 
-typedef struct _grn_com_sqtp grn_com_sqtp;
-typedef struct _grn_com_sqtp_header grn_com_sqtp_header;
+typedef struct _grn_com_gqtp grn_com_gqtp;
+typedef struct _grn_com_gqtp_header grn_com_gqtp_header;
 
-struct _grn_com_sqtp_header {
-  uint32_t size;
-  uint16_t flags;
-  uint16_t proto;
+struct _grn_com_gqtp_header {
+  uint8_t proto;
   uint8_t qtype;
+  uint16_t keylen;
   uint8_t level;
+  uint8_t flags;
   uint16_t status;
-  uint32_t info;
+  uint32_t size;
+  uint32_t opaque;
+  uint64_t cas;
 };
 
-struct _grn_com_sqtp {
+struct _grn_com_gqtp {
   grn_com com;
   grn_rc rc;
   size_t rest;
@@ -136,16 +140,16 @@ struct _grn_com_sqtp {
   void *userdata;
 };
 
-grn_com_sqtp *grn_com_sqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
-grn_com_sqtp *grn_com_sqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *func);
-grn_rc grn_com_sqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_sqtp *cs);
+grn_com_gqtp *grn_com_gqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
+grn_com_gqtp *grn_com_gqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *func);
+grn_rc grn_com_gqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp *cs);
 
-grn_rc grn_com_sqtp_send(grn_ctx *ctx, grn_com_sqtp *cs, grn_com_sqtp_header *header, char *body);
-grn_rc grn_com_sqtp_recv(grn_ctx *ctx, grn_com_sqtp *cs, grn_obj *buf,
-                         unsigned int *status, unsigned int *info);
+grn_rc grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
+                         grn_com_gqtp_header *header, char *body, uint32_t size);
+grn_rc grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *status);
 
-#define GRN_COM_SQTP_MSG_HEADER(buf) ((grn_com_sqtp_header *)(buf)->u.b.head)
-#define GRN_COM_SQTP_MSG_BODY(buf) ((buf)->u.b.head + sizeof(grn_com_sqtp_header))
+#define GRN_COM_GQTP_MSG_HEADER(buf) ((grn_com_gqtp_header *)(buf)->u.b.head)
+#define GRN_COM_GQTP_MSG_BODY(buf) ((buf)->u.b.head + sizeof(grn_com_gqtp_header))
 
 #ifdef __cplusplus
 }

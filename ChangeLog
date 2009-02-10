@@ -1,3 +1,12 @@
+2009-02-11  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h: grn_id is not long. (Thanks to Kouhei Sutou)
+	* lib/com.h (GRN_COM_PROTO_MBREQ): add.
+
+2009-02-10  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (grn_ql_info): cut off com_info;
+
 2009-02-10  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h (GRN_DB_DELIMIT): add.
