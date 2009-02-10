@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,40 +17,146 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "sen-test-utils.h"
+#include "grn-test-utils.h"
 
 const gchar *
-sen_rc_to_string(sen_rc rc)
+grn_rc_to_string(grn_rc rc)
 {
   switch (rc) {
-  case sen_success:
-    return "sen_success";
-  case sen_memory_exhausted:
-    return "sen_memory_exhausted";
-  case sen_invalid_format:
-    return "sen_invalid_format";
-  case sen_file_operation_error:
-    return "sen_file_operation_error";
-  case sen_invalid_argument:
-    return "sen_invalid_argument";
-  case sen_other_error:
-    return "sen_other_error";
-  case sen_external_error:
-    return "sen_external_error";
-  case sen_internal_error:
-    return "sen_internal_error";
-  case sen_abnormal_error:
-    return "sen_abnormal_error";
-  case sen_end_of_data:
-    return "sen_end_of_data";
+  case GRN_SUCCESS:
+    return "GRN_SUCCESS";
+  case GRN_END_OF_DATA:
+    return "GRN_END_OF_DATA";
+  case GRN_UNKNOWN_ERROR:
+    return "GRN_UNKNOWN_ERROR";
+  case GRN_OPERATION_NOT_PERMITTED:
+    return "GRN_OPERATION_NOT_PERMITTED";
+  case GRN_NO_SUCH_FILE_OR_DIRECTORY:
+    return "GRN_NO_SUCH_FILE_OR_DIRECTORY";
+  case GRN_NO_SUCH_PROCESS:
+    return "GRN_NO_SUCH_PROCESS";
+  case GRN_INTERRUPTED_FUNCTION_CALL:
+    return "GRN_INTERRUPTED_FUNCTION_CALL";
+  case GRN_INPUT_OUTPUT_ERROR:
+    return "GRN_INPUT_OUTPUT_ERROR";
+  case GRN_NO_SUCH_DEVICE_OR_ADDRESS:
+    return "GRN_NO_SUCH_DEVICE_OR_ADDRESS";
+  case GRN_ARG_LIST_TOO_LONG:
+    return "GRN_ARG_LIST_TOO_LONG";
+  case GRN_EXEC_FORMAT_ERROR:
+    return "GRN_EXEC_FORMAT_ERROR";
+  case GRN_BAD_FILE_DESCRIPTOR:
+    return "GRN_BAD_FILE_DESCRIPTOR";
+  case GRN_NO_CHILD_PROCESSES:
+    return "GRN_NO_CHILD_PROCESSES";
+  case GRN_RESOURCE_TEMPORARILY_UNAVAILABLE:
+    return "GRN_RESOURCE_TEMPORARILY_UNAVAILABLE";
+  case GRN_NOT_ENOUGH_SPACE:
+    return "GRN_NOT_ENOUGH_SPACE";
+  case GRN_PERMISSION_DENIED:
+    return "GRN_PERMISSION_DENIED";
+  case GRN_BAD_ADDRESS:
+    return "GRN_BAD_ADDRESS";
+  case GRN_RESOURCE_BUSY:
+    return "GRN_RESOURCE_BUSY";
+  case GRN_FILE_EXISTS:
+    return "GRN_FILE_EXISTS";
+  case GRN_IMPROPER_LINK:
+    return "GRN_IMPROPER_LINK";
+  case GRN_NO_SUCH_DEVICE:
+    return "GRN_NO_SUCH_DEVICE";
+  case GRN_NOT_A_DIRECTORY:
+    return "GRN_NOT_A_DIRECTORY";
+  case GRN_IS_A_DIRECTORY:
+    return "GRN_IS_A_DIRECTORY";
+  case GRN_INVALID_ARGUMENT:
+    return "GRN_INVALID_ARGUMENT";
+  case GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM:
+    return "GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM";
+  case GRN_TOO_MANY_OPEN_FILES:
+    return "GRN_TOO_MANY_OPEN_FILES";
+  case GRN_INAPPROPRIATE_I_O_CONTROL_OPERATION:
+    return "GRN_INAPPROPRIATE_I_O_CONTROL_OPERATION";
+  case GRN_FILE_TOO_LARGE:
+    return "GRN_FILE_TOO_LARGE";
+  case GRN_NO_SPACE_LEFT_ON_DEVICE:
+    return "GRN_NO_SPACE_LEFT_ON_DEVICE";
+  case GRN_INVALID_SEEK:
+    return "GRN_INVALID_SEEK";
+  case GRN_READ_ONLY_FILE_SYSTEM:
+    return "GRN_READ_ONLY_FILE_SYSTEM";
+  case GRN_TOO_MANY_LINKS:
+    return "GRN_TOO_MANY_LINKS";
+  case GRN_BROKEN_PIPE:
+    return "GRN_BROKEN_PIPE";
+  case GRN_DOMAIN_ERROR:
+    return "GRN_DOMAIN_ERROR";
+  case GRN_RESULT_TOO_LARGE:
+    return "GRN_RESULT_TOO_LARGE";
+  case GRN_RESOURCE_DEADLOCK_AVOIDED:
+    return "GRN_RESOURCE_DEADLOCK_AVOIDED";
+  case GRN_NO_MEMORY_AVAILABLE:
+    return "GRN_NO_MEMORY_AVAILABLE";
+  case GRN_FILENAME_TOO_LONG:
+    return "GRN_FILENAME_TOO_LONG";
+  case GRN_NO_LOCKS_AVAILABLE:
+    return "GRN_NO_LOCKS_AVAILABLE";
+  case GRN_FUNCTION_NOT_IMPLEMENTED:
+    return "GRN_FUNCTION_NOT_IMPLEMENTED";
+  case GRN_DIRECTORY_NOT_EMPTY:
+    return "GRN_DIRECTORY_NOT_EMPTY";
+  case GRN_ILLEGAL_BYTE_SEQUENCE:
+    return "GRN_ILLEGAL_BYTE_SEQUENCE";
+  case GRN_SOCKET_NOT_INITIALISED:
+    return "GRN_SOCKET_NOT_INITIALISED";
+  case GRN_OPERATION_WOULD_BLOCK:
+    return "GRN_OPERATION_WOULD_BLOCK";
+  case GRN_ADDRESS_IS_NOT_AVAILABLE:
+    return "GRN_ADDRESS_IS_NOT_AVAILABLE";
+  case GRN_NETWORK_IS_DOWN:
+    return "GRN_NETWORK_IS_DOWN";
+  case GRN_NO_BUFFER:
+    return "GRN_NO_BUFFER";
+  case GRN_SOCKET_IS_ALREADY_CONNECTED:
+    return "GRN_SOCKET_IS_ALREADY_CONNECTED";
+  case GRN_SOCKET_IS_NOT_CONNECTED:
+    return "GRN_SOCKET_IS_NOT_CONNECTED";
+  case GRN_SOCKET_IS_ALREADY_SHUTDOWNED:
+    return "GRN_SOCKET_IS_ALREADY_SHUTDOWNED";
+  case GRN_OPERATION_TIMEOUT:
+    return "GRN_OPERATION_TIMEOUT";
+  case GRN_CONNECTION_REFUSED:
+    return "GRN_CONNECTION_REFUSED";
+  case GRN_RANGE_ERROR:
+    return "GRN_RANGE_ERROR";
+  case GRN_TOKENIZER_ERROR:
+    return "GRN_TOKENIZER_ERROR";
+  case GRN_FILE_CORRUPT:
+    return "GRN_FILE_CORRUPT";
+  case GRN_INVALID_FORMAT:
+    return "GRN_INVALID_FORMAT";
+  case GRN_OBJECT_CORRUPT:
+    return "GRN_OBJECT_CORRUPT";
+  case GRN_TOO_MANY_SYMBOLIC_LINKS:
+    return "GRN_TOO_MANY_SYMBOLIC_LINKS";
+  case GRN_NOT_SOCKET:
+    return "GRN_NOT_SOCKET";
+  case GRN_OPERATION_NOT_SUPPORTED:
+    return "GRN_OPERATION_NOT_SUPPORTED";
+  case GRN_ADDRESS_IS_IN_USE:
+    return "GRN_ADDRESS_IS_IN_USE";
+  case GRN_ZLIB_ERROR:
+    return "GRN_ZLIB_ERROR";
+  case GRN_LZO_ERROR:
+    return "GRN_LZO_ERROR";
   default:
-    return "sen_unknown_status";
+    return "GRN_UNKNOWN_STATUS";
   }
 }
 
 static gchar *base_dir = NULL;
 const gchar *
-sen_test_get_base_dir(void)
+grn_test_get_base_dir(void)
 {
   const gchar *dir;
 
@@ -74,22 +180,22 @@ sen_test_get_base_dir(void)
   return base_dir;
 }
 
-typedef struct _sen_log
+typedef struct _grn_log
 {
   gint level;
   gchar *time;
   gchar *title;
   gchar *message;
   gchar *location;
-} sen_log;
+} grn_log;
 
-static sen_log *
-sen_log_new(gint level, const gchar *time, const gchar *title,
+static grn_log *
+grn_log_new(gint level, const gchar *time, const gchar *title,
             const gchar *message, const gchar *location)
 {
-  sen_log *log;
+  grn_log *log;
 
-  log = g_new0(sen_log, 1);
+  log = g_new0(grn_log, 1);
   log->level = level;
   log->time = g_strdup(time);
   log->title = g_strdup(title);
@@ -100,7 +206,7 @@ sen_log_new(gint level, const gchar *time, const gchar *title,
 }
 
 static void
-sen_log_free(sen_log *log)
+grn_log_free(grn_log *log)
 {
   if (!log) {
     return;
@@ -114,19 +220,19 @@ sen_log_free(sen_log *log)
   g_free(log);
 }
 
-typedef struct _sen_logger_context
+typedef struct _grn_logger_context
 {
-  sen_logger_info *logger;
+  grn_logger_info *logger;
   GList *logs;
   GList *messages;
-} sen_logger_context;
+} grn_logger_context;
 
-static sen_logger_context *
-sen_logger_context_new(sen_logger_info *logger)
+static grn_logger_context *
+grn_logger_context_new(grn_logger_info *logger)
 {
-  sen_logger_context *context;
+  grn_logger_context *context;
 
-  context = g_new0(sen_logger_context, 1);
+  context = g_new0(grn_logger_context, 1);
   context->logger = logger;
   context->logs = NULL;
   context->messages = NULL;
@@ -135,7 +241,7 @@ sen_logger_context_new(sen_logger_info *logger)
 }
 
 static void
-sen_logger_context_clear_messages(sen_logger_context *context)
+grn_logger_context_clear_messages(grn_logger_context *context)
 {
   g_list_foreach(context->messages, (GFunc)g_free, NULL);
   g_list_free(context->messages);
@@ -143,96 +249,96 @@ sen_logger_context_clear_messages(sen_logger_context *context)
 }
 
 static void
-sen_logger_context_free(sen_logger_context *context)
+grn_logger_context_free(grn_logger_context *context)
 {
   if (!context) {
     return;
   }
 
-  g_list_foreach(context->logs, (GFunc)sen_log_free, NULL);
+  g_list_foreach(context->logs, (GFunc)grn_log_free, NULL);
   g_list_free(context->logs);
 
-  sen_logger_context_clear_messages(context);
+  grn_logger_context_clear_messages(context);
 
   g_free(context);
 }
 
 static void
-sen_collect_logger_log_func(int level, const char *time, const char *title,
+grn_collect_logger_log_func(int level, const char *time, const char *title,
                             const char *message, const char *location,
                             void *func_arg)
 {
-  sen_logger_context *context = func_arg;
-  sen_log *log;
+  grn_logger_context *context = func_arg;
+  grn_log *log;
 
-  log = sen_log_new(level, time, title, message, location);
+  log = grn_log_new(level, time, title, message, location);
   context->logs = g_list_prepend(context->logs, log);
   context->messages = g_list_prepend(context->messages, g_strdup(message));
 }
 
-sen_logger_info *
-sen_collect_logger_new(void)
+grn_logger_info *
+grn_collect_logger_new(void)
 {
-  sen_logger_info *logger;
+  grn_logger_info *logger;
 
-  logger = g_new(sen_logger_info, 1);
-  logger->max_level = sen_log_dump;
-  logger->flags = SEN_LOG_TIME | SEN_LOG_MESSAGE | SEN_LOG_LOCATION;
-  logger->func = sen_collect_logger_log_func;
-  logger->func_arg = sen_logger_context_new(logger);
+  logger = g_new(grn_logger_info, 1);
+  logger->max_level = GRN_LOG_DUMP;
+  logger->flags = GRN_LOG_TIME | GRN_LOG_MESSAGE | GRN_LOG_LOCATION;
+  logger->func = grn_collect_logger_log_func;
+  logger->func_arg = grn_logger_context_new(logger);
 
   return logger;
 }
 
 void
-sen_collect_logger_clear_messages(sen_logger_info *logger)
+grn_collect_logger_clear_messages(grn_logger_info *logger)
 {
-  sen_logger_context *context = logger->func_arg;
+  grn_logger_context *context = logger->func_arg;
 
-  sen_logger_context_clear_messages(context);
+  grn_logger_context_clear_messages(context);
 }
 
 const GList *
-sen_collect_logger_get_messages(sen_logger_info *logger)
+grn_collect_logger_get_messages(grn_logger_info *logger)
 {
-  sen_logger_context *context = logger->func_arg;
+  grn_logger_context *context = logger->func_arg;
 
   return context->messages;
 }
 
 void
-sen_collect_logger_free(sen_logger_info *logger)
+grn_collect_logger_free(grn_logger_info *logger)
 {
   if (!logger) {
     return;
   }
 
-  sen_logger_context_free(logger->func_arg);
+  grn_logger_context_free(logger->func_arg);
   g_free(logger);
 }
 
 
-sen_logger_info *
-setup_sen_logger(void)
+grn_logger_info *
+setup_grn_logger(void)
 {
-  sen_logger_info *logger;
+  grn_logger_info *logger;
 
-  logger = sen_collect_logger_new();
-  sen_logger_info_set(logger);
+  logger = grn_collect_logger_new();
+  grn_logger_info_set(NULL, logger);
   return logger;
 }
 
 void
-teardown_sen_logger(sen_logger_info *logger)
+teardown_grn_logger(grn_logger_info *logger)
 {
-  sen_logger_info_set(NULL);
+  grn_logger_info_set(NULL, NULL);
   if (logger) {
-    sen_collect_logger_free(logger);
+    grn_collect_logger_free(logger);
   }
 }
 
 GString *
-sen_long_path_new(const gchar *base_path, gssize max_size)
+grn_long_path_new(const gchar *base_path, gssize max_size)
 {
   GString *long_path;
 
@@ -246,79 +352,79 @@ sen_long_path_new(const gchar *base_path, gssize max_size)
 }
 
 GList *
-sen_test_pat_cursor_get_keys(sen_ctx *context, sen_table_cursor *cursor)
+grn_test_pat_cursor_get_keys(grn_ctx *context, grn_table_cursor *cursor)
 {
   GList *keys = NULL;
-  sen_id id;
+  grn_id id;
 
-  id = sen_table_cursor_next(context, cursor);
-  while (id != SEN_ID_NIL) {
+  id = grn_table_cursor_next(context, cursor);
+  while (id != GRN_ID_NIL) {
     void *key;
     GString *null_terminated_key;
     int size;
 
-    size = sen_table_cursor_get_key(context, cursor, &key);
+    size = grn_table_cursor_get_key(context, cursor, &key);
     null_terminated_key = g_string_new_len(key, size);
     keys = g_list_append(keys, g_string_free(null_terminated_key, FALSE));
-    id = sen_table_cursor_next(context, cursor);
+    id = grn_table_cursor_next(context, cursor);
   }
 
   return keys;
 }
 
 GList *
-sen_test_pat_get_keys(sen_ctx *context, sen_obj *patricia_trie)
+grn_test_pat_get_keys(grn_ctx *context, grn_obj *patricia_trie)
 {
   GList *keys;
-  sen_table_cursor *cursor;
+  grn_table_cursor *cursor;
 
-  cursor = sen_table_cursor_open(context, patricia_trie,
-                                 NULL, 0, NULL, 0, SEN_CURSOR_ASCENDING);
-  keys = sen_test_pat_cursor_get_keys(context, cursor);
-  sen_table_cursor_close(context, cursor);
+  cursor = grn_table_cursor_open(context, patricia_trie,
+                                 NULL, 0, NULL, 0, GRN_CURSOR_ASCENDING);
+  keys = grn_test_pat_cursor_get_keys(context, cursor);
+  grn_table_cursor_close(context, cursor);
 
   return keys;
 }
 
 GList *
-sen_test_pat_cursor_get_pairs(sen_ctx *context, sen_table_cursor *cursor)
+grn_test_pat_cursor_get_pairs(grn_ctx *context, grn_table_cursor *cursor)
 {
-  sen_id id;
+  grn_id id;
   GList *pairs = NULL;
 
-  id = sen_table_cursor_next(context, cursor);
-  while (id != SEN_ID_NIL) {
+  id = grn_table_cursor_next(context, cursor);
+  while (id != GRN_ID_NIL) {
     int length;
     void *key, *value;
     GString *null_terminated_key, *null_terminated_value;
 
-    length = sen_table_cursor_get_key(context, cursor, &key);
+    length = grn_table_cursor_get_key(context, cursor, &key);
     null_terminated_key = g_string_new_len(key, length);
     pairs = g_list_append(pairs,
                           g_string_free(null_terminated_key, FALSE));
 
-    length = sen_table_cursor_get_value(context, cursor, &value);
+    length = grn_table_cursor_get_value(context, cursor, &value);
     null_terminated_value = g_string_new_len(value, length);
     pairs = g_list_append(pairs,
                           g_string_free(null_terminated_value, FALSE));
 
-    id = sen_table_cursor_next(context, cursor);
+    id = grn_table_cursor_next(context, cursor);
   }
 
   return pairs;
 }
 
 GHashTable *
-sen_test_pat_get_pairs(sen_ctx *context, sen_obj *patricia_trie)
+grn_test_pat_get_pairs(grn_ctx *context, grn_obj *patricia_trie)
 {
   GList *node, *ordered_pairs;
   GHashTable *pairs;
-  sen_table_cursor *cursor;
+  grn_table_cursor *cursor;
 
-  cursor = sen_table_cursor_open(context, patricia_trie,
-                                 NULL, 0, NULL, 0, SEN_CURSOR_ASCENDING);
-  ordered_pairs = sen_test_pat_cursor_get_pairs(context, cursor);
-  sen_table_cursor_close(context, cursor);
+  cursor = grn_table_cursor_open(context, patricia_trie,
+                                 NULL, 0, NULL, 0, GRN_CURSOR_ASCENDING);
+  ordered_pairs = grn_test_pat_cursor_get_pairs(context, cursor);
+  grn_table_cursor_close(context, cursor);
 
   pairs = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
   for (node = ordered_pairs; node; node = g_list_next(node)) {
