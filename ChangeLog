@@ -1,3 +1,8 @@
+2009-02-10  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_DB_DELIMIT): add.
+	* lib/db.c (GRN_OBJ_COLUMN_ARRAY): support.
+
 2009-02-09  Poe MORITA  <morita at razil.jp>
 
 	* lib/store.c (grn_ja_ref_raw): fixed a typo.

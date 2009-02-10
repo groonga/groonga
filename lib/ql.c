@@ -740,7 +740,28 @@ column_value(grn_ctx *ctx, grn_obj *column, grn_id obj,
   grn_obj *value;
   if (VOIDP(args) || (PAIRP(args) && VOIDP(CAR(args)))) {
     if ((value = grn_obj_get_value(ctx, column, obj, NULL))) {
-      res = obj2cell(ctx, value, res);
+      switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+      case GRN_OBJ_COLUMN_ARRAY :
+        {
+          grn_cell **rp = &res;
+          grn_id *v = (grn_id *) GRN_BULK_HEAD(value);
+          uint32_t s = GRN_BULK_VSIZE(value) / sizeof(grn_id);
+          *rp = NIL;
+          while (s--) {
+            grn_cell *cell = grn_cell_new(ctx);
+            if (cell) {
+              obj_obj_bind(cell, column->header.domain, *v);
+              if ((*rp = CONS(cell, NIL))) {
+                rp = &CDR(*rp);
+              }
+            }
+          }
+        }
+        break;
+      default :
+        res = obj2cell(ctx, value, res);
+        break;
+      }
       grn_obj_close(ctx, value);
     } else {
       res = F;
@@ -792,7 +813,7 @@ static grn_cell *
 rec_obj_new(grn_ctx *ctx, grn_obj *domain, unsigned value_size)
 {
   return table_create(ctx, NULL, 0, GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                      domain, value_size, GRN_ENC_NONE, GRN_DB_BIGRAM);
+                      domain, value_size, GRN_ENC_NONE, GRN_DB_DELIMIT);
 }
 
 typedef struct {
@@ -1389,7 +1410,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           POP(res, args);
           if (!RECORDSP(res)) {
             res = table_create(ctx, NULL, 0, GRN_OBJ_TABLE_NO_KEY,
-                               table, sizeof(grn_id), GRN_ENC_NONE, GRN_DB_BIGRAM);
+                               table, sizeof(grn_id), GRN_ENC_NONE, GRN_DB_DELIMIT);
           }
           if (ce) {
             grn_table_sort(ctx, table, limit, get_obj(ctx, res), ce->keys, ce->n_keys);
@@ -2028,7 +2049,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
   grn_encoding encoding = GRN_ENC_DEFAULT;
   grn_obj *domain = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
   grn_cell *car;
-  grn_id tokenizer = GRN_DB_BIGRAM;
+  grn_id tokenizer = GRN_DB_DELIMIT;
   char msg[STRBUF_SIZE];
   uint16_t msg_size;
   while (PAIRP(args)) {
