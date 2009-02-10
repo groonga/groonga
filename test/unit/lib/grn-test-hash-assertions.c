@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,49 +21,49 @@
 
 #include <hash.h>
 
-#include "sen-test-hash-assertions.h"
+#include "grn-test-hash-assertions.h"
 
 void
-sen_test_assert_create_hash_helper(sen_hash **hash, SenTestHashFactory *factory)
+grn_test_assert_create_hash_helper(grn_hash **hash, GrnTestHashFactory *factory)
 {
   GError *error = NULL;
-  sen_logger_info *logger;
+  grn_logger_info *logger;
 
-  logger = sen_test_hash_factory_get_logger(factory);
+  logger = grn_test_hash_factory_get_logger(factory);
   cut_assert_not_null(logger);
-  sen_collect_logger_clear_messages(logger);
-  *hash = sen_test_hash_factory_create(factory, &error);
+  grn_collect_logger_clear_messages(logger);
+  *hash = grn_test_hash_factory_create(factory, &error);
   gcut_assert_error(error);
   cut_assert_not_null(*hash);
-  gcut_assert_equal_list_string(NULL, sen_collect_logger_get_messages(logger));
+  gcut_assert_equal_list_string(NULL, grn_collect_logger_get_messages(logger));
 }
 
 void
-sen_test_assert_open_hash_helper(sen_hash **hash, SenTestHashFactory *factory)
+grn_test_assert_open_hash_helper(grn_hash **hash, GrnTestHashFactory *factory)
 {
   GError *error = NULL;
-  sen_logger_info *logger;
+  grn_logger_info *logger;
 
-  logger = sen_test_hash_factory_get_logger(factory);
+  logger = grn_test_hash_factory_get_logger(factory);
   cut_assert_not_null(logger);
-  sen_collect_logger_clear_messages(logger);
-  *hash = sen_test_hash_factory_open(factory, &error);
+  grn_collect_logger_clear_messages(logger);
+  *hash = grn_test_hash_factory_open(factory, &error);
   gcut_assert_error(error);
   cut_assert_not_null(*hash);
-  gcut_assert_equal_list_string(NULL, sen_collect_logger_get_messages(logger));
+  gcut_assert_equal_list_string(NULL, grn_collect_logger_get_messages(logger));
 }
 
 void
-sen_test_assert_fail_open_hash_helper(sen_hash **hash,
-                                      SenTestHashFactory *factory)
+grn_test_assert_fail_open_hash_helper(grn_hash **hash,
+                                      GrnTestHashFactory *factory)
 {
   GError *expected_error = NULL;
   GError *actual_error = NULL;
 
-  *hash = sen_test_hash_factory_open(factory, &actual_error);
-  expected_error = g_error_new(SEN_TEST_HASH_FACTORY_ERROR,
-                               SEN_TEST_HASH_FACTORY_ERROR_NULL,
-                               "failed to open sen_hash");
+  *hash = grn_test_hash_factory_open(factory, &actual_error);
+  expected_error = g_error_new(GRN_TEST_HASH_FACTORY_ERROR,
+                               GRN_TEST_HASH_FACTORY_ERROR_NULL,
+                               "failed to open grn_hash");
   gcut_take_error(expected_error);
   gcut_take_error(actual_error);
   gcut_assert_equal_error(expected_error, actual_error);

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,33 +17,33 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef __SEN_TEST_HASH_ASSERTIONS_H__
-#define __SEN_TEST_HASH_ASSERTIONS_H__
+#ifndef __GRN_TEST_HASH_ASSERTIONS_H__
+#define __GRN_TEST_HASH_ASSERTIONS_H__
 
-#include "sen-assertions.h"
-#include "sen-test-hash-factory.h"
+#include "grn-assertions.h"
+#include "grn-test-hash-factory.h"
 
-#define sen_test_assert_create_hash(hash, factory)      \
+#define grn_test_assert_create_hash(hash, factory)      \
   cut_trace_with_info_expression(                       \
-    sen_test_assert_create_hash_helper(hash, factory),  \
-    sen_test_assert_create_hash(hash, factory))
+    grn_test_assert_create_hash_helper(hash, factory),  \
+    grn_test_assert_create_hash(hash, factory))
 
-#define sen_test_assert_open_hash(hash, factory)        \
+#define grn_test_assert_open_hash(hash, factory)        \
   cut_trace_with_info_expression(                       \
-    sen_test_assert_open_hash_helper(hash, factory),    \
-    sen_test_assert_open_hash(hash, factory))
+    grn_test_assert_open_hash_helper(hash, factory),    \
+    grn_test_assert_open_hash(hash, factory))
 
-#define sen_test_assert_fail_open_hash(hash, factory)           \
+#define grn_test_assert_fail_open_hash(hash, factory)           \
   cut_trace_with_info_expression(                               \
-    sen_test_assert_fail_open_hash_helper(hash, factory),       \
-    sen_test_assert_fail_open_hash(hash, factory))
+    grn_test_assert_fail_open_hash_helper(hash, factory),       \
+    grn_test_assert_fail_open_hash(hash, factory))
 
 
-void     sen_test_assert_create_hash_helper    (sen_hash           **hash,
-                                                SenTestHashFactory  *factory);
-void     sen_test_assert_open_hash_helper      (sen_hash           **hash,
-                                                SenTestHashFactory  *factory);
-void     sen_test_assert_fail_open_hash_helper (sen_hash           **hash,
-                                                SenTestHashFactory  *factory);
+void     grn_test_assert_create_hash_helper    (grn_hash           **hash,
+                                                GrnTestHashFactory  *factory);
+void     grn_test_assert_open_hash_helper      (grn_hash           **hash,
+                                                GrnTestHashFactory  *factory);
+void     grn_test_assert_fail_open_hash_helper (grn_hash           **hash,
+                                                GrnTestHashFactory  *factory);
 
 #endif
