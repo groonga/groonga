@@ -59,7 +59,21 @@ AM_PROG_LIBTOOL
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  lib/Makefile
-                 examples/Makefile])
+                 examples/Makefile
+                 test/Makefile
+		 test/unit/Makefile
+		 test/unit/lib/Makefile
+		 test/unit/fixtures/Makefile
+		 test/unit/fixtures/inverted-index/Makefile
+		 test/unit/fixtures/stress/Makefile
+		 test/unit/fixtures/performance/Makefile
+		 test/unit/util/Makefile
+		 test/unit/core/Makefile
+		 test/ql/Makefile
+		 test/benchmark/Makefile
+		 test/benchmark/lib/Makefile
+                ])
+
 AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/param.h sys/types.h pthread.h sys/resource.h)
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h)
@@ -68,22 +82,6 @@ AC_SYS_LARGEFILE
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(off_t)
-
-#                 test/Makefile
-#                 test/unit/Makefile
-#                 test/unit/lib/Makefile
-#                 test/unit/fixtures/Makefile
-#                 test/unit/fixtures/inverted-index/Makefile
-#                 test/unit/fixtures/stress/Makefile
-#                 test/unit/fixtures/performance/Makefile
-#                 test/unit/util/Makefile
-#                 test/unit/core/Makefile
-#                 test/ql/Makefile
-#                 test/benchmark/Makefile
-#                 test/benchmark/lib/Makefile
-#                 sample/Makefile
-#                 sample/ql/Makefile
-#                 bindings/mysql/myigroonga/Makefile
 
 AC_MSG_CHECKING([for fpclassify])
 AC_COMPILE_IFELSE([[
