@@ -23,8 +23,8 @@ extern "C" {
 
 typedef unsigned grn_id;
 
-#define GRN_ID_NIL                     (0x00L)
-#define GRN_ID_MAX                     (0x3fffffffL)
+#define GRN_ID_NIL                     (0x00)
+#define GRN_ID_MAX                     (0x3fffffff)
 
 typedef enum {
   GRN_SUCCESS = 0,
@@ -120,8 +120,8 @@ typedef enum {
 
 typedef struct _grn_ctx grn_ctx;
 
-#define GRN_CTX_MSGSIZE                (0x80L)
-#define GRN_CTX_FIN                    (0xffL)
+#define GRN_CTX_MSGSIZE                (0x80)
+#define GRN_CTX_FIN                    (0xff)
 
 struct _grn_ctx {
   grn_rc rc;
@@ -162,10 +162,10 @@ struct _grn_ctx {
  * ctxを初期化します。
  **/
 
-#define GRN_CTX_NO_DB                  (0x00L)
-#define GRN_CTX_USE_DB                 (0x01L)
-#define GRN_CTX_USE_QL                 (0x03L)
-#define GRN_CTX_BATCH_MODE             (0x04L)
+#define GRN_CTX_NO_DB                  (0x00)
+#define GRN_CTX_USE_DB                 (0x01)
+#define GRN_CTX_USE_QL                 (0x03)
+#define GRN_CTX_BATCH_MODE             (0x04)
 
 grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
 
@@ -181,62 +181,62 @@ grn_rc grn_ctx_fin(grn_ctx *ctx);
 
 typedef unsigned int grn_obj_flags;
 
-#define GRN_OBJ_TABLE_TYPE_MASK        (0x07L)
-#define GRN_OBJ_TABLE_HASH_KEY         (0x00L)
-#define GRN_OBJ_TABLE_PAT_KEY          (0x01L)
-#define GRN_OBJ_TABLE_NO_KEY           (0x03L)
-#define GRN_OBJ_TABLE_ALIAS            (0x04L)
+#define GRN_OBJ_TABLE_TYPE_MASK        (0x07)
+#define GRN_OBJ_TABLE_HASH_KEY         (0x00)
+#define GRN_OBJ_TABLE_PAT_KEY          (0x01)
+#define GRN_OBJ_TABLE_NO_KEY           (0x03)
+#define GRN_OBJ_TABLE_ALIAS            (0x04)
 
-#define GRN_OBJ_KEY_MASK               (0x07L<<3)
-#define GRN_OBJ_KEY_UINT               (0x00L<<3)
-#define GRN_OBJ_KEY_INT                (0x01L<<3)
-#define GRN_OBJ_KEY_FLOAT              (0x02L<<3)
+#define GRN_OBJ_KEY_MASK               (0x07<<3)
+#define GRN_OBJ_KEY_UINT               (0x00<<3)
+#define GRN_OBJ_KEY_INT                (0x01<<3)
+#define GRN_OBJ_KEY_FLOAT              (0x02<<3)
 
-#define GRN_OBJ_KEY_WITH_SIS           (0x01L<<6)
-#define GRN_OBJ_KEY_NORMALIZE          (0x01L<<7)
+#define GRN_OBJ_KEY_WITH_SIS           (0x01<<6)
+#define GRN_OBJ_KEY_NORMALIZE          (0x01<<7)
 
-#define GRN_OBJ_COLUMN_TYPE_MASK       (0x07L)
-#define GRN_OBJ_COLUMN_SCALAR          (0x00L)
-#define GRN_OBJ_COLUMN_ARRAY           (0x01L)
-#define GRN_OBJ_COLUMN_VERSES          (0x02L)
-#define GRN_OBJ_COLUMN_POSTINGS        (0x03L)
-#define GRN_OBJ_COLUMN_INDEX           (0x04L)
+#define GRN_OBJ_COLUMN_TYPE_MASK       (0x07)
+#define GRN_OBJ_COLUMN_SCALAR          (0x00)
+#define GRN_OBJ_COLUMN_ARRAY           (0x01)
+#define GRN_OBJ_COLUMN_VERSES          (0x02)
+#define GRN_OBJ_COLUMN_POSTINGS        (0x03)
+#define GRN_OBJ_COLUMN_INDEX           (0x04)
 
-#define GRN_OBJ_COMPRESS_MASK          (0x07L<<4)
-#define GRN_OBJ_COMPRESS_NONE          (0x00L<<4)
-#define GRN_OBJ_COMPRESS_ZLIB          (0x01L<<4)
-#define GRN_OBJ_COMPRESS_LZO           (0x02L<<4)
+#define GRN_OBJ_COMPRESS_MASK          (0x07<<4)
+#define GRN_OBJ_COMPRESS_NONE          (0x00<<4)
+#define GRN_OBJ_COMPRESS_ZLIB          (0x01<<4)
+#define GRN_OBJ_COMPRESS_LZO           (0x02<<4)
 
-#define GRN_OBJ_WITH_SECTION           (0x00L<<7)
-#define GRN_OBJ_NO_SECTION             (0x01L<<7)
-#define GRN_OBJ_WITH_SCORE             (0x00L<<8)
-#define GRN_OBJ_NO_SCORE               (0x01L<<8)
-#define GRN_OBJ_WITH_POSITION          (0x00L<<9)
-#define GRN_OBJ_NO_POSITION            (0x01L<<9)
+#define GRN_OBJ_WITH_SECTION           (0x00<<7)
+#define GRN_OBJ_NO_SECTION             (0x01<<7)
+#define GRN_OBJ_WITH_SCORE             (0x00<<8)
+#define GRN_OBJ_NO_SCORE               (0x01<<8)
+#define GRN_OBJ_WITH_POSITION          (0x00<<9)
+#define GRN_OBJ_NO_POSITION            (0x01<<9)
 
-#define GRN_OBJ_UNIT_MASK              (0x0fL<<8)
-#define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00L<<8)
-#define GRN_OBJ_UNIT_DOCUMENT_SECTION  (0x01L<<8)
-#define GRN_OBJ_UNIT_DOCUMENT_POSITION (0x02L<<8)
-#define GRN_OBJ_UNIT_SECTION_NONE      (0x03L<<8)
-#define GRN_OBJ_UNIT_SECTION_POSITION  (0x04L<<8)
-#define GRN_OBJ_UNIT_POSITION_NONE     (0x05L<<8)
-#define GRN_OBJ_UNIT_USERDEF_DOCUMENT  (0x06L<<8)
-#define GRN_OBJ_UNIT_USERDEF_SECTION   (0x07L<<8)
-#define GRN_OBJ_UNIT_USERDEF_POSITION  (0x08L<<8)
+#define GRN_OBJ_UNIT_MASK              (0x0f<<8)
+#define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00<<8)
+#define GRN_OBJ_UNIT_DOCUMENT_SECTION  (0x01<<8)
+#define GRN_OBJ_UNIT_DOCUMENT_POSITION (0x02<<8)
+#define GRN_OBJ_UNIT_SECTION_NONE      (0x03<<8)
+#define GRN_OBJ_UNIT_SECTION_POSITION  (0x04<<8)
+#define GRN_OBJ_UNIT_POSITION_NONE     (0x05<<8)
+#define GRN_OBJ_UNIT_USERDEF_DOCUMENT  (0x06<<8)
+#define GRN_OBJ_UNIT_USERDEF_SECTION   (0x07<<8)
+#define GRN_OBJ_UNIT_USERDEF_POSITION  (0x08<<8)
 
-#define GRN_OBJ_NO_SUBREC              (0x00L<<13)
-#define GRN_OBJ_WITH_SUBREC            (0x01L<<13)
+#define GRN_OBJ_NO_SUBREC              (0x00<<13)
+#define GRN_OBJ_WITH_SUBREC            (0x01<<13)
 
-#define GRN_OBJ_COLUMN_INDEX_SCALAR    (0x01L<<14)
+#define GRN_OBJ_COLUMN_INDEX_SCALAR    (0x01<<14)
 
-#define GRN_OBJ_KEY_VAR_SIZE           (0x01L<<14)
+#define GRN_OBJ_KEY_VAR_SIZE           (0x01<<14)
 
-#define GRN_OBJ_DO_DEEP_COPY           (0x00L<<14)
-#define GRN_OBJ_DO_SHALLOW_COPY        (0x01L<<14)
+#define GRN_OBJ_DO_DEEP_COPY           (0x00<<14)
+#define GRN_OBJ_DO_SHALLOW_COPY        (0x01<<14)
 
-#define GRN_OBJ_TEMPORARY              (0x00L<<15)
-#define GRN_OBJ_PERSISTENT             (0x01L<<15)
+#define GRN_OBJ_TEMPORARY              (0x00<<15)
+#define GRN_OBJ_PERSISTENT             (0x01<<15)
 
 /* obj types */
 
@@ -442,7 +442,7 @@ grn_obj *grn_proc_create(grn_ctx *ctx,
  * table操作のための関数
  */
 
-#define GRN_TABLE_MAX_KEY_SIZE         (0x1000L)
+#define GRN_TABLE_MAX_KEY_SIZE         (0x1000)
 
 /**
  * grn_table_create:
@@ -480,17 +480,17 @@ grn_obj *grn_table_open(grn_ctx *ctx,
 
 typedef unsigned char grn_search_flags;
 
-#define GRN_SEARCH_EXACT               (0x00L)
-#define GRN_SEARCH_LCP                 (0x01L)
-#define GRN_SEARCH_SUFFIX              (0x02L)
-#define GRN_SEARCH_PREFIX              (0x03L)
-#define GRN_SEARCH_PARTIAL             (0x04L)
-#define GRN_SEARCH_NEAR                (0x05L)
-#define GRN_SEARCH_NEAR2               (0x06L)
-#define GRN_SEARCH_SIMILAR             (0x07L)
-#define GRN_SEARCH_TERM_EXTRACT        (0x08L)
-#define GRN_TABLE_ADD                  (0x01L<<6)
-#define GRN_TABLE_ADDED                (0x01L<<7)
+#define GRN_SEARCH_EXACT               (0x00)
+#define GRN_SEARCH_LCP                 (0x01)
+#define GRN_SEARCH_SUFFIX              (0x02)
+#define GRN_SEARCH_PREFIX              (0x03)
+#define GRN_SEARCH_PARTIAL             (0x04)
+#define GRN_SEARCH_NEAR                (0x05)
+#define GRN_SEARCH_NEAR2               (0x06)
+#define GRN_SEARCH_SIMILAR             (0x07)
+#define GRN_SEARCH_TERM_EXTRACT        (0x08)
+#define GRN_TABLE_ADD                  (0x01<<6)
+#define GRN_TABLE_ADDED                (0x01<<7)
 
 /**
  * grn_table_lookup:
@@ -567,12 +567,12 @@ grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 
 typedef grn_obj grn_table_cursor;
 
-#define GRN_CURSOR_DESCENDING          (0x00L<<0)
-#define GRN_CURSOR_ASCENDING           (0x01L<<0)
-#define GRN_CURSOR_GE                  (0x00L<<1)
-#define GRN_CURSOR_GT                  (0x01L<<1)
-#define GRN_CURSOR_LE                  (0x00L<<2)
-#define GRN_CURSOR_LT                  (0x01L<<2)
+#define GRN_CURSOR_DESCENDING          (0x00<<0)
+#define GRN_CURSOR_ASCENDING           (0x01<<0)
+#define GRN_CURSOR_GE                  (0x00<<1)
+#define GRN_CURSOR_GT                  (0x01<<1)
+#define GRN_CURSOR_LE                  (0x00<<2)
+#define GRN_CURSOR_LT                  (0x01<<2)
 
 /**
  * grn_table_cursor_open:
@@ -689,8 +689,8 @@ grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 typedef struct _grn_table_sort_key grn_table_sort_key;
 typedef unsigned char grn_table_sort_flags;
 
-#define GRN_TABLE_SORT_DESC            (0x00L<<0)
-#define GRN_TABLE_SORT_ASC             (0x01L<<0)
+#define GRN_TABLE_SORT_DESC            (0x00<<0)
+#define GRN_TABLE_SORT_ASC             (0x01<<0)
 
 struct _grn_table_sort_key {
   grn_obj *key;
@@ -715,11 +715,11 @@ int grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
 typedef struct _grn_table_group_result grn_table_group_result;
 typedef unsigned int grn_table_group_flags;
 
-#define GRN_TABLE_GROUP_CALC_COUNT     (0x01L<<3)
-#define GRN_TABLE_GROUP_CALC_MAX       (0x01L<<4)
-#define GRN_TABLE_GROUP_CALC_MIN       (0x01L<<5)
-#define GRN_TABLE_GROUP_CALC_SUM       (0x01L<<6)
-#define GRN_TABLE_GROUP_CALC_AVG       (0x01L<<7)
+#define GRN_TABLE_GROUP_CALC_COUNT     (0x01<<3)
+#define GRN_TABLE_GROUP_CALC_MAX       (0x01<<4)
+#define GRN_TABLE_GROUP_CALC_MIN       (0x01<<5)
+#define GRN_TABLE_GROUP_CALC_SUM       (0x01<<6)
+#define GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
 
 typedef enum {
   GRN_SEL_OR = 0,
@@ -847,7 +847,7 @@ grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
  * db, table, columnの全てまたは幾つかで共通に使用できる関数
  */
 
-#define GRN_PROC_MAX_ARGS              (0x100L)
+#define GRN_PROC_MAX_ARGS              (0x100)
 
 typedef enum {
   GRN_INFO_ENCODING = 0,
@@ -956,16 +956,16 @@ grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value
  * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 
-#define GRN_OBJ_SET_MASK               (0x07L)
-#define GRN_OBJ_SET                    (0x01L)
-#define GRN_OBJ_INCR                   (0x02L)
-#define GRN_OBJ_DECR                   (0x03L)
-#define GRN_OBJ_APPEND                 (0x04L)
-#define GRN_OBJ_PREPEND                (0x05L)
-#define GRN_OBJ_GET                    (0x01L<<4)
-#define GRN_OBJ_COMPARE                (0x01L<<5)
-#define GRN_OBJ_LOCK                   (0x01L<<6)
-#define GRN_OBJ_UNLOCK                 (0x01L<<7)
+#define GRN_OBJ_SET_MASK               (0x07)
+#define GRN_OBJ_SET                    (0x01)
+#define GRN_OBJ_INCR                   (0x02)
+#define GRN_OBJ_DECR                   (0x03)
+#define GRN_OBJ_APPEND                 (0x04)
+#define GRN_OBJ_PREPEND                (0x05)
+#define GRN_OBJ_GET                    (0x01<<4)
+#define GRN_OBJ_COMPARE                (0x01<<5)
+#define GRN_OBJ_LOCK                   (0x01<<6)
+#define GRN_OBJ_UNLOCK                 (0x01<<7)
 
 grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
 
@@ -1219,9 +1219,9 @@ grn_snip *grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
                          const char **closetags, unsigned int *closetag_lens,
                          grn_snip_mapping *mapping);
 
-#define GRN_SNIP_NORMALIZE             (0x01L<<0)
-#define GRN_SNIP_COPY_TAG              (0x01L<<1)
-#define GRN_SNIP_SKIP_LEADING_SPACES   (0x01L<<2)
+#define GRN_SNIP_NORMALIZE             (0x01<<0)
+#define GRN_SNIP_COPY_TAG              (0x01<<1)
+#define GRN_SNIP_SKIP_LEADING_SPACES   (0x01<<2)
 #define GRN_QUERY_SCAN_NORMALIZE       GRN_SNIP_NORMALIZE
 
 grn_snip *grn_snip_open(grn_ctx *ctx, grn_encoding encoding, int flags, unsigned int width,
@@ -1242,10 +1242,10 @@ grn_rc grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int inde
 
 /* log */
 
-#define GRN_LOG_TIME                   (0x01L<<0)
-#define GRN_LOG_TITLE                  (0x01L<<1)
-#define GRN_LOG_MESSAGE                (0x01L<<2)
-#define GRN_LOG_LOCATION               (0x01L<<3)
+#define GRN_LOG_TIME                   (0x01<<0)
+#define GRN_LOG_TITLE                  (0x01<<1)
+#define GRN_LOG_MESSAGE                (0x01<<2)
+#define GRN_LOG_LOCATION               (0x01<<3)
 
 typedef struct _grn_logger_info grn_logger_info;
 
@@ -1336,9 +1336,9 @@ typedef struct {
   grn_encoding encoding;
 } grn_str;
 
-#define GRN_STR_REMOVEBLANK            (0x01L<<0)
-#define GRN_STR_WITH_CTYPES            (0x01L<<1)
-#define GRN_STR_WITH_CHECKS            (0x01L<<2)
+#define GRN_STR_REMOVEBLANK            (0x01<<0)
+#define GRN_STR_WITH_CTYPES            (0x01<<1)
+#define GRN_STR_WITH_CHECKS            (0x01<<2)
 #define GRN_STR_NORMALIZE              GRN_OBJ_KEY_NORMALIZE
 
 grn_str *grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
@@ -1349,11 +1349,11 @@ int grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding enc
 
 /* ql */
 
-#define GRN_QL_MORE                    (0x01L<<0)
-#define GRN_QL_TAIL                    (0x01L<<1)
-#define GRN_QL_HEAD                    (0x01L<<2)
-#define GRN_QL_QUIET                   (0x01L<<3)
-#define GRN_QL_QUIT                    (0x01L<<4)
+#define GRN_QL_MORE                    (0x01<<0)
+#define GRN_QL_TAIL                    (0x01<<1)
+#define GRN_QL_HEAD                    (0x01<<2)
+#define GRN_QL_QUIET                   (0x01<<3)
+#define GRN_QL_QUIT                    (0x01<<4)
 #define GRN_QL_FIN                     GRN_CTX_FIN
 
 grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);
