@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,39 +17,39 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "sen-test-hash-factory.h"
+#include "grn-test-hash-factory.h"
 
-#define SEN_TEST_HASH_FACTORY_GET_PRIVATE(obj)                          \
-  (G_TYPE_INSTANCE_GET_PRIVATE((obj), SEN_TYPE_TEST_HASH_FACTORY,       \
-                               SenTestHashFactoryPrivate))
+#define GRN_TEST_HASH_FACTORY_GET_PRIVATE(obj)                          \
+  (G_TYPE_INSTANCE_GET_PRIVATE((obj), GRN_TYPE_TEST_HASH_FACTORY,       \
+                               GrnTestHashFactoryPrivate))
 
-typedef struct _SenTestHashFactoryPrivate	SenTestHashFactoryPrivate;
-struct _SenTestHashFactoryPrivate
+typedef struct _GrnTestHashFactoryPrivate	GrnTestHashFactoryPrivate;
+struct _GrnTestHashFactoryPrivate
 {
-  sen_ctx *context;
-  sen_hash *hash;
-  sen_hash_cursor *cursor;
-  SenTestContextFlags context_flags;
-  sen_logger_info *logger;
+  grn_ctx *context;
+  grn_hash *hash;
+  grn_hash_cursor *cursor;
+  GrnTestContextFlags context_flags;
+  grn_logger_info *logger;
   gchar *path;
   guint32 key_size;
   guint32 value_size;
-  SenTestHashFlags flags;
-  SenTestEncoding encoding;
+  GrnTestHashFlags flags;
+  GrnTestEncoding encoding;
   gchar *cursor_min;
   guint32 cursor_min_size;
   gchar *cursor_max;
   guint32 cursor_max_size;
-  SenTestCursorFlags cursor_flags;
+  GrnTestCursorFlags cursor_flags;
 };
 
 
-G_DEFINE_TYPE(SenTestHashFactory, sen_test_hash_factory, G_TYPE_OBJECT)
+G_DEFINE_TYPE(GrnTestHashFactory, grn_test_hash_factory, G_TYPE_OBJECT)
 
 static void dispose         (GObject               *object);
 
 static void
-sen_test_hash_factory_class_init(SenTestHashFactoryClass *klass)
+grn_test_hash_factory_class_init(GrnTestHashFactoryClass *klass)
 {
   GObjectClass *gobject_class;
 
@@ -57,58 +57,59 @@ sen_test_hash_factory_class_init(SenTestHashFactoryClass *klass)
 
   gobject_class->dispose = dispose;
 
-  g_type_class_add_private(gobject_class, sizeof(SenTestHashFactoryPrivate));
+  g_type_class_add_private(gobject_class, sizeof(GrnTestHashFactoryPrivate));
 }
 
 static void
-sen_test_hash_factory_init(SenTestHashFactory *factory)
+grn_test_hash_factory_init(GrnTestHashFactory *factory)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
 
   priv->context = NULL;
   priv->hash = NULL;
   priv->cursor = NULL;
-  priv->context_flags = SEN_TEST_CONTEXT_FLAG_USE_QL;
+  priv->context_flags = GRN_TEST_CONTEXT_FLAG_USE_QL;
   priv->logger = NULL;
   priv->path = NULL;
   priv->key_size = sizeof(guint32);
-  priv->value_size = SEN_TEST_HASH_FACTORY_DEFAULT_VALUE_SIZE;
-  priv->flags = SEN_TEST_HASH_FLAG_NONE;
-  priv->encoding = SEN_TEST_ENCODING_DEFAULT;
+  priv->value_size = GRN_TEST_HASH_FACTORY_DEFAULT_VALUE_SIZE;
+  priv->flags = GRN_TEST_HASH_FLAG_NONE;
+  priv->encoding = GRN_TEST_ENCODING_DEFAULT;
   priv->cursor_min = NULL;
   priv->cursor_min_size = 0;
   priv->cursor_max = NULL;
   priv->cursor_max_size = 0;
-  priv->cursor_flags = SEN_TEST_CURSOR_FLAG_NONE;
+  priv->cursor_flags = GRN_TEST_CURSOR_FLAG_NONE;
 }
 
 static void
-cursor_free(SenTestHashFactoryPrivate *priv)
+cursor_free(GrnTestHashFactoryPrivate *priv)
 {
   if (priv->cursor) {
-    sen_hash_cursor_close(priv->context, priv->cursor);
+    grn_hash_cursor_close(priv->context, priv->cursor);
     priv->cursor = NULL;
   }
 }
 
 static void
-hash_free(SenTestHashFactoryPrivate *priv)
+hash_free(GrnTestHashFactoryPrivate *priv)
 {
   if (priv->hash) {
     cursor_free(priv);
-    sen_hash_close(priv->context, priv->hash);
+    grn_hash_close(priv->context, priv->hash);
     priv->hash = NULL;
   }
 }
 
 static void
-context_free(SenTestHashFactoryPrivate *priv)
+context_free(GrnTestHashFactoryPrivate *priv)
 {
   if (priv->context) {
     hash_free(priv);
-    sen_ctx_close(priv->context);
+    grn_ctx_fin(priv->context);
+    g_free(priv->context);
     priv->context = NULL;
   }
 }
@@ -116,9 +117,9 @@ context_free(SenTestHashFactoryPrivate *priv)
 static void
 dispose(GObject *object)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(object);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(object);
 
   context_free(priv);
 
@@ -140,35 +141,37 @@ dispose(GObject *object)
     priv->cursor_max = NULL;
   }
 
-  G_OBJECT_CLASS(sen_test_hash_factory_parent_class)->dispose(object);
+  G_OBJECT_CLASS(grn_test_hash_factory_parent_class)->dispose(object);
 }
 
 GQuark
-sen_test_hash_factory_error_quark(void)
+grn_test_hash_factory_error_quark(void)
 {
-  return g_quark_from_static_string("sen-test-hash-factory-error-quark");
+  return g_quark_from_static_string("grn-test-hash-factory-error-quark");
 }
 
-SenTestHashFactory *
-sen_test_hash_factory_new(void)
+GrnTestHashFactory *
+grn_test_hash_factory_new(void)
 {
-  return g_object_new(SEN_TYPE_TEST_HASH_FACTORY, NULL);
+  return g_object_new(GRN_TYPE_TEST_HASH_FACTORY, NULL);
 }
 
 static gboolean
-sen_test_hash_factory_ensure_context(SenTestHashFactory *factory, GError **error)
+grn_test_hash_factory_ensure_context(GrnTestHashFactory *factory, GError **error)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
+  grn_rc result;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
   context_free(priv);
 
-  priv->context = sen_ctx_open(NULL, priv->context_flags);
-  if (!priv->context) {
+  priv->context = g_new0(grn_ctx, 1);
+  result = grn_ctx_init(priv->context, priv->context_flags, priv->encoding);
+  if (result != GRN_SUCCESS) {
     g_set_error(error,
-                SEN_TEST_HASH_FACTORY_ERROR,
-                SEN_TEST_HASH_FACTORY_ERROR_CONTEXT_NULL,
-                "failed to open sen_ctx"
+                GRN_TEST_HASH_FACTORY_ERROR,
+                GRN_TEST_HASH_FACTORY_ERROR_CONTEXT_NULL,
+                "failed to init grn_ctx"
                 /* FIXME: add error detail */);
     return FALSE;
   }
@@ -176,207 +179,207 @@ sen_test_hash_factory_ensure_context(SenTestHashFactory *factory, GError **error
   return TRUE;
 }
 
-sen_hash *
-sen_test_hash_factory_open(SenTestHashFactory *factory, GError **error)
+grn_hash *
+grn_test_hash_factory_open(GrnTestHashFactory *factory, GError **error)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  if (!sen_test_hash_factory_ensure_context(factory, error))
+  if (!grn_test_hash_factory_ensure_context(factory, error))
     return NULL;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
-  priv->hash = sen_hash_open(priv->context, priv->path);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv->hash = grn_hash_open(priv->context, priv->path);
   if (!priv->hash) {
     g_set_error(error,
-                SEN_TEST_HASH_FACTORY_ERROR,
-                SEN_TEST_HASH_FACTORY_ERROR_NULL,
-                "failed to open sen_hash"
+                GRN_TEST_HASH_FACTORY_ERROR,
+                GRN_TEST_HASH_FACTORY_ERROR_NULL,
+                "failed to open grn_hash"
                 /* FIXME: add error detail */);
   }
   return priv->hash;
 }
 
-sen_hash *
-sen_test_hash_factory_create(SenTestHashFactory *factory, GError **error)
+grn_hash *
+grn_test_hash_factory_create(GrnTestHashFactory *factory, GError **error)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  if (!sen_test_hash_factory_ensure_context(factory, error))
+  if (!grn_test_hash_factory_ensure_context(factory, error))
     return NULL;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
-  priv->hash = sen_hash_create(priv->context, priv->path, priv->key_size,
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv->hash = grn_hash_create(priv->context, priv->path, priv->key_size,
                                priv->value_size, priv->flags, priv->encoding);
   if (!priv->hash) {
     g_set_error(error,
-                SEN_TEST_HASH_FACTORY_ERROR,
-                SEN_TEST_HASH_FACTORY_ERROR_NULL,
-                "failed to create sen_hash"
+                GRN_TEST_HASH_FACTORY_ERROR,
+                GRN_TEST_HASH_FACTORY_ERROR_NULL,
+                "failed to create grn_hash"
                 /* FIXME: add error detail */);
   }
 
   return priv->hash;
 }
 
-sen_hash_cursor *
-sen_test_hash_factory_open_cursor(SenTestHashFactory *factory, GError **error)
+grn_hash_cursor *
+grn_test_hash_factory_open_cursor(GrnTestHashFactory *factory, GError **error)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
   if (!priv->hash) {
     g_set_error(error,
-                SEN_TEST_HASH_FACTORY_ERROR,
-                SEN_TEST_HASH_FACTORY_ERROR_NULL,
-                "sen_hash is neither opened nor created.");
+                GRN_TEST_HASH_FACTORY_ERROR,
+                GRN_TEST_HASH_FACTORY_ERROR_NULL,
+                "grn_hash is neither opened nor created.");
     return NULL;
   }
 
   cursor_free(priv);
-  priv->cursor = sen_hash_cursor_open(priv->context, priv->hash,
+  priv->cursor = grn_hash_cursor_open(priv->context, priv->hash,
                                       priv->cursor_min, priv->cursor_min_size,
                                       priv->cursor_max, priv->cursor_max_size,
                                       priv->cursor_flags);
   if (!priv->cursor) {
     g_set_error(error,
-                SEN_TEST_HASH_FACTORY_ERROR,
-                SEN_TEST_HASH_FACTORY_ERROR_CURSOR_NULL,
-                "failed to open sen_hash_cursor"
+                GRN_TEST_HASH_FACTORY_ERROR,
+                GRN_TEST_HASH_FACTORY_ERROR_CURSOR_NULL,
+                "failed to open grn_hash_cursor"
                 /* FIXME: add error detail */);
   }
 
   return priv->cursor;
 }
 
-sen_ctx *
-sen_test_hash_factory_get_context(SenTestHashFactory *factory)
+grn_ctx *
+grn_test_hash_factory_get_context(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->context;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->context;
 }
 
-SenTestContextFlags
-sen_test_hash_factory_get_context_flags(SenTestHashFactory *factory)
+GrnTestContextFlags
+grn_test_hash_factory_get_context_flags(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->context_flags;
-}
-
-void
-sen_test_hash_factory_set_context_flags(SenTestHashFactory *factory,
-                                        SenTestContextFlags flags)
-{
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->context_flags = flags;
-}
-
-sen_logger_info *
-sen_test_hash_factory_get_logger(SenTestHashFactory *factory)
-{
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->logger;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->context_flags;
 }
 
 void
-sen_test_hash_factory_set_logger(SenTestHashFactory *factory,
-                                 sen_logger_info *logger)
+grn_test_hash_factory_set_context_flags(GrnTestHashFactory *factory,
+                                        GrnTestContextFlags flags)
 {
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->logger = logger;
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->context_flags = flags;
+}
+
+grn_logger_info *
+grn_test_hash_factory_get_logger(GrnTestHashFactory *factory)
+{
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->logger;
+}
+
+void
+grn_test_hash_factory_set_logger(GrnTestHashFactory *factory,
+                                 grn_logger_info *logger)
+{
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->logger = logger;
 }
 
 const gchar *
-sen_test_hash_factory_get_path(SenTestHashFactory *factory)
+grn_test_hash_factory_get_path(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->path;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->path;
 }
 
 void
-sen_test_hash_factory_set_path(SenTestHashFactory *factory,
+grn_test_hash_factory_set_path(GrnTestHashFactory *factory,
                                const gchar *path)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
   if (priv->path)
     g_free(priv->path);
   priv->path = g_strdup(path);
 }
 
 guint32
-sen_test_hash_factory_get_key_size(SenTestHashFactory *factory)
+grn_test_hash_factory_get_key_size(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->key_size;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->key_size;
 }
 
 void
-sen_test_hash_factory_set_key_size(SenTestHashFactory *factory,
+grn_test_hash_factory_set_key_size(GrnTestHashFactory *factory,
                                    guint32 key_size)
 {
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->key_size = key_size;
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->key_size = key_size;
 }
 
 guint32
-sen_test_hash_factory_get_value_size(SenTestHashFactory *factory)
+grn_test_hash_factory_get_value_size(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->value_size;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->value_size;
 }
 
 void
-sen_test_hash_factory_set_value_size(SenTestHashFactory *factory,
+grn_test_hash_factory_set_value_size(GrnTestHashFactory *factory,
                                      guint32 value_size)
 {
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->value_size = value_size;
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->value_size = value_size;
 }
 
-SenTestHashFlags
-sen_test_hash_factory_get_flags(SenTestHashFactory *factory)
+GrnTestHashFlags
+grn_test_hash_factory_get_flags(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->flags;
-}
-
-void
-sen_test_hash_factory_set_flags(SenTestHashFactory *factory,
-                                SenTestHashFlags flags)
-{
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->flags = flags;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->flags;
 }
 
 void
-sen_test_hash_factory_add_flags(SenTestHashFactory *factory,
-                                SenTestHashFlags flags)
+grn_test_hash_factory_set_flags(GrnTestHashFactory *factory,
+                                GrnTestHashFlags flags)
 {
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->flags |= flags;
-}
-
-SenTestEncoding
-sen_test_hash_factory_get_encoding(SenTestHashFactory *factory)
-{
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->encoding;
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->flags = flags;
 }
 
 void
-sen_test_hash_factory_set_encoding(SenTestHashFactory *factory,
-                                   SenTestEncoding encoding)
+grn_test_hash_factory_add_flags(GrnTestHashFactory *factory,
+                                GrnTestHashFlags flags)
 {
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->encoding = encoding;
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->flags |= flags;
+}
+
+GrnTestEncoding
+grn_test_hash_factory_get_encoding(GrnTestHashFactory *factory)
+{
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->encoding;
+}
+
+void
+grn_test_hash_factory_set_encoding(GrnTestHashFactory *factory,
+                                   GrnTestEncoding encoding)
+{
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->encoding = encoding;
 }
 
 const gchar *
-sen_test_hash_factory_get_cursor_min(SenTestHashFactory *factory)
+grn_test_hash_factory_get_cursor_min(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_min;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_min;
 }
 
 guint32
-sen_test_hash_factory_get_cursor_min_size(SenTestHashFactory *factory)
+grn_test_hash_factory_get_cursor_min_size(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_min_size;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_min_size;
 }
 
 void
-sen_test_hash_factory_set_cursor_min(SenTestHashFactory *factory,
+grn_test_hash_factory_set_cursor_min(GrnTestHashFactory *factory,
                                      const gchar *min,
                                      guint32 size)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
   if (priv->cursor_min)
     g_free(priv->cursor_min);
   priv->cursor_min = g_memdup(min, size);
@@ -384,48 +387,48 @@ sen_test_hash_factory_set_cursor_min(SenTestHashFactory *factory,
 }
 
 const gchar *
-sen_test_hash_factory_get_cursor_max(SenTestHashFactory *factory)
+grn_test_hash_factory_get_cursor_max(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_max;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_max;
 }
 
 guint32
-sen_test_hash_factory_get_cursor_max_size(SenTestHashFactory *factory)
+grn_test_hash_factory_get_cursor_max_size(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_max_size;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_max_size;
 }
 
 void
-sen_test_hash_factory_set_cursor_max(SenTestHashFactory *factory,
+grn_test_hash_factory_set_cursor_max(GrnTestHashFactory *factory,
                                      const gchar *max,
                                      guint32 size)
 {
-  SenTestHashFactoryPrivate *priv;
+  GrnTestHashFactoryPrivate *priv;
 
-  priv = SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
   if (priv->cursor_max)
     g_free(priv->cursor_max);
   priv->cursor_max = g_memdup(max, size);
   priv->cursor_max_size = size;
 }
 
-SenTestCursorFlags
-sen_test_hash_factory_get_cursor_flags(SenTestHashFactory *factory)
+GrnTestCursorFlags
+grn_test_hash_factory_get_cursor_flags(GrnTestHashFactory *factory)
 {
-  return SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_flags;
+  return GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_flags;
 }
 
 void
-sen_test_hash_factory_set_cursor_flags(SenTestHashFactory *factory,
-                                       SenTestCursorFlags flags)
+grn_test_hash_factory_set_cursor_flags(GrnTestHashFactory *factory,
+                                       GrnTestCursorFlags flags)
 {
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_flags = flags;
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_flags = flags;
 }
 
 void
-sen_test_hash_factory_add_cursor_flags(SenTestHashFactory *factory,
-                                       SenTestCursorFlags flags)
+grn_test_hash_factory_add_cursor_flags(GrnTestHashFactory *factory,
+                                       GrnTestCursorFlags flags)
 {
-  SEN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_flags |= flags;
+  GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_flags |= flags;
 }
 
