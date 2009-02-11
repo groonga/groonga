@@ -415,6 +415,7 @@ grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *st
     size_t whole_size = sizeof(grn_com_gqtp_header) + value_size;
     switch (proto) {
     case GRN_COM_PROTO_GQTP :
+    case GRN_COM_PROTO_MBREQ :
       if (GRN_BULK_WSIZE(buf) < whole_size) {
         if ((cs->rc = grn_bulk_resize(ctx, buf, whole_size))) {
           *status = grn_com_emem;
@@ -440,9 +441,6 @@ grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *st
         rest -= ret, buf->u.b.curr += ret;
       }
       *buf->u.b.curr = '\0';
-      break;
-    case GRN_COM_PROTO_MBREQ :
-      
       break;
     default :
       GRN_LOG(ctx, GRN_LOG_ERROR, "illegal header: %d", proto);

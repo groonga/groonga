@@ -196,7 +196,7 @@ do_msg(grn_com_event *ev, grn_com_gqtp *cs)
   {
     char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
     grn_com_gqtp_header *header = GRN_COM_GQTP_MSG_HEADER(&cs->msg);
-    uint32_t size = header->size;
+    uint32_t size = ntohl(header->size);
     uint16_t flags = header->flags;
     grn_ql_send(ctx, body, size, flags);
     if (ctx->stat == GRN_QL_QUIT || grn_gctx.stat == GRN_QL_QUIT) {
