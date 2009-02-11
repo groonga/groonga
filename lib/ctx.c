@@ -550,7 +550,7 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       } else {
         grn_com_gqtp_header *rheader = GRN_COM_GQTP_MSG_HEADER(&ctx->impl->com->msg);
         *str = GRN_COM_GQTP_MSG_BODY(&ctx->impl->com->msg);
-        *str_len = rheader->size;
+        *str_len = ntohl(rheader->size);
         if (rheader->flags & GRN_QL_QUIT) {
           ctx->stat = GRN_QL_QUIT;
           *flags = GRN_QL_QUIT;

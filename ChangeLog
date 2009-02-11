@@ -1,5 +1,9 @@
 2009-02-11  Poe MORITA  <morita at razil.jp>
 
+	* lib/com.c (grn_com_gqtp_header): fixed a bug.
+
+2009-02-11  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h: grn_id is not long. (Thanks to Kouhei Sutou)
 	* lib/com.h (GRN_COM_PROTO_MBREQ): add.
 
