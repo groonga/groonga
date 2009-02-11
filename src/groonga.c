@@ -176,9 +176,79 @@ grn_ctx_close(grn_ctx *ctx)
   GRN_GFREE(ctx);
 }
 
-inline static void
+enum {
+  MBRES_SUCCESS = 0x00,
+  MBRES_KEY_ENOENT = 0x01,
+  MBRES_KEY_EEXISTS = 0x02,
+  MBRES_E2BIG = 0x03,
+  MBRES_EINVAL = 0x04,
+  MBRES_NOT_STORED = 0x05,
+  MBRES_UNKNOWN_COMMAND = 0x81,
+  MBRES_ENOMEM = 0x82,
+};
+
+enum {
+  MBCMD_GET = 0x00,
+  MBCMD_SET = 0x01,
+  MBCMD_ADD = 0x02,
+  MBCMD_REPLACE = 0x03,
+  MBCMD_DELETE = 0x04,
+  MBCMD_INCREMENT = 0x05,
+  MBCMD_DECREMENT = 0x06,
+  MBCMD_QUIT = 0x07,
+  MBCMD_FLUSH = 0x08,
+  MBCMD_GETQ = 0x09,
+  MBCMD_NOOP = 0x0a,
+  MBCMD_VERSION = 0x0b,
+  MBCMD_GETK = 0x0c,
+  MBCMD_GETKQ = 0x0d,
+  MBCMD_APPEND = 0x0e,
+  MBCMD_PREPEND = 0x0f,
+};
+
+static void
+do_mbreq(grn_ctx *ctx, grn_com_gqtp_header *header, grn_com_gqtp *cs)
+{
+  switch (header->qtype) {
+  case MBCMD_GET :
+    break;
+  case MBCMD_SET :
+    break;
+  case MBCMD_ADD :
+    break;
+  case MBCMD_REPLACE :
+    break;
+  case MBCMD_DELETE :
+    break;
+  case MBCMD_INCREMENT :
+    break;
+  case MBCMD_DECREMENT :
+    break;
+  case MBCMD_QUIT :
+    break;
+  case MBCMD_FLUSH :
+    break;
+  case MBCMD_GETQ :
+    break;
+  case MBCMD_NOOP :
+    break;
+  case MBCMD_VERSION :
+    break;
+  case MBCMD_GETK :
+    break;
+  case MBCMD_GETKQ :
+    break;
+  case MBCMD_APPEND :
+    break;
+  case MBCMD_PREPEND :
+    break;
+  }
+}
+
+static void
 do_msg(grn_com_event *ev, grn_com_gqtp *cs)
 {
+  grn_com_gqtp_header *header;
   grn_ctx *ctx = (grn_ctx *)cs->userdata;
   if (!ctx) {
     ctx = GRN_GMALLOC(sizeof(grn_ctx));
@@ -193,9 +263,11 @@ do_msg(grn_com_event *ev, grn_com_gqtp *cs)
     grn_ql_load(ctx, NULL);
     cs->userdata = ctx;
   }
-  {
+  header = GRN_COM_GQTP_MSG_HEADER(&cs->msg);
+  if (header->proto == GRN_COM_PROTO_MBREQ) {
+    do_mbreq(ctx, header, cs);
+  } else {
     char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
-    grn_com_gqtp_header *header = GRN_COM_GQTP_MSG_HEADER(&cs->msg);
     uint32_t size = ntohl(header->size);
     uint16_t flags = header->flags;
     grn_ql_send(ctx, body, size, flags);
@@ -206,7 +278,6 @@ do_msg(grn_com_event *ev, grn_com_gqtp *cs)
     } else {
       cs->com.status = grn_com_idle;
     }
-    return;
   }
 }
 

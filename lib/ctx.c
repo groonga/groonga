@@ -24,6 +24,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif /* HAVE_NETINET_IN_H */
 
 grn_ctx grn_gctx = GRN_CTX_INITIALIZER;
 int grn_pagesize;
