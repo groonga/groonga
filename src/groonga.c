@@ -22,6 +22,9 @@
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif /* HAVE_NETINET_IN_H */
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
@@ -206,41 +209,149 @@ enum {
   MBCMD_PREPEND = 0x0f,
 };
 
+static grn_obj *cache_table = NULL;
+static grn_obj *cache_value = NULL;
+static grn_obj *cache_flags = NULL;
+static grn_obj *cache_expire = NULL;
+static grn_obj *cache_cas = NULL;
+
+#define CTX_LOOKUP(name) (grn_ctx_lookup(ctx, (name), strlen(name)))
+
+static grn_obj *
+cache_init(grn_ctx *ctx)
+{
+  if (cache_table) { return cache_table; }
+  if ((cache_table = CTX_LOOKUP("<cache>"))) {
+    cache_value = CTX_LOOKUP("<cache>.value");
+    cache_flags = CTX_LOOKUP("<cache>.flags");
+    cache_expire = CTX_LOOKUP("<cache>.expire");
+    cache_cas = CTX_LOOKUP("<cache>.cas");
+  } else {
+    grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
+    grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
+    grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
+    if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
+                                        GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
+                                        shorttext_type, 0, enc))) {
+      cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
+                                      GRN_OBJ_PERSISTENT, shorttext_type);
+      cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
+                                      GRN_OBJ_PERSISTENT, uint_type);
+      cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
+                                       GRN_OBJ_PERSISTENT, uint_type);
+      cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
+                                    GRN_OBJ_PERSISTENT, int64_type);
+    }
+  }
+  return cache_table;
+}
+
 static void
 do_mbreq(grn_ctx *ctx, grn_com_gqtp_header *header, grn_com_gqtp *cs)
 {
   switch (header->qtype) {
   case MBCMD_GET :
+    {
+      grn_id rid;
+      grn_obj buf;
+      uint16_t keylen = ntohs(header->keylen);
+      char *key = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      grn_search_flags f = 0;
+      cache_init(ctx);
+      GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+      } else {
+        grn_obj_get_value(ctx, cache_flags, rid, &buf);
+        grn_obj_get_value(ctx, cache_value, rid, &buf);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 4);
+      }
+      grn_obj_close(ctx, &buf);
+      cs->com.status = grn_com_idle;
+    }
     break;
   case MBCMD_SET :
-    break;
   case MBCMD_ADD :
-    break;
   case MBCMD_REPLACE :
+    {
+      grn_id rid;
+      grn_obj buf;
+      uint32_t size = ntohl(header->size);
+      uint16_t keylen = ntohs(header->keylen);
+      uint8_t extralen = header->level;
+      char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      uint32_t flags = *((uint32_t *)body);
+      uint32_t expire = ntohl(*((uint32_t *)(body + 4)));
+      uint32_t valuelen = size - keylen - extralen;
+      char *key = body + 8;
+      char *value = key + keylen;
+      grn_search_flags f = GRN_TABLE_ADD;
+      GRN_ASSERT(extralen == 8);
+      cache_init(ctx);
+      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_ENOMEM, 0, 0);
+      } else {
+        if (header->qtype == MBCMD_SET && !(f & GRN_TABLE_ADDED)) {
+          grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_EEXISTS, 0, 0);
+        } else {
+          /* todo : handle add */
+          GRN_BULK_SET(ctx, &buf, value, valuelen);
+          grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+          GRN_BULK_SET(ctx, &buf, &flags, 4);
+          grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+          GRN_BULK_SET(ctx, &buf, &expire, 4);
+          grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
+          /* todo : ntohll */
+          GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
+          grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+          GRN_BULK_SET(ctx, &buf, NULL, 0);
+          grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+        }
+      }
+      cs->com.status = grn_com_idle;
+    }
     break;
   case MBCMD_DELETE :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_INCREMENT :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_DECREMENT :
-    break;
-  case MBCMD_QUIT :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_FLUSH :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_GETQ :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_NOOP :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_VERSION :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_GETK :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_GETKQ :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_APPEND :
+    cs->com.status = grn_com_idle;
     break;
   case MBCMD_PREPEND :
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_QUIT : /* fallthru */
+  default :
+    cs->com.status = grn_com_closing;
+    grn_ctx_close(ctx);
+    cs->userdata = NULL;
     break;
   }
 }
