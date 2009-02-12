@@ -247,18 +247,18 @@ cache_init(grn_ctx *ctx)
 }
 
 static void
-do_mbreq(grn_ctx *ctx, grn_com_gqtp_header *header, grn_com_gqtp *cs)
+do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_gqtp *cs)
 {
+  grn_obj buf;
+  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   switch (header->qtype) {
   case MBCMD_GET :
     {
       grn_id rid;
-      grn_obj buf;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_COM_GQTP_MSG_BODY(&cs->msg);
       grn_search_flags f = 0;
       cache_init(ctx);
-      GRN_OBJ_INIT(&buf, GRN_BULK, 0);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
@@ -267,7 +267,6 @@ do_mbreq(grn_ctx *ctx, grn_com_gqtp_header *header, grn_com_gqtp *cs)
         grn_obj_get_value(ctx, cache_value, rid, &buf);
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 4);
       }
-      grn_obj_close(ctx, &buf);
       cs->com.status = grn_com_idle;
     }
     break;
@@ -276,7 +275,6 @@ do_mbreq(grn_ctx *ctx, grn_com_gqtp_header *header, grn_com_gqtp *cs)
   case MBCMD_REPLACE :
     {
       grn_id rid;
-      grn_obj buf;
       uint32_t size = ntohl(header->size);
       uint16_t keylen = ntohs(header->keylen);
       uint8_t extralen = header->level;
@@ -315,45 +313,75 @@ do_mbreq(grn_ctx *ctx, grn_com_gqtp_header *header, grn_com_gqtp *cs)
     }
     break;
   case MBCMD_DELETE :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_INCREMENT :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_DECREMENT :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_FLUSH :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_GETQ :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_NOOP :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_VERSION :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_GETK :
-    cs->com.status = grn_com_idle;
+    {
+      grn_id rid;
+      uint16_t keylen = ntohs(header->keylen);
+      char *key = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      grn_search_flags f = 0;
+      cache_init(ctx);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+      } else {
+        grn_obj_get_value(ctx, cache_flags, rid, &buf);
+        grn_bulk_write(ctx, &buf, key, keylen);
+        grn_obj_get_value(ctx, cache_value, rid, &buf);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, keylen, 4);
+      }
+      cs->com.status = grn_com_idle;
+    }
     break;
   case MBCMD_GETKQ :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_APPEND :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
   case MBCMD_PREPEND :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
     cs->com.status = grn_com_idle;
     break;
-  case MBCMD_QUIT : /* fallthru */
+  case MBCMD_QUIT :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+    /* fallthru */
   default :
     cs->com.status = grn_com_closing;
     grn_ctx_close(ctx);
     cs->userdata = NULL;
+    grn_com_gqtp_close(ctx, ev, cs);
     break;
   }
+  grn_obj_close(ctx, &buf);
 }
 
 static void
@@ -376,7 +404,7 @@ do_msg(grn_com_event *ev, grn_com_gqtp *cs)
   }
   header = GRN_COM_GQTP_MSG_HEADER(&cs->msg);
   if (header->proto == GRN_COM_PROTO_MBREQ) {
-    do_mbreq(ctx, header, cs);
+    do_mbreq(ctx, ev, header, cs);
   } else {
     char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
     uint32_t size = ntohl(header->size);
