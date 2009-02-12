@@ -173,7 +173,7 @@ errout(grn_ctx *ctx, grn_com_gqtp *cs, char *msg)
 }
 
 static void
-grn_ctx_close(grn_ctx *ctx)
+ctx_close(grn_ctx *ctx)
 {
   grn_ctx_fin(ctx);
   GRN_GFREE(ctx);
@@ -266,6 +266,7 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
         grn_obj_get_value(ctx, cache_flags, rid, &buf);
         grn_obj_get_value(ctx, cache_value, rid, &buf);
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 4);
+        grn_obj_close(ctx, &buf);
       }
       cs->com.status = grn_com_idle;
     }
@@ -355,6 +356,7 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
         grn_bulk_write(ctx, &buf, key, keylen);
         grn_obj_get_value(ctx, cache_value, rid, &buf);
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, keylen, 4);
+        grn_obj_close(ctx, &buf);
       }
       cs->com.status = grn_com_idle;
     }
@@ -376,12 +378,10 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
     /* fallthru */
   default :
     cs->com.status = grn_com_closing;
-    grn_ctx_close(ctx);
-    cs->userdata = NULL;
-    grn_com_gqtp_close(ctx, ev, cs);
+    ctx_close(ctx);
+    grn_com_gqtp_close(&grn_gctx, ev, cs);
     break;
   }
-  grn_obj_close(ctx, &buf);
 }
 
 static void
@@ -412,7 +412,7 @@ do_msg(grn_com_event *ev, grn_com_gqtp *cs)
     grn_ql_send(ctx, body, size, flags);
     if (ctx->stat == GRN_QL_QUIT || grn_gctx.stat == GRN_QL_QUIT) {
       cs->com.status = grn_com_closing;
-      grn_ctx_close(ctx);
+      ctx_close(ctx);
       cs->userdata = NULL;
     } else {
       cs->com.status = grn_com_idle;
@@ -486,8 +486,8 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
   if (cs->rc) {
     grn_ctx *ctx = (grn_ctx *)cs->userdata;
     GRN_LOG(ctx, GRN_LOG_NOTICE, "connection closed..");
-    if (ctx) { grn_ctx_close(ctx); }
-    grn_com_gqtp_close(ctx, ev, cs);
+    if (ctx) { ctx_close(ctx); }
+    grn_com_gqtp_close(&grn_gctx, ev, cs);
     return;
   }
   {
@@ -547,8 +547,8 @@ server(char *path)
           grn_com_gqtp *com;
           GRN_HASH_EACH(ev.hash, id, &pfd, &key_size, &com, {
             grn_ctx *ctx = (grn_ctx *)com->userdata;
-            if (ctx) { grn_ctx_close(ctx); }
-            grn_com_gqtp_close(ctx, &ev, com);
+            if (ctx) { ctx_close(ctx); }
+            grn_com_gqtp_close(&grn_gctx, &ev, com);
           });
         }
         rc = 0;

@@ -1,5 +1,9 @@
 2009-02-13  Poe MORITA  <morita at razil.jp>
 
+	* src/groonga.c (do_mbreq): fixed a small bug.
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
 	* src/groonga.c (do_mbreq): support MBCMD_QUIT.
 
 2009-02-12  Poe MORITA  <morita at razil.jp>
