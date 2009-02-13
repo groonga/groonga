@@ -250,6 +250,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   struct epoll_event *ep;
   nevents = epoll_wait(ev->epfd, ev->events, ev->max_nevents, timeout);
 #else /* USE_EPOLL */
+  uint32_t dummy;
   int nfd = 0, *pfd;
   struct pollfd *ep = ev->events;
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
