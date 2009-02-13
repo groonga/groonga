@@ -207,12 +207,12 @@ typedef unsigned int grn_obj_flags;
 #define GRN_OBJ_COMPRESS_ZLIB          (0x01<<4)
 #define GRN_OBJ_COMPRESS_LZO           (0x02<<4)
 
-#define GRN_OBJ_WITH_SECTION           (0x00<<7)
-#define GRN_OBJ_NO_SECTION             (0x01<<7)
-#define GRN_OBJ_WITH_SCORE             (0x00<<8)
-#define GRN_OBJ_NO_SCORE               (0x01<<8)
-#define GRN_OBJ_WITH_POSITION          (0x00<<9)
-#define GRN_OBJ_NO_POSITION            (0x01<<9)
+#define GRN_OBJ_NO_SECTION             (0x00<<7)
+#define GRN_OBJ_WITH_SECTION           (0x01<<7)
+#define GRN_OBJ_NO_SCORE               (0x00<<8)
+#define GRN_OBJ_WITH_SCORE             (0x01<<8)
+#define GRN_OBJ_NO_POSITION            (0x00<<9)
+#define GRN_OBJ_WITH_POSITION          (0x01<<9)
 
 #define GRN_OBJ_UNIT_MASK              (0x0f<<8)
 #define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00<<8)

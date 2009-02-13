@@ -1855,7 +1855,7 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
     r = BUFFER_REC_AT(b, pos);
     p = NEXT_ADDR(r);
     GRN_B_DEC(rid, p);
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       GRN_B_DEC(sid, p);
     } else {
       sid = 1;
@@ -1874,7 +1874,7 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
   if (!j) { return GRN_SUCCESS; }
   p = NEXT_ADDR(r);
   GRN_B_DEC(id.rid, p);
-  if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+  if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
     GRN_B_DEC(id.sid, p);
   } else {
     id.sid = 1;
@@ -1886,7 +1886,7 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
   r2 = BUFFER_REC_AT(b, j);
   p = NEXT_ADDR(r2);
   GRN_B_DEC(id2.rid, p);
-  if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+  if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
     GRN_B_DEC(id2.sid, p);
   } else {
     id2.sid = 1;
@@ -1969,7 +1969,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
     r_curr = BUFFER_REC_AT(b, *lastp);
     p = NEXT_ADDR(r_curr);
     GRN_B_DEC(id_curr.rid, p);
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       GRN_B_DEC(id_curr.sid, p);
     } else {
       id_curr.sid = 1;
@@ -1997,7 +1997,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
             r_curr = BUFFER_REC_AT(b, step);
             p = NEXT_ADDR(r_curr);
             GRN_B_DEC(id_curr.rid, p);
-          if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             GRN_B_DEC(id_curr.sid, p);
           } else {
             id_curr.sid = 1;
@@ -2046,7 +2046,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
           docid idj;
           p = NEXT_ADDR(rj);
           GRN_B_DEC(idj.rid, p);
-          if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             GRN_B_DEC(idj.sid, p);
           } else {
             idj.sid = 1;
@@ -2192,14 +2192,14 @@ encode_rec(grn_ctx *ctx, grn_ii *ii, grn_ii_updspec *u, unsigned int *size, int 
   }
   p = br;
   GRN_B_ENC(u->rid, p);
-  if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+  if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
     GRN_B_ENC(u->sid, p);
   } else {
     u->sid = 1;
   }
   GRN_B_ENC(tf, p);
-  if (!(ii->header->flags & GRN_OBJ_NO_SCORE)) { GRN_B_ENC(score, p); }
-  if (!(ii->header->flags & GRN_OBJ_NO_POSITION)) {
+  if ((ii->header->flags & GRN_OBJ_WITH_SCORE)) { GRN_B_ENC(score, p); }
+  if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
     for (lpos = 0, pp = u->pos; pp && tf--; lpos = pp->pos, pp = pp->next) {
       GRN_B_ENC(pp->pos - lpos, p);
     }
@@ -2261,8 +2261,8 @@ typedef struct {
     if (dgap) { cid.sid = 0; }\
     snp += cid.tf;\
     cid.tf = 1 + *stp++;\
-    if (!(ii->header->flags & GRN_OBJ_NO_SCORE)) { cid.score = *sop++; }\
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {\
+    if ((ii->header->flags & GRN_OBJ_WITH_SCORE)) { cid.score = *sop++; }\
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {\
       cid.sid += 1 + *ssp++;\
     } else {\
       cid.sid = 1;\
@@ -2276,11 +2276,11 @@ typedef struct {
   uint32_t dgap = id.rid - lid.rid;\
   uint32_t sgap = (dgap ? id.sid : id.sid - lid.sid) - 1;\
   *ridp++ = dgap;\
-  if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {\
+  if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {\
     *sidp++ = sgap;\
   }\
   *tfp++ = id.tf - 1;\
-  if (!(ii->header->flags & GRN_OBJ_NO_SCORE)) { *scorep++ = id.score; }\
+  if ((ii->header->flags & GRN_OBJ_WITH_SCORE)) { *scorep++ = id.score; }\
   lid.rid = id.rid;\
   lid.sid = id.sid;\
 }
@@ -2293,7 +2293,7 @@ typedef struct {
         break;\
       }\
       PUTNEXT_(cid);\
-      if (!(ii->header->flags & GRN_OBJ_NO_POSITION)) {\
+      if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {\
         uint32_t i;\
         for (i = 0; i < cid.tf; i++) {\
           *posp++ = snp[i];\
@@ -2314,7 +2314,7 @@ typedef struct {
     buffer_rec *br = BUFFER_REC_AT(sb, nextb);\
     sbp = NEXT_ADDR(br);\
     GRN_B_DEC(bid.rid, sbp);\
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {\
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {\
       GRN_B_DEC(bid.sid, sbp);\
     } else {\
       bid.sid = 1;\
@@ -2338,9 +2338,9 @@ typedef struct {
         rc = GRN_FILE_CORRUPT;\
         break;\
       }\
-      if (!(ii->header->flags & GRN_OBJ_NO_SCORE)) { GRN_B_DEC(bid.score, sbp); }\
+      if ((ii->header->flags & GRN_OBJ_WITH_SCORE)) { GRN_B_DEC(bid.score, sbp); }\
       PUTNEXT_(bid);\
-      if (!(ii->header->flags & GRN_OBJ_NO_POSITION)) {\
+      if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {\
         while (bid.tf--) { GRN_B_DEC(*posp, sbp); spos += *posp++; }\
       }\
     }\
@@ -2433,7 +2433,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
     sdf = rdv[0].data_size;
     // (df in chunk list) = a[1] - sdf;
     srp = rdv[0].data;
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       ssp = rdv[1].data;
       stp = rdv[2].data;
       sop = rdv[3].data;
@@ -2447,7 +2447,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
     }
     if (!(rc = datavec_reset(ctx, dv, ii->max_n_elements, sdf + S_SEGMENT, bufsize))) {
       ridp =   dv[0].data;
-      if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
         sidp =   dv[1].data;
         tfp =    dv[2].data;
         scorep = dv[3].data;
@@ -2480,7 +2480,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
     dv[0].data_size = ndf; dv[0].flags = f_d;
     dv[1].data_size = ndf; dv[1].flags = f_s;
     dv[2].data_size = ndf; dv[2].flags = f_s;
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       dv[3].data_size = ndf; dv[3].flags = f_s;
       dv[4].data_size = np; dv[4].flags = f_p|ODD;
     } else {
@@ -2574,7 +2574,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         size += grn_p_decv(ctx, scp, sce - scp, rdv, ii->n_elements);
         sdf = rdv[0].data_size;
         srp = rdv[0].data;
-        if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+        if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
           ssp = rdv[1].data;
           stp = rdv[2].data;
           sop = rdv[3].data;
@@ -2594,7 +2594,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       }
     }
     ridp =   dv[0].data;
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       sidp =   dv[1].data;
       tfp =    dv[2].data;
       scorep = dv[3].data;
@@ -2623,14 +2623,14 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           lexicon_delete(ctx, ii, tid, h);
           memset(bt, 0, sizeof(buffer_term));
           nterms_void++;
-        } else if (!(ii->header->flags & GRN_OBJ_NO_SECTION)
+        } else if ((ii->header->flags & GRN_OBJ_WITH_SECTION)
                    && !nchunks && ndf == 1 && lid.rid < 0x100000 &&
                    lid.sid < 0x800 && lid.tf == 1 && lid.score == 0) {
           a[0] = (lid.rid << 12) + (lid.sid << 1) + 1;
           a[1] = posp[-1];
           memset(bt, 0, sizeof(buffer_term));
           nterms_void++;
-        } else if ((ii->header->flags & GRN_OBJ_NO_SECTION)
+        } else if (!(ii->header->flags & GRN_OBJ_WITH_SECTION)
                    && !nchunks && ndf == 1 && lid.tf == 1 && lid.score == 0) {
           a[0] = (lid.rid << 1) + 1;
           a[1] = posp[-1];
@@ -2646,7 +2646,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           dv[0].data_size = ndf; dv[0].flags = f_d;
           dv[1].data_size = ndf; dv[1].flags = f_s;
           dv[2].data_size = ndf; dv[2].flags = f_s;
-          if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             dv[3].data_size = ndf; dv[3].flags = f_s;
             dv[4].data_size = np; dv[4].flags = f_p|ODD;
           } else {
@@ -3115,10 +3115,10 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   ii->header->total_chunk_size = 0;
   ii->header->flags = flags;
   ii->max_n_elements = MAX_N_ELEMENTS;
-  if (flags & GRN_OBJ_NO_SECTION) { ii->max_n_elements--; }
+  if (!(flags & GRN_OBJ_WITH_SECTION)) { ii->max_n_elements--; }
   ii->n_elements = ii->max_n_elements;
-  if (flags & GRN_OBJ_NO_SCORE) { ii->n_elements--; }
-  if (flags & GRN_OBJ_NO_POSITION) { ii->n_elements--; }
+  if (!(flags & GRN_OBJ_WITH_SCORE)) { ii->n_elements--; }
+  if (!(flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements--; }
   GRN_GET(path,ii);
   return ii;
 }
@@ -3177,10 +3177,10 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   ii->encoding = encoding;
   ii->header = header;
   ii->max_n_elements = MAX_N_ELEMENTS;
-  if (header->flags & GRN_OBJ_NO_SECTION) { ii->max_n_elements--; }
+  if (!(header->flags & GRN_OBJ_WITH_SECTION)) { ii->max_n_elements--; }
   ii->n_elements = ii->max_n_elements;
-  if (header->flags & GRN_OBJ_NO_SCORE) { ii->n_elements--; }
-  if (header->flags & GRN_OBJ_NO_POSITION) { ii->n_elements--; }
+  if (!(header->flags & GRN_OBJ_WITH_SCORE)) { ii->n_elements--; }
+  if (!(header->flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements--; }
   GRN_GET(path,ii);
   return ii;
 }
@@ -3299,7 +3299,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         pos2.pos = a[1];
         pos2.next = NULL;
         u2.pos = &pos2;
-        if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+        if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
           u2.rid = BIT31_12(v);
           u2.sid = BIT11_01(v);
         } else {
@@ -3339,7 +3339,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   }
   if (!br) {
     if (u->tf == 1 && u->score == 0) {
-      if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
         if (u->rid < 0x100000 && u->sid < 0x800) {
           a[0] = (u->rid << 12) + (u->sid << 1) + 1;
           a[1] = u->pos->pos;
@@ -3384,7 +3384,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   for (;;) {
     if (!a[0]) { goto exit; }
     if (a[0] & 1) {
-      if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
         uint32_t rid = BIT31_12(a[0]);
         uint32_t sid = BIT11_01(a[0]);
         if (u->rid == rid && (!u->sid || u->sid == sid)) {
@@ -3513,7 +3513,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
   c->flags = flags;
   if (pos & 1) {
     c->stat = 0;
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       c->pb.rid = BIT31_12(pos);
       c->pb.sid = BIT11_01(pos);
     } else {
@@ -3583,7 +3583,7 @@ grn_ii_cursor_openv1(grn_ii *ii, grn_id tid)
   c->ii = ii;
   if (pos & 1) {
     c->stat = 0;
-    if (!(ii->header->flags & GRN_OBJ_NO_SECTION)) {
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       c->pb.rid = BIT31_12(pos);
       c->pb.sid = BIT11_01(pos);
     } else {
@@ -3654,14 +3654,14 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
             uint32_t dgap = *c->crp++;
             c->pc.rid += dgap;
             if (dgap) { c->pc.sid = 0; }
-            if (!(c->ii->header->flags & GRN_OBJ_NO_SECTION)) {
+            if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
               c->pc.sid += 1 + *c->csp++;
             } else {
               c->pc.sid = 1;
             }
             c->cpp += c->pc.rest;
             c->pc.rest = c->pc.tf = 1 + *c->ctp++;
-            if (!(c->ii->header->flags & GRN_OBJ_NO_SCORE)) {
+            if ((c->ii->header->flags & GRN_OBJ_WITH_SCORE)) {
               c->pc.score = *c->cwp++;
             } else {
               c->pc.score = 0;
@@ -3692,7 +3692,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               }
               c->cdf = c->rdv[0].data_size;
               c->crp = c->cdp = c->rdv[0].data;
-              if (!(c->ii->header->flags & GRN_OBJ_NO_SECTION)) {
+              if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
                 c->csp = c->rdv[1].data;
                 c->ctp = c->rdv[2].data;
                 c->cwp = c->rdv[3].data;
@@ -3720,7 +3720,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
           /* todo : if (c->buffer_pseg != *c->ppseg) { retry; } */
           c->bp = NEXT_ADDR(br);
           GRN_B_DEC(c->pb.rid, c->bp);
-          if (!(c->ii->header->flags & GRN_OBJ_NO_SECTION)) {
+          if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             GRN_B_DEC(c->pb.sid, c->bp);
           } else {
             c->pb.sid = 1;
@@ -3730,7 +3730,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
           }
           c->nextb = br->step;
           GRN_B_DEC(c->pb.tf, c->bp);
-          if (!(c->ii->header->flags & GRN_OBJ_NO_SCORE)) {
+          if ((c->ii->header->flags & GRN_OBJ_WITH_SCORE)) {
             GRN_B_DEC(c->pb.score, c->bp);
           } else {
             c->pb.score = 0;

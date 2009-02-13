@@ -1,5 +1,10 @@
 2009-02-13  Poe MORITA  <morita at razil.jp>
 
+	* groonga.h (GRN_OBJ_WITH_SECTION, GRN_OBJ_WITH_SCORE, GRN_OBJ_WITH_POSITION):
+	reversed flag value;
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
 	* examples/index.c: add PATH_MAX definition.
 
 2009-02-13  Poe MORITA  <morita at razil.jp>

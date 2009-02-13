@@ -1089,6 +1089,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 case 'I' :
                   flags |= GRN_OBJ_COLUMN_INDEX;
                   break;
+                case 'l' :
+                case 'L' :
+                  flags |= GRN_OBJ_COMPRESS_LZO;
+                  break;
                 case 'p' :
                 case 'P' :
                   switch (msg[1]) {
@@ -1098,13 +1102,40 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                     break;
                   case 'o' :
                   case 'O' :
-                    flags |= GRN_OBJ_COLUMN_POSTINGS;
+                    switch (msg[3]) {
+                    case 't' :
+                    case 'T' :
+                      flags |= GRN_OBJ_COLUMN_POSTINGS;
+                      break;
+                    case 'i' :
+                    case 'I' :
+                      flags |= GRN_OBJ_WITH_POSITION;
+                      break;
+                    }
                     break;
                   }
                   break;
                 case 's' :
                 case 'S' :
-                  flags &= ~GRN_OBJ_COLUMN_TYPE_MASK;
+                  switch (msg[1]) {
+                  case 'e' :
+                  case 'E' :
+                    flags |= GRN_OBJ_WITH_SECTION;
+                    break;
+                  case 'c' :
+                  case 'C' :
+                    switch (msg[2]) {
+                    case 'o' :
+                    case 'O' :
+                      flags |= GRN_OBJ_WITH_SCORE;
+                      break;
+                    case 'a' :
+                    case 'A' : /* scalar */
+                      flags &= ~GRN_OBJ_COLUMN_TYPE_MASK;
+                      break;
+                    }
+                    break;
+                  }
                   break;
                 case 't' :
                 case 'T' :
@@ -1113,6 +1144,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 case 'v' :
                 case 'V' :
                   flags |= GRN_OBJ_COLUMN_VERSES;
+                  break;
+                case 'z' :
+                case 'Z' :
+                  flags |= GRN_OBJ_COMPRESS_ZLIB;
                   break;
                 }
               }

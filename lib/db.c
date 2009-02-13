@@ -1604,7 +1604,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   switch (flags & GRN_OBJ_COLUMN_TYPE_MASK) {
   case GRN_OBJ_COLUMN_SCALAR :
     if ((flags & GRN_OBJ_KEY_VAR_SIZE) || value_size > sizeof(int64_t)) {
-      res = (grn_obj *)grn_ja_create(ctx, path, value_size, 0); //todo : zlib support
+      res = (grn_obj *)grn_ja_create(ctx, path, value_size, flags);
     } else {
       res = (grn_obj *)grn_ra_create(ctx, path, value_size);
     }
@@ -1612,11 +1612,11 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   case GRN_OBJ_COLUMN_ARRAY :
   case GRN_OBJ_COLUMN_VERSES :
   case GRN_OBJ_COLUMN_POSTINGS :
-    res = (grn_obj *)grn_ja_create(ctx, path, value_size * 16/*todo*/, 0);
+    res = (grn_obj *)grn_ja_create(ctx, path, value_size * 16/*todo*/, flags);
     //todo : zlib support
     break;
   case GRN_OBJ_COLUMN_INDEX :
-    res = (grn_obj *)grn_ii_create(ctx, path, table, 0); //todo : ii layout support
+    res = (grn_obj *)grn_ii_create(ctx, path, table, flags); //todo : ii layout support
     break;
   }
   if (res) {

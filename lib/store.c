@@ -261,6 +261,7 @@ grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uin
   grn_io_set_type(io, GRN_COLUMN_VAR_SIZE);
   header = grn_io_header(io);
   header->curr_pos = JA_SEGMENT_SIZE;
+  header->flags = flags;
   for (i = 0; i < JA_N_ESEGMENTS; i++) { header->esegs[i] = JA_ESEG_VOID; }
   if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
     grn_io_close(ctx, io);
