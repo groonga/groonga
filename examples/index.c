@@ -18,6 +18,14 @@ typedef struct {
   grn_obj *inv;
 } grn_index;
 
+# ifndef PATH_MAX
+#  if defined(MAXPATHLEN)
+#   define PATH_MAX MAXPATHLEN
+#  else /* MAXPATHLEN */
+#   define PATH_MAX 1024
+#  endif /* MAXPATHLEN */
+# endif /* PATH_MAX */
+
 grn_index *
 grn_index_create(grn_ctx *ctx, const char *path, grn_encoding enc)
 {

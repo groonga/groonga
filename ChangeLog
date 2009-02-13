@@ -1,5 +1,9 @@
 2009-02-13  Poe MORITA  <morita at razil.jp>
 
+	* examples/index.c: add PATH_MAX definition.
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
 	* lib/com.c: 'dummy' was not defined when using 'poll'.
 
 2009-02-13  Poe MORITA  <morita at razil.jp>
