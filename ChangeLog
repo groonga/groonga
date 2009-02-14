@@ -1,3 +1,7 @@
+2009-02-14  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: fixed a bug which cause segv when GRN_OBJ_WITH_SCORE was not assigned.
+
 2009-02-13  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h (GRN_OBJ_WITH_SECTION, GRN_OBJ_WITH_SCORE, GRN_OBJ_WITH_POSITION):
