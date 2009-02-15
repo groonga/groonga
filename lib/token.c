@@ -429,6 +429,8 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->flags = flags;
   token->encoding = encoding;
   token->tokenizer = tokenizer;
+  token->orig = str;
+  token->orig_blen = str_len;
   token->curr = NULL;
   token->curr_size = 0;
   token->pos = -1;

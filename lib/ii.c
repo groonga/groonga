@@ -2598,63 +2598,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       posp = dv[j].data;
     }
     GETNEXTC();
-
-for (;;) {
-  if (bid.rid) {
-    if (cid.rid) {
-      if (cid.rid < bid.rid) {
-  if (cid.rid) {
-    if (cid.tf) {
-      if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {
-        GRN_LOG(ctx, GRN_LOG_CRIT, "brokenc!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);
-        rc = GRN_FILE_CORRUPT;
-        break;
-      }
-      PUTNEXT_(cid);
-      if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-        uint32_t i;
-        for (i = 0; i < cid.tf; i++) {
-          *posp++ = snp[i];
-          spos += snp[i];
-        }
-      }
-    } else {
-      GRN_LOG(ctx, GRN_LOG_CRIT, "invalid chunk(%d,%d)", bt->tid, cid.rid);
-      rc = GRN_FILE_CORRUPT;
-      break;
-    }
-  }
-  GETNEXTC();
-
-      } else {
-        if (bid.rid < cid.rid) {
-          PUTNEXTB();
-        } else {
-          if (bid.sid) {
-            if (cid.sid < bid.sid) {
-              PUTNEXTC();
-            } else {
-              if (bid.sid == cid.sid) { GETNEXTC(); }
-              PUTNEXTB();
-            }
-          } else {
-            GETNEXTC();
-          }
-        }
-      }
-    } else {
-      PUTNEXTB();
-    }
-  } else {
-    if (cid.rid) {
-      PUTNEXTC();
-    } else {
-      break;
-    }
-  }
-}
-
-    //    MERGE_BC(1);
+    MERGE_BC(1);
     GRN_ASSERT(posp < dv[ii->n_elements].data);
     ndf = ridp - dv[0].data;
 
@@ -2729,7 +2673,7 @@ for (;;) {
               GRN_B_ENC(cinfo[i].size, dcp);
               GRN_B_ENC(cinfo[i].dgap, dcp);
             }
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "split (%d) encsize=%d", bt->tid, encsize);
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "split (%d) encsize=%d", tid, encsize);
             bt->tid |= CHUNK_SPLIT;
           } else {
             dcp += encsize;

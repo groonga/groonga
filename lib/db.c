@@ -30,7 +30,7 @@
 #define WITH_NORMALIZE(table,key,key_size,block) {\
   if ((table)->obj.flags & GRN_OBJ_KEY_NORMALIZE) {\
     grn_str *nstr;\
-    if ((nstr = grn_str_open(ctx, key, key_size, (table)->encoding, 0))) { \
+    if ((nstr = grn_str_open(ctx, key, key_size, (table)->encoding, GRN_STR_NORMALIZE))) { \
       char *key = nstr->norm;\
       unsigned key_size = nstr->norm_blen;\
       block\

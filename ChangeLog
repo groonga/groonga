@@ -1,3 +1,7 @@
+2009-02-15  Poe MORITA  <morita at razil.jp>
+
+	* lib/token.c (grn_token_open): orig, orig_blen was not initialized.
+
 2009-02-14  Poe MORITA  <morita at razil.jp>
 
 	* lib/ii.c: fixed a bug which cause segv when GRN_OBJ_WITH_SCORE was not assigned.
