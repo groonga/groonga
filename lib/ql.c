@@ -959,7 +959,7 @@ match_exec(grn_ctx *ctx, match_spec *spec, grn_id base, grn_id id)
   return res != F;
 }
 
-grn_rc
+static grn_rc
 match_close(grn_ctx *ctx, match_spec *spec)
 {
   return column_exp_close(ctx, spec->ce);

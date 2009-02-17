@@ -778,9 +778,13 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
         mi->count--;
         if (!(mi->count & SEGMENT_MASK)) {
           //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d", i);
-          grn_io_anon_unmap(ctx, mi, SEGMENT_SIZE);
-          mi->map = NULL;
-          if (i == ctx->impl->currseg) { ctx->impl->currseg = -1; }
+          if (i == ctx->impl->currseg) {
+            memset(mi->map, 0, mi->nref);
+            mi->nref = 0;
+          } else {
+            grn_io_anon_unmap(ctx, mi, SEGMENT_SIZE);
+            mi->map = NULL;
+          }
         }
       }
     }
@@ -1099,7 +1103,7 @@ grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, cons
 
 #ifdef USE_FAIL_MALLOC
 int
-fail_malloc_check(size_t size, const char *file, int line, const char *func)
+grn_fail_malloc_check(size_t size, const char *file, int line, const char *func)
 {
   if ((grn_fmalloc_file && strcmp(file, grn_fmalloc_file)) ||
       (grn_fmalloc_line && line != grn_fmalloc_line) ||
@@ -1115,7 +1119,7 @@ fail_malloc_check(size_t size, const char *file, int line, const char *func)
 void *
 grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
 {
-  if (fail_malloc_check(size, file, line, func)) {
+  if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_malloc_default(ctx, size, file, line, func);
   } else {
     MERR("fail_malloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
@@ -1126,7 +1130,7 @@ grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const cha
 void *
 grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
 {
-  if (fail_malloc_check(size, file, line, func)) {
+  if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_calloc_default(ctx, size, file, line, func);
   } else {
     MERR("fail_calloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
@@ -1138,7 +1142,7 @@ void *
 grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line,
                  const char *func)
 {
-  if (fail_malloc_check(size, file, line, func)) {
+  if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_realloc_default(ctx, ptr, size, file, line, func);
   } else {
     MERR("fail_realloc (%p,%zu) (%s:%d@%s) <%d>", ptr, size, file, line, func, alloc_count);
@@ -1149,7 +1153,7 @@ grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int lin
 char *
 grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const char *func)
 {
-  if (fail_malloc_check(strlen(s), file, line, func)) {
+  if (grn_fail_malloc_check(strlen(s), file, line, func)) {
     return grn_strdup_default(ctx, s, file, line, func);
   } else {
     MERR("fail_strdup(%p) (%s:%d@%s) <%d>", s, file, line, func, alloc_count);

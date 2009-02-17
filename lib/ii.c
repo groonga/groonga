@@ -2418,12 +2418,12 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
   grn_io_win sw;
   uint64_t spos = 0;
   uint32_t segno = cinfo->segno, size = cinfo->size, sdf = 0, ndf = 0;
-  uint32_t *ridp = NULL, *sidp = NULL, *tfp, *scorep, *posp = NULL;
+  uint32_t *ridp = NULL, *sidp = NULL, *tfp, *scorep = NULL, *posp = NULL;
   docinfo cid = {0, 0, 0, 0, 0}, lid = {0, 0, 0, 0, 0}, bid = *bidp;
   uint8_t *scp = WIN_MAP2(ii->chunk, ctx, &sw, segno, 0, size, grn_io_rdonly);
   if (scp) {
     uint16_t nextb = *nextbp;
-    uint32_t snn = 0, *srp, *ssp = NULL, *stp, *sop, *snp;
+    uint32_t snn = 0, *srp, *ssp = NULL, *stp, *sop = NULL, *snp;
     uint8_t *sbp = *sbpp;
     datavec rdv[MAX_N_ELEMENTS + 1];
     size_t bufsize = S_SEGMENT * ii->n_elements;
@@ -2521,7 +2521,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     uint16_t nextb;
     uint64_t spos = 0;
     int32_t balance = 0;
-    uint32_t *ridp, *sidp = NULL, *tfp, *scorep, *posp, nchunks = 0;
+    uint32_t *ridp, *sidp = NULL, *tfp, *scorep = NULL, *posp, nchunks = 0;
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
     docinfo cid = {0, 0, 0, 0, 0}, lid = {0, 0, 0, 0, 0}, bid = {0, 0};
@@ -2977,6 +2977,8 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   return rc;
 }
 
+#define BUFFER_SPLIT_COND (b->header.nterms > 1000)
+
 inline static uint32_t
 buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
            buffer_term **bt, buffer_rec **br, buffer **bp, grn_id id, grn_hash *h)
@@ -3002,9 +3004,11 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
             break;
           }
           buffer_close(ctx, ii, pseg);
-          if ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
+          if (BUFFER_SPLIT_COND)
+            /* ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
-              b->header.chunk_size) {
+               b->header.chunk_size) */
+            {
             GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
             if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
           } else {
@@ -3254,9 +3258,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing a[0]=%d seg=%d(%p) free=%d",
                   a[0], LSEG(a[0]), b, b->header.buffer_free);
           buffer_close(ctx, ii, pseg);
-          if ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
+          if (BUFFER_SPLIT_COND)
+            /*((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
-              b->header.chunk_size) {
+               b->header.chunk_size)*/
+            {
             GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
             if ((rc = buffer_split(ctx, ii, LSEG(pos), h))) { goto exit; }
             continue;
@@ -4155,7 +4161,7 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (vgram) { sbuf = grn_vgram_buf_open(value_len); }
-  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), 0, GRN_ENC_NONE);
+  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, GRN_ENC_NONE);
   if (!h) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on index_add failed !");
     grn_token_close(ctx, token);
@@ -4208,7 +4214,7 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   if (!(token = grn_token_open(ctx, lexicon, value, value_len, GRN_TOKEN_UPD))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), 0, GRN_ENC_NONE);
+  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, GRN_ENC_NONE);
   if (!h) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on index_del failed !");
     grn_token_close(ctx, token);
@@ -4318,7 +4324,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
     new = NULL;
   }
   if (oldvalues) {
-    old = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), 0, GRN_ENC_NONE);
+    old = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, GRN_ENC_NONE);
     if (!old) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
       if (new) { grn_hash_close(ctx, new); }

@@ -1964,7 +1964,7 @@ enum {
   GRN_ACCESSOR_FUNCALL
 };
 
-grn_accessor *
+static grn_accessor *
 accessor_new(grn_ctx *ctx)
 {
   grn_accessor *res = GRN_MALLOCN(grn_accessor, 1);
