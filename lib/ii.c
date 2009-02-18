@@ -58,14 +58,14 @@
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
 struct grn_ii_header {
+  uint64_t total_chunk_size;
+  uint64_t bmax;
   uint32_t flags;
-  uint32_t total_chunk_size;
   uint32_t amax;
-  uint32_t bmax;
   uint32_t smax;
   uint32_t param1;
   uint32_t param2;
-  uint32_t reserved[309];
+  uint32_t reserved[307];
   uint32_t ainfo[MAX_LSEG];
   uint32_t binfo[MAX_LSEG];
   uint32_t free_chunks[N_CHUNK_VARIATION + 1];
@@ -2509,7 +2509,9 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
   datavec rdv[MAX_N_ELEMENTS + 1];
   uint16_t n = db->header.nterms, nterms_void = 0;
   size_t unitsize = (S_SEGMENT + sb->header.chunk_size / sb->header.nterms) * 2;
+  // size_t unitsize = (S_SEGMENT + sb->header.chunk_size) * 2 + (1<<24);
   size_t totalsize = unitsize * ii->n_elements;
+  //todo : realloc
   if ((rc = datavec_init(ctx, dv, ii->n_elements, unitsize, totalsize))) {
     return rc;
   }
@@ -2694,8 +2696,6 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
   db->header.buffer_free =
     S_SEGMENT - sizeof(buffer_header) - db->header.nterms * sizeof(buffer_term);
   db->header.nterms_void = nterms_void;
-  ii->header->total_chunk_size += db->header.chunk_size >> 10;
-  grn_ii_expire(ctx, ii);
   return rc;
 }
 
@@ -2744,10 +2744,11 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
               fake_map2(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
               if (!(rc = grn_io_win_unmap2(&dw))) {
                 ii->header->binfo[seg] = ds;
+                ii->header->total_chunk_size += actual_chunk_size;
                 if (scn != NOT_ASSIGNED) {
                   grn_io_win_unmap2(&sw);
                   chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
-                  ii->header->total_chunk_size -= sb->header.chunk_size >> 10;
+                  ii->header->total_chunk_size -= sb->header.chunk_size;
                 }
               } else {
                 GRN_FREE(dc);
@@ -2805,7 +2806,7 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
 {
   uint16_t i, n, *nt;
   buffer_term *bt;
-  uint32_t s, th = sb->header.chunk_size >> 1;
+  uint32_t s, th = (sb->header.chunk_size + sb->header.nterms) >> 1;
   term_sort *ts = GRN_MALLOC(sb->header.nterms * sizeof(term_sort));
   if (!ts) { return GRN_NO_MEMORY_AVAILABLE; }
   for (i = 0, n = sb->header.nterms, bt = sb->terms; n; bt++, n--) {
@@ -2820,10 +2821,10 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
   memset(db0, 0, S_SEGMENT);
   bt = db0->terms;
   nt = &db0->header.nterms;
-  for (s = 0; n < i && s < th; n++, bt++) {
+  for (s = 0; n + 1 < i && s <= th; n++, bt++) {
     memcpy(bt, ts[n].bt, sizeof(buffer_term));
     (*nt)++;
-    s += ts[n].bt->size_in_chunk;
+    s += ts[n].bt->size_in_chunk + 1;
   }
   memset(db1, 0, S_SEGMENT);
   bt = db1->terms;
@@ -2878,6 +2879,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
         uint32_t actual_db0_chunk_size = 0;
         uint32_t actual_db1_chunk_size = 0;
         uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
+        //        uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT * 2;
         if ((dc0 = GRN_MALLOC(max_dest_chunk_size))) {
           if ((dc1 = GRN_MALLOC(max_dest_chunk_size))) {
             if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
@@ -2903,10 +2905,12 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           array_update(ctx, ii, dls0, db0);
                           array_update(ctx, ii, dls1, db1);
                           ii->header->binfo[seg] = NOT_ASSIGNED;
+                          ii->header->total_chunk_size += actual_db0_chunk_size;
+                          ii->header->total_chunk_size += actual_db1_chunk_size;
                           if (scn != NOT_ASSIGNED) {
                             grn_io_win_unmap2(&sw);
                             chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
-                            ii->header->total_chunk_size -= sb->header.chunk_size >> 10;
+                            ii->header->total_chunk_size -= sb->header.chunk_size;
                           }
                         } else {
                           if (actual_db1_chunk_size) {
@@ -2977,7 +2981,11 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   return rc;
 }
 
-#define BUFFER_SPLIT_COND (b->header.nterms > 1000)
+#define SCALE_FACTOR 2048
+#define MAX_NTERMS   8192
+#define SPLIT_COND  (b->header.nterms > 1024 ||\
+                     b->header.chunk_size * 100 > ii->header->total_chunk_size)
+//#define SPLIT_COND (b->header.nterms > 1000)
 
 inline static uint32_t
 buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
@@ -2989,9 +2997,11 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   unsigned key_size;
   const char *key = _grn_table_key(ctx, ii->lexicon, id, &key_size);
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
-  grn_table_cursor *tc = grn_table_cursor_open(ctx, ii->lexicon,
-                                               key, key_size, NULL, 0,
-                                               GRN_CURSOR_ASCENDING|GRN_CURSOR_GT);
+  grn_table_cursor *tc = (ii->lexicon->header.type == GRN_TABLE_PAT_KEY)
+    ? grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0,
+                            GRN_CURSOR_ASCENDING|GRN_CURSOR_GT)
+    : grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0,
+                            GRN_CURSOR_ASCENDING);
   if (tc) {
     while (lseg == NOT_ASSIGNED && (tid = grn_table_cursor_next(ctx, tc))) {
       if ((a = array_at(ctx, ii, tid))) {
@@ -3004,12 +3014,12 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
             break;
           }
           buffer_close(ctx, ii, pseg);
-          if (BUFFER_SPLIT_COND)
+          if (SPLIT_COND)
             /* ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size) */
             {
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d total=%zu", b->header.nterms, b->header.chunk_size, ii->header->total_chunk_size >> 10);
             if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
           } else {
             if (buffer_flush(ctx, ii, LSEG(pos), h)) { break; }
@@ -3218,11 +3228,13 @@ grn_ii_info(grn_ctx *ctx, grn_ii *ii, uint64_t *seg_size, uint64_t *chunk_size)
 void
 grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
 {
+  /*
   if ((grn_gtick & 127) == 127) {
     grn_io_expire(ctx, ii->seg, 128, 1000000);
   }
+  */
   if ((grn_gtick & 3) == 3) {
-    grn_io_expire(ctx, ii->chunk, 1, 1000000);
+    grn_io_expire(ctx, ii->chunk, 0, 1000000);
   }
   grn_gtick++;
 }
@@ -3258,12 +3270,12 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing a[0]=%d seg=%d(%p) free=%d",
                   a[0], LSEG(a[0]), b, b->header.buffer_free);
           buffer_close(ctx, ii, pseg);
-          if (BUFFER_SPLIT_COND)
+          if (SPLIT_COND)
             /*((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size)*/
             {
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d", b->header.nterms, b->header.chunk_size);
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d total=%zu", b->header.nterms, b->header.chunk_size, ii->header->total_chunk_size >> 10);
             if ((rc = buffer_split(ctx, ii, LSEG(pos), h))) { goto exit; }
             continue;
           }
@@ -3368,6 +3380,7 @@ exit :
   if (u->tf != u->atf) {
     GRN_LOG(ctx, GRN_LOG_WARNING, "too many postings(%d) on %u. discarded %d.", u->atf, tid, u->atf - u->tf);
   }
+  grn_ii_expire(ctx, ii);
   return rc;
 }
 

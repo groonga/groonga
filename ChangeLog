@@ -1,3 +1,7 @@
+2009-02-18  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: keep track of total_chunk_size.
+
 2009-02-17  Poe MORITA  <morita at razil.jp>
 
 	* lib/ctx.c (grn_ctx_free): cut off verbose munmap.
