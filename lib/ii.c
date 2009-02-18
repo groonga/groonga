@@ -232,10 +232,21 @@ typedef struct {
                   ((seg) >> N_CHUNK_VARIATION),\
                   (((seg) & ((1 << N_CHUNK_VARIATION) - 1)) << W_LEAST_CHUNK) + (pos),\
                   size,mode)
-
+/*
+static int new_histogram[32];
+static int free_histogram[32];
+*/
 static grn_rc
 chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 {
+  /*
+  if (size) {
+    int m, es = size - 1;
+    GRN_BIT_SCAN_REV(es, m);
+    m++;
+    new_histogram[m]++;
+  }
+  */
   if (size > S_CHUNK) {
     int i, j;
     uint32_t n = (size + S_CHUNK - 1) >> W_CHUNK;
@@ -308,6 +319,14 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 static grn_rc
 chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t size)
 {
+  /*
+  if (size) {
+    int m, es = size - 1;
+    GRN_BIT_SCAN_REV(es, m);
+    m++;
+    free_histogram[m]++;
+  }
+  */
   grn_io_win iw;
   grn_ii_ginfo *ginfo;
   uint32_t seg, m, *gseg;
@@ -3084,6 +3103,12 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   grn_obj_flags lflags;
   grn_encoding encoding;
   grn_obj *tokenizer;
+  /*
+  for (i = 0; i < 32; i++) {
+    new_histogram[i] = 0;
+    free_histogram[i] = 0;
+  }
+  */
   if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer)) { return NULL; }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
   seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
@@ -3202,6 +3227,16 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
   if ((rc = grn_io_close(ctx, ii->seg))) { return rc; }
   if ((rc = grn_io_close(ctx, ii->chunk))) { return rc; }
   GRN_GFREE(ii);
+  /*
+  {
+    int i;
+    for (i = 0; i < 32; i++) {
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "new[%d]=%d free[%d]=%d",
+              i, new_histogram[i],
+              i, free_histogram[i]);
+    }
+  }
+  */
   return rc;
 }
 

@@ -1,5 +1,9 @@
 2009-02-18  Poe MORITA  <morita at razil.jp>
 
+	* src/groonga.c (msg_handler): fixed a problem cause segv.
+
+2009-02-18  Poe MORITA  <morita at razil.jp>
+
 	* lib/ii.c: keep track of total_chunk_size.
 
 2009-02-17  Poe MORITA  <morita at razil.jp>

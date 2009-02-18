@@ -484,10 +484,9 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
 {
   grn_com_gqtp *cs = (grn_com_gqtp *)c;
   if (cs->rc) {
-    grn_ctx *ctx = (grn_ctx *)cs->userdata;
     GRN_LOG(ctx, GRN_LOG_NOTICE, "connection closed..");
-    if (ctx) { ctx_close(ctx); }
-    grn_com_gqtp_close(&grn_gctx, ev, cs);
+    if (cs->userdata) { ctx_close((grn_ctx *)cs->userdata); }
+    grn_com_gqtp_close(ctx, ev, cs);
     return;
   }
   {

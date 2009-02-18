@@ -268,10 +268,6 @@ grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
   ctx->seqno = 0;
   ctx->subno = 0;
   ctx->impl = NULL;
-  if (flags & GRN_CTX_USE_DB) {
-    grn_ctx_impl_init(ctx);
-    if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
-  }
   if (flags & GRN_CTX_USE_QL) {
     grn_ctx_ql_init(ctx, flags);
     if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
