@@ -49,7 +49,6 @@ struct _grn_ii {
   grn_obj_flags lflags;
   grn_encoding encoding;
   uint32_t n_elements;
-  uint32_t max_n_elements;
   struct grn_ii_header *header;
 };
 

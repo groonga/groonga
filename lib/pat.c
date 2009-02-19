@@ -749,7 +749,13 @@ grn_pat_lookup(grn_ctx *ctx, grn_pat *pat, const void *key, int key_size,
 {
   if (!pat || !key || !key_size || pat->key_size < key_size) { return GRN_ID_NIL; }
   if (*flags & GRN_TABLE_ADD) {
-    return grn_pat_get(ctx, pat, key, key_size, value, flags);
+    if (grn_io_lock(ctx, pat->io, 10000000)) {
+      return GRN_ID_NIL;
+    } else {
+      grn_id id = grn_pat_get(ctx, pat, key, key_size, value, flags);
+      grn_io_unlock(pat->io);
+      return id;
+    }
   } else {
     return grn_pat_at(ctx, pat, key, key_size, value);
   }

@@ -22,6 +22,9 @@
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif /* HAVE_NETINET_IN_H */
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
@@ -156,7 +159,10 @@ output(grn_ctx *ctx, int flags, void *arg)
   header.level = 0;
   header.status = 0;
   if (ctx->stat == GRN_QL_QUIT) { cs->com.status = grn_com_closing; }
-  grn_com_gqtp_send(ctx, cs, &header, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf));
+  if (grn_com_gqtp_send(ctx, cs, &header, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf))) {
+    ctx->stat = GRN_QL_QUIT;
+    cs->com.status = grn_com_closing;
+  }
   GRN_BULK_REWIND(buf);
 }
 
@@ -170,15 +176,257 @@ errout(grn_ctx *ctx, grn_com_gqtp *cs, char *msg)
 }
 
 static void
-grn_ctx_close(grn_ctx *ctx)
+ctx_close(grn_ctx *ctx)
 {
   grn_ctx_fin(ctx);
   GRN_GFREE(ctx);
 }
 
-inline static void
+enum {
+  MBRES_SUCCESS = 0x00,
+  MBRES_KEY_ENOENT = 0x01,
+  MBRES_KEY_EEXISTS = 0x02,
+  MBRES_E2BIG = 0x03,
+  MBRES_EINVAL = 0x04,
+  MBRES_NOT_STORED = 0x05,
+  MBRES_UNKNOWN_COMMAND = 0x81,
+  MBRES_ENOMEM = 0x82,
+};
+
+enum {
+  MBCMD_GET = 0x00,
+  MBCMD_SET = 0x01,
+  MBCMD_ADD = 0x02,
+  MBCMD_REPLACE = 0x03,
+  MBCMD_DELETE = 0x04,
+  MBCMD_INCREMENT = 0x05,
+  MBCMD_DECREMENT = 0x06,
+  MBCMD_QUIT = 0x07,
+  MBCMD_FLUSH = 0x08,
+  MBCMD_GETQ = 0x09,
+  MBCMD_NOOP = 0x0a,
+  MBCMD_VERSION = 0x0b,
+  MBCMD_GETK = 0x0c,
+  MBCMD_GETKQ = 0x0d,
+  MBCMD_APPEND = 0x0e,
+  MBCMD_PREPEND = 0x0f,
+};
+
+static grn_mutex cache_mutex;
+static grn_obj *cache_table = NULL;
+static grn_obj *cache_value = NULL;
+static grn_obj *cache_flags = NULL;
+static grn_obj *cache_expire = NULL;
+static grn_obj *cache_cas = NULL;
+
+#define CTX_LOOKUP(name) (grn_ctx_lookup(ctx, (name), strlen(name)))
+
+static grn_obj *
+cache_init(grn_ctx *ctx)
+{
+  if (cache_table) { return cache_table; }
+  MUTEX_LOCK(cache_mutex);
+  if ((cache_table = CTX_LOOKUP("<cache>"))) {
+    cache_value = CTX_LOOKUP("<cache>.value");
+    cache_flags = CTX_LOOKUP("<cache>.flags");
+    cache_expire = CTX_LOOKUP("<cache>.expire");
+    cache_cas = CTX_LOOKUP("<cache>.cas");
+  } else {
+    if (!cache_table) {
+      grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
+      grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
+      grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
+      if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
+                                          GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
+                                          shorttext_type, 0, enc))) {
+        cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
+                                        GRN_OBJ_PERSISTENT, shorttext_type);
+        cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
+                                        GRN_OBJ_PERSISTENT, uint_type);
+        cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
+                                         GRN_OBJ_PERSISTENT, uint_type);
+        cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
+                                      GRN_OBJ_PERSISTENT, int64_type);
+      }
+    }
+  }
+  MUTEX_UNLOCK(cache_mutex);
+  return cache_table;
+}
+
+static void
+do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_gqtp *cs)
+{
+  grn_obj buf;
+  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  switch (header->qtype) {
+  case MBCMD_GET :
+    {
+      grn_id rid;
+      uint16_t keylen = ntohs(header->keylen);
+      char *key = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      grn_search_flags f = 0;
+      cache_init(ctx);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+      } else {
+        grn_obj_get_value(ctx, cache_flags, rid, &buf);
+        grn_obj_get_value(ctx, cache_value, rid, &buf);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 4);
+        grn_obj_close(ctx, &buf);
+      }
+      cs->com.status = grn_com_idle;
+    }
+    break;
+  case MBCMD_SET :
+  case MBCMD_ADD :
+    {
+      grn_id rid;
+      uint32_t size = ntohl(header->size);
+      uint16_t keylen = ntohs(header->keylen);
+      uint8_t extralen = header->level;
+      char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      uint32_t flags = *((uint32_t *)body);
+      uint32_t expire = ntohl(*((uint32_t *)(body + 4)));
+      uint32_t valuelen = size - keylen - extralen;
+      char *key = body + 8;
+      char *value = key + keylen;
+      grn_search_flags f = GRN_TABLE_ADD;
+      GRN_ASSERT(extralen == 8);
+      cache_init(ctx);
+      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_ENOMEM, 0, 0);
+      } else {
+        /* todo : handle add */
+        GRN_BULK_SET(ctx, &buf, value, valuelen);
+        grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &flags, 4);
+        grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &expire, 4);
+        grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
+        /* todo : ntohll */
+        GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
+        grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, NULL, 0);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+      }
+      cs->com.status = grn_com_idle;
+    }
+    break;
+  case MBCMD_REPLACE :
+    {
+      grn_id rid;
+      uint32_t size = ntohl(header->size);
+      uint16_t keylen = ntohs(header->keylen);
+      uint8_t extralen = header->level;
+      char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      uint32_t flags = *((uint32_t *)body);
+      uint32_t expire = ntohl(*((uint32_t *)(body + 4)));
+      uint32_t valuelen = size - keylen - extralen;
+      char *key = body + 8;
+      char *value = key + keylen;
+      grn_search_flags f = 0;
+      GRN_ASSERT(extralen == 8);
+      cache_init(ctx);
+      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+      } else {
+        /* todo : handle add */
+        GRN_BULK_SET(ctx, &buf, value, valuelen);
+        grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &flags, 4);
+        grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &expire, 4);
+        grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
+        /* todo : ntohll */
+        GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
+        grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, NULL, 0);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+      }
+      cs->com.status = grn_com_idle;
+    }
+    break;
+  case MBCMD_DELETE :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_INCREMENT :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_DECREMENT :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_FLUSH :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_GETQ :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_NOOP :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_VERSION :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_GETK :
+    {
+      grn_id rid;
+      uint16_t keylen = ntohs(header->keylen);
+      char *key = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      grn_search_flags f = 0;
+      cache_init(ctx);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+      } else {
+        grn_obj_get_value(ctx, cache_flags, rid, &buf);
+        grn_bulk_write(ctx, &buf, key, keylen);
+        grn_obj_get_value(ctx, cache_value, rid, &buf);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, keylen, 4);
+        grn_obj_close(ctx, &buf);
+      }
+      cs->com.status = grn_com_idle;
+    }
+    break;
+  case MBCMD_GETKQ :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_APPEND :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_PREPEND :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    cs->com.status = grn_com_idle;
+    break;
+  case MBCMD_QUIT :
+    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+    /* fallthru */
+  default :
+    cs->com.status = grn_com_closing;
+    ctx_close(ctx);
+    grn_com_gqtp_close(&grn_gctx, ev, cs);
+    break;
+  }
+}
+
+static void
 do_msg(grn_com_event *ev, grn_com_gqtp *cs)
 {
+  grn_com_gqtp_header *header;
   grn_ctx *ctx = (grn_ctx *)cs->userdata;
   if (!ctx) {
     ctx = GRN_GMALLOC(sizeof(grn_ctx));
@@ -193,20 +441,21 @@ do_msg(grn_com_event *ev, grn_com_gqtp *cs)
     grn_ql_load(ctx, NULL);
     cs->userdata = ctx;
   }
-  {
+  header = GRN_COM_GQTP_MSG_HEADER(&cs->msg);
+  if (header->proto == GRN_COM_PROTO_MBREQ) {
+    do_mbreq(ctx, ev, header, cs);
+  } else {
     char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
-    grn_com_gqtp_header *header = GRN_COM_GQTP_MSG_HEADER(&cs->msg);
     uint32_t size = ntohl(header->size);
     uint16_t flags = header->flags;
     grn_ql_send(ctx, body, size, flags);
     if (ctx->stat == GRN_QL_QUIT || grn_gctx.stat == GRN_QL_QUIT) {
       cs->com.status = grn_com_closing;
-      grn_ctx_close(ctx);
+      ctx_close(ctx);
       cs->userdata = NULL;
     } else {
       cs->com.status = grn_com_idle;
     }
-    return;
   }
 }
 
@@ -274,9 +523,8 @@ msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
 {
   grn_com_gqtp *cs = (grn_com_gqtp *)c;
   if (cs->rc) {
-    grn_ctx *ctx = (grn_ctx *)cs->userdata;
     GRN_LOG(ctx, GRN_LOG_NOTICE, "connection closed..");
-    if (ctx) { grn_ctx_close(ctx); }
+    if (cs->userdata) { ctx_close((grn_ctx *)cs->userdata); }
     grn_com_gqtp_close(ctx, ev, cs);
     return;
   }
@@ -314,6 +562,7 @@ server(char *path)
   grn_ctx ctx_, *ctx = &ctx_;
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
+  MUTEX_INIT(cache_mutex);
   grn_ctx_init(ctx, 0, enc);
   queue_init(&qq);
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com_gqtp))) {
@@ -337,8 +586,8 @@ server(char *path)
           grn_com_gqtp *com;
           GRN_HASH_EACH(ev.hash, id, &pfd, &key_size, &com, {
             grn_ctx *ctx = (grn_ctx *)com->userdata;
-            if (ctx) { grn_ctx_close(ctx); }
-            grn_com_gqtp_close(ctx, &ev, com);
+            if (ctx) { ctx_close(ctx); }
+            grn_com_gqtp_close(&grn_gctx, &ev, com);
           });
         }
         rc = 0;

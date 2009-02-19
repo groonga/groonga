@@ -819,10 +819,10 @@ rec_obj_new(grn_ctx *ctx, grn_obj *domain, unsigned value_size)
 typedef struct {
   column_exp *ce;
   grn_cell *func;
-  grn_cell *exprs;
+  //  grn_cell *exprs;
   grn_cell *args;
   grn_sel_operator op;
-  grn_cell *objs;
+  //  grn_cell *objs;
   int32_t offset;
   int32_t limit;
   int mode;
@@ -847,6 +847,11 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   spec->offset = 0;
   spec->limit = 0;
   spec->mode = 0;
+  spec->from = NULL;
+  spec->fromsize = 0;
+  spec->to = NULL;
+  spec->tosize = 0;
+  spec->op = GRN_SEL_OR;
   POP(expr, args);
   if (RECORDSP(expr)) {
     char ops[STRBUF_SIZE];
@@ -885,23 +890,17 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
     if (BULKP(expr)) {
       spec->from = STRVALUE(expr);
       spec->fromsize = STRSIZE(expr);
-    } else {
-      spec->from = NULL;
-      spec->fromsize = 0;
     }
     POP(expr, args);
     if (BULKP(expr)) {
       spec->to = STRVALUE(expr);
       spec->tosize = STRSIZE(expr);
-    } else {
-      spec->to = NULL;
-      spec->tosize = 0;
     }
     expr = rec_obj_new(ctx, table, 0);
     if (ERRP(ctx, GRN_WARN)) { return F; }
     spec->op = GRN_SEL_OR;
   }
-  spec->objs = CONS(expr, spec->exprs);
+  //  spec->objs = CONS(expr, spec->exprs);
   return expr;
 }
 
@@ -959,7 +958,7 @@ match_exec(grn_ctx *ctx, match_spec *spec, grn_id base, grn_id id)
   return res != F;
 }
 
-grn_rc
+static grn_rc
 match_close(grn_ctx *ctx, match_spec *spec)
 {
   return column_exp_close(ctx, spec->ce);
@@ -1089,6 +1088,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 case 'I' :
                   flags |= GRN_OBJ_COLUMN_INDEX;
                   break;
+                case 'l' :
+                case 'L' :
+                  flags |= GRN_OBJ_COMPRESS_LZO;
+                  break;
                 case 'p' :
                 case 'P' :
                   switch (msg[1]) {
@@ -1098,13 +1101,40 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                     break;
                   case 'o' :
                   case 'O' :
-                    flags |= GRN_OBJ_COLUMN_POSTINGS;
+                    switch (msg[3]) {
+                    case 't' :
+                    case 'T' :
+                      flags |= GRN_OBJ_COLUMN_POSTINGS;
+                      break;
+                    case 'i' :
+                    case 'I' :
+                      flags |= GRN_OBJ_WITH_POSITION;
+                      break;
+                    }
                     break;
                   }
                   break;
                 case 's' :
                 case 'S' :
-                  flags &= ~GRN_OBJ_COLUMN_TYPE_MASK;
+                  switch (msg[1]) {
+                  case 'e' :
+                  case 'E' :
+                    flags |= GRN_OBJ_WITH_SECTION;
+                    break;
+                  case 'c' :
+                  case 'C' :
+                    switch (msg[2]) {
+                    case 'o' :
+                    case 'O' :
+                      flags |= GRN_OBJ_WITH_SCORE;
+                      break;
+                    case 'a' :
+                    case 'A' : /* scalar */
+                      flags &= ~GRN_OBJ_COLUMN_TYPE_MASK;
+                      break;
+                    }
+                    break;
+                  }
                   break;
                 case 't' :
                 case 'T' :
@@ -1113,6 +1143,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 case 'v' :
                 case 'V' :
                   flags |= GRN_OBJ_COLUMN_VERSES;
+                  break;
+                case 'z' :
+                case 'Z' :
+                  flags |= GRN_OBJ_COMPRESS_ZLIB;
                   break;
                 }
               }

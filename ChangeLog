@@ -1,3 +1,66 @@
+2009-02-19  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (do_mbreq): fixed MBCMD_SET behavior.
+
+2009-02-18  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (grn_hash_lookup): add lock/unlock.
+	* lib/pat.c (grn_pat_lookup): add lock/unlock.
+	* lib/ii.c (grn_ii_column_update): add lock/unlock.
+
+2009-02-18  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (msg_handler): fixed a problem cause segv.
+
+2009-02-18  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: keep track of total_chunk_size.
+
+2009-02-17  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.c (grn_ctx_free): cut off verbose munmap.
+
+2009-02-15  Poe MORITA  <morita at razil.jp>
+
+	* lib/token.c (grn_token_open): orig, orig_blen was not initialized.
+
+2009-02-14  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c: fixed a bug which cause segv when GRN_OBJ_WITH_SCORE was not assigned.
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_OBJ_WITH_SECTION, GRN_OBJ_WITH_SCORE, GRN_OBJ_WITH_POSITION):
+	reversed flag value;
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
+	* examples/index.c: add PATH_MAX definition.
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
+	* lib/com.c: 'dummy' was not defined when using 'poll'.
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
+	* examples/index.c: add.
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (do_mbreq): fixed a small bug.
+
+2009-02-13  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (do_mbreq): support MBCMD_QUIT.
+
+2009-02-12  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (do_mbreq): implemented.
+
+2009-02-12  Poe MORITA  <morita at razil.jp>
+
+	* lib/com.c (grn_com_mbres_send): add.
+
 2009-02-11  Poe MORITA  <morita at razil.jp>
 
 	* lib/com.c (grn_com_gqtp_header): fixed a bug.

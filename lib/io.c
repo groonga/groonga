@@ -253,7 +253,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   return NULL;
 }
 
-grn_rc
+static grn_rc
 array_init_(grn_io *io, int n_arrays, size_t hsize, size_t msize)
 {
   int i;
@@ -283,7 +283,7 @@ array_init_(grn_io *io, int n_arrays, size_t hsize, size_t msize)
   return GRN_SUCCESS;
 }
 
-grn_rc
+static grn_rc
 array_init(grn_io *io, int n_arrays)
 {
   if (n_arrays) {
@@ -1821,13 +1821,11 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
 }
 
 #ifdef USE_FAIL_MALLOC
-int
-fail_malloc_check(size_t size, const char *file, int line, const char *func);
 inline static void *
 grn_fail_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length,
               const char* file, int line, const char *func)
 {
-  if (fail_malloc_check(length, file, line, func)) {
+  if (grn_fail_malloc_check(length, file, line, func)) {
     return grn_mmap(ctx, fi, offset, length);
   } else {
     MERR("fail_mmap(%zu,%d,%llu) (%s:%d@%s) <%zu>",

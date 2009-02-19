@@ -153,8 +153,6 @@ struct _grn_ctx {
  * grn_ctx_init:
  * @ctx: 初期化するctx構造体へのポインタを指定します。
  * @flags: 初期化するctxのオプションを指定します。
- * GRN_CTX_NO_DBを指定すると、エラーハンドリングのみが行えるctxを初期化します。
- * GRN_CTX_USE_DBを指定すると、全てのDBAPIが使用できるctxを初期化します。
  * GRN_CTX_USE_QLを指定すると、groonga qlインタプリタを実行可能なctxを初期化します。
  * GRN_CTX_USE_QL|GRN_CTX_BATCH_MODEを指定すると、batchmodeでインタプリタを初期化します。
  * @encoding: 初期化するctxでデフォルトとなるencoding。
@@ -162,8 +160,6 @@ struct _grn_ctx {
  * ctxを初期化します。
  **/
 
-#define GRN_CTX_NO_DB                  (0x00)
-#define GRN_CTX_USE_DB                 (0x01)
 #define GRN_CTX_USE_QL                 (0x03)
 #define GRN_CTX_BATCH_MODE             (0x04)
 
@@ -171,7 +167,7 @@ grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
 
 /**
  * grn_ctx_fin:
- * @ctx: 終了化するctx構造体へのポインタを指定します。
+ * @ctx: 解放するctx構造体へのポインタを指定します。
  *
  * ctxの管理するメモリを解放し、使用を終了します。
  **/
@@ -207,12 +203,12 @@ typedef unsigned int grn_obj_flags;
 #define GRN_OBJ_COMPRESS_ZLIB          (0x01<<4)
 #define GRN_OBJ_COMPRESS_LZO           (0x02<<4)
 
-#define GRN_OBJ_WITH_SECTION           (0x00<<7)
-#define GRN_OBJ_NO_SECTION             (0x01<<7)
-#define GRN_OBJ_WITH_SCORE             (0x00<<8)
-#define GRN_OBJ_NO_SCORE               (0x01<<8)
-#define GRN_OBJ_WITH_POSITION          (0x00<<9)
-#define GRN_OBJ_NO_POSITION            (0x01<<9)
+#define GRN_OBJ_NO_SECTION             (0x00<<7)
+#define GRN_OBJ_WITH_SECTION           (0x01<<7)
+#define GRN_OBJ_NO_SCORE               (0x00<<8)
+#define GRN_OBJ_WITH_SCORE             (0x01<<8)
+#define GRN_OBJ_NO_POSITION            (0x00<<9)
+#define GRN_OBJ_WITH_POSITION          (0x01<<9)
 
 #define GRN_OBJ_UNIT_MASK              (0x0f<<8)
 #define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00<<8)
@@ -311,7 +307,11 @@ struct _grn_obj {
 /**
  * grn_db_create:
  * @path: 作成するdbを格納するファイルパス。NULLならtemporary dbとなる。
- * @encoding: 作成するdbでデフォルトとなるencoding。
+ * @optarg: 作成するdbのデフォルトencodingおよび組み込み型の名前を変更する時に指定する。
+ * optarg.encodingにはそのdbでデフォルトとなるencodingを指定する。
+ * optarg.builtin_type_namesには組み込み型の名前となるnul終端文字列の配列を指定する。
+ * optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
+ * 指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。
  *
  * 新たなdbを作成する。
  **/
@@ -382,8 +382,9 @@ grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
  * (todo: 複合keyを定義するための構造)
  **/
 
-enum {
-  GRN_DB_INT = 1,
+typedef enum {
+  GRN_DB_VOID = 0,
+  GRN_DB_INT,
   GRN_DB_UINT,
   GRN_DB_INT64,
   GRN_DB_FLOAT,
@@ -396,7 +397,7 @@ enum {
   GRN_DB_BIGRAM,
   GRN_DB_TRIGRAM,
   GRN_DB_MECAB,
-};
+} grn_builtin_type;
 
 grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                          grn_obj_flags flags, unsigned int size);
