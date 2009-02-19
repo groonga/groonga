@@ -1,5 +1,11 @@
 2009-02-18  Poe MORITA  <morita at razil.jp>
 
+	* lib/hash.c (grn_hash_lookup): add lock/unlock.
+	* lib/pat.c (grn_pat_lookup): add lock/unlock.
+	* lib/ii.c (grn_ii_column_update): add lock/unlock.
+
+2009-02-18  Poe MORITA  <morita at razil.jp>
+
 	* src/groonga.c (msg_handler): fixed a problem cause segv.
 
 2009-02-18  Poe MORITA  <morita at razil.jp>

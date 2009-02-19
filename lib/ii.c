@@ -4494,10 +4494,10 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     ERR(GRN_INVALID_ARGUMENT, "grn_ii_column_update: invalid argument");
     return GRN_INVALID_ARGUMENT;
   }
+  if (grn_io_lock(ctx, ii->seg, 10000000)) { return ctx->rc; }
   if (ii->obj.header.flags & GRN_OBJ_COLUMN_INDEX_SCALAR) {
     // todo : scalar index
   }
-
   if (new) {
     switch (new->header.type) {
     case GRN_BULK :
@@ -4529,7 +4529,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "invalid object assigned as oldvalue");
-      return GRN_INVALID_ARGUMENT;
+      goto exit;
     }
   }
 
@@ -4564,7 +4564,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "invalid object assigned as oldvalue");
-      return GRN_INVALID_ARGUMENT;
+      goto exit;
     }
   }
 
@@ -4597,9 +4597,10 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     }
   }
 exit :
+  grn_io_unlock(ii->seg);
   if (old && old != oldvalue) { grn_obj_close(ctx, old); }
   if (new && new != newvalue) { grn_obj_close(ctx, new); }
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
 /* token_info */

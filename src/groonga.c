@@ -159,7 +159,10 @@ output(grn_ctx *ctx, int flags, void *arg)
   header.level = 0;
   header.status = 0;
   if (ctx->stat == GRN_QL_QUIT) { cs->com.status = grn_com_closing; }
-  grn_com_gqtp_send(ctx, cs, &header, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf));
+  if (grn_com_gqtp_send(ctx, cs, &header, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf))) {
+    ctx->stat = GRN_QL_QUIT;
+    cs->com.status = grn_com_closing;
+  }
   GRN_BULK_REWIND(buf);
 }
 
@@ -209,6 +212,7 @@ enum {
   MBCMD_PREPEND = 0x0f,
 };
 
+static grn_mutex cache_mutex;
 static grn_obj *cache_table = NULL;
 static grn_obj *cache_value = NULL;
 static grn_obj *cache_flags = NULL;
@@ -221,28 +225,32 @@ static grn_obj *
 cache_init(grn_ctx *ctx)
 {
   if (cache_table) { return cache_table; }
+  MUTEX_LOCK(cache_mutex);
   if ((cache_table = CTX_LOOKUP("<cache>"))) {
     cache_value = CTX_LOOKUP("<cache>.value");
     cache_flags = CTX_LOOKUP("<cache>.flags");
     cache_expire = CTX_LOOKUP("<cache>.expire");
     cache_cas = CTX_LOOKUP("<cache>.cas");
   } else {
-    grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
-    grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
-    grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
-    if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
-                                        GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                        shorttext_type, 0, enc))) {
-      cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
-                                      GRN_OBJ_PERSISTENT, shorttext_type);
-      cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
-                                      GRN_OBJ_PERSISTENT, uint_type);
-      cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
-                                       GRN_OBJ_PERSISTENT, uint_type);
-      cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
-                                    GRN_OBJ_PERSISTENT, int64_type);
+    if (!cache_table) {
+      grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
+      grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
+      grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
+      if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
+                                          GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
+                                          shorttext_type, 0, enc))) {
+        cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
+                                        GRN_OBJ_PERSISTENT, shorttext_type);
+        cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
+                                        GRN_OBJ_PERSISTENT, uint_type);
+        cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
+                                         GRN_OBJ_PERSISTENT, uint_type);
+        cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
+                                      GRN_OBJ_PERSISTENT, int64_type);
+      }
     }
   }
+  MUTEX_UNLOCK(cache_mutex);
   return cache_table;
 }
 
@@ -523,6 +531,7 @@ server(char *path)
   grn_ctx ctx_, *ctx = &ctx_;
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
+  MUTEX_INIT(cache_mutex);
   grn_ctx_init(ctx, 0, enc);
   queue_init(&qq);
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com_gqtp))) {

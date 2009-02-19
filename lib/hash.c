@@ -1150,7 +1150,13 @@ grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, voi
 {
   if (!hash || !key || !key_size) { return GRN_ID_NIL; }
   if (*flags & GRN_TABLE_ADD) {
-    return grn_hash_get(ctx, hash, key, key_size, value, flags);
+    if (grn_io_lock(ctx, hash->io, 10000000)) {
+      return GRN_ID_NIL;
+    } else {
+      grn_id id = grn_hash_get(ctx, hash, key, key_size, value, flags);
+      grn_io_unlock(hash->io);
+      return id;
+    }
   } else {
     return grn_hash_at(ctx, hash, key, key_size, value);
   }
