@@ -1,3 +1,7 @@
+2009-02-19  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (do_mbreq): fixed MBCMD_SET behavior.
+
 2009-02-18  Poe MORITA  <morita at razil.jp>
 
 	* lib/hash.c (grn_hash_lookup): add lock/unlock.

@@ -237,7 +237,7 @@ cache_init(grn_ctx *ctx)
       grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
       grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
       if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
-                                          GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
+                                          GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                                           shorttext_type, 0, enc))) {
         cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
                                         GRN_OBJ_PERSISTENT, shorttext_type);
@@ -281,7 +281,6 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
     break;
   case MBCMD_SET :
   case MBCMD_ADD :
-  case MBCMD_REPLACE :
     {
       grn_id rid;
       uint32_t size = ntohl(header->size);
@@ -301,22 +300,54 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
       if (!rid) {
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_ENOMEM, 0, 0);
       } else {
-        if (header->qtype == MBCMD_SET && !(f & GRN_TABLE_ADDED)) {
-          grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_EEXISTS, 0, 0);
-        } else {
-          /* todo : handle add */
-          GRN_BULK_SET(ctx, &buf, value, valuelen);
-          grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, &flags, 4);
-          grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, &expire, 4);
-          grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-          /* todo : ntohll */
-          GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
-          grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, NULL, 0);
-          grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
-        }
+        /* todo : handle add */
+        GRN_BULK_SET(ctx, &buf, value, valuelen);
+        grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &flags, 4);
+        grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &expire, 4);
+        grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
+        /* todo : ntohll */
+        GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
+        grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, NULL, 0);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+      }
+      cs->com.status = grn_com_idle;
+    }
+    break;
+  case MBCMD_REPLACE :
+    {
+      grn_id rid;
+      uint32_t size = ntohl(header->size);
+      uint16_t keylen = ntohs(header->keylen);
+      uint8_t extralen = header->level;
+      char *body = GRN_COM_GQTP_MSG_BODY(&cs->msg);
+      uint32_t flags = *((uint32_t *)body);
+      uint32_t expire = ntohl(*((uint32_t *)(body + 4)));
+      uint32_t valuelen = size - keylen - extralen;
+      char *key = body + 8;
+      char *value = key + keylen;
+      grn_search_flags f = 0;
+      GRN_ASSERT(extralen == 8);
+      cache_init(ctx);
+      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+      } else {
+        /* todo : handle add */
+        GRN_BULK_SET(ctx, &buf, value, valuelen);
+        grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &flags, 4);
+        grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, &expire, 4);
+        grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
+        /* todo : ntohll */
+        GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
+        grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+        GRN_BULK_SET(ctx, &buf, NULL, 0);
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
       }
       cs->com.status = grn_com_idle;
     }

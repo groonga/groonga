@@ -564,6 +564,10 @@ grn_com_gqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *
       SERR("setsockopt");
       goto exit;
     }
+    if (setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (void *) &v, sizeof(int)) == -1) {
+      SERR("setsockopt");
+      goto exit;
+    }
   }
   {
     int retry = 0;
