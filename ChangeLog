@@ -1,3 +1,7 @@
+2009-02-20  Poe MORITA  <morita at razil.jp>
+
+	* lib/com.h (GRN_COM_PROTO_GQTP): changed magic number.
+
 2009-02-19  Poe MORITA  <morita at razil.jp>
 
 	* src/groonga.c (do_mbreq): fixed MBCMD_SET behavior.
