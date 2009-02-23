@@ -146,6 +146,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
     if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c, &f)) {
       c->fd = fd;
       c->events = events;
+      c->status = grn_com_idle;
       if (com) { *com = c; }
     }
   }
@@ -226,6 +227,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   FD_ZERO(&rfds);
   FD_ZERO(&wfds);
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
+    if (com->status == grn_com_closed) { continue; }
     if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
     if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
     if (*pfd > nfds) { nfds = *pfd; }
@@ -254,6 +256,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   int nfd = 0, *pfd;
   struct pollfd *ep = ev->events;
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
+    if (com->status == grn_com_closed) { continue; }
     ep->fd = *pfd;
     //    ep->events =(short) com->events;
     ep->events = POLLIN;
@@ -510,13 +513,13 @@ grn_com_gqtp_receiver(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
 {
   unsigned int status;
   grn_com_gqtp *cs = (grn_com_gqtp *)c;
-  if (cs->com.status == grn_com_closing) {
+  if (cs->com.status == grn_com_closing || cs->com.status == grn_com_closed) {
     grn_com_gqtp_close(ctx, ev, cs);
     return;
   }
   if (cs->com.status != grn_com_idle) {
-    GRN_LOG(ctx, GRN_LOG_INFO, "waiting to be idle.. (%d) %d", c->fd, *ev->hash->n_entries);
-    usleep(1000);
+    //    GRN_LOG(ctx, GRN_LOG_NOTICE, "waiting to be idle.. (%d) %d", c->fd, *ev->hash->n_entries);
+    usleep(1);
     return;
   }
   grn_com_gqtp_recv(ctx, cs, &cs->msg, &status);
@@ -537,6 +540,7 @@ grn_com_gqtp_acceptor(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
     grn_sock_close(fd);
     return;
   }
+  // GRN_LOG(ctx, GRN_LOG_NOTICE, "accepted (%d)", fd);
   ncs->com.ev_in = grn_com_gqtp_receiver;
   grn_bulk_init(ctx, &ncs->msg, 0);
   ncs->msg_in = cs->msg_in;
@@ -618,11 +622,14 @@ grn_com_gqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp *cs)
   } else {
     GRN_FREE(cs);
   }
-  if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
-  if (grn_sock_close(fd) == -1) {
-    SERR("close");
-    return ctx->rc;
+  if (cs->com.status != grn_com_closed) {
+    if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
+    if (grn_sock_close(fd) == -1) {
+      SERR("close");
+      return ctx->rc;
+    }
   }
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
   return GRN_SUCCESS;
 }
 

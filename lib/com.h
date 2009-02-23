@@ -66,7 +66,8 @@ enum {
   grn_com_done,
   grn_com_connecting,
   grn_com_error,
-  grn_com_closing
+  grn_com_closing,
+  grn_com_closed
 };
 
 enum {

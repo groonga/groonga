@@ -178,6 +178,7 @@ errout(grn_ctx *ctx, grn_com_gqtp *cs, char *msg)
 static void
 ctx_close(grn_ctx *ctx)
 {
+  //  GRN_LOG(ctx, GRN_LOG_NOTICE, "ctx close %p", ctx);
   grn_ctx_fin(ctx);
   GRN_GFREE(ctx);
 }
@@ -224,34 +225,36 @@ static grn_obj *cache_cas = NULL;
 static grn_obj *
 cache_init(grn_ctx *ctx)
 {
-  if (cache_table) { return cache_table; }
+  if (cache_cas) { return cache_cas; }
   MUTEX_LOCK(cache_mutex);
-  if ((cache_table = CTX_LOOKUP("<cache>"))) {
-    cache_value = CTX_LOOKUP("<cache>.value");
-    cache_flags = CTX_LOOKUP("<cache>.flags");
-    cache_expire = CTX_LOOKUP("<cache>.expire");
-    cache_cas = CTX_LOOKUP("<cache>.cas");
-  } else {
-    if (!cache_table) {
-      grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
-      grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
-      grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
-      if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
-                                          GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                                          shorttext_type, 0, enc))) {
-        cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
-                                        GRN_OBJ_PERSISTENT, shorttext_type);
-        cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
-                                        GRN_OBJ_PERSISTENT, uint_type);
-        cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
-                                         GRN_OBJ_PERSISTENT, uint_type);
-        cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
-                                      GRN_OBJ_PERSISTENT, int64_type);
+  if (!cache_cas) {
+    if ((cache_table = CTX_LOOKUP("<cache>"))) {
+      cache_value = CTX_LOOKUP("<cache>.value");
+      cache_flags = CTX_LOOKUP("<cache>.flags");
+      cache_expire = CTX_LOOKUP("<cache>.expire");
+      cache_cas = CTX_LOOKUP("<cache>.cas");
+    } else {
+      if (!cache_table) {
+        grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
+        grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
+        grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
+        if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
+                                            GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
+                                            shorttext_type, 0, enc))) {
+          cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
+                                          GRN_OBJ_PERSISTENT, shorttext_type);
+          cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
+                                          GRN_OBJ_PERSISTENT, uint_type);
+          cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
+                                           GRN_OBJ_PERSISTENT, uint_type);
+          cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
+                                        GRN_OBJ_PERSISTENT, int64_type);
+        }
       }
     }
   }
   MUTEX_UNLOCK(cache_mutex);
-  return cache_table;
+  return cache_cas;
 }
 
 static void
@@ -269,14 +272,17 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
       cache_init(ctx);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d not found", keylen);
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+        cs->com.status = grn_com_idle;
       } else {
         grn_obj_get_value(ctx, cache_flags, rid, &buf);
         grn_obj_get_value(ctx, cache_value, rid, &buf);
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d v=%d", keylen, GRN_BULK_VSIZE(&buf));
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 4);
+        cs->com.status = grn_com_idle;
         grn_obj_close(ctx, &buf);
       }
-      cs->com.status = grn_com_idle;
     }
     break;
   case MBCMD_SET :
@@ -299,6 +305,7 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_ENOMEM, 0, 0);
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "SET k=%d failed", keylen);
       } else {
         /* todo : handle add */
         GRN_BULK_SET(ctx, &buf, value, valuelen);
@@ -311,6 +318,7 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
         GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
         grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
         GRN_BULK_SET(ctx, &buf, NULL, 0);
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "SET k=%d v=%d (%d)", keylen, valuelen, cs->com.fd);
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
       }
       cs->com.status = grn_com_idle;
@@ -389,15 +397,18 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
       cache_init(ctx);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GETK k=%d not found", keylen);
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+        cs->com.status = grn_com_idle;
       } else {
         grn_obj_get_value(ctx, cache_flags, rid, &buf);
         grn_bulk_write(ctx, &buf, key, keylen);
         grn_obj_get_value(ctx, cache_value, rid, &buf);
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GETK k=%d v=%d", keylen, GRN_BULK_VSIZE(&buf));
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, keylen, 4);
+        cs->com.status = grn_com_idle;
         grn_obj_close(ctx, &buf);
       }
-      cs->com.status = grn_com_idle;
     }
     break;
   case MBCMD_GETKQ :
@@ -416,9 +427,8 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
     grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
     /* fallthru */
   default :
+    ctx->stat = GRN_QL_QUIT;
     cs->com.status = grn_com_closing;
-    ctx_close(ctx);
-    grn_com_gqtp_close(&grn_gctx, ev, cs);
     break;
   }
 }
@@ -449,13 +459,15 @@ do_msg(grn_com_event *ev, grn_com_gqtp *cs)
     uint32_t size = ntohl(header->size);
     uint16_t flags = header->flags;
     grn_ql_send(ctx, body, size, flags);
-    if (ctx->stat == GRN_QL_QUIT || grn_gctx.stat == GRN_QL_QUIT) {
-      cs->com.status = grn_com_closing;
-      ctx_close(ctx);
-      cs->userdata = NULL;
-    } else {
-      cs->com.status = grn_com_idle;
-    }
+  }
+  if (ctx->stat == GRN_QL_QUIT || grn_gctx.stat == GRN_QL_QUIT) {
+    cs->com.status = grn_com_closing;
+    grn_sock_close(cs->com.fd);
+    ctx_close(ctx);
+    cs->userdata = NULL;
+    cs->com.status = grn_com_closed;
+  } else {
+    cs->com.status = grn_com_idle;
   }
 }
 
@@ -491,7 +503,7 @@ static queue qq;
 
 /* worker thread */
 
-#define MAX_NFTHREADS 0x04
+#define MAX_NFTHREADS 4
 
 static uint32_t nthreads = 0, nfthreads = 0;
 

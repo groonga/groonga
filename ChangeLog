@@ -1,5 +1,9 @@
 2009-02-20  Poe MORITA  <morita at razil.jp>
 
+	* lib/com.c: add new status 'grn_com_closed'. sockets are closed by worker threads.
+
+2009-02-20  Poe MORITA  <morita at razil.jp>
+
 	* lib/com.h (GRN_COM_PROTO_GQTP): changed magic number.
 
 2009-02-19  Poe MORITA  <morita at razil.jp>
