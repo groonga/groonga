@@ -1,3 +1,7 @@
+2009-02-24  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h: update comments.
+
 2009-02-20  Poe MORITA  <morita at razil.jp>
 
 	* lib/com.c: add new status 'grn_com_closed'. sockets are closed by worker threads.

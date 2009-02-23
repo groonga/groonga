@@ -368,19 +368,6 @@ grn_obj *grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size);
  * ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。
  * idに一致するオブジェクトが存在しなければNULLを返す。
  **/
-grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
-
-/**
- * grn_type_create:
- * @name: 作成するtypeの名前。
- * @flags: GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT, GRN_OBJ_KEY_INT, GRN_OBJ_KEY_UINT
- *        のいずれかを指定
- * @size: GRN_OBJ_KEY_VAR_SIZEの場合は最大長、
- *        それ以外の場合は長さを指定(単位:byte)
- *
- * nameに対応する新たなtype(型)をdbに定義する。
- * (todo: 複合keyを定義するための構造)
- **/
 
 typedef enum {
   GRN_DB_VOID = 0,
@@ -398,6 +385,19 @@ typedef enum {
   GRN_DB_TRIGRAM,
   GRN_DB_MECAB,
 } grn_builtin_type;
+
+grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
+
+/**
+ * grn_type_create:
+ * @name: 作成するtypeの名前。
+ * @flags: GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT, GRN_OBJ_KEY_INT, GRN_OBJ_KEY_UINT
+ *        のいずれかを指定
+ * @size: GRN_OBJ_KEY_VAR_SIZEの場合は最大長、
+ *        それ以外の場合は長さを指定(単位:byte)
+ *
+ * nameに対応する新たなtype(型)をdbに定義する。
+ **/
 
 grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                          grn_obj_flags flags, unsigned int size);
@@ -579,7 +579,9 @@ typedef grn_obj grn_table_cursor;
  * grn_table_cursor_open:
  * @table: 対象table
  * @min: keyの下限 (NULLは下限なしと見なす)
+ * @min_size: @minのsize
  * @max: keyの上限 (NULLは上限なしと見なす)
+ * @max_size: @maxのsize
  * @flags: GRN_CURSOR_ASCENDINGを指定すると昇順にkeyを取り出す。(指定しなければ降順)
  *         GRN_CURSOR_GTを指定するとminに一致したkeyをcursorの範囲に含まない。
  *         GRN_CURSOR_LTを指定するとmaxに一致したkeyをcursorの範囲に含まない。
@@ -747,6 +749,7 @@ grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
  * @table1: 対象table1
  * @table2: 対象table2
  * @res: 結果を格納するtable
+ * @op: 実行する演算の種類
  *
  * table1とtable2をopの指定に従って集合演算した結果をresに格納する。
  * resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されない。
@@ -793,11 +796,24 @@ unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  * grn_column_create:
  * @table: 対象table
  * @name: カラム名
+ * @name_size: @nameのsize(byte)
  * @path: カラムを格納するファイルパス。
  *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効。
  *        NULLなら自動的にファイルパスが付与される。
  * @flags: GRN_OBJ_PERSISTENTを指定すると永続columnとなる。
  *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる。
+ *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する。
+ *         GRN_OBJ_COLUMN_ARRAYを指定すると値の配列を格納する。
+ *         GRN_OBJ_COLUMN_VERSESを指定するとGRN_VERSES(重み情報付きの配列)を格納する。
+ *         GRN_OBJ_COLUMN_POSTINGSを指定すると単語とその出現位置リストを格納する。
+ *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する。
+ *         GRN_OBJ_COMPRESS_LZOを指定すると値をlzo圧縮して格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SECTIONを指定すると、
+ *         転置索引にsection(段落情報)を合わせて格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SCOREを指定すると、
+ *         転置索引にscore情報を合わせて格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_POSITIONを指定すると、
+ *         転置索引に出現位置情報を合わせて格納する。
  * @type: カラム値の型。定義済みのtypeあるいはtableを指定できる。
  *
  * tableに新たなカラムを定義する。nameは省略できない。
