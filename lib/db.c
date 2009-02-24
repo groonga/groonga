@@ -1610,7 +1610,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     }
     break;
   case GRN_OBJ_COLUMN_ARRAY :
-  case GRN_OBJ_COLUMN_VERSES :
+  case GRN_OBJ_COLUMN_SECTIONS :
   case GRN_OBJ_COLUMN_POSTINGS :
     res = (grn_obj *)grn_ja_create(ctx, path, value_size * 16/*todo*/, flags);
     //todo : zlib support
@@ -1858,27 +1858,27 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *vector, const char *data, uint32_t data
   return grn_bulk_write(ctx, vector, (char *)p, pe - p);
 }
 
-/**** grn_verses ****/
+/**** grn_sections ****/
 
-#define INITIAL_VERSES_SIZE 256
+#define INITIAL_SECTIONS_SIZE 256
 
 grn_rc
-grn_verses_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
+grn_sections_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
                unsigned int weight, grn_id domain)
 {
-  grn_verse *vp;
+  grn_section *vp;
   if (!str_len) { return GRN_SUCCESS; }
   if (!v || !str) {
-    GRN_LOG(ctx, GRN_LOG_WARNING, "grn_verses_add: invalid argument");
+    GRN_LOG(ctx, GRN_LOG_WARNING, "grn_sections_add: invalid argument");
     return GRN_INVALID_ARGUMENT;
   }
-  if (!(v->u.v.n_verses & (INITIAL_VERSES_SIZE - 1))) {
-    vp = GRN_REALLOC(v->u.v.verses, sizeof(grn_verse) *
-                     (v->u.v.n_verses + INITIAL_VERSES_SIZE));
+  if (!(v->u.v.n_sections & (INITIAL_SECTIONS_SIZE - 1))) {
+    vp = GRN_REALLOC(v->u.v.sections, sizeof(grn_section) *
+                     (v->u.v.n_sections + INITIAL_SECTIONS_SIZE));
     if (!vp) { return GRN_NO_MEMORY_AVAILABLE; }
-    v->u.v.verses = vp;
+    v->u.v.sections = vp;
   }
-  vp = &v->u.v.verses[v->u.v.n_verses];
+  vp = &v->u.v.sections[v->u.v.n_sections];
   if (v->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {
     vp->str = (char *)str;
   } else {
@@ -1888,18 +1888,18 @@ grn_verses_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
   vp->str_len = str_len;
   vp->weight = weight;
   vp->domain = domain;
-  v->u.v.n_verses++;
+  v->u.v.n_sections++;
   return GRN_SUCCESS;
 }
 
 grn_obj *
-grn_verses_to_vector(grn_ctx *ctx, grn_obj *verses)
+grn_sections_to_vector(grn_ctx *ctx, grn_obj *sections)
 {
   grn_obj *vector = grn_vector_open(ctx, 0);
   if (vector) {
-    grn_verse *vp;
+    grn_section *vp;
     int i;
-    for (i = verses->u.v.n_verses, vp = verses->u.v.verses; i; i--, vp++) {
+    for (i = sections->u.v.n_sections, vp = sections->u.v.sections; i; i--, vp++) {
       grn_bulk_benc(ctx, vector, vp->weight);
       grn_bulk_benc(ctx, vector, vp->domain);
       grn_bulk_write(ctx, vector, vp->str, vp->str_len);
@@ -1910,14 +1910,14 @@ grn_verses_to_vector(grn_ctx *ctx, grn_obj *verses)
 }
 
 grn_obj *
-grn_vector_to_verses(grn_ctx *ctx, grn_obj *vector, grn_obj *verses)
+grn_vector_to_sections(grn_ctx *ctx, grn_obj *vector, grn_obj *sections)
 {
-  if (!verses) {
-    verses = grn_obj_open(ctx, GRN_VERSES, GRN_OBJ_DO_SHALLOW_COPY);
+  if (!sections) {
+    sections = grn_obj_open(ctx, GRN_SECTIONS, GRN_OBJ_DO_SHALLOW_COPY);
   }
-  if (verses) {
+  if (sections) {
     int i, n = grn_vector_size(ctx, vector);
-    verses->u.v.src = vector;
+    sections->u.v.src = vector;
     for (i = 0; i < n; i++) {
       unsigned int size;
       const uint8_t *pe, *p = (uint8_t *)grn_vector_fetch(ctx, vector, i, &size);
@@ -1930,14 +1930,14 @@ grn_vector_to_verses(grn_ctx *ctx, grn_obj *vector, grn_obj *verses)
           if (p < pe) {
             GRN_B_DEC(domain, p);
             if (p <= pe) {
-              grn_verses_add(ctx, verses, (char *)p, pe - p, weight, domain);
+              grn_sections_add(ctx, sections, (char *)p, pe - p, weight, domain);
             }
           }
         }
       }
     }
   }
-  return verses;
+  return sections;
 }
 
 /**** accessor ****/
@@ -2470,17 +2470,17 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           }
         }
         break;
-      case GRN_OBJ_COLUMN_VERSES :
+      case GRN_OBJ_COLUMN_SECTIONS :
         {
           grn_obj *vector;
-          /* if DB_OBJ(obj)->range is a table, then verses2updspecs() */
-          if (value->header.type != GRN_VERSES) {
+          /* if DB_OBJ(obj)->range is a table, then sections2updspecs() */
+          if (value->header.type != GRN_SECTIONS) {
             /* todo : convert */
-            ERR(GRN_INVALID_ARGUMENT, "verses required");
+            ERR(GRN_INVALID_ARGUMENT, "sections required");
             rc = GRN_INVALID_ARGUMENT;
             goto exit;
           }
-          vector = grn_verses_to_vector(ctx, value);
+          vector = grn_sections_to_vector(ctx, value);
           rc = grn_ja_putv(ctx, (grn_ja *)obj, id, vector, 0);
           grn_obj_close(ctx, vector);
         }
@@ -2627,16 +2627,16 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         grn_ja_unref(ctx, (grn_ja *)obj, id, v, len);
       }
       break;
-    case GRN_OBJ_COLUMN_VERSES :
+    case GRN_OBJ_COLUMN_SECTIONS :
       {
         grn_obj *vector;
         void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &len);
         if (!v) { len = 0; goto exit; }
         vector = grn_vector_open(ctx, 0);
         if (!grn_vector_decode(ctx, vector, v, len)) {
-          value->header.type = GRN_VERSES;
+          value->header.type = GRN_SECTIONS;
           value->header.flags |= GRN_OBJ_DO_SHALLOW_COPY;
-          value = grn_vector_to_verses(ctx, vector, value);
+          value = grn_vector_to_sections(ctx, vector, value);
         } else {
           grn_obj_close(ctx, vector);
         }
@@ -3297,16 +3297,16 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     case GRN_TABLE_NO_KEY :
       rc = grn_array_close(ctx, (grn_array *)obj);
       break;
-    case GRN_VERSES :
-      if (obj->u.v.verses) {
+    case GRN_SECTIONS :
+      if (obj->u.v.sections) {
         if (!(obj->header.flags & GRN_OBJ_DO_SHALLOW_COPY)) {
-          int n = obj->u.v.n_verses;
-          grn_verse *vp = obj->u.v.verses;
-          for (n = obj->u.v.n_verses, vp = obj->u.v.verses; n; n--, vp++) {
+          int n = obj->u.v.n_sections;
+          grn_section *vp = obj->u.v.sections;
+          for (n = obj->u.v.n_sections, vp = obj->u.v.sections; n; n--, vp++) {
             GRN_FREE(vp->str);
           }
         }
-        GRN_FREE(obj->u.v.verses);
+        GRN_FREE(obj->u.v.sections);
       }
       if (obj->u.v.src) { grn_obj_close(ctx, obj->u.v.src); }
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {

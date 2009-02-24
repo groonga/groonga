@@ -28,7 +28,7 @@
 
 static grn_cell *ha_object(grn_ctx *ctx, grn_cell *args, grn_ql_co *co);
 static grn_cell *ha_snip(grn_ctx *ctx, grn_cell *args, grn_ql_co *co);
-static grn_cell *ha_verses(grn_ctx *ctx, grn_cell *args, grn_ql_co *co);
+static grn_cell *ha_sections(grn_ctx *ctx, grn_cell *args, grn_ql_co *co);
 
 #define STRBUF_SIZE (GRN_TABLE_MAX_KEY_SIZE + 1)
 
@@ -133,14 +133,14 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
       }
     }
     break;
-  case GRN_VERSES :
+  case GRN_SECTIONS :
     {
-      grn_obj *verses = grn_obj_graft(ctx, obj);
-      if (verses) {
-        cell->header.type = GRN_VERSES;
+      grn_obj *sections = grn_obj_graft(ctx, obj);
+      if (sections) {
+        cell->header.type = GRN_SECTIONS;
         cell->header.impl_flags |= GRN_OBJ_ALLOCATED|GRN_CELL_NATIVE;
-        cell->u.p.value = verses;
-        cell->u.p.func = ha_verses;
+        cell->u.p.value = sections;
+        cell->u.p.func = ha_sections;
       }
     }
     break;
@@ -456,7 +456,7 @@ table_column(grn_ctx *ctx, grn_id base, char *msg, unsigned msg_size)
 }
 
 static grn_cell *
-ha_verses(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+ha_sections(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   uint16_t msg_size;
   grn_cell *car, *res;
@@ -469,9 +469,9 @@ ha_verses(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     switch (msg[1]) {
     case 's' : /* :sexp */
       {
-        grn_obj *verses = (grn_obj *)res->u.p.value;
-        int n = verses->u.v.n_verses;
-        grn_verse *vp = &verses->u.v.verses[n];
+        grn_obj *sections = (grn_obj *)res->u.p.value;
+        int n = sections->u.v.n_sections;
+        grn_section *vp = &sections->u.v.sections[n];
         grn_cell *a = INTERN("@");
         grn_cell *d = INTERN(":dic");
         grn_cell *w = INTERN(":weight");
@@ -725,7 +725,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
     case GRN_CELL_TIME :
       /* todo */
       break;
-    case GRN_VERSES :
+    case GRN_SECTIONS :
       obj = (grn_obj *)cell->u.p.value;
       break;
     }
@@ -1116,25 +1116,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                   break;
                 case 's' :
                 case 'S' :
-                  switch (msg[1]) {
-                  case 'e' :
-                  case 'E' :
-                    flags |= GRN_OBJ_WITH_SECTION;
-                    break;
-                  case 'c' :
-                  case 'C' :
-                    switch (msg[2]) {
-                    case 'o' :
-                    case 'O' :
-                      flags |= GRN_OBJ_WITH_SCORE;
-                      break;
-                    case 'a' :
-                    case 'A' : /* scalar */
-                      flags &= ~GRN_OBJ_COLUMN_TYPE_MASK;
-                      break;
-                    }
-                    break;
-                  }
+                  flags |= GRN_OBJ_WITH_SECTION;
                   break;
                 case 't' :
                 case 'T' :
@@ -1142,7 +1124,11 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                   break;
                 case 'v' :
                 case 'V' :
-                  flags |= GRN_OBJ_COLUMN_VERSES;
+                  flags |= GRN_OBJ_COLUMN_SECTIONS;
+                  break;
+                case 'w' :
+                case 'W' :
+                  flags |= GRN_OBJ_WITH_WEIGHT;
                   break;
                 case 'z' :
                 case 'Z' :
@@ -1731,17 +1717,17 @@ nf_toquery(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 }
 
 static grn_cell *
-nf_toverses(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+nf_tosections(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_cell *o = F, *s, *car, *key, *value;
   POP(s, args);
   if (PAIRP(s)) {
-    grn_obj verses;
-    GRN_OBJ_INIT(&verses, GRN_VERSES, 0);
+    grn_obj sections;
+    GRN_OBJ_INIT(&sections, GRN_SECTIONS, 0);
     while (PAIRP(s)) {
       POP(car, s);
       if (BULKP(car)) {
-        grn_verses_add(ctx, &verses, STRVALUE(car), STRSIZE(car), 0, GRN_ID_NIL);
+        grn_sections_add(ctx, &sections, STRVALUE(car), STRSIZE(car), 0, GRN_ID_NIL);
       } else if (PAIRP(car)) {
         const char *str = NULL;
         grn_id domain = GRN_ID_NIL;
@@ -1762,13 +1748,13 @@ nf_toverses(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             }
           }
           if (str) {
-            grn_verses_add(ctx, &verses, str, str_len, weight, domain);
+            grn_sections_add(ctx, &sections, str, str_len, weight, domain);
           }
         }
       }
     }
     GRN_CELL_NEW(ctx, o);
-    obj2cell(ctx, &verses, o);
+    obj2cell(ctx, &sections, o);
   }
   return o;
 }
@@ -3063,6 +3049,6 @@ grn_ql_def_db_funcs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "disp", nf_disp);
   grn_ql_def_native_func(ctx, "json-read", nf_json_read);
   grn_ql_def_native_func(ctx, "x->query", nf_toquery);
-  grn_ql_def_native_func(ctx, "x->verses", nf_toverses);
+  grn_ql_def_native_func(ctx, "x->sections", nf_tosections);
   return GRN_SUCCESS;
 }

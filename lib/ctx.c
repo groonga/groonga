@@ -1234,7 +1234,7 @@ grn_cell_clear(grn_ctx *ctx, grn_cell *o)
     case GRN_QUERY :
       if (o->u.p.value) { grn_query_close(ctx, (grn_query *)o->u.p.value); }
       break;
-    case GRN_VERSES :
+    case GRN_SECTIONS :
       if (o->u.p.value) { grn_obj_close(ctx, o->u.p.value); }
       break;
     case GRN_PATSNIP :

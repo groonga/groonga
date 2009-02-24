@@ -194,7 +194,7 @@ typedef unsigned int grn_obj_flags;
 #define GRN_OBJ_COLUMN_TYPE_MASK       (0x07)
 #define GRN_OBJ_COLUMN_SCALAR          (0x00)
 #define GRN_OBJ_COLUMN_ARRAY           (0x01)
-#define GRN_OBJ_COLUMN_VERSES          (0x02)
+#define GRN_OBJ_COLUMN_SECTIONS        (0x02)
 #define GRN_OBJ_COLUMN_POSTINGS        (0x03)
 #define GRN_OBJ_COLUMN_INDEX           (0x04)
 
@@ -203,11 +203,8 @@ typedef unsigned int grn_obj_flags;
 #define GRN_OBJ_COMPRESS_ZLIB          (0x01<<4)
 #define GRN_OBJ_COMPRESS_LZO           (0x02<<4)
 
-#define GRN_OBJ_NO_SECTION             (0x00<<7)
 #define GRN_OBJ_WITH_SECTION           (0x01<<7)
-#define GRN_OBJ_NO_SCORE               (0x00<<8)
-#define GRN_OBJ_WITH_SCORE             (0x01<<8)
-#define GRN_OBJ_NO_POSITION            (0x00<<9)
+#define GRN_OBJ_WITH_WEIGHT            (0x01<<8)
 #define GRN_OBJ_WITH_POSITION          (0x01<<9)
 
 #define GRN_OBJ_UNIT_MASK              (0x0f<<8)
@@ -239,7 +236,7 @@ typedef unsigned int grn_obj_flags;
 #define GRN_VOID                       (0x00)
 #define GRN_BULK                       (0x01)
 #define GRN_VECTOR                     (0x02)
-#define GRN_VERSES                     (0x03)
+#define GRN_SECTIONS                   (0x03)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
 #define GRN_SNIP                       (0x0a)
@@ -258,11 +255,11 @@ typedef unsigned int grn_obj_flags;
 #define GRN_COLUMN_VAR_SIZE            (0x41)
 #define GRN_COLUMN_INDEX               (0x48)
 
-typedef struct _grn_verse grn_verse;
+typedef struct _grn_section grn_section;
 typedef struct _grn_obj grn_obj;
 typedef struct _grn_obj_header grn_obj_header;
 
-struct _grn_verse {
+struct _grn_section {
   char *str;
   unsigned int str_len;
   unsigned int weight;
@@ -286,8 +283,8 @@ struct _grn_obj {
     } b;
     struct {
       grn_obj *src;
-      grn_verse *verses;
-      int n_verses;
+      grn_section *sections;
+      int n_sections;
     } v;
   } u;
 };
@@ -804,14 +801,14 @@ unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる。
  *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する。
  *         GRN_OBJ_COLUMN_ARRAYを指定すると値の配列を格納する。
- *         GRN_OBJ_COLUMN_VERSESを指定するとGRN_VERSES(重み情報付きの配列)を格納する。
+ *         GRN_OBJ_COLUMN_SECTIONSを指定するとGRN_SECTIONS(重み情報付きの配列)を格納する。
  *         GRN_OBJ_COLUMN_POSTINGSを指定すると単語とその出現位置リストを格納する。
  *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する。
  *         GRN_OBJ_COMPRESS_LZOを指定すると値をlzo圧縮して格納する。
  *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SECTIONを指定すると、
  *         転置索引にsection(段落情報)を合わせて格納する。
- *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SCOREを指定すると、
- *         転置索引にscore情報を合わせて格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_WEIGHTを指定すると、
+ *         転置索引にweight情報を合わせて格納する。
  *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_POSITIONを指定すると、
  *         転置索引に出現位置情報を合わせて格納する。
  * @type: カラム値の型。定義済みのtypeあるいはtableを指定できる。
@@ -1114,7 +1111,7 @@ struct _grn_search_optarg {
 grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
                       grn_obj *res, grn_sel_operator op, grn_search_optarg *optarg);
 
-grn_rc grn_verses_add(grn_ctx *ctx, grn_obj *verses,
+grn_rc grn_sections_add(grn_ctx *ctx, grn_obj *sections,
                       const char *str, unsigned int str_len,
                       unsigned int weight, grn_id lang);
 
