@@ -1932,44 +1932,10 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       break;
     case 'd' : /* :drop */
     case 'D' :
-      {
-        grn_hash *columns;
-        const char *path;
-        char pathbuf[PATH_MAX];
-        POP(car, args);
-        if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
-        if (!(table = grn_ctx_lookup(ctx, msg, msg_size))) {
-          QLERR("Invalid table");
-        }
-        if (!(columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                        GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY,
-                                        GRN_ENC_NONE))) {
-          QLERR("grn_hash_create failed");
-        }
-        if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns)) {
-          grn_id *key;
-          GRN_HASH_EACH(columns, id, &key, NULL, NULL, {
-            grn_obj *col = grn_ctx_get(ctx, *key);
-            if (col) {
-              if ((path = grn_obj_path(ctx, col))) {
-                strncpy(pathbuf, path, PATH_MAX);
-                grn_obj_close(ctx, col);
-                grn_obj_remove(ctx, pathbuf);
-              } else {
-                grn_obj_close(ctx, col);
-              }
-            }
-          });
-        }
-        grn_hash_close(ctx, columns);
-        if ((path = grn_obj_path(ctx, table))) {
-          strncpy(pathbuf, path, PATH_MAX);
-          grn_obj_close(ctx, table);
-          grn_obj_remove(ctx, pathbuf);
-        } else {
-          grn_obj_close(ctx, table);
-        }
-      }
+      POP(car, args);
+      if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
+      if (!(table = grn_ctx_lookup(ctx, msg, msg_size))) { QLERR("Invalid table"); }
+      grn_obj_remove(ctx, table);
       break;
     case 'p' : /* :prefix-search */
     case 'P' :

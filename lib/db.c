@@ -525,8 +525,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     DB_OBJ(res)->subrec_size = subrec_size;
     DB_OBJ(res)->subrec_offset = subrec_offset;
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
-      grn_obj_close(ctx, res);
-      grn_obj_remove(ctx, path);
+      grn_obj_remove(ctx, res);
       res = NULL;
     }
   } else {
@@ -1625,8 +1624,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     DB_OBJ(res)->flags = flags;
     res->header.flags = flags;
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
-      grn_obj_close(ctx, res);
-      grn_obj_remove(ctx, path);
+      grn_obj_remove(ctx, res);
       res = NULL;
     }
   }
@@ -2997,10 +2995,47 @@ grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset
 }
 
 grn_rc
-grn_obj_remove(grn_ctx *ctx, const char *path)
+grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
+  char *path;
   GRN_API_ENTER;
-  GRN_API_RETURN(GRN_SUCCESS);
+  path = (char *)grn_obj_path(ctx, obj);
+  if (path) { path = GRN_STRDUP(path); }
+  switch (obj->header.type) {
+  case GRN_DB :
+    /* todo : remove all tables and columns */
+    break;
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_NO_KEY :
+    {
+      grn_hash *cols;
+      if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY, GRN_ENC_NONE))) {
+        if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
+          grn_id *key;
+          GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
+            grn_obj *col = grn_ctx_get(ctx, *key);
+            if (col) { grn_obj_remove(ctx, col); }
+          });
+          grn_hash_close(ctx, cols);
+        }
+      }
+      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, 1);
+    }
+    break;
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_INDEX :
+    grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, 1);
+    break;
+  }
+  grn_obj_close(ctx, obj);
+  if (path) {
+    grn_io_remove(ctx, path);
+    GRN_FREE(path);
+  }
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc

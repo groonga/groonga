@@ -985,11 +985,12 @@ grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, 
 
 /**
  * grn_obj_remove:
- * @path: objectに該当するファイルパス
+ * @obj: 対象object
  *
- * pathに該当するオブジェクトのファイル一式を削除する。
+ * objをメモリから解放し、それが永続オブジェクトであった場合は、
+ * 該当するファイル一式を削除する。
  **/
-grn_rc grn_obj_remove(grn_ctx *ctx, const char *path);
+grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_rename:

@@ -3163,7 +3163,7 @@ grn_ii_remove(grn_ctx *ctx, const char *path)
   grn_rc rc;
   char buffer[PATH_MAX];
   if (!path || strlen(path) > PATH_MAX - 4) { return GRN_INVALID_ARGUMENT; }
-  if ((rc = grn_obj_remove(ctx, path))) { goto exit; }
+  if ((rc = grn_io_remove(ctx, path))) { goto exit; }
   snprintf(buffer, PATH_MAX, "%s.c", path);
   rc = grn_io_remove(ctx, buffer);
 exit :
