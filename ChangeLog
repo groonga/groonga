@@ -1,6 +1,7 @@
 2009-02-25  Tasuku SUENAGA <a at razil.jp>
 
 	* src/groonga.c (do_mbreq): added MBCMD_ADD support.
+	* src/groonga.c (do_mbreq): fixed compile error.
 
 2009-02-24  Poe MORITA  <morita at razil.jp>
 
