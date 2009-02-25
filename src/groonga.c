@@ -306,8 +306,9 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
       if (!rid) {
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_ENOMEM, 0, 0);
         // GRN_LOG(ctx, GRN_LOG_NOTICE, "SET k=%d failed", keylen);
+      } else if (header->qtype == MBCMD_ADD && !(f & GRN_TABLE_ADD)) {
+        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_EEXISTS, 0, 0);
       } else {
-        /* todo : handle add */
         GRN_BULK_SET(ctx, &buf, value, valuelen);
         grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
         GRN_BULK_SET(ctx, &buf, &flags, 4);
@@ -344,7 +345,6 @@ do_mbreq(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp_header *header, grn_com_g
       if (!rid) {
         grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
       } else {
-        /* todo : handle add */
         GRN_BULK_SET(ctx, &buf, value, valuelen);
         grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
         GRN_BULK_SET(ctx, &buf, &flags, 4);

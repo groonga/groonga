@@ -1,3 +1,7 @@
+2009-02-25  Tasuku SUENAGA <a at razil.jp>
+
+	* src/groonga.c (do_mbreq): added MBCMD_ADD support.
+
 2009-02-24  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h: verses -> sections. score -> weight.
