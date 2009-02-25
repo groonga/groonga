@@ -581,18 +581,42 @@ grn_table_lookup(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
   if (table && key_size) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      WITH_NORMALIZE((grn_pat *)table, key, key_size, {
-        if (*flags & GRN_SEARCH_LCP) {
-          id = grn_pat_lcp_search(ctx, (grn_pat *)table, key, key_size);
-        } else {
-          id = grn_pat_lookup(ctx, (grn_pat *)table, key, key_size, NULL, flags);
-        }
-      });
+      {
+        grn_pat *pat = (grn_pat *)table;
+        WITH_NORMALIZE(pat, key, key_size, {
+          if (*flags & GRN_SEARCH_LCP) {
+            id = grn_pat_lcp_search(ctx, pat, key, key_size);
+          } else {
+            if (*flags & GRN_TABLE_ADD) {
+              if (grn_io_lock(ctx, pat->io, 10000000)) {
+                id = GRN_ID_NIL;
+              } else {
+                id = grn_pat_get(ctx, pat, key, key_size, NULL, flags);
+                grn_io_unlock(pat->io);
+              }
+            } else {
+              id = grn_pat_at(ctx, pat, key, key_size, NULL);
+            }
+          }
+        });
+      }
       break;
     case GRN_TABLE_HASH_KEY :
-      WITH_NORMALIZE((grn_hash *)table, key, key_size, {
-        id = grn_hash_lookup(ctx, (grn_hash *)table, key, key_size, NULL, flags);
-      });
+      {
+        grn_hash *hash = (grn_hash *)table;
+        WITH_NORMALIZE(hash, key, key_size, {
+          if (*flags & GRN_TABLE_ADD) {
+            if (grn_io_lock(ctx, hash->io, 10000000)) {
+              id = GRN_ID_NIL;
+            } else {
+              id = grn_hash_get(ctx, hash, key, key_size, NULL, flags);
+              grn_io_unlock(hash->io);
+            }
+          } else {
+            id = grn_hash_at(ctx, hash, key, key_size, NULL);
+          }
+        });
+      }
       break;
     }
   }

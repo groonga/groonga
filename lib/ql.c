@@ -1936,6 +1936,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
       if (!(table = grn_ctx_lookup(ctx, msg, msg_size))) { QLERR("Invalid table"); }
       grn_obj_remove(ctx, table);
+      grn_hash_delete(ctx, ctx->impl->symbols, msg, msg_size, NULL);
       break;
     case 'p' : /* :prefix-search */
     case 'P' :

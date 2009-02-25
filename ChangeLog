@@ -1,3 +1,7 @@
+2009-02-25  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_table_lookup): moved grn_io_lock from hash.c/pat.c to db.c.
+
 2009-02-25  Tasuku SUENAGA <a at razil.jp>
 
 	* src/groonga.c (do_mbreq): added MBCMD_ADD support.
