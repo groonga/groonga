@@ -1,5 +1,9 @@
 2009-02-27  Poe MORITA  <morita at razil.jp>
 
+	* src/groonga.c: add -d option (run as daemon). -s option is took as server mode (don't fork).
+
+2009-02-27  Poe MORITA  <morita at razil.jp>
+
 	* doc/README.ja: add.
 
 2009-02-25  Poe MORITA  <morita at razil.jp>

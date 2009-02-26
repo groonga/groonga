@@ -42,6 +42,7 @@ usage(void)
           "  -a:                 run in standalone mode (default)\n"
           "  -c:                 run in client mode\n"
           "  -s:                 run in server mode\n"
+          "  -d:                 run in daemon mode\n"
           "  -e:                 encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
           "  -p <port number>:   server port number (default: %d)\n"
           "dest: <db pathname> or <dest hostname>\n"
@@ -619,7 +620,7 @@ server(char *path)
 }
 
 static int
-do_server(char *path)
+do_daemon(char *path)
 {
 #ifndef WIN32
   pid_t pid;
@@ -650,8 +651,8 @@ do_server(char *path)
 enum {
   mode_alone,
   mode_client,
+  mode_daemon,
   mode_server,
-  mode_dserver,
   mode_usage
 };
 
@@ -675,8 +676,8 @@ main(int argc, char **argv)
     {'h', NULL, NULL, mode_usage, getopt_op_update},
     {'a', NULL, NULL, mode_alone, getopt_op_update},
     {'c', NULL, NULL, mode_client, getopt_op_update},
+    {'d', NULL, NULL, mode_daemon, getopt_op_update},
     {'s', NULL, NULL, mode_server, getopt_op_update},
-    {'d', NULL, NULL, mode_dserver, getopt_op_update},
     {'l', NULL, NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
@@ -725,10 +726,10 @@ main(int argc, char **argv)
   case mode_client :
     r = do_client(argc <= i ? DEFAULT_DEST : argv[i]);
     break;
-  case mode_server :
-    r = do_server(argc <= i ? NULL : argv[i]);
+  case mode_daemon :
+    r = do_daemon(argc <= i ? NULL : argv[i]);
     break;
-  case mode_dserver :
+  case mode_server :
     r = server(argc <= i ? NULL : argv[i]);
     break;
   default :
