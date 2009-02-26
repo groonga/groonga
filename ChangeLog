@@ -1,3 +1,7 @@
+2009-02-27  Poe MORITA  <morita at razil.jp>
+
+	* doc/README.ja: add.
+
 2009-02-25  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_table_lookup): moved grn_io_lock from hash.c/pat.c to db.c.
