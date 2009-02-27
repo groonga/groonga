@@ -76,7 +76,7 @@ DB APIはQL APIの下位に位置し、データストアを構成する各オ�
      char errbuf[GRN_CTX_MSGSIZE];    /* 最後に発生したエラーに関するメッセージ */
    };
 
-  grn_ctx構造体はAPIで使用する前にgrn_ctx_init()で初期化しなければならない。初期化するgrn_ctx構造体へのポインタをctxに指定する。flagsにGRN_CTX_USE_QLを指定すると、grn_ctx内部にquery language処理系を生成する。GRN_CTX_USE_QLに加えてGRN_CTX_BATCH_MODEを指定した場合は、バッチモードでquery language処理系を生成する。encodingには、grn_ctxで文字列を処理する際のデフォルトの符号化方式を指定する。
+  grn_ctx構造体はAPIで使用する前にgrn_ctx_init()で初期化しなければならない。初期化するgrn_ctx構造体へのポインタを'ctx'に指定する。'flags'にGRN_CTX_USE_QLを指定すると、grn_ctx内部にquery language処理系を生成する。GRN_CTX_USE_QLに加えてGRN_CTX_BATCH_MODEを指定した場合は、バッチモードでquery language処理系を生成する。'encoding'には、grn_ctxで文字列を処理する際のデフォルトの符号化方式を指定する。
 
   API実行中にエラーが発生した場合には、grn_ctx構造体のrc, ntrace, errlvl, errline, errfile, errfunc, trace, errbufメンバに情報がセットされる。
 
@@ -150,27 +150,37 @@ DB APIはQL APIの下位に位置し、データストアを構成する各オ�
 
 :NAME
 
-  grn_db_create - つくる
+  grn_db_create, grn_db_open - データベースを生成する
 
 :SYNOPSIS
  ((' '))
   #include <groonga/groonga.h>
 
+  grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
+  grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
+
 :DESCRIPTION
 
-  つくる
+  つくる・ひらく
 
 :RETURN VALUE
 
 = low-level API
 
-== grn_hoge
+== grn_hash_create
 
 :NAME
+
+  grn_hash_create, grn_hash_open - ハッシュテーブルを生成する
 
 :SYNOPSIS
  ((' '))
   #include <groonga/groonga.h>
+
+  grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                            unsigned int value_size, unsigned int flags,
+                            grn_encoding encoding);
+  grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
 
 :DESCRIPTION
 :RETURN VALUE
@@ -183,3 +193,4 @@ DB APIはQL APIの下位に位置し、データストアを構成する各オ�
 :SEE ALSO
 :COLOPHON
 
+あとでまた書く

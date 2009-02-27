@@ -1,5 +1,9 @@
 2009-02-27  Poe MORITA  <morita at razil.jp>
 
+	* doc/ja/API.rd: updated.
+
+2009-02-27  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (GRN_CTX_INITIALIZER): removed.
 
 2009-02-27  Poe MORITA  <morita at razil.jp>

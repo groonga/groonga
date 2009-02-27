@@ -80,7 +80,7 @@ struct _grn_ctx {
   void *trace[16];                 /* バックトレースポインタ配列 */
   char errbuf[GRN_CTX_MSGSIZE];    /* 最後に発生したエラーに関するメッセージ */
 };</pre>
-<p>grn_ctx構造体はAPIで使用する前にgrn_ctx_init()で初期化しなければならない。初期化するgrn_ctx構造体へのポインタをctxに指定する。flagsにGRN_CTX_USE_QLを指定すると、grn_ctx内部にquery language処理系を生成する。GRN_CTX_USE_QLに加えてGRN_CTX_BATCH_MODEを指定した場合は、バッチモードでquery language処理系を生成する。encodingには、grn_ctxで文字列を処理する際のデフォルトの符号化方式を指定する。</p>
+<p>grn_ctx構造体はAPIで使用する前にgrn_ctx_init()で初期化しなければならない。初期化するgrn_ctx構造体へのポインタを'ctx'に指定する。'flags'にGRN_CTX_USE_QLを指定すると、grn_ctx内部にquery language処理系を生成する。GRN_CTX_USE_QLに加えてGRN_CTX_BATCH_MODEを指定した場合は、バッチモードでquery language処理系を生成する。'encoding'には、grn_ctxで文字列を処理する際のデフォルトの符号化方式を指定する。</p>
 <p>API実行中にエラーが発生した場合には、grn_ctx構造体のrc, ntrace, errlvl, errline, errfile, errfunc, trace, errbufメンバに情報がセットされる。</p>
 <p>grn_ctx_finはgrn_ctx構造体の使用する資源を解放する。grn_ctxを通して生成した一時オブジェクトも全て一括して解放される。</p>
 </dd>
@@ -154,27 +154,38 @@ grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
 <dl>
 <dt><a name="label-29" id="label-29">NAME</a></dt><!-- RDLabel: "NAME" -->
 <dd>
-grn_db_create - つくる
+grn_db_create, grn_db_open - データベースを生成する
 </dd>
 <dt><a name="label-30" id="label-30">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
 <dd>
 <p> </p>
-<pre>#include &lt;groonga/groonga.h&gt;</pre>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
+grn_obj *grn_db_open(grn_ctx *ctx, const char *path);</pre>
 </dd>
 <dt><a name="label-31" id="label-31">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dd>
-つくる
+つくる・ひらく
 </dd>
 <dt><a name="label-32" id="label-32">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
 </dl>
 <h1><a name="label-33" id="label-33">low-level API</a></h1><!-- RDLabel: "low-level API" -->
-<h2><a name="label-34" id="label-34">grn_hoge</a></h2><!-- RDLabel: "grn_hoge" -->
+<h2><a name="label-34" id="label-34">grn_hash_create</a></h2><!-- RDLabel: "grn_hash_create" -->
 <dl>
 <dt><a name="label-35" id="label-35">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_hash_create, grn_hash_open - ハッシュテーブルを生成する
+</dd>
 <dt><a name="label-36" id="label-36">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
 <dd>
 <p> </p>
-<pre>#include &lt;groonga/groonga.h&gt;</pre>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                          unsigned int value_size, unsigned int flags,
+                          grn_encoding encoding);
+grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);</pre>
 </dd>
 <dt><a name="label-37" id="label-37">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dt><a name="label-38" id="label-38">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
@@ -187,6 +198,7 @@ grn_db_create - つくる
 <dt><a name="label-45" id="label-45">SEE ALSO</a></dt><!-- RDLabel: "SEE ALSO" -->
 <dt><a name="label-46" id="label-46">COLOPHON</a></dt><!-- RDLabel: "COLOPHON" -->
 </dl>
+<p>あとでまた書く</p>
 
 </body>
 </html>
