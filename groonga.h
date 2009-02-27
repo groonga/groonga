@@ -143,12 +143,6 @@ struct _grn_ctx {
   char errbuf[GRN_CTX_MSGSIZE];
 };
 
-#define GRN_CTX_INITIALIZER \
-  { GRN_SUCCESS, 0, GRN_ENC_DEFAULT, 0, GRN_LOG_NOTICE,\
-    GRN_CTX_FIN, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL }
-
-#define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
-
 /**
  * grn_ctx_init:
  * @ctx: 初期化するctx構造体へのポインタを指定します。
