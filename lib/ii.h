@@ -49,7 +49,6 @@ struct _grn_ii {
   grn_obj_flags lflags;
   grn_encoding encoding;
   uint32_t n_elements;
-  uint32_t max_n_elements;
   struct grn_ii_header *header;
 };
 
@@ -63,7 +62,7 @@ struct _grn_ii_pos {
 struct _grn_ii_updspec {
   uint32_t rid;
   uint32_t sid;
-  int32_t score;
+  int32_t weight;
   int32_t tf;                 /* number of postings successfully stored to index */
   int32_t atf;                /* actual number of postings */
   struct _grn_ii_pos *pos;
@@ -97,7 +96,7 @@ typedef struct {
   uint32_t sid;
   uint32_t pos;
   uint32_t tf;
-  uint32_t score;
+  uint32_t weight;
   uint32_t rest;
 } grn_ii_posting;
 

@@ -66,7 +66,8 @@ enum {
   grn_com_done,
   grn_com_connecting,
   grn_com_error,
-  grn_com_closing
+  grn_com_closing,
+  grn_com_closed
 };
 
 enum {
@@ -112,7 +113,7 @@ grn_rc grn_com_event_each(grn_ctx *ctx, grn_com_event *ev, grn_com_callback *fun
 
 /******* grn_com_gqtp ********/
 
-#define GRN_COM_PROTO_GQTP   0x47
+#define GRN_COM_PROTO_GQTP   0xc7
 #define GRN_COM_PROTO_MBREQ  0x80
 #define GRN_COM_PROTO_MBRES  0x81
 
@@ -150,6 +151,10 @@ grn_rc grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned 
 
 #define GRN_COM_GQTP_MSG_HEADER(buf) ((grn_com_gqtp_header *)(buf)->u.b.head)
 #define GRN_COM_GQTP_MSG_BODY(buf) ((buf)->u.b.head + sizeof(grn_com_gqtp_header))
+
+grn_rc grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
+                          grn_com_gqtp_header *header, grn_obj *body,
+                          uint16_t status, uint32_t key_size, uint32_t extra_size);
 
 #ifdef __cplusplus
 }

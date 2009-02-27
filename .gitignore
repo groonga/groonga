@@ -27,3 +27,4 @@
 Makefile
 Makefile.in
 /examples/kv
+/examples/index

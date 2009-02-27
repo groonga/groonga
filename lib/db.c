@@ -30,7 +30,7 @@
 #define WITH_NORMALIZE(table,key,key_size,block) {\
   if ((table)->obj.flags & GRN_OBJ_KEY_NORMALIZE) {\
     grn_str *nstr;\
-    if ((nstr = grn_str_open(ctx, key, key_size, (table)->encoding, 0))) { \
+    if ((nstr = grn_str_open(ctx, key, key_size, (table)->encoding, GRN_STR_NORMALIZE))) { \
       char *key = nstr->norm;\
       unsigned key_size = nstr->norm_blen;\
       block\
@@ -525,8 +525,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     DB_OBJ(res)->subrec_size = subrec_size;
     DB_OBJ(res)->subrec_offset = subrec_offset;
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
-      grn_obj_close(ctx, res);
-      grn_obj_remove(ctx, path);
+      grn_obj_remove(ctx, res);
       res = NULL;
     }
   } else {
@@ -582,18 +581,42 @@ grn_table_lookup(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
   if (table && key_size) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      WITH_NORMALIZE((grn_pat *)table, key, key_size, {
-        if (*flags & GRN_SEARCH_LCP) {
-          id = grn_pat_lcp_search(ctx, (grn_pat *)table, key, key_size);
-        } else {
-          id = grn_pat_lookup(ctx, (grn_pat *)table, key, key_size, NULL, flags);
-        }
-      });
+      {
+        grn_pat *pat = (grn_pat *)table;
+        WITH_NORMALIZE(pat, key, key_size, {
+          if (*flags & GRN_SEARCH_LCP) {
+            id = grn_pat_lcp_search(ctx, pat, key, key_size);
+          } else {
+            if (*flags & GRN_TABLE_ADD) {
+              if (grn_io_lock(ctx, pat->io, 10000000)) {
+                id = GRN_ID_NIL;
+              } else {
+                id = grn_pat_get(ctx, pat, key, key_size, NULL, flags);
+                grn_io_unlock(pat->io);
+              }
+            } else {
+              id = grn_pat_at(ctx, pat, key, key_size, NULL);
+            }
+          }
+        });
+      }
       break;
     case GRN_TABLE_HASH_KEY :
-      WITH_NORMALIZE((grn_hash *)table, key, key_size, {
-        id = grn_hash_lookup(ctx, (grn_hash *)table, key, key_size, NULL, flags);
-      });
+      {
+        grn_hash *hash = (grn_hash *)table;
+        WITH_NORMALIZE(hash, key, key_size, {
+          if (*flags & GRN_TABLE_ADD) {
+            if (grn_io_lock(ctx, hash->io, 10000000)) {
+              id = GRN_ID_NIL;
+            } else {
+              id = grn_hash_get(ctx, hash, key, key_size, NULL, flags);
+              grn_io_unlock(hash->io);
+            }
+          } else {
+            id = grn_hash_at(ctx, hash, key, key_size, NULL);
+          }
+        });
+      }
       break;
     }
   }
@@ -1604,19 +1627,19 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   switch (flags & GRN_OBJ_COLUMN_TYPE_MASK) {
   case GRN_OBJ_COLUMN_SCALAR :
     if ((flags & GRN_OBJ_KEY_VAR_SIZE) || value_size > sizeof(int64_t)) {
-      res = (grn_obj *)grn_ja_create(ctx, path, value_size, 0); //todo : zlib support
+      res = (grn_obj *)grn_ja_create(ctx, path, value_size, flags);
     } else {
       res = (grn_obj *)grn_ra_create(ctx, path, value_size);
     }
     break;
   case GRN_OBJ_COLUMN_ARRAY :
-  case GRN_OBJ_COLUMN_VERSES :
+  case GRN_OBJ_COLUMN_SECTIONS :
   case GRN_OBJ_COLUMN_POSTINGS :
-    res = (grn_obj *)grn_ja_create(ctx, path, value_size * 16/*todo*/, 0);
+    res = (grn_obj *)grn_ja_create(ctx, path, value_size * 16/*todo*/, flags);
     //todo : zlib support
     break;
   case GRN_OBJ_COLUMN_INDEX :
-    res = (grn_obj *)grn_ii_create(ctx, path, table, 0); //todo : ii layout support
+    res = (grn_obj *)grn_ii_create(ctx, path, table, flags); //todo : ii layout support
     break;
   }
   if (res) {
@@ -1625,8 +1648,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     DB_OBJ(res)->flags = flags;
     res->header.flags = flags;
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
-      grn_obj_close(ctx, res);
-      grn_obj_remove(ctx, path);
+      grn_obj_remove(ctx, res);
       res = NULL;
     }
   }
@@ -1858,27 +1880,27 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *vector, const char *data, uint32_t data
   return grn_bulk_write(ctx, vector, (char *)p, pe - p);
 }
 
-/**** grn_verses ****/
+/**** grn_sections ****/
 
-#define INITIAL_VERSES_SIZE 256
+#define INITIAL_SECTIONS_SIZE 256
 
 grn_rc
-grn_verses_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
+grn_sections_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
                unsigned int weight, grn_id domain)
 {
-  grn_verse *vp;
+  grn_section *vp;
   if (!str_len) { return GRN_SUCCESS; }
   if (!v || !str) {
-    GRN_LOG(ctx, GRN_LOG_WARNING, "grn_verses_add: invalid argument");
+    GRN_LOG(ctx, GRN_LOG_WARNING, "grn_sections_add: invalid argument");
     return GRN_INVALID_ARGUMENT;
   }
-  if (!(v->u.v.n_verses & (INITIAL_VERSES_SIZE - 1))) {
-    vp = GRN_REALLOC(v->u.v.verses, sizeof(grn_verse) *
-                     (v->u.v.n_verses + INITIAL_VERSES_SIZE));
+  if (!(v->u.v.n_sections & (INITIAL_SECTIONS_SIZE - 1))) {
+    vp = GRN_REALLOC(v->u.v.sections, sizeof(grn_section) *
+                     (v->u.v.n_sections + INITIAL_SECTIONS_SIZE));
     if (!vp) { return GRN_NO_MEMORY_AVAILABLE; }
-    v->u.v.verses = vp;
+    v->u.v.sections = vp;
   }
-  vp = &v->u.v.verses[v->u.v.n_verses];
+  vp = &v->u.v.sections[v->u.v.n_sections];
   if (v->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {
     vp->str = (char *)str;
   } else {
@@ -1888,18 +1910,18 @@ grn_verses_add(grn_ctx *ctx, grn_obj *v, const char *str, unsigned int str_len,
   vp->str_len = str_len;
   vp->weight = weight;
   vp->domain = domain;
-  v->u.v.n_verses++;
+  v->u.v.n_sections++;
   return GRN_SUCCESS;
 }
 
 grn_obj *
-grn_verses_to_vector(grn_ctx *ctx, grn_obj *verses)
+grn_sections_to_vector(grn_ctx *ctx, grn_obj *sections)
 {
   grn_obj *vector = grn_vector_open(ctx, 0);
   if (vector) {
-    grn_verse *vp;
+    grn_section *vp;
     int i;
-    for (i = verses->u.v.n_verses, vp = verses->u.v.verses; i; i--, vp++) {
+    for (i = sections->u.v.n_sections, vp = sections->u.v.sections; i; i--, vp++) {
       grn_bulk_benc(ctx, vector, vp->weight);
       grn_bulk_benc(ctx, vector, vp->domain);
       grn_bulk_write(ctx, vector, vp->str, vp->str_len);
@@ -1910,14 +1932,14 @@ grn_verses_to_vector(grn_ctx *ctx, grn_obj *verses)
 }
 
 grn_obj *
-grn_vector_to_verses(grn_ctx *ctx, grn_obj *vector, grn_obj *verses)
+grn_vector_to_sections(grn_ctx *ctx, grn_obj *vector, grn_obj *sections)
 {
-  if (!verses) {
-    verses = grn_obj_open(ctx, GRN_VERSES, GRN_OBJ_DO_SHALLOW_COPY);
+  if (!sections) {
+    sections = grn_obj_open(ctx, GRN_SECTIONS, GRN_OBJ_DO_SHALLOW_COPY);
   }
-  if (verses) {
+  if (sections) {
     int i, n = grn_vector_size(ctx, vector);
-    verses->u.v.src = vector;
+    sections->u.v.src = vector;
     for (i = 0; i < n; i++) {
       unsigned int size;
       const uint8_t *pe, *p = (uint8_t *)grn_vector_fetch(ctx, vector, i, &size);
@@ -1930,14 +1952,14 @@ grn_vector_to_verses(grn_ctx *ctx, grn_obj *vector, grn_obj *verses)
           if (p < pe) {
             GRN_B_DEC(domain, p);
             if (p <= pe) {
-              grn_verses_add(ctx, verses, (char *)p, pe - p, weight, domain);
+              grn_sections_add(ctx, sections, (char *)p, pe - p, weight, domain);
             }
           }
         }
       }
     }
   }
-  return verses;
+  return sections;
 }
 
 /**** accessor ****/
@@ -1964,7 +1986,7 @@ enum {
   GRN_ACCESSOR_FUNCALL
 };
 
-grn_accessor *
+static grn_accessor *
 accessor_new(grn_ctx *ctx)
 {
   grn_accessor *res = GRN_MALLOCN(grn_accessor, 1);
@@ -2470,17 +2492,17 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           }
         }
         break;
-      case GRN_OBJ_COLUMN_VERSES :
+      case GRN_OBJ_COLUMN_SECTIONS :
         {
           grn_obj *vector;
-          /* if DB_OBJ(obj)->range is a table, then verses2updspecs() */
-          if (value->header.type != GRN_VERSES) {
+          /* if DB_OBJ(obj)->range is a table, then sections2updspecs() */
+          if (value->header.type != GRN_SECTIONS) {
             /* todo : convert */
-            ERR(GRN_INVALID_ARGUMENT, "verses required");
+            ERR(GRN_INVALID_ARGUMENT, "sections required");
             rc = GRN_INVALID_ARGUMENT;
             goto exit;
           }
-          vector = grn_verses_to_vector(ctx, value);
+          vector = grn_sections_to_vector(ctx, value);
           rc = grn_ja_putv(ctx, (grn_ja *)obj, id, vector, 0);
           grn_obj_close(ctx, vector);
         }
@@ -2627,16 +2649,16 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         grn_ja_unref(ctx, (grn_ja *)obj, id, v, len);
       }
       break;
-    case GRN_OBJ_COLUMN_VERSES :
+    case GRN_OBJ_COLUMN_SECTIONS :
       {
         grn_obj *vector;
         void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &len);
         if (!v) { len = 0; goto exit; }
         vector = grn_vector_open(ctx, 0);
         if (!grn_vector_decode(ctx, vector, v, len)) {
-          value->header.type = GRN_VERSES;
+          value->header.type = GRN_SECTIONS;
           value->header.flags |= GRN_OBJ_DO_SHALLOW_COPY;
-          value = grn_vector_to_verses(ctx, vector, value);
+          value = grn_vector_to_sections(ctx, vector, value);
         } else {
           grn_obj_close(ctx, vector);
         }
@@ -2997,10 +3019,47 @@ grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset
 }
 
 grn_rc
-grn_obj_remove(grn_ctx *ctx, const char *path)
+grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
+  char *path;
   GRN_API_ENTER;
-  GRN_API_RETURN(GRN_SUCCESS);
+  path = (char *)grn_obj_path(ctx, obj);
+  if (path) { path = GRN_STRDUP(path); }
+  switch (obj->header.type) {
+  case GRN_DB :
+    /* todo : remove all tables and columns */
+    break;
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_NO_KEY :
+    {
+      grn_hash *cols;
+      if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY, GRN_ENC_NONE))) {
+        if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
+          grn_id *key;
+          GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
+            grn_obj *col = grn_ctx_get(ctx, *key);
+            if (col) { grn_obj_remove(ctx, col); }
+          });
+          grn_hash_close(ctx, cols);
+        }
+      }
+      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, 1);
+    }
+    break;
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_INDEX :
+    grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, 1);
+    break;
+  }
+  grn_obj_close(ctx, obj);
+  if (path) {
+    grn_io_remove(ctx, path);
+    GRN_FREE(path);
+  }
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
@@ -3297,16 +3356,16 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     case GRN_TABLE_NO_KEY :
       rc = grn_array_close(ctx, (grn_array *)obj);
       break;
-    case GRN_VERSES :
-      if (obj->u.v.verses) {
+    case GRN_SECTIONS :
+      if (obj->u.v.sections) {
         if (!(obj->header.flags & GRN_OBJ_DO_SHALLOW_COPY)) {
-          int n = obj->u.v.n_verses;
-          grn_verse *vp = obj->u.v.verses;
-          for (n = obj->u.v.n_verses, vp = obj->u.v.verses; n; n--, vp++) {
+          int n = obj->u.v.n_sections;
+          grn_section *vp = obj->u.v.sections;
+          for (n = obj->u.v.n_sections, vp = obj->u.v.sections; n; n--, vp++) {
             GRN_FREE(vp->str);
           }
         }
-        GRN_FREE(obj->u.v.verses);
+        GRN_FREE(obj->u.v.sections);
       }
       if (obj->u.v.src) { grn_obj_close(ctx, obj->u.v.src); }
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {

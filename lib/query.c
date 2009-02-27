@@ -667,7 +667,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
 }
 
 /* TODO: delete overlapping logic with exec_query */
-grn_rc
+static grn_rc
 snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_operator op,
            unsigned int n_tags, int c_but,
            const char **opentags, unsigned int *opentag_lens,

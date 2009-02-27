@@ -143,18 +143,10 @@ struct _grn_ctx {
   char errbuf[GRN_CTX_MSGSIZE];
 };
 
-#define GRN_CTX_INITIALIZER \
-  { GRN_SUCCESS, 0, GRN_ENC_DEFAULT, 0, GRN_LOG_NOTICE,\
-    GRN_CTX_FIN, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL }
-
-#define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
-
 /**
  * grn_ctx_init:
  * @ctx: 初期化するctx構造体へのポインタを指定します。
  * @flags: 初期化するctxのオプションを指定します。
- * GRN_CTX_NO_DBを指定すると、エラーハンドリングのみが行えるctxを初期化します。
- * GRN_CTX_USE_DBを指定すると、全てのDBAPIが使用できるctxを初期化します。
  * GRN_CTX_USE_QLを指定すると、groonga qlインタプリタを実行可能なctxを初期化します。
  * GRN_CTX_USE_QL|GRN_CTX_BATCH_MODEを指定すると、batchmodeでインタプリタを初期化します。
  * @encoding: 初期化するctxでデフォルトとなるencoding。
@@ -162,8 +154,6 @@ struct _grn_ctx {
  * ctxを初期化します。
  **/
 
-#define GRN_CTX_NO_DB                  (0x00)
-#define GRN_CTX_USE_DB                 (0x01)
 #define GRN_CTX_USE_QL                 (0x03)
 #define GRN_CTX_BATCH_MODE             (0x04)
 
@@ -171,7 +161,7 @@ grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
 
 /**
  * grn_ctx_fin:
- * @ctx: 終了化するctx構造体へのポインタを指定します。
+ * @ctx: 解放するctx構造体へのポインタを指定します。
  *
  * ctxの管理するメモリを解放し、使用を終了します。
  **/
@@ -198,7 +188,7 @@ typedef unsigned int grn_obj_flags;
 #define GRN_OBJ_COLUMN_TYPE_MASK       (0x07)
 #define GRN_OBJ_COLUMN_SCALAR          (0x00)
 #define GRN_OBJ_COLUMN_ARRAY           (0x01)
-#define GRN_OBJ_COLUMN_VERSES          (0x02)
+#define GRN_OBJ_COLUMN_SECTIONS        (0x02)
 #define GRN_OBJ_COLUMN_POSTINGS        (0x03)
 #define GRN_OBJ_COLUMN_INDEX           (0x04)
 
@@ -207,12 +197,9 @@ typedef unsigned int grn_obj_flags;
 #define GRN_OBJ_COMPRESS_ZLIB          (0x01<<4)
 #define GRN_OBJ_COMPRESS_LZO           (0x02<<4)
 
-#define GRN_OBJ_WITH_SECTION           (0x00<<7)
-#define GRN_OBJ_NO_SECTION             (0x01<<7)
-#define GRN_OBJ_WITH_SCORE             (0x00<<8)
-#define GRN_OBJ_NO_SCORE               (0x01<<8)
-#define GRN_OBJ_WITH_POSITION          (0x00<<9)
-#define GRN_OBJ_NO_POSITION            (0x01<<9)
+#define GRN_OBJ_WITH_SECTION           (0x01<<7)
+#define GRN_OBJ_WITH_WEIGHT            (0x01<<8)
+#define GRN_OBJ_WITH_POSITION          (0x01<<9)
 
 #define GRN_OBJ_UNIT_MASK              (0x0f<<8)
 #define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00<<8)
@@ -243,7 +230,7 @@ typedef unsigned int grn_obj_flags;
 #define GRN_VOID                       (0x00)
 #define GRN_BULK                       (0x01)
 #define GRN_VECTOR                     (0x02)
-#define GRN_VERSES                     (0x03)
+#define GRN_SECTIONS                   (0x03)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
 #define GRN_SNIP                       (0x0a)
@@ -262,11 +249,11 @@ typedef unsigned int grn_obj_flags;
 #define GRN_COLUMN_VAR_SIZE            (0x41)
 #define GRN_COLUMN_INDEX               (0x48)
 
-typedef struct _grn_verse grn_verse;
+typedef struct _grn_section grn_section;
 typedef struct _grn_obj grn_obj;
 typedef struct _grn_obj_header grn_obj_header;
 
-struct _grn_verse {
+struct _grn_section {
   char *str;
   unsigned int str_len;
   unsigned int weight;
@@ -290,8 +277,8 @@ struct _grn_obj {
     } b;
     struct {
       grn_obj *src;
-      grn_verse *verses;
-      int n_verses;
+      grn_section *sections;
+      int n_sections;
     } v;
   } u;
 };
@@ -311,7 +298,11 @@ struct _grn_obj {
 /**
  * grn_db_create:
  * @path: 作成するdbを格納するファイルパス。NULLならtemporary dbとなる。
- * @encoding: 作成するdbでデフォルトとなるencoding。
+ * @optarg: 作成するdbのデフォルトencodingおよび組み込み型の名前を変更する時に指定する。
+ * optarg.encodingにはそのdbでデフォルトとなるencodingを指定する。
+ * optarg.builtin_type_namesには組み込み型の名前となるnul終端文字列の配列を指定する。
+ * optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
+ * 指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。
  *
  * 新たなdbを作成する。
  **/
@@ -368,22 +359,10 @@ grn_obj *grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size);
  * ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。
  * idに一致するオブジェクトが存在しなければNULLを返す。
  **/
-grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
 
-/**
- * grn_type_create:
- * @name: 作成するtypeの名前。
- * @flags: GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT, GRN_OBJ_KEY_INT, GRN_OBJ_KEY_UINT
- *        のいずれかを指定
- * @size: GRN_OBJ_KEY_VAR_SIZEの場合は最大長、
- *        それ以外の場合は長さを指定(単位:byte)
- *
- * nameに対応する新たなtype(型)をdbに定義する。
- * (todo: 複合keyを定義するための構造)
- **/
-
-enum {
-  GRN_DB_INT = 1,
+typedef enum {
+  GRN_DB_VOID = 0,
+  GRN_DB_INT,
   GRN_DB_UINT,
   GRN_DB_INT64,
   GRN_DB_FLOAT,
@@ -396,7 +375,20 @@ enum {
   GRN_DB_BIGRAM,
   GRN_DB_TRIGRAM,
   GRN_DB_MECAB,
-};
+} grn_builtin_type;
+
+grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
+
+/**
+ * grn_type_create:
+ * @name: 作成するtypeの名前。
+ * @flags: GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT, GRN_OBJ_KEY_INT, GRN_OBJ_KEY_UINT
+ *        のいずれかを指定
+ * @size: GRN_OBJ_KEY_VAR_SIZEの場合は最大長、
+ *        それ以外の場合は長さを指定(単位:byte)
+ *
+ * nameに対応する新たなtype(型)をdbに定義する。
+ **/
 
 grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                          grn_obj_flags flags, unsigned int size);
@@ -578,7 +570,9 @@ typedef grn_obj grn_table_cursor;
  * grn_table_cursor_open:
  * @table: 対象table
  * @min: keyの下限 (NULLは下限なしと見なす)
+ * @min_size: @minのsize
  * @max: keyの上限 (NULLは上限なしと見なす)
+ * @max_size: @maxのsize
  * @flags: GRN_CURSOR_ASCENDINGを指定すると昇順にkeyを取り出す。(指定しなければ降順)
  *         GRN_CURSOR_GTを指定するとminに一致したkeyをcursorの範囲に含まない。
  *         GRN_CURSOR_LTを指定するとmaxに一致したkeyをcursorの範囲に含まない。
@@ -746,6 +740,7 @@ grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
  * @table1: 対象table1
  * @table2: 対象table2
  * @res: 結果を格納するtable
+ * @op: 実行する演算の種類
  *
  * table1とtable2をopの指定に従って集合演算した結果をresに格納する。
  * resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されない。
@@ -792,11 +787,24 @@ unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  * grn_column_create:
  * @table: 対象table
  * @name: カラム名
+ * @name_size: @nameのsize(byte)
  * @path: カラムを格納するファイルパス。
  *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効。
  *        NULLなら自動的にファイルパスが付与される。
  * @flags: GRN_OBJ_PERSISTENTを指定すると永続columnとなる。
  *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる。
+ *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する。
+ *         GRN_OBJ_COLUMN_ARRAYを指定すると値の配列を格納する。
+ *         GRN_OBJ_COLUMN_SECTIONSを指定するとGRN_SECTIONS(重み情報付きの配列)を格納する。
+ *         GRN_OBJ_COLUMN_POSTINGSを指定すると単語とその出現位置リストを格納する。
+ *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する。
+ *         GRN_OBJ_COMPRESS_LZOを指定すると値をlzo圧縮して格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SECTIONを指定すると、
+ *         転置索引にsection(段落情報)を合わせて格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_WEIGHTを指定すると、
+ *         転置索引にweight情報を合わせて格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_POSITIONを指定すると、
+ *         転置索引に出現位置情報を合わせて格納する。
  * @type: カラム値の型。定義済みのtypeあるいはtableを指定できる。
  *
  * tableに新たなカラムを定義する。nameは省略できない。
@@ -971,11 +979,12 @@ grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, 
 
 /**
  * grn_obj_remove:
- * @path: objectに該当するファイルパス
+ * @obj: 対象object
  *
- * pathに該当するオブジェクトのファイル一式を削除する。
+ * objをメモリから解放し、それが永続オブジェクトであった場合は、
+ * 該当するファイル一式を削除する。
  **/
-grn_rc grn_obj_remove(grn_ctx *ctx, const char *path);
+grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_rename:
@@ -1097,7 +1106,7 @@ struct _grn_search_optarg {
 grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
                       grn_obj *res, grn_sel_operator op, grn_search_optarg *optarg);
 
-grn_rc grn_verses_add(grn_ctx *ctx, grn_obj *verses,
+grn_rc grn_sections_add(grn_ctx *ctx, grn_obj *sections,
                       const char *str, unsigned int str_len,
                       unsigned int weight, grn_id lang);
 

@@ -24,8 +24,17 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif /* HAVE_NETINET_IN_H */
 
-grn_ctx grn_gctx = GRN_CTX_INITIALIZER;
+#define GRN_CTX_INITIALIZER(enc) \
+  { GRN_SUCCESS, 0, enc, 0, GRN_LOG_NOTICE,\
+    GRN_CTX_FIN, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL }
+
+#define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
+
+grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
 int grn_pagesize;
 grn_mutex grn_glock;
 uint32_t grn_gtick;
@@ -265,10 +274,6 @@ grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
   ctx->seqno = 0;
   ctx->subno = 0;
   ctx->impl = NULL;
-  if (flags & GRN_CTX_USE_DB) {
-    grn_ctx_impl_init(ctx);
-    if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
-  }
   if (flags & GRN_CTX_USE_QL) {
     grn_ctx_ql_init(ctx, flags);
     if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
@@ -775,9 +780,13 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
         mi->count--;
         if (!(mi->count & SEGMENT_MASK)) {
           //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d", i);
-          grn_io_anon_unmap(ctx, mi, SEGMENT_SIZE);
-          mi->map = NULL;
-          if (i == ctx->impl->currseg) { ctx->impl->currseg = -1; }
+          if (i == ctx->impl->currseg) {
+            memset(mi->map, 0, mi->nref);
+            mi->nref = 0;
+          } else {
+            grn_io_anon_unmap(ctx, mi, SEGMENT_SIZE);
+            mi->map = NULL;
+          }
         }
       }
     }
@@ -1096,7 +1105,7 @@ grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, cons
 
 #ifdef USE_FAIL_MALLOC
 int
-fail_malloc_check(size_t size, const char *file, int line, const char *func)
+grn_fail_malloc_check(size_t size, const char *file, int line, const char *func)
 {
   if ((grn_fmalloc_file && strcmp(file, grn_fmalloc_file)) ||
       (grn_fmalloc_line && line != grn_fmalloc_line) ||
@@ -1112,7 +1121,7 @@ fail_malloc_check(size_t size, const char *file, int line, const char *func)
 void *
 grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
 {
-  if (fail_malloc_check(size, file, line, func)) {
+  if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_malloc_default(ctx, size, file, line, func);
   } else {
     MERR("fail_malloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
@@ -1123,7 +1132,7 @@ grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const cha
 void *
 grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
 {
-  if (fail_malloc_check(size, file, line, func)) {
+  if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_calloc_default(ctx, size, file, line, func);
   } else {
     MERR("fail_calloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
@@ -1135,7 +1144,7 @@ void *
 grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line,
                  const char *func)
 {
-  if (fail_malloc_check(size, file, line, func)) {
+  if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_realloc_default(ctx, ptr, size, file, line, func);
   } else {
     MERR("fail_realloc (%p,%zu) (%s:%d@%s) <%d>", ptr, size, file, line, func, alloc_count);
@@ -1146,7 +1155,7 @@ grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int lin
 char *
 grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const char *func)
 {
-  if (fail_malloc_check(strlen(s), file, line, func)) {
+  if (grn_fail_malloc_check(strlen(s), file, line, func)) {
     return grn_strdup_default(ctx, s, file, line, func);
   } else {
     MERR("fail_strdup(%p) (%s:%d@%s) <%d>", s, file, line, func, alloc_count);
@@ -1231,7 +1240,7 @@ grn_cell_clear(grn_ctx *ctx, grn_cell *o)
     case GRN_QUERY :
       if (o->u.p.value) { grn_query_close(ctx, (grn_query *)o->u.p.value); }
       break;
-    case GRN_VERSES :
+    case GRN_SECTIONS :
       if (o->u.p.value) { grn_obj_close(ctx, o->u.p.value); }
       break;
     case GRN_PATSNIP :
