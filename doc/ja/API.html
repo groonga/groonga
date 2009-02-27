@@ -1,0 +1,204 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>API.rd</title>
+</head>
+<body>
+<h1><a name="label-0" id="label-0">groonga C API マニュアル</a></h1><!-- RDLabel: "groonga C API マニュアル" -->
+<p>groongaのC言語APIは、1)共通API、2)QL API、3)DB API、4)低レベルAPIの4種に大別される。
+共通APIは他の全てのAPIと組み合わせて共通に使用される。残りの3種のAPIは階層構造をなしている。
+QL APIは最も上位に位置し、query languageを介してデータストアを操作する機能を提供する。
+DB APIはQL APIの下位に位置し、データストアを構成する各オブジェクトを操作する機能を提供する。
+低レベルAPIはDB APIのさらに下位に位置し、データオブジェクトの構成要素を直接操作する機能を提供する。</p>
+<h1><a name="label-1" id="label-1">共通API</a></h1><!-- RDLabel: "共通API" -->
+<h2><a name="label-2" id="label-2">grn_init</a></h2><!-- RDLabel: "grn_init" -->
+<dl>
+<dt><a name="label-3" id="label-3">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_init, grn_fin - groongaライブラリを初期化/解放する
+</dd>
+<dt><a name="label-4" id="label-4">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_init(void);
+grn_rc grn_fin(void);</pre>
+</dd>
+<dt><a name="label-5" id="label-5">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+<p>grn_init()は、libgroongaが必要とする資源の初期化を行う。libgroongaを使用するプログラムは他のgroonga API関数を呼び出す前に一度だけgrn_init()を呼び出さなければならない。</p>
+<p>grn_fin()はlibgroongaが使用する資源を解放する。grn_fin()実行後にgroonga API関数を実行してはならない。</p>
+</dd>
+<dt><a name="label-6" id="label-6">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dd>
+成功した場合はGRN_SUCCESSを返す。
+grn_init()は、資源の確保に失敗した場合にGRN_NO_MEMORY_AVAILABLEを返す。
+</dd>
+<dt><a name="label-7" id="label-7">NOTES</a></dt><!-- RDLabel: "NOTES" -->
+<dd>
+grn_init(), grn_fin()はリエントラントではない。その他のgroongaのC API関数は全てリエントラントである。
+</dd>
+</dl>
+<h2><a name="label-8" id="label-8">grn_ctx_init</a></h2><!-- RDLabel: "grn_ctx_init" -->
+<dl>
+<dt><a name="label-9" id="label-9">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_ctx_init, grn_ctx_fin - grn_ctx構造体を初期化/解放する
+</dd>
+<dt><a name="label-10" id="label-10">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
+grn_rc grn_ctx_fin(grn_ctx *ctx);</pre>
+</dd>
+<dt><a name="label-11" id="label-11">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+<p>grn_ctxは、1)エラー情報の通知、2)API内部で使用するメモリの管理、3)クエリ言語処理系の管理のために使用される構造体である。ほとんどのAPI関数は第一引数にgrn_ctx構造体を要求する。grn_ctx構造体は&lt;groonga/groonga.h&gt;で定義されている。</p>
+<pre>typedef struct _grn_ctx grn_ctx;
+struct _grn_ctx {
+  grn_rc rc;                       /* 最後に実行したAPIの終了コード */
+  int flags;                       /* 内部処理用 */
+  grn_encoding encoding;           /* デフォルトの文字エンコーディング */
+  unsigned char ntrace;            /* バックトレースの数 */
+  unsigned char errlvl;            /* 最後に発生したエラーのレベル */
+  unsigned char stat;              /* 内部処理用 */
+  unsigned int seqno;              /* 内部処理用 */
+  unsigned int subno;              /* 内部処理用 */
+  unsigned int seqno2;             /* 内部処理用 */
+  unsigned int errline;            /* エラーが発生した箇所の行番号 */
+  grn_ctx *prev;                   /* 内部処理用 */
+  grn_ctx *next;                   /* 内部処理用 */
+  const char *errfile;             /* エラーが発生したソースファイル名 */
+  const char *errfunc;             /* エラーが発生した関数名 */
+  struct _grn_ctx_impl *impl;      /* 内部処理用 */
+  void *trace[16];                 /* バックトレースポインタ配列 */
+  char errbuf[GRN_CTX_MSGSIZE];    /* 最後に発生したエラーに関するメッセージ */
+};</pre>
+<p>grn_ctx構造体はAPIで使用する前にgrn_ctx_init()で初期化しなければならない。初期化するgrn_ctx構造体へのポインタを'ctx'に指定する。'flags'にGRN_CTX_USE_QLを指定すると、grn_ctx内部にquery language処理系を生成する。GRN_CTX_USE_QLに加えてGRN_CTX_BATCH_MODEを指定した場合は、バッチモードでquery language処理系を生成する。'encoding'には、grn_ctxで文字列を処理する際のデフォルトの符号化方式を指定する。</p>
+<p>API実行中にエラーが発生した場合には、grn_ctx構造体のrc, ntrace, errlvl, errline, errfile, errfunc, trace, errbufメンバに情報がセットされる。</p>
+<p>grn_ctx_finはgrn_ctx構造体の使用する資源を解放する。grn_ctxを通して生成した一時オブジェクトも全て一括して解放される。</p>
+</dd>
+<dt><a name="label-12" id="label-12">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dd>
+成功した場合はGRN_SUCCESSを返す。
+flagsにGRN_CTX_USE_QLを指定してgrn_ctx_init()を実行した場合は、資源の確保に失敗するとGRN_NO_MEMORY_AVAILABLEを返す。GRN_CTX_USE_QLを指定せずにgrn_ctx_init()を実行した場合は必ずGRN_SUCCESSを返す。
+</dd>
+<dt><a name="label-13" id="label-13">NOTES</a></dt><!-- RDLabel: "NOTES" -->
+<dd>
+同一のgrn_ctx構造体を複数のスレッドが同時に使ってはいけない。スレッド固有データにgrn_ctxを保存し、スレッドとgrn_ctxと1:1に保てばこの制約は簡単に守ることができる。しかし、例えば非常に多くのクライアントからの接続を同時に受け付けるサーバシステムの中でgroongaを使用する場合には、スレッドとgrn_ctxとを動的に対応づけた方が有利かも知れない。
+</dd>
+</dl>
+<h1><a name="label-14" id="label-14">QL API</a></h1><!-- RDLabel: "QL API" -->
+<h2><a name="label-15" id="label-15">grn_ql_connect</a></h2><!-- RDLabel: "grn_ql_connect" -->
+<dl>
+<dt><a name="label-16" id="label-16">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_ql_connect - つなぐ
+</dd>
+<dt><a name="label-17" id="label-17">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);</pre>
+</dd>
+<dt><a name="label-18" id="label-18">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+つなぐ
+</dd>
+</dl>
+<h2><a name="label-19" id="label-19">grn_ql_send</a></h2><!-- RDLabel: "grn_ql_send" -->
+<dl>
+<dt><a name="label-20" id="label-20">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_ql_send - おくる
+</dd>
+<dt><a name="label-21" id="label-21">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);</pre>
+</dd>
+<dt><a name="label-22" id="label-22">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+おくる
+</dd>
+</dl>
+<h2><a name="label-23" id="label-23">grn_ql_recv</a></h2><!-- RDLabel: "grn_ql_recv" -->
+<dl>
+<dt><a name="label-24" id="label-24">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_ql_send - うけとる
+</dd>
+<dt><a name="label-25" id="label-25">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);</pre>
+</dd>
+<dt><a name="label-26" id="label-26">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+うけとる
+</dd>
+</dl>
+<h1><a name="label-27" id="label-27">DB API</a></h1><!-- RDLabel: "DB API" -->
+<h2><a name="label-28" id="label-28">grn_db_create</a></h2><!-- RDLabel: "grn_db_create" -->
+<dl>
+<dt><a name="label-29" id="label-29">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_db_create, grn_db_open - データベースを生成する
+</dd>
+<dt><a name="label-30" id="label-30">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
+grn_obj *grn_db_open(grn_ctx *ctx, const char *path);</pre>
+</dd>
+<dt><a name="label-31" id="label-31">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+つくる・ひらく
+</dd>
+<dt><a name="label-32" id="label-32">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+</dl>
+<h1><a name="label-33" id="label-33">low-level API</a></h1><!-- RDLabel: "low-level API" -->
+<h2><a name="label-34" id="label-34">grn_hash_create</a></h2><!-- RDLabel: "grn_hash_create" -->
+<dl>
+<dt><a name="label-35" id="label-35">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_hash_create, grn_hash_open - ハッシュテーブルを生成する
+</dd>
+<dt><a name="label-36" id="label-36">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                          unsigned int value_size, unsigned int flags,
+                          grn_encoding encoding);
+grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);</pre>
+</dd>
+<dt><a name="label-37" id="label-37">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dt><a name="label-38" id="label-38">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dt><a name="label-39" id="label-39">ERRORS</a></dt><!-- RDLabel: "ERRORS" -->
+<dt><a name="label-40" id="label-40">CONFORMING TO</a></dt><!-- RDLabel: "CONFORMING TO" -->
+<dt><a name="label-41" id="label-41">AVAILABILITY</a></dt><!-- RDLabel: "AVAILABILITY" -->
+<dt><a name="label-42" id="label-42">NOTES</a></dt><!-- RDLabel: "NOTES" -->
+<dt><a name="label-43" id="label-43">BUGS</a></dt><!-- RDLabel: "BUGS" -->
+<dt><a name="label-44" id="label-44">EXAMPLE</a></dt><!-- RDLabel: "EXAMPLE" -->
+<dt><a name="label-45" id="label-45">SEE ALSO</a></dt><!-- RDLabel: "SEE ALSO" -->
+<dt><a name="label-46" id="label-46">COLOPHON</a></dt><!-- RDLabel: "COLOPHON" -->
+</dl>
+<p>あとでまた書く</p>
+
+</body>
+</html>

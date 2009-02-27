@@ -28,7 +28,13 @@
 #include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
-grn_ctx grn_gctx = GRN_CTX_INITIALIZER;
+#define GRN_CTX_INITIALIZER(enc) \
+  { GRN_SUCCESS, 0, enc, 0, GRN_LOG_NOTICE,\
+    GRN_CTX_FIN, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL }
+
+#define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
+
+grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
 int grn_pagesize;
 grn_mutex grn_glock;
 uint32_t grn_gtick;

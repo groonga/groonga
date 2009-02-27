@@ -1,3 +1,23 @@
+2009-02-27  Poe MORITA  <morita at razil.jp>
+
+	* doc/ja/API.rd: updated.
+
+2009-02-27  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_CTX_INITIALIZER): removed.
+
+2009-02-27  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c: add -d option (run as daemon). -s option is took as server mode (don't fork).
+
+2009-02-27  Poe MORITA  <morita at razil.jp>
+
+	* doc/README.ja: add.
+
+2009-02-25  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_table_lookup): moved grn_io_lock from hash.c/pat.c to db.c.
+
 2009-02-25  Tasuku SUENAGA <a at razil.jp>
 
 	* src/groonga.c (do_mbreq): added MBCMD_ADD support.
