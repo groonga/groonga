@@ -714,6 +714,12 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
   } else {
     switch (cell->header.type) {
     case GRN_CELL_STR :
+      if (BULKP(cell)) {
+        if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0))) { return NULL; }}
+        grn_bulk_write(ctx, obj, STRVALUE(cell), STRSIZE(cell));
+      } else {
+        if (obj) { GRN_BULK_REWIND(obj); }
+      }
       /* todo */
       break;
     case GRN_CELL_INT :

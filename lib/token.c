@@ -73,8 +73,8 @@ delimited_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
     }
     if (r + token->delimiter_len <= e &&
         !memcmp(r, token->delimiter, token->delimiter_len)) {
-      break;
       token->next = r + token->delimiter_len;
+      break;
     }
   }
   argv[0].ptr = (void *)p;
