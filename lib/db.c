@@ -1307,6 +1307,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     int k, r;
     void *key;
     grn_obj bulk;
+    grn_table_cursor *tc;
     grn_table_sort_key *kp;
     grn_table_group_result *rp;
     for (k = 0, kp = keys; k < n_keys; k++, kp++) {
@@ -1322,9 +1323,40 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       }
     }
     GRN_OBJ_INIT(&bulk, GRN_BULK, 0);
-    {
-      grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0);
-      if (tc) {
+    if (n_keys == 1 && n_results == 1) {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+        grn_id id;
+        while ((id = grn_table_cursor_next(ctx, tc))) {
+          void *value;
+          grn_rset_recinfo *ri = NULL;
+          GRN_BULK_REWIND(&bulk);
+          if (DB_OBJ(table)->flags & GRN_OBJ_WITH_SUBREC) {
+            grn_table_cursor_get_value(ctx, tc, (void **)&ri);
+          }
+          grn_obj_get_value(ctx, keys->key, id, &bulk);
+          if (bulk.header.type == GRN_UVECTOR) {
+            // tood : support objects except grn_id
+            grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
+            grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
+            while (v < ve) {
+              grn_search_flags f = GRN_TABLE_ADD;
+              if (grn_table_get(ctx, results->table, v, sizeof(grn_id), &value, &f)) {
+                grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
+              }
+              v++;
+            }
+          } else {
+            grn_search_flags f = GRN_TABLE_ADD;
+            if (grn_table_get(ctx, results->table,
+                              GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, &f)) {
+              grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
+            }
+          }
+        }
+        grn_table_cursor_close(ctx, tc);
+      }
+    } else {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, tc))) {
           grn_rset_recinfo *ri = NULL;

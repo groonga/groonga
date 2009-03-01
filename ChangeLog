@@ -1,5 +1,9 @@
 2009-03-01  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (grn_table_group): support GRN_OBJ_COLUMN_ARRAY as key.
+
+2009-03-01  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (GRN_UVECTOR): add.
 
 2009-03-01  Poe MORITA  <morita at razil.jp>
