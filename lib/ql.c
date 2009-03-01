@@ -95,6 +95,39 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
   }
   if (!cell) { if (!(cell = grn_cell_new(ctx))) { return F; } }
   switch (obj->header.type) {
+  case GRN_UVECTOR :
+    {
+      grn_id rid = obj->header.domain;
+      grn_obj *range = grn_ctx_get(ctx, rid);
+      if (range && range->header.type == GRN_TYPE) {
+        // todo
+      } else {
+        grn_obj buf;
+        uint32_t size;
+        grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
+        void *value = NULL;
+        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        if (v < ve) {
+          for (;;) {
+            grn_table_get_key2(ctx, range, *v, &buf);
+            v++;
+            if (v < ve) {
+              GRN_BULK_PUTC(ctx, &buf, ' ');
+            } else {
+              break;
+            }
+          }
+        }
+        if ((size = GRN_BULK_VSIZE(&buf))) {
+          if (!(value = GRN_MALLOC(size))) { return F; }
+          cell->header.impl_flags |= GRN_OBJ_ALLOCATED;
+          memcpy(value, GRN_BULK_HEAD(&buf), size);
+        }
+        SETBULK(cell, value, size);
+        grn_obj_close(ctx, &buf);
+      }
+    }
+    break;
   case GRN_BULK :
     {
       void *v = GRN_BULK_HEAD(obj);
