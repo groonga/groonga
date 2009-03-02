@@ -1,3 +1,7 @@
+2009-03-02  Tasuku SUENAGA <a at razil.jp>
+
+	* doc/ja/API.rb: added document
+
 2009-03-01  Poe MORITA  <morita at razil.jp>
 
 	* lib/token.c (delimited_next): fixed a bug cause infinite loop.
