@@ -1,5 +1,9 @@
 2009-03-02  Poe MORITA  <morita at razil.jp>
 
+	* lib/scm.c (nf_distance1~nf_distance4): add.
+
+2009-03-02  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (GRN_OBJ_COLUMN_ARRAY): -> GRN_OBJ_COLUMN_UVECTOR.
 
 2009-03-02  Tasuku SUENAGA <a at razil.jp>
