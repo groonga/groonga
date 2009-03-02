@@ -780,7 +780,7 @@ column_value(grn_ctx *ctx, grn_obj *column, grn_id obj,
   if (VOIDP(args) || (PAIRP(args) && VOIDP(CAR(args)))) {
     if ((value = grn_obj_get_value(ctx, column, obj, NULL))) {
       switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-      case GRN_OBJ_COLUMN_ARRAY :
+      case GRN_OBJ_COLUMN_UVECTOR :
         {
           grn_cell **rp = &res;
           grn_id *v = (grn_id *) GRN_BULK_HEAD(value);
@@ -1119,10 +1119,6 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
               } else {
                 if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
                 switch (*msg) {
-                case 'a' :
-                case 'A' :
-                  flags |= GRN_OBJ_COLUMN_ARRAY;
-                  break;
                 case 'i' :
                 case 'I' :
                   flags |= GRN_OBJ_COLUMN_INDEX;
@@ -1160,6 +1156,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 case 't' :
                 case 'T' :
                   flags &= ~GRN_OBJ_PERSISTENT;
+                  break;
+                case 'u' :
+                case 'U' :
+                  flags |= GRN_OBJ_COLUMN_UVECTOR;
                   break;
                 case 'v' :
                 case 'V' :

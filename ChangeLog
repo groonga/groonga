@@ -1,3 +1,7 @@
+2009-03-02  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_OBJ_COLUMN_ARRAY): -> GRN_OBJ_COLUMN_UVECTOR.
+
 2009-03-02  Tasuku SUENAGA <a at razil.jp>
 
 	* doc/ja/API.rb: added document

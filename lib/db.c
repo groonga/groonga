@@ -1664,7 +1664,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
       res = (grn_obj *)grn_ra_create(ctx, path, value_size);
     }
     break;
-  case GRN_OBJ_COLUMN_ARRAY :
+  case GRN_OBJ_COLUMN_UVECTOR :
   case GRN_OBJ_COLUMN_SECTIONS :
   case GRN_OBJ_COLUMN_POSTINGS :
     res = (grn_obj *)grn_ja_create(ctx, path, value_size * 16/*todo*/, flags);
@@ -2507,7 +2507,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       case GRN_OBJ_COLUMN_SCALAR :
         rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, 0);
         break;
-      case GRN_OBJ_COLUMN_ARRAY :
+      case GRN_OBJ_COLUMN_UVECTOR :
         {
           grn_token *token;
           grn_obj buf, *lexicon = grn_ctx_get(ctx, DB_OBJ(obj)->range);
@@ -2674,7 +2674,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     break;
   case GRN_COLUMN_VAR_SIZE :
     switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-    case GRN_OBJ_COLUMN_ARRAY :
+    case GRN_OBJ_COLUMN_UVECTOR :
       value->header.type = GRN_UVECTOR;
       // fall thru
     case GRN_OBJ_COLUMN_SCALAR :

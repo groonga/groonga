@@ -187,7 +187,7 @@ typedef unsigned int grn_obj_flags;
 
 #define GRN_OBJ_COLUMN_TYPE_MASK       (0x07)
 #define GRN_OBJ_COLUMN_SCALAR          (0x00)
-#define GRN_OBJ_COLUMN_ARRAY           (0x01)
+#define GRN_OBJ_COLUMN_UVECTOR         (0x01)
 #define GRN_OBJ_COLUMN_SECTIONS        (0x02)
 #define GRN_OBJ_COLUMN_POSTINGS        (0x03)
 #define GRN_OBJ_COLUMN_INDEX           (0x04)
@@ -795,7 +795,7 @@ unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  * @flags: GRN_OBJ_PERSISTENTを指定すると永続columnとなる。
  *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる。
  *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する。
- *         GRN_OBJ_COLUMN_ARRAYを指定すると値の配列を格納する。
+ *         GRN_OBJ_COLUMN_UVECTORを指定すると値の配列を格納する。
  *         GRN_OBJ_COLUMN_SECTIONSを指定するとGRN_SECTIONS(重み情報付きの配列)を格納する。
  *         GRN_OBJ_COLUMN_POSTINGSを指定すると単語とその出現位置リストを格納する。
  *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する。
