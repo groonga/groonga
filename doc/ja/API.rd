@@ -91,110 +91,6 @@ DB APIはQL APIの下位に位置し、データストアを構成する各オ�
 
   同一のgrn_ctx構造体を複数のスレッドが同時に使ってはいけない。スレッド固有データにgrn_ctxを保存し、スレッドとgrn_ctxと1:1に保てばこの制約は簡単に守ることができる。しかし、例えば非常に多くのクライアントからの接続を同時に受け付けるサーバシステムの中でgroongaを使用する場合には、スレッドとgrn_ctxとを動的に対応づけた方が有利かも知れない。
 
-= QL API
-
-== grn_ql_connect
-
-:NAME
-
-  grn_ql_connect - つなぐ
-
-:SYNOPSIS
- ((' '))
-
-  #include <groonga/groonga.h>
-
-  grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);
-
-:DESCRIPTION
-
-  つなぐ
-
-== grn_ql_send
-
-:NAME
-
-  grn_ql_send - おくる
-
-:SYNOPSIS
- ((' '))
-
-  #include <groonga/groonga.h>
-
-  grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
-
-:DESCRIPTION
-
-  おくる
-
-== grn_ql_recv
-
-:NAME
-
-  grn_ql_send - うけとる
-
-:SYNOPSIS
- ((' '))
-
-  #include <groonga/groonga.h>
-
-  grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
-
-:DESCRIPTION
-
-  うけとる
-
-= DB API
-
-== grn_db_create
-
-:NAME
-
-  grn_db_create, grn_db_open - データベースを生成する
-
-:SYNOPSIS
- ((' '))
-  #include <groonga/groonga.h>
-
-  grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
-  grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
-
-:DESCRIPTION
-
-  つくる・ひらく
-
-:RETURN VALUE
-
-= low-level API
-
-== grn_hash_create
-
-:NAME
-
-  grn_hash_create, grn_hash_open - ハッシュテーブルを生成する
-
-:SYNOPSIS
- ((' '))
-  #include <groonga/groonga.h>
-
-  grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
-                            unsigned int value_size, unsigned int flags,
-                            grn_encoding encoding);
-  grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
-
-:DESCRIPTION
-:RETURN VALUE
-:ERRORS
-:CONFORMING TO
-:AVAILABILITY
-:NOTES
-:BUGS
-:EXAMPLE
-:SEE ALSO
-:COLOPHON
-
-= query & snippet API
-
 == grn_snip_open
 
 :NAME
@@ -347,3 +243,106 @@ result_lenには、resultのバイト長が格納されます。
   引数の値が不正な場合、GRN_INVALID_ARGUMENTを返す。
   結果保持用のメモリが確保できない場合は、GRN_NO_MEMORY_AVAILABLEを返す。
   成功した場合は、GRN_SUCCESSを返す。
+
+= QL API
+
+== grn_ql_connect
+
+:NAME
+
+  grn_ql_connect - つなぐ
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);
+
+:DESCRIPTION
+
+  つなぐ
+
+== grn_ql_send
+
+:NAME
+
+  grn_ql_send - おくる
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
+
+:DESCRIPTION
+
+  おくる
+
+== grn_ql_recv
+
+:NAME
+
+  grn_ql_send - うけとる
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
+
+:DESCRIPTION
+
+  うけとる
+
+= DB API
+
+== grn_db_create
+
+:NAME
+
+  grn_db_create, grn_db_open - データベースを生成する
+
+:SYNOPSIS
+ ((' '))
+  #include <groonga/groonga.h>
+
+  grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
+  grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
+
+:DESCRIPTION
+
+  つくる・ひらく
+
+:RETURN VALUE
+
+= low-level API
+
+== grn_hash_create
+
+:NAME
+
+  grn_hash_create, grn_hash_open - ハッシュテーブルを生成する
+
+:SYNOPSIS
+ ((' '))
+  #include <groonga/groonga.h>
+
+  grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                            unsigned int value_size, unsigned int flags,
+                            grn_encoding encoding);
+  grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
+
+:DESCRIPTION
+:RETURN VALUE
+:ERRORS
+:CONFORMING TO
+:AVAILABILITY
+:NOTES
+:BUGS
+:EXAMPLE
+:SEE ALSO
+:COLOPHON
+
