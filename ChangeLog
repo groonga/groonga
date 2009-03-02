@@ -1,3 +1,7 @@
+2009-03-02  Tasuku SUENAGA <a at razil.jp>
+
+	* doc/ja/API.rb: added document
+
 2009-03-01  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_table_group): support GRN_OBJ_COLUMN_ARRAY as key.
