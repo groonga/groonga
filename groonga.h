@@ -187,7 +187,7 @@ typedef unsigned int grn_obj_flags;
 
 #define GRN_OBJ_COLUMN_TYPE_MASK       (0x07)
 #define GRN_OBJ_COLUMN_SCALAR          (0x00)
-#define GRN_OBJ_COLUMN_ARRAY           (0x01)
+#define GRN_OBJ_COLUMN_UVECTOR         (0x01)
 #define GRN_OBJ_COLUMN_SECTIONS        (0x02)
 #define GRN_OBJ_COLUMN_POSTINGS        (0x03)
 #define GRN_OBJ_COLUMN_INDEX           (0x04)
@@ -231,6 +231,7 @@ typedef unsigned int grn_obj_flags;
 #define GRN_BULK                       (0x01)
 #define GRN_VECTOR                     (0x02)
 #define GRN_SECTIONS                   (0x03)
+#define GRN_UVECTOR                    (0x04)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
 #define GRN_SNIP                       (0x0a)
@@ -794,7 +795,7 @@ unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  * @flags: GRN_OBJ_PERSISTENTを指定すると永続columnとなる。
  *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる。
  *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する。
- *         GRN_OBJ_COLUMN_ARRAYを指定すると値の配列を格納する。
+ *         GRN_OBJ_COLUMN_UVECTORを指定すると値の配列を格納する。
  *         GRN_OBJ_COLUMN_SECTIONSを指定するとGRN_SECTIONS(重み情報付きの配列)を格納する。
  *         GRN_OBJ_COLUMN_POSTINGSを指定すると単語とその出現位置リストを格納する。
  *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する。
@@ -1014,12 +1015,12 @@ const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 /**
  * grn_obj_name:
  * @obj: 対象object
- * @namebuf: nameを格納するバッファ(呼出側で準備する)
+ * @namebuf: 名前を格納するバッファ(呼出側で準備する)
  * @buf_size: namebufのサイズ(byte長)
  *
- * objの名前を返す。無名objectなら0を返す。
- * 名前付きのobjectであり、buf_sizeの長さがname長以上であった場合は、
- * namebufに該当するnameをコピーする。
+ * objの名前の長さを返す。無名objectなら0を返す。
+ * 名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、
+ * namebufに該当する名前をコピーする。
  **/
 int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
@@ -1314,20 +1315,17 @@ grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
 #define GRN_BULK_VSIZE(bulk) ((bulk)->u.b.curr - (bulk)->u.b.head)
 #define GRN_BULK_EMPTYP(bulk) ((bulk)->u.b.curr == (bulk)->u.b.head)
 #define GRN_BULK_HEAD(bulk) ((bulk)->u.b.head)
+#define GRN_BULK_CURR(bulk) ((bulk)->u.b.curr)
 
 #define GRN_BULK_SET(ctx,bulk,str,len) do {\
   if ((bulk)->header.type == GRN_VOID) {\
     GRN_OBJ_INIT((bulk), GRN_BULK, 0);\
   }\
-  if ((bulk)->header.type == GRN_BULK) {\
-    if ((bulk)->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {\
-      (bulk)->u.b.head = (char *)(str);\
-      (bulk)->u.b.curr = (char *)(str) + len;\
-    } else {\
-      grn_bulk_write((ctx), (bulk), (const char *)(str), (unsigned int)(len));\
-    }\
+  if ((bulk)->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {\
+    (bulk)->u.b.head = (char *)(str);\
+    (bulk)->u.b.curr = (char *)(str) + len;\
   } else {\
-    (ctx)->rc = GRN_INVALID_ARGUMENT;\
+    grn_bulk_write((ctx), (bulk), (const char *)(str), (unsigned int)(len));\
   }\
 } while (0)
 

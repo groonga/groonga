@@ -95,6 +95,39 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
   }
   if (!cell) { if (!(cell = grn_cell_new(ctx))) { return F; } }
   switch (obj->header.type) {
+  case GRN_UVECTOR :
+    {
+      grn_id rid = obj->header.domain;
+      grn_obj *range = grn_ctx_get(ctx, rid);
+      if (range && range->header.type == GRN_TYPE) {
+        // todo
+      } else {
+        grn_obj buf;
+        uint32_t size;
+        grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
+        void *value = NULL;
+        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        if (v < ve) {
+          for (;;) {
+            grn_table_get_key2(ctx, range, *v, &buf);
+            v++;
+            if (v < ve) {
+              GRN_BULK_PUTC(ctx, &buf, ' ');
+            } else {
+              break;
+            }
+          }
+        }
+        if ((size = GRN_BULK_VSIZE(&buf))) {
+          if (!(value = GRN_MALLOC(size))) { return F; }
+          cell->header.impl_flags |= GRN_OBJ_ALLOCATED;
+          memcpy(value, GRN_BULK_HEAD(&buf), size);
+        }
+        SETBULK(cell, value, size);
+        grn_obj_close(ctx, &buf);
+      }
+    }
+    break;
   case GRN_BULK :
     {
       void *v = GRN_BULK_HEAD(obj);
@@ -714,6 +747,12 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
   } else {
     switch (cell->header.type) {
     case GRN_CELL_STR :
+      if (BULKP(cell)) {
+        if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0))) { return NULL; }}
+        grn_bulk_write(ctx, obj, STRVALUE(cell), STRSIZE(cell));
+      } else {
+        if (obj) { GRN_BULK_REWIND(obj); }
+      }
       /* todo */
       break;
     case GRN_CELL_INT :
@@ -741,7 +780,7 @@ column_value(grn_ctx *ctx, grn_obj *column, grn_id obj,
   if (VOIDP(args) || (PAIRP(args) && VOIDP(CAR(args)))) {
     if ((value = grn_obj_get_value(ctx, column, obj, NULL))) {
       switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-      case GRN_OBJ_COLUMN_ARRAY :
+      case GRN_OBJ_COLUMN_UVECTOR :
         {
           grn_cell **rp = &res;
           grn_id *v = (grn_id *) GRN_BULK_HEAD(value);
@@ -830,6 +869,8 @@ typedef struct {
   unsigned fromsize;
   char *to;
   unsigned tosize;
+  column_exp *score_ce;
+  grn_cell *score_func;
 } match_spec;
 
 inline static grn_cell *
@@ -852,6 +893,13 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   spec->to = NULL;
   spec->tosize = 0;
   spec->op = GRN_SEL_OR;
+  spec->score_ce = NULL;
+  spec->score_func = NULL;
+  POP(car, args);
+  if (car != NIL) {
+    spec->score_ce = column_exp_open(ctx, r, car);
+    if (EVAL_BY_FUNCALLP(spec->score_ce)) { spec->score_func = CAR(car); }
+  }
   POP(expr, args);
   if (RECORDSP(expr)) {
     char ops[STRBUF_SIZE];
@@ -870,7 +918,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   } else {
     char str[STRBUF_SIZE];
     uint16_t str_size;
-     grn_obj *table = grn_ctx_get(ctx, base);
+    grn_obj *table = grn_ctx_get(ctx, base);
     if (INTP(expr)) { spec->offset = IVALUE(expr); }
     POP(expr, args);
     if (INTP(expr)) { spec->limit = IVALUE(expr); }
@@ -958,9 +1006,33 @@ match_exec(grn_ctx *ctx, match_spec *spec, grn_id base, grn_id id)
   return res != F;
 }
 
+inline static int
+score_exec(grn_ctx *ctx, match_spec *spec, grn_id base, grn_id id)
+{
+  grn_cell *res;
+  column_exp_exec(ctx, spec->score_ce, id);
+  if (spec->score_func) {
+    grn_cell *code = ctx->impl->code;
+    ctx->impl->code = spec->score_func;
+    res = spec->score_func->u.o.func(ctx, CDR(spec->score_ce->expr), &ctx->impl->co);
+    ctx->impl->code = code;
+  } else {
+    res = grn_ql_eval(ctx, spec->score_ce->expr, NIL);
+  }
+  switch (res->header.type) {
+  case GRN_CELL_INT :
+    return IVALUE(res);
+  case GRN_CELL_FLOAT :
+    return (int)FVALUE(res);
+  default :
+    return 0;
+  }
+}
+
 static grn_rc
 match_close(grn_ctx *ctx, match_spec *spec)
 {
+  if (spec->score_ce) { column_exp_close(ctx, spec->score_ce); }
   return column_exp_close(ctx, spec->ce);
 }
 
@@ -1080,10 +1152,6 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
               } else {
                 if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
                 switch (*msg) {
-                case 'a' :
-                case 'A' :
-                  flags |= GRN_OBJ_COLUMN_ARRAY;
-                  break;
                 case 'i' :
                 case 'I' :
                   flags |= GRN_OBJ_COLUMN_INDEX;
@@ -1121,6 +1189,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 case 't' :
                 case 'T' :
                   flags &= ~GRN_OBJ_PERSISTENT;
+                  break;
+                case 'u' :
+                case 'U' :
+                  flags |= GRN_OBJ_COLUMN_UVECTOR;
                   break;
                 case 'v' :
                 case 'V' :
@@ -1344,7 +1416,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                           /* todo : use GRN_SET_INT_ADD if !n_entries */
                           grn_search_flags fl = GRN_TABLE_ADD;
                           grn_table_get(ctx, rec, pi, sizeof(grn_id), (void **)&ri, &fl);
-                          // grn_table_add_subrec(rp->table, value, ri ? ri->score : 0, NULL, 0)
+                          if (spec.score_ce) {
+                            int score = score_exec(ctx, &spec, base, id);
+                            grn_table_add_subrec(rec, ri, score, NULL, 0);
+                          }
                           if (!--l) { break; }
                         }
                       }

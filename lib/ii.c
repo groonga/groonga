@@ -4502,8 +4502,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     switch (new->header.type) {
     case GRN_BULK :
       {
-        const char *str = GRN_BULK_VALUE(new);
-        unsigned int str_len = GRN_BULK_LEN(new);
+        const char *str = GRN_BULK_HEAD(new);
+        unsigned int str_len = GRN_BULK_VSIZE(new);
         new_ = new;
         GRN_OBJ_INIT(&newv, GRN_SECTIONS, GRN_OBJ_DO_SHALLOW_COPY);
         new = &newv;;
@@ -4537,8 +4537,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     switch (old->header.type) {
     case GRN_BULK :
       {
-        const char *str = GRN_BULK_VALUE(old);
-        unsigned int str_len = GRN_BULK_LEN(old);
+        const char *str = GRN_BULK_HEAD(old);
+        unsigned int str_len = GRN_BULK_VSIZE(old);
         old_ = old;
         GRN_OBJ_INIT(&oldv, GRN_SECTIONS, GRN_OBJ_DO_SHALLOW_COPY);
         old = &oldv;;
