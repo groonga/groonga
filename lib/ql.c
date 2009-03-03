@@ -869,6 +869,8 @@ typedef struct {
   unsigned fromsize;
   char *to;
   unsigned tosize;
+  column_exp *score_ce;
+  grn_cell *score_func;
 } match_spec;
 
 inline static grn_cell *
@@ -891,6 +893,13 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   spec->to = NULL;
   spec->tosize = 0;
   spec->op = GRN_SEL_OR;
+  spec->score_ce = NULL;
+  spec->score_func = NULL;
+  POP(car, args);
+  if (car != NIL) {
+    spec->score_ce = column_exp_open(ctx, r, car);
+    if (EVAL_BY_FUNCALLP(spec->score_ce)) { spec->score_func = CAR(car); }
+  }
   POP(expr, args);
   if (RECORDSP(expr)) {
     char ops[STRBUF_SIZE];
@@ -909,7 +918,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   } else {
     char str[STRBUF_SIZE];
     uint16_t str_size;
-     grn_obj *table = grn_ctx_get(ctx, base);
+    grn_obj *table = grn_ctx_get(ctx, base);
     if (INTP(expr)) { spec->offset = IVALUE(expr); }
     POP(expr, args);
     if (INTP(expr)) { spec->limit = IVALUE(expr); }
@@ -997,9 +1006,33 @@ match_exec(grn_ctx *ctx, match_spec *spec, grn_id base, grn_id id)
   return res != F;
 }
 
+inline static int
+score_exec(grn_ctx *ctx, match_spec *spec, grn_id base, grn_id id)
+{
+  grn_cell *res;
+  column_exp_exec(ctx, spec->score_ce, id);
+  if (spec->score_func) {
+    grn_cell *code = ctx->impl->code;
+    ctx->impl->code = spec->score_func;
+    res = spec->score_func->u.o.func(ctx, CDR(spec->score_ce->expr), &ctx->impl->co);
+    ctx->impl->code = code;
+  } else {
+    res = grn_ql_eval(ctx, spec->score_ce->expr, NIL);
+  }
+  switch (res->header.type) {
+  case GRN_CELL_INT :
+    return IVALUE(res);
+  case GRN_CELL_FLOAT :
+    return (int)FVALUE(res);
+  default :
+    return 0;
+  }
+}
+
 static grn_rc
 match_close(grn_ctx *ctx, match_spec *spec)
 {
+  if (spec->score_ce) { column_exp_close(ctx, spec->score_ce); }
   return column_exp_close(ctx, spec->ce);
 }
 
@@ -1383,7 +1416,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                           /* todo : use GRN_SET_INT_ADD if !n_entries */
                           grn_search_flags fl = GRN_TABLE_ADD;
                           grn_table_get(ctx, rec, pi, sizeof(grn_id), (void **)&ri, &fl);
-                          // grn_table_add_subrec(rp->table, value, ri ? ri->score : 0, NULL, 0)
+                          if (spec.score_ce) {
+                            int score = score_exec(ctx, &spec, base, id);
+                            grn_table_add_subrec(rec, ri, score, NULL, 0);
+                          }
                           if (!--l) { break; }
                         }
                       }

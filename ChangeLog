@@ -1,3 +1,7 @@
+2009-03-03  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (table::scan): support (table ::scan match_expr score_expr).
+
 2009-03-02  Poe MORITA  <morita at razil.jp>
 
 	* lib/scm.c (nf_distance1~nf_distance4): add.
