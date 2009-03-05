@@ -1,3 +1,7 @@
+2009-03-05  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_column_create): impl_flags was not saved.
+
 2009-03-03  Poe MORITA  <morita at razil.jp>
 
 	* lib/ql.c (table::scan): support (table ::scan match_expr score_expr).

@@ -1676,6 +1676,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   }
   if (res) {
     DB_OBJ(res)->header.domain = domain;
+    DB_OBJ(res)->header.impl_flags = impl_flags;
     DB_OBJ(res)->range = range;
     DB_OBJ(res)->flags = flags;
     res->header.flags = flags;
