@@ -1024,8 +1024,8 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
     case GRN_QUERY :
       GRN_BULK_PUTS(ctx, buf, "#<QUERY>");
       break;
-    case GRN_SECTIONS :
-      GRN_BULK_PUTS(ctx, buf, "#<SECTIONS>");
+    case GRN_VECTOR :
+      GRN_BULK_PUTS(ctx, buf, "#<VECTOR>");
       break;
     case GRN_CELL_OP :
       GRN_BULK_PUTS(ctx, buf, "#<OP>");

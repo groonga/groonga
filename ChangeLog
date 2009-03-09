@@ -1,3 +1,7 @@
+2009-03-09  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_OBJ_COLUMN_VECTOR): add.
+
 2009-03-05  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_column_create): impl_flags was not saved.
