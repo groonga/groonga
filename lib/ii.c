@@ -4457,7 +4457,8 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   grn_obj *lexicon = ii->lexicon;
   const char *head = GRN_BULK_HEAD(in->u.v.body);
   for (j = in->u.v.n_sections, v = in->u.v.sections; j; j--, v++) {
-    if ((token = grn_token_open(ctx, lexicon, head + v->offset, v->length, flags))) {
+    if (v->length &&
+        (token = grn_token_open(ctx, lexicon, head + v->offset, v->length, flags))) {
       while (!token->status) {
         if ((tid = grn_token_next(ctx, token))) {
           if (!grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {

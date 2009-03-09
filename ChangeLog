@@ -1,3 +1,7 @@
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (grn_vector2updspecs): avoid grn_token_open error.
+
 2009-03-09  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h (GRN_OBJ_COLUMN_VECTOR): add.
