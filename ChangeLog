@@ -1,3 +1,59 @@
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_table_group): support uvector.
+
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (grn_ii_column_update) : UVECTOR support.
+
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (ha_table): jload support vector value.
+
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_vector_decode): fix a bug cause segv when decoding vector value.
+
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (grn_vector2updspecs): avoid grn_token_open error.
+
+2009-03-09  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_OBJ_COLUMN_VECTOR): add.
+
+2009-03-05  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_column_create): impl_flags was not saved.
+
+2009-03-03  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (table::scan): support (table ::scan match_expr score_expr).
+
+2009-03-02  Poe MORITA  <morita at razil.jp>
+
+	* lib/scm.c (nf_distance1~nf_distance4): add.
+
+2009-03-02  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_OBJ_COLUMN_ARRAY): -> GRN_OBJ_COLUMN_UVECTOR.
+
+2009-03-02  Tasuku SUENAGA <a at razil.jp>
+
+	* doc/ja/API.rb: added document
+
+2009-03-01  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_table_group): support GRN_OBJ_COLUMN_ARRAY as key.
+
+2009-03-01  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (GRN_UVECTOR): add.
+
+2009-03-01  Poe MORITA  <morita at razil.jp>
+
+	* lib/token.c (delimited_next): fixed a bug cause infinite loop.
+
 2009-02-27  Poe MORITA  <morita at razil.jp>
 
 	* doc/ja/API.rd: updated.

@@ -4,7 +4,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>API.rd</title>
+<title>doc/ja/API.rd</title>
 </head>
 <body>
 <h1><a name="label-0" id="label-0">groonga C API マニュアル</a></h1><!-- RDLabel: "groonga C API マニュアル" -->
@@ -94,69 +94,227 @@ flagsにGRN_CTX_USE_QLを指定してgrn_ctx_init()を実行した場合は、�
 同一のgrn_ctx構造体を複数のスレッドが同時に使ってはいけない。スレッド固有データにgrn_ctxを保存し、スレッドとgrn_ctxと1:1に保てばこの制約は簡単に守ることができる。しかし、例えば非常に多くのクライアントからの接続を同時に受け付けるサーバシステムの中でgroongaを使用する場合には、スレッドとgrn_ctxとを動的に対応づけた方が有利かも知れない。
 </dd>
 </dl>
-<h1><a name="label-14" id="label-14">QL API</a></h1><!-- RDLabel: "QL API" -->
-<h2><a name="label-15" id="label-15">grn_ql_connect</a></h2><!-- RDLabel: "grn_ql_connect" -->
+<h2><a name="label-14" id="label-14">grn_snip_open</a></h2><!-- RDLabel: "grn_snip_open" -->
 <dl>
-<dt><a name="label-16" id="label-16">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dt><a name="label-15" id="label-15">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_snip_open - snippet生成のための構造体を初期化する
+</dd>
+<dt><a name="label-16" id="label-16">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_snip *grn_snip_open(grn_ctx *ctx, grn_encoding encoding,
+                        int flags, unsigned int width,
+                        unsigned int max_results,
+                        const char *defaultopentag,
+                        unsigned int defaultopentag_len,
+                        const char *defaultclosetag,
+                        unsigned int defaultclosetag_len,
+                        grn_snip_mapping *mapping);</pre>
+</dd>
+<dt><a name="label-17" id="label-17">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+grn_snip_open()は、snippet生成のために用いる構造体grn_snipを確保し、そのポインタを返す。
+</dd>
+<dt><a name="label-18" id="label-18">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dd>
+成功した場合はgrn_snip構造体のポインタを返す。
+構造体の確保に失敗した場合にはNULLを返す。
+</dd>
+<dt><a name="label-19" id="label-19">NOTE</a></dt><!-- RDLabel: "NOTE" -->
+<dd>
+同条件でsnippetを生成する場合には、grn_snip構造体を使いまわすことができる。
+</dd>
+</dl>
+<h2><a name="label-20" id="label-20">grn_snip_close</a></h2><!-- RDLabel: "grn_snip_close" -->
+<dl>
+<dt><a name="label-21" id="label-21">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_snip_close - snippet生成のための構造体を開放する
+</dd>
+<dt><a name="label-22" id="label-22">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_snip_close(grn_ctx *ctx, grn_snip *snip);</pre>
+</dd>
+<dt><a name="label-23" id="label-23">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+grn_snip_close()は、grn_snip_openで確保されたsnippet生成のための構造体grn_snipを開放する。
+</dd>
+<dt><a name="label-24" id="label-24">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dd>
+GRN_SUCCESSを返す。
+</dd>
+</dl>
+<h2><a name="label-25" id="label-25">grn_snip_add_cond</a></h2><!-- RDLabel: "grn_snip_add_cond" -->
+<dl>
+<dt><a name="label-26" id="label-26">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_snip_add_cond - 検索対象の単語と、その単語の前後に付与する文字列を指定する。
+</dd>
+<dt><a name="label-27" id="label-27">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
+                         const char *keyword, unsigned int keyword_len,
+                         const char *opentag, unsigned int opentag_len,
+                         const char *closetag, unsigned int closetag_len);</pre>
+</dd>
+<dt><a name="label-28" id="label-28">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+grn_snip_add_cond()は、検索対象の単語と、その単語の前後に付与する文字列を指定する。
+ctxは、grn_ctx_initで初期化したgrn_ctxインスタンスを指定します。
+snipは、grn_snip_openで生成したgrn_snipインスタンスを指定します。
+keywordは、検索対象の単語を指定します。
+keyword_lenは、keywordのバイト長を指定します。
+opentagは、snippet中の検索単語の前につける文字列を指定します。 NULLを指定した場合には、grn_snip_openで指定したdefaultopentagが使用されます。
+opentag_lenは、opentagのバイト長を指定します。
+closetagは、snippet中の検索単語の後につける文字列を指定します。 NULLを指定した場合には、grn_snip_openで指定したdefaultclosetagが使用されます。
+closetag_lenは、closetagのバイト長を指定します。
+</dd>
+<dt><a name="label-29" id="label-29">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dd>
+引数の値が不正な場合、GRN_INVALID_ARGUMENTを返す。
+成功した場合、GRN_SUCCESSを返す。
+</dd>
+<dt><a name="label-30" id="label-30">NOTE</a></dt><!-- RDLabel: "NOTE" -->
+<dd>
+opentag, closetagの指す内容はコピーされない。sen_snip_closeを呼ぶまで、ポインタの開放や内容の変更は行えない。
+</dd>
+</dl>
+<h2><a name="label-31" id="label-31">grn_snip_exec</a></h2><!-- RDLabel: "grn_snip_exec" -->
+<dl>
+<dt><a name="label-32" id="label-32">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_snip_exec - 検索対象の単語を検索し、snippetを生成します。
+</dd>
+<dt><a name="label-33" id="label-33">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_snip_exec(grn_ctx *ctx, grn_snip *snip,
+                     const char *string, unsigned int string_len,
+                     unsigned int *nresults, unsigned int *max_tagged_len);</pre>
+</dd>
+<dt><a name="label-34" id="label-34">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dd>
+grn_snip_exec()は、検索対象の単語と、その単語の前後に付与する文字列を指定する。
+検索対象の単語を検索し、snippetを生成します。
+ctxは、grn_ctx_initで初期化したgrn_ctxインスタンスを指定します。
+snipは、grn_snip_openで生成したgrn_snipインスタンスを指定します。
+stringには、snippetを生成する対象の文字列を指定します。
+string_lenには、stringのバイト長を指定します。
+nresultsには、snippetを実際に生成できた個数が格納されます。
+max_tagged_lenには、生成されたsnippetのうち、一番長いsnippetについて末尾のNULLを含めた長さが格納されます。
+</dd>
+<dt><a name="label-35" id="label-35">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dd>
+引数の値が不正な場合、GRN_INVALID_ARGUMENTを返す。
+結果保持用のメモリが確保できない場合は、GRN_NO_MEMORY_AVAILABLEを返す。
+成功した場合は、GRN_SUCCESSを返す。
+</dd>
+</dl>
+<h2><a name="label-36" id="label-36">grn_snip_get_result</a></h2><!-- RDLabel: "grn_snip_get_result" -->
+<dl>
+<dt><a name="label-37" id="label-37">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dd>
+grn_snip_get_result - sen_snip_execで生成したsnippetを取り出します。
+</dd>
+<dt><a name="label-38" id="label-38">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dd>
+<p> </p>
+<pre>#include &lt;groonga/groonga.h&gt;
+
+grn_rc grn_snip_get_result(grn_ctx *ctx, grn_snip *snip,
+                           const unsigned int index,
+                           char *result, unsigned int *result_len);</pre>
+</dd>
+<dt><a name="label-39" id="label-39">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+</dl>
+<p>sen_snip_execで生成したsnippetを取り出します。
+ctxは、grn_ctx_initで初期化したgrn_ctxインスタンスを指定します。
+snipは、sen_snip_execで生成したsnippetを取り出します。
+indexは、snippetの0からはじまるインデックスを指定します。
+resultには、snippetの文字列が格納されます。
+result_lenには、resultのバイト長が格納されます。</p>
+<dl>
+<dt><a name="label-40" id="label-40">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dd>
+引数の値が不正な場合、GRN_INVALID_ARGUMENTを返す。
+結果保持用のメモリが確保できない場合は、GRN_NO_MEMORY_AVAILABLEを返す。
+成功した場合は、GRN_SUCCESSを返す。
+</dd>
+</dl>
+<h1><a name="label-41" id="label-41">QL API</a></h1><!-- RDLabel: "QL API" -->
+<h2><a name="label-42" id="label-42">grn_ql_connect</a></h2><!-- RDLabel: "grn_ql_connect" -->
+<dl>
+<dt><a name="label-43" id="label-43">NAME</a></dt><!-- RDLabel: "NAME" -->
 <dd>
 grn_ql_connect - つなぐ
 </dd>
-<dt><a name="label-17" id="label-17">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dt><a name="label-44" id="label-44">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
 <dd>
 <p> </p>
 <pre>#include &lt;groonga/groonga.h&gt;
 
 grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);</pre>
 </dd>
-<dt><a name="label-18" id="label-18">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dt><a name="label-45" id="label-45">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dd>
 つなぐ
 </dd>
 </dl>
-<h2><a name="label-19" id="label-19">grn_ql_send</a></h2><!-- RDLabel: "grn_ql_send" -->
+<h2><a name="label-46" id="label-46">grn_ql_send</a></h2><!-- RDLabel: "grn_ql_send" -->
 <dl>
-<dt><a name="label-20" id="label-20">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dt><a name="label-47" id="label-47">NAME</a></dt><!-- RDLabel: "NAME" -->
 <dd>
 grn_ql_send - おくる
 </dd>
-<dt><a name="label-21" id="label-21">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dt><a name="label-48" id="label-48">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
 <dd>
 <p> </p>
 <pre>#include &lt;groonga/groonga.h&gt;
 
 grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);</pre>
 </dd>
-<dt><a name="label-22" id="label-22">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dt><a name="label-49" id="label-49">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dd>
 おくる
 </dd>
 </dl>
-<h2><a name="label-23" id="label-23">grn_ql_recv</a></h2><!-- RDLabel: "grn_ql_recv" -->
+<h2><a name="label-50" id="label-50">grn_ql_recv</a></h2><!-- RDLabel: "grn_ql_recv" -->
 <dl>
-<dt><a name="label-24" id="label-24">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dt><a name="label-51" id="label-51">NAME</a></dt><!-- RDLabel: "NAME" -->
 <dd>
 grn_ql_send - うけとる
 </dd>
-<dt><a name="label-25" id="label-25">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dt><a name="label-52" id="label-52">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
 <dd>
 <p> </p>
 <pre>#include &lt;groonga/groonga.h&gt;
 
 grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);</pre>
 </dd>
-<dt><a name="label-26" id="label-26">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dt><a name="label-53" id="label-53">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dd>
 うけとる
 </dd>
 </dl>
-<h1><a name="label-27" id="label-27">DB API</a></h1><!-- RDLabel: "DB API" -->
-<h2><a name="label-28" id="label-28">grn_db_create</a></h2><!-- RDLabel: "grn_db_create" -->
+<h1><a name="label-54" id="label-54">DB API</a></h1><!-- RDLabel: "DB API" -->
+<h2><a name="label-55" id="label-55">grn_db_create</a></h2><!-- RDLabel: "grn_db_create" -->
 <dl>
-<dt><a name="label-29" id="label-29">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dt><a name="label-56" id="label-56">NAME</a></dt><!-- RDLabel: "NAME" -->
 <dd>
 grn_db_create, grn_db_open - データベースを生成する
 </dd>
-<dt><a name="label-30" id="label-30">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dt><a name="label-57" id="label-57">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
 <dd>
 <p> </p>
 <pre>#include &lt;groonga/groonga.h&gt;
@@ -164,20 +322,20 @@ grn_db_create, grn_db_open - データベースを生成する
 grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
 grn_obj *grn_db_open(grn_ctx *ctx, const char *path);</pre>
 </dd>
-<dt><a name="label-31" id="label-31">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dt><a name="label-58" id="label-58">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dd>
 つくる・ひらく
 </dd>
-<dt><a name="label-32" id="label-32">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dt><a name="label-59" id="label-59">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
 </dl>
-<h1><a name="label-33" id="label-33">low-level API</a></h1><!-- RDLabel: "low-level API" -->
-<h2><a name="label-34" id="label-34">grn_hash_create</a></h2><!-- RDLabel: "grn_hash_create" -->
+<h1><a name="label-60" id="label-60">low-level API</a></h1><!-- RDLabel: "low-level API" -->
+<h2><a name="label-61" id="label-61">grn_hash_create</a></h2><!-- RDLabel: "grn_hash_create" -->
 <dl>
-<dt><a name="label-35" id="label-35">NAME</a></dt><!-- RDLabel: "NAME" -->
+<dt><a name="label-62" id="label-62">NAME</a></dt><!-- RDLabel: "NAME" -->
 <dd>
 grn_hash_create, grn_hash_open - ハッシュテーブルを生成する
 </dd>
-<dt><a name="label-36" id="label-36">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
+<dt><a name="label-63" id="label-63">SYNOPSIS</a></dt><!-- RDLabel: "SYNOPSIS" -->
 <dd>
 <p> </p>
 <pre>#include &lt;groonga/groonga.h&gt;
@@ -187,18 +345,17 @@ grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
                           grn_encoding encoding);
 grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);</pre>
 </dd>
-<dt><a name="label-37" id="label-37">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
-<dt><a name="label-38" id="label-38">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
-<dt><a name="label-39" id="label-39">ERRORS</a></dt><!-- RDLabel: "ERRORS" -->
-<dt><a name="label-40" id="label-40">CONFORMING TO</a></dt><!-- RDLabel: "CONFORMING TO" -->
-<dt><a name="label-41" id="label-41">AVAILABILITY</a></dt><!-- RDLabel: "AVAILABILITY" -->
-<dt><a name="label-42" id="label-42">NOTES</a></dt><!-- RDLabel: "NOTES" -->
-<dt><a name="label-43" id="label-43">BUGS</a></dt><!-- RDLabel: "BUGS" -->
-<dt><a name="label-44" id="label-44">EXAMPLE</a></dt><!-- RDLabel: "EXAMPLE" -->
-<dt><a name="label-45" id="label-45">SEE ALSO</a></dt><!-- RDLabel: "SEE ALSO" -->
-<dt><a name="label-46" id="label-46">COLOPHON</a></dt><!-- RDLabel: "COLOPHON" -->
+<dt><a name="label-64" id="label-64">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
+<dt><a name="label-65" id="label-65">RETURN VALUE</a></dt><!-- RDLabel: "RETURN VALUE" -->
+<dt><a name="label-66" id="label-66">ERRORS</a></dt><!-- RDLabel: "ERRORS" -->
+<dt><a name="label-67" id="label-67">CONFORMING TO</a></dt><!-- RDLabel: "CONFORMING TO" -->
+<dt><a name="label-68" id="label-68">AVAILABILITY</a></dt><!-- RDLabel: "AVAILABILITY" -->
+<dt><a name="label-69" id="label-69">NOTES</a></dt><!-- RDLabel: "NOTES" -->
+<dt><a name="label-70" id="label-70">BUGS</a></dt><!-- RDLabel: "BUGS" -->
+<dt><a name="label-71" id="label-71">EXAMPLE</a></dt><!-- RDLabel: "EXAMPLE" -->
+<dt><a name="label-72" id="label-72">SEE ALSO</a></dt><!-- RDLabel: "SEE ALSO" -->
+<dt><a name="label-73" id="label-73">COLOPHON</a></dt><!-- RDLabel: "COLOPHON" -->
 </dl>
-<p>あとでまた書く</p>
 
 </body>
 </html>

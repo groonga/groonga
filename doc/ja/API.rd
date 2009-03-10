@@ -91,6 +91,159 @@ DB APIはQL APIの下位に位置し、データストアを構成する各オ�
 
   同一のgrn_ctx構造体を複数のスレッドが同時に使ってはいけない。スレッド固有データにgrn_ctxを保存し、スレッドとgrn_ctxと1:1に保てばこの制約は簡単に守ることができる。しかし、例えば非常に多くのクライアントからの接続を同時に受け付けるサーバシステムの中でgroongaを使用する場合には、スレッドとgrn_ctxとを動的に対応づけた方が有利かも知れない。
 
+== grn_snip_open
+
+:NAME
+
+  grn_snip_open - snippet生成のための構造体を初期化する
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_snip *grn_snip_open(grn_ctx *ctx, grn_encoding encoding,
+                          int flags, unsigned int width,
+                          unsigned int max_results,
+                          const char *defaultopentag,
+                          unsigned int defaultopentag_len,
+                          const char *defaultclosetag,
+                          unsigned int defaultclosetag_len,
+                          grn_snip_mapping *mapping);
+
+:DESCRIPTION
+
+  grn_snip_open()は、snippet生成のために用いる構造体grn_snipを確保し、そのポインタを返す。
+
+:RETURN VALUE
+
+  成功した場合はgrn_snip構造体のポインタを返す。
+  構造体の確保に失敗した場合にはNULLを返す。
+
+:NOTE
+
+  同条件でsnippetを生成する場合には、grn_snip構造体を使いまわすことができる。
+
+== grn_snip_close
+
+:NAME
+
+  grn_snip_close - snippet生成のための構造体を開放する
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_rc grn_snip_close(grn_ctx *ctx, grn_snip *snip);
+
+:DESCRIPTION
+
+  grn_snip_close()は、grn_snip_openで確保されたsnippet生成のための構造体grn_snipを開放する。
+
+:RETURN VALUE
+
+  GRN_SUCCESSを返す。
+
+== grn_snip_add_cond
+
+:NAME
+
+  grn_snip_add_cond - 検索対象の単語と、その単語の前後に付与する文字列を指定する。
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_rc grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
+                           const char *keyword, unsigned int keyword_len,
+                           const char *opentag, unsigned int opentag_len,
+                           const char *closetag, unsigned int closetag_len);
+
+:DESCRIPTION
+
+  grn_snip_add_cond()は、検索対象の単語と、その単語の前後に付与する文字列を指定する。
+  ctxは、grn_ctx_initで初期化したgrn_ctxインスタンスを指定します。
+  snipは、grn_snip_openで生成したgrn_snipインスタンスを指定します。
+  keywordは、検索対象の単語を指定します。
+  keyword_lenは、keywordのバイト長を指定します。
+  opentagは、snippet中の検索単語の前につける文字列を指定します。 NULLを指定した場合には、grn_snip_openで指定したdefaultopentagが使用されます。
+  opentag_lenは、opentagのバイト長を指定します。
+  closetagは、snippet中の検索単語の後につける文字列を指定します。 NULLを指定した場合には、grn_snip_openで指定したdefaultclosetagが使用されます。
+  closetag_lenは、closetagのバイト長を指定します。
+
+:RETURN VALUE
+
+  引数の値が不正な場合、GRN_INVALID_ARGUMENTを返す。
+  成功した場合、GRN_SUCCESSを返す。
+
+:NOTE
+
+  opentag, closetagの指す内容はコピーされない。sen_snip_closeを呼ぶまで、ポインタの開放や内容の変更は行えない。
+
+== grn_snip_exec
+
+:NAME
+
+  grn_snip_exec - 検索対象の単語を検索し、snippetを生成します。
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_rc grn_snip_exec(grn_ctx *ctx, grn_snip *snip,
+                       const char *string, unsigned int string_len,
+                       unsigned int *nresults, unsigned int *max_tagged_len);
+
+:DESCRIPTION
+
+  grn_snip_exec()は、検索対象の単語と、その単語の前後に付与する文字列を指定する。
+  検索対象の単語を検索し、snippetを生成します。
+  ctxは、grn_ctx_initで初期化したgrn_ctxインスタンスを指定します。
+  snipは、grn_snip_openで生成したgrn_snipインスタンスを指定します。
+  stringには、snippetを生成する対象の文字列を指定します。
+  string_lenには、stringのバイト長を指定します。
+  nresultsには、snippetを実際に生成できた個数が格納されます。
+  max_tagged_lenには、生成されたsnippetのうち、一番長いsnippetについて末尾のNULLを含めた長さが格納されます。
+
+:RETURN VALUE
+
+  引数の値が不正な場合、GRN_INVALID_ARGUMENTを返す。
+  結果保持用のメモリが確保できない場合は、GRN_NO_MEMORY_AVAILABLEを返す。
+  成功した場合は、GRN_SUCCESSを返す。
+
+== grn_snip_get_result
+
+:NAME
+
+  grn_snip_get_result - sen_snip_execで生成したsnippetを取り出します。
+
+:SYNOPSIS
+ ((' '))
+
+  #include <groonga/groonga.h>
+
+  grn_rc grn_snip_get_result(grn_ctx *ctx, grn_snip *snip,
+                             const unsigned int index,
+                             char *result, unsigned int *result_len);
+
+:DESCRIPTION
+
+sen_snip_execで生成したsnippetを取り出します。
+ctxは、grn_ctx_initで初期化したgrn_ctxインスタンスを指定します。
+snipは、sen_snip_execで生成したsnippetを取り出します。
+indexは、snippetの0からはじまるインデックスを指定します。
+resultには、snippetの文字列が格納されます。
+result_lenには、resultのバイト長が格納されます。
+
+:RETURN VALUE
+
+  引数の値が不正な場合、GRN_INVALID_ARGUMENTを返す。
+  結果保持用のメモリが確保できない場合は、GRN_NO_MEMORY_AVAILABLEを返す。
+  成功した場合は、GRN_SUCCESSを返す。
+
 = QL API
 
 == grn_ql_connect
@@ -193,4 +346,3 @@ DB APIはQL APIの下位に位置し、データストアを構成する各オ�
 :SEE ALSO
 :COLOPHON
 
-あとでまた書く

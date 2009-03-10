@@ -73,14 +73,6 @@ grn_rc grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int en
 
 void grn_logger_fin(void);
 
-/* bulk */
-
-#define GRN_BULK_VALUE(bulk) \
- (((bulk)->header.type == GRN_BULK) ? GRN_BULK_HEAD(bulk) : NULL)
-
-#define GRN_BULK_LEN(bulk) \
- (((bulk)->header.type == GRN_BULK) ? GRN_BULK_VSIZE(bulk) : 0)
-
 #ifdef __cplusplus
 }
 #endif

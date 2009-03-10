@@ -1024,8 +1024,8 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
     case GRN_QUERY :
       GRN_BULK_PUTS(ctx, buf, "#<QUERY>");
       break;
-    case GRN_SECTIONS :
-      GRN_BULK_PUTS(ctx, buf, "#<SECTIONS>");
+    case GRN_VECTOR :
+      GRN_BULK_PUTS(ctx, buf, "#<VECTOR>");
       break;
     case GRN_CELL_OP :
       GRN_BULK_PUTS(ctx, buf, "#<OP>");
@@ -3022,6 +3022,125 @@ nf_intern(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   return v;
 }
 
+#define GEO_RESOLUTION   3600000
+#define GEO_RADIOUS      6357303
+#define GEO_BES_C1       6334834
+#define GEO_BES_C2       6377397
+#define GEO_BES_C3       0.006674
+#define GEO_GRS_C1       6335439
+#define GEO_GRS_C2       6378137
+#define GEO_GRS_C3       0.006694
+#define GEO_INT2RAD(x)   ((M_PI * x) / (GEO_RESOLUTION * 180))
+
+static grn_cell *
+nf_distance1(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  grn_cell *e;
+  double lng1, lat1, lng2, lat2, x, y, d;
+  if (!PAIRP(args)) { QLERR("list required"); }
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng2 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat2 = GEO_INT2RAD(IVALUE(e));
+  x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+  y = (lat2 - lat1);
+  d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
+  GRN_CELL_NEW(ctx, e);
+  SETFLOAT(e, d);
+  return e;
+}
+static grn_cell *
+nf_distance2(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  grn_cell *e;
+  double lng1, lat1, lng2, lat2, x, y, d;
+  if (!PAIRP(args)) { QLERR("list required"); }
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng2 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat2 = GEO_INT2RAD(IVALUE(e));
+  x = sin(fabs(lng2 - lng1) * 0.5);
+  y = sin(fabs(lat2 - lat1) * 0.5);
+  d = asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GEO_RADIOUS;
+  GRN_CELL_NEW(ctx, e);
+  SETFLOAT(e, d);
+  return e;
+}
+static grn_cell *
+nf_distance3(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  grn_cell *e;
+  double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
+  if (!PAIRP(args)) { QLERR("list required"); }
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng2 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat2 = GEO_INT2RAD(IVALUE(e));
+  p = (lat1 + lat2) * 0.5;
+  q = (1 - GEO_BES_C3 * sin(p) * sin(p));
+  m = GEO_BES_C1 / sqrt(q * q * q);
+  n = GEO_BES_C2 / sqrt(q);
+  x = n * cos(p) * fabs(lng1 - lng2);
+  y = m * fabs(lat1 - lat2);
+  d = sqrt((x * x) + (y * y));
+  GRN_CELL_NEW(ctx, e);
+  SETFLOAT(e, d);
+  return e;
+}
+static grn_cell *
+nf_distance4(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  grn_cell *e;
+  double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
+  if (!PAIRP(args)) { QLERR("list required"); }
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat1 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lng2 = GEO_INT2RAD(IVALUE(e));
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  lat2 = GEO_INT2RAD(IVALUE(e));
+  p = (lat1 + lat2) * 0.5;
+  q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
+  m = GEO_GRS_C1 / sqrt(q * q * q);
+  n = GEO_GRS_C2 / sqrt(q);
+  x = n * cos(p) * fabs(lng1 - lng2);
+  y = m * fabs(lat1 - lat2);
+  d = sqrt((x * x) + (y * y));
+  GRN_CELL_NEW(ctx, e);
+  SETFLOAT(e, d);
+  return e;
+}
+
 /* ========== Initialization of internal keywords ========== */
 
 inline static void
@@ -3165,6 +3284,10 @@ init_procs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "substrb", nf_substrb);
   grn_ql_def_native_func(ctx, "x->b32h", nf_tob32h);
   grn_ql_def_native_func(ctx, "intern", nf_intern);
+  grn_ql_def_native_func(ctx, "distance1", nf_distance1);
+  grn_ql_def_native_func(ctx, "distance2", nf_distance2);
+  grn_ql_def_native_func(ctx, "distance3", nf_distance3);
+  grn_ql_def_native_func(ctx, "distance4", nf_distance4);
 }
 
 /* initialize several globals */
