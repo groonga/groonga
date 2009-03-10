@@ -133,36 +133,38 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
       void *v = GRN_BULK_HEAD(obj);
       grn_id rid = obj->header.domain;
       grn_obj *range = grn_ctx_get(ctx, rid);
-      if (range && range->header.type == GRN_TYPE) {
-        switch (rid) {
-        case GRN_DB_INT :
-          SETINT(cell, *((int32_t *)v));
-          break;
-        case GRN_DB_UINT :
-          SETINT(cell, *((uint32_t *)v));
-          break;
-        case GRN_DB_INT64 :
-          SETINT(cell, *((int64_t *)v));
-          break;
-        case GRN_DB_FLOAT :
-          SETFLOAT(cell, *((double *)v));
-          break;
-        case GRN_DB_TIME :
-          SETTIME(cell, v);
-          break;
-        default :
-          {
-            uint32_t size = GRN_BULK_VSIZE(obj);
-            void *value = GRN_MALLOC(size);
-            if (!value) { return F; }
-            cell->header.impl_flags |= GRN_OBJ_ALLOCATED;
-            memcpy(value, v, size);
-            SETBULK(cell, value, size);
+      if (v) {
+        if (range && range->header.type == GRN_TYPE) {
+          switch (rid) {
+          case GRN_DB_INT :
+            SETINT(cell, *((int32_t *)v));
+            break;
+          case GRN_DB_UINT :
+            SETINT(cell, *((uint32_t *)v));
+            break;
+          case GRN_DB_INT64 :
+            SETINT(cell, *((int64_t *)v));
+            break;
+          case GRN_DB_FLOAT :
+            SETFLOAT(cell, *((double *)v));
+            break;
+          case GRN_DB_TIME :
+            SETTIME(cell, v);
+            break;
+          default :
+            {
+              uint32_t size = GRN_BULK_VSIZE(obj);
+              void *value = GRN_MALLOC(size);
+              if (!value) { return F; }
+              cell->header.impl_flags |= GRN_OBJ_ALLOCATED;
+              memcpy(value, v, size);
+              SETBULK(cell, value, size);
+            }
+            break;
           }
-          break;
+        } else {
+          obj_obj_bind(cell, rid, *((grn_id *)v));
         }
-      } else {
-        obj_obj_bind(cell, rid, *((grn_id *)v));
       }
     }
     break;

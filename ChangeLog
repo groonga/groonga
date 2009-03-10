@@ -1,5 +1,9 @@
 2009-03-10  Poe MORITA  <morita at razil.jp>
 
+	* lib/ii.c (grn_ii_column_update) : UVECTOR support.
+
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
 	* lib/ql.c (ha_table): jload support vector value.
 
 2009-03-10  Poe MORITA  <morita at razil.jp>

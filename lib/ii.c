@@ -4484,6 +4484,33 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   return GRN_SUCCESS;
 }
 
+static grn_rc
+grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
+                     grn_obj *in, grn_obj *out)
+{
+  int j;
+  grn_ii_updspec **u;
+  grn_hash *h = (grn_hash *)out;
+  const grn_id *rp = (const grn_id *)GRN_BULK_HEAD(in);
+  const grn_id *re = (const grn_id *)GRN_BULK_CURR(in);
+  for (j = 0; rp < re; j++, rp++) {
+    if (!grn_hash_get(ctx, h, rp, sizeof(grn_id), (void **) &u, NULL)) {
+      break;
+    }
+    if (!*u) {
+      if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
+        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on grn_ii_update failed!");
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+    }
+    if (grn_ii_updspec_add(ctx, *u, j, 0)) {
+      GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                      grn_obj *oldvalue, grn_obj *newvalue)
@@ -4522,11 +4549,25 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       }
       if (new_ != newvalue) { grn_obj_close(ctx, new_); }
       if (rc) { goto exit; }
-      /* fallthru */
+      break;
+    case GRN_UVECTOR :
+      new_ = new;
+      new = (grn_obj *)grn_hash_create(ctx, NULL, sizeof(grn_id),
+                                       sizeof(grn_ii_updspec *),
+                                       GRN_HASH_TINY, GRN_ENC_NONE);
+      if (!new) {
+        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
+        rc = GRN_NO_MEMORY_AVAILABLE;
+      } else {
+        rc = grn_uvector2updspecs(ctx, ii, rid, section, new_, new);
+      }
+      if (new_ != newvalue) { grn_obj_close(ctx, new_); }
+      if (rc) { goto exit; }
+      break;
     case GRN_TABLE_HASH_KEY :
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "invalid object assigned as oldvalue");
+      ERR(GRN_INVALID_ARGUMENT, "invalid object assigned as newvalue");
       goto exit;
     }
   }
@@ -4558,7 +4599,21 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       }
       if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
       if (rc) { goto exit; }
-      /* fallthru */
+      break;
+    case GRN_UVECTOR :
+      old_ = old;
+      old = (grn_obj *)grn_hash_create(ctx, NULL, sizeof(grn_id),
+                                       sizeof(grn_ii_updspec *),
+                                       GRN_HASH_TINY, GRN_ENC_NONE);
+      if (!old) {
+        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
+        rc = GRN_NO_MEMORY_AVAILABLE;
+      } else {
+        rc = grn_uvector2updspecs(ctx, ii, rid, section, old_, old);
+      }
+      if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
+      if (rc) { goto exit; }
+      break;
     case GRN_TABLE_HASH_KEY :
       break;
     default :

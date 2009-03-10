@@ -2730,6 +2730,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     break;
   case GRN_BULK :
   case GRN_VECTOR :
+  case GRN_UVECTOR :
     break;
   default :
     ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_value failed");
@@ -3008,7 +3009,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (!obj) {
-    ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_value failed");
+    ERR(GRN_INVALID_ARGUMENT, "grn_obj_set_info failed");
     goto exit;
   }
   switch (type) {
