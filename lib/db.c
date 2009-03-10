@@ -1927,22 +1927,20 @@ exit :
   GRN_API_RETURN(length);
 }
 
-#define INITIAL_SECTIONS_SIZE 256
-
-#define ALLOC_SECTIONS(v) {\
-  if (!(v->u.v.n_sections & (INITIAL_SECTIONS_SIZE - 1))) {\
-    grn_section *vp = GRN_REALLOC(v->u.v.sections, sizeof(grn_section) *\
-                                  (v->u.v.n_sections + INITIAL_SECTIONS_SIZE));\
-    if (!vp) { return GRN_NO_MEMORY_AVAILABLE; }\
-    v->u.v.sections = vp;\
-  }\
-}
+#define W_SECTIONS_UNIT 8
+#define S_SECTIONS_UNIT (1 << W_SECTIONS_UNIT)
+#define M_SECTIONS_UNIT (S_SECTIONS_UNIT - 1)
 
 grn_rc
 grn_vector_delimit(grn_ctx *ctx, grn_obj *v, unsigned int weight, grn_id domain)
 {
   if (v->header.type != GRN_VECTOR) { return GRN_INVALID_ARGUMENT; }
-  ALLOC_SECTIONS(v);
+  if (!(v->u.v.n_sections & M_SECTIONS_UNIT)) {
+    grn_section *vp = GRN_REALLOC(v->u.v.sections, sizeof(grn_section) *
+                                  (v->u.v.n_sections + S_SECTIONS_UNIT));
+    if (!vp) { return GRN_NO_MEMORY_AVAILABLE; }
+    v->u.v.sections = vp;
+  }
   {
     grn_obj *body = grn_vector_body(ctx, v);
     grn_section *vp = &v->u.v.sections[v->u.v.n_sections];
@@ -1960,12 +1958,19 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size
 {
   uint8_t *p = (uint8_t *)data;
   uint8_t *pe = p + data_size;
-  GRN_B_DEC(v->u.v.n_sections, p);
-  ALLOC_SECTIONS(v);
+  uint32_t n, n0 = v->u.v.n_sections;
+  GRN_B_DEC(n, p);
+  if (((n0 + M_SECTIONS_UNIT) >> W_SECTIONS_UNIT) !=
+      ((n0 + n + M_SECTIONS_UNIT) >> W_SECTIONS_UNIT)) {
+    grn_section *vp = GRN_REALLOC(v->u.v.sections, sizeof(grn_section) *
+                                  ((n0 + n + M_SECTIONS_UNIT) & ~M_SECTIONS_UNIT));
+    if (!vp) { return GRN_NO_MEMORY_AVAILABLE; }
+    v->u.v.sections = vp;
+  }
   {
-    grn_section *vp = v->u.v.sections;
+    grn_section *vp;
     uint32_t o = 0, l, i;
-    for (i = v->u.v.n_sections, vp = v->u.v.sections; i; i--, vp++) {
+    for (i = n, vp = v->u.v.sections + n0; i; i--, vp++) {
       if (pe <= p) { return GRN_INVALID_ARGUMENT; }
       GRN_B_DEC(l, p);
       vp->length = l;
@@ -1981,13 +1986,14 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size
     }
     p += o;
     if (p < pe) {
-      for (i = v->u.v.n_sections, vp = v->u.v.sections; i; i--, vp++) {
+      for (i = n, vp = v->u.v.sections + n0; i; i--, vp++) {
         if (pe <= p) { return GRN_INVALID_ARGUMENT; }
         GRN_B_DEC(vp->weight, p);
         GRN_B_DEC(vp->domain, p);
       }
     }
   }
+  v->u.v.n_sections += n;
   return ctx->rc;
 }
 
