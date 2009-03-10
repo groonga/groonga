@@ -1334,23 +1334,37 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
             grn_table_cursor_get_value(ctx, tc, (void **)&ri);
           }
           grn_obj_get_value(ctx, keys->key, id, &bulk);
-          if (bulk.header.type == GRN_VECTOR) {
-            // tood : support objects except grn_id
-            grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
-            grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
-            while (v < ve) {
+          switch (bulk.header.type) {
+          case GRN_UVECTOR :
+            {
+              // tood : support objects except grn_id
+              grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
+              grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
+              while (v < ve) {
+                grn_search_flags f = GRN_TABLE_ADD;
+                if (grn_table_get(ctx, results->table, v, sizeof(grn_id), &value, &f)) {
+                  grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
+                }
+                v++;
+              }
+            }
+            break;
+          case GRN_VECTOR :
+            ERR(GRN_OPERATION_NOT_SUPPORTED, "sorry.. not implemented yet");
+            /* todo */
+            break;
+          case GRN_BULK :
+            {
               grn_search_flags f = GRN_TABLE_ADD;
-              if (grn_table_get(ctx, results->table, v, sizeof(grn_id), &value, &f)) {
+              if (grn_table_get(ctx, results->table,
+                                GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, &f)) {
                 grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
               }
-              v++;
             }
-          } else {
-            grn_search_flags f = GRN_TABLE_ADD;
-            if (grn_table_get(ctx, results->table,
-                              GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, &f)) {
-              grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
-            }
+            break;
+          default :
+            ERR(GRN_INVALID_ARGUMENT, "invalid column");
+            break;
           }
         }
         grn_table_cursor_close(ctx, tc);

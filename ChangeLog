@@ -1,5 +1,9 @@
 2009-03-10  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (grn_table_group): support uvector.
+
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
 	* lib/ii.c (grn_ii_column_update) : UVECTOR support.
 
 2009-03-10  Poe MORITA  <morita at razil.jp>
