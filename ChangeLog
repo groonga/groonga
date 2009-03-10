@@ -1,4 +1,9 @@
 2009-03-10  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (ha_table): jload support vector value.
+
+2009-03-10  Poe MORITA  <morita at razil.jp>
+
 	* lib/db.c (grn_vector_decode): fix a bug cause segv when decoding vector value.
 
 2009-03-10  Poe MORITA  <morita at razil.jp>

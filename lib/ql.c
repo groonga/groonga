@@ -562,6 +562,41 @@ ha_sections(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   } else { QLWARN("buf alloc failed"); }\
 } while (0)
 
+static void
+list2vector(grn_ctx *ctx, grn_cell *s, grn_obj *v)
+{
+  grn_cell *car, *key, *value;
+  while (PAIRP(s)) {
+    POP(car, s);
+    if (BULKP(car)) {
+      grn_vector_add_element(ctx, v, STRVALUE(car), STRSIZE(car), 0, GRN_ID_NIL);
+    } else if (PAIRP(car)) {
+      const char *str = NULL;
+      grn_id domain = GRN_ID_NIL;
+      unsigned int weight = 0, str_len = 0;
+      POP(key, car);
+      if (key == INTERN("@")) {
+        while (PAIRP(car)) {
+          POP(key, car);
+          POP(value, car);
+          if (key == INTERN(":dic")) {
+            /* todo */
+          } else if (key == INTERN(":weight")) {
+            grn_obj2int(ctx, value);
+            weight = (uint32_t) IVALUE(value);
+          } else if (key == INTERN(":value") && BULKP(value)) {
+            str = STRVALUE(value);
+            str_len = STRSIZE(value);
+          }
+        }
+        if (str) {
+          grn_vector_add_element(ctx, v, str, str_len, weight, domain);
+        }
+      }
+    }
+  }
+}
+
 static grn_obj *
 cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
 {
@@ -764,6 +799,10 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
       break;
     case GRN_CELL_TIME :
       /* todo */
+      break;
+    case GRN_CELL_LIST :
+      obj = grn_obj_open(ctx, GRN_VECTOR, 0, 0);
+      list2vector(ctx, cell, obj);
       break;
     case GRN_VECTOR :
       obj = (grn_obj *)cell->u.p.value;
@@ -1874,41 +1913,12 @@ nf_toquery(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 static grn_cell *
 nf_tosections(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
-  grn_cell *o = F, *s, *car, *key, *value;
+  grn_cell *o = F, *s;
   POP(s, args);
   if (PAIRP(s)) {
     grn_obj sections;
     GRN_OBJ_INIT(&sections, GRN_VECTOR, 0);
-    while (PAIRP(s)) {
-      POP(car, s);
-      if (BULKP(car)) {
-        grn_vector_add_element(ctx, &sections,
-                               STRVALUE(car), STRSIZE(car), 0, GRN_ID_NIL);
-      } else if (PAIRP(car)) {
-        const char *str = NULL;
-        grn_id domain = GRN_ID_NIL;
-        unsigned int weight = 0, str_len = 0;
-        POP(key, car);
-        if (key == INTERN("@")) {
-          while (PAIRP(car)) {
-            POP(key, car);
-            POP(value, car);
-            if (key == INTERN(":dic")) {
-              /* todo */
-            } else if (key == INTERN(":weight")) {
-              grn_obj2int(ctx, value);
-              weight = (uint32_t) IVALUE(value);
-            } else if (key == INTERN(":value") && BULKP(value)) {
-              str = STRVALUE(value);
-              str_len = STRSIZE(value);
-            }
-          }
-          if (str) {
-            grn_vector_add_element(ctx, &sections, str, str_len, weight, domain);
-          }
-        }
-      }
-    }
+    list2vector(ctx, s, &sections);
     GRN_CELL_NEW(ctx, o);
     obj2cell(ctx, &sections, o);
   }

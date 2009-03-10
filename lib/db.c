@@ -2601,6 +2601,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   rc = ctx->rc;
                 }
               }
+              break;
             case GRN_VECTOR :
               {
                 int j;
