@@ -1876,6 +1876,28 @@ grn_obj_query(grn_ctx *ctx, const char *str, unsigned int str_len,
  return res;
 }
 
+static void
+uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
+{
+  grn_obj *range = grn_ctx_get(ctx, obj->header.domain);
+  if (range && range->header.type == GRN_TYPE) {
+    // todo
+  } else {
+    grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
+    if (v < ve) {
+      for (;;) {
+        grn_table_get_key2(ctx, range, *v, buf);
+        v++;
+        if (v < ve) {
+          GRN_BULK_PUTC(ctx, buf, ' ');
+        } else {
+          break;
+        }
+      }
+    }
+  }
+}
+
 static grn_cell *
 nf_tostring(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
@@ -1884,44 +1906,25 @@ nf_tostring(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   switch (car->header.type) {
   case GRN_UVECTOR :
     {
-      grn_obj *obj = car->u.p.value;
-      grn_id rid = obj->header.domain;
-      grn_obj *range = grn_ctx_get(ctx, rid);
-      if (range && range->header.type == GRN_TYPE) {
-        // todo
-      } else {
-        grn_obj buf;
-        uint32_t size;
-        grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
-        void *value = NULL;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
-        if (v < ve) {
-          for (;;) {
-            grn_table_get_key2(ctx, range, *v, &buf);
-            v++;
-            if (v < ve) {
-              GRN_BULK_PUTC(ctx, &buf, ' ');
-            } else {
-              break;
-            }
-          }
+      grn_obj buf;
+      uint32_t size;
+      void *value = NULL;
+      GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+      uvector2str(ctx, car->u.p.value, &buf);
+      if ((o = grn_cell_new(ctx))) {
+        if ((size = GRN_BULK_VSIZE(&buf))) {
+          if (!(value = GRN_MALLOC(size))) { return F; }
+          o->header.impl_flags |= GRN_OBJ_ALLOCATED;
+          memcpy(value, GRN_BULK_HEAD(&buf), size);
         }
-        if ((o = grn_cell_new(ctx))) {
-          if ((size = GRN_BULK_VSIZE(&buf))) {
-            if (!(value = GRN_MALLOC(size))) { return F; }
-            o->header.impl_flags |= GRN_OBJ_ALLOCATED;
-            memcpy(value, GRN_BULK_HEAD(&buf), size);
-          }
-          SETBULK(o, value, size);
-        }
-        grn_obj_close(ctx, &buf);
+        SETBULK(o, value, size);
       }
+      grn_obj_close(ctx, &buf);
     }
     break;
   }
   return o;
 }
-
 
 static grn_cell *
 nf_toquery(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
@@ -2821,7 +2824,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
       }
       break;
     case GRN_UVECTOR :
-      
+      uvector2str(ctx, obj->u.p.value, buf);
       break;
     default :
       grn_obj_inspect(ctx, obj, buf, GRN_OBJ_INSPECT_ESC|GRN_OBJ_INSPECT_SYMBOL_AS_STR);
@@ -3023,6 +3026,9 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
         grn_bulk_ftoa(ctx, buf, dv);
         *f = 1;
       }
+      break;
+    case GRN_UVECTOR :
+      uvector2str(ctx, obj->u.p.value, buf);
       break;
     default :
       grn_obj_inspect(ctx, obj, buf, 0); *f = 1;
