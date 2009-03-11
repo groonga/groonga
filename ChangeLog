@@ -1,5 +1,9 @@
 2009-03-11  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (grn_obj_set_value): fixed a bug cause segv when empty string assigned to uvector column.
+
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
 	* lib/ql.c (disp_j_with_format): support uvector.
 
 2009-03-11  Poe MORITA  <morita at razil.jp>
