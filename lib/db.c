@@ -2798,9 +2798,9 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
             // todo : reduce copy
             // todo : grn_vector_add_element when vector assigned
             grn_bulk_write(ctx, value, v, len);
-            value->header.type = GRN_UVECTOR;
             grn_ja_unref(ctx, (grn_ja *)obj, id, v, len);
           }
+          value->header.type = GRN_UVECTOR;
         } else {
           switch (value->header.type) {
           case GRN_VECTOR :
@@ -3443,7 +3443,7 @@ grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domai
 grn_obj *
 grn_obj_graft(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_obj *new = grn_obj_open(ctx, obj->header.type, obj->header.flags, 0);
+  grn_obj *new = grn_obj_open(ctx, obj->header.type, obj->header.flags, obj->header.domain);
   if (new) {
     /* todo : deep copy if (obj->header.flags & GRN_OBJ_DO_SHALLOW_COPY) */
     new->u.b.head = obj->u.b.head;

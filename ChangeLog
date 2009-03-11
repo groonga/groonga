@@ -1,5 +1,9 @@
 2009-03-11  Poe MORITA  <morita at razil.jp>
 
+	* lib/ql.c (disp_j_with_format): support uvector.
+
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
 	* lib/ii.c (grn_ii_cursor_next_pos): support ii without GRN_OBJ_WITH_POSITION.
 
 2009-03-10  Poe MORITA  <morita at razil.jp>
