@@ -605,29 +605,39 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
 grn_rc
 grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
 {
-  grn_obj header;
-  uint32_t last = 0;
+  grn_obj header, footer;
   grn_rc rc = GRN_SUCCESS;
-  grn_vector *v = (grn_vector *)vector;
-  int i, n = grn_vector_size(ctx, vector);
+  grn_section *vp;
+  int i, f = 0, n = grn_vector_size(ctx, vector);
   GRN_OBJ_INIT(&header, GRN_BULK, 0);
+  GRN_OBJ_INIT(&footer, GRN_BULK, 0);
   grn_bulk_benc(ctx, &header, n);
-  for (i = 0; i < n; i++) {
-    grn_bulk_benc(ctx, &header, v->offsets[i] - last);
-    last = v->offsets[i];
+  for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
+    grn_bulk_benc(ctx, &header, vp->length);
+    if (vp->weight || vp->domain) { f = 1; }
+  }
+  if (f) {
+    for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
+      grn_bulk_benc(ctx, &footer, vp->weight);
+      grn_bulk_benc(ctx, &footer, vp->domain);
+    }
   }
   {
     grn_io_win iw;
     grn_ja_einfo einfo;
+    grn_obj *body = vector->u.v.body;
     size_t sizeh = GRN_BULK_VSIZE(&header);
-    size_t sizev = GRN_BULK_VSIZE(vector);
-    if ((rc = grn_ja_alloc(ctx, ja, id, sizeh + sizev, &einfo, &iw))) { goto exit; }
-    memcpy(iw.addr, header.u.b.head, sizeh);
-    memcpy((char *)iw.addr + sizeh, vector->u.b.head, sizev);
+    size_t sizev = GRN_BULK_VSIZE(body);
+    size_t sizef = GRN_BULK_VSIZE(&footer);
+    if ((rc = grn_ja_alloc(ctx, ja, id, sizeh + sizev + sizef, &einfo, &iw))) { goto exit; }
+    memcpy(iw.addr, GRN_BULK_HEAD(&header), sizeh);
+    memcpy((char *)iw.addr + sizeh, GRN_BULK_HEAD(body), sizev);
+    if (f) { memcpy((char *)iw.addr + sizeh + sizev, GRN_BULK_HEAD(&footer), sizef); }
     grn_io_win_unmap2(&iw);
     rc = grn_ja_replace(ctx, ja, id, &einfo);
   }
 exit :
+  GRN_OBJ_FIN(ctx, &footer);
   GRN_OBJ_FIN(ctx, &header);
   return rc;
 }

@@ -167,6 +167,7 @@ struct _grn_proc {
 
 /* vector */
 
+/*
 typedef struct _grn_vector grn_vector;
 
 struct _grn_vector {
@@ -178,6 +179,9 @@ struct _grn_vector {
 const char *grn_vector_fetch(grn_ctx *ctx, grn_obj *vector, int i, unsigned int *size);
 int grn_vector_delimit(grn_ctx *ctx, grn_obj *vector);
 int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
+*/
+
+grn_rc grn_vector_delimit(grn_ctx *ctx, grn_obj *v, unsigned int weight, grn_id domain);
 
 grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
