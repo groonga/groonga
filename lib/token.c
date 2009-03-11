@@ -446,6 +446,10 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->pctx.data[2].int_value = 0;
   ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, table, &token->pctx.user_data,
                                             3, token->pctx.data);
+  if (ctx->rc) {
+    GRN_FREE(token);
+    token = NULL;
+  }
   return token;
 }
 

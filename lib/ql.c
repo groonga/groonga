@@ -2820,6 +2820,9 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         grn_bulk_ftoa(ctx, buf, dv);
       }
       break;
+    case GRN_UVECTOR :
+      
+      break;
     default :
       grn_obj_inspect(ctx, obj, buf, GRN_OBJ_INSPECT_ESC|GRN_OBJ_INSPECT_SYMBOL_AS_STR);
       break;

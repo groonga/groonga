@@ -2603,17 +2603,16 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
             case GRN_BULK :
               {
                 grn_token *token;
-                if ((token = grn_token_open(ctx, lexicon, v, s, GRN_TABLE_ADD))) {
+                if (v && s &&
+                    (token = grn_token_open(ctx, lexicon, v, s, GRN_TABLE_ADD))) {
                   while (!token->status) {
                     grn_id tid = grn_token_next(ctx, token);
                     grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
                   }
                   grn_token_close(ctx, token);
-                  rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                                  GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), 0);
-                } else {
-                  rc = ctx->rc;
                 }
+                rc = grn_ja_put(ctx, (grn_ja *)obj, id,
+                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), 0);
               }
               break;
             case GRN_VECTOR :
