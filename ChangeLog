@@ -1,3 +1,7 @@
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (grn_ii_cursor_next_pos): support ii without GRN_OBJ_WITH_POSITION.
+
 2009-03-10  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_table_group): support uvector.
