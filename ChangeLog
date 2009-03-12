@@ -1,5 +1,9 @@
 2009-03-13  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (contain?): cut off GRN_ID_NIL.
+
+2009-03-13  Poe MORITA  <morita at razil.jp>
+
 	* lib/scm.c (contain?): accept both uvectors and objects as argument.
 
 2009-03-12  Poe MORITA  <morita at razil.jp>
