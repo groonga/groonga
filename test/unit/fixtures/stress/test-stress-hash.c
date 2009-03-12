@@ -19,15 +19,15 @@
 
 #include <hash.h>
 #include <gcutter.h>
-#include "../lib/sen-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void data_read_write(void);
 void test_read_write(gconstpointer *data);
 
 #define N_THREADS 10
 
-static sen_ctx *contexts[N_THREADS];
-static sen_hash *hashes[N_THREADS];
+static grn_ctx *contexts[N_THREADS];
+static grn_hash *hashes[N_THREADS];
 
 void
 startup(void)
@@ -45,16 +45,16 @@ shutdown(void)
   int i;
 
   for (i = 0; i < N_THREADS; i++) {
-    sen_ctx *context;
+    grn_ctx *context;
 
     context = contexts[i];
     if (context) {
-      sen_hash *hash;
+      grn_hash *hash;
 
       hash = hashes[i];
       if (hash)
-        sen_hash_close(context, hash);
-      sen_ctx_close(context);
+        grn_hash_close(context, hash);
+      grn_ctx_fin(context);
     }
   }
 }
@@ -66,15 +66,15 @@ data_read_write(void)
   gint i;
   const gchar *n_processes, *process_number, *thread_type;
 
-  n_processes = g_getenv(SEN_TEST_ENV_N_PROCESSES);
+  n_processes = g_getenv(GRN_TEST_ENV_N_PROCESSES);
   if (!n_processes)
     n_processes = "?";
 
-  process_number = g_getenv(SEN_TEST_ENV_PROCESS_NUMBER);
+  process_number = g_getenv(GRN_TEST_ENV_PROCESS_NUMBER);
   if (!process_number)
     process_number = "?";
 
-  if (g_getenv(SEN_TEST_ENV_MULTI_THREAD))
+  if (g_getenv(GRN_TEST_ENV_MULTI_THREAD))
     thread_type = "multi thread";
   else
     thread_type = "single thread";
@@ -90,61 +90,61 @@ void
 test_read_write(gconstpointer *data)
 {
   gint i, key;
-  sen_search_flags flags;
-  sen_ctx *context;
-  sen_hash *hash;
+  grn_search_flags flags;
+  grn_ctx *context;
+  grn_hash *hash;
   const gchar *path;
   const gchar *value_string;
   gint process_number = 0;
   const gchar *process_number_string;
   void *value;
-  sen_id id = SEN_ID_NIL;
-  sen_rc rc;
+  grn_id id = GRN_ID_NIL;
+  grn_rc rc;
 
   i = GPOINTER_TO_INT(data);
-  process_number_string = g_getenv(SEN_TEST_ENV_PROCESS_NUMBER);
+  process_number_string = g_getenv(GRN_TEST_ENV_PROCESS_NUMBER);
   if (process_number_string)
     process_number = atoi(process_number_string);
 
   key = i + process_number * N_THREADS;
 
-  contexts[i] = sen_ctx_open(NULL, SEN_CTX_USE_QL);
-  cut_assert_not_null(contexts[i], "context: %d (%d)", i, process_number);
+  rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  cut_set_message("context: %d (%d)", i, process_number);
+  grn_test_assert(rc);
   context = contexts[i];
 
-  path = g_getenv(SEN_TEST_ENV_HASH_PATH);
+  path = g_getenv(GRN_TEST_ENV_HASH_PATH);
   cut_assert_not_null(path);
-  hashes[i] = sen_hash_open(context, path);
+  hashes[i] = grn_hash_open(context, path);
   cut_assert_not_null(hashes[i], "hash: %d (%d)", i, process_number);
   hash = hashes[i];
 
   flags = 0;
-  sen_test_assert_nil(sen_hash_lookup(context, hash, &key, sizeof(key),
-                                      &value, &flags),
-                      "lookup - fail: %d (%d:%d)", key, i, process_number);
+  cut_set_message("lookup - fail: %d (%d:%d)", key, i, process_number);
+  grn_test_assert_nil(grn_hash_lookup(context, hash, &key, sizeof(key),
+                                      &value, &flags));
 
   value_string = cut_take_printf("value: %d (%d:%d)", key, i, process_number);
-  flags = SEN_TABLE_ADD;
-  rc = sen_io_lock(context, hash->io, -1);
-  if (rc != sen_success)
-    sen_test_assert(rc);
-  id = sen_hash_lookup(context, hash, &key, sizeof(key), &value, &flags);
-  sen_io_unlock(hash->io);
-  sen_test_assert_not_nil(id);
-  cut_assert_equal_uint(SEN_TABLE_ADDED, flags & SEN_TABLE_ADDED);
+  flags = GRN_TABLE_ADD;
+  rc = grn_io_lock(context, hash->io, -1);
+  if (rc != GRN_SUCCESS)
+    grn_test_assert(rc);
+  id = grn_hash_lookup(context, hash, &key, sizeof(key), &value, &flags);
+  grn_io_unlock(hash->io);
+  grn_test_assert_not_nil(id);
+  cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
   strcpy(value, value_string);
 
   flags = 0;
   value = NULL;
-  id = sen_hash_lookup(context, hash, &key, sizeof(key), &value, &flags);
-  sen_test_assert_not_nil(id,
-                          "lookup - success: %d (%d:%d)",
-                          key, i, process_number);
+  id = grn_hash_lookup(context, hash, &key, sizeof(key), &value, &flags);
+  cut_set_message("lookup - success: %d (%d:%d)", key, i, process_number);
+  grn_test_assert_not_nil(id);
   cut_assert_equal_string(value_string, value);
 
   hashes[i] = NULL;
-  sen_test_assert(sen_hash_close(context, hash));
+  grn_test_assert(grn_hash_close(context, hash));
 
   contexts[i] = NULL;
-  sen_test_assert(sen_ctx_close(context));
+  grn_test_assert(grn_ctx_fin(context));
 }

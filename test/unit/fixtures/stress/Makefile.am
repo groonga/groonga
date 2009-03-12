@@ -15,9 +15,9 @@ AM_CFLAGS = $(GCUTTER_CFLAGS)
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version
 
 LIBS =								\
-	$(top_builddir)/lib/libgroonga.la				\
+	$(top_builddir)/lib/libgroonga.la			\
 	$(GCUTTER_LIBS)						\
-	$(top_builddir)/test/unit/lib/libsen-test-utils.la
+	$(top_builddir)/test/unit/lib/libgrn-test-utils.la
 
 test_stress_hash_la_SOURCES = test-stress-hash.c
 test_stress_patricia_trie_la_SOURCES = test-stress-patricia-trie.c
