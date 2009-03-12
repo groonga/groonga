@@ -2824,7 +2824,13 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
       }
       break;
     case GRN_UVECTOR :
-      uvector2str(ctx, obj->u.p.value, buf);
+      {
+        grn_obj tmp;
+        GRN_OBJ_INIT(&tmp, GRN_BULK, 0);
+        uvector2str(ctx, obj->u.p.value, &tmp);
+        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp), ctx->encoding);
+        grn_obj_close(ctx, &tmp);
+      }
       break;
     default :
       grn_obj_inspect(ctx, obj, buf, GRN_OBJ_INSPECT_ESC|GRN_OBJ_INSPECT_SYMBOL_AS_STR);

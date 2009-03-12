@@ -3143,6 +3143,75 @@ nf_distance4(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   SETFLOAT(e, d);
   return e;
 }
+static grn_cell *
+nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  int r = 0;
+  grn_id id;
+  grn_cell *e, *car;
+  if (!PAIRP(args)) { QLERR("list required"); }
+  POP(e, args);
+  switch (e->header.type) {
+  case GRN_UVECTOR :
+    {
+      grn_obj *u = e->u.p.value, *range = grn_ctx_get(ctx, u->header.domain);
+      grn_id *v, *ve = (grn_id *)GRN_BULK_CURR(u);
+      POP(e, args);
+      switch (e->header.type) {
+      case GRN_CELL_LIST :
+        r = 1;
+        while (r && PAIRP(e)) {
+          POP(car, e);
+          switch (car->header.type) {
+          case GRN_CELL_OBJECT :
+            if (car->header.domain == u->header.domain && (id = car->u.o.id)) {
+              for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
+                if (v == ve) { r = 0; break; }
+                if (*v == id) { break; }
+              }
+            } else {
+              r = 0;
+            }
+            break;
+          case GRN_CELL_STR :
+            id = grn_table_at(ctx, range, STRVALUE(car), STRSIZE(car), NULL);
+            if (id) {
+              for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
+                if (v == ve) { r = 0; break; }
+                if (*v == id) { break; }
+              }
+            } else {
+              r = 0;
+            }
+            break;
+          default :
+            r = 0;
+            break;
+          }
+        }
+        break;
+      case GRN_CELL_OBJECT :
+        if (e->header.domain == u->header.domain && (id = e->u.o.id)) {
+          for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
+            if (v == ve) { r = 0; break; }
+            if (*v == id) { r = 1; break; }
+          }
+        } else {
+          r = 0;
+        }
+        break;
+      default :
+        r = 0;
+        break;
+      }
+    }
+    break;
+  default :
+    QLERR("uvector required");
+    break;
+  }
+  return r ? T : F;
+}
 
 /* ========== Initialization of internal keywords ========== */
 
@@ -3291,6 +3360,7 @@ init_procs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "distance2", nf_distance2);
   grn_ql_def_native_func(ctx, "distance3", nf_distance3);
   grn_ql_def_native_func(ctx, "distance4", nf_distance4);
+  grn_ql_def_native_func(ctx, "contain?", nf_containp);
 }
 
 /* initialize several globals */
