@@ -23,19 +23,19 @@ typedef struct {
   PyObject_HEAD
   grn_ctx ctx;
   int closed;
-} groongactx_ContextObject;
+} groongaql_ContextObject;
 
-static PyTypeObject groongactx_ContextType;
+static PyTypeObject groongaql_ContextType;
 
 /* Object methods */
 
 static PyObject *
-groongactx_ContextObject_new(PyTypeObject *type, PyObject *args, PyObject *keywds)
+groongaql_ContextObject_new(PyTypeObject *type, PyObject *args, PyObject *keywds)
 {
   grn_rc rc;
   int flags;
   grn_encoding encoding;
-  groongactx_ContextObject *self;
+  groongaql_ContextObject *self;
 
   static char *kwlist[] = {"flags", "encoding", NULL};
 
@@ -43,7 +43,7 @@ groongactx_ContextObject_new(PyTypeObject *type, PyObject *args, PyObject *keywd
                                    &flags, &encoding)) {
     return NULL;
   }
-  if (!(self = (groongactx_ContextObject *)type->tp_alloc(type, 0))) {
+  if (!(self = (groongaql_ContextObject *)type->tp_alloc(type, 0))) {
     return NULL;
   }
   Py_BEGIN_ALLOW_THREADS
@@ -58,7 +58,7 @@ groongactx_ContextObject_new(PyTypeObject *type, PyObject *args, PyObject *keywd
 }
 
 static void
-groongactx_ContextObject_dealloc(groongactx_ContextObject *self)
+groongaql_ContextObject_dealloc(groongaql_ContextObject *self)
 {
   if (!self->closed) {
     Py_BEGIN_ALLOW_THREADS
@@ -73,7 +73,7 @@ groongactx_ContextObject_dealloc(groongactx_ContextObject *self)
 /* instance methods */
 
 static PyObject *
-groongactx_ContextClass_ql_connect(groongactx_ContextObject *self, PyObject *args, PyObject *keywds)
+groongaql_ContextClass_ql_connect(groongaql_ContextObject *self, PyObject *args, PyObject *keywds)
 {
   grn_rc rc;
   int port, flags;
@@ -92,7 +92,7 @@ groongactx_ContextClass_ql_connect(groongactx_ContextObject *self, PyObject *arg
 }
 
 static PyObject *
-groongactx_Context_ql_load(groongactx_ContextObject *self, PyObject *args, PyObject *keywds)
+groongaql_Context_ql_load(groongaql_ContextObject *self, PyObject *args, PyObject *keywds)
 {
   grn_rc rc;
   const char *path;
@@ -110,7 +110,7 @@ groongactx_Context_ql_load(groongactx_ContextObject *self, PyObject *args, PyObj
 }
 
 static PyObject *
-groongactx_Context_ql_send(groongactx_ContextObject *self, PyObject *args, PyObject *keywds)
+groongaql_Context_ql_send(groongaql_ContextObject *self, PyObject *args, PyObject *keywds)
 {
   grn_rc rc;
   char *str;
@@ -131,7 +131,7 @@ groongactx_Context_ql_send(groongactx_ContextObject *self, PyObject *args, PyObj
 }
 
 static PyObject *
-groongactx_Context_ql_recv(groongactx_ContextObject *self)
+groongaql_Context_ql_recv(groongaql_ContextObject *self)
 {
   grn_rc rc;
   int flags;
@@ -146,7 +146,7 @@ groongactx_Context_ql_recv(groongactx_ContextObject *self)
 }
 
 static PyObject *
-groongactx_Context_fin(groongactx_ContextObject *self)
+groongaql_Context_fin(groongaql_ContextObject *self)
 {
   grn_rc rc;
 
@@ -161,7 +161,7 @@ groongactx_Context_fin(groongactx_ContextObject *self)
 }
 
 static PyObject *
-groongactx_Context_ql_info_get(groongactx_ContextObject *self)
+groongaql_Context_ql_info_get(groongaql_ContextObject *self)
 {
   grn_rc rc;
   grn_ql_info info;
@@ -180,23 +180,23 @@ groongactx_Context_ql_info_get(groongactx_ContextObject *self)
 
 /* methods of classes */
 
-static PyMethodDef groongactx_Context_methods[] = {
-  {"ql_connect", (PyCFunction)groongactx_ContextClass_ql_connect,
+static PyMethodDef groongaql_Context_methods[] = {
+  {"ql_connect", (PyCFunction)groongaql_ContextClass_ql_connect,
    METH_VARARGS | METH_KEYWORDS,
    "Create a remote groonga context."},
-  {"ql_load", (PyCFunction)groongactx_Context_ql_load,
+  {"ql_load", (PyCFunction)groongaql_Context_ql_load,
    METH_VARARGS | METH_KEYWORDS,
    "Load a file into context."},
-  {"ql_send", (PyCFunction)groongactx_Context_ql_send,
+  {"ql_send", (PyCFunction)groongaql_Context_ql_send,
    METH_VARARGS | METH_KEYWORDS,
    "Send message to context."},
-  {"ql_recv", (PyCFunction)groongactx_Context_ql_recv,
+  {"ql_recv", (PyCFunction)groongaql_Context_ql_recv,
    METH_NOARGS,
    "Receive message from context."},
-  {"fin", (PyCFunction)groongactx_Context_fin,
+  {"fin", (PyCFunction)groongaql_Context_fin,
    METH_NOARGS,
    "Release groonga context."},
-  {"ql_info_get", (PyCFunction)groongactx_Context_ql_info_get,
+  {"ql_info_get", (PyCFunction)groongaql_Context_ql_info_get,
    METH_NOARGS,
    "Get QL context information."},
   {NULL, NULL, 0, NULL}
@@ -208,13 +208,13 @@ static PyMethodDef module_methods[] = {
 
 /* type objects */
 
-static PyTypeObject groongactx_ContextType = {
+static PyTypeObject groongaql_ContextType = {
   PyObject_HEAD_INIT(NULL)
   0,                                           /* ob_size */
-  "groongactx.Context",                          /* tp_name */
-  sizeof(groongactx_ContextObject),              /* tp_basicsize */
+  "groongaql.Context",                          /* tp_name */
+  sizeof(groongaql_ContextObject),              /* tp_basicsize */
   0,                                           /* tp_itemsize */
-  (destructor)groongactx_ContextObject_dealloc,  /* tp_dealloc */
+  (destructor)groongaql_ContextObject_dealloc,  /* tp_dealloc */
   0,                                           /* tp_print */
   0,                                           /* tp_getattr */
   0,                                           /* tp_setattr */
@@ -237,7 +237,7 @@ static PyTypeObject groongactx_ContextType = {
   0,                                           /* tp_weaklistoffset */
   0,                                           /* tp_iter */
   0,                                           /* tp_iternext */
-  groongactx_Context_methods,                    /* tp_methods */
+  groongaql_Context_methods,                    /* tp_methods */
   0,                                           /* tp_members */
   0,                                           /* tp_getset */
   0,                                           /* tp_base */
@@ -247,7 +247,7 @@ static PyTypeObject groongactx_ContextType = {
   0,                                           /* tp_dictoffset */
   0,                                           /* tp_init */
   0,                                           /* tp_alloc */
-  groongactx_ContextObject_new,                  /* tp_new */
+  groongaql_ContextObject_new,                  /* tp_new */
 };
 
 /* consts */
@@ -348,22 +348,22 @@ static ConstPair consts[] = {
 #define PyMODINIT_FUNC void
 #endif
 PyMODINIT_FUNC
-initgroongactx(void)
+initgroongaql(void)
 {
   unsigned int i;
   PyObject *m, *dict;
 
-  if (!(m = Py_InitModule3("groongactx", module_methods,
-                           "groonga context module."))) {
+  if (!(m = Py_InitModule3("groongaql", module_methods,
+                           "groonga ql module."))) {
     goto exit;
   }
   grn_init();
 
   /* register classes */
 
-  if (PyType_Ready(&groongactx_ContextType) < 0) { goto exit; }
-  Py_INCREF(&groongactx_ContextType);
-  PyModule_AddObject(m, "Context", (PyObject *)&groongactx_ContextType);
+  if (PyType_Ready(&groongaql_ContextType) < 0) { goto exit; }
+  Py_INCREF(&groongaql_ContextType);
+  PyModule_AddObject(m, "Context", (PyObject *)&groongaql_ContextType);
 
   /* register consts */
 
@@ -380,6 +380,6 @@ initgroongactx(void)
   if (Py_AtExit((void (*)(void))grn_fin)) { goto exit; }
 exit:
   if (PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "groongactx: init failed");
+    PyErr_SetString(PyExc_ImportError, "groongaql: init failed");
   }
 }

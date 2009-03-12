@@ -1,15 +1,15 @@
 #!/usr/bin/python
 from distutils.core import setup, Extension
 
-cflags = ['-Wall', '-fPIC', '-g', '-O0']
-#cflags = ['-Wall', '-fPIC', '-O3']
+#cflags = ['-Wall', '-fPIC', '-g', '-O0']
+cflags = ['-Wall', '-fPIC', '-O3']
 
-ext = Extension('groongactx',
+ext = Extension('groongaql',
                 libraries = ['groonga'],
-                sources = ['groongactx.c'],
+                sources = ['groongaql.c'],
                 extra_compile_args = cflags)
 
-setup(name = 'groongactx',
+setup(name = 'groongaql',
       version = '1.0',
       description = 'python GQTP',
       long_description = '''
