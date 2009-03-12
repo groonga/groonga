@@ -1,3 +1,11 @@
+2009-03-12  Poe MORITA  <morita at razil.jp>
+
+	* lib/scm.c (contain?): add.
+
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (nf_disp): uvector values are printed as space separated key string.
+
 2009-03-11  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_obj_set_value): fixed a bug cause segv when empty string assigned to uvector column.
