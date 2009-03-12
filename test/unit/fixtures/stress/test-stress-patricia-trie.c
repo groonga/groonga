@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,15 +19,15 @@
 
 #include <pat.h>
 #include <gcutter.h>
-#include "../lib/sen-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void data_read_write(void);
 void test_read_write(gconstpointer *data);
 
 #define N_THREADS 10
 
-static sen_ctx *contexts[N_THREADS];
-static sen_pat *tries[N_THREADS];
+static grn_ctx *contexts[N_THREADS];
+static grn_pat *tries[N_THREADS];
 
 void
 startup(void)
@@ -45,16 +45,16 @@ shutdown(void)
   int i;
 
   for (i = 0; i < N_THREADS; i++) {
-    sen_ctx *context;
+    grn_ctx *context;
 
     context = contexts[i];
     if (context) {
-      sen_pat *trie;
+      grn_pat *trie;
 
       trie = tries[i];
       if (trie)
-        sen_pat_close(context, trie);
-      sen_ctx_close(context);
+        grn_pat_close(context, trie);
+      grn_ctx_fin(context);
     }
   }
 }
@@ -66,15 +66,15 @@ data_read_write(void)
   gint i;
   const gchar *n_processes, *process_number, *thread_type;
 
-  n_processes = g_getenv(SEN_TEST_ENV_N_PROCESSES);
+  n_processes = g_getenv(GRN_TEST_ENV_N_PROCESSES);
   if (!n_processes)
     n_processes = "?";
 
-  process_number = g_getenv(SEN_TEST_ENV_PROCESS_NUMBER);
+  process_number = g_getenv(GRN_TEST_ENV_PROCESS_NUMBER);
   if (!process_number)
     process_number = "?";
 
-  if (g_getenv(SEN_TEST_ENV_MULTI_THREAD))
+  if (g_getenv(GRN_TEST_ENV_MULTI_THREAD))
     thread_type = "multi thread";
   else
     thread_type = "single thread";
@@ -91,61 +91,61 @@ test_read_write(gconstpointer *data)
 {
   gint i;
   const gchar *key;
-  sen_search_flags flags;
-  sen_ctx *context;
-  sen_pat *trie;
+  grn_search_flags flags;
+  grn_ctx *context;
+  grn_pat *trie;
   const gchar *path;
   const gchar *value_string;
   gint process_number = 0;
   const gchar *process_number_string;
   void *value;
-  sen_id id = SEN_ID_NIL;
-  sen_rc rc;
+  grn_id id = GRN_ID_NIL;
+  grn_rc rc;
 
   i = GPOINTER_TO_INT(data);
-  process_number_string = g_getenv(SEN_TEST_ENV_PROCESS_NUMBER);
+  process_number_string = g_getenv(GRN_TEST_ENV_PROCESS_NUMBER);
   if (process_number_string)
     process_number = atoi(process_number_string);
 
   key = cut_take_printf("key: %d (%d:%d)", i, process_number, N_THREADS);
 
-  contexts[i] = sen_ctx_open(NULL, SEN_CTX_USE_QL);
-  cut_assert_not_null(contexts[i], "context: %d (%d)", i, process_number);
+  rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  cut_set_message("context: %d (%d)", i, process_number);
+  grn_test_assert(rc);
   context = contexts[i];
 
-  path = g_getenv(SEN_TEST_ENV_PATRICIA_TRIE_PATH);
+  path = g_getenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH);
   cut_assert_not_null(path);
-  tries[i] = sen_pat_open(context, path);
+  tries[i] = grn_pat_open(context, path);
   cut_assert_not_null(tries[i], "patricia trie: %d (%d)", i, process_number);
   trie = tries[i];
 
   flags = 0;
-  sen_test_assert_nil(sen_pat_lookup(context, trie, key, strlen(key),
-                                     &value, &flags),
-                      "lookup - fail: %d (%d:%d)", key, i, process_number);
+  cut_set_message("lookup - fail: %s (%d:%d)", key, i, process_number);
+  grn_test_assert_nil(grn_pat_lookup(context, trie, key, strlen(key),
+                                     &value, &flags));
 
   value_string = cut_take_printf("value: [%s] (%d:%d)", key, i, process_number);
-  flags = SEN_TABLE_ADD;
-  rc = sen_io_lock(context, trie->io, -1);
-  if (rc != sen_success)
-    sen_test_assert(rc);
-  id = sen_pat_lookup(context, trie, key, strlen(key), &value, &flags);
-  sen_io_unlock(trie->io);
-  sen_test_assert_not_nil(id);
-  cut_assert_equal_uint(SEN_TABLE_ADDED, flags & SEN_TABLE_ADDED);
+  flags = GRN_TABLE_ADD;
+  rc = grn_io_lock(context, trie->io, -1);
+  if (rc != GRN_SUCCESS)
+    grn_test_assert(rc);
+  id = grn_pat_lookup(context, trie, key, strlen(key), &value, &flags);
+  grn_io_unlock(trie->io);
+  grn_test_assert_not_nil(id);
+  cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
   strcpy(value, value_string);
 
   flags = 0;
   value = NULL;
-  id = sen_pat_lookup(context, trie, key, strlen(key), &value, &flags);
-  sen_test_assert_not_nil(id,
-                          "lookup - success: %s (%d:%d)",
-                          key, i, process_number);
+  id = grn_pat_lookup(context, trie, key, strlen(key), &value, &flags);
+  cut_set_message("lookup - success: %s (%d:%d)", key, i, process_number);
+  grn_test_assert_not_nil(id);
   cut_assert_equal_string(value_string, value);
 
   tries[i] = NULL;
-  sen_test_assert(sen_pat_close(context, trie));
+  grn_test_assert(grn_pat_close(context, trie));
 
   contexts[i] = NULL;
-  sen_test_assert(sen_ctx_close(context));
+  grn_test_assert(grn_ctx_fin(context));
 }
