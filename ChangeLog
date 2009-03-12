@@ -1,6 +1,6 @@
 2009-03-13  Poe MORITA  <morita at razil.jp>
 
-	* lib/db.c (contain?): cut off GRN_ID_NIL.
+	* lib/db.c (grn_table_group): cut off GRN_ID_NIL.
 
 2009-03-13  Poe MORITA  <morita at razil.jp>
 
