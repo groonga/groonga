@@ -3071,6 +3071,17 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           }
         }
         break;
+      case GRN_CELL_STR :
+        id = grn_table_at(ctx, range, STRVALUE(car), STRSIZE(car), NULL);
+        if (id) {
+          for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
+            if (v == ve) { r = 0; break; }
+            if (*v == id) { r = 1; break; }
+          }
+        } else {
+          r = 0;
+        }
+        break;
       case GRN_CELL_OBJECT :
         if (e->header.domain == u->header.domain && (id = e->u.o.id)) {
           for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
@@ -3087,8 +3098,30 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       }
     }
     break;
+  case GRN_CELL_OBJECT :
+    {
+      grn_id domain = e->header.domain;
+      id = e->u.o.id;
+      POP(e, args);
+      if (e->header.type == GRN_CELL_LIST) { e = CAR(e); }
+      switch (e->header.type) {
+      case GRN_CELL_STR :
+        {
+          grn_obj *range = grn_ctx_get(ctx, domain);
+          if (grn_table_at(ctx, range, STRVALUE(e), STRSIZE(e), NULL) == id) { r = 1; }
+        }
+        break;
+      case GRN_CELL_OBJECT :
+        if (e->header.domain == domain && e->u.o.id == id) { r = 1; }
+        break;
+      default :
+        r = 0;
+        break;
+      }
+    }
+    break;
   default :
-    QLERR("uvector required");
+    QLERR("uvector or object required");
     break;
   }
   return r ? T : F;
