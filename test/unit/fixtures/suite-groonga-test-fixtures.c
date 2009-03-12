@@ -8,11 +8,11 @@ void groonga_test_fixtures_cooldown(void);
 void
 groonga_test_fixtures_warmup(void)
 {
-  sen_init();
+  grn_init();
 }
 
 void
 groonga_test_fixtures_cooldown(void)
 {
-  sen_fin();
+  grn_fin();
 }
