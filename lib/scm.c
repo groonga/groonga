@@ -3072,7 +3072,7 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         }
         break;
       case GRN_CELL_STR :
-        id = grn_table_at(ctx, range, STRVALUE(car), STRSIZE(car), NULL);
+        id = grn_table_at(ctx, range, STRVALUE(e), STRSIZE(e), NULL);
         if (id) {
           for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
             if (v == ve) { r = 0; break; }
