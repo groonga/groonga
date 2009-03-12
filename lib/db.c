@@ -3854,22 +3854,22 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
   sort_entry *array, *ep;
   GRN_API_ENTER;
   if (!n_keys || !keys) {
-    ERR(GRN_INVALID_ARGUMENT, "keys is null");
+    WARN(GRN_INVALID_ARGUMENT, "keys is null");
     goto exit;
   }
   if (!table) {
-    ERR(GRN_INVALID_ARGUMENT, "table is null");
+    WARN(GRN_INVALID_ARGUMENT, "table is null");
     goto exit;
   }
   if (!(result && result->header.type == GRN_TABLE_NO_KEY)) {
-    ERR(GRN_INVALID_ARGUMENT, "result is not a array");
+    WARN(GRN_INVALID_ARGUMENT, "result is not a array");
     goto exit;
   }
   n = grn_table_size(ctx, table);
   if (limit <= 0) {
     limit += n;
     if (limit <= 0) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "limit is too small in grn_table_sort !");
+      WARN(GRN_INVALID_ARGUMENT, "limit is too small in grn_table_sort !");
       goto exit;
     }
   }
