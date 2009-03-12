@@ -1,5 +1,9 @@
 2009-03-12  Poe MORITA  <morita at razil.jp>
 
+	* lib/scm.c (geo-within?): add.
+
+2009-03-12  Poe MORITA  <morita at razil.jp>
+
 	* lib/scm.c (contain?): add.
 
 2009-03-11  Poe MORITA  <morita at razil.jp>
