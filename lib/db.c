@@ -1342,7 +1342,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
               grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
               while (v < ve) {
                 grn_search_flags f = GRN_TABLE_ADD;
-                if (grn_table_get(ctx, results->table, v, sizeof(grn_id), &value, &f)) {
+                if ((*v != GRN_ID_NIL) &&
+                    grn_table_get(ctx, results->table, v, sizeof(grn_id), &value, &f)) {
                   grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
                 }
                 v++;
@@ -1390,6 +1391,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
               ? GRN_BULK_VSIZE(&bulk)
               : keys[rp->key_end].offset;
             key = bulk.u.b.head + begin;
+            // todo : cut off GRN_ID_NIL
             if (grn_table_get(ctx, rp->table, key, end - begin, &value, &f)) {
               grn_table_add_subrec(rp->table, value, ri ? ri->score : 0, NULL, 0);
             }
