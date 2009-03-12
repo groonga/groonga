@@ -71,7 +71,6 @@ setup(void)
 #define SAVE_ENV_VALUE(var_name, macro_name)                            \
   env_ ## var_name = g_strdup(g_getenv(SEN_TEST_ENV_ ## macro_name))
 
-  SAVE_ENV_VALUE(space_path, SPACE_PATH);
   SAVE_ENV_VALUE(table_path, TABLE_PATH);
   SAVE_ENV_VALUE(table_type, TABLE_TYPE);
   SAVE_ENV_VALUE(multi_thread, MULTI_THREAD);
@@ -117,7 +116,6 @@ teardown(void)
     }                                                                   \
   } while(0)
 
-  RESTORE_ENV_VALUE(space_path, SPACE_PATH);
   RESTORE_ENV_VALUE(table_path, TABLE_PATH);
   RESTORE_ENV_VALUE(table_type, TABLE_TYPE);
   RESTORE_ENV_VALUE(multi_thread, MULTI_THREAD);
@@ -175,11 +173,6 @@ run_test(const gchar **test_case_names, const sen_test_data *data)
 
   context = sen_ctx_open(NULL, SEN_CTX_USE_QL);
   cut_assert_not_null(context);
-
-  path = g_build_filename(base_dir, "space", NULL);
-  g_setenv(SEN_TEST_ENV_SPACE_PATH, path, TRUE);
-  space = sen_space_create(context, path, sen_enc_utf8);
-  g_free(path);
 
   type_name = "name";
   type = sen_type_create(context, type_name, strlen(type_name),

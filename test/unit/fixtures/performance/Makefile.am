@@ -14,8 +14,8 @@ AM_CFLAGS = $(GCUTTER_CFLAGS)
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version
 
 LIBS =								\
-	$(top_builddir)/lib/libgroonga.la				\
+	$(top_builddir)/lib/libgroonga.la			\
 	$(GCUTTER_LIBS)						\
-	$(top_builddir)/test/unit/lib/libsen-test-utils.la
+	$(top_builddir)/test/unit/lib/libgrn-test-utils.la
 
 test_read_write_la_SOURCES = test-read-write.c
