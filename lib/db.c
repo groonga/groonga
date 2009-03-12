@@ -1326,6 +1326,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     if (n_keys == 1 && n_results == 1) {
       if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
         grn_id id;
+        grn_obj *range = grn_ctx_get(ctx, grn_obj_get_range(ctx, keys->key));
+        int idp = GRN_OBJ_TABLEP(range);
         while ((id = grn_table_cursor_next(ctx, tc))) {
           void *value;
           grn_rset_recinfo *ri = NULL;
@@ -1357,7 +1359,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           case GRN_BULK :
             {
               grn_search_flags f = GRN_TABLE_ADD;
-              if (grn_table_get(ctx, results->table,
+              if ((!idp || *((grn_id *)GRN_BULK_HEAD(&bulk))) &&
+                  grn_table_get(ctx, results->table,
                                 GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, &f)) {
                 grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
               }
