@@ -1027,6 +1027,9 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
     case GRN_VECTOR :
       GRN_BULK_PUTS(ctx, buf, "#<VECTOR>");
       break;
+    case GRN_UVECTOR :
+      GRN_BULK_PUTS(ctx, buf, "#<UVECTOR>");
+      break;
     case GRN_CELL_OP :
       GRN_BULK_PUTS(ctx, buf, "#<OP>");
       break;
@@ -3021,6 +3024,75 @@ nf_intern(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   }
   return v;
 }
+static grn_cell *
+nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  int r = 0;
+  grn_id id;
+  grn_cell *e, *car;
+  if (!PAIRP(args)) { QLERR("list required"); }
+  POP(e, args);
+  switch (e->header.type) {
+  case GRN_UVECTOR :
+    {
+      grn_obj *u = e->u.p.value, *range = grn_ctx_get(ctx, u->header.domain);
+      grn_id *v, *ve = (grn_id *)GRN_BULK_CURR(u);
+      POP(e, args);
+      switch (e->header.type) {
+      case GRN_CELL_LIST :
+        r = 1;
+        while (r && PAIRP(e)) {
+          POP(car, e);
+          switch (car->header.type) {
+          case GRN_CELL_OBJECT :
+            if (car->header.domain == u->header.domain && (id = car->u.o.id)) {
+              for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
+                if (v == ve) { r = 0; break; }
+                if (*v == id) { break; }
+              }
+            } else {
+              r = 0;
+            }
+            break;
+          case GRN_CELL_STR :
+            id = grn_table_at(ctx, range, STRVALUE(car), STRSIZE(car), NULL);
+            if (id) {
+              for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
+                if (v == ve) { r = 0; break; }
+                if (*v == id) { break; }
+              }
+            } else {
+              r = 0;
+            }
+            break;
+          default :
+            r = 0;
+            break;
+          }
+        }
+        break;
+      case GRN_CELL_OBJECT :
+        if (e->header.domain == u->header.domain && (id = e->u.o.id)) {
+          for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
+            if (v == ve) { r = 0; break; }
+            if (*v == id) { r = 1; break; }
+          }
+        } else {
+          r = 0;
+        }
+        break;
+      default :
+        r = 0;
+        break;
+      }
+    }
+    break;
+  default :
+    QLERR("uvector required");
+    break;
+  }
+  return r ? T : F;
+}
 
 #define GEO_RESOLUTION   3600000
 #define GEO_RADIOUS      6357303
@@ -3033,7 +3105,7 @@ nf_intern(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 #define GEO_INT2RAD(x)   ((M_PI * x) / (GEO_RESOLUTION * 180))
 
 static grn_cell *
-nf_distance1(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+nf_geo_distance1(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_cell *e;
   double lng1, lat1, lng2, lat2, x, y, d;
@@ -3058,7 +3130,7 @@ nf_distance1(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   return e;
 }
 static grn_cell *
-nf_distance2(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+nf_geo_distance2(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_cell *e;
   double lng1, lat1, lng2, lat2, x, y, d;
@@ -3083,7 +3155,7 @@ nf_distance2(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   return e;
 }
 static grn_cell *
-nf_distance3(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+nf_geo_distance3(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_cell *e;
   double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
@@ -3112,7 +3184,7 @@ nf_distance3(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   return e;
 }
 static grn_cell *
-nf_distance4(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+nf_geo_distance4(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_cell *e;
   double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
@@ -3139,6 +3211,68 @@ nf_distance4(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   GRN_CELL_NEW(ctx, e);
   SETFLOAT(e, d);
   return e;
+}
+static grn_cell *
+nf_geo_withinp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  grn_cell *e;
+  int64_t ln0, la0, ln1, la1, ln2, la2, ln3, la3;
+  double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
+  if (!PAIRP(args)) { QLERR("list required"); }
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  ln0 = IVALUE(e);
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  la0 = IVALUE(e);
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  ln1 = IVALUE(e);
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  la1 = IVALUE(e);
+  if (args == NIL) { return T; }
+  POP(e, args);
+  if (args == NIL) {
+    lng0 = GEO_INT2RAD(ln0);
+    lat0 = GEO_INT2RAD(la0);
+    lng1 = GEO_INT2RAD(ln1);
+    lat1 = GEO_INT2RAD(la1);
+    x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
+    y = (lat1 - lat0);
+    d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
+    switch (e->header.type) {
+    case GRN_CELL_INT : return d <= IVALUE(e) ? T : F;
+    case GRN_CELL_FLOAT : return d <= FVALUE(e) ? T : F;
+    default : QLERR("integer or float value required");
+    }
+  }
+  if (!INTP(e)) { QLERR("integer required"); }
+  ln2 = IVALUE(e);
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  la2 = IVALUE(e);
+  if (args == NIL) {
+    lng0 = GEO_INT2RAD(ln0);
+    lat0 = GEO_INT2RAD(la0);
+    lng1 = GEO_INT2RAD(ln1);
+    lat1 = GEO_INT2RAD(la1);
+    lng2 = GEO_INT2RAD(ln2);
+    lat2 = GEO_INT2RAD(la2);
+    x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
+    y = (lat1 - lat0);
+    d = (x * x) + (y * y);
+    x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+    y = (lat2 - lat1);
+    return d <= (x * x) + (y * y) ? T : F;
+  }
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  ln3 = IVALUE(e);
+  POP(e, args);
+  if (!INTP(e)) { QLERR("integer required"); }
+  la3 = IVALUE(e);
+  return ((ln2 <= ln0) && (ln0 <= ln3) && (la2 <= la0) && (la0 <= la3)) ? T : F;
 }
 
 /* ========== Initialization of internal keywords ========== */
@@ -3284,10 +3418,12 @@ init_procs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "substrb", nf_substrb);
   grn_ql_def_native_func(ctx, "x->b32h", nf_tob32h);
   grn_ql_def_native_func(ctx, "intern", nf_intern);
-  grn_ql_def_native_func(ctx, "distance1", nf_distance1);
-  grn_ql_def_native_func(ctx, "distance2", nf_distance2);
-  grn_ql_def_native_func(ctx, "distance3", nf_distance3);
-  grn_ql_def_native_func(ctx, "distance4", nf_distance4);
+  grn_ql_def_native_func(ctx, "contain?", nf_containp);
+  grn_ql_def_native_func(ctx, "geo-distance1", nf_geo_distance1);
+  grn_ql_def_native_func(ctx, "geo-distance2", nf_geo_distance2);
+  grn_ql_def_native_func(ctx, "geo-distance3", nf_geo_distance3);
+  grn_ql_def_native_func(ctx, "geo-distance4", nf_geo_distance4);
+  grn_ql_def_native_func(ctx, "geo-within?", nf_geo_withinp);
 }
 
 /* initialize several globals */

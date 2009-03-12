@@ -3846,33 +3846,40 @@ grn_ii_posting *
 grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
 {
   uint32_t gap;
-  if (((c->ii->header->flags & GRN_OBJ_WITH_POSITION)) &&
-      c->nelements == c->ii->n_elements) {
-    if (c->buf) {
-      if (c->post == &c->pc) {
-        if (c->pc.rest) {
-          c->pc.rest--;
-          c->pc.pos += *c->cpp++;
-        } else {
-          return NULL;
-        }
-      } else if (c->post == &c->pb) {
-        if (c->pb.rest) {
-          c->pb.rest--;
-          GRN_B_DEC(gap, c->bp);
-          c->pb.pos += gap;
+  if ((c->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+    if (c->nelements == c->ii->n_elements) {
+      if (c->buf) {
+        if (c->post == &c->pc) {
+          if (c->pc.rest) {
+            c->pc.rest--;
+            c->pc.pos += *c->cpp++;
+          } else {
+            return NULL;
+          }
+        } else if (c->post == &c->pb) {
+          if (c->pb.rest) {
+            c->pb.rest--;
+            GRN_B_DEC(gap, c->bp);
+            c->pb.pos += gap;
+          } else {
+            return NULL;
+          }
         } else {
           return NULL;
         }
       } else {
-        return NULL;
+        if (c->stat & SOLE_POS_USED) {
+          return NULL;
+        } else {
+          c->stat |= SOLE_POS_USED;
+        }
       }
+    }
+  } else {
+    if (c->stat & SOLE_POS_USED) {
+      return NULL;
     } else {
-      if (c->stat & SOLE_POS_USED) {
-        return NULL;
-      } else {
-        c->stat |= SOLE_POS_USED;
-      }
+      c->stat |= SOLE_POS_USED;
     }
   }
   return c->post;

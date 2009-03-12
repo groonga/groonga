@@ -95,39 +95,6 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
   }
   if (!cell) { if (!(cell = grn_cell_new(ctx))) { return F; } }
   switch (obj->header.type) {
-  case GRN_UVECTOR :
-    {
-      grn_id rid = obj->header.domain;
-      grn_obj *range = grn_ctx_get(ctx, rid);
-      if (range && range->header.type == GRN_TYPE) {
-        // todo
-      } else {
-        grn_obj buf;
-        uint32_t size;
-        grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
-        void *value = NULL;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
-        if (v < ve) {
-          for (;;) {
-            grn_table_get_key2(ctx, range, *v, &buf);
-            v++;
-            if (v < ve) {
-              GRN_BULK_PUTC(ctx, &buf, ' ');
-            } else {
-              break;
-            }
-          }
-        }
-        if ((size = GRN_BULK_VSIZE(&buf))) {
-          if (!(value = GRN_MALLOC(size))) { return F; }
-          cell->header.impl_flags |= GRN_OBJ_ALLOCATED;
-          memcpy(value, GRN_BULK_HEAD(&buf), size);
-        }
-        SETBULK(cell, value, size);
-        grn_obj_close(ctx, &buf);
-      }
-    }
-    break;
   case GRN_BULK :
     {
       void *v = GRN_BULK_HEAD(obj);
@@ -165,6 +132,17 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
         } else {
           obj_obj_bind(cell, rid, *((grn_id *)v));
         }
+      }
+    }
+    break;
+  case GRN_UVECTOR :
+    {
+      grn_obj *sections = grn_obj_graft(ctx, obj);
+      if (sections) {
+        cell->header.type = GRN_UVECTOR;
+        cell->header.impl_flags |= GRN_OBJ_ALLOCATED|GRN_CELL_NATIVE;
+        cell->u.p.value = sections;
+        cell->u.p.func = ha_sections;
       }
     }
     break;
@@ -238,19 +216,19 @@ get_accessor(grn_ctx *ctx, grn_obj *table, grn_cell *e)
 #define COLUMN_EXPP(x,ce) ((x) == (ce)->cells[(ce)->n_keys])
 
 static grn_cell *
-column_exp_build_(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce)
+column_exp_build_(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce, grn_cell *parameter)
 {
   if (PAIRP(e)) {
     grn_cell *x, *r, *l = NIL, **d;
     POP(x, e);
-    if (x == NIL && keywordp(CAR(e))) {
+    if (x == parameter && keywordp(CAR(e))) {
       if (ce->keys[ce->n_keys].key) { ce->n_keys++; }
       ce->keys[ce->n_keys].key = get_accessor(ctx, table, CAR(e));
       d = &ce->cells[ce->n_keys];
       if (!*d) { *d = grn_cell_new(ctx); }
       r = *d;
     } else {
-      r = column_exp_build_(ctx, table, x, ce);
+      r = column_exp_build_(ctx, table, x, ce, parameter);
       if (COLUMN_EXPP(r, ce) && keywordp(CAR(e))) {
         get_accessor(ctx, ce->keys[ce->n_keys].key, CAR(e));
       } else {
@@ -261,7 +239,7 @@ column_exp_build_(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce)
           if (COLUMN_EXPP(l, ce) && ascp(x)) {
             ce->keys[ce->n_keys].flags |= GRN_TABLE_SORT_ASC;
           }
-          l = column_exp_build_(ctx, table, x, ce);
+          l = column_exp_build_(ctx, table, x, ce, parameter);
           *d = CONS(l, NIL);
           d = &CDR(*d);
         }
@@ -274,7 +252,7 @@ column_exp_build_(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce)
 }
 
 static void
-column_exp_build(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce)
+column_exp_build(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce, grn_cell *parameter)
 {
   grn_cell *x, *r = e, *l = NIL, **d = &r;
   ce->n_keys = 0;
@@ -283,7 +261,7 @@ column_exp_build(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce)
     if (COLUMN_EXPP(l, ce) && ascp(x)) {
       ce->keys[ce->n_keys].flags |= GRN_TABLE_SORT_ASC;
     }
-    l = column_exp_build_(ctx, table, x, ce);
+    l = column_exp_build_(ctx, table, x, ce, parameter);
     *d = CONS(l, NIL);
     d = &CDR(*d);
   }
@@ -296,21 +274,21 @@ column_exp_build(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce)
  ((ce)->n_applys == 1 && PAIRP((ce)->expr) && NATIVE_FUNCP(CAR((ce)->expr)))
 
 static void
-column_exp_check(grn_cell *e, int *ns, int *ne)
+column_exp_check(grn_cell *e, int *ns, int *ne, grn_cell *parameter)
 {
   if (PAIRP(e)) {
     grn_cell *x;
     POP(x, e);
-    if (x == NIL) {
+    if (x == parameter) {
       (*ns)++;
     } else if (NATIVE_FUNCP(x)) {
       (*ne)++;
     } else {
-      column_exp_check(x, ns, ne);
+      column_exp_check(x, ns, ne, parameter);
     }
     while (PAIRP(e)) {
       POP(x, e);
-      column_exp_check(x, ns, ne);
+      column_exp_check(x, ns, ne, parameter);
     }
   } else {
     if (symbolp(e)) { (*ne)++; }
@@ -318,11 +296,11 @@ column_exp_check(grn_cell *e, int *ns, int *ne)
 }
 
 static column_exp *
-column_exp_open(grn_ctx *ctx, grn_obj *table, grn_cell *expr)
+column_exp_open(grn_ctx *ctx, grn_obj *table, grn_cell *expr, grn_cell *parameter)
 {
   column_exp *ce = GRN_CALLOC(sizeof(column_exp));
   if (ce) {
-    column_exp_check(expr, &ce->n_keys, &ce->n_applys);
+    column_exp_check(expr, &ce->n_keys, &ce->n_applys, parameter);
     if (ce->n_keys) {
       if (!(ce->keys = GRN_CALLOC(sizeof(grn_table_sort_key) * ce->n_keys))) {
         GRN_FREE(ce);
@@ -333,7 +311,7 @@ column_exp_open(grn_ctx *ctx, grn_obj *table, grn_cell *expr)
         GRN_FREE(ce);
         return NULL;
       }
-      column_exp_build(ctx, table, expr, ce);
+      column_exp_build(ctx, table, expr, ce, parameter);
     } else {
       ce->expr = expr;
     }
@@ -922,7 +900,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   grn_cell *car, *expr;
   grn_obj *r = grn_ctx_get(ctx, base);
   POP(expr, args);
-  spec->ce = column_exp_open(ctx, r, expr);
+  spec->ce = column_exp_open(ctx, r, expr, NIL);
   if (EVAL_BY_FUNCALLP(spec->ce)) {
     spec->func = CAR(expr);
   } else {
@@ -940,7 +918,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   spec->score_func = NULL;
   POP(car, args);
   if (car != NIL) {
-    spec->score_ce = column_exp_open(ctx, r, car);
+    spec->score_ce = column_exp_open(ctx, r, car, NIL);
     if (EVAL_BY_FUNCALLP(spec->score_ce)) { spec->score_func = CAR(car); }
   }
   POP(expr, args);
@@ -1314,7 +1292,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       {
         column_exp *ce;
         POP(car, args);
-        ce = column_exp_open(ctx, table, car);
+        ce = column_exp_open(ctx, table, car, NIL);
         if (ce) {
           int n_results = 0;
           grn_table_group_result *rp, results[256];
@@ -1544,7 +1522,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           int limit = 0;
           column_exp *ce;
           POP(car, args);
-          ce = column_exp_open(ctx, table, car);
+          ce = column_exp_open(ctx, table, car, NIL);
           POP(car, args);
           if (!grn_obj2int(ctx, car)) { limit = car->u.i.i; }
           if (limit <= 0) { limit += grn_table_size(ctx, table); }
@@ -1896,6 +1874,56 @@ grn_obj_query(grn_ctx *ctx, const char *str, unsigned int str_len,
   res->u.p.value = (grn_obj *)q;
   res->u.p.func = ha_query;
  return res;
+}
+
+static void
+uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
+{
+  grn_obj *range = grn_ctx_get(ctx, obj->header.domain);
+  if (range && range->header.type == GRN_TYPE) {
+    // todo
+  } else {
+    grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
+    if (v < ve) {
+      for (;;) {
+        grn_table_get_key2(ctx, range, *v, buf);
+        v++;
+        if (v < ve) {
+          GRN_BULK_PUTC(ctx, buf, ' ');
+        } else {
+          break;
+        }
+      }
+    }
+  }
+}
+
+static grn_cell *
+nf_tostring(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  grn_cell *o = F, *car;
+  POP(car, args);
+  switch (car->header.type) {
+  case GRN_UVECTOR :
+    {
+      grn_obj buf;
+      uint32_t size;
+      void *value = NULL;
+      GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+      uvector2str(ctx, car->u.p.value, &buf);
+      if ((o = grn_cell_new(ctx))) {
+        if ((size = GRN_BULK_VSIZE(&buf))) {
+          if (!(value = GRN_MALLOC(size))) { return F; }
+          o->header.impl_flags |= GRN_OBJ_ALLOCATED;
+          memcpy(value, GRN_BULK_HEAD(&buf), size);
+        }
+        SETBULK(o, value, size);
+      }
+      grn_obj_close(ctx, &buf);
+    }
+    break;
+  }
+  return o;
 }
 
 static grn_cell *
@@ -2481,7 +2509,7 @@ nf_snippet(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       spec->table = table;
       spec->width = width;
       spec->max_results = max_results;
-      spec->ce = column_exp_open(ctx, table, args);
+      spec->ce = column_exp_open(ctx, table, args, NIL);
     }
     break;
   default :
@@ -2596,7 +2624,7 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
         disp_j(ctx, car, buf);
         return;
       }
-      if ((ce = column_exp_open(ctx, r, columns))) {
+      if ((ce = column_exp_open(ctx, r, columns, NIL))) {
         POP(car, args);
         if (!grn_obj2int(ctx, car)) { offset = car->u.i.i; }
         POP(car, args);
@@ -2626,6 +2654,39 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
       }
     }
     break;
+  case GRN_UVECTOR :
+    {
+      column_exp *ce;
+      grn_cell *parameter, *columns;
+      grn_obj *u = car->u.p.value, *r = grn_ctx_get(ctx, u->header.domain);
+      POP(parameter, args);
+      POP(columns, args);
+      if (!PAIRP(columns)) {
+        disp_j(ctx, car, buf);
+        return;
+      }
+      if ((ce = column_exp_open(ctx, r, columns, parameter))) {
+        /*
+        POP(car, args);
+        if (!grn_obj2int(ctx, car)) { offset = car->u.i.i; }
+        POP(car, args);
+        if (!grn_obj2int(ctx, car)) { limit = car->u.i.i; }
+        */
+        {
+          int i;
+          grn_id *v = (grn_id *)GRN_BULK_HEAD(u), *ve = (grn_id *)GRN_BULK_CURR(u);
+          GRN_BULK_PUTC(ctx, buf, '[');
+          for (i = 0; v < ve; v++, i++) {
+            if (i) { GRN_BULK_PUTS(ctx, buf, ", "); }
+            column_exp_exec(ctx, ce, *v);
+            disp_j(ctx, ce->expr, buf);
+          }
+          GRN_BULK_PUTC(ctx, buf, ']');
+        }
+        column_exp_close(ctx, ce);
+      }
+    }
+    break;
   case GRN_CELL_OBJECT :
     {
       grn_cell *columns;
@@ -2636,7 +2697,7 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
         disp_j(ctx, car, buf);
         return;
       }
-      if ((ce = column_exp_open(ctx, r, columns))) {
+      if ((ce = column_exp_open(ctx, r, columns, NIL))) {
         column_exp_exec(ctx, ce, car->u.o.id);
         disp_j(ctx, ce->expr, buf);
         column_exp_close(ctx, ce);
@@ -2762,6 +2823,15 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         grn_bulk_ftoa(ctx, buf, dv);
       }
       break;
+    case GRN_UVECTOR :
+      {
+        grn_obj tmp;
+        GRN_OBJ_INIT(&tmp, GRN_BULK, 0);
+        uvector2str(ctx, obj->u.p.value, &tmp);
+        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp), ctx->encoding);
+        grn_obj_close(ctx, &tmp);
+      }
+      break;
     default :
       grn_obj_inspect(ctx, obj, buf, GRN_OBJ_INSPECT_ESC|GRN_OBJ_INSPECT_SYMBOL_AS_STR);
       break;
@@ -2792,7 +2862,7 @@ disp_t_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf, int *f)
         disp_t(ctx, car, buf, f);
         return;
       }
-      if ((ce = column_exp_open(ctx, r, columns))) {
+      if ((ce = column_exp_open(ctx, r, columns, NIL))) {
         POP(car, args);
         if (!grn_obj2int(ctx, car)) { offset = car->u.i.i; }
         POP(car, args);
@@ -2830,7 +2900,7 @@ disp_t_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf, int *f)
         disp_t(ctx, car, buf, f);
         return;
       }
-      if ((ce = column_exp_open(ctx, r, columns))) {
+      if ((ce = column_exp_open(ctx, r, columns, NIL))) {
         column_exp_exec(ctx, ce, car->u.o.id);
         disp_t(ctx, ce->expr, buf, f);
         column_exp_close(ctx, ce);
@@ -2962,6 +3032,9 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
         grn_bulk_ftoa(ctx, buf, dv);
         *f = 1;
       }
+      break;
+    case GRN_UVECTOR :
+      uvector2str(ctx, obj->u.p.value, buf);
       break;
     default :
       grn_obj_inspect(ctx, obj, buf, 0); *f = 1;
@@ -3179,5 +3252,6 @@ grn_ql_def_db_funcs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "json-read", nf_json_read);
   grn_ql_def_native_func(ctx, "x->query", nf_toquery);
   grn_ql_def_native_func(ctx, "x->sections", nf_tosections);
+  grn_ql_def_native_func(ctx, "x->string", nf_tostring);
   return GRN_SUCCESS;
 }

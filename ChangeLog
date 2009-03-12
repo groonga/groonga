@@ -1,3 +1,27 @@
+2009-03-12  Poe MORITA  <morita at razil.jp>
+
+	* lib/scm.c (geo-within?): add.
+
+2009-03-12  Poe MORITA  <morita at razil.jp>
+
+	* lib/scm.c (contain?): add.
+
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (nf_disp): uvector values are printed as space separated key string.
+
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_obj_set_value): fixed a bug cause segv when empty string assigned to uvector column.
+
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (disp_j_with_format): support uvector.
+
+2009-03-11  Poe MORITA  <morita at razil.jp>
+
+	* lib/ii.c (grn_ii_cursor_next_pos): support ii without GRN_OBJ_WITH_POSITION.
+
 2009-03-10  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_table_group): support uvector.
