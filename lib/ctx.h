@@ -115,6 +115,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
 } while (0)
 
 #define ERR(rc,...) ERRSET(ctx, GRN_ERROR, (rc),  __VA_ARGS__)
+#define WARN(rc,...) ERRSET(ctx, GRN_WARN, (rc),  __VA_ARGS__)
 #define MERR(...) ERRSET(ctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
 
 #ifdef WIN32
