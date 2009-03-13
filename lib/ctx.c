@@ -511,10 +511,13 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       grn_rc rc;
       grn_com_gqtp_header sheader;
       if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
-      sheader.flags = flags;
       sheader.qtype = 0;
+      sheader.keylen = 0;
       sheader.level = 0;
+      sheader.flags = flags;
       sheader.status = 0;
+      sheader.opaque = 0;
+      sheader.cas = 0;
       if ((rc = grn_com_gqtp_send(ctx, ctx->impl->com, &sheader, (char *)str, str_len))) {
         ERR(rc, "grn_com_gqtp_send failed");
       }

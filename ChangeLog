@@ -1,5 +1,13 @@
 2009-03-13  Poe MORITA  <morita at razil.jp>
 
+	* lib/ctx.c (grn_ql_send): memzero gqtp header.
+
+2009-03-13  Poe MORITA  <morita at razil.jp>
+
+	* lib/scm.c (contain?): fix a small bug.
+
+2009-03-13  Poe MORITA  <morita at razil.jp>
+
 	* lib/db.c (grn_table_sort): ctx->errlvl set GRN_WARN when argument is invalid.
 
 2009-03-13  Poe MORITA  <morita at razil.jp>
