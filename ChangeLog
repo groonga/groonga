@@ -1,3 +1,7 @@
+2009-03-13  Tasuku SUENAGA <a at razil.jp>
+
+	* configure.ac: release 0.0.2.
+
 2009-03-13  Poe MORITA  <morita at razil.jp>
 
 	* lib/ctx.c (grn_ql_send): memzero gqtp header.
