@@ -1,37 +1,56 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
+/*
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
-#include <groonga.h>
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#include <store.h>
 
 #include <gcutter.h>
 #include <glib/gstdio.h>
 
-#include "../lib/sen-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void test_create_simple(void);
 void test_create_with_many_flags(void);
 void test_create_with_encoding_utf8(void);
 void test_create_with_encoding_euc_jp(void);
 
-static sen_logger_info *logger;
+static grn_logger_info *logger;
 static GList *error_messages;
 
-static sen_db *db;
+static grn_ctx *context;
+static grn_obj *db;
 static gchar *base_dir;
 static gchar *default_path;
-static int default_flags;
-static sen_encoding default_encoding;
+static grn_db_create_optarg options;
 
 void
 setup(void)
 {
-  logger = setup_sen_logger();
+  logger = setup_grn_logger();
   error_messages = NULL;
 
+  context = g_new0(grn_ctx, 1);
+  grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
   db = NULL;
-  base_dir = g_build_filename(sen_test_get_base_dir(), "tmp", NULL);
+  base_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
   default_path = g_build_filename(base_dir, "store", NULL);
-  default_flags = 0;
-  default_encoding = sen_enc_default;
+  options.encoding = GRN_ENC_DEFAULT;
+  options.
 
   cut_remove_path(base_dir, NULL);
   g_mkdir_with_parents(base_dir, 0755);
@@ -50,7 +69,7 @@ void
 teardown(void)
 {
   if (db) {
-    sen_db_close(db);
+    grn_db_close(context, db);
   }
 
   if (default_path) {
@@ -62,18 +81,22 @@ teardown(void)
     g_free(base_dir);
   }
 
+  if (context) {
+    grn_ctx_fin(context);
+  }
+
   clear_error_messages();
-  teardown_sen_logger(logger);
+  teardown_grn_logger(logger);
 }
 
 #define clear_messages()                        \
-  sen_collect_logger_clear_messages(logger)
+  grn_collect_logger_clear_messages(logger)
 
 #define messages()                              \
-  sen_collect_logger_get_messages(logger)
+  grn_collect_logger_get_messages(logger)
 
 #define create_db()                                                     \
-  db = sen_db_create(default_path, default_flags, default_encoding)
+  db = grn_db_create(context, default_path, default_flags, default_encoding)
 
 #define cut_assert_create_db() do               \
 {                                               \
@@ -106,7 +129,7 @@ test_create_with_long_path(void)
   GString *long_path;
   const gchar last_component[] = G_DIR_SEPARATOR_S "db";
 
-  long_path = sen_long_path_new(default_path,
+  long_path = grn_long_path_new(default_path,
                                 max_path - strlen(last_component));
   g_free(default_path);
 
@@ -115,7 +138,7 @@ test_create_with_long_path(void)
 
   default_path = g_string_free(long_path, FALSE);
   cut_assert_create_db();
-  sen_db_close(db);
+  grn_db_close(db);
   db = NULL;
 
   long_path = g_string_new(default_path);
@@ -129,22 +152,22 @@ test_create_with_long_path(void)
 void
 test_create_with_many_flags(void)
 {
-  default_flags = SEN_INDEX_NORMALIZE | SEN_INDEX_SPLIT_ALPHA |
-    SEN_INDEX_SPLIT_DIGIT | SEN_INDEX_SPLIT_SYMBOL |
-    SEN_INDEX_NGRAM | SEN_INDEX_DELIMITED;
+  default_flags = GRN_INDEX_NORMALIZE | GRN_INDEX_SPLIT_ALPHA |
+    GRN_INDEX_SPLIT_DIGIT | GRN_INDEX_SPLIT_SYMBOL |
+    GRN_INDEX_NGRAM | GRN_INDEX_DELIMITED;
   cut_assert_create_db();
 }
 
 void
 test_create_with_encoding_utf8(void)
 {
-  default_encoding = sen_enc_utf8;
+  default_encoding = grn_enc_utf8;
   cut_assert_create_db();
 }
 
 void
 test_create_with_encoding_euc_jp(void)
 {
-  default_encoding = sen_enc_euc_jp;
+  default_encoding = grn_enc_euc_jp;
   cut_assert_create_db();
 }

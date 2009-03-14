@@ -1,6 +1,5 @@
 if WITH_CUTTER
 noinst_LTLIBRARIES =				\
-	test-store.la				\
 	test-context.la				\
 	test-hash.la				\
 	test-hash-sort.la			\
@@ -33,7 +32,6 @@ noinst_HEADERS =		\
 	test-patricia-trie.h	\
 	test-hash.h
 
-test_store_la_SOURCES			= test-store.c
 test_context_la_SOURCES			= test-context.c
 test_hash_la_SOURCES			= test-hash.c
 test_hash_sort_la_SOURCES		= test-hash-sort.c
