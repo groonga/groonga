@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,11 @@
 #include <gcutter.h>
 #include <glib/gstdio.h>
 
-#include "../lib/sen-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void test_dynamic_malloc_change(void);
 
-static sen_ctx *context;
+static grn_ctx *context;
 static int default_flags;
 static void *memory;
 
@@ -34,7 +34,7 @@ void
 setup(void)
 {
   context = NULL;
-  default_flags = SEN_CTX_USE_QL;
+  default_flags = GRN_CTX_USE_QL;
   memory = NULL;
 }
 
@@ -43,15 +43,15 @@ teardown(void)
 {
   if (context) {
     if (memory) {
-      sen_ctx *ctx = context;
-      SEN_FREE(memory);
+      grn_ctx *ctx = context;
+      GRN_FREE(memory);
     }
-    sen_ctx_close(context);
+    grn_ctx_fin(context);
   }
 }
 
 #define open_context()                                                  \
-  context = sen_ctx_open(NULL, default_flags)
+  context = grn_ctx_open(NULL, default_flags)
 
 #define cut_assert_open_context() do            \
 {                                               \
@@ -61,7 +61,7 @@ teardown(void)
 
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
 static void *
-malloc_always_fail(sen_ctx *ctx, size_t size,
+malloc_always_fail(grn_ctx *ctx, size_t size,
                    const char *file, int line, const char *func)
 {
   return NULL;
@@ -74,14 +74,14 @@ test_dynamic_malloc_change(void)
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
   cut_assert_open_context();
   {
-    sen_ctx *ctx = context;
+    grn_ctx *ctx = context;
 
-    memory = SEN_MALLOC(1);
+    memory = GRN_MALLOC(1);
     cut_assert_not_null(memory);
-    SEN_FREE(memory);
+    GRN_FREE(memory);
 
-    sen_ctx_set_malloc(ctx, malloc_always_fail);
-    memory = SEN_MALLOC(1);
+    grn_ctx_set_malloc(ctx, malloc_always_fail);
+    memory = GRN_MALLOC(1);
     cut_assert_null(memory);
   }
 #else

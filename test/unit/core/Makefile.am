@@ -23,10 +23,10 @@ AM_CFLAGS = $(GCUTTER_CFLAGS)
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version
 
 LIBS =							\
-	$(top_builddir)/lib/libgroonga.la			\
+	$(top_builddir)/lib/libgroonga.la		\
 	$(GCUTTER_LIBS)					\
-	$(builddir)/../lib/libsen-test-utils.la		\
-	$(builddir)/../lib/libsen-test-hash-utils.la
+	$(builddir)/../lib/libgrn-test-utils.la		\
+	$(builddir)/../lib/libgrn-test-hash-utils.la
 
 noinst_HEADERS =		\
 	test-patricia-trie.h	\
