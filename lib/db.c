@@ -1326,6 +1326,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     if (n_keys == 1 && n_results == 1) {
       if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
         grn_id id;
+        grn_obj *range = grn_ctx_get(ctx, grn_obj_get_range(ctx, keys->key));
+        int idp = GRN_OBJ_TABLEP(range);
         while ((id = grn_table_cursor_next(ctx, tc))) {
           void *value;
           grn_rset_recinfo *ri = NULL;
@@ -1342,7 +1344,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
               grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
               while (v < ve) {
                 grn_search_flags f = GRN_TABLE_ADD;
-                if (grn_table_get(ctx, results->table, v, sizeof(grn_id), &value, &f)) {
+                if ((*v != GRN_ID_NIL) &&
+                    grn_table_get(ctx, results->table, v, sizeof(grn_id), &value, &f)) {
                   grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
                 }
                 v++;
@@ -1356,7 +1359,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           case GRN_BULK :
             {
               grn_search_flags f = GRN_TABLE_ADD;
-              if (grn_table_get(ctx, results->table,
+              if ((!idp || *((grn_id *)GRN_BULK_HEAD(&bulk))) &&
+                  grn_table_get(ctx, results->table,
                                 GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, &f)) {
                 grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
               }
@@ -1390,6 +1394,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
               ? GRN_BULK_VSIZE(&bulk)
               : keys[rp->key_end].offset;
             key = bulk.u.b.head + begin;
+            // todo : cut off GRN_ID_NIL
             if (grn_table_get(ctx, rp->table, key, end - begin, &value, &f)) {
               grn_table_add_subrec(rp->table, value, ri ? ri->score : 0, NULL, 0);
             }
@@ -3849,22 +3854,22 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
   sort_entry *array, *ep;
   GRN_API_ENTER;
   if (!n_keys || !keys) {
-    ERR(GRN_INVALID_ARGUMENT, "keys is null");
+    WARN(GRN_INVALID_ARGUMENT, "keys is null");
     goto exit;
   }
   if (!table) {
-    ERR(GRN_INVALID_ARGUMENT, "table is null");
+    WARN(GRN_INVALID_ARGUMENT, "table is null");
     goto exit;
   }
   if (!(result && result->header.type == GRN_TABLE_NO_KEY)) {
-    ERR(GRN_INVALID_ARGUMENT, "result is not a array");
+    WARN(GRN_INVALID_ARGUMENT, "result is not a array");
     goto exit;
   }
   n = grn_table_size(ctx, table);
   if (limit <= 0) {
     limit += n;
     if (limit <= 0) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "limit is too small in grn_table_sort !");
+      WARN(GRN_INVALID_ARGUMENT, "limit is too small in grn_table_sort !");
       goto exit;
     }
   }
