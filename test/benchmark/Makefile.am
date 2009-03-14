@@ -17,7 +17,7 @@ AM_CFLAGS =		\
 	$(GLIB_CFLAGS)
 
 LIBS =						\
-	$(top_builddir)/lib/libgroonga.la		\
+	$(top_builddir)/lib/libgroonga.la	\
 	$(builddir)/lib/libbenchmark.la		\
 	$(GLIB_LIBS)
 
