@@ -1,4 +1,4 @@
-/* -*- c-file-style: "gnu"; coding: utf-8 -*- */
+/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
