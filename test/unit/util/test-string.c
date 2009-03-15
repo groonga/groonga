@@ -68,11 +68,11 @@ test_normalize_utf8(void)
   guint normalized_text_len;
   int flags;
 
-  flags = GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
+  flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
   string = grn_str_open(&context, text_ja_utf8, strlen(text_ja_utf8),
                         GRN_ENC_UTF8, flags);
-  normalized_text = cut_take_string(string->norm);
-  normalized_text_len = string->length;
+  normalized_text = cut_take_strndup(string->norm, string->norm_blen);
+  normalized_text_len = string->norm_blen;
   grn_test_assert(grn_str_close(&context, string));
 
   cut_assert_equal_string(normalized_text_ja_utf8, normalized_text);
