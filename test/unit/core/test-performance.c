@@ -120,6 +120,7 @@ teardown(void)
     if (space)
       grn_obj_close(context, space);
     grn_ctx_fin(context);
+    g_free(context);
   }
 
 #define RESTORE_ENV_VALUE(var_name, macro_name) do                      \

@@ -1,11 +1,28 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
+/*
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include <hash.h>
 #include <pat.h>
 
-#include <cutter.h>
+#include <gcutter.h>
 
-#include "../lib/grn-test-utils.h"
+#include "../lib/grn-assertions.h"
 
 void data_hash(void);
 void test_hash(gconstpointer test_data);
@@ -29,7 +46,7 @@ setup(void)
 {
   gchar *tmp_dir;
 
-  context = NULL;
+  context = g_new0(grn_ctx, 1);
   hash = NULL;
   trie = NULL;
 
@@ -62,7 +79,8 @@ teardown(void)
       grn_hash_close(context, hash);
     if (trie)
       grn_pat_close(context, trie);
-    grn_ctx_close(context);
+    grn_ctx_fin(context);
+    g_free(context);
   }
 
 #define RESTORE_ENV_VALUE(var_name, macro_name) do                      \
@@ -166,13 +184,12 @@ test_hash(gconstpointer test_data)
   gchar *path;
   const gchar *test_case_names[] = {"test_stress_hash", NULL};
 
-  context = grn_ctx_open(NULL, GRN_CTX_USE_QL);
-  cut_assert_not_null(context);
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
 
   path = g_build_filename(base_dir, "hash", NULL);
   g_setenv(GRN_TEST_ENV_HASH_PATH, path, TRUE);
   hash = grn_hash_create(context, path, sizeof(gint), VALUE_SIZE,
-                         0, grn_enc_utf8);
+                         0, GRN_ENC_UTF8);
   g_free(path);
   cut_assert_not_null(hash);
 
@@ -205,7 +222,7 @@ test_patricia_trie(gconstpointer test_data)
   path = g_build_filename(base_dir, "patricia-trie", NULL);
   g_setenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH, path, TRUE);
   trie = grn_pat_create(context, path, GRN_PAT_MAX_KEY_SIZE / 2, VALUE_SIZE,
-                        0, grn_enc_utf8);
+                        0, GRN_ENC_UTF8);
   g_free(path);
   cut_assert_not_null(trie);
 
