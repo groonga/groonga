@@ -238,7 +238,7 @@ static void
 add_data_ascending(void)
 {
   cut_add_data("ascending",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セナ",
                                                   "セナ + Ruby",
                                                   "セナセナ",
@@ -247,7 +247,7 @@ add_data_ascending(void)
                              set_ascending, NULL),
                test_data_free,
                "ascending - max",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セナ",
                                                   "セナ + Ruby",
                                                   "セナセナ",
@@ -255,7 +255,7 @@ add_data_ascending(void)
                              set_ascending, set_max, NULL),
                test_data_free,
                "ascending - max - gt",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セナ",
                                                   "セナ + Ruby",
                                                   "セナセナ",
@@ -263,14 +263,14 @@ add_data_ascending(void)
                              set_ascending, set_max, set_gt, NULL),
                test_data_free,
                "ascending - max - lt",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セナ",
                                                   "セナ + Ruby",
                                                   NULL),
                              set_ascending, set_max, set_lt, NULL),
                test_data_free,
                "ascending - max - gt - lt",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セナ",
                                                   "セナ + Ruby",
                                                   NULL),
@@ -340,7 +340,7 @@ add_data_ascending(void)
                              set_ascending, set_min_high, NULL),
                test_data_free,
                "ascending - low-max",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セナ",
                                                   NULL),
                              set_ascending, set_max_low, NULL),
@@ -355,7 +355,7 @@ static void
 add_data_ascending_sis(void)
 {
   cut_add_data("ascending - sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セ",
                                                   "セナ",
                                                   "セナ + Ruby",
@@ -370,7 +370,7 @@ add_data_ascending_sis(void)
                              set_ascending, set_sis, NULL),
                test_data_free,
                "ascending - max - sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セ",
                                                   "セナ",
                                                   "セナ + Ruby",
@@ -380,7 +380,7 @@ add_data_ascending_sis(void)
                              set_ascending, set_max, set_sis, NULL),
                test_data_free,
                "ascending - max - gt - sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セ",
                                                   "セナ",
                                                   "セナ + Ruby",
@@ -390,7 +390,7 @@ add_data_ascending_sis(void)
                              set_ascending, set_max, set_gt, set_sis, NULL),
                test_data_free,
                "ascending - max - lt - sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セ",
                                                   "セナ",
                                                   "セナ + Ruby",
@@ -399,7 +399,7 @@ add_data_ascending_sis(void)
                              set_ascending, set_max, set_lt, set_sis, NULL),
                test_data_free,
                "ascending - max - gt - lt - sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セ",
                                                   "セナ",
                                                   "セナ + Ruby",
@@ -502,7 +502,7 @@ add_data_ascending_sis(void)
                              set_ascending, set_min_high, set_sis, NULL),
                test_data_free,
                "ascending - low-max - sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セ",
                                                   "セナ",
                                                   NULL),
@@ -523,7 +523,7 @@ add_data_descending(void)
                                                   "セナセナ",
                                                   "セナ + Ruby",
                                                   "セナ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, NULL),
                test_data_free,
@@ -531,7 +531,7 @@ add_data_descending(void)
                test_data_new(gcut_list_string_new("セナセナ",
                                                   "セナ + Ruby",
                                                   "セナ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, NULL),
                test_data_free,
@@ -539,21 +539,21 @@ add_data_descending(void)
                test_data_new(gcut_list_string_new("セナセナ",
                                                   "セナ + Ruby",
                                                   "セナ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, set_gt, NULL),
                test_data_free,
                "descending - max - lt",
                test_data_new(gcut_list_string_new("セナ + Ruby",
                                                   "セナ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, set_lt, NULL),
                test_data_free,
                "descending - max - gt - lt",
                test_data_new(gcut_list_string_new("セナ + Ruby",
                                                   "セナ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, set_gt, set_lt, NULL),
                test_data_free,
@@ -622,7 +622,7 @@ add_data_descending(void)
                test_data_free,
                "descending - low-max",
                test_data_new(gcut_list_string_new("セナ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max_low, NULL),
                test_data_free,
@@ -646,7 +646,7 @@ add_data_descending_sis(void)
                                                   "セナ + Ruby",
                                                   "セナ",
                                                   "セ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_sis, NULL),
                test_data_free,
@@ -656,7 +656,7 @@ add_data_descending_sis(void)
                                                   "セナ + Ruby",
                                                   "セナ",
                                                   "セ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, set_sis, NULL),
                test_data_free,
@@ -666,7 +666,7 @@ add_data_descending_sis(void)
                                                   "セナ + Ruby",
                                                   "セナ",
                                                   "セ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, set_gt, set_sis,
                              NULL),
@@ -676,7 +676,7 @@ add_data_descending_sis(void)
                                                   "セナ + Ruby",
                                                   "セナ",
                                                   "セ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, set_lt, set_sis,
                              NULL),
@@ -686,7 +686,7 @@ add_data_descending_sis(void)
                                                   "セナ + Ruby",
                                                   "セナ",
                                                   "セ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max, set_gt, set_lt,
                              set_sis, NULL),
@@ -789,7 +789,7 @@ add_data_descending_sis(void)
                "descending - low-max - sis",
                test_data_new(gcut_list_string_new("セナ",
                                                   "セ",
-                                                  "Grnna",
+                                                  "Groonga",
                                                   NULL),
                              set_descending, set_max_low, set_sis, NULL),
                test_data_free,
@@ -815,7 +815,7 @@ test_next_with_multi_entries(gconstpointer data)
   const grn_trie_test_data *test_data = data;
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Grnna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 
@@ -844,7 +844,7 @@ void
 data_value(void)
 {
   cut_add_data("default",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "",
                                                   "セナ",
                                                   "",
@@ -860,7 +860,7 @@ data_value(void)
                test_data_free,
 
                "sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "",
                                                   "セ",
                                                   "",
@@ -894,11 +894,11 @@ test_value(gconstpointer data)
   const grn_trie_test_data *test_data = data;
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Grnna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
   gchar value2[] = "VALUE2";
-  gchar value4_1[] = "Grnna";
+  gchar value4_1[] = "Groonga";
   gchar value4_2[] = "るびい";
   gchar value5_1[] = "上書きされる値 - overridden value";
   gchar value5_2[] = "上書きされた値 - override value";
@@ -942,14 +942,14 @@ void
 data_delete(void)
 {
   cut_add_data("default",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セナ + Ruby",
                                                   "ナセナセ",
                                                   NULL),
                              set_ascending, NULL),
                test_data_free,
                "sis",
-               test_data_new(gcut_list_string_new("Grnna",
+               test_data_new(gcut_list_string_new("Groonga",
                                                   "セ",
                                                   "セナ + Ruby",
                                                   "セナセ",
@@ -967,7 +967,7 @@ test_delete(gconstpointer data)
   const grn_trie_test_data *test_data = data;
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Grnna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 

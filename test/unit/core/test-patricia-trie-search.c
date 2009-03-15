@@ -177,7 +177,7 @@ test_lcp_search(gconstpointer data)
   gchar key[GRN_PAT_MAX_KEY_SIZE];
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Grnna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 
@@ -288,7 +288,7 @@ test_prefix_search(gconstpointer data)
   const grn_trie_test_data *test_data = data;
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Grnna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 
@@ -363,7 +363,7 @@ test_suffix_search(gconstpointer data)
   const grn_trie_test_data *test_data = data;
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Grnna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 
