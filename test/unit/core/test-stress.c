@@ -216,8 +216,7 @@ test_patricia_trie(gconstpointer test_data)
   gchar *path;
   const gchar *test_case_names[] = {"test_stress_patricia_trie", NULL};
 
-  context = grn_ctx_open(NULL, GRN_CTX_USE_QL);
-  cut_assert_not_null(context);
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
 
   path = g_build_filename(base_dir, "patricia-trie", NULL);
   g_setenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH, path, TRUE);
