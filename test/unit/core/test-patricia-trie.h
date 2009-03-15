@@ -63,7 +63,7 @@ setup_trie_common(const gchar *default_path_component)
 
   expected_messages = NULL;
 
-  context = g_new0(grn_ctx, 1);
+  context = NULL;
   trie = NULL;
   cursor = NULL;
   id = GRN_ID_NIL;
@@ -157,8 +157,13 @@ teardown_trie_common(void)
 #define messages()                              \
   grn_collect_logger_get_messages(logger)
 
-#define open_context()                                          \
-  grn_test_assert(grn_ctx_init(context, default_context_flags, default_encoding))
+#define open_context() do                               \
+{                                                       \
+  context = g_new0(grn_ctx, 1);                         \
+  grn_test_assert(grn_ctx_init(context,                 \
+                               default_context_flags,   \
+                               default_encoding));      \
+} while (0)
 
 #define cut_assert_open_context() do            \
 {                                               \

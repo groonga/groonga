@@ -196,7 +196,7 @@ data_lookup_add(void)
                test_data_new("Cutter", NULL),
                test_data_free,
                "sis",
-               test_data_new("Grnna", set_sis),
+               test_data_new("Groonga", set_sis),
                test_data_free,
                "sis - multi byte key",
                test_data_new("セナ", set_sis_and_utf8_encoding),
@@ -221,7 +221,7 @@ data_delete_by_id(void)
                test_data_new("Cutter", NULL),
                test_data_free,
                "sis",
-               test_data_new("Grnna", set_sis),
+               test_data_new("Groonga", set_sis),
                test_data_free,
                "sis - multi byte key",
                test_data_new("セナ", set_sis_and_utf8_encoding),
@@ -401,7 +401,7 @@ test_lookup_and_delete_for_same_prefix_key(gconstpointer data)
 void
 test_get_key(void)
 {
-  const gchar key[] = "Grnna";
+  const gchar key[] = "Groonga";
   const gchar initial_key[] = "Ludia";
   gchar got_key[GRN_PAT_MAX_KEY_SIZE];
   grn_id nonexistence_id = 12345;
@@ -445,7 +445,7 @@ data_get_value(void)
                test_data_new("Cutter", NULL),
                test_data_free,
                "sis",
-               test_data_new("Grnna", set_sis),
+               test_data_new("Groonga", set_sis),
                test_data_free,
                "sis - multi byte",
                test_data_new("セナ", set_sis_and_utf8_encoding),
@@ -646,7 +646,7 @@ data_add_and_delete(void)
                increment_test_data_new("Cutter", string_increment, NULL),
                increment_test_data_free,
                "sis",
-               increment_test_data_new("Grnna", string_increment, set_sis),
+               increment_test_data_new("Groonga", string_increment, set_sis),
                increment_test_data_free,
                "sis - multi byte key (katakana)",
                increment_test_data_new("セナ", utf8_string_increment,
