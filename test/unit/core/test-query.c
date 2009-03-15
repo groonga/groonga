@@ -51,7 +51,7 @@ teardown(void)
 void
 attributes_open_broken_utf8(void)
 {
-  cut_set_attributes("ML", "grnna-dev:1070");
+  cut_set_attributes("ML", "senna-dev:1070");
 }
 
 void
