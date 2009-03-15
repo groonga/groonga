@@ -45,6 +45,7 @@ static GList *record_ids;
 static gchar *tmp_directory;
 static gchar *path;
 static grn_ctx *context;
+static grn_obj *db;
 static grn_obj *type;
 static grn_obj *lexicon;
 static grn_ii *inverted_index;
@@ -94,6 +95,9 @@ setup(void)
 
   context = g_new0(grn_ctx, 1);
   grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
+
+  db = grn_db_create(context, NULL, NULL);
+  grn_ctx_use(context, db);
 
   type_name = "name";
   type = grn_type_create(context, type_name, strlen(type_name),
@@ -183,7 +187,7 @@ teardown(void)
 #define cut_assert_create() do                                  \
 {                                                               \
   inverted_index = grn_ii_create(context, path, lexicon, 0);    \
-  cut_assert(inverted_index);                                   \
+  cut_assert_not_null(inverted_index);                          \
   cut_assert_file_exist(strconcat(path, ".c"));                 \
 } while (0)
 
@@ -303,8 +307,7 @@ test_open_invalid_chunk_file(void)
   inverted_index = grn_ii_open(context, path, lexicon);
   cut_assert_null(inverted_index);
 
-  expected_messages =
-    gcut_list_string_new("invalid ii file. ii_idstr (WRONG-ID)", NULL);
+  expected_messages = gcut_list_string_new("file type unmatch", NULL);
   gcut_assert_equal_list_string(expected_messages, messages());
 }
 
@@ -406,19 +409,18 @@ test_crud(void)
 
   remove_data(2, 1, "CHECKINSTALL.JA");
   add_data(3, 2, "FUTUREWORKS.JA");
-  remove_data(4, 1, "INSTALL.JA");
   gcut_assert_equal_list_string(gcut_take_new_list_string("3", NULL),
                                 retrieve_record_ids("検索"));
 
-  update_data(3, 1, "Makefile.am", "README.JA");
-  gcut_assert_equal_list_string(gcut_take_new_list_string("3", "3", NULL),
+  update_data(4, 1, "INSTALL.JA", "README.JA");
+  gcut_assert_equal_list_string(gcut_take_new_list_string("3", "4", NULL),
                                 retrieve_record_ids("検索"));
 
-  remove_data(3, 1, "README.JA");
+  remove_data(4, 1, "README.JA");
   gcut_assert_equal_list_string(gcut_take_new_list_string("3", NULL),
                                 retrieve_record_ids("検索"));
 
   remove_data(3, 2, "FUTUREWORKS.JA");
-  gcut_assert_equal_list_string(NULL, retrieve_record_ids("検索"),
-                                "this assert is wrong?");
+  cut_set_message("this assertion is wrong?");
+  gcut_assert_equal_list_string(NULL, retrieve_record_ids("検索"));
 }
