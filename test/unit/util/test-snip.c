@@ -276,14 +276,14 @@ test_simple_exec(void)
   grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("[[Groonga]] is an embeddable fulltext search engine, "
                           "which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(104, result_len);
 
   grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
-  cut_assert_equal_string("ng languages and databases. [[Groonga]] is\n"
+  cut_assert_equal_string("ting languages and databases. [[Groonga]] is\n"
                           "an inverted index based engine, & combines "
-                          "the best of n-gram\ni",
+                          "the best of n-gr",
                           result);
   cut_assert_equal_uint(104, result_len);
 }
@@ -389,9 +389,9 @@ test_simple_exec_utf8(void)
 
   grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groongaは組み込み型の全文検索[[エンジン]]です。"
-                          "DBMSやスクリプト言語処理系等",
+                          "DBMSやスクリプト言語処理系",
                           result);
-  cut_assert_equal_uint(103, result_len);
+  cut_assert_equal_uint(102, result_len);
 
   grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
   cut_assert_equal_string("度な転置\n"
@@ -491,7 +491,7 @@ test_exec_with_one_length_keyword(void)
   grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groonga is an embeddable fullte[[x]]t search "
                           "engine, which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(104, result_len);
 
@@ -527,12 +527,12 @@ test_customized_tag(void)
   grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groonga is an embeddable fulltext search "
                           "((*engine*)), which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(106, result_len);
 
   grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
-  cut_assert_equal_string("nd databases. Groonga is\n"
+  cut_assert_equal_string(" databases. Groonga is\n"
                           "an inverted index based ((*engine*)), "
                           "& combines the best of n-gram\n"
                           "indexing and wo",
@@ -567,14 +567,14 @@ test_multi_conditions(void)
   grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groonga is an embeddable ((*fulltext*)) search "
                           "engine, which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(106, result_len);
 
   grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
-  cut_assert_equal_string("dexing to achieve fast, precise searches. While\n"
+  cut_assert_equal_string("exing to achieve fast, precise searches. While\n"
                           "[[groonga]] codebase is rather compact it is "
-                          "scalable enou",
+                          "scalable eno",
                           result);
   cut_assert_equal_uint(104, result_len);
 }
