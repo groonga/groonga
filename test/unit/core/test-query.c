@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,36 +21,43 @@
 
 #include <gcutter.h>
 
-#include "../lib/sen-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void attributes_open_broken_utf8(void);
 void test_open_broken_utf8(void);
 
-static sen_query *query;
+static grn_ctx *context;
+static grn_query *query;
 
 void
 setup(void)
 {
+  context = g_new0(grn_ctx, 1);
+  grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
   query = NULL;
 }
 
 void
 teardown(void)
 {
-  if (query)
-    sen_query_close(query);
+  if (context) {
+    if (query)
+      grn_obj_close(context, (grn_obj *)query);
+    grn_ctx_fin(context);
+    g_free(context);
+  }
 }
 
 void
 attributes_open_broken_utf8(void)
 {
-  cut_set_attributes("ML", "senna-dev:1070");
+  cut_set_attributes("ML", "grnna-dev:1070");
 }
 
 void
 test_open_broken_utf8(void)
 {
   gchar utf8[] = "\"あ\"";
-  query = sen_query_open(utf8, 2, sen_sel_or, 10, sen_enc_utf8);
+  query = grn_query_open(context, utf8, 2, GRN_SEL_OR, 10, GRN_ENC_UTF8);
   cut_assert_not_null(query);
 }
