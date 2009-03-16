@@ -1,3 +1,7 @@
+2009-03-16  Tasuku SUENAGA <a at razil.jp>
+
+	* groonga.spec.in: changed mail address and package name.
+
 2009-03-13  Tasuku SUENAGA <a at razil.jp>
 
 	* configure.ac: release 0.0.2.

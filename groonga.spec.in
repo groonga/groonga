@@ -7,7 +7,7 @@ Version: %{version}
 Release: %{release}
 License: LGPL
 Group: local
-Packager: Brazil Ltd. <senna@razil.jp>
+Packager: Brazil Ltd. <groonga@razil.jp>
 Source: %{name}-%{version}.tar.gz
 BuildRoot: /var/tmp/%{name}
 Requires: mecab >= 0.80
@@ -16,11 +16,11 @@ Requires: mecab >= 0.80
 An Embeddable Fulltext Search Engine.
 
 %package devel
-Summary: Libraries and header files for Groonga
+Summary: Libraries and header files for groonga
 Group: Development/Libraries
 
 %description devel
-Libraries and header files for Groonga
+Libraries and header files for groonga
 
 %prep
 %setup -q
