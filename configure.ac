@@ -61,17 +61,17 @@ AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  examples/Makefile
                  test/Makefile
-		 test/unit/Makefile
-		 test/unit/lib/Makefile
-		 test/unit/fixtures/Makefile
-		 test/unit/fixtures/inverted-index/Makefile
-		 test/unit/fixtures/stress/Makefile
-		 test/unit/fixtures/performance/Makefile
-		 test/unit/util/Makefile
-		 test/unit/core/Makefile
-		 test/ql/Makefile
-		 test/benchmark/Makefile
-		 test/benchmark/lib/Makefile
+                 test/unit/Makefile
+                 test/unit/lib/Makefile
+                 test/unit/fixtures/Makefile
+                 test/unit/fixtures/inverted-index/Makefile
+                 test/unit/fixtures/stress/Makefile
+                 test/unit/fixtures/performance/Makefile
+                 test/unit/util/Makefile
+                 test/unit/core/Makefile
+                 test/ql/Makefile
+                 test/benchmark/Makefile
+                 test/benchmark/lib/Makefile
                 ])
 
 AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/param.h sys/types.h pthread.h sys/resource.h)
