@@ -42,8 +42,10 @@
 (define (assert-accessor-equal-time expected key value)
   (define (groonga-time-format->float-format string)
     (regexp-replace #/^#:<([^.]+)\.([^.]+)>$/ string "(\\1 . \\2)"))
-  (assert-accessor-equal expected key value
-                         :prepare-output groonga-time-format->float-format)
+  (assert-ql-equal value `(record ,key ,value)
+                   :prepare-output groonga-time-format->float-format)
+  (assert-ql-equal expected `(record ,key)
+                   :prepare-output groonga-time-format->float-format)
   #f)
 
 (define (assert-accessor-in-delta expected delta key value . options)
