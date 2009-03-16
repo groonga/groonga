@@ -91,6 +91,6 @@
           (if (and detect-error? (error-message? output))
             (error (remove-error-header output))
             (read (open-input-string (prepare-output output))))
-          output)))))
+          (prepare-output output))))))
 
 (provide "ql-test-utils")

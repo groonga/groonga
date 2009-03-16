@@ -23,6 +23,17 @@
 (define (teardown)
   (teardown-ql))
 
+(define (assert-accessor-void key value)
+  (define (groonga-void->symbol string)
+    (if (equal? "#<VOID>" string)
+      'void
+      string))
+  (assert-ql-equal value `(record ,key ,value))
+  (assert-ql-equal 'void `(record ,key)
+                   :read-output #f
+                   :prepare-output groonga-void->symbol)
+  #f)
+
 (define (assert-accessor-equal expected key value . options)
   (apply assert-ql-equal expected `(record ,key ,value) options)
   (apply assert-ql-equal expected `(record ,key) options)
@@ -46,10 +57,11 @@
   (assert-accessor-equal -1 :int -1)
   (assert-accessor-equal 0 :int 0)
 
+  (assert-accessor-equal 100 :int 100)
+  (assert-accessor-equal -100 :int -100)
+
   (assert-accessor-equal max-int :int max-int)
   (assert-accessor-equal min-int :int min-int)
-
-  (assert-accessor-equal min-int :int (+ max-int 1)) ; is it OK?
   #f)
 
 (define max-uint (- (expt 2 32) 1))
@@ -58,11 +70,10 @@
   (assert-accessor-equal max-int :uint max-int)
   (assert-accessor-equal 0 :uint 0)
 
+  (assert-accessor-equal 100 :uint 100)
+
   (assert-accessor-equal max-uint :uint max-uint)
   (assert-accessor-equal min-uint :uint min-uint)
-
-  (assert-accessor-equal min-uint :uint (+ max-uint 1)) ; is it OK?
-  (assert-accessor-equal max-uint :uint -1) ; is it OK?
   #f)
 
 (define max-int64 (- (expt 2 63) 1))
@@ -71,10 +82,11 @@
   (assert-accessor-equal -1 :int64 -1)
   (assert-accessor-equal 0 :int64 0)
 
+  (assert-accessor-equal 100 :int64 100)
+  (assert-accessor-equal -100 :int64 -100)
+
   (assert-accessor-equal max-int64 :int64 max-int64)
   (assert-accessor-equal min-int64 :int64 min-int64)
-
-  (assert-accessor-equal min-int64 :int64 (+ max-int64 1)) ; is it OK?
   #f)
 
 (define large-float (* max-int64 2.0))
@@ -89,19 +101,19 @@
   #f)
 
 (define (test-slot-short-text)
-  (assert-accessor-equal "" :short-text "")
+  (assert-accessor-void :short-text "")
   (assert-accessor-equal "short text" :short-text "short text")
   ;; should test max length text
   #f)
 
 (define (test-slot-text)
-  (assert-accessor-equal "" :text "")
+  (assert-accessor-void :text "")
   (assert-accessor-equal "text" :text "text")
   ;; should test max length text
   #f)
 
 (define (test-slot-long-text)
-  (assert-accessor-equal "" :long-text "")
+  (assert-accessor-void :long-text "")
   (assert-accessor-equal "long text" :long-text "long text")
   ;; should test max length text
   #f)
