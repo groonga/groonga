@@ -1,11 +1,28 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
+/*
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include <hash.h>
 #include <pat.h>
 
-#include <cutter.h>
+#include <gcutter.h>
 
-#include "../lib/sen-test-utils.h"
+#include "../lib/grn-assertions.h"
 
 void data_hash(void);
 void test_hash(gconstpointer test_data);
@@ -14,9 +31,9 @@ void test_patricia_trie(gconstpointer test_data);
 
 #define VALUE_SIZE 1024
 
-static sen_ctx *context;
-static sen_hash *hash;
-static sen_pat *trie;
+static grn_ctx *context;
+static grn_hash *hash;
+static grn_pat *trie;
 static gchar *base_dir;
 static gchar *env_hash_path;
 static gchar *env_patricia_trie_path;
@@ -29,12 +46,12 @@ setup(void)
 {
   gchar *tmp_dir;
 
-  context = NULL;
+  context = g_new0(grn_ctx, 1);
   hash = NULL;
   trie = NULL;
 
 #define SAVE_ENV_VALUE(var_name, macro_name)                            \
-  env_ ## var_name = g_strdup(g_getenv(SEN_TEST_ENV_ ## macro_name))
+  env_ ## var_name = g_strdup(g_getenv(GRN_TEST_ENV_ ## macro_name))
 
   SAVE_ENV_VALUE(hash_path, HASH_PATH);
   SAVE_ENV_VALUE(patricia_trie_path, PATRICIA_TRIE_PATH);
@@ -44,7 +61,7 @@ setup(void)
 
 #undef SAVE_ENV_VALUE
 
-  tmp_dir = g_build_filename(sen_test_get_base_dir(), "tmp", NULL);
+  tmp_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
   cut_remove_path(tmp_dir, NULL);
 
   base_dir = g_build_filename(tmp_dir, "stress", NULL);
@@ -59,19 +76,20 @@ teardown(void)
 {
   if (context) {
     if (hash)
-      sen_hash_close(context, hash);
+      grn_hash_close(context, hash);
     if (trie)
-      sen_pat_close(context, trie);
-    sen_ctx_close(context);
+      grn_pat_close(context, trie);
+    grn_ctx_fin(context);
+    g_free(context);
   }
 
 #define RESTORE_ENV_VALUE(var_name, macro_name) do                      \
   {                                                                     \
     if (env_ ## var_name) {                                             \
-      g_setenv(SEN_TEST_ENV_ ## macro_name, env_ ## var_name, TRUE);    \
+      g_setenv(GRN_TEST_ENV_ ## macro_name, env_ ## var_name, TRUE);    \
       g_free(env_ ## var_name);                                         \
     } else {                                                            \
-      g_unsetenv(SEN_TEST_ENV_ ## macro_name);                          \
+      g_unsetenv(GRN_TEST_ENV_ ## macro_name);                          \
     }                                                                   \
   } while(0)
 
@@ -89,18 +107,18 @@ teardown(void)
   }
 }
 
-typedef struct _sen_test_data
+typedef struct _grn_test_data
 {
   gint n_processes;
   gboolean multi_thread;
-} sen_test_data;
+} grn_test_data;
 
-static sen_test_data *
+static grn_test_data *
 test_data_new(gint n_processes, gboolean multi_thread)
 {
-  sen_test_data *data;
+  grn_test_data *data;
 
-  data = g_new0(sen_test_data, 1);
+  data = g_new0(grn_test_data, 1);
   data->n_processes = n_processes;
   data->multi_thread = multi_thread;
 
@@ -108,19 +126,19 @@ test_data_new(gint n_processes, gboolean multi_thread)
 }
 
 static void
-test_data_free(sen_test_data *data)
+test_data_free(grn_test_data *data)
 {
   g_free(data);
 }
 
 static gboolean
-run(const gchar **test_case_names, const sen_test_data *data)
+run(const gchar **test_case_names, const grn_test_data *data)
 {
   gint i;
   const gchar *test_dir;
   CutSubProcessGroup *group;
 
-  test_dir = cut_take_string(g_build_filename(sen_test_get_base_dir(),
+  test_dir = cut_take_string(g_build_filename(grn_test_get_base_dir(),
                                               "fixtures",
                                               NULL));
 
@@ -135,12 +153,12 @@ run(const gchar **test_case_names, const sen_test_data *data)
 
     cut_sub_process_group_add(group, sub_process);
     if (data->multi_thread)
-      g_setenv(SEN_TEST_ENV_MULTI_THREAD, "TRUE", TRUE);
+      g_setenv(GRN_TEST_ENV_MULTI_THREAD, "TRUE", TRUE);
     else
-      g_unsetenv(SEN_TEST_ENV_MULTI_THREAD);
-    g_setenv(SEN_TEST_ENV_N_PROCESSES,
+      g_unsetenv(GRN_TEST_ENV_MULTI_THREAD);
+    g_setenv(GRN_TEST_ENV_N_PROCESSES,
              cut_take_printf("%d", data->n_processes), TRUE);
-    g_setenv(SEN_TEST_ENV_PROCESS_NUMBER, cut_take_printf("%d", i), TRUE);
+    g_setenv(GRN_TEST_ENV_PROCESS_NUMBER, cut_take_printf("%d", i), TRUE);
     cut_sub_process_run_async(sub_process);
   }
   return cut_sub_process_group_wait(group);
@@ -162,17 +180,16 @@ data_hash(void)
 void
 test_hash(gconstpointer test_data)
 {
-  const sen_test_data *data = test_data;
+  const grn_test_data *data = test_data;
   gchar *path;
   const gchar *test_case_names[] = {"test_stress_hash", NULL};
 
-  context = sen_ctx_open(NULL, SEN_CTX_USE_QL);
-  cut_assert_not_null(context);
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
 
   path = g_build_filename(base_dir, "hash", NULL);
-  g_setenv(SEN_TEST_ENV_HASH_PATH, path, TRUE);
-  hash = sen_hash_create(context, path, sizeof(gint), VALUE_SIZE,
-                         0, sen_enc_utf8);
+  g_setenv(GRN_TEST_ENV_HASH_PATH, path, TRUE);
+  hash = grn_hash_create(context, path, sizeof(gint), VALUE_SIZE,
+                         0, GRN_ENC_UTF8);
   g_free(path);
   cut_assert_not_null(hash);
 
@@ -195,17 +212,16 @@ data_patricia_trie(void)
 void
 test_patricia_trie(gconstpointer test_data)
 {
-  const sen_test_data *data = test_data;
+  const grn_test_data *data = test_data;
   gchar *path;
   const gchar *test_case_names[] = {"test_stress_patricia_trie", NULL};
 
-  context = sen_ctx_open(NULL, SEN_CTX_USE_QL);
-  cut_assert_not_null(context);
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
 
   path = g_build_filename(base_dir, "patricia-trie", NULL);
-  g_setenv(SEN_TEST_ENV_PATRICIA_TRIE_PATH, path, TRUE);
-  trie = sen_pat_create(context, path, SEN_PAT_MAX_KEY_SIZE / 2, VALUE_SIZE,
-                        0, sen_enc_utf8);
+  g_setenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH, path, TRUE);
+  trie = grn_pat_create(context, path, GRN_PAT_MAX_KEY_SIZE / 2, VALUE_SIZE,
+                        0, GRN_ENC_UTF8);
   g_free(path);
   cut_assert_not_null(trie);
 

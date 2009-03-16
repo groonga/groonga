@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ void test_sort_by_value(gconstpointer data);
 
 static GList *keys;
 static GList *values;
-static sen_array *sort_result;
+static grn_array *sort_result;
 
 void
 startup(void)
@@ -78,31 +78,31 @@ teardown(void)
   keys_free();
   values_free();
   if (sort_result)
-    sen_array_close(context, sort_result);
+    grn_array_close(context, sort_result);
   teardown_hash_common();
 }
 
 
-typedef int (*compare_func)(sen_ctx *ctx,
-                            sen_obj *hash1, void *target1, uint32_t target1_size,
-                            sen_obj *hash2, void *target2, uint32_t target2_size,
+typedef int (*compare_func)(grn_ctx *ctx,
+                            grn_obj *hash1, void *target1, uint32_t target1_size,
+                            grn_obj *hash2, void *target2, uint32_t target2_size,
                             void *compare_arg);
 
-typedef struct _sen_sort_test_data
+typedef struct _grn_sort_test_data
 {
   GList *expected_strings;
   int limit;
-  sen_table_sort_optarg *options;
-  sen_test_set_parameters_func set_parameters;
+  grn_table_sort_optarg *options;
+  grn_test_set_parameters_func set_parameters;
   const GList *strings;
-} sen_sort_test_data;
+} grn_sort_test_data;
 
-static sen_table_sort_optarg *
+static grn_table_sort_optarg *
 sort_options_new(int flags, compare_func _compare, void *compare_arg, int offset)
 {
-  sen_table_sort_optarg *options;
+  grn_table_sort_optarg *options;
 
-  options = g_new0(sen_table_sort_optarg, 1);
+  options = g_new0(grn_table_sort_optarg, 1);
   options->flags = flags;
   options->compar = _compare;
   options->compar_arg = compare_arg;
@@ -112,21 +112,21 @@ sort_options_new(int flags, compare_func _compare, void *compare_arg, int offset
 }
 
 static void
-sort_options_free(sen_table_sort_optarg *options)
+sort_options_free(grn_table_sort_optarg *options)
 {
   g_free(options);
 }
 
-static sen_sort_test_data *
+static grn_sort_test_data *
 sort_test_data_new(GList *expected_strings,
                    int limit,
-                   sen_table_sort_optarg *options,
-                   sen_test_set_parameters_func set_parameters,
+                   grn_table_sort_optarg *options,
+                   grn_test_set_parameters_func set_parameters,
                    const GList *strings)
 {
-  sen_sort_test_data *test_data;
+  grn_sort_test_data *test_data;
 
-  test_data = g_new0(sen_sort_test_data, 1);
+  test_data = g_new0(grn_sort_test_data, 1);
   test_data->expected_strings = expected_strings;
   test_data->limit = limit;
   test_data->options = options;
@@ -137,7 +137,7 @@ sort_test_data_new(GList *expected_strings,
 }
 
 static void
-sort_test_data_free(sen_sort_test_data *test_data)
+sort_test_data_free(grn_sort_test_data *test_data)
 {
   if (test_data->options)
     sort_options_free(test_data->options);
@@ -145,69 +145,69 @@ sort_test_data_free(sen_sort_test_data *test_data)
 }
 
 static GList *
-retrieve_all_keys (sen_array *array, sen_id n_entries)
+retrieve_all_keys (grn_array *array, grn_id n_entries)
 {
-  sen_id id;
-  sen_array_cursor *cursor;
+  grn_id id;
+  grn_array_cursor *cursor;
 
   keys_free();
 
-  cursor = sen_array_cursor_open(context, array, 0, 0, SEN_CURSOR_ASCENDING);
-  id = sen_array_cursor_next(context, cursor);
-  while (id != SEN_ID_NIL) {
-    sen_id *hash_id;
+  cursor = grn_array_cursor_open(context, array, 0, 0, GRN_CURSOR_ASCENDING);
+  id = grn_array_cursor_next(context, cursor);
+  while (id != GRN_ID_NIL) {
+    grn_id *hash_id;
     void *array_value;
-    gchar key[SEN_HASH_MAX_KEY_SIZE];
+    gchar key[GRN_HASH_MAX_KEY_SIZE];
     int size;
 
-    sen_array_cursor_get_value(context, cursor, &array_value);
+    grn_array_cursor_get_value(context, cursor, &array_value);
     hash_id = array_value;
-    size = sen_hash_get_key(context, hash, *hash_id, key, SEN_HASH_MAX_KEY_SIZE);
+    size = grn_hash_get_key(context, hash, *hash_id, key, GRN_HASH_MAX_KEY_SIZE);
     key[size] = '\0';
     keys = g_list_append(keys, g_strdup(key));
-    id = sen_array_cursor_next(context, cursor);
+    id = grn_array_cursor_next(context, cursor);
   }
-  sen_array_cursor_close(context, cursor);
+  grn_array_cursor_close(context, cursor);
 
   return keys;
 }
 
 static GList *
-retrieve_all_values (sen_array *array, sen_id n_entries)
+retrieve_all_values (grn_array *array, grn_id n_entries)
 {
-  sen_id id;
-  sen_array_cursor *cursor;
+  grn_id id;
+  grn_array_cursor *cursor;
 
   values_free();
 
-  cursor = sen_array_cursor_open(context, array, 0, 0, SEN_CURSOR_ASCENDING);
-  id = sen_array_cursor_next(context, cursor);
-  while (id != SEN_ID_NIL) {
-    sen_id *hash_id;
+  cursor = grn_array_cursor_open(context, array, 0, 0, GRN_CURSOR_ASCENDING);
+  id = grn_array_cursor_next(context, cursor);
+  while (id != GRN_ID_NIL) {
+    grn_id *hash_id;
     void *array_value;
-    gchar value[SEN_TEST_HASH_FACTORY_DEFAULT_VALUE_SIZE];
+    gchar value[GRN_TEST_HASH_FACTORY_DEFAULT_VALUE_SIZE];
     int size;
 
-    sen_array_cursor_get_value(context, cursor, &array_value);
+    grn_array_cursor_get_value(context, cursor, &array_value);
     hash_id = array_value;
-    size = sen_hash_get_value(context, hash, *hash_id, value);
+    size = grn_hash_get_value(context, hash, *hash_id, value);
     value[size]= '\0';
     values = g_list_append(values, g_strdup(value));
-    id = sen_array_cursor_next(context, cursor);
+    id = grn_array_cursor_next(context, cursor);
   }
-  sen_array_cursor_close(context, cursor);
+  grn_array_cursor_close(context, cursor);
 
   return values;
 }
 
 static void
 add_sort_by_uint_key_data(const gchar *additional_label,
-                          sen_test_set_parameters_func set_parameters_func)
+                          grn_test_set_parameters_func set_parameters_func)
 {
   int sort_by_unsigned_key_flags;
 
-  sort_by_unsigned_key_flags = SEN_TABLE_SORT_AS_NUMBER;
-  sort_by_unsigned_key_flags |= SEN_TABLE_SORT_AS_UNSIGNED;
+  sort_by_unsigned_key_flags = GRN_TABLE_SORT_AS_NUMBER;
+  sort_by_unsigned_key_flags |= GRN_TABLE_SORT_AS_UNSIGNED;
 
   cut_add_data(cut_take_printf("ascending%s", additional_label),
                sort_test_data_new(gcut_list_string_new("セナセナ",
@@ -217,7 +217,7 @@ add_sort_by_uint_key_data(const gchar *additional_label,
                                                        "セナ + Ruby",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
                                                    sort_by_unsigned_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -231,7 +231,7 @@ add_sort_by_uint_key_data(const gchar *additional_label,
                                                        "ナセナセ",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
                                                    sort_by_unsigned_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -247,7 +247,7 @@ add_sort_by_uint_key_data(const gchar *additional_label,
                                                        "セナセナ",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
                                                    sort_by_unsigned_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -261,7 +261,7 @@ add_sort_by_uint_key_data(const gchar *additional_label,
                                                        "ナセナセ",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
                                                    sort_by_unsigned_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -304,7 +304,7 @@ data_sort_by_uint_key(void)
 void
 test_sort_by_uint_key(gconstpointer data)
 {
-  const sen_sort_test_data *test_data = data;
+  const grn_sort_test_data *test_data = data;
   const uint32_t key1 = 100;
   const uint32_t key2 = 2000000;
   const uint32_t key3 = 30000;
@@ -328,8 +328,8 @@ test_sort_by_uint_key(gconstpointer data)
   cut_assert_lookup_add_with_value(&key4, value4);
   cut_assert_lookup_add_with_value(&key5, value5);
 
-  sort_result = sen_array_create(context, NULL, sizeof(sen_id), SEN_ARRAY_TINY);
-  n_entries = sen_hash_sort(context, hash, test_data->limit,
+  sort_result = grn_array_create(context, NULL, sizeof(grn_id), GRN_ARRAY_TINY);
+  n_entries = grn_hash_sort(context, hash, test_data->limit,
                             sort_result, test_data->options);
   gcut_assert_equal_list_string(test_data->expected_strings,
                                 retrieve_all_values(sort_result, n_entries));
@@ -337,11 +337,11 @@ test_sort_by_uint_key(gconstpointer data)
 
 static void
 add_sort_by_int_key_data(const gchar *additional_label,
-                         sen_test_set_parameters_func set_parameters_func)
+                         grn_test_set_parameters_func set_parameters_func)
 {
   int sort_by_number_key_flags;
 
-  sort_by_number_key_flags = SEN_TABLE_SORT_AS_NUMBER;
+  sort_by_number_key_flags = GRN_TABLE_SORT_AS_NUMBER;
 
   cut_add_data(cut_take_printf("ascending%s", additional_label),
                sort_test_data_new(gcut_list_string_new("セナ + Ruby",
@@ -351,7 +351,7 @@ add_sort_by_int_key_data(const gchar *additional_label,
                                                        "Senna",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
                                                    sort_by_number_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -365,7 +365,7 @@ add_sort_by_int_key_data(const gchar *additional_label,
                                                        "セナセナ",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
                                                    sort_by_number_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -381,7 +381,7 @@ add_sort_by_int_key_data(const gchar *additional_label,
                                                        "セナ + Ruby",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
                                                    sort_by_number_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -395,7 +395,7 @@ add_sort_by_int_key_data(const gchar *additional_label,
                                                        "セナセナ",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
                                                    sort_by_number_key_flags,
                                                    NULL, NULL,
                                                    0),
@@ -438,7 +438,7 @@ data_sort_by_int_key(void)
 void
 test_sort_by_int_key(gconstpointer data)
 {
-  const sen_sort_test_data *test_data = data;
+  const grn_sort_test_data *test_data = data;
   const int32_t key1 = 100;
   const int32_t key2 = -2000000;
   const int32_t key3 = 30000;
@@ -452,7 +452,7 @@ test_sort_by_int_key(gconstpointer data)
   int n_entries;
 
   key_size = sizeof(int32_t);
-  sen_test_hash_factory_set_key_size(factory, key_size);
+  grn_test_hash_factory_set_key_size(factory, key_size);
 
   if (test_data->set_parameters)
     test_data->set_parameters();
@@ -465,17 +465,17 @@ test_sort_by_int_key(gconstpointer data)
   cut_assert_lookup_add_with_value(&key4, value4);
   cut_assert_lookup_add_with_value(&key5, value5);
 
-  sort_result = sen_array_create(context, NULL, sizeof(sen_id), SEN_ARRAY_TINY);
-  n_entries = sen_hash_sort(context, hash, test_data->limit,
+  sort_result = grn_array_create(context, NULL, sizeof(grn_id), GRN_ARRAY_TINY);
+  n_entries = grn_hash_sort(context, hash, test_data->limit,
                             sort_result, test_data->options);
   gcut_assert_equal_list_string(test_data->expected_strings,
                                 retrieve_all_values(sort_result, n_entries));
 }
 
 static int
-compare_string(sen_ctx *ctx,
-               sen_obj *hash1, void *target1, uint32_t target1_size,
-               sen_obj *hash2, void *target2, uint32_t target2_size,
+compare_string(grn_ctx *ctx,
+               grn_obj *hash1, void *target1, uint32_t target1_size,
+               grn_obj *hash2, void *target2, uint32_t target2_size,
                void *user_data)
 {
   gchar *null_terminated_target1;
@@ -491,7 +491,7 @@ compare_string(sen_ctx *ctx,
 
 static void
 add_sort_by_variable_size_key_data(const gchar *additional_label,
-                                   sen_test_set_parameters_func set_parameters_func)
+                                   grn_test_set_parameters_func set_parameters_func)
 {
   const GList *keys;
 
@@ -510,7 +510,7 @@ add_sort_by_variable_size_key_data(const gchar *additional_label,
                                                        "ナセナセ",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_ASC,
+                                  sort_options_new(GRN_TABLE_SORT_ASC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -523,7 +523,7 @@ add_sort_by_variable_size_key_data(const gchar *additional_label,
                                                        "セナ + Ruby",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_ASC,
+                                  sort_options_new(GRN_TABLE_SORT_ASC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -538,7 +538,7 @@ add_sort_by_variable_size_key_data(const gchar *additional_label,
                                                        "Senna",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_DESC,
+                                  sort_options_new(GRN_TABLE_SORT_DESC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -551,7 +551,7 @@ add_sort_by_variable_size_key_data(const gchar *additional_label,
                                                        "セナ + Ruby",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_DESC,
+                                  sort_options_new(GRN_TABLE_SORT_DESC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -561,7 +561,7 @@ add_sort_by_variable_size_key_data(const gchar *additional_label,
 
 static void
 add_sort_by_variable_size_key_data_many(const gchar *additional_label,
-                                        sen_test_set_parameters_func set_parameters_func)
+                                        grn_test_set_parameters_func set_parameters_func)
 {
   const GList *keys;
 
@@ -588,7 +588,7 @@ add_sort_by_variable_size_key_data_many(const gchar *additional_label,
                                                        "ブラジル",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_ASC,
+                                  sort_options_new(GRN_TABLE_SORT_ASC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -601,7 +601,7 @@ add_sort_by_variable_size_key_data_many(const gchar *additional_label,
                                                        "Senna",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_ASC,
+                                  sort_options_new(GRN_TABLE_SORT_ASC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -620,7 +620,7 @@ add_sort_by_variable_size_key_data_many(const gchar *additional_label,
                                                        "Ludia",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_DESC,
+                                  sort_options_new(GRN_TABLE_SORT_DESC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -633,7 +633,7 @@ add_sort_by_variable_size_key_data_many(const gchar *additional_label,
                                                        "セナセナ",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_DESC,
+                                  sort_options_new(GRN_TABLE_SORT_DESC,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -654,12 +654,12 @@ data_sort_by_variable_size_key(void)
 void
 test_sort_by_variable_size_key(gconstpointer data)
 {
-  const sen_sort_test_data *test_data = data;
+  const grn_sort_test_data *test_data = data;
   const GList *node;
   int n_entries;
 
-  sen_test_hash_factory_set_key_size(factory, SEN_HASH_MAX_KEY_SIZE);
-  sen_test_hash_factory_add_flags(factory, SEN_OBJ_KEY_VAR_SIZE);
+  grn_test_hash_factory_set_key_size(factory, GRN_HASH_MAX_KEY_SIZE);
+  grn_test_hash_factory_add_flags(factory, GRN_OBJ_KEY_VAR_SIZE);
 
   if (test_data->set_parameters)
     test_data->set_parameters();
@@ -671,8 +671,8 @@ test_sort_by_variable_size_key(gconstpointer data)
     cut_assert_lookup_add(key);
   }
 
-  sort_result = sen_array_create(context, NULL, sizeof(sen_id), SEN_ARRAY_TINY);
-  n_entries = sen_hash_sort(context, hash, test_data->limit,
+  sort_result = grn_array_create(context, NULL, sizeof(grn_id), GRN_ARRAY_TINY);
+  n_entries = grn_hash_sort(context, hash, test_data->limit,
                             sort_result, test_data->options);
   gcut_assert_equal_list_string(test_data->expected_strings,
                                 retrieve_all_keys(sort_result, n_entries));
@@ -680,7 +680,7 @@ test_sort_by_variable_size_key(gconstpointer data)
 
 static void
 add_sort_by_value_data(const gchar *additional_label,
-                       sen_test_set_parameters_func set_parameters_func)
+                       grn_test_set_parameters_func set_parameters_func)
 {
   const GList *values;
 
@@ -700,8 +700,8 @@ add_sort_by_value_data(const gchar *additional_label,
                                                        "ナセナセ",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -714,8 +714,8 @@ add_sort_by_value_data(const gchar *additional_label,
                                                        "セナ + Ruby",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -730,8 +730,8 @@ add_sort_by_value_data(const gchar *additional_label,
                                                        "Senna",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -744,8 +744,8 @@ add_sort_by_value_data(const gchar *additional_label,
                                                        "セナ + Ruby",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -755,7 +755,7 @@ add_sort_by_value_data(const gchar *additional_label,
 
 static void
 add_sort_by_value_data_many(const gchar *additional_label,
-                            sen_test_set_parameters_func set_parameters_func)
+                            grn_test_set_parameters_func set_parameters_func)
 {
   const GList *values;
 
@@ -783,8 +783,8 @@ add_sort_by_value_data_many(const gchar *additional_label,
                                                        "ブラジル",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -797,8 +797,8 @@ add_sort_by_value_data_many(const gchar *additional_label,
                                                        "Senna",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_ASC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_ASC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -817,8 +817,8 @@ add_sort_by_value_data_many(const gchar *additional_label,
                                                        "Ludia",
                                                        NULL),
                                   0,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -831,8 +831,8 @@ add_sort_by_value_data_many(const gchar *additional_label,
                                                        "セナセナ",
                                                        NULL),
                                   3,
-                                  sort_options_new(SEN_TABLE_SORT_DESC |
-                                                   SEN_TABLE_SORT_BY_VALUE,
+                                  sort_options_new(GRN_TABLE_SORT_DESC |
+                                                   GRN_TABLE_SORT_BY_VALUE,
                                                    compare_string, NULL,
                                                    0),
                                   set_parameters_func,
@@ -853,13 +853,13 @@ data_sort_by_value(void)
 void
 test_sort_by_value(gconstpointer data)
 {
-  const sen_sort_test_data *test_data = data;
+  const grn_sort_test_data *test_data = data;
   const GList *node;
   int32_t key;
   int n_entries;
 
   key_size = sizeof(key);
-  sen_test_hash_factory_set_key_size(factory, key_size);
+  grn_test_hash_factory_set_key_size(factory, key_size);
 
   if (test_data->set_parameters)
     test_data->set_parameters();
@@ -873,8 +873,8 @@ test_sort_by_value(gconstpointer data)
     key++;
   }
 
-  sort_result = sen_array_create(context, NULL, sizeof(sen_id), SEN_ARRAY_TINY);
-  n_entries = sen_hash_sort(context, hash, test_data->limit,
+  sort_result = grn_array_create(context, NULL, sizeof(grn_id), GRN_ARRAY_TINY);
+  n_entries = grn_hash_sort(context, hash, test_data->limit,
                             sort_result, test_data->options);
   gcut_assert_equal_list_string(test_data->expected_strings,
                                 retrieve_all_values(sort_result, n_entries));

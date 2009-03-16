@@ -1,7 +1,5 @@
 if WITH_CUTTER
 noinst_LTLIBRARIES =				\
-	test-index.la				\
-	test-store.la				\
 	test-context.la				\
 	test-hash.la				\
 	test-hash-sort.la			\
@@ -25,17 +23,15 @@ AM_CFLAGS = $(GCUTTER_CFLAGS)
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version
 
 LIBS =							\
-	$(top_builddir)/lib/libgroonga.la			\
+	$(top_builddir)/lib/libgroonga.la		\
 	$(GCUTTER_LIBS)					\
-	$(builddir)/../lib/libsen-test-utils.la		\
-	$(builddir)/../lib/libsen-test-hash-utils.la
+	$(builddir)/../lib/libgrn-test-utils.la		\
+	$(builddir)/../lib/libgrn-test-hash-utils.la
 
 noinst_HEADERS =		\
 	test-patricia-trie.h	\
 	test-hash.h
 
-test_index_la_SOURCES			= test-index.c
-test_store_la_SOURCES			= test-store.c
 test_context_la_SOURCES			= test-context.c
 test_hash_la_SOURCES			= test-hash.c
 test_hash_sort_la_SOURCES		= test-hash-sort.c

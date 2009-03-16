@@ -1,11 +1,28 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
+/*
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include <groonga.h>
 
 #include <gcutter.h>
 #include <glib/gstdio.h>
 
-#include "../lib/sen-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void test_simple_exec(void);
 void test_simple_exec_euc_jp(void);
@@ -25,11 +42,12 @@ void test_add_cond_with_invalid_argument(void);
 void test_add_cond_with_too_large_keyword(void);
 void test_add_cond_with_copy_tag_flag(void);
 
-static sen_snip *snip;
+static grn_ctx context;
+static grn_snip *snip;
 static gchar *keyword;
 static gchar *result;
 
-static sen_encoding default_encoding;
+static grn_encoding default_encoding;
 static int default_flags;
 static unsigned int default_width;
 static unsigned int default_max_results;
@@ -37,7 +55,7 @@ static gchar *default_open_tag;
 static unsigned int default_open_tag_len;
 static gchar *default_close_tag;
 static unsigned int default_close_tag_len;
-static sen_snip_mapping *default_mapping;
+static grn_snip_mapping *default_mapping;
 
 static const gchar text[] =
   "Groonga is an embeddable fulltext search engine, which you can use in\n"
@@ -176,11 +194,13 @@ shutdown(void)
 void
 setup(void)
 {
+  grn_ctx_init(&context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+
   snip = NULL;
   keyword = NULL;
   result = NULL;
 
-  default_encoding = sen_enc_default;
+  default_encoding = GRN_ENC_DEFAULT;
   default_flags = 0;
   default_width = 100;
   default_max_results = 10;
@@ -195,7 +215,7 @@ void
 teardown(void)
 {
   if (snip) {
-    sen_snip_close(snip);
+    grn_snip_close(&context, snip);
   }
   if (keyword) {
     g_free(keyword);
@@ -210,15 +230,18 @@ teardown(void)
   if (default_close_tag) {
     g_free(default_close_tag);
   }
+
+  grn_ctx_fin(&context);
 }
 
-static sen_snip *
+static grn_snip *
 open_snip(void)
 {
   if (snip) {
-    sen_snip_close(snip);
+    grn_snip_close(&context, snip);
   }
-  snip = sen_snip_open(default_encoding, default_flags,
+  snip = grn_snip_open(&context,
+                       default_encoding, default_flags,
                        default_width,  default_max_results,
                        default_open_tag, default_open_tag_len,
                        default_close_tag, default_close_tag_len,
@@ -241,26 +264,26 @@ test_simple_exec(void)
   const gchar keyword[] = "Groonga";
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip, text, strlen(text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(2, n_results);
   cut_assert_equal_uint(105, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("[[Groonga]] is an embeddable fulltext search engine, "
                           "which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(104, result_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 1, result, &result_len));
-  cut_assert_equal_string("ng languages and databases. [[Groonga]] is\n"
+  grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
+  cut_assert_equal_string("ting languages and databases. [[Groonga]] is\n"
                           "an inverted index based engine, & combines "
-                          "the best of n-gram\ni",
+                          "the best of n-gr",
                           result);
   cut_assert_equal_uint(104, result_len);
 }
@@ -276,27 +299,27 @@ test_simple_exec_euc_jp(void)
   keyword = utf8_to_euc_jp("検索", &error);
   cut_assert_g_error(error);
 
-  default_encoding = sen_enc_euc_jp;
+  default_encoding = GRN_ENC_EUC_JP;
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip,
-                               text_ja_euc, strlen(text_ja_euc),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip,
+                                text_ja_euc, strlen(text_ja_euc),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(2, n_results);
   cut_assert_equal_uint(108, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("型の全文[[検索]]エンジンです。"
                           "DBMSやスクリプト言語処理系等に\n"
                           "組み込むことによって、その全文[[検索]]機能を強",
                           take_euc_jp_to_utf8(result));
   cut_assert_equal_uint(107, result_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 1, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
   cut_assert_equal_string("です。コンパクトな実装ですが、大規模な文書\n"
                           "量と[[検索]]要求を処理できるように設計されて"
                           "います。また、純",
@@ -315,27 +338,27 @@ test_simple_exec_sjis(void)
   keyword = utf8_to_sjis("処理", &error);
   cut_assert_g_error(error);
 
-  default_encoding = sen_enc_sjis;
+  default_encoding = GRN_ENC_SJIS;
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip,
-                               text_ja_sjis, strlen(text_ja_sjis),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip,
+                                text_ja_sjis, strlen(text_ja_sjis),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(2, n_results);
   cut_assert_equal_uint(104, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("み型の全文検索エンジンです。"
                           "DBMSやスクリプト言語[[処理]]系等に\n"
                           "組み込むことによって、その全文検索機能を",
                           take_sjis_to_utf8(result));
   cut_assert_equal_uint(103, result_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 1, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
   cut_assert_equal_string("パクトな実装ですが、大規模な文書\n"
                           "量と検索要求を[[処理]]できるように設計"
                           "されています。また、純粋なn-gram",
@@ -351,26 +374,26 @@ test_simple_exec_utf8(void)
   unsigned int result_len;
   const gchar keyword[] = "エンジン";
 
-  default_encoding = sen_enc_utf8;
+  default_encoding = GRN_ENC_UTF8;
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip,
-                               text_ja_utf8, strlen(text_ja_utf8),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip,
+                                text_ja_utf8, strlen(text_ja_utf8),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(2, n_results);
   cut_assert_equal_uint(105, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groongaは組み込み型の全文検索[[エンジン]]です。"
-                          "DBMSやスクリプト言語処理系等",
+                          "DBMSやスクリプト言語処理系",
                           result);
-  cut_assert_equal_uint(103, result_len);
+  cut_assert_equal_uint(102, result_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 1, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
   cut_assert_equal_string("度な転置\n"
                           "インデックスタイプの[[エンジン]]です。"
                           "コンパクトな実装ですが、",
@@ -386,21 +409,21 @@ test_exec_with_invalid_argument(void)
 
   cut_assert_open_snip();
 
-  sen_test_assert(sen_snip_exec(snip, text, strlen(text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                &n_results, &max_tagged_len));
 
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_exec(NULL, text, strlen(text),
-                                        &n_results, &max_tagged_len));
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_exec(snip, NULL, strlen(text),
-                                        &n_results, &max_tagged_len));
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_exec(snip, text, strlen(text),
-                                        NULL, &max_tagged_len));
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_exec(snip, text, strlen(text),
-                                        &n_results, NULL));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_exec(&context, NULL, text, strlen(text),
+                                         &n_results, &max_tagged_len));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_exec(&context, snip, NULL, strlen(text),
+                                         &n_results, &max_tagged_len));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_exec(&context, snip, text, strlen(text),
+                                         NULL, &max_tagged_len));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_exec(&context, snip, text, strlen(text),
+                                         &n_results, NULL));
 }
 
 void
@@ -411,35 +434,35 @@ test_exec_with_normalize(void)
   unsigned int result_len;
   const gchar keyword[] = "転置インデックス";
 
-  default_encoding = sen_enc_utf8;
+  default_encoding = GRN_ENC_UTF8;
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip,
-                               text_ja_utf8, strlen(text_ja_utf8),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip,
+                                text_ja_utf8, strlen(text_ja_utf8),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(0, n_results);
 
-  sen_snip_close(snip);
+  grn_snip_close(&context, snip);
   snip = NULL;
 
 
-  default_flags = SEN_SNIP_NORMALIZE;
+  default_flags = GRN_SNIP_NORMALIZE;
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip,
-                               text_ja_utf8, strlen(text_ja_utf8),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip,
+                                text_ja_utf8, strlen(text_ja_utf8),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(1, n_results);
   cut_assert_equal_uint(105, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("備えた、高速かつ高精度な[[転置\n"
                           "インデックス]]タイプのエンジンです。コン",
                           result);
@@ -455,24 +478,24 @@ test_exec_with_one_length_keyword(void)
   const gchar keyword[] = "x";
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip,
-                               text, strlen(text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip,
+                                text, strlen(text),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(2, n_results);
   cut_assert_equal_uint(113, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groonga is an embeddable fullte[[x]]t search "
                           "engine, which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(104, result_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 1, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
   cut_assert_equal_string("an inverted inde[[x]] based engine, & "
                           "combines the best of n-gram\n"
                           "inde[[x]]ing and word inde[[x]]ing to achieve ",
@@ -491,25 +514,25 @@ test_customized_tag(void)
   const gchar keyword[] = "engine";
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   open_tag, strlen(open_tag),
-                                   close_tag, strlen(close_tag)));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    open_tag, strlen(open_tag),
+                                    close_tag, strlen(close_tag)));
 
-  sen_test_assert(sen_snip_exec(snip, text, strlen(text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(2, n_results);
   cut_assert_equal_uint(107, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groonga is an embeddable fulltext search "
                           "((*engine*)), which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(106, result_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 1, result, &result_len));
-  cut_assert_equal_string("nd databases. Groonga is\n"
+  grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
+  cut_assert_equal_string(" databases. Groonga is\n"
                           "an inverted index based ((*engine*)), "
                           "& combines the best of n-gram\n"
                           "indexing and wo",
@@ -529,29 +552,29 @@ test_multi_conditions(void)
   const gchar keyword2[] = "groonga";
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword1, strlen(keyword1),
-                                   open_tag, strlen(open_tag),
-                                   close_tag, strlen(close_tag)));
-  sen_test_assert(sen_snip_add_cond(snip, keyword2, strlen(keyword2),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword1, strlen(keyword1),
+                                    open_tag, strlen(open_tag),
+                                    close_tag, strlen(close_tag)));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword2, strlen(keyword2),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip, text, strlen(text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(2, n_results);
   cut_assert_equal_uint(107, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("Groonga is an embeddable ((*fulltext*)) search "
                           "engine, which you can use in\n"
-                          "conjunction with various scripti",
+                          "conjunction with various scrip",
                           result);
   cut_assert_equal_uint(106, result_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 1, result, &result_len));
-  cut_assert_equal_string("dexing to achieve fast, precise searches. While\n"
+  grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
+  cut_assert_equal_string("exing to achieve fast, precise searches. While\n"
                           "[[groonga]] codebase is rather compact it is "
-                          "scalable enou",
+                          "scalable eno",
                           result);
   cut_assert_equal_uint(104, result_len);
 }
@@ -565,18 +588,19 @@ test_invalid_result_index(void)
   const gchar keyword[] = "index";
 
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip, text, strlen(text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(1, n_results);
   cut_assert_equal_uint(113, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_get_result(snip, 1, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_get_result(&context, snip, 1,
+                                               result, &result_len));
 }
 
 void
@@ -588,18 +612,18 @@ test_html_mapping(void)
   unsigned int result_len;
   const gchar keyword[] = "indexing";
 
-  default_mapping = (sen_snip_mapping *)-1;
+  default_mapping = (grn_snip_mapping *)-1;
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   open_tag, strlen(open_tag), NULL, 0));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    open_tag, strlen(open_tag), NULL, 0));
 
-  sen_test_assert(sen_snip_exec(snip, text, strlen(text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(1, n_results);
   cut_assert_equal_uint(113, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string("ngine, &amp; combines the best of n-gram\n"
                           "<<indexing]] and word <<indexing]] to achieve fast, "
                           "precise searches. W",
@@ -622,18 +646,18 @@ test_html_mapping_escape(void)
     /*                */"&lt;a class=&quot;external&quot; "
     /*                      */"href=";
 
-  default_mapping = (sen_snip_mapping *)-1;
+  default_mapping = (grn_snip_mapping *)-1;
   cut_assert_open_snip();
-  sen_test_assert(sen_snip_add_cond(snip, keyword, strlen(keyword),
-                                   NULL, 0, close_tag, strlen(close_tag)));
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, close_tag, strlen(close_tag)));
 
-  sen_test_assert(sen_snip_exec(snip, html_text, strlen(html_text),
-                               &n_results, &max_tagged_len));
+  grn_test_assert(grn_snip_exec(&context, snip, html_text, strlen(html_text),
+                                &n_results, &max_tagged_len));
   cut_assert_equal_uint(1, n_results);
   cut_assert_equal_uint(strlen(expected) + 1, max_tagged_len);
   result = g_new(gchar, max_tagged_len);
 
-  sen_test_assert(sen_snip_get_result(snip, 0, result, &result_len));
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
   cut_assert_equal_string(expected, result);
   cut_assert_equal_uint(strlen(expected), result_len);
 }
@@ -641,7 +665,7 @@ test_html_mapping_escape(void)
 void
 test_close_with_null(void)
 {
-  sen_test_assert_equal_rc(sen_invalid_argument, sen_snip_close(NULL));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT, grn_snip_close(&context, NULL));
 }
 
 void
@@ -666,7 +690,7 @@ test_open_with_copy_tag(void)
   const gchar *original_default_open_tag, *original_default_close_tag;
   unsigned int original_default_open_tag_len, original_default_close_tag_len;
 
-  default_flags = SEN_SNIP_COPY_TAG;
+  default_flags = GRN_SNIP_COPY_TAG;
 
   cut_assert_not_null(open_snip());
 
@@ -709,43 +733,43 @@ test_add_cond_with_invalid_argument(void)
 
   cut_assert_open_snip();
 
-  sen_test_assert(sen_snip_add_cond(snip,
-                                   keyword, keyword_len,
-                                   open_tag, open_tag_len,
-                                   close_tag, close_tag_len));
+  grn_test_assert(grn_snip_add_cond(&context, snip,
+                                    keyword, keyword_len,
+                                    open_tag, open_tag_len,
+                                    close_tag, close_tag_len));
   n_conds++;
 
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_add_cond(NULL,
-                                            keyword, keyword_len,
-                                            open_tag, open_tag_len,
-                                            close_tag, close_tag_len));
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_add_cond(snip,
-                                            NULL, keyword_len,
-                                            open_tag, open_tag_len,
-                                            close_tag, close_tag_len));
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_add_cond(snip,
-                                            keyword, 0,
-                                            open_tag, open_tag_len,
-                                            close_tag, close_tag_len));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_add_cond(&context, NULL,
+                                             keyword, keyword_len,
+                                             open_tag, open_tag_len,
+                                             close_tag, close_tag_len));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_add_cond(&context, snip,
+                                             NULL, keyword_len,
+                                             open_tag, open_tag_len,
+                                             close_tag, close_tag_len));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_add_cond(&context, snip,
+                                             keyword, 0,
+                                             open_tag, open_tag_len,
+                                             close_tag, close_tag_len));
 
   while (n_conds < max_n_conds) {
-    sen_test_assert(sen_snip_add_cond(snip,
+    cut_set_message("cond #%d", n_conds);
+    grn_test_assert(grn_snip_add_cond(&context, snip,
                                       keyword, keyword_len,
                                       open_tag, open_tag_len,
-                                      close_tag, close_tag_len),
-                    "cond #%d", n_conds);
+                                      close_tag, close_tag_len));
     n_conds++;
   }
 
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_add_cond(snip,
-                                            keyword, keyword_len,
-                                            open_tag, open_tag_len,
-                                            close_tag, close_tag_len),
-                          "cond #%d", n_conds);
+  cut_set_message("cond #%d", n_conds);
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_add_cond(&context, snip,
+                                             keyword, keyword_len,
+                                             open_tag, open_tag_len,
+                                             close_tag, close_tag_len));
 }
 
 void
@@ -756,21 +780,21 @@ test_add_cond_with_too_large_keyword(void)
   cut_assert_open_snip();
 
   cut_assert_operator_int(strlen(text), >, default_width);
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_add_cond(snip,
-                                            text, strlen(text),
-                                            NULL, 0, NULL, 0));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_add_cond(&context, snip,
+                                             text, strlen(text),
+                                             NULL, 0, NULL, 0));
 
   sub_text = text + strlen(text) - default_width;
-  sen_test_assert(sen_snip_add_cond(snip,
+  grn_test_assert(grn_snip_add_cond(&context, snip,
                                     sub_text, strlen(sub_text),
                                     NULL, 0, NULL, 0));
 
   sub_text--;
-  sen_test_assert_equal_rc(sen_invalid_argument,
-                          sen_snip_add_cond(snip,
-                                            sub_text, strlen(sub_text),
-                                            NULL, 0, NULL, 0));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_snip_add_cond(&context, snip,
+                                             sub_text, strlen(sub_text),
+                                             NULL, 0, NULL, 0));
 }
 
 void
@@ -786,23 +810,23 @@ test_add_cond_with_copy_tag(void)
   open_tag_len = strlen(open_tag);
   close_tag_len = strlen(close_tag);
 
-  default_flags = SEN_SNIP_COPY_TAG;
+  default_flags = GRN_SNIP_COPY_TAG;
 
   cut_assert_open_snip();
 
-  sen_test_assert(sen_snip_add_cond(snip,
+  grn_test_assert(grn_snip_add_cond(&context, snip,
                                     keyword, keyword_len,
                                     open_tag, open_tag_len,
                                     close_tag, close_tag_len));
-  sen_test_assert(sen_snip_add_cond(snip,
+  grn_test_assert(grn_snip_add_cond(&context, snip,
                                     keyword, keyword_len,
                                     open_tag, open_tag_len,
                                     NULL, 0));
-  sen_test_assert(sen_snip_add_cond(snip,
+  grn_test_assert(grn_snip_add_cond(&context, snip,
                                     keyword, keyword_len,
                                     NULL, 0,
                                     close_tag, close_tag_len));
-  sen_test_assert(sen_snip_add_cond(snip,
+  grn_test_assert(grn_snip_add_cond(&context, snip,
                                     keyword, keyword_len,
                                     NULL, 0,
                                     NULL, 0));

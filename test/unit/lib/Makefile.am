@@ -1,7 +1,7 @@
 if WITH_CUTTER
 noinst_LTLIBRARIES =			\
-	libsen-test-utils.la		\
-	libsen-test-hash-utils.la
+	libgrn-test-utils.la		\
+	libgrn-test-hash-utils.la
 endif
 
 INCLUDES =					\
@@ -27,15 +27,15 @@ LIBS =						\
 	$(GCUTTER_LIBS)
 
 noinst_HEADERS =				\
-	sen-test-utils.h			\
-	sen-assertions.h			\
-	sen-test-hash-factory.h			\
-	sen-test-hash-assertions.h
+	grn-test-utils.h			\
+	grn-assertions.h			\
+	grn-test-hash-factory.h			\
+	grn-test-hash-assertions.h
 
-libsen_test_utils_la_SOURCES =	\
-	sen-test-utils.c	\
-	sen-assertions.c
+libgrn_test_utils_la_SOURCES =	\
+	grn-test-utils.c	\
+	grn-assertions.c
 
-libsen_test_hash_utils_la_SOURCES =	\
-	sen-test-hash-factory.c		\
-	sen-test-hash-assertions.c
+libgrn_test_hash_utils_la_SOURCES =	\
+	grn-test-hash-factory.c		\
+	grn-test-hash-assertions.c

@@ -110,13 +110,13 @@
 #define PACKAGE_NAME "groonga"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "groonga 0.0.1"
+#define PACKAGE_STRING "groonga 0.0.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "groonga"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.0.1"
+#define PACKAGE_VERSION "0.0.2"
 
 /* "specified default encoding" */
 #define SENAPPY_DEFAULT_ENCODING "euc_jp"
@@ -158,7 +158,7 @@
 #define USE_SELECT 1
 
 /* Version number of package */
-#define VERSION "0.0.1"
+#define VERSION "0.0.2"
 
 /* Define to 1 if you use Cutter */
 /* #undef WITH_CUTTER */

@@ -19,45 +19,17 @@
 
 #include <groonga.h>
 
-#include <gcutter.h>
-
-#include "../lib/grn-assertions.h"
-
-void attributes_open_broken_utf8(void);
-void test_open_broken_utf8(void);
-
-static grn_ctx *context;
-static grn_query *query;
+void groonga_test_fixtures_warmup(void);
+void groonga_test_fixtures_cooldown(void);
 
 void
-setup(void)
+groonga_test_fixtures_warmup(void)
 {
-  context = g_new0(grn_ctx, 1);
-  grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
-  query = NULL;
+  grn_init();
 }
 
 void
-teardown(void)
+groonga_test_fixtures_cooldown(void)
 {
-  if (context) {
-    if (query)
-      grn_obj_close(context, (grn_obj *)query);
-    grn_ctx_fin(context);
-    g_free(context);
-  }
-}
-
-void
-attributes_open_broken_utf8(void)
-{
-  cut_set_attributes("ML", "senna-dev:1070");
-}
-
-void
-test_open_broken_utf8(void)
-{
-  gchar utf8[] = "\"あ\"";
-  query = grn_query_open(context, utf8, 2, GRN_SEL_OR, 10, GRN_ENC_UTF8);
-  cut_assert_not_null(query);
+  grn_fin();
 }

@@ -1,46 +1,62 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
+/*
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include <groonga.h>
 
 #include <cutter.h>
 
-#include "../lib/sen-test-utils.h"
+#include "../lib/grn-assertions.h"
 
 void data_read_write(void);
 void test_read_write(gconstpointer test_data);
 
 #define VALUE_SIZE 1024
 
-typedef struct _sen_test_data
+typedef struct _grn_test_data
 {
   gchar *type_name;
-  sen_obj_flags flags;
+  grn_obj_flags flags;
   gint n_processes;
   gboolean multi_thread;
-} sen_test_data;
+} grn_test_data;
 
 static GList *sub_processes;
-static sen_test_data *base_data;
+static grn_test_data *base_data;
 
-static sen_ctx *context;
-static sen_obj *space;
-static sen_obj *type;
-static sen_obj *table;
+static grn_ctx *context;
+static grn_obj *space;
+static grn_obj *type;
+static grn_obj *table;
 static gchar *base_dir;
-static gchar *env_space_path;
 static gchar *env_table_path;
 static gchar *env_table_type;
 static gchar *env_multi_thread;
 static gchar *env_n_processes;
 static gchar *env_process_number;
 
-static sen_test_data *
-test_data_new(const gchar *type_name, sen_obj_flags flags,
+static grn_test_data *
+test_data_new(const gchar *type_name, grn_obj_flags flags,
               gint n_processes, gboolean multi_thread)
 {
-  sen_test_data *data;
+  grn_test_data *data;
 
-  data = g_new0(sen_test_data, 1);
+  data = g_new0(grn_test_data, 1);
   data->type_name = g_strdup(type_name);
   data->flags = flags;
   data->n_processes = n_processes;
@@ -50,7 +66,7 @@ test_data_new(const gchar *type_name, sen_obj_flags flags,
 }
 
 static void
-test_data_free(sen_test_data *data)
+test_data_free(grn_test_data *data)
 {
   g_free(data->type_name);
   g_free(data);
@@ -64,14 +80,13 @@ setup(void)
   sub_processes = NULL;
   base_data = NULL;
 
-  context = NULL;
+  context = g_new0(grn_ctx, 1);
   space = NULL;
   table = NULL;
 
 #define SAVE_ENV_VALUE(var_name, macro_name)                            \
-  env_ ## var_name = g_strdup(g_getenv(SEN_TEST_ENV_ ## macro_name))
+  env_ ## var_name = g_strdup(g_getenv(GRN_TEST_ENV_ ## macro_name))
 
-  SAVE_ENV_VALUE(space_path, SPACE_PATH);
   SAVE_ENV_VALUE(table_path, TABLE_PATH);
   SAVE_ENV_VALUE(table_type, TABLE_TYPE);
   SAVE_ENV_VALUE(multi_thread, MULTI_THREAD);
@@ -80,7 +95,7 @@ setup(void)
 
 #undef SAVE_ENV_VALUE
 
-  tmp_dir = g_build_filename(sen_test_get_base_dir(), "tmp", NULL);
+  tmp_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
   cut_remove_path(tmp_dir, NULL);
 
   base_dir = g_build_filename(tmp_dir, "performance", NULL);
@@ -101,23 +116,23 @@ teardown(void)
 
   if (context) {
     if (table)
-      sen_obj_close(context, table);
+      grn_obj_close(context, table);
     if (space)
-      sen_obj_close(context, space);
-    sen_ctx_close(context);
+      grn_obj_close(context, space);
+    grn_ctx_fin(context);
+    g_free(context);
   }
 
 #define RESTORE_ENV_VALUE(var_name, macro_name) do                      \
   {                                                                     \
     if (env_ ## var_name) {                                             \
-      g_setenv(SEN_TEST_ENV_ ## macro_name, env_ ## var_name, TRUE);    \
+      g_setenv(GRN_TEST_ENV_ ## macro_name, env_ ## var_name, TRUE);    \
       g_free(env_ ## var_name);                                         \
     } else {                                                            \
-      g_unsetenv(SEN_TEST_ENV_ ## macro_name);                          \
+      g_unsetenv(GRN_TEST_ENV_ ## macro_name);                          \
     }                                                                   \
   } while(0)
 
-  RESTORE_ENV_VALUE(space_path, SPACE_PATH);
   RESTORE_ENV_VALUE(table_path, TABLE_PATH);
   RESTORE_ENV_VALUE(table_type, TABLE_TYPE);
   RESTORE_ENV_VALUE(multi_thread, MULTI_THREAD);
@@ -133,13 +148,13 @@ teardown(void)
 }
 
 static gboolean
-run(const gchar **test_case_names, const sen_test_data *data)
+run(const gchar **test_case_names, const grn_test_data *data)
 {
   gint i;
   const gchar *test_dir;
   CutSubProcessGroup *group;
 
-  test_dir = cut_take_string(g_build_filename(sen_test_get_base_dir(),
+  test_dir = cut_take_string(g_build_filename(grn_test_get_base_dir(),
                                               "fixtures",
                                               NULL));
 
@@ -154,12 +169,12 @@ run(const gchar **test_case_names, const sen_test_data *data)
 
     cut_sub_process_group_add(group, sub_process);
     if (data->multi_thread)
-      g_setenv(SEN_TEST_ENV_MULTI_THREAD, "TRUE", TRUE);
+      g_setenv(GRN_TEST_ENV_MULTI_THREAD, "TRUE", TRUE);
     else
-      g_unsetenv(SEN_TEST_ENV_MULTI_THREAD);
-    g_setenv(SEN_TEST_ENV_N_PROCESSES,
+      g_unsetenv(GRN_TEST_ENV_MULTI_THREAD);
+    g_setenv(GRN_TEST_ENV_N_PROCESSES,
              cut_take_printf("%d", data->n_processes), TRUE);
-    g_setenv(SEN_TEST_ENV_PROCESS_NUMBER, cut_take_printf("%d", i), TRUE);
+    g_setenv(GRN_TEST_ENV_PROCESS_NUMBER, cut_take_printf("%d", i), TRUE);
     cut_sub_process_run_async(sub_process);
 
     sub_processes = g_list_append(sub_processes, sub_process);
@@ -168,32 +183,26 @@ run(const gchar **test_case_names, const sen_test_data *data)
 }
 
 static gboolean
-run_test(const gchar **test_case_names, const sen_test_data *data)
+run_test(const gchar **test_case_names, const grn_test_data *data)
 {
   const gchar *type_name, *table_name;
   gchar *path;
 
-  context = sen_ctx_open(NULL, SEN_CTX_USE_QL);
-  cut_assert_not_null(context);
-
-  path = g_build_filename(base_dir, "space", NULL);
-  g_setenv(SEN_TEST_ENV_SPACE_PATH, path, TRUE);
-  space = sen_space_create(context, path, sen_enc_utf8);
-  g_free(path);
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
 
   type_name = "name";
-  type = sen_type_create(context, type_name, strlen(type_name),
-                         SEN_OBJ_KEY_UINT, sizeof(sen_id));
+  type = grn_type_create(context, type_name, strlen(type_name),
+                         GRN_OBJ_KEY_UINT, sizeof(grn_id));
 
   path = g_build_filename(base_dir, "table", NULL);
-  g_setenv(SEN_TEST_ENV_TABLE_PATH, path, TRUE);
+  g_setenv(GRN_TEST_ENV_TABLE_PATH, path, TRUE);
 
   table_name = cut_take_printf("%s: performance-read-write", data->type_name);
-  g_setenv(SEN_TEST_ENV_TABLE_TYPE, data->type_name, TRUE);
-  table = sen_table_create(context,
+  g_setenv(GRN_TEST_ENV_TABLE_TYPE, data->type_name, TRUE);
+  table = grn_table_create(context,
                            table_name, strlen(table_name),
-                           path, SEN_OBJ_PERSISTENT | data->flags,
-                           type, VALUE_SIZE, sen_enc_utf8);
+                           path, GRN_OBJ_PERSISTENT | data->flags,
+                           type, VALUE_SIZE, GRN_ENC_UTF8);
   g_free(path);
   cut_assert_not_null(table);
 
@@ -202,7 +211,7 @@ run_test(const gchar **test_case_names, const sen_test_data *data)
 
 
 static void
-add_read_write_data(const gchar *type_name, sen_obj_flags flags)
+add_read_write_data(const gchar *type_name, grn_obj_flags flags)
 {
   cut_add_data(cut_take_printf("%s - single process - single thread", type_name),
                test_data_new(type_name, flags, 1, FALSE), test_data_free,
@@ -220,14 +229,14 @@ add_read_write_data(const gchar *type_name, sen_obj_flags flags)
 void
 data_read_write(void)
 {
-  add_read_write_data("hash", SEN_OBJ_TABLE_HASH_KEY);
-  add_read_write_data("patricia tree", SEN_OBJ_TABLE_PAT_KEY);
+  add_read_write_data("hash", GRN_OBJ_TABLE_HASH_KEY);
+  add_read_write_data("patricia tree", GRN_OBJ_TABLE_PAT_KEY);
 }
 
 void
 test_read_write(gconstpointer test_data)
 {
-  const sen_test_data *data = test_data;
+  const grn_test_data *data = test_data;
   const gchar *test_case_names[] = {"test_read_write", NULL};
   CutSubProcess *target_sub_process;
   CutSubProcess *base_sub_process;

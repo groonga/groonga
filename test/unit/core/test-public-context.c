@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,46 +22,45 @@
 #include <gcutter.h>
 #include <glib/gstdio.h>
 
-#include "../lib/sen-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void test_load(void);
 
-static sen_db *db;
-static sen_ctx *context;
+static grn_obj *db;
+static grn_ctx *context;
 static gchar *base_dir;
 static gchar *default_path;
-static int default_db_flags, default_context_flags;
-static sen_encoding default_encoding;
+static int default_context_flags;
+static grn_encoding default_encoding;
 static gchar *sample_ql_program;
 
 void
 setup(void)
 {
   db = NULL;
-  context = NULL;
+  context = g_new0(grn_ctx, 1);
 
-  base_dir = g_build_filename(sen_test_get_base_dir(), "tmp", NULL);
+  base_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
   default_path = g_build_filename(base_dir, "db", NULL);
-  default_db_flags = 0;
-  default_encoding = sen_enc_default;
-  default_context_flags = SEN_CTX_USE_QL;
+  default_encoding = GRN_ENC_DEFAULT;
+  default_context_flags = GRN_CTX_USE_QL;
 
   cut_remove_path(base_dir, NULL);
   g_mkdir_with_parents(base_dir, 0755);
 
-  sample_ql_program = g_build_filename(sen_test_get_base_dir(),
+  sample_ql_program = g_build_filename(grn_test_get_base_dir(),
                                        "..", "ql", "bookmark.scm", NULL);
 }
 
 void
 teardown(void)
 {
-  if (db) {
-    sen_db_close(db);
-  }
-
   if (context) {
-    sen_ctx_close(context);
+    if (db) {
+      grn_obj_close(context, db);
+    }
+    grn_ctx_fin(context);
+    g_free(context);
   }
 
   if (default_path) {
@@ -78,11 +77,18 @@ teardown(void)
   }
 }
 
-#define create_db()                                                     \
-  db = sen_db_create(default_path, default_db_flags, default_encoding)
+#define create_db() do                                  \
+{                                                       \
+  grn_db_create_optarg option;                          \
+                                                        \
+  option.encoding = default_encoding;                   \
+  option.builtin_type_names = NULL;                     \
+  option.n_builtin_type_names = 0;                      \
+  db = grn_db_create(context, default_path, &option);   \
+} while (0)
 
 #define open_context()                                                  \
-  context = sen_ctx_open(db, default_context_flags)
+  grn_test_assert(grn_ctx_init(context, default_context_flags, default_encoding))
 
 #define cut_assert_open_context() do            \
 {                                               \
@@ -96,5 +102,5 @@ void
 test_load(void)
 {
   cut_assert_open_context();
-  sen_test_assert(sen_ctx_load(context, sample_ql_program));
+  grn_test_assert(grn_ql_load(context, sample_ql_program));
 }

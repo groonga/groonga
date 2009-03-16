@@ -1,4 +1,4 @@
-SUBDIRS = lib src examples
+SUBDIRS = lib src examples test
 DISTONLY_SUBDIRS = bindings doc util vcc
 pkginclude_HEADERS = groonga.h
 

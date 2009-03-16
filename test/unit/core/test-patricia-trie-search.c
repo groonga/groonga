@@ -1,4 +1,21 @@
-/* -*- c-file-style: "gnu"; coding: utf-8 -*- */
+/* -*- c-basic-offset: 2; coding: utf-8 -*- */
+/*
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include "test-patricia-trie.h"
 
@@ -11,7 +28,7 @@ void test_suffix_search(gconstpointer data);
 
 static GList *keys;
 
-static sen_hash *hash;
+static grn_hash *hash;
 
 void
 setup(void)
@@ -22,7 +39,7 @@ setup(void)
 
   keys = NULL;
 
-  default_encoding = sen_enc_utf8;
+  default_encoding = GRN_ENC_UTF8;
 }
 
 static void
@@ -38,7 +55,7 @@ static void
 hash_free(void)
 {
   if (context && hash) {
-    sen_hash_close(context, hash);
+    grn_hash_close(context, hash);
     hash = NULL;
   }
 }
@@ -52,9 +69,9 @@ teardown(void)
 }
 
 #define create_hash()                                   \
-  hash = sen_hash_create(context, NULL, sizeof(sen_id), \
-                         0, SEN_HASH_TINY,              \
-                         sen_enc_default)
+  hash = grn_hash_create(context, NULL, sizeof(grn_id), \
+                         0, GRN_HASH_TINY,              \
+                         GRN_ENC_DEFAULT)
 
 #define cut_assert_create_hash() do                     \
 {                                                       \
@@ -69,48 +86,48 @@ teardown(void)
 static GList *
 retrieve_all_keys(void)
 {
-  sen_id hash_id;
-  sen_hash_cursor *cursor;
+  grn_id hash_id;
+  grn_hash_cursor *cursor;
 
   keys_free();
 
-  cursor = sen_hash_cursor_open(context, hash,
+  cursor = grn_hash_cursor_open(context, hash,
                                 NULL, 0, NULL, 0,
-                                SEN_CURSOR_DESCENDING);
-  hash_id = sen_hash_cursor_next(context, cursor);
-  while (hash_id != SEN_ID_NIL) {
-    sen_id *trie_id;
+                                GRN_CURSOR_DESCENDING);
+  hash_id = grn_hash_cursor_next(context, cursor);
+  while (hash_id != GRN_ID_NIL) {
+    grn_id *trie_id;
     void *hash_key;
     GString *null_terminated_key;
-    gchar key[SEN_PAT_MAX_KEY_SIZE];
+    gchar key[GRN_PAT_MAX_KEY_SIZE];
     int size;
 
-    sen_hash_cursor_get_key(context, cursor, &hash_key);
+    grn_hash_cursor_get_key(context, cursor, &hash_key);
     trie_id = hash_key;
-    size = sen_pat_get_key(context, trie, *trie_id, key, sizeof(key));
+    size = grn_pat_get_key(context, trie, *trie_id, key, sizeof(key));
     null_terminated_key = g_string_new_len(key, size);
     keys = g_list_append(keys, g_string_free(null_terminated_key, FALSE));
-    hash_id = sen_hash_cursor_next(context, cursor);
+    hash_id = grn_hash_cursor_next(context, cursor);
   }
-  sen_hash_cursor_close(context, cursor);
+  grn_hash_cursor_close(context, cursor);
 
   return keys;
 }
 
-static sen_trie_test_data *lcp_test_data_new(const gchar *expected_key,
+static grn_trie_test_data *lcp_test_data_new(const gchar *expected_key,
                                              const gchar *search_key,
-                                             sen_test_set_parameters_func set_parameters,
+                                             grn_test_set_parameters_func set_parameters,
                                              ...) G_GNUC_NULL_TERMINATED;
-static sen_trie_test_data *
+static grn_trie_test_data *
 lcp_test_data_new(const gchar *expected_key, const gchar *search_key,
-                  sen_test_set_parameters_func set_parameters, ...)
+                  grn_test_set_parameters_func set_parameters, ...)
 {
-  sen_trie_test_data *test_data;
+  grn_trie_test_data *test_data;
   va_list args;
 
   va_start(args, set_parameters);
   test_data = trie_test_data_newv(NULL, search_key, expected_key,
-                                  sen_success, NULL, NULL,
+                                  GRN_SUCCESS, NULL, NULL,
                                   set_parameters, &args);
   va_end(args);
 
@@ -118,7 +135,7 @@ lcp_test_data_new(const gchar *expected_key, const gchar *search_key,
 }
 
 static void
-lcp_test_data_free(sen_trie_test_data *test_data)
+lcp_test_data_free(grn_trie_test_data *test_data)
 {
   trie_test_data_free(test_data);
 }
@@ -156,11 +173,11 @@ data_lcp_search(void)
 void
 test_lcp_search(gconstpointer data)
 {
-  const sen_trie_test_data *test_data = data;
-  gchar key[SEN_PAT_MAX_KEY_SIZE];
+  const grn_trie_test_data *test_data = data;
+  gchar key[GRN_PAT_MAX_KEY_SIZE];
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Senna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 
@@ -174,32 +191,32 @@ test_lcp_search(gconstpointer data)
   cut_assert_lookup_add(key4);
   cut_assert_lookup_add(key5);
 
-  id = sen_pat_lcp_search(context, trie,
+  id = grn_pat_lcp_search(context, trie,
                           test_data->search_key,
                           strlen(test_data->search_key));
   if (test_data->expected_key) {
     int size;
     gchar *null_terminated_key;
 
-    sen_test_assert_not_nil(id);
-    size = sen_pat_get_key(context, trie, id, key, sizeof(key));
+    grn_test_assert_not_nil(id);
+    size = grn_pat_get_key(context, trie, id, key, sizeof(key));
     null_terminated_key = g_string_free(g_string_new_len(key, size), FALSE);
     cut_assert_equal_string(test_data->expected_key, null_terminated_key);
   } else {
-    sen_test_assert_nil(id);
+    grn_test_assert_nil(id);
   }
 }
 
-static sen_trie_test_data *xfix_test_data_new(sen_rc expected_rc,
+static grn_trie_test_data *xfix_test_data_new(grn_rc expected_rc,
                                               GList *expected_keys,
                                               gchar *search_key,
-                                              sen_test_set_parameters_func set_parameters,
+                                              grn_test_set_parameters_func set_parameters,
                                               ...) G_GNUC_NULL_TERMINATED;
-static sen_trie_test_data *
-xfix_test_data_new(sen_rc expected_rc, GList *expected_keys, gchar *search_key,
-                   sen_test_set_parameters_func set_parameters, ...)
+static grn_trie_test_data *
+xfix_test_data_new(grn_rc expected_rc, GList *expected_keys, gchar *search_key,
+                   grn_test_set_parameters_func set_parameters, ...)
 {
-  sen_trie_test_data *test_data;
+  grn_trie_test_data *test_data;
   va_list args;
 
   va_start(args, set_parameters);
@@ -212,7 +229,7 @@ xfix_test_data_new(sen_rc expected_rc, GList *expected_keys, gchar *search_key,
 }
 
 static void
-xfix_test_data_free(sen_trie_test_data *test_data)
+xfix_test_data_free(grn_trie_test_data *test_data)
 {
   trie_test_data_free(test_data);
 }
@@ -221,30 +238,30 @@ void
 data_prefix_search(void)
 {
   cut_add_data("default - nonexistence",
-               xfix_test_data_new(sen_end_of_data, NULL, "カッター", NULL, NULL),
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "カッター", NULL, NULL),
                xfix_test_data_free,
                "default - short",
-               xfix_test_data_new(sen_success,
+               xfix_test_data_new(GRN_SUCCESS,
                                   gcut_list_string_new("セナ", "セナ + Ruby",
                                                        "セナセナ", NULL),
                                   "セ", NULL, NULL),
                xfix_test_data_free,
                "default - exact",
-               xfix_test_data_new(sen_success,
+               xfix_test_data_new(GRN_SUCCESS,
                                   gcut_list_string_new("セナ", "セナ + Ruby",
                                                        "セナセナ", NULL),
                                   "セナ", NULL, NULL),
                xfix_test_data_free,
                "default - long",
-               xfix_test_data_new(sen_end_of_data, NULL, "セナセナセナ",
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "セナセナセナ",
                                   NULL, NULL),
                xfix_test_data_free,
                "sis - nonexistence",
-               xfix_test_data_new(sen_end_of_data, NULL, "カッター",
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "カッター",
                                   set_sis, NULL),
                xfix_test_data_free,
                "sis - short",
-               xfix_test_data_new(sen_success,
+               xfix_test_data_new(GRN_SUCCESS,
                                   gcut_list_string_new("セ", "セナ",
                                                        "セナ + Ruby",
                                                        "セナセ", "セナセナ",
@@ -252,7 +269,7 @@ data_prefix_search(void)
                                   "セ", set_sis, NULL),
                xfix_test_data_free,
                "sis - exact",
-               xfix_test_data_new(sen_success,
+               xfix_test_data_new(GRN_SUCCESS,
                                   gcut_list_string_new("セナ",
                                                        "セナ + Ruby",
                                                        "セナセ", "セナセナ",
@@ -260,7 +277,7 @@ data_prefix_search(void)
                                   "セナ", set_sis, NULL),
                xfix_test_data_free,
                "sis - long",
-               xfix_test_data_new(sen_end_of_data, NULL, "セナセナセナ",
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "セナセナセナ",
                                   set_sis, NULL),
                xfix_test_data_free);
 }
@@ -268,10 +285,10 @@ data_prefix_search(void)
 void
 test_prefix_search(gconstpointer data)
 {
-  const sen_trie_test_data *test_data = data;
+  const grn_trie_test_data *test_data = data;
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Senna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 
@@ -286,8 +303,8 @@ test_prefix_search(gconstpointer data)
   cut_assert_lookup_add(key5);
 
   cut_assert_create_hash();
-  sen_test_assert_equal_rc(test_data->expected_rc,
-                           sen_pat_prefix_search(context, trie,
+  grn_test_assert_equal_rc(test_data->expected_rc,
+                           grn_pat_prefix_search(context, trie,
                                                  test_data->search_key,
                                                  strlen(test_data->search_key),
                                                  hash));
@@ -299,26 +316,26 @@ void
 data_suffix_search(void)
 {
   cut_add_data("default - nonexistence",
-               xfix_test_data_new(sen_end_of_data, NULL, "カッター", NULL, NULL),
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "カッター", NULL, NULL),
                xfix_test_data_free,
                "default - short",
-               xfix_test_data_new(sen_end_of_data, NULL, "ナ", NULL, NULL),
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "ナ", NULL, NULL),
                xfix_test_data_free,
                "default - exact",
-               xfix_test_data_new(sen_success,
+               xfix_test_data_new(GRN_SUCCESS,
                                   gcut_list_string_new("セナ", NULL),
                                   "セナ", NULL, NULL),
                xfix_test_data_free,
                "default - long",
-               xfix_test_data_new(sen_end_of_data, NULL, "セナセナセナ",
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "セナセナセナ",
                                   NULL, NULL),
                xfix_test_data_free,
                "sis - nonexistence",
-               xfix_test_data_new(sen_end_of_data, NULL, "カッター",
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "カッター",
                                   set_sis, NULL),
                xfix_test_data_free,
                "sis - short",
-               xfix_test_data_new(sen_success,
+               xfix_test_data_new(GRN_SUCCESS,
                                   gcut_list_string_new("セナセナ",
                                                        "ナセナ",
                                                        "セナ",
@@ -327,7 +344,7 @@ data_suffix_search(void)
                                   "ナ", set_sis, NULL),
                xfix_test_data_free,
                "sis - exact",
-               xfix_test_data_new(sen_success,
+               xfix_test_data_new(GRN_SUCCESS,
                                   gcut_list_string_new("セナセナ",
                                                        "ナセナ",
                                                        "セナ",
@@ -335,7 +352,7 @@ data_suffix_search(void)
                                   "セナ", set_sis, NULL),
                xfix_test_data_free,
                "sis - long",
-               xfix_test_data_new(sen_end_of_data, NULL, "セナセナセナ",
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "セナセナセナ",
                                   set_sis, NULL),
                xfix_test_data_free);
 }
@@ -343,10 +360,10 @@ data_suffix_search(void)
 void
 test_suffix_search(gconstpointer data)
 {
-  const sen_trie_test_data *test_data = data;
+  const grn_trie_test_data *test_data = data;
   const gchar key1[] = "セナ";
   const gchar key2[] = "ナセナセ";
-  const gchar key3[] = "Senna";
+  const gchar key3[] = "Groonga";
   const gchar key4[] = "セナ + Ruby";
   const gchar key5[] = "セナセナ";
 
@@ -361,8 +378,8 @@ test_suffix_search(gconstpointer data)
   cut_assert_lookup_add(key5);
 
   cut_assert_create_hash();
-  sen_test_assert_equal_rc(test_data->expected_rc,
-                           sen_pat_suffix_search(context, trie,
+  grn_test_assert_equal_rc(test_data->expected_rc,
+                           grn_pat_suffix_search(context, trie,
                                                  test_data->search_key,
                                                  strlen(test_data->search_key),
                                                  hash));
