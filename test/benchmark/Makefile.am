@@ -16,9 +16,9 @@ INCLUDES =			\
 AM_CFLAGS =		\
 	$(GLIB_CFLAGS)
 
-LIBS =						\
-	$(top_builddir)/lib/libgroonga.la	\
-	$(builddir)/lib/libbenchmark.la		\
+LIBS =								\
+	$(top_builddir)/lib/libgroonga.la			\
+	$(top_builddir)/test/benchmark/lib/libbenchmark.la	\
 	$(GLIB_LIBS)
 
 bench_table_factory_SOURCES = bench-table-factory.c
