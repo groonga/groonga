@@ -356,8 +356,6 @@ else
   MECAB_CFLAGS="-I`$MECAB_CONFIG --inc-dir`"
   LDFLAGS="$LDFLAGS -L`$MECAB_CONFIG --libs-only-L`"
  	AC_CHECK_LIB(mecab, mecab_new, [], [AC_MSG_ERROR("No libmecab found")])
- 	AC_CHECK_LIB(mecab, mecab_dictionary_info,
-               [AC_DEFINE(USE_MECAB_DICINFO, [1], [check mecab encodings])], [])
   CPPFLAGS="$CPPFLAGS $MECAB_CFLAGS"
   AC_CHECK_HEADER(mecab.h, , [AC_MSG_ERROR("No mecab.h found")])
 fi
