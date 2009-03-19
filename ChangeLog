@@ -2,6 +2,11 @@
 
 	* lib/ql.c (ha_table): return empty table when nhits is zero.
 
+2009-03-18  Tasuku SUENAGA <a at razil.jp>
+
+	* configure.ac: removed an unused constant USE_MECAB_DICINFO.
+	* lib/com.c: added ctx argument to com->ev_in/com->ev_out.
+
 2009-03-16  Tasuku SUENAGA <a at razil.jp>
 
 	* groonga.spec.in: changed mail address and package name.

@@ -247,8 +247,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   }
   if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "select returns 0 events"); }
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
-    if (FD_ISSET(*pfd, &rfds)) { com->ev_in(ev, com); }
-    if (FD_ISSET(*pfd, &wfds)) { com->ev_out(ev, com); }
+    if (FD_ISSET(*pfd, &rfds)) { com->ev_in(ctx, ev, com); }
+    if (FD_ISSET(*pfd, &wfds)) { com->ev_out(ctx, ev, com); }
   });
 #else /* USE_SELECT */
 #ifdef USE_EPOLL
