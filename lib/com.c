@@ -226,12 +226,15 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   }
   FD_ZERO(&rfds);
   FD_ZERO(&wfds);
+  ctx->errlvl = GRN_OK;
+  ctx->rc = GRN_SUCCESS;
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
     if (com->status == grn_com_closed) { continue; }
     if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
     if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
     if (*pfd > nfds) { nfds = *pfd; }
   });
+  errno = 0;
   nevents = select(nfds + 1, &rfds, &wfds, NULL, (timeout >= 0) ? &tv : NULL);
   if (nevents < 0) {
 #ifdef WIN32
@@ -250,11 +253,16 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #else /* USE_SELECT */
 #ifdef USE_EPOLL
   struct epoll_event *ep;
+  ctx->errlvl = GRN_OK;
+  ctx->rc = GRN_SUCCESS;
+  errno = 0;
   nevents = epoll_wait(ev->epfd, ev->events, ev->max_nevents, timeout);
 #else /* USE_EPOLL */
   uint32_t dummy;
   int nfd = 0, *pfd;
   struct pollfd *ep = ev->events;
+  ctx->errlvl = GRN_OK;
+  ctx->rc = GRN_SUCCESS;
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
     if (com->status == grn_com_closed) { continue; }
     ep->fd = *pfd;
@@ -264,6 +272,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     ep++;
     nfd++;
   });
+  errno = 0;
   nevents = poll(ev->events, nfd, timeout);
 #endif /* USE_EPOLL */
   if (nevents < 0) {
@@ -346,7 +355,7 @@ grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
     msg_iov[0].iov_len = sizeof(grn_com_gqtp_header);
     msg_iov[1].iov_base = body;
     msg_iov[1].iov_len = size;
-    while ((ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1) {
+    while (errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1) {
       SERR("sendmsg");
       if (errno == EAGAIN || errno == EINTR) { continue; }
       cs->rc = ctx->rc;
@@ -354,7 +363,7 @@ grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
     }
 #endif /* WIN32 */
   } else {
-    while ((ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
+    while (errno = 0, (ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
 #ifdef WIN32
       int e = WSAGetLastError();
       SERR("send");
@@ -393,8 +402,8 @@ grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *st
   }
   do {
     // todo : also support non blocking mode (use MSG_DONTWAIT)
+    errno = 0;
     if ((ret = recv(cs->com.fd, buf->u.b.curr, rest, MSG_WAITALL)) <= 0) {
-      if (ret < 0) {
 #ifdef WIN32
         int e = WSAGetLastError();
         SERR("recv size");
@@ -403,7 +412,6 @@ grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *st
         SERR("recv size");
         if (errno == EAGAIN || errno == EINTR) { continue; }
 #endif /* WIN32 */
-      }
       cs->rc = ctx->rc;
       *status = grn_com_erecv_head;
       goto exit;
@@ -427,8 +435,8 @@ grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *st
         }
       }
       for (rest = value_size; rest;) {
+        errno = 0;
         if ((ret = recv(cs->com.fd, buf->u.b.curr, rest, MSG_WAITALL)) <= 0) {
-          if (ret < 0) {
 #ifdef WIN32
             int e = WSAGetLastError();
             SERR("recv body");
@@ -437,7 +445,6 @@ grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *st
             SERR("recv body");
             if (errno == EAGAIN || errno == EINTR) { continue; }
 #endif /* WIN32 */
-          }
           cs->rc = ctx->rc;
           *status = grn_com_erecv_body;
           goto exit;
@@ -482,7 +489,7 @@ grn_com_gqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
       SERR("setsockopt");
     }
   }
-  while (connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1) {
+  while (errno = 0, connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1) {
 #ifdef WIN32
     if (WSAGetLastError() == WSAECONNREFUSED)
 #else /* WIN32 */
@@ -576,6 +583,7 @@ grn_com_gqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *
   {
     int retry = 0;
     for (;;) {
+      errno = 0;
       if (bind(lfd, (struct sockaddr *) &addr, sizeof addr) < 0) {
 #ifdef WIN32
         if (WSAGetLastError() == WSAEADDRINUSE)
@@ -676,7 +684,7 @@ grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
     msg_iov[0].iov_len = sizeof(grn_com_gqtp_header);
     msg_iov[1].iov_base = GRN_BULK_HEAD(body);
     msg_iov[1].iov_len = size;
-    while ((ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1) {
+    while (errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1) {
       SERR("sendmsg");
       if (errno == EAGAIN || errno == EINTR) { continue; }
       cs->rc = ctx->rc;
@@ -684,6 +692,7 @@ grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
     }
 #endif /* WIN32 */
   } else {
+    errno = 0;
     while ((ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
 #ifdef WIN32
       int e = WSAGetLastError();

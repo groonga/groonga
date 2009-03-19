@@ -1283,7 +1283,8 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         QLERR("records object expected");
       }
       if (grn_table_search(ctx, table, STRVALUE(car), STRSIZE(car),
-                           GRN_SEARCH_TERM_EXTRACT, get_obj(ctx, res), GRN_SEL_OR)) {
+                           GRN_SEARCH_TERM_EXTRACT, get_obj(ctx, res), GRN_SEL_OR)
+          < GRN_SUCCESS) {
         QLERR("term_extract failed");
       }
       break;
@@ -1402,7 +1403,8 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         QLERR("records object expected");
       }
       if (grn_table_search(ctx, table, STRVALUE(car), STRSIZE(car),
-                           GRN_SEARCH_PREFIX, get_obj(ctx, res), GRN_SEL_OR)) {
+                           GRN_SEARCH_PREFIX, get_obj(ctx, res), GRN_SEL_OR)
+          < GRN_SUCCESS) {
         QLERR("prefix search failed");
       }
       break;
@@ -1553,7 +1555,8 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             QLERR("records object expected");
           }
           if (grn_table_search(ctx, table, STRVALUE(car), STRSIZE(car),
-                               GRN_SEARCH_SUFFIX, get_obj(ctx, res), GRN_SEL_OR)) {
+                               GRN_SEARCH_SUFFIX, get_obj(ctx, res), GRN_SEL_OR)
+              < GRN_SUCCESS) {
             QLERR("suffix search failed");
           }
           break;

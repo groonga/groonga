@@ -1,3 +1,7 @@
+2009-03-19  Poe MORITA  <morita at razil.jp>
+
+	* lib/ql.c (ha_table): return empty table when nhits is zero.
+
 2009-03-16  Tasuku SUENAGA <a at razil.jp>
 
 	* groonga.spec.in: changed mail address and package name.
