@@ -2260,9 +2260,11 @@ lexicon_deletable(grn_ctx *ctx, grn_obj *lexicon, grn_id tid, void *arg)
 inline static void
 lexicon_delete(grn_ctx *ctx, grn_ii *ii, uint32_t tid, grn_hash *h)
 {
+#ifdef CASCADE_DELETE_LEXICON
   lexicon_deletable_arg arg = {ii, h};
   grn_table_delete_optarg optarg = {0, lexicon_deletable, &arg};
   _grn_table_delete_by_id(ctx, ii->lexicon, tid, &optarg);
+#endif /* CASCADE_DELETE_LEXICON */
 }
 
 typedef struct {
