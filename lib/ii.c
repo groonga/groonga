@@ -4506,7 +4506,6 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     return GRN_INVALID_ARGUMENT;
   }
   if (grn_io_lock(ctx, ii->seg, 10000000)) { return ctx->rc; }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "<%x:%x>ii_lock> c=%p", ctx, grn_gtick, ii->chunk);
   if (new) {
     switch (new->header.type) {
     case GRN_BULK :
@@ -4634,7 +4633,6 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     }
   }
 exit :
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "<%x:%x>ii_lock< c=%p", ctx, grn_gtick, ii->chunk);
   grn_io_unlock(ii->seg);
   if (old && old != oldvalue) { grn_obj_close(ctx, old); }
   if (new && new != newvalue) { grn_obj_close(ctx, new); }

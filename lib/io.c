@@ -1310,7 +1310,7 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
     }
   }
   if (n) {
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "<%x:%x> expired i=%p max=%d (%d/%d)",
+    GRN_LOG(ctx, GRN_LOG_INFO, "<%x:%x> expired i=%p max=%d (%d/%d)",
             ctx, grn_gtick, io, io->max_map_seg, n, ln);
   }
   return n;
