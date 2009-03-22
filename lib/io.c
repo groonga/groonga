@@ -364,8 +364,7 @@ grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai, uint32_t l
   }
   if (*sp) {
     uint32_t pseg = *sp - 1;
-    GRN_IO_SEG_REF(io, pseg, *p);
-    if (*p) { GRN_IO_SEG_UNREF(io, pseg); };
+    GRN_IO_SEG_MAP(io, pseg, *p);
   }
 }
 
@@ -1114,7 +1113,7 @@ grn_io_win_unmap(grn_io_win *iw)
       if (iw->segment >= io->header->max_segment) {
         rc = GRN_INVALID_ARGUMENT;
       } else {
-        GRN_IO_SEG_UNREF(io, iw->segment);
+        //GRN_IO_SEG_UNREF(io, iw->segment);
       }
 #ifdef USE_AIO
       if (grn_aio_enabled) {
@@ -1289,47 +1288,6 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
   SEG_MAP(io, segno, info);
 }
 
-// deprecated
-grn_rc
-grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
-{
-  uint32_t retry, *pnref;
-  grn_io_mapinfo *info;
-  if (!io->maps || segno >= io->header->max_segment) { return GRN_INVALID_ARGUMENT; }
-  info = &io->maps[segno];
-  /* pnref = &io->nrefs[segno]; */
-  pnref = &info->nref;
-  for (retry = 0;; retry++) {
-    uint32_t nref;
-    GRN_ATOMIC_ADD_EX(pnref, 1, nref);
-    if (nref) {
-      GRN_ATOMIC_ADD_EX(pnref, -1, nref);
-      if (retry >= GRN_IO_MAX_RETRY) {
-        GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected! in grn_io_seg_expire(%p, %u, %u)", io, segno, nref);
-        return GRN_RESOURCE_DEADLOCK_AVOIDED;
-      }
-    } else {
-      GRN_ATOMIC_ADD_EX(pnref, GRN_IO_MAX_REF, nref);
-      if (nref > 1) {
-        GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
-        if (retry >= GRN_IO_MAX_RETRY) {
-          GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!! in grn_io_seg_expire(%p, %u, %u)", io, segno, nref);
-          return GRN_RESOURCE_DEADLOCK_AVOIDED;
-        }
-      } else {
-        uint32_t nmaps;
-        GRN_MUNMAP(&grn_gctx, &info->fmo, info->map, io->header->segment_size);
-        info->map = NULL;
-        GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
-        GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
-        return GRN_SUCCESS;
-      }
-    }
-    if (retry >= nretry) { return GRN_RESOURCE_DEADLOCK_AVOIDED; }
-    usleep(1000);
-  }
-}
-
 uint32_t
 grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
 {
@@ -1351,8 +1309,10 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
       }
     }
   }
-  GRN_LOG(ctx, GRN_LOG_INFO, "expired:%08x max=%d (%d/%d)",
-          grn_gtick, io->max_map_seg, n, ln);
+  if (n) {
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "<%x:%x> expired i=%p max=%d (%d/%d)",
+            ctx, grn_gtick, io, io->max_map_seg, n, ln);
+  }
   return n;
 }
 

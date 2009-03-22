@@ -331,8 +331,6 @@ void grn_free(grn_ctx *ctx, void *ptr, const char* file, int line);
 
 void grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func);
 
-void grn_index_expire(void);
-
 /**** grn_ctx ****/
 
 extern grn_ctx grn_gctx;

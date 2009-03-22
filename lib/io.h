@@ -117,8 +117,6 @@ void *grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
 grn_rc grn_io_win_mapv(grn_io_win **list, grn_ctx *ctx, int nent);
 grn_rc grn_io_win_unmap(grn_io_win *iw);
 
-grn_rc grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry);
-
 void *grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
                       uint32_t offset, uint32_t size, grn_io_rw_mode mode);
 grn_rc grn_io_win_unmap2(grn_io_win *iw);
@@ -146,71 +144,9 @@ grn_rc grn_io_write_ja(grn_io *io, grn_ctx *ctx,
 grn_rc grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
                              uint32_t segment, uint32_t offset, uint32_t value_len);
 
-#define GRN_IO_MAX_REF 0x80000000
 #define GRN_IO_MAX_RETRY 0x10000
 
 void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info);
-
-/* arguments must be validated by caller;
- * io mustn't be NULL;
- * segno must be in valid range;
- * addr must be set NULL;
- */
-// deprecated
-#define GRN_IO_SEG_REF(io,segno,addr) {\
-  uint32_t retry;\
-  grn_io_mapinfo *info = &(io)->maps[segno];\
-  /* uint32_t *pnref = &(io)->nrefs[segno]; */\
-  uint32_t *pnref = &info->nref;\
-  for (retry = 0;; retry++) {\
-    uint32_t nref;\
-    GRN_ATOMIC_ADD_EX(pnref, 1, nref);\
-    if (nref >= GRN_IO_MAX_REF) {\
-      GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
-      if (retry >= GRN_IO_MAX_RETRY) {\
-	GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
-        *pnref = 0; /* force reset */ \
-	break;\
-      }\
-      usleep(1000);\
-      continue;\
-    }\
-    if (nref > 10000) {\
-      GRN_LOG(ctx, GRN_LOG_ALERT, "strange nref value! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
-    }\
-    if (!info->map) {\
-      if (nref) {\
-	GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
-	if (retry >= GRN_IO_MAX_RETRY) {\
-	  GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
-	  break;\
-	}\
-	usleep(1000);\
-	continue;\
-      } else {\
-	grn_io_seg_map_(ctx, io, segno, info);\
-        if (!info->map) {\
-          GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
-          GRN_LOG(ctx, GRN_LOG_CRIT, "mmap failed!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
-        }\
-      }\
-    }\
-    addr = info->map;\
-    break;\
-  }\
-}
-
-/* arguments must be validated by caller;
- * io mustn't be NULL;
- * segno must be in valid range;
- */
-// deprecated
-#define GRN_IO_SEG_UNREF(io,segno) {\
-  uint32_t nref;\
-  /* uint32_t *pnref = &(io)->nrefs[segno]; */\
-  uint32_t *pnref = &(io)->maps[segno].nref;\
-  GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
-}
 
 /* simply map segment to addr.
    it can't be used with ref/unref/expire */

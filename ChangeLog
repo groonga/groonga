@@ -1,3 +1,7 @@
+2009-03-22  Poe MORITA  <morita at razil.jp>
+
+	* lib/io.h (GRN_IO_SEG_REF): cut off.
+
 2009-03-21  Poe MORITA  <morita at razil.jp>
 
 	* lib/ii.c (lexicon_delete): disabled.

@@ -88,7 +88,6 @@ int grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b);
 
 uint32_t grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, uint32_t key);
 
-void grn_ii_seg_expire(grn_ctx *ctx, grn_ii *ii, int32_t threshold);
 void grn_ii_expire(grn_ctx *ctx, grn_ii *ii);
 
 typedef struct {
