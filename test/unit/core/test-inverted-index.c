@@ -271,7 +271,7 @@ test_open_invalid_segment_file(void)
   grn_io *io;
   gchar *id_string;
 
-  io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, GRN_IO_WO_NREF);
+  io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, 0);
   cut_assert_not_null(io);
   id_string = grn_io_header(io);
   strcpy(id_string, "WRONG-ID");
@@ -293,14 +293,14 @@ test_open_invalid_chunk_file(void)
   grn_io *io;
   gchar *id_string;
 
-  io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, GRN_IO_WO_NREF);
+  io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, 0);
   cut_assert_not_null(io);
   id_string = grn_io_header(io);
   strcpy(id_string, "WRONG-ID");
   grn_io_close(context, io);
 
   io = grn_io_create(context, cut_take_printf("%s.c", path),
-                     10, 10, 10, grn_io_auto, GRN_IO_WO_SEGREF);
+                     10, 10, 10, grn_io_auto, 0);
   cut_assert_not_null(io);
   grn_io_close(context, io);
 

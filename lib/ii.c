@@ -3087,14 +3087,14 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer)) { return NULL; }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
   seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
-                      S_SEGMENT, MAX_LSEG, grn_io_auto, GRN_IO_WO_NREF);
+                      S_SEGMENT, MAX_LSEG, grn_io_auto, 0);
   if (!seg) { return NULL; }
   if (path) {
     strcpy(path2, path);
     strcat(path2, ".c");
-    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, MAX_CHUNK, grn_io_auto, GRN_IO_WO_NREF);
+    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, MAX_CHUNK, grn_io_auto, 0);
   } else {
-    chunk = grn_io_create(ctx, NULL, 0, S_CHUNK, MAX_CHUNK, grn_io_auto, GRN_IO_WO_NREF);
+    chunk = grn_io_create(ctx, NULL, 0, S_CHUNK, MAX_CHUNK, grn_io_auto, 0);
   }
   if (!chunk) {
     grn_io_close(ctx, seg);

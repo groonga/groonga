@@ -87,7 +87,6 @@ struct _grn_io {
   struct _grn_io_header *header;
   byte *user_header;
   grn_io_mapinfo *maps;
-  uint32_t *nrefs;
   uint32_t base;
   uint32_t base_seg;
   grn_io_mode mode;
@@ -99,9 +98,6 @@ struct _grn_io {
   uint8_t flags;
   uint32_t *lock;
 };
-
-#define GRN_IO_WO_SEGREF 1
-#define GRN_IO_WO_NREF   2
 
 grn_io *grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
 		      uint32_t max_segment, grn_io_mode mode, unsigned int flags);

@@ -134,9 +134,6 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
   uint32_t total_header_size;
   io_header *header;
   total_header_size = IO_HEADER_SIZE + header_size;
-  if (!(flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF))) {
-    total_header_size += max_segment * sizeof(uint32_t);
-  }
   b = (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
   if ((header = (io_header *)GRN_MMAP(&grn_gctx, NULL, NULL, 0, b))) {
     header->header_size = header_size;
@@ -148,17 +145,10 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
     memcpy(header->idstr, GRN_IO_IDSTR, 16);
     if ((io = GRN_GMALLOCN(grn_io, 1))) {
       grn_io_mapinfo *maps = NULL;
-      if ((flags & GRN_IO_WO_SEGREF) ||
-          ((maps = GRN_GMALLOCN(grn_io_mapinfo, max_segment)) &&
+      if (((maps = GRN_GMALLOCN(grn_io_mapinfo, max_segment)) &&
            memset(maps, 0, sizeof(grn_io_mapinfo) * max_segment))) {
         io->header = header;
-        if (flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF)) {
-          io->nrefs = NULL;
-          io->user_header = (((byte *) header) + IO_HEADER_SIZE);
-        } else {
-          io->nrefs = (uint32_t *)(((byte *) header) + IO_HEADER_SIZE);
-          io->user_header = ((byte *) io->nrefs) + max_segment * sizeof(uint32_t);
-        }
+        io->user_header = (((byte *) header) + IO_HEADER_SIZE);
         io->maps = maps;
         io->base = b;
         io->base_seg = 0;
@@ -194,9 +184,6 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   }
   if (!*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   total_header_size = IO_HEADER_SIZE + header_size;
-  if (!(flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF))) {
-    total_header_size += max_segment * sizeof(uint32_t);
-  }
   b = (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
   bs = (b + segment_size - 1) / segment_size;
   max_nfiles = (unsigned int)(
@@ -216,18 +203,11 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
         grn_msync(ctx, header, b);
         if ((io = GRN_GMALLOCN(grn_io, 1))) {
           grn_io_mapinfo *maps = NULL;
-          if ((flags & GRN_IO_WO_SEGREF) ||
-              ((maps = GRN_GMALLOCN(grn_io_mapinfo, max_segment)) &&
+          if (((maps = GRN_GMALLOCN(grn_io_mapinfo, max_segment)) &&
                memset(maps, 0, sizeof(grn_io_mapinfo) * max_segment))) {
             strncpy(io->path, path, PATH_MAX);
             io->header = header;
-            if (flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF)) {
-              io->nrefs = NULL;
-              io->user_header = (((byte *) header) + IO_HEADER_SIZE);
-            } else {
-              io->nrefs = (uint32_t *)(((byte *) header) + IO_HEADER_SIZE);
-              io->user_header = ((byte *) io->nrefs) + max_segment * sizeof(uint32_t);
-            }
+            io->user_header = (((byte *) header) + IO_HEADER_SIZE);
             io->maps = maps;
             io->base = b;
             io->base_seg = bs;
@@ -433,9 +413,6 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     if (!segment_size) { return NULL; }
   }
   total_header_size = IO_HEADER_SIZE + header_size;
-  if (!(flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF))) {
-    total_header_size += max_segment * sizeof(uint32_t);
-  }
   b = (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
   bs = (b + segment_size - 1) / segment_size;
   max_nfiles = (unsigned int)(
@@ -448,18 +425,11 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     if ((header = GRN_MMAP(&grn_gctx, &fis->fmo, fis, 0, b))) {
       if ((io = GRN_GMALLOC(sizeof(grn_io)))) {
         grn_io_mapinfo *maps = NULL;
-        if ((header->flags & GRN_IO_WO_SEGREF) ||
-            (maps = GRN_GCALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
+        if ((maps = GRN_GCALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
           strncpy(io->path, path, PATH_MAX);
           io->header = header;
-          if (header->flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF)) {
-            io->nrefs = NULL;
-            io->user_header = (((byte *) header) + IO_HEADER_SIZE);
-          } else {
-            io->nrefs = (uint32_t *)(((byte *) header) + IO_HEADER_SIZE);
-            io->user_header = ((byte *) io->nrefs) + max_segment * sizeof(uint32_t);
-          }
-          if ((header->flags & (GRN_IO_WO_SEGREF|GRN_IO_WO_NREF)) || io->nrefs) {
+          io->user_header = (((byte *) header) + IO_HEADER_SIZE);
+          {
             io->maps = maps;
             io->base = b;
             io->base_seg = bs;
