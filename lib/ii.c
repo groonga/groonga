@@ -3059,14 +3059,6 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
 
 /* ii */
 
-#define GRN_GET(path,ii) {\
-  grn_cell *obj = grn_get(path);\
-  if (obj != F) {\
-    obj->header.type = GRN_COLUMN_INDEX;\
-    obj->u.b.value = (char *) ii;\
-  }\
-}
-
 grn_ii *
 grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
 {
@@ -3087,12 +3079,13 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer)) { return NULL; }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
   seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
-                      S_SEGMENT, MAX_LSEG, grn_io_auto, 0);
+                      S_SEGMENT, MAX_LSEG, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
   if (!seg) { return NULL; }
   if (path) {
     strcpy(path2, path);
     strcat(path2, ".c");
-    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, MAX_CHUNK, grn_io_auto, 0);
+    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, MAX_CHUNK, grn_io_auto,
+                          GRN_IO_EXPIRE_SEGMENT);
   } else {
     chunk = grn_io_create(ctx, NULL, 0, S_CHUNK, MAX_CHUNK, grn_io_auto, 0);
   }
@@ -3128,7 +3121,6 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   if ((flags & GRN_OBJ_WITH_SECTION)) { ii->n_elements++; }
   if ((flags & GRN_OBJ_WITH_WEIGHT)) { ii->n_elements++; }
   if ((flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements++; }
-  GRN_GET(path,ii);
   return ii;
 }
 
@@ -3189,7 +3181,6 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   if ((header->flags & GRN_OBJ_WITH_SECTION)) { ii->n_elements++; }
   if ((header->flags & GRN_OBJ_WITH_WEIGHT)) { ii->n_elements++; }
   if ((header->flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements++; }
-  GRN_GET(path,ii);
   return ii;
 }
 

@@ -40,7 +40,8 @@ grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
   for (actual_size = 1; actual_size < element_size; actual_size *= 2) ;
   max_segments = ((GRN_ID_MAX + 1) / GRN_RA_SEGMENT_SIZE) * actual_size;
   io = grn_io_create(ctx, path, sizeof(struct grn_ra_header),
-                     GRN_RA_SEGMENT_SIZE, max_segments, grn_io_auto, 0);
+                     GRN_RA_SEGMENT_SIZE, max_segments, grn_io_auto,
+                     GRN_IO_EXPIRE_SEGMENT);
   if (!io) { return NULL; }
   header = grn_io_header(io);
   grn_io_set_type(io, GRN_COLUMN_FIX_SIZE);
@@ -256,7 +257,8 @@ grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uin
   grn_ja *ja = NULL;
   struct grn_ja_header *header;
   io = grn_io_create(ctx, path, sizeof(struct grn_ja_header),
-                     JA_SEGMENT_SIZE, JA_N_DSEGMENTS, grn_io_auto, 0);
+                     JA_SEGMENT_SIZE, JA_N_DSEGMENTS, grn_io_auto,
+                     GRN_IO_EXPIRE_SEGMENT);
   if (!io) { return NULL; }
   grn_io_set_type(io, GRN_COLUMN_VAR_SIZE);
   header = grn_io_header(io);

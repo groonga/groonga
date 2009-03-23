@@ -99,6 +99,9 @@ struct _grn_io {
   uint32_t *lock;
 };
 
+#define GRN_IO_EXPIRE_WHOLE            (0x01)
+#define GRN_IO_EXPIRE_SEGMENT          (0x02)
+
 grn_io *grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
 		      uint32_t max_segment, grn_io_mode mode, unsigned int flags);
 grn_io *grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode);

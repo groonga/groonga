@@ -29,6 +29,7 @@
 #include "ctx.h"
 #include "io.h"
 #include "hash.h"
+#include "ql.h"
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 
@@ -170,6 +171,25 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
   return NULL;
 }
 
+static void
+grn_io_register(grn_io *io)
+{
+  if (io->fis &&
+      (io->flags == GRN_IO_EXPIRE_WHOLE || io->flags == GRN_IO_EXPIRE_SEGMENT)) {
+    grn_cell *obj = grn_get(io->path);
+    if (obj != F) { obj->u.p.value = (grn_obj *)io; }
+  }
+}
+
+static void
+grn_io_unregister(grn_io *io)
+{
+  if (io->fis &&
+      (io->flags == GRN_IO_EXPIRE_WHOLE || io->flags == GRN_IO_EXPIRE_SEGMENT)) {
+    grn_del(io->path);
+  }
+}
+
 grn_io *
 grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
               uint32_t max_segment, grn_io_mode mode, uint32_t flags)
@@ -220,6 +240,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
             io->count = 0;
             io->flags = 0;
             io->lock = &header->lock;
+            grn_io_register(io);
             return io;
           }
           GRN_GFREE(io);
@@ -281,7 +302,8 @@ array_init(grn_io *io, int n_arrays)
 }
 
 grn_io *
-grn_io_create_with_array(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
+grn_io_create_with_array(grn_ctx *ctx, const char *path,
+                         uint32_t header_size, uint32_t segment_size,
                          grn_io_mode mode, int n_arrays, grn_io_array_spec *array_specs)
 {
   if (n_arrays) {
@@ -297,7 +319,7 @@ grn_io_create_with_array(grn_ctx *ctx, const char *path, uint32_t header_size, u
       msize += sizeof(void *) * array_specs[i].max_n_segments;
     }
     if ((io = grn_io_create(ctx, path, header_size + hsize,
-                            segment_size, nsegs, mode, 0))) {
+                            segment_size, nsegs, mode, GRN_IO_EXPIRE_WHOLE))) {
       hp = io->user_header;
       memcpy(hp, array_specs, sizeof(grn_io_array_spec) * n_arrays);
       io->header->n_arrays = n_arrays;
@@ -442,6 +464,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
             io->flags = 0;
             io->lock = &header->lock;
             if (!array_init(io, io->header->n_arrays)) {
+              grn_io_register(io);
               return io;
             }
           }
@@ -469,6 +492,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
   unsigned int max_nfiles = (unsigned int)(
     ((uint64_t)segment_size * (max_segment + bs) + GRN_IO_FILE_SIZE - 1)
     / GRN_IO_FILE_SIZE);
+  grn_io_unregister(io);
   if (io->ainfo) { GRN_GFREE(io->ainfo); }
   if (io->maps) {
     for (mi = io->maps, i = max_segment; i; mi++, i--) {
