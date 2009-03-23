@@ -15,6 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #ifndef GROONGA_IN_H
 #define GROONGA_IN_H
 
@@ -22,7 +23,9 @@
 #define _GNU_SOURCE
 #endif /* __GNUC__ */
 
+#ifndef WIN32
 #include "config.h"
+#endif /* WIN32 */
 
 #ifdef USE_AIO
 /* #define __USE_XOPEN2K 1 */
@@ -69,59 +72,66 @@
 
 #ifdef WIN32
 
-# pragma warning(disable: 4996)
-# include <io.h>
-# include <basetsd.h>
-# include <process.h>
-# include <winsock2.h>
-# include <windows.h>
-# include <stddef.h>
-# include <windef.h>
-# include <float.h>
-# define PATH_MAX (MAX_PATH - 1)
-# define inline _inline
-# define snprintf _snprintf
-# define vsnprintf _vsnprintf
-# define unlink _unlink
-# define open _open
-# define lseek _lseek
-# define read _read
-# define getpid _getpid
-# if _MSC_VER < 1400
-#  define fstat _fstat
-# endif /* _MSC_VER < 1400 */
-# define write _write
-# define close _close
-# define usleep Sleep
-# define sleep(x) Sleep((x) * 1000)
-# define uint8_t UINT8
-# define int8_t INT8
-# define int_least8_t INT8
-# define uint_least8_t UINT8
-# define int16_t INT16
-# define uint16_t UINT16
-# define int32_t INT32
-# define uint32_t UINT32
-# define int64_t INT64
-# define uint64_t UINT64
-# define ssize_t SSIZE_T
-# undef MSG_WAITALL
-# define MSG_WAITALL 0
-# define PATH_SEPARATOR "\\"
-# define fpclassify _fpclass
-# define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
-# define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
-# define SHUT_RDWR SD_BOTH
+#define GRN_API __declspec(dllexport)
 
-# define islessgreater(x,y)  (!_isnan(x) && !_isnan(y) && ((x) < (y) || (x) > (y)))
-# define isless(x,y)         (!_isnan(x) && !_isnan(y) && ((x) < (y)))
-# define isgreater(x,y)      (!_isnan(x) && !_isnan(y) && ((x) > (y)))
+#pragma warning(disable: 4996)
+#include <io.h>
+#include <basetsd.h>
+#include <process.h>
+#include <winsock2.h>
+#include <windows.h>
+#include <stddef.h>
+#include <windef.h>
+#include <float.h>
+#include <sys/types.h>
+#define PATH_MAX (MAX_PATH - 1)
+#define inline _inline
+#define snprintf _snprintf
+#if _MSC_VER < 1500
+  #define vsnprintf _vsnprintf
+#endif /* _MSC_VER < 1500 */
+#define unlink _unlink
+#define open _open
+#define lseek _lseek
+#define read _read
+#define getpid _getpid
+#if _MSC_VER < 1400
+# define fstat _fstat
+#endif /* _MSC_VER < 1400 */
+#define write _write
+#define close _close
+#define usleep Sleep
+#define sleep(x) Sleep((x) * 1000)
+#define uint8_t UINT8
+#define int8_t INT8
+#define int_least8_t INT8
+#define uint_least8_t UINT8
+#define int16_t INT16
+#define uint16_t UINT16
+#define int32_t INT32
+#define uint32_t UINT32
+#define int64_t INT64
+#define uint64_t UINT64
+#define ssize_t SSIZE_T
+#undef MSG_WAITALL
+#define MSG_WAITALL 0
+#define PATH_SEPARATOR "\\"
+#define fpclassify _fpclass
+#define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
+#define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
+#define SHUT_RDWR SD_BOTH
+
+#define islessgreater(x,y)  (!_isnan(x) && !_isnan(y) && ((x) < (y) || (x) > (y)))
+#define isless(x,y)         (!_isnan(x) && !_isnan(y) && ((x) < (y)))
+#define isgreater(x,y)      (!_isnan(x) && !_isnan(y) && ((x) > (y)))
 typedef SOCKET grn_sock;
-# define grn_sock_close closesocket
+#define grn_sock_close closesocket
 
-# define CALLBACK __stdcall
+#define CALLBACK __stdcall
 
 #else /* WIN32 */
+
+#define GROONGA_API
 
 # ifndef PATH_MAX
 #  if defined(MAXPATHLEN)

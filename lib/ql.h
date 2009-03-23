@@ -32,6 +32,10 @@
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE
 #endif /* _ISOC99_SOURCE */
+#if WIN32
+#define _USE_MATH_DEFINES
+#endif /* WIN32 */
+
 #include <math.h>
 
 #ifdef __cplusplus

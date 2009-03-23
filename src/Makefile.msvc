@@ -1,0 +1,50 @@
+CC = cl.exe
+CXXC = cl.exe
+LINK=link.exe
+CFLAGS = /nologo /Ox /W3 /MT /Zi
+# for debug, use /Od option
+# for getting preprocessed source, use /P option
+LDFLAGS = /nologo /MACHINE:X86 /DYNAMICBASE /OPT:REF /OPT:ICF /NXCOMPAT ADVAPI32.LIB libmecab.lib ws2_32.lib
+# for Win64 use /MACHINE:X64
+
+DEFS =  -D_CRT_SECURE_NO_DEPRECATE \
+        -DWIN32 \
+        -DDLL_EXPORT \
+        -DNO_LZO \
+        -DNO_ZLIB \
+        -DUSE_SELECT \
+        -DGROONGA_DEFAULT_ENCODING="\"euc-jp\"" \
+        -DGROONGA_INITIAL_N_SEGMENTS="512" \
+        -DGROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="0" \
+        -DGROONGA_LOG_PATH="\"c:\\groonga\\log\\groonga.log\""
+#        -DPACKAGE="\"@PACKAGE@\"" \
+#        -DVERSION="\"@VERSION@\"" \
+DEL = del
+
+OBJ = \
+  ..\lib\com.obj \
+  ..\lib\ctx.obj \
+  ..\lib\db.obj \
+  ..\lib\hash.obj \
+  ..\lib\ii.obj \
+  ..\lib\io.obj \
+  ..\lib\nfkc.obj \
+  ..\lib\pat.obj \
+  ..\lib\ql.obj \
+  ..\lib\query.obj \
+  ..\lib\scm.obj \
+  ..\lib\snip.obj \
+  ..\lib\store.obj \
+  ..\lib\str.obj \
+  ..\lib\token.obj
+
+.c.obj:
+	$(CC) $(CFLAGS) $(DEFS) -c  $<
+
+all: groonga
+
+groonga: $(OBJ) groonga.obj
+	$(LINK) $(LDFLAGS) /out:$@.exe $(OBJ) groonga.obj
+
+clean:
+	$(DEL) *.obj *.exe *.pdb *.exp *.i
