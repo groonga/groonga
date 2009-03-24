@@ -1,5 +1,10 @@
 2009-03-24  Tasuku SUENAGA <a at razil.jp>
 
+	* lib/groonga_in.h: renamed grn_uyield_cnt to grn_uyield_count.
+	* lib/ctx.c: renamed grn_uyield_cnt to grn_uyield_count.
+
+2009-03-24  Tasuku SUENAGA <a at razil.jp>
+
 	* configure.ac: added micro yielding option --enable-uyield. Thanks to Mikio Hirabayashi.
 	* lib/groonga_in.h: added macros for --enable-uyield.
 	* lib/ctx.c: added grn_uyield_cnt for --enable-uyield.

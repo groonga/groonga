@@ -196,12 +196,12 @@ typedef pthread_key_t grn_thread_key;
 #define THREAD_GETSPECIFIC pthread_getspecific
 
 #if USE_UYIELD
-  extern int grn_uyield_cnt;
+  extern int grn_uyield_count;
   #define GRN_TESTYIELD() \
     do { \
-      if (((++grn_uyield_cnt) & (0x20 - 1)) == 0) { \
+      if (((++grn_uyield_count) & (0x20 - 1)) == 0) { \
         sched_yield(); \
-        if(grn_uyield_cnt > 0x1000) grn_uyield_cnt = (uint32_t)time(NULL) % 0x1000; \
+        if(grn_uyield_count > 0x1000) grn_uyield_count = (uint32_t)time(NULL) % 0x1000; \
       } \
     } while(false)
   #undef assert
@@ -214,9 +214,9 @@ typedef pthread_key_t grn_thread_key;
       TCTESTYIELD(); \
     } while (false)
   #define if(if_cond) \
-    if ((((++grn_uyield_cnt) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (if_cond))
+    if ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (if_cond))
   #define while(while_cond) \
-    while ((((++grn_uyield_cnt) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (while_cond))
+    while ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (while_cond))
 
   #if !defined(_POSIX_PRIORITY_SCHEDULING)
   #define sched_yield() usleep(1000 * 20)

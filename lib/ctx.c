@@ -40,7 +40,7 @@ grn_mutex grn_glock;
 uint32_t grn_gtick;
 
 #ifdef USE_UYIELD
-int grn_uyield_cnt;
+int grn_uyield_count;
 #endif
 
 /* fixme by 2038 */
