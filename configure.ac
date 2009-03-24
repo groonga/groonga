@@ -211,13 +211,6 @@ if test "x$enable_dynamic_malloc_change" = "xyes"; then
             [Define to 1 if you enable dynamic malloc change])
 fi
 
-# libmyigroonga
-AC_ARG_WITH(mysqlsrc,
-  [AC_HELP_STRING([--with-mysqlsrc=DIR],
-    [specify MySQL source dictionary.])],
-  MYSQL_SRCDIR="$withval")
-AC_SUBST(MYSQL_SRCDIR)
-
 # epoll/poll/select check
 AC_CHECK_HEADER(sys/epoll.h, [
   AC_CHECK_FUNC(epoll_create, [
