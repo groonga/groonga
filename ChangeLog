@@ -1,5 +1,14 @@
 2009-03-24  Tasuku SUENAGA <a at razil.jp>
 
+	* configure.ac: added micro yielding option --enable-uyield. Thanks to Mikio Hirabayashi.
+	* lib/groonga_in.h: added macros for --enable-uyield.
+	* lib/ctx.c: added grn_uyield_cnt for --enable-uyield.
+	* lib/com.c: changed a while condition for --enable-uyield.
+	* lib/ql.c: changed a while condition for --enable-uyield.
+	* src/groonga.c: changed a while condition for --enable-uyield.
+
+2009-03-24  Tasuku SUENAGA <a at razil.jp>
+
 	* configure.ac: removed libmyigroonga.
 
 2009-03-24  Poe MORITA  <morita at razil.jp>
