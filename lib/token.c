@@ -478,15 +478,38 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
         if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
       }
     }
-    switch (table->header.type) {
-    case GRN_TABLE_PAT_KEY :
-      tid = grn_pat_lookup(ctx, (grn_pat *)table, token->curr, token->curr_size,
-                           NULL, &token->flags);
-      break;
-    case GRN_TABLE_HASH_KEY :
-      tid = grn_hash_lookup(ctx, (grn_hash *)table, token->curr, token->curr_size,
-                            NULL, &token->flags);
-      break;
+    if (token->flags & GRN_TABLE_ADD) {
+      switch (table->header.type) {
+      case GRN_TABLE_PAT_KEY :
+        if (grn_io_lock(ctx, ((grn_pat *)table)->io, 10000000)) {
+          tid = GRN_ID_NIL;
+        } else {
+          tid = grn_pat_lookup(ctx, (grn_pat *)table, token->curr, token->curr_size,
+                               NULL, &token->flags);
+          grn_io_unlock(((grn_pat *)table)->io);
+        }
+        break;
+      case GRN_TABLE_HASH_KEY :
+        if (grn_io_lock(ctx, ((grn_hash *)table)->io, 10000000)) {
+          tid = GRN_ID_NIL;
+        } else {
+          tid = grn_hash_lookup(ctx, (grn_hash *)table, token->curr, token->curr_size,
+                                NULL, &token->flags);
+          grn_io_unlock(((grn_hash *)table)->io);
+        }
+        break;
+      }
+    } else {
+      switch (table->header.type) {
+      case GRN_TABLE_PAT_KEY :
+        tid = grn_pat_lookup(ctx, (grn_pat *)table, token->curr, token->curr_size,
+                             NULL, &token->flags);
+        break;
+      case GRN_TABLE_HASH_KEY :
+        tid = grn_hash_lookup(ctx, (grn_hash *)table, token->curr, token->curr_size,
+                              NULL, &token->flags);
+        break;
+      }
     }
     if (tid == GRN_ID_NIL) { token->status = grn_token_not_found; }
     token->pos++;

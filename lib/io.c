@@ -1286,22 +1286,55 @@ uint32_t
 grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
 {
   uint32_t m, n = 0, ln = io->nmaps;
-  if (io && io->maps) {
-    grn_io_mapinfo *info = io->maps;
-    for (m = io->max_map_seg; n < limit && m; info++, m--) {
-      if (info->map && (grn_gtick - info->count) > count_thresh) {
-        uint32_t nmaps, nref, *pnref = &info->nref;
-        GRN_ATOMIC_ADD_EX(pnref, 1, nref);
-        if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
-          GRN_MUNMAP(&grn_gctx, &info->fmo, info->map, io->header->segment_size);
-          GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
-          info->map = NULL;
-          info->count = grn_gtick;
-          n++;
+  switch (io->flags) {
+  case GRN_IO_EXPIRE_WHOLE :
+    {
+      uint32_t nmaps, nref, *pnref = &io->nref;
+      GRN_ATOMIC_ADD_EX(pnref, 1, nref);
+      if (!nref && grn_gtick - io->count > count_thresh) {
+        uint32_t i = io->header->n_arrays;
+        grn_io_mapinfo *info = io->maps;
+        grn_io_array_spec *array_specs = (grn_io_array_spec *)io->user_header;
+        while (i--) {
+          memset(io->ainfo[i].addrs, 0, sizeof(void *) * array_specs[i].max_n_segments);
         }
-        GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+        for (m = io->max_map_seg; m; info++, m--) {
+          if (info->map) {
+            uint32_t nmaps, nref, *pnref = &info->nref;
+            GRN_ATOMIC_ADD_EX(pnref, 1, nref);
+            if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
+              GRN_MUNMAP(&grn_gctx, &info->fmo, info->map, io->header->segment_size);
+              GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
+              info->map = NULL;
+              info->count = grn_gtick;
+              n++;
+            }
+            GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+          }
+        }
+      }
+      GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+    }
+    break;
+  case GRN_IO_EXPIRE_SEGMENT :
+    {
+      grn_io_mapinfo *info = io->maps;
+      for (m = io->max_map_seg; n < limit && m; info++, m--) {
+        if (info->map && (grn_gtick - info->count) > count_thresh) {
+          uint32_t nmaps, nref, *pnref = &info->nref;
+          GRN_ATOMIC_ADD_EX(pnref, 1, nref);
+          if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
+            GRN_MUNMAP(&grn_gctx, &info->fmo, info->map, io->header->segment_size);
+            GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
+            info->map = NULL;
+            info->count = grn_gtick;
+            n++;
+          }
+          GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+        }
       }
     }
+    break;
   }
   if (n) {
     GRN_LOG(ctx, GRN_LOG_INFO, "<%x:%x> expired i=%p max=%d (%d/%d)",

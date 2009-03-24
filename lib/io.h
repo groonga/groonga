@@ -94,6 +94,7 @@ struct _grn_io {
   grn_io_array_info *ainfo;
   uint32_t max_map_seg;
   uint32_t nmaps;
+  uint32_t nref;
   uint32_t count;
   uint8_t flags;
   uint32_t *lock;

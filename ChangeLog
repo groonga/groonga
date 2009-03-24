@@ -1,3 +1,7 @@
+2009-03-24  Poe MORITA  <morita at razil.jp>
+
+	* lib/token.c (grn_token_next): lock updating lexicons.
+
 2009-03-23  Poe MORITA  <morita at razil.jp>
 
 	* lib/io.h (GRN_IO_EXPIRE_WHOLE, GRN_IO_EXPIRE_SEGMENT): add.
