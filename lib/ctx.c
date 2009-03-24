@@ -39,6 +39,10 @@ int grn_pagesize;
 grn_mutex grn_glock;
 uint32_t grn_gtick;
 
+#ifdef USE_UYIELD
+int grn_uyield_cnt;
+#endif
+
 /* fixme by 2038 */
 
 grn_rc

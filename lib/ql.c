@@ -491,7 +491,7 @@ ha_sections(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         grn_cell *w = INTERN(":weight");
         grn_cell *v = INTERN(":value");
         res = NIL;
-        while (vp--, n--) {
+        while ((vp--, n--)) {
           grn_cell *vs = NIL;
           if (vp->weight || vp->domain) {
             vs = CONS(v, CONS(grn_ql_mk_string(ctx, head + vp->offset, vp->length), vs));

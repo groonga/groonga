@@ -73,7 +73,7 @@ do_alone(char *path)
     if (buf) {
       grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
       grn_ql_load(ctx, NULL);
-      while (prompt(), fgets(buf, BUFSIZE, stdin)) {
+      while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
         uint32_t size = strlen(buf) - 1;
         buf[size] = '\0';
         grn_ql_send(ctx, buf, size, 0);
@@ -115,8 +115,8 @@ do_client(char *hostname)
     grn_ql_info_get(ctx, &info);
     if (!grn_bulk_reinit(ctx, info.outbuf, BUFSIZE)) {
       if (batchmode) { BATCHMODE(ctx); }
-      while (prompt(), fgets(GRN_BULK_HEAD(info.outbuf),
-                             GRN_BULK_WSIZE(info.outbuf), stdin)) {
+      while ((prompt(), fgets(GRN_BULK_HEAD(info.outbuf),
+                              GRN_BULK_WSIZE(info.outbuf), stdin))) {
         int flags;
         char *str;
         unsigned int str_len;

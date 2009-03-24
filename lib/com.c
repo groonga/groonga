@@ -355,7 +355,7 @@ grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
     msg_iov[0].iov_len = sizeof(grn_com_gqtp_header);
     msg_iov[1].iov_base = body;
     msg_iov[1].iov_len = size;
-    while (errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1) {
+    while ((errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1)) {
       SERR("sendmsg");
       if (errno == EAGAIN || errno == EINTR) { continue; }
       cs->rc = ctx->rc;
@@ -363,7 +363,7 @@ grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
     }
 #endif /* WIN32 */
   } else {
-    while (errno = 0, (ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
+    while ((errno = 0, (ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1)) {
 #ifdef WIN32
       int e = WSAGetLastError();
       SERR("send");
@@ -489,7 +489,7 @@ grn_com_gqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
       SERR("setsockopt");
     }
   }
-  while (errno = 0, connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1) {
+  while ((errno = 0, connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1)) {
 #ifdef WIN32
     if (WSAGetLastError() == WSAECONNREFUSED)
 #else /* WIN32 */
@@ -684,7 +684,7 @@ grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
     msg_iov[0].iov_len = sizeof(grn_com_gqtp_header);
     msg_iov[1].iov_base = GRN_BULK_HEAD(body);
     msg_iov[1].iov_len = size;
-    while (errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1) {
+    while ((errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1)) {
       SERR("sendmsg");
       if (errno == EAGAIN || errno == EINTR) { continue; }
       cs->rc = ctx->rc;

@@ -162,6 +162,18 @@ fi
 m4_ifdef([AC_CHECK_COVERAGE], [AC_CHECK_COVERAGE])
 GENHTML_OPTIONS="--title 'Groonga Code Coverage'"
 
+# microyield
+AC_MSG_CHECKING([whether enable uyield])
+AC_ARG_ENABLE(uyield,
+  [AC_HELP_STRING([--enable-uyield],
+    [build for detecting race conditions. [default=no]])],
+  ,
+  [enable_uyield="no"])
+if test "x$enable_uyield" != "xno"; then
+  AC_DEFINE(USE_UYIELD, [1], [use uyield])
+fi
+AC_MSG_RESULT($enable_uyield)
+
 ## malloc
 force_enable_dynamic_malloc_change="no"
 
