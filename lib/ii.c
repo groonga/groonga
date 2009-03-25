@@ -98,9 +98,10 @@ segment_get_clear(grn_ctx *ctx, grn_ii *ii, uint32_t *pseg)
   uint32_t seg = segment_get(ctx, ii);
   if (seg < MAX_PSEG) {
     void *p = NULL;
-    GRN_IO_SEG_MAP(ii->seg, seg, p);
+    GRN_IO_SEG_REF(ii->seg, seg, p);
     if (!p) { return GRN_NO_MEMORY_AVAILABLE; }
     memset(p, 0, S_SEGMENT);
+    GRN_IO_SEG_UNREF(ii->seg, seg);
     *pseg = seg;
     return GRN_SUCCESS;
   } else {
@@ -1786,7 +1787,7 @@ buffer_open(grn_ctx *ctx, grn_ii *ii, uint32_t pos, buffer_term **bt, buffer **b
   uint16_t lseg = (uint16_t) (LSEG(pos));
   uint32_t pseg = ii->header->binfo[lseg];
   if (pseg != NOT_ASSIGNED) {
-    GRN_IO_SEG_MAP(ii->seg, pseg, p);
+    GRN_IO_SEG_REF(ii->seg, pseg, p);
     if (!p) { return NOT_ASSIGNED; }
     if (b) { *b = (buffer *)p; }
     if (bt) { *bt = (buffer_term *)(p + LPOS(pos)); }
@@ -1801,7 +1802,7 @@ buffer_close(grn_ctx *ctx, grn_ii *ii, uint32_t pseg)
     GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid pseg buffer_close(%d)", pseg);
     return GRN_INVALID_ARGUMENT;
   }
-  // GRN_IO_SEG_UNREF(ii->seg, pseg);
+  GRN_IO_SEG_UNREF(ii->seg, pseg);
   return GRN_SUCCESS;
 }
 
@@ -2066,7 +2067,7 @@ array_at(grn_ctx *ctx, grn_ii *ii, uint32_t id)
   if (id > GRN_ID_MAX) { return NULL; }
   seg = id >> W_ARRAY;
   if ((pseg = ii->header->ainfo[seg]) == NOT_ASSIGNED) { return NULL; }
-  GRN_IO_SEG_MAP(ii->seg, pseg, p);
+  GRN_IO_SEG_REF(ii->seg, pseg, p);
   if (!p) { return NULL; }
   return (uint32_t *)(p + (id & ARRAY_MASK_IN_A_SEGMENT) * S_ARRAY_ELEMENT);
 }
@@ -2084,7 +2085,7 @@ array_get(grn_ctx *ctx, grn_ii *ii, uint32_t id)
     ii->header->ainfo[seg] = pseg;
     if (seg >= ii->header->amax) { ii->header->amax = seg + 1; }
   }
-  GRN_IO_SEG_MAP(ii->seg, pseg, p)
+  GRN_IO_SEG_REF(ii->seg, pseg, p)
   if (!p) { return NULL; }
   return (uint32_t *)(p + (id & ARRAY_MASK_IN_A_SEGMENT) * S_ARRAY_ELEMENT);
 }
@@ -2092,7 +2093,7 @@ array_get(grn_ctx *ctx, grn_ii *ii, uint32_t id)
 inline static void
 array_unref(grn_ii *ii, uint32_t id)
 {
-  // GRN_IO_SEG_UNREF(ii->seg, ii->header->ainfo[id >> W_ARRAY]);
+  GRN_IO_SEG_UNREF(ii->seg, ii->header->ainfo[id >> W_ARRAY]);
 }
 
 /* updspec */
@@ -2719,7 +2720,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   if ((ds = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
   pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
   if (pseg != NOT_ASSIGNED) {
-    GRN_IO_SEG_MAP(ii->seg, ds, db);
+    GRN_IO_SEG_REF(ii->seg, ds, db);
     if (db) {
       uint32_t actual_chunk_size = 0;
       uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
@@ -2766,7 +2767,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
       } else {
         rc = GRN_NO_MEMORY_AVAILABLE;
       }
-      //GRN_IO_SEG_UNREF(ii->seg, ds);
+      GRN_IO_SEG_UNREF(ii->seg, ds);
     } else {
       rc = GRN_NO_MEMORY_AVAILABLE;
     }
@@ -2866,9 +2867,9 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   }
   sps = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
   if (sps != NOT_ASSIGNED) {
-    GRN_IO_SEG_MAP(ii->seg, dps0, db0);
+    GRN_IO_SEG_REF(ii->seg, dps0, db0);
     if (db0) {
-      GRN_IO_SEG_MAP(ii->seg, dps1, db1);
+      GRN_IO_SEG_REF(ii->seg, dps1, db1);
       if (db1) {
         uint32_t actual_db0_chunk_size = 0;
         uint32_t actual_db1_chunk_size = 0;
@@ -2960,11 +2961,11 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
         } else {
           rc = GRN_NO_MEMORY_AVAILABLE;
         }
-        //GRN_IO_SEG_UNREF(ii->seg, dps1);
+        GRN_IO_SEG_UNREF(ii->seg, dps1);
       } else {
         rc = GRN_NO_MEMORY_AVAILABLE;
       }
-      //GRN_IO_SEG_UNREF(ii->seg, dps0);
+      GRN_IO_SEG_UNREF(ii->seg, dps0);
     } else {
       rc = GRN_NO_MEMORY_AVAILABLE;
     }

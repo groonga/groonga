@@ -174,8 +174,7 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
 static void
 grn_io_register(grn_io *io)
 {
-  if (io->fis &&
-      (io->flags == GRN_IO_EXPIRE_WHOLE || io->flags == GRN_IO_EXPIRE_SEGMENT)) {
+  if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
     grn_cell *obj = grn_get(io->path);
     if (obj != F) { obj->u.p.value = (grn_obj *)io; }
   }
@@ -184,8 +183,7 @@ grn_io_register(grn_io *io)
 static void
 grn_io_unregister(grn_io *io)
 {
-  if (io->fis &&
-      (io->flags == GRN_IO_EXPIRE_WHOLE || io->flags == GRN_IO_EXPIRE_SEGMENT)) {
+  if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
     grn_del(io->path);
   }
 }
@@ -319,7 +317,7 @@ grn_io_create_with_array(grn_ctx *ctx, const char *path,
       msize += sizeof(void *) * array_specs[i].max_n_segments;
     }
     if ((io = grn_io_create(ctx, path, header_size + hsize,
-                            segment_size, nsegs, mode, GRN_IO_EXPIRE_WHOLE))) {
+                            segment_size, nsegs, mode, GRN_IO_EXPIRE_GTICK))) {
       hp = io->user_header;
       memcpy(hp, array_specs, sizeof(grn_io_array_spec) * n_arrays);
       io->header->n_arrays = n_arrays;
@@ -366,7 +364,8 @@ grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai, uint32_t l
   }
   if (*sp) {
     uint32_t pseg = *sp - 1;
-    GRN_IO_SEG_MAP(io, pseg, *p);
+    GRN_IO_SEG_REF(io, pseg, *p);
+    if (*p) { GRN_IO_SEG_UNREF(io, pseg); };
   }
 }
 
@@ -1172,7 +1171,7 @@ grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
   iw->size = size;
   if (nseg == 1) {
     byte *addr;
-    GRN_IO_SEG_MAP(io, segment, addr);
+    GRN_IO_SEG_REF(io, segment, addr);
     if (!addr) { return NULL; }
     iw->cached = 1;
     iw->addr = addr + offset;
@@ -1186,13 +1185,14 @@ grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
         byte *p, *q;
         uint32_t s, r;
         for (p = iw->addr, r = size; r; p += s, r -= s, segment++, offset = 0) {
-          GRN_IO_SEG_MAP(io, segment, q);
+          GRN_IO_SEG_REF(io, segment, q);
           if (!q) {
             GRN_FREE(iw->addr);
             return NULL;
           }
           s = (offset + r > segment_size) ? segment_size - offset : r;
           memcpy(p, q + offset, s);
+          GRN_IO_SEG_UNREF(io, segment);
         }
       }
       break;
@@ -1209,7 +1209,10 @@ grn_rc
 grn_io_win_unmap2(grn_io_win *iw)
 {
   if (!iw || !iw->io ||!iw->ctx) { return GRN_INVALID_ARGUMENT; }
-  if (iw->cached) { return GRN_SUCCESS; }
+  if (iw->cached) {
+    GRN_IO_SEG_UNREF(iw->io, iw->segment);
+    return GRN_SUCCESS;
+  }
   {
     grn_io *io = iw->io;
     grn_ctx *ctx = iw->ctx;
@@ -1225,10 +1228,11 @@ grn_io_win_unmap2(grn_io_win *iw)
         uint32_t segment_size = io->header->segment_size;
         uint32_t s, r, offset = iw->offset, segment = iw->segment;
         for (p = iw->addr, r = iw->size; r; p += s, r -= s, segment++, offset = 0) {
-          GRN_IO_SEG_MAP(io, segment, q);
+          GRN_IO_SEG_REF(io, segment, q);
           if (!q) { return GRN_NO_MEMORY_AVAILABLE; }
           s = (offset + r > segment_size) ? segment_size - offset : r;
           memcpy(q + offset, p, s);
+          GRN_IO_SEG_UNREF(io, segment);
         }
       }
       GRN_FREE(iw->addr);
@@ -1282,14 +1286,56 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
   SEG_MAP(io, segno, info);
 }
 
+grn_rc
+grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
+{
+  uint32_t retry, *pnref;
+  grn_io_mapinfo *info;
+  if (!io->maps || segno >= io->header->max_segment) { return GRN_INVALID_ARGUMENT; }
+  info = &io->maps[segno];
+  pnref = &info->nref;
+  for (retry = 0;; retry++) {
+    uint32_t nref;
+    GRN_ATOMIC_ADD_EX(pnref, 1, nref);
+    if (nref) {
+      GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+      if (retry >= GRN_IO_MAX_RETRY) {
+        GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected! in grn_io_seg_expire(%p, %u, %u)", io, segno, nref);
+        return GRN_RESOURCE_DEADLOCK_AVOIDED;
+      }
+    } else {
+      GRN_ATOMIC_ADD_EX(pnref, GRN_IO_MAX_REF, nref);
+      if (nref > 1) {
+        GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
+        GRN_FUTEX_WAKE(pnref);
+        if (retry >= GRN_IO_MAX_RETRY) {
+          GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!! in grn_io_seg_expire(%p, %u, %u)", io,
+ segno, nref);
+          return GRN_RESOURCE_DEADLOCK_AVOIDED;
+        }
+      } else {
+        uint32_t nmaps;
+        GRN_MUNMAP(&grn_gctx, &info->fmo, info->map, io->header->segment_size);
+        info->map = NULL;
+        GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
+        GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
+        GRN_FUTEX_WAKE(pnref);
+        return GRN_SUCCESS;
+      }
+    }
+    if (retry >= nretry) { return GRN_RESOURCE_DEADLOCK_AVOIDED; }
+    GRN_FUTEX_WAIT(pnref);
+  }
+}
+
 uint32_t
 grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
 {
   uint32_t m, n = 0, ln = io->nmaps;
-  switch (io->flags) {
-  case GRN_IO_EXPIRE_WHOLE :
+  switch ((io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
+  case GRN_IO_EXPIRE_GTICK :
     {
-      uint32_t nmaps, nref, *pnref = &io->nref;
+      uint32_t nref, nmaps, *pnref = &io->nref;
       GRN_ATOMIC_ADD_EX(pnref, 1, nref);
       if (!nref && grn_gtick - io->count > count_thresh) {
         uint32_t i = io->header->n_arrays;
@@ -1300,16 +1346,12 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
         }
         for (m = io->max_map_seg; m; info++, m--) {
           if (info->map) {
-            uint32_t nmaps, nref, *pnref = &info->nref;
-            GRN_ATOMIC_ADD_EX(pnref, 1, nref);
-            if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
-              GRN_MUNMAP(&grn_gctx, &info->fmo, info->map, io->header->segment_size);
-              GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
-              info->map = NULL;
-              info->count = grn_gtick;
-              n++;
-            }
-            GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+            GRN_MUNMAP(&grn_gctx, &info->fmo, info->map, io->header->segment_size);
+            info->map = NULL;
+            info->nref = 0;
+            info->count = grn_gtick;
+            GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
+            n++;
           }
         }
       }
@@ -1317,6 +1359,11 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
     }
     break;
   case GRN_IO_EXPIRE_SEGMENT :
+    for (m = io->max_map_seg; n < limit && m; m--) {
+      if (!grn_io_seg_expire(ctx, io, m, 2)) { n++; }
+    }
+    break;
+  case (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT) :
     {
       grn_io_mapinfo *info = io->maps;
       for (m = io->max_map_seg; n < limit && m; info++, m--) {

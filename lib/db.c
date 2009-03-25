@@ -1796,12 +1796,13 @@ default_column_set_value(grn_ctx *ctx, grn_proc_ctx *pctx, grn_obj *in, grn_obj 
         ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", value_size);
         return GRN_INVALID_ARGUMENT;
       } else {
-        void *v = grn_ra_get(ctx, (grn_ra *)pctx->obj, arg->id);
+        void *v = grn_ra_ref(ctx, (grn_ra *)pctx->obj, arg->id);
         if (!v) {
           ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
           return GRN_NO_MEMORY_AVAILABLE;
         }
         memcpy(v, in->u.p.ptr, value_size);
+        grn_ra_unref(ctx, (grn_ra *)pctx->obj, arg->id);
       }
       break;
     case GRN_COLUMN_INDEX :
@@ -2671,13 +2672,14 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       if (((grn_ra *)obj)->header->element_size < s) {
         ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", s);
       } else {
-        void *p = grn_ra_get(ctx, (grn_ra *)obj, id);
+        void *p = grn_ra_ref(ctx, (grn_ra *)obj, id);
         if (!p) {
           ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
           rc = GRN_NO_MEMORY_AVAILABLE;
           goto exit;
         }
         memcpy(p, v, s);
+        grn_ra_unref(ctx, (grn_ra *)obj, id);
         rc = GRN_SUCCESS;
       }
       break;
@@ -2715,7 +2717,8 @@ grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
     }
     break;
   case GRN_COLUMN_FIX_SIZE :
-    if ((value = grn_ra_at(ctx, (grn_ra *)obj, id))) {
+    if ((value = grn_ra_ref(ctx, (grn_ra *)obj, id))) {
+      grn_ra_unref(ctx, (grn_ra *)obj, id);
       *size = ((grn_ra *)obj)->header->element_size;
     }
     break;
@@ -2841,10 +2844,11 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   case GRN_COLUMN_FIX_SIZE :
     {
       unsigned element_size;
-      void *v = grn_ra_at(ctx, (grn_ra *)obj, id);
+      void *v = grn_ra_ref(ctx, (grn_ra *)obj, id);
       if (!v) { goto exit; }
       element_size = ((grn_ra *)obj)->header->element_size;
       grn_bulk_write(ctx, value, v, element_size);
+      grn_ra_unref(ctx, (grn_ra *)obj, id);
       len = element_size;
     }
     break;

@@ -57,18 +57,17 @@ struct _grn_ra {
 
 struct grn_ra_header {
   unsigned element_size;
-  grn_id curr_max;
   uint32_t nrecords; /* nrecords is not maintained by default */
-  uint32_t reserved[9];
+  uint32_t reserved[10];
 };
 
 grn_ra *grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size);
 grn_ra *grn_ra_open(grn_ctx *ctx, const char *path);
-grn_rc grn_ra_info(grn_ctx *ctx, grn_ra *ra, unsigned int *element_size, grn_id *curr_max);
+grn_rc grn_ra_info(grn_ctx *ctx, grn_ra *ra, unsigned int *element_size);
 grn_rc grn_ra_close(grn_ctx *ctx, grn_ra *ra);
 grn_rc grn_ra_remove(grn_ctx *ctx, const char *path);
-void *grn_ra_get(grn_ctx *ctx, grn_ra *ra, grn_id id);
-void *grn_ra_at(grn_ctx *ctx, grn_ra *ra, grn_id id);
+void *grn_ra_ref(grn_ctx *ctx, grn_ra *ra, grn_id id);
+grn_rc grn_ra_unref(grn_ctx *ctx, grn_ra *ra, grn_id id);
 
 /**** variable sized elements ****/
 
