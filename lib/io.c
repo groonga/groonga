@@ -1360,7 +1360,7 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
     break;
   case GRN_IO_EXPIRE_SEGMENT :
     for (m = io->max_map_seg; n < limit && m; m--) {
-      if (!grn_io_seg_expire(ctx, io, m, 2)) { n++; }
+      if (!grn_io_seg_expire(ctx, io, m, 0)) { n++; }
     }
     break;
   case (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT) :
@@ -1387,6 +1387,42 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
     GRN_LOG(ctx, GRN_LOG_INFO, "<%x:%x> expired i=%p max=%d (%d/%d)",
             ctx, grn_gtick, io, io->max_map_seg, n, ln);
   }
+  return n;
+}
+
+static uint32_t
+grn_expire_(grn_ctx *ctx, int count_thresh, uint32_t limit)
+{
+  uint32_t n = 0;
+  grn_cell *obj;
+  GRN_HASH_EACH(grn_gctx.impl->symbols, id, NULL, NULL, (void **) &obj, {
+    grn_dl_close(ctx, id);
+    n += grn_io_expire(ctx, (grn_io *) obj->u.p.value, count_thresh, limit);
+    if (n >= limit) { break; }
+  });
+  return n;
+}
+
+uint32_t
+grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit)
+{
+  grn_ctx *c;
+  uint32_t n = 0;
+  MUTEX_LOCK(grn_glock);
+  if (grn_gtick) {
+    for (c = grn_gctx.next;; c = ctx->next) {
+      if (c == &grn_gctx) {
+        MUTEX_UNLOCK(grn_glock);
+        n = grn_expire_(ctx, count_thresh, limit);
+        MUTEX_LOCK(grn_glock);
+        break;
+      }
+      if ((c->seqno & 1) && (c->seqno == c->seqno2)) { break; }
+    }
+  }
+  grn_gtick++;
+  for (c = grn_gctx.next; c != &grn_gctx; c = ctx->next) { c->seqno2 = c->seqno; }
+  MUTEX_UNLOCK(grn_glock);
   return n;
 }
 

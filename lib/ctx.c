@@ -276,6 +276,7 @@ grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
   ctx->stat = GRN_QL_WAIT_EXPR;
   ctx->encoding = encoding;
   ctx->seqno = 0;
+  ctx->seqno2 = 0;
   ctx->subno = 0;
   ctx->impl = NULL;
   if (flags & GRN_CTX_USE_QL) {

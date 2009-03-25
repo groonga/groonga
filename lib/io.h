@@ -220,6 +220,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
         }\
         break;\
       }\
+      info->count = grn_gtick;\
     }\
   } else {\
     for (retry = 0; !info->map; retry++) {\
@@ -243,6 +244,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
         break;\
       }\
     }\
+    info->count = grn_gtick;\
   }\
   addr = info->map;\
 }
@@ -346,6 +348,7 @@ void *grn_dl_sym(grn_ctx *ctx, grn_id id, const char *symbol);
 grn_id grn_dl_lookup(grn_ctx *ctx, const char *filename);
 
 uint32_t grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit);
+uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
 
 /* encode/decode */
 
