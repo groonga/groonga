@@ -48,6 +48,7 @@ extern "C" {
   } else {\
     (ctx)->seqno++;\
   }\
+  GRN_TEST_YIELD();\
 }
 
 /* CAUTION!! : pass only variables or constants as r */
@@ -58,6 +59,7 @@ extern "C" {
   } else {\
     ctx->seqno++;\
   }\
+  GRN_TEST_YIELD();\
   return r;\
 }
 

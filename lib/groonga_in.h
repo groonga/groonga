@@ -197,22 +197,24 @@ typedef pthread_key_t grn_thread_key;
 
 #if USE_UYIELD
   extern int grn_uyield_count;
-  #define GRN_TESTYIELD() \
-    do { \
-      if (((++grn_uyield_count) & (0x20 - 1)) == 0) { \
-        sched_yield(); \
-        if(grn_uyield_count > 0x1000) grn_uyield_count = (uint32_t)time(NULL) % 0x1000; \
-      } \
-    } while(false)
+  #define GRN_TEST_YIELD() \
+    do {\
+      if (((++grn_uyield_count) & (0x20 - 1)) == 0) {\
+        sched_yield();\
+        if(grn_uyield_count > 0x1000) {\
+          grn_uyield_count = (uint32_t)time(NULL) % 0x1000;\
+        }\
+      }\
+    } while (0)
   #undef assert
   #define assert(assert_expr) \
-    do { \
-      if (!(assert_expr)){ \
-        fprintf(stderr, "assertion failed: %s\n", #assert_expr); \
-        abort(); \
-      } \
-      TCTESTYIELD(); \
-    } while (false)
+    do {\
+      if (!(assert_expr)){\
+        fprintf(stderr, "assertion failed: %s\n", #assert_expr);\
+        abort();\
+      }\
+      GRN_TEST_YIELD();\
+    } while (0)
   #define if(if_cond) \
     if ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (if_cond))
   #define while(while_cond) \
@@ -222,9 +224,9 @@ typedef pthread_key_t grn_thread_key;
   #define sched_yield() usleep(1000 * 20)
   #endif
 #else /* USE_UYIELD */
-  #define GRN_TESTYIELD() \
+  #define GRN_TEST_YIELD() \
     do { \
-    } while (false)
+    } while (0)
 #endif /* USE_UYIELD */
 
 #else /* HAVE_PTHREAD_H */

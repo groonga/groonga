@@ -4,6 +4,12 @@
 
 2009-03-24  Tasuku SUENAGA <a at razil.jp>
 
+	* lib/ctx.c: added initial value of grn_uyield_count.
+	* lib/ctx.h: added GRN_TEST_YIELD() to GRN_API_ENTER/RETURN.
+	* lib/groonga_in.h: renamed GRN_TESTYIELD() to GRN_TEST_YIELD() and reformat.
+
+2009-03-24  Tasuku SUENAGA <a at razil.jp>
+
 	* lib/groonga_in.h: renamed grn_uyield_cnt to grn_uyield_count.
 	* lib/ctx.c: renamed grn_uyield_cnt to grn_uyield_count.
 
