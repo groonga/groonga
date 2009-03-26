@@ -97,8 +97,6 @@ inline static int grn_msync(grn_ctx *ctx, void *start, size_t length);
 inline static grn_rc grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 
-#define TEMPORAL 2
-
 static grn_hash *grn_dls = NULL;
 
 grn_rc
@@ -160,7 +158,7 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
         io->max_map_seg = 0;
         io->nmaps = 0;
         io->count = 0;
-        io->flags = TEMPORAL;
+        io->flags = GRN_IO_TEMPORARY;
         io->lock = &header->lock;
         return io;
       }
@@ -236,7 +234,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
             io->max_map_seg = 0;
             io->nmaps = 0;
             io->count = 0;
-            io->flags = 0;
+            io->flags = flags;
             io->lock = &header->lock;
             grn_io_register(io);
             return io;
@@ -460,7 +458,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
             io->max_map_seg = 0;
             io->nmaps = 0;
             io->count = 0;
-            io->flags = 0;
+            io->flags = header->flags;
             io->lock = &header->lock;
             if (!array_init(io, io->header->n_arrays)) {
               grn_io_register(io);
@@ -498,7 +496,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
       if (mi->map) {
         /* if (atomic_read(mi->nref)) { return STILL_IN_USE ; } */
 #ifdef WIN32
-        if ((io->flags & TEMPORAL)) {
+        if ((io->flags & GRN_IO_TEMPORARY)) {
           GRN_GFREE(mi->map);
         } else
 #endif /* WIN32 */
@@ -508,7 +506,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
     GRN_GFREE(io->maps);
   }
 #ifdef WIN32
-  if ((io->flags & TEMPORAL)) {
+  if ((io->flags & GRN_IO_TEMPORARY)) {
     GRN_GFREE(io->header);
   } else
 #endif /* WIN32 */
@@ -1259,7 +1257,7 @@ grn_io_win_unmap2(grn_io_win *iw)
 #define SEG_MAP(io,segno,info)\
 {\
   uint32_t segment_size = io->header->segment_size;\
-  if ((io->flags & TEMPORAL)) {\
+  if ((io->flags & GRN_IO_TEMPORARY)) {\
     DO_MAP(io, &info->fmo, NULL, 0, segment_size, segno, info->map);\
   } else {\
     uint32_t segments_per_file = GRN_IO_FILE_SIZE / segment_size;\
@@ -1293,6 +1291,7 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
   grn_io_mapinfo *info;
   if (!io->maps || segno >= io->header->max_segment) { return GRN_INVALID_ARGUMENT; }
   info = &io->maps[segno];
+  if (!info->map) { return GRN_INVALID_ARGUMENT; }
   pnref = &info->nref;
   for (retry = 0;; retry++) {
     uint32_t nref;

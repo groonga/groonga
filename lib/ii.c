@@ -3231,14 +3231,9 @@ void
 grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
 {
   /*
-  if ((grn_gtick & 127) == 127) {
-    grn_io_expire(ctx, ii->seg, 128, 1000000);
-  }
+  grn_io_expire(ctx, ii->seg, 128, 1000000);
   */
-  if ((grn_gtick & 3) == 3) {
-    grn_io_expire(ctx, ii->chunk, 0, 1000000);
-  }
-  grn_gtick++;
+  grn_io_expire(ctx, ii->chunk, 0, 1000000);
 }
 
 #define BIT11_01(x) ((x >> 1) & 0x7ff)

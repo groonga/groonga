@@ -146,6 +146,7 @@ grn_rc grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
 
 #define GRN_IO_EXPIRE_GTICK            (0x01)
 #define GRN_IO_EXPIRE_SEGMENT          (0x02)
+#define GRN_IO_TEMPORARY               (0x04)
 
 void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info);
 
