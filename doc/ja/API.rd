@@ -284,7 +284,7 @@ result_lenには、resultのバイト長が格納されます。
 
 :NAME
 
-  grn_ql_send - うけとる
+  grn_ql_recv - うけとる
 
 :SYNOPSIS
  ((' '))
