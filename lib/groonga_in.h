@@ -267,6 +267,10 @@ typedef int grn_cond;
 #define COND_WAIT(c,m) do { MUTEX_UNLOCK(m); usleep(1000); MUTEX_LOCK(m); } while (0)
 /* todo : must be enhanced! */
 
+#define GRN_TEST_YIELD() \
+  do { \
+  } while (0)
+
 #endif /* HAVE_PTHREAD_H */
 
 #ifdef __GNUC__
