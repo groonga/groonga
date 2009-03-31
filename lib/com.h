@@ -34,6 +34,37 @@
 extern "C" {
 #endif
 
+/******* grn_com_queue ********/
+
+typedef struct _grn_com_queue grn_com_queue;
+typedef struct _grn_com_queue grn_com_queue_entry;
+
+#define GRN_COM_QUEUE_BINSIZE (0x100)
+
+struct _grn_com_queue_entry {
+  grn_com_queue_entry *next;
+};
+
+struct _grn_com_queue {
+  grn_com_queue_entry *bins[GRN_COM_QUEUE_BINSIZE];
+  grn_com_queue_entry *next;
+  grn_com_queue_entry **tail;
+  uint8_t first;
+  uint8_t last;
+  grn_mutex mutex;
+};
+
+#define GRN_COM_QUEUE_INIT(q) {\
+  (q)->next = NULL;\
+  (q)->tail = &(q)->next;\
+  (q)->first = 0;\
+  (q)->last = 0;\
+  MUTEX_INIT((q)->mutex);\
+}
+
+grn_rc grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e);
+grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
+
 /******* grn_com ********/
 
 #ifdef USE_SELECT
@@ -54,7 +85,6 @@ extern "C" {
 #endif /* USE_EPOLL */
 #endif /* USE_SELECT */
 
-typedef struct _grn_com grn_com;
 typedef struct _grn_com_event grn_com_event;
 typedef void grn_com_callback(grn_ctx *ctx, grn_com_event *, grn_com *);
 
@@ -90,6 +120,9 @@ struct _grn_com_event {
   struct _grn_hash *hash;
   int max_nevents;
   void *userdata;
+  grn_ctx *ctx;
+  grn_mutex mutex;
+  grn_cond cond;
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
   int epfd;

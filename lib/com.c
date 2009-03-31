@@ -49,6 +49,97 @@
 #define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
 
+/******* grn_com_queue ********/
+
+grn_rc
+grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e)
+{
+  uint8_t i = q->last + 1;
+  e->next = NULL;
+  if (q->first == i || q->next) {
+    MUTEX_LOCK(q->mutex);
+    if (q->first == i || q->next) {
+      *q->tail = e;
+      q->tail = &e->next;
+    } else {
+      q->bins[q->last] = e;
+      q->last = i;
+    }
+    MUTEX_UNLOCK(q->mutex);
+  } else {
+    q->bins[q->last] = e;
+    q->last = i;
+  }
+  return GRN_SUCCESS;
+}
+
+grn_com_queue_entry *
+grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
+{
+  grn_com_queue_entry *e = NULL;
+  if (q->first == q->last) {
+    if (q->next) {
+      MUTEX_LOCK(q->mutex);
+      e = q->next;
+      q->next = e->next;
+      MUTEX_UNLOCK(q->mutex);
+    }
+  } else {
+    e = q->bins[q->first++];
+  }
+  return e;
+}
+
+/******* sender
+
+static void * CALLBACK
+sender(void *arg)
+{
+  grn_com_event *ev = (grn_com_event *)arg;
+  MUTEX_LOCK(ev->mutex);
+  while (ev->ctx->stat != GRN_QL_QUIT) {
+    while (!(peers_with_msg = get_out_msgs(peers))) {
+      COND_WAIT(ev->cond, ev->mutex);
+      if (ev->ctx->stat == GRN_QL_QUIT) { goto exit; }
+    }
+    MUTEX_UNLOCK(ev->mutex);
+    peers_writable = poll(peers_with_msg, POLLOUT);
+    for (peer in peers_writable) {
+      msgs = queue_peek_all(peer->send_pros);
+      if (!send(msgs)) {
+        queue_deque(peer->send_pros, msgs);
+        for (msg in msgs) { enque(msg->edge->send_cons, msg); }
+      }
+    }
+    MUTEX_LOCK(ev->mutex);
+  }
+exit :
+  MUTEX_UNLOCK(ev->mutex);
+  return NULL;
+}
+
+static void
+output(grn_ctx *ctx, int flags, grn_com_msg *msg)
+{
+  peer = msg->peer;
+  if (empty(peer->send_pros) && !send(msg)) {
+    grn_msg_fin(msg);
+  } else {
+    MUTEX_LOCK(ev->mutex);
+    enque(peer->send_pros, msg);
+    COND_SIGNAL(ev->cond);
+    MUTEX_UNLOCK(ev->mutex);
+  }
+}
+
+********/
+
+grn_rc
+grn_com_send(grn_ctx *ctx, grn_com_msg *msg)
+{
+  return GRN_SUCCESS;
+}
+
 /******* grn_com ********/
 
 grn_rc
@@ -84,6 +175,11 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
 {
   ev->max_nevents = max_nevents;
   if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0, GRN_ENC_NONE))) {
+    /*
+    MUTEX_INIT(ev->mutex);
+    COND_INIT(ev->cond);
+    if (THREAD_CREATE(thread, sender, ev)) { SERR("pthread_create"); }
+    */
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
     if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {

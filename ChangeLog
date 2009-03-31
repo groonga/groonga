@@ -1,3 +1,7 @@
+2009-03-31  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (grn_com_msg): add.
+
 2009-03-26  Poe MORITA  <morita at razil.jp>
 
 	* lib/io.h (GRN_IO_TEMPORARY): add.
