@@ -1372,26 +1372,6 @@ grn_rc grn_ql_load(grn_ctx *ctx, const char *path);
 grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
 grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
 
-typedef struct _grn_com_addr grn_com_addr;
-typedef struct _grn_com_msg grn_com_msg;
-typedef struct _grn_com grn_com;
-
-struct _grn_com_addr {
-  unsigned int addr;
-  unsigned short port;
-  unsigned short sid;
-};
-
-struct _grn_com_msg {
-  grn_obj buffer;
-  grn_com *peer;
-  grn_com_addr ctx_id;
-  grn_com_addr peer_id;
-  unsigned int query_id;
-  unsigned int flags;
-  unsigned char protocol;
-};
-
 typedef struct _grn_ql_info grn_ql_info;
 
 struct _grn_ql_info {

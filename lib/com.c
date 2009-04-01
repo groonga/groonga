@@ -90,6 +90,32 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
   return e;
 }
 
+/******* grn_msg ********/
+
+grn_rc
+grn_msg_send(grn_ctx *ctx, grn_obj *msg)
+{
+  return GRN_SUCCESS;
+}
+
+grn_obj *
+grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *msg)
+{
+  return NULL;
+}
+
+grn_obj *
+grn_msg_open(grn_ctx *ctx, grn_com *com)
+{
+  return NULL;
+}
+
+grn_rc
+grn_msg_close(grn_ctx *ctx, grn_obj *msg)
+{
+  return GRN_SUCCESS;
+}
+
 /******* sender
 
 static void * CALLBACK
@@ -133,12 +159,6 @@ output(grn_ctx *ctx, int flags, grn_com_msg *msg)
 }
 
 ********/
-
-grn_rc
-grn_com_send(grn_ctx *ctx, grn_com_msg *msg)
-{
-  return GRN_SUCCESS;
-}
 
 /******* grn_com ********/
 
