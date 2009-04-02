@@ -384,7 +384,6 @@ AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure
 AC_OUTPUT([
   groonga.spec
   groonga.pc
-  vcc/config.h
   ])
 
 echo "

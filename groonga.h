@@ -21,6 +21,14 @@
 extern "C" {
 #endif
 
+#ifndef GRN_API
+#if defined(_WIN32) || defined(_WIN64)
+#define GRN_API __declspec(dllimport)
+#else
+#define GRN_API
+#endif /* defined(_WIN32) || defined(_WIN64) */
+#endif /* GRN_API */
+
 typedef unsigned grn_id;
 
 #define GRN_ID_NIL                     (0x00)
@@ -92,8 +100,8 @@ typedef enum {
   GRN_LZO_ERROR = -61,
 } grn_rc;
 
-grn_rc grn_init(void);
-grn_rc grn_fin(void);
+GRN_API grn_rc grn_init(void);
+GRN_API grn_rc grn_fin(void);
 
 typedef enum {
   GRN_ENC_DEFAULT = 0,
@@ -157,7 +165,7 @@ struct _grn_ctx {
 #define GRN_CTX_USE_QL                 (0x03)
 #define GRN_CTX_BATCH_MODE             (0x04)
 
-grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
+GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
 
 /**
  * grn_ctx_fin:
@@ -165,7 +173,7 @@ grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
  *
  * ctxの管理するメモリを解放し、使用を終了します。
  **/
-grn_rc grn_ctx_fin(grn_ctx *ctx);
+GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
 
 /* obj */
 
@@ -313,7 +321,7 @@ struct _grn_db_create_optarg {
   int n_builtin_type_names;
 };
 
-grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
+GRN_API grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
 
 /**
  * grn_db_open:
@@ -321,7 +329,7 @@ grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *opt
  *
  * 既存のdbを開く。
  **/
-grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
+GRN_API grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
 
 /**
  * grn_ctx_use:
@@ -330,7 +338,7 @@ grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
  * ctxが操作対象とするdbを指定します。NULLを指定した場合は、
  * dbを操作しない状態(init直後の状態)になります。
  **/
-grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
 
 /**
  * grn_ctx_db:
@@ -338,7 +346,7 @@ grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
  * ctxが現在操作対象としているdbを返します。
  * dbを使用していない場合はNULLを返します。
  **/
-grn_obj *grn_ctx_db(grn_ctx *ctx);
+GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
 
 /**
  * grn_ctx_lookup:
@@ -348,7 +356,7 @@ grn_obj *grn_ctx_db(grn_ctx *ctx);
  * ctxが使用するdbからnameに対応するオブジェクトを検索して返す。
  * nameに一致するオブジェクトが存在しなければNULLを返す。
  **/
-grn_obj *grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size);
+GRN_API grn_obj *grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size);
 
 /**
  * grn_ctx_get:
@@ -375,7 +383,7 @@ typedef enum {
   GRN_DB_MECAB,
 } grn_builtin_type;
 
-grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
+GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
 
 /**
  * grn_type_create:
@@ -388,10 +396,10 @@ grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
  * nameに対応する新たなtype(型)をdbに定義する。
  **/
 
-grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
-                         grn_obj_flags flags, unsigned int size);
+GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
+                                 grn_obj_flags flags, unsigned int size);
 
-grn_rc grn_db_load(grn_ctx *ctx, const char *path);
+GRN_API grn_rc grn_db_load(grn_ctx *ctx, const char *path);
 
 /**
  * grn_proc_create:
@@ -423,10 +431,10 @@ typedef enum {
   GRN_PROC_GROUP
 } grn_proc_type;
 
-grn_obj *grn_proc_create(grn_ctx *ctx,
-                         const char *name, unsigned name_size,
-                         const char *path, grn_proc_type type,
-                         grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin);
+GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
+                                 const char *name, unsigned name_size,
+                                 const char *path, grn_proc_type type,
+                                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin);
 
 /*-------------------------------------------------------------
  * table操作のための関数
@@ -454,10 +462,10 @@ grn_obj *grn_proc_create(grn_ctx *ctx,
  *
  * nameに対応する新たなtableをctxが使用するdbに定義する。
  **/
-grn_obj *grn_table_create(grn_ctx *ctx,
-                          const char *name, unsigned name_size,
-                          const char *path, grn_obj_flags flags,
-                          grn_obj *key_type, unsigned value_size, grn_encoding encoding);
+GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
+                                  const char *name, unsigned name_size,
+                                  const char *path, grn_obj_flags flags,
+                                  grn_obj *key_type, unsigned value_size, grn_encoding encoding);
 /**
  * grn_table_open:
  * @name: 開こうとするtableの名前。NULLなら無名tableとなる。
@@ -465,8 +473,8 @@ grn_obj *grn_table_create(grn_ctx *ctx,
  *
  * ctxが使用するdbの中でnameに対応付けて既存のtableを開く。
  **/
-grn_obj *grn_table_open(grn_ctx *ctx,
-                        const char *name, unsigned name_size, const char *path);
+GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
+                                const char *name, unsigned name_size, const char *path);
 
 typedef unsigned char grn_search_flags;
 
@@ -496,9 +504,9 @@ typedef unsigned char grn_search_flags;
  *
  * tableからkeyに対応するrecordを検索し、対応するIDを返す。
  **/
-grn_id grn_table_lookup(grn_ctx *ctx, grn_obj *table,
-                        const void *key, unsigned key_size,
-                        grn_search_flags *flags);
+GRN_API grn_id grn_table_lookup(grn_ctx *ctx, grn_obj *table,
+                                const void *key, unsigned key_size,
+                                grn_search_flags *flags);
 
 /**
  * grn_table_add:
@@ -507,7 +515,7 @@ grn_id grn_table_lookup(grn_ctx *ctx, grn_obj *table,
  * 新しいレコードを追加し、そのIDを返す。
  * GRN_OBJ_TABLE_NO_KEYが指定されたtableでのみ有効。
  **/
-grn_id grn_table_add(grn_ctx *ctx, grn_obj *table);
+GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table);
 
 /**
  * grn_table_get_key:
@@ -522,8 +530,8 @@ grn_id grn_table_add(grn_ctx *ctx, grn_obj *table);
  * keybufに該当するkeyをコピーする。
  *
  **/
-int grn_table_get_key(grn_ctx *ctx, grn_obj *table,
-                      grn_id id, void *keybuf, int buf_size);
+GRN_API int grn_table_get_key(grn_ctx *ctx, grn_obj *table,
+                              grn_id id, void *keybuf, int buf_size);
 
 /**
  * grn_table_delete:
@@ -534,8 +542,8 @@ int grn_table_get_key(grn_ctx *ctx, grn_obj *table,
  * tableのkeyに対応するレコードを削除する。
  * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
-grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
-                        const void *key, unsigned key_size);
+GRN_API grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
+                                const void *key, unsigned key_size);
 
 /**
  * grn_table_delete_by_id:
@@ -545,7 +553,7 @@ grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
  * tableのkeyに対応するレコードを削除する。
  * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
-grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
+GRN_API grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
 
 /**
  * grn_table_truncate:
@@ -553,7 +561,7 @@ grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
  *
  * tableの全レコードを一括して削除する。
  **/
-grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table);
+GRN_API grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 
 typedef grn_obj grn_table_cursor;
 
@@ -579,10 +587,10 @@ typedef grn_obj grn_table_cursor;
  * GRN_OBJ_TABLE_PAT_KEYを指定したtableではkey順に、
  * GRN_OBJ_TABLE_HASH_KEYを指定したtableではid順にレコードを取り出します。
  **/
-grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
-                                        const void *min, unsigned min_size,
-                                        const void *max, unsigned max_size,
-                                        int flags);
+GRN_API grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
+                                                const void *min, unsigned min_size,
+                                                const void *max, unsigned max_size,
+                                                int flags);
 
 /**
  * grn_table_cursor_close:
@@ -590,7 +598,7 @@ grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
  *
  * grn_table_cursor_openで生成したcursorを解放する。
  **/
-grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
+GRN_API grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
 
 /**
  * grn_table_cursor_next:
@@ -599,7 +607,7 @@ grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
  * cursorのカレントレコードを一件進めてそのIDを返す。
  * cursorの対象範囲の末尾に達するとGRN_ID_NILを返す。
  **/
-grn_id grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
+GRN_API grn_id grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
 
 /**
  * grn_table_cursor_get_key:
@@ -607,7 +615,7 @@ grn_id grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
  * @key: カレントレコードのkeyへのポインタがセットされる。
  * cursorのカレントレコードのkeyを@keyにセットし、その長さを返す。
  **/
-int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key);
+GRN_API int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key);
 
 /**
  * grn_table_cursor_get_value:
@@ -615,7 +623,7 @@ int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key);
  * @value: カレントレコードのvalueへのポインタがセットされる。
  * cursorのカレントレコードのvalueを@valueにセットし、その長さを返す。
  **/
-int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value);
+GRN_API int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 
 /**
  * grn_table_cursor_set_value:
@@ -626,7 +634,7 @@ int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value)
  * cursorのカレントレコードのvalueを引数の内容に置き換える。
  * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
-grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
+GRN_API grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
                                   void *value, int flags);
 
 /**
@@ -636,7 +644,7 @@ grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
  * cursorのカレントレコードを削除する。
  * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
-grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
+GRN_API grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 
 #define GRN_TABLE_EACH(ctx,table,head,tail,id,key,key_size,value,block) do {\
   (ctx)->errlvl = GRN_OK;\
@@ -690,8 +698,8 @@ struct _grn_table_sort_key {
   int offset;
 };
 
-int grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
-                   grn_obj *result, grn_table_sort_key *keys, int n_keys);
+GRN_API int grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
+                           grn_obj *result, grn_table_sort_key *keys, int n_keys);
 
 /**
  * grn_table_group:
@@ -729,9 +737,9 @@ struct _grn_table_group_result {
   grn_sel_operator op;
 };
 
-grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
-                       grn_table_sort_key *keys, int n_keys,
-                       grn_table_group_result *results, int n_results);
+GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
+                               grn_table_sort_key *keys, int n_keys,
+                               grn_table_group_result *results, int n_results);
 
 /**
  * grn_table_setoperation:
@@ -743,8 +751,8 @@ grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
  * table1とtable2をopの指定に従って集合演算した結果をresに格納する。
  * resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されない。
  **/
-grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
-                              grn_obj *res, grn_sel_operator op);
+GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
+                                      grn_obj *res, grn_sel_operator op);
 
 /**
  * grn_table_difference:
@@ -755,8 +763,8 @@ grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
  *
  * table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納する。
  **/
-grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
-                            grn_obj *res1, grn_obj *res2);
+GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
+                                    grn_obj *res1, grn_obj *res2);
 
 /**
  * grn_table_column:
@@ -765,8 +773,8 @@ grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
  *
  * nameに対応するtableのカラムを返す。対応するカラムが存在しなければNULLを返す。
  **/
-grn_obj *grn_table_column(grn_ctx *ctx, grn_obj *table,
-                          const char *name, unsigned name_size);
+GRN_API grn_obj *grn_table_column(grn_ctx *ctx, grn_obj *table,
+                                  const char *name, unsigned name_size);
 
 
 /**
@@ -775,7 +783,7 @@ grn_obj *grn_table_column(grn_ctx *ctx, grn_obj *table,
  *
  * tableに登録されているレコードの件数を返す。
  **/
-unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
+GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 
 /*-------------------------------------------------------------
  * column操作のための関数
@@ -806,9 +814,9 @@ unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  * tableに新たなカラムを定義する。nameは省略できない。
  * 一つのtableに同一のnameのcolumnを複数定義することはできない。
  **/
-grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
-                           const char *name, unsigned name_size,
-                           const char *path, grn_obj_flags flags, grn_obj *type);
+GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
+                                   const char *name, unsigned name_size,
+                                   const char *path, grn_obj_flags flags, grn_obj *type);
 
 /**
  * grn_column_open:
@@ -819,9 +827,9 @@ grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
  *
  * 既存の永続的なcolumnを、tableのnameに対応するcolumnとして開く
  **/
-grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
-                         const char *name, unsigned name_size,
-                         const char *path, grn_obj *type);
+GRN_API grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
+                                 const char *name, unsigned name_size,
+                                 const char *path, grn_obj *type);
 
 /**
  * grn_column_index_update
@@ -835,9 +843,9 @@ grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
  * id, sectionに対応するエントリを更新する。
  * columnはGRN_OBJ_COLUMN_INDEX型のカラムでなければならない。
  **/
-grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
-                               grn_id id, unsigned int section,
-                               grn_obj *oldvalue, grn_obj *newvalue);
+GRN_API grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
+                                       grn_id id, unsigned int section,
+                                       grn_obj *oldvalue, grn_obj *newvalue);
 
 /**
  * grn_column_table:
@@ -845,7 +853,7 @@ grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
  *
  * columnが属するtableを返す。
  **/
-grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
+GRN_API grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
 
 /*-------------------------------------------------------------
  * db, table, columnの全てまたは幾つかで共通に使用できる関数
@@ -890,7 +898,7 @@ typedef enum {
  *
  * objのtypeに対応する情報をvaluebufに格納する。
  **/
-grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);
+GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);
 
 /**
  * grn_obj_set_info:
@@ -900,7 +908,7 @@ grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_ob
  *
  * objのtypeに対応する情報をvalueの内容に更新する。
  **/
-grn_rc grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value);
+GRN_API grn_rc grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value);
 
 /**
  * grn_obj_get_element_info:
@@ -912,8 +920,8 @@ grn_rc grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj 
  * objのidに対応するレコードの、typeに対応する情報をvaluebufに格納する。
  * 呼出側ではtypeに応じて十分なサイズのバッファを確保しなければならない。
  **/
-grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
-                                  grn_info_type type, grn_obj *value);
+GRN_API grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                                          grn_info_type type, grn_obj *value);
 
 /**
  * grn_obj_set_element_info:
@@ -924,8 +932,8 @@ grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
  *
  * objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新する。
  **/
-grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
-                                grn_info_type type, grn_obj *value);
+GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                                        grn_info_type type, grn_obj *value);
 
 
 /**
@@ -937,7 +945,7 @@ grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
  * tableのIDに対応するレコードのvalueを取得する。
  * 対応するレコードが存在する場合はvalue長を返す。見つからない場合は0を返す。
  **/
-grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
+GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
 
 /**
  * grn_obj_set_value:
@@ -971,7 +979,7 @@ grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value
 #define GRN_OBJ_LOCK                   (0x01<<6)
 #define GRN_OBJ_UNLOCK                 (0x01<<7)
 
-grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
+GRN_API grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
 
 /**
  * grn_obj_remove:
@@ -980,7 +988,7 @@ grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, 
  * objをメモリから解放し、それが永続オブジェクトであった場合は、
  * 該当するファイル一式を削除する。
  **/
-grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_rename:
@@ -989,7 +997,7 @@ grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
  *
  * old_pathに該当するオブジェクトのファイル名をnew_pathに変更する。
  **/
-grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
+GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
 /**
  * grn_obj_close:
@@ -997,7 +1005,7 @@ grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
  *
  * objをメモリから解放する。objに属するobjectも再帰的にメモリから解放される。
  **/
-grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_path:
@@ -1005,7 +1013,7 @@ grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
  *
  * objに対応するファイルパスを返す。一時objectならNULLを返す。
  **/
-const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
+GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_name:
@@ -1017,7 +1025,7 @@ const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
  * 名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、
  * namebufに該当する名前をコピーする。
  **/
-int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
+GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 /**
  * grn_obj_expire:
@@ -1025,7 +1033,7 @@ int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
  *
  * objの占有するメモリのうち、可能な領域をthresholdを指標として解放する。
  **/
-int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
+GRN_API int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
 
 /**
  * grn_obj_check:
@@ -1033,7 +1041,7 @@ int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
  *
  * objに対応するファイルの整合性を検査する。
  **/
-int grn_obj_check(grn_ctx *ctx, grn_obj *obj);
+GRN_API int grn_obj_check(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_lock:
@@ -1042,7 +1050,7 @@ int grn_obj_check(grn_ctx *ctx, grn_obj *obj);
  * objをlockする。timeout(秒)経過してもlockを取得できない場合は
  * GRN_RESOURCE_DEADLOCK_AVOIDEDを返す。
  **/
-grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
+GRN_API grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
 
 /**
  * grn_obj_unlock:
@@ -1050,7 +1058,7 @@ grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
  *
  * objをunlockする。
  **/
-grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
+GRN_API grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
 
 /**
  * grn_obj_clear_lock:
@@ -1058,7 +1066,7 @@ grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
  *
  * 強制的にロックをクリアする。
  **/
-grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_is_locked;
@@ -1066,7 +1074,7 @@ grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
  *
  * objが現在lockされていれば0以外の値を返す。
  **/
-unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
+GRN_API unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_db:
@@ -1074,7 +1082,7 @@ unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
  *
  * objの属するdbを返す。
  **/
-grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_search:
@@ -1099,30 +1107,30 @@ struct _grn_search_optarg {
   int max_size;
 };
 
-grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
-                      grn_obj *res, grn_sel_operator op, grn_search_optarg *optarg);
+GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
+                              grn_obj *res, grn_sel_operator op, grn_search_optarg *optarg);
 
 /*-------------------------------------------------------------
  * grn_vector
 */
 
-unsigned int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
+GRN_API unsigned int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 
-grn_rc grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
-                              const char *str, unsigned int str_len,
-                              unsigned int weight, grn_id domain);
+GRN_API grn_rc grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
+                                      const char *str, unsigned int str_len,
+                                      unsigned int weight, grn_id domain);
 
-unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
-                                    unsigned int offset, const char **str,
-                                    unsigned int *weight, grn_id *domain);
+GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
+                                            unsigned int offset, const char **str,
+                                            unsigned int *weight, grn_id *domain);
 
 /*-------------------------------------------------------------
  * hook操作のための関数
  */
 
-int grn_proc_call_next(grn_ctx *ctx, grn_obj *exec_info, grn_obj *in, grn_obj *out);
-void *grn_proc_get_ctx_local_data(grn_ctx *ctx, grn_obj *exec_info);
-void *grn_proc_get_hook_local_data(grn_ctx *ctx, grn_obj *exec_info);
+GRN_API int grn_proc_call_next(grn_ctx *ctx, grn_obj *exec_info, grn_obj *in, grn_obj *out);
+GRN_API void *grn_proc_get_ctx_local_data(grn_ctx *ctx, grn_obj *exec_info);
+GRN_API void *grn_proc_get_hook_local_data(grn_ctx *ctx, grn_obj *exec_info);
 
 typedef enum {
   GRN_HOOK_SET = 0,
@@ -1147,8 +1155,8 @@ typedef enum {
  *
  * objに対してhookを追加する。
  **/
-grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
-                        int offset, grn_obj *proc, grn_obj *data);
+GRN_API grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
+                                int offset, grn_obj *proc, grn_obj *data);
 
 /**
  * grn_obj_get_hook:
@@ -1160,8 +1168,8 @@ grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
  * objに定義されているhookの手続き(proc)を返す。hook固有情報が定義されている場合は、
  * その内容をdataにコピーして返す。
  **/
-grn_obj *grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
-                          int offset, grn_obj *data);
+GRN_API grn_obj *grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
+                                  int offset, grn_obj *data);
 
 /**
  * grn_obj_delete_hook:
@@ -1171,9 +1179,9 @@ grn_obj *grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
  *
  * objに定義されているhookを削除する。
  **/
-grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset);
+GRN_API grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset);
 
-grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain);
+GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain);
 
 /* query & snippet */
 
@@ -1219,41 +1227,41 @@ struct _grn_snip_mapping {
   void *dummy;
 };
 
-grn_query *grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-                          grn_sel_operator default_op,
-                          int max_exprs, grn_encoding encoding);
-unsigned int grn_query_rest(grn_ctx *ctx, grn_query *q, const char ** const rest);
-grn_rc grn_query_close(grn_ctx *ctx, grn_query *q);
+GRN_API grn_query *grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
+                                  grn_sel_operator default_op,
+                                  int max_exprs, grn_encoding encoding);
+GRN_API unsigned int grn_query_rest(grn_ctx *ctx, grn_query *q, const char ** const rest);
+GRN_API grn_rc grn_query_close(grn_ctx *ctx, grn_query *q);
 
-grn_rc grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_lens,
-                      unsigned int nstrs, int flags, int *found, int *score);
-grn_snip *grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
-                         unsigned int width, unsigned int max_results,
-                         unsigned int n_tags,
-                         const char **opentags, unsigned int *opentag_lens,
-                         const char **closetags, unsigned int *closetag_lens,
-                         grn_snip_mapping *mapping);
+GRN_API grn_rc grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_lens,
+                              unsigned int nstrs, int flags, int *found, int *score);
+GRN_API grn_snip *grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
+                                 unsigned int width, unsigned int max_results,
+                                 unsigned int n_tags,
+                                 const char **opentags, unsigned int *opentag_lens,
+                                 const char **closetags, unsigned int *closetag_lens,
+                                 grn_snip_mapping *mapping);
 
 #define GRN_SNIP_NORMALIZE             (0x01<<0)
 #define GRN_SNIP_COPY_TAG              (0x01<<1)
 #define GRN_SNIP_SKIP_LEADING_SPACES   (0x01<<2)
 #define GRN_QUERY_SCAN_NORMALIZE       GRN_SNIP_NORMALIZE
 
-grn_snip *grn_snip_open(grn_ctx *ctx, grn_encoding encoding, int flags, unsigned int width,
-                        unsigned int max_results,
-                        const char *defaultopentag, unsigned int defaultopentag_len,
-                        const char *defaultclosetag, unsigned int defaultclosetag_len,
-                        grn_snip_mapping *mapping);
-grn_rc grn_snip_close(grn_ctx *ctx, grn_snip *snip);
-grn_rc grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
-                         const char *keyword, unsigned int keyword_len,
-                         const char *opentag, unsigned int opentag_len,
-                         const char *closetag, unsigned int closetag_len);
-grn_rc grn_snip_exec(grn_ctx *ctx, grn_snip *snip,
-                     const char *string, unsigned int string_len,
-                     unsigned int *nresults, unsigned int *max_tagged_len);
-grn_rc grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int index,
-                           char *result, unsigned int *result_len);
+GRN_API grn_snip *grn_snip_open(grn_ctx *ctx, grn_encoding encoding, int flags, unsigned int width,
+                                unsigned int max_results,
+                                const char *defaultopentag, unsigned int defaultopentag_len,
+                                const char *defaultclosetag, unsigned int defaultclosetag_len,
+                                grn_snip_mapping *mapping);
+GRN_API grn_rc grn_snip_close(grn_ctx *ctx, grn_snip *snip);
+GRN_API grn_rc grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
+                                 const char *keyword, unsigned int keyword_len,
+                                 const char *opentag, unsigned int opentag_len,
+                                 const char *closetag, unsigned int closetag_len);
+GRN_API grn_rc grn_snip_exec(grn_ctx *ctx, grn_snip *snip,
+                             const char *string, unsigned int string_len,
+                             unsigned int *nresults, unsigned int *max_tagged_len);
+GRN_API grn_rc grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int index,
+                                   char *result, unsigned int *result_len);
 
 /* log */
 
@@ -1271,12 +1279,12 @@ struct _grn_logger_info {
   void *func_arg;
 };
 
-grn_rc grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info);
+GRN_API grn_rc grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info);
 
-void grn_logger_put(grn_ctx *ctx, grn_log_level level,
-                    const char *file, int line, const char *func, const char *fmt, ...);
+GRN_API void grn_logger_put(grn_ctx *ctx, grn_log_level level,
+                            const char *file, int line, const char *func, const char *fmt, ...);
 
-int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
+GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 #ifndef GRN_LOG_DEFAULT_LEVEL
 #define GRN_LOG_DEFAULT_LEVEL GRN_LOG_NOTICE
@@ -1290,25 +1298,25 @@ int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 /* string & bulk */
 
-grn_rc grn_bulk_init(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
-grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
-grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, unsigned int newsize);
-grn_rc grn_bulk_write(grn_ctx *ctx, grn_obj *bulk,
-                      const char *str, unsigned int len);
-grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
-grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
-grn_rc grn_bulk_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
-grn_rc grn_bulk_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
-grn_rc grn_bulk_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
-grn_rc grn_bulk_itoh(grn_ctx *ctx, grn_obj *bulk, int i, unsigned int len);
-grn_rc grn_bulk_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
-grn_rc grn_bulk_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
-grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
-grn_rc grn_bulk_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
-grn_rc grn_bulk_esc(grn_ctx *ctx, grn_obj *bulk, const char *s,
-                    unsigned int len, grn_encoding encoding);
-grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
-                       const char *str, unsigned int len);
+GRN_API grn_rc grn_bulk_init(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
+GRN_API grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
+GRN_API grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, unsigned int newsize);
+GRN_API grn_rc grn_bulk_write(grn_ctx *ctx, grn_obj *bulk,
+                              const char *str, unsigned int len);
+GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
+GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
+GRN_API grn_rc grn_bulk_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
+GRN_API grn_rc grn_bulk_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
+GRN_API grn_rc grn_bulk_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
+GRN_API grn_rc grn_bulk_itoh(grn_ctx *ctx, grn_obj *bulk, int i, unsigned int len);
+GRN_API grn_rc grn_bulk_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
+GRN_API grn_rc grn_bulk_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
+GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
+GRN_API grn_rc grn_bulk_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
+GRN_API grn_rc grn_bulk_esc(grn_ctx *ctx, grn_obj *bulk, const char *s,
+                            unsigned int len, grn_encoding encoding);
+GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
+                               const char *str, unsigned int len);
 
 #define GRN_BULK_PUTS(ctx,bulk,str) (grn_bulk_write((ctx), (bulk), (str), strlen(str)))
 #define GRN_BULK_PUTC(ctx,bulk,c) do {\
@@ -1353,11 +1361,11 @@ typedef struct {
 #define GRN_STR_WITH_CHECKS            (0x01<<2)
 #define GRN_STR_NORMALIZE              GRN_OBJ_KEY_NORMALIZE
 
-grn_str *grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-                      grn_encoding encoding, int flags);
-grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
+GRN_API grn_str *grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
+                              grn_encoding encoding, int flags);
+GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 
-int grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
+GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
 
 /* ql */
 
@@ -1368,10 +1376,10 @@ int grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding enc
 #define GRN_QL_QUIT                    (0x01<<4)
 #define GRN_QL_FIN                     GRN_CTX_FIN
 
-grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);
-grn_rc grn_ql_load(grn_ctx *ctx, const char *path);
-grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
-grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
+GRN_API grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);
+GRN_API grn_rc grn_ql_load(grn_ctx *ctx, const char *path);
+GRN_API grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
+GRN_API grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
 
 typedef struct _grn_ql_info grn_ql_info;
 
@@ -1382,29 +1390,29 @@ struct _grn_ql_info {
   unsigned char stat;
 };
 
-grn_rc grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info);
+GRN_API grn_rc grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info);
 
 /* hash */
 
 typedef struct _grn_hash grn_hash;
 typedef struct _grn_hash_cursor grn_hash_cursor;
 
-grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
-                          unsigned int value_size, unsigned int flags,
-                          grn_encoding encoding);
+GRN_API grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                                  unsigned int value_size, unsigned int flags,
+                                  grn_encoding encoding);
 
-grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
+GRN_API grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
 
-grn_rc grn_hash_close(grn_ctx *ctx, grn_hash *hash);
+GRN_API grn_rc grn_hash_close(grn_ctx *ctx, grn_hash *hash);
 
-grn_id grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
-                       void **value, grn_search_flags *flags);
+GRN_API grn_id grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
+                               void **value, grn_search_flags *flags);
 
-int grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize);
-int grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk);
-int grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf);
-grn_rc grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *value,
-                          int flags);
+GRN_API int grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize);
+GRN_API int grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk);
+GRN_API int grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf);
+GRN_API grn_rc grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *value,
+                                  int flags);
 
 typedef struct _grn_table_delete_optarg grn_table_delete_optarg;
 
@@ -1414,28 +1422,28 @@ struct _grn_table_delete_optarg {
   void *func_arg;
 };
 
-grn_rc grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
-                             grn_table_delete_optarg *optarg);
-grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash,
-                       const void *key, unsigned int key_size,
-                       grn_table_delete_optarg *optarg);
+GRN_API grn_rc grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
+                                     grn_table_delete_optarg *optarg);
+GRN_API grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash,
+                               const void *key, unsigned int key_size,
+                               grn_table_delete_optarg *optarg);
 
-grn_hash_cursor *grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
-                                      const void *min, unsigned int min_size,
-                                      const void *max, unsigned int max_size, int flags);
-grn_id grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c);
-void grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c);
+GRN_API grn_hash_cursor *grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
+                                              const void *min, unsigned int min_size,
+                                              const void *max, unsigned int max_size, int flags);
+GRN_API grn_id grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c);
+GRN_API void grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c);
 
-int grn_hash_cursor_get_key(grn_ctx *ctx, grn_hash_cursor *c, void **key);
-int grn_hash_cursor_get_value(grn_ctx *ctx, grn_hash_cursor *c, void **value);
-grn_rc grn_hash_cursor_set_value(grn_ctx *ctx, grn_hash_cursor *c,
-                                 void *value, int flags);
+GRN_API int grn_hash_cursor_get_key(grn_ctx *ctx, grn_hash_cursor *c, void **key);
+GRN_API int grn_hash_cursor_get_value(grn_ctx *ctx, grn_hash_cursor *c, void **value);
+GRN_API grn_rc grn_hash_cursor_set_value(grn_ctx *ctx, grn_hash_cursor *c,
+                                         void *value, int flags);
 
-int grn_hash_cursor_get_key_value(grn_ctx *ctx, grn_hash_cursor *c,
-                                  void **key, unsigned int *key_size, void **value);
+GRN_API int grn_hash_cursor_get_key_value(grn_ctx *ctx, grn_hash_cursor *c,
+                                          void **key, unsigned int *key_size, void **value);
 
-grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
-                              grn_table_delete_optarg *optarg);
+GRN_API grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
+                                      grn_table_delete_optarg *optarg);
 
 #define GRN_HASH_EACH(hash,id,key,key_size,value,block) do {\
   grn_hash_cursor *_sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0);\
@@ -1455,31 +1463,31 @@ grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
 typedef struct _grn_pat grn_pat;
 typedef struct _grn_pat_cursor grn_pat_cursor;
 
-grn_pat *grn_pat_create(grn_ctx *ctx, const char *path, unsigned int key_size,
-                        unsigned int value_size, unsigned int flags,
-                        grn_encoding encoding);
+GRN_API grn_pat *grn_pat_create(grn_ctx *ctx, const char *path, unsigned int key_size,
+                                unsigned int value_size, unsigned int flags,
+                                grn_encoding encoding);
 
-grn_pat *grn_pat_open(grn_ctx *ctx, const char *path);
+GRN_API grn_pat *grn_pat_open(grn_ctx *ctx, const char *path);
 
-grn_rc grn_pat_close(grn_ctx *ctx, grn_pat *pat);
+GRN_API grn_rc grn_pat_close(grn_ctx *ctx, grn_pat *pat);
 
-grn_rc grn_pat_remove(grn_ctx *ctx, const char *path);
+GRN_API grn_rc grn_pat_remove(grn_ctx *ctx, const char *path);
 
-grn_id grn_pat_lookup(grn_ctx *ctx, grn_pat *pat, const void *key, int key_size,
-                       void **value, grn_search_flags *flags);
+GRN_API grn_id grn_pat_lookup(grn_ctx *ctx, grn_pat *pat, const void *key, int key_size,
+                              void **value, grn_search_flags *flags);
 
-int grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize);
-int grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk);
-int grn_pat_get_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *valuebuf);
-grn_rc grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
-                         void *value, int flags);
+GRN_API int grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize);
+GRN_API int grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk);
+GRN_API int grn_pat_get_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *valuebuf);
+GRN_API grn_rc grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
+                                 void *value, int flags);
 
-grn_rc grn_pat_delete_by_id(grn_ctx *ctx, grn_pat *pat, grn_id id,
-                            grn_table_delete_optarg *optarg);
-grn_rc grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, unsigned int key_size,
-                      grn_table_delete_optarg *optarg);
-int grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
-                      grn_table_delete_optarg *optarg);
+GRN_API grn_rc grn_pat_delete_by_id(grn_ctx *ctx, grn_pat *pat, grn_id id,
+                                    grn_table_delete_optarg *optarg);
+GRN_API grn_rc grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, unsigned int key_size,
+                              grn_table_delete_optarg *optarg);
+GRN_API int grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
+                                    grn_table_delete_optarg *optarg);
 
 typedef struct _grn_pat_scan_hit grn_pat_scan_hit;
 
@@ -1489,33 +1497,33 @@ struct _grn_pat_scan_hit {
   unsigned int length;
 };
 
-int grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
-                 grn_pat_scan_hit *sh, unsigned int sh_size, const char **rest);
+GRN_API int grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
+                         grn_pat_scan_hit *sh, unsigned int sh_size, const char **rest);
 
-grn_rc grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
-                             const void *key, unsigned int key_size, grn_hash *h);
-grn_rc grn_pat_suffix_search(grn_ctx *ctx, grn_pat *pat,
-                             const void *key, unsigned int key_size, grn_hash *h);
-grn_id grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat,
-                          const void *key, unsigned int key_size);
+GRN_API grn_rc grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
+                                     const void *key, unsigned int key_size, grn_hash *h);
+GRN_API grn_rc grn_pat_suffix_search(grn_ctx *ctx, grn_pat *pat,
+                                     const void *key, unsigned int key_size, grn_hash *h);
+GRN_API grn_id grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat,
+                                  const void *key, unsigned int key_size);
 
-unsigned int grn_pat_size(grn_ctx *ctx, grn_pat *pat);
+GRN_API unsigned int grn_pat_size(grn_ctx *ctx, grn_pat *pat);
 
-grn_pat_cursor *grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
-                                    const void *min, unsigned int min_size,
-                                    const void *max, unsigned int max_size, int flags);
-grn_id grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c);
-void grn_pat_cursor_close(grn_ctx *ctx, grn_pat_cursor *c);
+GRN_API grn_pat_cursor *grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
+                                            const void *min, unsigned int min_size,
+                                            const void *max, unsigned int max_size, int flags);
+GRN_API grn_id grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c);
+GRN_API void grn_pat_cursor_close(grn_ctx *ctx, grn_pat_cursor *c);
 
-int grn_pat_cursor_get_key(grn_ctx *ctx, grn_pat_cursor *c, void **key);
-int grn_pat_cursor_get_value(grn_ctx *ctx, grn_pat_cursor *c, void **value);
+GRN_API int grn_pat_cursor_get_key(grn_ctx *ctx, grn_pat_cursor *c, void **key);
+GRN_API int grn_pat_cursor_get_value(grn_ctx *ctx, grn_pat_cursor *c, void **value);
 
-int grn_pat_cursor_get_key_value(grn_ctx *ctx, grn_pat_cursor *c,
-                                 void **key, unsigned int *key_size, void **value);
-grn_rc grn_pat_cursor_set_value(grn_ctx *ctx, grn_pat_cursor *c,
-                                void *value, int flags);
-grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
-                             grn_table_delete_optarg *optarg);
+GRN_API int grn_pat_cursor_get_key_value(grn_ctx *ctx, grn_pat_cursor *c,
+                                         void **key, unsigned int *key_size, void **value);
+GRN_API grn_rc grn_pat_cursor_set_value(grn_ctx *ctx, grn_pat_cursor *c,
+                                        void *value, int flags);
+GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
+                                     grn_table_delete_optarg *optarg);
 
 #define GRN_PAT_EACH(pat,id,key,key_size,value,block) do {\
   grn_pat_cursor *_sc = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0);\

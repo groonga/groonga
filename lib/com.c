@@ -221,7 +221,7 @@ grn_com_init(void)
   WSADATA wd;
   if (WSAStartup(MAKEWORD(2, 0), &wd) != 0) {
     grn_ctx *ctx = &grn_gctx;
-    WSERR("WSAStartup");
+    SERR("WSAStartup");
   }
 #else /* WIN32 */
 #ifndef USE_MSG_NOSIGNAL
