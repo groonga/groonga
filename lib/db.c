@@ -3492,6 +3492,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_BULK :
     case GRN_UVECTOR :
+    case GRN_MSG :
       obj->header.type = GRN_VOID;
       if (obj->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {
         obj->u.b.head = NULL;

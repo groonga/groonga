@@ -228,6 +228,7 @@ typedef unsigned int grn_obj_flags;
 #define GRN_BULK                       (0x01)
 #define GRN_VECTOR                     (0x02)
 #define GRN_UVECTOR                    (0x03) /* element_size == sizeof(grn_id) */
+#define GRN_MSG                        (0x04)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
 #define GRN_SNIP                       (0x0a)

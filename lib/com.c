@@ -90,30 +90,54 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
   return e;
 }
 
+#define GRN_COM_QUEUE_EMPTYP(q) (((q)->first == (q)->last) && !(q)->next)
+
 /******* grn_msg ********/
 
-grn_rc
-grn_msg_send(grn_ctx *ctx, grn_obj *msg)
+grn_obj *
+grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old)
 {
-  return GRN_SUCCESS;
+  grn_msg *msg = NULL;
+  if (old && (msg = (grn_msg *)grn_com_queue_deque(ctx, old))) {
+    if (msg->ctx != ctx) {
+      ERR(GRN_INVALID_ARGUMENT, "ctx unmatch");
+      return NULL;
+    }
+    GRN_BULK_REWIND(&msg->qe.obj);
+    msg->qe.next = NULL;
+    msg->peer = com;
+    msg->old = old;
+  } else if ((msg = GRN_MALLOCN(grn_msg, 1))) {
+    GRN_OBJ_INIT(&msg->qe.obj, GRN_MSG, 0);
+    msg->qe.obj.header.impl_flags |= GRN_OBJ_ALLOCATED;
+    msg->qe.next = NULL;
+    msg->peer = com;
+    msg->ctx = ctx;
+    msg->old = old;
+  }
+  return (grn_obj *)msg;
 }
 
 grn_obj *
-grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *msg)
+grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old)
 {
-  return NULL;
-}
-
-grn_obj *
-grn_msg_open(grn_ctx *ctx, grn_com *com)
-{
-  return NULL;
+  grn_msg *req = (grn_msg *)query, *msg = NULL;
+  if (req && (msg = (grn_msg *)grn_msg_open(ctx, req->peer, old))) {
+    msg->edge_id = req->edge_id;
+    msg->query_id = req->query_id;
+    msg->flags = req->flags;
+    msg->protocol = req->protocol == GRN_COM_PROTO_MBREQ
+      ? GRN_COM_PROTO_MBRES : req->protocol;
+  }
+  return (grn_obj *)msg;
 }
 
 grn_rc
-grn_msg_close(grn_ctx *ctx, grn_obj *msg)
+grn_msg_close(grn_ctx *ctx, grn_obj *obj)
 {
-  return GRN_SUCCESS;
+  grn_msg *msg = (grn_msg *)obj;
+  if (ctx == msg->ctx) { return grn_obj_close(ctx, obj); }
+  return grn_com_queue_enque(ctx, msg->old, (grn_com_queue_entry *)msg);
 }
 
 /******* sender
@@ -131,10 +155,10 @@ sender(void *arg)
     MUTEX_UNLOCK(ev->mutex);
     peers_writable = poll(peers_with_msg, POLLOUT);
     for (peer in peers_writable) {
-      msgs = queue_peek_all(peer->send_pros);
+      msgs = queue_peek_all(peer->send_new);
       if (!send(msgs)) {
-        queue_deque(peer->send_pros, msgs);
-        for (msg in msgs) { enque(msg->edge->send_cons, msg); }
+        queue_deque(peer->send_new, msgs);
+        for (msg in msgs) { enque(msg->edge->send_old, msg); }
       }
     }
     MUTEX_LOCK(ev->mutex);
@@ -144,21 +168,49 @@ exit :
   return NULL;
 }
 
-static void
-output(grn_ctx *ctx, int flags, grn_com_msg *msg)
-{
-  peer = msg->peer;
-  if (empty(peer->send_pros) && !send(msg)) {
-    grn_msg_fin(msg);
-  } else {
-    MUTEX_LOCK(ev->mutex);
-    enque(peer->send_pros, msg);
-    COND_SIGNAL(ev->cond);
-    MUTEX_UNLOCK(ev->mutex);
-  }
-}
-
 ********/
+
+grn_rc
+grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
+{
+  grn_rc rc;
+  grn_msg *m = (grn_msg *)msg;
+  grn_com *peer = m->peer;
+  if (GRN_COM_QUEUE_EMPTYP(peer->new)) {
+    switch (m->protocol) {
+    case GRN_COM_PROTO_GQTP :
+      {
+        grn_com_gqtp_header sheader;
+        if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
+        sheader.qtype = 0;
+        sheader.keylen = 0;
+        sheader.level = 0;
+        sheader.flags = flags;
+        sheader.status = 0;
+        sheader.opaque = 0;
+        sheader.cas = 0;
+        //todo : MSG_DONTWAIT
+        rc = grn_com_gqtp_send(ctx, peer, &sheader,
+                               GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
+        if (rc != GRN_OPERATION_WOULD_BLOCK) { return rc; }
+      }
+      break;
+    case GRN_COM_PROTO_MBREQ :
+      return GRN_FUNCTION_NOT_IMPLEMENTED;
+    case GRN_COM_PROTO_MBRES :
+      // todo:
+      // grn_com_mbres_send(ctx, peer, header, &buf, MBRES_SUCCESS, 0, 4);
+      break;
+    default :
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+  MUTEX_LOCK(peer->ev->mutex);
+  rc = grn_com_queue_enque(ctx, peer->new, (grn_com_queue_entry *)msg);
+  COND_SIGNAL(peer->ev->cond);
+  MUTEX_UNLOCK(peer->ev->mutex);
+  return rc;
+}
 
 /******* grn_com ********/
 
@@ -195,9 +247,10 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
 {
   ev->max_nevents = max_nevents;
   if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0, GRN_ENC_NONE))) {
-    /*
     MUTEX_INIT(ev->mutex);
     COND_INIT(ev->cond);
+    GRN_COM_QUEUE_INIT(&ev->recv_old);
+    /*
     if (THREAD_CREATE(thread, sender, ev)) { SERR("pthread_create"); }
     */
 #ifndef USE_SELECT
@@ -428,6 +481,11 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #endif /* USE_EPOLL */
   }
 #endif /* USE_SELECT */
+  /* todo :
+  while (!(msg = (grn_com_msg *)grn_com_queue_deque(&recv_old))) {
+    grn_msg_close(ctx, msg);
+  }
+  */
   return GRN_SUCCESS;
 }
 
@@ -629,6 +687,102 @@ grn_com_gqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 exit :
   if (!cs) { grn_sock_close(fd); }
   return cs;
+}
+
+grn_rc
+grn_com_close(grn_ctx *ctx, grn_com *com)
+{
+  grn_sock fd = com->fd;
+  grn_com_event *ev = com->ev;
+  if (ev) { grn_com_event_del(ctx, ev, fd); }
+  if (com->status != grn_com_closed) {
+    if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
+    if (grn_sock_close(fd) == -1) {
+      SERR("close");
+      return ctx->rc;
+    }
+  }
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
+  if (!ev) { GRN_FREE(com); }
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_com_recv(grn_ctx *ctx, grn_msg *msg)
+{
+  ssize_t ret;
+  grn_com *com = msg->peer;
+  grn_com_gqtp_header *header = &msg->header;
+  byte *p = (byte *)header;
+  size_t rest = sizeof(grn_com_gqtp_header);
+  do {
+    errno = 0;
+    if ((ret = recv(com->fd, p, rest, MSG_WAITALL)) <= 0) {
+#ifdef WIN32
+        int e = WSAGetLastError();
+        SERR("recv size");
+        if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
+#else /* WIN32 */
+        SERR("recv size");
+        if (errno == EAGAIN || errno == EINTR) { continue; }
+#endif /* WIN32 */
+      goto exit;
+    }
+    rest -= ret, p += ret;
+  } while (rest);
+  GRN_LOG(ctx, GRN_LOG_INFO, "recv (%d,%x,%d,%02x,%02x,%04x)", ntohl(header->size), header->flags, header->proto, header->qtype, header->level, header->status);
+  {
+    uint8_t proto = header->proto;
+    size_t value_size = ntohl(header->size);
+    grn_obj *buf = &msg->qe.obj;
+    GRN_BULK_REWIND(buf);
+    switch (proto) {
+    case GRN_COM_PROTO_GQTP :
+    case GRN_COM_PROTO_MBREQ :
+      if (GRN_BULK_WSIZE(buf) < value_size) {
+        if ((grn_bulk_resize(ctx, buf, value_size))) {
+          goto exit;
+        }
+      }
+      for (rest = value_size; rest;) {
+        errno = 0;
+        if ((ret = recv(com->fd, buf->u.b.curr, rest, MSG_WAITALL)) <= 0) {
+#ifdef WIN32
+            int e = WSAGetLastError();
+            SERR("recv body");
+            if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
+#else /* WIN32 */
+            SERR("recv body");
+            if (errno == EAGAIN || errno == EINTR) { continue; }
+#endif /* WIN32 */
+          goto exit;
+        }
+        rest -= ret, buf->u.b.curr += ret;
+      }
+      //*buf->u.b.curr = '\0';
+      break;
+    default :
+      GRN_LOG(ctx, GRN_LOG_ERROR, "illegal header: %d", proto);
+      ctx->rc = GRN_INVALID_FORMAT;
+      goto exit;
+    }
+  }
+exit :
+  return ctx->rc;
+}
+
+static void
+grn_com_receiver(grn_ctx *ctx, grn_com *com)
+{
+  grn_com_event *ev = com->ev;
+  grn_msg *msg = (grn_msg *)grn_msg_open(ctx, com, &ev->recv_old);
+  /*
+  if (com->status == grn_com_closing || com->status == grn_com_closed) {
+    grn_com_close(ctx, com);
+  }
+  */
+  grn_com_recv(ctx, msg);
+  ev->msg_handler(ctx, (grn_obj *)msg);
 }
 
 static void
