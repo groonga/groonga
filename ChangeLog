@@ -1,3 +1,7 @@
+2009-04-03  Tasuku SUENAGA <a at razil.jp>
+
+	* build_windows.bat: refined.
+
 2009-04-02  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h (GRN_MSG): add.
