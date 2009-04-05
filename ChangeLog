@@ -1,3 +1,8 @@
+2009-04-05  Kouhei Sutou  <kou@clear-code.com>
+
+	* groonga.h: fix a typo:
+	GRN_SOCKET_NOT_INITIALISED -> GRN_SOCKET_NOT_INITIALIZED.
+
 2009-04-03  Tasuku SUENAGA <a at razil.jp>
 
 	* build_windows.bat: refined.
