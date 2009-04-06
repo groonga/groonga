@@ -209,7 +209,6 @@ struct _grn_msg {
   grn_com_addr edge_id;
   uint32_t query_id;
   uint32_t flags;
-  uint8_t protocol;
 };
 
 grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);

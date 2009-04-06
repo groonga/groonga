@@ -400,21 +400,6 @@ do_mbreq(grn_ctx *ctx, grn_msg *msg)
   }
 }
 
-static void
-do_msg(grn_ctx *ctx, grn_msg *msg)
-{
-  grn_com_header *header = &msg->header;
-  if (header->proto == GRN_COM_PROTO_MBREQ) {
-    do_mbreq(ctx, msg);
-  } else {
-    char *body = GRN_BULK_HEAD((grn_obj *)msg);
-    uint32_t size = ntohl(header->size);
-    uint16_t flags = header->flags;
-    grn_ql_send(ctx, body, size, flags);
-  }
-  grn_msg_close(ctx, (grn_obj *)msg);
-}
-
 /* query queue */
 
 static grn_mutex q_mutex;
@@ -429,6 +414,7 @@ typedef struct {
   grn_com_queue send_old;
   grn_com *com;
   grn_com_addr *addr;
+  grn_msg *msg;
   uint8_t stat;
   grn_id id;
 } grn_edge;
@@ -448,6 +434,21 @@ grn_com_queue ctx_new;
 grn_com_queue ctx_old;
 
 static uint32_t nthreads = 0, nfthreads = 0;
+
+static void
+do_msg(grn_ctx *ctx, grn_msg *msg)
+{
+  grn_com_header *header = &msg->header;
+  if (header->proto == GRN_COM_PROTO_MBREQ) {
+    do_mbreq(ctx, msg);
+  } else {
+    char *body = GRN_BULK_HEAD((grn_obj *)msg);
+    uint32_t size = ntohl(header->size);
+    uint16_t flags = header->flags;
+    grn_ql_send(ctx, body, size, flags);
+  }
+  grn_msg_close(ctx, (grn_obj *)msg);
+}
 
 static void * CALLBACK
 worker(void *arg)
@@ -473,6 +474,7 @@ worker(void *arg)
         MUTEX_UNLOCK(q_mutex);
         while (ctx->stat != GRN_QL_QUIT &&
                (msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+          edge->msg = (grn_msg *)msg;
           do_msg(ctx, (grn_msg *)msg);
         }
         while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
@@ -498,17 +500,18 @@ static void
 output(grn_ctx *ctx, int flags, void *arg)
 {
   grn_edge *edge = arg;
-  grn_com *cs = edge->com;
-  grn_com_header header;
-  grn_obj *buf = ctx->impl->outbuf;
-  header.flags = (flags & GRN_QL_MORE) ? GRN_QL_MORE : GRN_QL_TAIL;
-  header.qtype = 1;
-  header.level = 0;
-  header.status = 0;
-  if (grn_com_send(ctx, cs, &header, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf))) {
+  grn_com *com = edge->com;
+  grn_msg *req = edge->msg, *msg = (grn_msg *)ctx->impl->outbuf;
+  msg->edge_id = req->edge_id;
+  msg->query_id = req->query_id;
+  msg->flags = req->flags;
+  msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
+    ? GRN_COM_PROTO_MBRES : req->header.proto;
+  if (grn_msg_send(ctx, (grn_obj *)msg,
+                   (flags & GRN_QL_MORE) ? GRN_QL_MORE : GRN_QL_TAIL)) {
     edge->stat = EDGE_ABORT;
   }
-  GRN_BULK_REWIND(buf);
+  ctx->impl->outbuf = grn_msg_open(ctx, com, &edge->send_old);
 }
 
 static void
@@ -536,6 +539,8 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
       grn_ql_load(&edge->ctx, NULL);
       com->opaque = edge;
+      grn_obj_close(&edge->ctx, edge->ctx.impl->outbuf);
+      edge->ctx.impl->outbuf = grn_msg_open(&edge->ctx, com, &edge->send_old);
       edge->com = com;
       edge->id = id;
       edge->stat = EDGE_IDLE;

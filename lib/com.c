@@ -122,8 +122,8 @@ grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old)
     msg->edge_id = req->edge_id;
     msg->query_id = req->query_id;
     msg->flags = req->flags;
-    msg->protocol = req->protocol == GRN_COM_PROTO_MBREQ
-      ? GRN_COM_PROTO_MBRES : req->protocol;
+    msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
+      ? GRN_COM_PROTO_MBRES : req->header.proto;
   }
   return (grn_obj *)msg;
 }
@@ -173,7 +173,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
   grn_msg *m = (grn_msg *)msg;
   grn_com *peer = m->peer;
   if (GRN_COM_QUEUE_EMPTYP(&peer->new)) {
-    switch (m->protocol) {
+    switch (m->header.proto) {
     case GRN_COM_PROTO_GQTP :
       {
         grn_com_header sheader;
@@ -188,7 +188,10 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
         //todo : MSG_DONTWAIT
         rc = grn_com_send(ctx, peer, &sheader,
                           GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
-        if (rc != GRN_OPERATION_WOULD_BLOCK) { return rc; }
+        if (rc != GRN_OPERATION_WOULD_BLOCK) {
+          grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
+          return rc;
+        }
       }
       break;
     case GRN_COM_PROTO_MBREQ :
