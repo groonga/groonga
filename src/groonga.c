@@ -149,33 +149,6 @@ exit :
 
 /* server */
 
-static void
-output(grn_ctx *ctx, int flags, void *arg)
-{
-  grn_com *cs = arg;
-  grn_com_header header;
-  grn_obj *buf = &ctx->impl->outbuf;
-  header.flags = (flags & GRN_QL_MORE) ? GRN_QL_MORE : GRN_QL_TAIL;
-  header.qtype = 1;
-  header.level = 0;
-  header.status = 0;
-  if (ctx->stat == GRN_QL_QUIT) { cs->status = grn_com_closing; }
-  if (grn_com_send(ctx, cs, &header, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf))) {
-    ctx->stat = GRN_QL_QUIT;
-    cs->status = grn_com_closing;
-  }
-  GRN_BULK_REWIND(buf);
-}
-
-static void
-errout(grn_ctx *ctx, grn_com *cs, char *msg)
-{
-  grn_com_header header;
-  header.flags = GRN_QL_TAIL;
-  grn_com_send(ctx, cs, &header, msg, strlen(msg));
-  GRN_LOG(ctx, GRN_LOG_ERROR, "errout: %s", msg);
-}
-
 enum {
   MBRES_SUCCESS = 0x00,
   MBRES_KEY_ENOENT = 0x01,
@@ -423,7 +396,6 @@ do_mbreq(grn_ctx *ctx, grn_msg *msg)
     /* fallthru */
   default :
     ctx->stat = GRN_QL_QUIT;
-    cs->status = grn_com_closing;
     break;
   }
 }
@@ -450,8 +422,6 @@ static grn_cond q_cond;
 
 /* worker thread */
 
-#define MAX_NFTHREADS 4
-
 typedef struct {
   grn_com_queue_entry eq;
   grn_ctx ctx;
@@ -463,78 +433,21 @@ typedef struct {
   grn_id id;
 } grn_edge;
 
-grn_hash *edges;
-
-grn_com_queue ctx_new;
-grn_com_queue ctx_old;
-
-static uint32_t nthreads = 0, nfthreads = 0;
-
-/*
-static void * CALLBACK
-thread_start(void *arg)
-{
-  grn_com_gqtp *cs;
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
-  MUTEX_LOCK(q_mutex);
-  nthreads++;
-  do {
-    nfthreads++;
-    while (qq.tail == qq.head) { COND_WAIT(q_cond, q_mutex); }
-    nfthreads--;
-    if (grn_gctx.stat == GRN_QL_QUIT) { break; }
-    cs = qq.v[qq.head++];
-    MUTEX_UNLOCK(q_mutex);
-    if (cs) { do_msg((grn_com_event *) arg, cs); }
-    MUTEX_LOCK(q_mutex);
-  } while (nfthreads < MAX_NFTHREADS);
-  nthreads--;
-  MUTEX_UNLOCK(q_mutex);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
-  return NULL;
-}
-
-static void
-msg_handler(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
-{
-  grn_com_gqtp *cs = (grn_com_gqtp *)c;
-  if (cs->rc) {
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "connection closed..");
-    if (cs->userdata) { ctx_close((grn_ctx *)cs->userdata); }
-    grn_com_gqtp_close(ctx, ev, cs);
-    return;
-  }
-  {
-    int i = 0;
-    while (queue_enque(&qq, (grn_com_gqtp *)c)) {
-      if (i) {
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "queue is full try=%d qq(%d-%d) thd(%d/%d) %d", i, qq.head, qq.tail, nfthreads, nthreads, *ev->hash->n_entries);
-      }
-      if (++i == 100) {
-        errout(ctx, (grn_com_gqtp *)c, "*** ERROR: query queue is full");
-        return;
-      }
-      usleep(1000);
-    }
-  }
-  MUTEX_LOCK(q_mutex);
-  if (!nfthreads && nthreads < MAX_NFTHREADS) {
-    grn_thread thread;
-    MUTEX_UNLOCK(q_mutex);
-    if (THREAD_CREATE(thread, thread_start, ev)) { SERR("pthread_create"); }
-    return;
-  }
-  COND_SIGNAL(q_cond);
-  MUTEX_UNLOCK(q_mutex);
-}
-*/
-
 enum {
   EDGE_IDLE = 0x00,
   EDGE_WAIT = 0x01,
   EDGE_DOING = 0x02,
   EDGE_ABORT = 0x03,
 };
+
+#define MAX_NFTHREADS 4
+
+grn_hash *edges;
+
+grn_com_queue ctx_new;
+grn_com_queue ctx_old;
+
+static uint32_t nthreads = 0, nfthreads = 0;
 
 static void * CALLBACK
 worker(void *arg)
@@ -582,11 +495,27 @@ exit :
 }
 
 static void
-msg_handler(grn_ctx *ctx, grn_obj *obj)
+output(grn_ctx *ctx, int flags, void *arg)
+{
+  grn_edge *edge = arg;
+  grn_com *cs = edge->com;
+  grn_com_header header;
+  grn_obj *buf = ctx->impl->outbuf;
+  header.flags = (flags & GRN_QL_MORE) ? GRN_QL_MORE : GRN_QL_TAIL;
+  header.qtype = 1;
+  header.level = 0;
+  header.status = 0;
+  if (grn_com_send(ctx, cs, &header, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf))) {
+    edge->stat = EDGE_ABORT;
+  }
+  GRN_BULK_REWIND(buf);
+}
+
+static void
+msg_handler(grn_ctx *ctx, grn_obj *msg)
 {
   grn_edge *edge;
-  grn_msg *msg = (grn_msg *)obj;
-  grn_com *com = msg->peer;
+  grn_com *com = ((grn_msg *)msg)->peer;
   if (ctx->rc) {
     if (com->has_sid && (edge = com->opaque)) {
       MUTEX_LOCK(q_mutex);
@@ -596,13 +525,14 @@ msg_handler(grn_ctx *ctx, grn_obj *obj)
       edge->stat = EDGE_ABORT;
       MUTEX_UNLOCK(q_mutex);
     }
+    grn_msg_close(ctx, msg);
   } else {
     grn_search_flags f = GRN_TABLE_ADD;
-    grn_id id = grn_hash_get(ctx, edges, &msg->edge_id, sizeof(grn_com_addr),
+    grn_id id = grn_hash_get(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
                              (void **)&edge, &f);
     if (f & GRN_TABLE_ADDED) {
       grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL, enc);
-      grn_ql_recv_handler_set(&edge->ctx, output, com);
+      grn_ql_recv_handler_set(&edge->ctx, output, edge);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
       grn_ql_load(&edge->ctx, NULL);
       com->opaque = edge;
@@ -611,7 +541,7 @@ msg_handler(grn_ctx *ctx, grn_obj *obj)
       edge->stat = EDGE_IDLE;
     }
     if (edge->ctx.stat == GRN_QL_QUIT || edge->stat == EDGE_ABORT) {
-      grn_msg_close(ctx, obj);
+      grn_msg_close(ctx, msg);
     } else {
       grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
       MUTEX_LOCK(q_mutex);
@@ -628,11 +558,11 @@ msg_handler(grn_ctx *ctx, grn_obj *obj)
     }
   }
   while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
-    while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
-      grn_msg_close(&edge->ctx, obj);
+    while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+      grn_msg_close(&edge->ctx, msg);
     }
-    while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-      grn_msg_close(ctx, obj);
+    while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+      grn_msg_close(ctx, msg);
     }
     grn_ctx_fin(&edge->ctx);
     if (edge->com->has_sid) {

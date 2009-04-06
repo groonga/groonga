@@ -192,9 +192,6 @@ grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
                     grn_com_header *header, char *body, uint32_t size);
 grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
 
-#define GRN_COM_GQTP_MSG_HEADER(buf) ((grn_com_header *)(buf)->u.b.head)
-#define GRN_COM_GQTP_MSG_BODY(buf) ((buf)->u.b.head + sizeof(grn_com_header))
-
 grn_rc grn_com_mbres_send(grn_ctx *ctx, grn_com *cs,
                           grn_com_header *header, grn_obj *body,
                           uint16_t status, uint32_t key_size, uint32_t extra_size);

@@ -537,7 +537,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
   ssize_t ret, whole_size = sizeof(grn_com_header) + size;
   header->proto = GRN_COM_PROTO_GQTP;
   header->size = htonl(size);
-  if (cs->status == grn_com_closing) { header->flags |= GRN_QL_QUIT; }
+  if (ctx->stat == GRN_QL_QUIT) { header->flags |= GRN_QL_QUIT; }
   GRN_LOG(ctx, GRN_LOG_INFO, "send (%d,%x,%d,%02x,%02x,%04x)", size, header->flags, header->proto, header->qtype, header->level, header->status);
 
   if (size) {

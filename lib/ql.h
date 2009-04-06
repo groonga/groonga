@@ -171,7 +171,7 @@ struct _grn_ctx_impl {
   grn_cell *value;      /* evaluated value */
   grn_cell *global_env; /* global variables */
   char *inbuf;
-  grn_obj outbuf;
+  grn_obj *outbuf;
   grn_obj subbuf;
   unsigned int bufcur;
   void (*output)(grn_ctx *, int, void *);

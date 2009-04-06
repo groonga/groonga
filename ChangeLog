@@ -1,5 +1,9 @@
 2009-04-06  Poe MORITA  <morita at razil.jp>
 
+	* src/groonga.c (output): fixed a memory leak bug.
+
+2009-04-06  Poe MORITA  <morita at razil.jp>
+
 	* com.h (grn_com_gqtp): cut off.
 
 2009-04-03  Tasuku SUENAGA <a at razil.jp>

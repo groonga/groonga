@@ -3059,7 +3059,7 @@ nf_disp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     switch (str[0]) {
     case 'j' : /* json */
     case 'J' :
-      disp_j(ctx, val, &ctx->impl->outbuf);
+      disp_j(ctx, val, ctx->impl->outbuf);
       f = 1;
       if (ERRP(ctx, GRN_WARN)) { return F; }
       break;
@@ -3068,7 +3068,7 @@ nf_disp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       break;
     case 't' : /* tsv */
     case 'T' :
-      disp_t(ctx, val, &ctx->impl->outbuf, &f);
+      disp_t(ctx, val, ctx->impl->outbuf, &f);
       if (ERRP(ctx, GRN_WARN)) { return F; }
       break;
     case 'x' : /* xml */
