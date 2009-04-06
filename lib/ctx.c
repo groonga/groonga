@@ -329,7 +329,7 @@ grn_ctx_fin(grn_ctx *ctx)
         grn_ql_recv(ctx, &str, &str_len, &flags);
       }
       grn_ql_send(ctx, "ACK", 3, GRN_QL_HEAD);
-      rc = grn_com_gqtp_close(ctx, NULL, ctx->impl->com);
+      rc = grn_com_close(ctx, ctx->impl->com);
     }
     rc = grn_bulk_fin(ctx, &ctx->impl->outbuf);
     rc = grn_bulk_fin(ctx, &ctx->impl->subbuf);
@@ -489,7 +489,7 @@ grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags)
   if (!ctx->impl) { grn_ctx_impl_init(ctx); }
   if (!ctx->impl) { return ctx->rc; }
   {
-    grn_com_gqtp *com = grn_com_gqtp_copen(ctx, NULL, host, port);
+    grn_com *com = grn_com_copen(ctx, NULL, host, port);
     if (com) {
       ctx->impl->com = com;
       return GRN_SUCCESS;
@@ -514,7 +514,7 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
   if (ctx->impl) {
     if (ctx->impl->com) {
       grn_rc rc;
-      grn_com_gqtp_header sheader;
+      grn_com_header sheader;
       if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
       sheader.qtype = 0;
       sheader.keylen = 0;
@@ -523,8 +523,8 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       sheader.status = 0;
       sheader.opaque = 0;
       sheader.cas = 0;
-      if ((rc = grn_com_gqtp_send(ctx, ctx->impl->com, &sheader, (char *)str, str_len))) {
-        ERR(rc, "grn_com_gqtp_send failed");
+      if ((rc = grn_com_send(ctx, ctx->impl->com, &sheader, (char *)str, str_len))) {
+        ERR(rc, "grn_com_send failed");
       }
       goto exit;
     } else {
@@ -556,23 +556,23 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
   }
   if (ctx->impl) {
     if (ctx->impl->com) {
-      if (grn_com_gqtp_recv(ctx, ctx->impl->com, &ctx->impl->com->msg, &ctx->impl->com_status)) {
+      grn_com_header header;
+      if (grn_com_recv(ctx, ctx->impl->com, &header, &ctx->impl->outbuf)) {
         *str = NULL;
         *str_len = 0;
         *flags = 0;
       } else {
-        grn_com_gqtp_header *rheader = GRN_COM_GQTP_MSG_HEADER(&ctx->impl->com->msg);
-        *str = GRN_COM_GQTP_MSG_BODY(&ctx->impl->com->msg);
-        *str_len = ntohl(rheader->size);
-        if (rheader->flags & GRN_QL_QUIT) {
+        *str = GRN_BULK_HEAD(&ctx->impl->outbuf);
+        *str_len = GRN_BULK_VSIZE(&ctx->impl->outbuf);
+        if (header.flags & GRN_QL_QUIT) {
           ctx->stat = GRN_QL_QUIT;
           *flags = GRN_QL_QUIT;
         } else {
-          *flags = (rheader->flags & GRN_QL_TAIL) ? 0 : GRN_QL_MORE;
+          *flags = (header.flags & GRN_QL_TAIL) ? 0 : GRN_QL_MORE;
         }
       }
-      if (ctx->impl->com->rc) {
-        ERR(ctx->impl->com->rc, "grn_com_gqtp_recv failed!");
+      if (ctx->rc) {
+        ERR(ctx->rc, "grn_com_recv failed!");
       }
       goto exit;
     } else {
@@ -634,9 +634,9 @@ grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info)
 {
   if (!ctx || !ctx->impl) { return GRN_INVALID_ARGUMENT; }
   if (ctx->impl->com) {
-    info->fd = ctx->impl->com->com.fd;
+    info->fd = ctx->impl->com->fd;
     info->com_status = ctx->impl->com_status;
-    info->outbuf = &ctx->impl->com->msg;
+    info->outbuf = &ctx->impl->outbuf;
     info->stat = ctx->stat;
   } else {
     info->fd = -1;
