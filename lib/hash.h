@@ -128,7 +128,7 @@ struct _grn_tiny_array {
   if (ptr_) { *ptr_ ^= (1 << ((offset) & 7)); }\
 }
 
-void grn_tiny_array_init(grn_tiny_array *a, grn_ctx *ctx, uint16_t element_size, uint16_t flags);
+void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *a, uint16_t element_size, uint16_t flags);
 void grn_tiny_array_fin(grn_tiny_array *a);
 void *grn_tiny_array_at(grn_tiny_array *a, grn_id id);
 grn_id grn_tiny_array_id(grn_tiny_array *a, void *p);
@@ -137,7 +137,7 @@ grn_id grn_tiny_array_id(grn_tiny_array *a, void *p);
 
 typedef struct _grn_array grn_array;
 
-#define GRN_ARRAY_TINY (1L<<1)
+#define GRN_ARRAY_TINY                 (0x01<<6)
 
 typedef struct _grn_array_cursor grn_array_cursor;
 

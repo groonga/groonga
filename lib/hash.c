@@ -24,7 +24,7 @@
 /* grn_tiny_array */
 
 void
-grn_tiny_array_init(grn_tiny_array *a, grn_ctx *ctx, uint16_t element_size, uint16_t flags)
+grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *a, uint16_t element_size, uint16_t flags)
 {
   a->ctx = ctx;
   a->element_size = element_size;
@@ -119,11 +119,14 @@ enum {
   }\
 }
 
-inline static grn_rc
-tiny_array_init(grn_array *array, grn_ctx *ctx, const char *path,
+static grn_rc
+tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
                uint32_t value_size, uint32_t flags)
 {
-  if (path) { return GRN_INVALID_ARGUMENT; }
+  if (path) {
+    ERR(GRN_INVALID_ARGUMENT, "failed to create array");
+    return ctx->rc;
+  }
   GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
   array->obj.flags = flags;
   array->ctx = ctx;
@@ -134,12 +137,12 @@ tiny_array_init(grn_array *array, grn_ctx *ctx, const char *path,
   array->n_entries_ = 0;
   array->io = NULL;
   array->garbages = GRN_ID_NIL;
-  grn_tiny_array_init(&array->a, ctx, value_size, GRN_TINY_ARRAY_CLEAR);
-  grn_tiny_array_init(&array->bitmap, ctx, 1, GRN_TINY_ARRAY_CLEAR);
+  grn_tiny_array_init(ctx, &array->a, value_size, GRN_TINY_ARRAY_CLEAR);
+  grn_tiny_array_init(ctx, &array->bitmap, 1, GRN_TINY_ARRAY_CLEAR);
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+static grn_rc
 io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
                uint32_t value_size, uint32_t flags)
 {
@@ -156,7 +159,7 @@ io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
     io = grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
                                   GRN_ARRAY_SEGMENT_SIZE, grn_io_auto, 2, array_spec);
   }
-  if (!io) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (!io) { return ctx->rc; }
   header = grn_io_header(io);
   grn_io_set_type(io, GRN_TABLE_NO_KEY);
   header->flags = flags;
@@ -184,7 +187,7 @@ grn_array_create(grn_ctx *ctx, const char *path, uint32_t value_size, uint32_t f
   grn_array *array;
   if (ctx && (array = GRN_MALLOC(sizeof(grn_array)))) {
     if (!((flags & GRN_ARRAY_TINY) ?
-          tiny_array_init(array, ctx, path, value_size, flags) :
+          tiny_array_init(ctx, array, path, value_size, flags) :
           io_array_init(ctx, array, path, value_size, flags))) {
       return array;
     }
@@ -799,8 +802,8 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
   ah->n_entries_ = 0;
   ah->garbages = GRN_ID_NIL;
   ah->tokenizer = grn_ctx_get(ctx, GRN_DB_BIGRAM);
-  grn_tiny_array_init(&ah->a, ctx, entry_size, GRN_TINY_ARRAY_CLEAR);
-  grn_tiny_array_init(&ah->bitmap, ctx, 1, GRN_TINY_ARRAY_CLEAR);
+  grn_tiny_array_init(ctx, &ah->a, entry_size, GRN_TINY_ARRAY_CLEAR);
+  grn_tiny_array_init(ctx, &ah->bitmap, 1, GRN_TINY_ARRAY_CLEAR);
   return GRN_SUCCESS;
 }
 
