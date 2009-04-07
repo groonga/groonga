@@ -120,8 +120,7 @@ grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old)
   grn_msg *req = (grn_msg *)query, *msg = NULL;
   if (req && (msg = (grn_msg *)grn_msg_open(ctx, req->peer, old))) {
     msg->edge_id = req->edge_id;
-    msg->query_id = req->query_id;
-    msg->flags = req->flags;
+    //    msg->flags = req->flags;
     msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
       ? GRN_COM_PROTO_MBRES : req->header.proto;
   }
@@ -134,6 +133,17 @@ grn_msg_close(grn_ctx *ctx, grn_obj *obj)
   grn_msg *msg = (grn_msg *)obj;
   if (ctx == msg->ctx) { return grn_obj_close(ctx, obj); }
   return grn_com_queue_enque(ctx, msg->old, (grn_com_queue_entry *)msg);
+}
+
+grn_rc
+grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
+                     uint16_t status, uint32_t key_size, uint32_t extra_size)
+{
+  grn_com_header *header = &((grn_msg *)obj)->header;
+  header->status = htons(status);
+  header->keylen = htons(key_size);
+  header->level = htons(extra_size);
+  return GRN_SUCCESS;
 }
 
 /******* sender
@@ -172,21 +182,22 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
   grn_rc rc;
   grn_msg *m = (grn_msg *)msg;
   grn_com *peer = m->peer;
+  grn_com_header *header = &m->header;
   if (GRN_COM_QUEUE_EMPTYP(&peer->new)) {
-    switch (m->header.proto) {
+    switch (header->proto) {
     case GRN_COM_PROTO_GQTP :
       {
-        grn_com_header sheader;
         if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
-        sheader.qtype = 0;
-        sheader.keylen = 0;
-        sheader.level = 0;
-        sheader.flags = flags;
-        sheader.status = 0;
-        sheader.opaque = 0;
-        sheader.cas = 0;
+        if (ctx->stat == GRN_QL_QUIT) { flags |= GRN_QL_QUIT; }
+        header->qtype = 0;
+        header->keylen = 0;
+        header->level = 0;
+        header->flags = flags;
+        header->status = 0;
+        header->opaque = 0;
+        header->cas = 0;
         //todo : MSG_DONTWAIT
-        rc = grn_com_send(ctx, peer, &sheader,
+        rc = grn_com_send(ctx, peer, header,
                           GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
         if (rc != GRN_OPERATION_WOULD_BLOCK) {
           grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
@@ -197,8 +208,12 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     case GRN_COM_PROTO_MBREQ :
       return GRN_FUNCTION_NOT_IMPLEMENTED;
     case GRN_COM_PROTO_MBRES :
-      // todo:
-      // grn_com_mbres_send(ctx, peer, header, &buf, MBRES_SUCCESS, 0, 4);
+      rc = grn_com_send(ctx, peer, header,
+                        GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
+      if (rc != GRN_OPERATION_WOULD_BLOCK) {
+        grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
+        return rc;
+      }
       break;
     default :
       return GRN_INVALID_ARGUMENT;
@@ -538,9 +553,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
              grn_com_header *header, char *body, uint32_t size)
 {
   ssize_t ret, whole_size = sizeof(grn_com_header) + size;
-  header->proto = GRN_COM_PROTO_GQTP;
   header->size = htonl(size);
-  if (ctx->stat == GRN_QL_QUIT) { header->flags |= GRN_QL_QUIT; }
   GRN_LOG(ctx, GRN_LOG_INFO, "send (%d,%x,%d,%02x,%02x,%04x)", size, header->flags, header->proto, header->qtype, header->level, header->status);
 
   if (size) {
@@ -576,6 +589,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     }
 #endif /* WIN32 */
   } else {
+    errno = 0;
     while ((errno = 0, (ret = send(cs->fd, header, whole_size, MSG_NOSIGNAL)) == -1)) {
 #ifdef WIN32
       int e = WSAGetLastError();
@@ -809,74 +823,5 @@ exit :
   if (!cs) {
     grn_sock_close(lfd);
   }
-  return ctx->rc;
-}
-
-/* memcache binary protocol */
-
-grn_rc
-grn_com_mbres_send(grn_ctx *ctx, grn_com *cs,
-                   grn_com_header *header, grn_obj *body,
-                   uint16_t status, uint32_t key_size, uint32_t extra_size)
-{
-  uint32_t size = GRN_BULK_VSIZE(body);
-  ssize_t ret, whole_size = sizeof(grn_com_header) + size;
-  header->proto = GRN_COM_PROTO_MBRES;
-  header->keylen = htons(key_size);
-  header->level = extra_size;
-  header->flags = 0x00;
-  header->status = htons(status);
-  header->size = htonl(size);
-  if (size) {
-#ifdef WIN32
-    ssize_t reth;
-    if ((reth = send(cs->fd, header, sizeof(grn_com_header), 0)) == -1) {
-      SERR("send size");
-      goto exit;
-    }
-    if ((ret = send(cs->fd, GRN_BULK_HEAD(body), size, 0)) == -1) {
-      SERR("send body");
-      goto exit;
-    }
-    ret += reth;
-#else /* WIN32 */
-    struct iovec msg_iov[2];
-    struct msghdr msg;
-    msg.msg_name = NULL;
-    msg.msg_namelen = 0;
-    msg.msg_iov = msg_iov;
-    msg.msg_iovlen = 2;
-    msg.msg_control = NULL;
-    msg.msg_controllen = 0;
-    msg.msg_flags = 0;
-    msg_iov[0].iov_base = header;
-    msg_iov[0].iov_len = sizeof(grn_com_header);
-    msg_iov[1].iov_base = GRN_BULK_HEAD(body);
-    msg_iov[1].iov_len = size;
-    while ((errno = 0, (ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL)) == -1)) {
-      SERR("sendmsg");
-      if (errno == EAGAIN || errno == EINTR) { continue; }
-      goto exit;
-    }
-#endif /* WIN32 */
-  } else {
-    errno = 0;
-    while ((ret = send(cs->fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
-#ifdef WIN32
-      int e = WSAGetLastError();
-      SERR("send");
-      if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
-#else /* WIN32 */
-      SERR("send");
-      if (errno == EAGAIN || errno == EINTR) { continue; }
-#endif /* WIN32 */
-      goto exit;
-    }
-  }
-  if (ret != whole_size) {
-    GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg: %d < %d", ret, whole_size);
-    goto exit;
-  }
-exit :
   return ctx->rc;
 }

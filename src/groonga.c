@@ -148,6 +148,18 @@ exit :
 
 /* server */
 
+typedef struct {
+  grn_com_queue_entry eq;
+  grn_ctx ctx;
+  grn_com_queue recv_new;
+  grn_com_queue send_old;
+  grn_com *com;
+  grn_com_addr *addr;
+  grn_msg *msg;
+  uint8_t stat;
+  grn_id id;
+} grn_edge;
+
 enum {
   MBRES_SUCCESS = 0x00,
   MBRES_KEY_ENOENT = 0x01,
@@ -225,14 +237,12 @@ cache_init(grn_ctx *ctx)
 static void
 do_mbreq(grn_ctx *ctx, grn_edge *edge)
 {
-  grn_obj buf;
   grn_msg *msg = edge->msg;
-  grn_com *cs = msg->peer;
   grn_com_header *header = &msg->header;
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   switch (header->qtype) {
   case MBCMD_GET :
     {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
@@ -241,19 +251,20 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
         // GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d not found", keylen);
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+        grn_msg_set_property(ctx, re, MBRES_KEY_ENOENT, 0, 0);
+        grn_msg_send(ctx, re, 0);
       } else {
-        grn_obj_get_value(ctx, cache_flags, rid, &buf);
-        grn_obj_get_value(ctx, cache_value, rid, &buf);
-        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d v=%d", keylen, GRN_BULK_VSIZE(&buf));
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 4);
-        grn_obj_close(ctx, &buf);
+        grn_obj_get_value(ctx, cache_flags, rid, re);
+        grn_obj_get_value(ctx, cache_value, rid, re);
+        grn_msg_set_property(ctx, re, MBRES_SUCCESS, 0, 4);
+        grn_msg_send(ctx, re, 0);
       }
     }
     break;
   case MBCMD_SET :
   case MBCMD_ADD :
     {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
       grn_id rid;
       uint32_t size = ntohl(header->size);
       uint16_t keylen = ntohs(header->keylen);
@@ -267,14 +278,17 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_search_flags f = GRN_TABLE_ADD;
       GRN_ASSERT(extralen == 8);
       cache_init(ctx);
-      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_ENOMEM, 0, 0);
+        grn_msg_set_property(ctx, re, MBRES_ENOMEM, 0, 0);
+        grn_msg_send(ctx, re, 0);
         // GRN_LOG(ctx, GRN_LOG_NOTICE, "SET k=%d failed", keylen);
       } else if (header->qtype == MBCMD_ADD && !(f & GRN_TABLE_ADD)) {
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_EEXISTS, 0, 0);
+        grn_msg_set_property(ctx, re, MBRES_KEY_EEXISTS, 0, 0);
+        grn_msg_send(ctx, re, 0);
       } else {
+        grn_obj buf;
+        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_BULK_SET(ctx, &buf, value, valuelen);
         grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
         GRN_BULK_SET(ctx, &buf, &flags, 4);
@@ -282,16 +296,16 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         GRN_BULK_SET(ctx, &buf, &expire, 4);
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
         /* todo : ntohll */
-        GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
+        GRN_BULK_SET(ctx, re, &header->cas, sizeof(uint64_t));
         grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
-        GRN_BULK_SET(ctx, &buf, NULL, 0);
-        // GRN_LOG(ctx, GRN_LOG_NOTICE, "SET k=%d v=%d (%d)", keylen, valuelen, cs->fd);
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+        grn_msg_set_property(ctx, re, MBRES_SUCCESS, 0, 0);
+        grn_msg_send(ctx, re, 0);
       }
     }
     break;
   case MBCMD_REPLACE :
     {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
       grn_id rid;
       uint32_t size = ntohl(header->size);
       uint16_t keylen = ntohs(header->keylen);
@@ -305,11 +319,13 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_search_flags f = 0;
       GRN_ASSERT(extralen == 8);
       cache_init(ctx);
-      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+        grn_msg_set_property(ctx, re, MBRES_KEY_ENOENT, 0, 0);
+        grn_msg_send(ctx, re, 0);
       } else {
+        grn_obj buf;
+        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_BULK_SET(ctx, &buf, value, valuelen);
         grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
         GRN_BULK_SET(ctx, &buf, &flags, 4);
@@ -319,34 +335,63 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         /* todo : ntohll */
         GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
         grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
-        GRN_BULK_SET(ctx, &buf, NULL, 0);
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+        grn_msg_set_property(ctx, re, MBRES_SUCCESS, 0, 0);
+        grn_msg_send(ctx, re, 0);
       }
     }
     break;
   case MBCMD_DELETE :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_INCREMENT :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_DECREMENT :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_FLUSH :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_GETQ :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_NOOP :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_VERSION :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_GETK :
     {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
@@ -354,29 +399,44 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       cache_init(ctx);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
-        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GETK k=%d not found", keylen);
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_KEY_ENOENT, 0, 0);
+        grn_msg_set_property(ctx, re, MBRES_KEY_ENOENT, 0, 0);
+        grn_msg_send(ctx, re, 0);
       } else {
-        grn_obj_get_value(ctx, cache_flags, rid, &buf);
-        grn_bulk_write(ctx, &buf, key, keylen);
-        grn_obj_get_value(ctx, cache_value, rid, &buf);
-        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GETK k=%d v=%d", keylen, GRN_BULK_VSIZE(&buf));
-        grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, keylen, 4);
-        grn_obj_close(ctx, &buf);
+        grn_obj_get_value(ctx, cache_flags, rid, re);
+        grn_bulk_write(ctx, re, key, keylen);
+        grn_obj_get_value(ctx, cache_value, rid, re);
+        grn_msg_set_property(ctx, re, MBRES_SUCCESS, keylen, 4);
+        grn_msg_send(ctx, re, 0);
       }
     }
     break;
   case MBCMD_GETKQ :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_APPEND :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_PREPEND :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_UNKNOWN_COMMAND, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     break;
   case MBCMD_QUIT :
-    grn_com_mbres_send(ctx, cs, header, &buf, MBRES_SUCCESS, 0, 0);
+    {
+      grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+      grn_msg_set_property(ctx, re, MBRES_SUCCESS, 0, 0);
+      grn_msg_send(ctx, re, 0);
+    }
     /* fallthru */
   default :
     ctx->stat = GRN_QL_QUIT;
@@ -385,18 +445,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
 }
 
 /* worker thread */
-
-typedef struct {
-  grn_com_queue_entry eq;
-  grn_ctx ctx;
-  grn_com_queue recv_new;
-  grn_com_queue send_old;
-  grn_com *com;
-  grn_com_addr *addr;
-  grn_msg *msg;
-  uint8_t stat;
-  grn_id id;
-} grn_edge;
 
 enum {
   EDGE_IDLE = 0x00,
@@ -438,8 +486,8 @@ worker(void *arg)
         MUTEX_UNLOCK(q_mutex);
         while (ctx->stat != GRN_QL_QUIT &&
                (edge->msg = (grn_msg *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-          msg = (grn_obj *)edge->msg;
           grn_com_header *header = &edge->msg->header;
+          msg = (grn_obj *)edge->msg;
           switch (header->proto) {
           case GRN_COM_PROTO_MBREQ :
             do_mbreq(ctx, edge);
@@ -480,8 +528,7 @@ output(grn_ctx *ctx, int flags, void *arg)
   grn_com *com = edge->com;
   grn_msg *req = edge->msg, *msg = (grn_msg *)ctx->impl->outbuf;
   msg->edge_id = req->edge_id;
-  msg->query_id = req->query_id;
-  msg->flags = req->flags;
+  // msg->flags = req->flags;
   msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
     ? GRN_COM_PROTO_MBRES : req->header.proto;
   ERRCLR(ctx);

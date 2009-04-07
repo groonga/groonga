@@ -207,13 +207,14 @@ struct _grn_msg {
   grn_com_queue *old;
   grn_com_header header;
   grn_com_addr edge_id;
-  uint32_t query_id;
-  uint32_t flags;
+  //  uint32_t flags;
 };
 
 grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);
 grn_obj *grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old);
 grn_obj *grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old);
+grn_rc grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
+                            uint16_t status, uint32_t key_size, uint32_t extra_size);
 grn_rc grn_msg_close(grn_ctx *ctx, grn_obj *msg);
 
 #ifdef __cplusplus

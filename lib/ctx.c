@@ -516,6 +516,8 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       grn_rc rc;
       grn_com_header sheader;
       if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
+      if (ctx->stat == GRN_QL_QUIT) { flags |= GRN_QL_QUIT; }
+      sheader.proto = GRN_COM_PROTO_GQTP;
       sheader.qtype = 0;
       sheader.keylen = 0;
       sheader.level = 0;
