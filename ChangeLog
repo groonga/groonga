@@ -1,5 +1,9 @@
 2009-04-07  Poe MORITA  <morita at razil.jp>
 
+	* lib/com.c (com->status, msg->flags): cut off.
+
+2009-04-07  Poe MORITA  <morita at razil.jp>
+
 	* lib/com.c (grn_com_mbres_send): cut off.
 
 2009-04-07  Poe MORITA  <morita at razil.jp>

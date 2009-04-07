@@ -125,7 +125,6 @@ struct _grn_com {
   int events;
   uint16_t sid;
   uint8_t has_sid;
-  uint8_t status;
   grn_com_queue new;
   grn_com_event *ev;
   void *opaque;
@@ -207,7 +206,6 @@ struct _grn_msg {
   grn_com_queue *old;
   grn_com_header header;
   grn_com_addr edge_id;
-  //  uint32_t flags;
 };
 
 grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);

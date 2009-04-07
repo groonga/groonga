@@ -120,7 +120,6 @@ grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old)
   grn_msg *req = (grn_msg *)query, *msg = NULL;
   if (req && (msg = (grn_msg *)grn_msg_open(ctx, req->peer, old))) {
     msg->edge_id = req->edge_id;
-    //    msg->flags = req->flags;
     msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
       ? GRN_COM_PROTO_MBRES : req->header.proto;
   }
@@ -333,7 +332,6 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
     if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c, &f)) {
       c->fd = fd;
       c->events = events;
-      c->status = grn_com_idle;
       if (com) { *com = c; }
     }
   }
@@ -413,7 +411,6 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
     }
     ncs->fd = fd;
     ncs->has_sid = 0;
-    ncs->status = grn_com_idle;
     ncs->ev = ev;
     ncs->opaque = NULL;
     GRN_COM_QUEUE_INIT(&ncs->new);
@@ -421,11 +418,6 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
     return;
   } else {
     grn_msg *msg = (grn_msg *)grn_msg_open(ctx, com, &ev->recv_old);
-    /*
-    if (com->status == grn_com_closing || com->status == grn_com_closed) {
-      grn_com_close(ctx, com);
-    }
-    */
     grn_com_recv(ctx, msg->peer, &msg->header, (grn_obj *)msg);
     if (msg->peer /* is_edge_request(msg)*/) {
       memcpy(&msg->edge_id, &ev->curr_edge_id, sizeof(grn_com_addr));
@@ -460,7 +452,6 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   ctx->errlvl = GRN_OK;
   ctx->rc = GRN_SUCCESS;
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
-    if (com->status == grn_com_closed) { continue; }
     if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
     if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
     if (*pfd > nfds) { nfds = *pfd; }
@@ -494,7 +485,6 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   ctx->errlvl = GRN_OK;
   ctx->rc = GRN_SUCCESS;
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
-    if (com->status == grn_com_closed) { continue; }
     ep->fd = *pfd;
     //    ep->events =(short) com->events;
     ep->events = POLLIN;
@@ -726,12 +716,10 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
   grn_sock fd = com->fd;
   grn_com_event *ev = com->ev;
   if (ev) { grn_com_event_del(ctx, ev, fd); }
-  if (com->status != grn_com_closed) {
-    if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
-    if (grn_sock_close(fd) == -1) {
-      SERR("close");
-      return ctx->rc;
-    }
+  if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
+  if (grn_sock_close(fd) == -1) {
+    SERR("close");
+    return ctx->rc;
   }
   GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
   if (!ev) { GRN_FREE(com); }
@@ -811,7 +799,6 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func)
     ev->msg_handler = func;
     cs->fd = lfd;
     cs->has_sid = 0;
-    cs->status = grn_com_idle;
     cs->ev = ev;
     cs->opaque = NULL;
     GRN_COM_QUEUE_INIT(&cs->new);

@@ -528,7 +528,6 @@ output(grn_ctx *ctx, int flags, void *arg)
   grn_com *com = edge->com;
   grn_msg *req = edge->msg, *msg = (grn_msg *)ctx->impl->outbuf;
   msg->edge_id = req->edge_id;
-  // msg->flags = req->flags;
   msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
     ? GRN_COM_PROTO_MBRES : req->header.proto;
   ERRCLR(ctx);
