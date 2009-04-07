@@ -1,5 +1,9 @@
 2009-04-07  Poe MORITA  <morita at razil.jp>
 
+	* src/groonga.c (do_msg): cut off
+
+2009-04-07  Poe MORITA  <morita at razil.jp>
+
 	* lib/hash.h (GRN_ARRAY_TINY): avoid conflict with GRN_OBJ_TABLE_NO_KEY. (Thanks to Kouhei Sutou)
 	* lib/hash.c (grn_array_create): set error info to ctx when grn_array_create failed.
 
