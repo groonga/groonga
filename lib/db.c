@@ -76,7 +76,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   encoding = ctx->encoding;
   if (!path || strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
-      grn_tiny_array_init(&s->values, ctx, sizeof(grn_obj *),
+      grn_tiny_array_init(ctx, &s->values, sizeof(grn_obj *),
                           GRN_TINY_ARRAY_CLEAR|
                           GRN_TINY_ARRAY_THREADSAFE|
                           GRN_TINY_ARRAY_USE_MALLOC);
@@ -125,7 +125,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
   GRN_API_ENTER;
   if (path && strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
-      grn_tiny_array_init(&s->values, ctx, sizeof(grn_obj *),
+      grn_tiny_array_init(ctx, &s->values, sizeof(grn_obj *),
                           GRN_TINY_ARRAY_CLEAR|
                           GRN_TINY_ARRAY_THREADSAFE|
                           GRN_TINY_ARRAY_USE_MALLOC);

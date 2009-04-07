@@ -90,8 +90,6 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
   return e;
 }
 
-#define GRN_COM_QUEUE_EMPTYP(q) (((q)->first == (q)->last) && !(q)->next)
-
 /******* grn_msg ********/
 
 grn_obj *
@@ -104,17 +102,15 @@ grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old)
       return NULL;
     }
     GRN_BULK_REWIND(&msg->qe.obj);
-    msg->qe.next = NULL;
-    msg->peer = com;
-    msg->old = old;
   } else if ((msg = GRN_MALLOCN(grn_msg, 1))) {
     GRN_OBJ_INIT(&msg->qe.obj, GRN_MSG, 0);
     msg->qe.obj.header.impl_flags |= GRN_OBJ_ALLOCATED;
-    msg->qe.next = NULL;
-    msg->peer = com;
     msg->ctx = ctx;
-    msg->old = old;
   }
+  msg->qe.next = NULL;
+  msg->peer = com;
+  msg->old = old;
+  msg->header.proto = 0;
   return (grn_obj *)msg;
 }
 
@@ -126,8 +122,8 @@ grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old)
     msg->edge_id = req->edge_id;
     msg->query_id = req->query_id;
     msg->flags = req->flags;
-    msg->protocol = req->protocol == GRN_COM_PROTO_MBREQ
-      ? GRN_COM_PROTO_MBRES : req->protocol;
+    msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
+      ? GRN_COM_PROTO_MBRES : req->header.proto;
   }
   return (grn_obj *)msg;
 }
@@ -176,11 +172,11 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
   grn_rc rc;
   grn_msg *m = (grn_msg *)msg;
   grn_com *peer = m->peer;
-  if (GRN_COM_QUEUE_EMPTYP(peer->new)) {
-    switch (m->protocol) {
+  if (GRN_COM_QUEUE_EMPTYP(&peer->new)) {
+    switch (m->header.proto) {
     case GRN_COM_PROTO_GQTP :
       {
-        grn_com_gqtp_header sheader;
+        grn_com_header sheader;
         if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
         sheader.qtype = 0;
         sheader.keylen = 0;
@@ -190,9 +186,12 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
         sheader.opaque = 0;
         sheader.cas = 0;
         //todo : MSG_DONTWAIT
-        rc = grn_com_gqtp_send(ctx, peer, &sheader,
-                               GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
-        if (rc != GRN_OPERATION_WOULD_BLOCK) { return rc; }
+        rc = grn_com_send(ctx, peer, &sheader,
+                          GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
+        if (rc != GRN_OPERATION_WOULD_BLOCK) {
+          grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
+          return rc;
+        }
       }
       break;
     case GRN_COM_PROTO_MBREQ :
@@ -206,7 +205,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     }
   }
   MUTEX_LOCK(peer->ev->mutex);
-  rc = grn_com_queue_enque(ctx, peer->new, (grn_com_queue_entry *)msg);
+  rc = grn_com_queue_enque(ctx, &peer->new, (grn_com_queue_entry *)msg);
   COND_SIGNAL(peer->ev->cond);
   MUTEX_UNLOCK(peer->ev->mutex);
   return rc;
@@ -282,6 +281,10 @@ exit :
 grn_rc
 grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev)
 {
+  grn_obj *msg;
+  while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &ev->recv_old))) {
+    grn_msg_close(ctx, msg);
+  }
   if (ev->hash) { grn_hash_close(ctx, ev->hash); }
 #ifndef USE_SELECT
   if (ev->events) { GRN_FREE(ev->events); }
@@ -377,6 +380,50 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
   }
 }
 
+static void
+grn_com_receiver(grn_ctx *ctx, grn_com *com)
+{
+  grn_com_event *ev = com->ev;
+  ERRCLR(ctx);
+  if (ev->acceptor == com) {
+    grn_com *ncs;
+    grn_sock fd = accept(com->fd, NULL, NULL);
+    if (fd == -1) {
+      SERR("accept");
+      return;
+    }
+    if (grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, (grn_com **)&ncs)) {
+      grn_sock_close(fd);
+      return;
+    }
+    ncs->fd = fd;
+    ncs->has_sid = 0;
+    ncs->status = grn_com_idle;
+    ncs->ev = ev;
+    ncs->opaque = NULL;
+    GRN_COM_QUEUE_INIT(&ncs->new);
+    // GRN_LOG(ctx, GRN_LOG_NOTICE, "accepted (%d)", fd);
+    return;
+  } else {
+    grn_msg *msg = (grn_msg *)grn_msg_open(ctx, com, &ev->recv_old);
+    /*
+    if (com->status == grn_com_closing || com->status == grn_com_closed) {
+      grn_com_close(ctx, com);
+    }
+    */
+    grn_com_recv(ctx, msg->peer, &msg->header, (grn_obj *)msg);
+    if (msg->peer /* is_edge_request(msg)*/) {
+      memcpy(&msg->edge_id, &ev->curr_edge_id, sizeof(grn_com_addr));
+      if (!com->has_sid) {
+        com->has_sid = 1;
+        com->sid = ev->curr_edge_id.sid++;
+      }
+      msg->edge_id.sid = com->sid;
+    }
+    ev->msg_handler(ctx, (grn_obj *)msg);
+  }
+}
+
 grn_rc
 grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 {
@@ -416,8 +463,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   }
   if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "select returns 0 events"); }
   GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
-    if (FD_ISSET(*pfd, &rfds)) { com->ev_in(ctx, ev, com); }
-    if (FD_ISSET(*pfd, &wfds)) { com->ev_out(ctx, ev, com); }
+    if (FD_ISSET(*pfd, &rfds)) { grn_com_receiver(ctx, com); }
   });
 #else /* USE_SELECT */
 #ifdef USE_EPOLL
@@ -465,8 +511,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       if (grn_sock_close(efd) == -1) { SERR("close"); }
       continue;
     }
-    if ((ep->events & GRN_COM_POLLIN)) { com->ev_in(ctx, ev, com); }
-    if ((ep->events & GRN_COM_POLLOUT)) { com->ev_out(ctx, ev, com); }
+    if ((ep->events & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
 #else /* USE_EPOLL */
     efd = ep->fd;
     if (!(ep->events & ep->revents)) { continue; }
@@ -476,8 +521,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       if (grn_sock_close(efd) == -1) { SERR("close"); }
       continue;
     }
-    if ((ep->revents & GRN_COM_POLLIN)) { com->ev_in(ctx, ev, com); }
-    if ((ep->revents & GRN_COM_POLLOUT)) { com->ev_out(ctx, ev, com); }
+    if ((ep->revents & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
 #endif /* USE_EPOLL */
   }
 #endif /* USE_SELECT */
@@ -489,29 +533,25 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   return GRN_SUCCESS;
 }
 
-/******* grn_com_gqtp ********/
-
 grn_rc
-grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
-                  grn_com_gqtp_header *header, char *body, uint32_t size)
+grn_com_send(grn_ctx *ctx, grn_com *cs,
+             grn_com_header *header, char *body, uint32_t size)
 {
-  ssize_t ret, whole_size = sizeof(grn_com_gqtp_header) + size;
+  ssize_t ret, whole_size = sizeof(grn_com_header) + size;
   header->proto = GRN_COM_PROTO_GQTP;
   header->size = htonl(size);
-  if (cs->com.status == grn_com_closing) { header->flags |= GRN_QL_QUIT; }
+  if (ctx->stat == GRN_QL_QUIT) { header->flags |= GRN_QL_QUIT; }
   GRN_LOG(ctx, GRN_LOG_INFO, "send (%d,%x,%d,%02x,%02x,%04x)", size, header->flags, header->proto, header->qtype, header->level, header->status);
 
   if (size) {
 #ifdef WIN32
     ssize_t reth;
-    if ((reth = send(cs->com.fd, header, sizeof(grn_com_gqtp_header), 0)) == -1) {
+    if ((reth = send(cs->fd, header, sizeof(grn_com_header), 0)) == -1) {
       SERR("send size");
-      cs->rc = ctx->rc;
       goto exit;
     }
-    if ((ret = send(cs->com.fd, body, size, 0)) == -1) {
+    if ((ret = send(cs->fd, body, size, 0)) == -1) {
       SERR("send body");
-      cs->rc = ctx->rc;
       goto exit;
     }
     ret += reth;
@@ -526,18 +566,17 @@ grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
     msg.msg_controllen = 0;
     msg.msg_flags = 0;
     msg_iov[0].iov_base = header;
-    msg_iov[0].iov_len = sizeof(grn_com_gqtp_header);
+    msg_iov[0].iov_len = sizeof(grn_com_header);
     msg_iov[1].iov_base = body;
     msg_iov[1].iov_len = size;
-    while ((errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1)) {
+    while ((errno = 0, (ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL)) == -1)) {
       SERR("sendmsg");
       if (errno == EAGAIN || errno == EINTR) { continue; }
-      cs->rc = ctx->rc;
       goto exit;
     }
 #endif /* WIN32 */
   } else {
-    while ((errno = 0, (ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1)) {
+    while ((errno = 0, (ret = send(cs->fd, header, whole_size, MSG_NOSIGNAL)) == -1)) {
 #ifdef WIN32
       int e = WSAGetLastError();
       SERR("send");
@@ -546,175 +585,23 @@ grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
       SERR("send");
       if (errno == EAGAIN || errno == EINTR) { continue; }
 #endif /* WIN32 */
-      cs->rc = ctx->rc;
       goto exit;
     }
   }
   if (ret != whole_size) {
     GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg: %d < %d", ret, whole_size);
-    cs->rc = ctx->rc;
     goto exit;
   }
-  cs->rc = GRN_SUCCESS;
 exit :
-  return cs->rc;
+  return ctx->rc;
 }
 
 grn_rc
-grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *status)
+grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
 {
   ssize_t ret;
-  grn_com_gqtp_header *header;
-  size_t rest = sizeof(grn_com_gqtp_header);
-  if (GRN_BULK_WSIZE(buf) < rest) {
-    if ((cs->rc = grn_bulk_reinit(ctx, buf, rest))) {
-      *status = grn_com_emem;
-      goto exit;
-    }
-  } else {
-    GRN_BULK_REWIND(buf);
-  }
-  do {
-    // todo : also support non blocking mode (use MSG_DONTWAIT)
-    errno = 0;
-    if ((ret = recv(cs->com.fd, buf->u.b.curr, rest, MSG_WAITALL)) <= 0) {
-#ifdef WIN32
-        int e = WSAGetLastError();
-        SERR("recv size");
-        if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
-#else /* WIN32 */
-        SERR("recv size");
-        if (errno == EAGAIN || errno == EINTR) { continue; }
-#endif /* WIN32 */
-      cs->rc = ctx->rc;
-      *status = grn_com_erecv_head;
-      goto exit;
-    }
-    rest -= ret, buf->u.b.curr += ret;
-  } while (rest);
-  header = GRN_COM_GQTP_MSG_HEADER(buf);
-  GRN_LOG(ctx, GRN_LOG_INFO, "recv (%d,%x,%d,%02x,%02x,%04x)", ntohl(header->size), header->flags, header->proto, header->qtype, header->level, header->status);
-  *status = header->status;
-  {
-    uint8_t proto = header->proto;
-    size_t value_size = ntohl(header->size);
-    size_t whole_size = sizeof(grn_com_gqtp_header) + value_size;
-    switch (proto) {
-    case GRN_COM_PROTO_GQTP :
-    case GRN_COM_PROTO_MBREQ :
-      if (GRN_BULK_WSIZE(buf) < whole_size) {
-        if ((cs->rc = grn_bulk_resize(ctx, buf, whole_size))) {
-          *status = grn_com_emem;
-          goto exit;
-        }
-      }
-      for (rest = value_size; rest;) {
-        errno = 0;
-        if ((ret = recv(cs->com.fd, buf->u.b.curr, rest, MSG_WAITALL)) <= 0) {
-#ifdef WIN32
-            int e = WSAGetLastError();
-            SERR("recv body");
-            if (e == WSAEWOULDBLOCK || e == WSAEINTR) { continue; }
-#else /* WIN32 */
-            SERR("recv body");
-            if (errno == EAGAIN || errno == EINTR) { continue; }
-#endif /* WIN32 */
-          cs->rc = ctx->rc;
-          *status = grn_com_erecv_body;
-          goto exit;
-        }
-        rest -= ret, buf->u.b.curr += ret;
-      }
-      *buf->u.b.curr = '\0';
-      break;
-    default :
-      GRN_LOG(ctx, GRN_LOG_ERROR, "illegal header: %d", proto);
-      cs->rc = GRN_INVALID_FORMAT;
-      *status = grn_com_eproto;
-      goto exit;
-    }
-  }
-  cs->rc = GRN_SUCCESS;
-exit :
-  return cs->rc;
-}
-
-grn_com_gqtp *
-grn_com_gqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
-{
-  grn_sock fd = -1;
-  grn_com_gqtp *cs = NULL;
-  struct hostent *he;
-  struct sockaddr_in addr;
-  if (!(he = gethostbyname(dest))) {
-    SERR("gethostbyname");
-    goto exit;
-  }
-  addr.sin_family = AF_INET;
-  memcpy(&addr.sin_addr, he->h_addr, he->h_length);
-  addr.sin_port = htons(port);
-  if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    SERR("socket");
-    return NULL;
-  }
-  {
-    int v = 1;
-    if (setsockopt(fd, 6, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
-      SERR("setsockopt");
-    }
-  }
-  while ((errno = 0, connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1)) {
-#ifdef WIN32
-    if (WSAGetLastError() == WSAECONNREFUSED)
-#else /* WIN32 */
-    if (errno == ECONNREFUSED)
-#endif /* WIN32 */
-    {
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "connect retrying..");
-      sleep(2);
-      continue;
-    }
-    SERR("connect");
-    goto exit;
-  }
-  if (ev) {
-    if (grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, (grn_com **)&cs)) { goto exit; }
-  } else {
-    if (!(cs = GRN_CALLOC(sizeof(grn_com_gqtp)))) { goto exit; }
-    cs->com.fd = fd;
-  }
-  grn_bulk_init(ctx, &cs->msg, 0);
-exit :
-  if (!cs) { grn_sock_close(fd); }
-  return cs;
-}
-
-grn_rc
-grn_com_close(grn_ctx *ctx, grn_com *com)
-{
-  grn_sock fd = com->fd;
-  grn_com_event *ev = com->ev;
-  if (ev) { grn_com_event_del(ctx, ev, fd); }
-  if (com->status != grn_com_closed) {
-    if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
-    if (grn_sock_close(fd) == -1) {
-      SERR("close");
-      return ctx->rc;
-    }
-  }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
-  if (!ev) { GRN_FREE(com); }
-  return GRN_SUCCESS;
-}
-
-grn_rc
-grn_com_recv(grn_ctx *ctx, grn_msg *msg)
-{
-  ssize_t ret;
-  grn_com *com = msg->peer;
-  grn_com_gqtp_header *header = &msg->header;
   byte *p = (byte *)header;
-  size_t rest = sizeof(grn_com_gqtp_header);
+  size_t rest = sizeof(grn_com_header);
   do {
     errno = 0;
     if ((ret = recv(com->fd, p, rest, MSG_WAITALL)) <= 0) {
@@ -734,7 +621,6 @@ grn_com_recv(grn_ctx *ctx, grn_msg *msg)
   {
     uint8_t proto = header->proto;
     size_t value_size = ntohl(header->size);
-    grn_obj *buf = &msg->qe.obj;
     GRN_BULK_REWIND(buf);
     switch (proto) {
     case GRN_COM_PROTO_GQTP :
@@ -771,65 +657,84 @@ exit :
   return ctx->rc;
 }
 
-static void
-grn_com_receiver(grn_ctx *ctx, grn_com *com)
+grn_com *
+grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 {
+  grn_sock fd = -1;
+  grn_com *cs = NULL;
+  struct hostent *he;
+  struct sockaddr_in addr;
+  if (!(he = gethostbyname(dest))) {
+    SERR("gethostbyname");
+    goto exit;
+  }
+  addr.sin_family = AF_INET;
+  memcpy(&addr.sin_addr, he->h_addr, he->h_length);
+  addr.sin_port = htons(port);
+  if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    SERR("socket");
+    return NULL;
+  }
+  {
+    int v = 1;
+    if (setsockopt(fd, 6, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
+      SERR("setsockopt");
+    }
+  }
+  while ((errno = 0, connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1)) {
+#ifdef WIN32
+    if (WSAGetLastError() == WSAECONNREFUSED)
+#else /* WIN32 */
+    if (errno == ECONNREFUSED)
+#endif /* WIN32 */
+    {
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "connect retrying..");
+      sleep(2);
+      continue;
+    }
+    SERR("connect");
+    goto exit;
+  }
+  if (ev) {
+    if (grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, (grn_com **)&cs)) { goto exit; }
+  } else {
+    if (!(cs = GRN_CALLOC(sizeof(grn_com)))) { goto exit; }
+    cs->fd = fd;
+  }
+exit :
+  if (!cs) { grn_sock_close(fd); }
+  return cs;
+}
+
+grn_rc
+grn_com_close(grn_ctx *ctx, grn_com *com)
+{
+  grn_sock fd = com->fd;
   grn_com_event *ev = com->ev;
-  grn_msg *msg = (grn_msg *)grn_msg_open(ctx, com, &ev->recv_old);
-  /*
-  if (com->status == grn_com_closing || com->status == grn_com_closed) {
-    grn_com_close(ctx, com);
+  if (ev) { grn_com_event_del(ctx, ev, fd); }
+  if (com->status != grn_com_closed) {
+    if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
+    if (grn_sock_close(fd) == -1) {
+      SERR("close");
+      return ctx->rc;
+    }
   }
-  */
-  grn_com_recv(ctx, msg);
-  ev->msg_handler(ctx, (grn_obj *)msg);
-}
-
-static void
-grn_com_gqtp_receiver(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
-{
-  unsigned int status;
-  grn_com_gqtp *cs = (grn_com_gqtp *)c;
-  if (cs->com.status == grn_com_closing || cs->com.status == grn_com_closed) {
-    grn_com_gqtp_close(ctx, ev, cs);
-    return;
-  }
-  if (cs->com.status != grn_com_idle) {
-    //    GRN_LOG(ctx, GRN_LOG_NOTICE, "waiting to be idle.. (%d) %d", c->fd, *ev->hash->n_entries);
-    usleep(1);
-    return;
-  }
-  grn_com_gqtp_recv(ctx, cs, &cs->msg, &status);
-  cs->com.status = grn_com_doing;
-  cs->msg_in(ctx, ev, c);
-}
-
-static void
-grn_com_gqtp_acceptor(grn_ctx *ctx, grn_com_event *ev, grn_com *c)
-{
-  grn_com_gqtp *cs = (grn_com_gqtp *)c, *ncs;
-  grn_sock fd = accept(cs->com.fd, NULL, NULL);
-  if (fd == -1) {
-    SERR("accept");
-    return;
-  }
-  if (grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, (grn_com **)&ncs)) {
-    grn_sock_close(fd);
-    return;
-  }
-  // GRN_LOG(ctx, GRN_LOG_NOTICE, "accepted (%d)", fd);
-  ncs->com.ev_in = grn_com_gqtp_receiver;
-  grn_bulk_init(ctx, &ncs->msg, 0);
-  ncs->msg_in = cs->msg_in;
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
+  if (!ev) { GRN_FREE(com); }
+  return GRN_SUCCESS;
 }
 
 #define LISTEN_BACKLOG 0x1000
 
-grn_com_gqtp *
-grn_com_gqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *func)
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX 128
+#endif /* HOST_NAME_MAX */
+
+grn_rc
+grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func)
 {
   grn_sock lfd;
-  grn_com_gqtp *cs = NULL;
+  grn_com *cs = NULL;
   struct sockaddr_in addr;
   memset(&addr, 0, sizeof(struct sockaddr_in));
   addr.sin_family = AF_INET;
@@ -837,7 +742,19 @@ grn_com_gqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *
   addr.sin_port = htons(port);
   if ((lfd = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
     SERR("socket");
-    return NULL;
+    return ctx->rc;
+  }
+  {
+    struct hostent *he;
+    char hostname[HOST_NAME_MAX];
+    gethostname(hostname, HOST_NAME_MAX);
+    if (!(he = gethostbyname(hostname))) {
+      SERR("gethostbyname");
+      return ctx->rc;
+    }
+    memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
+    ev->curr_edge_id.port = htons(port);
+    ev->curr_edge_id.sid = 0;
   }
   {
     int v = 1;
@@ -875,51 +792,35 @@ grn_com_gqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *
     goto exit;
   }
   if (ev) {
-    if (grn_com_event_add(ctx, ev, lfd, GRN_COM_POLLIN, (grn_com **)&cs)) { goto exit; }
+    if (grn_com_event_add(ctx, ev, lfd, GRN_COM_POLLIN, &cs)) { goto exit; }
+    ev->acceptor = cs;
+    ev->msg_handler = func;
+    cs->fd = lfd;
+    cs->has_sid = 0;
+    cs->status = grn_com_idle;
+    cs->ev = ev;
+    cs->opaque = NULL;
+    GRN_COM_QUEUE_INIT(&cs->new);
   } else {
-    if (!(cs = GRN_MALLOC(sizeof(grn_com_gqtp)))) { goto exit; }
-    cs->com.fd = lfd;
+    if (!(cs = GRN_MALLOC(sizeof(grn_com)))) { goto exit; }
+    cs->fd = lfd;
   }
 exit :
-  if (cs) {
-    cs->com.ev_in = grn_com_gqtp_acceptor;
-    cs->msg_in = func;
-  } else {
+  if (!cs) {
     grn_sock_close(lfd);
   }
-  return cs;
-}
-
-grn_rc
-grn_com_gqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp *cs)
-{
-  grn_sock fd = cs->com.fd;
-  grn_bulk_fin(ctx, &cs->msg);
-  if (ev) {
-    grn_com_event_del(ctx, ev, fd);
-  } else {
-    GRN_FREE(cs);
-  }
-  if (cs->com.status != grn_com_closed) {
-    if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
-    if (grn_sock_close(fd) == -1) {
-      SERR("close");
-      return ctx->rc;
-    }
-  }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
 /* memcache binary protocol */
 
 grn_rc
-grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
-                   grn_com_gqtp_header *header, grn_obj *body,
+grn_com_mbres_send(grn_ctx *ctx, grn_com *cs,
+                   grn_com_header *header, grn_obj *body,
                    uint16_t status, uint32_t key_size, uint32_t extra_size)
 {
   uint32_t size = GRN_BULK_VSIZE(body);
-  ssize_t ret, whole_size = sizeof(grn_com_gqtp_header) + size;
+  ssize_t ret, whole_size = sizeof(grn_com_header) + size;
   header->proto = GRN_COM_PROTO_MBRES;
   header->keylen = htons(key_size);
   header->level = extra_size;
@@ -929,14 +830,12 @@ grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
   if (size) {
 #ifdef WIN32
     ssize_t reth;
-    if ((reth = send(cs->com.fd, header, sizeof(grn_com_gqtp_header), 0)) == -1) {
+    if ((reth = send(cs->fd, header, sizeof(grn_com_header), 0)) == -1) {
       SERR("send size");
-      cs->rc = ctx->rc;
       goto exit;
     }
-    if ((ret = send(cs->com.fd, GRN_BULK_HEAD(body), size, 0)) == -1) {
+    if ((ret = send(cs->fd, GRN_BULK_HEAD(body), size, 0)) == -1) {
       SERR("send body");
-      cs->rc = ctx->rc;
       goto exit;
     }
     ret += reth;
@@ -951,19 +850,18 @@ grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
     msg.msg_controllen = 0;
     msg.msg_flags = 0;
     msg_iov[0].iov_base = header;
-    msg_iov[0].iov_len = sizeof(grn_com_gqtp_header);
+    msg_iov[0].iov_len = sizeof(grn_com_header);
     msg_iov[1].iov_base = GRN_BULK_HEAD(body);
     msg_iov[1].iov_len = size;
-    while ((errno = 0, (ret = sendmsg(cs->com.fd, &msg, MSG_NOSIGNAL)) == -1)) {
+    while ((errno = 0, (ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL)) == -1)) {
       SERR("sendmsg");
       if (errno == EAGAIN || errno == EINTR) { continue; }
-      cs->rc = ctx->rc;
       goto exit;
     }
 #endif /* WIN32 */
   } else {
     errno = 0;
-    while ((ret = send(cs->com.fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
+    while ((ret = send(cs->fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
 #ifdef WIN32
       int e = WSAGetLastError();
       SERR("send");
@@ -972,16 +870,13 @@ grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
       SERR("send");
       if (errno == EAGAIN || errno == EINTR) { continue; }
 #endif /* WIN32 */
-      cs->rc = ctx->rc;
       goto exit;
     }
   }
   if (ret != whole_size) {
     GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg: %d < %d", ret, whole_size);
-    cs->rc = ctx->rc;
     goto exit;
   }
-  cs->rc = GRN_SUCCESS;
 exit :
-  return cs->rc;
+  return ctx->rc;
 }

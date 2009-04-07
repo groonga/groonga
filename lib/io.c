@@ -322,6 +322,7 @@ grn_io_create_with_array(grn_ctx *ctx, const char *path,
       if (!array_init_(io, n_arrays, hsize, msize)) {
         return io;
       }
+      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_io_create_with_array failed");
       grn_io_close(ctx, io);
     }
   }

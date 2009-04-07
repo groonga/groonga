@@ -507,7 +507,7 @@ grn_cell *
 grn_ql_feed(grn_ctx *ctx, char *str, uint32_t str_size, int mode)
 {
   if (GRN_QL_WAITINGP(ctx)) {
-    GRN_BULK_REWIND(&ctx->impl->outbuf);
+    GRN_BULK_REWIND(ctx->impl->outbuf);
     GRN_BULK_REWIND(&ctx->impl->subbuf);
     ctx->impl->bufcur = 0;
   }
@@ -1344,8 +1344,8 @@ opexe(grn_ctx *ctx)
           int fd;
           if ((fd = open(fname, O_RDONLY)) != -1) {
             if (read(fd, ctx->impl->inbuf, st.st_size) == st.st_size) {
-              GRN_BULK_PUTS(ctx, &ctx->impl->outbuf, "loading ");
-              GRN_BULK_PUTS(ctx, &ctx->impl->outbuf, STRVALUE(CAR(ctx->impl->args)));
+              GRN_BULK_PUTS(ctx, ctx->impl->outbuf, "loading ");
+              GRN_BULK_PUTS(ctx, ctx->impl->outbuf, STRVALUE(CAR(ctx->impl->args)));
               ctx->impl->cur = ctx->impl->inbuf;
               ctx->impl->str_end = ctx->impl->inbuf + st.st_size;
             }
@@ -1377,7 +1377,7 @@ opexe(grn_ctx *ctx)
     // verbose check?
     if (ctx->impl->phs != NIL &&
         !(ctx->impl->co.mode & (GRN_QL_HEAD|GRN_QL_TAIL))) { RTN_NIL_IF_TAIL(ctx); }
-    // GRN_BULK_PUTC(ctx, &ctx->impl->outbuf, '\n');
+    // GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
     ctx->impl->code = ctx->impl->value;
     s_goto(ctx, OP_EVAL);
 
@@ -1389,7 +1389,7 @@ opexe(grn_ctx *ctx)
   case OP_VALUEPRINT:  /* print evalution result */
     ctx->impl->args = ctx->impl->value;
     s_save(ctx, OP_T0LVL, NIL, NIL);
-    grn_obj_inspect(ctx, ctx->impl->args, &ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);
+    grn_obj_inspect(ctx, ctx->impl->args, ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);
     s_return(ctx, T);
 
   case OP_EVAL:    /* main part of evalution */
@@ -1850,20 +1850,20 @@ opexe(grn_ctx *ctx)
     }
 
   case OP_ERR0:  /* error */
-    GRN_BULK_PUTS(ctx, &ctx->impl->outbuf, "*** ERROR: ");
-    GRN_BULK_PUTS(ctx, &ctx->impl->outbuf, ctx->errbuf);
-    GRN_BULK_PUTC(ctx, &ctx->impl->outbuf, '\n');
+    GRN_BULK_PUTS(ctx, ctx->impl->outbuf, "*** ERROR: ");
+    GRN_BULK_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
+    GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
     ctx->impl->args = NIL;
     s_goto(ctx, OP_T0LVL);
 
   case OP_ERR1:  /* error */
-    GRN_BULK_PUTS(ctx, &ctx->impl->outbuf, "*** ERROR:");
+    GRN_BULK_PUTS(ctx, ctx->impl->outbuf, "*** ERROR:");
     while (ctx->impl->args != NIL) {
-      GRN_BULK_PUTC(ctx, &ctx->impl->outbuf, ' ');
-      grn_obj_inspect(ctx, CAR(ctx->impl->args), &ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);
+      GRN_BULK_PUTC(ctx, ctx->impl->outbuf, ' ');
+      grn_obj_inspect(ctx, CAR(ctx->impl->args), ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);
       ctx->impl->args = CDR(ctx->impl->args);
     }
-    GRN_BULK_PUTC(ctx, &ctx->impl->outbuf, '\n');
+    GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
     s_goto(ctx, OP_T0LVL);
 
   case OP_PUT:    /* put */
@@ -2692,20 +2692,20 @@ static grn_cell *
 nf_write(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   args = CAR(args);
-  grn_obj_inspect(ctx, args, &ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);
+  grn_obj_inspect(ctx, args, ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);
   return T;
 }
 static grn_cell *
 nf_display(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   args = CAR(args);
-  grn_obj_inspect(ctx, args, &ctx->impl->outbuf, 0);
+  grn_obj_inspect(ctx, args, ctx->impl->outbuf, 0);
   return T;
 }
 static grn_cell *
 nf_newline(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
-  GRN_BULK_PUTC(ctx, &ctx->impl->outbuf, '\n');
+  GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
   return T;
 }
 static grn_cell *

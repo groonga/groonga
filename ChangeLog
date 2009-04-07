@@ -1,3 +1,20 @@
+2009-04-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.h (GRN_ARRAY_TINY): avoid conflict with GRN_OBJ_TABLE_NO_KEY. (Thanks to Kouhei Sutou)
+	* lib/hash.c (grn_array_create): set error info to ctx when grn_array_create failed.
+
+2009-04-06  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (output): use grn_msg_send instead of grn_com_send.
+
+2009-04-06  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (output): fixed a memory leak bug.
+
+2009-04-06  Poe MORITA  <morita at razil.jp>
+
+	* com.h (grn_com_gqtp): cut off.
+
 2009-04-05  Kouhei Sutou  <kou@clear-code.com>
 
 	* groonga.h: fix a typo:

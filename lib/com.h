@@ -63,6 +63,8 @@ struct _grn_com_queue {
   MUTEX_INIT((q)->mutex);\
 }
 
+#define GRN_COM_QUEUE_EMPTYP(q) (((q)->first == (q)->last) && !(q)->next)
+
 grn_rc grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e);
 grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
 
@@ -88,6 +90,7 @@ grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
 
 typedef struct _grn_com grn_com;
 typedef struct _grn_com_event grn_com_event;
+typedef struct _grn_com_addr grn_com_addr;
 typedef void grn_com_callback(grn_ctx *ctx, grn_com_event *, grn_com *);
 typedef void grn_msg_handler(grn_ctx *ctx, grn_obj *msg);
 
@@ -111,25 +114,34 @@ enum {
   grn_com_eproto,
 };
 
+struct _grn_com_addr {
+  uint32_t addr;
+  uint16_t port;
+  uint16_t sid;
+};
+
 struct _grn_com {
   grn_sock fd;
-  uint8_t status;
   int events;
-  grn_com_queue *new;
+  uint16_t sid;
+  uint8_t has_sid;
+  uint8_t status;
+  grn_com_queue new;
   grn_com_event *ev;
-  grn_com_callback *ev_in;
-  grn_com_callback *ev_out;
+  void *opaque;
 };
 
 struct _grn_com_event {
   struct _grn_hash *hash;
   int max_nevents;
-  void *userdata;
   grn_ctx *ctx;
   grn_mutex mutex;
   grn_cond cond;
   grn_com_queue recv_old;
   grn_msg_handler *msg_handler;
+  grn_com_addr curr_edge_id;
+  grn_com *acceptor;
+  void *opaque;
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
   int epfd;
@@ -157,10 +169,9 @@ grn_rc grn_com_event_each(grn_ctx *ctx, grn_com_event *ev, grn_com_callback *fun
 #define GRN_COM_PROTO_MBREQ  0x80
 #define GRN_COM_PROTO_MBRES  0x81
 
-typedef struct _grn_com_gqtp grn_com_gqtp;
-typedef struct _grn_com_gqtp_header grn_com_gqtp_header;
+typedef struct _grn_com_header grn_com_header;
 
-struct _grn_com_gqtp_header {
+struct _grn_com_header {
   uint8_t proto;
   uint8_t qtype;
   uint16_t keylen;
@@ -172,51 +183,32 @@ struct _grn_com_gqtp_header {
   uint64_t cas;
 };
 
-struct _grn_com_gqtp {
-  grn_com com;
-  grn_rc rc;
-  size_t rest;
-  grn_obj msg;
-  grn_com_callback *msg_in;
-  void *userdata;
-};
+grn_com *grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
+grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func);
 
-grn_com_gqtp *grn_com_gqtp_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
-grn_com_gqtp *grn_com_gqtp_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_com_callback *func);
-grn_rc grn_com_gqtp_close(grn_ctx *ctx, grn_com_event *ev, grn_com_gqtp *cs);
+grn_rc grn_com_close(grn_ctx *ctx, grn_com *com);
 
-grn_rc grn_com_gqtp_send(grn_ctx *ctx, grn_com_gqtp *cs,
-                         grn_com_gqtp_header *header, char *body, uint32_t size);
-grn_rc grn_com_gqtp_recv(grn_ctx *ctx, grn_com_gqtp *cs, grn_obj *buf, unsigned int *status);
+grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
+                    grn_com_header *header, char *body, uint32_t size);
+grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
 
-#define GRN_COM_GQTP_MSG_HEADER(buf) ((grn_com_gqtp_header *)(buf)->u.b.head)
-#define GRN_COM_GQTP_MSG_BODY(buf) ((buf)->u.b.head + sizeof(grn_com_gqtp_header))
-
-grn_rc grn_com_mbres_send(grn_ctx *ctx, grn_com_gqtp *cs,
-                          grn_com_gqtp_header *header, grn_obj *body,
+grn_rc grn_com_mbres_send(grn_ctx *ctx, grn_com *cs,
+                          grn_com_header *header, grn_obj *body,
                           uint16_t status, uint32_t key_size, uint32_t extra_size);
 
 /******* grn_msg ********/
 
-typedef struct _grn_com_addr grn_com_addr;
 typedef struct _grn_msg grn_msg;
-
-struct _grn_com_addr {
-  uint32_t addr;
-  uint16_t port;
-  uint16_t sid;
-};
 
 struct _grn_msg {
   grn_com_queue_entry qe;
   grn_com *peer;
   grn_ctx *ctx;
   grn_com_queue *old;
-  grn_com_gqtp_header header;
+  grn_com_header header;
   grn_com_addr edge_id;
   uint32_t query_id;
   uint32_t flags;
-  uint8_t protocol;
 };
 
 grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);
