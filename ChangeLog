@@ -1,5 +1,9 @@
 2009-04-08  Poe MORITA  <morita at razil.jp>
 
+	* lib/hash.c (grn_array_add): fixed a bug. didn't work well, when value was NULL.
+
+2009-04-08  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (grn_table_columns): export.
 
 2009-04-08  Poe MORITA  <morita at razil.jp>
