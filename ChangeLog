@@ -1,3 +1,9 @@
+2009-04-08  Tasuku SUENAGA <a at razil.jp>
+
+	* /test/unit/fixtures/inverted-index/Makefile.am: fixed typo.
+	* Makefile.am: removed util/vcc directories.
+	* Makefile.am: removed deletion of svn directories.
+
 2009-04-08  Kouhei Sutou  <kou@clear-code.com>
 
 	* groonga.h (grn_obj_search): fix document.
