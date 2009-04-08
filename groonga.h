@@ -1104,7 +1104,7 @@ GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
  * @obj: 検索対象のobject
  * @query: 検索クエリ
  * @res: 検索結果を格納するテーブル
- * @op: grn_sel_or, grn_sel_and, grn_sel_but, grn_sel_adjustのいずれかを指定する
+ * @op: GRN_SEL_OR, GRN_SEL_AND, GRN_SEL_BUT, GRN_SEL_ADJUSTのいずれかを指定する
  * @optarg: 詳細検索条件
  *
  * objを対象としてqueryにマッチするレコードを検索し、

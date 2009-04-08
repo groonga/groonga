@@ -1,3 +1,7 @@
+2009-04-08  Kouhei Sutou  <kou@clear-code.com>
+
+	* groonga.h (grn_obj_search): fix document.
+
 2009-04-08  Tasuku SUENAGA <a at razil.jp>
 
 	* lib/com.c (grn_com_send): use WSASend instead of send.
