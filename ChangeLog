@@ -1,5 +1,9 @@
 2009-04-09  Poe MORITA  <morita at razil.jp>
 
+	* lib/ctx.h (WSANOTINITIALIZED): For msvc, WSANOTINITIALISED is correct. (Thanks to Toshihisa Tashiro)
+
+2009-04-09  Poe MORITA  <morita at razil.jp>
+
 	* lib/db.c (grn_obj_set_value): support GRN_OBJ_INCR, GRN_OBJ_DECR, GRN_OBJ_APPEND and GRN_OBJ_PREPEND.
 
 2009-04-08  Poe MORITA  <morita at razil.jp>

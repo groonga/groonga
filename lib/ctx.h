@@ -127,7 +127,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   const char *m;\
   int e = WSAGetLastError();\
   switch (e) {\
-  case WSANOTINITIALIZED :\
+  case WSANOTINITIALISED :\
     rc = GRN_SOCKET_NOT_INITIALIZED;\
     m = "please call grn_com_init first";\
     break;\
