@@ -80,6 +80,7 @@ extern "C" {
     ((grn_ctx *)ctx)->errlvl = GRN_OK;\
     ((grn_ctx *)ctx)->rc = GRN_SUCCESS;\
   }\
+  errno = 0;\
   grn_gctx.errlvl = GRN_OK;\
   grn_gctx.rc = GRN_SUCCESS;\
 } while (0)
@@ -126,8 +127,8 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   const char *m;\
   int e = WSAGetLastError();\
   switch (e) {\
-  case WSANOTINITIALISED :\
-    rc = GRN_SOCKET_NOT_INITIALISED;\
+  case WSANOTINITIALIZED :\
+    rc = GRN_SOCKET_NOT_INITIALIZED;\
     m = "please call grn_com_init first";\
     break;\
   case WSAEFAULT :\
@@ -190,6 +191,10 @@ void grn_ctx_impl_err(grn_ctx *ctx);
     rc = GRN_CONNECTION_REFUSED;\
     m = "connection refused";\
     break;\
+  case WSAEINTR :\
+    rc = GRN_INTERRUPTED_FUNCTION_CALL;\
+    m = "interrupted function call";\
+    break;\
   default:\
     rc = GRN_UNKNOWN_ERROR;\
     m = "unknown error";\
@@ -245,6 +250,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   case ESHUTDOWN : rc = GRN_SOCKET_IS_ALREADY_SHUTDOWNED; break;\
   case ETIMEDOUT : rc = GRN_OPERATION_TIMEOUT; break;\
   case ECONNREFUSED: rc = GRN_CONNECTION_REFUSED; break;\
+  case EAGAIN: rc = GRN_OPERATION_WOULD_BLOCK; break;\
   default : rc = GRN_UNKNOWN_ERROR; break;\
   }\
   ERR(rc, "syscall error '%s' (%s)", str, strerror(errno));\

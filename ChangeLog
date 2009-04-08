@@ -3,6 +3,36 @@
 	* lib/com.c (grn_com_send): use WSASend instead of send.
 	* lib/groonga_in.h: added comment for MSG_WAITALL on Windows.
 
+2009-04-08  Poe MORITA  <morita at razil.jp>
+
+	* lib/hash.c (grn_array_add): fixed a bug. didn't work well, when value was NULL.
+
+2009-04-08  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (grn_table_columns): export.
+
+2009-04-08  Poe MORITA  <morita at razil.jp>
+
+	* configure.ac (USE_KQUEUE): add.
+	* lib/com.c: kqueue support.
+
+2009-04-08  Kouhei Sutou  <kou@clear-code.com>
+
+	* test/: just only LGPL 2.1 not 'any later version'.
+
+2009-04-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/com.c (com->status, msg->flags): cut off.
+
+2009-04-07  Poe MORITA  <morita at razil.jp>
+
+	* lib/com.c (grn_com_mbres_send): cut off.
+
+2009-04-07  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (do_msg): cut off
+>>>>>>> d25cea78073747a21fdb252e761f24842009cfe0:ChangeLog
+
 2009-04-07  Poe MORITA  <morita at razil.jp>
 
 	* lib/hash.h (GRN_ARRAY_TINY): avoid conflict with GRN_OBJ_TABLE_NO_KEY. (Thanks to Kouhei Sutou)
@@ -19,6 +49,11 @@
 2009-04-06  Poe MORITA  <morita at razil.jp>
 
 	* com.h (grn_com_gqtp): cut off.
+
+2009-04-05  Kouhei Sutou  <kou@clear-code.com>
+
+	* groonga.h: fix a typo:
+	GRN_SOCKET_NOT_INITIALISED -> GRN_SOCKET_NOT_INITIALIZED.
 
 2009-04-03  Tasuku SUENAGA <a at razil.jp>
 

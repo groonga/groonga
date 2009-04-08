@@ -82,9 +82,15 @@ grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
 #define GRN_COM_POLLIN  EPOLLIN
 #define GRN_COM_POLLOUT EPOLLOUT
 #else /* USE_EPOLL */
+#ifdef USE_KQUEUE
+#include <sys/event.h>
+#define GRN_COM_POLLIN  EVFILT_READ
+#define GRN_COM_POLLOUT EVFILT_WRITE
+#else /* USE_KQUEUE */
 #include <sys/poll.h>
 #define GRN_COM_POLLIN  POLLIN
 #define GRN_COM_POLLOUT POLLOUT
+#endif /* USE_KQUEUE */
 #endif /* USE_EPOLL */
 #endif /* USE_SELECT */
 
@@ -125,7 +131,6 @@ struct _grn_com {
   int events;
   uint16_t sid;
   uint8_t has_sid;
-  uint8_t status;
   grn_com_queue new;
   grn_com_event *ev;
   void *opaque;
@@ -147,8 +152,13 @@ struct _grn_com_event {
   int epfd;
   struct epoll_event *events;
 #else /* USE_EPOLL */
+#ifdef USE_KQUEUE
+  int kqfd;
+  struct kevent *events;
+#else /* USE_KQUEUE */
   int dummy; /* dummy */
   struct pollfd *events;
+#endif /* USE_KQUEUE */
 #endif /* USE_EPOLL */
 #endif /* USE_SELECT */
 };
@@ -207,13 +217,13 @@ struct _grn_msg {
   grn_com_queue *old;
   grn_com_header header;
   grn_com_addr edge_id;
-  uint32_t query_id;
-  uint32_t flags;
 };
 
 grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);
 grn_obj *grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old);
 grn_obj *grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old);
+grn_rc grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
+                            uint16_t status, uint32_t key_size, uint32_t extra_size);
 grn_rc grn_msg_close(grn_ctx *ctx, grn_obj *msg);
 
 #ifdef __cplusplus

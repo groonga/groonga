@@ -77,7 +77,7 @@ typedef enum {
   GRN_FUNCTION_NOT_IMPLEMENTED = -38,
   GRN_DIRECTORY_NOT_EMPTY = -39,
   GRN_ILLEGAL_BYTE_SEQUENCE = -40,
-  GRN_SOCKET_NOT_INITIALISED = -41,
+  GRN_SOCKET_NOT_INITIALIZED = -41,
   GRN_OPERATION_WOULD_BLOCK = -42,
   GRN_ADDRESS_IS_NOT_AVAILABLE = -43,
   GRN_NETWORK_IS_DOWN = -44,
@@ -765,6 +765,21 @@ GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *ta
  **/
 GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                     grn_obj *res1, grn_obj *res2);
+
+/**
+ * grn_table_columns:
+ * @table: 対象table
+ * @name: 取得したいカラム名のprefix
+ * @name_size: @nameの長さ
+ * @res: 結果を格納するGRN_TABLE_HASH_KEYのtable
+ *
+ * @nameから始まるtableのカラムIDを@resに格納する。
+ * @name_sizeが0の場合はすべてのカラムIDを格納する。格納した
+ * カラムIDの数を返す。
+ **/
+GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
+                              const char *name, unsigned name_size,
+                              grn_obj *res);
 
 /**
  * grn_table_column:

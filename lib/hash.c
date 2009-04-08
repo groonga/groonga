@@ -485,13 +485,11 @@ grn_id
 grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 {
   grn_id e;
+  void *ee;
   if (!ctx || !array || !(e = array_entry_new(ctx, array))) { return GRN_ID_NIL; }
   (*array->n_entries)++;
-  if (value) {
-    void *ee;
-    ARRAY_ENTRY_AT(array, e, ee, GRN_TABLE_ADD);
-    *value = ee;
-  }
+  ARRAY_ENTRY_AT(array, e, ee, GRN_TABLE_ADD);
+  if (value) { *value = ee; }
   return e;
 }
 

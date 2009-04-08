@@ -223,7 +223,7 @@ if test "x$enable_dynamic_malloc_change" = "xyes"; then
             [Define to 1 if you enable dynamic malloc change])
 fi
 
-# epoll/poll/select check
+# epoll/kqueue/poll/select check
 AC_CHECK_HEADER(sys/epoll.h, [
   AC_CHECK_FUNC(epoll_create, [
     AC_TRY_RUN([
@@ -239,20 +239,28 @@ int main(int argc, char **argv) { return (epoll_create(16) < 0); }
 ])
 
 if test "x$have_epoll" != "xyes"; then
-  AC_CHECK_HEADER(sys/poll.h, [
-    AC_CHECK_FUNC(poll, [
-      have_poll="yes"
-      AC_DEFINE(USE_POLL, [1], [use poll])
+  AC_CHECK_HEADER(sys/event.h, [
+    AC_CHECK_FUNC(kevent, [
+      have_kqueue="yes"
+      AC_DEFINE(USE_KQUEUE, [1], [use kqueue])
     ])
   ])
-  if test "x$have_poll" != "xyes"; then
-    AC_CHECK_FUNC(select, [
-      have_select="yes"
-      AC_CHECK_HEADERS(sys/select.h)
-      AC_DEFINE(USE_SELECT, [1], [use select])
-    ],[
-      AC_MSG_ERROR([epoll/poll/select is missing.])
+  if test "x$have_kqueue" != "xyes"; then
+    AC_CHECK_HEADER(sys/poll.h, [
+      AC_CHECK_FUNC(poll, [
+        have_poll="yes"
+        AC_DEFINE(USE_POLL, [1], [use poll])
+      ])
     ])
+    if test "x$have_poll" != "xyes"; then
+      AC_CHECK_FUNC(select, [
+        have_select="yes"
+        AC_CHECK_HEADERS(sys/select.h)
+        AC_DEFINE(USE_SELECT, [1], [use select])
+      ],[
+        AC_MSG_ERROR([epoll/kqueue/poll/select is missing.])
+      ])
+    fi
   fi
 fi
 
