@@ -555,6 +555,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #ifdef USE_EPOLL
     efd = ep->data.fd;
     nevents--;
+    // todo : com = ep->data.ptr;
     if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       struct epoll_event e;
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->hash", efd);
@@ -570,6 +571,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #ifdef USE_KQUEUE
     efd = ep->ident;
     nevents--;
+    // todo : com = ep->udata;
     if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       struct kevent e;
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->set", efd);

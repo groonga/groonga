@@ -3,6 +3,10 @@
 	* configure.ac (USE_KQUEUE): add.
 	* lib/com.c: kqueue support.
 
+2009-04-08  Kouhei Sutou  <kou@clear-code.com>
+
+	*  test/: just only LGPL 2.1 not 'any later version'.
+
 2009-04-07  Poe MORITA  <morita at razil.jp>
 
 	* lib/com.c (com->status, msg->flags): cut off.
