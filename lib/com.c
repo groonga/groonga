@@ -545,16 +545,14 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
 
   if (size) {
 #ifdef WIN32
-    ssize_t reth;
-    if ((reth = send(cs->fd, header, sizeof(grn_com_header), 0)) == -1) {
-      SERR("send size");
-      goto exit;
+    WSABUF wsabufs[2];
+    wsabufs[0].buf = header;
+    wsabufs[0].len = sizeof(grn_com_header);
+    wsabufs[1].buf = body;
+    wsabufs[1].len = size;
+    if (WSASend(cs->fd, wsabufs, 2, &ret, 0, NULL, NULL) == SOCKET_ERROR) {
+      SERR("WSASend");
     }
-    if ((ret = send(cs->fd, body, size, 0)) == -1) {
-      SERR("send body");
-      goto exit;
-    }
-    ret += reth;
 #else /* WIN32 */
     struct iovec msg_iov[2];
     struct msghdr msg;

@@ -114,7 +114,7 @@
 #define uint64_t UINT64
 #define ssize_t SSIZE_T
 #undef MSG_WAITALL
-#define MSG_WAITALL 0
+#define MSG_WAITALL 0 /* before Vista, not supported... */
 #define PATH_SEPARATOR "\\"
 #define fpclassify _fpclass
 #define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
