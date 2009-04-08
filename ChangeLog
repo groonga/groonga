@@ -1,5 +1,9 @@
 2009-04-08  Tasuku SUENAGA <a at razil.jp>
 
+	* /test/unit/fixtures/inverted-index/Makefile.am: fixed typo.
+
+2009-04-08  Tasuku SUENAGA <a at razil.jp>
+
 	* lib/com.c (grn_com_send): use WSASend instead of send.
 	* lib/groonga_in.h: added comment for MSG_WAITALL on Windows.
 
