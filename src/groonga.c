@@ -544,13 +544,17 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
   grn_edge *edge;
   grn_com *com = ((grn_msg *)msg)->peer;
   if (ctx->rc) {
-    if (com->has_sid && (edge = com->opaque)) {
-      MUTEX_LOCK(q_mutex);
-      if (edge->stat == EDGE_IDLE) {
-        grn_com_queue_enque(ctx, &ctx_old, (grn_com_queue_entry *)edge);
+    if (com->has_sid) {
+      if ((edge = com->opaque)) {
+        MUTEX_LOCK(q_mutex);
+        if (edge->stat == EDGE_IDLE) {
+          grn_com_queue_enque(ctx, &ctx_old, (grn_com_queue_entry *)edge);
+        }
+        edge->stat = EDGE_ABORT;
+        MUTEX_UNLOCK(q_mutex);
+      } else {
+        grn_com_close(ctx, com);
       }
-      edge->stat = EDGE_ABORT;
-      MUTEX_UNLOCK(q_mutex);
     }
     grn_msg_close(ctx, msg);
   } else {

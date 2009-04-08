@@ -1,6 +1,10 @@
+2009-04-08  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (msg_handler): fixed a bug cause infinite loop.
+
 2009-04-08  Tasuku SUENAGA <a at razil.jp>
 
-	* /test/unit/fixtures/inverted-index/Makefile.am: fixed typo.
+	* test/unit/fixtures/inverted-index/Makefile.am: fixed typo.
 	* Makefile.am: removed util/vcc directories.
 	* Makefile.am: removed deletion of svn directories.
 
@@ -10,7 +14,7 @@
 
 2009-04-08  Tasuku SUENAGA <a at razil.jp>
 
-	* /test/unit/fixtures/inverted-index/Makefile.am: fixed typo.
+	* test/unit/fixtures/inverted-index/Makefile.am: fixed typo.
 
 2009-04-08  Tasuku SUENAGA <a at razil.jp>
 
@@ -45,7 +49,6 @@
 2009-04-07  Poe MORITA  <morita at razil.jp>
 
 	* src/groonga.c (do_msg): cut off
->>>>>>> d25cea78073747a21fdb252e761f24842009cfe0:ChangeLog
 
 2009-04-07  Poe MORITA  <morita at razil.jp>
 
