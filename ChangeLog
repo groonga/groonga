@@ -1,3 +1,8 @@
+2009-04-08  Poe MORITA  <morita at razil.jp>
+
+	* configure.ac (USE_KQUEUE): add.
+	* lib/com.c: kqueue support.
+
 2009-04-07  Poe MORITA  <morita at razil.jp>
 
 	* lib/com.c (com->status, msg->flags): cut off.

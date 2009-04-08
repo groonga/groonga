@@ -82,9 +82,15 @@ grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
 #define GRN_COM_POLLIN  EPOLLIN
 #define GRN_COM_POLLOUT EPOLLOUT
 #else /* USE_EPOLL */
+#ifdef USE_KQUEUE
+#include <sys/event.h>
+#define GRN_COM_POLLIN  EVFILT_READ
+#define GRN_COM_POLLOUT EVFILT_WRITE
+#else /* USE_KQUEUE */
 #include <sys/poll.h>
 #define GRN_COM_POLLIN  POLLIN
 #define GRN_COM_POLLOUT POLLOUT
+#endif /* USE_KQUEUE */
 #endif /* USE_EPOLL */
 #endif /* USE_SELECT */
 
@@ -146,8 +152,13 @@ struct _grn_com_event {
   int epfd;
   struct epoll_event *events;
 #else /* USE_EPOLL */
+#ifdef USE_KQUEUE
+  int kqfd;
+  struct kevent *events;
+#else /* USE_KQUEUE */
   int dummy; /* dummy */
   struct pollfd *events;
+#endif /* USE_KQUEUE */
 #endif /* USE_EPOLL */
 #endif /* USE_SELECT */
 };
