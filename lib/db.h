@@ -71,9 +71,6 @@ grn_rc grn_table_search(grn_ctx *ctx, grn_obj *table,
                         const void *key, uint32_t key_size,
                         grn_search_flags flags, grn_obj *res, grn_sel_operator op);
 
-int grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size,
-                      grn_obj *res);
-
 grn_id grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id);
 
 int grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk);

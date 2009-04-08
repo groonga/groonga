@@ -767,6 +767,21 @@ GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *tabl
                                     grn_obj *res1, grn_obj *res2);
 
 /**
+ * grn_table_columns:
+ * @table: ÂĞ¾İtable
+ * @name: ¼èÆÀ¤·¤¿¤¤¥«¥é¥àÌ¾¤Îprefix
+ * @name_size: @name¤ÎÄ¹¤µ
+ * @res: ·ë²Ì¤ò³ÊÇ¼¤¹¤ëGRN_TABLE_HASH_KEY¤Îtable
+ *
+ * @name¤«¤é»Ï¤Ş¤ëtable¤Î¥«¥é¥àID¤ò@res¤Ë³ÊÇ¼¤¹¤ë¡£
+ * @name_size¤¬0¤Î¾ì¹ç¤Ï¤¹¤Ù¤Æ¤Î¥«¥é¥àID¤ò³ÊÇ¼¤¹¤ë¡£³ÊÇ¼¤·¤¿
+ * ¥«¥é¥àID¤Î¿ô¤òÊÖ¤¹¡£
+ **/
+GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
+                              const char *name, unsigned name_size,
+                              grn_obj *res);
+
+/**
  * grn_table_column:
  * @table: å¯¾è±¡table
  * @name: ã‚«ãƒ©ãƒ å
