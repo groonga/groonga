@@ -41,8 +41,6 @@
 extern "C" {
 #endif
 
-#define GRN_ST_APPEND 1
-
 /**** fixed sized elements ****/
 
 typedef struct _grn_ra grn_ra;

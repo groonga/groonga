@@ -234,6 +234,8 @@ cache_init(grn_ctx *ctx)
   return cache_cas;
 }
 
+#define RELATIVE_TIME_THRESH 1000000
+
 static void
 do_mbreq(grn_ctx *ctx, grn_edge *edge)
 {
@@ -254,9 +256,20 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_msg_set_property(ctx, re, MBRES_KEY_ENOENT, 0, 0);
         grn_msg_send(ctx, re, 0);
       } else {
-        grn_obj_get_value(ctx, cache_flags, rid, re);
-        grn_obj_get_value(ctx, cache_value, rid, re);
-        grn_msg_set_property(ctx, re, MBRES_SUCCESS, 0, 4);
+        grn_obj buf;
+        struct timeval tv;
+        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        grn_obj_get_value(ctx, cache_expire, rid, &buf);
+        gettimeofday(&tv, NULL);
+        if (*((uint32_t *)GRN_BULK_HEAD(&buf)) < tv.tv_sec) {
+          grn_msg_set_property(ctx, re, MBRES_KEY_ENOENT, 0, 0);
+          grn_table_delete_by_id(ctx, cache_table, rid);
+        } else {
+          grn_obj_get_value(ctx, cache_flags, rid, re);
+          grn_obj_get_value(ctx, cache_value, rid, re);
+          grn_msg_set_property(ctx, re, MBRES_SUCCESS, 0, 4);
+        }
+        grn_obj_close(ctx, &buf);
         grn_msg_send(ctx, re, 0);
       }
     }
@@ -293,6 +306,11 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
         GRN_BULK_SET(ctx, &buf, &flags, 4);
         grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+        if (expire < RELATIVE_TIME_THRESH) {
+          struct timeval tv;
+          gettimeofday(&tv, NULL);
+          expire += tv.tv_sec;
+        }
         GRN_BULK_SET(ctx, &buf, &expire, 4);
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
         /* todo : ntohll */
@@ -330,6 +348,11 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
         GRN_BULK_SET(ctx, &buf, &flags, 4);
         grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+        if (expire < RELATIVE_TIME_THRESH) {
+          struct timeval tv;
+          gettimeofday(&tv, NULL);
+          expire += tv.tv_sec;
+        }
         GRN_BULK_SET(ctx, &buf, &expire, 4);
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
         /* todo : ntohll */
@@ -343,8 +366,21 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
   case MBCMD_DELETE :
     {
       grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
-      grn_msg_set_property(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0);
-      grn_msg_send(ctx, re, 0);
+      grn_id rid;
+      uint16_t keylen = ntohs(header->keylen);
+      char *key = GRN_BULK_HEAD((grn_obj *)msg);
+      grn_search_flags f = 0;
+      cache_init(ctx);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d not found", keylen);
+        grn_msg_set_property(ctx, re, MBRES_KEY_ENOENT, 0, 0);
+        grn_msg_send(ctx, re, 0);
+      } else {
+        grn_table_delete_by_id(ctx, cache_table, rid);
+        grn_msg_set_property(ctx, re, MBRES_SUCCESS, 0, 4);
+        grn_msg_send(ctx, re, 0);
+      }
     }
     break;
   case MBCMD_INCREMENT :

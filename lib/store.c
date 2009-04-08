@@ -600,7 +600,8 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   int rc;
   grn_io_win iw;
   grn_ja_einfo einfo;
-  if ((flags & GRN_ST_APPEND)) {
+  switch (flags & GRN_OBJ_SET_MASK) {
+  case GRN_OBJ_APPEND :
     if (value_len) {
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &old_len);
@@ -616,7 +617,25 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
         grn_io_win_unmap2(&iw);
       }
     }
-  } else {
+    break;
+  case GRN_OBJ_PREPEND :
+    if (value_len) {
+      uint32_t old_len;
+      void *oldvalue = grn_ja_ref(ctx, ja, id, &old_len);
+      if (oldvalue) {
+        if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) { return rc; }
+        memcpy(iw.addr, value, value_len);
+        memcpy((byte *)iw.addr + value_len, oldvalue, old_len);
+        grn_ja_unref(ctx, ja, id, oldvalue, old_len);
+        grn_io_win_unmap2(&iw);
+      } else {
+        if ((rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw))) { return rc; }
+        memcpy(iw.addr, value, value_len);
+        grn_io_win_unmap2(&iw);
+      }
+    }
+    break;
+  case GRN_OBJ_SET :
     if (value_len) {
       if ((rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw))) { return rc; }
       // printf("put id=%d, value_len=%d value=%p ei=%p(%d:%d)\n", id, value_len, buf, &einfo, einfo.pos, einfo.tail[0]);
@@ -625,6 +644,10 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     } else {
       memset(&einfo, 0, sizeof(grn_ja_einfo));
     }
+    break;
+  default :
+    ERR(GRN_INVALID_ARGUMENT, "grn_ja_put_raw called with illegal flags value");
+    return ctx->rc;
   }
   return grn_ja_replace(ctx, ja, id, &einfo);
 }

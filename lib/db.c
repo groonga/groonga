@@ -2530,6 +2530,50 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
   return rc;
 }
 
+#define INCRDECR(op) \
+  switch (DB_OBJ(obj)->range) {\
+  case GRN_OBJ_KEY_INT :\
+    if (s == sizeof(int32_t)) {\
+      int32_t *vp = (int32_t *)p;\
+      *vp op *(int32_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_UINT :\
+    if (s == sizeof(uint32_t)) {\
+      uint32_t *vp = (uint32_t *)p;\
+      *vp op *(int32_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
+    if (s == sizeof(int64_t)) {\
+      int64_t *vp = (int64_t *)p;\
+      *vp op *(int64_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_FLOAT :\
+    if (s == sizeof(double)) {\
+      double *vp = (double *)p;\
+      *vp op *(double *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  default :\
+    rc = GRN_OPERATION_NOT_SUPPORTED;\
+    break;\
+  }
+
 grn_rc
 grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   grn_obj *value, int flags)
@@ -2597,7 +2641,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     case GRN_COLUMN_VAR_SIZE :
       switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_SCALAR :
-        rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, 0);
+        rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags);
         break;
       case GRN_OBJ_COLUMN_VECTOR :
         {
@@ -2618,7 +2662,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   grn_token_close(ctx, token);
                 }
                 rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), 0);
+                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
               }
               break;
             case GRN_VECTOR :
@@ -2633,7 +2677,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
                 }
                 rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), 0);
+                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
               }
               break;
             default :
@@ -2678,9 +2722,21 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           rc = GRN_NO_MEMORY_AVAILABLE;
           goto exit;
         }
-        memcpy(p, v, s);
+        switch (flags & GRN_OBJ_SET_MASK) {
+        case GRN_OBJ_SET :
+          memcpy(p, v, s);
+          rc = GRN_SUCCESS;
+        case GRN_OBJ_INCR :
+          INCRDECR(+=);
+          break;
+        case GRN_OBJ_DECR :
+          INCRDECR(-=);
+          break;
+        default :
+          rc = GRN_OPERATION_NOT_SUPPORTED;
+          break;
+        }
         grn_ra_unref(ctx, (grn_ra *)obj, id);
-        rc = GRN_SUCCESS;
       }
       break;
     case GRN_COLUMN_INDEX :
