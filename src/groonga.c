@@ -188,6 +188,7 @@ enum {
   MBCMD_GETKQ = 0x0d,
   MBCMD_APPEND = 0x0e,
   MBCMD_PREPEND = 0x0f,
+  MBCMD_STAT = 0x10
 };
 
 static grn_mutex cache_mutex;
@@ -284,6 +285,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
     break;
   case MBCMD_SET :
   case MBCMD_ADD :
+  case MBCMD_APPEND :
+  case MBCMD_PREPEND :
     {
       grn_id rid;
       uint32_t size = ntohl(header->size);
@@ -305,10 +308,23 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       } else if (header->qtype == MBCMD_ADD && !(f & GRN_TABLE_ADD)) {
         MBRES(ctx, re, MBRES_KEY_EEXISTS, 0, 0, 0);
       } else {
+        int option = 0;
         grn_obj buf;
         GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_BULK_SET(ctx, &buf, value, valuelen);
-        grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+        switch (header->qtype) {
+        case MBCMD_SET :
+        case MBCMD_ADD :
+          option = GRN_OBJ_SET;
+          break;
+        case MBCMD_APPEND :
+          option = GRN_OBJ_APPEND;
+          break;
+        case MBCMD_PREPEND :
+          option = GRN_OBJ_PREPEND;
+          break;
+        }
+        grn_obj_set_value(ctx, cache_value, rid, &buf, option);
         GRN_BULK_SET(ctx, &buf, &flags, 4);
         grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
         if (expire < RELATIVE_TIME_THRESH) {
@@ -497,10 +513,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       }
     }
     break;
-  case MBCMD_APPEND :
-    MBRES(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0, 0);
-    break;
-  case MBCMD_PREPEND :
+  case MBCMD_STAT :
     MBRES(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0, 0);
     break;
   case MBCMD_QUIT :
