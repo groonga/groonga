@@ -457,10 +457,11 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
     }
     break;
   case MBCMD_NOOP :
-    MBRES(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0, 0);
+    MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
     break;
   case MBCMD_VERSION :
-    MBRES(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0, 0);
+    grn_bulk_write(ctx, re, PACKAGE_VERSION, strlen(PACKAGE_VERSION));
+    MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
     break;
   case MBCMD_GETKQ :
     flags = GRN_QL_MORE;
