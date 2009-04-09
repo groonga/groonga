@@ -1159,11 +1159,12 @@ grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
     offset = offset % segment_size;
   }
   nseg = (offset + size + segment_size - 1) / segment_size;
-  if (!iw || !size || !ctx || segment + nseg > io->header->max_segment) { return NULL; }
+  if (!size || !ctx || segment + nseg > io->header->max_segment) { return NULL; }
   iw->ctx = ctx;
   iw->diff = 0;
   iw->io = io;
   iw->mode = mode;
+  iw->tiny_p = 0;
   iw->segment = segment;
   iw->offset = offset;
   iw->nseg = nseg;
@@ -1209,7 +1210,7 @@ grn_io_win_unmap2(grn_io_win *iw)
 {
   if (!iw || !iw->io ||!iw->ctx) { return GRN_INVALID_ARGUMENT; }
   if (iw->cached) {
-    GRN_IO_SEG_UNREF(iw->io, iw->segment);
+    if (!iw->tiny_p) { GRN_IO_SEG_UNREF(iw->io, iw->segment); }
     return GRN_SUCCESS;
   }
   {

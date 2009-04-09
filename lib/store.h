@@ -87,8 +87,8 @@ grn_rc grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id,
                   void *value, uint32_t value_len, int flags);
 int grn_ja_at(grn_ctx *ctx, grn_ja *ja, grn_id id, void *valbuf, int buf_size);
 
-void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len);
-grn_rc grn_ja_unref(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len);
+void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len);
+grn_rc grn_ja_unref(grn_ctx *ctx, grn_io_win *iw);
 int grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold);
 
 grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags);

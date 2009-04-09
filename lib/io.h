@@ -57,7 +57,9 @@ typedef struct _grn_io grn_io;
 typedef struct {
   grn_io *io;
   grn_ctx *ctx;
-  grn_io_rw_mode mode;
+  uint8_t mode;
+  uint8_t tiny_p;
+  uint32_t pseg;
   uint32_t segment;
   uint32_t offset;
   uint32_t size;
@@ -65,7 +67,7 @@ typedef struct {
   off_t pos;
   void *addr;
   uint32_t diff;
-  int cached;
+  int32_t cached;
 #if defined(WIN32) && defined(WIN32_FMO_EACH)
   HANDLE fmo;
 #endif /* defined(WIN32) && defined(WIN32_FMO_EACH) */

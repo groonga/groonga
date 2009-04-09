@@ -2768,8 +2768,11 @@ grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
     }
     break;
   case GRN_COLUMN_VAR_SIZE :
-    if ((value = grn_ja_ref(ctx, (grn_ja *)obj, id, size))) {
-      grn_ja_unref(ctx, (grn_ja *)obj, id, (void *)value, *size);
+    {
+      grn_io_win jw;
+      if ((value = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, size))) {
+        grn_ja_unref(ctx, &jw);
+      }
     }
     break;
   case GRN_COLUMN_FIX_SIZE :
@@ -2856,22 +2859,24 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       {
         grn_obj *lexicon = grn_ctx_get(ctx, DB_OBJ(obj)->range);
         if (GRN_OBJ_TABLEP(lexicon)) {
-          void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &len);
+          grn_io_win jw;
+          void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
           if (v) {
             // todo : reduce copy
             // todo : grn_vector_add_element when vector assigned
             grn_bulk_write(ctx, value, v, len);
-            grn_ja_unref(ctx, (grn_ja *)obj, id, v, len);
+            grn_ja_unref(ctx, &jw);
           }
           value->header.type = GRN_UVECTOR;
         } else {
           switch (value->header.type) {
           case GRN_VECTOR :
             {
-              void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &len);
+              grn_io_win jw;
+              void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
               if (v) {
                 grn_vector_decode(ctx, value, v, len);
-                grn_ja_unref(ctx, (grn_ja *)obj, id, v, len);
+                grn_ja_unref(ctx, &jw);
               }
             }
             break;
@@ -2884,12 +2889,13 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       break;
     case GRN_OBJ_COLUMN_SCALAR :
       {
-        void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &len);
+        grn_io_win jw;
+        void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
         if (!v) { len = 0; goto exit; }
         // todo : reduce copy
         // todo : grn_vector_add_element when vector assigned
         grn_bulk_write(ctx, value, v, len);
-        grn_ja_unref(ctx, (grn_ja *)obj, id, v, len);
+        grn_ja_unref(ctx, &jw);
       }
       break;
     default :
@@ -3402,8 +3408,9 @@ grn_ctx_get(grn_ctx *ctx, grn_id id)
       if (id == GRN_ID_NIL) { res = ctx->impl->db; goto exit; }
       if (!(vp = grn_tiny_array_at(&s->values, id))) { goto exit; }
       if (s->specs && !*vp) {
+        grn_io_win jw;
         uint32_t value_len;
-        char *value = grn_ja_ref(ctx, s->specs, id, &value_len);
+        char *value = grn_ja_ref(ctx, s->specs, id, &jw, &value_len);
         if (value) {
           grn_obj v;
           GRN_OBJ_INIT(&v, GRN_VECTOR, 0);
@@ -3482,7 +3489,7 @@ grn_ctx_get(grn_ctx *ctx, grn_id id)
             }
             grn_obj_close(ctx, &v);
           }
-          grn_ja_unref(ctx, s->specs, id, value, value_len);
+          grn_ja_unref(ctx, &jw);
         }
       }
       res = *vp;

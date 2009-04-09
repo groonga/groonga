@@ -321,51 +321,47 @@ grn_ja_remove(grn_ctx *ctx, const char *path)
   return grn_io_remove(ctx, path);
 }
 
-void *
-grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
+static void *
+grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
-  grn_ja_einfo *einfo, *ei;
-  uint32_t lseg, *pseg, pos;
-  lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
-  pos = id & JA_M_EINFO_IN_A_SEGMENT;
-  pseg = &ja->header->esegs[lseg];
-  if (*pseg == JA_ESEG_VOID) { *value_len = 0; return NULL; }
-  GRN_IO_SEG_REF(ja->io, *pseg, einfo);
-  if (!einfo) { *value_len = 0; return NULL; }
-  ei = &einfo[pos];
-  if (ETINY_P(ei)) {
-    ETINY_DEC(ei, *value_len);
-    return (void *)ei;
-  }
-  {
-    void *value;
-    grn_io_win iw;
-    uint32_t jag, vpos, vsize;
-    if (EHUGE_P(ei)) {
-      EHUGE_DEC(ei, jag, vsize);
-      vpos = 0;
-    } else {
-      EINFO_DEC(ei, jag, vpos, vsize);
+  uint32_t pseg = ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
+  iw->size = 0;
+  iw->addr = NULL;
+  iw->pseg = pseg;
+  if (pseg != JA_ESEG_VOID) {
+    grn_ja_einfo *einfo;
+    GRN_IO_SEG_REF(ja->io, pseg, einfo);
+    if (einfo) {
+      grn_ja_einfo *ei = &einfo[id & JA_M_EINFO_IN_A_SEGMENT];
+      if (ETINY_P(ei)) {
+        iw->tiny_p = 1;
+        ETINY_DEC(ei, iw->size);
+        iw->io = ja->io;
+        iw->ctx = ctx;
+        iw->addr = (void *)ei;
+      } else {
+        uint32_t jag, vpos, vsize;
+        iw->tiny_p = 0;
+        if (EHUGE_P(ei)) {
+          EHUGE_DEC(ei, jag, vsize);
+          vpos = 0;
+        } else {
+          EINFO_DEC(ei, jag, vpos, vsize);
+        }
+        grn_io_win_map2(ja->io, ctx, iw, jag, vpos, vsize, grn_io_rdonly);
+      }
     }
-    value = grn_io_win_map2(ja->io, ctx, &iw, jag, vpos, vsize, grn_io_rdonly);
-    if (!value) { *value_len = 0; return NULL; }
-    *value_len = vsize;
-    return value;
   }
+  *value_len = iw->size;
+  return iw->addr;
 }
 
 grn_rc
-grn_ja_unref(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len)
+grn_ja_unref(grn_ctx *ctx, grn_io_win *iw)
 {
-  if (!value) { return GRN_INVALID_ARGUMENT; }
-  {
-    uint32_t lseg, *pseg;
-    lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
-    pseg = &ja->header->esegs[lseg];
-    GRN_IO_SEG_UNREF(ja->io, *pseg);
-  }
-  // todo : depend on grn_io_win_map2 implementation. unmap2 should be used
-  if (value_len > JA_SEGMENT_SIZE) { GRN_FREE(value); }
+  if (!iw->addr) { return GRN_INVALID_ARGUMENT; }
+  GRN_IO_SEG_UNREF(iw->io, iw->pseg);
+  if (!iw->tiny_p) { grn_io_win_unmap2(iw); }
   return GRN_SUCCESS;
 }
 
@@ -603,13 +599,14 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   switch (flags & GRN_OBJ_SET_MASK) {
   case GRN_OBJ_APPEND :
     if (value_len) {
+      grn_io_win jw;
       uint32_t old_len;
-      void *oldvalue = grn_ja_ref(ctx, ja, id, &old_len);
+      void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
         if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) { return rc; }
         memcpy(iw.addr, oldvalue, old_len);
         memcpy((byte *)iw.addr + old_len, value, value_len);
-        grn_ja_unref(ctx, ja, id, oldvalue, old_len);
+        grn_ja_unref(ctx, &jw);
         grn_io_win_unmap2(&iw);
       } else {
         if ((rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw))) { return rc; }
@@ -620,13 +617,14 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     break;
   case GRN_OBJ_PREPEND :
     if (value_len) {
+      grn_io_win jw;
       uint32_t old_len;
-      void *oldvalue = grn_ja_ref(ctx, ja, id, &old_len);
+      void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
         if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) { return rc; }
         memcpy(iw.addr, value, value_len);
         memcpy((byte *)iw.addr + value_len, oldvalue, old_len);
-        grn_ja_unref(ctx, ja, id, oldvalue, old_len);
+        grn_ja_unref(ctx, &jw);
         grn_io_win_unmap2(&iw);
       } else {
         if ((rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw))) { return rc; }
@@ -726,13 +724,13 @@ grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id)
 #ifndef NO_ZLIB
 #include <zlib.h>
 
-inline static void *
-grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
+static void *
+grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
   z_stream zstream;
   void *value, *zvalue;
   uint32_t zvalue_len = *value_len + sizeof (uint64_t);
-  if (!(zvalue = grn_ja_ref_raw(ctx, ja, id, &zvalue_len))) {
+  if (!(zvalue = grn_ja_ref_raw(ctx, ja, id, iw, &zvalue_len))) {
     *value_len = 0; return NULL;
   }
   zstream.next_in = (Bytef *)((uint64_t *)zvalue + 1);
@@ -775,13 +773,13 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 #ifndef NO_LZO
 #include <lzo/lzo1x.h>
 
-inline static void *
-grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
+static void *
+grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
   void *value, *lvalue;
   uint32_t lvalue_len = *value_len + sizeof (uint64_t);
   lzo_uint loutlen;
-  if (!(lvalue = grn_ja_ref_raw(ctx, ja, id, &lvalue_len))) {
+  if (!(lvalue = grn_ja_ref_raw(ctx, ja, id, iw, &lvalue_len))) {
     *value_len = 0; return NULL;
   }
   if (!(value = GRN_MALLOC(*(uint64_t *)lvalue + sizeof (grn_io_ja_ehead)))) {
@@ -809,19 +807,19 @@ grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
 #endif /* NO_LZO */
 
 void *
-grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, uint32_t *value_len)
+grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
 #ifndef NO_ZLIB
   if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
-    return grn_ja_ref_zlib(ctx, ja, id, value_len);
+    return grn_ja_ref_zlib(ctx, ja, id, iw, value_len);
   }
 #endif /* NO_ZLIB */
 #ifndef NO_LZO
   if (ja->header->flags & GRN_OBJ_COMPRESS_LZO) {
-    return grn_ja_ref_lzo(ctx, ja, id, value_len);
+    return grn_ja_ref_lzo(ctx, ja, id, iw, value_len);
   }
 #endif /* NO_LZO */
-  return grn_ja_ref_raw(ctx, ja, id, value_len);
+  return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
 }
 
 #ifndef NO_ZLIB
