@@ -21,6 +21,11 @@
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
 
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#define GRN_BREAK_POINT raise(SIGTRAP)
+#endif /* HAVE_SIGNAL_H */
+
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
 #endif /* HAVE_EXECINFO_H */

@@ -30,11 +30,7 @@
 #ifdef HAVE_NETINET_TCP_H
 #include <netinet/tcp.h>
 #endif /* HAVE_NETINET_TCP_H */
-#ifdef HAVE_SIGNAL_H
-#include <signal.h>
-#endif /* HAVE_SIGNAL_H */
 
-#include "com.h"
 #include "ctx.h"
 
 #ifndef PF_INET

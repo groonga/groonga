@@ -350,6 +350,7 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
         }
         grn_io_win_map2(ja->io, ctx, iw, jag, vpos, vsize, grn_io_rdonly);
       }
+      if (!iw->addr) { GRN_IO_SEG_UNREF(ja->io, pseg); }
     }
   }
   *value_len = iw->size;
@@ -478,9 +479,11 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
   iw->cached = 1;
   if (element_size < 8) {
     ETINY_ENC(einfo, element_size);
+    iw->tiny_p = 1;
     iw->addr = (void *)einfo;
     return GRN_SUCCESS;
   }
+  iw->tiny_p = 0;
   if (element_size + sizeof(grn_id) > JA_SEGMENT_SIZE) {
     int i, j, n = (element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
     for (i = 0, j = -1; i < JA_N_DSEGMENTS; i++) {
