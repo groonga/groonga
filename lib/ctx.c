@@ -525,7 +525,7 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       sheader.status = 0;
       sheader.opaque = 0;
       sheader.cas = 0;
-      if ((rc = grn_com_send(ctx, ctx->impl->com, &sheader, (char *)str, str_len))) {
+      if ((rc = grn_com_send(ctx, ctx->impl->com, &sheader, (char *)str, str_len, 0))) {
         ERR(rc, "grn_com_send failed");
       }
       goto exit;

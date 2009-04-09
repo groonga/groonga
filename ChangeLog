@@ -1,3 +1,7 @@
+2009-04-10  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (MBCMD_FLUSH, MBCMD_GETQ, MBCMD_GETKQ): support.
+
 2009-04-09  Poe MORITA  <morita at razil.jp>
 
 	* lib/store.c (grn_ja_ref): fixed a bug cause segv.

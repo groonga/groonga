@@ -193,7 +193,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
         header->cas = 0;
         //todo : MSG_DONTWAIT
         rc = grn_com_send(ctx, peer, header,
-                          GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
+                          GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), 0);
         if (rc != GRN_OPERATION_WOULD_BLOCK) {
           grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
           return rc;
@@ -204,7 +204,8 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       return GRN_FUNCTION_NOT_IMPLEMENTED;
     case GRN_COM_PROTO_MBRES :
       rc = grn_com_send(ctx, peer, header,
-                        GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg));
+                        GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg),
+                        (flags & GRN_QL_MORE) ? MSG_MORE :0);
       if (rc != GRN_OPERATION_WOULD_BLOCK) {
         grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
         return rc;
@@ -601,7 +602,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 
 grn_rc
 grn_com_send(grn_ctx *ctx, grn_com *cs,
-             grn_com_header *header, char *body, uint32_t size)
+             grn_com_header *header, char *body, uint32_t size, int flags)
 {
   ssize_t ret, whole_size = sizeof(grn_com_header) + size;
   header->size = htonl(size);
@@ -631,12 +632,12 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     msg_iov[0].iov_len = sizeof(grn_com_header);
     msg_iov[1].iov_base = body;
     msg_iov[1].iov_len = size;
-    if ((ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL)) == -1) {
+    if ((ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL|flags)) == -1) {
       SERR("sendmsg");
     }
 #endif /* WIN32 */
   } else {
-    if ((ret = send(cs->fd, header, whole_size, MSG_NOSIGNAL)) == -1) {
+    if ((ret = send(cs->fd, header, whole_size, MSG_NOSIGNAL|flags)) == -1) {
       SERR("send");
     }
   }

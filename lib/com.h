@@ -199,7 +199,7 @@ grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler 
 grn_rc grn_com_close(grn_ctx *ctx, grn_com *com);
 
 grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
-                    grn_com_header *header, char *body, uint32_t size);
+                    grn_com_header *header, char *body, uint32_t size, int flags);
 grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
 
 grn_rc grn_com_mbres_send(grn_ctx *ctx, grn_com *cs,
