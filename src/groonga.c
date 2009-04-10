@@ -200,6 +200,12 @@ static grn_obj *cache_cas = NULL;
 
 #define CTX_LOOKUP(name) (grn_ctx_lookup(ctx, (name), strlen(name)))
 
+/* incr and decr are available */
+#define VALUE_TYPE int64_type
+
+/* append and prepend are available */
+//#define VALUE_TYPE shorttext_type
+
 static grn_obj *
 cache_init(grn_ctx *ctx)
 {
@@ -220,7 +226,7 @@ cache_init(grn_ctx *ctx)
                                             GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                                             shorttext_type, 0, enc))) {
           cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
-                                          GRN_OBJ_PERSISTENT, shorttext_type);
+                                          GRN_OBJ_PERSISTENT, VALUE_TYPE);
           cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
                                           GRN_OBJ_PERSISTENT, uint_type);
           cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
@@ -285,62 +291,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
     break;
   case MBCMD_SET :
   case MBCMD_ADD :
-  case MBCMD_APPEND :
-  case MBCMD_PREPEND :
-    {
-      grn_id rid;
-      uint32_t size = ntohl(header->size);
-      uint16_t keylen = ntohs(header->keylen);
-      uint8_t extralen = header->level;
-      char *body = GRN_BULK_HEAD((grn_obj *)msg);
-      uint32_t flags = *((uint32_t *)body);
-      uint32_t expire = ntohl(*((uint32_t *)(body + 4)));
-      uint32_t valuelen = size - keylen - extralen;
-      char *key = body + 8;
-      char *value = key + keylen;
-      grn_search_flags f = GRN_TABLE_ADD;
-      GRN_ASSERT(extralen == 8);
-      cache_init(ctx);
-      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
-      if (!rid) {
-        MBRES(ctx, re, MBRES_ENOMEM, 0, 0, 0);
-        // GRN_LOG(ctx, GRN_LOG_NOTICE, "SET k=%d failed", keylen);
-      } else if (header->qtype == MBCMD_ADD && !(f & GRN_TABLE_ADD)) {
-        MBRES(ctx, re, MBRES_KEY_EEXISTS, 0, 0, 0);
-      } else {
-        int option = 0;
-        grn_obj buf;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_BULK_SET(ctx, &buf, value, valuelen);
-        switch (header->qtype) {
-        case MBCMD_SET :
-        case MBCMD_ADD :
-          option = GRN_OBJ_SET;
-          break;
-        case MBCMD_APPEND :
-          option = GRN_OBJ_APPEND;
-          break;
-        case MBCMD_PREPEND :
-          option = GRN_OBJ_PREPEND;
-          break;
-        }
-        grn_obj_set_value(ctx, cache_value, rid, &buf, option);
-        GRN_BULK_SET(ctx, &buf, &flags, 4);
-        grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
-        if (expire < RELATIVE_TIME_THRESH) {
-          struct timeval tv;
-          gettimeofday(&tv, NULL);
-          expire += tv.tv_sec;
-        }
-        GRN_BULK_SET(ctx, &buf, &expire, 4);
-        grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-        /* todo : ntohll */
-        GRN_BULK_SET(ctx, re, &header->cas, sizeof(uint64_t));
-        grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
-        MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
-      }
-    }
-    break;
   case MBCMD_REPLACE :
     {
       grn_id rid;
@@ -353,30 +303,60 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       uint32_t valuelen = size - keylen - extralen;
       char *key = body + 8;
       char *value = key + keylen;
-      grn_search_flags f = 0;
+      grn_search_flags f = header->qtype == MBCMD_REPLACE ? 0 : GRN_TABLE_ADD;
       GRN_ASSERT(extralen == 8);
       cache_init(ctx);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
       if (!rid) {
-        MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
+        MBRES(ctx, re, (f & GRN_TABLE_ADD) ? MBRES_ENOMEM : MBRES_KEY_ENOENT, 0, 0, 0);
       } else {
-        grn_obj buf;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_BULK_SET(ctx, &buf, value, valuelen);
-        grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-        GRN_BULK_SET(ctx, &buf, &flags, 4);
-        grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
-        if (expire < RELATIVE_TIME_THRESH) {
-          struct timeval tv;
-          gettimeofday(&tv, NULL);
-          expire += tv.tv_sec;
+        if (f & GRN_TABLE_ADD) {
+          grn_obj buf;
+          GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+          GRN_BULK_SET(ctx, &buf, value, valuelen);
+          grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+          GRN_BULK_SET(ctx, &buf, &flags, 4);
+          grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+          if (expire < RELATIVE_TIME_THRESH) {
+            struct timeval tv;
+            gettimeofday(&tv, NULL);
+            expire += tv.tv_sec;
+          }
+          GRN_BULK_SET(ctx, &buf, &expire, 4);
+          grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
+          GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
+          grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+          ((grn_msg *)re)->header.cas = header->cas;
+          MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
+        } else {
+          if (header->qtype == MBCMD_ADD) {
+            MBRES(ctx, re, MBRES_KEY_EEXISTS, 0, 0, 0);
+          } else {
+            grn_obj cas;
+            GRN_OBJ_INIT(&cas, GRN_BULK, 0);
+            grn_obj_get_value(ctx, cache_cas, rid, &cas);
+            if (header->cas && header->cas != *((uint64_t *)GRN_BULK_HEAD(&cas))) {
+              MBRES(ctx, re, MBRES_KEY_EEXISTS, 0, 0, 0);
+            } else {
+              grn_obj buf;
+              GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+              GRN_BULK_SET(ctx, &buf, value, valuelen);
+              grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
+              GRN_BULK_SET(ctx, &buf, &flags, 4);
+              grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
+              if (expire < RELATIVE_TIME_THRESH) {
+                struct timeval tv;
+                gettimeofday(&tv, NULL);
+                expire += tv.tv_sec;
+              }
+              GRN_BULK_SET(ctx, &buf, &expire, 4);
+              grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
+              ((grn_msg *)re)->header.cas = header->cas;
+              MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
+            }
+            grn_obj_close(ctx, &cas);
+          }
         }
-        GRN_BULK_SET(ctx, &buf, &expire, 4);
-        grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-        /* todo : ntohll */
-        GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
-        grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
-        MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
       }
     }
     break;
@@ -438,7 +418,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         }
         GRN_BULK_SET(ctx, &buf, &expire, 4);
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-        /* todo : ntohll */
         GRN_BULK_SET(ctx, re, &header->cas, sizeof(uint64_t));
         grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
         MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
@@ -513,8 +492,37 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       }
     }
     break;
+  case MBCMD_APPEND :
+  case MBCMD_PREPEND :
+    {
+      grn_id rid;
+      uint32_t size = ntohl(header->size);
+      uint16_t keylen = ntohs(header->keylen);
+      char *key = GRN_BULK_HEAD((grn_obj *)msg);
+      char *value = key + keylen;
+      uint32_t valuelen = size - keylen;
+      grn_search_flags f = GRN_TABLE_ADD;
+      cache_init(ctx);
+      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (!rid) {
+        MBRES(ctx, re, MBRES_ENOMEM, 0, 0, 0);
+      } else {
+        grn_obj buf;
+        int flags = header->qtype == MBCMD_APPEND ? GRN_OBJ_APPEND : GRN_OBJ_PREPEND;
+        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_BULK_SET(ctx, &buf, value, valuelen);
+        grn_obj_set_value(ctx, cache_value, rid, &buf, flags);
+        MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
+      }
+    }
+    break;
   case MBCMD_STAT :
-    MBRES(ctx, re, MBRES_UNKNOWN_COMMAND, 0, 0, 0);
+    {
+      pid_t pid = getpid();
+      grn_bulk_write(ctx, re, "pid", 3);
+      grn_bulk_itoa(ctx, re, pid);
+      MBRES(ctx, re, MBRES_SUCCESS, 3, 0, 0);
+    }
     break;
   case MBCMD_QUIT :
     MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
