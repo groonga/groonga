@@ -101,18 +101,6 @@ typedef void grn_com_callback(grn_ctx *ctx, grn_com_event *, grn_com *);
 typedef void grn_msg_handler(grn_ctx *ctx, grn_obj *msg);
 
 enum {
-  grn_com_idle = 0,
-  grn_com_head,
-  grn_com_body,
-  grn_com_doing,
-  grn_com_done,
-  grn_com_connecting,
-  grn_com_error,
-  grn_com_closing,
-  grn_com_closed
-};
-
-enum {
   grn_com_ok = 0,
   grn_com_emem,
   grn_com_erecv_head,
@@ -202,10 +190,6 @@ grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
                     grn_com_header *header, char *body, uint32_t size, int flags);
 grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
 
-grn_rc grn_com_mbres_send(grn_ctx *ctx, grn_com *cs,
-                          grn_com_header *header, grn_obj *body,
-                          uint16_t status, uint32_t key_size, uint32_t extra_size);
-
 /******* grn_msg ********/
 
 typedef struct _grn_msg grn_msg;
@@ -223,7 +207,7 @@ grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);
 grn_obj *grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old);
 grn_obj *grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old);
 grn_rc grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
-                            uint16_t status, uint32_t key_size, uint32_t extra_size);
+                            uint16_t status, uint32_t key_size, uint8_t extra_size);
 grn_rc grn_msg_close(grn_ctx *ctx, grn_obj *msg);
 
 #ifdef __cplusplus

@@ -1,3 +1,13 @@
+2009-04-10  Tasuku SUENAGA <a at razil.jp>
+
+	* lib/db.c: handle GRN_MSG as same as GRN_BULK on grn_obj_get_value.
+	* lib/com.h: removed unused enum constants.
+	* lib/com.h: changed a extra_len size of grn_msg_set_property.
+	* lib/com.c: changed a extra_len size of grn_msg_set_property.
+	* configure.ac: added test/unit/memcached.
+	* src/groonga.c: set opcode on a response header of memcached protocol.
+	* test/unit/memcached: added memcached protocol test. It requires libmemcached.
+
 2009-04-10  Poe MORITA  <morita at razil.jp>
 
 	* src/groonga.c (MBCMD_SET, MBCMD_ADD, MBCMD_REPLACE): support CAS field.

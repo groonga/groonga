@@ -201,10 +201,10 @@ static grn_obj *cache_cas = NULL;
 #define CTX_LOOKUP(name) (grn_ctx_lookup(ctx, (name), strlen(name)))
 
 /* incr and decr are available */
-#define VALUE_TYPE int64_type
+//#define VALUE_TYPE int64_type
 
 /* append and prepend are available */
-//#define VALUE_TYPE shorttext_type
+#define VALUE_TYPE shorttext_type
 
 static grn_obj *
 cache_init(grn_ctx *ctx)
@@ -255,6 +255,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
   grn_msg *msg = edge->msg;
   grn_com_header *header = &msg->header;
   grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+  ((grn_msg *)re)->header.qtype = header->qtype;
   switch (header->qtype) {
   case MBCMD_GETQ :
     flags = GRN_QL_MORE;

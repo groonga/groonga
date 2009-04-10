@@ -69,6 +69,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/fixtures/performance/Makefile
                  test/unit/util/Makefile
                  test/unit/core/Makefile
+                 test/unit/memcached/Makefile
                  test/ql/Makefile
                  test/benchmark/Makefile
                  test/benchmark/lib/Makefile

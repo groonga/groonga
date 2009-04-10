@@ -132,12 +132,12 @@ grn_msg_close(grn_ctx *ctx, grn_obj *obj)
 
 grn_rc
 grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
-                     uint16_t status, uint32_t key_size, uint32_t extra_size)
+                     uint16_t status, uint32_t key_size, uint8_t extra_size)
 {
   grn_com_header *header = &((grn_msg *)obj)->header;
   header->status = htons(status);
   header->keylen = htons(key_size);
-  header->level = htons(extra_size);
+  header->level = extra_size;
   return GRN_SUCCESS;
 }
 
