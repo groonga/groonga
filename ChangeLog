@@ -1,3 +1,8 @@
+2009-04-12  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (grn_obj_get_range): export.
+	* lib/db.c (grn_obj_set_value): fixed typo.
+
 2009-04-10  Tasuku SUENAGA <a at razil.jp>
 
 	* lib/db.c: handle GRN_MSG as same as GRN_BULK on grn_obj_get_value.

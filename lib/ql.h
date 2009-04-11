@@ -142,6 +142,9 @@ struct _grn_ctx_impl {
   grn_strdup_func strdup_func;
 #endif
 
+  /* qe portion */
+  grn_hash *qe;
+
   /* ql portion */
   uint32_t ncells;
   uint32_t seqno;

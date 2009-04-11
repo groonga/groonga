@@ -2532,7 +2532,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
 
 #define INCRDECR(op) \
   switch (DB_OBJ(obj)->range) {\
-  case GRN_OBJ_KEY_INT :\
+  case GRN_DB_INT :\
     if (s == sizeof(int32_t)) {\
       int32_t *vp = (int32_t *)p;\
       *vp op *(int32_t *)v;\
@@ -2726,6 +2726,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         case GRN_OBJ_SET :
           memcpy(p, v, s);
           rc = GRN_SUCCESS;
+          break;
         case GRN_OBJ_INCR :
           INCRDECR(+=);
           break;

@@ -1043,6 +1043,15 @@ GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 /**
+ * grn_obj_get_range:
+ * @obj: 対象object
+ *
+ * @objのとる値の範囲を表わしているオブジェクトのIDを返す。
+ * 例えば、grn_builtin_typeにあるGRN_DB_INTなどを返す。
+ **/
+GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
+
+/**
  * grn_obj_expire:
  * @obj: 対象object
  *

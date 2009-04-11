@@ -197,6 +197,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->lifoseg = -1;
   ctx->impl->currseg = -1;
   ctx->impl->db = NULL;
+  ctx->impl->qe = NULL;
+
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;
   ctx->impl->dump = NIL;
@@ -1380,3 +1382,6 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
     GRN_LOG(ctx, GRN_LOG_WARNING, "ASSERT fail on %s %s:%d", func, file, line);
   }
 }
+
+/**** query env ****/
+

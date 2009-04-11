@@ -85,8 +85,6 @@ void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
 grn_obj *grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj,
                               const char *name, unsigned name_size);
 
-grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
-
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
 typedef struct _grn_hook grn_hook;
