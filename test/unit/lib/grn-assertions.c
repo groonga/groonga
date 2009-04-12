@@ -76,3 +76,23 @@ grn_test_assert_not_nil_helper(grn_id id, const gchar *expression)
                                   expression, id, GRN_ID_NIL));
   }
 }
+
+void
+grn_test_assert_context_helper (grn_ctx *context, const gchar *expression)
+{
+  if (!context) {
+    cut_set_message("context should not NULL");
+    cut_assert_null_helper(context, expression);
+  } else if (context->rc == GRN_SUCCESS) {
+    cut_test_pass();
+  } else {
+    cut_test_fail(cut_take_printf("<(%s)->rc> != <GRN_SUCCESS>\n"
+                                  "expected: <%s> is <%s>\n"
+                                  "%s:%d: %s(): %s",
+                                  expression,
+                                  grn_rc_to_string(context->rc),
+                                  grn_rc_to_string(GRN_SUCCESS),
+                                  context->errfile, context->errline,
+                                  context->errfunc, context->errbuf));
+  }
+}

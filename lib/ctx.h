@@ -377,6 +377,9 @@ void grn_ql_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),
 void grn_ctx_concat_func(grn_ctx *ctx, int flags, void *dummy);
 void grn_ctx_stream_out_func(grn_ctx *c, int flags, void *stream);
 
+grn_rc grn_ctx_read(grn_ctx *ctx, grn_obj *str);
+grn_obj *grn_ctx_eval(grn_ctx *ctx, const char *str, unsigned int str_len);
+
 #ifdef __cplusplus
 }
 #endif

@@ -12,7 +12,8 @@ noinst_LTLIBRARIES =				\
 	test-stress.la				\
 	test-public-context.la			\
 	test-query.la				\
-	test-table.la
+	test-table.la				\
+	test-column.la
 endif
 
 INCLUDES =			\
@@ -46,3 +47,4 @@ test_stress_la_SOURCES			= test-stress.c
 test_public_context_la_SOURCES		= test-public-context.c
 test_query_la_SOURCES			= test-query.c
 test_table_la_SOURCES			= test-table.c
+test_column_la_SOURCES			= test-column.c

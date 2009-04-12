@@ -305,6 +305,36 @@ grn_collect_logger_get_messages(grn_logger_info *logger)
   return context->messages;
 }
 
+gchar *
+grn_collect_logger_to_string(grn_logger_info *logger)
+{
+  GString *string;
+  const GList *messages;
+
+  string = g_string_new(NULL);
+  for (messages = grn_collect_logger_get_messages(logger);
+       messages;
+       messages = g_list_next(messages)) {
+    const gchar *message = messages->data;
+    g_string_append_printf(string, "%s\n", message);
+  }
+
+  return g_string_free(string, FALSE);
+}
+
+void
+grn_collect_logger_print_messages(grn_logger_info *logger)
+{
+  const GList *messages;
+
+  for (messages = grn_collect_logger_get_messages(logger);
+       messages;
+       messages = g_list_next(messages)) {
+    const gchar *message = messages->data;
+    g_print("%s\n", message);
+  }
+}
+
 void
 grn_collect_logger_free(grn_logger_info *logger)
 {

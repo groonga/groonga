@@ -42,6 +42,11 @@
     grn_test_assert_not_nil_helper((expression), #expression),  \
     grn_test_assert_not_nil(expression))
 
+#define grn_test_assert_context(expression)                     \
+  cut_trace_with_info_expression(                               \
+    grn_test_assert_context_helper((expression), #expression),  \
+    grn_test_assert_context(expression))
+
 
 void     grn_test_assert_helper         (grn_rc       rc,
                                          const gchar *expression);
@@ -52,6 +57,8 @@ void     grn_test_assert_equal_rc_helper(grn_rc       expected,
 void     grn_test_assert_nil_helper     (grn_id       id,
                                          const gchar *expression);
 void     grn_test_assert_not_nil_helper (grn_id       id,
+                                         const gchar *expression);
+void     grn_test_assert_context_helper (grn_ctx     *context,
                                          const gchar *expression);
 
 #endif

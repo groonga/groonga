@@ -1385,3 +1385,35 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
 
 /**** query env ****/
 
+typedef struct _grn_qe grn_qe;
+typedef struct _grn_qe_list grn_qe_list;
+typedef struct _grn_qe_source grn_qe_source;
+
+struct _grn_qe_list {
+  grn_qe *qe;
+  grn_qe_list *next;
+};
+
+struct _grn_qe_source {
+  grn_proc_func *func;
+  uint32_t nargs;
+  grn_qe *args[1];
+};
+
+struct _grn_qe {
+  grn_obj *valur;
+  grn_qe_list *deps;
+  grn_qe_source *source;
+};
+
+grn_rc
+grn_ctx_read(grn_ctx *ctx, grn_obj *str)
+{
+
+}
+
+grn_obj *
+grn_ctx_eval(grn_ctx *ctx, const char *str, unsigned int str_len)
+{
+
+}

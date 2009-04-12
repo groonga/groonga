@@ -41,6 +41,8 @@ const gchar *grn_test_get_base_dir(void);
 grn_logger_info *grn_collect_logger_new(void);
 void grn_collect_logger_clear_messages(grn_logger_info *logger);
 const GList *grn_collect_logger_get_messages(grn_logger_info *logger);
+gchar *grn_collect_logger_to_string(grn_logger_info *logger);
+void grn_collect_logger_print_messages(grn_logger_info *logger);
 void grn_collect_logger_free(grn_logger_info *logger);
 
 grn_logger_info *setup_grn_logger(void);
