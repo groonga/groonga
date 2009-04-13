@@ -680,19 +680,6 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
       MUTEX_UNLOCK(q_mutex);
     }
   }
-  while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
-    while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
-      grn_msg_close(&edge->ctx, msg);
-    }
-    while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-      grn_msg_close(ctx, msg);
-    }
-    grn_ctx_fin(&edge->ctx);
-    if (edge->com->has_sid) {
-      grn_com_close(ctx, edge->com);
-    }
-    grn_hash_delete_by_id(ctx, edges, edge->id, NULL);
-  }
 }
 
 #define MAX_CON 0x10000
@@ -717,7 +704,23 @@ server(char *path)
       ev.opaque = db;
       edges = grn_hash_create(ctx, NULL, sizeof(grn_com_addr), sizeof(grn_edge), 0, 0);
       if (!grn_com_sopen(ctx, &ev, port, msg_handler)) {
-        while (!grn_com_event_poll(ctx, &ev, -1) && grn_gctx.stat != GRN_QL_QUIT) ;
+        while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_QL_QUIT) {
+          grn_edge *edge;
+          while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
+            grn_obj *msg;
+            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+              grn_msg_close(&edge->ctx, msg);
+            }
+            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+              grn_msg_close(ctx, msg);
+            }
+            grn_ctx_fin(&edge->ctx);
+            if (edge->com->has_sid) {
+              grn_com_close(ctx, edge->com);
+            }
+            grn_hash_delete_by_id(ctx, edges, edge->id, NULL);
+          }
+        }
         for (;;) {
           MUTEX_LOCK(q_mutex);
           if (nthreads == nfthreads) { break; }

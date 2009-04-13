@@ -135,8 +135,8 @@ typedef struct {
 
 #define GRN_DB_OBJP(obj) \
   (obj &&\
-   (GRN_TYPE <= DB_OBJ(obj)->header.type) &&\
-   (DB_OBJ(obj)->header.type <= GRN_COLUMN_INDEX))
+   (GRN_TYPE <= ((grn_db_obj *)obj)->header.type) &&\
+   (((grn_db_obj *)obj)->header.type <= GRN_COLUMN_INDEX))
 
 #define GRN_OBJ_TABLEP(obj) \
   (obj &&\

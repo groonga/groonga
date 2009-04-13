@@ -1,3 +1,7 @@
+2009-04-13  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c: session is closed by server, when ctx->stat become GRN_QL_QUIT.
+
 2009-04-13  Kouhei Sutou  <kou@clear-code.com>
 
 	* test/unit/core/test-column.c: add a missing file.

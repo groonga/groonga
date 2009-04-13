@@ -294,6 +294,8 @@ grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
   return ctx->rc;
 }
 
+static void grn_ctx_qe_fin(grn_ctx *ctx);
+
 grn_rc
 grn_ctx_fin(grn_ctx *ctx)
 {
@@ -305,6 +307,7 @@ grn_ctx_fin(grn_ctx *ctx)
   ctx->prev->next = ctx->next;
   MUTEX_UNLOCK(grn_glock);
   if (ctx->impl) {
+    grn_ctx_qe_fin(ctx);
     if (ctx->impl->objects) {
       grn_cell *o;
       GRN_ARRAY_EACH(ctx->impl->objects, 0, 0, id, &o, {
@@ -1383,37 +1386,144 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
   }
 }
 
-/**** query env ****/
+/**** grn_ctx_qe ****/
 
-typedef struct _grn_qe grn_qe;
-typedef struct _grn_qe_list grn_qe_list;
-typedef struct _grn_qe_source grn_qe_source;
+typedef struct _grn_ctx_qe grn_ctx_qe;
+typedef struct _grn_ctx_qe_list grn_ctx_qe_list;
+typedef struct _grn_ctx_qe_source grn_ctx_qe_source;
 
-struct _grn_qe_list {
-  grn_qe *qe;
-  grn_qe_list *next;
+struct _grn_ctx_qe_list {
+  grn_ctx_qe *qe;
+  grn_ctx_qe_list *next;
 };
 
-struct _grn_qe_source {
+struct _grn_ctx_qe_source {
   grn_proc_func *func;
   uint32_t nargs;
-  grn_qe *args[1];
+  grn_ctx_qe *args[1];
 };
 
-struct _grn_qe {
-  grn_obj *valur;
-  grn_qe_list *deps;
-  grn_qe_source *source;
+struct _grn_ctx_qe {
+  grn_obj *value;
+  grn_ctx_qe_list *deps;
+  grn_ctx_qe *dest;
+  grn_ctx_qe_source *source;
 };
+
+static grn_rc
+grn_ctx_qe_init(grn_ctx *ctx)
+{
+  if (!ctx->impl) {
+    grn_ctx_impl_init(ctx);
+  }
+  if (ctx->impl && !ctx->impl->qe) {
+    ctx->impl->qe = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
+                                    sizeof(grn_ctx_qe),
+                                    GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY,
+                                    GRN_ENC_NONE);
+  }
+  return ctx->rc;
+}
+
+static void
+grn_ctx_qe_fin(grn_ctx *ctx)
+{
+  if (ctx->impl->qe) {
+    grn_ctx_qe *qe;
+    GRN_HASH_EACH(ctx->impl->qe, id, NULL, NULL, &qe, {
+      grn_ctx_qe_list *l;
+      grn_ctx_qe_list *l_;
+      if (qe->source) { GRN_FREE(qe->source); }
+      if (qe->value && !GRN_DB_OBJP(qe->value)) { grn_obj_close(ctx, qe->value); }
+      for (l = qe->deps; l; l = l_) {
+        l_ = l->next;
+        GRN_FREE(l);
+      }
+    });
+    grn_hash_close(ctx, ctx->impl->qe);
+  }
+}
+
+static grn_ctx_qe_source *
+qe_parse(grn_ctx *ctx, grn_obj *source)
+{
+  return NULL;
+}
+
+static grn_obj *
+qe_exec(grn_ctx *ctx, grn_ctx_qe_source *source)
+{
+  return NULL;
+}
+
+static grn_ctx_qe *
+grn_ctx_qe_parse(grn_ctx *ctx, const char *key, int key_size)
+{
+  grn_ctx_qe *s, *d;
+  grn_ctx_qe_list *l;
+  grn_search_flags flags = 0;
+  if (!key_size || *key != '_') { return NULL; }
+  if (!grn_hash_get(ctx, ctx->impl->qe, key + 1, key_size - 1, (void **)&s, &flags)) {
+    return NULL;
+  }
+  flags = GRN_TABLE_ADD;
+  if (!grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&d, &flags)) {
+    return NULL;
+  }
+  if (!(l = GRN_MALLOCN(grn_ctx_qe_list, 1))) { return NULL; }
+  s->dest = d;
+  d->source = qe_parse(ctx, s->value);
+  return d;
+}
+
+static void
+grn_ctx_qe_set_(grn_ctx *ctx, grn_ctx_qe *qe, grn_obj *value)
+{
+  grn_ctx_qe_list *l;
+  if (qe->value && !GRN_DB_OBJP(qe->value)) { grn_obj_close(ctx, qe->value); }
+  qe->value = value;
+  if (qe->dest) {
+    grn_ctx_qe_set_(ctx, qe->dest, NULL);
+    if (qe->dest->source) { GRN_FREE(qe->dest->source); }
+    qe->dest->source = NULL;
+  }
+  for (l = qe->deps; l; l = l->next) { grn_ctx_qe_set_(ctx, l->qe, NULL); }
+}
 
 grn_rc
-grn_ctx_read(grn_ctx *ctx, grn_obj *str)
+grn_ctx_qe_set(grn_ctx *ctx, const char *key, int key_size, grn_obj *value)
 {
-
+  grn_ctx_qe *qe;
+  grn_search_flags flags = GRN_TABLE_ADD;
+  if (grn_ctx_qe_init(ctx)) { return ctx->rc; }
+  if (!grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &flags)) {
+    return ctx->rc;
+  }
+  grn_ctx_qe_set_(ctx, qe, value);
+  return GRN_SUCCESS;
 }
 
 grn_obj *
-grn_ctx_eval(grn_ctx *ctx, const char *str, unsigned int str_len)
+grn_ctx_qe_get(grn_ctx *ctx, const char *key, int key_size)
 {
+  grn_ctx_qe *qe;
+  grn_search_flags flags = 0;
+  if (grn_ctx_qe_init(ctx)) { return NULL; }
+  if (!grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &flags)) {
+    if (!(qe = grn_ctx_qe_parse(ctx, key, key_size))) { return NULL; }
+  }
+  if (!qe->value) {
+    if (!qe->source) {
+      if (!grn_ctx_qe_parse(ctx, key, key_size)) { return NULL; }
+    }
+    qe->value = qe_exec(ctx, qe->source);
+  }
+  return qe->value;
+}
 
+grn_rc
+grn_ctx_qe_read(grn_ctx *ctx, grn_obj *str)
+{
+  if (grn_ctx_qe_init(ctx)) { return ctx->rc; }
+  return GRN_SUCCESS;
 }
