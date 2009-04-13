@@ -1566,7 +1566,7 @@ grn_str_tok(char *str, size_t str_len, char delim, char **tokbuf, int buf_size, 
         break;
       }
       if (delim == *str) {
-        *str = '\0';
+        // *str = '\0';
         *tok++ = str;
         if (tok == tok_end) { break; }
       }

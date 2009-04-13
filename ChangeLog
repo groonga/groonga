@@ -1,3 +1,7 @@
+2009-04-14  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctc.c (grn_ctx_qe): add.
+
 2009-04-13  Poe MORITA  <morita at razil.jp>
 
 	* src/groonga.c: session is closed by server, when ctx->stat become GRN_QL_QUIT.

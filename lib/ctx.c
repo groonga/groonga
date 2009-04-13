@@ -1400,7 +1400,7 @@ struct _grn_ctx_qe_list {
 struct _grn_ctx_qe_source {
   grn_proc_func *func;
   uint32_t nargs;
-  grn_ctx_qe *args[1];
+  grn_ctx_qe *args[16];
 };
 
 struct _grn_ctx_qe {
@@ -1408,6 +1408,7 @@ struct _grn_ctx_qe {
   grn_ctx_qe_list *deps;
   grn_ctx_qe *dest;
   grn_ctx_qe_source *source;
+  grn_id id;
 };
 
 static grn_rc
@@ -1430,9 +1431,8 @@ grn_ctx_qe_fin(grn_ctx *ctx)
 {
   if (ctx->impl->qe) {
     grn_ctx_qe *qe;
+    grn_ctx_qe_list *l, *l_;
     GRN_HASH_EACH(ctx->impl->qe, id, NULL, NULL, &qe, {
-      grn_ctx_qe_list *l;
-      grn_ctx_qe_list *l_;
       if (qe->source) { GRN_FREE(qe->source); }
       if (qe->value && !GRN_DB_OBJP(qe->value)) { grn_obj_close(ctx, qe->value); }
       for (l = qe->deps; l; l = l_) {
@@ -1444,36 +1444,101 @@ grn_ctx_qe_fin(grn_ctx *ctx)
   }
 }
 
-static grn_ctx_qe_source *
-qe_parse(grn_ctx *ctx, grn_obj *source)
+static grn_ctx_qe *
+qe_at(grn_ctx *ctx, const char *key, int key_size)
 {
-  return NULL;
+  grn_ctx_qe *qe = NULL;
+  grn_hash_at(ctx, ctx->impl->qe, key, key_size, (void **)&qe);
+  return qe;
 }
 
-static grn_obj *
-qe_exec(grn_ctx *ctx, grn_ctx_qe_source *source)
+static grn_ctx_qe *
+qe_get(grn_ctx *ctx, const char *key, int key_size)
 {
-  return NULL;
+  grn_id id;
+  grn_ctx_qe *qe;
+  grn_search_flags flags = GRN_TABLE_ADD;
+  if (!(id = grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &flags))) {
+    return NULL;
+  }
+  if (flags & GRN_TABLE_ADDED) { qe->id = id; }
+  return qe;
+}
+
+static grn_ctx_qe_source *
+qe_parse(grn_ctx *ctx, grn_ctx_qe *s, grn_ctx_qe *d)
+{
+  grn_obj *str = s->value;
+  grn_ctx_qe_source *source = NULL;
+  if (str && str->header.type == GRN_BULK) {
+    char *head = GRN_BULK_HEAD(str);
+    char *tokbuf[17 + 1];
+    int i, n = grn_str_tok(head, GRN_BULK_VSIZE(str), ' ', tokbuf, 16, NULL);
+    if (n <= 17) {
+      grn_obj *obj = grn_ctx_lookup(ctx, head, tokbuf[0] - head);
+      if (obj->header.type == GRN_PROC) {
+        if ((source = GRN_MALLOCN(grn_ctx_qe_source, 1))) {
+          source->func = ((grn_proc *)obj)->funcs[PROC_INIT];
+          for (i = 0; i < n - 1; i++) {
+            const char *key = tokbuf[i] + 1;
+            if ((source->args[i] = qe_get(ctx, key, tokbuf[i + 1] - key))) {
+              grn_ctx_qe_list *l;
+              if ((l = GRN_MALLOCN(grn_ctx_qe_list, 1))) {
+                l->qe = d;
+                l->next = source->args[i]->deps;
+                source->args[i]->deps = l;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return source;
 }
 
 static grn_ctx_qe *
 grn_ctx_qe_parse(grn_ctx *ctx, const char *key, int key_size)
 {
   grn_ctx_qe *s, *d;
-  grn_ctx_qe_list *l;
-  grn_search_flags flags = 0;
   if (!key_size || *key != '_') { return NULL; }
-  if (!grn_hash_get(ctx, ctx->impl->qe, key + 1, key_size - 1, (void **)&s, &flags)) {
-    return NULL;
-  }
-  flags = GRN_TABLE_ADD;
-  if (!grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&d, &flags)) {
-    return NULL;
-  }
-  if (!(l = GRN_MALLOCN(grn_ctx_qe_list, 1))) { return NULL; }
+  if (!(s = qe_at(ctx, key + 1, key_size - 1))) { return NULL; }
+  if (!(d = qe_get(ctx, key, key_size))) { return NULL; }
   s->dest = d;
-  d->source = qe_parse(ctx, s->value);
+  d->source = qe_parse(ctx, s, d);
   return d;
+}
+
+static grn_obj *grn_ctx_qe_get_(grn_ctx *ctx, grn_ctx_qe *qe);
+
+static grn_obj *
+qe_exec(grn_ctx *ctx, grn_ctx_qe_source *source)
+{
+  uint32_t i;
+  grn_proc_ctx pctx;
+  pctx.user_data.ptr = NULL;
+  pctx.data[0].ptr = NULL;
+  if (source) {
+    for (i = 0; i < source->nargs; i++) {
+      pctx.data[i + 1].ptr = grn_ctx_qe_get_(ctx, source->args[i]);
+    }
+    source->func(ctx, NULL, &pctx.user_data, source->nargs + 1, pctx.data);
+  }
+  return (grn_obj *)pctx.data[0].ptr;
+}
+
+static grn_obj *
+grn_ctx_qe_get_(grn_ctx *ctx, grn_ctx_qe *qe)
+{
+  if (!qe->value) {
+    if (!qe->source) {
+      uint32_t key_size;
+      const char *key = _grn_hash_key(ctx, ctx->impl->qe, qe->id, &key_size);
+      if (!grn_ctx_qe_parse(ctx, key, key_size)) { return NULL; }
+    }
+    qe->value = qe_exec(ctx, qe->source);
+  }
+  return qe->value;
 }
 
 static void
@@ -1484,7 +1549,10 @@ grn_ctx_qe_set_(grn_ctx *ctx, grn_ctx_qe *qe, grn_obj *value)
   qe->value = value;
   if (qe->dest) {
     grn_ctx_qe_set_(ctx, qe->dest, NULL);
-    if (qe->dest->source) { GRN_FREE(qe->dest->source); }
+    if (qe->dest->source) {
+      // todo : clear deps;
+      GRN_FREE(qe->dest->source);
+    }
     qe->dest->source = NULL;
   }
   for (l = qe->deps; l; l = l->next) { grn_ctx_qe_set_(ctx, l->qe, NULL); }
@@ -1494,11 +1562,8 @@ grn_rc
 grn_ctx_qe_set(grn_ctx *ctx, const char *key, int key_size, grn_obj *value)
 {
   grn_ctx_qe *qe;
-  grn_search_flags flags = GRN_TABLE_ADD;
   if (grn_ctx_qe_init(ctx)) { return ctx->rc; }
-  if (!grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &flags)) {
-    return ctx->rc;
-  }
+  if (!(qe = qe_get(ctx, key, key_size))) { return ctx->rc; }
   grn_ctx_qe_set_(ctx, qe, value);
   return GRN_SUCCESS;
 }
@@ -1507,9 +1572,8 @@ grn_obj *
 grn_ctx_qe_get(grn_ctx *ctx, const char *key, int key_size)
 {
   grn_ctx_qe *qe;
-  grn_search_flags flags = 0;
   if (grn_ctx_qe_init(ctx)) { return NULL; }
-  if (!grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &flags)) {
+  if (!(qe = qe_at(ctx, key, key_size))) {
     if (!(qe = grn_ctx_qe_parse(ctx, key, key_size))) { return NULL; }
   }
   if (!qe->value) {
