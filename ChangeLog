@@ -1,3 +1,7 @@
+2009-04-13  Kouhei Sutou  <kou@clear-code.com>
+
+	* test/unit/core/test-column.c: add a missing file.
+
 2009-04-13  Poe MORITA  <morita at razil.jp>
 
 	* test/unit/core: add some tests. (Thanks to Kouhei Sutou)
