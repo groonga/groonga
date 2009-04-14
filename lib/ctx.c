@@ -294,8 +294,6 @@ grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
   return ctx->rc;
 }
 
-static void grn_ctx_qe_fin(grn_ctx *ctx);
-
 grn_rc
 grn_ctx_fin(grn_ctx *ctx)
 {
@@ -1426,8 +1424,33 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
     grn_obj_get_value(ctx, column, id, ctx->impl->outbuf);
   });
+  if (column->header.type == GRN_ACCESSOR) { grn_obj_close(ctx, column); }
   ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
   return GRN_SUCCESS;
+}
+
+static grn_rc
+search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
+       int argc, grn_proc_data *argv)
+{
+  grn_obj *index = (grn_obj *)argv[1].ptr;
+  grn_obj *query = (grn_obj *)argv[2].ptr;
+  grn_obj *res = argc > 3 ? (grn_obj *)argv[3].ptr : NULL;
+  // grn_obj *op = argc > 4 ? (grn_obj *)argv[4].ptr : NULL;
+  if (index->header.type == GRN_BULK) {
+    index = grn_ctx_lookup(ctx, GRN_BULK_HEAD(index), GRN_BULK_VSIZE(index));
+  }
+  if (index->header.type != GRN_COLUMN_INDEX) { return GRN_INVALID_ARGUMENT; }
+  if (!res) {
+    grn_obj *table;
+    if (!(table = grn_ctx_get(ctx, ((grn_db_obj *)index)->range))) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    res = grn_table_create(ctx, NULL, 0, NULL,
+                           GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0, 0);
+  }
+  argv[0].ptr = res;
+  return grn_obj_search(ctx, index, query, res, GRN_SEL_OR, NULL);
 }
 
 static grn_rc
@@ -1442,11 +1465,12 @@ grn_ctx_qe_init(grn_ctx *ctx)
                                     GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY,
                                     GRN_ENC_NONE);
     grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
+    grn_proc_create(ctx, "<proc:search>", 13, NULL, GRN_PROC_HOOK, search, NULL, NULL);
   }
   return ctx->rc;
 }
 
-static void
+void
 grn_ctx_qe_fin(grn_ctx *ctx)
 {
   if (ctx->impl->qe) {
@@ -1461,6 +1485,7 @@ grn_ctx_qe_fin(grn_ctx *ctx)
       }
     });
     grn_hash_close(ctx, ctx->impl->qe);
+    ctx->impl->qe = NULL;
   }
 }
 

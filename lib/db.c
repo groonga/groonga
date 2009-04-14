@@ -166,6 +166,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   grn_db *s = (grn_db *)db;
   if (!s) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
+  grn_ctx_qe_fin(ctx);
   GRN_TINY_ARRAY_EACH(&s->values, 1, grn_pat_curr_id(ctx, s->keys), id, vp, {
     if (*vp) { grn_obj_close(ctx, *vp); }
   });
