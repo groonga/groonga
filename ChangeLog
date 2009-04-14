@@ -1,3 +1,7 @@
+2009-04-15  Poe MORITA  <morita at razil.jp>
+
+	* lib/scm.c (nf_log): add.
+
 2009-04-14  Poe MORITA  <morita at razil.jp>
 
 	* lib/ctx.c (<proc:search>): add.

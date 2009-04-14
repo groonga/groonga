@@ -2832,6 +2832,25 @@ nf_loglevel(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   return (grn_logger_info_set(ctx, &info)) ? F : T;
 }
 static grn_cell *
+nf_log(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
+{
+  grn_cell *x, *y;
+  grn_log_level level = GRN_LOG_DEFAULT_LEVEL;
+  POP(x, args);
+  POP(y, args);
+  if (y->header.type == GRN_CELL_INT) { level = IVALUE(y); }
+  if (x->header.type == GRN_CELL_STR) {
+    char *buf = GRN_MALLOC(x->u.b.size + 1);
+    memcpy(buf, x->u.b.value, x->u.b.size);
+    buf[x->u.b.size] = '\0';
+    GRN_LOG(ctx, level, "%s", buf);
+    GRN_FREE(buf);
+    return T;
+  } else {
+    return F;
+  }
+}
+static grn_cell *
 nf_now(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
   grn_cell *x;
@@ -3444,6 +3463,7 @@ init_procs(grn_ctx *ctx)
   grn_ql_def_native_func(ctx, "list", nf_list);
   grn_ql_def_native_func(ctx, "batchmode", nf_batchmode);
   grn_ql_def_native_func(ctx, "loglevel", nf_loglevel);
+  grn_ql_def_native_func(ctx, "log", nf_log);
   grn_ql_def_native_func(ctx, "now", nf_now);
   grn_ql_def_native_func(ctx, "timestr", nf_timestr);
   grn_ql_def_native_func(ctx, "x->time", nf_totime);
