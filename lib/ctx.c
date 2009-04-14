@@ -511,6 +511,8 @@ grn_ctx_close(grn_ctx *ctx)
   return rc;
 }
 
+grn_obj *grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size);
+
 grn_rc
 grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
 {
@@ -536,7 +538,11 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       goto exit;
     } else {
       if (ctx->impl->symbols) {
-        grn_ql_feed(ctx, str, str_len, flags);
+        if (str_len && *str == '/') {
+          grn_ctx_qe_exec(ctx, str, str_len);
+        } else {
+          grn_ql_feed(ctx, str, str_len, flags);
+        }
         if (ctx->stat == GRN_QL_QUITTING) { ctx->stat = GRN_QL_QUIT; }
         if (!ERRP(ctx, GRN_CRIT)) {
           if (!(flags & GRN_QL_QUIET) && ctx->impl->output) {
@@ -1523,6 +1529,7 @@ grn_ctx_qe_parse(grn_ctx *ctx, const char *key, int key_size)
       if (obj->header.type == GRN_PROC) {
         if ((d->source = GRN_MALLOCN(grn_ctx_qe_source, 1))) {
           d->source->func = ((grn_proc *)obj)->funcs[PROC_INIT];
+          d->source->nargs = n - 1;
           for (i = 0; i < n - 1; i++) {
             const char *key = tokbuf[i] + 1;
             if ((d->source->args[i] = qe_get(ctx, key, tokbuf[i + 1] - key))) {
@@ -1559,12 +1566,14 @@ static grn_obj *
 grn_ctx_qe_get_(grn_ctx *ctx, grn_ctx_qe *qe)
 {
   if (!qe->value) {
-    if (!qe->source) {
-      uint32_t key_size;
-      const char *key = _grn_hash_key(ctx, ctx->impl->qe, qe->id, &key_size);
-      if (!grn_ctx_qe_parse(ctx, key, key_size)) { return NULL; }
+    uint32_t key_size;
+    const char *key = _grn_hash_key(ctx, ctx->impl->qe, qe->id, &key_size);
+    if (!qe->source) { grn_ctx_qe_parse(ctx, key, key_size); }
+    if (qe->source) {
+      qe->value = qe_exec(ctx, qe->source);
+    } else {
+      qe->value = grn_ctx_lookup(ctx, key, key_size);
     }
-    qe->value = qe_exec(ctx, qe->source);
   }
   return qe->value;
 }
@@ -1605,15 +1614,11 @@ grn_ctx_qe_get(grn_ctx *ctx, const char *key, int key_size)
   grn_ctx_qe *qe;
   if (grn_ctx_qe_init(ctx)) { return NULL; }
   if (!(qe = qe_at(ctx, key, key_size))) {
-    if (!(qe = grn_ctx_qe_parse(ctx, key, key_size))) { return NULL; }
-  }
-  if (!qe->value) {
-    if (!qe->source) {
-      if (!grn_ctx_qe_parse(ctx, key, key_size)) { return NULL; }
+    if (!(qe = grn_ctx_qe_parse(ctx, key, key_size))) {
+      return grn_ctx_lookup(ctx, key, key_size);
     }
-    qe->value = qe_exec(ctx, qe->source);
   }
-  return qe->value;
+  return grn_ctx_qe_get_(ctx, qe);
 }
 
 static const char *
@@ -1640,15 +1645,15 @@ get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
 }
 
 grn_obj *
-grn_ctx_qe_exec(grn_ctx *ctx, grn_obj *str)
+grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
   grn_obj top, key, *val;
   GRN_OBJ_INIT(&top, GRN_BULK, 0);
   GRN_OBJ_INIT(&key, GRN_BULK, 0);
   if (grn_ctx_qe_init(ctx)) { return NULL; }
-  p = GRN_BULK_HEAD(str);
-  e = p + GRN_BULK_VSIZE(str);
+  p = str;
+  e = p + str_size;
   p = get_token(ctx, &top, p, e, '?');
   while (p < e) {
     GRN_BULK_REWIND(&key);
