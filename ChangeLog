@@ -2,6 +2,10 @@
 
 	* lib/scm.c (nf_log): add.
 
+2009-04-14  Yutaro Shimamura <yu@irx.jp>
+
+	* lib/com.c: handle MSG_MORE, MSG_NOSIGNAL for unsupported systems.
+
 2009-04-14  Poe MORITA  <morita at razil.jp>
 
 	* lib/ctx.c (<proc:search>): add.
