@@ -1,5 +1,9 @@
 2009-04-14  Poe MORITA  <morita at razil.jp>
 
+	* lib/ctx.c (<proc:disp>): add.
+
+2009-04-14  Poe MORITA  <morita at razil.jp>
+
 	* lib/ctx.c (grn_ctx_qe_exec): add.
 
 2009-04-14  Poe MORITA  <morita at razil.jp>

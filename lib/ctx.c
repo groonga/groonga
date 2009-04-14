@@ -1412,6 +1412,19 @@ struct _grn_ctx_qe {
 };
 
 static grn_rc
+disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
+     int argc, grn_proc_data *argv)
+{
+  grn_obj *table = (grn_obj *)argv[1].ptr;
+  grn_obj *column = grn_table_column(ctx, table, ".:key", 5);
+  GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
+    grn_obj_get_value(ctx, column, id, ctx->impl->outbuf);
+  });
+  ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_ctx_qe_init(grn_ctx *ctx)
 {
   if (!ctx->impl) {
@@ -1422,6 +1435,7 @@ grn_ctx_qe_init(grn_ctx *ctx)
                                     sizeof(grn_ctx_qe),
                                     GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY,
                                     GRN_ENC_NONE);
+    grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
   }
   return ctx->rc;
 }
@@ -1535,7 +1549,8 @@ qe_exec(grn_ctx *ctx, grn_ctx_qe_source *source)
     for (i = 0; i < source->nargs; i++) {
       pctx.data[i + 1].ptr = grn_ctx_qe_get_(ctx, source->args[i]);
     }
-    source->func(ctx, NULL, &pctx.user_data, source->nargs + 1, pctx.data);
+    source->func(ctx, (grn_obj *)ctx->impl->qe,
+                 &pctx.user_data, source->nargs + 1, pctx.data);
   }
   return (grn_obj *)pctx.data[0].ptr;
 }
