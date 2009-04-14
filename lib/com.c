@@ -37,14 +37,14 @@
 #define PF_INET AF_INET
 #endif /* PF_INET */
 
-#ifdef USE_MSG_NOSIGNAL
-#if __FreeBSD__ >= 2 && __FreeBSD_version >= 600020
-#define MSG_NOSIGNAL 0x20000
-#endif /* __FreeBSD__ >= 2 && __FreeBSD_version >= 600020 */
-#else /* USE_MSG_NOSIGNAL */
+#ifndef USE_MSG_MORE
+#define MSG_MORE     0
+#endif /* USE_MSG_MORE */
+
+
+#ifndef USE_MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
-
 /******* grn_com_queue ********/
 
 grn_rc

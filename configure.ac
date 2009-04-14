@@ -265,17 +265,30 @@ if test "x$have_epoll" != "xyes"; then
   fi
 fi
 
+# check MSG_MORE defined
+AC_MSG_CHECKING([whether MSG_MORE defined])
+AC_COMPILE_IFELSE([[
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int main(int argc, char **argv)
+{
+  return MSG_MORE;
+}
+    ]],
+    [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(USE_MSG_MORE, [1], [use MSG_MORE])
+    ],
+    [
+      AC_MSG_RESULT(no)
+    ])
+
 # check MSG_NOSIGNAL defined
 AC_MSG_CHECKING([whether MSG_NOSIGNAL defined])
 AC_COMPILE_IFELSE([[
 #include <sys/types.h>
 #include <sys/socket.h>
-
-#if __FreeBSD__ >= 2 && __FreeBSD_version >= 600020
-#ifndef MSG_NOSIGNAL
-#define MSG_NOSIGNAL 0x20000
-#endif
-#endif
 
 int main(int argc, char **argv)
 {
@@ -284,7 +297,7 @@ int main(int argc, char **argv)
     ]],
     [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_MSG_NOSIGNAL, [1], [use MSG_SIGNAL])
+      AC_DEFINE(USE_MSG_NOSIGNAL, [1], [use MSG_NOSIGNAL])
     ],
     [
       AC_MSG_RESULT(no)
