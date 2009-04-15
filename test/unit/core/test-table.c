@@ -24,6 +24,8 @@
 #include "../lib/grn-assertions.h"
 
 void test_array_set_data(void);
+void data_temporary_table_no_path(void);
+void test_temporary_table_no_path(gpointer data);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -65,4 +67,29 @@ test_array_set_data(void)
 
   retrieved_record_value = grn_obj_get_value(&context, table, record_id, NULL);
   cut_assert_equal_string(value, GRN_BULK_HEAD(retrieved_record_value));
+}
+
+void
+data_temporary_table_no_path(void)
+{
+#define ADD_DATA(label, flags)                                          \
+  cut_add_data(label, GINT_TO_POINTER(flags), NULL, NULL)
+
+  ADD_DATA("no-key", GRN_OBJ_TABLE_NO_KEY);
+  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
+  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY);
+
+#undef ADD_DATA
+}
+
+void
+test_temporary_table_no_path(gpointer data)
+{
+  grn_obj *table;
+  grn_obj_flags flags = GPOINTER_TO_INT(data);
+
+  table = grn_table_create(&context, NULL, 0, NULL,
+                           flags,
+                           NULL, sizeof(grn_id), GRN_ENC_DEFAULT);
+  cut_assert_equal_string(NULL, grn_obj_path(&context, table));
 }

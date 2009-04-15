@@ -1,5 +1,9 @@
 2009-04-15  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (grn_obj_path): returns NULL if obj is TEMPORARY object.
+
+2009-04-15  Poe MORITA  <morita at razil.jp>
+
 	* src/groonga.c: HTTP support.
 
 2009-04-15  Poe MORITA  <morita at razil.jp>

@@ -3656,7 +3656,7 @@ grn_obj_path(grn_ctx *ctx, grn_obj *obj)
   char *path = NULL;
   GRN_API_ENTER;
   io = grn_obj_io(obj);
-  path = io ? io->path : NULL;
+  if (io && !(io->flags & GRN_IO_TEMPORARY)) { path = io->path; }
   GRN_API_RETURN(path);
 }
 
