@@ -200,12 +200,6 @@ static grn_obj *cache_cas = NULL;
 
 #define CTX_LOOKUP(name) (grn_ctx_lookup(ctx, (name), strlen(name)))
 
-/* incr and decr are available */
-//#define VALUE_TYPE int64_type
-
-/* append and prepend are available */
-#define VALUE_TYPE shorttext_type
-
 static grn_obj *
 cache_init(grn_ctx *ctx)
 {
@@ -226,7 +220,7 @@ cache_init(grn_ctx *ctx)
                                             GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                                             shorttext_type, 0, enc))) {
           cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
-                                          GRN_OBJ_PERSISTENT, VALUE_TYPE);
+                                          GRN_OBJ_PERSISTENT, shorttext_type);
           cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
                                           GRN_OBJ_PERSISTENT, uint_type);
           cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
