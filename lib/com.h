@@ -164,6 +164,7 @@ grn_rc grn_com_event_each(grn_ctx *ctx, grn_com_event *ev, grn_com_callback *fun
 
 /******* grn_com_gqtp ********/
 
+#define GRN_COM_PROTO_HTTP   0x47
 #define GRN_COM_PROTO_GQTP   0xc7
 #define GRN_COM_PROTO_MBREQ  0x80
 #define GRN_COM_PROTO_MBRES  0x81

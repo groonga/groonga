@@ -1,5 +1,9 @@
 2009-04-15  Poe MORITA  <morita at razil.jp>
 
+	* lib/com.c (grn_com_recv_text): add.
+
+2009-04-15  Poe MORITA  <morita at razil.jp>
+
 	* lib/store.c: grn_ja support GRN_OBJ_INCR and GRN_OBJ_DECR (only for int32_t and int64_t).
 
 2009-04-15  Poe MORITA  <morita at razil.jp>

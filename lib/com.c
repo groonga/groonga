@@ -650,14 +650,79 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
   return ctx->rc;
 }
 
+#define RETRY_MAX 10
+
+static const char *
+scan_delimiter(const char *p, const char *e)
+{
+  while (p + 4 < e) {
+    if (p[3] == '\n') {
+      if (p[2] == '\r') {
+        if (p[1] == '\n') {
+          if (p[0] == '\r') { return p + 4; } else { p += 2; }
+        } else { p += 2; }
+      } else { p += 4; }
+    } else { p += p[3] == '\r' ? 1 : 4; }
+  }
+  return NULL;
+}
+
+#define BUFSIZE 4096
+
+static grn_rc
+grn_com_recv_text(grn_ctx *ctx, grn_com *com,
+                  grn_com_header *header, grn_obj *buf, ssize_t ret)
+{
+  const char *p;
+  int retry = 0;
+  grn_bulk_write(ctx, buf, (char *)header, ret);
+  if ((p = scan_delimiter(GRN_BULK_HEAD(buf), GRN_BULK_CURR(buf)))) {
+    // todo : keep rest of message
+    GRN_BULK_CURR(buf) = (char *)p;
+    return GRN_SUCCESS;
+  }
+  for (;;) {
+    if (grn_bulk_reserve(ctx, buf, BUFSIZE)) { return ctx->rc; }
+    if ((ret = recv(com->fd, GRN_BULK_CURR(buf), BUFSIZE, 0)) < 0) {
+      SERR("recv text");
+      if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
+          ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
+        ERRCLR(ctx);
+        continue;
+      }
+      goto exit;
+    }
+    if (ret) {
+      p = GRN_BULK_CURR(buf);
+      if ((p = scan_delimiter(p, p + ret))) {
+        GRN_BULK_CURR(buf) = (char *)p;
+        // todo : keep rest of message
+        break;
+      } else {
+        GRN_BULK_CURR(buf) += ret;
+      }
+    } else {
+      if (++retry > RETRY_MAX) {
+        SERR("recv text");
+        goto exit;
+      }
+    }
+  }
+  header->proto = GRN_COM_PROTO_HTTP;
+  header->size = GRN_BULK_VSIZE(buf);
+exit :
+  return ctx->rc;
+}
+
 grn_rc
 grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
 {
   ssize_t ret;
+  int retry = 0;
   byte *p = (byte *)header;
   size_t rest = sizeof(grn_com_header);
   do {
-    if ((ret = recv(com->fd, p, rest, MSG_WAITALL)) <= 0) {
+    if ((ret = recv(com->fd, p, rest, 0)) < 0) {
       SERR("recv size");
       if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
           ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
@@ -666,7 +731,17 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       }
       goto exit;
     }
-    rest -= ret, p += ret;
+    if (ret) {
+      if (header->proto < 0x80) {
+        return grn_com_recv_text(ctx, com, header, buf, ret);
+      }
+      rest -= ret, p += ret;
+    } else {
+      if (++retry > RETRY_MAX) {
+        SERR("recv size");
+        goto exit;
+      }
+    }
   } while (rest);
   GRN_LOG(ctx, GRN_LOG_INFO, "recv (%d,%x,%d,%02x,%02x,%04x)", ntohl(header->size), header->flags, header->proto, header->qtype, header->level, header->status);
   {
@@ -681,8 +756,9 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
           goto exit;
         }
       }
+      retry = 0;
       for (rest = value_size; rest;) {
-        if ((ret = recv(com->fd, buf->u.b.curr, rest, MSG_WAITALL)) <= 0) {
+        if ((ret = recv(com->fd, GRN_BULK_CURR(buf), rest, MSG_WAITALL)) < 0) {
           SERR("recv body");
           if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
               ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
@@ -691,9 +767,15 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
           }
           goto exit;
         }
-        rest -= ret, buf->u.b.curr += ret;
+        if (ret) {
+          rest -= ret, GRN_BULK_CURR(buf) += ret;
+        } else {
+          if (++retry > RETRY_MAX) {
+            SERR("recv body");
+            goto exit;
+          }
+        }
       }
-      //*buf->u.b.curr = '\0';
       break;
     default :
       GRN_LOG(ctx, GRN_LOG_ERROR, "illegal header: %d", proto);
