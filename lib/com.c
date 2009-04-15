@@ -180,6 +180,25 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
   grn_com_header *header = &m->header;
   if (GRN_COM_QUEUE_EMPTYP(&peer->new)) {
     switch (header->proto) {
+    case GRN_COM_PROTO_HTTP :
+      {
+        ssize_t ret;
+        grn_obj head;
+        GRN_OBJ_INIT(&head, GRN_BULK, 0);
+        GRN_BULK_PUTS(ctx, &head, "HTTP/1.1 200 OK\r\n");
+        GRN_BULK_PUTS(ctx, &head, "Connection: close\r\n");
+        GRN_BULK_PUTS(ctx, &head, "Content-Type: text/plain\r\n\r\n");
+        ret = send(peer->fd, GRN_BULK_HEAD(&head), GRN_BULK_VSIZE(&head), MSG_NOSIGNAL);
+        if (ret == -1) { SERR("send"); }
+        grn_obj_close(ctx, &head);
+        ret = send(peer->fd, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), MSG_NOSIGNAL);
+        if (ret == -1) { SERR("send"); }
+        if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {
+          grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
+          return ctx->rc;
+        }
+      }
+      break;
     case GRN_COM_PROTO_GQTP :
       {
         if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
@@ -655,7 +674,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
 static const char *
 scan_delimiter(const char *p, const char *e)
 {
-  while (p + 4 < e) {
+  while (p + 4 <= e) {
     if (p[3] == '\n') {
       if (p[2] == '\r') {
         if (p[1] == '\n') {
@@ -693,8 +712,9 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
       goto exit;
     }
     if (ret) {
+      off_t o = GRN_BULK_VSIZE(buf);
       p = GRN_BULK_CURR(buf);
-      if ((p = scan_delimiter(p, p + ret))) {
+      if ((p = scan_delimiter(p - (o > 3 ? 3 : o), p + ret))) {
         GRN_BULK_CURR(buf) = (char *)p;
         // todo : keep rest of message
         break;
@@ -708,6 +728,7 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
       }
     }
   }
+  header->qtype = *GRN_BULK_HEAD(buf);
   header->proto = GRN_COM_PROTO_HTTP;
   header->size = GRN_BULK_VSIZE(buf);
 exit :

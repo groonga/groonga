@@ -160,6 +160,29 @@ typedef struct {
   grn_id id;
 } grn_edge;
 
+static void
+do_htreq(grn_ctx *ctx, grn_edge *edge)
+{
+  grn_msg *msg = edge->msg;
+  grn_com_header *header = &msg->header;
+  switch (header->qtype) {
+  case 'G' : /* GET */
+    {
+      char *p = GRN_BULK_HEAD((grn_obj *)msg);
+      char *e = GRN_BULK_CURR((grn_obj *)msg);
+      char *p0 = p + 4;
+      for (; p + 4 < e; p++) {
+        if (*p == ' ' && !memcmp(p + 1, "HTTP", 4)) {
+          break; }
+      }
+      grn_ql_send(ctx, p0, p - p0, header->flags);
+    }
+    break;
+  }
+  // todo : support "Connection: keep-alive"
+  ctx->stat = GRN_QL_QUIT;
+}
+
 enum {
   MBRES_SUCCESS = 0x00,
   MBRES_KEY_ENOENT = 0x01,
@@ -573,6 +596,9 @@ worker(void *arg)
           grn_com_header *header = &edge->msg->header;
           msg = (grn_obj *)edge->msg;
           switch (header->proto) {
+          case GRN_COM_PROTO_HTTP :
+            do_htreq(ctx, edge);
+            break;
           case GRN_COM_PROTO_MBREQ :
             do_mbreq(ctx, edge);
             break;

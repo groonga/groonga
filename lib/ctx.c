@@ -1425,7 +1425,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
     grn_obj_get_value(ctx, column, id, ctx->impl->outbuf);
   });
   if (column->header.type == GRN_ACCESSOR) { grn_obj_close(ctx, column); }
-  ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
+  //  ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
   return GRN_SUCCESS;
 }
 
@@ -1464,8 +1464,11 @@ grn_ctx_qe_init(grn_ctx *ctx)
                                     sizeof(grn_ctx_qe),
                                     GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY,
                                     GRN_ENC_NONE);
-    grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
-    grn_proc_create(ctx, "<proc:search>", 13, NULL, GRN_PROC_HOOK, search, NULL, NULL);
+    if (!ctx->rc) {
+      grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
+      grn_proc_create(ctx, "<proc:search>", 13, NULL, GRN_PROC_HOOK, search, NULL, NULL);
+      ERRCLR(ctx);
+    }
   }
   return ctx->rc;
 }
@@ -1655,12 +1658,15 @@ get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
     } else if (*p == '+') {
       GRN_BULK_PUTC(ctx, buf, ' ');
       p++;
-    } else if (*p == '%' && p + 2 <= e) {
+    } else if (*p == '%' && p + 3 <= e) {
       const char *r;
-      unsigned int c = grn_htoui(p, p + 2, &r);
-      /* GRN_ASSERT(p + 2 == r); */
-      GRN_BULK_PUTC(ctx, buf, c);
-      p = r;
+      unsigned int c = grn_htoui(p + 1, p + 3, &r);
+      if (p + 3 == r) {
+        GRN_BULK_PUTC(ctx, buf, c);
+      } else {
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid % sequence (%c%c)", p + 1, p + 2);
+      }
+      p += 3;
     } else {
       GRN_BULK_PUTC(ctx, buf, *p);
       p++;
