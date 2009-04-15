@@ -600,9 +600,12 @@ worker(void *arg)
       }
     }
     if (ctx->stat == GRN_QL_QUIT || edge->stat == EDGE_ABORT) {
+      if (edge->com->has_sid) { grn_com_close_(ctx, edge->com); }
       grn_com_queue_enque(&grn_gctx, &ctx_old, (grn_com_queue_entry *)edge);
+      edge->stat = EDGE_ABORT;
+    } else {
+      edge->stat = EDGE_IDLE;
     }
-    edge->stat = EDGE_IDLE;
   } while (nfthreads < MAX_NFTHREADS && grn_gctx.stat != GRN_QL_QUIT);
 exit :
   nthreads--;
@@ -715,7 +718,7 @@ server(char *path)
               grn_msg_close(ctx, msg);
             }
             grn_ctx_fin(&edge->ctx);
-            if (edge->com->has_sid) {
+            if (edge->com->has_sid && edge->com->opaque == edge) {
               grn_com_close(ctx, edge->com);
             }
             grn_hash_delete_by_id(ctx, edges, edge->id, NULL);

@@ -1,5 +1,9 @@
 2009-04-15  Poe MORITA  <morita at razil.jp>
 
+	* lib/com.c: close session immediately by server.
+
+2009-04-15  Poe MORITA  <morita at razil.jp>
+
 	* lib/scm.c (nf_log): -> nf_log_put.
 
 2009-04-15  Poe MORITA  <morita at razil.jp>

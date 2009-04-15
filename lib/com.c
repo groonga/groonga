@@ -411,13 +411,15 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
     grn_id id = grn_hash_at(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c);
     if (id) {
 #ifdef USE_EPOLL
-      struct epoll_event e;
-      memset(&e, 0, sizeof(struct epoll_event));
-      e.data.fd = fd;
-      e.events = c->events;
-      if (epoll_ctl(ev->epfd, EPOLL_CTL_DEL, fd, &e) == -1) {
-        SERR("epoll_ctl");
-        return ctx->rc;
+      if (!c->closed) {
+        struct epoll_event e;
+        memset(&e, 0, sizeof(struct epoll_event));
+        e.data.fd = fd;
+        e.events = c->events;
+        if (epoll_ctl(ev->epfd, EPOLL_CTL_DEL, fd, &e) == -1) {
+          SERR("epoll_ctl");
+          return ctx->rc;
+        }
       }
 #endif /* USE_EPOLL*/
 #ifdef USE_KQUEUE
@@ -454,6 +456,7 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
     }
     ncs->fd = fd;
     ncs->has_sid = 0;
+    ncs->closed = 0;
     ncs->ev = ev;
     ncs->opaque = NULL;
     GRN_COM_QUEUE_INIT(&ncs->new);
@@ -741,18 +744,26 @@ exit :
   return cs;
 }
 
+void
+grn_com_close_(grn_ctx *ctx, grn_com *com)
+{
+  grn_sock fd = com->fd;
+  if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
+  if (grn_sock_close(fd) == -1) {
+    SERR("close");
+  } else {
+    com->closed = 1;
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
+  }
+}
+
 grn_rc
 grn_com_close(grn_ctx *ctx, grn_com *com)
 {
   grn_sock fd = com->fd;
   grn_com_event *ev = com->ev;
   if (ev) { grn_com_event_del(ctx, ev, fd); }
-  if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
-  if (grn_sock_close(fd) == -1) {
-    SERR("close");
-    return ctx->rc;
-  }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
+  if (!com->closed) { grn_com_close_(ctx, com); }
   if (!ev) { GRN_FREE(com); }
   return GRN_SUCCESS;
 }
@@ -814,6 +825,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func)
     ev->msg_handler = func;
     cs->fd = lfd;
     cs->has_sid = 0;
+    cs->closed = 0;
     cs->ev = ev;
     cs->opaque = NULL;
     GRN_COM_QUEUE_INIT(&cs->new);

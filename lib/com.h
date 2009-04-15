@@ -119,6 +119,7 @@ struct _grn_com {
   int events;
   uint16_t sid;
   uint8_t has_sid;
+  uint8_t closed;
   grn_com_queue new;
   grn_com_event *ev;
   void *opaque;
@@ -184,6 +185,7 @@ struct _grn_com_header {
 grn_com *grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
 grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func);
 
+void grn_com_close_(grn_ctx *ctx, grn_com *com);
 grn_rc grn_com_close(grn_ctx *ctx, grn_com *com);
 
 grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
