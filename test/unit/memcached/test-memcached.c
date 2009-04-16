@@ -30,7 +30,6 @@
 #define GROONGA_TEST_DB "/tmp/groonga-memcached.db"
 
 /* globals */
-static pid_t groonga_pid;
 static struct memcached_st *memc;
 static struct memcached_server_st *servers;
 static char *val;
