@@ -1,3 +1,9 @@
+2009-04-16  Kouhei Sutou  <kou@clear-code.com>
+
+	* configure.ac, test/unit/memcached/Makefile.am: don't run
+	memcached protocol test if both of Cutter and libmemcached doesn't
+	exist.
+
 2009-04-15  Poe MORITA  <morita at razil.jp>
 
 	* lib/db.c (grn_obj_path): returns NULL if obj is TEMPORARY object.

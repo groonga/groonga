@@ -1,6 +1,8 @@
 if WITH_CUTTER
+if WITH_LIBMEMCACHED
 noinst_LTLIBRARIES =				\
 	test-memcached.la
+endif
 endif
 
 INCLUDES =			\
@@ -18,9 +20,4 @@ LIBS =								\
 	$(top_builddir)/test/unit/lib/libgrn-test-hash-utils.la
 
 test_memcached_la_SOURCES			= test-memcached.c
-
-ruby-bindings:
-	cd bindings/ruby && \
-	ruby extconf.rb && \
-	make clean && make
 
