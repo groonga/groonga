@@ -1415,17 +1415,29 @@ struct _grn_ctx_qe {
   grn_id id;
 };
 
+#define LOAD(str) (grn_ctx_qe_exec(ctx, (str), strlen(str)))
+
+static grn_rc
+init(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
+     int argc, grn_proc_data *argv)
+{
+  LOAD("/?select=<proc:disp> /search&search=<proc:search> index query&index=<terms>.body");
+  return ctx->rc;
+}
+
 static grn_rc
 disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
      int argc, grn_proc_data *argv)
 {
   grn_obj *table = (grn_obj *)argv[1].ptr;
-  grn_obj *column = grn_table_column(ctx, table, ".:key", 5);
-  GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
-    grn_obj_get_value(ctx, column, id, ctx->impl->outbuf);
-  });
-  if (column->header.type == GRN_ACCESSOR) { grn_obj_close(ctx, column); }
-  //  ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
+  if (table) {
+    grn_obj *column = grn_table_column(ctx, table, ".:key", 5);
+    GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
+      grn_obj_get_value(ctx, column, id, ctx->impl->outbuf);
+    });
+    if (column->header.type == GRN_ACCESSOR) { grn_obj_close(ctx, column); }
+    //  ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
+  }
   return GRN_SUCCESS;
 }
 
@@ -1440,7 +1452,9 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   if (index->header.type == GRN_BULK) {
     index = grn_ctx_lookup(ctx, GRN_BULK_HEAD(index), GRN_BULK_VSIZE(index));
   }
-  if (index->header.type != GRN_COLUMN_INDEX) { return GRN_INVALID_ARGUMENT; }
+  if (!index || index->header.type != GRN_COLUMN_INDEX) {
+    return GRN_INVALID_ARGUMENT;
+  }
   if (!res) {
     grn_obj *table;
     if (!(table = grn_ctx_get(ctx, ((grn_db_obj *)index)->range))) {
@@ -1451,6 +1465,15 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   }
   argv[0].ptr = res;
   return grn_obj_search(ctx, index, query, res, GRN_SEL_OR, NULL);
+}
+
+grn_rc
+grn_db_init_builtin_procs(grn_ctx *ctx)
+{
+  grn_proc_create(ctx, "<proc:init>", 11, NULL, GRN_PROC_HOOK, init, NULL, NULL);
+  grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
+  grn_proc_create(ctx, "<proc:search>", 13, NULL, GRN_PROC_HOOK, search, NULL, NULL);
+  return ctx->rc;
 }
 
 static grn_rc
@@ -1464,10 +1487,11 @@ grn_ctx_qe_init(grn_ctx *ctx)
                                     sizeof(grn_ctx_qe),
                                     GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY,
                                     GRN_ENC_NONE);
-    if (!ctx->rc) {
-      grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
-      grn_proc_create(ctx, "<proc:search>", 13, NULL, GRN_PROC_HOOK, search, NULL, NULL);
-      ERRCLR(ctx);
+    {
+      grn_proc *init = (grn_proc *)grn_ctx_lookup(ctx, "<proc:init>", 11);
+      if (init) {
+        init->funcs[PROC_INIT](ctx, (grn_obj *)ctx->impl->qe, NULL, 0, NULL);
+      }
     }
   }
   return ctx->rc;

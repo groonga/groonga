@@ -1526,7 +1526,10 @@ inline static void *
 grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
 {
   void *res;
-  if (!fi) { return GRN_GCALLOC(length); }
+  if (!fi) {
+    *fmo = (HANDLE)0;
+    return GRN_GCALLOC(length);
+  }
   /* MUTEX_LOCK(fi->mutex); */
   /* try to create fmo */
   *fmo = CreateFileMapping(fi->fh, NULL, PAGE_READWRITE, 0, offset + length, NULL);
@@ -1548,21 +1551,21 @@ inline static int
 grn_munmap(grn_ctx *ctx, HANDLE *fmo, void *start, size_t length)
 {
   int r = 0;
-  if (UnmapViewOfFile(start)) {
-    mmap_size -= length;
-  } else {
-    SERR("UnmapViewOfFile");
-    GRN_LOG(ctx, GRN_LOG_ERROR, "UnmapViewOfFile(%p,%d) failed <%zu>", start, length, mmap_size);
-    r = -1;
-  }
   if (*fmo) {
+    if (UnmapViewOfFile(start)) {
+      mmap_size -= length;
+    } else {
+      SERR("UnmapViewOfFile");
+      GRN_LOG(ctx, GRN_LOG_ERROR, "UnmapViewOfFile(%p,%d) failed <%zu>", start, length, mmap_size);
+      r = -1;
+    }
     if (!CloseHandle(*fmo)) {
       SERR("CloseHandle");
       GRN_LOG(ctx, GRN_LOG_ERROR, "CloseHandle(%p,%d) failed <%zu>", start, length, mmap_size);
     }
     *fmo = NULL;
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "fmo not exists <%p,%d>", start, length);
+    GRN_FREE(start);
   }
   return r;
 }

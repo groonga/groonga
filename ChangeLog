@@ -1,3 +1,8 @@
+2009-04-17  Poe MORITA  <morita at razil.jp>
+
+	* groonga.h (grn_obj_id): add.
+	* lib/io.c (grn_io_anon_unmap): support win32.
+
 2009-04-16  Kouhei Sutou  <kou@clear-code.com>
 
 	* test/unit/memcached/test-memcached.c: use temporary directory.

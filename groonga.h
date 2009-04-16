@@ -1109,6 +1109,15 @@ GRN_API unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
 /**
+ * grn_obj_id:
+ * @obj: 対象object
+ *
+ * objのidを返す。
+ **/
+GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
+
+
+/**
  * grn_obj_search:
  * @obj: 検索対象のobject
  * @query: 検索クエリ
