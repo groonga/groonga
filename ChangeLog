@@ -1,5 +1,7 @@
 2009-04-16  Kouhei Sutou  <kou@clear-code.com>
 
+	* test/unit/core/test-table.c: add a test for set/get default tokenizer.
+
 	* test/unit/memcached/Makefile.am,
 	test/unit/memcached/test-memcached.c: use non-installed groonga binary.
 

@@ -23,9 +23,13 @@
 
 #include "../lib/grn-assertions.h"
 
+#define OBJECT(name) (grn_ctx_lookup(&context, (name), strlen(name)))
+
 void test_array_set_data(void);
 void data_temporary_table_no_path(void);
 void test_temporary_table_no_path(gpointer data);
+void data_temporary_table_default_tokenizer(void);
+void test_temporary_table_default_tokenizer(gpointer data);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -92,4 +96,38 @@ test_temporary_table_no_path(gpointer data)
                            flags,
                            NULL, sizeof(grn_id), GRN_ENC_DEFAULT);
   cut_assert_equal_string(NULL, grn_obj_path(&context, table));
+}
+
+/* FIXME!!! */
+grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
+                          grn_encoding *encoding, grn_obj **tokenizer);
+
+void
+data_temporary_table_default_tokenizer(void)
+{
+#define ADD_DATA(label, flags)                                          \
+  cut_add_data(label, GINT_TO_POINTER(flags), NULL, NULL)
+
+  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
+  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY);
+
+#undef ADD_DATA
+}
+
+void
+test_temporary_table_default_tokenizer(gpointer data)
+{
+  grn_obj *table;
+  grn_obj_flags flags = GPOINTER_TO_INT(data);
+  grn_obj *tokenizer = NULL;
+  char name[1024];
+
+  table = grn_table_create(&context, NULL, 0, NULL,
+                           flags,
+                           NULL, sizeof(grn_id), GRN_ENC_DEFAULT);
+  grn_obj_set_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER,
+                   OBJECT("<token:trigram>"));
+  grn_table_get_info(&context, table, NULL, NULL, &tokenizer);
+  grn_obj_name(&context, tokenizer, name, sizeof(name));
+  cut_assert_equal_string("<token:trigram>", name);
 }
