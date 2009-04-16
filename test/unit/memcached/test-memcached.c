@@ -30,9 +30,10 @@
 #define GROONGA_TEST_DB "/tmp/groonga-memcached.db"
 
 /* globals */
-pid_t groonga_pid;
-struct memcached_st *memc;
-struct memcached_server_st *servers;
+static pid_t groonga_pid;
+static struct memcached_st *memc;
+static struct memcached_server_st *servers;
+static char *val;
 
 void test_set_and_get(void);
 
@@ -59,6 +60,8 @@ setup(void)
     cut_fail("cannot execute groonga server. port:%s db:%s",
              GROONGA_TEST_PORT, GROONGA_TEST_DB);
   }
+
+  val = NULL;
 }
 
 void
@@ -70,12 +73,15 @@ teardown(void)
     cut_fail("cannot terminate groonga server. port:%s db:%s",
              GROONGA_TEST_PORT, GROONGA_TEST_DB);
   }
+
+  if (val) {
+    free(val);
+  }
 }
 
 void
 test_set_and_get(void)
 {
-  char *val;
   size_t val_len;
   uint32_t flags;
   memcached_return rc;
@@ -89,16 +95,11 @@ test_set_and_get(void)
   cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
   cut_assert_equal_string("value", val);
   cut_assert_equal_uint(0xdeadbeefU, flags);
-
-  if (val) {
-    free(val);
-  }
 }
 
 void
 test_set_and_get_with_expire(void)
 {
-  char *val;
   size_t val_len;
   uint32_t flags;
   memcached_return rc;
@@ -113,13 +114,14 @@ test_set_and_get_with_expire(void)
   cut_assert_equal_string("value", val);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 
+  if (val) {
+    free(val);
+    val = NULL;
+  }
+
   sleep(2);
 
   val = memcached_get(memc, "key", 1, &val_len, &flags, &rc);
   cut_set_message("memcached get with expiration error.");
   cut_assert_equal_int(MEMCACHED_NOTFOUND, rc);
-
-  if (val) {
-    free(val);
-  }
 }
