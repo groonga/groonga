@@ -1,5 +1,10 @@
 2009-04-16  Kouhei Sutou  <kou@clear-code.com>
 
+	* test/unit/memcached/Makefile.am,
+	test/unit/memcached/test-memcached.c: use non-installed groonga binary.
+
+	* test/unit/memcached/test-memcached.c: use GCutEgg.
+
 	* test/unit/memcached/test-memcached.c: fix memory management problem.
 
 	* configure.ac, test/unit/memcached/Makefile.am: don't run

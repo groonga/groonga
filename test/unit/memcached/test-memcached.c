@@ -35,48 +35,47 @@ static struct memcached_st *memc;
 static struct memcached_server_st *servers;
 static char *val;
 
+static GCutEgg *egg;
+
 void test_set_and_get(void);
 
 void
 setup(void)
 {
-  if ((groonga_pid = fork())) {
-    memcached_return rc;
+  GError *error = NULL;
+  memcached_return rc;
 
-    sleep(1); /* wait for groonga daemon */
-    memc = memcached_create(NULL);
-    memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, 1);
+  memc = NULL;
+  servers = NULL;
 
-    servers = memcached_servers_parse("localhost:" GROONGA_TEST_PORT);
-    rc = memcached_server_push(memc, servers);
+  egg = gcut_egg_new(GROONGA, "-s",
+                     "-p", GROONGA_TEST_PORT,
+                     GROONGA_TEST_DB,
+                     NULL);
+  gcut_egg_hatch(egg, &error);
+  gcut_assert_error(error);
 
-    cut_set_message("memcached server connect failed.");
-    cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
-  } else {
-    execlp("groonga", "groonga", "-s",
-           "-p", GROONGA_TEST_PORT,
-           GROONGA_TEST_DB,
-           (char *)NULL);
-    cut_fail("cannot execute groonga server. port:%s db:%s",
-             GROONGA_TEST_PORT, GROONGA_TEST_DB);
-  }
+  sleep(1); /* wait for groonga daemon */
+  memc = memcached_create(NULL);
+  memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, 1);
 
-  val = NULL;
+  servers = memcached_servers_parse("localhost:" GROONGA_TEST_PORT);
+  rc = memcached_server_push(memc, servers);
+
+  cut_set_message("memcached server connect failed.");
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
 }
 
 void
 teardown(void)
 {
-  memcached_server_list_free(servers);
-  memcached_free(memc);
-  if (kill(groonga_pid, SIGTERM)) {
-    cut_fail("cannot terminate groonga server. port:%s db:%s",
-             GROONGA_TEST_PORT, GROONGA_TEST_DB);
-  }
+  if (egg)
+    g_object_unref(egg);
 
-  if (val) {
-    free(val);
-  }
+  if (servers)
+    memcached_server_list_free(servers);
+  if (memc)
+    memcached_free(memc);
 }
 
 void

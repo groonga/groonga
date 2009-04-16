@@ -10,7 +10,10 @@ INCLUDES =			\
 	-I$(top_srcdir)/lib	\
 	$(GROONGA_INCLUDEDIR)
 
-AM_CFLAGS = $(GCUTTER_CFLAGS)
+AM_CFLAGS =						\
+	$(GCUTTER_CFLAGS)				\
+	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"
+
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -lmemcached
 
 LIBS =								\
