@@ -30,6 +30,8 @@ void data_temporary_table_no_path(void);
 void test_temporary_table_no_path(gpointer data);
 void data_temporary_table_default_tokenizer(void);
 void test_temporary_table_default_tokenizer(gpointer data);
+void data_temporary_table_add(void);
+void test_temporary_table_add(gpointer data);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -130,4 +132,38 @@ test_temporary_table_default_tokenizer(gpointer data)
   grn_table_get_info(&context, table, NULL, NULL, &tokenizer);
   grn_obj_name(&context, tokenizer, name, sizeof(name));
   cut_assert_equal_string("<token:trigram>", name);
+}
+
+void
+data_temporary_table_add(void)
+{
+#define ADD_DATA(label, flags)                                          \
+  cut_add_data(label, GINT_TO_POINTER(flags), NULL, NULL)
+
+  ADD_DATA("no-key", GRN_OBJ_TABLE_NO_KEY);
+  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
+  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY);
+
+#undef ADD_DATA
+}
+
+void
+test_temporary_table_add(gpointer data)
+{
+  grn_obj *table;
+  grn_obj_flags flags = GPOINTER_TO_INT(data);
+  gchar key[] = "key";
+
+  table = grn_table_create(&context, NULL, 0, NULL,
+                           flags,
+                           OBJECT("<shorttext>"),
+                           sizeof(grn_id), GRN_ENC_DEFAULT);
+  if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
+    grn_table_add(&context, table);
+  } else {
+    grn_search_flags flags = GRN_TABLE_ADD;
+    grn_table_lookup(&context, table, key, strlen(key), &flags);
+  }
+
+  cut_assert_equal_int(1, grn_table_size(&context, table));
 }
