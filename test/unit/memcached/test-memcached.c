@@ -27,12 +27,12 @@
 #include "../lib/grn-assertions.h"
 
 #define GROONGA_TEST_PORT "4545"
-#define GROONGA_TEST_DB "/tmp/groonga-memcached.db"
 
 /* globals */
 static struct memcached_st *memc;
 static struct memcached_server_st *servers;
-static char *val;
+static gchar *tmp_directory;
+static gchar *val;
 
 static GCutEgg *egg;
 
@@ -47,9 +47,17 @@ setup(void)
   memc = NULL;
   servers = NULL;
 
+  tmp_directory = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
+  cut_remove_path(tmp_directory, NULL);
+  if (g_mkdir_with_parents(tmp_directory, 0700) == -1)
+    cut_assert_errno();
+
   egg = gcut_egg_new(GROONGA, "-s",
                      "-p", GROONGA_TEST_PORT,
-                     GROONGA_TEST_DB,
+                     cut_take_printf("%s%s%s",
+                                     tmp_directory,
+                                     G_DIR_SEPARATOR_S,
+                                     "memcached.db"),
                      NULL);
   gcut_egg_hatch(egg, &error);
   gcut_assert_error(error);
@@ -70,6 +78,8 @@ teardown(void)
 {
   if (egg)
     g_object_unref(egg);
+
+  cut_remove_path(tmp_directory, NULL);
 
   if (servers)
     memcached_server_list_free(servers);
