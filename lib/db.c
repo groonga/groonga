@@ -2266,6 +2266,9 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
           }
         }
         break;
+      default :
+        res = NULL;
+        goto exit;
       }
     } else {
       /* if obj->header.type == GRN_TYPE ... lookup table */

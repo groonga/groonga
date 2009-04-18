@@ -1375,6 +1375,23 @@ GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
   }\
 } while (0)
 
+typedef struct _grn_obj_format grn_obj_format;
+
+struct _grn_obj_format {
+  const void *min;
+  unsigned min_size;
+  const void *max;
+  unsigned max_size;
+  int flags;
+  int limit;
+  int ncolumns;
+  grn_obj **columns;
+};
+
+#define GRN_OBJ_FORMAT_ASARRAY         (0x01<<3)
+
+GRN_API grn_rc grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
+                             grn_obj_format *format);
 /* grn_str */
 
 typedef struct {
