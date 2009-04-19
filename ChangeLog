@@ -1,3 +1,7 @@
+2009-04-19  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.c (<proc:scan>): add.
+
 2009-04-18  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h (grn_bulk_otoj): add.

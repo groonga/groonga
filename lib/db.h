@@ -140,8 +140,8 @@ typedef struct {
 
 #define GRN_OBJ_TABLEP(obj) \
   (obj &&\
-   (GRN_TABLE_HASH_KEY <= DB_OBJ(obj)->header.type) &&\
-   (DB_OBJ(obj)->header.type <= GRN_DB))
+   (GRN_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&\
+   (((grn_db_obj *)obj)->header.type <= GRN_DB))
 
 typedef struct _grn_proc_ctx grn_proc_ctx;
 struct _grn_proc_ctx {

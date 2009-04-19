@@ -958,7 +958,7 @@ GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
  * @value: 値を格納するバッファ(呼出側で準備する)
  *
  * tableのIDに対応するレコードのvalueを取得する。
- * 対応するレコードが存在する場合はvalue長を返す。見つからない場合は0を返す。
+ * valueを戻り値として返す。
  **/
 GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
 

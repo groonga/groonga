@@ -1499,12 +1499,71 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   return grn_obj_search(ctx, index, query, res, GRN_SEL_OR, NULL);
 }
 
+static grn_rc
+scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
+     int argc, grn_proc_data *argv)
+{
+  grn_id id;
+  grn_table_cursor *c;
+  grn_obj *table, *val1, *op, *val2, *res, *opt;
+  if (argc < 5) { return GRN_INVALID_ARGUMENT; }
+  table = (grn_obj *)argv[1].ptr;
+  if (!GRN_OBJ_TABLEP(table)) { return GRN_INVALID_ARGUMENT; }
+  val1 = (grn_obj *)argv[2].ptr;
+  op = (grn_obj *)argv[3].ptr;
+  val2 = (grn_obj *)argv[4].ptr;
+  res = argc > 5
+    ? (grn_obj *)argv[5].ptr
+    : grn_table_create(ctx, NULL, 0, NULL,
+                       GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0, 0);
+  opt = argc > 6 ? (grn_obj *)argv[6].ptr : NULL;
+  argv[0].ptr = res;
+  if ((c = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+    int o = 0, n =0, l = -1;
+    grn_obj buf1, buf2, *v1, *v2;
+    GRN_OBJ_INIT(&buf1, GRN_BULK, 0);
+    GRN_OBJ_INIT(&buf2, GRN_BULK, 0);
+    // todo : support op
+    while ((id = grn_table_cursor_next(ctx, c))) {
+      if (val1->header.type == GRN_BULK) {
+        v1 = val1;
+      } else {
+        GRN_BULK_REWIND(&buf1);
+        v1 = grn_obj_get_value(ctx, val1, id, &buf1);
+      }
+      if (val2->header.type == GRN_BULK) {
+        v2 = val2;
+      } else {
+        GRN_BULK_REWIND(&buf2);
+        v2 = grn_obj_get_value(ctx, val2, id, &buf2);
+      }
+      if ((GRN_BULK_VSIZE(v1) == GRN_BULK_VSIZE(v2)) &&
+          !memcmp(GRN_BULK_HEAD(v1), GRN_BULK_HEAD(v2), GRN_BULK_VSIZE(v1))) {
+        if (n++ >= o) {
+          /* todo : use GRN_SET_INT_ADD if !n_entries */
+          grn_rset_recinfo *ri;
+          grn_search_flags fl = GRN_TABLE_ADD;
+          grn_table_get(ctx, res, &id, sizeof(grn_id), (void **)&ri, &fl);
+          {
+            int score = 1;
+            grn_table_add_subrec(res, ri, score, NULL, 0);
+          }
+          if (!--l) { break; }
+        }
+      }
+    }
+    grn_table_cursor_close(ctx, c);
+  }
+  return ctx->rc;
+}
+
 grn_rc
 grn_db_init_builtin_procs(grn_ctx *ctx)
 {
   grn_proc_create(ctx, "<proc:init>", 11, NULL, GRN_PROC_HOOK, init, NULL, NULL);
   grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
   grn_proc_create(ctx, "<proc:search>", 13, NULL, GRN_PROC_HOOK, search, NULL, NULL);
+  grn_proc_create(ctx, "<proc:scan>", 11, NULL, GRN_PROC_HOOK, scan, NULL, NULL);
   return ctx->rc;
 }
 
