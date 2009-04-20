@@ -4,6 +4,14 @@
 
 2009-04-20  Tasuku SUENAGA <a at razil.jp>
 
+	* src/groonga.c (do_mbreq): fixed add bug.
+
+2009-04-20  Tasuku SUENAGA <a at razil.jp>
+
+	* src/groonga.c (do_mbreq): fixed set/add/replace bug when expire == 0.
+
+2009-04-20  Tasuku SUENAGA <a at razil.jp>
+
 	* src/groonga.c (do_mbreq): imploved memcached protocol compatibility.
 	* test/unit/memcached/test-memcached.c: added add/replace test.
 
