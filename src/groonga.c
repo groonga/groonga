@@ -357,7 +357,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
           GRN_BULK_SET(ctx, &buf, &flags, 4);
           grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
-          if (expire < RELATIVE_TIME_THRESH) {
+          if (expire && expire < RELATIVE_TIME_THRESH) {
             struct timeval tv;
             gettimeofday(&tv, NULL);
             expire += tv.tv_sec;
