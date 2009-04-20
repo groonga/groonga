@@ -1,3 +1,7 @@
+2009-04-21  Poe MORITA  <morita at razil.jp>
+
+	* src/grnslap.c: add.
+
 2009-04-20  Tasuku SUENAGA <a at razil.jp>
 
 	* src/groonga.c (do_mbreq): imploved memcached protocol compatibility.

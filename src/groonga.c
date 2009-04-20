@@ -638,7 +638,7 @@ worker(void *arg)
           grn_msg_close(ctx, msg);
         }
         MUTEX_LOCK(q_mutex);
-        if (ctx->stat == GRN_QL_QUIT) { break; }
+        if (ctx->stat == GRN_QL_QUIT || edge->stat == EDGE_ABORT) { break; }
       }
     }
     if (ctx->stat == GRN_QL_QUIT || edge->stat == EDGE_ABORT) {
@@ -698,6 +698,8 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
                              (void **)&edge, &f);
     if (f & GRN_TABLE_ADDED) {
       grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL, enc);
+      GRN_COM_QUEUE_INIT(&edge->recv_new);
+      GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ql_recv_handler_set(&edge->ctx, output, edge);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
       grn_ql_load(&edge->ctx, NULL);
@@ -759,6 +761,7 @@ server(char *path)
             while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
               grn_msg_close(ctx, msg);
             }
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "ctx_fin (%p/%p)", edge, &edge->ctx);
             grn_ctx_fin(&edge->ctx);
             if (edge->com->has_sid && edge->com->opaque == edge) {
               grn_com_close(ctx, edge->com);

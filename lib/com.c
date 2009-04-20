@@ -77,7 +77,7 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
     if (q->next) {
       MUTEX_LOCK(q->mutex);
       e = q->next;
-      q->next = e->next;
+      if (!(q->next = e->next)) { q->tail = &q->next; }
       MUTEX_UNLOCK(q->mutex);
     }
   } else {
@@ -374,6 +374,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   {
     grn_search_flags f = GRN_TABLE_ADD;
     if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c, &f)) {
+      c->ev = ev;
       c->fd = fd;
       c->events = events;
       if (com) { *com = c; }
@@ -473,10 +474,8 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
       grn_sock_close(fd);
       return;
     }
-    ncs->fd = fd;
     ncs->has_sid = 0;
     ncs->closed = 0;
-    ncs->ev = ev;
     ncs->opaque = NULL;
     GRN_COM_QUEUE_INIT(&ncs->new);
     // GRN_LOG(ctx, GRN_LOG_NOTICE, "accepted (%d)", fd);
@@ -664,7 +663,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     }
   }
   if (ret != whole_size) {
-    GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg: %d < %d", ret, whole_size);
+    GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg(%d): %d < %d", cs->fd, ret, whole_size);
   }
   return ctx->rc;
 }
@@ -745,6 +744,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
   do {
     if ((ret = recv(com->fd, p, rest, 0)) < 0) {
       SERR("recv size");
+      GRN_LOG(ctx, GRN_LOG_ERROR, "recv error (%d)", com->fd);
       if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
           ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
         ERRCLR(ctx);
@@ -760,6 +760,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
     } else {
       if (++retry > RETRY_MAX) {
         SERR("recv size");
+        GRN_LOG(ctx, GRN_LOG_ERROR, "recv retry max (%d)", com->fd);
         goto exit;
       }
     }
@@ -926,10 +927,8 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func)
     if (grn_com_event_add(ctx, ev, lfd, GRN_COM_POLLIN, &cs)) { goto exit; }
     ev->acceptor = cs;
     ev->msg_handler = func;
-    cs->fd = lfd;
     cs->has_sid = 0;
     cs->closed = 0;
-    cs->ev = ev;
     cs->opaque = NULL;
     GRN_COM_QUEUE_INIT(&cs->new);
   } else {

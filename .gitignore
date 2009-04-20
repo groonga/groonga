@@ -24,6 +24,7 @@
 /groonga.spec
 /stamp-h1
 /src/groonga
+/src/grnslap
 Makefile
 Makefile.in
 /examples/kv

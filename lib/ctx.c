@@ -1484,6 +1484,7 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   if (index->header.type == GRN_BULK) {
     index = grn_ctx_lookup(ctx, GRN_BULK_HEAD(index), GRN_BULK_VSIZE(index));
   }
+  if (!query) { return GRN_INVALID_ARGUMENT; }
   if (!index || index->header.type != GRN_COLUMN_INDEX) {
     return GRN_INVALID_ARGUMENT;
   }
