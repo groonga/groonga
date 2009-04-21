@@ -190,3 +190,83 @@ test_memcached_replace(void)
   cut_assert_equal_string("new-value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 }
+
+void
+test_memcached_flush(void)
+{
+  uint32_t flags;
+  memcached_return rc;
+
+  rc = memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU);
+  cut_set_message("memcached set failed.");
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+
+  memcached_flush(memc, 0);
+
+  val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
+  cut_set_message("memcached get succeeded.");
+  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc);
+}
+
+void
+test_memcached_flush_with_time(void)
+{
+  const int sleep_time = 1;
+  uint32_t flags;
+  memcached_return rc;
+
+  rc = memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU);
+  cut_set_message("memcached set failed.");
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+
+  memcached_flush(memc, sleep_time);
+
+  val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
+  cut_set_message("memcached get failed.");
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_string("to be flushed", val1);
+  cut_assert_equal_uint(0xdeadbeefU, flags);
+
+  sleep(sleep_time + 1);
+
+  val2 = memcached_get(memc, "key", 3, &val2_len, &flags, &rc);
+  cut_set_message("memcached get succeeded.");
+  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc);
+}
+
+/* FIXME: uncomment when libmemcached supports initial value. */
+/*
+void
+test_memcached_increment(void)
+{
+  uint32_t flags;
+  uint64_t intval;
+  memcached_return rc;
+
+  rc = memcached_increment_with_initial(memc, "incr", 4, 1, 30, 0, &intval);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_true(intval == 30);
+
+  rc = memcached_increment_with_initial(memc, "incr", 4, 3, 0, 0, &intval);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_true(intval == 33);
+
+  fflush(stderr);
+}
+
+void
+test_memcached_decrement(void)
+{
+  uint32_t flags;
+  uint64_t intval;
+  memcached_return rc;
+
+  rc = memcached_increment_with_initial(memc, "decr", 4, 30, 99, 0, &intval);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_true(intval == 99);
+
+  rc = memcached_decrement_with_initial(memc, "decr", 4, 17, 0, 0, &intval);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_true(intval == 82);
+}
+*/
