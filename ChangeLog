@@ -1,3 +1,7 @@
+2009-04-22  Poe MORITA  <morita at razil.jp>
+
+	* src/grnslap.c: fixed a bug cause segv.
+
 2009-04-22  Tasuku SUENAGA <a at razil.jp>
 
 	* configure.ac: fixed compile problem without libmemcached.

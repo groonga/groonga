@@ -790,7 +790,6 @@ server(char *path)
             while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
               grn_msg_close(ctx, msg);
             }
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "ctx_fin (%p/%p)", edge, &edge->ctx);
             grn_ctx_fin(&edge->ctx);
             if (edge->com->has_sid && edge->com->opaque == edge) {
               grn_com_close(ctx, edge->com);

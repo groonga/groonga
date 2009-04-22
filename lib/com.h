@@ -192,6 +192,7 @@ grn_rc grn_com_close(grn_ctx *ctx, grn_com *com);
 grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
                     grn_com_header *header, char *body, uint32_t size, int flags);
 grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
+grn_rc grn_com_send_text(grn_ctx *ctx, grn_com *cs, const char *body, uint32_t size, int flags);
 
 /******* grn_msg ********/
 

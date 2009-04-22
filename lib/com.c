@@ -188,6 +188,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
         GRN_BULK_PUTS(ctx, &head, "HTTP/1.1 200 OK\r\n");
         GRN_BULK_PUTS(ctx, &head, "Connection: close\r\n");
         GRN_BULK_PUTS(ctx, &head, "Content-Type: text/plain\r\n\r\n");
+        // todo : refine
         ret = send(peer->fd, GRN_BULK_HEAD(&head), GRN_BULK_VSIZE(&head), MSG_NOSIGNAL);
         if (ret == -1) { SERR("send"); }
         grn_obj_close(ctx, &head);
@@ -622,6 +623,26 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 }
 
 grn_rc
+grn_com_send_text(grn_ctx *ctx, grn_com *cs, const char *body, uint32_t size, int flags)
+{
+  ssize_t ret;
+  grn_obj buf;
+  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_BULK_PUTS(ctx, &buf, "GET ");
+  grn_bulk_write(ctx, &buf, body, size);
+  GRN_BULK_PUTS(ctx, &buf, " HTTP/1.0\r\n\r\n");
+  // todo : refine
+  if ((ret = send(cs->fd, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), MSG_NOSIGNAL|flags)) == -1) {
+    SERR("send");
+  }
+  if (ret != GRN_BULK_VSIZE(&buf)) {
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "send %d != %d", (int)ret, (int)GRN_BULK_VSIZE(&buf));
+  }
+  grn_obj_close(ctx, &buf);
+  return ctx->rc;
+}
+
+grn_rc
 grn_com_send(grn_ctx *ctx, grn_com *cs,
              grn_com_header *header, char *body, uint32_t size, int flags)
 {
@@ -697,7 +718,10 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
   if ((p = scan_delimiter(GRN_BULK_HEAD(buf), GRN_BULK_CURR(buf)))) {
     // todo : keep rest of message
     GRN_BULK_CURR(buf) = (char *)p;
-    return GRN_SUCCESS;
+    header->qtype = *GRN_BULK_HEAD(buf);
+    header->proto = GRN_COM_PROTO_HTTP;
+    header->size = GRN_BULK_VSIZE(buf);
+    goto exit;
   }
   for (;;) {
     if (grn_bulk_reserve(ctx, buf, BUFSIZE)) { return ctx->rc; }
@@ -731,6 +755,18 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
   header->proto = GRN_COM_PROTO_HTTP;
   header->size = GRN_BULK_VSIZE(buf);
 exit :
+  if (header->qtype == 'H') {
+    //todo : refine
+    /*
+    GRN_BULK_REWIND(buf);
+    grn_bulk_reserve(ctx, buf, BUFSIZE);
+    if ((ret = recv(com->fd, GRN_BULK_CURR(buf), BUFSIZE, 0)) < 0) {
+      SERR("recv text body");
+    } else {
+      GRN_BULK_CURR(buf) += ret;
+    }
+    */
+  }
   return ctx->rc;
 }
 
@@ -760,7 +796,6 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
     } else {
       if (++retry > RETRY_MAX) {
         SERR("recv size");
-        GRN_LOG(ctx, GRN_LOG_ERROR, "recv retry max (%d)", com->fd);
         goto exit;
       }
     }
@@ -857,7 +892,6 @@ grn_com_close_(grn_ctx *ctx, grn_com *com)
     SERR("close");
   } else {
     com->closed = 1;
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "closed (%d)", fd);
   }
 }
 
