@@ -3406,7 +3406,9 @@ grn_ctx_get(grn_ctx *ctx, grn_id id)
   GRN_API_ENTER;
   if (id & GRN_OBJ_TMP_OBJECT) {
     if (ctx->impl->values) {
-      grn_array_get_value(ctx, ctx->impl->values, id & ~GRN_OBJ_TMP_OBJECT, &res);
+      grn_tmp_db_obj *tmp_obj;
+      tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, id & ~GRN_OBJ_TMP_OBJECT);
+      res = (grn_obj *)tmp_obj->obj;
     }
   } else {
     grn_obj *db = ctx->impl->db;
