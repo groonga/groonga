@@ -1,3 +1,7 @@
+2009-04-22  Tasuku SUENAGA <a at razil.jp>
+
+	* configure.ac: fixed compile problem without libmemcached.
+
 2009-04-21  Tasuku SUENAGA <a at razil.jp>
 
 	* src/groonga.c (do_mbreq): fixed incr/decr bug.

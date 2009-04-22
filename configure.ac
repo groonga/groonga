@@ -322,6 +322,8 @@ if test "$ac_cv_use_cutter" != "no"; then
   if test "$ac_cv_have_libmemcached_memcached_h" = "yes"; then
     AC_DEFINE(WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
   fi
+else
+  AM_CONDITIONAL([WITH_LIBMEMCACHED], 0)
 fi
 
 # check GLib for benchmark
