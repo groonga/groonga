@@ -188,7 +188,9 @@ grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size)
   grn_id id;
   grn_search_flags flags = 0;
   grn_obj *obj = NULL;
-  grn_obj *db = ctx->impl->db;
+  grn_obj *db;
+  if (!ctx || !ctx->impl) { return obj; }
+  db = ctx->impl->db;
   GRN_API_ENTER;
   if (DB_P(db)) {
     grn_db *s = (grn_db *)db;

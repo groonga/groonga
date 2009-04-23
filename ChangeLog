@@ -1,3 +1,7 @@
+2009-04-23  Kouhei Sutou  <kou@clear-code.com>
+
+	* lib/db.c (grn_ctx_lookup): add NULL check.
+
 2009-04-23  Poe MORITA  <morita at razil.jp>
 
 	* src/groonga.c (server): add setrlimit call.
