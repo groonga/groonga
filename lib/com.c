@@ -106,7 +106,7 @@ grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old)
   msg->qe.next = NULL;
   msg->peer = com;
   msg->old = old;
-  msg->header.proto = 0;
+  memset(&msg->header, 0, sizeof(grn_com_header));
   return (grn_obj *)msg;
 }
 

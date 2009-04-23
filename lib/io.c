@@ -1170,7 +1170,7 @@ grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
   iw->nseg = nseg;
   iw->size = size;
   if (nseg == 1) {
-    byte *addr;
+    byte *addr = NULL;
     GRN_IO_SEG_REF(io, segment, addr);
     if (!addr) { return NULL; }
     iw->cached = 1;
@@ -1182,7 +1182,7 @@ grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
     case grn_io_rdonly:
     case grn_io_rdwr:
       {
-        byte *p, *q;
+        byte *p, *q = NULL;
         uint32_t s, r;
         for (p = iw->addr, r = size; r; p += s, r -= s, segment++, offset = 0) {
           GRN_IO_SEG_REF(io, segment, q);
@@ -1224,7 +1224,7 @@ grn_io_win_unmap2(grn_io_win *iw)
     case grn_io_rdwr:
     case grn_io_wronly:
       {
-        byte *p, *q;
+        byte *p, *q = NULL;
         uint32_t segment_size = io->header->segment_size;
         uint32_t s, r, offset = iw->offset, segment = iw->segment;
         for (p = iw->addr, r = iw->size; r; p += s, r -= s, segment++, offset = 0) {
