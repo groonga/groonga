@@ -282,6 +282,7 @@ grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
   if (id && (res = GRN_MALLOC(sizeof(grn_db_obj)))) {
     GRN_DB_OBJ_SET_TYPE(res, GRN_TYPE);
     res->obj.header.flags = flags;
+    res->obj.header.domain = GRN_ID_NIL;
     GRN_TYPE_SIZE(&res->obj) = size;
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
       // grn_obj_delete(ctx, db, id);
