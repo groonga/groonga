@@ -1,3 +1,7 @@
+2009-04-23  Poe MORITA  <morita at razil.jp>
+
+	* src/groonga.c (server): add setrlimit call.
+
 2009-04-23  Kouhei Sutou  <kou@clear-code.com>
 
 	* lib/db.c (grn_type_create): initialize type's domain as NIL.

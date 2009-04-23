@@ -26,6 +26,8 @@
 #include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
+#include <sys/resource.h>
+
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
 
@@ -766,12 +768,23 @@ server(char *path)
   int rc = -1;
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
+  grn_ctx_init(ctx, 0, enc);
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   MUTEX_INIT(cache_mutex);
-  grn_ctx_init(ctx, 0, enc);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
+  {
+    struct rlimit lim;
+    lim.rlim_cur = 4096;
+    lim.rlim_max = 4096;
+    // RLIMIT_OFILE
+    setrlimit(RLIMIT_NOFILE, &lim);
+    lim.rlim_cur = 0;
+    lim.rlim_max = 0;
+    getrlimit(RLIMIT_NOFILE, &lim);
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%d,%d)", lim.rlim_cur, lim.rlim_max);
+  }
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
     grn_obj *db = NULL;
     if (path) { db = grn_db_open(ctx, path); }
