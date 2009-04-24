@@ -1,5 +1,9 @@
 2009-04-24  Poe MORITA  <morita at razil.jp>
 
+	* src/groonga.c (worker): add lock.
+
+2009-04-24  Poe MORITA  <morita at razil.jp>
+
 	* lib/store.c (grn_ja): add lock.
 
 2009-04-23  Poe MORITA  <morita at razil.jp>

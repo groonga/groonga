@@ -663,7 +663,9 @@ worker(void *arg)
             ctx->stat = GRN_QL_QUIT;
             break;
           }
+          MUTEX_LOCK(edge->com->ev->mutex);
           grn_msg_close(ctx, msg);
+          MUTEX_UNLOCK(edge->com->ev->mutex);
         }
         while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
           grn_msg_close(ctx, msg);
