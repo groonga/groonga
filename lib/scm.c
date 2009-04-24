@@ -2068,41 +2068,45 @@ opexe(grn_ctx *ctx)
     s_return(ctx, CAAR(ctx->impl->args));
   case OP_QQUOTE2:
     x = CAR(ctx->impl->code);
-    y = CADR(x);
-    if (y == UNQUOTE) {
-      CDR(x) = ctx->impl->value;
-    } else if (CAR(y) == UNQUOTESP) {
-      if (ctx->impl->value == NIL) {
-        CDR(x) = CDDR(x);
-      } else if (!PAIRP(ctx->impl->value) ) {
-        /* error */
-      } else {
-        ctx->impl->value = list_deep_copy(ctx, ctx->impl->value);
-        for (y = ctx->impl->value; CDR(y) != NIL; y = CDR(y)) {}
-        CDR(y) = CDDR(x);
-        CDR(x) = ctx->impl->value;
-      }
-    } else {
-      y = CAAR(x);
+    if (x) {
+      y = CADR(x);
       if (y == UNQUOTE) {
-        CAR(x) = ctx->impl->value;
+        CDR(x) = ctx->impl->value;
       } else if (CAR(y) == UNQUOTESP) {
         if (ctx->impl->value == NIL) {
-          CAR(x) = CDAR(x);
+          CDR(x) = CDDR(x);
         } else if (!PAIRP(ctx->impl->value) ) {
           /* error */
         } else {
           ctx->impl->value = list_deep_copy(ctx, ctx->impl->value);
           for (y = ctx->impl->value; CDR(y) != NIL; y = CDR(y)) {}
-          CDR(y) = CDAR(x);
-          CAR(x) = ctx->impl->value;
+          CDR(y) = CDDR(x);
+          CDR(x) = ctx->impl->value;
         }
       } else {
-        /* error */
+        y = CAAR(x);
+        if (y == UNQUOTE) {
+          CAR(x) = ctx->impl->value;
+        } else if (CAR(y) == UNQUOTESP) {
+          if (ctx->impl->value == NIL) {
+            CAR(x) = CDAR(x);
+          } else if (!PAIRP(ctx->impl->value) ) {
+            /* error */
+          } else {
+            ctx->impl->value = list_deep_copy(ctx, ctx->impl->value);
+            for (y = ctx->impl->value; CDR(y) != NIL; y = CDR(y)) {}
+            CDR(y) = CDAR(x);
+            CAR(x) = ctx->impl->value;
+          }
+        } else {
+          /* error */
+        }
       }
+      ctx->impl->code = CDR(ctx->impl->code);
+      s_goto(ctx, OP_QQUOTE1);
+    } else {
+      /* error */
     }
-    ctx->impl->code = CDR(ctx->impl->code);
-    s_goto(ctx, OP_QQUOTE1);
   }
   GRN_LOG(ctx, GRN_LOG_ERROR, "illegal op (%d)", ctx->impl->op);
   return NIL;
