@@ -50,12 +50,11 @@
 grn_rc
 grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e)
 {
-    MUTEX_LOCK(q->mutex);
-
-      *q->tail = e;
-      q->tail = &e->next;
-
-    MUTEX_UNLOCK(q->mutex);
+  MUTEX_LOCK(q->mutex);
+  e->next = NULL;
+  *q->tail = e;
+  q->tail = &e->next;
+  MUTEX_UNLOCK(q->mutex);
   /*
   uint8_t i = q->last + 1;
   e->next = NULL;
@@ -82,13 +81,12 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
 {
   grn_com_queue_entry *e = NULL;
 
-      MUTEX_LOCK(q->mutex);
-
-    if (q->next) {
-      e = q->next;
-      if (!(q->next = e->next)) { q->tail = &q->next; }
-    }
-      MUTEX_UNLOCK(q->mutex);
+  MUTEX_LOCK(q->mutex);
+  if (q->next) {
+    e = q->next;
+    if (!(q->next = e->next)) { q->tail = &q->next; }
+  }
+  MUTEX_UNLOCK(q->mutex);
 
   /*
   if (q->first == q->last) {
