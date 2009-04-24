@@ -1,3 +1,7 @@
+2009-04-24  Tasuku SUENAGA <a at razil.jp>
+
+	* lib/scm.c (opexe): fixed segv with quasiquote for invalid sexp.
+
 2009-04-24  Poe MORITA  <morita at razil.jp>
 
 	* lib/com.c (grn_com_queue): modified..
