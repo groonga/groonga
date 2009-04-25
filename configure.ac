@@ -386,14 +386,14 @@ else
     [AC_CHECK_FILE("$withval", MECAB_CONFIG="$withval", MECAB_CONFIG=no)],
     [AC_PATH_PROG(MECAB_CONFIG, mecab-config, no)])
   if test "x$MECAB_CONFIG" = "xno"; then
-    AC_MSG_ERROR([mecab-config is missing.])
+    AC_DEFINE(NO_MECAB, [1], [without MeCab])
+  else
+    MECAB_CFLAGS="-I`$MECAB_CONFIG --inc-dir`"
+    LDFLAGS="$LDFLAGS -L`$MECAB_CONFIG --libs-only-L`"
+    AC_CHECK_LIB(mecab, mecab_new, [], [AC_MSG_ERROR("No libmecab found")])
+    CPPFLAGS="$CPPFLAGS $MECAB_CFLAGS"
+    AC_CHECK_HEADER(mecab.h, , [AC_MSG_ERROR("No mecab.h found")])
   fi
-
-  MECAB_CFLAGS="-I`$MECAB_CONFIG --inc-dir`"
-  LDFLAGS="$LDFLAGS -L`$MECAB_CONFIG --libs-only-L`"
- 	AC_CHECK_LIB(mecab, mecab_new, [], [AC_MSG_ERROR("No libmecab found")])
-  CPPFLAGS="$CPPFLAGS $MECAB_CFLAGS"
-  AC_CHECK_HEADER(mecab.h, , [AC_MSG_ERROR("No mecab.h found")])
 fi
 
 # flags for compile groonga

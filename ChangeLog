@@ -1,5 +1,9 @@
 2009-04-25  Tasuku SUENAGA <a at razil.jp>
 
+	* configure.ac: configure succeeds without mecab.
+
+2009-04-25  Tasuku SUENAGA <a at razil.jp>
+
 	* configure.ac: removed inline parameters for compiler.
 
 2009-04-25  Poe MORITA  <morita at razil.jp>
