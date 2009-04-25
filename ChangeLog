@@ -1,5 +1,9 @@
 2009-04-25  Poe MORITA  <morita at razil.jp>
 
+	* lib/io.h: cut off debug log.
+
+2009-04-25  Poe MORITA  <morita at razil.jp>
+
 	* lib/ii.c (chunk_new,chunk_free): fixed a leak bug.
 
 2009-04-25  Poe MORITA  <morita at razil.jp>
