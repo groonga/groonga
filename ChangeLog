@@ -1,3 +1,7 @@
+2009-04-25  Poe MORITA  <morita at razil.jp>
+
+	* lib/ctx.h (LOGTRACE): add.
+
 2009-04-24  Tasuku SUENAGA <a at razil.jp>
 
 	* lib/scm.c (opexe): fixed segv with quasiquote for invalid sexp.

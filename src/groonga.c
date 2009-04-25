@@ -627,7 +627,6 @@ worker(void *arg)
 {
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
   MUTEX_LOCK(q_mutex);
-  nthreads++;
   do {
     grn_ctx *ctx;
     grn_edge *edge;
@@ -663,9 +662,7 @@ worker(void *arg)
             ctx->stat = GRN_QL_QUIT;
             break;
           }
-          MUTEX_LOCK(edge->com->ev->mutex);
           grn_msg_close(ctx, msg);
-          MUTEX_UNLOCK(edge->com->ev->mutex);
         }
         while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
           grn_msg_close(ctx, msg);
@@ -753,6 +750,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
         edge->stat = EDGE_WAIT;
         if (!nfthreads && nthreads < MAX_NFTHREADS) {
           grn_thread thread;
+          nthreads++;
           if (THREAD_CREATE(thread, worker, NULL)) { SERR("pthread_create"); }
         }
         COND_SIGNAL(q_cond);
