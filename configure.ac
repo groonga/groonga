@@ -50,10 +50,7 @@ if test "$GCC" = "yes"; then
 #  CHECK_CFLAG([-Wshadow])
 #  CHECK_CFLAG([-Wconversion])
 #  CHECK_CFLAG([-Wwrite-strings])
-  CHECK_CFLAG([-Winline])
-  CHECK_CFLAG([--param max-inline-insns-single=12000])
-  CHECK_CFLAG([--param large-function-growth=28000])
-  CHECK_CFLAG([--param inline-unit-growth=400])
+#  CHECK_CFLAG([-Winline])
 fi
 AM_PROG_LIBTOOL
 AC_CONFIG_FILES([Makefile
