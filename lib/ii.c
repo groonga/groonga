@@ -252,12 +252,16 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     if (ii->header->ngarbages[m - W_LEAST_CHUNK] > N_GARBAGES_TH) {
       grn_ii_ginfo *ginfo;
       uint32_t *gseg;
+      grn_io_win iw, iw_;
+      iw_.addr = NULL;
       gseg = &ii->header->garbages[m - W_LEAST_CHUNK];
       while (*gseg != NOT_ASSIGNED) {
-        grn_io_win iw;
         ginfo = WIN_MAP2(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
         //GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
-        if (!ginfo) { return GRN_NO_MEMORY_AVAILABLE; }
+        if (!ginfo) {
+          if (iw_.addr) { grn_io_win_unmap2(&iw_); }
+          return GRN_NO_MEMORY_AVAILABLE;
+        }
         if (ginfo->next != NOT_ASSIGNED || ginfo->nrecs > N_GARBAGES_TH) {
           *res = ginfo->recs[ginfo->tail];
           if (++ginfo->tail == N_GARBAGES) { ginfo->tail = 0; }
@@ -267,10 +271,15 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
             HEADER_CHUNK_OFF(ii, *gseg);
             *gseg = ginfo->next;
           }
+          if (iw_.addr) { grn_io_win_unmap2(&iw_); }
+          grn_io_win_unmap2(&iw);
           return GRN_SUCCESS;
         }
+        if (iw_.addr) { grn_io_win_unmap2(&iw_); }
+        iw_ = iw;
         gseg = &ginfo->next;
       }
+      if (iw_.addr) { grn_io_win_unmap2(&iw_); }
     }
     vp = &ii->header->free_chunks[m - W_LEAST_CHUNK];
     if (*vp == NOT_ASSIGNED) {
@@ -301,7 +310,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t s
     free_histogram[m]++;
   }
   */
-  grn_io_win iw;
+  grn_io_win iw, iw_;
   grn_ii_ginfo *ginfo;
   uint32_t seg, m, *gseg;
   seg = offset >> N_CHUNK_VARIATION;
@@ -318,16 +327,25 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t s
     m = W_LEAST_CHUNK;
   }
   gseg = &ii->header->garbages[m - W_LEAST_CHUNK];
+  iw_.addr = NULL;
   while (*gseg != NOT_ASSIGNED) {
     ginfo = WIN_MAP2(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
     // GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
-    if (!ginfo) { return GRN_NO_MEMORY_AVAILABLE; }
+    if (!ginfo) {
+      if (iw_.addr) { grn_io_win_unmap2(&iw_); }
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
     if (ginfo->nrecs < N_GARBAGES) { break; }
+    if (iw_.addr) { grn_io_win_unmap2(&iw_); }
+    iw_ = iw;
     gseg = &ginfo->next;
   }
   if (*gseg == NOT_ASSIGNED) {
     grn_rc rc;
-    if ((rc = chunk_new(ctx, ii, gseg, S_GARBAGE))) { return rc; }
+    if ((rc = chunk_new(ctx, ii, gseg, S_GARBAGE))) {
+      if (iw_.addr) { grn_io_win_unmap2(&iw_); }
+      return rc;
+    }
     ginfo = WIN_MAP2(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
     /*
     uint32_t i = 0;
@@ -338,15 +356,20 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t s
     *gseg = i;
     GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
     */
-    if (!ginfo) { return GRN_NO_MEMORY_AVAILABLE; }
+    if (!ginfo) {
+      if (iw_.addr) { grn_io_win_unmap2(&iw_); }
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
     ginfo->head = 0;
     ginfo->tail = 0;
     ginfo->nrecs = 0;
     ginfo->next = NOT_ASSIGNED;
   }
+  if (iw_.addr) { grn_io_win_unmap2(&iw_); }
   ginfo->recs[ginfo->head] = offset;
   if (++ginfo->head == N_GARBAGES) { ginfo->head = 0; }
   ginfo->nrecs++;
+  grn_io_win_unmap2(&iw);
   ii->header->ngarbages[m - W_LEAST_CHUNK]++;
   return GRN_SUCCESS;
 }
