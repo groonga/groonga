@@ -250,7 +250,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
     }\
     info->count = grn_gtick;\
   }\
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "ref(%d) %d:%s (%x)", *pnref,__LINE__,__FUNCTION__, io->flags); \
+  if (*pnref > 1) { GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "ref(%d:%d) %d:%s (%x)", segno, *pnref,__LINE__,__FUNCTION__, io->flags); } \
   addr = info->map;\
 }
 
@@ -259,7 +259,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
       (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {\
     uint32_t nref, *pnref = &(io)->maps[segno].nref;\
     GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
-    GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "unref(%d) %d:%s (%x)", *pnref, __LINE__,__FUNCTION__, io->flags); \
+    if (*pnref) { GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "unref(%d:%d) %d:%s (%x)", segno, *pnref, __LINE__,__FUNCTION__, io->flags); } \
   }\
 }
 
