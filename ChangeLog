@@ -1,5 +1,9 @@
 2009-04-25  Tasuku SUENAGA <a at razil.jp>
 
+	* configure.ac: release 0.0.3.
+
+2009-04-25  Tasuku SUENAGA <a at razil.jp>
+
 	* configure.ac: configure succeeds without mecab.
 
 2009-04-25  Tasuku SUENAGA <a at razil.jp>
