@@ -213,7 +213,17 @@ enum {
   MBCMD_GETKQ = 0x0d,
   MBCMD_APPEND = 0x0e,
   MBCMD_PREPEND = 0x0f,
-  MBCMD_STAT = 0x10
+  MBCMD_STAT = 0x10,
+  MBCMD_SETQ = 0x11,
+  MBCMD_ADDQ = 0x12,
+  MBCMD_REPLACEQ = 0x13,
+  MBCMD_DELETEQ = 0x14,
+  MBCMD_INCREMENTQ = 0x15,
+  MBCMD_DECREMENTQ = 0x16,
+  MBCMD_QUITQ = 0x17,
+  MBCMD_FLUSHQ = 0x18,
+  MBCMD_APPENDQ = 0x19,
+  MBCMD_PREPENDQ = 0x1a
 };
 
 static grn_mutex cache_mutex;
@@ -269,9 +279,11 @@ cache_init(grn_ctx *ctx)
 
 #define GRN_MSG_MBRES(block) \
 do {\
+  if (!quiet) {\
     grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);\
     ((grn_msg *)re)->header.qtype = header->qtype;\
     block\
+  }\
 } while (0)
 
 static uint64_t
@@ -284,12 +296,15 @@ get_mbreq_cas_id()
   static uint64_t cas_id = 0;
   return ++cas_id;
 }
+
 static void
 do_mbreq(grn_ctx *ctx, grn_edge *edge)
 {
+  int quiet = 0;
   int flags = 0;
   grn_msg *msg = edge->msg;
   grn_com_header *header = &msg->header;
+
   switch (header->qtype) {
   case MBCMD_GETQ :
     flags = GRN_QL_MORE;
@@ -320,11 +335,11 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
           });
         } else {
+          GRN_BULK_REWIND(&buf);
+          grn_obj_get_value(ctx, cache_cas, rid, &buf);
           GRN_MSG_MBRES({
             grn_obj_get_value(ctx, cache_flags, rid, re);
             grn_obj_get_value(ctx, cache_value, rid, re);
-            GRN_BULK_REWIND(&buf);
-            grn_obj_get_value(ctx, cache_cas, rid, &buf);
             ((grn_msg *)re)->header.cas = *((uint64_t *)GRN_BULK_HEAD(&buf));
             MBRES(ctx, re, MBRES_SUCCESS, 0, 4, flags);
           });
@@ -333,6 +348,11 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       }
     }
     break;
+  case MBCMD_SETQ :
+  case MBCMD_ADDQ :
+  case MBCMD_REPLACEQ :
+    quiet = 1;
+    /* fallthru */
   case MBCMD_SET :
   case MBCMD_ADD :
   case MBCMD_REPLACE :
@@ -347,7 +367,9 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       uint32_t valuelen = size - keylen - extralen;
       char *key = body + 8;
       char *value = key + keylen;
-      grn_search_flags f = header->qtype == MBCMD_REPLACE ? 0 : GRN_TABLE_ADD;
+      grn_search_flags f = (header->qtype == MBCMD_REPLACE ||
+                            header->qtype == MBCMD_REPLACEQ)
+                           ? 0 : GRN_TABLE_ADD;
       GRN_ASSERT(extralen == 8);
       cache_init(ctx);
       rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
@@ -380,7 +402,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             });
           }
         } else {
-          if (header->qtype != MBCMD_SET) {
+          if (header->qtype != MBCMD_SET && header->qtype != MBCMD_SETQ) {
             grn_obj buf;
             uint32_t oexpire;
             struct timeval tv;
@@ -391,14 +413,16 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             gettimeofday(&tv, NULL);
 
             if (oexpire && oexpire < tv.tv_sec) {
-              if (header->qtype == MBCMD_REPLACE) {
+              if (header->qtype == MBCMD_REPLACE ||
+                  header->qtype == MBCMD_REPLACEQ) {
                 grn_table_delete_by_id(ctx, cache_table, rid);
                 GRN_MSG_MBRES({
                   MBRES(ctx, re, MBRES_NOT_STORED, 0, 0, 0);
                 });
                 break;
               }
-            } else if (header->qtype == MBCMD_ADD) {
+            } else if (header->qtype == MBCMD_ADD ||
+                       header->qtype == MBCMD_ADDQ) {
               GRN_MSG_MBRES({
                 MBRES(ctx, re, MBRES_NOT_STORED, 0, 0, 0);
               });
@@ -445,6 +469,9 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       }
     }
     break;
+  case MBCMD_DELETEQ :
+    quiet = 1;
+    /* fallthru */
   case MBCMD_DELETE :
     {
       grn_id rid;
@@ -466,6 +493,10 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       }
     }
     break;
+  case MBCMD_INCREMENTQ :
+  case MBCMD_DECREMENTQ :
+    quiet = 1;
+    /* fallthru */
   case MBCMD_INCREMENT :
   case MBCMD_DECREMENT :
     {
@@ -519,7 +550,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           } else {
             GRN_BULK_SET(ctx, &buf, &delta, 8);
             grn_obj_set_value(ctx, cache_value, rid, &buf,
-                              header->qtype == MBCMD_INCREMENT
+                              header->qtype == MBCMD_INCREMENT ||
+                              header->qtype == MBCMD_INCREMENTQ
                               ? GRN_OBJ_INCR
                               : GRN_OBJ_DECR);
           }
@@ -543,6 +575,9 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       }
     }
     break;
+  case MBCMD_FLUSHQ :
+    quiet = 1;
+    /* fallthru */
   case MBCMD_FLUSH :
     {
       grn_obj buf;
@@ -631,6 +666,10 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       }
     }
     break;
+  case MBCMD_APPENDQ :
+  case MBCMD_PREPENDQ :
+    quiet = 1;
+    /* fallthru */
   case MBCMD_APPEND :
   case MBCMD_PREPEND :
     {
@@ -670,6 +709,9 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       });
     }
     break;
+  case MBCMD_QUITQ :
+    quiet = 1;
+    /* fallthru */
   case MBCMD_QUIT :
     GRN_MSG_MBRES({
       MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
