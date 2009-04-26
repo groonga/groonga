@@ -234,6 +234,48 @@ test_memcached_flush_with_time(void)
   cut_assert_equal_int(MEMCACHED_NOTFOUND, rc);
 }
 
+void
+test_memcached_cas(void)
+{
+  memcached_return rc;
+
+  const char *key = "caskey";
+  size_t key_len = strlen(key);
+  char* keys[2] = { (char *)key, NULL };
+  size_t key_lens[2] = { key_len, 0 };
+
+  memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_SUPPORT_CAS, 1);
+  rc = memcached_set(memc, key, key_len, "cas test", 8, 0, 0xdeadbeefU);
+  cut_set_message("memcached set failed.");
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+
+  {
+    uint64_t cas;
+    memcached_result_st *results;
+    memcached_result_st results_obj;
+
+    results = memcached_result_create(memc, &results_obj);
+    rc = memcached_mget(memc, keys, key_lens, 1);
+    cut_set_message("memcached mget failed.");
+    cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+    results = memcached_fetch_result(memc, &results_obj, &rc);
+
+    cas = memcached_result_cas(results);
+    cut_set_message("memcached cas value is non-zero.");
+    cut_assert_operator_int(cas, !=, 0);
+
+    rc = memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas);
+    cut_set_message("memcached cas failed.");
+    cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+
+    rc = memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas);
+    cut_set_message("memcached cas value is same.");
+    cut_assert_equal_int(MEMCACHED_DATA_EXISTS, rc);
+
+    memcached_result_free(&results_obj);
+  }
+}
+
 /* FIXME: uncomment when libmemcached supports initial value. */
 /*
 void
