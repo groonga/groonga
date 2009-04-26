@@ -274,6 +274,16 @@ do {\
     block\
 } while (0)
 
+static uint64_t
+get_mbreq_cas_id()
+{
+  /* FIXME: I think this logic have bugs.
+            one is a race condition.
+            another is a cyclic increment (cas_id must be non-zero).
+            But memcached-1.2.8 do this... */
+  static uint64_t cas_id = 0;
+  return ++cas_id;
+}
 static void
 do_mbreq(grn_ctx *ctx, grn_edge *edge)
 {
@@ -313,6 +323,9 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           GRN_MSG_MBRES({
             grn_obj_get_value(ctx, cache_flags, rid, re);
             grn_obj_get_value(ctx, cache_value, rid, re);
+            GRN_BULK_REWIND(&buf);
+            grn_obj_get_value(ctx, cache_cas, rid, &buf);
+            ((grn_msg *)re)->header.cas = *((uint64_t *)GRN_BULK_HEAD(&buf));
             MBRES(ctx, re, MBRES_SUCCESS, 0, 4, flags);
           });
         }
@@ -357,12 +370,15 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           }
           GRN_BULK_SET(ctx, &buf, &expire, 4);
           grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
-          grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
-          GRN_MSG_MBRES({
-            ((grn_msg *)re)->header.cas = header->cas;
-            MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
-          });
+          {
+            uint64_t cas_id = get_mbreq_cas_id();
+            GRN_BULK_SET(ctx, &buf, &cas_id, sizeof(uint64_t));
+            grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+            GRN_MSG_MBRES({
+              ((grn_msg *)re)->header.cas = cas_id;
+              MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
+            });
+          }
         } else {
           if (header->qtype != MBCMD_SET) {
             grn_obj buf;
@@ -413,10 +429,15 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               }
               GRN_BULK_SET(ctx, &buf, &expire, 4);
               grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-              GRN_MSG_MBRES({
-                ((grn_msg *)re)->header.cas = header->cas;
-                MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
-              });
+              {
+                uint64_t cas_id = get_mbreq_cas_id();
+                GRN_BULK_SET(ctx, &buf, &cas_id, sizeof(uint64_t));
+                grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+                GRN_MSG_MBRES({
+                  ((grn_msg *)re)->header.cas = cas_id;
+                  MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
+                });
+              }
             }
             grn_obj_close(ctx, &cas);
           }
@@ -510,9 +531,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         }
         GRN_BULK_SET(ctx, &buf, &expire, 4);
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-        GRN_BULK_SET(ctx, &buf, &header->cas, sizeof(uint64_t));
-        grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
         GRN_MSG_MBRES({
+          /* TODO: get_mbreq_cas_id() */
           grn_obj_get_value(ctx, cache_value, rid, re);
           grn_hton(&delta, (uint64_t *)GRN_BULK_HEAD(re), 8);
           GRN_BULK_REWIND(re);
@@ -601,6 +621,9 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             grn_obj_get_value(ctx, cache_flags, rid, re);
             grn_bulk_write(ctx, re, key, keylen);
             grn_obj_get_value(ctx, cache_value, rid, re);
+            GRN_BULK_REWIND(&buf);
+            grn_obj_get_value(ctx, cache_cas, rid, &buf);
+            ((grn_msg *)re)->header.cas = *((uint64_t *)GRN_BULK_HEAD(&buf));
             MBRES(ctx, re, MBRES_SUCCESS, keylen, 4, flags);
           });
         }
