@@ -1,3 +1,7 @@
+2009-04-26  Kouhei Sutou  <kou@clear-code.com>
+
+	* lib/db.c: initialize database's domain and range as GRN_ID_NIL.
+
 2009-04-26  Poe MORITA  <morita at razil.jp>
 
 	* src/grnslap.c: add max_con argument.
