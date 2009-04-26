@@ -1,3 +1,9 @@
+2009-04-27  Tasuku SUENAGA <a at razil.jp>
+
+	* src/groonga.c: fixed bug of cas on memcached.
+	* src/groonga.c: supports quiet commands of memcached.
+	* test/unit/memcached/test-memcached.c: added test_memcached_cas().
+
 2009-04-26  Poe MORITA  <morita at razil.jp>
 
 	* src/grnslap.c: add max_con argument.
