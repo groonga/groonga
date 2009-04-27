@@ -1,3 +1,9 @@
+2009-04-27  Tasuku SUENAGA <a at razil.jp>
+
+	* src/groonga.c: fixed bug of cas on memcached.
+	* src/groonga.c: supports quiet commands of memcached.
+	* test/unit/memcached/test-memcached.c: added test_memcached_cas().
+
 2009-04-26  Kouhei Sutou  <kou@clear-code.com>
 
 	* lib/db.c: initialize database's domain and range as GRN_ID_NIL.
