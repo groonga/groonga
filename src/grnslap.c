@@ -237,12 +237,12 @@ do_client()
     if (!grn_com_event_init(ctx, &ev, 1000, sizeof(grn_com))) {
       ev.msg_handler = msg_handler;
       if (!THREAD_CREATE(thread, receiver, NULL)) {
+        int cnt = 0;
         gettimeofday(&tvb, NULL);
         lprint(ctx, "begin: max_concurrency=%d", max_con);
         while (fgets(buf, BUFSIZE, stdin)) {
-          int di = rand() % dest_cnt;
           uint32_t size = strlen(buf) - 1;
-          session *s = session_alloc(ctx, dests + di);
+          session *s = session_alloc(ctx, dests + (cnt++ % dest_cnt));
           if (s) {
             gettimeofday(&s->tv, NULL);
             s->n_query++;
