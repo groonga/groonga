@@ -27,11 +27,18 @@
 #endif /* HAVE_NETINET_IN_H */
 
 #define DEFAULT_PORT 10041
-#define DEFAULT_DEST "localhost"
+#define DEFAULT_HOST "localhost"
 #define DEFAULT_MAX_CONCURRENCY 10
+#define MAX_DEST 256
 
-static int port = DEFAULT_PORT;
+typedef struct {
+  char *host;
+  uint16_t port;
+} grn_slap_dest;
+
 static int proto = 'g';
+static int dest_cnt = 0;
+static grn_slap_dest dests[MAX_DEST];
 static int max_con = DEFAULT_MAX_CONCURRENCY;
 
 #include <stdarg.h>
@@ -54,16 +61,32 @@ lprint(grn_ctx *ctx, const char *fmt, ...)
 }
 
 static void
+parse_dest(char *deststr, grn_slap_dest *dest)
+{
+  int p;
+  char *d;
+  if ((d = strchr(deststr, ':'))) {
+    if ((p = atoi(d + 1))) {
+      *d = '\0';
+      dest->host = deststr;
+      dest->port = p;
+      return;
+    }
+  }
+  dest->host = NULL;
+  dest->port = 0;
+}
+
+static void
 usage(void)
 {
   fprintf(stderr,
-          "Usage: grnslap [options...] [dest]\n"
+          "Usage: grnslap [options...] [dest...]\n"
           "options:\n"
           "  -P <protocol>:      http or gqtp (default: gqtp)\n"
           "  -m <max concurrency>:   number of max concurrency (default: %d)\n"
-          "  -p <port number>:   server port number (default: %d)\n"
-          "dest: hostname (default: \"%s\")\n",
-          DEFAULT_MAX_CONCURRENCY, DEFAULT_PORT, DEFAULT_DEST);
+          "dest: hostname:port number (default: \"%s:%d\")\n",
+          DEFAULT_MAX_CONCURRENCY, DEFAULT_HOST, DEFAULT_PORT);
 }
 
 #define BUFSIZE 0x1000000
@@ -92,13 +115,13 @@ static int etime_max = 0;
 static int64_t etime_amount = 0;
 
 static session *
-session_open(grn_ctx *ctx, const char *dest, int port)
+session_open(grn_ctx *ctx, grn_slap_dest *dest)
 {
   grn_id id;
   session *s;
   grn_com *com;
   grn_search_flags f = GRN_TABLE_ADD;
-  if (!(com = grn_com_copen(ctx, &ev, dest, port))) { return NULL; }
+  if (!(com = grn_com_copen(ctx, &ev, dest->host, dest->port))) { return NULL; }
   id = grn_hash_get(ctx, sessions, &com->fd, sizeof(grn_sock), (void **)&s, &f);
   com->opaque = s;
   s->com = com;
@@ -117,14 +140,14 @@ session_close(grn_ctx *ctx, session *s)
 }
 
 static session *
-session_alloc(grn_ctx *ctx, const char *dest, int port)
+session_alloc(grn_ctx *ctx, grn_slap_dest *dest)
 {
   session *s;
   while ((s = (session *)grn_com_queue_deque(ctx, &fsessions))) {
     if (s->n_query < 1000000 && !s->com->closed) { return s; }
     //session_close(ctx, s);
   }
-  return session_open(ctx, dest, port);
+  return session_open(ctx, dest);
 }
 
 static void
@@ -188,7 +211,7 @@ receiver(void *arg)
 }
 
 static int
-do_client(char *hostname)
+do_client()
 {
   int rc = -1;
   char *buf;
@@ -214,8 +237,9 @@ do_client(char *hostname)
         gettimeofday(&tvb, NULL);
         lprint(ctx, "begin: max_concurrency=%d", max_con);
         while (fgets(buf, BUFSIZE, stdin)) {
+          int di = rand() % dest_cnt;
           uint32_t size = strlen(buf) - 1;
-          session *s = session_alloc(ctx, hostname, port);
+          session *s = session_alloc(ctx, dests + di);
           if (s) {
             gettimeofday(&s->tv, NULL);
             s->n_query++;
@@ -288,26 +312,40 @@ enum {
 int
 main(int argc, char **argv)
 {
-  char *portstr = NULL, *protostr = NULL, *maxconstr = NULL;
+  char *protostr = NULL, *maxconstr = NULL;
   int r, i, mode = mode_client;
   static grn_str_getopt_opt opts[] = {
-    {'p', NULL, NULL, 0, getopt_op_none},
     {'P', NULL, NULL, 0, getopt_op_none},
     {'m', NULL, NULL, 0, getopt_op_none},
     {'h', NULL, NULL, mode_usage, getopt_op_update},
     {'\0', NULL, NULL, 0, 0}
   };
-  opts[0].arg = &portstr;
-  opts[1].arg = &protostr;
-  opts[2].arg = &maxconstr;
+  opts[0].arg = &protostr;
+  opts[1].arg = &maxconstr;
   i = grn_str_getopt(argc, argv, opts, &mode);
-  if (portstr) { port = atoi(portstr); }
   if (protostr) { proto = *protostr; }
   if (maxconstr) { max_con = atoi(maxconstr); }
+
+  if (argc <= i) {
+    dests[0].host = DEFAULT_HOST;
+    dests[0].port = DEFAULT_PORT;
+    dest_cnt = 1;
+  } else if (argc <= (i + MAX_DEST)){
+    for (dest_cnt = 0; i < argc; i++) {
+      parse_dest(argv[i], &dests[dest_cnt]);
+      if (dests[dest_cnt].host) {
+        dest_cnt++;
+      }
+    }
+  } else {
+    /* too much dests */
+    mode = mode_usage;
+  }
+
   if (grn_init()) { return -1; }
   switch (mode) {
   case mode_client :
-    r = do_client(argc <= i ? DEFAULT_DEST : argv[i]);
+    r = do_client();
     break;
   default :
     usage(); r = -1;
