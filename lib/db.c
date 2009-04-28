@@ -1151,6 +1151,32 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
   GRN_API_RETURN(rc);
 }
 
+grn_obj *
+grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
+{
+  grn_obj *obj = NULL;
+  GRN_API_ENTER;
+  if (!tc) {
+    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+  } else {
+    switch (tc->header.type) {
+    case GRN_CURSOR_TABLE_PAT_KEY :
+      obj = (grn_obj *)(((grn_pat_cursor *)tc)->pat);
+      break;
+    case GRN_CURSOR_TABLE_HASH_KEY :
+      obj = (grn_obj *)(((grn_hash_cursor *)tc)->hash);
+      break;
+    case GRN_CURSOR_TABLE_NO_KEY :
+      obj = (grn_obj *)(((grn_array_cursor *)tc)->array);
+      break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
+      break;
+    }
+  }
+  GRN_API_RETURN(obj);
+}
+
 grn_rc
 grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_size,
                  grn_search_flags flags, grn_obj *res, grn_sel_operator op)

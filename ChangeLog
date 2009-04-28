@@ -1,3 +1,8 @@
+2009-04-28  Kouhei Sutou  <kou@clear-code.com>
+
+	* groonga.h, lib/db.c, test/unit/core/test-table-cursor.c:
+	add grn_table_cursor_table().
+
 2009-04-27  Tasuku SUENAGA <a at razil.jp>
 
 	* src/groonga.c: fixed bug of cas on memcached.

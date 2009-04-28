@@ -646,6 +646,14 @@ GRN_API grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
  **/
 GRN_API grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 
+/**
+ * grn_table_cursor_table:
+ * @tc: 対象cursor
+ *
+ * cursorが属するtableを返す。
+ **/
+GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
+
 #define GRN_TABLE_EACH(ctx,table,head,tail,id,key,key_size,value,block) do {\
   (ctx)->errlvl = GRN_OK;\
   (ctx)->rc = GRN_SUCCESS;\
