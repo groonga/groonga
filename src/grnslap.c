@@ -37,6 +37,7 @@ typedef struct {
 } grn_slap_dest;
 
 static int proto = 'g';
+static int verbose = 0;
 static int dest_cnt = 0;
 static grn_slap_dest dests[MAX_DEST];
 static int max_con = DEFAULT_MAX_CONCURRENCY;
@@ -168,8 +169,10 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
   switch (m->header.proto) {
   case GRN_COM_PROTO_GQTP :
     if (GRN_BULK_VSIZE(msg) != 2) {
-      GRN_BULK_PUTC(ctx, msg, '\0');
-      lprint(ctx, "%8d(%4d) %8d : %s", s->query_id, s->n_sessions, etime, GRN_BULK_HEAD(msg));
+      if (verbose) {
+        GRN_BULK_PUTC(ctx, msg, '\0');
+        lprint(ctx, "%8d(%4d) %8d : %s", s->query_id, s->n_sessions, etime, GRN_BULK_HEAD(msg));
+      }
     }
     if ((m->header.flags & GRN_QL_TAIL)) {
       grn_com_queue_enque(ctx, &fsessions, (grn_com_queue_entry *)s);
@@ -305,26 +308,28 @@ do_client()
 }
 
 enum {
-  mode_client,
-  mode_usage
+  flag_usage = 1,
+  flag_verbose = 2
 };
 
 int
 main(int argc, char **argv)
 {
   char *protostr = NULL, *maxconstr = NULL;
-  int r, i, mode = mode_client;
+  int r, i, flags = 0;
   static grn_str_getopt_opt opts[] = {
     {'P', NULL, NULL, 0, getopt_op_none},
     {'m', NULL, NULL, 0, getopt_op_none},
-    {'h', NULL, NULL, mode_usage, getopt_op_update},
+    {'h', NULL, NULL, flag_usage, getopt_op_on},
+    {'v', NULL, NULL, flag_verbose, getopt_op_on},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &protostr;
   opts[1].arg = &maxconstr;
-  i = grn_str_getopt(argc, argv, opts, &mode);
+  i = grn_str_getopt(argc, argv, opts, &flags);
   if (protostr) { proto = *protostr; }
   if (maxconstr) { max_con = atoi(maxconstr); }
+  if (flags & flag_verbose) { verbose = 1; }
 
   if (argc <= i) {
     dests[0].host = DEFAULT_HOST;
@@ -339,17 +344,14 @@ main(int argc, char **argv)
     }
   } else {
     /* too much dests */
-    mode = mode_usage;
+    flags |= flag_usage;
   }
 
   if (grn_init()) { return -1; }
-  switch (mode) {
-  case mode_client :
-    r = do_client();
-    break;
-  default :
+  if (flags & flag_usage) {
     usage(); r = -1;
-    break;
+  } else {
+    r = do_client();
   }
   grn_fin();
   return r;
