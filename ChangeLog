@@ -1,3 +1,8 @@
+2009-04-28  Tasuku SUENAGA <a at razil.jp>
+
+	* src/grnslap.c: added multi host/port support.
+	* src/grnslap.c: added verbose mode.
+
 2009-04-27  Tasuku SUENAGA <a at razil.jp>
 
 	* src/groonga.c: fixed bug of cas on memcached.
