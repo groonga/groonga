@@ -7,6 +7,12 @@ grn_ctx ctx;
 grn_obj *db;
 grn_encoding enc = GRN_ENC_DEFAULT;
 
+#ifdef SEQUENTIAL
+#define GENKEY(i) (i)
+#else /* SEQUENTIAL */
+#define GENKEY(i) (rand())
+#endif /* SEQUENTIAL */
+
 int nloops = 1000000;
 unsigned key_size = 8;
 unsigned value_size = 8;
@@ -23,7 +29,7 @@ ql_put(void)
   EVAL(&ctx, "(<t1> ::def :c1 <text>)");
   EVAL(&ctx, "(<t1> ::load :c1)");
   for (i = 0; i < nloops; i++) {
-    key = rand();
+    key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     GRN_BULK_PUTC(&ctx, &buf, '\t');
@@ -42,7 +48,7 @@ ql_get(void)
   grn_obj buf;
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    key = rand();
+    key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     GRN_BULK_PUTS(&ctx, &buf, "(<t1> : \"");
     grn_bulk_itoh(&ctx, &buf, key, key_size);
@@ -69,7 +75,7 @@ column_put(void)
   if (!table || !column) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {
@@ -107,7 +113,7 @@ column_get(void)
   if (!table || !column) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {
@@ -155,7 +161,7 @@ table_put(void)
   if (!table) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {
@@ -184,7 +190,7 @@ table_get(void)
   if (!table) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {
@@ -222,7 +228,7 @@ hash_put(const char *path)
   if (!hash) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {
@@ -251,7 +257,7 @@ hash_get(const char *path)
   if (!hash) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {
@@ -283,7 +289,7 @@ pat_put(const char *path)
   if (!pat) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {
@@ -312,7 +318,7 @@ pat_get(const char *path)
   if (!pat) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
-    int key = rand();
+    int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     {

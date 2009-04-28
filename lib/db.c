@@ -85,6 +85,8 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
         MUTEX_INIT(s->lock);
         GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
         grn_db_obj_init(ctx, NULL, GRN_ID_NIL, &s->obj);
+        s->obj.header.domain = GRN_ID_NIL;
+        DB_OBJ(&s->obj)->range = GRN_ID_NIL;
         // prepare builtin classes and load builtin plugins.
         if (path) {
           char buffer[PATH_MAX];
@@ -1147,6 +1149,32 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
     }
   }
   GRN_API_RETURN(rc);
+}
+
+grn_obj *
+grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
+{
+  grn_obj *obj = NULL;
+  GRN_API_ENTER;
+  if (!tc) {
+    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+  } else {
+    switch (tc->header.type) {
+    case GRN_CURSOR_TABLE_PAT_KEY :
+      obj = (grn_obj *)(((grn_pat_cursor *)tc)->pat);
+      break;
+    case GRN_CURSOR_TABLE_HASH_KEY :
+      obj = (grn_obj *)(((grn_hash_cursor *)tc)->hash);
+      break;
+    case GRN_CURSOR_TABLE_NO_KEY :
+      obj = (grn_obj *)(((grn_array_cursor *)tc)->array);
+      break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
+      break;
+    }
+  }
+  GRN_API_RETURN(obj);
 }
 
 grn_rc

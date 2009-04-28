@@ -1,5 +1,13 @@
-2009-04-28  Tasuku SUENAGA <a at razil.jp>
+2009-04-29  Poe MORITA  <morita at razil.jp>
 
+	* grnslap.c: fixed bug of etime_amount calculation.
+
+2009-04-28  Kouhei Sutou  <kou@clear-code.com>
+
+	* groonga.h, lib/db.c, test/unit/core/test-table-cursor.c:
+	add grn_table_cursor_table().
+
+2009-04-28  Tasuku SUENAGA <a at razil.jp>
 	* src/grnslap.c: added multi host/port support.
 	* src/grnslap.c: added verbose mode.
 
@@ -8,6 +16,10 @@
 	* src/groonga.c: fixed bug of cas on memcached.
 	* src/groonga.c: supports quiet commands of memcached.
 	* test/unit/memcached/test-memcached.c: added test_memcached_cas().
+
+2009-04-26  Kouhei Sutou  <kou@clear-code.com>
+
+	* lib/db.c: initialize database's domain and range as GRN_ID_NIL.
 
 2009-04-26  Poe MORITA  <morita at razil.jp>
 

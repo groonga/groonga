@@ -164,11 +164,12 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
   etime = (tv.tv_sec - s->tv.tv_sec) * 1000000 + (tv.tv_usec - s->tv.tv_usec);
   if (etime > etime_max) { etime_max = etime; }
   if (etime < etime_min) { etime_min = etime; }
-  etime_amount += etime;
   if (ctx->rc) { m->header.proto = 0; }
   switch (m->header.proto) {
   case GRN_COM_PROTO_GQTP :
-    if (GRN_BULK_VSIZE(msg) != 2) {
+    if (GRN_BULK_VSIZE(msg) == 2) {
+      etime_amount += etime;
+    } else {
       if (verbose) {
         GRN_BULK_PUTC(ctx, msg, '\0');
         lprint(ctx, "%8d(%4d) %8d : %s", s->query_id, s->n_sessions, etime, GRN_BULK_HEAD(msg));
