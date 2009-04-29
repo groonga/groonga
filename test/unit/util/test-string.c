@@ -67,9 +67,9 @@ test_normalize_utf8(void)
   guint normalized_text_len;
   int flags;
 
+  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
   flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
-  string = grn_str_open(&context, text_ja_utf8, strlen(text_ja_utf8),
-                        GRN_ENC_UTF8, flags);
+  string = grn_str_open(&context, text_ja_utf8, strlen(text_ja_utf8), flags);
   normalized_text = cut_take_strndup(string->norm, string->norm_blen);
   normalized_text_len = string->norm_blen;
   grn_test_assert(grn_str_close(&context, string));
@@ -82,6 +82,6 @@ void
 test_charlen_nonnull_broken_utf8(void)
 {
   const gchar utf8[] = "あ";
-
-  cut_assert_equal_uint(0, grn_charlen(&context, utf8, utf8 + 1, GRN_ENC_UTF8));
+  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
+  cut_assert_equal_uint(0, grn_charlen(&context, utf8, utf8 + 1));
 }

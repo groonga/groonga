@@ -157,7 +157,6 @@ struct _grn_ctx {
  * @flags: 初期化するctxのオプションを指定します。
  * GRN_CTX_USE_QLを指定すると、groonga qlインタプリタを実行可能なctxを初期化します。
  * GRN_CTX_USE_QL|GRN_CTX_BATCH_MODEを指定すると、batchmodeでインタプリタを初期化します。
- * @encoding: 初期化するctxでデフォルトとなるencoding。
  *
  * ctxを初期化します。
  **/
@@ -323,8 +322,7 @@ struct _grn_obj {
 /**
  * grn_db_create:
  * @path: 作成するdbを格納するファイルパス。NULLならtemporary dbとなる。
- * @optarg: 作成するdbのデフォルトencodingおよび組み込み型の名前を変更する時に指定する。
- * optarg.encodingにはそのdbでデフォルトとなるencodingを指定する。
+ * @optarg: 作成するdbの組み込み型の名前を変更する時に指定する。
  * optarg.builtin_type_namesには組み込み型の名前となるnul終端文字列の配列を指定する。
  * optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
  * 指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。
@@ -335,7 +333,6 @@ struct _grn_obj {
 typedef struct _grn_db_create_optarg grn_db_create_optarg;
 
 struct _grn_db_create_optarg {
-  grn_encoding encoding;
   char **builtin_type_names;
   int n_builtin_type_names;
 };
@@ -477,14 +474,13 @@ GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
  *            key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなる。
  * @value_size: keyに対応する値を格納する領域のサイズ(byte長)。tableはcolumnとは別に、
  *              keyに対応する値を格納する領域を一つだけ持つことができる。
- * @encoding: 作成するtableでデフォルトとなるencoding。
  *
  * nameに対応する新たなtableをctxが使用するdbに定義する。
  **/
 GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned name_size,
                                   const char *path, grn_obj_flags flags,
-                                  grn_obj *key_type, unsigned value_size, grn_encoding encoding);
+                                  grn_obj *key_type, unsigned value_size);
 /**
  * grn_table_open:
  * @name: 開こうとするtableの名前。NULLなら無名tableとなる。
@@ -1288,8 +1284,7 @@ struct _grn_snip_mapping {
 };
 
 GRN_API grn_query *grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-                                  grn_sel_operator default_op,
-                                  int max_exprs, grn_encoding encoding);
+                                  grn_sel_operator default_op, int max_exprs);
 GRN_API unsigned int grn_query_rest(grn_ctx *ctx, grn_query *q, const char ** const rest);
 GRN_API grn_rc grn_query_close(grn_ctx *ctx, grn_query *q);
 
@@ -1307,7 +1302,7 @@ GRN_API grn_snip *grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
 #define GRN_SNIP_SKIP_LEADING_SPACES   (0x01<<2)
 #define GRN_QUERY_SCAN_NORMALIZE       GRN_SNIP_NORMALIZE
 
-GRN_API grn_snip *grn_snip_open(grn_ctx *ctx, grn_encoding encoding, int flags, unsigned int width,
+GRN_API grn_snip *grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
                                 unsigned int max_results,
                                 const char *defaultopentag, unsigned int defaultopentag_len,
                                 const char *defaultclosetag, unsigned int defaultclosetag_len,
@@ -1373,8 +1368,7 @@ GRN_API grn_rc grn_bulk_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
 GRN_API grn_rc grn_bulk_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
 GRN_API grn_rc grn_bulk_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
-GRN_API grn_rc grn_bulk_esc(grn_ctx *ctx, grn_obj *bulk, const char *s,
-                            unsigned int len, grn_encoding encoding);
+GRN_API grn_rc grn_bulk_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
 GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
 
@@ -1439,10 +1433,10 @@ typedef struct {
 #define GRN_STR_NORMALIZE              GRN_OBJ_KEY_NORMALIZE
 
 GRN_API grn_str *grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-                              grn_encoding encoding, int flags);
+                              int flags);
 GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 
-GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
+GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 
 /* ql */
 
@@ -1475,8 +1469,7 @@ typedef struct _grn_hash grn_hash;
 typedef struct _grn_hash_cursor grn_hash_cursor;
 
 GRN_API grn_hash *grn_hash_create(grn_ctx *ctx, const char *path, unsigned int key_size,
-                                  unsigned int value_size, unsigned int flags,
-                                  grn_encoding encoding);
+                                  unsigned int value_size, unsigned int flags);
 
 GRN_API grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
 
@@ -1541,8 +1534,7 @@ typedef struct _grn_pat grn_pat;
 typedef struct _grn_pat_cursor grn_pat_cursor;
 
 GRN_API grn_pat *grn_pat_create(grn_ctx *ctx, const char *path, unsigned int key_size,
-                                unsigned int value_size, unsigned int flags,
-                                grn_encoding encoding);
+                                unsigned int value_size, unsigned int flags);
 
 GRN_API grn_pat *grn_pat_open(grn_ctx *ctx, const char *path);
 

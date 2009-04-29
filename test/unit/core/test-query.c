@@ -57,6 +57,7 @@ void
 test_open_broken_utf8(void)
 {
   gchar utf8[] = "\"あ\"";
-  query = grn_query_open(context, utf8, 2, GRN_SEL_OR, 10, GRN_ENC_UTF8);
+  GRN_CTX_SET_ENCODING(context, GRN_ENC_UTF8);
+  query = grn_query_open(context, utf8, 2, GRN_SEL_OR, 10);
   cut_assert_not_null(query);
 }

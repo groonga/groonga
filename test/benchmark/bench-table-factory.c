@@ -48,8 +48,7 @@ bench_normal(gpointer user_data)
   table = grn_table_create(data->context,
                            data->name, data->name_size,
                            data->path, data->flags,
-                           data->key_type, data->value_size,
-                           data->encoding);
+                           data->key_type, data->value_size);
   grn_obj_close(data->context, table);
 }
 
@@ -59,11 +58,11 @@ bench_normal_temporary(gpointer user_data)
   BenchmarkData *data = user_data;
   grn_obj *table;
 
+  GRN_CTX_SET_ENCODING(data->context, data->encoding);
   table = grn_table_create(data->context,
                            data->name, data->name_size,
                            NULL, data->flags & ~GRN_OBJ_PERSISTENT,
-                           data->key_type, data->value_size,
-                           data->encoding);
+                           data->key_type, data->value_size);
   grn_obj_close(data->context, table);
 }
 
@@ -130,11 +129,11 @@ grn_table_factory_set_key_type(grn_table_factory *factory, grn_obj *key_type)
 static grn_obj *
 grn_table_factory_make(grn_table_factory *factory)
 {
+  GRN_CTX_SET_ENCODING(factory->context, factory->encoding);
   return grn_table_create(factory->context,
                           factory->name, factory->name_size,
                           factory->path, factory->flags,
-                          factory->key_type, factory->value_size,
-                          factory->encoding);
+                          factory->key_type, factory->value_size);
 }
 
 static void

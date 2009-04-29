@@ -80,7 +80,6 @@ teardown(void)
 {                                                       \
   grn_db_create_optarg option;                          \
                                                         \
-  option.encoding = default_encoding;                   \
   option.builtin_type_names = NULL;                     \
   option.n_builtin_type_names = 0;                      \
   db = grn_db_create(context, default_path, &option);   \

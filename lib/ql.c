@@ -407,7 +407,7 @@ unesc(grn_ctx *ctx, grn_cell *obj)
   char *src, *dest, *end = STRVALUE(obj) + STRSIZE(obj);
   for (src = dest = STRVALUE(obj);;) {
     unsigned int len;
-    if (!(len = grn_charlen(ctx, src, end, ctx->encoding))) { break; }
+    if (!(len = grn_charlen(ctx, src, end))) { break; }
     if (src[0] == '\\' && src + 1 < end && len == 1) {
       src++;
       switch (*src) {
@@ -860,10 +860,10 @@ register_cell(grn_ctx *ctx, grn_obj *db_obj, const char *name, unsigned name_siz
 static grn_cell *
 table_create(grn_ctx *ctx, const char *name, unsigned name_size,
              grn_obj_flags flags, grn_obj *domain,
-             unsigned value_size, grn_encoding encoding, grn_id tokenizer)
+             unsigned value_size, grn_id tokenizer)
 {
   grn_obj *table = grn_table_create(ctx, name, name_size,
-                                    NULL, flags, domain, value_size, encoding);
+                                    NULL, flags, domain, value_size);
   if (!table) { QLERR("table create failed"); }
   grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, grn_ctx_get(ctx, tokenizer));
   return register_cell(ctx, table, name, name_size);
@@ -873,7 +873,7 @@ static grn_cell *
 rec_obj_new(grn_ctx *ctx, grn_obj *domain, unsigned value_size)
 {
   return table_create(ctx, NULL, 0, GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                      domain, value_size, GRN_ENC_NONE, GRN_DB_DELIMIT);
+                      domain, value_size, GRN_DB_DELIMIT);
 }
 
 typedef struct {
@@ -1531,7 +1531,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           POP(res, args);
           if (!RECORDSP(res)) {
             res = table_create(ctx, NULL, 0, GRN_OBJ_TABLE_NO_KEY,
-                               table, sizeof(grn_id), GRN_ENC_NONE, GRN_DB_DELIMIT);
+                               table, sizeof(grn_id), GRN_DB_DELIMIT);
           }
           if (ce) {
             grn_table_sort(ctx, table, limit, get_obj(ctx, res), ce->keys, ce->n_keys);
@@ -1869,7 +1869,7 @@ grn_obj_query(grn_ctx *ctx, const char *str, unsigned int str_len,
 {
   grn_query *q;
   grn_cell *res = grn_cell_new(ctx);
-  if (!res || !(q = grn_query_open(ctx, str, str_len, default_op, max_exprs, encoding))) {
+  if (!res || !(q = grn_query_open(ctx, str, str_len, default_op, max_exprs))) {
     return NULL;
   }
   res->header.type = GRN_QUERY;
@@ -2345,7 +2345,14 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
       }
     }
   }
-  return table_create(ctx, name, name_size, flags, domain, value_size, encoding, tokenizer);
+  {
+    grn_cell *r;
+    grn_encoding enc_ = GRN_CTX_GET_ENCODING(ctx);
+    if (encoding != GRN_ENC_DEFAULT) { GRN_CTX_SET_ENCODING(ctx, encoding); }
+    r = table_create(ctx, name, name_size, flags, domain, value_size, tokenizer);
+    GRN_CTX_SET_ENCODING(ctx, enc_);
+    return r;
+  }
 }
 
 static grn_cell *
@@ -2419,7 +2426,7 @@ nf_snippet(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     {
       grn_cell *tags = args;
       /* FIXME: mapping */
-      if (!(s = grn_snip_open(ctx, ctx->encoding, GRN_SNIP_NORMALIZE, width, max_results,
+      if (!(s = grn_snip_open(ctx, GRN_SNIP_NORMALIZE, width, max_results,
                               NULL, 0, NULL, 0, (grn_snip_mapping *)-1))) {
         QLERR("grn_snip_open failed");
       }
@@ -2733,7 +2740,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
           r++;
           size--;
         }
-        grn_bulk_esc(ctx, buf, r, size, ctx->encoding);
+        grn_bulk_esc(ctx, buf, r, size);
       } else {
         GRN_BULK_PUTS(ctx, buf, "null");
       }
@@ -2815,7 +2822,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         grn_obj key;
         GRN_OBJ_INIT(&key, GRN_BULK, 0);
         grn_ql_obj_key(ctx, obj, &key);
-        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key), ctx->encoding);
+        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key));
         grn_obj_close(ctx, &key);
       }
       break;
@@ -2831,7 +2838,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         grn_obj tmp;
         GRN_OBJ_INIT(&tmp, GRN_BULK, 0);
         uvector2str(ctx, obj->u.p.value, &tmp);
-        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp), ctx->encoding);
+        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp));
         grn_obj_close(ctx, &tmp);
       }
       break;
@@ -2917,12 +2924,12 @@ disp_t_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf, int *f)
 }
 
 inline static void
-bulk_tsv_esc(grn_ctx *ctx, grn_obj *buf, const char *s, int len, grn_encoding encoding)
+bulk_tsv_esc(grn_ctx *ctx, grn_obj *buf, const char *s, int len)
 {
   const char *e;
   unsigned int l;
   for (e = s + len; s < e; s += l) {
-    if (!(l = grn_charlen(ctx, s, e, encoding))) { break; }
+    if (!(l = grn_charlen(ctx, s, e))) { break; }
     if (l == 1) {
       switch (*s) {
       case '\t' :
@@ -3025,7 +3032,7 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
       }
       break;
     case GRN_CELL_STR :
-      bulk_tsv_esc(ctx, buf, obj->u.b.value, obj->u.b.size, ctx->encoding);
+      bulk_tsv_esc(ctx, buf, obj->u.b.value, obj->u.b.size);
       *f = 1;
       break;
     case GRN_CELL_TIME :
@@ -3126,7 +3133,7 @@ json_readstr(grn_ctx *ctx, jctx *jc)
   for (start = end = jc->cur;;) {
     unsigned int len;
     /* null check and length check */
-    if (!(len = grn_charlen(ctx, end, jc->str_end, jc->encoding))) {
+    if (!(len = grn_charlen(ctx, end, jc->str_end))) {
       jc->cur = jc->str_end;
       break;
     }
@@ -3154,7 +3161,7 @@ json_readstrexp(grn_ctx *ctx, jctx *jc, int keyp)
   for (start = src = dest = jc->cur;;) {
     unsigned int len;
     /* null check and length check */
-    if (!(len = grn_charlen(ctx, src, jc->str_end, jc->encoding))) {
+    if (!(len = grn_charlen(ctx, src, jc->str_end))) {
       jc->cur = jc->str_end;
       if (start < dest) {
         res = keyp

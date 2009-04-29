@@ -124,7 +124,7 @@ skip_space(grn_ctx *ctx, grn_query *q)
   unsigned int len;
   while (q->cur < q->str_end && grn_isspace(q->cur, q->encoding)) {
     /* null check and length check */
-    if (!(len = grn_charlen(ctx, q->cur, q->str_end, q->encoding))) {
+    if (!(len = grn_charlen(ctx, q->cur, q->str_end))) {
       q->cur = q->str_end;
       break;
     }
@@ -143,7 +143,7 @@ get_phrase(grn_ctx *ctx, grn_query *q)
       q->cur = s;
       break;
     }
-    len = grn_charlen(ctx, s, q->str_end, q->encoding);
+    len = grn_charlen(ctx, s, q->str_end);
     if (len == 0) {
       /* invalid string containing malformed multibyte char */
       return NULL;
@@ -153,7 +153,7 @@ get_phrase(grn_ctx *ctx, grn_query *q)
         break;
       } else if (*s == GRN_QUERY_ESCAPE && s + 1 < q->str_end) {
         s++;
-        len = grn_charlen(ctx, s, q->str_end, q->encoding);
+        len = grn_charlen(ctx, s, q->str_end);
       }
     }
     while (len--) { *d++ = *s++; }
@@ -168,7 +168,7 @@ get_word(grn_ctx *ctx, grn_query *q, int *prefixp)
   unsigned int len;
   for (end = q->cur;; ) {
     /* null check and length check */
-    if (!(len = grn_charlen(ctx, end, q->str_end, q->encoding))) {
+    if (!(len = grn_charlen(ctx, end, q->str_end))) {
       q->cur = q->str_end;
       break;
     }
@@ -353,7 +353,7 @@ get_weight_vector(grn_ctx *ctx, grn_query *query, const char *source)
       GRN_FREE(query->opt.weight_vector);
       query->opt.weight_vector = NULL;
       if (!(query->weight_set = grn_hash_create(ctx, NULL, sizeof(unsigned int), sizeof(int),
-                                                0, GRN_ENC_NONE))) {
+                                                0))) {
         return source;
       }
       p = source;           /* reparse */
@@ -428,7 +428,7 @@ section_weight_cb(grn_ctx *ctx, grn_hash *r, const void *rid, int sid, void *arg
 
 grn_query *
 grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-               grn_sel_operator default_op, int max_exprs, grn_encoding encoding)
+               grn_sel_operator default_op, int max_exprs)
 {
   grn_query *q;
   int max_cells = max_exprs * 4;
@@ -443,7 +443,7 @@ grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
   q->cur = q->str;
   q->str_end = q->str + str_len;
   q->default_op = default_op;
-  q->encoding = encoding;
+  q->encoding = ctx->encoding;
   q->max_exprs = max_exprs;
   q->max_cells = max_cells;
   q->cur_cell = 0;
@@ -654,7 +654,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     snip_cond *sc = q->snip_conds;
     int f = GRN_STR_WITH_CHECKS | GRN_STR_REMOVEBLANK;
     if (flags & GRN_QUERY_SCAN_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
-    n = grn_str_open(ctx, *(strs + i), *(str_lens + i), q->encoding, f);
+    n = grn_str_open(ctx, *(strs + i), *(str_lens + i), f);
     if (!n) { return GRN_NO_MEMORY_AVAILABLE; }
     if ((rc = scan_query(ctx, q, n, i + 1, q->expr, &sc, GRN_SEL_OR, flags, found, score))) {
       grn_str_close(ctx, n);
@@ -722,7 +722,7 @@ grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
                grn_snip_mapping *mapping)
 {
   grn_snip *res;
-  if (!(res = grn_snip_open(ctx, query->encoding, flags, width, max_results,
+  if (!(res = grn_snip_open(ctx, flags, width, max_results,
                             NULL, 0, NULL, 0, mapping))) {
     return NULL;
   }
@@ -744,7 +744,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
   grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
   if (!n && op != GRN_SEL_OR) { return; }
   if (n) {
-    s = grn_hash_create(ctx, NULL, r->key_size, r->value_size, r->obj.flags, r->encoding);
+    s = grn_hash_create(ctx, NULL, r->key_size, r->value_size, r->obj.flags);
     // s->keys = r->keys; need ?
   } else {
     s = r;

@@ -45,8 +45,7 @@ create_bookmarks_table(void)
                                NULL,
                                GRN_OBJ_TABLE_HASH_KEY,
                                LOOKUP("<shorttext>"),
-                               1024,
-                               GRN_ENC_DEFAULT);
+                               1024);
   grn_test_assert_context(&context);
   cut_set_message("%s", cut_take_string(grn_collect_logger_to_string(logger)));
   cut_assert_not_null(bookmarks);

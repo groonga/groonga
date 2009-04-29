@@ -30,7 +30,7 @@
 #define WITH_NORMALIZE(table,key,key_size,block) {\
   if ((table)->obj.flags & GRN_OBJ_KEY_NORMALIZE) {\
     grn_str *nstr;\
-    if ((nstr = grn_str_open(ctx, key, key_size, (table)->encoding, GRN_STR_NORMALIZE))) { \
+    if ((nstr = grn_str_open(ctx, key, key_size, GRN_STR_NORMALIZE))) { \
       char *key = nstr->norm;\
       unsigned key_size = nstr->norm_blen;\
       block\
@@ -71,9 +71,7 @@ grn_obj *
 grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
 {
   grn_db *s;
-  grn_encoding encoding;
   GRN_API_ENTER;
-  encoding = ctx->encoding;
   if (!path || strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
       grn_tiny_array_init(ctx, &s->values, sizeof(grn_obj *),
@@ -81,7 +79,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
                           GRN_TINY_ARRAY_THREADSAFE|
                           GRN_TINY_ARRAY_USE_MALLOC);
       if ((s->keys = grn_pat_create(ctx, path, GRN_PAT_MAX_KEY_SIZE, 0,
-                                    GRN_OBJ_KEY_VAR_SIZE, encoding))) {
+                                    GRN_OBJ_KEY_VAR_SIZE))) {
         MUTEX_INIT(s->lock);
         GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
         grn_db_obj_init(ctx, NULL, GRN_ID_NIL, &s->obj);
@@ -446,7 +444,7 @@ calc_rec_size(grn_obj_flags flags, uint32_t *max_n_subrecs,
 grn_obj *
 grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
                  const char *path, grn_obj_flags flags,
-                 grn_obj *key_type, unsigned value_size, grn_encoding encoding)
+                 grn_obj *key_type, unsigned value_size)
 {
   grn_id id;
   unsigned char impl_flags = 0;
@@ -515,10 +513,10 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
                 &subrec_offset, &key_size, &value_size);
   switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
   case GRN_OBJ_TABLE_HASH_KEY :
-    res = (grn_obj *)grn_hash_create(ctx, path, key_size, value_size, flags, encoding);
+    res = (grn_obj *)grn_hash_create(ctx, path, key_size, value_size, flags);
     break;
   case GRN_OBJ_TABLE_PAT_KEY :
-    res = (grn_obj *)grn_pat_create(ctx, path, key_size, value_size, flags, encoding);
+    res = (grn_obj *)grn_pat_create(ctx, path, key_size, value_size, flags);
     break;
   case GRN_OBJ_TABLE_NO_KEY :
     res = (grn_obj *)grn_array_create(ctx, path, value_size, flags);
@@ -1230,7 +1228,7 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
                 grn_table_lookup(ctx, res, &tid, sizeof(grn_id), &fl);
                 /* todo : nsubrec++ if GRN_OBJ_TABLE_SUBSET assigned */
               }
-              if (!(len = grn_charlen(ctx, sp, se, pat->encoding))) { break; }
+              if (!(len = grn_charlen(ctx, sp, se))) { break; }
             }
           }
           // todo : support op;
@@ -2193,7 +2191,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
     size_t len;
     const char *sp, *se = name + name_size;
     if (*name == GRN_DB_DELIMITER) { name++; }
-    for (sp = name; (len = grn_charlen(ctx, sp, se, ctx->encoding)); sp += len) {
+    for (sp = name; (len = grn_charlen(ctx, sp, se)); sp += len) {
       if (*sp == GRN_DB_DELIMITER) { break; }
     }
     if (!(len = sp - name)) { goto exit; }
@@ -3005,15 +3003,24 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
   }
   switch (type) {
   case GRN_INFO_ENCODING :
-    switch (obj->header.type) {
-    case GRN_TABLE_PAT_KEY :
-      grn_bulk_write(ctx, valuebuf, (const char *)&((grn_pat *)obj)->encoding, sizeof(grn_encoding));
-      break;
-    case GRN_TABLE_HASH_KEY :
-      grn_bulk_write(ctx, valuebuf, (const char *)&((grn_hash *)obj)->encoding, sizeof(grn_encoding));
-      break;
-    default :
-      ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+    {
+      grn_encoding enc;
+      switch (obj->header.type) {
+      case GRN_DB :
+        enc = ((grn_db *)obj)->keys->encoding;
+        grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
+        break;
+      case GRN_TABLE_PAT_KEY :
+        enc = ((grn_pat *)obj)->encoding;
+        grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
+        break;
+      case GRN_TABLE_HASH_KEY :
+        enc = ((grn_hash *)obj)->encoding;
+        grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
+        break;
+      default :
+        ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+      }
     }
     break;
   case GRN_INFO_SOURCE :
@@ -3316,7 +3323,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     {
       grn_hash *cols;
       if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                  GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY, GRN_ENC_NONE))) {
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
         if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
           grn_id *key;
           GRN_HASH_EACH(cols, id, &key, NULL, NULL, {

@@ -4201,7 +4201,7 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (vgram) { sbuf = grn_vgram_buf_open(value_len); }
-  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, GRN_ENC_NONE);
+  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
   if (!h) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on index_add failed !");
     grn_token_close(ctx, token);
@@ -4254,7 +4254,7 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   if (!(token = grn_token_open(ctx, lexicon, value, value_len, GRN_TOKEN_UPD))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, GRN_ENC_NONE);
+  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
   if (!h) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on index_del failed !");
     grn_token_close(ctx, token);
@@ -4322,7 +4322,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
     return GRN_INVALID_ARGUMENT;
   }
   if (newvalues) {
-    new = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, GRN_ENC_NONE);
+    new = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
     if (!new) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
       rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4364,7 +4364,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
     new = NULL;
   }
   if (oldvalues) {
-    old = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY, GRN_ENC_NONE);
+    old = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
     if (!old) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
       if (new) { grn_hash_close(ctx, new); }
@@ -4532,7 +4532,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       new_ = new;
       new = (grn_obj *)grn_hash_create(ctx, NULL, sizeof(grn_id),
                                        sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY, GRN_ENC_NONE);
+                                       GRN_HASH_TINY);
       if (!new) {
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4546,7 +4546,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       new_ = new;
       new = (grn_obj *)grn_hash_create(ctx, NULL, sizeof(grn_id),
                                        sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY, GRN_ENC_NONE);
+                                       GRN_HASH_TINY);
       if (!new) {
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4582,7 +4582,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       old_ = old;
       old = (grn_obj *)grn_hash_create(ctx, NULL, sizeof(grn_id),
                                        sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY, GRN_ENC_NONE);
+                                       GRN_HASH_TINY);
       if (!old) {
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4596,7 +4596,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       old_ = old;
       old = (grn_obj *)grn_hash_create(ctx, NULL, sizeof(grn_id),
                                        sizeof(grn_ii_updspec *),
-                                       GRN_HASH_TINY, GRN_ENC_NONE);
+                                       GRN_HASH_TINY);
       if (!old) {
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4675,7 +4675,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   grn_hash_cursor *c;
   grn_id *tp, *tq;
 
-  if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0, GRN_ENC_NONE))) {
+  if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
     grn_table_search(ctx, lexicon, key, key_size,
                      GRN_SEARCH_PREFIX, (grn_obj *)h, GRN_SEL_OR);
     if (GRN_HASH_SIZE(h)) {
@@ -4694,7 +4694,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 ti->size += s;
               }
             } else {
-              if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0, GRN_ENC_NONE))) {
+              if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
                 grn_table_search(ctx, lexicon, key2, key2_size,
                                  GRN_SEARCH_SUFFIX, (grn_obj *)g, GRN_SEL_OR);
                 GRN_HASH_EACH(g, id, &tq, NULL, &offset2, {
@@ -4753,7 +4753,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     }
     break;
   case EX_PREFIX :
-    if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0, GRN_ENC_NONE))) {
+    if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
       grn_table_search(ctx, lexicon, key, key_size,
                        GRN_SEARCH_PREFIX, (grn_obj *)h, GRN_SEL_OR);
       if (GRN_HASH_SIZE(h)) {
@@ -4771,7 +4771,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     }
     break;
   case EX_SUFFIX :
-    if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0, GRN_ENC_NONE))) {
+    if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
       grn_table_search(ctx, lexicon, key, key_size,
                        GRN_SEARCH_SUFFIX, (grn_obj *)h, GRN_SEL_OR);
       if (GRN_HASH_SIZE(h)) {
@@ -5117,7 +5117,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   grn_token *token;
   grn_obj *lexicon = ii->lexicon;
   if (!lexicon || !ii || !string || !s || !optarg) { return GRN_INVALID_ARGUMENT; }
-  if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0, GRN_ENC_NONE))) {
+  if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (!(token = grn_token_open(ctx, lexicon, string, string_len, 0))) {
@@ -5262,7 +5262,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   if (!ii || !string || !string_len || !s || !optarg) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!(nstr = grn_str_open(ctx, string, string_len, ii->encoding, 0))) {
+  if (!(nstr = grn_str_open(ctx, string, string_len, 0))) {
     return GRN_INVALID_ARGUMENT;
   }
   policy = optarg->max_interval;
@@ -5283,7 +5283,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
       if (policy == TERM_EXTRACT_EACH_POST) {
         if (!(skip = grn_table_get_key(ctx, ii->lexicon, tid, NULL, 0))) { break; }
       } else {
-        if (!(skip = (int)grn_charlen(ctx, p, pe, ii->encoding))) { break; }
+        if (!(skip = (int)grn_charlen(ctx, p, pe))) { break; }
       }
       if (!(c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
                                    rep
@@ -5315,7 +5315,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
       }
       grn_ii_cursor_close(ctx, c);
     } else {
-      if (!(skip = (int)grn_charlen(ctx, p, pe, ii->encoding))) {
+      if (!(skip = (int)grn_charlen(ctx, p, pe))) {
         break;
       }
     }

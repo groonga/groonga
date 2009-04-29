@@ -225,7 +225,7 @@ do_client()
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
   GRN_COM_QUEUE_INIT(&fsessions);
-  sessions = grn_hash_create(ctx, NULL, sizeof(grn_sock), sizeof(session), 0, 0);
+  sessions = grn_hash_create(ctx, NULL, sizeof(grn_sock), sizeof(session), 0);
   sheader.proto = GRN_COM_PROTO_GQTP;
   sheader.qtype = 0;
   sheader.keylen = 0;

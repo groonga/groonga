@@ -248,8 +248,7 @@ grn_ctx_ql_init(grn_ctx *ctx, int flags)
                                              GRN_ARRAY_TINY))) {
     if ((ctx->impl->symbols = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                               sizeof(grn_cell),
-                                              GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY,
-                                              GRN_ENC_NONE))) {
+                                              GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY))) {
       if (!ERRP(ctx, GRN_ERROR)) {
         grn_ql_init_globals(ctx);
         if (!ERRP(ctx, GRN_ERROR)) {
@@ -850,6 +849,13 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
     if (!ctx->rc) {
       ctx->impl->db = db;
       if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
+      {
+        grn_obj buf;
+        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        grn_obj_get_info(ctx, db, GRN_INFO_ENCODING, &buf);
+        ctx->encoding = *(grn_encoding *)GRN_BULK_HEAD(&buf);
+        grn_obj_close(ctx, &buf);
+      }
     }
   }
   GRN_API_RETURN(ctx->rc);
@@ -1519,7 +1525,7 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
       return GRN_INVALID_ARGUMENT;
     }
     res = grn_table_create(ctx, NULL, 0, NULL,
-                           GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0, 0);
+                           GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0);
   }
   argv[0].ptr = res;
   return grn_obj_search(ctx, index, query, res, GRN_SEL_OR, NULL);
@@ -1541,7 +1547,7 @@ scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   res = argc > 5
     ? (grn_obj *)argv[5].ptr
     : grn_table_create(ctx, NULL, 0, NULL,
-                       GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0, 0);
+                       GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0);
   opt = argc > 6 ? (grn_obj *)argv[6].ptr : NULL;
   argv[0].ptr = res;
   if ((c = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
@@ -1602,8 +1608,7 @@ grn_ctx_qe_init(grn_ctx *ctx)
   if (ctx->impl && !ctx->impl->qe) {
     ctx->impl->qe = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                     sizeof(grn_ctx_qe),
-                                    GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY,
-                                    GRN_ENC_NONE);
+                                    GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY);
     {
       grn_proc *init = (grn_proc *)grn_ctx_lookup(ctx, "<proc:init>", 11);
       if (init) {

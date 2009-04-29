@@ -69,8 +69,7 @@ teardown(void)
 
 #define create_hash()                                   \
   hash = grn_hash_create(context, NULL, sizeof(grn_id), \
-                         0, GRN_HASH_TINY,              \
-                         GRN_ENC_DEFAULT)
+                         0, GRN_HASH_TINY)
 
 #define cut_assert_create_hash() do                     \
 {                                                       \

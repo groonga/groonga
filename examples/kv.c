@@ -12,8 +12,6 @@ grn_obj *db;
 #define GENKEY(i) (rand())
 #endif /* SEQUENTIAL */
 
-grn_encoding enc = GRN_ENC_DEFAULT;
-
 int nloops = 1000000;
 unsigned key_size = 8;
 unsigned value_size = 8;
@@ -69,7 +67,7 @@ column_put(void)
   grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                    key_type, 0, enc);
+                                    key_type, 0);
   grn_obj *value_type = grn_ctx_get(&ctx, GRN_DB_TEXT);
   grn_obj *column = grn_column_create(&ctx, table, "c1", 2, NULL,
                                       GRN_OBJ_PERSISTENT, value_type);
@@ -158,7 +156,7 @@ table_put(void)
   grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                    key_type, value_size, enc);
+                                    key_type, value_size);
   if (!table) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
@@ -225,7 +223,7 @@ hash_put(const char *path)
   int i;
   grn_obj buf;
   grn_hash *hash = grn_hash_create(&ctx, path, key_size, value_size,
-                                   GRN_OBJ_PERSISTENT|GRN_OBJ_KEY_VAR_SIZE, enc);
+                                   GRN_OBJ_PERSISTENT|GRN_OBJ_KEY_VAR_SIZE);
   if (!hash) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {
@@ -286,7 +284,7 @@ pat_put(const char *path)
   int i;
   grn_obj buf;
   grn_pat *pat = grn_pat_create(&ctx, path, key_size, value_size,
-                                   GRN_OBJ_PERSISTENT|GRN_OBJ_KEY_VAR_SIZE, enc);
+                                   GRN_OBJ_PERSISTENT|GRN_OBJ_KEY_VAR_SIZE);
   if (!pat) { return -1; }
   GRN_OBJ_INIT(&buf, GRN_BULK, 0);
   for (i = 0; i < nloops; i++) {

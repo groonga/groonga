@@ -103,7 +103,7 @@ grn_rc
 grn_io_init(void)
 {
   grn_dls = grn_hash_create(&grn_gctx, NULL, PATH_MAX, sizeof(void *),
-                            GRN_OBJ_KEY_VAR_SIZE, GRN_ENC_NONE);
+                            GRN_OBJ_KEY_VAR_SIZE);
   if (!grn_dls) { return GRN_NO_MEMORY_AVAILABLE; }
   return GRN_SUCCESS;
 }

@@ -353,13 +353,14 @@ delinfo_new(grn_ctx *ctx, grn_pat *pat)
 
 grn_pat *
 grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
-               uint32_t value_size, uint32_t flags, grn_encoding encoding)
+               uint32_t value_size, uint32_t flags)
 {
   grn_io *io;
   grn_pat *pat;
   pat_node *node0;
   struct grn_pat_header *header;
   uint32_t entry_size, w_of_element;
+  grn_encoding encoding = ctx->encoding;
   if (flags & GRN_OBJ_KEY_WITH_SIS) {
     entry_size = sizeof(sis_node) + value_size;
   } else {
@@ -596,7 +597,7 @@ _grn_pat_get(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
 inline static int
 chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lkey)
 {
-  size_t len = grn_charlen(ctx, *key, end, pat->encoding);
+  size_t len = grn_charlen(ctx, *key, end);
   if (len) {
     *lkey += len;
     *key += len;
@@ -844,7 +845,7 @@ grn_pat_prefix_search2(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key
 {
   grn_hash *h;
   if (!pat || !key) { return NULL; }
-  if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0, 0))) {
+  if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
     if (grn_pat_prefix_search(ctx, pat, key, key_size, h)) {
       grn_hash_close(ctx, h);
       h = NULL;
@@ -875,7 +876,7 @@ grn_pat_suffix_search2(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key
 {
   grn_hash *h;
   if (!pat || !key) { return NULL; }
-  if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(uint32_t), 0, 0))) {
+  if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(uint32_t), 0))) {
     if (grn_pat_suffix_search(ctx, pat, key, key_size, h)) {
       grn_hash_close(ctx, h);
       h = NULL;
@@ -1328,7 +1329,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   int n = 0;
   grn_id tid;
   if (pat->obj.flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_str *nstr = grn_str_open(ctx, str, str_len, pat->encoding, GRN_STR_WITH_CHECKS);
+    grn_str *nstr = grn_str_open(ctx, str, str_len, GRN_STR_WITH_CHECKS);
     if (nstr) {
       int16_t *cp = nstr->checks;
       unsigned int offset = 0, offset0 = 0;
@@ -1370,7 +1371,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
         sh[n].length = len;
         n++;
       } else {
-        len = grn_charlen(ctx, sp, se, pat->encoding);
+        len = grn_charlen(ctx, sp, se);
       }
       if (!len) { break; }
     }

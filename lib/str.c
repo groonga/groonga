@@ -118,7 +118,7 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
 }
 
 int
-grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding)
+grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding)
 {
   /* MEMO: This function allows non-null-terminated string as str. */
   /*       But requires the end of string. */
@@ -162,6 +162,12 @@ grn_charlen(grn_ctx *ctx, const char *str, const char *end, grn_encoding encodin
     break;
   }
   return 0;
+}
+
+int
+grn_charlen(grn_ctx *ctx, const char *str, const char *end)
+{
+  return grn_charlen_(ctx, str, end, ctx->encoding);
 }
 
 static unsigned char symbol[] = {
@@ -1161,8 +1167,7 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
 }
 
 grn_str *
-grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-             grn_encoding encoding, int flags)
+grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding)
 {
   grn_rc rc;
   grn_str *nstr;
@@ -1213,6 +1218,12 @@ grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
     return NULL;
   }
   return nstr;
+}
+
+grn_str *
+grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
+{
+  return grn_str_open_(ctx, str, str_len, flags, ctx->encoding);
 }
 
 grn_rc
@@ -1825,7 +1836,7 @@ grn_bulk_lltob32h(grn_ctx *ctx, grn_obj *buf, long long int i)
 }
 
 grn_rc
-grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len, grn_encoding encoding)
+grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
 {
   const char *e;
   unsigned int l;
@@ -1833,7 +1844,7 @@ grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len, grn_en
 
   GRN_BULK_PUTC(ctx, buf, '"');
   for (e = s + len; s < e; s += l) {
-    if (!(l = grn_charlen(ctx, s, e, encoding))) { break; }
+    if (!(l = grn_charlen(ctx, s, e))) { break; }
     if (l == 1) {
       switch (*s) {
       case '"' :
@@ -1944,7 +1955,7 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
   char *s = *str, *e = *str_end;
   for (i = 0; s < e; i++, s += l) {
     if (i == start) { *str = s; }
-    if (!(l = grn_charlen(ctx, s, e, encoding))) {
+    if (!(l = grn_charlen(ctx, s, e))) {
       return GRN_INVALID_ARGUMENT;
     }
     if (i == end) {
@@ -1989,7 +2000,7 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     case GRN_DB_SHORTTEXT :
     case GRN_DB_TEXT :
     case GRN_DB_LONGTEXT :
-      grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj), ctx->encoding);
+      grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
       break;
     case GRN_DB_INT :
       grn_bulk_itoa(ctx, bulk, *((int32_t *)GRN_BULK_HEAD(obj)));
@@ -2018,7 +2029,7 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
           grn_obj_get_value(ctx, accessor, *((grn_id *)GRN_BULK_HEAD(obj)), &buf);
           grn_obj_close(ctx, accessor);
         }
-        grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), ctx->encoding);
+        grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
       }
     }
     break;
@@ -2043,7 +2054,7 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       GRN_BULK_PUTC(ctx, bulk, ']');
     } else {
       uvector2str(ctx, obj, &buf);
-      grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), ctx->encoding);
+      grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
     }
     break;
   case GRN_TABLE_HASH_KEY :
@@ -2079,7 +2090,7 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         if (i) { GRN_BULK_PUTS(ctx, bulk, ", "); }
         GRN_BULK_REWIND(&buf);
         grn_obj_get_value(ctx, column, id, &buf);
-        grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), ctx->encoding);
+        grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
       }
       GRN_BULK_PUTC(ctx, bulk, ']');
       grn_table_cursor_close(ctx, tc);

@@ -208,8 +208,9 @@ grn_test_hash_factory_create(GrnTestHashFactory *factory, GError **error)
     return NULL;
 
   priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
+  GRN_CTX_SET_ENCODING(priv->context, priv->encoding);
   priv->hash = grn_hash_create(priv->context, priv->path, priv->key_size,
-                               priv->value_size, priv->flags, priv->encoding);
+                               priv->value_size, priv->flags);
   if (!priv->hash) {
     g_set_error(error,
                 GRN_TEST_HASH_FACTORY_ERROR,

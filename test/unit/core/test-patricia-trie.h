@@ -171,10 +171,12 @@ teardown_trie_common(void)
   cut_assert(context);                          \
 } while (0)
 
-#define create_trie()                                                   \
+#define create_trie() do                                                \
+{                                                                       \
+  GRN_CTX_SET_ENCODING(context, default_encoding);                      \
   trie = grn_pat_create(context, default_path, default_key_size,        \
-                        default_value_size, default_flags,              \
-                        default_encoding)
+                        default_value_size, default_flags);             \
+} while (0)
 
 #define cut_assert_create_trie() do             \
 {                                               \

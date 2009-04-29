@@ -73,6 +73,9 @@ grn_rc grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int en
 
 void grn_logger_fin(void);
 
+int grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
+grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding);
+
 #ifdef __cplusplus
 }
 #endif

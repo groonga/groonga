@@ -187,8 +187,8 @@ test_hash(gconstpointer test_data)
 
   path = g_build_filename(base_dir, "hash", NULL);
   g_setenv(GRN_TEST_ENV_HASH_PATH, path, TRUE);
-  hash = grn_hash_create(context, path, sizeof(gint), VALUE_SIZE,
-                         0, GRN_ENC_UTF8);
+  GRN_CTX_SET_ENCODING(context, GRN_ENC_UTF8);
+  hash = grn_hash_create(context, path, sizeof(gint), VALUE_SIZE, 0);
   g_free(path);
   cut_assert_not_null(hash);
 
@@ -219,8 +219,8 @@ test_patricia_trie(gconstpointer test_data)
 
   path = g_build_filename(base_dir, "patricia-trie", NULL);
   g_setenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH, path, TRUE);
-  trie = grn_pat_create(context, path, GRN_PAT_MAX_KEY_SIZE / 2, VALUE_SIZE,
-                        0, GRN_ENC_UTF8);
+  GRN_CTX_SET_ENCODING(context, GRN_ENC_UTF8);
+  trie = grn_pat_create(context, path, GRN_PAT_MAX_KEY_SIZE / 2, VALUE_SIZE, 0);
   g_free(path);
   cut_assert_not_null(trie);
 

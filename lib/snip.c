@@ -253,7 +253,7 @@ grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned in
   int f = GRN_STR_REMOVEBLANK;
   memset(sc, 0, sizeof(snip_cond));
   if (flags & GRN_SNIP_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
-  if (!(sc->keyword = grn_str_open(ctx, keyword, keyword_len, enc, f))) {
+  if (!(sc->keyword = grn_str_open(ctx, keyword, keyword_len, f))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open on snip_cond_init failed !");
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -418,7 +418,7 @@ grn_snip_set_default_tag(grn_ctx *ctx,
 }
 
 grn_snip *
-grn_snip_open(grn_ctx *ctx, grn_encoding encoding, int flags, unsigned int width,
+grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
               unsigned int max_results,
               const char *defaultopentag, unsigned int defaultopentag_len,
               const char *defaultclosetag, unsigned int defaultclosetag_len,
@@ -435,7 +435,7 @@ grn_snip_open(grn_ctx *ctx, grn_encoding encoding, int flags, unsigned int width
     GRN_FREE(ret);
     return NULL;
   }
-  ret->encoding = encoding;
+  ret->encoding = ctx->encoding;
   ret->flags = flags;
   ret->width = width;
   ret->max_results = max_results;
@@ -529,7 +529,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
   exec_clean(ctx, snip);
   *nresults = 0;
   if (snip->flags & GRN_SNIP_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
-  snip->nstr = grn_str_open(ctx, string, string_len, snip->encoding, f);
+  snip->nstr = grn_str_open(ctx, string, string_len, f);
   if (!snip->nstr) {
     exec_clean(ctx, snip);
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open on grn_snip_exec failed !");

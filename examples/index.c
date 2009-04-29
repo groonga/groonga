@@ -27,7 +27,7 @@ typedef struct {
 # endif /* PATH_MAX */
 
 grn_index *
-grn_index_create(grn_ctx *ctx, const char *path, grn_encoding enc)
+grn_index_create(grn_ctx *ctx, const char *path)
 {
   grn_obj *db, *keys, *key_type, *lexicon, *inv, *tokenizer;
   if ((db = grn_db_create(ctx, NULL, NULL))) {
@@ -37,12 +37,12 @@ grn_index_create(grn_ctx *ctx, const char *path, grn_encoding enc)
     if ((key_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT))) {
       if ((keys = grn_table_create(ctx, "<keys>", 6, buffer,
                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                   key_type, 0, enc))) {
+                                   key_type, 0))) {
         strcpy(buffer, path);
         strcat(buffer, ".SEN.l");
         if ((lexicon = grn_table_create(ctx, "<lexicon>", 9, buffer,
                                         GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                                        key_type, 0, enc))) {
+                                        key_type, 0))) {
           if ((tokenizer = grn_ctx_get(ctx, GRN_DB_MECAB))) {
             grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
             strcpy(buffer, path);
@@ -131,7 +131,7 @@ grn_index_sel(grn_ctx *ctx, grn_index *index,
   GRN_OBJ_INIT(&query, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_BULK_SET(ctx, &query, string, string_len);
   if ((res = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_HASH_KEY,
-                              index->keys, 0, GRN_ENC_NONE))) {
+                              index->keys, 0))) {
     if ((grn_obj_search(ctx, index->inv, &query, res, GRN_SEL_OR, NULL))) {
       grn_obj_close(ctx, res);
       res =  NULL;
@@ -255,7 +255,7 @@ main(int argc, char **argv)
     return -1;
   }
   if (argc > 2) {
-    index = grn_index_create(&ctx, argv[1], GRN_ENC_DEFAULT);
+    index = grn_index_create(&ctx, argv[1]);
     do_index(&ctx, index, argv[2]);
   } else {
     index = grn_index_open(&ctx, argv[1]);

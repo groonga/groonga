@@ -807,9 +807,10 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
 
 grn_hash *
 grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t value_size,
-                uint32_t flags, grn_encoding encoding)
+                uint32_t flags)
 {
   grn_hash *hash;
+  grn_encoding encoding = ctx->encoding;
   if (key_size > GRN_HASH_MAX_KEY_SIZE) { return NULL; }
   if ((hash = GRN_MALLOC(sizeof(grn_hash)))) {
     if (!((flags & GRN_HASH_TINY) ?

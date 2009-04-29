@@ -33,7 +33,6 @@
 
 static int port = DEFAULT_PORT;
 static int batchmode;
-static grn_encoding enc = GRN_ENC_DEFAULT;
 
 static void
 usage(void)
@@ -253,7 +252,7 @@ cache_init(grn_ctx *ctx)
         grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
         if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
                                             GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                                            shorttext_type, 0, enc))) {
+                                            shorttext_type, 0))) {
           cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
                                           GRN_OBJ_PERSISTENT, shorttext_type);
           cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
@@ -910,7 +909,7 @@ server(char *path)
     if (!db) { db = grn_db_create(ctx, path, NULL); }
     if (db) {
       ev.opaque = db;
-      edges = grn_hash_create(ctx, NULL, sizeof(grn_com_addr), sizeof(grn_edge), 0, 0);
+      edges = grn_hash_create(ctx, NULL, sizeof(grn_com_addr), sizeof(grn_edge), 0);
       if (!grn_com_sopen(ctx, &ev, port, msg_handler)) {
         while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_QL_QUIT) {
           grn_edge *edge;
@@ -1022,6 +1021,7 @@ enum {
 int
 main(int argc, char **argv)
 {
+  grn_encoding enc = GRN_ENC_DEFAULT;
   char *portstr = NULL, *encstr = NULL, *loglevel = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {

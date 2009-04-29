@@ -63,7 +63,7 @@ test_array_set_data(void)
 
   table = grn_table_create(&context, NULL, 0, NULL,
                            GRN_OBJ_TABLE_NO_KEY,
-                           NULL, sizeof(value), GRN_ENC_DEFAULT);
+                           NULL, sizeof(value));
   record_id = grn_table_add(&context, table);
 
   record_value = grn_obj_open(&context, GRN_BULK, 0, 0);
@@ -96,7 +96,7 @@ test_temporary_table_no_path(gpointer data)
 
   table = grn_table_create(&context, NULL, 0, NULL,
                            flags,
-                           NULL, sizeof(grn_id), GRN_ENC_DEFAULT);
+                           NULL, sizeof(grn_id));
   cut_assert_equal_string(NULL, grn_obj_path(&context, table));
 }
 
@@ -126,7 +126,7 @@ test_temporary_table_default_tokenizer(gpointer data)
 
   table = grn_table_create(&context, NULL, 0, NULL,
                            flags,
-                           NULL, sizeof(grn_id), GRN_ENC_DEFAULT);
+                           NULL, sizeof(grn_id));
   grn_obj_set_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER,
                    OBJECT("<token:trigram>"));
   grn_table_get_info(&context, table, NULL, NULL, &tokenizer);
@@ -157,7 +157,7 @@ test_temporary_table_add(gpointer data)
   table = grn_table_create(&context, NULL, 0, NULL,
                            flags,
                            OBJECT("<shorttext>"),
-                           sizeof(grn_id), GRN_ENC_DEFAULT);
+                           sizeof(grn_id));
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
     grn_table_add(&context, table);
   } else {

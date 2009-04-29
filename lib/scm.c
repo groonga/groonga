@@ -712,7 +712,7 @@ mk_atom(grn_ctx *ctx, char *str, unsigned int len, grn_cell *v)
   const char *cur, *last, *str_end = str + len;
   if ((p = str2num(ctx, str, len)) != NIL) { return p; }
   for (last = cur = str; cur < str_end; cur += len) {
-    if (!(len = grn_charlen(ctx, cur, str_end, ctx->encoding))) { break; }
+    if (!(len = grn_charlen(ctx, cur, str_end))) { break; }
     if (*cur == '.') {
       if (last < cur) { *vp = grn_ql_mk_symbol2(ctx, last, cur - last, str != last); }
       v = CONS(v, CONS(NIL, NIL));
@@ -830,7 +830,7 @@ readstr(grn_ctx *ctx, char **str, unsigned int *size)
   for (start = end = ctx->impl->cur;;) {
     unsigned int len;
     /* null check and length check */
-    if (!(len = grn_charlen(ctx, end, ctx->impl->str_end, ctx->encoding))) {
+    if (!(len = grn_charlen(ctx, end, ctx->impl->str_end))) {
       ctx->impl->cur = ctx->impl->str_end;
       break;
     }
@@ -858,7 +858,7 @@ readstrexp(grn_ctx *ctx, char **str, unsigned int *size)
   for (start = src = dest = ctx->impl->cur;;) {
     unsigned int len;
     /* null check and length check */
-    if (!(len = grn_charlen(ctx, src, ctx->impl->str_end, ctx->encoding))) {
+    if (!(len = grn_charlen(ctx, src, ctx->impl->str_end))) {
       ctx->impl->cur = ctx->impl->str_end;
       if (start < dest) {
         *str = start;
@@ -971,7 +971,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       symbol2str(obj, b);
       if (flags & GRN_OBJ_INSPECT_SYMBOL_AS_STR) {
         grn_bulk_esc(ctx, buf, (*b == ':') ? b + 1 : b,
-                     strlen(b) - (*b == ':') ? 1 : 0, ctx->encoding);
+                     strlen(b) - (*b == ':') ? 1 : 0);
       } else {
         GRN_BULK_PUTS(ctx, buf, b);
       }
@@ -1003,7 +1003,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       break;
     case GRN_CELL_STR :
       if (flags & GRN_OBJ_INSPECT_ESC) {
-        grn_bulk_esc(ctx, buf, STRVALUE(obj), STRSIZE(obj), ctx->encoding);
+        grn_bulk_esc(ctx, buf, STRVALUE(obj), STRSIZE(obj));
       } else {
         grn_bulk_write(ctx, buf, STRVALUE(obj), STRSIZE(obj));
       }

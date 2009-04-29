@@ -239,8 +239,8 @@ open_snip(void)
   if (snip) {
     grn_snip_close(&context, snip);
   }
-  snip = grn_snip_open(&context,
-                       default_encoding, default_flags,
+  GRN_CTX_SET_ENCODING(&context, default_encoding);
+  snip = grn_snip_open(&context, default_flags,
                        default_width,  default_max_results,
                        default_open_tag, default_open_tag_len,
                        default_close_tag, default_close_tag_len,

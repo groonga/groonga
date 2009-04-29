@@ -94,6 +94,7 @@ setup(void)
 
   context = g_new0(grn_ctx, 1);
   grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
+  GRN_CTX_SET_ENCODING(context, GRN_ENC_UTF8);
 
   db = grn_db_create(context, NULL, NULL);
   grn_ctx_use(context, db);
@@ -108,7 +109,7 @@ setup(void)
                              table_name, strlen(table_name),
                              table_path,
                              GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
-                             type, VALUE_SIZE, GRN_ENC_UTF8);
+                             type, VALUE_SIZE);
   g_free(table_path);
 
   vgram_path = g_build_filename(tmp_directory, "vgram", NULL);

@@ -293,7 +293,7 @@ grn_rc
 grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_size)
 {
   ev->max_nevents = max_nevents;
-  if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0, GRN_ENC_NONE))) {
+  if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0))) {
     MUTEX_INIT(ev->mutex);
     COND_INIT(ev->cond);
     GRN_COM_QUEUE_INIT(&ev->recv_old);

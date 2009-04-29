@@ -189,6 +189,8 @@ run_test(const gchar **test_case_names, const grn_test_data *data)
 
   grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
 
+  GRN_CTX_SET_ENCODING(context, GRN_ENC_UTF8);
+
   type_name = "name";
   type = grn_type_create(context, type_name, strlen(type_name),
                          GRN_OBJ_KEY_UINT, sizeof(grn_id));
@@ -201,7 +203,7 @@ run_test(const gchar **test_case_names, const grn_test_data *data)
   table = grn_table_create(context,
                            table_name, strlen(table_name),
                            path, GRN_OBJ_PERSISTENT | data->flags,
-                           type, VALUE_SIZE, GRN_ENC_UTF8);
+                           type, VALUE_SIZE);
   g_free(path);
   cut_assert_not_null(table);
 
