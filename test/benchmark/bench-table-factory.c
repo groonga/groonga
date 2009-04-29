@@ -191,7 +191,7 @@ bench_setup(gpointer user_data)
   bench_utils_remove_path_recursive_force(data->base_dir);
   g_mkdir_with_parents(data->base_dir, 0755);
 
-  grn_ctx_init(data->context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  grn_ctx_init(data->context, GRN_CTX_USE_QL);
 
   type_name = "name";
   data->key_type = grn_type_create(data->context,

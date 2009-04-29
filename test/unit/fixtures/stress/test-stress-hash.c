@@ -107,7 +107,7 @@ test_read_write(gconstpointer *data)
 
   key = i + process_number * N_THREADS;
 
-  rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL);
   cut_set_message("context: %d (%d)", i, process_number);
   grn_test_assert(rc);
   context = contexts[i];

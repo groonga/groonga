@@ -36,7 +36,7 @@ void
 setup(void)
 {
   logger = setup_grn_logger();
-  grn_ctx_init(&context, 0, GRN_ENC_DEFAULT);
+  grn_ctx_init(&context, 0);
   database = grn_db_create(&context, NULL, NULL);
 }
 

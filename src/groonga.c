@@ -67,7 +67,7 @@ do_alone(char *path)
   int rc = -1;
   grn_obj *db = NULL;
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0), enc);
+  grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0));
   if (path) { db = grn_db_open(ctx, path); }
   if (!db) { db = grn_db_create(ctx, path, NULL); }
   if (db) {
@@ -111,7 +111,7 @@ do_client(char *hostname)
 {
   int rc = -1;
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0), enc);
+  grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
   if (!grn_ql_connect(ctx, hostname, port, 0)) {
     char *buf = GRN_MALLOC(BUFSIZE);
     if (buf) {
@@ -846,7 +846,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
     grn_id id = grn_hash_get(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
                              (void **)&edge, &f);
     if (f & GRN_TABLE_ADDED) {
-      grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL, enc);
+      grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL);
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ql_recv_handler_set(&edge->ctx, output, edge);
@@ -887,7 +887,7 @@ server(char *path)
   int rc = -1;
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, 0, enc);
+  grn_ctx_init(ctx, 0);
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   MUTEX_INIT(cache_mutex);
@@ -1071,7 +1071,7 @@ main(int argc, char **argv)
   }
   batchmode = !isatty(0);
   if (grn_init()) { return -1; }
-  grn_gctx.encoding = enc; /* todo : make it api */
+  grn_set_default_encoding(enc);
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
   switch (mode) {
   case mode_alone :

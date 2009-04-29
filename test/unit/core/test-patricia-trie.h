@@ -160,8 +160,8 @@ teardown_trie_common(void)
 {                                                       \
   context = g_new0(grn_ctx, 1);                         \
   grn_test_assert(grn_ctx_init(context,                 \
-                               default_context_flags,   \
-                               default_encoding));      \
+                               default_context_flags)); \
+  GRN_CTX_SET_ENCODING(context, default_encoding);      \
 } while (0)
 
 #define cut_assert_open_context() do            \

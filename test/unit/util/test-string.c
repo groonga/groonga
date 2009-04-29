@@ -50,7 +50,7 @@ static const gchar normalized_text_ja_utf8[] =
 void
 setup (void)
 {
-  grn_ctx_init(&context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  grn_ctx_init(&context, GRN_CTX_USE_QL);
 }
 
 void

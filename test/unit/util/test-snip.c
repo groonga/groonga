@@ -193,7 +193,7 @@ shutdown(void)
 void
 setup(void)
 {
-  grn_ctx_init(&context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  grn_ctx_init(&context, GRN_CTX_USE_QL);
 
   snip = NULL;
   keyword = NULL;

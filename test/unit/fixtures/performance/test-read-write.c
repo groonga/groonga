@@ -117,7 +117,7 @@ test_read_write(gconstpointer *data)
     process_number = atoi(process_number_string);
 
   cut_set_message("context: %d (%d)", i, process_number);
-  rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL);
   grn_test_assert(rc);
   context = contexts[i];
 

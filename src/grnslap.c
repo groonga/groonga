@@ -198,7 +198,7 @@ static void * CALLBACK
 receiver(void *arg)
 {
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, 0, GRN_ENC_DEFAULT);
+  grn_ctx_init(ctx, 0);
   while (!grn_com_event_poll(ctx, &ev, 100)) {
     if (nsent == nrecv && done) { break; }
     /*
@@ -223,7 +223,7 @@ do_client()
   struct timeval tvb, tve;
   grn_com_header sheader;
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, 0, GRN_ENC_DEFAULT);
+  grn_ctx_init(ctx, 0);
   GRN_COM_QUEUE_INIT(&fsessions);
   sessions = grn_hash_create(ctx, NULL, sizeof(grn_sock), sizeof(session), 0, 0);
   sheader.proto = GRN_COM_PROTO_GQTP;

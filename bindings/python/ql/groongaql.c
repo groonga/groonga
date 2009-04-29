@@ -47,7 +47,8 @@ groongaql_ContextObject_new(PyTypeObject *type, PyObject *args, PyObject *keywds
     return NULL;
   }
   Py_BEGIN_ALLOW_THREADS
-  rc = grn_ctx_init(&self->ctx, flags, encoding);
+  rc = grn_ctx_init(&self->ctx, flags);
+  GRN_CTX_SET_ENCODING(&self->ctx, encoding);
   Py_END_ALLOW_THREADS
   if (rc) {
     self->ob_type->tp_free(self);

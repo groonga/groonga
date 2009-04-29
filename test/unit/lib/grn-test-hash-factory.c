@@ -165,7 +165,8 @@ grn_test_hash_factory_ensure_context(GrnTestHashFactory *factory, GError **error
   context_free(priv);
 
   priv->context = g_new0(grn_ctx, 1);
-  result = grn_ctx_init(priv->context, priv->context_flags, priv->encoding);
+  result = grn_ctx_init(priv->context, priv->context_flags);
+  GRN_CTX_SET_ENCODING(priv->context, priv->encoding);
   if (result != GRN_SUCCESS) {
     g_set_error(error,
                 GRN_TEST_HASH_FACTORY_ERROR,

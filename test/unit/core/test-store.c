@@ -44,7 +44,7 @@ setup(void)
   error_messages = NULL;
 
   context = g_new0(grn_ctx, 1);
-  grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT);
+  grn_ctx_init(context, GRN_CTX_USE_QL);
   db = NULL;
   base_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
   default_path = g_build_filename(base_dir, "store", NULL);

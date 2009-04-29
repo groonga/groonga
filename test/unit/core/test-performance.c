@@ -187,7 +187,7 @@ run_test(const gchar **test_case_names, const grn_test_data *data)
   const gchar *type_name, *table_name;
   gchar *path;
 
-  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
 
   type_name = "name";
   type = grn_type_create(context, type_name, strlen(type_name),

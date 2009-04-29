@@ -1,5 +1,14 @@
 2009-04-29  Poe MORITA  <morita at razil.jp>
 
+	* groonga.h (grn_ctx_init): cut off encoding argument.
+	* groonga.h (grn_get_default_encoding): add.
+	* groonga.h (grn_set_default_encoding): add.
+	* groonga.h (GRN_CTX_GET_ENCODING): add.
+	* groonga.h (GRN_CTX_SET_ENCODING): add.
+	* db.c (grn_obj_get_info) : support GRN_INFO_ENCODING.
+
+2009-04-29  Poe MORITA  <morita at razil.jp>
+
 	* grnslap.c: fixed bug of etime_amount calculation.
 
 2009-04-28  Kouhei Sutou  <kou@clear-code.com>

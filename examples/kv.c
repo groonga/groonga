@@ -5,13 +5,14 @@
 
 grn_ctx ctx;
 grn_obj *db;
-grn_encoding enc = GRN_ENC_DEFAULT;
 
 #ifdef SEQUENTIAL
 #define GENKEY(i) (i)
 #else /* SEQUENTIAL */
 #define GENKEY(i) (rand())
 #endif /* SEQUENTIAL */
+
+grn_encoding enc = GRN_ENC_DEFAULT;
 
 int nloops = 1000000;
 unsigned key_size = 8;
@@ -358,7 +359,7 @@ main(int argc, char **argv)
     fprintf(stderr, "grn_init() failed\n");
     return -1;
   }
-  if (grn_ctx_init(&ctx, (method == 'q' ? GRN_CTX_USE_QL|GRN_CTX_BATCH_MODE : 0), enc)) {
+  if (grn_ctx_init(&ctx, (method == 'q' ? GRN_CTX_USE_QL|GRN_CTX_BATCH_MODE : 0))) {
     fprintf(stderr, "grn_ctx_init() failed\n");
     return -1;
   }

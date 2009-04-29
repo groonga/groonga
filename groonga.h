@@ -165,7 +165,7 @@ struct _grn_ctx {
 #define GRN_CTX_USE_QL                 (0x03)
 #define GRN_CTX_BATCH_MODE             (0x04)
 
-GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
+GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags);
 
 /**
  * grn_ctx_fin:
@@ -174,6 +174,25 @@ GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding);
  * ctxの管理するメモリを解放し、使用を終了します。
  **/
 GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
+
+/**
+ * grn_get_default_encoding:
+ *
+ * デフォルトのencodingを返します。
+ **/
+GRN_API grn_encoding grn_get_default_encoding(void);
+
+/**
+ * grn_get_default_encoding:
+ * @encoding: 変更後のデフォルトのencodingを指定します。
+ *
+ * デフォルトのencodingを変更します。
+ **/
+GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
+
+#define GRN_CTX_GET_ENCODING(ctx) ((ctx)->encoding)
+#define GRN_CTX_SET_ENCODING(ctx,enc) \
+  ((ctx)->encoding = (enc == GRN_ENC_DEFAULT) ? grn_get_default_encoding() : enc)
 
 /* obj */
 

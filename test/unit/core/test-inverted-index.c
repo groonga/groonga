@@ -93,7 +93,7 @@ setup(void)
   path = g_build_filename(tmp_directory, "inverted-index", NULL);
 
   context = g_new0(grn_ctx, 1);
-  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
 
   db = grn_db_create(context, NULL, NULL);
   grn_ctx_use(context, db);

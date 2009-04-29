@@ -269,14 +269,14 @@ grn_ctx_ql_init(grn_ctx *ctx, int flags)
 }
 
 grn_rc
-grn_ctx_init(grn_ctx *ctx, int flags, grn_encoding encoding)
+grn_ctx_init(grn_ctx *ctx, int flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   // if (ctx->stat != GRN_QL_FIN) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   ctx->flags = flags;
   ctx->stat = GRN_QL_WAIT_EXPR;
-  ctx->encoding = encoding;
+  ctx->encoding = grn_gctx.encoding;
   ctx->seqno = 0;
   ctx->seqno2 = 0;
   ctx->subno = 0;
@@ -366,7 +366,8 @@ grn_init(void)
   grn_ql_init_const();
   ctx->next = ctx;
   ctx->prev = ctx;
-  grn_ctx_init(ctx, 0, grn_strtoenc(GROONGA_DEFAULT_ENCODING));
+  grn_ctx_init(ctx, 0);
+  ctx->encoding = grn_strtoenc(GROONGA_DEFAULT_ENCODING);
 #ifdef WIN32
   {
     SYSTEM_INFO si;
@@ -445,6 +446,32 @@ grn_init(void)
   return rc;
 }
 
+grn_encoding
+grn_get_default_encoding(void)
+{
+  return grn_gctx.encoding;
+}
+
+grn_rc
+grn_set_default_encoding(grn_encoding encoding)
+{
+  switch (encoding) {
+  case GRN_ENC_DEFAULT :
+    grn_gctx.encoding = grn_strtoenc(GROONGA_DEFAULT_ENCODING);
+    return GRN_SUCCESS;
+  case GRN_ENC_NONE :
+  case GRN_ENC_EUC_JP :
+  case GRN_ENC_UTF8 :
+  case GRN_ENC_SJIS :
+  case GRN_ENC_LATIN1 :
+  case GRN_ENC_KOI8R :
+    grn_gctx.encoding = encoding;
+    return GRN_SUCCESS;
+  default :
+    return GRN_INVALID_ARGUMENT;
+  }
+}
+
 static int alloc_count = 0;
 
 grn_rc
@@ -468,9 +495,7 @@ grn_ctx_open(grn_obj *db, int flags)
 {
   grn_ctx *ctx = GRN_GMALLOCN(grn_ctx, 1);
   if (ctx) {
-    grn_ctx_init(ctx, flags, db ?
-                 ((grn_pat *)grn_db_keys(db))->encoding :
-                 GRN_ENC_DEFAULT);
+    grn_ctx_init(ctx, flags);
     if (ERRP(ctx, GRN_ERROR)) {
       grn_ctx_close(ctx);
       return NULL;

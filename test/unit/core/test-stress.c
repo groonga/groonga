@@ -183,7 +183,7 @@ test_hash(gconstpointer test_data)
   gchar *path;
   const gchar *test_case_names[] = {"test_stress_hash", NULL};
 
-  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
 
   path = g_build_filename(base_dir, "hash", NULL);
   g_setenv(GRN_TEST_ENV_HASH_PATH, path, TRUE);
@@ -215,7 +215,7 @@ test_patricia_trie(gconstpointer test_data)
   gchar *path;
   const gchar *test_case_names[] = {"test_stress_patricia_trie", NULL};
 
-  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL, GRN_ENC_DEFAULT));
+  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
 
   path = g_build_filename(base_dir, "patricia-trie", NULL);
   g_setenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH, path, TRUE);

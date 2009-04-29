@@ -86,8 +86,11 @@ teardown(void)
   db = grn_db_create(context, default_path, &option);   \
 } while (0)
 
-#define open_context()                                                  \
-  grn_test_assert(grn_ctx_init(context, default_context_flags, default_encoding))
+#define open_context() do                                               \
+{                                                                       \
+  grn_test_assert(grn_ctx_init(context, default_context_flags));        \
+  GRN_CTX_SET_ENCODING(context, default_encoding);                      \
+} while (0)
 
 #define cut_assert_open_context() do            \
 {                                               \

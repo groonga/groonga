@@ -3004,6 +3004,18 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     }
   }
   switch (type) {
+  case GRN_INFO_ENCODING :
+    switch (obj->header.type) {
+    case GRN_TABLE_PAT_KEY :
+      grn_bulk_write(ctx, valuebuf, (const char *)&((grn_pat *)obj)->encoding, sizeof(grn_encoding));
+      break;
+    case GRN_TABLE_HASH_KEY :
+      grn_bulk_write(ctx, valuebuf, (const char *)&((grn_hash *)obj)->encoding, sizeof(grn_encoding));
+      break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+    }
+    break;
   case GRN_INFO_SOURCE :
     if (!GRN_DB_OBJP(obj)) {
       ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");

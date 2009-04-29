@@ -31,7 +31,7 @@ void
 setup(void)
 {
   context = g_new0(grn_ctx, 1);
-  grn_ctx_init(context, 0, GRN_ENC_DEFAULT);
+  grn_ctx_init(context, 0);
   database = NULL;
 }
 

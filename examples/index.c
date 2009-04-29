@@ -250,7 +250,7 @@ main(int argc, char **argv)
     fprintf(stderr, "grn_init() failed\n");
     return -1;
   }
-  if (grn_ctx_init(&ctx, 0, GRN_ENC_DEFAULT)) {
+  if (grn_ctx_init(&ctx, 0)) {
     fprintf(stderr, "grn_ctx_init() failed\n");
     return -1;
   }
