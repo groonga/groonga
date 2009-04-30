@@ -3860,20 +3860,20 @@ compare_value(grn_ctx *ctx, sort_entry *a, sort_entry *b,
   const char *ap, *bp;
   for (i = 0; i < n_keys; i++, keys++) {
     if (i) {
-      if (keys->flags & GRN_TABLE_SORT_ASC) {
-        ap = grn_obj_get_value_(ctx, keys->key, a->id, &as);
-        bp = grn_obj_get_value_(ctx, keys->key, b->id, &bs);
-      } else {
+      if (keys->flags & GRN_TABLE_SORT_DESC) {
         ap = grn_obj_get_value_(ctx, keys->key, b->id, &as);
         bp = grn_obj_get_value_(ctx, keys->key, a->id, &bs);
+      } else {
+        ap = grn_obj_get_value_(ctx, keys->key, a->id, &as);
+        bp = grn_obj_get_value_(ctx, keys->key, b->id, &bs);
       }
     } else {
-      if (keys->flags & GRN_TABLE_SORT_ASC) {
-        ap = a->value; as = a->size;
-        bp = b->value; bs = b->size;
-      } else {
+      if (keys->flags & GRN_TABLE_SORT_DESC) {
         ap = b->value; as = b->size;
         bp = a->value; bs = a->size;
+      } else {
+        ap = a->value; as = a->size;
+        bp = b->value; bs = b->size;
       }
     }
     type = keys->offset;

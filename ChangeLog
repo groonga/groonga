@@ -1,5 +1,9 @@
 2009-04-30  Poe MORITA  <morita at razil.jp>
 
+	* lib/db.c (compare_value): fixed a bug cause wrong sort result.
+
+2009-04-30  Poe MORITA  <morita at razil.jp>
+
 	* groonga.h (GRN_CURSOR_ASCENDING/GRN_CURSOR_DESCENDING): swap value.
 	* groonga.h (GRN_TABLE_SORT_ASC/GRN_TABLE_SORT_DESC): swap value.
 

@@ -364,22 +364,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max, in
   c->array = array;
   c->ctx = ctx;
   c->obj.flags = flags;
-  if (flags & GRN_CURSOR_ASCENDING) {
-    c->dir = 1;
-    if (min) {
-      c->curr_rec = min;
-      if (!(flags & GRN_CURSOR_GT)) { c->curr_rec--; }
-    } else {
-      c->curr_rec = GRN_ID_NIL;
-    }
-    if (max) {
-      c->limit = max;
-      if ((flags & GRN_CURSOR_LT)) { c->limit--; }
-    } else {
-      c->limit = ARRAY_CURR_MAX(array);
-    }
-    if (c->limit < c->curr_rec) { c->limit = c->curr_rec; }
-  } else {
+  if (flags & GRN_CURSOR_DESCENDING) {
     c->dir = -1;
     if (max) {
       c->curr_rec = max;
@@ -394,6 +379,21 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max, in
       c->limit = GRN_ID_NIL + 1;
     }
     if (c->curr_rec < c->limit) { c->limit = c->curr_rec; }
+  } else {
+    c->dir = 1;
+    if (min) {
+      c->curr_rec = min;
+      if (!(flags & GRN_CURSOR_GT)) { c->curr_rec--; }
+    } else {
+      c->curr_rec = GRN_ID_NIL;
+    }
+    if (max) {
+      c->limit = max;
+      if ((flags & GRN_CURSOR_LT)) { c->limit--; }
+    } else {
+      c->limit = ARRAY_CURR_MAX(array);
+    }
+    if (c->limit < c->curr_rec) { c->limit = c->curr_rec; }
   }
   return c;
 }
@@ -1421,28 +1421,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   c->hash = hash;
   c->ctx = ctx;
   c->obj.flags = flags;
-  if (flags & GRN_CURSOR_ASCENDING) {
-    c->dir = 1;
-    if (min) {
-      if (!(c->curr_rec = grn_hash_lookup(ctx, hash, min, min_size, NULL, &f))) {
-        c->limit = GRN_ID_NIL;
-        goto exit;
-      }
-      if (!(flags & GRN_CURSOR_GT)) { c->curr_rec--; }
-    } else {
-      c->curr_rec = GRN_ID_NIL;
-    }
-    if (max) {
-      if (!(c->limit = grn_hash_lookup(ctx, hash, max, max_size, NULL, &f))) {
-        c->curr_rec = GRN_ID_NIL;
-        goto exit;
-      }
-      if ((flags & GRN_CURSOR_LT)) { c->limit--; }
-    } else {
-      c->limit = HASH_CURR_MAX(hash);
-    }
-    if (c->limit < c->curr_rec) { c->limit = c->curr_rec; }
-  } else {
+  if (flags & GRN_CURSOR_DESCENDING) {
     c->dir = -1;
     if (max) {
       if (!(c->curr_rec = grn_hash_lookup(ctx, hash, max, max_size, NULL, &f))) {
@@ -1463,6 +1442,27 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
       c->limit = GRN_ID_NIL + 1;
     }
     if (c->curr_rec < c->limit) { c->limit = c->curr_rec; }
+  } else {
+    c->dir = 1;
+    if (min) {
+      if (!(c->curr_rec = grn_hash_lookup(ctx, hash, min, min_size, NULL, &f))) {
+        c->limit = GRN_ID_NIL;
+        goto exit;
+      }
+      if (!(flags & GRN_CURSOR_GT)) { c->curr_rec--; }
+    } else {
+      c->curr_rec = GRN_ID_NIL;
+    }
+    if (max) {
+      if (!(c->limit = grn_hash_lookup(ctx, hash, max, max_size, NULL, &f))) {
+        c->curr_rec = GRN_ID_NIL;
+        goto exit;
+      }
+      if ((flags & GRN_CURSOR_LT)) { c->limit--; }
+    } else {
+      c->limit = HASH_CURR_MAX(hash);
+    }
+    if (c->limit < c->curr_rec) { c->limit = c->curr_rec; }
   }
 exit :
   return c;
@@ -1583,7 +1583,7 @@ grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
       : grn_str_greater(ap, as, bp, bs)))
 
 #define COMPARE_VAL(ap,as,bp,bs)\
-  ((dir) ? COMPARE_VAL_((ap),(as),(bp),(bs)) : COMPARE_VAL_((bp),(bs),(ap),(as)))
+  ((dir) ? COMPARE_VAL_((bp),(bs),(ap),(as)) : COMPARE_VAL_((ap),(as),(bp),(bs)))
 
 inline static entry **
 pack(grn_ctx *ctx, grn_hash *hash, entry **res, grn_table_sort_optarg *arg, int dir)
@@ -1734,7 +1734,7 @@ typedef struct {
       : memcmp(&(ap)->v, &(bp)->v, sizeof(uint32_t)) > 0))
 
 #define COMPARE_VAL32(ap,bp)\
-  ((dir) ? COMPARE_VAL32_((ap),(bp)) : COMPARE_VAL32_((bp),(ap)))
+  ((dir) ? COMPARE_VAL32_((bp),(ap)) : COMPARE_VAL32_((ap),(bp)))
 
 inline static val32 *
 pack_val32(grn_ctx *ctx, grn_hash *hash, val32 *res, grn_table_sort_optarg *arg, int dir)
@@ -1870,7 +1870,7 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
   if (limit > *hash->n_entries) { limit = *hash->n_entries; }
   //  hash->limit = limit;
   if (optarg) {
-    int dir = (optarg->flags & GRN_TABLE_SORT_ASC);
+    int dir = (optarg->flags & GRN_TABLE_SORT_DESC);
     if ((optarg->flags & GRN_TABLE_SORT_BY_ID) ||
         (optarg->flags & GRN_TABLE_SORT_BY_VALUE)
         ? ((hash->value_size - optarg->offset) == sizeof(uint32_t))

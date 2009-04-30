@@ -183,7 +183,7 @@ symbolp(grn_cell *x)
 }
 
 static int
-ascp(grn_cell *x)
+descp(grn_cell *x)
 {
   uint16_t name_size;
   const char *name;
@@ -191,7 +191,7 @@ ascp(grn_cell *x)
     && (name = _grn_hash_strkey_by_val(x, &name_size))
     && (name_size > 1)
     && (*name == ':')
-    && (name[1] == 'a');
+    && (name[1] == 'd');
 }
 
 /* column_exp */
@@ -236,8 +236,8 @@ column_exp_build_(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce, grn
         d = &CDR(r);
         while (PAIRP(e)) {
           POP(x, e);
-          if (COLUMN_EXPP(l, ce) && ascp(x)) {
-            ce->keys[ce->n_keys].flags |= GRN_TABLE_SORT_ASC;
+          if (COLUMN_EXPP(l, ce) && descp(x)) {
+            ce->keys[ce->n_keys].flags |= GRN_TABLE_SORT_DESC;
           }
           l = column_exp_build_(ctx, table, x, ce, parameter);
           *d = CONS(l, NIL);
@@ -258,8 +258,8 @@ column_exp_build(grn_ctx *ctx, grn_obj *table, grn_cell *e, column_exp *ce, grn_
   ce->n_keys = 0;
   while (PAIRP(e)) {
     POP(x, e);
-    if (COLUMN_EXPP(l, ce) && ascp(x)) {
-      ce->keys[ce->n_keys].flags |= GRN_TABLE_SORT_ASC;
+    if (COLUMN_EXPP(l, ce) && descp(x)) {
+      ce->keys[ce->n_keys].flags |= GRN_TABLE_SORT_DESC;
     }
     l = column_exp_build_(ctx, table, x, ce, parameter);
     *d = CONS(l, NIL);
@@ -949,7 +949,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
       uint16_t i;
       for (i = 0; i < str_size; i++) {
         switch (str[i]) {
-        case 'a' : spec->mode |= GRN_CURSOR_ASCENDING; break;
+        case 'd' : spec->mode |= GRN_CURSOR_DESCENDING; break;
         case 'g' : spec->mode |= GRN_CURSOR_GT; break;
         case 'l' : spec->mode |= GRN_CURSOR_LT; break;
         }
@@ -2645,7 +2645,7 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
           char msg[STRBUF_SIZE];
           uint16_t msg_size;
           if (!obj2str(car, msg, &msg_size) && (*msg == 'd')) {
-            flags &= ~GRN_CURSOR_ASCENDING;
+            flags |= GRN_CURSOR_DESCENDING;
           }
         }
         {
@@ -2883,7 +2883,7 @@ disp_t_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf, int *f)
           char msg[STRBUF_SIZE];
           uint16_t msg_size;
           if (!obj2str(car, msg, &msg_size) && (*msg == 'd')) {
-            flags &= ~GRN_CURSOR_ASCENDING;
+            flags |= GRN_CURSOR_DESCENDING;
           }
         }
         {
