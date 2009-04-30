@@ -206,10 +206,8 @@ test_create(void)
 void
 test_create_with_null_path(void)
 {
-  cut_omit("grn_ii_create() doesn't check NULL path. should be checked?");
-
   inverted_index = grn_ii_create(context, NULL, lexicon, 0);
-  cut_assert_null(inverted_index);
+  cut_assert_not_null(inverted_index);
 }
 
 void
