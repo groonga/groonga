@@ -1,5 +1,9 @@
 2009-04-30  Poe MORITA  <morita at razil.jp>
 
+	* lib/token.c: fixed a bug cause wrong flag handling.
+
+2009-04-30  Poe MORITA  <morita at razil.jp>
+
 	* lib/db.c (compare_value): fixed a bug cause wrong sort result.
 
 2009-04-30  Poe MORITA  <morita at razil.jp>

@@ -48,7 +48,7 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open_(ctx, (char *)argv[0].ptr, argv[1].int_value,
-                                   token->encoding, nflags))) {
+                                    nflags, token->encoding))) {
     ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
     return ctx->rc;
   }
@@ -145,7 +145,7 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open_(ctx, (char *)argv[0].ptr, argv[1].int_value,
-                                   token->encoding, nflags))) {
+                                    nflags, token->encoding))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open failed at grn_token_open");
     return GRN_TOKENIZER_ERROR;
   }
@@ -262,7 +262,7 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
   grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open_(ctx, (char *)argv[0].ptr, argv[1].int_value,
-                                   token->encoding, nflags))) {
+                                    nflags, token->encoding))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open failed at grn_token_open");
     return GRN_TOKENIZER_ERROR;
   }
