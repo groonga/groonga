@@ -3732,6 +3732,31 @@ grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
 }
 
 int
+grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
+{
+  int len = 0;
+  char buf[GRN_TABLE_MAX_KEY_SIZE];
+  GRN_API_ENTER;
+  if (GRN_DB_OBJP(obj)) {
+    if (DB_OBJ(obj)->id && DB_OBJ(obj)->id < GRN_ID_MAX) {
+      grn_db *s = (grn_db *)DB_OBJ(obj)->db;
+      len = grn_pat_get_key(ctx, s->keys, DB_OBJ(obj)->id, buf, GRN_TABLE_MAX_KEY_SIZE);
+      if (len) {
+        char *p;
+        for (p = &buf[len]; buf < p; p--) {
+          if (p[-1] == GRN_DB_DELIMITER) { break; }
+        }
+        len -= (p - buf);
+        if (len <= buf_size) {
+          memcpy(namebuf, p, len);
+        }
+      }
+    }
+  }
+  GRN_API_RETURN(len);
+}
+
+int
 grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold)
 {
   GRN_API_ENTER;

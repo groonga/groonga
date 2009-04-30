@@ -1,3 +1,7 @@
+2009-04-30  Poe MORITA  <morita at razil.jp>
+
+	* lib/db.c (grn_column_name): add.
+
 2009-04-29  Poe MORITA  <morita at razil.jp>
 
 	* groonga.h (grn_db_create_optarg): cut off encoding element.
@@ -7,7 +11,7 @@
 	* groonga.h (grn_bulk_esc): cut off encoding argument.
 	* groonga.h (grn_str_open): cut off encoding argument.
 	* groonga.h (grn_charlen): cut off encoding argument.
-	* groonga.h (grn_hash_create`): cut off encoding argument.
+	* groonga.h (grn_hash_create): cut off encoding argument.
 	* lib/ctx.c (grn_ctx_use): update ctx->encoding to db->encoding;
 
 2009-04-29  Poe MORITA  <morita at razil.jp>

@@ -181,6 +181,75 @@ table_put(void)
 }
 
 int
+table_put2(void)
+{
+  int i;
+  grn_obj keybuf, valbuf;
+  grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
+                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
+                                    key_type, value_size);
+  if (!table) { return -1; }
+  for (i = 0; i < nloops; i++) {
+    int key = GENKEY(i);
+    GRN_OBJ_INIT(&keybuf, GRN_BULK, 0);
+    grn_bulk_itoh(&ctx, &keybuf, key, key_size);
+    {
+      grn_search_flags flags = GRN_TABLE_ADD;
+      grn_id rid = grn_table_lookup(&ctx, table,
+                                    GRN_BULK_HEAD(&keybuf), key_size, &flags);
+      if (!rid) {
+        fprintf(stderr, "table_lookup failed");
+      } else {
+        GRN_OBJ_INIT(&valbuf, GRN_BULK, 0);
+        grn_bulk_itoh(&ctx, &valbuf, key, key_size);
+        if (grn_obj_set_value(&ctx, table, rid, &valbuf, GRN_OBJ_SET)) {
+          fprintf(stderr, "grn_obj_set_value failed");
+        }
+        grn_obj_close(&ctx, &valbuf);
+      }
+    }
+    grn_obj_close(&ctx, &keybuf);
+  }
+  return 0;
+}
+
+int
+table_put_allocate(void)
+{
+  int i;
+  grn_obj *buf;
+  grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
+                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
+                                    key_type, value_size);
+  if (!table) { return -1; }
+  for (i = 0; i < nloops; i++) {
+    int key = GENKEY(i);
+    buf = grn_obj_open(&ctx, GRN_BULK, 0, 0);
+    grn_bulk_itoh(&ctx, buf, key, key_size);
+    {
+      grn_search_flags flags = GRN_TABLE_ADD;
+      grn_id rid = grn_table_lookup(&ctx, table,
+                                    GRN_BULK_HEAD(buf), key_size, &flags);
+      if (!rid) {
+        fprintf(stderr, "table_lookup failed");
+      } else {
+        grn_obj *value_buf;
+        value_buf = grn_obj_open(&ctx, GRN_BULK, 0, 0);
+        grn_bulk_itoh(&ctx, value_buf, key, key_size);
+        if (grn_obj_set_value(&ctx, table, rid, value_buf, GRN_OBJ_SET)) {
+          fprintf(stderr, "grn_obj_set_value failed");
+        }
+        grn_obj_close(&ctx, value_buf);
+      }
+    }
+    grn_obj_close(&ctx, buf);
+  }
+  return 0;
+}
+
+int
 table_get(void)
 {
   int i;
@@ -390,7 +459,9 @@ main(int argc, char **argv)
       r = (op == 'p') ? column_put() : column_get();
       break;
     case 't' :
-      r = (op == 'p') ? table_put() : table_get();
+      //      r = (op == 'p') ? table_put() : table_get();
+      r = (op == 'p') ? table_put_allocate() : table_get();
+    //r = (op == 'p') ? table_put2() : table_get();
       break;
     default :
       r = -1;

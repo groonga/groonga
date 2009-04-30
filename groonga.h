@@ -1066,6 +1066,18 @@ GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 /**
+ * grn_obj_name:
+ * @obj: 対象object
+ * @namebuf: 名前を格納するバッファ(呼出側で準備する)
+ * @buf_size: namebufのサイズ(byte長)
+ *
+ * カラムobjの名前の長さを返す。
+ * buf_sizeの長さが名前の長以上であった場合は、
+ * namebufに該当する名前をコピーする。
+ **/
+GRN_API int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
+
+/**
  * grn_obj_get_range:
  * @obj: 対象object
  *
@@ -1073,6 +1085,8 @@ GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size
  * 例えば、grn_builtin_typeにあるGRN_DB_INTなどを返す。
  **/
 GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
+
+#define GRN_OBJ_GET_DOMAIN(obj) ((obj)->header.domain)
 
 /**
  * grn_obj_expire:
