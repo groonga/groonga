@@ -580,8 +580,8 @@ GRN_API grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 
 typedef grn_obj grn_table_cursor;
 
-#define GRN_CURSOR_DESCENDING          (0x00<<0)
-#define GRN_CURSOR_ASCENDING           (0x01<<0)
+#define GRN_CURSOR_ASCENDING           (0x00<<0)
+#define GRN_CURSOR_DESCENDING          (0x01<<0)
 #define GRN_CURSOR_GE                  (0x00<<1)
 #define GRN_CURSOR_GT                  (0x01<<1)
 #define GRN_CURSOR_LE                  (0x00<<2)
@@ -712,8 +712,8 @@ GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 typedef struct _grn_table_sort_key grn_table_sort_key;
 typedef unsigned char grn_table_sort_flags;
 
-#define GRN_TABLE_SORT_DESC            (0x00<<0)
-#define GRN_TABLE_SORT_ASC             (0x01<<0)
+#define GRN_TABLE_SORT_ASC             (0x00<<0)
+#define GRN_TABLE_SORT_DESC            (0x01<<0)
 
 struct _grn_table_sort_key {
   grn_obj *key;
