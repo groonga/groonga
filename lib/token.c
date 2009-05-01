@@ -21,6 +21,53 @@
 #include "pat.h"
 #include "hash.h"
 
+grn_obj *grn_uvector_tokenizer = NULL;
+
+typedef struct {
+  byte *curr;
+  byte *tail;
+  uint32_t unit;
+} grn_uvector_tokenizer_info;
+
+static grn_rc
+uvector_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+            int argc, grn_proc_data *argv)
+{
+  grn_uvector_tokenizer_info *token;
+  if (!(token = GRN_MALLOC(sizeof(grn_uvector_tokenizer_info)))) { return ctx->rc; }
+  user_data->ptr = token;
+  token->curr = argv[0].ptr;
+  token->tail = token->curr + argv[1].int_value;
+  token->unit = sizeof(grn_id);
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+uvector_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+             int argc, grn_proc_data *argv)
+{
+  grn_uvector_tokenizer_info *token = user_data->ptr;
+  byte *p = token->curr + token->unit;
+  argv[0].ptr = (void *)token->curr;
+  if (token->tail < p) {
+    argv[1].int_value = 0;
+    argv[2].int_value = GRN_TOKEN_LAST;
+  } else {
+    argv[1].int_value = token->unit;
+    token->curr = p;
+    argv[2].int_value = token->tail == p ? GRN_TOKEN_LAST : 0;
+  }
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+uvector_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+          int argc, grn_proc_data *argv)
+{
+  GRN_FREE(user_data->ptr);
+  return GRN_SUCCESS;
+}
+
 typedef struct {
   grn_str *nstr;
   uint8_t *delimiter;
@@ -498,6 +545,13 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
           grn_io_unlock(((grn_hash *)table)->io);
         }
         break;
+      case GRN_TABLE_NO_KEY :
+        if (token->curr_size == sizeof(grn_id)) {
+          tid = *((grn_id *)token->curr);
+        } else {
+          tid = GRN_ID_NIL;
+        }
+        break;
       }
     } else {
       switch (table->header.type) {
@@ -508,6 +562,13 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       case GRN_TABLE_HASH_KEY :
         tid = grn_hash_lookup(ctx, (grn_hash *)table, token->curr, token->curr_size,
                               NULL, &token->flags);
+        break;
+      case GRN_TABLE_NO_KEY :
+        if (token->curr_size == sizeof(grn_id)) {
+          tid = *((grn_id *)token->curr);
+        } else {
+          tid = GRN_ID_NIL;
+        }
         break;
       }
     }
@@ -553,5 +614,7 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                         mecab_init, mecab_next, mecab_fin);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
 #endif /* NO_MECAB */
+  grn_uvector_tokenizer = grn_proc_create(ctx, NULL, 0, NULL, GRN_PROC_HOOK,
+                                          uvector_init, uvector_next, uvector_fin);
   return GRN_SUCCESS;
 }

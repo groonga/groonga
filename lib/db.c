@@ -834,6 +834,12 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer; }
       rc = GRN_SUCCESS;
       break;
+    case GRN_TABLE_NO_KEY :
+      if (flags) { *flags = 0; }
+      if (encoding) { *encoding = GRN_ENC_NONE; }
+      if (tokenizer) { *tokenizer = grn_uvector_tokenizer; }
+      rc = GRN_SUCCESS;
+      break;
     }
   }
   GRN_API_RETURN(rc);
@@ -1302,7 +1308,25 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
     case GRN_COLUMN_INDEX :
       switch (query->header.type) {
       case GRN_BULK :
-        {
+        if (query->header.domain == obj->header.domain &&
+            GRN_BULK_VSIZE(query) == sizeof(grn_id)) {
+          grn_id tid = *((grn_id *)GRN_BULK_HEAD(query));
+          grn_ii_cursor *c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
+                                                GRN_ID_NIL, GRN_ID_MAX, 1, 0);
+          if (c) {
+            grn_ii_posting *pos;
+            grn_hash *s = (grn_hash *)res;
+            while ((pos = grn_ii_cursor_next(ctx, c))) {
+              /* todo: support orgarg(op)
+              res_add(ctx, s, (grn_rset_posinfo *) pos,
+                      get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
+              */
+              grn_hash_get(ctx, s, pos, s->key_size, NULL, NULL);
+            }
+            grn_ii_cursor_close(ctx, c);
+          }
+          return GRN_SUCCESS;
+        } else {
           const char *str = GRN_BULK_HEAD(query);
           unsigned int str_len = GRN_BULK_VSIZE(query);
           rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res);
