@@ -3330,8 +3330,8 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
             grn_obj *col = grn_ctx_get(ctx, *key);
             if (col) { grn_obj_remove(ctx, col); }
           });
-          grn_hash_close(ctx, cols);
         }
+        grn_hash_close(ctx, cols);
       }
       grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, 1);
     }
