@@ -129,6 +129,7 @@ typedef SOCKET grn_sock;
 
 #define CALLBACK __stdcall
 
+#include <intrin.h>
 #else /* WIN32 */
 
 #define GROONGA_API
@@ -319,6 +320,20 @@ typedef int grn_cond;
   (r) = (uint32_t)InterlockedExchangeAdd((int32_t *)(p), (int32_t)(i));
 # ifdef WIN32 /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
+{\
+  uint32_t v1, v2; \
+  uint64_t *p2= (p); \
+  v1 = *(((uint32_t *)&(v))+0);\
+  v2 = *(((uint32_t *)&(v))+1);\
+  __asm  _set_loop: \
+  __asm  mov esi, p2 \
+  __asm  mov ebx, v1 \
+  __asm  mov ecx, v2 \
+  __asm  mov eax, dword ptr [esi] \
+  __asm  mov edx, dword ptr [esi + 4] \
+  __asm  lock cmpxchg8b qword ptr [esi] \
+  __asm  jnz  _set_loop \
+}\
 /* TODO: use _InterlockedCompareExchange64 or inline asm */
 # elif defined WIN64 /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \

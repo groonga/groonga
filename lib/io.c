@@ -1437,6 +1437,9 @@ void
 grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
 {
   /* support WIN32 */
+#ifdef WIN32
+  return GRN_FREE(mi->map); 
+#endif
   GRN_MUNMAP(ctx, &mi->fmo, mi->map, length);
 }
 
@@ -1527,7 +1530,9 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
 {
   void *res;
   if (!fi) {
-    *fmo = (HANDLE)0;
+    if(fmo) {
+      *fmo = (HANDLE)0;
+    }
     return GRN_GCALLOC(length);
   }
   /* MUTEX_LOCK(fi->mutex); */
@@ -1551,6 +1556,9 @@ inline static int
 grn_munmap(grn_ctx *ctx, HANDLE *fmo, void *start, size_t length)
 {
   int r = 0;
+  if (!fmo) {
+    GRN_FREE(start);
+  }
   if (*fmo) {
     if (UnmapViewOfFile(start)) {
       mmap_size -= length;
