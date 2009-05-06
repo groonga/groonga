@@ -336,7 +336,7 @@ main(int argc, char **argv)
     dests[0].host = DEFAULT_HOST;
     dests[0].port = DEFAULT_PORT;
     dest_cnt = 1;
-  } else if (argc <= (i + MAX_DEST)){
+  } else if (i > 0 && argc <= (i + MAX_DEST)){
     for (dest_cnt = 0; i < argc; i++) {
       parse_dest(argv[i], &dests[dest_cnt]);
       if (dests[dest_cnt].host) {
