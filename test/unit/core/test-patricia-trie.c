@@ -286,7 +286,8 @@ test_delete_by_id_sis_short(void)
 void
 attributes_delete_by_id_sis_long(void)
 {
-  cut_set_attributes("ML", "1010");
+  cut_set_attributes("ML", "1010",
+                     NULL);
 }
 
 void
