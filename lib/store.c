@@ -481,6 +481,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei)
   GRN_IO_SEG_REF(ja->io, *pseg, einfo);
   if (!einfo) { return GRN_NO_MEMORY_AVAILABLE; }
   eback = einfo[pos];
+  // smb_wmb();
   GRN_SET_64BIT(&einfo[pos], *ei);
   GRN_IO_SEG_UNREF(ja->io, *pseg);
   grn_ja_free(ctx, ja, &eback);
