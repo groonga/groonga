@@ -589,6 +589,7 @@ _grn_pat_get(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
     rn->lr[1] = *p0;
     rn->lr[0] = r;
   }
+  // smp_wmb();
   *p0 = r;
   *new = 1;
   return r;

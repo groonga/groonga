@@ -174,6 +174,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
 static void
 buffer_segment_update(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, uint32_t pseg)
 {
+  // smb_wmb();
   ii->header->binfo[lseg] = pseg;
   if (lseg >= ii->header->bmax) { ii->header->bmax = lseg + 1; }
 }
@@ -1964,6 +1965,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
     if (!*lastp) {
       rnew->step = 0;
       rnew->jump = 0;
+      // smb_wmb();
       *lastp = pos;
       if (bt->size_in_buffer++ > 1) {
         buffer_rec *rhead = BUFFER_REC_AT(b, bt->pos_in_buffer);
@@ -2026,6 +2028,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
       }
       rnew->step = step;
       rnew->jump = check_jump(ctx, ii, b, rnew, jump) ? 0 : jump;
+      // smb_wmb();
       *lastp = pos;
       break;
     }
@@ -2761,6 +2764,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
               db->header.chunk = actual_chunk_size ? dcn : NOT_ASSIGNED;
               fake_map2(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
               if (!(rc = grn_io_win_unmap2(&dw))) {
+                // smb_wmb();
                 ii->header->binfo[seg] = ds;
                 ii->header->total_chunk_size += actual_chunk_size;
                 if (scn != NOT_ASSIGNED) {

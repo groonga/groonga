@@ -467,7 +467,7 @@ test_array_index(void)
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
-  db_path = g_build_filename(tmp_directory, "array-index-db", NULL);
+  db_path = g_build_filename(tmp_directory, "inverted-index", NULL);
   db = grn_db_create(context, db_path, NULL);
   g_free(db_path);
 
@@ -509,7 +509,7 @@ test_scalar_index(void)
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
-  db_path = g_build_filename(tmp_directory, "array-index-db", NULL);
+  db_path = g_build_filename(tmp_directory, "inverted-index", NULL);
   db = grn_db_create(context, db_path, NULL);
   g_free(db_path);
 
@@ -536,6 +536,71 @@ test_scalar_index(void)
   grn_test_assert(set_index_source(checked, checks));
 
   insert_and_search(users, items, checks, checked);
+
+  grn_obj_close(context, checks);
+  grn_obj_close(context, checked);
+  grn_obj_close(context, items);
+  grn_obj_close(context, users);
+}
+
+void
+test_int_index(void)
+{
+  gchar *db_path, *name;
+  grn_obj *users, *items, *checks, *checked, *int_type;
+
+  remove_tmp_directory();
+  g_mkdir_with_parents(tmp_directory, 0700);
+  db_path = g_build_filename(tmp_directory, "inverted-index", NULL);
+  db = grn_db_create(context, db_path, NULL);
+  g_free(db_path);
+
+  int_type = grn_ctx_get(context, GRN_DB_INT);
+  cut_assert_not_null(int_type);
+
+  name = "users";
+  users = grn_table_create(context, name, strlen(name), NULL,
+                           GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+  cut_assert_not_null(users);
+
+  name = "items";
+  items = grn_table_create(context, name, strlen(name), NULL,
+                           GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT, int_type, 0);
+  cut_assert_not_null(items);
+
+  name = "checks";
+  checks = grn_column_create(context, users, name, strlen(name), NULL,
+                             GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT, items);
+  cut_assert_not_null(checks);
+
+  name = "checked";
+  checked = grn_column_create(context, items, name, strlen(name), NULL,
+                              GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT, users);
+  cut_assert_not_null(checked);
+
+  grn_test_assert(set_index_source(checked, checks));
+
+  {
+    int32_t key = 1;
+    grn_search_flags f = GRN_TABLE_ADD;
+    grn_obj value, *res;
+    grn_id user1 = grn_table_add(context, users);
+    grn_id user2 = grn_table_add(context, users);
+    grn_id item = grn_table_lookup(context, items, &key, sizeof(int32_t), &f);
+    GRN_OBJ_INIT(&value, GRN_BULK, 0);
+    res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, items, 0);
+    cut_assert_not_null(res);
+    grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));
+    value.header.domain = grn_obj_id(context, items);
+    grn_test_assert(grn_obj_set_value(context, checks, user1, &value, GRN_OBJ_SET));
+    grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
+    cut_assert_equal_int(grn_table_size(context, res), 1);
+    grn_test_assert(grn_obj_set_value(context, checks, user2, &value, GRN_OBJ_SET));
+    grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
+    cut_assert_equal_int(grn_table_size(context, res), 2);
+    grn_obj_close(context, &value);
+    grn_obj_close(context, res);
+  }
 
   grn_obj_close(context, checks);
   grn_obj_close(context, checked);
