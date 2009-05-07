@@ -82,7 +82,8 @@ setup(void)
 
   cut_set_fixture_data_dir(grn_test_get_base_dir(),
                            "fixtures",
-                           "inverted-index");
+                           "inverted-index",
+                           NULL);
 
   logger = setup_grn_logger();
 
@@ -330,13 +331,13 @@ update_data(grn_id record_id, unsigned int section,
 
   GRN_OBJ_INIT(&old_value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
   if (old_name) {
-    old_data = cut_get_fixture_data_string(old_name);
+    old_data = cut_get_fixture_data_string(old_name, NULL);
     GRN_BULK_SET(context, &old_value, old_data, strlen(old_data));
   }
 
   GRN_OBJ_INIT(&new_value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
   if (new_name) {
-    new_data = cut_get_fixture_data_string(new_name);
+    new_data = cut_get_fixture_data_string(new_name, NULL);
     GRN_BULK_SET(context, &new_value, new_data, strlen(new_data));
   }
 
