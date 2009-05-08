@@ -201,7 +201,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       {
         ssize_t ret;
         grn_obj head;
-        GRN_BULK_INIT(&head);
+        GRN_TEXT_INIT(&head);
         GRN_BULK_PUTS(ctx, &head, "HTTP/1.1 200 OK\r\n");
         GRN_BULK_PUTS(ctx, &head, "Connection: close\r\n");
         GRN_BULK_PUTS(ctx, &head, "Content-Type: text/plain\r\n\r\n");
@@ -644,7 +644,7 @@ grn_com_send_text(grn_ctx *ctx, grn_com *cs, const char *body, uint32_t size, in
 {
   ssize_t ret;
   grn_obj buf;
-  GRN_BULK_INIT(&buf);
+  GRN_TEXT_INIT(&buf);
   GRN_BULK_PUTS(ctx, &buf, "GET ");
   grn_bulk_write(ctx, &buf, body, size);
   GRN_BULK_PUTS(ctx, &buf, " HTTP/1.0\r\n\r\n");

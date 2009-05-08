@@ -1371,25 +1371,7 @@ GRN_API grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
 GRN_API grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, unsigned int newsize);
 GRN_API grn_rc grn_bulk_write(grn_ctx *ctx, grn_obj *bulk,
                               const char *str, unsigned int len);
-GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
-GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
-GRN_API grn_rc grn_bulk_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
-GRN_API grn_rc grn_bulk_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
-GRN_API grn_rc grn_bulk_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
-GRN_API grn_rc grn_bulk_itoh(grn_ctx *ctx, grn_obj *bulk, int i, unsigned int len);
-GRN_API grn_rc grn_bulk_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
-GRN_API grn_rc grn_bulk_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
-GRN_API grn_rc grn_bulk_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
-GRN_API grn_rc grn_bulk_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
-GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
-                               const char *str, unsigned int len);
-
-#define GRN_BULK_INIT(obj) GRN_OBJ_INIT((obj), GRN_BULK, 0, GRN_DB_TEXT)
-#define GRN_BULK_PUTS(ctx,bulk,str) (grn_bulk_write((ctx), (bulk), (str), strlen(str)))
-#define GRN_BULK_PUTC(ctx,bulk,c) do {\
-  char _c = (c); grn_bulk_write((ctx), (bulk), &_c, 1);\
-} while (0)
 #define GRN_BULK_REWIND(bulk) ((bulk)->u.b.curr = (bulk)->u.b.head)
 #define GRN_BULK_WSIZE(bulk) ((bulk)->u.b.tail - (bulk)->u.b.head)
 #define GRN_BULK_REST(bulk) ((bulk)->u.b.tail - (bulk)->u.b.curr)
@@ -1398,9 +1380,28 @@ GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
 #define GRN_BULK_HEAD(bulk) ((bulk)->u.b.head)
 #define GRN_BULK_CURR(bulk) ((bulk)->u.b.curr)
 
+GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
+GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
+GRN_API grn_rc grn_bulk_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
+GRN_API grn_rc grn_bulk_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
+GRN_API grn_rc grn_bulk_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
+GRN_API grn_rc grn_bulk_itoh(grn_ctx *ctx, grn_obj *bulk, int i, unsigned int len);
+GRN_API grn_rc grn_bulk_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
+GRN_API grn_rc grn_bulk_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
+GRN_API grn_rc grn_bulk_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
+GRN_API grn_rc grn_bulk_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
+GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
+                               const char *str, unsigned int len);
+
+#define GRN_TEXT_INIT(obj) GRN_OBJ_INIT((obj), GRN_BULK, 0, GRN_DB_TEXT)
+#define GRN_BULK_PUTS(ctx,bulk,str) (grn_bulk_write((ctx), (bulk), (str), strlen(str)))
+#define GRN_BULK_PUTC(ctx,bulk,c) do {\
+  char _c = (c); grn_bulk_write((ctx), (bulk), &_c, 1);\
+} while (0)
+
 #define GRN_BULK_SET(ctx,bulk,str,len) do {\
   if ((bulk)->header.type == GRN_VOID) {\
-    GRN_BULK_INIT(bulk); \
+    GRN_TEXT_INIT(bulk); \
   }\
   if ((bulk)->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {\
     (bulk)->u.b.head = (char *)(str);\

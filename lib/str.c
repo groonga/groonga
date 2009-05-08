@@ -1983,7 +1983,7 @@ grn_rc
 grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 {
   grn_obj buf;
-  GRN_BULK_INIT(&buf);
+  GRN_TEXT_INIT(&buf);
   switch (obj->header.type) {
   case GRN_BULK :
     switch (obj->header.domain) {

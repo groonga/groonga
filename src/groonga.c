@@ -328,7 +328,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj buf;
         uint32_t expire;
         struct timeval tv;
-        GRN_BULK_INIT(&buf);
+        GRN_TEXT_INIT(&buf);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
         gettimeofday(&tv, NULL);
@@ -410,7 +410,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             uint32_t oexpire;
             struct timeval tv;
 
-            GRN_BULK_INIT(&buf);
+            GRN_TEXT_INIT(&buf);
             grn_obj_get_value(ctx, cache_expire, rid, &buf);
             oexpire = *((uint32_t *)GRN_BULK_HEAD(&buf));
             gettimeofday(&tv, NULL);
@@ -435,7 +435,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           }
           {
             grn_obj cas;
-            GRN_BULK_INIT(&cas);
+            GRN_TEXT_INIT(&cas);
             grn_obj_get_value(ctx, cache_cas, rid, &cas);
             if (header->cas && header->cas !=
                 *((uint64_t *)GRN_BULK_HEAD(&cas))) {
@@ -645,7 +645,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj buf;
         uint32_t expire;
         struct timeval tv;
-        GRN_BULK_INIT(&buf);
+        GRN_TEXT_INIT(&buf);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
         gettimeofday(&tv, NULL);

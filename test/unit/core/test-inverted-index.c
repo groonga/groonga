@@ -431,7 +431,7 @@ set_index_source(grn_obj *index, grn_obj *source)
   grn_rc rc;
   grn_obj buf;
   grn_id id = grn_obj_id(context, source);
-  GRN_BULK_INIT(&buf);
+  GRN_TEXT_INIT(&buf);
   grn_bulk_write(context, &buf, (void *)&id, sizeof(grn_id));
   rc = grn_obj_set_info(context, index, GRN_INFO_SOURCE, &buf);
   grn_obj_close(context, &buf);
@@ -445,7 +445,7 @@ insert_and_search(grn_obj *users, grn_obj *items, grn_obj *checks, grn_obj *chec
   grn_id user2 = grn_table_add(context, users);
   grn_id item = grn_table_add(context, items);
   grn_obj value, *res;
-  GRN_BULK_INIT(&value);
+  GRN_TEXT_INIT(&value);
   res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);
   cut_assert_not_null(res);
   grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));
@@ -588,8 +588,8 @@ test_int_index(void)
     grn_id user1 = grn_table_add(context, users);
     grn_id user2 = grn_table_add(context, users);
     grn_id item = grn_table_lookup(context, items, &key, sizeof(int32_t), &f);
-    GRN_BULK_INIT(&value);
-    GRN_BULK_INIT(&query);
+    GRN_TEXT_INIT(&value);
+    GRN_TEXT_INIT(&query);
     res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);
     cut_assert_not_null(res);
     grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));

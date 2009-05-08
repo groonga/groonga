@@ -324,7 +324,7 @@ column_exp_exec(grn_ctx *ctx, column_exp *ce, grn_id id)
 {
   int i;
   grn_obj v, *vp;
-  GRN_BULK_INIT(&v);
+  GRN_TEXT_INIT(&v);
   for (i = 0; i < ce->n_keys; i++) {
     grn_cell *c = ce->cells[i];
     GRN_BULK_REWIND(&v);
@@ -1912,7 +1912,7 @@ nf_tostring(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_obj buf;
       uint32_t size;
       void *value = NULL;
-      GRN_BULK_INIT(&buf);
+      GRN_TEXT_INIT(&buf);
       uvector2str(ctx, car->u.p.value, &buf);
       if ((o = grn_cell_new(ctx))) {
         if ((size = GRN_BULK_VSIZE(&buf))) {
@@ -2544,7 +2544,7 @@ ha_snip(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       if ((grn_snip_exec(ctx, s, str->u.b.value, str->u.b.size, &nresults, &max_len))) {
         QLERR("grn_snip_exec failed");
       }
-      GRN_BULK_INIT(&buf);
+      GRN_TEXT_INIT(&buf);
       if (grn_bulk_resize(ctx, &buf, max_len)) { QLERR("grn_bulk_resize failed"); }
 
       if (nresults) {
@@ -2581,7 +2581,7 @@ ha_snip(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_cell *v, *expr, *str = CAR(args);
       char *string = STRVALUE(str);
       size_t len = STRSIZE(str);
-      GRN_BULK_INIT(&buf);
+      GRN_TEXT_INIT(&buf);
       if (grn_bulk_resize(ctx, &buf, len)) { QLERR("grn_bulk_resize failed."); }
       while (off < len) {
         grn_obj *table = spec->table;
@@ -2823,7 +2823,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
     case GRN_CELL_OBJECT :
       {
         grn_obj key;
-        GRN_BULK_INIT(&key);
+        GRN_TEXT_INIT(&key);
         grn_ql_obj_key(ctx, obj, &key);
         grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key));
         grn_obj_close(ctx, &key);
@@ -2839,7 +2839,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
     case GRN_UVECTOR :
       {
         grn_obj tmp;
-        GRN_BULK_INIT(&tmp);
+        GRN_TEXT_INIT(&tmp);
         uvector2str(ctx, obj->u.p.value, &tmp);
         grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp));
         grn_obj_close(ctx, &tmp);
