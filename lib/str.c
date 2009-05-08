@@ -1665,15 +1665,6 @@ exit:
 int grn_bulk_margin_size = 0;
 
 grn_rc
-grn_bulk_init(grn_ctx *ctx, grn_obj *buf, unsigned int size)
-{
-  buf->u.b.head = NULL;
-  buf->u.b.curr = NULL;
-  buf->u.b.tail = NULL;
-  return size ? grn_bulk_resize(ctx, buf, size) : GRN_SUCCESS;
-}
-
-grn_rc
 grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
 {
   char *head;
@@ -1992,7 +1983,7 @@ grn_rc
 grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 {
   grn_obj buf;
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_BULK_INIT(&buf);
   switch (obj->header.type) {
   case GRN_BULK :
     switch (obj->header.domain) {

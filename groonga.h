@@ -307,11 +307,11 @@ struct _grn_obj {
   } u;
 };
 
-#define GRN_OBJ_INIT(obj,obj_type,obj_flags) do {\
+#define GRN_OBJ_INIT(obj,obj_type,obj_flags,obj_domain) do { \
   (obj)->header.type = (obj_type);\
-  (obj)->header.flags = (obj_flags);\
   (obj)->header.impl_flags = 0;\
-  (obj)->header.domain = GRN_ID_NIL;\
+  (obj)->header.flags = (obj_flags);\
+  (obj)->header.domain = (obj_domain);\
   (obj)->u.b.head = NULL;\
   (obj)->u.b.curr = NULL;\
   (obj)->u.b.tail = NULL;\
@@ -1367,7 +1367,6 @@ GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 /* string & bulk */
 
-GRN_API grn_rc grn_bulk_init(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
 GRN_API grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
 GRN_API grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, unsigned int newsize);
 GRN_API grn_rc grn_bulk_write(grn_ctx *ctx, grn_obj *bulk,
@@ -1386,6 +1385,7 @@ GRN_API grn_rc grn_bulk_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned
 GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
 
+#define GRN_BULK_INIT(obj) GRN_OBJ_INIT((obj), GRN_BULK, 0, GRN_DB_TEXT)
 #define GRN_BULK_PUTS(ctx,bulk,str) (grn_bulk_write((ctx), (bulk), (str), strlen(str)))
 #define GRN_BULK_PUTC(ctx,bulk,c) do {\
   char _c = (c); grn_bulk_write((ctx), (bulk), &_c, 1);\
@@ -1400,7 +1400,7 @@ GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
 
 #define GRN_BULK_SET(ctx,bulk,str,len) do {\
   if ((bulk)->header.type == GRN_VOID) {\
-    GRN_OBJ_INIT((bulk), GRN_BULK, 0); \
+    GRN_BULK_INIT(bulk); \
   }\
   if ((bulk)->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {\
     (bulk)->u.b.head = (char *)(str);\
