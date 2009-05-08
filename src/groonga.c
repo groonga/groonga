@@ -251,7 +251,7 @@ cache_init(grn_ctx *ctx)
       cache_cas = CTX_LOOKUP("<cache>.cas");
     } else {
       if (!cache_table) {
-        grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
+        grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT32);
         grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
         grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
         if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,

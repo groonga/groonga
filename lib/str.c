@@ -1993,10 +1993,10 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     case GRN_DB_LONGTEXT :
       grn_text_esc(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
       break;
-    case GRN_DB_INT :
+    case GRN_DB_INT32 :
       grn_text_itoa(ctx, bulk, *((int32_t *)GRN_BULK_HEAD(obj)));
       break;
-    case GRN_DB_UINT :
+    case GRN_DB_UINT32 :
       grn_text_lltoa(ctx, bulk, *((uint32_t *)GRN_BULK_HEAD(obj)));
       break;
     case GRN_DB_INT64 :

@@ -251,10 +251,11 @@ typedef unsigned int grn_obj_flags;
 /* obj types */
 
 #define GRN_VOID                       (0x00)
-#define GRN_BULK                       (0x01)
-#define GRN_VECTOR                     (0x02)
+#define GRN_ATOM                       (0x01)
+#define GRN_BULK                       (0x02)
 #define GRN_UVECTOR                    (0x03) /* element_size == sizeof(grn_id) */
 #define GRN_MSG                        (0x04)
+#define GRN_VECTOR                     (0x05)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
 #define GRN_SNIP                       (0x0a)
@@ -304,6 +305,12 @@ struct _grn_obj {
       grn_section *sections;
       int n_sections;
     } v;
+    int i32;
+    unsigned int u32;
+    long long  i64;
+    long long unsigned u64;
+    double f;
+    grn_id id;
   } u;
 };
 
@@ -384,9 +391,10 @@ GRN_API grn_obj *grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_si
 
 typedef enum {
   GRN_DB_VOID = 0,
-  GRN_DB_INT,
-  GRN_DB_UINT,
+  GRN_DB_INT32,
+  GRN_DB_UINT32,
   GRN_DB_INT64,
+  GRN_DB_UINT64,
   GRN_DB_FLOAT,
   GRN_DB_TIME,
   GRN_DB_SHORTTEXT,
@@ -1447,6 +1455,68 @@ struct _grn_obj_format {
 
 GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
                              grn_obj_format *format);
+
+/* grn_int, grn_uint, grn_int64, grn_float, grn_time, grn_record */
+
+#define GRN_INT32_SET(ctx,obj,val) do {\
+  GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_INT32);\
+  (obj)->u.i32 = (int)(val);\
+} while (0)
+#define GRN_UINT32_SET(ctx,obj,val) do {\
+  GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_UINT32);\
+  (obj)->u.u32 = (unsigned int)(val);\
+} while (0)
+#define GRN_INT64_SET(ctx,obj,val) do {\
+  GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_INT64);\
+  (obj)->u.i64 = (long long int)(val);\
+} while (0)
+#define GRN_UINT64_SET(ctx,obj,val) do {\
+  GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_UINT64);\
+  (obj)->u.u64 = (long long unsigned int)(val);\
+} while (0)
+#define GRN_FLOAT_SET(ctx,obj,val) do {\
+  GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_FLOAT);\
+  (obj)->u.f = (double)(val);\
+} while (0)
+#define GRN_TIME_SET GRN_INT64_SET
+#define GRN_RECORD_SET(ctx,obj,id,domain) do {\
+  GRN_OBJ_INIT((obj), GRN_ATOM, 0, (domain));\
+  (obj)->u.id = (grn_id)(id);\
+} while (0)
+
+#define GRN_INT32_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_INT32)
+#define GRN_UINT32_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_UINT32)
+#define GRN_INT64_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_INT64)
+#define GRN_UINT64_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_UINT64)
+#define GRN_FLOAT_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_FLOAT)
+#define GRN_TIME_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_TIME)
+#define GRN_SHORTTEXT_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_VECTOR, 0, GRN_DB_SHORTTEXT)
+#define GRN_TEXT_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_VECTOR, 0, GRN_DB_TEXT)
+#define GRN_LONGTEXT_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_VECTOR, 0, GRN_DB_LONG_TEXT)
+#define GRN_RECORD_VECTOR_INIT(obj,domain) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, (domain))
+
+#define GRN_INT32_APPEND(ctx,obj,val) do {\
+  int _val = (int)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(int));\
+} while (0)
+#define GRN_UINT32_APPEND(ctx,obj,val) do {\
+  uint _val = (uint)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(uint));\
+} while (0)
+#define GRN_INT64_APPEND(ctx,obj,val) do {\
+  long long int _val = (long long int)(val);\
+  grn_bulk_write((ctx), (obj), &_val, sizeof(long long int));\
+} while (0)
+#define GRN_UINT64_APPEND(ctx,obj,val) do {\
+  long long unsigned int _val = (long long unsigned int)(val);\
+  grn_bulk_write((ctx), (obj), &_val, sizeof(long long unsigned int));\
+} while (0)
+#define GRN_FLOAT_APPEND(ctx,obj,val) do {\
+  double _val = (double)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(double));\
+} while (0)
+#define GRN_TIME_APPEND GRN_INT64_APPEND
+#define GRN_RECORD_APPEND(ctx,obj,val) do {\
+  grn_id _val = (grn_id)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(grn_id));\
+} while (0)
+
 /* grn_str */
 
 typedef struct {

@@ -554,7 +554,7 @@ test_int_index(void)
   db = grn_db_create(context, db_path, NULL);
   g_free(db_path);
 
-  int_type = grn_ctx_get(context, GRN_DB_INT);
+  int_type = grn_ctx_get(context, GRN_DB_INT32);
   cut_assert_not_null(int_type);
 
   name = "users";
@@ -593,7 +593,7 @@ test_int_index(void)
     grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));
     value.header.domain = grn_obj_id(context, items);
     grn_bulk_write(context, &query, (void *)&key, sizeof(int32_t));
-    query.header.domain = GRN_DB_INT;
+    query.header.domain = GRN_DB_INT32;
     grn_test_assert(grn_obj_set_value(context, checks, user1, &value, GRN_OBJ_SET));
     grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
     cut_assert_equal_int(grn_table_size(context, res), 1);

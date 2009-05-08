@@ -103,10 +103,10 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
       if (v) {
         if (range && range->header.type == GRN_TYPE) {
           switch (rid) {
-          case GRN_DB_INT :
+          case GRN_DB_INT32 :
             SETINT(cell, *((int32_t *)v));
             break;
-          case GRN_DB_UINT :
+          case GRN_DB_UINT32 :
             SETINT(cell, *((uint32_t *)v));
             break;
           case GRN_DB_INT64 :
@@ -585,7 +585,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
     grn_obj *range = grn_ctx_get(ctx, rid);
     if (range && range->header.type == GRN_TYPE) {
       switch (rid) {
-      case GRN_DB_INT :
+      case GRN_DB_INT32 :
         {
           int32_t v;
           switch (cell->header.type) {
@@ -609,7 +609,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
           grn_bulk_write(ctx, obj, (const char *)(&v), sizeof(int32_t));
         }
         break;
-      case GRN_DB_UINT :
+      case GRN_DB_UINT32 :
         {
           uint32_t v;
           switch (cell->header.type) {

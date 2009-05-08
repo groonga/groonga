@@ -2382,7 +2382,7 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
       case GRN_ACCESSOR_GET_VALUE :
       case GRN_ACCESSOR_GET_SCORE :
       case GRN_ACCESSOR_GET_NSUBRECS :
-        range = GRN_DB_INT;
+        range = GRN_DB_INT32;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->range; }
@@ -2591,7 +2591,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
 
 #define INCRDECR(op) \
   switch (DB_OBJ(obj)->range) {\
-  case GRN_DB_INT :\
+  case GRN_DB_INT32 :\
     if (s == sizeof(int32_t)) {\
       int32_t *vp = (int32_t *)p;\
       *vp op *(int32_t *)v;\
@@ -2600,7 +2600,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
       rc = GRN_INVALID_ARGUMENT;\
     }\
     break;\
-  case GRN_DB_UINT :\
+  case GRN_DB_UINT32 :\
     if (s == sizeof(uint32_t)) {\
       uint32_t *vp = (uint32_t *)p;\
       *vp op *(int32_t *)v;\
@@ -4161,13 +4161,16 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   grn_obj *obj;
   obj = deftype(ctx, "<int>",
                 GRN_OBJ_KEY_INT, sizeof(int32_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT) { return GRN_FILE_CORRUPT; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT32) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<uint>",
                 GRN_OBJ_KEY_UINT, sizeof(uint32_t));
-  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT) { return GRN_FILE_CORRUPT; }
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT32) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<int64>",
                 GRN_OBJ_KEY_INT, sizeof(int64_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_INT64) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "<uint64>",
+                GRN_OBJ_KEY_UINT, sizeof(uint64_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT64) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "<float>",
                 GRN_OBJ_KEY_FLOAT, sizeof(double));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT) { return GRN_FILE_CORRUPT; }
