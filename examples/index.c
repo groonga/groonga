@@ -111,10 +111,8 @@ grn_index_upd(grn_ctx *ctx, grn_index *index, const char *key,
   grn_id rid = grn_table_lookup(ctx, index->keys, key, strlen(key), &flags);
   if (rid) {
     grn_obj old, new;
-    GRN_OBJ_INIT(&old, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-    GRN_OBJ_INIT(&new, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-    GRN_BULK_SET(ctx, &old, oldvalue, oldvalue_len);
-    GRN_BULK_SET(ctx, &new, newvalue, newvalue_len);
+    GRN_TEXT_REF(ctx, &old, oldvalue, oldvalue_len);
+    GRN_TEXT_REF(ctx, &new, newvalue, newvalue_len);
     grn_column_index_update(ctx, index->inv, rid, 1, &old, &new);
     grn_obj_close(ctx, &old);
     grn_obj_close(ctx, &new);
@@ -128,8 +126,7 @@ grn_index_sel(grn_ctx *ctx, grn_index *index,
 {
   grn_obj *res;
   grn_obj query;
-  GRN_OBJ_INIT(&query, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-  GRN_BULK_SET(ctx, &query, string, string_len);
+  GRN_TEXT_REF(ctx, &query, string, string_len);
   if ((res = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_HASH_KEY,
                               index->keys, 0))) {
     if ((grn_obj_search(ctx, index->inv, &query, res, GRN_SEL_OR, NULL))) {

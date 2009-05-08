@@ -383,21 +383,20 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       } else {
         if (f & GRN_TABLE_ADDED) {
           grn_obj buf;
-          GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-          GRN_BULK_SET(ctx, &buf, value, valuelen);
+          GRN_TEXT_REF(ctx, &buf, value, valuelen);
           grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, &flags, 4);
+          GRN_TEXT_REF(ctx, &buf, &flags, 4);
           grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
           if (expire && expire < RELATIVE_TIME_THRESH) {
             struct timeval tv;
             gettimeofday(&tv, NULL);
             expire += tv.tv_sec;
           }
-          GRN_BULK_SET(ctx, &buf, &expire, 4);
+          GRN_TEXT_REF(ctx, &buf, &expire, 4);
           grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
           {
             uint64_t cas_id = get_mbreq_cas_id();
-            GRN_BULK_SET(ctx, &buf, &cas_id, sizeof(uint64_t));
+            GRN_TEXT_REF(ctx, &buf, &cas_id, sizeof(uint64_t));
             grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
             GRN_MSG_MBRES({
               ((grn_msg *)re)->header.cas = cas_id;
@@ -444,21 +443,20 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               });
             } else {
               grn_obj buf;
-              GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-              GRN_BULK_SET(ctx, &buf, value, valuelen);
+              GRN_TEXT_REF(ctx, &buf, value, valuelen);
               grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-              GRN_BULK_SET(ctx, &buf, &flags, 4);
+              GRN_TEXT_REF(ctx, &buf, &flags, 4);
               grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
               if (expire && expire < RELATIVE_TIME_THRESH) {
                 struct timeval tv;
                 gettimeofday(&tv, NULL);
                 expire += tv.tv_sec;
               }
-              GRN_BULK_SET(ctx, &buf, &expire, 4);
+              GRN_TEXT_REF(ctx, &buf, &expire, 4);
               grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
               {
                 uint64_t cas_id = get_mbreq_cas_id();
-                GRN_BULK_SET(ctx, &buf, &cas_id, sizeof(uint64_t));
+                GRN_TEXT_REF(ctx, &buf, &cas_id, sizeof(uint64_t));
                 grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
                 GRN_MSG_MBRES({
                   ((grn_msg *)re)->header.cas = cas_id;
@@ -521,12 +519,11 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         });
       } else {
         grn_obj buf;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         if (f & GRN_TABLE_ADDED) {
           uint32_t flags = 0;
-          GRN_BULK_SET(ctx, &buf, &init, 8);
+          GRN_TEXT_REF(ctx, &buf, &init, 8);
           grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, &flags, 4);
+          GRN_TEXT_REF(ctx, &buf, &flags, 4);
           grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
         } else {
           uint32_t oexpire;
@@ -545,13 +542,13 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               break;
             } else {
               uint32_t flags = 0;
-              GRN_BULK_SET(ctx, &buf, &init, 8);
+              GRN_TEXT_REF(ctx, &buf, &init, 8);
               grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-              GRN_BULK_SET(ctx, &buf, &flags, 4);
+              GRN_TEXT_REF(ctx, &buf, &flags, 4);
               grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
             }
           } else {
-            GRN_BULK_SET(ctx, &buf, &delta, 8);
+            GRN_TEXT_REF(ctx, &buf, &delta, 8);
             grn_obj_set_value(ctx, cache_value, rid, &buf,
                               header->qtype == MBCMD_INCREMENT ||
                               header->qtype == MBCMD_INCREMENTQ
@@ -564,14 +561,14 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           gettimeofday(&tv, NULL);
           expire += tv.tv_sec;
         }
-        GRN_BULK_SET(ctx, &buf, &expire, 4);
+        GRN_TEXT_REF(ctx, &buf, &expire, 4);
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
         GRN_MSG_MBRES({
           /* TODO: get_mbreq_cas_id() */
           grn_obj_get_value(ctx, cache_value, rid, re);
           grn_hton(&delta, (uint64_t *)GRN_BULK_HEAD(re), 8);
           GRN_BULK_REWIND(re);
-          GRN_BULK_SET(ctx, re, &delta, sizeof(uint64_t));
+          GRN_TEXT_SET(ctx, re, &delta, sizeof(uint64_t));
           MBRES(ctx, re, MBRES_SUCCESS, 0, sizeof(uint64_t), 0);
         });
         grn_obj_close(ctx, &buf);
@@ -605,8 +602,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         expire = tv.tv_sec - 1;
       }
       grn_obj_close(ctx, &buf);
-      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-      GRN_BULK_SET(ctx, &buf, &expire, 4);
+      GRN_TEXT_REF(ctx, &buf, &expire, 4);
       GRN_TABLE_EACH(ctx, cache_table, 0, 0, rid, NULL, NULL, NULL, {
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
       });
@@ -693,8 +689,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         /* FIXME: check expire */
         grn_obj buf;
         int flags = header->qtype == MBCMD_APPEND ? GRN_OBJ_APPEND : GRN_OBJ_PREPEND;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-        GRN_BULK_SET(ctx, &buf, value, valuelen);
+        GRN_TEXT_REF(ctx, &buf, value, valuelen);
         grn_obj_set_value(ctx, cache_value, rid, &buf, flags);
         GRN_MSG_MBRES({
           MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
@@ -707,7 +702,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       pid_t pid = getpid();
       GRN_MSG_MBRES({
         grn_bulk_write(ctx, re, "pid", 3);
-        grn_bulk_itoa(ctx, re, pid);
+        grn_text_itoa(ctx, re, pid);
         MBRES(ctx, re, MBRES_SUCCESS, 3, 0, 0);
       });
     }

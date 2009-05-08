@@ -329,16 +329,14 @@ update_data(grn_id record_id, unsigned int section,
   grn_obj old_value, new_value;
   const gchar *old_data, *new_data;
 
-  GRN_OBJ_INIT(&old_value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
   if (old_name) {
     old_data = cut_get_fixture_data_string(old_name, NULL);
-    GRN_BULK_SET(context, &old_value, old_data, strlen(old_data));
+    GRN_TEXT_REF(context, &old_value, old_data, strlen(old_data));
   }
 
-  GRN_OBJ_INIT(&new_value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
   if (new_name) {
     new_data = cut_get_fixture_data_string(new_name, NULL);
-    GRN_BULK_SET(context, &new_value, new_data, strlen(new_data));
+    GRN_TEXT_REF(context, &new_value, new_data, strlen(new_data));
   }
 
   grn_ii_column_update(context, inverted_index, record_id, section,

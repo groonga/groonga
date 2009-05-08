@@ -1475,7 +1475,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
       grn_obj *col = grn_table_column(ctx, table, ".:key", 5);
       format.ncolumns = 1;
       format.columns = &col;
-      grn_bulk_otoj(ctx, ctx->impl->outbuf, table, &format);
+      grn_text_otoj(ctx, ctx->impl->outbuf, table, &format);
       grn_obj_unlink(ctx, col);
     } else {
       grn_obj *str = (grn_obj *)argv[2].ptr;
@@ -1489,7 +1489,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
         }
         format.ncolumns = n;
         format.columns = cols;
-        grn_bulk_otoj(ctx, ctx->impl->outbuf, table, &format);
+        grn_text_otoj(ctx, ctx->impl->outbuf, table, &format);
         //  ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
         for (i = 0; i < n; i++) {
           grn_obj_unlink(ctx, cols[i]);

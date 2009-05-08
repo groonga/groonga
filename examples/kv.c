@@ -30,9 +30,9 @@ ql_put(void)
   for (i = 0; i < nloops; i++) {
     key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     GRN_TEXT_PUTC(&ctx, &buf, '\t');
-    grn_bulk_itoh(&ctx, &buf, key, value_size);
+    grn_text_itoh(&ctx, &buf, key, value_size);
     GRN_TEXT_PUTC(&ctx, &buf, '\0');
     EVAL(&ctx, GRN_BULK_HEAD(&buf));
   }
@@ -50,7 +50,7 @@ ql_get(void)
     key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     GRN_TEXT_PUTS(&ctx, &buf, "(<t1> : \"");
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     GRN_TEXT_PUTS(&ctx, &buf, "\").c1");
     GRN_TEXT_PUTC(&ctx, &buf, '\0');
     EVAL(&ctx, GRN_BULK_HEAD(&buf));
@@ -76,7 +76,7 @@ column_put(void)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -114,7 +114,7 @@ column_get(void)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = 0;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -162,7 +162,7 @@ table_put(void)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -193,7 +193,7 @@ table_put2(void)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_TEXT_INIT(&keybuf);
-    grn_bulk_itoh(&ctx, &keybuf, key, key_size);
+    grn_text_itoh(&ctx, &keybuf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -202,7 +202,7 @@ table_put2(void)
         fprintf(stderr, "table_lookup failed");
       } else {
         GRN_TEXT_INIT(&valbuf);
-        grn_bulk_itoh(&ctx, &valbuf, key, key_size);
+        grn_text_itoh(&ctx, &valbuf, key, key_size);
         if (grn_obj_set_value(&ctx, table, rid, &valbuf, GRN_OBJ_SET)) {
           fprintf(stderr, "grn_obj_set_value failed");
         }
@@ -227,7 +227,7 @@ table_put_allocate(void)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     buf = grn_obj_open(&ctx, GRN_BULK, 0, 0);
-    grn_bulk_itoh(&ctx, buf, key, key_size);
+    grn_text_itoh(&ctx, buf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -237,7 +237,7 @@ table_put_allocate(void)
       } else {
         grn_obj *value_buf;
         value_buf = grn_obj_open(&ctx, GRN_BULK, 0, 0);
-        grn_bulk_itoh(&ctx, value_buf, key, key_size);
+        grn_text_itoh(&ctx, value_buf, key, key_size);
         if (grn_obj_set_value(&ctx, table, rid, value_buf, GRN_OBJ_SET)) {
           fprintf(stderr, "grn_obj_set_value failed");
         }
@@ -260,7 +260,7 @@ table_get(void)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = 0;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -298,7 +298,7 @@ hash_put(const char *path)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = GRN_TABLE_ADD;
@@ -327,7 +327,7 @@ hash_get(const char *path)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = 0;
@@ -359,7 +359,7 @@ pat_put(const char *path)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = GRN_TABLE_ADD;
@@ -388,7 +388,7 @@ pat_get(const char *path)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = 0;

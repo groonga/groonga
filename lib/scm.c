@@ -970,7 +970,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       char b[GRN_TABLE_MAX_KEY_SIZE + 1];
       symbol2str(obj, b);
       if (flags & GRN_OBJ_INSPECT_SYMBOL_AS_STR) {
-        grn_bulk_esc(ctx, buf, (*b == ':') ? b + 1 : b,
+        grn_text_esc(ctx, buf, (*b == ':') ? b + 1 : b,
                      strlen(b) - (*b == ':') ? 1 : 0);
       } else {
         GRN_TEXT_PUTS(ctx, buf, b);
@@ -990,8 +990,8 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
     case GRN_CELL_OBJECT :
       if (flags & GRN_OBJ_INSPECT_ESC) {
         GRN_TEXT_PUTS(ctx, buf, "#p<");
-        grn_bulk_itob(ctx, buf, obj->header.domain);
-        grn_bulk_itob(ctx, buf, obj->u.o.id);
+        grn_text_itob(ctx, buf, obj->header.domain);
+        grn_text_itob(ctx, buf, obj->u.o.id);
         GRN_TEXT_PUTC(ctx, buf, '>');
       } else {
         grn_ql_obj_key(ctx, obj, buf);
@@ -1003,22 +1003,22 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       break;
     case GRN_CELL_STR :
       if (flags & GRN_OBJ_INSPECT_ESC) {
-        grn_bulk_esc(ctx, buf, STRVALUE(obj), STRSIZE(obj));
+        grn_text_esc(ctx, buf, STRVALUE(obj), STRSIZE(obj));
       } else {
         grn_bulk_write(ctx, buf, STRVALUE(obj), STRSIZE(obj));
       }
       break;
     case GRN_CELL_INT :
-      grn_bulk_lltoa(ctx, buf, IVALUE(obj));
+      grn_text_lltoa(ctx, buf, IVALUE(obj));
       break;
     case GRN_CELL_FLOAT :
-      grn_bulk_ftoa(ctx, buf, FVALUE(obj));
+      grn_text_ftoa(ctx, buf, FVALUE(obj));
       break;
     case GRN_CELL_TIME :
       GRN_TEXT_PUTS(ctx, buf, "#:<");
-      grn_bulk_itoa(ctx, buf, obj->u.tv.tv_sec);
+      grn_text_itoa(ctx, buf, obj->u.tv.tv_sec);
       GRN_TEXT_PUTS(ctx, buf, ".");
-      grn_bulk_itoa(ctx, buf, obj->u.tv.tv_usec);
+      grn_text_itoa(ctx, buf, obj->u.tv.tv_usec);
       GRN_TEXT_PUTC(ctx, buf, '>');
       break;
     case GRN_QUERY :
@@ -1038,7 +1038,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       break;
     case GRN_CELL_PROC :
       GRN_TEXT_PUTS(ctx, buf, "#<PROCEDURE ");
-      grn_bulk_itoa(ctx, buf, PROCNUM(obj));
+      grn_text_itoa(ctx, buf, PROCNUM(obj));
       GRN_TEXT_PUTS(ctx, buf, ">");
       break;
     case GRN_CELL_MACRO :
@@ -1108,7 +1108,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
         GRN_TEXT_PUTS(ctx, buf, b);
       } else {
         GRN_TEXT_PUTS(ctx, buf, "#<?(");
-        grn_bulk_itoa(ctx, buf, obj->header.type);
+        grn_text_itoa(ctx, buf, obj->header.type);
         GRN_TEXT_PUTS(ctx, buf, ")?>");
       }
       break;
@@ -3009,7 +3009,7 @@ nf_tob32h(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_obj buf;
       GRN_TEXT_INIT(&buf);
       grn_bulk_resize(ctx, &buf, 13);
-      if (grn_bulk_lltob32h(ctx, &buf, IVALUE(x))) {
+      if (grn_text_lltob32h(ctx, &buf, IVALUE(x))) {
         grn_bulk_fin(ctx, &buf);
         QLERR("lltob32h failed");
       }
@@ -3021,7 +3021,7 @@ nf_tob32h(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_obj buf;
       GRN_TEXT_INIT(&buf);
       grn_bulk_resize(ctx, &buf, 13);
-      if (grn_bulk_lltob32h(ctx, &buf, (int64_t)FVALUE(x))) {
+      if (grn_text_lltob32h(ctx, &buf, (int64_t)FVALUE(x))) {
         grn_bulk_fin(ctx, &buf);
         QLERR("lltob32h failed");
       }

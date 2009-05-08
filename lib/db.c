@@ -2101,8 +2101,8 @@ grn_sections_to_vector(grn_ctx *ctx, grn_obj *sections)
     grn_section *vp;
     int i;
     for (i = sections->u.v.n_sections, vp = sections->u.v.sections; i; i--, vp++) {
-      grn_bulk_benc(ctx, vector, vp->weight);
-      grn_bulk_benc(ctx, vector, vp->domain);
+      grn_text_benc(ctx, vector, vp->weight);
+      grn_text_benc(ctx, vector, vp->domain);
       grn_bulk_write(ctx, vector, vp->str, vp->str_len);
       grn_vector_delimit(ctx, vector);
     }
@@ -3051,8 +3051,7 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
       ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");
       goto exit;
     }
-    GRN_TEXT_INIT(valuebuf);
-    GRN_BULK_SET(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
+    GRN_TEXT_SET(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
     break;
   default :
     /* todo */
@@ -3069,8 +3068,7 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
   int i, n = DB_OBJ(obj)->source_size / sizeof(grn_id);
   default_set_value_hook_data hook_data = { DB_OBJ(obj)->id, 0 };
   grn_obj *source, data;
-  GRN_OBJ_INIT(&data, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-  GRN_BULK_SET(ctx, &data, &hook_data, sizeof hook_data);
+  GRN_TEXT_REF(ctx, &data, &hook_data, sizeof hook_data);
   for (i = 1; i <= n; i++, s++) {
     hook_data.section = i;
     if ((source = grn_ctx_get(ctx, *s))) {
@@ -3091,11 +3089,11 @@ grn_hook_pack(grn_ctx *ctx, grn_db_obj *obj, grn_obj *buf)
     grn_hook *hooks;
     for (hooks = obj->hooks[e]; hooks; hooks = hooks->next) {
       grn_id id = hooks->proc ? hooks->proc->obj.id : 0;
-      if ((rc = grn_bulk_benc(ctx, buf, id + 1))) { goto exit; }
-      if ((rc = grn_bulk_benc(ctx, buf, hooks->hld_size))) { goto exit; }
+      if ((rc = grn_text_benc(ctx, buf, id + 1))) { goto exit; }
+      if ((rc = grn_text_benc(ctx, buf, hooks->hld_size))) { goto exit; }
       if ((rc = grn_bulk_write(ctx, buf, (char *)NEXT_ADDR(hooks), hooks->hld_size))) { goto exit; }
     }
-    if ((rc = grn_bulk_benc(ctx, buf, 0))) { goto exit; }
+    if ((rc = grn_text_benc(ctx, buf, 0))) { goto exit; }
   }
 exit :
   return rc;

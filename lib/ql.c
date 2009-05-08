@@ -1233,8 +1233,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (column) {
               if (nsources) {
                 grn_obj source;
-                GRN_OBJ_INIT(&source, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-                GRN_BULK_SET(ctx, &source, sources, nsources * sizeof(grn_id));
+                GRN_TEXT_REF(ctx, &source, sources, nsources * sizeof(grn_id));
                 grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source);
               }
               msg_size = grn_obj_name(ctx, column, msg, GRN_PAT_MAX_KEY_SIZE);
@@ -2743,7 +2742,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
           r++;
           size--;
         }
-        grn_bulk_esc(ctx, buf, r, size);
+        grn_text_esc(ctx, buf, r, size);
       } else {
         GRN_TEXT_PUTS(ctx, buf, "null");
       }
@@ -2825,7 +2824,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         grn_obj key;
         GRN_TEXT_INIT(&key);
         grn_ql_obj_key(ctx, obj, &key);
-        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key));
+        grn_text_esc(ctx, buf, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key));
         grn_obj_close(ctx, &key);
       }
       break;
@@ -2833,7 +2832,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
       {
         double dv= obj->u.tv.tv_sec;
         dv += obj->u.tv.tv_usec / 1000000.0;
-        grn_bulk_ftoa(ctx, buf, dv);
+        grn_text_ftoa(ctx, buf, dv);
       }
       break;
     case GRN_UVECTOR :
@@ -2841,7 +2840,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         grn_obj tmp;
         GRN_TEXT_INIT(&tmp);
         uvector2str(ctx, obj->u.p.value, &tmp);
-        grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp));
+        grn_text_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp));
         grn_obj_close(ctx, &tmp);
       }
       break;
@@ -3042,7 +3041,7 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
       {
         double dv= obj->u.tv.tv_sec;
         dv += obj->u.tv.tv_usec / 1000000.0;
-        grn_bulk_ftoa(ctx, buf, dv);
+        grn_text_ftoa(ctx, buf, dv);
         *f = 1;
       }
       break;
