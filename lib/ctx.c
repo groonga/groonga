@@ -224,7 +224,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->symbols = NULL;
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
-  GRN_OBJ_INIT(&ctx->impl->subbuf, GRN_BULK, 0);
+  GRN_BULK_INIT(&ctx->impl->subbuf);
 }
 
 void
@@ -851,7 +851,7 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
       if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
       {
         grn_obj buf;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        GRN_BULK_INIT(&buf);
         grn_obj_get_info(ctx, db, GRN_INFO_ENCODING, &buf);
         ctx->encoding = *(grn_encoding *)GRN_BULK_HEAD(&buf);
         grn_obj_close(ctx, &buf);
@@ -1553,8 +1553,8 @@ scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   if ((c = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
     int o = 0, n =0, l = -1;
     grn_obj buf1, buf2, *v1, *v2;
-    GRN_OBJ_INIT(&buf1, GRN_BULK, 0);
-    GRN_OBJ_INIT(&buf2, GRN_BULK, 0);
+    GRN_BULK_INIT(&buf1);
+    GRN_BULK_INIT(&buf2);
     // todo : support op
     while ((id = grn_table_cursor_next(ctx, c))) {
       if (val1->header.type == GRN_BULK) {
@@ -1826,8 +1826,8 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
   grn_obj top, key, *val;
-  GRN_OBJ_INIT(&top, GRN_BULK, 0);
-  GRN_OBJ_INIT(&key, GRN_BULK, 0);
+  GRN_BULK_INIT(&top);
+  GRN_BULK_INIT(&key);
   if (grn_ctx_qe_init(ctx)) { return NULL; }
   p = str;
   e = p + str_size;

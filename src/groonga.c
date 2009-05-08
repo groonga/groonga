@@ -324,7 +324,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj buf;
         uint32_t expire;
         struct timeval tv;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        GRN_BULK_INIT(&buf);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
         gettimeofday(&tv, NULL);
@@ -379,7 +379,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       } else {
         if (f & GRN_TABLE_ADDED) {
           grn_obj buf;
-          GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+          GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
           GRN_BULK_SET(ctx, &buf, value, valuelen);
           grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
           GRN_BULK_SET(ctx, &buf, &flags, 4);
@@ -406,7 +406,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             uint32_t oexpire;
             struct timeval tv;
 
-            GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+            GRN_BULK_INIT(&buf);
             grn_obj_get_value(ctx, cache_expire, rid, &buf);
             oexpire = *((uint32_t *)GRN_BULK_HEAD(&buf));
             gettimeofday(&tv, NULL);
@@ -431,7 +431,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           }
           {
             grn_obj cas;
-            GRN_OBJ_INIT(&cas, GRN_BULK, 0);
+            GRN_BULK_INIT(&cas);
             grn_obj_get_value(ctx, cache_cas, rid, &cas);
             if (header->cas && header->cas !=
                 *((uint64_t *)GRN_BULK_HEAD(&cas))) {
@@ -440,7 +440,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               });
             } else {
               grn_obj buf;
-              GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+              GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
               GRN_BULK_SET(ctx, &buf, value, valuelen);
               grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
               GRN_BULK_SET(ctx, &buf, &flags, 4);
@@ -517,7 +517,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         });
       } else {
         grn_obj buf;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         if (f & GRN_TABLE_ADDED) {
           uint32_t flags = 0;
           GRN_BULK_SET(ctx, &buf, &init, 8);
@@ -601,7 +601,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         expire = tv.tv_sec - 1;
       }
       grn_obj_close(ctx, &buf);
-      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
       GRN_BULK_SET(ctx, &buf, &expire, 4);
       GRN_TABLE_EACH(ctx, cache_table, 0, 0, rid, NULL, NULL, NULL, {
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
@@ -641,7 +641,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj buf;
         uint32_t expire;
         struct timeval tv;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        GRN_BULK_INIT(&buf);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
         gettimeofday(&tv, NULL);
@@ -689,7 +689,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         /* FIXME: check expire */
         grn_obj buf;
         int flags = header->qtype == MBCMD_APPEND ? GRN_OBJ_APPEND : GRN_OBJ_PREPEND;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         GRN_BULK_SET(ctx, &buf, value, valuelen);
         grn_obj_set_value(ctx, cache_value, rid, &buf, flags);
         GRN_MSG_MBRES({

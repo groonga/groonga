@@ -324,7 +324,7 @@ column_exp_exec(grn_ctx *ctx, column_exp *ce, grn_id id)
 {
   int i;
   grn_obj v, *vp;
-  GRN_OBJ_INIT(&v, GRN_BULK, 0);
+  GRN_BULK_INIT(&v);
   for (i = 0; i < ce->n_keys; i++) {
     grn_cell *c = ce->cells[i];
     GRN_BULK_REWIND(&v);
@@ -1233,7 +1233,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (column) {
               if (nsources) {
                 grn_obj source;
-                GRN_OBJ_INIT(&source, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+                GRN_OBJ_INIT(&source, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
                 GRN_BULK_SET(ctx, &source, sources, nsources * sizeof(grn_id));
                 grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source);
               }
@@ -1912,7 +1912,7 @@ nf_tostring(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_obj buf;
       uint32_t size;
       void *value = NULL;
-      GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+      GRN_BULK_INIT(&buf);
       uvector2str(ctx, car->u.p.value, &buf);
       if ((o = grn_cell_new(ctx))) {
         if ((size = GRN_BULK_VSIZE(&buf))) {
@@ -1950,7 +1950,7 @@ nf_tosections(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   POP(s, args);
   if (PAIRP(s)) {
     grn_obj sections;
-    GRN_OBJ_INIT(&sections, GRN_VECTOR, 0);
+    GRN_OBJ_INIT(&sections, GRN_VECTOR, 0, GRN_DB_TEXT);
     list2vector(ctx, s, &sections);
     GRN_CELL_NEW(ctx, o);
     obj2cell(ctx, &sections, o);
@@ -2544,7 +2544,9 @@ ha_snip(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       if ((grn_snip_exec(ctx, s, str->u.b.value, str->u.b.size, &nresults, &max_len))) {
         QLERR("grn_snip_exec failed");
       }
-      if (grn_bulk_init(ctx, &buf, max_len)) { QLERR("grn_bulk_init failed"); }
+      GRN_BULK_INIT(&buf);
+      if (grn_bulk_resize(ctx, &buf, max_len)) { QLERR("grn_bulk_resize failed"); }
+
       if (nresults) {
         for (i = 0; i < nresults; i++) {
           if (i && spc != NIL) { grn_obj_inspect(ctx, spc, &buf, 0); }
@@ -2579,7 +2581,8 @@ ha_snip(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_cell *v, *expr, *str = CAR(args);
       char *string = STRVALUE(str);
       size_t len = STRSIZE(str);
-      if (grn_bulk_init(ctx, &buf, len)) { QLERR("grn_bulk_init failed."); }
+      GRN_BULK_INIT(&buf);
+      if (grn_bulk_resize(ctx, &buf, len)) { QLERR("grn_bulk_resize failed."); }
       while (off < len) {
         grn_obj *table = spec->table;
         int i, nhits = grn_pat_scan(ctx, (grn_pat *)table, string + off, len - off,
@@ -2820,7 +2823,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
     case GRN_CELL_OBJECT :
       {
         grn_obj key;
-        GRN_OBJ_INIT(&key, GRN_BULK, 0);
+        GRN_BULK_INIT(&key);
         grn_ql_obj_key(ctx, obj, &key);
         grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key));
         grn_obj_close(ctx, &key);
@@ -2836,7 +2839,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
     case GRN_UVECTOR :
       {
         grn_obj tmp;
-        GRN_OBJ_INIT(&tmp, GRN_BULK, 0);
+        GRN_BULK_INIT(&tmp);
         uvector2str(ctx, obj->u.p.value, &tmp);
         grn_bulk_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp));
         grn_obj_close(ctx, &tmp);

@@ -1132,7 +1132,7 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
   len = PAT_LEN(node);
   if (KEY_NEEDS_CONVERT(pat, len)) {
     if (bulk->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {
-      GRN_OBJ_INIT(bulk, GRN_BULK, 0);
+      GRN_BULK_INIT(bulk);
     }
     if (!grn_bulk_reserve(ctx, bulk, len)) {
       KEY_DEC(pat, bulk->u.b.curr, key, len);
