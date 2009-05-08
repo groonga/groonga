@@ -992,7 +992,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
         GRN_TEXT_PUTS(ctx, buf, "#p<");
         grn_bulk_itob(ctx, buf, obj->header.domain);
         grn_bulk_itob(ctx, buf, obj->u.o.id);
-        GRN_BULK_PUTC(ctx, buf, '>');
+        GRN_TEXT_PUTC(ctx, buf, '>');
       } else {
         grn_ql_obj_key(ctx, obj, buf);
       }
@@ -1019,7 +1019,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       grn_bulk_itoa(ctx, buf, obj->u.tv.tv_sec);
       GRN_TEXT_PUTS(ctx, buf, ".");
       grn_bulk_itoa(ctx, buf, obj->u.tv.tv_usec);
-      GRN_BULK_PUTC(ctx, buf, '>');
+      GRN_TEXT_PUTC(ctx, buf, '>');
       break;
     case GRN_QUERY :
       GRN_TEXT_PUTS(ctx, buf, "#<QUERY>");
@@ -1070,32 +1070,32 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
     case GRN_CELL_LIST :
       /* todo : detect loop */
       if (CAR(obj) == QUOTE && ok_abbrev(CDR(obj))) {
-        GRN_BULK_PUTC(ctx, buf, '\'');
+        GRN_TEXT_PUTC(ctx, buf, '\'');
         grn_obj_inspect(ctx, CADR(obj), buf, flags);
       } else if (CAR(obj) == QQUOTE && ok_abbrev(CDR(obj))) {
-        GRN_BULK_PUTC(ctx, buf, '`');
+        GRN_TEXT_PUTC(ctx, buf, '`');
         grn_obj_inspect(ctx, CADR(obj), buf, flags);
       } else if (CAR(obj) == UNQUOTE && ok_abbrev(CDR(obj))) {
-        GRN_BULK_PUTC(ctx, buf, ',');
+        GRN_TEXT_PUTC(ctx, buf, ',');
         grn_obj_inspect(ctx, CADR(obj), buf, flags);
       } else if (CAR(obj) == UNQUOTESP && ok_abbrev(CDR(obj))) {
         GRN_TEXT_PUTS(ctx, buf, ",@");
         grn_obj_inspect(ctx, CADR(obj), buf, flags);
       } else {
-        GRN_BULK_PUTC(ctx, buf, '(');
+        GRN_TEXT_PUTC(ctx, buf, '(');
         for (;;) {
           grn_obj_inspect(ctx, CAR(obj), buf, flags);
           if ((obj = CDR(obj)) && (obj != NIL)) {
             if (PAIRP(obj)) {
-              GRN_BULK_PUTC(ctx, buf, ' ');
+              GRN_TEXT_PUTC(ctx, buf, ' ');
             } else {
               GRN_TEXT_PUTS(ctx, buf, " . ");
               grn_obj_inspect(ctx, obj, buf, flags);
-              GRN_BULK_PUTC(ctx, buf, ')');
+              GRN_TEXT_PUTC(ctx, buf, ')');
               break;
             }
           } else {
-            GRN_BULK_PUTC(ctx, buf, ')');
+            GRN_TEXT_PUTC(ctx, buf, ')');
             break;
           }
         }
@@ -1377,7 +1377,7 @@ opexe(grn_ctx *ctx)
     // verbose check?
     if (ctx->impl->phs != NIL &&
         !(ctx->impl->co.mode & (GRN_QL_HEAD|GRN_QL_TAIL))) { RTN_NIL_IF_TAIL(ctx); }
-    // GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
+    // GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '\n');
     ctx->impl->code = ctx->impl->value;
     s_goto(ctx, OP_EVAL);
 
@@ -1852,18 +1852,18 @@ opexe(grn_ctx *ctx)
   case OP_ERR0:  /* error */
     GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "*** ERROR: ");
     GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
-    GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
+    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '\n');
     ctx->impl->args = NIL;
     s_goto(ctx, OP_T0LVL);
 
   case OP_ERR1:  /* error */
     GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "*** ERROR:");
     while (ctx->impl->args != NIL) {
-      GRN_BULK_PUTC(ctx, ctx->impl->outbuf, ' ');
+      GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ' ');
       grn_obj_inspect(ctx, CAR(ctx->impl->args), ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);
       ctx->impl->args = CDR(ctx->impl->args);
     }
-    GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
+    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '\n');
     s_goto(ctx, OP_T0LVL);
 
   case OP_PUT:    /* put */
@@ -2709,7 +2709,7 @@ nf_display(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 static grn_cell *
 nf_newline(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 {
-  GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
+  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '\n');
   return T;
 }
 static grn_cell *

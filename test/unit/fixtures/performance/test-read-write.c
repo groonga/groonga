@@ -146,7 +146,7 @@ test_read_write(gconstpointer *data)
   retrieved_value = grn_obj_get_value(context, table, id, NULL);
   cut_set_message("lookup - success: (%d:%d)", i, process_number);
   grn_test_assert_not_nil(id);
-  GRN_BULK_PUTC(context, retrieved_value, '\0');
+  GRN_TEXT_PUTC(context, retrieved_value, '\0');
   cut_assert_equal_string(value_string, GRN_BULK_HEAD(retrieved_value));
 
   tables[i] = NULL;

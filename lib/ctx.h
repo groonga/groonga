@@ -277,7 +277,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
     if (i) GRN_TEXT_PUTS((ctx), &buf, " <= ");\
     GRN_TEXT_PUTS((ctx), &buf, p[i]);\
   }\
-  GRN_BULK_PUTC((ctx), &buf, '\0');\
+  GRN_TEXT_PUTC((ctx), &buf, '\0');\
   free(p);\
   GRN_LOG((ctx), GRN_LOG_NOTICE, "%s : %s", msg, GRN_BULK_HEAD(&buf));\
   grn_obj_close((ctx), &buf);\

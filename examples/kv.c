@@ -31,9 +31,9 @@ ql_put(void)
     key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
     grn_bulk_itoh(&ctx, &buf, key, key_size);
-    GRN_BULK_PUTC(&ctx, &buf, '\t');
+    GRN_TEXT_PUTC(&ctx, &buf, '\t');
     grn_bulk_itoh(&ctx, &buf, key, value_size);
-    GRN_BULK_PUTC(&ctx, &buf, '\0');
+    GRN_TEXT_PUTC(&ctx, &buf, '\0');
     EVAL(&ctx, GRN_BULK_HEAD(&buf));
   }
   grn_obj_close(&ctx, &buf);
@@ -52,7 +52,7 @@ ql_get(void)
     GRN_TEXT_PUTS(&ctx, &buf, "(<t1> : \"");
     grn_bulk_itoh(&ctx, &buf, key, key_size);
     GRN_TEXT_PUTS(&ctx, &buf, "\").c1");
-    GRN_BULK_PUTC(&ctx, &buf, '\0');
+    GRN_TEXT_PUTC(&ctx, &buf, '\0');
     EVAL(&ctx, GRN_BULK_HEAD(&buf));
   }
   grn_obj_close(&ctx, &buf);
@@ -88,7 +88,7 @@ column_put(void)
         GRN_BULK_REWIND(&buf);
         if (v) {
           grn_bulk_space(&ctx, &buf, v -1);
-          GRN_BULK_PUTC(&ctx, &buf, GRN_BULK_HEAD(&buf)[0]);
+          GRN_TEXT_PUTC(&ctx, &buf, GRN_BULK_HEAD(&buf)[0]);
           s += v;
         }
         if (grn_obj_set_value(&ctx, column, rid, &buf, GRN_OBJ_SET)) {

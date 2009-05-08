@@ -1892,7 +1892,7 @@ uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
         grn_table_get_key2(ctx, range, *v, buf);
         v++;
         if (v < ve) {
-          GRN_BULK_PUTC(ctx, buf, ' ');
+          GRN_TEXT_PUTC(ctx, buf, ' ');
         } else {
           break;
         }
@@ -2654,13 +2654,13 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
         {
           grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, r, offset,
                                                              offset + limit, flags);
-          GRN_BULK_PUTC(ctx, buf, '[');
+          GRN_TEXT_PUTC(ctx, buf, '[');
           for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
             if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
             column_exp_exec(ctx, ce, id);
             disp_j(ctx, ce->expr, buf);
           }
-          GRN_BULK_PUTC(ctx, buf, ']');
+          GRN_TEXT_PUTC(ctx, buf, ']');
           grn_table_cursor_close(ctx, tc);
         }
         column_exp_close(ctx, ce);
@@ -2688,13 +2688,13 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
         {
           int i;
           grn_id *v = (grn_id *)GRN_BULK_HEAD(u), *ve = (grn_id *)GRN_BULK_CURR(u);
-          GRN_BULK_PUTC(ctx, buf, '[');
+          GRN_TEXT_PUTC(ctx, buf, '[');
           for (i = 0; v < ve; v++, i++) {
             if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
             column_exp_exec(ctx, ce, *v);
             disp_j(ctx, ce->expr, buf);
           }
-          GRN_BULK_PUTC(ctx, buf, ']');
+          GRN_TEXT_PUTC(ctx, buf, ']');
         }
         column_exp_close(ctx, ce);
       }
@@ -2759,14 +2759,14 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         {
           grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, r, 0, 0,
                                                              GRN_CURSOR_ASCENDING);
-          GRN_BULK_PUTC(ctx, buf, '[');
+          GRN_TEXT_PUTC(ctx, buf, '[');
           for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
             if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
             obj_obj_bind(&o, obj->u.o.id, id);
             disp_j(ctx, &o, buf);
             if (ERRP(ctx, GRN_WARN)) { return; }
           }
-          GRN_BULK_PUTC(ctx, buf, ']');
+          GRN_TEXT_PUTC(ctx, buf, ']');
           grn_table_cursor_close(ctx, tc);
         }
       }
@@ -2777,7 +2777,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         if (ERRP(ctx, GRN_WARN)) { return; }
       } else if (CAR(obj) == INTERN("@")) {
         int o;
-        GRN_BULK_PUTC(ctx, buf, '{');
+        GRN_TEXT_PUTC(ctx, buf, '{');
         for (obj = CDR(obj), o = 0;; o = 1 - o) {
           if (PAIRP(obj)) {
             disp_j(ctx, CAR(obj), buf);
@@ -2790,16 +2790,16 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
               GRN_TEXT_PUTS(ctx, buf, " . ");
               disp_j(ctx, obj, buf);
               if (ERRP(ctx, GRN_WARN)) { return; }
-              GRN_BULK_PUTC(ctx, buf, '}');
+              GRN_TEXT_PUTC(ctx, buf, '}');
               break;
             }
           } else {
-            GRN_BULK_PUTC(ctx, buf, '}');
+            GRN_TEXT_PUTC(ctx, buf, '}');
             break;
           }
         }
       } else {
-        GRN_BULK_PUTC(ctx, buf, '[');
+        GRN_TEXT_PUTC(ctx, buf, '[');
         for (;;) {
           disp_j(ctx, CAR(obj), buf);
           if (ERRP(ctx, GRN_WARN)) { return; }
@@ -2810,11 +2810,11 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
               GRN_TEXT_PUTS(ctx, buf, " . ");
               disp_j(ctx, obj, buf);
               if (ERRP(ctx, GRN_WARN)) { return; }
-              GRN_BULK_PUTC(ctx, buf, ']');
+              GRN_TEXT_PUTC(ctx, buf, ']');
               break;
             }
           } else {
-            GRN_BULK_PUTC(ctx, buf, ']');
+            GRN_TEXT_PUTC(ctx, buf, ']');
             break;
           }
         }
@@ -2950,7 +2950,7 @@ bulk_tsv_esc(grn_ctx *ctx, grn_obj *buf, const char *s, int len)
         grn_bulk_write(ctx, buf, "\\\\", 2);
         break;
       default :
-        GRN_BULK_PUTC(ctx, buf, *s);
+        GRN_TEXT_PUTC(ctx, buf, *s);
       }
     } else {
       grn_bulk_write(ctx, buf, s, l);
@@ -2999,10 +2999,10 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
             if (!o) { disp_t(ctx, CAR(obj), buf, f); }
             if ((obj = CDR(obj)) && (obj != NIL)) {
               if (PAIRP(obj)) {
-                if (!o && PAIRP(CDR(obj))) { GRN_BULK_PUTC(ctx, buf, '\t'); *f = 1; }
+                if (!o && PAIRP(CDR(obj))) { GRN_TEXT_PUTC(ctx, buf, '\t'); *f = 1; }
               } else {
                 if (!o) {
-                  GRN_BULK_PUTC(ctx, buf, '\t'); *f = 1; /* dot pair */
+                  GRN_TEXT_PUTC(ctx, buf, '\t'); *f = 1; /* dot pair */
                   disp_t(ctx, obj, buf, f);
                 }
                 break;
@@ -3022,9 +3022,9 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
           disp_t(ctx, car, buf, f);
           if ((obj != NIL)) {
             if (PAIRP(obj)) {
-              GRN_BULK_PUTC(ctx, buf, '\t'); *f = 1;
+              GRN_TEXT_PUTC(ctx, buf, '\t'); *f = 1;
             } else {
-              GRN_BULK_PUTC(ctx, buf, '\t'); *f = 1; /* dot pair */
+              GRN_TEXT_PUTC(ctx, buf, '\t'); *f = 1; /* dot pair */
               disp_t(ctx, obj, buf, f);
               break;
             }

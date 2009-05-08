@@ -171,7 +171,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
       etime_amount += etime;
     } else {
       if (verbose) {
-        GRN_BULK_PUTC(ctx, msg, '\0');
+        GRN_TEXT_PUTC(ctx, msg, '\0');
         lprint(ctx, "%8d(%4d) %8d : %s", s->query_id, s->n_sessions, etime, GRN_BULK_HEAD(msg));
       }
     }

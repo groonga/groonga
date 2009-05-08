@@ -1612,7 +1612,7 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_
     grn_db *s = (grn_db *)DB_OBJ(table)->db;
     GRN_TEXT_INIT(&bulk);
     grn_pat_get_key2(ctx, s->keys, DB_OBJ(table)->id, &bulk);
-    GRN_BULK_PUTC(ctx, &bulk, GRN_DB_DELIMITER);
+    GRN_TEXT_PUTC(ctx, &bulk, GRN_DB_DELIMITER);
     grn_bulk_write(ctx, &bulk, name, name_size);
     grn_pat_prefix_search(ctx, s->keys, GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk),
                           (grn_hash *)res);

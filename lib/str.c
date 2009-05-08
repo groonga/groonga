@@ -1741,7 +1741,7 @@ ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
   size_t len = sprintf(buf->u.b.curr, "%#.15g", d);
   if (buf->u.b.curr[len - 1] == '.') {
     buf->u.b.curr += len;
-    GRN_BULK_PUTC(ctx, buf, '0');
+    GRN_TEXT_PUTC(ctx, buf, '0');
   } else {
     char *p, *q;
     buf->u.b.curr[len] = '\0';
@@ -1833,7 +1833,7 @@ grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
   unsigned int l;
   grn_rc rc = GRN_SUCCESS;
 
-  GRN_BULK_PUTC(ctx, buf, '"');
+  GRN_TEXT_PUTC(ctx, buf, '"');
   for (e = s + len; s < e; s += l) {
     if (!(l = grn_charlen(ctx, s, e))) { break; }
     if (l == 1) {
@@ -1874,13 +1874,13 @@ grn_bulk_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
         }
         break;
       default :
-        GRN_BULK_PUTC(ctx, buf, *s);
+        GRN_TEXT_PUTC(ctx, buf, *s);
       }
     } else {
       grn_bulk_write(ctx, buf, s, l);
     }
   }
-  GRN_BULK_PUTC(ctx, buf, '"');
+  GRN_TEXT_PUTC(ctx, buf, '"');
   return rc;
 }
 
@@ -1922,7 +1922,7 @@ grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
         }
       }
     } else {
-      GRN_BULK_PUTC(ctx, buf, *s);
+      GRN_TEXT_PUTC(ctx, buf, *s);
     }
   }
   return GRN_SUCCESS;
@@ -1970,7 +1970,7 @@ uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
         grn_table_get_key2(ctx, range, *v, buf);
         v++;
         if (v < ve) {
-          GRN_BULK_PUTC(ctx, buf, ' ');
+          GRN_TEXT_PUTC(ctx, buf, ' ');
         } else {
           break;
         }
@@ -2028,21 +2028,21 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     if (format) {
       int i, j;
       grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
-      GRN_BULK_PUTC(ctx, bulk, '[');
+      GRN_TEXT_PUTC(ctx, bulk, '[');
       if (v < ve) {
         for (i = 0;; i++) {
           if (i) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
-          GRN_BULK_PUTC(ctx, bulk, '[');
+          GRN_TEXT_PUTC(ctx, bulk, '[');
           for (j = 0; j < format->ncolumns; j++) {
             if (j) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
             GRN_BULK_REWIND(&buf);
             grn_obj_get_value(ctx, format->columns[j], *v, &buf);
             grn_bulk_otoj(ctx, bulk, &buf, format);
           }
-          GRN_BULK_PUTC(ctx, bulk, ']');
+          GRN_TEXT_PUTC(ctx, bulk, ']');
         }
       }
-      GRN_BULK_PUTC(ctx, bulk, ']');
+      GRN_TEXT_PUTC(ctx, bulk, ']');
     } else {
       uvector2str(ctx, obj, &buf);
       grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
@@ -2056,19 +2056,19 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_id id;
       grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, obj, 0, 0,
                                                          GRN_CURSOR_ASCENDING);
-      GRN_BULK_PUTC(ctx, bulk, '[');
+      GRN_TEXT_PUTC(ctx, bulk, '[');
       for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
         if (i) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
-        GRN_BULK_PUTC(ctx, bulk, '[');
+        GRN_TEXT_PUTC(ctx, bulk, '[');
         for (j = 0; j < format->ncolumns; j++) {
           if (j) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
           GRN_BULK_REWIND(&buf);
           grn_obj_get_value(ctx, format->columns[j], id, &buf);
           grn_bulk_otoj(ctx, bulk, &buf, format);
         }
-        GRN_BULK_PUTC(ctx, bulk, ']');
+        GRN_TEXT_PUTC(ctx, bulk, ']');
       }
-      GRN_BULK_PUTC(ctx, bulk, ']');
+      GRN_TEXT_PUTC(ctx, bulk, ']');
       grn_table_cursor_close(ctx, tc);
     } else {
       int i;
@@ -2076,14 +2076,14 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_obj *column = grn_table_column(ctx, obj, ".:key", 5);
       grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, obj, 0, 0,
                                                          GRN_CURSOR_ASCENDING);
-      GRN_BULK_PUTC(ctx, bulk, '[');
+      GRN_TEXT_PUTC(ctx, bulk, '[');
       for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
         if (i) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
         GRN_BULK_REWIND(&buf);
         grn_obj_get_value(ctx, column, id, &buf);
         grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
       }
-      GRN_BULK_PUTC(ctx, bulk, ']');
+      GRN_TEXT_PUTC(ctx, bulk, ']');
       grn_table_cursor_close(ctx, tc);
       if (column->header.type == GRN_ACCESSOR) { grn_obj_close(ctx, column); }
     }
