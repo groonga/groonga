@@ -30,6 +30,7 @@
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
+#define DEFAULT_MAX_NFTHREADS 8
 
 static int port = DEFAULT_PORT;
 static int batchmode;
@@ -45,11 +46,14 @@ usage(void)
           "  -s:                 run in server mode\n"
           "  -d:                 run in daemon mode\n"
           "  -e:                 encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
+          "  -l <log level>:     log level\n"
           "  -p <port number>:   server port number (default: %d)\n"
+          "  -t <max threads>:   max number of free threads (default: %d)\n"
+          "  -h, --help:         show usage\n"
           "dest: <db pathname> or <dest hostname>\n"
           "  <db pathname>: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
-          DEFAULT_PORT, DEFAULT_DEST);
+          DEFAULT_PORT, DEFAULT_MAX_NFTHREADS, DEFAULT_DEST);
 }
 
 inline static void
@@ -736,9 +740,8 @@ static grn_com_queue ctx_new;
 static grn_com_queue ctx_old;
 static grn_mutex q_mutex;
 static grn_cond q_cond;
-static uint32_t nthreads = 0, nfthreads = 0;
-
-#define MAX_NFTHREADS 4
+static uint32_t nthreads = 0, nfthreads = 0,
+                max_nfthreads = DEFAULT_MAX_NFTHREADS;
 
 static void * CALLBACK
 worker(void *arg)
@@ -796,7 +799,7 @@ worker(void *arg)
     } else {
       edge->stat = EDGE_IDLE;
     }
-  } while (nfthreads < MAX_NFTHREADS && grn_gctx.stat != GRN_QL_QUIT);
+  } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_QL_QUIT);
 exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
@@ -866,7 +869,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
       if (edge->stat == EDGE_IDLE) {
         grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
         edge->stat = EDGE_WAIT;
-        if (!nfthreads && nthreads < MAX_NFTHREADS) {
+        if (!nfthreads && nthreads < max_nfthreads) {
           grn_thread thread;
           nthreads++;
           if (THREAD_CREATE(thread, worker, NULL)) { SERR("pthread_create"); }
@@ -1022,12 +1025,14 @@ int
 main(int argc, char **argv)
 {
   grn_encoding enc = GRN_ENC_DEFAULT;
-  char *portstr = NULL, *encstr = NULL, *loglevel = NULL;
+  char *portstr = NULL, *encstr = NULL,
+       *max_nfthreadsstr = NULL, *loglevel = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', NULL, NULL, 0, getopt_op_none},
     {'e', NULL, NULL, 0, getopt_op_none},
-    {'h', NULL, NULL, mode_usage, getopt_op_update},
+    {'t', NULL, NULL, 0, getopt_op_none},
+    {'h', "help", NULL, mode_usage, getopt_op_update},
     {'a', NULL, NULL, mode_alone, getopt_op_update},
     {'c', NULL, NULL, mode_client, getopt_op_update},
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
@@ -1037,7 +1042,8 @@ main(int argc, char **argv)
   };
   opts[0].arg = &portstr;
   opts[1].arg = &encstr;
-  opts[7].arg = &loglevel;
+  opts[2].arg = &max_nfthreadsstr;
+  opts[8].arg = &loglevel;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }
@@ -1068,6 +1074,9 @@ main(int argc, char **argv)
       enc = GRN_ENC_KOI8R;
       break;
     }
+  }
+  if (max_nfthreadsstr) {
+    max_nfthreads = atoi(max_nfthreadsstr);
   }
   batchmode = !isatty(0);
   if (grn_init()) { return -1; }
