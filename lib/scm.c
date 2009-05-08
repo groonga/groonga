@@ -958,13 +958,13 @@ void
 grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
 {
   if (!obj) {
-    GRN_BULK_PUTS(ctx, buf, "NULL");
+    GRN_TEXT_PUTS(ctx, buf, "NULL");
   } else if (obj == NIL) {
-    GRN_BULK_PUTS(ctx, buf, "()");
+    GRN_TEXT_PUTS(ctx, buf, "()");
   } else if (obj == T) {
-    GRN_BULK_PUTS(ctx, buf, "#t");
+    GRN_TEXT_PUTS(ctx, buf, "#t");
   } else if (obj == F) {
-    GRN_BULK_PUTS(ctx, buf, "#f");
+    GRN_TEXT_PUTS(ctx, buf, "#f");
   } else {
     if (SYMBOLP(obj)) {
       char b[GRN_TABLE_MAX_KEY_SIZE + 1];
@@ -973,7 +973,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
         grn_bulk_esc(ctx, buf, (*b == ':') ? b + 1 : b,
                      strlen(b) - (*b == ':') ? 1 : 0);
       } else {
-        GRN_BULK_PUTS(ctx, buf, b);
+        GRN_TEXT_PUTS(ctx, buf, b);
       }
       return;
     }
@@ -982,14 +982,14 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       if (SYMBOLP(obj)) {
         char b[GRN_TABLE_MAX_KEY_SIZE + 1];
         symbol2str(obj, b);
-        GRN_BULK_PUTS(ctx, buf, b);
+        GRN_TEXT_PUTS(ctx, buf, b);
       } else {
-        GRN_BULK_PUTS(ctx, buf, "#<VOID>");
+        GRN_TEXT_PUTS(ctx, buf, "#<VOID>");
       }
       break;
     case GRN_CELL_OBJECT :
       if (flags & GRN_OBJ_INSPECT_ESC) {
-        GRN_BULK_PUTS(ctx, buf, "#p<");
+        GRN_TEXT_PUTS(ctx, buf, "#p<");
         grn_bulk_itob(ctx, buf, obj->header.domain);
         grn_bulk_itob(ctx, buf, obj->u.o.id);
         GRN_BULK_PUTC(ctx, buf, '>');
@@ -999,7 +999,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       break;
     case GRN_SNIP :
     case GRN_PATSNIP :
-      GRN_BULK_PUTS(ctx, buf, "#<SNIP>");
+      GRN_TEXT_PUTS(ctx, buf, "#<SNIP>");
       break;
     case GRN_CELL_STR :
       if (flags & GRN_OBJ_INSPECT_ESC) {
@@ -1015,57 +1015,57 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       grn_bulk_ftoa(ctx, buf, FVALUE(obj));
       break;
     case GRN_CELL_TIME :
-      GRN_BULK_PUTS(ctx, buf, "#:<");
+      GRN_TEXT_PUTS(ctx, buf, "#:<");
       grn_bulk_itoa(ctx, buf, obj->u.tv.tv_sec);
-      GRN_BULK_PUTS(ctx, buf, ".");
+      GRN_TEXT_PUTS(ctx, buf, ".");
       grn_bulk_itoa(ctx, buf, obj->u.tv.tv_usec);
       GRN_BULK_PUTC(ctx, buf, '>');
       break;
     case GRN_QUERY :
-      GRN_BULK_PUTS(ctx, buf, "#<QUERY>");
+      GRN_TEXT_PUTS(ctx, buf, "#<QUERY>");
       break;
     case GRN_VECTOR :
-      GRN_BULK_PUTS(ctx, buf, "#<VECTOR>");
+      GRN_TEXT_PUTS(ctx, buf, "#<VECTOR>");
       break;
     case GRN_UVECTOR :
-      GRN_BULK_PUTS(ctx, buf, "#<UVECTOR>");
+      GRN_TEXT_PUTS(ctx, buf, "#<UVECTOR>");
       break;
     case GRN_CELL_OP :
-      GRN_BULK_PUTS(ctx, buf, "#<OP>");
+      GRN_TEXT_PUTS(ctx, buf, "#<OP>");
       break;
     case GRN_CELL_SYNTAX :
-      GRN_BULK_PUTS(ctx, buf, "#<SYNTAX>");
+      GRN_TEXT_PUTS(ctx, buf, "#<SYNTAX>");
       break;
     case GRN_CELL_PROC :
-      GRN_BULK_PUTS(ctx, buf, "#<PROCEDURE ");
+      GRN_TEXT_PUTS(ctx, buf, "#<PROCEDURE ");
       grn_bulk_itoa(ctx, buf, PROCNUM(obj));
-      GRN_BULK_PUTS(ctx, buf, ">");
+      GRN_TEXT_PUTS(ctx, buf, ">");
       break;
     case GRN_CELL_MACRO :
-      GRN_BULK_PUTS(ctx, buf, "#<MACRO>");
+      GRN_TEXT_PUTS(ctx, buf, "#<MACRO>");
       break;
     case GRN_CELL_CLOSURE :
-      GRN_BULK_PUTS(ctx, buf, "#<CLOSURE>");
+      GRN_TEXT_PUTS(ctx, buf, "#<CLOSURE>");
       break;
     case GRN_CELL_CONTINUATION :
-      GRN_BULK_PUTS(ctx, buf, "#<CONTINUATION>");
+      GRN_TEXT_PUTS(ctx, buf, "#<CONTINUATION>");
       break;
     case GRN_TYPE :
-      GRN_BULK_PUTS(ctx, buf, "#<TYPE>");
+      GRN_TEXT_PUTS(ctx, buf, "#<TYPE>");
       break;
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_NO_KEY :
     case GRN_TABLE_PAT_KEY :
-      GRN_BULK_PUTS(ctx, buf, "#<TABLE>");
+      GRN_TEXT_PUTS(ctx, buf, "#<TABLE>");
       break;
     case GRN_COLUMN_FIX_SIZE :
-      GRN_BULK_PUTS(ctx, buf, "#<RA_COLUMN>");
+      GRN_TEXT_PUTS(ctx, buf, "#<RA_COLUMN>");
       break;
     case GRN_COLUMN_VAR_SIZE :
-      GRN_BULK_PUTS(ctx, buf, "#<JA_COLUMN>");
+      GRN_TEXT_PUTS(ctx, buf, "#<JA_COLUMN>");
       break;
     case GRN_COLUMN_INDEX :
-      GRN_BULK_PUTS(ctx, buf, "#<IDX_COLUMN>");
+      GRN_TEXT_PUTS(ctx, buf, "#<IDX_COLUMN>");
       break;
     case GRN_CELL_LIST :
       /* todo : detect loop */
@@ -1079,7 +1079,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
         GRN_BULK_PUTC(ctx, buf, ',');
         grn_obj_inspect(ctx, CADR(obj), buf, flags);
       } else if (CAR(obj) == UNQUOTESP && ok_abbrev(CDR(obj))) {
-        GRN_BULK_PUTS(ctx, buf, ",@");
+        GRN_TEXT_PUTS(ctx, buf, ",@");
         grn_obj_inspect(ctx, CADR(obj), buf, flags);
       } else {
         GRN_BULK_PUTC(ctx, buf, '(');
@@ -1089,7 +1089,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
             if (PAIRP(obj)) {
               GRN_BULK_PUTC(ctx, buf, ' ');
             } else {
-              GRN_BULK_PUTS(ctx, buf, " . ");
+              GRN_TEXT_PUTS(ctx, buf, " . ");
               grn_obj_inspect(ctx, obj, buf, flags);
               GRN_BULK_PUTC(ctx, buf, ')');
               break;
@@ -1105,11 +1105,11 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       if (SYMBOLP(obj)) {
         char b[GRN_TABLE_MAX_KEY_SIZE + 1];
         symbol2str(obj, b);
-        GRN_BULK_PUTS(ctx, buf, b);
+        GRN_TEXT_PUTS(ctx, buf, b);
       } else {
-        GRN_BULK_PUTS(ctx, buf, "#<?(");
+        GRN_TEXT_PUTS(ctx, buf, "#<?(");
         grn_bulk_itoa(ctx, buf, obj->header.type);
-        GRN_BULK_PUTS(ctx, buf, ")?>");
+        GRN_TEXT_PUTS(ctx, buf, ")?>");
       }
       break;
     }
@@ -1344,8 +1344,8 @@ opexe(grn_ctx *ctx)
           int fd;
           if ((fd = open(fname, O_RDONLY)) != -1) {
             if (read(fd, ctx->impl->inbuf, st.st_size) == st.st_size) {
-              GRN_BULK_PUTS(ctx, ctx->impl->outbuf, "loading ");
-              GRN_BULK_PUTS(ctx, ctx->impl->outbuf, STRVALUE(CAR(ctx->impl->args)));
+              GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "loading ");
+              GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, STRVALUE(CAR(ctx->impl->args)));
               ctx->impl->cur = ctx->impl->inbuf;
               ctx->impl->str_end = ctx->impl->inbuf + st.st_size;
             }
@@ -1850,14 +1850,14 @@ opexe(grn_ctx *ctx)
     }
 
   case OP_ERR0:  /* error */
-    GRN_BULK_PUTS(ctx, ctx->impl->outbuf, "*** ERROR: ");
-    GRN_BULK_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
+    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "*** ERROR: ");
+    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
     GRN_BULK_PUTC(ctx, ctx->impl->outbuf, '\n');
     ctx->impl->args = NIL;
     s_goto(ctx, OP_T0LVL);
 
   case OP_ERR1:  /* error */
-    GRN_BULK_PUTS(ctx, ctx->impl->outbuf, "*** ERROR:");
+    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "*** ERROR:");
     while (ctx->impl->args != NIL) {
       GRN_BULK_PUTC(ctx, ctx->impl->outbuf, ' ');
       grn_obj_inspect(ctx, CAR(ctx->impl->args), ctx->impl->outbuf, GRN_OBJ_INSPECT_ESC);

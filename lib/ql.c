@@ -2656,7 +2656,7 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
                                                              offset + limit, flags);
           GRN_BULK_PUTC(ctx, buf, '[');
           for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
-            if (i) { GRN_BULK_PUTS(ctx, buf, ", "); }
+            if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
             column_exp_exec(ctx, ce, id);
             disp_j(ctx, ce->expr, buf);
           }
@@ -2690,7 +2690,7 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
           grn_id *v = (grn_id *)GRN_BULK_HEAD(u), *ve = (grn_id *)GRN_BULK_CURR(u);
           GRN_BULK_PUTC(ctx, buf, '[');
           for (i = 0; v < ve; v++, i++) {
-            if (i) { GRN_BULK_PUTS(ctx, buf, ", "); }
+            if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
             column_exp_exec(ctx, ce, *v);
             disp_j(ctx, ce->expr, buf);
           }
@@ -2728,11 +2728,11 @@ static void
 disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
 {
   if (!obj || obj == NIL) {
-    GRN_BULK_PUTS(ctx, buf, "[]");
+    GRN_TEXT_PUTS(ctx, buf, "[]");
   } else if (obj == T) {
-    GRN_BULK_PUTS(ctx, buf, "true");
+    GRN_TEXT_PUTS(ctx, buf, "true");
   } else if (obj == F) {
-    GRN_BULK_PUTS(ctx, buf, "false");
+    GRN_TEXT_PUTS(ctx, buf, "false");
   } else {
     switch (obj->header.type) {
     case GRN_VOID :
@@ -2745,7 +2745,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
         }
         grn_bulk_esc(ctx, buf, r, size);
       } else {
-        GRN_BULK_PUTS(ctx, buf, "null");
+        GRN_TEXT_PUTS(ctx, buf, "null");
       }
       break;
     case GRN_TABLE_HASH_KEY :
@@ -2761,7 +2761,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
                                                              GRN_CURSOR_ASCENDING);
           GRN_BULK_PUTC(ctx, buf, '[');
           for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
-            if (i) { GRN_BULK_PUTS(ctx, buf, ", "); }
+            if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
             obj_obj_bind(&o, obj->u.o.id, id);
             disp_j(ctx, &o, buf);
             if (ERRP(ctx, GRN_WARN)) { return; }
@@ -2785,9 +2785,9 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
           }
           if ((obj = CDR(obj)) && (obj != NIL)) {
             if (PAIRP(obj)) {
-              GRN_BULK_PUTS(ctx, buf, o ? ", " : ": ");
+              GRN_TEXT_PUTS(ctx, buf, o ? ", " : ": ");
             } else {
-              GRN_BULK_PUTS(ctx, buf, " . ");
+              GRN_TEXT_PUTS(ctx, buf, " . ");
               disp_j(ctx, obj, buf);
               if (ERRP(ctx, GRN_WARN)) { return; }
               GRN_BULK_PUTC(ctx, buf, '}');
@@ -2805,9 +2805,9 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
           if (ERRP(ctx, GRN_WARN)) { return; }
           if ((obj = CDR(obj)) && (obj != NIL)) {
             if (PAIRP(obj)) {
-              GRN_BULK_PUTS(ctx, buf, ", ");
+              GRN_TEXT_PUTS(ctx, buf, ", ");
             } else {
-              GRN_BULK_PUTS(ctx, buf, " . ");
+              GRN_TEXT_PUTS(ctx, buf, " . ");
               disp_j(ctx, obj, buf);
               if (ERRP(ctx, GRN_WARN)) { return; }
               GRN_BULK_PUTC(ctx, buf, ']');
@@ -2962,11 +2962,11 @@ static void
 disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
 {
   if (!obj || obj == NIL) {
-    GRN_BULK_PUTS(ctx, buf, "()"); *f = 1;
+    GRN_TEXT_PUTS(ctx, buf, "()"); *f = 1;
   } else if (obj == T) {
-    GRN_BULK_PUTS(ctx, buf, "#t"); *f = 1;
+    GRN_TEXT_PUTS(ctx, buf, "#t"); *f = 1;
   } else if (obj == F) {
-    GRN_BULK_PUTS(ctx, buf, "#f"); *f = 1;
+    GRN_TEXT_PUTS(ctx, buf, "#f"); *f = 1;
   } else {
     switch (obj->header.type) {
     case GRN_TABLE_HASH_KEY :

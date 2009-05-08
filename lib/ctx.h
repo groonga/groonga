@@ -274,8 +274,8 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   p = backtrace_symbols((ctx)->trace, (ctx)->ntrace);\
   GRN_TEXT_INIT(&buf);\
   for (i = 0; i < (ctx)->ntrace; i++) {\
-    if (i) GRN_BULK_PUTS((ctx), &buf, " <= ");\
-    GRN_BULK_PUTS((ctx), &buf, p[i]);\
+    if (i) GRN_TEXT_PUTS((ctx), &buf, " <= ");\
+    GRN_TEXT_PUTS((ctx), &buf, p[i]);\
   }\
   GRN_BULK_PUTC((ctx), &buf, '\0');\
   free(p);\

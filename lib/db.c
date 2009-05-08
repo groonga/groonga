@@ -3157,7 +3157,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_bulk_write(ctx, b, (void *)&spec, sizeof(grn_obj_spec));
   grn_vector_delimit(ctx, &v, 0, 0);
   if (obj->header.impl_flags & GRN_OBJ_CUSTOM_NAME) {
-    GRN_BULK_PUTS(ctx, b, grn_obj_path(ctx, (grn_obj *)obj));
+    GRN_TEXT_PUTS(ctx, b, grn_obj_path(ctx, (grn_obj *)obj));
   }
   grn_vector_delimit(ctx, &v, 0, 0);
   grn_bulk_write(ctx, b, obj->source, obj->source_size);

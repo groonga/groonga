@@ -49,9 +49,9 @@ ql_get(void)
   for (i = 0; i < nloops; i++) {
     key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    GRN_BULK_PUTS(&ctx, &buf, "(<t1> : \"");
+    GRN_TEXT_PUTS(&ctx, &buf, "(<t1> : \"");
     grn_bulk_itoh(&ctx, &buf, key, key_size);
-    GRN_BULK_PUTS(&ctx, &buf, "\").c1");
+    GRN_TEXT_PUTS(&ctx, &buf, "\").c1");
     GRN_BULK_PUTC(&ctx, &buf, '\0');
     EVAL(&ctx, GRN_BULK_HEAD(&buf));
   }

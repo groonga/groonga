@@ -1765,10 +1765,10 @@ grn_bulk_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 #ifdef HAVE_FPCLASSIFY
   switch (fpclassify(d)) {
   CASE_FP_NAN
-    GRN_BULK_PUTS(ctx, buf, "#<nan>");
+    GRN_TEXT_PUTS(ctx, buf, "#<nan>");
     break;
   CASE_FP_INFINITE
-    GRN_BULK_PUTS(ctx, buf, d > 0 ? "#i1/0" : "#i-1/0");
+    GRN_TEXT_PUTS(ctx, buf, d > 0 ? "#i1/0" : "#i-1/0");
     break;
   default :
     ftoa_(ctx, buf, d);
@@ -1777,12 +1777,12 @@ grn_bulk_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 #else /* HAVE_FPCLASSIFY */
   if (d == d) {
     if (d != 0 && ((d / 2.0) == d)) {
-      GRN_BULK_PUTS(ctx, buf, d > 0 ? "#i1/0" : "#i-1/0");
+      GRN_TEXT_PUTS(ctx, buf, d > 0 ? "#i1/0" : "#i-1/0");
     } else {
       ftoa_(ctx, buf, d);
     }
   } else {
-    GRN_BULK_PUTS(ctx, buf, "#<nan>");
+    GRN_TEXT_PUTS(ctx, buf, "#<nan>");
   }
 #endif /* HAVE_FPCLASSIFY */
   return rc;
@@ -2031,10 +2031,10 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       GRN_BULK_PUTC(ctx, bulk, '[');
       if (v < ve) {
         for (i = 0;; i++) {
-          if (i) { GRN_BULK_PUTS(ctx, bulk, ", "); }
+          if (i) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
           GRN_BULK_PUTC(ctx, bulk, '[');
           for (j = 0; j < format->ncolumns; j++) {
-            if (j) { GRN_BULK_PUTS(ctx, bulk, ", "); }
+            if (j) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
             GRN_BULK_REWIND(&buf);
             grn_obj_get_value(ctx, format->columns[j], *v, &buf);
             grn_bulk_otoj(ctx, bulk, &buf, format);
@@ -2058,10 +2058,10 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
                                                          GRN_CURSOR_ASCENDING);
       GRN_BULK_PUTC(ctx, bulk, '[');
       for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
-        if (i) { GRN_BULK_PUTS(ctx, bulk, ", "); }
+        if (i) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
         GRN_BULK_PUTC(ctx, bulk, '[');
         for (j = 0; j < format->ncolumns; j++) {
-          if (j) { GRN_BULK_PUTS(ctx, bulk, ", "); }
+          if (j) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
           GRN_BULK_REWIND(&buf);
           grn_obj_get_value(ctx, format->columns[j], id, &buf);
           grn_bulk_otoj(ctx, bulk, &buf, format);
@@ -2078,7 +2078,7 @@ grn_bulk_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
                                                          GRN_CURSOR_ASCENDING);
       GRN_BULK_PUTC(ctx, bulk, '[');
       for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
-        if (i) { GRN_BULK_PUTS(ctx, bulk, ", "); }
+        if (i) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
         GRN_BULK_REWIND(&buf);
         grn_obj_get_value(ctx, column, id, &buf);
         grn_bulk_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));

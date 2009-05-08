@@ -1394,7 +1394,7 @@ GRN_API grn_rc grn_bulk_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
 
 #define GRN_TEXT_INIT(obj) GRN_OBJ_INIT((obj), GRN_BULK, 0, GRN_DB_TEXT)
-#define GRN_BULK_PUTS(ctx,bulk,str) (grn_bulk_write((ctx), (bulk), (str), strlen(str)))
+#define GRN_TEXT_PUTS(ctx,bulk,str) (grn_bulk_write((ctx), (bulk), (str), strlen(str)))
 #define GRN_BULK_PUTC(ctx,bulk,c) do {\
   char _c = (c); grn_bulk_write((ctx), (bulk), &_c, 1);\
 } while (0)
