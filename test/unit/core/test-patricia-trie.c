@@ -286,7 +286,8 @@ test_delete_by_id_sis_short(void)
 void
 attributes_delete_by_id_sis_long(void)
 {
-  cut_set_attributes("ML", "1010");
+  cut_set_attributes("ML", "1010",
+                     NULL);
 }
 
 void
@@ -431,9 +432,10 @@ test_get_key(void)
              initial_key);
   */
 
-  cut_assert_equal_int(strlen(key),
-                       grn_pat_get_key(context, trie, id,
-                                       &got_key, GRN_PAT_MAX_KEY_SIZE));
+  got_key_size = grn_pat_get_key(context, trie, id,
+                                 &got_key, GRN_PAT_MAX_KEY_SIZE);
+  cut_assert_equal_int(strlen(key), got_key_size);
+  got_key[got_key_size] = '\0';
   cut_assert_equal_string(key, got_key);
 }
 

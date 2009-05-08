@@ -106,8 +106,8 @@ test_read_write(gconstpointer *data)
   gint process_number = 0;
   const gchar *process_number_string;
   const gchar table_name[] = "performance-read-write";
-  gchar value[VALUE_SIZE];
-  gint size;
+  grn_obj value;
+  grn_obj *retrieved_value;
   grn_id id;
   grn_rc rc;
 
@@ -139,18 +139,18 @@ test_read_write(gconstpointer *data)
   grn_test_assert_not_nil(id);
   cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
 
-#if 0
-  grn_obj_set_value(context, table, id, (gchar *)value_string, GRN_OBJ_SET);
+  GRN_OBJ_INIT(&value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_BULK_SET(context, &value, value_string, strlen(value_string));
+  grn_obj_set_value(context, table, id, &value, GRN_OBJ_SET);
 
-  size = grn_table_get_value(context, table, id, value);
-  value[size] = '\0';
+  retrieved_value = grn_obj_get_value(context, table, id, NULL);
   cut_set_message("lookup - success: (%d:%d)", i, process_number);
   grn_test_assert_not_nil(id);
-  cut_assert_equal_string(value_string, value);
+  GRN_BULK_PUTC(context, retrieved_value, '\0');
+  cut_assert_equal_string(value_string, GRN_BULK_HEAD(retrieved_value));
 
   tables[i] = NULL;
-  grn_test_assert(grn_table_close(context, table));
-#endif
+  grn_test_assert(grn_obj_close(context, table));
 
   contexts[i] = NULL;
   grn_test_assert(grn_ctx_fin(context));
