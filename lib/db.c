@@ -136,6 +136,8 @@ grn_db_open(grn_ctx *ctx, const char *path)
           MUTEX_INIT(s->lock);
           GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
           grn_db_obj_init(ctx, NULL, GRN_ID_NIL, &s->obj);
+          s->obj.header.domain = GRN_ID_NIL;
+          DB_OBJ(&s->obj)->range = GRN_ID_NIL;
           grn_ctx_use(ctx, (grn_obj *)s);
           grn_db_init_builtin_tokenizers(ctx);
           grn_db_init_builtin_procs(ctx);
