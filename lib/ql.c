@@ -1233,7 +1233,8 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (column) {
               if (nsources) {
                 grn_obj source;
-                GRN_TEXT_REF(ctx, &source, sources, nsources * sizeof(grn_id));
+                GRN_TEXT_INIT_REF(&source);
+                GRN_TEXT_SET_REF(&source, sources, nsources * sizeof(grn_id));
                 grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source);
               }
               msg_size = grn_obj_name(ctx, column, msg, GRN_PAT_MAX_KEY_SIZE);

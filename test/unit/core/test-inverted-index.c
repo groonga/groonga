@@ -329,14 +329,17 @@ update_data(grn_id record_id, unsigned int section,
   grn_obj old_value, new_value;
   const gchar *old_data, *new_data;
 
+  GRN_TEXT_INIT_REF(&old_value);
+  GRN_TEXT_INIT_REF(&new_value);
+
   if (old_name) {
     old_data = cut_get_fixture_data_string(old_name, NULL);
-    GRN_TEXT_REF(context, &old_value, old_data, strlen(old_data));
+    GRN_TEXT_SET_REF(&old_value, old_data, strlen(old_data));
   }
 
   if (new_name) {
     new_data = cut_get_fixture_data_string(new_name, NULL);
-    GRN_TEXT_REF(context, &new_value, new_data, strlen(new_data));
+    GRN_TEXT_SET_REF(&new_value, new_data, strlen(new_data));
   }
 
   grn_ii_column_update(context, inverted_index, record_id, section,

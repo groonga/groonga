@@ -139,7 +139,8 @@ test_read_write(gconstpointer *data)
   grn_test_assert_not_nil(id);
   cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
 
-  GRN_TEXT_REF(context, &value, value_string, strlen(value_string));
+  GRN_TEXT_INIT_REF(&value);
+  GRN_TEXT_SET_REF(&value, value_string, strlen(value_string));
   grn_obj_set_value(context, table, id, &value, GRN_OBJ_SET);
 
   retrieved_value = grn_obj_get_value(context, table, id, NULL);

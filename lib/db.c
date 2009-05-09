@@ -3051,7 +3051,7 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
       ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");
       goto exit;
     }
-    GRN_TEXT_SET(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
+    grn_bulk_write(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
     break;
   default :
     /* todo */
@@ -3068,7 +3068,8 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
   int i, n = DB_OBJ(obj)->source_size / sizeof(grn_id);
   default_set_value_hook_data hook_data = { DB_OBJ(obj)->id, 0 };
   grn_obj *source, data;
-  GRN_TEXT_REF(ctx, &data, &hook_data, sizeof hook_data);
+  GRN_TEXT_INIT_REF(&data);
+  GRN_TEXT_SET_REF(&data, &hook_data, sizeof hook_data);
   for (i = 1; i <= n; i++, s++) {
     hook_data.section = i;
     if ((source = grn_ctx_get(ctx, *s))) {

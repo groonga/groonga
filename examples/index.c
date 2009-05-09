@@ -111,8 +111,10 @@ grn_index_upd(grn_ctx *ctx, grn_index *index, const char *key,
   grn_id rid = grn_table_lookup(ctx, index->keys, key, strlen(key), &flags);
   if (rid) {
     grn_obj old, new;
-    GRN_TEXT_REF(ctx, &old, oldvalue, oldvalue_len);
-    GRN_TEXT_REF(ctx, &new, newvalue, newvalue_len);
+    GRN_TEXT_INIT_REF(&old);
+    GRN_TEXT_INIT_REF(&new);
+    GRN_TEXT_SET_REF(&old, oldvalue, oldvalue_len);
+    GRN_TEXT_SET_REF(&new, newvalue, newvalue_len);
     grn_column_index_update(ctx, index->inv, rid, 1, &old, &new);
     grn_obj_close(ctx, &old);
     grn_obj_close(ctx, &new);
@@ -126,7 +128,8 @@ grn_index_sel(grn_ctx *ctx, grn_index *index,
 {
   grn_obj *res;
   grn_obj query;
-  GRN_TEXT_REF(ctx, &query, string, string_len);
+  GRN_TEXT_INIT_REF(&query);
+  GRN_TEXT_SET_REF(&query, string, string_len);
   if ((res = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_HASH_KEY,
                               index->keys, 0))) {
     if ((grn_obj_search(ctx, index->inv, &query, res, GRN_SEL_OR, NULL))) {
