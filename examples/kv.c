@@ -23,17 +23,17 @@ ql_put(void)
 {
   int i, key;
   grn_obj buf;
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   EVAL(&ctx, "(ptable '<t1>)");
   EVAL(&ctx, "(<t1> ::def :c1 <text>)");
   EVAL(&ctx, "(<t1> ::load :c1)");
   for (i = 0; i < nloops; i++) {
     key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
-    GRN_BULK_PUTC(&ctx, &buf, '\t');
-    grn_bulk_itoh(&ctx, &buf, key, value_size);
-    GRN_BULK_PUTC(&ctx, &buf, '\0');
+    grn_text_itoh(&ctx, &buf, key, key_size);
+    GRN_TEXT_PUTC(&ctx, &buf, '\t');
+    grn_text_itoh(&ctx, &buf, key, value_size);
+    GRN_TEXT_PUTC(&ctx, &buf, '\0');
     EVAL(&ctx, GRN_BULK_HEAD(&buf));
   }
   grn_obj_close(&ctx, &buf);
@@ -45,14 +45,14 @@ ql_get(void)
 {
   int i, key;
   grn_obj buf;
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    GRN_BULK_PUTS(&ctx, &buf, "(<t1> : \"");
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
-    GRN_BULK_PUTS(&ctx, &buf, "\").c1");
-    GRN_BULK_PUTC(&ctx, &buf, '\0');
+    GRN_TEXT_PUTS(&ctx, &buf, "(<t1> : \"");
+    grn_text_itoh(&ctx, &buf, key, key_size);
+    GRN_TEXT_PUTS(&ctx, &buf, "\").c1");
+    GRN_TEXT_PUTC(&ctx, &buf, '\0');
     EVAL(&ctx, GRN_BULK_HEAD(&buf));
   }
   grn_obj_close(&ctx, &buf);
@@ -72,11 +72,11 @@ column_put(void)
   grn_obj *column = grn_column_create(&ctx, table, "c1", 2, NULL,
                                       GRN_OBJ_PERSISTENT, value_type);
   if (!table || !column) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -88,7 +88,7 @@ column_put(void)
         GRN_BULK_REWIND(&buf);
         if (v) {
           grn_bulk_space(&ctx, &buf, v -1);
-          GRN_BULK_PUTC(&ctx, &buf, GRN_BULK_HEAD(&buf)[0]);
+          GRN_TEXT_PUTC(&ctx, &buf, GRN_BULK_HEAD(&buf)[0]);
           s += v;
         }
         if (grn_obj_set_value(&ctx, column, rid, &buf, GRN_OBJ_SET)) {
@@ -110,11 +110,11 @@ column_get(void)
   grn_obj *table = grn_ctx_lookup(&ctx, "<t1>", 4);
   grn_obj *column = grn_ctx_lookup(&ctx, "<t1>.c1", 7);
   if (!table || !column) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = 0;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -124,7 +124,7 @@ column_get(void)
       } else {
         grn_obj obj, *p;
         unsigned int v = key % value_size;
-        GRN_OBJ_INIT(&obj, GRN_BULK, 0);
+        GRN_TEXT_INIT(&obj);
         p = grn_obj_get_value(&ctx, column, rid, &obj);
         if (!p) {
           fprintf(stderr, "grn_obj_get_value failed\n");
@@ -158,11 +158,11 @@ table_put(void)
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, value_size);
   if (!table) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -192,8 +192,8 @@ table_put2(void)
   if (!table) { return -1; }
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
-    GRN_OBJ_INIT(&keybuf, GRN_BULK, 0);
-    grn_bulk_itoh(&ctx, &keybuf, key, key_size);
+    GRN_TEXT_INIT(&keybuf);
+    grn_text_itoh(&ctx, &keybuf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -201,8 +201,8 @@ table_put2(void)
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
-        GRN_OBJ_INIT(&valbuf, GRN_BULK, 0);
-        grn_bulk_itoh(&ctx, &valbuf, key, key_size);
+        GRN_TEXT_INIT(&valbuf);
+        grn_text_itoh(&ctx, &valbuf, key, key_size);
         if (grn_obj_set_value(&ctx, table, rid, &valbuf, GRN_OBJ_SET)) {
           fprintf(stderr, "grn_obj_set_value failed");
         }
@@ -227,7 +227,7 @@ table_put_allocate(void)
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     buf = grn_obj_open(&ctx, GRN_BULK, 0, 0);
-    grn_bulk_itoh(&ctx, buf, key, key_size);
+    grn_text_itoh(&ctx, buf, key, key_size);
     {
       grn_search_flags flags = GRN_TABLE_ADD;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -237,7 +237,7 @@ table_put_allocate(void)
       } else {
         grn_obj *value_buf;
         value_buf = grn_obj_open(&ctx, GRN_BULK, 0, 0);
-        grn_bulk_itoh(&ctx, value_buf, key, key_size);
+        grn_text_itoh(&ctx, value_buf, key, key_size);
         if (grn_obj_set_value(&ctx, table, rid, value_buf, GRN_OBJ_SET)) {
           fprintf(stderr, "grn_obj_set_value failed");
         }
@@ -256,11 +256,11 @@ table_get(void)
   grn_obj buf;
   grn_obj *table = grn_ctx_lookup(&ctx, "<t1>", 4);
   if (!table) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       grn_search_flags flags = 0;
       grn_id rid = grn_table_lookup(&ctx, table,
@@ -269,7 +269,7 @@ table_get(void)
         fprintf(stderr, "table_lookup failed");
       } else {
         grn_obj obj, *p;
-        GRN_OBJ_INIT(&obj, GRN_BULK, 0);
+        GRN_TEXT_INIT(&obj);
         p = grn_obj_get_value(&ctx, table, rid, &obj);
         if (!p) {
           fprintf(stderr, "grn_obj_get_value failed\n");
@@ -294,11 +294,11 @@ hash_put(const char *path)
   grn_hash *hash = grn_hash_create(&ctx, path, key_size, value_size,
                                    GRN_OBJ_PERSISTENT|GRN_OBJ_KEY_VAR_SIZE);
   if (!hash) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = GRN_TABLE_ADD;
@@ -323,11 +323,11 @@ hash_get(const char *path)
   grn_obj buf;
   grn_hash *hash = grn_hash_open(&ctx, path);
   if (!hash) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = 0;
@@ -355,11 +355,11 @@ pat_put(const char *path)
   grn_pat *pat = grn_pat_create(&ctx, path, key_size, value_size,
                                    GRN_OBJ_PERSISTENT|GRN_OBJ_KEY_VAR_SIZE);
   if (!pat) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = GRN_TABLE_ADD;
@@ -384,11 +384,11 @@ pat_get(const char *path)
   grn_obj buf;
   grn_pat *pat = grn_pat_open(&ctx, path);
   if (!pat) { return -1; }
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_itoh(&ctx, &buf, key, key_size);
+    grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
       grn_search_flags flags = 0;

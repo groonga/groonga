@@ -30,6 +30,7 @@
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
+#define DEFAULT_MAX_NFTHREADS 8
 
 static int port = DEFAULT_PORT;
 static int batchmode;
@@ -45,11 +46,14 @@ usage(void)
           "  -s:                 run in server mode\n"
           "  -d:                 run in daemon mode\n"
           "  -e:                 encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
+          "  -l <log level>:     log level\n"
           "  -p <port number>:   server port number (default: %d)\n"
+          "  -t <max threads>:   max number of free threads (default: %d)\n"
+          "  -h, --help:         show usage\n"
           "dest: <db pathname> or <dest hostname>\n"
           "  <db pathname>: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
-          DEFAULT_PORT, DEFAULT_DEST);
+          DEFAULT_PORT, DEFAULT_MAX_NFTHREADS, DEFAULT_DEST);
 }
 
 inline static void
@@ -247,7 +251,7 @@ cache_init(grn_ctx *ctx)
       cache_cas = CTX_LOOKUP("<cache>.cas");
     } else {
       if (!cache_table) {
-        grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT);
+        grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT32);
         grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
         grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
         if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
@@ -324,7 +328,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj buf;
         uint32_t expire;
         struct timeval tv;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        GRN_TEXT_INIT(&buf);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
         gettimeofday(&tv, NULL);
@@ -379,21 +383,21 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       } else {
         if (f & GRN_TABLE_ADDED) {
           grn_obj buf;
-          GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
-          GRN_BULK_SET(ctx, &buf, value, valuelen);
+          GRN_TEXT_INIT_REF(&buf);
+          GRN_TEXT_SET_REF(&buf, value, valuelen);
           grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, &flags, 4);
+          GRN_TEXT_SET_REF(&buf, &flags, 4);
           grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
           if (expire && expire < RELATIVE_TIME_THRESH) {
             struct timeval tv;
             gettimeofday(&tv, NULL);
             expire += tv.tv_sec;
           }
-          GRN_BULK_SET(ctx, &buf, &expire, 4);
+          GRN_TEXT_SET_REF(&buf, &expire, 4);
           grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
           {
             uint64_t cas_id = get_mbreq_cas_id();
-            GRN_BULK_SET(ctx, &buf, &cas_id, sizeof(uint64_t));
+            GRN_TEXT_SET_REF(&buf, &cas_id, sizeof(uint64_t));
             grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
             GRN_MSG_MBRES({
               ((grn_msg *)re)->header.cas = cas_id;
@@ -406,7 +410,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             uint32_t oexpire;
             struct timeval tv;
 
-            GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+            GRN_TEXT_INIT(&buf);
             grn_obj_get_value(ctx, cache_expire, rid, &buf);
             oexpire = *((uint32_t *)GRN_BULK_HEAD(&buf));
             gettimeofday(&tv, NULL);
@@ -431,7 +435,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           }
           {
             grn_obj cas;
-            GRN_OBJ_INIT(&cas, GRN_BULK, 0);
+            GRN_TEXT_INIT(&cas);
             grn_obj_get_value(ctx, cache_cas, rid, &cas);
             if (header->cas && header->cas !=
                 *((uint64_t *)GRN_BULK_HEAD(&cas))) {
@@ -440,21 +444,21 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               });
             } else {
               grn_obj buf;
-              GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
-              GRN_BULK_SET(ctx, &buf, value, valuelen);
+              GRN_TEXT_INIT_REF(&buf);
+              GRN_TEXT_SET_REF(&buf, value, valuelen);
               grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-              GRN_BULK_SET(ctx, &buf, &flags, 4);
+              GRN_TEXT_SET_REF(&buf, &flags, 4);
               grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
               if (expire && expire < RELATIVE_TIME_THRESH) {
                 struct timeval tv;
                 gettimeofday(&tv, NULL);
                 expire += tv.tv_sec;
               }
-              GRN_BULK_SET(ctx, &buf, &expire, 4);
+              GRN_TEXT_SET_REF(&buf, &expire, 4);
               grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
               {
                 uint64_t cas_id = get_mbreq_cas_id();
-                GRN_BULK_SET(ctx, &buf, &cas_id, sizeof(uint64_t));
+                GRN_TEXT_SET_REF(&buf, &cas_id, sizeof(uint64_t));
                 grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
                 GRN_MSG_MBRES({
                   ((grn_msg *)re)->header.cas = cas_id;
@@ -517,12 +521,12 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         });
       } else {
         grn_obj buf;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_INIT_REF(&buf);
         if (f & GRN_TABLE_ADDED) {
           uint32_t flags = 0;
-          GRN_BULK_SET(ctx, &buf, &init, 8);
+          GRN_TEXT_SET_REF(&buf, &init, 8);
           grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-          GRN_BULK_SET(ctx, &buf, &flags, 4);
+          GRN_TEXT_SET_REF(&buf, &flags, 4);
           grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
         } else {
           uint32_t oexpire;
@@ -541,13 +545,13 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               break;
             } else {
               uint32_t flags = 0;
-              GRN_BULK_SET(ctx, &buf, &init, 8);
+              GRN_TEXT_SET_REF(&buf, &init, 8);
               grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
-              GRN_BULK_SET(ctx, &buf, &flags, 4);
+              GRN_TEXT_SET_REF(&buf, &flags, 4);
               grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
             }
           } else {
-            GRN_BULK_SET(ctx, &buf, &delta, 8);
+            GRN_TEXT_SET_REF(&buf, &delta, 8);
             grn_obj_set_value(ctx, cache_value, rid, &buf,
                               header->qtype == MBCMD_INCREMENT ||
                               header->qtype == MBCMD_INCREMENTQ
@@ -560,14 +564,13 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           gettimeofday(&tv, NULL);
           expire += tv.tv_sec;
         }
-        GRN_BULK_SET(ctx, &buf, &expire, 4);
+        GRN_TEXT_SET_REF(&buf, &expire, 4);
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
         GRN_MSG_MBRES({
           /* TODO: get_mbreq_cas_id() */
           grn_obj_get_value(ctx, cache_value, rid, re);
           grn_hton(&delta, (uint64_t *)GRN_BULK_HEAD(re), 8);
-          GRN_BULK_REWIND(re);
-          GRN_BULK_SET(ctx, re, &delta, sizeof(uint64_t));
+          GRN_TEXT_SET(ctx, re, &delta, sizeof(uint64_t));
           MBRES(ctx, re, MBRES_SUCCESS, 0, sizeof(uint64_t), 0);
         });
         grn_obj_close(ctx, &buf);
@@ -582,6 +585,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_obj buf;
       uint32_t expire;
       uint8_t extralen = header->level;
+      GRN_TEXT_INIT_REF(&buf);
       if (extralen) {
         char *body = GRN_BULK_HEAD((grn_obj *)msg);
         GRN_ASSERT(extralen == 4);
@@ -601,8 +605,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         expire = tv.tv_sec - 1;
       }
       grn_obj_close(ctx, &buf);
-      GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
-      GRN_BULK_SET(ctx, &buf, &expire, 4);
+      GRN_TEXT_SET_REF(&buf, &expire, 4);
       GRN_TABLE_EACH(ctx, cache_table, 0, 0, rid, NULL, NULL, NULL, {
         grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
       });
@@ -641,7 +644,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_obj buf;
         uint32_t expire;
         struct timeval tv;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        GRN_TEXT_INIT(&buf);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
         gettimeofday(&tv, NULL);
@@ -689,8 +692,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         /* FIXME: check expire */
         grn_obj buf;
         int flags = header->qtype == MBCMD_APPEND ? GRN_OBJ_APPEND : GRN_OBJ_PREPEND;
-        GRN_OBJ_INIT(&buf, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_BULK_SET(ctx, &buf, value, valuelen);
+        GRN_TEXT_INIT_REF(&buf);
+        GRN_TEXT_SET_REF(&buf, value, valuelen);
         grn_obj_set_value(ctx, cache_value, rid, &buf, flags);
         GRN_MSG_MBRES({
           MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
@@ -703,7 +706,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       pid_t pid = getpid();
       GRN_MSG_MBRES({
         grn_bulk_write(ctx, re, "pid", 3);
-        grn_bulk_itoa(ctx, re, pid);
+        grn_text_itoa(ctx, re, pid);
         MBRES(ctx, re, MBRES_SUCCESS, 3, 0, 0);
       });
     }
@@ -736,9 +739,8 @@ static grn_com_queue ctx_new;
 static grn_com_queue ctx_old;
 static grn_mutex q_mutex;
 static grn_cond q_cond;
-static uint32_t nthreads = 0, nfthreads = 0;
-
-#define MAX_NFTHREADS 4
+static uint32_t nthreads = 0, nfthreads = 0,
+                max_nfthreads = DEFAULT_MAX_NFTHREADS;
 
 static void * CALLBACK
 worker(void *arg)
@@ -796,7 +798,7 @@ worker(void *arg)
     } else {
       edge->stat = EDGE_IDLE;
     }
-  } while (nfthreads < MAX_NFTHREADS && grn_gctx.stat != GRN_QL_QUIT);
+  } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_QL_QUIT);
 exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
@@ -866,7 +868,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
       if (edge->stat == EDGE_IDLE) {
         grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
         edge->stat = EDGE_WAIT;
-        if (!nfthreads && nthreads < MAX_NFTHREADS) {
+        if (!nfthreads && nthreads < max_nfthreads) {
           grn_thread thread;
           nthreads++;
           if (THREAD_CREATE(thread, worker, NULL)) { SERR("pthread_create"); }
@@ -1022,12 +1024,14 @@ int
 main(int argc, char **argv)
 {
   grn_encoding enc = GRN_ENC_DEFAULT;
-  char *portstr = NULL, *encstr = NULL, *loglevel = NULL;
+  char *portstr = NULL, *encstr = NULL,
+       *max_nfthreadsstr = NULL, *loglevel = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', NULL, NULL, 0, getopt_op_none},
     {'e', NULL, NULL, 0, getopt_op_none},
-    {'h', NULL, NULL, mode_usage, getopt_op_update},
+    {'t', NULL, NULL, 0, getopt_op_none},
+    {'h', "help", NULL, mode_usage, getopt_op_update},
     {'a', NULL, NULL, mode_alone, getopt_op_update},
     {'c', NULL, NULL, mode_client, getopt_op_update},
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
@@ -1037,7 +1041,8 @@ main(int argc, char **argv)
   };
   opts[0].arg = &portstr;
   opts[1].arg = &encstr;
-  opts[7].arg = &loglevel;
+  opts[2].arg = &max_nfthreadsstr;
+  opts[8].arg = &loglevel;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }
@@ -1068,6 +1073,9 @@ main(int argc, char **argv)
       enc = GRN_ENC_KOI8R;
       break;
     }
+  }
+  if (max_nfthreadsstr) {
+    max_nfthreads = atoi(max_nfthreadsstr);
   }
   batchmode = !isatty(0);
   if (grn_init()) { return -1; }

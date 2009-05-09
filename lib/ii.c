@@ -4525,7 +4525,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     case GRN_BULK :
       {
         new_ = new;
-        GRN_OBJ_INIT(&newv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_OBJ_INIT(&newv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         newv.u.v.body = new;
         new = &newv;
         grn_vector_delimit(ctx, new, 0, GRN_ID_NIL);
@@ -4575,7 +4575,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         //        const char *str = GRN_BULK_HEAD(old);
         //        unsigned int str_len = GRN_BULK_VSIZE(old);
         old_ = old;
-        GRN_OBJ_INIT(&oldv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_OBJ_INIT(&oldv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         oldv.u.v.body = old;
         old = &oldv;;
         grn_vector_delimit(ctx, old, 0, GRN_ID_NIL);

@@ -314,7 +314,7 @@ void grn_obj_patsnip_spec_close(grn_ctx *ctx, patsnip_spec *ss);
 } while(0)
 
 #define GRN_STR2OBJ(ctx,bulk,o) do {\
-  GRN_BULK_PUTC(ctx, (bulk), '\0'); \
+  GRN_TEXT_PUTC(ctx, (bulk), '\0'); \
   GRN_CELL_NEW(ctx, (o));\
   (o)->header.impl_flags = GRN_OBJ_ALLOCATED;\
   (o)->header.type = GRN_CELL_STR;\

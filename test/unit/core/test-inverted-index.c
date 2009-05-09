@@ -329,16 +329,17 @@ update_data(grn_id record_id, unsigned int section,
   grn_obj old_value, new_value;
   const gchar *old_data, *new_data;
 
-  GRN_OBJ_INIT(&old_value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_INIT_REF(&old_value);
+  GRN_TEXT_INIT_REF(&new_value);
+
   if (old_name) {
     old_data = cut_get_fixture_data_string(old_name, NULL);
-    GRN_BULK_SET(context, &old_value, old_data, strlen(old_data));
+    GRN_TEXT_SET_REF(&old_value, old_data, strlen(old_data));
   }
 
-  GRN_OBJ_INIT(&new_value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
   if (new_name) {
     new_data = cut_get_fixture_data_string(new_name, NULL);
-    GRN_BULK_SET(context, &new_value, new_data, strlen(new_data));
+    GRN_TEXT_SET_REF(&new_value, new_data, strlen(new_data));
   }
 
   grn_ii_column_update(context, inverted_index, record_id, section,
@@ -431,7 +432,7 @@ set_index_source(grn_obj *index, grn_obj *source)
   grn_rc rc;
   grn_obj buf;
   grn_id id = grn_obj_id(context, source);
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&buf);
   grn_bulk_write(context, &buf, (void *)&id, sizeof(grn_id));
   rc = grn_obj_set_info(context, index, GRN_INFO_SOURCE, &buf);
   grn_obj_close(context, &buf);
@@ -445,8 +446,8 @@ insert_and_search(grn_obj *users, grn_obj *items, grn_obj *checks, grn_obj *chec
   grn_id user2 = grn_table_add(context, users);
   grn_id item = grn_table_add(context, items);
   grn_obj value, *res;
-  GRN_OBJ_INIT(&value, GRN_BULK, 0);
-  res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, items, 0);
+  GRN_TEXT_INIT(&value);
+  res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);
   cut_assert_not_null(res);
   grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));
   value.header.domain = grn_obj_id(context, items);
@@ -556,7 +557,7 @@ test_int_index(void)
   db = grn_db_create(context, db_path, NULL);
   g_free(db_path);
 
-  int_type = grn_ctx_get(context, GRN_DB_INT);
+  int_type = grn_ctx_get(context, GRN_DB_INT32);
   cut_assert_not_null(int_type);
 
   name = "users";
@@ -584,21 +585,25 @@ test_int_index(void)
   {
     int32_t key = 1;
     grn_search_flags f = GRN_TABLE_ADD;
-    grn_obj value, *res;
+    grn_obj value, query, *res;
     grn_id user1 = grn_table_add(context, users);
     grn_id user2 = grn_table_add(context, users);
     grn_id item = grn_table_lookup(context, items, &key, sizeof(int32_t), &f);
-    GRN_OBJ_INIT(&value, GRN_BULK, 0);
-    res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, items, 0);
+    GRN_TEXT_INIT(&value);
+    GRN_TEXT_INIT(&query);
+    res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);
     cut_assert_not_null(res);
     grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));
     value.header.domain = grn_obj_id(context, items);
+    grn_bulk_write(context, &query, (void *)&key, sizeof(int32_t));
+    query.header.domain = GRN_DB_INT32;
     grn_test_assert(grn_obj_set_value(context, checks, user1, &value, GRN_OBJ_SET));
     grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
     cut_assert_equal_int(grn_table_size(context, res), 1);
     grn_test_assert(grn_obj_set_value(context, checks, user2, &value, GRN_OBJ_SET));
-    grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
+    grn_test_assert(grn_obj_search(context, checked, &query, res, GRN_SEL_OR, NULL));
     cut_assert_equal_int(grn_table_size(context, res), 2);
+    grn_obj_close(context, &query);
     grn_obj_close(context, &value);
     grn_obj_close(context, res);
   }

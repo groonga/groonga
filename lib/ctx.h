@@ -272,12 +272,12 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   grn_obj buf;\
   BACKTRACE(ctx);\
   p = backtrace_symbols((ctx)->trace, (ctx)->ntrace);\
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0);\
+  GRN_TEXT_INIT(&buf);\
   for (i = 0; i < (ctx)->ntrace; i++) {\
-    if (i) GRN_BULK_PUTS((ctx), &buf, " <= ");\
-    GRN_BULK_PUTS((ctx), &buf, p[i]);\
+    if (i) GRN_TEXT_PUTS((ctx), &buf, " <= ");\
+    GRN_TEXT_PUTS((ctx), &buf, p[i]);\
   }\
-  GRN_BULK_PUTC((ctx), &buf, '\0');\
+  GRN_TEXT_PUTC((ctx), &buf, '\0');\
   free(p);\
   GRN_LOG((ctx), GRN_LOG_NOTICE, "%s : %s", msg, GRN_BULK_HEAD(&buf));\
   grn_obj_close((ctx), &buf);\

@@ -735,17 +735,17 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
   grn_rc rc = GRN_SUCCESS;
   grn_section *vp;
   int i, f = 0, n = grn_vector_size(ctx, vector);
-  GRN_OBJ_INIT(&header, GRN_BULK, 0);
-  GRN_OBJ_INIT(&footer, GRN_BULK, 0);
-  grn_bulk_benc(ctx, &header, n);
+  GRN_TEXT_INIT(&header);
+  GRN_TEXT_INIT(&footer);
+  grn_text_benc(ctx, &header, n);
   for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
-    grn_bulk_benc(ctx, &header, vp->length);
+    grn_text_benc(ctx, &header, vp->length);
     if (vp->weight || vp->domain) { f = 1; }
   }
   if (f) {
     for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
-      grn_bulk_benc(ctx, &footer, vp->weight);
-      grn_bulk_benc(ctx, &footer, vp->domain);
+      grn_text_benc(ctx, &footer, vp->weight);
+      grn_text_benc(ctx, &footer, vp->domain);
     }
   }
   {

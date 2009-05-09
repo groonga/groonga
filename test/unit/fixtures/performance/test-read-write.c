@@ -139,14 +139,14 @@ test_read_write(gconstpointer *data)
   grn_test_assert_not_nil(id);
   cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
 
-  GRN_OBJ_INIT(&value, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_BULK_SET(context, &value, value_string, strlen(value_string));
+  GRN_TEXT_INIT_REF(&value);
+  GRN_TEXT_SET_REF(&value, value_string, strlen(value_string));
   grn_obj_set_value(context, table, id, &value, GRN_OBJ_SET);
 
   retrieved_value = grn_obj_get_value(context, table, id, NULL);
   cut_set_message("lookup - success: (%d:%d)", i, process_number);
   grn_test_assert_not_nil(id);
-  GRN_BULK_PUTC(context, retrieved_value, '\0');
+  GRN_TEXT_PUTC(context, retrieved_value, '\0');
   cut_assert_equal_string(value_string, GRN_BULK_HEAD(retrieved_value));
 
   tables[i] = NULL;

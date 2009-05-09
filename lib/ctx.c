@@ -224,7 +224,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->symbols = NULL;
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
-  GRN_OBJ_INIT(&ctx->impl->subbuf, GRN_BULK, 0);
+  GRN_TEXT_INIT(&ctx->impl->subbuf);
 }
 
 void
@@ -851,7 +851,7 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
       if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
       {
         grn_obj buf;
-        GRN_OBJ_INIT(&buf, GRN_BULK, 0);
+        GRN_TEXT_INIT(&buf);
         grn_obj_get_info(ctx, db, GRN_INFO_ENCODING, &buf);
         ctx->encoding = *(grn_encoding *)GRN_BULK_HEAD(&buf);
         grn_obj_close(ctx, &buf);
@@ -1475,7 +1475,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
       grn_obj *col = grn_table_column(ctx, table, ".:key", 5);
       format.ncolumns = 1;
       format.columns = &col;
-      grn_bulk_otoj(ctx, ctx->impl->outbuf, table, &format);
+      grn_text_otoj(ctx, ctx->impl->outbuf, table, &format);
       grn_obj_unlink(ctx, col);
     } else {
       grn_obj *str = (grn_obj *)argv[2].ptr;
@@ -1489,7 +1489,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
         }
         format.ncolumns = n;
         format.columns = cols;
-        grn_bulk_otoj(ctx, ctx->impl->outbuf, table, &format);
+        grn_text_otoj(ctx, ctx->impl->outbuf, table, &format);
         //  ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
         for (i = 0; i < n; i++) {
           grn_obj_unlink(ctx, cols[i]);
@@ -1553,8 +1553,8 @@ scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   if ((c = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
     int o = 0, n =0, l = -1;
     grn_obj buf1, buf2, *v1, *v2;
-    GRN_OBJ_INIT(&buf1, GRN_BULK, 0);
-    GRN_OBJ_INIT(&buf2, GRN_BULK, 0);
+    GRN_TEXT_INIT(&buf1);
+    GRN_TEXT_INIT(&buf2);
     // todo : support op
     while ((id = grn_table_cursor_next(ctx, c))) {
       if (val1->header.type == GRN_BULK) {
@@ -1802,19 +1802,19 @@ get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
     if (*p == d) {
       p++; break;
     } else if (*p == '+') {
-      GRN_BULK_PUTC(ctx, buf, ' ');
+      GRN_TEXT_PUTC(ctx, buf, ' ');
       p++;
     } else if (*p == '%' && p + 3 <= e) {
       const char *r;
       unsigned int c = grn_htoui(p + 1, p + 3, &r);
       if (p + 3 == r) {
-        GRN_BULK_PUTC(ctx, buf, c);
+        GRN_TEXT_PUTC(ctx, buf, c);
       } else {
         GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid % sequence (%c%c)", p + 1, p + 2);
       }
       p += 3;
     } else {
-      GRN_BULK_PUTC(ctx, buf, *p);
+      GRN_TEXT_PUTC(ctx, buf, *p);
       p++;
     }
   }
@@ -1826,8 +1826,8 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
   grn_obj top, key, *val;
-  GRN_OBJ_INIT(&top, GRN_BULK, 0);
-  GRN_OBJ_INIT(&key, GRN_BULK, 0);
+  GRN_TEXT_INIT(&top);
+  GRN_TEXT_INIT(&key);
   if (grn_ctx_qe_init(ctx)) { return NULL; }
   p = str;
   e = p + str_size;
