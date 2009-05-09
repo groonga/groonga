@@ -2176,6 +2176,7 @@ accessor_new(grn_ctx *ctx)
     res->header.type = GRN_ACCESSOR;
     res->header.impl_flags = GRN_OBJ_ALLOCATED;
     res->header.flags = 0;
+    res->header.domain = GRN_ID_NIL;
     res->action = GRN_ACCESSOR_VOID;
     res->offset = 0;
     res->next = NULL;
