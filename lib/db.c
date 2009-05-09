@@ -572,8 +572,8 @@ grn_table_open(grn_ctx *ctx, const char *name, unsigned name_size, const char *p
         grn_id id = grn_obj_register(ctx, db, name, name_size);
         res->header.impl_flags |= GRN_OBJ_CUSTOM_NAME;
         res->header.domain = GRN_ID_NIL; /* unknown */
+        DB_OBJ(res)->range = GRN_ID_NIL; /* unknown */
         grn_db_obj_init(ctx, db, id, DB_OBJ(res));
-        DB_OBJ(res)->range = GRN_ID_NIL;
       }
     }
     GRN_API_RETURN(res);
