@@ -3478,7 +3478,7 @@ grn_obj *
 grn_ctx_get(grn_ctx *ctx, grn_id id)
 {
   grn_obj *res = NULL;
-  if (!ctx || !ctx->impl) { return res; }
+  if (!ctx || !ctx->impl || !id) { return res; }
   GRN_API_ENTER;
   if (id & GRN_OBJ_TMP_OBJECT) {
     if (ctx->impl->values) {
@@ -3491,7 +3491,6 @@ grn_ctx_get(grn_ctx *ctx, grn_id id)
     if (db) {
       grn_db *s = (grn_db *)db;
       grn_obj **vp;
-      if (id == GRN_ID_NIL) { res = ctx->impl->db; goto exit; }
       if (!(vp = grn_tiny_array_at(&s->values, id))) { goto exit; }
       if (s->specs && !*vp) {
         grn_io_win jw;
