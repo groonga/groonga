@@ -1237,6 +1237,15 @@ GRN_API grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry
                                 int offset, grn_obj *proc, grn_obj *data);
 
 /**
+ * grn_obj_get_nhooks:
+ * @obj: 対象object
+ * @entry: hookタイプ
+ *
+ * objに定義されているhookの数を返す。
+ **/
+GRN_API int grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry);
+
+/**
  * grn_obj_get_hook:
  * @obj: 対象object
  * @entry: hookタイプ

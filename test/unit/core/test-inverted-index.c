@@ -438,7 +438,9 @@ set_index_source(grn_obj *index, grn_obj *source)
   grn_id id = grn_obj_id(context, source);
   GRN_TEXT_INIT(&buf);
   grn_bulk_write(context, &buf, (void *)&id, sizeof(grn_id));
+  cut_assert_equal_int(grn_obj_get_nhooks(context, source, GRN_HOOK_SET), 0);
   rc = grn_obj_set_info(context, index, GRN_INFO_SOURCE, &buf);
+  cut_assert_equal_int(grn_obj_get_nhooks(context, source, GRN_HOOK_SET), 1);
   grn_obj_close(context, &buf);
   return rc;
 }

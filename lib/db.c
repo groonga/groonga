@@ -3315,6 +3315,21 @@ exit :
   GRN_API_RETURN(rc);
 }
 
+int
+grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
+{
+  int res = 0;
+  GRN_API_ENTER;
+  {
+    grn_hook *hook = DB_OBJ(obj)->hooks[entry];
+    while (hook) {
+      res++;
+      hook = hook->next;
+    }
+  }
+  GRN_API_RETURN(res);
+}
+
 grn_obj *
 grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
                       int offset, grn_obj *hldbuf)
