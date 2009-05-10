@@ -100,22 +100,6 @@ test_temporary_table_no_path(gpointer data)
   cut_assert_equal_string(NULL, grn_obj_path(&context, table));
 }
 
-/* FIXME!!! */
-grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
-                          grn_encoding *encoding, grn_obj **tokenizer);
-
-void
-data_temporary_table_default_tokenizer(void)
-{
-#define ADD_DATA(label, flags)                                          \
-  cut_add_data(label, GINT_TO_POINTER(flags), NULL, NULL)
-
-  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
-  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY);
-
-#undef ADD_DATA
-}
-
 void
 test_temporary_table_default_tokenizer(gpointer data)
 {
@@ -129,7 +113,7 @@ test_temporary_table_default_tokenizer(gpointer data)
                            NULL, sizeof(grn_id));
   grn_obj_set_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER,
                    OBJECT("<token:trigram>"));
-  grn_table_get_info(&context, table, NULL, NULL, &tokenizer);
+  tokenizer = grn_obj_get_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
   grn_obj_name(&context, tokenizer, name, sizeof(name));
   cut_assert_equal_string("<token:trigram>", name);
 }

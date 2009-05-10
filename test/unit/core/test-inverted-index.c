@@ -112,6 +112,10 @@ setup(void)
                              table_path,
                              GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
                              type, VALUE_SIZE);
+
+  grn_obj_set_info(context, lexicon, GRN_INFO_DEFAULT_TOKENIZER,
+                   grn_ctx_get(context, GRN_DB_BIGRAM));
+
   g_free(table_path);
 
   vgram_path = g_build_filename(tmp_directory, "vgram", NULL);

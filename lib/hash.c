@@ -743,7 +743,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   header->max_offset = m - 1;
   header->n_entries = 0;
   header->n_garbages = 0;
-  header->tokenizer = GRN_DB_BIGRAM;
+  header->tokenizer = 0;
   GRN_DB_OBJ_SET_TYPE(ih, GRN_TABLE_HASH_KEY);
   ih->obj.flags = flags;
   ih->ctx = ctx;
@@ -799,7 +799,7 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
   ah->n_garbages_ = 0;
   ah->n_entries_ = 0;
   ah->garbages = GRN_ID_NIL;
-  ah->tokenizer = grn_ctx_get(ctx, GRN_DB_BIGRAM);
+  ah->tokenizer = NULL;
   grn_tiny_array_init(ctx, &ah->a, entry_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_array_init(ctx, &ah->bitmap, 1, GRN_TINY_ARRAY_CLEAR);
   return GRN_SUCCESS;

@@ -392,7 +392,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   header->curr_del = 0;
   header->curr_del2 = 0;
   header->curr_del3 = 0;
-  header->tokenizer = GRN_DB_BIGRAM;
+  header->tokenizer = 0;
   if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
     grn_io_close(ctx, io);
     return NULL;

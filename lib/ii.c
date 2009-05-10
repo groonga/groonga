@@ -4892,8 +4892,12 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
       ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, ef & EX_SUFFIX);
       break;
     case grn_token_done :
+      /*
       key = _grn_table_key(ctx, lexicon, tid, &size);
       ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, ef);
+      */
+      ti = token_info_open(ctx, lexicon, ii, (char *)token->orig,
+                           token->orig_blen, 0, ef);
       break;
     case grn_token_not_found :
       ti = token_info_open(ctx, lexicon, ii, (char *)token->orig,

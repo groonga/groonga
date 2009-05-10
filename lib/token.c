@@ -470,7 +470,6 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   grn_encoding encoding;
   grn_obj *tokenizer;
   if (grn_table_get_info(ctx, table, NULL, &encoding, &tokenizer)) { return NULL; }
-  if (!tokenizer) { return NULL; }
   if (!(token = GRN_MALLOC(sizeof(grn_token)))) { return NULL; }
   token->table = table;
   token->flags = flags;
@@ -483,16 +482,18 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->pos = -1;
   token->status = grn_token_doing;
   token->force_prefix = 0;
-  token->pctx.user_data.ptr = NULL;
-  token->pctx.obj = table;
-  token->pctx.hooks = NULL;
-  token->pctx.currh = NULL;
-  token->pctx.phase = PROC_INIT;
-  token->pctx.data[0].ptr = (void *)str;
-  token->pctx.data[1].int_value = str_len;
-  token->pctx.data[2].int_value = 0;
-  ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, table, &token->pctx.user_data,
-                                            3, token->pctx.data);
+  if (tokenizer) {
+    token->pctx.user_data.ptr = NULL;
+    token->pctx.obj = table;
+    token->pctx.hooks = NULL;
+    token->pctx.currh = NULL;
+    token->pctx.phase = PROC_INIT;
+    token->pctx.data[0].ptr = (void *)str;
+    token->pctx.data[1].int_value = str_len;
+    token->pctx.data[2].int_value = 0;
+    ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, table, &token->pctx.user_data,
+                                              3, token->pctx.data);
+  }
   if (ctx->rc) {
     GRN_FREE(token);
     token = NULL;
@@ -508,22 +509,28 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
   grn_obj *table = token->table;
   grn_obj *tokenizer = token->tokenizer;
   while (token->status != grn_token_done) {
-    token->pctx.data[0].ptr = NULL;
-    token->pctx.data[1].int_value = 0;
-    token->pctx.data[2].int_value = 0;
-    ((grn_proc *)tokenizer)->funcs[PROC_NEXT](ctx, table, &token->pctx.user_data,
-                                              4, token->pctx.data);
-    token->curr = token->pctx.data[0].ptr;
-    token->curr_size = token->pctx.data[1].int_value;
-    status = token->pctx.data[2].int_value;
-    token->status = (status & GRN_TOKEN_LAST) ? grn_token_done : grn_token_doing;
-    token->force_prefix = 0;
-    if (status & GRN_TOKEN_UNMATURED) {
-      if (status & GRN_TOKEN_OVERLAP) {
-        if (!(token->flags & GRN_TABLE_ADD)) { continue; }
-      } else {
-        if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
+    if (tokenizer) {
+      token->pctx.data[0].ptr = NULL;
+      token->pctx.data[1].int_value = 0;
+      token->pctx.data[2].int_value = 0;
+      ((grn_proc *)tokenizer)->funcs[PROC_NEXT](ctx, table, &token->pctx.user_data,
+                                                4, token->pctx.data);
+      token->curr = token->pctx.data[0].ptr;
+      token->curr_size = token->pctx.data[1].int_value;
+      status = token->pctx.data[2].int_value;
+      token->status = (status & GRN_TOKEN_LAST) ? grn_token_done : grn_token_doing;
+      token->force_prefix = 0;
+      if (status & GRN_TOKEN_UNMATURED) {
+        if (status & GRN_TOKEN_OVERLAP) {
+          if (!(token->flags & GRN_TABLE_ADD)) { continue; }
+        } else {
+          if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
+        }
       }
+    } else {
+      token->curr = token->orig;
+      token->curr_size = token->orig_blen;
+      token->status = grn_token_done;
     }
     if (token->flags & GRN_TABLE_ADD) {
       switch (table->header.type) {
@@ -583,9 +590,11 @@ grn_rc
 grn_token_close(grn_ctx *ctx, grn_token *token)
 {
   if (token) {
-    ((grn_proc *)token->tokenizer)->funcs[PROC_FIN](ctx, token->table,
-                                                    &token->pctx.user_data,
-                                                    0, token->pctx.data);
+    if (token->tokenizer) {
+      ((grn_proc *)token->tokenizer)->funcs[PROC_FIN](ctx, token->table,
+                                                      &token->pctx.user_data,
+                                                      0, token->pctx.data);
+    }
     GRN_FREE(token);
     return GRN_SUCCESS;
   } else {

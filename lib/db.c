@@ -3022,14 +3022,14 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
     goto exit;
   }
-  if (!valuebuf) {
-    if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
-      ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
-      goto exit;
-    }
-  }
   switch (type) {
   case GRN_INFO_ENCODING :
+    if (!valuebuf) {
+      if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
+        ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+        goto exit;
+      }
+    }
     {
       grn_encoding enc;
       switch (obj->header.type) {
@@ -3051,11 +3051,27 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     }
     break;
   case GRN_INFO_SOURCE :
+    if (!valuebuf) {
+      if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
+        ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+        goto exit;
+      }
+    }
     if (!GRN_DB_OBJP(obj)) {
       ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");
       goto exit;
     }
     grn_bulk_write(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
+    break;
+  case GRN_INFO_DEFAULT_TOKENIZER :
+    switch (DB_OBJ(obj)->header.type) {
+    case GRN_TABLE_HASH_KEY :
+      valuebuf = ((grn_hash *)obj)->tokenizer;
+      break;
+    case GRN_TABLE_PAT_KEY :
+      valuebuf = ((grn_pat *)obj)->tokenizer;
+      break;
+    }
     break;
   default :
     /* todo */
@@ -3212,16 +3228,16 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
     rc = GRN_SUCCESS;
     break;
   case GRN_INFO_DEFAULT_TOKENIZER :
-    if (value && DB_OBJ(value)->header.type == GRN_PROC) {
+    if (!value || DB_OBJ(value)->header.type == GRN_PROC) {
       switch (DB_OBJ(obj)->header.type) {
       case GRN_TABLE_HASH_KEY :
         ((grn_hash *)obj)->tokenizer = value;
-        ((grn_hash *)obj)->header->tokenizer = DB_OBJ(value)->id;
+        ((grn_hash *)obj)->header->tokenizer = grn_obj_id(ctx, value);
         rc = GRN_SUCCESS;
         break;
       case GRN_TABLE_PAT_KEY :
         ((grn_pat *)obj)->tokenizer = value;
-        ((grn_pat *)obj)->header->tokenizer = DB_OBJ(value)->id;
+        ((grn_pat *)obj)->header->tokenizer = grn_obj_id(ctx, value);
         rc = GRN_SUCCESS;
         break;
       }
