@@ -57,3 +57,13 @@ test_range(void)
   database = grn_db_create(context, NULL, NULL);
   grn_test_assert_nil(grn_obj_get_range(context, database));
 }
+
+void
+test_cursor(void)
+{
+  grn_table_cursor *c;
+  database = grn_db_create(context, NULL, NULL);
+  c = grn_table_cursor_open(context, database, NULL, 0, NULL, 0, 0);
+  cut_assert_true(grn_table_cursor_next(context, c));
+  grn_table_cursor_close(context, c);
+}

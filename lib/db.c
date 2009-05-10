@@ -962,6 +962,10 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
   if (table) {
     switch (table->header.type) {
     case GRN_DB :
+      tc = (grn_table_cursor *)grn_pat_cursor_open(ctx, ((grn_db *)table)->keys,
+                                                   min, min_size,
+                                                   max, max_size, flags);
+      break;
     case GRN_TABLE_PAT_KEY :
       tc = (grn_table_cursor *)grn_pat_cursor_open(ctx, (grn_pat *)table,
                                                    min, min_size,
