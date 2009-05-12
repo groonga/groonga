@@ -390,7 +390,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   }
 #endif /* USE_KQUEUE */
   {
-    if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c, NULL)) {
+    if (grn_hash_add(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c, NULL)) {
       c->ev = ev;
       c->fd = fd;
       c->events = events;
@@ -405,7 +405,7 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
 {
   grn_com *c;
   if (!ev) { return GRN_INVALID_ARGUMENT; }
-  if (grn_hash_at(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c)) {
+  if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c)) {
     if (c->fd != fd) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "grn_com_event_mod fd unmatch %d != %d", c->fd, fd);
       return GRN_OBJECT_CORRUPT;
@@ -445,7 +445,7 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
   if (!ev) { return GRN_INVALID_ARGUMENT; }
   {
     grn_com *c;
-    grn_id id = grn_hash_at(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c);
+    grn_id id = grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c);
     if (id) {
 #ifdef USE_EPOLL
       if (!c->closed) {
@@ -591,7 +591,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     efd = ep->data.fd;
     nevents--;
     // todo : com = ep->data.ptr;
-    if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
+    if (!grn_hash_get(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       struct epoll_event e;
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->hash", efd);
       memset(&e, 0, sizeof(struct epoll_event));
@@ -607,7 +607,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     efd = ep->ident;
     nevents--;
     // todo : com = ep->udata;
-    if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
+    if (!grn_hash_get(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       struct kevent e;
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->set", efd);
       EV_SET(&e, efd, ep->filter, EV_DELETE, 0, 0, NULL);
@@ -620,7 +620,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     efd = ep->fd;
     if (!(ep->events & ep->revents)) { continue; }
     nevents--;
-    if (!grn_hash_at(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
+    if (!grn_hash_get(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->hash", efd);
       if (grn_sock_close(efd) == -1) { SERR("close"); }
       continue;

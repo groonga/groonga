@@ -688,7 +688,7 @@ grn_get(const char *key)
 {
   grn_cell *obj;
   if (!grn_gctx.impl || !grn_gctx.impl->symbols ||
-      !grn_hash_get(&grn_gctx, grn_gctx.impl->symbols, key, strlen(key),
+      !grn_hash_add(&grn_gctx, grn_gctx.impl->symbols, key, strlen(key),
                     (void **) &obj, NULL)) {
     GRN_LOG(&grn_gctx, GRN_LOG_WARNING, "grn_get(%s) failed", key);
     return F;
@@ -705,7 +705,7 @@ grn_at(const char *key)
 {
   grn_cell *obj;
   if (!grn_gctx.impl || grn_gctx.impl->symbols ||
-      !grn_hash_at(&grn_gctx, grn_gctx.impl->symbols,
+      !grn_hash_get(&grn_gctx, grn_gctx.impl->symbols,
                    key, strlen(key), (void **) &obj)) {
     return F;
   }
@@ -1665,7 +1665,7 @@ static grn_ctx_qe *
 qe_at(grn_ctx *ctx, const char *key, int key_size)
 {
   grn_ctx_qe *qe = NULL;
-  grn_hash_at(ctx, ctx->impl->qe, key, key_size, (void **)&qe);
+  grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe);
   return qe;
 }
 
@@ -1675,7 +1675,7 @@ qe_get(grn_ctx *ctx, const char *key, int key_size)
   grn_id id;
   grn_ctx_qe *qe;
   int added;
-  if (!(id = grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &added))) {
+  if (!(id = grn_hash_add(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &added))) {
     return NULL;
   }
   if (added) { qe->id = id; }

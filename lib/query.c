@@ -343,7 +343,7 @@ get_weight_vector(grn_ctx *ctx, grn_query *query, const char *source)
 
     if (query->weight_set) {
       int *pval;
-      if (grn_hash_get(ctx, query->weight_set, &key, sizeof(unsigned int), (void **)&pval, NULL)) {
+      if (grn_hash_add(ctx, query->weight_set, &key, sizeof(unsigned int), (void **)&pval, NULL)) {
         *pval = value;
       }
     } else if (key < DEFAULT_WEIGHT_VECTOR_SIZE) {
@@ -418,7 +418,7 @@ section_weight_cb(grn_ctx *ctx, grn_hash *r, const void *rid, int sid, void *arg
 {
   int *w;
   grn_hash *s = (grn_hash *)arg;
-  if (s && grn_hash_at(ctx, s, &sid, sizeof(grn_id), (void **)&w)) {
+  if (s && grn_hash_get(ctx, s, &sid, sizeof(grn_id), (void **)&w)) {
     return *w;
   } else {
     return 0;

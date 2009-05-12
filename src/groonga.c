@@ -844,7 +844,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
     grn_msg_close(ctx, msg);
   } else {
     int added;
-    grn_id id = grn_hash_get(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
+    grn_id id = grn_hash_add(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
                              (void **)&edge, &added);
     if (added) {
       grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL);

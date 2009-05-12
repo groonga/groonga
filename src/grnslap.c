@@ -122,7 +122,7 @@ session_open(grn_ctx *ctx, grn_slap_dest *dest)
   session *s;
   grn_com *com;
   if (!(com = grn_com_copen(ctx, &ev, dest->host, dest->port))) { return NULL; }
-  id = grn_hash_get(ctx, sessions, &com->fd, sizeof(grn_sock), (void **)&s, NULL);
+  id = grn_hash_add(ctx, sessions, &com->fd, sizeof(grn_sock), (void **)&s, NULL);
   com->opaque = s;
   s->com = com;
   s->id = id;

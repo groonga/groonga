@@ -85,9 +85,9 @@ struct _grn_pat_cursor {
   uint8_t curr_key[GRN_TABLE_MAX_KEY_SIZE];
 };
 
-grn_id grn_pat_at(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
-                  void **value);
 grn_id grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
+                  void **value);
+grn_id grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
                    void **value, int *added);
 grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
 

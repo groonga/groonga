@@ -166,7 +166,7 @@ grn_cell *
 grn_ql_mk_symbol(grn_ctx *ctx, const char *name, int name_size)
 {
   grn_cell *x;
-  if (!grn_hash_get(ctx, ctx->impl->symbols, name, name_size, (void **) &x, NULL)) {
+  if (!grn_hash_add(ctx, ctx->impl->symbols, name, name_size, (void **) &x, NULL)) {
     return F;
   }
   if (!x->header.impl_flags) {
@@ -186,7 +186,7 @@ grn_cell *
 grn_ql_at(grn_ctx *ctx, const char *key)
 {
   grn_cell *o;
-  if (!grn_hash_at(ctx, ctx->impl->symbols, key, strlen(key), (void **) &o)) {
+  if (!grn_hash_get(ctx, ctx->impl->symbols, key, strlen(key), (void **) &o)) {
     return NULL;
   }
   return o;

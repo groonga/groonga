@@ -600,12 +600,12 @@ grn_table_lookup(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
                 id = GRN_ID_NIL;
               } else {
                 int added;
-                id = grn_pat_get(ctx, pat, key, key_size, NULL, &added);
+                id = grn_pat_add(ctx, pat, key, key_size, NULL, &added);
                 if (flags && added) { *flags |= GRN_TABLE_ADDED; }
                 grn_io_unlock(pat->io);
               }
             } else {
-              id = grn_pat_at(ctx, pat, key, key_size, NULL);
+              id = grn_pat_get(ctx, pat, key, key_size, NULL);
             }
           }
         });
@@ -620,12 +620,12 @@ grn_table_lookup(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
               id = GRN_ID_NIL;
             } else {
               int added;
-              id = grn_hash_get(ctx, hash, key, key_size, NULL, &added);
+              id = grn_hash_add(ctx, hash, key, key_size, NULL, &added);
               if (flags && added) { *flags |= GRN_TABLE_ADDED; }
               grn_io_unlock(hash->io);
             }
           } else {
-            id = grn_hash_at(ctx, hash, key, key_size, NULL);
+            id = grn_hash_get(ctx, hash, key, key_size, NULL);
           }
         });
       }
@@ -649,7 +649,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
           if (grn_io_lock(ctx, pat->io, 10000000)) {
             id = GRN_ID_NIL;
           } else {
-            id = grn_pat_get(ctx, pat, key, key_size, NULL, added);
+            id = grn_pat_add(ctx, pat, key, key_size, NULL, added);
             grn_io_unlock(pat->io);
           }
         });
@@ -662,7 +662,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
           if (grn_io_lock(ctx, hash->io, 10000000)) {
             id = GRN_ID_NIL;
           } else {
-            id = grn_hash_get(ctx, hash, key, key_size, NULL, added);
+            id = grn_hash_add(ctx, hash, key, key_size, NULL, added);
             grn_io_unlock(hash->io);
           }
         });
@@ -686,12 +686,12 @@ grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       WITH_NORMALIZE((grn_pat *)table, key, key_size, {
-        id = grn_pat_at(ctx, (grn_pat *)table, key, key_size, NULL);
+        id = grn_pat_get(ctx, (grn_pat *)table, key, key_size, NULL);
       });
       break;
     case GRN_TABLE_HASH_KEY :
       WITH_NORMALIZE((grn_hash *)table, key, key_size, {
-        id = grn_hash_at(ctx, (grn_hash *)table, key, key_size, NULL);
+        id = grn_hash_get(ctx, (grn_hash *)table, key, key_size, NULL);
       });
       break;
     }
@@ -710,12 +710,12 @@ grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       WITH_NORMALIZE((grn_pat *)table, key, key_size, {
-        id = grn_pat_get(ctx, (grn_pat *)table, key, key_size, value, added);
+        id = grn_pat_add(ctx, (grn_pat *)table, key, key_size, value, added);
       });
       break;
     case GRN_TABLE_HASH_KEY :
       WITH_NORMALIZE((grn_hash *)table, key, key_size, {
-        id = grn_hash_get(ctx, (grn_hash *)table, key, key_size, value, added);
+        id = grn_hash_add(ctx, (grn_hash *)table, key, key_size, value, added);
       });
       break;
     case GRN_TABLE_NO_KEY :
@@ -737,12 +737,12 @@ grn_table_get_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       WITH_NORMALIZE((grn_pat *)table, key, key_size, {
-        id = grn_pat_at(ctx, (grn_pat *)table, key, key_size, value);
+        id = grn_pat_get(ctx, (grn_pat *)table, key, key_size, value);
       });
       break;
     case GRN_TABLE_HASH_KEY :
       WITH_NORMALIZE((grn_hash *)table, key, key_size, {
-        id = grn_hash_at(ctx, (grn_hash *)table, key, key_size, value);
+        id = grn_hash_get(ctx, (grn_hash *)table, key, key_size, value);
       });
       break;
     }
@@ -1383,7 +1383,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
               res_add(ctx, s, (grn_rset_posinfo *) pos,
                       get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
               */
-              grn_hash_get(ctx, s, pos, s->key_size, NULL, NULL);
+              grn_hash_add(ctx, s, pos, s->key_size, NULL, NULL);
             }
             grn_ii_cursor_close(ctx, c);
           }

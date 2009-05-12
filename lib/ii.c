@@ -2249,7 +2249,7 @@ lexicon_deletable(grn_ctx *ctx, grn_obj *lexicon, grn_id tid, void *arg)
   }
   {
     grn_ii_updspec **u;
-    if (!grn_hash_at(ctx, h, &tid, sizeof(grn_id), (void **) &u)) {
+    if (!grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **) &u)) {
       return (ERRP(ctx, GRN_ERROR)) ? 0 : 1;
     }
     if (!(*u)->tf || !(*u)->sid) { return 1; }
@@ -4215,7 +4215,7 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   while (!token->status) {
     (tid = grn_token_next(ctx, token));
     if (tid) {
-      if (!grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
+      if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
       if (!*u) {
         if (!(*u = grn_ii_updspec_open(ctx, rid, 1))) {
           GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_updspec_open on index_add failed!");
@@ -4266,7 +4266,7 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   }
   while (!token->status) {
     if ((tid = grn_token_next(ctx, token))) {
-      if (!grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
+      if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
       if (!*u) {
         if (!(*u = grn_ii_updspec_open(ctx, rid, 0))) {
           GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on index_del failed !");
@@ -4336,7 +4336,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
       if ((token = grn_token_open(ctx, lexicon, v->str, v->str_len, GRN_TABLE_ADD))) {
         while (!token->status) {
           if ((tid = grn_token_next(ctx, token))) {
-            if (!grn_hash_get(ctx, new, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+            if (!grn_hash_add(ctx, new, &tid, sizeof(grn_id), (void **) &u, NULL)) {
               break;
             }
             if (!*u) {
@@ -4379,7 +4379,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
       if ((token = grn_token_open(ctx, lexicon, v->str, v->str_len, GRN_TOKEN_UPD))) {
         while (!token->status) {
           if ((tid = grn_token_next(ctx, token))) {
-            if (!grn_hash_get(ctx, old, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+            if (!grn_hash_add(ctx, old, &tid, sizeof(grn_id), (void **) &u, NULL)) {
               break;
             }
             if (!*u) {
@@ -4411,7 +4411,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
   if (old) {
     grn_id eid;
     GRN_HASH_EACH(old, id, &tp, NULL, &u, {
-      if (new && (eid = grn_hash_at(ctx, new, tp, sizeof(grn_id), (void **) &un))) {
+      if (new && (eid = grn_hash_get(ctx, new, tp, sizeof(grn_id), (void **) &un))) {
         if (!grn_ii_updspec_cmp(*u, *un)) {
           grn_ii_updspec_close(ctx, *un);
           grn_hash_delete_by_id(ctx, new, eid, NULL);
@@ -4457,7 +4457,7 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         (token = grn_token_open(ctx, lexicon, head + v->offset, v->length, flags))) {
       while (!token->status) {
         if ((tid = grn_token_next(ctx, token))) {
-          if (!grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+          if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
             break;
           }
           if (!*u) {
@@ -4490,7 +4490,7 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   const grn_id *rp = (const grn_id *)GRN_BULK_HEAD(in);
   const grn_id *re = (const grn_id *)GRN_BULK_CURR(in);
   for (j = 0; rp < re; j++, rp++) {
-    if (!grn_hash_get(ctx, h, rp, sizeof(grn_id), (void **) &u, NULL)) {
+    if (!grn_hash_add(ctx, h, rp, sizeof(grn_id), (void **) &u, NULL)) {
       break;
     }
     if (!*u) {
@@ -4623,7 +4623,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     grn_hash *o = (grn_hash *)old;
     grn_hash *n = (grn_hash *)new;
     GRN_HASH_EACH(o, id, &tp, NULL, &u, {
-      if (n && (eid = grn_hash_at(ctx, n, tp, sizeof(grn_id), (void **) &un))) {
+      if (n && (eid = grn_hash_get(ctx, n, tp, sizeof(grn_id), (void **) &un))) {
         if (!grn_ii_updspec_cmp(*u, *un)) {
           grn_ii_updspec_close(ctx, *un);
           grn_hash_delete_by_id(ctx, n, eid, NULL);
@@ -4951,21 +4951,21 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
   grn_id id = GRN_ID_NIL;
   switch (op) {
   case GRN_SEL_OR :
-    id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri, NULL);
+    id = grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL);
     break;
   case GRN_SEL_AND :
-    if ((id = grn_hash_at(ctx, s, pi, s->key_size, (void **)&ri))) {
+    if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
       ri->n_subrecs |= GRN_RSET_UTIL_BIT;
     }
     break;
   case GRN_SEL_BUT :
-    if ((id = grn_hash_at(ctx, s, pi, s->key_size, (void **)&ri))) {
+    if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
       grn_hash_delete_by_id(ctx, s, id, NULL);
       id = GRN_ID_NIL;
     }
     break;
   case GRN_SEL_ADJUST :
-    if ((id = grn_hash_at(ctx, s, pi, s->key_size, (void **)&ri))) {
+    if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
       ri->score += score;
       id = GRN_ID_NIL;
     }
@@ -5135,7 +5135,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   if (!(max_size = optarg->max_size)) { max_size = 1048576; }
   while (token->status != grn_token_done) {
     if ((tid = grn_token_next(ctx, token))) {
-      if (grn_hash_get(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) { (*w1)++; }
+      if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) { (*w1)++; }
     }
     if (tid && token->curr_size) {
       if (optarg->max_interval == GRN_SEL_UNSPLIT) {
@@ -5424,7 +5424,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
     weight = get_weight(ctx, s, rid, sid, wvm, optarg);
     if (tip == tie && weight) {
       grn_rset_posinfo pi = {rid, sid, 0};
-      if (orp || grn_hash_at(ctx, s, &pi, s->key_size, NULL)) {
+      if (orp || grn_hash_get(ctx, s, &pi, s->key_size, NULL)) {
         int count = 0, noccur = 0, pos = 0, score = 0, tscore = 0, min, max;
 
 #define SKIP_OR_BREAK(pos) {\
