@@ -64,7 +64,7 @@ test_array_set_data(void)
   table = grn_table_create(&context, NULL, 0, NULL,
                            GRN_OBJ_TABLE_NO_KEY,
                            NULL, sizeof(value));
-  record_id = grn_table_add(&context, table);
+  record_id = grn_table_add(&context, table, NULL, 0, NULL);
 
   record_value = grn_obj_open(&context, GRN_BULK, 0, 0);
   grn_bulk_write(&context, record_value, value, sizeof(value));
@@ -143,7 +143,7 @@ test_temporary_table_add(gpointer data)
                            OBJECT("<shorttext>"),
                            sizeof(grn_id));
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
-    grn_table_add(&context, table);
+    grn_table_add(&context, table, NULL, 0, NULL);
   } else {
     grn_search_flags flags = GRN_TABLE_ADD;
     grn_table_lookup(&context, table, key, strlen(key), &flags);

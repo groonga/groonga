@@ -451,9 +451,9 @@ set_index_source(grn_obj *index, grn_obj *source)
 static void
 insert_and_search(grn_obj *users, grn_obj *items, grn_obj *checks, grn_obj *checked)
 {
-  grn_id user1 = grn_table_add(context, users);
-  grn_id user2 = grn_table_add(context, users);
-  grn_id item = grn_table_add(context, items);
+  grn_id user1 = grn_table_add(context, users, NULL, 0, NULL);
+  grn_id user2 = grn_table_add(context, users, NULL, 0, NULL);
+  grn_id item = grn_table_add(context, items, NULL, 0, NULL);
   grn_obj value, *res;
   GRN_TEXT_INIT(&value);
   res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);
@@ -595,8 +595,8 @@ test_int_index(void)
     int32_t key = 1;
     grn_search_flags f = GRN_TABLE_ADD;
     grn_obj value, query, *res;
-    grn_id user1 = grn_table_add(context, users);
-    grn_id user2 = grn_table_add(context, users);
+    grn_id user1 = grn_table_add(context, users, NULL, 0, NULL);
+    grn_id user2 = grn_table_add(context, users, NULL, 0, NULL);
     grn_id item = grn_table_lookup(context, items, &key, sizeof(int32_t), &f);
     GRN_TEXT_INIT(&value);
     GRN_TEXT_INIT(&query);
