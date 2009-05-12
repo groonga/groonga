@@ -88,7 +88,7 @@ struct _grn_pat_cursor {
 grn_id grn_pat_at(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
                   void **value);
 grn_id grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
-                   void **value, grn_search_flags *flags);
+                   void **value, int *added);
 grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
 
 /* private */

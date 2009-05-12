@@ -59,10 +59,10 @@ grn_obj *grn_db_keys(grn_obj *s);
 grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                grn_table_delete_optarg *optarg);
 
-grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
-                    void **value);
-grn_id grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
-                     void **value, grn_search_flags *flags);
+grn_id grn_table_get_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
+                       void **value);
+grn_id grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
+                       void **value, int *added);
 grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
                           grn_encoding *encoding, grn_obj **tokenizer);
 const char *_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size);

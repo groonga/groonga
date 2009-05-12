@@ -658,14 +658,14 @@ if (KEY_NEEDS_CONVERT(pat,size)) {\
 
 grn_id
 grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
-            void **value, grn_search_flags *flags)
+            void **value, int *added)
 {
   uint32_t new, lkey = 0;
   grn_id r0;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   KEY_ENCODE(pat, keybuf, key, key_size);
   r0 = _grn_pat_get(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
-  if (new && flags) { *flags |= GRN_TABLE_ADDED; }
+  if (added) { *added = new; }
   if (r0 && (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) &&
       (*((uint8_t *)key) & 0x80)) { // todo: refine!!
     sis_node *sl, *sr;
@@ -751,7 +751,10 @@ grn_pat_lookup(grn_ctx *ctx, grn_pat *pat, const void *key, int key_size,
 {
   if (!pat || !key || !key_size || pat->key_size < key_size) { return GRN_ID_NIL; }
   if (*flags & GRN_TABLE_ADD) {
-    return grn_pat_get(ctx, pat, key, key_size, value, flags);
+    int added;
+    grn_id id = grn_pat_get(ctx, pat, key, key_size, value, &added);
+    if (flags && added) { *flags |= GRN_TABLE_ADDED; }
+    return id;
   } else {
     return grn_pat_at(ctx, pat, key, key_size, value);
   }

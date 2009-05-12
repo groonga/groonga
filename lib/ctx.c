@@ -687,10 +687,9 @@ grn_cell *
 grn_get(const char *key)
 {
   grn_cell *obj;
-  grn_search_flags f = GRN_TABLE_ADD;
   if (!grn_gctx.impl || !grn_gctx.impl->symbols ||
       !grn_hash_get(&grn_gctx, grn_gctx.impl->symbols, key, strlen(key),
-                    (void **) &obj, &f)) {
+                    (void **) &obj, NULL)) {
     GRN_LOG(&grn_gctx, GRN_LOG_WARNING, "grn_get(%s) failed", key);
     return F;
   }
@@ -1574,8 +1573,7 @@ scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
         if (n++ >= o) {
           /* todo : use GRN_SET_INT_ADD if !n_entries */
           grn_rset_recinfo *ri;
-          grn_search_flags fl = GRN_TABLE_ADD;
-          grn_table_get(ctx, res, &id, sizeof(grn_id), (void **)&ri, &fl);
+          grn_table_add_v(ctx, res, &id, sizeof(grn_id), (void **)&ri, NULL);
           {
             int score = 1;
             grn_table_add_subrec(res, ri, score, NULL, 0);
@@ -1676,11 +1674,11 @@ qe_get(grn_ctx *ctx, const char *key, int key_size)
 {
   grn_id id;
   grn_ctx_qe *qe;
-  grn_search_flags flags = GRN_TABLE_ADD;
-  if (!(id = grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &flags))) {
+  int added;
+  if (!(id = grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe, &added))) {
     return NULL;
   }
-  if (flags & GRN_TABLE_ADDED) { qe->id = id; }
+  if (added) { qe->id = id; }
   return qe;
 }
 

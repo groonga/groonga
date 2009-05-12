@@ -534,11 +534,26 @@ GRN_API grn_id grn_table_lookup(grn_ctx *ctx, grn_obj *table,
 /**
  * grn_table_add:
  * @table: 対象table
+ * @key: 検索key
+ * @added: NULL以外の値が指定された場合、
+ * 新たにrecordが追加された時には1が、既存recordだった時には0がセットされる。
  *
- * 新しいレコードを追加し、そのIDを返す。
- * GRN_OBJ_TABLE_NO_KEYが指定されたtableでのみ有効。
+ * keyに対応する新しいrecordをtableに追加し、そのIDを返す。
+ * keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返す。
+ * GRN_OBJ_TABLE_NO_KEYが指定されたtableでは、key, key_size は無視される。
  **/
-GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table);
+GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
+                             const void *key, unsigned key_size, int *added);
+
+/**
+ * grn_table_get:
+ * @table: 対象table
+ * @key: 検索key
+ *
+ * tableからkeyに対応するrecordを検索し、対応するIDを返す。
+ **/
+GRN_API grn_id grn_table_get(grn_ctx *ctx, grn_obj *table,
+                             const void *key, unsigned key_size);
 
 /**
  * grn_table_get_key:

@@ -843,10 +843,10 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
     }
     grn_msg_close(ctx, msg);
   } else {
-    grn_search_flags f = GRN_TABLE_ADD;
+    int added;
     grn_id id = grn_hash_get(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
-                             (void **)&edge, &f);
-    if (f & GRN_TABLE_ADDED) {
+                             (void **)&edge, &added);
+    if (added) {
       grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL);
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);

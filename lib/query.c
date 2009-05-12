@@ -343,8 +343,7 @@ get_weight_vector(grn_ctx *ctx, grn_query *query, const char *source)
 
     if (query->weight_set) {
       int *pval;
-      grn_search_flags f = GRN_TABLE_ADD;
-      if (grn_hash_get(ctx, query->weight_set, &key, sizeof(unsigned int), (void **)&pval, &f)) {
+      if (grn_hash_get(ctx, query->weight_set, &key, sizeof(unsigned int), (void **)&pval, NULL)) {
         *pval = value;
       }
     } else if (key < DEFAULT_WEIGHT_VECTOR_SIZE) {

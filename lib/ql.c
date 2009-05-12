@@ -748,10 +748,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
         id = cell->u.o.id;
         break;
       case GRN_CELL_STR :
-        {
-          grn_search_flags flags = GRN_TABLE_ADD;
-          id = grn_table_get(ctx, range, STRVALUE(cell), STRSIZE(cell), NULL, &flags);
-        }
+        id = grn_table_add(ctx, range, STRVALUE(cell), STRSIZE(cell), NULL);
         break;
       default :
         if (VOIDP(cell)) { id = GRN_ID_NIL; }
@@ -1440,8 +1437,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                       if (match_exec(ctx, &spec, base, id)) {
                         if (n++ >= o) {
                           /* todo : use GRN_SET_INT_ADD if !n_entries */
-                          grn_search_flags fl = GRN_TABLE_ADD;
-                          grn_table_get(ctx, rec, pi, sizeof(grn_id), (void **)&ri, &fl);
+                          grn_table_add_v(ctx, rec, pi, sizeof(grn_id), (void **)&ri, NULL);
                           if (spec.score_ce) {
                             int score = score_exec(ctx, &spec, base, id);
                             grn_table_add_subrec(rec, ri, score, NULL, 0);

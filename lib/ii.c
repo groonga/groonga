@@ -4748,7 +4748,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     token_info_expand_both(ctx, lexicon, ii, key, key_size, ti);
     break;
   case EX_NONE :
-    if ((tid = grn_table_at(ctx, lexicon, key, key_size, NULL)) &&
+    if ((tid = grn_table_get(ctx, lexicon, key, key_size)) &&
         (s = grn_ii_estimate_size(ctx, ii, tid)) &&
         (ti->cursors = cursor_heap_open(ctx, 1))) {
       cursor_heap_push(ctx, ti->cursors, ii, tid, 0);

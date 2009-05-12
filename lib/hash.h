@@ -310,7 +310,7 @@ int grn_hash_sort(grn_ctx *ctx, grn_hash *hash, int limit,
 grn_id grn_hash_at(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
                    void **value);
 grn_id grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
-                    void **value, grn_search_flags *flags);
+                    void **value, int *added);
 
 grn_rc grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout);
 grn_rc grn_hash_unlock(grn_ctx *ctx, grn_hash *hash);

@@ -1056,7 +1056,7 @@ grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash)
 
 grn_id
 grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void **value,
-             grn_search_flags *flags)
+             int *added)
 {
   entry_str *ee;
   uint32_t h, i, m, s;
@@ -1093,7 +1093,10 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void *
     }
     ENTRY_AT(hash, e, ee, GRN_TABLE_ADD);
     if (!ee) { return GRN_ID_NIL; }
-    if (match_key(ctx, hash, ee, h, key, key_size)) { goto exit; }
+    if (match_key(ctx, hash, ee, h, key, key_size)) {
+      if (added) { *added = 0; }
+      goto exit;
+    }
   }
   if (!(e = entry_new(ctx, hash, key_size))) { /* unlock */ return GRN_ID_NIL; }
   ENTRY_AT(hash, e, ee, GRN_TABLE_ADD);
@@ -1105,7 +1108,7 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void *
   }
   *ep = e;
   (*hash->n_entries)++;
-  if (flags) { *flags |= GRN_TABLE_ADDED; }
+  if (added) { *added = 1; }
 exit :
   /* unlock */
   if (value) { *value = get_value(hash,ee); }
@@ -1152,7 +1155,9 @@ grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, voi
 {
   if (!hash || !key || !key_size) { return GRN_ID_NIL; }
   if (*flags & GRN_TABLE_ADD) {
-    return grn_hash_get(ctx, hash, key, key_size, value, flags);
+    int added;
+    return grn_hash_get(ctx, hash, key, key_size, value, &added);
+    if (flags && added) { *flags |= GRN_TABLE_ADDED; }
   } else {
     return grn_hash_at(ctx, hash, key, key_size, value);
   }
@@ -2136,8 +2141,7 @@ grn_rhash_group(grn_hash *s, int limit, grn_group_optarg *optarg)
     }
     {
       grn_rset_recinfo *gri;
-      grn_search_flags f = GRN_TABLE_ADD;
-      if (grn_hash_get(ctx, g, gkey, rsize, (void **)&gri, &f)) {
+      if (grn_hash_get(ctx, g, gkey, rsize, (void **)&gri, NULL)) {
         grn_rhash_add_subrec(g, gri, ri->score, ekey, dir);
       }
     }

@@ -121,9 +121,8 @@ session_open(grn_ctx *ctx, grn_slap_dest *dest)
   grn_id id;
   session *s;
   grn_com *com;
-  grn_search_flags f = GRN_TABLE_ADD;
   if (!(com = grn_com_copen(ctx, &ev, dest->host, dest->port))) { return NULL; }
-  id = grn_hash_get(ctx, sessions, &com->fd, sizeof(grn_sock), (void **)&s, &f);
+  id = grn_hash_get(ctx, sessions, &com->fd, sizeof(grn_sock), (void **)&s, NULL);
   com->opaque = s;
   s->com = com;
   s->id = id;

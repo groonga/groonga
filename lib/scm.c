@@ -166,8 +166,7 @@ grn_cell *
 grn_ql_mk_symbol(grn_ctx *ctx, const char *name, int name_size)
 {
   grn_cell *x;
-  grn_search_flags f = GRN_TABLE_ADD;
-  if (!grn_hash_get(ctx, ctx->impl->symbols, name, name_size, (void **) &x, &f)) {
+  if (!grn_hash_get(ctx, ctx->impl->symbols, name, name_size, (void **) &x, NULL)) {
     return F;
   }
   if (!x->header.impl_flags) {
@@ -3080,7 +3079,7 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             }
             break;
           case GRN_CELL_STR :
-            id = grn_table_at(ctx, range, STRVALUE(car), STRSIZE(car), NULL);
+            id = grn_table_get(ctx, range, STRVALUE(car), STRSIZE(car));
             if (id) {
               for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
                 if (v == ve) { r = 0; break; }
@@ -3097,7 +3096,7 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         }
         break;
       case GRN_CELL_STR :
-        id = grn_table_at(ctx, range, STRVALUE(e), STRSIZE(e), NULL);
+        id = grn_table_get(ctx, range, STRVALUE(e), STRSIZE(e));
         if (id) {
           for (v = (grn_id *)GRN_BULK_HEAD(u);; v++) {
             if (v == ve) { r = 0; break; }
@@ -3133,7 +3132,7 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       case GRN_CELL_STR :
         {
           grn_obj *range = grn_ctx_get(ctx, domain);
-          if (grn_table_at(ctx, range, STRVALUE(e), STRSIZE(e), NULL) == id) { r = 1; }
+          if (grn_table_get(ctx, range, STRVALUE(e), STRSIZE(e)) == id) { r = 1; }
         }
         break;
       case GRN_CELL_OBJECT :

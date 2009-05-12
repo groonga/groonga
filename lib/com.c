@@ -390,8 +390,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   }
 #endif /* USE_KQUEUE */
   {
-    grn_search_flags f = GRN_TABLE_ADD;
-    if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c, &f)) {
+    if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c, NULL)) {
       c->ev = ev;
       c->fd = fd;
       c->events = events;
