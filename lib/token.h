@@ -41,9 +41,6 @@
 extern "C" {
 #endif
 
-#define GRN_TOKEN_ADD 1
-#define GRN_TOKEN_UPD 2
-
 typedef struct {
   grn_obj *table;
   const unsigned char *orig;
@@ -51,7 +48,7 @@ typedef struct {
   uint32_t orig_blen;
   uint32_t curr_size;
   int32_t pos;
-  grn_search_flags flags;
+  int32_t add;
   uint8_t status;
   uint8_t force_prefix;
   grn_obj_flags table_flags;
@@ -76,7 +73,7 @@ grn_rc grn_token_init(void);
 grn_rc grn_token_fin(void);
 
 grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
-                          size_t str_len, grn_search_flags flags);
+                          size_t str_len, int add);
 
 grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
 grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);
