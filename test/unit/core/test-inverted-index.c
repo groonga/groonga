@@ -441,6 +441,9 @@ set_index_source(grn_obj *index, grn_obj *source)
   cut_assert_equal_int(grn_obj_get_nhooks(context, source, GRN_HOOK_SET), 0);
   rc = grn_obj_set_info(context, index, GRN_INFO_SOURCE, &buf);
   cut_assert_equal_int(grn_obj_get_nhooks(context, source, GRN_HOOK_SET), 1);
+  GRN_BULK_REWIND(&buf);
+  cut_assert_null(grn_obj_get_hook(context, source, GRN_HOOK_SET, 0, &buf));
+  cut_assert_equal_int(*((grn_id *)GRN_BULK_HEAD(&buf)), grn_obj_id(context, index));
   grn_obj_close(context, &buf);
   return rc;
 }

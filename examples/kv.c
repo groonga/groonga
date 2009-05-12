@@ -459,9 +459,9 @@ main(int argc, char **argv)
       r = (op == 'p') ? column_put() : column_get();
       break;
     case 't' :
-      //      r = (op == 'p') ? table_put() : table_get();
-      r = (op == 'p') ? table_put_allocate() : table_get();
-    //r = (op == 'p') ? table_put2() : table_get();
+      r = (op == 'p') ? table_put() : table_get();
+      //r = (op == 'p') ? table_put_allocate() : table_get();
+      //r = (op == 'p') ? table_put2() : table_get();
       break;
     default :
       r = -1;

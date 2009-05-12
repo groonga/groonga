@@ -2654,47 +2654,45 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       ERR(GRN_INVALID_ARGUMENT, "not db_obj");
     }
   } else {
-    void *v;
-    unsigned int s;
     grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
-    grn_obj oldbuf, *oldvalue;
-    GRN_TEXT_INIT(&oldbuf);
-    oldvalue = grn_obj_get_value(ctx, obj, id, &oldbuf);
-    if (flags & GRN_OBJ_SET) {
-      void *ov;
-      unsigned int os;
-      v = GRN_BULK_HEAD(value);
-      s = GRN_BULK_VSIZE(value);
-      ov = GRN_BULK_HEAD(oldvalue);
-      os = GRN_BULK_VSIZE(oldvalue);
-      if (ov && v && os == s && !memcmp(ov, v, s)) {
-        grn_bulk_fin(ctx, oldvalue);
-        rc = GRN_SUCCESS;
-        goto exit;
-      }
-    }
-    if (hooks) {
-      // todo : grn_proc_ctx_open()
-      grn_proc_ctx pctx = {{0}, obj, hooks, hooks, PROC_INIT, 4, 4};
-      pctx.data[0].id = id;
-      pctx.data[1].ptr = oldvalue;
-      pctx.data[2].ptr = value;
-      pctx.data[3].int_value = flags;
-      while (hooks) {
-        pctx.currh = hooks;
-        if (hooks->proc) {
-          rc = hooks->proc->funcs[PROC_INIT](ctx, obj, &pctx.user_data, 4, pctx.data);
-        } else {
-          rc = default_set_value_hook(ctx, obj, &pctx.user_data, 4, pctx.data);
+    void *v = GRN_BULK_HEAD(value);
+    unsigned int s = GRN_BULK_VSIZE(value);
+    if (hooks || obj->header.type == GRN_COLUMN_VAR_SIZE) {
+      grn_obj oldbuf, *oldvalue;
+      GRN_TEXT_INIT(&oldbuf);
+      oldvalue = grn_obj_get_value(ctx, obj, id, &oldbuf);
+      if (flags & GRN_OBJ_SET) {
+        void *ov;
+        unsigned int os;
+        ov = GRN_BULK_HEAD(oldvalue);
+        os = GRN_BULK_VSIZE(oldvalue);
+        if (ov && v && os == s && !memcmp(ov, v, s)) {
+          grn_bulk_fin(ctx, oldvalue);
+          rc = GRN_SUCCESS;
+          goto exit;
         }
-        if (rc) { goto exit; }
-        hooks = hooks->next;
-        pctx.offset++;
       }
+      if (hooks) {
+        // todo : grn_proc_ctx_open()
+        grn_proc_ctx pctx = {{0}, obj, hooks, hooks, PROC_INIT, 4, 4};
+        pctx.data[0].id = id;
+        pctx.data[1].ptr = oldvalue;
+        pctx.data[2].ptr = value;
+        pctx.data[3].int_value = flags;
+        while (hooks) {
+          pctx.currh = hooks;
+          if (hooks->proc) {
+            rc = hooks->proc->funcs[PROC_INIT](ctx, obj, &pctx.user_data, 4, pctx.data);
+          } else {
+            rc = default_set_value_hook(ctx, obj, &pctx.user_data, 4, pctx.data);
+          }
+          if (rc) { goto exit; }
+          hooks = hooks->next;
+          pctx.offset++;
+        }
+      }
+      grn_obj_close(ctx, oldvalue);
     }
-    grn_obj_close(ctx, oldvalue);
-    v = GRN_BULK_HEAD(value);
-    s = GRN_BULK_VSIZE(value);
     switch (obj->header.type) {
     case GRN_TABLE_PAT_KEY :
       rc = grn_pat_set_value(ctx, (grn_pat *)obj, id, v, flags);
