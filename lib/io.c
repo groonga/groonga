@@ -118,10 +118,9 @@ grn_io_fin(void)
 }
 
 grn_id
-grn_dl_lookup(grn_ctx *ctx, const char *filename)
+grn_dl_get(grn_ctx *ctx, const char *filename)
 {
-  grn_search_flags f = 0;
-  return grn_hash_lookup(ctx, grn_dls, filename, strlen(filename), NULL, &f);
+  return grn_hash_get(ctx, grn_dls, filename, strlen(filename), NULL);
 }
 
 grn_io *
@@ -1774,15 +1773,11 @@ grn_dl_open(grn_ctx *ctx, const char *filename)
 {
   grn_id id;
   HMODULE dl, *dlp;
-  grn_search_flags f = 0;
-  if ((id = grn_hash_lookup(ctx, grn_dls, filename, strlen(filename),
-                            (void **)&dlp, &f))) {
+  if ((id = grn_hash_get(ctx, grn_dls, filename, strlen(filename), (void **)&dlp))) {
     return id;
   }
   if ((dl = LoadLibrary(filename))) {
-    f = GRN_TABLE_ADD;
-    if ((id = grn_hash_lookup(ctx, grn_dls, filename, strlen(filename),
-                              (void *)&dlp, &f))) {
+    if ((id = grn_hash_add(ctx, grn_dls, filename, strlen(filename), (void *)&dlp, NULL))) {
       *dlp = dl;
     } else {
       if (!FreeLibrary(dl)) {
@@ -1978,15 +1973,11 @@ grn_dl_open(grn_ctx *ctx, const char *filename)
 {
   grn_id id;
   void *dl, **dlp;
-  grn_search_flags f = 0;
-  if ((id = grn_hash_lookup(ctx, grn_dls, filename, strlen(filename),
-                            (void **)&dlp, &f))) {
+  if ((id = grn_hash_get(ctx, grn_dls, filename, strlen(filename), (void **)&dlp))) {
     return id;
   }
   if ((dl = dlopen(filename, 0))) {
-    f = GRN_TABLE_ADD;
-    if ((id = grn_hash_lookup(ctx, grn_dls, filename, strlen(filename),
-                              (void **)&dlp, &f))) {
+    if ((id = grn_hash_add(ctx, grn_dls, filename, strlen(filename), (void **)&dlp, NULL))) {
       *dlp = dl;
     } else {
       if (dlclose(dl)) {

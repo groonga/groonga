@@ -433,10 +433,22 @@ unesc(grn_ctx *ctx, grn_cell *obj)
 }
 
 static grn_cell *
-grn_ql_table_at(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size,
-                grn_search_flags flags, grn_cell *res)
+grn_ql_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, grn_cell *res)
 {
-  grn_id id = grn_table_lookup(ctx, table, key, key_size, &flags);
+  grn_id id = grn_table_add(ctx, table, key, key_size, NULL);
+  if (id) {
+    if (!res) { GRN_CELL_NEW(ctx, res); }
+    obj_obj_bind(res, DB_OBJ(table)->id, id);
+    return res;
+  } else {
+    return F;
+  }
+}
+
+static grn_cell *
+grn_ql_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, grn_cell *res)
+{
+  grn_id id = grn_table_get(ctx, table, key, key_size);
   if (id) {
     if (!res) { GRN_CELL_NEW(ctx, res); }
     obj_obj_bind(res, DB_OBJ(table)->id, id);
@@ -1091,7 +1103,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     {
       POP(car, args);
       if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
-      res = grn_ql_table_at(ctx, table, msg, msg_size, 0, NULL);
+      res = grn_ql_table_get(ctx, table, msg, msg_size, NULL);
     }
     break;
   case ':' :
@@ -1113,10 +1125,9 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         case 'M' :
           {
             grn_id id;
-            grn_search_flags flags = GRN_SEARCH_LCP;
             POP(car, args);
             if (!BULKP(car)) { QLERR("invalid argument"); }
-            id = grn_table_lookup(ctx, table, STRVALUE(car), STRSIZE(car), &flags);
+            id = grn_table_lcp_search(ctx, table, STRVALUE(car), STRSIZE(car));
             res = id ? grn_ql_obj_new(ctx, base, id) : F;
           }
           break;
@@ -1360,7 +1371,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             // todo : support array
             POP(car, args);
             if (obj2str(car, msg, &msg_size)) { return F; }
-            res = grn_ql_table_at(ctx, table, msg, msg_size, GRN_TABLE_ADD, NULL);
+            res = grn_ql_table_add(ctx, table, msg, msg_size, NULL);
             if (res != F) {
               grn_cell cons, dummy;
               grn_obj *column;
@@ -1695,7 +1706,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (!PAIRP(s)) { QLERR("invalid argument"); }
           }
           s = CADR(s);
-          o = grn_ql_table_at(ctx, table, s->u.b.value, s->u.b.size, GRN_TABLE_ADD, &obj);
+          o = grn_ql_table_add(ctx, table, s->u.b.value, s->u.b.size, &obj);
           if (o != F) {
             cons.header.type = GRN_CELL_LIST;
             cons.header.impl_flags = 0;
@@ -1713,8 +1724,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           }
         } else { /* array */
           if (!BULKP(car)) { QLERR("invalid argument"); }
-          o = grn_ql_table_at(ctx, table, car->u.b.value, car->u.b.size,
-                              GRN_TABLE_ADD, &obj);
+          o = grn_ql_table_add(ctx, table, car->u.b.value, car->u.b.size, &obj);
 
           if (o != F) {
             cons.header.type = GRN_CELL_LIST;
@@ -1771,9 +1781,8 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           if (grn_obj_lock(ctx, ctx->impl->db, GRN_ID_NIL, -1)) {
             GRN_LOG(ctx, GRN_LOG_CRIT, "ha_table::load lock failed");
           } else {
-            o = grn_ql_table_at(ctx, table, args->u.b.value,
-                                tokbuf[0] - args->u.b.value,
-                                GRN_TABLE_ADD, &obj);
+            o = grn_ql_table_add(ctx, table, args->u.b.value,
+                                tokbuf[0] - args->u.b.value, &obj);
             if (o != F) {
               for (s = stat->columns, i = 1; i < stat->ncolumns; s = CDR(s), i++) {
                 val.u.b.value = tokbuf[i - 1] + 1;
@@ -2013,7 +2022,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         POP(car, args);
         if (obj2str(car, name, &name_size)) { return F; }
         if (!(table = grn_column_table(ctx, column))) { return F; }
-        res = grn_ql_table_at(ctx, table, name, name_size, 0, NULL);
+        res = grn_ql_table_get(ctx, table, name, name_size, NULL);
         if (res != F) {
           // grn_obj_lock(ctx, ctx->impl->db, GRN_ID_NIL, -1))
           column_value(ctx, column, res->u.o.id, args, res);

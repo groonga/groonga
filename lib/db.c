@@ -188,7 +188,6 @@ grn_obj *
 grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size)
 {
   grn_id id;
-  grn_search_flags flags = 0;
   grn_obj *obj = NULL;
   grn_obj *db;
   if (!ctx || !ctx->impl) { return obj; }
@@ -196,7 +195,7 @@ grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size)
   GRN_API_ENTER;
   if (DB_P(db)) {
     grn_db *s = (grn_db *)db;
-    if ((id = grn_pat_lookup(ctx, s->keys, name, name_size, NULL, &flags))) {
+    if ((id = grn_pat_get(ctx, s->keys, name, name_size, NULL))) {
       obj = grn_ctx_get(ctx, id);
     }
   }
@@ -324,10 +323,10 @@ grn_proc_create(grn_ctx *ctx,
   grn_proc *res = NULL;
   grn_id id = GRN_ID_NIL;
   grn_id domain;
-  grn_search_flags f = GRN_TABLE_ADD;
+  int added = 0;
   grn_obj *db = ctx->impl->db;
   GRN_API_ENTER;
-  domain = path ? grn_dl_lookup(ctx, path) : GRN_ID_NIL;
+  domain = path ? grn_dl_get(ctx, path) : GRN_ID_NIL;
   if (check_name(ctx, name, name_size)) {
     ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
     GRN_API_RETURN(NULL);
@@ -338,11 +337,11 @@ grn_proc_create(grn_ctx *ctx,
   }
   if (name && name_size) {
     grn_db *s = (grn_db *)db;
-    if (!(id = grn_pat_lookup(ctx, s->keys, name, name_size, NULL, &f))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_pat_lookup failed");
+    if (!(id = grn_pat_add(ctx, s->keys, name, name_size, NULL, &added))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_pat_add failed");
       GRN_API_RETURN(NULL);
     }
-    if (!(f & GRN_TABLE_ADDED)) {
+    if (!added) {
       res = (grn_proc *)grn_ctx_get(ctx, id);
       if (res && res->funcs[PROC_INIT]) {
         ERR(GRN_INVALID_ARGUMENT, "already used name");
@@ -360,7 +359,7 @@ grn_proc_create(grn_ctx *ctx,
     res->funcs[PROC_INIT] = init;
     res->funcs[PROC_NEXT] = next;
     res->funcs[PROC_FIN] = fin;
-    if (f & GRN_TABLE_ADDED) {
+    if (added) {
       if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
         // grn_obj_delete(ctx, db, id);
         GRN_FREE(res);
@@ -578,6 +577,32 @@ grn_table_open(grn_ctx *ctx, const char *name, unsigned name_size, const char *p
     }
     GRN_API_RETURN(res);
   }
+}
+
+grn_id
+grn_table_lcp_search(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size)
+{
+  grn_id id = GRN_ID_NIL;
+  GRN_API_ENTER;
+  switch (table->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    {
+      grn_pat *pat = (grn_pat *)table;
+      WITH_NORMALIZE(pat, key, key_size, {
+        id = grn_pat_lcp_search(ctx, pat, key, key_size);
+      });
+    }
+    break;
+  case GRN_TABLE_HASH_KEY :
+    {
+      grn_hash *hash = (grn_hash *)table;
+      WITH_NORMALIZE(hash, key, key_size, {
+          id = grn_hash_get(ctx, hash, key, key_size, NULL);
+      });
+    }
+    break;
+  }
+  GRN_API_RETURN(id);
 }
 
 grn_id
@@ -1257,22 +1282,15 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
         switch (flags) {
         case GRN_SEARCH_EXACT :
           {
-            grn_search_flags f = 0;
-            grn_id id = grn_pat_lookup(ctx, pat, key, key_size, NULL, &f);
-            if (id) {
-              grn_search_flags fl = GRN_TABLE_ADD;
-              grn_table_lookup(ctx, res, &id, sizeof(grn_id), &fl);
-            }
+            grn_id id = grn_pat_get(ctx, pat, key, key_size, NULL);
+            if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           }
           // todo : support op;
           break;
         case GRN_SEARCH_LCP :
           {
             grn_id id = grn_pat_lcp_search(ctx, pat, key, key_size);
-            if (id) {
-              grn_search_flags fl = GRN_TABLE_ADD;
-              grn_table_lookup(ctx, res, &id, sizeof(grn_id), &fl);
-            }
+            if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           }
           // todo : support op;
           break;
@@ -1292,8 +1310,7 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
             const char *se = sp + key_size;
             for (; sp < se; sp += len) {
               if ((tid = grn_pat_lcp_search(ctx, pat, sp, se - sp))) {
-                grn_search_flags fl = GRN_TABLE_ADD;
-                grn_table_lookup(ctx, res, &tid, sizeof(grn_id), &fl);
+                grn_table_add(ctx, res, &tid, sizeof(grn_id), NULL);
                 /* todo : nsubrec++ if GRN_OBJ_TABLE_SUBSET assigned */
               }
               if (!(len = grn_charlen(ctx, sp, se))) { break; }
@@ -1311,15 +1328,11 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
   case GRN_TABLE_HASH_KEY :
     {
       grn_hash *hash = (grn_hash *)table;
-      grn_search_flags f = 0;
       grn_id id;
       WITH_NORMALIZE(hash, key, key_size, {
-        id = grn_hash_lookup(ctx, hash, key, key_size, NULL, &f);
+        id = grn_hash_get(ctx, hash, key, key_size, NULL);
       });
-      if (id) {
-        grn_search_flags fl = GRN_TABLE_ADD;
-        grn_table_lookup(ctx, res, &id, sizeof(grn_id), &fl);
-      }
+      if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
     }
     break;
   }
@@ -2788,9 +2801,8 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                 grn_section *v;
                 const char *head = GRN_BULK_HEAD(value->u.v.body);
                 for (j = value->u.v.n_sections, v = value->u.v.sections; j; j--, v++) {
-                  grn_search_flags f = GRN_TABLE_ADD;
-                  grn_id tid = grn_table_lookup(ctx, lexicon,
-                                                head + v->offset, v->length, &f);
+                  grn_id tid = grn_table_add(ctx, lexicon,
+                                             head + v->offset, v->length, NULL);
                   grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
                 }
                 rc = grn_ja_put(ctx, (grn_ja *)obj, id,
@@ -3475,10 +3487,10 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size
   grn_id id = GRN_ID_NIL;
   if (name && name_size) {
     grn_db *s = (grn_db *)db;
-    grn_search_flags f = GRN_TABLE_ADD;
-    if (!(id = grn_pat_lookup(ctx, s->keys, name, name_size, NULL, &f))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_pat_lookup failed");
-    } else if (!(f & GRN_TABLE_ADDED)) {
+    int added;
+    if (!(id = grn_pat_add(ctx, s->keys, name, name_size, NULL, &added))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_pat_add failed");
+    } else if (!added) {
       ERR(GRN_INVALID_ARGUMENT, "already used name was assigend");
       id = GRN_ID_NIL;
     }

@@ -526,6 +526,8 @@ typedef unsigned char grn_search_flags;
  *         flagsにNULLが指定された場合は、GRN_SEARCH_EXACTのみが指定されたものと見なされる。
  *
  * tableからkeyに対応するrecordを検索し、対応するIDを返す。
+ *
+ * deprecated: 近々廃止されます。
  **/
 GRN_API grn_id grn_table_lookup(grn_ctx *ctx, grn_obj *table,
                                 const void *key, unsigned key_size,
@@ -554,6 +556,17 @@ GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
  **/
 GRN_API grn_id grn_table_get(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned key_size);
+
+/**
+ * grn_table_lcp_search:
+ * @table: 対象table
+ * @key: 検索key
+ *
+ * tableがGRN_TABLE_PAT_KEYを指定して作ったtableなら、
+ * longest common prefix searchを行い、対応するIDを返す。
+ **/
+GRN_API grn_id grn_table_lcp_search(grn_ctx *ctx, grn_obj *table,
+                                    const void *key, unsigned key_size);
 
 /**
  * grn_table_get_key:
@@ -1583,8 +1596,13 @@ GRN_API grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
 
 GRN_API grn_rc grn_hash_close(grn_ctx *ctx, grn_hash *hash);
 
-GRN_API grn_id grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
-                               void **value, grn_search_flags *flags);
+GRN_API grn_id grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key,
+                               unsigned int key_size, void **value, grn_search_flags *flags);
+
+GRN_API grn_id grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
+                            unsigned int key_size, void **value, int *added);
+GRN_API grn_id grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
+                            unsigned int key_size, void **value);
 
 GRN_API int grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize);
 GRN_API int grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk);
@@ -1652,6 +1670,10 @@ GRN_API grn_rc grn_pat_remove(grn_ctx *ctx, const char *path);
 
 GRN_API grn_id grn_pat_lookup(grn_ctx *ctx, grn_pat *pat, const void *key, int key_size,
                               void **value, grn_search_flags *flags);
+GRN_API grn_id grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key,
+                           unsigned int key_size, void **value);
+GRN_API grn_id grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key,
+                           unsigned int key_size, void **value, int *added);
 
 GRN_API int grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize);
 GRN_API int grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk);

@@ -307,11 +307,6 @@ struct _grn_table_sort_optarg {
 int grn_hash_sort(grn_ctx *ctx, grn_hash *hash, int limit,
                   grn_array *result, grn_table_sort_optarg *optarg);
 
-grn_id grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
-                   void **value);
-grn_id grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size,
-                    void **value, int *added);
-
 grn_rc grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout);
 grn_rc grn_hash_unlock(grn_ctx *ctx, grn_hash *hash);
 grn_rc grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash);

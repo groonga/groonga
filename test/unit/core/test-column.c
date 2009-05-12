@@ -71,11 +71,8 @@ static void
 add_groonga_bookmark(void)
 {
   gchar key[] = "groonga";
-  grn_search_flags flags = GRN_TABLE_ADD;
-
-  groonga_bookmark_id = grn_table_lookup(&context, bookmarks,
-                                         &key, strlen(key),
-                                         &flags);
+  groonga_bookmark_id = grn_table_add(&context, bookmarks,
+                                      &key, strlen(key), NULL);
   grn_test_assert_context(&context);
   cut_set_message("%s", cut_take_string(grn_collect_logger_to_string(logger)));
   grn_test_assert_not_nil(groonga_bookmark_id);

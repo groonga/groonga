@@ -372,8 +372,7 @@ retrieve_record_ids(const gchar *term)
   grn_ii_posting *posting;
   grn_search_flags flags;
 
-  flags = GRN_SEARCH_EXACT;
-  term_id = grn_table_lookup(context, lexicon, term, strlen(term), &flags);
+  term_id = grn_table_get(context, lexicon, term, strlen(term));
   if (term_id == GRN_ID_NIL)
     return NULL;
 
@@ -593,11 +592,10 @@ test_int_index(void)
 
   {
     int32_t key = 1;
-    grn_search_flags f = GRN_TABLE_ADD;
     grn_obj value, query, *res;
     grn_id user1 = grn_table_add(context, users, NULL, 0, NULL);
     grn_id user2 = grn_table_add(context, users, NULL, 0, NULL);
-    grn_id item = grn_table_lookup(context, items, &key, sizeof(int32_t), &f);
+    grn_id item = grn_table_add(context, items, &key, sizeof(int32_t), NULL);
     GRN_TEXT_INIT(&value);
     GRN_TEXT_INIT(&query);
     res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);

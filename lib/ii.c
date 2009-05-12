@@ -5266,7 +5266,6 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   int skip, rep, policy;
   grn_rc rc = GRN_SUCCESS;
   grn_wv_mode wvm = grn_wv_none;
-  grn_search_flags flags = GRN_SEARCH_LCP;
   if (!ii || !string || !string_len || !s || !optarg) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -5287,7 +5286,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   */
   rep = 0;
   for (p = nstr->norm, pe = p + nstr->norm_blen; p < pe; p += skip) {
-    if ((tid = grn_table_lookup(ctx, ii->lexicon, p, pe - p, &flags))) {
+    if ((tid = grn_table_lcp_search(ctx, ii->lexicon, p, pe - p))) {
       if (policy == TERM_EXTRACT_EACH_POST) {
         if (!(skip = grn_table_get_key(ctx, ii->lexicon, tid, NULL, 0))) { break; }
       } else {

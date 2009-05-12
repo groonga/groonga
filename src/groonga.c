@@ -317,9 +317,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
-      grn_search_flags f = 0;
       cache_init(ctx);
-      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      rid = grn_table_get(ctx, cache_table, key, keylen);
       if (!rid) {
         GRN_MSG_MBRES({
           MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
@@ -370,18 +369,23 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       uint32_t valuelen = size - keylen - extralen;
       char *key = body + 8;
       char *value = key + keylen;
+      int added = 0;
       grn_search_flags f = (header->qtype == MBCMD_REPLACE ||
                             header->qtype == MBCMD_REPLACEQ)
                            ? 0 : GRN_TABLE_ADD;
       GRN_ASSERT(extralen == 8);
       cache_init(ctx);
-      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (header->qtype == MBCMD_REPLACE || header->qtype == MBCMD_REPLACEQ) {
+        rid = grn_table_get(ctx, cache_table, key, keylen);
+      } else {
+        rid = grn_table_add(ctx, cache_table, key, keylen, &added);
+      }
       if (!rid) {
         GRN_MSG_MBRES({
           MBRES(ctx, re, (f & GRN_TABLE_ADD) ? MBRES_ENOMEM : MBRES_NOT_STORED, 0, 0, 0);
         });
       } else {
-        if (f & GRN_TABLE_ADDED) {
+        if (added) {
           grn_obj buf;
           GRN_TEXT_INIT_REF(&buf);
           GRN_TEXT_SET_REF(&buf, value, valuelen);
@@ -480,9 +484,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
-      grn_search_flags f = 0;
       cache_init(ctx);
-      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      rid = grn_table_get(ctx, cache_table, key, keylen);
       if (!rid) {
         // GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d not found", keylen);
         GRN_MSG_MBRES({
@@ -504,17 +507,21 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
   case MBCMD_DECREMENT :
     {
       grn_id rid;
+      int added = 0;
       uint64_t delta, init;
       uint16_t keylen = ntohs(header->keylen);
       char *body = GRN_BULK_HEAD((grn_obj *)msg);
       char *key = body + 20;
       uint32_t expire = ntohl(*((uint32_t *)(body + 16)));
-      grn_search_flags f = expire == 0xffffffff ? 0 : GRN_TABLE_ADD;
       grn_ntoh(&delta, body, 8);
       grn_ntoh(&init, body + 8, 8);
       GRN_ASSERT(header->level == 20); /* extralen */
       cache_init(ctx);
-      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      if (expire == 0xffffffff) {
+        rid = grn_table_get(ctx, cache_table, key, keylen);
+      } else {
+        rid = grn_table_add(ctx, cache_table, key, keylen, &added);
+      }
       if (!rid) {
         GRN_MSG_MBRES({
           MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
@@ -522,7 +529,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       } else {
         grn_obj buf;
         GRN_TEXT_INIT_REF(&buf);
-        if (f & GRN_TABLE_ADDED) {
+        if (added) {
           uint32_t flags = 0;
           GRN_TEXT_SET_REF(&buf, &init, 8);
           grn_obj_set_value(ctx, cache_value, rid, &buf, GRN_OBJ_SET);
@@ -633,9 +640,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
-      grn_search_flags f = 0;
       cache_init(ctx);
-      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      rid = grn_table_get(ctx, cache_table, key, keylen);
       if (!rid) {
         GRN_MSG_MBRES({
           MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
@@ -681,9 +687,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
       char *value = key + keylen;
       uint32_t valuelen = size - keylen;
-      grn_search_flags f = GRN_TABLE_ADD;
       cache_init(ctx);
-      rid = grn_table_lookup(ctx, cache_table, key, keylen, &f);
+      rid = grn_table_add(ctx, cache_table, key, keylen, NULL);
       if (!rid) {
         GRN_MSG_MBRES({
           MBRES(ctx, re, MBRES_ENOMEM, 0, 0, 0);

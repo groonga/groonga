@@ -98,7 +98,7 @@ void
 test_read_write(gconstpointer *data)
 {
   gint i;
-  grn_search_flags flags;
+  int added;
   grn_ctx *context;
   grn_obj *table;
   const gchar *path;
@@ -128,16 +128,13 @@ test_read_write(gconstpointer *data)
   cut_assert_not_null(tables[i], "table: %d (%d)", i, process_number);
   table = tables[i];
 
-  flags = 0;
   cut_set_message("lookup - fail: (%d:%d)", i, process_number);
-  grn_test_assert_nil(grn_table_lookup(context, table,
-                                       &i, sizeof(grn_id), &flags));
+  grn_test_assert_nil(grn_table_get(context, table, &i, sizeof(grn_id)));
 
   value_string = cut_take_printf("value: (%d:%d)", i, process_number);
-  flags = GRN_TABLE_ADD;
-  id = grn_table_lookup(context, table, &i, sizeof(grn_id), &flags);
+  id = grn_table_add(context, table, &i, sizeof(grn_id), &added);
   grn_test_assert_not_nil(id);
-  cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
+  cut_assert_equal_int(1, added);
 
   GRN_TEXT_INIT_REF(&value);
   GRN_TEXT_SET_REF(&value, value_string, strlen(value_string));

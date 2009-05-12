@@ -78,9 +78,7 @@ column_put(void)
     GRN_BULK_REWIND(&buf);
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
-      grn_search_flags flags = GRN_TABLE_ADD;
-      grn_id rid = grn_table_lookup(&ctx, table,
-                                    GRN_BULK_HEAD(&buf), key_size, &flags);
+      grn_id rid = grn_table_add(&ctx, table, GRN_BULK_HEAD(&buf), key_size, NULL);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -116,9 +114,7 @@ column_get(void)
     GRN_BULK_REWIND(&buf);
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
-      grn_search_flags flags = 0;
-      grn_id rid = grn_table_lookup(&ctx, table,
-                                    GRN_BULK_HEAD(&buf), key_size, &flags);
+      grn_id rid = grn_table_get(&ctx, table, GRN_BULK_HEAD(&buf), key_size);
       if (!rid) {
         fprintf(stderr, "table_lookup failed\n");
       } else {
@@ -164,9 +160,7 @@ table_put(void)
     GRN_BULK_REWIND(&buf);
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
-      grn_search_flags flags = GRN_TABLE_ADD;
-      grn_id rid = grn_table_lookup(&ctx, table,
-                                    GRN_BULK_HEAD(&buf), key_size, &flags);
+      grn_id rid = grn_table_add(&ctx, table, GRN_BULK_HEAD(&buf), key_size, NULL);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -195,9 +189,7 @@ table_put2(void)
     GRN_TEXT_INIT(&keybuf);
     grn_text_itoh(&ctx, &keybuf, key, key_size);
     {
-      grn_search_flags flags = GRN_TABLE_ADD;
-      grn_id rid = grn_table_lookup(&ctx, table,
-                                    GRN_BULK_HEAD(&keybuf), key_size, &flags);
+      grn_id rid = grn_table_add(&ctx, table, GRN_BULK_HEAD(&keybuf), key_size, NULL);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -229,9 +221,7 @@ table_put_allocate(void)
     buf = grn_obj_open(&ctx, GRN_BULK, 0, 0);
     grn_text_itoh(&ctx, buf, key, key_size);
     {
-      grn_search_flags flags = GRN_TABLE_ADD;
-      grn_id rid = grn_table_lookup(&ctx, table,
-                                    GRN_BULK_HEAD(buf), key_size, &flags);
+      grn_id rid = grn_table_add(&ctx, table, GRN_BULK_HEAD(buf), key_size, NULL);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -262,9 +252,7 @@ table_get(void)
     GRN_BULK_REWIND(&buf);
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
-      grn_search_flags flags = 0;
-      grn_id rid = grn_table_lookup(&ctx, table,
-                                    GRN_BULK_HEAD(&buf), key_size, &flags);
+      grn_id rid = grn_table_get(&ctx, table, GRN_BULK_HEAD(&buf), key_size);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -301,9 +289,7 @@ hash_put(const char *path)
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
-      grn_search_flags flags = GRN_TABLE_ADD;
-      grn_id rid = grn_hash_lookup(&ctx, hash,
-                                   GRN_BULK_HEAD(&buf), key_size, &value, &flags);
+      grn_id rid = grn_hash_add(&ctx, hash, GRN_BULK_HEAD(&buf), key_size, &value, NULL);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -330,9 +316,7 @@ hash_get(const char *path)
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
-      grn_search_flags flags = 0;
-      grn_id rid = grn_hash_lookup(&ctx, hash,
-                                   GRN_BULK_HEAD(&buf), key_size, &value, &flags);
+      grn_id rid = grn_hash_get(&ctx, hash, GRN_BULK_HEAD(&buf), key_size, &value);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -362,9 +346,8 @@ pat_put(const char *path)
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
-      grn_search_flags flags = GRN_TABLE_ADD;
-      grn_id rid = grn_pat_lookup(&ctx, pat,
-                                   GRN_BULK_HEAD(&buf), key_size, &value, &flags);
+      grn_id rid = grn_pat_add(&ctx, pat,
+                               GRN_BULK_HEAD(&buf), key_size, &value, NULL);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {
@@ -391,9 +374,7 @@ pat_get(const char *path)
     grn_text_itoh(&ctx, &buf, key, key_size);
     {
       void *value;
-      grn_search_flags flags = 0;
-      grn_id rid = grn_pat_lookup(&ctx, pat,
-                                   GRN_BULK_HEAD(&buf), key_size, &value, &flags);
+      grn_id rid = grn_pat_get(&ctx, pat, GRN_BULK_HEAD(&buf), key_size, &value);
       if (!rid) {
         fprintf(stderr, "table_lookup failed");
       } else {

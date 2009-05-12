@@ -138,8 +138,7 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
     grn_search_flags flags;
     grn_id sid = sl->children;
     while (sid && sid != id) {
-      flags = GRN_TABLE_ADD;
-      if (grn_hash_lookup(ctx, h, &sid, sizeof(grn_id), (void **) &offset, &flags)) {
+      if (grn_hash_add(ctx, h, &sid, sizeof(grn_id), (void **) &offset, NULL)) {
         *offset = level;
         if (level < MAX_LEVEL) { sis_collect(ctx, pat, h, sid, level + 1); }
         if (!(sl = sis_at(ctx, pat, sid))) { break; }
@@ -777,7 +776,6 @@ get_tc(grn_ctx *ctx, grn_pat *pat, grn_hash *h, pat_node *rn)
 {
   grn_id id;
   pat_node *node;
-  grn_search_flags flags = GRN_TABLE_ADD;
   id = rn->lr[1];
   if (id) {
     PAT_AT(pat, id, node);
@@ -785,7 +783,7 @@ get_tc(grn_ctx *ctx, grn_pat *pat, grn_hash *h, pat_node *rn)
       if (PAT_CHK(node) > PAT_CHK(rn)) {
         get_tc(ctx, pat, h, node);
       } else {
-        grn_hash_lookup(ctx, h, &id, sizeof(grn_id), NULL, &flags);
+        grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
@@ -796,7 +794,7 @@ get_tc(grn_ctx *ctx, grn_pat *pat, grn_hash *h, pat_node *rn)
       if (PAT_CHK(node) > PAT_CHK(rn)) {
         get_tc(ctx, pat, h, node);
       } else {
-        grn_hash_lookup(ctx, h, &id, sizeof(grn_id), NULL, &flags);
+        grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
       }
     }
   }
@@ -834,8 +832,7 @@ grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
       if (c >= len - 1) {
         get_tc(ctx, pat, h, rn);
       } else {
-        grn_search_flags flags = GRN_TABLE_ADD;
-        grn_hash_lookup(ctx, h, &r, sizeof(grn_id), NULL, &flags);
+        grn_hash_add(ctx, h, &r, sizeof(grn_id), NULL, NULL);
       }
       return GRN_SUCCESS;
     }
@@ -865,8 +862,7 @@ grn_pat_suffix_search(grn_ctx *ctx, grn_pat *pat,
   grn_id r;
   if ((r = grn_pat_get(ctx, pat, key, key_size, NULL))) {
     uint32_t *offset;
-    grn_search_flags flags = GRN_TABLE_ADD;
-    if (grn_hash_lookup(ctx, h, &r, sizeof(grn_id), (void **) &offset, &flags)) {
+    if (grn_hash_add(ctx, h, &r, sizeof(grn_id), (void **) &offset, NULL)) {
       *offset = 0;
       if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) { sis_collect(ctx, pat, h, r, 1); }
       return GRN_SUCCESS;

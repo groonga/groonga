@@ -145,8 +145,7 @@ test_temporary_table_add(gpointer data)
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
     grn_table_add(&context, table, NULL, 0, NULL);
   } else {
-    grn_search_flags flags = GRN_TABLE_ADD;
-    grn_table_lookup(&context, table, key, strlen(key), &flags);
+    grn_table_add(&context, table, key, strlen(key), NULL);
   }
 
   cut_assert_equal_int(1, grn_table_size(&context, table));

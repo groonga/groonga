@@ -1055,8 +1055,8 @@ grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash)
 }
 
 grn_id
-grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void **value,
-             int *added)
+grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
+             unsigned int key_size, void **value, int *added)
 {
   entry_str *ee;
   uint32_t h, i, m, s;
@@ -1116,7 +1116,8 @@ exit :
 }
 
 grn_id
-grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void **value)
+grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
+             unsigned int key_size, void **value)
 {
   grn_id e, *ep;
   uint32_t h, i, m, s;
@@ -1150,8 +1151,8 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void *
 }
 
 grn_id
-grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key, int key_size, void **value,
-                grn_search_flags *flags)
+grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key,
+                unsigned int key_size, void **value, grn_search_flags *flags)
 {
   if (!hash || !key || !key_size) { return GRN_ID_NIL; }
   if (*flags & GRN_TABLE_ADD) {
@@ -1419,7 +1420,6 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
                     const void *max, uint32_t max_size, int flags)
 {
   grn_hash_cursor *c;
-  grn_search_flags f = 0;
   if (!hash || !ctx) { return NULL; }
   if (!(c = GRN_MALLOCN(grn_hash_cursor, 1))) { return NULL; }
   GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_HASH_KEY);
@@ -1429,7 +1429,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   if (flags & GRN_CURSOR_DESCENDING) {
     c->dir = -1;
     if (max) {
-      if (!(c->curr_rec = grn_hash_lookup(ctx, hash, max, max_size, NULL, &f))) {
+      if (!(c->curr_rec = grn_hash_get(ctx, hash, max, max_size, NULL))) {
         c->limit = GRN_ID_NIL;
         goto exit;
       }
@@ -1438,7 +1438,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
       c->curr_rec = HASH_CURR_MAX(hash) + 1;
     }
     if (min) {
-      if (!(c->limit = grn_hash_lookup(ctx, hash, min, min_size, NULL, &f))) {
+      if (!(c->limit = grn_hash_get(ctx, hash, min, min_size, NULL))) {
         c->curr_rec = GRN_ID_NIL;
         goto exit;
       }
@@ -1450,7 +1450,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   } else {
     c->dir = 1;
     if (min) {
-      if (!(c->curr_rec = grn_hash_lookup(ctx, hash, min, min_size, NULL, &f))) {
+      if (!(c->curr_rec = grn_hash_get(ctx, hash, min, min_size, NULL))) {
         c->limit = GRN_ID_NIL;
         goto exit;
       }
@@ -1459,7 +1459,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
       c->curr_rec = GRN_ID_NIL;
     }
     if (max) {
-      if (!(c->limit = grn_hash_lookup(ctx, hash, max, max_size, NULL, &f))) {
+      if (!(c->limit = grn_hash_get(ctx, hash, max, max_size, NULL))) {
         c->curr_rec = GRN_ID_NIL;
         goto exit;
       }
@@ -1948,10 +1948,9 @@ grn_hash_group(grn_ctx *ctx, grn_hash *hash,
     PREPARE_VAL(e, ep, es);
     {
       uint32_t *val;
-      grn_search_flags flags = GRN_TABLE_ADD;
       grn_id gid = (args->result->header.type == GRN_TABLE_PAT_KEY)
-        ? grn_pat_lookup(ctx, (grn_pat *)args->result, ep, es, (void **)&val, &flags)
-        : grn_hash_lookup(ctx, (grn_hash *)args->result, ep, es, (void **)&val, &flags);
+        ? grn_pat_add(ctx, (grn_pat *)args->result, ep, es, (void **)&val, NULL)
+        : grn_hash_add(ctx, (grn_hash *)args->result, ep, es, (void **)&val, NULL);
       if (!gid) { return ctx->rc; }
       if (args->flags & GRN_TABLE_GROUP_CALC_COUNT) {
         *val += 1;

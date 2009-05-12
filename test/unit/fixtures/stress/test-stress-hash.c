@@ -89,7 +89,7 @@ void
 test_read_write(gconstpointer *data)
 {
   gint i, key;
-  grn_search_flags flags;
+  int added;
   grn_ctx *context;
   grn_hash *hash;
   const gchar *path;
@@ -118,25 +118,21 @@ test_read_write(gconstpointer *data)
   cut_assert_not_null(hashes[i], "hash: %d (%d)", i, process_number);
   hash = hashes[i];
 
-  flags = 0;
   cut_set_message("lookup - fail: %d (%d:%d)", key, i, process_number);
-  grn_test_assert_nil(grn_hash_lookup(context, hash, &key, sizeof(key),
-                                      &value, &flags));
+  grn_test_assert_nil(grn_hash_get(context, hash, &key, sizeof(key), &value));
 
   value_string = cut_take_printf("value: %d (%d:%d)", key, i, process_number);
-  flags = GRN_TABLE_ADD;
   rc = grn_io_lock(context, hash->io, -1);
   if (rc != GRN_SUCCESS)
     grn_test_assert(rc);
-  id = grn_hash_lookup(context, hash, &key, sizeof(key), &value, &flags);
+  id = grn_hash_add(context, hash, &key, sizeof(key), &value, &added);
   grn_io_unlock(hash->io);
   grn_test_assert_not_nil(id);
-  cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
+  cut_assert_equal_int(1, added);
   strcpy(value, value_string);
 
-  flags = 0;
   value = NULL;
-  id = grn_hash_lookup(context, hash, &key, sizeof(key), &value, &flags);
+  id = grn_hash_get(context, hash, &key, sizeof(key), &value);
   cut_set_message("lookup - success: %d (%d:%d)", key, i, process_number);
   grn_test_assert_not_nil(id);
   cut_assert_equal_string(value_string, value);

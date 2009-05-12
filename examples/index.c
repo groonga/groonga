@@ -107,8 +107,7 @@ grn_index_upd(grn_ctx *ctx, grn_index *index, const char *key,
               const char *oldvalue, unsigned int oldvalue_len,
               const char *newvalue, unsigned int newvalue_len)
 {
-  grn_search_flags flags = GRN_TABLE_ADD;
-  grn_id rid = grn_table_lookup(ctx, index->keys, key, strlen(key), &flags);
+  grn_id rid = grn_table_add(ctx, index->keys, key, strlen(key), NULL);
   if (rid) {
     grn_obj old, new;
     GRN_TEXT_INIT_REF(&old);
