@@ -135,7 +135,6 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
   uint32_t *offset;
   sis_node *sl = sis_at(ctx, pat, id);
   if (sl) {
-    grn_search_flags flags;
     grn_id sid = sl->children;
     while (sid && sid != id) {
       if (grn_hash_add(ctx, h, &sid, sizeof(grn_id), (void **) &offset, NULL)) {
