@@ -1157,8 +1157,9 @@ grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key,
   if (!hash || !key || !key_size) { return GRN_ID_NIL; }
   if (*flags & GRN_TABLE_ADD) {
     int added;
-    return grn_hash_add(ctx, hash, key, key_size, value, &added);
+    grn_id id = grn_hash_add(ctx, hash, key, key_size, value, &added);
     if (flags && added) { *flags |= GRN_TABLE_ADDED; }
+    return id;
   } else {
     return grn_hash_get(ctx, hash, key, key_size, value);
   }
