@@ -176,7 +176,7 @@ grn_ql_mk_symbol(grn_ctx *ctx, const char *name, int name_size)
   if (x->header.type == GRN_VOID && ctx->impl->db) {
     uint16_t symname_size;
     const char *symname = _grn_hash_strkey_by_val(x, &symname_size);
-    grn_obj *obj = grn_ctx_lookup(ctx, symname, symname_size);
+    grn_obj *obj = grn_ctx_get(ctx, symname, symname_size);
     if (obj) { grn_ql_obj_bind(obj, x); }
   }
   return x;
@@ -3059,7 +3059,7 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   switch (e->header.type) {
   case GRN_UVECTOR :
     {
-      grn_obj *u = e->u.p.value, *range = grn_ctx_get(ctx, u->header.domain);
+      grn_obj *u = e->u.p.value, *range = grn_ctx_at(ctx, u->header.domain);
       grn_id *v, *ve = (grn_id *)GRN_BULK_CURR(u);
       POP(e, args);
       switch (e->header.type) {
@@ -3131,7 +3131,7 @@ nf_containp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       switch (e->header.type) {
       case GRN_CELL_STR :
         {
-          grn_obj *range = grn_ctx_get(ctx, domain);
+          grn_obj *range = grn_ctx_at(ctx, domain);
           if (grn_table_get(ctx, range, STRVALUE(e), STRSIZE(e)) == id) { r = 1; }
         }
         break;

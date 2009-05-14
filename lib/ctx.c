@@ -1279,7 +1279,7 @@ grn_cell_clear(grn_ctx *ctx, grn_cell *o)
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_NO_KEY :
-      grn_obj_close(ctx, grn_ctx_get(ctx, o->u.o.id));
+      grn_obj_close(ctx, grn_ctx_at(ctx, o->u.o.id));
       break;
     case GRN_CELL_STR :
       if (o->u.b.value) {
@@ -1512,7 +1512,7 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   grn_obj *res = argc > 3 ? (grn_obj *)argv[3].ptr : NULL;
   // grn_obj *op = argc > 4 ? (grn_obj *)argv[4].ptr : NULL;
   if (index->header.type == GRN_BULK) {
-    index = grn_ctx_lookup(ctx, GRN_BULK_HEAD(index), GRN_BULK_VSIZE(index));
+    index = grn_ctx_get(ctx, GRN_BULK_HEAD(index), GRN_BULK_VSIZE(index));
   }
   if (!query) { return GRN_INVALID_ARGUMENT; }
   if (!index || index->header.type != GRN_COLUMN_INDEX) {
@@ -1520,7 +1520,7 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   }
   if (!res) {
     grn_obj *table;
-    if (!(table = grn_ctx_get(ctx, ((grn_db_obj *)index)->range))) {
+    if (!(table = grn_ctx_at(ctx, ((grn_db_obj *)index)->range))) {
       return GRN_INVALID_ARGUMENT;
     }
     res = grn_table_create(ctx, NULL, 0, NULL,
@@ -1608,7 +1608,7 @@ grn_ctx_qe_init(grn_ctx *ctx)
                                     sizeof(grn_ctx_qe),
                                     GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY);
     {
-      grn_proc *init = (grn_proc *)grn_ctx_lookup(ctx, "<proc:init>", 11);
+      grn_proc *init = (grn_proc *)grn_ctx_get(ctx, "<proc:init>", 11);
       if (init) {
         init->funcs[PROC_INIT](ctx, (grn_obj *)ctx->impl->qe, NULL, 0, NULL);
       }
@@ -1697,7 +1697,7 @@ grn_ctx_qe_parse(grn_ctx *ctx, const char *key, int key_size)
     char *tokbuf[17 + 1];
     int i, n = grn_str_tok(head, GRN_BULK_VSIZE(str), ' ', tokbuf, 16, NULL);
     if (n <= 17) {
-      grn_obj *obj = grn_ctx_lookup(ctx, head, tokbuf[0] - head);
+      grn_obj *obj = grn_ctx_get(ctx, head, tokbuf[0] - head);
       if (obj && obj->header.type == GRN_PROC) {
         if ((d->source = GRN_MALLOCN(grn_ctx_qe_source, 1))) {
           d->source->func = ((grn_proc *)obj)->funcs[PROC_INIT];
@@ -1744,7 +1744,7 @@ grn_ctx_qe_get_(grn_ctx *ctx, grn_ctx_qe *qe)
     if (qe->source) {
       qe->value = qe_exec(ctx, qe->source);
     } else {
-      qe->value = grn_ctx_lookup(ctx, key, key_size);
+      qe->value = grn_ctx_get(ctx, key, key_size);
     }
   }
   return qe->value;
@@ -1787,7 +1787,7 @@ grn_ctx_qe_get(grn_ctx *ctx, const char *key, int key_size)
   if (grn_ctx_qe_init(ctx)) { return NULL; }
   if (!(qe = qe_at(ctx, key, key_size))) {
     if (!(qe = grn_ctx_qe_parse(ctx, key, key_size))) {
-      return grn_ctx_lookup(ctx, key, key_size);
+      return grn_ctx_get(ctx, key, key_size);
     }
   }
   return grn_ctx_qe_get_(ctx, qe);

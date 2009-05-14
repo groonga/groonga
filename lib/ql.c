@@ -23,7 +23,7 @@
 #include "snip.h"
 
 #define DB_OBJ(obj) ((grn_db_obj *)obj)
-#define RVALUE(obj) (grn_ctx_get(ctx, (obj)->u.o.id))
+#define RVALUE(obj) (grn_ctx_at(ctx, (obj)->u.o.id))
 #define INTERN2(s,l) (grn_ql_mk_symbol(ctx, s, l))
 
 static grn_cell *ha_object(grn_ctx *ctx, grn_cell *args, grn_ql_co *co);
@@ -99,7 +99,7 @@ obj2cell(grn_ctx *ctx, grn_obj *obj, grn_cell *cell)
     {
       void *v = GRN_BULK_HEAD(obj);
       grn_id rid = obj->header.domain;
-      grn_obj *range = grn_ctx_get(ctx, rid);
+      grn_obj *range = grn_ctx_at(ctx, rid);
       if (v) {
         if (range && range->header.type == GRN_TYPE) {
           switch (rid) {
@@ -392,13 +392,13 @@ get_cell(grn_ctx *ctx, grn_obj *db_obj)
 static grn_obj *
 get_obj(grn_ctx *ctx, grn_cell *cell)
 {
-  return GRN_DB_OBJP(cell) ? grn_ctx_get(ctx, cell->u.o.id) : NULL;
+  return GRN_DB_OBJP(cell) ? grn_ctx_at(ctx, cell->u.o.id) : NULL;
 }
 
 static grn_obj *
 get_domain(grn_ctx *ctx, grn_cell *cell)
 {
-  return grn_ctx_get(ctx, cell->header.domain);
+  return grn_ctx_at(ctx, cell->header.domain);
 }
 
 static void
@@ -461,9 +461,9 @@ grn_ql_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
 static grn_obj *
 get_column(grn_ctx *ctx, grn_id tid, char *msg, unsigned msg_size, grn_id *id)
 {
-  grn_obj *table = grn_ctx_get(ctx, tid);
+  grn_obj *table = grn_ctx_at(ctx, tid);
   for (;;) {
-    grn_obj *domain = grn_ctx_get(ctx, DB_OBJ(table)->header.domain);
+    grn_obj *domain = grn_ctx_at(ctx, DB_OBJ(table)->header.domain);
     if (!domain || domain->header.type == GRN_TYPE) { break; }
     if (id) {
       if (!grn_table_get_key(ctx, table, *id, id, sizeof(grn_id))) { return NULL; }
@@ -594,7 +594,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
 {
   if ((column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_SCALAR) {
     grn_id rid = grn_obj_get_range(ctx, column);
-    grn_obj *range = grn_ctx_get(ctx, rid);
+    grn_obj *range = grn_ctx_at(ctx, rid);
     if (range && range->header.type == GRN_TYPE) {
       switch (rid) {
       case GRN_DB_INT32 :
@@ -874,7 +874,7 @@ table_create(grn_ctx *ctx, const char *name, unsigned name_size,
   grn_obj *table = grn_table_create(ctx, name, name_size,
                                     NULL, flags, domain, value_size);
   if (!table) { QLERR("table create failed"); }
-  grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, grn_ctx_get(ctx, tokenizer));
+  grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, grn_ctx_at(ctx, tokenizer));
   return register_cell(ctx, table, name, name_size);
 }
 
@@ -907,7 +907,7 @@ inline static grn_cell *
 match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
 {
   grn_cell *car, *expr;
-  grn_obj *r = grn_ctx_get(ctx, base);
+  grn_obj *r = grn_ctx_at(ctx, base);
   POP(expr, args);
   spec->ce = column_exp_open(ctx, r, expr, NIL);
   if (EVAL_BY_FUNCALLP(spec->ce)) {
@@ -948,7 +948,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   } else {
     char str[STRBUF_SIZE];
     uint16_t str_size;
-    grn_obj *table = grn_ctx_get(ctx, base);
+    grn_obj *table = grn_ctx_at(ctx, base);
     if (INTP(expr)) { spec->offset = IVALUE(expr); }
     POP(expr, args);
     if (INTP(expr)) { spec->limit = IVALUE(expr); }
@@ -985,7 +985,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
 grn_obj *
 grn_ql_obj_key(grn_ctx *ctx, grn_cell *obj, grn_obj *value)
 {
-  grn_obj *table = grn_ctx_get(ctx, obj->header.domain);
+  grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
   grn_obj *accessor = grn_obj_get_accessor(ctx, table, ":key", 4);
   if (accessor) {
     value = grn_obj_get_value(ctx, accessor, obj->u.o.id, value);
@@ -1094,7 +1094,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   uint16_t msg_size;
   if (!(res = ctx->impl->code)) { QLERR("invalid receiver"); }
   base = ctx->impl->code->u.o.id;
-  if (!(table = grn_ctx_get(ctx, base))) { QLERR("invalid table"); }
+  if (!(table = grn_ctx_at(ctx, base))) { QLERR("invalid table"); }
   GRN_QL_CO_BEGIN(co);
   POP(car, args);
   if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
@@ -1327,7 +1327,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           if (!n_results) {
             for (rp = results; n_results < ce->n_keys; rp++, n_results++) {
               grn_id range = grn_obj_get_range(ctx, ce->keys[n_results].key);
-              rp->table = get_obj(ctx, rec_obj_new(ctx, grn_ctx_get(ctx, range), 0));
+              rp->table = get_obj(ctx, rec_obj_new(ctx, grn_ctx_at(ctx, range), 0));
               rp->key_begin = n_results;
               rp->key_end = rp->key_begin + 1;
             }
@@ -1734,7 +1734,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
               grn_obj *column;
               POP(car, r);
               cons.u.l.car = car;
-              column = grn_ctx_get(ctx, CAR(s)->u.o.id);
+              column = grn_ctx_at(ctx, CAR(s)->u.o.id);
               column_value(ctx, column, obj.u.o.id, &cons, &dummy);
             }
             stat->nrecs++;
@@ -1788,7 +1788,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 val.u.b.value = tokbuf[i - 1] + 1;
                 val.u.b.size = tokbuf[i] - val.u.b.value;
                 unesc(ctx, &val);
-                column = grn_ctx_get(ctx, CAR(s)->u.o.id);
+                column = grn_ctx_at(ctx, CAR(s)->u.o.id);
                 column_value(ctx, column, obj.u.o.id, &cons, &dummy);
               }
               stat->nrecs++;
@@ -1824,7 +1824,7 @@ ha_object(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     if (*msg == ':' && msg[1] == 'i') {
       res = obj2oid(ctx, obj, NULL);
     } else {
-      grn_obj *domain = grn_ctx_get(ctx, obj->header.domain);
+      grn_obj *domain = grn_ctx_at(ctx, obj->header.domain);
       grn_obj *column = grn_obj_get_accessor(ctx, domain, msg, msg_size);
       if (!column) {
         QLERR("invalid column %s", msg);
@@ -1887,7 +1887,7 @@ grn_obj_query(grn_ctx *ctx, const char *str, unsigned int str_len,
 static void
 uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
 {
-  grn_obj *range = grn_ctx_get(ctx, obj->header.domain);
+  grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
   if (range && range->header.type == GRN_TYPE) {
     // todo
   } else {
@@ -1973,7 +1973,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   grn_obj *column;
   if (!(res = ctx->impl->code)) { QLERR("invalid receiver"); }
   base = ctx->impl->code->u.o.id;
-  if (!(column = grn_ctx_get(ctx, base))) { QLERR("grn_ctx_get failed"); }
+  if (!(column = grn_ctx_at(ctx, base))) { QLERR("grn_ctx_get failed"); }
   POP(car, args);
   if (obj2str(car, msg, &msg_size)) { QLERR("invalid message"); }
   switch (*msg) {
@@ -2009,7 +2009,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           }
         } else {
           grn_obj *table;
-          if (!(table = grn_ctx_get(ctx, DB_OBJ(column)->range))) { return F; }
+          if (!(table = grn_ctx_at(ctx, DB_OBJ(column)->range))) { return F; }
           res = rec_obj_new(ctx, table, 0);
           if (ERRP(ctx, GRN_WARN)) { return F; }
           op = GRN_SEL_OR;
@@ -2039,7 +2039,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         switch (column->header.type) {
         case GRN_COLUMN_FIX_SIZE  :
         case GRN_COLUMN_VAR_SIZE  :
-          res = CONS(get_cell(ctx, grn_ctx_get(ctx, DB_OBJ(column)->range)), NIL);
+          res = CONS(get_cell(ctx, grn_ctx_at(ctx, DB_OBJ(column)->range)), NIL);
           break;
         case GRN_COLUMN_INDEX :
           {
@@ -2048,7 +2048,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             res = CONS(INTERN("::match"), CONS(NIL, NIL));
             for (t = column->triggers; t; t = t->next) {
               if (t->type == grn_db_index_target) {
-                res = CONS(get_cell(ctx, grn_ctx_get(ctx, t->target)), res);
+                res = CONS(get_cell(ctx, grn_ctx_at(ctx, t->target)), res);
               }
             }
             */
@@ -2128,7 +2128,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         uint32_t key_size;
         grn_pat *keys = (grn_pat *)grn_db_keys(ctx->impl->db);
         GRN_PAT_EACH(keys, id, &key, &key_size, &value, {
-          obj = grn_ctx_get(ctx, id);
+          obj = grn_ctx_at(ctx, id);
           grn_obj_clear_lock(ctx, obj);
         });
         res = grn_obj_clear_lock(ctx, ctx->impl->db) ? F : T;
@@ -2138,7 +2138,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     case 'D' :
       POP(car, args);
       if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
-      if (!(table = grn_ctx_lookup(ctx, msg, msg_size))) { QLERR("Invalid table"); }
+      if (!(table = grn_ctx_get(ctx, msg, msg_size))) { QLERR("Invalid table"); }
       grn_obj_remove(ctx, table);
       grn_hash_delete(ctx, ctx->impl->symbols, msg, msg_size, NULL);
       break;
@@ -2152,7 +2152,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         if ((res = rec_obj_new(ctx, ctx->impl->db, 0)) == F) {
           QLERR("rec_obj_new failed.");
         }
-        r = (grn_hash *)grn_ctx_get(ctx, res->u.o.id);
+        r = (grn_hash *)grn_ctx_at(ctx, res->u.o.id);
         grn_pat_prefix_search(ctx, keys, msg, msg_size, r);
         {
           grn_id *rid;
@@ -2238,7 +2238,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
   uint32_t value_size = 0;
   grn_obj_flags flags = (name && name_size) ? GRN_OBJ_PERSISTENT : GRN_OBJ_TEMPORARY;
   grn_encoding encoding = GRN_ENC_DEFAULT;
-  grn_obj *domain = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
+  grn_obj *domain = grn_ctx_at(ctx, GRN_DB_SHORTTEXT);
   grn_cell *car;
   grn_id tokenizer = GRN_DB_DELIMIT;
   char msg[STRBUF_SIZE];
@@ -2250,7 +2250,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_NO_KEY :
     case GRN_TYPE :
-      domain = grn_ctx_get(ctx, car->u.o.id);
+      domain = grn_ctx_at(ctx, car->u.o.id);
       break;
     case GRN_CELL_INT :
       value_size = (uint32_t) IVALUE(car);
@@ -2368,7 +2368,7 @@ nf_ptable(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   grn_cell *car;
   POP(car, args);
   if (obj2str(car, name, &name_size)) { QLERR("invalid argument"); }
-  if (grn_ctx_lookup(ctx, name, name_size)) { return T; }
+  if (grn_ctx_get(ctx, name, name_size)) { return T; }
   return nf_table_(ctx, args, name, name_size);
 }
 
@@ -2511,7 +2511,7 @@ nf_snippet(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   case GRN_TABLE_PAT_KEY :
     {
       patsnip_spec *spec;
-      grn_obj *table = grn_ctx_get(ctx, cond->u.o.id);
+      grn_obj *table = grn_ctx_at(ctx, cond->u.o.id);
       if (!table) { QLERR("table get failed."); }
       GRN_CELL_NEW(ctx, res);
       if (!(spec = GRN_MALLOC(sizeof(patsnip_spec)))) {
@@ -2676,7 +2676,7 @@ disp_j_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf)
     {
       column_exp *ce;
       grn_cell *parameter, *columns;
-      grn_obj *u = car->u.p.value, *r = grn_ctx_get(ctx, u->header.domain);
+      grn_obj *u = car->u.p.value, *r = grn_ctx_at(ctx, u->header.domain);
       POP(parameter, args);
       POP(columns, args);
       if (!PAIRP(columns)) {

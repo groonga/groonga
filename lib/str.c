@@ -1960,7 +1960,7 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
 static void
 uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
 {
-  grn_obj *range = grn_ctx_get(ctx, obj->header.domain);
+  grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
   if (range && range->header.type == GRN_TYPE) {
     // todo
   } else {
@@ -2014,7 +2014,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       break;
     default :
       {
-        grn_obj *table = grn_ctx_get(ctx, obj->header.domain);
+        grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
         grn_obj *accessor = grn_obj_get_accessor(ctx, table, ":key", 4);
         if (accessor) {
           grn_obj_get_value(ctx, accessor, *((grn_id *)GRN_BULK_HEAD(obj)), &buf);

@@ -372,17 +372,17 @@ GRN_API grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
 GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
 
 /**
- * grn_ctx_lookup:
+ * grn_ctx_get:
  * @name: 検索しようとするオブジェクトの名前。
  * @name_size: @nameのbyte長。
  *
  * ctxが使用するdbからnameに対応するオブジェクトを検索して返す。
  * nameに一致するオブジェクトが存在しなければNULLを返す。
  **/
-GRN_API grn_obj *grn_ctx_lookup(grn_ctx *ctx, const char *name, unsigned name_size);
+GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, unsigned name_size);
 
 /**
- * grn_ctx_get:
+ * grn_ctx_at:
  * @id: 検索しようとするオブジェクトのid。
  *
  * ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。
@@ -407,7 +407,7 @@ typedef enum {
   GRN_DB_MECAB,
 } grn_builtin_type;
 
-GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, grn_id id);
+GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 
 /**
  * grn_type_create:

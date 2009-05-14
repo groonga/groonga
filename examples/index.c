@@ -34,7 +34,7 @@ grn_index_create(grn_ctx *ctx, const char *path)
     char buffer[PATH_MAX];
     strcpy(buffer, path);
     strcat(buffer, ".SEN");
-    if ((key_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT))) {
+    if ((key_type = grn_ctx_at(ctx, GRN_DB_SHORTTEXT))) {
       if ((keys = grn_table_create(ctx, "<keys>", 6, buffer,
                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                    key_type, 0))) {
@@ -43,7 +43,7 @@ grn_index_create(grn_ctx *ctx, const char *path)
         if ((lexicon = grn_table_create(ctx, "<lexicon>", 9, buffer,
                                         GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                                         key_type, 0))) {
-          if ((tokenizer = grn_ctx_get(ctx, GRN_DB_MECAB))) {
+          if ((tokenizer = grn_ctx_at(ctx, GRN_DB_MECAB))) {
             grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
             strcpy(buffer, path);
             strcat(buffer, ".SEN.i");
@@ -75,12 +75,12 @@ grn_index_open(grn_ctx *ctx, const char *path)
     char buffer[PATH_MAX];
     strcpy(buffer, path);
     strcat(buffer, ".SEN");
-    if ((key_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT))) {
+    if ((key_type = grn_ctx_at(ctx, GRN_DB_SHORTTEXT))) {
       if ((keys = grn_table_open(ctx, "<keys>", 6, buffer))) {
         strcpy(buffer, path);
         strcat(buffer, ".SEN.l");
         if ((lexicon = grn_table_open(ctx, "<lexicon>", 9, buffer))) {
-          if ((tokenizer = grn_ctx_get(ctx, GRN_DB_MECAB))) {
+          if ((tokenizer = grn_ctx_at(ctx, GRN_DB_MECAB))) {
             grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
             strcpy(buffer, path);
             strcat(buffer, ".SEN.i");
