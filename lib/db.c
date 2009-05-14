@@ -348,6 +348,9 @@ grn_proc_create(grn_ctx *ctx,
         GRN_API_RETURN(NULL);
       }
     }
+  } else if (ctx->impl && ctx->impl->values) {
+    id = grn_array_add(ctx, ctx->impl->values, NULL) | GRN_OBJ_TMP_OBJECT;
+    added = 1;
   }
   if (!res) { res = GRN_MALLOCN(grn_proc, 1); }
   if (res) {
@@ -3531,6 +3534,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
       if (ctx->impl && ctx->impl->values) {
         grn_tmp_db_obj tmp_obj;
         tmp_obj.obj = obj;
+        memset(&tmp_obj.cell, 0, sizeof(grn_cell));
         rc = grn_array_set_value(ctx, ctx->impl->values,
                                  id & ~GRN_OBJ_TMP_OBJECT, &tmp_obj, GRN_OBJ_SET);
       }
