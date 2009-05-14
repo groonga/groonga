@@ -314,11 +314,14 @@ typedef int grn_cond;
   (void)atomic_swap_64(p, v)
 # endif /* ATOMIC 64BIT SET */
 
-#elif (defined(WIN32) || defined (WIN64)) /* __GNUC__ */
+#elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
 
 # define GRN_ATOMIC_ADD_EX(p,i,r) \
   (r) = (uint32_t)InterlockedExchangeAdd((int32_t *)(p), (int32_t)(i));
-# ifdef WIN32 /* ATOMIC 64BIT SET */
+# if defined(_WIN64) /* ATOMIC 64BIT SET */
+#  define GRN_SET_64BIT(p,v) \
+  *(p) = (v);
+# else /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
 {\
   uint32_t v1, v2; \
@@ -335,9 +338,6 @@ typedef int grn_cond;
   __asm  jnz  _set_loop \
 }\
 /* TODO: use _InterlockedCompareExchange64 or inline asm */
-# elif defined WIN64 /* ATOMIC 64BIT SET */
-#  define GRN_SET_64BIT(p,v) \
-  *(p) = (v);
 # endif /* ATOMIC 64BIT SET */
 
 /* todo */
