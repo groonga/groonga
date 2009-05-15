@@ -470,7 +470,7 @@ get_column(grn_ctx *ctx, grn_id tid, char *msg, unsigned msg_size, grn_id *id)
     }
     table = domain;
   }
-  return grn_table_column(ctx, table, msg, msg_size);
+  return grn_obj_column(ctx, table, msg, msg_size);
 }
 
 static grn_cell *
@@ -1172,7 +1172,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             grn_obj_flags flags = GRN_OBJ_PERSISTENT; /* default */
             POP(car, args);
             if (obj2str(car, name, &name_size)) { QLERR("invalid argument"); }
-            if (grn_table_column(ctx, table, name, name_size)) { return T; }
+            if (grn_obj_column(ctx, table, name, name_size)) { return T; }
             POP(car, args);
             type = get_obj(ctx, car);
             while (PAIRP(args)) {
@@ -1182,7 +1182,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 while (PAIRP(car) && nsources < MAXCOLUMNS) {
                   POP(col, car);
                   if (!obj2str(col, msg, &msg_size)) {
-                    grn_obj *source = grn_table_column(ctx, type, msg, msg_size);
+                    grn_obj *source = grn_obj_column(ctx, type, msg, msg_size);
                     if (source) { sources[nsources++] = DB_OBJ(source)->id; }
                   }
                 }
@@ -1383,7 +1383,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 if (obj2str(car, msg, &msg_size)) { break; }
                 POP(car, args);
                 cons.u.l.car = car;
-                column = grn_table_column(ctx, table, msg, msg_size);
+                column = grn_obj_column(ctx, table, msg, msg_size);
                 column_value(ctx, column, res->u.o.id, &cons, &dummy);
               }
             }
@@ -1620,7 +1620,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             grn_obj *column;
             POP(car, args);
             if (obj2str(car, msg, &msg_size)) { return F; }
-            if (!(column = grn_table_column(ctx, table, msg, msg_size))) { return F; }
+            if (!(column = grn_obj_column(ctx, table, msg, msg_size))) { return F; }
             if (!(msg_size = grn_obj_name(ctx, column, msg, STRBUF_SIZE))) { return F; }
             res = grn_table_delete(ctx, ctx->impl->db, msg, msg_size) ? F : T;
           }

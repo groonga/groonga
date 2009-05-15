@@ -2073,7 +2073,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     } else {
       int i;
       grn_id id;
-      grn_obj *column = grn_table_column(ctx, obj, ".:key", 5);
+      grn_obj *column = grn_obj_column(ctx, obj, ".:key", 5);
       grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, obj, 0, 0,
                                                          GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');

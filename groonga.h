@@ -841,14 +841,14 @@ GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
                               grn_obj *res);
 
 /**
- * grn_table_column:
+ * grn_obj_column:
  * @table: 対象table
  * @name: カラム名
  *
  * nameに対応するtableのカラムを返す。対応するカラムが存在しなければNULLを返す。
  **/
-GRN_API grn_obj *grn_table_column(grn_ctx *ctx, grn_obj *table,
-                                  const char *name, unsigned name_size);
+GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
+                                const char *name, unsigned name_size);
 
 
 /**

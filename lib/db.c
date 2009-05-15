@@ -1644,7 +1644,7 @@ grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
 }
 
 grn_obj *
-grn_table_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size)
+grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size)
 {
   grn_obj *column = NULL;
   GRN_API_ENTER;
@@ -2402,7 +2402,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
     } else {
       /* if obj->header.type == GRN_TYPE ... lookup table */
       for (rp = &res; ; rp = &(*rp)->next) {
-        grn_obj *column = grn_table_column(ctx, obj, name, len);
+        grn_obj *column = grn_obj_column(ctx, obj, name, len);
         *rp = accessor_new(ctx);
         if (column) {
           (*rp)->obj = column;

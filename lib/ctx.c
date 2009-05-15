@@ -1471,7 +1471,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
   if (argc > 1 && (table = (grn_obj *)argv[1].ptr)) {
     grn_obj_format format;
     if (argc < 3) {
-      grn_obj *col = grn_table_column(ctx, table, ".:key", 5);
+      grn_obj *col = grn_obj_column(ctx, table, ".:key", 5);
       format.ncolumns = 1;
       format.columns = &col;
       grn_text_otoj(ctx, ctx->impl->outbuf, table, &format);
@@ -1483,7 +1483,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
         char *p = GRN_BULK_HEAD(str), *tokbuf[256];
         int i, n = grn_str_tok(p, GRN_BULK_VSIZE(str), ' ', tokbuf, 256, NULL);
         for (i = 0; i < n; i++) {
-          cols[i] = grn_table_column(ctx, table, p, tokbuf[i] - p);
+          cols[i] = grn_obj_column(ctx, table, p, tokbuf[i] - p);
           p = tokbuf[i] + 1;
         }
         format.ncolumns = n;
