@@ -23,7 +23,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#define LOOKUP(name) (grn_ctx_lookup(&context, name, strlen(name)))
+#define LOOKUP(name) (grn_ctx_get(&context, name, strlen(name)))
 
 void test_fix_size_set_value_set(void);
 

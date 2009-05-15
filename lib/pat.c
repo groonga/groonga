@@ -400,7 +400,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   pat->header = header;
   pat->key_size = key_size;
   pat->value_size = value_size;
-  pat->tokenizer = grn_ctx_get(ctx, header->tokenizer);
+  pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
   pat->encoding = encoding;
   pat->obj.flags = flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
@@ -440,7 +440,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->value_size = header->value_size;
   pat->encoding = header->encoding;
   pat->obj.flags = header->flags;
-  pat->tokenizer = grn_ctx_get(ctx, header->tokenizer);
+  pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
   PAT_AT(pat, 0, node0);
   if (!node0) {
     grn_io_close(ctx, io);

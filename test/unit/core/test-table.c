@@ -23,7 +23,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#define OBJECT(name) (grn_ctx_lookup(&context, (name), strlen(name)))
+#define OBJECT(name) (grn_ctx_get(&context, (name), strlen(name)))
 
 void test_array_set_data(void);
 void data_temporary_table_no_path(void);

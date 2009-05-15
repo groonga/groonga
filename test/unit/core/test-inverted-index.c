@@ -114,7 +114,7 @@ setup(void)
                              type, VALUE_SIZE);
 
   grn_obj_set_info(context, lexicon, GRN_INFO_DEFAULT_TOKENIZER,
-                   grn_ctx_get(context, GRN_DB_BIGRAM));
+                   grn_ctx_at(context, GRN_DB_BIGRAM));
 
   g_free(table_path);
 
@@ -564,7 +564,7 @@ test_int_index(void)
   db = grn_db_create(context, db_path, NULL);
   g_free(db_path);
 
-  int_type = grn_ctx_get(context, GRN_DB_INT32);
+  int_type = grn_ctx_at(context, GRN_DB_INT32);
   cut_assert_not_null(int_type);
 
   name = "users";

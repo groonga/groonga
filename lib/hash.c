@@ -757,7 +757,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   ih->io = io;
   ih->header = header;
   ih->lock = &header->lock;
-  ih->tokenizer = grn_ctx_get(ctx, header->tokenizer);
+  ih->tokenizer = grn_ctx_at(ctx, header->tokenizer);
   return GRN_SUCCESS;
 }
 
@@ -846,7 +846,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
           hash->io = io;
           hash->header = header;
           hash->lock = &header->lock;
-          hash->tokenizer = grn_ctx_get(ctx, header->tokenizer);
+          hash->tokenizer = grn_ctx_at(ctx, header->tokenizer);
           return (grn_hash *)hash;
         } else {
           GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid hash flag. (%x)", header->flags);

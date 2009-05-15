@@ -440,12 +440,21 @@ ngram_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
 grn_rc
 grn_token_init(void)
 {
+  static grn_proc _grn_uvector_tokenizer;
 #ifndef NO_MECAB
   // char *arg[] = {"", "-Owakati"};
   // return mecab_load_dictionary(2, arg) ? GRN_SUCCESS : GRN_TOKENIZER_ERROR;
   sole_mecab = NULL;
   MUTEX_INIT(sole_mecab_lock);
 #endif /* NO_MECAB */
+  _grn_uvector_tokenizer.obj.db = NULL;
+  _grn_uvector_tokenizer.obj.id = GRN_ID_NIL;
+  _grn_uvector_tokenizer.obj.header.domain = GRN_ID_NIL;
+  _grn_uvector_tokenizer.obj.range = GRN_ID_NIL;
+  _grn_uvector_tokenizer.funcs[PROC_INIT] = uvector_init;
+  _grn_uvector_tokenizer.funcs[PROC_NEXT] = uvector_next;
+  _grn_uvector_tokenizer.funcs[PROC_FIN] = uvector_fin;
+  grn_uvector_tokenizer = (grn_obj *)&_grn_uvector_tokenizer;
   return GRN_SUCCESS;
 }
 
@@ -620,7 +629,5 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                         mecab_init, mecab_next, mecab_fin);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
 #endif /* NO_MECAB */
-  grn_uvector_tokenizer = grn_proc_create(ctx, NULL, 0, NULL, GRN_PROC_HOOK,
-                                          uvector_init, uvector_next, uvector_fin);
   return GRN_SUCCESS;
 }

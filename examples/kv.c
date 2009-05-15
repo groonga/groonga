@@ -64,11 +64,11 @@ column_put(void)
 {
   int i, s = 0;
   grn_obj buf;
-  grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, 0);
-  grn_obj *value_type = grn_ctx_get(&ctx, GRN_DB_TEXT);
+  grn_obj *value_type = grn_ctx_at(&ctx, GRN_DB_TEXT);
   grn_obj *column = grn_column_create(&ctx, table, "c1", 2, NULL,
                                       GRN_OBJ_PERSISTENT, value_type);
   if (!table || !column) { return -1; }
@@ -105,8 +105,8 @@ column_get(void)
 {
   int i, s = 0;
   grn_obj buf;
-  grn_obj *table = grn_ctx_lookup(&ctx, "<t1>", 4);
-  grn_obj *column = grn_ctx_lookup(&ctx, "<t1>.c1", 7);
+  grn_obj *table = grn_ctx_get(&ctx, "<t1>", 4);
+  grn_obj *column = grn_ctx_get(&ctx, "<t1>.c1", 7);
   if (!table || !column) { return -1; }
   GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {
@@ -149,7 +149,7 @@ table_put(void)
 {
   int i;
   grn_obj buf;
-  grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, value_size);
@@ -179,7 +179,7 @@ table_put2(void)
 {
   int i;
   grn_obj keybuf, valbuf;
-  grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, value_size);
@@ -211,7 +211,7 @@ table_put_allocate(void)
 {
   int i;
   grn_obj *buf;
-  grn_obj *key_type = grn_ctx_get(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, value_size);
@@ -244,7 +244,7 @@ table_get(void)
 {
   int i;
   grn_obj buf;
-  grn_obj *table = grn_ctx_lookup(&ctx, "<t1>", 4);
+  grn_obj *table = grn_ctx_get(&ctx, "<t1>", 4);
   if (!table) { return -1; }
   GRN_TEXT_INIT(&buf);
   for (i = 0; i < nloops; i++) {

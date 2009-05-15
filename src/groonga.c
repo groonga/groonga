@@ -236,7 +236,7 @@ static grn_obj *cache_flags = NULL;
 static grn_obj *cache_expire = NULL;
 static grn_obj *cache_cas = NULL;
 
-#define CTX_LOOKUP(name) (grn_ctx_lookup(ctx, (name), strlen(name)))
+#define CTX_GET(name) (grn_ctx_get(ctx, (name), strlen(name)))
 
 static grn_obj *
 cache_init(grn_ctx *ctx)
@@ -244,16 +244,16 @@ cache_init(grn_ctx *ctx)
   if (cache_cas) { return cache_cas; }
   MUTEX_LOCK(cache_mutex);
   if (!cache_cas) {
-    if ((cache_table = CTX_LOOKUP("<cache>"))) {
-      cache_value = CTX_LOOKUP("<cache>.value");
-      cache_flags = CTX_LOOKUP("<cache>.flags");
-      cache_expire = CTX_LOOKUP("<cache>.expire");
-      cache_cas = CTX_LOOKUP("<cache>.cas");
+    if ((cache_table = CTX_GET("<cache>"))) {
+      cache_value = CTX_GET("<cache>.value");
+      cache_flags = CTX_GET("<cache>.flags");
+      cache_expire = CTX_GET("<cache>.expire");
+      cache_cas = CTX_GET("<cache>.cas");
     } else {
       if (!cache_table) {
-        grn_obj *uint_type = grn_ctx_get(ctx, GRN_DB_UINT32);
-        grn_obj *int64_type = grn_ctx_get(ctx, GRN_DB_INT64);
-        grn_obj *shorttext_type = grn_ctx_get(ctx, GRN_DB_SHORTTEXT);
+        grn_obj *uint_type = grn_ctx_at(ctx, GRN_DB_UINT32);
+        grn_obj *int64_type = grn_ctx_at(ctx, GRN_DB_INT64);
+        grn_obj *shorttext_type = grn_ctx_at(ctx, GRN_DB_SHORTTEXT);
         if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
                                             GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                                             shorttext_type, 0))) {
