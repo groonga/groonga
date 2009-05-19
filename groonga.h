@@ -266,6 +266,7 @@ typedef unsigned int grn_obj_flags;
 #define GRN_CURSOR_COLUMN_INDEX        (0x18)
 #define GRN_TYPE                       (0x20)
 #define GRN_PROC                       (0x21)
+#define GRN_EXPR                       (0x22)
 #define GRN_TABLE_HASH_KEY             (0x30)
 #define GRN_TABLE_PAT_KEY              (0x31)
 #define GRN_TABLE_NO_KEY               (0x33)
