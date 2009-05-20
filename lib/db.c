@@ -250,11 +250,12 @@ grn_db_keys(grn_obj *s)
 static grn_rc
 check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
+  int len;
   const char *name_end = name + name_size;
   while (name < name_end) {
-    if (*name++ == GRN_DB_DELIMITER) {
-      return GRN_INVALID_ARGUMENT;
-    }
+    if (*name == GRN_DB_DELIMITER) { return GRN_INVALID_ARGUMENT; }
+    if (!(len = grn_charlen(ctx, name, name_end))) { break; }
+    name += len;
   }
   return GRN_SUCCESS;
 }
@@ -3867,13 +3868,14 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
       grn_db *s = (grn_db *)DB_OBJ(obj)->db;
       len = grn_pat_get_key(ctx, s->keys, DB_OBJ(obj)->id, buf, GRN_TABLE_MAX_KEY_SIZE);
       if (len) {
-        char *p;
-        for (p = &buf[len]; buf < p; p--) {
-          if (p[-1] == GRN_DB_DELIMITER) { break; }
+        int cl;
+        char *p = buf, *p0 = p, *pe = p + len;
+        for (; p < pe && (cl = grn_charlen(ctx, p, pe)); p += cl) {
+          if (*p == GRN_DB_DELIMITER && cl == 1) { p0 = p + cl; }
         }
-        len -= (p - buf);
-        if (len <= buf_size) {
-          memcpy(namebuf, p, len);
+        len = pe - p0;
+        if (len && len <= buf_size) {
+          memcpy(namebuf, p0, len);
         }
       }
     }
