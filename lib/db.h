@@ -184,6 +184,7 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 #define GRN_OBJ_ALLOCATED              (1L<<0) /* allocated by ctx */
 #define GRN_OBJ_CUSTOM_NAME            (1L<<1) /* db_obj which has custom name */
+#define GRN_OBJ_RESERVED               (1L<<2) /* reserved */
 
 #define GRN_OBJ_TOKEN_MASK             (0x07L<<3)
 #define GRN_OBJ_TOKEN_NGRAM            (0x01L<<3)
@@ -193,6 +194,46 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 #define GRN_OBJ_KEY_SPLIT_ALPHA        (1L<<8)
 #define GRN_OBJ_KEY_SPLIT_DIGIT        (1L<<9)
 #define GRN_OBJ_KEY_SPLIT_SYMBOL       (1L<<10)
+
+/* expr */
+
+typedef struct _grn_expr grn_expr;
+
+grn_expr *grn_expr_open(grn_ctx *ctx, int size);
+grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);
+grn_obj *grn_expr_def_var(grn_ctx *ctx, grn_expr *expr);
+grn_obj *grn_expr_push_var(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
+grn_obj *grn_expr_push_value(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
+grn_rc grn_expr_push_proc(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, int nargs);
+grn_rc grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs);
+grn_obj *grn_expr_exec(grn_ctx *ctx, grn_expr *expr);
+grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_expr *expr, int offset);
+
+typedef struct {
+  uint8_t op;
+  grn_obj *value;
+} grn_expr_code;
+
+typedef struct {
+  uint32_t flags;
+  grn_obj *value;
+} grn_expr_stack;
+
+struct _grn_expr {
+  grn_obj *pool;
+  grn_obj *values;
+  grn_expr_code *codes;
+  grn_expr_stack *stack;
+  uint32_t pool_curr;
+  uint32_t pool_size;
+  uint32_t values_curr;
+  uint32_t values_tail;
+  uint32_t values_size;
+  uint32_t codes_curr;
+  uint32_t codes_size;
+  uint32_t stack_curr;
+  uint32_t stack_size;
+};
 
 #ifdef __cplusplus
 }

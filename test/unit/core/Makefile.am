@@ -15,7 +15,8 @@ noinst_LTLIBRARIES =				\
 	test-table.la				\
 	test-column.la				\
 	test-database.la			\
-	test-table-cursor.la
+	test-table-cursor.la			\
+	test-expr.la
 endif
 
 INCLUDES =			\
@@ -52,3 +53,4 @@ test_table_la_SOURCES			= test-table.c
 test_column_la_SOURCES			= test-column.c
 test_database_la_SOURCES		= test-database.c
 test_table_cursor_la_SOURCES		= test-table-cursor.c
+test_expr_la_SOURCES			= test-expr.c

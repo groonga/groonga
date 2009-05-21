@@ -45,7 +45,7 @@ extern "C" {
 /**** grn_cell ****/
 
 /* flag values used for grn_cell.header.impl_flags */
-/* bit 0~1 are reserved */
+/* bit 0~2 are reserved */
 #define GRN_CELL_SYMBOL                (1L<<3) /* ql: registered in the symbol table */
 #define GRN_CELL_PROMISE               (1L<<4) /* ql: promise object */
 #define GRN_CELL_NATIVE                (1L<<5) /* ql: native function */
