@@ -278,8 +278,6 @@ test_memcached_cas(void)
   }
 }
 
-/* FIXME: uncomment when libmemcached supports initial value. */
-/*
 void
 test_memcached_increment(void)
 {
@@ -313,4 +311,3 @@ test_memcached_decrement(void)
   cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
   cut_assert_true(intval == 82);
 }
-*/
