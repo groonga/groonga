@@ -195,7 +195,7 @@ GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
 
 /* obj */
 
-typedef unsigned int grn_obj_flags;
+typedef unsigned short int grn_obj_flags;
 
 #define GRN_OBJ_TABLE_TYPE_MASK        (0x07)
 #define GRN_OBJ_TABLE_HASH_KEY         (0x00)
@@ -312,7 +312,10 @@ struct _grn_obj {
   } u;
 };
 
-#define GRN_OBJ_DO_SHALLOW_COPY        (0x01)
+
+#define GRN_OBJ_REFER                  (0x01<<0)
+#define GRN_OBJ_EXTERNAL               (0x01<<1)
+#define GRN_OBJ_DO_SHALLOW_COPY        (GRN_OBJ_REFER|GRN_OBJ_EXTERNAL)
 
 #define GRN_OBJ_INIT(obj,obj_type,obj_flags,obj_domain) do { \
   (obj)->header.type = (obj_type);\
@@ -1412,13 +1415,41 @@ GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 /* grn_bulk */
 
-#define GRN_BULK_REWIND(bulk) ((bulk)->u.b.curr = (bulk)->u.b.head)
-#define GRN_BULK_WSIZE(bulk) ((bulk)->u.b.tail - (bulk)->u.b.head)
-#define GRN_BULK_REST(bulk) ((bulk)->u.b.tail - (bulk)->u.b.curr)
-#define GRN_BULK_VSIZE(bulk) ((bulk)->u.b.curr - (bulk)->u.b.head)
-#define GRN_BULK_EMPTYP(bulk) ((bulk)->u.b.curr == (bulk)->u.b.head)
-#define GRN_BULK_HEAD(bulk) ((bulk)->u.b.head)
-#define GRN_BULK_CURR(bulk) ((bulk)->u.b.curr)
+#define GRN_BULK_BUFSIZE \
+  ((uintptr_t)&(((grn_obj *)0)[1]) - (uintptr_t)&(((grn_obj *)0)->u.b.head))
+#define GRN_BULK_EXP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_EXTERNAL)
+#define GRN_BULK_REWIND(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.curr = (bulk)->u.b.head)\
+   : (((bulk)->header.flags = 0), NULL))
+#define GRN_BULK_WSIZE(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.tail - (bulk)->u.b.head)\
+   : GRN_BULK_BUFSIZE)
+#define GRN_BULK_REST(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.tail - (bulk)->u.b.curr)\
+   : GRN_BULK_BUFSIZE - (bulk)->header.flags)
+#define GRN_BULK_VSIZE(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.curr - (bulk)->u.b.head)\
+   : (bulk)->header.flags)
+#define GRN_BULK_EMPTYP(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.curr == (bulk)->u.b.head)\
+   : !((bulk)->header.flags))
+#define GRN_BULK_HEAD(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.head)\
+   : (char *)&((bulk)->u.b.head))
+#define GRN_BULK_CURR(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.curr)\
+   : (char *)&((bulk)->u.b.head) + (bulk)->header.flags)
+#define GRN_BULK_TAIL(bulk) \
+  (GRN_BULK_EXP(bulk)\
+   ? ((bulk)->u.b.tail)\
+   : (char *)&((bulk)[1]))
 
 GRN_API grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
 GRN_API grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, unsigned int newsize);
@@ -1426,6 +1457,7 @@ GRN_API grn_rc grn_bulk_write(grn_ctx *ctx, grn_obj *bulk,
                               const char *str, unsigned int len);
 GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
 GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
+GRN_API grn_rc grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
 GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
 
 /* grn_text */

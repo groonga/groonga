@@ -318,7 +318,7 @@ void grn_obj_patsnip_spec_close(grn_ctx *ctx, patsnip_spec *ss);
   GRN_CELL_NEW(ctx, (o));\
   (o)->header.impl_flags = GRN_OBJ_ALLOCATED;\
   (o)->header.type = GRN_CELL_STR;\
-  (o)->u.b.value = (bulk)->u.b.head;\
+  (o)->u.b.value = GRN_BULK_HEAD(bulk);\
   (o)->u.b.size = GRN_BULK_VSIZE(bulk) - 1;\
 } while(0)
 

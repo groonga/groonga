@@ -1129,15 +1129,16 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
   if (!(key = pat_node_get_key(ctx, pat, node))) { return 0; }
   len = PAT_LEN(node);
   if (KEY_NEEDS_CONVERT(pat, len)) {
-    if (bulk->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
+    if (bulk->header.impl_flags & GRN_OBJ_REFER) {
       GRN_TEXT_INIT(bulk);
     }
     if (!grn_bulk_reserve(ctx, bulk, len)) {
-      KEY_DEC(pat, bulk->u.b.curr, key, len);
-      bulk->u.b.curr += len;
+      char *curr = GRN_BULK_CURR(bulk);
+      KEY_DEC(pat, curr, key, len);
+      grn_bulk_truncate(ctx, bulk, GRN_BULK_VSIZE(bulk) + len);
     }
   } else {
-    if (bulk->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
+    if (bulk->header.impl_flags & GRN_OBJ_REFER) {
       bulk->u.b.head = (char *)key;
       bulk->u.b.curr = (char *)key + len;
     } else {

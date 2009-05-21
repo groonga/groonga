@@ -1206,7 +1206,7 @@ grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk)
   if (!ee) { return 0; }
   key_size = (hash->obj.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
   key = get_key(ctx, hash, ee);
-  if (bulk->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
+  if (bulk->header.impl_flags & GRN_OBJ_REFER) {
     bulk->u.b.head = key;
     bulk->u.b.curr = key + key_size;
   } else {

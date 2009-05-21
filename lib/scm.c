@@ -1323,7 +1323,7 @@ opexe(grn_ctx *ctx)
       GRN_TEXT_INIT(&buf);
       grn_obj_inspect(ctx, ctx->impl->envir, &buf, GRN_OBJ_INSPECT_ESC);
       *buf.u.b.curr = '\0';
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "mgc > ncells=%d envir=<%s>", ctx->impl->n_entries, buf.u.b.head);
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "mgc > ncells=%d envir=<%s>", ctx->impl->n_entries, GRN_BULK_HEAD(&buf));
       grn_bulk_fin(ctx, &buf);
     }
     grn_ctx_mgc(ctx);

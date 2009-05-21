@@ -1669,12 +1669,24 @@ grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
 {
   char *head;
   newsize += grn_bulk_margin_size + 1;
-  newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
-  head = buf->u.b.head - (buf->u.b.head ? grn_bulk_margin_size : 0);
-  if (!(head = GRN_REALLOC(head, newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
-  buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
-  buf->u.b.head = head + grn_bulk_margin_size;
-  buf->u.b.tail = head + newsize;
+  if (GRN_BULK_EXP(buf)) {
+    newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
+    head = buf->u.b.head - (buf->u.b.head ? grn_bulk_margin_size : 0);
+    if (!(head = GRN_REALLOC(head, newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
+    buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
+    buf->u.b.head = head + grn_bulk_margin_size;
+    buf->u.b.tail = head + newsize;
+  } else {
+    if (newsize > GRN_BULK_BUFSIZE) {
+      newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
+      if (!(head = GRN_MALLOC(newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
+      memcpy(head, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf));
+      buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
+      buf->u.b.head = head + grn_bulk_margin_size;
+      buf->u.b.tail = head + newsize;
+      buf->header.impl_flags |= GRN_OBJ_EXTERNAL;
+    }
+  }
   return GRN_SUCCESS;
 }
 
@@ -1689,11 +1701,13 @@ grn_rc
 grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
 {
   grn_rc rc = GRN_SUCCESS;
+  char *curr;
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
-  memcpy(buf->u.b.curr, str, len);
-  buf->u.b.curr += len;
+  curr = GRN_BULK_CURR(buf);
+  memcpy(curr, str, len);
+  GRN_BULK_INCR_LEN(buf, len);
   return rc;
 }
 
@@ -1711,16 +1725,44 @@ grn_rc
 grn_bulk_space(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 {
   grn_rc rc = grn_bulk_reserve(ctx, buf, len);
-  if (!rc) { buf->u.b.curr += len; }
+  if (!rc) {
+    GRN_BULK_INCR_LEN(buf, len);
+  }
   return rc;
+}
+
+grn_rc
+grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len)
+{
+  if (GRN_BULK_EXP(bulk)) {
+    if ((bulk->u.b.tail - bulk->u.b.head) < len) {
+      return grn_bulk_resize(ctx, bulk, len);
+    } else {
+      bulk->u.b.curr = bulk->u.b.head + len;
+    }
+  } else {
+    if (GRN_BULK_BUFSIZE < len) {
+      return grn_bulk_resize(ctx, bulk, len);
+    } else {
+      bulk->header.flags = len;
+    }
+  }
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_text_itoa(grn_ctx *ctx, grn_obj *buf, int i)
 {
   grn_rc rc = GRN_SUCCESS;
-  while (grn_itoa(i, buf->u.b.curr, buf->u.b.tail, &buf->u.b.curr)) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
+  for (;;) {
+    char *curr = GRN_BULK_CURR(buf);
+    char *tail = GRN_BULK_TAIL(buf);
+    if (grn_itoa(i, curr, tail, &curr)) {
+      if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
+    } else {
+      GRN_BULK_SET_CURR(buf, curr);
+      break;
+    }
   }
   return rc;
 }
@@ -1729,8 +1771,15 @@ grn_rc
 grn_text_lltoa(grn_ctx *ctx, grn_obj *buf, long long int i)
 {
   grn_rc rc = GRN_SUCCESS;
-  while (grn_lltoa(i, buf->u.b.curr, buf->u.b.tail, &buf->u.b.curr)) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
+  for (;;) {
+    char *curr = GRN_BULK_CURR(buf);
+    char *tail = GRN_BULK_TAIL(buf);
+    if (grn_lltoa(i, curr, tail, &curr)) {
+      if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
+    } else {
+      GRN_BULK_SET_CURR(buf, curr);
+      break;
+    }
   }
   return rc;
 }
@@ -1738,20 +1787,21 @@ grn_text_lltoa(grn_ctx *ctx, grn_obj *buf, long long int i)
 inline static void
 ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
 {
-  size_t len = sprintf(buf->u.b.curr, "%#.15g", d);
-  if (buf->u.b.curr[len - 1] == '.') {
-    buf->u.b.curr += len;
+  char *curr = GRN_BULK_CURR(buf);
+  size_t len = sprintf(curr, "%#.15g", d);
+  if (curr[len - 1] == '.') {
+    GRN_BULK_INCR_LEN(buf, len);
     GRN_TEXT_PUTC(ctx, buf, '0');
   } else {
     char *p, *q;
-    buf->u.b.curr[len] = '\0';
-    if ((p = strchr(buf->u.b.curr, 'e'))) {
+    curr[len] = '\0';
+    if ((p = strchr(curr, 'e'))) {
       for (q = p; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
-      memmove(q, p, buf->u.b.curr + len - q);
+      memmove(q, p, curr + len - q);
     } else {
-      for (q = buf->u.b.curr + len; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
+      for (q = curr + len; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
     }
-    buf->u.b.curr += len;
+    GRN_BULK_INCR_LEN(buf, len);
   }
 }
 
@@ -1795,8 +1845,8 @@ grn_text_itoh(grn_ctx *ctx, grn_obj *buf, int i, unsigned int len)
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
-  grn_itoh(i, buf->u.b.curr, len);
-  buf->u.b.curr += len;
+  grn_itoh(i, GRN_BULK_CURR(buf), len);
+  GRN_BULK_INCR_LEN(buf, len);
   return rc;
 }
 
@@ -1808,8 +1858,8 @@ grn_text_itob(grn_ctx *ctx, grn_obj *buf, grn_id id)
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
-  grn_itob(id, buf->u.b.curr);
-  buf->u.b.curr += len;
+  grn_itob(id, GRN_BULK_CURR(buf));
+  GRN_BULK_INCR_LEN(buf, len);
   return rc;
 }
 
@@ -1821,8 +1871,8 @@ grn_text_lltob32h(grn_ctx *ctx, grn_obj *buf, long long int i)
   if (GRN_BULK_REST(buf) < len) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
   }
-  grn_lltob32h(i, buf->u.b.curr);
-  buf->u.b.curr += len;
+  grn_lltob32h(i, GRN_BULK_CURR(buf));
+  GRN_BULK_INCR_LEN(buf, len);
   return rc;
 }
 
@@ -1866,7 +1916,7 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
       case '\x1d': case '\x1e': case '\x1f': case '\x7f':
         if (!(rc = grn_bulk_write(ctx, buf, "\\u", 2))) {
           if ((rc = grn_text_itoh(ctx, buf, *s, 4))) {
-            buf->u.b.curr -= 2;
+            GRN_BULK_INCR_LEN(buf, -2);
             return rc;
           }
         } else {
@@ -1892,9 +1942,9 @@ grn_text_benc(grn_ctx *ctx, grn_obj *buf, unsigned int v)
   if (GRN_BULK_REST(buf) < 5) {
     if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + 5))) { return rc; }
   }
-  p = (uint8_t *)buf->u.b.curr;
+  p = (uint8_t *)GRN_BULK_CURR(buf);
   GRN_B_ENC(v, p);
-  buf->u.b.curr = (char *)p;
+  GRN_BULK_SET_CURR(buf, (char *)p);
   return rc;
 }
 
@@ -1918,7 +1968,7 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
     if (*s < 0 || urlenc_tbl[(int)*s]) {
       if (!grn_bulk_write(ctx, buf, &c, 1)) {
         if (grn_text_itoh(ctx, buf, *s, 2)) {
-          buf->u.b.curr--;
+          GRN_BULK_INCR_LEN(buf, -1);
         }
       }
     } else {
@@ -1931,10 +1981,10 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
 grn_rc
 grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
 {
-  if (buf->u.b.head) {
+  if (GRN_BULK_EXP(buf) && buf->u.b.head) {
     GRN_REALLOC(buf->u.b.head - grn_bulk_margin_size, 0);
-    buf->u.b.head = NULL;
   }
+  buf->u.b.head = NULL;
   return GRN_SUCCESS;
 }
 

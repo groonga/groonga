@@ -182,8 +182,7 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 /* flag values used for grn_obj.header.impl_flags */
 
-#define GRN_OBJ_ALLOCATED              (0x01<<1) /* allocated by ctx */
-#define GRN_OBJ_BODY_ALLOCATED         (0x01<<2) /* allocated body */
+#define GRN_OBJ_ALLOCATED              (0x01<<2) /* allocated by ctx */
 
 /* flag value used for grn_obj.header.flags */
 

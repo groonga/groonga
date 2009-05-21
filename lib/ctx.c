@@ -614,12 +614,12 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       if (ctx->impl->symbols) {
         grn_obj *buf = ctx->impl->outbuf;
         unsigned int head, tail;
-        unsigned int *offsets = (unsigned int *) ctx->impl->subbuf.u.b.head;
+        unsigned int *offsets = (unsigned int *) GRN_BULK_HEAD(&ctx->impl->subbuf);
         int npackets = GRN_BULK_VSIZE(&ctx->impl->subbuf) / sizeof(unsigned int);
         if (npackets < ctx->impl->bufcur) { return GRN_INVALID_ARGUMENT; }
         head = ctx->impl->bufcur ? offsets[ctx->impl->bufcur - 1] : 0;
         tail = ctx->impl->bufcur < npackets ? offsets[ctx->impl->bufcur] : GRN_BULK_VSIZE(buf);
-        *str = buf->u.b.head + head;
+        *str = GRN_BULK_HEAD(buf) + head;
         *str_len = tail - head;
         *flags = ctx->impl->bufcur++ < npackets ? GRN_QL_MORE : 0;
         goto exit;
@@ -647,7 +647,7 @@ grn_ctx_stream_out_func(grn_ctx *ctx, int flags, void *stream)
     grn_obj *buf = ctx->impl->outbuf;
     uint32_t size = GRN_BULK_VSIZE(buf);
     if (size) {
-      fwrite(buf->u.b.head, 1, size, (FILE *)stream);
+      fwrite(GRN_BULK_HEAD(buf), 1, size, (FILE *)stream);
       fputc('\n', (FILE *)stream);
       fflush((FILE *)stream);
       GRN_BULK_REWIND(buf);

@@ -76,6 +76,22 @@ void grn_logger_fin(void);
 int grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
 grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding);
 
+#define GRN_BULK_INCR_LEN(buf,len) {\
+  if (GRN_BULK_EXP(buf)) {\
+    (buf)->u.b.curr += (len);\
+  } else {\
+    (buf)->header.flags += (len);\
+  }\
+}
+
+#define GRN_BULK_SET_CURR(buf,p) {\
+  if (GRN_BULK_EXP(buf)) {\
+    (buf)->u.b.curr = (p);\
+  } else {\
+    (buf)->header.flags = (p) - GRN_BULK_HEAD(buf);\
+  }\
+}
+
 #ifdef __cplusplus
 }
 #endif
