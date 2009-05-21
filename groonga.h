@@ -242,9 +242,6 @@ typedef unsigned int grn_obj_flags;
 
 #define GRN_OBJ_KEY_VAR_SIZE           (0x01<<14)
 
-#define GRN_OBJ_DO_DEEP_COPY           (0x00<<14)
-#define GRN_OBJ_DO_SHALLOW_COPY        (0x01<<14)
-
 #define GRN_OBJ_TEMPORARY              (0x00<<15)
 #define GRN_OBJ_PERSISTENT             (0x01<<15)
 
@@ -315,10 +312,12 @@ struct _grn_obj {
   } u;
 };
 
+#define GRN_OBJ_DO_SHALLOW_COPY        (0x01)
+
 #define GRN_OBJ_INIT(obj,obj_type,obj_flags,obj_domain) do { \
   (obj)->header.type = (obj_type);\
-  (obj)->header.impl_flags = 0;\
-  (obj)->header.flags = (obj_flags);\
+  (obj)->header.impl_flags = (obj_flags);\
+  (obj)->header.flags = 0;\
   (obj)->header.domain = (obj_domain);\
   (obj)->u.b.head = NULL;\
   (obj)->u.b.curr = NULL;\

@@ -1496,8 +1496,6 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (grn_table_get_info(ctx, table, &flags, &encoding, &tokenizer)) {
               return F;
             }
-            if (flags & GRN_OBJ_TOKEN_DELIMITED) { res = CONS(INTERN(":delimited"), res); }
-            if (flags & GRN_OBJ_TOKEN_NGRAM) { res = CONS(INTERN(":ngram"), res); }
             if (flags & GRN_OBJ_KEY_NORMALIZE) { res = CONS(INTERN(":normalize"), res); }
             switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
             case GRN_OBJ_TABLE_HASH_KEY :

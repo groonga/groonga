@@ -452,7 +452,6 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
                  grn_obj *key_type, unsigned value_size)
 {
   grn_id id;
-  unsigned char impl_flags = 0;
   grn_id domain = GRN_ID_NIL;
   uint32_t key_size, max_n_subrecs;
   uint8_t subrec_size, subrec_offset;
@@ -506,7 +505,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
         GRN_API_RETURN(NULL);
       }
     } else {
-      impl_flags |= GRN_OBJ_CUSTOM_NAME;
+      flags |= GRN_OBJ_CUSTOM_NAME;
     }
   } else {
     if (path) {
@@ -528,7 +527,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     break;
   }
   if (res) {
-    DB_OBJ(res)->header.impl_flags = impl_flags;
+    DB_OBJ(res)->header.impl_flags = 0;
     DB_OBJ(res)->header.domain = domain;
     DB_OBJ(res)->range = GRN_ID_NIL;
     DB_OBJ(res)->max_n_subrecs = max_n_subrecs;
@@ -573,7 +572,7 @@ grn_table_open(grn_ctx *ctx, const char *name, unsigned name_size, const char *p
       }
       if (res) {
         grn_id id = grn_obj_register(ctx, db, name, name_size);
-        res->header.impl_flags |= GRN_OBJ_CUSTOM_NAME;
+        res->header.flags |= GRN_OBJ_CUSTOM_NAME;
         res->header.domain = GRN_ID_NIL; /* unknown */
         DB_OBJ(res)->range = GRN_ID_NIL; /* unknown */
         grn_db_obj_init(ctx, db, id, DB_OBJ(res));
@@ -1730,7 +1729,6 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   grn_db *s;
   uint32_t value_size;
   grn_obj *db, *res = NULL;
-  unsigned char impl_flags = 0;
   grn_id id = GRN_ID_NIL;
   grn_id range = GRN_ID_NIL;
   grn_id domain = GRN_ID_NIL;
@@ -1799,7 +1797,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         goto exit;
       }
     } else {
-      impl_flags |= GRN_OBJ_CUSTOM_NAME;
+      flags |= GRN_OBJ_CUSTOM_NAME;
     }
   } else {
     if (path) {
@@ -1825,7 +1823,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   }
   if (res) {
     DB_OBJ(res)->header.domain = domain;
-    DB_OBJ(res)->header.impl_flags = impl_flags;
+    DB_OBJ(res)->header.impl_flags = 0;
     DB_OBJ(res)->range = range;
     DB_OBJ(res)->flags = flags;
     res->header.flags = flags;
@@ -1897,7 +1895,7 @@ grn_column_open(grn_ctx *ctx, grn_obj *table,
       grn_id id = grn_obj_register(ctx, (grn_obj *)s, fullname, name_size);
       DB_OBJ(res)->header.domain = domain;
       DB_OBJ(res)->range = DB_OBJ(type)->id;
-      res->header.impl_flags |= GRN_OBJ_CUSTOM_NAME;
+      res->header.flags |= GRN_OBJ_CUSTOM_NAME;
       grn_db_obj_init(ctx, (grn_obj *)s, id, DB_OBJ(res));
     }
   }
@@ -2190,7 +2188,7 @@ grn_obj *
 grn_vector_to_sections(grn_ctx *ctx, grn_obj *vector, grn_obj *sections)
 {
   if (!sections) {
-    sections = grn_obj_open(ctx, GRN_SECTIONS, GRN_OBJ_DO_SHALLOW_COPY, 0);
+    sections = grn_obj_open(ctx, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, 0);
   }
   if (sections) {
     int i, n = grn_vector_size(ctx, vector);
@@ -3245,7 +3243,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   spec.range = obj->range;
   grn_bulk_write(ctx, b, (void *)&spec, sizeof(grn_obj_spec));
   grn_vector_delimit(ctx, &v, 0, 0);
-  if (obj->header.impl_flags & GRN_OBJ_CUSTOM_NAME) {
+  if (obj->header.flags & GRN_OBJ_CUSTOM_NAME) {
     GRN_TEXT_PUTS(ctx, b, grn_obj_path(ctx, (grn_obj *)obj));
   }
   grn_vector_delimit(ctx, &v, 0, 0);
@@ -3565,7 +3563,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
 }
 
 #define GET_PATH(spec,buffer,s,id) {\
-  if (spec->header.impl_flags & GRN_OBJ_CUSTOM_NAME) {\
+  if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {\
     const char *path;\
     unsigned int size = grn_vector_get_element(ctx, &v, 1, &path, NULL, NULL); \
     if (size > PATH_MAX) { ERR(GRN_FILENAME_TOO_LONG, "too long path"); }\
@@ -3702,7 +3700,7 @@ grn_obj_graft(grn_ctx *ctx, grn_obj *obj)
 {
   grn_obj *new = grn_obj_open(ctx, obj->header.type, obj->header.flags, obj->header.domain);
   if (new) {
-    /* todo : deep copy if (obj->header.flags & GRN_OBJ_DO_SHALLOW_COPY) */
+    /* todo : deep copy if (obj->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) */
     new->u.b.head = obj->u.b.head;
     new->u.b.curr = obj->u.b.curr;
     new->u.b.tail = obj->u.b.tail;
@@ -3732,7 +3730,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     switch (obj->header.type) {
     case GRN_VECTOR :
       if (obj->u.v.body &&
-          !(obj->header.flags & GRN_OBJ_DO_SHALLOW_COPY)) {
+          !(obj->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY)) {
         grn_obj_close(ctx, obj->u.v.body);
       }
       if (obj->u.v.sections) { GRN_FREE(obj->u.v.sections); }
@@ -3743,16 +3741,14 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     case GRN_UVECTOR :
     case GRN_MSG :
       obj->header.type = GRN_VOID;
-      if (obj->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {
+      if (obj->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
         obj->u.b.head = NULL;
         obj->u.b.tail = NULL;
         rc = GRN_SUCCESS;
       } else {
         rc = grn_bulk_fin(ctx, obj);
       }
-      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
-        GRN_FREE(obj);
-      }
+      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) { GRN_FREE(obj); }
       break;
     case GRN_ACCESSOR :
       {

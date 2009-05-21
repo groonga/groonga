@@ -1129,7 +1129,7 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
   if (!(key = pat_node_get_key(ctx, pat, node))) { return 0; }
   len = PAT_LEN(node);
   if (KEY_NEEDS_CONVERT(pat, len)) {
-    if (bulk->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {
+    if (bulk->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
       GRN_TEXT_INIT(bulk);
     }
     if (!grn_bulk_reserve(ctx, bulk, len)) {
@@ -1137,7 +1137,7 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
       bulk->u.b.curr += len;
     }
   } else {
-    if (bulk->header.flags & GRN_OBJ_DO_SHALLOW_COPY) {
+    if (bulk->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
       bulk->u.b.head = (char *)key;
       bulk->u.b.curr = (char *)key + len;
     } else {

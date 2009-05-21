@@ -182,18 +182,12 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 /* flag values used for grn_obj.header.impl_flags */
 
-#define GRN_OBJ_ALLOCATED              (1L<<0) /* allocated by ctx */
-#define GRN_OBJ_CUSTOM_NAME            (1L<<1) /* db_obj which has custom name */
-#define GRN_OBJ_RESERVED               (1L<<2) /* reserved */
+#define GRN_OBJ_ALLOCATED              (0x01<<1) /* allocated by ctx */
+#define GRN_OBJ_BODY_ALLOCATED         (0x01<<2) /* allocated body */
 
-#define GRN_OBJ_TOKEN_MASK             (0x07L<<3)
-#define GRN_OBJ_TOKEN_NGRAM            (0x01L<<3)
-#define GRN_OBJ_TOKEN_DELIMITED        (0x02L<<3)
-#define GRN_OBJ_TOKEN_USER_DEFINED     (0x07L<<3)
+/* flag value used for grn_obj.header.flags */
 
-#define GRN_OBJ_KEY_SPLIT_ALPHA        (1L<<8)
-#define GRN_OBJ_KEY_SPLIT_DIGIT        (1L<<9)
-#define GRN_OBJ_KEY_SPLIT_SYMBOL       (1L<<10)
+#define GRN_OBJ_CUSTOM_NAME            (0x01<<12) /* db_obj which has custom name */
 
 /* expr */
 
