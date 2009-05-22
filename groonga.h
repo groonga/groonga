@@ -1411,10 +1411,13 @@ GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 #define GRN_BULK_BUFSIZE \
   ((uintptr_t)&(((grn_obj *)0)[1]) - (uintptr_t)&(((grn_obj *)0)->u.b.head))
 #define GRN_BULK_OUTP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
-#define GRN_BULK_REWIND(bulk) \
-  (GRN_BULK_OUTP(bulk)\
-   ? ((bulk)->u.b.curr = (bulk)->u.b.head)\
-   : (((bulk)->header.flags = 0), NULL))
+#define GRN_BULK_REWIND(bulk) do {\
+  if (GRN_BULK_OUTP(bulk)) {\
+    (bulk)->u.b.curr = (bulk)->u.b.head;\
+  } else {\
+    (bulk)->header.flags = 0;\
+  }\
+} while (0)
 #define GRN_BULK_WSIZE(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.tail - (bulk)->u.b.head)\
