@@ -257,6 +257,8 @@ void grn_ql_init_const(void);
 grn_rc grn_ql_obj_mark(grn_ctx *ctx, grn_cell *o);
 grn_rc grn_ql_obj_unmark(grn_ctx *ctx, grn_cell *o);
 
+grn_rc grn_ctx_mgc(grn_ctx *ctx);
+
 typedef struct _patsnip_spec patsnip_spec;
 void grn_obj_patsnip_spec_close(grn_ctx *ctx, patsnip_spec *ss);
 

@@ -1676,7 +1676,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   }
   if (load == 1) {
     int i;
-    grn_cell *s;
+    grn_cell *s, *saved;
     struct _ins_stat *stat;
     for (s = args, i = 0; PAIRP(s); s = CDR(s), i++) {
       car = CAR(s);
@@ -1684,13 +1684,14 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       CAR(s) = table_column(ctx, base, msg, msg_size);
       if (CAR(s) == F) { QLERR("invalid argument"); }
     }
-    if (!(s = grn_cell_alloc(ctx, sizeof(struct _ins_stat)))) { return F; }
-    stat = (struct _ins_stat *)s->u.b.value; // todo : not GC safe
+    if (!(saved = grn_cell_alloc(ctx, sizeof(struct _ins_stat)))) { return F; }
+    stat = (struct _ins_stat *)saved->u.b.value;
     stat->columns = args;
     stat->ncolumns = i;
     stat->nrecs = 0;
     do {
-      GRN_QL_CO_WAIT(co, stat);
+      GRN_QL_CO_WAIT(co, saved);
+      stat = (struct _ins_stat *)saved->u.b.value;
       if (BULKP(args) && STRSIZE(args)) {
         grn_cell *r, *o, obj, cons, dummy;
         jctx jc;
@@ -1740,6 +1741,12 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         }
       } else {
         co->mode |= GRN_QL_TAIL;
+      }
+      {
+        grn_cell *_value = ctx->impl->value;
+        ctx->impl->value = saved;
+        grn_ctx_mgc(ctx);
+        ctx->impl->value = _value;
       }
     } while (!(co->mode & (GRN_QL_HEAD|GRN_QL_TAIL)));
     if ((res = grn_cell_new(ctx))) {

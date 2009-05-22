@@ -377,7 +377,7 @@ E6:
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_rc
 grn_ctx_mgc(grn_ctx *ctx)
 {
   /*
@@ -557,6 +557,7 @@ grn_ql_feed(grn_ctx *ctx, char *str, uint32_t str_size, int mode)
         ctx->impl->arg.u.b.value = str;
         ctx->impl->arg.u.b.size = str_size;
         ctx->impl->arg.header.type = GRN_CELL_STR;
+        ctx->impl->arg.header.impl_flags = GRN_OBJ_ALLOCATED;
         ctx->impl->args = &ctx->impl->arg;
       }
       /* fall through */
