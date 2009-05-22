@@ -333,8 +333,8 @@ update_data(grn_id record_id, unsigned int section,
   grn_obj old_value, new_value;
   const gchar *old_data, *new_data;
 
-  GRN_TEXT_INIT_REF(&old_value);
-  GRN_TEXT_INIT_REF(&new_value);
+  GRN_TEXT_INIT(&old_value, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_INIT(&new_value, GRN_OBJ_DO_SHALLOW_COPY);
 
   if (old_name) {
     old_data = cut_get_fixture_data_string(old_name, NULL);
@@ -434,7 +434,7 @@ set_index_source(grn_obj *index, grn_obj *source)
   grn_rc rc;
   grn_obj buf;
   grn_id id = grn_obj_id(context, source);
-  GRN_TEXT_INIT(&buf);
+  GRN_TEXT_INIT(&buf, 0);
   grn_bulk_write(context, &buf, (void *)&id, sizeof(grn_id));
   cut_assert_equal_int(grn_obj_get_nhooks(context, source, GRN_HOOK_SET), 0);
   rc = grn_obj_set_info(context, index, GRN_INFO_SOURCE, &buf);
@@ -453,7 +453,7 @@ insert_and_search(grn_obj *users, grn_obj *items, grn_obj *checks, grn_obj *chec
   grn_id user2 = grn_table_add(context, users, NULL, 0, NULL);
   grn_id item = grn_table_add(context, items, NULL, 0, NULL);
   grn_obj value, *res;
-  GRN_TEXT_INIT(&value);
+  GRN_TEXT_INIT(&value, 0);
   res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);
   cut_assert_not_null(res);
   grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));
@@ -595,8 +595,8 @@ test_int_index(void)
     grn_id user1 = grn_table_add(context, users, NULL, 0, NULL);
     grn_id user2 = grn_table_add(context, users, NULL, 0, NULL);
     grn_id item = grn_table_add(context, items, &key, sizeof(int32_t), NULL);
-    GRN_TEXT_INIT(&value);
-    GRN_TEXT_INIT(&query);
+    GRN_TEXT_INIT(&value, 0);
+    GRN_TEXT_INIT(&query, 0);
     res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, users, 0);
     cut_assert_not_null(res);
     grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));

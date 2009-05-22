@@ -1457,7 +1457,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         goto exit;
       }
     }
-    GRN_TEXT_INIT(&bulk);
+    GRN_TEXT_INIT(&bulk, 0);
     if (n_keys == 1 && n_results == 1) {
       if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
         grn_id id;
@@ -1686,7 +1686,7 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_
   if (GRN_OBJ_TABLEP(table)) {
     grn_obj bulk;
     grn_db *s = (grn_db *)DB_OBJ(table)->db;
-    GRN_TEXT_INIT(&bulk);
+    GRN_TEXT_INIT(&bulk, 0);
     grn_pat_get_key2(ctx, s->keys, DB_OBJ(table)->id, &bulk);
     GRN_TEXT_PUTC(ctx, &bulk, GRN_DB_DELIMITER);
     grn_bulk_write(ctx, &bulk, name, name_size);
@@ -2530,7 +2530,7 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
   grn_obj buf;
   void *vp = NULL;
   size_t vs = 0;
-  GRN_TEXT_INIT(&buf);
+  GRN_TEXT_INIT(&buf, 0);
   for (;;) {
     GRN_BULK_REWIND(&buf);
     switch (a->action) {
@@ -2603,7 +2603,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
     grn_obj buf;
     void *vp = NULL;
     size_t vs;
-    GRN_TEXT_INIT(&buf);
+    GRN_TEXT_INIT(&buf, 0);
     for (;;) {
       GRN_BULK_REWIND(&buf);
       switch (a->action) {
@@ -2727,7 +2727,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     unsigned int s = GRN_BULK_VSIZE(value);
     if (hooks || obj->header.type == GRN_COLUMN_VAR_SIZE) {
       grn_obj oldbuf, *oldvalue;
-      GRN_TEXT_INIT(&oldbuf);
+      GRN_TEXT_INIT(&oldbuf, 0);
       oldvalue = grn_obj_get_value(ctx, obj, id, &oldbuf);
       if (flags & GRN_OBJ_SET) {
         void *ov;
@@ -2781,7 +2781,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
           if (GRN_OBJ_TABLEP(lexicon)) {
             grn_obj buf;
-            GRN_TEXT_INIT(&buf);
+            GRN_TEXT_INIT(&buf, 0);
             switch (value->header.type) {
             case GRN_BULK :
               {
@@ -2938,7 +2938,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   }
   switch (value->header.type) {
   case GRN_VOID :
-    GRN_TEXT_INIT(value);
+    GRN_TEXT_INIT(value, 0);
     break;
   case GRN_BULK :
   case GRN_VECTOR :
@@ -3166,7 +3166,7 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
   int i, n = DB_OBJ(obj)->source_size / sizeof(grn_id);
   default_set_value_hook_data hook_data = { DB_OBJ(obj)->id, 0 };
   grn_obj *source, data;
-  GRN_TEXT_INIT_REF(&data);
+  GRN_TEXT_INIT(&data, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_SET_REF(&data, &hook_data, sizeof hook_data);
   for (i = 1; i <= n; i++, s++) {
     hook_data.section = i;
@@ -4455,7 +4455,7 @@ grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs)
         // todo : support other patterns.
         range = grn_obj_get_range(ctx, col);
         rv = &expr->values[expr->values_curr++];
-        GRN_RECORD_INIT(rv, range);
+        GRN_RECORD_INIT(rv, 0, range);
         r = &expr->stack[expr->stack_curr++];
         r->flags = 2; /* return value */
         r->value = rv;
@@ -4517,7 +4517,7 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
         EXPR_POP(rec, expr);
         value = grn_obj_get_value_(ctx, col, *((grn_id *)GRN_BULK_HEAD(rec)), &size);
         EXPR_PUSH_ALLOC(res, expr);
-        GRN_RECORD_INIT(res, grn_obj_get_range(ctx, col));
+        GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
         GRN_RECORD_SET(ctx, res, *((grn_id *)value));
       }
       break;

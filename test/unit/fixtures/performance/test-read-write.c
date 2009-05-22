@@ -136,7 +136,7 @@ test_read_write(gconstpointer *data)
   grn_test_assert_not_nil(id);
   cut_assert_equal_int(1, added);
 
-  GRN_TEXT_INIT_REF(&value);
+  GRN_TEXT_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_SET_REF(&value, value_string, strlen(value_string));
   grn_obj_set_value(context, table, id, &value, GRN_OBJ_SET);
 

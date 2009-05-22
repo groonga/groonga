@@ -1320,7 +1320,7 @@ opexe(grn_ctx *ctx)
   if (ctx->impl->op == OP_T0LVL || ctx->impl->n_entries > ctx->impl->ncells + GC_THRESHOLD) {
     if (ctx->impl->gc_verbose) {
       grn_obj buf;
-      GRN_TEXT_INIT(&buf);
+      GRN_TEXT_INIT(&buf, 0);
       grn_obj_inspect(ctx, ctx->impl->envir, &buf, GRN_OBJ_INSPECT_ESC);
       *buf.u.b.curr = '\0';
       GRN_LOG(ctx, GRN_LOG_NOTICE, "mgc > ncells=%d envir=<%s>", ctx->impl->n_entries, GRN_BULK_HEAD(&buf));
@@ -2315,7 +2315,7 @@ nf_add(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   case GRN_CELL_STR :
     {
       grn_obj buf;
-      GRN_TEXT_INIT(&buf);
+      GRN_TEXT_INIT(&buf, 0);
       while (PAIRP(args)) {
         POP(x, args);
         grn_obj_inspect(ctx, x, &buf, 0);
@@ -2369,7 +2369,7 @@ nf_mul(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   if (CAR(args)->header.type == GRN_CELL_STR && CADR(args)->header.type == GRN_CELL_INT) {
     int i, n = (int)IVALUE(CADR(args));
     grn_obj buf;
-    GRN_TEXT_INIT(&buf);
+    GRN_TEXT_INIT(&buf, 0);
     POP(x, args);
     for (i = 0; i < n; i++) {
       grn_obj_inspect(ctx, x, &buf, 0);
@@ -3006,7 +3006,7 @@ nf_tob32h(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   case GRN_CELL_INT :
     {
       grn_obj buf;
-      GRN_TEXT_INIT(&buf);
+      GRN_TEXT_INIT(&buf, 0);
       grn_bulk_resize(ctx, &buf, 13);
       if (grn_text_lltob32h(ctx, &buf, IVALUE(x))) {
         grn_bulk_fin(ctx, &buf);
@@ -3018,7 +3018,7 @@ nf_tob32h(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   case GRN_CELL_FLOAT :
     {
       grn_obj buf;
-      GRN_TEXT_INIT(&buf);
+      GRN_TEXT_INIT(&buf, 0);
       grn_bulk_resize(ctx, &buf, 13);
       if (grn_text_lltob32h(ctx, &buf, (int64_t)FVALUE(x))) {
         grn_bulk_fin(ctx, &buf);

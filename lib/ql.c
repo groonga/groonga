@@ -324,7 +324,7 @@ column_exp_exec(grn_ctx *ctx, column_exp *ce, grn_id id)
 {
   int i;
   grn_obj v, *vp;
-  GRN_TEXT_INIT(&v);
+  GRN_TEXT_INIT(&v, 0);
   for (i = 0; i < ce->n_keys; i++) {
     grn_cell *c = ce->cells[i];
     GRN_BULK_REWIND(&v);
@@ -1241,7 +1241,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (column) {
               if (nsources) {
                 grn_obj source;
-                GRN_TEXT_INIT_REF(&source);
+                GRN_TEXT_INIT(&source, GRN_OBJ_DO_SHALLOW_COPY);
                 GRN_TEXT_SET_REF(&source, sources, nsources * sizeof(grn_id));
                 grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source);
               }
@@ -1915,7 +1915,7 @@ nf_tostring(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_obj buf;
       uint32_t size;
       void *value = NULL;
-      GRN_TEXT_INIT(&buf);
+      GRN_TEXT_INIT(&buf, 0);
       uvector2str(ctx, car->u.p.value, &buf);
       if ((o = grn_cell_new(ctx))) {
         if ((size = GRN_BULK_VSIZE(&buf))) {
@@ -2547,7 +2547,7 @@ ha_snip(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       if ((grn_snip_exec(ctx, s, str->u.b.value, str->u.b.size, &nresults, &max_len))) {
         QLERR("grn_snip_exec failed");
       }
-      GRN_TEXT_INIT(&buf);
+      GRN_TEXT_INIT(&buf, 0);
       if (grn_bulk_resize(ctx, &buf, max_len)) { QLERR("grn_bulk_resize failed"); }
 
       if (nresults) {
@@ -2584,7 +2584,7 @@ ha_snip(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       grn_cell *v, *expr, *str = CAR(args);
       char *string = STRVALUE(str);
       size_t len = STRSIZE(str);
-      GRN_TEXT_INIT(&buf);
+      GRN_TEXT_INIT(&buf, 0);
       if (grn_bulk_resize(ctx, &buf, len)) { QLERR("grn_bulk_resize failed."); }
       while (off < len) {
         grn_obj *table = spec->table;
@@ -2826,7 +2826,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
     case GRN_CELL_OBJECT :
       {
         grn_obj key;
-        GRN_TEXT_INIT(&key);
+        GRN_TEXT_INIT(&key, 0);
         grn_ql_obj_key(ctx, obj, &key);
         grn_text_esc(ctx, buf, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key));
         grn_obj_close(ctx, &key);
@@ -2842,7 +2842,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
     case GRN_UVECTOR :
       {
         grn_obj tmp;
-        GRN_TEXT_INIT(&tmp);
+        GRN_TEXT_INIT(&tmp, 0);
         uvector2str(ctx, obj->u.p.value, &tmp);
         grn_text_esc(ctx, buf, GRN_BULK_HEAD(&tmp), GRN_BULK_VSIZE(&tmp));
         grn_obj_close(ctx, &tmp);

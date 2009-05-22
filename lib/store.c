@@ -735,8 +735,8 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
   grn_rc rc = GRN_SUCCESS;
   grn_section *vp;
   int i, f = 0, n = grn_vector_size(ctx, vector);
-  GRN_TEXT_INIT(&header);
-  GRN_TEXT_INIT(&footer);
+  GRN_TEXT_INIT(&header, 0);
+  GRN_TEXT_INIT(&footer, 0);
   grn_text_benc(ctx, &header, n);
   for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
     grn_text_benc(ctx, &header, vp->length);

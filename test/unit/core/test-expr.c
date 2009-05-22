@@ -77,7 +77,7 @@ test_accessor(void)
   c2 = grn_column_create(&context, t2, "c2", 2, NULL,
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
-  GRN_TEXT_INIT(&buf);
+  GRN_TEXT_INIT(&buf, 0);
   for (i = 0; i < 100; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
@@ -120,7 +120,7 @@ test_expr(void)
   c2 = grn_column_create(&context, t2, "c2", 2, NULL,
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
-  GRN_TEXT_INIT(&buf);
+  GRN_TEXT_INIT(&buf, 0);
   for (i = 0; i < 100; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
