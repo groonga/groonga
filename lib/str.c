@@ -1669,7 +1669,7 @@ grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
 {
   char *head;
   newsize += grn_bulk_margin_size + 1;
-  if (GRN_BULK_EXP(buf)) {
+  if (GRN_BULK_OUTP(buf)) {
     newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
     head = buf->u.b.head - (buf->u.b.head ? grn_bulk_margin_size : 0);
     if (!(head = GRN_REALLOC(head, newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -1684,7 +1684,7 @@ grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
       buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
       buf->u.b.head = head + grn_bulk_margin_size;
       buf->u.b.tail = head + newsize;
-      buf->header.impl_flags |= GRN_OBJ_EXTERNAL;
+      buf->header.impl_flags |= GRN_OBJ_OUTPLACE;
     }
   }
   return GRN_SUCCESS;
@@ -1712,6 +1712,15 @@ grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
 }
 
 grn_rc
+grn_bulk_write_from(grn_ctx *ctx, grn_obj *bulk,
+                    const char *str, unsigned int from, unsigned int len)
+{
+  grn_rc rc = grn_bulk_truncate(ctx, bulk, from);
+  if (!rc) { rc = grn_bulk_write(ctx, bulk, str, len); }
+  return rc;
+}
+
+grn_rc
 grn_bulk_reserve(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -1734,15 +1743,15 @@ grn_bulk_space(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 grn_rc
 grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len)
 {
-  if (GRN_BULK_EXP(bulk)) {
+  if (GRN_BULK_OUTP(bulk)) {
     if ((bulk->u.b.tail - bulk->u.b.head) < len) {
-      return grn_bulk_resize(ctx, bulk, len);
+      return grn_bulk_space(ctx, bulk, len);
     } else {
       bulk->u.b.curr = bulk->u.b.head + len;
     }
   } else {
     if (GRN_BULK_BUFSIZE < len) {
-      return grn_bulk_resize(ctx, bulk, len);
+      return grn_bulk_space(ctx, bulk, len);
     } else {
       bulk->header.flags = len;
     }
@@ -1981,7 +1990,7 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
 grn_rc
 grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
 {
-  if (GRN_BULK_EXP(buf) && buf->u.b.head) {
+  if (GRN_BULK_OUTP(buf) && buf->u.b.head) {
     GRN_REALLOC(buf->u.b.head - grn_bulk_margin_size, 0);
   }
   buf->u.b.head = NULL;

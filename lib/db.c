@@ -4449,7 +4449,7 @@ grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs)
         y = &expr->stack[--expr->stack_curr];
         xv = (x->flags == 2) ? x->value : ((grn_expr_code *)(x->value))->value;
         yv = (y->flags == 2) ? y->value : ((grn_expr_code *)(y->value))->value;
-        obj = grn_ctx_at(ctx, xv->u.id);
+        obj = grn_ctx_at(ctx, *((grn_id *)GRN_BULK_HEAD(xv)));
         col = grn_obj_column(ctx, obj, GRN_BULK_HEAD(yv), GRN_BULK_VSIZE(yv));
         ((grn_expr_code *)(y->value))->value = col;
         // todo : support other patterns.
@@ -4515,7 +4515,7 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
         grn_obj *col, *rec, *res;
         EXPR_POP(col, expr);
         EXPR_POP(rec, expr);
-        value = grn_obj_get_value_(ctx, col, rec->u.id, &size);
+        value = grn_obj_get_value_(ctx, col, *((grn_id *)GRN_BULK_HEAD(rec)), &size);
         EXPR_PUSH_ALLOC(res, expr);
         GRN_RECORD_INIT(res, grn_obj_get_range(ctx, col));
         GRN_RECORD_SET(ctx, res, *((grn_id *)value));

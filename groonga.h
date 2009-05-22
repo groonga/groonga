@@ -303,19 +303,13 @@ struct _grn_obj {
       grn_section *sections;
       int n_sections;
     } v;
-    int i32;
-    unsigned int u32;
-    long long  i64;
-    long long unsigned u64;
-    double f;
-    grn_id id;
   } u;
 };
 
 
 #define GRN_OBJ_REFER                  (0x01<<0)
-#define GRN_OBJ_EXTERNAL               (0x01<<1)
-#define GRN_OBJ_DO_SHALLOW_COPY        (GRN_OBJ_REFER|GRN_OBJ_EXTERNAL)
+#define GRN_OBJ_OUTPLACE               (0x01<<1)
+#define GRN_OBJ_DO_SHALLOW_COPY        (GRN_OBJ_REFER|GRN_OBJ_OUTPLACE)
 
 #define GRN_OBJ_INIT(obj,obj_type,obj_flags,obj_domain) do { \
   (obj)->header.type = (obj_type);\
@@ -1417,37 +1411,37 @@ GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 #define GRN_BULK_BUFSIZE \
   ((uintptr_t)&(((grn_obj *)0)[1]) - (uintptr_t)&(((grn_obj *)0)->u.b.head))
-#define GRN_BULK_EXP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_EXTERNAL)
+#define GRN_BULK_OUTP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr = (bulk)->u.b.head)\
    : (((bulk)->header.flags = 0), NULL))
 #define GRN_BULK_WSIZE(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.tail - (bulk)->u.b.head)\
    : GRN_BULK_BUFSIZE)
 #define GRN_BULK_REST(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.tail - (bulk)->u.b.curr)\
    : GRN_BULK_BUFSIZE - (bulk)->header.flags)
 #define GRN_BULK_VSIZE(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr - (bulk)->u.b.head)\
    : (bulk)->header.flags)
 #define GRN_BULK_EMPTYP(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr == (bulk)->u.b.head)\
    : !((bulk)->header.flags))
 #define GRN_BULK_HEAD(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.head)\
    : (char *)&((bulk)->u.b.head))
 #define GRN_BULK_CURR(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr)\
    : (char *)&((bulk)->u.b.head) + (bulk)->header.flags)
 #define GRN_BULK_TAIL(bulk) \
-  (GRN_BULK_EXP(bulk)\
+  (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.tail)\
    : (char *)&((bulk)[1]))
 
@@ -1455,6 +1449,8 @@ GRN_API grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
 GRN_API grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, unsigned int newsize);
 GRN_API grn_rc grn_bulk_write(grn_ctx *ctx, grn_obj *bulk,
                               const char *str, unsigned int len);
+GRN_API grn_rc grn_bulk_write_from(grn_ctx *ctx, grn_obj *bulk,
+                                   const char *str, unsigned int from, unsigned int len);
 GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
 GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
 GRN_API grn_rc grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
@@ -1471,20 +1467,23 @@ GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
   GRN_OBJ_INIT((obj), GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_SHORTTEXT)
 #define GRN_LONGTEXT_INIT_REF(obj) \
   GRN_OBJ_INIT((obj), GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_LONGTEXT)
-#define GRN_TEXT_SET(ctx,obj,str,len) do {\
-  GRN_BULK_REWIND(obj);\
-  GRN_TEXT_APPEND((ctx), (obj), (str), (len));\
-} while (0)
+#define GRN_TEXT_SET(ctx,obj,str,len) \
+  grn_bulk_write_from((ctx), (obj), (const char *)(str), 0, (unsigned int)(len))
 #define GRN_TEXT_SET_REF(obj,str,len) do {\
   (obj)->u.b.head = (char *)(str);\
   (obj)->u.b.curr = (char *)(str) + (len);\
 } while (0)
 #define GRN_TEXT_APPEND(ctx,obj,str,len) \
   grn_bulk_write((ctx), (obj), (const char *)(str), (unsigned int)(len))
-#define GRN_TEXT_PUTS(ctx,obj,str) (grn_bulk_write((ctx), (obj), (str), strlen(str)))
 #define GRN_TEXT_PUTC(ctx,obj,c) do {\
   char _c = (c); grn_bulk_write((ctx), (obj), &_c, 1);\
 } while (0)
+
+#define GRN_TEXT_APPEND_CSTR(ctx,obj,str) \
+  (GRN_TEXT_APPEND((ctx), (obj), (str), strlen(str)))
+#define GRN_TEXT_SET_CSTR(ctx,obj,str) \
+  (GRN_TEXT_SET((ctx), (obj), (str), strlen(str)))
+#define GRN_TEXT_PUTS GRN_TEXT_APPEND_CSTR
 
 GRN_API grn_rc grn_text_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
 GRN_API grn_rc grn_text_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
@@ -1525,13 +1524,31 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_TIME_INIT(obj) GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_TIME)
 #define GRN_RECORD_INIT(obj,domain) GRN_OBJ_INIT((obj), GRN_ATOM, 0, (domain))
 
-#define GRN_INT32_SET(ctx,obj,val) ((obj)->u.i32 = (int)(val))
-#define GRN_UINT32_SET(ctx,obj,val) ((obj)->u.u32 = (unsigned int)(val))
-#define GRN_INT64_SET(ctx,obj,val) ((obj)->u.i64 = (long long int)(val))
-#define GRN_UINT64_SET(ctx,obj,val) ((obj)->u.u64 = (long long unsigned int)(val))
-#define GRN_FLOAT_SET(ctx,obj,val) ((obj)->u.f = (double)(val))
-#define GRN_TIME_SET(ctx,obj,val) ((obj)->u.i64 = (long long int)(val))
-#define GRN_RECORD_SET(ctx,obj,val) ((obj)->u.id = (grn_id)(val))
+#define GRN_INT32_SET(ctx,obj,val) do {\
+  int _val = (int)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int));\
+} while (0)
+#define GRN_UINT32_SET(ctx,obj,val) do {\
+  uint _val = (uint)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint));\
+} while (0)
+#define GRN_INT64_SET(ctx,obj,val) do {\
+  long long int _val = (long long int)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(long long int));\
+} while (0)
+#define GRN_UINT64_SET(ctx,obj,val) do {\
+  long long unsigned int _val = (long long unsigned int)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(long long unsigned int));\
+} while (0)
+#define GRN_FLOAT_SET(ctx,obj,val) do {\
+  double _val = (double)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(double));\
+} while (0)
+#define GRN_TIME_SET GRN_UINT64_SET
+#define GRN_RECORD_SET(ctx,obj,val) do {\
+  grn_id _val = (grn_id)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_id));\
+} while (0)
 
 #define GRN_INT32_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_INT32)
 #define GRN_UINT32_VECTOR_INIT(obj) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, GRN_DB_UINT32)
@@ -1545,25 +1562,25 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_RECORD_VECTOR_INIT(obj,domain) GRN_OBJ_INIT((obj), GRN_UVECTOR, 0, (domain))
 
 #define GRN_INT32_APPEND(ctx,obj,val) do {\
-  int _val = (int)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(int));\
+  int _val = (int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int));\
 } while (0)
 #define GRN_UINT32_APPEND(ctx,obj,val) do {\
-  uint _val = (uint)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(uint));\
+  uint _val = (uint)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(uint));\
 } while (0)
 #define GRN_INT64_APPEND(ctx,obj,val) do {\
   long long int _val = (long long int)(val);\
-  grn_bulk_write((ctx), (obj), &_val, sizeof(long long int));\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(long long int));\
 } while (0)
 #define GRN_UINT64_APPEND(ctx,obj,val) do {\
   long long unsigned int _val = (long long unsigned int)(val);\
-  grn_bulk_write((ctx), (obj), &_val, sizeof(long long unsigned int));\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(long long unsigned int));\
 } while (0)
 #define GRN_FLOAT_APPEND(ctx,obj,val) do {\
-  double _val = (double)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(double));\
+  double _val = (double)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(double));\
 } while (0)
 #define GRN_TIME_APPEND GRN_INT64_APPEND
 #define GRN_RECORD_APPEND(ctx,obj,val) do {\
-  grn_id _val = (grn_id)(val); grn_bulk_write((ctx), (obj), &_val, sizeof(grn_id));\
+  grn_id _val = (grn_id)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(grn_id));\
 } while (0)
 
 /* grn_str */

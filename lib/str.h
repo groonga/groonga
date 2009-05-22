@@ -77,7 +77,7 @@ int grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding en
 grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding);
 
 #define GRN_BULK_INCR_LEN(buf,len) {\
-  if (GRN_BULK_EXP(buf)) {\
+  if (GRN_BULK_OUTP(buf)) {\
     (buf)->u.b.curr += (len);\
   } else {\
     (buf)->header.flags += (len);\
@@ -85,10 +85,10 @@ grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int 
 }
 
 #define GRN_BULK_SET_CURR(buf,p) {\
-  if (GRN_BULK_EXP(buf)) {\
-    (buf)->u.b.curr = (p);\
+  if (GRN_BULK_OUTP(buf)) {\
+    (buf)->u.b.curr = (char *)(p);\
   } else {\
-    (buf)->header.flags = (p) - GRN_BULK_HEAD(buf);\
+    (buf)->header.flags = (char *)(p) - GRN_BULK_HEAD(buf);\
   }\
 }
 

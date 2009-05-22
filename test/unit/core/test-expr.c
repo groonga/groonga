@@ -83,7 +83,7 @@ test_accessor(void)
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_write(&context, &buf, &i2, sizeof(grn_id));
+    grn_bulk_write(&context, &buf, (char *)&i2, sizeof(grn_id));
     grn_obj_set_value(&context, c1, i1, &buf, GRN_OBJ_SET);
     grn_obj_set_value(&context, c2, i2, &buf, GRN_OBJ_SET);
   }
@@ -126,7 +126,7 @@ test_expr(void)
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
     GRN_BULK_REWIND(&buf);
-    grn_bulk_write(&context, &buf, &i2, sizeof(grn_id));
+    grn_bulk_write(&context, &buf, (char *)&i2, sizeof(grn_id));
     grn_obj_set_value(&context, c1, i1, &buf, GRN_OBJ_SET);
     grn_obj_set_value(&context, c2, i2, &buf, GRN_OBJ_SET);
   }
