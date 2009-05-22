@@ -3716,7 +3716,7 @@ grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domai
 grn_obj *
 grn_obj_graft(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_obj *new = grn_obj_open(ctx, obj->header.type, obj->header.flags, obj->header.domain);
+  grn_obj *new = grn_obj_open(ctx, obj->header.type, obj->header.impl_flags, obj->header.domain);
   if (new) {
     /* todo : deep copy if (obj->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) */
     new->u.b.head = obj->u.b.head;
