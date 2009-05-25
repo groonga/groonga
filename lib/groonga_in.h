@@ -418,6 +418,34 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* WORDS_BIGENDIAN */
 #define grn_ntoh grn_hton
 
+#ifdef USE_FUTEX
+#include <linux/futex.h>
+#include <sys/syscall.h>
+
+#define GRN_FUTEX_WAIT(p) do {\
+  int err;\
+  struct timespec timeout = {1, 0};\
+  while (1) {\
+    if (!(err = syscall(SYS_futex, p, FUTEX_WAIT, *p, &timeout))) {\
+      break;\
+    }\
+    if (err == ETIMEDOUT) {\
+      GRN_LOG(ctx, GRN_LOG_CRIT, "timeout in GRN_FUTEX_WAIT(%p)", p);\
+      break;\
+    } else if (err != EWOULDBLOCK) {\
+      GRN_LOG(ctx, GRN_LOG_CRIT, "error %d in GRN_FUTEX_WAIT(%p)", err);\
+      break;\
+    }\
+  }\
+} while(0)
+
+#define GRN_FUTEX_WAKE(p) \
+  syscall(SYS_futex, p, FUTEX_WAKE, 1)
+#else /* USE_FUTEX */
+#define GRN_FUTEX_WAIT(p) usleep(1000)
+#define GRN_FUTEX_WAKE(p)
+#endif /* USE_FUTEX */
+
 #ifndef GROONGA_H
 #include "groonga.h"
 #endif /* GROONGA_H */

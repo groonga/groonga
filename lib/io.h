@@ -152,9 +152,6 @@ grn_rc grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
 
 void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info);
 
-#define GRN_FUTEX_WAIT(p) usleep(1000)
-#define GRN_FUTEX_WAKE(p)
-
 /* arguments must be validated by caller;
  * io mustn't be NULL;
  * segno must be in valid range;

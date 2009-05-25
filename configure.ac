@@ -396,6 +396,22 @@ else
   fi
 fi
 
+# futex check
+AC_ARG_ENABLE(futex,
+  [AC_HELP_STRING([--enable-futex],
+    [use futex. [default=no]])],
+  ,
+  [enable_futex="no"])
+if test "x$enable_futex" != "xno"; then
+  AC_CHECK_HEADERS(linux/futex.h sys/syscall.h, [
+    AC_DEFINE(USE_UYIELD, [1], [use uyield])
+  ], [
+    AC_MSG_ERROR("linux/futex.h or sys/syscall.h not found")
+  ])
+fi
+AC_MSG_CHECKING([whether enable futex])
+AC_MSG_RESULT($enable_futex)
+
 # flags for compile groonga
 CFLAGS="$CFLAGS $MECAB_CFLAGS $OPT_CFLAGS"
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS"
