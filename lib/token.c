@@ -627,7 +627,10 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
 #ifndef NO_MECAB
   obj = grn_proc_create(ctx, "<token:mecab>", 13, NULL, GRN_PROC_HOOK,
                         mecab_init, mecab_next, mecab_fin);
-  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
+#else /* NO_MECAB */
+  obj = grn_proc_create(ctx, "<token:mecab>", 13, NULL, GRN_PROC_HOOK,
+                        NULL, NULL, NULL);
 #endif /* NO_MECAB */
+  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
   return GRN_SUCCESS;
 }
