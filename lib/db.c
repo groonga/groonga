@@ -2535,48 +2535,51 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
 static grn_obj *
 grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
 {
-  grn_obj buf;
-  void *vp = NULL;
   size_t vs = 0;
-  GRN_TEXT_INIT(&buf, 0);
+  uint32_t size0;
+  void *vp = NULL;
+  if (!value) {
+    if (!(value = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }
+  }
+  size0 = GRN_BULK_VSIZE(value);
   for (;;) {
-    GRN_BULK_REWIND(&buf);
+    grn_bulk_truncate(ctx, value, size0);
     switch (a->action) {
     case GRN_ACCESSOR_GET_KEY :
-      grn_table_get_key2(ctx, a->obj, id, &buf);
-      vp = GRN_BULK_HEAD(&buf);
-      vs = GRN_BULK_VSIZE(&buf);
+      grn_table_get_key2(ctx, a->obj, id, value);
+      vp = GRN_BULK_HEAD(value) + size0;
+      vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_VALUE :
-      grn_obj_get_value(ctx, a->obj, id, &buf);
-      vp = GRN_BULK_HEAD(&buf);
-      vs = GRN_BULK_VSIZE(&buf);
+      grn_obj_get_value(ctx, a->obj, id, value);
+      vp = GRN_BULK_HEAD(value) + size0;
+      vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_SCORE :
-      grn_obj_get_value(ctx, a->obj, id, &buf);
+      grn_obj_get_value(ctx, a->obj, id, value);
       {
-        grn_rset_recinfo *ri = (grn_rset_recinfo *)GRN_BULK_HEAD(&buf);
+        grn_rset_recinfo *ri = (grn_rset_recinfo *)(GRN_BULK_HEAD(value) + size0);
         vp = &ri->score;
         vs = sizeof(int);
       }
       break;
     case GRN_ACCESSOR_GET_NSUBRECS :
-      grn_obj_get_value(ctx, a->obj, id, &buf);
+      grn_obj_get_value(ctx, a->obj, id, value);
       {
-        grn_rset_recinfo *ri = (grn_rset_recinfo *)GRN_BULK_HEAD(&buf);
+        grn_rset_recinfo *ri = (grn_rset_recinfo *)(GRN_BULK_HEAD(value) + size0);
         vp = &ri->n_subrecs;
         vs = sizeof(int);
       }
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
       /* todo : support vector */
-      grn_obj_get_value(ctx, a->obj, id, &buf);
-      vp = GRN_BULK_HEAD(&buf);
-      vs = GRN_BULK_VSIZE(&buf);
+      grn_obj_get_value(ctx, a->obj, id, value);
+      vp = GRN_BULK_HEAD(value) + size0;
+      vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_DB_OBJ :
       value = grn_ctx_at(ctx, id);
-      grn_obj_close(ctx, &buf);
+      grn_obj_close(ctx, value);
       return value;
       break;
     case GRN_ACCESSOR_LOOKUP :
@@ -2592,12 +2595,6 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       break;
     }
   }
-  if (!value) { value = grn_obj_open(ctx, GRN_BULK, 0, 0); }
-  if (value) {
-    grn_bulk_write(ctx, value, vp, vs);
-    value->header.type = buf.header.type;
-  }
-  grn_obj_close(ctx, &buf);
   return value;
 }
 
