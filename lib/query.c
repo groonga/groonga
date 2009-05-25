@@ -794,24 +794,8 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
     op1 = q->default_op;
   }
   if (n) {
-    switch (op) {
-    case GRN_SEL_OR :
-      // todo   if (!grn_records_union(r, s)) { grn_records_close(s); }
-      break;
-    case GRN_SEL_AND :
-      // todo   if (!grn_records_intersect(r, s)) { grn_records_close(s); }
-      break;
-    case GRN_SEL_BUT :
-      // todo   if (!grn_records_subtract(r, s)) { grn_records_close(s); }
-      break;
-      /* todo: adjust
-    case GRN_SEL_ADJUST :
-      break;
-      */
-    default :
-      grn_hash_close(ctx, s);
-      break;
-    }
+    grn_table_setoperation(ctx, (grn_obj *)r, (grn_obj *)s, (grn_obj *)r, op);
+    grn_hash_close(ctx, s);
   }
 }
 
