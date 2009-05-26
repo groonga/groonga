@@ -199,6 +199,7 @@ grn_obj *grn_expr_push_var(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
 grn_obj *grn_expr_push_value(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
 grn_rc grn_expr_push_proc(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, int nargs);
 grn_rc grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs);
+grn_rc grn_expr_compile(grn_ctx *ctx, grn_expr *expr);
 grn_obj *grn_expr_exec(grn_ctx *ctx, grn_expr *expr);
 grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_expr *expr, int offset);
 

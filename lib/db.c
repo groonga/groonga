@@ -4441,7 +4441,7 @@ grn_rc
 grn_expr_push_proc(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, int nargs)
 {
   GRN_API_ENTER;
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "fix me");
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "fixme");
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -4510,6 +4510,13 @@ grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs)
   _s->flags = 1;\
 }
 
+grn_rc
+grn_expr_compile(grn_ctx *ctx, grn_expr *expr)
+{
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "fixme");
+  return ctx->rc;
+}
+
 grn_obj *
 grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
 {
@@ -4547,6 +4554,6 @@ grn_expr_get_value(grn_ctx *ctx, grn_expr *expr, int offset)
 {
   grn_obj *res = NULL;
   GRN_API_ENTER;
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "fix me");
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "fixme");
   GRN_API_RETURN(res);
 }
