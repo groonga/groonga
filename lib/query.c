@@ -744,7 +744,22 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
   if (!n && op != GRN_SEL_OR) { return; }
   if (n) {
     s = grn_hash_create(ctx, NULL, r->key_size, r->value_size, r->obj.flags);
-    // s->keys = r->keys; need ?
+    s->obj.header.impl_flags = 0;
+    s->obj.header.domain = r->obj.header.domain;
+    s->obj.range = r->obj.range;
+    s->obj.max_n_subrecs = r->obj.max_n_subrecs;
+    s->obj.subrec_size = r->obj.subrec_size;
+    s->obj.subrec_offset = r->obj.subrec_offset;
+    s->obj.id = r->obj.id;
+    s->obj.db = r->obj.db;
+    s->obj.source = r->obj.source;
+    s->obj.source_size = r->obj.source_size;
+    /*
+    grn_hook_entry entry;
+    for (entry = 0; entry < N_HOOK_ENTRIES; entry++) {
+      s->obj.hooks[entry] = NULL;
+    }
+    */
   } else {
     s = r;
   }
