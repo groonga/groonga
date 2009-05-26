@@ -4272,6 +4272,8 @@ deftype(grn_ctx *ctx, const char *name,
   return o;
 }
 
+#define N_RESERVED_TYPES 255
+
 grn_rc
 grn_db_init_builtin_types(grn_ctx *ctx)
 {
@@ -4305,6 +4307,15 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONGTEXT) { return GRN_FILE_CORRUPT; }
   grn_db_init_builtin_tokenizers(ctx);
   grn_db_init_builtin_procs(ctx);
+  {
+    grn_obj *db = ctx->impl->db;
+    grn_id id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys);
+    char buf[GRN_TABLE_MAX_KEY_SIZE] = "<sys:00>";
+    while (id < N_RESERVED_TYPES) {
+      grn_itoh(++id, buf + 5, 2);
+      grn_obj_register(ctx, db, buf, 8);
+    }
+  }
   return ctx->rc;
 }
 
