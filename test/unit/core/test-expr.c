@@ -135,10 +135,11 @@ test_expr(void)
   }
   {
     grn_expr *expr = grn_expr_open(&context, 10);
-    grn_obj *r, *v = grn_expr_def_var(&context, expr);
+    grn_obj *r, *v;
+    cut_assert_not_null(expr);
+    v = grn_expr_def_var(&context, expr);
     GRN_RECORD_INIT(v, 0, grn_obj_id(&context, t1));
     grn_expr_push_var(&context, expr, v);
-    cut_assert_not_null(c2);
     GRN_TEXT_SETS(&context, &buf, "c1");
     grn_expr_push_value(&context, expr, &buf);
     grn_expr_push_op(&context, expr, 1, 2);

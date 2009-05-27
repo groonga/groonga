@@ -29,6 +29,7 @@
 #define DEFAULT_PORT 10041
 #define DEFAULT_HOST "localhost"
 #define DEFAULT_MAX_CONCURRENCY 10
+#define DEFAULT_MAX_THROUGHPUT 10000
 #define MAX_DEST 256
 
 typedef struct {
@@ -41,6 +42,7 @@ static int verbose = 0;
 static int dest_cnt = 0;
 static grn_slap_dest dests[MAX_DEST];
 static int max_con = DEFAULT_MAX_CONCURRENCY;
+static int max_tp = DEFAULT_MAX_THROUGHPUT;
 
 #include <stdarg.h>
 static void
@@ -239,7 +241,7 @@ do_client()
       if (!THREAD_CREATE(thread, receiver, NULL)) {
         int cnt = 0;
         gettimeofday(&tvb, NULL);
-        lprint(ctx, "begin: max_concurrency=%d", max_con);
+        lprint(ctx, "begin: max_concurrency=%d max_tp=%d", max_con, max_tp);
         while (fgets(buf, BUFSIZE, stdin)) {
           uint32_t size = strlen(buf) - 1;
           session *s = session_alloc(ctx, dests + (cnt++ % dest_cnt));
@@ -269,7 +271,10 @@ do_client()
           } else {
             fprintf(stderr, "grn_com_copen failed\n");
           }
-          while ((nsent - nrecv) >= max_con) {
+          for (;;) {
+            gettimeofday(&tve, NULL);
+            if (((nrecv / (tve.tv_sec - tvb.tv_sec)) < max_tp) ||
+                (nsent - nrecv) < max_con) { break; }
             /* lprint(ctx, "s:%d r:%d", nsent, nrecv); */
             usleep(1000);
           }
@@ -315,20 +320,23 @@ enum {
 int
 main(int argc, char **argv)
 {
-  char *protostr = NULL, *maxconstr = NULL;
+  char *protostr = NULL, *maxconstr = NULL, *maxtpstr = NULL;
   int r, i, flags = 0;
   static grn_str_getopt_opt opts[] = {
     {'P', NULL, NULL, 0, getopt_op_none},
     {'m', NULL, NULL, 0, getopt_op_none},
+    {'t', NULL, NULL, 0, getopt_op_none},
     {'h', NULL, NULL, flag_usage, getopt_op_on},
     {'v', NULL, NULL, flag_verbose, getopt_op_on},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &protostr;
   opts[1].arg = &maxconstr;
+  opts[2].arg = &maxtpstr;
   i = grn_str_getopt(argc, argv, opts, &flags);
   if (protostr) { proto = *protostr; }
   if (maxconstr) { max_con = atoi(maxconstr); }
+  if (maxtpstr) { max_tp = atoi(maxtpstr); }
   if (flags & flag_verbose) { verbose = 1; }
 
   if (argc <= i) {
