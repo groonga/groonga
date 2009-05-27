@@ -4334,10 +4334,15 @@ grn_expr_open(grn_ctx *ctx, int size)
         expr->values_curr = 0;
         expr->values_tail = 0;
         expr->values_size = size;
-        if ((expr->stack = GRN_MALLOCN(grn_expr_stack, size))) {
-          expr->stack_curr = 0;
-          expr->stack_size = size;
-          goto exit;
+        if ((expr->codes = GRN_MALLOCN(grn_expr_code, size))) {
+          expr->codes_curr = 0;
+          expr->codes_size = size;
+          if ((expr->stack = GRN_MALLOCN(grn_expr_stack, size))) {
+            expr->stack_curr = 0;
+            expr->stack_size = size;
+            goto exit;
+          }
+          GRN_FREE(expr->codes);
         }
         GRN_FREE(expr->values);
       }
@@ -4465,9 +4470,9 @@ grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs)
         y = &expr->stack[--expr->stack_curr];
         xv = (x->flags == 2) ? x->value : ((grn_expr_code *)(x->value))->value;
         yv = (y->flags == 2) ? y->value : ((grn_expr_code *)(y->value))->value;
-        obj = grn_ctx_at(ctx, *((grn_id *)GRN_BULK_HEAD(xv)));
-        col = grn_obj_column(ctx, obj, GRN_BULK_HEAD(yv), GRN_BULK_VSIZE(yv));
-        ((grn_expr_code *)(y->value))->value = col;
+        obj = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(yv));
+        col = grn_obj_column(ctx, obj, GRN_BULK_HEAD(xv), GRN_BULK_VSIZE(xv));
+        ((grn_expr_code *)(x->value))->value = col;
         // todo : support other patterns.
         range = grn_obj_get_range(ctx, col);
         rv = &expr->values[expr->values_curr++];
@@ -4513,8 +4518,7 @@ grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs)
 grn_rc
 grn_expr_compile(grn_ctx *ctx, grn_expr *expr)
 {
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "fixme");
-  return ctx->rc;
+  return GRN_SUCCESS;
 }
 
 grn_obj *
@@ -4535,7 +4539,7 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
       {
         uint32_t size;
         const char *value;
-        grn_obj *col, *rec, *res;
+        grn_obj *col, *rec;
         EXPR_POP(col, expr);
         EXPR_POP(rec, expr);
         value = grn_obj_get_value_(ctx, col, *((grn_id *)GRN_BULK_HEAD(rec)), &size);

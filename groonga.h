@@ -1524,8 +1524,8 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   char _c = (c); grn_bulk_write((ctx), (obj), &_c, 1);\
 } while (0)
 
-#define GRN_TEXT_PUTS(ctx,obj,str) (GRN_TEXT_PUT((ctx), (obj), (str), strlen(str)))
-#define GRN_TEXT_SETS(ctx,obj,str) (GRN_TEXT_SET((ctx), (obj), (str), strlen(str)))
+#define GRN_TEXT_PUTS(ctx,obj,str) GRN_TEXT_PUT((ctx), (obj), (str), strlen(str))
+#define GRN_TEXT_SETS(ctx,obj,str) GRN_TEXT_SET((ctx), (obj), (str), strlen(str))
 #define GRN_TEXT_VALUE(obj) GRN_BULK_HEAD(obj)
 #define GRN_TEXT_LEN(obj) GRN_BULK_VSIZE(obj)
 
