@@ -78,7 +78,7 @@ test_accessor(void)
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
   GRN_TEXT_INIT(&buf, 0);
-  for (i = 0; i < 100; i++) {
+  for (i = 0; i < 1000000; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
@@ -89,6 +89,7 @@ test_accessor(void)
   }
   {
     grn_id id;
+    int nerr = 0;
     grn_obj *a = grn_obj_column(&context, t1, "c1.c2.c1", 8);
     grn_table_cursor *tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0);
     cut_assert_not_null(a);
@@ -96,11 +97,13 @@ test_accessor(void)
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_BULK_REWIND(&buf);
       grn_obj_get_value(&context, a, id, &buf);
-      cut_assert_equal_uint(sizeof(grn_id), GRN_BULK_VSIZE(&buf));
-      cut_assert_equal_uint(id, *((grn_id *)GRN_BULK_HEAD(&buf)));
+      if (GRN_RECORD_VALUE(&buf) != id) { nerr++; }
     }
+    cut_assert_equal_uint(0, nerr);
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+    cut_assert_equal_uint(0, grn_obj_close(&context, a));
   }
+  cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
 }
 
 void
@@ -121,7 +124,7 @@ test_expr(void)
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
   GRN_TEXT_INIT(&buf, 0);
-  for (i = 0; i < 100; i++) {
+  for (i = 0; i < 1000000; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
@@ -148,15 +151,16 @@ test_expr(void)
     grn_expr_compile(&context, expr);
     {
       grn_id id;
+      int nerr = 0;
       grn_table_cursor *tc;
       tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0);
       cut_assert_not_null(tc);
       while ((id = grn_table_cursor_next(&context, tc))) {
         GRN_RECORD_SET(&context, v, id);
         r = grn_expr_exec(&context, expr);
-        cut_assert_equal_uint(sizeof(grn_id), GRN_BULK_VSIZE(r));
-        cut_assert_equal_uint(id, *((grn_id *)GRN_BULK_HEAD(r)));
+        if (GRN_RECORD_VALUE(r) != id) { nerr++; }
       }
+      cut_assert_equal_uint(0, nerr);
       cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
     }
     cut_assert_equal_uint(0, grn_expr_close(&context, expr));

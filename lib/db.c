@@ -3772,6 +3772,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
           GRN_FREE(p);
         }
       }
+      rc = GRN_SUCCESS;
       break;
     case GRN_TYPE :
       GRN_FREE(obj);
@@ -4369,6 +4370,7 @@ grn_expr_close(grn_ctx *ctx, grn_expr *expr)
   }
   GRN_FREE(expr->values);
   GRN_FREE(expr->stack);
+  GRN_FREE(expr->codes);
   GRN_FREE(expr);
   GRN_API_RETURN(ctx->rc);
 }
@@ -4542,7 +4544,7 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
         grn_obj *col, *rec;
         EXPR_POP(col, expr);
         EXPR_POP(rec, expr);
-        value = grn_obj_get_value_(ctx, col, *((grn_id *)GRN_BULK_HEAD(rec)), &size);
+        value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
         EXPR_PUSH_ALLOC(res, expr);
         GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
         GRN_RECORD_SET(ctx, res, *((grn_id *)value));
