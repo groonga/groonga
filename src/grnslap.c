@@ -273,7 +273,7 @@ do_client()
           }
           for (;;) {
             gettimeofday(&tve, NULL);
-            if ((nrecv < max_tp * (tve.tv_sec - tvb.tv_sec)) ||
+            if ((nrecv < max_tp * (tve.tv_sec - tvb.tv_sec)) &&
                 (nsent - nrecv) < max_con) { break; }
             /* lprint(ctx, "s:%d r:%d", nsent, nrecv); */
             usleep(1000);
