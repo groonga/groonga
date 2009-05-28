@@ -107,7 +107,7 @@ test_accessor(void)
     }
     gettimeofday(&tve, NULL);
     et = (tve.tv_sec - tvb.tv_sec) * 1000000 + (tve.tv_usec - tvb.tv_usec);
-    //printf("et=%zu\n", et);
+    //    printf("et=%zu\n", et);
     cut_assert_equal_uint(0, nerr);
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
     cut_assert_equal_uint(0, grn_obj_close(&context, a));
@@ -166,6 +166,9 @@ test_expr(void)
 
     grn_expr_push_op(&context, expr, 1, 2);
     grn_expr_compile(&context, expr);
+
+    //printf("expr->codes_curr =%d\n", expr->codes_curr);
+
     {
       grn_id id;
       uint64_t et;

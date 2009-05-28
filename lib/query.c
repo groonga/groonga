@@ -743,7 +743,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
   grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
   if (!n && op != GRN_SEL_OR) { return; }
   if (n) {
-    s = grn_hash_create(ctx, NULL, r->key_size, r->value_size, r->obj.flags);
+    s = grn_hash_create(ctx, NULL, r->key_size, r->value_size, r->obj.header.flags);
     s->obj.header.impl_flags = 0;
     s->obj.header.domain = r->obj.header.domain;
     s->obj.range = r->obj.range;

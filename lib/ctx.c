@@ -841,15 +841,15 @@ grn_rc
 grn_ctx_use(grn_ctx *ctx, grn_obj *db)
 {
   GRN_API_ENTER;
-  if (!db || !DB_P(db)) {
+  if (db && !DB_P(db)) {
     ctx->rc = GRN_INVALID_ARGUMENT;
   } else {
     if (!ctx->impl) { grn_ctx_impl_init(ctx); }
     if (!ctx->rc) {
       ctx->impl->db = db;
-      if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
-      {
+      if (db) {
         grn_obj buf;
+        if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
         GRN_TEXT_INIT(&buf, 0);
         grn_obj_get_info(ctx, db, GRN_INFO_ENCODING, &buf);
         ctx->encoding = *(grn_encoding *)GRN_BULK_HEAD(&buf);

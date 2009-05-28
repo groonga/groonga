@@ -402,7 +402,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   pat->value_size = value_size;
   pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
   pat->encoding = encoding;
-  pat->obj.flags = flags;
+  pat->obj.header.flags = flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
     grn_io_close(ctx, io);
     GRN_FREE(pat);
@@ -439,7 +439,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->key_size = header->key_size;
   pat->value_size = header->value_size;
   pat->encoding = header->encoding;
-  pat->obj.flags = header->flags;
+  pat->obj.header.flags = header->flags;
   pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
   PAT_AT(pat, 0, node0);
   if (!node0) {
@@ -609,10 +609,10 @@ chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lk
 #define MAX_FIXED_KEY_SIZE (sizeof(int64_t))
 
 #define KEY_NEEDS_CONVERT(pat,size) \
-  (!((pat)->obj.flags & GRN_OBJ_KEY_VAR_SIZE) && (size) <= MAX_FIXED_KEY_SIZE)
+  (!((pat)->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) && (size) <= MAX_FIXED_KEY_SIZE)
 
 #define KEY_ENC(pat,keybuf,key,size) {\
-  switch ((pat)->obj.flags & GRN_OBJ_KEY_MASK) {\
+  switch ((pat)->obj.header.flags & GRN_OBJ_KEY_MASK) {\
   case GRN_OBJ_KEY_UINT :\
     grn_hton((keybuf), (key), (size));\
     break;\
@@ -631,7 +631,7 @@ chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lk
 }
 
 #define KEY_DEC(pat,keybuf,key,size) {\
-  switch ((pat)->obj.flags & GRN_OBJ_KEY_MASK) {\
+  switch ((pat)->obj.header.flags & GRN_OBJ_KEY_MASK) {\
   case GRN_OBJ_KEY_UINT :\
     grn_ntoh((keybuf), (key), (size));\
     break;\
@@ -664,7 +664,7 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   KEY_ENCODE(pat, keybuf, key, key_size);
   r0 = _grn_pat_add(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
   if (added) { *added = new; }
-  if (r0 && (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) &&
+  if (r0 && (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) &&
       (*((uint8_t *)key) & 0x80)) { // todo: refine!!
     sis_node *sl, *sr;
     grn_id l = r0, r;
@@ -694,7 +694,7 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   }
   if (r0 && value) {
     byte *v = (byte *)sis_get(ctx, pat, r0);
-    if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) {
+    if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
       *value = v + sizeof(sis_node);
     } else {
       *value = v;
@@ -723,7 +723,7 @@ grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void
       if (k && key_size == PAT_LEN(rn) && !memcmp(k, key, key_size)) {
         if (value) {
           byte *v = (byte *)sis_get(ctx, pat, r);
-          if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) {
+          if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
             *value = v + sizeof(sis_node);
           } else {
             *value = v;
@@ -863,7 +863,7 @@ grn_pat_suffix_search(grn_ctx *ctx, grn_pat *pat,
     uint32_t *offset;
     if (grn_hash_add(ctx, h, &r, sizeof(grn_id), (void **) &offset, NULL)) {
       *offset = 0;
-      if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) { sis_collect(ctx, pat, h, r, 1); }
+      if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) { sis_collect(ctx, pat, h, r, 1); }
       return GRN_SUCCESS;
     }
   }
@@ -891,7 +891,7 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
   grn_id r, r2 = GRN_ID_NIL;
   uint32_t len = key_size * 16;
   int c0 = -1, c;
-  if (!pat || !key || !(pat->obj.flags & GRN_OBJ_KEY_VAR_SIZE)) { return GRN_ID_NIL; }
+  if (!pat || !key || !(pat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) { return GRN_ID_NIL; }
   PAT_AT(pat, 0, rn);
   for (r = rn->lr[1]; r;) {
     PAT_AT(pat, r, rn);
@@ -1047,7 +1047,7 @@ static grn_rc
 _grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
                 grn_table_delete_optarg *optarg)
 {
-  if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) {
+  if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
     grn_id id = grn_pat_get(ctx, pat, key, key_size, NULL);
     if (id && grn_pat_delete_with_sis(ctx, pat, id, optarg)) {
       return GRN_SUCCESS;
@@ -1156,7 +1156,7 @@ grn_pat_get_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *valuebuf)
     byte *v = (byte *)sis_at(ctx, pat, id);
     if (v) {
       if (valuebuf) {
-        if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) {
+        if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
           memcpy(valuebuf, v + sizeof(sis_node), value_size);
         } else {
           memcpy(valuebuf, v, value_size);
@@ -1174,7 +1174,7 @@ grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size)
   const char *value = NULL;
   if ((*size = pat->value_size)) {
     if ((value = (const char *)sis_at(ctx, pat, id))
-        && (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS)) {
+        && (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS)) {
       value += sizeof(sis_node);
     }
   }
@@ -1189,7 +1189,7 @@ grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *value, int flags)
     if (value_size) {
       byte *v = (byte *)sis_get(ctx, pat, id);
       if (v) {
-        if (pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) { v += sizeof(sis_node); }
+        if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) { v += sizeof(sis_node); }
         switch ((flags & GRN_OBJ_SET_MASK)) {
         case GRN_OBJ_SET :
           memcpy(v, value, value_size);
@@ -1213,7 +1213,7 @@ grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned *flags,
   ERRCLR(NULL);
   if (!pat) { return GRN_INVALID_ARGUMENT; }
   if (key_size) { *key_size = pat->key_size; }
-  if (flags) { *flags = pat->obj.flags; }
+  if (flags) { *flags = pat->obj.header.flags; }
   if (encoding) { *encoding = pat->encoding; }
   if (nrecords) { *nrecords = pat->header->nrecords; }
   if (file_size) {
@@ -1328,7 +1328,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
 {
   int n = 0;
   grn_id tid;
-  if (pat->obj.flags & GRN_OBJ_KEY_NORMALIZE) {
+  if (pat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
     grn_str *nstr = grn_str_open(ctx, str, str_len, GRN_STR_WITH_CHECKS);
     if (nstr) {
       int16_t *cp = nstr->checks;
@@ -1426,7 +1426,7 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
         if (node) {
           ch = PAT_CHK(node);
           if (ch > check) {
-            if (c->obj.flags & GRN_CURSOR_DESCENDING) {
+            if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
               push(c, node->lr[0], ch);
               id = node->lr[1];
             } else {
@@ -1443,7 +1443,7 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
                 uint32_t lmin, lmax;
                 pat_node *nmin, *nmax;
                 const uint8_t *kmin, *kmax;
-                if (c->obj.flags & GRN_CURSOR_DESCENDING) {
+                if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
                   PAT_AT(c->pat, c->limit, nmin);
                   PAT_AT(c->pat, id, nmax);
                 } else {
@@ -1656,7 +1656,7 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
   if (flags & GRN_CURSOR_DESCENDING) {
     if (min) {
       set_cursor_ascend(ctx, pat, c, min, min_size, flags);
-      c->obj.flags = GRN_CURSOR_ASCENDING;
+      c->obj.header.flags = GRN_CURSOR_ASCENDING;
       c->limit = grn_pat_cursor_next(ctx, c);
       c->sp = 0;
       if (!c->limit) { goto exit; }
@@ -1681,7 +1681,7 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
   } else {
     if (max) {
       set_cursor_descend(ctx, pat, c, max, max_size, flags);
-      c->obj.flags = GRN_CURSOR_DESCENDING;
+      c->obj.header.flags = GRN_CURSOR_DESCENDING;
       c->limit = grn_pat_cursor_next(ctx, c);
       c->sp = 0;
       if (!c->limit) { goto exit; }
@@ -1705,7 +1705,7 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
     }
   }
 exit :
-  c->obj.flags = flags;
+  c->obj.header.flags = flags;
   c->curr_rec = GRN_ID_NIL;
   return c;
 }
@@ -1724,7 +1724,7 @@ grn_pat_cursor_get_value(grn_ctx *ctx, grn_pat_cursor *c, void **value)
   if (value_size) {
     byte *v = (byte *)sis_at(ctx, c->pat, c->curr_rec);
     if (v) {
-      if (c->pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) {
+      if (c->pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
         *value = v + sizeof(sis_node);
       } else {
         *value = v;
@@ -1749,7 +1749,7 @@ grn_pat_cursor_get_key_value(grn_ctx *ctx, grn_pat_cursor *c,
   if (value_size) {
     byte *v = (byte *)sis_at(ctx, c->pat, c->curr_rec);
     if (v) {
-      if (c->pat->obj.flags & GRN_OBJ_KEY_WITH_SIS) {
+      if (c->pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
         *value = v + sizeof(sis_node);
       } else {
         *value = v;

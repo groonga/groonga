@@ -114,7 +114,7 @@ typedef struct {
   uint8_t subrec_offset;
   uint8_t record_unit;
   uint8_t subrec_unit;
-  grn_obj_flags flags;
+  //  grn_obj_flags flags;
 } grn_db_obj;
 
 #define GRN_OBJ_TMP_OBJECT 0x80000000

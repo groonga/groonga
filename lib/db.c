@@ -28,7 +28,7 @@
 #define DB_OBJ(obj) ((grn_db_obj *)obj)
 
 #define WITH_NORMALIZE(table,key,key_size,block) {\
-  if ((table)->obj.flags & GRN_OBJ_KEY_NORMALIZE) {\
+  if ((table)->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {\
     grn_str *nstr;\
     if ((nstr = grn_str_open(ctx, key, key_size, GRN_STR_NORMALIZE))) { \
       char *key = nstr->norm;\
@@ -535,6 +535,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     break;
   }
   if (res) {
+    DB_OBJ(res)->header.flags = flags;
     DB_OBJ(res)->header.impl_flags = 0;
     DB_OBJ(res)->header.domain = domain;
     DB_OBJ(res)->range = GRN_ID_NIL;
@@ -923,13 +924,13 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
   if (table) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      if (flags) { *flags = ((grn_pat *)table)->obj.flags; }
+      if (flags) { *flags = ((grn_pat *)table)->obj.header.flags; }
       if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer; }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_HASH_KEY :
-      if (flags) { *flags = ((grn_hash *)table)->obj.flags; }
+      if (flags) { *flags = ((grn_hash *)table)->obj.header.flags; }
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer; }
       rc = GRN_SUCCESS;
@@ -1027,7 +1028,7 @@ void
 grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
                      grn_rset_posinfo *pi, int dir)
 {
-  if (DB_OBJ(table)->flags & GRN_OBJ_WITH_SUBREC) {
+  if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
     int limit = DB_OBJ(table)->max_n_subrecs;
     ri->score += score;
     ri->n_subrecs += 1;
@@ -1480,7 +1481,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           void *value;
           grn_rset_recinfo *ri = NULL;
           GRN_BULK_REWIND(&bulk);
-          if (DB_OBJ(table)->flags & GRN_OBJ_WITH_SUBREC) {
+          if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
             grn_table_cursor_get_value(ctx, tc, (void **)&ri);
           }
           grn_obj_get_value(ctx, keys->key, id, &bulk);
@@ -1525,7 +1526,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         while ((id = grn_table_cursor_next(ctx, tc))) {
           grn_rset_recinfo *ri = NULL;
           GRN_BULK_REWIND(&bulk);
-          if (DB_OBJ(table)->flags & GRN_OBJ_WITH_SUBREC) {
+          if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
             grn_table_cursor_get_value(ctx, tc, (void **)&ri);
           }
           for (k = 0, kp = keys; k < n_keys; k++, kp++) {
@@ -1839,7 +1840,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     DB_OBJ(res)->header.domain = domain;
     DB_OBJ(res)->header.impl_flags = 0;
     DB_OBJ(res)->range = range;
-    DB_OBJ(res)->flags = flags;
+    DB_OBJ(res)->header.flags = flags;
     res->header.flags = flags;
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
       grn_obj_remove(ctx, res);
@@ -2353,7 +2354,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          if (DB_OBJ(obj)->flags & GRN_OBJ_WITH_SUBREC) {
+          if (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_SUBREC) {
             (*rp)->action = GRN_ACCESSOR_GET_SCORE;
             done++;
           } else {
@@ -2383,7 +2384,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          if (DB_OBJ(obj)->flags & GRN_OBJ_WITH_SUBREC) {
+          if (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_SUBREC) {
             (*rp)->action = GRN_ACCESSOR_GET_NSUBRECS;
             done++;
           } else {
@@ -4316,9 +4317,10 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   {
     grn_obj *db = ctx->impl->db;
     grn_id id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys);
-    char buf[GRN_TABLE_MAX_KEY_SIZE] = "<sys:00>";
+    char buf[] = "<sys:00>";
     while (id < N_RESERVED_TYPES) {
       grn_itoh(++id, buf + 5, 2);
+      buf[5 + 2] = '>';
       grn_obj_register(ctx, db, buf, 8);
     }
   }
@@ -4464,9 +4466,8 @@ grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, int op, int nargs)
   if (expr->codes_curr >= expr->codes_size) {
     ERR(GRN_NO_MEMORY_AVAILABLE, "stack is full");
   } else {
-    grn_expr_code *code = &expr->codes[expr->codes_curr++];
+    grn_expr_code *code = &expr->codes[expr->codes_curr - 1];
     code->op = (uint8_t) op;
-    code->value = NULL;
     switch (op) {
     case 1 : /* GET_VALUE */
       {
@@ -4536,6 +4537,57 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
   GRN_API_ENTER;
   expr->values_curr = 0;
   expr->stack_curr = 0;
+  {
+    grn_expr_code *code;
+
+    code = expr->codes;
+    //EXPR_PUSH(code->value, expr);
+    res = code->value;
+
+    code++;
+    {
+      uint32_t size;
+      const char *value;
+      grn_obj *col, *rec;
+      //      EXPR_POP(rec, expr);
+      rec = res;
+      col = code->value;
+      value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
+      EXPR_PUSH_ALLOC(res, expr);
+      //      GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
+      GRN_RECORD_SET(ctx, res, *((grn_id *)value));
+    }
+
+    code++;
+    {
+      uint32_t size;
+      const char *value;
+      grn_obj *col, *rec;
+      rec = res;
+      //      EXPR_POP(rec, expr);
+      col = code->value;
+      value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
+      //      EXPR_PUSH_ALLOC(res, expr);
+      //      GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
+      GRN_RECORD_SET(ctx, res, *((grn_id *)value));
+    }
+
+    code++;
+    {
+      uint32_t size;
+      const char *value;
+      grn_obj *col, *rec;
+      rec = res;
+      //EXPR_POP(rec, expr);
+      col = code->value;
+      value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
+      // EXPR_PUSH_ALLOC(res, expr);
+      GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
+      GRN_RECORD_SET(ctx, res, *((grn_id *)value));
+    }
+  }
+
+#ifdef hogehoge
   for (pc = 0; pc < expr->codes_curr; pc++) {
     grn_expr_code *code = &expr->codes[pc];
     switch (code->op) {
@@ -4547,8 +4599,8 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
         uint32_t size;
         const char *value;
         grn_obj *col, *rec;
-        EXPR_POP(col, expr);
         EXPR_POP(rec, expr);
+        col = code->value;
         value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
         EXPR_PUSH_ALLOC(res, expr);
         GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
@@ -4557,6 +4609,7 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
       break;
     }
   }
+#endif
   GRN_API_RETURN(res);
 }
 
