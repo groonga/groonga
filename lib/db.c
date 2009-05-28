@@ -563,7 +563,10 @@ grn_table_open(grn_ctx *ctx, const char *name, unsigned name_size, const char *p
     grn_obj *res = grn_ctx_get(ctx, name, name_size);
     if (res) {
       const char *path2 = grn_obj_path(ctx, res);
-      if (path && (!path2 || strcmp(path, path2))) { GRN_API_RETURN(NULL); }
+      if (path && (!path2 || strcmp(path, path2))) {
+        ERR(GRN_INVALID_ARGUMENT, "path unmatch");
+        GRN_API_RETURN(NULL);
+      }
     } else if (path) {
       uint32_t type = grn_io_detect_type(ctx, path);
       if (!type) { GRN_API_RETURN(NULL); }
@@ -585,6 +588,8 @@ grn_table_open(grn_ctx *ctx, const char *name, unsigned name_size, const char *p
         DB_OBJ(res)->range = GRN_ID_NIL; /* unknown */
         grn_db_obj_init(ctx, db, id, DB_OBJ(res));
       }
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "path is missing");
     }
     GRN_API_RETURN(res);
   }

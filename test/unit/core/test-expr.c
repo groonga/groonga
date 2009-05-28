@@ -16,6 +16,7 @@
 */
 
 #include "db.h"
+#include <stdio.h>
 
 #include <gcutter.h>
 
@@ -60,6 +61,8 @@ teardown(void)
   cut_remove_path(tmp_directory, NULL);
 }
 
+#define NRECORDS 1000000
+
 void
 test_accessor(void)
 {
@@ -78,7 +81,7 @@ test_accessor(void)
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
   GRN_TEXT_INIT(&buf, 0);
-  for (i = 0; i < 1000000; i++) {
+  for (i = 0; i < NRECORDS; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
@@ -89,16 +92,22 @@ test_accessor(void)
   }
   {
     grn_id id;
+    uint64_t et;
     int nerr = 0;
+    struct timeval tvb, tve;
     grn_obj *a = grn_obj_column(&context, t1, "c1.c2.c1", 8);
     grn_table_cursor *tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0);
     cut_assert_not_null(a);
     cut_assert_not_null(tc);
+    gettimeofday(&tvb, NULL);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_BULK_REWIND(&buf);
       grn_obj_get_value(&context, a, id, &buf);
       if (GRN_RECORD_VALUE(&buf) != id) { nerr++; }
     }
+    gettimeofday(&tve, NULL);
+    et = (tve.tv_sec - tvb.tv_sec) * 1000000 + (tve.tv_usec - tvb.tv_usec);
+    //printf("et=%zu\n", et);
     cut_assert_equal_uint(0, nerr);
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
     cut_assert_equal_uint(0, grn_obj_close(&context, a));
@@ -124,7 +133,7 @@ test_expr(void)
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
   GRN_TEXT_INIT(&buf, 0);
-  for (i = 0; i < 1000000; i++) {
+  for (i = 0; i < NRECORDS; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
@@ -140,6 +149,7 @@ test_expr(void)
     v = grn_expr_def_var(&context, expr);
     GRN_RECORD_INIT(v, 0, grn_obj_id(&context, t1));
     grn_expr_push_var(&context, expr, v);
+
     GRN_TEXT_SETS(&context, &buf, "c1");
     grn_expr_push_value(&context, expr, &buf);
     grn_expr_push_op(&context, expr, 1, 2);
@@ -148,19 +158,31 @@ test_expr(void)
     grn_expr_push_op(&context, expr, 1, 2);
     GRN_TEXT_SETS(&context, &buf, "c1");
     grn_expr_push_value(&context, expr, &buf);
+
+    /*
+    GRN_TEXT_SETS(&context, &buf, "c1.c2.c1");
+    grn_expr_push_value(&context, expr, &buf);
+    */
+
     grn_expr_push_op(&context, expr, 1, 2);
     grn_expr_compile(&context, expr);
     {
       grn_id id;
+      uint64_t et;
       int nerr = 0;
       grn_table_cursor *tc;
+      struct timeval tvb, tve;
       tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0);
       cut_assert_not_null(tc);
+      gettimeofday(&tvb, NULL);
       while ((id = grn_table_cursor_next(&context, tc))) {
         GRN_RECORD_SET(&context, v, id);
         r = grn_expr_exec(&context, expr);
         if (GRN_RECORD_VALUE(r) != id) { nerr++; }
       }
+      gettimeofday(&tve, NULL);
+      et = (tve.tv_sec - tvb.tv_sec) * 1000000 + (tve.tv_usec - tvb.tv_usec);
+      //printf("et=%zu\n", et);
       cut_assert_equal_uint(0, nerr);
       cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
     }
