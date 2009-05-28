@@ -1,4 +1,33 @@
+2009-05-28 mori <daijiro.mori@gmail.com>
+
+ * lib/db.c, test/unit/core/test-expr.c: Set error info in grn_table_open().
+
+2009-05-27 mori <daijiro.mori@gmail.com>
+
+ * src/grnslap.c: Fixed a typo..
+
+ * src/grnslap.c: Avoid division by zero...
+
+ * src/grnslap.c, test/unit/core/test-expr.c: Added -t (max throughput) option
+ to grnslap.
+
+ * lib/db.c, test/unit/core/test-expr.c: Fixed a memory leak bug in
+ grn_expr_close().
+
+ * groonga.h, lib/db.c, test/unit/core/test-expr.c: Fixed a bug in
+ grn_expr_open().
+
 2009-05-26 mori <daijiro.mori@gmail.com>
+
+ * lib/query.c: Fixed a bug in grn_query_search() causes segv.
+
+2009-05-26 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac: release 0.0.6
+
+2009-05-26 mori <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/db.h: Added grn_expr_compile().
 
  * lib/db.c, lib/token.c: Lower range of grn_db ids (1 to 255) are reserved by
  sysytem.
