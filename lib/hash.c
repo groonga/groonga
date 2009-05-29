@@ -1061,6 +1061,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
   entry_str *ee;
   uint32_t h, i, m, s;
   grn_id e, *ep, *np = NULL;
+  if (!key || !key_size) { return GRN_ID_NIL; }
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (key_size > hash->key_size) {
       ERR(GRN_INVALID_ARGUMENT, "too long key");

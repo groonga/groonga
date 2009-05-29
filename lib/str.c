@@ -1171,7 +1171,7 @@ grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, gr
 {
   grn_rc rc;
   grn_str *nstr;
-  if (!str) { return NULL; }
+  if (!str || !str_len) { return NULL; }
 
   if (!(flags & GRN_STR_NORMALIZE)) {
     return grn_fakenstr_open(ctx, str, str_len, encoding, flags);

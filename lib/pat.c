@@ -661,6 +661,7 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   uint32_t new, lkey = 0;
   grn_id r0;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
+  if (!key || !key_size) { return GRN_ID_NIL; }
   KEY_ENCODE(pat, keybuf, key, key_size);
   r0 = _grn_pat_add(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
   if (added) { *added = new; }

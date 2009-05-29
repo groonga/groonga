@@ -647,9 +647,10 @@ grn_ctx_stream_out_func(grn_ctx *ctx, int flags, void *stream)
     grn_obj *buf = ctx->impl->outbuf;
     uint32_t size = GRN_BULK_VSIZE(buf);
     if (size) {
-      fwrite(GRN_BULK_HEAD(buf), 1, size, (FILE *)stream);
-      fputc('\n', (FILE *)stream);
-      fflush((FILE *)stream);
+      if (fwrite(GRN_BULK_HEAD(buf), 1, size, (FILE *)stream)) {
+        fputc('\n', (FILE *)stream);
+        fflush((FILE *)stream);
+      }
       GRN_BULK_REWIND(buf);
     }
   }

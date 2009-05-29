@@ -685,7 +685,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
   if (table) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      if (key && key_size) {
+      {
         grn_pat *pat = (grn_pat *)table;
         WITH_NORMALIZE(pat, key, key_size, {
           if (grn_io_lock(ctx, pat->io, 10000000)) {
@@ -698,7 +698,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
       }
       break;
     case GRN_TABLE_HASH_KEY :
-      if (key && key_size) {
+      {
         grn_hash *hash = (grn_hash *)table;
         WITH_NORMALIZE(hash, key, key_size, {
           if (grn_io_lock(ctx, hash->io, 10000000)) {
@@ -4568,7 +4568,7 @@ grn_expr_exec(grn_ctx *ctx, grn_expr *expr)
       col = code->value;
       value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
       //      EXPR_PUSH_ALLOC(res, expr);
-      //      GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
+      GRN_RECORD_INIT(res, 0, grn_obj_get_range(ctx, col));
       GRN_RECORD_SET(ctx, res, *((grn_id *)value));
     }
 
