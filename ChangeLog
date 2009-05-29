@@ -1,3 +1,101 @@
+2009-05-28 mori <daijiro.mori@gmail.com>
+
+ * lib/db.c, test/unit/core/test-expr.c: Set error info in grn_table_open().
+
+2009-05-27 mori <daijiro.mori@gmail.com>
+
+ * src/grnslap.c: Fixed a typo..
+
+ * src/grnslap.c: Avoid division by zero...
+
+ * src/grnslap.c, test/unit/core/test-expr.c: Added -t (max throughput) option
+ to grnslap.
+
+ * lib/db.c, test/unit/core/test-expr.c: Fixed a memory leak bug in
+ grn_expr_close().
+
+ * groonga.h, lib/db.c, test/unit/core/test-expr.c: Fixed a bug in
+ grn_expr_open().
+
+2009-05-26 mori <daijiro.mori@gmail.com>
+
+ * lib/query.c: Fixed a bug in grn_query_search() causes segv.
+
+2009-05-26 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac: release 0.0.6
+
+2009-05-26 mori <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/db.h: Added grn_expr_compile().
+
+ * lib/db.c, lib/token.c: Lower range of grn_db ids (1 to 255) are reserved by
+ sysytem.
+
+2009-05-25 mori <daijiro.mori@gmail.com>
+
+ * lib/query.c: Support 'r' argument for grn_query_search().
+
+ * lib/token.c: Register "<token:mecab>" to db, even if mecab is disabled (for
+ compatibility).
+
+2009-05-25 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac, lib/groonga_in.h, lib/io.h: Define
+ GRN_FUTEX_WAIT/GRN_FUTEX_WAKE with futex.
+
+2009-05-25 mori <daijiro.mori@gmail.com>
+
+ * lib/db.c: Reduced malloc call from grn_accessor_get_value().
+
+2009-05-22 mori <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_obj_graft() cause memory leak.
+
+ * lib/ql.c, lib/ql.h, lib/scm.c: Put gc in ha_table().
+
+ * groonga.h: Fixed '?: have different type' problem in GRN_BULK_REWIND().
+
+ * examples/index.c, examples/kv.c, groonga.h, lib/com.c, lib/ctx.c,
+ lib/ctx.h, lib/db.c, lib/pat.c, lib/ql.c, lib/scm.c, lib/store.c, lib/str.c,
+ src/groonga.c, test/unit/core/test-expr.c,
+ test/unit/core/test-inverted-index.c,
+ test/unit/fixtures/performance/test-read-write.c: Added 'flags' argument to
+ GRN_TEXT_INIT(), GRN_OBJ_DO_SHALLOW_COPY and/or GRN_OBJ_VECTOR can be
+ assigned as its value. GRN_TEXT_INIT_REF has been cut off.
+
+ * groonga.h, lib/db.c, lib/str.c, lib/str.h, test/unit/core/test-expr.c:
+ Added grn_bulk_write_from() and GRN_TEXT_SET_CSTR().
+
+ * groonga.h, lib/com.c, lib/ctx.c, lib/db.c, lib/db.h, lib/hash.c, lib/pat.c,
+ lib/ql.h, lib/scm.c, lib/str.c, lib/str.h: grn_obj became inplace buffer.
+
+2009-05-22 Toshihisa <t2001@gol.com>
+
+ * lib/db.c: MUTEX_DESTROY in grn_db_close
+
+2009-05-21 mori <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/db.h, lib/hash.c, lib/pat.c, lib/ql.c: modified
+ the value of GRN_OBJ_DO_SHALLOW_COPY.
+
+2009-05-21 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/memcached/test-memcached.c: Enabled test for memcached incr/decr
+ with init.
+
+2009-05-20 mori <daijiro.mori@gmail.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-expr.c: add tests for
+ grn_expr.
+
+ * lib/db.c: fixed a problem in grn_obj_column() cause segv when name contains
+ illegal character.
+
+2009-05-19 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac: release 0.0.5
+
 2009-05-19 mori <daijiro.mori@gmail.com>
 
  * groonga.h, lib/db.c, lib/db.h, lib/ql.h: grn_expr add.
