@@ -464,8 +464,12 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
   uint32_t key_size, max_n_subrecs;
   uint8_t subrec_size, subrec_offset;
   grn_obj *res = NULL;
-  grn_obj *db = ctx->impl->db;
+  grn_obj *db;
   char buffer[PATH_MAX];
+  if (!ctx->impl || !(db = ctx->impl->db)) {
+    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
+    return NULL;
+  }
   GRN_API_ENTER;
   if (check_name(ctx, name, name_size)) {
     ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
@@ -555,7 +559,11 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
 grn_obj *
 grn_table_open(grn_ctx *ctx, const char *name, unsigned name_size, const char *path)
 {
-  grn_obj *db = ctx->impl->db;
+  grn_obj *db;
+  if (!ctx->impl || !(db = ctx->impl->db)) {
+    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
+    return NULL;
+  }
   GRN_API_ENTER;
   if (!DB_P(db)) {
     ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
