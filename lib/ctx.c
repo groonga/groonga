@@ -1663,7 +1663,7 @@ grn_ctx_qe_deps_delete(grn_ctx *ctx, grn_ctx_qe *s, grn_ctx_qe *d)
 }
 
 static grn_ctx_qe *
-qe_at(grn_ctx *ctx, const char *key, int key_size)
+qe_get(grn_ctx *ctx, const char *key, int key_size)
 {
   grn_ctx_qe *qe = NULL;
   grn_hash_get(ctx, ctx->impl->qe, key, key_size, (void **)&qe);
@@ -1671,7 +1671,7 @@ qe_at(grn_ctx *ctx, const char *key, int key_size)
 }
 
 static grn_ctx_qe *
-qe_get(grn_ctx *ctx, const char *key, int key_size)
+qe_add(grn_ctx *ctx, const char *key, int key_size)
 {
   grn_id id;
   grn_ctx_qe *qe;
@@ -1689,8 +1689,8 @@ grn_ctx_qe_parse(grn_ctx *ctx, const char *key, int key_size)
   grn_obj *str;
   grn_ctx_qe *s, *d;
   if (!key_size || *key != '/') { return NULL; }
-  if (!(s = qe_at(ctx, key + 1, key_size - 1))) { return NULL; }
-  if (!(d = qe_get(ctx, key, key_size))) { return NULL; }
+  if (!(s = qe_get(ctx, key + 1, key_size - 1))) { return NULL; }
+  if (!(d = qe_add(ctx, key, key_size))) { return NULL; }
   s->dest = d;
   str = s->value;
   if (str && str->header.type == GRN_BULK) {
@@ -1705,7 +1705,7 @@ grn_ctx_qe_parse(grn_ctx *ctx, const char *key, int key_size)
           d->source->nargs = n - 1;
           for (i = 0; i < n - 1; i++) {
             const char *key = tokbuf[i] + 1;
-            if ((d->source->args[i] = qe_get(ctx, key, tokbuf[i + 1] - key))) {
+            if ((d->source->args[i] = qe_add(ctx, key, tokbuf[i + 1] - key))) {
               grn_ctx_qe_deps_push(ctx, d->source->args[i], d);
             }
           }
@@ -1776,7 +1776,7 @@ grn_ctx_qe_set(grn_ctx *ctx, const char *key, int key_size, grn_obj *value)
 {
   grn_ctx_qe *qe;
   if (grn_ctx_qe_init(ctx)) { return ctx->rc; }
-  if (!(qe = qe_get(ctx, key, key_size))) { return ctx->rc; }
+  if (!(qe = qe_add(ctx, key, key_size))) { return ctx->rc; }
   grn_ctx_qe_set_(ctx, qe, value);
   return GRN_SUCCESS;
 }
@@ -1786,7 +1786,7 @@ grn_ctx_qe_get(grn_ctx *ctx, const char *key, int key_size)
 {
   grn_ctx_qe *qe;
   if (grn_ctx_qe_init(ctx)) { return NULL; }
-  if (!(qe = qe_at(ctx, key, key_size))) {
+  if (!(qe = qe_get(ctx, key, key_size))) {
     if (!(qe = grn_ctx_qe_parse(ctx, key, key_size))) {
       return grn_ctx_get(ctx, key, key_size);
     }

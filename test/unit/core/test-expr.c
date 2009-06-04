@@ -148,23 +148,23 @@ test_expr(void)
     cut_assert_not_null(expr);
     v = grn_expr_def_var(&context, expr);
     GRN_RECORD_INIT(v, 0, grn_obj_id(&context, t1));
-    grn_expr_push_var(&context, expr, v);
+    grn_expr_append_obj(&context, expr, v);
 
     GRN_TEXT_SETS(&context, &buf, "c1");
-    grn_expr_push_value(&context, expr, &buf);
-    grn_expr_push_op(&context, expr, 1, 2);
+    grn_expr_append_const(&context, expr, &buf);
+    grn_expr_append_op(&context, expr, GRN_OP_GET_VALUE, 2);
     GRN_TEXT_SETS(&context, &buf, "c2");
-    grn_expr_push_value(&context, expr, &buf);
-    grn_expr_push_op(&context, expr, 1, 2);
+    grn_expr_append_const(&context, expr, &buf);
+    grn_expr_append_op(&context, expr, GRN_OP_GET_VALUE, 2);
     GRN_TEXT_SETS(&context, &buf, "c1");
-    grn_expr_push_value(&context, expr, &buf);
+    grn_expr_append_const(&context, expr, &buf);
 
     /*
     GRN_TEXT_SETS(&context, &buf, "c1.c2.c1");
-    grn_expr_push_value(&context, expr, &buf);
+    grn_expr_append_const(&context, expr, &buf);
     */
 
-    grn_expr_push_op(&context, expr, 1, 2);
+    grn_expr_append_op(&context, expr, GRN_OP_GET_VALUE, 2);
     grn_expr_compile(&context, expr);
     {
       grn_id id;

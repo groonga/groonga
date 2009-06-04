@@ -1624,6 +1624,28 @@ GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 
 GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 
+/* expr */
+
+typedef struct _grn_expr grn_expr;
+
+typedef enum {
+  GRN_OP_PUSH = 0,
+  GRN_OP_GET_VALUE,
+  GRN_OP_SET_VALUE,
+  GRN_OP_AND,
+  GRN_OP_OR,
+  GRN_OP_EQUAL,
+} grn_op;
+
+grn_expr *grn_expr_open(grn_ctx *ctx, int size);
+grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);
+grn_obj *grn_expr_def_var(grn_ctx *ctx, grn_expr *expr);
+grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
+grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
+grn_rc grn_expr_append_op(grn_ctx *ctx, grn_expr *expr, grn_op op, int nargs);
+grn_obj *grn_expr_exec(grn_ctx *ctx, grn_expr *expr);
+grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_expr *expr, int offset);
+
 /* ql */
 
 #define GRN_QL_MORE                    (0x01<<0)

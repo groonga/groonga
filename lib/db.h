@@ -192,27 +192,8 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 /* expr */
 
-typedef struct _grn_expr grn_expr;
-
-typedef enum {
-  GRN_OP_PUSH = 0,
-  GRN_OP_GET_VALUE,
-  GRN_OP_SET_VALUE,
-  GRN_OP_AND,
-  GRN_OP_OR,
-  GRN_OP_EQUAL,
-} grn_op;
-
-grn_expr *grn_expr_open(grn_ctx *ctx, int size);
-grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);
-grn_obj *grn_expr_def_var(grn_ctx *ctx, grn_expr *expr);
-grn_obj *grn_expr_push_var(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
-grn_obj *grn_expr_push_value(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
-grn_rc grn_expr_push_proc(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, int nargs);
-grn_rc grn_expr_push_op(grn_ctx *ctx, grn_expr *expr, grn_op op, int nargs);
 grn_rc grn_expr_compile(grn_ctx *ctx, grn_expr *expr);
-grn_obj *grn_expr_exec(grn_ctx *ctx, grn_expr *expr);
-grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_expr *expr, int offset);
+grn_rc grn_expr_append_proc(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, int nargs);
 
 typedef struct {
   grn_op op;
