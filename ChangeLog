@@ -1,3 +1,25 @@
+2009-06-04 mori <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c, lib/db.c, lib/db.h, test/unit/core/test-expr.c: Added
+ grn_expr.
+
+2009-06-02 mori <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/db.h, test/unit/core/test-expr.c: Added grn_op.
+
+2009-05-29 mori <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/db.c, lib/hash.c, lib/pat.c, lib/str.c: Added parameter
+ check to grn_hash_add() and grn_pat_add().
+
+ * lib/ctx.c, lib/db.c, lib/db.h, lib/hash.c, lib/pat.c, lib/query.c,
+ test/unit/core/test-expr.c: Fixed a problem in grn_table_create(), flags
+ value was not saved correctly.
+
+2009-05-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac: release 0.0.7
+
 2009-05-28 mori <daijiro.mori@gmail.com>
 
  * lib/db.c, test/unit/core/test-expr.c: Set error info in grn_table_open().
