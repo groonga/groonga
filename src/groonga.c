@@ -26,7 +26,9 @@
 #include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
+#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
+#endif /* HAVE_SYS_RESOURCE_H */
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
@@ -325,12 +327,12 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         });
       } else {
         grn_obj buf;
+        grn_timeval tv;
         uint32_t expire;
-        struct timeval tv;
         GRN_TEXT_INIT(&buf, 0);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
-        gettimeofday(&tv, NULL);
+        grn_timeval_now(ctx, &tv);
         if (expire && expire < tv.tv_sec) {
           grn_table_delete_by_id(ctx, cache_table, rid);
           GRN_MSG_MBRES({
@@ -393,8 +395,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           GRN_TEXT_SET_REF(&buf, &flags, 4);
           grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
           if (expire && expire < RELATIVE_TIME_THRESH) {
-            struct timeval tv;
-            gettimeofday(&tv, NULL);
+            grn_timeval tv;
+            grn_timeval_now(ctx, &tv);
             expire += tv.tv_sec;
           }
           GRN_TEXT_SET_REF(&buf, &expire, 4);
@@ -411,13 +413,13 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         } else {
           if (header->qtype != MBCMD_SET && header->qtype != MBCMD_SETQ) {
             grn_obj buf;
+            grn_timeval tv;
             uint32_t oexpire;
-            struct timeval tv;
 
             GRN_TEXT_INIT(&buf, 0);
             grn_obj_get_value(ctx, cache_expire, rid, &buf);
             oexpire = *((uint32_t *)GRN_BULK_HEAD(&buf));
-            gettimeofday(&tv, NULL);
+            grn_timeval_now(ctx, &tv);
 
             if (oexpire && oexpire < tv.tv_sec) {
               if (header->qtype == MBCMD_REPLACE ||
@@ -454,8 +456,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               GRN_TEXT_SET_REF(&buf, &flags, 4);
               grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
               if (expire && expire < RELATIVE_TIME_THRESH) {
-                struct timeval tv;
-                gettimeofday(&tv, NULL);
+                grn_timeval tv;
+                grn_timeval_now(ctx, &tv);
                 expire += tv.tv_sec;
               }
               GRN_TEXT_SET_REF(&buf, &expire, 4);
@@ -536,12 +538,12 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           GRN_TEXT_SET_REF(&buf, &flags, 4);
           grn_obj_set_value(ctx, cache_flags, rid, &buf, GRN_OBJ_SET);
         } else {
+          grn_timeval tv;
           uint32_t oexpire;
-          struct timeval tv;
 
           grn_obj_get_value(ctx, cache_expire, rid, &buf);
           oexpire = *((uint32_t *)GRN_BULK_HEAD(&buf));
-          gettimeofday(&tv, NULL);
+          grn_timeval_now(ctx, &tv);
 
           if (oexpire && oexpire < tv.tv_sec) {
             if (expire == 0xffffffffU) {
@@ -567,8 +569,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           }
         }
         if (expire && expire < RELATIVE_TIME_THRESH) {
-          struct timeval tv;
-          gettimeofday(&tv, NULL);
+          grn_timeval tv;
+          grn_timeval_now(ctx, &tv);
           expire += tv.tv_sec;
         }
         GRN_TEXT_SET_REF(&buf, &expire, 4);
@@ -598,8 +600,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         GRN_ASSERT(extralen == 4);
         expire = ntohl(*((uint32_t *)(body)));
         if (expire < RELATIVE_TIME_THRESH) {
-          struct timeval tv;
-          gettimeofday(&tv, NULL);
+          grn_timeval tv;
+          grn_timeval_now(ctx, &tv);
           if (expire) {
             expire += tv.tv_sec;
           } else {
@@ -607,8 +609,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           }
         }
       } else {
-        struct timeval tv;
-        gettimeofday(&tv, NULL);
+        grn_timeval tv;
+        grn_timeval_now(ctx, &tv);
         expire = tv.tv_sec - 1;
       }
       grn_obj_close(ctx, &buf);
@@ -648,12 +650,12 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         });
       } else {
         grn_obj buf;
+        grn_timeval tv;
         uint32_t expire;
-        struct timeval tv;
         GRN_TEXT_INIT(&buf, 0);
         grn_obj_get_value(ctx, cache_expire, rid, &buf);
         expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
-        gettimeofday(&tv, NULL);
+        grn_timeval_now(ctx, &tv);
         if (expire && expire < tv.tv_sec) {
           grn_table_delete_by_id(ctx, cache_table, rid);
           GRN_MSG_MBRES({
@@ -899,6 +901,7 @@ server(char *path)
   MUTEX_INIT(cache_mutex);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
+#ifndef WIN32
   {
     struct rlimit lim;
     lim.rlim_cur = 4096;
@@ -910,6 +913,7 @@ server(char *path)
     getrlimit(RLIMIT_NOFILE, &lim);
     GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%d,%d)", lim.rlim_cur, lim.rlim_max);
   }
+#endif /* WIN32 */
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
     grn_obj *db = NULL;
     if (path) { db = grn_db_open(ctx, path); }

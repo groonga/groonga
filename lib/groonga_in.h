@@ -113,6 +113,7 @@
 #define int64_t INT64
 #define uint64_t UINT64
 #define ssize_t SSIZE_T
+#define pid_t int
 #undef MSG_WAITALL
 #define MSG_WAITALL 0 /* before Vista, not supported... */
 #define PATH_SEPARATOR "\\"
