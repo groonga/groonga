@@ -192,8 +192,11 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 /* expr */
 
-grn_rc grn_expr_compile(grn_ctx *ctx, grn_expr *expr);
-grn_rc grn_expr_append_proc(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, int nargs);
+typedef struct _grn_expr grn_expr;
+
+grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);
+grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
+grn_rc grn_expr_append_proc(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, int nargs);
 
 typedef struct {
   grn_op op;
@@ -201,6 +204,7 @@ typedef struct {
 } grn_expr_code;
 
 struct _grn_expr {
+  grn_db_obj obj;
   grn_obj *pool;
   grn_obj *values;
   grn_obj **stack;

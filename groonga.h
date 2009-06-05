@@ -1626,8 +1626,6 @@ GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 
 /* expr */
 
-typedef struct _grn_expr grn_expr;
-
 typedef enum {
   GRN_OP_PUSH = 0,
   GRN_OP_GET_VALUE,
@@ -1637,14 +1635,14 @@ typedef enum {
   GRN_OP_EQUAL,
 } grn_op;
 
-grn_expr *grn_expr_open(grn_ctx *ctx, int size);
-grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);
-grn_obj *grn_expr_def_var(grn_ctx *ctx, grn_expr *expr);
-grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
-grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_expr *expr, grn_obj *obj);
-grn_rc grn_expr_append_op(grn_ctx *ctx, grn_expr *expr, grn_op op, int nargs);
-grn_obj *grn_expr_exec(grn_ctx *ctx, grn_expr *expr);
-grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_expr *expr, int offset);
+grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size);
+grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size);
+grn_obj *grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size);
+grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
+grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
+grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs);
+grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
+grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
 /* ql */
 

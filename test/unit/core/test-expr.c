@@ -143,10 +143,10 @@ test_expr(void)
     grn_obj_set_value(&context, c2, i2, &buf, GRN_OBJ_SET);
   }
   {
-    grn_expr *expr = grn_expr_open(&context, 10);
+    grn_obj *expr = grn_expr_create(&context, NULL, 0);
     grn_obj *r, *v;
     cut_assert_not_null(expr);
-    v = grn_expr_def_var(&context, expr);
+    v = grn_expr_add_var(&context, expr, NULL, 0);
     GRN_RECORD_INIT(v, 0, grn_obj_id(&context, t1));
     grn_expr_append_obj(&context, expr, v);
 
@@ -186,7 +186,7 @@ test_expr(void)
       cut_assert_equal_uint(0, nerr);
       cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
     }
-    cut_assert_equal_uint(0, grn_expr_close(&context, expr));
+    cut_assert_equal_uint(0, grn_obj_close(&context, expr));
   }
   cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
 }
