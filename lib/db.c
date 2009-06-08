@@ -4355,19 +4355,37 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 grn_obj *
 grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
 {
+  grn_id id;
+  grn_obj *db;
   grn_expr *expr = NULL;
+  if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
+    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
+    return NULL;
+  }
   GRN_API_ENTER;
-  if ((expr = GRN_MALLOCN(grn_expr, 1))) {
+  if (check_name(ctx, name, name_size)) {
+    ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
+    GRN_API_RETURN(NULL);
+  }
+  if (!DB_P(db)) {
+    ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
+    GRN_API_RETURN(NULL);
+  }
+  id = grn_obj_register(ctx, db, name, name_size);
+  if (id && (expr = GRN_MALLOCN(grn_expr, 1))) {
     int size = 10;
-    if ((expr->pool = GRN_MALLOCN(grn_obj, size))) {
-      expr->pool_curr = 0;
-      expr->pool_size = size;
+    expr->consts = NULL;
+    expr->nconsts = 0;
+    expr->names = NULL;
+    expr->vars = NULL;
+    expr->nvars = 0;
+    GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
+    if (!grn_db_obj_init(ctx, db, id, DB_OBJ(expr))) {
       if ((expr->values = GRN_MALLOCN(grn_obj, size))) {
         int i;
         for (i = 0; i < size; i++) {
           GRN_OBJ_INIT(&expr->values[i], GRN_ATOM, GRN_OBJ_EXPRVALUE, GRN_ID_NIL);
         }
-        GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
         expr->values_curr = 0;
         expr->values_tail = 0;
         expr->values_size = size;
@@ -4383,7 +4401,6 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
         }
         GRN_FREE(expr->values);
       }
-      GRN_FREE(expr->pool);
     }
     GRN_FREE(expr);
     expr = NULL;
@@ -4397,10 +4414,16 @@ grn_expr_close(grn_ctx *ctx, grn_expr *expr)
 {
   uint32_t i;
   GRN_API_ENTER;
-  for (i = 0; i < expr->pool_curr; i++) {
-    grn_obj_close(ctx, &expr->pool[i]);
+  for (i = 0; i < expr->nconsts; i++) {
+    grn_obj_close(ctx, &expr->consts[i]);
   }
-  GRN_FREE(expr->pool);
+  GRN_REALLOC(expr->consts, 0);
+  for (i = 0; i < expr->nvars; i++) {
+    grn_obj_close(ctx, &expr->names[i]);
+    grn_obj_close(ctx, &expr->vars[i]);
+  }
+  GRN_REALLOC(expr->vars, 0);
+  GRN_REALLOC(expr->names, 0);
   for (i = 0; i < expr->values_curr; i++) {
     grn_obj_close(ctx, &expr->values[i]);
   }
@@ -4411,15 +4434,33 @@ grn_expr_close(grn_ctx *ctx, grn_expr *expr)
   GRN_API_RETURN(ctx->rc);
 }
 
+#define APPEND_OBJ(p,n,x) {\
+  if (!((n) % 16)) {\
+    grn_obj *p0 = GRN_REALLOC((p), sizeof(grn_obj) * ((n) + 16));\
+    if (p0) {\
+      (p) = p0;\
+      (x) = (p) + (n)++;\
+    } else {\
+      (x) = NULL;\
+    }\
+  } else {\
+    (x) = (p) + (n)++;\
+  }\
+}
+
 grn_obj *
 grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
 {
-  grn_obj *res = NULL;
+  uint32_t n;
+  grn_obj *name_obj, *res;
+  grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  if (((grn_expr *)expr)->pool_curr >= ((grn_expr *)expr)->pool_size) {
-    ERR(GRN_NO_MEMORY_AVAILABLE, "stack is full");
-  } else {
-    res = &((grn_expr *)expr)->pool[((grn_expr *)expr)->pool_curr++];
+  n = e->nvars;
+  APPEND_OBJ(e->names, n, name_obj);
+  APPEND_OBJ(e->vars, e->nvars, res);
+  if (name_obj) {
+    GRN_TEXT_INIT(name_obj, 0);
+    GRN_TEXT_PUT(ctx, name_obj, name, name_size);
   }
   GRN_API_RETURN(res);
 }
@@ -4427,6 +4468,15 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
 grn_obj *
 grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
 {
+  grn_obj *obj, *res;
+  grn_expr *e = (grn_expr *)expr;
+  uint32_t n = e->nvars;
+  for (obj = e->names, res = e->vars; n--; res++, obj++) {
+    if (GRN_BULK_VSIZE(obj) == name_size &&
+        !(memcmp(GRN_BULK_HEAD(obj), name, name_size))) {
+      return res;
+    }
+  }
   return NULL;
 }
 
@@ -4464,7 +4514,8 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
   if (GRN_DB_OBJP(obj)) {
     res = obj;
   } else {
-    if ((res = grn_expr_add_var(ctx, expr, NULL, 0))) {
+    APPEND_OBJ(e->consts, e->nconsts, res);
+    if (res) {
       switch (obj->header.type) {
       case GRN_ATOM :
         memcpy(res, obj, sizeof(grn_obj));
@@ -4485,14 +4536,6 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
   grn_expr_append_code(ctx, e, res); /* constant */
 exit :
   GRN_API_RETURN(res);
-}
-
-grn_rc
-grn_expr_append_proc(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, int nargs)
-{
-  GRN_API_ENTER;
-  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "fixme");
-  GRN_API_RETURN(ctx->rc);
 }
 
 #define EXPR_POP(x,expr) {\

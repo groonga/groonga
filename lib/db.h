@@ -196,7 +196,6 @@ typedef struct _grn_expr grn_expr;
 
 grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);
 grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
-grn_rc grn_expr_append_proc(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, int nargs);
 
 typedef struct {
   grn_op op;
@@ -205,12 +204,14 @@ typedef struct {
 
 struct _grn_expr {
   grn_db_obj obj;
-  grn_obj *pool;
+  grn_obj *names;
+  grn_obj *vars;
+  grn_obj *consts;
   grn_obj *values;
   grn_obj **stack;
   grn_expr_code *codes;
-  uint32_t pool_curr;
-  uint32_t pool_size;
+  uint32_t nvars;
+  uint32_t nconsts;
   uint32_t values_curr;
   uint32_t values_tail;
   uint32_t values_size;
