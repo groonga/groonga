@@ -16,9 +16,9 @@ DEFS =  -D_CRT_SECURE_NO_DEPRECATE \
         -DGROONGA_DEFAULT_ENCODING="\"euc-jp\"" \
         -DGROONGA_INITIAL_N_SEGMENTS="512" \
         -DGROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="0" \
-        -DGROONGA_LOG_PATH="\"c:\\groonga\\log\\groonga.log\""
+        -DGROONGA_LOG_PATH="\"c:\\groonga\\log\\groonga.log\"" \
+        -DPACKAGE_VERSION="\"0.0.8\""
 #        -DPACKAGE="\"@PACKAGE@\"" \
-#        -DVERSION="\"@VERSION@\"" \
 DEL = del
 
 OBJ = \
