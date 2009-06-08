@@ -3269,6 +3269,8 @@ grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_siz
   return GRN_SUCCESS;
 }
 
+static void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+
 static void
 grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
 {
@@ -3292,6 +3294,10 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_vector_delimit(ctx, &v, 0, 0);
   grn_hook_pack(ctx, obj, b);
   grn_vector_delimit(ctx, &v, 0, 0);
+  if (obj->header.type == GRN_EXPR) {
+    grn_expr_pack(ctx, b, (grn_obj *)obj);
+    grn_vector_delimit(ctx, &v, 0, 0);
+  }
   grn_ja_putv(ctx, s->specs, obj->id, &v, 0);
   grn_obj_close(ctx, &v);
 }
@@ -3615,6 +3621,9 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   }\
 }
 
+static grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec,
+                              const uint8_t *p, const uint8_t *pe);
+
 grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id)
 {
@@ -3641,6 +3650,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           grn_obj v;
           GRN_OBJ_INIT(&v, GRN_VECTOR, 0, GRN_DB_TEXT);
           if (!grn_vector_decode(ctx, &v, value, value_len)) {
+            const char *p;
             uint32_t size;
             grn_obj_spec *spec;
             char buffer[PATH_MAX];
@@ -3694,9 +3704,14 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               case GRN_PROC :
                 if (!*vp) { *vp = grn_proc_open(ctx, spec); }
                 break;
+              case GRN_EXPR :
+                {
+                  size = grn_vector_get_element(ctx, &v, 4, &p, NULL, NULL);
+                  if (!*vp) { *vp = grn_expr_open(ctx, spec, p, p + size); }
+                }
+                break;
               }
               if (*vp) {
-                const char *p;
                 grn_db_obj *r = DB_OBJ(*vp);
                 r->header = spec->header;
                 r->id = id;
@@ -4352,6 +4367,187 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 
 /* grn_expr */
 
+#define APPEND_OBJ(p,n,x) {\
+  if (!((n) % 16)) {\
+    grn_obj *p0 = GRN_REALLOC((p), sizeof(grn_obj) * ((n) + 16));\
+    if (p0) {\
+      (p) = p0;\
+      (x) = (p) + (n)++;\
+    } else {\
+      (x) = NULL;\
+    }\
+  } else {\
+    (x) = (p) + (n)++;\
+  }\
+}
+
+void
+grn_obj_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_text_benc(ctx, buf, obj->header.type);
+  if (GRN_DB_OBJP(obj)) {
+    grn_text_benc(ctx, buf, DB_OBJ(obj)->id);
+  } else {
+    // todo : support vector, query, accessor, snip..
+    uint32_t vs = GRN_BULK_VSIZE(obj);
+    grn_text_benc(ctx, buf, obj->header.domain);
+    grn_text_benc(ctx, buf, vs);
+    if (vs) { GRN_TEXT_PUT(ctx, buf, GRN_BULK_HEAD(obj), vs); }
+  }
+}
+
+const uint8_t *
+grn_obj_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, uint8_t type, uint8_t flags, grn_obj *obj)
+{
+  grn_id domain;
+  uint32_t vs;
+  GRN_B_DEC(domain, p);
+  GRN_OBJ_INIT(obj, type, flags, domain);
+  GRN_B_DEC(vs, p);
+  if (pe < p + vs) {
+    ERR(GRN_INVALID_FORMAT, "benced image is corrupt");
+    return p;
+  }
+  grn_bulk_write(ctx, obj, p, vs);
+  return p + vs;
+}
+
+static void
+grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
+{
+  grn_obj *n, *v;
+  grn_expr_code *c;
+  grn_expr *e = (grn_expr *)expr;
+  uint32_t i = e->nvars;
+  grn_text_benc(ctx, buf, i);
+  for (n = e->names, v = e->vars; i; i--, v++, n++) {
+    uint32_t ns = GRN_TEXT_LEN(n);
+    grn_text_benc(ctx, buf, ns);
+    if (ns) { GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(n), ns); }
+    grn_obj_pack(ctx, buf, v);
+  }
+  i = e->codes_curr;
+  grn_text_benc(ctx, buf, i);
+  for (c = e-> codes; i; i--, c++) {
+    grn_text_benc(ctx, buf, c->op);
+    if (!c->value) {
+      grn_text_benc(ctx, buf, 0); /* NULL */
+    } else if (e->vars <= c->value && c->value < e->vars + e->nvars) {
+      grn_text_benc(ctx, buf, 1); /* variable */
+      grn_text_benc(ctx, buf, c->value - e->vars);
+    } else {
+      grn_text_benc(ctx, buf, 2); /* others */
+      grn_obj_pack(ctx, buf, c->value);
+    }
+  }
+}
+
+/*
+  uint8_t *p = GRN_BULK_HEAD(buf);
+  uint8_t *pe = p + GRN_BULK_VSIZE(buf);
+*/
+
+const uint8_t *
+grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr)
+{
+  grn_obj *v;
+  uint8_t type;
+  uint32_t i, n, ns;
+  grn_expr_code *code;
+  grn_expr *e = (grn_expr *)expr;
+  GRN_B_DEC(n, p);
+  for (i = 0; i < n; i++) {
+    GRN_B_DEC(ns, p);
+    v = grn_expr_add_var(ctx, expr, ns ? p : NULL, ns);
+    p += ns;
+    GRN_B_DEC(type, p);
+    if (GRN_TYPE <= type && type <= GRN_COLUMN_INDEX) { /* error */ }
+    p = grn_obj_unpack(ctx, p, pe, type, 0, v);
+    if (pe < p) {
+      ERR(GRN_INVALID_FORMAT, "benced image is corrupt");
+      return p;
+    }
+  }
+  GRN_B_DEC(n, p);
+  /* confirm e->codes_size >= n */
+  for (i = 0, code = e->codes; i < n; i++) {
+    GRN_B_DEC(code->op, p);
+    GRN_B_DEC(type, p);
+    switch (type) {
+    case 0 : /* NULL */
+      code->value = NULL;
+      break;
+    case 1 : /* variable */
+      {
+        uint32_t offset;
+        GRN_B_DEC(offset, p);
+        code->value = e->vars + offset;
+      }
+      break;
+    case 2 : /* others */
+      GRN_B_DEC(type, p);
+      if (GRN_TYPE <= type && type <= GRN_COLUMN_INDEX) {
+        grn_id id;
+        GRN_B_DEC(id, p);
+        code->value = grn_ctx_at(ctx, id);
+      } else {
+        APPEND_OBJ(e->consts, e->nconsts, v);
+        p = grn_obj_unpack(ctx, p, pe, type, GRN_OBJ_EXPRCONST, v);
+      }
+      break;
+    }
+    if (pe < p) {
+      ERR(GRN_INVALID_FORMAT, "benced image is corrupt");
+      return p;
+    }
+  }
+  return p;
+}
+
+static grn_obj *
+grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe)
+{
+  grn_expr *expr = NULL;
+  if ((expr = GRN_MALLOCN(grn_expr, 1))) {
+    int size = 10;
+    expr->consts = NULL;
+    expr->nconsts = 0;
+    expr->names = NULL;
+    expr->vars = NULL;
+    expr->nvars = 0;
+    GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
+    if ((expr->values = GRN_MALLOCN(grn_obj, size))) {
+      int i;
+      for (i = 0; i < size; i++) {
+        GRN_OBJ_INIT(&expr->values[i], GRN_ATOM, GRN_OBJ_EXPRVALUE, GRN_ID_NIL);
+      }
+      expr->values_curr = 0;
+      expr->values_tail = 0;
+      expr->values_size = size;
+      if ((expr->codes = GRN_MALLOCN(grn_expr_code, size))) {
+        expr->codes_curr = 0;
+        expr->codes_size = size;
+        if ((expr->stack = GRN_MALLOCN(grn_obj *, size))) {
+          expr->stack_curr = 0;
+          expr->stack_size = size;
+          expr->obj.header = spec->header;
+          if (grn_expr_unpack(ctx, p, pe, (grn_obj *)expr) == pe) {
+            goto exit;
+          } else {
+            ERR(GRN_INVALID_FORMAT, "benced image is corrupt");
+          }
+        }
+        GRN_FREE(expr->codes);
+      }
+      GRN_FREE(expr->values);
+    }
+    GRN_FREE(expr);
+    expr = NULL;
+  }
+exit :
+  return (grn_obj *)expr;
+}
+
 grn_obj *
 grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
 {
@@ -4432,20 +4628,6 @@ grn_expr_close(grn_ctx *ctx, grn_expr *expr)
   GRN_FREE(expr->codes);
   GRN_FREE(expr);
   GRN_API_RETURN(ctx->rc);
-}
-
-#define APPEND_OBJ(p,n,x) {\
-  if (!((n) % 16)) {\
-    grn_obj *p0 = GRN_REALLOC((p), sizeof(grn_obj) * ((n) + 16));\
-    if (p0) {\
-      (p) = p0;\
-      (x) = (p) + (n)++;\
-    } else {\
-      (x) = NULL;\
-    }\
-  } else {\
-    (x) = (p) + (n)++;\
-  }\
 }
 
 grn_obj *
@@ -4615,7 +4797,8 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
 grn_rc
 grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
 {
-  return GRN_SUCCESS;
+  grn_obj_spec_save(ctx, DB_OBJ(expr));
+  return ctx->rc;
 }
 
 #define PUSH1(v) {\
