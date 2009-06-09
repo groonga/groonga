@@ -1820,6 +1820,7 @@ get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
   return p;
 }
 
+/*
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
@@ -1841,5 +1842,30 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
   val = grn_ctx_qe_get(ctx, GRN_BULK_HEAD(&top), GRN_BULK_VSIZE(&top));
   GRN_OBJ_FIN(ctx, &key);
   GRN_OBJ_FIN(ctx, &top);
+  return val;
+}
+*/
+
+grn_obj *
+grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
+{
+  const char *p, *e;
+  grn_obj key, *expr, *val = NULL;
+  GRN_TEXT_INIT(&key, 0);
+  p = str;
+  e = p + str_size;
+  p = get_token(ctx, &key, p, e, '?');
+  if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
+    while (p < e) {
+      GRN_BULK_REWIND(&key);
+      p = get_token(ctx, &key, p, e, '=');
+      if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
+        val = &key;
+      }
+      p = get_token(ctx, val, p, e, '&');
+    }
+    val = grn_expr_exec(ctx, expr);
+  }
+  GRN_OBJ_FIN(ctx, &key);
   return val;
 }
