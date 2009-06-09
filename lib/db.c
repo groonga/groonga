@@ -82,7 +82,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
                                     GRN_OBJ_KEY_VAR_SIZE))) {
         MUTEX_INIT(s->lock);
         GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
-        grn_db_obj_init(ctx, NULL, GRN_ID_NIL, &s->obj);
+        s->obj.db = (grn_obj *)s;
         s->obj.header.domain = GRN_ID_NIL;
         DB_OBJ(&s->obj)->range = GRN_ID_NIL;
         // prepare builtin classes and load builtin plugins.
@@ -135,7 +135,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
         if ((s->specs = grn_ja_open(ctx, buffer))) {
           MUTEX_INIT(s->lock);
           GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
-          grn_db_obj_init(ctx, NULL, GRN_ID_NIL, &s->obj);
+          s->obj.db = (grn_obj *)s;
           s->obj.header.domain = GRN_ID_NIL;
           DB_OBJ(&s->obj)->range = GRN_ID_NIL;
           grn_ctx_use(ctx, (grn_obj *)s);
@@ -4576,6 +4576,13 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
     expr->names = NULL;
     expr->vars = NULL;
     expr->nvars = 0;
+    expr->values_curr = 0;
+    expr->values_tail = 0;
+    expr->values_size = size;
+    expr->codes_curr = 0;
+    expr->codes_size = size;
+    expr->stack_curr = 0;
+    expr->stack_size = size;
     GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
     expr->obj.header.domain = GRN_ID_NIL;
     expr->obj.range = GRN_ID_NIL;
@@ -4585,15 +4592,8 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
         for (i = 0; i < size; i++) {
           GRN_OBJ_INIT(&expr->values[i], GRN_ATOM, GRN_OBJ_EXPRVALUE, GRN_ID_NIL);
         }
-        expr->values_curr = 0;
-        expr->values_tail = 0;
-        expr->values_size = size;
         if ((expr->codes = GRN_MALLOCN(grn_expr_code, size))) {
-          expr->codes_curr = 0;
-          expr->codes_size = size;
           if ((expr->stack = GRN_MALLOCN(grn_obj *, size))) {
-            expr->stack_curr = 0;
-            expr->stack_size = size;
             goto exit;
           }
           GRN_FREE(expr->codes);
