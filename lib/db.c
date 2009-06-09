@@ -4470,7 +4470,8 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
   }
   GRN_B_DEC(n, p);
   /* confirm e->codes_size >= n */
-  for (i = 0, code = e->codes; i < n; i++) {
+  e->codes_curr = n;
+  for (i = 0, code = e->codes; i < n; i++, code++) {
     GRN_B_DEC(code->op, p);
     GRN_B_DEC(type, p);
     switch (type) {
@@ -4576,6 +4577,8 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
     expr->vars = NULL;
     expr->nvars = 0;
     GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
+    expr->obj.header.domain = GRN_ID_NIL;
+    expr->obj.range = GRN_ID_NIL;
     if (!grn_db_obj_init(ctx, db, id, DB_OBJ(expr))) {
       if ((expr->values = GRN_MALLOCN(grn_obj, size))) {
         int i;
