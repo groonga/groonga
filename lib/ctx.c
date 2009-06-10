@@ -197,7 +197,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->lifoseg = -1;
   ctx->impl->currseg = -1;
   ctx->impl->db = NULL;
+
   ctx->impl->qe = NULL;
+  ctx->impl->stack_curr = 0;
 
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;

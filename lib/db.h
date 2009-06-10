@@ -192,6 +192,9 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 /* expr */
 
+grn_rc grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
+grn_obj *grn_ctx_pop(grn_ctx *ctx);
+
 typedef struct _grn_expr grn_expr;
 
 grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);

@@ -143,6 +143,8 @@ struct _grn_ctx_impl {
 #endif
 
   /* qe portion */
+  grn_obj *stack[16]; // fixme
+  uint32_t stack_curr;
   grn_hash *qe;
 
   /* ql portion */
