@@ -626,7 +626,7 @@ test_mroonga_index(void)
 {
   grn_obj *t1,*c1,*lc,*ft;
   grn_obj buff;
-  grn_id c1_id,r1,r2;
+  grn_id c1_id,r1,r2,r3,r4;
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory,0700);
@@ -646,7 +646,7 @@ test_mroonga_index(void)
 			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,NULL,0);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(context, lc, GRN_INFO_DEFAULT_TOKENIZER,
-				   grn_ctx_at(context, GRN_DB_UNIGRAM)));
+				   grn_ctx_at(context, GRN_DB_BIGRAM)));
 
   /* actual column */
   c1 = grn_column_create(context,t1,"c1",2,"mrn/t1.c1.grn",
@@ -669,21 +669,29 @@ test_mroonga_index(void)
   /* insert row */
   r1 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(1,r1);
-  GRN_BULK_REWIND(&buff);
   GRN_TEXT_SET(context, &buff, "abcde", 5);
   grn_test_assert(grn_obj_set_value(context, c1, r1, &buff, GRN_OBJ_SET));
 
   r2 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(2,r2);
-  GRN_BULK_REWIND(&buff);
   GRN_TEXT_SET(context, &buff, "fghij", 5);
   grn_test_assert(grn_obj_set_value(context, c1, r2, &buff, GRN_OBJ_SET));
 
-  /* confirm record are inserted in both column and index */
-  cut_assert_equal_int(2,grn_table_size(context,t1));
-  cut_assert_equal_int(10,grn_table_size(context,lc));
+  r3 = grn_table_add(context, t1, NULL, 0, NULL);
+  cut_assert_equal_int(3,r3);
+  GRN_TEXT_SET(context, &buff, "11 22 33", 8);
+  grn_test_assert(grn_obj_set_value(context, c1, r3, &buff, GRN_OBJ_SET));
 
-  /* fulltext search */
+  r4 = grn_table_add(context, t1, NULL, 0, NULL);
+  cut_assert_equal_int(4,r4);
+  GRN_TEXT_SET(context, &buff, "44 22 55", 8);
+  grn_test_assert(grn_obj_set_value(context, c1, r4, &buff, GRN_OBJ_SET));
+
+  /* confirm record are inserted in both column and index */
+  cut_assert_equal_int(4,grn_table_size(context,t1));
+  cut_assert_equal_int(19,grn_table_size(context,lc));
+
+  /* nlq search */
   {
     grn_id id, docid;
     grn_obj *res;
@@ -695,12 +703,40 @@ test_mroonga_index(void)
     cut_assert_equal_int(1, grn_table_size(context, res));
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
+      GRN_BULK_REWIND(&buff);
       grn_table_get_key(context, res, id, &docid, sizeof(grn_id));
       cut_assert_equal_int(2, docid);
-      GRN_BULK_REWIND(&buff);
       cut_assert_not_null(grn_obj_get_value(context, c1, docid, &buff));
-      cut_assert_equal_string("fghij", (char*) GRN_BULK_HEAD(&buff));
+      cut_assert_equal_int(5 ,GRN_TEXT_LEN(&buff));
+      cut_assert_equal_substring("fghij", (char*) GRN_BULK_HEAD(&buff),GRN_TEXT_LEN(&buff));
     }
+    grn_table_cursor_close(context, tc);
+    grn_obj_close(context, res);
+  }
+
+  /* boolean search */
+  {
+    grn_id id, docid;
+    grn_obj *res;
+    grn_query *query;
+    grn_table_cursor *tc;
+    const char *qstr = "+22 -55";
+    res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, t1, 0);
+    query = grn_query_open(context, qstr, strlen(qstr), GRN_SEL_OR, 32);
+    grn_obj_search(context, ft, (grn_obj*) query, res, GRN_SEL_OR, NULL);
+    cut_assert_equal_int(1, grn_table_size(context, res));
+    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
+    while ((id = grn_table_cursor_next(context, tc))) {
+      GRN_BULK_REWIND(&buff);
+      grn_table_get_key(context, res, id, &docid, sizeof(grn_id));
+      cut_assert_equal_int(3, docid);
+      cut_assert_not_null(grn_obj_get_value(context, c1, docid, &buff));
+      cut_assert_equal_int(8 ,GRN_TEXT_LEN(&buff));
+      cut_assert_equal_substring("11 22 33", (char*) GRN_BULK_HEAD(&buff),GRN_TEXT_LEN(&buff));
+    }
+    grn_query_close(context, query);
+    grn_table_cursor_close(context ,tc);
+    grn_obj_close(context, res);
   }
 
   grn_obj_close(context, &buff);
@@ -709,4 +745,3 @@ test_mroonga_index(void)
   grn_obj_close(context, lc);
   grn_obj_close(context, t1);
 }
-
