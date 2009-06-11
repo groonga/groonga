@@ -1620,6 +1620,7 @@ GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 
 typedef enum {
   GRN_OP_PUSH = 0,
+  GRN_OP_CALL,
   GRN_OP_GET_VALUE,
   GRN_OP_SET_VALUE,
   GRN_OP_AND,

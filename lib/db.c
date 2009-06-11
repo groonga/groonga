@@ -4697,16 +4697,46 @@ grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
 }
 
 static void
-grn_expr_append_code(grn_ctx *ctx, grn_expr *expr, grn_obj *obj)
+grn_expr_append_code(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, grn_op op)
 {
   if (expr->codes_curr >= expr->codes_size) {
     ERR(GRN_NO_MEMORY_AVAILABLE, "stack is full");
   } else {
     grn_expr_code *code = &expr->codes[expr->codes_curr++];
-    code->op = GRN_OP_PUSH;
+    code->op = op;
     code->value = obj;
     expr->stack[expr->stack_curr++] = obj;
   }
+}
+
+#define EXPR_POP(x,expr) {\
+  (x) = (expr)->stack[--(expr)->stack_curr];\
+  if (EXPRVP(x)) { (expr)->values_curr--; }\
+}
+
+#define EXPR_PUSH(x,expr) {\
+  (expr)->stack[(expr)->stack_curr++] = (x);\
+}
+
+#define EXPR_PUSH_ALLOC(x,expr) {\
+  grn_expr_stack *_s;\
+  if ((expr)->values_tail < (expr)->values_curr) {\
+    (x) = &(expr)->values[(expr)->values_tail++];\
+    grn_obj_close(ctx, (x));\
+  } else {\
+    (x) = &(expr)->values[(expr)->values_curr++];\
+    (expr)->values_tail = (expr)->values_curr;\
+  }\
+  _s = &(expr)->stack[(expr)->stack_curr++];\
+  _s->value = (x);\
+  _s->flags = 1;\
+}
+
+#define EXPRVP(x) ((x)->header.impl_flags & GRN_OBJ_EXPRVALUE)
+
+#define EXPR_ALLOC(x,expr,type,domain) {\
+  (x) = &(expr)->values[(expr)->values_curr++];\
+  GRN_OBJ_INIT(x, type, GRN_OBJ_EXPRVALUE, domain);\
 }
 
 grn_obj *
@@ -4715,7 +4745,23 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  grn_expr_append_code(ctx, e, obj);
+  switch (obj->header.type) {
+  case GRN_PROC :
+    {
+      grn_obj *o;
+      uint32_t i;
+      grn_proc *p = (grn_proc *)obj;
+      grn_expr_code *code = &e->codes[e->codes_curr++];
+      code->op = GRN_OP_CALL;
+      code->value = obj;
+      for (i = p->nargs; i; i--) { EXPR_POP(o, e); }
+      for (i = p->nresults, o = p->results; i; i--, o++) { EXPR_PUSH(o, e); }
+    }
+    break;
+  default :
+    grn_expr_append_code(ctx, e, obj, GRN_OP_PUSH);
+    break;
+  }
   if (!ctx->rc) { res = obj; }
   GRN_API_RETURN(res);
 }
@@ -4749,42 +4795,9 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
       res->header.impl_flags |= GRN_OBJ_EXPRCONST;
     }
   }
-  grn_expr_append_code(ctx, e, res); /* constant */
+  grn_expr_append_code(ctx, e, res, GRN_OP_PUSH); /* constant */
 exit :
   GRN_API_RETURN(res);
-}
-
-#define EXPR_POP(x,expr) {\
-  (x) = (expr)->stack[--(expr)->stack_curr];\
-  if (EXPRVP(x)) { (expr)->values_curr--; }\
-}
-
-#define EXPR_PUSH(x,expr) {\
-  grn_expr_stack *_s;\
-  _s = &(expr)->stack[(expr)->stack_curr++];\
-  _s->value = (x);\
-  _s->flags = 0;\
-}
-
-#define EXPR_PUSH_ALLOC(x,expr) {\
-  grn_expr_stack *_s;\
-  if ((expr)->values_tail < (expr)->values_curr) {\
-    (x) = &(expr)->values[(expr)->values_tail++];\
-    grn_obj_close(ctx, (x));\
-  } else {\
-    (x) = &(expr)->values[(expr)->values_curr++];\
-    (expr)->values_tail = (expr)->values_curr;\
-  }\
-  _s = &(expr)->stack[(expr)->stack_curr++];\
-  _s->value = (x);\
-  _s->flags = 1;\
-}
-
-#define EXPRVP(x) ((x)->header.impl_flags & GRN_OBJ_EXPRVALUE)
-
-#define EXPR_ALLOC(x,expr,type,domain) {\
-  (x) = &(expr)->values[(expr)->values_curr++];\
-  GRN_OBJ_INIT(x, type, GRN_OBJ_EXPRVALUE, domain);\
 }
 
 grn_rc
@@ -4798,6 +4811,7 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
     grn_expr_code *code;
     switch (op) {
     case GRN_OP_PUSH :
+    case GRN_OP_CALL :
       ERR(GRN_INVALID_ARGUMENT, "invalid operator assigned");
       break;
     case GRN_OP_GET_VALUE :
@@ -4885,6 +4899,13 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         PUSH1(code->value);
         code++;
         break;
+      case GRN_OP_CALL :
+        {
+          grn_proc *p = (grn_proc *)code->value;
+          p->funcs[PROC_INIT](ctx, NULL, NULL, 0, NULL);
+        }
+        code++;
+        break;
       case GRN_OP_GET_VALUE :
         {
           grn_obj *col, *rec;
@@ -4925,6 +4946,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             GRN_INT32_SET(ctx, res, 0);
           }
           res->header.domain = GRN_DB_INT32;
+          code++;
         }
         break;
       case GRN_OP_AND :
@@ -4937,6 +4959,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             GRN_INT32_SET(ctx, res, 1);
           }
           res->header.domain = GRN_DB_INT32;
+          code++;
         }
         break;
       case GRN_OP_OR :
@@ -4949,6 +4972,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             GRN_INT32_SET(ctx, res, 1);
           }
           res->header.domain = GRN_DB_INT32;
+          code++;
         }
         break;
       }

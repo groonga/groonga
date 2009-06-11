@@ -1456,16 +1456,6 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-#define LOAD(str) (grn_ctx_qe_exec(ctx, (str), strlen(str)))
-
-static grn_rc
-init(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
-     int argc, grn_proc_data *argv)
-{
-  LOAD("/?select=<proc:disp> /search co&search=<proc:search> index q&index=<terms>.body&co=.:key");
-  return ctx->rc;
-}
-
 static grn_rc
 disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
      int argc, grn_proc_data *argv)
