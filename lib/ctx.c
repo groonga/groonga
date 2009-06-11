@@ -1593,10 +1593,11 @@ scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data,
 grn_rc
 grn_db_init_builtin_procs(grn_ctx *ctx)
 {
-  grn_proc_create(ctx, "<proc:init>", 11, NULL, GRN_PROC_HOOK, init, NULL, NULL);
-  grn_proc_create(ctx, "<proc:disp>", 11, NULL, GRN_PROC_HOOK, disp, NULL, NULL);
-  grn_proc_create(ctx, "<proc:search>", 13, NULL, GRN_PROC_HOOK, search, NULL, NULL);
-  grn_proc_create(ctx, "<proc:scan>", 11, NULL, GRN_PROC_HOOK, scan, NULL, NULL);
+  grn_obj res;
+  GRN_INT32_INIT(&res, 0);
+  grn_proc_create(ctx, "<proc:disp>", 11, NULL, disp, NULL, NULL, 2, 0, NULL);
+  grn_proc_create(ctx, "<proc:search>", 13, NULL, search, NULL, NULL, 3, 1, &res);
+  grn_proc_create(ctx, "<proc:scan>", 11, NULL, scan, NULL, NULL, 3, 1, &res);
   return ctx->rc;
 }
 
@@ -1821,32 +1822,6 @@ get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
   }
   return p;
 }
-
-/*
-grn_obj *
-grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
-{
-  const char *p, *e;
-  grn_obj top, key, *val;
-  GRN_TEXT_INIT(&top, 0);
-  GRN_TEXT_INIT(&key, 0);
-  if (grn_ctx_qe_init(ctx)) { return NULL; }
-  p = str;
-  e = p + str_size;
-  p = get_token(ctx, &top, p, e, '?');
-  while (p < e) {
-    GRN_BULK_REWIND(&key);
-    p = get_token(ctx, &key, p, e, '=');
-    val = grn_obj_open(ctx, GRN_BULK, 0, 0);
-    p = get_token(ctx, val, p, e, '&');
-    grn_ctx_qe_set(ctx, GRN_BULK_HEAD(&key), GRN_BULK_VSIZE(&key), val);
-  }
-  val = grn_ctx_qe_get(ctx, GRN_BULK_HEAD(&top), GRN_BULK_VSIZE(&top));
-  GRN_OBJ_FIN(ctx, &key);
-  GRN_OBJ_FIN(ctx, &top);
-  return val;
-}
-*/
 
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)

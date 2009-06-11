@@ -333,9 +333,9 @@ grn_type_open(grn_ctx *ctx, grn_obj_spec *spec)
 
 grn_obj *
 grn_proc_create(grn_ctx *ctx,
-                const char *name, unsigned name_size,
-                const char *path, grn_proc_type type,
-                grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin)
+                const char *name, unsigned name_size, const char *path,
+                grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
+                unsigned nargs, unsigned nresults, grn_obj *result_types)
 {
   grn_proc *res = NULL;
   grn_id id = GRN_ID_NIL;
@@ -345,6 +345,9 @@ grn_proc_create(grn_ctx *ctx,
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
     ERR(GRN_INVALID_ARGUMENT, "db not initialized");
     return NULL;
+  }
+  if (nresults > 16) {
+    ERR(GRN_INVALID_ARGUMENT, "too many results");
   }
   GRN_API_ENTER;
   domain = path ? grn_dl_get(ctx, path) : GRN_ID_NIL;
@@ -383,6 +386,9 @@ grn_proc_create(grn_ctx *ctx,
     res->funcs[PROC_INIT] = init;
     res->funcs[PROC_NEXT] = next;
     res->funcs[PROC_FIN] = fin;
+    res->nargs = nargs;
+    res->nresults = nresults;
+    memcpy(res->results, result_types, sizeof(grn_obj) * nresults);
     if (added) {
       if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
         // grn_obj_delete(ctx, db, id);

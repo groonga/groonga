@@ -158,6 +158,9 @@ struct _grn_proc_ctx {
 struct _grn_proc {
   grn_db_obj obj;
   grn_proc_func *funcs[3];
+  uint32_t nargs;
+  uint32_t nresults;
+  grn_obj results[16];
 };
 
 /* vector */

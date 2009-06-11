@@ -443,18 +443,10 @@ typedef grn_rc grn_proc_func(grn_ctx *ctx, grn_obj *obj, grn_proc_data *user_dat
 
 typedef grn_rc grn_proc_init_func(grn_ctx *ctx, const char *path);
 
-typedef enum {
-  GRN_PROC_HOOK,
-  GRN_PROC_RECALC,
-  GRN_PROC_SCORE,
-  GRN_PROC_COMPARE,
-  GRN_PROC_GROUP
-} grn_proc_type;
-
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
-                                 const char *name, unsigned name_size,
-                                 const char *path, grn_proc_type type,
-                                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin);
+                                 const char *name, unsigned name_size, const char *path,
+                                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
+                                 unsigned nargs, unsigned nresults, grn_obj *result_types);
 
 /*-------------------------------------------------------------
  * table操作のための関数
