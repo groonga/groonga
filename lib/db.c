@@ -1994,11 +1994,10 @@ typedef struct {
 } default_set_value_hook_data;
 
 static grn_rc
-default_set_value_hook(grn_ctx *ctx, grn_obj *obj, grn_proc_data *user_data,
-                       int argc, grn_proc_data *argv)
+default_set_value_hook(grn_ctx *ctx, grn_obj *obj, grn_proc_data *user_data)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
-  if (!pctx || argc != 4) {
+  if (!pctx) {
     ERR(GRN_INVALID_ARGUMENT, "default_set_value_hook failed");
     return GRN_INVALID_ARGUMENT;
   } else {
@@ -2793,9 +2792,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         while (hooks) {
           pctx.currh = hooks;
           if (hooks->proc) {
-            rc = hooks->proc->funcs[PROC_INIT](ctx, obj, &pctx.user_data, 4, pctx.data);
+            rc = hooks->proc->funcs[PROC_INIT](ctx, obj, &pctx.user_data);
           } else {
-            rc = default_set_value_hook(ctx, obj, &pctx.user_data, 4, pctx.data);
+            rc = default_set_value_hook(ctx, obj, &pctx.user_data);
           }
           if (rc) { goto exit; }
           hooks = hooks->next;
@@ -4902,7 +4901,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
       case GRN_OP_CALL :
         {
           grn_proc *p = (grn_proc *)code->value;
-          p->funcs[PROC_INIT](ctx, NULL, NULL, 0, NULL);
+          p->funcs[PROC_INIT](ctx, NULL, NULL);
         }
         code++;
         break;
