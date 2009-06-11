@@ -922,10 +922,6 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
 
 #define LISTEN_BACKLOG 0x1000
 
-#ifndef HOST_NAME_MAX
-#define HOST_NAME_MAX 128
-#endif /* HOST_NAME_MAX */
-
 grn_rc
 grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
               grn_msg_handler *func, struct hostent *he)

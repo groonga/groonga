@@ -447,6 +447,14 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #define GRN_FUTEX_WAKE(p)
 #endif /* USE_FUTEX */
 
+#ifndef HOST_NAME_MAX
+#ifdef _POSIX_HOST_NAME_MAX
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#else /* POSIX_HOST_NAME_MAX */
+#define HOST_NAME_MAX 128
+#endif /* POSIX_HOST_NAME_MAX */
+#endif /* HOST_NAME_MAX */
+
 #ifndef GROONGA_H
 #include "groonga.h"
 #endif /* GROONGA_H */
