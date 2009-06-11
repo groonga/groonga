@@ -30,7 +30,7 @@ static int default_flags;
 static void *memory;
 
 void
-setup(void)
+cut_setup(void)
 {
   context = NULL;
   default_flags = GRN_CTX_USE_QL;
@@ -38,7 +38,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (context) {
     if (memory) {

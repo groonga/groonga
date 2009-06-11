@@ -18,9 +18,6 @@
 #include "groonga_in.h"
 
 #include <string.h>
-#ifdef HAVE_NETDB_H
-#include <netdb.h>
-#endif /* HAVE_NETDB_H */
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif /* HAVE_SYS_SOCKET_H */
@@ -930,7 +927,8 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
 #endif /* HOST_NAME_MAX */
 
 grn_rc
-grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func)
+grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
+              grn_msg_handler *func, struct hostent *he)
 {
   grn_sock lfd;
   grn_com *cs = NULL;
@@ -943,18 +941,9 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func)
     SERR("socket");
     return ctx->rc;
   }
-  {
-    struct hostent *he;
-    char hostname[HOST_NAME_MAX];
-    gethostname(hostname, HOST_NAME_MAX);
-    if (!(he = gethostbyname(hostname))) {
-      SERR("gethostbyname");
-      return ctx->rc;
-    }
-    memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
-    ev->curr_edge_id.port = htons(port);
-    ev->curr_edge_id.sid = 0;
-  }
+  memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
+  ev->curr_edge_id.port = htons(port);
+  ev->curr_edge_id.sid = 0;
   {
     int v = 1;
     if (setsockopt(lfd, 6, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {

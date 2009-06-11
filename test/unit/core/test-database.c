@@ -28,7 +28,7 @@ static grn_ctx *context;
 static grn_obj *database;
 
 void
-setup(void)
+cut_setup(void)
 {
   context = g_new0(grn_ctx, 1);
   grn_ctx_init(context, 0);
@@ -36,7 +36,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (context) {
     grn_ctx_fin(context);

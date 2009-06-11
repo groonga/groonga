@@ -41,7 +41,7 @@ static gchar *env_n_processes;
 static gchar *env_process_number;
 
 void
-setup(void)
+cut_setup(void)
 {
   gchar *tmp_dir;
 
@@ -71,7 +71,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (context) {
     if (hash)

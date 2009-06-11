@@ -30,6 +30,10 @@
 #include "hash.h"
 #endif /* GRN_HASH_H */
 
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif /* HAVE_NETDB_H */
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -184,7 +188,8 @@ struct _grn_com_header {
 };
 
 grn_com *grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
-grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port, grn_msg_handler *func);
+grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
+                     grn_msg_handler *func, struct hostent *he);
 
 void grn_com_close_(grn_ctx *ctx, grn_com *com);
 grn_rc grn_com_close(grn_ctx *ctx, grn_com *com);

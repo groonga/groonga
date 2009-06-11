@@ -28,7 +28,7 @@ static grn_ctx context;
 static grn_obj *database;
 
 void
-startup(void)
+cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_base_dir(),
                                    "tmp",
@@ -37,13 +37,13 @@ startup(void)
 }
 
 void
-shutdown(void)
+cut_shutdown(void)
 {
   g_free(tmp_directory);
 }
 
 void
-setup(void)
+cut_setup(void)
 {
   cut_remove_path(tmp_directory, NULL);
   g_mkdir_with_parents(tmp_directory, 0700);
@@ -53,7 +53,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   grn_db_close(&context, database);
   grn_ctx_fin(&context);

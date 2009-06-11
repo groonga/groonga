@@ -164,7 +164,7 @@ take_sjis_to_utf8(const gchar *sjis)
 } while (0)
 
 void
-startup(void)
+cut_startup(void)
 {
   GError *error = NULL;
 
@@ -179,7 +179,7 @@ startup(void)
 }
 
 void
-shutdown(void)
+cut_shutdown(void)
 {
   if (text_ja_euc) {
     g_free(text_ja_euc);
@@ -191,7 +191,7 @@ shutdown(void)
 }
 
 void
-setup(void)
+cut_setup(void)
 {
   grn_ctx_init(&context, GRN_CTX_USE_QL);
 
@@ -211,7 +211,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (snip) {
     grn_snip_close(&context, snip);

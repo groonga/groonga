@@ -33,19 +33,19 @@ static GList *values;
 static grn_array *sort_result;
 
 void
-startup(void)
+cut_startup(void)
 {
   startup_hash_common();
 }
 
 void
-shutdown(void)
+cut_shutdown(void)
 {
   shutdown_hash_common();
 }
 
 void
-setup(void)
+cut_setup(void)
 {
   setup_hash_common("hash");
   keys = NULL;
@@ -72,7 +72,7 @@ values_free(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   keys_free();
   values_free();

@@ -33,7 +33,7 @@ static grn_ctx context;
 static grn_obj *database;
 
 void
-setup(void)
+cut_setup(void)
 {
   logger = setup_grn_logger();
   grn_ctx_init(&context, 0);
@@ -41,7 +41,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   grn_ctx_fin(&context);
   teardown_grn_logger(logger);

@@ -49,7 +49,7 @@ static GArray *ids;
 static GList *expected_keys, *actual_keys;
 
 void
-setup(void)
+cut_setup(void)
 {
   setup_trie_common("patricia-trie");
 
@@ -59,7 +59,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (ids)
     g_array_free(ids, TRUE);

@@ -34,7 +34,7 @@ static grn_encoding default_encoding;
 static gchar *sample_ql_program;
 
 void
-setup(void)
+cut_setup(void)
 {
   db = NULL;
   context = g_new0(grn_ctx, 1);
@@ -52,7 +52,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (context) {
     if (db) {

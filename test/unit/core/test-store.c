@@ -38,7 +38,7 @@ static gchar *default_path;
 static grn_db_create_optarg options;
 
 void
-setup(void)
+cut_setup(void)
 {
   logger = setup_grn_logger();
   error_messages = NULL;
@@ -65,7 +65,7 @@ clear_error_messages(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (db) {
     grn_db_close(context, db);

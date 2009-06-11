@@ -72,7 +72,7 @@ test_data_free(grn_test_data *data)
 }
 
 void
-setup(void)
+cut_setup(void)
 {
   gchar *tmp_dir;
 
@@ -105,7 +105,7 @@ setup(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (sub_processes)
     g_list_free(sub_processes);

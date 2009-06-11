@@ -30,7 +30,7 @@ static GList *keys;
 static grn_hash *hash;
 
 void
-setup(void)
+cut_setup(void)
 {
   setup_trie_common("patricia-trie-search");
 
@@ -60,7 +60,7 @@ hash_free(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   keys_free();
   hash_free();

@@ -919,9 +919,16 @@ server(char *path)
     if (path) { db = grn_db_open(ctx, path); }
     if (!db) { db = grn_db_create(ctx, path, NULL); }
     if (db) {
+      struct hostent *he;
+      char hostname[HOST_NAME_MAX];
+      gethostname(hostname, HOST_NAME_MAX);
+      if (!(he = gethostbyname(hostname))) {
+        SERR("gethostbyname");
+        return rc;
+      }
       ev.opaque = db;
       edges = grn_hash_create(ctx, NULL, sizeof(grn_com_addr), sizeof(grn_edge), 0);
-      if (!grn_com_sopen(ctx, &ev, port, msg_handler)) {
+      if (!grn_com_sopen(ctx, &ev, port, msg_handler, he)) {
         while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_QL_QUIT) {
           grn_edge *edge;
           while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {

@@ -46,26 +46,26 @@ void test_add_and_delete(gconstpointer data);
 static GArray *ids;
 
 void
-startup(void)
+cut_startup(void)
 {
   startup_hash_common();
 }
 
 void
-shutdown(void)
+cut_shutdown(void)
 {
   shutdown_hash_common();
 }
 
 void
-setup(void)
+cut_setup(void)
 {
   setup_hash_common("hash");
   ids = NULL;
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (ids)
     g_array_free(ids, TRUE);

@@ -29,7 +29,7 @@ static grn_ctx *contexts[N_THREADS];
 static grn_hash *hashes[N_THREADS];
 
 void
-startup(void)
+cut_startup(void)
 {
   int i;
 
@@ -39,7 +39,7 @@ startup(void)
 }
 
 void
-shutdown(void)
+cut_shutdown(void)
 {
   int i;
 

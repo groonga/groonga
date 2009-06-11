@@ -33,7 +33,7 @@ static GList *keys;
 static GList *keys_and_values;
 
 void
-setup(void)
+cut_setup(void)
 {
   setup_trie_common("patricia-trie-cursor");
 
@@ -64,7 +64,7 @@ keys_and_values_free(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   keys_free();
   keys_and_values_free();

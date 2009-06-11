@@ -55,7 +55,7 @@ static grn_vgram *vgram;
 */
 
 void
-startup(void)
+cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_base_dir(),
                                    "tmp",
@@ -64,7 +64,7 @@ startup(void)
 }
 
 void
-shutdown(void)
+cut_shutdown(void)
 {
   g_free(tmp_directory);
 }
@@ -76,7 +76,7 @@ remove_tmp_directory(void)
 }
 
 void
-setup(void)
+cut_setup(void)
 {
   gchar *table_path, *vgram_path;
   const gchar *type_name, *table_name;
@@ -156,7 +156,7 @@ record_ids_free(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   if (context) {
     inverted_index_free();

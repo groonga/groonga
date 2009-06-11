@@ -33,19 +33,19 @@ static GList *keys;
 static GList *keys_and_values;
 
 void
-startup(void)
+cut_startup(void)
 {
   startup_hash_common();
 }
 
 void
-shutdown(void)
+cut_shutdown(void)
 {
   shutdown_hash_common();
 }
 
 void
-setup(void)
+cut_setup(void)
 {
   setup_hash_common("hash-cursor");
 
@@ -77,7 +77,7 @@ keys_and_values_free(void)
 }
 
 void
-teardown(void)
+cut_teardown(void)
 {
   keys_free();
   keys_and_values_free();
