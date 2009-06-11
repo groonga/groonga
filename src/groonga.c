@@ -34,12 +34,14 @@
 #define DEFAULT_DEST "localhost"
 #define DEFAULT_MAX_NFTHREADS 8
 
+static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
 static int batchmode;
 
 static void
 usage(void)
 {
+  gethostname(hostname, HOST_NAME_MAX);
   fprintf(stderr,
           "Usage: groonga [options...] [dest]\n"
           "options:\n"
@@ -49,12 +51,14 @@ usage(void)
           "  -d:                 run in daemon mode\n"
           "  -e:                 encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
           "  -l <log level>:     log level\n"
+          "  -i <ip/hostname>:   server address to listen (default: %s)\n"
           "  -p <port number>:   server port number (default: %d)\n"
           "  -t <max threads>:   max number of free threads (default: %d)\n"
           "  -h, --help:         show usage\n"
           "dest: <db pathname> or <dest hostname>\n"
           "  <db pathname>: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
+          hostname,
           DEFAULT_PORT, DEFAULT_MAX_NFTHREADS, DEFAULT_DEST);
 }
 
@@ -920,8 +924,6 @@ server(char *path)
     if (!db) { db = grn_db_create(ctx, path, NULL); }
     if (db) {
       struct hostent *he;
-      char hostname[HOST_NAME_MAX];
-      gethostname(hostname, HOST_NAME_MAX);
       if (!(he = gethostbyname(hostname))) {
         SERR("gethostbyname");
         return rc;
@@ -1041,7 +1043,8 @@ main(int argc, char **argv)
 {
   grn_encoding enc = GRN_ENC_DEFAULT;
   char *portstr = NULL, *encstr = NULL,
-       *max_nfthreadsstr = NULL, *loglevel = NULL;
+       *max_nfthreadsstr = NULL, *loglevel = NULL,
+       *hostnamestr = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', NULL, NULL, 0, getopt_op_none},
@@ -1053,12 +1056,14 @@ main(int argc, char **argv)
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
     {'s', NULL, NULL, mode_server, getopt_op_update},
     {'l', NULL, NULL, 0, getopt_op_none},
+    {'i', NULL, NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
   opts[1].arg = &encstr;
   opts[2].arg = &max_nfthreadsstr;
   opts[8].arg = &loglevel;
+  opts[9].arg = &hostnamestr;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }
@@ -1097,6 +1102,17 @@ main(int argc, char **argv)
   if (grn_init()) { return -1; }
   grn_set_default_encoding(enc);
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
+  if (hostnamestr) {
+    size_t hostnamelen = strlen(hostnamestr);
+    if (hostnamelen > HOST_NAME_MAX) {
+      memcpy(hostname, hostnamestr, HOST_NAME_MAX - 1);
+      hostname[HOST_NAME_MAX] = '\0';
+    } else {
+      strcpy(hostname, hostnamestr);
+    }
+  } else {
+    gethostname(hostname, HOST_NAME_MAX);
+  }
   switch (mode) {
   case mode_alone :
     r = do_alone(argc <= i ? NULL : argv[i]);
