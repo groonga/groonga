@@ -198,7 +198,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->currseg = -1;
   ctx->impl->db = NULL;
 
-  ctx->impl->qe = NULL;
+  ctx->impl->qe = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(void *), 0);
   ctx->impl->stack_curr = 0;
 
   ctx->impl->phs = NIL;
@@ -306,7 +306,6 @@ grn_ctx_fin(grn_ctx *ctx)
   ctx->prev->next = ctx->next;
   MUTEX_UNLOCK(grn_glock);
   if (ctx->impl) {
-    grn_ctx_qe_fin(ctx);
     if (ctx->impl->objects) {
       grn_cell *o;
       GRN_ARRAY_EACH(ctx->impl->objects, 0, 0, id, &o, {
@@ -351,6 +350,7 @@ grn_ctx_fin(grn_ctx *ctx)
       }
     }
     grn_io_anon_unmap(ctx, &ctx->impl->mi, sizeof(grn_io_mapinfo) * N_SEGMENTS);
+    grn_hash_close(ctx, ctx->impl->qe);
     GRN_FREE(ctx->impl);
   }
   ctx->stat = GRN_QL_FIN;
@@ -1489,6 +1489,9 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
   grn_obj *index = grn_ctx_pop(ctx);
   grn_obj *query = grn_ctx_pop(ctx);
   grn_obj *res = grn_ctx_pop(ctx);
+  if (op) {
+    /* todo */
+  }
   if (index->header.type == GRN_BULK) {
     index = grn_ctx_get(ctx, GRN_BULK_HEAD(index), GRN_BULK_VSIZE(index));
   }

@@ -83,7 +83,5 @@ test_dynamic_malloc_change(void)
     memory = GRN_MALLOC(1);
     cut_assert_null(memory);
   }
-#else
-  cut_omit("dynamic malloc change is disabled.");
 #endif
 }
