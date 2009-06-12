@@ -2982,6 +2982,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   case GRN_VOID :
     GRN_TEXT_INIT(value, 0);
     break;
+  case GRN_ATOM :
   case GRN_BULK :
   case GRN_VECTOR :
   case GRN_UVECTOR :
