@@ -1448,14 +1448,6 @@ struct _grn_ctx_qe {
   grn_id id;
 };
 
-static void
-grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
-{
-  if (obj && (!GRN_DB_OBJP(obj) || (((grn_db_obj *)obj)->id & GRN_OBJ_TMP_OBJECT))) {
-    grn_obj_close(ctx, obj);
-  }
-}
-
 static grn_rc
 disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
 {

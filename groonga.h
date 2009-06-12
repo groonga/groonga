@@ -253,6 +253,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_UVECTOR                    (0x03) /* element_size == sizeof(grn_id) */
 #define GRN_MSG                        (0x04)
 #define GRN_VECTOR                     (0x05)
+#define GRN_ALIAS                      (0x06)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
 #define GRN_SNIP                       (0x0a)
@@ -1399,8 +1400,7 @@ GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 /* grn_bulk */
 
-#define GRN_BULK_BUFSIZE \
-  ((uintptr_t)&(((grn_obj *)0)[1]) - (uintptr_t)&(((grn_obj *)0)->u.b.head))
+#define GRN_BULK_BUFSIZE (sizeof(grn_obj) - sizeof(grn_obj_header))
 #define GRN_BULK_OUTP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk) do {\
   if (GRN_BULK_OUTP(bulk)) {\
@@ -1539,8 +1539,8 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int));\
 } while (0)
 #define GRN_UINT32_SET(ctx,obj,val) do {\
-  uint _val = (uint)(val);\
-  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint));\
+  unsigned int _val = (unsigned int)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(unsigned int));\
 } while (0)
 #define GRN_INT64_SET(ctx,obj,val) do {\
   long long int _val = (long long int)(val);\
@@ -1572,7 +1572,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   int _val = (int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int));\
 } while (0)
 #define GRN_UINT32_PUT(ctx,obj,val) do {\
-  uint _val = (uint)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(uint));\
+  unsigned int _val = (unsigned  int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(unsigned int));\
 } while (0)
 #define GRN_INT64_PUT(ctx,obj,val) do {\
   long long int _val = (long long int)(val);\
@@ -1620,8 +1620,13 @@ GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 typedef enum {
   GRN_OP_PUSH = 0,
   GRN_OP_CALL,
-  GRN_OP_GET_VALUE,
-  GRN_OP_SET_VALUE,
+  GRN_OP_INTERN,
+  GRN_OP_TABLE_CREATE,
+  GRN_OP_VAR_SET_VALUE,
+  GRN_OP_OBJ_GET_VALUE,
+  GRN_OP_OBJ_SET_VALUE,
+  GRN_OP_OBJ_SEARCH,
+  GRN_OP_JSON_PUT,
   GRN_OP_AND,
   GRN_OP_OR,
   GRN_OP_EQUAL,
