@@ -751,7 +751,7 @@ test_mroonga_index_score(void)
 {
   grn_obj *t1,*c1,*lc,*ft;
   grn_obj buff;
-  grn_id c1_id,r1,r2,r3,r4;
+  grn_id r1,r2,r3,r4;
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory,0700);
@@ -787,29 +787,28 @@ test_mroonga_index_score(void)
   GRN_TEXT_INIT(&buff,0);
 
   /* link between actual column and fulltext index */
-  c1_id = grn_obj_id(context, c1);
-  GRN_TEXT_SET(context, &buff, (char*)&c1_id, sizeof(grn_id));
+  GRN_UINT32_SET(context, &buff, grn_obj_id(context, c1));
   grn_obj_set_info(context, ft, GRN_INFO_SOURCE, &buff); /* need to use grn_id */
 
   /* insert row */
   r1 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(1,r1);
-  GRN_TEXT_SET(context, &buff, "abcde", 5);
+  GRN_TEXT_SETS(context, &buff, "abcde");
   grn_test_assert(grn_obj_set_value(context, c1, r1, &buff, GRN_OBJ_SET));
 
   r2 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(2,r2);
-  GRN_TEXT_SET(context, &buff, "fghij", 5);
+  GRN_TEXT_SETS(context, &buff, "fghij");
   grn_test_assert(grn_obj_set_value(context, c1, r2, &buff, GRN_OBJ_SET));
 
   r3 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(3,r3);
-  GRN_TEXT_SET(context, &buff, "11 22 33", 8);
+  GRN_TEXT_SETS(context, &buff, "11 22 33");
   grn_test_assert(grn_obj_set_value(context, c1, r3, &buff, GRN_OBJ_SET));
 
   r4 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(4,r4);
-  GRN_TEXT_SET(context, &buff, "44 22 55", 8);
+  GRN_TEXT_SETS(context, &buff, "44 22 55");
   grn_test_assert(grn_obj_set_value(context, c1, r4, &buff, GRN_OBJ_SET));
 
   /* confirm record are inserted in both column and index */
@@ -826,7 +825,7 @@ test_mroonga_index_score(void)
                            GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, t1, 0);
     GRN_UINT32_INIT(&score, 0);
     GRN_BULK_REWIND(&buff);
-    GRN_TEXT_SET(context, &buff, "hi", 2);
+    GRN_TEXT_SETS(context, &buff, "hi");
     grn_obj_search(context, ft, &buff, res, GRN_SEL_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     score_column = grn_obj_column(context, res, ".:score", 7);
