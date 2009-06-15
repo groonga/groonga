@@ -4948,30 +4948,38 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
         grn_sel_operator op)
 {
   grn_rset_recinfo *ri;
-  grn_id id = GRN_ID_NIL;
   switch (op) {
   case GRN_SEL_OR :
-    id = grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL);
+    if (grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL)) {
+      if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
+        grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
+      }
+    }
     break;
   case GRN_SEL_AND :
-    if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
-      ri->n_subrecs |= GRN_RSET_UTIL_BIT;
+    if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
+      if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
+        ri->n_subrecs |= GRN_RSET_UTIL_BIT;
+        grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
+      }
     }
     break;
   case GRN_SEL_BUT :
-    if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
-      grn_hash_delete_by_id(ctx, s, id, NULL);
-      id = GRN_ID_NIL;
+    {
+      grn_id id;
+      if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
+        grn_hash_delete_by_id(ctx, s, id, NULL);
+      }
     }
     break;
   case GRN_SEL_ADJUST :
-    if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
-      ri->score += score;
-      id = GRN_ID_NIL;
+    if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
+      if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
+        ri->score += score;
+      }
     }
     break;
   }
-  if (id) { grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1); }
 }
 
 #ifdef USE_BHEAP
