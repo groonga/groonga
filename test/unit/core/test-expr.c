@@ -392,20 +392,15 @@ static grn_obj *docs, *terms, *size, *body, *index_body;
 #define INSERT_DATA(str) {\
   uint32_t s = (uint32_t)strlen(str);\
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);\
-  GRN_TEXT_SET(&context, &textbuf, str, s);\
-  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf, GRN_OBJ_SET));\
-  GRN_UINT32_SET(&context, &intbuf, s);\
-  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf, GRN_OBJ_SET));\
+  GRN_TEXT_SET(&context, textbuf, str, s);\
+  grn_test_assert(grn_obj_set_value(&context, body, docid, textbuf, GRN_OBJ_SET));\
+  GRN_UINT32_SET(&context, intbuf, s);\
+  grn_test_assert(grn_obj_set_value(&context, size, docid, intbuf, GRN_OBJ_SET));\
 }
 
 static void
-prepare_data(void)
+prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 {
-  grn_obj textbuf, intbuf;
-
-  GRN_TEXT_INIT(&textbuf, 0);
-  GRN_UINT32_INIT(&intbuf, 0);
-
   docs = grn_table_create(&context, "docs", 4, NULL,
                           GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
   cut_assert_not_null(docs);
@@ -425,23 +420,51 @@ prepare_data(void)
                                  GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT, docs);
   cut_assert_not_null(index_body);
 
-  GRN_UINT32_SET(&context, &intbuf, grn_obj_id(&context, body));
-  grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, &intbuf);
+  GRN_UINT32_SET(&context, intbuf, grn_obj_id(&context, body));
+  grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, intbuf);
 
   INSERT_DATA("hoge");
   INSERT_DATA("fuga fuga");
-  INSERT_DATA("moge mogge moge");
+  INSERT_DATA("moge moge moge");
   INSERT_DATA("hoge hoge");
   INSERT_DATA("hoge fuga fuga");
-  INSERT_DATA("hoge moge mogge moge");
+  INSERT_DATA("hoge moge moge moge");
   INSERT_DATA("moge hoge hoge");
   INSERT_DATA("moge hoge fuga fuga");
-  INSERT_DATA("moge hoge moge mogge moge");
-  INSERT_DATA("poyo moge hoge moge mogge moge");
+  INSERT_DATA("moge hoge moge moge moge");
+  INSERT_DATA("poyo moge hoge moge moge moge");
 }
 
 void
 test_table_scan(void)
 {
-  prepare_data();
+  grn_obj *expr, *v, *res, textbuf, intbuf;
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+
+  prepare_data(&textbuf, &intbuf);
+
+  cut_assert_not_null((expr = grn_expr_create(&context, NULL, 0)));
+  v = grn_expr_add_var(&context, expr, NULL, 0);
+  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
+  grn_expr_append_obj(&context, expr, v);
+  GRN_TEXT_SETS(&context, &textbuf, "size");
+  grn_expr_append_const(&context, expr, &textbuf);
+  grn_expr_append_op(&context, expr, GRN_OP_OBJ_GET_VALUE, 2);
+  GRN_UINT32_SET(&context, &intbuf, 14);
+  grn_expr_append_const(&context, expr, &intbuf);
+  grn_expr_append_op(&context, expr, GRN_OP_EQUAL, 2);
+  grn_expr_compile(&context, expr);
+
+  res = grn_table_create(&context, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+  cut_assert_not_null(res);
+
+  grn_test_assert(grn_table_scan(&context, docs, expr, res, GRN_SEL_OR));
+
+  cut_assert_equal_uint(3, grn_table_size(&context, res));
+
+  grn_obj_close(&context, res);
+  grn_obj_close(&context, expr);
+  grn_obj_close(&context, &textbuf);
 }

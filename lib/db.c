@@ -5246,7 +5246,7 @@ grn_table_scan(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                grn_obj *res, grn_sel_operator op)
 {
   if (res->header.type != GRN_TABLE_HASH_KEY ||
-      res->header.flags != GRN_OBJ_WITH_SUBREC) {
+      !(res->header.flags & GRN_OBJ_WITH_SUBREC)) {
     ERR(GRN_INVALID_ARGUMENT, "hash table with subrec required");
     return ctx->rc;
   }
