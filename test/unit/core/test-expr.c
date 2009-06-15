@@ -438,33 +438,78 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 void
 test_table_scan(void)
 {
-  grn_obj *expr, *v, *res, textbuf, intbuf;
+  grn_obj *cond, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
   prepare_data(&textbuf, &intbuf);
 
-  cut_assert_not_null((expr = grn_expr_create(&context, NULL, 0)));
-  v = grn_expr_add_var(&context, expr, NULL, 0);
+  cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
+  v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-  grn_expr_append_obj(&context, expr, v);
+  grn_expr_append_obj(&context, cond, v);
   GRN_TEXT_SETS(&context, &textbuf, "size");
-  grn_expr_append_const(&context, expr, &textbuf);
-  grn_expr_append_op(&context, expr, GRN_OP_OBJ_GET_VALUE, 2);
+  grn_expr_append_const(&context, cond, &textbuf);
+  grn_expr_append_op(&context, cond, GRN_OP_OBJ_GET_VALUE, 2);
   GRN_UINT32_SET(&context, &intbuf, 14);
-  grn_expr_append_const(&context, expr, &intbuf);
-  grn_expr_append_op(&context, expr, GRN_OP_EQUAL, 2);
-  grn_expr_compile(&context, expr);
+  grn_expr_append_const(&context, cond, &intbuf);
+  grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
+  grn_expr_compile(&context, cond);
 
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
   cut_assert_not_null(res);
 
-  grn_test_assert(grn_table_scan(&context, docs, expr, res, GRN_SEL_OR));
+  grn_test_assert(grn_table_scan(&context, docs, cond, res, GRN_SEL_OR));
 
   cut_assert_equal_uint(3, grn_table_size(&context, res));
 
-  grn_obj_close(&context, res);
-  grn_obj_close(&context, expr);
-  grn_obj_close(&context, &textbuf);
+  grn_test_assert(grn_obj_close(&context, res));
+  grn_test_assert(grn_obj_close(&context, cond));
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+  grn_test_assert(grn_obj_close(&context, &intbuf));
+}
+
+void
+test_op_table_scan(void)
+{
+  grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+
+  prepare_data(&textbuf, &intbuf);
+
+  cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
+  v = grn_expr_add_var(&context, cond, NULL, 0);
+  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
+  grn_expr_append_obj(&context, cond, v);
+  GRN_TEXT_SETS(&context, &textbuf, "size");
+  grn_expr_append_const(&context, cond, &textbuf);
+  grn_expr_append_op(&context, cond, GRN_OP_OBJ_GET_VALUE, 2);
+  GRN_UINT32_SET(&context, &intbuf, 14);
+  grn_expr_append_const(&context, cond, &intbuf);
+  grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
+  grn_expr_compile(&context, cond);
+
+  res = grn_table_create(&context, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+  cut_assert_not_null(res);
+
+  cut_assert_not_null((expr = grn_expr_create(&context, NULL, 0)));
+  grn_expr_append_obj(&context, expr, docs);
+  grn_expr_append_obj(&context, expr, cond);
+  grn_expr_append_obj(&context, expr, res);
+  GRN_UINT32_SET(&context, &intbuf, GRN_SEL_OR);
+  grn_expr_append_const(&context, expr, &intbuf);
+  grn_expr_append_op(&context, expr, GRN_OP_TABLE_SCAN, 4);
+
+  grn_expr_exec(&context, expr);
+
+  cut_assert_equal_uint(3, grn_table_size(&context, res));
+
+  grn_test_assert(grn_obj_close(&context, expr));
+  grn_test_assert(grn_obj_close(&context, res));
+  grn_test_assert(grn_obj_close(&context, cond));
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+  grn_test_assert(grn_obj_close(&context, &intbuf));
 }

@@ -3812,6 +3812,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) { GRN_FREE(obj); }
       rc = GRN_SUCCESS;
       break;
+    case GRN_ATOM :
     case GRN_BULK :
     case GRN_UVECTOR :
     case GRN_MSG :
