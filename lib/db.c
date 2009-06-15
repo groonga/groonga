@@ -1447,7 +1447,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         } else {
           const char *str = GRN_BULK_HEAD(query);
           unsigned int str_len = GRN_BULK_VSIZE(query);
-          rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res);
+          rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res, op);
         }
         break;
       case GRN_QUERY :
@@ -5247,47 +5247,84 @@ grn_table_scan(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                grn_obj *res, grn_sel_operator op)
 {
   if (res->header.type != GRN_TABLE_HASH_KEY ||
-      !(res->header.flags & GRN_OBJ_WITH_SUBREC)) {
-    ERR(GRN_INVALID_ARGUMENT, "hash table with subrec required");
+      (res->header.domain != DB_OBJ(table)->id)) {
+    ERR(GRN_INVALID_ARGUMENT, "hash table required");
     return ctx->rc;
   }
   GRN_API_ENTER;
   {
     int32_t score;
-    grn_id id;
+    grn_id id, *idp;
+    grn_table_cursor *tc;
+    grn_hash_cursor *hc;
     grn_hash *s = (grn_hash *)res;
-    grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0);
     grn_obj *r, *v = grn_expr_get_var_by_offset(ctx, expr, 0);
     if (!v) {
-      ERR(GRN_INVALID_ARGUMENT, "expr doesn't have any variable");
+      ERR(GRN_INVALID_ARGUMENT, "at least one variable must be defined");
       goto exit;
     }
     GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, table));
-    if (tc) {
-      while ((id = grn_table_cursor_next(ctx, tc))) {
-        GRN_RECORD_SET(ctx, v, id);
-        r = grn_expr_exec(ctx, expr);
-        if ((score = GRN_UINT32_VALUE(r))) {
-          res_add(ctx, s, (grn_rset_posinfo *)&id, score, op);
-        }
-      }
-      grn_table_cursor_close(ctx, tc);
-      if (op == GRN_SEL_AND) {
-        grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0);
-        if (c) {
-          grn_id eid;
-          grn_rset_recinfo *ri;
-          while ((eid = grn_hash_cursor_next(ctx, c))) {
-            grn_hash_cursor_get_value(ctx, c, (void **) &ri);
-            if ((ri->n_subrecs & GRN_RSET_UTIL_BIT)) {
-              ri->n_subrecs &= ~GRN_RSET_UTIL_BIT;
-            } else {
-              grn_hash_delete_by_id(ctx, s, eid, NULL);
+    switch (op) {
+    case GRN_SEL_OR :
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+        while ((id = grn_table_cursor_next(ctx, tc))) {
+          GRN_RECORD_SET(ctx, v, id);
+          r = grn_expr_exec(ctx, expr);
+          if ((score = GRN_UINT32_VALUE(r))) {
+            grn_rset_recinfo *ri;
+            if (grn_hash_add(ctx, s, &id, s->key_size, (void **)&ri, NULL)) {
+              grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)&id, 1);
             }
           }
-          grn_hash_cursor_close(ctx, c);
         }
+        grn_table_cursor_close(ctx, tc);
       }
+      break;
+    case GRN_SEL_AND :
+      if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0))) {
+        while (grn_hash_cursor_next(ctx, hc)) {
+          grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
+          GRN_RECORD_SET(ctx, v, *idp);
+          r = grn_expr_exec(ctx, expr);
+          if ((score = GRN_UINT32_VALUE(r))) {
+            grn_rset_recinfo *ri;
+            grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
+            grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)idp, 1);
+          } else {
+            grn_hash_cursor_delete(ctx, hc, NULL);
+          }
+        }
+        grn_hash_cursor_close(ctx, hc);
+      }
+      break;
+    case GRN_SEL_BUT :
+      if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0))) {
+        while (grn_hash_cursor_next(ctx, hc)) {
+          grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
+          GRN_RECORD_SET(ctx, v, *idp);
+          r = grn_expr_exec(ctx, expr);
+          if ((score = GRN_UINT32_VALUE(r))) {
+            grn_hash_cursor_delete(ctx, hc, NULL);
+          }
+        }
+        grn_hash_cursor_close(ctx, hc);
+      }
+      break;
+    case GRN_SEL_ADJUST :
+      if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0))) {
+        while (grn_hash_cursor_next(ctx, hc)) {
+          grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
+          GRN_RECORD_SET(ctx, v, *idp);
+          r = grn_expr_exec(ctx, expr);
+          if ((score = GRN_UINT32_VALUE(r))) {
+            grn_rset_recinfo *ri;
+            grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
+            grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)idp, 1);
+          }
+        }
+        grn_hash_cursor_close(ctx, hc);
+      }
+      break;
     }
   }
 exit :

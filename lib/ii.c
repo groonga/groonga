@@ -5534,7 +5534,7 @@ exit :
 
 grn_rc
 grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
-           grn_hash *s)
+           grn_hash *s, grn_sel_operator op)
 {
   ERRCLR(ctx);
   GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%s)", string);
@@ -5544,26 +5544,28 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
     /* todo : support subrec
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);
     */
-    if (grn_ii_select(ctx, ii, string, string_len, s, GRN_SEL_OR, &arg)) {
+    if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(1) failed !");
       return ctx->rc;
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "exact: %d", GRN_HASH_SIZE(s));
-    if (GRN_HASH_SIZE(s) <= GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD) {
-      arg.mode = GRN_SEL_UNSPLIT;
-      if (grn_ii_select(ctx, ii, string, string_len, s, GRN_SEL_OR, &arg)) {
-        GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(2) failed !");
-        return ctx->rc;
+    if (op == GRN_SEL_OR) {
+      if (GRN_HASH_SIZE(s) <= GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD) {
+        arg.mode = GRN_SEL_UNSPLIT;
+        if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
+          GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(2) failed !");
+          return ctx->rc;
+        }
+        GRN_LOG(ctx, GRN_LOG_INFO, "unsplit: %d", GRN_HASH_SIZE(s));
       }
-      GRN_LOG(ctx, GRN_LOG_INFO, "unsplit: %d", GRN_HASH_SIZE(s));
-    }
-    if (GRN_HASH_SIZE(s) <= GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD) {
-      arg.mode = GRN_SEL_PARTIAL;
-      if (grn_ii_select(ctx, ii, string, string_len, s, GRN_SEL_OR, &arg)) {
-        GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(3) failed !");
-        return ctx->rc;
+      if (GRN_HASH_SIZE(s) <= GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD) {
+        arg.mode = GRN_SEL_PARTIAL;
+        if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
+          GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(3) failed !");
+          return ctx->rc;
+        }
+        GRN_LOG(ctx, GRN_LOG_INFO, "partial: %d", GRN_HASH_SIZE(s));
       }
-      GRN_LOG(ctx, GRN_LOG_INFO, "partial: %d", GRN_HASH_SIZE(s));
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "hits=%d", GRN_HASH_SIZE(s));
     return GRN_SUCCESS;

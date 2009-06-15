@@ -159,7 +159,7 @@ grn_rc grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii, const char *string, unsig
 grn_rc grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
                      grn_hash *s, grn_sel_operator op, grn_select_optarg *optarg);
 grn_rc grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
-                  grn_hash *s);
+                  grn_hash *s, grn_sel_operator op);
 
 grn_rc grn_ii_query_select(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_sel_operator op);
 
