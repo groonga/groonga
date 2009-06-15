@@ -5151,7 +5151,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           if (x->header.domain == y->header.domain &&
               x->header.type == y->header.type &&
               GRN_BULK_VSIZE(x) == GRN_BULK_VSIZE(y) &&
-              !memcpy(GRN_BULK_HEAD(x), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(x))) {
+              !memcmp(GRN_BULK_HEAD(x), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(x))) {
             GRN_INT32_SET(ctx, res, 1);
           } else {
             GRN_INT32_SET(ctx, res, 0);

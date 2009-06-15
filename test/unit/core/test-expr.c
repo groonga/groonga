@@ -291,7 +291,8 @@ test_expr_query(void)
 
   /* lexicon table */
   lc = grn_table_create(&context, "lc", 2, NULL,
-			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
+                        grn_ctx_at(&context, GRN_DB_SHORTTEXT), 0);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(&context, lc, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(&context, GRN_DB_BIGRAM)));
@@ -356,7 +357,7 @@ test_expr_query(void)
   grn_expr_append_op(&context, expr, GRN_OP_VAR_SET_VALUE, 2);
 
   grn_expr_append_obj(&context, expr, ft);
-  GRN_TEXT_SETS(&context, &textbuf, "hi");
+  GRN_TEXT_SETS(&context, &textbuf, "hij");
   grn_expr_append_const(&context, expr, &textbuf);
   grn_expr_append_obj(&context, expr, v);
   GRN_UINT32_SET(&context, &intbuf, GRN_SEL_OR);
@@ -384,4 +385,63 @@ test_expr_query(void)
   grn_obj_close(&context, c1);
   grn_obj_close(&context, lc);
   grn_obj_close(&context, t1);
+}
+
+static grn_obj *docs, *terms, *size, *body, *index_body;
+
+#define INSERT_DATA(str) {\
+  uint32_t s = (uint32_t)strlen(str);\
+  grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);\
+  GRN_TEXT_SET(&context, &textbuf, str, s);\
+  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf, GRN_OBJ_SET));\
+  GRN_UINT32_SET(&context, &intbuf, s);\
+  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf, GRN_OBJ_SET));\
+}
+
+static void
+prepare_data(void)
+{
+  grn_obj textbuf, intbuf;
+
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+
+  docs = grn_table_create(&context, "docs", 4, NULL,
+                          GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+  cut_assert_not_null(docs);
+  terms = grn_table_create(&context, "terms", 5, NULL,
+                           GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+  cut_assert_not_null(terms);
+  size = grn_column_create(&context, docs, "size", 4, NULL,
+                           GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                           grn_ctx_at(&context, GRN_DB_UINT32));
+  cut_assert_not_null(size);
+  body = grn_column_create(&context, docs, "body", 4, NULL,
+                           GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                           grn_ctx_at(&context, GRN_DB_TEXT));
+  cut_assert_not_null(body);
+
+  index_body = grn_column_create(&context, terms, "docs_body", 4, NULL,
+                                 GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT, docs);
+  cut_assert_not_null(index_body);
+
+  GRN_UINT32_SET(&context, &intbuf, grn_obj_id(&context, body));
+  grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, &intbuf);
+
+  INSERT_DATA("hoge");
+  INSERT_DATA("fuga fuga");
+  INSERT_DATA("moge mogge moge");
+  INSERT_DATA("hoge hoge");
+  INSERT_DATA("hoge fuga fuga");
+  INSERT_DATA("hoge moge mogge moge");
+  INSERT_DATA("moge hoge hoge");
+  INSERT_DATA("moge hoge fuga fuga");
+  INSERT_DATA("moge hoge moge mogge moge");
+  INSERT_DATA("poyo moge hoge moge mogge moge");
+}
+
+void
+test_table_scan(void)
+{
+  prepare_data();
 }

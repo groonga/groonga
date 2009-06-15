@@ -643,7 +643,8 @@ test_mroonga_index(void)
 
   /* lexicon table */
   lc = grn_table_create(context,"lc",2,"mrn/lc.grn",
-			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,NULL,0);
+			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
+                        grn_ctx_at(context, GRN_DB_SHORTTEXT), 0);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(context, lc, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(context, GRN_DB_BIGRAM)));
@@ -768,7 +769,8 @@ test_mroonga_index_score(void)
 
   /* lexicon table */
   lc = grn_table_create(context,"lc",2,"mrn/lc.grn",
-			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,NULL,0);
+			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
+                        grn_ctx_at(context, GRN_DB_SHORTTEXT), 0);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(context, lc, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(context, GRN_DB_BIGRAM)));
@@ -825,7 +827,7 @@ test_mroonga_index_score(void)
                            GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, t1, 0);
     GRN_UINT32_INIT(&score, 0);
     GRN_BULK_REWIND(&buff);
-    GRN_TEXT_SETS(context, &buff, "hi");
+    GRN_TEXT_SETS(context, &buff, "hij");
     grn_obj_search(context, ft, &buff, res, GRN_SEL_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     score_column = grn_obj_column(context, res, ".:score", 7);
