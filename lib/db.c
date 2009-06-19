@@ -140,7 +140,6 @@ grn_db_open(grn_ctx *ctx, const char *path)
           DB_OBJ(&s->obj)->range = GRN_ID_NIL;
           grn_ctx_use(ctx, (grn_obj *)s);
           grn_db_init_builtin_tokenizers(ctx);
-          grn_db_init_builtin_procs(ctx);
           GRN_API_RETURN((grn_obj *)s);
         } else {
           ERR(GRN_NO_MEMORY_AVAILABLE, "ja open failed");
@@ -3869,7 +3868,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       rc = GRN_SUCCESS;
       break;
     case GRN_EXPR :
-      rc = grn_expr_close(ctx, (grn_expr *)obj);
+      rc = grn_expr_close(ctx, obj);
       break;
     }
   }
@@ -4372,7 +4371,6 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONGTEXT) { return GRN_FILE_CORRUPT; }
   grn_db_init_builtin_tokenizers(ctx);
-  grn_db_init_builtin_procs(ctx);
   {
     grn_obj *db = ctx->impl->db;
     grn_id id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys);
@@ -4672,30 +4670,31 @@ grn_expr_dup(grn_ctx *ctx, grn_obj *expr)
 }
 
 grn_rc
-grn_expr_close(grn_ctx *ctx, grn_expr *expr)
+grn_expr_close(grn_ctx *ctx, grn_obj *expr)
 {
   uint32_t i;
+  grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  if (expr->obj.header.domain) {
-    grn_hash_delete(ctx, ctx->impl->qe, &expr->obj.header.domain, sizeof(grn_id), NULL);
+  if (e->obj.header.domain) {
+    grn_hash_delete(ctx, ctx->impl->qe, &e->obj.header.domain, sizeof(grn_id), NULL);
   }
-  for (i = 0; i < expr->nconsts; i++) {
-    grn_obj_close(ctx, &expr->consts[i]);
+  for (i = 0; i < e->nconsts; i++) {
+    grn_obj_close(ctx, &e->consts[i]);
   }
-  GRN_REALLOC(expr->consts, 0);
-  for (i = 0; i < expr->nvars; i++) {
-    grn_obj_close(ctx, &expr->names[i]);
-    grn_obj_close(ctx, &expr->vars[i]);
+  GRN_REALLOC(e->consts, 0);
+  for (i = 0; i < e->nvars; i++) {
+    grn_obj_close(ctx, &e->names[i]);
+    grn_obj_close(ctx, &e->vars[i]);
   }
-  GRN_REALLOC(expr->vars, 0);
-  GRN_REALLOC(expr->names, 0);
-  for (i = 0; i < expr->values_curr; i++) {
-    grn_obj_close(ctx, &expr->values[i]);
+  GRN_REALLOC(e->vars, 0);
+  GRN_REALLOC(e->names, 0);
+  for (i = 0; i < e->values_curr; i++) {
+    grn_obj_close(ctx, &e->values[i]);
   }
-  GRN_FREE(expr->values);
-  GRN_FREE(expr->stack);
-  GRN_FREE(expr->codes);
-  GRN_FREE(expr);
+  GRN_FREE(e->values);
+  GRN_FREE(e->stack);
+  GRN_FREE(e->codes);
+  GRN_FREE(e);
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -4913,6 +4912,12 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
     case GRN_OP_TABLE_SCAN :
       PUSH_CODE(e, op, NULL);
       break;
+    case GRN_OP_TABLE_SORT :
+      PUSH_CODE(e, op, NULL);
+      break;
+    case GRN_OP_TABLE_GROUP :
+      PUSH_CODE(e, op, NULL);
+      break;
     case GRN_OP_JSON_PUT :
       PUSH_CODE(e, op, NULL);
       break;
@@ -4974,6 +4979,16 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   if (obj && (!GRN_DB_OBJP(obj) || (((grn_db_obj *)obj)->id & GRN_OBJ_TMP_OBJECT))) {
     grn_obj_close(ctx, obj);
   }
+}
+
+#define WITH_SPSAVE(block) {\
+  ctx->impl->stack_curr = sp - ctx->impl->stack;\
+  block\
+  if (sp != ctx->impl->stack + ctx->impl->stack_curr) {\
+    sp = ctx->impl->stack + ctx->impl->stack_curr;\
+    s0 = sp[-1];\
+    s1 = sp[-2];\
+  }\
 }
 
 grn_obj *
@@ -5040,7 +5055,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           POP1(value);
           value = GRN_OBJ_RESOLVE(ctx, value);
           if (GRN_DB_OBJP(value)) {
-            var->header.type = GRN_ALIAS;
+            var->header.type = GRN_PTR;
             var->header.domain = DB_OBJ(value)->id;
             var->u.b.head = (char *)value;
           } else {
@@ -5105,13 +5120,103 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           expr = GRN_OBJ_RESOLVE(ctx, expr);
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
-          {
-            ctx->impl->stack_curr = sp - ctx->impl->stack;
+          WITH_SPSAVE({
             grn_table_scan(ctx, table, expr, res, (grn_sel_operator)GRN_UINT32_VALUE(op));
-            if (sp != ctx->impl->stack + ctx->impl->stack_curr) {
-              sp = ctx->impl->stack + ctx->impl->stack_curr;
-              s0 = sp[-1];
-              s1 = sp[-2];
+          });
+        }
+        code++;
+        break;
+      case GRN_OP_TABLE_SORT :
+        {
+          grn_obj *keys_, *res, *limit, *table;
+          POP1(keys_);
+          keys_ = GRN_OBJ_RESOLVE(ctx, keys_);
+          POP1(res);
+          res = GRN_OBJ_RESOLVE(ctx, res);
+          POP1(limit);
+          limit = GRN_OBJ_RESOLVE(ctx, limit);
+          POP1(table);
+          table = GRN_OBJ_RESOLVE(ctx, table);
+          {
+            grn_table_sort_key *keys;
+            char *p = GRN_BULK_HEAD(keys_), *tokbuf[256];
+            int n = grn_str_tok(p, GRN_BULK_VSIZE(keys_), ' ', tokbuf, 256, NULL);
+            if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
+              int i, n_keys = 0;
+              for (i = 0; i < n; i++) {
+                uint32_t len = (uint32_t) (tokbuf[i] - p);
+                grn_obj *col = grn_obj_column(ctx, table, p, len);
+                if (col) {
+                  keys[n_keys].key = col;
+                  keys[n_keys].flags = GRN_TABLE_SORT_ASC;
+                  keys[n_keys].offset = 0;
+                  n_keys++;
+                } else {
+                  if (p[0] == ':' && p[1] == 'd' && len == 2 && n_keys) {
+                    keys[n_keys - 1].flags |= GRN_TABLE_SORT_DESC;
+                  }
+                }
+                p = tokbuf[i] + 1;
+              }
+              WITH_SPSAVE({
+                grn_table_sort(ctx, table, GRN_INT32_VALUE(limit), res, keys, n_keys);
+              });
+              for (i = 0; i < n_keys; i++) {
+                grn_obj_unlink(ctx, keys[i].key);
+              }
+              GRN_FREE(keys);
+            }
+          }
+        }
+        code++;
+        break;
+      case GRN_OP_TABLE_GROUP :
+        {
+          grn_obj *res, *keys_, *table;
+          POP1(res);
+          res = GRN_OBJ_RESOLVE(ctx, res);
+          POP1(keys_);
+          keys_ = GRN_OBJ_RESOLVE(ctx, keys_);
+          POP1(table);
+          table = GRN_OBJ_RESOLVE(ctx, table);
+          {
+            grn_table_sort_key *keys;
+            grn_table_group_result results;
+            char *p = GRN_BULK_HEAD(keys_), *tokbuf[256];
+            int n = grn_str_tok(p, GRN_BULK_VSIZE(keys_), ' ', tokbuf, 256, NULL);
+            if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
+              int i, n_keys = 0;
+              for (i = 0; i < n; i++) {
+                uint32_t len = (uint32_t) (tokbuf[i] - p);
+                grn_obj *col = grn_obj_column(ctx, table, p, len);
+                if (col) {
+                  keys[n_keys].key = col;
+                  keys[n_keys].flags = GRN_TABLE_SORT_ASC;
+                  keys[n_keys].offset = 0;
+                  n_keys++;
+                } else if (n_keys) {
+                  if (p[0] == ':' && p[1] == 'd' && len == 2) {
+                    keys[n_keys - 1].flags |= GRN_TABLE_SORT_DESC;
+                  } else {
+                    keys[n_keys - 1].offset = grn_atoi(p, p + len, NULL);
+                  }
+                }
+                p = tokbuf[i] + 1;
+              }
+              /* todo : support multi-results */
+              results.table = res;
+              results.key_begin = 0;
+              results.key_end = 0;
+              results.limit = 0;
+              results.flags = 0;
+              results.op = GRN_SEL_OR;
+              WITH_SPSAVE({
+                grn_table_group(ctx, table, keys, n_keys, &results, 1);
+              });
+              for (i = 0; i < n_keys; i++) {
+                grn_obj_unlink(ctx, keys[i].key);
+              }
+              GRN_FREE(keys);
             }
           }
         }

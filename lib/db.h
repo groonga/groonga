@@ -194,7 +194,7 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 #define GRN_OBJ_CUSTOM_NAME            (0x01<<12) /* db_obj which has custom name */
 
 #define GRN_OBJ_RESOLVE(ctx,obj) \
-  (((obj)->header.type != GRN_ALIAS)\
+  (((obj)->header.type != GRN_PTR)\
    ? (obj)\
    : ((obj)->u.b.head\
       ? (grn_obj *)(obj)->u.b.head\
@@ -208,12 +208,6 @@ grn_rc grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
 grn_obj *grn_ctx_pop(grn_ctx *ctx);
 
 typedef struct _grn_expr grn_expr;
-
-grn_rc grn_expr_close(grn_ctx *ctx, grn_expr *expr);
-grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
-
-grn_rc grn_table_scan(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                      grn_obj *res, grn_sel_operator op);
 
 typedef struct {
   grn_op op;

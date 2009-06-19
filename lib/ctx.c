@@ -1425,6 +1425,7 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
 
 /**** grn_ctx_qe ****/
 
+/*
 typedef struct _grn_ctx_qe grn_ctx_qe;
 typedef struct _grn_ctx_qe_list grn_ctx_qe_list;
 typedef struct _grn_ctx_qe_source grn_ctx_qe_source;
@@ -1482,7 +1483,6 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
   grn_obj *query = grn_ctx_pop(ctx);
   grn_obj *res = grn_ctx_pop(ctx);
   if (op) {
-    /* todo */
   }
   if (index->header.type == GRN_BULK) {
     index = grn_ctx_get(ctx, GRN_BULK_HEAD(index), GRN_BULK_VSIZE(index));
@@ -1541,7 +1541,6 @@ scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
       if ((GRN_BULK_VSIZE(v1) == GRN_BULK_VSIZE(v2)) &&
           !memcmp(GRN_BULK_HEAD(v1), GRN_BULK_HEAD(v2), GRN_BULK_VSIZE(v1))) {
         if (n++ >= o) {
-          /* todo : use GRN_SET_INT_ADD if !n_entries */
           grn_rset_recinfo *ri;
           grn_table_add_v(ctx, res, &id, sizeof(grn_id), (void **)&ri, NULL);
           {
@@ -1763,6 +1762,7 @@ grn_ctx_qe_get(grn_ctx *ctx, const char *key, int key_size)
   }
   return grn_ctx_qe_get_(ctx, qe);
 }
+*/
 
 static const char *
 get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
