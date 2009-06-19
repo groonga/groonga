@@ -4924,6 +4924,11 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
     case GRN_OP_AND :
     case GRN_OP_OR :
     case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
+    case GRN_OP_LESS :
+    case GRN_OP_GREATER :
+    case GRN_OP_LESS_EQUAL :
+    case GRN_OP_GREATER_EQUAL :
       PUSH_CODE(e, op, NULL);
       break;
     }
@@ -4988,6 +4993,211 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     sp = ctx->impl->stack + ctx->impl->stack_curr;\
     s0 = sp[-1];\
     s1 = sp[-2];\
+  }\
+}
+
+#define do_compare_sub(op) {\
+  switch (y->header.domain) {\
+  case GRN_DB_INT32 :\
+    r = (x_ op GRN_INT32_VALUE(y));\
+    break;\
+  case GRN_DB_UINT32 :\
+    r = (x_ op GRN_UINT32_VALUE(y));\
+    break;\
+  case GRN_DB_INT64 :\
+    r = (x_ op GRN_INT64_VALUE(y));\
+    break;\
+  case GRN_DB_UINT64 :\
+  case GRN_DB_TIME :\
+    r = (x_ op GRN_UINT64_VALUE(y));\
+    break;\
+  case GRN_DB_FLOAT :\
+    r = (x_ op GRN_FLOAT_VALUE(y));\
+    break;\
+  case GRN_DB_SHORTTEXT :\
+  case GRN_DB_TEXT :\
+  case GRN_DB_LONGTEXT :\
+    {\
+      const char *p_ = GRN_TEXT_VALUE(y);\
+      int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+      r = (x_ op i_);\
+    }\
+    break;\
+  default :\
+    r = 0;\
+    break;\
+  }\
+}\
+
+#define do_compare(x,y,r,op) {\
+  switch (x->header.domain) {\
+  case GRN_DB_INT32 :\
+    {\
+      int32_t x_ = GRN_INT32_VALUE(x);\
+      do_compare_sub(op);\
+    }\
+    break;\
+  case GRN_DB_UINT32 :\
+    {\
+      uint32_t x_ = GRN_UINT32_VALUE(x);\
+      do_compare_sub(op);\
+    }\
+    break;\
+  case GRN_DB_INT64 :\
+    {\
+      int64_t x_ = GRN_INT64_VALUE(x);\
+      do_compare_sub(op);\
+    }\
+    break;\
+  case GRN_DB_UINT64 :\
+    {\
+      uint64_t x_ = GRN_UINT64_VALUE(x);\
+      do_compare_sub(op);\
+    }\
+    break;\
+  case GRN_DB_FLOAT :\
+    {\
+      double x_ = GRN_FLOAT_VALUE(x);\
+      do_compare_sub(op);\
+    }\
+    break;\
+  case GRN_DB_SHORTTEXT :\
+  case GRN_DB_TEXT :\
+  case GRN_DB_LONGTEXT :\
+    if (GRN_DB_SHORTTEXT <= y->header.domain && y->header.domain <= GRN_DB_LONGTEXT) {\
+      int r_;\
+      uint32_t la = GRN_TEXT_LEN(x), lb = GRN_TEXT_LEN(y);\
+      if (la > lb) {\
+        if (!(r_ = memcmp(GRN_TEXT_VALUE(x), GRN_TEXT_VALUE(y), lb))) {\
+          r_ = 1;\
+        }\
+      } else {\
+        if (!(r_ = memcmp(GRN_TEXT_VALUE(x), GRN_TEXT_VALUE(y), la))) {\
+          r_ = la == lb ? 0 : -1;\
+        }\
+      }\
+      r = (r_ op 0);\
+    } else {\
+      const char *q_ = GRN_TEXT_VALUE(x);\
+      int x_ = grn_atoi(q_, q_ + GRN_TEXT_LEN(x), NULL);\
+      do_compare_sub(op);\
+    }\
+    break;\
+  default :\
+    r = 0;\
+    break;\
+  }\
+}
+
+#define do_eq_sub {\
+  switch (y->header.domain) {\
+  case GRN_DB_INT32 :\
+    r = (x_ == GRN_INT32_VALUE(y));\
+    break;\
+  case GRN_DB_UINT32 :\
+    r = (x_ == GRN_UINT32_VALUE(y));\
+    break;\
+  case GRN_DB_INT64 :\
+    r = (x_ == GRN_INT64_VALUE(y));\
+    break;\
+  case GRN_DB_UINT64 :\
+  case GRN_DB_TIME :\
+    r = (x_ == GRN_UINT64_VALUE(y));\
+    break;\
+  case GRN_DB_FLOAT :\
+    r = ((x_ <= GRN_FLOAT_VALUE(y)) && (x_ >= GRN_FLOAT_VALUE(y)));\
+    break;\
+  case GRN_DB_SHORTTEXT :\
+  case GRN_DB_TEXT :\
+  case GRN_DB_LONGTEXT :\
+    {\
+      const char *p_ = GRN_TEXT_VALUE(y);\
+      int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+      r = (x_ == i_);\
+    }\
+    break;\
+  default :\
+    r = 0;\
+    break;\
+  }\
+}\
+
+#define do_eq(x,y,r) {\
+  switch (x->header.domain) {\
+  case GRN_DB_INT32 :\
+    {\
+      int32_t x_ = GRN_INT32_VALUE(x);\
+      do_eq_sub;\
+    }\
+    break;\
+  case GRN_DB_UINT32 :\
+    {\
+      uint32_t x_ = GRN_UINT32_VALUE(x);\
+      do_eq_sub;\
+    }\
+    break;\
+  case GRN_DB_INT64 :\
+    {\
+      int64_t x_ = GRN_INT64_VALUE(x);\
+      do_eq_sub;\
+    }\
+    break;\
+  case GRN_DB_UINT64 :\
+    {\
+      uint64_t x_ = GRN_UINT64_VALUE(x);\
+      do_eq_sub;\
+    }\
+    break;\
+  case GRN_DB_FLOAT :\
+    {\
+      double x_ = GRN_FLOAT_VALUE(x);\
+      switch (y->header.domain) {\
+      case GRN_DB_INT32 :\
+        r = ((x_ <= GRN_INT32_VALUE(y)) && (x_ >= GRN_INT32_VALUE(y)));\
+        break;\
+      case GRN_DB_UINT32 :\
+        r = ((x_ <= GRN_UINT32_VALUE(y)) && (x_ >= GRN_UINT32_VALUE(y)));\
+        break;\
+      case GRN_DB_INT64 :\
+        r = ((x_ <= GRN_INT64_VALUE(y)) && (x_ >= GRN_INT64_VALUE(y)));\
+        break;\
+      case GRN_DB_UINT64 :\
+      case GRN_DB_TIME :\
+        r = ((x_ <= GRN_UINT64_VALUE(y)) && (x_ >= GRN_UINT64_VALUE(y)));\
+        break;\
+      case GRN_DB_FLOAT :\
+        r = ((x_ <= GRN_FLOAT_VALUE(y)) && (x_ >= GRN_FLOAT_VALUE(y)));\
+        break;\
+      case GRN_DB_SHORTTEXT :\
+      case GRN_DB_TEXT :\
+      case GRN_DB_LONGTEXT :\
+        {\
+          const char *p_ = GRN_TEXT_VALUE(y);\
+          int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+          r = (x_ <= i_ && x_ >= i_);\
+        }\
+        break;\
+      default :\
+        r = 0;\
+        break;\
+      }\
+    }\
+    break;\
+  case GRN_DB_SHORTTEXT :\
+  case GRN_DB_TEXT :\
+  case GRN_DB_LONGTEXT :\
+    if (GRN_DB_SHORTTEXT <= y->header.domain && y->header.domain <= GRN_DB_LONGTEXT) {\
+      uint32_t la = GRN_TEXT_LEN(x), lb = GRN_TEXT_LEN(y);\
+      r =  (la == lb && !memcmp(GRN_TEXT_VALUE(x), GRN_TEXT_VALUE(y), lb));\
+    } else {\
+      const char *q_ = GRN_TEXT_VALUE(x);\
+      int x_ = grn_atoi(q_, q_ + GRN_TEXT_LEN(x), NULL);\
+      do_eq_sub;\
+    }\
+    break;\
+  default :\
+    r = 0;\
+    break;\
   }\
 }
 
@@ -5250,22 +5460,6 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         }
         code++;
         break;
-      case GRN_OP_EQUAL :
-        {
-          grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
-          if (x->header.domain == y->header.domain &&
-              x->header.type == y->header.type &&
-              GRN_BULK_VSIZE(x) == GRN_BULK_VSIZE(y) &&
-              !memcmp(GRN_BULK_HEAD(x), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(x))) {
-            GRN_INT32_SET(ctx, res, 1);
-          } else {
-            GRN_INT32_SET(ctx, res, 0);
-          }
-          res->header.domain = GRN_DB_INT32;
-          code++;
-        }
-        break;
       case GRN_OP_AND :
         {
           grn_obj *x, *y;
@@ -5276,8 +5470,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             GRN_INT32_SET(ctx, res, 1);
           }
           res->header.domain = GRN_DB_INT32;
-          code++;
         }
+        code++;
         break;
       case GRN_OP_OR :
         {
@@ -5289,8 +5483,74 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             GRN_INT32_SET(ctx, res, 1);
           }
           res->header.domain = GRN_DB_INT32;
-          code++;
         }
+        code++;
+        break;
+      case GRN_OP_EQUAL :
+        {
+          int r;
+          grn_obj *x, *y;
+          POP2PUSH1(x, y, res);
+          do_eq(x, y, r);
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_NOT_EQUAL :
+        {
+          int r;
+          grn_obj *x, *y;
+          POP2PUSH1(x, y, res);
+          do_eq(x, y, r);
+          GRN_INT32_SET(ctx, res, 1 - r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_LESS :
+        {
+          int r;
+          grn_obj *x, *y;
+          POP2PUSH1(x, y, res);
+          do_compare(x, y, r, <);
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_GREATER :
+        {
+          int r;
+          grn_obj *x, *y;
+          POP2PUSH1(x, y, res);
+          do_compare(x, y, r, >);
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_LESS_EQUAL :
+        {
+          int r;
+          grn_obj *x, *y;
+          POP2PUSH1(x, y, res);
+          do_compare(x, y, r, <=);
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_GREATER_EQUAL :
+        {
+          int r;
+          grn_obj *x, *y;
+          POP2PUSH1(x, y, res);
+          do_compare(x, y, r, >=);
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
         break;
       }
     }

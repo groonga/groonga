@@ -1641,6 +1641,11 @@ typedef enum {
   GRN_OP_AND,
   GRN_OP_OR,
   GRN_OP_EQUAL,
+  GRN_OP_NOT_EQUAL,
+  GRN_OP_LESS,
+  GRN_OP_GREATER,
+  GRN_OP_LESS_EQUAL,
+  GRN_OP_GREATER_EQUAL
 } grn_op;
 
 GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size);
