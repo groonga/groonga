@@ -4929,6 +4929,13 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
     case GRN_OP_GREATER :
     case GRN_OP_LESS_EQUAL :
     case GRN_OP_GREATER_EQUAL :
+    case GRN_OP_GEO_DISTANCE1 :
+    case GRN_OP_GEO_DISTANCE2 :
+    case GRN_OP_GEO_DISTANCE3 :
+    case GRN_OP_GEO_DISTANCE4 :
+    case GRN_OP_GEO_WITHINP5 :
+    case GRN_OP_GEO_WITHINP6 :
+    case GRN_OP_GEO_WITHINP8 :
       PUSH_CODE(e, op, NULL);
       break;
     }
@@ -5200,6 +5207,16 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     break;\
   }\
 }
+
+#define GEO_RESOLUTION   3600000
+#define GEO_RADIOUS      6357303
+#define GEO_BES_C1       6334834
+#define GEO_BES_C2       6377397
+#define GEO_BES_C3       0.006674
+#define GEO_GRS_C1       6335439
+#define GEO_GRS_C2       6378137
+#define GEO_GRS_C3       0.006694
+#define GEO_INT2RAD(x)   ((M_PI * x) / (GEO_RESOLUTION * 180))
 
 grn_obj *
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
@@ -5547,6 +5564,182 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           grn_obj *x, *y;
           POP2PUSH1(x, y, res);
           do_compare(x, y, r, >=);
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_GEO_DISTANCE1 :
+        {
+          grn_obj *e;
+          double lng1, lat1, lng2, lat2, x, y, d;
+          POP1(e);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1PUSH1(e, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+          y = (lat2 - lat1);
+          d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
+          res->header.domain = GRN_DB_FLOAT;
+          GRN_FLOAT_SET(ctx, res, d);
+        }
+        code++;
+        break;
+      case GRN_OP_GEO_DISTANCE2 :
+        {
+          grn_obj *e;
+          double lng1, lat1, lng2, lat2, x, y, d;
+          POP1(e);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1PUSH1(e, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          x = sin(fabs(lng2 - lng1) * 0.5);
+          y = sin(fabs(lat2 - lat1) * 0.5);
+          d = asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GEO_RADIOUS;
+          res->header.domain = GRN_DB_FLOAT;
+          GRN_FLOAT_SET(ctx, res, d);
+        }
+        code++;
+        break;
+      case GRN_OP_GEO_DISTANCE3 :
+        {
+          grn_obj *e;
+          double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
+          POP1(e);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1PUSH1(e, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          p = (lat1 + lat2) * 0.5;
+          q = (1 - GEO_BES_C3 * sin(p) * sin(p));
+          m = GEO_BES_C1 / sqrt(q * q * q);
+          n = GEO_BES_C2 / sqrt(q);
+          x = n * cos(p) * fabs(lng1 - lng2);
+          y = m * fabs(lat1 - lat2);
+          d = sqrt((x * x) + (y * y));
+          res->header.domain = GRN_DB_FLOAT;
+          GRN_FLOAT_SET(ctx, res, d);
+        }
+        code++;
+        break;
+      case GRN_OP_GEO_DISTANCE4 :
+        {
+          grn_obj *e;
+          double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
+          POP1(e);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1PUSH1(e, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          p = (lat1 + lat2) * 0.5;
+          q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
+          m = GEO_GRS_C1 / sqrt(q * q * q);
+          n = GEO_GRS_C2 / sqrt(q);
+          x = n * cos(p) * fabs(lng1 - lng2);
+          y = m * fabs(lat1 - lat2);
+          d = sqrt((x * x) + (y * y));
+          res->header.domain = GRN_DB_FLOAT;
+          GRN_FLOAT_SET(ctx, res, d);
+        }
+        code++;
+        break;
+      case GRN_OP_GEO_WITHINP5 :
+        {
+          int r;
+          grn_obj *e;
+          double lng0, lat0, lng1, lat1, x, y, d;
+          POP1(e);
+          lng0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1PUSH1(e, res);
+          x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
+          y = (lat1 - lat0);
+          d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
+          switch (e->header.domain) {
+          case GRN_DB_INT32 :
+            r = d <= GRN_INT32_VALUE(e);
+            break;
+          case GRN_DB_FLOAT :
+            r = d <= GRN_FLOAT_VALUE(e);
+            break;
+          default :
+            r = 0;
+            break;
+          }
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_GEO_WITHINP6 :
+        {
+          int r;
+          grn_obj *e;
+          double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
+          POP1(e);
+          lng0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(e);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1PUSH1(e, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
+          y = (lat1 - lat0);
+          d = (x * x) + (y * y);
+          x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+          y = (lat2 - lat1);
+          r = d <= (x * x) + (y * y);
+          GRN_INT32_SET(ctx, res, r);
+          res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_GEO_WITHINP8 :
+        {
+          int r;
+          grn_obj *e;
+          int64_t ln0, la0, ln1, la1, ln2, la2, ln3, la3;
+          POP1(e);
+          ln0 = GRN_INT32_VALUE(e);
+          POP1(e);
+          la0 = GRN_INT32_VALUE(e);
+          POP1(e);
+          ln1 = GRN_INT32_VALUE(e);
+          POP1(e);
+          la1 = GRN_INT32_VALUE(e);
+          POP1(e);
+          ln2 = GRN_INT32_VALUE(e);
+          POP1(e);
+          la2 = GRN_INT32_VALUE(e);
+          POP1(e);
+          ln3 = GRN_INT32_VALUE(e);
+          POP1PUSH1(e, res);
+          la3 = GRN_INT32_VALUE(e);
+          r = ((ln2 <= ln0) && (ln0 <= ln3) && (la2 <= la0) && (la0 <= la3));
           GRN_INT32_SET(ctx, res, r);
           res->header.domain = GRN_DB_INT32;
         }

@@ -1645,7 +1645,14 @@ typedef enum {
   GRN_OP_LESS,
   GRN_OP_GREATER,
   GRN_OP_LESS_EQUAL,
-  GRN_OP_GREATER_EQUAL
+  GRN_OP_GREATER_EQUAL,
+  GRN_OP_GEO_DISTANCE1,
+  GRN_OP_GEO_DISTANCE2,
+  GRN_OP_GEO_DISTANCE3,
+  GRN_OP_GEO_DISTANCE4,
+  GRN_OP_GEO_WITHINP5,
+  GRN_OP_GEO_WITHINP6,
+  GRN_OP_GEO_WITHINP8
 } grn_op;
 
 GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size);
