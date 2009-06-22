@@ -1195,6 +1195,30 @@ grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *value, int flags)
         case GRN_OBJ_SET :
           memcpy(v, value, value_size);
           return GRN_SUCCESS;
+        case GRN_OBJ_INCR :
+          switch (value_size) {
+          case sizeof(int32_t) :
+            *((int32_t *)v) += *((int32_t *)value);
+            return GRN_SUCCESS;
+          case sizeof(int64_t) :
+            *((int64_t *)v) += *((int64_t *)value);
+            return GRN_SUCCESS;
+          default :
+            return GRN_INVALID_ARGUMENT;
+          }
+          break;
+        case GRN_OBJ_DECR :
+          switch (value_size) {
+          case sizeof(int32_t) :
+            *((int32_t *)v) -= *((int32_t *)value);
+            return GRN_SUCCESS;
+          case sizeof(int64_t) :
+            *((int64_t *)v) -= *((int64_t *)value);
+            return GRN_SUCCESS;
+          default :
+            return GRN_INVALID_ARGUMENT;
+          }
+          break;
         default :
           // todo : support other types.
           return GRN_INVALID_ARGUMENT;

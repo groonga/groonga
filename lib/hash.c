@@ -299,6 +299,30 @@ grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id, void *value, int 
       case GRN_OBJ_SET :
         memcpy(ee, value, array->value_size);
         return GRN_SUCCESS;
+      case GRN_OBJ_INCR :
+        switch (array->value_size) {
+        case sizeof(int32_t) :
+          *((int32_t *)ee) += *((int32_t *)value);
+          return GRN_SUCCESS;
+        case sizeof(int64_t) :
+          *((int64_t *)ee) += *((int64_t *)value);
+          return GRN_SUCCESS;
+        default :
+          return GRN_INVALID_ARGUMENT;
+        }
+        break;
+      case GRN_OBJ_DECR :
+        switch (array->value_size) {
+        case sizeof(int32_t) :
+          *((int32_t *)ee) -= *((int32_t *)value);
+          return GRN_SUCCESS;
+        case sizeof(int64_t) :
+          *((int64_t *)ee) -= *((int64_t *)value);
+          return GRN_SUCCESS;
+        default :
+          return GRN_INVALID_ARGUMENT;
+        }
+        break;
       default :
         // todo : support other types.
         return GRN_INVALID_ARGUMENT;
@@ -1298,6 +1322,30 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *value, int fla
       case GRN_OBJ_SET :
         memcpy(v, value, hash->value_size);
         return GRN_SUCCESS;
+      case GRN_OBJ_INCR :
+        switch (hash->value_size) {
+        case sizeof(int32_t) :
+          *((int32_t *)v) += *((int32_t *)value);
+          return GRN_SUCCESS;
+        case sizeof(int64_t) :
+          *((int64_t *)v) += *((int64_t *)value);
+          return GRN_SUCCESS;
+        default :
+          return GRN_INVALID_ARGUMENT;
+        }
+        break;
+      case GRN_OBJ_DECR :
+        switch (hash->value_size) {
+        case sizeof(int32_t) :
+          *((int32_t *)v) -= *((int32_t *)value);
+          return GRN_SUCCESS;
+        case sizeof(int64_t) :
+          *((int64_t *)v) -= *((int64_t *)value);
+          return GRN_SUCCESS;
+        default :
+          return GRN_INVALID_ARGUMENT;
+        }
+        break;
       default :
         ERR(GRN_INVALID_ARGUMENT, "flags = %d", flags);
         return ctx->rc;
