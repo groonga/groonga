@@ -343,6 +343,9 @@ struct _grn_db_create_optarg {
 
 GRN_API grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg);
 
+#define GRN_DB_OPEN_OR_CREATE(ctx,path,optarg) \
+  (grn_db_open((ctx), (path)) || grn_db_create((ctx), (path), (optarg)))
+
 /**
  * grn_db_open:
  * @path: 開こうとするdbを格納するファイルパス。
@@ -486,6 +489,10 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
  **/
 GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
                                 const char *name, unsigned name_size, const char *path);
+
+#define GRN_TABLE_OPEN_OR_CREATE(ctx,name,name_size,path,flags,key_type,value_size) \
+  (grn_ctx_get((ctx), (name), (name_size)) ||\
+   grn_table_create((ctx), (name), (name_size), (path), (flags), (key_type), (value_size)))
 
 typedef unsigned char grn_search_flags;
 
@@ -879,6 +886,10 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned name_size,
                                    const char *path, grn_obj_flags flags, grn_obj *type);
+
+#define GRN_COLUMN_OPEN_OR_CREATE(ctx,table,name,name_size,path,flags,type) \
+  (grn_obj_column((ctx), (table), (name), (name_size)) ||\
+   grn_column_create((ctx), (table), (name), (name_size), (path), (flags), (type)))
 
 /**
  * grn_column_open:
