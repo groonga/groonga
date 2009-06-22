@@ -350,6 +350,7 @@ main(int argc, char **argv)
         dest_cnt++;
       }
     }
+    if (!dest_cnt) { flags |= flag_usage; }
   } else {
     /* too much dests */
     flags |= flag_usage;
