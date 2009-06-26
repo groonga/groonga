@@ -3745,7 +3745,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         }
       }
       res = *vp;
-      if (res->header.type == GRN_EXPR) {
+      if (res && res->header.type == GRN_EXPR) {
         if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, NULL)) {
           res = NULL;
         } else {

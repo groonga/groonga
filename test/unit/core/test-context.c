@@ -23,9 +23,11 @@
 
 #include "../lib/grn-assertions.h"
 
+void test_at_nonexistent(void);
 void test_dynamic_malloc_change(void);
 
 static grn_ctx *context;
+static grn_obj *database;
 static int default_flags;
 static void *memory;
 
@@ -33,6 +35,7 @@ void
 cut_setup(void)
 {
   context = NULL;
+  database = NULL;
   default_flags = GRN_CTX_USE_QL;
   memory = NULL;
 }
@@ -45,18 +48,36 @@ cut_teardown(void)
       grn_ctx *ctx = context;
       GRN_FREE(memory);
     }
+    if (database) {
+      grn_db_close(context, database);
+    }
     grn_ctx_fin(context);
+    g_free(context);
   }
 }
 
-#define open_context()                                                  \
-  context = grn_ctx_open(NULL, default_flags)
-
-#define cut_assert_open_context() do            \
-{                                               \
-  open_context();                               \
-  cut_assert(context);                          \
+#define cut_assert_ensure_context() do                          \
+{                                                               \
+  if (!context) {                                               \
+    context = g_new0(grn_ctx, 1);                               \
+    grn_test_assert(grn_ctx_init(context, default_flags));      \
+  }                                                             \
 } while (0)
+
+#define cut_assert_ensure_database() do                 \
+{                                                       \
+  cut_assert_ensure_context();                          \
+  if (!database) {                                      \
+    database = grn_db_create(context, NULL, NULL);      \
+  }                                                     \
+} while (0)
+
+void
+test_at_nonexistent(void)
+{
+  cut_assert_ensure_database();
+  cut_assert_null(grn_ctx_at(context, 99999));
+}
 
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
 static void *
@@ -71,7 +92,7 @@ void
 test_dynamic_malloc_change(void)
 {
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
-  cut_assert_open_context();
+  cut_assert_ensue_context();
   {
     grn_ctx *ctx = context;
 
