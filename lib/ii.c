@@ -5235,24 +5235,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_array_close(ctx, sorted);
   }
   grn_hash_close(ctx, h);
-  if (op == GRN_SEL_AND) {
-    grn_id eid;
-    grn_rset_recinfo *ri;
-    grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0);
-    if (!c) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_cursor_open on grn_ii_similar_search failed!");
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-    while ((eid = grn_hash_cursor_next(ctx, c))) {
-      grn_hash_cursor_get_value(ctx, c, (void **) &ri);
-      if ((ri->n_subrecs & GRN_RSET_UTIL_BIT)) {
-        ri->n_subrecs &= ~GRN_RSET_UTIL_BIT;
-      } else {
-        grn_hash_delete_by_id(ctx, s, eid, NULL);
-      }
-    }
-    grn_hash_cursor_close(ctx, c);
-  }
+  grn_ii_resolve_sel_and(ctx, s, op);
   //  grn_hash_cursor_clear(r);
   return rc;
 }
@@ -5500,25 +5483,7 @@ exit :
     if (*tip) { token_info_close(ctx, *tip); }
   }
   GRN_FREE(tis);
-  if (op == GRN_SEL_AND) {
-    grn_id eid;
-    grn_rset_recinfo *ri;
-    grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0);
-    if (c) {
-      while ((eid = grn_hash_cursor_next(ctx, c))) {
-        grn_hash_cursor_get_value(ctx, c, (void **) &ri);
-        if ((ri->n_subrecs & GRN_RSET_UTIL_BIT)) {
-          ri->n_subrecs &= ~GRN_RSET_UTIL_BIT;
-        } else {
-          grn_hash_delete_by_id(ctx, s, eid, NULL);
-        }
-      }
-      grn_hash_cursor_close(ctx, c);
-    }
-    else {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_cursor_open on grn_ii_select failed !");
-    }
-  }
+  grn_ii_resolve_sel_and(ctx, s, op);
   //  grn_hash_cursor_clear(r);
   bt_close(ctx, bt);
 #ifdef DEBUG
@@ -5569,5 +5534,42 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "hits=%d", GRN_HASH_SIZE(s));
     return GRN_SUCCESS;
+  }
+}
+
+grn_rc
+grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_sel_operator op)
+{
+  int rep = 0;
+  grn_ii_cursor *c;
+  grn_ii_posting *pos;
+  if ((c = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
+                              rep ? ii->n_elements : ii->n_elements - 1, 0))) {
+    while ((pos = grn_ii_cursor_next(ctx, c))) {
+      res_add(ctx, s, (grn_rset_posinfo *) pos, (1 + pos->weight), op);
+    }
+    grn_ii_cursor_close(ctx, c);
+  }
+  return ctx->rc;
+}
+
+void
+grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_sel_operator op)
+{
+  if (op == GRN_SEL_AND) {
+    grn_id eid;
+    grn_rset_recinfo *ri;
+    grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0);
+    if (c) {
+      while ((eid = grn_hash_cursor_next(ctx, c))) {
+        grn_hash_cursor_get_value(ctx, c, (void **) &ri);
+        if ((ri->n_subrecs & GRN_RSET_UTIL_BIT)) {
+          ri->n_subrecs &= ~GRN_RSET_UTIL_BIT;
+        } else {
+          grn_hash_delete_by_id(ctx, s, eid, NULL);
+        }
+      }
+      grn_hash_cursor_close(ctx, c);
+    }
   }
 }

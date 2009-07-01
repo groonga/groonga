@@ -1101,7 +1101,7 @@ GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 /**
- * grn_obj_name:
+ * grn_column_name:
  * @obj: 対象object
  * @namebuf: 名前を格納するバッファ(呼出側で準備する)
  * @buf_size: namebufのサイズ(byte長)
@@ -1575,6 +1575,9 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 } while (0)
 #define GRN_PTR_SET(ctx,obj,val) \
   grn_bulk_write_from((ctx), (obj), (char *)val, 0, sizeof(grn_obj *))
+  /* todo
+#define GRN_PTR_SET_AT(ctx,obj,offset,val)
+  */
 
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT32_VALUE(obj) (*((unsigned int *)GRN_BULK_HEAD(obj)))
@@ -1584,6 +1587,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_TIME_VALUE GRN_UINT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE(obj) ((grn_obj *)GRN_BULK_HEAD(obj))
+#define GRN_PTR_VALUE_AT(obj,offset) (GRN_PTR_VALUE(obj) + (offset))
 
 #define GRN_INT32_PUT(ctx,obj,val) do {\
   int _val = (int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int));\
@@ -1637,7 +1641,9 @@ GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 /* expr */
 
 typedef enum {
-  GRN_OP_PUSH = 0,
+  GRN_OP_NOP = 0,
+  GRN_OP_PUSH,
+  GRN_OP_POP,
   GRN_OP_CALL,
   GRN_OP_INTERN,
   GRN_OP_TABLE_CREATE,
@@ -1657,6 +1663,7 @@ typedef enum {
   GRN_OP_GREATER,
   GRN_OP_LESS_EQUAL,
   GRN_OP_GREATER_EQUAL,
+  GRN_OP_MATCH,
   GRN_OP_GEO_DISTANCE1,
   GRN_OP_GEO_DISTANCE2,
   GRN_OP_GEO_DISTANCE3,

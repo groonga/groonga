@@ -166,6 +166,10 @@ grn_rc grn_ii_query_select(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, g
 grn_rc grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q,
                         grn_hash *r, grn_sel_operator op);
 
+void grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_sel_operator op);
+
+grn_rc grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_sel_operator op);
+
 #ifdef __cplusplus
 }
 #endif

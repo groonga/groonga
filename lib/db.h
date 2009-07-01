@@ -233,6 +233,19 @@ struct _grn_expr {
   uint32_t stack_size;
 };
 
+/**
+ * grn_column_index:
+ * @column: 対象のcolumn
+ * @op: indexで実行したい操作
+ * @indexbuf: indexを格納するバッファ(呼出側で準備する)
+ * @buf_size: namebufのサイズ(byte長)
+ *
+ * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
+ * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
+ **/
+int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_op op,
+                     grn_obj **indexbuf, int buf_size);
+
 #ifdef __cplusplus
 }
 #endif
