@@ -5386,7 +5386,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
           WITH_SPSAVE({
-            grn_table_scan(ctx, table, expr, res, (grn_sel_operator)GRN_UINT32_VALUE(op));
+            grn_table_select(ctx, table, expr, res, (grn_sel_operator)GRN_UINT32_VALUE(op));
           });
         }
         code++;
@@ -6003,7 +6003,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
 }
 
 static void
-grn_table_scan_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
+grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
                grn_obj *res, grn_sel_operator op)
 {
   int32_t score;
@@ -6078,7 +6078,7 @@ grn_table_scan_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
 }
 
 grn_rc
-grn_table_scan(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
+grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                grn_obj *res, grn_sel_operator op)
 {
   grn_obj *v;
@@ -6123,7 +6123,7 @@ grn_table_scan(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         } else {
           e->codes = codes + si->start;
           e->codes_curr = si->end - si->start + 1;
-          grn_table_scan_(ctx, table, expr, v, res, i ? GRN_SEL_AND : op);
+          grn_table_select_(ctx, table, expr, v, res, i ? GRN_SEL_AND : op);
         }
         GRN_FREE(si);
       }
@@ -6133,7 +6133,7 @@ grn_table_scan(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       goto exit;
     }
   }
-  grn_table_scan_(ctx, table, expr, v, res, op);
+  grn_table_select_(ctx, table, expr, v, res, op);
 exit :
   GRN_API_RETURN(ctx->rc);
 }

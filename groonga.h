@@ -486,6 +486,7 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
  * @path: 開こうとするtableのファイルパス。
  *
  * ctxが使用するdbの中でnameに対応付けて既存のtableを開く。
+ * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい。
  **/
 GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
                                 const char *name, unsigned name_size, const char *path);
@@ -1686,7 +1687,7 @@ GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
-GRN_API grn_rc grn_table_scan(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
+GRN_API grn_rc grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                               grn_obj *res, grn_sel_operator op);
 
 /* ql */
