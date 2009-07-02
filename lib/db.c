@@ -4737,6 +4737,7 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
     GRN_TEXT_INIT(name_obj, 0);
     GRN_TEXT_PUT(ctx, name_obj, name, name_size);
   }
+  GRN_VOID_INIT(res);
   GRN_API_RETURN(res);
 }
 
@@ -5322,7 +5323,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           if (GRN_DB_OBJP(value)) {
             var->header.type = GRN_PTR;
             var->header.domain = DB_OBJ(value)->id;
-            var->u.b.head = (char *)value;
+            GRN_PTR_SET(ctx, var, value);
           } else {
             // todo : copy obj type.
             GRN_TEXT_SET(ctx, var, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));

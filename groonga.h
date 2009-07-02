@@ -1504,6 +1504,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_VECTOR : GRN_BULK,\
                ((flags) & GRN_OBJ_DO_SHALLOW_COPY), (domain))
 
+#define GRN_VOID_INIT(obj) GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_VOID)
 #define GRN_TEXT_INIT(obj,flags) \
   GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_TEXT)
 #define GRN_SHORTTEXT_INIT(obj,flags) \
@@ -1574,8 +1575,10 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   grn_id _val = (grn_id)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_id));\
 } while (0)
-#define GRN_PTR_SET(ctx,obj,val) \
-  grn_bulk_write_from((ctx), (obj), (char *)val, 0, sizeof(grn_obj *))
+#define GRN_PTR_SET(ctx,obj,val) do {\
+  grn_obj *_val = (grn_obj *)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_obj *));\
+} while (0)
   /* todo
 #define GRN_PTR_SET_AT(ctx,obj,offset,val)
   */
@@ -1587,8 +1590,8 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_FLOAT_VALUE(obj) (*((double *)GRN_BULK_HEAD(obj)))
 #define GRN_TIME_VALUE GRN_UINT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
-#define GRN_PTR_VALUE(obj) ((grn_obj *)GRN_BULK_HEAD(obj))
-#define GRN_PTR_VALUE_AT(obj,offset) (GRN_PTR_VALUE(obj) + (offset))
+#define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
+#define GRN_PTR_VALUE_AT(obj,offset) (((grn_obj **)GRN_BULK_HEAD(obj))[offset])
 
 #define GRN_INT32_PUT(ctx,obj,val) do {\
   int _val = (int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int));\
@@ -1680,6 +1683,7 @@ GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr,
                                   const char *name, unsigned name_size);
 GRN_API grn_obj *grn_expr_get_var(grn_ctx *ctx, grn_obj *expr,
                                   const char *name, unsigned name_size);
+GRN_API grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset);
 GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
 GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
 GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs);

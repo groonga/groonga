@@ -1794,7 +1794,7 @@ grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
-  grn_obj key, *expr, *val = NULL;
+  grn_obj key, *expr, *val = NULL, *v;
   GRN_TEXT_INIT(&key, 0);
   p = str;
   e = p + str_size;
@@ -1807,6 +1807,10 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
         val = &key;
       }
       p = get_token(ctx, val, p, e, '&');
+    }
+    if ((v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
+      v->header.type = GRN_PTR;
+      GRN_PTR_SET(ctx, v, ctx->impl->outbuf);
     }
     val = grn_expr_exec(ctx, expr);
   }

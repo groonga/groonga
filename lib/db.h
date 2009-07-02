@@ -196,9 +196,9 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 #define GRN_OBJ_RESOLVE(ctx,obj) \
   (((obj)->header.type != GRN_PTR)\
    ? (obj)\
-   : ((obj)->u.b.head\
-      ? (grn_obj *)(obj)->u.b.head\
-      : grn_ctx_at((ctx), (obj)->header.domain)))
+   : GRN_PTR_VALUE(obj)\
+   ? GRN_PTR_VALUE(obj)\
+      : grn_ctx_at((ctx), (obj)->header.domain))
 
 /* expr */
 
