@@ -2480,6 +2480,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
       *bidp = bid;
       GRN_ASSERT(posp < dv[ii->n_elements].data);
       ndf = ridp - dv[0].data;
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "chunk_merge ne=%d rid=%d bs=%d as=%d cs=%d us=%d ndf=%d sdf=%d", ii->n_elements, rid, bufsize, posp - dv[0].data, dv[ii->n_elements].data - dv[0].data, dv[1].data - dv[0].data, ndf, sdf);
     }
     datavec_fin(ctx, rdv);
     grn_io_win_unmap2(&sw);
@@ -2624,6 +2625,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     MERGE_BC(1);
     GRN_ASSERT(posp < dv[ii->n_elements].data);
     ndf = ridp - dv[0].data;
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer_merge ne=%d as=%d cs=%d us=%d ndf=%d sdf=%d", ii->n_elements, posp - dv[0].data, dv[ii->n_elements].data - dv[0].data, dv[1].data - dv[0].data, ndf, sdf);
 
     {
       grn_id tid = bt->tid & GRN_ID_MAX;
