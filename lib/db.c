@@ -4569,7 +4569,7 @@ grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t 
 {
   grn_expr *expr = NULL;
   if ((expr = GRN_MALLOCN(grn_expr, 1))) {
-    int size = 10;
+    int size = 256;
     expr->consts = NULL;
     expr->nconsts = 0;
     expr->names = NULL;
@@ -4706,7 +4706,9 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   for (i = 0; i < e->nconsts; i++) {
     grn_obj_close(ctx, &e->consts[i]);
   }
-  GRN_REALLOC(e->consts, 0);
+  if (e->consts) {
+    GRN_REALLOC(e->consts, 0);
+  }
   for (i = 0; i < e->nvars; i++) {
     grn_obj_close(ctx, &e->names[i]);
     grn_obj_close(ctx, &e->vars[i]);
@@ -4913,6 +4915,9 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
       }
       break;
     case GRN_OP_TABLE_CREATE :
+      PUSH_CODE(e, op, NULL);
+      break;
+    case GRN_OP_EXPR_GET_VAR :
       PUSH_CODE(e, op, NULL);
       break;
     case GRN_OP_VAR_SET_VALUE :
@@ -5309,6 +5314,39 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           res = grn_table_create(ctx, GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
                                  NULL, GRN_UINT32_VALUE(flags),
                                  key_type, GRN_UINT32_VALUE(value_size));
+          PUSH1(res);
+        }
+        code++;
+        break;
+      case GRN_OP_EXPR_GET_VAR :
+        {
+          grn_obj *name, *expr, *res;
+          POP1(name);
+          name = GRN_OBJ_RESOLVE(ctx, name);
+          POP1(expr);
+          expr = GRN_OBJ_RESOLVE(ctx, expr);
+          switch (name->header.domain) {
+          case GRN_DB_INT32 :
+            res = grn_expr_get_var_by_offset(ctx, expr, (unsigned int) GRN_INT32_VALUE(name));
+            break;
+          case GRN_DB_UINT32 :
+            res = grn_expr_get_var_by_offset(ctx, expr, (unsigned int) GRN_UINT32_VALUE(name));
+            break;
+          case GRN_DB_INT64 :
+            res = grn_expr_get_var_by_offset(ctx, expr, (unsigned int) GRN_INT64_VALUE(name));
+            break;
+          case GRN_DB_UINT64 :
+            res = grn_expr_get_var_by_offset(ctx, expr, (unsigned int) GRN_UINT64_VALUE(name));
+            break;
+          case GRN_DB_SHORTTEXT :
+          case GRN_DB_TEXT :
+          case GRN_DB_LONGTEXT :
+            res = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name));
+            break;
+          default :
+            ERR(GRN_INVALID_ARGUMENT, "invalid type");
+            goto exit;
+          }
           PUSH1(res);
         }
         code++;
@@ -5793,8 +5831,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
       }
     }
     res = s0;
-    if (res) { sp--; }
-    ctx->impl->stack_curr = sp - ctx->impl->stack;
+    ctx->impl->stack_curr = sp == ctx->impl->stack ? 0 : sp - ctx->impl->stack - 1;
   }
 exit :
   GRN_API_RETURN(res);

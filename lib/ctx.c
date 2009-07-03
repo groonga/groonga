@@ -1790,6 +1790,9 @@ get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
   return p;
 }
 
+// todo : if obj is already initialized, reuse it
+#define GRN_TEXT_REINIT(obj) GRN_OBJ_INIT((obj), GRN_BULK, GRN_OBJ_EXPRVALUE, GRN_DB_TEXT)
+
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
@@ -1806,6 +1809,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
       if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
         val = &key;
       }
+      GRN_TEXT_REINIT(val);
       p = get_token(ctx, val, p, e, '&');
     }
     if ((v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
