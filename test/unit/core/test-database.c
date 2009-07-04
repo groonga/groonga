@@ -23,16 +23,48 @@
 
 void test_domain(void);
 void test_range(void);
+void test_cursor(void);
+void test_multi_database(void);
 
-static grn_ctx *context;
-static grn_obj *database;
+static gchar *tmp_directory;
+
+static grn_ctx *context, *context2;
+static grn_obj *database, *database2;
+
+void
+cut_startup(void)
+{
+  tmp_directory = g_build_filename(grn_test_get_base_dir(),
+                                   "tmp",
+                                   "test-database",
+                                   NULL);
+}
+
+void
+cut_shutdown(void)
+{
+  g_free(tmp_directory);
+}
+
+static void
+remove_tmp_directory(void)
+{
+  cut_remove_path(tmp_directory, NULL);
+}
 
 void
 cut_setup(void)
 {
+  remove_tmp_directory();
+  g_mkdir_with_parents(tmp_directory, 0700);
+
   context = g_new0(grn_ctx, 1);
   grn_ctx_init(context, 0);
   database = NULL;
+
+  context2 = g_new0(grn_ctx, 1);
+  grn_ctx_init(context2, 0);
+  database2 = NULL;
 }
 
 void
@@ -42,6 +74,13 @@ cut_teardown(void)
     grn_ctx_fin(context);
     g_free(context);
   }
+
+  if (context2) {
+    grn_ctx_fin(context2);
+    g_free(context2);
+  }
+
+  remove_tmp_directory();
 }
 
 void
@@ -66,4 +105,30 @@ test_cursor(void)
   c = grn_table_cursor_open(context, database, NULL, 0, NULL, 0, 0);
   cut_assert_true(grn_table_cursor_next(context, c));
   grn_table_cursor_close(context, c);
+}
+
+void
+test_open_database(void)
+{
+  const gchar table_name[] = "<users>";
+  const gchar *path;
+
+  path = cut_build_path(tmp_directory, "database.groonga", NULL);
+  database = grn_db_create(context, path, NULL);
+  grn_test_assert_not_null(context, database);
+  grn_test_assert_not_null(context,
+                           grn_table_create(context,
+                                            table_name,
+                                            strlen(table_name),
+                                            NULL,
+                                            GRN_OBJ_TABLE_HASH_KEY,
+                                            grn_ctx_at(context, GRN_DB_UINT32),
+                                            0));
+
+  database2 = grn_db_open(context2, path);
+  grn_test_assert_not_null(context2, database2);
+  grn_test_assert_not_null(context2,
+                           grn_ctx_get(context2,
+                                       table_name,
+                                       strlen(table_name)));
 }
