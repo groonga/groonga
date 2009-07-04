@@ -24,7 +24,8 @@
 void test_domain(void);
 void test_range(void);
 void test_cursor(void);
-void test_multi_database(void);
+void test_get_persistent_object_from_opened_database(void);
+void test_recreate_temporary_object_on_opened_database(void);
 
 static gchar *tmp_directory;
 
@@ -108,7 +109,34 @@ test_cursor(void)
 }
 
 void
-test_open_database(void)
+test_get_persistent_object_from_opened_database(void)
+{
+  const gchar table_name[] = "<users>";
+  const gchar *path;
+
+  path = cut_build_path(tmp_directory, "database.groonga", NULL);
+  database = grn_db_create(context, path, NULL);
+  grn_test_assert_not_null(context, database);
+  grn_test_assert_not_null(context,
+                           grn_table_create(context,
+                                            table_name,
+                                            strlen(table_name),
+                                            NULL,
+                                            GRN_OBJ_TABLE_HASH_KEY |
+                                            GRN_OBJ_PERSISTENT,
+                                            grn_ctx_at(context, GRN_DB_UINT32),
+                                            0));
+
+  database2 = grn_db_open(context2, path);
+  grn_test_assert_not_null(context2, database2);
+  grn_test_assert_not_null(context2,
+                           grn_ctx_get(context2,
+                                       table_name,
+                                       strlen(table_name)));
+}
+
+void
+test_recreate_temporary_object_on_opened_database(void)
 {
   const gchar table_name[] = "<users>";
   const gchar *path;
@@ -127,8 +155,16 @@ test_open_database(void)
 
   database2 = grn_db_open(context2, path);
   grn_test_assert_not_null(context2, database2);
+  grn_test_assert_null(context2,
+                       grn_ctx_get(context2,
+                                   table_name,
+                                   strlen(table_name)));
   grn_test_assert_not_null(context2,
-                           grn_ctx_get(context2,
-                                       table_name,
-                                       strlen(table_name)));
+                           grn_table_create(context,
+                                            table_name,
+                                            strlen(table_name),
+                                            NULL,
+                                            GRN_OBJ_TABLE_HASH_KEY,
+                                            grn_ctx_at(context, GRN_DB_UINT32),
+                                            0));
 }
