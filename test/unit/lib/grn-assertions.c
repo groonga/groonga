@@ -96,3 +96,35 @@ grn_test_assert_context_helper (grn_ctx *context, const gchar *expression)
                                   context->errfunc, context->errbuf));
   }
 }
+
+void
+grn_test_assert_null_helper (grn_ctx *context,
+                             grn_obj *object, const gchar *expression)
+{
+  if (!object) {
+    cut_test_pass();
+  } else {
+    GString *inspected;
+    const gchar *taken_inspected;
+
+    inspected = g_string_new(NULL);
+    grn_test_object_inspect(inspected, context, object);
+    taken_inspected = cut_take_string(inspected->str);
+    cut_test_fail(cut_take_printf("expected: <%s> is NULL\n"
+                                  "  actual: <%s>",
+                                  expression,
+                                  taken_inspected));
+  }
+}
+
+void
+grn_test_assert_not_null_helper (grn_ctx *context,
+                                 grn_obj *object, const gchar *expression)
+{
+  if (object) {
+    cut_test_pass();
+  } else {
+    cut_test_fail(cut_take_printf("expected: <%s> is not NULL",
+                                  expression));
+  }
+}

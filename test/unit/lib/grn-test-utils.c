@@ -471,3 +471,96 @@ grn_test_pat_get_pairs(grn_ctx *context, grn_obj *patricia_trie)
 
   return pairs;
 }
+
+const gchar *
+grn_test_type_inspect (grn_ctx *context, unsigned char type)
+{
+  switch (type) {
+  case GRN_VOID:
+    return "void";
+  case GRN_ATOM:
+    return "atom";
+  case GRN_BULK:
+    return "bulk";
+  case GRN_PTR:
+    return "ptr";
+  case GRN_UVECTOR:
+    return "uvector";
+  case GRN_PVECTOR:
+    return "pvector";
+  case GRN_MSG:
+    return "msg";
+  case GRN_QUERY:
+    return "query";
+  case GRN_ACCESSOR:
+    return "accessor";
+  case GRN_SNIP:
+    return "snip";
+  case GRN_PATSNIP:
+    return "patsnip";
+  case GRN_CURSOR_TABLE_HASH_KEY:
+    return "cursor-table-hash-key";
+  case GRN_CURSOR_TABLE_PAT_KEY:
+    return "cursor-table-pat-key";
+  case GRN_CURSOR_TABLE_NO_KEY:
+    return "cursor-table-no-key";
+  case GRN_CURSOR_COLUMN_INDEX:
+    return "cursor-column-index";
+  case GRN_TYPE:
+    return "type";
+  case GRN_PROC:
+    return "proc";
+  case GRN_EXPR:
+    return "expr";
+  case GRN_TABLE_HASH_KEY:
+    return "table-hash-key";
+  case GRN_TABLE_PAT_KEY:
+    return "table-pat-key";
+  case GRN_TABLE_NO_KEY:
+    return "table-no-key";
+  case GRN_DB:
+    return "db";
+  case GRN_COLUMN_FIX_SIZE:
+    return "column-fix-size";
+  case GRN_COLUMN_VAR_SIZE:
+    return "column-var-size";
+  case GRN_COLUMN_INDEX:
+    return "column-index";
+  default:
+    return "unknown";
+  }
+}
+
+void
+grn_test_object_inspect (GString *output, grn_ctx *context, grn_obj *object)
+{
+  grn_id domain;
+
+  if (!object) {
+    g_string_append(output, "<NULL>");
+    return;
+  }
+
+  g_string_append(output, "#<");
+  g_string_append_printf(output, "%s",
+                         grn_test_type_inspect(context, object->header.type));
+  g_string_append_printf(output, ":%p ", object);
+  g_string_append_printf(output, "flags: 0x%x, ", object->header.flags);
+
+  g_string_append(output, "domain: ");
+  domain = object->header.domain;
+  if (domain == GRN_ID_NIL) {
+    g_string_append(output, "<nil>");
+  } else {
+    grn_obj *domain_object = NULL;
+
+    if (context)
+      domain_object = grn_ctx_at(context, domain);
+    if (domain_object)
+      grn_test_object_inspect(output, context, domain_object);
+    else
+      g_string_append_printf(output, "%u", domain);
+  }
+
+  g_string_append(output, ">");
+}

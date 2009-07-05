@@ -58,5 +58,11 @@ GList      *grn_test_pat_cursor_get_pairs (grn_ctx          *context,
                                            grn_table_cursor *cursor);
 GHashTable *grn_test_pat_get_pairs        (grn_ctx          *context,
                                            grn_obj          *patricia_trie);
+const gchar *grn_test_type_inspect        (grn_ctx          *context,
+                                           unsigned char     type);
+void        grn_test_object_inspect       (GString          *output,
+                                           grn_ctx          *context,
+                                           grn_obj          *object);
+
 
 #endif
