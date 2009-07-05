@@ -318,12 +318,7 @@ void grn_obj_patsnip_spec_close(grn_ctx *ctx, patsnip_spec *ss);
 } while(0)
 
 #define GRN_STR2OBJ(ctx,bulk,o) do {\
-  GRN_TEXT_PUTC(ctx, (bulk), '\0'); \
-  GRN_CELL_NEW(ctx, (o));\
-  (o)->header.impl_flags = GRN_OBJ_ALLOCATED;\
-  (o)->header.type = GRN_CELL_STR;\
-  (o)->u.b.value = GRN_BULK_HEAD(bulk);\
-  (o)->u.b.size = GRN_BULK_VSIZE(bulk) - 1;\
+  (o) = grn_ql_mk_string(ctx, GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk));\
 } while(0)
 
 #define CONS(a,b) (grn_cell_cons(ctx, a, b))
