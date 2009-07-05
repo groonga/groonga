@@ -286,6 +286,7 @@ grn_ctx_init(grn_ctx *ctx, int flags)
     grn_ctx_ql_init(ctx, flags);
     if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   }
+  ctx->opaque = NULL;
   MUTEX_LOCK(grn_glock);
   ctx->next = grn_gctx.next;
   ctx->prev = &grn_gctx;

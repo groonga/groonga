@@ -142,6 +142,7 @@ struct _grn_ctx {
   unsigned int subno;
   unsigned int seqno2;
   unsigned int errline;
+  void *opaque;
   grn_ctx *prev;
   grn_ctx *next;
   const char *errfile;
@@ -150,6 +151,8 @@ struct _grn_ctx {
   void *trace[16];
   char errbuf[GRN_CTX_MSGSIZE];
 };
+
+#define GRN_CTX_USER_DATA(ctx) ((ctx)->opaque)
 
 /**
  * grn_ctx_init:
