@@ -144,7 +144,7 @@ test_recreate_temporary_object_on_opened_database(void)
   path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, path, NULL);
   grn_test_assert_not_null(context, database);
-  grn_test_assert_not_null(context,
+  grn_test_assert_null(context,
                            grn_table_create(context,
                                             table_name,
                                             strlen(table_name),
@@ -159,7 +159,7 @@ test_recreate_temporary_object_on_opened_database(void)
                        grn_ctx_get(context2,
                                    table_name,
                                    strlen(table_name)));
-  grn_test_assert_not_null(context2,
+  grn_test_assert_null(context2,
                            grn_table_create(context,
                                             table_name,
                                             strlen(table_name),

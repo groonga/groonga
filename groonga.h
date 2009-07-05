@@ -326,6 +326,7 @@ struct _grn_obj {
 /**
  * grn_db_create:
  * @path: 作成するdbを格納するファイルパス。NULLならtemporary dbとなる。
+ * NULL以外のパスを指定した場合はpersistent dbとなる。
  * @optarg: 作成するdbの組み込み型の名前を変更する時に指定する。
  * optarg.builtin_type_namesには組み込み型の名前となるnul終端文字列の配列を指定する。
  * optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
@@ -460,6 +461,8 @@ GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
 /**
  * grn_table_create:
  * @name: 作成するtableの名前。NULLなら無名tableとなる。
+ *        persistent dbに対して名前をありのtableを作成するときには、
+ *        flagsにGRN_OBJ_PERSISTENTが指定されていなければならない。
  * @path: 作成するtableのファイルパス。
  *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効。
  *        NULLなら自動的にファイルパスが付与される。

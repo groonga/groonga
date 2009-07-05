@@ -540,6 +540,10 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
       ERR(GRN_INVALID_ARGUMENT, "path assigend for temporary table");
       GRN_API_RETURN(NULL);
     }
+    if (PERSISTENT_DB_P(db) && name && name_size) {
+      ERR(GRN_INVALID_ARGUMENT, "name assigend for temporary table");
+      GRN_API_RETURN(NULL);
+    }
   }
   calc_rec_size(flags, &max_n_subrecs, &subrec_size,
                 &subrec_offset, &key_size, &value_size);
