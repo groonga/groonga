@@ -1765,32 +1765,6 @@ grn_ctx_qe_get(grn_ctx *ctx, const char *key, int key_size)
 }
 */
 
-static const char *
-get_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
-{
-  while (p < e) {
-    if (*p == d) {
-      p++; break;
-    } else if (*p == '+') {
-      GRN_TEXT_PUTC(ctx, buf, ' ');
-      p++;
-    } else if (*p == '%' && p + 3 <= e) {
-      const char *r;
-      unsigned int c = grn_htoui(p + 1, p + 3, &r);
-      if (p + 3 == r) {
-        GRN_TEXT_PUTC(ctx, buf, c);
-      } else {
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid % sequence (%c%c)", p + 1, p + 2);
-      }
-      p += 3;
-    } else {
-      GRN_TEXT_PUTC(ctx, buf, *p);
-      p++;
-    }
-  }
-  return p;
-}
-
 // todo : if obj is already initialized, reuse it
 #define GRN_TEXT_REINIT(obj) GRN_OBJ_INIT((obj), GRN_BULK, GRN_OBJ_EXPRVALUE, GRN_DB_TEXT)
 
@@ -1802,16 +1776,16 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
   GRN_TEXT_INIT(&key, 0);
   p = str;
   e = p + str_size;
-  p = get_token(ctx, &key, p, e, '?');
+  p = get_uri_token(ctx, &key, p, e, '?');
   if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
     while (p < e) {
       GRN_BULK_REWIND(&key);
-      p = get_token(ctx, &key, p, e, '=');
+      p = get_uri_token(ctx, &key, p, e, '=');
       if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
         val = &key;
       }
       GRN_TEXT_REINIT(val);
-      p = get_token(ctx, val, p, e, '&');
+      p = get_uri_token(ctx, val, p, e, '&');
     }
     if ((v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       v->header.type = GRN_PTR;

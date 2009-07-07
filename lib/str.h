@@ -92,6 +92,9 @@ grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int 
   }\
 }
 
+const char *get_uri_token(grn_ctx *ctx, grn_obj *buf,
+                          const char *p, const char *e, char d);
+
 #ifdef __cplusplus
 }
 #endif

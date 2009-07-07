@@ -2151,3 +2151,29 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
   grn_obj_close(ctx, &buf);
   return GRN_SUCCESS;
 }
+
+const char *
+get_uri_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
+{
+  while (p < e) {
+    if (*p == d) {
+      p++; break;
+    } else if (*p == '+') {
+      GRN_TEXT_PUTC(ctx, buf, ' ');
+      p++;
+    } else if (*p == '%' && p + 3 <= e) {
+      const char *r;
+      unsigned int c = grn_htoui(p + 1, p + 3, &r);
+      if (p + 3 == r) {
+        GRN_TEXT_PUTC(ctx, buf, c);
+      } else {
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid \% sequence (%c%c)", p + 1, p + 2);
+      }
+      p += 3;
+    } else {
+      GRN_TEXT_PUTC(ctx, buf, *p);
+      p++;
+    }
+  }
+  return p;
+}
