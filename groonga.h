@@ -395,6 +395,12 @@ GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, unsigned name_size)
 
 typedef enum {
   GRN_DB_VOID = 0,
+  GRN_DB_OBJECT,
+  GRN_DB_BOOL,
+  GRN_DB_INT8,
+  GRN_DB_UINT8,
+  GRN_DB_INT16,
+  GRN_DB_UINT16,
   GRN_DB_INT32,
   GRN_DB_UINT32,
   GRN_DB_INT64,

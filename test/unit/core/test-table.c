@@ -112,10 +112,10 @@ test_temporary_table_default_tokenizer(gpointer data)
                            flags,
                            NULL, sizeof(grn_id));
   grn_obj_set_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER,
-                   OBJECT("<token:trigram>"));
+                   OBJECT("Token:trigram"));
   tokenizer = grn_obj_get_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
   grn_obj_name(&context, tokenizer, name, sizeof(name));
-  cut_assert_equal_string("<token:trigram>", name);
+  cut_assert_equal_string("Token:trigram", name);
 }
 
 void
@@ -140,7 +140,7 @@ test_temporary_table_add(gpointer data)
 
   table = grn_table_create(&context, NULL, 0, NULL,
                            flags,
-                           OBJECT("<shorttext>"),
+                           OBJECT("Shorttext"),
                            sizeof(grn_id));
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
     grn_table_add(&context, table, NULL, 0, NULL);

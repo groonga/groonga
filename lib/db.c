@@ -3648,8 +3648,9 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
   if (id & GRN_OBJ_TMP_OBJECT) {
     if (ctx->impl->values) {
       grn_tmp_db_obj *tmp_obj;
-      tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, id & ~GRN_OBJ_TMP_OBJECT);
-      res = (grn_obj *)tmp_obj->obj;
+      if ((tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, id & ~GRN_OBJ_TMP_OBJECT))) {
+        res = (grn_obj *)tmp_obj->obj;
+      }
     }
   } else {
     grn_obj *db = ctx->impl->db;
@@ -4348,42 +4349,59 @@ grn_rc
 grn_db_init_builtin_types(grn_ctx *ctx)
 {
   grn_obj *obj;
-  obj = deftype(ctx, "<int>",
+  obj = deftype(ctx, "Object",
+                GRN_OBJ_KEY_UINT, sizeof(uint64_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_OBJECT) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "Bool",
+                GRN_OBJ_KEY_UINT, sizeof(uint8_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_BOOL) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "Int8",
+                GRN_OBJ_KEY_INT, sizeof(int8_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT8) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "Uint8",
+                GRN_OBJ_KEY_UINT, sizeof(uint8_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT8) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "Int16",
+                GRN_OBJ_KEY_INT, sizeof(int16_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_INT16) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "Uint16",
+                GRN_OBJ_KEY_UINT, sizeof(uint16_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT16) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "Int32",
                 GRN_OBJ_KEY_INT, sizeof(int32_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_INT32) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<uint>",
+  obj = deftype(ctx, "Uint32",
                 GRN_OBJ_KEY_UINT, sizeof(uint32_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT32) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<int64>",
+  obj = deftype(ctx, "Int64",
                 GRN_OBJ_KEY_INT, sizeof(int64_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_INT64) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<uint64>",
+  obj = deftype(ctx, "Uint64",
                 GRN_OBJ_KEY_UINT, sizeof(uint64_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_UINT64) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<float>",
+  obj = deftype(ctx, "Float",
                 GRN_OBJ_KEY_FLOAT, sizeof(double));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<time>",
+  obj = deftype(ctx, "Time",
                 GRN_OBJ_KEY_UINT, sizeof(grn_timeval));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TIME) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<shorttext>",
+  obj = deftype(ctx, "Shorttext",
                 GRN_OBJ_KEY_VAR_SIZE, GRN_TABLE_MAX_KEY_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_SHORTTEXT) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<text>",
+  obj = deftype(ctx, "Text",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 16);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TEXT) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "<longtext>",
+  obj = deftype(ctx, "Longtext",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONGTEXT) { return GRN_FILE_CORRUPT; }
   grn_db_init_builtin_tokenizers(ctx);
   {
     grn_obj *db = ctx->impl->db;
     grn_id id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys);
-    char buf[] = "<sys:00>";
+    char buf[] = "Sys:00";
     while (id < N_RESERVED_TYPES) {
-      grn_itoh(++id, buf + 5, 2);
-      buf[5 + 2] = '>';
-      grn_obj_register(ctx, db, buf, 8);
+      grn_itoh(++id, buf + 4, 2);
+      grn_obj_register(ctx, db, buf, 6);
     }
   }
   return ctx->rc;

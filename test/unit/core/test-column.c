@@ -44,7 +44,7 @@ create_bookmarks_table(void)
                                strlen(bookmarks_table_name),
                                NULL,
                                GRN_OBJ_TABLE_HASH_KEY,
-                               LOOKUP("<shorttext>"),
+                               LOOKUP("Shorttext"),
                                1024);
   grn_test_assert_context(&context);
   cut_set_message("%s", cut_take_string(grn_collect_logger_to_string(logger)));
@@ -61,7 +61,7 @@ add_count_column_to_bookmarks_table (void)
                                    count_column_name,
                                    strlen(count_column_name),
                                    NULL, 0,
-                                   LOOKUP("<int>"));
+                                   LOOKUP("Int32"));
   grn_test_assert_context(&context);
   cut_set_message("%s", cut_take_string(grn_collect_logger_to_string(logger)));
   cut_assert_not_null(count_column);

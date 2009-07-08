@@ -1315,7 +1315,7 @@ qquote_uquotelist(grn_ctx *ctx, grn_cell *cl, grn_cell *pcl, int level) {
   }
 }
 
-#define GC_THRESHOLD 1000000
+#define GC_THRESHOLD 1000000000
 
 static grn_cell *
 opexe(grn_ctx *ctx)
