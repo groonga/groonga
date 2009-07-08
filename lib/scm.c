@@ -1326,9 +1326,9 @@ opexe(grn_ctx *ctx)
       grn_obj buf;
       GRN_TEXT_INIT(&buf, 0);
       grn_obj_inspect(ctx, ctx->impl->envir, &buf, GRN_OBJ_INSPECT_ESC);
-      *buf.u.b.curr = '\0';
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "mgc > ncells=%d envir=<%s>", ctx->impl->n_entries, GRN_BULK_HEAD(&buf));
-      grn_bulk_fin(ctx, &buf);
+      GRN_TEXT_PUTC(ctx, &buf, '\0');
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "mgc > ncells=%d envir=<%s>", ctx->impl->n_entries, GRN_TEXT_VALUE(&buf));
+      GRN_OBJ_FIN(ctx, &buf);
     }
     grn_ctx_mgc(ctx);
     if (ctx->impl->gc_verbose) {

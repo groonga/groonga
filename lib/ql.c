@@ -997,26 +997,30 @@ grn_ql_obj_key(grn_ctx *ctx, grn_cell *obj, grn_obj *value)
 inline static grn_cell *
 obj2oid(grn_ctx *ctx, grn_cell *obj, grn_cell *res)
 {
-  char buf[32];
-  grn_obj bogus_buf;
-  bogus_buf.u.b.head = buf;
-  bogus_buf.u.b.curr = buf;
-  bogus_buf.u.b.tail = buf + 32;
+  grn_obj buf;
   if (obj->header.type != GRN_CELL_OBJECT) { return F; }
-  grn_obj_inspect(ctx, obj, &bogus_buf, GRN_OBJ_INSPECT_ESC);
+  GRN_TEXT_INIT(&buf, 0);
+  grn_obj_inspect(ctx, obj, &buf, GRN_OBJ_INSPECT_ESC);
   if (res) {
-    uint32_t size = GRN_BULK_VSIZE(&bogus_buf);
+    uint32_t size = GRN_BULK_VSIZE(&buf);
     char *value = GRN_MALLOC(size + 1);
-    if (!value) { return F; }
+    if (!value) {
+      res = F;
+      goto exit;
+    }
     grn_cell_clear(ctx, res);
     res->header.impl_flags = GRN_OBJ_ALLOCATED;
     res->header.type = GRN_CELL_STR;
     res->u.b.size = size;
     res->u.b.value = value;
-    memcpy(res->u.b.value, buf, res->u.b.size + 1);
+    memcpy(res->u.b.value, GRN_TEXT_VALUE(&buf), res->u.b.size + 1);
   } else {
-    if (!(res = grn_ql_mk_string(ctx, buf, GRN_BULK_VSIZE(&bogus_buf)))) { return F; }
+    if (!(res = grn_ql_mk_string(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_VSIZE(&buf)))) {
+      res = F;
+    }
   }
+exit :
+  GRN_OBJ_FIN(ctx, &buf);
   return res;
 }
 
