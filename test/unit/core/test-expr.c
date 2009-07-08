@@ -508,7 +508,7 @@ test_op_table_scan(void)
   grn_expr_append_obj(&context, expr, res);
   GRN_UINT32_SET(&context, &intbuf, GRN_SEL_OR);
   grn_expr_append_const(&context, expr, &intbuf);
-  grn_expr_append_op(&context, expr, GRN_OP_TABLE_SCAN, 4);
+  grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
   grn_expr_exec(&context, expr);
 
@@ -571,7 +571,7 @@ test_search_scan(void)
   grn_expr_append_obj(&context, expr, v);
   GRN_UINT32_SET(&context, &intbuf, GRN_SEL_AND);
   grn_expr_append_const(&context, expr, &intbuf);
-  grn_expr_append_op(&context, expr, GRN_OP_TABLE_SCAN, 4);
+  grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
   grn_expr_append_obj(&context, expr, v);
   GRN_TEXT_SETS(&context, &textbuf, ".size .:score .body");
@@ -633,7 +633,7 @@ test_scan_search(void)
   grn_expr_append_obj(&context, expr, v);
   GRN_UINT32_SET(&context, &intbuf, GRN_SEL_OR);
   grn_expr_append_const(&context, expr, &intbuf);
-  grn_expr_append_op(&context, expr, GRN_OP_TABLE_SCAN, 4);
+  grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
   grn_expr_append_obj(&context, expr, index_body);
   GRN_TEXT_SETS(&context, &textbuf, "moge");

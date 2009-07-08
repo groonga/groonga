@@ -3750,10 +3750,11 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
       }
       res = *vp;
       if (res && res->header.type == GRN_EXPR) {
-        if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, NULL)) {
+        int added;
+        if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, &added)) {
           res = NULL;
         } else {
-          *vp = grn_expr_dup(ctx, res);
+          if (added) { *vp = grn_expr_dup(ctx, res); }
           res = *vp;
         }
       }
@@ -4946,7 +4947,7 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
     case GRN_OP_OBJ_SEARCH :
       PUSH_CODE(e, op, NULL);
       break;
-    case GRN_OP_TABLE_SCAN :
+    case GRN_OP_TABLE_SELECT :
       PUSH_CODE(e, op, NULL);
       break;
     case GRN_OP_TABLE_SORT :
@@ -5359,7 +5360,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         {
           grn_obj *value, *var;
           POP1(var);
-          var = GRN_OBJ_RESOLVE(ctx, var);
+          // var = GRN_OBJ_RESOLVE(ctx, var);
           POP1(value);
           value = GRN_OBJ_RESOLVE(ctx, value);
           if (GRN_DB_OBJP(value)) {
@@ -5368,6 +5369,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             GRN_PTR_SET(ctx, var, value);
           } else {
             // todo : copy obj type.
+            var->header.type = value->header.type;
+            var->header.domain = value->header.domain;
             GRN_TEXT_SET(ctx, var, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
           }
         }
@@ -5417,7 +5420,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         }
         code++;
         break;
-      case GRN_OP_TABLE_SCAN :
+      case GRN_OP_TABLE_SELECT :
         {
           grn_obj *op, *res, *expr, *table;
           POP1(op);
