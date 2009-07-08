@@ -2233,6 +2233,7 @@ typedef struct {
   grn_hash *h;
 } lexicon_deletable_arg;
 
+#ifdef CASCADE_DELETE_LEXICON
 static int
 lexicon_deletable(grn_ctx *ctx, grn_obj *lexicon, grn_id tid, void *arg)
 {
@@ -2256,6 +2257,7 @@ lexicon_deletable(grn_ctx *ctx, grn_obj *lexicon, grn_id tid, void *arg)
     return 0;
   }
 }
+#endif /* CASCADE_DELETE_LEXICON */
 
 inline static void
 lexicon_delete(grn_ctx *ctx, grn_ii *ii, uint32_t tid, grn_hash *h)
@@ -2492,7 +2494,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
     uint32_t encsize;
     uint32_t np = posp - dv[ii->n_elements - 1].data;
     uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
-    uint32_t f_d = ((ndf < 16) || (lid.rid >= 256 * ndf)) ? 0 : USE_P_ENC;
+    uint32_t f_d = ((ndf < 16) || (ndf <= (lid.rid >> 8))) ? 0 : USE_P_ENC;
     dv[j].data_size = ndf; dv[j++].flags = f_d;
     if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       dv[j].data_size = ndf; dv[j++].flags = f_s;
@@ -2502,7 +2504,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
       dv[j].data_size = ndf; dv[j++].flags = f_s;
     }
     if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-      uint32_t f_p = ((np < 32) || (spos >= 8192 * np)) ? 0 : USE_P_ENC;
+      uint32_t f_p = ((np < 32) || (np <= (spos >> 13))) ? 0 : USE_P_ENC;
       dv[j].data_size = np; dv[j].flags = f_p|ODD;
     }
     if ((enc = GRN_MALLOC((ndf * 4 + np) * 2))) {
@@ -2656,7 +2658,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           uint8_t *dcp0;
           uint32_t encsize;
           uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
-          uint32_t f_d = ((ndf < 16) || (lid.rid >= 256 * ndf)) ? 0 : USE_P_ENC;
+          uint32_t f_d = ((ndf < 16) || (ndf <= (lid.rid >> 8))) ? 0 : USE_P_ENC;
           dv[j].data_size = ndf; dv[j++].flags = f_d;
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             dv[j].data_size = ndf; dv[j++].flags = f_s;
@@ -2667,7 +2669,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
           if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
             uint32_t np = posp - dv[ii->n_elements - 1].data;
-            uint32_t f_p = ((np < 32) || (spos >= 8192 * np)) ? 0 : USE_P_ENC;
+            uint32_t f_p = ((np < 32) || (np <= (spos >> 13))) ? 0 : USE_P_ENC;
             dv[j].data_size = np; dv[j].flags = f_p|ODD;
           }
           dcp0 = dcp;
@@ -2682,6 +2684,41 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             }
           }
           encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
+
+          if (sb->header.chunk_size + S_SEGMENT <= (dcp - dc) + encsize) {
+            int i;
+            char buf[255], *bufp;
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "cs(%d)+(%d)=(%d)<=(%d)+(%d)=(%d)",
+                    sb->header.chunk_size, S_SEGMENT, sb->header.chunk_size + S_SEGMENT,
+                    (dcp - dc), encsize, (dcp - dc) + encsize);
+            for (j = 0; j < ii->n_elements; j++) {
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "rdv[%d] data_size=%d, flags=%d",
+                      j, rdv[j].data_size, rdv[j].flags);
+              for (i = 0, bufp = buf; i < rdv[j].data_size;) {
+                bufp += sprintf(bufp, " %d", rdv[j].data[i]);
+                i++;
+                if (!(i % 32) || i == rdv[j].data_size) {
+                  GRN_LOG(ctx, GRN_LOG_NOTICE, "rdv[%d].data[%d]%s", j, i, buf);
+                  bufp = buf;
+                }
+              }
+            }
+
+            for (j = 0; j < ii->n_elements; j++) {
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "dv[%d] data_size=%d, flags=%d",
+                      j, dv[j].data_size, dv[j].flags);
+              for (i = 0, bufp = buf; i < dv[j].data_size;) {
+                bufp += sprintf(bufp, " %d", dv[j].data[i]);
+                i++;
+                if (!(i % 32) || i == dv[j].data_size) {
+                  GRN_LOG(ctx, GRN_LOG_NOTICE, "dv[%d].data[%d]%s", j, i, buf);
+                  bufp = buf;
+                }
+              }
+            }
+
+          }
+
           if (encsize > CHUNK_SPLIT_THRESHOLD &&
               (cinfo || (cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) &&
               !chunk_flush(ctx, ii, &cinfo[nchunks], dcp, encsize)) {
@@ -3288,7 +3325,6 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           rc = GRN_NO_MEMORY_AVAILABLE;
           goto exit;
         }
-        if (tid == 62) { GRN_LOG(ctx, GRN_LOG_NOTICE, "b->header.buffer_free=%d size=%d", b->header.buffer_free, size); }
         if (b->header.buffer_free < size) {
           int bfb = b->header.buffer_free;
           GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing a[0]=%d seg=%d(%p) free=%d",

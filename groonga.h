@@ -906,6 +906,7 @@ GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
  * @type: カラム値の型。
  *
  * 既存の永続的なcolumnを、tableのnameに対応するcolumnとして開く
+ * 永続dbに登録されている永続テーブルのカラムを開く場合はgrn_ctx_get()を使用するのが望ましい。
  **/
 GRN_API grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
                                  const char *name, unsigned name_size,
