@@ -388,6 +388,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max, in
   c->array = array;
   c->ctx = ctx;
   c->obj.header.flags = flags;
+  c->obj.header.domain = GRN_ID_NIL;
   if (flags & GRN_CURSOR_DESCENDING) {
     c->dir = -1;
     if (max) {
@@ -1476,6 +1477,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   c->hash = hash;
   c->ctx = ctx;
   c->obj.header.flags = flags;
+  c->obj.header.domain = GRN_ID_NIL;
   if (flags & GRN_CURSOR_DESCENDING) {
     c->dir = -1;
     if (max) {
