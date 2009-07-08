@@ -1678,6 +1678,7 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
   c->ss = NULL;
   c->limit = 0;
   c->curr_rec = GRN_ID_NIL;
+  c->obj.header.domain = GRN_ID_NIL;
   if (flags & GRN_CURSOR_DESCENDING) {
     if (min) {
       set_cursor_ascend(ctx, pat, c, min, min_size, flags);
