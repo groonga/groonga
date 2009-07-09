@@ -294,114 +294,169 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otyp
 /* TODO: use column */
 /* TODO: use expr */
 /* TODO: use table_cursor flags */
+/* if offset < 0, order desc. */
+/* if count == -1, show all records */
 static void
-cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj *buf, grn_output_type otype)
+cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
+               char *sort_column_name, unsigned sort_column_name_len,
+               int offset, int count,
+               grn_obj *buf, grn_output_type otype)
 {
   grn_obj *table;
+  if (!offset || count < -1) { return; }
   if ((table = grn_ctx_get(ctx, table_name, table_name_len))) {
     grn_hash *col_ids;
     if ((col_ids = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                    GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
       int ncols;
       if ((ncols = grn_table_columns(ctx, table, NULL, 0, (grn_obj *)col_ids))) {
-        grn_table_cursor *cur;
         grn_obj **cols;
         if ((cols = (grn_obj **)GRN_MALLOC(sizeof(grn_obj *) * (ncols + 2)))) {
-          grn_obj **last_cols = cols;
-          char line_delimiter, column_delimiter;
-          switch (otype) {
-          case grn_output_tsv:
-            line_delimiter = '\n';
-            column_delimiter = '\t';
-            break;
-          case grn_output_json:
-            line_delimiter = ',';
-            column_delimiter = ',';
-            GRN_TEXT_PUTC(ctx, buf, '[');
-            break;
-          }
+          grn_obj *sort;
+          if ((sort = grn_table_create(ctx, NULL, 0, NULL,
+                                       GRN_OBJ_TABLE_NO_KEY,
+                                       NULL, sizeof(grn_id)))) {
+            int limit;
+            grn_obj *sort_col = NULL;
+            grn_obj **last_cols = cols;
+            char line_delimiter, column_delimiter;
 
-          /* fetch columns */
-          {
-            grn_id *key;
-            if (otype == grn_output_json) {
+            switch (otype) {
+            case grn_output_tsv:
+              line_delimiter = '\n';
+              column_delimiter = '\t';
+              break;
+            case grn_output_json:
+              line_delimiter = ',';
+              column_delimiter = ',';
               GRN_TEXT_PUTC(ctx, buf, '[');
+              break;
             }
-            grn_text_esc(ctx, buf, "@id", 3);
-            GRN_TEXT_PUTC(ctx, buf, column_delimiter);
-            grn_text_esc(ctx, buf, "@value", 6);
 
-            GRN_HASH_EACH(col_ids, id, &key, NULL, NULL, {
-              if ((*last_cols = grn_ctx_at(ctx, *key))) {
-                char name[GRN_TABLE_MAX_KEY_SIZE];
-                unsigned int name_len;
-                name_len = grn_obj_name(ctx, *last_cols, name,
-                                        GRN_TABLE_MAX_KEY_SIZE);
-                GRN_TEXT_PUTC(ctx, buf, column_delimiter);
-                grn_text_esc(ctx, buf, name, name_len);
-                last_cols++;
-              } else {
-                /* TODO: handling error */
+            /* fetch columns */
+            {
+              grn_id *key;
+              if (otype == grn_output_json) {
+                GRN_TEXT_PUTC(ctx, buf, '[');
               }
-            });
-            if (otype == grn_output_json) {
-              GRN_TEXT_PUTC(ctx, buf, ']');
-            }
-          }
-
-          /* show records */
-          if ((cur = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
-            grn_id rec_id;
-
-            GRN_TEXT_PUTC(ctx, buf, line_delimiter);
-
-            if (otype == grn_output_json) {
-              GRN_TEXT_PUTC(ctx, buf, '[');
-            }
-            while ((rec_id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
-              int kv_len;
-              grn_obj **c;
-              const char *kv;
-
-              kv_len = grn_table_cursor_get_key(ctx, cur, (void **)&kv);
-              grn_text_esc(ctx, buf, kv, kv_len);
-
+              grn_text_esc(ctx, buf, ":id", 3);
               GRN_TEXT_PUTC(ctx, buf, column_delimiter);
-              kv_len = grn_table_cursor_get_value(ctx, cur, (void **)&kv);
-              grn_text_esc(ctx, buf, kv, kv_len);
+              grn_text_esc(ctx, buf, ":key", 4);
+              GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+              grn_text_esc(ctx, buf, ":value", 6);
 
-              for (c = cols; c < last_cols; c++) {
-                grn_obj value;
-                GRN_TEXT_INIT(&value, 0); /* FIXME: to use GRN_VOID_INIT */
-                if (grn_obj_get_value(ctx, *c, rec_id, &value)) {
+              GRN_HASH_EACH(col_ids, id, &key, NULL, NULL, {
+                if ((*last_cols = grn_ctx_at(ctx, *key))) {
+                  char name[GRN_TABLE_MAX_KEY_SIZE];
+                  unsigned int name_len;
+                  name_len = grn_obj_name(ctx, *last_cols, name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
                   GRN_TEXT_PUTC(ctx, buf, column_delimiter);
-                  print_columnvalue(ctx, &value, buf, otype);
+                  grn_text_esc(ctx, buf, name, name_len);
+                  if (name_len == sort_column_name_len &&
+                      !memcmp(name, sort_column_name, name_len)) {
+                    sort_col = *last_cols;
+                  }
+                  last_cols++;
+                } else {
+                  /* TODO: handling error */
                 }
-                GRN_OBJ_FIN(ctx, &value);
+              });
+              if (otype == grn_output_json) {
+                GRN_TEXT_PUTC(ctx, buf, ']');
+              }
+            }
+
+            if (!sort_col) {
+              sort_col = *cols;
+            }
+
+            /* sort records */
+            {
+              grn_table_sort_key keys;
+              /* TODO: tableのid、key、valueでのソートはどうしよう */
+              if (offset < 0) {
+                keys.flags = GRN_TABLE_SORT_DESC;
+                offset = -offset; /* FIXME: INT_MIN */
+              } else {
+                keys.flags = GRN_TABLE_SORT_ASC;
+              }
+              if (count == -1) {
+                limit = -1;
+              } else {
+                limit = offset + count - 1;
+              }
+              keys.key = sort_col;
+              keys.offset = offset - 1;
+              /* NOTE: keys.offsetは0オリジン？ */
+              /* NOTE: grn_table_sortの返り値わからん */
+              grn_table_sort(ctx, table, limit, sort, &keys, 1);
+            }
+
+            /* show records */
+            if (count) {
+              grn_array_cursor *cur;
+              printf("offset: %d, limit: %d\n", offset, limit);
+              if ((cur = grn_array_cursor_open(ctx, (grn_array *)sort,
+                                               (grn_id)offset,
+                                               (grn_id)limit + 1, 0))) {
+                grn_id rec_count;
+                while ((rec_count = grn_array_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+                  grn_obj **c;
+                  grn_id *rec_id;
+
+                  GRN_TEXT_PUTC(ctx, buf, line_delimiter);
+                  if (otype == grn_output_json) {
+                    GRN_TEXT_PUTC(ctx, buf, '[');
+                  }
+                  printf("reccount: %d, offset: %d, limit: %d\n", rec_count, offset, limit);
+
+                  grn_array_cursor_get_value(ctx, cur, (void **)&rec_id);
+                  grn_text_itoa(ctx, buf, rec_id);
+
+                  {
+                    int key_len;
+                    char key[GRN_TABLE_MAX_KEY_SIZE];
+                    key_len = grn_table_get_key(ctx, table, *rec_id, key, GRN_TABLE_MAX_KEY_SIZE);
+                    grn_text_esc(ctx, buf, key, key_len);
+                  }
+                  GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+                  {
+                    grn_obj value;
+                    GRN_TEXT_INIT(&value, 0);
+                    /* TODO: 何でgrn_table_get_valueじゃないのか */
+                    grn_obj_get_value(ctx, table, *rec_id, &value);
+                    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&value), GRN_TEXT_LEN(&value));
+                  }
+
+                  for (c = cols; c < last_cols; c++) {
+                    grn_obj value;
+                    GRN_TEXT_INIT(&value, 0); /* FIXME: to use GRN_VOID_INIT */
+                    if (grn_obj_get_value(ctx, *c, *rec_id, &value)) {
+                      GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+                      print_columnvalue(ctx, &value, buf, otype);
+                    } else {
+                      /* TODO: error handling */
+                    }
+                    GRN_OBJ_FIN(ctx, &value);
+                  }
+                  if (otype == grn_output_json) {
+                    GRN_TEXT_PUTC(ctx, buf, ']');
+                  }
+                }
+                grn_array_cursor_close(ctx, cur);
               }
             }
             if (otype == grn_output_json) {
               GRN_TEXT_PUTC(ctx, buf, ']');
             }
-            grn_table_cursor_close(ctx, cur);
+            grn_obj_close(ctx, sort);
           }
-
-          /* close cols */
-          {
-            grn_obj **c;
-            for (c = cols; c < last_cols; c++) {
-              grn_obj_close(ctx, *c);
-            }
-            free(cols);
-            if (otype == grn_output_json) {
-              GRN_TEXT_PUTC(ctx, buf, ']');
-            }
-          }
+          free(cols);
         }
       }
       grn_hash_close(ctx, col_ids);
     }
-    grn_obj_close(ctx, table);
   }
 }
 
@@ -538,8 +593,8 @@ do_alone(char **argv, int argc)
         }
         break;
       case 'r':
-        if (argc >= 2) {
-          cmd_recordlist(ctx, argv[2], strlen(argv[2]), &buf, grn_output_json);
+        if (argc >= 5) {
+          cmd_recordlist(ctx, argv[2], strlen(argv[2]), argv[3], strlen(argv[3]), atoi(argv[4]), atoi(argv[5]), &buf, grn_output_json);
         }
         break;
       }
@@ -648,24 +703,65 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
               grn_obj *query;
               GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
               if ((query = parse_http_path(ctx, path, p - path))) {
-                grn_obj *p1;
                 path += 3;
                 switch (*path) {
                 case 't':
                   cmd_tablelist(ctx, grn_ctx_db(ctx), re, grn_output_json);
                   break;
                 case 'c':
-                  if (grn_hash_get(ctx, (grn_hash *)query,
-                                   "table", 5, (void **)&p1) != GRN_ID_NIL) {
-                    cmd_columnlist(ctx, GRN_TEXT_VALUE(p1), GRN_TEXT_LEN(p1),
-                                   re, grn_output_json);
+                  {
+                    grn_obj *table;
+                    if (grn_hash_get(ctx, (grn_hash *)query,
+                                     "table", 5, (void **)&table) != GRN_ID_NIL) {
+                      cmd_columnlist(ctx, GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                                     re, grn_output_json);
+                    }
                   }
                   break;
                 case 'r':
-                  if (grn_hash_get(ctx, (grn_hash *)query,
-                                   "table", 5, (void **)&p1) != GRN_ID_NIL) {
-                    cmd_recordlist(ctx, GRN_TEXT_VALUE(p1), GRN_TEXT_LEN(p1),
-                                   re, grn_output_json);
+                  {
+                    grn_obj *table;
+                    if (grn_hash_get(ctx, (grn_hash *)query,
+                                     "table", 5,
+                                     (void **)&table) != GRN_ID_NIL) {
+                      int offset, count;
+                      grn_obj *sort_column, *num_str;
+                      if (grn_hash_get(ctx, (grn_hash *)query,
+                                       "offset", 11,
+                                       (void **)&num_str) != GRN_ID_NIL) {
+                        offset = grn_atoi(
+                          GRN_TEXT_VALUE(num_str),
+                          GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
+                          NULL);
+                      } else {
+                        offset = 0;
+                      }
+
+                      if (grn_hash_get(ctx, (grn_hash *)query,
+                                       "count", 11,
+                                       (void **)&num_str) != GRN_ID_NIL) {
+                        count = grn_atoi(
+                          GRN_TEXT_VALUE(num_str),
+                          GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
+                          NULL);
+                      } else {
+                        count = -1;
+                      }
+
+                      if (grn_hash_get(ctx, (grn_hash *)query,
+                                       "sort_column", 11,
+                                       (void **)&sort_column) != GRN_ID_NIL) {
+                        cmd_recordlist(ctx,
+                          GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                          GRN_TEXT_VALUE(sort_column), GRN_TEXT_LEN(sort_column),
+                          offset, count, re, grn_output_json);
+                      } else {
+                        cmd_recordlist(ctx,
+                          GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                          NULL, 0,
+                          offset, count, re, grn_output_json);
+                      }
+                    }
                   }
                   break;
                 }
