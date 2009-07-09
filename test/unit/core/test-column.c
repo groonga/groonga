@@ -44,7 +44,7 @@ create_bookmarks_table(void)
                                strlen(bookmarks_table_name),
                                NULL,
                                GRN_OBJ_TABLE_HASH_KEY,
-                               LOOKUP("Shorttext"),
+                               LOOKUP("ShortText"),
                                1024);
   grn_test_assert_context(&context);
   cut_set_message("%s", cut_take_string(grn_collect_logger_to_string(logger)));

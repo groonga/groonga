@@ -689,105 +689,129 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
       char *p = GRN_BULK_HEAD((grn_obj *)msg);
       char *e = GRN_BULK_CURR((grn_obj *)msg);
       for (; p + 6 < e; p++) {
-        if (*p == ' ') {
-          if (!path) {
-            path = p + 1;
-          } else if (!memcmp(p + 1, "HTTP/1", 6)) {
-            grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
-            ((grn_msg *)re)->header.qtype = header->qtype;
-            *p = '\0';
-
-            GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
-            GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
-            if (!memcmp(path, "/a/", 3)) {
-              grn_obj *query;
-              GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
-              if ((query = parse_http_path(ctx, path, p - path))) {
-                path += 3;
-                switch (*path) {
-                case 't':
-                  cmd_tablelist(ctx, grn_ctx_db(ctx), re, grn_output_json);
-                  break;
-                case 'c':
-                  {
-                    grn_obj *table;
-                    if (grn_hash_get(ctx, (grn_hash *)query,
-                                     "table", 5, (void **)&table) != GRN_ID_NIL) {
-                      cmd_columnlist(ctx, GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
-                                     re, grn_output_json);
-                    }
-                  }
-                  break;
-                case 'r':
-                  {
-                    grn_obj *table;
-                    if (grn_hash_get(ctx, (grn_hash *)query,
-                                     "table", 5,
-                                     (void **)&table) != GRN_ID_NIL) {
-                      int offset, count;
-                      grn_obj *sort_column, *num_str;
-                      if (grn_hash_get(ctx, (grn_hash *)query,
-                                       "offset", 11,
-                                       (void **)&num_str) != GRN_ID_NIL) {
-                        offset = grn_atoi(
-                          GRN_TEXT_VALUE(num_str),
-                          GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
-                          NULL);
-                      } else {
-                        offset = 0;
-                      }
-
-                      if (grn_hash_get(ctx, (grn_hash *)query,
-                                       "count", 11,
-                                       (void **)&num_str) != GRN_ID_NIL) {
-                        count = grn_atoi(
-                          GRN_TEXT_VALUE(num_str),
-                          GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
-                          NULL);
-                      } else {
-                        count = -1;
-                      }
-
-                      if (grn_hash_get(ctx, (grn_hash *)query,
-                                       "sort_column", 11,
-                                       (void **)&sort_column) != GRN_ID_NIL) {
-                        cmd_recordlist(ctx,
-                          GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
-                          GRN_TEXT_VALUE(sort_column), GRN_TEXT_LEN(sort_column),
-                          offset, count, re, grn_output_json);
-                      } else {
-                        cmd_recordlist(ctx,
-                          GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
-                          NULL, 0,
-                          offset, count, re, grn_output_json);
-                      }
-                    }
-                  }
-                  break;
-                }
-                release_query(ctx, query);
-              }
-            } else if (!memcmp(path, "/s/", 3)) {
-              /* static file */
-              /* FIXME: remove '..' for security ! */
-              /* FIXME: follow symbolic link ? */
-              if (!memcmp(p - 5, ".html", 5)) { // FIXME: 5文字はヤバい。msgの頭より前になる恐れ
-                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/html\r\n\r\n");
-              } else if (!memcmp(p - 4, ".css", 4)) {
-                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/css\r\n\r\n");
-              } else if (!memcmp(p - 3 , ".js", 3)) {
+        if (*p != ' ') { continue; }
+        if (!path) { path = p + 1; continue; }
+        if (!memcmp(p + 1, "HTTP/1", 6)) {
+          if (path[0] == '/' && path[2] == '/') {
+            switch (path[1]) {
+            case 'a' :
+              {
+                grn_obj *query;
+                grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+                ((grn_msg *)re)->header.qtype = header->qtype;
+                *p = '\0';
+                GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
+                GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
                 GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
+                if ((query = parse_http_path(ctx, path, p - path))) {
+                  path += 3;
+                  switch (*path) {
+                  case 't':
+                    cmd_tablelist(ctx, grn_ctx_db(ctx), re, grn_output_json);
+                    break;
+                  case 'c':
+                    {
+                      grn_obj *table;
+                      if (grn_hash_get(ctx, (grn_hash *)query,
+                                       "table", 5, (void **)&table) != GRN_ID_NIL) {
+                        cmd_columnlist(ctx, GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                                       re, grn_output_json);
+                      }
+                    }
+                    break;
+                  case 'r':
+                    {
+                      grn_obj *table;
+                      if (grn_hash_get(ctx, (grn_hash *)query,
+                                       "table", 5,
+                                       (void **)&table) != GRN_ID_NIL) {
+                        int offset, count;
+                        grn_obj *sort_column, *num_str;
+                        if (grn_hash_get(ctx, (grn_hash *)query,
+                                         "offset", 11,
+                                         (void **)&num_str) != GRN_ID_NIL) {
+                          offset = grn_atoi(
+                            GRN_TEXT_VALUE(num_str),
+                            GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
+                            NULL);
+                        } else {
+                          offset = 0;
+                        }
+
+                        if (grn_hash_get(ctx, (grn_hash *)query,
+                                         "count", 11,
+                                         (void **)&num_str) != GRN_ID_NIL) {
+                          count = grn_atoi(
+                            GRN_TEXT_VALUE(num_str),
+                            GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
+                            NULL);
+                        } else {
+                          count = -1;
+                        }
+
+                        if (grn_hash_get(ctx, (grn_hash *)query,
+                                         "sort_column", 11,
+                                         (void **)&sort_column) != GRN_ID_NIL) {
+                          cmd_recordlist(ctx,
+                            GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                            GRN_TEXT_VALUE(sort_column), GRN_TEXT_LEN(sort_column),
+                            offset, count, re, grn_output_json);
+                        } else {
+                          cmd_recordlist(ctx,
+                            GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                            NULL, 0,
+                            offset, count, re, grn_output_json);
+                        }
+                      }
+                    }
+                    break;
+                  }
+                  release_query(ctx, query);
+                }
+                if (grn_msg_send(ctx, re, 0)) {
+                  /* TODO: error handling */
+                }
               }
-              grn_bulk_from_file(ctx, (grn_obj *)re, path + 1);
+              break;
+            case 's' :
+              {
+                grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+                ((grn_msg *)re)->header.qtype = header->qtype;
+                *p = '\0';
+                GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
+                GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
+                /* static file */
+                /* FIXME: remove '..' for security ! */
+                /* FIXME: follow symbolic link ? */
+                if (!memcmp(p - 5, ".html", 5)) { // FIXME: 5文字はヤバい。msgの頭より前になる恐れ
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/html\r\n\r\n");
+                } else if (!memcmp(p - 4, ".css", 4)) {
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/css\r\n\r\n");
+                } else if (!memcmp(p - 3 , ".js", 3)) {
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
+                }
+                grn_bulk_from_file(ctx, (grn_obj *)re, path + 1);
+                if (grn_msg_send(ctx, re, 0)) {
+                  /* TODO: error handling */
+                }
+              }
+              break;
+            case 'q' :
+              {
+                grn_obj *head = ctx->impl->outbuf;
+                GRN_TEXT_INIT(head, 0);
+                GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
+                GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
+                GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
+                // todo : refine
+                grn_ql_send(ctx, path, p - path, header->flags);
+              }
+              break;
             }
-            if (grn_msg_send(ctx, re, 0)) {
-              /* TODO: error handling */
-            }
-            break;
           }
+          break;
         }
       }
-      //grn_ql_send(ctx, p0, p - p0, header->flags);
     }
     break;
   }

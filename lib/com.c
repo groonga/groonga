@@ -197,15 +197,6 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     case GRN_COM_PROTO_HTTP :
       {
         ssize_t ret;
-        grn_obj head;
-        GRN_TEXT_INIT(&head, 0);
-        GRN_TEXT_PUTS(ctx, &head, "HTTP/1.1 200 OK\r\n");
-        GRN_TEXT_PUTS(ctx, &head, "Connection: close\r\n");
-        GRN_TEXT_PUTS(ctx, &head, "Content-Type: text/plain\r\n\r\n");
-        // todo : refine
-        ret = send(peer->fd, GRN_BULK_HEAD(&head), GRN_BULK_VSIZE(&head), MSG_NOSIGNAL);
-        if (ret == -1) { SERR("send"); }
-        grn_obj_close(ctx, &head);
         ret = send(peer->fd, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), MSG_NOSIGNAL);
         if (ret == -1) { SERR("send"); }
         if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {
