@@ -382,7 +382,7 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                 keys.flags = GRN_TABLE_SORT_ASC;
               }
               if (count == -1) {
-                limit = -1;
+                limit = 0;
               } else {
                 limit = offset + count - 1;
               }
@@ -394,7 +394,6 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
             /* show records */
             if (count) {
               grn_array_cursor *cur;
-              printf("offset: %d, limit: %d\n", offset, limit);
               if ((cur = grn_array_cursor_open(ctx, (grn_array *)sort,
                                                (grn_id)offset,
                                                (grn_id)limit + 1, 0))) {
@@ -407,7 +406,6 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                   if (otype == grn_output_json) {
                     GRN_TEXT_PUTC(ctx, buf, '[');
                   }
-                  printf("reccount: %d, offset: %d, limit: %d\n", rec_count, offset, limit);
 
                   grn_array_cursor_get_value(ctx, cur, (void **)&rec_id);
 
