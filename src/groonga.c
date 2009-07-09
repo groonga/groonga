@@ -29,6 +29,8 @@
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
@@ -55,8 +57,8 @@ usage(void)
           "  -p <port number>:   server port number (default: %d)\n"
           "  -t <max threads>:   max number of free threads (default: %d)\n"
           "  -h, --help:         show usage\n"
-          "dest: <db pathname> or <dest hostname>\n"
-          "  <db pathname>: when standalone/server mode\n"
+          "dest: <db pathname> [<command>] or <dest hostname>\n"
+          "  <db pathname> [<command>]: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
           hostname,
           DEFAULT_PORT, DEFAULT_MAX_NFTHREADS, DEFAULT_DEST);
@@ -70,30 +72,479 @@ prompt(void)
 
 #define BUFSIZE 0x1000000
 
+/* TODO: use struct which contains line_delimiter/column_delimiter */
+typedef enum {
+  grn_output_tsv,
+  grn_output_json
+} grn_output_type;
+
+static grn_obj *
+parse_http_path(grn_ctx *ctx, char *path, int path_len)
+{
+  grn_obj buf;
+  grn_obj *query;
+  const char *p, *e;
+  grn_obj *key_type = grn_ctx_at(ctx, GRN_DB_SHORTTEXT);
+
+  GRN_TEXT_INIT(&buf, 0);
+
+  p = path;
+  e = p + path_len;
+  p = get_uri_token(ctx, &buf, p, e, '?');
+
+  if ((query = grn_table_create(ctx, NULL, 0, NULL,
+                                GRN_OBJ_TABLE_HASH_KEY,
+                                key_type, sizeof(grn_obj *)))) {
+    while (p < e) {
+      grn_id key_id;
+      grn_obj *value;
+
+      GRN_BULK_REWIND(&buf);
+      p = get_uri_token(ctx, &buf, p, e, '=');
+      if ((key_id = grn_hash_add(ctx, (grn_hash *)query,
+                                 GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf),
+                                 (void **)&value, NULL)) != GRN_ID_NIL) {
+        /* TODO: if virtual table is able to have column, use it */
+        GRN_TEXT_INIT(value, 0);
+        p = get_uri_token(ctx, value, p, e, '&');
+      }
+    }
+  }
+  return query;
+}
+
+void
+release_query(grn_ctx *ctx, grn_obj *query)
+{
+  if (query) {
+    grn_obj *value;
+    GRN_HASH_EACH((grn_hash *)query, id, NULL, NULL, &value, {
+      GRN_OBJ_FIN(ctx, value);
+    });
+    grn_obj_close(ctx, query);
+  }
+}
+
+/* bulk must be initialized grn_bulk or grn_msg */
 static int
-do_alone(char *path)
+grn_bulk_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
+{
+  /* FIXME: implement more smartly with grn_bulk */
+  int fd, ret = 0;
+  struct stat stat;
+  if ((fd = open(path, O_RDONLY)) == -1) { return ret; }
+  if (fstat(fd, &stat) != -1) {
+    char *buf, *bp;
+    off_t rest = stat.st_size;
+    if ((buf = GRN_MALLOC(rest))) {
+      ssize_t ss;
+      for (bp = buf; rest; rest -= ss, bp += ss) {
+        if ((ss = read(fd, bp, rest)) == -1) { goto exit; }
+      }
+      GRN_TEXT_SET(ctx, bulk, buf, stat.st_size);
+      ret = 1;
+    }
+    GRN_FREE(buf);
+  }
+exit :
+  close(fd);
+  return ret;
+}
+
+static int
+print_columnvalue(grn_ctx *ctx, grn_obj *value, grn_obj *buf, grn_output_type otype)
+{
+  switch (otype) {
+  case grn_output_tsv:
+    /* TODO: implement tsv */
+    break;
+  case grn_output_json:
+    {
+      grn_obj_format format;
+      grn_text_otoj(ctx, buf, value, &format);
+    }
+    break;
+  }
+  return 1;
+}
+
+static int
+print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_output_type otype)
+{
+  grn_id id;
+  char *type, name[GRN_TABLE_MAX_KEY_SIZE];
+  const char *path;
+  int name_len;
+
+  switch (column->header.type) {
+  case GRN_COLUMN_FIX_SIZE:
+    type = "\"fix\"";
+    break;
+  case GRN_COLUMN_VAR_SIZE:
+    type = "\"var\"";
+    break;
+  case GRN_COLUMN_INDEX:
+    type = "\"index\"";
+    break;
+  default:
+    printf("%d\n", column->header.type);
+    return 0;
+  }
+
+  id = grn_obj_id(ctx, column);
+  name_len = grn_obj_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
+  path = grn_obj_path(ctx, column);
+
+  switch (otype) {
+  case grn_output_tsv:
+    grn_text_itoa(ctx, buf, id);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_esc(ctx, buf, name, name_len);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_esc(ctx, buf, path, strlen(path));
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    GRN_TEXT_PUTS(ctx, buf, type);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_itoa(ctx, buf, column->header.flags);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_itoa(ctx, buf, column->header.domain);
+    /* TODO: flags to str, domain to str */
+    break;
+  case grn_output_json:
+    GRN_TEXT_PUTC(ctx, buf, '[');
+    grn_text_itoa(ctx, buf, id);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_esc(ctx, buf, name, name_len);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_esc(ctx, buf, path, strlen(path));
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    GRN_TEXT_PUTS(ctx, buf, type);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_itoa(ctx, buf, column->header.flags);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_itoa(ctx, buf, column->header.domain);
+    /* TODO: flags to str, domain to str */
+    GRN_TEXT_PUTC(ctx, buf, ']');
+    break;
+  }
+  return 1;
+}
+
+static int
+print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otype)
+{
+  grn_id id;
+  char *type, name[GRN_TABLE_MAX_KEY_SIZE];
+  const char *path;
+  int name_len;
+
+  switch (table->header.type) {
+  case GRN_TABLE_HASH_KEY:
+    type = "\"hash\"";
+    break;
+  case GRN_TABLE_PAT_KEY:
+    type = "\"pat\"";
+    break;
+  case GRN_TABLE_NO_KEY:
+    type = "\"no\"";
+    break;
+  default:
+    return 0;
+  }
+
+  id = grn_obj_id(ctx, table);
+  name_len = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+  path = grn_obj_path(ctx, table);
+
+  switch (otype) {
+  case grn_output_tsv:
+    grn_text_itoa(ctx, buf, id);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_esc(ctx, buf, name, name_len);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_esc(ctx, buf, path, strlen(path));
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    GRN_TEXT_PUTS(ctx, buf, type);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_itoa(ctx, buf, table->header.flags);
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    grn_text_itoa(ctx, buf, table->header.domain);
+    /* TODO: flags to str, domain to str */
+    break;
+  case grn_output_json:
+    GRN_TEXT_PUTC(ctx, buf, '[');
+    grn_text_itoa(ctx, buf, id);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_esc(ctx, buf, name, name_len);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_esc(ctx, buf, path, strlen(path));
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    GRN_TEXT_PUTS(ctx, buf, type);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_itoa(ctx, buf, table->header.flags);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    grn_text_itoa(ctx, buf, table->header.domain);
+    /* TODO: flags to str, domain to str */
+    GRN_TEXT_PUTC(ctx, buf, ']');
+    break;
+  }
+  return 1;
+}
+
+/* TODO: use column */
+/* TODO: use expr */
+/* TODO: use table_cursor flags */
+static void
+cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj *buf, grn_output_type otype)
+{
+  grn_obj *table;
+  if ((table = grn_ctx_get(ctx, table_name, table_name_len))) {
+    grn_hash *col_ids;
+    if ((col_ids = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                   GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      int ncols;
+      if ((ncols = grn_table_columns(ctx, table, NULL, 0, (grn_obj *)col_ids))) {
+        grn_table_cursor *cur;
+        grn_obj **cols;
+        if ((cols = (grn_obj **)GRN_MALLOC(sizeof(grn_obj *) * (ncols + 2)))) {
+          grn_obj **last_cols = cols;
+          char line_delimiter, column_delimiter;
+          switch (otype) {
+          case grn_output_tsv:
+            line_delimiter = '\n';
+            column_delimiter = '\t';
+            break;
+          case grn_output_json:
+            line_delimiter = ',';
+            column_delimiter = ',';
+            GRN_TEXT_PUTC(ctx, buf, '[');
+            break;
+          }
+
+          /* fetch columns */
+          {
+            grn_id *key;
+            if (otype == grn_output_json) {
+              GRN_TEXT_PUTC(ctx, buf, '[');
+            }
+            grn_text_esc(ctx, buf, "@id", 3);
+            GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+            grn_text_esc(ctx, buf, "@value", 6);
+
+            GRN_HASH_EACH(col_ids, id, &key, NULL, NULL, {
+              if ((*last_cols = grn_ctx_at(ctx, *key))) {
+                char name[GRN_TABLE_MAX_KEY_SIZE];
+                unsigned int name_len;
+                name_len = grn_obj_name(ctx, *last_cols, name,
+                                        GRN_TABLE_MAX_KEY_SIZE);
+                GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+                grn_text_esc(ctx, buf, name, name_len);
+                last_cols++;
+              } else {
+                /* TODO: handling error */
+              }
+            });
+            if (otype == grn_output_json) {
+              GRN_TEXT_PUTC(ctx, buf, ']');
+            }
+          }
+
+          /* show records */
+          if ((cur = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+            grn_id rec_id;
+
+            GRN_TEXT_PUTC(ctx, buf, line_delimiter);
+
+            if (otype == grn_output_json) {
+              GRN_TEXT_PUTC(ctx, buf, '[');
+            }
+            while ((rec_id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+              int kv_len;
+              grn_obj **c;
+              const char *kv;
+
+              kv_len = grn_table_cursor_get_key(ctx, cur, (void **)&kv);
+              grn_text_esc(ctx, buf, kv, kv_len);
+
+              GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+              kv_len = grn_table_cursor_get_value(ctx, cur, (void **)&kv);
+              grn_text_esc(ctx, buf, kv, kv_len);
+
+              for (c = cols; c < last_cols; c++) {
+                grn_obj value;
+                GRN_TEXT_INIT(&value, 0); /* FIXME: to use GRN_VOID_INIT */
+                if (grn_obj_get_value(ctx, *c, rec_id, &value)) {
+                  GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+                  print_columnvalue(ctx, &value, buf, otype);
+                }
+                GRN_OBJ_FIN(ctx, &value);
+              }
+            }
+            if (otype == grn_output_json) {
+              GRN_TEXT_PUTC(ctx, buf, ']');
+            }
+            grn_table_cursor_close(ctx, cur);
+          }
+
+          /* close cols */
+          {
+            grn_obj **c;
+            for (c = cols; c < last_cols; c++) {
+              grn_obj_close(ctx, *c);
+            }
+            free(cols);
+            if (otype == grn_output_json) {
+              GRN_TEXT_PUTC(ctx, buf, ']');
+            }
+          }
+        }
+      }
+      grn_hash_close(ctx, col_ids);
+    }
+    grn_obj_close(ctx, table);
+  }
+}
+
+static void
+cmd_columnlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj *buf, grn_output_type otype)
+{
+  grn_obj *table;
+  /* MEMO: grn_table_openのname/path両方指定した場合はエラーでいいんじゃ？ */
+  if ((table = grn_ctx_get(ctx, table_name, table_name_len))) {
+    grn_hash *cols;
+    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)cols)) {
+        grn_id *key;
+        char line_delimiter, column_delimiter;
+
+        switch (otype) {
+        case grn_output_tsv:
+          line_delimiter = '\n';
+          column_delimiter = '\t';
+          GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\ttype\tflags\tdomain");
+          break;
+        case grn_output_json:
+          line_delimiter = ',';
+          column_delimiter = ',';
+          GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"]");
+          break;
+        }
+
+        GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
+          grn_obj *col;
+          if ((col = grn_ctx_at(ctx, *key))) {
+            GRN_TEXT_PUTC(ctx, buf, line_delimiter);
+            if (!print_columninfo(ctx, col, buf, otype)) {
+              grn_bulk_truncate(ctx, buf, GRN_BULK_VSIZE(buf) - 1);
+            }
+            grn_obj_close(ctx, col);
+          }
+        });
+        if (otype == grn_output_json) {
+          GRN_TEXT_PUTC(ctx, buf, ']');
+        }
+      }
+      grn_hash_close(ctx, cols);
+    }
+    grn_obj_close(ctx, table);
+  }
+}
+
+/* FIXME: dbは、grn_ctx_dbでとればいいんちゃう？ */
+static void
+cmd_tablelist(grn_ctx *ctx, grn_obj *db, grn_obj *buf, grn_output_type otype)
+{
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0))) {
+    grn_id id;
+    char line_delimiter, column_delimiter;
+
+    switch (otype) {
+    case grn_output_tsv:
+      line_delimiter = '\n';
+      column_delimiter = '\t';
+      GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\ttype\tflags\tdomain");
+      break;
+    case grn_output_json:
+      line_delimiter = ',';
+      column_delimiter = ',';
+      GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"]");
+      break;
+    }
+    while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *o;
+
+      if ((o = grn_ctx_at(ctx, id))) {
+        GRN_TEXT_PUTC(ctx, buf, line_delimiter);
+        if (!print_tableinfo(ctx, o, buf, otype)) {
+          grn_bulk_truncate(ctx, buf, GRN_BULK_VSIZE(buf) - 1);
+        }
+        grn_obj_close(ctx, o);
+      }
+    }
+    if (otype == grn_output_json) {
+      GRN_TEXT_PUTC(ctx, buf, ']');
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
+static int
+do_alone(char **argv, int argc)
 {
   int rc = -1;
+  char *path = NULL, *cmd = NULL;
   grn_obj *db = NULL;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0));
+  if (argv) {
+    path = argv[0];
+    if (argc >= 1) {
+      cmd = argv[1];
+      /* TODO: handle arguments of command */
+    }
+  }
   if (path) { db = grn_db_open(ctx, path); }
   if (!db) { db = grn_db_create(ctx, path, NULL); }
   if (db) {
-    char *buf = GRN_MALLOC(BUFSIZE);
-    if (buf) {
-      grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
-      grn_ql_load(ctx, NULL);
-      while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
-        uint32_t size = strlen(buf) - 1;
-        buf[size] = '\0';
-        grn_ql_send(ctx, buf, size, 0);
-        if (ctx->stat == GRN_QL_QUIT) { break; }
+    if (!cmd) {
+      char *buf = GRN_MALLOC(BUFSIZE);
+      if (buf) {
+        grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
+        grn_ql_load(ctx, NULL);
+        while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
+          uint32_t size = strlen(buf) - 1;
+          buf[size] = '\0';
+          grn_ql_send(ctx, buf, size, 0);
+          if (ctx->stat == GRN_QL_QUIT) { break; }
+        }
+        GRN_FREE(buf);
+        rc = 0;
+      } else {
+        fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
       }
-      GRN_FREE(buf);
-      rc = 0;
     } else {
-      fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
+      grn_obj buf;
+      GRN_TEXT_INIT(&buf, 0);
+      /* NOTE: command dispatch */
+      switch (*cmd) {
+      case 't':
+        cmd_tablelist(ctx, db, &buf, grn_output_json);
+        break;
+      case 'c':
+        if (argc >= 2) {
+          cmd_columnlist(ctx, argv[2], strlen(argv[2]), &buf, grn_output_json);
+        }
+        break;
+      case 'r':
+        if (argc >= 2) {
+          cmd_recordlist(ctx, argv[2], strlen(argv[2]), &buf, grn_output_json);
+        }
+        break;
+      }
+      fwrite(GRN_TEXT_VALUE(&buf), 1, GRN_TEXT_LEN(&buf), stdout);
+      GRN_OBJ_FIN(ctx, &buf);
     }
     grn_db_close(ctx, db);
   } else {
@@ -179,14 +630,68 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
   switch (header->qtype) {
   case 'G' : /* GET */
     {
+      char *path = NULL;
       char *p = GRN_BULK_HEAD((grn_obj *)msg);
       char *e = GRN_BULK_CURR((grn_obj *)msg);
-      char *p0 = p + 4;
-      for (; p + 4 < e; p++) {
-        if (*p == ' ' && !memcmp(p + 1, "HTTP", 4)) {
-          break; }
+      for (; p + 6 < e; p++) {
+        if (*p == ' ') {
+          if (!path) {
+            path = p + 1;
+          } else if (!memcmp(p + 1, "HTTP/1", 6)) {
+            grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+            ((grn_msg *)re)->header.qtype = header->qtype;
+            *p = '\0';
+
+            GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
+            GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
+            if (!memcmp(path, "/a/", 3)) {
+              grn_obj *query;
+              GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
+              if ((query = parse_http_path(ctx, path, p - path))) {
+                grn_obj *p1;
+                path += 3;
+                switch (*path) {
+                case 't':
+                  cmd_tablelist(ctx, grn_ctx_db(ctx), re, grn_output_json);
+                  break;
+                case 'c':
+                  if (grn_hash_get(ctx, (grn_hash *)query,
+                                   "table", 5, (void **)&p1) != GRN_ID_NIL) {
+                    cmd_columnlist(ctx, GRN_TEXT_VALUE(p1), GRN_TEXT_LEN(p1),
+                                   re, grn_output_json);
+                  }
+                  break;
+                case 'r':
+                  if (grn_hash_get(ctx, (grn_hash *)query,
+                                   "table", 5, (void **)&p1) != GRN_ID_NIL) {
+                    cmd_recordlist(ctx, GRN_TEXT_VALUE(p1), GRN_TEXT_LEN(p1),
+                                   re, grn_output_json);
+                  }
+                  break;
+                }
+                release_query(ctx, query);
+              }
+            } else if (!memcmp(path, "/s/", 3)) {
+              /* static file */
+              /* FIXME: remove '..' for security ! */
+              /* FIXME: follow symbolic link ? */
+              if (!memcmp(p - 5, ".html", 5)) { // FIXME: 5文字はヤバい。msgの頭より前になる恐れ
+                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/html\r\n\r\n");
+              } else if (!memcmp(p - 4, ".css", 4)) {
+                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/css\r\n\r\n");
+              } else if (!memcmp(p - 3 , ".js", 3)) {
+                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
+              }
+              grn_bulk_from_file(ctx, (grn_obj *)re, path + 1);
+            }
+            if (grn_msg_send(ctx, re, 0)) {
+              /* TODO: error handling */
+            }
+            break;
+          }
+        }
       }
-      grn_ql_send(ctx, p0, p - p0, header->flags);
+      //grn_ql_send(ctx, p0, p - p0, header->flags);
     }
     break;
   }
@@ -1115,7 +1620,11 @@ main(int argc, char **argv)
   }
   switch (mode) {
   case mode_alone :
-    r = do_alone(argc <= i ? NULL : argv[i]);
+    if (argc <= i) {
+      r = do_alone(NULL, 0);
+    } else {
+      r = do_alone(argv + i, argc - i - 1);
+    }
     break;
   case mode_client :
     r = do_client(argc <= i ? DEFAULT_DEST : argv[i]);

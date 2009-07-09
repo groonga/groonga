@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+ "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>groonga admin</title>
+<link rel="stylesheet" type="text/css" href="/s/admin.css">
+<script type="text/javascript" src="/s/jquery-1.3.2.min.js"></script>
+</head>
+<body>
+<h1>groonga admin</h1>
+<div id="header">
+  <ul>
+    <li id="menu-tablelist"><a href="#tablelist">テーブル一覧</a></li>
+  </ul>
+</div>
+<div id="body">
+</div>
+<div id="footer">
+</div>
+<script type="text/javascript">
+GroongaAdmin = {
+  initialize: function() {
+    $('#menu-tablelist').mousedown(function() {
+      GroongaAdmin.tablelist();
+    });
+  },
+  show_table: function (d) {
+    var body = $('#body');
+    body.empty();
+    if ($.isArray(d)) {
+      var table = $('<table/>').appendTo(body);
+      var thead = $('<thead/>').appendTo(table);
+      var tbody = $('<tbody/>').appendTo(table);
+      var first_line = true;
+      $.each(d, function(key) {
+        var line = d[key];
+        if ($.isArray(line)) {
+          var tr = $('<tr/>');
+          (first_line ? thead : tbody).append(tr);
+          $.each(line, function(l_key) {
+            var item = first_line ? $('<th/>') : $('<td/>');
+            item.text(line[l_key]);
+            tr.append(item);
+          });
+        }
+        first_line = false;
+      });
+    }
+    return tbody;
+  },
+  tablelist: function() {
+    $.ajax({
+      url: '/a/tablelist',
+      data: {},
+      dataType: 'json',
+      success: function(d) {
+        tbody = GroongaAdmin.show_table(d);
+        tbody.find('tr').each(function() {
+          var table_name_td = $(this).find('td:eq(1)');
+          var table_name = table_name_td.text();
+          table_name_td.text('');
+          table_name_td.append($('<a/>').attr('href', '#')
+                                        .text(table_name)
+                                        .click(function() {
+                                          GroongaAdmin.recordlist(table_name)
+                                        }));
+        });
+      }
+    });
+  },
+  recordlist: function(table) {
+    $.ajax({
+      url: '/a/recordlist',
+      data: {'table': table},
+      dataType: 'json',
+      success: function(d) {
+        GroongaAdmin.show_table(d);
+      }
+    });
+  },
+};
+$(function() {
+  GroongaAdmin.initialize();
+  GroongaAdmin.tablelist();
+});
+</script>
+</body>
+</html>
