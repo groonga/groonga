@@ -202,8 +202,6 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 /* expr */
 
-void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
-
 grn_rc grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
 grn_obj *grn_ctx_pop(grn_ctx *ctx);
 

@@ -750,7 +750,10 @@ GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
  * @n_keys: ソートキー配列のサイズ
  *
  * table内のレコードをソートし、上位limit個の要素をresultに格納する。
- * keysには、tableのcolumn,accessor,procのいずれかが指定できる。
+ * keys.keyには、tableのcolumn,accessor,procのいずれかが指定できる。
+ * keys.flagsには、GRN_TABLE_SORT_ASC/GRN_TABLE_SORT_DESCのいずれかを指定できる。
+ * GRN_TABLE_SORT_ASCでは昇順、GRN_TABLE_SORT_DESCでは降順でソートされる。
+ * keys.offsetは、内部利用のためのメンバである。
  **/
 
 typedef struct _grn_table_sort_key grn_table_sort_key;
@@ -853,7 +856,12 @@ GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
  * @table: 対象table
  * @name: カラム名
  *
- * nameに対応するtableのカラムを返す。対応するカラムが存在しなければNULLを返す。
+ * nameがカラム名の場合、それに対応するtableのカラムを返す。
+ * 対応するカラムが存在しなければNULLを返す。
+ * nameはアクセサ文字列の場合、それに対応するaccessorを返す。
+ * アクセサ文字列とは、'.'で始まり、カラム名等を'.'で連結した文字列である。
+ * '.:id', '.:key'は特殊なアクセサで、それぞれレコードID/keyを返す。
+ * 例) '.col1' / '.col2.col3' / '.col2.:id'
  **/
 GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
                                 const char *name, unsigned name_size);
@@ -1090,9 +1098,21 @@ GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *ne
  * grn_obj_close:
  * @obj: 対象object
  *
- * objをメモリから解放する。objに属するobjectも再帰的にメモリから解放される。
+ * 一時的なobjectであるobjをメモリから解放する。
+ * objに属するobjectも再帰的にメモリから解放される。
+ * 永続的な、table・column・exprなどは解放してはならない。
+ * 一般的には、一時的か永続的かを気にしなくてよいgrn_obj_unlinkを用いるべき。
  **/
 GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
+
+/**
+ * grn_obj_unlink:
+ * @obj: 対象object
+ *
+ * objをメモリから解放する。
+ * objに属するobjectも再帰的にメモリから解放される。
+ **/
+GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_path:
