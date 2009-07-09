@@ -126,10 +126,19 @@ typedef enum {
   GRN_LOG_DUMP
 } grn_log_level;
 
+typedef struct _grn_obj grn_obj;
 typedef struct _grn_ctx grn_ctx;
 
 #define GRN_CTX_MSGSIZE                (0x80)
 #define GRN_CTX_FIN                    (0xff)
+
+typedef union {
+  int int_value;
+  grn_id id;
+  void *ptr;
+} grn_user_data;
+
+typedef grn_rc grn_proc_func(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data);
 
 struct _grn_ctx {
   grn_rc rc;
@@ -142,7 +151,7 @@ struct _grn_ctx {
   unsigned int subno;
   unsigned int seqno2;
   unsigned int errline;
-  void *opaque;
+  grn_user_data user_data;
   grn_ctx *prev;
   grn_ctx *next;
   const char *errfile;
@@ -152,7 +161,7 @@ struct _grn_ctx {
   char errbuf[GRN_CTX_MSGSIZE];
 };
 
-#define GRN_CTX_USER_DATA(ctx) ((ctx)->opaque)
+#define GRN_CTX_USER_DATA(ctx) (&((ctx)->user_data))
 
 /**
  * grn_ctx_init:
@@ -278,7 +287,6 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_COLUMN_INDEX               (0x48)
 
 typedef struct _grn_section grn_section;
-typedef struct _grn_obj grn_obj;
 typedef struct _grn_obj_header grn_obj_header;
 
 struct _grn_section {
@@ -445,14 +453,6 @@ GRN_API grn_rc grn_db_load(grn_ctx *ctx, const char *path);
  *
  * nameに対応する新たなproc(手続き)をctxが使用するdbに定義する。
  **/
-
-typedef union {
-  int int_value;
-  grn_id id;
-  void *ptr;
-} grn_proc_data;
-
-typedef grn_rc grn_proc_func(grn_ctx *ctx, grn_obj *obj, grn_proc_data *user_data);
 
 typedef grn_rc grn_proc_init_func(grn_ctx *ctx, const char *path);
 
@@ -1113,6 +1113,23 @@ GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
  * objに属するobjectも再帰的にメモリから解放される。
  **/
 GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
+
+/**
+ * grn_obj_user_data
+ * @obj: 対象object
+ *
+ * objectに登録できるユーザデータへのポインタを返す。table, column, proc, exprのみ使用可能。
+ **/
+GRN_API grn_user_data *grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
+
+/**
+ * grn_obj_set_finalizer
+ * @obj: 対象object
+ * @func: objectを破棄するときに呼ばれる関数
+ *
+ * objectを破棄するときに呼ばれる関数を設定する。table, column, proc, exprのみ設定可能。
+ **/
+GRN_API grn_rc grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
 
 /**
  * grn_obj_path:

@@ -106,6 +106,8 @@ typedef struct {
   grn_id id;
   grn_id range;  /* table: type of subrecords, column: type of values */
   grn_obj *db;
+  grn_user_data user_data;
+  grn_proc_func *finalizer;
   grn_hook *hooks[5];
   void *source;
   uint32_t source_size;
@@ -124,6 +126,8 @@ typedef struct {
   (db_obj)->obj.header.impl_flags = 0;\
   (db_obj)->obj.header.flags = 0;\
   (db_obj)->obj.id = GRN_ID_NIL;\
+  (db_obj)->obj.user_data.ptr = NULL;\
+  (db_obj)->obj.finalizer = NULL;\
   (db_obj)->obj.hooks[0] = NULL;\
   (db_obj)->obj.hooks[1] = NULL;\
   (db_obj)->obj.hooks[2] = NULL;\
@@ -145,14 +149,14 @@ typedef struct {
 
 typedef struct _grn_proc_ctx grn_proc_ctx;
 struct _grn_proc_ctx {
-  grn_proc_data user_data;
+  grn_user_data user_data;
   grn_obj *obj;
   grn_hook *hooks;
   grn_hook *currh;
   grn_proc_phase phase;
   unsigned short nargs;
   unsigned short offset;
-  grn_proc_data data[16];
+  grn_user_data data[16];
 };
 
 struct _grn_proc {

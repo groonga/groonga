@@ -32,7 +32,7 @@ typedef struct {
 } grn_uvector_tokenizer_info;
 
 static grn_rc
-uvector_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+uvector_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   grn_obj *str;
   grn_uvector_tokenizer_info *token;
@@ -48,7 +48,7 @@ uvector_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
 }
 
 static grn_rc
-uvector_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+uvector_next(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   grn_uvector_tokenizer_info *token = user_data->ptr;
   byte *p = token->curr + token->unit;
@@ -66,7 +66,7 @@ uvector_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
 }
 
 static grn_rc
-uvector_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+uvector_fin(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   GRN_FREE(user_data->ptr);
   return GRN_SUCCESS;
@@ -87,7 +87,7 @@ typedef struct {
 } grn_delimited_tokenizer;
 
 static grn_rc
-delimited_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
+delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
                uint8_t *delimiter, uint32_t delimiter_len)
 {
   grn_obj *str;
@@ -116,7 +116,7 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data,
 }
 
 static grn_rc
-delimited_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+delimited_next(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   size_t cl;
   grn_delimited_tokenizer *token = user_data->ptr;
@@ -141,7 +141,7 @@ delimited_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
 }
 
 static grn_rc
-delimited_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+delimited_fin(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   grn_delimited_tokenizer *token = user_data->ptr;
   grn_str_close(ctx, token->nstr);
@@ -150,7 +150,7 @@ delimited_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
 }
 
 static grn_rc
-delimit_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+delimit_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 { return delimited_init(ctx, table, user_data, " ", 1); }
 
 /* mecab tokenizer */
@@ -181,7 +181,7 @@ typedef struct {
 } grn_mecab_tokenizer;
 
 static grn_rc
-mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+mecab_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   grn_obj *str;
   int nflags = 0;
@@ -245,7 +245,7 @@ mecab_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
 }
 
 static grn_rc
-mecab_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+mecab_next(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   size_t cl;
   grn_mecab_tokenizer *token = user_data->ptr;
@@ -271,7 +271,7 @@ mecab_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
 }
 
 static grn_rc
-mecab_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+mecab_fin(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   grn_mecab_tokenizer *token = user_data->ptr;
   // if (token->mecab) { mecab_destroy(token->mecab); }
@@ -305,7 +305,7 @@ typedef struct {
 } grn_ngram_tokenizer;
 
 static grn_rc
-ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data, uint8_t ngram_unit)
+ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram_unit)
 {
   grn_obj *str;
   int nflags = GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES;
@@ -338,19 +338,19 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data, uint8_t ngram
 }
 
 static grn_rc
-unigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+unigram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 { return ngram_init(ctx, table, user_data, 1); }
 
 static grn_rc
-bigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+bigram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 { return ngram_init(ctx, table, user_data, 2); }
 
 static grn_rc
-trigram_init(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+trigram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 { return ngram_init(ctx, table, user_data, 3); }
 
 static grn_rc
-ngram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+ngram_next(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   size_t cl;
   grn_ngram_tokenizer *token = user_data->ptr;
@@ -440,7 +440,7 @@ ngram_next(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
 }
 
 static grn_rc
-ngram_fin(grn_ctx *ctx, grn_obj *table, grn_proc_data *user_data)
+ngram_fin(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data)
 {
   grn_ngram_tokenizer *token = user_data->ptr;
   grn_str_close(ctx, token->nstr);

@@ -1955,7 +1955,7 @@ typedef struct {
 static grn_rc
 default_column_set_value(grn_ctx *ctx, grn_proc_ctx *pctx, grn_obj *in, grn_obj *out)
 {
-  grn_proc_data *data = grn_proc_ctx_get_local_data(pctx);
+  grn_user_data *data = grn_proc_ctx_get_local_data(pctx);
   if (data) {
     grn_column_set_value_arg *arg = data->ptr;
     unsigned int value_size = in->u.p.size; //todo
@@ -1996,7 +1996,7 @@ typedef struct {
 } default_set_value_hook_data;
 
 static grn_rc
-default_set_value_hook(grn_ctx *ctx, grn_obj *obj, grn_proc_data *user_data)
+default_set_value_hook(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (!pctx) {
@@ -3800,6 +3800,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   if (obj) {
     if (GRN_DB_OBJP(obj)) {
       grn_hook_entry entry;
+      if (DB_OBJ(obj)->finalizer) {
+        DB_OBJ(obj)->finalizer(ctx, obj, &DB_OBJ(obj)->user_data);
+      }
       if (DB_OBJ(obj)->source) {
         GRN_FREE(DB_OBJ(obj)->source);
       }
@@ -3993,6 +3996,21 @@ grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id)
   GRN_API_ENTER;
   grn_io_unlock(grn_obj_io(obj));
   GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_user_data *
+grn_obj_user_data(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!GRN_DB_OBJP(obj)) { return NULL; }
+  return &DB_OBJ(obj)->user_data;
+}
+
+grn_rc
+grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func)
+{
+  if (!GRN_DB_OBJP(obj)) { return GRN_INVALID_ARGUMENT; }
+  DB_OBJ(obj)->finalizer = func;
+  return GRN_SUCCESS;
 }
 
 grn_rc

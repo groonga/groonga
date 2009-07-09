@@ -30,7 +30,7 @@
 
 #define GRN_CTX_INITIALIZER(enc) \
   { GRN_SUCCESS, 0, enc, 0, GRN_LOG_NOTICE,\
-    GRN_CTX_FIN, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL }
+      GRN_CTX_FIN, 0, 0, 0, 0, {0}, NULL, NULL, NULL, NULL, NULL }
 
 #define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
 
@@ -286,7 +286,7 @@ grn_ctx_init(grn_ctx *ctx, int flags)
     grn_ctx_ql_init(ctx, flags);
     if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   }
-  ctx->opaque = NULL;
+  ctx->user_data.ptr = NULL;
   MUTEX_LOCK(grn_glock);
   ctx->next = grn_gctx.next;
   ctx->prev = &grn_gctx;
@@ -1451,7 +1451,7 @@ struct _grn_ctx_qe {
 };
 
 static grn_rc
-disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
+disp(grn_ctx *ctx, grn_obj *qe, grn_user_data *user_data)
 {
   grn_obj *table = grn_ctx_pop(ctx);
   grn_obj *str = grn_ctx_pop(ctx);
@@ -1477,7 +1477,7 @@ disp(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
 }
 
 static grn_rc
-search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
+search(grn_ctx *ctx, grn_obj *qe, grn_user_data *user_data)
 {
   grn_obj *op = grn_ctx_pop(ctx);
   grn_obj *index = grn_ctx_pop(ctx);
@@ -1505,7 +1505,7 @@ search(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
 }
 
 static grn_rc
-scan(grn_ctx *ctx, grn_obj *qe, grn_proc_data *user_data)
+scan(grn_ctx *ctx, grn_obj *qe, grn_user_data *user_data)
 {
   grn_id id;
   grn_table_cursor *c;
