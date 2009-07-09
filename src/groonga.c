@@ -78,13 +78,12 @@ typedef enum {
   grn_output_json
 } grn_output_type;
 
-static grn_obj *
+static grn_hash *
 parse_http_path(grn_ctx *ctx, char *path, int path_len)
 {
   grn_obj buf;
-  grn_obj *query;
+  grn_hash *query;
   const char *p, *e;
-  grn_obj *key_type = grn_ctx_at(ctx, GRN_DB_SHORTTEXT);
 
   GRN_TEXT_INIT(&buf, 0);
 
@@ -92,9 +91,8 @@ parse_http_path(grn_ctx *ctx, char *path, int path_len)
   e = p + path_len;
   p = get_uri_token(ctx, &buf, p, e, '?');
 
-  if ((query = grn_table_create(ctx, NULL, 0, NULL,
-                                GRN_OBJ_TABLE_HASH_KEY,
-                                key_type, sizeof(grn_obj *)))) {
+  if ((query = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
+                               sizeof(grn_obj *), GRN_OBJ_KEY_VAR_SIZE))) {
     while (p < e) {
       grn_id key_id;
       grn_obj *value;
@@ -107,6 +105,8 @@ parse_http_path(grn_ctx *ctx, char *path, int path_len)
         /* TODO: if virtual table is able to have column, use it */
         GRN_TEXT_INIT(value, 0);
         p = get_uri_token(ctx, value, p, e, '&');
+      } else {
+        /* TODO: error handling */
       }
     }
   }
@@ -114,14 +114,14 @@ parse_http_path(grn_ctx *ctx, char *path, int path_len)
 }
 
 void
-release_query(grn_ctx *ctx, grn_obj *query)
+release_query(grn_ctx *ctx, grn_hash *query)
 {
   if (query) {
     grn_obj *value;
-    GRN_HASH_EACH((grn_hash *)query, id, NULL, NULL, &value, {
+    GRN_HASH_EACH(query, id, NULL, NULL, &value, {
       GRN_OBJ_FIN(ctx, value);
     });
-    grn_obj_close(ctx, query);
+    grn_hash_close(ctx, query);
   }
 }
 
@@ -374,7 +374,7 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
             /* sort records */
             {
               grn_table_sort_key keys;
-              /* TODO: tableのid、key、valueでのソートはどうしよう */
+              /* TODO: use grn_obj_column for sort :id/:key/column */
               if (offset < 0) {
                 keys.flags = GRN_TABLE_SORT_DESC;
                 offset = -offset; /* FIXME: INT_MIN */
@@ -387,9 +387,7 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                 limit = offset + count - 1;
               }
               keys.key = sort_col;
-              keys.offset = offset - 1;
-              /* NOTE: keys.offsetは0オリジン？ */
-              /* NOTE: grn_table_sortの返り値わからん */
+              /* NOTE: handling grn_table_sort return value */
               grn_table_sort(ctx, table, limit, sort, &keys, 1);
             }
 
@@ -412,8 +410,9 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                   printf("reccount: %d, offset: %d, limit: %d\n", rec_count, offset, limit);
 
                   grn_array_cursor_get_value(ctx, cur, (void **)&rec_id);
-                  grn_text_itoa(ctx, buf, rec_id);
 
+                  grn_text_itoa(ctx, buf, (int)*rec_id);
+                  GRN_TEXT_PUTC(ctx, buf, column_delimiter);
                   {
                     int key_len;
                     char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -696,7 +695,7 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
             switch (path[1]) {
             case 'a' :
               {
-                grn_obj *query;
+                grn_hash *query;
                 grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
                 ((grn_msg *)re)->header.qtype = header->qtype;
                 *p = '\0';
@@ -712,7 +711,7 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
                   case 'c':
                     {
                       grn_obj *table;
-                      if (grn_hash_get(ctx, (grn_hash *)query,
+                      if (grn_hash_get(ctx, query,
                                        "table", 5, (void **)&table) != GRN_ID_NIL) {
                         cmd_columnlist(ctx, GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
                                        re, grn_output_json);
@@ -722,24 +721,24 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
                   case 'r':
                     {
                       grn_obj *table;
-                      if (grn_hash_get(ctx, (grn_hash *)query,
+                      if (grn_hash_get(ctx, query,
                                        "table", 5,
                                        (void **)&table) != GRN_ID_NIL) {
                         int offset, count;
                         grn_obj *sort_column, *num_str;
-                        if (grn_hash_get(ctx, (grn_hash *)query,
-                                         "offset", 11,
+                        if (grn_hash_get(ctx, query,
+                                         "offset", 6,
                                          (void **)&num_str) != GRN_ID_NIL) {
                           offset = grn_atoi(
                             GRN_TEXT_VALUE(num_str),
                             GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
                             NULL);
                         } else {
-                          offset = 0;
+                          offset = 1;
                         }
 
-                        if (grn_hash_get(ctx, (grn_hash *)query,
-                                         "count", 11,
+                        if (grn_hash_get(ctx, query,
+                                         "count", 5,
                                          (void **)&num_str) != GRN_ID_NIL) {
                           count = grn_atoi(
                             GRN_TEXT_VALUE(num_str),
@@ -749,7 +748,7 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
                           count = -1;
                         }
 
-                        if (grn_hash_get(ctx, (grn_hash *)query,
+                        if (grn_hash_get(ctx, query,
                                          "sort_column", 11,
                                          (void **)&sort_column) != GRN_ID_NIL) {
                           cmd_recordlist(ctx,
