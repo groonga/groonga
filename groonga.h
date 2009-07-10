@@ -1383,6 +1383,9 @@ GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags fl
 #ifndef GRN_QUERY_ESCAPE
 #define GRN_QUERY_ESCAPE '\\'
 #endif /* GRN_QUERY_ESCAPE */
+#ifndef GRN_QUERY_COLUMN
+#define GRN_QUERY_COLUMN ':'
+#endif /* GRN_QUERY_COLUMN */
 
 typedef struct _grn_snip grn_snip;
 typedef struct _grn_query grn_query;
@@ -1664,8 +1667,10 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_RECORD_PUT(ctx,obj,val) do {\
   grn_id _val = (grn_id)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(grn_id));\
 } while (0)
-#define GRN_PTR_PUT(ctx,obj,val) \
-  grn_bulk_write((ctx), (obj), (char *)val, sizeof(grn_obj *))
+#define GRN_PTR_PUT(ctx,obj,val) do {\
+  grn_obj *_val = (grn_obj *)(val);\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(grn_obj *));\
+} while (0)
 
 /* grn_str */
 
@@ -1712,6 +1717,8 @@ typedef enum {
   GRN_OP_JSON_PUT,
   GRN_OP_AND,
   GRN_OP_OR,
+  GRN_OP_BUT,
+  GRN_OP_ADJUST,
   GRN_OP_EQUAL,
   GRN_OP_NOT_EQUAL,
   GRN_OP_LESS,
@@ -1743,7 +1750,16 @@ GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
 GRN_API grn_rc grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                              grn_obj *res, grn_sel_operator op);
+                                grn_obj *res, grn_sel_operator op);
+
+GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
+                            const char *str, unsigned str_size, grn_obj *res);
+
+GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
+                                          const char *name, unsigned name_size,
+                                          const char *str, unsigned str_size,
+                                          grn_obj *table, grn_obj *default_column);
+
 
 /* ql */
 
