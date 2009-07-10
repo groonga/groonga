@@ -107,6 +107,7 @@ test_temporary_table_default_tokenizer(gpointer data)
   grn_obj_flags flags = GPOINTER_TO_INT(data);
   grn_obj *tokenizer = NULL;
   char name[1024];
+  int name_size;
 
   table = grn_table_create(&context, NULL, 0, NULL,
                            flags,
@@ -114,7 +115,8 @@ test_temporary_table_default_tokenizer(gpointer data)
   grn_obj_set_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER,
                    OBJECT("TokenTrigram"));
   tokenizer = grn_obj_get_info(&context, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
-  grn_obj_name(&context, tokenizer, name, sizeof(name));
+  name_size = grn_obj_name(&context, tokenizer, name, sizeof(name));
+  name[name_size] = '\0';
   cut_assert_equal_string("TokenTrigram", name);
 }
 
