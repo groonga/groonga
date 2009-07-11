@@ -644,7 +644,7 @@ test_mroonga_index(void)
   /* lexicon table */
   lc = grn_table_create(context,"lc",2,"mrn/lc.grn",
 			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                        grn_ctx_at(context, GRN_DB_SHORTTEXT), 0);
+                        grn_ctx_at(context, GRN_DB_SHORT_TEXT), 0);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(context, lc, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(context, GRN_DB_BIGRAM)));
@@ -770,7 +770,7 @@ test_mroonga_index_score(void)
   /* lexicon table */
   lc = grn_table_create(context,"lc",2,"mrn/lc.grn",
 			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                        grn_ctx_at(context, GRN_DB_SHORTTEXT), 0);
+                        grn_ctx_at(context, GRN_DB_SHORT_TEXT), 0);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(context, lc, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(context, GRN_DB_BIGRAM)));

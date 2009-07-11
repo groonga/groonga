@@ -34,7 +34,7 @@ grn_index_create(grn_ctx *ctx, const char *path)
     char buffer[PATH_MAX];
     strcpy(buffer, path);
     strcat(buffer, ".SEN");
-    if ((key_type = grn_ctx_at(ctx, GRN_DB_SHORTTEXT))) {
+    if ((key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT))) {
       if ((keys = grn_table_create(ctx, "<keys>", 6, buffer,
                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                    key_type, 0))) {
@@ -75,7 +75,7 @@ grn_index_open(grn_ctx *ctx, const char *path)
     char buffer[PATH_MAX];
     strcpy(buffer, path);
     strcat(buffer, ".SEN");
-    if ((key_type = grn_ctx_at(ctx, GRN_DB_SHORTTEXT))) {
+    if ((key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT))) {
       if ((keys = grn_table_open(ctx, "<keys>", 6, buffer))) {
         strcpy(buffer, path);
         strcat(buffer, ".SEN.l");

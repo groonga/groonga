@@ -292,7 +292,7 @@ test_expr_query(void)
   /* lexicon table */
   lc = grn_table_create(&context, "lc", 2, NULL,
 			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                        grn_ctx_at(&context, GRN_DB_SHORTTEXT), 0);
+                        grn_ctx_at(&context, GRN_DB_SHORT_TEXT), 0);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(&context, lc, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(&context, GRN_DB_BIGRAM)));
@@ -407,7 +407,7 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 
   terms = grn_table_create(&context, "terms", 5, NULL,
                            GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                           grn_ctx_at(&context, GRN_DB_SHORTTEXT), 0);
+                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT), 0);
   cut_assert_not_null(terms);
   grn_test_assert(grn_obj_set_info(&context, terms, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(&context, GRN_DB_BIGRAM)));

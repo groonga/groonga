@@ -64,7 +64,7 @@ column_put(void)
 {
   int i, s = 0;
   grn_obj buf;
-  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, 0);
@@ -149,7 +149,7 @@ table_put(void)
 {
   int i;
   grn_obj buf;
-  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, value_size);
@@ -179,7 +179,7 @@ table_put2(void)
 {
   int i;
   grn_obj keybuf, valbuf;
-  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, value_size);
@@ -211,7 +211,7 @@ table_put_allocate(void)
 {
   int i;
   grn_obj *buf;
-  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORTTEXT);
+  grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
                                     key_type, value_size);

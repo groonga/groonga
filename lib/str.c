@@ -2047,9 +2047,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
   case GRN_BULK :
     switch (obj->header.domain) {
     case GRN_DB_VOID :
-    case GRN_DB_SHORTTEXT :
+    case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
-    case GRN_DB_LONGTEXT :
+    case GRN_DB_LONG_TEXT :
       grn_text_esc(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
       break;
     case GRN_DB_INT32 :

@@ -2247,7 +2247,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
   uint32_t value_size = 0;
   grn_obj_flags flags = (name && name_size) ? GRN_OBJ_PERSISTENT : GRN_OBJ_TEMPORARY;
   grn_encoding encoding = GRN_ENC_DEFAULT;
-  grn_obj *domain = grn_ctx_at(ctx, GRN_DB_SHORTTEXT);
+  grn_obj *domain = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
   grn_cell *car;
   grn_id tokenizer = GRN_DB_DELIMIT;
   char msg[STRBUF_SIZE];
