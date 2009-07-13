@@ -27,6 +27,18 @@ static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
 
+void test_accessor(void);
+void test_expr(void);
+void test_persistent_expr(void);
+void test_expr_query(void);
+
+void test_table_select_equal(void);
+void test_table_select_select(void);
+void test_table_select_search(void);
+void test_table_select_select_search(void);
+void test_table_select_match(void);
+void test_table_select_match_equal(void);
+
 void
 cut_startup(void)
 {
@@ -443,7 +455,7 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 }
 
 void
-test_table_scan(void)
+test_table_select_equal(void)
 {
   grn_obj *cond, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
@@ -478,7 +490,7 @@ test_table_scan(void)
 }
 
 void
-test_op_table_scan(void)
+test_table_select_select(void)
 {
   grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
@@ -522,7 +534,7 @@ test_op_table_scan(void)
 }
 
 void
-test_search_scan(void)
+test_table_select_search(void)
 {
   grn_obj *cond, *expr, *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
@@ -592,7 +604,7 @@ test_search_scan(void)
 }
 
 void
-test_scan_search(void)
+test_table_select_select_search(void)
 {
   grn_obj *cond, *expr, *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
@@ -662,7 +674,7 @@ test_scan_search(void)
 }
 
 void
-test_table_scan_match(void)
+test_table_select_match(void)
 {
   grn_obj *cond, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
@@ -696,7 +708,7 @@ test_table_scan_match(void)
 }
 
 void
-test_table_scan_match_equal(void)
+test_table_select_match_equal(void)
 {
   grn_obj *cond, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
