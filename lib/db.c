@@ -385,6 +385,9 @@ grn_proc_create(grn_ctx *ctx,
     res->funcs[PROC_INIT] = init;
     res->funcs[PROC_NEXT] = next;
     res->funcs[PROC_FIN] = fin;
+    GRN_TEXT_INIT(&res->name_buf, 0);
+    res->vars = NULL;
+    res->nvars = 0;
     res->nargs = nargs;
     res->nresults = nresults;
     memcpy(res->results, result_types, sizeof(grn_obj) * nresults);
@@ -409,9 +412,33 @@ grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec)
     res->funcs[PROC_INIT] = NULL;
     res->funcs[PROC_NEXT] = NULL;
     res->funcs[PROC_FIN] = NULL;
+    GRN_TEXT_INIT(&res->name_buf, 0);
+    res->vars = NULL;
+    res->nvars = 0;
     res->obj.header = spec->header;
     if (res->obj.range) {
       // todo : grn_dl_load should be called.
+    }
+  }
+  return (grn_obj *)res;
+}
+
+static grn_obj *
+grn_proc_dup(grn_ctx *ctx, grn_obj *proc)
+{
+  grn_proc *p = (grn_proc *)proc;
+  grn_proc *res = GRN_MALLOC(sizeof(grn_proc));
+  if (res) {
+    uint32_t i;
+    grn_obj *v;
+    grn_expr_var *v0;
+    memcpy(res, p, sizeof(grn_proc));
+    res->obj.header.domain = p->obj.id;
+    for (v0 = p->vars, i = p->nvars; i; v0++, i--) {
+      if ((v = grn_expr_add_var(ctx, (grn_obj *)res, v0->name, v0->name_size))) {
+        GRN_OBJ_INIT(v, v0->value.header.type, 0, v0->value.header.domain);
+        GRN_TEXT_PUT(ctx, v, GRN_TEXT_VALUE(&v0->value), GRN_TEXT_LEN(&v0->value));
+      }
     }
   }
   return (grn_obj *)res;
@@ -3308,9 +3335,11 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_vector_delimit(ctx, &v, 0, 0);
   grn_hook_pack(ctx, obj, b);
   grn_vector_delimit(ctx, &v, 0, 0);
-  if (obj->header.type == GRN_EXPR) {
+  switch (obj->header.type) {
+  case GRN_EXPR :
     grn_expr_pack(ctx, b, (grn_obj *)obj);
     grn_vector_delimit(ctx, &v, 0, 0);
+    break;
   }
   grn_ja_putv(ctx, s->specs, obj->id, &v, 0);
   grn_obj_close(ctx, &v);
@@ -3750,14 +3779,25 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           grn_ja_unref(ctx, &jw);
         }
       }
-      res = *vp;
-      if (res && res->header.type == GRN_EXPR) {
+      if ((res = *vp)) {
         int added;
-        if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, &added)) {
-          res = NULL;
-        } else {
-          if (added) { *vp = grn_expr_dup(ctx, res); }
-          res = *vp;
+        switch (res->header.type) {
+        case GRN_EXPR :
+          if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, &added)) {
+            res = NULL;
+          } else {
+            if (added) { *vp = grn_expr_dup(ctx, res); }
+            res = *vp;
+          }
+          break;
+        case GRN_PROC :
+          if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, &added)) {
+            res = NULL;
+          } else {
+            if (added) { *vp = grn_proc_dup(ctx, res); }
+            res = *vp;
+          }
+          break;
         }
       }
     }
@@ -3874,6 +3914,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       rc = grn_ii_close(ctx, (grn_ii *)obj);
       break;
     case GRN_PROC :
+      grn_obj_close(ctx, &((grn_proc *)obj)->name_buf);
       GRN_FREE(obj);
       rc = GRN_SUCCESS;
       break;

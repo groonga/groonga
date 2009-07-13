@@ -161,7 +161,12 @@ struct _grn_proc_ctx {
 
 struct _grn_proc {
   grn_db_obj obj;
+  grn_obj name_buf;
+  grn_expr_var *vars;
+  uint32_t nvars;
+  /* -- compatible with grn_expr -- */
   grn_proc_func *funcs[3];
+
   uint32_t nargs;
   uint32_t nresults;
   grn_obj results[16];
@@ -220,11 +225,13 @@ struct _grn_expr {
   grn_db_obj obj;
   grn_obj name_buf;
   grn_expr_var *vars;
+  uint32_t nvars;
+  /* -- compatible with grn_proc -- */
+
   grn_obj *consts;
   grn_obj *values;
   grn_obj **stack;
   grn_expr_code *codes;
-  uint32_t nvars;
   uint32_t nconsts;
   uint32_t values_curr;
   uint32_t values_tail;
