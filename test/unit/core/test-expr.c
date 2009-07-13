@@ -33,6 +33,7 @@ void test_persistent_expr(void);
 void test_expr_query(void);
 
 void test_table_select_equal(void);
+void test_table_select_equal_indexed(void);
 void test_table_select_select(void);
 void test_table_select_search(void);
 void test_table_select_select_search(void);
@@ -482,6 +483,41 @@ test_table_select_equal(void)
   grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_SEL_OR));
 
   cut_assert_equal_uint(3, grn_table_size(&context, res));
+
+  grn_test_assert(grn_obj_close(&context, res));
+  grn_test_assert(grn_obj_close(&context, cond));
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+  grn_test_assert(grn_obj_close(&context, &intbuf));
+}
+
+void
+test_table_select_equal_indexed(void)
+{
+  grn_obj *cond, *v, *res, textbuf, intbuf;
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+
+  prepare_data(&textbuf, &intbuf);
+
+  cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
+  v = grn_expr_add_var(&context, cond, NULL, 0);
+  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
+  grn_expr_append_obj(&context, cond, v);
+  GRN_TEXT_SETS(&context, &textbuf, "body");
+  grn_expr_append_const(&context, cond, &textbuf);
+  grn_expr_append_op(&context, cond, GRN_OP_OBJ_GET_VALUE, 2);
+  GRN_TEXT_SETS(&context, &textbuf, "hoge");
+  grn_expr_append_const(&context, cond, &textbuf);
+  grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
+  grn_expr_compile(&context, cond);
+
+  res = grn_table_create(&context, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+  cut_assert_not_null(res);
+
+  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_SEL_OR));
+
+  cut_assert_equal_uint(1, grn_table_size(&context, res));
 
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
