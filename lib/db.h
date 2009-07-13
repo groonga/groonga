@@ -218,8 +218,8 @@ typedef struct {
 
 struct _grn_expr {
   grn_db_obj obj;
-  grn_obj *names;
-  grn_obj *vars;
+  grn_obj name_buf;
+  grn_expr_var *vars;
   grn_obj *consts;
   grn_obj *values;
   grn_obj **stack;

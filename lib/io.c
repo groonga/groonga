@@ -117,10 +117,19 @@ grn_io_fin(void)
   return grn_hash_close(&grn_gctx, grn_dls);
 }
 
+#define PATHLEN(filename) (strlen(filename) + 1)
+
 grn_id
 grn_dl_get(grn_ctx *ctx, const char *filename)
 {
-  return grn_hash_get(ctx, grn_dls, filename, strlen(filename), NULL);
+  return grn_hash_get(ctx, grn_dls, filename, PATHLEN(filename), NULL);
+}
+
+const char *
+grn_dl_path(grn_ctx *ctx, grn_id id)
+{
+  uint32_t key_size;
+  return _grn_hash_key(ctx, grn_dls, id, &key_size);
 }
 
 grn_io *
@@ -1773,11 +1782,11 @@ grn_dl_open(grn_ctx *ctx, const char *filename)
 {
   grn_id id;
   HMODULE dl, *dlp;
-  if ((id = grn_hash_get(ctx, grn_dls, filename, strlen(filename), (void **)&dlp))) {
+  if ((id = grn_hash_get(ctx, grn_dls, filename, PATHLEN(filename), (void **)&dlp))) {
     return id;
   }
   if ((dl = LoadLibrary(filename))) {
-    if ((id = grn_hash_add(ctx, grn_dls, filename, strlen(filename), (void *)&dlp, NULL))) {
+    if ((id = grn_hash_add(ctx, grn_dls, filename, PATHLEN(filename), (void *)&dlp, NULL))) {
       *dlp = dl;
     } else {
       if (!FreeLibrary(dl)) {
@@ -1973,11 +1982,11 @@ grn_dl_open(grn_ctx *ctx, const char *filename)
 {
   grn_id id;
   void *dl, **dlp;
-  if ((id = grn_hash_get(ctx, grn_dls, filename, strlen(filename), (void **)&dlp))) {
+  if ((id = grn_hash_get(ctx, grn_dls, filename, PATHLEN(filename), (void **)&dlp))) {
     return id;
   }
   if ((dl = dlopen(filename, 0))) {
-    if ((id = grn_hash_add(ctx, grn_dls, filename, strlen(filename), (void **)&dlp, NULL))) {
+    if ((id = grn_hash_add(ctx, grn_dls, filename, PATHLEN(filename), (void **)&dlp, NULL))) {
       *dlp = dl;
     } else {
       if (dlclose(dl)) {

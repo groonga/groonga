@@ -347,6 +347,7 @@ grn_id grn_dl_open(grn_ctx *ctx, const char *filename);
 grn_rc grn_dl_close(grn_ctx *ctx, grn_id id);
 void *grn_dl_sym(grn_ctx *ctx, grn_id id, const char *symbol);
 grn_id grn_dl_get(grn_ctx *ctx, const char *filename);
+const char *grn_dl_path(grn_ctx *ctx, grn_id id);
 
 uint32_t grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit);
 uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);

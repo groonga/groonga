@@ -954,8 +954,6 @@ GRN_API grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
  * db, table, columnの全てまたは幾つかで共通に使用できる関数
  */
 
-#define GRN_PROC_MAX_ARGS              (0x100)
-
 typedef enum {
   GRN_INFO_ENCODING = 0,
   GRN_INFO_SOURCE,
@@ -1734,6 +1732,12 @@ typedef enum {
   GRN_OP_GEO_WITHINP6,
   GRN_OP_GEO_WITHINP8
 } grn_op;
+
+typedef struct {
+  char *name;
+  unsigned name_size;
+  grn_obj value;
+} grn_expr_var;
 
 GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size);
 GRN_API grn_rc grn_expr_close(grn_ctx *ctx, grn_obj *expr);

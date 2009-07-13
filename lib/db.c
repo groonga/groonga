@@ -337,7 +337,7 @@ grn_proc_create(grn_ctx *ctx,
 {
   grn_proc *res = NULL;
   grn_id id = GRN_ID_NIL;
-  grn_id domain;
+  grn_id range;
   int added = 0;
   grn_obj *db;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
@@ -348,7 +348,7 @@ grn_proc_create(grn_ctx *ctx,
     ERR(GRN_INVALID_ARGUMENT, "too many results");
   }
   GRN_API_ENTER;
-  domain = path ? grn_dl_get(ctx, path) : GRN_ID_NIL;
+  range = path ? grn_dl_get(ctx, path) : GRN_ID_NIL;
   if (check_name(ctx, name, name_size)) {
     ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
     GRN_API_RETURN(NULL);
@@ -379,8 +379,9 @@ grn_proc_create(grn_ctx *ctx,
     GRN_DB_OBJ_SET_TYPE(res, GRN_PROC);
     res->obj.db = db;
     res->obj.id = id;
-    res->obj.header.domain = domain;
-    res->obj.range = GRN_ID_NIL;
+    res->obj.header.domain = GRN_ID_NIL;
+    res->obj.header.flags = path ? GRN_OBJ_CUSTOM_NAME : 0;
+    res->obj.range = range;
     res->funcs[PROC_INIT] = init;
     res->funcs[PROC_NEXT] = next;
     res->funcs[PROC_FIN] = fin;
@@ -409,7 +410,7 @@ grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec)
     res->funcs[PROC_NEXT] = NULL;
     res->funcs[PROC_FIN] = NULL;
     res->obj.header = spec->header;
-    if (res->obj.header.domain) {
+    if (res->obj.range) {
       // todo : grn_dl_load should be called.
     }
   }
@@ -3922,6 +3923,9 @@ grn_obj_path(grn_ctx *ctx, grn_obj *obj)
   grn_io *io;
   char *path = NULL;
   GRN_API_ENTER;
+  if (obj->header.type == GRN_PROC) {
+    return grn_dl_path(ctx, DB_OBJ(obj)->range);
+  }
   io = grn_obj_io(obj);
   if (io && !(io->flags & GRN_IO_TEMPORARY)) { path = io->path; }
   GRN_API_RETURN(path);
@@ -4519,29 +4523,34 @@ grn_obj_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, uint8_t type, 
 static void
 grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
 {
-  grn_obj *n, *v;
   grn_expr_code *c;
+  grn_expr_var *v;
   grn_expr *e = (grn_expr *)expr;
-  uint32_t i = e->nvars;
-  grn_text_benc(ctx, buf, i);
-  for (n = e->names, v = e->vars; i; i--, v++, n++) {
-    uint32_t ns = GRN_TEXT_LEN(n);
-    grn_text_benc(ctx, buf, ns);
-    if (ns) { GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(n), ns); }
-    grn_obj_pack(ctx, buf, v);
+  uint32_t i, j;
+  grn_text_benc(ctx, buf, e->nvars);
+  for (i = e->nvars, v = e->vars; i; i--, v++) {
+    grn_text_benc(ctx, buf, v->name_size);
+    if (v->name_size) { GRN_TEXT_PUT(ctx, buf, v->name, v->name_size); }
+    grn_obj_pack(ctx, buf, &v->value);
   }
   i = e->codes_curr;
   grn_text_benc(ctx, buf, i);
-  for (c = e-> codes; i; i--, c++) {
+  for (c = e->codes; i; i--, c++) {
     grn_text_benc(ctx, buf, c->op);
     if (!c->value) {
       grn_text_benc(ctx, buf, 0); /* NULL */
-    } else if (e->vars <= c->value && c->value < e->vars + e->nvars) {
-      grn_text_benc(ctx, buf, 1); /* variable */
-      grn_text_benc(ctx, buf, c->value - e->vars);
     } else {
-      grn_text_benc(ctx, buf, 2); /* others */
-      grn_obj_pack(ctx, buf, c->value);
+      for (j = 0, v = e->vars; j < e->nvars; j++, v++) {
+        if (&v->value == c->value) {
+          grn_text_benc(ctx, buf, 1); /* variable */
+          grn_text_benc(ctx, buf, j);
+          break;
+        }
+      }
+      if (j == e->nvars) {
+        grn_text_benc(ctx, buf, 2); /* others */
+        grn_obj_pack(ctx, buf, c->value);
+      }
     }
   }
 }
@@ -4581,7 +4590,7 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
       {
         uint32_t offset;
         GRN_B_DEC(offset, p);
-        code->value = e->vars + offset;
+        code->value = &e->vars[i].value;
       }
       break;
     case 2 : /* others */
@@ -4613,7 +4622,6 @@ grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t 
     int size = 256;
     expr->consts = NULL;
     expr->nconsts = 0;
-    expr->names = NULL;
     expr->vars = NULL;
     expr->nvars = 0;
     GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
@@ -4673,7 +4681,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
     int size = 256;
     expr->consts = NULL;
     expr->nconsts = 0;
-    expr->names = NULL;
+    GRN_TEXT_INIT(&expr->name_buf, 0);
     expr->vars = NULL;
     expr->nvars = 0;
     expr->values_curr = 0;
@@ -4715,20 +4723,26 @@ grn_expr_dup(grn_ctx *ctx, grn_obj *expr)
   grn_expr *res = (grn_expr *)grn_expr_create(ctx, NULL, 0);
   if (res) {
     uint32_t i;
+    grn_obj *v;
     grn_expr_code *c, *c0;
-    grn_obj *n0, *v0, *v;
+    grn_expr_var *v0;
     res->obj.header.domain = e->obj.id;
-    for (n0 = e->names, v0 = e->vars, i = e->nvars; i; n0++, v0++, i--) {
-      if ((v = grn_expr_add_var(ctx, (grn_obj *)res,
-                                GRN_TEXT_VALUE(n0), GRN_TEXT_LEN(n0)))) {
-        GRN_OBJ_INIT(v, v0->header.type, 0, v0->header.domain);
-        GRN_TEXT_PUT(ctx, v, GRN_TEXT_VALUE(v0), GRN_TEXT_LEN(v0));
+    for (v0 = e->vars, i = e->nvars; i; v0++, i--) {
+      if ((v = grn_expr_add_var(ctx, (grn_obj *)res, v0->name, v0->name_size))) {
+        GRN_OBJ_INIT(v, v0->value.header.type, 0, v0->value.header.domain);
+        GRN_TEXT_PUT(ctx, v, GRN_TEXT_VALUE(&v0->value), GRN_TEXT_LEN(&v0->value));
       }
     }
     for (c0 = e->codes, c = res->codes, i = e->codes_curr; i; c0++, c++, i--) {
-      off_t g = c0->value - e->vars;
+      int j;
       c->op = c0->op;
-      c->value = (0 <= g && g < e->nvars) ? res->vars + g : c0->value;
+      c->value = c0->value;
+      for (j = 0, v0 = e->vars; j < e->nvars; v0++, j++) {
+        if (c0->value == &v0->value) {
+          c->value = &res->vars[j].value;
+          break;
+        }
+      }
     }
     res->codes_curr = e->codes_curr;
   }
@@ -4750,12 +4764,11 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   if (e->consts) {
     GRN_REALLOC(e->consts, 0);
   }
+  grn_obj_close(ctx, &e->name_buf);
   for (i = 0; i < e->nvars; i++) {
-    grn_obj_close(ctx, &e->names[i]);
-    grn_obj_close(ctx, &e->vars[i]);
+    grn_obj_close(ctx, &e->vars[i].value);
   }
   GRN_REALLOC(e->vars, 0);
-  GRN_REALLOC(e->names, 0);
   for (i = 0; i < e->values_curr; i++) {
     grn_obj_close(ctx, &e->values[i]);
   }
@@ -4766,34 +4779,47 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   GRN_API_RETURN(ctx->rc);
 }
 
+#define APPEND_VAR(p,n,x) {\
+  if (!((n) % 16)) {\
+    grn_expr_var *p0 = GRN_REALLOC((p), sizeof(grn_expr_var) * ((n) + 16));\
+    if (p0) {\
+      (p) = p0;\
+      (x) = (p) + (n)++;\
+    } else {\
+      (x) = NULL;\
+    }\
+  } else {\
+    (x) = (p) + (n)++;\
+  }\
+}
+
 grn_obj *
 grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
 {
-  uint32_t n;
-  grn_obj *name_obj, *res;
+  grn_expr_var *v;
+  grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  n = e->nvars;
-  APPEND_OBJ(e->names, n, name_obj);
-  APPEND_OBJ(e->vars, e->nvars, res);
-  if (name_obj) {
-    GRN_TEXT_INIT(name_obj, 0);
-    GRN_TEXT_PUT(ctx, name_obj, name, name_size);
+  APPEND_VAR(e->vars, e->nvars, v);
+  if (v) {
+    GRN_TEXT_PUT(ctx, &e->name_buf, name, name_size);
+    v->name = GRN_BULK_CURR(&e->name_buf) - name_size;
+    v->name_size = name_size;
+    res = &v->value;
+    GRN_VOID_INIT(res);
   }
-  GRN_VOID_INIT(res);
   GRN_API_RETURN(res);
 }
 
 grn_obj *
 grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
 {
-  grn_obj *obj, *res;
+  grn_expr_var *v;
   grn_expr *e = (grn_expr *)expr;
   uint32_t n = e->nvars;
-  for (obj = e->names, res = e->vars; n--; res++, obj++) {
-    if (GRN_BULK_VSIZE(obj) == name_size &&
-        !(memcmp(GRN_BULK_HEAD(obj), name, name_size))) {
-      return res;
+  for (v = e->vars; n--; v++) {
+    if (v->name_size == name_size && !memcmp(v->name, name, name_size)) {
+      return &v->value;
     }
   }
   return NULL;
@@ -4803,7 +4829,7 @@ grn_obj *
 grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 {
   grn_expr *e = (grn_expr *)expr;
-  return (offset < e->nvars) ? &e->vars[offset] : NULL;
+  return (offset < e->nvars) ? &e->vars[offset].value : NULL;
 }
 
 static void
@@ -6002,7 +6028,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
-  if (!e->nvars || !(var = e->vars)) { return NULL; }
+  if (!e->nvars || !(var = &e->vars[0].value)) { return NULL; }
   for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
@@ -6372,7 +6398,7 @@ get_phrase(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
   grn_expr_append_const(ctx, q->e, column);
   grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_const(ctx, q->e, &q->buf);
-  if (mode == GRN_OP_MATCH || GRN_SEL_EXACT) {
+  if (mode == GRN_OP_MATCH || mode == GRN_SEL_EXACT) {
     grn_expr_append_op(ctx, q->e, mode, 2);
   } else {
     grn_expr_append_const_int(ctx, q->e, option);
@@ -6451,7 +6477,7 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
   grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_const(ctx, q->e, &q->buf);
   grn_expr_append_const_str(ctx, q->e, start, end - start);
-  if (mode == GRN_OP_MATCH || GRN_SEL_EXACT) {
+  if (mode == GRN_OP_MATCH || mode == GRN_SEL_EXACT) {
     grn_expr_append_op(ctx, q->e, mode, 2);
   } else {
     grn_expr_append_const_int(ctx, q->e, option);
