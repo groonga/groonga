@@ -150,7 +150,8 @@ typedef struct {
 typedef struct _grn_proc_ctx grn_proc_ctx;
 struct _grn_proc_ctx {
   grn_user_data user_data;
-  grn_obj *obj;
+  grn_proc *proc;
+  //  grn_obj *obj;
   grn_hook *hooks;
   grn_hook *currh;
   grn_proc_phase phase;

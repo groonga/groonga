@@ -508,7 +508,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len, in
     GRN_TEXT_INIT(&str_, GRN_OBJ_DO_SHALLOW_COPY);
     GRN_TEXT_SET_REF(&str_, str, str_len);
     token->pctx.user_data.ptr = NULL;
-    token->pctx.obj = table;
+    token->pctx.proc = (grn_proc *)tokenizer;
     token->pctx.hooks = NULL;
     token->pctx.currh = NULL;
     token->pctx.phase = PROC_INIT;
@@ -623,25 +623,30 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
 grn_rc
 grn_db_init_builtin_tokenizers(grn_ctx *ctx)
 {
-  grn_obj *obj, results[2];
-  GRN_UINT32_INIT(&results[0], 0);
-  GRN_TEXT_INIT(&results[1], 0);
-
+  grn_obj *obj;
+  grn_expr_var vars[] = {
+    {NULL, 0},
+    {NULL, 0},
+    {NULL, 0}
+  };
+  GRN_TEXT_INIT(&vars[0].value, 0);
+  GRN_TEXT_INIT(&vars[1].value, 0);
+  GRN_UINT32_INIT(&vars[2].value, 0);
   obj = grn_proc_create(ctx, "TokenDelimit", 12, NULL,
-                        delimit_init, delimited_next, delimited_fin, 1, 2, results);
+                        delimit_init, delimited_next, delimited_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_DELIMIT) { return GRN_FILE_CORRUPT; }
   obj = grn_proc_create(ctx, "TokenUnigram", 12, NULL,
-                        unigram_init, ngram_next, ngram_fin, 1, 2, results);
+                        unigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_UNIGRAM) { return GRN_FILE_CORRUPT; }
   obj = grn_proc_create(ctx, "TokenBigram", 11, NULL,
-                        bigram_init, ngram_next, ngram_fin, 1, 2, results);
+                        bigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_BIGRAM) { return GRN_FILE_CORRUPT; }
   obj = grn_proc_create(ctx, "TokenTrigram", 12, NULL,
-                        trigram_init, ngram_next, ngram_fin, 1, 2, results);
+                        trigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) { return GRN_FILE_CORRUPT; }
 #ifndef NO_MECAB
   obj = grn_proc_create(ctx, "TokenMecab", 10, NULL,
-                        mecab_init, mecab_next, mecab_fin, 1, 2, results);
+                        mecab_init, mecab_next, mecab_fin, 3, vars);
 #endif /* NO_MECAB */
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
   return GRN_SUCCESS;
