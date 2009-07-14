@@ -1,4 +1,4 @@
-AC_INIT([groonga],0.0.8,[groonga@razil.jp])
+AC_INIT([groonga],0.0.9,[groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
