@@ -4513,18 +4513,22 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_op op, grn_obj **indexbuf, int 
   if (!GRN_DB_OBJP(obj)) { return 0; }
   GRN_API_ENTER;
   if (op != GRN_OP_NOT_EQUAL) {
-    grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
-    while (hooks) {
+    grn_hook *hooks;
+    for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
       default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
       /* todo : data->section */
-      if (target->header.type == GRN_COLUMN_INDEX) {
-        if (n < buf_size) {
-          *ip++ = target;
-        }
-        n++;
+      if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+      if (op == GRN_OP_EQUAL) {
+        grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
+        if (!lexicon) { continue; }
+        grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer);
+        if (tokenizer) { continue; }
       }
-      hooks = hooks->next;
+      if (n < buf_size) {
+        *ip++ = target;
+      }
+      n++;
     }
   }
   GRN_API_RETURN(n);
