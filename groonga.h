@@ -98,6 +98,7 @@ typedef enum {
   GRN_ADDRESS_IS_IN_USE = -59,
   GRN_ZLIB_ERROR = -60,
   GRN_LZO_ERROR = -61,
+  GRN_STACK_OVER_FLOW = -62,
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);

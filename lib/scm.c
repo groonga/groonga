@@ -419,6 +419,7 @@ grn_ctx_mgc(grn_ctx *ctx)
         ctx->impl->n_entries++;
       } else {
         if (((grn_obj *)o->obj)->header.type != GRN_EXPR ||
+            ((grn_obj *)o->obj)->header.type != GRN_PROC ||
             ((grn_obj *)o->obj)->header.domain == GRN_ID_NIL) {
           grn_obj_close(ctx, (grn_obj *)o->obj);
         }
