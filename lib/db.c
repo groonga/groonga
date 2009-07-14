@@ -364,10 +364,14 @@ grn_proc_create(grn_ctx *ctx,
       GRN_API_RETURN(NULL);
     }
     if (!added) {
-      res = (grn_proc *)grn_ctx_at(ctx, id);
-      if (res && res->funcs[PROC_INIT]) {
-        ERR(GRN_INVALID_ARGUMENT, "already used name");
-        GRN_API_RETURN(NULL);
+      grn_proc **vp;
+      if ((vp = grn_tiny_array_at(&s->values, id)) && (res = (*vp))) {
+        if (res->funcs[PROC_INIT]) {
+          ERR(GRN_INVALID_ARGUMENT, "already used name");
+          GRN_API_RETURN(NULL);
+        }
+      } else {
+        added = 1;
       }
     }
   } else if (ctx->impl && ctx->impl->values) {
@@ -388,9 +392,9 @@ grn_proc_create(grn_ctx *ctx,
     GRN_TEXT_INIT(&res->name_buf, 0);
     res->vars = NULL;
     res->nvars = 0;
-    res->nargs = nargs;
-    res->nresults = nresults;
-    memcpy(res->results, result_types, sizeof(grn_obj) * nresults);
+    //    res->nargs = nargs;
+    //    res->nresults = nresults;
+    //    memcpy(res->results, result_types, sizeof(grn_obj) * nresults);
     if (added) {
       if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
         // grn_obj_delete(ctx, db, id);
@@ -427,12 +431,17 @@ static grn_obj *
 grn_proc_dup(grn_ctx *ctx, grn_obj *proc)
 {
   grn_proc *p = (grn_proc *)proc;
-  grn_proc *res = GRN_MALLOC(sizeof(grn_proc));
+  //grn_proc *res = (grn_proc *)GRN_MALLOC(sizeof(grn_proc));
+  grn_proc *res = (grn_proc *)grn_proc_create(ctx, NULL, 0, NULL,
+                                              p->funcs[PROC_INIT],
+                                              p->funcs[PROC_NEXT],
+                                              p->funcs[PROC_FIN],
+                                              0, 0, NULL);
   if (res) {
     uint32_t i;
     grn_obj *v;
     grn_expr_var *v0;
-    memcpy(res, p, sizeof(grn_proc));
+    // memcpy(res, p, sizeof(grn_proc));
     res->obj.header.domain = p->obj.id;
     for (v0 = p->vars, i = p->nvars; i; v0++, i--) {
       if ((v = grn_expr_add_var(ctx, (grn_obj *)res, v0->name, v0->name_size))) {
@@ -3978,9 +3987,15 @@ grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
   int len = 0;
   GRN_API_ENTER;
   if (GRN_DB_OBJP(obj)) {
-    if (DB_OBJ(obj)->id && DB_OBJ(obj)->id < GRN_ID_MAX) {
+    if (DB_OBJ(obj)->id) {
       grn_db *s = (grn_db *)DB_OBJ(obj)->db;
-      len = grn_pat_get_key(ctx, s->keys, DB_OBJ(obj)->id, namebuf, buf_size);
+      if (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) {
+        if (obj->header.type == GRN_PROC || obj->header.type == GRN_EXPR) {
+          len = grn_pat_get_key(ctx, s->keys, obj->header.domain, namebuf, buf_size);
+        }
+      } else {
+        len = grn_pat_get_key(ctx, s->keys, DB_OBJ(obj)->id, namebuf, buf_size);
+      }
     }
   }
   GRN_API_RETURN(len);
@@ -4663,6 +4678,7 @@ grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t 
     int size = 256;
     expr->consts = NULL;
     expr->nconsts = 0;
+    GRN_TEXT_INIT(&expr->name_buf, 0);
     expr->vars = NULL;
     expr->nvars = 0;
     GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
@@ -4928,14 +4944,14 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
   switch (obj->header.type) {
   case GRN_PROC :
     {
-      grn_obj *o;
-      uint32_t i;
-      grn_proc *p = (grn_proc *)obj;
+      //      grn_obj *o;
+      //      uint32_t i;
+      //      grn_proc *p = (grn_proc *)obj;
       grn_expr_code *code = &e->codes[e->codes_curr++];
       code->op = GRN_OP_CALL;
       code->value = obj;
-      for (i = p->nargs; i; i--) { EXPR_POP(o, e); }
-      for (i = p->nresults, o = p->results; i; i--, o++) { EXPR_PUSH(o, e); }
+      //for (i = p->nargs; i; i--) { EXPR_POP(o, e); }
+      //for (i = p->nresults, o = p->results; i; i--, o++) { EXPR_PUSH(o, e); }
     }
     break;
   default :

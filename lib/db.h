@@ -167,9 +167,9 @@ struct _grn_proc {
   /* -- compatible with grn_expr -- */
   grn_proc_func *funcs[3];
 
-  uint32_t nargs;
-  uint32_t nresults;
-  grn_obj results[16];
+  //  uint32_t nargs;
+  //  uint32_t nresults;
+  //  grn_obj results[16];
 };
 
 /* vector */
