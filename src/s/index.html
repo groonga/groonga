@@ -27,6 +27,10 @@
       <p>
         groongaの管理ツールです。
       </p>
+      <ul>
+        <li>開始時間: <span id="status-starttime" /></li>
+        <li>uptime: <span id="status-uptime" /></li>
+      </ul>
     </div>
     <div id="tab-instancelist">
       実装中です。
@@ -125,6 +129,8 @@ GroongaAdmin = {
       e.append($('<option />').text(val));
     });
     /* TODO: テーブル一覧を更新 */
+    GroongaAdmin.status();
+    setInterval(GroongaAdmin.status, 1000);
   },
   create_table_element: function (d) {
     var table = $('<table/>');
@@ -147,6 +153,17 @@ GroongaAdmin = {
       });
     }
     return table;
+  },
+  status: function() {
+    $.ajax({
+      url: '/a/status',
+      data: {},
+      dataType: 'json',
+      success: function(d) {
+        $('#status-starttime').empty().append(d.starttime);
+        $('#status-uptime').empty().append(d.uptime);
+      }
+    });
   },
   tablelist: function() {
     $.ajax({

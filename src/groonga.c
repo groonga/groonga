@@ -39,6 +39,7 @@
 static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
 static int batchmode;
+grn_timeval starttime;
 
 static void
 usage(void)
@@ -289,6 +290,26 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otyp
     break;
   }
   return 1;
+}
+
+static void
+cmd_status(grn_ctx *ctx, grn_obj *buf, grn_output_type otype)
+{
+  grn_timeval now;
+  grn_timeval_now(ctx, &now);
+
+  switch (otype) {
+  case grn_output_tsv:
+    /* TODO: implement */
+    break;
+  case grn_output_json:
+    GRN_TEXT_PUTS(ctx, buf, "{\"starttime\":");
+    grn_text_itoa(ctx, buf, starttime.tv_sec);
+    GRN_TEXT_PUTS(ctx, buf, ",\"uptime\":");
+    grn_text_itoa(ctx, buf, now.tv_sec - starttime.tv_sec);
+    GRN_TEXT_PUTC(ctx, buf, '}');
+    break;
+  }
 }
 
 /* TODO: support path */
@@ -605,6 +626,7 @@ do_alone(char **argv, int argc)
   grn_obj *db = NULL;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0));
+  grn_timeval_now(ctx, &starttime);
   if (argv) {
     path = argv[0];
     if (argc >= 1) {
@@ -679,6 +701,7 @@ do_client(char *hostname)
   int rc = -1;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
+  grn_timeval_now(ctx, &starttime);
   if (!grn_ql_connect(ctx, hostname, port, 0)) {
     char *buf = GRN_MALLOC(BUFSIZE);
     if (buf) {
@@ -870,6 +893,10 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
                         }
                       }
                     }
+                    break;
+                  case 's':
+                    /* status */
+                    cmd_status(ctx, re, grn_output_json);
                     break;
                   }
                   release_query(ctx, query);
@@ -1633,6 +1660,7 @@ server(char *path)
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  grn_timeval_now(ctx, &starttime);
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   MUTEX_INIT(cache_mutex);
