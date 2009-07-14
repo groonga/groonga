@@ -16,89 +16,166 @@
 <div id="header">
 </div>
 <div id="body">
-  <div id="top-tabs">
-    <ul>
-      <li><a href="#tab-main">メイン</a></li>
-      <li><a href="#tab-instancelist">インスタンス一覧</a></li>
-      <li><a href="#tab-tablelist" id="tab-tablelist-link">テーブル一覧</a></li>
-      <li><a href="#tab-createtable">テーブル作成</a></li>
-    </ul>
-    <div id="tab-main">
-      <p>
-        groongaの管理ツールです。
-      </p>
-      <ul>
-        <li>開始時間: <span id="status-starttime" /></li>
-        <li>uptime: <span id="status-uptime" /></li>
-      </ul>
-    </div>
-    <div id="tab-instancelist">
-      実装中です。
-    </div>
-    <div id="tab-tablelist">
-    </div>
-    <div id="tab-createtable">
-      <table>
-        <tr>
-          <td>
-            <label for="createtable-name">テーブル名</label>
-          </td>
-          <td>
-            <input type="text" id="createtable-name" />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            主キー
-          </td>
-          <td>
-            <label for="createtable-key-type">keyの型:</label>
-            <select id="createtable-key-type">
-              <optgroup label="組み込み型" id="createtable-key-type-default" />
-              <optgroup label="テーブル" id="createtable-key-type-table" />
-            </select>
-            <label for="createtable-key-index">keyのインデックス種類:</label>
-            <select id="createtable-key-index">
-              <option value="pat">パトリシア木</option>
-              <option value="hash">ハッシュテーブル</option>
-              <option value="no">キーなし</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            フラグ
-          </td>
-          <td id="createtable-flags">
-            <input type="checkbox" value="GRN_OBJ_PERSISTENT" checked>永続化</input>
-            <input type="checkbox" value="GRN_OBJ_KEY_NORMALIZE">key文字列の正規化</input>
-            <input type="checkbox" value="GRN_OBJ_KEY_WITH_SIS">key文字列のsuffix登録</input>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            value
-          </td>
-          <td>
-            <input type="text" id="createtable-value-size" value="0" />
-          </td>
-        </tr>
-      </table>
-      <!--table id="createtable-columns">
-        <thead>
-          <tr>
-            <th>カラム名</th>
-            <th>型</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-      <input type="button" id="createtable-add-column" value="カラム追加"-->
-      <input type="button" id="createtable-add-table" value="テーブル追加">
-    </div>
-  </div>
-</div>
+  <table>
+    <tr>
+      <td id="left-column">
+        <div id="side-menu">
+          テーブル一覧
+          <ul id="side-menu-tablelist" />
+        </div>
+      </td>
+
+      <td id="right-column">
+        <!-- database view -->
+        <div id="database-tabs">
+          <ul>
+            <li><a href="#database-tab-summary">サマリー</a></li>
+            <li><a href="#database-tab-tablelist" id="tab-tablelist-link">テーブル一覧</a></li>
+            <li><a href="#database-tab-createtable">テーブル作成</a></li>
+          </ul>
+          <div id="database-tab-summary">
+            <p>
+              groongaの管理ツールです。
+            </p>
+            <ul>
+              <li>開始時間: <span id="status-starttime"></span></li>
+              <li>uptime: <span id="status-uptime"></span></li>
+            </ul>
+          </div>
+          <div id="database-tab-tablelist">
+          </div>
+          <div id="database-tab-createtable">
+            <table>
+              <tr>
+                <td>
+                  <label for="createtable-name">テーブル名</label>
+                </td>
+                <td>
+                  <input type="text" id="createtable-name">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  主キー
+                </td>
+                <td>
+                  <label for="createtable-key-type">keyの型:</label>
+                  <select id="createtable-key-type">
+                    <optgroup label="組み込み型" id="createtable-key-type-builtin">
+                    </optgroup>
+                    <optgroup label="テーブル" id="createtable-key-type-table">
+                    </optgroup>
+                  </select>
+                  <label for="createtable-key-index">keyのインデックス種類:</label>
+                  <select id="createtable-key-index">
+                    <option value="GRN_OBJ_TABLE_PAT_KEY">パトリシア木</option>
+                    <option value="GRN_OBJ_TABLE_HASH_KEY">ハッシュテーブル</option>
+                    <option value="GRN_OBJ_TABLE_NO_KEY">キーなし</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  フラグ
+                </td>
+                <td id="createtable-flags">
+                  <input type="checkbox" value="GRN_OBJ_PERSISTENT" checked>永続化</input>
+                  <input type="checkbox" value="GRN_OBJ_KEY_NORMALIZE">key文字列の正規化</input>
+                  <input type="checkbox" value="GRN_OBJ_KEY_WITH_SIS">key文字列のsuffix登録</input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  value
+                </td>
+                <td>
+                  <input type="text" id="createtable-value-size" value="0">
+                </td>
+              </tr>
+            </table>
+            <input type="button" id="createtable-add-table" value="テーブル追加">
+          </div>
+        </div>
+
+        <!-- table view -->
+        <div id="table-tabs">
+          <ul>
+            <li><a href="#table-tab-recordlist" id="tab-recordlist-link">レコード一覧</a></li>
+            <li><a href="#table-tab-columnlist" id="tab-columnlist-link">カラム一覧</a></li>
+            <li><a href="#table-tab-createrecord">レコード作成</a></li>
+            <li><a href="#table-tab-createcolumn">カラム作成</a></li>
+          </ul>
+          <div id="table-tab-recordlist">
+          </div>
+          <div id="table-tab-columnlist">
+          </div>
+          <div id="table-tab-createrecord">
+            <!-- TODO: implement -->
+          </div>
+          <div id="table-tab-createcolumn">
+            <table>
+              <tr>
+                <td>
+                  <label for="createcolumn-name">カラム名</label>
+                </td>
+                <td>
+                  <input type="text" id="createcolumn-name">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  設定
+                </td>
+                <td>
+                  <label for="createcolumn-type">型:</label>
+                  <select id="createcolumn-type">
+                    <optgroup label="組み込み型" id="createcolumn-type-builtin">
+                    </optgroup>
+                    <optgroup label="テーブル" id="createcolumn-type-table">
+                    </optgroup>
+                  </select>
+
+                  <label for="createcolumn-column-type">カラム種別:</label>
+                  <select id="createcolumn-column-type">
+                    <option value="GRN_OBJ_COLUMN_SCALAR">スカラ</option>
+                    <option value="GRN_OBJ_COLUMN_VECTOR">ベクタ</option>
+                    <option value="GRN_OBJ_COLUMN_INDEX">転置インデックス</option>
+                  </select>
+
+                  <label for="createcolumn-compress">圧縮:</label>
+                  <select id="createcolumn-compress">
+                    <option value="GRN_OBJ_COMPRESS_NONE">圧縮なし</option>
+                    <option value="GRN_OBJ_COMPRESS_ZLIB">zlib</option>
+                    <option value="GRN_OBJ_COMPRESS_LZO">LZO</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  フラグ
+                </td>
+                <td id="createcolumn-flags">
+                  <input type="checkbox" value="GRN_OBJ_PERSISTENT" checked>永続化</input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  転置インデックス用フラグ
+                </td>
+                <td id="createcolumn-ii-flags">
+                  <input type="checkbox" value="GRN_OBJ_WITH_SECTION">段落情報を含める</input>
+                  <input type="checkbox" value="GRN_OBJ_WITH_WEIGHT">重みを含める</input>
+                  <input type="checkbox" value="GRN_OBJ_WITH_POSITION">位置情報を含める</input>
+                </td>
+              </tr>
+            </table>
+            <input type="button" id="createcolumn-add-column" value="カラム追加">
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
 <div id="footer">
 </div>
 <script type="text/javascript">
@@ -115,20 +192,41 @@ Groonga = {
   GRN_OBJ_TABLE_NO_KEY:           (0x03),
   GRN_OBJ_KEY_WITH_SIS:           (0x01<<6),
   GRN_OBJ_KEY_NORMALIZE:          (0x01<<7),
+
+  GRN_OBJ_COLUMN_SCALAR:          (0x00),
+  GRN_OBJ_COLUMN_VECTOR:          (0x01),
+  GRN_OBJ_COLUMN_INDEX:           (0x02),
+
+  GRN_OBJ_COMPRESS_NONE:          (0x00<<4),
+  GRN_OBJ_COMPRESS_ZLIB:          (0x01<<4),
+  GRN_OBJ_COMPRESS_LZO:           (0x02<<4),
+  GRN_OBJ_WITH_SECTION:           (0x01<<7),
+  GRN_OBJ_WITH_WEIGHT:            (0x01<<8),
+  GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
 GroongaAdmin = {
   initialize: function() {
+    GroongaAdmin.current_table = null;
+
+    $('#database-tabs').tabs();
+    $('#table-tabs').tabs();
     $('#tab-tablelist-link').click(function() {
       GroongaAdmin.tablelist();
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
     });
-    var e = $('#createtable-key-type-default');
-    $.each(Groonga.key_type_list, function(i, val) {
-      e.append($('<option />').text(val));
+    $('#createcolumn-add-column').click(function() {
+      GroongaAdmin.createcolumn();
     });
-    /* TODO: テーブル一覧を更新 */
+    GroongaAdmin.update_tablelist();
+
+    var e1 = $('#createtable-key-type-builtin');
+    var e2 = $('#createcolumn-type-builtin');
+    $.each(Groonga.key_type_list, function(i, val) {
+      e1.append($('<option />').text(val));
+      e2.append($('<option />').text(val));
+    });
     GroongaAdmin.status();
     setInterval(GroongaAdmin.status, 1000);
   },
@@ -160,8 +258,51 @@ GroongaAdmin = {
       data: {},
       dataType: 'json',
       success: function(d) {
-        $('#status-starttime').empty().append(d.starttime);
-        $('#status-uptime').empty().append(d.uptime);
+        $('#status-starttime').text(d.starttime);
+        $('#status-uptime').text(d.uptime);
+      }
+    });
+  },
+  update_tablelist: function() {
+    $.ajax({
+      url: '/a/tablelist',
+      data: {},
+      dataType: 'json',
+      success: function(d) {
+        d.shift();
+        var tl = $('#side-menu-tablelist').empty();
+        var tt = $('#createtable-key-type-table').empty();
+        var ct = $('#createcolumn-type-table').empty();
+        tl.append(
+          $('<li />').append(
+            $('<a />').attr('href', '#side-menu-database')
+                      .text('サマリー')
+                      .click(function() {
+                        GroongaAdmin.current_table = null;
+                        $('#table-tabs').hide();
+                        $('#database-tabs').show();
+                      })
+          )
+        )
+        $.each(d, function(i, val) {
+          var table_name = val[1];
+          tl.append(
+            $('<li />').append(
+              $('<a />')
+                .attr('href', '#side-menu-tablelist-' + table_name)
+                .text(table_name)
+                .click(function() {
+                  GroongaAdmin.current_table = table_name;
+                  $('#database-tabs').hide();
+                  $('#table-tabs').show();
+                  GroongaAdmin.columnlist(table_name);
+                  GroongaAdmin.recordlist(table_name);
+                })
+            )
+          );
+          tt.append($('<option />').text(val[1]));
+          ct.append($('<option />').text(val[1]));
+        });
       }
     });
   },
@@ -172,7 +313,7 @@ GroongaAdmin = {
       dataType: 'json',
       success: function(d) {
         var table = GroongaAdmin.create_table_element(d);
-        $('#tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
+        $('#database-tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
         table.find('tr').each(function() {
           var table_name_td = $(this).find('td:eq(1)');
           var table_name = table_name_td.text();
@@ -193,9 +334,22 @@ GroongaAdmin = {
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
-        $('#tab-tablelist')
+        $('#table-tab-recordlist')
           .empty()
-          .append($('<h1/>').text('レコード一覧: ' + table))
+          .append($('<h1/>').text('レコード一覧'))
+          .append(GroongaAdmin.create_table_element(d));
+      }
+    });
+  },
+  columnlist: function(table_name) {
+    $.ajax({
+      url: '/a/columnlist',
+      data: {'table': table_name},
+      dataType: 'json',
+      success: function(d) {
+        $('#table-tab-columnlist')
+          .empty()
+          .append($('<h1/>').text('カラム一覧'))
           .append(GroongaAdmin.create_table_element(d));
       }
     });
@@ -205,17 +359,7 @@ GroongaAdmin = {
     $('#createtable-flags>input:checked').each(function() {
       flags |= Groonga[$(this).val()];
     });
-    switch ($('#createtable-key-index').val()) {
-    case 'pat':
-      flags |= Groonga.GRN_OBJ_TABLE_PAT_KEY;
-      break;
-    case 'hash':
-      flags |= Groonga.GRN_OBJ_TABLE_HASH_KEY;
-      break;
-    case 'no':
-      flags |= Groonga.GRN_OBJ_TABLE_NO_KEY;
-      break;
-    }
+    flags |= Groonga[$('#createtable-key-index').val()];
     $.ajax({
       url: '/a/createtable',
       data: {
@@ -228,15 +372,43 @@ GroongaAdmin = {
       success: function(d) {
         if (d) {
           alert('テーブルを作成しました。');
+          GroongaAdmin.update_tablelist();
         } else {
           alert('テーブルが作成できませんでした。');
         }
       }
     });
   },
+  createcolumn: function() {
+    var flags = 0;
+    $('#createcolumn-flags>input:checked').each(function() {
+      flags |= Groonga[$(this).val()];
+    });
+    $('#createcolumn-ii-flags>input:checked').each(function() {
+      flags |= Groonga[$(this).val()];
+    });
+    flags |= Groonga[$('#createcolumn-column-type').val()];
+    flags |= Groonga[$('#createcolumn-column-compress').val()];
+    $.ajax({
+      url: '/a/createcolumn',
+      data: {
+        table: GroongaAdmin.current_table,
+        name: $('#createcolumn-name').val(),
+        'flags': flags,
+        type: $('#createcolumn-type').val()
+      },
+      dataType: 'json',
+      success: function(d) {
+        if (d) {
+          alert('カラムを作成しました。');
+        } else {
+          alert('カラムが作成できませんでした。');
+        }
+      }
+    });
+  }
 };
 $(function() {
-  $('#top-tabs').tabs();
   GroongaAdmin.initialize();
   GroongaAdmin.tablelist();
 });

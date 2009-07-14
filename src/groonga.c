@@ -385,7 +385,8 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
     if ((col_ids = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                    GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
       int ncols;
-      if ((ncols = grn_table_columns(ctx, table, NULL, 0, (grn_obj *)col_ids))) {
+      if ((ncols = grn_table_columns(ctx, table, NULL, 0,
+                                     (grn_obj *)col_ids)) >= 0) {
         grn_obj **cols;
         if ((cols = (grn_obj **)GRN_MALLOC(sizeof(grn_obj *) * (ncols + 2)))) {
           grn_obj *sort;
@@ -542,7 +543,7 @@ cmd_columnlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj 
     grn_hash *cols;
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-      if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)cols)) {
+      if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)cols) >= 0) {
         grn_id *key;
         char line_delimiter, column_delimiter;
 
@@ -842,7 +843,35 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
                           }
                         }
                       case 'c':
-                        /* TODO: implement */
+                        {
+                          grn_obj *table, *name, *flags_str, *type;
+                          if (grn_hash_get(ctx, query,
+                                           "table", 5, (void **)&table)
+                                != GRN_ID_NIL &&
+                              grn_hash_get(ctx, query,
+                                           "name", 4, (void **)&name)
+                                != GRN_ID_NIL &&
+                              grn_hash_get(ctx, query,
+                                           "flags", 5, (void **)&flags_str)
+                                != GRN_ID_NIL &&
+                              grn_hash_get(ctx, query,
+                                           "type", 4, (void **)&type)
+                                != GRN_ID_NIL) {
+                            int flags;
+                            flags = grn_atoi(
+                              GRN_TEXT_VALUE(flags_str),
+                              GRN_TEXT_VALUE(flags_str) +
+                                GRN_TEXT_LEN(flags_str),
+                              NULL);
+                            cmd_createcolumn(
+                              ctx,
+                              GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                              GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
+                              flags,
+                              GRN_TEXT_VALUE(type), GRN_TEXT_LEN(type),
+                              re, grn_output_json);
+                          }
+                        }
                         break;
                       }
                     }
