@@ -93,7 +93,7 @@ parse_http_path(grn_ctx *ctx, char *path, int path_len)
   p = get_uri_token(ctx, &buf, p, e, '?');
 
   if ((query = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
-                               sizeof(grn_obj *), GRN_OBJ_KEY_VAR_SIZE))) {
+                               sizeof(grn_obj), GRN_OBJ_KEY_VAR_SIZE))) {
     while (p < e) {
       grn_id key_id;
       grn_obj *value;
