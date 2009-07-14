@@ -291,6 +291,61 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otyp
   return 1;
 }
 
+/* TODO: support path */
+static void
+cmd_createcolumn(grn_ctx *ctx,
+                 char *table_name, unsigned table_name_len,
+                 char *column_name, unsigned column_name_len,
+                 int flags,
+                 char *type_name, unsigned type_name_len,
+                 grn_obj *buf, grn_output_type otype)
+{
+  grn_obj *table;
+  if ((table = grn_ctx_get(ctx, table_name, table_name_len))) {
+    grn_obj *type;
+    if ((type = grn_ctx_get(ctx, type_name, type_name_len))) {
+      grn_obj *column;
+      if ((column = grn_column_create(ctx, table,
+                                      column_name, column_name_len,
+                                      /* path */NULL, flags, type))) {
+        grn_obj_unlink(ctx, column);
+        GRN_TEXT_PUTS(ctx, buf, "true");
+      } else {
+        /* TODO: error handling */
+      }
+      grn_obj_unlink(ctx, type);
+    }
+    grn_obj_unlink(ctx, table);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "false");
+}
+
+/* TODO: support path */
+static void
+cmd_createtable(grn_ctx *ctx,
+                char *table_name, unsigned table_name_len,
+                int flags,
+                char *key_type_name, unsigned key_type_name_len,
+                unsigned value_size,
+                grn_obj *buf, grn_output_type otype)
+{
+  grn_obj *key_type;
+  if ((key_type = grn_ctx_get(ctx, key_type_name, key_type_name_len))) {
+    grn_obj *table;
+    if ((table = grn_table_create(ctx, table_name, table_name_len,
+                                  /* path */NULL, flags,
+                                  key_type, value_size))) {
+      grn_obj_unlink(ctx, table);
+      GRN_TEXT_PUTS(ctx, buf, "true");
+      return;
+    } else {
+      /* TODO: error handling */
+    }
+    grn_obj_unlink(ctx, key_type);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "false");
+}
+
 /* TODO: use column */
 /* TODO: use expr */
 /* TODO: use table_cursor flags */
@@ -704,19 +759,73 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
                   path += 3;
                   switch (*path) {
                   case 't':
+                    /* tablelist */
                     cmd_tablelist(ctx, grn_ctx_db(ctx), re, grn_output_json);
                     break;
                   case 'c':
-                    {
-                      grn_obj *table;
-                      if (grn_hash_get(ctx, query,
-                                       "table", 5, (void **)&table) != GRN_ID_NIL) {
-                        cmd_columnlist(ctx, GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
-                                       re, grn_output_json);
+                    /* columnlist */
+                    /* createtable */
+                    /* createcolumn */
+                    if (p - path > 10) {
+                      switch (*(path + 6)) {
+                      case 'l':
+                        {
+                          grn_obj *table;
+                          if (grn_hash_get(ctx, query,
+                                           "table", 5, (void **)&table)
+                                != GRN_ID_NIL) {
+                            cmd_columnlist(ctx,
+                                           GRN_TEXT_VALUE(table),
+                                           GRN_TEXT_LEN(table),
+                                           re, grn_output_json);
+                          }
+                        }
+                        break;
+                      case 't':
+                        {
+                          grn_obj *name, *flags_str, *key_type, *value_size_str;
+                          if (grn_hash_get(ctx, query,
+                                           "name", 4, (void **)&name)
+                                != GRN_ID_NIL &&
+                              grn_hash_get(ctx, query,
+                                           "flags", 5, (void **)&flags_str)
+                                != GRN_ID_NIL &&
+                              grn_hash_get(ctx, query,
+                                           "key_type", 8, (void **)&key_type)
+                                != GRN_ID_NIL &&
+                              grn_hash_get(ctx, query,
+                                           "value_size", 10,
+                                           (void **)&value_size_str)
+                                != GRN_ID_NIL) {
+                            int flags;
+                            unsigned value_size;
+                            flags = grn_atoi(
+                              GRN_TEXT_VALUE(flags_str),
+                              GRN_TEXT_VALUE(flags_str) +
+                                GRN_TEXT_LEN(flags_str),
+                              NULL);
+                            value_size = grn_atoi(
+                              GRN_TEXT_VALUE(value_size_str),
+                              GRN_TEXT_VALUE(value_size_str) +
+                                GRN_TEXT_LEN(value_size_str),
+                              NULL);
+                            cmd_createtable(
+                              ctx,
+                              GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
+                              flags,
+                              GRN_TEXT_VALUE(key_type), GRN_TEXT_LEN(key_type),
+                              value_size,
+                              re, grn_output_json);
+                          }
+                        }
+                      case 'c':
+                        /* TODO: implement */
+                        break;
                       }
                     }
                     break;
                   case 'r':
+                    /* recordlist */
                     {
                       grn_obj *table;
                       if (grn_hash_get(ctx, query,
@@ -782,6 +891,8 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
                 /* FIXME: follow symbolic link ? */
                 if (!memcmp(p - 5, ".html", 5)) { // FIXME: 5文字はヤバい。msgの頭より前になる恐れ
                   GRN_TEXT_PUTS(ctx, re, "Content-Type: text/html\r\n\r\n");
+                } else if (!memcmp(p - 4, ".png", 4)) {
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: image/png\r\n\r\n");
                 } else if (!memcmp(p - 4, ".css", 4)) {
                   GRN_TEXT_PUTS(ctx, re, "Content-Type: text/css\r\n\r\n");
                 } else if (!memcmp(p - 3 , ".js", 3)) {

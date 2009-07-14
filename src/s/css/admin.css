@@ -1,0 +1,34 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: white;
+  color: #333;
+  font-size:11px;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  border: none;
+}
+
+a {
+  color: #cf4020;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+input {
+  border: 1px solid;
+}
+
+#header {
+  height: 80px;
+  background: url(../images/groonga.png) no-repeat left bottom;
+}
