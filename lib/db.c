@@ -1369,7 +1369,7 @@ grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
 
 grn_rc
 grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_size,
-                 grn_search_flags flags, grn_obj *res, grn_sel_operator op)
+                 grn_search_flags flags, grn_obj *res, grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
@@ -1461,7 +1461,7 @@ grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id)
 
 grn_rc
 grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
-               grn_obj *res, grn_sel_operator op, grn_search_optarg *optarg)
+               grn_obj *res, grn_operator op, grn_search_optarg *optarg)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
@@ -1638,7 +1638,7 @@ exit :
 
 grn_rc
 grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res,
-                       grn_sel_operator op)
+                       grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
   void *key, *value1, *value2;
@@ -1682,31 +1682,33 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
     break;
   }
   switch (op) {
-  case GRN_SEL_OR :
+  case GRN_OP_OR :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       if (grn_table_add_v(ctx, table1, key, key_size, &value1, NULL)) {
         memcpy(value1, value2, value_size);
       }
     });
     break;
-  case GRN_SEL_AND :
+  case GRN_OP_AND :
     GRN_TABLE_EACH(ctx, table1, 0, 0, id, &key, &key_size, &value1, {
       if (!grn_table_get_v(ctx, table2, key, key_size, &value2)) {
         _grn_table_delete_by_id(ctx, table1, id, NULL);
       }
     });
     break;
-  case GRN_SEL_BUT :
+  case GRN_OP_BUT :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       grn_table_delete(ctx, table1, key, key_size);
     });
     break;
-  case GRN_SEL_ADJUST :
+  case GRN_OP_ADJUST :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       if (grn_table_get_v(ctx, table1, key, key_size, &value1)) {
         memcpy(value1, value2, value_size);
       }
     });
+    break;
+  default :
     break;
   }
   return rc;
@@ -4516,7 +4518,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 }
 
 int
-grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_op op, grn_obj **indexbuf, int buf_size)
+grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op, grn_obj **indexbuf, int buf_size)
 {
   int n = 0;
   grn_obj **ip = indexbuf;
@@ -4929,7 +4931,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 }
 
 static void
-grn_expr_append_code(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, grn_op op)
+grn_expr_append_code(grn_ctx *ctx, grn_expr *expr, grn_obj *obj, grn_operator op)
 {
   if (expr->codes_curr >= expr->codes_size) {
     ERR(GRN_NO_MEMORY_AVAILABLE, "stack is full");
@@ -5076,7 +5078,7 @@ grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i)
 }
 
 grn_rc
-grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
+grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
 {
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
@@ -5172,6 +5174,8 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
       PUSH_CODE(e, op, NULL);
+      break;
+    default :
       break;
     }
   }
@@ -5637,7 +5641,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           POP1(index);
           index = GRN_OBJ_RESOLVE(ctx, index);
           grn_obj_search(ctx, index, query, res,
-                         (grn_sel_operator)GRN_UINT32_VALUE(op), NULL);
+                         (grn_operator)GRN_UINT32_VALUE(op), NULL);
         }
         code++;
         break;
@@ -5653,7 +5657,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
           WITH_SPSAVE({
-            grn_table_select(ctx, table, expr, res, (grn_sel_operator)GRN_UINT32_VALUE(op));
+            grn_table_select(ctx, table, expr, res, (grn_operator)GRN_UINT32_VALUE(op));
           });
         }
         code++;
@@ -5741,7 +5745,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
               results.key_end = 0;
               results.limit = 0;
               results.flags = 0;
-              results.op = GRN_SEL_OR;
+              results.op = GRN_OP_OR;
               WITH_SPSAVE({
                 grn_table_group(ctx, table, keys, n_keys, &results, 1);
               });
@@ -6068,6 +6072,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         }
         code++;
         break;
+      default :
+        break;
       }
     }
     res = s0;
@@ -6091,22 +6097,22 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
 
 inline static void
 res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
-        grn_sel_operator op)
+        grn_operator op)
 {
   grn_rset_recinfo *ri;
   switch (op) {
-  case GRN_SEL_OR :
+  case GRN_OP_OR :
     if (grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL)) {
       grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
     }
     break;
-  case GRN_SEL_AND :
+  case GRN_OP_AND :
     if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
       ri->n_subrecs |= GRN_RSET_UTIL_BIT;
       grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
     }
     break;
-  case GRN_SEL_BUT :
+  case GRN_OP_BUT :
     {
       grn_id id;
       if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
@@ -6114,10 +6120,12 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
       }
     }
     break;
-  case GRN_SEL_ADJUST :
+  case GRN_OP_ADJUST :
     if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
       ri->score += score;
     }
+    break;
+  default :
     break;
   }
 }
@@ -6126,7 +6134,7 @@ typedef struct {
   uint32_t start;
   uint32_t end;
   uint32_t nargs;
-  grn_op op;
+  grn_operator op;
   grn_obj *index;
   grn_obj *query;
   grn_obj *args[8];
@@ -6282,7 +6290,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
 
 static void
 grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
-               grn_obj *res, grn_sel_operator op)
+               grn_obj *res, grn_operator op)
 {
   int32_t score;
   grn_id id, *idp;
@@ -6292,7 +6300,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
   grn_obj *r;
   GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, table));
   switch (op) {
-  case GRN_SEL_OR :
+  case GRN_OP_OR :
     if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
       while ((id = grn_table_cursor_next(ctx, tc))) {
         GRN_RECORD_SET(ctx, v, id);
@@ -6307,7 +6315,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       grn_table_cursor_close(ctx, tc);
     }
     break;
-  case GRN_SEL_AND :
+  case GRN_OP_AND :
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
@@ -6324,7 +6332,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       grn_hash_cursor_close(ctx, hc);
     }
     break;
-  case GRN_SEL_BUT :
+  case GRN_OP_BUT :
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
@@ -6337,7 +6345,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       grn_hash_cursor_close(ctx, hc);
     }
     break;
-  case GRN_SEL_ADJUST :
+  case GRN_OP_ADJUST :
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
@@ -6352,12 +6360,14 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       grn_hash_cursor_close(ctx, hc);
     }
     break;
+  default :
+    break;
   }
 }
 
 grn_rc
 grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-               grn_obj *res, grn_sel_operator op)
+               grn_obj *res, grn_operator op)
 {
   grn_obj *v;
   if (res->header.type != GRN_TABLE_HASH_KEY ||
@@ -6370,7 +6380,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     return ctx->rc;
   }
   GRN_API_ENTER;
-  if (op == GRN_SEL_AND || (op == GRN_SEL_OR && !GRN_HASH_SIZE((grn_hash *)res))) {
+  if (op == GRN_OP_AND || (op == GRN_OP_OR && !GRN_HASH_SIZE((grn_hash *)res))) {
     int i, n;
     scan_info **sis;
     if ((sis = scan_info_build(ctx, table, expr, &n))) {
@@ -6386,13 +6396,13 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               grn_id tid = grn_table_get(ctx, table,
                                          GRN_BULK_HEAD(si->query),
                                          GRN_BULK_VSIZE(si->query));
-              grn_ii_at(ctx, (grn_ii *)si->index, tid, (grn_hash *)res, i ? GRN_SEL_AND : op);
-              grn_ii_resolve_sel_and(ctx, (grn_hash *)res, i ? GRN_SEL_AND : op);
+              grn_ii_at(ctx, (grn_ii *)si->index, tid, (grn_hash *)res, i ? GRN_OP_AND : op);
+              grn_ii_resolve_sel_and(ctx, (grn_hash *)res, i ? GRN_OP_AND : op);
             }
             break;
           case GRN_OP_MATCH :
             /* todo : support sections */
-            grn_obj_search(ctx, si->index, si->query, res, i ? GRN_SEL_AND : op, NULL);
+            grn_obj_search(ctx, si->index, si->query, res, i ? GRN_OP_AND : op, NULL);
             break;
           default :
             /* todo */
@@ -6401,7 +6411,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         } else {
           e->codes = codes + si->start;
           e->codes_curr = si->end - si->start + 1;
-          grn_table_select_(ctx, table, expr, v, res, i ? GRN_SEL_AND : op);
+          grn_table_select_(ctx, table, expr, v, res, i ? GRN_OP_AND : op);
         }
         GRN_FREE(si);
       }
@@ -6455,9 +6465,9 @@ typedef struct {
   grn_obj *table;
   grn_obj *default_column;
   grn_obj buf;
-  grn_sel_operator default_op;
+  grn_operator default_op;
   grn_select_optarg opt;
-  grn_sel_mode default_mode;
+  grn_operator default_mode;
   int escalation_threshold;
   int escalation_decaystep;
   int weight_offset;
@@ -6467,7 +6477,7 @@ typedef struct {
 } efs_info;
 
 typedef struct {
-  grn_op op;
+  grn_operator op;
   int weight;
 } efs_op;
 
@@ -6485,8 +6495,8 @@ skip_space(grn_ctx *ctx, efs_info *q)
   }
 }
 
-static grn_rc get_expr(grn_ctx *ctx, efs_info *q, grn_obj *column, grn_op mode);
-static grn_rc get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_op mode);
+static grn_rc get_expr(grn_ctx *ctx, efs_info *q, grn_obj *column, grn_operator mode);
+static grn_rc get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_operator mode);
 
 static grn_rc
 get_phrase(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
@@ -6520,7 +6530,7 @@ get_phrase(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
   grn_expr_append_const(ctx, q->e, column);
   grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_const(ctx, q->e, &q->buf);
-  if (mode == GRN_OP_MATCH || mode == GRN_SEL_EXACT) {
+  if (mode == GRN_OP_MATCH || mode == GRN_OP_EXACT) {
     grn_expr_append_op(ctx, q->e, mode, 2);
   } else {
     grn_expr_append_const_int(ctx, q->e, option);
@@ -6588,7 +6598,7 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
         return get_token(ctx, q, &op, c, mode);
       }
     } else if (*end == GRN_QUERY_PREFIX) {
-      mode = GRN_SEL_PREFIX;
+      mode = GRN_OP_PREFIX;
       q->cur = end + 1;
       break;
     }
@@ -6599,7 +6609,7 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
   grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_const(ctx, q->e, &q->buf);
   grn_expr_append_const_str(ctx, q->e, start, end - start);
-  if (mode == GRN_OP_MATCH || mode == GRN_SEL_EXACT) {
+  if (mode == GRN_OP_MATCH || mode == GRN_OP_EXACT) {
     grn_expr_append_op(ctx, q->e, mode, 2);
   } else {
     grn_expr_append_const_int(ctx, q->e, option);
@@ -6609,41 +6619,41 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
 }
 
 static void
-get_op(efs_info *q, efs_op *op, grn_op *mode, int *option)
+get_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
 {
   const char *start, *end = q->cur;
   switch (*end) {
   case 'S' :
-    *mode = GRN_SEL_SIMILAR;
+    *mode = GRN_OP_SIMILAR;
     start = ++end;
     *option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { *option = DEFAULT_SIMILARITY_THRESHOLD; }
     q->cur = end;
     break;
   case 'N' :
-    *mode = GRN_SEL_NEAR;
+    *mode = GRN_OP_NEAR;
     start = ++end;
     *option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { *option = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
     break;
   case 'n' :
-    *mode = GRN_SEL_NEAR2;
+    *mode = GRN_OP_NEAR2;
     start = ++end;
     *option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { *option = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
     break;
   case 'T' :
-    *mode = GRN_SEL_TERM_EXTRACT;
+    *mode = GRN_OP_TERM_EXTRACT;
     start = ++end;
     *option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { *option = DEFAULT_TERM_EXTRACT_POLICY; }
     q->cur = end;
     break;
   case 'X' : /* force exact mode */
-    op->op = GRN_SEL_AND;
-    *mode = GRN_SEL_EXACT;
+    op->op = GRN_OP_AND;
+    *mode = GRN_OP_EXACT;
     *option = 0;
     start = ++end;
     q->cur = end;
@@ -6654,7 +6664,7 @@ get_op(efs_info *q, efs_op *op, grn_op *mode, int *option)
 }
 
 static grn_rc
-get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_op mode)
+get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_operator mode)
 {
   int option = 0;
   op->op = q->default_op;
@@ -6680,25 +6690,25 @@ get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_op mode)
       break;
     case GRN_QUERY_AND :
       q->cur++;
-      op->op = GRN_SEL_AND;
+      op->op = GRN_OP_AND;
       break;
     case GRN_QUERY_BUT :
       q->cur++;
-      op->op = GRN_SEL_BUT;
+      op->op = GRN_OP_BUT;
       break;
     case GRN_QUERY_ADJ_INC :
       q->cur++;
       if (op->weight < 127) { op->weight++; }
-      op->op = GRN_SEL_ADJUST;
+      op->op = GRN_OP_ADJUST;
       break;
     case GRN_QUERY_ADJ_DEC :
       q->cur++;
       if (op->weight > -128) { op->weight--; }
-      op->op = GRN_SEL_ADJUST;
+      op->op = GRN_OP_ADJUST;
       break;
     case GRN_QUERY_ADJ_NEG :
       q->cur++;
-      op->op = GRN_SEL_ADJUST;
+      op->op = GRN_OP_ADJUST;
       op->weight = -1;
       break;
     case GRN_QUERY_PARENL :
@@ -6708,7 +6718,7 @@ get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_op mode)
     case 'O' :
       if (q->cur[1] == 'R' && q->cur[2] == ' ') {
         q->cur += 2;
-        op->op = GRN_SEL_OR;
+        op->op = GRN_OP_OR;
         break;
       }
       /* fallthru */
@@ -6721,12 +6731,12 @@ get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_op mode)
 }
 
 static grn_rc
-get_expr(grn_ctx *ctx, efs_info *q, grn_obj *column, grn_op mode)
+get_expr(grn_ctx *ctx, efs_info *q, grn_obj *column, grn_operator mode)
 {
   efs_op op;
   grn_rc rc = get_token(ctx, q, &op, column, mode);
-  while (!rc) {
-    rc = get_token(ctx, q, &op, column, mode);
+  if (rc) { return rc; }
+  while (!(rc = get_token(ctx, q, &op, column, mode))) {
     if (op.op == GRN_OP_ADJUST) {
       grn_expr_append_const_int(ctx, q->e, op.weight);
       grn_expr_append_op(ctx, q->e, op.op, 3);
@@ -6812,16 +6822,16 @@ get_pragma(grn_ctx *ctx, efs_info *q)
       if (end > start) {
         switch (*start) {
         case 'O' :
-          q->default_op = GRN_SEL_OR;
+          q->default_op = GRN_OP_OR;
           break;
         case GRN_QUERY_AND :
-          q->default_op = GRN_SEL_AND;
+          q->default_op = GRN_OP_AND;
           break;
         case GRN_QUERY_BUT :
-          q->default_op = GRN_SEL_BUT;
+          q->default_op = GRN_OP_BUT;
           break;
         case GRN_QUERY_ADJ_INC :
-          q->default_op = GRN_SEL_ADJUST;
+          q->default_op = GRN_OP_ADJUST;
           break;
         }
       }
@@ -6864,7 +6874,7 @@ grn_expr_create_from_str(grn_ctx *ctx,
   efsi.str_end = str + str_size;
   efsi.table = table;
   efsi.default_column = default_column;
-  efsi.default_op = GRN_SEL_AND;
+  efsi.default_op = GRN_OP_AND;
   efsi.escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
   efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
   efsi.weight_offset = 0;
@@ -6910,7 +6920,7 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   if (!res) { goto exit; }
   query = grn_expr_create_from_str(ctx, NULL, 0,
                                    GRN_TEXT_VALUE(&qbuf), GRN_TEXT_LEN(&qbuf), table, column);
-  grn_table_select(ctx, table, query, res, GRN_SEL_OR);
+  grn_table_select(ctx, table, query, res, GRN_OP_OR);
   {
     grn_obj_format format;
     grn_obj *cols[256];

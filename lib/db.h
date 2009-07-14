@@ -69,7 +69,7 @@ const char *_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *ke
 
 grn_rc grn_table_search(grn_ctx *ctx, grn_obj *table,
                         const void *key, uint32_t key_size,
-                        grn_search_flags flags, grn_obj *res, grn_sel_operator op);
+                        grn_search_flags flags, grn_obj *res, grn_operator op);
 
 grn_id grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id);
 
@@ -219,7 +219,7 @@ grn_obj *grn_ctx_pop(grn_ctx *ctx);
 typedef struct _grn_expr grn_expr;
 
 typedef struct {
-  grn_op op;
+  grn_operator op;
   grn_obj *value;
 } grn_expr_code;
 
@@ -254,7 +254,7 @@ struct _grn_expr {
  * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
  * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
  **/
-int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_op op,
+int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                      grn_obj **indexbuf, int buf_size);
 
 #ifdef __cplusplus

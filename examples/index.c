@@ -131,7 +131,7 @@ grn_index_sel(grn_ctx *ctx, grn_index *index,
   GRN_TEXT_SET_REF(&query, string, string_len);
   if ((res = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_HASH_KEY,
                               index->keys, 0))) {
-    if ((grn_obj_search(ctx, index->inv, &query, res, GRN_SEL_OR, NULL))) {
+    if ((grn_obj_search(ctx, index->inv, &query, res, GRN_OP_OR, NULL))) {
       grn_obj_close(ctx, res);
       res =  NULL;
     }

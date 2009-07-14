@@ -126,20 +126,8 @@ grn_rc grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
 
 typedef struct _grn_select_optarg grn_select_optarg;
 
-typedef enum {
-  GRN_SEL_EXACT = 0,
-  GRN_SEL_PARTIAL,
-  GRN_SEL_UNSPLIT,
-  GRN_SEL_NEAR,
-  GRN_SEL_NEAR2,
-  GRN_SEL_SIMILAR,
-  GRN_SEL_TERM_EXTRACT,
-  GRN_SEL_PREFIX,
-  GRN_SEL_SUFFIX
-} grn_sel_mode;
-
 struct _grn_select_optarg {
-  grn_sel_mode mode;
+  grn_operator mode;
   int similarity_threshold;
   int max_interval;
   int *weight_vector;
@@ -153,22 +141,22 @@ grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id, unsigned int se
                             grn_obj *oldvalue, grn_obj *newvalue);
 grn_rc grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
                             unsigned int string_len, grn_hash *s,
-                            grn_sel_operator op, grn_select_optarg *optarg);
+                            grn_operator op, grn_select_optarg *optarg);
 grn_rc grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
-                              grn_hash *s, grn_sel_operator op, grn_select_optarg *optarg);
+                              grn_hash *s, grn_operator op, grn_select_optarg *optarg);
 grn_rc grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
-                     grn_hash *s, grn_sel_operator op, grn_select_optarg *optarg);
+                     grn_hash *s, grn_operator op, grn_select_optarg *optarg);
 grn_rc grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
-                  grn_hash *s, grn_sel_operator op);
+                  grn_hash *s, grn_operator op);
 
-grn_rc grn_ii_query_select(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_sel_operator op);
+grn_rc grn_ii_query_select(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_operator op);
 
 grn_rc grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q,
-                        grn_hash *r, grn_sel_operator op);
+                        grn_hash *r, grn_operator op);
 
-void grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_sel_operator op);
+void grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op);
 
-grn_rc grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_sel_operator op);
+grn_rc grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op);
 
 #ifdef __cplusplus
 }

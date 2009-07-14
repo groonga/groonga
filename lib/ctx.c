@@ -1501,7 +1501,7 @@ search(grn_ctx *ctx, grn_obj *qe, grn_user_data *user_data)
                            GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0);
   }
   grn_ctx_push(ctx, res);
-  return grn_obj_search(ctx, index, query, res, GRN_SEL_OR, NULL);
+  return grn_obj_search(ctx, index, query, res, GRN_OP_OR, NULL);
 }
 
 static grn_rc
@@ -1772,7 +1772,7 @@ grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
-  grn_obj key, *expr, *val = NULL, *v;
+  grn_obj key, *expr, *val = NULL;
   GRN_TEXT_INIT(&key, 0);
   p = str;
   e = p + str_size;

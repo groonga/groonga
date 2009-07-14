@@ -890,7 +890,7 @@ typedef struct {
   grn_cell *func;
   //  grn_cell *exprs;
   grn_cell *args;
-  grn_sel_operator op;
+  grn_operator op;
   //  grn_cell *objs;
   int32_t offset;
   int32_t limit;
@@ -922,7 +922,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
   spec->fromsize = 0;
   spec->to = NULL;
   spec->tosize = 0;
-  spec->op = GRN_SEL_OR;
+  spec->op = GRN_OP_OR;
   spec->score_ce = NULL;
   spec->score_func = NULL;
   POP(car, args);
@@ -936,13 +936,13 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
     uint16_t ops_size;
     if (expr->header.domain != base) { QLERR("table unmatch"); }
     POP(car, args);
-    spec->op = GRN_SEL_AND;
+    spec->op = GRN_OP_AND;
     if (!obj2str(car, ops, &ops_size)) {
       switch (*ops) {
-      case '+': spec->op = GRN_SEL_OR; break;
-      case '-': spec->op = GRN_SEL_BUT; break;
-      case '*': spec->op = GRN_SEL_AND; break;
-      case '>': spec->op = GRN_SEL_ADJUST; break;
+      case '+': spec->op = GRN_OP_OR; break;
+      case '-': spec->op = GRN_OP_BUT; break;
+      case '*': spec->op = GRN_OP_AND; break;
+      case '>': spec->op = GRN_OP_ADJUST; break;
       }
     }
   } else {
@@ -976,7 +976,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
     }
     expr = rec_obj_new(ctx, table, 0);
     if (ERRP(ctx, GRN_WARN)) { return F; }
-    spec->op = GRN_SEL_OR;
+    spec->op = GRN_OP_OR;
   }
   //  spec->objs = CONS(expr, spec->exprs);
   return expr;
@@ -1295,7 +1295,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         QLERR("records object expected");
       }
       if (grn_table_search(ctx, table, STRVALUE(car), STRSIZE(car),
-                           GRN_SEARCH_TERM_EXTRACT, get_obj(ctx, res), GRN_SEL_OR)
+                           GRN_SEARCH_TERM_EXTRACT, get_obj(ctx, res), GRN_OP_OR)
           < GRN_SUCCESS) {
         QLERR("term_extract failed");
       }
@@ -1353,7 +1353,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         while (PAIRP(args)) {
           POP(car, args);
           if (!TABLEP(car)) { continue; }
-          grn_table_setoperation(ctx, table, RVALUE(car), table, GRN_SEL_AND);
+          grn_table_setoperation(ctx, table, RVALUE(car), table, GRN_OP_AND);
         }
       }
       break;
@@ -1415,7 +1415,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         QLERR("records object expected");
       }
       if (grn_table_search(ctx, table, STRVALUE(car), STRSIZE(car),
-                           GRN_SEARCH_PREFIX, get_obj(ctx, res), GRN_SEL_OR)
+                           GRN_SEARCH_PREFIX, get_obj(ctx, res), GRN_OP_OR)
           < GRN_SUCCESS) {
         QLERR("prefix search failed");
       }
@@ -1437,7 +1437,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (ERRP(ctx, GRN_WARN)) { return F; }
             rec = RVALUE(res);
             switch (spec.op) {
-            case GRN_SEL_OR :
+            case GRN_OP_OR :
               {
                 grn_id id;
                 grn_table_cursor *c;
@@ -1466,22 +1466,24 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 }
               }
               break;
-            case GRN_SEL_AND :
+            case GRN_OP_AND :
               GRN_HASH_EACH((grn_hash *)rec, id, &rid, NULL, &ri, {
                 if (!match_exec(ctx, &spec, base, *rid)) {
                   grn_hash_delete_by_id(ctx, (grn_hash *)rec, id, NULL);
                 }
               });
               break;
-            case GRN_SEL_BUT :
+            case GRN_OP_BUT :
               GRN_HASH_EACH((grn_hash *)rec, id, &rid, NULL, &ri, {
                 if (match_exec(ctx, &spec, base, *rid)) {
                   grn_hash_delete_by_id(ctx, (grn_hash *)rec, id, NULL);
                 }
               });
               break;
-            case GRN_SEL_ADJUST :
+            case GRN_OP_ADJUST :
               /* todo : support it */
+              break;
+            default :
               break;
             }
             match_close(ctx, &spec);
@@ -1564,7 +1566,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             QLERR("records object expected");
           }
           if (grn_table_search(ctx, table, STRVALUE(car), STRSIZE(car),
-                               GRN_SEARCH_SUFFIX, get_obj(ctx, res), GRN_SEL_OR)
+                               GRN_SEARCH_SUFFIX, get_obj(ctx, res), GRN_OP_OR)
               < GRN_SUCCESS) {
             QLERR("suffix search failed");
           }
@@ -1575,7 +1577,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             while (PAIRP(args)) {
               POP(car, args);
               if (!TABLEP(car)) { continue; }
-              grn_table_setoperation(ctx, table, RVALUE(car), table, GRN_SEL_BUT);
+              grn_table_setoperation(ctx, table, RVALUE(car), table, GRN_OP_BUT);
             }
           }
           break;
@@ -1633,7 +1635,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             while (PAIRP(args)) {
               POP(car, args);
               if (!TABLEP(car)) { continue; }
-              grn_table_setoperation(ctx, table, RVALUE(car), table, GRN_SEL_OR);
+              grn_table_setoperation(ctx, table, RVALUE(car), table, GRN_OP_OR);
             }
           }
           break;
@@ -1879,7 +1881,7 @@ ha_query(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 
 static grn_cell *
 grn_obj_query(grn_ctx *ctx, const char *str, unsigned int str_len,
-              grn_sel_operator default_op, int max_exprs, grn_encoding encoding)
+              grn_operator default_op, int max_exprs, grn_encoding encoding)
 {
   grn_query *q;
   grn_cell *res = grn_cell_new(ctx);
@@ -1950,7 +1952,7 @@ nf_toquery(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   POP(s, args);
   if (BULKP(s)) {
     /* TODO: operator, exprs, encoding */
-    if (!(o = grn_obj_query(ctx, s->u.b.value, s->u.b.size, GRN_SEL_AND, 32, ctx->encoding))) {
+    if (!(o = grn_obj_query(ctx, s->u.b.value, s->u.b.size, GRN_OP_AND, 32, ctx->encoding))) {
       QLERR("query_obj_new failed");
     }
   }
@@ -1990,11 +1992,11 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     {
       if (IDX_COLUMNP(ctx->impl->code)) {
         grn_cell *q;
-        grn_sel_operator op;
+        grn_operator op;
         POP(q, args);
         if (!QUERYP(q)) {
           if (!BULKP(q)) { return F; }
-          if (!(q = grn_obj_query(ctx, q->u.b.value, q->u.b.size, GRN_SEL_AND, 32, ctx->encoding))) {
+          if (!(q = grn_obj_query(ctx, q->u.b.value, q->u.b.size, GRN_OP_AND, 32, ctx->encoding))) {
             QLERR("query_obj_new failed");
           }
         }
@@ -2006,14 +2008,14 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         if (RECORDSP(res)) {
           char ops[STRBUF_SIZE];
           uint16_t ops_size;
-          op = GRN_SEL_AND;
+          op = GRN_OP_AND;
           POP(car, args);
           if (!obj2str(car, ops, &ops_size)) {
             switch (*ops) {
-            case '+': op = GRN_SEL_OR; break;
-            case '-': op = GRN_SEL_BUT; break;
-            case '*': op = GRN_SEL_AND; break;
-            case '>': op = GRN_SEL_ADJUST; break;
+            case '+': op = GRN_OP_OR; break;
+            case '-': op = GRN_OP_BUT; break;
+            case '*': op = GRN_OP_AND; break;
+            case '>': op = GRN_OP_ADJUST; break;
             }
           }
         } else {
@@ -2021,7 +2023,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           if (!(table = grn_ctx_at(ctx, DB_OBJ(column)->range))) { return F; }
           res = rec_obj_new(ctx, table, 0);
           if (ERRP(ctx, GRN_WARN)) { return F; }
-          op = GRN_SEL_OR;
+          op = GRN_OP_OR;
         }
         grn_obj_search(ctx, column, (grn_obj *)q->u.p.value, RVALUE(res), op, NULL);
       } else {

@@ -38,9 +38,9 @@ struct _grn_query {
   char *str;
   char *cur;
   char *str_end;
-  grn_sel_operator default_op;
+  grn_operator default_op;
   grn_select_optarg opt;
-  grn_sel_mode default_mode;
+  grn_operator default_mode;
   int escalation_threshold;
   int escalation_decaystep;
   int weight_offset;
@@ -188,42 +188,42 @@ get_word(grn_ctx *ctx, grn_query *q, int *prefixp)
 }
 
 inline static grn_cell *
-get_op(grn_query *q, grn_sel_operator op, int weight)
+get_op(grn_query *q, grn_operator op, int weight)
 {
   char *start, *end = q->cur;
   int mode, option;
   switch (*end) {
   case 'S' :
-    mode = GRN_SEL_SIMILAR;
+    mode = GRN_OP_SIMILAR;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_SIMILARITY_THRESHOLD; }
     q->cur = end;
     break;
   case 'N' :
-    mode = GRN_SEL_NEAR;
+    mode = GRN_OP_NEAR;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
     break;
   case 'n' :
-    mode = GRN_SEL_NEAR2;
+    mode = GRN_OP_NEAR2;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
     break;
   case 'T' :
-    mode = GRN_SEL_TERM_EXTRACT;
+    mode = GRN_OP_TERM_EXTRACT;
     start = ++end;
     option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { option = DEFAULT_TERM_EXTRACT_POLICY; }
     q->cur = end;
     break;
   case 'X' : /* force exact mode */
-    op = GRN_SEL_AND;
-    mode = GRN_SEL_EXACT;
+    op = GRN_OP_AND;
+    mode = GRN_OP_EXACT;
     option = 0;
     start = ++end;
     q->cur = end;
@@ -240,7 +240,7 @@ inline static grn_cell *
 get_token(grn_ctx *ctx, grn_query *q)
 {
   grn_cell *token = NIL;
-  grn_sel_operator op = q->default_op;
+  grn_operator op = q->default_op;
   {
     int weight = DEFAULT_WEIGHT, prefixp = 0, mode = -1, option = 0;
     skip_space(ctx, q);
@@ -265,25 +265,25 @@ get_token(grn_ctx *ctx, grn_query *q)
       break;
     case GRN_QUERY_AND :
       q->cur++;
-      token = op_new(q, GRN_SEL_AND, weight, mode, option);
+      token = op_new(q, GRN_OP_AND, weight, mode, option);
       break;
     case GRN_QUERY_BUT :
       q->cur++;
-      token = op_new(q, GRN_SEL_BUT, weight, mode, option);
+      token = op_new(q, GRN_OP_BUT, weight, mode, option);
       break;
     case GRN_QUERY_ADJ_INC :
       q->cur++;
       if (weight < 127) { weight++; }
-      token = op_new(q, GRN_SEL_ADJUST, weight, mode, option);
+      token = op_new(q, GRN_OP_ADJUST, weight, mode, option);
       break;
     case GRN_QUERY_ADJ_DEC :
       q->cur++;
       if (weight > -128) { weight--; }
-      token = op_new(q, GRN_SEL_ADJUST, weight, mode, option);
+      token = op_new(q, GRN_OP_ADJUST, weight, mode, option);
       break;
     case GRN_QUERY_ADJ_NEG :
       q->cur++;
-      token = op_new(q, GRN_SEL_ADJUST, -1, mode, option);
+      token = op_new(q, GRN_OP_ADJUST, -1, mode, option);
       break;
     case GRN_QUERY_PARENL :
       q->cur++;
@@ -296,7 +296,7 @@ get_token(grn_ctx *ctx, grn_query *q)
           token->u.b.size == 2) {
         cell_del(q);
         q->cur_expr--;
-        token = op_new(q, GRN_SEL_OR, weight, mode, option);
+        token = op_new(q, GRN_OP_OR, weight, mode, option);
       }
       break;
     }
@@ -389,16 +389,16 @@ get_pragma(grn_ctx *ctx, grn_query *q)
       if (end > start) {
         switch (*start) {
         case 'O' :
-          q->default_op = GRN_SEL_OR;
+          q->default_op = GRN_OP_OR;
           break;
         case GRN_QUERY_AND :
-          q->default_op = GRN_SEL_AND;
+          q->default_op = GRN_OP_AND;
           break;
         case GRN_QUERY_BUT :
-          q->default_op = GRN_SEL_BUT;
+          q->default_op = GRN_OP_BUT;
           break;
         case GRN_QUERY_ADJ_INC :
-          q->default_op = GRN_SEL_ADJUST;
+          q->default_op = GRN_OP_ADJUST;
           break;
         }
       }
@@ -427,7 +427,7 @@ section_weight_cb(grn_ctx *ctx, grn_hash *r, const void *rid, int sid, void *arg
 
 grn_query *
 grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-               grn_sel_operator default_op, int max_exprs)
+               grn_operator default_op, int max_exprs)
 {
   grn_query *q;
   int max_cells = max_exprs * 4;
@@ -503,7 +503,7 @@ grn_query_str(grn_query *q, const char **str, unsigned int *len)
 
 static void
 scan_keyword(snip_cond *sc, grn_str *str, grn_id section,
-             grn_sel_operator op, grn_select_optarg *optarg,
+             grn_operator op, grn_select_optarg *optarg,
              int *found, int *score)
 {
   int tf;
@@ -521,42 +521,44 @@ scan_keyword(snip_cond *sc, grn_str *str, grn_id section,
     }
   }
   switch (op) {
-  case GRN_SEL_OR :
+  case GRN_OP_OR :
     if (tf) {
       *found = 1;
       *score += w * tf;
     }
     break;
-  case GRN_SEL_AND :
+  case GRN_OP_AND :
     if (tf) {
       *score += w * tf;
     } else {
       *found = 0;
     }
     break;
-  case GRN_SEL_BUT :
+  case GRN_OP_BUT :
     if (tf) {
       *found = 0;
     }
     break;
-  case GRN_SEL_ADJUST :
+  case GRN_OP_ADJUST :
     *score += w * tf;
+  default :
+    break;
   }
 }
 
 /* TODO: delete overlapping logic with exec_query */
 static grn_rc
 scan_query(grn_ctx *ctx, grn_query *q, grn_str *nstr, grn_id section, grn_cell *c, snip_cond **sc,
-           grn_sel_operator op, int flags, int *found, int *score)
+           grn_operator op, int flags, int *found, int *score)
 {
   int _found = 0, _score = 0;
   grn_cell *e, *ope = NIL;
-  grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
+  grn_operator op0 = GRN_OP_OR, *opp = &op0, op1 = q->default_op;
   while (c != NIL) {
     POP(e, c);
     switch (e->header.type) {
     case GRN_CELL_OP :
-      if (opp == &op0 && e->u.op.op == GRN_SEL_BUT) {
+      if (opp == &op0 && e->u.op.op == GRN_OP_BUT) {
         POP(e, c);
       } else {
         ope = e;
@@ -603,18 +605,18 @@ scan_query(grn_ctx *ctx, grn_query *q, grn_str *nstr, grn_id section, grn_cell *
     op1 = q->default_op;
   }
   switch (op) {
-  case GRN_SEL_OR :
+  case GRN_OP_OR :
     *found |= _found;
     *score += _score;
     break;
-  case GRN_SEL_AND :
+  case GRN_OP_AND :
     *found &= _found;
     *score += _score;
     break;
-  case GRN_SEL_BUT :
+  case GRN_OP_BUT :
     *found &= !_found;
     break;
-  case GRN_SEL_ADJUST :
+  case GRN_OP_ADJUST :
     *score += _score;
     break;
   default :
@@ -655,7 +657,7 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
     if (flags & GRN_QUERY_SCAN_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
     n = grn_str_open(ctx, *(strs + i), *(str_lens + i), f);
     if (!n) { return GRN_NO_MEMORY_AVAILABLE; }
-    if ((rc = scan_query(ctx, q, n, i + 1, q->expr, &sc, GRN_SEL_OR, flags, found, score))) {
+    if ((rc = scan_query(ctx, q, n, i + 1, q->expr, &sc, GRN_OP_OR, flags, found, score))) {
       grn_str_close(ctx, n);
       return rc;
     }
@@ -667,13 +669,13 @@ grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_
 
 /* TODO: delete overlapping logic with exec_query */
 static grn_rc
-snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_operator op,
+snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_operator op,
            unsigned int n_tags, int c_but,
            const char **opentags, unsigned int *opentag_lens,
            const char **closetags, unsigned int *closetag_lens)
 {
   grn_cell *e, *ope = NIL;
-  grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
+  grn_operator op0 = GRN_OP_OR, *opp = &op0, op1 = q->default_op;
   while (c != NIL) {
     POP(e, c);
     switch (e->header.type) {
@@ -687,7 +689,7 @@ snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_oper
       } else {
         q->opt.mode = q->default_mode;
       }
-      if (!(c_but ^ (*opp == GRN_SEL_BUT))) {
+      if (!(c_but ^ (*opp == GRN_OP_BUT))) {
         grn_rc rc;
         unsigned int i = snip->cond_len % n_tags;
         if ((rc = grn_snip_add_cond(ctx, snip, e->u.b.value, e->u.b.size,
@@ -698,7 +700,7 @@ snip_query(grn_ctx *ctx, grn_query *q, grn_snip *snip, grn_cell *c, grn_sel_oper
       }
       break;
     case GRN_CELL_LIST :
-      snip_query(ctx, q, snip, e, *opp, n_tags, (*opp == GRN_SEL_BUT) ? c_but ^ 1 : c_but,
+      snip_query(ctx, q, snip, e, *opp, n_tags, (*opp == GRN_OP_BUT) ? c_but ^ 1 : c_but,
                  opentags, opentag_lens, closetags, closetag_lens);
       break;
     default :
@@ -725,7 +727,7 @@ grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
                             NULL, 0, NULL, 0, mapping))) {
     return NULL;
   }
-  if (snip_query(ctx, query, res, query->expr, GRN_SEL_OR, n_tags, 0,
+  if (snip_query(ctx, query, res, query->expr, GRN_OP_OR, n_tags, 0,
                  opentags, opentag_lens, closetags, closetag_lens)) {
     grn_snip_close(ctx, res);
     return NULL;
@@ -735,13 +737,13 @@ grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
 
 static void
 exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
-            grn_hash *r, grn_sel_operator op)
+            grn_hash *r, grn_operator op)
 {
   grn_hash *s;
   grn_cell *e, *ope = NIL;
   int n = *r->n_entries;
-  grn_sel_operator op0 = GRN_SEL_OR, *opp = &op0, op1 = q->default_op;
-  if (!n && op != GRN_SEL_OR) { return; }
+  grn_operator op0 = GRN_OP_OR, *opp = &op0, op1 = q->default_op;
+  if (!n && op != GRN_OP_OR) { return; }
   if (n) {
     s = grn_hash_create(ctx, NULL, r->key_size, r->value_size, r->obj.header.flags);
     s->obj.header.impl_flags = 0;
@@ -767,7 +769,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
     POP(e, c);
     switch (e->header.type) {
     case GRN_CELL_OP :
-      if (opp == &op0 && e->u.op.op == GRN_SEL_BUT) {
+      if (opp == &op0 && e->u.op.op == GRN_OP_BUT) {
         POP(e, c);
       } else {
         ope = e;
@@ -781,7 +783,7 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
         if (!q->opt.weight_vector) {
           q->opt.vector_size = ope->u.op.weight + q->weight_offset;
         }
-        if (ope->u.op.mode == GRN_SEL_SIMILAR) {
+        if (ope->u.op.mode == GRN_OP_SIMILAR) {
           q->opt.max_interval = q->default_mode;
         }
       } else {
@@ -815,25 +817,25 @@ exec_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_cell *c,
 }
 
 grn_rc
-grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_sel_operator op)
+grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_operator op)
 {
   int p = q->escalation_threshold;
   // dump_query(q, q->expr, 0);
   // grn_log("escalation_threshold=%d", p);
   if (p >= 0 || (-p & 1)) {
-    q->default_mode = GRN_SEL_EXACT;
+    q->default_mode = GRN_OP_EXACT;
     exec_search(ctx, i, q, q->expr, r, op);
     GRN_LOG(ctx, GRN_LOG_INFO, "hits(exact)=%d", *r->n_entries);
   }
   if ((p >= 0) ? (p >= *r->n_entries) : (-p & 2)) {
     q->weight_offset -= q->escalation_decaystep;
-    q->default_mode = GRN_SEL_UNSPLIT;
+    q->default_mode = GRN_OP_UNSPLIT;
     exec_search(ctx, i, q, q->expr, r, op);
     GRN_LOG(ctx, GRN_LOG_INFO, "hits(unsplit)=%d", *r->n_entries);
   }
   if ((p >= 0) ? (p >= *r->n_entries) : (-p & 4)) {
     q->weight_offset -= q->escalation_decaystep;
-    q->default_mode = GRN_SEL_PARTIAL;
+    q->default_mode = GRN_OP_PARTIAL;
     exec_search(ctx, i, q, q->expr, r, op);
     GRN_LOG(ctx, GRN_LOG_INFO, "hits(partial)=%d", *r->n_entries);
   }

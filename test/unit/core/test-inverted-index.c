@@ -460,10 +460,10 @@ insert_and_search(grn_obj *users, grn_obj *items, grn_obj *checks, grn_obj *chec
   grn_bulk_write(context, &value, (void *)&item, sizeof(grn_id));
   value.header.domain = grn_obj_id(context, items);
   grn_test_assert(grn_obj_set_value(context, checks, user1, &value, GRN_OBJ_SET));
-  grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
+  grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_OP_OR, NULL));
   cut_assert_equal_int(grn_table_size(context, res), 1);
   grn_test_assert(grn_obj_set_value(context, checks, user2, &value, GRN_OBJ_SET));
-  grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
+  grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_OP_OR, NULL));
   cut_assert_equal_int(grn_table_size(context, res), 2);
   grn_obj_close(context, &value);
   grn_obj_close(context, res);
@@ -605,10 +605,10 @@ test_int_index(void)
     grn_bulk_write(context, &query, (void *)&key, sizeof(int32_t));
     query.header.domain = GRN_DB_INT32;
     grn_test_assert(grn_obj_set_value(context, checks, user1, &value, GRN_OBJ_SET));
-    grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_SEL_OR, NULL));
+    grn_test_assert(grn_obj_search(context, checked, &value, res, GRN_OP_OR, NULL));
     cut_assert_equal_int(grn_table_size(context, res), 1);
     grn_test_assert(grn_obj_set_value(context, checks, user2, &value, GRN_OBJ_SET));
-    grn_test_assert(grn_obj_search(context, checked, &query, res, GRN_SEL_OR, NULL));
+    grn_test_assert(grn_obj_search(context, checked, &query, res, GRN_OP_OR, NULL));
     cut_assert_equal_int(grn_table_size(context, res), 2);
     grn_obj_close(context, &query);
     grn_obj_close(context, &value);
@@ -700,7 +700,7 @@ test_mroonga_index(void)
     res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, t1, 0);
     GRN_BULK_REWIND(&buff);
     GRN_TEXT_SET(context, &buff, "hi", 2);
-    grn_obj_search(context, ft, &buff, res, GRN_SEL_OR, NULL);
+    grn_obj_search(context, ft, &buff, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
@@ -723,8 +723,8 @@ test_mroonga_index(void)
     grn_table_cursor *tc;
     const char *qstr = "+22 -55";
     res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, t1, 0);
-    query = grn_query_open(context, qstr, strlen(qstr), GRN_SEL_OR, 32);
-    grn_obj_search(context, ft, (grn_obj*) query, res, GRN_SEL_OR, NULL);
+    query = grn_query_open(context, qstr, strlen(qstr), GRN_OP_OR, 32);
+    grn_obj_search(context, ft, (grn_obj*) query, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
@@ -828,7 +828,7 @@ test_mroonga_index_score(void)
     GRN_UINT32_INIT(&score, 0);
     GRN_BULK_REWIND(&buff);
     GRN_TEXT_SETS(context, &buff, "hij");
-    grn_obj_search(context, ft, &buff, res, GRN_SEL_OR, NULL);
+    grn_obj_search(context, ft, &buff, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     score_column = grn_obj_column(context, res, ".:score", 7);
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
@@ -858,8 +858,8 @@ test_mroonga_index_score(void)
     res = grn_table_create(context, NULL, 0, NULL,
                            GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, t1, 0);
     GRN_UINT32_INIT(&score, 0);
-    query = grn_query_open(context, qstr, strlen(qstr), GRN_SEL_OR, 32);
-    grn_obj_search(context, ft, (grn_obj*) query, res, GRN_SEL_OR, NULL);
+    query = grn_query_open(context, qstr, strlen(qstr), GRN_OP_OR, 32);
+    grn_obj_search(context, ft, (grn_obj*) query, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     score_column = grn_obj_column(context, res, ".:score", 7);
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);

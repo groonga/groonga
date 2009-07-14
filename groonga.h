@@ -810,11 +810,49 @@ typedef unsigned int grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
 
 typedef enum {
-  GRN_SEL_OR = 0,
-  GRN_SEL_AND,
-  GRN_SEL_BUT,
-  GRN_SEL_ADJUST
-} grn_sel_operator;
+  GRN_OP_NOP = 0,
+  GRN_OP_PUSH,
+  GRN_OP_POP,
+  GRN_OP_EQUAL,
+  GRN_OP_NOT_EQUAL,
+  GRN_OP_LESS,
+  GRN_OP_GREATER,
+  GRN_OP_LESS_EQUAL,
+  GRN_OP_GREATER_EQUAL,
+  GRN_OP_MATCH,
+  GRN_OP_EXACT,
+  GRN_OP_PARTIAL,
+  GRN_OP_UNSPLIT,
+  GRN_OP_NEAR,
+  GRN_OP_NEAR2,
+  GRN_OP_SIMILAR,
+  GRN_OP_TERM_EXTRACT,
+  GRN_OP_PREFIX,
+  GRN_OP_SUFFIX,
+  GRN_OP_GEO_DISTANCE1,
+  GRN_OP_GEO_DISTANCE2,
+  GRN_OP_GEO_DISTANCE3,
+  GRN_OP_GEO_DISTANCE4,
+  GRN_OP_GEO_WITHINP5,
+  GRN_OP_GEO_WITHINP6,
+  GRN_OP_GEO_WITHINP8,
+  GRN_OP_AND,
+  GRN_OP_OR,
+  GRN_OP_BUT,
+  GRN_OP_ADJUST,
+  GRN_OP_CALL,
+  GRN_OP_INTERN,
+  GRN_OP_TABLE_CREATE,
+  GRN_OP_EXPR_GET_VAR,
+  GRN_OP_VAR_SET_VALUE,
+  GRN_OP_OBJ_GET_VALUE,
+  GRN_OP_OBJ_SET_VALUE,
+  GRN_OP_OBJ_SEARCH,
+  GRN_OP_TABLE_SELECT,
+  GRN_OP_TABLE_SORT,
+  GRN_OP_TABLE_GROUP,
+  GRN_OP_JSON_PUT
+} grn_operator;
 
 struct _grn_table_group_result {
   grn_obj *table;
@@ -822,7 +860,7 @@ struct _grn_table_group_result {
   unsigned char key_end;
   int limit;
   grn_table_group_flags flags;
-  grn_sel_operator op;
+  grn_operator op;
 };
 
 GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
@@ -840,7 +878,7 @@ GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
  * resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されない。
  **/
 GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
-                                      grn_obj *res, grn_sel_operator op);
+                                      grn_obj *res, grn_operator op);
 
 /**
  * grn_table_difference:
@@ -1261,7 +1299,7 @@ GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
  * @obj: 検索対象のobject
  * @query: 検索クエリ
  * @res: 検索結果を格納するテーブル
- * @op: GRN_SEL_OR, GRN_SEL_AND, GRN_SEL_BUT, GRN_SEL_ADJUSTのいずれかを指定する
+ * @op: GRN_OP_OR, GRN_OP_AND, GRN_OP_BUT, GRN_OP_ADJUSTのいずれかを指定する
  * @optarg: 詳細検索条件
  *
  * objを対象としてqueryにマッチするレコードを検索し、
@@ -1280,7 +1318,7 @@ struct _grn_search_optarg {
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
-                              grn_obj *res, grn_sel_operator op, grn_search_optarg *optarg);
+                              grn_obj *res, grn_operator op, grn_search_optarg *optarg);
 
 /*-------------------------------------------------------------
  * grn_vector
@@ -1412,7 +1450,7 @@ struct _grn_snip_mapping {
 };
 
 GRN_API grn_query *grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-                                  grn_sel_operator default_op, int max_exprs);
+                                  grn_operator default_op, int max_exprs);
 GRN_API unsigned int grn_query_rest(grn_ctx *ctx, grn_query *q, const char ** const rest);
 GRN_API grn_rc grn_query_close(grn_ctx *ctx, grn_query *q);
 
@@ -1715,42 +1753,6 @@ GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 
 /* expr */
 
-typedef enum {
-  GRN_OP_NOP = 0,
-  GRN_OP_PUSH,
-  GRN_OP_POP,
-  GRN_OP_CALL,
-  GRN_OP_INTERN,
-  GRN_OP_TABLE_CREATE,
-  GRN_OP_EXPR_GET_VAR,
-  GRN_OP_VAR_SET_VALUE,
-  GRN_OP_OBJ_GET_VALUE,
-  GRN_OP_OBJ_SET_VALUE,
-  GRN_OP_OBJ_SEARCH,
-  GRN_OP_TABLE_SELECT,
-  GRN_OP_TABLE_SORT,
-  GRN_OP_TABLE_GROUP,
-  GRN_OP_JSON_PUT,
-  GRN_OP_AND,
-  GRN_OP_OR,
-  GRN_OP_BUT,
-  GRN_OP_ADJUST,
-  GRN_OP_EQUAL,
-  GRN_OP_NOT_EQUAL,
-  GRN_OP_LESS,
-  GRN_OP_GREATER,
-  GRN_OP_LESS_EQUAL,
-  GRN_OP_GREATER_EQUAL,
-  GRN_OP_MATCH,
-  GRN_OP_GEO_DISTANCE1,
-  GRN_OP_GEO_DISTANCE2,
-  GRN_OP_GEO_DISTANCE3,
-  GRN_OP_GEO_DISTANCE4,
-  GRN_OP_GEO_WITHINP5,
-  GRN_OP_GEO_WITHINP6,
-  GRN_OP_GEO_WITHINP8
-} grn_op;
-
 GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size);
 GRN_API grn_rc grn_expr_close(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr,
@@ -1760,13 +1762,13 @@ GRN_API grn_obj *grn_expr_get_var(grn_ctx *ctx, grn_obj *expr,
 GRN_API grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset);
 GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
 GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
-GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs);
+GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
 GRN_API grn_rc grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                                grn_obj *res, grn_sel_operator op);
+                                grn_obj *res, grn_operator op);
 
 GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                             const char *str, unsigned str_size, grn_obj *res);
