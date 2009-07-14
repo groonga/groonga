@@ -3939,12 +3939,16 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       rc = grn_ii_close(ctx, (grn_ii *)obj);
       break;
     case GRN_PROC :
-      if (obj->header.domain) {
-        grn_hash_delete(ctx, ctx->impl->qe, &obj->header.domain, sizeof(grn_id), NULL);
+      {
+        grn_proc *p = (grn_proc *)obj;
+        if (obj->header.domain) {
+          grn_hash_delete(ctx, ctx->impl->qe, &obj->header.domain, sizeof(grn_id), NULL);
+        }
+        GRN_REALLOC(p->vars, 0);
+        grn_obj_close(ctx, &p->name_buf);
+        GRN_FREE(obj);
+        rc = GRN_SUCCESS;
       }
-      grn_obj_close(ctx, &((grn_proc *)obj)->name_buf);
-      GRN_FREE(obj);
-      rc = GRN_SUCCESS;
       break;
     case GRN_EXPR :
       rc = grn_expr_close(ctx, obj);
@@ -4123,7 +4127,13 @@ grn_obj_id(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id id = GRN_ID_NIL;
   GRN_API_ENTER;
-  if (GRN_DB_OBJP(obj)) { id = DB_OBJ(obj)->id; }
+  if (GRN_DB_OBJP(obj)) {
+    id = DB_OBJ(obj)->id;
+    if ((id & GRN_OBJ_TMP_OBJECT) &&
+        (obj->header.type == GRN_PROC || obj->header.type == GRN_EXPR)) {
+      id = obj->header.domain;
+    }
+  }
   GRN_API_RETURN(id);
 }
 
@@ -4548,11 +4558,11 @@ grn_ctx_pop(grn_ctx *ctx)
 grn_rc
 grn_ctx_push(grn_ctx *ctx, grn_obj *obj)
 {
-  if (ctx && ctx->impl && ctx->impl->stack_curr < 16) {
+  if (ctx && ctx->impl && ctx->impl->stack_curr < GRN_STACK_SIZE) {
     ctx->impl->stack[ctx->impl->stack_curr++] = obj;
     return GRN_SUCCESS;
   }
-  return GRN_NO_MEMORY_AVAILABLE;
+  return GRN_STACK_OVER_FLOW;
 }
 
 #define APPEND_OBJ(p,n,x) {\
@@ -4877,6 +4887,8 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
 grn_obj *
 grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
 {
+  uint32_t i;
+  char *p;
   grn_expr_var *v;
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
@@ -4884,10 +4896,13 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
   APPEND_VAR(e->vars, e->nvars, v);
   if (v) {
     GRN_TEXT_PUT(ctx, &e->name_buf, name, name_size);
-    v->name = GRN_BULK_CURR(&e->name_buf) - name_size;
     v->name_size = name_size;
     res = &v->value;
     GRN_VOID_INIT(res);
+    for (i = e->nvars, p = GRN_TEXT_VALUE(&e->name_buf), v = e->vars; i; i--, v++) {
+      v->name = p;
+      p += v->name_size;
+    }
   }
   GRN_API_RETURN(res);
 }
@@ -5111,8 +5126,12 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_op op, int nargs)
         code->op = op;
         EXPR_POP(xv, e);
         EXPR_POP(yv, e);
-        obj = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(yv));
-        col = grn_obj_column(ctx, obj, GRN_BULK_HEAD(xv), GRN_BULK_VSIZE(xv));
+        if (GRN_COLUMN_FIX_SIZE <= xv->header.type && xv->header.type <= GRN_COLUMN_INDEX) {
+          col = xv;
+        } else {
+          obj = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(yv));
+          col = grn_obj_column(ctx, obj, GRN_BULK_HEAD(xv), GRN_BULK_VSIZE(xv));
+        }
         code->value = col;
         rv = &e->values[e->values_curr++];
         rv->header.domain = grn_obj_get_range(ctx, col);
@@ -5466,6 +5485,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc)
   if (p->funcs[PROC_FIN]) {
     p->funcs[PROC_FIN](ctx, proc, &pctx.user_data);
   }
+  res = grn_ctx_pop(ctx);
   GRN_API_RETURN(res);
 }
 
@@ -6902,7 +6922,7 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
     }
     format.ncolumns = n;
     format.columns = cols;
-    grn_text_otoj(ctx, res, table, &format);
+    grn_text_otoj(ctx, outbuf, res, &format);
     for (i = 0; i < n; i++) {
       grn_obj_unlink(ctx, cols[i]);
     }
@@ -6946,52 +6966,5 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[7], "filter");
   DEF_VAR(vars[8], "sortby");
   DEF_VAR(vars[9], "drilldown");
-  grn_proc_create(ctx, "/q/define_selector", 14, NULL, define_selector, NULL, NULL, 10, vars);
-}
-
-grn_obj *
-grn_expr_create_search(grn_ctx *ctx, const char *name, unsigned name_size,
-                       grn_obj *table, grn_obj *column, int hits,
-                       grn_obj *output, grn_obj *query, grn_obj *filter,
-                       grn_obj *sortby, grn_obj *drilldown)
-{
-  grn_obj *expr = grn_expr_create(ctx, name, name_size);
-  grn_obj *res, *buf, *v_table, *v_column, *v_offset, *v_hits, *v_output;
-  grn_obj *v_query, *v_filter, *v_sortby, *v_drilldown;
-  if (!expr) { goto exit; }
-  buf = grn_expr_add_var(ctx, expr, NULL, 0);
-  res = grn_expr_add_var(ctx, expr, NULL, 0);
-  v_table = grn_expr_add_var(ctx, expr, "table", 5);
-  GRN_TEXT_INIT(v_table, 0);
-  VAR_SET_VALUE(ctx, v_table, table);
-  v_column = grn_expr_add_var(ctx, expr, "column", 6);
-  GRN_TEXT_INIT(v_column, 0);
-  VAR_SET_VALUE(ctx, v_column, column);
-  v_offset = grn_expr_add_var(ctx, expr, "offset", 6);
-  GRN_INT32_INIT(v_offset, 0);
-  GRN_INT32_SET(ctx, v_offset, 0);
-  v_hits = grn_expr_add_var(ctx, expr, "hits", 4);
-  GRN_INT32_INIT(v_hits, 0);
-  GRN_INT32_SET(ctx, v_hits, hits);
-  v_output = grn_expr_add_var(ctx, expr, "output", 6);
-  GRN_TEXT_INIT(v_output, 0);
-  VAR_SET_VALUE(ctx, v_output, output);
-  v_query = grn_expr_add_var(ctx, expr, "query", 5);
-  GRN_TEXT_INIT(v_query, 0);
-  VAR_SET_VALUE(ctx, v_query, query);
-  v_filter = grn_expr_add_var(ctx, expr, "filter", 6);
-  GRN_TEXT_INIT(v_filter, 0);
-  VAR_SET_VALUE(ctx, v_filter, filter);
-  v_sortby = grn_expr_add_var(ctx, expr, "sortby", 6);
-  GRN_TEXT_INIT(v_sortby, 0);
-  VAR_SET_VALUE(ctx, v_sortby, sortby);
-  v_drilldown = grn_expr_add_var(ctx, expr, "drilldown", 9);
-  GRN_TEXT_INIT(v_drilldown, 0);
-  VAR_SET_VALUE(ctx, v_drilldown, drilldown);
-
-
-
-  grn_expr_compile(ctx, expr);
-exit :
-  return expr;
+  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 10, vars);
 }

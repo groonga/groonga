@@ -1787,10 +1787,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
       GRN_TEXT_REINIT(val);
       p = get_uri_token(ctx, val, p, e, '&');
     }
-    if ((v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
-      v->header.type = GRN_PTR;
-      GRN_PTR_SET(ctx, v, ctx->impl->outbuf);
-    }
+    grn_ctx_push(ctx, ctx->impl->outbuf);
     val = grn_expr_exec(ctx, expr);
   }
   GRN_OBJ_FIN(ctx, &key);

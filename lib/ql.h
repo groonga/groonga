@@ -125,6 +125,8 @@ grn_rc grn_del(const char *key);
 
 /**** grn_ctx_impl ****/
 
+#define GRN_STACK_SIZE 256
+
 struct _grn_ctx_impl {
   grn_encoding encoding;
 
@@ -143,7 +145,7 @@ struct _grn_ctx_impl {
 #endif
 
   /* qe portion */
-  grn_obj *stack[16]; // fixme
+  grn_obj *stack[GRN_STACK_SIZE];
   uint32_t stack_curr;
   grn_hash *qe;
 
