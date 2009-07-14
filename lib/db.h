@@ -148,6 +148,7 @@ typedef struct {
    (((grn_db_obj *)obj)->header.type <= GRN_DB))
 
 typedef struct _grn_proc_ctx grn_proc_ctx;
+
 struct _grn_proc_ctx {
   grn_user_data user_data;
   grn_proc *proc;
