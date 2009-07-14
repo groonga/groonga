@@ -450,16 +450,33 @@ GRN_API grn_rc grn_db_load(grn_ctx *ctx, const char *path);
  * @init: 初期化関数のポインタ
  * @next: 実処理関数のポインタ
  * @fin: 終了関数のポインタ
+ * @nvars: procで使用する変数の数
+ * @vars: procで使用する変数の定義(grn_expr_var構造体の配列)
  *
  * nameに対応する新たなproc(手続き)をctxが使用するdbに定義する。
  **/
+
+typedef struct {
+  char *name;
+  unsigned name_size;
+  grn_obj value;
+} grn_expr_var;
 
 typedef grn_rc grn_proc_init_func(grn_ctx *ctx, const char *path);
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
                                  const char *name, unsigned name_size, const char *path,
                                  grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
-                                 unsigned nargs, unsigned nresults, grn_obj *result_types);
+                                 unsigned nvars, grn_expr_var *vars);
+/**
+ * grn_proc_vars:
+ * @user_data: grn_proc_funcに渡されたuser_data
+ * @nvars: 変数の数
+ *
+ * 現在実行中のgrn_proc_func関数から、定義されている変数(grn_expr_var)の配列とその数を取得する。
+ **/
+
+GRN_API grn_expr_var *grn_proc_vars(grn_ctx *ctx, grn_user_data *user_data, unsigned *nvars);
 
 /*-------------------------------------------------------------
  * table操作のための関数
@@ -1732,12 +1749,6 @@ typedef enum {
   GRN_OP_GEO_WITHINP6,
   GRN_OP_GEO_WITHINP8
 } grn_op;
-
-typedef struct {
-  char *name;
-  unsigned name_size;
-  grn_obj value;
-} grn_expr_var;
 
 GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size);
 GRN_API grn_rc grn_expr_close(grn_ctx *ctx, grn_obj *expr);
