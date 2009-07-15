@@ -6607,13 +6607,18 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
   grn_expr_append_obj(ctx, q->e, q->v);
   grn_expr_append_const(ctx, q->e, column);
   grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
-  grn_expr_append_const(ctx, q->e, &q->buf);
   grn_expr_append_const_str(ctx, q->e, start, end - start);
-  if (mode == GRN_OP_MATCH || mode == GRN_OP_EXACT) {
-    grn_expr_append_op(ctx, q->e, mode, 2);
-  } else {
+  switch (mode) {
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+  case GRN_OP_SIMILAR :
+  case GRN_OP_TERM_EXTRACT :
     grn_expr_append_const_int(ctx, q->e, option);
     grn_expr_append_op(ctx, q->e, mode, 3);
+    break;
+  default :
+    grn_expr_append_op(ctx, q->e, mode, 2);
+    break;
   }
   return GRN_SUCCESS;
 }
@@ -6927,7 +6932,7 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
     char *p = GRN_TEXT_VALUE(output), *tokbuf[256];
     int i, n = grn_str_tok(p, GRN_TEXT_LEN(output), ' ', tokbuf, 256, NULL);
     for (i = 0; i < n; i++) {
-      cols[i] = grn_obj_column(ctx, table, p, tokbuf[i] - p);
+      cols[i] = grn_obj_column(ctx, res, p, tokbuf[i] - p);
       p = tokbuf[i] + 1;
     }
     format.ncolumns = n;
