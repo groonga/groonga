@@ -2096,7 +2096,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
             if (j) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
             GRN_BULK_REWIND(&buf);
             grn_obj_get_value(ctx, format->columns[j], *v, &buf);
-            grn_text_otoj(ctx, bulk, &buf, format);
+            grn_text_otoj(ctx, bulk, &buf, NULL);
           }
           GRN_TEXT_PUTC(ctx, bulk, ']');
         }
@@ -2123,7 +2123,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
           if (j) { GRN_TEXT_PUTS(ctx, bulk, ", "); }
           GRN_BULK_REWIND(&buf);
           grn_obj_get_value(ctx, format->columns[j], id, &buf);
-          grn_text_otoj(ctx, bulk, &buf, format);
+          grn_text_otoj(ctx, bulk, &buf, NULL);
         }
         GRN_TEXT_PUTC(ctx, bulk, ']');
       }
