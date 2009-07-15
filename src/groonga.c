@@ -235,19 +235,14 @@ static int
 print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otype)
 {
   grn_id id;
-  char *type, name[GRN_TABLE_MAX_KEY_SIZE];
+  char name[GRN_TABLE_MAX_KEY_SIZE];
   const char *path;
   int name_len;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
-    type = "\"hash\"";
-    break;
   case GRN_TABLE_PAT_KEY:
-    type = "\"pat\"";
-    break;
   case GRN_TABLE_NO_KEY:
-    type = "\"no\"";
     break;
   default:
     return 0;
@@ -265,8 +260,6 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otyp
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_esc(ctx, buf, path, strlen(path));
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    GRN_TEXT_PUTS(ctx, buf, type);
-    GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_itoa(ctx, buf, table->header.domain);
@@ -279,8 +272,6 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otyp
     grn_text_esc(ctx, buf, name, name_len);
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_esc(ctx, buf, path, strlen(path));
-    GRN_TEXT_PUTC(ctx, buf, ',');
-    GRN_TEXT_PUTS(ctx, buf, type);
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, ',');
@@ -591,12 +582,12 @@ cmd_tablelist(grn_ctx *ctx, grn_obj *db, grn_obj *buf, grn_output_type otype)
     case grn_output_tsv:
       line_delimiter = '\n';
       column_delimiter = '\t';
-      GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\ttype\tflags\tdomain");
+      GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\tflags\tdomain");
       break;
     case grn_output_json:
       line_delimiter = ',';
       column_delimiter = ',';
-      GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"]");
+      GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]");
       break;
     }
     while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {

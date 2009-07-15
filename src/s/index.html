@@ -146,7 +146,7 @@
                   <select id="createcolumn-compress">
                     <option value="GRN_OBJ_COMPRESS_NONE">圧縮なし</option>
                     <option value="GRN_OBJ_COMPRESS_ZLIB">zlib</option>
-                    <option value="GRN_OBJ_COMPRESS_LZO">LZO</option>
+                    <option value="GRN_OBJ_COMPRESS_LZO">lzo</option>
                   </select>
                 </td>
               </tr>
@@ -187,22 +187,91 @@ Groonga = {
                      'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
                      'Text', 'LongText'],
   GRN_OBJ_PERSISTENT:             (0x01<<15),
+
+  GRN_OBJ_TABLE_TYPE_MASK:        (0x07),
   GRN_OBJ_TABLE_HASH_KEY:         (0x00),
   GRN_OBJ_TABLE_PAT_KEY:          (0x01),
   GRN_OBJ_TABLE_NO_KEY:           (0x03),
+
   GRN_OBJ_KEY_WITH_SIS:           (0x01<<6),
   GRN_OBJ_KEY_NORMALIZE:          (0x01<<7),
 
+  GRN_OBJ_COLUMN_TYPE_MASK:       (0x07),
   GRN_OBJ_COLUMN_SCALAR:          (0x00),
   GRN_OBJ_COLUMN_VECTOR:          (0x01),
   GRN_OBJ_COLUMN_INDEX:           (0x02),
 
+  GRN_OBJ_COMPRESS_MASK:          (0x07<<4),
   GRN_OBJ_COMPRESS_NONE:          (0x00<<4),
   GRN_OBJ_COMPRESS_ZLIB:          (0x01<<4),
   GRN_OBJ_COMPRESS_LZO:           (0x02<<4),
+
   GRN_OBJ_WITH_SECTION:           (0x01<<7),
   GRN_OBJ_WITH_WEIGHT:            (0x01<<8),
-  GRN_OBJ_WITH_POSITION:          (0x01<<9)
+  GRN_OBJ_WITH_POSITION:          (0x01<<9),
+
+  table_flags_to_s: function(flags) {
+    ret = []
+    if (flags & Groonga.GRN_OBJ_PERSISTENT) {
+      ret.push('永続的');
+    }
+    switch (flags & Groonga.GRN_OBJ_TABLE_TYPE_MASK) {
+    case Groonga.GRN_OBJ_TABLE_HASH_KEY:
+      ret.push('ハッシュテーブル')
+      break;
+    case Groonga.GRN_OBJ_TABLE_PAT_KEY:
+      ret.push('パトリシア木')
+      break;
+    case Groonga.GRN_OBJ_TABLE_NO_KEY:
+      ret.push('キーなし')
+      break;
+    }
+    if (flags & Groonga.GRN_OBJ_KEY_WITH_SIS) {
+      ret.push('keyのSIS自動登録');
+    }
+    if (flags & Groonga.GRN_OBJ_KEY_NORMALIZE) {
+      ret.push('keyの正規化');
+    }
+    return ret.join(' ');
+  },
+  column_flags_to_s: function(flags) {
+    ret = []
+    if (flags & Groonga.GRN_OBJ_PERSISTENT) {
+      ret.push('永続的');
+    }
+    switch (flags & Groonga.GRN_OBJ_COLUMN_TYPE_MASK) {
+    case Groonga.GRN_OBJ_COLUMN_SCALAR:
+      ret.push('スカラ')
+      break;
+    case Groonga.GRN_OBJ_COLUMN_VECTOR:
+      ret.push('ベクタ')
+      break;
+    case Groonga.GRN_OBJ_COLUMN_INDEX:
+      ret.push('転置インデックス')
+      if (flags & Groonga.GRN_OBJ_WITH_SECTION) {
+        ret.push('セクション情報');
+      }
+      if (flags & Groonga.GRN_OBJ_WITH_WEIGHT) {
+        ret.push('重み情報');
+      }
+      if (flags & Groonga.GRN_OBJ_WITH_POSITION) {
+        ret.push('位置情報');
+      }
+      break;
+    }
+    switch (flags & Groonga.GRN_OBJ_COMPRESS_MASK) {
+    case Groonga.GRN_OBJ_COMPRESS_NONE:
+      ret.push('無圧縮');
+      break;
+    case Groonga.GRN_OBJ_COMPRESS_ZLIB:
+      ret.push('zlib圧縮');
+      break;
+    case Groonga.GRN_OBJ_COMPRESS_LZO:
+      ret.push('lzo圧縮');
+      break;
+    }
+    return ret.join(' ');
+  }
 };
 GroongaAdmin = {
   initialize: function() {
@@ -330,6 +399,8 @@ GroongaAdmin = {
               .click(function() {
                 GroongaAdmin.recordlist(table_name);
             }));
+          var flags_td = $(this).find('td:eq(3)');
+          flags_td.text(Groonga.table_flags_to_s(Number(flags_td.text())));
         });
       }
     });
@@ -358,10 +429,15 @@ GroongaAdmin = {
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
+        var table = GroongaAdmin.create_table_element(d);
         $('#table-tab-columnlist')
           .empty()
           .append($('<h1/>').text('カラム一覧'))
-          .append(GroongaAdmin.create_table_element(d));
+          .append(table);
+        table.find('tr').each(function() {
+          var flags_td = $(this).find('td:eq(4)');
+          flags_td.text(Groonga.column_flags_to_s(Number(flags_td.text())));
+        });
       }
     });
   },
