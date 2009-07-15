@@ -213,6 +213,12 @@ GroongaAdmin = {
     $('#tab-tablelist-link').click(function() {
       GroongaAdmin.tablelist();
     });
+    $('#tab-columnlist-link').click(function() {
+      GroongaAdmin.columnlist(GroongaAdmin.current_table);
+    });
+    $('#tab-recordlist-link').click(function() {
+      GroongaAdmin.recordlist(GroongaAdmin.current_table, 1, 30);
+    });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
     });
@@ -296,7 +302,7 @@ GroongaAdmin = {
                   $('#database-tabs').hide();
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
-                  GroongaAdmin.recordlist(table_name);
+                  GroongaAdmin.recordlist(table_name, 1, 30);
                 })
             )
           );
@@ -328,10 +334,15 @@ GroongaAdmin = {
       }
     });
   },
-  recordlist: function(table_name) {
+  recordlist: function(table_name, offset, count) {
     $.ajax({
       url: '/a/recordlist',
-      data: {'table': table_name},
+      data: {
+        'table': table_name,
+        'offset': offset,
+        'count': count
+        /* sort_column: :id */
+      },
       dataType: 'json',
       success: function(d) {
         $('#table-tab-recordlist')
