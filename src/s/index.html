@@ -286,9 +286,7 @@ GroongaAdmin = {
       GroongaAdmin.columnlist(GroongaAdmin.current_table);
     });
     $('#tab-recordlist-link').click(function() {
-      GroongaAdmin.recordlist_offset = 1;
-      GroongaAdmin.recordlist(GroongaAdmin.current_table,
-                              1, GroongaAdmin.recordlist_count);
+      GroongaAdmin.recordlist(GroongaAdmin.current_table, 1);
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
@@ -305,7 +303,6 @@ GroongaAdmin = {
       e2.append($('<option />').text(val));
     });
 
-    GroongaAdmin.recordlist_offset = 1;
     GroongaAdmin.recordlist_count = 30;
 
     GroongaAdmin.status();
@@ -377,9 +374,7 @@ GroongaAdmin = {
                   $('#database-tabs').hide();
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
-                  GroongaAdmin.recordlist(table_name,
-                                          GroongaAdmin.recordlist_offset,
-                                          GroongaAdmin.recordlist_count);
+                  GroongaAdmin.recordlist(table_name, 1);
                 })
             )
           );
@@ -404,23 +399,68 @@ GroongaAdmin = {
       }
     });
   },
-  recordlist: function(table_name, offset, count) {
+  pager_element: function(per_page, current_page, total, show_num, func) {
+    var ret = $('<div/>')
+    if (total) {
+      var last_page = Math.floor((total - 1) / per_page) + 1;
+      var st = current_page - Math.floor(show_num / 2);
+      st = (st < 1) ? 1 : st;
+      var ed = st + show_num - 1;
+      ed = (ed > last_page) ? last_page : ed;
+
+      if (st > 1) {
+        ret.append(
+          $('<span/>').addClass('pager').append(
+            $('<a/>').attr('href', '#').text('1').click(func)
+          )
+        ).append($('<span/>').text('....'));
+      }
+      for (var i = st; i <= ed; i++) {
+        ret.append(
+          $('<span/>').addClass('pager').append(
+            $('<a/>').attr('href', '#').text(String(i)).click(func)
+          )
+        );
+      }
+      if (ed < last_page) {
+        ret.append($('<span/>').text('....')).append(
+          $('<span/>').addClass('pager').append(
+            $('<a/>').attr('href', '#').text(String(last_page)).click(func)
+          )
+        )
+      }
+    }
+    return ret;
+  },
+  recordlist: function(table_name, page) {
     $.ajax({
       url: '/a/recordlist',
       data: {
         'table': table_name,
-        'offset': offset,
-        'count': count
+        'offset': (page - 1) * GroongaAdmin.recordlist_count + 1,
+        'count': GroongaAdmin.recordlist_count
         /* sort_column: :id */
       },
       dataType: 'json',
       success: function(d) {
         var all_count = d.shift();
+        var pager = GroongaAdmin.pager_element(
+          GroongaAdmin.recordlist_count,
+          page,
+          all_count,
+          13,
+          function() {
+            GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                                    Number($(this).text()));
+          }
+        );
         $('#table-tab-recordlist')
           .empty()
           .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append($('<p/>').text('総件数: ' + all_count))
-          .append(GroongaAdmin.create_table_element(d));
+          .append(pager)
+          .append(GroongaAdmin.create_table_element(d))
+          .append(pager);
       }
     });
   },

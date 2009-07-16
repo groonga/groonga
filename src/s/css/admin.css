@@ -80,3 +80,11 @@ table.records td {
   border-width: 0 0 1px 1px;
   padding: 0.3em;
 }
+
+span.pager {
+  display: inline-block;
+  border: #333 1px solid;
+  padding: 0.1em;
+  margin: 0.1em;
+  background-color: white;
+}
