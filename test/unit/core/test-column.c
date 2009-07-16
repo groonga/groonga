@@ -93,6 +93,7 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
+  grn_db_close(&context, database);
   grn_ctx_fin(&context);
   teardown_grn_logger(logger);
 }
@@ -146,4 +147,5 @@ test_fix_size_set_value_increment(void)
          GRN_BULK_HEAD(retrieved_record_value),
          GRN_BULK_VSIZE(retrieved_record_value));
   cut_assert_equal_int(count + increment_count, retrieved_count);
+  grn_obj_close(&context, retrieved_record_value);
 }
