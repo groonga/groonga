@@ -102,20 +102,20 @@ test_fix_size_set_value_set(void)
 {
   gint32 count = 29;
   gint32 retrieved_count;
-  grn_obj *record_value;
-  grn_obj *retrieved_record_value;
+  grn_obj record_value;
+  grn_obj retrieved_record_value;
 
-  record_value = grn_obj_open(&context, GRN_BULK, 0, 0);
-  grn_bulk_write(&context, record_value, (const char *)&count, sizeof(count));
+  GRN_INT32_INIT(&record_value, 0);
+  GRN_INT32_SET(&context, &record_value, count);
   grn_test_assert(grn_obj_set_value(&context, count_column, groonga_bookmark_id,
-                                    record_value, GRN_OBJ_SET));
+                                    &record_value, GRN_OBJ_SET));
 
-  retrieved_record_value = grn_obj_get_value(&context, count_column,
-                                             groonga_bookmark_id, NULL);
-  memcpy(&retrieved_count,
-         GRN_BULK_HEAD(retrieved_record_value),
-         GRN_BULK_VSIZE(retrieved_record_value));
+  GRN_INT32_INIT(&retrieved_record_value, 0);
+  grn_obj_get_value(&context, count_column, groonga_bookmark_id, &retrieved_record_value);
+  retrieved_count = GRN_INT32_VALUE(&retrieved_record_value);
   cut_assert_equal_int(count, retrieved_count);
+  GRN_OBJ_FIN(&context, &record_value);
+  GRN_OBJ_FIN(&context, &retrieved_record_value);
 }
 
 void
