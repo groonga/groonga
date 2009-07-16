@@ -161,8 +161,7 @@ print_columnvalue(grn_ctx *ctx, grn_obj *value, grn_obj *buf, grn_output_type ot
     break;
   case grn_output_json:
     {
-      grn_obj_format format;
-      grn_text_otoj(ctx, buf, value, &format);
+      grn_text_otoj(ctx, buf, value, NULL);
     }
     break;
   }
