@@ -286,7 +286,9 @@ GroongaAdmin = {
       GroongaAdmin.columnlist(GroongaAdmin.current_table);
     });
     $('#tab-recordlist-link').click(function() {
-      GroongaAdmin.recordlist(GroongaAdmin.current_table, 1, 30);
+      GroongaAdmin.recordlist_offset = 1;
+      GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                              1, GroongaAdmin.recordlist_count);
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
@@ -302,6 +304,10 @@ GroongaAdmin = {
       e1.append($('<option />').text(val));
       e2.append($('<option />').text(val));
     });
+
+    GroongaAdmin.recordlist_offset = 1;
+    GroongaAdmin.recordlist_count = 30;
+
     GroongaAdmin.status();
     setInterval(GroongaAdmin.status, 1000);
   },
@@ -371,7 +377,9 @@ GroongaAdmin = {
                   $('#database-tabs').hide();
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
-                  GroongaAdmin.recordlist(table_name, 1, 30);
+                  GroongaAdmin.recordlist(table_name,
+                                          GroongaAdmin.recordlist_offset,
+                                          GroongaAdmin.recordlist_count);
                 })
             )
           );
@@ -390,15 +398,6 @@ GroongaAdmin = {
         var table = GroongaAdmin.create_table_element(d);
         $('#database-tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
         table.find('tr').each(function() {
-          var table_name_td = $(this).find('td:eq(1)');
-          var table_name = table_name_td.text();
-          table_name_td.text('');
-          table_name_td.append(
-            $('<a/>').attr('href', '#')
-              .text(table_name)
-              .click(function() {
-                GroongaAdmin.recordlist(table_name);
-            }));
           var flags_td = $(this).find('td:eq(3)');
           flags_td.text(Groonga.table_flags_to_s(Number(flags_td.text())));
         });
@@ -416,9 +415,11 @@ GroongaAdmin = {
       },
       dataType: 'json',
       success: function(d) {
+        var all_count = d.shift();
         $('#table-tab-recordlist')
           .empty()
           .append($('<h1/>').text('レコード一覧: ' + table_name))
+          .append($('<p/>').text('総件数: ' + all_count))
           .append(GroongaAdmin.create_table_element(d));
       }
     });

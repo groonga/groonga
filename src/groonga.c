@@ -405,6 +405,12 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                 break;
               }
 
+              {
+                unsigned int n = grn_table_size(ctx, table);
+                grn_text_itoa(ctx, buf, n);
+                GRN_TEXT_PUTC(ctx, buf, line_delimiter);
+              }
+
               /* fetch columns */
               {
                 grn_id *key;
