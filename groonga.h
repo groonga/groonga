@@ -525,7 +525,7 @@ GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
   (((table) = grn_ctx_get((ctx), (name), (name_size))) ||\
    ((table) = grn_table_create((ctx), (name), (name_size), (path), (flags), (key_type), (value_size))))
 
-typedef unsigned char grn_search_flags;
+typedef unsigned char grn_search_flags; /* deprecated: 近々廃止されます。*/
 
 #define GRN_SEARCH_EXACT               (0x00)
 #define GRN_SEARCH_LCP                 (0x01)
