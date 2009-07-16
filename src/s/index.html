@@ -416,11 +416,15 @@ GroongaAdmin = {
         ).append($('<span/>').text('....'));
       }
       for (var i = st; i <= ed; i++) {
-        ret.append(
-          $('<span/>').addClass('pager').append(
-            $('<a/>').attr('href', '#').text(String(i)).click(func)
-          )
+        var s = $('<span/>').append(
+          $('<a/>').attr('href', '#').text(String(i)).click(func)
         );
+        if (i == current_page) {
+          s.addClass('pager-current');
+        } else {
+          s.addClass('pager');
+        }
+        ret.append(s);
       }
       if (ed < last_page) {
         ret.append($('<span/>').text('....')).append(

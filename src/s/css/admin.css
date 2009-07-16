@@ -88,3 +88,16 @@ span.pager {
   margin: 0.1em;
   background-color: white;
 }
+
+span.pager-current {
+  display: inline-block;
+  border: #333 1px solid;
+  padding: 0.1em;
+  margin: 0.1em;
+  background-color: #333;
+}
+
+span.pager-current a {
+  color: white;
+  font-weight: bold;
+}
