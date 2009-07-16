@@ -6540,6 +6540,89 @@ get_phrase(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
 }
 
 static grn_rc
+get_geocond(grn_ctx *ctx, efs_info *q, grn_obj *longitude, grn_obj *latitude)
+{
+  unsigned int len;
+  const char *start = q->cur, *end;
+  for (end = q->cur;; ) {
+    /* null check and length check */
+    if (!(len = grn_charlen(ctx, end, q->str_end))) {
+      q->cur = q->str_end;
+      break;
+    }
+    if (grn_isspace(end, q->encoding) ||
+        *end == GRN_QUERY_PARENR) {
+      q->cur = end;
+      break;
+    }
+  }
+  {
+    char *tokbuf[8];
+    int32_t lng0, lat0, lng1, lat1, lng2, lat2, r;
+    int32_t n = grn_str_tok((char *)start, end - start, ',', tokbuf, 8, NULL);
+    switch (n) {
+    case 3 :
+      lng0 = grn_atoi(start, tokbuf[0], NULL);
+      lat0 = grn_atoi(tokbuf[0] + 1, tokbuf[1], NULL);
+      r = grn_atoi(tokbuf[1] + 1, tokbuf[2], NULL);
+      grn_expr_append_obj(ctx, q->e, q->v);
+      grn_expr_append_const(ctx, q->e, longitude);
+      grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
+      grn_expr_append_obj(ctx, q->e, q->v);
+      grn_expr_append_const(ctx, q->e, latitude);
+      grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
+      grn_expr_append_const_int(ctx, q->e, lng0);
+      grn_expr_append_const_int(ctx, q->e, lat0);
+      grn_expr_append_const_int(ctx, q->e, r);
+      grn_expr_append_op(ctx, q->e, GRN_OP_GEO_WITHINP5, 5);
+      break;
+    case 4 :
+      lng0 = grn_atoi(start, tokbuf[0], NULL);
+      lat0 = grn_atoi(tokbuf[0] + 1, tokbuf[1], NULL);
+      lng1 = grn_atoi(tokbuf[1] + 1, tokbuf[2], NULL);
+      lat1 = grn_atoi(tokbuf[2] + 1, tokbuf[3], NULL);
+      grn_expr_append_obj(ctx, q->e, q->v);
+      grn_expr_append_const(ctx, q->e, longitude);
+      grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
+      grn_expr_append_obj(ctx, q->e, q->v);
+      grn_expr_append_const(ctx, q->e, latitude);
+      grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
+      grn_expr_append_const_int(ctx, q->e, lng0);
+      grn_expr_append_const_int(ctx, q->e, lat0);
+      grn_expr_append_const_int(ctx, q->e, lng1);
+      grn_expr_append_const_int(ctx, q->e, lat1);
+      grn_expr_append_op(ctx, q->e, GRN_OP_GEO_WITHINP6, 6);
+      break;
+    case 6 :
+      lng0 = grn_atoi(start, tokbuf[0], NULL);
+      lat0 = grn_atoi(tokbuf[0] + 1, tokbuf[1], NULL);
+      lng1 = grn_atoi(tokbuf[1] + 1, tokbuf[2], NULL);
+      lat1 = grn_atoi(tokbuf[2] + 1, tokbuf[3], NULL);
+      lng2 = grn_atoi(tokbuf[3] + 1, tokbuf[4], NULL);
+      lat2 = grn_atoi(tokbuf[4] + 1, tokbuf[5], NULL);
+      grn_expr_append_obj(ctx, q->e, q->v);
+      grn_expr_append_const(ctx, q->e, longitude);
+      grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
+      grn_expr_append_obj(ctx, q->e, q->v);
+      grn_expr_append_const(ctx, q->e, latitude);
+      grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
+      grn_expr_append_const_int(ctx, q->e, lng0);
+      grn_expr_append_const_int(ctx, q->e, lat0);
+      grn_expr_append_const_int(ctx, q->e, lng1);
+      grn_expr_append_const_int(ctx, q->e, lat1);
+      grn_expr_append_const_int(ctx, q->e, lng2);
+      grn_expr_append_const_int(ctx, q->e, lat2);
+      grn_expr_append_op(ctx, q->e, GRN_OP_GEO_WITHINP8, 8);
+      break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT, "invalid geocond");
+      break;
+    }
+  }
+  return ctx->rc;
+}
+
+static grn_rc
 get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
 {
   const char *start = q->cur, *end;
@@ -6586,9 +6669,9 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
           mode = GRN_OP_MATCH;
           q->cur = end + 2;
           break;
-        case '%' :
-          mode = GRN_OP_GEO_WITHINP5;
+        case '@' :
           q->cur = end + 2;
+          return get_geocond(ctx, q, column, c);
           break;
         default :
           mode = GRN_OP_EQUAL;
