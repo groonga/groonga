@@ -445,14 +445,15 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                 } else {
                   keys.flags = GRN_TABLE_SORT_ASC;
                 }
+                keys.key = sort_col;
                 if (count == -1) {
+                  grn_table_sort(ctx, table, limit, sort, &keys, 1);
                   limit = 0;
                 } else {
-                  limit = offset + count - 1;
+                  limit = grn_table_sort(ctx, table, offset + count - 1, sort,
+                                         &keys, 1) + 1;
                 }
-                keys.key = sort_col;
                 /* NOTE: handling grn_table_sort return value */
-                grn_table_sort(ctx, table, limit, sort, &keys, 1);
               }
 
               /* show records */
@@ -460,7 +461,7 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                 grn_array_cursor *cur;
                 if ((cur = grn_array_cursor_open(ctx, (grn_array *)sort,
                                                  (grn_id)offset,
-                                                 (grn_id)limit + 1, 0))) {
+                                                 (grn_id)limit, 0))) {
                   grn_id rec_count;
                   while ((rec_count = grn_array_cursor_next(ctx, cur)) != GRN_ID_NIL) {
                     grn_obj **c;
@@ -556,7 +557,7 @@ cmd_columnlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj 
             if (!print_columninfo(ctx, col, buf, otype)) {
               grn_bulk_truncate(ctx, buf, GRN_BULK_VSIZE(buf) - 1);
             }
-            grn_obj_close(ctx, col);
+            grn_obj_unlink(ctx, col);
           }
         });
         if (otype == grn_output_json) {
@@ -565,7 +566,7 @@ cmd_columnlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj 
       }
       grn_hash_close(ctx, cols);
     }
-    grn_obj_close(ctx, table);
+    grn_obj_unlink(ctx, table);
   }
 }
 
@@ -598,7 +599,7 @@ cmd_tablelist(grn_ctx *ctx, grn_obj *db, grn_obj *buf, grn_output_type otype)
         if (!print_tableinfo(ctx, o, buf, otype)) {
           grn_bulk_truncate(ctx, buf, GRN_BULK_VSIZE(buf) - 1);
         }
-        grn_obj_close(ctx, o);
+        grn_obj_unlink(ctx, o);
       }
     }
     if (otype == grn_output_json) {

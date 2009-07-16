@@ -37,6 +37,10 @@ input {
   width: 12em;
 }
 
+#side-menu-tablelist {
+  padding-left: 1.5em;
+}
+
 #left-column {
   height: 100%;
   vertical-align: top;
@@ -53,4 +57,26 @@ input {
 
 #table-tabs {
   display: none;
+}
+
+table.records {
+  border: #333 1px solid;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+table.records th {
+  background-color: #fb9f10;
+  border: #333 solid;
+  border-width: 0 0 1px 1px;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0.3em;
+}
+
+table.records td {
+  background-color: white;
+  border: #333 solid;
+  border-width: 0 0 1px 1px;
+  padding: 0.3em;
 }

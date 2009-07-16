@@ -306,7 +306,7 @@ GroongaAdmin = {
     setInterval(GroongaAdmin.status, 1000);
   },
   create_table_element: function (d) {
-    var table = $('<table/>');
+    var table = $('<table/>').attr('class', 'records');
     if ($.isArray(d)) {
       var thead = $('<thead/>').appendTo(table);
       var tbody = $('<tbody/>').appendTo(table);
@@ -418,7 +418,7 @@ GroongaAdmin = {
       success: function(d) {
         $('#table-tab-recordlist')
           .empty()
-          .append($('<h1/>').text('レコード一覧'))
+          .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append(GroongaAdmin.create_table_element(d));
       }
     });
@@ -432,7 +432,7 @@ GroongaAdmin = {
         var table = GroongaAdmin.create_table_element(d);
         $('#table-tab-columnlist')
           .empty()
-          .append($('<h1/>').text('カラム一覧'))
+          .append($('<h1/>').text('カラム一覧: ' + table_name))
           .append(table);
         table.find('tr').each(function() {
           var flags_td = $(this).find('td:eq(4)');
