@@ -400,7 +400,7 @@ GroongaAdmin = {
     });
   },
   pager_element: function(per_page, current_page, total, show_num, func) {
-    var ret = $('<div/>')
+    var ret = $('<div/>').addClass('pager');
     if (total) {
       var last_page = Math.floor((total - 1) / per_page) + 1;
       var st = current_page - Math.floor(show_num / 2);
@@ -462,7 +462,7 @@ GroongaAdmin = {
           .empty()
           .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append($('<p/>').text('総件数: ' + all_count))
-          .append(pager)
+          .append(pager.clone())
           .append(GroongaAdmin.create_table_element(d))
           .append(pager);
       }

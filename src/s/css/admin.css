@@ -63,6 +63,7 @@ table.records {
   border: #333 1px solid;
   border-collapse: collapse;
   border-spacing: 0;
+  margin: 0.2em;
 }
 
 table.records th {
