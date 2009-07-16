@@ -262,7 +262,7 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otyp
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_itoa(ctx, buf, table->header.domain);
-    /* TODO: flags to str, domain to str */
+    /* TODO: domain to str */
     break;
   case grn_output_json:
     GRN_TEXT_PUTC(ctx, buf, '[');
@@ -275,7 +275,7 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_output_type otyp
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_itoa(ctx, buf, table->header.domain);
-    /* TODO: flags to str, domain to str */
+    /* TODO: domain to str */
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
   }
@@ -491,7 +491,6 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                     {
                       grn_obj value;
                       GRN_TEXT_INIT(&value, 0);
-                      /* TODO: 何でgrn_table_get_valueじゃないのか */
                       grn_obj_get_value(ctx, table, *rec_id, &value);
                       grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&value), GRN_TEXT_LEN(&value));
                     }
@@ -499,12 +498,9 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
                     for (c = cols; c < last_cols; c++) {
                       grn_obj value;
                       GRN_TEXT_INIT(&value, 0); /* FIXME: to use GRN_VOID_INIT */
-                      if (grn_obj_get_value(ctx, *c, *rec_id, &value)) {
-                        GRN_TEXT_PUTC(ctx, buf, column_delimiter);
-                        print_columnvalue(ctx, &value, buf, otype);
-                      } else {
-                        /* TODO: error handling */
-                      }
+                      grn_obj_get_value(ctx, *c, *rec_id, &value);
+                      GRN_TEXT_PUTC(ctx, buf, column_delimiter);
+                      print_columnvalue(ctx, &value, buf, otype);
                       GRN_OBJ_FIN(ctx, &value);
                     }
                     if (otype == grn_output_json) {
@@ -533,7 +529,6 @@ static void
 cmd_columnlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj *buf, grn_output_type otype)
 {
   grn_obj *table;
-  /* MEMO: grn_table_openのname/path両方指定した場合はエラーでいいんじゃ？ */
   if ((table = grn_ctx_get(ctx, table_name, table_name_len))) {
     grn_hash *cols;
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -575,7 +570,7 @@ cmd_columnlist(grn_ctx *ctx, char *table_name, unsigned table_name_len, grn_obj 
   }
 }
 
-/* FIXME: dbは、grn_ctx_dbでとればいいんちゃう？ */
+/* FIXME: db with grn_ctx_db() */
 static void
 cmd_tablelist(grn_ctx *ctx, grn_obj *db, grn_obj *buf, grn_output_type otype)
 {
