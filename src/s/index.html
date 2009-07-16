@@ -462,7 +462,7 @@ GroongaAdmin = {
           .empty()
           .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append($('<p/>').text('総件数: ' + all_count))
-          .append(pager.clone())
+          .append(pager.clone(true))
           .append(GroongaAdmin.create_table_element(d))
           .append(pager);
       }
