@@ -501,7 +501,7 @@ GRN_API grn_expr_var *grn_proc_vars(grn_ctx *ctx, grn_user_data *user_data, unsi
  * @key_type: keyの型を指定する。GRN_OBJ_TABLE_NO_KEYが指定された場合は無効。
  *            既存のtypeあるいはtableを指定できる。
  *            key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなる。
- * @value_size: keyに対応する値を格納する領域のサイズ(byte長)。tableはcolumnとは別に、
+ * @value_type: keyに対応する値を格納する領域の型。tableはcolumnとは別に、
  *              keyに対応する値を格納する領域を一つだけ持つことができる。
  *
  * nameに対応する新たなtableをctxが使用するdbに定義する。
@@ -509,7 +509,7 @@ GRN_API grn_expr_var *grn_proc_vars(grn_ctx *ctx, grn_user_data *user_data, unsi
 GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned name_size,
                                   const char *path, grn_obj_flags flags,
-                                  grn_obj *key_type, unsigned value_size);
+                                  grn_obj *key_type, unsigned value_type);
 /**
  * grn_table_open:
  * @name: 開こうとするtableの名前。NULLなら無名tableとなる。
@@ -521,9 +521,9 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
 GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
                                 const char *name, unsigned name_size, const char *path);
 
-#define GRN_TABLE_OPEN_OR_CREATE(ctx,name,name_size,path,flags,key_type,value_size,table) \
+#define GRN_TABLE_OPEN_OR_CREATE(ctx,name,name_size,path,flags,key_type,value_type,table) \
   (((table) = grn_ctx_get((ctx), (name), (name_size))) ||\
-   ((table) = grn_table_create((ctx), (name), (name_size), (path), (flags), (key_type), (value_size))))
+   ((table) = grn_table_create((ctx), (name), (name_size), (path), (flags), (key_type), (value_type))))
 
 typedef unsigned char grn_search_flags; /* deprecated: 近々廃止されます。*/
 
@@ -1160,6 +1160,16 @@ GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *ne
 GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 
 /**
+ * grn_obj_mutate:
+ * @obj: 対象object
+ * @domain: 変更後のobjの型
+ * @flags: GRN_OBJ_VECTORを指定するとdomain型の値のベクタを格納するオブジェクトになる。
+ *
+ * objの型を変更する。objはGRN_OBJ_INITマクロなどで初期化済みでなければならない。
+ **/
+GRN_API grn_rc grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags);
+
+/**
  * grn_obj_unlink:
  * @obj: 対象object
  *
@@ -1603,6 +1613,8 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 
 #define GRN_OBJ_DO_SHALLOW_COPY        (GRN_OBJ_REFER|GRN_OBJ_OUTPLACE)
 #define GRN_OBJ_VECTOR                 (0x01<<7)
+
+#define GRN_OBJ_MUTABLE(obj) ((obj) && (obj)->header.type <= GRN_VECTOR)
 
 #define GRN_VALUE_FIX_SIZE_INIT(obj,flags,domain)\
   GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_ATOM,\

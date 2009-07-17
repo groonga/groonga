@@ -1990,10 +1990,14 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
 grn_rc
 grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
 {
-  if (GRN_BULK_OUTP(buf) && buf->u.b.head) {
-    GRN_REALLOC(buf->u.b.head - grn_bulk_margin_size, 0);
+  if (!(buf->header.impl_flags & GRN_OBJ_REFER)) {
+    if (GRN_BULK_OUTP(buf) && buf->u.b.head) {
+      GRN_REALLOC(buf->u.b.head - grn_bulk_margin_size, 0);
+    }
   }
+  buf->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
   buf->u.b.head = NULL;
+  buf->u.b.tail = NULL;
   return GRN_SUCCESS;
 }
 
