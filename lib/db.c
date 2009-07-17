@@ -2987,7 +2987,6 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   case GRN_VOID :
     GRN_TEXT_INIT(value, 0);
     break;
-  case GRN_ATOM :
   case GRN_BULK :
   case GRN_VECTOR :
   case GRN_UVECTOR :
@@ -3843,7 +3842,6 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       rc = GRN_SUCCESS;
       break;
     case GRN_VOID :
-    case GRN_ATOM :
     case GRN_BULK :
     case GRN_PTR :
     case GRN_UVECTOR :
@@ -3947,7 +3945,7 @@ grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
     case GRN_DB_FLOAT :
     case GRN_DB_TIME :
       if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
-      obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_ATOM;
+      obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       obj->header.domain = domain;
       break;
     case GRN_DB_SHORT_TEXT :
@@ -3978,7 +3976,7 @@ grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
             }
           } else {
             if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
-            obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_ATOM;
+            obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
           }
           obj->header.domain = domain;
         }
@@ -4750,7 +4748,7 @@ grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t 
     if ((expr->values = GRN_MALLOCN(grn_obj, size))) {
       int i;
       for (i = 0; i < size; i++) {
-        GRN_OBJ_INIT(&expr->values[i], GRN_ATOM, GRN_OBJ_EXPRVALUE, GRN_ID_NIL);
+        GRN_OBJ_INIT(&expr->values[i], GRN_BULK, GRN_OBJ_EXPRVALUE, GRN_ID_NIL);
       }
       expr->values_curr = 0;
       expr->values_tail = 0;
@@ -4820,7 +4818,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
       if ((expr->values = GRN_MALLOCN(grn_obj, size))) {
         int i;
         for (i = 0; i < size; i++) {
-          GRN_OBJ_INIT(&expr->values[i], GRN_ATOM, GRN_OBJ_EXPRVALUE, GRN_ID_NIL);
+          GRN_OBJ_INIT(&expr->values[i], GRN_BULK, GRN_OBJ_EXPRVALUE, GRN_ID_NIL);
         }
         if ((expr->codes = GRN_MALLOCN(grn_expr_code, size))) {
           if ((expr->stack = GRN_MALLOCN(grn_obj *, size))) {
@@ -5045,9 +5043,6 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
     APPEND_OBJ(e->consts, e->nconsts, res);
     if (res) {
       switch (obj->header.type) {
-      case GRN_ATOM :
-        memcpy(res, obj, sizeof(grn_obj));
-        break;
       case GRN_BULK :
       case GRN_UVECTOR :
         GRN_OBJ_INIT(res, obj->header.type, 0, obj->header.domain);

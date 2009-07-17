@@ -261,7 +261,6 @@ typedef unsigned short int grn_obj_flags;
 /* obj types */
 
 #define GRN_VOID                       (0x00)
-#define GRN_ATOM                       (0x01)
 #define GRN_BULK                       (0x02)
 #define GRN_PTR                        (0x03)
 #define GRN_UVECTOR                    (0x04) /* vector of grn_id */
@@ -1585,13 +1584,13 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_OBJ_MUTABLE(obj) ((obj) && (obj)->header.type <= GRN_VECTOR)
 
 #define GRN_VALUE_FIX_SIZE_INIT(obj,flags,domain)\
-  GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_ATOM,\
+  GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK,\
                ((flags) & GRN_OBJ_DO_SHALLOW_COPY), (domain))
 #define GRN_VALUE_VAR_SIZE_INIT(obj,flags,domain)\
   GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_VECTOR : GRN_BULK,\
                ((flags) & GRN_OBJ_DO_SHALLOW_COPY), (domain))
 
-#define GRN_VOID_INIT(obj) GRN_OBJ_INIT((obj), GRN_ATOM, 0, GRN_DB_VOID)
+#define GRN_VOID_INIT(obj) GRN_OBJ_INIT((obj), GRN_VOID, 0, GRN_DB_VOID)
 #define GRN_TEXT_INIT(obj,flags) \
   GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_TEXT)
 #define GRN_SHORT_TEXT_INIT(obj,flags) \

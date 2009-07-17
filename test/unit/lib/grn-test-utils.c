@@ -478,8 +478,6 @@ grn_test_type_inspect (grn_ctx *context, unsigned char type)
   switch (type) {
   case GRN_VOID:
     return "void";
-  case GRN_ATOM:
-    return "atom";
   case GRN_BULK:
     return "bulk";
   case GRN_PTR:
