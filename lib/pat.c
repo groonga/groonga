@@ -745,21 +745,6 @@ grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void
 }
 
 grn_id
-grn_pat_lookup(grn_ctx *ctx, grn_pat *pat, const void *key, int key_size,
-               void **value, grn_search_flags *flags)
-{
-  if (!pat || !key || !key_size || pat->key_size < key_size) { return GRN_ID_NIL; }
-  if (*flags & GRN_TABLE_ADD) {
-    int added;
-    grn_id id = grn_pat_add(ctx, pat, key, key_size, value, &added);
-    if (flags && added) { *flags |= GRN_TABLE_ADDED; }
-    return id;
-  } else {
-    return grn_pat_get(ctx, pat, key, key_size, value);
-  }
-}
-
-grn_id
 grn_pat_nextid(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
 {
   grn_id r = GRN_ID_NIL;

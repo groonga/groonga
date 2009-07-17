@@ -69,7 +69,7 @@ const char *_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *ke
 
 grn_rc grn_table_search(grn_ctx *ctx, grn_obj *table,
                         const void *key, uint32_t key_size,
-                        grn_search_flags flags, grn_obj *res, grn_operator op);
+                        grn_operator mode, grn_obj *res, grn_operator op);
 
 grn_id grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id);
 

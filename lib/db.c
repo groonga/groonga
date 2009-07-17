@@ -706,61 +706,6 @@ grn_table_lcp_search(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key
 }
 
 grn_id
-grn_table_lookup(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size,
-                 grn_search_flags *flags)
-{
-  grn_id id = GRN_ID_NIL;
-  GRN_API_ENTER;
-  if (table && key_size) {
-    switch (table->header.type) {
-    case GRN_TABLE_PAT_KEY :
-      {
-        grn_pat *pat = (grn_pat *)table;
-        WITH_NORMALIZE(pat, key, key_size, {
-          if (*flags & GRN_SEARCH_LCP) {
-            id = grn_pat_lcp_search(ctx, pat, key, key_size);
-          } else {
-            if (*flags & GRN_TABLE_ADD) {
-              if (grn_io_lock(ctx, pat->io, 10000000)) {
-                id = GRN_ID_NIL;
-              } else {
-                int added;
-                id = grn_pat_add(ctx, pat, key, key_size, NULL, &added);
-                if (flags && added) { *flags |= GRN_TABLE_ADDED; }
-                grn_io_unlock(pat->io);
-              }
-            } else {
-              id = grn_pat_get(ctx, pat, key, key_size, NULL);
-            }
-          }
-        });
-      }
-      break;
-    case GRN_TABLE_HASH_KEY :
-      {
-        grn_hash *hash = (grn_hash *)table;
-        WITH_NORMALIZE(hash, key, key_size, {
-          if (*flags & GRN_TABLE_ADD) {
-            if (grn_io_lock(ctx, hash->io, 10000000)) {
-              id = GRN_ID_NIL;
-            } else {
-              int added;
-              id = grn_hash_add(ctx, hash, key, key_size, NULL, &added);
-              if (flags && added) { *flags |= GRN_TABLE_ADDED; }
-              grn_io_unlock(hash->io);
-            }
-          } else {
-            id = grn_hash_get(ctx, hash, key, key_size, NULL);
-          }
-        });
-      }
-      break;
-    }
-  }
-  GRN_API_RETURN(id);
-}
-
-grn_id
 grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, int *added)
 {
   grn_id id = GRN_ID_NIL;
@@ -1371,7 +1316,7 @@ grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
 
 grn_rc
 grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_size,
-                 grn_search_flags flags, grn_obj *res, grn_operator op)
+                 grn_operator mode, grn_obj *res, grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
@@ -1380,30 +1325,30 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
     {
       grn_pat *pat = (grn_pat *)table;
       WITH_NORMALIZE(pat, key, key_size, {
-        switch (flags) {
-        case GRN_SEARCH_EXACT :
+        switch (mode) {
+        case GRN_OP_EXACT :
           {
             grn_id id = grn_pat_get(ctx, pat, key, key_size, NULL);
             if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           }
           // todo : support op;
           break;
-        case GRN_SEARCH_LCP :
+        case GRN_OP_LCP :
           {
             grn_id id = grn_pat_lcp_search(ctx, pat, key, key_size);
             if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           }
           // todo : support op;
           break;
-        case GRN_SEARCH_SUFFIX :
+        case GRN_OP_SUFFIX :
           rc = grn_pat_suffix_search(ctx, pat, key, key_size, (grn_hash *)res);
           // todo : support op;
           break;
-        case GRN_SEARCH_PREFIX :
+        case GRN_OP_PREFIX :
           rc = grn_pat_prefix_search(ctx, pat, key, key_size, (grn_hash *)res);
           // todo : support op;
           break;
-        case GRN_SEARCH_TERM_EXTRACT :
+        case GRN_OP_TERM_EXTRACT :
           {
             int len;
             grn_id tid;
@@ -1421,7 +1366,7 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
           break;
         default :
           rc = GRN_INVALID_ARGUMENT;
-          ERR(rc, "invalid flag %d", flags);
+          ERR(rc, "invalid mode %d", mode);
         }
       });
     }
@@ -1474,11 +1419,11 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       {
         const void *key = GRN_BULK_HEAD(query);
         uint32_t key_size = GRN_BULK_VSIZE(query);
-        grn_search_flags flags = optarg ? optarg->flags : GRN_SEARCH_EXACT;
+        grn_operator mode = optarg ? optarg->mode : GRN_OP_EXACT;
         if (!key || !key_size) {
           return GRN_INVALID_ARGUMENT;
         }
-        rc = grn_table_search(ctx, obj, key, key_size, flags, res, op);
+        rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
       }
       break;
     case GRN_COLUMN_INDEX :
@@ -2630,6 +2575,8 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
   void *vp = NULL;
   if (!value) {
     if (!(value = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }
+  } else {
+    value->header.type = GRN_BULK;
   }
   size0 = GRN_BULK_VSIZE(value);
   for (;;) {
@@ -3066,6 +3013,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         char *curr = GRN_BULK_CURR(value);
         len = grn_pat_get_value(ctx, pat, id, curr - size);
       }
+      value->header.type = GRN_BULK;
     }
     break;
   case GRN_TABLE_HASH_KEY :
@@ -3080,6 +3028,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         char *curr = GRN_BULK_CURR(value);
         len = grn_hash_get_value(ctx, hash, id, curr - size);
       }
+      value->header.type = GRN_BULK;
     }
     break;
   case GRN_TABLE_NO_KEY :
@@ -3094,6 +3043,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         char *curr = GRN_BULK_CURR(value);
         len = grn_array_get_value(ctx, array, id, curr - size);
       }
+      value->header.type = GRN_BULK;
     }
     break;
   case GRN_COLUMN_VAR_SIZE :
@@ -3137,6 +3087,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         if (!v) { len = 0; goto exit; }
         // todo : reduce copy
         // todo : grn_vector_add_element when vector assigned
+        value->header.type = GRN_BULK;
         grn_bulk_write(ctx, value, v, len);
         grn_ja_unref(ctx, &jw);
       }
@@ -3152,6 +3103,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       void *v = grn_ra_ref(ctx, (grn_ra *)obj, id);
       if (!v) { goto exit; }
       element_size = ((grn_ra *)obj)->header->element_size;
+      value->header.type = GRN_BULK;
       grn_bulk_write(ctx, value, v, element_size);
       grn_ra_unref(ctx, (grn_ra *)obj, id);
       len = element_size;

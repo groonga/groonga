@@ -525,40 +525,6 @@ GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
   (((table) = grn_ctx_get((ctx), (name), (name_size))) ||\
    ((table) = grn_table_create((ctx), (name), (name_size), (path), (flags), (key_type), (value_type))))
 
-typedef unsigned char grn_search_flags; /* deprecated: 近々廃止されます。*/
-
-#define GRN_SEARCH_EXACT               (0x00)
-#define GRN_SEARCH_LCP                 (0x01)
-#define GRN_SEARCH_SUFFIX              (0x02)
-#define GRN_SEARCH_PREFIX              (0x03)
-#define GRN_SEARCH_PARTIAL             (0x04)
-#define GRN_SEARCH_NEAR                (0x05)
-#define GRN_SEARCH_NEAR2               (0x06)
-#define GRN_SEARCH_SIMILAR             (0x07)
-#define GRN_SEARCH_TERM_EXTRACT        (0x08)
-#define GRN_TABLE_ADD                  (0x01<<6)
-#define GRN_TABLE_ADDED                (0x01<<7)
-
-/**
- * grn_table_lookup:
- * @table: 対象table
- * @key: 検索key
- * @flags: GRN_SEARCH_EXACTが指定された場合はkeyに完全一致するrecordを検索する。
- *         GRN_SEARCH_LCPが指定された場合はlongest common prefix searchを行う。
- *         該当するkeyが存在せず、かつGRN_TABLE_ADDが指定された場合は、
- *         tableに該当レコードを追加する。(追加しない場合はGRN_ID_NILを返す)
- *         GRN_TABLE_ADDが指定され、かつ実際にレコードが追加された場合は、
- *         flagsのGRN_TABLE_ADDED bitが立てられる。
- *         flagsにNULLが指定された場合は、GRN_SEARCH_EXACTのみが指定されたものと見なされる。
- *
- * tableからkeyに対応するrecordを検索し、対応するIDを返す。
- *
- * deprecated: 近々廃止されます。
- **/
-GRN_API grn_id grn_table_lookup(grn_ctx *ctx, grn_obj *table,
-                                const void *key, unsigned key_size,
-                                grn_search_flags *flags);
-
 /**
  * grn_table_add:
  * @table: 対象table
@@ -821,6 +787,7 @@ typedef enum {
   GRN_OP_GREATER_EQUAL,
   GRN_OP_MATCH,
   GRN_OP_EXACT,
+  GRN_OP_LCP,
   GRN_OP_PARTIAL,
   GRN_OP_UNSPLIT,
   GRN_OP_NEAR,
@@ -1315,10 +1282,11 @@ GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
  * objを対象としてqueryにマッチするレコードを検索し、
  * opの指定に従ってresにレコードを追加あるいは削除する。
  **/
+
 typedef struct _grn_search_optarg grn_search_optarg;
 
 struct _grn_search_optarg {
-  grn_search_flags flags;
+  grn_operator mode;
   int similarity_threshold;
   int max_interval;
   int *weight_vector;
@@ -1828,9 +1796,6 @@ GRN_API grn_hash *grn_hash_open(grn_ctx *ctx, const char *path);
 
 GRN_API grn_rc grn_hash_close(grn_ctx *ctx, grn_hash *hash);
 
-GRN_API grn_id grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key,
-                               unsigned int key_size, void **value, grn_search_flags *flags);
-
 GRN_API grn_id grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
                             unsigned int key_size, void **value, int *added);
 GRN_API grn_id grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
@@ -1900,8 +1865,6 @@ GRN_API grn_rc grn_pat_close(grn_ctx *ctx, grn_pat *pat);
 
 GRN_API grn_rc grn_pat_remove(grn_ctx *ctx, const char *path);
 
-GRN_API grn_id grn_pat_lookup(grn_ctx *ctx, grn_pat *pat, const void *key, int key_size,
-                              void **value, grn_search_flags *flags);
 GRN_API grn_id grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key,
                            unsigned int key_size, void **value);
 GRN_API grn_id grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key,

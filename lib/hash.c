@@ -1176,21 +1176,6 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
   return GRN_ID_NIL;
 }
 
-grn_id
-grn_hash_lookup(grn_ctx *ctx, grn_hash *hash, const void *key,
-                unsigned int key_size, void **value, grn_search_flags *flags)
-{
-  if (!hash || !key || !key_size) { return GRN_ID_NIL; }
-  if (*flags & GRN_TABLE_ADD) {
-    int added;
-    grn_id id = grn_hash_add(ctx, hash, key, key_size, value, &added);
-    if (flags && added) { *flags |= GRN_TABLE_ADDED; }
-    return id;
-  } else {
-    return grn_hash_get(ctx, hash, key, key_size, value);
-  }
-}
-
 const char *
 _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
 {

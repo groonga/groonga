@@ -90,7 +90,6 @@ test_read_write(gconstpointer *data)
 {
   gint i;
   const gchar *key;
-  grn_search_flags flags;
   grn_ctx *context;
   grn_pat *trie;
   const gchar *path;
@@ -98,6 +97,7 @@ test_read_write(gconstpointer *data)
   gint process_number = 0;
   const gchar *process_number_string;
   void *value;
+  int added;
   grn_id id = GRN_ID_NIL;
   grn_rc rc;
 
@@ -119,25 +119,22 @@ test_read_write(gconstpointer *data)
   cut_assert_not_null(tries[i], "patricia trie: %d (%d)", i, process_number);
   trie = tries[i];
 
-  flags = 0;
   cut_set_message("lookup - fail: %s (%d:%d)", key, i, process_number);
-  grn_test_assert_nil(grn_pat_lookup(context, trie, key, strlen(key),
-                                     &value, &flags));
+  grn_test_assert_nil(grn_pat_get(context, trie, key, strlen(key), &value));
 
   value_string = cut_take_printf("value: [%s] (%d:%d)", key, i, process_number);
-  flags = GRN_TABLE_ADD;
   rc = grn_io_lock(context, trie->io, -1);
   if (rc != GRN_SUCCESS)
     grn_test_assert(rc);
-  id = grn_pat_lookup(context, trie, key, strlen(key), &value, &flags);
+  added = 0;
+  id = grn_pat_add(context, trie, key, strlen(key), &value, &added);
   grn_io_unlock(trie->io);
   grn_test_assert_not_nil(id);
-  cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);
+  cut_assert_equal_uint(1, added);
   strcpy(value, value_string);
 
-  flags = 0;
   value = NULL;
-  id = grn_pat_lookup(context, trie, key, strlen(key), &value, &flags);
+  id = grn_pat_get(context, trie, key, strlen(key), &value);
   cut_set_message("lookup - success: %s (%d:%d)", key, i, process_number);
   grn_test_assert_not_nil(id);
   cut_assert_equal_string(value_string, value);

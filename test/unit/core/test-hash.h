@@ -138,8 +138,14 @@ teardown_hash_common(void)
 #define cut_assert_fail_open_hash()                     \
   grn_test_assert_fail_open_hash(&hash, factory)
 
+typedef int grn_search_flags;
+
+#define GRN_TABLE_ADD                  (0x01<<6)
+
 #define lookup(key, flags)                                      \
-  grn_hash_lookup(context, hash, key, key_size, &value, flags)
+  (((*(flags) & GRN_TABLE_ADD))                                 \
+   ? grn_hash_add(context, hash, key, key_size, &value, flags)  \
+   : grn_hash_get(context, hash, key, key_size, &value))
 
 #define cut_assert_lookup(key, flags) do                \
 {                                                       \
@@ -168,7 +174,7 @@ teardown_hash_common(void)
                                                                         \
   flags = GRN_TABLE_ADD;                                                \
   cut_assert_lookup(_key, &flags);                                      \
-  cut_assert_equal_uint(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);      \
+  cut_assert_equal_uint(1, flags & 1);                                  \
   found_id = id;                                                        \
   if (sample_value) {                                                   \
     strcpy(value, sample_value);                                        \
@@ -185,7 +191,7 @@ teardown_hash_common(void)
                                                                         \
   flags = GRN_TABLE_ADD;                                                \
   cut_assert_lookup(_key, &flags);                                      \
-  cut_assert_equal_uint(0, flags & GRN_TABLE_ADDED);                    \
+  cut_assert_equal_uint(0, flags & 1);                                  \
   cut_assert_equal_uint(found_id, id);                                  \
   if (sample_value) {                                                   \
     cut_assert_equal_string(sample_value, value);                       \

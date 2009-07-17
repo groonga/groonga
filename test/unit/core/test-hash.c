@@ -327,7 +327,7 @@ test_lookup_add(gconstpointer data)
                                                 \
   flags = GRN_TABLE_ADD;                        \
   cut_assert_lookup(&sample_key, &flags);       \
-  cut_assert(flags & GRN_TABLE_ADDED);          \
+  cut_assert(flags & 1);                        \
   sample_id = id;                               \
 } while (0)
 

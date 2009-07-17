@@ -4717,7 +4717,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
 
   if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
     grn_table_search(ctx, lexicon, key, key_size,
-                     GRN_SEARCH_PREFIX, (grn_obj *)h, GRN_OP_OR);
+                     GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
     if (GRN_HASH_SIZE(h)) {
       if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h) + 256))) {
         if ((c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0))) {
@@ -4736,7 +4736,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
             } else {
               if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
                 grn_table_search(ctx, lexicon, key2, key2_size,
-                                 GRN_SEARCH_SUFFIX, (grn_obj *)g, GRN_OP_OR);
+                                 GRN_OP_SUFFIX, (grn_obj *)g, GRN_OP_OR);
                 GRN_HASH_EACH(g, id, &tq, NULL, &offset2, {
                   if ((s = grn_ii_estimate_size(ctx, ii, *tq))) {
                     cursor_heap_push(ctx, ti->cursors, ii, *tq, /* *offset2 */ 0);
@@ -4795,7 +4795,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   case EX_PREFIX :
     if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
       grn_table_search(ctx, lexicon, key, key_size,
-                       GRN_SEARCH_PREFIX, (grn_obj *)h, GRN_OP_OR);
+                       GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
       if (GRN_HASH_SIZE(h)) {
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
           GRN_HASH_EACH(h, id, &tp, NULL, NULL, {
@@ -4813,7 +4813,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   case EX_SUFFIX :
     if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
       grn_table_search(ctx, lexicon, key, key_size,
-                       GRN_SEARCH_SUFFIX, (grn_obj *)h, GRN_OP_OR);
+                       GRN_OP_SUFFIX, (grn_obj *)h, GRN_OP_OR);
       if (GRN_HASH_SIZE(h)) {
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
           uint32_t *offset2;
@@ -5186,11 +5186,11 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     if (tid && token->curr_size) {
       if (optarg->max_interval == GRN_OP_UNSPLIT) {
         grn_table_search(ctx, lexicon, token->curr, token->curr_size,
-                         GRN_SEARCH_PREFIX, (grn_obj *)h, GRN_OP_OR);
+                         GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
       }
       if (optarg->max_interval == GRN_OP_PARTIAL) {
         grn_table_search(ctx, lexicon, token->curr, token->curr_size,
-                         GRN_SEARCH_SUFFIX, (grn_obj *)h, GRN_OP_OR);
+                         GRN_OP_SUFFIX, (grn_obj *)h, GRN_OP_OR);
       }
     }
   }

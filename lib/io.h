@@ -143,6 +143,9 @@ grn_rc grn_io_write_ja(grn_io *io, grn_ctx *ctx,
 grn_rc grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
                              uint32_t segment, uint32_t offset, uint32_t value_len);
 
+#define GRN_TABLE_ADD                  (0x01<<6)
+#define GRN_TABLE_ADDED                (0x01<<7)
+
 #define GRN_IO_MAX_RETRY               (0x10000)
 #define GRN_IO_MAX_REF                 (0x80000000)
 

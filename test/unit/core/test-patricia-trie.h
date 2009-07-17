@@ -207,8 +207,14 @@ teardown_trie_common(void)
   cut_assert_null(trie);                                \
 } while (0)
 
+typedef int grn_search_flags;
+
+#define GRN_TABLE_ADD                  (0x01<<6)
+
 #define lookup(key, key_size, flags)                            \
-  grn_pat_lookup(context, trie, key, key_size, &value, flags)
+  (((*(flags) & GRN_TABLE_ADD))                                 \
+   ? grn_pat_add(context, trie, key, key_size, &value, flags)   \
+   : grn_pat_get(context, trie, key, key_size, &value))
 
 #define cut_assert_lookup(key, key_size, flags) do                      \
 {                                                                       \
@@ -241,7 +247,7 @@ teardown_trie_common(void)
                                                                         \
   flags = GRN_TABLE_ADD;                                                \
   cut_assert_lookup(_key, key_size, &flags);                            \
-  cut_assert_equal_int(GRN_TABLE_ADDED, flags & GRN_TABLE_ADDED);       \
+  cut_assert_equal_int(1, flags & 1);                                   \
   found_id = id;                                                        \
   if (sample_value) {                                                   \
     strcpy(value, sample_value);                                        \
@@ -258,7 +264,7 @@ teardown_trie_common(void)
                                                                         \
   flags = GRN_TABLE_ADD;                                                \
   cut_assert_lookup(_key, key_size, &flags);                            \
-  cut_assert_equal_uint(0, flags & GRN_TABLE_ADDED);                    \
+  cut_assert_equal_uint(0, flags & 1);                                  \
   cut_assert_equal_uint(found_id, id);                                  \
   if (sample_value) {                                                   \
     cut_assert_equal_string(sample_value, value);                       \

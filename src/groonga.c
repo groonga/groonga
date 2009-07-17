@@ -1155,9 +1155,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       char *key = body + 8;
       char *value = key + keylen;
       int added = 0;
-      grn_search_flags f = (header->qtype == MBCMD_REPLACE ||
-                            header->qtype == MBCMD_REPLACEQ)
-                           ? 0 : GRN_TABLE_ADD;
+      int f = (header->qtype == MBCMD_REPLACE ||
+               header->qtype == MBCMD_REPLACEQ) ? 0 : GRN_TABLE_ADD;
       GRN_ASSERT(extralen == 8);
       cache_init(ctx);
       if (header->qtype == MBCMD_REPLACE || header->qtype == MBCMD_REPLACEQ) {
