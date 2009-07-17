@@ -1,4 +1,83 @@
+2009-07-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, test/unit/lib/grn-test-utils.c: Removed GRN_ATOM.
+
+ * groonga.h, lib/db.c, lib/db.h, lib/hash.c, lib/ii.c, lib/io.h, lib/pat.c,
+ lib/ql.c, src/groonga.c, test/unit/core/test-hash.c,
+ test/unit/core/test-hash.h, test/unit/core/test-patricia-trie.h,
+ .../fixtures/stress/test-stress-patricia-trie.c: Removed grn_table_lookup().
+
+ * groonga.h, lib/db.c, lib/str.c: Added grn_obj_mutate().
+
+ * test/unit/core/test-column.c: Fixed memory leak in test-column.c
+
+ * test/unit/core/test-column.c: Refined test_fix_size_set_value_set().
+
+2009-07-16 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: Clean comments.
+
+ * src/s/index.html: Fixed problem upper pager doen't work on HTML.
+
+ * src/s/css/admin.css, src/s/index.html: Modified pager view.
+
+ * src/s/css/admin.css, src/s/index.html: Changed current page style of HTML
+ admin pager.
+
+ * src/s/css/admin.css, src/s/index.html: Added pager on HTML admin
+ recordlist.
+
+2009-07-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c: Added grn_table_sort_key_from_str().
+
+2009-07-16 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: Fixed bug in print_columnvalue().
+
+ * src/groonga.c, src/s/index.html: Added total count response on HTML admin.
+
+ * src/groonga.c, src/s/css/admin.css, src/s/index.html: Fixed table/column
+ double closing on HTML admin.
+
+2009-07-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Added get_geocond().
+
+2009-07-16 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c, src/s/index.html: Added flags2str on HTML admin.
+
+2009-07-15 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/str.c: Fixed a bug in grn_text_otoj().
+
+ * lib/db.c, lib/scm.c: Fixed a bug in grn_table_select().
+
+2009-07-15 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c, src/s/index.html: Added accessor sort on HTML admin.
+
+2009-07-15 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * examples/index.c, groonga.h, lib/ctx.c, lib/db.c, lib/db.h, lib/ii.c,
+ lib/ii.h, lib/ql.c, lib/query.c, test/unit/core/test-expr.c,
+ test/unit/core/test-inverted-index.c, test/unit/core/test-query.c: GRN_SEL_*
+ -> GRN_OP_*
+
+2009-07-15 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c, src/s/css/admin.css, src/s/index.html: Added create column
+ funtion on HTML admin.
+
+2009-07-15 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c, lib/db.c, lib/ql.h, lib/scm.c: Fixed a bug in
+ grn_obj_id().
+
 2009-07-14 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac: release 0.0.9
 
  * src/groonga.c: Fixed bug in buffer overrun on parse_http_query.
 
