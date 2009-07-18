@@ -82,10 +82,10 @@ test_accessor(void)
   int i;
   grn_obj *t1, *t2, *c1, *c2, buf;
   t1 = grn_table_create(&context, "t1", 2, NULL,
-                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t1);
   t2 = grn_table_create(&context, "t2", 2, NULL,
-                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t2);
   c1 = grn_column_create(&context, t1, "c1", 2, NULL,
                          GRN_OBJ_PERSISTENT, t2);
@@ -134,10 +134,10 @@ test_expr(void)
   int i;
   grn_obj *t1, *t2, *c1, *c2, buf;
   t1 = grn_table_create(&context, "t1", 2, NULL,
-                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t1);
   t2 = grn_table_create(&context, "t2", 2, NULL,
-                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t2);
   c1 = grn_column_create(&context, t1, "c1", 2, NULL,
                          GRN_OBJ_PERSISTENT, t2);
@@ -210,10 +210,10 @@ test_persistent_expr(void)
   int i;
   grn_obj *t1, *t2, *c1, *c2, buf;
   t1 = grn_table_create(&context, "t1", 2, NULL,
-                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t1);
   t2 = grn_table_create(&context, "t2", 2, NULL,
-                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+                        GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t2);
   c1 = grn_column_create(&context, t1, "c1", 2, NULL,
                          GRN_OBJ_PERSISTENT, t2);
@@ -299,13 +299,13 @@ test_expr_query(void)
 
   /* actual table */
   t1 = grn_table_create(&context, "t1", 2, NULL,
-			GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+			GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t1);
 
   /* lexicon table */
   lc = grn_table_create(&context, "lc", 2, NULL,
 			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                        grn_ctx_at(&context, GRN_DB_SHORT_TEXT), 0);
+                        grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
   cut_assert_not_null(lc);
   grn_test_assert(grn_obj_set_info(&context, lc, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(&context, GRN_DB_BIGRAM)));
@@ -415,12 +415,12 @@ static void
 prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 {
   docs = grn_table_create(&context, "docs", 4, NULL,
-                          GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
+                          GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(docs);
 
   terms = grn_table_create(&context, "terms", 5, NULL,
                            GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT), 0);
+                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
   cut_assert_not_null(terms);
   grn_test_assert(grn_obj_set_info(&context, terms, GRN_INFO_DEFAULT_TOKENIZER,
 				   grn_ctx_at(&context, GRN_DB_BIGRAM)));
@@ -477,7 +477,7 @@ test_table_select_equal(void)
   grn_expr_compile(&context, cond);
 
   res = grn_table_create(&context, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
   grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
@@ -512,7 +512,7 @@ test_table_select_equal_indexed(void)
   grn_expr_compile(&context, cond);
 
   res = grn_table_create(&context, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
   grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
@@ -547,7 +547,7 @@ test_table_select_select(void)
   grn_expr_compile(&context, cond);
 
   res = grn_table_create(&context, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
   cut_assert_not_null((expr = grn_expr_create(&context, NULL, 0)));
@@ -731,7 +731,7 @@ test_table_select_match(void)
   grn_expr_compile(&context, cond);
 
   res = grn_table_create(&context, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
   grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
@@ -777,7 +777,7 @@ test_table_select_match_equal(void)
   grn_expr_compile(&context, cond);
 
   res = grn_table_create(&context, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, 0);
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
   grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));

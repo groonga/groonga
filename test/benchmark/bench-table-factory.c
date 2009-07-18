@@ -24,6 +24,7 @@
 
 #define DEFAULT_FLAGS (GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY)
 #define DEFAULT_VALUE_SIZE (1024)
+#define VALUE_TYPE_NAME "<value_type>"
 
 typedef struct _BenchmarkData
 {
@@ -44,11 +45,15 @@ bench_normal(gpointer user_data)
 {
   BenchmarkData *data = user_data;
   grn_obj *table;
-
+  grn_obj *value_type = grn_ctx_get(data->context, VALUE_TYPE_NAME, strlen(VALUE_TYPE_NAME));
+  if (!value_type) {
+    value_type = grn_type_create(data->context, VALUE_TYPE_NAME, strlen(VALUE_TYPE_NAME),
+                                 0, data->value_size);
+  }
   table = grn_table_create(data->context,
                            data->name, data->name_size,
                            data->path, data->flags,
-                           data->key_type, data->value_size);
+                           data->key_type, value_type);
   grn_obj_close(data->context, table);
 }
 
@@ -57,12 +62,16 @@ bench_normal_temporary(gpointer user_data)
 {
   BenchmarkData *data = user_data;
   grn_obj *table;
-
+  grn_obj *value_type = grn_ctx_get(data->context, VALUE_TYPE_NAME, strlen(VALUE_TYPE_NAME));
+  if (!value_type) {
+    value_type = grn_type_create(data->context, VALUE_TYPE_NAME, strlen(VALUE_TYPE_NAME),
+                                 0, data->value_size);
+  }
   GRN_CTX_SET_ENCODING(data->context, data->encoding);
   table = grn_table_create(data->context,
                            data->name, data->name_size,
                            NULL, data->flags & ~GRN_OBJ_PERSISTENT,
-                           data->key_type, data->value_size);
+                           data->key_type, value_type);
   grn_obj_close(data->context, table);
 }
 
@@ -129,11 +138,16 @@ grn_table_factory_set_key_type(grn_table_factory *factory, grn_obj *key_type)
 static grn_obj *
 grn_table_factory_make(grn_table_factory *factory)
 {
+  grn_obj *value_type = grn_ctx_get(factory->context, VALUE_TYPE_NAME, strlen(VALUE_TYPE_NAME));
+  if (!value_type) {
+    value_type = grn_type_create(factory->context, VALUE_TYPE_NAME, strlen(VALUE_TYPE_NAME),
+                                 0, factory->value_size);
+  }
   GRN_CTX_SET_ENCODING(factory->context, factory->encoding);
   return grn_table_create(factory->context,
                           factory->name, factory->name_size,
                           factory->path, factory->flags,
-                          factory->key_type, factory->value_size);
+                          factory->key_type, value_type);
 }
 
 static void

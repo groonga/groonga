@@ -125,7 +125,7 @@ test_get_persistent_object_from_opened_database(void)
                                             GRN_OBJ_TABLE_HASH_KEY |
                                             GRN_OBJ_PERSISTENT,
                                             grn_ctx_at(context, GRN_DB_UINT32),
-                                            0));
+                                            NULL));
 
   database2 = grn_db_open(context2, path);
   grn_test_assert_not_null(context2, database2);
@@ -151,7 +151,7 @@ test_recreate_temporary_object_on_opened_database(void)
                                             NULL,
                                             GRN_OBJ_TABLE_HASH_KEY,
                                             grn_ctx_at(context, GRN_DB_UINT32),
-                                            0));
+                                            NULL));
 
   database2 = grn_db_open(context2, path);
   grn_test_assert_not_null(context2, database2);
@@ -166,5 +166,5 @@ test_recreate_temporary_object_on_opened_database(void)
                                             NULL,
                                             GRN_OBJ_TABLE_HASH_KEY,
                                             grn_ctx_at(context, GRN_DB_UINT32),
-                                            0));
+                                            NULL));
 }

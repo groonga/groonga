@@ -15,6 +15,7 @@ grn_obj *db;
 int nloops = 1000000;
 unsigned key_size = 8;
 unsigned value_size = 8;
+grn_obj *value_type;
 
 #define EVAL(ctx, exp) (grn_ql_send(ctx, (exp), strlen(exp), 0))
 
@@ -67,7 +68,7 @@ column_put(void)
   grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                    key_type, 0);
+                                    key_type, NULL);
   grn_obj *value_type = grn_ctx_at(&ctx, GRN_DB_TEXT);
   grn_obj *column = grn_column_create(&ctx, table, "c1", 2, NULL,
                                       GRN_OBJ_PERSISTENT, value_type);
@@ -152,7 +153,7 @@ table_put(void)
   grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                    key_type, value_size);
+                                    key_type, value_type);
   if (!table) { return -1; }
   GRN_TEXT_INIT(&buf, 0);
   for (i = 0; i < nloops; i++) {
@@ -182,7 +183,7 @@ table_put2(void)
   grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                    key_type, value_size);
+                                    key_type, value_type);
   if (!table) { return -1; }
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
@@ -214,7 +215,7 @@ table_put_allocate(void)
   grn_obj *key_type = grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT);
   grn_obj *table = grn_table_create(&ctx, "<t1>", 4, NULL,
                                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                    key_type, value_size);
+                                    key_type, value_type);
   if (!table) { return -1; }
   for (i = 0; i < nloops; i++) {
     int key = GENKEY(i);
@@ -432,6 +433,7 @@ main(int argc, char **argv)
       fprintf(stderr, "db initialize failed\n");
       return -1;
     }
+    value_type = grn_type_create(&ctx, "<value_type>", 12, 0, value_size);
     switch (method) {
     case 'q' :
       r = (op == 'p') ? ql_put() : ql_get();

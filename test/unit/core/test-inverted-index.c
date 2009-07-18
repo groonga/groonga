@@ -36,7 +36,6 @@ void test_crud(void);
 void test_array_index(void);
 
 #define TYPE_SIZE 1024
-#define VALUE_SIZE 1024
 
 static grn_logger_info *logger;
 
@@ -112,7 +111,7 @@ cut_setup(void)
                              table_name, strlen(table_name),
                              table_path,
                              GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
-                             type, VALUE_SIZE);
+                             type, NULL);
 
   grn_obj_set_info(context, lexicon, GRN_INFO_DEFAULT_TOKENIZER,
                    grn_ctx_at(context, GRN_DB_BIGRAM));

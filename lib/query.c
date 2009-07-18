@@ -870,7 +870,7 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   sortby = &vars[7].value;
   drilldown = &vars[8].value;
   res = grn_table_create(ctx, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0);
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
   if (!res) { goto exit; }
   query = grn_expr_create_from_str(ctx, NULL, 0,
                                    GRN_TEXT_VALUE(&qbuf), GRN_TEXT_LEN(&qbuf), table, column);
@@ -880,7 +880,7 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   keys = grn_table_sort_key_from_str(ctx, GRN_TEXT_VALUE(sortby),
                                      GRN_TEXT_LEN(sortby), res, &nkeys);
   if (!keys) { goto exit; }
-  sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, res, sizeof(grn_id));
+  sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, res, res);
   grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
   grn_table_sort_key_close(ctx, keys, nkeys);
 
@@ -899,13 +899,13 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
       g.table = grn_table_create(ctx, NULL, 0, NULL,
                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                  grn_ctx_at(ctx, grn_obj_get_range(ctx, gkeys[i].key)),
-                                 sizeof(grn_id));
+                                 NULL);
       grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
 
       keys = grn_table_sort_key_from_str(ctx, "-.:nrecords", 11, g.table, &nkeys);
       if (!keys) { goto exit; }
       sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                g.table, sizeof(grn_id));
+                                g.table, g.table);
       grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
       grn_table_sort_key_close(ctx, keys, nkeys);
 

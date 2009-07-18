@@ -526,11 +526,11 @@ calc_rec_size(grn_obj_flags flags, uint32_t *max_n_subrecs,
 grn_obj *
 grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
                  const char *path, grn_obj_flags flags,
-                 grn_obj *key_type, unsigned value_size)
+                 grn_obj *key_type, grn_obj *value_type)
 {
   grn_id id;
-  grn_id domain = GRN_ID_NIL;
-  uint32_t key_size, max_n_subrecs;
+  grn_id domain = GRN_ID_NIL, range = GRN_ID_NIL;
+  uint32_t key_size, value_size, max_n_subrecs;
   uint8_t subrec_size, subrec_offset;
   grn_obj *res = NULL;
   grn_obj *db;
@@ -574,6 +574,36 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
   } else {
     key_size = (flags & GRN_OBJ_KEY_VAR_SIZE) ? GRN_TABLE_MAX_KEY_SIZE : sizeof(grn_id);
   }
+  if (value_type) {
+    range = DB_OBJ(value_type)->id;
+    switch (value_type->header.type) {
+    case GRN_TYPE :
+      {
+        grn_db_obj *t = (grn_db_obj *)value_type;
+        if (t->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+          ERR(GRN_INVALID_ARGUMENT, "value_type must be fixed size");
+          GRN_API_RETURN(NULL);
+        }
+        value_size = GRN_TYPE_SIZE(t);
+      }
+      break;
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_NO_KEY :
+    case GRN_TABLE_PAT_KEY :
+      value_size = sizeof(grn_id);
+      break;
+    default :
+      /*
+      if (value_type == grn_type_any) {
+        value_size = sizeof(grn_id) + sizeof(grn_id);
+      }
+      */
+      value_size = sizeof(grn_id);
+    }
+  } else {
+    value_size = 0;
+  }
+
   id = grn_obj_register(ctx, db, name, name_size);
   if (ERRP(ctx, GRN_ERROR)) { GRN_API_RETURN(NULL);  }
   if (GRN_OBJ_PERSISTENT & flags) {
@@ -615,7 +645,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     DB_OBJ(res)->header.flags = flags;
     DB_OBJ(res)->header.impl_flags = 0;
     DB_OBJ(res)->header.domain = domain;
-    DB_OBJ(res)->range = GRN_ID_NIL;
+    DB_OBJ(res)->range = range;
     DB_OBJ(res)->max_n_subrecs = max_n_subrecs;
     DB_OBJ(res)->subrec_size = subrec_size;
     DB_OBJ(res)->subrec_offset = subrec_offset;
@@ -5563,9 +5593,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         break;
       case GRN_OP_TABLE_CREATE :
         {
-          grn_obj *value_size, *key_type, *flags, *name;
-          POP1(value_size);
-          value_size = GRN_OBJ_RESOLVE(ctx, value_size);
+          grn_obj *value_type, *key_type, *flags, *name;
+          POP1(value_type);
+          value_type = GRN_OBJ_RESOLVE(ctx, value_type);
           POP1(key_type);
           key_type = GRN_OBJ_RESOLVE(ctx, key_type);
           POP1(flags);
@@ -5574,7 +5604,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           name = GRN_OBJ_RESOLVE(ctx, name);
           res = grn_table_create(ctx, GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
                                  NULL, GRN_UINT32_VALUE(flags),
-                                 key_type, GRN_UINT32_VALUE(value_size));
+                                 key_type, value_type);
           PUSH1(res);
         }
         code++;

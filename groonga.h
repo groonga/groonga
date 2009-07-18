@@ -513,7 +513,7 @@ GRN_API grn_expr_var *grn_proc_vars(grn_ctx *ctx, grn_user_data *user_data, unsi
 GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned name_size,
                                   const char *path, grn_obj_flags flags,
-                                  grn_obj *key_type, unsigned value_type);
+                                  grn_obj *key_type, grn_obj *value_type);
 /**
  * grn_table_open:
  * @name: 開こうとするtableの名前。NULLなら無名tableとなる。

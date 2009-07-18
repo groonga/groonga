@@ -869,20 +869,20 @@ register_cell(grn_ctx *ctx, grn_obj *db_obj, const char *name, unsigned name_siz
 static grn_cell *
 table_create(grn_ctx *ctx, const char *name, unsigned name_size,
              grn_obj_flags flags, grn_obj *domain,
-             unsigned value_size, grn_id tokenizer)
+             grn_obj *value_type, grn_id tokenizer)
 {
   grn_obj *table = grn_table_create(ctx, name, name_size,
-                                    NULL, flags, domain, value_size);
+                                    NULL, flags, domain, value_type);
   if (!table) { QLERR("table create failed"); }
   grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, grn_ctx_at(ctx, tokenizer));
   return register_cell(ctx, table, name, name_size);
 }
 
 static grn_cell *
-rec_obj_new(grn_ctx *ctx, grn_obj *domain, unsigned value_size)
+rec_obj_new(grn_ctx *ctx, grn_obj *domain, grn_obj *value_type)
 {
   return table_create(ctx, NULL, 0, GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                      domain, value_size, GRN_DB_DELIMIT);
+                      domain, value_type, GRN_DB_DELIMIT);
 }
 
 typedef struct {
@@ -974,7 +974,7 @@ match_prepare(grn_ctx *ctx, match_spec *spec, grn_id base, grn_cell *args)
       spec->to = STRVALUE(expr);
       spec->tosize = STRSIZE(expr);
     }
-    expr = rec_obj_new(ctx, table, 0);
+    expr = rec_obj_new(ctx, table, NULL);
     if (ERRP(ctx, GRN_WARN)) { return F; }
     spec->op = GRN_OP_OR;
   }
@@ -1145,7 +1145,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
             if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
             POP(res, args);
             if (res == NIL) {
-              if (!(res = rec_obj_new(ctx, NULL, 0))) { QLERR("rec_obj_new failed"); }
+              if (!(res = rec_obj_new(ctx, NULL, NULL))) { QLERR("rec_obj_new failed"); }
             } else if (!RECORDSP(res)) {
               QLERR("records object expected");
             }
@@ -1290,7 +1290,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       if (!BULKP(car)) { QLERR("string expected"); }
       POP(res, args);
       if (res == NIL) {
-        if (!(res = rec_obj_new(ctx, table, 0))) { QLERR("rec_obj_new failed"); }
+        if (!(res = rec_obj_new(ctx, table, NULL))) { QLERR("rec_obj_new failed"); }
       } else if (!RECORDSP(res)) {
         QLERR("records object expected");
       }
@@ -1331,7 +1331,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           if (!n_results) {
             for (rp = results; n_results < ce->n_keys; rp++, n_results++) {
               grn_id range = grn_obj_get_range(ctx, ce->keys[n_results].key);
-              rp->table = get_obj(ctx, rec_obj_new(ctx, grn_ctx_at(ctx, range), 0));
+              rp->table = get_obj(ctx, rec_obj_new(ctx, grn_ctx_at(ctx, range), NULL));
               rp->key_begin = n_results;
               rp->key_end = rp->key_begin + 1;
             }
@@ -1410,7 +1410,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       if (!BULKP(car)) { QLERR("string expected"); }
       POP(res, args);
       if (res == NIL) {
-        if (!(res = rec_obj_new(ctx, table, 0))) { QLERR("rec_obj_new failed"); }
+        if (!(res = rec_obj_new(ctx, table, NULL))) { QLERR("rec_obj_new failed"); }
       } else if (!RECORDSP(res)) {
         QLERR("records object expected");
       }
@@ -1542,7 +1542,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           POP(res, args);
           if (!RECORDSP(res)) {
             res = table_create(ctx, NULL, 0, GRN_OBJ_TABLE_NO_KEY,
-                               table, sizeof(grn_id), GRN_DB_DELIMIT);
+                               table, table, GRN_DB_DELIMIT);
           }
           if (ce) {
             grn_table_sort(ctx, table, limit, get_obj(ctx, res), ce->keys, ce->n_keys);
@@ -1561,7 +1561,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           if (!BULKP(car)) { QLERR("string expected"); }
           POP(res, args);
           if (res == NIL) {
-            if (!(res = rec_obj_new(ctx, table, 0))) { QLERR("rec_obj_new failed"); }
+            if (!(res = rec_obj_new(ctx, table, NULL))) { QLERR("rec_obj_new failed"); }
           } else if (!RECORDSP(res)) {
             QLERR("records object expected");
           }
@@ -2021,7 +2021,7 @@ ha_column(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         } else {
           grn_obj *table;
           if (!(table = grn_ctx_at(ctx, DB_OBJ(column)->range))) { return F; }
-          res = rec_obj_new(ctx, table, 0);
+          res = rec_obj_new(ctx, table, NULL);
           if (ERRP(ctx, GRN_WARN)) { return F; }
           op = GRN_OP_OR;
         }
@@ -2160,7 +2160,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         grn_pat *keys = (grn_pat *)grn_db_keys(ctx->impl->db);
         POP(car, args);
         if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
-        if ((res = rec_obj_new(ctx, ctx->impl->db, 0)) == F) {
+        if ((res = rec_obj_new(ctx, ctx->impl->db, NULL)) == F) {
           QLERR("rec_obj_new failed.");
         }
         r = (grn_hash *)grn_ctx_at(ctx, res->u.o.id);
@@ -2246,7 +2246,6 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 static grn_cell *
 nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
 {
-  uint32_t value_size = 0;
   grn_obj_flags flags = (name && name_size) ? GRN_OBJ_PERSISTENT : GRN_OBJ_TEMPORARY;
   grn_encoding encoding = GRN_ENC_DEFAULT;
   grn_obj *domain = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
@@ -2262,9 +2261,6 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
     case GRN_TABLE_NO_KEY :
     case GRN_TYPE :
       domain = grn_ctx_at(ctx, car->u.o.id);
-      break;
-    case GRN_CELL_INT :
-      value_size = (uint32_t) IVALUE(car);
       break;
     default :
       if (obj2str(car, msg, &msg_size)) { QLERR("invalid argument"); }
@@ -2365,7 +2361,7 @@ nf_table_(grn_ctx *ctx, grn_cell *args, const char *name, uint16_t name_size)
     grn_cell *r;
     grn_encoding enc_ = GRN_CTX_GET_ENCODING(ctx);
     if (encoding != GRN_ENC_DEFAULT) { GRN_CTX_SET_ENCODING(ctx, encoding); }
-    r = table_create(ctx, name, name_size, flags, domain, value_size, tokenizer);
+    r = table_create(ctx, name, name_size, flags, domain, NULL, tokenizer);
     GRN_CTX_SET_ENCODING(ctx, enc_);
     return r;
   }

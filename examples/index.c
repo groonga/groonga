@@ -37,12 +37,12 @@ grn_index_create(grn_ctx *ctx, const char *path)
     if ((key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT))) {
       if ((keys = grn_table_create(ctx, "<keys>", 6, buffer,
                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
-                                   key_type, 0))) {
+                                   key_type, NULL))) {
         strcpy(buffer, path);
         strcat(buffer, ".SEN.l");
         if ((lexicon = grn_table_create(ctx, "<lexicon>", 9, buffer,
                                         GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                                        key_type, 0))) {
+                                        key_type, NULL))) {
           if ((tokenizer = grn_ctx_at(ctx, GRN_DB_MECAB))) {
             grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
             strcpy(buffer, path);
@@ -130,7 +130,7 @@ grn_index_sel(grn_ctx *ctx, grn_index *index,
   GRN_TEXT_INIT(&query, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_SET_REF(&query, string, string_len);
   if ((res = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_HASH_KEY,
-                              index->keys, 0))) {
+                              index->keys, NULL))) {
     if ((grn_obj_search(ctx, index->inv, &query, res, GRN_OP_OR, NULL))) {
       grn_obj_close(ctx, res);
       res =  NULL;

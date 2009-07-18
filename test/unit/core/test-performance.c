@@ -25,8 +25,6 @@
 void data_read_write(void);
 void test_read_write(gconstpointer test_data);
 
-#define VALUE_SIZE 1024
-
 typedef struct _grn_test_data
 {
   gchar *type_name;
@@ -203,7 +201,7 @@ run_test(const gchar **test_case_names, const grn_test_data *data)
   table = grn_table_create(context,
                            table_name, strlen(table_name),
                            path, GRN_OBJ_PERSISTENT | data->flags,
-                           type, VALUE_SIZE);
+                           type, NULL);
   g_free(path);
   cut_assert_not_null(table);
 

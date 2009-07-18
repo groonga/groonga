@@ -70,7 +70,7 @@ test_table(gpointer data)
   table = grn_table_create(&context, NULL, 0, NULL,
                            flags,
                            OBJECT("<shorttext>"),
-                           0);
+                           NULL);
   cursor = grn_table_cursor_open(&context, table, NULL, 0, NULL, 0, 0);
   /* FIXME: grn_test_assert_equal_object() */
   cut_assert_equal_pointer(table, grn_table_cursor_table(&context, cursor));
