@@ -754,214 +754,235 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
       char *path = NULL;
       char *p = GRN_BULK_HEAD((grn_obj *)msg);
       char *e = GRN_BULK_CURR((grn_obj *)msg);
-      for (; p + 6 < e; p++) {
-        if (*p != ' ') { continue; }
-        if (!path) { path = p + 1; continue; }
-        if (!memcmp(p + 1, "HTTP/1", 6)) {
-          if (path[0] == '/' && path[2] == '/') {
-            switch (path[1]) {
-            case 'a' :
-              {
-                grn_hash *query;
-                grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
-                ((grn_msg *)re)->header.qtype = header->qtype;
-                *p = '\0';
-                GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
-                GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
-                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
-                if ((query = parse_http_path(ctx, path, p - path))) {
-                  path += 3;
-                  switch (*path) {
-                  case 't':
-                    /* tablelist */
-                    cmd_tablelist(ctx, grn_ctx_db(ctx), re, grn_output_json);
-                    break;
-                  case 'c':
-                    /* columnlist */
-                    /* createtable */
-                    /* createcolumn */
-                    if (p - path > 10) {
-                      switch (*(path + 6)) {
-                      case 'l':
-                        {
-                          grn_obj *table;
-                          if (grn_hash_get(ctx, query,
-                                           "table", 5, (void **)&table)
-                                != GRN_ID_NIL) {
-                            cmd_columnlist(ctx,
-                                           GRN_TEXT_VALUE(table),
-                                           GRN_TEXT_LEN(table),
-                                           re, grn_output_json);
-                          }
-                        }
-                        break;
-                      case 't':
-                        {
-                          grn_obj *name, *flags_str, *key_type, *value_size_str;
-                          if (grn_hash_get(ctx, query,
-                                           "name", 4, (void **)&name)
-                                != GRN_ID_NIL &&
-                              grn_hash_get(ctx, query,
-                                           "flags", 5, (void **)&flags_str)
-                                != GRN_ID_NIL &&
-                              grn_hash_get(ctx, query,
-                                           "key_type", 8, (void **)&key_type)
-                                != GRN_ID_NIL &&
-                              grn_hash_get(ctx, query,
-                                           "value_size", 10,
-                                           (void **)&value_size_str)
-                                != GRN_ID_NIL) {
-                            int flags;
-                            unsigned value_size;
-                            flags = grn_atoi(
-                              GRN_TEXT_VALUE(flags_str),
-                              GRN_TEXT_VALUE(flags_str) +
-                                GRN_TEXT_LEN(flags_str),
-                              NULL);
-                            value_size = grn_atoi(
-                              GRN_TEXT_VALUE(value_size_str),
-                              GRN_TEXT_VALUE(value_size_str) +
-                                GRN_TEXT_LEN(value_size_str),
-                              NULL);
-                            cmd_createtable(
-                              ctx,
-                              GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
-                              flags,
-                              GRN_TEXT_VALUE(key_type), GRN_TEXT_LEN(key_type),
-                              value_size,
-                              re, grn_output_json);
-                          }
-                        }
-                      case 'c':
-                        {
-                          grn_obj *table, *name, *flags_str, *type;
-                          if (grn_hash_get(ctx, query,
-                                           "table", 5, (void **)&table)
-                                != GRN_ID_NIL &&
-                              grn_hash_get(ctx, query,
-                                           "name", 4, (void **)&name)
-                                != GRN_ID_NIL &&
-                              grn_hash_get(ctx, query,
-                                           "flags", 5, (void **)&flags_str)
-                                != GRN_ID_NIL &&
-                              grn_hash_get(ctx, query,
-                                           "type", 4, (void **)&type)
-                                != GRN_ID_NIL) {
-                            int flags;
-                            flags = grn_atoi(
-                              GRN_TEXT_VALUE(flags_str),
-                              GRN_TEXT_VALUE(flags_str) +
-                                GRN_TEXT_LEN(flags_str),
-                              NULL);
-                            cmd_createcolumn(
-                              ctx,
-                              GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
-                              GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
-                              flags,
-                              GRN_TEXT_VALUE(type), GRN_TEXT_LEN(type),
-                              re, grn_output_json);
-                          }
-                        }
-                        break;
-                      }
-                    }
-                    break;
-                  case 'r':
-                    /* recordlist */
+      for (;; p++) {
+        if (e <= p + 6) {
+          /* invalid request */
+          goto exit;
+        }
+        if (*p == ' ') {
+          if (!path) {
+            path = p + 1;
+          } else {
+            if (!memcmp(p + 1, "HTTP/1", 6)) {
+              break;
+            }
+          }
+        }
+      }
+      if (path[0] == '/' && path[2] == '/') {
+        switch (path[1]) {
+        case 'a' :
+          {
+            grn_hash *query;
+            grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+            ((grn_msg *)re)->header.qtype = header->qtype;
+            *p = '\0';
+            GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
+            GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
+            GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
+            if ((query = parse_http_path(ctx, path, p - path))) {
+              path += 3;
+              switch (*path) {
+              case 't':
+                /* tablelist */
+                cmd_tablelist(ctx, grn_ctx_db(ctx), re, grn_output_json);
+                break;
+              case 'c':
+                /* columnlist */
+                /* createtable */
+                /* createcolumn */
+                if (p - path > 10) {
+                  switch (*(path + 6)) {
+                  case 'l':
                     {
                       grn_obj *table;
                       if (grn_hash_get(ctx, query,
-                                       "table", 5,
-                                       (void **)&table) != GRN_ID_NIL) {
-                        int offset, count;
-                        grn_obj *sort_column, *num_str;
-                        if (grn_hash_get(ctx, query,
-                                         "offset", 6,
-                                         (void **)&num_str) != GRN_ID_NIL) {
-                          offset = grn_atoi(
-                            GRN_TEXT_VALUE(num_str),
-                            GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
-                            NULL);
-                        } else {
-                          offset = 1;
-                        }
-
-                        if (grn_hash_get(ctx, query,
-                                         "count", 5,
-                                         (void **)&num_str) != GRN_ID_NIL) {
-                          count = grn_atoi(
-                            GRN_TEXT_VALUE(num_str),
-                            GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
-                            NULL);
-                        } else {
-                          count = -1;
-                        }
-
-                        if (grn_hash_get(ctx, query,
-                                         "sort_column", 11,
-                                         (void **)&sort_column) != GRN_ID_NIL) {
-                          cmd_recordlist(ctx,
-                            GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
-                            GRN_TEXT_VALUE(sort_column), GRN_TEXT_LEN(sort_column),
-                            offset, count, re, grn_output_json);
-                        } else {
-                          cmd_recordlist(ctx,
-                            GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
-                            ".:key", 5,
-                            offset, count, re, grn_output_json);
-                        }
+                                       "table", 5, (void **)&table)
+                            != GRN_ID_NIL) {
+                        cmd_columnlist(ctx,
+                                       GRN_TEXT_VALUE(table),
+                                       GRN_TEXT_LEN(table),
+                                       re, grn_output_json);
                       }
                     }
                     break;
-                  case 's':
-                    /* status */
-                    cmd_status(ctx, re, grn_output_json);
+                  case 't':
+                    {
+                      grn_obj *name, *flags_str, *key_type, *value_size_str;
+                      if (grn_hash_get(ctx, query,
+                                       "name", 4, (void **)&name)
+                            != GRN_ID_NIL &&
+                          grn_hash_get(ctx, query,
+                                       "flags", 5, (void **)&flags_str)
+                            != GRN_ID_NIL &&
+                          grn_hash_get(ctx, query,
+                                       "key_type", 8, (void **)&key_type)
+                            != GRN_ID_NIL &&
+                          grn_hash_get(ctx, query,
+                                       "value_size", 10,
+                                       (void **)&value_size_str)
+                            != GRN_ID_NIL) {
+                        int flags;
+                        unsigned value_size;
+                        flags = grn_atoi(
+                          GRN_TEXT_VALUE(flags_str),
+                          GRN_TEXT_VALUE(flags_str) +
+                            GRN_TEXT_LEN(flags_str),
+                          NULL);
+                        value_size = grn_atoi(
+                          GRN_TEXT_VALUE(value_size_str),
+                          GRN_TEXT_VALUE(value_size_str) +
+                            GRN_TEXT_LEN(value_size_str),
+                          NULL);
+                        cmd_createtable(
+                          ctx,
+                          GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
+                          flags,
+                          GRN_TEXT_VALUE(key_type), GRN_TEXT_LEN(key_type),
+                          value_size,
+                          re, grn_output_json);
+                      }
+                    }
+                  case 'c':
+                    {
+                      grn_obj *table, *name, *flags_str, *type;
+                      if (grn_hash_get(ctx, query,
+                                       "table", 5, (void **)&table)
+                            != GRN_ID_NIL &&
+                          grn_hash_get(ctx, query,
+                                       "name", 4, (void **)&name)
+                            != GRN_ID_NIL &&
+                          grn_hash_get(ctx, query,
+                                       "flags", 5, (void **)&flags_str)
+                            != GRN_ID_NIL &&
+                          grn_hash_get(ctx, query,
+                                       "type", 4, (void **)&type)
+                            != GRN_ID_NIL) {
+                        int flags;
+                        flags = grn_atoi(
+                          GRN_TEXT_VALUE(flags_str),
+                          GRN_TEXT_VALUE(flags_str) +
+                            GRN_TEXT_LEN(flags_str),
+                          NULL);
+                        cmd_createcolumn(
+                          ctx,
+                          GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                          GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name),
+                          flags,
+                          GRN_TEXT_VALUE(type), GRN_TEXT_LEN(type),
+                          re, grn_output_json);
+                      }
+                    }
                     break;
                   }
-                  release_query(ctx, query);
                 }
-                if (grn_msg_send(ctx, re, 0)) {
-                  /* TODO: error handling */
+                break;
+              case 'r':
+                /* recordlist */
+                {
+                  grn_obj *table;
+                  if (grn_hash_get(ctx, query,
+                                   "table", 5,
+                                   (void **)&table) != GRN_ID_NIL) {
+                    int offset, count;
+                    grn_obj *sort_column, *num_str;
+                    if (grn_hash_get(ctx, query,
+                                     "offset", 6,
+                                     (void **)&num_str) != GRN_ID_NIL) {
+                      offset = grn_atoi(
+                        GRN_TEXT_VALUE(num_str),
+                        GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
+                        NULL);
+                    } else {
+                      offset = 1;
+                    }
+
+                    if (grn_hash_get(ctx, query,
+                                     "count", 5,
+                                     (void **)&num_str) != GRN_ID_NIL) {
+                      count = grn_atoi(
+                        GRN_TEXT_VALUE(num_str),
+                        GRN_TEXT_VALUE(num_str) + GRN_TEXT_LEN(num_str),
+                        NULL);
+                    } else {
+                      count = -1;
+                    }
+
+                    if (grn_hash_get(ctx, query,
+                                     "sort_column", 11,
+                                     (void **)&sort_column) != GRN_ID_NIL) {
+                      cmd_recordlist(ctx,
+                        GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                        GRN_TEXT_VALUE(sort_column), GRN_TEXT_LEN(sort_column),
+                        offset, count, re, grn_output_json);
+                    } else {
+                      cmd_recordlist(ctx,
+                        GRN_TEXT_VALUE(table), GRN_TEXT_LEN(table),
+                        ".:key", 5,
+                        offset, count, re, grn_output_json);
+                    }
+                  }
                 }
+                break;
+              case 's':
+                /* status */
+                cmd_status(ctx, re, grn_output_json);
+                break;
               }
-              break;
-            case 's' :
-              {
-                grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
-                ((grn_msg *)re)->header.qtype = header->qtype;
-                *p = '\0';
-                GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
-                GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
-                /* static file */
-                /* FIXME: remove '..' for security ! */
-                /* FIXME: follow symbolic link ? */
-                if (!memcmp(p - 5, ".html", 5)) { // FIXME: 5文字はヤバい。msgの頭より前になる恐れ
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/html\r\n\r\n");
-                } else if (!memcmp(p - 4, ".png", 4)) {
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: image/png\r\n\r\n");
-                } else if (!memcmp(p - 4, ".css", 4)) {
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/css\r\n\r\n");
-                } else if (!memcmp(p - 3 , ".js", 3)) {
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
-                }
-                grn_bulk_from_file(ctx, (grn_obj *)re, path + 1);
-                if (grn_msg_send(ctx, re, 0)) {
-                  /* TODO: error handling */
-                }
-              }
-              break;
-            case 'q' :
-              {
-                grn_obj *head = ctx->impl->outbuf;
-                GRN_TEXT_INIT(head, 0);
-                GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
-                GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
-                GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
-                // todo : refine
-                grn_ql_send(ctx, path, p - path, header->flags);
-              }
-              break;
+              release_query(ctx, query);
             }
+            if (grn_msg_send(ctx, re, 0)) {
+              /* TODO: error handling */
+            }
+          }
+          break;
+        case 's' :
+          {
+            char *q;
+            grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
+            ((grn_msg *)re)->header.qtype = header->qtype;
+            *p = '\0';
+            GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
+            GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
+            /* static file */
+            /* FIXME: remove '..' for security ! */
+            /* FIXME: follow symbolic link ? */
+            for (q = p;; q--) {
+              if (q <= path) {
+                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/plain\r\n\r\n");
+                break;
+              }
+              if (*q == '.') {
+                if (q + 5 == p && !memcmp(q, ".html", 5)) {
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/html\r\n\r\n");
+                  break;
+                } else if (q + 4 == p && !memcmp(q, ".png", 4)) {
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: image/png\r\n\r\n");
+                  break;
+                } else if (q + 4 == p && !memcmp(q, ".css", 4)) {
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/css\r\n\r\n");
+                  break;
+                } else if (q + 3 == p && !memcmp(q, ".js", 3)) {
+                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
+                  break;
+                }
+              }
+            }
+            grn_bulk_from_file(ctx, (grn_obj *)re, path + 1);
+            if (grn_msg_send(ctx, re, 0)) {
+              /* TODO: error handling */
+            }
+          }
+          break;
+        case 'q' :
+          {
+            grn_obj *head = ctx->impl->outbuf;
+            GRN_TEXT_INIT(head, 0);
+            GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
+            GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
+            GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
+            // todo : refine
+            grn_ql_send(ctx, path, p - path, header->flags);
           }
           break;
         }
@@ -969,6 +990,7 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
     }
     break;
   }
+exit :
   // todo : support "Connection: keep-alive"
   ctx->stat = GRN_QL_QUIT;
 }
