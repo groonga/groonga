@@ -1514,7 +1514,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           switch (bulk.header.type) {
           case GRN_UVECTOR :
             {
-              // tood : support objects except grn_id
+              // todo : support objects except grn_id
               grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
               grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
               while (v < ve) {
@@ -7006,30 +7006,78 @@ grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx, char *str, unsigned str_size,
                             grn_obj *table, unsigned *nkeys)
 {
-  uint32_t i, n = 0;
-  char *p, **tokbuf;
-  grn_table_sort_key *keys = NULL, *k;
+  char **tokbuf;
+  grn_table_sort_key *keys = NULL, *k = NULL;
   if ((tokbuf = GRN_MALLOCN(char *, str_size))) {
-    n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
+    int i, n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
     if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
       k = keys;
-      for (i = 0, p = str; i < n; i++) {
+      for (i = 0; i < n; i++) {
         k->flags = GRN_TABLE_SORT_ASC;
         k->offset = 0;
-        if (*p == '+') {
-          p++;
-        } else if (*p == '-') {
+        if (*str == '+') {
+          str++;
+        } else if (*str == '-') {
           k->flags = GRN_TABLE_SORT_DESC;
-          p++;
+          str++;
         }
-        if ((k->key = grn_obj_column(ctx, table, p, tokbuf[i] - p))) {
+        if ((k->key = grn_obj_column(ctx, table, str, tokbuf[i] - str))) {
           k++;
         }
-        p = tokbuf[i] + 1;
+        str = tokbuf[i] + 1;
       }
     }
     GRN_FREE(tokbuf);
   }
   *nkeys = k - keys;
   return keys;
+}
+
+grn_rc
+grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned nkeys)
+{
+  int i;
+  for (i = 0; i < nkeys; i++) {
+    grn_obj_unlink(ctx, keys[i].key);
+  }
+  GRN_FREE(keys);
+  return ctx->rc;
+}
+
+grn_rc
+grn_obj_format_from_str(grn_ctx *ctx, grn_obj_format *format,
+                        char *str, unsigned str_size, grn_obj *table)
+{
+  char **tokbuf;
+  grn_obj **cols = NULL, **c = NULL;
+  format->columns = NULL;
+  if ((tokbuf = GRN_MALLOCN(char *, str_size))) {
+    int i, n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
+    if ((cols = GRN_MALLOCN(grn_obj *, n))) {
+      c = cols;
+      for (i = 0; i < n; i++) {
+        if ((*c = grn_obj_column(ctx, table, str, tokbuf[i] - str))) {
+          c++;
+        }
+        str = tokbuf[i] + 1;
+      }
+      format->columns = cols;
+    }
+    GRN_FREE(tokbuf);
+  }
+  format->ncolumns = c - cols;
+  return ctx->rc;
+}
+
+grn_rc
+grn_obj_format_close(grn_ctx *ctx, grn_obj_format *format)
+{
+  int i = format->ncolumns;
+  if (i) {
+    while (i--) {
+      grn_obj_unlink(ctx, format->columns[i]);
+    }
+    GRN_FREE(format->columns);
+  }
+  return ctx->rc;
 }

@@ -847,12 +847,13 @@ grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_operato
 static grn_rc
 selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 {
-  uint32_t nvars;
   int32_t offset, hits;
-  grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
-  // grn_obj columns; todo
-  grn_obj *outbuf, *res, *sorted, *table, *column;
+  uint32_t nkeys, nvars;
+  grn_obj_format format;
+  grn_table_sort_key *keys;
+  grn_obj *outbuf, *res, *table, *column, *sorted;
   grn_obj *output, *query, qbuf, *sortby, *drilldown;
+  grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
   outbuf = grn_ctx_pop(ctx);
   if (nvars != 9) { goto exit; }
   table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
@@ -875,36 +876,48 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
                                    GRN_TEXT_VALUE(&qbuf), GRN_TEXT_LEN(&qbuf), table, column);
   grn_table_select(ctx, table, query, res, GRN_OP_OR);
   grn_obj_unlink(ctx, query);
-  {
-    uint32_t i, nkeys;
-    grn_table_sort_key *keys;
-    keys = grn_table_sort_key_from_str(ctx, GRN_TEXT_VALUE(sortby),
-                                       GRN_TEXT_LEN(sortby), res, &nkeys);
-    if (!keys) { goto exit; }
-    sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, res, sizeof(grn_id));
-    grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
-    for (i = 0; i < nkeys; i++) {
-      grn_obj_unlink(ctx, keys[i].key);
-    }
-    GRN_FREE(keys);
-  }
-  {
-    grn_obj_format format;
-    grn_obj *cols[256];
-    char *p = GRN_TEXT_VALUE(output), *tokbuf[256];
-    int i, n = grn_str_tok(p, GRN_TEXT_LEN(output), ' ', tokbuf, 256, NULL);
-    for (i = 0; i < n; i++) {
-      cols[i] = grn_obj_column(ctx, sorted, p, tokbuf[i] - p);
-      p = tokbuf[i] + 1;
-    }
-    format.ncolumns = n;
-    format.columns = cols;
-    grn_text_otoj(ctx, outbuf, sorted, &format);
-    for (i = 0; i < n; i++) {
-      grn_obj_unlink(ctx, cols[i]);
-    }
-  }
+
+  keys = grn_table_sort_key_from_str(ctx, GRN_TEXT_VALUE(sortby),
+                                     GRN_TEXT_LEN(sortby), res, &nkeys);
+  if (!keys) { goto exit; }
+  sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, res, sizeof(grn_id));
+  grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
+  grn_table_sort_key_close(ctx, keys, nkeys);
+
+  grn_obj_format_from_str(ctx, &format, GRN_TEXT_VALUE(output), GRN_TEXT_LEN(output), sorted);
+  grn_text_otoj(ctx, outbuf, sorted, &format);
+  grn_obj_format_close(ctx, &format);
+
   grn_obj_unlink(ctx, sorted);
+  {
+    uint32_t i, ngkeys;
+    grn_table_sort_key *gkeys;
+    grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
+    gkeys = grn_table_sort_key_from_str(ctx, GRN_TEXT_VALUE(drilldown),
+                                        GRN_TEXT_LEN(drilldown), res, &ngkeys);
+    for (i = 0; i < ngkeys; i++) {
+      g.table = grn_table_create(ctx, NULL, 0, NULL,
+                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                 grn_ctx_at(ctx, grn_obj_get_range(ctx, gkeys[i].key)),
+                                 sizeof(grn_id));
+      grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
+
+      keys = grn_table_sort_key_from_str(ctx, "-.:nrecords", 11, g.table, &nkeys);
+      if (!keys) { goto exit; }
+      sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
+                                g.table, sizeof(grn_id));
+      grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
+      grn_table_sort_key_close(ctx, keys, nkeys);
+
+      grn_obj_format_from_str(ctx, &format, ".:key .:nrecords", 16, sorted);
+      grn_text_otoj(ctx, outbuf, sorted, &format);
+      grn_obj_format_close(ctx, &format);
+
+      grn_obj_unlink(ctx, sorted);
+      grn_obj_unlink(ctx, g.table);
+    }
+    grn_table_sort_key_close(ctx, gkeys, ngkeys);
+  }
   grn_obj_unlink(ctx, res);
 exit :
   grn_ctx_push(ctx, outbuf);
