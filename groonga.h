@@ -127,6 +127,11 @@ typedef enum {
   GRN_LOG_DUMP
 } grn_log_level;
 
+typedef enum {
+  GRN_CONTENT_TSV,
+  GRN_CONTENT_JSON
+} grn_content_type;
+
 typedef struct _grn_obj grn_obj;
 typedef struct _grn_ctx grn_ctx;
 
