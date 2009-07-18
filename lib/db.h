@@ -257,6 +257,8 @@ struct _grn_expr {
 int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                      grn_obj **indexbuf, int buf_size);
 
+void grn_db_init_builtin_query(grn_ctx *ctx);
+
 #ifdef __cplusplus
 }
 #endif

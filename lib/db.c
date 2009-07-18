@@ -118,8 +118,6 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   GRN_API_RETURN(NULL);
 }
 
-static void grn_db_init_builtin_query(grn_ctx *ctx);
-
 grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path)
 {
@@ -7034,106 +7032,4 @@ grn_table_sort_key_from_str(grn_ctx *ctx, char *str, unsigned str_size,
   }
   *nkeys = k - keys;
   return keys;
-}
-
-static grn_rc
-selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
-{
-  uint32_t nvars;
-  int32_t offset, hits;
-  grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
-  // grn_obj columns; todo
-  grn_obj *outbuf, *res, *sorted, *table, *column;
-  grn_obj *output, *query, qbuf, *sortby, *drilldown;
-  outbuf = grn_ctx_pop(ctx);
-  if (nvars != 9) { goto exit; }
-  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
-  if (!table) { goto exit; }
-  column = grn_obj_column(ctx, table,
-                          GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value));
-  offset = grn_atoi(GRN_TEXT_VALUE(&vars[2].value), GRN_BULK_CURR(&vars[2].value), NULL);
-  hits = grn_atoi(GRN_TEXT_VALUE(&vars[3].value), GRN_BULK_CURR(&vars[3].value), NULL);
-  output = &vars[4].value;
-  GRN_TEXT_INIT(&qbuf, 0);
-  GRN_TEXT_PUT(ctx, &qbuf, GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value));
-  GRN_TEXT_PUTC(ctx, &qbuf, ' ');
-  GRN_TEXT_PUT(ctx, &qbuf, GRN_TEXT_VALUE(&vars[6].value), GRN_TEXT_LEN(&vars[6].value));
-  sortby = &vars[7].value;
-  drilldown = &vars[8].value;
-  res = grn_table_create(ctx, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, 0);
-  if (!res) { goto exit; }
-  query = grn_expr_create_from_str(ctx, NULL, 0,
-                                   GRN_TEXT_VALUE(&qbuf), GRN_TEXT_LEN(&qbuf), table, column);
-  grn_table_select(ctx, table, query, res, GRN_OP_OR);
-  grn_obj_unlink(ctx, query);
-  {
-    uint32_t i, nkeys;
-    grn_table_sort_key *keys;
-    keys = grn_table_sort_key_from_str(ctx, GRN_TEXT_VALUE(sortby),
-                                       GRN_TEXT_LEN(sortby), res, &nkeys);
-    if (!keys) { goto exit; }
-    sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, res, sizeof(grn_id));
-    grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
-    for (i = 0; i < nkeys; i++) {
-      grn_obj_unlink(ctx, keys[i].key);
-    }
-    GRN_FREE(keys);
-  }
-  {
-    grn_obj_format format;
-    grn_obj *cols[256];
-    char *p = GRN_TEXT_VALUE(output), *tokbuf[256];
-    int i, n = grn_str_tok(p, GRN_TEXT_LEN(output), ' ', tokbuf, 256, NULL);
-    for (i = 0; i < n; i++) {
-      cols[i] = grn_obj_column(ctx, sorted, p, tokbuf[i] - p);
-      p = tokbuf[i] + 1;
-    }
-    format.ncolumns = n;
-    format.columns = cols;
-    grn_text_otoj(ctx, outbuf, sorted, &format);
-    for (i = 0; i < n; i++) {
-      grn_obj_unlink(ctx, cols[i]);
-    }
-  }
-  grn_obj_unlink(ctx, sorted);
-  grn_obj_unlink(ctx, res);
-exit :
-  grn_ctx_push(ctx, outbuf);
-  return ctx->rc;
-}
-
-static grn_rc
-define_selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
-{
-  uint32_t nvars;
-  grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
-  grn_proc_create(ctx,
-                  GRN_TEXT_VALUE(&vars[0].value),
-                  GRN_TEXT_LEN(&vars[0].value),
-                  NULL, selector, NULL, NULL, nvars - 1, vars + 1);
-  return ctx->rc;
-}
-
-#define DEF_VAR(v,name_str) {\
-  (v).name = (name_str);\
-  (v).name_size = strlen(name_str);\
-  GRN_TEXT_INIT(&(v).value, 0);\
-}
-
-static void
-grn_db_init_builtin_query(grn_ctx *ctx)
-{
-  grn_expr_var vars[10];
-  DEF_VAR(vars[0], "name");
-  DEF_VAR(vars[1], "table");
-  DEF_VAR(vars[2], "column");
-  DEF_VAR(vars[3], "offset");
-  DEF_VAR(vars[4], "hits");
-  DEF_VAR(vars[5], "output");
-  DEF_VAR(vars[6], "query");
-  DEF_VAR(vars[7], "filter");
-  DEF_VAR(vars[8], "sortby");
-  DEF_VAR(vars[9], "drilldown");
-  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 10, vars);
 }

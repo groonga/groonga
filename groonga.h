@@ -1757,6 +1757,9 @@ GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
                                           const char *str, unsigned str_size,
                                           grn_obj *table, grn_obj *default_column);
 
+GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
+                                                        char *str, unsigned str_size,
+                                                        grn_obj *table, unsigned *nkeys);
 
 /* ql */
 
