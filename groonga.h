@@ -1763,13 +1763,28 @@ GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
                                           grn_obj *table, grn_obj *default_column);
 
 GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
-                                                        char *str, unsigned str_size,
+                                                        const char *str, unsigned str_size,
                                                         grn_obj *table, unsigned *nkeys);
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys, unsigned nkeys);
 GRN_API grn_rc grn_obj_format_from_str(grn_ctx *ctx, grn_obj_format *format,
-                                       char *str, unsigned str_size, grn_obj *table);
+                                       const char *str, unsigned str_size, grn_obj *table);
 GRN_API grn_rc grn_obj_format_close(grn_ctx *ctx, grn_obj_format *format);
+
+GRN_API grn_rc grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                          const char *table, unsigned table_len,
+                          const char *match_column, unsigned match_column_len,
+                          int offset, int hits,
+                          const char *output_columns, unsigned output_columns_len,
+                          const char *query, unsigned query_len,
+                          const char *filter, unsigned filter_len,
+                          const char *foreach, unsigned foreach_len,
+                          const char *sortby, unsigned sortby_len,
+                          const char *drilldown, unsigned drilldown_len,
+                          int drilldown_offset, int drilldown_hits,
+                          const char *drilldown_output_columns,
+                          unsigned drilldown_output_columns_len,
+                          const char *drilldown_sortby, unsigned drilldown_sortby_len);
 
 /* ql */
 

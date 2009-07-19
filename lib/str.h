@@ -61,7 +61,7 @@ const char *grn_enctostr(grn_encoding enc);
 grn_encoding grn_strtoenc(const char *str);
 
 void grn_itoh(unsigned int i, char *p, unsigned int len);
-int grn_str_tok(char *str, size_t str_len, char delim, char **tokbuf, int buf_size, char **rest);
+int grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, int buf_size, const char **rest);
 int grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts, int *flags);
 
 extern int grn_str_margin_size;

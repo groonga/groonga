@@ -1566,11 +1566,11 @@ grn_ulltob32h(uint64_t i, char *p)
 }
 
 int
-grn_str_tok(char *str, size_t str_len, char delim, char **tokbuf, int buf_size, char **rest)
+grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, int buf_size, const char **rest)
 {
-  char **tok = tokbuf, **tok_end = tokbuf + buf_size;
+  const char **tok = tokbuf, **tok_end = tokbuf + buf_size;
   if (buf_size > 0) {
-    char *str_end = str + str_len;
+    const char *str_end = str + str_len;
     for (;;str++) {
       if (str == str_end) {
         *tok++ = str;

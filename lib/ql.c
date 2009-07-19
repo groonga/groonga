@@ -1779,7 +1779,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     do {
       GRN_QL_CO_WAIT(co, stat);
       if (BULKP(args) && STRSIZE(args)) {
-        char *tokbuf[MAXCOLUMNS];
+        const char *tokbuf[MAXCOLUMNS];
         grn_obj *column;
         grn_cell val, obj, cons, dummy;
         cons.header.type = GRN_CELL_LIST;
@@ -1796,7 +1796,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                                 tokbuf[0] - args->u.b.value, &obj);
             if (o != F) {
               for (s = stat->columns, i = 1; i < stat->ncolumns; s = CDR(s), i++) {
-                val.u.b.value = tokbuf[i - 1] + 1;
+                val.u.b.value = (char *)tokbuf[i - 1] + 1;
                 val.u.b.size = tokbuf[i] - val.u.b.value;
                 unesc(ctx, &val);
                 column = grn_ctx_at(ctx, CAR(s)->u.o.id);

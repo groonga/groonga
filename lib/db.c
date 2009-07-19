@@ -5727,7 +5727,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           table = GRN_OBJ_RESOLVE(ctx, table);
           {
             grn_table_sort_key *keys;
-            char *p = GRN_BULK_HEAD(keys_), *tokbuf[256];
+            const char *p = GRN_BULK_HEAD(keys_), *tokbuf[256];
             int n = grn_str_tok(p, GRN_BULK_VSIZE(keys_), ' ', tokbuf, 256, NULL);
             if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
               int i, n_keys = 0;
@@ -5770,7 +5770,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           {
             grn_table_sort_key *keys;
             grn_table_group_result results;
-            char *p = GRN_BULK_HEAD(keys_), *tokbuf[256];
+            const char *p = GRN_BULK_HEAD(keys_), *tokbuf[256];
             int n = grn_str_tok(p, GRN_BULK_VSIZE(keys_), ' ', tokbuf, 256, NULL);
             if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
               int i, n_keys = 0;
@@ -5822,7 +5822,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           {
             grn_obj_format format;
             grn_obj *cols[256];
-            char *p = GRN_BULK_HEAD(str), *tokbuf[256];
+            const char *p = GRN_BULK_HEAD(str), *tokbuf[256];
             int i, n = grn_str_tok(p, GRN_BULK_VSIZE(str), ' ', tokbuf, 256, NULL);
             for (i = 0; i < n; i++) {
               cols[i] = grn_obj_column(ctx, table, p, tokbuf[i] - p);
@@ -6483,7 +6483,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                 const char *str, unsigned str_size, grn_obj *res)
 {
   grn_obj *col;
-  char *p = (char *)str, *q, *pe = p + str_size, *tokbuf[256];
+  const char *p = (char *)str, *q, *pe = p + str_size, *tokbuf[256];
   while (p < pe) {
     int i, n = grn_str_tok(p, pe - p, ' ', tokbuf, 256, &q);
     for (i = 0; i < n; i++) {
@@ -6609,7 +6609,7 @@ get_geocond(grn_ctx *ctx, efs_info *q, grn_obj *longitude, grn_obj *latitude)
     }
   }
   {
-    char *tokbuf[8];
+    const char *tokbuf[8];
     int32_t lng0, lat0, lng1, lat1, lng2, lat2, r;
     int32_t n = grn_str_tok((char *)start, end - start, ',', tokbuf, 8, NULL);
     switch (n) {
@@ -7033,12 +7033,12 @@ exit :
 }
 
 grn_table_sort_key *
-grn_table_sort_key_from_str(grn_ctx *ctx, char *str, unsigned str_size,
+grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
                             grn_obj *table, unsigned *nkeys)
 {
-  char **tokbuf;
+  const char **tokbuf;
   grn_table_sort_key *keys = NULL, *k = NULL;
-  if ((tokbuf = GRN_MALLOCN(char *, str_size))) {
+  if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     int i, n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
     if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
       k = keys;
@@ -7076,12 +7076,12 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned nkeys)
 
 grn_rc
 grn_obj_format_from_str(grn_ctx *ctx, grn_obj_format *format,
-                        char *str, unsigned str_size, grn_obj *table)
+                        const char *str, unsigned str_size, grn_obj *table)
 {
-  char **tokbuf;
+  const char **tokbuf;
   grn_obj **cols = NULL, **c = NULL;
   format->columns = NULL;
-  if ((tokbuf = GRN_MALLOCN(char *, str_size))) {
+  if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     int i, n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
     if ((cols = GRN_MALLOCN(grn_obj *, n))) {
       c = cols;
@@ -7108,6 +7108,96 @@ grn_obj_format_close(grn_ctx *ctx, grn_obj_format *format)
       grn_obj_unlink(ctx, format->columns[i]);
     }
     GRN_FREE(format->columns);
+  }
+  return ctx->rc;
+}
+
+grn_rc
+grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+           const char *table, unsigned table_len,
+           const char *match_column, unsigned match_column_len,
+           int offset, int hits,
+           const char *output_columns, unsigned output_columns_len,
+           const char *query, unsigned query_len,
+           const char *filter, unsigned filter_len,
+           const char *foreach, unsigned foreach_len,
+           const char *sortby, unsigned sortby_len,
+           const char *drilldown, unsigned drilldown_len,
+           int drilldown_offset, int drilldown_hits,
+           const char *drilldown_output_columns, unsigned drilldown_output_columns_len,
+           const char *drilldown_sortby, unsigned drilldown_sortby_len)
+{
+  uint32_t nkeys;
+  grn_obj_format format;
+  grn_table_sort_key *keys;
+  grn_obj *table_, *match_column_, qbuf, *query_, *res, *sorted;
+  if ((table_ = grn_ctx_get(ctx, table, table_len))) {
+    match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
+    GRN_TEXT_INIT(&qbuf, 0);
+    GRN_TEXT_PUT(ctx, &qbuf, query, query_len);
+    GRN_TEXT_PUTC(ctx, &qbuf, ' ');
+    GRN_TEXT_PUT(ctx, &qbuf, filter, filter_len);
+    if ((res = grn_table_create(ctx, NULL, 0, NULL,
+                                GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                table_, NULL))) {
+      if ((query_ = grn_expr_create_from_str(ctx, NULL, 0,
+                                             GRN_TEXT_VALUE(&qbuf), GRN_TEXT_LEN(&qbuf),
+                                             table_, match_column_))) {
+        grn_table_select(ctx, table_, query_, res, GRN_OP_OR);
+        grn_obj_unlink(ctx, query_);
+        // todo : support foreach
+        if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
+                                       GRN_OBJ_TABLE_NO_KEY, res, res))) {
+          if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
+            grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
+            grn_table_sort_key_close(ctx, keys, nkeys);
+            // format.min = offset;
+            format.limit = hits;
+            grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, sorted);
+            grn_text_otoj(ctx, outbuf, sorted, &format);
+            grn_obj_format_close(ctx, &format);
+          }
+          grn_obj_unlink(ctx, sorted);
+        }
+        if (drilldown_len) {
+          uint32_t i, ngkeys;
+          grn_table_sort_key *gkeys;
+          grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
+          gkeys = grn_table_sort_key_from_str(ctx, drilldown, drilldown_len, res, &ngkeys);
+          for (i = 0; i < ngkeys; i++) {
+            grn_obj *domain = grn_ctx_at(ctx, grn_obj_get_range(ctx, gkeys[i].key));
+            if ((g.table = grn_table_create(ctx, NULL, 0, NULL,
+                                            GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                            domain, NULL))) {
+              grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
+              if ((keys = grn_table_sort_key_from_str(ctx,
+                                                      drilldown_sortby, drilldown_sortby_len,
+                                                      g.table, &nkeys))) {
+                if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
+                                               g.table, g.table))) {
+                  grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
+                  grn_table_sort_key_close(ctx, keys, nkeys);
+
+                  // format.min = drilldown_offset;
+                  format.limit = drilldown_hits;
+                  grn_obj_format_from_str(ctx, &format,
+                                          drilldown_output_columns, drilldown_output_columns_len,
+                                          sorted);
+                  grn_text_otoj(ctx, outbuf, sorted, &format);
+                  grn_obj_format_close(ctx, &format);
+                }
+                grn_obj_unlink(ctx, sorted);
+              }
+              grn_obj_unlink(ctx, g.table);
+            }
+            grn_obj_unlink(ctx, domain);
+          }
+          grn_table_sort_key_close(ctx, gkeys, ngkeys);
+        }
+      }
+      grn_obj_unlink(ctx, res);
+    }
+    grn_obj_unlink(ctx, table_);
   }
   return ctx->rc;
 }

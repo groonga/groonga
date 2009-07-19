@@ -847,79 +847,26 @@ grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_operato
 static grn_rc
 selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 {
-  int32_t offset, hits;
-  uint32_t nkeys, nvars;
-  grn_obj_format format;
-  grn_table_sort_key *keys;
-  grn_obj *outbuf, *res, *table, *column, *sorted;
-  grn_obj *output, *query, qbuf, *sortby, *drilldown;
+  uint32_t nvars;
+  grn_obj *outbuf = grn_ctx_pop(ctx);
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
-  outbuf = grn_ctx_pop(ctx);
-  if (nvars != 9) { goto exit; }
-  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
-  if (!table) { goto exit; }
-  column = grn_obj_column(ctx, table,
-                          GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value));
-  offset = grn_atoi(GRN_TEXT_VALUE(&vars[2].value), GRN_BULK_CURR(&vars[2].value), NULL);
-  hits = grn_atoi(GRN_TEXT_VALUE(&vars[3].value), GRN_BULK_CURR(&vars[3].value), NULL);
-  output = &vars[4].value;
-  GRN_TEXT_INIT(&qbuf, 0);
-  GRN_TEXT_PUT(ctx, &qbuf, GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value));
-  GRN_TEXT_PUTC(ctx, &qbuf, ' ');
-  GRN_TEXT_PUT(ctx, &qbuf, GRN_TEXT_VALUE(&vars[6].value), GRN_TEXT_LEN(&vars[6].value));
-  sortby = &vars[7].value;
-  drilldown = &vars[8].value;
-  res = grn_table_create(ctx, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
-  if (!res) { goto exit; }
-  query = grn_expr_create_from_str(ctx, NULL, 0,
-                                   GRN_TEXT_VALUE(&qbuf), GRN_TEXT_LEN(&qbuf), table, column);
-  grn_table_select(ctx, table, query, res, GRN_OP_OR);
-  grn_obj_unlink(ctx, query);
-
-  keys = grn_table_sort_key_from_str(ctx, GRN_TEXT_VALUE(sortby),
-                                     GRN_TEXT_LEN(sortby), res, &nkeys);
-  if (!keys) { goto exit; }
-  sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, res, res);
-  grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
-  grn_table_sort_key_close(ctx, keys, nkeys);
-
-  grn_obj_format_from_str(ctx, &format, GRN_TEXT_VALUE(output), GRN_TEXT_LEN(output), sorted);
-  grn_text_otoj(ctx, outbuf, sorted, &format);
-  grn_obj_format_close(ctx, &format);
-
-  grn_obj_unlink(ctx, sorted);
-  {
-    uint32_t i, ngkeys;
-    grn_table_sort_key *gkeys;
-    grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
-    gkeys = grn_table_sort_key_from_str(ctx, GRN_TEXT_VALUE(drilldown),
-                                        GRN_TEXT_LEN(drilldown), res, &ngkeys);
-    for (i = 0; i < ngkeys; i++) {
-      g.table = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                 grn_ctx_at(ctx, grn_obj_get_range(ctx, gkeys[i].key)),
-                                 NULL);
-      grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
-
-      keys = grn_table_sort_key_from_str(ctx, "-.:nrecords", 11, g.table, &nkeys);
-      if (!keys) { goto exit; }
-      sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                g.table, g.table);
-      grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
-      grn_table_sort_key_close(ctx, keys, nkeys);
-
-      grn_obj_format_from_str(ctx, &format, ".:key .:nrecords", 16, sorted);
-      grn_text_otoj(ctx, outbuf, sorted, &format);
-      grn_obj_format_close(ctx, &format);
-
-      grn_obj_unlink(ctx, sorted);
-      grn_obj_unlink(ctx, g.table);
-    }
-    grn_table_sort_key_close(ctx, gkeys, ngkeys);
+  if (nvars == 14) {
+    grn_search(ctx, outbuf, GRN_CONTENT_JSON,
+               GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
+               GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
+               grn_atoi(GRN_TEXT_VALUE(&vars[2].value), GRN_BULK_CURR(&vars[2].value), NULL),
+               grn_atoi(GRN_TEXT_VALUE(&vars[3].value), GRN_BULK_CURR(&vars[3].value), NULL),
+               GRN_TEXT_VALUE(&vars[4].value), GRN_TEXT_LEN(&vars[4].value),
+               GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value),
+               GRN_TEXT_VALUE(&vars[6].value), GRN_TEXT_LEN(&vars[6].value),
+               GRN_TEXT_VALUE(&vars[7].value), GRN_TEXT_LEN(&vars[7].value),
+               GRN_TEXT_VALUE(&vars[8].value), GRN_TEXT_LEN(&vars[8].value),
+               GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
+               grn_atoi(GRN_TEXT_VALUE(&vars[10].value), GRN_BULK_CURR(&vars[10].value), NULL),
+               grn_atoi(GRN_TEXT_VALUE(&vars[11].value), GRN_BULK_CURR(&vars[11].value), NULL),
+               GRN_TEXT_VALUE(&vars[12].value), GRN_TEXT_LEN(&vars[12].value),
+               GRN_TEXT_VALUE(&vars[13].value), GRN_TEXT_LEN(&vars[13].value));
   }
-  grn_obj_unlink(ctx, res);
-exit :
   grn_ctx_push(ctx, outbuf);
   return ctx->rc;
 }
@@ -949,16 +896,21 @@ define_selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
 {
-  grn_expr_var vars[10];
+  grn_expr_var vars[15];
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "table");
-  DEF_VAR(vars[2], "column");
+  DEF_VAR(vars[2], "match_column");
   DEF_VAR(vars[3], "offset");
   DEF_VAR(vars[4], "hits");
-  DEF_VAR(vars[5], "output");
+  DEF_VAR(vars[5], "output_columns");
   DEF_VAR(vars[6], "query");
   DEF_VAR(vars[7], "filter");
-  DEF_VAR(vars[8], "sortby");
-  DEF_VAR(vars[9], "drilldown");
-  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 10, vars);
+  DEF_VAR(vars[8], "foreach");
+  DEF_VAR(vars[9], "sortby");
+  DEF_VAR(vars[10], "drilldown");
+  DEF_VAR(vars[11], "drilldown_offset");
+  DEF_VAR(vars[12], "drilldown_hits");
+  DEF_VAR(vars[13], "drilldown_output_columns");
+  DEF_VAR(vars[14], "drilldown_sortby");
+  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 15, vars);
 }
