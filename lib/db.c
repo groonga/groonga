@@ -7177,7 +7177,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                g.table, g.table))) {
                   grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
                   grn_table_sort_key_close(ctx, keys, nkeys);
-
                   // format.min = drilldown_offset;
                   format.limit = drilldown_hits;
                   grn_obj_format_from_str(ctx, &format,
@@ -7199,5 +7198,174 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     grn_obj_unlink(ctx, table_);
   }
+  return ctx->rc;
+}
+
+typedef enum {
+  JC_BEGIN,
+  JC_STRING,
+  JC_SYMBOL,
+  JC_NUMBER,
+  JC_STRING_ESC
+} jc_stat;
+
+typedef struct {
+  grn_obj stack;
+  grn_obj *last;
+  int stack_size;
+  int nest_level;
+  jc_stat stat;
+} jctx;
+
+static void
+push_bracket_open(grn_ctx *ctx, jctx *jc)
+{
+  jc->nest_level++;
+}
+
+static void
+push_brace_open(grn_ctx *ctx, jctx *jc)
+{
+  jc->nest_level++;
+}
+
+static void
+push_bracket_close(grn_ctx *ctx, jctx *jc)
+{
+  jc->nest_level--;
+}
+
+static void
+push_brace_close(grn_ctx *ctx, jctx *jc)
+{
+  jc->nest_level--;
+}
+
+static void
+push_char(grn_ctx *ctx, jctx *jc, char c)
+{
+  GRN_TEXT_PUTC(ctx, jc->last, c);
+}
+
+static void
+push_str(grn_ctx *ctx, jctx *jc, const char *str, uint32_t str_len)
+{
+  GRN_TEXT_PUT(ctx, jc->last, str, str_len);
+}
+
+static void
+json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
+{
+  char c;
+  int len;
+  const char *se = str + str_len;
+  while (str < se) {
+    c = *str;
+    switch (jc->stat) {
+    case JC_BEGIN :
+      if ((len = grn_isspace(str, ctx->encoding))) {
+        str += len;
+        continue;
+      }
+      switch (c) {
+      case '"' :
+        jc->stat = JC_STRING;
+        str++;
+        break;
+      case '[' :
+        push_bracket_open(ctx, jc);
+        str++;
+        break;
+      case '{' :
+        push_brace_open(ctx, jc);
+        str++;
+        break;
+      case ':' :
+        str++;
+        break;
+      case ',' :
+        str++;
+        break;
+      case ']' :
+        push_bracket_close(ctx, jc);
+        str++;
+        break;
+      case '}' :
+        push_brace_close(ctx, jc);
+        str++;
+        break;
+      case '+' : case '-' : case '0' : case '1' : case '2' : case '3' :
+      case '4' : case '5' : case '6' : case '7' : case '8' : case '9' :
+        jc->stat = JC_NUMBER;
+        break;
+      default :
+        jc->stat = JC_SYMBOL;
+        break;
+      }
+      break;
+    case JC_SYMBOL :
+      if ('A' <= c && c <= 'z') {
+        push_char(ctx, jc, c);
+        str++;
+      } else {
+        jc->stat = JC_BEGIN;
+      }
+      break;
+    case JC_NUMBER :
+      switch (c) {
+      case '+' : case '-' : case '.' : case 'e' : case '0' : case '1' : case '2' :
+      case '3' : case '4' : case '5' : case '6' : case '7' : case '8' : case '9' :
+        push_char(ctx, jc, c);
+        str++;
+        break;
+      default :
+        jc->stat = JC_BEGIN;
+      }
+      break;
+    case JC_STRING :
+      switch (c) {
+      case '\\' :
+        jc->stat = JC_STRING_ESC;
+        str++;
+        break;
+      case '"' :
+        str++;
+        jc->stat = JC_BEGIN;
+      default :
+        if ((len = grn_charlen(ctx, str, se))) {
+          push_str(ctx, jc, str, len);
+          str += len;
+        } else {
+          str = se;
+        }
+      }
+      break;
+    case JC_STRING_ESC :
+      switch (c) {
+      case 'n' :
+        push_char(ctx, jc, '\n');
+        break;
+      case 't' :
+        push_char(ctx, jc, '\t');
+        break;
+      default :
+        push_char(ctx, jc, c);
+      }
+      str++;
+      jc->stat = JC_STRING;
+      break;
+    }
+  }
+}
+
+grn_rc
+grn_load(grn_ctx *ctx, const char *str, unsigned str_len)
+{
+  jctx jc;
+  GRN_TEXT_INIT(&jc.stack, 0);
+  jc.stack_size = 0;
+  jc.nest_level = 0;
+  jc.stat = JC_BEGIN;
+  json_read(ctx, &jc, str, str_len);
   return ctx->rc;
 }
