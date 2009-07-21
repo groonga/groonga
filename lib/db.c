@@ -7211,11 +7211,38 @@ typedef enum {
 
 typedef struct {
   grn_obj stack;
+  grn_obj level;
   grn_obj *last;
   int stack_size;
   int nest_level;
   jc_stat stat;
 } jctx;
+
+static grn_obj *
+stack_add(grn_ctx *ctx, jctx *jc)
+{
+  grn_obj *res;
+  uint32_t curr_size = jc->stack_size * sizeof(grn_obj);
+  if (curr_size < GRN_TEXT_LEN(&jc->stack)) {
+    res = (grn_obj *)(GRN_TEXT_VALUE(&jc->stack) + curr_size);
+    res->header.domain = GRN_DB_TEXT;
+  } else {
+    if (grn_bulk_space(ctx, &jc->stack, sizeof(grn_obj))) { return NULL; }
+    res = (grn_obj *)(GRN_TEXT_VALUE(&jc->stack) + curr_size);
+    GRN_TEXT_INIT(res, 0);
+  }
+  jc->stack_size++;
+  return res;
+}
+
+static void
+stack_clear(grn_ctx *ctx, jctx *jc)
+{
+  uint32_t i = jc->stack_size;
+  grn_obj *o = (grn_obj *)(GRN_TEXT_VALUE(&jc->stack));
+  while (i--) { GRN_OBJ_FIN(ctx, o++); }
+  GRN_OBJ_FIN(ctx, &jc->stack);
+}
 
 static void
 push_bracket_open(grn_ctx *ctx, jctx *jc)
@@ -7359,13 +7386,15 @@ json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
 }
 
 grn_rc
-grn_load(grn_ctx *ctx, const char *str, unsigned str_len)
+grn_load(grn_ctx *ctx, grn_content_type input_type, const char *str, unsigned str_len)
 {
-  jctx jc;
-  GRN_TEXT_INIT(&jc.stack, 0);
-  jc.stack_size = 0;
-  jc.nest_level = 0;
-  jc.stat = JC_BEGIN;
-  json_read(ctx, &jc, str, str_len);
+  if (input_type == GRN_CONTENT_JSON) {
+    jctx jc;
+    GRN_TEXT_INIT(&jc.stack, 0);
+    jc.stack_size = 0;
+    jc.nest_level = 0;
+    jc.stat = JC_BEGIN;
+    json_read(ctx, &jc, str, str_len);
+  }
   return ctx->rc;
 }
