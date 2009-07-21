@@ -7216,9 +7216,10 @@ typedef enum {
 typedef struct {
   grn_obj stack;
   grn_obj level;
+  grn_obj columns;
+  grn_obj *table;
   grn_obj *last;
   int stack_size;
-  int nest_level;
   jc_stat stat;
 } jctx;
 
@@ -7261,9 +7262,33 @@ stack_clear(grn_ctx *ctx, jctx *jc)
 static void
 push_bracket_close(grn_ctx *ctx, jctx *jc)
 {
-  uint32_t begin;
+  grn_obj *value;
+  uint32_t begin, ndata;
+  grn_id id = GRN_ID_NIL;
+  uint32_t ncols = GRN_BULK_VSIZE(&jc->columns) / sizeof(grn_obj *);
+  grn_obj **cols = (grn_obj **)GRN_BULK_HEAD(&jc->columns);
   GRN_UINT32_POP(&jc->level, begin);
-  // do
+  value = ((grn_obj *)(GRN_TEXT_VALUE(&jc->stack))) + begin;
+  ndata = jc->stack_size - begin;
+  switch (jc->table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+    if (ndata == ncols + 1) {
+      id = grn_table_add(ctx, jc->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
+      value++;
+    }
+    break;
+  case GRN_TABLE_NO_KEY :
+    if (ndata == ncols) {
+      id = grn_table_add(ctx, jc->table, NULL, 0, NULL);
+    }
+    break;
+  default :
+    break;
+  }
+  if (id) {
+    while (ndata--) { grn_obj_set_value(ctx, *cols++, id, value++, GRN_OBJ_SET); }
+  }
   jc->stack_size = begin;
 }
 
@@ -7272,7 +7297,7 @@ push_brace_close(grn_ctx *ctx, jctx *jc)
 {
   uint32_t begin;
   GRN_UINT32_POP(&jc->level, begin);
-  // do
+  // do hash event
   jc->stack_size = begin;
 }
 
@@ -7450,17 +7475,36 @@ json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
 }
 
 grn_rc
-grn_load(grn_ctx *ctx, grn_content_type input_type, const char *str, unsigned str_len)
+grn_load(grn_ctx *ctx, grn_content_type input_type,
+         const char *table, unsigned table_len,
+         const char *columns, unsigned columns_len,
+         const char *values, unsigned values_len)
 {
-  if (input_type == GRN_CONTENT_JSON) {
-    jctx jc;
-    GRN_TEXT_INIT(&jc.stack, 0);
-    GRN_UINT32_INIT(&jc.level, GRN_OBJ_VECTOR);
-    jc.stack_size = 0;
-    jc.stat = JC_BEGIN;
-    json_read(ctx, &jc, str, str_len);
-    stack_clear(ctx, &jc);
-    GRN_OBJ_FIN(ctx, &jc.level);
+  switch (input_type) {
+  case GRN_CONTENT_JSON :
+    {
+      jctx jc;
+      GRN_TEXT_INIT(&jc.stack, 0);
+      GRN_UINT32_INIT(&jc.level, GRN_OBJ_VECTOR);
+      GRN_PTR_INIT(&jc.columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      jc.stack_size = 0;
+      jc.stat = JC_BEGIN;
+      jc.table = grn_ctx_get(ctx, table, table_len);
+      grn_obj_columns(ctx, jc.table, columns, columns_len, &jc.columns);
+      json_read(ctx, &jc, values, values_len);
+      {
+        uint32_t i = GRN_BULK_VSIZE(&jc.columns) / sizeof(grn_obj *);
+        grn_obj **p = (grn_obj **)GRN_BULK_HEAD(&jc.columns);
+        while (i--) { grn_obj_unlink(ctx, *p++); }
+      }
+      stack_clear(ctx, &jc);
+      GRN_OBJ_FIN(ctx, &jc.level);
+    }
+    break;
+  case GRN_CONTENT_TSV :
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "unsupported input_type");
+    // todo
+    break;
   }
   return ctx->rc;
 }
