@@ -7206,7 +7206,11 @@ typedef enum {
   JC_STRING,
   JC_SYMBOL,
   JC_NUMBER,
-  JC_STRING_ESC
+  JC_STRING_ESC,
+  JC_UNICODE0,
+  JC_UNICODE1,
+  JC_UNICODE2,
+  JC_UNICODE3
 } jc_stat;
 
 typedef struct {
@@ -7232,6 +7236,7 @@ stack_add(grn_ctx *ctx, jctx *jc)
     GRN_TEXT_INIT(res, 0);
   }
   jc->stack_size++;
+  jc->last = res;
   return res;
 }
 
@@ -7244,40 +7249,31 @@ stack_clear(grn_ctx *ctx, jctx *jc)
   GRN_OBJ_FIN(ctx, &jc->stack);
 }
 
-static void
-push_bracket_open(grn_ctx *ctx, jctx *jc)
-{
-  jc->nest_level++;
-}
-
-static void
-push_brace_open(grn_ctx *ctx, jctx *jc)
-{
-  jc->nest_level++;
+#define GRN_UINT32_POP(obj,value) {\
+  if (GRN_BULK_VSIZE(obj) >= sizeof(uint32_t)) {\
+    GRN_BULK_INCR_LEN((obj), -(sizeof(uint32_t)));\
+    value = *(uint32_t *)(GRN_BULK_CURR(obj));\
+  } else {\
+    value = 0;\
+  }\
 }
 
 static void
 push_bracket_close(grn_ctx *ctx, jctx *jc)
 {
-  jc->nest_level--;
+  uint32_t begin;
+  GRN_UINT32_POP(&jc->level, begin);
+  // do
+  jc->stack_size = begin;
 }
 
 static void
 push_brace_close(grn_ctx *ctx, jctx *jc)
 {
-  jc->nest_level--;
-}
-
-static void
-push_char(grn_ctx *ctx, jctx *jc, char c)
-{
-  GRN_TEXT_PUTC(ctx, jc->last, c);
-}
-
-static void
-push_str(grn_ctx *ctx, jctx *jc, const char *str, uint32_t str_len)
-{
-  GRN_TEXT_PUT(ctx, jc->last, str, str_len);
+  uint32_t begin;
+  GRN_UINT32_POP(&jc->level, begin);
+  // do
+  jc->stack_size = begin;
 }
 
 static void
@@ -7297,14 +7293,15 @@ json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
       switch (c) {
       case '"' :
         jc->stat = JC_STRING;
+        stack_add(ctx, jc);
         str++;
         break;
       case '[' :
-        push_bracket_open(ctx, jc);
+        GRN_UINT32_PUT(ctx, &jc->level, jc->stack_size);
         str++;
         break;
       case '{' :
-        push_brace_open(ctx, jc);
+        GRN_UINT32_PUT(ctx, &jc->level, jc->stack_size);
         str++;
         break;
       case ':' :
@@ -7324,28 +7321,33 @@ json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
       case '+' : case '-' : case '0' : case '1' : case '2' : case '3' :
       case '4' : case '5' : case '6' : case '7' : case '8' : case '9' :
         jc->stat = JC_NUMBER;
+        stack_add(ctx, jc);
         break;
       default :
         jc->stat = JC_SYMBOL;
+        stack_add(ctx, jc);
         break;
       }
       break;
     case JC_SYMBOL :
       if ('A' <= c && c <= 'z') {
-        push_char(ctx, jc, c);
+        GRN_TEXT_PUTC(ctx, jc->last, c);
         str++;
       } else {
+        // parse symbol;
         jc->stat = JC_BEGIN;
       }
       break;
     case JC_NUMBER :
       switch (c) {
-      case '+' : case '-' : case '.' : case 'e' : case '0' : case '1' : case '2' :
-      case '3' : case '4' : case '5' : case '6' : case '7' : case '8' : case '9' :
-        push_char(ctx, jc, c);
+      case '+' : case '-' : case '.' : case 'e' : case 'E' :
+      case '0' : case '1' : case '2' : case '3' : case '4' :
+      case '5' : case '6' : case '7' : case '8' : case '9' :
+        GRN_TEXT_PUTC(ctx, jc->last, c);
         str++;
         break;
       default :
+        // parse number;
         jc->stat = JC_BEGIN;
       }
       break;
@@ -7360,7 +7362,7 @@ json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
         jc->stat = JC_BEGIN;
       default :
         if ((len = grn_charlen(ctx, str, se))) {
-          push_str(ctx, jc, str, len);
+          GRN_TEXT_PUT(ctx, jc->last, str, len);
           str += len;
         } else {
           str = se;
@@ -7369,17 +7371,79 @@ json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
       break;
     case JC_STRING_ESC :
       switch (c) {
+      case 'b' :
+        GRN_TEXT_PUTC(ctx, jc->last, '\b');
+        jc->stat = JC_STRING;
+        break;
+      case 'f' :
+        GRN_TEXT_PUTC(ctx, jc->last, '\f');
+        jc->stat = JC_STRING;
+        break;
       case 'n' :
-        push_char(ctx, jc, '\n');
+        GRN_TEXT_PUTC(ctx, jc->last, '\n');
+        jc->stat = JC_STRING;
+        break;
+      case 'r' :
+        GRN_TEXT_PUTC(ctx, jc->last, '\r');
+        jc->stat = JC_STRING;
         break;
       case 't' :
-        push_char(ctx, jc, '\t');
+        GRN_TEXT_PUTC(ctx, jc->last, '\t');
+        jc->stat = JC_STRING;
+        break;
+      case 'u' :
+        jc->stat = JC_UNICODE0;
         break;
       default :
-        push_char(ctx, jc, c);
+        GRN_TEXT_PUTC(ctx, jc->last, c);
+        jc->stat = JC_STRING;
       }
       str++;
-      jc->stat = JC_STRING;
+      break;
+    case JC_UNICODE0 :
+      if (('0' <= c && c <= '9') ||
+          ('a' <= c && c <= 'f') ||
+          ('A' <= c && c <= 'F')) {
+        GRN_TEXT_PUTC(ctx, jc->last, c);
+        jc->stat = JC_UNICODE1;
+      } else {
+        // error
+      }
+      str++;
+      break;
+    case JC_UNICODE1 :
+      if (('0' <= c && c <= '9') ||
+          ('a' <= c && c <= 'f') ||
+          ('A' <= c && c <= 'F')) {
+        GRN_TEXT_PUTC(ctx, jc->last, c);
+        jc->stat = JC_UNICODE2;
+      } else {
+        // error
+      }
+      str++;
+      break;
+    case JC_UNICODE2 :
+      if (('0' <= c && c <= '9') ||
+          ('a' <= c && c <= 'f') ||
+          ('A' <= c && c <= 'F')) {
+        GRN_TEXT_PUTC(ctx, jc->last, c);
+        jc->stat = JC_UNICODE3;
+      } else {
+        // error
+      }
+      str++;
+      break;
+    case JC_UNICODE3 :
+      if (('0' <= c && c <= '9') ||
+          ('a' <= c && c <= 'f') ||
+          ('A' <= c && c <= 'F')) {
+        GRN_TEXT_PUTC(ctx, jc->last, c);
+        /* decode */
+        jc->stat = JC_STRING;
+      } else {
+        // error
+      }
+      str++;
       break;
     }
   }
@@ -7391,10 +7455,12 @@ grn_load(grn_ctx *ctx, grn_content_type input_type, const char *str, unsigned st
   if (input_type == GRN_CONTENT_JSON) {
     jctx jc;
     GRN_TEXT_INIT(&jc.stack, 0);
+    GRN_UINT32_INIT(&jc.level, GRN_OBJ_VECTOR);
     jc.stack_size = 0;
-    jc.nest_level = 0;
     jc.stat = JC_BEGIN;
     json_read(ctx, &jc, str, str_len);
+    stack_clear(ctx, &jc);
+    GRN_OBJ_FIN(ctx, &jc.level);
   }
   return ctx->rc;
 }
