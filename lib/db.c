@@ -7201,53 +7201,24 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   return ctx->rc;
 }
 
-typedef enum {
-  JC_BEGIN,
-  JC_STRING,
-  JC_SYMBOL,
-  JC_NUMBER,
-  JC_STRING_ESC,
-  JC_UNICODE0,
-  JC_UNICODE1,
-  JC_UNICODE2,
-  JC_UNICODE3
-} jc_stat;
-
-typedef struct {
-  grn_obj stack;
-  grn_obj level;
-  grn_obj columns;
-  grn_obj *table;
-  grn_obj *last;
-  int stack_size;
-  jc_stat stat;
-} jctx;
+/* grn_load */
 
 static grn_obj *
-stack_add(grn_ctx *ctx, jctx *jc)
+values_add(grn_ctx *ctx, grn_loader *loader)
 {
   grn_obj *res;
-  uint32_t curr_size = jc->stack_size * sizeof(grn_obj);
-  if (curr_size < GRN_TEXT_LEN(&jc->stack)) {
-    res = (grn_obj *)(GRN_TEXT_VALUE(&jc->stack) + curr_size);
+  uint32_t curr_size = loader->values_size * sizeof(grn_obj);
+  if (curr_size < GRN_TEXT_LEN(&loader->values)) {
+    res = (grn_obj *)(GRN_TEXT_VALUE(&loader->values) + curr_size);
     res->header.domain = GRN_DB_TEXT;
   } else {
-    if (grn_bulk_space(ctx, &jc->stack, sizeof(grn_obj))) { return NULL; }
-    res = (grn_obj *)(GRN_TEXT_VALUE(&jc->stack) + curr_size);
+    if (grn_bulk_space(ctx, &loader->values, sizeof(grn_obj))) { return NULL; }
+    res = (grn_obj *)(GRN_TEXT_VALUE(&loader->values) + curr_size);
     GRN_TEXT_INIT(res, 0);
   }
-  jc->stack_size++;
-  jc->last = res;
+  loader->values_size++;
+  loader->last = res;
   return res;
-}
-
-static void
-stack_clear(grn_ctx *ctx, jctx *jc)
-{
-  uint32_t i = jc->stack_size;
-  grn_obj *o = (grn_obj *)(GRN_TEXT_VALUE(&jc->stack));
-  while (i--) { GRN_OBJ_FIN(ctx, o++); }
-  GRN_OBJ_FIN(ctx, &jc->stack);
 }
 
 #define GRN_UINT32_POP(obj,value) {\
@@ -7260,27 +7231,27 @@ stack_clear(grn_ctx *ctx, jctx *jc)
 }
 
 static void
-push_bracket_close(grn_ctx *ctx, jctx *jc)
+push_bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
   grn_obj *value;
   uint32_t begin, ndata;
   grn_id id = GRN_ID_NIL;
-  uint32_t ncols = GRN_BULK_VSIZE(&jc->columns) / sizeof(grn_obj *);
-  grn_obj **cols = (grn_obj **)GRN_BULK_HEAD(&jc->columns);
-  GRN_UINT32_POP(&jc->level, begin);
-  value = ((grn_obj *)(GRN_TEXT_VALUE(&jc->stack))) + begin;
-  ndata = jc->stack_size - begin;
-  switch (jc->table->header.type) {
+  uint32_t ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
+  grn_obj **cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
+  GRN_UINT32_POP(&loader->level, begin);
+  value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
+  ndata = loader->values_size - begin;
+  switch (loader->table->header.type) {
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
     if (ndata == ncols + 1) {
-      id = grn_table_add(ctx, jc->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
+      id = grn_table_add(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
       value++;
     }
     break;
   case GRN_TABLE_NO_KEY :
     if (ndata == ncols) {
-      id = grn_table_add(ctx, jc->table, NULL, 0, NULL);
+      id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
     }
     break;
   default :
@@ -7289,44 +7260,44 @@ push_bracket_close(grn_ctx *ctx, jctx *jc)
   if (id) {
     while (ndata--) { grn_obj_set_value(ctx, *cols++, id, value++, GRN_OBJ_SET); }
   }
-  jc->stack_size = begin;
+  loader->values_size = begin;
 }
 
 static void
-push_brace_close(grn_ctx *ctx, jctx *jc)
+push_brace_close(grn_ctx *ctx, grn_loader *loader)
 {
   uint32_t begin;
-  GRN_UINT32_POP(&jc->level, begin);
+  GRN_UINT32_POP(&loader->level, begin);
   // do hash event
-  jc->stack_size = begin;
+  loader->values_size = begin;
 }
 
 static void
-json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
+json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
 {
   char c;
   int len;
   const char *se = str + str_len;
   while (str < se) {
     c = *str;
-    switch (jc->stat) {
-    case JC_BEGIN :
+    switch (loader->stat) {
+    case GRN_LOADER_BEGIN :
       if ((len = grn_isspace(str, ctx->encoding))) {
         str += len;
         continue;
       }
       switch (c) {
       case '"' :
-        jc->stat = JC_STRING;
-        stack_add(ctx, jc);
+        loader->stat = GRN_LOADER_STRING;
+        values_add(ctx, loader);
         str++;
         break;
       case '[' :
-        GRN_UINT32_PUT(ctx, &jc->level, jc->stack_size);
+        GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
         str++;
         break;
       case '{' :
-        GRN_UINT32_PUT(ctx, &jc->level, jc->stack_size);
+        GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
         str++;
         break;
       case ':' :
@@ -7336,135 +7307,135 @@ json_read(grn_ctx *ctx, jctx *jc, const char *str, unsigned str_len)
         str++;
         break;
       case ']' :
-        push_bracket_close(ctx, jc);
+        push_bracket_close(ctx, loader);
         str++;
         break;
       case '}' :
-        push_brace_close(ctx, jc);
+        push_brace_close(ctx, loader);
         str++;
         break;
       case '+' : case '-' : case '0' : case '1' : case '2' : case '3' :
       case '4' : case '5' : case '6' : case '7' : case '8' : case '9' :
-        jc->stat = JC_NUMBER;
-        stack_add(ctx, jc);
+        loader->stat = GRN_LOADER_NUMBER;
+        values_add(ctx, loader);
         break;
       default :
-        jc->stat = JC_SYMBOL;
-        stack_add(ctx, jc);
+        loader->stat = GRN_LOADER_SYMBOL;
+        values_add(ctx, loader);
         break;
       }
       break;
-    case JC_SYMBOL :
+    case GRN_LOADER_SYMBOL :
       if ('A' <= c && c <= 'z') {
-        GRN_TEXT_PUTC(ctx, jc->last, c);
+        GRN_TEXT_PUTC(ctx, loader->last, c);
         str++;
       } else {
         // parse symbol;
-        jc->stat = JC_BEGIN;
+        loader->stat = GRN_LOADER_BEGIN;
       }
       break;
-    case JC_NUMBER :
+    case GRN_LOADER_NUMBER :
       switch (c) {
       case '+' : case '-' : case '.' : case 'e' : case 'E' :
       case '0' : case '1' : case '2' : case '3' : case '4' :
       case '5' : case '6' : case '7' : case '8' : case '9' :
-        GRN_TEXT_PUTC(ctx, jc->last, c);
+        GRN_TEXT_PUTC(ctx, loader->last, c);
         str++;
         break;
       default :
         // parse number;
-        jc->stat = JC_BEGIN;
+        loader->stat = GRN_LOADER_BEGIN;
       }
       break;
-    case JC_STRING :
+    case GRN_LOADER_STRING :
       switch (c) {
       case '\\' :
-        jc->stat = JC_STRING_ESC;
+        loader->stat = GRN_LOADER_STRING_ESC;
         str++;
         break;
       case '"' :
         str++;
-        jc->stat = JC_BEGIN;
+        loader->stat = GRN_LOADER_BEGIN;
       default :
         if ((len = grn_charlen(ctx, str, se))) {
-          GRN_TEXT_PUT(ctx, jc->last, str, len);
+          GRN_TEXT_PUT(ctx, loader->last, str, len);
           str += len;
         } else {
           str = se;
         }
       }
       break;
-    case JC_STRING_ESC :
+    case GRN_LOADER_STRING_ESC :
       switch (c) {
       case 'b' :
-        GRN_TEXT_PUTC(ctx, jc->last, '\b');
-        jc->stat = JC_STRING;
+        GRN_TEXT_PUTC(ctx, loader->last, '\b');
+        loader->stat = GRN_LOADER_STRING;
         break;
       case 'f' :
-        GRN_TEXT_PUTC(ctx, jc->last, '\f');
-        jc->stat = JC_STRING;
+        GRN_TEXT_PUTC(ctx, loader->last, '\f');
+        loader->stat = GRN_LOADER_STRING;
         break;
       case 'n' :
-        GRN_TEXT_PUTC(ctx, jc->last, '\n');
-        jc->stat = JC_STRING;
+        GRN_TEXT_PUTC(ctx, loader->last, '\n');
+        loader->stat = GRN_LOADER_STRING;
         break;
       case 'r' :
-        GRN_TEXT_PUTC(ctx, jc->last, '\r');
-        jc->stat = JC_STRING;
+        GRN_TEXT_PUTC(ctx, loader->last, '\r');
+        loader->stat = GRN_LOADER_STRING;
         break;
       case 't' :
-        GRN_TEXT_PUTC(ctx, jc->last, '\t');
-        jc->stat = JC_STRING;
+        GRN_TEXT_PUTC(ctx, loader->last, '\t');
+        loader->stat = GRN_LOADER_STRING;
         break;
       case 'u' :
-        jc->stat = JC_UNICODE0;
+        loader->stat = GRN_LOADER_UNICODE0;
         break;
       default :
-        GRN_TEXT_PUTC(ctx, jc->last, c);
-        jc->stat = JC_STRING;
+        GRN_TEXT_PUTC(ctx, loader->last, c);
+        loader->stat = GRN_LOADER_STRING;
       }
       str++;
       break;
-    case JC_UNICODE0 :
+    case GRN_LOADER_UNICODE0 :
       if (('0' <= c && c <= '9') ||
           ('a' <= c && c <= 'f') ||
           ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, jc->last, c);
-        jc->stat = JC_UNICODE1;
+        GRN_TEXT_PUTC(ctx, loader->last, c);
+        loader->stat = GRN_LOADER_UNICODE1;
       } else {
         // error
       }
       str++;
       break;
-    case JC_UNICODE1 :
+    case GRN_LOADER_UNICODE1 :
       if (('0' <= c && c <= '9') ||
           ('a' <= c && c <= 'f') ||
           ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, jc->last, c);
-        jc->stat = JC_UNICODE2;
+        GRN_TEXT_PUTC(ctx, loader->last, c);
+        loader->stat = GRN_LOADER_UNICODE2;
       } else {
         // error
       }
       str++;
       break;
-    case JC_UNICODE2 :
+    case GRN_LOADER_UNICODE2 :
       if (('0' <= c && c <= '9') ||
           ('a' <= c && c <= 'f') ||
           ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, jc->last, c);
-        jc->stat = JC_UNICODE3;
+        GRN_TEXT_PUTC(ctx, loader->last, c);
+        loader->stat = GRN_LOADER_UNICODE3;
       } else {
         // error
       }
       str++;
       break;
-    case JC_UNICODE3 :
+    case GRN_LOADER_UNICODE3 :
       if (('0' <= c && c <= '9') ||
           ('a' <= c && c <= 'f') ||
           ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, jc->last, c);
+        GRN_TEXT_PUTC(ctx, loader->last, c);
         /* decode */
-        jc->stat = JC_STRING;
+        loader->stat = GRN_LOADER_STRING;
       } else {
         // error
       }
@@ -7480,31 +7451,27 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
          const char *columns, unsigned columns_len,
          const char *values, unsigned values_len)
 {
+  grn_loader *loader;
+  if (!ctx || !ctx->impl) {
+    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
+    return ctx->rc;
+  }
+  GRN_API_ENTER;
+  loader = &ctx->impl->loader;
   switch (input_type) {
   case GRN_CONTENT_JSON :
-    {
-      jctx jc;
-      GRN_TEXT_INIT(&jc.stack, 0);
-      GRN_UINT32_INIT(&jc.level, GRN_OBJ_VECTOR);
-      GRN_PTR_INIT(&jc.columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      jc.stack_size = 0;
-      jc.stat = JC_BEGIN;
-      jc.table = grn_ctx_get(ctx, table, table_len);
-      grn_obj_columns(ctx, jc.table, columns, columns_len, &jc.columns);
-      json_read(ctx, &jc, values, values_len);
-      {
-        uint32_t i = GRN_BULK_VSIZE(&jc.columns) / sizeof(grn_obj *);
-        grn_obj **p = (grn_obj **)GRN_BULK_HEAD(&jc.columns);
-        while (i--) { grn_obj_unlink(ctx, *p++); }
-      }
-      stack_clear(ctx, &jc);
-      GRN_OBJ_FIN(ctx, &jc.level);
+    if (table && table_len) {
+      loader->table = grn_ctx_get(ctx, table, table_len);
     }
+    if (columns && columns_len) {
+      grn_obj_columns(ctx, loader->table, columns, columns_len, &loader->columns);
+    }
+    json_read(ctx, loader, values, values_len);
     break;
   case GRN_CONTENT_TSV :
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "unsupported input_type");
     // todo
     break;
   }
-  return ctx->rc;
+  GRN_API_RETURN(ctx->rc);
 }

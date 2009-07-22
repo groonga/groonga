@@ -174,6 +174,33 @@ grn_ctx_impl_init_malloc(grn_ctx *ctx)
 #endif
 
 static void
+grn_loader_init(grn_loader *loader)
+{
+  GRN_TEXT_INIT(&loader->values, 0);
+  GRN_UINT32_INIT(&loader->level, GRN_OBJ_VECTOR);
+  GRN_PTR_INIT(&loader->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  loader->table = NULL;
+  loader->last = NULL;
+  loader->values_size = 0;
+  loader->stat = GRN_LOADER_BEGIN;
+}
+
+void
+grn_ctx_loader_clear(grn_ctx *ctx)
+{
+  grn_loader *loader = &ctx->impl->loader;
+  grn_obj *v = (grn_obj *)(GRN_BULK_HEAD(&loader->values));
+  grn_obj **p = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
+  uint32_t i = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
+  while (i--) { grn_obj_unlink(ctx, *p++); }
+  for (i = loader->values_size; i; i--) { GRN_OBJ_FIN(ctx, v++); }
+  GRN_OBJ_FIN(ctx, &loader->values);
+  GRN_OBJ_FIN(ctx, &loader->level);
+  GRN_OBJ_FIN(ctx, &loader->columns);
+  grn_loader_init(loader);
+}
+
+static void
 grn_ctx_impl_init(grn_ctx *ctx)
 {
   if (!(ctx->impl = GRN_MALLOC(sizeof(struct _grn_ctx_impl)))) { return; }
@@ -227,6 +254,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
   GRN_TEXT_INIT(&ctx->impl->subbuf, 0);
+  grn_loader_init(&ctx->impl->loader);
 }
 
 void
@@ -352,6 +380,7 @@ grn_ctx_fin(grn_ctx *ctx)
     }
     grn_io_anon_unmap(ctx, &ctx->impl->mi, sizeof(grn_io_mapinfo) * N_SEGMENTS);
     grn_hash_close(ctx, ctx->impl->qe);
+    grn_ctx_loader_clear(ctx);
     GRN_FREE(ctx->impl);
   }
   ctx->stat = GRN_QL_FIN;

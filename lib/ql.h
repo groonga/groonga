@@ -125,6 +125,28 @@ grn_rc grn_del(const char *key);
 
 /**** grn_ctx_impl ****/
 
+typedef enum {
+  GRN_LOADER_BEGIN,
+  GRN_LOADER_STRING,
+  GRN_LOADER_SYMBOL,
+  GRN_LOADER_NUMBER,
+  GRN_LOADER_STRING_ESC,
+  GRN_LOADER_UNICODE0,
+  GRN_LOADER_UNICODE1,
+  GRN_LOADER_UNICODE2,
+  GRN_LOADER_UNICODE3
+} grn_loader_stat;
+
+typedef struct {
+  grn_obj values;
+  grn_obj level;
+  grn_obj columns;
+  grn_obj *table;
+  grn_obj *last;
+  int values_size;
+  grn_loader_stat stat;
+} grn_loader;
+
 #define GRN_STACK_SIZE 256
 
 struct _grn_ctx_impl {
@@ -148,6 +170,9 @@ struct _grn_ctx_impl {
   grn_obj *stack[GRN_STACK_SIZE];
   uint32_t stack_curr;
   grn_hash *qe;
+
+  /* loader portion */
+  grn_loader loader;
 
   /* ql portion */
   uint32_t ncells;
