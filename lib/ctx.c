@@ -182,6 +182,7 @@ grn_loader_init(grn_loader *loader)
   loader->table = NULL;
   loader->last = NULL;
   loader->values_size = 0;
+  loader->nrecords = 0;
   loader->stat = GRN_LOADER_BEGIN;
 }
 

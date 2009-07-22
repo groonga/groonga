@@ -1786,6 +1786,11 @@ GRN_API grn_rc grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output
                           unsigned drilldown_output_columns_len,
                           const char *drilldown_sortby, unsigned drilldown_sortby_len);
 
+GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
+                        const char *table, unsigned table_len,
+                        const char *columns, unsigned columns_len,
+                        const char *values, unsigned values_len);
+
 /* ql */
 
 #define GRN_QL_MORE                    (0x01<<0)

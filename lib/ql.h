@@ -126,7 +126,7 @@ grn_rc grn_del(const char *key);
 /**** grn_ctx_impl ****/
 
 typedef enum {
-  GRN_LOADER_BEGIN,
+  GRN_LOADER_BEGIN = 0,
   GRN_LOADER_STRING,
   GRN_LOADER_SYMBOL,
   GRN_LOADER_NUMBER,
@@ -143,7 +143,8 @@ typedef struct {
   grn_obj columns;
   grn_obj *table;
   grn_obj *last;
-  int values_size;
+  uint32_t values_size;
+  uint32_t nrecords;
   grn_loader_stat stat;
 } grn_loader;
 

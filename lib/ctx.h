@@ -390,6 +390,7 @@ grn_rc grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv);
 
 void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);
 void grn_ctx_qe_fin(grn_ctx *ctx);
+void grn_ctx_loader_clear(grn_ctx *ctx);
 
 /**** receive handler ****/
 

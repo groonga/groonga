@@ -7259,6 +7259,7 @@ push_bracket_close(grn_ctx *ctx, grn_loader *loader)
   }
   if (id) {
     while (ndata--) { grn_obj_set_value(ctx, *cols++, id, value++, GRN_OBJ_SET); }
+    loader->nrecords++;
   }
   loader->values_size = begin;
 }
@@ -7461,10 +7462,11 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
   switch (input_type) {
   case GRN_CONTENT_JSON :
     if (table && table_len) {
+      grn_ctx_loader_clear(ctx);
       loader->table = grn_ctx_get(ctx, table, table_len);
-    }
-    if (columns && columns_len) {
-      grn_obj_columns(ctx, loader->table, columns, columns_len, &loader->columns);
+      if (loader->table && columns && columns_len) {
+        grn_obj_columns(ctx, loader->table, columns, columns_len, &loader->columns);
+      }
     }
     json_read(ctx, loader, values, values_len);
     break;

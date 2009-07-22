@@ -887,6 +887,25 @@ define_selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   return ctx->rc;
 }
 
+static grn_rc
+loader(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *outbuf = grn_ctx_pop(ctx);
+  grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
+  if (nvars == 4) {
+    grn_load(ctx, GRN_CONTENT_JSON,
+             GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
+             GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
+             GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value));
+    if (!GRN_BULK_VSIZE(&ctx->impl->loader.level)) {
+      grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
+    }
+  }
+  grn_ctx_push(ctx, outbuf);
+  return ctx->rc;
+}
+
 #define DEF_VAR(v,name_str) {\
   (v).name = (name_str);\
   (v).name_size = strlen(name_str);\
@@ -913,4 +932,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[13], "drilldown_output_columns");
   DEF_VAR(vars[14], "drilldown_sortby");
   grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 15, vars);
+  DEF_VAR(vars[0], "input_type");
+  DEF_VAR(vars[1], "table");
+  DEF_VAR(vars[2], "columns");
+  DEF_VAR(vars[3], "values");
+  grn_proc_create(ctx, "/q/loader", 9, NULL, loader, NULL, NULL, 4, vars);
 }
