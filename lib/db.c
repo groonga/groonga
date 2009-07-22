@@ -7233,7 +7233,7 @@ values_add(grn_ctx *ctx, grn_loader *loader)
 static void
 push_bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
-  grn_obj *value;
+  grn_obj *value, *col;
   uint32_t begin, ndata;
   grn_id id = GRN_ID_NIL;
   uint32_t ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
@@ -7241,25 +7241,39 @@ push_bracket_close(grn_ctx *ctx, grn_loader *loader)
   GRN_UINT32_POP(&loader->level, begin);
   value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
   ndata = loader->values_size - begin;
-  switch (loader->table->header.type) {
-  case GRN_TABLE_HASH_KEY :
-  case GRN_TABLE_PAT_KEY :
-    if (ndata == ncols + 1) {
-      id = grn_table_add(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
-      value++;
+  if (loader->table) {
+    switch (loader->table->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+      if (ndata == ncols + 1) {
+        id = grn_table_add(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
+        value++;
+      } else if (!ncols) {
+        while (ndata--) {
+          col = grn_obj_column(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+          GRN_PTR_PUT(ctx, &loader->columns, col);
+          value++;
+        }
+      }
+      break;
+    case GRN_TABLE_NO_KEY :
+      if (ndata == ncols) {
+        id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+      } else if (!ncols) {
+        while (ndata--) {
+          col = grn_obj_column(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+          GRN_PTR_PUT(ctx, &loader->columns, col);
+          value++;
+        }
+      }
+      break;
+    default :
+      break;
     }
-    break;
-  case GRN_TABLE_NO_KEY :
-    if (ndata == ncols) {
-      id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+    if (id) {
+      while (ndata--) { grn_obj_set_value(ctx, *cols++, id, value++, GRN_OBJ_SET); }
+      loader->nrecords++;
     }
-    break;
-  default :
-    break;
-  }
-  if (id) {
-    while (ndata--) { grn_obj_set_value(ctx, *cols++, id, value++, GRN_OBJ_SET); }
-    loader->nrecords++;
   }
   loader->values_size = begin;
 }
