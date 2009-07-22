@@ -1774,17 +1774,17 @@ GRN_API grn_rc grn_obj_format_close(grn_ctx *ctx, grn_obj_format *format);
 GRN_API grn_rc grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                           const char *table, unsigned table_len,
                           const char *match_column, unsigned match_column_len,
-                          int offset, int hits,
-                          const char *output_columns, unsigned output_columns_len,
                           const char *query, unsigned query_len,
                           const char *filter, unsigned filter_len,
                           const char *foreach, unsigned foreach_len,
                           const char *sortby, unsigned sortby_len,
+                          const char *output_columns, unsigned output_columns_len,
+                          int offset, int hits,
                           const char *drilldown, unsigned drilldown_len,
-                          int drilldown_offset, int drilldown_hits,
+                          const char *drilldown_sortby, unsigned drilldown_sortby_len,
                           const char *drilldown_output_columns,
                           unsigned drilldown_output_columns_len,
-                          const char *drilldown_sortby, unsigned drilldown_sortby_len);
+                          int drilldown_offset, int drilldown_hits);
 
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned table_len,

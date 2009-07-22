@@ -850,22 +850,22 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   uint32_t nvars;
   grn_obj *outbuf = grn_ctx_pop(ctx);
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
-  if (nvars == 14) {
+  if (nvars == 15) {
     grn_search(ctx, outbuf, GRN_CONTENT_JSON,
-               GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
-               grn_atoi(GRN_TEXT_VALUE(&vars[2].value), GRN_BULK_CURR(&vars[2].value), NULL),
-               grn_atoi(GRN_TEXT_VALUE(&vars[3].value), GRN_BULK_CURR(&vars[3].value), NULL),
+               GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
+               GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value),
                GRN_TEXT_VALUE(&vars[4].value), GRN_TEXT_LEN(&vars[4].value),
                GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value),
                GRN_TEXT_VALUE(&vars[6].value), GRN_TEXT_LEN(&vars[6].value),
                GRN_TEXT_VALUE(&vars[7].value), GRN_TEXT_LEN(&vars[7].value),
-               GRN_TEXT_VALUE(&vars[8].value), GRN_TEXT_LEN(&vars[8].value),
-               GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
-               grn_atoi(GRN_TEXT_VALUE(&vars[10].value), GRN_BULK_CURR(&vars[10].value), NULL),
-               grn_atoi(GRN_TEXT_VALUE(&vars[11].value), GRN_BULK_CURR(&vars[11].value), NULL),
+               grn_atoi(GRN_TEXT_VALUE(&vars[8].value), GRN_BULK_CURR(&vars[8].value), NULL),
+               grn_atoi(GRN_TEXT_VALUE(&vars[9].value), GRN_BULK_CURR(&vars[9].value), NULL),
+               GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
+               GRN_TEXT_VALUE(&vars[11].value), GRN_TEXT_LEN(&vars[11].value),
                GRN_TEXT_VALUE(&vars[12].value), GRN_TEXT_LEN(&vars[12].value),
-               GRN_TEXT_VALUE(&vars[13].value), GRN_TEXT_LEN(&vars[13].value));
+               grn_atoi(GRN_TEXT_VALUE(&vars[13].value), GRN_BULK_CURR(&vars[13].value), NULL),
+               grn_atoi(GRN_TEXT_VALUE(&vars[14].value), GRN_BULK_CURR(&vars[14].value), NULL));
   }
   grn_ctx_push(ctx, outbuf);
   return ctx->rc;
@@ -915,23 +915,24 @@ loader(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
 {
-  grn_expr_var vars[15];
+  grn_expr_var vars[16];
   DEF_VAR(vars[0], "name");
-  DEF_VAR(vars[1], "table");
-  DEF_VAR(vars[2], "match_column");
-  DEF_VAR(vars[3], "offset");
-  DEF_VAR(vars[4], "hits");
-  DEF_VAR(vars[5], "output_columns");
-  DEF_VAR(vars[6], "query");
-  DEF_VAR(vars[7], "filter");
-  DEF_VAR(vars[8], "foreach");
-  DEF_VAR(vars[9], "sortby");
-  DEF_VAR(vars[10], "drilldown");
-  DEF_VAR(vars[11], "drilldown_offset");
-  DEF_VAR(vars[12], "drilldown_hits");
+  DEF_VAR(vars[1], "output_type");
+  DEF_VAR(vars[2], "table");
+  DEF_VAR(vars[3], "match_column");
+  DEF_VAR(vars[4], "query");
+  DEF_VAR(vars[5], "filter");
+  DEF_VAR(vars[6], "foreach");
+  DEF_VAR(vars[7], "sortby");
+  DEF_VAR(vars[8], "output_columns");
+  DEF_VAR(vars[9], "offset");
+  DEF_VAR(vars[10], "hits");
+  DEF_VAR(vars[11], "drilldown");
+  DEF_VAR(vars[12], "drilldown_sortby");
   DEF_VAR(vars[13], "drilldown_output_columns");
-  DEF_VAR(vars[14], "drilldown_sortby");
-  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 15, vars);
+  DEF_VAR(vars[14], "drilldown_offset");
+  DEF_VAR(vars[15], "drilldown_hits");
+  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 16, vars);
   DEF_VAR(vars[0], "input_type");
   DEF_VAR(vars[1], "table");
   DEF_VAR(vars[2], "columns");
