@@ -475,7 +475,7 @@ insert_bookmark(const char *tag_string, grn_id doc_id,
 }
 
 static void
-prepare_bookmark_scheme(void)
+prepare_bookmark_schema(void)
 {
   bookmarks = grn_table_create(&context, "bookmarks", 4, NULL,
                                 GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT,
@@ -573,7 +573,7 @@ test_table_select_equal_table(void)
   GRN_UINT32_INIT(&int_buffer, 0);
 
   prepare_data(&text_buffer, &int_buffer);
-  prepare_bookmark_scheme();
+  prepare_bookmark_schema();
 
   GRN_RECORD_INIT(&record_buffer, 0, grn_obj_id(&context, docs));
   insert_bookmark("hoge", doc_id, &text_buffer, &record_buffer);
