@@ -5422,6 +5422,9 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 
 #define do_eq(x,y,r) {\
   switch (x->header.domain) {\
+  case GRN_DB_VOID :\
+    r = 0;\
+    break;\
   case GRN_DB_INT32 :\
     {\
       int32_t x_ = GRN_INT32_VALUE(x);\
@@ -5494,7 +5497,30 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   default :\
-    r = 0;\
+    {\
+      grn_obj *x_domain;\
+      x_domain = grn_ctx_at(ctx, x->header.domain);\
+      switch (x_domain->header.type) {\
+      case GRN_TABLE_HASH_KEY :\
+      case GRN_TABLE_PAT_KEY :\
+      case GRN_TABLE_NO_KEY :\
+        {\
+            grn_obj *y_domain;\
+            y_domain = grn_ctx_at(ctx, y->header.domain);\
+            if (y_domain &&\
+                x_domain->header.type == y_domain->header.type &&\
+                x_domain->header.domain == y_domain->header.domain) {\
+              r = GRN_RECORD_VALUE(x) == GRN_RECORD_VALUE(y);\
+            } else {\
+              r = 0;\
+            }\
+        }\
+        break;\
+      default :\
+        r = 0;\
+        break;\
+      }\
+    }\
     break;\
   }\
 }
