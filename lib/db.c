@@ -4216,9 +4216,13 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_PROC :
       {
+        uint32_t i;
         grn_proc *p = (grn_proc *)obj;
         if (obj->header.domain) {
           grn_hash_delete(ctx, ctx->impl->qe, &obj->header.domain, sizeof(grn_id), NULL);
+        }
+        for (i = 0; i < p->nvars; i++) {
+          grn_obj_close(ctx, &p->vars[i].value);
         }
         GRN_REALLOC(p->vars, 0);
         grn_obj_close(ctx, &p->name_buf);
