@@ -7234,10 +7234,9 @@ static void
 push_bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
   grn_obj *value, *col;
-  uint32_t begin, ndata;
   grn_id id = GRN_ID_NIL;
-  uint32_t ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   grn_obj **cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
+  uint32_t begin, ndata, ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   GRN_UINT32_POP(&loader->level, begin);
   value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
   ndata = loader->values_size - begin;
@@ -7247,6 +7246,7 @@ push_bracket_close(grn_ctx *ctx, grn_loader *loader)
     case GRN_TABLE_PAT_KEY :
       if (ndata == ncols + 1) {
         id = grn_table_add(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
+        ndata--;
         value++;
       } else if (!ncols) {
         while (ndata--) {
@@ -7278,12 +7278,45 @@ push_bracket_close(grn_ctx *ctx, grn_loader *loader)
   loader->values_size = begin;
 }
 
+#define PKEY_NAME ":key"
+
 static void
 push_brace_close(grn_ctx *ctx, grn_loader *loader)
 {
   uint32_t begin;
+  grn_obj *value, *ve;
+  grn_id id = GRN_ID_NIL;
   GRN_UINT32_POP(&loader->level, begin);
-  // do hash event
+  value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
+  ve = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + loader->values_size;
+  if (loader->table) {
+    switch (loader->table->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+      if (value + 1 < ve && GRN_TEXT_LEN(value) == strlen(PKEY_NAME) &&
+          !memcmp(GRN_TEXT_VALUE(value), PKEY_NAME, strlen(PKEY_NAME))) {
+        value++;
+        id = grn_table_add(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
+        value++;
+      }
+      break;
+    case GRN_TABLE_NO_KEY :
+      id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+      break;
+    default :
+      break;
+    }
+    if (id) {
+      while (value + 1 < ve) {
+        grn_obj *col = grn_obj_column(ctx, loader->table,
+                                      GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        value++;
+        if (col) { grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET); }
+        value++;
+      }
+      loader->nrecords++;
+    }
+  }
   loader->values_size = begin;
 }
 
