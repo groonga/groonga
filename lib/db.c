@@ -7747,6 +7747,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         }
 #endif /* CAST_IN_JSON_READ */
         loader->stat = GRN_LOADER_BEGIN;
+        break;
       }
       break;
     case GRN_LOADER_STRING :
@@ -7758,6 +7759,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
       case '"' :
         str++;
         loader->stat = GRN_LOADER_BEGIN;
+        break;
       default :
         if ((len = grn_charlen(ctx, str, se))) {
           GRN_TEXT_PUT(ctx, loader->last, str, len);
@@ -7765,6 +7767,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         } else {
           str = se;
         }
+        break;
       }
       break;
     case GRN_LOADER_STRING_ESC :
@@ -7795,6 +7798,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
       default :
         GRN_TEXT_PUTC(ctx, loader->last, c);
         loader->stat = GRN_LOADER_STRING;
+        break;
       }
       str++;
       break;
