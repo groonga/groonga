@@ -34,6 +34,9 @@ typedef unsigned grn_id;
 #define GRN_ID_NIL                     (0x00)
 #define GRN_ID_MAX                     (0x3fffffff)
 
+#define GRN_TRUE                       (1)
+#define GRN_FALSE                      (0)
+
 typedef enum {
   GRN_SUCCESS = 0,
   GRN_END_OF_DATA = 1,
@@ -200,7 +203,7 @@ GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
 GRN_API grn_encoding grn_get_default_encoding(void);
 
 /**
- * grn_get_default_encoding:
+ * grn_set_default_encoding:
  * @encoding: 変更後のデフォルトのencodingを指定します。
  *
  * デフォルトのencodingを変更します。
@@ -1131,14 +1134,14 @@ GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *ne
 GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 
 /**
- * grn_obj_mutate:
+ * grn_obj_reinit:
  * @obj: 対象object
  * @domain: 変更後のobjの型
  * @flags: GRN_OBJ_VECTORを指定するとdomain型の値のベクタを格納するオブジェクトになる。
  *
  * objの型を変更する。objはGRN_OBJ_INITマクロなどで初期化済みでなければならない。
  **/
-GRN_API grn_rc grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags);
+GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags);
 
 /**
  * grn_obj_unlink:
@@ -1624,6 +1627,8 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_TEXT_VALUE(obj) GRN_BULK_HEAD(obj)
 #define GRN_TEXT_LEN(obj) GRN_BULK_VSIZE(obj)
 
+#define GRN_BOOL_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_BOOL)
 #define GRN_INT32_INIT(obj,flags) \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_INT32)
 #define GRN_UINT32_INIT(obj,flags) \
@@ -1641,6 +1646,10 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_PVECTOR : GRN_PTR,\
                ((flags) & GRN_OBJ_DO_SHALLOW_COPY), (domain))
 
+#define GRN_BOOL_SET(ctx,obj,val) do {\
+  unsigned char _val = (unsigned char)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(unsigned char));\
+} while (0)
 #define GRN_INT32_SET(ctx,obj,val) do {\
   int _val = (int)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int));\
@@ -1674,6 +1683,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_PTR_SET_AT(ctx,obj,offset,val)
   */
 
+#define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT32_VALUE(obj) (*((unsigned int *)GRN_BULK_HEAD(obj)))
 #define GRN_INT64_VALUE(obj) (*((long long int *)GRN_BULK_HEAD(obj)))
@@ -1684,11 +1694,16 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE_AT(obj,offset) (((grn_obj **)GRN_BULK_HEAD(obj))[offset])
 
+#define GRN_BOOL_PUT(ctx,obj,val) do {\
+  unsigned char _val = (unsigned char)(val);\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(unsigned char));\
+} while (0)
 #define GRN_INT32_PUT(ctx,obj,val) do {\
   int _val = (int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int));\
 } while (0)
 #define GRN_UINT32_PUT(ctx,obj,val) do {\
-  unsigned int _val = (unsigned  int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(unsigned int));\
+  unsigned int _val = (unsigned  int)(val);\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(unsigned int));\
 } while (0)
 #define GRN_INT64_PUT(ctx,obj,val) do {\
   long long int _val = (long long int)(val);\

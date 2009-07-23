@@ -2546,6 +2546,292 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
   return range;
 }
 
+grn_rc
+grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (src->header.domain) {
+  case GRN_DB_INT32 :
+    switch (dest->header.domain) {
+    case GRN_DB_INT32 :
+      GRN_INT32_SET(ctx, dest, GRN_INT32_VALUE(src));
+      break;
+    case GRN_DB_UINT32 :
+      GRN_UINT32_SET(ctx, dest, GRN_INT32_VALUE(src));
+      break;
+    case GRN_DB_INT64 :
+      GRN_INT64_SET(ctx, dest, GRN_INT32_VALUE(src));
+      break;
+    case GRN_DB_UINT64 :
+    case GRN_DB_TIME :
+      GRN_UINT64_SET(ctx, dest, GRN_INT32_VALUE(src));
+      break;
+    case GRN_DB_FLOAT :
+      GRN_FLOAT_SET(ctx, dest, GRN_INT32_VALUE(src));
+      break;
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      grn_text_itoa(ctx, dest, GRN_INT32_VALUE(src));
+      break;
+    default :
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  case GRN_DB_UINT32 :
+    switch (dest->header.domain) {
+    case GRN_DB_INT32 :
+      GRN_INT32_SET(ctx, dest, GRN_UINT32_VALUE(src));
+      break;
+    case GRN_DB_UINT32 :
+      GRN_UINT32_SET(ctx, dest, GRN_UINT32_VALUE(src));
+      break;
+    case GRN_DB_INT64 :
+      GRN_INT64_SET(ctx, dest, GRN_UINT32_VALUE(src));
+      break;
+    case GRN_DB_UINT64 :
+    case GRN_DB_TIME :
+      GRN_UINT64_SET(ctx, dest, GRN_UINT32_VALUE(src));
+      break;
+    case GRN_DB_FLOAT :
+      GRN_FLOAT_SET(ctx, dest, GRN_UINT32_VALUE(src));
+      break;
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      grn_text_lltoa(ctx, dest, GRN_UINT32_VALUE(src));
+      break;
+    default :
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  case GRN_DB_INT64 :
+    switch (dest->header.domain) {
+    case GRN_DB_INT32 :
+      GRN_INT32_SET(ctx, dest, GRN_INT64_VALUE(src));
+      break;
+    case GRN_DB_UINT32 :
+      GRN_UINT32_SET(ctx, dest, GRN_INT64_VALUE(src));
+      break;
+    case GRN_DB_INT64 :
+      GRN_INT64_SET(ctx, dest, GRN_INT64_VALUE(src));
+      break;
+    case GRN_DB_UINT64 :
+    case GRN_DB_TIME :
+      GRN_UINT64_SET(ctx, dest, GRN_INT64_VALUE(src));
+      break;
+    case GRN_DB_FLOAT :
+      GRN_FLOAT_SET(ctx, dest, GRN_INT64_VALUE(src));
+      break;
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      grn_text_lltoa(ctx, dest, GRN_INT64_VALUE(src));
+      break;
+    default :
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  case GRN_DB_UINT64 :
+  case GRN_DB_TIME :
+    switch (dest->header.domain) {
+    case GRN_DB_INT32 :
+      GRN_INT32_SET(ctx, dest, GRN_UINT64_VALUE(src));
+      break;
+    case GRN_DB_UINT32 :
+      GRN_UINT32_SET(ctx, dest, GRN_UINT64_VALUE(src));
+      break;
+    case GRN_DB_INT64 :
+      GRN_INT64_SET(ctx, dest, GRN_UINT64_VALUE(src));
+      break;
+    case GRN_DB_UINT64 :
+    case GRN_DB_TIME :
+      GRN_UINT64_SET(ctx, dest, GRN_UINT64_VALUE(src));
+      break;
+    case GRN_DB_FLOAT :
+      GRN_FLOAT_SET(ctx, dest, GRN_UINT64_VALUE(src));
+      break;
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      grn_text_lltoa(ctx, dest, GRN_UINT64_VALUE(src));
+      break;
+    default :
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  case GRN_DB_FLOAT :
+    switch (dest->header.domain) {
+    case GRN_DB_INT32 :
+      GRN_INT32_SET(ctx, dest, GRN_FLOAT_VALUE(src));
+      break;
+    case GRN_DB_UINT32 :
+      GRN_UINT32_SET(ctx, dest, GRN_FLOAT_VALUE(src));
+      break;
+    case GRN_DB_INT64 :
+      GRN_INT64_SET(ctx, dest, GRN_FLOAT_VALUE(src));
+      break;
+    case GRN_DB_UINT64 :
+    case GRN_DB_TIME :
+      GRN_UINT64_SET(ctx, dest, GRN_FLOAT_VALUE(src));
+      break;
+    case GRN_DB_FLOAT :
+      GRN_FLOAT_SET(ctx, dest, GRN_FLOAT_VALUE(src));
+      break;
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      grn_text_lltoa(ctx, dest, GRN_FLOAT_VALUE(src));
+      break;
+    default :
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    switch (dest->header.domain) {
+    case GRN_DB_INT32 :
+      {
+        const char *cur, *str = GRN_BULK_HEAD(src);
+        const char *str_end = GRN_BULK_CURR(src);
+        int32_t i = grn_atoi(str, str_end, &cur);
+        if (cur == str_end) {
+          GRN_INT32_SET(ctx, dest, i);
+        } else if (cur != str) {
+          double d;
+          char *end;
+          grn_obj buf;
+          GRN_TEXT_INIT(&buf, 0);
+          GRN_TEXT_PUT(ctx, &buf, str, GRN_BULK_VSIZE(src));
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          errno = 0;
+          d = strtod(GRN_TEXT_VALUE(&buf), &end);
+          if (!errno && end == GRN_BULK_CURR(&buf)) {
+            GRN_INT32_SET(ctx, dest, d);
+          } else {
+            rc = GRN_INVALID_ARGUMENT;
+          }
+          GRN_OBJ_FIN(ctx, &buf);
+        }
+      }
+      break;
+    case GRN_DB_UINT32 :
+      {
+        const char *cur, *str = GRN_BULK_HEAD(src);
+        const char *str_end = GRN_BULK_CURR(src);
+        uint32_t i = grn_atoui(str, str_end, &cur);
+        if (cur == str_end) {
+          GRN_UINT32_SET(ctx, dest, i);
+        } else if (cur != str) {
+          double d;
+          char *end;
+          grn_obj buf;
+          GRN_TEXT_INIT(&buf, 0);
+          GRN_TEXT_PUT(ctx, &buf, str, GRN_BULK_VSIZE(src));
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          errno = 0;
+          d = strtod(GRN_TEXT_VALUE(&buf), &end);
+          if (!errno && end == GRN_BULK_CURR(&buf)) {
+            GRN_UINT32_SET(ctx, dest, d);
+          } else {
+            rc = GRN_INVALID_ARGUMENT;
+          }
+          GRN_OBJ_FIN(ctx, &buf);
+        }
+      }
+      break;
+    case GRN_DB_INT64 :
+      {
+        const char *cur, *str = GRN_BULK_HEAD(src);
+        const char *str_end = GRN_BULK_CURR(src);
+        int64_t i = grn_atoll(str, str_end, &cur);
+        if (cur == str_end) {
+          GRN_INT64_SET(ctx, dest, i);
+        } else if (cur != str) {
+          double d;
+          char *end;
+          grn_obj buf;
+          GRN_TEXT_INIT(&buf, 0);
+          GRN_TEXT_PUT(ctx, &buf, str, GRN_BULK_VSIZE(src));
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          errno = 0;
+          d = strtod(GRN_TEXT_VALUE(&buf), &end);
+          if (!errno && end == GRN_BULK_CURR(&buf)) {
+            GRN_INT64_SET(ctx, dest, d);
+          } else {
+            rc = GRN_INVALID_ARGUMENT;
+          }
+          GRN_OBJ_FIN(ctx, &buf);
+        }
+      }
+      break;
+    case GRN_DB_UINT64 :
+    case GRN_DB_TIME :
+      {
+        const char *cur, *str = GRN_BULK_HEAD(src);
+        const char *str_end = GRN_BULK_CURR(src);
+        int64_t i = grn_atoll(str, str_end, &cur);
+        if (cur == str_end) {
+          GRN_INT64_SET(ctx, dest, i);
+        } else if (cur != str) {
+          double d;
+          char *end;
+          grn_obj buf;
+          GRN_TEXT_INIT(&buf, 0);
+          GRN_TEXT_PUT(ctx, &buf, str, GRN_BULK_VSIZE(src));
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          errno = 0;
+          d = strtod(GRN_TEXT_VALUE(&buf), &end);
+          if (!errno && end == GRN_BULK_CURR(&buf)) {
+            GRN_INT64_SET(ctx, dest, d);
+          } else {
+            rc = GRN_INVALID_ARGUMENT;
+          }
+          GRN_OBJ_FIN(ctx, &buf);
+        }
+      }
+      break;
+    case GRN_DB_FLOAT :
+      {
+        double d;
+        char *end;
+        grn_obj buf;
+        GRN_TEXT_INIT(&buf, 0);
+        GRN_TEXT_PUT(ctx, &buf, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+        GRN_TEXT_PUTC(ctx, &buf, '\0');
+        errno = 0;
+        d = strtod(GRN_TEXT_VALUE(&buf), &end);
+        if (!errno && end == GRN_BULK_CURR(&buf)) {
+          GRN_FLOAT_SET(ctx, dest, d);
+        } else {
+          rc = GRN_INVALID_ARGUMENT;
+        }
+        GRN_OBJ_FIN(ctx, &buf);
+      }
+      break;
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      GRN_TEXT_PUT(ctx, dest, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+      break;
+    default :
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  default :
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+  return rc;
+}
+
 const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
 
 const char *
@@ -2793,6 +3079,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     }
   } else {
     grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
+    grn_id range = DB_OBJ(obj)->range;
     void *v = GRN_BULK_HEAD(value);
     unsigned int s = GRN_BULK_VSIZE(value);
     if (hooks || obj->header.type == GRN_COLUMN_VAR_SIZE) {
@@ -2920,31 +3207,41 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       }
       break;
     case GRN_COLUMN_FIX_SIZE :
-      if (((grn_ra *)obj)->header->element_size < s) {
-        ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", s);
-      } else {
-        void *p = grn_ra_ref(ctx, (grn_ra *)obj, id);
-        if (!p) {
-          ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
-          rc = GRN_NO_MEMORY_AVAILABLE;
-          goto exit;
+      {
+        grn_obj buf;
+        GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+        if (range != value->header.domain) {
+          grn_obj_cast(ctx, value, &buf);
+          v = GRN_BULK_HEAD(&buf);
+          s = GRN_BULK_VSIZE(&buf);
         }
-        switch (flags & GRN_OBJ_SET_MASK) {
-        case GRN_OBJ_SET :
-          memcpy(p, v, s);
-          rc = GRN_SUCCESS;
-          break;
-        case GRN_OBJ_INCR :
-          INCRDECR(+=);
-          break;
-        case GRN_OBJ_DECR :
-          INCRDECR(-=);
-          break;
-        default :
-          rc = GRN_OPERATION_NOT_SUPPORTED;
-          break;
+        if (((grn_ra *)obj)->header->element_size < s) {
+          ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", s);
+        } else {
+          void *p = grn_ra_ref(ctx, (grn_ra *)obj, id);
+          if (!p) {
+            ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
+            rc = GRN_NO_MEMORY_AVAILABLE;
+            goto exit;
+          }
+          switch (flags & GRN_OBJ_SET_MASK) {
+          case GRN_OBJ_SET :
+            memcpy(p, v, s);
+            rc = GRN_SUCCESS;
+            break;
+          case GRN_OBJ_INCR :
+            INCRDECR(+=);
+            break;
+          case GRN_OBJ_DECR :
+            INCRDECR(-=);
+            break;
+          default :
+            rc = GRN_OPERATION_NOT_SUPPORTED;
+            break;
+          }
+          grn_ra_unref(ctx, (grn_ra *)obj, id);
         }
-        grn_ra_unref(ctx, (grn_ra *)obj, id);
+        GRN_OBJ_FIN(ctx, &buf);
       }
       break;
     case GRN_COLUMN_INDEX :
@@ -3949,7 +4246,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_rc
-grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
+grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
 {
   if (!GRN_OBJ_MUTABLE(obj)) {
     ERR(GRN_INVALID_ARGUMENT, "invalid obj assigned");
@@ -3959,6 +4256,7 @@ grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
       if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
       obj->header.type = GRN_VOID;
       obj->header.domain = domain;
+      GRN_BULK_REWIND(obj);
       break;
     case GRN_DB_OBJECT :
     case GRN_DB_BOOL :
@@ -3975,6 +4273,7 @@ grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
       if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
       obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       obj->header.domain = domain;
+      GRN_BULK_REWIND(obj);
       break;
     case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
@@ -3987,6 +4286,7 @@ grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
         obj->header.type = GRN_BULK;
       }
       obj->header.domain = domain;
+      GRN_BULK_REWIND(obj);
       break;
     default :
       {
@@ -4007,6 +4307,7 @@ grn_obj_mutate(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
             obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
           }
           obj->header.domain = domain;
+          GRN_BULK_REWIND(obj);
         }
       }
       break;
@@ -5422,6 +5723,9 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 
 #define do_eq(x,y,r) {\
   switch (x->header.domain) {\
+  case GRN_DB_VOID :\
+    r = 0;\
+    break;\
   case GRN_DB_INT32 :\
     {\
       int32_t x_ = GRN_INT32_VALUE(x);\
@@ -5494,7 +5798,9 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   default :\
-    r = 0;\
+    r = ((x->header.domain == y->header.domain) &&\
+         GRN_BULK_VSIZE(x) == GRN_BULK_VSIZE(y) &&\
+         !(memcmp(GRN_BULK_HEAD(x), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(x))));\
     break;\
   }\
 }
@@ -7378,7 +7684,31 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         GRN_TEXT_PUTC(ctx, loader->last, c);
         str++;
       } else {
-        // parse symbol;
+#ifdef CAST_IN_JSON_READ
+        char *v = GRN_TEXT_VALUE(loader->last);
+        switch (*v) {
+        case 'n' :
+          if (GRN_TEXT_LEN(loader->last) == 4 && !memcmp(v, "null", 4)) {
+            loader->last->header.domain = GRN_DB_VOID;
+            GRN_BULK_REWIND(loader->last);
+          }
+          break;
+        case 't' :
+          if (GRN_TEXT_LEN(loader->last) == 4 && !memcmp(v, "true", 4)) {
+            loader->last->header.domain = GRN_DB_BOOL;
+            GRN_BOOL_SET(ctx, loader->last, GRN_TRUE);
+          }
+          break;
+        case 'f' :
+          if (GRN_TEXT_LEN(loader->last) == 5 && !memcmp(v, "false", 5)) {
+            loader->last->header.domain = GRN_DB_BOOL;
+            GRN_BOOL_SET(ctx, loader->last, GRN_FALSE);
+          }
+          break;
+        default :
+          break;
+        }
+#endif /* CAST_IN_JSON_READ */
         loader->stat = GRN_LOADER_BEGIN;
       }
       break;
@@ -7391,7 +7721,31 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         str++;
         break;
       default :
-        // parse number;
+#ifdef CAST_IN_JSON_READ
+        {
+          const char *cur, *str = GRN_BULK_HEAD(loader->last);
+          const char *str_end = GRN_BULK_CURR(loader->last);
+          int64_t i = grn_atoll(str, str_end, &cur);
+          if (cur == str_end) {
+            loader->last->header.domain = GRN_DB_INT64;
+            GRN_INT64_SET(ctx, loader->last, i);
+          } else if (cur != str) {
+            double d;
+            char *end;
+            grn_obj buf;
+            GRN_TEXT_INIT(&buf, 0);
+            GRN_TEXT_PUT(ctx, &buf, str, GRN_BULK_VSIZE(loader->last));
+            GRN_TEXT_PUTC(ctx, &buf, '\0');
+            errno = 0;
+            d = strtod(GRN_TEXT_VALUE(&buf), &end);
+            if (!errno && end == GRN_BULK_CURR(&buf)) {
+              loader->last->header.domain = GRN_DB_FLOAT;
+              GRN_FLOAT_SET(ctx, loader->last, d);
+            }
+            GRN_OBJ_FIN(ctx, &buf);
+          }
+        }
+#endif /* CAST_IN_JSON_READ */
         loader->stat = GRN_LOADER_BEGIN;
       }
       break;
