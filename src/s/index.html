@@ -89,7 +89,13 @@
                   value
                 </td>
                 <td>
-                  <input type="text" id="createtable-value-size" value="0">
+                  <label for="createtable-value-type">valueの型:</label>
+                  <select id="createtable-value-type">
+                    <optgroup label="組み込み型" id="createtable-value-type-builtin">
+                    </optgroup>
+                    <optgroup label="テーブル" id="createtable-value-type-table">
+                    </optgroup>
+                  </select>
                 </td>
               </tr>
             </table>
@@ -182,6 +188,9 @@
 Groonga = {
   key_type_list: ['Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                   'Int64', 'UInt64', 'Float', 'Time', 'ShortText'],
+  value_type_list: ['Object', 'Bool',
+                    'Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
+                    'Int64', 'UInt64', 'Float', 'Time'],
   column_type_list: ['Object', 'Bool',
                      'Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                      'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
@@ -303,6 +312,11 @@ GroongaAdmin = {
       e2.append($('<option />').text(val));
     });
 
+    e1 = $('#createtable-value-type-builtin');
+    $.each(Groonga.value_type_list, function(i, val) {
+      e1.append($('<option />').text(val));
+    })
+
     GroongaAdmin.recordlist_count = 30;
 
     GroongaAdmin.status();
@@ -350,6 +364,7 @@ GroongaAdmin = {
         d.shift();
         var tl = $('#side-menu-tablelist').empty();
         var tt = $('#createtable-key-type-table').empty();
+        var vt = $('#createtable-value-type-table').empty();
         var ct = $('#createcolumn-type-table').empty();
         tl.append(
           $('<li />').append(
@@ -379,6 +394,7 @@ GroongaAdmin = {
             )
           );
           tt.append($('<option />').text(val[1]));
+          vt.append($('<option />').text(val[1]));
           ct.append($('<option />').text(val[1]));
         });
       }
@@ -498,7 +514,7 @@ GroongaAdmin = {
         name: $('#createtable-name').val(),
         'flags': flags,
         key_type: $('#createtable-key-type').val(),
-        value_size: $('#createtable-value-size').val()
+        value_type: $('#createtable-value-type').val()
       },
       dataType: 'json',
       success: function(d) {
