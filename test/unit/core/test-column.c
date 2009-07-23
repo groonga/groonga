@@ -93,7 +93,7 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
-  grn_db_close(&context, database);
+  grn_obj_close(&context, database);
   grn_ctx_fin(&context);
   teardown_grn_logger(logger);
 }
