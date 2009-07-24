@@ -411,7 +411,6 @@ grn_ctx_mgc(grn_ctx *ctx)
       }
     });
   }
-  /*
   {
     grn_tmp_db_obj *o;
     GRN_ARRAY_EACH(ctx->impl->values, 0, 0, id, &o, {
@@ -427,7 +426,6 @@ grn_ctx_mgc(grn_ctx *ctx)
       }
     });
   }
-  */
   ctx->impl->lseqno = ctx->impl->seqno;
   ctx->impl->nbinds = 0;
   ctx->impl->nunbinds = 0;

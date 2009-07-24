@@ -1813,12 +1813,15 @@ do_daemon(char *path)
 }
 
 enum {
-  mode_alone,
+  mode_alone = 0,
   mode_client,
   mode_daemon,
   mode_server,
   mode_usage
 };
+
+#define MODE_MASK   0x7f
+#define MODE_USE_QL 0x80
 
 #define SET_LOGLEVEL(x) do {\
   static grn_logger_info info;\
@@ -1835,7 +1838,7 @@ main(int argc, char **argv)
   grn_encoding enc = GRN_ENC_DEFAULT;
   char *portstr = NULL, *encstr = NULL,
        *max_nfthreadsstr = NULL, *loglevel = NULL,
-       *hostnamestr = NULL, *useqlstr = NULL;
+       *hostnamestr = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', NULL, NULL, 0, getopt_op_none},
@@ -1848,7 +1851,7 @@ main(int argc, char **argv)
     {'s', NULL, NULL, mode_server, getopt_op_update},
     {'l', NULL, NULL, 0, getopt_op_none},
     {'i', NULL, NULL, 0, getopt_op_none},
-    {'q', NULL, NULL, 0, getopt_op_none},
+    {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1856,7 +1859,6 @@ main(int argc, char **argv)
   opts[2].arg = &max_nfthreadsstr;
   opts[8].arg = &loglevel;
   opts[9].arg = &hostnamestr;
-  opts[10].arg = &useqlstr;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }
@@ -1906,8 +1908,8 @@ main(int argc, char **argv)
   } else {
     gethostname(hostname, HOST_NAME_MAX);
   }
-  useql = !useqlstr || !strcmp(useqlstr, "yes");
-  switch (mode) {
+  useql = (mode & MODE_USE_QL);
+  switch (mode & MODE_MASK) {
   case mode_alone :
     if (argc <= i) {
       r = do_alone(NULL, 0);
