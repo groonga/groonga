@@ -2712,7 +2712,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
           GRN_TEXT_PUTC(ctx, &buf, '\0');
           errno = 0;
           d = strtod(GRN_TEXT_VALUE(&buf), &end);
-          if (!errno && end == GRN_BULK_CURR(&buf)) {
+          if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
             GRN_INT32_SET(ctx, dest, d);
           } else {
             rc = GRN_INVALID_ARGUMENT;
@@ -2737,7 +2737,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
           GRN_TEXT_PUTC(ctx, &buf, '\0');
           errno = 0;
           d = strtod(GRN_TEXT_VALUE(&buf), &end);
-          if (!errno && end == GRN_BULK_CURR(&buf)) {
+          if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
             GRN_UINT32_SET(ctx, dest, d);
           } else {
             rc = GRN_INVALID_ARGUMENT;
@@ -2762,7 +2762,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
           GRN_TEXT_PUTC(ctx, &buf, '\0');
           errno = 0;
           d = strtod(GRN_TEXT_VALUE(&buf), &end);
-          if (!errno && end == GRN_BULK_CURR(&buf)) {
+          if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
             GRN_INT64_SET(ctx, dest, d);
           } else {
             rc = GRN_INVALID_ARGUMENT;
@@ -2788,7 +2788,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
           GRN_TEXT_PUTC(ctx, &buf, '\0');
           errno = 0;
           d = strtod(GRN_TEXT_VALUE(&buf), &end);
-          if (!errno && end == GRN_BULK_CURR(&buf)) {
+          if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
             GRN_INT64_SET(ctx, dest, d);
           } else {
             rc = GRN_INVALID_ARGUMENT;
@@ -2807,7 +2807,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
         GRN_TEXT_PUTC(ctx, &buf, '\0');
         errno = 0;
         d = strtod(GRN_TEXT_VALUE(&buf), &end);
-        if (!errno && end == GRN_BULK_CURR(&buf)) {
+        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
           GRN_FLOAT_SET(ctx, dest, d);
         } else {
           rc = GRN_INVALID_ARGUMENT;
@@ -7742,7 +7742,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
             GRN_TEXT_PUTC(ctx, &buf, '\0');
             errno = 0;
             d = strtod(GRN_TEXT_VALUE(&buf), &end);
-            if (!errno && end == GRN_BULK_CURR(&buf)) {
+            if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
               loader->last->header.domain = GRN_DB_FLOAT;
               GRN_FLOAT_SET(ctx, loader->last, d);
             }
