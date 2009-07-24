@@ -629,6 +629,15 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
           }
         }
         goto exit;
+      } else {
+        grn_ctx_qe_exec(ctx, str, str_len);
+        if (ctx->stat == GRN_QL_QUITTING) { ctx->stat = GRN_QL_QUIT; }
+        if (!ERRP(ctx, GRN_CRIT)) {
+          if (!(flags & GRN_QL_QUIET) && ctx->impl->output) {
+            ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
+          }
+        }
+        goto exit;
       }
     }
   }

@@ -39,6 +39,7 @@
 static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
 static int batchmode;
+static int useql;
 grn_timeval starttime;
 
 static void
@@ -612,7 +613,7 @@ do_alone(char **argv, int argc)
   char *path = NULL, *cmd = NULL;
   grn_obj *db = NULL;
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0));
+  grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
   grn_timeval_now(ctx, &starttime);
   if (argv) {
     path = argv[0];
@@ -1647,7 +1648,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
     grn_id id = grn_hash_add(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
                              (void **)&edge, &added);
     if (added) {
-      grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL);
+      grn_ctx_init(&edge->ctx, (useql ? GRN_CTX_USE_QL : 0));
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ql_recv_handler_set(&edge->ctx, output, edge);
@@ -1834,7 +1835,7 @@ main(int argc, char **argv)
   grn_encoding enc = GRN_ENC_DEFAULT;
   char *portstr = NULL, *encstr = NULL,
        *max_nfthreadsstr = NULL, *loglevel = NULL,
-       *hostnamestr = NULL;
+       *hostnamestr = NULL, *useqlstr = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', NULL, NULL, 0, getopt_op_none},
@@ -1847,6 +1848,7 @@ main(int argc, char **argv)
     {'s', NULL, NULL, mode_server, getopt_op_update},
     {'l', NULL, NULL, 0, getopt_op_none},
     {'i', NULL, NULL, 0, getopt_op_none},
+    {'q', NULL, NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1854,6 +1856,7 @@ main(int argc, char **argv)
   opts[2].arg = &max_nfthreadsstr;
   opts[8].arg = &loglevel;
   opts[9].arg = &hostnamestr;
+  opts[10].arg = &useqlstr;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }
@@ -1903,6 +1906,7 @@ main(int argc, char **argv)
   } else {
     gethostname(hostname, HOST_NAME_MAX);
   }
+  useql = !useqlstr || !strcmp(useqlstr, "yes");
   switch (mode) {
   case mode_alone :
     if (argc <= i) {

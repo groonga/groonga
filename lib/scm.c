@@ -800,7 +800,7 @@ mk_const(grn_ctx *ctx, char *name, unsigned int len)
 grn_rc
 grn_ql_load(grn_ctx *ctx, const char *filename)
 {
-  if (!ctx || !ctx->impl) { return GRN_INVALID_ARGUMENT; }
+  if (!ctx || !ctx->impl || !ctx->impl->symbols) { return GRN_INVALID_ARGUMENT; }
   if (!filename) { filename = InitFile; }
   ctx->impl->args = CONS(mk_const_string(ctx, filename), NIL);
   ctx->stat = GRN_QL_TOPLEVEL;
