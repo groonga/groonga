@@ -228,6 +228,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->qe = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(void *), 0);
   ctx->impl->stack_curr = 0;
+  ctx->impl->qe_next = NULL;
 
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;
@@ -256,6 +257,12 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
   GRN_TEXT_INIT(&ctx->impl->subbuf, 0);
   grn_loader_init(&ctx->impl->loader);
+}
+
+void
+grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr)
+{
+  ctx->impl->qe_next = expr;
 }
 
 void
@@ -571,24 +578,39 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
   grn_obj key, *expr, *val = NULL;
-  GRN_TEXT_INIT(&key, 0);
-  p = str;
-  e = p + str_size;
-  p = get_uri_token(ctx, &key, p, e, '?');
-  if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
-    while (p < e) {
-      GRN_BULK_REWIND(&key);
-      p = get_uri_token(ctx, &key, p, e, '=');
-      if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
-        val = &key;
-      }
+  if (ctx->impl->qe_next) {
+    expr = ctx->impl->qe_next;
+    ctx->impl->qe_next = NULL;
+    // fixme...
+    if ((val = grn_expr_get_var(ctx, expr, "table", 5))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-      p = get_uri_token(ctx, val, p, e, '&');
+    }
+    if ((val = grn_expr_get_var(ctx, expr, "values", 6))) {
+      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+      GRN_TEXT_PUT(ctx, val, str, str_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     val = grn_expr_exec(ctx, expr);
+  } else {
+    GRN_TEXT_INIT(&key, 0);
+    p = str;
+    e = p + str_size;
+    p = get_uri_token(ctx, &key, p, e, '?');
+    if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
+      while (p < e) {
+        GRN_BULK_REWIND(&key);
+        p = get_uri_token(ctx, &key, p, e, '=');
+        if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
+          val = &key;
+        }
+        grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+        p = get_uri_token(ctx, val, p, e, '&');
+      }
+      grn_ctx_push(ctx, ctx->impl->outbuf);
+      val = grn_expr_exec(ctx, expr);
+    }
+    GRN_OBJ_FIN(ctx, &key);
   }
-  GRN_OBJ_FIN(ctx, &key);
   return val;
 }
 

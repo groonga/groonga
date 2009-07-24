@@ -7360,6 +7360,7 @@ values_add(grn_ctx *ctx, grn_loader *loader)
   if (curr_size < GRN_TEXT_LEN(&loader->values)) {
     res = (grn_obj *)(GRN_TEXT_VALUE(&loader->values) + curr_size);
     res->header.domain = GRN_DB_TEXT;
+    GRN_BULK_REWIND(res);
   } else {
     if (grn_bulk_space(ctx, &loader->values, sizeof(grn_obj))) { return NULL; }
     res = (grn_obj *)(GRN_TEXT_VALUE(&loader->values) + curr_size);
@@ -7479,6 +7480,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
     c = *str;
     switch (loader->stat) {
     case GRN_LOADER_BEGIN :
+    case GRN_LOADER_TOKEN :
       if ((len = grn_isspace(str, ctx->encoding))) {
         str += len;
         continue;
@@ -7491,10 +7493,12 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         break;
       case '[' :
         GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         str++;
         break;
       case '{' :
         GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         str++;
         break;
       case ':' :
@@ -7505,10 +7509,12 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         break;
       case ']' :
         push_bracket_close(ctx, loader);
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         str++;
         break;
       case '}' :
         push_brace_close(ctx, loader);
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         str++;
         break;
       case '+' : case '-' : case '0' : case '1' : case '2' : case '3' :
@@ -7552,7 +7558,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
           break;
         }
 #endif /* CAST_IN_JSON_READ */
-        loader->stat = GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
       }
       break;
     case GRN_LOADER_NUMBER :
@@ -7589,7 +7595,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
           }
         }
 #endif /* CAST_IN_JSON_READ */
-        loader->stat = GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         break;
       }
       break;
@@ -7601,7 +7607,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         break;
       case '"' :
         str++;
-        loader->stat = GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         break;
       default :
         if ((len = grn_charlen(ctx, str, se))) {

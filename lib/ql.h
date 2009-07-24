@@ -127,6 +127,7 @@ grn_rc grn_del(const char *key);
 
 typedef enum {
   GRN_LOADER_BEGIN = 0,
+  GRN_LOADER_TOKEN,
   GRN_LOADER_STRING,
   GRN_LOADER_SYMBOL,
   GRN_LOADER_NUMBER,
@@ -171,6 +172,7 @@ struct _grn_ctx_impl {
   grn_obj *stack[GRN_STACK_SIZE];
   uint32_t stack_curr;
   grn_hash *qe;
+  grn_obj *qe_next;
 
   /* loader portion */
   grn_loader loader;

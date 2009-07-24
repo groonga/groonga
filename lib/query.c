@@ -898,8 +898,10 @@ loader(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
              GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
              GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
              GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value));
-    if (!GRN_BULK_VSIZE(&ctx->impl->loader.level)) {
+    if (ctx->impl->loader.stat == GRN_LOADER_BEGIN) {
       grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
+    } else {
+      grn_ctx_set_next_expr(ctx, obj);
     }
   }
   grn_ctx_push(ctx, outbuf);
