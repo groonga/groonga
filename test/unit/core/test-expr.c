@@ -81,7 +81,7 @@ void
 test_accessor(void)
 {
   int i;
-  grn_obj *t1, *t2, *c1, *c2, buf;
+  grn_obj *t1, *t2, *c1, *c2, r1, r2;
   t1 = grn_table_create(&context, "t1", 2, NULL,
                         GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t1);
@@ -94,15 +94,16 @@ test_accessor(void)
   c2 = grn_column_create(&context, t2, "c2", 2, NULL,
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
-  GRN_TEXT_INIT(&buf, 0);
+  GRN_RECORD_INIT(&r1, 0, grn_obj_id(&context, t1));
+  GRN_RECORD_INIT(&r2, 0, grn_obj_id(&context, t2));
   for (i = 0; i < NRECORDS; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
-    GRN_BULK_REWIND(&buf);
-    grn_bulk_write(&context, &buf, (char *)&i2, sizeof(grn_id));
-    grn_obj_set_value(&context, c1, i1, &buf, GRN_OBJ_SET);
-    grn_obj_set_value(&context, c2, i2, &buf, GRN_OBJ_SET);
+    GRN_RECORD_SET(&context, &r1, i1);
+    GRN_RECORD_SET(&context, &r2, i2);
+    grn_obj_set_value(&context, c1, i1, &r2, GRN_OBJ_SET);
+    grn_obj_set_value(&context, c2, i2, &r1, GRN_OBJ_SET);
   }
   {
     grn_id id;
@@ -115,9 +116,9 @@ test_accessor(void)
     cut_assert_not_null(tc);
     gettimeofday(&tvb, NULL);
     while ((id = grn_table_cursor_next(&context, tc))) {
-      GRN_BULK_REWIND(&buf);
-      grn_obj_get_value(&context, a, id, &buf);
-      if (GRN_RECORD_VALUE(&buf) != id) { nerr++; }
+      GRN_BULK_REWIND(&r2);
+      grn_obj_get_value(&context, a, id, &r2);
+      if (GRN_RECORD_VALUE(&r2) != id) { nerr++; }
     }
     gettimeofday(&tve, NULL);
     et = (tve.tv_sec - tvb.tv_sec) * 1000000 + (tve.tv_usec - tvb.tv_usec);
@@ -126,14 +127,15 @@ test_accessor(void)
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
     cut_assert_equal_uint(0, grn_obj_close(&context, a));
   }
-  cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
+  cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
+  cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
 }
 
 void
 test_expr(void)
 {
   int i;
-  grn_obj *t1, *t2, *c1, *c2, buf;
+  grn_obj *t1, *t2, *c1, *c2, r1, r2, buf;
   t1 = grn_table_create(&context, "t1", 2, NULL,
                         GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t1);
@@ -147,14 +149,16 @@ test_expr(void)
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
   GRN_TEXT_INIT(&buf, 0);
+  GRN_RECORD_INIT(&r1, 0, grn_obj_id(&context, t1));
+  GRN_RECORD_INIT(&r2, 0, grn_obj_id(&context, t2));
   for (i = 0; i < NRECORDS; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
-    GRN_BULK_REWIND(&buf);
-    grn_bulk_write(&context, &buf, (char *)&i2, sizeof(grn_id));
-    grn_obj_set_value(&context, c1, i1, &buf, GRN_OBJ_SET);
-    grn_obj_set_value(&context, c2, i2, &buf, GRN_OBJ_SET);
+    GRN_RECORD_SET(&context, &r1, i1);
+    GRN_RECORD_SET(&context, &r2, i2);
+    grn_obj_set_value(&context, c1, i1, &r2, GRN_OBJ_SET);
+    grn_obj_set_value(&context, c2, i2, &r1, GRN_OBJ_SET);
   }
   {
     grn_obj *expr = grn_expr_create(&context, NULL, 0);
@@ -202,6 +206,8 @@ test_expr(void)
     }
     cut_assert_equal_uint(0, grn_obj_close(&context, expr));
   }
+  cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
+  cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
   cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
 }
 
@@ -209,7 +215,7 @@ void
 test_persistent_expr(void)
 {
   int i;
-  grn_obj *t1, *t2, *c1, *c2, buf;
+  grn_obj *t1, *t2, *c1, *c2, r1, r2, buf;
   t1 = grn_table_create(&context, "t1", 2, NULL,
                         GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(t1);
@@ -223,14 +229,16 @@ test_persistent_expr(void)
                          GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(c2);
   GRN_TEXT_INIT(&buf, 0);
+  GRN_RECORD_INIT(&r1, 0, grn_obj_id(&context, t1));
+  GRN_RECORD_INIT(&r2, 0, grn_obj_id(&context, t2));
   for (i = 0; i < NRECORDS; i++) {
     grn_id i1, i2;
     i1 = grn_table_add(&context, t1, NULL, 0, NULL);
     i2 = grn_table_add(&context, t2, NULL, 0, NULL);
-    GRN_BULK_REWIND(&buf);
-    grn_bulk_write(&context, &buf, (char *)&i2, sizeof(grn_id));
-    grn_obj_set_value(&context, c1, i1, &buf, GRN_OBJ_SET);
-    grn_obj_set_value(&context, c2, i2, &buf, GRN_OBJ_SET);
+    GRN_RECORD_SET(&context, &r1, i1);
+    GRN_RECORD_SET(&context, &r2, i2);
+    grn_obj_set_value(&context, c1, i1, &r2, GRN_OBJ_SET);
+    grn_obj_set_value(&context, c2, i2, &r1, GRN_OBJ_SET);
   }
   {
     grn_obj *expr = grn_expr_create(&context, "test", 4);
@@ -262,8 +270,6 @@ test_persistent_expr(void)
   grn_db_close(&context, database);
   database = grn_db_open(&context, path);
 
-  GRN_TEXT_INIT(&buf, 0);
-
   {
     grn_id id;
     uint64_t et;
@@ -288,7 +294,8 @@ test_persistent_expr(void)
     cut_assert_equal_uint(0, nerr);
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
   }
-  cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
+  cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
+  cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
 }
 
 void

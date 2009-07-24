@@ -582,8 +582,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
       if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
         val = &key;
       }
-      grn_obj_mutate(ctx, val, GRN_DB_TEXT, 0);
-      GRN_BULK_REWIND(val);
+      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
       p = get_uri_token(ctx, val, p, e, '&');
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);

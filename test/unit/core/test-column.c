@@ -128,13 +128,13 @@ test_fix_size_set_value_increment(void)
   grn_obj *record_value;
   grn_obj *retrieved_record_value;
 
-  record_value = grn_obj_open(&context, GRN_BULK, 0, 0);
+  record_value = grn_obj_open(&context, GRN_BULK, 0, GRN_DB_INT32);
   grn_bulk_write(&context, record_value, (const char *)&count, sizeof(count));
   grn_test_assert(grn_obj_set_value(&context, count_column, groonga_bookmark_id,
                                     record_value, GRN_OBJ_SET));
   grn_obj_close(&context, record_value);
 
-  record_value = grn_obj_open(&context, GRN_BULK, 0, 0);
+  record_value = grn_obj_open(&context, GRN_BULK, 0, GRN_DB_INT32);
   grn_bulk_write(&context, record_value,
                  (const char *)&increment_count, sizeof(increment_count));
   grn_test_assert(grn_obj_set_value(&context, count_column, groonga_bookmark_id,
