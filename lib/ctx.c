@@ -191,10 +191,11 @@ grn_ctx_loader_clear(grn_ctx *ctx)
 {
   grn_loader *loader = &ctx->impl->loader;
   grn_obj *v = (grn_obj *)(GRN_BULK_HEAD(&loader->values));
+  grn_obj *ve = (grn_obj *)(GRN_BULK_CURR(&loader->values));
   grn_obj **p = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
   uint32_t i = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   while (i--) { grn_obj_unlink(ctx, *p++); }
-  for (i = loader->values_size; i; i--) { GRN_OBJ_FIN(ctx, v++); }
+  while (v < ve) { GRN_OBJ_FIN(ctx, v++); }
   GRN_OBJ_FIN(ctx, &loader->values);
   GRN_OBJ_FIN(ctx, &loader->level);
   GRN_OBJ_FIN(ctx, &loader->columns);

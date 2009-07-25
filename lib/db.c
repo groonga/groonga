@@ -2473,6 +2473,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         goto exit;
       }
     } else {
+      if (len == name_size) { goto exit; }
       /* if obj->header.type == GRN_TYPE ... lookup table */
       for (rp = &res; ; rp = &(*rp)->next) {
         grn_obj *column = grn_obj_column(ctx, obj, name, len);
@@ -7380,58 +7381,111 @@ values_add(grn_ctx *ctx, grn_loader *loader)
   }\
 }
 
-static void
-push_bracket_close(grn_ctx *ctx, grn_loader *loader)
+#define OPEN_BRACKET 0x40000000
+#define OPEN_BRACE   0x40000001
+
+static grn_obj *
+values_next(grn_ctx *ctx, grn_obj *value)
 {
-  grn_obj *value, *col;
+  if (value->header.domain & OPEN_BRACKET) {
+    value += GRN_UINT32_VALUE(value);
+  }
+  return value + 1;
+}
+
+static int
+values_len(grn_ctx *ctx, grn_obj *head, grn_obj *tail)
+{
+  int len;
+  for (len = 0; head < tail; head = values_next(ctx, head), len++) ;
+  return len;
+}
+
+static void
+bracket_close(grn_ctx *ctx, grn_loader *loader)
+{
+  grn_obj *value, *col, *ve;
   grn_id id = GRN_ID_NIL;
   grn_obj **cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
   uint32_t begin, ndata, ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   GRN_UINT32_POP(&loader->level, begin);
   value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
-  ndata = loader->values_size - begin;
-  if (loader->table) {
-    switch (loader->table->header.type) {
-    case GRN_TABLE_HASH_KEY :
-    case GRN_TABLE_PAT_KEY :
-      if (ndata == ncols + 1) {
-        id = grn_table_add(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
-        ndata--;
-        value++;
-      } else if (!ncols) {
-        while (ndata--) {
-          col = grn_obj_column(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-          GRN_PTR_PUT(ctx, &loader->columns, col);
+  ve = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + loader->values_size;
+  GRN_ASSERT(value->header.domain & OPEN_BRACKET);
+  GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
+  value++;
+  if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t)) {
+    ndata = values_len(ctx, value, ve);
+    if (loader->table) {
+      switch (loader->table->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+        if (ndata == ncols + 1) {
+          id = grn_table_add(ctx, loader->table,
+                             GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
+          ndata--;
           value++;
+        } else if (!ncols) {
+          while (ndata--) {
+            col = grn_obj_column(ctx, loader->table,
+                                 GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+            GRN_PTR_PUT(ctx, &loader->columns, col);
+            value++;
+          }
         }
+        break;
+      case GRN_TABLE_NO_KEY :
+        if (ndata == ncols) {
+          id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+        } else if (!ncols) {
+          while (ndata--) {
+            col = grn_obj_column(ctx, loader->table,
+                                 GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+            GRN_PTR_PUT(ctx, &loader->columns, col);
+            value++;
+          }
+        }
+        break;
+      default :
+        break;
       }
-      break;
-    case GRN_TABLE_NO_KEY :
-      if (ndata == ncols) {
-        id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
-      } else if (!ncols) {
+      if (id) {
         while (ndata--) {
-          col = grn_obj_column(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-          GRN_PTR_PUT(ctx, &loader->columns, col);
-          value++;
+          if (value->header.domain == OPEN_BRACKET) {
+            int n = GRN_UINT32_VALUE(value);
+            grn_obj buf, *v = value + 1;
+            GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
+            while (n--) {
+              if (v->header.domain == GRN_DB_TEXT) {
+                grn_vector_add_element(ctx, &buf,
+                                       GRN_TEXT_VALUE(v),
+                                       GRN_TEXT_LEN(v), 0, GRN_ID_NIL);
+              } else {
+                // error
+              }
+              v = values_next(ctx, v);
+            }
+            grn_obj_set_value(ctx, *cols, id, &buf, GRN_OBJ_SET);
+            GRN_OBJ_FIN(ctx, &buf);
+          } else if (value->header.domain == OPEN_BRACE) {
+            /* todo */
+          } else {
+            grn_obj_set_value(ctx, *cols, id, value, GRN_OBJ_SET);
+          }
+          value = values_next(ctx, value);
+          cols++;
         }
+        loader->nrecords++;
       }
-      break;
-    default :
-      break;
     }
-    if (id) {
-      while (ndata--) { grn_obj_set_value(ctx, *cols++, id, value++, GRN_OBJ_SET); }
-      loader->nrecords++;
-    }
+    loader->values_size = begin;
   }
-  loader->values_size = begin;
 }
 
 #define PKEY_NAME ":key"
 
 static void
-push_brace_close(grn_ctx *ctx, grn_loader *loader)
+brace_close(grn_ctx *ctx, grn_loader *loader)
 {
   uint32_t begin;
   grn_obj *value, *ve;
@@ -7439,35 +7493,76 @@ push_brace_close(grn_ctx *ctx, grn_loader *loader)
   GRN_UINT32_POP(&loader->level, begin);
   value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
   ve = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + loader->values_size;
-  if (loader->table) {
-    switch (loader->table->header.type) {
-    case GRN_TABLE_HASH_KEY :
-    case GRN_TABLE_PAT_KEY :
-      if (value + 1 < ve && GRN_TEXT_LEN(value) == strlen(PKEY_NAME) &&
-          !memcmp(GRN_TEXT_VALUE(value), PKEY_NAME, strlen(PKEY_NAME))) {
-        value++;
-        id = grn_table_add(ctx, loader->table, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
-        value++;
+  GRN_ASSERT(value->header.domain & OPEN_BRACKET);
+  GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
+  value++;
+  if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t)) {
+    if (loader->table) {
+      switch (loader->table->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+        {
+          grn_obj *v;
+          for (v = value; v + 1 < ve; v = values_next(ctx, v)) {
+            if (v->header.domain == GRN_DB_TEXT &&
+                GRN_TEXT_LEN(v) == strlen(PKEY_NAME) &&
+                !memcmp(GRN_TEXT_VALUE(v), PKEY_NAME, strlen(PKEY_NAME))) {
+              v++;
+              if (v->header.domain == GRN_DB_TEXT) {
+                id = grn_table_add(ctx, loader->table,
+                                   GRN_TEXT_VALUE(v), GRN_TEXT_LEN(v), NULL);
+              }
+              break;
+            } else {
+              v = values_next(ctx, v);
+            }
+          }
+        }
+        break;
+      case GRN_TABLE_NO_KEY :
+        id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+        break;
+      default :
+        break;
       }
-      break;
-    case GRN_TABLE_NO_KEY :
-      id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
-      break;
-    default :
-      break;
-    }
-    if (id) {
-      while (value + 1 < ve) {
-        grn_obj *col = grn_obj_column(ctx, loader->table,
-                                      GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-        value++;
-        if (col) { grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET); }
-        value++;
+      if (id) {
+        grn_obj *col;
+        while (value + 1 < ve) {
+          if (value->header.domain != GRN_DB_TEXT) { break; /* error */ }
+          col = grn_obj_column(ctx, loader->table,
+                               GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+          value++;
+          if (col) {
+            if (value->header.domain == OPEN_BRACKET) {
+              int n = GRN_UINT32_VALUE(value);
+              grn_obj buf, *v = value + 1;
+              GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
+              while (n--) {
+                if (v->header.domain == GRN_DB_TEXT) {
+                  grn_vector_add_element(ctx, &buf,
+                                         GRN_TEXT_VALUE(v),
+                                         GRN_TEXT_LEN(v), 0, GRN_ID_NIL);
+                } else {
+                  // error
+                }
+                v = values_next(ctx, v);
+              }
+              grn_obj_set_value(ctx, col, id, &buf, GRN_OBJ_SET);
+              GRN_OBJ_FIN(ctx, &buf);
+            } else if (value->header.domain == OPEN_BRACE) {
+              /* todo */
+            } else {
+              grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
+            }
+            grn_obj_unlink(ctx, col);
+          }
+          value = values_next(ctx, value);
+        }
+        loader->nrecords++;
       }
-      loader->nrecords++;
     }
+    loader->values_size = begin;
   }
-  loader->values_size = begin;
 }
 
 static void
@@ -7493,12 +7588,16 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         break;
       case '[' :
         GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
-        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        values_add(ctx, loader);
+        loader->last->header.domain = OPEN_BRACKET;
+        loader->stat = GRN_LOADER_TOKEN;
         str++;
         break;
       case '{' :
         GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
-        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        values_add(ctx, loader);
+        loader->last->header.domain = OPEN_BRACE;
+        loader->stat = GRN_LOADER_TOKEN;
         str++;
         break;
       case ':' :
@@ -7508,12 +7607,12 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         str++;
         break;
       case ']' :
-        push_bracket_close(ctx, loader);
+        bracket_close(ctx, loader);
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         str++;
         break;
       case '}' :
-        push_brace_close(ctx, loader);
+        brace_close(ctx, loader);
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
         str++;
         break;
@@ -7608,6 +7707,10 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
       case '"' :
         str++;
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        /*
+        *(GRN_BULK_CURR(loader->last)) = '\0';
+        GRN_LOG(ctx, GRN_LOG_ALERT, "read str(%s)", GRN_TEXT_VALUE(loader->last));
+        */
         break;
       default :
         if ((len = grn_charlen(ctx, str, se))) {
