@@ -392,6 +392,8 @@ void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);
 void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 
+void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
+
 /**** receive handler ****/
 
 void grn_ql_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),

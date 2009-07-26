@@ -411,7 +411,6 @@ grn_ctx_mgc(grn_ctx *ctx)
       }
     });
   }
-  /*
   {
     grn_tmp_db_obj *o;
     GRN_ARRAY_EACH(ctx->impl->values, 0, 0, id, &o, {
@@ -427,7 +426,6 @@ grn_ctx_mgc(grn_ctx *ctx)
       }
     });
   }
-  */
   ctx->impl->lseqno = ctx->impl->seqno;
   ctx->impl->nbinds = 0;
   ctx->impl->nunbinds = 0;
@@ -800,7 +798,7 @@ mk_const(grn_ctx *ctx, char *name, unsigned int len)
 grn_rc
 grn_ql_load(grn_ctx *ctx, const char *filename)
 {
-  if (!ctx || !ctx->impl) { return GRN_INVALID_ARGUMENT; }
+  if (!ctx || !ctx->impl || !ctx->impl->symbols) { return GRN_INVALID_ARGUMENT; }
   if (!filename) { filename = InitFile; }
   ctx->impl->args = CONS(mk_const_string(ctx, filename), NIL);
   ctx->stat = GRN_QL_TOPLEVEL;

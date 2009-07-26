@@ -120,7 +120,7 @@ AC_ARG_WITH(encoding,
   [AC_HELP_STRING([--with-encoding=ENCODING],
     [specify Groonga default encoding(euc/sjis/utf8/latin1/koi8r/none)])],
   GROONGA_DEFAULT_ENCODING="$withval",
-  GROONGA_DEFAULT_ENCODING="euc_jp")
+  GROONGA_DEFAULT_ENCODING="utf8")
 AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_ENCODING, "$GROONGA_DEFAULT_ENCODING", "specified default encoding")
 
 # default query escalation threshold

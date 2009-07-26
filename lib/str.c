@@ -1263,7 +1263,7 @@ grn_enctostr(grn_encoding enc)
 grn_encoding
 grn_strtoenc(const char *str)
 {
-  grn_encoding e = GRN_ENC_EUC_JP;
+  grn_encoding e = GRN_ENC_UTF8;
   int i = sizeof(grn_enc_string) / sizeof(grn_enc_string[0]);
   while (i--) {
     if (!strcmp(str, grn_enc_string[i])) {

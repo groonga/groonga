@@ -39,6 +39,7 @@
 static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
 static int batchmode;
+static int useql;
 grn_timeval starttime;
 
 static void
@@ -612,7 +613,7 @@ do_alone(char **argv, int argc)
   char *path = NULL, *cmd = NULL;
   grn_obj *db = NULL;
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, GRN_CTX_USE_QL|(batchmode ? GRN_CTX_BATCH_MODE : 0));
+  grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
   grn_timeval_now(ctx, &starttime);
   if (argv) {
     path = argv[0];
@@ -1647,7 +1648,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
     grn_id id = grn_hash_add(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
                              (void **)&edge, &added);
     if (added) {
-      grn_ctx_init(&edge->ctx, GRN_CTX_USE_QL);
+      grn_ctx_init(&edge->ctx, (useql ? GRN_CTX_USE_QL : 0));
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ql_recv_handler_set(&edge->ctx, output, edge);
@@ -1812,12 +1813,15 @@ do_daemon(char *path)
 }
 
 enum {
-  mode_alone,
+  mode_alone = 0,
   mode_client,
   mode_daemon,
   mode_server,
   mode_usage
 };
+
+#define MODE_MASK   0x7f
+#define MODE_USE_QL 0x80
 
 #define SET_LOGLEVEL(x) do {\
   static grn_logger_info info;\
@@ -1847,6 +1851,7 @@ main(int argc, char **argv)
     {'s', NULL, NULL, mode_server, getopt_op_update},
     {'l', NULL, NULL, 0, getopt_op_none},
     {'i', NULL, NULL, 0, getopt_op_none},
+    {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1903,7 +1908,8 @@ main(int argc, char **argv)
   } else {
     gethostname(hostname, HOST_NAME_MAX);
   }
-  switch (mode) {
+  useql = (mode & MODE_USE_QL);
+  switch (mode & MODE_MASK) {
   case mode_alone :
     if (argc <= i) {
       r = do_alone(NULL, 0);
