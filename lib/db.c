@@ -1136,6 +1136,12 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
       break;
     }
   }
+  if (tc) {
+    grn_id id = grn_obj_register(ctx, ctx->impl->db, NULL, 0);
+    DB_OBJ(tc)->header.domain = GRN_ID_NIL;
+    DB_OBJ(tc)->range = GRN_ID_NIL;
+    grn_db_obj_init(ctx, ctx->impl->db, id, DB_OBJ(tc));
+  }
   GRN_API_RETURN(tc);
 }
 
@@ -1173,6 +1179,21 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
     ERR(GRN_INVALID_ARGUMENT, "tc is null");
     rc = GRN_INVALID_ARGUMENT;
   } else {
+    {
+      if (DB_OBJ(tc)->finalizer) {
+        DB_OBJ(tc)->finalizer(ctx, (grn_obj *)tc, &DB_OBJ(tc)->user_data);
+      }
+      if (DB_OBJ(tc)->source) {
+        GRN_FREE(DB_OBJ(tc)->source);
+      }
+      /*
+      grn_hook_entry entry;
+      for (entry = 0; entry < N_HOOK_ENTRIES; entry++) {
+        grn_hook_free(ctx, DB_OBJ(tc)->hooks[entry]);
+      }
+      */
+      grn_obj_delete_by_id(ctx, DB_OBJ(tc)->db, DB_OBJ(tc)->id, 0);
+    }
     switch (tc->header.type) {
     case GRN_CURSOR_TABLE_PAT_KEY :
       grn_pat_cursor_close(ctx, (grn_pat_cursor *)tc);
@@ -4025,6 +4046,15 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         }
       }
       rc = GRN_SUCCESS;
+      break;
+    case GRN_CURSOR_TABLE_PAT_KEY :
+      grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
+      break;
+    case GRN_CURSOR_TABLE_HASH_KEY :
+      grn_hash_cursor_close(ctx, (grn_hash_cursor *)obj);
+      break;
+    case GRN_CURSOR_TABLE_NO_KEY :
+      grn_array_cursor_close(ctx, (grn_array_cursor *)obj);
       break;
     case GRN_TYPE :
       GRN_FREE(obj);
