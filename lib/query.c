@@ -934,10 +934,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[13], "drilldown_output_columns");
   DEF_VAR(vars[14], "drilldown_offset");
   DEF_VAR(vars[15], "drilldown_hits");
-  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 16, vars);
+  grn_proc_create(ctx, "define_selector", 15, NULL, define_selector, NULL, NULL, 16, vars);
   DEF_VAR(vars[0], "input_type");
   DEF_VAR(vars[1], "table");
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "values");
-  grn_proc_create(ctx, "/q/loader", 9, NULL, loader, NULL, NULL, 4, vars);
+  grn_proc_create(ctx, "loader", 9, NULL, loader, NULL, NULL, 4, vars);
 }
