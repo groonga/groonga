@@ -396,6 +396,8 @@ grn_ctx_fin(grn_ctx *ctx)
   return rc;
 }
 
+grn_timeval grn_starttime;
+
 grn_rc
 grn_init(void)
 {
@@ -408,6 +410,7 @@ grn_init(void)
   ctx->prev = ctx;
   grn_ctx_init(ctx, 0);
   ctx->encoding = grn_strtoenc(GROONGA_DEFAULT_ENCODING);
+  grn_timeval_now(ctx, &grn_starttime);
 #ifdef WIN32
   {
     SYSTEM_INFO si;

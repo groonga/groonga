@@ -377,6 +377,8 @@ typedef struct {
   int32_t tv_usec;
 } grn_timeval;
 
+extern grn_timeval grn_starttime;
+
 #ifndef GRN_TIMEVAL_STR_SIZE
 #define GRN_TIMEVAL_STR_SIZE 0x100
 #endif /* GRN_TIMEVAL_STR_SIZE */
