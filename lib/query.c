@@ -992,6 +992,8 @@ proc_column_create(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   return ctx->rc;
 }
 
+#define GRN_STRLEN(s) ((s) ? strlen(s) : 0)
+
 static int
 print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type otype)
 {
@@ -1025,7 +1027,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_esc(ctx, buf, name, name_len);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_esc(ctx, buf, path, strlen(path));
+    grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     GRN_TEXT_PUTS(ctx, buf, type);
     GRN_TEXT_PUTC(ctx, buf, '\t');
@@ -1040,7 +1042,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_esc(ctx, buf, name, name_len);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_text_esc(ctx, buf, path, strlen(path));
+    grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, ',');
     GRN_TEXT_PUTS(ctx, buf, type);
     GRN_TEXT_PUTC(ctx, buf, ',');
@@ -1081,7 +1083,7 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_esc(ctx, buf, name, name_len);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_esc(ctx, buf, path, strlen(path));
+    grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, '\t');
@@ -1094,7 +1096,7 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_esc(ctx, buf, name, name_len);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_text_esc(ctx, buf, path, strlen(path));
+    grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, ',');
@@ -1212,7 +1214,7 @@ proc_table_list(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 
 #define DEF_VAR(v,name_str) {\
   (v).name = (name_str);\
-  (v).name_size = strlen(name_str);\
+  (v).name_size = GRN_STRLEN(name_str);\
   GRN_TEXT_INIT(&(v).value, 0);\
 }
 
