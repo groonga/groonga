@@ -607,7 +607,7 @@ cmd_tablelist(grn_ctx *ctx, grn_obj *db, grn_obj *buf, grn_content_type otype)
 }
 
 static int
-do_alone(char **argv, int argc)
+do_alone(int argc, char **argv)
 {
   int rc = -1;
   char *path = NULL, *cmd = NULL;
@@ -971,7 +971,7 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
             GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
             GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
             GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
-            // todo : refine
+            path += 2;
             grn_ql_send(ctx, path, p - path, header->flags);
           }
           break;
@@ -1912,9 +1912,9 @@ main(int argc, char **argv)
   switch (mode & MODE_MASK) {
   case mode_alone :
     if (argc <= i) {
-      r = do_alone(NULL, 0);
+      r = do_alone(0, NULL);
     } else {
-      r = do_alone(argv + i, argc - i - 1);
+      r = do_alone(argc - i - 1, argv + i);
     }
     break;
   case mode_client :

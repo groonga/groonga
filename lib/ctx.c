@@ -575,7 +575,7 @@ grn_ctx_close(grn_ctx *ctx)
 }
 
 grn_obj *
-grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
+grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
   grn_obj key, *expr, *val = NULL;
@@ -615,6 +615,63 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
   return val;
 }
 
+grn_obj *
+grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
+{
+  grn_obj *expr, *val = NULL;
+  if (ctx->impl->qe_next) {
+    expr = ctx->impl->qe_next;
+    ctx->impl->qe_next = NULL;
+    // fixme...
+    if ((val = grn_expr_get_var(ctx, expr, "table", 5))) {
+      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+    }
+    if ((val = grn_expr_get_var(ctx, expr, "values", 6))) {
+      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+      GRN_TEXT_PUT(ctx, val, str, str_size);
+    }
+    grn_ctx_push(ctx, ctx->impl->outbuf);
+    val = grn_expr_exec(ctx, expr);
+  } else {
+    unsigned int argc = 0;
+    const char *p = (char *)str, *q, *pe = p + str_size, *tokbuf[256];
+    while (p < pe) {
+      int i, n = grn_str_tok(p, pe - p, ' ', tokbuf, 256, &q);
+      for (i = 0; i < n; i++, argc++) {
+        if (!argc) {
+          if (!(expr = grn_ctx_get(ctx, p, tokbuf[i] - p))) { return NULL; }
+        } else {
+          if ((val = grn_expr_get_var_by_offset(ctx, expr, argc - 1))) {
+            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+            GRN_TEXT_PUT(ctx, val, p, tokbuf[i] - p);
+          }
+        }
+      }
+    }
+    if (expr) {
+      grn_ctx_push(ctx, ctx->impl->outbuf);
+      val = grn_expr_exec(ctx, expr);
+    }
+  }
+  return val;
+}
+
+grn_rc
+grn_ql_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
+{
+  grn_obj buf;
+  GRN_TEXT_INIT(&buf, 0);
+  while (argc--) {
+    // todo : encode into json like syntax
+    GRN_TEXT_PUTS(ctx, &buf, *argv);
+    argv++;
+    if (argc) { GRN_TEXT_PUTC(ctx, &buf, ' '); }
+  }
+  grn_ql_send(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), flags);
+  GRN_OBJ_FIN(ctx, &buf);
+  return ctx->rc;
+}
+
 grn_rc
 grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
 {
@@ -640,11 +697,7 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       goto exit;
     } else {
       if (ctx->impl->symbols) {
-        if (str_len && *str == '/') {
-          grn_ctx_qe_exec(ctx, str, str_len);
-        } else {
-          grn_ql_feed(ctx, str, str_len, flags);
-        }
+        grn_ql_feed(ctx, str, str_len, flags);
         if (ctx->stat == GRN_QL_QUITTING) { ctx->stat = GRN_QL_QUIT; }
         if (!ERRP(ctx, GRN_CRIT)) {
           if (!(flags & GRN_QL_QUIET) && ctx->impl->output) {
@@ -653,7 +706,11 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
         }
         goto exit;
       } else {
-        grn_ctx_qe_exec(ctx, str, str_len);
+        if (*str == '/') {
+          grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
+        } else {
+          grn_ctx_qe_exec(ctx, str, str_len);
+        }
         if (ctx->stat == GRN_QL_QUITTING) { ctx->stat = GRN_QL_QUIT; }
         if (!ERRP(ctx, GRN_CRIT)) {
           if (!(flags & GRN_QL_QUIET) && ctx->impl->output) {

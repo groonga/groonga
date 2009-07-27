@@ -845,7 +845,7 @@ grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_operato
 /**** procs ****/
 
 static grn_rc
-selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_obj *outbuf = grn_ctx_pop(ctx);
@@ -872,7 +872,7 @@ selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 }
 
 static grn_rc
-define_selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+proc_define_selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
@@ -880,7 +880,7 @@ define_selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   if (grn_proc_create(ctx,
                       GRN_TEXT_VALUE(&vars[0].value),
                       GRN_TEXT_LEN(&vars[0].value),
-                      NULL, selector, NULL, NULL, nvars - 1, vars + 1)) {
+                      NULL, proc_select, NULL, NULL, nvars - 1, vars + 1)) {
     GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
   }
   grn_ctx_push(ctx, outbuf);
@@ -888,7 +888,7 @@ define_selector(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 }
 
 static grn_rc
-loader(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+proc_load(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_obj *outbuf = grn_ctx_pop(ctx);
@@ -905,6 +905,36 @@ loader(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
     }
   }
   grn_ctx_push(ctx, outbuf);
+  return ctx->rc;
+}
+
+static grn_rc
+proc_status(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+{
+  return ctx->rc;
+}
+
+static grn_rc
+proc_column_create(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+{
+  return ctx->rc;
+}
+
+static grn_rc
+proc_table_create(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+{
+  return ctx->rc;
+}
+
+static grn_rc
+proc_column_list(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+{
+  return ctx->rc;
+}
+
+static grn_rc
+proc_table_list(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+{
   return ctx->rc;
 }
 
@@ -934,10 +964,37 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[13], "drilldown_output_columns");
   DEF_VAR(vars[14], "drilldown_offset");
   DEF_VAR(vars[15], "drilldown_hits");
-  grn_proc_create(ctx, "/q/define_selector", 18, NULL, define_selector, NULL, NULL, 16, vars);
+  grn_proc_create(ctx, "define_selector", 15, NULL, proc_define_selector, NULL, NULL, 16, vars);
+
+  grn_proc_create(ctx, "select", 6, NULL, proc_select, NULL, NULL, 15, vars + 1);
+
   DEF_VAR(vars[0], "input_type");
   DEF_VAR(vars[1], "table");
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "values");
-  grn_proc_create(ctx, "/q/loader", 9, NULL, loader, NULL, NULL, 4, vars);
+  grn_proc_create(ctx, "load", 4, NULL, proc_load, NULL, NULL, 4, vars);
+
+  DEF_VAR(vars[0], "output_type");
+  grn_proc_create(ctx, "status", 6, NULL, proc_status, NULL, NULL, 1, vars);
+
+  DEF_VAR(vars[0], "output_type");
+  grn_proc_create(ctx, "table_list", 10, NULL, proc_table_list, NULL, NULL, 1, vars);
+
+  DEF_VAR(vars[0], "output_type");
+  DEF_VAR(vars[1], "table");
+  grn_proc_create(ctx, "column_list", 11, NULL, proc_column_list, NULL, NULL, 2, vars);
+
+  DEF_VAR(vars[0], "output_type");
+  DEF_VAR(vars[1], "name");
+  DEF_VAR(vars[2], "flags");
+  DEF_VAR(vars[3], "type");
+  DEF_VAR(vars[4], "DEFAULT_TOKENIZER");
+  grn_proc_create(ctx, "table_create", 12, NULL, proc_table_create, NULL, NULL, 5, vars);
+
+  DEF_VAR(vars[0], "output_type");
+  DEF_VAR(vars[1], "table");
+  DEF_VAR(vars[2], "name");
+  DEF_VAR(vars[3], "flags");
+  DEF_VAR(vars[4], "type");
+  grn_proc_create(ctx, "column_create", 13, NULL, proc_column_create, NULL, NULL, 5, vars);
 }
