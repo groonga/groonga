@@ -81,10 +81,6 @@ grn_table_cursor *grn_table_cursor_open_by_id(grn_ctx *ctx, grn_obj *table,
 void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
                           grn_rset_posinfo *pi, int dir);
 
-
-grn_obj *grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj,
-                              const char *name, unsigned name_size);
-
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
 typedef struct _grn_hook grn_hook;

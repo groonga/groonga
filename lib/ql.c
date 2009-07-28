@@ -210,7 +210,7 @@ get_accessor(grn_ctx *ctx, grn_obj *table, grn_cell *e)
   uint16_t msg_size;
   char msg[STRBUF_SIZE];
   obj2str(e, msg, &msg_size);
-  return grn_obj_get_accessor(ctx, table, msg, msg_size);
+  return grn_obj_column(ctx, table, msg, msg_size);
 }
 
 #define COLUMN_EXPP(x,ce) ((x) == (ce)->cells[(ce)->n_keys])
@@ -342,7 +342,7 @@ column_exp_close(grn_ctx *ctx, column_exp *ce)
   int i;
   grn_ql_obj_unmark(ctx, ce->expr);
   for (i = 0; i < ce->n_keys; i++) {
-    grn_obj_close(ctx, ce->keys[i].key);
+    grn_obj_unlink(ctx, ce->keys[i].key);
   }
   if (ce->keys) { GRN_FREE(ce->keys); }
   if (ce->cells) { GRN_FREE(ce->cells); }
@@ -769,6 +769,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
       if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }}
       grn_bulk_write(ctx, obj, (const char *)&id, sizeof(grn_id));
     }
+    obj->header.domain = rid;
   } else {
     switch (cell->header.type) {
     case GRN_CELL_STR :
@@ -986,10 +987,10 @@ grn_obj *
 grn_ql_obj_key(grn_ctx *ctx, grn_cell *obj, grn_obj *value)
 {
   grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
-  grn_obj *accessor = grn_obj_get_accessor(ctx, table, ":key", 4);
+  grn_obj *accessor = grn_obj_column(ctx, table, ":key", 4);
   if (accessor) {
     value = grn_obj_get_value(ctx, accessor, obj->u.o.id, value);
-    grn_obj_close(ctx, accessor);
+    grn_obj_unlink(ctx, accessor);
   }
   return value;
 }
@@ -1836,12 +1837,12 @@ ha_object(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
       res = obj2oid(ctx, obj, NULL);
     } else {
       grn_obj *domain = grn_ctx_at(ctx, obj->header.domain);
-      grn_obj *column = grn_obj_get_accessor(ctx, domain, msg, msg_size);
+      grn_obj *column = grn_obj_column(ctx, domain, msg, msg_size);
       if (!column) {
         QLERR("invalid column %s", msg);
       }
       res = column_value(ctx, column, obj->u.o.id, args, NULL);
-      grn_obj_close(ctx, column);
+      grn_obj_unlink(ctx, column);
       POP(car, args);
     }
   }
