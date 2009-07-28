@@ -2078,10 +2078,10 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     default :
       {
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
-        grn_obj *accessor = grn_obj_get_accessor(ctx, table, ":key", 4);
+        grn_obj *accessor = grn_obj_column(ctx, table, ":key", 4);
         if (accessor) {
           grn_obj_get_value(ctx, accessor, *((grn_id *)GRN_BULK_HEAD(obj)), &buf);
-          grn_obj_close(ctx, accessor);
+          grn_obj_unlink(ctx, accessor);
         }
         grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
       }

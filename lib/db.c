@@ -1737,6 +1737,9 @@ grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
   return GRN_SUCCESS;
 }
 
+static grn_obj *grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj,
+                                     const char *name, unsigned name_size);
+
 grn_obj *
 grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size)
 {
@@ -2351,7 +2354,7 @@ accessor_new(grn_ctx *ctx)
   return res;
 }
 
-grn_obj *
+static grn_obj *
 grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name_size)
 {
   grn_accessor *res = NULL, **rp = NULL, **rp0 = NULL;
@@ -5361,6 +5364,10 @@ grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
           obj = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(yv));
           col = grn_obj_column(ctx, obj, GRN_BULK_HEAD(xv), GRN_BULK_VSIZE(xv));
         }
+        if (!col) {
+          ERR(GRN_INVALID_ARGUMENT, "column lookup failed");
+          goto exit;
+        }
         code->value = col;
         rv = &e->values[e->values_curr++];
         rv->header.domain = grn_obj_get_range(ctx, col);
@@ -6911,6 +6918,9 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
           break;
         }
         return get_token(ctx, q, &op, c, mode);
+      } else {
+        ERR(GRN_INVALID_ARGUMENT, "column lookup failed");
+        return ctx->rc;
       }
     } else if (*end == GRN_QUERY_PREFIX) {
       mode = GRN_OP_PREFIX;
@@ -7209,6 +7219,10 @@ grn_expr_create_from_str(grn_ctx *ctx,
   efsi.snip_conds = NULL;
 exit :
   GRN_OBJ_FIN(ctx, &efsi.buf);
+  if (ctx->rc) {
+    grn_obj_unlink(ctx, efsi.e);
+    return NULL;
+  }
   return efsi.e;
 }
 
@@ -7325,6 +7339,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                              table_, match_column_))) {
         grn_table_select(ctx, table_, query_, res, GRN_OP_OR);
         grn_obj_unlink(ctx, query_);
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "nhits=%d", grn_table_size(ctx, res));
         // todo : support foreach
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
                                        GRN_OBJ_TABLE_NO_KEY, res, res))) {
