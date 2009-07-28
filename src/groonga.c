@@ -610,25 +610,19 @@ static int
 do_alone(int argc, char **argv)
 {
   int rc = -1;
-  char *path = NULL, *cmd = NULL;
+  char *path = NULL;
   grn_obj *db = NULL;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
   grn_timeval_now(ctx, &starttime);
-  if (argv) {
-    path = argv[0];
-    if (argc >= 1) {
-      cmd = argv[1];
-      /* TODO: handle arguments of command */
-    }
-  }
+  if (argc > 0 && argv) { path = *argv++; argc--; }
   if (path) { db = grn_db_open(ctx, path); }
   if (!db) { db = grn_db_create(ctx, path, NULL); }
   if (db) {
-    if (!cmd) {
+    grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
+    if (!argc) {
       char *buf = GRN_MALLOC(BUFSIZE);
       if (buf) {
-        grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
         grn_ql_load(ctx, NULL);
         while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
           uint32_t size = strlen(buf) - 1;
@@ -642,26 +636,7 @@ do_alone(int argc, char **argv)
         fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
       }
     } else {
-      grn_obj buf;
-      GRN_TEXT_INIT(&buf, 0);
-      /* NOTE: command dispatch */
-      switch (*cmd) {
-      case 't':
-        cmd_tablelist(ctx, db, &buf, GRN_CONTENT_JSON);
-        break;
-      case 'c':
-        if (argc >= 2) {
-          cmd_columnlist(ctx, argv[2], strlen(argv[2]), &buf, GRN_CONTENT_JSON);
-        }
-        break;
-      case 'r':
-        if (argc >= 5) {
-          cmd_recordlist(ctx, argv[2], strlen(argv[2]), argv[3], strlen(argv[3]), atoi(argv[4]), atoi(argv[5]), &buf, GRN_CONTENT_JSON);
-        }
-        break;
-      }
-      fwrite(GRN_TEXT_VALUE(&buf), 1, GRN_TEXT_LEN(&buf), stdout);
-      GRN_OBJ_FIN(ctx, &buf);
+      grn_ql_sendv(ctx, argc, argv, 0);
     }
     grn_db_close(ctx, db);
   } else {
