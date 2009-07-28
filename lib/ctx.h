@@ -46,11 +46,11 @@ extern "C" {
 
 #define GRN_API_ENTER \
 {\
-  (ctx)->errlvl = GRN_OK;\
-  (ctx)->rc = GRN_SUCCESS;\
   if ((ctx)->seqno & 1) {\
     (ctx)->subno++;\
   } else {\
+    (ctx)->errlvl = GRN_OK;\
+    (ctx)->rc = GRN_SUCCESS;\
     (ctx)->seqno++;\
   }\
   GRN_TEST_YIELD();\

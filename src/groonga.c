@@ -1886,11 +1886,7 @@ main(int argc, char **argv)
   useql = (mode & MODE_USE_QL);
   switch (mode & MODE_MASK) {
   case mode_alone :
-    if (argc <= i) {
-      r = do_alone(0, NULL);
-    } else {
-      r = do_alone(argc - i - 1, argv + i);
-    }
+    r = do_alone(argc - i, argv + i);
     break;
   case mode_client :
     r = do_client(argc <= i ? DEFAULT_DEST : argv[i]);

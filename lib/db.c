@@ -6918,6 +6918,9 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
           break;
         }
         return get_token(ctx, q, &op, c, mode);
+      } else {
+        ERR(GRN_INVALID_ARGUMENT, "column lookup failed");
+        return ctx->rc;
       }
     } else if (*end == GRN_QUERY_PREFIX) {
       mode = GRN_OP_PREFIX;
@@ -7216,6 +7219,10 @@ grn_expr_create_from_str(grn_ctx *ctx,
   efsi.snip_conds = NULL;
 exit :
   GRN_OBJ_FIN(ctx, &efsi.buf);
+  if (ctx->rc) {
+    grn_obj_unlink(ctx, efsi.e);
+    return NULL;
+  }
   return efsi.e;
 }
 
