@@ -396,6 +396,8 @@ grn_ctx_fin(grn_ctx *ctx)
   return rc;
 }
 
+grn_timeval grn_starttime;
+
 grn_rc
 grn_init(void)
 {
@@ -408,6 +410,7 @@ grn_init(void)
   ctx->prev = ctx;
   grn_ctx_init(ctx, 0);
   ctx->encoding = grn_strtoenc(GROONGA_DEFAULT_ENCODING);
+  grn_timeval_now(ctx, &grn_starttime);
 #ifdef WIN32
   {
     SYSTEM_INFO si;
@@ -618,7 +621,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
-  grn_obj *expr, *val = NULL;
+  grn_obj *expr = NULL, *val = NULL;
   if (ctx->impl->qe_next) {
     expr = ctx->impl->qe_next;
     ctx->impl->qe_next = NULL;
@@ -646,7 +649,9 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
             GRN_TEXT_PUT(ctx, val, p, tokbuf[i] - p);
           }
         }
+        p = tokbuf[i] + 1;
       }
+      p = q;
     }
     if (expr) {
       grn_ctx_push(ctx, ctx->impl->outbuf);
