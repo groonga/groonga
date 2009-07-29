@@ -2444,13 +2444,44 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
           switch (obj->header.type) {
           case GRN_DB :
           case GRN_TYPE :
-          case GRN_TABLE_NO_KEY :
             (*rp)->action = GRN_ACCESSOR_GET_ID;
             done++;
             break;
           case GRN_TABLE_PAT_KEY :
           case GRN_TABLE_HASH_KEY :
+          case GRN_TABLE_NO_KEY :
             (*rp)->action = GRN_ACCESSOR_GET_KEY;
+            break;
+          default :
+            /* lookup failed */
+            grn_obj_close(ctx, (grn_obj *)res);
+            res = NULL;
+            goto exit;
+          }
+        }
+        break;
+      case 'v' : /* value */
+      case 'V' :
+        for (rp = &res; !done; rp = &(*rp)->next) {
+          *rp = accessor_new(ctx);
+          (*rp)->obj = obj;
+          obj = grn_ctx_at(ctx, obj->header.domain);
+          switch (obj->header.type) {
+          case GRN_DB :
+          case GRN_TYPE :
+            if (DB_OBJ((*rp)->obj)->range) {
+              (*rp)->action = GRN_ACCESSOR_GET_VALUE;
+              done++;
+            } else {
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
+            break;
+          case GRN_TABLE_PAT_KEY :
+          case GRN_TABLE_HASH_KEY :
+          case GRN_TABLE_NO_KEY :
+           (*rp)->action = GRN_ACCESSOR_GET_KEY;
             break;
           default :
             /* lookup failed */
