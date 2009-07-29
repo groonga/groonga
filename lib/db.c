@@ -4373,8 +4373,8 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
       }
     }
   } else if (obj->header.type == GRN_ACCESSOR) {
-    grn_accessor *a = (grn_accessor *)obj;
-    for (;;) {
+    grn_accessor *a;
+    for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
         GRN_TEXT_PUTS(ctx, buf, ":id");
@@ -4397,15 +4397,11 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         grn_column_name_(ctx, a->obj, buf);
+        if (a->next) { GRN_TEXT_PUTC(ctx, buf, '.'); }
         break;
       case GRN_ACCESSOR_GET_DB_OBJ :
       case GRN_ACCESSOR_LOOKUP :
       case GRN_ACCESSOR_FUNCALL :
-        break;
-      }
-      if ((a = a->next)) {
-        GRN_TEXT_PUTC(ctx, buf, '.');
-      } else {
         break;
       }
     }
@@ -6144,6 +6140,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
               cols[i] = grn_obj_column(ctx, table, p, tokbuf[i] - p);
               p = tokbuf[i] + 1;
             }
+            format.flags = 0;
             format.ncolumns = n;
             format.columns = cols;
             grn_text_otoj(ctx, res, table, &format);
@@ -7454,6 +7451,8 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_column_, qbuf, *query_, *res, *sorted;
+  format.limit = hits;
+  format.flags = GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES;
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
     GRN_TEXT_INIT(&qbuf, 0);
@@ -7477,11 +7476,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     GRN_OBJ_FIN(ctx, &qbuf);
     if (res) {
-      // todo : support output_type
-      GRN_TEXT_PUTC(ctx, outbuf, '[');
-      grn_text_itoa(ctx, outbuf, grn_table_size(ctx, res));
-      GRN_TEXT_PUTC(ctx, outbuf, ',');
-
       // todo : support foreach
       if (sortby_len) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
@@ -7490,7 +7484,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
             grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
             grn_table_sort_key_close(ctx, keys, nkeys);
             // format.min = offset;
-            format.limit = hits;
             grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, sorted);
             grn_text_otoj(ctx, outbuf, sorted, &format);
             grn_obj_format_close(ctx, &format);
@@ -7499,7 +7492,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         }
       } else {
         // format.min = offset;
-        format.limit = hits;
         grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, res);
         grn_text_otoj(ctx, outbuf, res, &format);
         grn_obj_format_close(ctx, &format);
@@ -7539,7 +7531,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         grn_table_sort_key_close(ctx, gkeys, ngkeys);
       }
       if (res != table_) { grn_obj_unlink(ctx, res); }
-      GRN_TEXT_PUTC(ctx, outbuf, ']');
     }
     grn_obj_unlink(ctx, table_);
   }

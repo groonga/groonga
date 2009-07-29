@@ -2092,10 +2092,20 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       int i, j;
       grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
       GRN_TEXT_PUTC(ctx, bulk, '[');
+      grn_text_itoa(ctx, bulk, ve - v);
       if (v < ve) {
+        if (format->flags & GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES) {
+          GRN_TEXT_PUTS(ctx, bulk, ",[");
+          for (j = 0; j < format->ncolumns; j++) {
+            if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+            GRN_BULK_REWIND(&buf);
+            grn_column_name_(ctx, format->columns[j], &buf);
+            grn_text_otoj(ctx, bulk, &buf, NULL);
+          }
+          GRN_TEXT_PUTC(ctx, bulk, ']');
+        }
         for (i = 0;; i++) {
-          if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-          GRN_TEXT_PUTC(ctx, bulk, '[');
+          GRN_TEXT_PUTS(ctx, bulk, ",[");
           for (j = 0; j < format->ncolumns; j++) {
             if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
             GRN_BULK_REWIND(&buf);
@@ -2120,9 +2130,19 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, obj, 0, 0,
                                                          GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');
+      grn_text_itoa(ctx, bulk, grn_table_size(ctx, obj));
+      if (format->flags & GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES) {
+        GRN_TEXT_PUTS(ctx, bulk, ",[");
+        for (j = 0; j < format->ncolumns; j++) {
+          if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+          GRN_BULK_REWIND(&buf);
+          grn_column_name_(ctx, format->columns[j], &buf);
+          grn_text_otoj(ctx, bulk, &buf, NULL);
+        }
+        GRN_TEXT_PUTC(ctx, bulk, ']');
+      }
       for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
-        if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-        GRN_TEXT_PUTC(ctx, bulk, '[');
+        GRN_TEXT_PUTS(ctx, bulk, ",[");
         for (j = 0; j < format->ncolumns; j++) {
           if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
           GRN_BULK_REWIND(&buf);
