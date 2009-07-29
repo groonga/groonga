@@ -36,7 +36,8 @@ OBJ = \
   snip.obj \
   store.obj \
   str.obj \
-  token.obj
+  token.obj \
+  proc.obj
 
 .c.obj:
 	$(CC) $(CFLAGS) $(DEFS) -c  $<

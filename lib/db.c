@@ -21,6 +21,7 @@
 #include "ii.h"
 #include "ql.h"
 #include "token.h"
+#include "proc.h"
 #include <string.h>
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
@@ -184,6 +185,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   MUTEX_DESTROY(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
   GRN_FREE(s);
+  if (ctx->impl && ctx->impl->db == db) { ctx->impl->db = NULL; }
   GRN_API_RETURN(GRN_SUCCESS);
 }
 

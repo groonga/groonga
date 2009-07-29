@@ -945,7 +945,10 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
             GRN_TEXT_INIT(head, 0);
             GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
             GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
+            /* todo : support tsv
             GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
+            */
+            GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
             path += 2;
             grn_ql_send(ctx, path, p - path, header->flags);
           }
@@ -1626,9 +1629,9 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
       grn_ctx_init(&edge->ctx, (useql ? GRN_CTX_USE_QL : 0));
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
-      grn_ql_recv_handler_set(&edge->ctx, output, edge);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
       grn_ql_load(&edge->ctx, NULL);
+      grn_ql_recv_handler_set(&edge->ctx, output, edge);
       com->opaque = edge;
       grn_obj_close(&edge->ctx, edge->ctx.impl->outbuf);
       edge->ctx.impl->outbuf = grn_msg_open(&edge->ctx, com, &edge->send_old);
