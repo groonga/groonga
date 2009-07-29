@@ -24,6 +24,8 @@
 #define GET_OTYPE(var) \
   ((GRN_TEXT_LEN(var) && *(GRN_TEXT_VALUE(var)) == 't') ? GRN_CONTENT_TSV : GRN_CONTENT_JSON)
 
+#define DEFAULT_LIMIT 10
+
 static grn_rc
 proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
 {
@@ -31,6 +33,12 @@ proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   grn_obj *outbuf = grn_ctx_pop(ctx);
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
   if (nvars == 15) {
+    int offset = GRN_TEXT_LEN(&vars[7].value)
+      ? grn_atoi(GRN_TEXT_VALUE(&vars[7].value), GRN_BULK_CURR(&vars[7].value), NULL)
+      : 0;
+    int limit = GRN_TEXT_LEN(&vars[8].value)
+      ? grn_atoi(GRN_TEXT_VALUE(&vars[8].value), GRN_BULK_CURR(&vars[8].value), NULL)
+      : DEFAULT_LIMIT;
     grn_search(ctx, outbuf, GET_OTYPE(&vars[14].value),
                GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
@@ -39,8 +47,7 @@ proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
                GRN_TEXT_VALUE(&vars[4].value), GRN_TEXT_LEN(&vars[4].value),
                GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value),
                GRN_TEXT_VALUE(&vars[6].value), GRN_TEXT_LEN(&vars[6].value),
-               grn_atoi(GRN_TEXT_VALUE(&vars[7].value), GRN_BULK_CURR(&vars[7].value), NULL),
-               grn_atoi(GRN_TEXT_VALUE(&vars[8].value), GRN_BULK_CURR(&vars[8].value), NULL),
+               offset, limit,
                GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
                GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
                GRN_TEXT_VALUE(&vars[11].value), GRN_TEXT_LEN(&vars[11].value),

@@ -397,7 +397,7 @@ test_expr_query(void)
 
   cut_assert_equal_uint(0, grn_obj_close(&context, expr));
 
-  cut_assert_equal_substring("[[\"abhij\", 1], [\"fghij\", 1]]",
+  cut_assert_equal_substring("[[\"abhij\",1],[\"fghij\",1]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_obj_close(&context, &textbuf);
@@ -637,7 +637,7 @@ test_table_select_search(void)
 
   grn_expr_exec(&context, expr);
 
-  cut_assert_equal_substring("[[14, 4, \"moge moge moge\"], [14, 2, \"moge hoge hoge\"]]",
+  cut_assert_equal_substring("[[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_test_assert(grn_obj_close(&context, expr));
@@ -707,7 +707,7 @@ test_table_select_select_search(void)
 
   grn_expr_exec(&context, expr);
 
-  cut_assert_equal_substring("[[14, 4, \"moge moge moge\"], [14, 2, \"moge hoge hoge\"]]",
+  cut_assert_equal_substring("[[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_test_assert(grn_obj_close(&context, expr));
