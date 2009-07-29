@@ -4355,6 +4355,64 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
   GRN_API_RETURN(len);
 }
 
+grn_rc
+grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
+{
+  if (GRN_DB_OBJP(obj)) {
+    if (DB_OBJ(obj)->id && DB_OBJ(obj)->id < GRN_ID_MAX) {
+      uint32_t len;
+      grn_db *s = (grn_db *)DB_OBJ(obj)->db;
+      const char *p = _grn_pat_key(ctx, s->keys, DB_OBJ(obj)->id, &len);
+      if (len) {
+        int cl;
+        const char *p0 = p, *pe = p + len;
+        for (; p < pe && (cl = grn_charlen(ctx, p, pe)); p += cl) {
+          if (*p == GRN_DB_DELIMITER && cl == 1) { p0 = p + cl; }
+        }
+        GRN_TEXT_PUT(ctx, buf, p0, pe - p0);
+      }
+    }
+  } else if (obj->header.type == GRN_ACCESSOR) {
+    grn_accessor *a = (grn_accessor *)obj;
+    for (;;) {
+      switch (a->action) {
+      case GRN_ACCESSOR_GET_ID :
+        GRN_TEXT_PUTS(ctx, buf, ":id");
+        break;
+      case GRN_ACCESSOR_GET_KEY :
+        if (!a->next) {
+          GRN_TEXT_PUTS(ctx, buf, ":key");
+        }
+        break;
+      case GRN_ACCESSOR_GET_VALUE :
+        if (!a->next) {
+          GRN_TEXT_PUTS(ctx, buf, ":value");
+        }
+        break;
+      case GRN_ACCESSOR_GET_SCORE :
+        GRN_TEXT_PUTS(ctx, buf, ":score");
+        break;
+      case GRN_ACCESSOR_GET_NSUBRECS :
+        GRN_TEXT_PUTS(ctx, buf, ":nsubrecs");
+        break;
+      case GRN_ACCESSOR_GET_COLUMN_VALUE :
+        grn_column_name_(ctx, a->obj, buf);
+        break;
+      case GRN_ACCESSOR_GET_DB_OBJ :
+      case GRN_ACCESSOR_LOOKUP :
+      case GRN_ACCESSOR_FUNCALL :
+        break;
+      }
+      if ((a = a->next)) {
+        GRN_TEXT_PUTC(ctx, buf, '.');
+      } else {
+        break;
+      }
+    }
+  }
+  return ctx->rc;
+}
+
 int
 grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold)
 {
@@ -6081,6 +6139,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             grn_obj *cols[256];
             const char *p = GRN_BULK_HEAD(str), *tokbuf[256];
             int i, n = grn_str_tok(p, GRN_BULK_VSIZE(str), ' ', tokbuf, 256, NULL);
+            format.flags = 0;
             for (i = 0; i < n; i++) {
               cols[i] = grn_obj_column(ctx, table, p, tokbuf[i] - p);
               p = tokbuf[i] + 1;

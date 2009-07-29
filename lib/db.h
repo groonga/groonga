@@ -83,6 +83,8 @@ void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
 
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
+grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
+
 typedef struct _grn_hook grn_hook;
 
 struct _grn_hook {
