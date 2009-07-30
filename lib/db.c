@@ -1781,7 +1781,7 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_
 {
   int n = 0;
   GRN_API_ENTER;
-  if (GRN_OBJ_TABLEP(table)) {
+  if (GRN_OBJ_TABLEP(table) && !(DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT)) {
     grn_obj bulk;
     grn_db *s = (grn_db *)DB_OBJ(table)->db;
     GRN_TEXT_INIT(&bulk, 0);
@@ -7404,14 +7404,27 @@ grn_obj_format_from_str(grn_ctx *ctx, grn_obj_format *format,
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     int i, n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
     if ((cols = GRN_MALLOCN(grn_obj *, n))) {
-      c = cols;
+      format->columns = c = cols;
       for (i = 0; i < n; i++) {
-        if ((*c = grn_obj_column(ctx, table, str, tokbuf[i] - str))) {
-          c++;
+        const char *p = tokbuf[i];
+        if (str < p) {
+          if (p[-1] == '*') {
+            grn_hash *cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                             GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+            if (cols) {
+              grn_id *key;
+              grn_table_columns(ctx, table, str, p - str - 1, (grn_obj *)cols);
+              GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
+                if ((*c = grn_ctx_at(ctx, *key))) { c++; }
+              });
+              grn_hash_close(ctx, cols);
+            }
+          } else if ((*c = grn_obj_column(ctx, table, str, p - str))) {
+            c++;
+          }
         }
-        str = tokbuf[i] + 1;
+        str = p + 1;
       }
-      format->columns = cols;
     }
     GRN_FREE(tokbuf);
   }

@@ -24,7 +24,8 @@
 #define GET_OTYPE(var) \
   ((GRN_TEXT_LEN(var) && *(GRN_TEXT_VALUE(var)) == 't') ? GRN_CONTENT_TSV : GRN_CONTENT_JSON)
 
-#define DEFAULT_LIMIT 10
+#define DEFAULT_LIMIT           10
+#define DEFAULT_OUTPUT_COLUMNS  ":id :key :value *"
 
 static grn_rc
 proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
@@ -39,6 +40,12 @@ proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
     int limit = GRN_TEXT_LEN(&vars[8].value)
       ? grn_atoi(GRN_TEXT_VALUE(&vars[8].value), GRN_BULK_CURR(&vars[8].value), NULL)
       : DEFAULT_LIMIT;
+    char *output_columns = GRN_TEXT_VALUE(&vars[6].value);
+    uint32_t output_columns_len = GRN_TEXT_LEN(&vars[6].value);
+    if (!output_columns_len) {
+      output_columns = DEFAULT_OUTPUT_COLUMNS;
+      output_columns_len = strlen(DEFAULT_OUTPUT_COLUMNS);
+    }
     grn_search(ctx, outbuf, GET_OTYPE(&vars[14].value),
                GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
@@ -46,7 +53,7 @@ proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
                GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value),
                GRN_TEXT_VALUE(&vars[4].value), GRN_TEXT_LEN(&vars[4].value),
                GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value),
-               GRN_TEXT_VALUE(&vars[6].value), GRN_TEXT_LEN(&vars[6].value),
+               output_columns, output_columns_len,
                offset, limit,
                GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
                GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
