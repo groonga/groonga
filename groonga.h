@@ -1576,6 +1576,7 @@ struct _grn_obj_format {
   const void *max;
   unsigned max_size;
   int flags;
+  int offset;
   int limit;
   int ncolumns;
   grn_obj **columns;

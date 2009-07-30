@@ -5567,7 +5567,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     value = s0;\
   } else {\
     s0 = value = vp++;\
-    s0->header.impl_flags = GRN_OBJ_EXPRVALUE;\
+    s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
   }\
 }
 
@@ -5579,7 +5579,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   sp--;\
   s1 = sp[-2];\
   s0 = value = vp++;\
-  s0->header.impl_flags = GRN_OBJ_EXPRVALUE;\
+  s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
 }
 
 void
@@ -7464,6 +7464,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_column_, qbuf, *query_, *res, *sorted;
+  format.offset = offset;
   format.limit = hits;
   format.flags = GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES;
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
@@ -7496,7 +7497,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
             grn_table_sort_key_close(ctx, keys, nkeys);
-            // format.min = offset;
             grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, sorted);
             grn_text_otoj(ctx, outbuf, sorted, &format);
             grn_obj_format_close(ctx, &format);
@@ -7504,7 +7504,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        // format.min = offset;
         grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, res);
         grn_text_otoj(ctx, outbuf, res, &format);
         grn_obj_format_close(ctx, &format);
@@ -7527,7 +7526,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                              g.table, g.table))) {
                 grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
                 grn_table_sort_key_close(ctx, keys, nkeys);
-                // format.min = drilldown_offset;
+                format.offset = drilldown_offset;
                 format.limit = drilldown_hits;
                 grn_obj_format_from_str(ctx, &format,
                                         drilldown_output_columns, drilldown_output_columns_len,
