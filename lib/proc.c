@@ -165,10 +165,10 @@ proc_column_create(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   uint32_t nvars;
   grn_obj *buf = grn_ctx_pop(ctx);
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
-  if (nvars == 5) {
-    grn_obj *column = grn_column_create(ctx,
-                                        grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
-                                                    GRN_TEXT_LEN(&vars[0].value)),
+  if (nvars == 6) {
+    grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
+                                 GRN_TEXT_LEN(&vars[0].value));
+    grn_obj *column = grn_column_create(ctx, table,
                                         GRN_TEXT_VALUE(&vars[1].value),
                                         GRN_TEXT_LEN(&vars[1].value),
                                         NULL,
@@ -176,7 +176,31 @@ proc_column_create(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
                                                  GRN_BULK_CURR(&vars[2].value), NULL),
                                         grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
                                                     GRN_TEXT_LEN(&vars[3].value)));
-    if (column) { grn_obj_unlink(ctx, column); }
+    if (column) {
+      if (GRN_TEXT_LEN(&vars[4].value)) {
+        grn_obj sources, source_ids, **p, **pe;
+        GRN_PTR_INIT(&sources, GRN_OBJ_VECTOR, GRN_ID_NIL);
+        GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+        grn_obj_columns(ctx, table,
+                        GRN_TEXT_VALUE(&vars[4].value),
+                        GRN_TEXT_LEN(&vars[4].value),
+                        &sources);
+        p = (grn_obj **)GRN_BULK_HEAD(&sources);
+        pe = (grn_obj **)GRN_BULK_CURR(&sources);
+        while (p < pe) {
+          grn_id source_id = grn_obj_id(ctx, *p++);
+          if (source_id) {
+            GRN_UINT32_PUT(ctx, &source_ids, source_id);
+          }
+        }
+        if (GRN_BULK_VSIZE(&source_ids)) {
+          grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+        }
+        GRN_OBJ_FIN(ctx, &source_ids);
+        GRN_OBJ_FIN(ctx, &sources);
+      }
+      grn_obj_unlink(ctx, column);
+    }
     GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
   }
   grn_ctx_push(ctx, buf);
@@ -461,6 +485,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[1], "name");
   DEF_VAR(vars[2], "flags");
   DEF_VAR(vars[3], "type");
-  DEF_VAR(vars[4], "output_type");
-  grn_proc_create(ctx, "column_create", 13, NULL, proc_column_create, NULL, NULL, 5, vars);
+  DEF_VAR(vars[4], "source");
+  DEF_VAR(vars[5], "output_type");
+  grn_proc_create(ctx, "column_create", 13, NULL, proc_column_create, NULL, NULL, 6, vars);
 }
