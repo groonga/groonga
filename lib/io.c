@@ -215,7 +215,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
     / GRN_IO_FILE_SIZE);
   if ((fis = GRN_GMALLOCN(fileinfo, max_nfiles))) {
     grn_fileinfo_init(fis, max_nfiles);
-    if (!grn_open(ctx, fis, path, O_RDWR|O_CREAT|O_TRUNC, GRN_IO_FILE_SIZE)) {
+    if (!grn_open(ctx, fis, path, O_RDWR|O_CREAT|O_EXCL, GRN_IO_FILE_SIZE)) {
       if ((header = (io_header *)GRN_MMAP(&grn_gctx, &fis->fmo, fis, 0, b))) {
         header->header_size = header_size;
         header->segment_size = segment_size;
@@ -1514,7 +1514,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
 {
   fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
                       FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                      OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+                      CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
     SERR("CreateFile");
     return ctx->rc;
@@ -1607,7 +1607,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
   /* may be wrong if flags is just only O_RDWR */
   fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
                       FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                      OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+                      CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
     SERR("CreateFile");
     return ctx->rc;

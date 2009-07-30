@@ -346,7 +346,7 @@ GroongaAdmin = {
   },
   status: function() {
     $.ajax({
-      url: '/a/status',
+      url: '/q/status',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -357,7 +357,7 @@ GroongaAdmin = {
   },
   update_tablelist: function() {
     $.ajax({
-      url: '/a/tablelist',
+      url: '/q/table_list',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -402,7 +402,7 @@ GroongaAdmin = {
   },
   tablelist: function() {
     $.ajax({
-      url: '/a/tablelist',
+      url: '/q/table_list',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -454,11 +454,11 @@ GroongaAdmin = {
   },
   recordlist: function(table_name, page) {
     $.ajax({
-      url: '/a/recordlist',
+      url: '/q/select',
       data: {
         'table': table_name,
-        'offset': (page - 1) * GroongaAdmin.recordlist_count + 1,
-        'count': GroongaAdmin.recordlist_count
+        'offset': (page - 1) * GroongaAdmin.recordlist_count,
+        'limit': GroongaAdmin.recordlist_count
         /* sort_column: :id */
       },
       dataType: 'json',
@@ -486,7 +486,7 @@ GroongaAdmin = {
   },
   columnlist: function(table_name) {
     $.ajax({
-      url: '/a/columnlist',
+      url: '/q/column_list',
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
@@ -509,7 +509,7 @@ GroongaAdmin = {
     });
     flags |= Groonga[$('#createtable-key-index').val()];
     $.ajax({
-      url: '/a/createtable',
+      url: '/q/table_create',
       data: {
         name: $('#createtable-name').val(),
         'flags': flags,
@@ -538,7 +538,7 @@ GroongaAdmin = {
     flags |= Groonga[$('#createcolumn-column-type').val()];
     flags |= Groonga[$('#createcolumn-column-compress').val()];
     $.ajax({
-      url: '/a/createcolumn',
+      url: '/q/column_create',
       data: {
         table: GroongaAdmin.current_table,
         name: $('#createcolumn-name').val(),
