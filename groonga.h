@@ -1568,6 +1568,8 @@ GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
 
 typedef struct _grn_obj_format grn_obj_format;
 
+#define GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES   (1)
+
 struct _grn_obj_format {
   const void *min;
   unsigned min_size;
