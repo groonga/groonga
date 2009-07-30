@@ -39,6 +39,7 @@
 static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
 static int batchmode;
+static int newdb;
 static int useql;
 grn_timeval starttime;
 
@@ -49,6 +50,7 @@ usage(void)
   fprintf(stderr,
           "Usage: groonga [options...] [dest]\n"
           "options:\n"
+          "  -n:                 create new database\n"
           "  -a:                 run in standalone mode (default)\n"
           "  -c:                 run in client mode\n"
           "  -s:                 run in server mode\n"
@@ -611,13 +613,12 @@ do_alone(int argc, char **argv)
 {
   int rc = -1;
   char *path = NULL;
-  grn_obj *db = NULL;
+  grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
   grn_timeval_now(ctx, &starttime);
   if (argc > 0 && argv) { path = *argv++; argc--; }
-  if (path) { db = grn_db_open(ctx, path); }
-  if (!db) { db = grn_db_create(ctx, path, NULL); }
+  db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
     grn_ql_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
     if (!argc) {
@@ -1688,9 +1689,8 @@ server(char *path)
   }
 #endif /* WIN32 */
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
-    grn_obj *db = NULL;
-    if (path) { db = grn_db_open(ctx, path); }
-    if (!db) { db = grn_db_create(ctx, path, NULL); }
+    grn_obj *db;
+    db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
     if (db) {
       struct hostent *he;
       if (!(he = gethostbyname(hostname))) {
@@ -1798,8 +1798,9 @@ enum {
   mode_usage
 };
 
-#define MODE_MASK   0x7f
-#define MODE_USE_QL 0x80
+#define MODE_MASK   0x007f
+#define MODE_USE_QL 0x0080
+#define MODE_NEW_DB 0x0100
 
 #define SET_LOGLEVEL(x) do {\
   static grn_logger_info info;\
@@ -1830,6 +1831,7 @@ main(int argc, char **argv)
     {'l', NULL, NULL, 0, getopt_op_none},
     {'i', NULL, NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
+    {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1886,6 +1888,7 @@ main(int argc, char **argv)
   } else {
     gethostname(hostname, HOST_NAME_MAX);
   }
+  newdb = (mode & MODE_NEW_DB);
   useql = (mode & MODE_USE_QL);
   switch (mode & MODE_MASK) {
   case mode_alone :
