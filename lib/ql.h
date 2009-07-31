@@ -42,6 +42,10 @@
 extern "C" {
 #endif
 
+/**** grn_expr ****/
+
+#define GRN_EXPR_MISSING_NAME          "expr_missing"
+
 /**** grn_cell ****/
 
 /* flag values used for grn_cell.header.impl_flags */

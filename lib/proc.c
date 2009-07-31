@@ -16,6 +16,8 @@
 */
 
 #include <string.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include "proc.h"
 #include "ql.h"
 
@@ -427,6 +429,49 @@ proc_table_list(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   return ctx->rc;
 }
 
+/* bulk must be initialized grn_bulk or grn_msg */
+static int
+grn_bulk_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
+{
+  /* FIXME: implement more smartly with grn_bulk */
+  int fd, ret = 0;
+  struct stat stat;
+  if ((fd = open(path, O_RDONLY)) == -1) { return ret; }
+  if (fstat(fd, &stat) != -1) {
+    char *buf, *bp;
+    off_t rest = stat.st_size;
+    if ((buf = GRN_MALLOC(rest))) {
+      ssize_t ss;
+      for (bp = buf; rest; rest -= ss, bp += ss) {
+        if ((ss = read(fd, bp, rest)) == -1) { goto exit; }
+      }
+      GRN_TEXT_SET(ctx, bulk, buf, stat.st_size);
+      ret = 1;
+    }
+    GRN_FREE(buf);
+  }
+exit :
+  close(fd);
+  return ret;
+}
+
+static grn_rc
+proc_missing(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+{
+  uint32_t nvars, plen;
+  grn_obj *buf = grn_ctx_pop(ctx);
+  grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
+  if (nvars == 2 && (plen = GRN_TEXT_LEN(&vars[0].value)) < PATH_MAX) {
+    char path[PATH_MAX];
+    memcpy(path, "src/s/", 6);
+    memcpy(path + 6, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
+    path[6 + GRN_TEXT_LEN(&vars[0].value)] = '\0';
+    grn_bulk_from_file(ctx, buf, path);
+  }
+  grn_ctx_push(ctx, buf);
+  return ctx->rc;
+}
+
 #define DEF_VAR(v,name_str) {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -488,4 +533,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[4], "source");
   DEF_VAR(vars[5], "output_type");
   grn_proc_create(ctx, "column_create", 13, NULL, proc_column_create, NULL, NULL, 6, vars);
+
+  DEF_VAR(vars[0], "path");
+  DEF_VAR(vars[1], "output_type");
+  grn_proc_create(ctx, GRN_EXPR_MISSING_NAME, strlen(GRN_EXPR_MISSING_NAME),
+                  NULL, proc_missing, NULL, NULL, 2, vars);
 }

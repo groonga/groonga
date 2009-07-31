@@ -577,6 +577,8 @@ grn_ctx_close(grn_ctx *ctx)
   return rc;
 }
 
+#define EXPR_MISSING "expr_missing"
+
 grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
@@ -609,6 +611,14 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
         }
         grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
         p = get_uri_token(ctx, val, p, e, '&');
+      }
+      grn_ctx_push(ctx, ctx->impl->outbuf);
+      val = grn_expr_exec(ctx, expr);
+    } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
+                                   strlen(GRN_EXPR_MISSING_NAME)))) {
+      if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
+        grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+        GRN_TEXT_PUT(ctx, val, str, str_size);
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
       val = grn_expr_exec(ctx, expr);
