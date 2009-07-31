@@ -638,19 +638,16 @@ typedef grn_obj grn_table_cursor;
  *         GRN_CURSOR_BY_IDを指定するとID順にレコードを取り出す。
  *         GRN_OBJ_TABLE_PAT_KEYを指定したtableについては、
  *         GRN_CURSOR_BY_KEYを指定するとkey順にレコードを取り出す。
- * @offset: 該当する範囲のレコードのうち、offset番目からレコードを取り出す。
- *          -(該当する範囲のレコード数) < offset <= 0 の範囲の値が指定された場合は、
- *         該当する範囲のレコード数 - offset が指定されたものとみなす。
+ * @offset: 該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出す。
  * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す。
- *          -(該当する範囲のレコード数) < limit <= 0 の範囲の値が指定された場合は、
- *         該当する範囲のレコード数 - limit が指定されたものとみなす。
+ *         0が指定された場合は、全件が指定されたものとみなす。
  *
  * tableに登録されているレコードを順番に取り出すためのカーソルを生成して返す。
  **/
 GRN_API grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                                                 const void *min, unsigned min_size,
                                                 const void *max, unsigned max_size,
-                                                int offset, int limit, int flags);
+                                                unsigned offset, unsigned limit, int flags);
 
 /**
  * grn_table_cursor_close:

@@ -1111,7 +1111,7 @@ grn_table_cursor *
 grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const void *min, unsigned min_size,
                       const void *max, unsigned max_size,
-                      int offset, int limit, int flags)
+                      unsigned offset, unsigned limit, int flags)
 {
   grn_table_cursor *tc = NULL;
   GRN_API_ENTER;
