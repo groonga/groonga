@@ -4720,7 +4720,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                      GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
     if (GRN_HASH_SIZE(h)) {
       if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h) + 256))) {
-        if ((c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0))) {
+        if ((c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0, 0, 0))) {
           uint32_t key2_size;
           const char *key2;
           while (grn_hash_cursor_next(ctx, c)) {
@@ -5196,7 +5196,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   }
   grn_token_close(ctx, token);
   {
-    grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0);
+    grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0, 0, 0);
     if (!c) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_cursor_open on grn_ii_similar_search failed !");
       grn_hash_close(ctx, h);
@@ -5597,7 +5597,7 @@ grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
   if (op == GRN_OP_AND) {
     grn_id eid;
     grn_rset_recinfo *ri;
-    grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0);
+    grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, 0, 0);
     if (c) {
       while ((eid = grn_hash_cursor_next(ctx, c))) {
         grn_hash_cursor_get_value(ctx, c, (void **) &ri);

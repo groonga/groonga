@@ -151,7 +151,7 @@ retrieve_all_keys (grn_array *array, grn_id n_entries)
 
   keys_free();
 
-  cursor = grn_array_cursor_open(context, array, 0, 0, GRN_CURSOR_ASCENDING);
+  cursor = grn_array_cursor_open(context, array, 0, 0, 0, 0, GRN_CURSOR_ASCENDING);
   id = grn_array_cursor_next(context, cursor);
   while (id != GRN_ID_NIL) {
     grn_id *hash_id;
@@ -179,7 +179,7 @@ retrieve_all_values (grn_array *array, grn_id n_entries)
 
   values_free();
 
-  cursor = grn_array_cursor_open(context, array, 0, 0, GRN_CURSOR_ASCENDING);
+  cursor = grn_array_cursor_open(context, array, 0, 0, 0, 0, GRN_CURSOR_ASCENDING);
   id = grn_array_cursor_next(context, cursor);
   while (id != GRN_ID_NIL) {
     grn_id *hash_id;

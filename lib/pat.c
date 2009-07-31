@@ -1426,11 +1426,36 @@ pop(grn_pat_cursor *c)
   return c->sp ? &c->ss[--c->sp] : NULL;
 }
 
+static grn_id
+grn_pat_cursor_next_by_id(grn_ctx *ctx, grn_pat_cursor *c)
+{
+  grn_pat *pat = c->pat;
+  int dir = (c->obj.header.flags & GRN_CURSOR_DESCENDING) ? -1 : 1;
+  while (c->curr_rec != c->tail) {
+    c->curr_rec += dir;
+    if (pat->header->n_garbages) {
+      uint32_t key_size;
+      if (grn_pat_get(ctx, pat,
+                      _grn_pat_key(ctx, pat, c->curr_rec, &key_size),
+                      key_size, NULL) != c->curr_rec) {
+        continue;
+      }
+    }
+    c->rest--;
+    return c->curr_rec;
+  }
+  return GRN_ID_NIL;
+}
+
 grn_id
 grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
 {
   pat_node *node;
   grn_pat_cursor_entry *se;
+  if (!c->rest) { return GRN_ID_NIL; }
+  if ((c->obj.header.flags & GRN_CURSOR_BY_ID)) {
+    return grn_pat_cursor_next_by_id(ctx, c);
+  }
   while ((se = pop(c))) {
     grn_id id = se->id;
     int check = se->check, ch;
@@ -1450,19 +1475,19 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
             check = ch;
             continue;
           } else {
-            if (id == c->limit) {
+            if (id == c->tail) {
               c->sp = 0;
             } else {
-              if (!c->curr_rec && c->limit) {
+              if (!c->curr_rec && c->tail) {
                 uint32_t lmin, lmax;
                 pat_node *nmin, *nmax;
                 const uint8_t *kmin, *kmax;
                 if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
-                  PAT_AT(c->pat, c->limit, nmin);
+                  PAT_AT(c->pat, c->tail, nmin);
                   PAT_AT(c->pat, id, nmax);
                 } else {
                   PAT_AT(c->pat, id, nmin);
-                  PAT_AT(c->pat, c->limit, nmax);
+                  PAT_AT(c->pat, c->tail, nmax);
                 }
                 lmin = PAT_LEN(nmin);
                 lmax = PAT_LEN(nmax);
@@ -1477,6 +1502,7 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
               }
             }
             c->curr_rec = id;
+            c->rest--;
             return id;
           }
         }
@@ -1649,15 +1675,100 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   return GRN_SUCCESS;
 }
 
+static grn_pat_cursor *
+grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
+                          const void *min, uint32_t min_size,
+                          const void *max, uint32_t max_size,
+                          unsigned offset, unsigned limit, int flags)
+{
+  int dir;
+  grn_pat_cursor *c;
+  if (!pat || !ctx) { return NULL; }
+  if (!(c = GRN_MALLOCN(grn_pat_cursor, 1))) { return NULL; }
+  GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_PAT_KEY);
+  c->pat = pat;
+  c->ctx = ctx;
+  c->obj.header.flags = flags;
+  c->obj.header.domain = GRN_ID_NIL;
+  c->size = 0;
+  c->sp = 0;
+  c->ss = NULL;
+  c->tail = 0;
+  if (flags & GRN_CURSOR_DESCENDING) {
+    dir = -1;
+    if (max) {
+      if (!(c->curr_rec = grn_pat_get(ctx, pat, max, max_size, NULL))) {
+        c->tail = GRN_ID_NIL;
+        goto exit;
+      }
+      if (!(flags & GRN_CURSOR_LT)) { c->curr_rec++; }
+    } else {
+      c->curr_rec = pat->header->curr_rec + 1;
+    }
+    if (min) {
+      if (!(c->tail = grn_pat_get(ctx, pat, min, min_size, NULL))) {
+        c->curr_rec = GRN_ID_NIL;
+        goto exit;
+      }
+      if ((flags & GRN_CURSOR_GT)) { c->tail++; }
+    } else {
+      c->tail = GRN_ID_NIL + 1;
+    }
+    if (c->curr_rec < c->tail) { c->tail = c->curr_rec; }
+  } else {
+    dir = 1;
+    if (min) {
+      if (!(c->curr_rec = grn_pat_get(ctx, pat, min, min_size, NULL))) {
+        c->tail = GRN_ID_NIL;
+        goto exit;
+      }
+      if (!(flags & GRN_CURSOR_GT)) { c->curr_rec--; }
+    } else {
+      c->curr_rec = GRN_ID_NIL;
+    }
+    if (max) {
+      if (!(c->tail = grn_pat_get(ctx, pat, max, max_size, NULL))) {
+        c->curr_rec = GRN_ID_NIL;
+        goto exit;
+      }
+      if ((flags & GRN_CURSOR_LT)) { c->tail--; }
+    } else {
+      c->tail = pat->header->curr_rec;
+    }
+    if (c->tail < c->curr_rec) { c->tail = c->curr_rec; }
+  }
+  if (pat->header->n_garbages) {
+    while (offset && c->curr_rec != c->tail) {
+      uint32_t key_size;
+      c->curr_rec += dir;
+      if (grn_pat_get(ctx, pat,
+                      _grn_pat_key(ctx, pat, c->curr_rec, &key_size),
+                      key_size, NULL) == c->curr_rec) {
+        offset--;
+      }
+    }
+  } else {
+    c->curr_rec += dir * offset;
+  }
+  c->rest = limit ? limit : GRN_ID_MAX;
+exit :
+  return c;
+}
+
 grn_pat_cursor *
 grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
                     const void *min, uint32_t min_size,
-                    const void *max, uint32_t max_size, int flags)
+                    const void *max, uint32_t max_size,
+                    unsigned offset, unsigned limit, int flags)
 {
   grn_id id;
   pat_node *node;
   grn_pat_cursor *c;
   if (!pat || !ctx) { return NULL; }
+  if ((flags & GRN_CURSOR_BY_ID)) {
+    return grn_pat_cursor_open_by_id(ctx, pat, min, min_size, max, max_size,
+                                     offset, limit, flags);
+  }
   if (!(c = GRN_MALLOCN(grn_pat_cursor, 1))) { return NULL; }
   GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_PAT_KEY);
   c->pat = pat;
@@ -1665,16 +1776,17 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
   c->size = 0;
   c->sp = 0;
   c->ss = NULL;
-  c->limit = 0;
+  c->tail = 0;
+  c->rest = GRN_ID_MAX;
   c->curr_rec = GRN_ID_NIL;
   c->obj.header.domain = GRN_ID_NIL;
   if (flags & GRN_CURSOR_DESCENDING) {
     if (min) {
       set_cursor_ascend(ctx, pat, c, min, min_size, flags);
       c->obj.header.flags = GRN_CURSOR_ASCENDING;
-      c->limit = grn_pat_cursor_next(ctx, c);
+      c->tail = grn_pat_cursor_next(ctx, c);
       c->sp = 0;
-      if (!c->limit) { goto exit; }
+      if (!c->tail) { goto exit; }
     }
     if (max) {
       set_cursor_descend(ctx, pat, c, max, max_size, flags);
@@ -1697,9 +1809,9 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
     if (max) {
       set_cursor_descend(ctx, pat, c, max, max_size, flags);
       c->obj.header.flags = GRN_CURSOR_DESCENDING;
-      c->limit = grn_pat_cursor_next(ctx, c);
+      c->tail = grn_pat_cursor_next(ctx, c);
       c->sp = 0;
-      if (!c->limit) { goto exit; }
+      if (!c->tail) { goto exit; }
     }
     if (min) {
       set_cursor_ascend(ctx, pat, c, min, min_size, flags);
@@ -1722,6 +1834,8 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
 exit :
   c->obj.header.flags = flags;
   c->curr_rec = GRN_ID_NIL;
+  while (offset--) { grn_pat_cursor_next(ctx, c); }
+  c->rest = limit ? limit : GRN_ID_MAX;
   return c;
 }
 

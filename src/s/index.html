@@ -183,8 +183,15 @@
   </tr>
 </table>
 <div id="footer">
+Powered by <a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQuery UI</a>.
 </div>
 <script type="text/javascript">
+function escapeHTML(str) {
+  return str.replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+}
 Groonga = {
   key_type_list: ['Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                   'Int64', 'UInt64', 'Float', 'Time', 'ShortText'],
@@ -323,30 +330,47 @@ GroongaAdmin = {
     setInterval(GroongaAdmin.status, 1000);
   },
   create_table_element: function (d) {
-    var table = $('<table/>').attr('class', 'records');
+    var elms = ['<table class="records">'];
     if ($.isArray(d)) {
-      var thead = $('<thead/>').appendTo(table);
-      var tbody = $('<tbody/>').appendTo(table);
-      var first_line = true;
-      $.each(d, function(key) {
-        var line = d[key];
+      elms.push('<thead>');
+      var l = d.length;
+      if (l >= 1) {
+        var line = d[0];
+        elms.push('<thead>');
         if ($.isArray(line)) {
-          var tr = $('<tr/>');
-          (first_line ? thead : tbody).append(tr);
-          $.each(line, function(l_key) {
-            var item = first_line ? $('<th/>') : $('<td/>');
-            item.text(line[l_key]);
-            tr.append(item);
-          });
+          elms.push('<tr>');
+          var m = line.length;
+          for (var j = 0 ; j < m; j++) {
+            elms.push('<th>');
+            elms.push(escapeHTML(line[j]));
+            elms.push('</th>');
+          }
+          elms.push('</tr>');
         }
-        first_line = false;
-      });
+        elms.push('</thead>');
+        elms.push('<tbody>');
+        for (var i = 1; i < l; i++) {
+          line = d[key];
+          if ($.isArray(line)) {
+            elms.push('<tr>');
+            var m = line.length;
+            for (var j = 0 ; j < m; j++) {
+              elms.push('<td>');
+              elms.push(escapeHTML(line[j]));
+              elms.push('</td>');
+            }
+            elms.push('</tr>');
+          }
+        }
+        elms.push('</tbody>');
+      }
     }
-    return table;
+    elms.push('</table>');
+    return $(elms.join(''));
   },
   status: function() {
     $.ajax({
-      url: '/q/status',
+      url: '/status',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -357,7 +381,7 @@ GroongaAdmin = {
   },
   update_tablelist: function() {
     $.ajax({
-      url: '/q/table_list',
+      url: '/table_list',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -402,7 +426,7 @@ GroongaAdmin = {
   },
   tablelist: function() {
     $.ajax({
-      url: '/q/table_list',
+      url: '/table_list',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -454,7 +478,7 @@ GroongaAdmin = {
   },
   recordlist: function(table_name, page) {
     $.ajax({
-      url: '/q/select',
+      url: '/select',
       data: {
         'table': table_name,
         'offset': (page - 1) * GroongaAdmin.recordlist_count,
@@ -486,7 +510,7 @@ GroongaAdmin = {
   },
   columnlist: function(table_name) {
     $.ajax({
-      url: '/q/column_list',
+      url: '/column_list',
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
@@ -509,7 +533,7 @@ GroongaAdmin = {
     });
     flags |= Groonga[$('#createtable-key-index').val()];
     $.ajax({
-      url: '/q/table_create',
+      url: '/table_create',
       data: {
         name: $('#createtable-name').val(),
         'flags': flags,
@@ -538,7 +562,7 @@ GroongaAdmin = {
     flags |= Groonga[$('#createcolumn-column-type').val()];
     flags |= Groonga[$('#createcolumn-column-compress').val()];
     $.ajax({
-      url: '/q/column_create',
+      url: '/column_create',
       data: {
         table: GroongaAdmin.current_table,
         name: $('#createcolumn-name').val(),

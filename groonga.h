@@ -621,8 +621,8 @@ typedef grn_obj grn_table_cursor;
 #define GRN_CURSOR_GT                  (0x01<<1)
 #define GRN_CURSOR_LE                  (0x00<<2)
 #define GRN_CURSOR_LT                  (0x01<<2)
-#define GRN_CURSOR_BY_ID               (0x00<<3)
-#define GRN_CURSOR_BY_KEY              (0x01<<3)
+#define GRN_CURSOR_BY_KEY              (0x00<<3)
+#define GRN_CURSOR_BY_ID               (0x01<<3)
 
 /**
  * grn_table_cursor_open:
@@ -638,6 +638,7 @@ typedef grn_obj grn_table_cursor;
  *         GRN_CURSOR_BY_IDを指定するとID順にレコードを取り出す。
  *         GRN_OBJ_TABLE_PAT_KEYを指定したtableについては、
  *         GRN_CURSOR_BY_KEYを指定するとkey順にレコードを取り出す。
+ *         (GRN_OBJ_TABLE_HASH_KEY,GRN_OBJ_TABLE_NO_KEYではGRN_CURSOR_BY_KEYは無視される)
  * @offset: 該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出す。
  * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す。
  *         0が指定された場合は、全件が指定されたものとみなす。
@@ -1887,7 +1888,8 @@ GRN_API grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash,
 
 GRN_API grn_hash_cursor *grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
                                               const void *min, unsigned int min_size,
-                                              const void *max, unsigned int max_size, int flags);
+                                              const void *max, unsigned int max_size,
+                                              unsigned offset, unsigned limit, int flags);
 GRN_API grn_id grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c);
 GRN_API void grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c);
 
@@ -1903,7 +1905,7 @@ GRN_API grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
                                       grn_table_delete_optarg *optarg);
 
 #define GRN_HASH_EACH(hash,id,key,key_size,value,block) do {\
-  grn_hash_cursor *_sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0);\
+  grn_hash_cursor *_sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0, 0, 0); \
   if (_sc) {\
     grn_id id;\
     while ((id = grn_hash_cursor_next(ctx, _sc))) {\
@@ -1969,7 +1971,8 @@ GRN_API unsigned int grn_pat_size(grn_ctx *ctx, grn_pat *pat);
 
 GRN_API grn_pat_cursor *grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
                                             const void *min, unsigned int min_size,
-                                            const void *max, unsigned int max_size, int flags);
+                                            const void *max, unsigned int max_size,
+                                            unsigned offset, unsigned limit, int flags);
 GRN_API grn_id grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c);
 GRN_API void grn_pat_cursor_close(grn_ctx *ctx, grn_pat_cursor *c);
 
@@ -1984,7 +1987,7 @@ GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
                                      grn_table_delete_optarg *optarg);
 
 #define GRN_PAT_EACH(pat,id,key,key_size,value,block) do {\
-  grn_pat_cursor *_sc = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0);\
+  grn_pat_cursor *_sc = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, 0, 0); \
   if (_sc) {\
     grn_id id;\
     while ((id = grn_pat_cursor_next(ctx, _sc))) {\

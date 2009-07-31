@@ -379,7 +379,8 @@ grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *c)
   ((IO_ARRAYP(array)) ? (array)->header->curr_rec : (array)->a.max)
 
 grn_array_cursor *
-grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max, int flags)
+grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
+                      unsigned offset, unsigned limit, int flags)
 {
   grn_array_cursor *c;
   if (!array || !ctx) { return NULL; }
@@ -398,12 +399,12 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max, in
       c->curr_rec = ARRAY_CURR_MAX(array) + 1;
     }
     if (min) {
-      c->limit = min;
-      if ((flags & GRN_CURSOR_GT)) { c->limit++; }
+      c->tail = min;
+      if ((flags & GRN_CURSOR_GT)) { c->tail++; }
     } else {
-      c->limit = GRN_ID_NIL + 1;
+      c->tail = GRN_ID_NIL + 1;
     }
-    if (c->curr_rec < c->limit) { c->limit = c->curr_rec; }
+    if (c->curr_rec < c->tail) { c->tail = c->curr_rec; }
   } else {
     c->dir = 1;
     if (min) {
@@ -413,25 +414,40 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max, in
       c->curr_rec = GRN_ID_NIL;
     }
     if (max) {
-      c->limit = max;
-      if ((flags & GRN_CURSOR_LT)) { c->limit--; }
+      c->tail = max;
+      if ((flags & GRN_CURSOR_LT)) { c->tail--; }
     } else {
-      c->limit = ARRAY_CURR_MAX(array);
+      c->tail = ARRAY_CURR_MAX(array);
     }
-    if (c->limit < c->curr_rec) { c->limit = c->curr_rec; }
+    if (c->tail < c->curr_rec) { c->tail = c->curr_rec; }
   }
+  if (*array->n_garbages) {
+    while (offset && c->curr_rec != c->tail) {
+      uint8_t res;
+      c->curr_rec += c->dir;
+      ARRAY_BITMAP_AT(c->array, c->curr_rec, res);
+      if (res) { offset--; }
+    }
+  } else {
+    c->curr_rec += c->dir * offset;
+  }
+  c->rest = limit ? limit : GRN_ID_MAX;
   return c;
 }
 
 grn_id
 grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c)
 {
-  if (c) {
-    while (c->curr_rec != c->limit) {
-      uint8_t res;
+  if (c && c->rest) {
+    while (c->curr_rec != c->tail) {
       c->curr_rec += c->dir;
-      ARRAY_BITMAP_AT(c->array, c->curr_rec, res);
-      if (res) { return c->curr_rec; }
+      if (*c->array->n_garbages) {
+        uint8_t res;
+        ARRAY_BITMAP_AT(c->array, c->curr_rec, res);
+        if (!res) { continue; }
+      }
+      c->rest--;
+      return c->curr_rec;
     }
   }
   return GRN_ID_NIL;
@@ -1452,8 +1468,9 @@ grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c)
 
 grn_hash_cursor *
 grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
-                    const void *min, uint32_t min_size,
-                    const void *max, uint32_t max_size, int flags)
+                     const void *min, uint32_t min_size,
+                     const void *max, uint32_t max_size,
+                     unsigned offset, unsigned limit, int flags)
 {
   grn_hash_cursor *c;
   if (!hash || !ctx) { return NULL; }
@@ -1467,7 +1484,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
     c->dir = -1;
     if (max) {
       if (!(c->curr_rec = grn_hash_get(ctx, hash, max, max_size, NULL))) {
-        c->limit = GRN_ID_NIL;
+        c->tail = GRN_ID_NIL;
         goto exit;
       }
       if (!(flags & GRN_CURSOR_LT)) { c->curr_rec++; }
@@ -1475,20 +1492,20 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
       c->curr_rec = HASH_CURR_MAX(hash) + 1;
     }
     if (min) {
-      if (!(c->limit = grn_hash_get(ctx, hash, min, min_size, NULL))) {
+      if (!(c->tail = grn_hash_get(ctx, hash, min, min_size, NULL))) {
         c->curr_rec = GRN_ID_NIL;
         goto exit;
       }
-      if ((flags & GRN_CURSOR_GT)) { c->limit++; }
+      if ((flags & GRN_CURSOR_GT)) { c->tail++; }
     } else {
-      c->limit = GRN_ID_NIL + 1;
+      c->tail = GRN_ID_NIL + 1;
     }
-    if (c->curr_rec < c->limit) { c->limit = c->curr_rec; }
+    if (c->curr_rec < c->tail) { c->tail = c->curr_rec; }
   } else {
     c->dir = 1;
     if (min) {
       if (!(c->curr_rec = grn_hash_get(ctx, hash, min, min_size, NULL))) {
-        c->limit = GRN_ID_NIL;
+        c->tail = GRN_ID_NIL;
         goto exit;
       }
       if (!(flags & GRN_CURSOR_GT)) { c->curr_rec--; }
@@ -1496,16 +1513,27 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
       c->curr_rec = GRN_ID_NIL;
     }
     if (max) {
-      if (!(c->limit = grn_hash_get(ctx, hash, max, max_size, NULL))) {
+      if (!(c->tail = grn_hash_get(ctx, hash, max, max_size, NULL))) {
         c->curr_rec = GRN_ID_NIL;
         goto exit;
       }
-      if ((flags & GRN_CURSOR_LT)) { c->limit--; }
+      if ((flags & GRN_CURSOR_LT)) { c->tail--; }
     } else {
-      c->limit = HASH_CURR_MAX(hash);
+      c->tail = HASH_CURR_MAX(hash);
     }
-    if (c->limit < c->curr_rec) { c->limit = c->curr_rec; }
+    if (c->tail < c->curr_rec) { c->tail = c->curr_rec; }
   }
+  if (*hash->n_garbages) {
+    while (offset && c->curr_rec != c->tail) {
+      uint8_t res;
+      c->curr_rec += c->dir;
+      BITMAP_AT(c->hash, c->curr_rec, res);
+      if (res) { offset--; }
+    }
+  } else {
+    c->curr_rec += c->dir * offset;
+  }
+  c->rest = limit ? limit : GRN_ID_MAX;
 exit :
   return c;
 }
@@ -1513,12 +1541,16 @@ exit :
 grn_id
 grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c)
 {
-  if (c) {
-    while (c->curr_rec != c->limit) {
-      uint8_t res;
+  if (c && c->rest) {
+    while (c->curr_rec != c->tail) {
       c->curr_rec += c->dir;
-      BITMAP_AT(c->hash, c->curr_rec, res);
-      if (res) { return c->curr_rec; }
+      if (*c->hash->n_garbages) {
+        uint8_t res;
+        BITMAP_AT(c->hash, c->curr_rec, res);
+        if (!res) { continue; }
+      }
+      c->rest--;
+      return c->curr_rec;
     }
   }
   return GRN_ID_NIL;
