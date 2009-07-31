@@ -240,7 +240,7 @@ grn_test_hash_factory_open_cursor(GrnTestHashFactory *factory, GError **error)
   priv->cursor = grn_hash_cursor_open(priv->context, priv->hash,
                                       priv->cursor_min, priv->cursor_min_size,
                                       priv->cursor_max, priv->cursor_max_size,
-                                      priv->cursor_flags);
+                                      0, 0, priv->cursor_flags);
   if (!priv->cursor) {
     g_set_error(error,
                 GRN_TEST_HASH_FACTORY_ERROR,

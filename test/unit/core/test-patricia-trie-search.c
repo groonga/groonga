@@ -90,7 +90,7 @@ retrieve_all_keys(void)
   keys_free();
 
   cursor = grn_hash_cursor_open(context, hash,
-                                NULL, 0, NULL, 0,
+                                NULL, 0, NULL, 0, 0, 0,
                                 GRN_CURSOR_DESCENDING);
   hash_id = grn_hash_cursor_next(context, cursor);
   while (hash_id != GRN_ID_NIL) {

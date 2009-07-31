@@ -283,7 +283,7 @@ typedef int grn_search_flags;
                                default_cursor_min_size, \
                                default_cursor_max,      \
                                default_cursor_max_size, \
-                               default_cursor_flags)
+                               0, 0, default_cursor_flags)
 
 #define cut_assert_open_cursor() do                     \
 {                                                       \

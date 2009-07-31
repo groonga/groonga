@@ -463,7 +463,7 @@ cmd_recordlist(grn_ctx *ctx, char *table_name, unsigned table_name_len,
               /* show records */
               if (count) {
                 grn_array_cursor *cur;
-                if ((cur = grn_array_cursor_open(ctx, (grn_array *)sort,
+                if ((cur = grn_array_cursor_open(ctx, (grn_array *)sort, 0, 0,
                                                  (grn_id)offset,
                                                  (grn_id)limit, 0))) {
                   grn_id rec_count;

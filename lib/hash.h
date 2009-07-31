@@ -164,8 +164,8 @@ struct _grn_array_cursor {
   grn_array *array;
   grn_ctx *ctx;
   grn_id curr_rec;
-  grn_id limit;
-  int rest;
+  grn_id tail;
+  unsigned int rest;
   int dir;
 };
 
@@ -178,7 +178,8 @@ int grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebu
 grn_rc grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
                            void *value, int flags);
 grn_array_cursor *grn_array_cursor_open(grn_ctx *ctx, grn_array *array,
-                                        grn_id min, grn_id max, int flags);
+                                        grn_id min, grn_id max,
+                                        unsigned offset, unsigned limit, int flags);
 grn_id grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c);
 int grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value);
 grn_rc grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c,
@@ -194,7 +195,7 @@ grn_id grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id);
 void *_grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id);
 
 #define GRN_ARRAY_EACH(array,head,tail,id,value,block) do {\
-  grn_array_cursor *_sc = grn_array_cursor_open(ctx, array, head, tail, 0);\
+  grn_array_cursor *_sc = grn_array_cursor_open(ctx, array, head, tail, 0, 0, 0); \
   if (_sc) {\
     grn_id id;\
     while ((id = grn_array_cursor_next(ctx, _sc))) {\
@@ -269,11 +270,12 @@ struct grn_hash_header {
 
 struct _grn_hash_cursor {
   grn_db_obj obj;
-  grn_id curr_rec;
   grn_hash *hash;
   grn_ctx *ctx;
+  grn_id curr_rec;
+  grn_id tail;
+  unsigned int rest;
   int dir;
-  grn_id limit;
 };
 
 /* deprecated */

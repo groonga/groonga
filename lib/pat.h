@@ -81,7 +81,8 @@ struct _grn_pat_cursor {
   grn_ctx *ctx;
   unsigned int size;
   unsigned int sp;
-  grn_id limit;
+  grn_id tail;
+  unsigned int rest;
   grn_pat_cursor_entry *ss;
   uint8_t curr_key[GRN_TABLE_MAX_KEY_SIZE];
 };
