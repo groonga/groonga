@@ -463,9 +463,8 @@ proc_missing(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
   if (nvars == 2 && (plen = GRN_TEXT_LEN(&vars[0].value)) < PATH_MAX) {
     char path[PATH_MAX];
-    memcpy(path, "src/s/", 6);
-    memcpy(path + 6, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
-    path[6 + GRN_TEXT_LEN(&vars[0].value)] = '\0';
+    memcpy(path, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
+    path[GRN_TEXT_LEN(&vars[0].value)] = '\0';
     grn_bulk_from_file(ctx, buf, path);
   }
   grn_ctx_push(ctx, buf);

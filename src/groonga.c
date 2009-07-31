@@ -29,8 +29,6 @@
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
-#include <fcntl.h>
-#include <sys/stat.h>
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
@@ -75,32 +73,6 @@ prompt(void)
 }
 
 #define BUFSIZE 0x1000000
-
-/* bulk must be initialized grn_bulk or grn_msg */
-static int
-grn_bulk_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
-{
-  /* FIXME: implement more smartly with grn_bulk */
-  int fd, ret = 0;
-  struct stat stat;
-  if ((fd = open(path, O_RDONLY)) == -1) { return ret; }
-  if (fstat(fd, &stat) != -1) {
-    char *buf, *bp;
-    off_t rest = stat.st_size;
-    if ((buf = GRN_MALLOC(rest))) {
-      ssize_t ss;
-      for (bp = buf; rest; rest -= ss, bp += ss) {
-        if ((ss = read(fd, bp, rest)) == -1) { goto exit; }
-      }
-      GRN_TEXT_SET(ctx, bulk, buf, stat.st_size);
-      ret = 1;
-    }
-    GRN_FREE(buf);
-  }
-exit :
-  close(fd);
-  return ret;
-}
 
 static int
 do_alone(int argc, char **argv)
@@ -211,6 +183,57 @@ typedef struct {
 } grn_edge;
 
 static void
+put_response_header(grn_ctx *ctx, const char *path, uint32_t path_len)
+{
+  const char *p, *pd, *pe = path + path_len;
+  grn_obj *head = ctx->impl->outbuf;
+  for (p = pd = path, pe = path + path_len; p < pe && *p != '?'; p++) {
+    if (*p == '.') { pd = p; }
+  }
+  GRN_TEXT_INIT(head, 0);
+  GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
+  GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
+  if (*pd == '.') {
+    pd++;
+    if (pd < p) {
+      switch (*pd) {
+      case 'c' :
+        if (pd + 3 == p && !memcmp(pd, "css", 3)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
+          return;
+        }
+        break;
+      case 'h' :
+        if (pd + 4 == p && !memcmp(pd, "html", 4)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/html\r\n\r\n");
+          return;
+        }
+        break;
+      case 'j' :
+        if (pd + 2 == p && !memcmp(pd, "js", 4)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+          return;
+        }
+        break;
+      case 'p' :
+        if (pd + 3 == p && !memcmp(pd, "png", 3)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: image/png\r\n\r\n");
+          return;
+        }
+        break;
+      case 't' :
+        if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
+          return;
+        }
+        break;
+      }
+    }
+  }
+  GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+}
+
+static void
 do_htreq(grn_ctx *ctx, grn_edge *edge)
 {
   grn_msg *msg = edge->msg;
@@ -236,61 +259,9 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
           }
         }
       }
-      if (path[0] == '/' && path[2] == '/') {
-        switch (path[1]) {
-        case 's' :
-          {
-            char *q;
-            grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);
-            ((grn_msg *)re)->header.qtype = header->qtype;
-            *p = '\0';
-            GRN_TEXT_PUTS(ctx, re, "HTTP/1.1 200 OK\r\n");
-            GRN_TEXT_PUTS(ctx, re, "Connection: close\r\n");
-            /* static file */
-            /* FIXME: remove '..' for security ! */
-            /* FIXME: follow symbolic link ? */
-            for (q = p;; q--) {
-              if (q <= path) {
-                GRN_TEXT_PUTS(ctx, re, "Content-Type: text/plain\r\n\r\n");
-                break;
-              }
-              if (*q == '.') {
-                if (q + 5 == p && !memcmp(q, ".html", 5)) {
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/html\r\n\r\n");
-                  break;
-                } else if (q + 4 == p && !memcmp(q, ".png", 4)) {
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: image/png\r\n\r\n");
-                  break;
-                } else if (q + 4 == p && !memcmp(q, ".css", 4)) {
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/css\r\n\r\n");
-                  break;
-                } else if (q + 3 == p && !memcmp(q, ".js", 3)) {
-                  GRN_TEXT_PUTS(ctx, re, "Content-Type: text/javascript\r\n\r\n");
-                  break;
-                }
-              }
-            }
-            grn_bulk_from_file(ctx, (grn_obj *)re, path + 1);
-            if (grn_msg_send(ctx, re, 0)) {
-              /* TODO: error handling */
-            }
-          }
-          break;
-        case 'q' :
-          {
-            grn_obj *head = ctx->impl->outbuf;
-            GRN_TEXT_INIT(head, 0);
-            GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
-            GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
-            /* todo : support tsv
-            GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
-            */
-            GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
-            path += 2;
-            grn_ql_send(ctx, path, p - path, header->flags);
-          }
-          break;
-        }
+      if (*path == '/') {
+        put_response_header(ctx, path, p - path);
+        grn_ql_send(ctx, path, p - path, 0);
       }
     }
     break;
