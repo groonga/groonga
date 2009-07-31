@@ -111,7 +111,7 @@ test_accessor(void)
     int nerr = 0;
     struct timeval tvb, tve;
     grn_obj *a = grn_obj_column(&context, t1, "c1.c2.c1", 8);
-    grn_table_cursor *tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0);
+    grn_table_cursor *tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, 0, 0);
     cut_assert_not_null(a);
     cut_assert_not_null(tc);
     gettimeofday(&tvb, NULL);
@@ -190,7 +190,7 @@ test_expr(void)
       int nerr = 0;
       grn_table_cursor *tc;
       struct timeval tvb, tve;
-      tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0);
+      tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, 0, 0);
       cut_assert_not_null(tc);
       gettimeofday(&tvb, NULL);
       while ((id = grn_table_cursor_next(&context, tc))) {
@@ -280,7 +280,7 @@ test_persistent_expr(void)
     grn_obj *expr = grn_ctx_get(&context, "test", 4);
     v = grn_expr_get_var(&context, expr, "foo", 3);
     t1 = grn_ctx_get(&context, "t1", 2);
-    tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0);
+    tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, 0, 0);
     cut_assert_not_null(tc);
     gettimeofday(&tvb, NULL);
     while ((id = grn_table_cursor_next(&context, tc))) {
@@ -398,7 +398,7 @@ test_expr_query(void)
 
   cut_assert_equal_uint(0, grn_obj_close(&context, expr));
 
-  cut_assert_equal_substring("[[\"abhij\",1],[\"fghij\",1]]",
+  cut_assert_equal_substring("[2,[\"abhij\",1],[\"fghij\",1]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_obj_close(&context, &textbuf);
@@ -513,11 +513,11 @@ test_table_select_equal(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v);
-  GRN_TEXT_SETS(&context, &textbuf, "size");
+  GRN_TEXT_SETS(&context, &textbuf, "body");
   grn_expr_append_const(&context, cond, &textbuf);
   grn_expr_append_op(&context, cond, GRN_OP_OBJ_GET_VALUE, 2);
-  GRN_UINT32_SET(&context, &intbuf, 14);
-  grn_expr_append_const(&context, cond, &intbuf);
+  GRN_TEXT_SETS(&context, &textbuf, "poyo moge hoge moge moge moge");
+  grn_expr_append_const(&context, cond, &textbuf);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
   grn_expr_compile(&context, cond);
 
@@ -527,7 +527,7 @@ test_table_select_equal(void)
 
   grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  cut_assert_equal_uint(1, grn_table_size(&context, res));
 
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
@@ -719,7 +719,7 @@ test_table_select_search(void)
 
   grn_expr_exec(&context, expr);
 
-  cut_assert_equal_substring("[[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
+  cut_assert_equal_substring("[2,[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_test_assert(grn_obj_close(&context, expr));
@@ -789,7 +789,7 @@ test_table_select_select_search(void)
 
   grn_expr_exec(&context, expr);
 
-  cut_assert_equal_substring("[[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
+  cut_assert_equal_substring("[2,[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_test_assert(grn_obj_close(&context, expr));

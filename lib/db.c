@@ -1111,7 +1111,7 @@ grn_table_cursor *
 grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const void *min, unsigned min_size,
                       const void *max, unsigned max_size,
-                      int flags)
+                      int offset, int limit, int flags)
 {
   grn_table_cursor *tc = NULL;
   GRN_API_ENTER;
@@ -1552,7 +1552,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     GRN_TEXT_INIT(&bulk, 0);
     if (n_keys == 1 && n_results == 1) {
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
         grn_id id;
         grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys->key));
         int idp = GRN_OBJ_TABLEP(range);
@@ -1600,7 +1600,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         grn_table_cursor_close(ctx, tc);
       }
     } else {
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, tc))) {
           grn_rset_recinfo *ri = NULL;
@@ -2642,10 +2642,10 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
     GRN_UINT32_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     GRN_INT64_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_UINT64 :\
-  case GRN_DB_TIME :\
     GRN_UINT64_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_FLOAT :\
@@ -2697,10 +2697,10 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
     NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_INT64 :
+  case GRN_DB_TIME :
     NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_UINT64 :
-  case GRN_DB_TIME :
     NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_FLOAT :
@@ -2717,10 +2717,10 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
       TEXT2DEST(uint32_t, grn_atoui, GRN_UINT32_SET);
       break;
     case GRN_DB_INT64 :
+    case GRN_DB_TIME :
       TEXT2DEST(int64_t, grn_atoll, GRN_INT64_SET);
       break;
     case GRN_DB_UINT64 :
-    case GRN_DB_TIME :
       TEXT2DEST(int64_t, grn_atoll, GRN_UINT64_SET);
       break;
     case GRN_DB_FLOAT :
@@ -4664,7 +4664,7 @@ pack(grn_ctx *ctx, grn_obj *table, sort_entry *head, sort_entry *tail,
 {
   int i = 0;
   sort_entry e, c;
-  grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0);
+  grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0);
   if (!tc) { return NULL; }
   if ((c.id = grn_table_cursor_next(ctx, tc))) {
     c.value = grn_obj_get_value_(ctx, keys->key, c.id, &c.size);
@@ -4849,7 +4849,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_OBJ_KEY_FLOAT, sizeof(double));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "Time",
-                GRN_OBJ_KEY_UINT, sizeof(grn_timeval));
+                GRN_OBJ_KEY_INT, sizeof(int64_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TIME) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "ShortText",
                 GRN_OBJ_KEY_VAR_SIZE, GRN_TABLE_MAX_KEY_SIZE);
@@ -5567,7 +5567,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     value = s0;\
   } else {\
     s0 = value = vp++;\
-    s0->header.impl_flags = GRN_OBJ_EXPRVALUE;\
+    s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
   }\
 }
 
@@ -5579,7 +5579,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   sp--;\
   s1 = sp[-2];\
   s0 = value = vp++;\
-  s0->header.impl_flags = GRN_OBJ_EXPRVALUE;\
+  s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
 }
 
 void
@@ -5609,10 +5609,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     r = (x_ op GRN_UINT32_VALUE(y));\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     r = (x_ op GRN_INT64_VALUE(y));\
     break;\
   case GRN_DB_UINT64 :\
-  case GRN_DB_TIME :\
     r = (x_ op GRN_UINT64_VALUE(y));\
     break;\
   case GRN_DB_FLOAT :\
@@ -5648,6 +5648,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
       do_compare_sub(op);\
@@ -5702,10 +5703,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     r = (x_ == GRN_UINT32_VALUE(y));\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     r = (x_ == GRN_INT64_VALUE(y));\
     break;\
   case GRN_DB_UINT64 :\
-  case GRN_DB_TIME :\
     r = (x_ == GRN_UINT64_VALUE(y));\
     break;\
   case GRN_DB_FLOAT :\
@@ -5744,6 +5745,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
       do_eq_sub;\
@@ -5766,10 +5768,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
         r = ((x_ <= GRN_UINT32_VALUE(y)) && (x_ >= GRN_UINT32_VALUE(y)));\
         break;\
       case GRN_DB_INT64 :\
+      case GRN_DB_TIME :\
         r = ((x_ <= GRN_INT64_VALUE(y)) && (x_ >= GRN_INT64_VALUE(y)));\
         break;\
       case GRN_DB_UINT64 :\
-      case GRN_DB_TIME :\
         r = ((x_ <= GRN_UINT64_VALUE(y)) && (x_ >= GRN_UINT64_VALUE(y)));\
         break;\
       case GRN_DB_FLOAT :\
@@ -6666,7 +6668,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
   GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, table));
   switch (op) {
   case GRN_OP_OR :
-    if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+    if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
       while ((id = grn_table_cursor_next(ctx, tc))) {
         GRN_RECORD_SET(ctx, v, id);
         r = grn_expr_exec(ctx, expr);
@@ -7464,6 +7466,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_column_, qbuf, *query_, *res, *sorted;
+  format.offset = offset;
   format.limit = hits;
   format.flags = GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES;
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
@@ -7496,7 +7499,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
             grn_table_sort_key_close(ctx, keys, nkeys);
-            // format.min = offset;
             grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, sorted);
             grn_text_otoj(ctx, outbuf, sorted, &format);
             grn_obj_format_close(ctx, &format);
@@ -7504,7 +7506,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        // format.min = offset;
         grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, res);
         grn_text_otoj(ctx, outbuf, res, &format);
         grn_obj_format_close(ctx, &format);
@@ -7527,7 +7528,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                              g.table, g.table))) {
                 grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
                 grn_table_sort_key_close(ctx, keys, nkeys);
-                // format.min = drilldown_offset;
+                format.offset = drilldown_offset;
                 format.limit = drilldown_hits;
                 grn_obj_format_from_str(ctx, &format,
                                         drilldown_output_columns, drilldown_output_columns_len,

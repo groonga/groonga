@@ -3056,9 +3056,9 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   const char *key = _grn_table_key(ctx, ii->lexicon, id, &key_size);
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
   grn_table_cursor *tc = (ii->lexicon->header.type == GRN_TABLE_PAT_KEY)
-    ? grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0,
+    ? grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0, 0, 0,
                             GRN_CURSOR_ASCENDING|GRN_CURSOR_GT)
-    : grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0,
+    : grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0, 0, 0,
                             GRN_CURSOR_ASCENDING);
   if (tc) {
     while (lseg == NOT_ASSIGNED && (tid = grn_table_cursor_next(ctx, tc))) {

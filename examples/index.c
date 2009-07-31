@@ -208,7 +208,7 @@ do_search(grn_ctx *ctx, grn_index *index)
       unsigned int n = grn_table_size(ctx, res);
       printf("%u hits\n", n);
       if (n) {
-        grn_table_cursor *tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0);
+        grn_table_cursor *tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, 0, 0);
         if (tc) {
           while (grn_table_cursor_next(ctx, tc)) {
             grn_id *ridp;

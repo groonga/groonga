@@ -701,7 +701,7 @@ test_mroonga_index(void)
     GRN_TEXT_SET(context, &buff, "hi", 2);
     grn_obj_search(context, ft, &buff, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
-    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
+    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0, 0, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
       GRN_BULK_REWIND(&buff);
       grn_table_get_key(context, res, id, &docid, sizeof(grn_id));
@@ -725,7 +725,7 @@ test_mroonga_index(void)
     query = grn_query_open(context, qstr, strlen(qstr), GRN_OP_OR, 32);
     grn_obj_search(context, ft, (grn_obj*) query, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
-    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
+    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0, 0, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
       GRN_BULK_REWIND(&buff);
       grn_table_get_key(context, res, id, &docid, sizeof(grn_id));
@@ -830,7 +830,7 @@ test_mroonga_index_score(void)
     grn_obj_search(context, ft, &buff, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     score_column = grn_obj_column(context, res, ".:score", 7);
-    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
+    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0, 0, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
       GRN_BULK_REWIND(&buff);
       grn_table_get_key(context, res, id, &docid, sizeof(grn_id));
@@ -861,7 +861,7 @@ test_mroonga_index_score(void)
     grn_obj_search(context, ft, (grn_obj*) query, res, GRN_OP_OR, NULL);
     cut_assert_equal_int(1, grn_table_size(context, res));
     score_column = grn_obj_column(context, res, ".:score", 7);
-    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0);
+    tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0, 0, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
       GRN_BULK_REWIND(&buff);
       grn_table_get_key(context, res, id, &docid, sizeof(grn_id));

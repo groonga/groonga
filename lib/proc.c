@@ -388,7 +388,7 @@ proc_table_list(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
   if (nvars == 1) {
     grn_table_cursor *cur;
-    if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0))) {
+    if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, 0, 0))) {
       grn_id id;
       char line_delimiter, column_delimiter;
       grn_content_type otype = GET_OTYPE(&vars[0].value);

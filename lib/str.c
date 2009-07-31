@@ -2127,7 +2127,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     if (format) {
       int i, j;
       grn_id id;
-      grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, obj, 0, 0,
+      grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, obj,
+                                                         format->offset,
+                                                         format->offset + format->limit,
                                                          GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');
       grn_text_itoa(ctx, bulk, grn_table_size(ctx, obj));

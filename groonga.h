@@ -621,6 +621,8 @@ typedef grn_obj grn_table_cursor;
 #define GRN_CURSOR_GT                  (0x01<<1)
 #define GRN_CURSOR_LE                  (0x00<<2)
 #define GRN_CURSOR_LT                  (0x01<<2)
+#define GRN_CURSOR_BY_ID               (0x00<<3)
+#define GRN_CURSOR_BY_KEY              (0x01<<3)
 
 /**
  * grn_table_cursor_open:
@@ -629,18 +631,26 @@ typedef grn_obj grn_table_cursor;
  * @min_size: @minのsize
  * @max: keyの上限 (NULLは上限なしと見なす)
  * @max_size: @maxのsize
- * @flags: GRN_CURSOR_ASCENDINGを指定すると昇順にkeyを取り出す。(指定しなければ降順)
+ * @flags: GRN_CURSOR_ASCENDINGを指定すると昇順にレコードを取り出す。
+ *         GRN_CURSOR_DESCENDINGを指定すると降順にレコードを取り出す。
  *         GRN_CURSOR_GTを指定するとminに一致したkeyをcursorの範囲に含まない。
  *         GRN_CURSOR_LTを指定するとmaxに一致したkeyをcursorの範囲に含まない。
+ *         GRN_CURSOR_BY_IDを指定するとID順にレコードを取り出す。
+ *         GRN_OBJ_TABLE_PAT_KEYを指定したtableについては、
+ *         GRN_CURSOR_BY_KEYを指定するとkey順にレコードを取り出す。
+ * @offset: 該当する範囲のレコードのうち、offset番目からレコードを取り出す。
+ *          -(該当する範囲のレコード数) < offset <= 0 の範囲の値が指定された場合は、
+ *         該当する範囲のレコード数 - offset が指定されたものとみなす。
+ * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す。
+ *          -(該当する範囲のレコード数) < limit <= 0 の範囲の値が指定された場合は、
+ *         該当する範囲のレコード数 - limit が指定されたものとみなす。
  *
  * tableに登録されているレコードを順番に取り出すためのカーソルを生成して返す。
- * GRN_OBJ_TABLE_PAT_KEYを指定したtableではkey順に、
- * GRN_OBJ_TABLE_HASH_KEYを指定したtableではid順にレコードを取り出します。
  **/
 GRN_API grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                                                 const void *min, unsigned min_size,
                                                 const void *max, unsigned max_size,
-                                                int flags);
+                                                int offset, int limit, int flags);
 
 /**
  * grn_table_cursor_close:
@@ -1576,6 +1586,7 @@ struct _grn_obj_format {
   const void *max;
   unsigned max_size;
   int flags;
+  int offset;
   int limit;
   int ncolumns;
   grn_obj **columns;
@@ -1672,7 +1683,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   double _val = (double)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(double));\
 } while (0)
-#define GRN_TIME_SET GRN_UINT64_SET
+#define GRN_TIME_SET GRN_INT64_SET
 #define GRN_RECORD_SET(ctx,obj,val) do {\
   grn_id _val = (grn_id)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_id));\
@@ -1685,13 +1696,20 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_PTR_SET_AT(ctx,obj,offset,val)
   */
 
+#define GRN_TIME_USEC_PER_SEC 1000000
+#define GRN_TIME_PACK(sec, usec) ((sec) * GRN_TIME_USEC_PER_SEC + (usec))
+#define GRN_TIME_UNPACK(time_value, sec, usec) do {\
+  sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
+  usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
+} while (0)
+
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT32_VALUE(obj) (*((unsigned int *)GRN_BULK_HEAD(obj)))
 #define GRN_INT64_VALUE(obj) (*((long long int *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT64_VALUE(obj) (*((long long unsigned int *)GRN_BULK_HEAD(obj)))
 #define GRN_FLOAT_VALUE(obj) (*((double *)GRN_BULK_HEAD(obj)))
-#define GRN_TIME_VALUE GRN_UINT64_VALUE
+#define GRN_TIME_VALUE GRN_INT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE_AT(obj,offset) (((grn_obj **)GRN_BULK_HEAD(obj))[offset])

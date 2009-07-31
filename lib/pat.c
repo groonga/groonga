@@ -99,7 +99,7 @@ pat_node_new(grn_ctx *ctx, grn_pat *pat, grn_id *id)
   if (n > GRN_ID_MAX) { return NULL; }
   if ((res = pat_get(ctx, pat, n))) {
     pat->header->curr_rec = n;
-    pat->header->nrecords++;
+    pat->header->n_entries++;
   }
   if (id) { *id = n; }
   return res;
@@ -384,12 +384,13 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   header->encoding = encoding;
   header->key_size = key_size;
   header->value_size = value_size;
-  header->nrecords = 0;
+  header->n_entries = 0;
   header->curr_rec = 0;
   header->curr_key = -1;
   header->curr_del = 0;
   header->curr_del2 = 0;
   header->curr_del3 = 0;
+  header->n_garbages = 0;
   header->tokenizer = 0;
   if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
     grn_io_close(ctx, io);
@@ -550,7 +551,8 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
     if (*lkey && size2) {
       if (pat->header->garbages[0]) {
         r = pat->header->garbages[0];
-        pat->header->nrecords++;
+        pat->header->n_entries++;
+        pat->header->n_garbages--;
         PAT_AT(pat, r, rn);
         if (!rn) { return 0; }
         pat->header->garbages[0] = rn->lr[0];
@@ -564,7 +566,8 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
       if (pat->header->garbages[size2]) {
         uint8_t *keybuf;
         r = pat->header->garbages[size2];
-        pat->header->nrecords++;
+        pat->header->n_entries++;
+        pat->header->n_garbages--;
         PAT_AT(pat, r, rn);
         if (!rn) { return 0; }
         pat->header->garbages[size2] = rn->lr[0];
@@ -1025,7 +1028,8 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
       *p0 = otherside;
     }
   }
-  pat->header->nrecords--;
+  pat->header->n_entries--;
+  pat->header->n_garbages++;
   return GRN_SUCCESS;
 }
 
@@ -1057,7 +1061,7 @@ uint32_t
 grn_pat_size(grn_ctx *ctx, grn_pat *pat)
 {
   if (!pat) { return GRN_INVALID_ARGUMENT; }
-  return pat->header->nrecords;
+  return pat->header->n_entries;
 }
 
 const char *
@@ -1218,14 +1222,14 @@ grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *value, int flags)
 
 grn_rc
 grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned *flags,
-             grn_encoding *encoding, unsigned *nrecords, unsigned *file_size)
+             grn_encoding *encoding, unsigned *n_entries, unsigned *file_size)
 {
   ERRCLR(NULL);
   if (!pat) { return GRN_INVALID_ARGUMENT; }
   if (key_size) { *key_size = pat->key_size; }
   if (flags) { *flags = pat->obj.header.flags; }
   if (encoding) { *encoding = pat->encoding; }
-  if (nrecords) { *nrecords = pat->header->nrecords; }
+  if (n_entries) { *n_entries = pat->header->n_entries; }
   if (file_size) {
     grn_rc rc;
     uint64_t tmp = 0;
