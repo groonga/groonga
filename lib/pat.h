@@ -55,13 +55,14 @@ struct grn_pat_header {
   uint32_t key_size;
   uint32_t value_size;
   grn_id tokenizer;
-  uint32_t nrecords;
+  uint32_t n_entries;
   uint32_t curr_rec;
   int32_t curr_key;
   int32_t curr_del;
   int32_t curr_del2;
   int32_t curr_del3;
-  uint32_t reserved[1006];
+  uint32_t n_garbages;
+  uint32_t reserved[1005];
   grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
   grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
 };

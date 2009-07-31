@@ -574,7 +574,7 @@ static void
 cmd_tablelist(grn_ctx *ctx, grn_obj *db, grn_obj *buf, grn_content_type otype)
 {
   grn_table_cursor *cur;
-  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0))) {
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, 0, 0))) {
     grn_id id;
     char line_delimiter, column_delimiter;
 

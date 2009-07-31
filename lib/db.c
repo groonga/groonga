@@ -1111,7 +1111,7 @@ grn_table_cursor *
 grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const void *min, unsigned min_size,
                       const void *max, unsigned max_size,
-                      int flags)
+                      int offset, int limit, int flags)
 {
   grn_table_cursor *tc = NULL;
   GRN_API_ENTER;
@@ -1552,7 +1552,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     GRN_TEXT_INIT(&bulk, 0);
     if (n_keys == 1 && n_results == 1) {
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
         grn_id id;
         grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys->key));
         int idp = GRN_OBJ_TABLEP(range);
@@ -1600,7 +1600,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         grn_table_cursor_close(ctx, tc);
       }
     } else {
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, tc))) {
           grn_rset_recinfo *ri = NULL;
@@ -4664,7 +4664,7 @@ pack(grn_ctx *ctx, grn_obj *table, sort_entry *head, sort_entry *tail,
 {
   int i = 0;
   sort_entry e, c;
-  grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0);
+  grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0);
   if (!tc) { return NULL; }
   if ((c.id = grn_table_cursor_next(ctx, tc))) {
     c.value = grn_obj_get_value_(ctx, keys->key, c.id, &c.size);
@@ -6666,7 +6666,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
   GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, table));
   switch (op) {
   case GRN_OP_OR :
-    if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0))) {
+    if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
       while ((id = grn_table_cursor_next(ctx, tc))) {
         GRN_RECORD_SET(ctx, v, id);
         r = grn_expr_exec(ctx, expr);
