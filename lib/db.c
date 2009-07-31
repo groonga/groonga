@@ -2642,10 +2642,10 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
     GRN_UINT32_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     GRN_INT64_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_UINT64 :\
-  case GRN_DB_TIME :\
     GRN_UINT64_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_FLOAT :\
@@ -2697,10 +2697,10 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
     NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_INT64 :
+  case GRN_DB_TIME :
     NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_UINT64 :
-  case GRN_DB_TIME :
     NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_FLOAT :
@@ -2717,10 +2717,10 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest)
       TEXT2DEST(uint32_t, grn_atoui, GRN_UINT32_SET);
       break;
     case GRN_DB_INT64 :
+    case GRN_DB_TIME :
       TEXT2DEST(int64_t, grn_atoll, GRN_INT64_SET);
       break;
     case GRN_DB_UINT64 :
-    case GRN_DB_TIME :
       TEXT2DEST(int64_t, grn_atoll, GRN_UINT64_SET);
       break;
     case GRN_DB_FLOAT :
@@ -4849,7 +4849,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_OBJ_KEY_FLOAT, sizeof(double));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "Time",
-                GRN_OBJ_KEY_UINT, sizeof(grn_timeval));
+                GRN_OBJ_KEY_INT, sizeof(int64_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TIME) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "ShortText",
                 GRN_OBJ_KEY_VAR_SIZE, GRN_TABLE_MAX_KEY_SIZE);
@@ -5609,10 +5609,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     r = (x_ op GRN_UINT32_VALUE(y));\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     r = (x_ op GRN_INT64_VALUE(y));\
     break;\
   case GRN_DB_UINT64 :\
-  case GRN_DB_TIME :\
     r = (x_ op GRN_UINT64_VALUE(y));\
     break;\
   case GRN_DB_FLOAT :\
@@ -5648,6 +5648,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
       do_compare_sub(op);\
@@ -5702,10 +5703,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     r = (x_ == GRN_UINT32_VALUE(y));\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     r = (x_ == GRN_INT64_VALUE(y));\
     break;\
   case GRN_DB_UINT64 :\
-  case GRN_DB_TIME :\
     r = (x_ == GRN_UINT64_VALUE(y));\
     break;\
   case GRN_DB_FLOAT :\
@@ -5744,6 +5745,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
       do_eq_sub;\
@@ -5766,10 +5768,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
         r = ((x_ <= GRN_UINT32_VALUE(y)) && (x_ >= GRN_UINT32_VALUE(y)));\
         break;\
       case GRN_DB_INT64 :\
+      case GRN_DB_TIME :\
         r = ((x_ <= GRN_INT64_VALUE(y)) && (x_ >= GRN_INT64_VALUE(y)));\
         break;\
       case GRN_DB_UINT64 :\
-      case GRN_DB_TIME :\
         r = ((x_ <= GRN_UINT64_VALUE(y)) && (x_ >= GRN_UINT64_VALUE(y)));\
         break;\
       case GRN_DB_FLOAT :\

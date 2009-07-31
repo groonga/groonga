@@ -1683,7 +1683,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   double _val = (double)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(double));\
 } while (0)
-#define GRN_TIME_SET GRN_UINT64_SET
+#define GRN_TIME_SET GRN_INT64_SET
 #define GRN_RECORD_SET(ctx,obj,val) do {\
   grn_id _val = (grn_id)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_id));\
@@ -1696,13 +1696,20 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_PTR_SET_AT(ctx,obj,offset,val)
   */
 
+#define GRN_TIME_USEC_PER_SEC 1000000
+#define GRN_TIME_PACK(sec, usec) ((sec) * GRN_TIME_USEC_PER_SEC + (usec))
+#define GRN_TIME_UNPACK(time_value, sec, usec) do {\
+  sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
+  usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
+} while (0)
+
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT32_VALUE(obj) (*((unsigned int *)GRN_BULK_HEAD(obj)))
 #define GRN_INT64_VALUE(obj) (*((long long int *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT64_VALUE(obj) (*((long long unsigned int *)GRN_BULK_HEAD(obj)))
 #define GRN_FLOAT_VALUE(obj) (*((double *)GRN_BULK_HEAD(obj)))
-#define GRN_TIME_VALUE GRN_UINT64_VALUE
+#define GRN_TIME_VALUE GRN_INT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE_AT(obj,offset) (((grn_obj **)GRN_BULK_HEAD(obj))[offset])
