@@ -161,11 +161,12 @@ struct _grn_array {
 
 struct _grn_array_cursor {
   grn_db_obj obj;
-  grn_id curr_rec;
   grn_array *array;
   grn_ctx *ctx;
-  int dir;
+  grn_id curr_rec;
   grn_id limit;
+  int rest;
+  int dir;
 };
 
 grn_array *grn_array_create(grn_ctx *ctx, const char *path,
