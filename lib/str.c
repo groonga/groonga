@@ -32,7 +32,7 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
   /* MEMO: This function allows non-null-terminated string as str. */
   /*       But requires the end of string. */
   const unsigned char *p = str;
-  if (!*p || p >= end) { return 0; }
+  if (end <= p || !*p) { return 0; }
   if (*p & 0x80) {
     int b, w;
     int size;
