@@ -6126,6 +6126,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         break;
       case GRN_OP_JSON_PUT :
         {
+          grn_obj_format format;
           grn_obj *str, *table, *res;
           POP1(res);
           res = GRN_OBJ_RESOLVE(ctx, res);
@@ -6133,24 +6134,11 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           str = GRN_OBJ_RESOLVE(ctx, str);
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
-          {
-            grn_obj_format format;
-            grn_obj *cols[256];
-            const char *p = GRN_BULK_HEAD(str), *tokbuf[256];
-            int i, n = grn_str_tok(p, GRN_BULK_VSIZE(str), ' ', tokbuf, 256, NULL);
-            format.flags = 0;
-            for (i = 0; i < n; i++) {
-              cols[i] = grn_obj_column(ctx, table, p, tokbuf[i] - p);
-              p = tokbuf[i] + 1;
-            }
-            format.flags = 0;
-            format.ncolumns = n;
-            format.columns = cols;
-            grn_text_otoj(ctx, res, table, &format);
-            for (i = 0; i < n; i++) {
-              grn_obj_unlink(ctx, cols[i]);
-            }
-          }
+          GRN_OBJ_FORMAT_INIT(&format, 0, 0, 0);
+          grn_obj_columns(ctx, table,
+                          GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str), &format.columns);
+          grn_text_otoj(ctx, res, table, &format);
+          GRN_OBJ_FORMAT_FIN(ctx, &format);
         }
         code++;
         break;
@@ -6799,18 +6787,32 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                 const char *str, unsigned str_size, grn_obj *res)
 {
   grn_obj *col;
-  const char *p = (char *)str, *q, *pe = p + str_size, *tokbuf[256];
+  const char *p = (char *)str, *q, *r, *pe = p + str_size, *tokbuf[256];
   while (p < pe) {
     int i, n = grn_str_tok(p, pe - p, ' ', tokbuf, 256, &q);
     for (i = 0; i < n; i++) {
-      if ((col = grn_obj_column(ctx, table, p, tokbuf[i] - p))) {
-        GRN_PTR_PUT(ctx, res, col);
+      r = tokbuf[i];
+      if (p < r) {
+        if (r[-1] == '*') {
+          grn_hash *cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                           GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+          if (cols) {
+            grn_id *key;
+            grn_table_columns(ctx, table, p, r - p - 1, (grn_obj *)cols);
+            GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
+              if ((col = grn_ctx_at(ctx, *key))) { GRN_PTR_PUT(ctx, res, col); }
+            });
+            grn_hash_close(ctx, cols);
+          }
+        } else if ((col = grn_obj_column(ctx, table, p, r - p))) {
+          GRN_PTR_PUT(ctx, res, col);
+        }
       }
-      p = tokbuf[i] + 1;
+      p = r + 1;
     }
     p = q;
   }
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
 /* grn_expr_create_from_str */
@@ -7398,57 +7400,6 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned nkeys)
 }
 
 grn_rc
-grn_obj_format_from_str(grn_ctx *ctx, grn_obj_format *format,
-                        const char *str, unsigned str_size, grn_obj *table)
-{
-  const char **tokbuf;
-  grn_obj **cols = NULL, **c = NULL;
-  format->columns = NULL;
-  if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
-    int i, n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
-    if ((cols = GRN_MALLOCN(grn_obj *, n))) {
-      format->columns = c = cols;
-      for (i = 0; i < n; i++) {
-        const char *p = tokbuf[i];
-        if (str < p) {
-          if (p[-1] == '*') {
-            grn_hash *cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                             GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
-            if (cols) {
-              grn_id *key;
-              grn_table_columns(ctx, table, str, p - str - 1, (grn_obj *)cols);
-              GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
-                if ((*c = grn_ctx_at(ctx, *key))) { c++; }
-              });
-              grn_hash_close(ctx, cols);
-            }
-          } else if ((*c = grn_obj_column(ctx, table, str, p - str))) {
-            c++;
-          }
-        }
-        str = p + 1;
-      }
-    }
-    GRN_FREE(tokbuf);
-  }
-  format->ncolumns = c - cols;
-  return ctx->rc;
-}
-
-grn_rc
-grn_obj_format_close(grn_ctx *ctx, grn_obj_format *format)
-{
-  int i = format->ncolumns;
-  if (i) {
-    while (i--) {
-      grn_obj_unlink(ctx, format->columns[i]);
-    }
-    GRN_FREE(format->columns);
-  }
-  return ctx->rc;
-}
-
-grn_rc
 grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            const char *table, unsigned table_len,
            const char *match_column, unsigned match_column_len,
@@ -7467,9 +7418,6 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_column_, qbuf, *query_, *res, *sorted;
-  format.offset = offset;
-  format.limit = hits;
-  format.flags = GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES;
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
     GRN_TEXT_INIT(&qbuf, 0);
@@ -7500,16 +7448,18 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
             grn_table_sort_key_close(ctx, keys, nkeys);
-            grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, sorted);
+            GRN_OBJ_FORMAT_INIT(&format, offset, hits, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+            grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
             grn_text_otoj(ctx, outbuf, sorted, &format);
-            grn_obj_format_close(ctx, &format);
+            GRN_OBJ_FORMAT_FIN(ctx, &format);
           }
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        grn_obj_format_from_str(ctx, &format, output_columns, output_columns_len, res);
+        GRN_OBJ_FORMAT_INIT(&format, offset, hits, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+        grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         grn_text_otoj(ctx, outbuf, res, &format);
-        grn_obj_format_close(ctx, &format);
+        GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
       if (drilldown_len) {
         uint32_t i, ngkeys;
@@ -7529,13 +7479,13 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                              g.table, g.table))) {
                 grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
                 grn_table_sort_key_close(ctx, keys, nkeys);
-                format.offset = drilldown_offset;
-                format.limit = drilldown_hits;
-                grn_obj_format_from_str(ctx, &format,
-                                        drilldown_output_columns, drilldown_output_columns_len,
-                                        sorted);
+                GRN_OBJ_FORMAT_INIT(&format, drilldown_offset, drilldown_hits,
+                                    GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+                grn_obj_columns(ctx, sorted,
+                                drilldown_output_columns, drilldown_output_columns_len,
+                                &format.columns);
                 grn_text_otoj(ctx, outbuf, sorted, &format);
-                grn_obj_format_close(ctx, &format);
+                GRN_OBJ_FORMAT_FIN(ctx, &format);
               }
               grn_obj_unlink(ctx, sorted);
             }
