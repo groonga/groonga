@@ -7773,8 +7773,16 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         values_add(ctx, loader);
         break;
       default :
-        loader->stat = GRN_LOADER_SYMBOL;
-        values_add(ctx, loader);
+        if ('A' <= c && c <= 'z') {
+          loader->stat = GRN_LOADER_SYMBOL;
+          values_add(ctx, loader);
+        } else {
+          if ((len = grn_charlen(ctx, str, se))) {
+            str += len;
+          } else {
+            str = se;
+          }
+        }
         break;
       }
       break;
