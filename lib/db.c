@@ -2642,8 +2642,10 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
   case GRN_DB_UINT32 :\
     GRN_UINT32_SET(ctx, dest, getvalue(src));\
     break;\
-  case GRN_DB_INT64 :\
   case GRN_DB_TIME :\
+    GRN_TIME_SET(ctx, dest, getvalue(src));\
+    break;\
+  case GRN_DB_INT64 :\
     GRN_INT64_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_UINT64 :\
@@ -2698,8 +2700,10 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
     NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_INT64 :
-  case GRN_DB_TIME :
     NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa);
+    break;
+  case GRN_DB_TIME :
+    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa);
     break;
   case GRN_DB_UINT64 :
     NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa);
@@ -2717,8 +2721,43 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
     case GRN_DB_UINT32 :
       TEXT2DEST(uint32_t, grn_atoui, GRN_UINT32_SET);
       break;
-    case GRN_DB_INT64 :
     case GRN_DB_TIME :
+      {
+        grn_timeval v;
+        int len = GRN_TEXT_LEN(src);
+        char *str = GRN_TEXT_VALUE(src);
+        if (grn_str2timeval(str, len, &v)) {
+          if (len > 3 && *str == '#' && str[1] == ':' && str[2] == '<') {
+            const char *cur;
+            v.tv_sec = grn_atoi(str + 3, str + len, &cur);
+            if (cur >= str + len || *cur != '.') {
+              GRN_LOG(ctx, GRN_LOG_WARNING, "illegal time format '%s'", str);
+            }
+            v.tv_usec = grn_atoi(cur + 1, str + len, &cur);
+            if (cur >= str + len || *cur != '>') {
+              GRN_LOG(ctx, GRN_LOG_WARNING, "illegal time format '%s'", str);
+            }
+          } else {
+            double d;
+            char *end;
+            grn_obj buf;
+            GRN_TEXT_INIT(&buf, 0);
+            GRN_TEXT_PUT(ctx, &buf, str, len);
+            GRN_TEXT_PUTC(ctx, &buf, '\0');
+            errno = 0;
+            d = strtod(GRN_TEXT_VALUE(&buf), &end);
+            if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+              v.tv_sec = d;
+              v.tv_usec = ((d - v.tv_sec) * 1000000);
+            } else {
+              rc = GRN_INVALID_ARGUMENT;
+            }
+          }
+        }
+        GRN_TIME_SET(ctx, dest, GRN_TIME_PACK((int64_t)v.tv_sec, v.tv_usec));
+      }
+      break;
+    case GRN_DB_INT64 :
       TEXT2DEST(int64_t, grn_atoll, GRN_INT64_SET);
       break;
     case GRN_DB_UINT64 :
