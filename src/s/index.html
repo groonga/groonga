@@ -186,6 +186,30 @@
 Powered by <a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQuery UI</a>.
 </div>
 <script type="text/javascript">
+function prim2html(prim) {
+  switch(typeof prim) {
+  case 'undefined':
+    return 'undefined';
+  case 'boolean':
+    return prim ? 'true' : 'false';
+  case 'number':
+    return String(prim);
+  case 'string':
+    return escapeHTML(prim);
+  case 'array':
+  case 'object':
+    if (prim == null) {
+      return 'null';
+    } else if ($.isArray(prim)) {
+      return 'array'; /* TODO: implement */
+    } else {
+      return 'object'; /* TODO: implement */
+    }
+  default:
+    return 'ERROR';
+  }
+}
+
 function escapeHTML(str) {
   return str.replace(/&/g, "&amp;")
             .replace(/"/g, "&quot;")
@@ -342,7 +366,7 @@ GroongaAdmin = {
           var m = line.length;
           for (var j = 0 ; j < m; j++) {
             elms.push('<th>');
-            elms.push(escapeHTML(line[j]));
+            elms.push(prim2html(line[j]));
             elms.push('</th>');
           }
           elms.push('</tr>');
@@ -356,7 +380,7 @@ GroongaAdmin = {
             var m = line.length;
             for (var j = 0 ; j < m; j++) {
               elms.push('<td>');
-              elms.push(escapeHTML(line[j]));
+              elms.push(prim2html(line[j]));
               elms.push('</td>');
             }
             elms.push('</tr>');
