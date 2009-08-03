@@ -138,16 +138,18 @@ proc_table_create(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   grn_obj *buf = grn_ctx_pop(ctx);
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
   if (nvars == 6) {
-    grn_obj *table = grn_table_create(ctx,
-                                      GRN_TEXT_VALUE(&vars[0].value),
-                                      GRN_TEXT_LEN(&vars[0].value),
-                                      NULL,
-                                      grn_atoi(GRN_TEXT_VALUE(&vars[1].value),
-                                               GRN_BULK_CURR(&vars[1].value), NULL),
-                                      grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[2].value),
-                                                  GRN_TEXT_LEN(&vars[2].value)),
-                                      grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
-                                                  GRN_TEXT_LEN(&vars[3].value)));
+    grn_obj *table;
+    grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[1].value),
+                                   GRN_BULK_CURR(&vars[1].value), NULL);
+    if (GRN_TEXT_LEN(&vars[0].value)) { flags |= GRN_OBJ_PERSISTENT; }
+    table = grn_table_create(ctx,
+                             GRN_TEXT_VALUE(&vars[0].value),
+                             GRN_TEXT_LEN(&vars[0].value),
+                             NULL, flags,
+                             grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[2].value),
+                                         GRN_TEXT_LEN(&vars[2].value)),
+                             grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
+                                         GRN_TEXT_LEN(&vars[3].value)));
     if (table) {
       grn_obj_set_info(ctx, table,
                        GRN_INFO_DEFAULT_TOKENIZER,
@@ -168,22 +170,23 @@ proc_column_create(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
   grn_obj *buf = grn_ctx_pop(ctx);
   grn_expr_var *vars = grn_proc_vars(ctx, user_data, &nvars);
   if (nvars == 6) {
-    grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
-                                 GRN_TEXT_LEN(&vars[0].value));
-    grn_obj *column = grn_column_create(ctx, table,
-                                        GRN_TEXT_VALUE(&vars[1].value),
-                                        GRN_TEXT_LEN(&vars[1].value),
-                                        NULL,
-                                        grn_atoi(GRN_TEXT_VALUE(&vars[2].value),
-                                                 GRN_BULK_CURR(&vars[2].value), NULL),
-                                        grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
-                                                    GRN_TEXT_LEN(&vars[3].value)));
+    grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[2].value),
+                                   GRN_BULK_CURR(&vars[2].value), NULL);
+    grn_obj *column, *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
+                                          GRN_TEXT_LEN(&vars[0].value));
+    grn_obj *type = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
+                                GRN_TEXT_LEN(&vars[3].value));
+    if (GRN_TEXT_LEN(&vars[1].value)) { flags |= GRN_OBJ_PERSISTENT; }
+    column = grn_column_create(ctx, table,
+                               GRN_TEXT_VALUE(&vars[1].value),
+                               GRN_TEXT_LEN(&vars[1].value),
+                               NULL, flags, type);
     if (column) {
       if (GRN_TEXT_LEN(&vars[4].value)) {
         grn_obj sources, source_ids, **p, **pe;
         GRN_PTR_INIT(&sources, GRN_OBJ_VECTOR, GRN_ID_NIL);
         GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
-        grn_obj_columns(ctx, table,
+        grn_obj_columns(ctx, type,
                         GRN_TEXT_VALUE(&vars[4].value),
                         GRN_TEXT_LEN(&vars[4].value),
                         &sources);

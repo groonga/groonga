@@ -1725,6 +1725,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
               cons.u.l.car = car;
               column = get_column(ctx, base, msg, msg_size, NULL);
               column_value(ctx, column, obj.u.o.id, &cons, &dummy);
+              grn_obj_unlink(ctx, column);
             }
             stat->nrecs++;
           }

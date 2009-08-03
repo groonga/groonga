@@ -1576,21 +1576,33 @@ GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
 
 typedef struct _grn_obj_format grn_obj_format;
 
-#define GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES   (1)
+#define GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES   (0x01<<0)
+#define GRN_OBJ_FORMAT_ASARRAY             (0x01<<3)
 
 struct _grn_obj_format {
+  grn_obj columns;
   const void *min;
-  unsigned min_size;
   const void *max;
+  unsigned min_size;
   unsigned max_size;
-  int flags;
   int offset;
   int limit;
-  int ncolumns;
-  grn_obj **columns;
+  int flags;
 };
 
-#define GRN_OBJ_FORMAT_ASARRAY         (0x01<<3)
+#define GRN_OBJ_FORMAT_INIT(format,format_offset,format_limit,format_flags) do {\
+  GRN_PTR_INIT(&(format)->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);\
+  (format)->offset = (format_offset);\
+  (format)->limit = (format_limit);\
+  (format)->flags = (format_flags);\
+} while (0)
+
+#define GRN_OBJ_FORMAT_FIN(ctx,format) do {\
+  int ncolumns = GRN_BULK_VSIZE(&(format)->columns) / sizeof(grn_obj *);\
+  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&(format)->columns);\
+  while (ncolumns--) { grn_obj_unlink((ctx), *columns++); }\
+  GRN_OBJ_FIN((ctx), &(format)->columns);\
+} while (0)
 
 GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
                              grn_obj_format *format);
@@ -1800,9 +1812,6 @@ GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
                                                         grn_obj *table, unsigned *nkeys);
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys, unsigned nkeys);
-GRN_API grn_rc grn_obj_format_from_str(grn_ctx *ctx, grn_obj_format *format,
-                                       const char *str, unsigned str_size, grn_obj *table);
-GRN_API grn_rc grn_obj_format_close(grn_ctx *ctx, grn_obj_format *format);
 
 GRN_API grn_rc grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                           const char *table, unsigned table_len,
