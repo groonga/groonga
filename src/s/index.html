@@ -251,19 +251,19 @@ Groonga = {
   GRN_OBJ_WITH_POSITION:          (0x01<<9),
 
   table_flags_to_s: function(flags) {
-    ret = []
+    ret = [];
     if (flags & Groonga.GRN_OBJ_PERSISTENT) {
       ret.push('永続的');
     }
     switch (flags & Groonga.GRN_OBJ_TABLE_TYPE_MASK) {
     case Groonga.GRN_OBJ_TABLE_HASH_KEY:
-      ret.push('ハッシュテーブル')
+      ret.push('ハッシュテーブル');
       break;
     case Groonga.GRN_OBJ_TABLE_PAT_KEY:
-      ret.push('パトリシア木')
+      ret.push('パトリシア木');
       break;
     case Groonga.GRN_OBJ_TABLE_NO_KEY:
-      ret.push('キーなし')
+      ret.push('キーなし');
       break;
     }
     if (flags & Groonga.GRN_OBJ_KEY_WITH_SIS) {
@@ -275,19 +275,19 @@ Groonga = {
     return ret.join(' ');
   },
   column_flags_to_s: function(flags) {
-    ret = []
+    ret = [];
     if (flags & Groonga.GRN_OBJ_PERSISTENT) {
       ret.push('永続的');
     }
     switch (flags & Groonga.GRN_OBJ_COLUMN_TYPE_MASK) {
     case Groonga.GRN_OBJ_COLUMN_SCALAR:
-      ret.push('スカラ')
+      ret.push('スカラ');
       break;
     case Groonga.GRN_OBJ_COLUMN_VECTOR:
-      ret.push('ベクタ')
+      ret.push('ベクタ');
       break;
     case Groonga.GRN_OBJ_COLUMN_INDEX:
-      ret.push('転置インデックス')
+      ret.push('転置インデックス');
       if (flags & Groonga.GRN_OBJ_WITH_SECTION) {
         ret.push('セクション情報');
       }
