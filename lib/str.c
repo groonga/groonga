@@ -2057,16 +2057,19 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_text_esc(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
       break;
     case GRN_DB_INT32 :
-      grn_text_itoa(ctx, bulk, *((int32_t *)GRN_BULK_HEAD(obj)));
+      grn_text_itoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT32_VALUE(obj) : 0);
       break;
     case GRN_DB_UINT32 :
-      grn_text_lltoa(ctx, bulk, *((uint32_t *)GRN_BULK_HEAD(obj)));
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_UINT32_VALUE(obj) : 0);
       break;
     case GRN_DB_INT64 :
-      grn_text_lltoa(ctx, bulk, *((int64_t *)GRN_BULK_HEAD(obj)));
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT64_VALUE(obj) : 0);
+      break;
+    case GRN_DB_UINT64 :
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_UINT64_VALUE(obj) : 0);
       break;
     case GRN_DB_FLOAT :
-      grn_text_ftoa(ctx, bulk, *((double *)GRN_BULK_HEAD(obj)));
+      grn_text_ftoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_FLOAT_VALUE(obj) : 0);
       break;
     case GRN_DB_TIME :
       {
