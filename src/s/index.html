@@ -390,7 +390,7 @@ GroongaAdmin = {
       }
     }
     elms.push('</table>');
-    return $(elms.join(''));
+    return elms.join('');
   },
   status: function() {
     $.ajax({
@@ -454,7 +454,7 @@ GroongaAdmin = {
       data: {},
       dataType: 'json',
       success: function(d) {
-        var table = GroongaAdmin.create_table_element(d);
+        var table = $(GroongaAdmin.create_table_element(d));
         $('#database-tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
         table.find('tr').each(function() {
           var flags_td = $(this).find('td:eq(3)');
@@ -527,7 +527,7 @@ GroongaAdmin = {
           .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append($('<p/>').text('総件数: ' + all_count))
           .append(pager.clone(true))
-          .append(GroongaAdmin.create_table_element(d))
+          .append($('<div/>').html(GroongaAdmin.create_table_element(d)))
           .append(pager);
       }
     });
@@ -538,7 +538,7 @@ GroongaAdmin = {
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
-        var table = GroongaAdmin.create_table_element(d);
+        var table = $(GroongaAdmin.create_table_element(d));
         $('#table-tab-columnlist')
           .empty()
           .append($('<h1/>').text('カラム一覧: ' + table_name))
