@@ -1493,8 +1493,12 @@ default_logger_func(int level, const char *time, const char *title,
     MUTEX_UNLOCK(grn_glock);
   }
   if (default_logger_fp) {
-    fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
-            time, *(slev + level), title, msg, location);
+    if (location && *location) {
+      fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
+              time, *(slev + level), title, msg, location);
+    } else {
+      fprintf(default_logger_fp, "%s|%c|%s %s\n", time, *(slev + level), title, msg);
+    }
     fflush(default_logger_fp);
   }
 }

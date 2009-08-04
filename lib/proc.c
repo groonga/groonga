@@ -27,7 +27,7 @@
   ((GRN_TEXT_LEN(var) && *(GRN_TEXT_VALUE(var)) == 't') ? GRN_CONTENT_TSV : GRN_CONTENT_JSON)
 
 #define DEFAULT_LIMIT           10
-#define DEFAULT_OUTPUT_COLUMNS  ":id :key :value *"
+#define DEFAULT_OUTPUT_COLUMNS  "_id _key _value *"
 
 static grn_rc
 proc_select(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)

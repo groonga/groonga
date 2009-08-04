@@ -258,13 +258,17 @@ grn_db_keys(grn_obj *s)
   return (grn_obj *)(((grn_db *)s)->keys);
 }
 
-#define GRN_DB_DELIMITER '.'
+#define GRN_DB_DELIMITER            '.'
+#define GRN_DB_PSEUDO_COLUMN_PREFIX '_'
 
 static grn_rc
 check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
   int len;
   const char *name_end = name + name_size;
+  if (name < name_end && *name == GRN_DB_PSEUDO_COLUMN_PREFIX) {
+    return GRN_INVALID_ARGUMENT;
+  }
   while (name < name_end) {
     if (*name == GRN_DB_DELIMITER || *name == GRN_QUERY_COLUMN) {
       return GRN_INVALID_ARGUMENT;
@@ -2396,7 +2400,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
       if (*sp == GRN_DB_DELIMITER) { break; }
     }
     if (!(len = sp - name)) { goto exit; }
-    if (*name == ':') { /* pseudo column */
+    if (*name == ':' || *name == GRN_DB_PSEUDO_COLUMN_PREFIX) { /* pseudo column */
       int done = 0;
       switch (name[1]) {
       case 'k' : /* key */
@@ -2727,31 +2731,19 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
         int len = GRN_TEXT_LEN(src);
         char *str = GRN_TEXT_VALUE(src);
         if (grn_str2timeval(str, len, &v)) {
-          if (len > 3 && *str == '#' && str[1] == ':' && str[2] == '<') {
-            const char *cur;
-            v.tv_sec = grn_atoi(str + 3, str + len, &cur);
-            if (cur >= str + len || *cur != '.') {
-              GRN_LOG(ctx, GRN_LOG_WARNING, "illegal time format '%s'", str);
-            }
-            v.tv_usec = grn_atoi(cur + 1, str + len, &cur);
-            if (cur >= str + len || *cur != '>') {
-              GRN_LOG(ctx, GRN_LOG_WARNING, "illegal time format '%s'", str);
-            }
+          double d;
+          char *end;
+          grn_obj buf;
+          GRN_TEXT_INIT(&buf, 0);
+          GRN_TEXT_PUT(ctx, &buf, str, len);
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          errno = 0;
+          d = strtod(GRN_TEXT_VALUE(&buf), &end);
+          if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+            v.tv_sec = d;
+            v.tv_usec = ((d - v.tv_sec) * GRN_TIME_USEC_PER_SEC);
           } else {
-            double d;
-            char *end;
-            grn_obj buf;
-            GRN_TEXT_INIT(&buf, 0);
-            GRN_TEXT_PUT(ctx, &buf, str, len);
-            GRN_TEXT_PUTC(ctx, &buf, '\0');
-            errno = 0;
-            d = strtod(GRN_TEXT_VALUE(&buf), &end);
-            if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
-              v.tv_sec = d;
-              v.tv_usec = ((d - v.tv_sec) * 1000000);
-            } else {
-              rc = GRN_INVALID_ARGUMENT;
-            }
+            rc = GRN_INVALID_ARGUMENT;
           }
         }
         GRN_TIME_SET(ctx, dest, GRN_TIME_PACK((int64_t)v.tv_sec, v.tv_usec));
@@ -4454,23 +4446,23 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
     for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
-        GRN_TEXT_PUTS(ctx, buf, ":id");
+        GRN_TEXT_PUTS(ctx, buf, "_id");
         break;
       case GRN_ACCESSOR_GET_KEY :
         if (!a->next) {
-          GRN_TEXT_PUTS(ctx, buf, ":key");
+          GRN_TEXT_PUTS(ctx, buf, "_key");
         }
         break;
       case GRN_ACCESSOR_GET_VALUE :
         if (!a->next) {
-          GRN_TEXT_PUTS(ctx, buf, ":value");
+          GRN_TEXT_PUTS(ctx, buf, "_value");
         }
         break;
       case GRN_ACCESSOR_GET_SCORE :
-        GRN_TEXT_PUTS(ctx, buf, ":score");
+        GRN_TEXT_PUTS(ctx, buf, "_score");
         break;
       case GRN_ACCESSOR_GET_NSUBRECS :
-        GRN_TEXT_PUTS(ctx, buf, ":nsubrecs");
+        GRN_TEXT_PUTS(ctx, buf, "_nsubrecs");
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         grn_column_name_(ctx, a->obj, buf);
@@ -4981,6 +4973,36 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op, grn_obj **indexbuf
 }
 
 /* grn_expr */
+
+grn_rc
+grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
+{
+  uint32_t i;
+  grn_expr_var *var;
+  grn_expr_code *code;
+  grn_expr *e = (grn_expr *)expr;
+  GRN_TEXT_PUTC(ctx, buf, '(');
+  for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
+    if (i) { GRN_TEXT_PUTC(ctx, buf, ','); }
+    if (var->name_size) {
+      GRN_TEXT_PUT(ctx, buf, var->name, var->name_size);
+    } else {
+      grn_text_itoa(ctx, buf, (int)i);
+    }
+    GRN_TEXT_PUTC(ctx, buf, ':');
+    grn_text_otoj(ctx, buf, &var->value, NULL);
+  }
+  GRN_TEXT_PUTC(ctx, buf, ')');
+  for (i = 0, code = e->codes; i < e->codes_curr; i++, code++) {
+    if (i) { GRN_TEXT_PUTC(ctx, buf, ' '); }
+    grn_text_itoa(ctx, buf, (int)code->op);
+    if (code->value) {
+      GRN_TEXT_PUTC(ctx, buf, ':');
+      grn_text_otoj(ctx, buf, code->value, NULL);
+    }
+  }
+  return GRN_SUCCESS;
+}
 
 grn_obj *
 grn_ctx_pop(grn_ctx *ctx)
@@ -7509,6 +7531,12 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       if ((query_ = grn_expr_create_from_str(ctx, NULL, 0,
                                              GRN_TEXT_VALUE(&qbuf), GRN_TEXT_LEN(&qbuf),
                                              table_, match_column_))) {
+        grn_obj strbuf;
+        GRN_TEXT_INIT(&strbuf, 0);
+        grn_expr_inspect(ctx, &strbuf, query_);
+        GRN_TEXT_PUTC(ctx, &strbuf, '\0');
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
+        GRN_OBJ_FIN(ctx, &strbuf);
         grn_table_select(ctx, table_, query_, res, GRN_OP_OR);
         grn_obj_unlink(ctx, query_);
       }
@@ -7709,7 +7737,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   }
 }
 
-#define PKEY_NAME ":key"
+#define PKEY_NAME "_key"
 
 static void
 brace_close(grn_ctx *ctx, grn_loader *loader)
@@ -7731,9 +7759,10 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
         {
           grn_obj *v;
           for (v = value; v + 1 < ve; v = values_next(ctx, v)) {
+            char *p = GRN_TEXT_VALUE(v);
             if (v->header.domain == GRN_DB_TEXT &&
                 GRN_TEXT_LEN(v) == strlen(PKEY_NAME) &&
-                !memcmp(GRN_TEXT_VALUE(v), PKEY_NAME, strlen(PKEY_NAME))) {
+                (*p == ':' || *p == '_') && !memcmp(p + 1, "key", 3)) {
               v++;
               if (v->header.domain == GRN_DB_TEXT) {
                 id = grn_table_add(ctx, loader->table,
