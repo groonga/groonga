@@ -112,6 +112,9 @@
             <li><a href="#table-tab-createcolumn">カラム作成</a></li>
           </ul>
           <div id="table-tab-recordlist">
+            <label for="tab-recordlist-query">検索クエリ: </label><input type="text" id="tab-recordlist-query">
+            <div id="tab-recordlist-table">
+            </div>
           </div>
           <div id="table-tab-columnlist">
           </div>
@@ -186,7 +189,7 @@
 Powered by <a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQuery UI</a>.
 </div>
 <script type="text/javascript">
-function prim2html(prim) {
+function prim2html(prim, limit) {
   switch(typeof prim) {
   case 'undefined':
     return 'undefined';
@@ -195,6 +198,9 @@ function prim2html(prim) {
   case 'number':
     return String(prim);
   case 'string':
+    if (prim.length > limit) {
+      prim = prim.substring(0, limit) + '...';
+    }
     return escapeHTML(prim);
   case 'array':
   case 'object':
@@ -326,7 +332,8 @@ GroongaAdmin = {
       GroongaAdmin.columnlist(GroongaAdmin.current_table);
     });
     $('#tab-recordlist-link').click(function() {
-      GroongaAdmin.recordlist(GroongaAdmin.current_table, 1);
+      $('#tab-recordlist-query').val('');
+      GroongaAdmin.recordlist(GroongaAdmin.current_table, '', 1);
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
@@ -366,7 +373,7 @@ GroongaAdmin = {
           var m = line.length;
           for (var j = 0 ; j < m; j++) {
             elms.push('<th>');
-            elms.push(prim2html(line[j]));
+            elms.push(prim2html(line[j], 128));
             elms.push('</th>');
           }
           elms.push('</tr>');
@@ -380,7 +387,7 @@ GroongaAdmin = {
             var m = line.length;
             for (var j = 0 ; j < m; j++) {
               elms.push('<td>');
-              elms.push(prim2html(line[j]));
+              elms.push(prim2html(line[j], 128));
               elms.push('</td>');
             }
             elms.push('</tr>');
@@ -437,7 +444,8 @@ GroongaAdmin = {
                   $('#database-tabs').hide();
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
-                  GroongaAdmin.recordlist(table_name, 1);
+                  $('#tab-recordlist-query').val('');
+                  GroongaAdmin.recordlist(table_name, '', 1);
                 })
             )
           );
@@ -500,11 +508,12 @@ GroongaAdmin = {
     }
     return ret;
   },
-  recordlist: function(table_name, page) {
+  recordlist: function(table_name, query, page) {
     $.ajax({
       url: '/select',
       data: {
         'table': table_name,
+        'query': query,
         'offset': (page - 1) * GroongaAdmin.recordlist_count,
         'limit': GroongaAdmin.recordlist_count
         /* sort_column: :id */
@@ -519,16 +528,23 @@ GroongaAdmin = {
           13,
           function() {
             GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                                    $('#tab-recordlist-query').val(),
                                     Number($(this).text()));
           }
         );
-        $('#table-tab-recordlist')
+        $('#tab-recordlist-table')
           .empty()
           .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append($('<p/>').text('総件数: ' + all_count))
           .append(pager.clone(true))
           .append($('<div/>').html(GroongaAdmin.create_table_element(d)))
           .append(pager);
+        $('#tab-recordlist-query')
+          .keyup(function(e) {
+          GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                                  $('#tab-recordlist-query').val(),
+                                  1);
+        });
       }
     });
   },
