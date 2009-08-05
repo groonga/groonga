@@ -1585,13 +1585,15 @@ struct _grn_obj_format {
   const void *max;
   unsigned min_size;
   unsigned max_size;
+  int nhits;
   int offset;
   int limit;
   int flags;
 };
 
-#define GRN_OBJ_FORMAT_INIT(format,format_offset,format_limit,format_flags) do {\
+#define GRN_OBJ_FORMAT_INIT(format,format_nhits,format_offset,format_limit,format_flags) do { \
   GRN_PTR_INIT(&(format)->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);\
+  (format)->nhits = (format_nhits);\
   (format)->offset = (format_offset);\
   (format)->limit = (format_limit);\
   (format)->flags = (format_flags);\

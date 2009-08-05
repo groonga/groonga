@@ -2138,7 +2138,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');
-      grn_text_itoa(ctx, bulk, grn_table_size(ctx, obj));
+      grn_text_itoa(ctx, bulk, format->nhits);
       if (format->flags & GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES) {
         GRN_TEXT_PUTS(ctx, bulk, ",[");
         for (j = 0; j < ncolumns; j++) {

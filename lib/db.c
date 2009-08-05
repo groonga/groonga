@@ -6234,7 +6234,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           str = GRN_OBJ_RESOLVE(ctx, str);
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
-          GRN_OBJ_FORMAT_INIT(&format, 0, 0, 0);
+          GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, 0, 0);
           grn_obj_columns(ctx, table,
                           GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str), &format.columns);
           grn_text_otoj(ctx, res, table, &format);
@@ -7508,13 +7508,13 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            const char *foreach, unsigned foreach_len,
            const char *sortby, unsigned sortby_len,
            const char *output_columns, unsigned output_columns_len,
-           int offset, int hits,
+           int offset, int limit,
            const char *drilldown, unsigned drilldown_len,
            const char *drilldown_sortby, unsigned drilldown_sortby_len,
            const char *drilldown_output_columns, unsigned drilldown_output_columns_len,
-           int drilldown_offset, int drilldown_hits)
+           int drilldown_offset, int drilldown_limit)
 {
-  uint32_t nkeys;
+  uint32_t nkeys, nhits;
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_column_, qbuf, *query_, *res, *sorted;
@@ -7548,13 +7548,14 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_OBJ_FIN(ctx, &qbuf);
     if (res) {
       // todo : support foreach
+      nhits = grn_table_size(ctx, res);
       if (sortby_len) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
                                        GRN_OBJ_TABLE_NO_KEY, res, res))) {
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
-            grn_table_sort(ctx, res, offset + hits, sorted, keys, nkeys);
+            grn_table_sort(ctx, res, offset + limit, sorted, keys, nkeys);
             grn_table_sort_key_close(ctx, keys, nkeys);
-            GRN_OBJ_FORMAT_INIT(&format, offset, hits, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+            GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
             grn_text_otoj(ctx, outbuf, sorted, &format);
             GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -7562,7 +7563,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        GRN_OBJ_FORMAT_INIT(&format, offset, hits, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         grn_text_otoj(ctx, outbuf, res, &format);
         GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -7578,6 +7579,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                           GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                           domain, NULL))) {
             grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
+            nhits = grn_table_size(ctx, g.table);
             if ((keys = grn_table_sort_key_from_str(ctx,
                                                     drilldown_sortby, drilldown_sortby_len,
                                                     g.table, &nkeys))) {
@@ -7585,7 +7587,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                              g.table, g.table))) {
                 grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
                 grn_table_sort_key_close(ctx, keys, nkeys);
-                GRN_OBJ_FORMAT_INIT(&format, drilldown_offset, drilldown_hits,
+                GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit,
                                     GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
                 grn_obj_columns(ctx, sorted,
                                 drilldown_output_columns, drilldown_output_columns_len,
