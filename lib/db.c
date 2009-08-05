@@ -4089,7 +4089,9 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           grn_ja_unref(ctx, &jw);
         }
       }
-      if ((res = *vp)) {
+      res = *vp;
+      /*
+      if (res) {
         int added;
         switch (res->header.type) {
         case GRN_EXPR :
@@ -4110,6 +4112,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           break;
         }
       }
+      */
     }
   }
 exit :
@@ -6761,7 +6764,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       while ((id = grn_table_cursor_next(ctx, tc))) {
         GRN_RECORD_SET(ctx, v, id);
         r = grn_expr_exec(ctx, expr);
-        if ((score = GRN_UINT32_VALUE(r))) {
+        if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_rset_recinfo *ri;
           if (grn_hash_add(ctx, s, &id, s->key_size, (void **)&ri, NULL)) {
             grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)&id, 1);
@@ -6777,7 +6780,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
         r = grn_expr_exec(ctx, expr);
-        if ((score = GRN_UINT32_VALUE(r))) {
+        if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
           grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)idp, 1);
@@ -6794,7 +6797,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
         r = grn_expr_exec(ctx, expr);
-        if ((score = GRN_UINT32_VALUE(r))) {
+        if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_hash_cursor_delete(ctx, hc, NULL);
         }
       }
@@ -6807,7 +6810,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
         r = grn_expr_exec(ctx, expr);
-        if ((score = GRN_UINT32_VALUE(r))) {
+        if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
           grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)idp, 1);
@@ -7201,6 +7204,10 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
     }
     end += len;
   }
+  if (!column) {
+    ERR(GRN_INVALID_ARGUMENT, "column missing");
+    return ctx->rc;
+  }
   if (mode == GRN_OP_OBJ_SET_VALUE) {
     grn_expr_append_obj(ctx, q->e, q->v);
     grn_expr_append_const(ctx, q->e, column);
@@ -7490,7 +7497,9 @@ grn_expr_create_from_str(grn_ctx *ctx,
   efsi.opt.weight_vector = NULL;
   efsi.weight_set = NULL;
   get_pragma(ctx, &efsi);
-  get_expr(ctx, &efsi, default_column, GRN_OP_MATCH);
+  if (get_expr(ctx, &efsi, default_column, GRN_OP_MATCH)) {
+    goto exit;
+  }
   grn_expr_compile(ctx, efsi.e);
   efsi.opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
   efsi.opt.func = efsi.weight_set ? section_weight_cb : NULL;
@@ -7589,6 +7598,9 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_OBJ_FIN(ctx, &strbuf);
         grn_table_select(ctx, table_, query_, res, GRN_OP_OR);
         grn_obj_unlink(ctx, query_);
+      } else {
+        /* todo */
+        ERRCLR(ctx);
       }
     } else {
       res = table_;
