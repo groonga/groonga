@@ -1747,35 +1747,38 @@ grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
 static grn_obj *grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj,
                                      const char *name, unsigned name_size);
 
+static grn_obj *
+grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size)
+{
+  grn_obj *column = NULL;
+  char buf[GRN_PAT_MAX_KEY_SIZE];
+  int len = grn_obj_name(ctx, table, buf, GRN_PAT_MAX_KEY_SIZE);
+  if (len) {
+    buf[len++] = GRN_DB_DELIMITER;
+    if (len + name_size <= GRN_PAT_MAX_KEY_SIZE) {
+      memcpy(buf + len, name, name_size);
+      column = grn_ctx_get(ctx, buf, len + name_size);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "name is too long");
+    }
+  } else {
+    /* todo : support temporary table */
+  }
+  return column;
+}
+
 grn_obj *
 grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size)
 {
   grn_obj *column = NULL;
   GRN_API_ENTER;
   if (GRN_OBJ_TABLEP(table)) {
-    if (check_name(ctx, name, name_size)) {
+    if (check_name(ctx, name, name_size) ||
+        !(column = grn_obj_column_(ctx, table, name, name_size))) {
       column = grn_obj_get_accessor(ctx, table, name, name_size);
-    } else {
-      char buf[GRN_PAT_MAX_KEY_SIZE];
-      int len = grn_obj_name(ctx, table, buf, GRN_PAT_MAX_KEY_SIZE);
-      if (len) {
-        buf[len++] = GRN_DB_DELIMITER;
-        if (len + name_size <= GRN_PAT_MAX_KEY_SIZE) {
-          memcpy(buf + len, name, name_size);
-          column = grn_ctx_get(ctx, buf, len + name_size);
-        } else {
-          ERR(GRN_INVALID_ARGUMENT, "name is too long");
-        }
-      } else {
-        /* todo : support temporary table */
-      }
     }
-  } else {
-    if (table->header.type == GRN_ACCESSOR) {
-      column = grn_obj_get_accessor(ctx, table, name, name_size);
-    } else {
-      ERR(GRN_INVALID_ARGUMENT, "invalid table assigned");
-    }
+  } else if (table->header.type == GRN_ACCESSOR) {
+    column = grn_obj_get_accessor(ctx, table, name, name_size);
   }
   GRN_API_RETURN(column);
 }
@@ -2400,7 +2403,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
       if (*sp == GRN_DB_DELIMITER) { break; }
     }
     if (!(len = sp - name)) { goto exit; }
-    if (*name == ':' || *name == GRN_DB_PSEUDO_COLUMN_PREFIX) { /* pseudo column */
+    if (*name == GRN_DB_PSEUDO_COLUMN_PREFIX || *name == ':') { /* pseudo column */
       int done = 0;
       switch (name[1]) {
       case 'k' : /* key */
@@ -2561,10 +2564,9 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         goto exit;
       }
     } else {
-      if (len == name_size) { goto exit; }
       /* if obj->header.type == GRN_TYPE ... lookup table */
       for (rp = &res; ; rp = &(*rp)->next) {
-        grn_obj *column = grn_obj_column(ctx, obj, name, len);
+        grn_obj *column = grn_obj_column_(ctx, obj, name, len);
         *rp = accessor_new(ctx);
         if (column) {
           (*rp)->obj = column;
