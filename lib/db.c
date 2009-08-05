@@ -7154,6 +7154,10 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
           mode = GRN_OP_NOT_EQUAL;
           q->cur = end + 2;
           break;
+        case '=' :
+          mode = GRN_OP_OBJ_SET_VALUE;
+          q->cur = end + 2;
+          break;
         case '<' :
           if (end + 2 < q->str_end && end[2] == '=') {
             mode = GRN_OP_LESS_EQUAL;
@@ -7197,21 +7201,28 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
     }
     end += len;
   }
-  grn_expr_append_obj(ctx, q->e, q->v);
-  grn_expr_append_const(ctx, q->e, column);
-  grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
-  grn_expr_append_const_str(ctx, q->e, start, end - start);
-  switch (mode) {
-  case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
-  case GRN_OP_SIMILAR :
-  case GRN_OP_TERM_EXTRACT :
-    grn_expr_append_const_int(ctx, q->e, option);
-    grn_expr_append_op(ctx, q->e, mode, 3);
-    break;
-  default :
-    grn_expr_append_op(ctx, q->e, mode, 2);
-    break;
+  if (mode == GRN_OP_OBJ_SET_VALUE) {
+    grn_expr_append_obj(ctx, q->e, q->v);
+    grn_expr_append_const(ctx, q->e, column);
+    grn_expr_append_const_str(ctx, q->e, start, end - start);
+    grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_SET_VALUE, 2);
+  } else {
+    grn_expr_append_obj(ctx, q->e, q->v);
+    grn_expr_append_const(ctx, q->e, column);
+    grn_expr_append_op(ctx, q->e, GRN_OP_OBJ_GET_VALUE, 2);
+    grn_expr_append_const_str(ctx, q->e, start, end - start);
+    switch (mode) {
+    case GRN_OP_NEAR :
+    case GRN_OP_NEAR2 :
+    case GRN_OP_SIMILAR :
+    case GRN_OP_TERM_EXTRACT :
+      grn_expr_append_const_int(ctx, q->e, option);
+      grn_expr_append_op(ctx, q->e, mode, 3);
+      break;
+    default :
+      grn_expr_append_op(ctx, q->e, mode, 2);
+      break;
+    }
   }
   return GRN_SUCCESS;
 }
@@ -7554,7 +7565,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   uint32_t nkeys, nhits;
   grn_obj_format format;
   grn_table_sort_key *keys;
-  grn_obj *table_, *match_column_, qbuf, *query_, *res, *sorted;
+  grn_obj *table_, *match_column_, qbuf, *query_, *foreach_, *res, *sorted;
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
     GRN_TEXT_INIT(&qbuf, 0);
@@ -7584,7 +7595,26 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     GRN_OBJ_FIN(ctx, &qbuf);
     if (res) {
-      // todo : support foreach
+      if (foreach && foreach_len) {
+        if ((foreach_ = grn_expr_create_from_str(ctx, NULL, 0,
+                                                 foreach, foreach_len,
+                                                 res, match_column_))) {
+          grn_obj *v;
+          if ((v = grn_expr_get_var_by_offset(ctx, foreach_, 0))) {
+            grn_id id;
+            grn_table_cursor *tc;
+            GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, res));
+            if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, 0, 0))) {
+              while ((id = grn_table_cursor_next(ctx, tc))) {
+                GRN_RECORD_SET(ctx, v, id);
+                grn_expr_exec(ctx, foreach_);
+              }
+              grn_table_cursor_close(ctx, tc);
+            }
+          }
+          grn_obj_unlink(ctx, foreach_);
+        }
+      }
       nhits = grn_table_size(ctx, res);
       if (sortby_len) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
