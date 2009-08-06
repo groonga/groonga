@@ -322,15 +322,26 @@ Groonga = {
 GroongaAdmin = {
   initialize: function() {
     GroongaAdmin.current_table = null;
+    GroongaAdmin.statusTimer = null;
 
-    $('#database-tabs').tabs();
-    $('#table-tabs').tabs();
+    GroongaAdmin.database_tabs = $('#database-tabs').tabs({
+      show: function(e, ui) {
+        GroongaAdmin.stop_status_timer();
+        if (ui.panel.id == 'database-tab-summary') {
+          GroongaAdmin.start_status_timer();
+        }
+      },
+    });
+    GroongaAdmin.table_tabs = $('#table-tabs').tabs({
+      show: function(e, ui) {
+      }
+    });
     $('#tab-tablelist-link').click(function() {
       GroongaAdmin.tablelist();
     });
     $('#tab-columnlist-link').click(function() {
       GroongaAdmin.columnlist(GroongaAdmin.current_table);
-    });
+    })
     $('#tab-recordlist-link').click(function() {
       $('#tab-recordlist-query').val('');
       GroongaAdmin.recordlist(GroongaAdmin.current_table, '', 1);
@@ -363,9 +374,15 @@ GroongaAdmin = {
     });
 
     GroongaAdmin.recordlist_count = 30;
-
-    GroongaAdmin.status();
-    setInterval(GroongaAdmin.status, 1000);
+  },
+  start_status_timer: function() {
+    GroongaAdmin.statusTimer = setInterval(GroongaAdmin.status, 1000);
+  },
+  stop_status_timer: function() {
+    if (GroongaAdmin.statusTimer) {
+      clearInterval(GroongaAdmin.statusTimer);
+      GroongaAdmin.statusTimer = null;
+    }
   },
   create_table_element: function (d) {
     var elms = ['<table class="records">'];
@@ -436,6 +453,7 @@ GroongaAdmin = {
                         GroongaAdmin.current_table = null;
                         $('#table-tabs').hide();
                         $('#database-tabs').show();
+                        GroongaAdmin.start_status_timer();
                       })
           )
         )
@@ -449,6 +467,7 @@ GroongaAdmin = {
                 .click(function() {
                   GroongaAdmin.current_table = table_name;
                   $('#database-tabs').hide();
+                  GroongaAdmin.stop_status_timer();
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
                   $('#tab-recordlist-query').val('');
