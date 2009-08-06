@@ -227,7 +227,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->currseg = -1;
   ctx->impl->db = NULL;
 
-  ctx->impl->qe = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(void *), 0);
+  ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_expr_vars), 0);
   ctx->impl->stack_curr = 0;
   ctx->impl->qe_next = NULL;
 
@@ -388,7 +388,18 @@ grn_ctx_fin(grn_ctx *ctx)
       }
     }
     grn_io_anon_unmap(ctx, &ctx->impl->mi, sizeof(grn_io_mapinfo) * N_SEGMENTS);
-    grn_hash_close(ctx, ctx->impl->qe);
+    {
+      uint32_t i;
+      grn_expr_var *v;
+      grn_expr_vars *vp;
+      GRN_HASH_EACH(ctx->impl->expr_vars, id, NULL, NULL, &vp, {
+        for (v = vp->vars, i = vp->nvars; i; v++, i--) {
+          GRN_OBJ_FIN(ctx, &v->value);
+        }
+        GRN_FREE(vp->vars);
+      });
+    }
+    grn_hash_close(ctx, ctx->impl->expr_vars);
     grn_ctx_loader_clear(ctx);
     GRN_FREE(ctx->impl);
   }
