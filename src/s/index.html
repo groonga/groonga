@@ -355,6 +355,13 @@ GroongaAdmin = {
       e1.append($('<option />').text(val));
     })
 
+    $('#tab-recordlist-query')
+      .keyup(function(e) {
+      GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                              $('#tab-recordlist-query').val(),
+                              1);
+    });
+
     GroongaAdmin.recordlist_count = 30;
 
     GroongaAdmin.status();
@@ -539,12 +546,6 @@ GroongaAdmin = {
           .append(pager.clone(true))
           .append($('<div/>').html(GroongaAdmin.create_table_element(d)))
           .append(pager);
-        $('#tab-recordlist-query')
-          .keyup(function(e) {
-          GroongaAdmin.recordlist(GroongaAdmin.current_table,
-                                  $('#tab-recordlist-query').val(),
-                                  1);
-        });
       }
     });
   },
