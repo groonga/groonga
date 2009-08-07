@@ -210,6 +210,7 @@ test_expr(void)
   cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
 }
 
+#ifdef ENABLE_PERSISTENT_EXPR
 void
 test_persistent_expr(void)
 {
@@ -296,6 +297,7 @@ test_persistent_expr(void)
   cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
   cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
 }
+#endif /* ENABLE_PERSISTENT_EXPR */
 
 void
 test_expr_query(void)

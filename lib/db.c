@@ -436,36 +436,11 @@ grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec)
   return (grn_obj *)res;
 }
 
-static grn_obj *
-grn_proc_dup(grn_ctx *ctx, grn_obj *proc)
-{
-  grn_proc *p = (grn_proc *)proc;
-  //grn_proc *res = (grn_proc *)GRN_MALLOC(sizeof(grn_proc));
-  grn_proc *res = (grn_proc *)grn_proc_create(ctx, NULL, 0, NULL,
-                                              p->funcs[PROC_INIT],
-                                              p->funcs[PROC_NEXT],
-                                              p->funcs[PROC_FIN],
-                                              0, NULL);
-  if (res) {
-    uint32_t i;
-    grn_obj *v;
-    grn_expr_var *v0;
-    // memcpy(res, p, sizeof(grn_proc));
-    res->obj.header.domain = p->obj.id;
-    for (v0 = p->vars, i = p->nvars; i; v0++, i--) {
-      if ((v = grn_expr_add_var(ctx, (grn_obj *)res, v0->name, v0->name_size))) {
-        GRN_OBJ_INIT(v, v0->value.header.type, 0, v0->value.header.domain);
-        GRN_TEXT_PUT(ctx, v, GRN_TEXT_VALUE(&v0->value), GRN_TEXT_LEN(&v0->value));
-      }
-    }
-  }
-  return (grn_obj *)res;
-}
-
 grn_expr_var *
 grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned *nvars)
 {
   grn_expr_var *vars = NULL;
+  *nvars = 0;
   if (expr->header.type == GRN_PROC || expr->header.type == GRN_EXPR) {
     grn_id id = DB_OBJ(expr)->id;
     grn_expr *e = (grn_expr *)expr;
@@ -481,9 +456,12 @@ grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned *nvars)
           if ((vars = vp->vars = GRN_MALLOCN(grn_expr_var, e->nvars))) {
             uint32_t i;
             for (v0 = e->vars, v = vars, i = e->nvars; i; v0++, v++, i--) {
+              v->name = v0->name;
+              v->name_size = v0->name_size;
               GRN_OBJ_INIT(&v->value, v0->value.header.type, 0, v0->value.header.domain);
               GRN_TEXT_PUT(ctx, &v->value, GRN_TEXT_VALUE(&v0->value), GRN_TEXT_LEN(&v0->value));
             }
+            vp->nvars = e->nvars;
           }
         }
         *nvars = vp->nvars;
@@ -528,8 +506,7 @@ grn_proc_vars(grn_ctx *ctx, grn_user_data *user_data, unsigned *nvars)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (pctx->proc) {
-    *nvars = pctx->proc->nvars;
-    return pctx->proc->vars;
+    return grn_expr_get_vars(ctx, (grn_obj *)pctx->proc, nvars);
   } else {
     *nvars = 0;
     return NULL;
@@ -4038,8 +4015,6 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
 static grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec,
                               const uint8_t *p, const uint8_t *pe);
 
-static grn_obj *grn_expr_dup(grn_ctx *ctx, grn_obj *expr);
-
 grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id)
 {
@@ -4151,29 +4126,6 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         }
       }
       res = *vp;
-      /*
-      if (res) {
-        int added;
-        switch (res->header.type) {
-        case GRN_EXPR :
-          if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, &added)) {
-            res = NULL;
-          } else {
-            if (added) { *vp = grn_expr_dup(ctx, res); }
-            res = *vp;
-          }
-          break;
-        case GRN_PROC :
-          if (!grn_hash_add(ctx, ctx->impl->qe, &id, sizeof(grn_id), (void **)&vp, &added)) {
-            res = NULL;
-          } else {
-            if (added) { *vp = grn_proc_dup(ctx, res); }
-            res = *vp;
-          }
-          break;
-        }
-      }
-      */
     }
   }
 exit :
@@ -5284,13 +5236,17 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
     ERR(GRN_INVALID_ARGUMENT, "db not initialized");
     return NULL;
   }
+  if (name_size) {
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "");
+    return NULL;
+  }
   GRN_API_ENTER;
   if (check_name(ctx, name, name_size)) {
     ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
     GRN_API_RETURN(NULL);
   }
   if (!DB_P(db)) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
+    ERR(GRN_INVALID_ARGUMENT, "named expr is not supported");
     GRN_API_RETURN(NULL);
   }
   id = grn_obj_register(ctx, db, name, name_size);
@@ -5331,39 +5287,6 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
   }
 exit :
   GRN_API_RETURN((grn_obj *)expr);
-}
-
-static grn_obj *
-grn_expr_dup(grn_ctx *ctx, grn_obj *expr)
-{
-  grn_expr *e = (grn_expr *)expr;
-  grn_expr *res = (grn_expr *)grn_expr_create(ctx, NULL, 0);
-  if (res) {
-    uint32_t i;
-    grn_obj *v;
-    grn_expr_code *c, *c0;
-    grn_expr_var *v0;
-    res->obj.header.domain = e->obj.id;
-    for (v0 = e->vars, i = e->nvars; i; v0++, i--) {
-      if ((v = grn_expr_add_var(ctx, (grn_obj *)res, v0->name, v0->name_size))) {
-        GRN_OBJ_INIT(v, v0->value.header.type, 0, v0->value.header.domain);
-        GRN_TEXT_PUT(ctx, v, GRN_TEXT_VALUE(&v0->value), GRN_TEXT_LEN(&v0->value));
-      }
-    }
-    for (c0 = e->codes, c = res->codes, i = e->codes_curr; i; c0++, c++, i--) {
-      int j;
-      c->op = c0->op;
-      c->value = c0->value;
-      for (j = 0, v0 = e->vars; j < e->nvars; v0++, j++) {
-        if (c0->value == &v0->value) {
-          c->value = &res->vars[j].value;
-          break;
-        }
-      }
-    }
-    res->codes_curr = e->codes_curr;
-  }
-  return (grn_obj *)res;
 }
 
 grn_rc
@@ -5438,10 +5361,9 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
 grn_obj *
 grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
 {
+  uint32_t n;
   grn_expr_var *v;
-  grn_expr *e = (grn_expr *)expr;
-  uint32_t n = e->nvars;
-  for (v = e->vars; n--; v++) {
+  for (v = grn_expr_get_vars(ctx, expr, &n); n--; v++) {
     if (v->name_size == name_size && !memcmp(v->name, name, name_size)) {
       return &v->value;
     }
@@ -5452,8 +5374,10 @@ grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
 grn_obj *
 grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 {
-  grn_expr *e = (grn_expr *)expr;
-  return (offset < e->nvars) ? &e->vars[offset].value : NULL;
+  uint32_t n;
+  grn_expr_var *v;
+  v = grn_expr_get_vars(ctx, expr, &n);
+  return (offset < n) ? &v[offset].value : NULL;
 }
 
 static void
