@@ -577,6 +577,7 @@ GroongaAdmin = {
             GroongaAdmin.recordlist(GroongaAdmin.current_table,
                                     $('#tab-recordlist-query').val(),
                                     Number($(this).text()));
+            return false;
           }
         );
         $('#tab-recordlist-table')
