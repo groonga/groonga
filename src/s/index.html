@@ -86,14 +86,24 @@
               </tr>
               <tr>
                 <td>
-                  value
+                  valueの型
                 </td>
                 <td>
-                  <label for="createtable-value-type">valueの型:</label>
                   <select id="createtable-value-type">
                     <optgroup label="組み込み型" id="createtable-value-type-builtin">
                     </optgroup>
                     <optgroup label="テーブル" id="createtable-value-type-table">
+                    </optgroup>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  デフォルトトークナイザ
+                </td>
+                <td>
+                  <select id="createtable-default-tokenizer">
+                    <optgroup label="組み込み" id="createtable-default-tokenizer-builtin">
                     </optgroup>
                   </select>
                 </td>
@@ -232,6 +242,7 @@ Groonga = {
                      'Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                      'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
                      'Text', 'LongText'],
+  tokenizer_list: ['TokenDelimit', 'TokenUnigram', 'TokenBigram', 'TokenTrigram', 'TokenMecab'],
   GRN_OBJ_PERSISTENT:             (0x01<<15),
 
   GRN_OBJ_TABLE_TYPE_MASK:        (0x07),
@@ -355,16 +366,25 @@ GroongaAdmin = {
     GroongaAdmin.update_tablelist();
 
     var e1 = $('#createtable-key-type-builtin');
-    var e2 = $('#createcolumn-type-builtin');
     $.each(Groonga.key_type_list, function(i, val) {
-      e1.append($('<option />').text(val));
-      e2.append($('<option />').text(val));
+      e1.append($('<option />').val(val).text(val));
     });
 
     e1 = $('#createtable-value-type-builtin');
     $.each(Groonga.value_type_list, function(i, val) {
-      e1.append($('<option />').text(val));
-    })
+      e1.append($('<option />').val(val).text(val));
+    });
+
+    e1 = $('#createtable-default-tokenizer-builtin');
+    e1.append($('<option />').val('').text('なし'));
+    $.each(Groonga.tokenizer_list, function(i, val) {
+      e1.append($('<option />').val(val).text(val));
+    });
+
+    e1 = $('#createcolumn-type-builtin');
+    $.each(Groonga.column_type_list, function(i, val) {
+      e1.append($('<option />').val(val).text(val));
+    });
 
     $('#tab-recordlist-query')
       .keyup(function(e) {
@@ -476,9 +496,9 @@ GroongaAdmin = {
                 })
             )
           );
-          tt.append($('<option />').text(val[1]));
-          vt.append($('<option />').text(val[1]));
-          ct.append($('<option />').text(val[1]));
+          tt.append($('<option />').val(val[1]).text(val[1]));
+          vt.append($('<option />').val(val[1]).text(val[1]));
+          ct.append($('<option />').val(val[1]).text(val[1]));
         });
       }
     });
@@ -599,7 +619,8 @@ GroongaAdmin = {
         name: $('#createtable-name').val(),
         'flags': flags,
         key_type: $('#createtable-key-type').val(),
-        value_type: $('#createtable-value-type').val()
+        value_type: $('#createtable-value-type').val(),
+        default_tokenizer: $('#createtable-default-tokenizer').val()
       },
       dataType: 'json',
       success: function(d) {
