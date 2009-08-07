@@ -255,6 +255,8 @@ struct _grn_expr {
 int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                      grn_obj **indexbuf, int buf_size);
 
+grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
+
 #ifdef __cplusplus
 }
 #endif
