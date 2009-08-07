@@ -376,6 +376,7 @@ GroongaAdmin = {
     GroongaAdmin.recordlist_count = 30;
   },
   start_status_timer: function() {
+    GroongaAdmin.status();
     GroongaAdmin.statusTimer = setInterval(GroongaAdmin.status, 1000);
   },
   stop_status_timer: function() {
