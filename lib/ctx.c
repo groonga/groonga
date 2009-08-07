@@ -598,17 +598,13 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
   if (ctx->impl->qe_next) {
     expr = ctx->impl->qe_next;
     ctx->impl->qe_next = NULL;
-    // fixme...
-    if ((val = grn_expr_get_var(ctx, expr, "table", 5))) {
-      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-    }
     if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
       GRN_TEXT_PUT(ctx, val, str, str_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     val = grn_expr_exec(ctx, expr);
-    //    grn_expr_clear_vars(ctx, expr);
+    grn_expr_clear_vars(ctx, expr);
   } else {
     GRN_TEXT_INIT(&key, 0);
     p = str;
@@ -626,7 +622,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
       val = grn_expr_exec(ctx, expr);
-      //      grn_expr_clear_vars(ctx, expr);
+      grn_expr_clear_vars(ctx, expr);
     } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
                                    strlen(GRN_EXPR_MISSING_NAME)))) {
       if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
@@ -635,7 +631,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
       val = grn_expr_exec(ctx, expr);
-      //      grn_expr_clear_vars(ctx, expr);
+      grn_expr_clear_vars(ctx, expr);
     }
     GRN_OBJ_FIN(ctx, &key);
   }
@@ -649,17 +645,13 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
   if (ctx->impl->qe_next) {
     expr = ctx->impl->qe_next;
     ctx->impl->qe_next = NULL;
-    // fixme...
-    if ((val = grn_expr_get_var(ctx, expr, "table", 5))) {
-      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-    }
     if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
       GRN_TEXT_PUT(ctx, val, str, str_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     val = grn_expr_exec(ctx, expr);
-    //    grn_expr_clear_vars(ctx, expr);
+    grn_expr_clear_vars(ctx, expr);
   } else {
     unsigned int argc = 0;
     const char *p = (char *)str, *q, *pe = p + str_size, *tokbuf[256];
@@ -681,7 +673,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
     if (expr) {
       grn_ctx_push(ctx, ctx->impl->outbuf);
       val = grn_expr_exec(ctx, expr);
-      //      grn_expr_clear_vars(ctx, expr);
+      grn_expr_clear_vars(ctx, expr);
     }
   }
   return val;

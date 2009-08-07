@@ -2785,6 +2785,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
           } else {
             rc = GRN_INVALID_ARGUMENT;
           }
+          GRN_OBJ_FIN(ctx, &buf);
         }
         GRN_TIME_SET(ctx, dest, GRN_TIME_PACK((int64_t)v.tv_sec, v.tv_usec));
       }
