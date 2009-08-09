@@ -154,6 +154,10 @@
                     </optgroup>
                   </select>
 
+                  <label for="createcolumn-source">テーブル型の場合カラム</label>
+                  <select id="createcolumn-source" disabled>
+                  </select>
+
                   <label for="createcolumn-column-type">カラム種別:</label>
                   <select id="createcolumn-column-type">
                     <option value="GRN_OBJ_COLUMN_SCALAR">スカラ</option>
@@ -391,6 +395,30 @@ GroongaAdmin = {
       GroongaAdmin.recordlist(GroongaAdmin.current_table,
                               $('#tab-recordlist-query').val(),
                               1);
+    });
+
+    $('#createcolumn-type').change(function(e) {
+      var s = $('#createcolumn-type-table option:selected');
+      var cs = $('#createcolumn-source');
+      if (s.length > 0) {
+        cs.empty().removeAttr('disabled');
+        $.ajax({
+          url: '/column_list',
+          data: {'table': s.val()},
+          dataType: 'json',
+          success: function(d) {
+            var idx;
+            if (idx = $.inArray('name', d[0])) {
+              d.shift();
+              $.each(d, function(i, val) {
+                cs.append($('<option />').val(val[idx]).text(val[idx]));
+              });
+            }
+          }
+        });
+      } else {
+        cs.empty().attr('disabled', 'disabled');
+      }
     });
 
     GroongaAdmin.recordlist_count = 30;
@@ -644,14 +672,18 @@ GroongaAdmin = {
     });
     flags |= Groonga[$('#createcolumn-column-type').val()];
     flags |= Groonga[$('#createcolumn-column-compress').val()];
+    d = {
+      table: GroongaAdmin.current_table,
+      name: $('#createcolumn-name').val(),
+      'flags': flags,
+      type: $('#createcolumn-type').val()
+    };
+    if ($('#createcolumn-source').val()) {
+      d['source'] = $('#createcolumn-source').val();
+    }
     $.ajax({
       url: '/column_create',
-      data: {
-        table: GroongaAdmin.current_table,
-        name: $('#createcolumn-name').val(),
-        'flags': flags,
-        type: $('#createcolumn-type').val()
-      },
+      data: d,
       dataType: 'json',
       success: function(d) {
         if (d) {

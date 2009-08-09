@@ -238,7 +238,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
   }
 
   id = grn_obj_id(ctx, column);
-  name_len = grn_obj_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
+  name_len = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
   path = grn_obj_path(ctx, column);
 
   switch (otype) {
