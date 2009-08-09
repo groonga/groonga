@@ -897,9 +897,9 @@ GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
  * nameがカラム名の場合、それに対応するtableのカラムを返す。
  * 対応するカラムが存在しなければNULLを返す。
  * nameはアクセサ文字列の場合、それに対応するaccessorを返す。
- * アクセサ文字列とは、'.'で始まり、カラム名等を'.'で連結した文字列である。
- * '.:id', '.:key'は特殊なアクセサで、それぞれレコードID/keyを返す。
- * 例) '.col1' / '.col2.col3' / '.col2.:id'
+ * アクセサ文字列とは、カラム名等を'.'で連結した文字列である。
+ * '_id', '_key'は特殊なアクセサで、それぞれレコードID/keyを返す。
+ * 例) 'col1' / 'col2.col3' / 'col2._id'
  **/
 GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
                                 const char *name, unsigned name_size);
@@ -1585,13 +1585,15 @@ struct _grn_obj_format {
   const void *max;
   unsigned min_size;
   unsigned max_size;
+  int nhits;
   int offset;
   int limit;
   int flags;
 };
 
-#define GRN_OBJ_FORMAT_INIT(format,format_offset,format_limit,format_flags) do {\
+#define GRN_OBJ_FORMAT_INIT(format,format_nhits,format_offset,format_limit,format_flags) do { \
   GRN_PTR_INIT(&(format)->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);\
+  (format)->nhits = (format_nhits);\
   (format)->offset = (format_offset);\
   (format)->limit = (format_limit);\
   (format)->flags = (format_flags);\

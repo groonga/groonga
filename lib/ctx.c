@@ -227,7 +227,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->currseg = -1;
   ctx->impl->db = NULL;
 
-  ctx->impl->qe = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(void *), 0);
+  ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_expr_vars), 0);
   ctx->impl->stack_curr = 0;
   ctx->impl->qe_next = NULL;
 
@@ -388,7 +388,18 @@ grn_ctx_fin(grn_ctx *ctx)
       }
     }
     grn_io_anon_unmap(ctx, &ctx->impl->mi, sizeof(grn_io_mapinfo) * N_SEGMENTS);
-    grn_hash_close(ctx, ctx->impl->qe);
+    {
+      uint32_t i;
+      grn_expr_var *v;
+      grn_expr_vars *vp;
+      GRN_HASH_EACH(ctx->impl->expr_vars, id, NULL, NULL, &vp, {
+        for (v = vp->vars, i = vp->nvars; i; v++, i--) {
+          GRN_OBJ_FIN(ctx, &v->value);
+        }
+        GRN_FREE(vp->vars);
+      });
+    }
+    grn_hash_close(ctx, ctx->impl->expr_vars);
     grn_ctx_loader_clear(ctx);
     GRN_FREE(ctx->impl);
   }
@@ -587,16 +598,13 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
   if (ctx->impl->qe_next) {
     expr = ctx->impl->qe_next;
     ctx->impl->qe_next = NULL;
-    // fixme...
-    if ((val = grn_expr_get_var(ctx, expr, "table", 5))) {
-      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-    }
-    if ((val = grn_expr_get_var(ctx, expr, "values", 6))) {
+    if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
       GRN_TEXT_PUT(ctx, val, str, str_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     val = grn_expr_exec(ctx, expr);
+    grn_expr_clear_vars(ctx, expr);
   } else {
     GRN_TEXT_INIT(&key, 0);
     p = str;
@@ -614,6 +622,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
       val = grn_expr_exec(ctx, expr);
+      grn_expr_clear_vars(ctx, expr);
     } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
                                    strlen(GRN_EXPR_MISSING_NAME)))) {
       if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
@@ -622,6 +631,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
       val = grn_expr_exec(ctx, expr);
+      grn_expr_clear_vars(ctx, expr);
     }
     GRN_OBJ_FIN(ctx, &key);
   }
@@ -635,16 +645,13 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
   if (ctx->impl->qe_next) {
     expr = ctx->impl->qe_next;
     ctx->impl->qe_next = NULL;
-    // fixme...
-    if ((val = grn_expr_get_var(ctx, expr, "table", 5))) {
-      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-    }
-    if ((val = grn_expr_get_var(ctx, expr, "values", 6))) {
+    if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
       GRN_TEXT_PUT(ctx, val, str, str_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     val = grn_expr_exec(ctx, expr);
+    grn_expr_clear_vars(ctx, expr);
   } else {
     unsigned int argc = 0;
     const char *p = (char *)str, *q, *pe = p + str_size, *tokbuf[256];
@@ -666,6 +673,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
     if (expr) {
       grn_ctx_push(ctx, ctx->impl->outbuf);
       val = grn_expr_exec(ctx, expr);
+      grn_expr_clear_vars(ctx, expr);
     }
   }
   return val;
@@ -1493,8 +1501,12 @@ default_logger_func(int level, const char *time, const char *title,
     MUTEX_UNLOCK(grn_glock);
   }
   if (default_logger_fp) {
-    fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
-            time, *(slev + level), title, msg, location);
+    if (location && *location) {
+      fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
+              time, *(slev + level), title, msg, location);
+    } else {
+      fprintf(default_logger_fp, "%s|%c|%s %s\n", time, *(slev + level), title, msg);
+    }
     fflush(default_logger_fp);
   }
 }

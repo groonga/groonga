@@ -86,14 +86,24 @@
               </tr>
               <tr>
                 <td>
-                  value
+                  valueの型
                 </td>
                 <td>
-                  <label for="createtable-value-type">valueの型:</label>
                   <select id="createtable-value-type">
                     <optgroup label="組み込み型" id="createtable-value-type-builtin">
                     </optgroup>
                     <optgroup label="テーブル" id="createtable-value-type-table">
+                    </optgroup>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  デフォルトトークナイザ
+                </td>
+                <td>
+                  <select id="createtable-default-tokenizer">
+                    <optgroup label="組み込み" id="createtable-default-tokenizer-builtin">
                     </optgroup>
                   </select>
                 </td>
@@ -112,6 +122,9 @@
             <li><a href="#table-tab-createcolumn">カラム作成</a></li>
           </ul>
           <div id="table-tab-recordlist">
+            <label for="tab-recordlist-query">検索クエリ: </label><input type="text" id="tab-recordlist-query">
+            <div id="tab-recordlist-table">
+            </div>
           </div>
           <div id="table-tab-columnlist">
           </div>
@@ -139,6 +152,10 @@
                     </optgroup>
                     <optgroup label="テーブル" id="createcolumn-type-table">
                     </optgroup>
+                  </select>
+
+                  <label for="createcolumn-source">テーブル型の場合カラム</label>
+                  <select id="createcolumn-source" disabled>
                   </select>
 
                   <label for="createcolumn-column-type">カラム種別:</label>
@@ -186,6 +203,33 @@
 Powered by <a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQuery UI</a>.
 </div>
 <script type="text/javascript">
+function prim2html(prim, limit) {
+  switch(typeof prim) {
+  case 'undefined':
+    return 'undefined';
+  case 'boolean':
+    return prim ? 'true' : 'false';
+  case 'number':
+    return String(prim);
+  case 'string':
+    if (prim.length > limit) {
+      prim = prim.substring(0, limit) + '...';
+    }
+    return escapeHTML(prim);
+  case 'array':
+  case 'object':
+    if (prim == null) {
+      return 'null';
+    } else if ($.isArray(prim)) {
+      return 'array'; /* TODO: implement */
+    } else {
+      return 'object'; /* TODO: implement */
+    }
+  default:
+    return 'ERROR';
+  }
+}
+
 function escapeHTML(str) {
   return str.replace(/&/g, "&amp;")
             .replace(/"/g, "&quot;")
@@ -202,6 +246,7 @@ Groonga = {
                      'Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                      'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
                      'Text', 'LongText'],
+  tokenizer_list: ['TokenDelimit', 'TokenUnigram', 'TokenBigram', 'TokenTrigram', 'TokenMecab'],
   GRN_OBJ_PERSISTENT:             (0x01<<15),
 
   GRN_OBJ_TABLE_TYPE_MASK:        (0x07),
@@ -227,19 +272,19 @@ Groonga = {
   GRN_OBJ_WITH_POSITION:          (0x01<<9),
 
   table_flags_to_s: function(flags) {
-    ret = []
+    ret = [];
     if (flags & Groonga.GRN_OBJ_PERSISTENT) {
       ret.push('永続的');
     }
     switch (flags & Groonga.GRN_OBJ_TABLE_TYPE_MASK) {
     case Groonga.GRN_OBJ_TABLE_HASH_KEY:
-      ret.push('ハッシュテーブル')
+      ret.push('ハッシュテーブル');
       break;
     case Groonga.GRN_OBJ_TABLE_PAT_KEY:
-      ret.push('パトリシア木')
+      ret.push('パトリシア木');
       break;
     case Groonga.GRN_OBJ_TABLE_NO_KEY:
-      ret.push('キーなし')
+      ret.push('キーなし');
       break;
     }
     if (flags & Groonga.GRN_OBJ_KEY_WITH_SIS) {
@@ -251,19 +296,19 @@ Groonga = {
     return ret.join(' ');
   },
   column_flags_to_s: function(flags) {
-    ret = []
+    ret = [];
     if (flags & Groonga.GRN_OBJ_PERSISTENT) {
       ret.push('永続的');
     }
     switch (flags & Groonga.GRN_OBJ_COLUMN_TYPE_MASK) {
     case Groonga.GRN_OBJ_COLUMN_SCALAR:
-      ret.push('スカラ')
+      ret.push('スカラ');
       break;
     case Groonga.GRN_OBJ_COLUMN_VECTOR:
-      ret.push('ベクタ')
+      ret.push('ベクタ');
       break;
     case Groonga.GRN_OBJ_COLUMN_INDEX:
-      ret.push('転置インデックス')
+      ret.push('転置インデックス');
       if (flags & Groonga.GRN_OBJ_WITH_SECTION) {
         ret.push('セクション情報');
       }
@@ -292,17 +337,29 @@ Groonga = {
 GroongaAdmin = {
   initialize: function() {
     GroongaAdmin.current_table = null;
+    GroongaAdmin.statusTimer = null;
 
-    $('#database-tabs').tabs();
-    $('#table-tabs').tabs();
+    GroongaAdmin.database_tabs = $('#database-tabs').tabs({
+      show: function(e, ui) {
+        GroongaAdmin.stop_status_timer();
+        if (ui.panel.id == 'database-tab-summary') {
+          GroongaAdmin.start_status_timer();
+        }
+      },
+    });
+    GroongaAdmin.table_tabs = $('#table-tabs').tabs({
+      show: function(e, ui) {
+      }
+    });
     $('#tab-tablelist-link').click(function() {
       GroongaAdmin.tablelist();
     });
     $('#tab-columnlist-link').click(function() {
       GroongaAdmin.columnlist(GroongaAdmin.current_table);
-    });
+    })
     $('#tab-recordlist-link').click(function() {
-      GroongaAdmin.recordlist(GroongaAdmin.current_table, 1);
+      $('#tab-recordlist-query').val('');
+      GroongaAdmin.recordlist(GroongaAdmin.current_table, '', 1);
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
@@ -313,21 +370,68 @@ GroongaAdmin = {
     GroongaAdmin.update_tablelist();
 
     var e1 = $('#createtable-key-type-builtin');
-    var e2 = $('#createcolumn-type-builtin');
     $.each(Groonga.key_type_list, function(i, val) {
-      e1.append($('<option />').text(val));
-      e2.append($('<option />').text(val));
+      e1.append($('<option />').val(val).text(val));
     });
 
     e1 = $('#createtable-value-type-builtin');
     $.each(Groonga.value_type_list, function(i, val) {
-      e1.append($('<option />').text(val));
-    })
+      e1.append($('<option />').val(val).text(val));
+    });
+
+    e1 = $('#createtable-default-tokenizer-builtin');
+    e1.append($('<option />').val('').text('なし'));
+    $.each(Groonga.tokenizer_list, function(i, val) {
+      e1.append($('<option />').val(val).text(val));
+    });
+
+    e1 = $('#createcolumn-type-builtin');
+    $.each(Groonga.column_type_list, function(i, val) {
+      e1.append($('<option />').val(val).text(val));
+    });
+
+    $('#tab-recordlist-query')
+      .keyup(function(e) {
+      GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                              $('#tab-recordlist-query').val(),
+                              1);
+    });
+
+    $('#createcolumn-type').change(function(e) {
+      var s = $('#createcolumn-type-table option:selected');
+      var cs = $('#createcolumn-source');
+      if (s.length > 0) {
+        cs.empty().removeAttr('disabled');
+        $.ajax({
+          url: '/column_list',
+          data: {'table': s.val()},
+          dataType: 'json',
+          success: function(d) {
+            var idx;
+            if (idx = $.inArray('name', d[0])) {
+              d.shift();
+              $.each(d, function(i, val) {
+                cs.append($('<option />').val(val[idx]).text(val[idx]));
+              });
+            }
+          }
+        });
+      } else {
+        cs.empty().attr('disabled', 'disabled');
+      }
+    });
 
     GroongaAdmin.recordlist_count = 30;
-
+  },
+  start_status_timer: function() {
     GroongaAdmin.status();
-    setInterval(GroongaAdmin.status, 1000);
+    GroongaAdmin.statusTimer = setInterval(GroongaAdmin.status, 1000);
+  },
+  stop_status_timer: function() {
+    if (GroongaAdmin.statusTimer) {
+      clearInterval(GroongaAdmin.statusTimer);
+      GroongaAdmin.statusTimer = null;
+    }
   },
   create_table_element: function (d) {
     var elms = ['<table class="records">'];
@@ -342,7 +446,7 @@ GroongaAdmin = {
           var m = line.length;
           for (var j = 0 ; j < m; j++) {
             elms.push('<th>');
-            elms.push(escapeHTML(line[j]));
+            elms.push(prim2html(line[j], 128));
             elms.push('</th>');
           }
           elms.push('</tr>');
@@ -356,7 +460,7 @@ GroongaAdmin = {
             var m = line.length;
             for (var j = 0 ; j < m; j++) {
               elms.push('<td>');
-              elms.push(escapeHTML(line[j]));
+              elms.push(prim2html(line[j], 128));
               elms.push('</td>');
             }
             elms.push('</tr>');
@@ -366,7 +470,7 @@ GroongaAdmin = {
       }
     }
     elms.push('</table>');
-    return $(elms.join(''));
+    return elms.join('');
   },
   status: function() {
     $.ajax({
@@ -398,6 +502,7 @@ GroongaAdmin = {
                         GroongaAdmin.current_table = null;
                         $('#table-tabs').hide();
                         $('#database-tabs').show();
+                        GroongaAdmin.start_status_timer();
                       })
           )
         )
@@ -411,15 +516,17 @@ GroongaAdmin = {
                 .click(function() {
                   GroongaAdmin.current_table = table_name;
                   $('#database-tabs').hide();
+                  GroongaAdmin.stop_status_timer();
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
-                  GroongaAdmin.recordlist(table_name, 1);
+                  $('#tab-recordlist-query').val('');
+                  GroongaAdmin.recordlist(table_name, '', 1);
                 })
             )
           );
-          tt.append($('<option />').text(val[1]));
-          vt.append($('<option />').text(val[1]));
-          ct.append($('<option />').text(val[1]));
+          tt.append($('<option />').val(val[1]).text(val[1]));
+          vt.append($('<option />').val(val[1]).text(val[1]));
+          ct.append($('<option />').val(val[1]).text(val[1]));
         });
       }
     });
@@ -430,7 +537,7 @@ GroongaAdmin = {
       data: {},
       dataType: 'json',
       success: function(d) {
-        var table = GroongaAdmin.create_table_element(d);
+        var table = $(GroongaAdmin.create_table_element(d));
         $('#database-tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
         table.find('tr').each(function() {
           var flags_td = $(this).find('td:eq(3)');
@@ -476,11 +583,12 @@ GroongaAdmin = {
     }
     return ret;
   },
-  recordlist: function(table_name, page) {
+  recordlist: function(table_name, query, page) {
     $.ajax({
       url: '/select',
       data: {
         'table': table_name,
+        'query': query,
         'offset': (page - 1) * GroongaAdmin.recordlist_count,
         'limit': GroongaAdmin.recordlist_count
         /* sort_column: :id */
@@ -495,15 +603,17 @@ GroongaAdmin = {
           13,
           function() {
             GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                                    $('#tab-recordlist-query').val(),
                                     Number($(this).text()));
+            return false;
           }
         );
-        $('#table-tab-recordlist')
+        $('#tab-recordlist-table')
           .empty()
           .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append($('<p/>').text('総件数: ' + all_count))
           .append(pager.clone(true))
-          .append(GroongaAdmin.create_table_element(d))
+          .append($('<div/>').html(GroongaAdmin.create_table_element(d)))
           .append(pager);
       }
     });
@@ -514,7 +624,7 @@ GroongaAdmin = {
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
-        var table = GroongaAdmin.create_table_element(d);
+        var table = $(GroongaAdmin.create_table_element(d));
         $('#table-tab-columnlist')
           .empty()
           .append($('<h1/>').text('カラム一覧: ' + table_name))
@@ -538,7 +648,8 @@ GroongaAdmin = {
         name: $('#createtable-name').val(),
         'flags': flags,
         key_type: $('#createtable-key-type').val(),
-        value_type: $('#createtable-value-type').val()
+        value_type: $('#createtable-value-type').val(),
+        default_tokenizer: $('#createtable-default-tokenizer').val()
       },
       dataType: 'json',
       success: function(d) {
@@ -561,14 +672,18 @@ GroongaAdmin = {
     });
     flags |= Groonga[$('#createcolumn-column-type').val()];
     flags |= Groonga[$('#createcolumn-column-compress').val()];
+    d = {
+      table: GroongaAdmin.current_table,
+      name: $('#createcolumn-name').val(),
+      'flags': flags,
+      type: $('#createcolumn-type').val()
+    };
+    if ($('#createcolumn-source').val()) {
+      d['source'] = $('#createcolumn-source').val();
+    }
     $.ajax({
       url: '/column_create',
-      data: {
-        table: GroongaAdmin.current_table,
-        name: $('#createcolumn-name').val(),
-        'flags': flags,
-        type: $('#createcolumn-type').val()
-      },
+      data: d,
       dataType: 'json',
       success: function(d) {
         if (d) {
