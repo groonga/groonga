@@ -2605,8 +2605,8 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
       /* if obj->header.type == GRN_TYPE ... lookup table */
       for (rp = &res; ; rp = &(*rp)->next) {
         grn_obj *column = grn_obj_column_(ctx, obj, name, len);
-        *rp = accessor_new(ctx);
         if (column) {
+          *rp = accessor_new(ctx);
           (*rp)->obj = column;
           /*
           switch (column->header.type) {
@@ -2621,6 +2621,12 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
           (*rp)->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
           break;
         } else {
+          if (!obj->header.domain) {
+            ERR(GRN_INVALID_ARGUMENT, "no such column: <%s>", name);
+            res = NULL;
+            goto exit;
+          }
+          *rp = accessor_new(ctx);
           (*rp)->obj = obj;
           obj = grn_ctx_at(ctx, obj->header.domain);
           switch (obj->header.type) {

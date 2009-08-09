@@ -98,6 +98,31 @@ grn_test_assert_context_helper (grn_ctx *context, const gchar *expression)
 }
 
 void
+grn_test_assert_error_helper (grn_rc expected_rc, const gchar *expected_message,
+                              grn_ctx *context, const gchar *expression)
+{
+  if (!context) {
+    cut_set_message("context should not NULL");
+    cut_assert_null_helper(context, expression);
+  } else if (context->rc == expected_rc &&
+             cut_equal_string(expected_message, context->errbuf)) {
+    cut_test_pass();
+  } else {
+    cut_test_fail(cut_take_printf("<%s>\n"
+                                  "expected: <%s>(%s)\n"
+                                  "  actual: <%s>(%s)\n"
+                                  "%s:%d: %s():",
+                                  expression,
+                                  expected_message,
+                                  grn_rc_to_string(expected_rc),
+                                  context->errbuf,
+                                  grn_rc_to_string(context->rc),
+                                  context->errfile, context->errline,
+                                  context->errfunc));
+  }
+}
+
+void
 grn_test_assert_null_helper (grn_ctx *context,
                              grn_obj *object, const gchar *expression)
 {
