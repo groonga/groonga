@@ -32,6 +32,7 @@ void data_temporary_table_default_tokenizer(void);
 void test_temporary_table_default_tokenizer(gpointer data);
 void data_temporary_table_add(void);
 void test_temporary_table_add(gpointer data);
+void test_nonexistent_column(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -151,4 +152,23 @@ test_temporary_table_add(gpointer data)
   }
 
   cut_assert_equal_int(1, grn_table_size(&context, table));
+}
+
+void
+test_nonexistent_column(void)
+{
+  grn_obj *table;
+  char table_name[] = "users";
+  char nonexistent_column_name[] = "nonexistent";
+
+  table = grn_table_create(&context, table_name, strlen(table_name),
+                           NULL,
+                           GRN_OBJ_TABLE_NO_KEY,
+                           NULL, NULL);
+  grn_test_assert_null(&context,
+                       grn_obj_column(&context, table,
+                                      nonexistent_column_name,
+                                      strlen(nonexistent_column_name)));
+  grn_test_assert_error(GRN_INVALID_ARGUMENT, "no such column: <nonexistent>",
+                        &context);
 }

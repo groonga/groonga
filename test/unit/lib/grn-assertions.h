@@ -42,10 +42,15 @@
     grn_test_assert_not_nil_helper((expression), #expression),  \
     grn_test_assert_not_nil(expression))
 
-#define grn_test_assert_context(expression)                     \
+#define grn_test_assert_context(context)                        \
   cut_trace_with_info_expression(                               \
-    grn_test_assert_context_helper((expression), #expression),  \
-    grn_test_assert_context(expression))
+    grn_test_assert_context_helper((context), #context),        \
+    grn_test_assert_context(context))
+
+#define grn_test_assert_error(rc, message, context)                     \
+  cut_trace_with_info_expression(                                       \
+    grn_test_assert_error_helper((rc), (message), (context), #context), \
+    grn_test_assert_error(context))
 
 #define grn_test_assert_null(context, object)                   \
   cut_trace_with_info_expression(                               \
@@ -70,6 +75,10 @@ void     grn_test_assert_nil_helper     (grn_id       id,
 void     grn_test_assert_not_nil_helper (grn_id       id,
                                          const gchar *expression);
 void     grn_test_assert_context_helper (grn_ctx     *context,
+                                         const gchar *expression);
+void     grn_test_assert_error_helper   (grn_rc       expected_rc,
+                                         const gchar *expected_message,
+                                         grn_ctx     *context,
                                          const gchar *expression);
 void     grn_test_assert_null_helper    (grn_ctx     *context,
                                          grn_obj     *object,
