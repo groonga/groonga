@@ -4781,10 +4781,10 @@ pack(grn_ctx *ctx, grn_obj *table, sort_entry *head, sort_entry *tail,
 }
 
 int
-grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
+grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                grn_obj *result, grn_table_sort_key *keys, int n_keys)
 {
-  int n, i = 0;
+  int n, r, i = 0;
   sort_entry *array, *ep;
   GRN_API_ENTER;
   if (!n_keys || !keys) {
@@ -4800,13 +4800,17 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
     goto exit;
   }
   n = grn_table_size(ctx, table);
-  if (limit <= 0) {
-    limit += n;
-    if (limit <= 0) {
-      WARN(GRN_INVALID_ARGUMENT, "limit is too small in grn_table_sort !");
-      goto exit;
-    }
+  if (offset < 0) {
+    offset += n;
+    if (offset < 0) { offset = 0; }
   }
+  if (offset >= n) { goto exit; }
+  r = n - offset;
+  if (limit < 0) {
+    limit += r + 1;
+  }
+  if (limit <= 0) { goto exit; }
+  if (limit > r) { limit = r; }
   {
     int j;
     grn_table_sort_key *kp;
@@ -4876,7 +4880,6 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
   if (!(array = GRN_MALLOC(sizeof(sort_entry) * n))) {
     goto exit;
   }
-  if (limit > n) { limit = n; }
   if ((ep = pack(ctx, table, array, array + n - 1, keys, n_keys))) {
     intptr_t rest = limit - 1 - (ep - array);
     _sort(ctx, array, ep - 1, limit, keys, n_keys);
@@ -4886,7 +4889,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
   }
   {
     grn_id *v;
-    for (i = 0, ep = array; i < limit; i++, ep++) {
+    for (i = 0, ep = array + offset; i < limit; i++, ep++) {
       if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
       if (!(*v = ep->id)) { break; }
     }
@@ -6160,7 +6163,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
                 p = tokbuf[i] + 1;
               }
               WITH_SPSAVE({
-                grn_table_sort(ctx, table, GRN_INT32_VALUE(limit), res, keys, n_keys);
+                grn_table_sort(ctx, table, 0, GRN_INT32_VALUE(limit), res, keys, n_keys);
               });
               for (i = 0; i < n_keys; i++) {
                 grn_obj_unlink(ctx, keys[i].key);
@@ -6974,6 +6977,7 @@ typedef struct {
   grn_operator default_op;
   grn_select_optarg opt;
   grn_operator default_mode;
+  int parse_level;
   int escalation_threshold;
   int escalation_decaystep;
   int weight_offset;
@@ -7510,6 +7514,46 @@ exit :
   return efsi.e;
 }
 
+grn_rc
+grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
+               const char *str, unsigned str_size,
+               grn_obj *default_column, grn_operator default_mode,
+               grn_operator default_op, int parse_level)
+{
+  efs_info efsi;
+  efsi.str = str;
+  if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
+      (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
+    GRN_TEXT_INIT(&efsi.buf, 0);
+    efsi.str = str;
+    efsi.cur = str;
+    efsi.str_end = str + str_size;
+    efsi.default_column = default_column;
+    efsi.default_op = default_op;
+    efsi.default_mode = default_mode;
+    efsi.parse_level = parse_level;
+    efsi.escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
+    efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
+    efsi.weight_offset = 0;
+    efsi.opt.weight_vector = NULL;
+    efsi.weight_set = NULL;
+    if (parse_level >= 2) {
+      get_pragma(ctx, &efsi);
+    }
+    get_expr(ctx, &efsi, default_column, GRN_OP_MATCH);
+    /*
+    efsi.opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
+    efsi.opt.func = efsi.weight_set ? section_weight_cb : NULL;
+    efsi.opt.func_arg = efsi.weight_set;
+    efsi.snip_conds = NULL;
+    */
+    GRN_OBJ_FIN(ctx, &efsi.buf);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
+  }
+  return ctx->rc;
+}
+
 grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
                             grn_obj *table, unsigned *nkeys)
@@ -7628,9 +7672,9 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
                                        GRN_OBJ_TABLE_NO_KEY, res, res))) {
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
-            grn_table_sort(ctx, res, offset + limit, sorted, keys, nkeys);
+            grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
             grn_table_sort_key_close(ctx, keys, nkeys);
-            GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
             grn_text_otoj(ctx, outbuf, sorted, &format);
             GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -7660,9 +7704,10 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                     g.table, &nkeys))) {
               if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                              g.table, g.table))) {
-                grn_table_sort(ctx, g.table, 0, sorted, keys, nkeys);
+                grn_table_sort(ctx, g.table, drilldown_offset, drilldown_limit,
+                               sorted, keys, nkeys);
                 grn_table_sort_key_close(ctx, keys, nkeys);
-                GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit,
+                GRN_OBJ_FORMAT_INIT(&format, nhits, 0, drilldown_limit,
                                     GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
                 grn_obj_columns(ctx, sorted,
                                 drilldown_output_columns, drilldown_output_columns_len,

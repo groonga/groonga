@@ -743,6 +743,7 @@ GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 /**
  * grn_table_sort:
  * @table: 対象table
+ * @offset: sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納する
  * @limit: resに格納するレコードの上限
  * @result: 結果を格納するtable
  * @keys: ソートキー配列へのポインタ
@@ -767,7 +768,7 @@ struct _grn_table_sort_key {
   int offset;
 };
 
-GRN_API int grn_table_sort(grn_ctx *ctx, grn_obj *table, int limit,
+GRN_API int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                            grn_obj *result, grn_table_sort_key *keys, int n_keys);
 
 /**
@@ -1808,6 +1809,11 @@ GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
                                           const char *name, unsigned name_size,
                                           const char *str, unsigned str_size,
                                           grn_obj *table, grn_obj *default_column);
+
+GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
+                              const char *str, unsigned str_size,
+                              grn_obj *default_column, grn_operator default_mode,
+                              grn_operator default_op, int parse_level);
 
 GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
                                                         const char *str, unsigned str_size,
