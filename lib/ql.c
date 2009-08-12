@@ -1546,10 +1546,10 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                                table, table, GRN_DB_DELIMIT);
           }
           if (ce) {
-            grn_table_sort(ctx, table, limit, get_obj(ctx, res), ce->keys, ce->n_keys);
+            grn_table_sort(ctx, table, 0, limit, get_obj(ctx, res), ce->keys, ce->n_keys);
             column_exp_close(ctx, ce);
           } else {
-            grn_table_sort(ctx, table, limit, get_obj(ctx, res), NULL, 0);
+            grn_table_sort(ctx, table, 0, limit, get_obj(ctx, res), NULL, 0);
           }
         }
         break;
