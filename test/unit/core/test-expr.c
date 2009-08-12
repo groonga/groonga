@@ -34,7 +34,6 @@ void test_expr_query(void);
 
 void test_table_select_equal(void);
 void test_table_select_equal_indexed(void);
-void test_table_select_equal_table(void);
 void test_table_select_select(void);
 void test_table_select_search(void);
 void test_table_select_select_search(void);
@@ -411,7 +410,6 @@ test_expr_query(void)
 }
 
 static grn_obj *docs, *terms, *size, *body, *index_body;
-static grn_obj *bookmarks, *doc, *tag;
 
 #define INSERT_DATA(str) {\
   uint32_t s = (uint32_t)strlen(str);\
@@ -464,42 +462,6 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
   INSERT_DATA("moge hoge fuga fuga");
   INSERT_DATA("moge hoge moge moge moge");
   INSERT_DATA("poyo moge hoge moge moge moge");
-}
-
-static void
-insert_bookmark(const char *tag_string, grn_id doc_id,
-                grn_obj *text_buffer, grn_obj *record_buffer)
-{
-  grn_id bookmark_id;
-
-  bookmark_id = grn_table_add(&context, bookmarks, NULL, 0, NULL);
-
-  GRN_RECORD_SET(&context, record_buffer, doc_id);
-  grn_test_assert(grn_obj_set_value(&context, doc, bookmark_id, record_buffer,
-                                    GRN_OBJ_SET));
-
-  GRN_TEXT_SET(&context, text_buffer, tag_string, strlen(tag_string));
-  grn_test_assert(grn_obj_set_value(&context, tag, bookmark_id, text_buffer,
-                                    GRN_OBJ_SET));
-}
-
-static void
-prepare_bookmark_schema(void)
-{
-  bookmarks = grn_table_create(&context, "bookmarks", 4, NULL,
-                                GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT,
-                                NULL, NULL);
-  grn_test_assert_not_null(&context, bookmarks);
-
-  doc = grn_column_create(&context, bookmarks, "doc", 3, NULL,
-                          GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
-                          docs);
-  grn_test_assert_not_null(&context, doc);
-
-  tag = grn_column_create(&context, bookmarks, "tag", 3, NULL,
-                          GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
-                          grn_ctx_at(&context, GRN_DB_SHORT_TEXT));
-  grn_test_assert_not_null(&context, tag);
 }
 
 void
@@ -570,50 +532,6 @@ test_table_select_equal_indexed(void)
   grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
   grn_test_assert(grn_obj_close(&context, &intbuf));
-}
-
-void
-test_table_select_equal_table(void)
-{
-  grn_obj *cond, *v, *res, text_buffer, int_buffer, record_buffer;
-  grn_id doc_id = 3;
-
-  GRN_TEXT_INIT(&text_buffer, 0);
-  GRN_UINT32_INIT(&int_buffer, 0);
-
-  prepare_data(&text_buffer, &int_buffer);
-  prepare_bookmark_schema();
-
-  GRN_RECORD_INIT(&record_buffer, 0, grn_obj_id(&context, docs));
-  insert_bookmark("hoge", doc_id, &text_buffer, &record_buffer);
-  insert_bookmark("fuga", doc_id, &text_buffer, &record_buffer);
-
-  cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
-  v = grn_expr_add_var(&context, cond, NULL, 0);
-  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, bookmarks));
-  grn_expr_append_obj(&context, cond, v);
-  GRN_TEXT_SETS(&context, &text_buffer, "doc");
-  grn_expr_append_const(&context, cond, &text_buffer);
-  grn_expr_append_op(&context, cond, GRN_OP_OBJ_GET_VALUE, 2);
-  GRN_RECORD_SET(&context, &record_buffer, doc_id);
-  grn_expr_append_const(&context, cond, &record_buffer);
-  grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
-  grn_expr_compile(&context, cond);
-
-  res = grn_table_create(&context, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                         bookmarks, NULL);
-  cut_assert_not_null(res);
-
-  grn_test_assert(grn_table_select(&context, bookmarks, cond, res, GRN_OP_OR));
-
-  cut_assert_equal_uint(2, grn_table_size(&context, res));
-
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
-  grn_test_assert(grn_obj_close(&context, &text_buffer));
-  grn_test_assert(grn_obj_close(&context, &int_buffer));
-  grn_test_assert(grn_obj_close(&context, &record_buffer));
 }
 
 void
