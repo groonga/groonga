@@ -257,6 +257,8 @@ int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
 
 grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
 
+grn_rc grn_expr_parser_close(grn_ctx *ctx);
+
 #ifdef __cplusplus
 }
 #endif

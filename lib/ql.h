@@ -182,6 +182,7 @@ struct _grn_ctx_impl {
   uint32_t stack_curr;
   grn_hash *expr_vars;
   grn_obj *qe_next;
+  void *parser;
 
   /* loader portion */
   grn_loader loader;
