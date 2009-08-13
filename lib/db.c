@@ -2449,7 +2449,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          obj = grn_ctx_at(ctx, obj->header.domain);
+          if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+            grn_obj_close(ctx, (grn_obj *)res);
+            res = NULL;
+            goto exit;
+          }
           switch (obj->header.type) {
           case GRN_DB :
             (*rp)->action = GRN_ACCESSOR_GET_KEY;
