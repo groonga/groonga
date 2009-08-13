@@ -413,6 +413,31 @@ grn_ctx_fin(grn_ctx *ctx)
 
 grn_timeval grn_starttime;
 
+static FILE *default_logger_fp = NULL;
+
+static void
+default_logger_func(int level, const char *time, const char *title,
+                    const char *msg, const char *location, void *func_arg)
+{
+  const char slev[] = " EACewnid-";
+  if (!default_logger_fp) {
+    MUTEX_LOCK(grn_glock);
+    if (!default_logger_fp) {
+      default_logger_fp = fopen(GROONGA_LOG_PATH, "a");
+    }
+    MUTEX_UNLOCK(grn_glock);
+  }
+  if (default_logger_fp) {
+    if (location && *location) {
+      fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
+              time, *(slev + level), title, msg, location);
+    } else {
+      fprintf(default_logger_fp, "%s|%c|%s %s\n", time, *(slev + level), title, msg);
+    }
+    fflush(default_logger_fp);
+  }
+}
+
 static grn_logger_info default_logger = {
   GRN_LOG_DEFAULT_LEVEL,
   GRN_LOG_TIME|GRN_LOG_MESSAGE,
@@ -1497,31 +1522,6 @@ grn_ctx_log(grn_ctx *ctx, char *fmt, ...)
   vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE - 1, fmt, argp);
   va_end(argp);
   ctx->errbuf[GRN_CTX_MSGSIZE - 1] = '\0';
-}
-
-static FILE *default_logger_fp = NULL;
-
-static void
-default_logger_func(int level, const char *time, const char *title,
-                    const char *msg, const char *location, void *func_arg)
-{
-  const char slev[] = " EACewnid-";
-  if (!default_logger_fp) {
-    MUTEX_LOCK(grn_glock);
-    if (!default_logger_fp) {
-      default_logger_fp = fopen(GROONGA_LOG_PATH, "a");
-    }
-    MUTEX_UNLOCK(grn_glock);
-  }
-  if (default_logger_fp) {
-    if (location && *location) {
-      fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
-              time, *(slev + level), title, msg, location);
-    } else {
-      fprintf(default_logger_fp, "%s|%c|%s %s\n", time, *(slev + level), title, msg);
-    }
-    fflush(default_logger_fp);
-  }
 }
 
 void
