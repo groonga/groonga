@@ -1442,6 +1442,7 @@ grn_itoa(int i, char *p, char *end, char **rest)
     *p++ = '-';
     q = p;
     if (i == INT_MIN) {
+      if (p >= end) { return GRN_INVALID_ARGUMENT; }
       *p++ = (-(i % 10)) + '0';
       i /= 10;
     }
@@ -1456,6 +1457,31 @@ grn_itoa(int i, char *p, char *end, char **rest)
     char t = *q;
     *q = *p;
     *p = t;
+  }
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_itoa_padded(int i, char *p, char *end, char ch)
+{
+  char *q;
+  if (p >= end) { return GRN_INVALID_ARGUMENT; }
+  if (i < 0) {
+    *p++ = '-';
+    if (i == INT_MIN) {
+      if (p >= end) { return GRN_INVALID_ARGUMENT; }
+      *p++ = (-(i % 10)) + '0';
+      i /= 10;
+    }
+    i = -i;
+  }
+  q = end - 1;
+  do {
+    if (q < p) { return GRN_INVALID_ARGUMENT; }
+    *q-- = i % 10 + '0';
+  } while ((i /= 10) > 0);
+  while (q >= p) {
+    *q-- = ch;
   }
   return GRN_SUCCESS;
 }
@@ -1777,6 +1803,19 @@ grn_text_itoa(grn_ctx *ctx, grn_obj *buf, int i)
 }
 
 grn_rc
+grn_text_itoa_padded(grn_ctx *ctx, grn_obj *buf, int i, char ch, unsigned int len)
+{
+  grn_rc rc = GRN_SUCCESS;
+  char *curr;
+  if ((rc = grn_bulk_reserve(ctx, buf, len))) { return rc; }
+  curr = GRN_BULK_CURR(buf);
+  if (!grn_itoa_padded(i, curr, curr + len, ch)) {
+    GRN_BULK_SET_CURR(buf, curr + len);
+  }
+  return rc;
+}
+
+grn_rc
 grn_text_lltoa(grn_ctx *ctx, grn_obj *buf, long long int i)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -1986,6 +2025,46 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
   }
   return GRN_SUCCESS;
 }
+
+static const char *weekdays[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+static const char *months[12] = {
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+grn_rc
+grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec)
+{
+  time_t tsec;
+  struct tm *t;
+#ifdef WIN32
+  tsec = (time_t)sec;
+  t = gmtime(&tsec);
+#else /* WIN32 */
+  struct tm tm;
+  tsec = (time_t)sec;
+  t = gmtime_r(&tsec, &tm);
+#endif /* WIN32 */
+  if (t) {
+    GRN_TEXT_SET(ctx, bulk, weekdays[t->tm_wday], 3);
+    GRN_TEXT_PUTS(ctx, bulk, ", ");
+    grn_text_itoa_padded(ctx, bulk, t->tm_mday, '0', 2);
+    GRN_TEXT_PUTS(ctx, bulk, " ");
+    GRN_TEXT_PUT(ctx, bulk, months[t->tm_mon], 3);
+    GRN_TEXT_PUTS(ctx, bulk, " ");
+    grn_text_itoa(ctx, bulk, t->tm_year + 1900);
+    GRN_TEXT_PUTS(ctx, bulk, " ");
+    grn_text_itoa_padded(ctx, bulk, t->tm_hour, '0', 2);
+    GRN_TEXT_PUTS(ctx, bulk, ":");
+    grn_text_itoa_padded(ctx, bulk, t->tm_min, '0', 2);
+    GRN_TEXT_PUTS(ctx, bulk, ":");
+    grn_text_itoa_padded(ctx, bulk, t->tm_sec, '0', 2);
+    GRN_TEXT_PUTS(ctx, bulk, " GMT");
+  } else {
+    GRN_TEXT_SETS(ctx, bulk, "Mon, 16 Mar 1980 20:40:00 GMT");
+  }
+  return GRN_SUCCESS;
+}
+
 
 grn_rc
 grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)

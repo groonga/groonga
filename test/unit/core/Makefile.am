@@ -16,7 +16,8 @@ noinst_LTLIBRARIES =				\
 	test-column.la				\
 	test-database.la			\
 	test-table-cursor.la			\
-	test-expr.la
+	test-expr.la			\
+	test-text.la
 endif
 
 INCLUDES =			\

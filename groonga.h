@@ -1565,6 +1565,7 @@ GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
 /* grn_text */
 
 GRN_API grn_rc grn_text_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
+GRN_API grn_rc grn_text_itoa_padded(grn_ctx *ctx, grn_obj *bulk, int i, char ch, unsigned int len);
 GRN_API grn_rc grn_text_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_text_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
 GRN_API grn_rc grn_text_itoh(grn_ctx *ctx, grn_obj *bulk, int i, unsigned int len);
@@ -1574,6 +1575,7 @@ GRN_API grn_rc grn_text_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
 GRN_API grn_rc grn_text_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
 GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
+GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 
 typedef struct _grn_obj_format grn_obj_format;
 
