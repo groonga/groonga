@@ -2449,7 +2449,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          obj = grn_ctx_at(ctx, obj->header.domain);
+          if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+            grn_obj_close(ctx, (grn_obj *)res);
+            res = NULL;
+            goto exit;
+          }
           switch (obj->header.type) {
           case GRN_DB :
             (*rp)->action = GRN_ACCESSOR_GET_KEY;
@@ -7514,46 +7518,6 @@ exit :
   return efsi.e;
 }
 
-grn_rc
-grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
-               const char *str, unsigned str_size,
-               grn_obj *default_column, grn_operator default_mode,
-               grn_operator default_op, int parse_level)
-{
-  efs_info efsi;
-  efsi.str = str;
-  if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
-      (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
-    GRN_TEXT_INIT(&efsi.buf, 0);
-    efsi.str = str;
-    efsi.cur = str;
-    efsi.str_end = str + str_size;
-    efsi.default_column = default_column;
-    efsi.default_op = default_op;
-    efsi.default_mode = default_mode;
-    efsi.parse_level = parse_level;
-    efsi.escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
-    efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
-    efsi.weight_offset = 0;
-    efsi.opt.weight_vector = NULL;
-    efsi.weight_set = NULL;
-    if (parse_level >= 2) {
-      get_pragma(ctx, &efsi);
-    }
-    get_expr(ctx, &efsi, default_column, GRN_OP_MATCH);
-    /*
-    efsi.opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
-    efsi.opt.func = efsi.weight_set ? section_weight_cb : NULL;
-    efsi.opt.func_arg = efsi.weight_set;
-    efsi.snip_conds = NULL;
-    */
-    GRN_OBJ_FIN(ctx, &efsi.buf);
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
-  }
-  return ctx->rc;
-}
-
 grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
                             grn_obj *table, unsigned *nkeys)
@@ -8221,4 +8185,80 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     break;
   }
   GRN_API_RETURN(ctx->rc);
+}
+
+/* grn_expr_parse */
+
+#include "expr.c"
+
+static grn_rc
+grn_expr_parser_open(grn_ctx *ctx)
+{
+  if (!ctx->impl->parser) {
+    yyParser *pParser = GRN_MALLOCN(yyParser, 1);
+    if (pParser) {
+      pParser->yyidx = -1;
+#if YYSTACKDEPTH<=0
+      yyGrowStack(pParser);
+#endif
+      ctx->impl->parser = pParser;
+    }
+  }
+  return ctx->rc;
+}
+
+grn_rc
+grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
+               const char *str, unsigned str_size,
+               grn_obj *default_column, grn_operator default_mode,
+               grn_operator default_op, int parse_level)
+{
+  efs_info efsi;
+  if (grn_expr_parser_open(ctx)) { return ctx->rc; }
+  efsi.str = str;
+  if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
+      (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
+    GRN_TEXT_INIT(&efsi.buf, 0);
+    efsi.str = str;
+    efsi.cur = str;
+    efsi.str_end = str + str_size;
+    efsi.default_column = default_column;
+    efsi.default_op = default_op;
+    efsi.default_mode = default_mode;
+    efsi.parse_level = parse_level;
+    efsi.escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
+    efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
+    efsi.weight_offset = 0;
+    efsi.opt.weight_vector = NULL;
+    efsi.weight_set = NULL;
+    if (parse_level >= 2) {
+      get_pragma(ctx, &efsi);
+    }
+    get_expr(ctx, &efsi, default_column, GRN_OP_MATCH);
+    /*
+    efsi.opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
+    efsi.opt.func = efsi.weight_set ? section_weight_cb : NULL;
+    efsi.opt.func_arg = efsi.weight_set;
+    efsi.snip_conds = NULL;
+    */
+    GRN_OBJ_FIN(ctx, &efsi.buf);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
+  }
+  return ctx->rc;
+}
+
+grn_rc
+grn_expr_parser_close(grn_ctx *ctx)
+{
+  if (ctx->impl->parser) {
+    yyParser *pParser = (yyParser*)ctx->impl->parser;
+    while (pParser->yyidx >= 0) yy_pop_parser_stack(pParser);
+#if YYSTACKDEPTH<=0
+    free(pParser->yystack);
+#endif
+    GRN_FREE(pParser);
+    ctx->impl->parser = NULL;
+  }
+  return ctx->rc;
 }
