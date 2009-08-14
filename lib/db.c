@@ -5008,6 +5008,52 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op, grn_obj **indexbuf
 
 /* grn_expr */
 
+static char *opstrs[] = {
+  "NOP",
+  "PUSH",
+  "POP",
+  "EQUAL",
+  "NOT_EQUAL",
+  "LESS",
+  "GREATER",
+  "LESS_EQUAL",
+  "GREATER_EQUAL",
+  "MATCH",
+  "EXACT",
+  "LCP",
+  "PARTIAL",
+  "UNSPLIT",
+  "NEAR",
+  "NEAR2",
+  "SIMILAR",
+  "TERM_EXTRACT",
+  "PREFIX",
+  "SUFFIX",
+  "GEO_DISTANCE1",
+  "GEO_DISTANCE2",
+  "GEO_DISTANCE3",
+  "GEO_DISTANCE4",
+  "GEO_WITHINP5",
+  "GEO_WITHINP6",
+  "GEO_WITHINP8",
+  "AND",
+  "OR",
+  "BUT",
+  "ADJUST",
+  "CALL",
+  "INTERN",
+  "VAR_SET_VALUE",
+  "OBJ_GET_VALUE",
+  "OBJ_SET_VALUE",
+  "OBJ_SEARCH",
+  "EXPR_GET_VAR",
+  "TABLE_CREATE",
+  "TABLE_SELECT",
+  "TABLE_SORT",
+  "TABLE_GROUP",
+  "JSON_PUT"
+};
+
 grn_rc
 grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
 {
@@ -5015,6 +5061,7 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
   grn_expr_var *var;
   grn_expr_code *code;
   grn_expr *e = (grn_expr *)expr;
+  GRN_TEXT_PUTS(ctx, buf, "noname");
   GRN_TEXT_PUTC(ctx, buf, '(');
   for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
     if (i) { GRN_TEXT_PUTC(ctx, buf, ','); }
@@ -5027,14 +5074,16 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
     grn_text_otoj(ctx, buf, &var->value, NULL);
   }
   GRN_TEXT_PUTC(ctx, buf, ')');
+  GRN_TEXT_PUTC(ctx, buf, '{');
   for (i = 0, code = e->codes; i < e->codes_curr; i++, code++) {
     if (i) { GRN_TEXT_PUTC(ctx, buf, ' '); }
-    grn_text_itoa(ctx, buf, (int)code->op);
+    GRN_TEXT_PUTS(ctx, buf, opstrs[code->op]);
     if (code->value) {
       GRN_TEXT_PUTC(ctx, buf, ':');
       grn_text_otoj(ctx, buf, code->value, NULL);
     }
   }
+  GRN_TEXT_PUTC(ctx, buf, '}');
   return GRN_SUCCESS;
 }
 
@@ -6970,6 +7019,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
 #define DEFAULT_WEIGHT_VECTOR_SIZE 4096
 
 typedef struct {
+  grn_ctx *ctx;
   grn_obj *e;
   grn_obj *v;
   const char *str;
@@ -7485,6 +7535,7 @@ grn_expr_create_from_str(grn_ctx *ctx,
                          grn_obj *table, grn_obj *default_column)
 {
   efs_info efsi;
+  efsi.ctx = ctx;
   GRN_TEXT_INIT(&efsi.buf, 0);
   if (!(efsi.e = grn_expr_create(ctx, name, name_size))) { goto exit; }
   efsi.str = str;
@@ -8189,6 +8240,7 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
 
 /* grn_expr_parse */
 
+#include "expr.h"
 #include "expr.c"
 
 static grn_rc
@@ -8207,6 +8259,188 @@ grn_expr_parser_open(grn_ctx *ctx)
   return ctx->rc;
 }
 
+static grn_rc
+get_word_(grn_ctx *ctx, efs_info *q)
+{
+  grn_operator mode;
+  const char *start = q->cur, *end;
+  unsigned int len;
+  for (end = q->cur;; ) {
+    /* null check and length check */
+    if (!(len = grn_charlen(ctx, end, q->str_end))) {
+      q->cur = q->str_end;
+      break;
+    }
+    if (grn_isspace(end, q->encoding) ||
+        *end == GRN_QUERY_PARENR) {
+      q->cur = end;
+      break;
+    }
+    if (*end == GRN_QUERY_COLUMN) {
+      grn_obj *c = grn_obj_column(ctx, q->table, start, end - start);
+      if (c && end + 1 < q->str_end) {
+        //        efs_op op;
+        switch (end[1]) {
+        case '!' :
+          mode = GRN_OP_NOT_EQUAL;
+          q->cur = end + 2;
+          break;
+        case '=' :
+          mode = GRN_OP_OBJ_SET_VALUE;
+          q->cur = end + 2;
+          break;
+        case '<' :
+          if (end + 2 < q->str_end && end[2] == '=') {
+            mode = GRN_OP_LESS_EQUAL;
+            q->cur = end + 3;
+          } else {
+            mode = GRN_OP_LESS;
+            q->cur = end + 2;
+          }
+          break;
+        case '>' :
+          if (end + 2 < q->str_end && end[2] == '=') {
+            mode = GRN_OP_GREATER_EQUAL;
+            q->cur = end + 3;
+          } else {
+            mode = GRN_OP_GREATER;
+            q->cur = end + 2;
+          }
+          break;
+        case '%' :
+          mode = GRN_OP_MATCH;
+          q->cur = end + 2;
+          break;
+        case '@' :
+          q->cur = end + 2;
+          //          return get_geocond(ctx, q, column, c);
+          break;
+        default :
+          mode = GRN_OP_EQUAL;
+          q->cur = end + 1;
+          break;
+        }
+      } else {
+        ERR(GRN_INVALID_ARGUMENT, "column lookup failed");
+        return ctx->rc;
+      }
+    } else if (*end == GRN_QUERY_PREFIX) {
+      mode = GRN_OP_PREFIX;
+      q->cur = end + 1;
+      break;
+    }
+    end += len;
+  }
+  grn_expr_append_const_str(ctx, q->e, start, end - start);
+  grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_WORD, 1, q);
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+get_token_(grn_ctx *ctx, efs_info *q)
+{
+  int option = 0;
+  grn_operator mode;
+  efs_op op_, *op = &op_;
+  op->op = q->default_op;
+  op->weight = DEFAULT_WEIGHT;
+  for (;;) {
+    skip_space(ctx, q);
+    if (q->cur >= q->str_end) { return GRN_END_OF_DATA; }
+    switch (*q->cur) {
+    case '\0' :
+      return GRN_END_OF_DATA;
+      break;
+    case GRN_QUERY_PARENR :
+      q->cur++;
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_PARENR, 0, q);
+      break;
+    case GRN_QUERY_QUOTEL :
+      q->cur++;
+
+      {
+        const char *start, *s;
+        start = s = q->cur;
+        GRN_BULK_REWIND(&q->buf);
+        while (1) {
+          unsigned int len;
+          if (s >= q->str_end) {
+            q->cur = s;
+            break;
+          }
+          len = grn_charlen(ctx, s, q->str_end);
+          if (len == 0) {
+            /* invalid string containing malformed multibyte char */
+            return GRN_END_OF_DATA;
+          } else if (len == 1) {
+            if (*s == GRN_QUERY_QUOTER) {
+              q->cur = s + 1;
+              break;
+            } else if (*s == GRN_QUERY_ESCAPE && s + 1 < q->str_end) {
+              s++;
+              len = grn_charlen(ctx, s, q->str_end);
+            }
+          }
+          GRN_TEXT_PUT(ctx, &q->buf, s, len);
+          grn_expr_append_const(ctx, q->e, &q->buf);
+          grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_PHRASE, 1, q);
+          s += len;
+        }
+      }
+
+      break;
+    case GRN_QUERY_PREFIX :
+      q->cur++;
+      get_op(q, op, &mode, &option);
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_MATCH_OPERATOR, 0, q);
+      break;
+    case GRN_QUERY_AND :
+      q->cur++;
+      op->op = GRN_OP_AND;
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_AND, 0, q);
+      break;
+    case GRN_QUERY_BUT :
+      q->cur++;
+      op->op = GRN_OP_BUT;
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_BUT, 0, q);
+      break;
+    case GRN_QUERY_ADJ_INC :
+      q->cur++;
+      if (op->weight < 127) { op->weight++; }
+      op->op = GRN_OP_ADJUST;
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_ADJ_INC, 0, q);
+      break;
+    case GRN_QUERY_ADJ_DEC :
+      q->cur++;
+      if (op->weight > -128) { op->weight--; }
+      op->op = GRN_OP_ADJUST;
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_ADJ_DEC, 0, q);
+      break;
+    case GRN_QUERY_ADJ_NEG :
+      q->cur++;
+      op->op = GRN_OP_ADJUST;
+      op->weight = -1;
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_ADJ_NEG, 0, q);
+      break;
+    case GRN_QUERY_PARENL :
+      q->cur++;
+      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_PARENL, 0, q);
+      break;
+    case 'O' :
+      if (q->cur[1] == 'R' && q->cur[2] == ' ') {
+        q->cur += 2;
+        grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_OR, 0, q);
+        break;
+      }
+      /* fallthru */
+    default :
+      get_word_(ctx, q);
+      break;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
                const char *str, unsigned str_size,
@@ -8215,10 +8449,12 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
 {
   efs_info efsi;
   if (grn_expr_parser_open(ctx)) { return ctx->rc; }
+  efsi.ctx = ctx;
   efsi.str = str;
   if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
       (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
     GRN_TEXT_INIT(&efsi.buf, 0);
+    efsi.e = expr;
     efsi.str = str;
     efsi.cur = str;
     efsi.str_end = str + str_size;
@@ -8231,10 +8467,21 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.weight_offset = 0;
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
-    if (parse_level >= 2) {
-      get_pragma(ctx, &efsi);
+
+    get_token_(ctx, &efsi);
+
+    grn_expr_parser(ctx->impl->parser, 0, 0, &efsi);
+    /*
+    {
+        grn_obj strbuf;
+        GRN_TEXT_INIT(&strbuf, 0);
+        grn_expr_inspect(ctx, &strbuf, expr);
+        GRN_TEXT_PUTC(ctx, &strbuf, '\0');
+        puts(GRN_TEXT_VALUE(&strbuf));
+        GRN_OBJ_FIN(ctx, &strbuf);
     }
-    get_expr(ctx, &efsi, default_column, GRN_OP_MATCH);
+    */
+
     /*
     efsi.opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
     efsi.opt.func = efsi.weight_set ? section_weight_cb : NULL;
