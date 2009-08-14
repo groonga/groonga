@@ -58,21 +58,21 @@
 **                       defined, then do no error processing.
 */
 #define YYCODETYPE unsigned char
-#define YYNOCODE 9
+#define YYNOCODE 18
 #define YYACTIONTYPE unsigned char
-#define grn_expr_parserTOKENTYPE int
+#define grn_expr_parserTOKENTYPE  int 
 typedef union {
   grn_expr_parserTOKENTYPE yy0;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
 #endif
-#define grn_expr_parserARG_SDECL
-#define grn_expr_parserARG_PDECL
-#define grn_expr_parserARG_FETCH
-#define grn_expr_parserARG_STORE
-#define YYNSTATE 10
-#define YYNRULE 5
+#define grn_expr_parserARG_SDECL  efs_info *efsi ;
+#define grn_expr_parserARG_PDECL , efs_info *efsi 
+#define grn_expr_parserARG_FETCH  efs_info *efsi  = yypParser->efsi 
+#define grn_expr_parserARG_STORE yypParser->efsi  = efsi 
+#define YYNSTATE 23
+#define YYNRULE 13
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
 #define YY_ACCEPT_ACTION  (YYNSTATE+YYNRULE+1)
 #define YY_ERROR_ACTION   (YYNSTATE+YYNRULE)
@@ -129,25 +129,39 @@ static const YYMINORTYPE yyzerominor;
 **  yy_default[]       Default action for each state.
 */
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */    10,    2,    1,    4,    3,   16,    5,    4,    3,    6,
- /*    10 */     7,   17,    8,    9,
+ /*     0 */    23,   15,    6,    7,    8,    9,   10,   11,   16,   16,
+ /*    10 */     2,    6,    7,    8,    9,   10,   11,   16,   16,    2,
+ /*    20 */    22,   24,   19,    6,    7,    8,    9,   10,   11,   16,
+ /*    30 */    16,    2,    1,    3,   17,   14,    9,   10,   11,   16,
+ /*    40 */    16,    2,    9,   10,   11,   16,   16,    2,    4,   17,
+ /*    50 */    14,   37,    5,   17,   14,   16,   16,    2,   12,   14,
+ /*    60 */    13,   14,   20,   18,   14,   21,   14,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */     0,    1,    2,    3,    4,    6,    7,    3,    4,    7,
- /*    10 */     7,    8,    7,    7,
+ /*     0 */     0,   16,    2,    3,    4,    5,    6,    7,    8,    9,
+ /*    10 */    10,    2,    3,    4,    5,    6,    7,    8,    9,   10,
+ /*    20 */    11,    0,   16,    2,    3,    4,    5,    6,    7,    8,
+ /*    30 */     9,   10,    1,   14,   15,   16,    5,    6,    7,    8,
+ /*    40 */     9,   10,    5,    6,    7,    8,    9,   10,   14,   15,
+ /*    50 */    16,   13,   14,   15,   16,    8,    9,   10,   15,   16,
+ /*    60 */    15,   16,   16,   15,   16,   15,   16,
 };
 #define YY_SHIFT_USE_DFLT (-1)
-#define YY_SHIFT_MAX 7
+#define YY_SHIFT_MAX 11
 static const signed char yy_shift_ofst[] = {
- /*     0 */    -1,   -1,   -1,   -1,   -1,    0,    4,    4,
+ /*     0 */    31,   37,   37,    0,    9,   21,   37,   37,   37,   47,
+ /*    10 */    47,   47,
 };
-#define YY_REDUCE_USE_DFLT (-2)
-#define YY_REDUCE_MAX 4
+#define YY_REDUCE_USE_DFLT (-16)
+#define YY_REDUCE_MAX 11
 static const signed char yy_reduce_ofst[] = {
- /*     0 */    -1,    2,    3,    5,    6,
+ /*     0 */    38,   19,   34,   43,   43,   43,   45,   48,   50,  -15,
+ /*    10 */     6,   46,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */    15,   15,   15,   15,   15,   15,   11,   12,   13,   14,
+ /*     0 */    36,   36,   36,   36,   36,   36,   36,   36,   36,   36,
+ /*    10 */    36,   36,   26,   27,   30,   31,   34,   25,   28,   32,
+ /*    20 */    33,   29,   35,
 };
 #define YY_SZ_ACTTAB (int)(sizeof(yy_action)/sizeof(yy_action[0]))
 
@@ -238,8 +252,11 @@ void grn_expr_parserTrace(FILE *TraceFILE, char *zTracePrompt){
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
 static const char *const yyTokenName[] = { 
-  "$",             "PLUS",          "MINUS",         "DIVIDE",      
-  "TIMES",         "error",         "program",       "expr",        
+  "$",             "MATCH_OPERATOR",  "OR",            "AND",         
+  "BUT",           "ADJ_INC",       "ADJ_DEC",       "ADJ_NEG",     
+  "WORD",          "PHRASE",        "PARENL",        "PARENR",      
+  "error",         "match_expression",  "match_expr_elements",  "match_expr_element",
+  "word",        
 };
 #endif /* NDEBUG */
 
@@ -247,11 +264,19 @@ static const char *const yyTokenName[] = {
 /* For tracing reduce actions, the names of all rules are required.
 */
 static const char *const yyRuleName[] = {
- /*   0 */ "program ::= expr",
- /*   1 */ "expr ::= expr MINUS expr",
- /*   2 */ "expr ::= expr PLUS expr",
- /*   3 */ "expr ::= expr TIMES expr",
- /*   4 */ "expr ::= expr DIVIDE expr",
+ /*   0 */ "match_expression ::= MATCH_OPERATOR match_expr_elements",
+ /*   1 */ "match_expression ::= match_expr_elements",
+ /*   2 */ "match_expr_elements ::= match_expr_element",
+ /*   3 */ "match_expr_elements ::= match_expr_elements match_expr_element",
+ /*   4 */ "match_expr_elements ::= match_expr_elements OR match_expr_element",
+ /*   5 */ "match_expr_elements ::= match_expr_elements AND match_expr_element",
+ /*   6 */ "match_expr_elements ::= match_expr_elements BUT match_expr_element",
+ /*   7 */ "match_expr_element ::= word",
+ /*   8 */ "match_expr_element ::= ADJ_INC word",
+ /*   9 */ "match_expr_element ::= ADJ_DEC word",
+ /*  10 */ "match_expr_element ::= ADJ_NEG word",
+ /*  11 */ "word ::= WORD|PHRASE",
+ /*  12 */ "word ::= PARENL match_expr_elements PARENR",
 };
 #endif /* NDEBUG */
 
@@ -531,11 +556,19 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
-  { 6, 1 },
-  { 7, 3 },
-  { 7, 3 },
-  { 7, 3 },
-  { 7, 3 },
+  { 13, 2 },
+  { 13, 1 },
+  { 14, 1 },
+  { 14, 2 },
+  { 14, 3 },
+  { 14, 3 },
+  { 14, 3 },
+  { 15, 1 },
+  { 15, 2 },
+  { 15, 2 },
+  { 15, 2 },
+  { 16, 1 },
+  { 16, 3 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -590,36 +623,82 @@ static void yy_reduce(
   **  #line <lineno> <thisfile>
   **     break;
   */
-      case 0: /* program ::= expr */
-#line 16 "expr.y"
-{ printf("Result=%d\n", yymsp[0].minor.yy0); }
-#line 599 "expr.c"
-        break;
-      case 1: /* expr ::= expr MINUS expr */
+      case 0: /* match_expression ::= MATCH_OPERATOR match_expr_elements */
 #line 18 "expr.y"
-{ yygotominor.yy0 = yymsp[-2].minor.yy0 - yymsp[0].minor.yy0; }
-#line 604 "expr.c"
-        break;
-      case 2: /* expr ::= expr PLUS expr */
-#line 19 "expr.y"
-{ yygotominor.yy0 = yymsp[-2].minor.yy0 + yymsp[0].minor.yy0; }
-#line 609 "expr.c"
-        break;
-      case 3: /* expr ::= expr TIMES expr */
-#line 20 "expr.y"
-{ yygotominor.yy0 = yymsp[-2].minor.yy0 * yymsp[0].minor.yy0; }
-#line 614 "expr.c"
-        break;
-      case 4: /* expr ::= expr DIVIDE expr */
-#line 21 "expr.y"
 {
-         if (yymsp[0].minor.yy0 != 0) {
-           yygotominor.yy0 = yymsp[-2].minor.yy0 / yymsp[0].minor.yy0;
-         } else {
-           puts("divide by zero");
-         }
+  /* insert(yymsp[0].minor.yy0) */
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
+  yygotominor.yy0 = yymsp[0].minor.yy0 + 1;
 }
-#line 625 "expr.c"
+#line 636 "expr.c"
+        break;
+      case 1: /* match_expression ::= match_expr_elements */
+#line 23 "expr.y"
+{
+  /* insert(yymsp[0].minor.yy0); */
+  grn_expr_append_op(efsi->ctx, efsi->e, efsi->default_mode, 2);
+  yygotominor.yy0 = yymsp[0].minor.yy0 + 1;
+}
+#line 645 "expr.c"
+        break;
+      case 2: /* match_expr_elements ::= match_expr_element */
+      case 7: /* match_expr_element ::= word */
+      case 11: /* word ::= WORD|PHRASE */
+#line 28 "expr.y"
+{ yygotominor.yy0 = yymsp[0].minor.yy0; }
+#line 652 "expr.c"
+        break;
+      case 3: /* match_expr_elements ::= match_expr_elements match_expr_element */
+#line 29 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, efsi->default_op, 2);
+  yygotominor.yy0 = yymsp[-1].minor.yy0 + yymsp[0].minor.yy0 + 1;
+}
+#line 660 "expr.c"
+        break;
+      case 4: /* match_expr_elements ::= match_expr_elements OR match_expr_element */
+#line 33 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
+  yygotominor.yy0 = yymsp[-2].minor.yy0 + yymsp[0].minor.yy0 + 1;
+}
+#line 668 "expr.c"
+        break;
+      case 5: /* match_expr_elements ::= match_expr_elements AND match_expr_element */
+#line 37 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
+  yygotominor.yy0 = yymsp[-2].minor.yy0 + yymsp[0].minor.yy0 + 1;
+}
+#line 676 "expr.c"
+        break;
+      case 6: /* match_expr_elements ::= match_expr_elements BUT match_expr_element */
+#line 41 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
+  yygotominor.yy0 = yymsp[-2].minor.yy0 + yymsp[0].minor.yy0 + 1;
+}
+#line 684 "expr.c"
+        break;
+      case 8: /* match_expr_element ::= ADJ_INC word */
+#line 47 "expr.y"
+{ puts(">"); }
+#line 689 "expr.c"
+        break;
+      case 9: /* match_expr_element ::= ADJ_DEC word */
+#line 48 "expr.y"
+{ puts("<"); }
+#line 694 "expr.c"
+        break;
+      case 10: /* match_expr_element ::= ADJ_NEG word */
+#line 49 "expr.y"
+{ puts("~"); }
+#line 699 "expr.c"
+        break;
+      case 12: /* word ::= PARENL match_expr_elements PARENR */
+#line 53 "expr.y"
+{ yygotominor.yy0 = yymsp[-1].minor.yy0; }
+#line 704 "expr.c"
         break;
   };
   yygoto = yyRuleInfo[yyruleno].lhs;
@@ -677,10 +756,13 @@ static void yy_syntax_error(
 ){
   grn_expr_parserARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 12 "expr.y"
+#line 11 "expr.y"
 
-  puts("Syntax error!");
-#line 688 "expr.c"
+  {
+    grn_ctx *ctx = efsi->ctx;
+    ERR(GRN_SYNTAX_ERROR, "Syntax error!");
+  }
+#line 770 "expr.c"
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

@@ -1,4 +1,11 @@
-#define PLUS                            1
-#define MINUS                           2
-#define DIVIDE                          3
-#define TIMES                           4
+#define GRN_EXPR_TOKEN_MATCH_OPERATOR                  1
+#define GRN_EXPR_TOKEN_OR                              2
+#define GRN_EXPR_TOKEN_AND                             3
+#define GRN_EXPR_TOKEN_BUT                             4
+#define GRN_EXPR_TOKEN_ADJ_INC                         5
+#define GRN_EXPR_TOKEN_ADJ_DEC                         6
+#define GRN_EXPR_TOKEN_ADJ_NEG                         7
+#define GRN_EXPR_TOKEN_WORD                            8
+#define GRN_EXPR_TOKEN_PHRASE                          9
+#define GRN_EXPR_TOKEN_PARENL                         10
+#define GRN_EXPR_TOKEN_PARENR                         11
