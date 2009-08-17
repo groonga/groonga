@@ -5547,19 +5547,27 @@ exit :
   GRN_API_RETURN(res);
 }
 
-grn_obj *
-grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned str_size)
+static grn_obj *
+grn_expr_add_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned str_size)
 {
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
-  GRN_API_ENTER;
   APPEND_OBJ(e->consts, e->nconsts, res);
   if (res) {
     GRN_TEXT_INIT(res, 0);
     grn_bulk_write(ctx, res, str, str_size);
     res->header.impl_flags |= GRN_OBJ_EXPRCONST;
   }
-  grn_expr_append_code(ctx, e, res, GRN_OP_PUSH); /* constant */
+  return res;
+}
+
+grn_obj *
+grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned str_size)
+{
+  grn_obj *res;
+  GRN_API_ENTER;
+  res = grn_expr_add_str(ctx, expr, str, str_size);
+  grn_expr_append_code(ctx, (grn_expr *)expr, res, GRN_OP_PUSH); /* constant */
   GRN_API_RETURN(res);
 }
 
@@ -7028,6 +7036,10 @@ typedef struct {
   grn_obj *table;
   grn_obj *default_column;
   grn_obj buf;
+  grn_obj token_stack;
+  grn_obj column_stack;
+  grn_obj op_stack;
+  grn_obj mode_stack;
   grn_operator default_op;
   grn_select_optarg opt;
   grn_operator default_mode;
@@ -7035,6 +7047,7 @@ typedef struct {
   int escalation_threshold;
   int escalation_decaystep;
   int weight_offset;
+  int last_token;
   grn_hash *weight_set;
   grn_encoding encoding;
   snip_cond *snip_conds;
@@ -7537,6 +7550,10 @@ grn_expr_create_from_str(grn_ctx *ctx,
   efs_info efsi;
   efsi.ctx = ctx;
   GRN_TEXT_INIT(&efsi.buf, 0);
+  GRN_UINT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
+  GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
   if (!(efsi.e = grn_expr_create(ctx, name, name_size))) { goto exit; }
   efsi.str = str;
   efsi.v = grn_expr_add_var(ctx, efsi.e, NULL, 0);
@@ -7561,6 +7578,10 @@ grn_expr_create_from_str(grn_ctx *ctx,
   efsi.opt.func_arg = efsi.weight_set;
   efsi.snip_conds = NULL;
 exit :
+  GRN_OBJ_FIN(ctx, &efsi.op_stack);
+  GRN_OBJ_FIN(ctx, &efsi.mode_stack);
+  GRN_OBJ_FIN(ctx, &efsi.column_stack);
+  GRN_OBJ_FIN(ctx, &efsi.token_stack);
   GRN_OBJ_FIN(ctx, &efsi.buf);
   if (ctx->rc) {
     grn_obj_unlink(ctx, efsi.e);
@@ -8240,6 +8261,35 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
 
 /* grn_expr_parse */
 
+#define GRN_PTR_POP(obj,value) {\
+  if (GRN_BULK_VSIZE(obj) >= sizeof(grn_obj *)) {\
+    GRN_BULK_INCR_LEN((obj), -(sizeof(grn_obj *)));\
+    value = *(grn_obj **)(GRN_BULK_CURR(obj));\
+  } else {\
+    value = NULL;\
+  }\
+}
+
+grn_obj *
+grn_ptr_value_at(grn_obj *obj, int offset)
+{
+  int size = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
+  if (offset < 0) { offset = size + offset; }
+  return (0 <= offset && offset < size)
+    ? (((grn_obj **)GRN_BULK_HEAD(obj))[offset])
+    : NULL;
+}
+
+int32_t
+grn_int32_value_at(grn_obj *obj, int offset)
+{
+  int size = GRN_BULK_VSIZE(obj) / sizeof(int32_t);
+  if (offset < 0) { offset = size + offset; }
+  return (0 <= offset && offset < size)
+    ? (((int32_t *)GRN_BULK_HEAD(obj))[offset])
+    : 0;
+}
+
 #include "expr.h"
 #include "expr.c"
 
@@ -8257,6 +8307,19 @@ grn_expr_parser_open(grn_ctx *ctx)
     }
   }
   return ctx->rc;
+}
+
+#define PARSE(token) {\
+  if ((q->last_token == GRN_EXPR_TOKEN_STRING ||\
+       q->last_token == GRN_EXPR_TOKEN_PARENR) && \
+      !((token) == GRN_EXPR_TOKEN_PARENR || \
+        (token) == GRN_EXPR_TOKEN_LOGICAL_AND ||\
+        (token) == GRN_EXPR_TOKEN_LOGICAL_OR ||\
+        (token) == GRN_EXPR_TOKEN_LOGICAL_BUT)) {\
+    grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_LOGICAL_AND, 0, q);\
+  }\
+  grn_expr_parser(ctx->impl->parser, (token), 0, q);\
+  q->last_token = (token);\
 }
 
 static grn_rc
@@ -8331,8 +8394,8 @@ get_word_(grn_ctx *ctx, efs_info *q)
     }
     end += len;
   }
-  grn_expr_append_const_str(ctx, q->e, start, end - start);
-  grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_WORD, 1, q);
+  GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e, start, end - start));
+  PARSE(GRN_EXPR_TOKEN_STRING);
   return GRN_SUCCESS;
 }
 
@@ -8353,7 +8416,7 @@ get_token_(grn_ctx *ctx, efs_info *q)
       break;
     case GRN_QUERY_PARENR :
       q->cur++;
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_PARENR, 0, q);
+      PARSE(GRN_EXPR_TOKEN_PARENR);
       break;
     case GRN_QUERY_QUOTEL :
       q->cur++;
@@ -8382,8 +8445,10 @@ get_token_(grn_ctx *ctx, efs_info *q)
             }
           }
           GRN_TEXT_PUT(ctx, &q->buf, s, len);
-          grn_expr_append_const(ctx, q->e, &q->buf);
-          grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_PHRASE, 1, q);
+          GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e,
+                                                             GRN_TEXT_VALUE(&q->buf),
+                                                             GRN_TEXT_LEN(&q->buf)));
+          PARSE(GRN_EXPR_TOKEN_STRING);
           s += len;
         }
       }
@@ -8392,44 +8457,44 @@ get_token_(grn_ctx *ctx, efs_info *q)
     case GRN_QUERY_PREFIX :
       q->cur++;
       get_op(q, op, &mode, &option);
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_MATCH_OPERATOR, 0, q);
+      PARSE(GRN_EXPR_TOKEN_MATCH);
       break;
     case GRN_QUERY_AND :
       q->cur++;
       op->op = GRN_OP_AND;
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_AND, 0, q);
+      PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
       break;
     case GRN_QUERY_BUT :
       q->cur++;
       op->op = GRN_OP_BUT;
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_BUT, 0, q);
+      PARSE(GRN_EXPR_TOKEN_LOGICAL_BUT);
       break;
     case GRN_QUERY_ADJ_INC :
       q->cur++;
       if (op->weight < 127) { op->weight++; }
       op->op = GRN_OP_ADJUST;
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_ADJ_INC, 0, q);
+      PARSE(GRN_EXPR_TOKEN_ADJ_INC);
       break;
     case GRN_QUERY_ADJ_DEC :
       q->cur++;
       if (op->weight > -128) { op->weight--; }
       op->op = GRN_OP_ADJUST;
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_ADJ_DEC, 0, q);
+      PARSE(GRN_EXPR_TOKEN_ADJ_DEC);
       break;
     case GRN_QUERY_ADJ_NEG :
       q->cur++;
       op->op = GRN_OP_ADJUST;
       op->weight = -1;
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_ADJ_NEG, 0, q);
+      PARSE(GRN_EXPR_TOKEN_ADJ_NEG);
       break;
     case GRN_QUERY_PARENL :
       q->cur++;
-      grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_PARENL, 0, q);
+      PARSE(GRN_EXPR_TOKEN_PARENL);
       break;
     case 'O' :
       if (q->cur[1] == 'R' && q->cur[2] == ' ') {
         q->cur += 2;
-        grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_OR, 0, q);
+        PARSE(GRN_EXPR_TOKEN_LOGICAL_OR);
         break;
       }
       /* fallthru */
@@ -8454,13 +8519,18 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
   if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
       (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
     GRN_TEXT_INIT(&efsi.buf, 0);
+    GRN_UINT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
+    GRN_UINT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
+    GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     efsi.e = expr;
     efsi.str = str;
     efsi.cur = str;
     efsi.str_end = str + str_size;
     efsi.default_column = default_column;
-    efsi.default_op = default_op;
-    efsi.default_mode = default_mode;
+    GRN_PTR_PUT(ctx, &efsi.column_stack, default_column);
+    GRN_INT32_PUT(ctx, &efsi.op_stack, default_op);
+    GRN_INT32_PUT(ctx, &efsi.mode_stack, default_mode);
     efsi.parse_level = parse_level;
     efsi.escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
     efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
@@ -8488,6 +8558,10 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.opt.func_arg = efsi.weight_set;
     efsi.snip_conds = NULL;
     */
+    GRN_OBJ_FIN(ctx, &efsi.op_stack);
+    GRN_OBJ_FIN(ctx, &efsi.mode_stack);
+    GRN_OBJ_FIN(ctx, &efsi.column_stack);
+    GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
