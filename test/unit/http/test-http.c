@@ -77,6 +77,9 @@ test_get_root(void)
 
     session = soup_session_sync_new();
     message = soup_message_new("GET", "http://localhost:" GROONGA_TEST_PORT "/");
+    gcut_take_object(G_OBJECT(session));
+    gcut_take_object(G_OBJECT(message));
+    
     status = soup_session_send_message(session, message);
 
     cut_assert_equal_uint(200, status);
