@@ -35,6 +35,7 @@ static GCutEgg *egg;
 
 static SoupSession *session;
 
+static SoupMessage *message;
 
 void
 cut_setup(void)
@@ -59,6 +60,7 @@ cut_setup(void)
   gcut_assert_error(error);
 
   session = soup_session_sync_new();
+  message = NULL;
 
   sleep(1);
 }
@@ -70,37 +72,40 @@ cut_teardown(void)
     g_object_unref(egg);
   }
 
+  if (message){
+    g_object_unref(message);
+  }
+  
   g_object_unref(session);
   cut_remove_path(tmp_directory, NULL);
+}
+
+static void
+assert_get(const char *path)
+{
+  guint status;
+  
+  message = soup_message_new("GET", cut_take_printf("%s%s", "http://localhost:" GROONGA_TEST_PORT, path));
+    
+  status = soup_session_send_message(session, message);
+
+  cut_assert_equal_uint(SOUP_STATUS_OK, status);
 }
 
 void
 test_get_root(void)
 {
-    SoupMessage *message;
-    guint status;
-    
-    message = soup_message_new("GET", "http://localhost:" GROONGA_TEST_PORT "/");
-    gcut_take_object(G_OBJECT(message));
-    
-    status = soup_session_send_message(session, message);
-
-    cut_assert_equal_uint(SOUP_STATUS_OK, status);
-    cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
-    cut_assert_equal_memory("", 0, message->response_body->data, message->response_body->length);
+  assert_get("/");
+  
+  cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+  cut_assert_equal_memory("", 0, message->response_body->data, message->response_body->length);
 }
 
 void
 test_get_status(void)
 {
-    SoupMessage *message;
-    guint status;
-
-    message = soup_message_new("GET", "http://localhost:" GROONGA_TEST_PORT "/status");
-    gcut_take_object(G_OBJECT(message));
-
-    status = soup_session_send_message(session, message);
-    cut_assert_equal_uint(SOUP_STATUS_OK, status);
-    cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
-    cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}", message->response_body->data);
+  assert_get("/status");
+  
+  cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+  cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}", message->response_body->data);
 }
