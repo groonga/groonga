@@ -129,13 +129,19 @@ assert_get(const gchar *path, const gchar *first_param, ...)
   cut_assert_equal_uint(SOUP_STATUS_OK, status);
 }
 
+static void
+assert_equal_response_body(const gchar *expected, SoupMessage *message)
+{
+  cut_assert_equal_string(expected, message->response_body->data);
+}
+
 void
 test_get_root(void)
 {
   assert_get("/", NULL);
   
   cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
-  cut_assert_equal_memory("", 0, message->response_body->data, message->response_body->length);
+  assert_equal_response_body("", message);
 }
 
 void
@@ -157,7 +163,7 @@ test_get_table_list(void)
   assert_get("/table_list", NULL);
 
   cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
-  cut_assert_equal_string("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]", message->response_body->data);
+  assert_equal_response_body("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]", message);
   flags = GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY;
   assert_get("/table_create",
              "name", table_name,
@@ -166,13 +172,13 @@ test_get_table_list(void)
              "value_type", "Object",
              "default_tokenizer", "",
              NULL);
-  cut_assert_equal_string("true", message->response_body->data);
+  assert_equal_response_body("true", message);
   users = grn_ctx_get(&context, table_name, strlen(table_name));
   grn_test_assert_not_null(&context, users);
   assert_get("/table_list", NULL);
   cut_assert_equal_string("text/javascript",
                           soup_message_headers_get_content_type(message->response_headers, NULL));
-  cut_assert_equal_string(
+  assert_equal_response_body(
     cut_take_printf("["
                     "[\"id\",\"name\",\"path\",\"flags\",\"domain\"],"
                     "[%u,\"%s\",\"%s\",%u,%u]"
@@ -182,5 +188,5 @@ test_get_table_list(void)
                     grn_obj_path(&context, users),
                     flags | GRN_OBJ_KEY_INT,
                     GRN_DB_INT8),
-    message->response_body->data);
+    message);
 }
