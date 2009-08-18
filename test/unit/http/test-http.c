@@ -82,5 +82,5 @@ test_get_root(void)
     
     status = soup_session_send_message(session, message);
 
-    cut_assert_equal_uint(200, status);
+    cut_assert_equal_uint(SOUP_STATUS_OK, status);
 }
