@@ -204,7 +204,11 @@ void
 test_get_column_list(void)
 {
   const gchar *table_name = "users";
+  const gchar *column_name = "age";
+  const gchar *full_column_name;
   grn_obj *users;
+  grn_obj *age;
+  full_column_name = cut_take_printf("%s.%s", table_name, column_name);
   users = grn_table_create(&context, table_name, strlen(table_name),
                            NULL, GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
                            grn_ctx_at(&context, GRN_DB_INT8),
@@ -217,9 +221,23 @@ test_get_column_list(void)
 
   assert_get("/column_create",
              "table", table_name,
-             "name", "age",
+             "name", column_name,
              "flags", cut_take_printf("%u", GRN_OBJ_COLUMN_SCALAR),
-             "type", "Text",
+             "type", "Int8",
              NULL);
   assert_equal_response_body("true", message);
+  age = grn_ctx_get(&context, full_column_name, strlen(full_column_name));
+  grn_test_assert_not_null(&context, age);
+  assert_get("/column_list", "table", table_name, NULL);
+  assert_equal_response_body(
+    cut_take_printf("["
+                    "[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"],"
+                    "[%u,\"%s\",\"%s\",\"fix\",%u,%u]"
+                    "]",
+                    grn_obj_id(&context, age),
+                    column_name,
+                    grn_obj_path(&context, age),
+                    GRN_OBJ_COLUMN_SCALAR | GRN_OBJ_PERSISTENT | GRN_OBJ_KEY_INT,
+                    grn_obj_id(&context, users)),
+    message);
 }
