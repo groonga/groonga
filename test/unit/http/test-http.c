@@ -33,6 +33,9 @@ static gchar *tmp_directory;
 
 static GCutEgg *egg;
 
+static SoupSession *session;
+
+
 void
 cut_setup(void)
 {
@@ -55,6 +58,8 @@ cut_setup(void)
   gcut_egg_hatch(egg, &error);
   gcut_assert_error(error);
 
+  session = soup_session_sync_new();
+
   sleep(1);
 }
 
@@ -65,19 +70,17 @@ cut_teardown(void)
     g_object_unref(egg);
   }
 
+  g_object_unref(session);
   cut_remove_path(tmp_directory, NULL);
 }
 
 void
 test_get_root(void)
 {
-    SoupSession *session;
     SoupMessage *message;
     guint status;
-
-    session = soup_session_sync_new();
+    
     message = soup_message_new("GET", "http://localhost:" GROONGA_TEST_PORT "/");
-    gcut_take_object(G_OBJECT(session));
     gcut_take_object(G_OBJECT(message));
     
     status = soup_session_send_message(session, message);
@@ -90,13 +93,10 @@ test_get_root(void)
 void
 test_get_status(void)
 {
-    SoupSession *session;
     SoupMessage *message;
     guint status;
 
-    session = soup_session_sync_new();
     message = soup_message_new("GET", "http://localhost:" GROONGA_TEST_PORT "/status");
-    gcut_take_object(G_OBJECT(session));
     gcut_take_object(G_OBJECT(message));
 
     status = soup_session_send_message(session, message);
