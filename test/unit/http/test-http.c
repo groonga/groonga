@@ -104,6 +104,10 @@ assert_get(const gchar *path, const gchar *first_param, ...)
   GHashTable *params;
   guint status;
 
+  if(message) {
+    g_object_unref(message);
+  }
+
   va_start(args, first_param);
   
   uri = soup_uri_new(NULL);
