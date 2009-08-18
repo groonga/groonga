@@ -15,7 +15,51 @@
   }
 }
 
-query ::= expression.
+input ::= query.
+input ::= expression.
+
+query ::= query_element.
+query ::= query query_element. {
+  grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->op_stack, -1), 2);
+}
+query ::= query LOGICAL_AND query_element. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
+}
+query ::= query LOGICAL_BUT query_element.{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
+}
+query ::= query LOGICAL_OR query_element.{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
+}
+
+query_element ::= QSTRING.
+query_element ::= PARENL query PARENR.
+
+query_element ::= LESS query_element.
+query_element ::= GREATER query_element.
+query_element ::= LESS_EQUAL query_element.
+query_element ::= GREATER_EQUAL query_element.
+query_element ::= IN query_element.
+query_element ::= MATCH query_element.
+query_element ::= NEAR query_element.
+query_element ::= SIMILAR query_element.
+query_element ::= EXTRACT query_element.
+
+query_element ::= COLUMN LESS query_element.
+query_element ::= COLUMN GREATER query_element.
+query_element ::= COLUMN LESS_EQUAL query_element.
+query_element ::= COLUMN GREATER_EQUAL query_element.
+query_element ::= COLUMN IN query_element.
+query_element ::= COLUMN MATCH query_element.
+query_element ::= COLUMN NEAR query_element.
+query_element ::= COLUMN EXTRACT query_element.
+query_element ::= COLUMN SIMILAR query_element.
+query_element ::= BRACEL expression BRACER. {
+  efsi->parse_level = efsi->default_parse_level;
+}
+query_element ::= EVAL primary_expression. {
+  efsi->parse_level = efsi->default_parse_level;
+}
 
 expression ::= assignment_expression.
 expression ::= expression COMMA assignment_expression.
@@ -50,81 +94,69 @@ logical_and_expression ::= logical_and_expression LOGICAL_BUT bitwise_or_express
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
 }
 
-bitwise_or_expression(A) ::= bitwise_xor_expression(B). {
-  if (!B) {
-    grn_obj *column, *token;
-    GRN_PTR_POP(&efsi->token_stack, token);
-    column = grn_ptr_value_at(&efsi->column_stack, -1);
-    grn_expr_append_obj(efsi->ctx, efsi->e, efsi->v);
-    grn_expr_append_const(efsi->ctx, efsi->e, column);
-    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
-    grn_expr_append_code(efsi->ctx, (grn_expr *)efsi->e, token, GRN_OP_PUSH);
-    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
-  }
-  A = 1;
-}
-bitwise_or_expression(A) ::= bitwise_or_expression(B) BITWISE_OR bitwise_xor_expression. { A = B;}
+bitwise_or_expression ::= bitwise_xor_expression.
+bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression.
 
-bitwise_xor_expression(A) ::= bitwise_and_expression(B). { A = B;}
-bitwise_xor_expression(A) ::= bitwise_xor_expression(B) BITWISE_XOR bitwise_and_expression. { A = B;}
+bitwise_xor_expression ::= bitwise_and_expression.
+bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression.
 
-bitwise_and_expression(A) ::= equality_expression(B). { A = B;}
-bitwise_and_expression(A) ::= bitwise_and_expression(B) BITWISE_AND equality_expression. { A = B;}
+bitwise_and_expression ::= equality_expression.
+bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression.
 
-equality_expression(A) ::= relational_expression(B). { A = B;}
-equality_expression(A) ::= equality_expression(B) EQUAL relational_expression. { A = B;}
-equality_expression(A) ::= equality_expression(B) NOT_EQUAL relational_expression. { A = B;}
+equality_expression ::= relational_expression.
+equality_expression ::= equality_expression EQUAL relational_expression.
+equality_expression ::= equality_expression NOT_EQUAL relational_expression.
 
-relational_expression(A) ::= shift_expression(B). { A = B;}
-relational_expression(A) ::= relational_expression(B) LESS shift_expression. { A = B;}
-relational_expression(A) ::= relational_expression(B) GREATER shift_expression. { A = B;}
-relational_expression(A) ::= relational_expression(B) LESS_EQUAL shift_expression. { A = B;}
-relational_expression(A) ::= relational_expression(B) GREATER_EQUAL shift_expression. { A = B;}
-relational_expression(A) ::= relational_expression(B) IN shift_expression. { A = B;}
-relational_expression(A) ::= relational_expression(B) MATCH shift_expression. { A = B;}
+relational_expression ::= shift_expression.
+relational_expression ::= relational_expression LESS shift_expression.
+relational_expression ::= relational_expression GREATER shift_expression.
+relational_expression ::= relational_expression LESS_EQUAL shift_expression.
+relational_expression ::= relational_expression GREATER_EQUAL shift_expression.
+relational_expression ::= relational_expression IN shift_expression.
+relational_expression ::= relational_expression MATCH shift_expression.
+relational_expression ::= relational_expression NEAR shift_expression.
+relational_expression ::= relational_expression SIMILAR shift_expression.
+relational_expression ::= relational_expression EXTRACT shift_expression.
 
-shift_expression(A) ::= additive_expression(B). { A = B;}
-shift_expression(A) ::= shift_expression(B) SHIFTL additive_expression. { A = B;}
-shift_expression(A) ::= shift_expression(B) SHIFTR additive_expression. { A = B;}
-shift_expression(A) ::= shift_expression(B) SHIFTRR additive_expression. { A = B;}
+shift_expression ::= additive_expression.
+shift_expression ::= shift_expression SHIFTL additive_expression.
+shift_expression ::= shift_expression SHIFTR additive_expression.
+shift_expression ::= shift_expression SHIFTRR additive_expression.
 
-additive_expression(A) ::= multiplicative_expression(B). { A = B;}
-additive_expression(A) ::= additive_expression(B) PLUS multiplicative_expression. { A = B;}
-additive_expression(A) ::= additive_expression(B) MINUS multiplicative_expression. { A = B;}
+additive_expression ::= multiplicative_expression.
+additive_expression ::= additive_expression PLUS multiplicative_expression.
+additive_expression ::= additive_expression MINUS multiplicative_expression.
 
-multiplicative_expression(A) ::= unary_expression(B). { A = B;}
-multiplicative_expression(A) ::= multiplicative_expression(B) STAR unary_expression. { A = B;}
-multiplicative_expression(A) ::= multiplicative_expression(B) SLASH unary_expression. { A = B;}
-multiplicative_expression(A) ::= multiplicative_expression(B) MOD unary_expression. { A = B;}
+multiplicative_expression ::= unary_expression.
+multiplicative_expression ::= multiplicative_expression STAR unary_expression.
+multiplicative_expression ::= multiplicative_expression SLASH unary_expression.
+multiplicative_expression ::= multiplicative_expression MOD unary_expression.
 
-unary_expression(A) ::= postfix_expression(B). { A = B;}
-unary_expression(A) ::= DELETE unary_expression(B). { A = B;}
-unary_expression(A) ::= INCR unary_expression(B). { A = B;}
-unary_expression(A) ::= DECR unary_expression(B). { A = B;}
-unary_expression(A) ::= PLUS unary_expression(B). { A = B;}
-unary_expression(A) ::= MINUS unary_expression(B). { A = B;}
-unary_expression(A) ::= NOT unary_expression(B). { A = B;}
-unary_expression(A) ::= ADJ_INC unary_expression(B). { A = B;}
-unary_expression(A) ::= ADJ_DEC unary_expression(B). { A = B;}
-unary_expression(A) ::= ADJ_NEG unary_expression(B). { A = B;}
-unary_expression(A) ::= UNARY_SIMILAR unary_expression(B). { A = B;}
-unary_expression(A) ::= UNARY_EXTRACT unary_expression(B). { A = B;}
-unary_expression(A) ::= UNARY_NEAR unary_expression(B). { A = B;}
+unary_expression ::= postfix_expression.
+unary_expression ::= DELETE unary_expression.
+unary_expression ::= INCR unary_expression.
+unary_expression ::= DECR unary_expression.
+unary_expression ::= PLUS unary_expression.
+unary_expression ::= MINUS unary_expression.
+unary_expression ::= NOT unary_expression.
+unary_expression ::= ADJ_INC unary_expression.
+unary_expression ::= ADJ_DEC unary_expression.
+unary_expression ::= ADJ_NEG unary_expression.
 
-postfix_expression(A) ::= lefthand_side_expression(B). { A = B;}
-postfix_expression(A) ::= lefthand_side_expression(B) INCR. { A = B;}
-postfix_expression(A) ::= lefthand_side_expression(B) DECR. { A = B;}
+postfix_expression ::= lefthand_side_expression.
+postfix_expression ::= lefthand_side_expression INCR.
+postfix_expression ::= lefthand_side_expression DECR.
 
-lefthand_side_expression(A) ::= call_expression(B). { A = B;}
-lefthand_side_expression(A) ::= member_expression(B). { A = B;}
+lefthand_side_expression ::= call_expression.
+lefthand_side_expression ::= member_expression.
 
-call_expression(A) ::= member_expression arguments(B). { A = B;}
+call_expression ::= member_expression arguments.
 
-member_expression(A) ::= primary_expression(B). { A = B;}
-member_expression(A) ::= member_expression(B) member_expression_part. { A = B;}
+member_expression ::= primary_expression.
+member_expression ::= member_expression member_expression_part.
 
 primary_expression ::= object_literal.
-primary_expression(A) ::= PARENL expression(B) PARENR. { A = 1;}
+primary_expression ::= PARENL expression PARENR.
 primary_expression ::= IDENTIFIER.
 primary_expression ::= array_literal.
 primary_expression ::= DECIMAL.
@@ -155,6 +187,9 @@ property_name ::= IDENTIFIER|STRING|DECIMAL.
 member_expression_part ::= BRACKETL expression BRACKETR.
 member_expression_part ::= DOT IDENTIFIER.
 
-arguments ::= PARENL argument_list PARENR.
-argument_list ::= .
-argument_list ::= argument_list COMMA assignment_expression.
+arguments ::= PARENL argument_list(A) PARENR. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, A);
+}
+argument_list(A) ::= . { A = 0; }
+argument_list(A) ::= assignment_expression. { A = 1; }
+argument_list(A) ::= argument_list(B) COMMA assignment_expression. { A = B + 1; }
