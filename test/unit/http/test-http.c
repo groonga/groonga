@@ -48,6 +48,9 @@ cut_setup(void)
     cut_assert_errno();
   }
 
+  session = NULL;
+  message = NULL;
+  
   egg = gcut_egg_new(GROONGA, "-s",
                      "-p", GROONGA_TEST_PORT,
                      "-n",
@@ -60,7 +63,6 @@ cut_setup(void)
   gcut_assert_error(error);
 
   session = soup_session_sync_new();
-  message = NULL;
 
   sleep(1);
 }
@@ -72,11 +74,14 @@ cut_teardown(void)
     g_object_unref(egg);
   }
 
-  if (message){
+  if (message) {
     g_object_unref(message);
   }
+
+  if (session) {
+    g_object_unref(session);
+  }
   
-  g_object_unref(session);
   cut_remove_path(tmp_directory, NULL);
 }
 
