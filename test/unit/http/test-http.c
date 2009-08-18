@@ -83,4 +83,6 @@ test_get_root(void)
     status = soup_session_send_message(session, message);
 
     cut_assert_equal_uint(SOUP_STATUS_OK, status);
+    cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+    cut_assert_equal_memory("", 0, message->response_body->data, message->response_body->length);
 }
