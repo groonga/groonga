@@ -3239,6 +3239,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                 grn_obj_close(ctx, &v);
               }
               break;
+            case GRN_UVECTOR :
+              rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags);
+              break;
             case GRN_VECTOR :
               rc = grn_ja_putv(ctx, (grn_ja *)obj, id, value, 0);
               break;
@@ -5043,8 +5046,8 @@ static char *opstrs[] = {
   "CALL",
   "INTERN",
   "VAR_SET_VALUE",
-  "OBJ_GET_VALUE",
-  "OBJ_SET_VALUE",
+  ".",
+  "=",
   "OBJ_SEARCH",
   "EXPR_GET_VAR",
   "TABLE_CREATE",
@@ -5054,10 +5057,22 @@ static char *opstrs[] = {
   "JSON_PUT"
 };
 
+static void
+put_value(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int len;
+  char namebuf[GRN_TABLE_MAX_KEY_SIZE];
+  if ((len = grn_column_name(ctx, obj, namebuf, GRN_TABLE_MAX_KEY_SIZE))) {
+    GRN_TEXT_PUT(ctx, buf, namebuf, len);
+  } else {
+    grn_text_otoj(ctx, buf, obj, NULL);
+  }
+}
+
 grn_rc
 grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
 {
-  uint32_t i;
+  uint32_t i, j;
   grn_expr_var *var;
   grn_expr_code *code;
   grn_expr *e = (grn_expr *)expr;
@@ -5065,22 +5080,40 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
   GRN_TEXT_PUTC(ctx, buf, '(');
   for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
     if (i) { GRN_TEXT_PUTC(ctx, buf, ','); }
+    GRN_TEXT_PUTC(ctx, buf, '?');
     if (var->name_size) {
       GRN_TEXT_PUT(ctx, buf, var->name, var->name_size);
     } else {
       grn_text_itoa(ctx, buf, (int)i);
     }
     GRN_TEXT_PUTC(ctx, buf, ':');
-    grn_text_otoj(ctx, buf, &var->value, NULL);
+    put_value(ctx, buf, &var->value);
   }
   GRN_TEXT_PUTC(ctx, buf, ')');
   GRN_TEXT_PUTC(ctx, buf, '{');
-  for (i = 0, code = e->codes; i < e->codes_curr; i++, code++) {
-    if (i) { GRN_TEXT_PUTC(ctx, buf, ' '); }
-    GRN_TEXT_PUTS(ctx, buf, opstrs[code->op]);
-    if (code->value) {
-      GRN_TEXT_PUTC(ctx, buf, ':');
-      grn_text_otoj(ctx, buf, code->value, NULL);
+  for (j = 0, code = e->codes; j < e->codes_curr; j++, code++) {
+    if (j) { GRN_TEXT_PUTC(ctx, buf, ' '); }
+    if (code->op == GRN_OP_PUSH) {
+      for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
+        if (&var->value == code->value) {
+          GRN_TEXT_PUTC(ctx, buf, '?');
+          if (var->name_size) {
+            GRN_TEXT_PUT(ctx, buf, var->name, var->name_size);
+          } else {
+            grn_text_itoa(ctx, buf, (int)i);
+          }
+          break;
+        }
+      }
+      if (i == e->nvars) {
+        put_value(ctx, buf, code->value);
+      }
+    } else {
+      if (code->value) {
+        put_value(ctx, buf, code->value);
+        GRN_TEXT_PUTC(ctx, buf, ' ');
+      }
+      GRN_TEXT_PUTS(ctx, buf, opstrs[code->op]);
     }
   }
   GRN_TEXT_PUTC(ctx, buf, '}');
@@ -7044,10 +7077,10 @@ typedef struct {
   grn_select_optarg opt;
   grn_operator default_mode;
   int parse_level;
+  int default_parse_level;
   int escalation_threshold;
   int escalation_decaystep;
   int weight_offset;
-  int last_token;
   grn_hash *weight_set;
   grn_encoding encoding;
   snip_cond *snip_conds;
@@ -8309,18 +8342,7 @@ grn_expr_parser_open(grn_ctx *ctx)
   return ctx->rc;
 }
 
-#define PARSE(token) {\
-  if ((q->last_token == GRN_EXPR_TOKEN_STRING ||\
-       q->last_token == GRN_EXPR_TOKEN_PARENR) && \
-      !((token) == GRN_EXPR_TOKEN_PARENR || \
-        (token) == GRN_EXPR_TOKEN_LOGICAL_AND ||\
-        (token) == GRN_EXPR_TOKEN_LOGICAL_OR ||\
-        (token) == GRN_EXPR_TOKEN_LOGICAL_BUT)) {\
-    grn_expr_parser(ctx->impl->parser, GRN_EXPR_TOKEN_LOGICAL_AND, 0, q);\
-  }\
-  grn_expr_parser(ctx->impl->parser, (token), 0, q);\
-  q->last_token = (token);\
-}
+#define PARSE(token) grn_expr_parser(ctx->impl->parser, (token), 0, q)
 
 static grn_rc
 get_word_(grn_ctx *ctx, efs_info *q)
@@ -8395,7 +8417,19 @@ get_word_(grn_ctx *ctx, efs_info *q)
     end += len;
   }
   GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e, start, end - start));
-  PARSE(GRN_EXPR_TOKEN_STRING);
+
+{
+  grn_obj *column, *token;
+  efs_info *efsi = q;
+  GRN_PTR_POP(&efsi->token_stack, token);
+  column = grn_ptr_value_at(&efsi->column_stack, -1);
+  grn_expr_append_obj(efsi->ctx, efsi->e, efsi->v);
+  grn_expr_append_const(efsi->ctx, efsi->e, column);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
+  grn_expr_append_code(efsi->ctx, (grn_expr *)efsi->e, token, GRN_OP_PUSH);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
+}
+  PARSE(GRN_EXPR_TOKEN_QSTRING);
   return GRN_SUCCESS;
 }
 
@@ -8448,7 +8482,19 @@ get_token_(grn_ctx *ctx, efs_info *q)
           GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e,
                                                              GRN_TEXT_VALUE(&q->buf),
                                                              GRN_TEXT_LEN(&q->buf)));
-          PARSE(GRN_EXPR_TOKEN_STRING);
+
+{
+  grn_obj *column, *token;
+  efs_info *efsi = q;
+  GRN_PTR_POP(&efsi->token_stack, token);
+  column = grn_ptr_value_at(&efsi->column_stack, -1);
+  grn_expr_append_obj(efsi->ctx, efsi->e, efsi->v);
+  grn_expr_append_const(efsi->ctx, efsi->e, column);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
+  grn_expr_append_code(efsi->ctx, (grn_expr *)efsi->e, token, GRN_OP_PUSH);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
+}
+          PARSE(GRN_EXPR_TOKEN_QSTRING);
           s += len;
         }
       }
@@ -8531,7 +8577,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_PTR_PUT(ctx, &efsi.column_stack, default_column);
     GRN_INT32_PUT(ctx, &efsi.op_stack, default_op);
     GRN_INT32_PUT(ctx, &efsi.mode_stack, default_mode);
-    efsi.parse_level = parse_level;
+    efsi.default_parse_level = efsi.parse_level = parse_level;
     efsi.escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
     efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
     efsi.weight_offset = 0;
@@ -8541,6 +8587,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     get_token_(ctx, &efsi);
 
     grn_expr_parser(ctx->impl->parser, 0, 0, &efsi);
+
     /*
     {
         grn_obj strbuf;
