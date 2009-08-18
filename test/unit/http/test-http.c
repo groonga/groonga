@@ -20,13 +20,9 @@
 #include <libsoup/soup.h>
 #include <gcutter.h> /* must be included after memcached.h */
 
-#include <unistd.h> /* for exec */
-#include <sys/types.h>
-#include <signal.h>
-
 #include "../lib/grn-assertions.h"
 
-#define GROONGA_TEST_PORT "4545"
+#define GROONGA_TEST_PORT 4545
 
 /* globals */
 static gchar *tmp_directory;
@@ -37,10 +33,14 @@ static SoupSession *session;
 
 static SoupMessage *message;
 
+static grn_ctx context;
+static grn_obj *database;
+
 void
 cut_setup(void)
 {
   GError *error = NULL;
+  const gchar *db_path;
 
   tmp_directory = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
   cut_remove_path(tmp_directory, NULL);
@@ -50,21 +50,26 @@ cut_setup(void)
 
   session = NULL;
   message = NULL;
+
+  grn_ctx_init(&context, 0);
+  database = NULL;
+  db_path = cut_take_printf("%s%s%s",
+                            tmp_directory,
+                            G_DIR_SEPARATOR_S,
+                            "http.db");
   
   egg = gcut_egg_new(GROONGA, "-s",
-                     "-p", GROONGA_TEST_PORT,
-                     "-n",
-                     cut_take_printf("%s%s%s",
-                                     tmp_directory,
-                                     G_DIR_SEPARATOR_S,
-                                     "http.db"),
+                     "-p", cut_take_printf("%d", GROONGA_TEST_PORT),
+                     "-n", db_path,
                      NULL);
   gcut_egg_hatch(egg, &error);
   gcut_assert_error(error);
 
   session = soup_session_sync_new();
 
-  sleep(1);
+  g_usleep(G_USEC_PER_SEC);
+
+  database = grn_db_open(&context, db_path);
 }
 
 void
@@ -81,17 +86,40 @@ cut_teardown(void)
   if (session) {
     g_object_unref(session);
   }
+
+  if (database) {
+    grn_obj_unlink(&context, database);
+  }
+  
+  grn_ctx_fin(&context);
   
   cut_remove_path(tmp_directory, NULL);
 }
 
 static void
-assert_get(const char *path)
+assert_get(const gchar *path, const gchar *first_param, ...)
 {
+  va_list args;
+  SoupURI *uri;
+  GHashTable *params;
   guint status;
+
+  va_start(args, first_param);
   
-  message = soup_message_new("GET", cut_take_printf("%s%s", "http://localhost:" GROONGA_TEST_PORT, path));
-    
+  uri = soup_uri_new(NULL);
+  soup_uri_set_scheme(uri, SOUP_URI_SCHEME_HTTP);
+  soup_uri_set_host(uri, "localhost");
+  soup_uri_set_port(uri, GROONGA_TEST_PORT);
+  soup_uri_set_path(uri, path);
+  params = gcut_hash_table_string_string_new_va_list(first_param, args);
+  soup_uri_set_query_from_form(uri, params);
+  message = soup_message_new("GET", cut_take_string(soup_uri_to_string(uri, FALSE)));
+
+  g_hash_table_unref(params);
+  soup_uri_free(uri);
+
+  va_end(args);
+
   status = soup_session_send_message(session, message);
 
   cut_assert_equal_uint(SOUP_STATUS_OK, status);
@@ -100,7 +128,7 @@ assert_get(const char *path)
 void
 test_get_root(void)
 {
-  assert_get("/");
+  assert_get("/", NULL);
   
   cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
   cut_assert_equal_memory("", 0, message->response_body->data, message->response_body->length);
@@ -109,7 +137,7 @@ test_get_root(void)
 void
 test_get_status(void)
 {
-  assert_get("/status");
+  assert_get("/status", NULL);
   
   cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
   cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}", message->response_body->data);
@@ -118,8 +146,34 @@ test_get_status(void)
 void
 test_get_table_list(void)
 {
-  assert_get("/table_list");
+  grn_obj *users;
+  
+  assert_get("/table_list", NULL);
 
   cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
   cut_assert_equal_string("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]", message->response_body->data);
+  assert_get("/table_create",
+             "name", "users",
+             "flags", cut_take_printf("%u",
+                                      GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY),
+             "key_type", "Int8",
+             "value_type", "Object",
+             "default_tokenizer", "",
+             NULL);
+  cut_assert_equal_string("true", message->response_body->data);
+  users = grn_ctx_get(&context, "users", strlen("users"));
+  grn_test_assert_not_null(&context, users);
+  assert_get("/table_list", NULL);
+  cut_assert_equal_string("text/javascript",
+                          soup_message_headers_get_content_type(message->response_headers, NULL));
+  cut_assert_equal_string(
+    cut_take_printf("["
+                    "[\"id\",\"name\",\"path\",\"flags\",\"domain\"],"
+                    "[%u,\"users\",\"%s\",%u,%u]"
+                    "]",
+                    grn_obj_id(&context, users),
+                    grn_obj_path(&context, users),
+                    GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY | GRN_OBJ_KEY_INT,
+                    GRN_DB_INT8),
+    message->response_body->data);
 }
