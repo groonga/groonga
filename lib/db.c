@@ -5015,13 +5015,13 @@ static char *opstrs[] = {
   "NOP",
   "PUSH",
   "POP",
-  "EQUAL",
-  "NOT_EQUAL",
-  "LESS",
-  "GREATER",
-  "LESS_EQUAL",
-  "GREATER_EQUAL",
-  "MATCH",
+  "==",
+  "!=",
+  "<",
+  ">",
+  "<=",
+  ">=",
+  "%%",
   "EXACT",
   "LCP",
   "PARTIAL",
@@ -8409,6 +8409,13 @@ get_word_(grn_ctx *ctx, efs_info *q)
         ERR(GRN_INVALID_ARGUMENT, "column lookup failed");
         return ctx->rc;
       }
+      GRN_PTR_PUT(ctx, &q->column_stack, c);
+      GRN_INT32_PUT(ctx, &q->mode_stack, mode);
+
+      PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
+
+      return GRN_SUCCESS;
     } else if (*end == GRN_QUERY_PREFIX) {
       mode = GRN_OP_PREFIX;
       q->cur = end + 1;
@@ -8427,7 +8434,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
   grn_expr_append_const(efsi->ctx, efsi->e, column);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_code(efsi->ctx, (grn_expr *)efsi->e, token, GRN_OP_PUSH);
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
+  grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
 }
   PARSE(GRN_EXPR_TOKEN_QSTRING);
   return GRN_SUCCESS;
@@ -8492,7 +8499,7 @@ get_token_(grn_ctx *ctx, efs_info *q)
   grn_expr_append_const(efsi->ctx, efsi->e, column);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_code(efsi->ctx, (grn_expr *)efsi->e, token, GRN_OP_PUSH);
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
+  grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
 }
           PARSE(GRN_EXPR_TOKEN_QSTRING);
           s += len;

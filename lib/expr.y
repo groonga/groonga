@@ -35,25 +35,16 @@ query ::= query LOGICAL_OR query_element.{
 query_element ::= QSTRING.
 query_element ::= PARENL query PARENR.
 
-query_element ::= LESS query_element.
-query_element ::= GREATER query_element.
-query_element ::= LESS_EQUAL query_element.
-query_element ::= GREATER_EQUAL query_element.
-query_element ::= IN query_element.
-query_element ::= MATCH query_element.
-query_element ::= NEAR query_element.
-query_element ::= SIMILAR query_element.
-query_element ::= EXTRACT query_element.
-
-query_element ::= COLUMN LESS query_element.
-query_element ::= COLUMN GREATER query_element.
-query_element ::= COLUMN LESS_EQUAL query_element.
-query_element ::= COLUMN GREATER_EQUAL query_element.
-query_element ::= COLUMN IN query_element.
-query_element ::= COLUMN MATCH query_element.
-query_element ::= COLUMN NEAR query_element.
-query_element ::= COLUMN EXTRACT query_element.
-query_element ::= COLUMN SIMILAR query_element.
+query_element ::= RELATIVE_OP query_element.{
+  int mode;
+  GRN_UINT32_POP(&efsi->mode_stack, mode);
+}
+query_element ::= IDENTIFIER RELATIVE_OP query_element. {
+  int mode;
+  grn_obj *c;
+  GRN_PTR_POP(&efsi->column_stack, c);
+  GRN_UINT32_POP(&efsi->mode_stack, mode);
+}
 query_element ::= BRACEL expression BRACER. {
   efsi->parse_level = efsi->default_parse_level;
 }
