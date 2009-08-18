@@ -151,21 +151,23 @@ void
 test_get_table_list(void)
 {
   grn_obj *users;
+  grn_obj_flags flags;
+  const gchar *table_name = "users";
   
   assert_get("/table_list", NULL);
 
   cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
   cut_assert_equal_string("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]", message->response_body->data);
+  flags = GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY;
   assert_get("/table_create",
-             "name", "users",
-             "flags", cut_take_printf("%u",
-                                      GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY),
+             "name", table_name,
+             "flags", cut_take_printf("%u", flags),
              "key_type", "Int8",
              "value_type", "Object",
              "default_tokenizer", "",
              NULL);
   cut_assert_equal_string("true", message->response_body->data);
-  users = grn_ctx_get(&context, "users", strlen("users"));
+  users = grn_ctx_get(&context, table_name, strlen(table_name));
   grn_test_assert_not_null(&context, users);
   assert_get("/table_list", NULL);
   cut_assert_equal_string("text/javascript",
@@ -173,11 +175,12 @@ test_get_table_list(void)
   cut_assert_equal_string(
     cut_take_printf("["
                     "[\"id\",\"name\",\"path\",\"flags\",\"domain\"],"
-                    "[%u,\"users\",\"%s\",%u,%u]"
+                    "[%u,\"%s\",\"%s\",%u,%u]"
                     "]",
                     grn_obj_id(&context, users),
+                    table_name,
                     grn_obj_path(&context, users),
-                    GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY | GRN_OBJ_KEY_INT,
+                    flags | GRN_OBJ_KEY_INT,
                     GRN_DB_INT8),
     message->response_body->data);
 }
