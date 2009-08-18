@@ -15,39 +15,181 @@
   }
 }
 
-match_expression(A) ::= MATCH_OPERATOR match_expr_elements(B). {
-  /* insert(B) */
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
-  A = B + 1;
+input ::= query.
+input ::= expression.
+
+query ::= query_element.
+query ::= query query_element. {
+  grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->op_stack, -1), 2);
 }
-match_expression(A) ::= match_expr_elements(B). {
-  /* insert(B); */
-  grn_expr_append_op(efsi->ctx, efsi->e, efsi->default_mode, 2);
-  A = B + 1;
-}
-match_expr_elements(A) ::= match_expr_element(B). { A = B; }
-match_expr_elements(A) ::= match_expr_elements(B) match_expr_element(C). {
-  grn_expr_append_op(efsi->ctx, efsi->e, efsi->default_op, 2);
-  A = B + C + 1;
-}
-match_expr_elements(A) ::= match_expr_elements(B) OR match_expr_element(C). {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
-  A = B + C + 1;
-}
-match_expr_elements(A) ::= match_expr_elements(B) AND match_expr_element(C). {
+query ::= query LOGICAL_AND query_element. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
-  A = B + C + 1;
 }
-match_expr_elements(A) ::= match_expr_elements(B) BUT match_expr_element(C). {
+query ::= query LOGICAL_BUT query_element.{
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
-  A = B + C + 1;
+}
+query ::= query LOGICAL_OR query_element.{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
 }
 
-match_expr_element(A) ::= word(B). { A = B; }
-match_expr_element ::= ADJ_INC word. { puts(">"); }
-match_expr_element ::= ADJ_DEC word. { puts("<"); }
-match_expr_element ::= ADJ_NEG word. { puts("~"); }
+query_element ::= QSTRING.
+query_element ::= PARENL query PARENR.
 
-word(A) ::= WORD|PHRASE(B). { A = B; }
+query_element ::= LESS query_element.
+query_element ::= GREATER query_element.
+query_element ::= LESS_EQUAL query_element.
+query_element ::= GREATER_EQUAL query_element.
+query_element ::= IN query_element.
+query_element ::= MATCH query_element.
+query_element ::= NEAR query_element.
+query_element ::= SIMILAR query_element.
+query_element ::= EXTRACT query_element.
 
-word(A) ::= PARENL match_expr_elements(B) PARENR. { A = B; }
+query_element ::= COLUMN LESS query_element.
+query_element ::= COLUMN GREATER query_element.
+query_element ::= COLUMN LESS_EQUAL query_element.
+query_element ::= COLUMN GREATER_EQUAL query_element.
+query_element ::= COLUMN IN query_element.
+query_element ::= COLUMN MATCH query_element.
+query_element ::= COLUMN NEAR query_element.
+query_element ::= COLUMN EXTRACT query_element.
+query_element ::= COLUMN SIMILAR query_element.
+query_element ::= BRACEL expression BRACER. {
+  efsi->parse_level = efsi->default_parse_level;
+}
+query_element ::= EVAL primary_expression. {
+  efsi->parse_level = efsi->default_parse_level;
+}
+
+expression ::= assignment_expression.
+expression ::= expression COMMA assignment_expression.
+
+assignment_expression ::= conditional_expression.
+assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression SHIRTR_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expression.
+
+conditional_expression ::= logical_or_expression.
+conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression.
+
+logical_or_expression ::= logical_and_expression.
+logical_or_expression ::= logical_or_expression LOGICAL_OR logical_and_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
+}
+
+logical_and_expression ::= bitwise_or_expression.
+logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
+}
+logical_and_expression ::= logical_and_expression LOGICAL_BUT bitwise_or_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
+}
+
+bitwise_or_expression ::= bitwise_xor_expression.
+bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression.
+
+bitwise_xor_expression ::= bitwise_and_expression.
+bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression.
+
+bitwise_and_expression ::= equality_expression.
+bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression.
+
+equality_expression ::= relational_expression.
+equality_expression ::= equality_expression EQUAL relational_expression.
+equality_expression ::= equality_expression NOT_EQUAL relational_expression.
+
+relational_expression ::= shift_expression.
+relational_expression ::= relational_expression LESS shift_expression.
+relational_expression ::= relational_expression GREATER shift_expression.
+relational_expression ::= relational_expression LESS_EQUAL shift_expression.
+relational_expression ::= relational_expression GREATER_EQUAL shift_expression.
+relational_expression ::= relational_expression IN shift_expression.
+relational_expression ::= relational_expression MATCH shift_expression.
+relational_expression ::= relational_expression NEAR shift_expression.
+relational_expression ::= relational_expression SIMILAR shift_expression.
+relational_expression ::= relational_expression EXTRACT shift_expression.
+
+shift_expression ::= additive_expression.
+shift_expression ::= shift_expression SHIFTL additive_expression.
+shift_expression ::= shift_expression SHIFTR additive_expression.
+shift_expression ::= shift_expression SHIFTRR additive_expression.
+
+additive_expression ::= multiplicative_expression.
+additive_expression ::= additive_expression PLUS multiplicative_expression.
+additive_expression ::= additive_expression MINUS multiplicative_expression.
+
+multiplicative_expression ::= unary_expression.
+multiplicative_expression ::= multiplicative_expression STAR unary_expression.
+multiplicative_expression ::= multiplicative_expression SLASH unary_expression.
+multiplicative_expression ::= multiplicative_expression MOD unary_expression.
+
+unary_expression ::= postfix_expression.
+unary_expression ::= DELETE unary_expression.
+unary_expression ::= INCR unary_expression.
+unary_expression ::= DECR unary_expression.
+unary_expression ::= PLUS unary_expression.
+unary_expression ::= MINUS unary_expression.
+unary_expression ::= NOT unary_expression.
+unary_expression ::= ADJ_INC unary_expression.
+unary_expression ::= ADJ_DEC unary_expression.
+unary_expression ::= ADJ_NEG unary_expression.
+
+postfix_expression ::= lefthand_side_expression.
+postfix_expression ::= lefthand_side_expression INCR.
+postfix_expression ::= lefthand_side_expression DECR.
+
+lefthand_side_expression ::= call_expression.
+lefthand_side_expression ::= member_expression.
+
+call_expression ::= member_expression arguments.
+
+member_expression ::= primary_expression.
+member_expression ::= member_expression member_expression_part.
+
+primary_expression ::= object_literal.
+primary_expression ::= PARENL expression PARENR.
+primary_expression ::= IDENTIFIER.
+primary_expression ::= array_literal.
+primary_expression ::= DECIMAL.
+primary_expression ::= HEX_INTEGER.
+primary_expression ::= STRING.
+primary_expression ::= BOOLEAN.
+primary_expression ::= NULL.
+
+array_literal ::= BRACKETL elision BRACKETR.
+array_literal ::= BRACKETL element_list elision BRACKETR.
+array_literal ::= BRACKETL element_list BRACKETR.
+
+elision ::= COMMA.
+elision ::= elision COMMA.
+
+element_list ::= assignment_expression.
+element_list ::= elision assignment_expression.
+element_list ::= element_list elision assignment_expression.
+
+object_literal ::= BRACEL property_name_and_value_list RBRACE.
+
+property_name_and_value_list ::= .
+property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value.
+
+property_name_and_value ::= property_name COLON assignment_expression.
+property_name ::= IDENTIFIER|STRING|DECIMAL.
+
+member_expression_part ::= BRACKETL expression BRACKETR.
+member_expression_part ::= DOT IDENTIFIER.
+
+arguments ::= PARENL argument_list(A) PARENR. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, A);
+}
+argument_list(A) ::= . { A = 0; }
+argument_list(A) ::= assignment_expression. { A = 1; }
+argument_list(A) ::= argument_list(B) COMMA assignment_expression. { A = B + 1; }

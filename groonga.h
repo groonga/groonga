@@ -1728,7 +1728,6 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_TIME_VALUE GRN_INT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
-#define GRN_PTR_VALUE_AT(obj,offset) (((grn_obj **)GRN_BULK_HEAD(obj))[offset])
 
 #define GRN_BOOL_PUT(ctx,obj,val) do {\
   unsigned char _val = (unsigned char)(val);\
