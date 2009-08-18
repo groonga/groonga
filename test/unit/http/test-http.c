@@ -241,3 +241,49 @@ test_get_column_list(void)
                     grn_obj_id(&context, users)),
     message);
 }
+
+void
+test_select(void)
+{
+  const gchar *table_name = "users";
+  const gchar *column_name = "age";
+  const gchar *hayamizu_name = "Hayamizu";
+  gint hayamizu_age = 22;
+  grn_obj *users;
+  grn_obj *age;
+  grn_id hayamizu_id;
+  grn_obj age_value;
+  
+  users = grn_table_create(&context, table_name, strlen(table_name),
+                           NULL, GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
+                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT),
+                           NULL);
+  grn_test_assert_not_null(&context, users);
+  age = grn_column_create(&context, users, column_name, strlen(column_name),
+                          NULL, GRN_OBJ_PERSISTENT | GRN_OBJ_COLUMN_SCALAR,
+                          grn_ctx_at(&context, GRN_DB_INT32));
+  grn_test_assert_not_null(&context, age);
+
+  hayamizu_id = grn_table_add(&context, users,
+                              hayamizu_name, strlen(hayamizu_name),
+                              NULL);
+  grn_test_assert_not_nil(hayamizu_id);
+  cut_assert_equal_uint(1, grn_table_size(&context, users));
+
+  GRN_INT32_INIT(&age_value, 0);
+  GRN_INT32_SET(&context, &age_value, 22);
+  grn_obj_set_value(&context, age, hayamizu_id, &age_value, GRN_OBJ_SET);
+  grn_obj_unlink(&context, &age_value);
+
+  assert_get("/select",
+             "table", table_name,
+             "query", cut_take_printf("%s:%d", column_name, hayamizu_age),
+             NULL);
+  assert_equal_response_body(
+    cut_take_printf("[1,"
+                    "[\"_id\",\"_key\",\"%s\"],"
+                    "[%u,\"%s\",%d]"
+                    "]",
+                    column_name, hayamizu_id, hayamizu_name, hayamizu_age),
+    message);
+}
