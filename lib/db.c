@@ -3452,6 +3452,17 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
               }
             }
             break;
+          case GRN_UVECTOR :
+          case GRN_BULK :
+            {
+              grn_io_win jw;
+              void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
+              if (v) {
+                grn_bulk_write(ctx, value, v, len);
+                grn_ja_unref(ctx, &jw);
+              }
+            }
+            break;
           default :
             ERR(GRN_INVALID_ARGUMENT, "vecotr or bulk required");
             break;
@@ -8430,9 +8441,9 @@ get_word_(grn_ctx *ctx, efs_info *q)
   efs_info *efsi = q;
   GRN_PTR_POP(&efsi->token_stack, token);
   column = grn_ptr_value_at(&efsi->column_stack, -1);
-  grn_expr_append_obj(efsi->ctx, efsi->e, efsi->v);
+    grn_expr_append_obj(efsi->ctx, efsi->e, efsi->v);
   grn_expr_append_const(efsi->ctx, efsi->e, column);
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_code(efsi->ctx, (grn_expr *)efsi->e, token, GRN_OP_PUSH);
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
 }
@@ -8495,9 +8506,9 @@ get_token_(grn_ctx *ctx, efs_info *q)
   efs_info *efsi = q;
   GRN_PTR_POP(&efsi->token_stack, token);
   column = grn_ptr_value_at(&efsi->column_stack, -1);
-  grn_expr_append_obj(efsi->ctx, efsi->e, efsi->v);
+    grn_expr_append_obj(efsi->ctx, efsi->e, efsi->v);
   grn_expr_append_const(efsi->ctx, efsi->e, column);
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OBJ_GET_VALUE, 2);
   grn_expr_append_code(efsi->ctx, (grn_expr *)efsi->e, token, GRN_OP_PUSH);
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
 }
@@ -8595,16 +8606,14 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
 
     grn_expr_parser(ctx->impl->parser, 0, 0, &efsi);
 
-    /*
     {
         grn_obj strbuf;
         GRN_TEXT_INIT(&strbuf, 0);
         grn_expr_inspect(ctx, &strbuf, expr);
         GRN_TEXT_PUTC(ctx, &strbuf, '\0');
-        puts(GRN_TEXT_VALUE(&strbuf));
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
         GRN_OBJ_FIN(ctx, &strbuf);
     }
-    */
 
     /*
     efsi.opt.vector_size = DEFAULT_WEIGHT_VECTOR_SIZE;
