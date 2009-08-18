@@ -86,3 +86,21 @@ test_get_root(void)
     cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
     cut_assert_equal_memory("", 0, message->response_body->data, message->response_body->length);
 }
+
+void
+test_get_status(void)
+{
+    SoupSession *session;
+    SoupMessage *message;
+    guint status;
+
+    session = soup_session_sync_new();
+    message = soup_message_new("GET", "http://localhost:" GROONGA_TEST_PORT "/status");
+    gcut_take_object(G_OBJECT(session));
+    gcut_take_object(G_OBJECT(message));
+
+    status = soup_session_send_message(session, message);
+    cut_assert_equal_uint(SOUP_STATUS_OK, status);
+    cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+    cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}", message->response_body->data);
+}
