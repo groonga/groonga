@@ -1,6 +1,8 @@
 if WITH_CUTTER
+if WITH_SOUP
 noinst_LTLIBRARIES =				\
 	test-http.la
+endif
 endif
 
 INCLUDES =			\

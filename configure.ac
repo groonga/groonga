@@ -321,7 +321,12 @@ if test "$ac_cv_use_cutter" != "no"; then
     AC_DEFINE(WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
   fi
   PKG_CHECK_MODULES(SOUP, libsoup-2.4,
-                    [soup_exists=yes], [soup_exists=no])
+                    [ac_cv_soup_exists=yes], [ac_cv_soup_exists=no])
+  AM_CONDITIONAL([WITH_SOUP],
+                 [test "$ac_cv_soup_exists" = "yes"])
+  if test "$ac_cv_soup_exists" = "yes"; then
+    AC_DEFINE(WITH_SOUP, 1, [Define to 1 if you use libsoup])
+  fi
 else
   AM_CONDITIONAL([WITH_LIBMEMCACHED], 0)
 fi
