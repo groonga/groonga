@@ -67,6 +67,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/util/Makefile
                  test/unit/core/Makefile
                  test/unit/memcached/Makefile
+		 test/unit/http/Makefile
                  test/ql/Makefile
                  test/benchmark/Makefile
                  test/benchmark/lib/Makefile
@@ -319,6 +320,8 @@ if test "$ac_cv_use_cutter" != "no"; then
   if test "$ac_cv_have_libmemcached_memcached_h" = "yes"; then
     AC_DEFINE(WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
   fi
+  PKG_CHECK_MODULES(SOUP, libsoup-2.4,
+                    [soup_exists=yes], [soup_exists=no])
 else
   AM_CONDITIONAL([WITH_LIBMEMCACHED], 0)
 fi

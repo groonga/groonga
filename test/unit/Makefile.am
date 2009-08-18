@@ -3,7 +3,8 @@ SUBDIRS =		\
 	fixtures	\
 	util		\
 	core		\
-	memcached
+	memcached	\
+	http
 
 if WITH_CUTTER
 TESTS = run-test.sh
