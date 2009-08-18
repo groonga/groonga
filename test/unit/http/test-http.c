@@ -210,6 +210,16 @@ test_get_column_list(void)
                            grn_ctx_at(&context, GRN_DB_INT8),
                            grn_ctx_at(&context, GRN_DB_OBJECT));
   grn_test_assert_not_null(&context, users);
-  assert_get("/column_list", NULL);
-  assert_equal_response_body("", message);
+  assert_get("/column_list", "table", table_name, NULL);
+  assert_equal_response_body(
+    "[[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"]]",
+    message);
+
+  assert_get("/column_create",
+             "table", table_name,
+             "name", "age",
+             "flags", cut_take_printf("%u", GRN_OBJ_COLUMN_SCALAR),
+             "type", "Text",
+             NULL);
+  assert_equal_response_body("true", message);
 }
