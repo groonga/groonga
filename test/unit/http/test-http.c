@@ -135,12 +135,20 @@ assert_equal_response_body(const gchar *expected, SoupMessage *message)
   cut_assert_equal_string(expected, message->response_body->data);
 }
 
+static void
+assert_equal_content_type(const gchar *expected, SoupMessage *message)
+{
+  const gchar *actual;
+  actual = soup_message_headers_get_content_type(message->response_headers, NULL);
+  cut_assert_equal_string(expected, actual);
+}
+
 void
 test_get_root(void)
 {
   assert_get("/", NULL);
   
-  cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+  assert_equal_content_type("text/javascript", message);
   assert_equal_response_body("", message);
 }
 
@@ -149,7 +157,7 @@ test_get_status(void)
 {
   assert_get("/status", NULL);
   
-  cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+  assert_equal_content_type("text/javascript", message);
   cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}", message->response_body->data);
 }
 
@@ -162,7 +170,7 @@ test_get_table_list(void)
   
   assert_get("/table_list", NULL);
 
-  cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+  assert_equal_content_type("text/javascript", message);
   assert_equal_response_body("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]", message);
   flags = GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY;
   assert_get("/table_create",
@@ -176,8 +184,7 @@ test_get_table_list(void)
   users = grn_ctx_get(&context, table_name, strlen(table_name));
   grn_test_assert_not_null(&context, users);
   assert_get("/table_list", NULL);
-  cut_assert_equal_string("text/javascript",
-                          soup_message_headers_get_content_type(message->response_headers, NULL));
+  assert_equal_content_type("text/javascript", message);
   assert_equal_response_body(
     cut_take_printf("["
                     "[\"id\",\"name\",\"path\",\"flags\",\"domain\"],"
