@@ -114,3 +114,12 @@ test_get_status(void)
   cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
   cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}", message->response_body->data);
 }
+
+void
+test_get_table_list(void)
+{
+  assert_get("/table_list");
+
+  cut_assert_equal_string("text/javascript", soup_message_headers_get_content_type(message->response_headers, NULL));
+  cut_assert_equal_string("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]", message->response_body->data);
+}
