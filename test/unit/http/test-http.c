@@ -199,3 +199,17 @@ test_get_table_list(void)
                     GRN_DB_INT8),
     message);
 }
+
+void
+test_get_column_list(void)
+{
+  const gchar *table_name = "users";
+  grn_obj *users;
+  users = grn_table_create(&context, table_name, strlen(table_name),
+                           NULL, GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
+                           grn_ctx_at(&context, GRN_DB_INT8),
+                           grn_ctx_at(&context, GRN_DB_OBJECT));
+  grn_test_assert_not_null(&context, users);
+  assert_get("/column_list", NULL);
+  assert_equal_response_body("", message);
+}
