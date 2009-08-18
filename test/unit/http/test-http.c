@@ -108,21 +108,21 @@ assert_get(const gchar *path, const gchar *first_param, ...)
     g_object_unref(message);
   }
 
-  va_start(args, first_param);
-  
   uri = soup_uri_new(NULL);
   soup_uri_set_scheme(uri, SOUP_URI_SCHEME_HTTP);
   soup_uri_set_host(uri, "localhost");
   soup_uri_set_port(uri, GROONGA_TEST_PORT);
   soup_uri_set_path(uri, path);
+
+  va_start(args, first_param);
   params = gcut_hash_table_string_string_new_va_list(first_param, args);
-  soup_uri_set_query_from_form(uri, params);
-  message = soup_message_new("GET", cut_take_string(soup_uri_to_string(uri, FALSE)));
-
-  g_hash_table_unref(params);
-  soup_uri_free(uri);
-
   va_end(args);
+
+  soup_uri_set_query_from_form(uri, params);
+  g_hash_table_unref(params);
+
+  message = soup_message_new("GET", cut_take_string(soup_uri_to_string(uri, FALSE)));
+  soup_uri_free(uri);
 
   status = soup_session_send_message(session, message);
 
@@ -158,7 +158,8 @@ test_get_status(void)
   assert_get("/status", NULL);
   
   assert_equal_content_type("text/javascript", message);
-  cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}", message->response_body->data);
+  cut_assert_match("{\"starttime\":\\d+,\"uptime\":\\d+}",
+                   message->response_body->data);
 }
 
 void
@@ -171,7 +172,8 @@ test_get_table_list(void)
   assert_get("/table_list", NULL);
 
   assert_equal_content_type("text/javascript", message);
-  assert_equal_response_body("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]", message);
+  assert_equal_response_body("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]",
+                             message);
   flags = GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY;
   assert_get("/table_create",
              "name", table_name,
