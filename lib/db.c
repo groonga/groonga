@@ -5334,22 +5334,24 @@ exit :
 
 /* data flow info */
 typedef struct {
-  grn_obj *value;
   grn_expr_code *code;
+  grn_id domain;
+  unsigned char type;
 } grn_expr_dfi;
 
-#define DFI_POP(e,dfi) {\
+#define DFI_POP(e,d) {\
   if (GRN_BULK_VSIZE(&(e)->dfi) >= sizeof(grn_expr_dfi)) {\
     GRN_BULK_INCR_LEN((&(e)->dfi), -(sizeof(grn_expr_dfi)));\
-    dfi = (grn_expr_dfi *)(GRN_BULK_CURR(&(e)->dfi));\
+    (d) = (grn_expr_dfi *)(GRN_BULK_CURR(&(e)->dfi));\
   } else {\
-    dfi = NULL;\
+    (d) = NULL;\
   }\
 }
 
-#define DFI_PUT(e,v,c) {\
+#define DFI_PUT(e,t,d,c) {\
   grn_expr_dfi dfi;\
-  dfi.value = (v);\
+  dfi.type = (t);\
+  dfi.domain = (d);\
   dfi.code = (c);\
   grn_bulk_write(ctx, &(e)->dfi, (char *)&dfi, sizeof(grn_expr_dfi));\
 }
@@ -5536,6 +5538,8 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 grn_obj *
 grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
 {
+  uint8_t type = GRN_VOID;
+  grn_id domain = GRN_ID_NIL;
   grn_expr_dfi *dfi;
   grn_expr_code *code;
   grn_obj *res = NULL;
@@ -5550,7 +5554,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_PUSH :
       if (obj) {
         PUSH_CODE(e, op, obj, nargs, code);
-        DFI_PUT(e, obj, code);
+        DFI_PUT(e, obj->header.type, GRN_OBJ_GET_DOMAIN(obj), code);
       } else {
         ERR(GRN_INVALID_ARGUMENT, "obj not assigned for GRN_OP_PUSH");
         goto exit;
@@ -5574,8 +5578,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       {
         int i = nargs;
         while (i--) { DFI_POP(e, dfi); }
-        DFI_PUT(e, NULL, code); /* cannot identify type of function return value */
       }
+      DFI_PUT(e, type, domain, code); /* cannot identify type of return value */
       break;
     case GRN_OP_INTERN :
       if (obj && CONSTP(obj)) {
@@ -5585,10 +5589,12 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         if (value) {
           obj = value;
           op = GRN_OP_PUSH;
+          type = obj->header.type;
+          domain = GRN_OBJ_GET_DOMAIN(obj);
         }
       }
       PUSH_CODE(e, op, obj, nargs, code);
-      DFI_PUT(e, obj, code);
+      DFI_PUT(e, type, domain, code);
       break;
     case GRN_OP_TABLE_CREATE :
     case GRN_OP_EXPR_GET_VAR :
@@ -5621,36 +5627,70 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         if (!obj) { DFI_POP(e, dfi); }
         while (i--) { DFI_POP(e, dfi); }
       }
-      DFI_PUT(e, NULL, code); /* cannot identify type of function return value */
+      DFI_PUT(e, type, domain, code);
       break;
     case GRN_OP_GET_VALUE :
       {
-        grn_obj *v, *s = obj;
-        if (!s) {
-          DFI_POP(e, dfi);
-          s = dfi->value;
-        }
-        if (nargs > 1) {
-          DFI_POP(e, dfi);
-          v = dfi->value;
+        grn_id vdomain = GRN_ID_NIL;
+        if (obj) {
+          if (nargs == 1) {
+            grn_obj *v = grn_expr_get_var_by_offset(ctx, expr, 0);
+            if (v) { vdomain = GRN_OBJ_GET_DOMAIN(v); }
+          } else {
+            DFI_POP(e, dfi);
+            vdomain = dfi->domain;
+          }
+          if (vdomain && obj->header.type == GRN_BULK) {
+            grn_obj *table = grn_ctx_at(ctx, vdomain);
+            grn_obj *col = grn_obj_column(ctx, table, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
+            if (col) {
+              obj = col;
+              type = col->header.type;
+              domain = grn_obj_get_range(ctx, col);
+            }
+          }
+          PUSH_CODE(e, op, obj, nargs, code);
         } else {
-          v = grn_expr_get_var_by_offset(ctx, expr, 0);
+          grn_expr_dfi *dfi0;
+          DFI_POP(e, dfi0);
+          if (nargs == 1) {
+            grn_obj *v = grn_expr_get_var_by_offset(ctx, expr, 0);
+            if (v) { vdomain = GRN_OBJ_GET_DOMAIN(v); }
+          } else {
+            DFI_POP(e, dfi);
+            vdomain = dfi->domain;
+          }
+          if (dfi0->code->op == GRN_OP_PUSH) {
+            dfi0->code->op = op;
+            dfi0->code->nargs = nargs;
+            obj = dfi0->code->value;
+            if (obj && obj->header.type == GRN_BULK) {
+              grn_obj *table = grn_ctx_at(ctx, vdomain);
+              grn_obj *col = grn_obj_column(ctx, table, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
+              if (col) {
+                dfi0->code->value = col;
+                type = col->header.type;
+                domain = grn_obj_get_range(ctx, col);
+              }
+            }
+          } else {
+            PUSH_CODE(e, op, obj, nargs, code);
+          }
         }
-        if (v && obj && obj->header.type == GRN_BULK) {
-          grn_obj *table = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(v));
-          grn_obj *column = grn_obj_column(ctx, table, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
-          if (column) { obj = column; }
-        }
-        PUSH_CODE(e, op, obj, nargs, code);
-        DFI_PUT(e, obj, code);
       }
+      DFI_PUT(e, type, domain, code);
       break;
     case GRN_OP_SET_VALUE :
       {
-        grn_obj *v = obj;
-        if (!v) {
+        if (obj) {
+          type = obj->header.type;
+          domain = GRN_OBJ_GET_DOMAIN(obj);
+        } else {
           DFI_POP(e, dfi);
-          v = dfi->value;
+          if (dfi) {
+            type = dfi->type;
+            domain = dfi->domain;
+          }
         }
         DFI_POP(e, dfi);
         if (dfi && (dfi->code)) {
@@ -5658,8 +5698,9 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
             dfi->code->op = GRN_OP_GET_REF;
           }
         }
-        DFI_PUT(e, v, code);
+        PUSH_CODE(e, op, obj, nargs, code);
       }
+      DFI_PUT(e, type, domain, code);
       break;
     default :
       break;
@@ -6073,6 +6114,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
 {
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
+  grn_obj *v0 = grn_expr_get_var_by_offset(ctx, expr, 0);
   if (expr->header.type == GRN_PROC) { return grn_proc_call(ctx, expr); }
   GRN_API_ENTER;
   {
@@ -6168,20 +6210,18 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
       case GRN_OP_SET_VALUE :
         {
           grn_obj *value, *var;
-          POP1(var);
-          // var = GRN_OBJ_RESOLVE(ctx, var);
           POP1(value);
           value = GRN_OBJ_RESOLVE(ctx, value);
+          POP1(var);
+          // var = GRN_OBJ_RESOLVE(ctx, var);
           VAR_SET_VALUE(ctx, var, value);
-        }
-        {
-          grn_rc rc;
-          grn_obj *col, *rec, *val;
-          POP2PUSH1(val, rec, res);
+
+        /*
           col = code->value;
-          rc = grn_obj_set_value(ctx, col, GRN_RECORD_VALUE(rec), val, GRN_OBJ_SET);
-          res->header.domain = GRN_DB_INT32;
-          GRN_INT32_SET(ctx, res, rc);
+          grn_obj_set_value(ctx, col, GRN_RECORD_VALUE(rec), val, GRN_OBJ_SET);
+        */
+
+          PUSH1(value);
         }
         code++;
         break;
@@ -6191,9 +6231,32 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           do {
             uint32_t size;
             const char *value;
-            POP1PUSH1(rec, res);
-            col = code->value;
-            value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
+            if (code->nargs == 1) {
+              rec = v0;
+              if (code->value) {
+                col = code->value;
+                res = vp++;
+              } else {
+                POP1PUSH1(col, res);
+              }
+            } else {
+              if (code->value) {
+                col = code->value;
+                POP1PUSH1(rec, res);
+              } else {
+                POP2PUSH1(rec, col, res);
+              }
+            }
+            if (col->header.type == GRN_BULK) {
+              grn_obj *table = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(rec));
+              col = grn_obj_column(ctx, table, GRN_BULK_HEAD(col), GRN_BULK_VSIZE(col));
+            }
+            if (col && GRN_DB_OBJP(col)) {
+              value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
+            } else {
+              ERR(GRN_INVALID_ARGUMENT, "col resolve failed");
+              goto exit;
+            }
             grn_bulk_write_from(ctx, res, value, 0, size);
             code++;
           } while (code < ce && code->op == GRN_OP_GET_VALUE);
