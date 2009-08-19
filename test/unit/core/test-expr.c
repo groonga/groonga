@@ -815,13 +815,9 @@ test_expr_parse(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   cut_assert_not_null(v);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-
   PARSE("hoge + moge");
-
   PARSE("poyo");
-
   grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
-
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
@@ -829,7 +825,22 @@ test_expr_parse(void)
 
   cut_assert_equal_uint(1, grn_table_size(&context, res));
   grn_test_assert(grn_obj_close(&context, res));
-
   grn_test_assert(grn_obj_close(&context, cond));
+
+  cond = grn_expr_create(&context, NULL, 0);
+  cut_assert_not_null(cond);
+  v = grn_expr_add_var(&context, cond, NULL, 0);
+  cut_assert_not_null(v);
+  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
+  PARSE("size:14");
+  res = grn_table_create(&context, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
+  cut_assert_not_null(res);
+  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+
+  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert(grn_obj_close(&context, res));
+  grn_test_assert(grn_obj_close(&context, cond));
+
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
