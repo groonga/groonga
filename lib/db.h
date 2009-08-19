@@ -231,7 +231,6 @@ struct _grn_expr {
 
   grn_obj *consts;
   grn_obj *values;
-  grn_obj **stack;
   grn_expr_code *codes;
   uint32_t nconsts;
   uint32_t values_curr;
@@ -239,8 +238,8 @@ struct _grn_expr {
   uint32_t values_size;
   uint32_t codes_curr;
   uint32_t codes_size;
-  uint32_t stack_curr;
-  uint32_t stack_size;
+
+  grn_obj dfi;
 };
 
 /**
