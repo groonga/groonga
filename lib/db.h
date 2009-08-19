@@ -217,8 +217,9 @@ grn_obj *grn_ctx_pop(grn_ctx *ctx);
 typedef struct _grn_expr grn_expr;
 
 typedef struct {
-  grn_operator op;
   grn_obj *value;
+  uint32_t nargs;
+  grn_operator op;
 } grn_expr_code;
 
 struct _grn_expr {

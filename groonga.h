@@ -793,9 +793,9 @@ typedef unsigned int grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
 
 typedef enum {
-  GRN_OP_NOP = 0,
-  GRN_OP_PUSH,
+  GRN_OP_PUSH = 0,
   GRN_OP_POP,
+  GRN_OP_NOP,
   GRN_OP_EQUAL,
   GRN_OP_NOT_EQUAL,
   GRN_OP_LESS,
@@ -1794,9 +1794,18 @@ GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr,
 GRN_API grn_obj *grn_expr_get_var(grn_ctx *ctx, grn_obj *expr,
                                   const char *name, unsigned name_size);
 GRN_API grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset);
-GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
-GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
+
+GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
+                                     grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
+                                       grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr,
+                                           const char *str, unsigned str_size,
+                                           grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
+                                           grn_operator op, int nargs);
 GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
+
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
