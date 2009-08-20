@@ -5674,6 +5674,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
                 domain = grn_obj_get_range(ctx, col);
               }
             }
+            code = dfi0->code;
           } else {
             PUSH_CODE(e, op, obj, nargs, code);
           }
@@ -6247,7 +6248,11 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
       case GRN_OP_SET_VALUE :
         {
           grn_obj *value, *var;
-          POP1(value);
+          if (code->value) {
+            value = code->value;
+          } else {
+            POP1(value);
+          }
           value = GRN_OBJ_RESOLVE(ctx, value);
           POP1(var);
           // var = GRN_OBJ_RESOLVE(ctx, var);
