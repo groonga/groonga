@@ -206,7 +206,7 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
   (((obj)->header.type != GRN_PTR)\
    ? (obj)\
    : GRN_PTR_VALUE(obj)\
-   ? GRN_PTR_VALUE(obj)\
+      ? GRN_PTR_VALUE(obj)\
       : grn_ctx_at((ctx), (obj)->header.domain))
 
 /* expr */
