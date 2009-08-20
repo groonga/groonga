@@ -1576,6 +1576,8 @@ GRN_API grn_rc grn_text_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
 GRN_API grn_rc grn_text_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
 GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
+GRN_API grn_rc grn_text_urldec(grn_ctx *ctx, grn_obj *buf,
+                               const char *s, unsigned int len, char d);
 GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 
 typedef struct _grn_obj_format grn_obj_format;
@@ -1713,7 +1715,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   */
 
 #define GRN_TIME_USEC_PER_SEC 1000000
-#define GRN_TIME_PACK(sec, usec) ((sec) * GRN_TIME_USEC_PER_SEC + (usec))
+#define GRN_TIME_PACK(sec, usec) ((long long int)(sec) * GRN_TIME_USEC_PER_SEC + (usec))
 #define GRN_TIME_UNPACK(time_value, sec, usec) do {\
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
