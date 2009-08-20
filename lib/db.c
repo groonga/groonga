@@ -5023,24 +5023,62 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op, grn_obj **indexbuf
 /* grn_expr */
 
 static char *opstrs[] = {
-  "NOP",
   "PUSH",
   "POP",
-  "==",
-  "!=",
-  "<",
-  ">",
-  "<=",
-  ">=",
-  "%%",
-  "EXACT",
-  "LCP",
-  "PARTIAL",
-  "UNSPLIT",
+  "NOP",
+  "CALL",
+  "INTERN",
+  "GET_REF",
+  "GET_VALUE",
+  "AND",
+  "BUT",
+  "OR",
+  "ASSIGN",
+  "STAR_ASSIGN",
+  "SLASH_ASSIGN",
+  "MOD_ASSIGN",
+  "PLUS_ASSIGN",
+  "MINUS_ASSIGN",
+  "SHIFTL_ASSIGN",
+  "SHIRTR_ASSIGN",
+  "SHIFTRR_ASSIGN",
+  "AND_ASSIGN",
+  "XOR_ASSIGN",
+  "OR_ASSIGN",
+  "QUESTION",
+  "COLON",
+  "BITWISE_OR",
+  "BITWISE_XOR",
+  "BITWISE_AND",
+  "EQUAL",
+  "NOT_EQUAL",
+  "LESS",
+  "GREATER",
+  "LESS_EQUAL",
+  "GREATER_EQUAL",
+  "IN",
+  "MATCH",
   "NEAR",
   "NEAR2",
   "SIMILAR",
   "TERM_EXTRACT",
+  "SHIFTL",
+  "SHIFTR",
+  "SHIFTRR",
+  "PLUS",
+  "MINUS",
+  "STAR",
+  "SLASH",
+  "MOD",
+  "DELETE",
+  "INCR",
+  "DECR",
+  "NOT",
+  "ADJUST",
+  "EXACT",
+  "LCP",
+  "PARTIAL",
+  "UNSPLIT",
   "PREFIX",
   "SUFFIX",
   "GEO_DISTANCE1",
@@ -5050,15 +5088,6 @@ static char *opstrs[] = {
   "GEO_WITHINP5",
   "GEO_WITHINP6",
   "GEO_WITHINP8",
-  "AND",
-  "OR",
-  "BUT",
-  "ADJUST",
-  "CALL",
-  "INTERN",
-  "VAR_SET_VALUE",
-  ".",
-  "=",
   "OBJ_SEARCH",
   "EXPR_GET_VAR",
   "TABLE_CREATE",
@@ -5682,7 +5711,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       DFI_PUT(e, type, domain, code);
       break;
-    case GRN_OP_SET_VALUE :
+    case GRN_OP_ASSIGN :
       {
         if (obj) {
           type = obj->header.type;
@@ -6250,7 +6279,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         }
         code++;
         break;
-      case GRN_OP_SET_VALUE :
+      case GRN_OP_ASSIGN :
         {
           grn_obj *value, *var;
           if (code->value) {
@@ -7387,7 +7416,7 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
           q->cur = end + 2;
           break;
         case '=' :
-          mode = GRN_OP_SET_VALUE;
+          mode = GRN_OP_ASSIGN;
           q->cur = end + 2;
           break;
         case '<' :
@@ -7437,11 +7466,11 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
     ERR(GRN_INVALID_ARGUMENT, "column missing");
     return ctx->rc;
   }
-  if (mode == GRN_OP_SET_VALUE) {
+  if (mode == GRN_OP_ASSIGN) {
     grn_expr_append_obj(ctx, q->e, q->v, GRN_OP_PUSH, 1);
     grn_expr_append_const(ctx, q->e, column, GRN_OP_PUSH, 1);
     grn_expr_append_const_str(ctx, q->e, start, end - start, GRN_OP_PUSH, 1);
-    grn_expr_append_op(ctx, q->e, GRN_OP_SET_VALUE, 2);
+    grn_expr_append_op(ctx, q->e, GRN_OP_ASSIGN, 2);
   } else {
     grn_expr_append_obj(ctx, q->e, q->v, GRN_OP_PUSH, 1);
     grn_expr_append_const(ctx, q->e, column, GRN_OP_PUSH, 1);
@@ -8500,7 +8529,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
           q->cur = end + 2;
           break;
         case '=' :
-          mode = GRN_OP_SET_VALUE;
+          mode = GRN_OP_ASSIGN;
           q->cur = end + 2;
           break;
         case '<' :
@@ -8654,19 +8683,19 @@ parse0(grn_ctx *ctx, efs_info *q)
       q->cur++;
       if (op->weight < 127) { op->weight++; }
       op->op = GRN_OP_ADJUST;
-      PARSE(GRN_EXPR_TOKEN_ADJ_INC);
+      PARSE(GRN_EXPR_TOKEN_ADJUST);
       break;
     case GRN_QUERY_ADJ_DEC :
       q->cur++;
       if (op->weight > -128) { op->weight--; }
       op->op = GRN_OP_ADJUST;
-      PARSE(GRN_EXPR_TOKEN_ADJ_DEC);
+      PARSE(GRN_EXPR_TOKEN_ADJUST);
       break;
     case GRN_QUERY_ADJ_NEG :
       q->cur++;
       op->op = GRN_OP_ADJUST;
       op->weight = -1;
-      PARSE(GRN_EXPR_TOKEN_ADJ_NEG);
+      PARSE(GRN_EXPR_TOKEN_ADJUST);
       break;
     case GRN_QUERY_PARENL :
       q->cur++;
@@ -8734,7 +8763,7 @@ get_identifier(grn_ctx *ctx, efs_info *q)
       case '[' : case ']' : case ',' : case '.' : case ':' :
       case '@' : case '?' : case '"' : case '*' : case '+' :
       case '-' : case '|' : case '/' : case '%' : case '!' :
-      case '^' : case '&' : case '>' : case '<' : case '=' :
+      case '^' : case '&' : case '>' : case '<' : case '=' : case '~' :
         goto done;
         break;
       }
@@ -8748,6 +8777,12 @@ done :
       goto exit;
     }
     break;
+  case 'f' :
+    if (len == 6 && !memcmp(q->cur, "false", 6)) {
+      PARSE(GRN_EXPR_TOKEN_BOOLEAN);
+      goto exit;
+    }
+    break;
   case 'i' :
     if (len == 2 && !memcmp(q->cur, "in", 2)) {
       PARSE(GRN_EXPR_TOKEN_IN);
@@ -8757,6 +8792,12 @@ done :
   case 'n' :
     if (len == 4 && !memcmp(q->cur, "null", 4)) {
       PARSE(GRN_EXPR_TOKEN_NULL);
+      goto exit;
+    }
+    break;
+  case 't' :
+    if (len == 4 && !memcmp(q->cur, "true", 4)) {
+      PARSE(GRN_EXPR_TOKEN_BOOLEAN);
       goto exit;
     }
     break;
@@ -8841,6 +8882,10 @@ parse4(grn_ctx *ctx, efs_info *q)
       q->cur++;
       PARSE(GRN_EXPR_TOKEN_MATCH);
       break;
+    case '~' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_BITWISE_NOT);
+      break;
     case '?' :
       q->cur++;
       PARSE(GRN_EXPR_TOKEN_QUESTION);
@@ -8863,19 +8908,19 @@ parse4(grn_ctx *ctx, efs_info *q)
         break;
       case 'T' :
         q->cur++;
-        PARSE(GRN_EXPR_TOKEN_EXTRACT);
+        PARSE(GRN_EXPR_TOKEN_TERM_EXTRACT);
         break;
       case '>' :
         q->cur++;
-        PARSE(GRN_EXPR_TOKEN_ADJ_INC);
+        PARSE(GRN_EXPR_TOKEN_ADJUST);
         break;
       case '<' :
         q->cur++;
-        PARSE(GRN_EXPR_TOKEN_ADJ_DEC);
+        PARSE(GRN_EXPR_TOKEN_ADJUST);
         break;
       case '~' :
         q->cur++;
-        PARSE(GRN_EXPR_TOKEN_ADJ_NEG);
+        PARSE(GRN_EXPR_TOKEN_ADJUST);
         break;
       case '=' :
         q->cur++;
