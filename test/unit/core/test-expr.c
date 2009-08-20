@@ -893,3 +893,49 @@ test_expr_set_value(void)
 
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
+
+void
+test_expr_set_value2(void)
+{
+  grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+  prepare_data(&textbuf, &intbuf);
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
+  cut_assert_not_null(cond);
+  cut_assert_not_null(v);
+  PARSE("size:14");
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert(grn_obj_close(&context, res));
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+
+  GRN_TEXT_SETS(&context, &textbuf, "size");
+  grn_expr_append_const(&context, expr, &textbuf, GRN_OP_GET_VALUE, 1);
+  GRN_UINT32_SET(&context, &intbuf, 14);
+  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_SET_VALUE, 2);
+  {
+    grn_id id;
+    grn_table_cursor *tc;
+    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, 0, 0);
+    cut_assert_not_null(tc);
+    while ((id = grn_table_cursor_next(&context, tc))) {
+      GRN_RECORD_SET(&context, v, id);
+      grn_expr_exec(&context, expr);
+    }
+    cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+  }
+  grn_test_assert(grn_obj_close(&context, expr));
+
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+  cut_assert_equal_uint(10, grn_table_size(&context, res));
+  grn_test_assert(grn_obj_close(&context, res));
+
+  grn_test_assert(grn_obj_close(&context, cond));
+
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+}

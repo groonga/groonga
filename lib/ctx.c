@@ -1016,7 +1016,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
       grn_io_mapinfo *mi = &ctx->impl->segs[i];
       if (mi->count & SEGMENT_VLEN) {
         if (mi->map != header) {
-          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%d", ptr, i);
+          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed.. ptr=%p seg=%d", ptr, i);
           return;
         }
         //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d (%d)", i, mi->nref * grn_pagesize);
@@ -1024,7 +1024,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
         mi->map = NULL;
       } else {
         if (!mi->map) {
-          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%d", ptr, i);
+          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed... ptr=%p seg=%d", ptr, i);
           return;
         }
         mi->count--;

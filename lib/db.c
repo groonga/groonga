@@ -5814,7 +5814,12 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   s1 = sp[-2];\
 }
 
-#define POP1PUSH1(arg,value) {\
+#define ALLOC1(value) {\
+  s1 = s0;\
+  *sp++ = s0 = value = vp++;\
+}
+
+#define POP1ALLOC1(arg,value) {\
   arg = s0;\
   if (EXPRVP(s0)) {\
     value = s0;\
@@ -5824,7 +5829,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   }\
 }
 
-#define POP2PUSH1(arg1,arg2,value) {\
+#define POP2ALLOC1(arg1,arg2,value) {\
   if (EXPRVP(s0)) { vp--; }\
   if (EXPRVP(s1)) { vp--; }\
   arg2 = s0;\
@@ -6146,16 +6151,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
             rec = v0;
             if (code->value) {
               col = code->value;
-              res = vp++;
+              ALLOC1(res);
             } else {
-              POP1PUSH1(col, res);
+              POP1ALLOC1(col, res);
             }
           } else {
             if (code->value) {
               col = code->value;
-              POP1PUSH1(rec, res);
+              POP1ALLOC1(rec, res);
             } else {
-              POP2PUSH1(rec, col, res);
+              POP2ALLOC1(rec, col, res);
             }
           }
           if (col->header.type == GRN_BULK) {
@@ -6278,16 +6283,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
               rec = v0;
               if (code->value) {
                 col = code->value;
-                res = vp++;
+                ALLOC1(res);
               } else {
-                POP1PUSH1(col, res);
+                POP1ALLOC1(col, res);
               }
             } else {
               if (code->value) {
                 col = code->value;
-                POP1PUSH1(rec, res);
+                POP1ALLOC1(rec, res);
               } else {
-                POP2PUSH1(rec, col, res);
+                POP2ALLOC1(rec, col, res);
               }
             }
             if (col->header.type == GRN_BULK) {
@@ -6458,7 +6463,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
       case GRN_OP_AND :
         {
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           if (GRN_INT32_VALUE(x) == 0 || GRN_INT32_VALUE(y) == 0) {
             GRN_INT32_SET(ctx, res, 0);
           } else {
@@ -6471,7 +6476,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
       case GRN_OP_OR :
         {
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           if (GRN_INT32_VALUE(x) == 0 && GRN_INT32_VALUE(y) == 0) {
             GRN_INT32_SET(ctx, res, 0);
           } else {
@@ -6503,7 +6508,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         {
           int r;
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           do_eq(x, y, r);
           GRN_INT32_SET(ctx, res, r);
           res->header.domain = GRN_DB_INT32;
@@ -6514,7 +6519,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         {
           int r;
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           do_eq(x, y, r);
           GRN_INT32_SET(ctx, res, 1 - r);
           res->header.domain = GRN_DB_INT32;
@@ -6525,7 +6530,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         {
           int r;
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           do_compare(x, y, r, <);
           GRN_INT32_SET(ctx, res, r);
           res->header.domain = GRN_DB_INT32;
@@ -6536,7 +6541,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         {
           int r;
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           do_compare(x, y, r, >);
           GRN_INT32_SET(ctx, res, r);
           res->header.domain = GRN_DB_INT32;
@@ -6547,7 +6552,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         {
           int r;
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           do_compare(x, y, r, <=);
           GRN_INT32_SET(ctx, res, r);
           res->header.domain = GRN_DB_INT32;
@@ -6558,7 +6563,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
         {
           int r;
           grn_obj *x, *y;
-          POP2PUSH1(x, y, res);
+          POP2ALLOC1(x, y, res);
           do_compare(x, y, r, >=);
           GRN_INT32_SET(ctx, res, r);
           res->header.domain = GRN_DB_INT32;
@@ -6575,7 +6580,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           POP1(e);
           lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1PUSH1(e, res);
+          POP1ALLOC1(e, res);
           lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
           y = (lat2 - lat1);
@@ -6595,7 +6600,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           POP1(e);
           lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1PUSH1(e, res);
+          POP1ALLOC1(e, res);
           lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           x = sin(fabs(lng2 - lng1) * 0.5);
           y = sin(fabs(lat2 - lat1) * 0.5);
@@ -6615,7 +6620,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           POP1(e);
           lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1PUSH1(e, res);
+          POP1ALLOC1(e, res);
           lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           p = (lat1 + lat2) * 0.5;
           q = (1 - GEO_BES_C3 * sin(p) * sin(p));
@@ -6639,7 +6644,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           POP1(e);
           lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1PUSH1(e, res);
+          POP1ALLOC1(e, res);
           lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           p = (lat1 + lat2) * 0.5;
           q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
@@ -6666,7 +6671,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           POP1(e);
           lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1PUSH1(e, res);
+          POP1ALLOC1(e, res);
           x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
           y = (lat1 - lat0);
           d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
@@ -6701,7 +6706,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           POP1(e);
           lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1PUSH1(e, res);
+          POP1ALLOC1(e, res);
           lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
           x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
           y = (lat1 - lat0);
@@ -6733,7 +6738,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr)
           la2 = GRN_INT32_VALUE(e);
           POP1(e);
           ln3 = GRN_INT32_VALUE(e);
-          POP1PUSH1(e, res);
+          POP1ALLOC1(e, res);
           la3 = GRN_INT32_VALUE(e);
           r = ((ln2 <= ln0) && (ln0 <= ln3) && (la2 <= la0) && (la0 <= la3));
           GRN_INT32_SET(ctx, res, r);
