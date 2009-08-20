@@ -206,7 +206,7 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
   (((obj)->header.type != GRN_PTR)\
    ? (obj)\
    : GRN_PTR_VALUE(obj)\
-   ? GRN_PTR_VALUE(obj)\
+      ? GRN_PTR_VALUE(obj)\
       : grn_ctx_at((ctx), (obj)->header.domain))
 
 /* expr */
@@ -217,8 +217,9 @@ grn_obj *grn_ctx_pop(grn_ctx *ctx);
 typedef struct _grn_expr grn_expr;
 
 typedef struct {
-  grn_operator op;
   grn_obj *value;
+  uint32_t nargs;
+  grn_operator op;
 } grn_expr_code;
 
 struct _grn_expr {
@@ -230,7 +231,6 @@ struct _grn_expr {
 
   grn_obj *consts;
   grn_obj *values;
-  grn_obj **stack;
   grn_expr_code *codes;
   uint32_t nconsts;
   uint32_t values_curr;
@@ -238,8 +238,8 @@ struct _grn_expr {
   uint32_t values_size;
   uint32_t codes_curr;
   uint32_t codes_size;
-  uint32_t stack_curr;
-  uint32_t stack_size;
+
+  grn_obj dfi;
 };
 
 /**
