@@ -2135,6 +2135,13 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     case GRN_DB_LONG_TEXT :
       grn_text_esc(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
       break;
+    case GRN_DB_BOOL :
+      if (*((unsigned char *)GRN_BULK_HEAD(obj))) {
+        GRN_TEXT_PUTS(ctx, bulk, "true");
+      } else {
+        GRN_TEXT_PUTS(ctx, bulk, "false");
+      }
+      break;
     case GRN_DB_INT32 :
       grn_text_itoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT32_VALUE(obj) : 0);
       break;

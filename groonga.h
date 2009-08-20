@@ -793,9 +793,9 @@ typedef unsigned int grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
 
 typedef enum {
-  GRN_OP_NOP = 0,
-  GRN_OP_PUSH,
+  GRN_OP_PUSH = 0,
   GRN_OP_POP,
+  GRN_OP_NOP,
   GRN_OP_EQUAL,
   GRN_OP_NOT_EQUAL,
   GRN_OP_LESS,
@@ -826,9 +826,9 @@ typedef enum {
   GRN_OP_ADJUST,
   GRN_OP_CALL,
   GRN_OP_INTERN,
-  GRN_OP_VAR_SET_VALUE,
-  GRN_OP_OBJ_GET_VALUE,
-  GRN_OP_OBJ_SET_VALUE,
+  GRN_OP_GET_REF,
+  GRN_OP_GET_VALUE,
+  GRN_OP_SET_VALUE,
   GRN_OP_OBJ_SEARCH,
   GRN_OP_EXPR_GET_VAR,
   GRN_OP_TABLE_CREATE,
@@ -1794,18 +1794,33 @@ GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr,
 GRN_API grn_obj *grn_expr_get_var(grn_ctx *ctx, grn_obj *expr,
                                   const char *name, unsigned name_size);
 GRN_API grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset);
-GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
-GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
+
+GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
+                                     grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
+                                       grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr,
+                                           const char *str, unsigned str_size,
+                                           grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
+                                           grn_operator op, int nargs);
 GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
+
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
-GRN_API grn_rc grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                                grn_obj *res, grn_operator op);
+GRN_API grn_obj *grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
+                                  grn_obj *res, grn_operator op);
 
 GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                             const char *str, unsigned str_size, grn_obj *res);
+
+#define GRN_EXPR_CREATE_FOR_QUERY(ctx,table,expr,var) \
+  if (((expr) = grn_expr_create((ctx), NULL, 0)) &&\
+      ((var) = grn_expr_add_var((ctx), (expr), NULL, 0))) {\
+    GRN_RECORD_INIT((var), 0, grn_obj_id((ctx), (table)));\
+  }
 
 GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
                                           const char *name, unsigned name_size,
