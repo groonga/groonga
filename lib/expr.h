@@ -60,5 +60,4 @@
 #define GRN_EXPR_TOKEN_NULL                           60
 #define GRN_EXPR_TOKEN_BRACKETL                       61
 #define GRN_EXPR_TOKEN_BRACKETR                       62
-#define GRN_EXPR_TOKEN_RBRACE                         63
-#define GRN_EXPR_TOKEN_DOT                            64
+#define GRN_EXPR_TOKEN_DOT                            63

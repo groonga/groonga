@@ -167,7 +167,7 @@ element_list ::= assignment_expression.
 element_list ::= elision assignment_expression.
 element_list ::= element_list elision assignment_expression.
 
-object_literal ::= BRACEL property_name_and_value_list RBRACE.
+object_literal ::= BRACEL property_name_and_value_list BRACER.
 
 property_name_and_value_list ::= .
 property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value.

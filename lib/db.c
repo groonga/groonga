@@ -8569,7 +8569,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
 }
 
 static grn_rc
-get_token_(grn_ctx *ctx, efs_info *q)
+parse0(grn_ctx *ctx, efs_info *q)
 {
   int option = 0;
   grn_operator mode;
@@ -8578,10 +8578,10 @@ get_token_(grn_ctx *ctx, efs_info *q)
   op->weight = DEFAULT_WEIGHT;
   for (;;) {
     skip_space(ctx, q);
-    if (q->cur >= q->str_end) { return GRN_END_OF_DATA; }
+    if (q->cur >= q->str_end) { goto exit; }
     switch (*q->cur) {
     case '\0' :
-      return GRN_END_OF_DATA;
+      goto exit;
       break;
     case GRN_QUERY_PARENR :
       q->cur++;
@@ -8603,7 +8603,7 @@ get_token_(grn_ctx *ctx, efs_info *q)
           len = grn_charlen(ctx, s, q->str_end);
           if (len == 0) {
             /* invalid string containing malformed multibyte char */
-            return GRN_END_OF_DATA;
+            goto exit;
           } else if (len == 1) {
             if (*s == GRN_QUERY_QUOTER) {
               q->cur = s + 1;
@@ -8614,10 +8614,12 @@ get_token_(grn_ctx *ctx, efs_info *q)
             }
           }
           GRN_TEXT_PUT(ctx, &q->buf, s, len);
-          GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e,
-                                                             GRN_TEXT_VALUE(&q->buf),
-                                                             GRN_TEXT_LEN(&q->buf)));
+          s += len;
 
+        }
+        GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e,
+                                                           GRN_TEXT_VALUE(&q->buf),
+                                                           GRN_TEXT_LEN(&q->buf)));
 {
   grn_obj *column, *token;
   efs_info *efsi = q;
@@ -8629,8 +8631,7 @@ get_token_(grn_ctx *ctx, efs_info *q)
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
 }
           PARSE(GRN_EXPR_TOKEN_QSTRING);
-          s += len;
-        }
+
       }
 
       break;
@@ -8671,6 +8672,7 @@ get_token_(grn_ctx *ctx, efs_info *q)
       q->cur++;
       PARSE(GRN_EXPR_TOKEN_PARENL);
       break;
+    case '=' :
     case 'O' :
       if (q->cur[1] == 'R' && q->cur[2] == ' ') {
         q->cur += 2;
@@ -8683,7 +8685,406 @@ get_token_(grn_ctx *ctx, efs_info *q)
       break;
     }
   }
+exit :
+  PARSE(0);
   return GRN_SUCCESS;
+}
+
+static grn_rc
+get_string(grn_ctx *ctx, efs_info *q)
+{
+  const char *s;
+  unsigned int len;
+  grn_rc rc = GRN_END_OF_DATA;
+  GRN_BULK_REWIND(&q->buf);
+  for (s = q->cur + 1; s < q->str_end; s += len) {
+    if (!(len = grn_charlen(ctx, s, q->str_end))) { break; }
+    if (len == 1) {
+      if (*s == GRN_QUERY_QUOTER) {
+        s++;
+        rc = GRN_SUCCESS;
+        break;
+      }
+      if (*s == GRN_QUERY_ESCAPE && s + 1 < q->str_end) {
+        s++;
+        if (!(len = grn_charlen(ctx, s, q->str_end))) { break; }
+      }
+    }
+    GRN_TEXT_PUT(ctx, &q->buf, s, len);
+  }
+  q->cur = s;
+  return rc;
+}
+
+static grn_rc
+get_identifier(grn_ctx *ctx, efs_info *q)
+{
+  const char *s;
+  unsigned int len;
+  grn_rc rc = GRN_SUCCESS;
+  for (s = q->cur; s < q->str_end; s += len) {
+    if (!(len = grn_charlen(ctx, s, q->str_end))) {
+      rc = GRN_END_OF_DATA;
+      goto exit;
+    }
+    if (grn_isspace(s, q->encoding)) { goto done; }
+    if (len == 1) {
+      switch (*s) {
+      case '\0' : case '(' : case ')' : case '{' : case '}' :
+      case '[' : case ']' : case ',' : case '.' : case ':' :
+      case '@' : case '?' : case '"' : case '*' : case '+' :
+      case '-' : case '|' : case '/' : case '%' : case '!' :
+      case '^' : case '&' : case '>' : case '<' : case '=' :
+        goto done;
+        break;
+      }
+    }
+  }
+done :
+  switch (*q->cur) {
+  case 'd' :
+    if (len == 6 && !memcmp(q->cur, "delete", 6)) {
+      PARSE(GRN_EXPR_TOKEN_DELETE);
+      goto exit;
+    }
+    break;
+  case 'i' :
+    if (len == 2 && !memcmp(q->cur, "in", 2)) {
+      PARSE(GRN_EXPR_TOKEN_IN);
+      goto exit;
+    }
+    break;
+  case 'n' :
+    if (len == 4 && !memcmp(q->cur, "null", 4)) {
+      PARSE(GRN_EXPR_TOKEN_NULL);
+      goto exit;
+    }
+    break;
+  }
+  {
+    grn_obj *obj;
+    const char *name = q->cur;
+    unsigned name_size = s - q->cur;
+    if ((obj = grn_expr_get_var(ctx, q->e, name, name_size))) {
+      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
+      PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      goto exit;
+    }
+    if ((obj = grn_obj_column(ctx, q->table, name, name_size))) {
+      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
+      PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      goto exit;
+    }
+    if ((obj = grn_ctx_get(ctx, name, name_size))) {
+      if (obj->header.type == GRN_PROC) {
+        GRN_PTR_PUT(ctx, &q->token_stack, obj);
+      }
+      PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      goto exit;
+    }
+    rc = GRN_SYNTAX_ERROR;
+  }
+exit :
+  q->cur = s;
+  return rc;
+}
+
+static grn_rc
+parse4(grn_ctx *ctx, efs_info *q)
+{
+  grn_rc rc = GRN_SUCCESS;
+  for (;;) {
+    skip_space(ctx, q);
+    if (q->cur >= q->str_end) { rc = GRN_END_OF_DATA; goto exit; }
+    switch (*q->cur) {
+    case '\0' :
+      rc = GRN_END_OF_DATA;
+      goto exit;
+      break;
+    case '(' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_PARENL);
+      break;
+    case ')' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_PARENR);
+      break;
+    case '{' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_BRACEL);
+      break;
+    case '}' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_BRACER);
+      break;
+    case '[' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_BRACKETL);
+      break;
+    case ']' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_BRACKETR);
+      break;
+    case ',' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_COMMA);
+      break;
+    case '.' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_DOT);
+      break;
+    case ':' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_COLON);
+      break;
+    case '@' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_MATCH);
+      break;
+    case '?' :
+      q->cur++;
+      PARSE(GRN_EXPR_TOKEN_QUESTION);
+      break;
+    case '"' :
+      if ((rc = get_string(ctx, q))) { goto exit; }
+      grn_expr_append_const(ctx, q->e, &q->buf, GRN_OP_PUSH, 1);
+      PARSE(GRN_EXPR_TOKEN_STRING);
+      break;
+    case '*' :
+      q->cur++;
+      switch (*q->cur) {
+      case 'N' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_NEAR);
+        break;
+      case 'S' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_SIMILAR);
+        break;
+      case 'T' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_EXTRACT);
+        break;
+      case '>' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_ADJ_INC);
+        break;
+      case '<' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_ADJ_DEC);
+        break;
+      case '~' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_ADJ_NEG);
+        break;
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_STAR_ASSIGN);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_STAR);
+        break;
+      }
+      break;
+    case '+' :
+      q->cur++;
+      switch (*q->cur) {
+      case '+' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_INCR);
+        break;
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_PLUS_ASSIGN);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_PLUS);
+        break;
+      }
+      break;
+    case '-' :
+      q->cur++;
+      switch (*q->cur) {
+      case '-' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_DECR);
+        break;
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_MINUS_ASSIGN);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_MINUS);
+        break;
+      }
+      break;
+    case '|' :
+      q->cur++;
+      switch (*q->cur) {
+      case '|' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_LOGICAL_OR);
+        break;
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_OR_ASSIGN);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_BITWISE_OR);
+        break;
+      }
+      break;
+    case '/' :
+      q->cur++;
+      switch (*q->cur) {
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_SLASH_ASSIGN);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_SLASH);
+        break;
+      }
+      break;
+    case '%' :
+      q->cur++;
+      switch (*q->cur) {
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_MOD_ASSIGN);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_MOD);
+        break;
+      }
+      break;
+    case '!' :
+      q->cur++;
+      switch (*q->cur) {
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_NOT_EQUAL);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_NOT);
+        break;
+      }
+      break;
+    case '^' :
+      q->cur++;
+      switch (*q->cur) {
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_XOR_ASSIGN);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_BITWISE_XOR);
+        break;
+      }
+      break;
+    case '&' :
+      q->cur++;
+      switch (*q->cur) {
+      case '&' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
+        break;
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_AND_ASSIGN);
+        break;
+      case '!' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_LOGICAL_BUT);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_BITWISE_AND);
+        break;
+      }
+      break;
+    case '>' :
+      q->cur++;
+      switch (*q->cur) {
+      case '>' :
+        q->cur++;
+        switch (*q->cur) {
+        case '>' :
+          q->cur++;
+          switch (*q->cur) {
+          case '=' :
+            q->cur++;
+            PARSE(GRN_EXPR_TOKEN_SHIFTRR_ASSIGN);
+            break;
+          default :
+            PARSE(GRN_EXPR_TOKEN_SHIFTRR);
+            break;
+          }
+          break;
+        case '=' :
+          q->cur++;
+          PARSE(GRN_EXPR_TOKEN_SHIRTR_ASSIGN);
+          break;
+        default :
+          PARSE(GRN_EXPR_TOKEN_SHIFTR);
+          break;
+        }
+        break;
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_GREATER_EQUAL);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_GREATER);
+        break;
+      }
+      break;
+    case '<' :
+      q->cur++;
+      switch (*q->cur) {
+      case '<' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_SHIFTL_ASSIGN);
+        break;
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_LESS_EQUAL);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_LESS);
+        break;
+      }
+      break;
+    case '=' :
+      q->cur++;
+      switch (*q->cur) {
+      case '=' :
+        q->cur++;
+        PARSE(GRN_EXPR_TOKEN_EQUAL);
+        break;
+      default :
+        PARSE(GRN_EXPR_TOKEN_ASSIGN);
+        break;
+      }
+      break;
+    case '0' : case '1' : case '2' : case '3' : case '4' :
+    case '5' : case '6' : case '7' : case '8' : case '9' :
+      {
+        /* todo : support other numeric types */
+        const char *rest;
+        int i = grn_atoi(q->cur, q->str_end, &rest);
+        q->cur = rest;
+        grn_expr_append_const_int(ctx, q->e, i, GRN_OP_PUSH, 1);
+        PARSE(GRN_EXPR_TOKEN_DECIMAL);
+      }
+      break;
+    default :
+      if ((rc = get_identifier(ctx, q))) { goto exit; }
+      break;
+    }
+  }
+exit :
+  PARSE(0);
+  return rc;
 }
 
 grn_rc
@@ -8718,9 +9119,11 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
 
-    get_token_(ctx, &efsi);
-
-    grn_expr_parser(ctx->impl->parser, 0, 0, &efsi);
+    if (parse_level < 4) {
+      parse0(ctx, &efsi);
+    } else {
+      parse4(ctx, &efsi);
+    }
 
     {
         grn_obj strbuf;
