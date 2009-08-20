@@ -7029,19 +7029,26 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
   }
 }
 
-grn_rc
+grn_obj *
 grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-               grn_obj *res, grn_operator op)
+                 grn_obj *res, grn_operator op)
 {
   grn_obj *v;
-  if (res->header.type != GRN_TABLE_HASH_KEY ||
-      (res->header.domain != DB_OBJ(table)->id)) {
-    ERR(GRN_INVALID_ARGUMENT, "hash table required");
-    return ctx->rc;
+  if (res) {
+    if (res->header.type != GRN_TABLE_HASH_KEY ||
+        (res->header.domain != DB_OBJ(table)->id)) {
+      ERR(GRN_INVALID_ARGUMENT, "hash table required");
+      return NULL;
+    }
+  } else {
+    if (!(res = grn_table_create(ctx, NULL, 0, NULL,
+                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
+      return NULL;
+    }
   }
   if (!(v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
     ERR(GRN_INVALID_ARGUMENT, "at least one variable must be defined");
-    return ctx->rc;
+    return NULL;
   }
   GRN_API_ENTER;
   if (op == GRN_OP_AND || (op == GRN_OP_OR && !GRN_HASH_SIZE((grn_hash *)res))) {
@@ -7087,7 +7094,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   }
   grn_table_select_(ctx, table, expr, v, res, op);
 exit :
-  GRN_API_RETURN(ctx->rc);
+  GRN_API_RETURN(res);
 }
 
 grn_rc

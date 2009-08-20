@@ -489,7 +489,7 @@ test_table_select_equal(void)
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
-  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+  cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
   cut_assert_equal_uint(1, grn_table_size(&context, res));
 
@@ -523,7 +523,7 @@ test_table_select_equal_indexed(void)
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
-  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+  cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
   cut_assert_equal_uint(1, grn_table_size(&context, res));
 
@@ -744,7 +744,7 @@ test_table_select_match(void)
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
-  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+  cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
   cut_assert_equal_uint(6, grn_table_size(&context, res));
 
@@ -790,7 +790,7 @@ test_table_select_match_equal(void)
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
 
-  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+  cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
   cut_assert_equal_uint(2, grn_table_size(&context, res));
 
@@ -821,7 +821,7 @@ test_expr_parse(void)
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
-  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+  cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
   cut_assert_equal_uint(1, grn_table_size(&context, res));
   grn_test_assert(grn_obj_close(&context, res));
@@ -836,10 +836,35 @@ test_expr_parse(void)
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
-  grn_test_assert(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+  cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
   cut_assert_equal_uint(3, grn_table_size(&context, res));
   grn_test_assert(grn_obj_close(&context, res));
+  grn_test_assert(grn_obj_close(&context, cond));
+
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+}
+
+void
+test_expr_set_value(void)
+{
+  grn_obj *cond, *v, *res, textbuf, intbuf;
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+  prepare_data(&textbuf, &intbuf);
+
+  GRN_EXPR_CREATE_FOR_SELECT(&context, docs, cond, v);
+  cut_assert_not_null(cond);
+  cut_assert_not_null(v);
+  PARSE("size:14");
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+
+  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert(grn_obj_close(&context, res));
+
+
+
   grn_test_assert(grn_obj_close(&context, cond));
 
   grn_test_assert(grn_obj_close(&context, &textbuf));

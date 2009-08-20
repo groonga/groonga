@@ -1810,11 +1810,17 @@ GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
-GRN_API grn_rc grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                                grn_obj *res, grn_operator op);
+GRN_API grn_obj *grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
+                                  grn_obj *res, grn_operator op);
 
 GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                             const char *str, unsigned str_size, grn_obj *res);
+
+#define GRN_EXPR_CREATE_FOR_SELECT(ctx,table,expr,var) \
+  if (((expr) = grn_expr_create((ctx), NULL, 0)) &&\
+      ((var) = grn_expr_add_var((ctx), (expr), NULL, 0))) {\
+    GRN_RECORD_INIT((var), 0, grn_obj_id((ctx), (table)));\
+  }
 
 GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
                                           const char *name, unsigned name_size,
