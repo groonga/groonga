@@ -329,6 +329,7 @@ if test "$ac_cv_use_cutter" != "no"; then
   fi
 else
   AM_CONDITIONAL([WITH_LIBMEMCACHED], 0)
+  AM_CONDITIONAL([WITH_SOUP], 0)
 fi
 
 # check GLib for benchmark
