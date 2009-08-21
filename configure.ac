@@ -328,8 +328,8 @@ if test "$ac_cv_use_cutter" != "no"; then
     AC_DEFINE(WITH_SOUP, 1, [Define to 1 if you use libsoup])
   fi
 else
-  AM_CONDITIONAL([WITH_LIBMEMCACHED], 0)
-  AM_CONDITIONAL([WITH_SOUP], 0)
+  AM_CONDITIONAL([WITH_LIBMEMCACHED], false)
+  AM_CONDITIONAL([WITH_SOUP], false)
 fi
 
 # check GLib for benchmark
