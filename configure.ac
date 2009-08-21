@@ -320,16 +320,19 @@ if test "$ac_cv_use_cutter" != "no"; then
   if test "$ac_cv_have_libmemcached_memcached_h" = "yes"; then
     AC_DEFINE(WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
   fi
-  PKG_CHECK_MODULES(SOUP, libsoup-2.4,
-                    [ac_cv_soup_exists=yes], [ac_cv_soup_exists=no])
-  AM_CONDITIONAL([WITH_SOUP],
-                 [test "$ac_cv_soup_exists" = "yes"])
-  if test "$ac_cv_soup_exists" = "yes"; then
-    AC_DEFINE(WITH_SOUP, 1, [Define to 1 if you use libsoup])
+
+  m4_ifdef([AC_CHECK_SOUPCUTTER], [
+  AC_CHECK_SOUPCUTTER
+  ],
+  [ac_cv_use_soupcutter="no"])
+  AM_CONDITIONAL([WITH_SOUPCUTTER],
+                 [test "$ac_cv_use_soupcutter" = "yes"])
+  if test "$ac_cv_use_soupcutter" = "yes"; then
+    AC_DEFINE(WITH_SOUPCUTTER, 1, [Define to 1 if you use soupcutter])
   fi
 else
   AM_CONDITIONAL([WITH_LIBMEMCACHED], false)
-  AM_CONDITIONAL([WITH_SOUP], false)
+  AM_CONDITIONAL([WITH_SOUPCUTTER], false)
 fi
 
 # check GLib for benchmark
