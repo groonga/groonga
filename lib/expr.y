@@ -149,7 +149,9 @@ postfix_expression ::= lefthand_side_expression DECR.
 lefthand_side_expression ::= call_expression.
 lefthand_side_expression ::= member_expression.
 
-call_expression ::= member_expression arguments.
+call_expression ::= member_expression arguments(A). {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, A);
+}
 
 member_expression ::= primary_expression.
 member_expression ::= member_expression member_expression_part.
@@ -186,9 +188,7 @@ property_name ::= IDENTIFIER|STRING|DECIMAL.
 member_expression_part ::= BRACKETL expression BRACKETR.
 member_expression_part ::= DOT IDENTIFIER.
 
-arguments ::= PARENL argument_list(A) PARENR. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, A);
-}
+arguments(A) ::= PARENL argument_list(B) PARENR. { A = B; }
 argument_list(A) ::= . { A = 0; }
 argument_list(A) ::= assignment_expression. { A = 1; }
 argument_list(A) ::= argument_list(B) COMMA assignment_expression. { A = B + 1; }

@@ -5603,11 +5603,11 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_CALL :
       PUSH_CODE(e, op, obj, nargs, code);
-      if (!obj) { DFI_POP(e, dfi); }
       {
         int i = nargs;
         while (i--) { DFI_POP(e, dfi); }
       }
+      if (!obj) { DFI_POP(e, dfi); }
       DFI_PUT(e, type, domain, code); /* cannot identify type of return value */
       break;
     case GRN_OP_INTERN :
@@ -6146,9 +6146,11 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs)
 grn_rc
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
-  if (expr->header.type == GRN_PROC) { return grn_proc_call(ctx, expr, nargs); }
+  uint32_t stack_curr = ctx->impl->stack_curr;
   GRN_API_ENTER;
-  {
+  if (expr->header.type == GRN_PROC) {
+    grn_proc_call(ctx, expr, nargs);
+  } else {
     grn_expr *e = (grn_expr *)expr;
     register grn_obj *s0 = NULL, *s1 = NULL, **sp, *vp = e->values;
     grn_obj *res = NULL, *v0 = grn_expr_get_var_by_offset(ctx, expr, 0);
@@ -6210,11 +6212,33 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           grn_obj *proc;
           if (code->value) {
+            if (ctx->impl->stack + code->nargs < sp) {
+              ERR(GRN_INVALID_ARGUMENT, "stack error");
+              goto exit;
+            }
             proc = code->value;
+            WITH_SPSAVE({
+              grn_expr_exec(ctx, proc, code->nargs);
+            });
           } else {
-            POP1(proc);
+            if (ctx->impl->stack + code->nargs + 1 < sp) {
+              ERR(GRN_INVALID_ARGUMENT, "stack error");
+              goto exit;
+            }
+            proc = sp[-(code->nargs + 1)];
+            WITH_SPSAVE({
+              grn_expr_exec(ctx, proc, code->nargs);
+            });
+            POP1(res);
+            {
+              grn_obj *proc_;
+              POP1(proc_);
+              if (proc != proc_) {
+                GRN_LOG(ctx, GRN_LOG_WARNING, "stack may be corrupt");
+              }
+            }
+            PUSH1(res);
           }
-          grn_proc_call(ctx, proc, code->nargs);
         }
         code++;
         break;
@@ -6377,6 +6401,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           WITH_SPSAVE({
             grn_table_select(ctx, table, expr, res, (grn_operator)GRN_UINT32_VALUE(op));
           });
+          PUSH1(res);
         }
         code++;
         break;
@@ -6786,6 +6811,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
     }
     ctx->impl->stack_curr = sp - ctx->impl->stack;
   }
+  if (ctx->impl->stack_curr + nargs != stack_curr + 1) {
+    GRN_LOG(ctx, GRN_LOG_WARNING, "nargs=%d stack balance=%d",
+            nargs, stack_curr - ctx->impl->stack_curr);
+  }
 exit :
   GRN_API_RETURN(ctx->rc);
 }
@@ -6997,7 +7026,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
 
 static void
 grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
-               grn_obj *res, grn_operator op)
+                  grn_obj *res, grn_operator op)
 {
   int32_t score;
   grn_id id, *idp;
@@ -8825,9 +8854,7 @@ done :
       goto exit;
     }
     if ((obj = grn_ctx_get(ctx, name, name_size))) {
-      if (obj->header.type == GRN_PROC) {
-        GRN_PTR_PUT(ctx, &q->token_stack, obj);
-      }
+      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       goto exit;
     }
