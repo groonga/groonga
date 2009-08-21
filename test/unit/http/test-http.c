@@ -17,8 +17,7 @@
 */
 
 #include <glib/gstdio.h>
-#include <libsoup/soup.h>
-#include <gcutter.h> /* must be included after memcached.h */
+#include <soupcutter.h> /* must be included after memcached.h */
 
 #include "../lib/grn-assertions.h"
 
@@ -30,6 +29,8 @@ static gchar *tmp_directory;
 static GCutEgg *egg;
 
 static SoupSession *session;
+
+static SoupCutClient *client;
 
 static SoupMessage *message;
 
@@ -49,6 +50,7 @@ cut_setup(void)
   }
 
   session = NULL;
+  client = NULL;
   message = NULL;
 
   grn_ctx_init(&context, 0);
@@ -85,6 +87,10 @@ cut_teardown(void)
 
   if (session) {
     g_object_unref(session);
+  }
+
+  if (client) {
+    g_object_unref(client);
   }
 
   if (database) {
@@ -146,10 +152,12 @@ assert_equal_content_type(const gchar *expected, SoupMessage *message)
 void
 test_get_root(void)
 {
-  assert_get("/", NULL);
-  
-  assert_equal_content_type("text/javascript", message);
-  assert_equal_response_body("", message);
+  client = soupcut_client_new();
+  soupcut_client_get(client, cut_take_printf("http://localhost:%u/", GROONGA_TEST_PORT), NULL);
+
+  soupcut_client_assert_response(client);
+  soupcut_client_assert_equal_content_type("text/javascript", client);
+  soupcut_client_assert_equal_body("", client);
 }
 
 void
