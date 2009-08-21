@@ -148,7 +148,8 @@ typedef union {
   void *ptr;
 } grn_user_data;
 
-typedef grn_rc grn_proc_func(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data);
+typedef grn_rc grn_proc_func(grn_ctx *ctx, int nargs, grn_obj **args,
+                             grn_user_data *user_data);
 
 struct _grn_ctx {
   grn_rc rc;
@@ -482,10 +483,12 @@ GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
  * @user_data: grn_proc_funcに渡されたuser_data
  * @nvars: 変数の数
  *
- * 現在実行中のgrn_proc_func関数から、定義されている変数(grn_expr_var)の配列とその数を取得する。
+ * user_dataをキーとして、現在実行中のgrn_proc_func関数および
+ * 定義されている変数(grn_expr_var)の配列とその数を取得する。
  **/
 
-GRN_API grn_expr_var *grn_proc_vars(grn_ctx *ctx, grn_user_data *user_data, unsigned *nvars);
+GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
+                                   grn_expr_var **vars, unsigned *nvars);
 
 /*-------------------------------------------------------------
  * table操作のための関数

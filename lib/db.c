@@ -501,16 +501,17 @@ grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr)
   return ctx->rc;
 }
 
-grn_expr_var *
-grn_proc_vars(grn_ctx *ctx, grn_user_data *user_data, unsigned *nvars)
+grn_obj *
+grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data, grn_expr_var **vars, unsigned *nvars)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (pctx->proc) {
-    return grn_expr_get_vars(ctx, (grn_obj *)pctx->proc, nvars);
+    *vars = grn_expr_get_vars(ctx, (grn_obj *)pctx->proc, nvars);
   } else {
+    *vars = NULL;
     *nvars = 0;
-    return NULL;
   }
+  return (grn_obj *)pctx->proc;
 }
 
 /* grn_table */
@@ -1226,7 +1227,7 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
   } else {
     {
       if (DB_OBJ(tc)->finalizer) {
-        DB_OBJ(tc)->finalizer(ctx, (grn_obj *)tc, &DB_OBJ(tc)->user_data);
+        DB_OBJ(tc)->finalizer(ctx, 1, (grn_obj **)&tc, &DB_OBJ(tc)->user_data);
       }
       if (DB_OBJ(tc)->source) {
         GRN_FREE(DB_OBJ(tc)->source);
@@ -2098,7 +2099,7 @@ typedef struct {
 } default_set_value_hook_data;
 
 static grn_rc
-default_set_value_hook(grn_ctx *ctx, grn_obj *obj, grn_user_data *user_data)
+default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (!pctx) {
@@ -3160,9 +3161,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         while (hooks) {
           pctx.currh = hooks;
           if (hooks->proc) {
-            rc = hooks->proc->funcs[PROC_INIT](ctx, obj, &pctx.user_data);
+            rc = hooks->proc->funcs[PROC_INIT](ctx, 1, &obj, &pctx.user_data);
           } else {
-            rc = default_set_value_hook(ctx, obj, &pctx.user_data);
+            rc = default_set_value_hook(ctx, 1, &obj, &pctx.user_data);
           }
           if (rc) { goto exit; }
           hooks = hooks->next;
@@ -4193,7 +4194,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     if (GRN_DB_OBJP(obj)) {
       grn_hook_entry entry;
       if (DB_OBJ(obj)->finalizer) {
-        DB_OBJ(obj)->finalizer(ctx, obj, &DB_OBJ(obj)->user_data);
+        DB_OBJ(obj)->finalizer(ctx, 1, &obj, &DB_OBJ(obj)->user_data);
       }
       if (DB_OBJ(obj)->source) {
         GRN_FREE(DB_OBJ(obj)->source);
@@ -6124,21 +6125,22 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 grn_rc
 grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs)
 {
-  grn_proc *p = (grn_proc *)proc;
   grn_proc_ctx pctx;
+  grn_proc *p = (grn_proc *)proc;
+  grn_obj **args = ctx->impl->stack + ctx->impl->stack_curr - nargs;
   GRN_API_ENTER;
   pctx.proc = p;
   pctx.user_data.ptr = NULL;
   if (p->funcs[PROC_INIT]) {
-    p->funcs[PROC_INIT](ctx, proc, &pctx.user_data);
+    p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);
   }
   pctx.phase = PROC_NEXT;
   if (p->funcs[PROC_NEXT]) {
-    p->funcs[PROC_NEXT](ctx, proc, &pctx.user_data);
+    p->funcs[PROC_NEXT](ctx, nargs, args, &pctx.user_data);
   }
   pctx.phase = PROC_FIN;
   if (p->funcs[PROC_FIN]) {
-    p->funcs[PROC_FIN](ctx, proc, &pctx.user_data);
+    p->funcs[PROC_FIN](ctx, nargs, args, &pctx.user_data);
   }
   GRN_API_RETURN(ctx->rc);
 }
