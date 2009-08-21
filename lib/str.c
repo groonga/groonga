@@ -2026,6 +2026,31 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
   return GRN_SUCCESS;
 }
 
+/* for parse query string, get_uri_token() instead */
+grn_rc
+grn_text_urldec(grn_ctx *ctx, grn_obj *buf, const char *p, unsigned int len, char d)
+{
+  const char *e = p + len;
+  while (p < e) {
+    if (*p == d) {
+      break;
+    } else if (*p == '%' && p + 3 <= e) {
+      const char *r;
+      unsigned int c = grn_htoui(p + 1, p + 3, &r);
+      if (p + 3 == r) {
+        GRN_TEXT_PUTC(ctx, buf, c);
+      } else {
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid \% sequence (%c%c)", p + 1, p + 2);
+      }
+      p += 3;
+    } else {
+      GRN_TEXT_PUTC(ctx, buf, *p);
+      p++;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 static const char *weekdays[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 static const char *months[12] = {
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -2134,6 +2159,13 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     case GRN_DB_TEXT :
     case GRN_DB_LONG_TEXT :
       grn_text_esc(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
+      break;
+    case GRN_DB_BOOL :
+      if (*((unsigned char *)GRN_BULK_HEAD(obj))) {
+        GRN_TEXT_PUTS(ctx, bulk, "true");
+      } else {
+        GRN_TEXT_PUTS(ctx, bulk, "false");
+      }
       break;
     case GRN_DB_INT32 :
       grn_text_itoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT32_VALUE(obj) : 0);

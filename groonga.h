@@ -793,24 +793,62 @@ typedef unsigned int grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
 
 typedef enum {
-  GRN_OP_NOP = 0,
-  GRN_OP_PUSH,
+  GRN_OP_PUSH = 0,
   GRN_OP_POP,
+  GRN_OP_NOP,
+  GRN_OP_CALL,
+  GRN_OP_INTERN,
+  GRN_OP_GET_REF,
+  GRN_OP_GET_VALUE,
+  GRN_OP_AND,
+  GRN_OP_BUT,
+  GRN_OP_OR,
+  GRN_OP_ASSIGN,
+  GRN_OP_STAR_ASSIGN,
+  GRN_OP_SLASH_ASSIGN,
+  GRN_OP_MOD_ASSIGN,
+  GRN_OP_PLUS_ASSIGN,
+  GRN_OP_MINUS_ASSIGN,
+  GRN_OP_SHIFTL_ASSIGN,
+  GRN_OP_SHIRTR_ASSIGN,
+  GRN_OP_SHIFTRR_ASSIGN,
+  GRN_OP_AND_ASSIGN,
+  GRN_OP_XOR_ASSIGN,
+  GRN_OP_OR_ASSIGN,
+  GRN_OP_QUESTION,
+  GRN_OP_COLON,
+  GRN_OP_BITWISE_OR,
+  GRN_OP_BITWISE_XOR,
+  GRN_OP_BITWISE_AND,
   GRN_OP_EQUAL,
   GRN_OP_NOT_EQUAL,
   GRN_OP_LESS,
   GRN_OP_GREATER,
   GRN_OP_LESS_EQUAL,
   GRN_OP_GREATER_EQUAL,
+  GRN_OP_IN,
   GRN_OP_MATCH,
-  GRN_OP_EXACT,
-  GRN_OP_LCP,
-  GRN_OP_PARTIAL,
-  GRN_OP_UNSPLIT,
   GRN_OP_NEAR,
   GRN_OP_NEAR2,
   GRN_OP_SIMILAR,
   GRN_OP_TERM_EXTRACT,
+  GRN_OP_SHIFTL,
+  GRN_OP_SHIFTR,
+  GRN_OP_SHIFTRR,
+  GRN_OP_PLUS,
+  GRN_OP_MINUS,
+  GRN_OP_STAR,
+  GRN_OP_SLASH,
+  GRN_OP_MOD,
+  GRN_OP_DELETE,
+  GRN_OP_INCR,
+  GRN_OP_DECR,
+  GRN_OP_NOT,
+  GRN_OP_ADJUST,
+  GRN_OP_EXACT,
+  GRN_OP_LCP,
+  GRN_OP_PARTIAL,
+  GRN_OP_UNSPLIT,
   GRN_OP_PREFIX,
   GRN_OP_SUFFIX,
   GRN_OP_GEO_DISTANCE1,
@@ -820,15 +858,6 @@ typedef enum {
   GRN_OP_GEO_WITHINP5,
   GRN_OP_GEO_WITHINP6,
   GRN_OP_GEO_WITHINP8,
-  GRN_OP_AND,
-  GRN_OP_OR,
-  GRN_OP_BUT,
-  GRN_OP_ADJUST,
-  GRN_OP_CALL,
-  GRN_OP_INTERN,
-  GRN_OP_VAR_SET_VALUE,
-  GRN_OP_OBJ_GET_VALUE,
-  GRN_OP_OBJ_SET_VALUE,
   GRN_OP_OBJ_SEARCH,
   GRN_OP_EXPR_GET_VAR,
   GRN_OP_TABLE_CREATE,
@@ -1576,6 +1605,8 @@ GRN_API grn_rc grn_text_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
 GRN_API grn_rc grn_text_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
 GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
+GRN_API grn_rc grn_text_urldec(grn_ctx *ctx, grn_obj *buf,
+                               const char *s, unsigned int len, char d);
 GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 
 typedef struct _grn_obj_format grn_obj_format;
@@ -1713,7 +1744,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   */
 
 #define GRN_TIME_USEC_PER_SEC 1000000
-#define GRN_TIME_PACK(sec, usec) ((sec) * GRN_TIME_USEC_PER_SEC + (usec))
+#define GRN_TIME_PACK(sec, usec) ((long long int)(sec) * GRN_TIME_USEC_PER_SEC + (usec))
 #define GRN_TIME_UNPACK(time_value, sec, usec) do {\
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
@@ -1794,18 +1825,33 @@ GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr,
 GRN_API grn_obj *grn_expr_get_var(grn_ctx *ctx, grn_obj *expr,
                                   const char *name, unsigned name_size);
 GRN_API grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset);
-GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
-GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
+
+GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
+                                     grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
+                                       grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr,
+                                           const char *str, unsigned str_size,
+                                           grn_operator op, int nargs);
+GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
+                                           grn_operator op, int nargs);
 GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
+
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
-GRN_API grn_rc grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                                grn_obj *res, grn_operator op);
+GRN_API grn_obj *grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
+                                  grn_obj *res, grn_operator op);
 
 GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                             const char *str, unsigned str_size, grn_obj *res);
+
+#define GRN_EXPR_CREATE_FOR_QUERY(ctx,table,expr,var) \
+  if (((expr) = grn_expr_create((ctx), NULL, 0)) &&\
+      ((var) = grn_expr_add_var((ctx), (expr), NULL, 0))) {\
+    GRN_RECORD_INIT((var), 0, grn_obj_id((ctx), (table)));\
+  }
 
 GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
                                           const char *name, unsigned name_size,
