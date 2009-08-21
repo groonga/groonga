@@ -148,8 +148,8 @@ typedef union {
   void *ptr;
 } grn_user_data;
 
-typedef grn_rc grn_proc_func(grn_ctx *ctx, int nargs, grn_obj **args,
-                             grn_user_data *user_data);
+typedef grn_obj *grn_proc_func(grn_ctx *ctx, int nargs, grn_obj **args,
+                               grn_user_data *user_data);
 
 struct _grn_ctx {
   grn_rc rc;

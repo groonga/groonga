@@ -31,23 +31,26 @@ typedef struct {
   grn_obj stat_;
 } grn_uvector_tokenizer_info;
 
-static grn_rc
+static grn_obj *
 uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *str;
   grn_uvector_tokenizer_info *token;
-  if (!(str = grn_ctx_pop(ctx))) { return GRN_INVALID_ARGUMENT; }
-  if (!(token = GRN_MALLOC(sizeof(grn_uvector_tokenizer_info)))) { return ctx->rc; }
+  if (!(str = grn_ctx_pop(ctx))) {
+    ERR(GRN_INVALID_ARGUMENT, "missing argument");
+    return NULL;
+  }
+  if (!(token = GRN_MALLOC(sizeof(grn_uvector_tokenizer_info)))) { return NULL; }
   user_data->ptr = token;
   token->curr = GRN_TEXT_VALUE(str);
   token->tail = token->curr + GRN_TEXT_LEN(str);
   token->unit = sizeof(grn_id);
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_uvector_tokenizer_info *token = user_data->ptr;
@@ -62,14 +65,14 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   grn_ctx_push(ctx, &token->curr_);
   grn_ctx_push(ctx, &token->stat_);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   GRN_FREE(user_data->ptr);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
 typedef struct {
@@ -86,7 +89,7 @@ typedef struct {
   grn_obj stat_;
 } grn_delimited_tokenizer;
 
-static grn_rc
+static grn_obj *
 delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
                uint8_t *delimiter, uint32_t delimiter_len)
 {
@@ -94,8 +97,11 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   int nflags = 0;
   grn_delimited_tokenizer *token;
   grn_obj_flags table_flags;
-  if (!(str = grn_ctx_pop(ctx))) { return GRN_INVALID_ARGUMENT; }
-  if (!(token = GRN_MALLOC(sizeof(grn_delimited_tokenizer)))) { return ctx->rc; }
+  if (!(str = grn_ctx_pop(ctx))) {
+    ERR(GRN_INVALID_ARGUMENT, "missing argument");
+    return NULL;
+  }
+  if (!(token = GRN_MALLOC(sizeof(grn_delimited_tokenizer)))) { return NULL; }
   user_data->ptr = token;
   token->delimiter = delimiter;
   token->delimiter_len = delimiter_len;
@@ -105,17 +111,17 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
                                     nflags, token->encoding))) {
     ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
-    return ctx->rc;
+    return NULL;
   }
   token->next = (unsigned char *)token->nstr->norm;
   token->end = token->next + token->nstr->norm_blen;
   token->len = token->nstr->length;
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   size_t cl;
@@ -137,19 +143,19 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   GRN_UINT32_SET(ctx, &token->stat_, r == e ? GRN_TOKEN_LAST : 0);
   grn_ctx_push(ctx, &token->curr_);
   grn_ctx_push(ctx, &token->stat_);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_delimited_tokenizer *token = user_data->ptr;
   grn_str_close(ctx, token->nstr);
   GRN_FREE(token);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 delimit_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *table = args[0];
@@ -183,7 +189,7 @@ typedef struct {
   grn_obj stat_;
 } grn_mecab_tokenizer;
 
-static grn_rc
+static grn_obj *
 mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *str;
@@ -194,13 +200,16 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj_flags table_flags;
   grn_mecab_tokenizer *token;
   unsigned int bufsize, maxtrial = 10, len;
-  if (!(str = grn_ctx_pop(ctx))) { return GRN_INVALID_ARGUMENT; }
+  if (!(str = grn_ctx_pop(ctx))) {
+    ERR(GRN_INVALID_ARGUMENT, "missing argument");
+    return NULL;
+  }
   SOLE_MECAB_CONFIRM;
   if (!sole_mecab) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "mecab_new failed on grn_mecab_init");
-    return GRN_TOKENIZER_ERROR;
+    ERR(GRN_TOKENIZER_ERROR, "mecab_new failed on grn_mecab_init");
+    return NULL;
   }
-  if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return ctx->rc; }
+  if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
   user_data->ptr = token;
   token->mecab = sole_mecab;
   // if (!(token->mecab = mecab_new3())) {
@@ -208,8 +217,8 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
                                     nflags, token->encoding))) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open failed at grn_token_open");
-    return GRN_TOKENIZER_ERROR;
+    ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
+    return NULL;
   }
   len = token->nstr->norm_blen;
   mecab_err[sizeof(mecab_err) - 1] = '\0';
@@ -217,7 +226,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if(!(buf = GRN_MALLOC(bufsize + 1))) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
       GRN_FREE(token);
-      return ctx->rc;
+      return NULL;
     }
     MUTEX_LOCK(sole_mecab_lock);
     s = mecab_sparse_tostr3(token->mecab, token->nstr->norm, len, buf, bufsize);
@@ -230,10 +239,10 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (strstr(mecab_err, "output buffer overflow") == NULL) { break; }
   }
   if (!s) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
+    ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
             len, bufsize, mecab_err);
     GRN_FREE(token);
-    return GRN_TOKENIZER_ERROR;
+    return NULL;
   }
   // certain version of mecab returns trailing lf or spaces.
   for (p = buf + strlen(buf) - 1;
@@ -245,10 +254,10 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   token->end = (unsigned char *)buf + strlen(buf);
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   size_t cl;
@@ -272,10 +281,10 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_UINT32_SET(ctx, &token->stat_, r == e ? GRN_TOKEN_LAST : 0);
   grn_ctx_push(ctx, &token->curr_);
   grn_ctx_push(ctx, &token->stat_);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *table = args[0];
@@ -284,7 +293,7 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_str_close(ctx, token->nstr);
   GRN_FREE(token->buf);
   GRN_FREE(token);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
 #endif /* NO_MECAB */
@@ -310,15 +319,18 @@ typedef struct {
   grn_obj stat_;
 } grn_ngram_tokenizer;
 
-static grn_rc
+static grn_obj *
 ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram_unit)
 {
   grn_obj *str;
   int nflags = GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES;
   grn_ngram_tokenizer *token;
   grn_obj_flags table_flags;
-  if (!(str = grn_ctx_pop(ctx))) { return GRN_INVALID_ARGUMENT; }
-  if (!(token = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) { return ctx->rc; }
+  if (!(str = grn_ctx_pop(ctx))) {
+    ERR(GRN_INVALID_ARGUMENT, "missing argument");
+    return NULL;
+  }
+  if (!(token = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) { return NULL; }
   user_data->ptr = token;
   token->uni_alpha = 1;
   token->uni_digit = 1;
@@ -331,8 +343,8 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
                                     nflags, token->encoding))) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open failed at grn_token_open");
-    return GRN_TOKENIZER_ERROR;
+    ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
+    return NULL;
   }
   token->next = (unsigned char *)token->nstr->norm;
   token->end = token->next + token->nstr->norm_blen;
@@ -340,22 +352,22 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
   token->len = token->nstr->length;
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 unigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 { return ngram_init(ctx, args[0], user_data, 1); }
 
-static grn_rc
+static grn_obj *
 bigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 { return ngram_init(ctx, args[0], user_data, 2); }
 
-static grn_rc
+static grn_obj *
 trigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 { return ngram_init(ctx, args[0], user_data, 3); }
 
-static grn_rc
+static grn_obj *
 ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   size_t cl;
@@ -397,7 +409,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if ((tid = grn_sym_common_prefix_search(sym, p))) {
       if (!(key = _grn_sym_key(sym, tid))) {
         token->status = grn_token_not_found;
-        return GRN_ID_NIL;
+        return NULL;
       }
       len = grn_str_len(key, token->encoding, NULL);
     }
@@ -442,16 +454,16 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_UINT32_SET(ctx, &token->stat_, status);
   grn_ctx_push(ctx, &token->curr_);
   grn_ctx_push(ctx, &token->stat_);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
-static grn_rc
+static grn_obj *
 ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_tokenizer *token = user_data->ptr;
   grn_str_close(ctx, token->nstr);
   GRN_FREE(token);
-  return GRN_SUCCESS;
+  return NULL;
 }
 
 /* external */

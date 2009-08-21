@@ -2098,13 +2098,12 @@ typedef struct {
   unsigned int section;
 } default_set_value_hook_data;
 
-static grn_rc
+static grn_obj *
 default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (!pctx) {
     ERR(GRN_INVALID_ARGUMENT, "default_set_value_hook failed");
-    return GRN_INVALID_ARGUMENT;
   } else {
     grn_obj *flags = grn_ctx_pop(ctx);
     grn_obj *newvalue = grn_ctx_pop(ctx);
@@ -2117,13 +2116,12 @@ default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     if (flags) { /* todo */ }
     switch (target->header.type) {
     case GRN_COLUMN_INDEX :
-      return grn_ii_column_update(ctx, (grn_ii *)target,
-                                  GRN_UINT32_VALUE(id),
-                                  section, oldvalue, newvalue);
-    default :
-      return GRN_SUCCESS;
+      grn_ii_column_update(ctx, (grn_ii *)target,
+                           GRN_UINT32_VALUE(id),
+                           section, oldvalue, newvalue);
     }
   }
+  return NULL;
 }
 
 /**** grn_vector ****/
@@ -3161,11 +3159,11 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         while (hooks) {
           pctx.currh = hooks;
           if (hooks->proc) {
-            rc = hooks->proc->funcs[PROC_INIT](ctx, 1, &obj, &pctx.user_data);
+            hooks->proc->funcs[PROC_INIT](ctx, 1, &obj, &pctx.user_data);
           } else {
-            rc = default_set_value_hook(ctx, 1, &obj, &pctx.user_data);
+            default_set_value_hook(ctx, 1, &obj, &pctx.user_data);
           }
-          if (rc) { goto exit; }
+          if (ctx->rc) { goto exit; }
           hooks = hooks->next;
           pctx.offset++;
         }
@@ -6126,22 +6124,26 @@ grn_rc
 grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs)
 {
   grn_proc_ctx pctx;
+  grn_obj *obj, **args;
   grn_proc *p = (grn_proc *)proc;
-  grn_obj **args = ctx->impl->stack + ctx->impl->stack_curr - nargs;
+  if (nargs > ctx->impl->stack_curr) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
+  args = ctx->impl->stack + ctx->impl->stack_curr - nargs;
   pctx.proc = p;
   pctx.user_data.ptr = NULL;
   if (p->funcs[PROC_INIT]) {
-    p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);
+    obj = p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);
   }
   pctx.phase = PROC_NEXT;
   if (p->funcs[PROC_NEXT]) {
-    p->funcs[PROC_NEXT](ctx, nargs, args, &pctx.user_data);
+    obj = p->funcs[PROC_NEXT](ctx, nargs, args, &pctx.user_data);
   }
   pctx.phase = PROC_FIN;
   if (p->funcs[PROC_FIN]) {
-    p->funcs[PROC_FIN](ctx, nargs, args, &pctx.user_data);
+    obj = p->funcs[PROC_FIN](ctx, nargs, args, &pctx.user_data);
   }
+  ctx->impl->stack_curr -= nargs;
+  grn_ctx_push(ctx, obj);
   GRN_API_RETURN(ctx->rc);
 }
 
