@@ -193,7 +193,8 @@ test_expr(void)
       gettimeofday(&tvb, NULL);
       while ((id = grn_table_cursor_next(&context, tc))) {
         GRN_RECORD_SET(&context, v, id);
-        r = grn_expr_exec(&context, expr);
+        grn_expr_exec(&context, expr, 0);
+        r = grn_ctx_pop(&context);
         if (GRN_RECORD_VALUE(r) != id) { nerr++; }
       }
       gettimeofday(&tve, NULL);
@@ -284,7 +285,8 @@ test_persistent_expr(void)
     gettimeofday(&tvb, NULL);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);
-      r = grn_expr_exec(&context, expr);
+      grn_expr_exec(&context, expr, 0);
+      r = grn_ctx_pop(&context);
       if (GRN_RECORD_VALUE(r) != id) { nerr++; }
     }
     gettimeofday(&tve, NULL);
@@ -395,7 +397,7 @@ test_expr_query(void)
 
   grn_expr_compile(&context, expr);
 
-  grn_expr_exec(&context, expr);
+  grn_expr_exec(&context, expr, 0);
 
   cut_assert_equal_uint(0, grn_obj_close(&context, expr));
 
@@ -566,7 +568,7 @@ test_table_select_select(void)
   grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
-  grn_expr_exec(&context, expr);
+  grn_expr_exec(&context, expr, 0);
 
   cut_assert_equal_uint(3, grn_table_size(&context, res));
 
@@ -637,7 +639,7 @@ test_table_select_search(void)
   grn_expr_append_obj(&context, expr, &textbuf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_JSON_PUT, 3);
 
-  grn_expr_exec(&context, expr);
+  grn_expr_exec(&context, expr, 0);
 
   cut_assert_equal_substring("[2,[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
@@ -708,7 +710,7 @@ test_table_select_select_search(void)
   grn_expr_append_obj(&context, expr, &textbuf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_JSON_PUT, 3);
 
-  grn_expr_exec(&context, expr);
+  grn_expr_exec(&context, expr, 0);
 
   cut_assert_equal_substring("[2,[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
@@ -878,7 +880,7 @@ test_expr_set_value(void)
     cut_assert_not_null(tc);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);
-      grn_expr_exec(&context, expr);
+      grn_expr_exec(&context, expr, 0);
     }
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
   }
@@ -924,7 +926,7 @@ test_expr_set_value2(void)
     cut_assert_not_null(tc);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);
-      grn_expr_exec(&context, expr);
+      grn_expr_exec(&context, expr, 0);
     }
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
   }
@@ -966,7 +968,7 @@ test_expr_set_value3(void)
     cut_assert_not_null(tc);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);
-      grn_expr_exec(&context, expr);
+      grn_expr_exec(&context, expr, 0);
     }
     cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
   }
