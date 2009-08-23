@@ -7935,21 +7935,19 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_OBJ_FIN(ctx, &qbuf);
     if (res) {
       if (foreach && foreach_len) {
-        if ((foreach_ = grn_expr_create_from_str(ctx, NULL, 0,
-                                                 foreach, foreach_len,
-                                                 res, match_column_))) {
-          grn_obj *v;
-          if ((v = grn_expr_get_var_by_offset(ctx, foreach_, 0))) {
+        grn_obj *v;
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, res, foreach_, v);
+        if (foreach_ && v) {
+          grn_table_cursor *tc;
+          grn_expr_parse(ctx, foreach_, foreach, foreach_len,
+                         match_column_, GRN_OP_MATCH, GRN_OP_AND, 4);
+          if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, 0, 0))) {
             grn_id id;
-            grn_table_cursor *tc;
-            GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, res));
-            if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, 0, 0))) {
-              while ((id = grn_table_cursor_next(ctx, tc))) {
-                GRN_RECORD_SET(ctx, v, id);
-                grn_expr_exec(ctx, foreach_, 0);
-              }
-              grn_table_cursor_close(ctx, tc);
+            while ((id = grn_table_cursor_next(ctx, tc))) {
+              GRN_RECORD_SET(ctx, v, id);
+              grn_expr_exec(ctx, foreach_, 0);
             }
+            grn_table_cursor_close(ctx, tc);
           }
           grn_obj_unlink(ctx, foreach_);
         }
