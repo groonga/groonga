@@ -525,6 +525,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len, in
     grn_obj str_;
     GRN_TEXT_INIT(&str_, GRN_OBJ_DO_SHALLOW_COPY);
     GRN_TEXT_SET_REF(&str_, str, str_len);
+    token->pctx.caller = NULL;
     token->pctx.user_data.ptr = NULL;
     token->pctx.proc = (grn_proc *)tokenizer;
     token->pctx.hooks = NULL;

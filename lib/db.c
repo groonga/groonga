@@ -436,6 +436,24 @@ grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec)
   return (grn_obj *)res;
 }
 
+grn_obj *
+grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
+{
+  grn_obj *res = NULL;
+  grn_expr *e = (grn_expr *)expr;
+  if (e) {
+    if (e->values_curr >= e->values_size) {
+      // todo : expand values.
+      ERR(GRN_NO_MEMORY_AVAILABLE, "no more e->values");
+      return NULL;
+    }
+    res = &e->values[e->values_curr++];
+    if (e->values_curr > e->values_tail) { e->values_tail = e->values_curr; }
+    grn_obj_reinit(ctx, res, domain, flags);
+  }
+  return res;
+}
+
 grn_expr_var *
 grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned *nvars)
 {
@@ -502,9 +520,11 @@ grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr)
 }
 
 grn_obj *
-grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data, grn_expr_var **vars, unsigned *nvars)
+grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
+                  grn_expr_var **vars, unsigned *nvars, grn_obj **caller)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
+  if (caller) { *caller = pctx->caller; }
   if (pctx->proc) {
     *vars = grn_expr_get_vars(ctx, (grn_obj *)pctx->proc, nvars);
   } else {
@@ -3147,7 +3167,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       if (hooks) {
         // todo : grn_proc_ctx_open()
         grn_obj id_, flags_;
-        grn_proc_ctx pctx = {{0}, hooks->proc, hooks, hooks, PROC_INIT, 4, 4};
+        grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
         GRN_UINT32_INIT(&id_, 0);
         GRN_UINT32_INIT(&flags_, 0);
         GRN_UINT32_SET(ctx, &id_, id);
@@ -3157,6 +3177,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         grn_ctx_push(ctx, value);
         grn_ctx_push(ctx, &flags_);
         while (hooks) {
+          pctx.caller = NULL;
           pctx.currh = hooks;
           if (hooks->proc) {
             hooks->proc->funcs[PROC_INIT](ctx, 1, &obj, &pctx.user_data);
@@ -5477,7 +5498,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
     grn_obj_close(ctx, &e->vars[i].value);
   }
   GRN_REALLOC(e->vars, 0);
-  for (i = 0; i < e->values_curr; i++) {
+  for (i = 0; i < e->values_tail; i++) {
     grn_obj_close(ctx, &e->values[i]);
   }
   GRN_FREE(e->values);
@@ -5545,14 +5566,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   return (offset < n) ? &v[offset].value : NULL;
 }
 
-#define EXPR_P0(expr) ((expr)->stack[(expr)->stack_curr - 1])
-
 #define EXPRVP(x) ((x)->header.impl_flags & GRN_OBJ_EXPRVALUE)
-
-#define EXPR_ALLOC(x,expr,type,domain) {\
-  (x) = &(expr)->values[(expr)->values_curr++];\
-  GRN_OBJ_INIT(x, type, GRN_OBJ_EXPRVALUE, domain);\
-}
 
 #define CONSTP(obj) ((obj)->header.impl_flags & GRN_OBJ_EXPRCONST)
 
@@ -5607,6 +5621,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         while (i--) { DFI_POP(e, dfi); }
       }
       if (!obj) { DFI_POP(e, dfi); }
+      // todo : increment e->values_tail.
       DFI_PUT(e, type, domain, code); /* cannot identify type of return value */
       break;
     case GRN_OP_INTERN :
@@ -5878,7 +5893,9 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 
 #define WITH_SPSAVE(block) {\
   ctx->impl->stack_curr = sp - ctx->impl->stack;\
+  e->values_curr = vp - e->values;\
   block\
+  vp = e->values + e->values_curr;\
   if (sp != ctx->impl->stack + ctx->impl->stack_curr) {\
     sp = ctx->impl->stack + ctx->impl->stack_curr;\
     s0 = sp[-1];\
@@ -6121,7 +6138,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_rc
-grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs)
+grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 {
   grn_proc_ctx pctx;
   grn_obj *obj, **args;
@@ -6130,6 +6147,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs)
   GRN_API_ENTER;
   args = ctx->impl->stack + ctx->impl->stack_curr - nargs;
   pctx.proc = p;
+  pctx.caller = caller;
   pctx.user_data.ptr = NULL;
   if (p->funcs[PROC_INIT]) {
     obj = p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);
@@ -6153,7 +6171,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
   uint32_t stack_curr = ctx->impl->stack_curr;
   GRN_API_ENTER;
   if (expr->header.type == GRN_PROC) {
-    grn_proc_call(ctx, expr, nargs);
+    grn_proc_call(ctx, expr, nargs, expr);
   } else {
     grn_expr *e = (grn_expr *)expr;
     register grn_obj *s0 = NULL, *s1 = NULL, **sp, *vp = e->values;

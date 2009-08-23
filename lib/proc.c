@@ -36,7 +36,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_expr_var *vars;
   grn_obj *outbuf = args[0];
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 15) {
     int offset = GRN_TEXT_LEN(&vars[7].value)
       ? grn_atoi(GRN_TEXT_VALUE(&vars[7].value), GRN_BULK_CURR(&vars[7].value), NULL)
@@ -74,7 +74,7 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   uint32_t nvars;
   grn_expr_var *vars;
   grn_obj *outbuf = args[0];
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (grn_proc_create(ctx,
                       GRN_TEXT_VALUE(&vars[0].value),
                       GRN_TEXT_LEN(&vars[0].value),
@@ -90,7 +90,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_obj *outbuf = args[0];
   grn_expr_var *vars;
-  grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 4) {
     grn_load(ctx, GET_OTYPE(&vars[3].value),
              GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
@@ -111,7 +111,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_obj *outbuf = args[0];
   grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 1) {
     grn_timeval now;
     grn_content_type otype = GET_OTYPE(&vars[0].value);
@@ -138,7 +138,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   uint32_t nvars;
   grn_obj *buf = args[0];
   grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 6) {
     grn_obj *table;
     grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[1].value),
@@ -170,7 +170,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   uint32_t nvars;
   grn_obj *buf = args[0];
   grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 6) {
     grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[2].value),
                                    GRN_BULK_CURR(&vars[2].value), NULL);
@@ -335,7 +335,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   uint32_t nvars;
   grn_obj *buf = args[0];
   grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 2) {
     grn_obj *table;
     grn_content_type otype = GET_OTYPE(&vars[1].value);
@@ -391,7 +391,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_obj *buf = args[0];
   grn_obj *db = ctx->impl->db;
   grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 1) {
     grn_table_cursor *cur;
     if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, 0, 0))) {
@@ -463,7 +463,7 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars, plen;
   grn_obj *buf = args[0];
   grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 2 && (plen = GRN_TEXT_LEN(&vars[0].value)) < PATH_MAX) {
     char path[PATH_MAX];
     memcpy(path, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
@@ -477,15 +477,19 @@ static grn_obj *
 proc_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
-  grn_obj *obj;
+  grn_obj *obj, *caller;
+  uint32_t nvars;
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if (nargs > 0) {
     int max = GRN_INT32_VALUE(args[0]);
     val = (int) (1.0 * max * rand() / (RAND_MAX + 1.0));
   } else {
     val = rand();
   }
-  obj = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_INT32);
-  GRN_INT32_SET(ctx, obj, val);
+  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_INT32, 0))) {
+    GRN_INT32_SET(ctx, obj, val);
+  }
   return obj;
 }
 

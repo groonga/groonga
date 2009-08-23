@@ -488,7 +488,7 @@ GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
  **/
 
 GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
-                                   grn_expr_var **vars, unsigned *nvars);
+                                   grn_expr_var **vars, unsigned *nvars, grn_obj **caller);
 
 /*-------------------------------------------------------------
  * table操作のための関数
@@ -1848,7 +1848,8 @@ GRN_API grn_obj *grn_ctx_pop(grn_ctx *ctx);
 #define GRN_EXPR_CALL(ctx,expr,nargs) \
   (grn_expr_exec((ctx), (expr), (nargs)), grn_ctx_pop(ctx))
 
-GRN_API grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
+GRN_API grn_obj *grn_expr_alloc(grn_ctx *ctx, grn_obj *expr,
+                                grn_id domain, grn_obj_flags flags);
 
 GRN_API grn_obj *grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                                   grn_obj *res, grn_operator op);
