@@ -6234,22 +6234,23 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           grn_obj *proc;
           if (code->value) {
-            if (ctx->impl->stack + code->nargs < sp) {
+            if (sp < ctx->impl->stack + code->nargs) {
               ERR(GRN_INVALID_ARGUMENT, "stack error");
               goto exit;
             }
             proc = code->value;
             WITH_SPSAVE({
-              grn_expr_exec(ctx, proc, code->nargs);
+              grn_proc_call(ctx, proc, code->nargs, expr);
             });
           } else {
-            if (ctx->impl->stack + code->nargs + 1 < sp) {
+            int offset = code->nargs + 1;
+            if (sp < ctx->impl->stack + offset) {
               ERR(GRN_INVALID_ARGUMENT, "stack error");
               goto exit;
             }
-            proc = sp[-(code->nargs + 1)];
+            proc = sp[-offset];
             WITH_SPSAVE({
-              grn_expr_exec(ctx, proc, code->nargs);
+              grn_proc_call(ctx, proc, code->nargs, expr);
             });
             POP1(res);
             {
