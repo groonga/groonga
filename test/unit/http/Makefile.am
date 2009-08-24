@@ -1,8 +1,6 @@
-if WITH_CUTTER
 if WITH_SOUPCUTTER
 noinst_LTLIBRARIES =				\
 	test-http.la
-endif
 endif
 
 INCLUDES =			\
