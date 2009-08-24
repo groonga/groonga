@@ -347,7 +347,7 @@ grn_ctx_fin(grn_ctx *ctx)
   if (ctx->impl) {
     if (ctx->impl->objects) {
       grn_cell *o;
-      GRN_ARRAY_EACH(ctx->impl->objects, 0, 0, id, &o, {
+      GRN_ARRAY_EACH(ctx, ctx->impl->objects, 0, 0, id, &o, {
         grn_cell_clear(ctx, o);
       });
       grn_array_close(ctx, ctx->impl->objects);
@@ -357,7 +357,7 @@ grn_ctx_fin(grn_ctx *ctx)
     }
     if (ctx->impl->values) {
       grn_tmp_db_obj *o;
-      GRN_ARRAY_EACH(ctx->impl->values, 0, 0, id, &o, {
+      GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
         grn_obj_close(ctx, (grn_obj *)o->obj);
       });
       grn_array_close(ctx, ctx->impl->values);
@@ -396,7 +396,7 @@ grn_ctx_fin(grn_ctx *ctx)
       uint32_t i;
       grn_expr_var *v;
       grn_expr_vars *vp;
-      GRN_HASH_EACH(ctx->impl->expr_vars, id, NULL, NULL, &vp, {
+      GRN_HASH_EACH(ctx, ctx->impl->expr_vars, id, NULL, NULL, &vp, {
         for (v = vp->vars, i = vp->nvars; i; v++, i--) {
           GRN_OBJ_FIN(ctx, &v->value);
         }
@@ -641,7 +641,8 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
       GRN_TEXT_PUT(ctx, val, str, str_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
-    val = grn_expr_exec(ctx, expr);
+    grn_expr_exec(ctx, expr, 1);
+    val = grn_ctx_pop(ctx);
     grn_expr_clear_vars(ctx, expr);
   } else {
     GRN_TEXT_INIT(&key, 0);
@@ -659,7 +660,8 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
         p = get_uri_token(ctx, val, p, e, '&');
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
-      val = grn_expr_exec(ctx, expr);
+      grn_expr_exec(ctx, expr, 1);
+      val = grn_ctx_pop(ctx);
       grn_expr_clear_vars(ctx, expr);
     } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
                                    strlen(GRN_EXPR_MISSING_NAME)))) {
@@ -668,7 +670,8 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
         GRN_TEXT_PUT(ctx, val, str, str_size);
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
-      val = grn_expr_exec(ctx, expr);
+      grn_expr_exec(ctx, expr, 1);
+      val = grn_ctx_pop(ctx);
       grn_expr_clear_vars(ctx, expr);
     }
     GRN_OBJ_FIN(ctx, &key);
@@ -688,7 +691,8 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
       GRN_TEXT_PUT(ctx, val, str, str_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
-    val = grn_expr_exec(ctx, expr);
+    grn_expr_exec(ctx, expr, 1);
+    val = grn_ctx_pop(ctx);
     grn_expr_clear_vars(ctx, expr);
   } else {
     unsigned int argc = 0;
@@ -710,7 +714,8 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
     }
     if (expr) {
       grn_ctx_push(ctx, ctx->impl->outbuf);
-      val = grn_expr_exec(ctx, expr);
+      grn_expr_exec(ctx, expr, 1);
+      val = grn_ctx_pop(ctx);
       grn_expr_clear_vars(ctx, expr);
     }
   }
@@ -1312,29 +1317,31 @@ grn_free(grn_ctx *ctx, void *ptr, const char* file, int line)
 void *
 grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func)
 {
+  void *res;
   if (!ctx) { return NULL; }
-  {
-    void *res;
-    if (!size) {
-      alloc_count--;
-#if defined __FreeBSD__
-      free(ptr);
-      return NULL;
-#endif /* __FreeBSD__ */
-    }
-    res = realloc(ptr, size);
-    if (!ptr && res) { alloc_count++; }
-    if (size && !res) {
+  if (size) {
+    if (!(res = realloc(ptr, size))) {
       if (!(res = realloc(ptr, size))) {
         MERR("realloc fail (%p,%zu)=%p (%s:%d) <%d>", ptr, size, res, file, line, alloc_count);
+        return NULL;
       }
     }
-    if (!size && res) {
+    if (!ptr) { alloc_count++; }
+  } else {
+    if (!ptr) { return NULL; }
+    alloc_count--;
+#if defined __FreeBSD__
+    free(ptr);
+    return NULL;
+#else /* __FreeBSD__ */
+    res = realloc(ptr, size);
+    if (res) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "realloc(%p,%zu)=%p (%s:%d) <%d>", ptr, size, res, file, line, alloc_count);
       // grn_free(ctx, res, file, line);
     }
-    return res;
+#endif /* __FreeBSD__ */
   }
+  return res;
 }
 
 int

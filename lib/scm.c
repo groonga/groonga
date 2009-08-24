@@ -401,7 +401,7 @@ grn_ctx_mgc(grn_ctx *ctx)
   ctx->impl->n_entries = 0;
   {
     grn_cell *o;
-    GRN_ARRAY_EACH(ctx->impl->objects, 0, 0, id, &o, {
+    GRN_ARRAY_EACH(ctx, ctx->impl->objects, 0, 0, id, &o, {
       if (o->header.impl_flags & (GRN_CELL_MARKED|GRN_CELL_MARK2)) {
         o->header.impl_flags &= ~GRN_CELL_MARKED;
         ctx->impl->n_entries++;
@@ -413,7 +413,7 @@ grn_ctx_mgc(grn_ctx *ctx)
   }
   {
     grn_tmp_db_obj *o;
-    GRN_ARRAY_EACH(ctx->impl->values, 0, 0, id, &o, {
+    GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
       if (o->cell.header.impl_flags & (GRN_CELL_MARKED|GRN_CELL_MARK2)) {
         o->cell.header.impl_flags &= ~GRN_CELL_MARKED;
         ctx->impl->n_entries++;

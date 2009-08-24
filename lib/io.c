@@ -113,7 +113,7 @@ grn_io_fin(void)
 {
   grn_ctx *ctx = &grn_gctx;
   if (!grn_dls) { return GRN_INVALID_ARGUMENT; }
-  GRN_HASH_EACH(grn_dls, id, NULL, NULL, NULL, { grn_dl_close(ctx, id); });
+  GRN_HASH_EACH(ctx, grn_dls, id, NULL, NULL, NULL, { grn_dl_close(ctx, id); });
   return grn_hash_close(&grn_gctx, grn_dls);
 }
 
@@ -1404,7 +1404,7 @@ grn_expire_(grn_ctx *ctx, int count_thresh, uint32_t limit)
 {
   uint32_t n = 0;
   grn_cell *obj;
-  GRN_HASH_EACH(grn_gctx.impl->symbols, id, NULL, NULL, (void **) &obj, {
+  GRN_HASH_EACH(ctx, grn_gctx.impl->symbols, id, NULL, NULL, (void **) &obj, {
     grn_dl_close(ctx, id);
     n += grn_io_expire(ctx, (grn_io *) obj->u.p.value, count_thresh, limit);
     if (n >= limit) { break; }

@@ -1267,7 +1267,6 @@ static void yy_reduce(
       case 83: /* postfix_expression ::= lefthand_side_expression DECR */
       case 84: /* lefthand_side_expression ::= call_expression */
       case 85: /* lefthand_side_expression ::= member_expression */
-      case 86: /* call_expression ::= member_expression arguments */
       case 87: /* member_expression ::= primary_expression */
       case 88: /* member_expression ::= member_expression member_expression_part */
       case 89: /* primary_expression ::= object_literal */
@@ -1297,14 +1296,14 @@ static void yy_reduce(
 #line 18 "expr.y"
 {
 }
-#line 1303 "expr.c"
+#line 1302 "expr.c"
         break;
       case 3: /* query ::= query query_element */
 #line 22 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->op_stack, -1), 2);
 }
-#line 1310 "expr.c"
+#line 1309 "expr.c"
         break;
       case 4: /* query ::= query LOGICAL_AND query_element */
       case 33: /* logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression */
@@ -1312,7 +1311,7 @@ static void yy_reduce(
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
 }
-#line 1318 "expr.c"
+#line 1317 "expr.c"
         break;
       case 5: /* query ::= query LOGICAL_BUT query_element */
       case 34: /* logical_and_expression ::= logical_and_expression LOGICAL_BUT bitwise_or_expression */
@@ -1320,7 +1319,7 @@ static void yy_reduce(
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
 }
-#line 1326 "expr.c"
+#line 1325 "expr.c"
         break;
       case 6: /* query ::= query LOGICAL_OR query_element */
       case 31: /* logical_or_expression ::= logical_or_expression LOGICAL_OR logical_and_expression */
@@ -1328,7 +1327,7 @@ static void yy_reduce(
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
 }
-#line 1334 "expr.c"
+#line 1333 "expr.c"
         break;
       case 9: /* query_element ::= RELATIVE_OP query_element */
 #line 38 "expr.y"
@@ -1336,7 +1335,7 @@ static void yy_reduce(
   int mode;
   GRN_UINT32_POP(&efsi->mode_stack, mode);
 }
-#line 1342 "expr.c"
+#line 1341 "expr.c"
         break;
       case 10: /* query_element ::= IDENTIFIER RELATIVE_OP query_element */
 #line 42 "expr.y"
@@ -1346,7 +1345,7 @@ static void yy_reduce(
   GRN_PTR_POP(&efsi->column_stack, c);
   GRN_UINT32_POP(&efsi->mode_stack, mode);
 }
-#line 1352 "expr.c"
+#line 1351 "expr.c"
         break;
       case 11: /* query_element ::= BRACEL expression BRACER */
       case 12: /* query_element ::= EVAL primary_expression */
@@ -1354,36 +1353,41 @@ static void yy_reduce(
 {
   efsi->parse_level = efsi->default_parse_level;
 }
-#line 1360 "expr.c"
+#line 1359 "expr.c"
         break;
       case 16: /* assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression */
 #line 59 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ASSIGN, 2);
 }
-#line 1367 "expr.c"
+#line 1366 "expr.c"
+        break;
+      case 86: /* call_expression ::= member_expression arguments */
+#line 152 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[0].minor.yy0);
+}
+#line 1373 "expr.c"
         break;
       case 113: /* arguments ::= PARENL argument_list PARENR */
-#line 189 "expr.y"
-{
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[-1].minor.yy0);
-}
-#line 1374 "expr.c"
+#line 191 "expr.y"
+{ yygotominor.yy0 = yymsp[-1].minor.yy0; }
+#line 1378 "expr.c"
         break;
       case 114: /* argument_list ::= */
 #line 192 "expr.y"
 { yygotominor.yy0 = 0; }
-#line 1379 "expr.c"
+#line 1383 "expr.c"
         break;
       case 115: /* argument_list ::= assignment_expression */
 #line 193 "expr.y"
 { yygotominor.yy0 = 1; }
-#line 1384 "expr.c"
+#line 1388 "expr.c"
         break;
       case 116: /* argument_list ::= argument_list COMMA assignment_expression */
 #line 194 "expr.y"
 { yygotominor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 1389 "expr.c"
+#line 1393 "expr.c"
         break;
   };
   yygoto = yyRuleInfo[yyruleno].lhs;
@@ -1447,7 +1451,7 @@ static void yy_syntax_error(
     grn_ctx *ctx = efsi->ctx;
     ERR(GRN_SYNTAX_ERROR, "Syntax error!");
   }
-#line 1455 "expr.c"
+#line 1459 "expr.c"
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

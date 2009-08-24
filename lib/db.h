@@ -150,6 +150,7 @@ typedef struct _grn_proc_ctx grn_proc_ctx;
 struct _grn_proc_ctx {
   grn_user_data user_data;
   grn_proc *proc;
+  grn_obj *caller;
   //  grn_obj *obj;
   grn_hook *hooks;
   grn_hook *currh;
@@ -210,9 +211,6 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
       : grn_ctx_at((ctx), (obj)->header.domain))
 
 /* expr */
-
-grn_rc grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
-grn_obj *grn_ctx_pop(grn_ctx *ctx);
 
 typedef struct _grn_expr grn_expr;
 

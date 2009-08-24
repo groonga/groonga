@@ -1032,7 +1032,7 @@ server(char *path)
         }
         {
           grn_edge *edge;
-          GRN_HASH_EACH(edges, id, NULL, NULL, &edge, {
+          GRN_HASH_EACH(ctx, edges, id, NULL, NULL, &edge, {
               grn_obj *obj;
             while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
               grn_msg_close(&edge->ctx, obj);
@@ -1049,7 +1049,7 @@ server(char *path)
         }
         {
           grn_com *com;
-          GRN_HASH_EACH(ev.hash, id, NULL, NULL, &com, { grn_com_close(ctx, com); });
+          GRN_HASH_EACH(ctx, ev.hash, id, NULL, NULL, &com, { grn_com_close(ctx, com); });
         }
         rc = 0;
       } else {
