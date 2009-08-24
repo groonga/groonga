@@ -190,7 +190,6 @@ retrieve_all_values (grn_array *array, grn_id n_entries)
     grn_array_cursor_get_value(context, cursor, &array_value);
     hash_id = array_value;
     size = grn_hash_get_value(context, hash, *hash_id, value);
-    value[size]= '\0';
     values = g_list_append(values, g_strdup(value));
     id = grn_array_cursor_next(context, cursor);
   }
