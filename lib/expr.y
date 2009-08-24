@@ -56,7 +56,9 @@ expression ::= assignment_expression.
 expression ::= expression COMMA assignment_expression.
 
 assignment_expression ::= conditional_expression.
-assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression.
+assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ASSIGN, 2);
+}
 assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression.
 assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression.
 assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression.
@@ -106,8 +108,12 @@ relational_expression ::= relational_expression GREATER_EQUAL shift_expression.
 relational_expression ::= relational_expression IN shift_expression.
 relational_expression ::= relational_expression MATCH shift_expression.
 relational_expression ::= relational_expression NEAR shift_expression.
+relational_expression ::= relational_expression NEAR2 shift_expression.
 relational_expression ::= relational_expression SIMILAR shift_expression.
-relational_expression ::= relational_expression EXTRACT shift_expression.
+relational_expression ::= relational_expression TERM_EXTRACT shift_expression.
+relational_expression ::= relational_expression LCP shift_expression.
+relational_expression ::= relational_expression PREFIX shift_expression.
+relational_expression ::= relational_expression SUFFIX shift_expression.
 
 shift_expression ::= additive_expression.
 shift_expression ::= shift_expression SHIFTL additive_expression.
@@ -130,9 +136,11 @@ unary_expression ::= DECR unary_expression.
 unary_expression ::= PLUS unary_expression.
 unary_expression ::= MINUS unary_expression.
 unary_expression ::= NOT unary_expression.
-unary_expression ::= ADJ_INC unary_expression.
-unary_expression ::= ADJ_DEC unary_expression.
-unary_expression ::= ADJ_NEG unary_expression.
+unary_expression ::= BITWISE_NOT unary_expression.
+unary_expression ::= ADJUST unary_expression.
+unary_expression ::= EXACT unary_expression.
+unary_expression ::= PARTIAL unary_expression.
+unary_expression ::= UNSPLIT unary_expression.
 
 postfix_expression ::= lefthand_side_expression.
 postfix_expression ::= lefthand_side_expression INCR.
@@ -141,7 +149,9 @@ postfix_expression ::= lefthand_side_expression DECR.
 lefthand_side_expression ::= call_expression.
 lefthand_side_expression ::= member_expression.
 
-call_expression ::= member_expression arguments.
+call_expression ::= member_expression arguments(A). {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, A);
+}
 
 member_expression ::= primary_expression.
 member_expression ::= member_expression member_expression_part.
@@ -167,7 +177,7 @@ element_list ::= assignment_expression.
 element_list ::= elision assignment_expression.
 element_list ::= element_list elision assignment_expression.
 
-object_literal ::= BRACEL property_name_and_value_list RBRACE.
+object_literal ::= BRACEL property_name_and_value_list BRACER.
 
 property_name_and_value_list ::= .
 property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value.
@@ -178,9 +188,7 @@ property_name ::= IDENTIFIER|STRING|DECIMAL.
 member_expression_part ::= BRACKETL expression BRACKETR.
 member_expression_part ::= DOT IDENTIFIER.
 
-arguments ::= PARENL argument_list(A) PARENR. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, A);
-}
+arguments(A) ::= PARENL argument_list(B) PARENR. { A = B; }
 argument_list(A) ::= . { A = 0; }
 argument_list(A) ::= assignment_expression. { A = 1; }
 argument_list(A) ::= argument_list(B) COMMA assignment_expression. { A = B + 1; }
