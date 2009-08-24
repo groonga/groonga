@@ -1025,3 +1025,44 @@ test_expr_proc_call(void)
 
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
+
+void
+test_expr_score_set(void)
+{
+  grn_obj *cond, *expr, *v, *res, *res2, textbuf, intbuf;
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+  prepare_data(&textbuf, &intbuf);
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
+  cut_assert_not_null(cond);
+  cut_assert_not_null(v);
+  PARSE(cond, "size:>0", 2);
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+  cut_assert_equal_uint(10, grn_table_size(&context, res));
+  grn_test_assert(grn_obj_close(&context, cond));
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, res, expr, v);
+  PARSE(expr, "_score = size", 4);
+  GRN_TABLE_EACH(&context, res, 0, 0, id, NULL, 0, NULL, {
+    GRN_RECORD_SET(&context, v, id);
+    grn_expr_exec(&context, expr, 0);
+  });
+  grn_test_assert(grn_obj_close(&context, expr));
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, res, cond, v);
+  cut_assert_not_null(cond);
+  cut_assert_not_null(v);
+  PARSE(cond, "_score:>9", 2);
+  res2 = grn_table_select(&context, res, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res2);
+  cut_assert_equal_uint(7, grn_table_size(&context, res2));
+  grn_test_assert(grn_obj_close(&context, cond));
+
+  grn_test_assert(grn_obj_close(&context, res2));
+  grn_test_assert(grn_obj_close(&context, res));
+
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+  grn_test_assert(grn_obj_close(&context, &intbuf));
+}

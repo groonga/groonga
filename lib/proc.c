@@ -362,7 +362,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
             break;
           }
 
-          GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
+          GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
             grn_obj *col;
             if ((col = grn_ctx_at(ctx, *key))) {
               GRN_TEXT_PUTC(ctx, buf, line_delimiter);
