@@ -169,6 +169,4 @@ test_nonexistent_column(void)
                        grn_obj_column(&context, table,
                                       nonexistent_column_name,
                                       strlen(nonexistent_column_name)));
-  grn_test_assert_error(GRN_INVALID_ARGUMENT, "no such column: <nonexistent>",
-                        &context);
 }

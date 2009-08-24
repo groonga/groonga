@@ -8641,6 +8641,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
         }
       } else {
         ERR(GRN_INVALID_ARGUMENT, "column lookup failed");
+        q->cur = q->str_end;
         return ctx->rc;
       }
       GRN_PTR_PUT(ctx, &q->column_stack, c);
