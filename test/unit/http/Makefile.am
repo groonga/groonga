@@ -1,8 +1,6 @@
-if WITH_CUTTER
-if WITH_SOUP
+if WITH_SOUPCUTTER
 noinst_LTLIBRARIES =				\
 	test-http.la
-endif
 endif
 
 INCLUDES =			\
@@ -11,11 +9,10 @@ INCLUDES =			\
 	$(GROONGA_INCLUDEDIR)
 
 AM_CFLAGS =						\
-	$(GCUTTER_CFLAGS)				\
-	$(SOUP_CFLAGS)					\
+	$(SOUPCUTTER_CFLAGS)				\
 	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"
 
-AM_LDFLAGS = -module -rpath $(libdir) -avoid-version $(SOUP_LIBS)
+AM_LDFLAGS = -module -rpath $(libdir) -avoid-version $(SOUPCUTTER_LIBS)
 
 LIBS =								\
 	$(top_builddir)/lib/libgroonga.la			\
