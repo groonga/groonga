@@ -2509,23 +2509,28 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          obj = grn_ctx_at(ctx, obj->header.domain);
-          switch (obj->header.type) {
-          case GRN_DB :
-          case GRN_TYPE :
+          if (!obj->header.domain) {
             (*rp)->action = GRN_ACCESSOR_GET_ID;
             done++;
-            break;
-          case GRN_TABLE_PAT_KEY :
-          case GRN_TABLE_HASH_KEY :
-          case GRN_TABLE_NO_KEY :
-            (*rp)->action = GRN_ACCESSOR_GET_KEY;
-            break;
-          default :
-            /* lookup failed */
-            grn_obj_close(ctx, (grn_obj *)res);
-            res = NULL;
-            goto exit;
+          } else {
+            obj = grn_ctx_at(ctx, obj->header.domain);
+            switch (obj->header.type) {
+            case GRN_DB :
+            case GRN_TYPE :
+              (*rp)->action = GRN_ACCESSOR_GET_ID;
+              done++;
+              break;
+            case GRN_TABLE_PAT_KEY :
+            case GRN_TABLE_HASH_KEY :
+            case GRN_TABLE_NO_KEY :
+              (*rp)->action = GRN_ACCESSOR_GET_KEY;
+              break;
+            default :
+              /* lookup failed */
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
           }
         }
         break;
@@ -2534,10 +2539,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          obj = grn_ctx_at(ctx, obj->header.domain);
-          switch (obj->header.type) {
-          case GRN_DB :
-          case GRN_TYPE :
+          if (!obj->header.domain) {
             if (DB_OBJ((*rp)->obj)->range) {
               (*rp)->action = GRN_ACCESSOR_GET_VALUE;
               done++;
@@ -2546,17 +2548,32 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
               res = NULL;
               goto exit;
             }
-            break;
-          case GRN_TABLE_PAT_KEY :
-          case GRN_TABLE_HASH_KEY :
-          case GRN_TABLE_NO_KEY :
-           (*rp)->action = GRN_ACCESSOR_GET_KEY;
-            break;
-          default :
-            /* lookup failed */
-            grn_obj_close(ctx, (grn_obj *)res);
-            res = NULL;
-            goto exit;
+            done++;
+          } else {
+            obj = grn_ctx_at(ctx, obj->header.domain);
+            switch (obj->header.type) {
+            case GRN_DB :
+            case GRN_TYPE :
+              if (DB_OBJ((*rp)->obj)->range) {
+                (*rp)->action = GRN_ACCESSOR_GET_VALUE;
+                done++;
+              } else {
+                grn_obj_close(ctx, (grn_obj *)res);
+                res = NULL;
+                goto exit;
+              }
+              break;
+            case GRN_TABLE_PAT_KEY :
+            case GRN_TABLE_HASH_KEY :
+            case GRN_TABLE_NO_KEY :
+             (*rp)->action = GRN_ACCESSOR_GET_KEY;
+              break;
+            default :
+              /* lookup failed */
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
           }
         }
         break;
@@ -8235,11 +8252,27 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
       }
       if (id) {
         grn_obj *col;
+        const char *name;
+        unsigned name_size;
         while (value + 1 < ve) {
           if (value->header.domain != GRN_DB_TEXT) { break; /* error */ }
-          col = grn_obj_column(ctx, loader->table,
-                               GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+          name = GRN_TEXT_VALUE(value);
+          name_size = GRN_TEXT_LEN(value);
+          col = grn_obj_column(ctx, loader->table, name, name_size);
           value++;
+          /* auto column create */
+          if (!col) {
+            if (value->header.domain == OPEN_BRACKET) {
+              grn_obj *v = value + 1;
+              col = grn_column_create(ctx, loader->table, name, name_size,
+                                      NULL, GRN_OBJ_PERSISTENT|GRN_OBJ_COLUMN_VECTOR,
+                                      grn_ctx_at(ctx, v->header.domain));
+            } else {
+              col = grn_column_create(ctx, loader->table, name, name_size,
+                                      NULL, GRN_OBJ_PERSISTENT,
+                                      grn_ctx_at(ctx, value->header.domain));
+            }
+          }
           if (col) {
             if (value->header.domain == OPEN_BRACKET) {
               int n = GRN_UINT32_VALUE(value);
