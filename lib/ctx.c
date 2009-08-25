@@ -347,7 +347,7 @@ grn_ctx_fin(grn_ctx *ctx)
   if (ctx->impl) {
     if (ctx->impl->objects) {
       grn_cell *o;
-      GRN_ARRAY_EACH(ctx->impl->objects, 0, 0, id, &o, {
+      GRN_ARRAY_EACH(ctx, ctx->impl->objects, 0, 0, id, &o, {
         grn_cell_clear(ctx, o);
       });
       grn_array_close(ctx, ctx->impl->objects);
@@ -357,7 +357,7 @@ grn_ctx_fin(grn_ctx *ctx)
     }
     if (ctx->impl->values) {
       grn_tmp_db_obj *o;
-      GRN_ARRAY_EACH(ctx->impl->values, 0, 0, id, &o, {
+      GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
         grn_obj_close(ctx, (grn_obj *)o->obj);
       });
       grn_array_close(ctx, ctx->impl->values);
@@ -396,7 +396,7 @@ grn_ctx_fin(grn_ctx *ctx)
       uint32_t i;
       grn_expr_var *v;
       grn_expr_vars *vp;
-      GRN_HASH_EACH(ctx->impl->expr_vars, id, NULL, NULL, &vp, {
+      GRN_HASH_EACH(ctx, ctx->impl->expr_vars, id, NULL, NULL, &vp, {
         for (v = vp->vars, i = vp->nvars; i; v++, i--) {
           GRN_OBJ_FIN(ctx, &v->value);
         }
@@ -1317,29 +1317,31 @@ grn_free(grn_ctx *ctx, void *ptr, const char* file, int line)
 void *
 grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func)
 {
+  void *res;
   if (!ctx) { return NULL; }
-  {
-    void *res;
-    if (!size) {
-      alloc_count--;
-#if defined __FreeBSD__
-      free(ptr);
-      return NULL;
-#endif /* __FreeBSD__ */
-    }
-    res = realloc(ptr, size);
-    if (!ptr && res) { alloc_count++; }
-    if (size && !res) {
+  if (size) {
+    if (!(res = realloc(ptr, size))) {
       if (!(res = realloc(ptr, size))) {
         MERR("realloc fail (%p,%zu)=%p (%s:%d) <%d>", ptr, size, res, file, line, alloc_count);
+        return NULL;
       }
     }
-    if (!size && res) {
+    if (!ptr) { alloc_count++; }
+  } else {
+    if (!ptr) { return NULL; }
+    alloc_count--;
+#if defined __FreeBSD__
+    free(ptr);
+    return NULL;
+#else /* __FreeBSD__ */
+    res = realloc(ptr, size);
+    if (res) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "realloc(%p,%zu)=%p (%s:%d) <%d>", ptr, size, res, file, line, alloc_count);
       // grn_free(ctx, res, file, line);
     }
-    return res;
+#endif /* __FreeBSD__ */
   }
+  return res;
 }
 
 int

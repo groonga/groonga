@@ -135,11 +135,7 @@ grn_id grn_tiny_array_id(grn_tiny_array *a, void *p);
 
 /**** grn_array ****/
 
-typedef struct _grn_array grn_array;
-
 #define GRN_ARRAY_TINY                 (0x01<<6)
-
-typedef struct _grn_array_cursor grn_array_cursor;
 
 struct _grn_array {
   grn_db_obj obj;
@@ -168,43 +164,6 @@ struct _grn_array_cursor {
   unsigned int rest;
   int dir;
 };
-
-grn_array *grn_array_create(grn_ctx *ctx, const char *path,
-                            uint32_t value_size, uint32_t flags);
-grn_array *grn_array_open(grn_ctx *ctx, const char *path);
-grn_rc grn_array_close(grn_ctx *ctx, grn_array *array);
-grn_id grn_array_add(grn_ctx *ctx, grn_array *array, void **value);
-int grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf);
-grn_rc grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
-                           void *value, int flags);
-grn_array_cursor *grn_array_cursor_open(grn_ctx *ctx, grn_array *array,
-                                        grn_id min, grn_id max,
-                                        unsigned offset, unsigned limit, int flags);
-grn_id grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c);
-int grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value);
-grn_rc grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c,
-                                  void *value, int flags);
-grn_rc grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *c,
-                               grn_table_delete_optarg *optarg);
-void grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *c);
-grn_rc grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
-                              grn_table_delete_optarg *optarg);
-
-grn_id grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id);
-
-void *_grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id);
-
-#define GRN_ARRAY_EACH(array,head,tail,id,value,block) do {\
-  grn_array_cursor *_sc = grn_array_cursor_open(ctx, array, head, tail, 0, 0, 0); \
-  if (_sc) {\
-    grn_id id;\
-    while ((id = grn_array_cursor_next(ctx, _sc))) {\
-      grn_array_cursor_get_value(ctx, _sc, (void **)(value)); \
-      block\
-    }\
-    grn_array_cursor_close(ctx, _sc); \
-  }\
-} while (0)
 
 #define GRN_ARRAY_SIZE(array) (*((array)->n_entries))
 

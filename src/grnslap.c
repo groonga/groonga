@@ -205,7 +205,7 @@ receiver(void *arg)
     /*
     {
       session *s;
-      GRN_HASH_EACH(sessions, id, NULL, NULL, &s, {
+      GRN_HASH_EACH(ctx, sessions, id, NULL, NULL, &s, {
           printf("id=%d: fd=%d stat=%d q=%d n=%d\n", s->id, s->com->fd, s->stat, s->query_id, s->n_query);
       });
     }
@@ -293,7 +293,7 @@ do_client()
         }
         {
           session *s;
-          GRN_HASH_EACH(sessions, id, NULL, NULL, &s, {
+          GRN_HASH_EACH(ctx, sessions, id, NULL, NULL, &s, {
             session_close(ctx, s);
           });
         }

@@ -520,7 +520,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   FD_ZERO(&wfds);
   ctx->errlvl = GRN_OK;
   ctx->rc = GRN_SUCCESS;
-  GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
+  GRN_HASH_EACH(ctx, ev->hash, eh, &pfd, &dummy, &com, {
     if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
     if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
     if (*pfd > nfds) { nfds = *pfd; }
@@ -532,7 +532,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     return ctx->rc;
   }
   if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "select returns 0 events"); }
-  GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
+  GRN_HASH_EACH(ctx, ev->hash, eh, &pfd, &dummy, &com, {
     if (FD_ISSET(*pfd, &rfds)) { grn_com_receiver(ctx, com); }
   });
 #else /* USE_SELECT */
@@ -556,7 +556,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   struct pollfd *ep = ev->events;
   ctx->errlvl = GRN_OK;
   ctx->rc = GRN_SUCCESS;
-  GRN_HASH_EACH(ev->hash, eh, &pfd, &dummy, &com, {
+  GRN_HASH_EACH(ctx, ev->hash, eh, &pfd, &dummy, &com, {
     ep->fd = *pfd;
     //    ep->events =(short) com->events;
     ep->events = POLLIN;

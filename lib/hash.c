@@ -469,7 +469,7 @@ int
 grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value)
 {
   void *ee;
-  if (c) {
+  if (c && value) {
     ARRAY_ENTRY_AT(c->array, c->curr_rec, ee, 0);
     if (ee) {
       *value = ee;

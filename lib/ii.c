@@ -4268,7 +4268,7 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   grn_token_close(ctx, token);
   // todo : support vgram
   //  if (sbuf) { grn_vgram_update(vgram, rid, sbuf, (grn_set *)h); }
-  GRN_HASH_EACH(h, id, &tp, NULL, &u, {
+  GRN_HASH_EACH(ctx, h, id, &tp, NULL, &u, {
     if ((r = grn_ii_update_one(ctx, ii, *tp, *u, h))) { rc = r; }
     grn_ii_updspec_close(ctx, *u);
   });
@@ -4314,7 +4314,7 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
     }
   }
   grn_token_close(ctx, token);
-  GRN_HASH_EACH(h, id, &tp, NULL, &u, {
+  GRN_HASH_EACH(ctx, h, id, &tp, NULL, &u, {
     if (*tp) {
       grn_ii_delete_one(ctx, ii, *tp, *u, NULL);
     }
@@ -4446,7 +4446,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
   }
   if (old) {
     grn_id eid;
-    GRN_HASH_EACH(old, id, &tp, NULL, &u, {
+    GRN_HASH_EACH(ctx, old, id, &tp, NULL, &u, {
       if (new && (eid = grn_hash_get(ctx, new, tp, sizeof(grn_id), (void **) &un))) {
         if (!grn_ii_updspec_cmp(*u, *un)) {
           grn_ii_updspec_close(ctx, *un);
@@ -4460,7 +4460,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
     grn_hash_close(ctx, old);
   }
   if (new) {
-    GRN_HASH_EACH(new, id, &tp, NULL, &u, {
+    GRN_HASH_EACH(ctx, new, id, &tp, NULL, &u, {
       grn_rc r;
       if ((r = grn_ii_update_one(ctx, ii, *tp, *u, new))) { rc = r; }
       grn_ii_updspec_close(ctx, *u);
@@ -4658,7 +4658,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     grn_id eid;
     grn_hash *o = (grn_hash *)old;
     grn_hash *n = (grn_hash *)new;
-    GRN_HASH_EACH(o, id, &tp, NULL, &u, {
+    GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
       if (n && (eid = grn_hash_get(ctx, n, tp, sizeof(grn_id), (void **) &un))) {
         if (!grn_ii_updspec_cmp(*u, *un)) {
           grn_ii_updspec_close(ctx, *un);
@@ -4672,7 +4672,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   }
   if (new) {
     grn_hash *n = (grn_hash *)new;
-    GRN_HASH_EACH(n, id, &tp, NULL, &u, {
+    GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
       grn_rc r;
       if ((r = grn_ii_update_one(ctx, ii, *tp, *u, n))) { rc = r; }
       grn_ii_updspec_close(ctx, *u);
@@ -4737,7 +4737,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
               if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
                 grn_table_search(ctx, lexicon, key2, key2_size,
                                  GRN_OP_SUFFIX, (grn_obj *)g, GRN_OP_OR);
-                GRN_HASH_EACH(g, id, &tq, NULL, &offset2, {
+                GRN_HASH_EACH(ctx, g, id, &tq, NULL, &offset2, {
                   if ((s = grn_ii_estimate_size(ctx, ii, *tq))) {
                     cursor_heap_push(ctx, ti->cursors, ii, *tq, /* *offset2 */ 0);
                     ti->ntoken++;
@@ -4798,7 +4798,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                        GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
       if (GRN_HASH_SIZE(h)) {
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
-          GRN_HASH_EACH(h, id, &tp, NULL, NULL, {
+          GRN_HASH_EACH(ctx, h, id, &tp, NULL, NULL, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
               cursor_heap_push(ctx, ti->cursors, ii, *tp, 0);
               ti->ntoken++;
@@ -4817,7 +4817,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
       if (GRN_HASH_SIZE(h)) {
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
           uint32_t *offset2;
-          GRN_HASH_EACH(h, id, &tp, NULL, &offset2, {
+          GRN_HASH_EACH(ctx, h, id, &tp, NULL, &offset2, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
               cursor_heap_push(ctx, ti->cursors, ii, *tp, /* *offset2 */ 0);
               ti->ntoken++;

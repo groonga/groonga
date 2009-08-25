@@ -1875,7 +1875,7 @@ grn_pat_cursor_get_key_value(grn_ctx *ctx, grn_pat_cursor *c,
                                            GRN_TABLE_MAX_KEY_SIZE);
     if (key) { *key = c->curr_key; }
   }
-  if (value_size) {
+  if (value && value_size) {
     byte *v = (byte *)sis_at(ctx, c->pat, c->curr_rec);
     if (v) {
       if (c->pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {

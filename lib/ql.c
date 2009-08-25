@@ -1468,14 +1468,14 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
               }
               break;
             case GRN_OP_AND :
-              GRN_HASH_EACH((grn_hash *)rec, id, &rid, NULL, &ri, {
+              GRN_HASH_EACH(ctx, (grn_hash *)rec, id, &rid, NULL, &ri, {
                 if (!match_exec(ctx, &spec, base, *rid)) {
                   grn_hash_delete_by_id(ctx, (grn_hash *)rec, id, NULL);
                 }
               });
               break;
             case GRN_OP_BUT :
-              GRN_HASH_EACH((grn_hash *)rec, id, &rid, NULL, &ri, {
+              GRN_HASH_EACH(ctx, (grn_hash *)rec, id, &rid, NULL, &ri, {
                 if (match_exec(ctx, &spec, base, *rid)) {
                   grn_hash_delete_by_id(ctx, (grn_hash *)rec, id, NULL);
                 }
@@ -2140,7 +2140,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         void *key, *value;
         uint32_t key_size;
         grn_pat *keys = (grn_pat *)grn_db_keys(ctx->impl->db);
-        GRN_PAT_EACH(keys, id, &key, &key_size, &value, {
+        GRN_PAT_EACH(ctx, keys, id, &key, &key_size, &value, {
           obj = grn_ctx_at(ctx, id);
           grn_obj_clear_lock(ctx, obj);
         });
@@ -2169,7 +2169,7 @@ nf_db(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         grn_pat_prefix_search(ctx, keys, msg, msg_size, r);
         {
           grn_id *rid;
-          GRN_HASH_EACH(r, id, &rid, NULL, NULL, {
+          GRN_HASH_EACH(ctx, r, id, &rid, NULL, NULL, {
             uint32_t key_size;
             const char *key = _grn_pat_key(ctx, keys, *rid, &key_size);
             while (key_size--) {

@@ -362,7 +362,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
             break;
           }
 
-          GRN_HASH_EACH(cols, id, &key, NULL, NULL, {
+          GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
             grn_obj *col;
             if ((col = grn_ctx_at(ctx, *key))) {
               GRN_TEXT_PUTC(ctx, buf, line_delimiter);
@@ -493,6 +493,21 @@ proc_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return obj;
 }
 
+static grn_obj *
+proc_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  struct timeval tv;
+  grn_expr_var *vars;
+  grn_obj *obj, *caller;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
+  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_TIME, 0))) {
+    gettimeofday(&tv, NULL);
+    GRN_TIME_SET(ctx, obj, GRN_TIME_PACK(tv.tv_sec, tv.tv_usec));
+  }
+  return obj;
+}
+
 #define DEF_VAR(v,name_str) {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -562,4 +577,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", 4, NULL, proc_rand, NULL, NULL, 0, vars);
+
+  grn_proc_create(ctx, "now", 3, NULL, proc_now, NULL, NULL, 0, vars);
 }

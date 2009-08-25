@@ -237,6 +237,7 @@ struct _grn_expr {
   uint32_t codes_curr;
   uint32_t codes_size;
 
+  grn_obj objs;
   grn_obj dfi;
 };
 
