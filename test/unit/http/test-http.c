@@ -30,8 +30,6 @@ static GCutEgg *egg;
 
 static SoupCutClient *client;
 
-static SoupMessage *message;
-
 static grn_ctx context;
 static grn_obj *database;
 
@@ -47,7 +45,6 @@ cut_setup(void)
     cut_assert_errno();
   }
 
-  message = NULL;
   client = soupcut_client_new();
   soupcut_client_set_base(client, cut_take_printf("http://localhost:%u/",
                                                   GROONGA_TEST_PORT));
@@ -76,10 +73,6 @@ cut_teardown(void)
 {
   if (egg) {
     g_object_unref(egg);
-  }
-
-  if (message) {
-    g_object_unref(message);
   }
 
   if (client) {
