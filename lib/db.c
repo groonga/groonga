@@ -6870,6 +6870,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
   if (ctx->impl->stack_curr + nargs != stack_curr + 1) {
     GRN_LOG(ctx, GRN_LOG_WARNING, "nargs=%d stack balance=%d",
             nargs, stack_curr - ctx->impl->stack_curr);
+
+    ctx->impl->stack_curr = stack_curr + 1 - nargs;
   }
 exit :
   GRN_API_RETURN(ctx->rc);
@@ -7934,13 +7936,11 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   uint32_t nkeys, nhits;
   grn_obj_format format;
   grn_table_sort_key *keys;
-  grn_obj *table_, *match_column_, *cond, *foreach_, *res, *sorted;
+  grn_obj *table_, *match_column_, *cond, *foreach_, *res = NULL, *sorted;
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
     if (query_len || filter_len) {
       grn_obj *v;
-      res = grn_table_create(ctx, NULL, 0, NULL,
-                             GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table_, NULL);
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, cond, v);
       if (cond) {
         if (query_len) {
@@ -7963,7 +7963,11 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
         GRN_OBJ_FIN(ctx, &strbuf);
         */
-        grn_table_select(ctx, table_, cond, res, GRN_OP_OR);
+        if (!ctx->rc) {
+          res = grn_table_create(ctx, NULL, 0, NULL,
+                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table_, NULL);
+          grn_table_select(ctx, table_, cond, res, GRN_OP_OR);
+        }
         grn_obj_unlink(ctx, cond);
       } else {
         /* todo */

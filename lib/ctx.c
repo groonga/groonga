@@ -772,7 +772,7 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
         }
         goto exit;
       } else {
-        if (*str == '/') {
+        if (str_len && *str == '/') {
           grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
         } else {
           grn_ctx_qe_exec(ctx, str, str_len);
