@@ -184,6 +184,8 @@ struct _grn_ctx_impl {
   grn_obj *qe_next;
   void *parser;
 
+  grn_id idbuf;
+
   /* loader portion */
   grn_loader loader;
 

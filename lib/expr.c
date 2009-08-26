@@ -1199,72 +1199,20 @@ static void yy_reduce(
       case 7: /* query_element ::= QSTRING */
       case 8: /* query_element ::= PARENL query PARENR */
       case 13: /* expression ::= assignment_expression */
-      case 14: /* expression ::= expression COMMA assignment_expression */
       case 15: /* assignment_expression ::= conditional_expression */
-      case 17: /* assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression */
-      case 18: /* assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression */
-      case 19: /* assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression */
-      case 20: /* assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression */
-      case 21: /* assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression */
-      case 22: /* assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression */
-      case 23: /* assignment_expression ::= lefthand_side_expression SHIRTR_ASSIGN assignment_expression */
-      case 24: /* assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression */
-      case 25: /* assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression */
-      case 26: /* assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression */
-      case 27: /* assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expression */
       case 28: /* conditional_expression ::= logical_or_expression */
-      case 29: /* conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression */
       case 30: /* logical_or_expression ::= logical_and_expression */
       case 32: /* logical_and_expression ::= bitwise_or_expression */
       case 35: /* bitwise_or_expression ::= bitwise_xor_expression */
-      case 36: /* bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression */
       case 37: /* bitwise_xor_expression ::= bitwise_and_expression */
-      case 38: /* bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression */
       case 39: /* bitwise_and_expression ::= equality_expression */
-      case 40: /* bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression */
       case 41: /* equality_expression ::= relational_expression */
-      case 42: /* equality_expression ::= equality_expression EQUAL relational_expression */
-      case 43: /* equality_expression ::= equality_expression NOT_EQUAL relational_expression */
       case 44: /* relational_expression ::= shift_expression */
-      case 45: /* relational_expression ::= relational_expression LESS shift_expression */
-      case 46: /* relational_expression ::= relational_expression GREATER shift_expression */
-      case 47: /* relational_expression ::= relational_expression LESS_EQUAL shift_expression */
-      case 48: /* relational_expression ::= relational_expression GREATER_EQUAL shift_expression */
-      case 49: /* relational_expression ::= relational_expression IN shift_expression */
-      case 50: /* relational_expression ::= relational_expression MATCH shift_expression */
-      case 51: /* relational_expression ::= relational_expression NEAR shift_expression */
-      case 52: /* relational_expression ::= relational_expression NEAR2 shift_expression */
-      case 53: /* relational_expression ::= relational_expression SIMILAR shift_expression */
-      case 54: /* relational_expression ::= relational_expression TERM_EXTRACT shift_expression */
-      case 55: /* relational_expression ::= relational_expression LCP shift_expression */
-      case 56: /* relational_expression ::= relational_expression PREFIX shift_expression */
-      case 57: /* relational_expression ::= relational_expression SUFFIX shift_expression */
       case 58: /* shift_expression ::= additive_expression */
-      case 59: /* shift_expression ::= shift_expression SHIFTL additive_expression */
-      case 60: /* shift_expression ::= shift_expression SHIFTR additive_expression */
-      case 61: /* shift_expression ::= shift_expression SHIFTRR additive_expression */
       case 62: /* additive_expression ::= multiplicative_expression */
-      case 63: /* additive_expression ::= additive_expression PLUS multiplicative_expression */
-      case 64: /* additive_expression ::= additive_expression MINUS multiplicative_expression */
       case 65: /* multiplicative_expression ::= unary_expression */
-      case 66: /* multiplicative_expression ::= multiplicative_expression STAR unary_expression */
-      case 67: /* multiplicative_expression ::= multiplicative_expression SLASH unary_expression */
-      case 68: /* multiplicative_expression ::= multiplicative_expression MOD unary_expression */
       case 69: /* unary_expression ::= postfix_expression */
-      case 70: /* unary_expression ::= DELETE unary_expression */
-      case 71: /* unary_expression ::= INCR unary_expression */
-      case 72: /* unary_expression ::= DECR unary_expression */
-      case 73: /* unary_expression ::= PLUS unary_expression */
-      case 74: /* unary_expression ::= MINUS unary_expression */
-      case 75: /* unary_expression ::= NOT unary_expression */
-      case 76: /* unary_expression ::= BITWISE_NOT unary_expression */
-      case 77: /* unary_expression ::= ADJUST unary_expression */
-      case 78: /* unary_expression ::= EXACT unary_expression */
-      case 79: /* unary_expression ::= PARTIAL unary_expression */
-      case 80: /* unary_expression ::= UNSPLIT unary_expression */
       case 81: /* postfix_expression ::= lefthand_side_expression */
-      case 82: /* postfix_expression ::= lefthand_side_expression INCR */
-      case 83: /* postfix_expression ::= lefthand_side_expression DECR */
       case 84: /* lefthand_side_expression ::= call_expression */
       case 85: /* lefthand_side_expression ::= member_expression */
       case 87: /* member_expression ::= primary_expression */
@@ -1296,14 +1244,14 @@ static void yy_reduce(
 #line 18 "expr.y"
 {
 }
-#line 1302 "expr.c"
+#line 1250 "expr.c"
         break;
       case 3: /* query ::= query query_element */
 #line 22 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->op_stack, -1), 2);
 }
-#line 1309 "expr.c"
+#line 1257 "expr.c"
         break;
       case 4: /* query ::= query LOGICAL_AND query_element */
       case 33: /* logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression */
@@ -1311,7 +1259,7 @@ static void yy_reduce(
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
 }
-#line 1317 "expr.c"
+#line 1265 "expr.c"
         break;
       case 5: /* query ::= query LOGICAL_BUT query_element */
       case 34: /* logical_and_expression ::= logical_and_expression LOGICAL_BUT bitwise_or_expression */
@@ -1319,7 +1267,7 @@ static void yy_reduce(
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
 }
-#line 1325 "expr.c"
+#line 1273 "expr.c"
         break;
       case 6: /* query ::= query LOGICAL_OR query_element */
       case 31: /* logical_or_expression ::= logical_or_expression LOGICAL_OR logical_and_expression */
@@ -1327,7 +1275,7 @@ static void yy_reduce(
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
 }
-#line 1333 "expr.c"
+#line 1281 "expr.c"
         break;
       case 9: /* query_element ::= RELATIVE_OP query_element */
 #line 38 "expr.y"
@@ -1335,7 +1283,7 @@ static void yy_reduce(
   int mode;
   GRN_UINT32_POP(&efsi->mode_stack, mode);
 }
-#line 1341 "expr.c"
+#line 1289 "expr.c"
         break;
       case 10: /* query_element ::= IDENTIFIER RELATIVE_OP query_element */
 #line 42 "expr.y"
@@ -1345,7 +1293,7 @@ static void yy_reduce(
   GRN_PTR_POP(&efsi->column_stack, c);
   GRN_UINT32_POP(&efsi->mode_stack, mode);
 }
-#line 1351 "expr.c"
+#line 1299 "expr.c"
         break;
       case 11: /* query_element ::= BRACEL expression BRACER */
       case 12: /* query_element ::= EVAL primary_expression */
@@ -1353,41 +1301,405 @@ static void yy_reduce(
 {
   efsi->parse_level = efsi->default_parse_level;
 }
-#line 1359 "expr.c"
+#line 1307 "expr.c"
+        break;
+      case 14: /* expression ::= expression COMMA assignment_expression */
+#line 56 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
+}
+#line 1314 "expr.c"
         break;
       case 16: /* assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression */
-#line 59 "expr.y"
+#line 61 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ASSIGN, 2);
 }
-#line 1366 "expr.c"
+#line 1321 "expr.c"
+        break;
+      case 17: /* assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression */
+#line 64 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR_ASSIGN, 2);
+}
+#line 1328 "expr.c"
+        break;
+      case 18: /* assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression */
+#line 67 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH_ASSIGN, 2);
+}
+#line 1335 "expr.c"
+        break;
+      case 19: /* assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression */
+#line 70 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD_ASSIGN, 2);
+}
+#line 1342 "expr.c"
+        break;
+      case 20: /* assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression */
+#line 73 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS_ASSIGN, 2);
+}
+#line 1349 "expr.c"
+        break;
+      case 21: /* assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression */
+#line 76 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS_ASSIGN, 2);
+}
+#line 1356 "expr.c"
+        break;
+      case 22: /* assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression */
+#line 79 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL_ASSIGN, 2);
+}
+#line 1363 "expr.c"
+        break;
+      case 23: /* assignment_expression ::= lefthand_side_expression SHIRTR_ASSIGN assignment_expression */
+#line 82 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIRTR_ASSIGN, 2);
+}
+#line 1370 "expr.c"
+        break;
+      case 24: /* assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression */
+#line 85 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR_ASSIGN, 2);
+}
+#line 1377 "expr.c"
+        break;
+      case 25: /* assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression */
+#line 88 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_ASSIGN, 2);
+}
+#line 1384 "expr.c"
+        break;
+      case 26: /* assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression */
+#line 91 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_XOR_ASSIGN, 2);
+}
+#line 1391 "expr.c"
+        break;
+      case 27: /* assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expression */
+#line 94 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR_ASSIGN, 2);
+}
+#line 1398 "expr.c"
+        break;
+      case 29: /* conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression */
+#line 99 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_TERNARY, 3);
+}
+#line 1405 "expr.c"
+        break;
+      case 36: /* bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression */
+#line 117 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_OR, 2);
+}
+#line 1412 "expr.c"
+        break;
+      case 38: /* bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression */
+#line 122 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_XOR, 2);
+}
+#line 1419 "expr.c"
+        break;
+      case 40: /* bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression */
+#line 127 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_AND, 2);
+}
+#line 1426 "expr.c"
+        break;
+      case 42: /* equality_expression ::= equality_expression EQUAL relational_expression */
+#line 132 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EQUAL, 2);
+}
+#line 1433 "expr.c"
+        break;
+      case 43: /* equality_expression ::= equality_expression NOT_EQUAL relational_expression */
+#line 135 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT_EQUAL, 2);
+}
+#line 1440 "expr.c"
+        break;
+      case 45: /* relational_expression ::= relational_expression LESS shift_expression */
+#line 140 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS, 2);
+}
+#line 1447 "expr.c"
+        break;
+      case 46: /* relational_expression ::= relational_expression GREATER shift_expression */
+#line 143 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER, 2);
+}
+#line 1454 "expr.c"
+        break;
+      case 47: /* relational_expression ::= relational_expression LESS_EQUAL shift_expression */
+#line 146 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS_EQUAL, 2);
+}
+#line 1461 "expr.c"
+        break;
+      case 48: /* relational_expression ::= relational_expression GREATER_EQUAL shift_expression */
+#line 149 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER_EQUAL, 2);
+}
+#line 1468 "expr.c"
+        break;
+      case 49: /* relational_expression ::= relational_expression IN shift_expression */
+#line 152 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_IN, 2);
+}
+#line 1475 "expr.c"
+        break;
+      case 50: /* relational_expression ::= relational_expression MATCH shift_expression */
+#line 155 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
+}
+#line 1482 "expr.c"
+        break;
+      case 51: /* relational_expression ::= relational_expression NEAR shift_expression */
+#line 158 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, 2);
+}
+#line 1489 "expr.c"
+        break;
+      case 52: /* relational_expression ::= relational_expression NEAR2 shift_expression */
+#line 161 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR2, 2);
+}
+#line 1496 "expr.c"
+        break;
+      case 53: /* relational_expression ::= relational_expression SIMILAR shift_expression */
+#line 164 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SIMILAR, 2);
+}
+#line 1503 "expr.c"
+        break;
+      case 54: /* relational_expression ::= relational_expression TERM_EXTRACT shift_expression */
+#line 167 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_TERM_EXTRACT, 2);
+}
+#line 1510 "expr.c"
+        break;
+      case 55: /* relational_expression ::= relational_expression LCP shift_expression */
+#line 170 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LCP, 2);
+}
+#line 1517 "expr.c"
+        break;
+      case 56: /* relational_expression ::= relational_expression PREFIX shift_expression */
+#line 173 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PREFIX, 2);
+}
+#line 1524 "expr.c"
+        break;
+      case 57: /* relational_expression ::= relational_expression SUFFIX shift_expression */
+#line 176 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SUFFIX, 2);
+}
+#line 1531 "expr.c"
+        break;
+      case 59: /* shift_expression ::= shift_expression SHIFTL additive_expression */
+#line 181 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL, 2);
+}
+#line 1538 "expr.c"
+        break;
+      case 60: /* shift_expression ::= shift_expression SHIFTR additive_expression */
+#line 184 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR, 2);
+}
+#line 1545 "expr.c"
+        break;
+      case 61: /* shift_expression ::= shift_expression SHIFTRR additive_expression */
+#line 187 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR, 2);
+}
+#line 1552 "expr.c"
+        break;
+      case 63: /* additive_expression ::= additive_expression PLUS multiplicative_expression */
+#line 192 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 2);
+}
+#line 1559 "expr.c"
+        break;
+      case 64: /* additive_expression ::= additive_expression MINUS multiplicative_expression */
+#line 195 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 2);
+}
+#line 1566 "expr.c"
+        break;
+      case 66: /* multiplicative_expression ::= multiplicative_expression STAR unary_expression */
+#line 200 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR, 2);
+}
+#line 1573 "expr.c"
+        break;
+      case 67: /* multiplicative_expression ::= multiplicative_expression SLASH unary_expression */
+#line 203 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH, 2);
+}
+#line 1580 "expr.c"
+        break;
+      case 68: /* multiplicative_expression ::= multiplicative_expression MOD unary_expression */
+#line 206 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD, 2);
+}
+#line 1587 "expr.c"
+        break;
+      case 70: /* unary_expression ::= DELETE unary_expression */
+#line 211 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DELETE, 1);
+}
+#line 1594 "expr.c"
+        break;
+      case 71: /* unary_expression ::= INCR unary_expression */
+#line 214 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
+}
+#line 1601 "expr.c"
+        break;
+      case 72: /* unary_expression ::= DECR unary_expression */
+#line 217 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
+}
+#line 1608 "expr.c"
+        break;
+      case 73: /* unary_expression ::= PLUS unary_expression */
+#line 220 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 1);
+}
+#line 1615 "expr.c"
+        break;
+      case 74: /* unary_expression ::= MINUS unary_expression */
+#line 223 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 1);
+}
+#line 1622 "expr.c"
+        break;
+      case 75: /* unary_expression ::= NOT unary_expression */
+#line 226 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT, 1);
+}
+#line 1629 "expr.c"
+        break;
+      case 76: /* unary_expression ::= BITWISE_NOT unary_expression */
+#line 229 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_NOT, 1);
+}
+#line 1636 "expr.c"
+        break;
+      case 77: /* unary_expression ::= ADJUST unary_expression */
+#line 232 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ADJUST, 1);
+}
+#line 1643 "expr.c"
+        break;
+      case 78: /* unary_expression ::= EXACT unary_expression */
+#line 235 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EXACT, 1);
+}
+#line 1650 "expr.c"
+        break;
+      case 79: /* unary_expression ::= PARTIAL unary_expression */
+#line 238 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PARTIAL, 1);
+}
+#line 1657 "expr.c"
+        break;
+      case 80: /* unary_expression ::= UNSPLIT unary_expression */
+#line 241 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_UNSPLIT, 1);
+}
+#line 1664 "expr.c"
+        break;
+      case 82: /* postfix_expression ::= lefthand_side_expression INCR */
+#line 246 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
+}
+#line 1671 "expr.c"
+        break;
+      case 83: /* postfix_expression ::= lefthand_side_expression DECR */
+#line 249 "expr.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
+}
+#line 1678 "expr.c"
         break;
       case 86: /* call_expression ::= member_expression arguments */
-#line 152 "expr.y"
+#line 256 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[0].minor.yy0);
 }
-#line 1373 "expr.c"
+#line 1685 "expr.c"
         break;
       case 113: /* arguments ::= PARENL argument_list PARENR */
-#line 191 "expr.y"
+#line 295 "expr.y"
 { yygotominor.yy0 = yymsp[-1].minor.yy0; }
-#line 1378 "expr.c"
+#line 1690 "expr.c"
         break;
       case 114: /* argument_list ::= */
-#line 192 "expr.y"
+#line 296 "expr.y"
 { yygotominor.yy0 = 0; }
-#line 1383 "expr.c"
+#line 1695 "expr.c"
         break;
       case 115: /* argument_list ::= assignment_expression */
-#line 193 "expr.y"
+#line 297 "expr.y"
 { yygotominor.yy0 = 1; }
-#line 1388 "expr.c"
+#line 1700 "expr.c"
         break;
       case 116: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 194 "expr.y"
+#line 298 "expr.y"
 { yygotominor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 1393 "expr.c"
+#line 1705 "expr.c"
         break;
   };
   yygoto = yyRuleInfo[yyruleno].lhs;
@@ -1451,7 +1763,7 @@ static void yy_syntax_error(
     grn_ctx *ctx = efsi->ctx;
     ERR(GRN_SYNTAX_ERROR, "Syntax error!");
   }
-#line 1459 "expr.c"
+#line 1771 "expr.c"
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
