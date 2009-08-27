@@ -189,8 +189,6 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
-static grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db,
-                               const char *name, unsigned name_size);
 static grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep);
 
 grn_obj *
@@ -4002,7 +4000,7 @@ grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path)
 }
 
 /* db must be validate by caller */
-static grn_id
+grn_id
 grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size)
 {
   grn_id id = GRN_ID_NIL;

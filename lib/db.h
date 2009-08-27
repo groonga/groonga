@@ -81,6 +81,8 @@ grn_table_cursor *grn_table_cursor_open_by_id(grn_ctx *ctx, grn_obj *table,
 void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
                           grn_rset_posinfo *pi, int dir);
 
+grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size);
+
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
 grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
