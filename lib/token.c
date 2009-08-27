@@ -17,6 +17,7 @@
 #include "groonga_in.h"
 #include <string.h>
 #include <ctype.h>
+#include "ql.h"
 #include "token.h"
 #include "pat.h"
 #include "hash.h"
@@ -663,10 +664,14 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
   obj = grn_proc_create(ctx, "TokenTrigram", 12, NULL,
                         trigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) { return GRN_FILE_CORRUPT; }
-#ifndef NO_MECAB
+#ifdef NO_MECAB
+  if (grn_obj_register(ctx, ctx->impl->db, "TokenMecab", 10) != GRN_DB_MECAB) {
+    return GRN_FILE_CORRUPT;
+  }
+#else /* NO_MECAB */
   obj = grn_proc_create(ctx, "TokenMecab", 10, NULL,
                         mecab_init, mecab_next, mecab_fin, 3, vars);
-#endif /* NO_MECAB */
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
+#endif /* NO_MECAB */
   return GRN_SUCCESS;
 }
