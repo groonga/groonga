@@ -224,7 +224,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_OBJ_TABLE_HASH_KEY         (0x00)
 #define GRN_OBJ_TABLE_PAT_KEY          (0x01)
 #define GRN_OBJ_TABLE_NO_KEY           (0x03)
-#define GRN_OBJ_TABLE_ALIAS            (0x04)
+#define GRN_OBJ_TABLE_VIEW             (0x04)
 
 #define GRN_OBJ_KEY_MASK               (0x07<<3)
 #define GRN_OBJ_KEY_UINT               (0x00<<3)

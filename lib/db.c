@@ -283,6 +283,9 @@ struct _grn_type {
   grn_db_obj obj;
 };
 
+static grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db,
+                               const char *name, unsigned name_size);
+
 grn_obj *
 grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                 grn_obj_flags flags, unsigned int size)
@@ -4000,7 +4003,7 @@ grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path)
 }
 
 /* db must be validate by caller */
-grn_id
+static grn_id
 grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size)
 {
   grn_id id = GRN_ID_NIL;
@@ -4980,7 +4983,8 @@ deftype(grn_ctx *ctx, const char *name,
   return o;
 }
 
-#define N_RESERVED_TYPES 255
+#define N_RESERVED_TOKENIZERS 127
+#define N_RESERVED_TYPES      255
 
 grn_rc
 grn_db_init_builtin_types(grn_ctx *ctx)
@@ -5032,6 +5036,15 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_TEXT) { return GRN_FILE_CORRUPT; }
   grn_db_init_builtin_tokenizers(ctx);
+  {
+    grn_obj *db = ctx->impl->db;
+    grn_id id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys);
+    char buf[] = "Tkn00";
+    while (id < N_RESERVED_TOKENIZERS) {
+      grn_itoh(++id, buf + 3, 2);
+      grn_obj_register(ctx, db, buf, 5);
+    }
+  }
   grn_db_init_builtin_query(ctx);
   {
     grn_obj *db = ctx->impl->db;

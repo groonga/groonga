@@ -664,11 +664,7 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
   obj = grn_proc_create(ctx, "TokenTrigram", 12, NULL,
                         trigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) { return GRN_FILE_CORRUPT; }
-#ifdef NO_MECAB
-  if (grn_obj_register(ctx, ctx->impl->db, "TokenMecab", 10) != GRN_DB_MECAB) {
-    return GRN_FILE_CORRUPT;
-  }
-#else /* NO_MECAB */
+#ifndef NO_MECAB
   obj = grn_proc_create(ctx, "TokenMecab", 10, NULL,
                         mecab_init, mecab_next, mecab_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
