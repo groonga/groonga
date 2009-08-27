@@ -1543,7 +1543,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           POP(res, args);
           if (!RECORDSP(res)) {
             res = table_create(ctx, NULL, 0, GRN_OBJ_TABLE_NO_KEY,
-                               table, table, GRN_DB_DELIMIT);
+                               NULL, table, GRN_DB_DELIMIT);
           }
           if (ce) {
             grn_table_sort(ctx, table, 0, limit, get_obj(ctx, res), ce->keys, ce->n_keys);

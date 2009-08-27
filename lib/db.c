@@ -703,6 +703,10 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     res = (grn_obj *)grn_pat_create(ctx, path, key_size, value_size, flags);
     break;
   case GRN_OBJ_TABLE_NO_KEY :
+    if (key_type) {
+      GRN_LOG(ctx, GRN_LOG_WARNING, "key_type assigend for no key table");
+    }
+    domain = range;
     res = (grn_obj *)grn_array_create(ctx, path, value_size, flags);
     break;
   }
@@ -7274,8 +7278,10 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
             grn_hash_close(ctx, cols);
           }
           {
-            grn_obj *type = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(table));
-            if (!type || type->header.type != GRN_TYPE) {
+            grn_obj *type = grn_ctx_at(ctx, table->header.domain);
+            if (type && (type->header.type == GRN_TABLE_HASH_KEY ||
+                         type->header.type == GRN_TABLE_PAT_KEY ||
+                         type->header.type == GRN_TABLE_NO_KEY)) {
               grn_obj *ai = grn_obj_column(ctx, table, "_id", 3);
               if (ai && ai->header.type == GRN_ACCESSOR) {
                 cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -8018,7 +8024,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       nhits = grn_table_size(ctx, res);
       if (sortby_len) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
-                                       GRN_OBJ_TABLE_NO_KEY, res, res))) {
+                                       GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
             grn_table_sort_key_close(ctx, keys, nkeys);
@@ -8051,7 +8057,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                     drilldown_sortby, drilldown_sortby_len,
                                                     g.table, &nkeys))) {
               if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                             g.table, g.table))) {
+                                             NULL, g.table))) {
                 grn_table_sort(ctx, g.table, drilldown_offset, drilldown_limit,
                                sorted, keys, nkeys);
                 grn_table_sort_key_close(ctx, keys, nkeys);

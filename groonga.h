@@ -1255,7 +1255,8 @@ GRN_API int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_s
  **/
 GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
 
-#define GRN_OBJ_GET_DOMAIN(obj) ((obj)->header.domain)
+#define GRN_OBJ_GET_DOMAIN(obj) \
+  ((obj)->header.type == GRN_TABLE_NO_KEY ? GRN_ID_NIL : (obj)->header.domain)
 
 /**
  * grn_obj_expire:
