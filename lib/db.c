@@ -2898,7 +2898,9 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
   for (;;) {
     switch (a->action) {
     case GRN_ACCESSOR_GET_ID :
-      // todo
+      ctx->impl->idbuf = id;
+      value = (const char *)&ctx->impl->idbuf;
+      *size = sizeof(grn_id);
       break;
     case GRN_ACCESSOR_GET_KEY :
       value = _grn_table_key(ctx, a->obj, id, size);
@@ -3357,6 +3359,7 @@ const char *
 grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
 {
   const char *value = NULL;
+  *size = 0;
   switch (obj->header.type) {
   case GRN_ACCESSOR :
     value = grn_accessor_get_value_(ctx, (grn_accessor *)obj, id, size);
