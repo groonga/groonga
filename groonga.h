@@ -1760,6 +1760,11 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
 } while (0)
+#define GRN_TIME_NOW(ctx,obj) do {\
+  struct timeval tv_;\
+  gettimeofday(&tv_, NULL);\
+  GRN_TIME_SET((ctx), (obj), GRN_TIME_PACK(tv_.tv_sec, tv_.tv_usec));\
+} while (0)
 
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))

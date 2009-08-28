@@ -497,13 +497,11 @@ static grn_obj *
 proc_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
-  struct timeval tv;
   grn_expr_var *vars;
   grn_obj *obj, *caller;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_TIME, 0))) {
-    gettimeofday(&tv, NULL);
-    GRN_TIME_SET(ctx, obj, GRN_TIME_PACK(tv.tv_sec, tv.tv_usec));
+    GRN_TIME_NOW(ctx, obj);
   }
   return obj;
 }
