@@ -615,44 +615,42 @@ GroongaAdmin = {
     return ret;
   },
   recordlist: function(table_name, query, query_type, page) {
-    if (query && query_type) {
-      var d = {
-        'table': table_name,
-        'offset': (page - 1) * GroongaAdmin.recordlist_count,
-        'limit': GroongaAdmin.recordlist_count
-        /* sort_column: :id */
-      };
+    var d = {
+      'table': table_name,
+      'offset': (page - 1) * GroongaAdmin.recordlist_count,
+      'limit': GroongaAdmin.recordlist_count
+      /* sort_column: :id */
+    };
+    if (query_type) {
       d[query_type] = query;
-      $.ajax({
-        url: '/select',
-        data: d,
-        dataType: 'json',
-        success: function(d) {
-          var all_count = d.shift();
-          var pager = GroongaAdmin.pager_element(
-            GroongaAdmin.recordlist_count,
-            page,
-            all_count,
-            13,
-            function() {
-              GroongaAdmin.recordlist(GroongaAdmin.current_table,
-                                      $('#tab-recordlist-query').val(),
-                                      Number($(this).text()));
-              return false;
-            }
-          );
-          $('#tab-recordlist-table')
-            .empty()
-            .append($('<h1/>').text('レコード一覧: ' + table_name))
-            .append($('<p/>').text('総件数: ' + all_count))
-            .append(pager.clone(true))
-            .append($('<div/>').html(GroongaAdmin.create_table_element(d)))
-            .append(pager);
-        }
-      });
-    } else {
-      $('#tab-recordlist-table').empty();
     }
+    $.ajax({
+      url: '/select',
+      data: d,
+      dataType: 'json',
+      success: function(d) {
+        var all_count = d.shift();
+        var pager = GroongaAdmin.pager_element(
+          GroongaAdmin.recordlist_count,
+          page,
+          all_count,
+          13,
+          function() {
+            GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                                    $('#tab-recordlist-query').val(),
+                                    Number($(this).text()));
+            return false;
+          }
+        );
+        $('#tab-recordlist-table')
+          .empty()
+          .append($('<h1/>').text('レコード一覧: ' + table_name))
+          .append($('<p/>').text('総件数: ' + all_count))
+          .append(pager.clone(true))
+          .append($('<div/>').html(GroongaAdmin.create_table_element(d)))
+          .append(pager);
+      }
+    });
   },
   columnlist: function(table_name) {
     $.ajax({
