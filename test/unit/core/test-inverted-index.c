@@ -347,7 +347,7 @@ update_data(grn_id record_id, unsigned int section,
   }
 
   grn_ii_column_update(context, inverted_index, record_id, section,
-                       &old_value, &new_value);
+                       &old_value, &new_value, NULL);
   grn_obj_close(context, &old_value);
   grn_obj_close(context, &new_value);
 }

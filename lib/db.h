@@ -83,6 +83,8 @@ void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
 
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
+grn_id grn_table_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table);
+
 grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
 
 typedef struct _grn_hook grn_hook;
@@ -101,8 +103,9 @@ typedef enum {
 
 typedef struct {
   grn_obj_header header;
-  grn_id id;
   grn_id range;  /* table: type of subrecords, column: type of values */
+  /* -- compatible with grn_accessor -- */
+  grn_id id;
   grn_obj *db;
   grn_user_data user_data;
   grn_proc_func *finalizer;

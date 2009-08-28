@@ -279,11 +279,13 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_MSG                        (0x07)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
-#define GRN_SNIP                       (0x0a)
-#define GRN_PATSNIP                    (0x0b)
+#define GRN_ACCESSOR_VIEW              (0x0a)
+#define GRN_SNIP                       (0x0b)
+#define GRN_PATSNIP                    (0x0c)
 #define GRN_CURSOR_TABLE_HASH_KEY      (0x10)
 #define GRN_CURSOR_TABLE_PAT_KEY       (0x11)
 #define GRN_CURSOR_TABLE_NO_KEY        (0x13)
+#define GRN_CURSOR_TABLE_VIEW          (0x14)
 #define GRN_CURSOR_COLUMN_INDEX        (0x18)
 #define GRN_TYPE                       (0x20)
 #define GRN_PROC                       (0x21)
@@ -291,6 +293,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_TABLE_HASH_KEY             (0x30)
 #define GRN_TABLE_PAT_KEY              (0x31)
 #define GRN_TABLE_NO_KEY               (0x33)
+#define GRN_TABLE_VIEW                 (0x34)
 #define GRN_DB                         (0x37)
 #define GRN_COLUMN_FIX_SIZE            (0x40)
 #define GRN_COLUMN_VAR_SIZE            (0x41)
@@ -413,6 +416,7 @@ GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, unsigned name_size)
 
 typedef enum {
   GRN_DB_VOID = 0,
+/* GRN_DB_DB, */
   GRN_DB_OBJECT,
   GRN_DB_BOOL,
   GRN_DB_INT8,
