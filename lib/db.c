@@ -5103,13 +5103,15 @@ deftype(grn_ctx *ctx, const char *name,
   return o;
 }
 
-#define N_RESERVED_TOKENIZERS 127
-#define N_RESERVED_TYPES      255
+#define N_RESERVED_TYPES      256
 
 grn_rc
 grn_db_init_builtin_types(grn_ctx *ctx)
 {
-  grn_obj *obj;
+  grn_id id;
+  grn_obj *obj, *db = ctx->impl->db;
+  char buf[] = "Sys00";
+  grn_obj_register(ctx, db, buf, 5);
   obj = deftype(ctx, "Object",
                 GRN_OBJ_KEY_UINT, sizeof(uint64_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_OBJECT) { return GRN_FILE_CORRUPT; }
@@ -5155,25 +5157,28 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   obj = deftype(ctx, "LongText",
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_TEXT) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "TokyoPoint",
+                GRN_OBJ_KEY_UINT, sizeof(uint64_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_TOKYO_POINT) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "WGS84Point",
+                GRN_OBJ_KEY_UINT, sizeof(uint64_t));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_WGS84_POINT) { return GRN_FILE_CORRUPT; }
+  for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < GRN_DB_MECAB; id++) {
+    grn_itoh(id, buf + 3, 2);
+    grn_obj_register(ctx, db, buf, 5);
+  }
+#ifdef NO_MECAB
+  grn_obj_register(ctx, db, "TokenMecab", 10);
+#endif /* NO_MECAB */
   grn_db_init_builtin_tokenizers(ctx);
-  {
-    grn_obj *db = ctx->impl->db;
-    grn_id id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys);
-    char buf[] = "Tkn00";
-    while (id < N_RESERVED_TOKENIZERS) {
-      grn_itoh(++id, buf + 3, 2);
-      grn_obj_register(ctx, db, buf, 5);
-    }
+  for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < 128; id++) {
+    grn_itoh(id, buf + 3, 2);
+    grn_obj_register(ctx, db, buf, 5);
   }
   grn_db_init_builtin_query(ctx);
-  {
-    grn_obj *db = ctx->impl->db;
-    grn_id id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys);
-    char buf[] = "Sys00";
-    while (id < N_RESERVED_TYPES) {
-      grn_itoh(++id, buf + 3, 2);
-      grn_obj_register(ctx, db, buf, 5);
-    }
+  for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < N_RESERVED_TYPES; id++) {
+    grn_itoh(id, buf + 3, 2);
+    grn_obj_register(ctx, db, buf, 5);
   }
   return ctx->rc;
 }
