@@ -169,6 +169,9 @@ struct _grn_array_cursor {
 
 #define GRN_ARRAY_SIZE(array) (*((array)->n_entries))
 
+grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
+                               grn_table_sort_key *keys, int n_keys);
+
 /**** grn_hash ****/
 
 #define GRN_HASH_TINY (1L<<1)
