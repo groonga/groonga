@@ -83,9 +83,11 @@ void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
 
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
-grn_id grn_table_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table);
+grn_id grn_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table);
 
 grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
+
+grn_rc grn_table_cursor_next_o(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *id);
 
 typedef struct _grn_hook grn_hook;
 

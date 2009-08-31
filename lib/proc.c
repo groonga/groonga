@@ -520,7 +520,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_obj *table = grn_ctx_get(ctx,
                                 GRN_TEXT_VALUE(&vars[1].value),
                                 GRN_TEXT_LEN(&vars[1].value));
-    grn_table_view_add(ctx, view, table);
+    grn_view_add(ctx, view, table);
     GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
   }
   return buf;

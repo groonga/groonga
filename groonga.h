@@ -432,8 +432,8 @@ typedef enum {
   GRN_DB_SHORT_TEXT,
   GRN_DB_TEXT,
   GRN_DB_LONG_TEXT,
-  GRN_DB_TOKYO_POINT,
-  GRN_DB_WGS84_POINT
+  GRN_DB_TOKYO_GEO_POINT,
+  GRN_DB_WGS84_GEO_POINT
 } grn_builtin_type;
 
 typedef enum {

@@ -4609,6 +4609,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     }
   }
   if (posting) {
+    grn_ii_updspec *u_;
     uint32_t offset = 0;
     grn_id *tpe;
     grn_table_sort_optarg arg = {GRN_TABLE_SORT_ASC, NULL, NULL, 0};
@@ -4616,10 +4617,10 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     grn_hash_sort(ctx, (grn_hash *)new, 0, sorted, &arg);
     GRN_TEXT_PUT(ctx, posting, ((grn_hash *)new)->n_entries, sizeof(uint32_t));
     GRN_ARRAY_EACH(ctx, sorted, 0, 0, id, &tp, {
-      grn_hash_get(ctx, (grn_hash *)new, (void *)tp, sizeof(grn_id), (void **)&u);
-      (*u)->offset = offset++;
+      grn_hash_get_value(ctx, (grn_hash *)new, *tp, &u_);
+      u_->offset = offset++;
       GRN_TEXT_PUT(ctx, posting, tp, sizeof(grn_id));
-      GRN_TEXT_PUT(ctx, posting, &(*u)->tf, sizeof(int32_t));
+      GRN_TEXT_PUT(ctx, posting, &u_->tf, sizeof(int32_t));
     });
     tpe = (grn_id *)GRN_BULK_CURR(post);
     for (tp = (grn_id *)GRN_BULK_HEAD(post); tp < tpe; tp++) {
