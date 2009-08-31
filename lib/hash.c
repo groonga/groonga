@@ -131,6 +131,8 @@ tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
+  array->n_keys = 0;
+  array->keys = NULL;
   array->n_garbages = &array->n_garbages_;
   array->n_entries = &array->n_entries_;
   array->n_garbages_ = 0;
@@ -173,6 +175,8 @@ io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
+  array->n_keys = 0;
+  array->keys = NULL;
   array->n_garbages = &header->n_garbages;
   array->n_entries = &header->n_entries;
   array->io = io;

@@ -590,6 +590,8 @@ calc_rec_size(grn_obj_flags flags, uint32_t *max_n_subrecs,
 }
 
 static grn_obj *grn_view_create(grn_ctx *ctx, const char *path, grn_obj_flags flags);
+static grn_obj *grn_view_transcript(grn_ctx *ctx, const char *path, grn_obj *key_type,
+                                    grn_obj *value_type, grn_obj_flags flags);
 
 grn_obj *
 grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
@@ -700,17 +702,29 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
                 &subrec_offset, &key_size, &value_size);
   switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
   case GRN_OBJ_TABLE_HASH_KEY :
-    res = (grn_obj *)grn_hash_create(ctx, path, key_size, value_size, flags);
+    if (key_type && key_type->header.type == GRN_TABLE_VIEW) {
+      res = grn_view_transcript(ctx, path, key_type, value_type, flags);
+    } else {
+      res = (grn_obj *)grn_hash_create(ctx, path, key_size, value_size, flags);
+    }
     break;
   case GRN_OBJ_TABLE_PAT_KEY :
-    res = (grn_obj *)grn_pat_create(ctx, path, key_size, value_size, flags);
+    if (key_type && key_type->header.type == GRN_TABLE_VIEW) {
+      res = grn_view_transcript(ctx, path, key_type, value_type, flags);
+    } else {
+      res = (grn_obj *)grn_pat_create(ctx, path, key_size, value_size, flags);
+    }
     break;
   case GRN_OBJ_TABLE_NO_KEY :
     if (key_type) {
       GRN_LOG(ctx, GRN_LOG_WARNING, "key_type assigend for no key table");
     }
-    domain = range;
-    res = (grn_obj *)grn_array_create(ctx, path, value_size, flags);
+    if (value_type && value_type->header.type == GRN_TABLE_VIEW) {
+      res = grn_view_transcript(ctx, path, key_type, value_type, flags);
+    } else {
+      domain = range;
+      res = (grn_obj *)grn_array_create(ctx, path, value_size, flags);
+    }
     break;
   case GRN_OBJ_TABLE_VIEW :
     domain = range = GRN_ID_NIL;
@@ -890,6 +904,31 @@ grn_view_open(grn_ctx *ctx, const char *path)
     GRN_FREE(res);
   }
   return NULL;
+}
+
+static grn_obj *
+grn_view_transcript(grn_ctx *ctx, const char *path,
+                    grn_obj *key_type, grn_obj *value_type, grn_obj_flags flags)
+{
+  grn_id *tp;
+  grn_obj *res = grn_view_create(ctx, path, flags);
+  /* todo : support persistent view */
+  if (key_type) {
+    grn_view *v = (grn_view *)key_type;
+    GRN_HASH_EACH(ctx, v->hash, id, &tp, NULL, NULL, {
+      grn_view_add(ctx, res,
+                   grn_table_create(ctx, NULL, 0, NULL, flags,
+                                    grn_ctx_at(ctx, *tp), value_type));
+    });
+  } else if (value_type) {
+    grn_view *v = (grn_view *)value_type;
+    GRN_HASH_EACH(ctx, v->hash, id, &tp, NULL, NULL, {
+      grn_view_add(ctx, res,
+                   grn_table_create(ctx, NULL, 0, NULL, flags,
+                                    NULL, grn_ctx_at(ctx, *tp)));
+    });
+  }
+  return res;
 }
 
 grn_id
@@ -3852,8 +3891,24 @@ grn_obj *
 grn_obj_get_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value)
 {
   if (obj->header.type == GRN_ACCESSOR_VIEW) {
-    return NULL;
-    // todo
+    uint32_t n;
+    grn_obj id_;
+    grn_accessor_view *v = (grn_accessor_view *)obj;
+    if (GRN_BULK_VSIZE(id) < sizeof(grn_id)) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "invalid id.");
+      return NULL;
+    }
+    n = GRN_RECORD_VALUE(id);
+    if (!n || n > v->naccessors) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "invalid id");
+      return NULL;
+    }
+    obj = v->accessors[n - 1];
+    GRN_TEXT_INIT(&id_, 0);
+    grn_bulk_write(ctx, &id_,
+                   GRN_BULK_HEAD(id) + sizeof(grn_id),
+                   GRN_BULK_VSIZE(id) - sizeof(grn_id));
+    return grn_obj_get_value_o(ctx, obj, &id_, value);
   } else {
     return grn_obj_get_value(ctx, obj, GRN_RECORD_VALUE(id), value);
   }
@@ -3864,8 +3919,24 @@ grn_obj_set_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id,
                     grn_obj *value, int flags)
 {
   if (obj->header.type == GRN_ACCESSOR_VIEW) {
-    return GRN_SUCCESS;
-    // todo
+    uint32_t n;
+    grn_obj id_;
+    grn_accessor_view *v = (grn_accessor_view *)obj;
+    if (GRN_BULK_VSIZE(id) < sizeof(grn_id)) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "invalid id.");
+      return ctx->rc;
+    }
+    n = GRN_RECORD_VALUE(id);
+    if (!n || n > v->naccessors) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "invalid id");
+      return ctx->rc;
+    }
+    obj = v->accessors[n - 1];
+    GRN_TEXT_INIT(&id_, 0);
+    grn_bulk_write(ctx, &id_,
+                   GRN_BULK_HEAD(id) + sizeof(grn_id),
+                   GRN_BULK_VSIZE(id) - sizeof(grn_id));
+    return grn_obj_set_value_o(ctx, obj, &id_, value, flags);
   } else {
     return grn_obj_set_value(ctx, obj, GRN_RECORD_VALUE(id), value, flags);
   }
@@ -5160,6 +5231,38 @@ pack(grn_ctx *ctx, grn_obj *table, sort_entry *head, sort_entry *tail,
   return i > 2 ? head : NULL;
 }
 
+static int
+grn_view_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
+              grn_obj *result, grn_table_sort_key *keys, int n_keys)
+{
+  int i = 0;
+  grn_obj *t, *r;
+  grn_id *tp, *rp;
+  grn_view *tv = (grn_view *)table;
+  grn_view *rv = (grn_view *)result;
+  grn_hash *th = tv->hash;
+  grn_hash *rh = rv->hash;
+  grn_table_sort_key *keys_ = GRN_MALLOCN(grn_table_sort_key, n_keys);
+  grn_table_sort_key *ks, *kd, *ke = keys + n_keys;
+  if (keys_) {
+    rv->keys = keys;
+    rv->n_keys = n_keys;
+    for (ks = keys, kd =keys_; ks < ke ; ks++, kd++) { kd->flags = ks->flags; }
+    GRN_HASH_EACH(ctx, th, id, &tp, NULL, NULL, {
+      grn_hash_get_key(ctx, rh, id, &rp, sizeof(grn_id));
+      t = grn_ctx_at(ctx, *tp);
+      r = grn_ctx_at(ctx, *rp);
+      for (ks = keys, kd =keys_; ks < ke ; ks++, kd++) {
+        kd->key = ((grn_accessor_view *)ks->key)->accessors[id - 1];
+      }
+      i += grn_table_sort(ctx, t, offset, limit, r, keys_, n_keys);
+    });
+    for (ks = keys, kd =keys_; ks < ke ; ks++, kd++) { ks->offset = kd->offset; }
+    GRN_FREE(keys_);
+  }
+  return i;
+}
+
 int
 grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                grn_obj *result, grn_table_sort_key *keys, int n_keys)
@@ -5174,6 +5277,9 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   if (!table) {
     WARN(GRN_INVALID_ARGUMENT, "table is null");
     goto exit;
+  }
+  if (table->header.type == GRN_TABLE_VIEW) {
+    return grn_view_sort(ctx, table, offset, limit, result, keys, n_keys);
   }
   if (!(result && result->header.type == GRN_TABLE_NO_KEY)) {
     WARN(GRN_INVALID_ARGUMENT, "result is not a array");
