@@ -327,27 +327,27 @@ cache_init(grn_ctx *ctx)
   if (cache_cas) { return cache_cas; }
   MUTEX_LOCK(cache_mutex);
   if (!cache_cas) {
-    if ((cache_table = CTX_GET("<cache>"))) {
-      cache_value = CTX_GET("<cache>.value");
-      cache_flags = CTX_GET("<cache>.flags");
-      cache_expire = CTX_GET("<cache>.expire");
-      cache_cas = CTX_GET("<cache>.cas");
+    if ((cache_table = CTX_GET("Memcache"))) {
+      cache_value = CTX_GET("Memcache.value");
+      cache_flags = CTX_GET("Memcache.flags");
+      cache_expire = CTX_GET("Memcache.expire");
+      cache_cas = CTX_GET("Memcache.cas");
     } else {
       if (!cache_table) {
-        grn_obj *uint_type = grn_ctx_at(ctx, GRN_DB_UINT32);
-        grn_obj *int64_type = grn_ctx_at(ctx, GRN_DB_INT64);
+        grn_obj *uint32_type = grn_ctx_at(ctx, GRN_DB_UINT32);
+        grn_obj *uint64_type = grn_ctx_at(ctx, GRN_DB_UINT64);
         grn_obj *shorttext_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
-        if ((cache_table = grn_table_create(ctx, "<cache>", 7, NULL,
+        if ((cache_table = grn_table_create(ctx, "Memcache", 8, NULL,
                                             GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                                             shorttext_type, NULL))) {
           cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
                                           GRN_OBJ_PERSISTENT, shorttext_type);
           cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
-                                          GRN_OBJ_PERSISTENT, uint_type);
+                                          GRN_OBJ_PERSISTENT, uint32_type);
           cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
-                                           GRN_OBJ_PERSISTENT, uint_type);
+                                           GRN_OBJ_PERSISTENT, uint32_type);
           cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
-                                        GRN_OBJ_PERSISTENT, int64_type);
+                                        GRN_OBJ_PERSISTENT, uint64_type);
         }
       }
     }
@@ -407,12 +407,15 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
         });
       } else {
-        grn_obj buf;
         grn_timeval tv;
         uint32_t expire;
-        GRN_TEXT_INIT(&buf, 0);
-        grn_obj_get_value(ctx, cache_expire, rid, &buf);
-        expire = *((uint32_t *)GRN_BULK_HEAD(&buf));
+        {
+          grn_obj expire_buf;
+          GRN_UINT32_INIT(&expire_buf, 0);
+          grn_obj_get_value(ctx, cache_expire, rid, &expire_buf);
+          expire = GRN_UINT32_VALUE(&expire_buf);
+          grn_obj_close(ctx, &expire_buf);
+        }
         grn_timeval_now(ctx, &tv);
         if (expire && expire < tv.tv_sec) {
           grn_table_delete_by_id(ctx, cache_table, rid);
@@ -420,16 +423,17 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
           });
         } else {
-          GRN_BULK_REWIND(&buf);
-          grn_obj_get_value(ctx, cache_cas, rid, &buf);
+          grn_obj cas_buf;
+          GRN_UINT64_INIT(&cas_buf, 0);
+          grn_obj_get_value(ctx, cache_cas, rid, &cas_buf);
           GRN_MSG_MBRES({
             grn_obj_get_value(ctx, cache_flags, rid, re);
             grn_obj_get_value(ctx, cache_value, rid, re);
-            ((grn_msg *)re)->header.cas = *((uint64_t *)GRN_BULK_HEAD(&buf));
+            ((grn_msg *)re)->header.cas = GRN_UINT64_VALUE(&cas_buf);
             MBRES(ctx, re, MBRES_SUCCESS, 0, 4, flags);
           });
+          grn_obj_close(ctx, &cas_buf);
         }
-        grn_obj_close(ctx, &buf);
       }
     }
     break;
@@ -484,15 +488,16 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
           grn_obj_set_value(ctx, cache_expire, rid, &uint_buf, GRN_OBJ_SET);
           grn_obj_close(ctx, &uint_buf);
           {
-            grn_obj int64_buf;
+            grn_obj cas_buf;
             uint64_t cas_id = get_mbreq_cas_id();
-            GRN_INT64_INIT(&int64_buf, 0);
-            GRN_INT64_SET(ctx, &int64_buf, cache_cas);
+            GRN_UINT64_INIT(&cas_buf, 0);
+            GRN_UINT64_SET(ctx, &cas_buf, cas_id);
+            grn_obj_set_value(ctx, cache_cas, rid, &cas_buf, GRN_OBJ_SET);
+            grn_obj_close(ctx, &cas_buf);
             GRN_MSG_MBRES({
               ((grn_msg *)re)->header.cas = cas_id;
               MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
             });
-            grn_obj_close(ctx, &int64_buf);
           }
         } else {
           if (header->qtype != MBCMD_SET && header->qtype != MBCMD_SETQ) {
@@ -524,11 +529,10 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
             grn_obj_close(ctx, &buf);
           }
           {
-            grn_obj cas;
-            GRN_TEXT_INIT(&cas, 0);
-            grn_obj_get_value(ctx, cache_cas, rid, &cas);
-            if (header->cas && header->cas !=
-                *((uint64_t *)GRN_BULK_HEAD(&cas))) {
+            grn_obj cas_buf;
+            GRN_UINT64_INIT(&cas_buf, 0);
+            grn_obj_get_value(ctx, cache_cas, rid, &cas_buf);
+            if (header->cas && header->cas != GRN_UINT64_VALUE(&cas_buf)) {
               GRN_MSG_MBRES({
                 MBRES(ctx, re, MBRES_NOT_STORED, 0, 0, 0);
               });
@@ -548,15 +552,15 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
               grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
               {
                 uint64_t cas_id = get_mbreq_cas_id();
-                GRN_TEXT_SET_REF(&buf, &cas_id, sizeof(uint64_t));
-                grn_obj_set_value(ctx, cache_cas, rid, &buf, GRN_OBJ_SET);
+                GRN_UINT64_SET(ctx, &cas_buf, cas_id);
+                grn_obj_set_value(ctx, cache_cas, rid, &cas_buf, GRN_OBJ_SET);
                 GRN_MSG_MBRES({
                   ((grn_msg *)re)->header.cas = cas_id;
                   MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
                 });
               }
             }
-            grn_obj_close(ctx, &cas);
+            grn_obj_close(ctx, &cas_buf);
           }
         }
       }
@@ -675,10 +679,8 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
     /* fallthru */
   case MBCMD_FLUSH :
     {
-      grn_obj buf;
       uint32_t expire;
       uint8_t extralen = header->level;
-      GRN_TEXT_INIT(&buf, GRN_OBJ_DO_SHALLOW_COPY);
       if (extralen) {
         char *body = GRN_BULK_HEAD((grn_obj *)msg);
         GRN_ASSERT(extralen == 4);
@@ -697,14 +699,18 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         grn_timeval_now(ctx, &tv);
         expire = tv.tv_sec - 1;
       }
-      grn_obj_close(ctx, &buf);
-      GRN_TEXT_SET_REF(&buf, &expire, 4);
-      GRN_TABLE_EACH(ctx, cache_table, 0, 0, rid, NULL, NULL, NULL, {
-        grn_obj_set_value(ctx, cache_expire, rid, &buf, GRN_OBJ_SET);
-      });
-      GRN_MSG_MBRES({
-        MBRES(ctx, re, MBRES_SUCCESS, 0, 4, 0);
-      });
+      {
+        grn_obj exp_buf;
+        GRN_UINT32_INIT(&exp_buf, 0);
+        GRN_UINT32_SET(ctx, &exp_buf, expire);
+        GRN_TABLE_EACH(ctx, cache_table, 0, 0, rid, NULL, NULL, NULL, {
+          grn_obj_set_value(ctx, cache_expire, rid, &exp_buf, GRN_OBJ_SET);
+        });
+        GRN_MSG_MBRES({
+          MBRES(ctx, re, MBRES_SUCCESS, 0, 4, 0);
+        });
+        grn_obj_close(ctx, &exp_buf);
+      }
     }
     break;
   case MBCMD_NOOP :
