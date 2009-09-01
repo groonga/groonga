@@ -2288,7 +2288,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
       grn_table_cursor_close(ctx, tc);
-      if (column->header.type == GRN_ACCESSOR) { grn_obj_close(ctx, column); }
+      grn_obj_unlink(ctx, column);
     }
     break;
   }

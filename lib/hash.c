@@ -215,6 +215,8 @@ grn_array_open(grn_ctx *ctx, const char *path)
             array->obj.header.flags = header->flags;
             array->ctx = ctx;
             array->value_size = header->value_size;
+            array->n_keys = 0;
+            array->keys = NULL;
             array->n_garbages = &header->n_garbages;
             array->n_entries = &header->n_entries;
             array->io = io;
