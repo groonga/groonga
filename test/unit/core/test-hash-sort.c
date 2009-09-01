@@ -483,8 +483,8 @@ compare_string(grn_ctx *ctx,
     g_string_free(g_string_new_len(target1, target1_size), FALSE);
   null_terminated_target2 =
     g_string_free(g_string_new_len(target2, target2_size), FALSE);
-  return g_utf8_collate(cut_take_string(null_terminated_target1),
-                        cut_take_string(null_terminated_target2)) > 0;
+  return strcmp(cut_take_string(null_terminated_target1),
+                cut_take_string(null_terminated_target2)) > 0;
 }
 
 static void
