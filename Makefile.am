@@ -1,5 +1,5 @@
 SUBDIRS = lib src examples test
-DISTONLY_SUBDIRS = bindings doc
+EXTRA_DIST = bindings
 pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -11,10 +11,6 @@ LCOV_LCOV = @LCOV@
 LCOV_GENHTML = @GENHTML@
 
 dist-hook:
-# copy dist-only files
-	for subdir in $(DISTONLY_SUBDIRS); do \
-		cp -rp $$subdir $(distdir)/$$subdir; \
-	done
 # misc
 	rm -rf `find $(distdir) -name '*.loT'`
 	rm -rf `find $(distdir) -name '*.cache'`

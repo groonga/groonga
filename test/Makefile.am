@@ -1,1 +1,1 @@
-SUBDIRS = unit ql benchmark
+SUBDIRS = unit benchmark
