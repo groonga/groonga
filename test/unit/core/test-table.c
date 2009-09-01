@@ -141,13 +141,17 @@ test_temporary_table_add(gpointer data)
   grn_obj_flags flags = GPOINTER_TO_INT(data);
   gchar key[] = "key";
 
-  table = grn_table_create(&context, NULL, 0, NULL,
-                           flags,
-                           OBJECT("ShortText"),
-                           NULL);
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
+    table = grn_table_create(&context, NULL, 0, NULL,
+                             flags,
+                             NULL,
+                             NULL);
     grn_table_add(&context, table, NULL, 0, NULL);
   } else {
+    table = grn_table_create(&context, NULL, 0, NULL,
+                             flags,
+                             OBJECT("ShortText"),
+                             NULL);
     grn_table_add(&context, table, key, strlen(key), NULL);
   }
 

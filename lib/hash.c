@@ -131,6 +131,8 @@ tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
+  array->n_keys = 0;
+  array->keys = NULL;
   array->n_garbages = &array->n_garbages_;
   array->n_entries = &array->n_entries_;
   array->n_garbages_ = 0;
@@ -173,6 +175,8 @@ io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
+  array->n_keys = 0;
+  array->keys = NULL;
   array->n_garbages = &header->n_garbages;
   array->n_entries = &header->n_entries;
   array->io = io;
@@ -236,6 +240,7 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
 {
   grn_rc rc = GRN_SUCCESS;
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
+  if (array->keys) { GRN_FREE(array->keys); }
   if (IO_ARRAYP(array)) {
     rc = grn_io_close(ctx, array->io);
   } else {
@@ -366,6 +371,16 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
 exit :
   /* unlock */
   return rc;
+}
+
+grn_rc
+grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array, grn_table_sort_key *keys, int n_keys)
+{
+  if ((array->keys = GRN_MALLOCN(grn_table_sort_key, n_keys))) {
+    memcpy(array->keys, keys, sizeof(grn_table_sort_key) * n_keys);
+    array->n_keys = n_keys;
+  }
+  return ctx->rc;
 }
 
 void

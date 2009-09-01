@@ -141,6 +141,8 @@ struct _grn_array {
   grn_db_obj obj;
   grn_ctx *ctx;
   uint32_t value_size;
+  int32_t n_keys;
+  grn_table_sort_key *keys;
   uint32_t *n_garbages;
   uint32_t *n_entries;
   /* portions for io_array */
@@ -166,6 +168,9 @@ struct _grn_array_cursor {
 };
 
 #define GRN_ARRAY_SIZE(array) (*((array)->n_entries))
+
+grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
+                               grn_table_sort_key *keys, int n_keys);
 
 /**** grn_hash ****/
 

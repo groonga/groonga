@@ -65,6 +65,7 @@ struct _grn_ii_updspec {
   int32_t weight;
   int32_t tf;                 /* number of postings successfully stored to index */
   int32_t atf;                /* actual number of postings */
+  int32_t offset;
   struct _grn_ii_pos *pos;
   struct _grn_ii_pos *tail;
   /* grn_vgram_vnode *vnodes; */
@@ -138,7 +139,7 @@ struct _grn_select_optarg {
 };
 
 grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id, unsigned int section,
-                            grn_obj *oldvalue, grn_obj *newvalue);
+                            grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting);
 grn_rc grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
                             unsigned int string_len, grn_hash *s,
                             grn_operator op, grn_select_optarg *optarg);

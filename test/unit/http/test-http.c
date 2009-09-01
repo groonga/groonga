@@ -28,11 +28,7 @@ static gchar *tmp_directory;
 
 static GCutEgg *egg;
 
-static SoupSession *session;
-
 static SoupCutClient *client;
-
-static SoupMessage *message;
 
 static grn_ctx context;
 static grn_obj *database;
@@ -49,8 +45,6 @@ cut_setup(void)
     cut_assert_errno();
   }
 
-  session = NULL;
-  message = NULL;
   client = soupcut_client_new();
   soupcut_client_set_base(client, cut_take_printf("http://localhost:%u/",
                                                   GROONGA_TEST_PORT));
@@ -69,8 +63,6 @@ cut_setup(void)
   gcut_egg_hatch(egg, &error);
   gcut_assert_error(error);
 
-  session = soup_session_sync_new();
-
   g_usleep(G_USEC_PER_SEC);
 
   database = grn_db_open(&context, db_path);
@@ -81,14 +73,6 @@ cut_teardown(void)
 {
   if (egg) {
     g_object_unref(egg);
-  }
-
-  if (message) {
-    g_object_unref(message);
-  }
-
-  if (session) {
-    g_object_unref(session);
   }
 
   if (client) {
@@ -119,6 +103,7 @@ test_get_status(void)
 {
   soupcut_client_get(client, "/status", NULL);
   
+  soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_match_body("{\"starttime\":\\d+,\"uptime\":\\d+}",
                                    client);

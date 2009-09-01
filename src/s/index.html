@@ -123,6 +123,13 @@
           </ul>
           <div id="table-tab-recordlist">
             <label for="tab-recordlist-query">検索クエリ: </label><input type="text" id="tab-recordlist-query">
+            <select id="tab-recordlist-querytype">
+              <option value="query">query</option>
+              <option value="filter">filter</option>
+              <option value="foreach">foreach</option>
+            </select>
+            <input type="button" id="tab-recordlist-submit" value="検索"/>
+            <input type="checkbox" id="tab-recordlist-incremental" /><label for="tab-recordlist-incremental" id="tab-recordlist-incremental-label">インクリメンタル検索</label>
             <div id="tab-recordlist-table">
             </div>
           </div>
@@ -359,13 +366,19 @@ GroongaAdmin = {
     })
     $('#tab-recordlist-link').click(function() {
       $('#tab-recordlist-query').val('');
-      GroongaAdmin.recordlist(GroongaAdmin.current_table, '', 1);
+      GroongaAdmin.recordlist(GroongaAdmin.current_table, null, null, 1);
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
     });
     $('#createcolumn-add-column').click(function() {
       GroongaAdmin.createcolumn();
+    });
+    $('#tab-recordlist-submit').click(function() {
+      GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                              $('#tab-recordlist-query').val(),
+                              $('#tab-recordlist-querytype').val(),
+                              1);
     });
     GroongaAdmin.update_tablelist();
 
@@ -390,12 +403,30 @@ GroongaAdmin = {
       e1.append($('<option />').val(val).text(val));
     });
 
-    $('#tab-recordlist-query')
-      .keyup(function(e) {
-      GroongaAdmin.recordlist(GroongaAdmin.current_table,
-                              $('#tab-recordlist-query').val(),
-                              1);
-    });
+    $('#tab-recordlist-querytype').change(function() {
+      if ($(this).val() == 'foreach') {
+        $('#tab-recordlist-incremental').hide();
+        $('#tab-recordlist-incremental-label').hide();
+      } else {
+        $('#tab-recordlist-incremental').show();
+        $('#tab-recordlist-incremental-label').show();
+      }
+      $('#tab-recordlist-incremental').change();
+    }).change();
+
+    $('#tab-recordlist-incremental').change(function() {
+      if ($(this).attr('checked') &&
+          $('#tab-recordlist-querytype').val() != 'foreach') {
+        $('#tab-recordlist-query').keyup(function(e) {
+          GroongaAdmin.recordlist(GroongaAdmin.current_table,
+                                  $('#tab-recordlist-query').val(),
+                                  $('#tab-recordlist-querytype').val(),
+                                  1);
+        });
+      } else {
+        $('#tab-recordlist-query').unbind('keyup');
+      }
+    }).change();
 
     $('#createcolumn-type').change(function(e) {
       var s = $('#createcolumn-type-table option:selected');
@@ -520,7 +551,7 @@ GroongaAdmin = {
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
                   $('#tab-recordlist-query').val('');
-                  GroongaAdmin.recordlist(table_name, '', 1);
+                  GroongaAdmin.recordlist(table_name, null, null, 1);
                 })
             )
           );
@@ -583,16 +614,19 @@ GroongaAdmin = {
     }
     return ret;
   },
-  recordlist: function(table_name, query, page) {
+  recordlist: function(table_name, query, query_type, page) {
+    var d = {
+      'table': table_name,
+      'offset': (page - 1) * GroongaAdmin.recordlist_count,
+      'limit': GroongaAdmin.recordlist_count
+      /* sort_column: :id */
+    };
+    if (query_type) {
+      d[query_type] = query;
+    }
     $.ajax({
       url: '/select',
-      data: {
-        'table': table_name,
-        'query': query,
-        'offset': (page - 1) * GroongaAdmin.recordlist_count,
-        'limit': GroongaAdmin.recordlist_count
-        /* sort_column: :id */
-      },
+      data: d,
       dataType: 'json',
       success: function(d) {
         var all_count = d.shift();

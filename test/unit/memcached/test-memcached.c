@@ -51,6 +51,8 @@ cut_setup(void)
 
   egg = gcut_egg_new(GROONGA, "-s",
                      "-p", GROONGA_TEST_PORT,
+                     "-e", "utf8",
+                     "-n",
                      cut_take_printf("%s%s%s",
                                      tmp_directory,
                                      G_DIR_SEPARATOR_S,

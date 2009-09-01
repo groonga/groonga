@@ -4478,7 +4478,7 @@ exit :
 
 static grn_rc
 grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
-                    grn_obj *in, grn_obj *out, int add)
+                    grn_obj *in, grn_obj *out, int add, grn_obj *posting)
 {
   int j;
   grn_id tid;
@@ -4493,6 +4493,7 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         (token = grn_token_open(ctx, lexicon, head + v->offset, v->length, add))) {
       while (!token->status) {
         if ((tid = grn_token_next(ctx, token))) {
+          if (posting) { GRN_RECORD_PUT(ctx, posting, tid); }
           if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
             break;
           }
@@ -4545,15 +4546,19 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
 
 grn_rc
 grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
-                     grn_obj *oldvalue, grn_obj *newvalue)
+                     grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting)
 {
   grn_id *tp;
   grn_rc rc = GRN_SUCCESS;
   grn_ii_updspec **u, **un;
-  grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv;
+  grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv, buf, *post = NULL;
   if (!ii || !ii->lexicon || !rid) {
     ERR(GRN_INVALID_ARGUMENT, "grn_ii_column_update: invalid argument");
     return GRN_INVALID_ARGUMENT;
+  }
+  if (posting) {
+    GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, grn_obj_id(ctx, ii->lexicon));
+    post = &buf;
   }
   if (grn_io_lock(ctx, ii->seg, 10000000)) { return ctx->rc; }
   if (new) {
@@ -4577,7 +4582,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = grn_vector2updspecs(ctx, ii, rid, section, new_, new, 1);
+        rc = grn_vector2updspecs(ctx, ii, rid, section, new_, new, 1, post);
       }
       if (new_ != newvalue) { grn_obj_close(ctx, new_); }
       if (rc) { goto exit; }
@@ -4603,6 +4608,27 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       goto exit;
     }
   }
+  if (posting) {
+    grn_ii_updspec *u_;
+    uint32_t offset = 0;
+    grn_id tid, *tpe;
+    grn_table_sort_optarg arg = {GRN_TABLE_SORT_ASC, NULL, NULL, 0};
+    grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
+    grn_hash_sort(ctx, (grn_hash *)new, 0, sorted, &arg);
+    GRN_TEXT_PUT(ctx, posting, ((grn_hash *)new)->n_entries, sizeof(uint32_t));
+    GRN_ARRAY_EACH(ctx, sorted, 0, 0, id, &tp, {
+      grn_hash_get_key_value(ctx, (grn_hash *)new, *tp, &tid, sizeof(grn_id), &u_);
+      u_->offset = offset++;
+      GRN_TEXT_PUT(ctx, posting, &tid, sizeof(grn_id));
+      GRN_TEXT_PUT(ctx, posting, &u_->tf, sizeof(int32_t));
+    });
+    tpe = (grn_id *)GRN_BULK_CURR(post);
+    for (tp = (grn_id *)GRN_BULK_HEAD(post); tp < tpe; tp++) {
+      grn_hash_get(ctx, (grn_hash *)new, (void *)tp, sizeof(grn_id), (void **)&u);
+      GRN_TEXT_PUT(ctx, posting, &(*u)->offset, sizeof(int32_t));
+    }
+    GRN_OBJ_FIN(ctx, post);
+  }
 
   if (old) {
     switch (old->header.type) {
@@ -4627,7 +4653,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = grn_vector2updspecs(ctx, ii, rid, section, old_, old, 0);
+        rc = grn_vector2updspecs(ctx, ii, rid, section, old_, old, 0, NULL);
       }
       if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
       if (rc) { goto exit; }

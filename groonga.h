@@ -224,7 +224,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_OBJ_TABLE_HASH_KEY         (0x00)
 #define GRN_OBJ_TABLE_PAT_KEY          (0x01)
 #define GRN_OBJ_TABLE_NO_KEY           (0x03)
-#define GRN_OBJ_TABLE_ALIAS            (0x04)
+#define GRN_OBJ_TABLE_VIEW             (0x04)
 
 #define GRN_OBJ_KEY_MASK               (0x07<<3)
 #define GRN_OBJ_KEY_UINT               (0x00<<3)
@@ -279,11 +279,13 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_MSG                        (0x07)
 #define GRN_QUERY                      (0x08)
 #define GRN_ACCESSOR                   (0x09)
-#define GRN_SNIP                       (0x0a)
-#define GRN_PATSNIP                    (0x0b)
+#define GRN_ACCESSOR_VIEW              (0x0a)
+#define GRN_SNIP                       (0x0b)
+#define GRN_PATSNIP                    (0x0c)
 #define GRN_CURSOR_TABLE_HASH_KEY      (0x10)
 #define GRN_CURSOR_TABLE_PAT_KEY       (0x11)
 #define GRN_CURSOR_TABLE_NO_KEY        (0x13)
+#define GRN_CURSOR_TABLE_VIEW          (0x14)
 #define GRN_CURSOR_COLUMN_INDEX        (0x18)
 #define GRN_TYPE                       (0x20)
 #define GRN_PROC                       (0x21)
@@ -291,6 +293,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_TABLE_HASH_KEY             (0x30)
 #define GRN_TABLE_PAT_KEY              (0x31)
 #define GRN_TABLE_NO_KEY               (0x33)
+#define GRN_TABLE_VIEW                 (0x34)
 #define GRN_DB                         (0x37)
 #define GRN_COLUMN_FIX_SIZE            (0x40)
 #define GRN_COLUMN_VAR_SIZE            (0x41)
@@ -413,6 +416,7 @@ GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, unsigned name_size)
 
 typedef enum {
   GRN_DB_VOID = 0,
+  GRN_DB_DB,
   GRN_DB_OBJECT,
   GRN_DB_BOOL,
   GRN_DB_INT8,
@@ -428,12 +432,17 @@ typedef enum {
   GRN_DB_SHORT_TEXT,
   GRN_DB_TEXT,
   GRN_DB_LONG_TEXT,
+  GRN_DB_TOKYO_GEO_POINT,
+  GRN_DB_WGS84_GEO_POINT
+} grn_builtin_type;
+
+typedef enum {
+  GRN_DB_MECAB = 64,
   GRN_DB_DELIMIT,
   GRN_DB_UNIGRAM,
   GRN_DB_BIGRAM,
   GRN_DB_TRIGRAM,
-  GRN_DB_MECAB,
-} grn_builtin_type;
+} grn_builtin_tokenizer;
 
 GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 
@@ -818,11 +827,12 @@ typedef enum {
   GRN_OP_AND_ASSIGN,
   GRN_OP_XOR_ASSIGN,
   GRN_OP_OR_ASSIGN,
-  GRN_OP_QUESTION,
-  GRN_OP_COLON,
+  GRN_OP_TERNARY,
+  GRN_OP_COMMA,
   GRN_OP_BITWISE_OR,
   GRN_OP_BITWISE_XOR,
   GRN_OP_BITWISE_AND,
+  GRN_OP_BITWISE_NOT,
   GRN_OP_EQUAL,
   GRN_OP_NOT_EQUAL,
   GRN_OP_LESS,
@@ -846,6 +856,8 @@ typedef enum {
   GRN_OP_DELETE,
   GRN_OP_INCR,
   GRN_OP_DECR,
+  GRN_OP_INCR_POST,
+  GRN_OP_DECR_POST,
   GRN_OP_NOT,
   GRN_OP_ADJUST,
   GRN_OP_EXACT,
@@ -1252,7 +1264,8 @@ GRN_API int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_s
  **/
 GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
 
-#define GRN_OBJ_GET_DOMAIN(obj) ((obj)->header.domain)
+#define GRN_OBJ_GET_DOMAIN(obj) \
+  ((obj)->header.type == GRN_TABLE_NO_KEY ? GRN_ID_NIL : (obj)->header.domain)
 
 /**
  * grn_obj_expire:
@@ -1751,6 +1764,11 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_TIME_UNPACK(time_value, sec, usec) do {\
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
+} while (0)
+#define GRN_TIME_NOW(ctx,obj) do {\
+  struct timeval tv_;\
+  gettimeofday(&tv_, NULL);\
+  GRN_TIME_SET((ctx), (obj), GRN_TIME_PACK(tv_.tv_sec, tv_.tv_usec));\
 } while (0)
 
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))

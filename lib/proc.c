@@ -497,15 +497,33 @@ static grn_obj *
 proc_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
-  struct timeval tv;
   grn_expr_var *vars;
   grn_obj *obj, *caller;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_TIME, 0))) {
-    gettimeofday(&tv, NULL);
-    GRN_TIME_SET(ctx, obj, GRN_TIME_PACK(tv.tv_sec, tv.tv_usec));
+    GRN_TIME_NOW(ctx, obj);
   }
   return obj;
+}
+
+static grn_obj *
+proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *buf = args[0];
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 2) {
+    grn_obj *view = grn_ctx_get(ctx,
+                                GRN_TEXT_VALUE(&vars[0].value),
+                                GRN_TEXT_LEN(&vars[0].value));
+    grn_obj *table = grn_ctx_get(ctx,
+                                GRN_TEXT_VALUE(&vars[1].value),
+                                GRN_TEXT_LEN(&vars[1].value));
+    grn_view_add(ctx, view, table);
+    GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+  }
+  return buf;
 }
 
 #define DEF_VAR(v,name_str) {\
@@ -579,4 +597,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_create(ctx, "rand", 4, NULL, proc_rand, NULL, NULL, 0, vars);
 
   grn_proc_create(ctx, "now", 3, NULL, proc_now, NULL, NULL, 0, vars);
+
+  DEF_VAR(vars[0], "view");
+  DEF_VAR(vars[1], "table");
+  grn_proc_create(ctx, "view_add", 8, NULL, proc_view_add, NULL, NULL, 2, vars);
 }
