@@ -102,6 +102,18 @@ test_temporary_table_no_path(gpointer data)
 }
 
 void
+data_temporary_table_default_tokenizer(void)
+{
+#define ADD_DATA(label, flags)                                          \
+  cut_add_data(label, GINT_TO_POINTER(flags), NULL, NULL)
+
+  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
+  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY);
+
+#undef ADD_DATA
+}
+
+void
 test_temporary_table_default_tokenizer(gpointer data)
 {
   grn_obj *table;
