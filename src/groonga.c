@@ -203,6 +203,12 @@ put_response_header(grn_ctx *ctx, const char *path, uint32_t path_len)
           return;
         }
         break;
+      case 'g' :
+        if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: image/gif\r\n\r\n");
+          return;
+        }
+        break;
       case 'h' :
         if (pd + 4 == p && !memcmp(pd, "html", 4)) {
           GRN_TEXT_PUTS(ctx, head, "Content-Type: text/html\r\n\r\n");
@@ -212,6 +218,9 @@ put_response_header(grn_ctx *ctx, const char *path, uint32_t path_len)
       case 'j' :
         if (pd + 2 == p && !memcmp(pd, "js", 4)) {
           GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+          return;
+        } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: image/jpeg\r\n\r\n");
           return;
         }
         break;
