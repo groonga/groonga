@@ -16,14 +16,12 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <glib/gstdio.h>
-#include <soupcutter.h> /* must be included after memcached.h */
+#include <soupcutter.h>
 
 #include "../lib/grn-assertions.h"
 
-#define GROONGA_TEST_PORT 4545
+#define GROONGA_TEST_PORT 5454
 
-/* globals */
 static gchar *tmp_directory;
 
 static GCutEgg *egg;
@@ -46,16 +44,16 @@ cut_setup(void)
   }
 
   client = soupcut_client_new();
-  soupcut_client_set_base(client, cut_take_printf("http://localhost:%u/",
+  soupcut_client_set_base(client, cut_take_printf("http://1localhost:%u/",
                                                   GROONGA_TEST_PORT));
-  
+
   grn_ctx_init(&context, 0);
   database = NULL;
   db_path = cut_take_printf("%s%s%s",
                             tmp_directory,
                             G_DIR_SEPARATOR_S,
                             "http.db");
-  
+
   egg = gcut_egg_new(GROONGA, "-s",
                      "-p", cut_take_printf("%d", GROONGA_TEST_PORT),
                      "-n", db_path,
@@ -82,9 +80,9 @@ cut_teardown(void)
   if (database) {
     grn_obj_unlink(&context, database);
   }
-  
+
   grn_ctx_fin(&context);
-  
+
   cut_remove_path(tmp_directory, NULL);
 }
 
@@ -102,7 +100,7 @@ void
 test_get_status(void)
 {
   soupcut_client_get(client, "/status", NULL);
-  
+
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_match_body("{\"starttime\":\\d+,\"uptime\":\\d+}",
@@ -115,13 +113,14 @@ test_get_table_list(void)
   grn_obj *users;
   grn_obj_flags flags;
   const gchar *table_name = "users";
-  
+
   soupcut_client_get(client, "/table_list", NULL);
 
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
-  soupcut_client_assert_equal_body("[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]",
-                                   client);
+  soupcut_client_assert_equal_body(
+    "[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]]",
+    client);
   flags = GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY;
   soupcut_client_get(client,
                      "/table_create",
@@ -133,10 +132,10 @@ test_get_table_list(void)
                      NULL);
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_body("true", client);
-  
+
   users = grn_ctx_get(&context, table_name, strlen(table_name));
   grn_test_assert_not_null(&context, users);
-  
+
   soupcut_client_get(client, "/table_list", NULL);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_equal_body(
@@ -160,13 +159,14 @@ test_get_column_list(void)
   const gchar *full_column_name;
   grn_obj *users;
   grn_obj *age;
+
   full_column_name = cut_take_printf("%s.%s", table_name, column_name);
   users = grn_table_create(&context, table_name, strlen(table_name),
                            NULL, GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
                            grn_ctx_at(&context, GRN_DB_INT8),
                            grn_ctx_at(&context, GRN_DB_OBJECT));
   grn_test_assert_not_null(&context, users);
-  
+
   soupcut_client_get(client, "/column_list", "table", table_name, NULL);
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
@@ -184,7 +184,7 @@ test_get_column_list(void)
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_equal_body("true", client);
-  
+
   age = grn_ctx_get(&context, full_column_name, strlen(full_column_name));
   grn_test_assert_not_null(&context, age);
 
@@ -215,7 +215,7 @@ test_select(void)
   grn_obj *age;
   grn_id hayamizu_id;
   grn_obj age_value;
-  
+
   users = grn_table_create(&context, table_name, strlen(table_name),
                            NULL, GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY,
                            grn_ctx_at(&context, GRN_DB_SHORT_TEXT),
@@ -240,7 +240,8 @@ test_select(void)
   soupcut_client_get(client,
                      "/select",
                      "table", table_name,
-                     "query", cut_take_printf("%s:%d", column_name, hayamizu_age),
+                     "query", cut_take_printf("%s:%d",
+                                              column_name, hayamizu_age),
                      NULL);
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
