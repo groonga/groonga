@@ -446,6 +446,9 @@ static grn_logger_info default_logger = {
 
 static const grn_logger_info *grn_logger = &default_logger;
 
+static grn_obj grn_true_, grn_false_, grn_null_;
+grn_obj *grn_true, *grn_false, *grn_null;
+
 grn_rc
 grn_init(void)
 {
@@ -459,6 +462,12 @@ grn_init(void)
   ctx->prev = ctx;
   grn_ctx_init(ctx, 0);
   ctx->encoding = grn_strtoenc(GROONGA_DEFAULT_ENCODING);
+  grn_true = &grn_true_;
+  grn_false = &grn_false_;
+  grn_null = &grn_null_;
+  GRN_VOID_INIT(grn_true);
+  GRN_VOID_INIT(grn_false);
+  GRN_VOID_INIT(grn_null);
   grn_timeval_now(ctx, &grn_starttime);
 #ifdef WIN32
   {

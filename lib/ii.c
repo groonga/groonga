@@ -4628,6 +4628,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       GRN_TEXT_PUT(ctx, posting, &(*u)->offset, sizeof(int32_t));
     }
     GRN_OBJ_FIN(ctx, post);
+    grn_array_close(ctx, sorted);
   }
 
   if (old) {

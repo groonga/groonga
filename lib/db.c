@@ -1325,11 +1325,10 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
   grn_view *v = (grn_view *)view;
   if (v && (vc = GRN_MALLOCN(grn_view_cursor, 1))) {
     vc->view = v;
-    vc->n_entries = GRN_HASH_SIZE(v->hash);
     vc->curr_rec = GRN_ID_NIL;
     VIEW_CURSOR_DELAY(vc) = 1;
     GRN_DB_OBJ_SET_TYPE(vc, GRN_CURSOR_TABLE_VIEW);
-    if ((vc->bins = GRN_MALLOCN(grn_table_cursor *, vc->n_entries))) {
+    if ((vc->bins = GRN_MALLOCN(grn_table_cursor *, GRN_HASH_SIZE(v->hash)))) {
       int i = 0, n, n2;
       uint32_t view_cursor_offset = 0;
       grn_hash *hash = v->hash;
@@ -1351,8 +1350,10 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
         }
         vc->bins[n] = c;
       });
-      if (i == vc->n_entries) { return vc; }
-      while (i--) { grn_table_cursor_close(ctx, vc->bins[i]); }
+      if (i) {
+        vc->n_entries = i;
+        return vc;
+      }
       GRN_FREE(vc->bins);
     }
     GRN_FREE(vc);
@@ -3358,6 +3359,8 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
   return rc;
 }
 
+#define GRN_OBJ_GET_VALUE_IMD (0xffffffffU)
+
 const char *
 grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size)
 {
@@ -3365,9 +3368,8 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
   for (;;) {
     switch (a->action) {
     case GRN_ACCESSOR_GET_ID :
-      ctx->impl->idbuf = id;
-      value = (const char *)&ctx->impl->idbuf;
-      *size = sizeof(grn_id);
+      value = (const char *)(uintptr_t)id;
+      *size = GRN_OBJ_GET_VALUE_IMD;
       break;
     case GRN_ACCESSOR_GET_KEY :
       value = _grn_table_key(ctx, a->obj, id, size);
@@ -4052,7 +4054,7 @@ grn_obj_get_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value)
       ERR(GRN_NO_MEMORY_AVAILABLE, "invalid id");
       return NULL;
     }
-    obj = v->accessors[n];
+    if (!(obj = v->accessors[n])) { return value; }
     idp++;
     ids -= sizeof(grn_id);
   }
@@ -5059,8 +5061,11 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
 {
   while (obj->header.type == GRN_ACCESSOR_VIEW) {
     grn_accessor_view *a = (grn_accessor_view *)obj;
-    if (!a->naccessors) { return ctx->rc; }
-    obj = a->accessors[0];
+    uint32_t n = a->naccessors;
+    for (;;) {
+      if (!n) { return ctx->rc; }
+      if ((obj = a->accessors[--n])) { break; }
+    }
   }
   if (GRN_DB_OBJP(obj)) {
     if (DB_OBJ(obj)->id && DB_OBJ(obj)->id < GRN_ID_MAX) {
@@ -5205,7 +5210,8 @@ typedef struct {
 } sort_entry;
 
 enum {
-  KEY_BULK = 0,
+  KEY_ID = 0,
+  KEY_BULK,
   KEY_INT8,
   KEY_INT16,
   KEY_INT32,
@@ -5252,6 +5258,9 @@ compare_value(grn_ctx *ctx, sort_entry *a, sort_entry *b,
     }
     type = keys->offset;
     switch (type) {
+    case KEY_ID :
+      if (ap != bp) { return ap > bp; }
+      break;
     case KEY_BULK :
       for (;; ap++, bp++, as--, bs--) {
         if (!as) { if (bs) { return 0; } else { break; } }
@@ -5393,14 +5402,17 @@ compare_cursor(grn_ctx *ctx, grn_table_cursor *a, grn_table_cursor *b, int n_key
   const char *ap, *bp, *cp;
   grn_table_sort_key *ak, *bk;
   for (i = 0; i < n_keys; i++) {
-    ap = grn_table_cursor_get_sort_key_value_(ctx, a, 0, &as, &ak);
-    bp = grn_table_cursor_get_sort_key_value_(ctx, b, 0, &bs, &bk);
+    ap = grn_table_cursor_get_sort_key_value_(ctx, a, i, &as, &ak);
+    bp = grn_table_cursor_get_sort_key_value_(ctx, b, i, &bs, &bk);
     if (ak->flags & GRN_TABLE_SORT_DESC) {
       cp = ap; ap = bp; bp = cp;
       cs = as; as = bs; bs = cs;
     }
     type = ak->offset;
     switch (type) {
+    case KEY_ID :
+      if (ap != bp) { return ap > bp; }
+      break;
     case KEY_BULK :
       for (;; ap++, bp++, as--, bs--) {
         if (!as) { if (bs) { return 0; } else { break; } }
@@ -5486,6 +5498,18 @@ grn_view_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   return i;
 }
 
+static int
+range_is_idp(grn_obj *obj)
+{
+  if (obj && obj->header.type == GRN_ACCESSOR) {
+    grn_accessor *a;
+    for (a = (grn_accessor *)obj; a; a = a->next) {
+      if (a->action == GRN_ACCESSOR_GET_ID) { return 1; }
+    }
+  }
+  return 0;
+}
+
 int
 grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                grn_obj *result, grn_table_sort_key *keys, int n_keys)
@@ -5524,65 +5548,69 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     int j;
     grn_table_sort_key *kp;
     for (kp = keys, j = n_keys; j; kp++, j--) {
-      grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, kp->key));
-      if (range->header.type == GRN_TYPE) {
-        if (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-          kp->offset = KEY_BULK;
-        } else {
-          uint8_t key_type = range->header.flags & GRN_OBJ_KEY_MASK;
-          switch (key_type) {
-          case GRN_OBJ_KEY_UINT :
-            switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
-            case 1 :
-              kp->offset = KEY_UINT8;
-              break;
-            case 2 :
-              kp->offset = KEY_UINT16;
-              break;
-            case 4 :
-              kp->offset = KEY_UINT32;
-              break;
-            case 8 :
-              kp->offset = KEY_UINT64;
-              break;
-            default :
-              ERR(GRN_INVALID_ARGUMENT, "unsupported uint value");
-              goto exit;
-            }
-          case GRN_OBJ_KEY_INT :
-            switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
-            case 1 :
-              kp->offset = KEY_INT8;
-              break;
-            case 2 :
-              kp->offset = KEY_INT16;
-              break;
-            case 4 :
-              kp->offset = KEY_INT32;
-              break;
-            case 8 :
-              kp->offset = KEY_INT64;
-              break;
-            default :
-              ERR(GRN_INVALID_ARGUMENT, "unsupported int value");
-              goto exit;
-            }
-          case GRN_OBJ_KEY_FLOAT :
-            switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
-            case 4 :
-              kp->offset = KEY_FLOAT32;
-              break;
-            case 8 :
-              kp->offset = KEY_FLOAT64;
-              break;
-            default :
-              ERR(GRN_INVALID_ARGUMENT, "unsupported float value");
-              goto exit;
+      if (range_is_idp(kp->key)) {
+        kp->offset = KEY_ID;
+      } else {
+        grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, kp->key));
+        if (range->header.type == GRN_TYPE) {
+          if (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+            kp->offset = KEY_BULK;
+          } else {
+            uint8_t key_type = range->header.flags & GRN_OBJ_KEY_MASK;
+            switch (key_type) {
+            case GRN_OBJ_KEY_UINT :
+              switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
+              case 1 :
+                kp->offset = KEY_UINT8;
+                break;
+              case 2 :
+                kp->offset = KEY_UINT16;
+                break;
+              case 4 :
+                kp->offset = KEY_UINT32;
+                break;
+              case 8 :
+                kp->offset = KEY_UINT64;
+                break;
+              default :
+                ERR(GRN_INVALID_ARGUMENT, "unsupported uint value");
+                goto exit;
+              }
+            case GRN_OBJ_KEY_INT :
+              switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
+              case 1 :
+                kp->offset = KEY_INT8;
+                break;
+              case 2 :
+                kp->offset = KEY_INT16;
+                break;
+              case 4 :
+                kp->offset = KEY_INT32;
+                break;
+              case 8 :
+                kp->offset = KEY_INT64;
+                break;
+              default :
+                ERR(GRN_INVALID_ARGUMENT, "unsupported int value");
+                goto exit;
+              }
+            case GRN_OBJ_KEY_FLOAT :
+              switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
+              case 4 :
+                kp->offset = KEY_FLOAT32;
+                break;
+              case 8 :
+                kp->offset = KEY_FLOAT64;
+                break;
+              default :
+                ERR(GRN_INVALID_ARGUMENT, "unsupported float value");
+                goto exit;
+              }
             }
           }
+        } else {
+          kp->offset = KEY_UINT32;
         }
-      } else {
-        kp->offset = KEY_UINT32;
       }
     }
   }
@@ -6554,45 +6582,6 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   return ctx->rc;
 }
 
-#define PUSH1(v) {\
-  s1 = s0;\
-  *sp++ = s0 = v;\
-}
-
-#define POP1(v) {\
-  if (EXPRVP(s0)) { vp--; }\
-  v = s0;\
-  s0 = s1;\
-  sp--;\
-  s1 = sp[-2];\
-}
-
-#define ALLOC1(value) {\
-  s1 = s0;\
-  *sp++ = s0 = value = vp++;\
-}
-
-#define POP1ALLOC1(arg,value) {\
-  arg = s0;\
-  if (EXPRVP(s0)) {\
-    value = s0;\
-  } else {\
-    sp[-1] = s0 = value = vp++;\
-    s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
-  }\
-}
-
-#define POP2ALLOC1(arg1,arg2,value) {\
-  if (EXPRVP(s0)) { vp--; }\
-  if (EXPRVP(s1)) { vp--; }\
-  arg2 = s0;\
-  arg1 = s1;\
-  sp--;\
-  s1 = sp[-2];\
-  sp[-1] = s0 = value = vp++;\
-  s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
-}
-
 void
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 {
@@ -6875,6 +6864,48 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   GRN_API_RETURN(ctx->rc);
 }
 
+#define PUSH1(v) {\
+  s1 = s0;\
+  *sp++ = s0 = v;\
+}
+
+#define POP1(v) {\
+  if (EXPRVP(s0)) { vp--; }\
+  v = s0;\
+  s0 = s1;\
+  sp--;\
+  if (sp < s_) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
+  s1 = sp[-2];\
+}
+
+#define ALLOC1(value) {\
+  s1 = s0;\
+  *sp++ = s0 = value = vp++;\
+}
+
+#define POP1ALLOC1(arg,value) {\
+  arg = s0;\
+  if (EXPRVP(s0)) {\
+    value = s0;\
+  } else {\
+    if (sp < s_ + 1) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
+    sp[-1] = s0 = value = vp++;\
+    s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
+  }\
+}
+
+#define POP2ALLOC1(arg1,arg2,value) {\
+  if (EXPRVP(s0)) { vp--; }\
+  if (EXPRVP(s1)) { vp--; }\
+  arg2 = s0;\
+  arg1 = s1;\
+  sp--;\
+  if (sp < s_ + 1) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
+  s1 = sp[-2];\
+  sp[-1] = s0 = value = vp++;\
+  s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
+}
+
 grn_rc
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
@@ -6884,10 +6915,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
     grn_proc_call(ctx, expr, nargs, expr);
   } else {
     grn_expr *e = (grn_expr *)expr;
-    register grn_obj *s0 = NULL, *s1 = NULL, **sp, *vp = e->values;
+    register grn_obj **s_ = ctx->impl->stack, *s0 = NULL, *s1 = NULL, **sp, *vp = e->values;
     grn_obj *res = NULL, *v0 = grn_expr_get_var_by_offset(ctx, expr, 0);
     grn_expr_code *code = e->codes, *ce = &e->codes[e->codes_curr];
-    sp = ctx->impl->stack + ctx->impl->stack_curr;
+    sp = s_ + stack_curr;
     while (code < ce) {
       switch (code->op) {
       case GRN_OP_NOP :
@@ -6944,7 +6975,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           grn_obj *proc;
           if (code->value) {
-            if (sp < ctx->impl->stack + code->nargs) {
+            if (sp < s_ + code->nargs) {
               ERR(GRN_INVALID_ARGUMENT, "stack error");
               goto exit;
             }
@@ -6954,7 +6985,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             });
           } else {
             int offset = code->nargs + 1;
-            if (sp < ctx->impl->stack + offset) {
+            if (sp < s_ + offset) {
               ERR(GRN_INVALID_ARGUMENT, "stack error");
               goto exit;
             }
@@ -7097,7 +7128,11 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
               ERR(GRN_INVALID_ARGUMENT, "col resolve failed");
               goto exit;
             }
-            grn_bulk_write_from(ctx, res, value, 0, size);
+            if (size == GRN_OBJ_GET_VALUE_IMD) {
+              GRN_RECORD_SET(ctx, res, (uintptr_t)value);
+            } else {
+              grn_bulk_write_from(ctx, res, value, 0, size);
+            }
             res->header.domain = grn_obj_get_range(ctx, col);
             code++;
           } while (code < ce && code->op == GRN_OP_GET_VALUE);
@@ -7542,12 +7577,13 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       }
     }
-    ctx->impl->stack_curr = sp - ctx->impl->stack;
+    ctx->impl->stack_curr = sp - s_;
   }
   if (ctx->impl->stack_curr + nargs != stack_curr + 1) {
+    /*
     GRN_LOG(ctx, GRN_LOG_WARNING, "nargs=%d stack balance=%d",
             nargs, stack_curr - ctx->impl->stack_curr);
-
+    */
     ctx->impl->stack_curr = stack_curr + 1 - nargs;
   }
 exit :
@@ -7873,7 +7909,9 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         for (cs = c0, cd = e->codes; cs < ce; cs++, cd++) {
           if (cs->value && cs->value->header.type == GRN_ACCESSOR_VIEW) {
             grn_accessor_view *a = (grn_accessor_view *)cs->value;
-            cd->value = a->accessors[id - 1];
+            if (!(cd->value = a->accessors[id - 1])) {
+              cd->value = grn_null;
+            }
           }
         }
         grn_table_select(ctx, t, expr, r, op);

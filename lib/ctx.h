@@ -371,6 +371,7 @@ extern grn_ctx grn_gctx;
 extern int grn_pagesize;
 extern grn_mutex grn_glock;
 extern uint32_t grn_gtick;
+extern grn_obj *grn_true, *grn_false, *grn_null;
 
 typedef struct {
   int32_t tv_sec;
