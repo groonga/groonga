@@ -1350,11 +1350,8 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
         }
         vc->bins[n] = c;
       });
-      if (i) {
-        vc->n_entries = i;
-        return vc;
-      }
-      GRN_FREE(vc->bins);
+      vc->n_entries = i;
+      return vc;
     }
     GRN_FREE(vc);
   }
