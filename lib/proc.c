@@ -289,6 +289,7 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_NO_KEY:
+  case GRN_TABLE_VIEW:
     break;
   default:
     return 0;
