@@ -7639,6 +7639,7 @@ typedef struct {
   uint32_t end;
   uint32_t nargs;
   grn_operator op;
+  grn_operator logical_op;
   grn_obj *index;
   grn_obj *query;
   grn_obj *args[8];
@@ -7654,7 +7655,7 @@ typedef enum {
 } scan_stat;
 
 scan_info **
-scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
+scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operator op)
 {
   int i;
   grn_obj *var;
@@ -7679,11 +7680,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
       i++;
       break;
     case GRN_OP_AND :
+    case GRN_OP_OR :
       if (stat != SCAN_OP) { return NULL; }
       stat = SCAN_START;
-      break;
-    case GRN_OP_OR :
-      return NULL; /* todo : support */
       break;
     case GRN_OP_PUSH :
       if (stat == SCAN_OP) { return NULL; }
@@ -7725,10 +7724,11 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
       stat = i ? SCAN_OP : SCAN_START;
-      sis[i++] = si;
+      si->logical_op = i ? GRN_OP_AND : op;
       si->op = c->op;
       si->end = c - e->codes;
       si->index = NULL;
+      sis[i++] = si;
       {
         grn_obj **p = si->args, **pe = si->args + si->nargs;
         for (; p < pe; p++) {
@@ -7742,6 +7742,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n)
       si = NULL;
       break;
     case GRN_OP_AND :
+    case GRN_OP_OR :
+      if (i) { sis[i - 1]->logical_op = c->op; }
       stat = SCAN_START;
       break;
     case GRN_OP_PUSH :
@@ -7949,7 +7951,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   if (op == GRN_OP_AND || (op == GRN_OP_OR && !GRN_HASH_SIZE((grn_hash *)res))) {
     int i, n;
     scan_info **sis;
-    if ((sis = scan_info_build(ctx, table, expr, &n))) {
+    if ((sis = scan_info_build(ctx, table, expr, &n, op))) {
       grn_expr *e = (grn_expr *)expr;
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
@@ -7962,13 +7964,13 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               grn_id tid = grn_table_get(ctx, table,
                                          GRN_BULK_HEAD(si->query),
                                          GRN_BULK_VSIZE(si->query));
-              grn_ii_at(ctx, (grn_ii *)si->index, tid, (grn_hash *)res, i ? GRN_OP_AND : op);
-              grn_ii_resolve_sel_and(ctx, (grn_hash *)res, i ? GRN_OP_AND : op);
+              grn_ii_at(ctx, (grn_ii *)si->index, tid, (grn_hash *)res, si->logical_op);
+              grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
             }
             break;
           case GRN_OP_MATCH :
             /* todo : support sections */
-            grn_obj_search(ctx, si->index, si->query, res, i ? GRN_OP_AND : op, NULL);
+            grn_obj_search(ctx, si->index, si->query, res, si->logical_op, NULL);
             break;
           default :
             /* todo */
@@ -7977,7 +7979,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         } else {
           e->codes = codes + si->start;
           e->codes_curr = si->end - si->start + 1;
-          grn_table_select_(ctx, table, expr, v, res, i ? GRN_OP_AND : op);
+          grn_table_select_(ctx, table, expr, v, res, si->logical_op);
         }
         GRN_FREE(si);
       }
