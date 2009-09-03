@@ -44,7 +44,7 @@ cut_setup(void)
   }
 
   client = soupcut_client_new();
-  soupcut_client_set_base(client, cut_take_printf("http://1localhost:%u/",
+  soupcut_client_set_base(client, cut_take_printf("http://localhost:%u/",
                                                   GROONGA_TEST_PORT));
 
   grn_ctx_init(&context, 0);
