@@ -870,6 +870,7 @@ typedef struct {
   grn_hash *hash;
   grn_table_sort_key *keys;
   int n_keys;
+  int offset;
 } grn_view;
 
 static grn_obj *
@@ -882,6 +883,7 @@ grn_view_create(grn_ctx *ctx, const char *path, grn_obj_flags flags)
       res->obj.header.flags = flags;
       res->obj.header.domain = GRN_ID_NIL;
       res->n_keys = 0;
+      res->offset = 0;
       res->keys = NULL;
       return (grn_obj *)res;
     }
@@ -898,6 +900,7 @@ grn_view_open(grn_ctx *ctx, const char *path)
     if ((res->hash = grn_hash_open(ctx, path))) {
       GRN_DB_OBJ_SET_TYPE(res, GRN_TABLE_VIEW);
       res->n_keys = 0;
+      res->offset = 0;
       res->keys = NULL;
       return (grn_obj *)res;
     }
@@ -1306,10 +1309,12 @@ typedef struct {
   grn_id curr_rec;
   grn_view *view;
   int n_entries;
+  uint32_t rest;
   grn_table_cursor **bins;
 } grn_view_cursor;
 
 static int compare_cursor(grn_ctx *ctx, grn_table_cursor *a, grn_table_cursor *b, int n_keys);
+static grn_id grn_view_cursor_next(grn_ctx *ctx, grn_view_cursor *vc);
 
 #define VIEW_CURSOR_OFFSET(tc) (DB_OBJ(tc)->max_n_subrecs)
 #define VIEW_CURSOR_DELAY(tc) (DB_OBJ(tc)->subrec_size)
@@ -1351,6 +1356,10 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
         vc->bins[n] = c;
       });
       vc->n_entries = i;
+      vc->rest = GRN_ID_MAX;
+      offset += v->offset;
+      while (offset--) { if (!grn_view_cursor_next(ctx, vc)) { break; } }
+      vc->rest = limit ? limit : GRN_ID_MAX;
       return vc;
     }
     GRN_FREE(vc);
@@ -1476,6 +1485,7 @@ grn_table_cursor_curr(grn_ctx *ctx, grn_table_cursor *tc)
 static grn_id
 grn_view_cursor_next(grn_ctx *ctx, grn_view_cursor *vc)
 {
+  if (!vc->rest) { return GRN_ID_NIL; }
   if (VIEW_CURSOR_DELAY(vc)) {
     VIEW_CURSOR_DELAY(vc) = 0;
   } else {
@@ -1488,6 +1498,7 @@ grn_view_cursor_next(grn_ctx *ctx, grn_view_cursor *vc)
   }
   if (vc->n_entries) {
     grn_table_cursor *tc = vc->bins[0];
+    vc->rest--;
     return grn_table_cursor_curr(ctx, tc);
   } else {
     return GRN_ID_NIL;
@@ -1510,6 +1521,7 @@ grn_table_cursor_curr_o(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *id)
 static grn_rc
 grn_view_cursor_next_o(grn_ctx *ctx, grn_view_cursor *vc, grn_obj *id)
 {
+  if (!vc->rest) { return GRN_END_OF_DATA; }
   if (VIEW_CURSOR_DELAY(vc)) {
     VIEW_CURSOR_DELAY(vc) = 0;
   } else {
@@ -1523,6 +1535,7 @@ grn_view_cursor_next_o(grn_ctx *ctx, grn_view_cursor *vc, grn_obj *id)
   if (vc->n_entries) {
     grn_table_cursor *tc = vc->bins[0];
     GRN_UINT32_PUT(ctx, id, VIEW_CURSOR_OFFSET(tc));
+    vc->rest--;
     return grn_table_cursor_curr_o(ctx, tc, id);
   } else {
     return GRN_END_OF_DATA;
@@ -5477,6 +5490,7 @@ grn_view_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   if (keys_) {
     rv->keys = keys;
     rv->n_keys = n_keys;
+    rv->offset = offset;
     for (ks = keys, kd =keys_; ks < ke ; ks++, kd++) { kd->flags = ks->flags; }
     GRN_HASH_EACH(ctx, th, id, &tp, NULL, NULL, {
       grn_hash_get_key(ctx, rh, id, &rid, sizeof(grn_id));
@@ -5485,7 +5499,7 @@ grn_view_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
       for (ks = keys, kd =keys_; ks < ke ; ks++, kd++) {
         kd->key = ((grn_accessor_view *)ks->key)->accessors[id - 1];
       }
-      i += grn_table_sort(ctx, t, offset, limit, r, keys_, n_keys);
+      i += grn_table_sort(ctx, t, 0, offset + limit, r, keys_, n_keys);
       if (r->header.type == GRN_TABLE_NO_KEY) {
         grn_array_copy_sort_key(ctx, (grn_array *)r, keys_, n_keys);
       }
