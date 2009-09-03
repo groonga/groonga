@@ -3164,7 +3164,7 @@ grn_accessor_view_close(grn_ctx *ctx, grn_obj *obj)
   int i;
   grn_accessor_view *a = (grn_accessor_view *)obj;
   for (i = 0; i < a->naccessors; i++) {
-    grn_obj_close(ctx, a->accessors[i]);
+    grn_obj_unlink(ctx, a->accessors[i]);
   }
   GRN_FREE(a->accessors);
   GRN_FREE(a);
