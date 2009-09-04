@@ -8768,6 +8768,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, 0, 0))) {
             while (!grn_table_cursor_next_o(ctx, tc, v)) {
               grn_expr_exec(ctx, foreach_, 0);
+              grn_ctx_pop(ctx);
             }
             grn_table_cursor_close(ctx, tc);
           }
