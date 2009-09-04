@@ -13,6 +13,9 @@ TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)"
 noinst_LTLIBRARIES = suite-groonga-test.la
 endif
 
+EXTRA_DIST =					\
+	run-test.sh
+
 INCLUDES =			\
 	-I$(srcdir)		\
 	-I$(top_srcdir)		\

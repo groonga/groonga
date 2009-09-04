@@ -1,4 +1,4 @@
-AC_INIT([groonga],0.1.1,[groonga@razil.jp])
+AC_INIT([groonga],0.1.2,[groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
@@ -67,8 +67,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/util/Makefile
                  test/unit/core/Makefile
                  test/unit/memcached/Makefile
-		 test/unit/http/Makefile
-                 test/ql/Makefile
+                 test/unit/http/Makefile
                  test/benchmark/Makefile
                  test/benchmark/lib/Makefile
                 ])
