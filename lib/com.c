@@ -162,10 +162,10 @@ sender(void *arg)
 {
   grn_com_event *ev = (grn_com_event *)arg;
   MUTEX_LOCK(ev->mutex);
-  while (ev->ctx->stat != GRN_QL_QUIT) {
+  while (ev->ctx->stat != GRN_CTX_QUIT) {
     while (!(peers_with_msg = get_out_msgs(peers))) {
       COND_WAIT(ev->cond, ev->mutex);
-      if (ev->ctx->stat == GRN_QL_QUIT) { goto exit; }
+      if (ev->ctx->stat == GRN_CTX_QUIT) { goto exit; }
     }
     MUTEX_UNLOCK(ev->mutex);
     peers_writable = poll(peers_with_msg, POLLOUT);
@@ -207,8 +207,8 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       break;
     case GRN_COM_PROTO_GQTP :
       {
-        if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
-        if (ctx->stat == GRN_QL_QUIT) { flags |= GRN_QL_QUIT; }
+        if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
+        if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
         header->qtype = 0;
         header->keylen = 0;
         header->level = 0;
@@ -230,7 +230,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     case GRN_COM_PROTO_MBRES :
       rc = grn_com_send(ctx, peer, header,
                         GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg),
-                        (flags & GRN_QL_MORE) ? MSG_MORE :0);
+                        (flags & GRN_CTX_MORE) ? MSG_MORE :0);
       if (rc != GRN_OPERATION_WOULD_BLOCK) {
         grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
         return rc;

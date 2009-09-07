@@ -17,7 +17,7 @@ unsigned key_size = 8;
 unsigned value_size = 8;
 grn_obj *value_type;
 
-#define EVAL(ctx, exp) (grn_ql_send(ctx, (exp), strlen(exp), 0))
+#define EVAL(ctx, exp) (grn_ctx_send(ctx, (exp), strlen(exp), 0))
 
 int
 ql_put(void)

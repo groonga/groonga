@@ -250,7 +250,7 @@ enum {
 };
 
 #define GRN_QL_TOPLEVEL  0x00
-#define GRN_QL_QUITTING  0x0f
+#define GRN_CTX_QUITTING  0x0f
 #define GRN_QL_EVAL      0x40
 #define GRN_QL_NATIVE    0x41
 #define GRN_QL_WAIT_EXPR 0xc0

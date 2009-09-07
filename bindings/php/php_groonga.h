@@ -86,36 +86,36 @@ ZEND_END_ARG_INFO()
 #define grn_ctx_close_arg_info NULL
 #endif
 
-PHP_FUNCTION(grn_ql_connect);
+PHP_FUNCTION(grn_ctx_connect);
 #if (PHP_MAJOR_VERSION >= 5)
-ZEND_BEGIN_ARG_INFO_EX(grn_ql_connect_arg_info, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 4)
+ZEND_BEGIN_ARG_INFO_EX(grn_ctx_connect_arg_info, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 4)
   ZEND_ARG_INFO(0, res)
   ZEND_ARG_INFO(0, host)
   ZEND_ARG_INFO(0, port)
   ZEND_ARG_INFO(0, flags)
 ZEND_END_ARG_INFO()
 #else /* PHP 4.x */
-#define grn_ql_connect_arg_info NULL
+#define grn_ctx_connect_arg_info NULL
 #endif
 
-PHP_FUNCTION(grn_ql_send);
+PHP_FUNCTION(grn_ctx_send);
 #if (PHP_MAJOR_VERSION >= 5)
-ZEND_BEGIN_ARG_INFO_EX(grn_ql_send_arg_info, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 3)
+ZEND_BEGIN_ARG_INFO_EX(grn_ctx_send_arg_info, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 3)
   ZEND_ARG_INFO(0, res)
   ZEND_ARG_INFO(0, query)
   ZEND_ARG_INFO(0, flags)
 ZEND_END_ARG_INFO()
 #else /* PHP 4.x */
-#define grn_ql_send_arg_info NULL
+#define grn_ctx_send_arg_info NULL
 #endif
 
-PHP_FUNCTION(grn_ql_recv);
+PHP_FUNCTION(grn_ctx_recv);
 #if (PHP_MAJOR_VERSION >= 5)
-ZEND_BEGIN_ARG_INFO_EX(grn_ql_recv_arg_info, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+ZEND_BEGIN_ARG_INFO_EX(grn_ctx_recv_arg_info, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, res)
 ZEND_END_ARG_INFO()
 #else /* PHP 4.x */
-#define grn_ql_recv_arg_info NULL
+#define grn_ctx_recv_arg_info NULL
 #endif
 
 #ifdef  __cplusplus

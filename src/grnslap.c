@@ -176,7 +176,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
         lprint(ctx, "%8d(%4d) %8d : %s", s->query_id, s->n_sessions, etime, GRN_BULK_HEAD(msg));
       }
     }
-    if ((m->header.flags & GRN_QL_TAIL)) {
+    if ((m->header.flags & GRN_CTX_TAIL)) {
       grn_com_queue_enque(ctx, &fsessions, (grn_com_queue_entry *)s);
       nrecv++;
     }

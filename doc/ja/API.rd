@@ -246,52 +246,52 @@ result_lenには、resultのバイト長が格納されます。
 
 = QL API
 
-== grn_ql_connect
+== grn_ctx_connect
 
 :NAME
 
-  grn_ql_connect - つなぐ
+  grn_ctx_connect - つなぐ
 
 :SYNOPSIS
  ((' '))
 
   #include <groonga/groonga.h>
 
-  grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);
+  grn_rc grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags);
 
 :DESCRIPTION
 
   つなぐ
 
-== grn_ql_send
+== grn_ctx_send
 
 :NAME
 
-  grn_ql_send - おくる
+  grn_ctx_send - おくる
 
 :SYNOPSIS
  ((' '))
 
   #include <groonga/groonga.h>
 
-  grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
+  grn_rc grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
 
 :DESCRIPTION
 
   おくる
 
-== grn_ql_recv
+== grn_ctx_recv
 
 :NAME
 
-  grn_ql_recv - うけとる
+  grn_ctx_recv - うけとる
 
 :SYNOPSIS
  ((' '))
 
   #include <groonga/groonga.h>
 
-  grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
+  grn_rc grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
 
 :DESCRIPTION
 

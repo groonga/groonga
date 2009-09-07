@@ -87,25 +87,7 @@ groongaql_ContextClass_ql_connect(groongaql_ContextObject *self, PyObject *args,
   }
   if (self->closed) { return NULL; }
   Py_BEGIN_ALLOW_THREADS
-  rc = grn_ql_connect(&self->ctx, host, port, flags);
-  Py_END_ALLOW_THREADS
-  return Py_BuildValue("i", rc);
-}
-
-static PyObject *
-groongaql_Context_ql_load(groongaql_ContextObject *self, PyObject *args, PyObject *keywds)
-{
-  grn_rc rc;
-  const char *path;
-  static char *kwlist[] = {"path", NULL};
-
-  if (!PyArg_ParseTupleAndKeywords(args, keywds, "s", kwlist,
-                                   &path)) {
-    return NULL;
-  }
-  if (self->closed) { return NULL; }
-  Py_BEGIN_ALLOW_THREADS
-  rc = grn_ql_load(&self->ctx, path);
+  rc = grn_ctx_connect(&self->ctx, host, port, flags);
   Py_END_ALLOW_THREADS
   return Py_BuildValue("i", rc);
 }
@@ -126,7 +108,7 @@ groongaql_Context_ql_send(groongaql_ContextObject *self, PyObject *args, PyObjec
   }
   if (self->closed) { return NULL; }
   Py_BEGIN_ALLOW_THREADS
-  rc = grn_ql_send(&self->ctx, str, str_len, flags);
+  rc = grn_ctx_send(&self->ctx, str, str_len, flags);
   Py_END_ALLOW_THREADS
   return Py_BuildValue("i", rc);
 }
@@ -141,7 +123,7 @@ groongaql_Context_ql_recv(groongaql_ContextObject *self)
 
   if (self->closed) { return NULL; }
   Py_BEGIN_ALLOW_THREADS
-  rc = grn_ql_recv(&self->ctx, &str, &str_len, &flags);
+  rc = grn_ctx_recv(&self->ctx, &str, &str_len, &flags);
   Py_END_ALLOW_THREADS
   return Py_BuildValue("(is#i)", rc, str, str_len, flags);
 }
@@ -165,10 +147,10 @@ static PyObject *
 groongaql_Context_ql_info_get(groongaql_ContextObject *self)
 {
   grn_rc rc;
-  grn_ql_info info;
+  grn_ctx_info info;
 
   if (self->closed) { return NULL; }
-  rc = grn_ql_info_get(&self->ctx, &info);
+  rc = grn_ctx_info_get(&self->ctx, &info);
   /* TODO: handling unsigned int properlly */
   /* TODO: get outbuf */
   return Py_BuildValue("{s:i,s:i,s:i}",
@@ -185,9 +167,6 @@ static PyMethodDef groongaql_Context_methods[] = {
   {"ql_connect", (PyCFunction)groongaql_ContextClass_ql_connect,
    METH_VARARGS | METH_KEYWORDS,
    "Create a remote groonga context."},
-  {"ql_load", (PyCFunction)groongaql_Context_ql_load,
-   METH_VARARGS | METH_KEYWORDS,
-   "Load a file into context."},
   {"ql_send", (PyCFunction)groongaql_Context_ql_send,
    METH_VARARGS | METH_KEYWORDS,
    "Send message to context."},
@@ -334,13 +313,12 @@ static ConstPair consts[] = {
   /* grn_ctx flags */
   {"CTX_USE_QL", GRN_CTX_USE_QL},
   {"CTX_BATCH_MODE", GRN_CTX_BATCH_MODE},
-  /* grn_ql flags */
-  {"QL_MORE", GRN_QL_MORE},
-  {"QL_TAIL", GRN_QL_TAIL},
-  {"QL_HEAD", GRN_QL_HEAD},
-  {"QL_QUIET", GRN_QL_QUIET},
-  {"QL_QUIT", GRN_QL_QUIT},
-  {"QL_FIN", GRN_QL_FIN},
+  {"CTX_MORE", GRN_CTX_MORE},
+  {"CTX_TAIL", GRN_CTX_TAIL},
+  {"CTX_HEAD", GRN_CTX_HEAD},
+  {"CTX_QUIET", GRN_CTX_QUIET},
+  {"CTX_QUIT", GRN_CTX_QUIT},
+  {"CTX_FIN", GRN_CTX_FIN},
   /* end */
   {NULL, 0}
 };

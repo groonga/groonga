@@ -395,12 +395,12 @@ void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);
 void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 
-grn_rc grn_ql_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
+grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
 
 /**** receive handler ****/
 
-void grn_ql_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),
+void grn_ctx_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),
                               void *func_arg);
 
 void grn_ctx_concat_func(grn_ctx *ctx, int flags, void *dummy);

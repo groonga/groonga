@@ -1918,30 +1918,26 @@ GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *columns, unsigned columns_len,
                         const char *values, unsigned values_len);
 
-/* ql */
+#define GRN_CTX_MORE                    (0x01<<0)
+#define GRN_CTX_TAIL                    (0x01<<1)
+#define GRN_CTX_HEAD                    (0x01<<2)
+#define GRN_CTX_QUIET                   (0x01<<3)
+#define GRN_CTX_QUIT                    (0x01<<4)
 
-#define GRN_QL_MORE                    (0x01<<0)
-#define GRN_QL_TAIL                    (0x01<<1)
-#define GRN_QL_HEAD                    (0x01<<2)
-#define GRN_QL_QUIET                   (0x01<<3)
-#define GRN_QL_QUIT                    (0x01<<4)
-#define GRN_QL_FIN                     GRN_CTX_FIN
+GRN_API grn_rc grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags);
+GRN_API grn_rc grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
+GRN_API grn_rc grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
 
-GRN_API grn_rc grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags);
-GRN_API grn_rc grn_ql_load(grn_ctx *ctx, const char *path);
-GRN_API grn_rc grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
-GRN_API grn_rc grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
+typedef struct _grn_ctx_info grn_ctx_info;
 
-typedef struct _grn_ql_info grn_ql_info;
-
-struct _grn_ql_info {
+struct _grn_ctx_info {
   int fd;
   unsigned int com_status;
   grn_obj *outbuf;
   unsigned char stat;
 };
 
-GRN_API grn_rc grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info);
+GRN_API grn_rc grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info);
 
 /* hash */
 

@@ -517,7 +517,7 @@ grn_ql_feed(grn_ctx *ctx, char *str, uint32_t str_size, int mode)
   for (;;) {
     switch (ctx->stat) {
     case GRN_QL_TOPLEVEL :
-      ctx->impl->co.mode &= ~GRN_QL_HEAD;
+      ctx->impl->co.mode &= ~GRN_CTX_HEAD;
       Eval_Cycle(ctx);
       break;
     case GRN_QL_WAIT_EXPR :
@@ -528,7 +528,7 @@ grn_ql_feed(grn_ctx *ctx, char *str, uint32_t str_size, int mode)
       break;
     case GRN_QL_WAIT_ARG :
       ctx->impl->co.mode = mode;
-      if ((mode & GRN_QL_HEAD)) {
+      if ((mode & GRN_CTX_HEAD)) {
         ctx->impl->cur = str;
         ctx->impl->str_end = str + str_size;
       } else {
@@ -544,7 +544,7 @@ grn_ql_feed(grn_ctx *ctx, char *str, uint32_t str_size, int mode)
         ph->u.b.size = str_size;
         ctx->impl->phs = CDR(ctx->impl->phs);
       }
-      if ((ctx->impl->phs == NIL) || (mode & (GRN_QL_HEAD|GRN_QL_TAIL))) {
+      if ((ctx->impl->phs == NIL) || (mode & (GRN_CTX_HEAD|GRN_CTX_TAIL))) {
         ctx->stat = GRN_QL_EVAL;
       }
       break;
@@ -553,7 +553,7 @@ grn_ql_feed(grn_ctx *ctx, char *str, uint32_t str_size, int mode)
       break;
     case GRN_QL_WAIT_DATA :
       ctx->impl->co.mode = mode;
-      if ((mode & GRN_QL_HEAD)) {
+      if ((mode & GRN_CTX_HEAD)) {
         ctx->impl->args = NIL;
         ctx->impl->cur = str;
         ctx->impl->str_end = str + str_size;
@@ -568,20 +568,20 @@ grn_ql_feed(grn_ctx *ctx, char *str, uint32_t str_size, int mode)
     case GRN_QL_NATIVE :
       GRN_ASSERT(ctx->impl->co.func);
       ctx->impl->value = ctx->impl->co.func(ctx, ctx->impl->args, &ctx->impl->co);
-      if (ERRP(ctx, GRN_ERROR)) { ctx->stat = GRN_QL_QUITTING; return F; }
+      if (ERRP(ctx, GRN_ERROR)) { ctx->stat = GRN_CTX_QUITTING; return F; }
       ERRCLR(ctx);
-      if (ctx->impl->co.last && !(ctx->impl->co.mode & (GRN_QL_HEAD|GRN_QL_TAIL))) {
+      if (ctx->impl->co.last && !(ctx->impl->co.mode & (GRN_CTX_HEAD|GRN_CTX_TAIL))) {
         ctx->stat = GRN_QL_WAIT_DATA;
       } else {
         ctx->impl->co.mode = 0;
         Eval_Cycle(ctx);
       }
       break;
-    case GRN_QL_QUITTING :
-    case GRN_QL_QUIT :
+    case GRN_CTX_QUITTING :
+    case GRN_CTX_QUIT :
       return NIL;
     }
-    if (ERRP(ctx, GRN_ERROR)) { ctx->stat = GRN_QL_QUITTING; return F; }
+    if (ERRP(ctx, GRN_ERROR)) { ctx->stat = GRN_CTX_QUITTING; return F; }
     if (GRN_QL_WAITINGP(ctx)) { /* waiting input data */
       if (ctx->impl->inbuf) {
         GRN_FREE(ctx->impl->inbuf);
@@ -793,18 +793,6 @@ mk_const(grn_ctx *ctx, char *name, unsigned int len)
     }
   }
   return NIL;
-}
-
-grn_rc
-grn_ql_load(grn_ctx *ctx, const char *filename)
-{
-  if (!ctx || !ctx->impl || !ctx->impl->symbols) { return GRN_INVALID_ARGUMENT; }
-  if (!filename) { filename = InitFile; }
-  ctx->impl->args = CONS(mk_const_string(ctx, filename), NIL);
-  ctx->stat = GRN_QL_TOPLEVEL;
-  ctx->impl->op = OP_LOAD;
-  grn_ql_feed(ctx, "init", 4, 0);
-  return ctx->rc;
 }
 
 /* ========== Routines for Reading ========== */
@@ -1262,11 +1250,11 @@ logtest(grn_cell *a, grn_cell *b)
 } while (0)
 
 #define RTN_NIL_IF_HEAD(ctx) do {\
-  if (((ctx)->impl->co.mode & GRN_QL_HEAD)) { s_goto(ctx, OP_T0LVL); }\
+  if (((ctx)->impl->co.mode & GRN_CTX_HEAD)) { s_goto(ctx, OP_T0LVL); }\
 } while (0)
 
 #define RTN_NIL_IF_TAIL(ctx) do {\
-  if (((ctx)->impl->co.mode & GRN_QL_TAIL)) { s_return((ctx), NIL); } else { return NIL; }\
+  if (((ctx)->impl->co.mode & GRN_CTX_TAIL)) { s_return((ctx), NIL); } else { return NIL; }\
 } while (0)
 
 static grn_cell *
@@ -1380,7 +1368,7 @@ opexe(grn_ctx *ctx)
   case OP_T1LVL:  /* top level */
     // verbose check?
     if (ctx->impl->phs != NIL &&
-        !(ctx->impl->co.mode & (GRN_QL_HEAD|GRN_QL_TAIL))) { RTN_NIL_IF_TAIL(ctx); }
+        !(ctx->impl->co.mode & (GRN_CTX_HEAD|GRN_CTX_TAIL))) { RTN_NIL_IF_TAIL(ctx); }
     // GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '\n');
     ctx->impl->code = ctx->impl->value;
     s_goto(ctx, OP_EVAL);
@@ -1899,7 +1887,7 @@ opexe(grn_ctx *ctx)
 
   case OP_SDOWN:   /* shutdown */
     GRN_LOG(ctx, GRN_LOG_NOTICE, "shutting down..");
-    grn_gctx.stat = GRN_QL_QUIT;
+    grn_gctx.stat = GRN_CTX_QUIT;
     s_goto(ctx, OP_QUIT);
 
   case OP_RDSEXPR:
@@ -2134,7 +2122,7 @@ Eval_Cycle(grn_ctx *ctx)
       ctx->stat = (ctx->impl->phs != NIL) ? GRN_QL_WAIT_ARG : GRN_QL_EVAL;
       return;
     case OP_QUIT :
-      ctx->stat = GRN_QL_QUITTING;
+      ctx->stat = GRN_CTX_QUITTING;
       return;
     default :
       break;

@@ -1748,7 +1748,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           }
         }
       } else {
-        co->mode |= GRN_QL_TAIL;
+        co->mode |= GRN_CTX_TAIL;
       }
       {
         grn_cell *_value = ctx->impl->value;
@@ -1756,7 +1756,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         grn_ctx_mgc(ctx);
         ctx->impl->value = _value;
       }
-    } while (!(co->mode & (GRN_QL_HEAD|GRN_QL_TAIL)));
+    } while (!(co->mode & (GRN_CTX_HEAD|GRN_CTX_TAIL)));
     if ((res = grn_cell_new(ctx))) {
       res->header.type = GRN_CELL_INT;
       res->u.i.i = stat->nrecs;
@@ -1810,9 +1810,9 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
           }
         }
       } else {
-        co->mode |= GRN_QL_TAIL;
+        co->mode |= GRN_CTX_TAIL;
       }
-    } while (!(co->mode & (GRN_QL_HEAD|GRN_QL_TAIL)));
+    } while (!(co->mode & (GRN_CTX_HEAD|GRN_CTX_TAIL)));
     if ((res = grn_cell_new(ctx))) {
       res->header.type = GRN_CELL_INT;
       res->u.i.i = stat->nrecs;
@@ -2907,7 +2907,7 @@ disp_t_with_format(grn_ctx *ctx, grn_cell *args, grn_obj *buf, int *f)
           grn_table_cursor *tc = grn_table_cursor_open_by_id(ctx, r, offset,
                                                              offset + limit, flags);
           for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
-            if (*f) { ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr); *f = 0; }
+            if (*f) { ctx->impl->output(ctx, GRN_CTX_MORE, ctx->impl->data.ptr); *f = 0; }
             column_exp_exec(ctx, ce, id);
             disp_t(ctx, ce->expr, buf, f);
           }
@@ -2995,7 +2995,7 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
                                                            GRN_CURSOR_ASCENDING);
         for (i = 0; (id = grn_table_cursor_next(ctx, tc)); i++) {
           obj_obj_bind(&o, obj->u.o.id, id);
-          if (*f) { ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr); *f = 0; }
+          if (*f) { ctx->impl->output(ctx, GRN_CTX_MORE, ctx->impl->data.ptr); *f = 0; }
           disp_t(ctx, &o, buf, f);
         }
         grn_table_cursor_close(ctx, tc);
@@ -3008,7 +3008,7 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
         int o0, o;
         grn_cell *val = CDR(obj);
         for (o0 = 0; o0 <= 1; o0++) {
-          if (*f) { ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr); *f = 0; }
+          if (*f) { ctx->impl->output(ctx, GRN_CTX_MORE, ctx->impl->data.ptr); *f = 0; }
           for (obj = val, o = o0;; o = 1 - o) {
             if (!o) { disp_t(ctx, CAR(obj), buf, f); }
             if ((obj = CDR(obj)) && (obj != NIL)) {
@@ -3103,7 +3103,7 @@ nf_disp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     QLERR("Few arguments");
   }
   if (f) {
-    ctx->impl->output(ctx, GRN_QL_MORE, ctx->impl->data.ptr);
+    ctx->impl->output(ctx, GRN_CTX_MORE, ctx->impl->data.ptr);
     if (ERRP(ctx, GRN_WARN)) { return F; }
   }
   return T;

@@ -311,7 +311,7 @@ grn_rc
 grn_ctx_init(grn_ctx *ctx, int flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
-  // if (ctx->stat != GRN_QL_FIN) { return GRN_INVALID_ARGUMENT; }
+  // if (ctx->stat != GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   ctx->flags = flags;
   ctx->stat = GRN_QL_WAIT_EXPR;
@@ -339,7 +339,7 @@ grn_ctx_fin(grn_ctx *ctx)
 {
   grn_rc rc = GRN_SUCCESS;
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
-  if (ctx->stat == GRN_QL_FIN) { return GRN_INVALID_ARGUMENT; }
+  if (ctx->stat == GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
   MUTEX_LOCK(grn_glock);
   ctx->next->prev = ctx->prev;
   ctx->prev->next = ctx->next;
@@ -366,14 +366,14 @@ grn_ctx_fin(grn_ctx *ctx)
       grn_hash_close(ctx, ctx->impl->symbols);
     }
     if (ctx->impl->com) {
-      if (ctx->stat != GRN_QL_QUIT) {
+      if (ctx->stat != GRN_CTX_QUIT) {
         int flags;
         char *str;
         unsigned int str_len;
-        grn_ql_send(ctx, "(quit)", 6, GRN_QL_HEAD);
-        grn_ql_recv(ctx, &str, &str_len, &flags);
+        grn_ctx_send(ctx, "(quit)", 6, GRN_CTX_HEAD);
+        grn_ctx_recv(ctx, &str, &str_len, &flags);
       }
-      grn_ql_send(ctx, "ACK", 3, GRN_QL_HEAD);
+      grn_ctx_send(ctx, "ACK", 3, GRN_CTX_HEAD);
       rc = grn_com_close(ctx, ctx->impl->com);
     }
     rc = grn_obj_close(ctx, ctx->impl->outbuf);
@@ -407,7 +407,7 @@ grn_ctx_fin(grn_ctx *ctx)
     grn_ctx_loader_clear(ctx);
     GRN_FREE(ctx->impl);
   }
-  ctx->stat = GRN_QL_FIN;
+  ctx->stat = GRN_CTX_FIN;
   return rc;
 }
 
@@ -613,7 +613,7 @@ grn_ctx_open(grn_obj *db, int flags)
 */
 
 grn_rc
-grn_ql_connect(grn_ctx *ctx, const char *host, int port, int flags)
+grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags)
 {
   if (!ctx->impl) { grn_ctx_impl_init(ctx); }
   if (!ctx->impl) { return ctx->rc; }
@@ -732,7 +732,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
 }
 
 grn_rc
-grn_ql_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
+grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
 {
   grn_obj buf;
   GRN_TEXT_INIT(&buf, 0);
@@ -742,13 +742,13 @@ grn_ql_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
     argv++;
     if (argc) { GRN_TEXT_PUTC(ctx, &buf, ' '); }
   }
-  grn_ql_send(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), flags);
+  grn_ctx_send(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), flags);
   GRN_OBJ_FIN(ctx, &buf);
   return ctx->rc;
 }
 
 grn_rc
-grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
+grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
@@ -756,8 +756,8 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
     if (ctx->impl->com) {
       grn_rc rc;
       grn_com_header sheader;
-      if ((flags & GRN_QL_MORE)) { flags |= GRN_QL_QUIET; }
-      if (ctx->stat == GRN_QL_QUIT) { flags |= GRN_QL_QUIT; }
+      if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
+      if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
       sheader.proto = GRN_COM_PROTO_GQTP;
       sheader.qtype = 0;
       sheader.keylen = 0;
@@ -773,9 +773,9 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
     } else {
       if (ctx->impl->symbols) {
         grn_ql_feed(ctx, str, str_len, flags);
-        if (ctx->stat == GRN_QL_QUITTING) { ctx->stat = GRN_QL_QUIT; }
+        if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
         if (!ERRP(ctx, GRN_CRIT)) {
-          if (!(flags & GRN_QL_QUIET) && ctx->impl->output) {
+          if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
             ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
           }
         }
@@ -786,9 +786,9 @@ grn_ql_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
         } else {
           grn_ctx_qe_exec(ctx, str, str_len);
         }
-        if (ctx->stat == GRN_QL_QUITTING) { ctx->stat = GRN_QL_QUIT; }
+        if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
         if (!ERRP(ctx, GRN_CRIT)) {
-          if (!(flags & GRN_QL_QUIET) && ctx->impl->output) {
+          if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
             ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
           }
         }
@@ -802,12 +802,12 @@ exit :
 }
 
 grn_rc
-grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
+grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
-  if (ctx->stat == GRN_QL_QUIT) {
-    *flags = GRN_QL_QUIT;
+  if (ctx->stat == GRN_CTX_QUIT) {
+    *flags = GRN_CTX_QUIT;
     return ctx->rc;
   }
   if (ctx->impl) {
@@ -820,11 +820,11 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       } else {
         *str = GRN_BULK_HEAD(ctx->impl->outbuf);
         *str_len = GRN_BULK_VSIZE(ctx->impl->outbuf);
-        if (header.flags & GRN_QL_QUIT) {
-          ctx->stat = GRN_QL_QUIT;
-          *flags = GRN_QL_QUIT;
+        if (header.flags & GRN_CTX_QUIT) {
+          ctx->stat = GRN_CTX_QUIT;
+          *flags = GRN_CTX_QUIT;
         } else {
-          *flags = (header.flags & GRN_QL_TAIL) ? 0 : GRN_QL_MORE;
+          *flags = (header.flags & GRN_CTX_TAIL) ? 0 : GRN_CTX_MORE;
         }
       }
       if (ctx->rc) {
@@ -842,7 +842,7 @@ grn_ql_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         tail = ctx->impl->bufcur < npackets ? offsets[ctx->impl->bufcur] : GRN_BULK_VSIZE(buf);
         *str = GRN_BULK_HEAD(buf) + head;
         *str_len = tail - head;
-        *flags = ctx->impl->bufcur++ < npackets ? GRN_QL_MORE : 0;
+        *flags = ctx->impl->bufcur++ < npackets ? GRN_CTX_MORE : 0;
         goto exit;
       }
     }
@@ -855,7 +855,7 @@ exit :
 void
 grn_ctx_concat_func(grn_ctx *ctx, int flags, void *dummy)
 {
-  if (ctx && ctx->impl && (flags & GRN_QL_MORE)) {
+  if (ctx && ctx->impl && (flags & GRN_CTX_MORE)) {
     unsigned int size = GRN_BULK_VSIZE(ctx->impl->outbuf);
     grn_bulk_write(ctx, &ctx->impl->subbuf, (char *) &size, sizeof(unsigned int));
   }
@@ -878,7 +878,7 @@ grn_ctx_stream_out_func(grn_ctx *ctx, int flags, void *stream)
 }
 
 void
-grn_ql_recv_handler_set(grn_ctx *ctx, void (*func)(grn_ctx *, int, void *), void *func_arg)
+grn_ctx_recv_handler_set(grn_ctx *ctx, void (*func)(grn_ctx *, int, void *), void *func_arg)
 {
   if (ctx && ctx->impl) {
     ctx->impl->output = func;
@@ -887,7 +887,7 @@ grn_ql_recv_handler_set(grn_ctx *ctx, void (*func)(grn_ctx *, int, void *), void
 }
 
 grn_rc
-grn_ql_info_get(grn_ctx *ctx, grn_ql_info *info)
+grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info)
 {
   if (!ctx || !ctx->impl) { return GRN_INVALID_ARGUMENT; }
   if (ctx->impl->com) {

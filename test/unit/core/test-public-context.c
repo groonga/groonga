@@ -98,10 +98,3 @@ cut_teardown(void)
   open_context();                               \
   cut_assert(context);                          \
 } while (0)
-
-void
-test_load(void)
-{
-  cut_assert_open_context();
-  grn_test_assert(grn_ql_load(context, sample_ql_program));
-}
