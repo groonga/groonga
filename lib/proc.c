@@ -434,7 +434,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
 /* bulk must be initialized grn_bulk or grn_msg */
 static int
-grn_bulk_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
+grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
 {
   /* FIXME: implement more smartly with grn_bulk */
   int fd, ret = 0;
@@ -448,7 +448,7 @@ grn_bulk_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
       for (bp = buf; rest; rest -= ss, bp += ss) {
         if ((ss = read(fd, bp, rest)) == -1) { goto exit; }
       }
-      GRN_TEXT_SET(ctx, bulk, buf, stat.st_size);
+      GRN_TEXT_PUT(ctx, bulk, buf, stat.st_size);
       ret = 1;
     }
     GRN_FREE(buf);
@@ -469,7 +469,7 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     char path[PATH_MAX];
     memcpy(path, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
     path[GRN_TEXT_LEN(&vars[0].value)] = '\0';
-    grn_bulk_from_file(ctx, buf, path);
+    grn_bulk_put_from_file(ctx, buf, path);
   }
   return buf;
 }
