@@ -282,7 +282,7 @@ grn_ctx_send - おくる
 <p> </p>
 <pre>#include &lt;groonga/groonga.h&gt;
 
-grn_rc grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);</pre>
+unsigned grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);</pre>
 </dd>
 <dt><a name="label-49" id="label-49">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dd>
@@ -300,7 +300,7 @@ grn_ctx_send - うけとる
 <p> </p>
 <pre>#include &lt;groonga/groonga.h&gt;
 
-grn_rc grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);</pre>
+unsigned grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);</pre>
 </dd>
 <dt><a name="label-53" id="label-53">DESCRIPTION</a></dt><!-- RDLabel: "DESCRIPTION" -->
 <dd>

@@ -274,7 +274,7 @@ result_lenには、resultのバイト長が格納されます。
 
   #include <groonga/groonga.h>
 
-  grn_rc grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
+  unsigned grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags);
 
 :DESCRIPTION
 
@@ -291,7 +291,7 @@ result_lenには、resultのバイト長が格納されます。
 
   #include <groonga/groonga.h>
 
-  grn_rc grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
+  unsigned grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
 
 :DESCRIPTION
 

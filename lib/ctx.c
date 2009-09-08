@@ -747,7 +747,7 @@ grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
   return ctx->rc;
 }
 
-grn_rc
+unsigned int
 grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
@@ -798,17 +798,17 @@ grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
   }
   ERR(GRN_INVALID_ARGUMENT, "invalid ctx assigned");
 exit :
-  return ctx->rc;
+  return 0;
 }
 
-grn_rc
+unsigned
 grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   if (ctx->stat == GRN_CTX_QUIT) {
     *flags = GRN_CTX_QUIT;
-    return ctx->rc;
+    return 0;
   }
   if (ctx->impl) {
     if (ctx->impl->com) {
@@ -837,7 +837,10 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         unsigned int head, tail;
         unsigned int *offsets = (unsigned int *) GRN_BULK_HEAD(&ctx->impl->subbuf);
         int npackets = GRN_BULK_VSIZE(&ctx->impl->subbuf) / sizeof(unsigned int);
-        if (npackets < ctx->impl->bufcur) { return GRN_INVALID_ARGUMENT; }
+        if (npackets < ctx->impl->bufcur) {
+          ERR(GRN_INVALID_ARGUMENT, "invalid argument");
+          return 0;
+        }
         head = ctx->impl->bufcur ? offsets[ctx->impl->bufcur - 1] : 0;
         tail = ctx->impl->bufcur < npackets ? offsets[ctx->impl->bufcur] : GRN_BULK_VSIZE(buf);
         *str = GRN_BULK_HEAD(buf) + head;
@@ -849,7 +852,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
   }
   ERR(GRN_INVALID_ARGUMENT, "invalid ctx assigned");
 exit :
-  return ctx->rc;
+  return 0;
 }
 
 void
