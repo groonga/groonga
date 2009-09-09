@@ -3215,7 +3215,7 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
     GRN_UINT32_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_TIME :\
-    GRN_TIME_SET(ctx, dest, getvalue(src));\
+    GRN_TIME_SET(ctx, dest, getvalue(src) * GRN_TIME_USEC_PER_SEC);\
     break;\
   case GRN_DB_INT64 :\
     GRN_INT64_SET(ctx, dest, getvalue(src));\
@@ -6926,6 +6926,27 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
 }
 
+static uint32_t
+truep(grn_ctx *ctx, grn_obj *v)
+{
+  uint32_t bv = 0;
+  switch (v->header.type) {
+  case GRN_BULK :
+    switch (v->header.domain) {
+    case GRN_DB_BOOL :
+      bv = GRN_BOOL_VALUE(v);
+      break;
+    case GRN_DB_INT32 :
+      bv = GRN_INT32_VALUE(v);
+      break;
+    case GRN_DB_UINT32 :
+      bv = GRN_UINT32_VALUE(v);
+      break;
+    }
+  }
+  return bv;
+}
+
 grn_rc
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
@@ -7120,24 +7141,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_CJUMP :
         {
-          uint32_t bv = 0;
           grn_obj *v;
           POP1(v);
-          switch (v->header.type) {
-          case GRN_BULK :
-            switch (v->header.domain) {
-            case GRN_DB_BOOL :
-              bv = GRN_BOOL_VALUE(v);
-              break;
-            case GRN_DB_INT32 :
-              bv = GRN_INT32_VALUE(v);
-              break;
-            case GRN_DB_UINT32 :
-              bv = GRN_UINT32_VALUE(v);
-              break;
-            }
-          }
-          if (!bv) { code += code->nargs; }
+          if (!truep(ctx, v)) { code += code->nargs; }
         }
         code++;
         break;
@@ -8923,6 +8929,21 @@ values_len(grn_ctx *ctx, grn_obj *head, grn_obj *tail)
   return len;
 }
 
+static grn_id
+loader_add(grn_ctx *ctx, const void *key, unsigned key_size)
+{
+  int added = 0;
+  grn_loader *loader = &ctx->impl->loader;
+  grn_id id = grn_table_add(ctx, loader->table, key, key_size, &added);
+  if (!added && loader->ifexists) {
+    grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->ifexists, 0);
+    GRN_RECORD_SET(ctx, v, id);
+    grn_expr_exec(ctx, loader->ifexists, 0);
+    if (!truep(ctx, grn_ctx_pop(ctx))) { id = 0; }
+  }
+  return id;
+}
+
 static void
 bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
@@ -8943,8 +8964,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       case GRN_TABLE_HASH_KEY :
       case GRN_TABLE_PAT_KEY :
         if (ndata == ncols + 1) {
-          id = grn_table_add(ctx, loader->table,
-                             GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), NULL);
+          id = loader_add(ctx, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
           ndata--;
           value++;
         } else if (!ncols) {
@@ -9032,8 +9052,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
                 (*p == ':' || *p == '_') && !memcmp(p + 1, "key", 3)) {
               v++;
               if (v->header.domain == GRN_DB_TEXT) {
-                id = grn_table_add(ctx, loader->table,
-                                   GRN_TEXT_VALUE(v), GRN_TEXT_LEN(v), NULL);
+                id = loader_add(ctx, GRN_TEXT_VALUE(v), GRN_TEXT_LEN(v));
               }
               break;
             } else {
@@ -9354,7 +9373,8 @@ grn_rc
 grn_load(grn_ctx *ctx, grn_content_type input_type,
          const char *table, unsigned table_len,
          const char *columns, unsigned columns_len,
-         const char *values, unsigned values_len)
+         const char *values, unsigned values_len,
+         const char *ifexists, unsigned ifexists_len)
 {
   grn_loader *loader;
   if (!ctx || !ctx->impl) {
@@ -9370,6 +9390,14 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
       loader->table = grn_ctx_get(ctx, table, table_len);
       if (loader->table && columns && columns_len) {
         grn_obj_columns(ctx, loader->table, columns, columns_len, &loader->columns);
+      }
+    }
+    if (ifexists && ifexists_len) {
+      grn_obj *v;
+      GRN_EXPR_CREATE_FOR_QUERY(ctx, loader->table, loader->ifexists, v);
+      if (loader->ifexists && v) {
+        grn_expr_parse(ctx, loader->ifexists, ifexists, ifexists_len,
+                       NULL, GRN_OP_EQUAL, GRN_OP_AND, 4);
       }
     }
     json_read(ctx, loader, values, values_len);

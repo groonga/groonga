@@ -181,6 +181,7 @@ grn_loader_init(grn_loader *loader)
   GRN_PTR_INIT(&loader->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   loader->table = NULL;
   loader->last = NULL;
+  loader->ifexists = NULL;
   loader->values_size = 0;
   loader->nrecords = 0;
   loader->stat = GRN_LOADER_BEGIN;
@@ -195,6 +196,7 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   grn_obj **p = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
   uint32_t i = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   if (ctx->impl->db) { while (i--) { grn_obj_unlink(ctx, *p++); } }
+  if (loader->ifexists) { grn_obj_unlink(ctx, loader->ifexists); }
   while (v < ve) { GRN_OBJ_FIN(ctx, v++); }
   GRN_OBJ_FIN(ctx, &loader->values);
   GRN_OBJ_FIN(ctx, &loader->level);
@@ -345,6 +347,7 @@ grn_ctx_fin(grn_ctx *ctx)
   ctx->prev->next = ctx->next;
   MUTEX_UNLOCK(grn_glock);
   if (ctx->impl) {
+    grn_ctx_loader_clear(ctx);
     if (ctx->impl->objects) {
       grn_cell *o;
       GRN_ARRAY_EACH(ctx, ctx->impl->objects, 0, 0, id, &o, {
@@ -404,7 +407,6 @@ grn_ctx_fin(grn_ctx *ctx)
       });
     }
     grn_hash_close(ctx, ctx->impl->expr_vars);
-    grn_ctx_loader_clear(ctx);
     GRN_FREE(ctx->impl);
   }
   ctx->stat = GRN_CTX_FIN;

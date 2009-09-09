@@ -1917,7 +1917,8 @@ GRN_API grn_rc grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned table_len,
                         const char *columns, unsigned columns_len,
-                        const char *values, unsigned values_len);
+                        const char *values, unsigned values_len,
+                        const char *ifexists, unsigned ifexists_len);
 
 #define GRN_CTX_MORE                    (0x01<<0)
 #define GRN_CTX_TAIL                    (0x01<<1)

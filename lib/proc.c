@@ -91,11 +91,12 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *outbuf = args[0];
   grn_expr_var *vars;
   grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  if (nvars == 4) {
-    grn_load(ctx, GET_OTYPE(&vars[3].value),
+  if (nvars == 5) {
+    grn_load(ctx, GET_OTYPE(&vars[4].value),
              GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
              GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
-             GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
+             GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
+             GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value));
     if (ctx->impl->loader.stat == GRN_LOADER_BEGIN) {
       grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
     } else {
@@ -560,8 +561,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
   DEF_VAR(vars[2], "columns");
-  DEF_VAR(vars[3], "input_type");
-  grn_proc_create(ctx, "load", 4, NULL, proc_load, NULL, NULL, 4, vars);
+  DEF_VAR(vars[3], "ifexists");
+  DEF_VAR(vars[4], "input_type");
+  grn_proc_create(ctx, "load", 4, NULL, proc_load, NULL, NULL, 5, vars);
 
   DEF_VAR(vars[0], "output_type");
   grn_proc_create(ctx, "status", 6, NULL, proc_status, NULL, NULL, 1, vars);
