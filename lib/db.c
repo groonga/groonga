@@ -5790,7 +5790,8 @@ static char *opstrs[] = {
   "AND_ASSIGN",
   "XOR_ASSIGN",
   "OR_ASSIGN",
-  "TERNARY",
+  "JUMP",
+  "CJUMP",
   "COMMA",
   "BITWISE_OR",
   "BITWISE_XOR",
@@ -6496,6 +6497,14 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       DFI_PUT(e, type, domain, code);
       break;
+    case GRN_OP_JUMP :
+      DFI_POP(e, dfi);
+      PUSH_CODE(e, op, obj, nargs, code);
+      break;
+    case GRN_OP_CJUMP :
+      DFI_POP(e, dfi);
+      PUSH_CODE(e, op, obj, nargs, code);
+      break;
     default :
       break;
     }
@@ -7106,6 +7115,32 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         }
         code++;
         break;
+      case GRN_OP_JUMP :
+        code += code->nargs + 1;
+        break;
+      case GRN_OP_CJUMP :
+        {
+          uint32_t bv = 0;
+          grn_obj *v;
+          POP1(v);
+          switch (v->header.type) {
+          case GRN_BULK :
+            switch (v->header.domain) {
+            case GRN_DB_BOOL :
+              bv = GRN_BOOL_VALUE(v);
+              break;
+            case GRN_DB_INT32 :
+              bv = GRN_INT32_VALUE(v);
+              break;
+            case GRN_DB_UINT32 :
+              bv = GRN_UINT32_VALUE(v);
+              break;
+            }
+          }
+          if (!bv) { code += code->nargs; }
+        }
+        code++;
+        break;
       case GRN_OP_GET_VALUE :
         {
           grn_obj *col, *rec;
@@ -7651,7 +7686,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
 typedef struct {
   uint32_t start;
   uint32_t end;
-  uint32_t nargs;
+  int32_t nargs;
   grn_operator op;
   grn_operator logical_op;
   grn_obj *index;
@@ -9697,19 +9732,19 @@ done :
     const char *name = q->cur;
     unsigned name_size = s - q->cur;
     if ((obj = grn_expr_get_var(ctx, q->e, name, name_size))) {
-      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
     }
     if ((obj = grn_obj_column(ctx, q->table, name, name_size))) {
       GRN_PTR_PUT(ctx, &((grn_expr *)q->e)->objs, obj);
-      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       goto exit;
     }
     if ((obj = grn_ctx_get(ctx, name, name_size))) {
-      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
     }
     rc = GRN_SYNTAX_ERROR;
@@ -9717,6 +9752,14 @@ done :
 exit :
   q->cur = s;
   return rc;
+}
+
+static void
+set_tos_minor_to_curr(grn_ctx *ctx, efs_info *q)
+{
+  yyParser *pParser = ctx->impl->parser;
+  yyStackEntry *yytos = &pParser->yystack[pParser->yyidx];
+  yytos->minor.yy0 = ((grn_expr *)(q->e))->codes_curr;
 }
 
 static grn_rc
@@ -9766,6 +9809,8 @@ parse4(grn_ctx *ctx, efs_info *q)
     case ':' :
       q->cur++;
       PARSE(GRN_EXPR_TOKEN_COLON);
+      set_tos_minor_to_curr(ctx, q);
+      grn_expr_append_op(ctx, q->e, GRN_OP_JUMP, 0);
       break;
     case '@' :
       q->cur++;
@@ -9778,11 +9823,13 @@ parse4(grn_ctx *ctx, efs_info *q)
     case '?' :
       q->cur++;
       PARSE(GRN_EXPR_TOKEN_QUESTION);
+      set_tos_minor_to_curr(ctx, q);
+      grn_expr_append_op(ctx, q->e, GRN_OP_CJUMP, 0);
       break;
     case '"' :
       if ((rc = get_string(ctx, q))) { goto exit; }
-      grn_expr_append_const(ctx, q->e, &q->buf, GRN_OP_PUSH, 1);
       PARSE(GRN_EXPR_TOKEN_STRING);
+      grn_expr_append_const(ctx, q->e, &q->buf, GRN_OP_PUSH, 1);
       break;
     case '*' :
       q->cur++;
@@ -10007,8 +10054,8 @@ parse4(grn_ctx *ctx, efs_info *q)
         const char *rest;
         int i = grn_atoi(q->cur, q->str_end, &rest);
         q->cur = rest;
-        grn_expr_append_const_int(ctx, q->e, i, GRN_OP_PUSH, 1);
         PARSE(GRN_EXPR_TOKEN_DECIMAL);
+        grn_expr_append_const_int(ctx, q->e, i, GRN_OP_PUSH, 1);
       }
       break;
     default :

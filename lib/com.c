@@ -799,7 +799,6 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       rest -= ret, p += ret;
     } else {
       if (++retry > RETRY_MAX) {
-        SERR("recv size");
         goto exit;
       }
     }

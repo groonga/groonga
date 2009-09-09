@@ -223,7 +223,7 @@ typedef struct _grn_expr grn_expr;
 
 typedef struct {
   grn_obj *value;
-  uint32_t nargs;
+  int32_t nargs;
   grn_operator op;
 } grn_expr_code;
 

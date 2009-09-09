@@ -96,8 +96,10 @@ assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expressi
 }
 
 conditional_expression ::= logical_or_expression.
-conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_TERNARY, 3);
+conditional_expression ::= logical_or_expression QUESTION(A) assignment_expression COLON(B) assignment_expression. {
+  grn_expr *e = (grn_expr *)efsi->e;
+  e->codes[A].nargs = B - A;
+  e->codes[B].nargs = e->codes_curr - B - 1;
 }
 
 logical_or_expression ::= logical_and_expression.
