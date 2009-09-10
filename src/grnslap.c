@@ -320,7 +320,7 @@ enum {
 int
 main(int argc, char **argv)
 {
-  char *protostr = NULL, *maxconstr = NULL, *maxtpstr = NULL;
+  const char *protostr = NULL, *maxconstr = NULL, *maxtpstr = NULL;
   int r, i, flags = 0;
   static grn_str_getopt_opt opts[] = {
     {'P', NULL, NULL, 0, getopt_op_none},

@@ -1615,7 +1615,7 @@ grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, in
 
 inline static void
 op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
-               int argc, char * const argv[], int *i, char * const optvalue)
+               int argc, char * const argv[], int *i, const char *optvalue)
 {
   switch (o->op) {
     case getopt_op_none:
@@ -1634,7 +1634,7 @@ op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
   }
   if (o->arg) {
     if (optvalue) {
-      *o->arg = optvalue;
+      *o->arg = (char *)optvalue;
     } else {
       if (++(*i) < argc) {
         *o->arg = argv[*i];
@@ -1656,7 +1656,7 @@ grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts,
       const grn_str_getopt_opt *o;
       int found;
       if (*++v == '-') {
-        char *eq;
+        const char *eq;
         size_t len;
         found = 0;
         v++;

@@ -23,7 +23,7 @@
 #include "ql.h"
 
 /**** globals for procs ****/
-char *admin_html_path = NULL;
+const char *admin_html_path = NULL;
 
 /**** procs ****/
 

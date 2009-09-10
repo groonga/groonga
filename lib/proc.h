@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-extern char *admin_html_path;
+extern const char *admin_html_path;
 void grn_db_init_builtin_query(grn_ctx *ctx);
 
 #ifdef __cplusplus

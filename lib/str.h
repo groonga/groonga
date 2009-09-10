@@ -39,7 +39,7 @@ typedef enum {
 typedef struct {
   const char opt; /* ends opt == 0 && longopt == NULL */
   const char *longopt;
-  char **arg; /* if NULL, no arg are required */
+  const char **arg; /* if NULL, no arg are required */
   int flag;
   grn_str_getopt_op op;
 } grn_str_getopt_opt;

@@ -1142,9 +1142,9 @@ int
 main(int argc, char **argv)
 {
   grn_encoding enc = GRN_ENC_DEFAULT;
-  char *portstr = NULL, *encstr = NULL,
-       *max_nfthreadsstr = NULL, *loglevel = NULL,
-       *hostnamestr = NULL;
+  const char *portstr = NULL, *encstr = NULL,
+             *max_nfthreadsstr = NULL, *loglevel = NULL,
+             *hostnamestr = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', NULL, NULL, 0, getopt_op_none},
