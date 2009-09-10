@@ -476,17 +476,19 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       return buf;
     }
     admin_html_path_len = (int)l;
-    if (l > 0 && admin_html_path[l - 1] == '/') { admin_html_path_len--; }
+    if (l > 0 && admin_html_path[l - 1] == PATH_SEPARATOR[0]) { admin_html_path_len--; }
   }
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 2 &&
       (plen = GRN_TEXT_LEN(&vars[0].value)) + admin_html_path_len < PATH_MAX) {
     char path[PATH_MAX];
     memcpy(path, admin_html_path, admin_html_path_len);
-    path[admin_html_path_len] = '/';
-    memcpy(path + admin_html_path_len + 1,
-           GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
-    path[GRN_TEXT_LEN(&vars[0].value) + admin_html_path_len + 1] = '\0';
+    path[admin_html_path_len] = PATH_SEPARATOR[0];
+    grn_str_url_path_normalize(GRN_TEXT_VALUE(&vars[0].value),
+                               GRN_TEXT_LEN(&vars[0].value),
+                               path + admin_html_path_len + 1,
+                               PATH_MAX - admin_html_path_len - 1);
+    printf("path: %s\n", path);
     grn_bulk_put_from_file(ctx, buf, path);
   }
   return buf;

@@ -2332,3 +2332,41 @@ get_uri_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
   }
   return p;
 }
+
+void
+grn_str_url_path_normalize(const char *path, size_t path_len, char *buf, size_t buf_len)
+{
+  char *b = buf, *be = buf + buf_len - 1;
+  const char *p = path, *pe = path + path_len, *pc;
+
+  if (buf_len < 2) { return; }
+
+  while (p < pe) {
+    for (pc = p; pc < pe && *pc != '/'; pc++) {}
+    if (*p == '.') {
+      if (pc == p + 2 && *(p + 1) == '.') {
+        /* '..' */
+        if (b - buf >= 2) {
+          for (b -= 2; *b != PATH_SEPARATOR[0] && b >= buf; b--) {}
+        }
+        if (*b == PATH_SEPARATOR[0]) { b++; }
+        p = pc + 1;
+        continue;
+      } else if (pc == p + 1) {
+        /* '.' */
+        p = pc + 1;
+        continue;
+      }
+    }
+    if (be - b >= pc - p) {
+      memcpy(b, p, (pc - p));
+      b += pc - p;
+      p = pc;
+      if (*pc == '/' && be > b) {
+        *b++ = PATH_SEPARATOR[0];
+        p++;
+      }
+    }
+  }
+  *b = '\0';
+}
