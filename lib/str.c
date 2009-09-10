@@ -1615,7 +1615,7 @@ grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, in
 
 inline static void
 op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
-               int argc, char * const argv[], int *i)
+               int argc, char * const argv[], int *i, char * const optvalue)
 {
   switch (o->op) {
     case getopt_op_none:
@@ -1633,10 +1633,14 @@ op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
       return;
   }
   if (o->arg) {
-    if (++(*i) < argc) {
-      *o->arg = argv[*i];
+    if (optvalue) {
+      *o->arg = optvalue;
     } else {
-      /* TODO: error */
+      if (++(*i) < argc) {
+        *o->arg = argv[*i];
+      } else {
+        /* TODO: error */
+      }
     }
   }
 }
@@ -1652,10 +1656,17 @@ grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts,
       const grn_str_getopt_opt *o;
       int found;
       if (*++v == '-') {
+        char *eq;
+        size_t len;
         found = 0;
+        v++;
+        for (eq = v; *eq != '\0' && *eq != '='; eq++) {}
+        len = eq - v;
         for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
-          if (o->longopt && !strcmp(v, o->longopt)) {
-            op_getopt_flag(flags, o, argc, argv, &i);
+          if (o->longopt && strlen(o->longopt) == len &&
+              !memcmp(v, o->longopt, len)) {
+            op_getopt_flag(flags, o, argc, argv, &i,
+                           (*eq == '\0' ? NULL : eq + 1));
             found = 1;
             break;
           }
@@ -1667,7 +1678,7 @@ grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts,
           found = 0;
           for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
             if (o->opt && *p == o->opt) {
-              op_getopt_flag(flags, o, argc, argv, &i);
+              op_getopt_flag(flags, o, argc, argv, &i, NULL);
               found = 1;
               break;
             }
