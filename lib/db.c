@@ -3215,7 +3215,7 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
     GRN_UINT32_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_TIME :\
-    GRN_TIME_SET(ctx, dest, getvalue(src) * GRN_TIME_USEC_PER_SEC);\
+    GRN_TIME_SET(ctx, dest, (long long int)(getvalue(src)) * GRN_TIME_USEC_PER_SEC);\
     break;\
   case GRN_DB_INT64 :\
     GRN_INT64_SET(ctx, dest, getvalue(src));\
@@ -6860,7 +6860,7 @@ grn_rc
 grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 {
   grn_proc_ctx pctx;
-  grn_obj *obj, **args;
+  grn_obj *obj = NULL, **args;
   grn_proc *p = (grn_proc *)proc;
   if (nargs > ctx->impl->stack_curr) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
