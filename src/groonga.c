@@ -17,6 +17,7 @@
 
 #include "lib/com.h"
 #include "lib/ql.h"
+#include "lib/proc.h"
 #include <string.h>
 #include <stdio.h>
 #ifdef HAVE_SYS_WAIT_H
@@ -48,17 +49,19 @@ usage(void)
   fprintf(stderr,
           "Usage: groonga [options...] [dest]\n"
           "options:\n"
-          "  -n:                 create new database\n"
-          "  -a:                 run in standalone mode (default)\n"
-          "  -c:                 run in client mode\n"
-          "  -s:                 run in server mode\n"
-          "  -d:                 run in daemon mode\n"
-          "  -e:                 encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
-          "  -l <log level>:     log level\n"
-          "  -i <ip/hostname>:   server address to listen (default: %s)\n"
-          "  -p <port number>:   server port number (default: %d)\n"
-          "  -t <max threads>:   max number of free threads (default: %d)\n"
-          "  -h, --help:         show usage\n"
+          "  -n:                       create new database\n"
+          "  -a:                       run in standalone mode (default)\n"
+          "  -c:                       run in client mode\n"
+          "  -s:                       run in server mode\n"
+          "  -d:                       run in daemon mode\n"
+          "  -e:                       encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
+          "  -l <log level>:           log level\n"
+          "  -i <ip/hostname>:         server address to listen (default: %s)\n"
+          "  -p <port number>:         server port number (default: %d)\n"
+          "  -t <max threads>:         max number of free threads (default: %d)\n"
+          "  -h, --help:               show usage\n"
+          "  --admin-html-path <path>: specify admin html path\n"
+          "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
@@ -1156,6 +1159,7 @@ main(int argc, char **argv)
     {'i', NULL, NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
+    {'\0', "admin-html-path", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1163,6 +1167,7 @@ main(int argc, char **argv)
   opts[2].arg = &max_nfthreadsstr;
   opts[8].arg = &loglevel;
   opts[9].arg = &hostnamestr;
+  opts[12].arg = &admin_html_path;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }

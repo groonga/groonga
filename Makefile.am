@@ -1,5 +1,6 @@
 SUBDIRS = lib src examples test
-EXTRA_DIST = bindings
+#dist_data_DATA =
+EXTRA_DIST = bindings resource
 pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -16,6 +17,15 @@ dist-hook:
 	rm -rf `find $(distdir) -name '*.cache'`
 	rm -rf `find $(distdir) -name '*.bak'`
 	rm -rf `find $(distdir) -name '*.orig'`
+
+install-data-local:
+	@$(NORMAL_INSTALL)
+	test -z "$(DESTDIR)$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
+	cp -R resource/* $(DESTDIR)$(pkgdatadir)
+
+uninstall-local:
+	@$(NORMAL_UNINSTALL)
+	rm -rf $(DESTDIR)$(pkgdatadir)
 
 ruby-bindings:
 	cd bindings/ruby && \

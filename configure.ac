@@ -99,26 +99,18 @@ int main(int argc, char **argv)
       AC_MSG_RESULT(no)
     ])
 
-# will deprecated
-AC_ARG_WITH(groongahome,
-  [AC_HELP_STRING([--with-groongahome=DIR],
-    [specify Groonga home directory])],
-  GROONGA_HOME="$withval",
-  GROONGA_HOME="${prefix}/lib/$PACKAGE_NAME/$PACKAGE_VERSION")
-AC_DEFINE_UNQUOTED(GROONGA_HOME, "$GROONGA_HOME", "specified home directory")
-
-# log directory
-AC_ARG_WITH(log,
-  [AC_HELP_STRING([--with-log=PATH],
-    [specify Groonga log path.])],
+# log path
+AC_ARG_WITH(log_path,
+  [AC_HELP_STRING([--with-log-path=PATH],
+    [specify groonga log path.])],
   GROONGA_LOG_PATH="$withval",
   GROONGA_LOG_PATH="/var/log/$PACKAGE_NAME/$PACKAGE_NAME.log")
 AC_DEFINE_UNQUOTED(GROONGA_LOG_PATH, "$GROONGA_LOG_PATH", "specified log directory")
 
 # default encoding
-AC_ARG_WITH(encoding,
-  [AC_HELP_STRING([--with-encoding=ENCODING],
-    [specify Groonga default encoding(euc/sjis/utf8/latin1/koi8r/none)])],
+AC_ARG_WITH(default_encoding,
+  [AC_HELP_STRING([--with-default-encoding=ENCODING],
+    [specify groonga default encoding(euc/sjis/utf8/latin1/koi8r/none)])],
   GROONGA_DEFAULT_ENCODING="$withval",
   GROONGA_DEFAULT_ENCODING="utf8")
 AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_ENCODING, "$GROONGA_DEFAULT_ENCODING", "specified default encoding")
@@ -126,7 +118,7 @@ AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_ENCODING, "$GROONGA_DEFAULT_ENCODING", "speci
 # default query escalation threshold
 AC_ARG_WITH(query_escalation_threshold,
   [AC_HELP_STRING([--with-query-escalation-threshold=NUMBER],
-    [specify Groonga default query escalation threshold])],
+    [specify groonga default query escalation threshold])],
   GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="$withval",
   GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="0")
 AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD, $GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD, "specified query escalation threshold")
@@ -158,7 +150,7 @@ fi
 
 # coverage
 m4_ifdef([AC_CHECK_COVERAGE], [AC_CHECK_COVERAGE])
-GENHTML_OPTIONS="--title 'Groonga Code Coverage'"
+GENHTML_OPTIONS="--title 'groonga Code Coverage'"
 
 # microyield
 AC_MSG_CHECKING([whether enable uyield])

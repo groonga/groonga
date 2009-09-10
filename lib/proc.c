@@ -22,6 +22,9 @@
 #include "proc.h"
 #include "ql.h"
 
+/**** globals for procs ****/
+char *admin_html_path = NULL;
+
 /**** procs ****/
 
 #define GET_OTYPE(var) \
@@ -465,11 +468,25 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars, plen;
   grn_obj *buf = args[0];
   grn_expr_var *vars;
+  static int admin_html_path_len = -1;
+  if (!admin_html_path) { return buf; }
+  if (admin_html_path_len < 0) {
+    size_t l;
+    if ((l = strlen(admin_html_path)) > PATH_MAX) {
+      return buf;
+    }
+    admin_html_path_len = (int)l;
+    if (l > 0 && admin_html_path[l - 1] == '/') { admin_html_path_len--; }
+  }
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  if (nvars == 2 && (plen = GRN_TEXT_LEN(&vars[0].value)) < PATH_MAX) {
+  if (nvars == 2 &&
+      (plen = GRN_TEXT_LEN(&vars[0].value)) + admin_html_path_len < PATH_MAX) {
     char path[PATH_MAX];
-    memcpy(path, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
-    path[GRN_TEXT_LEN(&vars[0].value)] = '\0';
+    memcpy(path, admin_html_path, admin_html_path_len);
+    path[admin_html_path_len] = '/';
+    memcpy(path + admin_html_path_len + 1,
+           GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
+    path[GRN_TEXT_LEN(&vars[0].value) + admin_html_path_len + 1] = '\0';
     grn_bulk_put_from_file(ctx, buf, path);
   }
   return buf;
