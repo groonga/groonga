@@ -262,7 +262,7 @@ static grn_obj *
 mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   size_t cl;
-  grn_obj *table = args[0];
+  //  grn_obj *table = args[0];
   grn_mecab_tokenizer *token = user_data->ptr;
   const unsigned char *p = token->next, *r;
   const unsigned char *e = token->end;
@@ -288,7 +288,7 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *table = args[0];
+  //  grn_obj *table = args[0];
   grn_mecab_tokenizer *token = user_data->ptr;
   // if (token->mecab) { mecab_destroy(token->mecab); }
   grn_str_close(ctx, token->nstr);

@@ -584,6 +584,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             GRN_IO_SEG_REF(ja->io, seg, addr);
             if (!addr) {
               if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
+              GRN_IO_SEG_UNREF(ja->io, lseg_);
               grn_io_unlock(ja->io);
               return GRN_NO_MEMORY_AVAILABLE;
             }
@@ -598,10 +599,15 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
               *gseg = ginfo->next;
             }
             if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
+            GRN_IO_SEG_UNREF(ja->io, lseg_);
             grn_io_unlock(ja->io);
             return GRN_SUCCESS;
           }
           if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
+          if (!ginfo->next) {
+            GRN_IO_SEG_UNREF(ja->io, lseg_);
+            break;
+          }
           lseg = lseg_;
           gseg = &ginfo->next;
         }

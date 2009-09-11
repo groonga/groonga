@@ -98,6 +98,27 @@ extern "C" {
 
 void grn_ctx_impl_err(grn_ctx *ctx);
 
+#ifdef HAVE_EXECINFO_H
+#define LOGTRACE(ctx,lvl) {\
+  int i;\
+  char **p;\
+  grn_obj buf;\
+  BACKTRACE(ctx);\
+  p = backtrace_symbols((ctx)->trace, (ctx)->ntrace);\
+  GRN_TEXT_INIT(&buf, 0);\
+  for (i = 0; i < (ctx)->ntrace; i++) {\
+    if (i) GRN_TEXT_PUTS((ctx), &buf, " <= ");\
+    GRN_TEXT_PUTS((ctx), &buf, p[i]);\
+  }\
+  GRN_TEXT_PUTC((ctx), &buf, '\0');\
+  free(p);\
+  GRN_LOG((ctx), lvl, "%s", GRN_BULK_HEAD(&buf));\
+  grn_obj_close((ctx), &buf);\
+}
+#else  /* HAVE_EXECINFO_H */
+#define LOGTRACE(ctx,msg)
+#endif /* HAVE_EXECINFO_H */
+
 #define ERRSET(ctx,lvl,r,...) do {\
   grn_ctx *ctx_ = (grn_ctx *)ctx;\
   ctx_->errlvl = (lvl);\
@@ -107,8 +128,8 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   ctx_->errfunc = __FUNCTION__;\
   grn_ctx_impl_err(ctx);\
   GRN_LOG(ctx, lvl, __VA_ARGS__);\
-  grn_ctx_log((grn_ctx *)ctx, __VA_ARGS__);\
   BACKTRACE(ctx);\
+  if (lvl <= GRN_LOG_CRIT) { LOGTRACE(ctx, lvl); }\
 } while (0)
 
 #define ERRP(ctx,lvl) (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
@@ -125,6 +146,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
 #define ERR(rc,...) ERRSET(ctx, GRN_ERROR, (rc),  __VA_ARGS__)
 #define WARN(rc,...) ERRSET(ctx, GRN_WARN, (rc),  __VA_ARGS__)
 #define MERR(...) ERRSET(ctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
+#define ALERT(...) ERRSET(ctx, GRN_ALERT, GRN_SUCCESS,  __VA_ARGS__)
 
 #ifdef WIN32
 #define SERR(str) {\
@@ -264,27 +286,6 @@ void grn_ctx_impl_err(grn_ctx *ctx);
 
 #define GERR(rc,...) ERRSET(&grn_gctx, GRN_ERROR, (rc),  __VA_ARGS__)
 #define GMERR(...) ERRSET(&grn_gctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
-
-#ifdef HAVE_EXECINFO_H
-#define LOGTRACE(ctx,msg) {\
-  int i;\
-  char **p;\
-  grn_obj buf;\
-  BACKTRACE(ctx);\
-  p = backtrace_symbols((ctx)->trace, (ctx)->ntrace);\
-  GRN_TEXT_INIT(&buf, 0);\
-  for (i = 0; i < (ctx)->ntrace; i++) {\
-    if (i) GRN_TEXT_PUTS((ctx), &buf, " <= ");\
-    GRN_TEXT_PUTS((ctx), &buf, p[i]);\
-  }\
-  GRN_TEXT_PUTC((ctx), &buf, '\0');\
-  free(p);\
-  GRN_LOG((ctx), GRN_LOG_NOTICE, "%s : %s", msg, GRN_BULK_HEAD(&buf));\
-  grn_obj_close((ctx), &buf);\
-}
-#else  /* HAVE_EXECINFO_H */
-#define LOGTRACE(msg)
-#endif /* HAVE_EXECINFO_H */
 
 #define GRN_MALLOC(s) grn_malloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_CALLOC(s) grn_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
