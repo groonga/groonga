@@ -488,7 +488,6 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                GRN_TEXT_LEN(&vars[0].value),
                                path + admin_html_path_len + 1,
                                PATH_MAX - admin_html_path_len - 1);
-    printf("path: %s\n", path);
     grn_bulk_put_from_file(ctx, buf, path);
   }
   return buf;
