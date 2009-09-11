@@ -3498,7 +3498,7 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
 static grn_obj *
 grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
 {
-  size_t vs = 0;
+  uint32_t vs = 0;
   uint32_t size0;
   void *vp = NULL;
   if (!value) {
@@ -3528,17 +3528,14 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
     case GRN_ACCESSOR_GET_SCORE :
       grn_obj_get_value(ctx, a->obj, id, value);
       {
-        grn_rset_recinfo *ri = (grn_rset_recinfo *)(GRN_BULK_HEAD(value) + size0);
-        vp = &ri->score;
-        vs = sizeof(int);
+        grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+        GRN_INT32_PUT(ctx, value, ri->score);
       }
       break;
     case GRN_ACCESSOR_GET_NSUBRECS :
-      grn_obj_get_value(ctx, a->obj, id, value);
       {
-        grn_rset_recinfo *ri = (grn_rset_recinfo *)(GRN_BULK_HEAD(value) + size0);
-        vp = &ri->n_subrecs;
-        vs = sizeof(int);
+        grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+        GRN_INT32_PUT(ctx, value, ri->n_subrecs);
       }
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
