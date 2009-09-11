@@ -4748,7 +4748,6 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   uint32_t *offset2;
   grn_hash_cursor *c;
   grn_id *tp, *tq;
-
   if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
     grn_table_search(ctx, lexicon, key, key_size,
                      GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
@@ -4761,16 +4760,17 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
             grn_hash_cursor_get_key(ctx, c, (void **) &tp);
             key2 = _grn_table_key(ctx, lexicon, *tp, &key2_size);
             if (!key2) { break; }
-            if (key2_size <= 2) { // todo: refine
+            if ((lexicon->header.type != GRN_TABLE_PAT_KEY) ||
+                !(lexicon->header.flags & GRN_OBJ_KEY_WITH_SIS) ||
+                key2_size <= 2) { // todo: refine
               if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
                 cursor_heap_push(ctx, ti->cursors, ii, *tp, 0);
                 ti->ntoken++;
                 ti->size += s;
               }
             } else {
-              if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
-                grn_table_search(ctx, lexicon, key2, key2_size,
-                                 GRN_OP_SUFFIX, (grn_obj *)g, GRN_OP_OR);
+              if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY))) {
+                grn_pat_suffix_search(ctx, (grn_pat *)lexicon, key2, key2_size, g);
                 GRN_HASH_EACH(ctx, g, id, &tq, NULL, &offset2, {
                   if ((s = grn_ii_estimate_size(ctx, ii, *tq))) {
                     cursor_heap_push(ctx, ti->cursors, ii, *tq, /* *offset2 */ 0);
