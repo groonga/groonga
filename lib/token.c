@@ -445,7 +445,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   token->pos = pos;
   token->len = len;
   token->tail = pos + len - 1;
-  if (p == r || r == e) {
+  if (p == r || token->next == e) {
     token->skip = 0;
     status |= GRN_TOKEN_LAST;
   } else {
@@ -563,7 +563,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       token->force_prefix = 0;
       if (status & GRN_TOKEN_UNMATURED) {
         if (status & GRN_TOKEN_OVERLAP) {
-          if (!token->add) { continue; }
+          if (!token->add) { token->pos++; continue; }
         } else {
           if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
         }
