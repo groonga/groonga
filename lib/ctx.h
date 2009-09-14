@@ -129,7 +129,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   grn_ctx_impl_err(ctx);\
   GRN_LOG(ctx, lvl, __VA_ARGS__);\
   BACKTRACE(ctx);\
-  if (lvl <= GRN_LOG_CRIT) { LOGTRACE(ctx, lvl); }\
+  if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
 } while (0)
 
 #define ERRP(ctx,lvl) (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
