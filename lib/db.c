@@ -8869,6 +8869,9 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     } else {
       res = table_;
     }
+    GRN_TEXT_PUTS(ctx, outbuf, "[[");
+    grn_text_itoa(ctx, outbuf, ctx->rc);
+    GRN_TEXT_PUTC(ctx, outbuf, ']');
     if (res) {
       if (foreach && foreach_len) {
         grn_obj *v;
@@ -8895,6 +8898,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
             GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
+            GRN_TEXT_PUTC(ctx, outbuf, ',');
             grn_text_otoj(ctx, outbuf, sorted, &format);
             GRN_OBJ_FORMAT_FIN(ctx, &format);
             grn_table_sort_key_close(ctx, keys, nkeys);
@@ -8904,6 +8908,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       } else {
         GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
+        GRN_TEXT_PUTC(ctx, outbuf, ',');
         grn_text_otoj(ctx, outbuf, res, &format);
         GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
@@ -8931,6 +8936,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                   grn_obj_columns(ctx, sorted,
                                   drilldown_output_columns, drilldown_output_columns_len,
                                   &format.columns);
+                  GRN_TEXT_PUTC(ctx, outbuf, ',');
                   grn_text_otoj(ctx, outbuf, sorted, &format);
                   GRN_OBJ_FORMAT_FIN(ctx, &format);
                   grn_obj_unlink(ctx, sorted);
@@ -8942,6 +8948,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                   GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);
+              GRN_TEXT_PUTC(ctx, outbuf, ',');
               grn_text_otoj(ctx, outbuf, g.table, &format);
               GRN_OBJ_FORMAT_FIN(ctx, &format);
             }
@@ -8952,6 +8959,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
       if (res != table_) { grn_obj_unlink(ctx, res); }
     }
+    GRN_TEXT_PUTC(ctx, outbuf, ']');
     grn_obj_unlink(ctx, table_);
   }
   return ctx->rc;
