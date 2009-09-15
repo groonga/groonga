@@ -171,8 +171,7 @@ test_remove_with_null_as_path(void)
   gcut_assert_equal_list_string(NULL, messages());
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                            grn_pat_remove(context, NULL));
-  expected_messages = gcut_list_string_new("path is null", NULL);
-  cut_assert_equal_g_list_string(expected_messages, messages());
+  cut_assert_not_null(strstr(g_list_nth_data((GList *)messages(), 1), "path is null"));
 }
 
 static grn_trie_test_data *

@@ -361,7 +361,7 @@ test_expr_query(void)
 
   /* confirm record are inserted in both column and index */
   cut_assert_equal_int(4, grn_table_size(&context, t1));
-  cut_assert_equal_int(17, grn_table_size(&context, lc));
+  cut_assert_equal_int(20, grn_table_size(&context, lc));
 
   cut_assert_not_null((expr = grn_expr_create(&context, NULL, 0)));
 
