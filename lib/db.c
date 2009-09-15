@@ -6000,18 +6000,21 @@ grn_ctx_push(grn_ctx *ctx, grn_obj *obj)
   return GRN_STACK_OVER_FLOW;
 }
 
-#define APPEND_OBJ(p,n,x) {\
-  if (!((n) % 16)) {\
-    grn_obj *p0 = GRN_REALLOC((p), sizeof(grn_obj) * ((n) + 16));\
-    if (p0) {\
-      (p) = p0;\
-      (x) = (p) + (n)++;\
-    } else {\
-      (x) = NULL;\
-    }\
-  } else {\
-    (x) = (p) + (n)++;\
-  }\
+static grn_obj *
+const_new(grn_ctx *ctx, grn_expr *e)
+{
+  if (!e->consts) {
+    if (!(e->consts = GRN_MALLOCN(grn_obj, GRN_STACK_SIZE))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "malloc failed");
+      return NULL;
+    }
+  }
+  if (e->nconsts < GRN_STACK_SIZE) {
+    return e->consts + e->nconsts++;
+  } else {
+    ERR(GRN_STACK_OVER_FLOW, "too many constants.");
+    return NULL;
+  }
 }
 
 void
@@ -6127,7 +6130,7 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
         GRN_B_DEC(id, p);
         code->value = grn_ctx_at(ctx, id);
       } else {
-        APPEND_OBJ(e->consts, e->nconsts, v);
+        if (!(v = const_new(ctx, e))) { return NULL; }
         p = grn_obj_unpack(ctx, p, pe, type, GRN_OBJ_EXPRCONST, v);
         code->value = v;
       }
@@ -6301,9 +6304,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   for (i = 0; i < e->nconsts; i++) {
     grn_obj_close(ctx, &e->consts[i]);
   }
-  if (e->consts) {
-    GRN_REALLOC(e->consts, 0);
-  }
+  if (e->consts) { GRN_FREE(e->consts);  }
   grn_obj_close(ctx, &e->name_buf);
   grn_obj_close(ctx, &e->dfi);
   for (;;) {
@@ -6317,7 +6318,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   for (i = 0; i < e->nvars; i++) {
     grn_obj_close(ctx, &e->vars[i].value);
   }
-  GRN_REALLOC(e->vars, 0);
+  GRN_FREE(e->vars);
   for (i = 0; i < e->values_tail; i++) {
     grn_obj_close(ctx, &e->values[i]);
   }
@@ -6325,20 +6326,6 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   GRN_FREE(e->codes);
   GRN_FREE(e);
   GRN_API_RETURN(ctx->rc);
-}
-
-#define APPEND_VAR(p,n,x) {\
-  if (!((n) % 16)) {\
-    grn_expr_var *p0 = GRN_REALLOC((p), sizeof(grn_expr_var) * ((n) + 16));\
-    if (p0) {\
-      (p) = p0;\
-      (x) = (p) + (n)++;\
-    } else {\
-      (x) = NULL;\
-    }\
-  } else {\
-    (x) = (p) + (n)++;\
-  }\
 }
 
 grn_obj *
@@ -6350,8 +6337,13 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  APPEND_VAR(e->vars, e->nvars, v);
-  if (v) {
+  if (!e->vars) {
+    if (!(e->vars = GRN_MALLOCN(grn_expr_var, GRN_STACK_SIZE))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "malloc failed");
+    }
+  }
+  if (e->vars && e->nvars < GRN_STACK_SIZE) {
+    v = e->vars + e->nvars++;
     GRN_TEXT_PUT(ctx, &e->name_buf, name, name_size);
     v->name_size = name_size;
     res = &v->value;
@@ -6597,8 +6589,7 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
   if (GRN_DB_OBJP(obj) || ACCESSORP(obj)) {
     res = obj;
   } else {
-    APPEND_OBJ(e->consts, e->nconsts, res);
-    if (res) {
+    if ((res = const_new(ctx, e))) {
       switch (obj->header.type) {
       case GRN_BULK :
       case GRN_UVECTOR :
@@ -6623,8 +6614,7 @@ grn_expr_add_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned str_size
 {
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
-  APPEND_OBJ(e->consts, e->nconsts, res);
-  if (res) {
+  if ((res = const_new(ctx, e))) {
     GRN_TEXT_INIT(res, 0);
     grn_bulk_write(ctx, res, str, str_size);
     res->header.impl_flags |= GRN_OBJ_EXPRCONST;
@@ -6650,8 +6640,7 @@ grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  APPEND_OBJ(e->consts, e->nconsts, res);
-  if (res) {
+  if ((res = const_new(ctx, e))) {
     GRN_INT32_INIT(res, 0);
     GRN_INT32_SET(ctx, res, i);
     res->header.impl_flags |= GRN_OBJ_EXPRCONST;
