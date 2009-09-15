@@ -173,6 +173,7 @@ struct _grn_proc {
   grn_expr_var *vars;
   uint32_t nvars;
   /* -- compatible with grn_expr -- */
+  grn_proc_type type;
   grn_proc_func *funcs[3];
 
   //  uint32_t nargs;

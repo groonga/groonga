@@ -2218,8 +2218,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
       int ncolumns = GRN_BULK_VSIZE(&format->columns) / sizeof(grn_obj *);
       grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
-      GRN_TEXT_PUTC(ctx, bulk, '[');
+      GRN_TEXT_PUTS(ctx, bulk, "[[");
       grn_text_itoa(ctx, bulk, ve - v);
+      GRN_TEXT_PUTC(ctx, bulk, ']');
       if (v < ve) {
         if (format->flags & GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES) {
           GRN_TEXT_PUTS(ctx, bulk, ",[");
@@ -2259,8 +2260,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
-      GRN_TEXT_PUTC(ctx, bulk, '[');
+      GRN_TEXT_PUTS(ctx, bulk, "[[");
       grn_text_itoa(ctx, bulk, format->nhits);
+      GRN_TEXT_PUTC(ctx, bulk, ']');
       if (format->flags & GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES) {
         GRN_TEXT_PUTS(ctx, bulk, ",[");
         for (j = 0; j < ncolumns; j++) {

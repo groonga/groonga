@@ -79,9 +79,8 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   grn_obj *outbuf = args[0];
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (grn_proc_create(ctx,
-                      GRN_TEXT_VALUE(&vars[0].value),
-                      GRN_TEXT_LEN(&vars[0].value),
-                      NULL, proc_select, NULL, NULL, nvars - 1, vars + 1)) {
+                      GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
+                      NULL, GRN_PROC_PROCEDURE, proc_select, NULL, NULL, nvars - 1, vars + 1)) {
     GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
   }
   return outbuf;
@@ -572,26 +571,32 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[13], "drilldown_offset");
   DEF_VAR(vars[14], "drilldown_limit");
   DEF_VAR(vars[15], "output_type");
-  grn_proc_create(ctx, "define_selector", 15, NULL, proc_define_selector, NULL, NULL, 16, vars);
+  grn_proc_create(ctx, "define_selector", 15, NULL, GRN_PROC_PROCEDURE,
+                  proc_define_selector, NULL, NULL, 16, vars);
 
-  grn_proc_create(ctx, "select", 6, NULL, proc_select, NULL, NULL, 15, vars + 1);
+  grn_proc_create(ctx, "select", 6, NULL, GRN_PROC_PROCEDURE,
+                  proc_select, NULL, NULL, 15, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "ifexists");
   DEF_VAR(vars[4], "input_type");
-  grn_proc_create(ctx, "load", 4, NULL, proc_load, NULL, NULL, 5, vars);
+  grn_proc_create(ctx, "load", 4, NULL, GRN_PROC_PROCEDURE,
+                  proc_load, NULL, NULL, 5, vars);
 
   DEF_VAR(vars[0], "output_type");
-  grn_proc_create(ctx, "status", 6, NULL, proc_status, NULL, NULL, 1, vars);
+  grn_proc_create(ctx, "status", 6, NULL, GRN_PROC_PROCEDURE,
+                  proc_status, NULL, NULL, 1, vars);
 
   DEF_VAR(vars[0], "output_type");
-  grn_proc_create(ctx, "table_list", 10, NULL, proc_table_list, NULL, NULL, 1, vars);
+  grn_proc_create(ctx, "table_list", 10, NULL, GRN_PROC_PROCEDURE,
+                  proc_table_list, NULL, NULL, 1, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "output_type");
-  grn_proc_create(ctx, "column_list", 11, NULL, proc_column_list, NULL, NULL, 2, vars);
+  grn_proc_create(ctx, "column_list", 11, NULL, GRN_PROC_PROCEDURE,
+                  proc_column_list, NULL, NULL, 2, vars);
 
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "flags");
@@ -599,7 +604,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "value_type");
   DEF_VAR(vars[4], "default_tokenizer");
   DEF_VAR(vars[5], "output_type");
-  grn_proc_create(ctx, "table_create", 12, NULL, proc_table_create, NULL, NULL, 6, vars);
+  grn_proc_create(ctx, "table_create", 12, NULL, GRN_PROC_PROCEDURE,
+                  proc_table_create, NULL, NULL, 6, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "name");
@@ -607,19 +613,21 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "type");
   DEF_VAR(vars[4], "source");
   DEF_VAR(vars[5], "output_type");
-  grn_proc_create(ctx, "column_create", 13, NULL, proc_column_create, NULL, NULL, 6, vars);
+  grn_proc_create(ctx, "column_create", 13, NULL, GRN_PROC_PROCEDURE,
+                  proc_column_create, NULL, NULL, 6, vars);
 
   DEF_VAR(vars[0], "path");
   DEF_VAR(vars[1], "output_type");
   grn_proc_create(ctx, GRN_EXPR_MISSING_NAME, strlen(GRN_EXPR_MISSING_NAME),
-                  NULL, proc_missing, NULL, NULL, 2, vars);
+                  NULL, GRN_PROC_PROCEDURE, proc_missing, NULL, NULL, 2, vars);
 
   DEF_VAR(vars[0], "seed");
-  grn_proc_create(ctx, "rand", 4, NULL, proc_rand, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "rand", 4, NULL, GRN_PROC_FUNCTION, proc_rand, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "now", 3, NULL, proc_now, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "now", 3, NULL, GRN_PROC_FUNCTION, proc_now, NULL, NULL, 0, vars);
 
   DEF_VAR(vars[0], "view");
   DEF_VAR(vars[1], "table");
-  grn_proc_create(ctx, "view_add", 8, NULL, proc_view_add, NULL, NULL, 2, vars);
+  grn_proc_create(ctx, "view_add", 8, NULL, GRN_PROC_PROCEDURE,
+                  proc_view_add, NULL, NULL, 2, vars);
 }

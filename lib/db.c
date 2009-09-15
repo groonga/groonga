@@ -340,8 +340,8 @@ grn_type_open(grn_ctx *ctx, grn_obj_spec *spec)
 }
 
 grn_obj *
-grn_proc_create(grn_ctx *ctx,
-                const char *name, unsigned name_size, const char *path,
+grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size,
+                const char *path, grn_proc_type type,
                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
                 unsigned nvars, grn_expr_var *vars)
 {
@@ -393,6 +393,7 @@ grn_proc_create(grn_ctx *ctx,
     res->obj.header.domain = GRN_ID_NIL;
     res->obj.header.flags = path ? GRN_OBJ_CUSTOM_NAME : 0;
     res->obj.range = range;
+    res->type = type;
     res->funcs[PROC_INIT] = init;
     res->funcs[PROC_NEXT] = next;
     res->funcs[PROC_FIN] = fin;

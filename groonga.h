@@ -496,8 +496,16 @@ typedef struct {
 
 typedef grn_rc grn_proc_init_func(grn_ctx *ctx, const char *path);
 
+typedef enum {
+  GRN_PROC_TOKENIZER = 1,
+  GRN_PROC_PROCEDURE,
+  GRN_PROC_FUNCTION,
+  GRN_PROC_HOOK
+} grn_proc_type;
+
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
-                                 const char *name, unsigned name_size, const char *path,
+                                 const char *name, unsigned name_size,
+                                 const char *path, grn_proc_type type,
                                  grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
                                  unsigned nvars, grn_expr_var *vars);
 /**
