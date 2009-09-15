@@ -629,7 +629,12 @@ GroongaAdmin = {
       data: d,
       dataType: 'json',
       success: function(d) {
-        var all_count = d.shift();
+        var rc = d.shift();
+        if (rc[0] != 0) {
+          alert('error');
+        }
+        var recs = d.shift();
+        var all_count = recs.shift()[0];
         var pager = GroongaAdmin.pager_element(
           GroongaAdmin.recordlist_count,
           page,
@@ -648,7 +653,7 @@ GroongaAdmin = {
           .append($('<h1/>').text('レコード一覧: ' + table_name))
           .append($('<p/>').text('総件数: ' + all_count))
           .append(pager.clone(true))
-          .append($('<div/>').html(GroongaAdmin.create_table_element(d)))
+          .append($('<div/>').html(GroongaAdmin.create_table_element(recs)))
           .append(pager);
       }
     });
