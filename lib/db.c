@@ -9552,7 +9552,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
       break;
     }
     if (grn_isspace(end, q->encoding) ||
-        *end == GRN_QUERY_PARENR) {
+        *end == GRN_QUERY_PARENL || *end == GRN_QUERY_PARENR) {
       q->cur = end;
       break;
     }
@@ -9587,13 +9587,10 @@ get_word_(grn_ctx *ctx, efs_info *q)
             q->cur = end + 2;
           }
           break;
-        case '%' :
+        case '@' :
+        case '%' : /* deprecated */
           mode = GRN_OP_MATCH;
           q->cur = end + 2;
-          break;
-        case '@' :
-          q->cur = end + 2;
-          //          return get_geocond(ctx, q, column, c);
           break;
         default :
           mode = GRN_OP_EQUAL;
