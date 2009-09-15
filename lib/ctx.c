@@ -336,16 +336,35 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   return ctx->rc;
 }
 
+#define GRN_CTX_ALLOCATED             (0x80)
+
+grn_ctx *
+grn_ctx_open(int flags)
+{
+  grn_ctx *ctx = GRN_GMALLOCN(grn_ctx, 1);
+  if (ctx) {
+    grn_ctx_init(ctx, flags|GRN_CTX_ALLOCATED);
+    if (ERRP(ctx, GRN_ERROR)) {
+      grn_ctx_fin(ctx);
+      GRN_GFREE(ctx);
+      ctx = NULL;
+    }
+  }
+  return ctx;
+}
+
 grn_rc
 grn_ctx_fin(grn_ctx *ctx)
 {
   grn_rc rc = GRN_SUCCESS;
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   if (ctx->stat == GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
-  MUTEX_LOCK(grn_glock);
-  ctx->next->prev = ctx->prev;
-  ctx->prev->next = ctx->next;
-  MUTEX_UNLOCK(grn_glock);
+  if (!(ctx->flags & GRN_CTX_ALLOCATED)) {
+    MUTEX_LOCK(grn_glock);
+    ctx->next->prev = ctx->prev;
+    ctx->prev->next = ctx->next;
+    MUTEX_UNLOCK(grn_glock);
+  }
   if (ctx->impl) {
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->objects) {
@@ -580,8 +599,17 @@ static int alloc_count = 0;
 grn_rc
 grn_fin(void)
 {
-  grn_ctx *ctx = &grn_gctx;
+  grn_ctx *ctx, *ctx_;
   grn_rc rc = GRN_SUCCESS;
+  for (ctx = grn_gctx.next; ctx != &grn_gctx; ctx = ctx_) {
+    ctx_ = ctx->next;
+    if (ctx->stat != GRN_CTX_FIN) { grn_ctx_fin(ctx); }
+    if (ctx->flags & GRN_CTX_ALLOCATED) {
+      ctx->next->prev = ctx->prev;
+      ctx->prev->next = ctx->next;
+      GRN_GFREE(ctx);
+    }
+  }
   grn_io_fin();
   grn_ctx_fin(ctx);
   grn_token_fin();
@@ -591,28 +619,6 @@ grn_fin(void)
   MUTEX_DESTROY(grn_glock);
   return rc;
 }
-
-/*
-grn_ctx *
-grn_ctx_open(grn_obj *db, int flags)
-{
-  grn_ctx *ctx = GRN_GMALLOCN(grn_ctx, 1);
-  if (ctx) {
-    grn_ctx_init(ctx, flags);
-    if (ERRP(ctx, GRN_ERROR)) {
-      grn_ctx_close(ctx);
-      return NULL;
-    }
-    if (ctx->impl && (ctx->impl->db = db) && ctx->impl->symbols) {
-      if (grn_ql_def_db_funcs(ctx)) {
-        grn_ctx_close(ctx);
-        return NULL;
-      }
-    }
-  }
-  return ctx;
-}
-*/
 
 grn_rc
 grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags)
