@@ -7436,13 +7436,20 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         }
         code++;
         break;
-      case GRN_OP_ADJUST :
+      case GRN_OP_BUT :
         {
-          /* todo */
+          grn_obj *x, *y;
+          POP2ALLOC1(x, y, res);
+          if (GRN_INT32_VALUE(x) == 0 || GRN_INT32_VALUE(y) == 1) {
+            GRN_INT32_SET(ctx, res, 0);
+          } else {
+            GRN_INT32_SET(ctx, res, 1);
+          }
+          res->header.domain = GRN_DB_INT32;
         }
         code++;
         break;
-      case GRN_OP_BUT :
+      case GRN_OP_ADJUST :
         {
           /* todo */
         }
@@ -7807,6 +7814,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
+    case GRN_OP_BUT :
       if (stat != SCAN_OP) { return NULL; }
       stat = SCAN_START;
       break;
@@ -7869,6 +7877,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
+    case GRN_OP_BUT :
       if (i) { sis[i - 1]->logical_op = c->op; }
       stat = SCAN_START;
       break;
