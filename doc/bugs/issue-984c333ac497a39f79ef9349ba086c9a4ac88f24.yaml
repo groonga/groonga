@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: output columns '_key*' are interpreted as '_key'
+desc: |-
+  /search proc takes output_columns/drilldown_output_columns parameters.
+  If parameter that has prefix '_key' or ':key' is given as these parameters,
+  it is interpreted as '_key'.
+  This may be a bug.
+type: :bugfix
+component: groonga
+release: 
+reporter: Tasuku SUENAGA <tasuku-s-github@titech.ac>
+status: :unstarted
+disposition: 
+creation_time: 2009-09-16 06:55:25.000692 Z
+references: []
+
+id: 984c333ac497a39f79ef9349ba086c9a4ac88f24
+log_events: 
+- - 2009-09-16 06:55:29.975302 Z
+  - Tasuku SUENAGA <tasuku-s-github@titech.ac>
+  - created
+  - ""
