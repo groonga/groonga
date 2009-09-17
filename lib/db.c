@@ -9416,48 +9416,89 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
       str++;
       break;
     case GRN_LOADER_UNICODE0 :
-      if (('0' <= c && c <= '9') ||
-          ('a' <= c && c <= 'f') ||
-          ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, loader->last, c);
-        loader->stat = GRN_LOADER_UNICODE1;
-      } else {
-        // error
+      switch (c) {
+      case '0' : case '1' : case '2' : case '3' : case '4' :
+      case '5' : case '6' : case '7' : case '8' : case '9' :
+        loader->unichar = (c - '0') * 0x1000;
+        break;
+      case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
+        loader->unichar = (c - 'a' + 10) * 0x1000;
+        break;
+      case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
+        loader->unichar = (c - 'A' + 10) * 0x1000;
+        break;
+      default :
+        ;// todo : error
       }
+      loader->stat = GRN_LOADER_UNICODE1;
       str++;
       break;
     case GRN_LOADER_UNICODE1 :
-      if (('0' <= c && c <= '9') ||
-          ('a' <= c && c <= 'f') ||
-          ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, loader->last, c);
-        loader->stat = GRN_LOADER_UNICODE2;
-      } else {
-        // error
+      switch (c) {
+      case '0' : case '1' : case '2' : case '3' : case '4' :
+      case '5' : case '6' : case '7' : case '8' : case '9' :
+        loader->unichar += (c - '0') * 0x100;
+        break;
+      case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
+        loader->unichar += (c - 'a' + 10) * 0x100;
+        break;
+      case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
+        loader->unichar += (c - 'A' + 10) * 0x100;
+        break;
+      default :
+        ;// todo : error
       }
+      loader->stat = GRN_LOADER_UNICODE2;
       str++;
       break;
     case GRN_LOADER_UNICODE2 :
-      if (('0' <= c && c <= '9') ||
-          ('a' <= c && c <= 'f') ||
-          ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, loader->last, c);
-        loader->stat = GRN_LOADER_UNICODE3;
-      } else {
-        // error
+      switch (c) {
+      case '0' : case '1' : case '2' : case '3' : case '4' :
+      case '5' : case '6' : case '7' : case '8' : case '9' :
+        loader->unichar += (c - '0') * 0x10;
+        break;
+      case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
+        loader->unichar += (c - 'a' + 10) * 0x10;
+        break;
+      case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
+        loader->unichar += (c - 'A' + 10) * 0x10;
+        break;
+      default :
+        ;// todo : error
       }
+      loader->stat = GRN_LOADER_UNICODE3;
       str++;
       break;
     case GRN_LOADER_UNICODE3 :
-      if (('0' <= c && c <= '9') ||
-          ('a' <= c && c <= 'f') ||
-          ('A' <= c && c <= 'F')) {
-        GRN_TEXT_PUTC(ctx, loader->last, c);
-        /* decode */
-        loader->stat = GRN_LOADER_STRING;
-      } else {
-        // error
+      switch (c) {
+      case '0' : case '1' : case '2' : case '3' : case '4' :
+      case '5' : case '6' : case '7' : case '8' : case '9' :
+        loader->unichar += (c - '0');
+        break;
+      case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
+        loader->unichar += (c - 'a' + 10);
+        break;
+      case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
+        loader->unichar += (c - 'A' + 10);
+        break;
+      default :
+        ;// todo : error
       }
+      {
+        uint32_t u = loader->unichar;
+        if (u < 0x80) {
+          GRN_TEXT_PUTC(ctx, loader->last, u);
+        } else {
+          if (u < 0x800) {
+            GRN_TEXT_PUTC(ctx, loader->last, ((u >> 6) & 0x1f) | 0xc0);
+          } else {
+            GRN_TEXT_PUTC(ctx, loader->last, (u >> 12) | 0xe0);
+            GRN_TEXT_PUTC(ctx, loader->last, ((u >> 6) & 0x3f) | 0x80);
+          }
+          GRN_TEXT_PUTC(ctx, loader->last, (u & 0x3f) | 0x80);
+        }
+      }
+      loader->stat = GRN_LOADER_STRING;
       str++;
       break;
     }

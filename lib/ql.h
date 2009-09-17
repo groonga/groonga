@@ -149,6 +149,7 @@ typedef struct {
   grn_obj *table;
   grn_obj *last;
   grn_obj *ifexists;
+  uint32_t unichar;
   uint32_t values_size;
   uint32_t nrecords;
   grn_loader_stat stat;
