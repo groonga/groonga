@@ -7840,6 +7840,7 @@ typedef struct {
   uint32_t start;
   uint32_t end;
   int32_t nargs;
+  int flags;
   grn_operator op;
   grn_operator logical_op;
   grn_obj *index;
@@ -7929,6 +7930,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
     case GRN_OP_GEO_WITHINP8 :
       stat = i ? SCAN_OP : SCAN_START;
       si->logical_op = i ? GRN_OP_AND : op;
+      si->flags = 0;
       si->op = c->op;
       si->end = c - e->codes;
       si->index = NULL;
@@ -7938,6 +7940,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
         for (; p < pe; p++) {
           if (GRN_DB_OBJP(*p)) {
             grn_column_index(ctx, *p, c->op, &si->index, 1);
+          } else if (ACCESSORP(*p)) {
+            si->flags = 1;
+            si->index = *p;
           } else {
             si->query = *p;
           }
@@ -8162,27 +8167,68 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
       for (i = 0; i < n; i++) {
+        int done = 0;
         scan_info *si = sis[i];
         if (si->index) {
           switch (si->op) {
           case GRN_OP_EQUAL :
-            {
+            if (si->flags) {
+              if (si->index->header.type == GRN_ACCESSOR &&
+                  !((grn_accessor *)si->index)->next) {
+                grn_obj dest;
+                grn_accessor *a = (grn_accessor *)si->index;
+                grn_rset_posinfo pi;
+                switch (a->action) {
+                case GRN_ACCESSOR_GET_ID :
+                  GRN_UINT32_INIT(&dest, 0);
+                  if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+                    memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
+                    if (pi.rid) {
+                      res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+                      grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+                    }
+                    done++;
+                  }
+                  GRN_OBJ_FIN(ctx, &dest);
+                  break;
+                case GRN_ACCESSOR_GET_KEY :
+                  GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
+                  if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+                    if ((pi.rid = grn_table_get(ctx, table,
+                                                GRN_BULK_HEAD(&dest),
+                                                GRN_BULK_VSIZE(&dest)))) {
+                      res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+                      grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+                    }
+                    done++;
+                  }
+                  GRN_OBJ_FIN(ctx, &dest);
+                  break;
+                }
+              }
+            } else {
+              /* table ?? si->index.domain ? */
               grn_id tid = grn_table_get(ctx, table,
                                          GRN_BULK_HEAD(si->query),
                                          GRN_BULK_VSIZE(si->query));
               grn_ii_at(ctx, (grn_ii *)si->index, tid, (grn_hash *)res, si->logical_op);
               grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+              done++;
             }
             break;
           case GRN_OP_MATCH :
-            /* todo : support sections */
-            grn_obj_search(ctx, si->index, si->query, res, si->logical_op, NULL);
+            if (!si->flags) {
+              /* todo : support sections */
+              grn_obj_search(ctx, si->index, si->query, res, si->logical_op, NULL);
+              done++;
+            }
             break;
           default :
             /* todo */
             break;
           }
-        } else {
+        }
+        if (!done) {
           e->codes = codes + si->start;
           e->codes_curr = si->end - si->start + 1;
           grn_table_select_(ctx, table, expr, v, res, si->logical_op);
