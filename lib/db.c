@@ -3275,7 +3275,7 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
       }
     }
   } else if (obj->header.type == GRN_ACCESSOR_VIEW) {
-    ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "GRN_ACCESSOR_VIEW is not supported");
+    range = GRN_DB_OBJECT;
   }
   return range;
 }
@@ -6451,6 +6451,55 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       PUSH_CODE(e, op, obj, nargs, code);
       DFI_PUT(e, type, domain, code);
       break;
+    case GRN_OP_EQUAL :
+      PUSH_CODE(e, op, obj, nargs, code);
+      if (nargs) {
+        grn_id xd, yd;
+        grn_obj *x, *y;
+        int i = nargs - 1;
+        if (obj) {
+          xd = GRN_OBJ_GET_DOMAIN(obj);
+          x = obj;
+        } else {
+          DFI_POP(e, dfi);
+          x = dfi->code->value;
+          xd = dfi->domain;
+        }
+        while (i--) {
+          DFI_POP(e, dfi);
+          y = dfi->code->value;
+          yd = dfi->domain;
+        }
+        if (CONSTP(x)) {
+          if (CONSTP(y)) {
+            /* todo */
+          } else {
+            grn_obj dest;
+            if (xd != yd) {
+              GRN_OBJ_INIT(&dest, GRN_BULK, 0, yd);
+              if (!grn_obj_cast(ctx, x, &dest, 0)) {
+                grn_obj_reinit(ctx, x, yd, 0);
+                grn_bulk_write(ctx, x, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
+              }
+              GRN_OBJ_FIN(ctx, &dest);
+            }
+          }
+        } else {
+          if (CONSTP(y)) {
+            grn_obj dest;
+            if (xd != yd) {
+              GRN_OBJ_INIT(&dest, GRN_BULK, 0, xd);
+              if (!grn_obj_cast(ctx, y, &dest, 0)) {
+                grn_obj_reinit(ctx, y, xd, 0);
+                grn_bulk_write(ctx, y, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
+              }
+              GRN_OBJ_FIN(ctx, &dest);
+            }
+          }
+        }
+      }
+      DFI_PUT(e, type, domain, code);
+      break;
     case GRN_OP_TABLE_CREATE :
     case GRN_OP_EXPR_GET_VAR :
     case GRN_OP_AND :
@@ -6458,7 +6507,6 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_BUT :
     case GRN_OP_ADJUST :
     case GRN_OP_MATCH :
-    case GRN_OP_EQUAL :
     case GRN_OP_NOT_EQUAL :
     case GRN_OP_LESS :
     case GRN_OP_GREATER :
@@ -6505,6 +6553,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
               domain = grn_obj_get_range(ctx, col);
               grn_obj_unlink(ctx, col);
             }
+          } else {
+            domain = grn_obj_get_range(ctx, obj);
           }
           PUSH_CODE(e, op, obj, nargs, code);
         } else {
@@ -6530,6 +6580,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
                 domain = grn_obj_get_range(ctx, col);
                 grn_obj_unlink(ctx, col);
               }
+            } else {
+              domain = grn_obj_get_range(ctx, obj);
             }
             code = dfi0->code;
           } else {
@@ -6898,9 +6950,26 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   default :\
-    r = ((x->header.domain == y->header.domain) &&\
-         GRN_BULK_VSIZE(x) == GRN_BULK_VSIZE(y) &&\
-         !(memcmp(GRN_BULK_HEAD(x), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(x))));\
+    if ((x->header.domain == y->header.domain)) {\
+      r = (GRN_BULK_VSIZE(x) == GRN_BULK_VSIZE(y) &&\
+           !(memcmp(GRN_BULK_HEAD(x), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(x))));\
+    } else {\
+      grn_obj dest;\
+      if (x->header.domain < y->header.domain) {\
+        GRN_OBJ_INIT(&dest, GRN_BULK, 0, y->header.domain);\
+        if (!grn_obj_cast(ctx, x, &dest, 0)) {\
+          r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(y) &&\
+               !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(y))); \
+        }\
+      } else {\
+        GRN_OBJ_INIT(&dest, GRN_BULK, 0, x->header.domain);\
+        if (!grn_obj_cast(ctx, y, &dest, 0)) {\
+          r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(x) &&\
+               !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(x), GRN_BULK_VSIZE(x))); \
+        }\
+      }\
+      GRN_OBJ_FIN(ctx, &dest);\
+    }\
     break;\
   }\
 }
@@ -7824,6 +7893,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
       break;
     case GRN_OP_GET_VALUE :
       switch (stat) {
+      case SCAN_START :
       case SCAN_VAR :
         stat = SCAN_COL1;
         break;
@@ -7905,6 +7975,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
       break;
     case GRN_OP_GET_VALUE :
       switch (stat) {
+      case SCAN_START :
       case SCAN_VAR :
         stat = SCAN_COL1;
         if (si->nargs < 8) {
@@ -9652,12 +9723,12 @@ get_word_(grn_ctx *ctx, efs_info *q)
         q->cur = q->str_end;
         return ctx->rc;
       }
+      PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+      PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
+
       GRN_PTR_PUT(ctx, &((grn_expr *)(q->e))->objs, c);
       GRN_PTR_PUT(ctx, &q->column_stack, c);
       GRN_INT32_PUT(ctx, &q->mode_stack, mode);
-
-      PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
-      PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
 
       return GRN_SUCCESS;
     } else if (*end == GRN_QUERY_PREFIX) {
