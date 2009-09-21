@@ -9723,7 +9723,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
       q->cur = end;
       break;
     }
-    if (*end == GRN_QUERY_COLUMN) {
+    if (q->parse_level >= 2 && *end == GRN_QUERY_COLUMN) {
       grn_obj *c = grn_obj_column(ctx, q->table, start, end - start);
       if (c && end + 1 < q->str_end) {
         //        efs_op op;
@@ -10354,6 +10354,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
 {
   efs_info efsi;
   if (grn_expr_parser_open(ctx)) { return ctx->rc; }
+  GRN_API_ENTER;
   efsi.ctx = ctx;
   efsi.str = str;
   if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
@@ -10407,7 +10408,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
   }
-  return ctx->rc;
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
