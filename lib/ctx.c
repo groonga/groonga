@@ -665,16 +665,16 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     GRN_TEXT_INIT(&key, 0);
     p = str;
     e = p + str_size;
-    p = get_uri_token(ctx, &key, p, e, '?');
+    p = grn_text_urldec(ctx, &key, p, e, '?');
     if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
       while (p < e) {
         GRN_BULK_REWIND(&key);
-        p = get_uri_token(ctx, &key, p, e, '=');
+        p = grn_text_urldec(ctx, &key, p, e, '=');
         if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
           val = &key;
         }
         grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-        p = get_uri_token(ctx, val, p, e, '&');
+        p = grn_text_urldec(ctx, val, p, e, '&');
       }
       grn_ctx_push(ctx, ctx->impl->outbuf);
       grn_expr_exec(ctx, expr, 1);

@@ -92,8 +92,8 @@ grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int 
   }\
 }
 
-const char *get_uri_token(grn_ctx *ctx, grn_obj *buf,
-                          const char *p, const char *e, char d);
+const char *grn_text_urldec(grn_ctx *ctx, grn_obj *buf,
+                            const char *p, const char *e, char d);
 
 void grn_str_url_path_normalize(const char *path, size_t path_len, char *buf, size_t buf_len);
 

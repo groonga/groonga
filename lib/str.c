@@ -2037,31 +2037,6 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
   return GRN_SUCCESS;
 }
 
-/* for parse query string, get_uri_token() instead */
-grn_rc
-grn_text_urldec(grn_ctx *ctx, grn_obj *buf, const char *p, unsigned int len, char d)
-{
-  const char *e = p + len;
-  while (p < e) {
-    if (*p == d) {
-      break;
-    } else if (*p == '%' && p + 3 <= e) {
-      const char *r;
-      unsigned int c = grn_htoui(p + 1, p + 3, &r);
-      if (p + 3 == r) {
-        GRN_TEXT_PUTC(ctx, buf, c);
-      } else {
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid \% sequence (%c%c)", p + 1, p + 2);
-      }
-      p += 3;
-    } else {
-      GRN_TEXT_PUTC(ctx, buf, *p);
-      p++;
-    }
-  }
-  return GRN_SUCCESS;
-}
-
 static const char *weekdays[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 static const char *months[12] = {
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -2310,7 +2285,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 }
 
 const char *
-get_uri_token(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
+grn_text_urldec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
 {
   while (p < e) {
     if (*p == d) {
