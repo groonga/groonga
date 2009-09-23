@@ -40,6 +40,15 @@ void test_table_select_select_search(void);
 void test_table_select_match(void);
 void test_table_select_match_equal(void);
 
+void test_expr_parse(void);
+void test_expr_set_value(void);
+void test_expr_set_value_with_implicit_variable_reference(void);
+void test_expr_set_value_with_query(void);
+void test_expr_proc_call(void);
+void test_expr_score_set(void);
+void test_expr_key_equal(void);
+void test_expr_value_access(void);
+
 void
 cut_startup(void)
 {
@@ -897,7 +906,7 @@ test_expr_set_value(void)
 }
 
 void
-test_expr_set_value2(void)
+test_expr_set_value_with_implicit_variable_reference(void)
 {
   grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
