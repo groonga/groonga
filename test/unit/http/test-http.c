@@ -247,10 +247,12 @@ test_select(void)
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_equal_body(
-    cut_take_printf("[1,"
+    cut_take_printf("[[%d],"
+                    "[[1],"
                     "[\"_id\",\"_key\",\"%s\"],"
                     "[%u,\"%s\",%d]"
-                    "]",
+                    "]]",
+                    GRN_SUCCESS,
                     column_name, hayamizu_id, hayamizu_name, hayamizu_age),
     client);
 }
