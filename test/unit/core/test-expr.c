@@ -952,7 +952,7 @@ test_expr_set_value_with_implicit_variable_reference(void)
 }
 
 void
-test_expr_set_value3(void)
+test_expr_set_value_with_query(void)
 {
   grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
