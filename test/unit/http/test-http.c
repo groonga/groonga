@@ -44,7 +44,7 @@ cut_setup(void)
   }
 
   client = soupcut_client_new();
-  soupcut_client_set_base(client, cut_take_printf("http://localhost:%u/",
+  soupcut_client_set_base(client, cut_take_printf("http://127.0.0.1:%u/",
                                                   GROONGA_TEST_PORT));
 
   grn_ctx_init(&context, 0);
@@ -55,6 +55,7 @@ cut_setup(void)
                             "http.db");
 
   egg = gcut_egg_new(GROONGA, "-s",
+                     "-i", "127.0.0.1",
                      "-p", cut_take_printf("%d", GROONGA_TEST_PORT),
                      "-n", db_path,
                      NULL);
