@@ -1993,6 +1993,113 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
   return rc;
 }
 
+typedef enum {
+  TOK_BEGIN = 0,
+  TOK_STRING,
+  TOK_QUOTE,
+  TOK_SYMBOL,
+  TOK_STRING_ESC,
+  TOK_SYMBOL_ESC,
+} tok_stat;
+
+const char *
+grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *s, const char *e)
+{
+  char c;
+  const char *p;
+  unsigned int len;
+  tok_stat stat = TOK_BEGIN;
+  for (p = s; p < e; p += len) {
+    if (!(len = grn_charlen(ctx, p, e))) { p = e; goto exit; }
+    switch (stat) {
+    case TOK_BEGIN :
+      if (grn_isspace(p, ctx->encoding)) { continue; }
+      switch (*p) {
+      case '"' :
+        stat = TOK_STRING;
+        break;
+      case '\'' :
+        stat = TOK_QUOTE;
+        break;
+      case ')' :
+      case '(' :
+        GRN_TEXT_PUT(ctx, buf, p, len);
+        goto exit;
+      default :
+        GRN_TEXT_PUT(ctx, buf, p, len);
+        break;
+      }
+      break;
+    case TOK_STRING :
+      break;
+    }
+  }
+exit :
+  return p;
+}
+
+/*
+const char *
+grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *s, const char *e)
+{
+  const char *p;
+  unsigned int len;
+  tok_stat stat = TOK_BEGIN;
+  for (p = s; p < e && grn_isspace(p, ctx->encoding); p += len) {
+    if (!(len = grn_charlen(ctx, p, e))) { p = e; goto eixt; }
+  }
+  for (; p < e; p += len) {
+    if (!(len = grn_charlen(ctx, p, e))) { break; }
+    if (len == 1) {
+      switch (*p) {
+      case '"' :
+        switch (stat) {
+        case TOK_BEGIN :
+          stat = TOK_STRING;
+          break;
+        case TOK_STRING :
+          p += len;
+          goto exit;
+        case TOK_SYMBOL :
+          goto exit;
+        }
+        break;
+      case '\\' :
+        switch (stat) {
+        case TOK_BEGIN :
+          stat = TOK_SYMBOL_ESC;
+          break;
+        case TOK_STRING :
+          
+        }
+        break;
+      case '(' :
+      case ')' :
+        switch (stat) {
+        case TOK_BEGIN :
+          GRN_TEXT_PUT(ctx, buf, p, len);
+          p += len;
+          goto exit;
+        case TOK_STRING :
+          GRN_TEXT_PUT(ctx, buf, p, len);
+          break;
+        default :
+          goto exit;
+        }
+        break;
+      deafault :
+        GRN_TEXT_PUT(ctx, buf, p, len);
+        break;
+      }
+    } else {
+      GRN_TEXT_PUT(ctx, buf, p, len);
+    }
+  }
+exit :
+  return p;
+}
+*/
+
 grn_rc
 grn_text_benc(grn_ctx *ctx, grn_obj *buf, unsigned int v)
 {

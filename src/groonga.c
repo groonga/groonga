@@ -1043,6 +1043,7 @@ server(char *path)
             }
             grn_hash_delete_by_id(ctx, edges, edge->id, NULL);
           }
+          // todo : log stat
         }
         for (;;) {
           MUTEX_LOCK(q_mutex);

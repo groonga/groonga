@@ -1901,12 +1901,6 @@ GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
     GRN_RECORD_INIT((var), 0, grn_obj_id((ctx), (table)));\
   }
 
-/* deprecated. use grn_expr_parse() instead. */
-GRN_API grn_obj *grn_expr_create_from_str(grn_ctx *ctx,
-                                          const char *name, unsigned name_size,
-                                          const char *str, unsigned str_size,
-                                          grn_obj *table, grn_obj *default_column);
-
 GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
                               const char *str, unsigned str_size,
                               grn_obj *default_column, grn_operator default_mode,
