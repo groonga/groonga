@@ -1117,18 +1117,26 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
     case GRN_TABLE_PAT_KEY :
       WITH_NORMALIZE((grn_pat *)table, key, key_size, {
         grn_pat *pat = (grn_pat *)table;
-        if (!(rc = grn_io_lock(ctx, pat->io, 10000000))) {
+        if (pat->io && !(pat->io->flags & GRN_IO_TEMPORARY)) {
+          if (!(rc = grn_io_lock(ctx, pat->io, 10000000))) {
+            rc = grn_pat_delete(ctx, pat, key, key_size, NULL);
+            grn_io_unlock(pat->io);
+          }
+        } else {
           rc = grn_pat_delete(ctx, pat, key, key_size, NULL);
-          grn_io_unlock(pat->io);
         }
       });
       break;
     case GRN_TABLE_HASH_KEY :
       WITH_NORMALIZE((grn_hash *)table, key, key_size, {
         grn_hash *hash = (grn_hash *)table;
-        if (!(rc = grn_io_lock(ctx, hash->io, 10000000))) {
+        if (hash->io && !(hash->io->flags & GRN_IO_TEMPORARY)) {
+          if (!(rc = grn_io_lock(ctx, hash->io, 10000000))) {
+            rc = grn_hash_delete(ctx, hash, key, key_size, NULL);
+            grn_io_unlock(hash->io);
+          }
+        } else {
           rc = grn_hash_delete(ctx, hash, key, key_size, NULL);
-          grn_io_unlock(hash->io);
         }
       });
       break;
@@ -1194,10 +1202,13 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
   grn_rc rc;
   grn_io *io;
   GRN_API_ENTER;
-  io = grn_obj_io(table);
-  if (!(rc = grn_io_lock(ctx, io, 10000000))) {
+  if ((io = grn_obj_io(table)) && !(io->flags & GRN_IO_TEMPORARY)) {
+    if (!(rc = grn_io_lock(ctx, io, 10000000))) {
+      rc = _grn_table_delete_by_id(ctx, table, id, NULL);
+      grn_io_unlock(io);
+    }
+  } else {
     rc = _grn_table_delete_by_id(ctx, table, id, NULL);
-    grn_io_unlock(io);
   }
   GRN_API_RETURN(rc);
 }
