@@ -9786,6 +9786,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
   }
   GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e, start, end - start));
 
+  PARSE(GRN_EXPR_TOKEN_QSTRING);
 {
   grn_obj *column, *token;
   efs_info *efsi = q;
@@ -9796,7 +9797,6 @@ get_word_(grn_ctx *ctx, efs_info *q)
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
 }
-  PARSE(GRN_EXPR_TOKEN_QSTRING);
   return GRN_SUCCESS;
 }
 
@@ -9852,6 +9852,7 @@ parse0(grn_ctx *ctx, efs_info *q)
         GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e,
                                                            GRN_TEXT_VALUE(&q->buf),
                                                            GRN_TEXT_LEN(&q->buf)));
+          PARSE(GRN_EXPR_TOKEN_QSTRING);
 {
   grn_obj *column, *token;
   efs_info *efsi = q;
@@ -9862,7 +9863,6 @@ parse0(grn_ctx *ctx, efs_info *q)
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
 }
-          PARSE(GRN_EXPR_TOKEN_QSTRING);
 
       }
 
