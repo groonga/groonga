@@ -707,34 +707,52 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
       GRN_TEXT_PUT(ctx, val, str, str_size);
     }
+  } else {
+    grn_obj buf;
+    char tok_type;
+    int offset = 0;
+    const char *v, *p = str, *e = str + str_size;
+    GRN_TEXT_INIT(&buf, 0);
+    p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+    if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf)))) {
+      while (p < e) {
+        GRN_BULK_REWIND(&buf);
+        p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+        switch (tok_type) {
+        case GRN_TOK_VOID :
+          p = e;
+          break;
+        case GRN_TOK_SYMBOL :
+          v = GRN_TEXT_VALUE(&buf);
+          if (GRN_TEXT_LEN(&buf) > 2 && v[0] == '-' && v[1] == '-') {
+            if ((val = grn_expr_get_var(ctx, expr, v + 2, GRN_TEXT_LEN(&buf) - 2))) {
+              grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+              p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
+            } else {
+              p = e;
+            }
+            break;
+          }
+          // fallthru
+        case GRN_TOK_STRING :
+        case GRN_TOK_QUOTE :
+          if ((val = grn_expr_get_var_by_offset(ctx, expr, offset++))) {
+            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+            GRN_TEXT_PUT(ctx, val, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+          } else {
+            p = e;
+          }
+          break;
+        }
+      }
+    }
+    GRN_OBJ_FIN(ctx, &buf);
+  }
+  if (expr) {
     grn_ctx_push(ctx, ctx->impl->outbuf);
     grn_expr_exec(ctx, expr, 1);
     val = grn_ctx_pop(ctx);
     grn_expr_clear_vars(ctx, expr);
-  } else {
-    unsigned int argc = 0;
-    const char *p = (char *)str, *q, *pe = p + str_size, *tokbuf[256];
-    while (p < pe) {
-      int i, n = grn_str_tok(p, pe - p, ' ', tokbuf, 256, &q);
-      for (i = 0; i < n; i++, argc++) {
-        if (!argc) {
-          if (!(expr = grn_ctx_get(ctx, p, tokbuf[i] - p))) { return NULL; }
-        } else {
-          if ((val = grn_expr_get_var_by_offset(ctx, expr, argc - 1))) {
-            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-            GRN_TEXT_PUT(ctx, val, p, tokbuf[i] - p);
-          }
-        }
-        p = tokbuf[i] + 1;
-      }
-      p = q;
-    }
-    if (expr) {
-      grn_ctx_push(ctx, ctx->impl->outbuf);
-      grn_expr_exec(ctx, expr, 1);
-      val = grn_ctx_pop(ctx);
-      grn_expr_clear_vars(ctx, expr);
-    }
   }
   return val;
 }
