@@ -1643,6 +1643,8 @@ GRN_API grn_rc grn_text_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
 GRN_API grn_rc grn_text_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
 GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
+GRN_API const char *grn_text_urldec(grn_ctx *ctx, grn_obj *buf,
+                                    const char *s, const char *e, char d);
 GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 
 typedef struct _grn_obj_format grn_obj_format;
