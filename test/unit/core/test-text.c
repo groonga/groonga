@@ -82,6 +82,6 @@ test_urldec(void)
   grn_obj t;
   const char *test_str1 = "/+test%20/u_hihi%00desu?yo-da:test";
   GRN_TEXT_INIT(&t, 0);
-  grn_text_urldec(&context, &t, test_str1, test_str1 + strlen(test_str1), ":");
+  grn_text_urldec(&context, &t, test_str1, test_str1 + strlen(test_str1), ':');
   cut_assert_equal_memory("/+test /u_hihi\0desu?yo-da", 25, GRN_TEXT_VALUE(&t), GRN_TEXT_LEN(&t));
 }
