@@ -39,7 +39,7 @@ typedef struct {
   grn_id lr[2];
   uint32_t key;
   uint16_t check;
-  int16_t bits;
+  uint16_t bits;
   /* length : 13, deleting : 1, immediate : 1 */
 } pat_node;
 
