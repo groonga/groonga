@@ -34,6 +34,19 @@
 
 #define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
 
+#ifdef USE_EXACT_ALLOC_COUNT
+#define GRN_ADD_ALLOC_COUNT(count) \
+{ \
+  uint32_t alloced; \
+  GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced); \
+}
+#else /* USE_EXACT_ALLOC_COUNT */
+#define GRN_ADD_ALLOC_COUNT(count) \
+{ \
+  alloc_count += count; \
+}
+#endif
+
 grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
 int grn_pagesize;
 grn_mutex grn_glock;
@@ -1311,10 +1324,12 @@ grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
   {
     void *res = malloc(size);
     if (res) {
-      alloc_count++;
+      GRN_ADD_ALLOC_COUNT(1);
     } else {
       if (!(res = malloc(size))) {
         MERR("malloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
+      } else {
+        GRN_ADD_ALLOC_COUNT(1);
       }
     }
     return res;
@@ -1328,10 +1343,12 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
   {
     void *res = calloc(size, 1);
     if (res) {
-      alloc_count++;
+      GRN_ADD_ALLOC_COUNT(1);
     } else {
       if (!(res = calloc(size, 1))) {
         MERR("calloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
+      } else {
+        GRN_ADD_ALLOC_COUNT(1);
       }
     }
     return res;
@@ -1345,7 +1362,7 @@ grn_free(grn_ctx *ctx, void *ptr, const char* file, int line)
   {
     free(ptr);
     if (ptr) {
-      alloc_count--;
+        GRN_ADD_ALLOC_COUNT(-1);
     } else {
       GRN_LOG(ctx, GRN_LOG_ALERT, "free fail (%p) (%s:%d) <%d>", ptr, file, line, alloc_count);
     }
@@ -1364,10 +1381,10 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
         return NULL;
       }
     }
-    if (!ptr) { alloc_count++; }
+    if (!ptr) { GRN_ADD_ALLOC_COUNT(1); }
   } else {
     if (!ptr) { return NULL; }
-    alloc_count--;
+    GRN_ADD_ALLOC_COUNT(-1);
 #if defined __FreeBSD__
     free(ptr);
     return NULL;
@@ -1395,8 +1412,8 @@ grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, cons
   {
     char *res = strdup(s);
     if (res) {
-      alloc_count++;
-    } else  {
+      GRN_ADD_ALLOC_COUNT(1);
+    } else {
       if (!(res = strdup(s))) {
         MERR("strdup(%p)=%p (%s:%d) <%d>", s, res, file, line, alloc_count);
       }

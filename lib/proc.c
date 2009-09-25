@@ -124,7 +124,9 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       /* TODO: implement */
       break;
     case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTS(ctx, outbuf, "{\"starttime\":");
+      GRN_TEXT_PUTS(ctx, outbuf, "{\"alloc_count\":");
+      grn_text_itoa(ctx, outbuf, grn_alloc_count());
+      GRN_TEXT_PUTS(ctx, outbuf, ",\"starttime\":");
       grn_text_itoa(ctx, outbuf, grn_starttime.tv_sec);
       GRN_TEXT_PUTS(ctx, outbuf, ",\"uptime\":");
       grn_text_itoa(ctx, outbuf, now.tv_sec - grn_starttime.tv_sec);
