@@ -7955,7 +7955,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
 }
 
 static scan_info **
-scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n,
+scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 grn_operator op, uint32_t size)
 {
   grn_obj *var;
@@ -8262,7 +8262,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   if (op == GRN_OP_OR || res_size) {
     int i, n;
     scan_info **sis;
-    if ((sis = scan_info_build(ctx, table, expr, &n, op, res_size))) {
+    if ((sis = scan_info_build(ctx, expr, &n, op, res_size))) {
       grn_obj res_stack;
       grn_expr *e = (grn_expr *)expr;
       grn_expr_code *codes = e->codes;
@@ -10492,4 +10492,64 @@ grn_expr_parser_close(grn_ctx *ctx)
     ctx->impl->parser = NULL;
   }
   return ctx->rc;
+}
+
+grn_snip *
+grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
+              unsigned int width, unsigned int max_results,
+              unsigned int n_tags,
+              const char **opentags, unsigned int *opentag_lens,
+              const char **closetags, unsigned int *closetag_lens,
+              grn_snip_mapping *mapping)
+{
+  int i, n;
+  scan_info **sis, *si;
+  grn_snip *res = NULL;
+  GRN_API_ENTER;
+  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 1))) {
+    if ((res = grn_snip_open(ctx, flags, width, max_results,
+                           NULL, 0, NULL, 0, mapping))) {
+      int butp = 0, nparens = 0, npbut = 0;
+      grn_obj but_stack;
+      grn_obj snip_stack;
+      GRN_UINT32_INIT(&but_stack, GRN_OBJ_VECTOR);
+      GRN_PTR_INIT(&snip_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      for (i = n; i--;) {
+        si = sis[i];
+        if (si->flags & SCAN_POP) {
+          nparens++;
+          if (si->logical_op == GRN_OP_BUT) {
+            GRN_UINT32_PUT(ctx, &but_stack, npbut);
+            npbut = nparens;
+            butp = 1 - butp;
+          }
+        } else {
+          if (si->op == GRN_OP_MATCH && si->query) {
+            if (butp == (si->logical_op == GRN_OP_BUT)) {
+              GRN_PTR_PUT(ctx, &snip_stack, si->query);
+            }
+          }
+          if (si->flags & SCAN_PUSH) {
+            if (nparens == npbut) {
+              butp = 1 - butp;
+              GRN_UINT32_POP(&but_stack, npbut);
+            }
+            nparens--;
+          }
+        }
+        GRN_FREE(si);
+      }
+      for (i = 0;; i = (i + 1) % n_tags) {
+        grn_obj *q;
+        GRN_PTR_POP(&snip_stack, q);
+        if (!q) { break; }
+        grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
+                          opentags[i], opentag_lens[i], closetags[i], closetag_lens[i]);
+      }
+      GRN_FREE(sis);
+      GRN_OBJ_FIN(ctx, &but_stack);
+      GRN_OBJ_FIN(ctx, &snip_stack);
+    }
+  }
+  GRN_API_RETURN(res);
 }

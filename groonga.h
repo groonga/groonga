@@ -1908,6 +1908,13 @@ GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
                               grn_obj *default_column, grn_operator default_mode,
                               grn_operator default_op, int parse_level);
 
+GRN_API grn_snip *grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
+                                unsigned int width, unsigned int max_results,
+                                unsigned int n_tags,
+                                const char **opentags, unsigned int *opentag_lens,
+                                const char **closetags, unsigned int *closetag_lens,
+                                grn_snip_mapping *mapping);
+
 GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
                                                         const char *str, unsigned str_size,
                                                         grn_obj *table, unsigned *nkeys);
