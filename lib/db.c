@@ -7860,6 +7860,10 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
   }
 }
 
+#define SCAN_ACCESSOR                  (0x01)
+#define SCAN_PUSH                      (0x02)
+#define SCAN_POP                       (0x04)
+
 typedef struct {
   uint32_t start;
   uint32_t end;
@@ -7877,33 +7881,90 @@ typedef enum {
   SCAN_VAR,
   SCAN_COL1,
   SCAN_COL2,
-  SCAN_CONST,
-  SCAN_OP
+  SCAN_CONST
 } scan_stat;
 
-#define SI_ALLOC(si) {\
-  if (!(si = GRN_MALLOCN(scan_info, 1))) {\
+#define SI_ALLOC(si, i, st) {\
+  if (!((si) = GRN_MALLOCN(scan_info, 1))) {\
     int j;\
-    for (j = 0; j < i; j++) {\
-      GRN_FREE(sis[j]);\
-      GRN_FREE(sis);\
-      return NULL;\
-    }\
+    for (j = 0; j < i; j++) { GRN_FREE(sis[j]); }\
+    GRN_FREE(sis);\
+    return NULL;\
   }\
-  si->nargs = 0;\
-  si->start = c - e->codes;\
+  (si)->logical_op = GRN_OP_OR;\
+  (si)->flags = SCAN_PUSH;\
+  (si)->index = NULL;\
+  (si)->nargs = 0;\
+  (si)->start = (st);\
 }
 
-scan_info **
-scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operator op)
+static scan_info **
+put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int start)
 {
-  int i;
+  int nparens = 1, ndifops = 0, i = *ip, j = i, r = 0;
+  grn_operator op_ = op == GRN_OP_BUT ? GRN_OP_AND : op;
+  while (j--) {
+    scan_info *s_ = sis[j];
+    if (s_->flags & SCAN_POP) {
+      ndifops++;
+      nparens++;
+    } else {
+      if (s_->flags & SCAN_PUSH) {
+        if (!(--nparens)) {
+          if (!r) {
+            if (ndifops) {
+              nparens = 1;
+              ndifops = 0;
+              r = j;
+            } else {
+              s_->flags &= ~SCAN_PUSH;
+              s_->logical_op = op;
+              break;
+            }
+          } else {
+            if (ndifops) {
+              SI_ALLOC(s_, i, start);
+              s_->flags = SCAN_POP;
+              s_->logical_op = op;
+              sis[i++] = s_;
+              *ip = i;
+            } else {
+              s_->flags &= ~SCAN_PUSH;
+              s_->logical_op = op;
+              memcpy(&sis[i], &sis[j], sizeof(scan_info *) * (r - j));
+              memcpy(&sis[j], &sis[r], sizeof(scan_info *) * (i - r));
+              memcpy(&sis[i + j - r], &sis[i], sizeof(scan_info *) * (r - j));
+            }
+            break;
+          }
+        }
+      } else {
+        if (op_ != (s_->logical_op == GRN_OP_BUT ? GRN_OP_AND : s_->logical_op)) {
+          ndifops++;
+        }
+      }
+    }
+  }
+  if (j < 0) {
+    ERR(GRN_INVALID_ARGUMENT, "unmatched parenthesis");
+    for (j = 0; j < i; j++) { GRN_FREE(sis[j]); }
+    GRN_FREE(sis);
+    return NULL;
+  }
+  return sis;
+}
+
+static scan_info **
+scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n,
+                grn_operator op, uint32_t size)
+{
   grn_obj *var;
   scan_stat stat;
+  int i, m = 0, o = 0;
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;  if (!e->nvars || !(var = &e->vars[0].value)) { return NULL; }
-  for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
+  for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
     case GRN_OP_EQUAL :
@@ -7916,17 +7977,18 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
       if (stat < SCAN_COL1 || SCAN_CONST < stat) { return NULL; }
-      stat = i ? SCAN_OP : SCAN_START;
-      i++;
+      stat = SCAN_START;
+      m++;
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
     case GRN_OP_BUT :
-      if (stat != SCAN_OP) { return NULL; }
-      stat = SCAN_START;
+    case GRN_OP_ADJUST :
+      if (stat != SCAN_START) { return NULL; }
+      o++;
+      if (o >= m) { return NULL; }
       break;
     case GRN_OP_PUSH :
-      if (stat == SCAN_OP) { return NULL; }
       stat = (c->value == var) ? SCAN_VAR : SCAN_CONST;
       break;
     case GRN_OP_GET_VALUE :
@@ -7950,9 +8012,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
       break;
     }
   }
-  if (!i || stat) { return NULL; }
-  if (!(sis = GRN_MALLOCN(scan_info *, i))) { return NULL; }
-  *n = i;
+  if (stat || m != o + 1) { return NULL; }
+  if (!(sis = GRN_MALLOCN(scan_info *, m + m + o))) { return NULL; }
   for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
@@ -7965,12 +8026,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
     case GRN_OP_GEO_WITHINP5 :
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
-      stat = i ? SCAN_OP : SCAN_START;
-      si->logical_op = i ? GRN_OP_AND : op;
-      si->flags = 0;
+      stat = SCAN_START;
       si->op = c->op;
       si->end = c - e->codes;
-      si->index = NULL;
       sis[i++] = si;
       {
         grn_obj **p = si->args, **pe = si->args + si->nargs;
@@ -7978,7 +8036,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
           if (GRN_DB_OBJP(*p)) {
             grn_column_index(ctx, *p, c->op, &si->index, 1);
           } else if (ACCESSORP(*p)) {
-            si->flags = 1;
+            si->flags |= SCAN_ACCESSOR;
             si->index = *p;
           } else {
             si->query = *p;
@@ -7990,11 +8048,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
     case GRN_OP_AND :
     case GRN_OP_OR :
     case GRN_OP_BUT :
-      if (i) { sis[i - 1]->logical_op = c->op; }
+    case GRN_OP_ADJUST :
+      if (!put_logical_op(ctx, sis, &i, c->op, c - e->codes)) { return NULL; }
       stat = SCAN_START;
       break;
     case GRN_OP_PUSH :
-      if (!si) { SI_ALLOC(si); }
+      if (!si) { SI_ALLOC(si, i, c - e->codes); }
       if (c->value == var) {
         stat = SCAN_VAR;
       } else {
@@ -8007,7 +8066,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
     case GRN_OP_GET_VALUE :
       switch (stat) {
       case SCAN_START :
-        if (!si) { SI_ALLOC(si); }
+        if (!si) { SI_ALLOC(si, i, c - e->codes); }
         // fallthru
       case SCAN_VAR :
         stat = SCAN_COL1;
@@ -8029,6 +8088,17 @@ scan_info_build(grn_ctx *ctx, grn_obj *table, grn_obj *expr, int *n, grn_operato
       break;
     }
   }
+  if (op == GRN_OP_OR && !size) {
+    // for debug
+    if (!(sis[0]->flags & SCAN_PUSH) || (sis[0]->logical_op != op)) {
+      ERR(GRN_INVALID_ARGUMENT, "invalid expr");
+    }
+    sis[0]->flags &= ~SCAN_PUSH;
+    sis[0]->logical_op = op;
+  } else {
+    if (!put_logical_op(ctx, sis, &i, op, c - e->codes)) { return NULL; }
+  }
+  *n = i;
   return sis;
 }
 
@@ -8167,6 +8237,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                  grn_obj *res, grn_operator op)
 {
   grn_obj *v;
+  unsigned int res_size;
   if (table->header.type == GRN_TABLE_VIEW) {
     return grn_view_select(ctx, table, expr, res, op);
   }
@@ -8187,82 +8258,103 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     return NULL;
   }
   GRN_API_ENTER;
-  if (op == GRN_OP_AND || (op == GRN_OP_OR && !GRN_HASH_SIZE((grn_hash *)res))) {
+  res_size = GRN_HASH_SIZE((grn_hash *)res);
+  if (op == GRN_OP_OR || res_size) {
     int i, n;
     scan_info **sis;
-    if ((sis = scan_info_build(ctx, table, expr, &n, op))) {
+    if ((sis = scan_info_build(ctx, table, expr, &n, op, res_size))) {
+      grn_obj res_stack;
       grn_expr *e = (grn_expr *)expr;
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
+      GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       for (i = 0; i < n; i++) {
         int done = 0;
         scan_info *si = sis[i];
-        if (si->index) {
-          switch (si->op) {
-          case GRN_OP_EQUAL :
-            if (si->flags) {
-              if (si->index->header.type == GRN_ACCESSOR &&
-                  !((grn_accessor *)si->index)->next) {
-                grn_obj dest;
-                grn_accessor *a = (grn_accessor *)si->index;
-                grn_rset_posinfo pi;
-                switch (a->action) {
-                case GRN_ACCESSOR_GET_ID :
-                  GRN_UINT32_INIT(&dest, 0);
-                  if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
-                    memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
-                    if (pi.rid) {
-                      res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                      grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-                    }
-                    done++;
-                  }
-                  GRN_OBJ_FIN(ctx, &dest);
-                  break;
-                case GRN_ACCESSOR_GET_KEY :
-                  GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
-                  if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
-                    if ((pi.rid = grn_table_get(ctx, table,
-                                                GRN_BULK_HEAD(&dest),
-                                                GRN_BULK_VSIZE(&dest)))) {
-                      res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                      grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-                    }
-                    done++;
-                  }
-                  GRN_OBJ_FIN(ctx, &dest);
-                  break;
-                }
-              }
-            } else {
-              /* table ?? si->index.domain ? */
-              grn_id tid = grn_table_get(ctx, table,
-                                         GRN_BULK_HEAD(si->query),
-                                         GRN_BULK_VSIZE(si->query));
-              grn_ii_at(ctx, (grn_ii *)si->index, tid, (grn_hash *)res, si->logical_op);
-              grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-              done++;
+        if (si->flags & SCAN_POP) {
+          grn_obj *res_;
+          GRN_PTR_POP(&res_stack, res_);
+          grn_table_setoperation(ctx, res_, res, res_, si->logical_op);
+          grn_obj_close(ctx, res);
+          res = res_;
+        } else {
+          if (si->flags & SCAN_PUSH) {
+            grn_obj *res_;
+            res_ = grn_table_create(ctx, NULL, 0, NULL,
+                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
+            if (res_) {
+              GRN_PTR_PUT(ctx, &res_stack, res);
+              res = res_;
             }
-            break;
-          case GRN_OP_MATCH :
-            if (!si->flags) {
-              /* todo : support sections */
-              grn_obj_search(ctx, si->index, si->query, res, si->logical_op, NULL);
-              done++;
-            }
-            break;
-          default :
-            /* todo */
-            break;
           }
-        }
-        if (!done) {
-          e->codes = codes + si->start;
-          e->codes_curr = si->end - si->start + 1;
-          grn_table_select_(ctx, table, expr, v, res, si->logical_op);
+          if (si->index) {
+            switch (si->op) {
+            case GRN_OP_EQUAL :
+              if (si->flags & SCAN_ACCESSOR) {
+                if (si->index->header.type == GRN_ACCESSOR &&
+                    !((grn_accessor *)si->index)->next) {
+                  grn_obj dest;
+                  grn_accessor *a = (grn_accessor *)si->index;
+                  grn_rset_posinfo pi;
+                  switch (a->action) {
+                  case GRN_ACCESSOR_GET_ID :
+                    GRN_UINT32_INIT(&dest, 0);
+                    if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+                      memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
+                      if (pi.rid) {
+                        res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+                        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+                      }
+                      done++;
+                    }
+                    GRN_OBJ_FIN(ctx, &dest);
+                    break;
+                  case GRN_ACCESSOR_GET_KEY :
+                    GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
+                    if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+                      if ((pi.rid = grn_table_get(ctx, table,
+                                                  GRN_BULK_HEAD(&dest),
+                                                  GRN_BULK_VSIZE(&dest)))) {
+                        res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+                        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+                      }
+                      done++;
+                    }
+                    GRN_OBJ_FIN(ctx, &dest);
+                    break;
+                  }
+                }
+              } else {
+                /* table ?? si->index.domain ? */
+                grn_id tid = grn_table_get(ctx, table,
+                                           GRN_BULK_HEAD(si->query),
+                                           GRN_BULK_VSIZE(si->query));
+                grn_ii_at(ctx, (grn_ii *)si->index, tid, (grn_hash *)res, si->logical_op);
+                grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+                done++;
+              }
+              break;
+            case GRN_OP_MATCH :
+              if (!(si->flags & SCAN_ACCESSOR)) {
+                /* todo : support sections */
+                grn_obj_search(ctx, si->index, si->query, res, si->logical_op, NULL);
+                done++;
+              }
+              break;
+            default :
+              /* todo */
+              break;
+            }
+          }
+          if (!done) {
+            e->codes = codes + si->start;
+            e->codes_curr = si->end - si->start + 1;
+            grn_table_select_(ctx, table, expr, v, res, si->logical_op);
+          }
         }
         GRN_FREE(si);
       }
+      GRN_OBJ_FIN(ctx, &res_stack);
       GRN_FREE(sis);
       e->codes = codes;
       e->codes_curr = codes_curr;
@@ -8273,7 +8365,6 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
 exit :
   GRN_API_RETURN(res);
 }
-
 
 // todo : support view
 grn_rc
