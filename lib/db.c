@@ -6778,8 +6778,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     r = (x_ op GRN_UINT32_VALUE(y));\
     break;\
   case GRN_DB_INT64 :\
-  case GRN_DB_TIME :\
     r = (x_ op GRN_INT64_VALUE(y));\
+    break;\
+  case GRN_DB_TIME :\
+    r = (GRN_TIME_PACK(x_,0) op GRN_INT64_VALUE(y));\
     break;\
   case GRN_DB_UINT64 :\
     r = (x_ op GRN_UINT64_VALUE(y));\
@@ -6816,8 +6818,42 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
       do_compare_sub(op);\
     }\
     break;\
-  case GRN_DB_INT64 :\
   case GRN_DB_TIME :\
+    {\
+      int64_t x_ = GRN_INT64_VALUE(x);\
+      switch (y->header.domain) {\
+      case GRN_DB_INT32 :\
+        r = (x_ op GRN_TIME_PACK(GRN_INT32_VALUE(y), 0));\
+        break;\
+      case GRN_DB_UINT32 :\
+        r = (x_ op GRN_TIME_PACK(GRN_UINT32_VALUE(y), 0));\
+        break;\
+      case GRN_DB_INT64 :\
+      case GRN_DB_TIME :\
+        r = (x_ op GRN_INT64_VALUE(y));\
+        break;\
+      case GRN_DB_UINT64 :\
+        r = (x_ op GRN_UINT64_VALUE(y));\
+        break;\
+      case GRN_DB_FLOAT :\
+        r = (x_ op GRN_TIME_PACK(GRN_FLOAT_VALUE(y), 0));\
+        break;\
+      case GRN_DB_SHORT_TEXT :\
+      case GRN_DB_TEXT :\
+      case GRN_DB_LONG_TEXT :\
+        {\
+          const char *p_ = GRN_TEXT_VALUE(y);\
+          int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+          r = (x_ op GRN_TIME_PACK(i_, 0));\
+        }\
+        break;\
+      default :\
+        r = 0;\
+        break;\
+      }\
+    }\
+    break;\
+  case GRN_DB_INT64 :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
       do_compare_sub(op);\
@@ -6872,8 +6908,10 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     r = (x_ == GRN_UINT32_VALUE(y));\
     break;\
   case GRN_DB_INT64 :\
-  case GRN_DB_TIME :\
     r = (x_ == GRN_INT64_VALUE(y));\
+    break;\
+  case GRN_DB_TIME :\
+    r = (GRN_TIME_PACK(x_,0) == GRN_INT64_VALUE(y));\
     break;\
   case GRN_DB_UINT64 :\
     r = (x_ == GRN_UINT64_VALUE(y));\
@@ -6914,10 +6952,44 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     }\
     break;\
   case GRN_DB_INT64 :\
-  case GRN_DB_TIME :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
       do_eq_sub;\
+    }\
+    break;\
+  case GRN_DB_TIME :\
+    {\
+      int64_t x_ = GRN_INT64_VALUE(x);\
+      switch (y->header.domain) {\
+      case GRN_DB_INT32 :\
+        r = (x_ == GRN_TIME_PACK(GRN_INT32_VALUE(y), 0));\
+        break;\
+      case GRN_DB_UINT32 :\
+        r = (x_ == GRN_TIME_PACK(GRN_UINT32_VALUE(y), 0));\
+        break;\
+      case GRN_DB_INT64 :\
+      case GRN_DB_TIME :\
+        r = (x_ == GRN_INT64_VALUE(y));\
+        break;\
+      case GRN_DB_UINT64 :\
+        r = (x_ == GRN_UINT64_VALUE(y));\
+        break;\
+      case GRN_DB_FLOAT :\
+        r = (x_ == GRN_TIME_PACK(GRN_FLOAT_VALUE(y), 0));\
+        break;\
+      case GRN_DB_SHORT_TEXT :\
+      case GRN_DB_TEXT :\
+      case GRN_DB_LONG_TEXT :\
+        {\
+          const char *p_ = GRN_TEXT_VALUE(y);\
+          int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+          r = (x_ == GRN_TIME_PACK(i_, 0));\
+        }\
+        break;\
+      default :\
+        r = 0;\
+        break;\
+      }\
     }\
     break;\
   case GRN_DB_UINT64 :\
@@ -7065,6 +7137,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 #define ALLOC1(value) {\
   s1 = s0;\
   *sp++ = s0 = value = vp++;\
+  if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
 }
 
 #define POP1ALLOC1(arg,value) {\
@@ -7863,6 +7936,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
 #define SCAN_ACCESSOR                  (0x01)
 #define SCAN_PUSH                      (0x02)
 #define SCAN_POP                       (0x04)
+#define SCAN_PRE_CONST                 (0x08)
 
 typedef struct {
   uint32_t start;
@@ -7994,6 +8068,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GET_VALUE :
       switch (stat) {
       case SCAN_START :
+      case SCAN_CONST :
       case SCAN_VAR :
         stat = SCAN_COL1;
         break;
@@ -8060,6 +8135,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         if (si->nargs < 8) {
           si->args[si->nargs++] = c->value;
         }
+        if (stat == SCAN_START) { si->flags |= SCAN_PRE_CONST; }
         stat = SCAN_CONST;
       }
       break;
@@ -8068,6 +8144,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       case SCAN_START :
         if (!si) { SI_ALLOC(si, i, c - e->codes); }
         // fallthru
+      case SCAN_CONST :
       case SCAN_VAR :
         stat = SCAN_COL1;
         if (si->nargs < 8) {
@@ -8342,7 +8419,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               }
               break;
             default :
-              /* todo */
+              /* todo : implement */
+              /* todo : handle SCAN_PRE_CONST */
               break;
             }
           }
