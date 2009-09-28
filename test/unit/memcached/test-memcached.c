@@ -26,7 +26,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#define GROONGA_TEST_PORT "4545"
+#define GROONGA_TEST_PORT "1234"
 
 /* globals */
 static gchar *tmp_directory;
@@ -155,8 +155,7 @@ test_memcached_add(void)
 
   rc = memcached_add(memc, "key", 3, "new-value", 9, 0, 0xdeadbeefU);
   cut_set_message("memcached add succeeded.");
-  /* TODO: fix rc after libmemcached fix */
-  cut_assert_equal_int(MEMCACHED_PROTOCOL_ERROR, rc);
+  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc);
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
   cut_set_message("memcached get failed.");
@@ -173,8 +172,7 @@ test_memcached_replace(void)
 
   rc = memcached_replace(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
   cut_set_message("memcached replace succeeded.");
-  /* TODO: fix rc after libmemcached fix */
-  cut_assert_equal_int(MEMCACHED_PROTOCOL_ERROR, rc);
+  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc);
 
   sleep(1);
 
@@ -243,7 +241,7 @@ test_memcached_cas(void)
 
   const char *key = "caskey";
   size_t key_len = strlen(key);
-  char* keys[2] = { (char *)key, NULL };
+  const char* keys[2] = { (char *)key, NULL };
   size_t key_lens[2] = { key_len, 0 };
 
   memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_SUPPORT_CAS, 1);
@@ -261,10 +259,12 @@ test_memcached_cas(void)
     cut_set_message("memcached mget failed.");
     cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
     results = memcached_fetch_result(memc, &results_obj, &rc);
+    cut_set_message("memcached fetch result failed.");
+    cut_assert_not_null(results);
 
     cas = memcached_result_cas(results);
     cut_set_message("memcached cas value is non-zero.");
-    cut_assert_operator_int(cas, !=, 0);
+    cut_assert_operator(cas, !=, 0);
 
     rc = memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas);
     cut_set_message("memcached cas failed.");
@@ -283,7 +283,6 @@ test_memcached_cas(void)
 void
 test_memcached_increment(void)
 {
-  uint32_t flags;
   uint64_t intval;
   memcached_return rc;
 
@@ -301,7 +300,6 @@ test_memcached_increment(void)
 void
 test_memcached_decrement(void)
 {
-  uint32_t flags;
   uint64_t intval;
   memcached_return rc;
 
