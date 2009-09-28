@@ -104,7 +104,11 @@ test_get_status(void)
 
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
-  soupcut_client_assert_match_body("{\"starttime\":\\d+,\"uptime\":\\d+}",
+  soupcut_client_assert_match_body("{"
+                                   "\"alloc_count\":\\d+,"
+                                   "\"starttime\":\\d+,"
+                                   "\"uptime\":\\d+"
+                                   "}",
                                    client);
 }
 
