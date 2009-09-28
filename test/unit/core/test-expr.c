@@ -1172,7 +1172,6 @@ test_expr_snip(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   cut_assert_not_null(expr);
 
-  GRN_BULK_REWIND(&textbuf);
   PARSE(expr, "search OR engine OR column", 1);
 
   {
