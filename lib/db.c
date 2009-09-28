@@ -10485,6 +10485,7 @@ parse4(grn_ctx *ctx, efs_info *q)
       if ((rc = get_identifier(ctx, q))) { goto exit; }
       break;
     }
+    if (ctx->rc) { rc = ctx->rc; break; }
   }
 exit :
   PARSE(0);
