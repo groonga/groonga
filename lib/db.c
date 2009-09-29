@@ -8326,7 +8326,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     }
   } else {
     if (!(res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
+                                 GRN_HASH_TINY|GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
       return NULL;
     }
   }
@@ -9129,11 +9129,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
         GRN_OBJ_FIN(ctx, &strbuf);
         */
-        if (!ctx->rc) {
-          res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table_, NULL);
-          grn_table_select(ctx, table_, cond, res, GRN_OP_OR);
-        }
+        if (!ctx->rc) { res = grn_table_select(ctx, table_, cond, NULL, GRN_OP_OR); }
         grn_obj_unlink(ctx, cond);
       } else {
         /* todo */

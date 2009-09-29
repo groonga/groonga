@@ -104,6 +104,7 @@ typedef enum {
   GRN_STACK_OVER_FLOW = -62,
   GRN_SYNTAX_ERROR = -63,
   GRN_RETRY_MAX = -64,
+  GRN_INCOMPATIBLE_FILE_FORMAT = -65
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);

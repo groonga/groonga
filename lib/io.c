@@ -397,7 +397,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
         if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
           res = h.type;
         } else {
-          ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
+          ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "incompatible file format");
         }
       } else {
         SERR(path);
@@ -434,6 +434,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
           segment_size = h.segment_size;
           max_segment = h.max_segment;
           flags = h.flags;
+        } else {
+          ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "incompatible file format");
         }
       }
     }

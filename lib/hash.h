@@ -174,7 +174,7 @@ grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
 
 /**** grn_hash ****/
 
-#define GRN_HASH_TINY (1L<<1)
+#define GRN_HASH_TINY                  (0x01<<6)
 #define GRN_HASH_MAX_KEY_SIZE GRN_TABLE_MAX_KEY_SIZE
 
 struct _grn_hash {
