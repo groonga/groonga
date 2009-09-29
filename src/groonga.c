@@ -143,9 +143,11 @@ do_client(char *hostname)
         char *str;
         unsigned int str_len;
         uint32_t size = strlen(buf) - 1;
-        if (grn_ctx_send(ctx, buf, size, 0)) { break; }
+        grn_ctx_send(ctx, buf, size, 0);
+        if (ctx->rc) { break; }
         do {
-          if (grn_ctx_recv(ctx, &str, &str_len, &flags)) {
+          grn_ctx_recv(ctx, &str, &str_len, &flags);
+          if (ctx->rc) {
             fprintf(stderr, "grn_ctx_recv failed\n");
             goto exit;
           }
@@ -165,8 +167,8 @@ do_client(char *hostname)
   } else {
     fprintf(stderr, "grn_ctx_connect failed (%s:%d)\n", hostname, port);
   }
-  grn_ctx_fin(ctx);
 exit :
+  grn_ctx_fin(ctx);
   return rc;
 }
 

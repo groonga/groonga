@@ -8551,7 +8551,6 @@ typedef struct {
   int escalation_decaystep;
   int weight_offset;
   grn_hash *weight_set;
-  grn_encoding encoding;
   snip_cond *snip_conds;
 } efs_info;
 
@@ -8564,7 +8563,7 @@ inline static void
 skip_space(grn_ctx *ctx, efs_info *q)
 {
   unsigned int len;
-  while (q->cur < q->str_end && grn_isspace(q->cur, q->encoding)) {
+  while (q->cur < q->str_end && grn_isspace(q->cur, ctx->encoding)) {
     /* null check and length check */
     if (!(len = grn_charlen(ctx, q->cur, q->str_end))) {
       q->cur = q->str_end;
@@ -8629,7 +8628,7 @@ get_geocond(grn_ctx *ctx, efs_info *q, grn_obj *longitude, grn_obj *latitude)
       q->cur = q->str_end;
       break;
     }
-    if (grn_isspace(end, q->encoding) ||
+    if (grn_isspace(end, ctx->encoding) ||
         *end == GRN_QUERY_PARENR) {
       q->cur = end;
       break;
@@ -8712,7 +8711,7 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
       q->cur = q->str_end;
       break;
     }
-    if (grn_isspace(end, q->encoding) ||
+    if (grn_isspace(end, ctx->encoding) ||
         *end == GRN_QUERY_PARENR) {
       q->cur = end;
       break;
@@ -9866,7 +9865,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
       q->cur = q->str_end;
       break;
     }
-    if (grn_isspace(end, q->encoding) ||
+    if (grn_isspace(end, ctx->encoding) ||
         *end == GRN_QUERY_PARENL || *end == GRN_QUERY_PARENR) {
       q->cur = end;
       break;
@@ -10105,7 +10104,7 @@ get_identifier(grn_ctx *ctx, efs_info *q)
       rc = GRN_END_OF_DATA;
       goto exit;
     }
-    if (grn_isspace(s, q->encoding)) { goto done; }
+    if (grn_isspace(s, ctx->encoding)) { goto done; }
     if (len == 1) {
       switch (*s) {
       case '\0' : case '(' : case ')' : case '{' : case '}' :
@@ -10486,6 +10485,7 @@ parse4(grn_ctx *ctx, efs_info *q)
       if ((rc = get_identifier(ctx, q))) { goto exit; }
       break;
     }
+    if (ctx->rc) { rc = ctx->rc; break; }
   }
 exit :
   PARSE(0);

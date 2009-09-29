@@ -1,3 +1,4 @@
+/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /* Copyright(C) 2009 Brazil
 
   This library is free software; you can redistribute it and/or
@@ -48,6 +49,7 @@ void test_expr_proc_call(void);
 void test_expr_score_set(void);
 void test_expr_key_equal(void);
 void test_expr_value_access(void);
+void test_expr_snip(void);
 
 void
 cut_startup(void)
@@ -1155,4 +1157,76 @@ test_expr_value_access(void)
   cut_assert_equal_uint(2, grn_table_size(&context, res));
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
+}
+
+void
+test_expr_snip(void)
+{
+  grn_obj *expr, *v;
+  grn_obj textbuf, intbuf;
+
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+  prepare_data(&textbuf, &intbuf);
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+  cut_assert_not_null(expr);
+
+  PARSE(expr, "search OR engine OR column", 1);
+
+  {
+    grn_snip *snip;
+    int flags;
+    unsigned int width, max_results;
+    const char *open_tags[] = {"[[", "<"};
+    const char *close_tags[] = {"]]", ">"};
+    unsigned int open_tag_lens[] = {2, 1};
+    unsigned int close_tag_lens[] = {2, 1};
+    unsigned int n_results;
+    unsigned int max_tagged_len;
+    gchar *result;
+    unsigned int result_len;
+    gchar text[] =
+      "groonga is an open-source fulltext search engine and column store.\n"
+      "It lets you write high-performance applications that requires "
+      "fulltext search.";
+
+    width = 100;
+    max_results = 10;
+    snip = grn_expr_snip(&context, expr, flags,
+                         width, max_results,
+                         sizeof(open_tags) / sizeof(open_tags[0]),
+                         open_tags, open_tag_lens,
+                         close_tags, close_tag_lens,
+                         NULL);
+    cut_assert_not_null(snip);
+
+    grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                  &n_results, &max_tagged_len));
+
+    cut_assert_equal_uint(2, n_results);
+    cut_assert_equal_uint(111, max_tagged_len);
+    result = g_new(gchar, max_tagged_len);
+    cut_take_memory(result);
+
+    grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
+    cut_assert_equal_string("groonga is an open-source fulltext "
+                            "[[search]] <engine> and [[column]] store.\n"
+                            "It lets you write high-performanc",
+                            result);
+    cut_assert_equal_uint(110, result_len);
+
+    grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
+    cut_assert_equal_string("e applications that requires "
+                            "fulltext [[search]].",
+                            result);
+    cut_assert_equal_uint(49, result_len);
+
+    grn_test_assert(grn_snip_close(&context, snip));
+  }
+
+  grn_test_assert(grn_obj_close(&context, expr));
+
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+  grn_test_assert(grn_obj_close(&context, &intbuf));
 }
