@@ -400,6 +400,8 @@ void grn_ctx_loader_clear(grn_ctx *ctx);
 grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
 
+int grn_alloc_count(void);
+
 /**** receive handler ****/
 
 void grn_ctx_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),

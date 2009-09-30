@@ -405,7 +405,7 @@ grn_ctx_fin(grn_ctx *ctx)
         int flags;
         char *str;
         unsigned int str_len;
-        grn_ctx_send(ctx, "(quit)", 6, GRN_CTX_HEAD);
+        grn_ctx_send(ctx, "quit", 4, GRN_CTX_HEAD);
         grn_ctx_recv(ctx, &str, &str_len, &flags);
       }
       grn_ctx_send(ctx, "ACK", 3, GRN_CTX_HEAD);
