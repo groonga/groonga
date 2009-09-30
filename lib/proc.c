@@ -547,6 +547,23 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return buf;
 }
 
+static grn_obj *
+proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *buf = args[0];
+  ctx->stat = GRN_CTX_QUITTING;
+  return buf;
+}
+
+static grn_obj *
+proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *buf = args[0];
+  grn_gctx.stat = GRN_CTX_QUIT;
+  ctx->stat = GRN_CTX_QUITTING;
+  return buf;
+}
+
 #define DEF_VAR(v,name_str) {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -623,13 +640,18 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_create(ctx, GRN_EXPR_MISSING_NAME, strlen(GRN_EXPR_MISSING_NAME),
                   NULL, GRN_PROC_PROCEDURE, proc_missing, NULL, NULL, 2, vars);
 
-  DEF_VAR(vars[0], "seed");
-  grn_proc_create(ctx, "rand", 4, NULL, GRN_PROC_FUNCTION, proc_rand, NULL, NULL, 0, vars);
-
-  grn_proc_create(ctx, "now", 3, NULL, GRN_PROC_FUNCTION, proc_now, NULL, NULL, 0, vars);
-
   DEF_VAR(vars[0], "view");
   DEF_VAR(vars[1], "table");
   grn_proc_create(ctx, "view_add", 8, NULL, GRN_PROC_PROCEDURE,
                   proc_view_add, NULL, NULL, 2, vars);
+
+  grn_proc_create(ctx, "quit", 4, NULL, GRN_PROC_PROCEDURE,
+                  proc_quit, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "shutdown", 8, NULL, GRN_PROC_PROCEDURE,
+                  proc_shutdown, NULL, NULL, 0, vars);
+
+  DEF_VAR(vars[0], "seed");
+  grn_proc_create(ctx, "rand", 4, NULL, GRN_PROC_FUNCTION, proc_rand, NULL, NULL, 0, vars);
+
+  grn_proc_create(ctx, "now", 3, NULL, GRN_PROC_FUNCTION, proc_now, NULL, NULL, 0, vars);
 }

@@ -64,6 +64,7 @@ typedef struct _grn_io_header {
   uint32_t n_arrays;
   uint32_t lock;
   uint64_t curr_size;
+  uint32_t segment_tail;
 } io_header;
 
 #define IO_HEADER_SIZE 64
@@ -327,6 +328,7 @@ grn_io_create_with_array(grn_ctx *ctx, const char *path,
       hp = io->user_header;
       memcpy(hp, array_specs, sizeof(grn_io_array_spec) * n_arrays);
       io->header->n_arrays = n_arrays;
+      io->header->segment_tail = 1;
       if (!array_init_(io, n_arrays, hsize, msize)) {
         return io;
       }
@@ -342,19 +344,33 @@ segment_alloc(grn_io *io)
 {
   uint32_t n, s;
   grn_io_array_info *ai;
-  char *used = GRN_GCALLOC(io->header->max_segment + 1);
-  if (!used) { return 0; }
-  for (n = io->header->n_arrays, ai = io->ainfo; n; n--, ai++) {
-    for (s = 0; s < ai->max_n_segments; s++) {
-      used[ai->segments[s]] = 1;
+  if (io->header->segment_tail) {
+    if (io->header->segment_tail > io->header->max_segment) {
+      s = 0;
+    } else {
+      s = io->header->segment_tail++;
     }
+  } else {
+    char *used = GRN_GCALLOC(io->header->max_segment + 1);
+    if (!used) { return 0; }
+    for (n = io->header->n_arrays, ai = io->ainfo; n; n--, ai++) {
+      for (s = 0; s < ai->max_n_segments; s++) {
+        used[ai->segments[s]] = 1;
+      }
+    }
+    for (s = 1; ; s++) {
+      if (s > io->header->max_segment) {
+        io->header->segment_tail = s;
+        s = 0;
+        break;
+      }
+      if (!used[s]) {
+        io->header->segment_tail = s + 1;
+        break;
+      }
+    }
+    GRN_GFREE(used);
   }
-  for (s = 1; s <= io->header->max_segment; s++) {
-    if (!used[s]) { goto exit; }
-  }
-  s = 0;
-exit :
-  GRN_GFREE(used);
   return s;
 }
 
@@ -397,7 +413,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
         if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
           res = h.type;
         } else {
-          ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
+          ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "incompatible file format");
         }
       } else {
         SERR(path);
@@ -434,6 +450,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
           segment_size = h.segment_size;
           max_segment = h.max_segment;
           flags = h.flags;
+        } else {
+          ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "incompatible file format");
         }
       }
     }
@@ -493,7 +511,8 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
   grn_io_mapinfo *mi;
   fileinfo *fi;
   uint32_t bs = io->base_seg;
-  uint32_t max_segment = io->header->max_segment;
+  uint32_t max_segment = io->header->segment_tail
+    ? io->header->segment_tail : io->header->max_segment;
   uint32_t segment_size = io->header->segment_size;
   unsigned int max_nfiles = (unsigned int)(
     ((uint64_t)segment_size * (max_segment + bs) + GRN_IO_FILE_SIZE - 1)

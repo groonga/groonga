@@ -127,6 +127,7 @@ void grn_ctx_impl_err(grn_ctx *ctx);
   ctx_->errline = __LINE__;\
   ctx_->errfunc = __FUNCTION__;\
   grn_ctx_impl_err(ctx);\
+  grn_ctx_log(ctx, __VA_ARGS__);\
   GRN_LOG(ctx, lvl, __VA_ARGS__);\
   BACKTRACE(ctx);\
   if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
@@ -398,6 +399,8 @@ void grn_ctx_loader_clear(grn_ctx *ctx);
 
 grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
+
+int grn_alloc_count(void);
 
 /**** receive handler ****/
 

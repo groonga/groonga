@@ -9129,11 +9129,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
         GRN_OBJ_FIN(ctx, &strbuf);
         */
-        if (!ctx->rc) {
-          res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table_, NULL);
-          grn_table_select(ctx, table_, cond, res, GRN_OP_OR);
-        }
+        if (!ctx->rc) { res = grn_table_select(ctx, table_, cond, NULL, GRN_OP_OR); }
         grn_obj_unlink(ctx, cond);
       } else {
         /* todo */
@@ -9144,6 +9140,10 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     GRN_TEXT_PUTS(ctx, outbuf, "[[");
     grn_text_itoa(ctx, outbuf, ctx->rc);
+    if (ctx->rc) {
+      GRN_TEXT_PUTC(ctx, outbuf, ',');
+      grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
+    }
     GRN_TEXT_PUTC(ctx, outbuf, ']');
     if (res) {
       if (foreach && foreach_len) {
