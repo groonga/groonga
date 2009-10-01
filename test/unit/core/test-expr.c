@@ -1172,7 +1172,7 @@ test_expr_snip(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   cut_assert_not_null(expr);
 
-  PARSE(expr, "search OR engine OR column", 1);
+  PARSE(expr, "search engine column", 1);
 
   {
     grn_snip *snip;

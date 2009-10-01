@@ -10584,7 +10584,7 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
   scan_info **sis, *si;
   grn_snip *res = NULL;
   GRN_API_ENTER;
-  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 1))) {
+  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0))) {
     if ((res = grn_snip_open(ctx, flags, width, max_results,
                            NULL, 0, NULL, 0, mapping))) {
       int butp = 0, nparens = 0, npbut = 0;

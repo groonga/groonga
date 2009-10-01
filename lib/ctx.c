@@ -845,6 +845,8 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   if (ctx->stat == GRN_CTX_QUIT) {
+    *str = NULL;
+    *str_len = 0;
     *flags = GRN_CTX_QUIT;
     return 0;
   }
