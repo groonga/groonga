@@ -7987,9 +7987,18 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
         if (!(--nparens)) {
           if (!r) {
             if (ndifops) {
-              nparens = 1;
-              ndifops = 0;
-              r = j;
+              if (j) {
+                nparens = 1;
+                ndifops = 0;
+                r = j;
+              } else {
+                SI_ALLOC(s_, i, start);
+                s_->flags = SCAN_POP;
+                s_->logical_op = op;
+                sis[i++] = s_;
+                *ip = i;
+                break;
+              }
             } else {
               s_->flags &= ~SCAN_PUSH;
               s_->logical_op = op;
@@ -8020,7 +8029,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
     }
   }
   if (j < 0) {
-    ERR(GRN_INVALID_ARGUMENT, "unmatched parenthesis");
+    ERR(GRN_INVALID_ARGUMENT, "unmatched nesting level");
     for (j = 0; j < i; j++) { GRN_FREE(sis[j]); }
     GRN_FREE(sis);
     return NULL;
