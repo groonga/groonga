@@ -9178,7 +9178,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
-            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
             GRN_TEXT_PUTC(ctx, outbuf, ',');
             grn_text_otoj(ctx, outbuf, sorted, &format);
@@ -9188,7 +9188,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         GRN_TEXT_PUTC(ctx, outbuf, ',');
         grn_text_otoj(ctx, outbuf, res, &format);
@@ -9214,7 +9214,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                   grn_table_sort(ctx, g.table, drilldown_offset, drilldown_limit,
                                  sorted, keys, nkeys);
                   GRN_OBJ_FORMAT_INIT(&format, nhits, 0, drilldown_limit,
-                                      GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+                                      GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
                   grn_obj_columns(ctx, sorted,
                                   drilldown_output_columns, drilldown_output_columns_len,
                                   &format.columns);
@@ -9227,7 +9227,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               }
             } else {
               GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit,
-                                  GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES);
+                                  GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);
               GRN_TEXT_PUTC(ctx, outbuf, ',');

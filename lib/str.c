@@ -2310,7 +2310,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_text_itoa(ctx, bulk, ve - v);
       GRN_TEXT_PUTC(ctx, bulk, ']');
       if (v < ve) {
-        if (format->flags & GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES) {
+        if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
           GRN_TEXT_PUTS(ctx, bulk, ",[");
           for (j = 0; j < ncolumns; j++) {
             if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
@@ -2351,7 +2351,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       GRN_TEXT_PUTS(ctx, bulk, "[[");
       grn_text_itoa(ctx, bulk, format->nhits);
       GRN_TEXT_PUTC(ctx, bulk, ']');
-      if (format->flags & GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES) {
+      if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
         GRN_TEXT_PUTS(ctx, bulk, ",[");
         for (j = 0; j < ncolumns; j++) {
           if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }

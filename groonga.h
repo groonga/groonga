@@ -1651,7 +1651,7 @@ GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 
 typedef struct _grn_obj_format grn_obj_format;
 
-#define GRN_OBJ_FORMAT_WTIH_COLUMN_NAMES   (0x01<<0)
+#define GRN_OBJ_FORMAT_WITH_COLUMN_NAMES   (0x01<<0)
 #define GRN_OBJ_FORMAT_ASARRAY             (0x01<<3)
 
 struct _grn_obj_format {
