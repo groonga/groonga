@@ -402,6 +402,8 @@ void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
 
 int grn_alloc_count(void);
 
+grn_content_type grn_get_ctype(grn_obj *var);
+
 /**** receive handler ****/
 
 void grn_ctx_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),

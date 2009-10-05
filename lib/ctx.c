@@ -658,6 +658,29 @@ grn_ctx_close(grn_ctx *ctx)
 
 #define EXPR_MISSING "expr_missing"
 
+grn_content_type
+grn_get_ctype(grn_obj *var)
+{
+  grn_content_type ct = GRN_CONTENT_JSON;
+  if (GRN_TEXT_LEN(var)) {
+    switch (*(GRN_TEXT_VALUE(var))) {
+    case 't' :
+    case 'T' :
+      ct = GRN_CONTENT_TSV;
+      break;
+    case 'j' :
+    case 'J' :
+      ct = GRN_CONTENT_JSON;
+      break;
+    case 'f' :
+    case 'F' :
+      ct = GRN_CONTENT_FASTXML;
+      break;
+    }
+  }
+  return ct;
+}
+
 static void
 put_response_header(grn_ctx *ctx, const char *p, const char *pe,
                     grn_content_type *ct, const char **name, unsigned int *name_len)
@@ -681,6 +704,12 @@ put_response_header(grn_ctx *ctx, const char *p, const char *pe,
       if (pd + 3 == p && !memcmp(pd, "css", 3)) {
         GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    case 'f':
+      if (pd + 4 == p && !memcmp(pd, "fxml", 4)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
+        *ct = GRN_CONTENT_FASTXML;
       }
       break;
     case 'g' :
@@ -765,7 +794,10 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     g = grn_text_urldec(ctx, &key, p, e, '?');
     put_response_header(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_VALUE(&key) + GRN_TEXT_LEN(&key),
                         &ot, &name, &name_len);
-    /* TODO: /cgi-bin/ */
+    /* todo :
+    if ((name_len > 2 && name[0] == 'd' && name[1] == '/') &&
+        (expr = grn_ctx_get(ctx, name + 2, name_len - 2)))
+    */
     if ((expr = grn_ctx_get(ctx, name, name_len))) {
       while (g < e) {
         GRN_BULK_REWIND(&key);
@@ -854,8 +886,8 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
     GRN_OBJ_FIN(ctx, &buf);
   }
   if (expr) {
-    grn_content_type ot = GRN_CONTENT_JSON;
     if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
+      grn_content_type ot = grn_get_ctype(val);
       grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
       GRN_INT32_SET(ctx, val, (int32_t)ot);
     }

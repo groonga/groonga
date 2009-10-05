@@ -96,8 +96,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_expr_var *vars;
   grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-  /* ct = GRN_INT32_VALUE(&vars[4].value); */
-  ct = GRN_CONTENT_JSON;
+  ct = grn_get_ctype(&vars[4].value);
 
   if (nvars == 5) {
     grn_load(ctx, ct,
