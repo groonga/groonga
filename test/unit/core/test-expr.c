@@ -50,6 +50,7 @@ void test_expr_score_set(void);
 void test_expr_key_equal(void);
 void test_expr_value_access(void);
 void test_expr_snip(void);
+void test_expr_snip_without_tags(void);
 
 void
 cut_startup(void)
@@ -1221,6 +1222,56 @@ test_expr_snip(void)
                             "fulltext [[search]].",
                             result);
     cut_assert_equal_uint(49, result_len);
+
+    grn_test_assert(grn_snip_close(&context, snip));
+  }
+
+  grn_test_assert(grn_obj_close(&context, expr));
+
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+  grn_test_assert(grn_obj_close(&context, &intbuf));
+}
+
+void
+test_expr_snip_without_tags(void)
+{
+  grn_obj *expr, *v;
+  grn_obj textbuf, intbuf;
+
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+  prepare_data(&textbuf, &intbuf);
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+  cut_assert_not_null(expr);
+
+  PARSE(expr, "search engine column", 1);
+
+  {
+    grn_snip *snip;
+    int flags;
+    unsigned int width, max_results;
+    unsigned int n_results;
+    unsigned int max_tagged_len;
+    gchar *result;
+    unsigned int result_len;
+    gchar text[] =
+      "groonga is an open-source fulltext search engine and column store.\n"
+      "It lets you write high-performance applications that requires "
+      "fulltext search.";
+
+    width = 100;
+    max_results = 10;
+    snip = grn_expr_snip(&context, expr, flags,
+                         width, max_results,
+                         0,
+                         NULL, NULL,
+                         NULL, NULL,
+                         NULL);
+    cut_assert_not_null(snip);
+
+    grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
+                                  &n_results, &max_tagged_len));
 
     grn_test_assert(grn_snip_close(&context, snip));
   }

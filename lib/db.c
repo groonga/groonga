@@ -10626,12 +10626,22 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
         }
         GRN_FREE(si);
       }
-      for (i = 0;; i = (i + 1) % n_tags) {
-        grn_obj *q;
-        GRN_PTR_POP(&snip_stack, q);
-        if (!q) { break; }
-        grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
-                          opentags[i], opentag_lens[i], closetags[i], closetag_lens[i]);
+      if (n_tags) {
+        for (i = 0;; i = (i + 1) % n_tags) {
+          grn_obj *q;
+          GRN_PTR_POP(&snip_stack, q);
+          if (!q) { break; }
+          grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
+                            opentags[i], opentag_lens[i], closetags[i], closetag_lens[i]);
+        }
+      } else {
+        for (;;) {
+          grn_obj *q;
+          GRN_PTR_POP(&snip_stack, q);
+          if (!q) { break; }
+          grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
+                            NULL, 0, NULL, 0);
+        }
       }
       GRN_FREE(sis);
       GRN_OBJ_FIN(ctx, &but_stack);
