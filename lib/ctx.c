@@ -735,6 +735,9 @@ put_response_header(grn_ctx *ctx, const char *p, const char *pe,
   }
 }
 
+#define OUTPUT_TYPE "output_type"
+#define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
+
 grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
@@ -762,7 +765,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     g = grn_text_urldec(ctx, &key, p, e, '?');
     put_response_header(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_VALUE(&key) + GRN_TEXT_LEN(&key),
                         &ot, &name, &name_len);
-    /* TODO: /cgi-bin/じゃなければ、name設定しない */
+    /* TODO: /cgi-bin/ */
     if ((expr = grn_ctx_get(ctx, name, name_len))) {
       while (g < e) {
         GRN_BULK_REWIND(&key);
@@ -773,9 +776,10 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
         grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
         g = grn_text_cgidec(ctx, val, g, e, '&');
       }
-      val = grn_expr_get_var(ctx, expr, "output_type", sizeof("output_type") - 1);
-      grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
-      GRN_INT32_SET(ctx, val, (int32_t)ot);
+      if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
+        grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
+        GRN_INT32_SET(ctx, val, (int32_t)ot);
+      }
 
       grn_ctx_push(ctx, ctx->impl->outbuf);
       grn_expr_exec(ctx, expr, 1);
@@ -850,6 +854,11 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
     GRN_OBJ_FIN(ctx, &buf);
   }
   if (expr) {
+    grn_content_type ot = GRN_CONTENT_JSON;
+    if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
+      grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
+      GRN_INT32_SET(ctx, val, (int32_t)ot);
+    }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     grn_expr_exec(ctx, expr, 1);
     val = grn_ctx_pop(ctx);
