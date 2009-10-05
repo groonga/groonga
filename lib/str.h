@@ -105,6 +105,9 @@ const char *grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *p, const 
 
 void grn_str_url_path_normalize(const char *path, size_t path_len, char *buf, size_t buf_len);
 
+GRN_API grn_rc grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
+                                grn_obj_format *format);
+
 #ifdef __cplusplus
 }
 #endif

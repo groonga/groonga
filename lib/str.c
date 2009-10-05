@@ -1993,6 +1993,39 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
   return rc;
 }
 
+grn_rc
+grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
+{
+  const char *e;
+  unsigned int l;
+  grn_rc rc = GRN_SUCCESS;
+
+  for (e = s + len; s < e; s += l) {
+    if (!(l = grn_charlen(ctx, s, e))) { break; }
+    if (l == 1) {
+      switch (*s) {
+      case '"' :
+        grn_bulk_write(ctx, buf, "&quot;", 6);
+        break;
+      case '<' :
+        grn_bulk_write(ctx, buf, "&lt;", 4);
+        break;
+      case '>' :
+        grn_bulk_write(ctx, buf, "&gt;", 4);
+        break;
+      case '&' :
+        grn_bulk_write(ctx, buf, "&amp;", 5);
+        break;
+      default :
+        GRN_TEXT_PUTC(ctx, buf, *s);
+      }
+    } else {
+      grn_bulk_write(ctx, buf, s, l);
+    }
+  }
+  return rc;
+}
+
 #define TOK_ESC                        (0x80)
 
 const char *
@@ -2391,6 +2424,75 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_table_cursor_close(ctx, tc);
       grn_obj_unlink(ctx, column);
     }
+    break;
+  }
+  grn_obj_close(ctx, &buf);
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
+{
+  grn_obj buf;
+  GRN_TEXT_INIT(&buf, 0);
+  switch (obj->header.type) {
+  case GRN_BULK :
+    switch (obj->header.domain) {
+    case GRN_DB_VOID :
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      grn_text_escape_xml(ctx, bulk, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
+      break;
+    case GRN_DB_BOOL :
+      if (*((unsigned char *)GRN_BULK_HEAD(obj))) {
+        GRN_TEXT_PUTS(ctx, bulk, "true");
+      } else {
+        GRN_TEXT_PUTS(ctx, bulk, "false");
+      }
+      break;
+    case GRN_DB_INT32 :
+      grn_text_itoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT32_VALUE(obj) : 0);
+      break;
+    case GRN_DB_UINT32 :
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_UINT32_VALUE(obj) : 0);
+      break;
+    case GRN_DB_INT64 :
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT64_VALUE(obj) : 0);
+      break;
+    case GRN_DB_UINT64 :
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_UINT64_VALUE(obj) : 0);
+      break;
+    case GRN_DB_FLOAT :
+      grn_text_ftoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_FLOAT_VALUE(obj) : 0);
+      break;
+    case GRN_DB_TIME :
+      {
+        double dv= *((int64_t *)GRN_BULK_HEAD(obj));
+        dv /= 1000000.0;
+        grn_text_ftoa(ctx, bulk, dv); /* TODO: implement ISO 8601 */
+      }
+      break;
+    default :
+      {
+        grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
+        grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
+        if (accessor) {
+          grn_obj_get_value(ctx, accessor, *((grn_id *)GRN_BULK_HEAD(obj)), &buf);
+          grn_obj_unlink(ctx, accessor);
+        }
+        grn_text_escape_xml(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
+      }
+    }
+    break;
+  case GRN_UVECTOR :
+    /* TODO: implement */
+    break;
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_VIEW :
+    /* TODO: implement */
     break;
   }
   grn_obj_close(ctx, &buf);

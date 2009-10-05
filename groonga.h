@@ -134,8 +134,10 @@ typedef enum {
 } grn_log_level;
 
 typedef enum {
+  GRN_CONTENT_NONE = 0,
   GRN_CONTENT_TSV,
-  GRN_CONTENT_JSON
+  GRN_CONTENT_JSON,
+  GRN_CONTENT_FASTXML
 } grn_content_type;
 
 typedef struct _grn_obj grn_obj;
@@ -1647,6 +1649,8 @@ GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, unsigned int len);
 GRN_API const char *grn_text_urldec(grn_ctx *ctx, grn_obj *buf,
                                     const char *s, const char *e, char d);
+GRN_API grn_rc grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf,
+                                   const char *s, unsigned int len);
 GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 
 typedef struct _grn_obj_format grn_obj_format;

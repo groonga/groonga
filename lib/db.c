@@ -9147,13 +9147,46 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     } else {
       res = table_;
     }
-    GRN_TEXT_PUTS(ctx, outbuf, "[[");
-    grn_text_itoa(ctx, outbuf, ctx->rc);
-    if (ctx->rc) {
-      GRN_TEXT_PUTC(ctx, outbuf, ',');
-      grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
+    switch (output_type) {
+    case GRN_CONTENT_JSON:
+      GRN_TEXT_PUTS(ctx, outbuf, "[[");
+      grn_text_itoa(ctx, outbuf, ctx->rc);
+      break;
+    case GRN_CONTENT_FASTXML:
+      GRN_TEXT_PUTS(ctx, outbuf, "<HIT>");
+      break;
+    case GRN_CONTENT_TSV:
+      grn_text_itoa(ctx, outbuf, ctx->rc);
+    case GRN_CONTENT_NONE:
+      break;
     }
-    GRN_TEXT_PUTC(ctx, outbuf, ']');
+    if (ctx->rc) {
+      switch (output_type) {
+      case GRN_CONTENT_JSON:
+        GRN_TEXT_PUTC(ctx, outbuf, ',');
+        grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
+        break;
+      case GRN_CONTENT_FASTXML:
+        break;
+      case GRN_CONTENT_TSV:
+        GRN_TEXT_PUTC(ctx, outbuf, '\t');
+        GRN_TEXT_PUTS(ctx, outbuf, ctx->errbuf);
+        break;
+      case GRN_CONTENT_NONE:
+        break;
+      }
+    }
+    switch (output_type) {
+    case GRN_CONTENT_JSON:
+      GRN_TEXT_PUTC(ctx, outbuf, ']');
+      break;
+    case GRN_CONTENT_TSV:
+      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      break;
+    case GRN_CONTENT_FASTXML:
+    case GRN_CONTENT_NONE:
+      break;
+    }
     if (res) {
       if (foreach && foreach_len) {
         grn_obj *v;
@@ -9180,8 +9213,22 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
             GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
-            GRN_TEXT_PUTC(ctx, outbuf, ',');
-            grn_text_otoj(ctx, outbuf, sorted, &format);
+            switch (output_type) {
+            case GRN_CONTENT_JSON:
+              GRN_TEXT_PUTC(ctx, outbuf, ',');
+              grn_text_otoj(ctx, outbuf, sorted, &format);
+              break;
+            case GRN_CONTENT_TSV:
+              GRN_TEXT_PUTC(ctx, outbuf, '\n');
+              /* TODO: implement grn_text_ototsv */
+              break;
+            case GRN_CONTENT_FASTXML:
+              GRN_TEXT_PUTS(ctx, outbuf, "<FIELD>");
+              grn_text_otofxml(ctx, outbuf, sorted, &format);
+              GRN_TEXT_PUTS(ctx, outbuf, "</FIELD>");
+            case GRN_CONTENT_NONE:
+              break;
+            }
             GRN_OBJ_FORMAT_FIN(ctx, &format);
             grn_table_sort_key_close(ctx, keys, nkeys);
           }
@@ -9190,8 +9237,23 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       } else {
         GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
-        GRN_TEXT_PUTC(ctx, outbuf, ',');
-        grn_text_otoj(ctx, outbuf, res, &format);
+        switch (output_type) {
+        case GRN_CONTENT_JSON:
+          GRN_TEXT_PUTC(ctx, outbuf, ',');
+          grn_text_otoj(ctx, outbuf, res, &format);
+          break;
+        case GRN_CONTENT_TSV:
+          GRN_TEXT_PUTC(ctx, outbuf, '\n');
+          /* TODO: implement */
+          break;
+        case GRN_CONTENT_FASTXML:
+          GRN_TEXT_PUTS(ctx, outbuf, "<FIELD>");
+          grn_text_otofxml(ctx, outbuf, res, &format);
+          GRN_TEXT_PUTS(ctx, outbuf, "</FIELD>");
+          break;
+        case GRN_CONTENT_NONE:
+          break;
+        }
         GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
       if (drilldown_len) {
@@ -9241,7 +9303,19 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
       if (res != table_) { grn_obj_unlink(ctx, res); }
     }
-    GRN_TEXT_PUTC(ctx, outbuf, ']');
+    switch (output_type) {
+    case GRN_CONTENT_JSON:
+      GRN_TEXT_PUTC(ctx, outbuf, ']');
+      break;
+    case GRN_CONTENT_TSV:
+      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      break;
+    case GRN_CONTENT_FASTXML:
+      GRN_TEXT_PUTS(ctx, outbuf, "</HIT>");
+      break;
+    case GRN_CONTENT_NONE:
+      break;
+    }
     grn_obj_unlink(ctx, table_);
   }
   return ctx->rc;
@@ -9811,7 +9885,9 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     }
     json_read(ctx, loader, values, values_len);
     break;
+  case GRN_CONTENT_NONE :
   case GRN_CONTENT_TSV :
+  case GRN_CONTENT_FASTXML :
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "unsupported input_type");
     // todo
     break;

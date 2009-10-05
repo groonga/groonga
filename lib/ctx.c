@@ -658,11 +658,88 @@ grn_ctx_close(grn_ctx *ctx)
 
 #define EXPR_MISSING "expr_missing"
 
+static void
+put_response_header(grn_ctx *ctx, const char *p, const char *pe,
+                    grn_content_type *ct, const char **name, unsigned int *name_len)
+{
+  const char *pd = NULL;
+  grn_obj *head = ctx->impl->outbuf;
+  for (*name = p; p < pe && *p != '?'; p++) {
+    if (*p == '.') {
+      pd = p;
+    } else if (*p == '/') {
+      *name = p + 1;
+    }
+  }
+  GRN_TEXT_INIT(head, 0);
+  GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
+  GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
+  if (pd && pd < p) {
+    *name_len = pd - *name;
+    switch (*++pd) {
+    case 'c' :
+      if (pd + 3 == p && !memcmp(pd, "css", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    case 'g' :
+      if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/gif\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    case 'h' :
+      if (pd + 4 == p && !memcmp(pd, "html", 4)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/html\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    case 'j' :
+      if (!memcmp(pd, "js", 2)) {
+        if (pd + 2 == p) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+          *ct = GRN_CONTENT_NONE;
+        } else if (pd + 4 == p && !memcmp(pd + 2, "on", 2)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+          *ct = GRN_CONTENT_JSON;
+        }
+      } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/jpeg\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    case 'p' :
+      if (pd + 3 == p && !memcmp(pd, "png", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/png\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    case 't' :
+      if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    case 'x':
+      if (pd + 3 == p && !memcmp(pd, "xml", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+      }
+      break;
+    }
+  } else {
+    *name_len = p - *name;
+    GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+    *ct = GRN_CONTENT_JSON;
+  }
+}
+
 grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   const char *p, *e;
-  grn_obj key, *expr, *val = NULL;
+  grn_obj *expr, *val = NULL;
   if (ctx->impl->qe_next) {
     expr = ctx->impl->qe_next;
     ctx->impl->qe_next = NULL;
@@ -675,20 +752,31 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     val = grn_ctx_pop(ctx);
     grn_expr_clear_vars(ctx, expr);
   } else {
+    grn_obj key;
+    const char *g, *name;
+    unsigned int name_len;
+    grn_content_type ot;
     GRN_TEXT_INIT(&key, 0);
     p = str;
     e = p + str_size;
-    p = grn_text_urldec(ctx, &key, p, e, '?');
-    if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
-      while (p < e) {
+    g = grn_text_urldec(ctx, &key, p, e, '?');
+    put_response_header(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_VALUE(&key) + GRN_TEXT_LEN(&key),
+                        &ot, &name, &name_len);
+    /* TODO: /cgi-bin/じゃなければ、name設定しない */
+    if ((expr = grn_ctx_get(ctx, name, name_len))) {
+      while (g < e) {
         GRN_BULK_REWIND(&key);
-        p = grn_text_cgidec(ctx, &key, p, e, '=');
+        g = grn_text_cgidec(ctx, &key, g, e, '=');
         if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
           val = &key;
         }
         grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-        p = grn_text_cgidec(ctx, val, p, e, '&');
+        g = grn_text_cgidec(ctx, val, g, e, '&');
       }
+      val = grn_expr_get_var(ctx, expr, "output_type", sizeof("output_type") - 1);
+      grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
+      GRN_INT32_SET(ctx, val, (int32_t)ot);
+
       grn_ctx_push(ctx, ctx->impl->outbuf);
       grn_expr_exec(ctx, expr, 1);
       val = grn_ctx_pop(ctx);
