@@ -199,11 +199,16 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
                         &sources);
         p = (grn_obj **)GRN_BULK_HEAD(&sources);
         pe = (grn_obj **)GRN_BULK_CURR(&sources);
-        while (p < pe) {
-          grn_id source_id = grn_obj_id(ctx, *p++);
+        for (; p < pe; p++) {
+          grn_id source_id = grn_obj_id(ctx, *p);
+          if ((*p)->header.type == GRN_ACCESSOR) {
+            /* todo : if "_key" assigned */
+            source_id = grn_obj_id(ctx, type);
+          }
           if (source_id) {
             GRN_UINT32_PUT(ctx, &source_ids, source_id);
           }
+          grn_obj_unlink(ctx, *p);
         }
         if (GRN_BULK_VSIZE(&source_ids)) {
           grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
