@@ -187,66 +187,6 @@ typedef struct {
 } grn_edge;
 
 static void
-put_response_header(grn_ctx *ctx, const char *path, uint32_t path_len)
-{
-  const char *p, *pd, *pe = path + path_len;
-  grn_obj *head = ctx->impl->outbuf;
-  for (p = pd = path, pe = path + path_len; p < pe && *p != '?'; p++) {
-    if (*p == '.') { pd = p; }
-  }
-  GRN_TEXT_INIT(head, 0);
-  GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
-  GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
-  if (*pd == '.') {
-    pd++;
-    if (pd < p) {
-      switch (*pd) {
-      case 'c' :
-        if (pd + 3 == p && !memcmp(pd, "css", 3)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
-          return;
-        }
-        break;
-      case 'g' :
-        if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: image/gif\r\n\r\n");
-          return;
-        }
-        break;
-      case 'h' :
-        if (pd + 4 == p && !memcmp(pd, "html", 4)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/html\r\n\r\n");
-          return;
-        }
-        break;
-      case 'j' :
-        if (pd + 2 == p && !memcmp(pd, "js", 4)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
-          return;
-        } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: image/jpeg\r\n\r\n");
-          return;
-        }
-        break;
-      case 'p' :
-        if (pd + 3 == p && !memcmp(pd, "png", 3)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: image/png\r\n\r\n");
-          return;
-        }
-        break;
-      case 't' :
-        if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
-          return;
-        }
-        break;
-      }
-    }
-  }
-  GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
-}
-
-static void
 do_htreq(grn_ctx *ctx, grn_edge *edge)
 {
   grn_msg *msg = edge->msg;
@@ -273,7 +213,6 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
         }
       }
       if (*path == '/') {
-        put_response_header(ctx, path, p - path);
         grn_ctx_send(ctx, path, p - path, 0);
       }
     }
