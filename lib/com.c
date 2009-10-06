@@ -799,7 +799,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       rest -= ret, p += ret;
     } else {
       if (++retry > RETRY_MAX) {
-        ERR(GRN_RETRY_MAX, "retry max in recv header");
+        ERR(GRN_RETRY_MAX, "retry max in recv header (%d)", com->fd);
         goto exit;
       }
     }
@@ -963,8 +963,6 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
     cs->fd = lfd;
   }
 exit :
-  if (!cs) {
-    grn_sock_close(lfd);
-  }
+  if (!cs) { grn_sock_close(lfd); }
   return ctx->rc;
 }

@@ -586,11 +586,84 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return buf;
 }
 
+static grn_obj *
+proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *buf = args[0];
+  grn_obj *db = ctx->impl->db;
+  if (db) {
+    grn_id id;
+    grn_pat *keys = (grn_pat *)grn_db_keys(db);
+    grn_pat_cursor *pc = grn_pat_cursor_open(ctx, keys, NULL, 0, NULL, 0, 0, 0, 0);
+    while ((id = grn_pat_cursor_next(ctx, pc))) {
+      grn_obj *obj = grn_ctx_at(ctx, id);
+      grn_obj_clear_lock(ctx, obj);
+    }
+    grn_pat_cursor_close(ctx, pc);
+    grn_obj_clear_lock(ctx, db);
+    GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+  }
+  return buf;
+}
+
+static char slev[] = " EACewnid-";
+
+static grn_logger_info info;
+
+static grn_obj *
+proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *buf = args[0];
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 1) {
+    char *p;
+    if (GRN_TEXT_LEN(&vars[0].value) &&
+        (p = strchr(slev, GRN_TEXT_VALUE(&vars[0].value)[0]))) {
+      info.max_level = (int)(p - slev);
+      info.flags = GRN_LOG_TIME|GRN_LOG_MESSAGE;
+      info.func = NULL;
+      info.func_arg = NULL;
+      grn_logger_info_set(ctx, &info);
+      GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "invalid level");
+    }
+  }
+  return buf;
+}
+
+static grn_obj *
+proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *buf = args[0];
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 2) {
+    char *p;
+    if (GRN_TEXT_LEN(&vars[0].value) &&
+        (p = strchr(slev, GRN_TEXT_VALUE(&vars[0].value)[0]))) {
+      GRN_TEXT_PUTC(ctx, &vars[1].value, '\0');
+      GRN_LOG(ctx, (int)(p - slev), "%s", GRN_TEXT_VALUE(&vars[1].value));
+      GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "invalid level");
+    }
+  }
+  return buf;
+}
+
 #define DEF_VAR(v,name_str) {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
   GRN_TEXT_INIT(&(v).value, 0);\
 }
+
+#define DEF_PROC(name, func, nvars, vars)\
+  (grn_proc_create(ctx, (name), (sizeof(name) - 1), NULL,\
+                   GRN_PROC_PROCEDURE, (func), NULL, NULL, (nvars), (vars)))
 
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
@@ -612,32 +685,25 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[13], "drilldown_offset");
   DEF_VAR(vars[14], "drilldown_limit");
   DEF_VAR(vars[15], "output_type");
-  grn_proc_create(ctx, "define_selector", 15, NULL, GRN_PROC_PROCEDURE,
-                  proc_define_selector, NULL, NULL, 16, vars);
-
-  grn_proc_create(ctx, "select", 6, NULL, GRN_PROC_PROCEDURE,
-                  proc_select, NULL, NULL, 15, vars + 1);
+  DEF_PROC("define_selector", proc_define_selector, 16, vars);
+  DEF_PROC("select", proc_select, 15, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "ifexists");
   DEF_VAR(vars[4], "input_type");
-  grn_proc_create(ctx, "load", 4, NULL, GRN_PROC_PROCEDURE,
-                  proc_load, NULL, NULL, 5, vars);
+  DEF_PROC("load", proc_load, 5, vars);
 
   DEF_VAR(vars[0], "output_type");
-  grn_proc_create(ctx, "status", 6, NULL, GRN_PROC_PROCEDURE,
-                  proc_status, NULL, NULL, 1, vars);
+  DEF_PROC("status", proc_status, 1, vars);
 
   DEF_VAR(vars[0], "output_type");
-  grn_proc_create(ctx, "table_list", 10, NULL, GRN_PROC_PROCEDURE,
-                  proc_table_list, NULL, NULL, 1, vars);
+  DEF_PROC("table_list", proc_table_list, 1, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "output_type");
-  grn_proc_create(ctx, "column_list", 11, NULL, GRN_PROC_PROCEDURE,
-                  proc_column_list, NULL, NULL, 2, vars);
+  DEF_PROC("column_list", proc_column_list, 2, vars);
 
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "flags");
@@ -645,8 +711,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "value_type");
   DEF_VAR(vars[4], "default_tokenizer");
   DEF_VAR(vars[5], "output_type");
-  grn_proc_create(ctx, "table_create", 12, NULL, GRN_PROC_PROCEDURE,
-                  proc_table_create, NULL, NULL, 6, vars);
+  DEF_PROC("table_create", proc_table_create, 6, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "name");
@@ -654,23 +719,26 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "type");
   DEF_VAR(vars[4], "source");
   DEF_VAR(vars[5], "output_type");
-  grn_proc_create(ctx, "column_create", 13, NULL, GRN_PROC_PROCEDURE,
-                  proc_column_create, NULL, NULL, 6, vars);
+  DEF_PROC("column_create", proc_column_create, 6, vars);
 
   DEF_VAR(vars[0], "path");
   DEF_VAR(vars[1], "output_type");
-  grn_proc_create(ctx, GRN_EXPR_MISSING_NAME, strlen(GRN_EXPR_MISSING_NAME),
-                  NULL, GRN_PROC_PROCEDURE, proc_missing, NULL, NULL, 2, vars);
+  DEF_PROC(GRN_EXPR_MISSING_NAME, proc_missing, 2, vars);
 
   DEF_VAR(vars[0], "view");
   DEF_VAR(vars[1], "table");
-  grn_proc_create(ctx, "view_add", 8, NULL, GRN_PROC_PROCEDURE,
-                  proc_view_add, NULL, NULL, 2, vars);
+  DEF_PROC("view_add", proc_view_add, 2, vars);
 
-  grn_proc_create(ctx, "quit", 4, NULL, GRN_PROC_PROCEDURE,
-                  proc_quit, NULL, NULL, 0, vars);
-  grn_proc_create(ctx, "shutdown", 8, NULL, GRN_PROC_PROCEDURE,
-                  proc_shutdown, NULL, NULL, 0, vars);
+  DEF_PROC("quit", proc_quit, 0, vars);
+  DEF_PROC("shutdown", proc_shutdown, 0, vars);
+  DEF_PROC("clearlock", proc_clearlock, 0, vars);
+
+  DEF_VAR(vars[0], "level");
+  DEF_PROC("log_level", proc_log_level, 1, vars);
+
+  DEF_VAR(vars[0], "level");
+  DEF_VAR(vars[1], "message");
+  DEF_PROC("log_put", proc_log_put, 2, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", 4, NULL, GRN_PROC_FUNCTION, proc_rand, NULL, NULL, 0, vars);

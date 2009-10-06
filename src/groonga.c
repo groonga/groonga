@@ -847,7 +847,6 @@ worker(void *arg)
       }
     }
     if (ctx->stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
-      if (edge->com->has_sid) { grn_com_close_(ctx, edge->com); }
       grn_com_queue_enque(&grn_gctx, &ctx_old, (grn_com_queue_entry *)edge);
       edge->stat = EDGE_ABORT;
     } else {
