@@ -14,3 +14,21 @@ releases:
     - daijiro <daijiro.mori@gmail.com>
     - created
     - ""
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: 1.0.0
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2009-10-06 07:24:04.165174 Z
+    - daijiro <daijiro.mori@gmail.com>
+    - created
+    - the first major release.
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: 1.1.0
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2009-10-06 07:25:48.624065 Z
+    - daijiro <daijiro.mori@gmail.com>
+    - created
+    - ""

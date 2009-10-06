@@ -186,6 +186,73 @@ typedef struct {
   grn_id id;
 } grn_edge;
 
+
+static void
+put_response_header(grn_ctx *ctx, const char *p, const char *pe)
+{
+  const char *pd = NULL;
+  grn_obj *head = ctx->impl->outbuf;
+  for (; p < pe && *p != '?'; p++) {
+    if (*p == '.') {
+      pd = p;
+    }
+  }
+  GRN_TEXT_SETS(ctx, head, "HTTP/1.1 200 OK\r\n");
+  GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
+  if (pd && pd < p) {
+    switch (*++pd) {
+    case 'c' :
+      if (pd + 3 == p && !memcmp(pd, "css", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
+      }
+      break;
+    case 'f':
+      if (pd + 4 == p && !memcmp(pd, "fxml", 4)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
+      }
+      break;
+    case 'g' :
+      if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/gif\r\n\r\n");
+      }
+      break;
+    case 'h' :
+      if (pd + 4 == p && !memcmp(pd, "html", 4)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/html\r\n\r\n");
+      }
+      break;
+    case 'j' :
+      if (!memcmp(pd, "js", 2)) {
+        if (pd + 2 == p) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+        } else if (pd + 4 == p && !memcmp(pd + 2, "on", 2)) {
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+        }
+      } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/jpeg\r\n\r\n");
+      }
+      break;
+    case 'p' :
+      if (pd + 3 == p && !memcmp(pd, "png", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/png\r\n\r\n");
+      }
+      break;
+    case 't' :
+      if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
+      }
+      break;
+    case 'x':
+      if (pd + 3 == p && !memcmp(pd, "xml", 3)) {
+        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
+      }
+      break;
+    }
+  } else {
+    GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+  }
+}
+
 static void
 do_htreq(grn_ctx *ctx, grn_edge *edge)
 {
@@ -213,6 +280,7 @@ do_htreq(grn_ctx *ctx, grn_edge *edge)
         }
       }
       if (*path == '/') {
+        put_response_header(ctx, path, p);
         grn_ctx_send(ctx, path, p - path, 0);
       }
     }

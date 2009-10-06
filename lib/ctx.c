@@ -682,11 +682,10 @@ grn_get_ctype(grn_obj *var)
 }
 
 static void
-put_response_header(grn_ctx *ctx, const char *p, const char *pe,
-                    grn_content_type *ct, const char **name, unsigned int *name_len)
+get_content_type(grn_ctx *ctx, const char *p, const char *pe,
+                 grn_content_type *ct, const char **name, unsigned int *name_len)
 {
   const char *pd = NULL;
-  grn_obj *head = ctx->impl->outbuf;
   for (*name = p; p < pe && *p != '?'; p++) {
     if (*p == '.') {
       pd = p;
@@ -694,72 +693,58 @@ put_response_header(grn_ctx *ctx, const char *p, const char *pe,
       *name = p + 1;
     }
   }
-  GRN_TEXT_INIT(head, 0);
-  GRN_TEXT_PUTS(ctx, head, "HTTP/1.1 200 OK\r\n");
-  GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
   if (pd && pd < p) {
     *name_len = pd - *name;
     switch (*++pd) {
     case 'c' :
       if (pd + 3 == p && !memcmp(pd, "css", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
       }
       break;
     case 'f':
       if (pd + 4 == p && !memcmp(pd, "fxml", 4)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
         *ct = GRN_CONTENT_FASTXML;
       }
       break;
     case 'g' :
       if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/gif\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
       }
       break;
     case 'h' :
       if (pd + 4 == p && !memcmp(pd, "html", 4)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/html\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
       }
       break;
     case 'j' :
       if (!memcmp(pd, "js", 2)) {
         if (pd + 2 == p) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
           *ct = GRN_CONTENT_NONE;
         } else if (pd + 4 == p && !memcmp(pd + 2, "on", 2)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
           *ct = GRN_CONTENT_JSON;
         }
       } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/jpeg\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
       }
       break;
     case 'p' :
       if (pd + 3 == p && !memcmp(pd, "png", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/png\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
       }
       break;
     case 't' :
       if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
       }
       break;
     case 'x':
       if (pd + 3 == p && !memcmp(pd, "xml", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
         *ct = GRN_CONTENT_NONE;
       }
       break;
     }
   } else {
     *name_len = p - *name;
-    GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
     *ct = GRN_CONTENT_JSON;
   }
 }
@@ -792,8 +777,8 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     p = str;
     e = p + str_size;
     g = grn_text_urldec(ctx, &key, p, e, '?');
-    put_response_header(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_VALUE(&key) + GRN_TEXT_LEN(&key),
-                        &ot, &name, &name_len);
+    get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_VALUE(&key) + GRN_TEXT_LEN(&key),
+                     &ot, &name, &name_len);
     /* todo :
     if ((name_len > 2 && name[0] == 'd' && name[1] == '/') &&
         (expr = grn_ctx_get(ctx, name + 2, name_len - 2)))
