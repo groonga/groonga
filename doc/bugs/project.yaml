@@ -6,15 +6,6 @@ components:
   name: groonga
 releases: 
 - !ditz.rubyforge.org,2008-03-06/release 
-  name: 0.1.2
-  status: :unreleased
-  release_time: 
-  log_events: 
-  - - 2009-08-28 22:16:55.231603 Z
-    - daijiro <daijiro.mori@gmail.com>
-    - created
-    - ""
-- !ditz.rubyforge.org,2008-03-06/release 
   name: 1.0.0
   status: :unreleased
   release_time: 

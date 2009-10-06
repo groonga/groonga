@@ -7,7 +7,7 @@ desc: |-
   This may be a bug.
 type: :bugfix
 component: groonga
-release: 
+release: 1.0.0
 reporter: Tasuku SUENAGA <tasuku-s-github@titech.ac>
 status: :unstarted
 disposition: 
@@ -19,4 +19,8 @@ log_events:
 - - 2009-09-16 06:55:29.975302 Z
   - Tasuku SUENAGA <tasuku-s-github@titech.ac>
   - created
+  - ""
+- - 2009-10-06 07:47:04.404349 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - assigned to release 1.0.0 from unassigned
   - ""

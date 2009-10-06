@@ -3,7 +3,7 @@ title: grn_expr_parse numeric value handling
 desc: in grn_expr_parse(), numeric values are parsed by grn_atoi() which is not robust way.
 type: :bugfix
 component: groonga
-release: 
+release: 1.0.0
 reporter: daijiro <daijiro.mori@gmail.com>
 status: :unstarted
 disposition: 
@@ -15,4 +15,8 @@ log_events:
 - - 2009-09-28 06:33:22.201453 Z
   - daijiro <daijiro.mori@gmail.com>
   - created
+  - ""
+- - 2009-10-06 07:47:21.998282 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - assigned to release 1.0.0 from unassigned
   - ""
