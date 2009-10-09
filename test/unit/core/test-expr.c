@@ -1273,6 +1273,24 @@ test_expr_snip_without_tags(void)
     grn_test_assert(grn_snip_exec(&context, snip, text, strlen(text),
                                   &n_results, &max_tagged_len));
 
+    cut_assert_equal_uint(2, n_results);
+    cut_assert_equal_uint(101, max_tagged_len);
+    result = g_new(gchar, max_tagged_len);
+    cut_take_memory(result);
+
+    grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
+    cut_assert_equal_string("groonga is an open-source fulltext "
+                            "search engine and column store.\n"
+                            "It lets you write high-performanc",
+                            result);
+    cut_assert_equal_uint(100, result_len);
+
+    grn_test_assert(grn_snip_get_result(&context, snip, 1, result, &result_len));
+    cut_assert_equal_string("e applications that requires "
+                            "fulltext search.",
+                            result);
+    cut_assert_equal_uint(45, result_len);
+
     grn_test_assert(grn_snip_close(&context, snip));
   }
 
