@@ -1177,7 +1177,7 @@ test_expr_snip(void)
 
   {
     grn_snip *snip;
-    int flags;
+    int flags = 0;
     unsigned int width, max_results;
     const char *open_tags[] = {"[[", "<"};
     const char *close_tags[] = {"]]", ">"};
@@ -1249,7 +1249,7 @@ test_expr_snip_without_tags(void)
 
   {
     grn_snip *snip;
-    int flags;
+    int flags = 0;
     unsigned int width, max_results;
     unsigned int n_results;
     unsigned int max_tagged_len;
