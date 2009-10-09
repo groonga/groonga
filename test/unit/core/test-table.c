@@ -170,82 +170,83 @@ test_temporary_table_add(gpointer data)
   cut_assert_equal_int(1, grn_table_size(&context, table));
 }
 
-typedef struct _ArraySortTestData
+typedef struct _grn_sort_test_data
 {
   int offset, limit;
-  gint32 expected_values[1000];
-  int n_expected_values;
-} ArraySortTestData;
+  GList *expected_values;
+} grn_sort_test_data;
 
+static GList *make_glist_from_array(const gint *value, guint length)
+{
+  GList *list = NULL;
+  guint i;
+  for (i = 0; i < length; ++i)
+    list = g_list_prepend(list, GINT_TO_POINTER(value[i]));
 
-static ArraySortTestData sort_data_no_offset_no_limit = {
-  0, -1,
-  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-   21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-   40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-   59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77,
-   78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
-   97, 98, 99}, 100
-};
+  return g_list_reverse(list);
+}
 
-static ArraySortTestData sort_data_offset = {
-  20, -1,
-  {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-   39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
-   58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
-   77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-   96, 97, 98, 99}, 80
-};
+static grn_sort_test_data *
+sort_test_data_new(int offset, int limit,
+                   gint32 expected_values[], int n_expected_values)
+{
+  grn_sort_test_data *test_data;
 
-static ArraySortTestData sort_data_limit = {
-  0, 20,
-  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}, 20
-};
+  test_data = g_new0(grn_sort_test_data, 1);
+  test_data->offset = offset;
+  test_data->limit = limit;
+  test_data->expected_values = make_glist_from_array(expected_values,
+                                                     n_expected_values);
 
-static ArraySortTestData sort_data_offset_limit = {
-  20, 20,
-  {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-   39}, 20
-};
+  return test_data;
+}
+
+static void
+sort_test_data_free(grn_sort_test_data *test_data)
+{
+  if (test_data->expected_values)
+    g_list_free(test_data->expected_values);
+  g_free(test_data);
+}
 
 void
-data_array_sort_offset_and_limit(void)
+data_array_sort(void)
 {
-#define ADD_DATA(label, p)                                          \
-  cut_add_data(label, p, NULL, NULL)
+#define ADD_DATA(label, test_data)                                          \
+  cut_add_data(label, test_data, sort_test_data_free, NULL)
 
-  ADD_DATA("no offset, no limit", &sort_data_no_offset_no_limit);
-  ADD_DATA("offset", &sort_data_offset);
-  ADD_DATA("limit", &sort_data_limit);
-  ADD_DATA("offset, limit", &sort_data_offset_limit);
+  gint32 sorted_values[] = {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+  };
+
+  ADD_DATA("no offset, no limit", sort_test_data_new(0, -1, &sorted_values[0], 20));
+  ADD_DATA("offset", sort_test_data_new(10, -1, &sorted_values[10], 10));
+  ADD_DATA("limit", sort_test_data_new(0, 10, &sorted_values[0], 10));
+  ADD_DATA("offset, limit", sort_test_data_new(5, 10, &sorted_values[5], 10));
 
 #undef ADD_DATA
 }
 
 void
-test_array_sort_offset_and_limit(ArraySortTestData *data)
+test_array_sort(gconstpointer data)
 {
+  const grn_sort_test_data *test_data = data;
   const gint32 values[] = {
-    80, 37, 1, 95, 29, 21, 27, 11, 70, 0, 73, 79, 16, 17, 23, 43, 20, 55, 15,
-    72, 92, 69, 74, 82, 8, 41, 65, 57, 39, 75, 46, 83, 4, 67, 48, 32, 25, 62,
-    40, 30, 94, 99, 98, 91, 61, 5, 7, 31, 33, 13, 38, 36, 34, 24, 59, 10, 45,
-    63, 22, 93, 85, 58, 19, 44, 53, 6, 3, 18, 78, 49, 90, 47, 28, 54, 56, 51,
-    71, 66, 2, 52, 77, 64, 76, 35, 97, 68, 42, 84, 86, 14, 87, 96, 50, 26, 9,
-    60, 88, 12, 89, 81
+    5, 6, 18, 9, 0, 4, 13, 12, 8, 14, 19, 11, 7, 3, 1, 10, 15, 2, 17, 16
   };
   const int n_values = sizeof(values)/sizeof(values[0]);
+  const gchar column_name[] = "sample_column";
+  const int n_keys = 1;
+  grn_table_sort_key keys[n_keys];
 
   grn_obj *grn_type_int32 = grn_ctx_get(&context, "Int32", strlen("Int32"));
-  grn_obj *table, *column;
-  const gchar column_name[] = "sample_column";
-
-  grn_table_sort_key keys[1];
-  const int n_keys = 1;
-
-  int i;
-  grn_obj *result;
-  int n_results;
+  grn_obj *table, *column, *result;
   grn_table_cursor *cursor;
+  int n_results;
+  guint i;
+
+  guint n_expected_values;
+  GList *sorted_values = NULL;
 
   table = grn_table_create(&context, NULL, 0, NULL,
                            GRN_OBJ_TABLE_NO_KEY,
@@ -276,12 +277,12 @@ test_array_sort_offset_and_limit(ArraySortTestData *data)
 
   result = grn_table_create(&context, NULL, 0, NULL, GRN_TABLE_NO_KEY,
                             NULL, table);
-  n_results = grn_table_sort(&context, table, data->offset, data->limit,
+  n_results = grn_table_sort(&context, table, test_data->offset, test_data->limit,
                              result, keys, n_keys);
-  cut_assert_equal_int(data->n_expected_values, n_results);
-  cut_assert_equal_int(data->n_expected_values, grn_table_size(&context, result));
+  n_expected_values = g_list_length(test_data->expected_values);
+  cut_assert_equal_int(n_expected_values, n_results);
+  cut_assert_equal_int(n_expected_values, grn_table_size(&context, result));
 
-  i = 0;
   cursor = grn_table_cursor_open(&context, result, NULL, 0, NULL, 0,
                                  0, 0, GRN_CURSOR_ASCENDING);
   while (grn_table_cursor_next(&context, cursor) != GRN_ID_NIL) {
@@ -294,11 +295,13 @@ test_array_sort_offset_and_limit(ArraySortTestData *data)
 
     GRN_INT32_INIT(&record_value, 0);
     grn_obj_get_value(&context, column, *id, &record_value);
-    cut_assert_equal_int(data->expected_values[i++],
-                         GRN_INT32_VALUE(&record_value));
+    sorted_values = g_list_append(sorted_values,
+                                  GINT_TO_POINTER(GRN_INT32_VALUE(&record_value)));
     GRN_OBJ_FIN(&context, &record_value);
   }
-  cut_assert_equal_int(data->n_expected_values, i);
+  gcut_assert_equal_list_int(test_data->expected_values, sorted_values);
+  g_list_free(sorted_values);
+
   grn_table_cursor_close(&context, cursor);
   grn_obj_close(&context, result);
 }
