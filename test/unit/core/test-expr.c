@@ -41,7 +41,7 @@ void test_table_select_select_search(void);
 void test_table_select_match(void);
 void test_table_select_match_equal(void);
 
-void test_expr_parse(void);
+void test_expr_parse(gconstpointer data);
 void test_expr_set_value(void);
 void test_expr_set_value_with_implicit_variable_reference(void);
 void test_expr_set_value_with_query(void);
@@ -816,9 +816,73 @@ test_table_select_match_equal(void)
 #define PARSE(expr,str,level) \
   grn_expr_parse(&context, (expr), (str), strlen(str), body, GRN_OP_MATCH, GRN_OP_AND, level)
 
-void
-test_expr_parse(void)
+static void
+grn_assert_expr(gchar *inspected, grn_obj *expr)
 {
+  grn_obj strbuf;
+  GRN_TEXT_INIT(&strbuf, 0);
+  grn_expr_inspect(&context, &strbuf, expr);
+  GRN_TEXT_PUTC(&context, &strbuf, '\0');
+  cut_assert_equal_string(inspected, GRN_TEXT_VALUE(&strbuf));
+  GRN_OBJ_FIN(&context, &strbuf);
+}
+
+typedef struct _grn_expr_parse_test_data {
+  gchar *expr1, *expr2, *expr3;
+  int parse_level1, parse_level2, parse_level3;
+} grn_expr_parse_test_data;
+
+static grn_expr_parse_test_data *
+grn_expr_parse_test_data_new(gchar *expr1, int parse_level1,
+                             gchar *expr2, int parse_level2,
+                             gchar *expr3, int parse_level3)
+{
+  grn_expr_parse_test_data *test_data;
+
+  test_data = g_new0(grn_expr_parse_test_data, 1);
+  test_data->expr1 = expr1;
+  test_data->expr2 = expr2;
+  test_data->expr3 = expr3;
+  test_data->parse_level1 = parse_level1;
+  test_data->parse_level2 = parse_level2;
+  test_data->parse_level3 = parse_level3;
+
+  return test_data;
+}
+
+static void
+grn_expr_parse_test_data_free(grn_expr_parse_test_data *test_data)
+{
+  g_free(test_data->expr1);
+  g_free(test_data->expr2);
+  g_free(test_data->expr3);
+  g_free(test_data);
+}
+
+void
+data_expr_parse(void)
+{
+  cut_add_data("column query parse level",
+               grn_expr_parse_test_data_new(g_strdup("hoge + moge"), 1,
+                                            g_strdup("poyo"), 1,
+                                            g_strdup("size:14"), 2),
+               grn_expr_parse_test_data_free,
+               "table query parse level",
+               grn_expr_parse_test_data_new(g_strdup("body:%hoge + body:%moge"), 2,
+                                            g_strdup("body:%poyo"), 2,
+                                            g_strdup("size:14"), 2),
+               grn_expr_parse_test_data_free,
+               "expression parse level",
+               grn_expr_parse_test_data_new(g_strdup("body@\"hoge\" && body@\"moge\""), 4,
+                                            g_strdup("body@\"poyo\""), 4,
+                                            g_strdup("size == 14"), 4),
+               grn_expr_parse_test_data_free);
+}
+
+void
+test_expr_parse(gconstpointer data)
+{
+  const grn_expr_parse_test_data *test_data = data;
   grn_obj *cond, *v, *res, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
@@ -829,9 +893,12 @@ test_expr_parse(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   cut_assert_not_null(v);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-  PARSE(cond, "hoge + moge", 1);
-  PARSE(cond, "poyo", 1);
+  PARSE(cond, test_data->expr1, test_data->parse_level1);
+  PARSE(cond, test_data->expr2, test_data->parse_level2);
   grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
+  grn_assert_expr("noname(?0:\"\"){body GET_VALUE \"hoge\" MATCH "
+                                  "body GET_VALUE \"moge\" MATCH AND "
+                                  "body GET_VALUE \"poyo\" MATCH AND}", cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
@@ -846,7 +913,8 @@ test_expr_parse(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   cut_assert_not_null(v);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-  PARSE(cond, "size:14", 2);
+  PARSE(cond, test_data->expr3, test_data->parse_level3);
+  grn_assert_expr("noname(?0:\"\"){size GET_VALUE 14 EQUAL}", cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
