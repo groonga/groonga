@@ -187,6 +187,7 @@ struct _grn_ctx_impl {
   void *parser;
 
   /* loader portion */
+  grn_edge *edge;
   grn_loader loader;
 
   /* ql portion */

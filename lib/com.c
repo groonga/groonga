@@ -966,3 +966,66 @@ exit :
   if (!cs) { grn_sock_close(lfd); }
   return ctx->rc;
 }
+
+grn_hash *grn_edges;
+void (*grn_dispatcher)(grn_ctx *ctx, grn_edge *edge);
+
+void
+grn_edges_init(grn_ctx *ctx, void (*dispatcher)(grn_ctx *ctx, grn_edge *edge))
+{
+  grn_edges = grn_hash_create(ctx, NULL, sizeof(grn_com_addr), sizeof(grn_edge), 0);
+  grn_dispatcher = dispatcher;
+}
+
+void
+grn_edges_fin(grn_ctx *ctx)
+{
+  grn_hash_close(ctx, grn_edges);
+}
+
+grn_edge *
+grn_edges_add(grn_ctx *ctx, grn_com_addr *addr, int *added)
+{
+  if (grn_io_lock(ctx, grn_edges->io, 10000000)) {
+    return NULL;
+  } else {
+    grn_edge *edge;
+    grn_id id = grn_hash_add(ctx, grn_edges, addr, sizeof(grn_com_addr),
+                             (void **)&edge, added);
+    grn_io_unlock(grn_edges->io);
+    if (id) { edge->id = id; }
+    return edge;
+  }
+}
+
+void
+grn_edges_delete(grn_ctx *ctx, grn_edge *edge)
+{
+  if (!grn_io_lock(ctx, grn_edges->io, 10000000)) {
+    grn_hash_delete_by_id(ctx, grn_edges, edge->id, NULL);
+    grn_io_unlock(grn_edges->io);
+  }
+}
+
+grn_edge *
+grn_edges_add_communicator(grn_ctx *ctx, grn_com_addr *addr)
+{
+  int added;
+  grn_edge *edge = grn_edges_add(ctx, addr, &added);
+  if (added) {
+    grn_ctx_init(&edge->ctx, 0);
+    GRN_COM_QUEUE_INIT(&edge->recv_new);
+    GRN_COM_QUEUE_INIT(&edge->send_old);
+    edge->com = NULL;
+    edge->stat = 0 /*EDGE_IDLE*/;
+    edge->flags = GRN_EDGE_COMMUNICATOR;
+  }
+  return edge;
+}
+
+void
+grn_edge_dispatch(grn_ctx *ctx, grn_edge *edge, grn_obj *msg)
+{
+  grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
+  grn_dispatcher(ctx, edge);
+}

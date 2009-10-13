@@ -9972,6 +9972,8 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
   }
 }
 
+grn_com_addr *addr;
+
 grn_rc
 grn_load(grn_ctx *ctx, grn_content_type input_type,
          const char *table, unsigned table_len,
@@ -9986,6 +9988,14 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
   }
   GRN_API_ENTER;
   loader = &ctx->impl->loader;
+
+  if (ctx->impl->edge) {
+    grn_edge *edge = grn_edges_add_communicator(ctx, addr);
+    grn_obj *msg = grn_msg_open(ctx, edge->com, &ctx->impl->edge->send_old);
+    /* build msg */
+    grn_edge_dispatch(ctx, edge, msg);
+  }
+
   switch (input_type) {
   case GRN_CONTENT_JSON :
     if (table && table_len) {

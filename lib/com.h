@@ -219,6 +219,32 @@ grn_rc grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
                             uint16_t status, uint32_t key_size, uint8_t extra_size);
 grn_rc grn_msg_close(grn_ctx *ctx, grn_obj *msg);
 
+/******* grn_edge ********/
+
+#define GRN_EDGE_WORKER       0
+#define GRN_EDGE_COMMUNICATOR 1
+
+typedef struct {
+  grn_com_queue_entry eq;
+  grn_ctx ctx;
+  grn_com_queue recv_new;
+  grn_com_queue send_old;
+  grn_com *com;
+  grn_com_addr *addr;
+  grn_msg *msg;
+  uint8_t stat;
+  uint8_t flags;
+  grn_id id;
+} grn_edge;
+
+extern grn_hash *grn_edges;
+void grn_edges_init(grn_ctx *ctx, void (*dispatcher)(grn_ctx *ctx, grn_edge *edge));
+void grn_edges_fin(grn_ctx *ctx);
+grn_edge *grn_edges_add(grn_ctx *ctx, grn_com_addr *addr, int *added);
+grn_edge *grn_edges_add_communicator(grn_ctx *ctx, grn_com_addr *addr);
+void grn_edges_delete(grn_ctx *ctx, grn_edge *edge);
+void grn_edge_dispatch(grn_ctx *ctx, grn_edge *edge, grn_obj *msg);
+
 #ifdef __cplusplus
 }
 #endif

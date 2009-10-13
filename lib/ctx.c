@@ -273,6 +273,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
   GRN_TEXT_INIT(&ctx->impl->subbuf, 0);
+  ctx->impl->edge = NULL;
   grn_loader_init(&ctx->impl->loader);
 }
 
@@ -777,8 +778,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     p = str;
     e = p + str_size;
     g = grn_text_urldec(ctx, &key, p, e, '?');
-    get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_TEXT_VALUE(&key) + GRN_TEXT_LEN(&key),
-                     &ot, &name, &name_len);
+    get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &name, &name_len);
     /* todo :
     if ((name_len > 2 && name[0] == 'd' && name[1] == '/') &&
         (expr = grn_ctx_get(ctx, name + 2, name_len - 2)))

@@ -174,19 +174,6 @@ exit :
 
 /* server */
 
-typedef struct {
-  grn_com_queue_entry eq;
-  grn_ctx ctx;
-  grn_com_queue recv_new;
-  grn_com_queue send_old;
-  grn_com *com;
-  grn_com_addr *addr;
-  grn_msg *msg;
-  uint8_t stat;
-  grn_id id;
-} grn_edge;
-
-
 static void
 put_response_header(grn_ctx *ctx, const char *p, const char *pe)
 {
@@ -857,7 +844,6 @@ enum {
   EDGE_ABORT = 0x03,
 };
 
-static grn_hash *edges;
 static grn_com_queue ctx_new;
 static grn_com_queue ctx_old;
 static grn_mutex q_mutex;
@@ -886,6 +872,7 @@ worker(void *arg)
       while (!GRN_COM_QUEUE_EMPTYP(&edge->recv_new)) {
         grn_obj *msg;
         MUTEX_UNLOCK(q_mutex);
+        /* if (edge->flags == GRN_EDGE_WORKER) */
         while (ctx->stat != GRN_CTX_QUIT &&
                (edge->msg = (grn_msg *)grn_com_queue_deque(ctx, &edge->recv_new))) {
           grn_com_header *header = &edge->msg->header;
@@ -946,6 +933,23 @@ output(grn_ctx *ctx, int flags, void *arg)
 }
 
 static void
+dispatcher(grn_ctx *ctx, grn_edge *edge)
+{
+  MUTEX_LOCK(q_mutex);
+  if (edge->stat == EDGE_IDLE) {
+    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
+    edge->stat = EDGE_WAIT;
+    if (!nfthreads && nthreads < max_nfthreads) {
+      grn_thread thread;
+      nthreads++;
+      if (THREAD_CREATE(thread, worker, NULL)) { SERR("pthread_create"); }
+    }
+    COND_SIGNAL(q_cond);
+  }
+  MUTEX_UNLOCK(q_mutex);
+}
+
+static void
 msg_handler(grn_ctx *ctx, grn_obj *msg)
 {
   grn_edge *edge;
@@ -966,8 +970,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
     grn_msg_close(ctx, msg);
   } else {
     int added;
-    grn_id id = grn_hash_add(ctx, edges, &((grn_msg *)msg)->edge_id, sizeof(grn_com_addr),
-                             (void **)&edge, &added);
+    edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
     if (added) {
       grn_ctx_init(&edge->ctx, (useql ? GRN_CTX_USE_QL : 0));
       GRN_COM_QUEUE_INIT(&edge->recv_new);
@@ -978,25 +981,14 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
       grn_obj_close(&edge->ctx, edge->ctx.impl->outbuf);
       edge->ctx.impl->outbuf = grn_msg_open(&edge->ctx, com, &edge->send_old);
       edge->com = com;
-      edge->id = id;
       edge->stat = EDGE_IDLE;
+      edge->flags = GRN_EDGE_WORKER;
     }
     if (edge->ctx.stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
       grn_msg_close(ctx, msg);
     } else {
       grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
-      MUTEX_LOCK(q_mutex);
-      if (edge->stat == EDGE_IDLE) {
-        grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
-        edge->stat = EDGE_WAIT;
-        if (!nfthreads && nthreads < max_nfthreads) {
-          grn_thread thread;
-          nthreads++;
-          if (THREAD_CREATE(thread, worker, NULL)) { SERR("pthread_create"); }
-        }
-        COND_SIGNAL(q_cond);
-      }
-      MUTEX_UNLOCK(q_mutex);
+      dispatcher(ctx, edge);
     }
   }
 }
@@ -1039,7 +1031,7 @@ server(char *path)
         return rc;
       }
       ev.opaque = db;
-      edges = grn_hash_create(ctx, NULL, sizeof(grn_com_addr), sizeof(grn_edge), 0);
+      grn_edges_init(ctx, dispatcher);
       if (!grn_com_sopen(ctx, &ev, port, msg_handler, he)) {
         while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
           grn_edge *edge;
@@ -1055,7 +1047,7 @@ server(char *path)
             if (edge->com->has_sid && edge->com->opaque == edge) {
               grn_com_close(ctx, edge->com);
             }
-            grn_hash_delete_by_id(ctx, edges, edge->id, NULL);
+            grn_edges_delete(ctx, edge);
           }
           // todo : log stat
         }
@@ -1067,7 +1059,7 @@ server(char *path)
         }
         {
           grn_edge *edge;
-          GRN_HASH_EACH(ctx, edges, id, NULL, NULL, &edge, {
+          GRN_HASH_EACH(ctx, grn_edges, id, NULL, NULL, &edge, {
               grn_obj *obj;
             while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
               grn_msg_close(&edge->ctx, obj);
@@ -1079,7 +1071,7 @@ server(char *path)
             if (edge->com->has_sid) {
               grn_com_close(ctx, edge->com);
             }
-            grn_hash_delete_by_id(ctx, edges, edge->id, NULL);
+            grn_edges_delete(ctx, edge);
           });
         }
         {
@@ -1090,7 +1082,7 @@ server(char *path)
       } else {
         fprintf(stderr, "grn_com_gqtp_sopen failed (%d)\n", port);
       }
-      grn_hash_close(ctx, edges);
+      grn_edges_fin(ctx);
       grn_db_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
