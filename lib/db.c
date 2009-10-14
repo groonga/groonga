@@ -5699,7 +5699,7 @@ int
 grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                grn_obj *result, grn_table_sort_key *keys, int n_keys)
 {
-  int n, r, i = 0;
+  int n, e, i = 0;
   sort_entry *array, *ep;
   GRN_API_ENTER;
   if (!n_keys || !keys) {
@@ -5724,12 +5724,12 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     if (offset < 0) { offset = 0; }
   }
   if (offset >= n) { goto exit; }
-  r = n - offset;
   if (limit < 0) {
-    limit += r + 1;
+    limit += n + 1;
   }
-  if (limit <= 0) { goto exit; }
-  if (limit > r) { limit = r; }
+  e = limit + offset;
+  if (e <= 0) { goto exit; }
+  if (e > n) { e = n; }
   {
     int j;
     grn_table_sort_key *kp;
@@ -5804,15 +5804,15 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     goto exit;
   }
   if ((ep = pack(ctx, table, array, array + n - 1, keys, n_keys))) {
-    intptr_t rest = limit - 1 - (ep - array);
-    _sort(ctx, array, ep - 1, limit, keys, n_keys);
+    intptr_t rest = e - 1 - (ep - array);
+    _sort(ctx, array, ep - 1, e, keys, n_keys);
     if (rest > 0 ) {
       _sort(ctx, ep + 1, array + n - 1, (int)rest, keys, n_keys);
     }
   }
   {
     grn_id *v;
-    for (i = 0, ep = array + offset; i < limit; i++, ep++) {
+    for (i = 0, ep = array + offset; i < limit && ep < array + n; i++, ep++) {
       if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
       if (!(*v = ep->id)) { break; }
     }
@@ -10832,12 +10832,22 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
         }
         GRN_FREE(si);
       }
-      for (i = 0;; i = (i + 1) % n_tags) {
-        grn_obj *q;
-        GRN_PTR_POP(&snip_stack, q);
-        if (!q) { break; }
-        grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
-                          opentags[i], opentag_lens[i], closetags[i], closetag_lens[i]);
+      if (n_tags) {
+        for (i = 0;; i = (i + 1) % n_tags) {
+          grn_obj *q;
+          GRN_PTR_POP(&snip_stack, q);
+          if (!q) { break; }
+          grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
+                            opentags[i], opentag_lens[i], closetags[i], closetag_lens[i]);
+        }
+      } else {
+        for (;;) {
+          grn_obj *q;
+          GRN_PTR_POP(&snip_stack, q);
+          if (!q) { break; }
+          grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
+                            NULL, 0, NULL, 0);
+        }
       }
       GRN_FREE(sis);
       GRN_OBJ_FIN(ctx, &but_stack);
