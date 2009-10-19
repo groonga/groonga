@@ -5540,14 +5540,14 @@ part(grn_ctx *ctx, sort_entry *b, sort_entry *e, grn_table_sort_key *keys, int n
 }
 
 static void
-_sort(grn_ctx *ctx, sort_entry *head, sort_entry *tail, int limit,
+_sort(grn_ctx *ctx, sort_entry *head, sort_entry *tail, int from, int to,
       grn_table_sort_key *keys, int n_keys)
 {
   sort_entry *c;
   if (head < tail && (c = part(ctx, head, tail, keys, n_keys))) {
-    intptr_t rest = limit - 1 - (c - head);
-    _sort(ctx, head, c - 1, limit, keys, n_keys);
-    if (rest > 0) { _sort(ctx, c + 1, tail, (int)rest, keys, n_keys); }
+    intptr_t m = c - head + 1;
+    if (from < m - 1) { _sort(ctx, head, c - 1, from, to, keys, n_keys); }
+    if (m < to) { _sort(ctx, c + 1, tail, from - m, to - m, keys, n_keys); }
   }
 }
 
@@ -5804,17 +5804,15 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     goto exit;
   }
   if ((ep = pack(ctx, table, array, array + n - 1, keys, n_keys))) {
-    intptr_t rest = e - 1 - (ep - array);
-    _sort(ctx, array, ep - 1, e, keys, n_keys);
-    if (rest > 0 ) {
-      _sort(ctx, ep + 1, array + n - 1, (int)rest, keys, n_keys);
-    }
+    intptr_t m = ep - array + 1;
+    if (offset < m - 1) { _sort(ctx, array, ep - 1, offset, e, keys, n_keys); }
+    if (m < e) { _sort(ctx, ep + 1, array + n - 1, offset - m, e - m, keys, n_keys); }
   }
   {
     grn_id *v;
     for (i = 0, ep = array + offset; i < limit && ep < array + n; i++, ep++) {
       if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
-      if (!(*v = ep->id)) { break; }
+      *v = ep->id;
     }
     GRN_FREE(array);
   }
