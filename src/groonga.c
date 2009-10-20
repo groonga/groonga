@@ -128,41 +128,55 @@ do_alone(int argc, char **argv)
 } while (0)
 
 static int
-do_client(char *hostname)
+recvput(grn_ctx *ctx)
+{
+  int flags;
+  char *str;
+  unsigned int str_len;
+  do {
+    grn_ctx_recv(ctx, &str, &str_len, &flags);
+    if (ctx->rc) {
+      fprintf(stderr, "grn_ctx_recv failed\n");
+      return -1;
+    }
+    if (str_len) {
+      fwrite(str, 1, str_len, stdout);
+      putchar('\n');
+      fflush(stdout);
+    }
+  } while ((flags & GRN_CTX_MORE));
+  return 0;
+}
+
+static int
+do_client(int argc, char **argv)
 {
   int rc = -1;
   grn_ctx ctx_, *ctx = &ctx_;
+  char *hostname = DEFAULT_DEST;
+  if (argc > 0 && argv) { hostname = *argv++; argc--; }
   grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
   grn_timeval_now(ctx, &starttime);
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {
-    char *buf = GRN_MALLOC(BUFSIZE);
-    if (buf) {
-      if (batchmode) { BATCHMODE(ctx); }
-      while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
-        int flags;
-        char *str;
-        unsigned int str_len;
-        uint32_t size = strlen(buf) - 1;
-        grn_ctx_send(ctx, buf, size, 0);
-        if (ctx->rc) { break; }
-        do {
-          grn_ctx_recv(ctx, &str, &str_len, &flags);
-          if (ctx->rc) {
-            fprintf(stderr, "grn_ctx_recv failed\n");
-            goto exit;
-          }
-          if (str_len) {
-            fwrite(str, 1, str_len, stdout);
-            putchar('\n');
-            fflush(stdout);
-          }
-        } while ((flags & GRN_CTX_MORE));
-        if (ctx->stat == GRN_CTX_QUIT) { break; }
+    if (!argc) {
+      char *buf = GRN_MALLOC(BUFSIZE);
+      if (buf) {
+        if (batchmode) { BATCHMODE(ctx); }
+        while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
+          uint32_t size = strlen(buf) - 1;
+          grn_ctx_send(ctx, buf, size, 0);
+          if (ctx->rc) { break; }
+          if (recvput(ctx)) { goto exit; }
+          if (ctx->stat == GRN_CTX_QUIT) { break; }
+        }
+        GRN_FREE(buf);
+        rc = 0;
+      } else {
+        fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
       }
-      GRN_FREE(buf);
-      rc = 0;
     } else {
-      fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
+      grn_ctx_sendv(ctx, argc, argv, 0);
+      if (recvput(ctx)) { goto exit; }
     }
   } else {
     fprintf(stderr, "grn_ctx_connect failed (%s:%d)\n", hostname, port);
@@ -1231,13 +1245,13 @@ main(int argc, char **argv)
     r = do_alone(argc - i, argv + i);
     break;
   case mode_client :
-    r = do_client(argc <= i ? DEFAULT_DEST : argv[i]);
+    r = do_client(argc - i, argv + i);
     break;
   case mode_daemon :
-    r = do_daemon(argc <= i ? NULL : argv[i]);
+    r = do_daemon(argc > i ? argv[i] : NULL);
     break;
   case mode_server :
-    r = server(argc <= i ? NULL : argv[i]);
+    r = server(argc > i ? argv[i] : NULL);
     break;
   default :
     usage(); r = -1;
