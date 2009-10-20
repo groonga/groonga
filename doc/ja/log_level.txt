@@ -1,0 +1,5 @@
+groonga manual(v0.1.4)
+                                 log_level (組込コマンド)
+
+   ログ出力レベルを設定します。
+

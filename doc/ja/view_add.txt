@@ -1,0 +1,4 @@
+groonga manual(v0.1.4)
+                                  view_add (組込コマンド)
+
+   VIEW型のテーブルに要素となるテーブルを定義します。

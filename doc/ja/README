@@ -301,14 +301,23 @@ grn_ctxが同一のgrn_dbを使用することができます。あるgrn_ctxを
 は値の範囲を決めるオブジェクトです。grn_typeは、数値や文字列などのデータ型を表
 すオブジェクトです。grn_dbを作成すると、以下のgrn_typeが自動的に定義されます。
 
- ・ <int>: 32bitの符号付き整数
- ・ <uint>: 32bitの符号無し整数
- ・ <int64>: 64bitの符号付き整数
- ・ <float>: 倍精度(64bit)の浮動小数点数
- ・ <time>: 標準Cライブラリのtime_t型で表現できる時刻
- ・ <shorttext>: 4KByte以下の文字列
- ・ <text>: 64Kbyte以下の文字列
- ・ <longtext>: 4GByte以下の文字列
+  Object
+  Bool
+  Int8
+  UInt8
+  Int16
+  UInt16
+  Int32
+  UInt32
+  Int64
+  UInt64
+  Float
+  Time
+  ShortText
+  Text
+  LongText
+  TokyoGeoPoint
+  WGS84GeoPoint
 
 上記のgrn_typeの名前は、適宜optionを指定することによって変更することもできま
 す。
@@ -417,11 +426,11 @@ grn_procは、tableやcolumnに対する参照/更新などの幾つかの契機
 クンに分解するトークナイザもgrn_procとして定義されます。grn_dbを作成すると、以
 下のトークナイザprocが自動的に定義されます。
 
- ・ <token:delimit>: 空白で区切られた文字列をトークンとする
- ・ <token:unigram>: unigram(1文字を1トークンとする)
- ・ <token:bigram>: bigram(2文字の文字列要素をトークンとする)
- ・ <token:trigram>: trigram(3文字の文字列要素をトークンとする)
- ・ <token:mecab>: 形態素解析器mecabで解析した形態素をトークンとする
+ ・ TokenDelimit : 空白で区切られた文字列をトークンとする
+ ・ TokenUnigram : unigram(1文字を1トークンとする)
+ ・ TokenBigram : bigram(2文字の文字列要素をトークンとする)
+ ・ TokenTrigram : trigram(3文字の文字列要素をトークンとする)
+ ・ TokenMecab : 形態素解析器mecabで解析した形態素をトークンとする
 
 これ以外にも、ユーザが定義した関数をgrn_procとして組み込むことができます。ユー
 ザがgrn_procを定義する場合には、init, next, finという3つの契機で呼ばれる関数を

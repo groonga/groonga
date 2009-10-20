@@ -1,0 +1,5 @@
+groonga manual(v0.1.4)
+                                  log_put (組込コマンド)
+
+   ログ出力を行います。
+

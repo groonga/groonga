@@ -1,0 +1,4 @@
+groonga manual(v0.1.4)
+                                  status (組込コマンド)
+
+   groongaプロセスの状態を表示します。

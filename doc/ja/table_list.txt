@@ -1,0 +1,4 @@
+groonga manual(v0.1.4)
+                                  table_list (組込コマンド)
+
+   DBに定義されているテーブルのリストを表示します。

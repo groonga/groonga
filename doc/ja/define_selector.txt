@@ -1,0 +1,4 @@
+groonga manual(v0.1.4)
+                                define_selector (組込コマンド)
+
+   検索条件をカスタマイズした新たな検索コマンドを定義します。
