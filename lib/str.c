@@ -2492,7 +2492,46 @@ grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *form
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_NO_KEY :
   case GRN_TABLE_VIEW :
-    /* TODO: implement */
+    if (format) {
+      int i, j;
+      int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+      grn_obj id, **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+      grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
+                                                   format->offset, format->limit,
+                                                   GRN_CURSOR_ASCENDING);
+      GRN_TEXT_PUTS(ctx, bulk, "<RESULTSET OFFSET=\"");
+      grn_text_itoa(ctx, bulk, format->offset);
+      GRN_TEXT_PUTS(ctx, bulk, "\" LIMIT=\"");
+      grn_text_itoa(ctx, bulk, format->limit);
+      GRN_TEXT_PUTS(ctx, bulk, "\" NHITS=\"");
+      grn_text_itoa(ctx, bulk, format->nhits);
+      GRN_TEXT_PUTS(ctx, bulk, "\">");
+      /* TODO: add TIME attribute to RESULTSET element. */
+      GRN_TEXT_INIT(&id, 0);
+      for (i = 1; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+        GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
+        grn_text_itoa(ctx, bulk, i);
+        GRN_TEXT_PUTS(ctx, bulk, "\">");
+        for (j = 0; j < ncolumns; j++) {
+          GRN_TEXT_PUTS(ctx, bulk, "<FIELD NAME=\"");
+          GRN_BULK_REWIND(&buf);
+          grn_column_name_(ctx, columns[j], &buf);
+          grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+          GRN_TEXT_PUTS(ctx, bulk, "\">");
+
+          GRN_BULK_REWIND(&buf);
+          grn_obj_get_value_o(ctx, columns[j], &id, &buf);
+          grn_text_otofxml(ctx, bulk, &buf, NULL);
+
+          GRN_TEXT_PUTS(ctx, bulk, "</FIELD>");
+        }
+        GRN_TEXT_PUTS(ctx, bulk, "</HIT>");
+      }
+      GRN_TEXT_PUTS(ctx, bulk, "</RESULTSET>");
+      grn_table_cursor_close(ctx, tc);
+    } /* else {
+      TODO: implement
+    } */
     break;
   }
   grn_obj_close(ctx, &buf);

@@ -9271,7 +9271,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_text_itoa(ctx, outbuf, ctx->rc);
       break;
     case GRN_CONTENT_FASTXML:
-      GRN_TEXT_PUTS(ctx, outbuf, "<HIT>");
+      GRN_TEXT_PUTS(ctx, outbuf, "<?xml version=\"1.0\" encoding=\"utf-8\" ?><SEGMENTS><SEGMENT><RESULTPAGE>");
       break;
     case GRN_CONTENT_TSV:
       grn_text_itoa(ctx, outbuf, ctx->rc);
@@ -9341,9 +9341,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               /* TODO: implement grn_text_ototsv */
               break;
             case GRN_CONTENT_FASTXML:
-              GRN_TEXT_PUTS(ctx, outbuf, "<FIELD>");
               grn_text_otofxml(ctx, outbuf, sorted, &format);
-              GRN_TEXT_PUTS(ctx, outbuf, "</FIELD>");
             case GRN_CONTENT_NONE:
               break;
             }
@@ -9429,7 +9427,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
       break;
     case GRN_CONTENT_FASTXML:
-      GRN_TEXT_PUTS(ctx, outbuf, "</HIT>");
+      GRN_TEXT_PUTS(ctx, outbuf, "</RESULTPAGE></SEGMENT></SEGMENTS>");
       break;
     case GRN_CONTENT_NONE:
       break;
