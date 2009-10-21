@@ -107,6 +107,9 @@ void grn_str_url_path_normalize(const char *path, size_t path_len, char *buf, si
 
 GRN_API grn_rc grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
                                 grn_obj_format *format);
+#define GRN_OBJ_FORMAT_FXML_ELEMENT_MASK             (0x01<<0)
+#define GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET        (0x00<<0)
+#define GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY  (0x01<<0)
 
 #ifdef __cplusplus
 }
