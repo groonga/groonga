@@ -1164,8 +1164,8 @@ main(int argc, char **argv)
 {
   grn_encoding enc = GRN_ENC_DEFAULT;
   const char *portstr = NULL, *encstr = NULL,
-             *max_nfthreadsstr = NULL, *loglevel = NULL,
-             *hostnamestr = NULL;
+    *max_nfthreadsstr = NULL, *loglevel = NULL,
+    *hostnamestr = NULL, *protocol = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', NULL, NULL, 0, getopt_op_none},
@@ -1181,6 +1181,7 @@ main(int argc, char **argv)
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
     {'\0', "admin-html-path", NULL, 0, getopt_op_none},
+    {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1188,7 +1189,8 @@ main(int argc, char **argv)
   opts[2].arg = &max_nfthreadsstr;
   opts[8].arg = &loglevel;
   opts[9].arg = &hostnamestr;
-  opts[12].arg = &admin_html_path;
+  opts[12].arg = &grn_admin_html_path;
+  opts[13].arg = &protocol;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }

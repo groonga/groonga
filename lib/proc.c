@@ -23,7 +23,7 @@
 #include "ql.h"
 
 /**** globals for procs ****/
-const char *admin_html_path = NULL;
+const char *grn_admin_html_path = NULL;
 
 /**** procs ****/
 
@@ -98,7 +98,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   ct = grn_get_ctype(&vars[4].value);
 
-  if (nvars == 5) {
+  if (nvars == 6) {
     grn_load(ctx, ct,
              GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
              GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
@@ -491,26 +491,26 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars, plen;
   grn_obj *buf = args[0];
   grn_expr_var *vars;
-  static int admin_html_path_len = -1;
-  if (!admin_html_path) { return buf; }
-  if (admin_html_path_len < 0) {
+  static int grn_admin_html_path_len = -1;
+  if (!grn_admin_html_path) { return buf; }
+  if (grn_admin_html_path_len < 0) {
     size_t l;
-    if ((l = strlen(admin_html_path)) > PATH_MAX) {
+    if ((l = strlen(grn_admin_html_path)) > PATH_MAX) {
       return buf;
     }
-    admin_html_path_len = (int)l;
-    if (l > 0 && admin_html_path[l - 1] == PATH_SEPARATOR[0]) { admin_html_path_len--; }
+    grn_admin_html_path_len = (int)l;
+    if (l > 0 && grn_admin_html_path[l - 1] == PATH_SEPARATOR[0]) { grn_admin_html_path_len--; }
   }
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 2 &&
-      (plen = GRN_TEXT_LEN(&vars[0].value)) + admin_html_path_len < PATH_MAX) {
+      (plen = GRN_TEXT_LEN(&vars[0].value)) + grn_admin_html_path_len < PATH_MAX) {
     char path[PATH_MAX];
-    memcpy(path, admin_html_path, admin_html_path_len);
-    path[admin_html_path_len] = PATH_SEPARATOR[0];
+    memcpy(path, grn_admin_html_path, grn_admin_html_path_len);
+    path[grn_admin_html_path_len] = PATH_SEPARATOR[0];
     grn_str_url_path_normalize(GRN_TEXT_VALUE(&vars[0].value),
                                GRN_TEXT_LEN(&vars[0].value),
-                               path + admin_html_path_len + 1,
-                               PATH_MAX - admin_html_path_len - 1);
+                               path + grn_admin_html_path_len + 1,
+                               PATH_MAX - grn_admin_html_path_len - 1);
     grn_bulk_put_from_file(ctx, buf, path);
   }
   return buf;
@@ -674,7 +674,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "match_column");
   DEF_VAR(vars[3], "query");
   DEF_VAR(vars[4], "filter");
-  DEF_VAR(vars[5], "foreach");
+  DEF_VAR(vars[5], "scorer");
   DEF_VAR(vars[6], "sortby");
   DEF_VAR(vars[7], "output_columns");
   DEF_VAR(vars[8], "offset");
@@ -693,7 +693,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "ifexists");
   DEF_VAR(vars[4], "input_type");
-  DEF_PROC("load", proc_load, 5, vars);
+  DEF_VAR(vars[5], "output_type");
+  DEF_PROC("load", proc_load, 6, vars);
 
   DEF_VAR(vars[0], "output_type");
   DEF_PROC("status", proc_status, 1, vars);

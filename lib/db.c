@@ -6001,7 +6001,7 @@ static char *opstrs[] = {
   "PLUS_ASSIGN",
   "MINUS_ASSIGN",
   "SHIFTL_ASSIGN",
-  "SHIRTR_ASSIGN",
+  "SHIFTR_ASSIGN",
   "SHIFTRR_ASSIGN",
   "AND_ASSIGN",
   "XOR_ASSIGN",
@@ -9218,7 +9218,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            const char *match_column, unsigned match_column_len,
            const char *query, unsigned query_len,
            const char *filter, unsigned filter_len,
-           const char *foreach, unsigned foreach_len,
+           const char *scorer, unsigned scorer_len,
            const char *sortby, unsigned sortby_len,
            const char *output_columns, unsigned output_columns_len,
            int offset, int limit,
@@ -9230,7 +9230,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   uint32_t nkeys, nhits;
   grn_obj_format format;
   grn_table_sort_key *keys;
-  grn_obj *table_, *match_column_, *cond, *foreach_, *res = NULL, *sorted;
+  grn_obj *table_, *match_column_, *cond, *scorer_, *res = NULL, *sorted;
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
     if (query_len || filter_len) {
@@ -9307,21 +9307,21 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       break;
     }
     if (res) {
-      if (foreach && foreach_len) {
+      if (scorer && scorer_len) {
         grn_obj *v;
-        GRN_EXPR_CREATE_FOR_QUERY(ctx, res, foreach_, v);
-        if (foreach_ && v) {
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, res, scorer_, v);
+        if (scorer_ && v) {
           grn_table_cursor *tc;
-          grn_expr_parse(ctx, foreach_, foreach, foreach_len,
+          grn_expr_parse(ctx, scorer_, scorer, scorer_len,
                          match_column_, GRN_OP_MATCH, GRN_OP_AND, 4);
           if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, 0, 0))) {
             while (!grn_table_cursor_next_o(ctx, tc, v)) {
-              grn_expr_exec(ctx, foreach_, 0);
+              grn_expr_exec(ctx, scorer_, 0);
               grn_ctx_pop(ctx);
             }
             grn_table_cursor_close(ctx, tc);
           }
-          grn_obj_unlink(ctx, foreach_);
+          grn_obj_unlink(ctx, scorer_);
         }
       }
       nhits = grn_table_size(ctx, res);
@@ -10673,7 +10673,7 @@ parse4(grn_ctx *ctx, efs_info *q)
           break;
         case '=' :
           q->cur++;
-          PARSE(GRN_EXPR_TOKEN_SHIRTR_ASSIGN);
+          PARSE(GRN_EXPR_TOKEN_SHIFTR_ASSIGN);
           break;
         default :
           PARSE(GRN_EXPR_TOKEN_SHIFTR);

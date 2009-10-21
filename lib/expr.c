@@ -598,7 +598,7 @@ static const char *const yyTokenName[] = {
   "IDENTIFIER",    "BRACEL",        "BRACER",        "EVAL",        
   "COMMA",         "ASSIGN",        "STAR_ASSIGN",   "SLASH_ASSIGN",
   "MOD_ASSIGN",    "PLUS_ASSIGN",   "MINUS_ASSIGN",  "SHIFTL_ASSIGN",
-  "SHIRTR_ASSIGN",  "SHIFTRR_ASSIGN",  "AND_ASSIGN",    "XOR_ASSIGN",  
+  "SHIFTR_ASSIGN",  "SHIFTRR_ASSIGN",  "AND_ASSIGN",    "XOR_ASSIGN",  
   "OR_ASSIGN",     "QUESTION",      "COLON",         "BITWISE_OR",  
   "BITWISE_XOR",   "BITWISE_AND",   "EQUAL",         "NOT_EQUAL",   
   "LESS",          "GREATER",       "LESS_EQUAL",    "GREATER_EQUAL",
@@ -649,7 +649,7 @@ static const char *const yyRuleName[] = {
  /*  20 */ "assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression",
  /*  21 */ "assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression",
  /*  22 */ "assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression",
- /*  23 */ "assignment_expression ::= lefthand_side_expression SHIRTR_ASSIGN assignment_expression",
+ /*  23 */ "assignment_expression ::= lefthand_side_expression SHIFTR_ASSIGN assignment_expression",
  /*  24 */ "assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression",
  /*  25 */ "assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression",
  /*  26 */ "assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression",
@@ -1359,10 +1359,10 @@ static void yy_reduce(
 }
 #line 1363 "expr.c"
         break;
-      case 23: /* assignment_expression ::= lefthand_side_expression SHIRTR_ASSIGN assignment_expression */
+      case 23: /* assignment_expression ::= lefthand_side_expression SHIFTR_ASSIGN assignment_expression */
 #line 87 "expr.y"
 {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIRTR_ASSIGN, 2);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR_ASSIGN, 2);
 }
 #line 1370 "expr.c"
         break;

@@ -84,8 +84,8 @@ assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expre
 assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL_ASSIGN, 2);
 }
-assignment_expression ::= lefthand_side_expression SHIRTR_ASSIGN assignment_expression. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIRTR_ASSIGN, 2);
+assignment_expression ::= lefthand_side_expression SHIFTR_ASSIGN assignment_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR_ASSIGN, 2);
 }
 assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR_ASSIGN, 2);

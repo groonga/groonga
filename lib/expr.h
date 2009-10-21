@@ -17,7 +17,7 @@
 #define GRN_EXPR_TOKEN_PLUS_ASSIGN                    17
 #define GRN_EXPR_TOKEN_MINUS_ASSIGN                   18
 #define GRN_EXPR_TOKEN_SHIFTL_ASSIGN                  19
-#define GRN_EXPR_TOKEN_SHIRTR_ASSIGN                  20
+#define GRN_EXPR_TOKEN_SHIFTR_ASSIGN                  20
 #define GRN_EXPR_TOKEN_SHIFTRR_ASSIGN                 21
 #define GRN_EXPR_TOKEN_AND_ASSIGN                     22
 #define GRN_EXPR_TOKEN_XOR_ASSIGN                     23

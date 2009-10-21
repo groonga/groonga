@@ -126,7 +126,7 @@
             <select id="tab-recordlist-querytype">
               <option value="query">query</option>
               <option value="filter">filter</option>
-              <option value="foreach">foreach</option>
+              <option value="scorer">scorer</option>
             </select>
             <input type="button" id="tab-recordlist-submit" value="検索"/>
             <input type="checkbox" id="tab-recordlist-incremental" /><label for="tab-recordlist-incremental" id="tab-recordlist-incremental-label">インクリメンタル検索</label>
@@ -404,7 +404,7 @@ GroongaAdmin = {
     });
 
     $('#tab-recordlist-querytype').change(function() {
-      if ($(this).val() == 'foreach') {
+      if ($(this).val() == 'scorer') {
         $('#tab-recordlist-incremental').hide();
         $('#tab-recordlist-incremental-label').hide();
       } else {
@@ -416,7 +416,7 @@ GroongaAdmin = {
 
     $('#tab-recordlist-incremental').change(function() {
       if ($(this).attr('checked') &&
-          $('#tab-recordlist-querytype').val() != 'foreach') {
+          $('#tab-recordlist-querytype').val() != 'scorer') {
         $('#tab-recordlist-query').keyup(function(e) {
           GroongaAdmin.recordlist(GroongaAdmin.current_table,
                                   $('#tab-recordlist-query').val(),
