@@ -7688,7 +7688,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           str = GRN_OBJ_RESOLVE(ctx, str);
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
-          GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, 0, 0);
+          GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, 0);
+          format.flags = 0;
           grn_obj_columns(ctx, table,
                           GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str), &format.columns);
           grn_text_otoj(ctx, res, table, &format);
@@ -9271,7 +9272,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_text_itoa(ctx, outbuf, ctx->rc);
       break;
     case GRN_CONTENT_FASTXML:
-      GRN_TEXT_PUTS(ctx, outbuf, "<HIT>");
+      GRN_TEXT_PUTS(ctx, outbuf, "<?xml version=\"1.0\" encoding=\"utf-8\" ?><SEGMENTS><SEGMENT><RESULTPAGE>");
       break;
     case GRN_CONTENT_TSV:
       grn_text_itoa(ctx, outbuf, ctx->rc);
@@ -9329,10 +9330,11 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
-            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
+            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
             switch (output_type) {
             case GRN_CONTENT_JSON:
+              format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
               GRN_TEXT_PUTC(ctx, outbuf, ',');
               grn_text_otoj(ctx, outbuf, sorted, &format);
               break;
@@ -9341,9 +9343,9 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               /* TODO: implement grn_text_ototsv */
               break;
             case GRN_CONTENT_FASTXML:
-              GRN_TEXT_PUTS(ctx, outbuf, "<FIELD>");
+              format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET;
               grn_text_otofxml(ctx, outbuf, sorted, &format);
-              GRN_TEXT_PUTS(ctx, outbuf, "</FIELD>");
+              break;
             case GRN_CONTENT_NONE:
               break;
             }
@@ -9353,10 +9355,11 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
+        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         switch (output_type) {
         case GRN_CONTENT_JSON:
+          format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
           GRN_TEXT_PUTC(ctx, outbuf, ',');
           grn_text_otoj(ctx, outbuf, res, &format);
           break;
@@ -9365,9 +9368,8 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           /* TODO: implement */
           break;
         case GRN_CONTENT_FASTXML:
-          GRN_TEXT_PUTS(ctx, outbuf, "<FIELD>");
+          format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET;
           grn_text_otofxml(ctx, outbuf, res, &format);
-          GRN_TEXT_PUTS(ctx, outbuf, "</FIELD>");
           break;
         case GRN_CONTENT_NONE:
           break;
@@ -9393,25 +9395,57 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                NULL, g.table))) {
                   grn_table_sort(ctx, g.table, drilldown_offset, drilldown_limit,
                                  sorted, keys, nkeys);
-                  GRN_OBJ_FORMAT_INIT(&format, nhits, 0, drilldown_limit,
-                                      GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
-                  grn_obj_columns(ctx, sorted,
-                                  drilldown_output_columns, drilldown_output_columns_len,
-                                  &format.columns);
-                  GRN_TEXT_PUTC(ctx, outbuf, ',');
-                  grn_text_otoj(ctx, outbuf, sorted, &format);
+                  GRN_OBJ_FORMAT_INIT(&format, nhits, 0, drilldown_limit);
+                  switch (output_type) {
+                  case GRN_CONTENT_JSON:
+                    grn_obj_columns(ctx, sorted,
+                                    drilldown_output_columns, drilldown_output_columns_len,
+                                    &format.columns);
+                    format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
+                    GRN_TEXT_PUTC(ctx, outbuf, ',');
+                    grn_text_otoj(ctx, outbuf, sorted, &format);
+                    break;
+                  case GRN_CONTENT_FASTXML:
+                    /* NOTE: drilldown_output_columns parameter is ignored */
+                    grn_obj_columns(ctx, sorted,
+                                    "_key _nsubrecs",
+                                    sizeof("_key _nsubrecs") - 1,
+                                    &format.columns);
+                    format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY;
+                    grn_text_otofxml(ctx, outbuf, sorted, &format);
+                    break;
+                  case GRN_CONTENT_NONE:
+                  case GRN_CONTENT_TSV:
+                    /* TODO: implement */
+                    break;
+                  }
                   GRN_OBJ_FORMAT_FIN(ctx, &format);
                   grn_obj_unlink(ctx, sorted);
                 }
                 grn_table_sort_key_close(ctx, keys, nkeys);
               }
             } else {
-              GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit,
-                                  GRN_OBJ_FORMAT_WITH_COLUMN_NAMES);
-              grn_obj_columns(ctx, g.table, drilldown_output_columns,
-                              drilldown_output_columns_len, &format.columns);
-              GRN_TEXT_PUTC(ctx, outbuf, ',');
-              grn_text_otoj(ctx, outbuf, g.table, &format);
+              GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit);
+              switch (output_type) {
+              case GRN_CONTENT_JSON:
+                grn_obj_columns(ctx, g.table, drilldown_output_columns,
+                                drilldown_output_columns_len, &format.columns);
+                format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
+                GRN_TEXT_PUTC(ctx, outbuf, ',');
+                grn_text_otoj(ctx, outbuf, g.table, &format);
+                break;
+              case GRN_CONTENT_FASTXML:
+                /* NOTE: drilldown_output_columns parameter is ignored */
+                grn_obj_columns(ctx, g.table, "_key _nsubrecs",
+                                sizeof("_key _nsubrecs") - 1, &format.columns);
+                format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY;
+                grn_text_otofxml(ctx, outbuf, g.table, &format);
+                break;
+              case GRN_CONTENT_NONE:
+              case GRN_CONTENT_TSV:
+                /* TODO: implement */
+                break;
+              }
               GRN_OBJ_FORMAT_FIN(ctx, &format);
             }
             grn_obj_unlink(ctx, g.table);
@@ -9429,7 +9463,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
       break;
     case GRN_CONTENT_FASTXML:
-      GRN_TEXT_PUTS(ctx, outbuf, "</HIT>");
+      GRN_TEXT_PUTS(ctx, outbuf, "</RESULTPAGE></SEGMENT></SEGMENTS>");
       break;
     case GRN_CONTENT_NONE:
       break;
