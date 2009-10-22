@@ -1,0 +1,116 @@
+.. highlightlang:: none
+
+define_selector
+===============
+
+名前
+----
+
+define_selector - 検索コマンドを定義
+
+書式
+----
+::
+
+ define_selector name table [match_column [query [filter [scorer [sortby
+                 [output_columns [offset [limit [drilldown [drilldown_sortby
+                 [drilldown_output_columns [drilldown_offset [drilldown_limit
+                 [output_type]]]]]]]]]]]]]]
+
+説明
+----
+
+groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+
+define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。
+
+引数
+----
+
+``name``
+
+  定義するselectorコマンドの名前を指定します。
+
+``table``
+
+  検索対象のテーブルを指定します。
+
+``match_column``
+
+  追加するselectorコマンドのmatch_column引数のデフォルト値を指定します。
+
+``query``
+
+  追加するselectorコマンドのquery引数のデフォルト値を指定します。
+
+``filter``
+
+  追加するselectorコマンドのfilter引数のデフォルト値を指定します。
+
+``scorer``
+
+  追加するselectorコマンドのscorer引数のデフォルト値を指定します。
+
+``sortby``
+
+  追加するselectorコマンドのsortby引数のデフォルト値を指定します。
+
+``output_columns``
+
+  追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。
+
+``offset``
+
+  追加するselectorコマンドのoffset引数のデフォルト値を指定します。
+
+``limit``
+
+  追加するselectorコマンドのlimit引数のデフォルト値を指定します。
+
+``drilldown``
+
+  追加するselectorコマンドのdrilldown引数のデフォルト値を指定します。
+
+``drilldown_sortby``
+
+  追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。
+
+``drilldown_output_columns``
+
+  追加するselectorコマンドのdrilldown_output_columns引数のデフォルト値を指定します。
+
+``drilldown_offset``
+
+  追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。
+
+``drilldown_limit``
+
+  追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。
+
+``output_type``
+
+  出力形式を、json,tsv,xmlのいずれかで指定します。[#]_
+
+返値
+----
+
+リターンコード
+
+  grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す文字列が返されます。
+
+例
+--
+
+テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義します。::
+
+ define_selector entry_selector Entry --output_type json
+ [[0]]
+
+関連項目
+--------
+
+:doc:`expr`
+
+.. rubric:: 脚注
+
+.. [#] tsv,xml出力はv1.0でサポートされます。

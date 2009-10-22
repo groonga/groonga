@@ -1,0 +1,281 @@
+.. highlightlang:: none
+
+grn式 (grn_expr)
+================
+
+名前
+----
+
+grn式 - 検索条件やデータベースへの操作を表現する文字列の形式。(読み方:"ぐるんしき")
+
+書式
+----
+
+grn式はquery形式とscript形式のいずれかによって表現することができます。
+
+ query形式
+
+   条件式
+     以下の条件式が使用できます。
+
+     文字列
+       全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)
+
+     "文字列"
+       フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでいる)
+
+     カラム名:値
+       一致条件(カラム値 == 値)
+
+     カラム名:!値
+       不一致条件(カラム値 != 値)
+
+     カラム名:<値
+       比較条件(カラム値 < 値)
+
+     カラム名:>値
+       比較条件(カラム値 > 値)
+
+     カラム名:<=値
+       比較条件(カラム値 <= 値)
+
+     カラム名:>=値
+       比較条件(カラム値 >= 値)
+
+     カラム名:@文字列
+       全文検索条件(カラム値が指定された文字列を含んでいる)
+
+   補助演算子 [#]_
+     全文検索条件の挙動を制御する以下の演算子が指定できます。
+
+     ~文字列
+       文字列を含んでいた場合は、そのレコードのスコアを下げます。
+
+     <文字列
+       文字列を含んでいた場合に加算されるスコアの値を小さくします。
+
+     >文字列
+       文字列を含んでいた場合に加算されるスコアの値を大きくします。
+
+     文字列*
+       文字列に前方一致する条件を示します。
+
+     \*S[数値]"文字列"
+       文字列と関連する文書を検索します。文字列から抽出する特徴語の数を数値に指定します。
+
+     \*N[数値]"文字列"
+       文字列に含まれる複数の語が、近傍に含まれる文書を検索します。近傍の範囲の上限とな
+       る語数を数値に指定します。N-gramの場合は、文字数を指定します。
+
+   結合演算子
+     複数の条件式を結合するために以下の演算子が使用できる。演算子を伴わずに複数の条件式
+     が空白(' ')区切りで指定された場合は、デフォルトの結合演算子が指定されたものとみな
+     される。
+
+     a OR b
+       論理和(aとbといずれかの条件がマッチする)
+
+     a + b
+       論理積(aとbの両方がマッチする)
+
+     a - b
+       aにマッチし、bにはマッチしない
+
+     ( )
+       複数の条件をまとめる
+
+   プラグマ [#]_
+     query形式文字列の先頭に、処理方法を指定するプラグマを埋め込むことができます。
+
+     プラグマは必ずクエリ文字列の冒頭に存在しなければなりません。(先頭に空白を入れては
+     いけません)
+
+     一つのクエリに複数のプラグマを指定することができます。
+
+     複数のプラグマを指定する場合は、間に空白を入れてはいけません。
+
+     \*E数値1[,数値2]
+       検索結果の数が数値1よりも小さい場合、完全一致→非わかち書き→部分一致の順に自動
+       的に検索処理方法を切り替えます。完全一致でヒットした文書と比べて非わかち書き一致、
+       部分一致でヒットした文書には数値2分だけ小さいスコアを付与します。数値2を省略した
+       場合は既定値(=2)と解釈されます。数値1に負の数を指定した場合は以下のように処理し
+       ます。
+
+       -1
+         完全一致検索のみを行う
+
+       -2
+         非わかち書き検索のみを行う
+
+       -3
+         完全一致検索と非わかち書き検索のみを行う
+
+       -4
+         部分一致検索のみを行う
+
+       -5
+         完全一致検索と部分一致検索のみを行う
+
+       -6
+         非わかち書き検索と部分一致検索のみを行う
+
+       -7
+         完全一致検索,非わかち書き検索,部分一致検索の全てを行う
+
+       例:
+
+         \*E10,3
+
+         検索結果数が10件以下だった場合に検索処理方法を順次切り替え、スコアを3ずつ小さ
+         くします。
+
+     \*D演算子
+       結合演算子の既定値(演算子を省略した場合にどの演算を行うか)を指定します。指定できる演
+       算子は、OR, +, - のいずれかです。
+
+       例1:
+
+        \*D+ abc def
+
+       abcとdefを両方含む文書を検索します。
+
+       例2:
+
+        \*DOR abc def
+
+       abcとdefのいずれかを含む文書を検索します。
+
+     \*W[数値[:重み][,数値[:重み]]...
+       数値で指定されたセクション番号のみを対象に検索します。セクションごとに検索スコア
+       の倍数を指定することができます。重みは、省略された場合1となります。負の重みも指
+       定することができます。
+
+ script形式 [#]_
+
+   ECMAScript風の構文で検索条件やレコードへの操作を記述します。
+
+   式中のIDENTIFIER(識別子)は、以下のいずれかを指します。
+
+   引数名
+     grn式が受け取る引数の名前
+
+   カラム名
+     操作対象としているレコードのカラム名
+
+   型名・関数名・テーブル名
+     データベースに定義された型・テーブル・関数の名前
+
+説明
+----
+
+grn式は、検索条件やデータベースへの操作を表現するために使用される文字列の形式です。
+
+selectやloadなどのいくつかの組込コマンドや、API関数grn_table_select()などで使用されます。grn式はquery形式とscript形式という2種類の方式で記述することができます。query形式は、多くのweb検索エンジンなどで検索フォームにユーザが指定可能なクエリ文字列の書式に合わせた形式です。script形式は、ECMAScriptの構文から式(expression)以下の構文要素を抜粋した形式になっており、文(statement)や制御構造などは表現できません。
+
+query形式のgrn式もscript形式のgrn式も、共通の中間形式に翻訳された上で処理されますので、処理速度や効率には差違はありません。記述できる処理の範囲はscript形式の方がquery形式より広くなっています。たとえば更新系の操作はscript形式のみで記述できます。
+
+DB-APIレイヤでは、異なる形式で記述された複数のgrn式を結合することも可能です。
+
+例
+--
+
+query形式でcolumn1の値が'hoge'に等しいという条件
+
+  column1:hoge
+
+script形式でcolumn1の値が'hoge'に等しいという条件
+
+  column1 == "hoge"
+
+構文
+----
+
+query形式のgrn式で有効な式の構文を拡張BNF記法で示します。
+
+.. productionlist::
+   query : `query_element`
+         : | ( `query` `query_element` )
+         : | ( `query` "+" `query_element` )
+         : | ( `query` "-" `query_element` )
+         : | ( `query` "OR" `query_element` )
+   query_element : STRING
+                 : | ( "(" `query` ")" )
+                 : | ( IDENTIFIER `relative_operator` `query_element` )
+   relative_operator : ( ":" | ":!" | ":<" | ":>" | ":<=" | ":>=" | ":@" )
+
+script形式のgrn式で有効な式の構文を拡張BNF記法で示します。
+
+.. productionlist::
+   expression : `assignment_expression`
+   expression : ( `expression` "," `assignment_expression` )
+   assignment_expression : `conditional_expression`
+                         : | ( `lefthand_side_expression` `assign_operator` `assignment_expression` )
+   assign_operator : ( "=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" )
+   conditional_expression : `logical_or_expression`
+                          : | ( `logical_or_expression` "?" `assignment_expression` ":" `assignment_expression` )
+   logical_or_expression : `logical_and_expression`
+                         : | ( `logical_or_expression` "||" `logical_and_expression` )
+   logical_and_expression : `bitwise_or_expression`
+                          : | ( `logical_and_expression` `logical_and_operator` `bitwise_or_expression` )
+   logical_and_operator : ( "&&" | "&!" )
+   bitwise_or_expression : `bitwise_xor_expression`
+                         : | ( `bitwise_or_expression` "|" `bitwise_xor_expression` )
+   bitwise_xor_expression : `bitwise_and_expression`
+                          : | ( `bitwise_xor_expression` "^" `bitwise_and_expression` )
+   bitwise_and_expression : `equality_expression`
+                          : | `bitwise_and_expression` "&" `equality_expression` )
+   equality_expression : `relational_expression`
+                       : | ( `equality_expression` `equality_operator` `relational_expression` )
+   equality_operator : ( "==" | "!=" )
+   relational_expression : `shift_expression`
+                         : | ( `relational_expression` `relational_operator` `shift_expression` )
+   relational_operator : ( "<" | ">" | "<=" | ">=" | "in" | "@" )
+   shift_expression : `additive_expression`
+                    : | ( `shift_expression` `shift_operator` `additive_expression` )
+   shift_operator : ( "<<" | ">>" | ">>>" )
+   additive_expression : `multiplicative_expression`
+                       : | ( `additive_expression` `additive_operator` `multiplicative_expression` )
+   additive_operator : ( "+" | "-" )
+   multiplicative_expression : `unary_expression`
+                             : | ( `multiplicative_expression` `multiplicative_operator` `unary_expression` )
+   multiplicative_operator : ( "*" | "/" | "%" )
+   unary_expression : `postfix_expression`
+                    : | ( `unary_operator` `unary_expression` )
+   unary_operator : ( "delete" : "++" : "--" : "+" : "-" : "!" : "~" )
+   postfix_expression : `lefthand_side_expression`
+                      : | ( `lefthand_side_expression` `postfix_operator` )
+   postfix_operator : ( "++" | "--" )
+   lefthand_side_expression : (`call_expression` | `member_expression`)
+   call_expression : `member_expression` `arguments`
+   member_expression : `primary_expression`
+   member_expression : `member_expression` `member_expression_part`
+   primary_expression : `object_literal`
+                      : | ( "(" `expression` ")" )
+                      : | IDENTIFIER
+                      : | `array_literal`
+                      : | DECIMAL
+                      : | HEX_INTEGER
+                      : | STRING
+                      : | "true"
+                      : | "false
+                      : | "null"
+   array_literal : ( "[" `elision` "]" )
+                 : | ( "[" `element_list elision` "]" )
+                 : | ( "[" `element_list` "]" )
+   elision : "," | ( `elision` "," )
+   element_list : `assignment_expression`
+                : | ( `elision` `assignment_expression` )
+                : | ( `element_list` `elision` `assignment_expression` )
+   object_literal : ( "{" `property_name_and_value_list` "}" )
+   property_name_and_value_list : ( `property_name_and_value_list` "," `property_name_and_value` )
+   property_name_and_value : ( `property_name` ":" `assignment_expression` )
+   property_name : IDENTIFIER | STRING | DECIMAL
+   member_expression_part : "[" `expression` "]" | ( "." IDENTIFIER )
+   arguments : ( "(" `argument_list` ")" )
+   argument_list : `assignment_expression` | ( `argument_list` "," `assignment_expression` )
+
+.. rubric:: 脚注
+
+.. [#] 補助演算子はv1.0でサポートされます。
+.. [#] プラグマはv1.0でサポートされます。
+.. [#] script形式のgrn式はv1.0でサポートされます。

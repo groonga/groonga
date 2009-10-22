@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.8. load &mdash; groonga v0.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.4',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
+    <link rel="up" title="2. コマンド一覧" href="commands.html" />
+    <link rel="next" title="2.9. select" href="select.html" />
+    <link rel="prev" title="2.7. view_add" href="view_add.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="select.html" title="2.9. select"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="view_add.html" title="2.7. view_add"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="commands.html" accesskey="U">2. コマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="load">
+<h1>2.8. load<a class="headerlink" href="#load" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>2.8.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>load - データのロード</p>
+</div>
+<div class="section" id="id2">
+<h2>2.8.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>load values table [columns [ifexists [input_type [output_type]]]]
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>2.8.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
+<p>loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更新します。</p>
+</div>
+<div class="section" id="id4">
+<h2>2.8.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">values</span></tt></p>
+<blockquote>
+<p>input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。</p>
+<p>input_typeがjsonである場合には、以下のいずれかの形式が使用できます。</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">形式1</span></tt></dt>
+<dd>[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値2,..],..]</dd>
+<dt><tt class="docutils literal"><span class="pre">形式2</span></tt></dt>
+<dd>[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム名2: カラム値2},..]</dd>
+</dl>
+<p>形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効です。</p>
+<p>対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に&#8217;_key&#8217;(主キーを示す疑似カラム名)が含まれていなければなりません。</p>
+<p>valuesに括弧の対応が取れていないjson文字列が指定された場合には、括弧の対応が取れるまでvaluesの続きの文字列を標準入力から読み取ります。続きの文字列については、空白文字(&#8216; &#8216;)をエスケープする必要はありません。</p>
+</blockquote>
+<p><tt class="docutils literal"><span class="pre">table</span></tt></p>
+<blockquote>
+レコードを追加しようとするテーブルの名前を指定します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">columns</span></tt></p>
+<blockquote>
+テーブルに登録するレコードに値を設定するカラム名のリストを指定します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">ifexists</span></tt></p>
+<blockquote>
+指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行するscript形式のgrn式文字列を指定します。ifexistsにgrn式が指定された場合は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルトはtrue)</blockquote>
+<p><tt class="docutils literal"><span class="pre">input_type</span></tt></p>
+<blockquote>
+入力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id10" id="id5">[1]</a></blockquote>
+<p><tt class="docutils literal"><span class="pre">output_type</span></tt></p>
+<blockquote>
+出力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id10" id="id6">[1]</a></blockquote>
+<p>返値
+&#8212;</p>
+<p>リターンコード <a class="footnote-reference" href="#id11" id="id7">[2]</a></p>
+<blockquote>
+grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す文字列が返されます。</blockquote>
+<dl class="docutils">
+<dt>件数</dt>
+<dd>テーブルに登録されたレコードの件数が返されます。</dd>
+</dl>
+</div>
+<div class="section" id="id8">
+<h2>2.8.5. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>テーブルEntryにレコードを登録します。:</p>
+<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --ouput_type json --values [
+{&quot;_key&quot;: &quot;abandon&quot;, &quot;body&quot;: &quot;放棄する&quot;},
+{&quot;_key&quot;: &quot;abbreviate&quot;, &quot;body&quot;: &quot;短縮する&quot;}
+]
+
+[[0],2]
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>2.8.6. 関連項目<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="expr.html"><em>grn式 (grn_expr)</em></a></p>
+<p class="rubric">脚注</p>
+<table class="docutils footnote" frame="void" id="id10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> tsv,xml入力はv1.0でサポートされます。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id11" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td>リターンコード出力はv1.0でサポートされます。</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">2.8. load</a><ul>
+<li><a class="reference external" href="#id1">2.8.1. 名前</a></li>
+<li><a class="reference external" href="#id2">2.8.2. 書式</a></li>
+<li><a class="reference external" href="#id3">2.8.3. 説明</a></li>
+<li><a class="reference external" href="#id4">2.8.4. 引数</a></li>
+<li><a class="reference external" href="#id8">2.8.5. 例</a></li>
+<li><a class="reference external" href="#id9">2.8.6. 関連項目</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="view_add.html"
+                                  title="previous chapter">2.7. view_add</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="select.html"
+                                  title="next chapter">2.9. select</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/load.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="select.html" title="2.9. select"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="view_add.html" title="2.7. view_add"
+             >previous</a> |</li>
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="commands.html" >2. コマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>
