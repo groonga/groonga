@@ -7,7 +7,7 @@ groonga manual(v0.1.4)
 
 ■書式
 
- column_create table name flags type [[source] output_type]
+ column_create table name flags type [source [output_type]]
 
 ■説明
 
