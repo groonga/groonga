@@ -30,3 +30,9 @@ Makefile
 Makefile.in
 /examples/kv
 /examples/index
+/doc/ja/.buildinfo
+/doc/ja/_sources/
+/doc/ja/_static/
+/doc/ja/build/
+/doc/ja/modindex.html
+/doc/ja/objects.inv
