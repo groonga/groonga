@@ -675,7 +675,7 @@ grn_get_ctype(grn_obj *var)
       break;
     case 'f' :
     case 'F' :
-      ct = GRN_CONTENT_FASTXML;
+      ct = GRN_CONTENT_XML;
       break;
     }
   }
@@ -704,7 +704,7 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
       break;
     case 'f':
       if (pd + 4 == p && !memcmp(pd, "fxml", 4)) {
-        *ct = GRN_CONTENT_FASTXML;
+        *ct = GRN_CONTENT_XML;
       }
       break;
     case 'g' :

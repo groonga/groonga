@@ -137,7 +137,7 @@ typedef enum {
   GRN_CONTENT_NONE = 0,
   GRN_CONTENT_TSV,
   GRN_CONTENT_JSON,
-  GRN_CONTENT_FASTXML
+  GRN_CONTENT_XML
 } grn_content_type;
 
 typedef struct _grn_obj grn_obj;

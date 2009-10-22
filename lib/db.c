@@ -9271,7 +9271,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       GRN_TEXT_PUTS(ctx, outbuf, "[[");
       grn_text_itoa(ctx, outbuf, ctx->rc);
       break;
-    case GRN_CONTENT_FASTXML:
+    case GRN_CONTENT_XML:
       GRN_TEXT_PUTS(ctx, outbuf, "<?xml version=\"1.0\" encoding=\"utf-8\" ?><SEGMENTS><SEGMENT><RESULTPAGE>");
       break;
     case GRN_CONTENT_TSV:
@@ -9285,7 +9285,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_TEXT_PUTC(ctx, outbuf, ',');
         grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
         break;
-      case GRN_CONTENT_FASTXML:
+      case GRN_CONTENT_XML:
         break;
       case GRN_CONTENT_TSV:
         GRN_TEXT_PUTC(ctx, outbuf, '\t');
@@ -9302,7 +9302,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     case GRN_CONTENT_TSV:
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
       break;
-    case GRN_CONTENT_FASTXML:
+    case GRN_CONTENT_XML:
     case GRN_CONTENT_NONE:
       break;
     }
@@ -9342,7 +9342,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               GRN_TEXT_PUTC(ctx, outbuf, '\n');
               /* TODO: implement grn_text_ototsv */
               break;
-            case GRN_CONTENT_FASTXML:
+            case GRN_CONTENT_XML:
               format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET;
               grn_text_otofxml(ctx, outbuf, sorted, &format);
               break;
@@ -9367,7 +9367,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           GRN_TEXT_PUTC(ctx, outbuf, '\n');
           /* TODO: implement */
           break;
-        case GRN_CONTENT_FASTXML:
+        case GRN_CONTENT_XML:
           format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET;
           grn_text_otofxml(ctx, outbuf, res, &format);
           break;
@@ -9405,7 +9405,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                     GRN_TEXT_PUTC(ctx, outbuf, ',');
                     grn_text_otoj(ctx, outbuf, sorted, &format);
                     break;
-                  case GRN_CONTENT_FASTXML:
+                  case GRN_CONTENT_XML:
                     /* NOTE: drilldown_output_columns parameter is ignored */
                     grn_obj_columns(ctx, sorted,
                                     "_key _nsubrecs",
@@ -9434,7 +9434,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 GRN_TEXT_PUTC(ctx, outbuf, ',');
                 grn_text_otoj(ctx, outbuf, g.table, &format);
                 break;
-              case GRN_CONTENT_FASTXML:
+              case GRN_CONTENT_XML:
                 /* NOTE: drilldown_output_columns parameter is ignored */
                 grn_obj_columns(ctx, g.table, "_key _nsubrecs",
                                 sizeof("_key _nsubrecs") - 1, &format.columns);
@@ -9462,7 +9462,7 @@ grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     case GRN_CONTENT_TSV:
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
       break;
-    case GRN_CONTENT_FASTXML:
+    case GRN_CONTENT_XML:
       GRN_TEXT_PUTS(ctx, outbuf, "</RESULTPAGE></SEGMENT></SEGMENTS>");
       break;
     case GRN_CONTENT_NONE:
@@ -10049,7 +10049,7 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     break;
   case GRN_CONTENT_NONE :
   case GRN_CONTENT_TSV :
-  case GRN_CONTENT_FASTXML :
+  case GRN_CONTENT_XML :
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "unsupported input_type");
     // todo
     break;
