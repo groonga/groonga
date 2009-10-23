@@ -77,7 +77,7 @@ loadは、使用しているデータベースのテーブルにレコードを�
 
 テーブルEntryにレコードを登録します。::
 
- load --table Entry --input_type json --ouput_type json --values [
+ load --table Entry --input_type json --output_type json --values [
  {"_key": "abandon", "body": "放棄する"},
  {"_key": "abbreviate", "body": "短縮する"}
  ]
