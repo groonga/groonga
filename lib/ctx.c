@@ -684,18 +684,15 @@ grn_get_ctype(grn_obj *var)
 
 static void
 get_content_type(grn_ctx *ctx, const char *p, const char *pe,
-                 grn_content_type *ct, const char **name, unsigned int *name_len)
+                 grn_content_type *ct)
 {
   const char *pd = NULL;
-  for (*name = p; p < pe && *p != '?'; p++) {
+  for (; p < pe && *p != '?'; p++) {
     if (*p == '.') {
       pd = p;
-    } else if (*p == '/') {
-      *name = p + 1;
     }
   }
   if (pd && pd < p) {
-    *name_len = pd - *name;
     switch (*++pd) {
     case 'c' :
       if (pd + 3 == p && !memcmp(pd, "css", 3)) {
@@ -745,7 +742,6 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
       break;
     }
   } else {
-    *name_len = p - *name;
     *ct = GRN_CONTENT_JSON;
   }
 }
@@ -771,19 +767,16 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     grn_expr_clear_vars(ctx, expr);
   } else {
     grn_obj key;
-    const char *g, *name;
-    unsigned int name_len;
+    const char *g;
     grn_content_type ot;
     GRN_TEXT_INIT(&key, 0);
     p = str;
     e = p + str_size;
     g = grn_text_urldec(ctx, &key, p, e, '?');
-    get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &name, &name_len);
-    /* todo :
-    if ((name_len > 2 && name[0] == 'd' && name[1] == '/') &&
-        (expr = grn_ctx_get(ctx, name + 2, name_len - 2)))
-    */
-    if ((expr = grn_ctx_get(ctx, name, name_len))) {
+    get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot);
+    if ((GRN_TEXT_LEN(&key) >= 2 &&
+         GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
+        (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, GRN_TEXT_LEN(&key) - 2))) {
       while (g < e) {
         GRN_BULK_REWIND(&key);
         g = grn_text_cgidec(ctx, &key, g, e, '=');

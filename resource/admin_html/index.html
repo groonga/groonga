@@ -434,7 +434,7 @@ GroongaAdmin = {
       if (s.length > 0) {
         cs.empty().removeAttr('disabled');
         $.ajax({
-          url: '/column_list',
+          url: '/d/column_list',
           data: {'table': s.val()},
           dataType: 'json',
           success: function(d) {
@@ -505,7 +505,7 @@ GroongaAdmin = {
   },
   status: function() {
     $.ajax({
-      url: '/status',
+      url: '/d/status',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -516,7 +516,7 @@ GroongaAdmin = {
   },
   update_tablelist: function() {
     $.ajax({
-      url: '/table_list',
+      url: '/d/table_list',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -564,7 +564,7 @@ GroongaAdmin = {
   },
   tablelist: function() {
     $.ajax({
-      url: '/table_list',
+      url: '/d/table_list',
       data: {},
       dataType: 'json',
       success: function(d) {
@@ -625,7 +625,7 @@ GroongaAdmin = {
       d[query_type] = query;
     }
     $.ajax({
-      url: '/select',
+      url: '/d/select',
       data: d,
       dataType: 'json',
       success: function(d) {
@@ -660,7 +660,7 @@ GroongaAdmin = {
   },
   columnlist: function(table_name) {
     $.ajax({
-      url: '/column_list',
+      url: '/d/column_list',
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
@@ -683,7 +683,7 @@ GroongaAdmin = {
     });
     flags |= Groonga[$('#createtable-key-index').val()];
     $.ajax({
-      url: '/table_create',
+      url: '/d/table_create',
       data: {
         name: $('#createtable-name').val(),
         'flags': flags,
@@ -722,7 +722,7 @@ GroongaAdmin = {
       d['source'] = $('#createcolumn-source').val();
     }
     $.ajax({
-      url: '/column_create',
+      url: '/d/column_create',
       data: d,
       dataType: 'json',
       success: function(d) {
