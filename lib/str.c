@@ -2329,7 +2329,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
           grn_obj_get_value(ctx, accessor, *((grn_id *)GRN_BULK_HEAD(obj)), &buf);
           grn_obj_unlink(ctx, accessor);
         }
-        grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
+        grn_text_otoj(ctx, bulk, &buf, format);
       }
     }
     break;

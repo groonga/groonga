@@ -249,22 +249,10 @@ struct _grn_expr {
   grn_obj dfi;
 };
 
-/**
- * grn_column_index:
- * @column: 対象のcolumn
- * @op: indexで実行したい操作
- * @indexbuf: indexを格納するバッファ(呼出側で準備する)
- * @buf_size: namebufのサイズ(byte長)
- *
- * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
- * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
- **/
-int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
-                     grn_obj **indexbuf, int buf_size);
-
 grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
 
 grn_rc grn_expr_parser_close(grn_ctx *ctx);
+grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp);
 
 #ifdef __cplusplus
 }

@@ -1468,6 +1468,19 @@ GRN_API grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry en
 
 GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain);
 
+/**
+ * grn_column_index:
+ * @column: 対象のcolumn
+ * @op: indexで実行したい操作
+ * @indexbuf: indexを格納するバッファ(呼出側で準備する)
+ * @buf_size: namebufのサイズ(byte長)
+ *
+ * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
+ * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
+ **/
+int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
+                     grn_obj **indexbuf, int buf_size);
+
 /* query & snippet */
 
 #ifndef GRN_QUERY_AND
