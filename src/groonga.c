@@ -492,7 +492,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
         if (added) {
           if (header->cas) {
             GRN_MSG_MBRES({
-              MBRES(ctx, re, EINVAL, 0, 0, 0);
+              MBRES(ctx, re, MBRES_EINVAL, 0, 0, 0);
             });
           } else {
             grn_obj text_buf, uint32_buf;

@@ -83,6 +83,7 @@
 #include <stddef.h>
 #include <windef.h>
 #include <float.h>
+#include <time.h>
 #include <sys/types.h>
 #define PATH_MAX (MAX_PATH - 1)
 #define inline _inline

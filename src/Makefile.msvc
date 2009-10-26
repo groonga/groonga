@@ -36,7 +36,8 @@ OBJ = \
   ..\lib\snip.obj \
   ..\lib\store.obj \
   ..\lib\str.obj \
-  ..\lib\token.obj
+  ..\lib\token.obj \
+  ..\lib\proc.obj
 
 .c.obj:
 	$(CC) $(CFLAGS) $(DEFS) -c  $<
