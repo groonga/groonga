@@ -1806,8 +1806,8 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
 } while (0)
 #define GRN_TIME_NOW(ctx,obj) do {\
-  struct timeval tv_;\
-  gettimeofday(&tv_, NULL);\
+  grn_timeval tv_;\
+  grn_timeval_now(ctx, &tv_);\
   GRN_TIME_SET((ctx), (obj), GRN_TIME_PACK(tv_.tv_sec, tv_.tv_usec));\
 } while (0)
 
