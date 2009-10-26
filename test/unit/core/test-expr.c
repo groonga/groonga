@@ -435,6 +435,64 @@ static grn_obj *docs, *terms, *size, *body, *index_body;
   grn_test_assert(grn_obj_set_value(&context, size, docid, intbuf, GRN_OBJ_SET));\
 }
 
+static void grn_test_assert_select(const GList* expected, grn_obj *result);
+static void grn_test_assert_select_all(grn_obj *result);
+static void grn_test_assert_select_none(grn_obj *result);
+
+static void
+grn_test_assert_select(const GList *expected, grn_obj *result)
+{
+  GList *records = NULL;
+  grn_table_cursor *cursor;
+  cursor = grn_table_cursor_open(&context, result, NULL, 0, NULL, 0, 0, 0, 0);
+  cut_assert_not_null(cursor);
+  while (grn_table_cursor_next(&context, cursor) != GRN_ID_NIL) {
+    void *value;
+    int size;
+    grn_obj record_value;
+    GString *null_terminated_key;
+
+    grn_table_cursor_get_key(&context, cursor, &value);
+    GRN_TEXT_INIT(&record_value, 0);
+    grn_obj_get_value(&context, body, *((grn_id *)value), &record_value);
+    value = GRN_TEXT_VALUE(&record_value);
+    size = GRN_TEXT_LEN(&record_value);
+
+    null_terminated_key = g_string_new_len(value, size);
+    records = g_list_append(records, null_terminated_key->str);
+    g_string_free(null_terminated_key, FALSE);
+  }
+  cut_assert_equal_uint(0, grn_table_cursor_close(&context, cursor));
+  gcut_take_list(records, g_free);
+  expected = g_list_sort((GList *)expected, (GCompareFunc)g_utf8_collate);
+  records = g_list_sort((GList *)records, (GCompareFunc)g_utf8_collate);
+  gcut_assert_equal_list_string(expected, records);
+}
+
+static void
+grn_test_assert_select_all(grn_obj *result)
+{
+  grn_test_assert_select(gcut_take_new_list_string("hoge",
+                                                   "fuga fuga",
+                                                   "moge moge moge",
+                                                   "hoge hoge",
+                                                   "hoge fuga fuga",
+                                                   "hoge moge moge moge",
+                                                   "moge hoge hoge",
+                                                   "moge hoge fuga fuga",
+                                                   "moge hoge moge moge moge",
+                                                   "poyo moge hoge "
+                                                     "moge moge moge",
+                                                   NULL), result);
+}
+
+static void
+grn_test_assert_select_none(grn_obj *result)
+{
+  cut_assert_equal_uint(0, grn_table_size(&context, result));
+}
+
+
 static void
 prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 {
@@ -506,7 +564,9 @@ test_table_select_equal(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  cut_assert_equal_uint(1, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("poyo moge hoge "
+                                                   "moge moge moge",
+                                                   NULL), res);
 
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
@@ -540,7 +600,7 @@ test_table_select_equal_indexed(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  cut_assert_equal_uint(1, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("hoge", NULL), res);
 
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
@@ -583,7 +643,10 @@ test_table_select_select(void)
 
   grn_expr_exec(&context, expr, 0);
 
-  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "hoge fuga fuga",
+                                                   "moge hoge hoge",
+                                                   NULL), res);
 
   grn_test_assert(grn_obj_close(&context, expr));
   grn_test_assert(grn_obj_close(&context, res));
@@ -761,7 +824,14 @@ test_table_select_match(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  cut_assert_equal_uint(6, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "hoge moge moge moge",
+                                                   "moge hoge hoge",
+                                                   "moge hoge fuga fuga",
+                                                   "moge hoge moge moge moge",
+                                                   "poyo moge hoge "
+                                                     "moge moge moge",
+                                                   NULL), res);
 
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
@@ -807,7 +877,9 @@ test_table_select_match_equal(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  cut_assert_equal_uint(2, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "moge hoge hoge",
+                                                   NULL), res);
 
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
@@ -882,7 +954,9 @@ test_expr_parse(gconstpointer data)
   cut_assert_not_null(res);
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  cut_assert_equal_uint(1, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("poyo moge hoge "
+                                                   "moge moge moge",
+                                                   NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
 
@@ -899,7 +973,10 @@ test_expr_parse(gconstpointer data)
   cut_assert_not_null(res);
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "hoge fuga fuga",
+                                                   "moge hoge hoge",
+                                                   NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
 
@@ -920,7 +997,10 @@ test_expr_set_value(void)
   PARSE(cond, "size:14", 2);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "hoge fuga fuga",
+                                                   "moge hoge hoge",
+                                                   NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
@@ -947,7 +1027,7 @@ test_expr_set_value(void)
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(10, grn_table_size(&context, res));
+  grn_test_assert_select_all(res);
   grn_test_assert(grn_obj_close(&context, res));
 
   grn_test_assert(grn_obj_close(&context, cond));
@@ -969,7 +1049,10 @@ test_expr_set_value_with_implicit_variable_reference(void)
   PARSE(cond, "size:14", 2);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "hoge fuga fuga",
+                                                   "moge hoge hoge",
+                                                   NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
@@ -993,7 +1076,7 @@ test_expr_set_value_with_implicit_variable_reference(void)
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(10, grn_table_size(&context, res));
+  grn_test_assert_select_all(res);
   grn_test_assert(grn_obj_close(&context, res));
 
   grn_test_assert(grn_obj_close(&context, cond));
@@ -1015,7 +1098,10 @@ test_expr_set_value_with_query(void)
   PARSE(cond, "size:14", 2);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(3, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "hoge fuga fuga",
+                                                   "moge hoge hoge",
+                                                   NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
@@ -1035,7 +1121,7 @@ test_expr_set_value_with_query(void)
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(10, grn_table_size(&context, res));
+  grn_test_assert_select_all(res);
   grn_test_assert(grn_obj_close(&context, res));
 
   grn_test_assert(grn_obj_close(&context, cond));
@@ -1057,7 +1143,12 @@ test_expr_proc_call(void)
   PARSE(cond, "size:>14", 2);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(4, grn_table_size(&context, res));
+  grn_test_assert_select(gcut_take_new_list_string("hoge moge moge moge",
+                                                   "moge hoge fuga fuga",
+                                                   "moge hoge moge moge moge",
+                                                   "poyo moge hoge "
+                                                     "moge moge moge",
+                                                   NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
@@ -1077,7 +1168,7 @@ test_expr_proc_call(void)
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(0, grn_table_size(&context, res));
+  grn_test_assert_select_none(res);
   grn_test_assert(grn_obj_close(&context, res));
 
   grn_test_assert(grn_obj_close(&context, cond));
@@ -1099,7 +1190,7 @@ test_expr_score_set(void)
   PARSE(cond, "size:>0", 2);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  cut_assert_equal_uint(10, grn_table_size(&context, res));
+  grn_test_assert_select_all(res);
   grn_test_assert(grn_obj_close(&context, cond));
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, res, expr, v);
@@ -1116,7 +1207,15 @@ test_expr_score_set(void)
   PARSE(cond, "_score:>9", 2);
   res2 = grn_table_select(&context, res, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res2);
-  cut_assert_equal_uint(7, grn_table_size(&context, res2));
+  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+                                                   "hoge fuga fuga",
+                                                   "hoge moge moge moge",
+                                                   "moge hoge hoge",
+                                                   "moge hoge fuga fuga",
+                                                   "moge hoge moge moge moge",
+                                                   "poyo moge hoge "
+                                                   "moge moge moge",
+                                                   NULL), res2);
   grn_test_assert(grn_obj_close(&context, cond));
 
   grn_test_assert(grn_obj_close(&context, res2));
