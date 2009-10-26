@@ -28,6 +28,8 @@ void test_simple_exec_euc_jp(void);
 void test_simple_exec_sjis(void);
 void test_simple_exec_utf8(void);
 void test_exec_with_invalid_argument(void);
+void data_proper_tag_insertion(void);
+void test_proper_tag_insertion(gconstpointer data);
 void test_exec_with_normalize(void);
 void test_exec_with_many_results(void);
 void test_customized_tag(void);
@@ -466,6 +468,73 @@ test_exec_with_normalize(void)
                           "インデックス]]タイプのエンジンです。コン",
                           result);
   cut_assert_equal_uint(104, result_len);
+}
+
+void
+data_proper_tag_insertion(void)
+{
+#define ADD_DATUM(label, expected, flags)              \
+  gcut_add_datum(label,                                \
+                 "expected", G_TYPE_STRING, (expected),\
+                 "flags", G_TYPE_INT, (flags),         \
+                 NULL)
+  const gchar tag_after_space[] =
+    "Groonga is an [[embeddable]] fulltext search engine, which you can use in\n"
+    "conjunction with various scrip";
+  const gchar tag_before_space[] =
+    "Groonga is an[[ embeddable]] fulltext search engine, which you can use in\n"
+    "conjunction with various scrip";
+
+  ADD_DATUM("no flags", tag_after_space,
+            0);
+  ADD_DATUM("copy_tag", tag_after_space,
+            GRN_SNIP_COPY_TAG);
+  ADD_DATUM("skip_spaces", tag_after_space,
+            GRN_SNIP_SKIP_LEADING_SPACES);
+  ADD_DATUM("copy_tag and skip_spaces", tag_after_space,
+            GRN_SNIP_COPY_TAG | GRN_SNIP_SKIP_LEADING_SPACES);
+  ADD_DATUM("normalize", tag_before_space,
+            GRN_SNIP_NORMALIZE);
+  ADD_DATUM("normalize and copy_tag", tag_before_space,
+            GRN_SNIP_NORMALIZE | GRN_SNIP_COPY_TAG);
+  ADD_DATUM("normalize and skip_spaces", tag_after_space,
+            GRN_SNIP_NORMALIZE | GRN_SNIP_SKIP_LEADING_SPACES);
+  ADD_DATUM("normalize, copy_tag and skip_spaces", tag_after_space,
+            GRN_SNIP_NORMALIZE | GRN_SNIP_COPY_TAG | GRN_SNIP_SKIP_LEADING_SPACES);
+#undef ADD_DATUM
+}
+
+void
+test_proper_tag_insertion(gconstpointer data)
+{
+  unsigned int n_results;
+  unsigned int max_tagged_len;
+  const gchar keyword[] = "embeddable";
+  const gchar *expected;
+  gchar *result;
+  unsigned int text_len, keyword_len, result_len, expected_len;
+
+  default_encoding = GRN_ENC_UTF8;
+  default_flags = gcut_data_get_int(data, "flags");
+
+  text_len = strlen(text);
+  keyword_len = strlen(keyword);
+  expected = gcut_data_get_string(data, "expected");
+  expected_len = strlen(expected);
+
+  cut_assert_open_snip();
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, keyword_len,
+                                    NULL, 0, NULL, 0));
+
+  grn_test_assert(grn_snip_exec(&context, snip, text, text_len, &n_results,
+                                &max_tagged_len));
+  cut_assert_equal_uint(1, n_results);
+  cut_assert_equal_uint(expected_len + 1, max_tagged_len);
+  result = g_new(gchar, max_tagged_len);
+
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
+  cut_assert_equal_string(expected, result);
+  cut_assert_equal_uint(expected_len, result_len);
 }
 
 void
