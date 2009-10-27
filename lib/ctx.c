@@ -81,6 +81,14 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
 #endif /* WIN32 */
 }
 
+void
+grn_time_now(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_timeval tv;
+  grn_timeval_now(ctx, &tv);
+  GRN_TIME_SET(ctx, obj, GRN_TIME_PACK(tv.tv_sec, tv.tv_usec));
+}
+
 grn_rc
 grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
 {

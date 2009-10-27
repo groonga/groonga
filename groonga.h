@@ -1478,8 +1478,8 @@ GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags fl
  * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
  * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
  **/
-int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
-                     grn_obj **indexbuf, int buf_size);
+GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
+                             grn_obj **indexbuf, int buf_size);
 
 /* query & snippet */
 
@@ -1805,11 +1805,10 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
 } while (0)
-#define GRN_TIME_NOW(ctx,obj) do {\
-  grn_timeval tv_;\
-  grn_timeval_now(ctx, &tv_);\
-  GRN_TIME_SET((ctx), (obj), GRN_TIME_PACK(tv_.tv_sec, tv_.tv_usec));\
-} while (0)
+
+GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
+
+#define GRN_TIME_NOW(ctx,obj) (grn_time_now((ctx), (obj)))
 
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))
