@@ -1468,6 +1468,19 @@ GRN_API grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry en
 
 GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain);
 
+/**
+ * grn_column_index:
+ * @column: 対象のcolumn
+ * @op: indexで実行したい操�
+ * @indexbuf: indexを格納するバッファ(呼出側で準備する)
+ * @buf_size: namebufのサイズ(byte長)
+ *
+ * columnに張られているindexのうち、opの操作を実行可能なものの数を返す�
+ * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す�
+ **/
+GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
+                             grn_obj **indexbuf, int buf_size);
+
 /* query & snippet */
 
 #ifndef GRN_QUERY_AND
@@ -1792,11 +1805,10 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
 } while (0)
-#define GRN_TIME_NOW(ctx,obj) do {\
-  grn_timeval tv_;\
-  grn_timeval_now(ctx, &tv_);\
-  GRN_TIME_SET((ctx), (obj), GRN_TIME_PACK(tv_.tv_sec, tv_.tv_usec));\
-} while (0)
+
+GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
+
+#define GRN_TIME_NOW(ctx,obj) (grn_time_now((ctx), (obj)))
 
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))
@@ -1906,6 +1918,8 @@ GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
   if (((expr) = grn_expr_create((ctx), NULL, 0)) &&\
       ((var) = grn_expr_add_var((ctx), (expr), NULL, 0))) {\
     GRN_RECORD_INIT((var), 0, grn_obj_id((ctx), (table)));\
+  } else {\
+    (var) = NULL;\
   }
 
 GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
@@ -1926,7 +1940,7 @@ GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys, unsigned nkeys);
 
-GRN_API grn_rc grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+GRN_API grn_rc grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                           const char *table, unsigned table_len,
                           const char *match_column, unsigned match_column_len,
                           const char *query, unsigned query_len,

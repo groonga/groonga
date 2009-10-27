@@ -4562,7 +4562,10 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   }
   if (grn_io_lock(ctx, ii->seg, 10000000)) { return ctx->rc; }
   if (new) {
-    switch (new->header.type) {
+    unsigned char type = (ii->obj.header.domain == new->header.domain)
+      ? GRN_UVECTOR
+      : new->header.type;
+    switch (type) {
     case GRN_BULK :
       {
         new_ = new;
@@ -4639,7 +4642,10 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   }
 
   if (old) {
-    switch (old->header.type) {
+    unsigned char type = (ii->obj.header.domain == old->header.domain)
+      ? GRN_UVECTOR
+      : old->header.type;
+    switch (type) {
     case GRN_BULK :
       {
         //        const char *str = GRN_BULK_HEAD(old);

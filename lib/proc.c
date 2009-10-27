@@ -54,7 +54,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       output_columns = DEFAULT_OUTPUT_COLUMNS;
       output_columns_len = strlen(DEFAULT_OUTPUT_COLUMNS);
     }
-    grn_search(ctx, outbuf, ct,
+    grn_select(ctx, outbuf, ct,
                GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
                GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
