@@ -1918,6 +1918,8 @@ GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
   if (((expr) = grn_expr_create((ctx), NULL, 0)) &&\
       ((var) = grn_expr_add_var((ctx), (expr), NULL, 0))) {\
     GRN_RECORD_INIT((var), 0, grn_obj_id((ctx), (table)));\
+  } else {\
+    (var) = NULL;\
   }
 
 GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
