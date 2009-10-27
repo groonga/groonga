@@ -1531,12 +1531,15 @@ static size_t mmap_size = 0;
 inline static grn_rc
 grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
 {
-  fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
-                      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                      CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
-  if (fi->fh == INVALID_HANDLE_VALUE) {
-    SERR("CreateFile");
-    return ctx->rc;
+  if ((flags & O_CREAT)) {
+    fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                        CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+    if (fi->fh == INVALID_HANDLE_VALUE) {
+      SERR("CreateFile");
+      return ctx->rc;
+    }
+    goto EXIT;
   }
   if ((flags & O_TRUNC)) {
     CloseHandle(fi->fh);
@@ -1547,7 +1550,17 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
       SERR("CreateFile");
       return ctx->rc;
     }
+    goto EXIT;
   }
+  /* O_RDWR only */
+  fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+                      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  if (fi->fh == INVALID_HANDLE_VALUE) {
+    SERR("CreateFile");
+    return ctx->rc;
+  }
+EXIT:
   MUTEX_INIT(fi->mutex);
   return GRN_SUCCESS;
 }
@@ -1624,12 +1637,15 @@ inline static grn_rc
 grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
 {
   /* may be wrong if flags is just only O_RDWR */
-  fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
-                      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                      CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
-  if (fi->fh == INVALID_HANDLE_VALUE) {
-    SERR("CreateFile");
-    return ctx->rc;
+  if ((flags & O_CREAT)) {
+    fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                        CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+    if (fi->fh == INVALID_HANDLE_VALUE) {
+      SERR("CreateFile");
+      return ctx->rc;
+    }
+    goto EXIT;
   }
   if ((flags & O_TRUNC)) {
     CloseHandle(fi->fh);
@@ -1641,7 +1657,17 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
       SERR("CreateFile");
       return ctx->rc;
     }
+    goto EXIT;
   }
+  /* O_RDWR only */
+  fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+                      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  if (fi->fh == INVALID_HANDLE_VALUE) {
+    SERR("CreateFile");
+    return ctx->rc;
+  }
+EXIT:
   /* signature may be wrong.. */
   fi->fmo = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, NULL);
   /* open failed */
