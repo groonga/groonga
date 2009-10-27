@@ -1539,7 +1539,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
       SERR("CreateFile");
       return ctx->rc;
     }
-    goto EXIT;
+    goto exit;
   }
   if ((flags & O_TRUNC)) {
     CloseHandle(fi->fh);
@@ -1550,7 +1550,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
       SERR("CreateFile");
       return ctx->rc;
     }
-    goto EXIT;
+    goto exit;
   }
   /* O_RDWR only */
   fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
@@ -1560,7 +1560,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     SERR("CreateFile");
     return ctx->rc;
   }
-EXIT:
+exit:
   MUTEX_INIT(fi->mutex);
   return GRN_SUCCESS;
 }
@@ -1645,7 +1645,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
       SERR("CreateFile");
       return ctx->rc;
     }
-    goto EXIT;
+    goto exit;
   }
   if ((flags & O_TRUNC)) {
     CloseHandle(fi->fh);
@@ -1657,7 +1657,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
       SERR("CreateFile");
       return ctx->rc;
     }
-    goto EXIT;
+    goto exit;
   }
   /* O_RDWR only */
   fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
@@ -1667,7 +1667,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     SERR("CreateFile");
     return ctx->rc;
   }
-EXIT:
+exit:
   /* signature may be wrong.. */
   fi->fmo = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, NULL);
   /* open failed */
