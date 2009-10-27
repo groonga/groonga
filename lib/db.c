@@ -9331,7 +9331,7 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned nkeys)
 }
 
 grn_rc
-grn_search(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            const char *table, unsigned table_len,
            const char *match_column, unsigned match_column_len,
            const char *query, unsigned query_len,
