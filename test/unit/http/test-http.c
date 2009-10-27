@@ -100,7 +100,7 @@ test_get_root(void)
 void
 test_get_status(void)
 {
-  soupcut_client_get(client, "/status", NULL);
+  soupcut_client_get(client, "/d/status", NULL);
 
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
@@ -119,7 +119,7 @@ test_get_table_list(void)
   grn_obj_flags flags;
   const gchar *table_name = "users";
 
-  soupcut_client_get(client, "/table_list", NULL);
+  soupcut_client_get(client, "/d/table_list", NULL);
 
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
@@ -128,7 +128,7 @@ test_get_table_list(void)
     client);
   flags = GRN_OBJ_PERSISTENT | GRN_OBJ_TABLE_PAT_KEY;
   soupcut_client_get(client,
-                     "/table_create",
+                     "/d/table_create",
                      "name", table_name,
                      "flags", cut_take_printf("%u", flags),
                      "key_type", "Int8",
@@ -141,7 +141,7 @@ test_get_table_list(void)
   users = grn_ctx_get(&context, table_name, strlen(table_name));
   grn_test_assert_not_null(&context, users);
 
-  soupcut_client_get(client, "/table_list", NULL);
+  soupcut_client_get(client, "/d/table_list", NULL);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_equal_body(
     cut_take_printf("["
@@ -172,7 +172,7 @@ test_get_column_list(void)
                            grn_ctx_at(&context, GRN_DB_OBJECT));
   grn_test_assert_not_null(&context, users);
 
-  soupcut_client_get(client, "/column_list", "table", table_name, NULL);
+  soupcut_client_get(client, "/d/column_list", "table", table_name, NULL);
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_equal_body(
@@ -180,7 +180,7 @@ test_get_column_list(void)
     client);
 
   soupcut_client_get(client,
-                     "/column_create",
+                     "/d/column_create",
                      "table", table_name,
                      "name", column_name,
                      "flags", cut_take_printf("%u", GRN_OBJ_COLUMN_SCALAR),
@@ -193,7 +193,7 @@ test_get_column_list(void)
   age = grn_ctx_get(&context, full_column_name, strlen(full_column_name));
   grn_test_assert_not_null(&context, age);
 
-  soupcut_client_get(client, "/column_list", "table", table_name, NULL);
+  soupcut_client_get(client, "/d/column_list", "table", table_name, NULL);
   soupcut_client_assert_response(client);
   soupcut_client_assert_equal_content_type("text/javascript", client);
   soupcut_client_assert_equal_body(
@@ -243,7 +243,7 @@ test_select(void)
   grn_obj_unlink(&context, &age_value);
 
   soupcut_client_get(client,
-                     "/select",
+                     "/d/select",
                      "table", table_name,
                      "query", cut_take_printf("%s:%d",
                                               column_name, hayamizu_age),
