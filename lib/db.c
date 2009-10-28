@@ -7000,11 +7000,9 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   e->values_curr = vp - e->values;\
   block\
   vp = e->values + e->values_curr;\
-  if (sp != ctx->impl->stack + ctx->impl->stack_curr) {\
-    sp = ctx->impl->stack + ctx->impl->stack_curr;\
-    s0 = sp[-1];\
-    s1 = sp[-2];\
-  }\
+  sp = ctx->impl->stack + ctx->impl->stack_curr;\
+  s0 = sp[-1];\
+  s1 = sp[-2];\
 }
 
 #define do_compare_sub(op) {\
