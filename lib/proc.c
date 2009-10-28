@@ -141,6 +141,9 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_text_itoa(ctx, outbuf, now.tv_sec - grn_starttime.tv_sec);
       GRN_TEXT_PUTC(ctx, outbuf, '}');
       break;
+    case GRN_CONTENT_XML:
+    case GRN_CONTENT_NONE:
+      break;
     }
   }
   return outbuf;
@@ -294,6 +297,9 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     /* TODO: flags to str, domain to str */
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
+  case GRN_CONTENT_XML:
+  case GRN_CONTENT_NONE:
+    break;
   }
   return 1;
 }
@@ -347,6 +353,9 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
     /* TODO: domain to str */
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
+  case GRN_CONTENT_XML:
+  case GRN_CONTENT_NONE:
+    break;
   }
   return 1;
 }
@@ -384,6 +393,9 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
             line_delimiter = ',';
             column_delimiter = ',';
             GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"]");
+            break;
+          case GRN_CONTENT_XML:
+          case GRN_CONTENT_NONE:
             break;
           }
 
@@ -437,6 +449,9 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
         line_delimiter = ',';
         column_delimiter = ',';
         GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]");
+        break;
+      case GRN_CONTENT_XML:
+      case GRN_CONTENT_NONE:
         break;
       }
       while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
