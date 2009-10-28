@@ -180,10 +180,10 @@ struct _grn_ctx {
 
 /**
  * grn_ctx_init:
- * @ctx: 初期化するctx構造体へのポインタを指定します�
- * @flags: 初期化するctxのオプションを指定します�
+ * @ctx: 初期化するctx構造体へのポインタを指定します。
+ * @flags: 初期化するctxのオプションを指定します。
  *
- * ctxを初期化します�
+ * ctxを初期化します。
  **/
 
 #define GRN_CTX_USE_QL                 (0x03)
@@ -193,39 +193,39 @@ GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags);
 
 /**
  * grn_ctx_open:
- * @flags: 初期化するctxのオプションを指定します�
+ * @flags: 初期化するctxのオプションを指定します。
  *
  *
- * 初期化されたgrn_ctxオブジェクトを返します�
+ * 初期化されたgrn_ctxオブジェクトを返します。
  * grn_ctx_initで初期化されたgrn_ctxオブジェクトは構造体の実体を
- * APIの呼び元で確保するのに対して、grn_ctx_openではgroongaライブラリの内部で�
- * 実体を確保します。どちらで初期化されたgrn_ctxも、grn_ctx_fin()で解放できます�
- * grn_ctx_openで確保したgrn_ctx構造体に関しては、grn_ctx_fin()で解放した後に�
- * そのgrn_ctxで作成したgrn_objをgrn_obj_close()によって解放しても問題ありません�
+ * APIの呼び元で確保するのに対して、grn_ctx_openではgroongaライブラリの内部で、
+ * 実体を確保します。どちらで初期化されたgrn_ctxも、grn_ctx_fin()で解放できます。
+ * grn_ctx_openで確保したgrn_ctx構造体に関しては、grn_ctx_fin()で解放した後に、
+ * そのgrn_ctxで作成したgrn_objをgrn_obj_close()によって解放しても問題ありません。
  **/
 
 GRN_API grn_ctx *grn_ctx_open(int flags);
 
 /**
  * grn_ctx_fin:
- * @ctx: 解放するctx構造体へのポインタを指定します�
+ * @ctx: 解放するctx構造体へのポインタを指定します。
  *
- * ctxの管理するメモリを解放し、使用を終了します�
+ * ctxの管理するメモリを解放し、使用を終了します。
  **/
 GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
 
 /**
  * grn_get_default_encoding:
  *
- * デフォルトのencodingを返します�
+ * デフォルトのencodingを返します。
  **/
 GRN_API grn_encoding grn_get_default_encoding(void);
 
 /**
  * grn_set_default_encoding:
- * @encoding: 変更後のデフォルトのencodingを指定します�
+ * @encoding: 変更後のデフォルトのencodingを指定します。
  *
- * デフォルトのencodingを変更します�
+ * デフォルトのencodingを変更します。
  **/
 GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
 
@@ -366,14 +366,14 @@ struct _grn_obj {
 
 /**
  * grn_db_create:
- * @path: 作成するdbを格納するファイルパス。NULLならtemporary dbとなる�
- * NULL以外のパスを指定した場合はpersistent dbとなる�
- * @optarg: 作成するdbの組み込み型の名前を変更する時に指定する�
- * optarg.builtin_type_namesには組み込み型の名前となるnul終端文字列の配列を指定する�
- * optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数�
- * 指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する�
+ * @path: 作成するdbを格納するファイルパス。NULLならtemporary dbとなる。
+ * NULL以外のパスを指定した場合はpersistent dbとなる。
+ * @optarg: 作成するdbの組み込み型の名前を変更する時に指定する。
+ * optarg.builtin_type_namesには組み込み型の名前となるnul終端文字列の配列を指定する。
+ * optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
+ * 指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。
  *
- * 新たなdbを作成する�
+ * 新たなdbを作成する。
  **/
 
 typedef struct _grn_db_create_optarg grn_db_create_optarg;
@@ -390,45 +390,45 @@ GRN_API grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_opt
 
 /**
  * grn_db_open:
- * @path: 開こうとするdbを格納するファイルパス�
+ * @path: 開こうとするdbを格納するファイルパス。
  *
- * 既存のdbを開く�
+ * 既存のdbを開く。
  **/
 GRN_API grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
 
 /**
  * grn_ctx_use:
- * @db: ctxが使用するdbを指定します�
+ * @db: ctxが使用するdbを指定します。
  *
- * ctxが操作対象とするdbを指定します。NULLを指定した場合は�
- * dbを操作しない状態(init直後の状態)になります�
+ * ctxが操作対象とするdbを指定します。NULLを指定した場合は、
+ * dbを操作しない状態(init直後の状態)になります。
  **/
 GRN_API grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
 
 /**
  * grn_ctx_db:
  *
- * ctxが現在操作対象としているdbを返します�
- * dbを使用していない場合はNULLを返します�
+ * ctxが現在操作対象としているdbを返します。
+ * dbを使用していない場合はNULLを返します。
  **/
 GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
 
 /**
  * grn_ctx_get:
- * @name: 検索しようとするオブジェクトの名前�
- * @name_size: @nameのbyte長�
+ * @name: 検索しようとするオブジェクトの名前。
+ * @name_size: @nameのbyte長。
  *
- * ctxが使用するdbからnameに対応するオブジェクトを検索して返す�
- * nameに一致するオブジェクトが存在しなければNULLを返す�
+ * ctxが使用するdbからnameに対応するオブジェクトを検索して返す。
+ * nameに一致するオブジェクトが存在しなければNULLを返す。
  **/
 GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, unsigned name_size);
 
 /**
  * grn_ctx_at:
- * @id: 検索しようとするオブジェクトのid�
+ * @id: 検索しようとするオブジェクトのid。
  *
- * ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す�
- * idに一致するオブジェクトが存在しなければNULLを返す�
+ * ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。
+ * idに一致するオブジェクトが存在しなければNULLを返す。
  **/
 
 typedef enum {
@@ -465,13 +465,13 @@ GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 
 /**
  * grn_type_create:
- * @name: 作成するtypeの名前�
+ * @name: 作成するtypeの名前。
  * @flags: GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT, GRN_OBJ_KEY_INT, GRN_OBJ_KEY_UINT
- *        のいずれかを指�
- * @size: GRN_OBJ_KEY_VAR_SIZEの場合は最大長�
+ *        のいずれかを指定
+ * @size: GRN_OBJ_KEY_VAR_SIZEの場合は最大長、
  *        それ以外の場合は長さを指定(単位:byte)
  *
- * nameに対応する新たなtype(型)をdbに定義する�
+ * nameに対応する新たなtype(型)をdbに定義する。
  **/
 
 GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
@@ -481,15 +481,15 @@ GRN_API grn_rc grn_db_load(grn_ctx *ctx, const char *path);
 
 /**
  * grn_proc_create:
- * @name: 作成するprocの名前�
- * @type: procの種類�
+ * @name: 作成するprocの名前。
+ * @type: procの種類。
  * @init: 初期化関数のポインタ
  * @next: 実処理関数のポインタ
  * @fin: 終了関数のポインタ
  * @nvars: procで使用する変数の数
  * @vars: procで使用する変数の定義(grn_expr_var構造体の配列)
  *
- * nameに対応する新たなproc(手続き)をctxが使用するdbに定義する�
+ * nameに対応する新たなproc(手続き)をctxが使用するdbに定義する。
  **/
 
 typedef struct {
@@ -518,7 +518,7 @@ GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
  * @nvars: 変数の数
  *
  * user_dataをキーとして、現在実行中のgrn_proc_func関数および
- * 定義されている変数(grn_expr_var)の配列とその数を取得する�
+ * 定義されている変数(grn_expr_var)の配列とその数を取得する。
  **/
 
 GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
@@ -532,24 +532,24 @@ GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
 
 /**
  * grn_table_create:
- * @name: 作成するtableの名前。NULLなら無名tableとなる�
- *        persistent dbに対して名前をありのtableを作成するときには�
- *        flagsにGRN_OBJ_PERSISTENTが指定されていなければならない�
- * @path: 作成するtableのファイルパス�
- *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効�
- *        NULLなら自動的にファイルパスが付与される�
- * @flags: GRN_OBJ_PERSISTENTを指定すると永続tableとなる�
+ * @name: 作成するtableの名前。NULLなら無名tableとなる。
+ *        persistent dbに対して名前をありのtableを作成するときには、
+ *        flagsにGRN_OBJ_PERSISTENTが指定されていなければならない。
+ * @path: 作成するtableのファイルパス。
+ *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効。
+ *        NULLなら自動的にファイルパスが付与される。
+ * @flags: GRN_OBJ_PERSISTENTを指定すると永続tableとなる。
  *         GRN_OBJ_TABLE_PAT_KEY,GRN_OBJ_TABLE_HASH_KEY,GRN_OBJ_TABLE_NO_KEY
- *         のいずれかを指定する�
- *         GRN_OBJ_KEY_NORMALIZEを指定すると正規化された文字列がkeyとなる�
- *         GRN_OBJ_KEY_WITH_SISを指定するとkey文字列の全suffixが自動的に登録される�
- * @key_type: keyの型を指定する。GRN_OBJ_TABLE_NO_KEYが指定された場合は無効�
- *            既存のtypeあるいはtableを指定できる�
- *            key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなる�
- * @value_type: keyに対応する値を格納する領域の型。tableはcolumnとは別に�
- *              keyに対応する値を格納する領域を一つだけ持つことができる�
+ *         のいずれかを指定する。
+ *         GRN_OBJ_KEY_NORMALIZEを指定すると正規化された文字列がkeyとなる。
+ *         GRN_OBJ_KEY_WITH_SISを指定するとkey文字列の全suffixが自動的に登録される。
+ * @key_type: keyの型を指定する。GRN_OBJ_TABLE_NO_KEYが指定された場合は無効。
+ *            既存のtypeあるいはtableを指定できる。
+ *            key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなる。
+ * @value_type: keyに対応する値を格納する領域の型。tableはcolumnとは別に、
+ *              keyに対応する値を格納する領域を一つだけ持つことができる。
  *
- * nameに対応する新たなtableをctxが使用するdbに定義する�
+ * nameに対応する新たなtableをctxが使用するdbに定義する。
  **/
 GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned name_size,
@@ -557,11 +557,11 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   grn_obj *key_type, grn_obj *value_type);
 /**
  * grn_table_open:
- * @name: 開こうとするtableの名前。NULLなら無名tableとなる�
- * @path: 開こうとするtableのファイルパス�
+ * @name: 開こうとするtableの名前。NULLなら無名tableとなる。
+ * @path: 開こうとするtableのファイルパス。
  *
- * ctxが使用するdbの中でnameに対応付けて既存のtableを開く�
- * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい�
+ * ctxが使用するdbの中でnameに対応付けて既存のtableを開く。
+ * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい。
  **/
 GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
                                 const char *name, unsigned name_size, const char *path);
@@ -574,12 +574,12 @@ GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
  * grn_table_add:
  * @table: 対象table
  * @key: 検索key
- * @added: NULL以外の値が指定された場合�
- * 新たにrecordが追加された時には1が、既存recordだった時には0がセットされる�
+ * @added: NULL以外の値が指定された場合、
+ * 新たにrecordが追加された時には1が、既存recordだった時には0がセットされる。
  *
- * keyに対応する新しいrecordをtableに追加し、そのIDを返す�
- * keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返す�
- * GRN_OBJ_TABLE_NO_KEYが指定されたtableでは、key, key_size は無視される�
+ * keyに対応する新しいrecordをtableに追加し、そのIDを返す。
+ * keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返す。
+ * GRN_OBJ_TABLE_NO_KEYが指定されたtableでは、key, key_size は無視される。
  **/
 GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned key_size, int *added);
@@ -589,7 +589,7 @@ GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
  * @table: 対象table
  * @key: 検索key
  *
- * tableからkeyに対応するrecordを検索し、対応するIDを返す�
+ * tableからkeyに対応するrecordを検索し、対応するIDを返す。
  **/
 GRN_API grn_id grn_table_get(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned key_size);
@@ -599,8 +599,8 @@ GRN_API grn_id grn_table_get(grn_ctx *ctx, grn_obj *table,
  * @table: 対象table
  * @key: 検索key
  *
- * tableがGRN_TABLE_PAT_KEYを指定して作ったtableなら�
- * longest common prefix searchを行い、対応するIDを返す�
+ * tableがGRN_TABLE_PAT_KEYを指定して作ったtableなら、
+ * longest common prefix searchを行い、対応するIDを返す。
  **/
 GRN_API grn_id grn_table_lcp_search(grn_ctx *ctx, grn_obj *table,
                                     const void *key, unsigned key_size);
@@ -612,10 +612,10 @@ GRN_API grn_id grn_table_lcp_search(grn_ctx *ctx, grn_obj *table,
  * @keybuf: keyを格納するバッファ(呼出側で準備する)
  * @buf_size: keybufのサイズ(byte長)
  *
- * tableのIDに対応するレコードのkeyを取得する。対応するレコードが存在する場合はkey長を返す�
- * 見つからない場合は0を返す�
- * 対応するキーの検索に成功し、またbuf_sizeの長さがkey長以上であった場合は�
- * keybufに該当するkeyをコピーする�
+ * tableのIDに対応するレコードのkeyを取得する。対応するレコードが存在する場合はkey長を返す。
+ * 見つからない場合は0を返す。
+ * 対応するキーの検索に成功し、またbuf_sizeの長さがkey長以上であった場合は、
+ * keybufに該当するkeyをコピーする。
  *
  **/
 GRN_API int grn_table_get_key(grn_ctx *ctx, grn_obj *table,
@@ -627,8 +627,8 @@ GRN_API int grn_table_get_key(grn_ctx *ctx, grn_obj *table,
  * @key: 検索key
  * @key_size: 検索keyのサイズ
  *
- * tableのkeyに対応するレコードを削除する�
- * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す�
+ * tableのkeyに対応するレコードを削除する。
+ * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 GRN_API grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
                                 const void *key, unsigned key_size);
@@ -638,8 +638,8 @@ GRN_API grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
  * @table: 対象table
  * @id: レコードID
  *
- * tableのkeyに対応するレコードを削除する�
- * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す�
+ * tableのkeyに対応するレコードを削除する。
+ * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 GRN_API grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
 
@@ -647,7 +647,7 @@ GRN_API grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
  * grn_table_truncate:
  * @table: 対象table
  *
- * tableの全レコードを一括して削除する�
+ * tableの全レコードを一括して削除する。
  **/
 GRN_API grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 
@@ -669,19 +669,19 @@ typedef grn_obj grn_table_cursor;
  * @min_size: @minのsize
  * @max: keyの上限 (NULLは上限なしと見なす)
  * @max_size: @maxのsize
- * @flags: GRN_CURSOR_ASCENDINGを指定すると昇順にレコードを取り出す�
- *         GRN_CURSOR_DESCENDINGを指定すると降順にレコードを取り出す�
- *         GRN_CURSOR_GTを指定するとminに一致したkeyをcursorの範囲に含まない�
- *         GRN_CURSOR_LTを指定するとmaxに一致したkeyをcursorの範囲に含まない�
- *         GRN_CURSOR_BY_IDを指定するとID順にレコードを取り出す�
- *         GRN_OBJ_TABLE_PAT_KEYを指定したtableについては�
- *         GRN_CURSOR_BY_KEYを指定するとkey順にレコードを取り出す�
+ * @flags: GRN_CURSOR_ASCENDINGを指定すると昇順にレコードを取り出す。
+ *         GRN_CURSOR_DESCENDINGを指定すると降順にレコードを取り出す。
+ *         GRN_CURSOR_GTを指定するとminに一致したkeyをcursorの範囲に含まない。
+ *         GRN_CURSOR_LTを指定するとmaxに一致したkeyをcursorの範囲に含まない。
+ *         GRN_CURSOR_BY_IDを指定するとID順にレコードを取り出す。
+ *         GRN_OBJ_TABLE_PAT_KEYを指定したtableについては、
+ *         GRN_CURSOR_BY_KEYを指定するとkey順にレコードを取り出す。
  *         (GRN_OBJ_TABLE_HASH_KEY,GRN_OBJ_TABLE_NO_KEYではGRN_CURSOR_BY_KEYは無視される)
- * @offset: 該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出す�
- * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す�
- *         0が指定された場合は、全件が指定されたものとみなす�
+ * @offset: 該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出す。
+ * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す。
+ *         0が指定された場合は、全件が指定されたものとみなす。
  *
- * tableに登録されているレコードを順番に取り出すためのカーソルを生成して返す�
+ * tableに登録されているレコードを順番に取り出すためのカーソルを生成して返す。
  **/
 GRN_API grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                                                 const void *min, unsigned min_size,
@@ -692,7 +692,7 @@ GRN_API grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
  * grn_table_cursor_close:
  * @tc: 対象cursor
  *
- * grn_table_cursor_openで生成したcursorを解放する�
+ * grn_table_cursor_openで生成したcursorを解放する。
  **/
 GRN_API grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
 
@@ -700,35 +700,35 @@ GRN_API grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
  * grn_table_cursor_next:
  * @tc: 対象cursor
  *
- * cursorのカレントレコードを一件進めてそのIDを返す�
- * cursorの対象範囲の末尾に達するとGRN_ID_NILを返す�
+ * cursorのカレントレコードを一件進めてそのIDを返す。
+ * cursorの対象範囲の末尾に達するとGRN_ID_NILを返す。
  **/
 GRN_API grn_id grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
 
 /**
  * grn_table_cursor_get_key:
  * @tc: 対象cursor
- * @key: カレントレコードのkeyへのポインタがセットされる�
- * cursorのカレントレコードのkeyを@keyにセットし、その長さを返す�
+ * @key: カレントレコードのkeyへのポインタがセットされる。
+ * cursorのカレントレコードのkeyを@keyにセットし、その長さを返す。
  **/
 GRN_API int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key);
 
 /**
  * grn_table_cursor_get_value:
  * @tc: 対象cursor
- * @value: カレントレコードのvalueへのポインタがセットされる�
- * cursorのカレントレコードのvalueを@valueにセットし、その長さを返す�
+ * @value: カレントレコードのvalueへのポインタがセットされる。
+ * cursorのカレントレコードのvalueを@valueにセットし、その長さを返す。
  **/
 GRN_API int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 
 /**
  * grn_table_cursor_set_value:
  * @tc: 対象cursor
- * @value: 新しいvalueの値�
- * @flags: grn_obj_set_valueのflagsと同様の値を指定できる�
+ * @value: 新しいvalueの値。
+ * @flags: grn_obj_set_valueのflagsと同様の値を指定できる。
  *
- * cursorのカレントレコードのvalueを引数の内容に置き換える�
- * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す�
+ * cursorのカレントレコードのvalueを引数の内容に置き換える。
+ * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 GRN_API grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
                                   void *value, int flags);
@@ -737,8 +737,8 @@ GRN_API grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
  * grn_table_cursor_delete:
  * @tc: 対象cursor
  *
- * cursorのカレントレコードを削除する�
- * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す�
+ * cursorのカレントレコードを削除する。
+ * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 GRN_API grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
 
@@ -746,7 +746,7 @@ GRN_API grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
  * grn_table_cursor_table:
  * @tc: 対象cursor
  *
- * cursorが属するtableを返す�
+ * cursorが属するtableを返す。
  **/
 GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 
@@ -781,17 +781,17 @@ GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 /**
  * grn_table_sort:
  * @table: 対象table
- * @offset: sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納す�
+ * @offset: sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納する
  * @limit: resに格納するレコードの上限
  * @result: 結果を格納するtable
  * @keys: ソートキー配列へのポインタ
  * @n_keys: ソートキー配列のサイズ
  *
- * table内のレコードをソートし、上位limit個の要素をresultに格納する�
- * keys.keyには、tableのcolumn,accessor,procのいずれかが指定できる�
- * keys.flagsには、GRN_TABLE_SORT_ASC/GRN_TABLE_SORT_DESCのいずれかを指定できる�
- * GRN_TABLE_SORT_ASCでは昇順、GRN_TABLE_SORT_DESCでは降順でソートされる�
- * keys.offsetは、内部利用のためのメンバである�
+ * table内のレコードをソートし、上位limit個の要素をresultに格納する。
+ * keys.keyには、tableのcolumn,accessor,procのいずれかが指定できる。
+ * keys.flagsには、GRN_TABLE_SORT_ASC/GRN_TABLE_SORT_DESCのいずれかを指定できる。
+ * GRN_TABLE_SORT_ASCでは昇順、GRN_TABLE_SORT_DESCでは降順でソートされる。
+ * keys.offsetは、内部利用のためのメンバである。
  **/
 
 typedef struct _grn_table_sort_key grn_table_sort_key;
@@ -926,10 +926,10 @@ GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
  * @table1: 対象table1
  * @table2: 対象table2
  * @res: 結果を格納するtable
- * @op: 実行する演算の種�
+ * @op: 実行する演算の種類
  *
- * table1とtable2をopの指定に従って集合演算した結果をresに格納する�
- * resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されない�
+ * table1とtable2をopの指定に従って集合演算した結果をresに格納する。
+ * resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されない。
  **/
 GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                       grn_obj *res, grn_operator op);
@@ -941,7 +941,7 @@ GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *ta
  * @res1: 結果を格納するtable
  * @res2: 結果を格納するtable
  *
- * table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納する�
+ * table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納する。
  **/
 GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                     grn_obj *res1, grn_obj *res2);
@@ -950,12 +950,12 @@ GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *tabl
  * grn_table_columns:
  * @table: 対象table
  * @name: 取得したいカラム名のprefix
- * @name_size: @nameの長�
+ * @name_size: @nameの長さ
  * @res: 結果を格納するGRN_TABLE_HASH_KEYのtable
  *
- * @nameから始まるtableのカラムIDを@resに格納する�
- * @name_sizeが0の場合はすべてのカラムIDを格納する。格納し�
- * カラムIDの数を返す�
+ * @nameから始まるtableのカラムIDを@resに格納する。
+ * @name_sizeが0の場合はすべてのカラムIDを格納する。格納した
+ * カラムIDの数を返す。
  **/
 GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
                               const char *name, unsigned name_size,
@@ -964,13 +964,13 @@ GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
 /**
  * grn_obj_column:
  * @table: 対象table
- * @name: カラム�
+ * @name: カラム名
  *
- * nameがカラム名の場合、それに対応するtableのカラムを返す�
- * 対応するカラムが存在しなければNULLを返す�
- * nameはアクセサ文字列の場合、それに対応するaccessorを返す�
- * アクセサ文字列とは、カラム名等を'.'で連結した文字列である�
- * '_id', '_key'は特殊なアクセサで、それぞれレコードID/keyを返す�
+ * nameがカラム名の場合、それに対応するtableのカラムを返す。
+ * 対応するカラムが存在しなければNULLを返す。
+ * nameはアクセサ文字列の場合、それに対応するaccessorを返す。
+ * アクセサ文字列とは、カラム名等を'.'で連結した文字列である。
+ * '_id', '_key'は特殊なアクセサで、それぞれレコードID/keyを返す。
  * 例) 'col1' / 'col2.col3' / 'col2._id'
  **/
 GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
@@ -981,7 +981,7 @@ GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
  * grn_table_size:
  * @table: 対象table
  *
- * tableに登録されているレコードの件数を返す�
+ * tableに登録されているレコードの件数を返す。
  **/
 GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 
@@ -992,27 +992,27 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 /**
  * grn_column_create:
  * @table: 対象table
- * @name: カラム�
+ * @name: カラム名
  * @name_size: @nameのsize(byte)
- * @path: カラムを格納するファイルパス�
- *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効�
- *        NULLなら自動的にファイルパスが付与される�
- * @flags: GRN_OBJ_PERSISTENTを指定すると永続columnとなる�
- *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる�
- *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する�
- *         GRN_OBJ_COLUMN_VECTORを指定すると値の配列を格納する�
- *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する�
- *         GRN_OBJ_COMPRESS_LZOを指定すると値をlzo圧縮して格納する�
- *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SECTIONを指定すると�
- *         転置索引にsection(段落情報)を合わせて格納する�
- *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_WEIGHTを指定すると�
- *         転置索引にweight情報を合わせて格納する�
- *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_POSITIONを指定すると�
- *         転置索引に出現位置情報を合わせて格納する�
- * @type: カラム値の型。定義済みのtypeあるいはtableを指定できる�
+ * @path: カラムを格納するファイルパス。
+ *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効。
+ *        NULLなら自動的にファイルパスが付与される。
+ * @flags: GRN_OBJ_PERSISTENTを指定すると永続columnとなる。
+ *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる。
+ *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する。
+ *         GRN_OBJ_COLUMN_VECTORを指定すると値の配列を格納する。
+ *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する。
+ *         GRN_OBJ_COMPRESS_LZOを指定すると値をlzo圧縮して格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SECTIONを指定すると、
+ *         転置索引にsection(段落情報)を合わせて格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_WEIGHTを指定すると、
+ *         転置索引にweight情報を合わせて格納する。
+ *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_POSITIONを指定すると、
+ *         転置索引に出現位置情報を合わせて格納する。
+ * @type: カラム値の型。定義済みのtypeあるいはtableを指定できる。
  *
- * tableに新たなカラムを定義する。nameは省略できない�
- * 一つのtableに同一のnameのcolumnを複数定義することはできない�
+ * tableに新たなカラムを定義する。nameは省略できない。
+ * 一つのtableに同一のnameのcolumnを複数定義することはできない。
  **/
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned name_size,
@@ -1025,12 +1025,12 @@ GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
 /**
  * grn_column_open:
  * @table: 対象table
- * @name: カラム�
- * @path: カラムを格納するファイルパス�
- * @type: カラム値の型�
+ * @name: カラム名
+ * @path: カラムを格納するファイルパス。
+ * @type: カラム値の型。
  *
  * 既存の永続的なcolumnを、tableのnameに対応するcolumnとして開く
- * 永続dbに登録されている永続テーブルのカラムを開く場合はgrn_ctx_get()を使用するのが望ましい�
+ * 永続dbに登録されている永続テーブルのカラムを開く場合はgrn_ctx_get()を使用するのが望ましい。
  **/
 GRN_API grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
                                  const char *name, unsigned name_size,
@@ -1044,9 +1044,9 @@ GRN_API grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
  * @oldvalue: 更新前の値
  * @newvalue: 更新後の値
  *
- * oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の�
- * id, sectionに対応するエントリを更新する�
- * columnはGRN_OBJ_COLUMN_INDEX型のカラムでなければならない�
+ * oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の、
+ * id, sectionに対応するエントリを更新する。
+ * columnはGRN_OBJ_COLUMN_INDEX型のカラムでなければならない。
  **/
 GRN_API grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
                                        grn_id id, unsigned int section,
@@ -1056,7 +1056,7 @@ GRN_API grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
  * grn_column_table:
  * @column: 対象column
  *
- * columnが属するtableを返す�
+ * columnが属するtableを返す。
  **/
 GRN_API grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
 
@@ -1096,20 +1096,20 @@ typedef enum {
 /**
  * grn_obj_get_info:
  * @obj: 対象obj
- * @type: 取得する情報の種�
+ * @type: 取得する情報の種類
  * @valuebuf: 値を格納するバッファ(呼出側で準備)
  *
- * objのtypeに対応する情報をvaluebufに格納する�
+ * objのtypeに対応する情報をvaluebufに格納する。
  **/
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);
 
 /**
  * grn_obj_set_info:
  * @obj: 対象obj
- * @type: 設定する情報の種�
+ * @type: 設定する情報の種類
  * @value: 設定しようとする値
  *
- * objのtypeに対応する情報をvalueの内容に更新する�
+ * objのtypeに対応する情報をvalueの内容に更新する。
  **/
 GRN_API grn_rc grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value);
 
@@ -1117,11 +1117,11 @@ GRN_API grn_rc grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, 
  * grn_obj_get_element_info:
  * @obj: 対象obj
  * @id: 対象ID
- * @type: 取得する情報の種�
+ * @type: 取得する情報の種類
  * @value: 値を格納するバッファ(呼出側で準備)
  *
- * objのidに対応するレコードの、typeに対応する情報をvaluebufに格納する�
- * 呼出側ではtypeに応じて十分なサイズのバッファを確保しなければならない�
+ * objのidに対応するレコードの、typeに対応する情報をvaluebufに格納する。
+ * 呼出側ではtypeに応じて十分なサイズのバッファを確保しなければならない。
  **/
 GRN_API grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                           grn_info_type type, grn_obj *value);
@@ -1130,10 +1130,10 @@ GRN_API grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
  * grn_obj_set_element_info:
  * @obj: 対象object
  * @id: 対象ID
- * @type: 設定する情報の種�
+ * @type: 設定する情報の種類
  * @value: 設定しようとする値
  *
- * objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新する�
+ * objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新する。
  **/
 GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                         grn_info_type type, grn_obj *value);
@@ -1145,8 +1145,8 @@ GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
  * @id: 対象レコードのID
  * @value: 値を格納するバッファ(呼出側で準備する)
  *
- * objのIDに対応するレコードのvalueを取得する�
- * valueを戻り値として返す�
+ * objのIDに対応するレコードのvalueを取得する。
+ * valueを戻り値として返す。
  **/
 GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
 
@@ -1156,19 +1156,19 @@ GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_ob
  * @id: 対象レコードのID
  * @value: 格納する値
  * @flags: 以下の値を指定できる
- *  GRN_OBJ_SET: レコードの値をvalueと置き換える�
- *  GRN_OBJ_INCR: レコードの値にvalueを加算する�
- *  GRN_OBJ_DECR: レコードの値にvalueを減算する�
- *  GRN_OBJ_APPEND: レコードの値の末尾にvalueを追加する�
- *  GRN_OBJ_PREPEND: レコードの値の先頭にvalueを追加する�
- *  GRN_OBJ_GET: 新しいレコードの値をvalueにセットする�
- *  GRN_OBJ_COMPARE: レコードの値とvalueが等しいか調べる�
- *  GRN_OBJ_LOCK: 当該レコードをロックする。GRN_OBJ_COMPAREと共に指定された場合は�
- *                レコードの値とvalueが等しい場合に限ってロックする�
- *  GRN_OBJ_UNLOCK: 当該レコードのロックを解除する�
+ *  GRN_OBJ_SET: レコードの値をvalueと置き換える。
+ *  GRN_OBJ_INCR: レコードの値にvalueを加算する。
+ *  GRN_OBJ_DECR: レコードの値にvalueを減算する。
+ *  GRN_OBJ_APPEND: レコードの値の末尾にvalueを追加する。
+ *  GRN_OBJ_PREPEND: レコードの値の先頭にvalueを追加する。
+ *  GRN_OBJ_GET: 新しいレコードの値をvalueにセットする。
+ *  GRN_OBJ_COMPARE: レコードの値とvalueが等しいか調べる。
+ *  GRN_OBJ_LOCK: 当該レコードをロックする。GRN_OBJ_COMPAREと共に指定された場合は、
+ *                レコードの値とvalueが等しい場合に限ってロックする。
+ *  GRN_OBJ_UNLOCK: 当該レコードのロックを解除する。
  *
- * objのIDに対応するレコードの値を更新する�
- * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す�
+ * objのIDに対応するレコードの値を更新する。
+ * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 
 #define GRN_OBJ_SET_MASK               (0x07)
@@ -1188,8 +1188,8 @@ GRN_API grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj 
  * grn_obj_remove:
  * @obj: 対象object
  *
- * objをメモリから解放し、それが永続オブジェクトであった場合は�
- * 該当するファイル一式を削除する�
+ * objをメモリから解放し、それが永続オブジェクトであった場合は、
+ * 該当するファイル一式を削除する。
  **/
 GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 
@@ -1198,7 +1198,7 @@ GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
  * @old_path: 旧ファイルパス
  * @new_path: 新ファイルパス
  *
- * old_pathに該当するオブジェクトのファイル名をnew_pathに変更する�
+ * old_pathに該当するオブジェクトのファイル名をnew_pathに変更する。
  **/
 GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
@@ -1206,20 +1206,20 @@ GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *ne
  * grn_obj_close:
  * @obj: 対象object
  *
- * 一時的なobjectであるobjをメモリから解放する�
- * objに属するobjectも再帰的にメモリから解放される�
- * 永続的な、table・column・exprなどは解放してはならない�
- * 一般的には、一時的か永続的かを気にしなくてよいgrn_obj_unlinkを用いるべき�
+ * 一時的なobjectであるobjをメモリから解放する。
+ * objに属するobjectも再帰的にメモリから解放される。
+ * 永続的な、table・column・exprなどは解放してはならない。
+ * 一般的には、一時的か永続的かを気にしなくてよいgrn_obj_unlinkを用いるべき。
  **/
 GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_reinit:
  * @obj: 対象object
- * @domain: 変更後のobjの�
- * @flags: GRN_OBJ_VECTORを指定するとdomain型の値のベクタを格納するオブジェクトになる�
+ * @domain: 変更後のobjの型
+ * @flags: GRN_OBJ_VECTORを指定するとdomain型の値のベクタを格納するオブジェクトになる。
  *
- * objの型を変更する。objはGRN_OBJ_INITマクロなどで初期化済みでなければならない�
+ * objの型を変更する。objはGRN_OBJ_INITマクロなどで初期化済みでなければならない。
  **/
 GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags);
 
@@ -1227,8 +1227,8 @@ GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigne
  * grn_obj_unlink:
  * @obj: 対象object
  *
- * objをメモリから解放する�
- * objに属するobjectも再帰的にメモリから解放される�
+ * objをメモリから解放する。
+ * objに属するobjectも再帰的にメモリから解放される。
  **/
 GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
 
@@ -1236,7 +1236,7 @@ GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
  * grn_obj_user_data
  * @obj: 対象object
  *
- * objectに登録できるユーザデータへのポインタを返す。table, column, proc, exprのみ使用可能�
+ * objectに登録できるユーザデータへのポインタを返す。table, column, proc, exprのみ使用可能。
  **/
 GRN_API grn_user_data *grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 
@@ -1245,7 +1245,7 @@ GRN_API grn_user_data *grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
  * @obj: 対象object
  * @func: objectを破棄するときに呼ばれる関数
  *
- * objectを破棄するときに呼ばれる関数を設定する。table, column, proc, exprのみ設定可能�
+ * objectを破棄するときに呼ばれる関数を設定する。table, column, proc, exprのみ設定可能。
  **/
 GRN_API grn_rc grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
 
@@ -1253,7 +1253,7 @@ GRN_API grn_rc grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *
  * grn_obj_path:
  * @obj: 対象object
  *
- * objに対応するファイルパスを返す。一時objectならNULLを返す�
+ * objに対応するファイルパスを返す。一時objectならNULLを返す。
  **/
 GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 
@@ -1263,9 +1263,9 @@ GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
  * @namebuf: 名前を格納するバッファ(呼出側で準備する)
  * @buf_size: namebufのサイズ(byte長)
  *
- * objの名前の長さを返す。無名objectなら0を返す�
- * 名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は�
- * namebufに該当する名前をコピーする�
+ * objの名前の長さを返す。無名objectなら0を返す。
+ * 名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、
+ * namebufに該当する名前をコピーする。
  **/
 GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
@@ -1275,9 +1275,9 @@ GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size
  * @namebuf: 名前を格納するバッファ(呼出側で準備する)
  * @buf_size: namebufのサイズ(byte長)
  *
- * カラムobjの名前の長さを返す�
- * buf_sizeの長さが名前の長以上であった場合は�
- * namebufに該当する名前をコピーする�
+ * カラムobjの名前の長さを返す。
+ * buf_sizeの長さが名前の長以上であった場合は、
+ * namebufに該当する名前をコピーする。
  **/
 GRN_API int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
@@ -1285,8 +1285,8 @@ GRN_API int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_s
  * grn_obj_get_range:
  * @obj: 対象object
  *
- * @objのとる値の範囲を表わしているオブジェクトのIDを返す�
- * 例えば、grn_builtin_typeにあるGRN_DB_INTなどを返す�
+ * @objのとる値の範囲を表わしているオブジェクトのIDを返す。
+ * 例えば、grn_builtin_typeにあるGRN_DB_INTなどを返す。
  **/
 GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
 
@@ -1297,7 +1297,7 @@ GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
  * grn_obj_expire:
  * @obj: 対象object
  *
- * objの占有するメモリのうち、可能な領域をthresholdを指標として解放する�
+ * objの占有するメモリのうち、可能な領域をthresholdを指標として解放する。
  **/
 GRN_API int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
 
@@ -1305,7 +1305,7 @@ GRN_API int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
  * grn_obj_check:
  * @obj: 対象object
  *
- * objに対応するファイルの整合性を検査する�
+ * objに対応するファイルの整合性を検査する。
  **/
 GRN_API int grn_obj_check(grn_ctx *ctx, grn_obj *obj);
 
@@ -1314,7 +1314,7 @@ GRN_API int grn_obj_check(grn_ctx *ctx, grn_obj *obj);
  * @obj: 対象object
  *
  * objをlockする。timeout(秒)経過してもlockを取得できない場合は
- * GRN_RESOURCE_DEADLOCK_AVOIDEDを返す�
+ * GRN_RESOURCE_DEADLOCK_AVOIDEDを返す。
  **/
 GRN_API grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
 
@@ -1322,7 +1322,7 @@ GRN_API grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
  * grn_obj_unlock:
  * @obj: 対象object
  *
- * objをunlockする�
+ * objをunlockする。
  **/
 GRN_API grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
 
@@ -1330,7 +1330,7 @@ GRN_API grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
  * grn_obj_clear_lock:
  * @obj: 対象object
  *
- * 強制的にロックをクリアする�
+ * 強制的にロックをクリアする。
  **/
 GRN_API grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
 
@@ -1338,7 +1338,7 @@ GRN_API grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
  * grn_obj_is_locked;
  * @obj: 対象object
  *
- * objが現在lockされていれば0以外の値を返す�
+ * objが現在lockされていれば0以外の値を返す。
  **/
 GRN_API unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
 
@@ -1346,7 +1346,7 @@ GRN_API unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
  * grn_obj_db:
  * @obj: 対象object
  *
- * objの属するdbを返す�
+ * objの属するdbを返す。
  **/
 GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
@@ -1354,7 +1354,7 @@ GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
  * grn_obj_id:
  * @obj: 対象object
  *
- * objのidを返す�
+ * objのidを返す。
  **/
 GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
@@ -1364,11 +1364,11 @@ GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
  * @obj: 検索対象のobject
  * @query: 検索クエリ
  * @res: 検索結果を格納するテーブル
- * @op: GRN_OP_OR, GRN_OP_AND, GRN_OP_BUT, GRN_OP_ADJUSTのいずれかを指定す�
+ * @op: GRN_OP_OR, GRN_OP_AND, GRN_OP_BUT, GRN_OP_ADJUSTのいずれかを指定する
  * @optarg: 詳細検索条件
  *
- * objを対象としてqueryにマッチするレコードを検索し�
- * opの指定に従ってresにレコードを追加あるいは削除する�
+ * objを対象としてqueryにマッチするレコードを検索し、
+ * opの指定に従ってresにレコードを追加あるいは削除する。
  **/
 
 typedef struct _grn_search_optarg grn_search_optarg;
@@ -1419,17 +1419,17 @@ typedef enum {
 /**
  * grn_obj_add_hook:
  * @obj: 対象object
- * @entry: GRN_HOOK_GETは、objectの参照時に呼び出されるhookを定義する�
-          GRN_HOOK_SETは、objectの更新時に呼び出されるhookを定義する�
-          GRN_HOOK_SELECTは、検索処理の実行中に適時呼び出され�
-          処理の実行状況を調べたり、実行の中断を指示することができる�
- * @offset: hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入する�
-            0を指定した場合は先頭に挿入される。-1を指定した場合は末尾に挿入される�
-            objectに複数のhookが定義されている場合は順位の順に呼び出される�
+ * @entry: GRN_HOOK_GETは、objectの参照時に呼び出されるhookを定義する。
+          GRN_HOOK_SETは、objectの更新時に呼び出されるhookを定義する。
+          GRN_HOOK_SELECTは、検索処理の実行中に適時呼び出され、
+          処理の実行状況を調べたり、実行の中断を指示することができる。
+ * @offset: hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入する。
+            0を指定した場合は先頭に挿入される。-1を指定した場合は末尾に挿入される。
+            objectに複数のhookが定義されている場合は順位の順に呼び出される。
  * @proc: 手続き
  * @data: hook固有情報
  *
- * objに対してhookを追加する�
+ * objに対してhookを追加する。
  **/
 GRN_API grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
                                 int offset, grn_obj *proc, grn_obj *data);
@@ -1437,21 +1437,21 @@ GRN_API grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry
 /**
  * grn_obj_get_nhooks:
  * @obj: 対象object
- * @entry: hookタイ�
+ * @entry: hookタイプ
  *
- * objに定義されているhookの数を返す�
+ * objに定義されているhookの数を返す。
  **/
 GRN_API int grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry);
 
 /**
  * grn_obj_get_hook:
  * @obj: 対象object
- * @entry: hookタイ�
- * @offset: 実行順�
+ * @entry: hookタイプ
+ * @offset: 実行順位
  * @data: hook固有情報格納バッファ
  *
- * objに定義されているhookの手続き(proc)を返す。hook固有情報が定義されている場合は�
- * その内容をdataにコピーして返す�
+ * objに定義されているhookの手続き(proc)を返す。hook固有情報が定義されている場合は、
+ * その内容をdataにコピーして返す。
  **/
 GRN_API grn_obj *grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
                                   int offset, grn_obj *data);
@@ -1459,10 +1459,10 @@ GRN_API grn_obj *grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry ent
 /**
  * grn_obj_delete_hook:
  * @obj: 対象object
- * @entry: hookタイ�
- * @offset: 実行順�
+ * @entry: hookタイプ
+ * @offset: 実行順位
  *
- * objに定義されているhookを削除する�
+ * objに定義されているhookを削除する。
  **/
 GRN_API grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset);
 
@@ -1471,12 +1471,12 @@ GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags fl
 /**
  * grn_column_index:
  * @column: 対象のcolumn
- * @op: indexで実行したい操�
+ * @op: indexで実行したい操作
  * @indexbuf: indexを格納するバッファ(呼出側で準備する)
  * @buf_size: namebufのサイズ(byte長)
  *
- * columnに張られているindexのうち、opの操作を実行可能なものの数を返す�
- * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す�
+ * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
+ * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
  **/
 GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                              grn_obj **indexbuf, int buf_size);
