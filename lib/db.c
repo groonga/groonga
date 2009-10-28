@@ -3892,7 +3892,7 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
       os = grn_obj_size(ctx, oldvalue);
       if (ov && v && os == s && !memcmp(ov, v, s)) {
         grn_bulk_fin(ctx, oldvalue);
-        return 1;
+        return 0;
       }
     }
     if (hooks) {
