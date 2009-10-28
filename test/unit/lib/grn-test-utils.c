@@ -148,6 +148,14 @@ grn_rc_to_string(grn_rc rc)
     return "GRN_ZLIB_ERROR";
   case GRN_LZO_ERROR:
     return "GRN_LZO_ERROR";
+  case GRN_STACK_OVER_FLOW:
+    return "GRN_STACK_OVER_FLOW";
+  case GRN_SYNTAX_ERROR:
+    return "GRN_SYNTAX_ERROR";
+  case GRN_RETRY_MAX:
+    return "GRN_RETRY_MAX";
+  case GRN_INCOMPATIBLE_FILE_FORMAT:
+    return "GRN_INCOMPATIBLE_FILE_FORMAT";
   default:
     return "GRN_UNKNOWN_STATUS";
   }
