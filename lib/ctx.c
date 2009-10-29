@@ -645,8 +645,9 @@ grn_fin(void)
 grn_rc
 grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags)
 {
+  GRN_API_ENTER;
   if (!ctx->impl) { grn_ctx_impl_init(ctx); }
-  if (!ctx->impl) { return ctx->rc; }
+  if (!ctx->impl) { goto exit; }
   {
     grn_com *com = grn_com_copen(ctx, NULL, host, port);
     if (com) {
@@ -654,7 +655,8 @@ grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags)
       return GRN_SUCCESS;
     }
   }
-  return ctx->rc;
+exit :
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc

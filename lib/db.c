@@ -4285,12 +4285,13 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       {
         grn_io_win jw;
         void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
-        if (!v) { len = 0; goto exit; }
-        // todo : reduce copy
-        // todo : grn_vector_add_element when vector assigned
-        value->header.type = GRN_BULK;
-        grn_bulk_write(ctx, value, v, len);
-        grn_ja_unref(ctx, &jw);
+        if (v) {
+          // todo : reduce copy
+          // todo : grn_vector_add_element when vector assigned
+          value->header.type = GRN_BULK;
+          grn_bulk_write(ctx, value, v, len);
+          grn_ja_unref(ctx, &jw);
+        }
       }
       break;
     default :
@@ -4303,13 +4304,13 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     {
       unsigned element_size;
       void *v = grn_ra_ref(ctx, (grn_ra *)obj, id);
-      if (!v) { goto exit; }
-      element_size = ((grn_ra *)obj)->header->element_size;
       value->header.type = GRN_BULK;
       value->header.domain = grn_obj_get_range(ctx, obj);
-      grn_bulk_write(ctx, value, v, element_size);
-      grn_ra_unref(ctx, (grn_ra *)obj, id);
-      len = element_size;
+      if (v) {
+        element_size = ((grn_ra *)obj)->header->element_size;
+        grn_bulk_write(ctx, value, v, element_size);
+        grn_ra_unref(ctx, (grn_ra *)obj, id);
+      }
     }
     break;
   case GRN_COLUMN_INDEX :
@@ -7376,6 +7377,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 }
 
 #define PUSH1(v) {\
+  if (EXPRVP(v)) { vp++; }\
   s1 = s0;\
   *sp++ = s0 = v;\
 }

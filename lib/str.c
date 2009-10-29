@@ -2331,7 +2331,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         grn_text_itoa(ctx, bulk, gp->longitude);
         GRN_TEXT_PUTC(ctx, bulk, '"');
       } else {
-        GRN_TEXT_PUTS(ctx, bulk, "\"0x0\"");
+        GRN_TEXT_PUTS(ctx, bulk, "\"\"");
       }
       break;
     default :
