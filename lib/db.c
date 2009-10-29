@@ -3583,6 +3583,25 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
     case GRN_DB_LONG_TEXT :
       GRN_TEXT_PUT(ctx, dest, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
       break;
+    case GRN_DB_TOKYO_GEO_POINT :
+    case GRN_DB_WGS84_GEO_POINT :
+      {
+        grn_geo_point gp;
+        const char *cur, *str = GRN_TEXT_VALUE(src);
+        const char *str_end = GRN_BULK_CURR(src);
+        gp.latitude = grn_atoi(str, str_end, &cur);
+        if (cur + 1 < str_end) {
+          gp.longitude = grn_atoi(cur + 1, str_end, &cur);
+          if (cur == str_end) {
+            GRN_GEOPOINT_SET(ctx, dest, gp);
+          } else {
+            rc = GRN_INVALID_ARGUMENT;
+          }
+        } else {
+          rc = GRN_INVALID_ARGUMENT;
+        }
+      }
+      break;
     default :
       {
         grn_obj *table = grn_ctx_at(ctx, dest->header.domain);
@@ -5974,10 +5993,10 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_TEXT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "TokyoGeoPoint",
-                GRN_OBJ_KEY_UINT, sizeof(uint64_t));
+                GRN_OBJ_KEY_UINT, sizeof(grn_geo_point));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TOKYO_GEO_POINT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "WGS84GeoPoint",
-                GRN_OBJ_KEY_UINT, sizeof(uint64_t));
+                GRN_OBJ_KEY_UINT, sizeof(grn_geo_point));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_WGS84_GEO_POINT) { return GRN_FILE_CORRUPT; }
   for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < GRN_DB_MECAB; id++) {
     grn_itoh(id, buf + 3, 2);

@@ -2321,6 +2321,19 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         grn_text_ftoa(ctx, bulk, dv);
       }
       break;
+    case GRN_DB_TOKYO_GEO_POINT :
+    case GRN_DB_WGS84_GEO_POINT :
+      if (GRN_BULK_VSIZE(obj) == sizeof(grn_geo_point)) {
+        grn_geo_point *gp = (grn_geo_point *)GRN_BULK_HEAD(obj);
+        GRN_TEXT_PUTC(ctx, bulk, '"');
+        grn_text_itoa(ctx, bulk, gp->latitude);
+        GRN_TEXT_PUTC(ctx, bulk, 'x');
+        grn_text_itoa(ctx, bulk, gp->longitude);
+        GRN_TEXT_PUTC(ctx, bulk, '"');
+      } else {
+        GRN_TEXT_PUTS(ctx, bulk, "\"0x0\"");
+      }
+      break;
     default :
       {
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
@@ -2471,6 +2484,19 @@ grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *form
         double dv= *((int64_t *)GRN_BULK_HEAD(obj));
         dv /= 1000000.0;
         grn_text_ftoa(ctx, bulk, dv); /* TODO: implement ISO 8601 */
+      }
+      break;
+    case GRN_DB_TOKYO_GEO_POINT :
+    case GRN_DB_WGS84_GEO_POINT :
+      if (GRN_BULK_VSIZE(obj) == sizeof(grn_geo_point)) {
+        grn_geo_point *gp = (grn_geo_point *)GRN_BULK_HEAD(obj);
+        GRN_TEXT_PUTC(ctx, bulk, '"');
+        grn_text_itoa(ctx, bulk, gp->latitude);
+        GRN_TEXT_PUTC(ctx, bulk, 'x');
+        grn_text_itoa(ctx, bulk, gp->longitude);
+        GRN_TEXT_PUTC(ctx, bulk, '"');
+      } else {
+        GRN_TEXT_PUTS(ctx, bulk, "\"0x0\"");
       }
       break;
     default :

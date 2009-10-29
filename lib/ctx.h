@@ -393,6 +393,14 @@ grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
 grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
 grn_rc grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv);
 
+typedef struct {
+  int32_t latitude;
+  int32_t longitude;
+} grn_geo_point;
+
+#define GRN_GEOPOINT_SET(ctx,obj,val) \
+  (grn_bulk_write_from((ctx), (obj), (char *)&val, 0, sizeof(grn_geo_point)))
+
 void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);
 void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
