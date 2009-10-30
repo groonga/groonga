@@ -9897,12 +9897,12 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         break;
       case ']' :
         bracket_close(ctx, loader);
-        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
         str++;
         break;
       case '}' :
         brace_close(ctx, loader);
-        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
         str++;
         break;
       case '+' : case '-' : case '0' : case '1' : case '2' : case '3' :
@@ -9954,7 +9954,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
           break;
         }
 #endif /* CAST_IN_JSON_READ */
-        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
       }
       break;
     case GRN_LOADER_NUMBER :
@@ -9991,7 +9991,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
           }
         }
 #endif /* CAST_IN_JSON_READ */
-        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
         break;
       }
       break;
@@ -10003,7 +10003,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         break;
       case '"' :
         str++;
-        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_BEGIN;
+        loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
         /*
         *(GRN_BULK_CURR(loader->last)) = '\0';
         GRN_LOG(ctx, GRN_LOG_ALERT, "read str(%s)", GRN_TEXT_VALUE(loader->last));
@@ -10136,6 +10136,9 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
       }
       loader->stat = GRN_LOADER_STRING;
       str++;
+      break;
+    case GRN_LOADER_END :
+      str = se;
       break;
     }
   }

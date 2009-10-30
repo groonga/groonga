@@ -139,7 +139,8 @@ typedef enum {
   GRN_LOADER_UNICODE0,
   GRN_LOADER_UNICODE1,
   GRN_LOADER_UNICODE2,
-  GRN_LOADER_UNICODE3
+  GRN_LOADER_UNICODE3,
+  GRN_LOADER_END
 } grn_loader_stat;
 
 typedef struct {
