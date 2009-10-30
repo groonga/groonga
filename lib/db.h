@@ -222,10 +222,13 @@ grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
 typedef struct _grn_expr grn_expr;
 
+#define GRN_EXPR_CODE_RELATIONAL_EXPRESSION (0x01)
+
 typedef struct {
   grn_obj *value;
   int32_t nargs;
   grn_operator op;
+  uint8_t flags;
 } grn_expr_code;
 
 struct _grn_expr {

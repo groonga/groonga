@@ -798,7 +798,7 @@ func_geo_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     grn_obj *pos = args[0], *pos1 = args[1], pos1_;
     grn_id domain = pos->header.domain;
     if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
-      double lng0, lat0, lng1, lat1, x, y, d;
+      double lng0, lat0, lng1, lat1, x, y;
       if (pos1->header.domain != domain) {
         GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
         if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
@@ -832,7 +832,7 @@ func_geo_distance2(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     grn_obj *pos = args[0], *pos1 = args[1], pos1_;
     grn_id domain = pos->header.domain;
     if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
-      double lng0, lat0, lng1, lat1, x, y, d;
+      double lng0, lat0, lng1, lat1, x, y;
       if (pos1->header.domain != domain) {
         GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
         if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
@@ -862,13 +862,14 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   grn_expr_var *vars;
   double d = 0;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
+
   if (nargs == 2) {
     grn_obj *pos = args[0], *pos1 = args[1], pos1_;
     grn_id domain = pos->header.domain;
     switch (domain) {
     case GRN_DB_TOKYO_GEO_POINT :
       {
-        double lng0, lat0, lng1, lat1, p, q, m, n, x, y, d;
+        double lng0, lat0, lng1, lat1, p, q, m, n, x, y;
         if (pos1->header.domain != domain) {
           GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
           if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }

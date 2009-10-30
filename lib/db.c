@@ -3788,8 +3788,14 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
             if ((ri = (grn_rset_recinfo *) grn_obj_get_value_(ctx, a->obj, id, &size))) {
               vp = &ri->score;
               // todo : flags support
-              if (GRN_BULK_VSIZE(value) == sizeof(int)) {
+              if (value->header.domain == GRN_DB_INT32) {
                 memcpy(vp, GRN_BULK_HEAD(value), sizeof(int));
+              } else {
+                grn_obj buf;
+                GRN_INT32_INIT(&buf, 0);
+                grn_obj_cast(ctx, value, &buf, 0);
+                memcpy(vp, GRN_BULK_HEAD(&buf), sizeof(int));
+                GRN_OBJ_FIN(ctx, &buf);
               }
             }
           }
@@ -6669,6 +6675,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   (c)->value = (v);\
   (c)->nargs = (n);\
   (c)->op = (o);\
+  (c)->flags = 0;\
 }
 
 grn_obj *
@@ -6784,10 +6791,6 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_TABLE_CREATE :
     case GRN_OP_EXPR_GET_VAR :
-    case GRN_OP_AND :
-    case GRN_OP_OR :
-    case GRN_OP_BUT :
-    case GRN_OP_ADJUST :
     case GRN_OP_MATCH :
     case GRN_OP_NOT_EQUAL :
     case GRN_OP_LESS :
@@ -6807,11 +6810,35 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_TABLE_GROUP :
     case GRN_OP_JSON_PUT :
     case GRN_OP_GET_REF :
+    case GRN_OP_ADJUST :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs) {
         int i = nargs - 1;
         if (!obj) { DFI_POP(e, dfi); }
         while (i--) { DFI_POP(e, dfi); }
+      }
+      DFI_PUT(e, type, domain, code);
+      break;
+    case GRN_OP_AND :
+    case GRN_OP_OR :
+    case GRN_OP_BUT :
+      PUSH_CODE(e, op, obj, nargs, code);
+      if (nargs != 2) {
+        GRN_LOG(ctx, GRN_LOG_WARNING, "nargs(%d) != 2 in relative op", nargs);
+      }
+      if (obj) {
+        GRN_LOG(ctx, GRN_LOG_WARNING, "obj assigned to relative op");
+      }
+      {
+        int i = nargs;
+        while (i--) {
+          DFI_POP(e, dfi);
+          if (dfi) {
+            dfi->code->flags |= GRN_EXPR_CODE_RELATIONAL_EXPRESSION;
+          } else {
+            GRN_LOG(ctx, GRN_LOG_WARNING, "stack under flow in relative op");
+          }
+        }
       }
       DFI_PUT(e, type, domain, code);
       break;
@@ -8220,7 +8247,7 @@ typedef enum {
   if (!((si) = GRN_MALLOCN(scan_info, 1))) {\
     int j;\
     for (j = 0; j < i; j++) { GRN_FREE(sis[j]); }\
-    GRN_FREE(sis);\
+    GRN_FREE(sis);                               \
     return NULL;\
   }\
   (si)->logical_op = GRN_OP_OR;\
@@ -8349,6 +8376,14 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         break;
       }
       break;
+    case GRN_OP_CALL :
+      if (c->flags & GRN_EXPR_CODE_RELATIONAL_EXPRESSION) {
+        stat = SCAN_START;
+        m++;
+      } else {
+        stat = SCAN_COL2;
+      }
+      break;
     default :
       return NULL;
       break;
@@ -8426,6 +8461,33 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         break;
       default :
         break;
+      }
+      break;
+    case GRN_OP_CALL :
+      if (!si) { SI_ALLOC(si, i, c - e->codes); }
+      if (c->flags & GRN_EXPR_CODE_RELATIONAL_EXPRESSION) {
+        stat = SCAN_START;
+        si->op = c->op;
+        si->end = c - e->codes;
+        sis[i++] = si;
+        /* index may be applicable occasionaly
+        {
+          grn_obj **p = si->args, **pe = si->args + si->nargs;
+          for (; p < pe; p++) {
+            if (GRN_DB_OBJP(*p)) {
+              grn_column_index(ctx, *p, c->op, &si->index, 1);
+            } else if (ACCESSORP(*p)) {
+              si->flags |= SCAN_ACCESSOR;
+              grn_column_index(ctx, *p, c->op, &si->index, 1);
+            } else {
+              si->query = *p;
+            }
+          }
+        }
+        */
+        si = NULL;
+      } else {
+        stat = SCAN_COL2;
       }
       break;
     default :
