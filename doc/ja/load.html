@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
-    <link rel="up" title="2. コマンド一覧" href="commands.html" />
+    <link rel="up" title="2. 組み込みコマンド一覧" href="commands.html" />
     <link rel="next" title="2.9. select" href="select.html" />
     <link rel="prev" title="2.7. view_add" href="view_add.html" /> 
   </head>
@@ -38,7 +38,7 @@
           <a href="view_add.html" title="2.7. view_add"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="commands.html" accesskey="U">2. コマンド一覧</a> &raquo;</li> 
+          <li><a href="commands.html" accesskey="U">2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -78,8 +78,9 @@
 </dl>
 <p>形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効です。</p>
 <p>対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に&#8217;_key&#8217;(主キーを示す疑似カラム名)が含まれていなければなりません。</p>
-<p>valuesに括弧の対応が取れていないjson文字列が指定された場合には、括弧の対応が取れるまでvaluesの続きの文字列を標準入力から読み取ります。続きの文字列については、空白文字(&#8216; &#8216;)をエスケープする必要はありません。</p>
+<p>values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの値を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要ですが、標準入力から与える文字列はエスケープする必要がありません。</p>
 </blockquote>
+<p>続きの文字列については、空白文字(&#8216; &#8216;)をエスケープする必要はありません。</p>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 レコードを追加しようとするテーブルの名前を指定します。</blockquote>
@@ -108,12 +109,18 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 <div class="section" id="id8">
 <h2>2.8.5. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryにレコードを登録します。:</p>
-<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --output_type json --values [
-{&quot;_key&quot;: &quot;abandon&quot;, &quot;body&quot;: &quot;放棄する&quot;},
+<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --output_type json --values [{\&quot;_key\&quot;:\&quot;abandon\&quot;,\&quot;body\&quot;:\&quot;放棄する\&quot;}]
+
+[[0],1]
+</pre></div>
+</div>
+<p>標準入力からvaluesの値を与えます。:</p>
+<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --output_type json
+[
 {&quot;_key&quot;: &quot;abbreviate&quot;, &quot;body&quot;: &quot;短縮する&quot;}
 ]
 
-[[0],2]
+[[0],1]
 </pre></div>
 </div>
 </div>
@@ -196,7 +203,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="view_add.html" title="2.7. view_add"
              >previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="commands.html" >2. コマンド一覧</a> &raquo;</li> 
+          <li><a href="commands.html" >2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
