@@ -1,4 +1,1008 @@
+2009-11-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/table_create.txt, lib/db.c: Added support for GRN_OP_MINUS.
+
+2009-10-31 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/db.h, lib/proc.c: Fixed a problem that grn_table_select
+ didn't work correctly when a function call was assigned as condition.
+
+2009-10-30 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/load.html, doc/ja/searchindex.js, doc/ja/source/load.txt: revised
+ load.txt
+
+ * lib/db.c, lib/proc.c, lib/ql.h: Added GRN_LOADER_END.
+
+ * lib/ctx.c, lib/db.c, lib/str.c: Fixed a bug in grn_ctx_connect().
+
+2009-10-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/commands.html, doc/ja/functions.html, doc/ja/geo_distance.html,
+ doc/ja/geo_in_circle.html, doc/ja/geo_in_rectangle.html, doc/ja/index.html,
+ doc/ja/now.html, doc/ja/rand.html, doc/ja/searchindex.js,
+ doc/ja/source/commands.txt, doc/ja/source/functions.txt,
+ doc/ja/source/geo_distance.txt, doc/ja/source/geo_in_circle.txt,
+ doc/ja/source/geo_in_rectangle.txt, doc/ja/source/index.txt,
+ doc/ja/source/now.txt, doc/ja/source/rand.txt, doc/ja/table_list.html,
+ lib/ctx.h, lib/db.c, lib/proc.c, lib/str.c: Added geo_in_circle(),
+ geo_in_rectangle() and geo_distance() builtin functions.
+
+ * lib/db.c: Fixed a bug in call_hook().
+
+2009-10-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_expr_exec()
+
+2009-10-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/searchindex.js, doc/ja/select.html, doc/ja/source/select.txt: Added
+ FastXML output example on document.
+
+ * lib/ctx.c: Fixed function name resolution bug with extension.
+
+ * lib/proc.c: Removed switch-case warning.
+
+2009-10-28 Ryo Onodera <onodera@clear-code.com>
+
+ * groonga.h: remove invalid byte sequences introduced by 0d866f7 and ffc2f94
+
+ * test/unit/lib/grn-test-utils.c: add missing grn_rc constants to
+ grn_rc_to_string()
+
+2009-10-28 t2001 <t2001@gol.com>
+
+ * lib/io.c: EXIT -> exit
+
+ * lib/io.c: fix grn_open (when flag is only O_RDWR)
+
+2009-10-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/proc.c: grn_search() -> grn_select()
+
+2009-10-19 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-expr.c: wrap grn_expr_parse() with grn_test_assert() in
+ PARSE()
+
+2009-10-20 Ryo Onodera <onodera@clear-code.com>
+
+ * groonga.h: fix gcc warning in GRN_EXPR_CREATE_FOR_QUERY()
+
+2009-10-26 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-expr.c: add grn_test_assert_select()
+
+2009-10-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c: Added grn_time_now().
+
+2009-10-27 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.c: make test-http.c follow the api path change by
+ c944e5b
+
+2009-10-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Fixed a problem that the index is not updated correctly in
+ certain cases.
+
+2009-10-26 tashiro <tashiro@tashiro-desktop.(none)>
+
+ * lib/groonga_in.h: Win32 needs time.h
+
+ * groonga.h, src/Makefile.msvc, src/groonga.c: for groonga.exe in WIN32
+
+2009-10-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/db.h, lib/str.c: grn_table_sort() now use index
+ for sorting if available.
+
+2009-10-26 t2001 <t2001@gol.com>
+
+ * groonga.h, lib/groonga_in.h, src/Makefile.msvc, src/groonga.c: for
+ groonga.exe in Win32
+
+2009-10-26 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/util/test-snip.c: add test_proper_tag_insertion()
+
+2009-10-15 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-expr.c: make test_expr_parse() use gcut_add_datum()
+
+2009-10-14 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-table.c: make test_array_sort() use gcut_add_datum()
+
+2009-10-23 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/ctx.c, resource/admin_html/index.html: Moved api path to /d.
+
+2009-10-23 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/load.html, doc/ja/searchindex.js, doc/ja/source/load.txt: Fixed a
+ typo.
+
+2009-10-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * .gitignore: Added some entries to .gitignore.
+
+2009-10-22 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/Makefile, doc/ja/column_create.html, doc/ja/column_create.txt,
+ doc/ja/column_list.html, doc/ja/column_list.txt, doc/ja/commands.html,
+ doc/ja/define_selector.html, doc/ja/define_selector.txt, doc/ja/expr.html,
+ doc/ja/expr.txt, doc/ja/genindex.html, doc/ja/groonga.html,
+ doc/ja/groonga.txt, doc/ja/http.html, doc/ja/http.txt, doc/ja/index.html,
+ doc/ja/load.html, doc/ja/load.txt, doc/ja/log_level.html,
+ doc/ja/log_level.txt, doc/ja/log_put.html, doc/ja/log_put.txt,
+ doc/ja/pseudo_column.html, doc/ja/pseudo_column.txt, doc/ja/quit.html,
+ doc/ja/quit.txt, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/select.html, doc/ja/select.txt, doc/ja/shutdown.html,
+ doc/ja/shutdown.txt, doc/ja/source/column_create.txt,
+ doc/ja/source/column_list.txt, doc/ja/source/commands.txt,
+ doc/ja/source/conf.py, doc/ja/source/define_selector.txt,
+ doc/ja/source/expr.txt, doc/ja/source/groonga.txt, doc/ja/source/http.txt,
+ doc/ja/source/index.txt, doc/ja/source/load.txt, doc/ja/source/log_level.txt,
+ doc/ja/source/log_put.txt, doc/ja/source/pseudo_column.txt,
+ doc/ja/source/quit.txt, doc/ja/source/select.txt, doc/ja/source/shutdown.txt,
+ doc/ja/source/status.txt, doc/ja/source/table_create.txt,
+ doc/ja/source/table_list.txt, doc/ja/source/type.txt,
+ doc/ja/source/view_add.txt, doc/ja/status.html, doc/ja/status.txt,
+ doc/ja/table_create.html, doc/ja/table_create.txt, doc/ja/table_list.html,
+ doc/ja/table_list.txt, doc/ja/type.html, doc/ja/type.txt,
+ doc/ja/view_add.html, doc/ja/view_add.txt: Write documents with Sphinx.
+
+2009-10-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/http.txt, doc/ja/pseudo_column.txt, doc/ja/type.txt, groonga.h,
+ lib/ctx.c, lib/db.c: Added some document pages.
+
+ * doc/ja/column_create.txt, doc/ja/column_list.txt,
+ doc/ja/define_selector.txt, doc/ja/expr.txt, doc/ja/log_level.txt,
+ doc/ja/log_put.txt, doc/ja/quit.txt, doc/ja/shutdown.txt,
+ doc/ja/table_list.txt, doc/ja/view_add.txt: Revised document pages.
+
+ * doc/ja/expr.txt: Added doc/ja/expr.txt.
+
+ * doc/ja/column_create.txt, doc/ja/groonga.txt, doc/ja/load.txt,
+ doc/ja/select.txt, doc/ja/status.txt, doc/ja/table_create.txt, groonga.h,
+ lib/db.c, lib/expr.c, lib/expr.h, lib/expr.y, lib/proc.c, lib/proc.h,
+ resource/admin_html/index.html, src/groonga.c: Modified the name of argument
+ 'foreach' to 'scorer' in grn_search().
+
+2009-10-21 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h, lib/db.c, lib/str.c, lib/str.h: Implemented drilldown on
+ FastXML.
+
+2009-10-20 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/db.c, lib/str.c: Added FastXML resultset on select proc.
+
+2009-10-20 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.yaml,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.yaml, doc/ja/README,
+ doc/ja/column_create.txt, doc/ja/column_list.txt, doc/ja/define_selector.txt,
+ doc/ja/groonga.txt, doc/ja/load.txt, doc/ja/log_level.txt,
+ doc/ja/log_put.txt, doc/ja/quit.txt, doc/ja/select.txt, doc/ja/shutdown.txt,
+ doc/ja/status.txt, doc/ja/table_create.txt, doc/ja/table_list.txt,
+ doc/ja/view_add.txt: Added man files.
+
+ * src/groonga.c: groonga now accepts arguments as command to execute, in
+ client mode.
+
+2009-10-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Modified the signature of _sort() function and impoved the
+ performance of grn_table_sort() when assigned positive value as offset.
+
+2009-10-13 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-expr.c: make test_expr_parse check the equivalence of
+ parse levels
+
+2009-10-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/com.c, lib/com.h, lib/ctx.c, lib/db.c, lib/ql.h, src/groonga.c: Added
+ grn_edges.
+
+2009-10-09 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-expr.c: add assertions in test_expr_snip_without_tags()
+
+ * test/unit/core/test-expr.c: should initialize |flags| in test_expr_snip()
+
+ * test/unit/core/test-table.c: refine tests for grn_table_sort
+
+2009-10-07 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c: fix a bug in grn_table_sort with offset and limit options
+
+ * test/unit/core/test-table.c: add tests for grn_table_sort with offset and
+ limit options
+
+2009-10-06 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.yaml, doc/bugs/project.yaml:
+ Added some issues.
+
+ * doc/bugs/project.yaml, lib/ctx.c, src/groonga.c: Devided
+ put_response_header() and get_content_type().
+
+ * lib/com.c, lib/proc.c, src/groonga.c: Added procedures clearlock, log_level
+ and log_put.
+
+2009-10-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/ctx.h, lib/proc.c: Added grn_get_ctype().
+
+ * lib/ctx.c, lib/proc.c: Fixed a problem that grn_ctx_qe_exec() doesn't work.
+
+ * lib/db.c, lib/proc.c: Added support for indexes on keys.
+
+2009-10-05 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h, lib/ctx.c, lib/db.c, lib/proc.c, lib/str.c, lib/str.h,
+ src/groonga.c: Change content-type to be determined by ext.
+
+2009-10-05 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-expr.c: fix a SIGFPE when grn_epr_snip is
+ called with n_tags == 0
+
+ * test/unit/core/Makefile.am: fix a build error on ubuntu 8.10
+
+2009-10-01 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h, lib/db.c, lib/str.c: Fixed typo.
+
+ * configure.ac: release 0.1.4
+
+2009-10-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in scan_info_build() cause parse error.
+
+ * lib/ctx.c, lib/db.c, lib/token.h, test/unit/core/test-expr.c: Fixed a
+ problem in grn_expr_snip() cause parse error.
+
+2009-09-30 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/ctx.h, lib/proc.c: Added quit and shutdown procedure.
+
+ * lib/ctx.h, lib/db.c, lib/io.c: Error message is returned into
+ grn_ctx->errbuf when an error occurred.
+
+2009-09-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/hash.h, lib/io.c: Added
+ GRN_INCOMPATIBLE_FILE_FORMAT.
+
+2009-09-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/com.c, lib/ctx.c, lib/db.c, src/groonga.c: Added
+ GRN_RETRY_MAX.
+
+2009-09-28 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-expr.c: remove a garbage.
+
+ * test/unit/http/test-http.c: follow the /status result change.
+
+ * test/unit/core/test-expr.c: add a test for grn_expr_snip().
+
+2009-09-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c, test/unit/memcached/test-memcached.c: Fixed memcached
+ implementation.
+
+2009-09-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fix a bug in grn_expr_parse() that wrong encoding was used.
+
+ * ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.yaml: Added an issue.
+
+ * lib/db.c: Added support for comparison with Time values and Integer values.
+
+2009-09-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c: Added grn_expr_snip().
+
+ * lib/db.c: Added support for nested grn_expr on grn_table_select().
+
+2009-09-26 Yutaro Shimamura <yu@irx.jp>
+
+ * configure.ac, lib/ctx.c, lib/proc.c: Configure option exact-alloc-count
+ added.
+
+2009-09-25 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/core/test-text.c: Fixed grn_text_urldec() test.
+
+ * groonga.h, lib/ctx.c, lib/str.c, lib/str.h, test/unit/core/test-text.c:
+ Re-export grn_text_urldec() and make grn_text_cgidec().
+
+2009-09-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/pat.c, lib/str.c, lib/str.h: Added grn_text_unesc_tok().
+
+2009-09-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed typo.
+
+ * groonga.h, lib/db.c, lib/str.c, lib/str.h, src/groonga.c: Put lock into
+ grn_table_delete() and grn_table_delete_by_id().
+
+2009-09-24 Kouhei Sutou <kou@cozmixng.org>
+
+ * configure.ac: also checks memcached_increment_with_initial().
+
+2009-09-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_expr_parse which generates wrong code.
+
+2009-09-23 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-expr.c: use meaningful name for test.
+
+ * test/unit/core/test-expr.c: use meaningful name for test.
+
+ * test/unit/http/test-http.c: follow the recent /select output change.
+
+ * test/unit/http/test-http.c: force to use IPv4 loopback address.
+
+2009-09-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c, lib/str.c, lib/str.h: Cut off grn_text_urldec(). and
+ renamed get_uri_token() to grn_text_urldec().
+
+ * lib/db.c: Fixed a bug in grn_expr_parse() returns wrong return code.
+ column:value notation is now available only when 2 or 3 is assigned as
+ parse_level value.
+
+2009-09-18 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac: release 0.1.3
+
+2009-09-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: grn_table_select() became faster on lookup by primary key or
+ record id.
+
+ * lib/db.c: Fixed a problem cause grn_table_select() returns wrong result on
+ view tables.
+
+2009-09-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.yaml, lib/db.c, lib/ql.h:
+ Added support for json escape sequence.
+
+ * lib/db.c: Added support for GRN_QUERY_BUT operator to grn_table_select().
+
+2009-09-16 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml: Added new issue.
+
+2009-09-15 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/expr.c, lib/expr.y: Modified fulltext match operator from
+ ':%' to ':@'. (sorry..)
+
+ * lib/db.c: Fixed a bug in grn_expr_parse cause memory error.
+
+2009-09-15 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * resource/admin_html/index.html: Follow up new json.
+
+2009-09-15 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * test/unit/core/test-expr.c: Updated unit tests.
+
+ * groonga.h, lib/db.c, lib/db.h, lib/proc.c, lib/str.c, lib/token.c: Added
+ type argument to grn_proc_create().
+
+ * test/unit/core/test-expr.c, test/unit/core/test-inverted-index.c,
+ test/unit/core/test-patricia-trie.c: Updated unit tests.
+
+ * groonga.h, lib/ctx.c, lib/db.c: Added grn_ctx_open().
+
+ * lib/db.c: Changed grn_obj_unlink() to invoke finalizer function even if not
+ obj closed.
+
+ * lib/db.c: Modified output json format in grn_search().
+
+2009-09-14 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.h: Backtrace info will be output to groonga.log when error occured.
+
+ * lib/ii.c, lib/token.c, lib/token.h: Fixed a bug in grn_token_next(). Added
+ GRN_TOKEN_REACH_END.
+
+ * lib/ii.c, lib/token.c: Fixed a bug in ngram_next cause wrong detection of
+ GRN_TOKEN_UNMATURED.
+
+2009-09-12 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_accessor_get_value() returns wrong nsubrecs
+ value.
+
+ * lib/ii.c: Improved token_info_expand_both().
+
+2009-09-11 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Added grn_view_group().
+
+2009-09-11 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/proc.c: Removed unused printf() for debug.
+
+2009-09-11 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.h, lib/io.h, lib/store.c, lib/token.c: Fixed a "strange nref value"
+ bug in grn_ja_putv().
+
+2009-09-10 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/proc.c, lib/str.c, lib/str.h: Added grn_str_url_path_normalize().
+
+ * lib/proc.c, lib/proc.h, lib/str.c, lib/str.h, src/grnslap.c, src/groonga.c:
+ Avoided compiler warnings.
+
+ * Makefile.am, configure.ac, lib/proc.c, lib/proc.h,
+ resource/admin_html/css/admin.css,
+ .../ui-bg_diagonals-thick_18_b81900_40x40.png,
+ .../ui-bg_diagonals-thick_20_666666_40x40.png,
+ .../images/ui-bg_flat_10_000000_40x100.png,
+ .../images/ui-bg_glass_100_f6f6f6_1x400.png,
+ .../images/ui-bg_glass_100_fdf5ce_1x400.png,
+ .../images/ui-bg_glass_65_ffffff_1x400.png,
+ .../images/ui-bg_gloss-wave_35_f6a828_500x100.png,
+ .../ui-bg_highlight-soft_100_eeeeee_1x100.png,
+ .../ui-bg_highlight-soft_75_ffe45c_1x100.png,
+ .../images/ui-icons_222222_256x240.png,
+ .../images/ui-icons_228ef1_256x240.png,
+ .../images/ui-icons_ef8c08_256x240.png,
+ .../images/ui-icons_ffd27a_256x240.png,
+ .../images/ui-icons_ffffff_256x240.png,
+ .../css/ui-lightness/jquery-ui-1.7.2.custom.css,
+ resource/admin_html/images/groonga.png, resource/admin_html/index.html,
+ resource/admin_html/js/jquery-1.3.2.min.js,
+ .../admin_html/js/jquery-ui-1.7.2.custom.min.js, src/groonga.c,
+ src/s/css/admin.css, .../ui-bg_diagonals-thick_18_b81900_40x40.png,
+ .../ui-bg_diagonals-thick_20_666666_40x40.png,
+ .../images/ui-bg_flat_10_000000_40x100.png,
+ .../images/ui-bg_glass_100_f6f6f6_1x400.png,
+ .../images/ui-bg_glass_100_fdf5ce_1x400.png,
+ .../images/ui-bg_glass_65_ffffff_1x400.png,
+ .../images/ui-bg_gloss-wave_35_f6a828_500x100.png,
+ .../ui-bg_highlight-soft_100_eeeeee_1x100.png,
+ .../ui-bg_highlight-soft_75_ffe45c_1x100.png,
+ .../images/ui-icons_222222_256x240.png,
+ .../images/ui-icons_228ef1_256x240.png,
+ .../images/ui-icons_ef8c08_256x240.png,
+ .../images/ui-icons_ffd27a_256x240.png,
+ .../images/ui-icons_ffffff_256x240.png,
+ src/s/css/ui-lightness/jquery-ui-1.7.2.custom.css, src/s/images/groonga.png,
+ src/s/index.html, src/s/js/jquery-1.3.2.min.js,
+ src/s/js/jquery-ui-1.7.2.custom.min.js: Install admin_html and groonga can
+ specify the path.
+
+ * lib/str.c: Fixed bug and support '=' on long option.
+
+2009-09-10 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug grn_obj_cast. time value should be cast as uint64_t.
+
+2009-09-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c, lib/db.c, lib/proc.c, lib/ql.h: Added ifexists
+ parameter to grn_load().
+
+ * groonga.h, lib/com.c, lib/db.c, lib/db.h, lib/expr.c, lib/expr.y: Added
+ support for ternary operator to grn_expr_parse().
+
+2009-09-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Avoid missing HTTP header when static file required.
+
+ * doc/ja/API.html, doc/ja/API.rd, groonga.h, lib/ctx.c: Changed return value
+ type of grn_ctx_send() and grn_ctx_recv().
+
+ * bindings/php/groonga.c, bindings/php/php_groonga.h,
+ bindings/python/ql/groongaql.c, doc/ja/API.html, doc/ja/API.rd,
+ examples/kv.c, groonga.h, lib/com.c, lib/ctx.c, lib/ctx.h, lib/ql.c,
+ lib/ql.h, lib/scm.c, src/grnslap.c, src/groonga.c,
+ test/unit/core/test-public-context.c: Removed grn_ql_load(). grn_ql_*()
+ renamed to grn_ctx_*().
+
+2009-09-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Minor changes in grn_ii_column_update().
+
+2009-09-04 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Avoid possible stack overflow on grn_search().
+
+2009-09-03 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/Makefile.am: add missing run-test.sh into archive.
+
+ * configure.ac: remove a garbage.  Reported by Yoshinori K. Okuji. Thanks!!!
+
+2009-09-03 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac: release 0.1.2
+
+2009-09-03 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/TUTORIAL: Updated TUTORIAL.
+
+ * doc/ja/TUTORIAL, lib/db.c: Avoid segfault on grn_accessor_view_close().
+
+2009-09-03 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: Fixed html admin pager.
+
+2009-09-03 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Enabled offset and limit parameter for grn_view_cursor and
+ grn_view_sort.
+
+ * doc/ja/TUTORIAL, lib/db.c: Enabled index scan in grn_table_select() for
+ queries with GRN_OP_OR.
+
+2009-09-03 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http.c: remove a garbage.  Reported by Yoshinori K.
+ Okuji. Thanks!!!
+
+2009-09-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/TUTORIAL: Added doc/ja/TUTORIAL.
+
+ * lib/db.c: Fixed a bug in grn_view_cursor_open().
+
+2009-09-02 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: Added support for .gif/.jpeg on groonga http.
+
+ * lib/proc.c: Added view on table_list proc.
+
+2009-09-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/ctx.h, lib/db.c, lib/ii.c, lib/ql.h: Added grn_true,
+ grn_false and grn_null.
+
+2009-09-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http.c: cleanup.
+
+ * test/unit/core/test-table.c: revert a removed data function.
+ data_temporary_table_default_tokenizer() was removed in
+ 390b63a1df4758a16fc97fd9a3a86834d4af2448 accidentally.  Pointed out by
+ Yoshinori K. Okuji. Thanks!!!
+
+2009-09-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/hash.c, lib/str.c: grn_table_select() support view.
+
+2009-09-01 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: Fixed bug in do_mbreq().
+
+ * Makefile.am, test/Makefile.am, test/ql/00793.scm, test/ql/Makefile.am,
+ test/ql/dump-data.scm, test/ql/init.scm, test/ql/karapake.rb,
+ test/ql/ql-assertions.scm, test/ql/ql-test-utils.scm, test/ql/run-test.scm,
+ test/ql/show-schema.scm, test/ql/test-base.scm, test/ql/test-bookmark.scm,
+ test/ql/test-disp.scm, test/ql/test-quasiquote.scm, test/ql/test-slot.scm,
+ test/ql/test-table.scm: Removed ql test.
+
+2009-09-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/db.h, lib/str.c: Added support for tables with
+ GRN_OBJ_TABLE_VIEW to grn_text_otoj().
+
+2009-09-01 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-hash-sort.c: Use locale independent function for
+ sorting.  Reported by Yoshinori K. Okuji. Thanks!!!
+
+2009-09-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/hash.c, lib/hash.h: Added grn_view_select().
+
+2009-08-31 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/hash.c, lib/hash.h, lib/ii.c: Added grn_view_sort().
+
+ * groonga.h, lib/db.c, lib/db.h, lib/ii.c, lib/proc.c: Renamed
+ GRN_DB_TOKYO_POINT/GRN_DB_WGS84_POINT into
+ GRN_DB_TOKYO_GEO_POINT/GRN_DB_WGS84_GEO_POINT.
+
+2009-08-30 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/token.c: Modified database format. Added
+ GRN_DB_TOKYO_POINT and GRN_DB_WGS84_POINT.
+
+2009-08-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * .gitignore, ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.yaml,
+ doc/bugs/project.yaml, groonga.h, lib/proc.c: Added doc/bugs files. thanks to
+ ditz.
+
+2009-08-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Added grn_obj_get_value_o(), grn_obj_set_value_o(),
+ grn_table_cursor_next_o().
+
+2009-08-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: Added empty query handling on HTML admin.
+
+2009-08-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/db.h, lib/ii.c, lib/ii.h, lib/proc.c,
+ test/unit/core/test-inverted-index.c: Added posting argument to
+ grn_ii_column_update().
+
+2009-08-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/db.h, lib/token.c: Added N_RESERVED_TOKENIZERS.
+
+2009-08-27 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c, test/unit/memcached/test-memcached.c: Fixed memcached
+ flags/expire bugs.
+
+2009-08-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/db.h, lib/token.c: Reserve GRN_DB_MECAB when NO_MECAB
+ assigned.
+
+ * groonga.h, lib/db.c, lib/ql.c, test/unit/core/test-table.c:
+ grn_table_create() requires NULL as key_type for table with
+ GRN_OBJ_TABLE_NO_KEY.
+
+2009-08-27 Yuto Hayamizu <info@hayamin.com>
+
+ * lib/db.c: fix opstrs for latest grn_operator
+
+2009-08-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/expr.c, lib/expr.y, lib/ql.h: Added
+ GRN_OP_TERNARY, GRN_OP_COMMA.
+
+ * lib/db.c: Fixed a bug in grn_obj_get_accessor(), "_id" is available as name
+ on grn_array table.
+
+2009-08-25 Yuto Hayamizu <info@hayamin.com>
+
+ * test/unit/http/test-http.c: Add an assertion.  test/unit/http/test-http.c:
+ add assert_response to test_get_status
+
+ * test/unit/http/test-http.c: Removed an unnecessary variable
+ test/unit/http/test-http.c: 'message' was unused.
+
+2009-08-25 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: Stop incremental search with a foreach parameter.
+
+2009-08-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/db.c: Fixed a bug in grn_expr_exec(). check stack underflow.
+
+2009-08-25 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: Added foreach parameter on groonga admin.
+
+2009-08-25 Yuto Hayamizu <info@hayamin.com>
+
+ * test/unit/http/test-http.c: removed unused SoupSession from test-http.c
+
+2009-08-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/db.h: Fixed a memory leak error in grn_expr_parse().
+
+ * test/unit/core/test-hash-sort.c: Fixed stack overflow of test-hash-sort.c
+ (thanks to hayamiz)
+
+ * lib/db.c, lib/pat.c, lib/proc.c, test/unit/core/test-expr.c,
+ test/unit/core/test-table.c: Added proc_now().
+
+2009-08-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/com.c, lib/ctx.c, lib/db.c, lib/hash.c, lib/hash.h,
+ lib/ii.c, lib/io.c, lib/proc.c, lib/ql.c, lib/scm.c, src/grnslap.c,
+ src/groonga.c, test/unit/core/test-expr.c: Exported grn_array.
+
+2009-08-24 Yuto Hayamizu <info@hayamin.com>
+
+ * test/unit/http/Makefile.am: fixed Makefile.am for soupcutter
+
+ * test/unit/http/test-http.c: use soupcutter in test-http.c
+
+2009-08-23 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Enhanced grn_search(). foreach is available.
+
+ * lib/db.c, test/unit/core/test-expr.c: Fixed a bug in grn_expr_exec() about
+ GRN_OP_CALL.
+
+ * groonga.h, lib/db.c, lib/db.h, lib/proc.c, lib/token.c: Added
+ grn_expr_alloc().
+
+2009-08-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/proc.c, lib/token.c: Modified the signature of
+ grn_proc_func().
+
+2009-08-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/proc.c, lib/token.c: Modified the signature of
+ grn_proc_func(). Renamed grn_proc_vars() into grn_proc_get_info().
+
+ * groonga.h, lib/db.h: Exported grn_ctx_push() and grn_ctx_pop().
+
+ * lib/db.c, lib/expr.c, lib/expr.y: Implemented GRN_OP_CALL.
+
+2009-08-21 Yuto Hayamizu <info@hayamin.com>
+
+ * test/unit/http/test-http.c: test_get_root: use soupcutter instead of
+ libsoup
+
+ * configure.ac, test/unit/http/Makefile.am: use soupcutter in configure.ac
+ and Makefile.am
+
+2009-08-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c, lib/db.c, test/unit/core/test-expr.c: Modified the
+ signature of grn_expr_exec().
+
+2009-08-21 Yuto Hayamizu <info@hayamin.com>
+
+ * configure.ac: fixed the predicate for AM_CONDITIONAL
+
+2009-08-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/expr.c, lib/expr.h, lib/expr.y,
+ test/unit/core/test-expr.c: Renamed GRN_OP_SET_VALUE into GRN_OP_ASSIGN.
+
+2009-08-20 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/expr.c, lib/expr.h, lib/expr.y: Refined grn_expr_parse().
+ Added level 4 parser.
+
+ * lib/ctx.c, lib/db.c, test/unit/core/test-expr.c: Fixed a bug in
+ grn_expr_exec().
+
+2009-08-20 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h, lib/str.c: Added grn_text_urldec().
+
+2009-08-20 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, test/unit/core/test-expr.c: GRN_OP_SET_VALUE is
+ available.
+
+ * groonga.h, lib/db.c, test/unit/core/test-expr.c: Added
+ GRN_EXPR_CREATE_FOR_SELECT.
+
+ * lib/db.c, lib/db.h: Added GRN_OP_GET_REF.
+
+ * lib/db.c, test/unit/core/test-expr.c: GRN_OP_SET_VALUE is available.
+
+2009-08-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/db.h, test/unit/core/test-expr.c: Renamed
+ GRN_OP_OBJ_GET_VALUE/GRN_OP_OBJ_SET_VALUE into
+ GRN_OP_GET_VALUE/GRN_OP_SET_VALUE.
+
+2009-08-19 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac: Fixed configure problem without cutter.
+
+ * lib/str.c: Added logic for GRN_DB_BOOL on grn_text_otoj().
+
+2009-08-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/db.h, test/unit/core/test-expr.c: Added two
+ arguments ('op' and 'nargs') to grn_expr_append_obj() and
+ grn_expr_append_const().
+
+ * lib/db.c: Fixed a bug in grn_obj_get_value(). bulk, uvector support.
+
+2009-08-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/expr.c, lib/expr.h, lib/expr.y, test/unit/core/test-expr.c:
+ Refined expr.y.
+
+2009-08-18 Yuto Hayamizu <info@hayamin.com>
+
+ * test/unit/http/test-http.c: select test
+
+ * test/unit/http/test-http.c: test for column_list after column_create
+
+ * test/unit/http/test-http.c: column_create test
+
+ * test/unit/http/test-http.c: column_list test
+
+ * test/unit/http/test-http.c: refactoring
+
+ * test/unit/http/test-http.c: assert_equal_content_type was added
+
+ * test/unit/http/test-http.c: assert_equal_response_body was added
+
+ * test/unit/http/test-http.c: removed redundancy
+
+ * test/unit/http/test-http.c: fix memory leak of assert_get
+
+ * test/unit/http/test-http.c: test case for table_create
+
+ * test/unit/http/test-http.c: added a test case for /table_list
+
+ * test/unit/http/test-http.c: made setup/teardown robust
+
+ * test/unit/http/test-http.c: fix indent  added 'assert_get', GET request
+ assertion
+
+ * test/unit/http/test-http.c: removed redundant code
+
+ * test/unit/http/test-http.c: added a test case for /status
+
+2009-08-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/expr.c, lib/expr.h, lib/expr.y, test/unit/core/test-expr.c:
+ Added QSTRING token type to expr.y.
+
+2009-08-18 Yuto Hayamizu <info@hayamin.com>
+
+ * configure.ac, test/unit/http/Makefile.am: libsoup existance checking was
+ added to configure.ac
+
+ * test/unit/http/test-http.c: added contenty type check & body length check
+
+ * test/unit/http/test-http.c: use constant
+
+ * test/unit/http/test-http.c: fixed memory leak
+
+ * configure.ac, test/unit/Makefile.am, test/unit/http/.gitignore,
+ test/unit/http/Makefile.am, test/unit/http/test-http.c: An initial http test
+ case was created
+
+2009-08-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/expr.c, lib/expr.h, lib/expr.y: Modified expr.y.
+
+2009-08-17 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/Makefile.am: Added expr.h/c/y for EXTRA_DIST.
+
+2009-08-14 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/expr.c, lib/expr.h, lib/expr.y,
+ test/unit/core/test-expr.c: Improved grn_expr_inspect().
+
+2009-08-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_obj_get_accessor(). grn_expr_parse is still
+ under construction.
+
+ * lib/ctx.c: Fixed typo.
+
+ * lib/ctx.c, lib/db.c, lib/db.h, lib/expr.c, lib/expr.h, lib/expr.y,
+ lib/ql.h: Initialize grn_logger in grn_init().
+
+2009-08-13 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h, lib/str.c, test/unit/core/Makefile.am,
+ test/unit/core/test-text.c: Added
+ grn_text_itoa_padded()/grn_text_time2rfc1123().
+
+2009-08-12 Kouhei Sutou <kou@cozmixng.org>
+
+ * test/unit/core/test-expr.c: remove needless codes.
+
+2009-08-12 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/pat.c, lib/ql.c: Added offset parameter to
+ grn_table_sort().
+
+2009-08-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, test/unit/core/test-table.c, test/unit/lib/grn-assertions.c,
+ test/unit/lib/grn-assertions.h: Fixed a bug in grn_obj_get_accessor() segv on
+ non-exitent column access. (Thanks to kou)
+
+2009-08-08 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/proc.c: Use grn_column_name instead of grn_obj_name.
+
+ * src/s/index.html: you can specify source with create column on html.
+
+2009-08-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/db.c: Fixed a memory leak bug in grn_load().
+
+2009-08-07 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: don't scroll on top when pager link is clicked.
+
+ * src/s/index.html: defalt tokenizer can be specified on html admin.
+
+ * src/s/index.html: added status event handling timing.
+
+2009-08-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/db.h, lib/proc.c: Modified proc_load().
+
+ * lib/db.c, test/unit/core/test-expr.c: Removed grn_proc_dup() and
+ grn_expr_dup().
+
+2009-08-07 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: don't request status api without summary html.
+
+ * src/s/index.html: removed duplicated event handler on search form.
+
+2009-08-06 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/db.c, lib/ql.h: Added grn_expr_get_vars().
+
+ * lib/db.c: Stop duplicating grn_proc and grn_expr.
+
+2009-08-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: grn_expr_create_from_str supports GRN_OP_OBJ_SET_VALUE.
+
+ * lib/db.c: grn_obj_columns() accepts '*' on nested table.
+
+ * groonga.h, lib/db.c, lib/str.c: Added nhits to grn_obj_format.
+
+ * lib/db.c: Enhanced grn_obj_column() leading '.' is not necessary.
+
+2009-08-05 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: added incremental search on html admin.
+
+2009-08-04 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c, lib/db.c, lib/proc.c, lib/str.c: Added
+ GRN_DB_PSEUDO_COLUMN_PREFIX.
+
+2009-08-04 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: decrease memory usage on HTML admin.
+
+ * src/s/index.html: added sentence delimiter of javascript.
+
+ * src/s/index.html: added logic of javascript primitive to html.
+
+2009-08-03 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: grn_obj_cast() support GRN_DB_TIME value.
+
+ * lib/db.c, lib/str.c: Fixed a bug in grn_obj_cast().
+
+2009-08-03 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/s/index.html: fixed bug in table tag creation on HTML.
+
+2009-08-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in json_read().
+
+ * lib/proc.c, lib/ql.c, lib/scm.c, lib/str.c: Fixed a bug in
+ proc_column_create().
+
+ * groonga.h, lib/db.c, lib/proc.c, lib/str.c: Removed
+ grn_obj_format_from_str().
+
 2009-07-31 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac: release 0.1.1
 
  * src/s/index.html: Chooned HTML table manipulation.
 
@@ -119,6 +1123,10 @@
  * src/s/index.html: Fixed create table function on HTML admin.
 
 2009-07-23 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-expr.c: Fix a typo.
+
+ * lib/db.c, test/unit/core/test-expr.c: Support GRN_OP_EQUAL for record ID.
 
  * test/unit/core/test-column.c: Use grn_obj_close() instead of
  grn_db_close().
