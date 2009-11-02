@@ -6668,7 +6668,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 
 #define EXPRVP(x) ((x)->header.impl_flags & GRN_OBJ_EXPRVALUE)
 
-#define CONSTP(obj) ((obj)->header.impl_flags & GRN_OBJ_EXPRCONST)
+#define CONSTP(obj) ((obj) && ((obj)->header.impl_flags & GRN_OBJ_EXPRCONST))
 
 #define PUSH_CODE(e,o,v,n,c) {\
   (c) = &(e)->codes[e->codes_curr++];\
@@ -6841,6 +6841,32 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         }
       }
       DFI_PUT(e, type, domain, code);
+      break;
+    case GRN_OP_MINUS :
+      if (nargs == 1) {
+        grn_expr_code *code;
+        grn_id domain;
+        unsigned char type;
+        grn_obj *x;
+        DFI_POP(e, dfi);
+        code = dfi->code;
+        domain = dfi->domain;
+        type = dfi->type;
+        x = code->value;
+        if (CONSTP(x) && domain == GRN_DB_INT32) {
+          GRN_INT32_SET(ctx, x, -(GRN_INT32_VALUE(x)));
+        }
+        DFI_PUT(e, type, domain, code);
+      } else {
+        PUSH_CODE(e, op, obj, nargs, code);
+        {
+          int i = nargs;
+          while (i--) {
+            DFI_POP(e, dfi);
+          }
+        }
+        DFI_PUT(e, type, domain, code);
+      }
       break;
     case GRN_OP_GET_VALUE :
       {

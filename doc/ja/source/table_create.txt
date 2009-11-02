@@ -99,7 +99,7 @@ ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作
 
 ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場合には、バイグラムの索引を作成します。::
 
-  table_create Term --flags 129 --key_type ShortText TokenBigram
+  table_create Term --flags 129 --key_type ShortText --default_tokenizer TokenBigram
   [[0]]
 
 .. rubric:: 脚注
