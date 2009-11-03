@@ -27,4 +27,16 @@ CUTTER_ARGS="$CUTTER_ARGS -s $BASE_DIR"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-file test-performance.so"
+
+case `uname` in
+    Darwin)
+	DYLD_LIBRARY_PATH="$top_dir/lib/.libs:$DYLD_LIBRARY_PATH"
+	DYLD_LIBRARY_PATH="$top_dir/test/unit/lib/.libs:$DYLD_LIBRARY_PATH"
+	export DYLD_LIBRARY_PATH
+	;;
+    *)
+	:
+	;;
+esac
+
 $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
