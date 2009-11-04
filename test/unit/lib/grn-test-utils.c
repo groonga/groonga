@@ -416,7 +416,7 @@ grn_test_pat_get_keys(grn_ctx *context, grn_obj *patricia_trie)
   grn_table_cursor *cursor;
 
   cursor = grn_table_cursor_open(context, patricia_trie,
-                                 NULL, 0, NULL, 0, 0, 0, GRN_CURSOR_ASCENDING);
+                                 NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_ASCENDING);
   keys = grn_test_pat_cursor_get_keys(context, cursor);
   grn_table_cursor_close(context, cursor);
 
@@ -459,7 +459,7 @@ grn_test_pat_get_pairs(grn_ctx *context, grn_obj *patricia_trie)
   grn_table_cursor *cursor;
 
   cursor = grn_table_cursor_open(context, patricia_trie,
-                                 NULL, 0, NULL, 0, 0, 0, GRN_CURSOR_ASCENDING);
+                                 NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_ASCENDING);
   ordered_pairs = grn_test_pat_cursor_get_pairs(context, cursor);
   grn_table_cursor_close(context, cursor);
 

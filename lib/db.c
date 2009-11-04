@@ -1517,7 +1517,7 @@ static grn_view_cursor *
 grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
                      const void *min, unsigned int min_size,
                      const void *max, unsigned int max_size,
-                     unsigned offset, unsigned limit, int flags)
+                     int offset, int limit, int flags)
 {
   grn_id *tp;
   grn_view_cursor *vc;
@@ -1553,7 +1553,7 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
       vc->rest = GRN_ID_MAX;
       offset += v->offset;
       while (offset--) { if (!grn_view_cursor_next(ctx, vc)) { break; } }
-      vc->rest = limit ? limit : GRN_ID_MAX;
+      vc->rest = (limit < 0) ? GRN_ID_MAX : limit;
       return vc;
     }
     GRN_FREE(vc);
@@ -1749,7 +1749,7 @@ grn_table_cursor *
 grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const void *min, unsigned min_size,
                       const void *max, unsigned max_size,
-                      unsigned offset, unsigned limit, int flags)
+                      int offset, int limit, int flags)
 {
   grn_table_cursor *tc = NULL;
   GRN_API_ENTER;
@@ -1800,15 +1800,15 @@ grn_table_cursor_open_by_id(grn_ctx *ctx, grn_obj *table,
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       tc = (grn_table_cursor *)grn_pat_cursor_open(ctx, (grn_pat *)table,
-                                                   NULL, 0, NULL, 0, 0, 0, flags);
+                                                   NULL, 0, NULL, 0, 0, -1, flags);
       break;
     case GRN_TABLE_HASH_KEY :
       tc = (grn_table_cursor *)grn_hash_cursor_open(ctx, (grn_hash *)table,
-                                                    NULL, 0, NULL, 0, 0, 0, flags);
+                                                    NULL, 0, NULL, 0, 0, -1, flags);
       break;
     case GRN_TABLE_NO_KEY :
       tc = (grn_table_cursor *)grn_array_cursor_open(ctx, (grn_array *)table,
-                                                     min, max, 0, 0, flags);
+                                                     min, max, 0, -1, flags);
       break;
     }
   }
@@ -2230,7 +2230,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     GRN_TEXT_INIT(&bulk, 0);
     if (n_keys == 1 && n_results == 1) {
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
         grn_id id;
         grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys->key));
         int idp = GRN_OBJ_TABLEP(range);
@@ -2278,7 +2278,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         grn_table_cursor_close(ctx, tc);
       }
     } else {
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, tc))) {
           grn_rset_recinfo *ri = NULL;
@@ -5645,7 +5645,7 @@ pack(grn_ctx *ctx, grn_obj *table, sort_entry *head, sort_entry *tail,
 {
   int i = 0;
   sort_entry e, c;
-  grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0);
+  grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0);
   if (!tc) { return NULL; }
   if ((c.id = grn_table_cursor_next(ctx, tc))) {
     c.value = grn_obj_get_value_(ctx, keys->key, c.id, &c.size);
@@ -5824,7 +5824,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     grn_pat *lexicon = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
     grn_pat_cursor *pc = grn_pat_cursor_open(ctx, lexicon, NULL, 0, NULL, 0,
                                              0 /* offset : can be used in unique index */,
-                                             0 /* limit : can be used in unique index  */,
+                                             -1 /* limit : can be used in unique index  */,
                                              (keys->flags & GRN_TABLE_SORT_DESC)
                                              ? GRN_CURSOR_DESCENDING
                                              : GRN_CURSOR_ASCENDING);
@@ -7878,7 +7878,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           str = GRN_OBJ_RESOLVE(ctx, str);
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
-          GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, 0);
+          GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, -1);
           format.flags = 0;
           grn_obj_columns(ctx, table,
                           GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str), &format.columns);
@@ -8547,7 +8547,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
   GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, table));
   switch (op) {
   case GRN_OP_OR :
-    if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0, 0))) {
+    if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
       while ((id = grn_table_cursor_next(ctx, tc))) {
         GRN_RECORD_SET(ctx, v, id);
         grn_expr_exec(ctx, expr, 0);
@@ -8563,7 +8563,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
     }
     break;
   case GRN_OP_AND :
-    if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, 0, 0))) {
+    if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
@@ -8581,7 +8581,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
     }
     break;
   case GRN_OP_BUT :
-    if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, 0, 0))) {
+    if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
@@ -8595,7 +8595,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
     }
     break;
   case GRN_OP_ADJUST :
-    if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, 0, 0))) {
+    if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
@@ -9539,7 +9539,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_table_cursor *tc;
           grn_expr_parse(ctx, scorer_, scorer, scorer_len,
                          match_column_, GRN_OP_MATCH, GRN_OP_AND, 4);
-          if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, 0, 0))) {
+          if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
             while (!grn_table_cursor_next_o(ctx, tc, v)) {
               grn_expr_exec(ctx, scorer_, 0);
               grn_ctx_pop(ctx);

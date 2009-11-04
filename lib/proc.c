@@ -431,7 +431,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 1) {
     grn_table_cursor *cur;
-    if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, 0, 0))) {
+    if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0))) {
       grn_id id;
       grn_content_type ct;
       char line_delimiter, column_delimiter;
@@ -576,7 +576,7 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   if (db) {
     grn_id id;
     grn_pat *keys = (grn_pat *)grn_db_keys(db);
-    grn_pat_cursor *pc = grn_pat_cursor_open(ctx, keys, NULL, 0, NULL, 0, 0, 0, 0);
+    grn_pat_cursor *pc = grn_pat_cursor_open(ctx, keys, NULL, 0, NULL, 0, 0, -1, 0);
     while ((id = grn_pat_cursor_next(ctx, pc))) {
       grn_obj *obj = grn_ctx_at(ctx, id);
       grn_obj_clear_lock(ctx, obj);

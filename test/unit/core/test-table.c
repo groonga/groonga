@@ -264,7 +264,7 @@ test_array_sort(gconstpointer data)
   cut_assert_equal_int(n_expected_values, grn_table_size(&context, result));
 
   cursor = grn_table_cursor_open(&context, result, NULL, 0, NULL, 0,
-                                 0, 0, GRN_CURSOR_ASCENDING);
+                                 0, -1, GRN_CURSOR_ASCENDING);
   while (grn_table_cursor_next(&context, cursor) != GRN_ID_NIL) {
     void *value;
     grn_id *id;

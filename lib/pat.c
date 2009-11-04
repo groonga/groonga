@@ -1679,7 +1679,7 @@ static grn_pat_cursor *
 grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
                           const void *min, uint32_t min_size,
                           const void *max, uint32_t max_size,
-                          unsigned offset, unsigned limit, int flags)
+                          int offset, int limit, int flags)
 {
   int dir;
   grn_pat_cursor *c;
@@ -1750,7 +1750,7 @@ grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
   } else {
     c->curr_rec += dir * offset;
   }
-  c->rest = limit ? limit : GRN_ID_MAX;
+  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
 exit :
   return c;
 }
@@ -1759,7 +1759,7 @@ grn_pat_cursor *
 grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
                     const void *min, uint32_t min_size,
                     const void *max, uint32_t max_size,
-                    unsigned offset, unsigned limit, int flags)
+                    int offset, int limit, int flags)
 {
   grn_id id;
   pat_node *node;
@@ -1835,7 +1835,7 @@ exit :
   c->obj.header.flags = flags;
   c->curr_rec = GRN_ID_NIL;
   while (offset--) { grn_pat_cursor_next(ctx, c); }
-  c->rest = limit ? limit : GRN_ID_MAX;
+  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
   return c;
 }
 

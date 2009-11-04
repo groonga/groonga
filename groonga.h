@@ -686,7 +686,7 @@ typedef grn_obj grn_table_cursor;
 GRN_API grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                                                 const void *min, unsigned min_size,
                                                 const void *max, unsigned max_size,
-                                                unsigned offset, unsigned limit, int flags);
+                                                int offset, int limit, int flags);
 
 /**
  * grn_table_cursor_close:
@@ -2022,7 +2022,7 @@ GRN_API grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash,
 GRN_API grn_hash_cursor *grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
                                               const void *min, unsigned int min_size,
                                               const void *max, unsigned int max_size,
-                                              unsigned offset, unsigned limit, int flags);
+                                              int offset, int limit, int flags);
 GRN_API grn_id grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c);
 GRN_API void grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c);
 
@@ -2038,7 +2038,7 @@ GRN_API grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
                                       grn_table_delete_optarg *optarg);
 
 #define GRN_HASH_EACH(ctx,hash,id,key,key_size,value,block) do {\
-  grn_hash_cursor *_sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0, 0, 0); \
+  grn_hash_cursor *_sc = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0, -1, 0); \
   if (_sc) {\
     grn_id id;\
     while ((id = grn_hash_cursor_next(ctx, _sc))) {\
@@ -2065,7 +2065,7 @@ GRN_API grn_rc grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
                                    void *value, int flags);
 GRN_API grn_array_cursor *grn_array_cursor_open(grn_ctx *ctx, grn_array *array,
                                                 grn_id min, grn_id max,
-                                                unsigned offset, unsigned limit, int flags);
+                                                int offset, int limit, int flags);
 GRN_API grn_id grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c);
 GRN_API int grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value);
 GRN_API grn_rc grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c,
@@ -2081,7 +2081,7 @@ GRN_API grn_id grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id);
 GRN_API void *_grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id);
 
 #define GRN_ARRAY_EACH(ctx,array,head,tail,id,value,block) do {\
-  grn_array_cursor *_sc = grn_array_cursor_open(ctx, array, head, tail, 0, 0, 0); \
+  grn_array_cursor *_sc = grn_array_cursor_open(ctx, array, head, tail, 0, -1, 0); \
   if (_sc) {\
     grn_id id;\
     while ((id = grn_array_cursor_next(ctx, _sc))) {\
@@ -2147,7 +2147,7 @@ GRN_API unsigned int grn_pat_size(grn_ctx *ctx, grn_pat *pat);
 GRN_API grn_pat_cursor *grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
                                             const void *min, unsigned int min_size,
                                             const void *max, unsigned int max_size,
-                                            unsigned offset, unsigned limit, int flags);
+                                            int offset, int limit, int flags);
 GRN_API grn_id grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c);
 GRN_API void grn_pat_cursor_close(grn_ctx *ctx, grn_pat_cursor *c);
 
@@ -2162,7 +2162,7 @@ GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
                                      grn_table_delete_optarg *optarg);
 
 #define GRN_PAT_EACH(ctx,pat,id,key,key_size,value,block) do {          \
-  grn_pat_cursor *_sc = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, 0, 0); \
+  grn_pat_cursor *_sc = grn_pat_cursor_open(ctx, pat, NULL, 0, NULL, 0, 0, -1, 0); \
   if (_sc) {\
     grn_id id;\
     while ((id = grn_pat_cursor_next(ctx, _sc))) {\

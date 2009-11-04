@@ -123,7 +123,7 @@ test_accessor(void)
     int nerr = 0;
     struct timeval tvb, tve;
     grn_obj *a = grn_obj_column(&context, t1, "c1.c2.c1", 8);
-    grn_table_cursor *tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, 0, 0);
+    grn_table_cursor *tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, -1, 0);
     cut_assert_not_null(a);
     cut_assert_not_null(tc);
     gettimeofday(&tvb, NULL);
@@ -201,7 +201,7 @@ test_expr(void)
       int nerr = 0;
       grn_table_cursor *tc;
       struct timeval tvb, tve;
-      tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, 0, 0);
+      tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, -1, 0);
       cut_assert_not_null(tc);
       gettimeofday(&tvb, NULL);
       while ((id = grn_table_cursor_next(&context, tc))) {
@@ -293,7 +293,7 @@ test_persistent_expr(void)
     grn_obj *expr = grn_ctx_get(&context, "test", 4);
     v = grn_expr_get_var(&context, expr, "foo", 3);
     t1 = grn_ctx_get(&context, "t1", 2);
-    tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, 0, 0);
+    tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, -1, 0);
     cut_assert_not_null(tc);
     gettimeofday(&tvb, NULL);
     while ((id = grn_table_cursor_next(&context, tc))) {
@@ -444,7 +444,7 @@ grn_test_assert_select(const GList *expected, grn_obj *result)
 {
   GList *records = NULL;
   grn_table_cursor *cursor;
-  cursor = grn_table_cursor_open(&context, result, NULL, 0, NULL, 0, 0, 0, 0);
+  cursor = grn_table_cursor_open(&context, result, NULL, 0, NULL, 0, 0, -1, 0);
   cut_assert_not_null(cursor);
   while (grn_table_cursor_next(&context, cursor) != GRN_ID_NIL) {
     void *value;
@@ -1016,7 +1016,7 @@ test_expr_set_value(void)
   {
     grn_id id;
     grn_table_cursor *tc;
-    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, 0, 0);
+    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, -1, 0);
     cut_assert_not_null(tc);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);
@@ -1065,7 +1065,7 @@ test_expr_set_value_with_implicit_variable_reference(void)
   {
     grn_id id;
     grn_table_cursor *tc;
-    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, 0, 0);
+    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, -1, 0);
     cut_assert_not_null(tc);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);
@@ -1110,7 +1110,7 @@ test_expr_set_value_with_query(void)
   {
     grn_id id;
     grn_table_cursor *tc;
-    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, 0, 0);
+    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, -1, 0);
     cut_assert_not_null(tc);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);
@@ -1157,7 +1157,7 @@ test_expr_proc_call(void)
   {
     grn_id id;
     grn_table_cursor *tc;
-    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, 0, 0);
+    tc = grn_table_cursor_open(&context, docs, NULL, 0, NULL, 0, 0, -1, 0);
     cut_assert_not_null(tc);
     while ((id = grn_table_cursor_next(&context, tc))) {
       GRN_RECORD_SET(&context, v, id);

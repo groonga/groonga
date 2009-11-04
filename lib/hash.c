@@ -397,7 +397,7 @@ grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *c)
 
 grn_array_cursor *
 grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
-                      unsigned offset, unsigned limit, int flags)
+                      int offset, int limit, int flags)
 {
   grn_array_cursor *c;
   if (!array || !ctx) { return NULL; }
@@ -448,7 +448,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
   } else {
     c->curr_rec += c->dir * offset;
   }
-  c->rest = limit ? limit : GRN_ID_MAX;
+  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
   return c;
 }
 
@@ -1487,7 +1487,7 @@ grn_hash_cursor *
 grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
                      const void *min, uint32_t min_size,
                      const void *max, uint32_t max_size,
-                     unsigned offset, unsigned limit, int flags)
+                     int offset, int limit, int flags)
 {
   grn_hash_cursor *c;
   if (!hash || !ctx) { return NULL; }
@@ -1550,7 +1550,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   } else {
     c->curr_rec += c->dir * offset;
   }
-  c->rest = limit ? limit : GRN_ID_MAX;
+  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
 exit :
   return c;
 }
@@ -1951,9 +1951,9 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
     GRN_LOG(ctx, GRN_LOG_ALERT, "allocation of entries failed on grn_hash_sort !");
     return 0;
   }
-  if (limit <= 0) {
-    limit += *hash->n_entries;
-    if (limit <= 0) {
+  if (limit < 0) {
+    limit += *hash->n_entries + 1;
+    if (limit < 0) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "limit is too small in grn_hash_sort !");
       return 0;
     }
@@ -2200,7 +2200,7 @@ grn_rhash_group(grn_hash *s, int limit, grn_group_optarg *optarg)
   } else {
     if (s->key_size <= rsize) { return NULL; }
   }
-  if (!(c = grn_hash_cursor_open(s->ctx, s, NULL, 0, NULL, 0, 0))) {
+  if (!(c = grn_hash_cursor_open(s->ctx, s, NULL, 0, NULL, -1, 0))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_cursor_open on grn_hash_group failed !");
     if (gkey) { GRN_FREE(gkey); }
     return NULL;

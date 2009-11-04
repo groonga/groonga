@@ -2424,7 +2424,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       int i;
       grn_obj id, *column = grn_obj_column(ctx, obj, "_key", 4);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
-                                                   0, 0, GRN_CURSOR_ASCENDING);
+                                                   0, -1, GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');
       GRN_TEXT_INIT(&id, 0);
       for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {

@@ -1447,7 +1447,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 if (l) {
                   if ((c = grn_table_cursor_open(ctx, table,
                                                  spec.from, spec.fromsize,
-                                                 spec.to, spec.tosize, 0, 0,
+                                                 spec.to, spec.tosize, 0, -1,
                                                  spec.mode))) {
                     while ((id = grn_table_cursor_next(ctx, c))) {
                       if (match_exec(ctx, &spec, base, id)) {
@@ -1605,7 +1605,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         int n = 0;
         grn_id id;
         grn_table_cursor *c;
-        if ((c = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, 0,
+        if ((c = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                        GRN_CURSOR_DESCENDING))) {
           for (; (id = grn_table_cursor_next(ctx, c)); n++) ;
           grn_table_cursor_close(ctx, c);
