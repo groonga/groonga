@@ -21,45 +21,61 @@
 
 #include "grn-test-utils.h"
 
-#define grn_test_assert(expression)                     \
-  cut_trace_with_info_expression(                       \
-    grn_test_assert_helper((expression), #expression),  \
+#define grn_test_assert(expression, ...)                        \
+  cut_trace_with_info_expression(                               \
+    cut_test_with_user_message(                                 \
+      grn_test_assert_helper((expression), #expression),        \
+      __VA_ARGS__),                                             \
     grn_test_assert(expression))
 
-#define grn_test_assert_equal_rc(expected, actual)              \
+#define grn_test_assert_equal_rc(expected, actual, ...)         \
   cut_trace_with_info_expression(                               \
-    grn_test_assert_equal_rc_helper((expected), (actual),       \
-                                    #expected, #actual),        \
+    cut_test_with_user_message(                                 \
+      grn_test_assert_equal_rc_helper((expected), (actual),     \
+                                      #expected, #actual),      \
+      __VA_ARGS__),                                             \
     grn_test_assert_equal_rc(expected, actual))
 
-#define grn_test_assert_nil(expression)                         \
+#define grn_test_assert_nil(expression, ...)                    \
   cut_trace_with_info_expression(                               \
-    grn_test_assert_nil_helper((expression), #expression),      \
+    cut_test_with_user_message(                                 \
+      grn_test_assert_nil_helper((expression), #expression),    \
+      __VA_ARGS__),                                             \
     grn_test_assert_nil(expression))
 
-#define grn_test_assert_not_nil(expression)                     \
-  cut_trace_with_info_expression(                               \
-    grn_test_assert_not_nil_helper((expression), #expression),  \
+#define grn_test_assert_not_nil(expression, ...)                        \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_not_nil_helper((expression), #expression),        \
+      __VA_ARGS__),                                                     \
     grn_test_assert_not_nil(expression))
 
-#define grn_test_assert_context(context)                        \
+#define grn_test_assert_context(context, ...)                   \
   cut_trace_with_info_expression(                               \
-    grn_test_assert_context_helper((context), #context),        \
+    cut_test_with_user_message(                                 \
+      grn_test_assert_context_helper((context), #context),      \
+      __VA_ARGS__),                                             \
     grn_test_assert_context(context))
 
-#define grn_test_assert_error(rc, message, context)                     \
+#define grn_test_assert_error(rc, message, context, ...)                \
   cut_trace_with_info_expression(                                       \
-    grn_test_assert_error_helper((rc), (message), (context), #context), \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_error_helper((rc), (message), (context), #context), \
+      __VA_ARGS__),                                                     \
     grn_test_assert_error(context))
 
-#define grn_test_assert_null(context, object)                   \
-  cut_trace_with_info_expression(                               \
-    grn_test_assert_null_helper((context), (object), #object),  \
+#define grn_test_assert_null(context, object, ...)                      \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_null_helper((context), (object), #object),        \
+      __VA_ARGS__),                                                     \
     grn_test_assert_null(context, object))
 
-#define grn_test_assert_not_null(context, object)                       \
+#define grn_test_assert_not_null(context, object, ...)                  \
   cut_trace_with_info_expression(                                       \
-    grn_test_assert_not_null_helper((context), (object), #object),      \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_not_null_helper((context), (object), #object),    \
+      __VA_ARGS__),                                                     \
     grn_test_assert_not_null(context, object))
 
 

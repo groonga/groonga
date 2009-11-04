@@ -109,8 +109,7 @@ test_read_write(gconstpointer *data)
   key = cut_take_printf("key: %d (%d:%d)", i, process_number, N_THREADS);
 
   rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL);
-  cut_set_message("context: %d (%d)", i, process_number);
-  grn_test_assert(rc);
+  grn_test_assert(rc, cut_message("context: %d (%d)", i, process_number));
   context = contexts[i];
 
   path = g_getenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH);
@@ -120,8 +119,9 @@ test_read_write(gconstpointer *data)
                       cut_message("patricia trie: %d (%d)", i, process_number));
   trie = tries[i];
 
-  cut_set_message("lookup - fail: %s (%d:%d)", key, i, process_number);
-  grn_test_assert_nil(grn_pat_get(context, trie, key, strlen(key), &value));
+  grn_test_assert_nil(
+    grn_pat_get(context, trie, key, strlen(key), &value),
+    cut_message("lookup - fail: %s (%d:%d)", key, i, process_number));
 
   value_string = cut_take_printf("value: [%s] (%d:%d)", key, i, process_number);
   rc = grn_io_lock(context, trie->io, -1);
@@ -136,8 +136,9 @@ test_read_write(gconstpointer *data)
 
   value = NULL;
   id = grn_pat_get(context, trie, key, strlen(key), &value);
-  cut_set_message("lookup - success: %s (%d:%d)", key, i, process_number);
-  grn_test_assert_not_nil(id);
+  grn_test_assert_not_nil(
+    id,
+    cut_message("lookup - success: %s (%d:%d)", key, i, process_number));
   cut_assert_equal_string(value_string, value);
 
   tries[i] = NULL;

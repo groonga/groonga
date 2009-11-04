@@ -563,8 +563,8 @@ test_add_and_delete(gconstpointer data)
     grn_id delete_id;
 
     delete_id = g_array_index(ids, grn_id, i);
-    cut_set_message("i = %d; id = %d", i, delete_id);
-    grn_test_assert(grn_hash_delete_by_id(context, hash, delete_id, NULL));
+    grn_test_assert(grn_hash_delete_by_id(context, hash, delete_id, NULL),
+                    cut_message("i = %d; id = %d", i, delete_id));
   }
   cut_assert_equal_int(0, GRN_HASH_SIZE(hash));
 }

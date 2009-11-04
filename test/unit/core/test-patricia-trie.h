@@ -218,21 +218,21 @@ typedef int grn_search_flags;
 
 #define cut_assert_lookup(key, key_size, flags) do                      \
 {                                                                       \
-  cut_set_message("flags: <%d>", *(flags));                             \
-  grn_test_assert_not_nil((id = lookup(key, key_size, (flags))));       \
+  grn_test_assert_not_nil((id = lookup(key, key_size, (flags))),        \
+                          cut_message("flags: <%d>", *(flags)));        \
 } while (0)
 
 #define cut_assert_lookup_failed(key, key_size, flags) do       \
 {                                                               \
-  cut_set_message("flags: <%d>", *(flags));                     \
-  grn_test_assert_nil(lookup(key, key_size, (flags)));          \
+  grn_test_assert_nil(lookup(key, key_size, (flags)),           \
+                      cut_message("flags: <%d>", *(flags)));    \
 } while (0)
 
 #define cut_assert_lookup_add(key) do                                   \
 {                                                                       \
   const gchar *_key;                                                    \
   uint32_t key_size;                                                    \
-  grn_search_flags flags;                                         \
+  grn_search_flags flags;                                               \
   grn_id found_id;                                                      \
                                                                         \
   _key = (key);                                                         \

@@ -147,16 +147,16 @@ typedef int grn_search_flags;
    ? grn_hash_add(context, hash, key, key_size, &value, flags)  \
    : grn_hash_get(context, hash, key, key_size, &value))
 
-#define cut_assert_lookup(key, flags) do                \
-{                                                       \
-  cut_set_message("flags: <%d>", *(flags));             \
-  grn_test_assert_not_nil((id = lookup(key, (flags)))); \
+#define cut_assert_lookup(key, flags) do                                \
+{                                                       		\
+  grn_test_assert_not_nil((id = lookup(key, (flags))),                  \
+                          cut_message("flags: <%d>", *(flags)));        \
 } while (0)
 
-#define cut_assert_lookup_failed(key, flags) do \
-{                                               \
-  cut_set_message("flags: <%d>", *(flags));     \
-  grn_test_assert_nil(lookup(key, (flags)));    \
+#define cut_assert_lookup_failed(key, flags) do                 \
+{                                               		\
+  grn_test_assert_nil(lookup(key, (flags)),                     \
+                      cut_message("flags: <%d>", *(flags)));    \
 } while (0)
 
 #define cut_assert_lookup_add(key) do                                   \

@@ -824,20 +824,20 @@ test_add_cond_with_invalid_argument(void)
                                              close_tag, close_tag_len));
 
   while (n_conds < max_n_conds) {
-    cut_set_message("cond #%d", n_conds);
     grn_test_assert(grn_snip_add_cond(&context, snip,
                                       keyword, keyword_len,
                                       open_tag, open_tag_len,
-                                      close_tag, close_tag_len));
+                                      close_tag, close_tag_len),
+                    cut_message("cond #%d", n_conds));
     n_conds++;
   }
 
-  cut_set_message("cond #%d", n_conds);
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                            grn_snip_add_cond(&context, snip,
                                              keyword, keyword_len,
                                              open_tag, open_tag_len,
-                                             close_tag, close_tag_len));
+                                             close_tag, close_tag_len),
+                           cut_message("cond #%d", n_conds));
 }
 
 void

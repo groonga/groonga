@@ -81,8 +81,9 @@ void
 grn_test_assert_context_helper (grn_ctx *context, const gchar *expression)
 {
   if (!context) {
-    cut_set_message("context should not NULL");
-    cut_assert_null_helper(context, expression);
+    cut_test_with_user_message(
+      cut_assert_null_helper(context, expression),
+      cut_message("context should not NULL"));
   } else if (context->rc == GRN_SUCCESS) {
     cut_test_pass();
   } else {
@@ -102,8 +103,9 @@ grn_test_assert_error_helper (grn_rc expected_rc, const gchar *expected_message,
                               grn_ctx *context, const gchar *expression)
 {
   if (!context) {
-    cut_set_message("context should not NULL");
-    cut_assert_null_helper(context, expression);
+    cut_test_with_user_message(
+      cut_assert_null_helper(context, expression),
+      cut_message("context should not NULL"));
   } else if (context->rc == expected_rc &&
              cut_equal_string(expected_message, context->errbuf)) {
     cut_test_pass();

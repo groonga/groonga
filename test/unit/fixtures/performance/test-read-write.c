@@ -116,9 +116,8 @@ test_read_write(gconstpointer *data)
   if (process_number_string)
     process_number = atoi(process_number_string);
 
-  cut_set_message("context: %d (%d)", i, process_number);
   rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL);
-  grn_test_assert(rc);
+  grn_test_assert(rc, cut_set_message("context: %d (%d)", i, process_number));
   context = contexts[i];
 
   path = g_getenv(GRN_TEST_ENV_TABLE_PATH);
@@ -129,8 +128,8 @@ test_read_write(gconstpointer *data)
                       cut_message("table: %d (%d)", i, process_number));
   table = tables[i];
 
-  cut_set_message("lookup - fail: (%d:%d)", i, process_number);
-  grn_test_assert_nil(grn_table_get(context, table, &i, sizeof(grn_id)));
+  grn_test_assert_nil(grn_table_get(context, table, &i, sizeof(grn_id)),
+                      cut_message("lookup - fail: (%d:%d)", i, process_number));
 
   value_string = cut_take_printf("value: (%d:%d)", i, process_number);
   id = grn_table_add(context, table, &i, sizeof(grn_id), &added);
@@ -142,8 +141,9 @@ test_read_write(gconstpointer *data)
   grn_obj_set_value(context, table, id, &value, GRN_OBJ_SET);
 
   retrieved_value = grn_obj_get_value(context, table, id, NULL);
-  cut_set_message("lookup - success: (%d:%d)", i, process_number);
-  grn_test_assert_not_nil(id);
+  grn_test_assert_not_nil(
+    id,
+    cut_message("lookup - success: (%d:%d)", i, process_number));
   GRN_TEXT_PUTC(context, retrieved_value, '\0');
   cut_assert_equal_string(value_string, GRN_BULK_HEAD(retrieved_value));
 

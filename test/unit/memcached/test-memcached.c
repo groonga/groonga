@@ -68,8 +68,8 @@ cut_setup(void)
   servers = memcached_servers_parse("localhost:" GROONGA_TEST_PORT);
   rc = memcached_server_push(memc, servers);
 
-  cut_set_message("memcached server connect failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached server connect failed."));
 
   memcached_flush(memc, 0); /* flush immediately for debug daemon */
 }
@@ -101,12 +101,12 @@ test_set_and_get(void)
   memcached_return rc;
 
   rc = memcached_set(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_set_message("memcached set failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached set failed."));
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_set_message("memcached get failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached get failed."));
   cut_assert_equal_string("value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 }
@@ -119,20 +119,20 @@ test_set_and_get_with_expire(void)
   const int timeout = 1;
 
   rc = memcached_set(memc, "key", 1, "value", 5, timeout, 0xdeadbeefU);
-  cut_set_message("memcached set with expiration failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached set with expiration failed."));
 
   val1 = memcached_get(memc, "key", 1, &val1_len, &flags, &rc);
-  cut_set_message("memcached get with expiration failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached get with expiration failed."));
   cut_assert_equal_string("value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 
   sleep(timeout + 1);
 
   val2 = memcached_get(memc, "key", 1, &val2_len, &flags, &rc);
-  cut_set_message("memcached get with expiration error.");
-  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc);
+  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc,
+                       cut_message("memcached get with expiration error."));
 }
 
 void
@@ -150,16 +150,16 @@ test_memcached_add(void)
   memcached_return rc;
 
   rc = memcached_add(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_set_message("memcached add failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached add failed."));
 
   rc = memcached_add(memc, "key", 3, "new-value", 9, 0, 0xdeadbeefU);
-  cut_set_message("memcached add succeeded.");
-  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc);
+  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc,
+                       cut_message("memcached add succeeded."));
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_set_message("memcached get failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached get failed."));
   cut_assert_equal_string("value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 }
@@ -171,22 +171,22 @@ test_memcached_replace(void)
   memcached_return rc;
 
   rc = memcached_replace(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_set_message("memcached replace succeeded.");
-  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc);
+  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc,
+                       cut_message("memcached replace succeeded."));
 
   sleep(1);
 
   rc = memcached_add(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_set_message("memcached add failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached add failed."));
 
   rc = memcached_replace(memc, "key", 3, "new-value", 9, 0, 0xdeadbeefU);
-  cut_set_message("memcached replace failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached replace failed."));
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_set_message("memcached get failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached get failed."));
   cut_assert_equal_string("new-value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 }
@@ -198,14 +198,14 @@ test_memcached_flush(void)
   memcached_return rc;
 
   rc = memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU);
-  cut_set_message("memcached set failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached set failed."));
 
   memcached_flush(memc, 0);
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_set_message("memcached get succeeded.");
-  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc);
+  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc,
+                       cut_message("memcached get succeeded."));
 }
 
 void
@@ -216,22 +216,22 @@ test_memcached_flush_with_time(void)
   memcached_return rc;
 
   rc = memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU);
-  cut_set_message("memcached set failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached set failed."));
 
   memcached_flush(memc, sleep_time);
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_set_message("memcached get failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached get failed."));
   cut_assert_equal_string("to be flushed", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 
   sleep(sleep_time + 1);
 
   val2 = memcached_get(memc, "key", 3, &val2_len, &flags, &rc);
-  cut_set_message("memcached get succeeded.");
-  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc);
+  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc,
+                       cut_message("memcached get succeeded."));
 }
 
 void
@@ -246,8 +246,8 @@ test_memcached_cas(void)
 
   memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_SUPPORT_CAS, 1);
   rc = memcached_set(memc, key, key_len, "cas test", 8, 0, 0xdeadbeefU);
-  cut_set_message("memcached set failed.");
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                       cut_message("memcached set failed."));
 
   {
     uint64_t cas;
@@ -256,24 +256,24 @@ test_memcached_cas(void)
 
     results = memcached_result_create(memc, &results_obj);
     rc = memcached_mget(memc, keys, key_lens, 1);
-    cut_set_message("memcached mget failed.");
-    cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+    cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                         cut_message("memcached mget failed."));
     results = memcached_fetch_result(memc, &results_obj, &rc);
-    cut_set_message("memcached fetch result failed.");
-    cut_assert_not_null(results);
+    cut_assert_not_null(results,
+                        cut_message("memcached fetch result failed."));
 
     cas = memcached_result_cas(results);
-    cut_set_message("memcached cas value is non-zero.");
-    cut_assert_operator(cas, !=, 0);
+    cut_assert_operator(cas, !=, 0,
+                        cut_message("memcached cas value is non-zero."));
 
     rc = memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas);
-    cut_set_message("memcached cas failed.");
-    cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+    cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
+                         cut_message("memcached cas failed."));
 
     rc = memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas);
-    cut_set_message("memcached cas value is same.");
     /* TODO: fix rc after libmemcached fix */
-    cut_assert_equal_int(MEMCACHED_PROTOCOL_ERROR, rc);
+    cut_assert_equal_int(MEMCACHED_PROTOCOL_ERROR, rc,
+                         cut_message("memcached cas value is same."));
     /* cut_assert_equal_int(MEMCACHED_DATA_EXISTS, rc); */
 
     memcached_result_free(&results_obj);
