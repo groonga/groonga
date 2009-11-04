@@ -21,7 +21,10 @@
 
 #include <groonga.h>
 
-#include <glib.h>
+#include <gcutter.h>
+#ifndef cut_message
+#  define cut_message(...) __VA_ARGS__
+#endif
 
 #include <string.h>
 

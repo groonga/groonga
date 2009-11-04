@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -115,7 +115,8 @@ test_read_write(gconstpointer *data)
   path = g_getenv(GRN_TEST_ENV_HASH_PATH);
   cut_assert_not_null(path);
   hashes[i] = grn_hash_open(context, path);
-  cut_assert_not_null(hashes[i], "hash: %d (%d)", i, process_number);
+  cut_assert_not_null(hashes[i],
+                      cut_message("hash: %d (%d)", i, process_number));
   hash = hashes[i];
 
   cut_set_message("lookup - fail: %d (%d:%d)", key, i, process_number);

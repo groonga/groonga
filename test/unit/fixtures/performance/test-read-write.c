@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -125,7 +125,8 @@ test_read_write(gconstpointer *data)
   cut_assert_not_null(path);
   tables[i] = grn_table_open(context, table_name, strlen(table_name),
                              path);
-  cut_assert_not_null(tables[i], "table: %d (%d)", i, process_number);
+  cut_assert_not_null(tables[i],
+                      cut_message("table: %d (%d)", i, process_number));
   table = tables[i];
 
   cut_set_message("lookup - fail: (%d:%d)", i, process_number);

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -116,7 +116,8 @@ test_read_write(gconstpointer *data)
   path = g_getenv(GRN_TEST_ENV_PATRICIA_TRIE_PATH);
   cut_assert_not_null(path);
   tries[i] = grn_pat_open(context, path);
-  cut_assert_not_null(tries[i], "patricia trie: %d (%d)", i, process_number);
+  cut_assert_not_null(tries[i],
+                      cut_message("patricia trie: %d (%d)", i, process_number));
   trie = tries[i];
 
   cut_set_message("lookup - fail: %s (%d:%d)", key, i, process_number);
