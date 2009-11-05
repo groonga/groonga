@@ -20,22 +20,18 @@
 #include "libmemcached/memcached.h"
 #include <gcutter.h> /* must be included after memcached.h */
 
-#include <unistd.h> /* for exec */
-#include <sys/types.h>
-#include <signal.h>
+#include <unistd.h>
 
 #include "../lib/grn-assertions.h"
-
-#define GROONGA_TEST_PORT "1234"
+#include "../lib/grn-test-server.h"
 
 /* globals */
-static gchar *tmp_directory;
 static gchar *val1 = NULL, *val2 = NULL;
 static size_t val1_len, val2_len;
 static struct memcached_st *memc = NULL;
 static struct memcached_server_st *servers = NULL;
 
-static GCutEgg *egg;
+static GrnTestServer *server;
 
 void
 cut_setup(void)
@@ -43,29 +39,18 @@ cut_setup(void)
   GError *error = NULL;
   memcached_return rc;
 
-  tmp_directory = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
-  cut_remove_path(tmp_directory, NULL);
-  if (g_mkdir_with_parents(tmp_directory, 0700) == -1) {
-    cut_assert_errno();
-  }
+  memc = NULL;
+  servers = NULL;
 
-  egg = gcut_egg_new(GROONGA, "-s",
-                     "-p", GROONGA_TEST_PORT,
-                     "-e", "utf8",
-                     "-n",
-                     cut_take_printf("%s%s%s",
-                                     tmp_directory,
-                                     G_DIR_SEPARATOR_S,
-                                     "memcached.db"),
-                     NULL);
-  gcut_egg_hatch(egg, &error);
+  server = grn_test_server_new();
+  grn_test_server_start(server, &error);
   gcut_assert_error(error);
 
-  sleep(1); /* wait for groonga daemon */
   memc = memcached_create(NULL);
   memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, 1);
 
-  servers = memcached_servers_parse("localhost:" GROONGA_TEST_PORT);
+  servers =
+    memcached_servers_parse(grn_test_server_get_memcached_address(server));
   rc = memcached_server_push(memc, servers);
 
   cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
@@ -80,17 +65,15 @@ cut_teardown(void)
   if (val1) { free(val1); val1 = NULL; }
   if (val2) { free(val2); val2 = NULL; }
 
-  if (egg) {
-    g_object_unref(egg);
-  }
-
-  cut_remove_path(tmp_directory, NULL);
-
   if (servers) {
     memcached_server_list_free(servers);
   }
   if (memc) {
     memcached_free(memc);
+  }
+
+  if (server) {
+    g_object_unref(server);
   }
 }
 
