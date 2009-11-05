@@ -18,7 +18,8 @@ LIBS =								\
 	$(top_builddir)/lib/libgroonga.la			\
 	$(GCUTTER_LIBS)						\
 	$(top_builddir)/test/unit/lib/libgrn-test-utils.la	\
-	$(top_builddir)/test/unit/lib/libgrn-test-hash-utils.la
+	$(top_builddir)/test/unit/lib/libgrn-test-server.la
 
 test_http_la_SOURCES			= test-http.c
+# test_invalid_http_la_SOURCES		= test-invalid-http.c
 
