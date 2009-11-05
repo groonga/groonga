@@ -9568,8 +9568,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               /* TODO: implement grn_text_ototsv */
               break;
             case GRN_CONTENT_XML:
-              format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET;
-              grn_text_otofxml(ctx, outbuf, sorted, &format);
+              format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+              grn_text_otoxml(ctx, outbuf, sorted, &format);
               break;
             case GRN_CONTENT_NONE:
               break;
@@ -9593,8 +9593,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           /* TODO: implement */
           break;
         case GRN_CONTENT_XML:
-          format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET;
-          grn_text_otofxml(ctx, outbuf, res, &format);
+          format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+          grn_text_otoxml(ctx, outbuf, res, &format);
           break;
         case GRN_CONTENT_NONE:
           break;
@@ -9636,8 +9636,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                     "_key _nsubrecs",
                                     sizeof("_key _nsubrecs") - 1,
                                     &format.columns);
-                    format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY;
-                    grn_text_otofxml(ctx, outbuf, sorted, &format);
+                    format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+                    grn_text_otoxml(ctx, outbuf, sorted, &format);
                     break;
                   case GRN_CONTENT_NONE:
                   case GRN_CONTENT_TSV:
@@ -9663,8 +9663,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 /* NOTE: drilldown_output_columns parameter is ignored */
                 grn_obj_columns(ctx, g.table, "_key _nsubrecs",
                                 sizeof("_key _nsubrecs") - 1, &format.columns);
-                format.flags = GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY;
-                grn_text_otofxml(ctx, outbuf, g.table, &format);
+                format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+                grn_text_otoxml(ctx, outbuf, g.table, &format);
                 break;
               case GRN_CONTENT_NONE:
               case GRN_CONTENT_TSV:

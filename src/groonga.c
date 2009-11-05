@@ -207,11 +207,6 @@ put_response_header(grn_ctx *ctx, const char *p, const char *pe)
         GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
       }
       break;
-    case 'f':
-      if (pd + 4 == p && !memcmp(pd, "fxml", 4)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
-      }
-      break;
     case 'g' :
       if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
         GRN_TEXT_PUTS(ctx, head, "Content-Type: image/gif\r\n\r\n");

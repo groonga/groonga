@@ -105,11 +105,11 @@ const char *grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *p, const 
 
 void grn_str_url_path_normalize(const char *path, size_t path_len, char *buf, size_t buf_len);
 
-GRN_API grn_rc grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
+GRN_API grn_rc grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
                                 grn_obj_format *format);
-#define GRN_OBJ_FORMAT_FXML_ELEMENT_MASK             (0x01<<0)
-#define GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET        (0x00<<0)
-#define GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY  (0x01<<0)
+#define GRN_OBJ_FORMAT_XML_ELEMENT_MASK             (0x01<<0)
+#define GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET        (0x00<<0)
+#define GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY  (0x01<<0)
 
 #ifdef __cplusplus
 }

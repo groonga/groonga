@@ -2444,7 +2444,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 }
 
 grn_rc
-grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
+grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 {
   grn_obj buf;
   GRN_TEXT_INIT(&buf, 0);
@@ -2525,8 +2525,8 @@ grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *form
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
-      switch (format->flags & GRN_OBJ_FORMAT_FXML_ELEMENT_MASK) {
-      case GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET:
+      switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
+      case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
         GRN_TEXT_PUTS(ctx, bulk, "<RESULTSET OFFSET=\"");
         grn_text_itoa(ctx, bulk, format->offset);
         GRN_TEXT_PUTS(ctx, bulk, "\" LIMIT=\"");
@@ -2535,7 +2535,7 @@ grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *form
         grn_text_itoa(ctx, bulk, format->nhits);
         GRN_TEXT_PUTS(ctx, bulk, "\">");
         break;
-      case GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY:
+      case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
         GRN_ASSERT(ncolumns == 2);
         GRN_TEXT_PUTS(ctx, bulk, "<NAVIGATIONENTRY>");
         /* FIXME: implement SAMPLECOUNT attritube */
@@ -2547,8 +2547,8 @@ grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *form
       /* TODO: add TIME attribute to RESULTSET element. */
       GRN_TEXT_INIT(&id, 0);
       for (i = 1; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
-        switch (format->flags & GRN_OBJ_FORMAT_FXML_ELEMENT_MASK) {
-        case GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET:
+        switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
+        case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
           GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
           grn_text_itoa(ctx, bulk, i);
           GRN_TEXT_PUTS(ctx, bulk, "\">");
@@ -2561,13 +2561,13 @@ grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *form
 
             GRN_BULK_REWIND(&buf);
             grn_obj_get_value_o(ctx, columns[j], &id, &buf);
-            grn_text_otofxml(ctx, bulk, &buf, NULL);
+            grn_text_otoxml(ctx, bulk, &buf, NULL);
 
             GRN_TEXT_PUTS(ctx, bulk, "</FIELD>");
           }
           GRN_TEXT_PUTS(ctx, bulk, "</HIT>");
           break;
-        case GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY:
+        case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
           GRN_TEXT_PUTS(ctx, bulk, "<NAVIGATIONELEMENT NAME=\"");
           GRN_BULK_REWIND(&buf);
           grn_obj_get_value_o(ctx, columns[0], &id, &buf);
@@ -2577,16 +2577,16 @@ grn_text_otofxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *form
           GRN_TEXT_PUTS(ctx, bulk, "\" COUNT=\"");
           GRN_BULK_REWIND(&buf);
           grn_obj_get_value_o(ctx, columns[1], &id, &buf);
-          grn_text_otofxml(ctx, bulk, &buf, format);
+          grn_text_otoxml(ctx, bulk, &buf, format);
           GRN_TEXT_PUTS(ctx, bulk, "\" />");
           break;
         }
       }
-      switch (format->flags & GRN_OBJ_FORMAT_FXML_ELEMENT_MASK) {
-      case GRN_OBJ_FORMAT_FXML_ELEMENT_RESULTSET:
+      switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
+      case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
         GRN_TEXT_PUTS(ctx, bulk, "</RESULTSET>");
         break;
-      case GRN_OBJ_FORMAT_FXML_ELEMENT_NAVIGATIONENTRY:
+      case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
         GRN_TEXT_PUTS(ctx, bulk, "</NAVIGATIONELEMENTS></NAVIGATIONENTRY>");
         break;
       }

@@ -132,7 +132,7 @@ drilldown結果
 
  [[0],[[2],["_id","_key","body"],[1,"abandon","放棄する"],[2,"abbreviate","短縮する"]]]
 
- select Entry --output_type fxml
+ select Entry --output_type xml
 
  <SEGMENTS><SEGMENT><RESULTPAGE><RESULTSET OFFSET="0" LIMIT="10" NHITS="2"><HIT NO="1"><FIELD NAME="_id">1</FIELD><FIELD NAME="_key">abandon</FIELD><FIELD NAME="body">放棄する</FIELD></HIT><HIT NO="2"><FIELD NAME="_id">2</FIELD><FIELD NAME="_key">abbreviate</FIELD><FIELD NAME="body">短縮する</FIELD></HIT></RESULTSET></RESULTPAGE></SEGMENT></SEGMENTS>
 

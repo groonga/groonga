@@ -709,11 +709,6 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
         *ct = GRN_CONTENT_NONE;
       }
       break;
-    case 'f':
-      if (pd + 4 == p && !memcmp(pd, "fxml", 4)) {
-        *ct = GRN_CONTENT_XML;
-      }
-      break;
     case 'g' :
       if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
         *ct = GRN_CONTENT_NONE;
