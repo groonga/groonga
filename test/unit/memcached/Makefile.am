@@ -20,7 +20,7 @@ LIBS =								\
 	$(top_builddir)/lib/libgroonga.la			\
 	$(GCUTTER_LIBS)						\
 	$(top_builddir)/test/unit/lib/libgrn-test-utils.la	\
-	$(top_builddir)/test/unit/lib/libgrn-test-hash-utils.la
+	$(top_builddir)/test/unit/lib/libgrn-test-server.la
 
 test_memcached_la_SOURCES			= test-memcached.c
 

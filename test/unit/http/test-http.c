@@ -19,12 +19,9 @@
 #include <soupcutter.h>
 
 #include "../lib/grn-assertions.h"
+#include "../lib/grn-test-server.h"
 
-#define GROONGA_TEST_PORT 5454
-
-static gchar *tmp_directory;
-
-static GCutEgg *egg;
+static GrnTestServer *server;
 
 static SoupCutClient *client;
 
@@ -37,43 +34,24 @@ cut_setup(void)
   GError *error = NULL;
   const gchar *db_path;
 
-  tmp_directory = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
-  cut_remove_path(tmp_directory, NULL);
-  if (g_mkdir_with_parents(tmp_directory, 0700) == -1) {
-    cut_assert_errno();
-  }
+  server = grn_test_server_new();
 
   client = soupcut_client_new();
-  soupcut_client_set_base(client, cut_take_printf("http://127.0.0.1:%u/",
-                                                  GROONGA_TEST_PORT));
-
   grn_ctx_init(&context, 0);
   database = NULL;
-  db_path = cut_take_printf("%s%s%s",
-                            tmp_directory,
-                            G_DIR_SEPARATOR_S,
-                            "http.db");
 
-  egg = gcut_egg_new(GROONGA, "-s",
-                     "-i", "127.0.0.1",
-                     "-p", cut_take_printf("%d", GROONGA_TEST_PORT),
-                     "-n", db_path,
-                     NULL);
-  gcut_egg_hatch(egg, &error);
+  grn_test_server_start(server, &error);
   gcut_assert_error(error);
 
-  g_usleep(G_USEC_PER_SEC);
-
+  soupcut_client_set_base(client, grn_test_server_get_http_uri_base(server));
+  db_path = grn_test_server_get_database_path(server, &error);
+  gcut_assert_error(error);
   database = grn_db_open(&context, db_path);
 }
 
 void
 cut_teardown(void)
 {
-  if (egg) {
-    g_object_unref(egg);
-  }
-
   if (client) {
     g_object_unref(client);
   }
@@ -84,7 +62,9 @@ cut_teardown(void)
 
   grn_ctx_fin(&context);
 
-  cut_remove_path(tmp_directory, NULL);
+  if (server) {
+    g_object_unref(server);
+  }
 }
 
 void
