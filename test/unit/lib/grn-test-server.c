@@ -38,6 +38,9 @@ struct _GrnTestServerPrivate
   gboolean custom_database_path;
   gchar *address;
   guint port;
+  gchar *encoding;
+  gchar *http_uri_base;
+  gchar *memcached_address;
 };
 
 
@@ -70,6 +73,9 @@ grn_test_server_init(GrnTestServer *factory)
   priv->custom_database_path = FALSE;
   priv->address = g_strdup("127.0.0.1");
   priv->port = GRN_TEST_SERVER_DEFAULT_PORT;
+  priv->encoding = g_strdup("utf8");
+  priv->http_uri_base = NULL;
+  priv->memcached_address = NULL;
 }
 
 static void
@@ -102,6 +108,21 @@ dispose(GObject *object)
   if (priv->address) {
     g_free(priv->address);
     priv->address = NULL;
+  }
+
+  if (priv->encoding) {
+    g_free(priv->encoding);
+    priv->encoding = NULL;
+  }
+
+  if (priv->http_uri_base) {
+    g_free(priv->http_uri_base);
+    priv->http_uri_base = NULL;
+  }
+
+  if (priv->memcached_address) {
+    g_free(priv->memcached_address);
+    priv->memcached_address = NULL;
   }
 
   G_OBJECT_CLASS(grn_test_server_parent_class)->dispose(object);
@@ -168,6 +189,7 @@ grn_test_server_start(GrnTestServer *server, GError **error)
                            "-i", priv->address,
                            "-p", port_string,
                            "-n", database_path,
+                           "-e", priv->encoding,
                            NULL);
   g_free(port_string);
   if (!gcut_egg_hatch(priv->egg, error))
@@ -264,4 +286,42 @@ grn_test_server_set_port(GrnTestServer *server, guint port)
   GRN_TEST_SERVER_GET_PRIVATE(server)->port = port;
 }
 
+const gchar *
+grn_test_server_get_encoding(GrnTestServer *server)
+{
+  return GRN_TEST_SERVER_GET_PRIVATE(server)->encoding;
+}
 
+void
+grn_test_server_set_encoding(GrnTestServer *server, const gchar *encoding)
+{
+  GrnTestServerPrivate *priv;
+
+  priv = GRN_TEST_SERVER_GET_PRIVATE(server);
+
+  g_free(priv->encoding);
+  priv->encoding = g_strdup(encoding);
+}
+
+const gchar *
+grn_test_server_get_http_uri_base(GrnTestServer *server)
+{
+  GrnTestServerPrivate *priv;
+
+  priv = GRN_TEST_SERVER_GET_PRIVATE(server);
+  g_free(priv->http_uri_base);
+  priv->http_uri_base =
+    g_strdup_printf("http://%s:%u/", priv->address, priv->port);
+  return priv->http_uri_base;
+}
+
+const gchar *
+grn_test_server_get_memcached_address(GrnTestServer *server)
+{
+  GrnTestServerPrivate *priv;
+
+  priv = GRN_TEST_SERVER_GET_PRIVATE(server);
+  g_free(priv->memcached_address);
+  priv->memcached_address = g_strdup_printf("%s:%u", priv->address, priv->port);
+  return priv->memcached_address;
+}

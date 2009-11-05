@@ -80,6 +80,17 @@ guint               grn_test_server_get_port (GrnTestServer *server);
 void                grn_test_server_set_port (GrnTestServer *server,
                                               guint          port);
 
+const gchar        *grn_test_server_get_encoding
+                                             (GrnTestServer *server);
+void                grn_test_server_set_encoding
+                                             (GrnTestServer *server,
+                                              const gchar   *encoding);
+
+const gchar        *grn_test_server_get_http_uri_base
+                                             (GrnTestServer *server);
+const gchar        *grn_test_server_get_memcached_address
+                                             (GrnTestServer *server);
+
 G_END_DECLS
 
 #endif
