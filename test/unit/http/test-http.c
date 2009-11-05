@@ -43,9 +43,7 @@ cut_setup(void)
   grn_test_server_start(server, &error);
   gcut_assert_error(error);
 
-  soupcut_client_set_base(client,
-                          cut_take_printf("http://127.0.0.1:%u/",
-                                          grn_test_server_get_port(server)));
+  soupcut_client_set_base(client, grn_test_server_get_http_uri_base(server));
   db_path = grn_test_server_get_database_path(server, &error);
   gcut_assert_error(error);
   database = grn_db_open(&context, db_path);
