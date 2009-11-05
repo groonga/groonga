@@ -693,8 +693,8 @@ test_add_and_delete(gconstpointer data)
     if (sis_utf8_data) {
       grn_pat_delete_by_id(context, trie, delete_id, NULL);
     } else {
-      cut_set_message("i = %d; id = %d", i, delete_id);
-      grn_test_assert(grn_pat_delete_by_id(context, trie, delete_id, NULL));
+      grn_test_assert(grn_pat_delete_by_id(context, trie, delete_id, NULL),
+                      cut_message("i = %d; id = %d", i, delete_id));
     }
   }
 

@@ -21,7 +21,13 @@
 
 #include <groonga.h>
 
-#include <glib.h>
+#include <gcutter.h>
+#ifndef cut_message
+#  define cut_message(...)
+#endif
+#ifndef cut_test_with_user_message
+#  define cut_test_with_user_message(assertion, set_user_message) (assertion)
+#endif
 
 #include <string.h>
 

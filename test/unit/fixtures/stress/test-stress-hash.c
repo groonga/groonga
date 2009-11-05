@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2009  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -108,18 +108,19 @@ test_read_write(gconstpointer *data)
   key = i + process_number * N_THREADS;
 
   rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL);
-  cut_set_message("context: %d (%d)", i, process_number);
-  grn_test_assert(rc);
+  grn_test_assert(rc, cut_message("context: %d (%d)", i, process_number));
   context = contexts[i];
 
   path = g_getenv(GRN_TEST_ENV_HASH_PATH);
   cut_assert_not_null(path);
   hashes[i] = grn_hash_open(context, path);
-  cut_assert_not_null(hashes[i], "hash: %d (%d)", i, process_number);
+  cut_assert_not_null(hashes[i],
+                      cut_message("hash: %d (%d)", i, process_number));
   hash = hashes[i];
 
-  cut_set_message("lookup - fail: %d (%d:%d)", key, i, process_number);
-  grn_test_assert_nil(grn_hash_get(context, hash, &key, sizeof(key), &value));
+  grn_test_assert_nil(
+    grn_hash_get(context, hash, &key, sizeof(key), &value),
+    cut_message("lookup - fail: %d (%d:%d)", key, i, process_number));
 
   value_string = cut_take_printf("value: %d (%d:%d)", key, i, process_number);
   rc = grn_io_lock(context, hash->io, -1);
@@ -133,8 +134,9 @@ test_read_write(gconstpointer *data)
 
   value = NULL;
   id = grn_hash_get(context, hash, &key, sizeof(key), &value);
-  cut_set_message("lookup - success: %d (%d:%d)", key, i, process_number);
-  grn_test_assert_not_nil(id);
+  grn_test_assert_not_nil(
+    id,
+    cut_message("lookup - success: %d (%d:%d)", key, i, process_number));
   cut_assert_equal_string(value_string, value);
 
   hashes[i] = NULL;

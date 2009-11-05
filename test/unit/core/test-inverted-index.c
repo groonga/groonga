@@ -421,8 +421,8 @@ test_crud(void)
                                 retrieve_record_ids("検索"));
 
   remove_data(3, 2, "FUTUREWORKS.JA");
-  cut_set_message("this assertion is wrong?");
-  gcut_assert_equal_list_string(NULL, retrieve_record_ids("検索"));
+  gcut_assert_equal_list_string(NULL, retrieve_record_ids("検索"),
+                                cut_message("this assertion is wrong?"));
 }
 
 static grn_rc
