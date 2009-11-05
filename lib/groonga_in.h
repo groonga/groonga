@@ -101,7 +101,7 @@
 #endif /* _MSC_VER < 1400 */
 #define write _write
 #define close _close
-#define usleep Sleep
+#define usleep(x) Sleep((x) / 1000)
 #define sleep(x) Sleep((x) * 1000)
 #define uint8_t UINT8
 #define int8_t INT8
