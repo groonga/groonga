@@ -27,12 +27,6 @@ class HTTPTest < Test::Unit::TestCase
     teardown_server
   end
 
-  def test_root
-    response = get("/")
-    assert_equal("text/javascript", response.content_type)
-    assert_equal("", response.body)
-  end
-
   def test_status
     response = get(command_path(:status))
     assert_equal("text/javascript", response.content_type)
