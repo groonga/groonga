@@ -111,10 +111,10 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:select, :table => "users"))
     assert_equal("text/javascript", response.content_type)
     assert_equal([[0],
-                 [[1],
-                 ["_id","_key","real_name"],
-                 [1,"ryoqun","Ryo Onodera"]
-                 ]],
+                  [[1],
+                   ["_id", "_key", "real_name"],
+                   [1, "ryoqun", "Ryo Onodera"]
+                  ]],
                  JSON.parse(response.body))
   end
 end
