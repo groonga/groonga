@@ -1,3 +1,6 @@
+SUBDIRS =	\
+	ruby
+
 if WITH_CUTTER
 noinst_LTLIBRARIES =			\
 	libgrn-test-utils.la		\

@@ -15,37 +15,15 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-require 'fileutils'
-require 'net/http'
-
 class HTTPTest < Test::Unit::TestCase
+  include GroongaTestUtils
+
   def setup
-    @groonga = guess_groonga_path
-    @tmp_dir = File.join(File.dirname(__FILE__), "tmp")
-    FileUtils.rm_rf(@tmp_dir)
-    FileUtils.mkdir_p(@tmp_dir)
-    @database_path = File.join(@tmp_dir, "database")
-    @address = "127.0.0.1"
-    @port = 5454
-    @encoding = "utf8"
-    @groonga_pid = fork do
-      exec(@groonga,
-           "-s",
-           "-i", @address,
-           "-p", @port.to_s,
-           "-n", @database_path,
-           "-e", @encoding)
-    end
-    sleep 1
+    setup_server
   end
 
   def teardown
-    Process.kill(:TERM, @groonga_pid)
-    begin
-      Process.waitpid(@groonga_pid)
-    rescue Errno::ECHILD
-    end
-    FileUtils.rm_r(@tmp_dir)
+    teardown_server
   end
 
   def test_root
@@ -56,12 +34,12 @@ class HTTPTest < Test::Unit::TestCase
     end
   end
 
-  private
-  def guess_groonga_path
-    groonga = ENV["GROONGA"]
-    groonga ||= File.join(File.dirname(__FILE__),
-                          "..", "..", "..",
-                          "src", "groonga")
-    groonga
+  def test_status
+    Net::HTTP.start(@address, @port) do |http|
+      response = http.get("/d/status")
+      assert_equal("text/javascript", response.content_type)
+      assert_equal(["alloc_count", "starttime", "uptime"],
+                   JSON.parse(response.body).keys.sort)
+    end
   end
 end

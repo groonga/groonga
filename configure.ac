@@ -60,6 +60,7 @@ AC_CONFIG_FILES([Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
+                 test/unit/lib/ruby/Makefile
                  test/unit/fixtures/Makefile
                  test/unit/fixtures/inverted-index/Makefile
                  test/unit/fixtures/stress/Makefile
