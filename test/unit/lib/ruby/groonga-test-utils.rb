@@ -59,4 +59,10 @@ module GroongaTestUtils
                           "src", "groonga")
     groonga
   end
+
+  def http_get(path)
+    Net::HTTP.start(@address, @port) do |http|
+      http.get(path)
+    end
+  end
 end

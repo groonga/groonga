@@ -27,19 +27,15 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_root
-    Net::HTTP.start(@address, @port) do |http|
-      response = http.get("/")
-      assert_equal("text/javascript", response.content_type)
-      assert_equal("", response.body)
-    end
+    response = http_get("/")
+    assert_equal("text/javascript", response.content_type)
+    assert_equal("", response.body)
   end
 
   def test_status
-    Net::HTTP.start(@address, @port) do |http|
-      response = http.get("/d/status")
-      assert_equal("text/javascript", response.content_type)
-      assert_equal(["alloc_count", "starttime", "uptime"],
-                   JSON.parse(response.body).keys.sort)
-    end
+    response = http_get("/d/status")
+    assert_equal("text/javascript", response.content_type)
+    assert_equal(["alloc_count", "starttime", "uptime"],
+                 JSON.parse(response.body).keys.sort)
   end
 end
