@@ -99,7 +99,7 @@ module GroongaTestUtils
     end
   end
 
-  def send_command(command, options = "")
+  def send_command(command, options = {})
     path = "/d/" + command.to_s + options_to_s(options)
     Net::HTTP.start(@address, @port) do |http|
       http.get(path)
