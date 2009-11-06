@@ -62,4 +62,33 @@ class HTTPTest < Test::Unit::TestCase
     table_name = body[1]
     assert_equal("users", table_name)
   end
+
+  def test_get_column_list
+    response = send_command(:table_create, :name => "users",
+                                           :flags => 1,
+                                           :key_type => "Int8",
+                                           :value_type => "Object",
+                                           :default_tokenizer => "")
+
+    response = send_command(:column_list, :table => "users")
+    assert_equal("text/javascript", response.content_type)
+    assert_equal([["id", "name", "path", "type", "flags", "domain"]],
+                 JSON.parse(response.body).sort)
+
+    response = send_command(:column_create, :table => "users",
+                                            :name => "age",
+                                            :flags => 0,
+                                            :type => "Int8")
+    assert_equal("true", response.body)
+
+    response = send_command(:column_list, :table => "users")
+    assert_equal("text/javascript", response.content_type)
+    column_list = JSON.parse(response.body)
+    assert_equal(2, column_list.length)
+    header = column_list[0]
+    body = column_list[1]
+    assert_equal(["id", "name", "path", "type", "flags", "domain"], header)
+    column_name = body[1]
+    assert_equal("age", column_name)
+  end
 end
