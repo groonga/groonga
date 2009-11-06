@@ -16,10 +16,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 require 'fileutils'
-require 'net/http'
-
-gem 'json'
-require 'json'
 
 module GroongaTestUtils
   def setup_server
@@ -71,30 +67,5 @@ module GroongaTestUtils
         end
       end
     end
-  end
-
-  def http_get(path)
-    Net::HTTP.start(@address, @port) do |http|
-      http.get(path)
-    end
-  end
-
-  def encode_options(options)
-    return "" if options.empty?
-
-    options.collect do |key, value|
-      if value.nil?
-        nil
-      else
-        "#{key}=#{URI.escape(value.to_s)}"
-      end
-    end.compact.join("&")
-  end
-
-  def command_path(command, options={})
-    path = "/d/#{command}"
-    encoded_options = encode_options(options)
-    path += "?#{encoded_options}" unless encoded_options.empty?
-    path
   end
 end

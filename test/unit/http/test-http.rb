@@ -17,6 +17,7 @@
 
 class HTTPTest < Test::Unit::TestCase
   include GroongaTestUtils
+  include GroongaHTTPTestUtils
 
   def setup
     setup_server
@@ -27,33 +28,33 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_root
-    response = http_get("/")
+    response = get("/")
     assert_equal("text/javascript", response.content_type)
     assert_equal("", response.body)
   end
 
   def test_status
-    response = http_get(command_path(:status))
+    response = get(command_path(:status))
     assert_equal("text/javascript", response.content_type)
     assert_equal(["alloc_count", "starttime", "uptime"],
                  JSON.parse(response.body).keys.sort)
   end
 
   def test_get_table_list
-    response = http_get(command_path(:table_list))
+    response = get(command_path(:table_list))
     assert_equal("text/javascript", response.content_type)
     assert_equal([["id", "name", "path", "flags", "domain"]],
                  JSON.parse(response.body).sort)
 
-    response = http_get(command_path(:table_create,
-                                     :name => "users",
-                                     :flags => 1,
-                                     :key_type => "Int8",
-                                     :value_type => "Object",
-                                     :default_tokenizer => ""))
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => 1,
+                                :key_type => "Int8",
+                                :value_type => "Object",
+                                :default_tokenizer => ""))
     assert_equal("true", response.body)
 
-    response = http_get(command_path(:table_list))
+    response = get(command_path(:table_list))
     assert_equal("text/javascript", response.content_type)
     table_list = JSON.parse(response.body)
     header = table_list[0]
