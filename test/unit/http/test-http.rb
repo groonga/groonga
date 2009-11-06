@@ -95,4 +95,32 @@ class HTTPTest < Test::Unit::TestCase
     column_name = body[1]
     assert_equal("age", column_name)
   end
+
+  def test_load
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => 1,
+                                :key_type => "ShortText"))
+    assert_equal("true", response.body)
+
+    response = get(command_path(:column_create,
+                                :table => "users",
+                                :name => "real_name",
+                                :flags => 0,
+                                :type => "ShortText"))
+    assert_equal("true", response.body)
+
+    values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
+    response = get(command_path(:load, :table => "users", :values => values))
+    assert_equal("1", response.body)
+
+    response = get(command_path(:select, :table => "users"))
+    assert_equal("text/javascript", response.content_type)
+    assert_equal([[0],
+                 [[1],
+                 ["_id","_key","real_name"],
+                 [1,"ryoqun","Ryo Onodera"]
+                 ]],
+                 JSON.parse(response.body))
+  end
 end
