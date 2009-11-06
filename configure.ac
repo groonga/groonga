@@ -423,7 +423,7 @@ else
   # mecab-config
   AC_ARG_WITH(mecab-config,
     [AS_HELP_STRING([--with-mecab-config=PATH],
-      [set mecab-config location. [search path]])],
+      [set mecab-config location. [default=auto-detect]])],
     [AC_CHECK_FILE("$withval", MECAB_CONFIG="$withval", MECAB_CONFIG=no)],
     [AC_PATH_PROG(MECAB_CONFIG, mecab-config, no)])
   if test "x$MECAB_CONFIG" = "xno"; then
