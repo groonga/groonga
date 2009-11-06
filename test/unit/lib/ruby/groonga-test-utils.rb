@@ -78,4 +78,31 @@ module GroongaTestUtils
       http.get(path)
     end
   end
+
+  def options_to_s(options)
+    if options.class == Hash
+      _options = []
+      options.each do |key, value|
+        key = key.to_s
+        value = value.to_s
+        if !key.empty? && !value.empty?
+          _options << key.to_s + '=' + URI.encode(value.to_s)
+        end
+      end
+      options = _options.join('&')
+    end
+
+    unless options.to_s.empty?
+      "?" + options.to_s
+    else
+      ""
+    end
+  end
+
+  def send_command(command, options = "")
+    path = "/d/" + command.to_s + options_to_s(options)
+    Net::HTTP.start(@address, @port) do |http|
+      http.get(path)
+    end
+  end
 end

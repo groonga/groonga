@@ -33,7 +33,7 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_status
-    response = http_get("/d/status")
+    response = send_command(:status)
     assert_equal("text/javascript", response.content_type)
     assert_equal(["alloc_count", "starttime", "uptime"],
                  JSON.parse(response.body).keys.sort)
