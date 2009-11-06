@@ -44,4 +44,22 @@ class InvalidHTTPTest < Test::Unit::TestCase
     end
     assert_equal("", response.body)
   end
+
+  def test_long_path
+    response = get("/0123456789" * 10000)
+    pend("should implement 404") do
+      assert_equal("404", response.code)
+    end
+  end
+
+  def test_long_query
+    options = {}
+    100.times do |i|
+      options["key#{i}"] = "value#{i}"
+    end
+    response = get(command_path("table_list", options))
+    assert_equal("200", response.code)
+    assert_equal([["id", "name", "path", "flags", "domain"]],
+                 JSON.parse(response.body))
+  end
 end
