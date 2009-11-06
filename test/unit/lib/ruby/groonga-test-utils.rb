@@ -31,15 +31,7 @@ module GroongaTestUtils
     @address = "127.0.0.1"
     @port = 5454
     @encoding = "utf8"
-    @groonga_pid = fork do
-      exec(@groonga,
-           "-s",
-           "-i", @address,
-           "-p", @port.to_s,
-           "-n", @database_path,
-           "-e", @encoding)
-    end
-    sleep 1
+    start_server
   end
 
   def teardown_server
@@ -58,6 +50,27 @@ module GroongaTestUtils
                           "..", "..", "..", "..", "..",
                           "src", "groonga")
     groonga
+  end
+
+  def start_server
+    @groonga_pid = fork do
+      exec(@groonga,
+           "-s",
+           "-i", @address,
+           "-p", @port.to_s,
+           "-n", @database_path,
+           "-e", @encoding)
+    end
+
+    Timeout.timeout(1) do
+      loop do
+        begin
+          TCPSocket.new(@address, @port)
+          break
+        rescue SystemCallError
+        end
+      end
+    end
   end
 
   def http_get(path)
