@@ -62,4 +62,14 @@ class InvalidHTTPTest < Test::Unit::TestCase
     assert_equal([["id", "name", "path", "flags", "domain"]],
                  JSON.parse(response.body))
   end
+
+  def test_short_method
+    socket = TCPSocket.new(@address, @port)
+    socket.print("G")
+    socket.flush
+    Timeout.timeout(1) do
+      response = get(command_path("table_list"))
+      assert_equal("200", response.code)
+    end
+  end
 end
