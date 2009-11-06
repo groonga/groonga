@@ -40,7 +40,7 @@ class HTTPTest < Test::Unit::TestCase
                  JSON.parse(response.body).keys.sort)
   end
 
-  def test_get_table_list
+  def test_table_list
     response = get(command_path(:table_list))
     assert_equal("text/javascript", response.content_type)
     assert_equal([["id", "name", "path", "flags", "domain"]],
@@ -65,7 +65,7 @@ class HTTPTest < Test::Unit::TestCase
     assert_equal("users", table_name)
   end
 
-  def test_get_column_list
+  def test_column_list
     response = get(command_path(:table_create,
                                 :name => "users",
                                 :flags => 1,
