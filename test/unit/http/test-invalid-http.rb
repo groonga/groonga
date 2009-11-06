@@ -33,4 +33,15 @@ class InvalidHTTPTest < Test::Unit::TestCase
       assert_equal("404", response.code)
     end
   end
+
+  def test_outside_html
+    relative_path = "../../Makefile.am"
+    assert_true(File.exist?(File.join(@resource_dir, relative_path)))
+
+    response = get("/#{relative_path}")
+    pend("should implement 404") do
+      assert_equal("404", response.code)
+    end
+    assert_equal("", response.body)
+  end
 end
