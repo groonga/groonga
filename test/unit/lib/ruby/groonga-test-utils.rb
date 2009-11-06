@@ -79,30 +79,22 @@ module GroongaTestUtils
     end
   end
 
-  def options_to_s(options)
-    if options.class == Hash
-      _options = []
-      options.each do |key, value|
-        key = key.to_s
-        value = value.to_s
-        if !key.empty? && !value.empty?
-          _options << key.to_s + '=' + URI.encode(value.to_s)
-        end
-      end
-      options = _options.join('&')
-    end
+  def encode_options(options)
+    return "" if options.empty?
 
-    unless options.to_s.empty?
-      "?" + options.to_s
-    else
-      ""
-    end
+    options.collect do |key, value|
+      if value.nil?
+        nil
+      else
+        "#{key}=#{URI.escape(value.to_s)}"
+      end
+    end.compact.join("&")
   end
 
-  def send_command(command, options = "")
-    path = "/d/" + command.to_s + options_to_s(options)
-    Net::HTTP.start(@address, @port) do |http|
-      http.get(path)
-    end
+  def command_path(command, options={})
+    path = "/d/#{command}"
+    encoded_options = encode_options(options)
+    path += "?#{encoded_options}" unless encoded_options.empty?
+    path
   end
 end
