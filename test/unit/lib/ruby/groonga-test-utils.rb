@@ -20,6 +20,7 @@ require 'fileutils'
 module GroongaTestUtils
   def setup_server
     @groonga = guess_groonga_path
+    @resource_dir = guess_resource_dir
     @tmp_dir = File.join(File.dirname(__FILE__), "tmp")
     FileUtils.rm_rf(@tmp_dir)
     FileUtils.mkdir_p(@tmp_dir)
@@ -45,7 +46,12 @@ module GroongaTestUtils
     groonga ||= File.join(File.dirname(__FILE__),
                           "..", "..", "..", "..", "..",
                           "src", "groonga")
-    groonga
+    File.expand_path(groonga)
+  end
+
+  def guess_resource_dir
+    File.expand_path(File.join(File.dirname(@groonga), "..",
+                               "resource", "admin_html"))
   end
 
   def start_server
@@ -54,8 +60,9 @@ module GroongaTestUtils
            "-s",
            "-i", @address,
            "-p", @port.to_s,
-           "-n", @database_path,
-           "-e", @encoding)
+           "-e", @encoding,
+           "--admin-html-path", @resource_dir,
+           "-n", @database_path)
     end
 
     Timeout.timeout(1) do

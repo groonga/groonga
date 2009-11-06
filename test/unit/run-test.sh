@@ -55,8 +55,8 @@ if test "$NO_CUTTER" != "yes" -a -n "$CUTTER"; then
     result=$?
 fi
 
-if test -n "$RUBY"; then
-    if ! $RUBY $BASE_DIR/run-test.rb; then
+if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
+    if ! $RUBY $BASE_DIR/run-test.rb "$@"; then
 	result=$?
     fi
 fi
