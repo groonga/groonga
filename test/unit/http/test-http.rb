@@ -166,4 +166,83 @@ class HTTPTest < Test::Unit::TestCase
                   ]],
                  JSON.parse(response.body))
   end
+
+  def test_select_match_column
+    create_users_table
+
+    response = get(command_path(:select,
+                                :table => "users",
+                                :match_column => "real_name",
+                                :query => "Yuto Hayamizu"))
+    assert_equal("text/javascript", response.content_type)
+    assert_select(response)
+  end
+
+  def test_select_query
+    create_users_table
+
+    response = get(command_path(:select,
+                                :table => "users",
+                                :query => "real_name:\"Yuto Hayamizu\""))
+    assert_equal("text/javascript", response.content_type)
+    assert_select(response)
+  end
+
+  def test_select_filter
+    create_users_table
+
+    response = get(command_path(:select,
+                                :table => "users",
+                                :filter => "real_name == \"Yuto Hayamizu\""))
+    assert_equal("text/javascript", response.content_type)
+    assert_select(response)
+  end
+
+  private
+  def create_users_table
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => TABLE_PAT_KEY,
+                                :key_type => "ShortText"))
+    assert_equal("true", response.body)
+
+    response = get(command_path(:column_create,
+                                :table => "users",
+                                :name => "real_name",
+                                :flags => COLUMN_SCALAR,
+                                :type => "ShortText"))
+    assert_equal("true", response.body)
+
+    response = get(command_path(:table_create,
+                                :name => "terms",
+                                :flags => TABLE_PAT_KEY,
+                                :key_type => "ShortText",
+                                :default_tokenizer => "TokenBigram"))
+    assert_equal("true", response.body)
+
+    response = get(command_path(:column_create,
+                                :table => "terms",
+                                :name => "users_real_name",
+                                :flags => COLUMN_INDEX,
+                                :type => "users",
+                                :source => "real_name"))
+    assert_equal("true", response.body)
+
+    values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
+    response = get(command_path(:load, :table => "users", :values => values))
+    assert_equal("1", response.body)
+
+    values = JSON.generate([{:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
+    response = get(command_path(:load, :table => "users", :values => values))
+    assert_equal("1", response.body)
+  end
+
+  def assert_select(response)
+    assert_equal([[0],
+                  [[1],
+                   ["_id", "_key", "real_name"],
+                   [2, "hayamiz", "Yuto Hayamizu"]
+                  ]],
+                 JSON.parse(response.body))
+  end
 end
