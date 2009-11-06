@@ -39,4 +39,16 @@ case `uname` in
 	;;
 esac
 
-$CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
+result=0
+if test -n "$CUTTER"; then
+    $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
+    result=$?
+fi
+
+if test -n "$RUBY"; then
+    if ! $RUBY $BASE_DIR/run-test.rb; then
+	result=$?
+    fi
+fi
+
+exit $result

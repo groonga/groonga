@@ -359,6 +359,28 @@ if test "$ac_cv_benchmark_available" = "yes"; then
   AC_DEFINE(WITH_BENCHMARK, 1, [Define to 1 if benchamrk is available])
 fi
 
+# check Ruby for HTTP test
+ac_cv_ruby_available="no"
+AC_ARG_WITH([ruby],
+            AS_HELP_STRING([--with-ruby=PATH],
+                           [Ruby interpreter path (default: auto-detect)]),
+            [RUBY="$withval"])
+
+if test "$RUBY" = "no"; then
+  : # ignore
+elif test "$RUBY" = ""; then
+  AC_PATH_PROG(RUBY, ruby, none)
+  if test "$RUBY" != "none"; then
+    ac_cv_ruby_available="yes"
+  fi
+else
+  AC_CHECK_FILE([$RUBY],
+                [ac_cv_ruby_available="yes"],
+                [AC_MSG_WARN([$RUBY is not found. Disable HTTP test.])])
+fi
+AC_SUBST(RUBY)
+AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
+
 # zlib
 AC_ARG_WITH(zlib,
   [AC_HELP_STRING([--with-zlib],

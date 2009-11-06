@@ -6,10 +6,10 @@ SUBDIRS =		\
 	memcached	\
 	http
 
-if WITH_CUTTER
 TESTS = run-test.sh
-TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)"
+TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)" RUBY="$(RUBY)"
 
+if WITH_CUTTER
 noinst_LTLIBRARIES = suite-groonga-test.la
 endif
 
