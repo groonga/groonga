@@ -303,6 +303,10 @@ int main(int argc, char **argv)
       AC_MSG_RESULT(no)
     ])
 
+# groonga binary path
+GROONGA="\$(abs_top_srcdir)/src/groonga"
+AC_SUBST(GROONGA)
+
 # check Cutter with GLib support if available
 m4_ifdef([AC_CHECK_GCUTTER], [
 AC_CHECK_GCUTTER

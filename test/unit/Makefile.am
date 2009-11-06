@@ -7,7 +7,11 @@ SUBDIRS =		\
 	http
 
 TESTS = run-test.sh
-TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)" RUBY="$(RUBY)"
+TESTS_ENVIRONMENT =				\
+	NO_MAKE=yes				\
+	CUTTER="$(CUTTER)"			\
+	RUBY="$(RUBY)"				\
+	GROONGA="$(GROONGA)"
 
 if WITH_CUTTER
 noinst_LTLIBRARIES = suite-groonga-test.la
@@ -31,3 +35,9 @@ suite_groonga_test_la_SOURCES = suite-groonga-test.c
 
 echo-cutter:
 	@echo $(CUTTER)
+
+echo-ruby:
+	@echo $(RUBY)
+
+echo-groonga:
+	@echo $(GROONGA)
