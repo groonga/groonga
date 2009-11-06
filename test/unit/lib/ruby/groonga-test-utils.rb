@@ -92,10 +92,10 @@ module GroongaTestUtils
       options = _options.join('&')
     end
 
-    unless options.to_s.empty?
-      "?" + options.to_s
-    else
+    if options.to_s.empty?
       ""
+    else
+      "?" + options.to_s
     end
   end
 
