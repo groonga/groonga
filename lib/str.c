@@ -2335,7 +2335,29 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       }
       break;
     default :
-      {
+      if (format) {
+        int j;
+        int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+        grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+        if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
+          GRN_TEXT_PUTS(ctx, bulk, "[");
+          for (j = 0; j < ncolumns; j++) {
+            if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+            GRN_BULK_REWIND(&buf);
+            grn_column_name_(ctx, columns[j], &buf);
+            grn_text_otoj(ctx, bulk, &buf, NULL);
+          }
+          GRN_TEXT_PUTS(ctx, bulk, "],");
+        }
+        GRN_TEXT_PUTC(ctx, bulk, '[');
+        for (j = 0; j < ncolumns; j++) {
+          if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+          GRN_BULK_REWIND(&buf);
+          grn_obj_get_value_o(ctx, columns[j], obj, &buf);
+          grn_text_otoj(ctx, bulk, &buf, NULL);
+        }
+        GRN_TEXT_PUTC(ctx, bulk, ']');
+      } else {
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
         grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
         if (accessor) {

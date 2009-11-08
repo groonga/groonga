@@ -19,3 +19,6 @@
    shutdown
    log_level
    log_put
+   add
+   set
+   get
