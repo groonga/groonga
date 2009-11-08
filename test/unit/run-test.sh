@@ -12,6 +12,16 @@ if test -z "$CUTTER"; then
 fi
 export CUTTER
 
+if test -z "$RUBY"; then
+    RUBY="`make -s -C $BASE_DIR echo-ruby`"
+fi
+export RUBY
+
+if test -z "$GROONGA"; then
+    GROONGA="`make -s -C $BASE_DIR echo-groonga`"
+fi
+export GROONGA
+
 CUTTER_ARGS=
 CUTTER_WRAPPER=
 if test x"$CUTTER_DEBUG" = x"yes"; then
@@ -39,4 +49,16 @@ case `uname` in
 	;;
 esac
 
-$CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
+result=0
+if test "$NO_CUTTER" != "yes" -a -n "$CUTTER"; then
+    $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
+    result=$?
+fi
+
+if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
+    if ! $RUBY $BASE_DIR/run-test.rb "$@"; then
+	result=$?
+    fi
+fi
+
+exit $result

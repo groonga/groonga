@@ -60,6 +60,7 @@ AC_CONFIG_FILES([Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
+                 test/unit/lib/ruby/Makefile
                  test/unit/fixtures/Makefile
                  test/unit/fixtures/inverted-index/Makefile
                  test/unit/fixtures/stress/Makefile
@@ -101,7 +102,7 @@ int main(int argc, char **argv)
 
 # log path
 AC_ARG_WITH(log_path,
-  [AC_HELP_STRING([--with-log-path=PATH],
+  [AS_HELP_STRING([--with-log-path=PATH],
     [specify groonga log path.])],
   GROONGA_LOG_PATH="$withval",
   GROONGA_LOG_PATH="/var/log/$PACKAGE_NAME/$PACKAGE_NAME.log")
@@ -109,7 +110,7 @@ AC_DEFINE_UNQUOTED(GROONGA_LOG_PATH, "$GROONGA_LOG_PATH", "specified log directo
 
 # default encoding
 AC_ARG_WITH(default_encoding,
-  [AC_HELP_STRING([--with-default-encoding=ENCODING],
+  [AS_HELP_STRING([--with-default-encoding=ENCODING],
     [specify groonga default encoding(euc/sjis/utf8/latin1/koi8r/none)])],
   GROONGA_DEFAULT_ENCODING="$withval",
   GROONGA_DEFAULT_ENCODING="utf8")
@@ -117,7 +118,7 @@ AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_ENCODING, "$GROONGA_DEFAULT_ENCODING", "speci
 
 # default query escalation threshold
 AC_ARG_WITH(query_escalation_threshold,
-  [AC_HELP_STRING([--with-query-escalation-threshold=NUMBER],
+  [AS_HELP_STRING([--with-query-escalation-threshold=NUMBER],
     [specify groonga default query escalation threshold])],
   GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="$withval",
   GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="0")
@@ -131,7 +132,7 @@ AC_CHECK_LIB(dl, dlopen, [NSL_LIBS="-ldl"])
 
 # aio
 AC_ARG_ENABLE(aio,
-  [AC_HELP_STRING([--enable-aio],
+  [AS_HELP_STRING([--enable-aio],
     [use aio/dio based cache. [default=no]])],,
   [enable_aio="no"])
 if test "x$enable_aio" != "xno"; then
@@ -141,7 +142,7 @@ fi
 
 # nfkc
 AC_ARG_ENABLE(nfkc,
-  [AC_HELP_STRING([--enable-nfkc],
+  [AS_HELP_STRING([--enable-nfkc],
     [use nfkc based utf8 normalization. [default=yes]])],,
   [enable_nfkc="yes"])
 if test "x$enable_nfkc" != "xyes"; then
@@ -155,7 +156,7 @@ GENHTML_OPTIONS="--title 'groonga Code Coverage'"
 # microyield
 AC_MSG_CHECKING([whether enable uyield])
 AC_ARG_ENABLE(uyield,
-  [AC_HELP_STRING([--enable-uyield],
+  [AS_HELP_STRING([--enable-uyield],
     [build for detecting race conditions. [default=no]])],
   ,
   [enable_uyield="no"])
@@ -170,7 +171,7 @@ force_enable_dynamic_malloc_change="no"
 # exact-alloc-count
 AC_MSG_CHECKING([whether enable exact-alloc-count])
 AC_ARG_ENABLE(exact-alloc-count,
-  [AC_HELP_STRING([--enable-exact-alloc-count],
+  [AS_HELP_STRING([--enable-exact-alloc-count],
     [atomic counting for memory alloc count. [default=no]])],,
   [enable_exact_alloc_count="no"])
 if test "x$enable_exact_alloc_count" != "xno"; then
@@ -181,7 +182,7 @@ AC_MSG_RESULT($enable_exact_alloc_count)
 # failmalloc
 AC_MSG_CHECKING([whether enable fmalloc])
 AC_ARG_ENABLE(fmalloc,
-  [AC_HELP_STRING([--enable-fmalloc],
+  [AS_HELP_STRING([--enable-fmalloc],
     [make memory allocation failed in specified condition for debug. [default=no]])],
   ,
   [enable_fmalloc="no"])
@@ -194,7 +195,7 @@ AC_MSG_RESULT($enable_fmalloc)
 # abort
 AC_MSG_CHECKING([whether enable abort])
 AC_ARG_ENABLE(abort,
-  [AC_HELP_STRING([--enable-abort],
+  [AS_HELP_STRING([--enable-abort],
     [enable query abortion. [default=no]])],
   ,
   [enable_abort="no"])
@@ -207,7 +208,7 @@ AC_MSG_RESULT($enable_abort)
 # dynamic malloc change
 AC_MSG_CHECKING([whether allow dynamic memory allocation change])
 AC_ARG_ENABLE(dynamic-malloc-change,
-  [AC_HELP_STRING([--enable-dynamic-malloc-change],
+  [AS_HELP_STRING([--enable-dynamic-malloc-change],
     [allow dynamic memory allocation change for testing. [default=no]])],
   ,
   [enable_dynamic_malloc_change="no"])
@@ -303,6 +304,10 @@ int main(int argc, char **argv)
       AC_MSG_RESULT(no)
     ])
 
+# groonga binary path
+GROONGA="\$(abs_top_srcdir)/src/groonga"
+AC_SUBST(GROONGA)
+
 # check Cutter with GLib support if available
 m4_ifdef([AC_CHECK_GCUTTER], [
 AC_CHECK_GCUTTER
@@ -359,9 +364,31 @@ if test "$ac_cv_benchmark_available" = "yes"; then
   AC_DEFINE(WITH_BENCHMARK, 1, [Define to 1 if benchamrk is available])
 fi
 
+# check Ruby for HTTP test
+ac_cv_ruby_available="no"
+AC_ARG_WITH([ruby],
+            AS_HELP_STRING([--with-ruby=PATH],
+                           [Ruby interpreter path (default: auto-detect)]),
+            [RUBY="$withval"])
+
+if test "$RUBY" = "no"; then
+  : # ignore
+elif test "$RUBY" = ""; then
+  AC_PATH_PROG(RUBY, ruby, none)
+  if test "$RUBY" != "none"; then
+    ac_cv_ruby_available="yes"
+  fi
+else
+  AC_CHECK_FILE([$RUBY],
+                [ac_cv_ruby_available="yes"],
+                [AC_MSG_WARN([$RUBY is not found. Disable HTTP test.])])
+fi
+AC_SUBST(RUBY)
+AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
+
 # zlib
 AC_ARG_WITH(zlib,
-  [AC_HELP_STRING([--with-zlib],
+  [AS_HELP_STRING([--with-zlib],
     [use zlib for data compression. [default=no]])],
   [with_zlib="$withval"],
   [with_zlib="no"])
@@ -373,7 +400,7 @@ fi
 
 # lzo
 AC_ARG_WITH(lzo,
-  [AC_HELP_STRING([--with-lzo],
+  [AS_HELP_STRING([--with-lzo],
     [use lzo for data compression. [default=no]])],
   [with_lzo="$withval"],
   [with_lzo="no"])
@@ -386,7 +413,7 @@ fi
 # mecab
 # NOTE: MUST be checked last
 AC_ARG_WITH(mecab,
-  [AC_HELP_STRING([--with-mecab],
+  [AS_HELP_STRING([--with-mecab],
     [use mecab for morphological analysis. [default=yes]])],
   [with_mecab="$withval"],
   [with_mecab="yes"])
@@ -395,8 +422,8 @@ if test "x$with_mecab" = "xno"; then
 else
   # mecab-config
   AC_ARG_WITH(mecab-config,
-    [AC_HELP_STRING([--with-mecab-config=PATH],
-      [set mecab-config location. [search path]])],
+    [AS_HELP_STRING([--with-mecab-config=PATH],
+      [set mecab-config location. [default=auto-detect]])],
     [AC_CHECK_FILE("$withval", MECAB_CONFIG="$withval", MECAB_CONFIG=no)],
     [AC_PATH_PROG(MECAB_CONFIG, mecab-config, no)])
   if test "x$MECAB_CONFIG" = "xno"; then
@@ -412,7 +439,7 @@ fi
 
 # futex check
 AC_ARG_ENABLE(futex,
-  [AC_HELP_STRING([--enable-futex],
+  [AS_HELP_STRING([--enable-futex],
     [use futex. [default=no]])],
   ,
   [enable_futex="no"])
