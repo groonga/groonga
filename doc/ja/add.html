@@ -51,21 +51,21 @@
 <h1>2.15. add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>2.15.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>add - 一件のレコードの追加</p>
+<p>add - 一件のレコードの追加 <a class="footnote-reference" href="#id8" id="id2">[1]</a></p>
 </div>
-<div class="section" id="id2">
-<h2>2.15.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>2.15.2. 書式<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>add table [key [columns [values [output_columns [output_type]]]]]
 </pre></div>
 </div>
 </div>
-<div class="section" id="id3">
-<h2>2.15.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>2.15.3. 説明<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるaddについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>addは、使用しているデータベースのテーブルに１件のレコードを登録し、カラムの値を更新します。</p>
 </div>
-<div class="section" id="id4">
-<h2>2.15.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>2.15.4. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 レコードを追加しようとするテーブルの名前を指定します。</blockquote>
@@ -92,7 +92,7 @@
 出力するカラム名のリストを空白(&#8216; &#8216;)区切りで指定します。</blockquote>
 <p><tt class="docutils literal"><span class="pre">output_type</span></tt></p>
 <blockquote>
-出力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id8" id="id5">[1]</a></blockquote>
+出力形式を、json,tsv,xmlのいずれかで指定します。</blockquote>
 <p>返値
 &#8212;</p>
 <blockquote>
@@ -118,7 +118,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 <table class="docutils footnote" frame="void" id="id8" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td>output_columnsでのgrn式指定はv1.0でサポートされます。</td></tr>
+<tr><td class="label">[1]</td><td>addコマンドはv1.0以降でサポートされます。</td></tr>
 </tbody>
 </table>
 </div>
@@ -134,9 +134,9 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
             <ul>
 <li><a class="reference external" href="">2.15. add</a><ul>
 <li><a class="reference external" href="#id1">2.15.1. 名前</a></li>
-<li><a class="reference external" href="#id2">2.15.2. 書式</a></li>
-<li><a class="reference external" href="#id3">2.15.3. 説明</a></li>
-<li><a class="reference external" href="#id4">2.15.4. 引数</a></li>
+<li><a class="reference external" href="#id3">2.15.2. 書式</a></li>
+<li><a class="reference external" href="#id4">2.15.3. 説明</a></li>
+<li><a class="reference external" href="#id5">2.15.4. 引数</a></li>
 <li><a class="reference external" href="#id6">2.15.5. 例</a></li>
 <li><a class="reference external" href="#id7">2.15.6. 関連項目</a></li>
 </ul>
