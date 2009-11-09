@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009  Yuto HAYAMIZU <y.hayamizu@gmail.com>
+# Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -170,32 +172,26 @@ class HTTPTest < Test::Unit::TestCase
   def test_select_match_column
     create_users_table
 
-    response = get(command_path(:select,
-                                :table => "users",
-                                :match_column => "real_name",
-                                :query => "Yuto Hayamizu"))
-    assert_equal("text/javascript", response.content_type)
-    assert_select(response)
+    assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :match_column => "real_name",
+                  :query => "Yuto Hayamizu")
   end
 
   def test_select_query
     create_users_table
 
-    response = get(command_path(:select,
-                                :table => "users",
-                                :query => "real_name:\"Yuto Hayamizu\""))
-    assert_equal("text/javascript", response.content_type)
-    assert_select(response)
+    assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :query => "real_name:\"Yuto Hayamizu\"")
   end
 
   def test_select_filter
     create_users_table
 
-    response = get(command_path(:select,
-                                :table => "users",
-                                :filter => "real_name == \"Yuto Hayamizu\""))
-    assert_equal("text/javascript", response.content_type)
-    assert_select(response)
+    assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :filter => "real_name == \"Yuto Hayamizu\"")
   end
 
   private
@@ -237,11 +233,13 @@ class HTTPTest < Test::Unit::TestCase
     assert_equal("1", response.body)
   end
 
-  def assert_select(response)
+  def assert_select(expected, parameters)
+    response = get(command_path(:select, parameters))
+    assert_equal("text/javascript", response.content_type)
     assert_equal([[0],
-                  [[1],
+                  [[expected.size],
                    ["_id", "_key", "real_name"],
-                   [2, "hayamiz", "Yuto Hayamizu"]
+                   *expected
                   ]],
                  JSON.parse(response.body))
   end
