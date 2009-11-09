@@ -112,7 +112,7 @@ class HTTPTest < Test::Unit::TestCase
 
     response = get(command_path(:select, :table => "users"))
     assert_equal("text/javascript", response.content_type)
-    assert_equal([[0],
+    assert_equal([[Result::SUCCESS],
                   [[1],
                    ["_id", "_key", "real_name"],
                    [1, "ryoqun", "Ryo Onodera"]
@@ -141,7 +141,7 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:select,
                                 :table => "users",
                                 :query => "real_name:\"Ryo Onodera\""))
-    assert_equal([[0],
+    assert_equal([[Result::Success],
                   [[1],
                    ["_id", "_key", "real_name"],
                    [1, "ryoqun", "Ryo Onodera"]
@@ -223,7 +223,7 @@ class HTTPTest < Test::Unit::TestCase
   def assert_select(expected, parameters)
     response = get(command_path(:select, parameters))
     assert_equal("text/javascript", response.content_type)
-    assert_equal([[0],
+    assert_equal([[Result::SUCCESS],
                   [[expected.size],
                    ["_id", "_key", "real_name"],
                    *expected
