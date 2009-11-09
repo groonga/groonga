@@ -29,34 +29,6 @@ class HTTPTest < Test::Unit::TestCase
     teardown_server
   end
 
-  def test_static_html
-    response = get("/index.html")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
-  end
-
-  def test_static_html_with_fragment
-    response = get("/index.html#anchor")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
-  end
-
-  def test_static_html_with_query
-    response = get("/index.html?key=value")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
-  end
-
-  def test_static_html_with_query_and_fragment
-    response = get("/index.html?key=value#anchor")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
-  end
-
   def test_status
     response = get(command_path(:status))
     assert_equal("text/javascript", response.content_type)
