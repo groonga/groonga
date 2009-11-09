@@ -16,8 +16,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 require 'fileutils'
+require 'groonga-constants'
 
 module GroongaTestUtils
+  include GroongaConstants
+
   def setup_server
     @groonga = guess_groonga_path
     @resource_dir = guess_resource_dir

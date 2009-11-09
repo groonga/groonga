@@ -21,20 +21,6 @@ class HTTPTest < Test::Unit::TestCase
   include GroongaTestUtils
   include GroongaHTTPTestUtils
 
-  TABLE_HASH_KEY = 0x0
-  TABLE_PAT_KEY  = 0x1
-  TABLE_NO_KEY = 0x3
-  TABLE_VIEW = 0x04
-  KEY_WITH_SIS = 0x40
-  KEY_NORMALIZE = 0x80
-
-  COLUMN_SCALAR = 0x0
-  COLUMN_VECTOR = 0x1
-  COLUMN_INDEX = 0x2
-  WITH_SECTION = 0x80
-  WITH_WEIGHT = 0x100
-  WITH_POSITION = 0x200
-
   def setup
     setup_server
   end
@@ -86,7 +72,7 @@ class HTTPTest < Test::Unit::TestCase
 
     response = get(command_path(:table_create,
                                 :name => "users",
-                                :flags => TABLE_PAT_KEY,
+                                :flags => Table::PAT_KEY,
                                 :key_type => "Int8",
                                 :value_type => "Object",
                                 :default_tokenizer => ""))
@@ -106,7 +92,7 @@ class HTTPTest < Test::Unit::TestCase
   def test_column_list
     response = get(command_path(:table_create,
                                 :name => "users",
-                                :flags => TABLE_PAT_KEY,
+                                :flags => Table::PAT_KEY,
                                 :key_type => "Int8",
                                 :value_type => "Object",
                                 :default_tokenizer => ""))
@@ -119,7 +105,7 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "age",
-                                :flags => COLUMN_SCALAR,
+                                :flags => Column::SCALAR,
                                 :type => "Int8"))
     assert_equal("true", response.body)
 
@@ -137,14 +123,14 @@ class HTTPTest < Test::Unit::TestCase
   def test_load
     response = get(command_path(:table_create,
                                 :name => "users",
-                                :flags => TABLE_PAT_KEY,
+                                :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
     assert_equal("true", response.body)
 
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "real_name",
-                                :flags => COLUMN_SCALAR,
+                                :flags => Column::SCALAR,
                                 :type => "ShortText"))
     assert_equal("true", response.body)
 
@@ -165,14 +151,14 @@ class HTTPTest < Test::Unit::TestCase
   def test_select
     response = get(command_path(:table_create,
                                 :name => "users",
-                                :flags => TABLE_PAT_KEY,
+                                :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
     assert_equal("true", response.body)
 
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "real_name",
-                                :flags => COLUMN_SCALAR,
+                                :flags => Column::SCALAR,
                                 :type => "ShortText"))
     assert_equal("true", response.body)
 
@@ -225,20 +211,20 @@ class HTTPTest < Test::Unit::TestCase
   def create_users_table
     response = get(command_path(:table_create,
                                 :name => "users",
-                                :flags => TABLE_PAT_KEY,
+                                :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
     assert_equal("true", response.body)
 
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "real_name",
-                                :flags => COLUMN_SCALAR,
+                                :flags => Column::SCALAR,
                                 :type => "ShortText"))
     assert_equal("true", response.body)
 
     response = get(command_path(:table_create,
                                 :name => "terms",
-                                :flags => TABLE_PAT_KEY,
+                                :flags => Table::PAT_KEY,
                                 :key_type => "ShortText",
                                 :default_tokenizer => "TokenBigram"))
     assert_equal("true", response.body)
@@ -246,7 +232,7 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:column_create,
                                 :table => "terms",
                                 :name => "users_real_name",
-                                :flags => COLUMN_INDEX,
+                                :flags => Column::INDEX,
                                 :type => "users",
                                 :source => "real_name"))
     assert_equal("true", response.body)
