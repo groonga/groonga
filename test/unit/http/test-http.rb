@@ -141,7 +141,7 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:select,
                                 :table => "users",
                                 :query => "real_name:\"Ryo Onodera\""))
-    assert_equal([[Result::Success],
+    assert_equal([[Result::SUCCESS],
                   [[1],
                    ["_id", "_key", "real_name"],
                    [1, "ryoqun", "Ryo Onodera"]
