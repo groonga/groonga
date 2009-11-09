@@ -74,6 +74,29 @@ class InvalidHTTPTest < Test::Unit::TestCase
     assert_equal("", response.body)
   end
 
+  def test_symbolic_link
+    relative_path = "../../Makefile.am"
+    relative_symbolic_link_path = "link"
+    path = File.join(@resource_dir, relative_symbolic_link_path)
+    symbolic_link_path = File.join(@resource_dir, relative_symbolic_link_path)
+    assert_false(File.exist?(symbolic_link_path))
+
+    begin
+      FileUtils.ln_s(relative_path, symbolic_link_path)
+      assert_true(File.exist?(symbolic_link_path))
+      assert_true(File.exist?(path))
+      assert_equal(File.read(path), File.read(symbolic_link_path))
+
+      response = get("/#{relative_symbolic_link_path}")
+      pend("should implement 404") do
+        assert_equal("404", response.code)
+      end
+      assert_equal("", response.body)
+    ensure
+      FileUtils.rm_f(symbolic_link_path)
+    end
+  end
+
   def test_not_start_with_slash
     response = get(".")
     assert_equal("400", response.code)
