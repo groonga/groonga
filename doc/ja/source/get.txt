@@ -55,7 +55,7 @@ getは、使用しているデータベースのテーブルの中の１件の�
 例
 --
 
-テーブルEntryから主キー値が"abandon'であるレコードのbodyカラムの値を取得します。::
+テーブルEntryから主キー値が"abandon"であるレコードのbodyカラムの値を取得します。::
 
  get Entry abandon body
 
