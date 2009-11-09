@@ -60,6 +60,13 @@ class InvalidHTTPTest < Test::Unit::TestCase
     assert_equal("", response.body)
   end
 
+  def test_not_start_with_slash
+    response = get(".")
+    assert_equal("400", response.code)
+    assert_equal("Bad Request: Your request path doesn't start with '/'.",
+                 response.body)
+  end
+
   def test_long_path
     response = get("/0123456789" * 10000)
     pend("should implement 404") do
