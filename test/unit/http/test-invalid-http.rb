@@ -60,6 +60,20 @@ class InvalidHTTPTest < Test::Unit::TestCase
     assert_equal("", response.body)
   end
 
+  def test_outside_html_with_invalid_utf8
+    relative_path = "../../Makefile.am"
+    assert_true(File.exist?(File.join(@resource_dir, relative_path)))
+    assert_false(File.exist?(File.join(@resource_dir,
+                                       File.basename(relative_path))))
+    invalid_relative_path = relative_path.gsub(/\//, "\xC0\x2F")
+
+    response = get("/#{invalid_relative_path}")
+    pend("should implement 404") do
+      assert_equal("404", response.code)
+    end
+    assert_equal("", response.body)
+  end
+
   def test_not_start_with_slash
     response = get(".")
     assert_equal("400", response.code)
