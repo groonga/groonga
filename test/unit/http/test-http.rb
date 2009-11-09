@@ -20,6 +20,7 @@
 class HTTPTest < Test::Unit::TestCase
   include GroongaTestUtils
   include GroongaHTTPTestUtils
+
   TABLE_HASH_KEY = 0x0
   TABLE_PAT_KEY  = 0x1
   TABLE_NO_KEY = 0x3
@@ -170,7 +171,7 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_select_match_column
-    create_users_table
+    populate_users
 
     assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
@@ -179,7 +180,7 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_select_query
-    create_users_table
+    populate_users
 
     assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
@@ -187,7 +188,7 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_select_filter
-    create_users_table
+    populate_users
 
     assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
@@ -195,6 +196,11 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   private
+  def populate_users
+    create_users_table
+    load_users
+  end
+
   def create_users_table
     response = get(command_path(:table_create,
                                 :name => "users",
@@ -223,7 +229,9 @@ class HTTPTest < Test::Unit::TestCase
                                 :type => "users",
                                 :source => "real_name"))
     assert_equal("true", response.body)
+  end
 
+  def load_users
     values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
     response = get(command_path(:load, :table => "users", :values => values))
     assert_equal("1", response.body)
