@@ -149,6 +149,37 @@ class HTTPTest < Test::Unit::TestCase
     assert_response_range(expected, 0, 10, response)
   end
 
+  def test_select_offset
+    create_bookmarks_table
+    expected = load_bookmarks
+
+    response = get(command_path(:select,
+                                :table => "bookmarks",
+                                :offset => 3))
+    assert_response_range(expected, 3, 10, response)
+  end
+
+  def test_select_limit
+    create_bookmarks_table
+    expected = load_bookmarks
+
+    response = get(command_path(:select,
+                                :table => "bookmarks",
+                                :limit => 4))
+    assert_response_range(expected, 0, 4, response)
+  end
+
+  def test_select_offset_and_limit
+    create_bookmarks_table
+    expected = load_bookmarks
+
+    response = get(command_path(:select,
+                                :table => "bookmarks",
+                                :offset => 3,
+                                :limit => 4))
+    assert_response_range(expected, 3, 4, response)
+  end
+
   private
   def assert_select(expected, parameters)
     response = get(command_path(:select, parameters))
