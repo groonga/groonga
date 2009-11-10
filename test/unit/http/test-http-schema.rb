@@ -26,10 +26,38 @@ class HTTPSchemaTest < Test::Unit::TestCase
     teardown_server
   end
 
-  def test_empty_table_list
+  def test_table_list_empty
     response = get(command_path(:table_list))
     assert_response([["id", "name", "path", "flags", "domain"]],
                     response,
                     :content_type => "text/javascript")
+  end
+
+  def test_table_list_created
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "Int8",
+                                :value_type => "Object",
+                                :default_tokenizer => ""))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
+
+    response = get(command_path(:table_list))
+    assert_response([
+                     ["id", "name", "path", "flags", "domain"],
+                     [nil,
+                      "users",
+                      nil,
+                      Flag::PERSISTENT | Table::PAT_KEY | Key::INT,
+                      Type::INT8],
+                    ],
+                    response,
+                    :content_type => "text/javascript") do |actual|
+      actual[0, 1] + actual[1..-1].collect do |values|
+        id, name, path, flags, domain = values
+        [nil, name, nil, flags, domain]
+      end
+    end
   end
 end

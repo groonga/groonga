@@ -35,33 +35,6 @@ class HTTPTest < Test::Unit::TestCase
                  JSON.parse(response.body).keys.sort)
   end
 
-  def test_table_list
-    response = get(command_path(:table_list))
-    assert_equal("text/javascript", response.content_type)
-    assert_response([["id", "name", "path", "flags", "domain"]],
-                    response,
-                    :content_type => "text/javascript")
-
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "Int8",
-                                :value_type => "Object",
-                                :default_tokenizer => ""))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
-
-    response = get(command_path(:table_list))
-    assert_equal("text/javascript", response.content_type)
-    table_list = JSON.parse(response.body)
-    header = table_list[0]
-    body = table_list[1]
-    assert_equal(2, table_list.length)
-    assert_equal(["id", "name", "path", "flags", "domain"], header)
-    table_name = body[1]
-    assert_equal("users", table_name)
-  end
-
   def test_column_list
     response = get(command_path(:table_create,
                                 :name => "users",
