@@ -140,34 +140,13 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_select_sortby
-    response = get(command_path(:table_create,
-                                :name => "bookmarks",
-                                :flags => Table::HASH_KEY,
-                                :key_type => "Int32"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
-
-    srand(Time.now.to_i)
-    values = [["_key"]]
-    expected = [[Result::SUCCESS]]
-    expected_records = []
-    id = 1
-    (0...10).to_a.shuffle.each do |number|
-      values.push([number])
-      expected_records.push([id, number])
-      id += 1
-    end
-    expected_records.sort! {|record1, record2| record1[1] <=> record2[1]}
-    expected_records = [[10], ["_id", "_key"]] + expected_records
-    expected.push(expected_records)
-    get(command_path(:load,
-                     :table => "bookmarks",
-                     :values => json(values)))
+    create_bookmarks_table
+    expected = load_shuffled_bookmarks
 
     response = get(command_path(:select,
                                 :table => "bookmarks",
                                 :sortby => "_key"))
-    assert_response(expected, response, :content_type => "text/javascript")
+    assert_response_range(expected, 0, 10, response)
   end
 
   private
@@ -180,5 +159,13 @@ class HTTPTest < Test::Unit::TestCase
                      ]],
                     response,
                     :content_type => "text/javascript")
+  end
+
+  def assert_response_range(expected, offset, limit, response)
+    # expected[1]'s format:
+    #   [<number of hits>, <header>, <record1>, <record2>...]
+    expected[1] = expected[1][0, 2] + 
+                  expected[1][offset + 2, limit]
+    assert_response(expected, response, :content_type => "text/javascript")
   end
 end

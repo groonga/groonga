@@ -116,6 +116,59 @@ module GroongaHTTPTestUtils
           {:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
   end
 
+  def create_bookmarks_table
+    response = get(command_path(:table_create,
+                                :name => "bookmarks",
+                                :flags => Table::HASH_KEY,
+                                :key_type => "Int32"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
+  end
+
+  def load_bookmarks
+    values = [["_key"]]
+    expected = [[Result::SUCCESS]]
+    expected_records = []
+    id = 1
+    (0...10).to_a.each do |number|
+      values.push([number])
+      expected_records.push([id, number])
+      id += 1
+    end
+    expected_records.sort! {|record1, record2| record1[1] <=> record2[1]}
+    expected_records = [[10], ["_id", "_key"]] + expected_records
+    expected.push(expected_records)
+
+    response = get(command_path(:load,
+                                :table => "bookmarks",
+                                :values => json(values)))
+    assert_response([[Result::SUCCESS], values.size-1], response,
+                    :content_type => "text/javascript")
+    expected
+  end
+
+  def load_shuffled_bookmarks
+    srand(Time.now.to_i)
+    values = [["_key"]]
+    expected = [[Result::SUCCESS]]
+    expected_records = []
+    id = 1
+    (0...10).to_a.shuffle.each do |number|
+      values.push([number])
+      expected_records.push([id, number])
+      id += 1
+    end
+    expected_records.sort! {|record1, record2| record1[1] <=> record2[1]}
+    expected_records = [[10], ["_id", "_key"]] + expected_records
+    expected.push(expected_records)
+    response = get(command_path(:load,
+                                :table => "bookmarks",
+                                :values => json(values)))
+    assert_response([[Result::SUCCESS], values.size-1], response,
+                    :content_type => "text/javascript")
+    expected
+  end
+
   def json(object)
     JSON.generate(object)
   end
