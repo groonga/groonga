@@ -102,16 +102,18 @@ module GroongaHTTPTestUtils
                     :content_type => "text/javascript")
   end
 
-  def load_users
-    values = json([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
-    response = get(command_path(:load, :table => "users", :values => values))
-    assert_response([[Result::SUCCESS], 1], response,
+  def load(table, values)
+    response = get(command_path(:load,
+                                :table => table,
+                                :values => json(values)))
+    assert_response([[Result::SUCCESS], values.size], response,
                     :content_type => "text/javascript")
+  end
 
-    values = json([{:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
-    response = get(command_path(:load, :table => "users", :values => values))
-    assert_response([[Result::SUCCESS], 1], response,
-                    :content_type => "text/javascript")
+  def load_users
+    load("users",
+         [{:_key => "ryoqun", :real_name => "Ryo Onodera"},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
   end
 
   def json(object)
