@@ -8,7 +8,6 @@
    status
    table_list
    column_list
-   table_list
    table_create
    column_create
    view_add
