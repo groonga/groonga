@@ -27,15 +27,15 @@ module GroongaHTTPTestUtils
 
   def teardown_server
     begin
-      quit_server
+      shutdown_server
     rescue Timeout::Error
     end
     super
   end
 
   private
-  def quit_server
-    get(command_path("quit"))
+  def shutdown_server
+    get(command_path("shutdown"))
   end
 
   def get(path)
