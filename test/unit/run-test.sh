@@ -33,6 +33,12 @@ elif test x"$CUTTER_CHECK_LEAK" = x"yes"; then
     CUTTER_ARGS="--keep-opening-modules"
 fi
 
+RUBY_TEST_ARGS=
+if test x"$PRIORITY_MODE" = x"yes"; then
+    RUBY_TEST_ARGS="$RUBY_TEST_ARGS --priority-mode"
+    # CUTTER_ARGS="$CUTTER_ARGS --priority-mode"
+fi
+
 CUTTER_ARGS="$CUTTER_ARGS -s $BASE_DIR"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
@@ -56,7 +62,7 @@ if test "$NO_CUTTER" != "yes" -a -n "$CUTTER"; then
 fi
 
 if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
-    if ! $RUBY $BASE_DIR/run-test.rb "$@"; then
+    if ! $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"; then
 	result=$?
     fi
 fi
