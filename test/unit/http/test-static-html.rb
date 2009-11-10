@@ -54,4 +54,11 @@ class StaticHTMLTest < Test::Unit::TestCase
     assert_equal(File.read(File.join(@resource_dir, "index.html")),
                  response.body)
   end
+
+  def test_outside
+    response = get("/../index.html")
+    assert_equal("text/html", response.content_type)
+    assert_equal(File.read(File.join(@resource_dir, "index.html")),
+                 response.body)
+  end
 end
