@@ -31,6 +31,7 @@ module GroongaTestUtils
     @address = "127.0.0.1"
     @port = 5454
     @encoding = "utf8"
+    @user_object_start_id = 256
     start_server
   end
 
@@ -76,6 +77,12 @@ module GroongaTestUtils
         rescue SystemCallError
         end
       end
+    end
+
+    def object_registered
+      current_id = @user_object_start_id
+      @user_object_start_id += 1
+      current_id
     end
   end
 end

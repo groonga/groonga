@@ -35,38 +35,6 @@ class HTTPTest < Test::Unit::TestCase
                  JSON.parse(response.body).keys.sort)
   end
 
-  def test_column_list
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "Int8",
-                                :value_type => "Object",
-                                :default_tokenizer => ""))
-
-    response = get(command_path(:column_list, :table => "users"))
-    assert_response([["id", "name", "path", "type", "flags", "domain"]],
-                    response,
-                    :content_type => "text/javascript")
-
-    response = get(command_path(:column_create,
-                                :table => "users",
-                                :name => "age",
-                                :flags => Column::SCALAR,
-                                :type => "Int8"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
-
-    response = get(command_path(:column_list, :table => "users"))
-    assert_equal("text/javascript", response.content_type)
-    column_list = JSON.parse(response.body)
-    assert_equal(2, column_list.length)
-    header = column_list[0]
-    body = column_list[1]
-    assert_equal(["id", "name", "path", "type", "flags", "domain"], header)
-    column_name = body[1]
-    assert_equal("age", column_name)
-  end
-
   def test_load
     response = get(command_path(:table_create,
                                 :name => "users",

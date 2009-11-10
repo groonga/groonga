@@ -100,6 +100,8 @@ module GroongaConstants
     UINT  = 0x00 << 3
     INT   = 0x01 << 3
     FLOAT = 0x02 << 3
+
+    VAR_SIZE = 0x01 << 14
   end
 
   module Column

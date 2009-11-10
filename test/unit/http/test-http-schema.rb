@@ -33,21 +33,13 @@ class HTTPSchemaTest < Test::Unit::TestCase
                     :content_type => "text/javascript")
   end
 
-  def test_table_list_created
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "Int8",
-                                :value_type => "Object",
-                                :default_tokenizer => ""))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
-
+  def test_table_list_exist
+    create_bookmarks_table
     response = get(command_path(:table_list))
     assert_response([
                      ["id", "name", "path", "flags", "domain"],
-                     [nil,
-                      "users",
+                     [@bookmarks_table_id,
+                      "bookmarks",
                       nil,
                       Flag::PERSISTENT | Table::PAT_KEY | Key::INT,
                       Type::INT8],
@@ -56,8 +48,64 @@ class HTTPSchemaTest < Test::Unit::TestCase
                     :content_type => "text/javascript") do |actual|
       actual[0, 1] + actual[1..-1].collect do |values|
         id, name, path, flags, domain = values
-        [nil, name, nil, flags, domain]
+        [id, name, nil, flags, domain]
       end
     end
+  end
+
+  def test_column_list_empty
+    create_bookmarks_table
+    response = get(command_path(:column_list,
+                                :table => "bookmarks"))
+    assert_response([["id", "name", "path", "type", "flags", "domain"]],
+                    response,
+                    :content_type => "text/javascript")
+  end
+
+  def test_column_list_exist
+    create_bookmarks_table
+    create_bookmark_title_column
+    response = get(command_path(:column_list,
+                                :table => "bookmarks"))
+    assert_response([
+                     ["id", "name", "path", "type", "flags", "domain"],
+                     [@bookmarks_title_column_id,
+                      "title",
+                      nil,
+                      "var",
+                      Column::SCALAR | Flag::PERSISTENT | Key::VAR_SIZE,
+                      @bookmarks_table_id]
+                    ],
+                    response,
+                    :content_type => "text/javascript") do |actual|
+      actual[0, 1] + actual[1..-1].collect do |values|
+        id, name, path, type, flags, domain = values
+        [id, name, nil, type, flags, domain]
+      end
+    end
+  end
+
+  private
+  def create_bookmarks_table
+    response = get(command_path(:table_create,
+                                :name => "bookmarks",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "Int8",
+                                :value_type => "Object",
+                                :default_tokenizer => ""))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
+    @bookmarks_table_id = object_registered
+  end
+
+  def create_bookmark_title_column
+    response = get(command_path(:column_create,
+                                :table => "bookmarks",
+                                :name => "title",
+                                :flags => Column::SCALAR,
+                                :type => "ShortText"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
+    @bookmarks_title_column_id = object_registered
   end
 end
