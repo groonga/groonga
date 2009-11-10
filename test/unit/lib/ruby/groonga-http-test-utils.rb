@@ -15,15 +15,26 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require 'groonga-test-utils'
+
 require 'net/http'
 
 gem 'json'
 require 'json'
 
 module GroongaHTTPTestUtils
-  include GroongaConstants
+  include GroongaTestUtils
+
+  def teardown_server
+    quit_server
+    super
+  end
 
   private
+  def quit_server
+    get(command_path("quit"))
+  end
+
   def get(path)
     Net::HTTP.start(@address, @port) do |http|
       http.get(path)
