@@ -124,6 +124,15 @@ class HTTPTest < Test::Unit::TestCase
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
 
+  def test_select_scorer
+    populate_users
+
+    assert_select([[2, "hayamiz", "Real Name"],
+                   [1, "ryoqun", "Real Name"]],
+                  :table => "users",
+                  :scorer => "real_name = \"Real Name\"")
+  end
+
   def test_select_output_columns
     populate_users
 
