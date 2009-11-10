@@ -96,6 +96,10 @@ module GroongaConstants
   module Key
     WITH_SIS = 0x40
     NORMALIZE = 0x80
+
+    UINT  = 0x00 << 3
+    INT   = 0x01 << 3
+    FLOAT = 0x02 << 3
   end
 
   module Column
@@ -108,5 +112,30 @@ module GroongaConstants
     WITH_SECTION = 0x80
     WITH_WEIGHT = 0x100
     WITH_POSITION = 0x200
+
+    TEMPORARY = 0x00 << 15
+    PERSISTENT = 0x01 << 15
+  end
+
+  module Type
+    VOID = 0
+    DB = 1
+    OBJECT = 2
+    BOOL = 3
+    INT8 = 4
+    UINT8 = 5
+    INT16 = 6
+    UINT16 = 7
+    INT32 = 8
+    UINT32 = 9
+    INT64 = 10
+    UINT64 = 11
+    FLOAT = 12
+    TIME = 13
+    SHORT_TEXT = 14
+    TEXT = 15
+    LONG_TEXT = 16
+    TOKYO_GEO_POINT = 17
+    WGS84_GEO_POINT = 18
   end
 end
