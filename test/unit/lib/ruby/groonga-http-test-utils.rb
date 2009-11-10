@@ -132,6 +132,7 @@ module GroongaHTTPTestUtils
       flunk("unknown content-type: #{response.content_type}")
     end
 
+    actual = yield(actual) if block_given?
     assert_equal(expected, actual)
   end
 end
