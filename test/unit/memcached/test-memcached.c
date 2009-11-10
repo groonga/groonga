@@ -23,6 +23,7 @@
 #include <unistd.h>
 
 #include "../lib/grn-assertions.h"
+#include "../lib/grn-test-memcached-assertions.h"
 #include "../lib/grn-test-server.h"
 
 /* globals */
@@ -37,7 +38,6 @@ void
 cut_setup(void)
 {
   GError *error = NULL;
-  memcached_return rc;
 
   memc = NULL;
   servers = NULL;
@@ -51,10 +51,8 @@ cut_setup(void)
 
   servers =
     memcached_servers_parse(grn_test_server_get_memcached_address(server));
-  rc = memcached_server_push(memc, servers);
-
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached server connect failed."));
+  grn_test_memcached_assert(memcached_server_push(memc, servers),
+                            cut_message("memcached server connect failed."));
 
   memcached_flush(memc, 0); /* flush immediately for debug daemon */
 }
@@ -83,13 +81,12 @@ test_set_and_get(void)
   uint32_t flags;
   memcached_return rc;
 
-  rc = memcached_set(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached set failed."));
+  grn_test_memcached_assert(
+    memcached_set(memc, "key", 3, "value", 5, 0, 0xdeadbeefU),
+    cut_message("memcached set failed."));
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached get failed."));
+  grn_test_memcached_assert(rc, cut_message("memcached get failed."));
   cut_assert_equal_string("value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 }
@@ -101,21 +98,22 @@ test_set_and_get_with_expire(void)
   memcached_return rc;
   const int timeout = 1;
 
-  rc = memcached_set(memc, "key", 1, "value", 5, timeout, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached set with expiration failed."));
+  grn_test_memcached_assert(
+    memcached_set(memc, "key", 1, "value", 5, timeout, 0xdeadbeefU),
+    cut_message("memcached set with expiration failed."));
 
   val1 = memcached_get(memc, "key", 1, &val1_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached get with expiration failed."));
+  grn_test_memcached_assert(
+    rc, cut_message("memcached get with expiration failed."));
   cut_assert_equal_string("value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 
   sleep(timeout + 1);
 
   val2 = memcached_get(memc, "key", 1, &val2_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc,
-                       cut_message("memcached get with expiration error."));
+  grn_test_memcached_assert_equal_rc(
+    MEMCACHED_NOTFOUND, rc,
+    cut_message("memcached get with expiration error."));
 }
 
 void
@@ -123,7 +121,7 @@ test_noop(void)
 {
   /* TODO: implement */
   memcached_return rc = MEMCACHED_SUCCESS;
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
+  grn_test_memcached_assert(rc);
 }
 
 void
@@ -132,17 +130,17 @@ test_memcached_add(void)
   uint32_t flags;
   memcached_return rc;
 
-  rc = memcached_add(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached add failed."));
+  grn_test_memcached_assert(
+    memcached_add(memc, "key", 3, "value", 5, 0, 0xdeadbeefU),
+    cut_message("memcached add failed."));
 
-  rc = memcached_add(memc, "key", 3, "new-value", 9, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc,
-                       cut_message("memcached add succeeded."));
+  grn_test_memcached_assert_equal_rc(
+    MEMCACHED_NOTSTORED,
+    memcached_add(memc, "key", 3, "new-value", 9, 0, 0xdeadbeefU),
+    cut_message("memcached add succeeded."));
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached get failed."));
+  grn_test_memcached_assert(rc, cut_message("memcached get failed."));
   cut_assert_equal_string("value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 }
@@ -153,23 +151,23 @@ test_memcached_replace(void)
   uint32_t flags;
   memcached_return rc;
 
-  rc = memcached_replace(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_NOTSTORED, rc,
-                       cut_message("memcached replace succeeded."));
+  grn_test_memcached_assert_equal_rc(
+    MEMCACHED_NOTSTORED,
+    memcached_replace(memc, "key", 3, "value", 5, 0, 0xdeadbeefU),
+    cut_message("memcached replace succeeded."));
 
   sleep(1);
 
-  rc = memcached_add(memc, "key", 3, "value", 5, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached add failed."));
+  grn_test_memcached_assert(
+    memcached_add(memc, "key", 3, "value", 5, 0, 0xdeadbeefU),
+    cut_message("memcached add failed."));
 
-  rc = memcached_replace(memc, "key", 3, "new-value", 9, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached replace failed."));
+  grn_test_memcached_assert(
+    memcached_replace(memc, "key", 3, "new-value", 9, 0, 0xdeadbeefU),
+    cut_message("memcached replace failed."));
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached get failed."));
+  grn_test_memcached_assert(rc, cut_message("memcached get failed."));
   cut_assert_equal_string("new-value", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 }
@@ -180,15 +178,16 @@ test_memcached_flush(void)
   uint32_t flags;
   memcached_return rc;
 
-  rc = memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached set failed."));
+  grn_test_memcached_assert(
+    memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU),
+    cut_message("memcached set failed."));
 
   memcached_flush(memc, 0);
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc,
-                       cut_message("memcached get succeeded."));
+  grn_test_memcached_assert_equal_rc(
+    MEMCACHED_NOTFOUND, rc,
+    cut_message("memcached get succeeded."));
 }
 
 void
@@ -198,23 +197,23 @@ test_memcached_flush_with_time(void)
   uint32_t flags;
   memcached_return rc;
 
-  rc = memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached set failed."));
+  grn_test_memcached_assert(
+    memcached_set(memc, "key", 3, "to be flushed", 13, 0, 0xdeadbeefU),
+    cut_message("memcached set failed."));
 
   memcached_flush(memc, sleep_time);
 
   val1 = memcached_get(memc, "key", 3, &val1_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached get failed."));
+  grn_test_memcached_assert(rc, cut_message("memcached get failed."));
   cut_assert_equal_string("to be flushed", val1);
   cut_assert_equal_uint(0xdeadbeefU, flags);
 
   sleep(sleep_time + 1);
 
   val2 = memcached_get(memc, "key", 3, &val2_len, &flags, &rc);
-  cut_assert_equal_int(MEMCACHED_NOTFOUND, rc,
-                       cut_message("memcached get succeeded."));
+  grn_test_memcached_assert_equal_rc(
+    MEMCACHED_NOTFOUND, rc,
+    cut_message("memcached get succeeded."));
 }
 
 void
@@ -228,9 +227,9 @@ test_memcached_cas(void)
   size_t key_lens[2] = { key_len, 0 };
 
   memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_SUPPORT_CAS, 1);
-  rc = memcached_set(memc, key, key_len, "cas test", 8, 0, 0xdeadbeefU);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                       cut_message("memcached set failed."));
+  grn_test_memcached_assert(
+    memcached_set(memc, key, key_len, "cas test", 8, 0, 0xdeadbeefU),
+    cut_message("memcached set failed."));
 
   {
     uint64_t cas;
@@ -238,9 +237,9 @@ test_memcached_cas(void)
     memcached_result_st results_obj;
 
     results = memcached_result_create(memc, &results_obj);
-    rc = memcached_mget(memc, keys, key_lens, 1);
-    cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                         cut_message("memcached mget failed."));
+    grn_test_memcached_assert(
+      memcached_mget(memc, keys, key_lens, 1),
+      cut_message("memcached mget failed."));
     results = memcached_fetch_result(memc, &results_obj, &rc);
     cut_assert_not_null(results,
                         cut_message("memcached fetch result failed."));
@@ -249,15 +248,15 @@ test_memcached_cas(void)
     cut_assert_operator(cas, !=, 0,
                         cut_message("memcached cas value is non-zero."));
 
-    rc = memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas);
-    cut_assert_equal_int(MEMCACHED_SUCCESS, rc,
-                         cut_message("memcached cas failed."));
+    grn_test_memcached_assert(
+      memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas),
+      cut_message("memcached cas failed."));
 
-    rc = memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas);
     /* TODO: fix rc after libmemcached fix */
-    cut_assert_equal_int(MEMCACHED_PROTOCOL_ERROR, rc,
-                         cut_message("memcached cas value is same."));
-    /* cut_assert_equal_int(MEMCACHED_DATA_EXISTS, rc); */
+    grn_test_memcached_assert_equal_rc(
+      MEMCACHED_PROTOCOL_ERROR, /* MEMCACHED_DATA_EXISTS */
+      memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas),
+      cut_message("memcached cas value is same."));
 
     memcached_result_free(&results_obj);
   }
@@ -267,15 +266,14 @@ void
 test_memcached_increment(void)
 {
   uint64_t intval;
-  memcached_return rc;
 
-  rc = memcached_increment_with_initial(memc, "incr", 4, 1, 30, 0, &intval);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
-  cut_assert_true(intval == 30);
+  grn_test_memcached_assert(
+    memcached_increment_with_initial(memc, "incr", 4, 1, 30, 0, &intval));
+  gcut_assert_equal_uint64(30, intval);
 
-  rc = memcached_increment_with_initial(memc, "incr", 4, 3, 0, 0, &intval);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
-  cut_assert_true(intval == 33);
+  grn_test_memcached_assert(
+    memcached_increment_with_initial(memc, "incr", 4, 3, 0, 0, &intval));
+  gcut_assert_equal_uint64(33, intval);
 
   fflush(stderr);
 }
@@ -284,13 +282,12 @@ void
 test_memcached_decrement(void)
 {
   uint64_t intval;
-  memcached_return rc;
 
-  rc = memcached_increment_with_initial(memc, "decr", 4, 30, 99, 0, &intval);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
-  cut_assert_true(intval == 99);
+  grn_test_memcached_assert(
+    memcached_increment_with_initial(memc, "decr", 4, 30, 99, 0, &intval));
+  gcut_assert_equal_uint64(99, intval);
 
-  rc = memcached_decrement_with_initial(memc, "decr", 4, 17, 0, 0, &intval);
-  cut_assert_equal_int(MEMCACHED_SUCCESS, rc);
-  cut_assert_true(intval == 82);
+  grn_test_memcached_assert(
+    memcached_decrement_with_initial(memc, "decr", 4, 17, 0, 0, &intval));
+  gcut_assert_equal_uint64(82, intval);
 }

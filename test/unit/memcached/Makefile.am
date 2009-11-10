@@ -16,11 +16,11 @@ AM_CFLAGS =						\
 
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -lmemcached
 
-LIBS =								\
-	$(top_builddir)/lib/libgroonga.la			\
-	$(GCUTTER_LIBS)						\
-	$(top_builddir)/test/unit/lib/libgrn-test-utils.la	\
-	$(top_builddir)/test/unit/lib/libgrn-test-server.la
+LIBS =									\
+	$(top_builddir)/lib/libgroonga.la				\
+	$(GCUTTER_LIBS)							\
+	$(top_builddir)/test/unit/lib/libgrn-test-utils.la		\
+	$(top_builddir)/test/unit/lib/libgrn-test-server.la		\
+	$(top_builddir)/test/unit/lib/libgrn-test-memcached-utils.la
 
 test_memcached_la_SOURCES			= test-memcached.c
-
