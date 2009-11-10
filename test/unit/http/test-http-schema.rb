@@ -85,6 +85,16 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
   end
 
+  def test_column_list_nonexistent
+    response = get(command_path(:column_list,
+                                :table => "nonexistent"))
+    pend("should implement error case") do
+      assert_response([[:something_error, :message]],
+                      response,
+                      :content_type => "text/javascript")
+    end
+  end
+
   private
   def create_bookmarks_table
     response = get(command_path(:table_create,
