@@ -28,8 +28,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_empty_table_list
     response = get(command_path(:table_list))
-    assert_equal("text/javascript", response.content_type)
-    assert_equal([["id", "name", "path", "flags", "domain"]],
-                 JSON.parse(response.body))
+    assert_response([["id", "name", "path", "flags", "domain"]],
+                    response,
+                    :content_type => "text/javascript")
   end
 end

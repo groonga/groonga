@@ -70,21 +70,24 @@ module GroongaHTTPTestUtils
                                 :name => "users",
                                 :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "real_name",
                                 :flags => Column::SCALAR,
                                 :type => "ShortText"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:table_create,
                                 :name => "terms",
                                 :flags => Table::PAT_KEY,
                                 :key_type => "ShortText",
                                 :default_tokenizer => "TokenBigram"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:column_create,
                                 :table => "terms",
@@ -92,20 +95,43 @@ module GroongaHTTPTestUtils
                                 :flags => Column::INDEX,
                                 :type => "users",
                                 :source => "real_name"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
   end
 
   def load_users
     values = json([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
     response = get(command_path(:load, :table => "users", :values => values))
-    assert_equal("1", response.body)
+    assert_response([[Result::SUCCESS], 1], response,
+                    :content_type => "text/javascript")
 
     values = json([{:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
     response = get(command_path(:load, :table => "users", :values => values))
-    assert_equal("1", response.body)
+    assert_response([[Result::SUCCESS], 1], response,
+                    :content_type => "text/javascript")
   end
 
   def json(object)
     JSON.generate(object)
+  end
+
+  def assert_response(expected, response, options=nil)
+    actual = nil
+    options ||= {}
+
+    if options[:content_type]
+      assert_equal(options[:content_type], response.content_type)
+    end
+
+    case response.content_type
+    when "text/javascript"
+      actual = JSON.parse(response.body)
+    when "text/html"
+      actual = response.body
+    else
+      flunk("unknown content-type: #{response.content_type}")
+    end
+
+    assert_equal(expected, actual)
   end
 end

@@ -28,36 +28,36 @@ class StaticHTMLTest < Test::Unit::TestCase
 
   def test_normal
     response = get("/index.html")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
+    assert_response(File.read(File.join(@resource_dir, "index.html")),
+                    response,
+                    :content_type => "text/html")
   end
 
   def test_with_fragment
     response = get("/index.html#anchor")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
+    assert_response(File.read(File.join(@resource_dir, "index.html")),
+                    response,
+                    :content_type => "text/html")
   end
 
   def test_with_query
     response = get("/index.html?key=value")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
+    assert_response(File.read(File.join(@resource_dir, "index.html")),
+                    response,
+                    :content_type => "text/html")
   end
 
   def test_with_query_and_fragment
     response = get("/index.html?key=value#anchor")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
+    assert_response(File.read(File.join(@resource_dir, "index.html")),
+                    response,
+                    :content_type => "text/html")
   end
 
   def test_outside
     response = get("/../index.html")
-    assert_equal("text/html", response.content_type)
-    assert_equal(File.read(File.join(@resource_dir, "index.html")),
-                 response.body)
+    assert_response(File.read(File.join(@resource_dir, "index.html")),
+                    response,
+                    :content_type => "text/html")
   end
 end

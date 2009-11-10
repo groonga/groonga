@@ -38,8 +38,9 @@ class HTTPTest < Test::Unit::TestCase
   def test_table_list
     response = get(command_path(:table_list))
     assert_equal("text/javascript", response.content_type)
-    assert_equal([["id", "name", "path", "flags", "domain"]],
-                 JSON.parse(response.body))
+    assert_response([["id", "name", "path", "flags", "domain"]],
+                    response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:table_create,
                                 :name => "users",
@@ -47,7 +48,8 @@ class HTTPTest < Test::Unit::TestCase
                                 :key_type => "Int8",
                                 :value_type => "Object",
                                 :default_tokenizer => ""))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:table_list))
     assert_equal("text/javascript", response.content_type)
@@ -69,16 +71,17 @@ class HTTPTest < Test::Unit::TestCase
                                 :default_tokenizer => ""))
 
     response = get(command_path(:column_list, :table => "users"))
-    assert_equal("text/javascript", response.content_type)
-    assert_equal([["id", "name", "path", "type", "flags", "domain"]],
-                 JSON.parse(response.body).sort)
+    assert_response([["id", "name", "path", "type", "flags", "domain"]],
+                    response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "age",
                                 :flags => Column::SCALAR,
                                 :type => "Int8"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:column_list, :table => "users"))
     assert_equal("text/javascript", response.content_type)
@@ -96,27 +99,30 @@ class HTTPTest < Test::Unit::TestCase
                                 :name => "users",
                                 :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "real_name",
                                 :flags => Column::SCALAR,
                                 :type => "ShortText"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
     response = get(command_path(:load, :table => "users", :values => values))
-    assert_equal("1", response.body)
+    assert_response([[Result::SUCCESS], 1], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:select, :table => "users"))
-    assert_equal("text/javascript", response.content_type)
-    assert_equal([[Result::SUCCESS],
-                  [[1],
-                   ["_id", "_key", "real_name"],
-                   [1, "ryoqun", "Ryo Onodera"]
-                  ]],
-                 JSON.parse(response.body))
+    assert_response([[Result::SUCCESS],
+                     [[1],
+                      ["_id", "_key", "real_name"],
+                      [1, "ryoqun", "Ryo Onodera"]
+                     ]],
+                    response,
+                    :content_type => "text/javascript")
   end
 
   def test_select
@@ -124,28 +130,32 @@ class HTTPTest < Test::Unit::TestCase
                                 :name => "users",
                                 :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:column_create,
                                 :table => "users",
                                 :name => "real_name",
                                 :flags => Column::SCALAR,
                                 :type => "ShortText"))
-    assert_equal("true", response.body)
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "text/javascript")
 
     values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
     response = get(command_path(:load, :table => "users", :values => values))
-    assert_equal("1", response.body)
+    assert_response([[Result::SUCCESS], 1], response,
+                    :content_type => "text/javascript")
 
     response = get(command_path(:select,
                                 :table => "users",
                                 :query => "real_name:\"Ryo Onodera\""))
-    assert_equal([[Result::SUCCESS],
-                  [[1],
-                   ["_id", "_key", "real_name"],
-                   [1, "ryoqun", "Ryo Onodera"]
-                  ]],
-                 JSON.parse(response.body))
+    assert_response([[Result::SUCCESS],
+                     [[1],
+                      ["_id", "_key", "real_name"],
+                      [1, "ryoqun", "Ryo Onodera"]
+                     ]],
+                    response,
+                    :content_type => "text/javascript")
   end
 
   def test_select_match_column
@@ -176,12 +186,12 @@ class HTTPTest < Test::Unit::TestCase
   private
   def assert_select(expected, parameters)
     response = get(command_path(:select, parameters))
-    assert_equal("text/javascript", response.content_type)
-    assert_equal([[Result::SUCCESS],
-                  [[expected.size],
-                   ["_id", "_key", "real_name"],
-                   *expected
-                  ]],
-                 JSON.parse(response.body))
+    assert_response([[Result::SUCCESS],
+                     [[expected.size],
+                      ["_id", "_key", "real_name"],
+                      *expected
+                     ]],
+                    response,
+                    :content_type => "text/javascript")
   end
 end
