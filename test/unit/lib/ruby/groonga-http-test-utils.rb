@@ -26,7 +26,10 @@ module GroongaHTTPTestUtils
   include GroongaTestUtils
 
   def teardown_server
-    quit_server
+    begin
+      quit_server
+    rescue Timeout::Error
+    end
     super
   end
 
