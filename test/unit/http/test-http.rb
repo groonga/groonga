@@ -189,9 +189,13 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:select,
                                 :table => "users",
                                 :output_columns => "real_name"))
-    assert_equal([[Result::SUCCESS],
-                  [[2], ["real_name"], ["Yuto Hayamizu"], ["Ryo Onodera"]]],
-                 JSON.parse(response.body))
+    assert_response([[Result::SUCCESS],
+                     [[2],
+                      ["real_name"],
+                      ["Yuto Hayamizu"],
+                      ["Ryo Onodera"]]],
+                    response,
+                    :content_type => "text/javascript")
   end
 
   private
