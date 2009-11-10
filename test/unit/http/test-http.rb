@@ -175,51 +175,6 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   private
-  def populate_users
-    create_users_table
-    load_users
-  end
-
-  def create_users_table
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "ShortText"))
-    assert_equal("true", response.body)
-
-    response = get(command_path(:column_create,
-                                :table => "users",
-                                :name => "real_name",
-                                :flags => Column::SCALAR,
-                                :type => "ShortText"))
-    assert_equal("true", response.body)
-
-    response = get(command_path(:table_create,
-                                :name => "terms",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "ShortText",
-                                :default_tokenizer => "TokenBigram"))
-    assert_equal("true", response.body)
-
-    response = get(command_path(:column_create,
-                                :table => "terms",
-                                :name => "users_real_name",
-                                :flags => Column::INDEX,
-                                :type => "users",
-                                :source => "real_name"))
-    assert_equal("true", response.body)
-  end
-
-  def load_users
-    values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
-    response = get(command_path(:load, :table => "users", :values => values))
-    assert_equal("1", response.body)
-
-    values = JSON.generate([{:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
-    response = get(command_path(:load, :table => "users", :values => values))
-    assert_equal("1", response.body)
-  end
-
   def assert_select(expected, parameters)
     response = get(command_path(:select, parameters))
     assert_equal("text/javascript", response.content_type)
