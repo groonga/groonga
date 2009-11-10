@@ -183,6 +183,17 @@ class HTTPTest < Test::Unit::TestCase
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
 
+  def test_select_output_columns
+    populate_users
+
+    response = get(command_path(:select,
+                                :table => "users",
+                                :output_columns => "real_name"))
+    assert_equal([[Result::SUCCESS],
+                  [[2], ["real_name"], ["Yuto Hayamizu"], ["Ryo Onodera"]]],
+                 JSON.parse(response.body))
+  end
+
   private
   def assert_select(expected, parameters)
     response = get(command_path(:select, parameters))
