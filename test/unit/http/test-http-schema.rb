@@ -144,6 +144,42 @@ class HTTPSchemaTest < Test::Unit::TestCase
                     :content_type => "application/json")
   end
 
+  def test_table_create_with_dot_name
+    response = get(command_path(:table_create, :name => "mori.daijiro"))
+    assert_response([[Result::INVALID_ARGUMENT, "name contains '.'"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_table_create_with_under_score_started_name
+    response = get(command_path(:table_create, :name => "_mori"))
+    assert_response([[Result::INVALID_ARGUMENT, "name contains '_'"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_table_create_with_under_score_name
+    response = get(command_path(:table_create, :name => "mori_daijiro"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_table_create_with_colon_name
+    response = get(command_path(:table_create, :name => "daijiro:mori"))
+    assert_response([[Result::INVALID_ARGUMENT, "name contains ':'"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_table_create_with_duplicated_name
+    response = get(command_path(:table_create, :name => "table_create"))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "already used name was assigned"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
   def test_full_text_search
     create_bookmarks_table
     create_bookmark_title_column
