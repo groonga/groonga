@@ -140,6 +140,37 @@ module GroongaHTTPTestUtils
     end
   end
 
+  def create_comments_table
+    response = get(command_path(:table_create,
+                                :name => "comments",
+                                :flags => Table::NO_KEY))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+
+    response = get(command_path(:column_create,
+                                :table => "comments",
+                                :name => "text",
+                                :flags => Column::SCALAR,
+                                :type => "ShortText"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+
+    response = get(command_path(:column_create,
+                                :table => "comments",
+                                :name => "author",
+                                :flags => Column::SCALAR,
+                                :type => "users"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+  end
+
+  def load_comments
+    load("comments",
+         [[:text, :author],
+          ["Ruby rocks", "ryoqun"],
+          ["Groonga rocks", "hayamiz"]])
+  end
+
   def json(object)
     JSON.generate(object)
   end

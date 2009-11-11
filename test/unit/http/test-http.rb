@@ -175,4 +175,16 @@ class HTTPTest < Test::Unit::TestCase
                   {:table => "bookmarks", :offset => 3, :limit => 4},
                   :n_hits => records.size)
   end
+
+  def test_select_accessor
+    create_users_table
+    load_users
+    create_comments_table
+    load_comments
+
+    assert_select(["_id", "text", "author"],
+                  [[2, "Groonga rocks", "hayamiz"]],
+                  :table => "comments",
+                  :query => "author.real_name:\"Yuto Hayamizu\"")
+  end
 end
