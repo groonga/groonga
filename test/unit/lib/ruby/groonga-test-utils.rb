@@ -21,7 +21,8 @@ require 'groonga-constants'
 module GroongaTestUtils
   include GroongaConstants
 
-  def setup_server
+  def setup_server(protocol=nil)
+    @protocol = protocol
     @groonga = guess_groonga_path
     @resource_dir = guess_resource_dir
     @tmp_dir = File.join(File.dirname(__FILE__), "tmp")
@@ -59,14 +60,15 @@ module GroongaTestUtils
   end
 
   def start_server
+    arguments = ["-s",
+                 "-i", @address,
+                 "-p", @port.to_s,
+                 "-e", @encoding,
+                 "--admin-html-path", @resource_dir]
+    arguments.concat(["--protocol", @protocol]) if @protocol
+    arguments.concat(["-n", @database_path])
     @groonga_pid = fork do
-      exec(@groonga,
-           "-s",
-           "-i", @address,
-           "-p", @port.to_s,
-           "-e", @encoding,
-           "--admin-html-path", @resource_dir,
-           "-n", @database_path)
+      exec(@groonga, *arguments)
     end
 
     Timeout.timeout(1) do

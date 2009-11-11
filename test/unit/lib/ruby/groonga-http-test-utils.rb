@@ -25,6 +25,10 @@ require 'json'
 module GroongaHTTPTestUtils
   include GroongaTestUtils
 
+  def setup_server
+    super("http")
+  end
+
   def teardown_server
     begin
       shutdown_server
