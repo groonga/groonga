@@ -154,4 +154,20 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :table => "comments",
                   :query => "author.real_name:\"Yuto Hayamizu\"")
   end
+
+  def test_drilldown
+    create_users_table
+    load_users
+    create_comments_table
+    load_comments
+
+    assert_select(["_id", "text", "author"],
+                  [[1,"Ruby rocks","ryoqun"], [2,"Groonga rocks","hayamiz"]],
+                  {:table => "comments",
+                   :drilldown => "author",
+                   :drilldown_output_columns => "real_name",
+                   :drilldown_limit => 10},
+                  :expected_drilldown => [
+                   [[2], ["real_name"], ["Ryo Onodera"], ["Yuto Hayamizu"]]])
+  end
 end

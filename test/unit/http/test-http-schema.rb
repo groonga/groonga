@@ -35,12 +35,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_table_list_exist
     create_bookmarks_table
+
     response = get(command_path(:table_list))
+    normalized_path = "/path/to/table"
     assert_response([
                      ["id", "name", "path", "flags", "domain"],
                      [@bookmarks_table_id,
                       "bookmarks",
-                      nil,
+                      normalized_path,
                       Flag::PERSISTENT | Table::PAT_KEY | Key::VAR_SIZE,
                       Type::SHORT_TEXT],
                     ],
@@ -48,7 +50,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                     :content_type => "application/json") do |actual|
       actual[0, 1] + actual[1..-1].collect do |values|
         id, name, path, flags, domain = values
-        [id, name, nil, flags, domain]
+        path = normalized_path if path
+        [id, name, path, flags, domain]
       end
     end
   end
@@ -153,7 +156,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_table_create_with_under_score_started_name
     response = get(command_path(:table_create, :name => "_mori"))
-    assert_response([[Result::INVALID_ARGUMENT, "name contains '_'"]],
+    assert_response([[Result::INVALID_ARGUMENT, "name starts with '_'"]],
                     response,
                     :content_type => "application/json")
   end
@@ -178,6 +181,266 @@ class HTTPSchemaTest < Test::Unit::TestCase
                       "already used name was assigned"]],
                     response,
                     :content_type => "application/json")
+  end
+
+  def test_table_create_with_duplicated_name
+    response = get(command_path(:table_create, :name => "table_create"))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "already used name was assigned"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_table_create_hash
+    response = get(command_path(:table_create, :name => "users"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::HASH_KEY,
+                        Type::VOID]])
+  end
+
+  def test_table_create_hash_with_normalize_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Key::NORMALIZE))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::HASH_KEY | Key::NORMALIZE,
+                        Type::VOID]])
+  end
+
+  def test_table_create_hash_with_normalized_string_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Key::NORMALIZE,
+                                :key_type => "ShortText"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::HASH_KEY |
+                        Key::NORMALIZE | Key::VAR_SIZE,
+                        Type::SHORT_TEXT]])
+  end
+
+  def test_table_create_hash_with_long_size_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :key_type => "Text"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_sis
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Key::SIS,
+                                :key_type => "ShortText"))
+    assert_response([[Result::UNKNOWN_ERROR, "SIS is invalid flag for hash"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_nonexistent_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :key_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_invalid_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :key_type => "table_create"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :value_type => "Int32"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::HASH_KEY,
+                        Type::VOID]])
+  end
+
+  def test_table_create_hash_with_nonexistent_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :value_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_patricia_trie
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY,
+                        Type::VOID]])
+  end
+
+  def test_table_create_patricia_trie_with_normalize_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY | Key::NORMALIZE))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY | Key::NORMALIZE,
+                        Type::VOID]])
+  end
+
+  def test_table_create_patricia_trie_with_normalized_string_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY | Key::NORMALIZE,
+                                :key_type => "ShortText"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY |
+                        Key::NORMALIZE | Key::VAR_SIZE,
+                        Type::SHORT_TEXT]])
+  end
+
+  def test_table_create_patricia_trie_with_long_size_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "Text"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_patricia_trie_with_sis
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY | Key::SIS,
+                                :key_type => "ShortText"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY |
+                        Key::VAR_SIZE | Key::SIS,
+                        Type::SHORT_TEXT]])
+  end
+
+  def test_table_create_patricia_trie_with_nonexistent_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_patricia_trie_with_invalid_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "table_create"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_patricia_trie_with_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :value_type => "Int32"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY,
+                        Type::VOID]])
+  end
+
+  def test_table_create_patricia_trie_with_nonexistent_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :value_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_array
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::NO_KEY))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::NO_KEY,
+                        Type::VOID]])
+  end
+
+  def test_table_create_view
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::VIEW))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::VIEW,
+                        Type::VOID]])
   end
 
   def test_full_text_search
@@ -237,5 +500,24 @@ class HTTPSchemaTest < Test::Unit::TestCase
     assert_response([[Result::SUCCESS]], response,
                     :content_type => "application/json")
     @bookmarks_title_column_id = object_registered
+  end
+
+  def assert_table_list(expected)
+    response = get(command_path(:table_list))
+    expected = expected.collect do |values|
+      name, flags, domain = values
+      [nil, name, nil, flags, domain]
+    end
+    assert_response([
+                     ["id", "name", "path", "flags", "domain"],
+                     *expected
+                    ],
+                    response,
+                    :content_type => "application/json") do |actual|
+      actual[0, 1] + actual[1..-1].collect do |values|
+        id, name, path, flags, domain = values
+        [nil, name, nil, flags, domain]
+      end
+    end
   end
 end

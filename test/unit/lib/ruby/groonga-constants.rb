@@ -94,8 +94,8 @@ module GroongaConstants
   end
 
   module Key
-    WITH_SIS = 0x40
-    NORMALIZE = 0x80
+    SIS       = 0x01 << 6
+    NORMALIZE = 0x01 << 7
 
     UINT  = 0x00 << 3
     INT   = 0x01 << 3
