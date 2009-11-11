@@ -136,6 +136,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
   end
 
+  def test_table_create_without_name
+    response = get(command_path(:table_create))
+    assert_response([[Result::UNKNOWN_ERROR,
+                      "should not create anonymous table"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
   def test_full_text_search
     create_bookmarks_table
     create_bookmark_title_column
