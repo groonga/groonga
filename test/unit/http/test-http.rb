@@ -102,7 +102,8 @@ class HTTPTest < Test::Unit::TestCase
   def test_select_match_column
     populate_users
 
-    assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
                   :match_column => "real_name",
                   :query => "Yuto Hayamizu")
@@ -111,7 +112,8 @@ class HTTPTest < Test::Unit::TestCase
   def test_select_query
     populate_users
 
-    assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"")
   end
@@ -119,7 +121,8 @@ class HTTPTest < Test::Unit::TestCase
   def test_select_filter
     populate_users
 
-    assert_select([[2, "hayamiz", "Yuto Hayamizu"]],
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
@@ -127,7 +130,8 @@ class HTTPTest < Test::Unit::TestCase
   def test_select_scorer
     populate_users
 
-    assert_select([[2, "hayamiz", "Real Name"],
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Real Name"],
                    [1, "ryoqun", "Real Name"]],
                   :table => "users",
                   :scorer => "real_name = \"Real Name\"")
@@ -190,11 +194,11 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   private
-  def assert_select(expected, parameters)
+  def assert_select(header, expected, parameters)
     response = get(command_path(:select, parameters))
     assert_response([[Result::SUCCESS],
                      [[expected.size],
-                      ["_id", "_key", "real_name"],
+                      header,
                       *expected
                      ]],
                     response,
