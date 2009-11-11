@@ -37,12 +37,16 @@ module GroongaTestUtils
   end
 
   def teardown_server
-    Process.kill(:TERM, @groonga_pid)
-    begin
-      Process.waitpid(@groonga_pid)
-    rescue Errno::ECHILD
+    if @groonga_pid
+      Process.kill(:TERM, @groonga_pid)
+      begin
+        Process.waitpid(@groonga_pid)
+      rescue Errno::ECHILD
+      end
+      @groonga_pid = nil
     end
-    FileUtils.rm_r(@tmp_dir)
+
+    FileUtils.rm_rf(@tmp_dir) if @tmp_dir
   end
 
   private
@@ -71,20 +75,31 @@ module GroongaTestUtils
       exec(@groonga, *arguments)
     end
 
-    Timeout.timeout(1) do
-      loop do
-        begin
-          TCPSocket.new(@address, @port)
-          break
-        rescue SystemCallError
+    begin
+      timeout(1) do
+        loop do
+          begin
+            TCPSocket.new(@address, @port)
+            break
+          rescue SystemCallError
+          end
         end
       end
+    rescue
+      @groonga_pid = nil
+      raise
     end
+  end
 
-    def object_registered
-      current_id = @user_object_start_id
-      @user_object_start_id += 1
-      current_id
-    end
+  def object_registered
+    current_id = @user_object_start_id
+    @user_object_start_id += 1
+    current_id
+  end
+
+  def timeout(seconds, &block)
+    Timeout.timeout(seconds, &block)
+  rescue Timeout::Error
+    raise RuntimeError, "timeout #{seconds}s", [caller[0]] + $@
   end
 end

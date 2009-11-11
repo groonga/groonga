@@ -31,7 +31,7 @@ module GroongaHTTPTestUtils
 
   def teardown_server
     begin
-      shutdown_server
+      shutdown_server if @groonga_pid
     rescue Timeout::Error
     end
     super
