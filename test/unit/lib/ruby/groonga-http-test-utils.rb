@@ -202,11 +202,14 @@ module GroongaHTTPTestUtils
 
   def assert_select(header, expected, parameters, options={}, &block)
     response = get(command_path(:select, parameters))
+    drilldown_records = options[:expected_drilldown] || []
+
     assert_response([[Result::SUCCESS],
                      [[options[:n_hits] || expected.size],
                       header,
                       *expected
-                     ]],
+                     ],
+                     *drilldown_records],
                     response,
                     :content_type => "application/json",
                     &block)
