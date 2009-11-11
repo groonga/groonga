@@ -41,8 +41,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                      [@bookmarks_table_id,
                       "bookmarks",
                       nil,
-                      Flag::PERSISTENT | Table::PAT_KEY | Key::INT,
-                      Type::INT8],
+                      Flag::PERSISTENT | Table::PAT_KEY | Key::VAR_SIZE,
+                      Type::SHORT_TEXT],
                     ],
                     response,
                     :content_type => "application/json") do |actual|
@@ -95,12 +95,47 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
   end
 
+  def test_full_text_search
+    create_bookmarks_table
+    create_bookmark_title_column
+
+    response = get(command_path(:table_create,
+                                :name => "terms",
+                                :flags => Table::PAT_KEY | Key::NORMALIZE,
+                                :key_type => "ShortText",
+                                :default_tokenizer => "TokenBigram"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+
+    response = get(command_path(:column_create,
+                                :table => "terms",
+                                :name => "bookmarks-title",
+                                :flags => Column::INDEX | Flag::WITH_POSITION,
+                                :type => "bookmarks",
+                                :source => "title"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+
+    groonga_title = "groonga - an open-source fulltext search engine " +
+                    "and column store."
+    senna_title = "Senna: An Embeddable Fulltext Search Engine"
+    load("bookmarks",
+         [{"_key" => "groonga", "title" => groonga_title},
+          {"_key" => "senna", "title" => senna_title}])
+
+    assert_select(["_key", "title"],
+                  [["groonga", groonga_title]],
+                  :table => "bookmarks",
+                  :output_columns => "_key title",
+                  :query => "title:@column")
+  end
+
   private
   def create_bookmarks_table
     response = get(command_path(:table_create,
                                 :name => "bookmarks",
                                 :flags => Table::PAT_KEY,
-                                :key_type => "Int8",
+                                :key_type => "ShortText",
                                 :value_type => "Object",
                                 :default_tokenizer => ""))
     assert_response([[Result::SUCCESS]], response,
