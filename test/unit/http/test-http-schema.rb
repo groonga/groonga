@@ -233,8 +233,65 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_hash_with_long_size_key
     response = get(command_path(:table_create,
                                 :name => "users",
-                                :flags => Key::NORMALIZE,
                                 :key_type => "Text"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_sis
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Key::SIS,
+                                :key_type => "ShortText"))
+    assert_response([[Result::UNKNOWN_ERROR, "SIS is invalid flag for hash"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_nonexistent_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :key_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_invalid_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :key_type => "table_create"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_hash_with_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :value_type => "Int32"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::HASH_KEY,
+                        Type::VOID]])
+  end
+
+  def test_table_create_hash_with_nonexistent_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :value_type => "nonexistent"))
     assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
                     response,
                     :content_type => "application/json")
