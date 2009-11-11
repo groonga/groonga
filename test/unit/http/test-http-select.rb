@@ -1,0 +1,157 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009  Yuto HAYAMIZU <y.hayamizu@gmail.com>
+# Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License version 2.1 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+class HTTPSelectTest < Test::Unit::TestCase
+  include GroongaHTTPTestUtils
+
+  def setup
+    setup_server
+  end
+
+  def teardown
+    teardown_server
+  end
+
+  def test_select
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "ShortText"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+
+    response = get(command_path(:column_create,
+                                :table => "users",
+                                :name => "real_name",
+                                :flags => Column::SCALAR,
+                                :type => "ShortText"))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+
+    values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
+    response = get(command_path(:load, :table => "users", :values => values))
+    assert_response([[Result::SUCCESS], 1], response,
+                    :content_type => "application/json")
+
+    assert_select(["_id", "_key", "real_name"],
+                  [[1, "ryoqun", "Ryo Onodera"]],
+                  :table => "users",
+                  :query => "real_name:\"Ryo Onodera\"")
+  end
+
+  def test_match_column
+    populate_users
+
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :match_column => "real_name",
+                  :query => "Yuto Hayamizu")
+  end
+
+  def test_query
+    populate_users
+
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :query => "real_name:\"Yuto Hayamizu\"")
+  end
+
+  def test_filter
+    populate_users
+
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :filter => "real_name == \"Yuto Hayamizu\"")
+  end
+
+  def test_scorer
+    populate_users
+
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Real Name"],
+                   [1, "ryoqun", "Real Name"]],
+                  :table => "users",
+                  :scorer => "real_name = \"Real Name\"")
+  end
+
+  def test_output_columns
+    populate_users
+
+    assert_select(["real_name"],
+                  [["Yuto Hayamizu"],
+                   ["Ryo Onodera"]],
+                  :table => "users",
+                  :output_columns => "real_name")
+  end
+
+  def test_sortby
+    create_bookmarks_table
+    records = load_bookmarks((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  :table => "bookmarks",
+                  :sortby => "_key")
+  end
+
+  def test_offset
+    create_bookmarks_table
+    records = load_bookmarks
+
+    assert_select(["_id", "_key"],
+                  records[3..-1],
+                  {:table => "bookmarks", :offset => 3},
+                  :n_hits => records.size)
+  end
+
+  def test_limit
+    create_bookmarks_table
+    records = load_bookmarks
+
+    assert_select(["_id", "_key"],
+                  records[0, 4],
+                  {:table => "bookmarks", :limit => 4},
+                  :n_hits => records.size)
+  end
+
+  def test_offset_and_limit
+    create_bookmarks_table
+    records = load_bookmarks
+
+    assert_select(["_id", "_key"],
+                  records[3, 4],
+                  {:table => "bookmarks", :offset => 3, :limit => 4},
+                  :n_hits => records.size)
+  end
+
+  def test_accessor
+    create_users_table
+    load_users
+    create_comments_table
+    load_comments
+
+    assert_select(["_id", "text", "author"],
+                  [[2, "Groonga rocks", "hayamiz"]],
+                  :table => "comments",
+                  :query => "author.real_name:\"Yuto Hayamizu\"")
+  end
+end
