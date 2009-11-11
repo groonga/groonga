@@ -683,7 +683,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
         gen_pathname(((grn_db *)db)->keys->io->path, buffer, id);
         path = buffer;
       } else {
-        ERR(GRN_INVALID_ARGUMENT, "path not assigend for persistent table");
+        ERR(GRN_INVALID_ARGUMENT, "path not assigned for persistent table");
         GRN_API_RETURN(NULL);
       }
     } else {
@@ -691,11 +691,11 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     }
   } else {
     if (path) {
-      ERR(GRN_INVALID_ARGUMENT, "path assigend for temporary table");
+      ERR(GRN_INVALID_ARGUMENT, "path assigned for temporary table");
       GRN_API_RETURN(NULL);
     }
     if (PERSISTENT_DB_P(db) && name && name_size) {
-      ERR(GRN_INVALID_ARGUMENT, "name assigend for temporary table");
+      ERR(GRN_INVALID_ARGUMENT, "name assigned for temporary table");
       GRN_API_RETURN(NULL);
     }
   }
@@ -718,7 +718,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     break;
   case GRN_OBJ_TABLE_NO_KEY :
     if (key_type) {
-      GRN_LOG(ctx, GRN_LOG_WARNING, "key_type assigend for no key table");
+      GRN_LOG(ctx, GRN_LOG_WARNING, "key_type assigned for no key table");
     }
     if (value_type && value_type->header.type == GRN_TABLE_VIEW) {
       res = grn_view_transcript(ctx, path, key_type, value_type, flags);
@@ -2583,7 +2583,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         gen_pathname(s->keys->io->path, buffer, id);
         path = buffer;
       } else {
-        ERR(GRN_INVALID_ARGUMENT, "path not assigend for persistent table");
+        ERR(GRN_INVALID_ARGUMENT, "path not assigned for persistent table");
         goto exit;
       }
     } else {
@@ -2591,7 +2591,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     }
   } else {
     if (path) {
-      ERR(GRN_INVALID_ARGUMENT, "path assigend for temporary table");
+      ERR(GRN_INVALID_ARGUMENT, "path assigned for temporary table");
       goto exit;
     }
   }
@@ -4836,7 +4836,7 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size
     if (!(id = grn_pat_add(ctx, s->keys, name, name_size, NULL, &added))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "grn_pat_add failed");
     } else if (!added) {
-      ERR(GRN_INVALID_ARGUMENT, "already used name was assigend");
+      ERR(GRN_INVALID_ARGUMENT, "already used name was assigned");
       id = GRN_ID_NIL;
     }
   } else if (ctx->impl && ctx->impl->values) {
