@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.2.12. shutdown &mdash; groonga v0.1.4 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.4',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.4 documentation" href="../index.html" />
+    <link rel="up" title="2.2. 組み込みコマンド一覧" href="../commands.html" />
+    <link rel="next" title="2.2.13. status" href="status.html" />
+    <link rel="prev" title="2.2.11. set" href="set.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="status.html" title="2.2.13. status"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="set.html" title="2.2.11. set"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" accesskey="U">2.2. 組み込みコマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="shutdown">
+<h1>2.2.12. shutdown<a class="headerlink" href="#shutdown" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>2.2.12.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>shutdown - サーバプロセスの停止</p>
+</div>
+<div class="section" id="id2">
+<h2>2.2.12.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>shutdown [output_type]
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>2.2.12.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
+<p>shutdownは、接続しているgroongaサーバプロセスを停止します。</p>
+</div>
+<div class="section" id="id4">
+<h2>2.2.12.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">output_type</span></tt></p>
+<blockquote>
+出力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id9" id="id5">[1]</a></blockquote>
+</div>
+<div class="section" id="id6">
+<h2>2.2.12.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>リターンコード <a class="footnote-reference" href="#id10" id="id7">[2]</a></p>
+<blockquote>
+grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す文字列が返されます。</blockquote>
+</div>
+<div class="section" id="id8">
+<h2>2.2.12.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>shutdown
+[[0]]
+</pre></div>
+</div>
+<p class="rubric">脚注</p>
+<table class="docutils footnote" frame="void" id="id9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td>tsv,xml出力はv1.0でサポートされます。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td>リターンコード出力はv1.0でサポートされます。</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">2.2.12. shutdown</a><ul>
+<li><a class="reference external" href="#id1">2.2.12.1. 名前</a></li>
+<li><a class="reference external" href="#id2">2.2.12.2. 書式</a></li>
+<li><a class="reference external" href="#id3">2.2.12.3. 説明</a></li>
+<li><a class="reference external" href="#id4">2.2.12.4. 引数</a></li>
+<li><a class="reference external" href="#id6">2.2.12.5. 返値</a></li>
+<li><a class="reference external" href="#id8">2.2.12.6. 例</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="set.html"
+                                  title="previous chapter">2.2.11. set</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="status.html"
+                                  title="next chapter">2.2.13. status</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/commands/shutdown.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="status.html" title="2.2.13. status"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="set.html" title="2.2.11. set"
+             >previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" >2.2. 組み込みコマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>

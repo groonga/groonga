@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.2.15. table_list &mdash; groonga v0.1.4 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.4',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.4 documentation" href="../index.html" />
+    <link rel="up" title="2.2. 組み込みコマンド一覧" href="../commands.html" />
+    <link rel="next" title="2.2.16. view_add" href="view_add.html" />
+    <link rel="prev" title="2.2.14. table_create" href="table_create.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="view_add.html" title="2.2.16. view_add"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="table_create.html" title="2.2.14. table_create"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" accesskey="U">2.2. 組み込みコマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="table-list">
+<h1>2.2.15. table_list<a class="headerlink" href="#table-list" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>2.2.15.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>table_list - DBに定義されているテーブルをリスト表示</p>
+</div>
+<div class="section" id="id2">
+<h2>2.2.15.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>table_list [output_type]
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>2.2.15.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
+<p>table_listは、DBに定義されているテーブルのリストを表示します。</p>
+</div>
+<div class="section" id="id4">
+<h2>2.2.15.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">output_type</span></tt></dt>
+<dd>出力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id9" id="id5">[1]</a></dd>
+</dl>
+</div>
+<div class="section" id="id6">
+<h2>2.2.15.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>リターンコード <a class="footnote-reference" href="#id10" id="id7">[2]</a></p>
+<blockquote>
+grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す文字列が返されます。</blockquote>
+<p><tt class="docutils literal"><span class="pre">id</span></tt></p>
+<blockquote>
+テーブルオブジェクトに割り当てられたID</blockquote>
+<p><tt class="docutils literal"><span class="pre">name</span></tt></p>
+<blockquote>
+テーブル名</blockquote>
+<p><tt class="docutils literal"><span class="pre">path</span></tt></p>
+<blockquote>
+テーブルのレコードを格納するファイル名</blockquote>
+<p><tt class="docutils literal"><span class="pre">flags</span></tt></p>
+<blockquote>
+テーブルのflags属性</blockquote>
+<p><tt class="docutils literal"><span class="pre">domain</span></tt></p>
+<blockquote>
+主キー値の属する型のID</blockquote>
+</div>
+<div class="section" id="id8">
+<h2>2.2.15.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>table_list Entry --output_type json
+[[0],[[&quot;id&quot;,&quot;name&quot;,&quot;path&quot;,&quot;flags&quot;,&quot;domain&quot;],[256,&quot;Entry&quot;,&quot;/tmp/hoge.0000100&quot;,49152,14],[257,&quot;Term&quot;,&quot;/tmp/hoge.0000101&quot;,49152,14]]]
+</pre></div>
+</div>
+<p class="rubric">脚注</p>
+<table class="docutils footnote" frame="void" id="id9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td>tsv,xml出力はv1.0でサポートされます。</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td>リターンコード出力はv1.0でサポートされます。</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">2.2.15. table_list</a><ul>
+<li><a class="reference external" href="#id1">2.2.15.1. 名前</a></li>
+<li><a class="reference external" href="#id2">2.2.15.2. 書式</a></li>
+<li><a class="reference external" href="#id3">2.2.15.3. 説明</a></li>
+<li><a class="reference external" href="#id4">2.2.15.4. 引数</a></li>
+<li><a class="reference external" href="#id6">2.2.15.5. 返値</a></li>
+<li><a class="reference external" href="#id8">2.2.15.6. 例</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="table_create.html"
+                                  title="previous chapter">2.2.14. table_create</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="view_add.html"
+                                  title="next chapter">2.2.16. view_add</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/commands/table_list.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="view_add.html" title="2.2.16. view_add"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="table_create.html" title="2.2.14. table_create"
+             >previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" >2.2. 組み込みコマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>
