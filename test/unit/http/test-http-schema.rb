@@ -202,6 +202,46 @@ class HTTPSchemaTest < Test::Unit::TestCase
                         Type::VOID]])
   end
 
+  def test_table_create_hash_with_normalize_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Key::NORMALIZE))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::HASH_KEY | Key::NORMALIZE,
+                        Type::VOID]])
+  end
+
+  def test_table_create_hash_with_normalized_string_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Key::NORMALIZE,
+                                :key_type => "ShortText"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::HASH_KEY |
+                        Key::NORMALIZE | Key::VAR_SIZE,
+                        Type::SHORT_TEXT]])
+  end
+
+  def test_table_create_hash_with_long_size_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Key::NORMALIZE,
+                                :key_type => "Text"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
   def test_table_create_patricia_trie
     response = get(command_path(:table_create,
                                 :name => "users",
