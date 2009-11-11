@@ -164,4 +164,16 @@ module GroongaHTTPTestUtils
     actual = yield(actual) if block_given?
     assert_equal(expected, actual)
   end
+
+  def assert_select(header, expected, parameters, options={}, &block)
+    response = get(command_path(:select, parameters))
+    assert_response([[Result::SUCCESS],
+                     [[options[:n_hits] || expected.size],
+                      header,
+                      *expected
+                     ]],
+                    response,
+                    :content_type => "application/json",
+                    &block)
+  end
 end

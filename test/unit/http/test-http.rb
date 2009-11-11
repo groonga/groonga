@@ -175,16 +175,4 @@ class HTTPTest < Test::Unit::TestCase
                   {:table => "bookmarks", :offset => 3, :limit => 4},
                   :n_hits => records.size)
   end
-
-  private
-  def assert_select(header, expected, parameters, options={})
-    response = get(command_path(:select, parameters))
-    assert_response([[Result::SUCCESS],
-                     [[options[:n_hits] || expected.size],
-                      header,
-                      *expected
-                     ]],
-                    response,
-                    :content_type => "application/json")
-  end
 end
