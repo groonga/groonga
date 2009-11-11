@@ -56,14 +56,9 @@ class HTTPTest < Test::Unit::TestCase
     assert_response([[Result::SUCCESS], 1], response,
                     :content_type => "application/json")
 
-    response = get(command_path(:select, :table => "users"))
-    assert_response([[Result::SUCCESS],
-                     [[1],
-                      ["_id", "_key", "real_name"],
-                      [1, "ryoqun", "Ryo Onodera"]
-                     ]],
-                    response,
-                    :content_type => "application/json")
+    assert_select(["_id", "_key", "real_name"],
+                  [[1, "ryoqun", "Ryo Onodera"]],
+                  :table => "users")
   end
 
   def test_select
@@ -87,16 +82,10 @@ class HTTPTest < Test::Unit::TestCase
     assert_response([[Result::SUCCESS], 1], response,
                     :content_type => "application/json")
 
-    response = get(command_path(:select,
-                                :table => "users",
-                                :query => "real_name:\"Ryo Onodera\""))
-    assert_response([[Result::SUCCESS],
-                     [[1],
-                      ["_id", "_key", "real_name"],
-                      [1, "ryoqun", "Ryo Onodera"]
-                     ]],
-                    response,
-                    :content_type => "application/json")
+    assert_select(["_id", "_key", "real_name"],
+                  [[1, "ryoqun", "Ryo Onodera"]],
+                  :table => "users",
+                  :query => "real_name:\"Ryo Onodera\"")
   end
 
   def test_select_match_column
@@ -140,16 +129,11 @@ class HTTPTest < Test::Unit::TestCase
   def test_select_output_columns
     populate_users
 
-    response = get(command_path(:select,
-                                :table => "users",
-                                :output_columns => "real_name"))
-    assert_response([[Result::SUCCESS],
-                     [[2],
-                      ["real_name"],
-                      ["Yuto Hayamizu"],
-                      ["Ryo Onodera"]]],
-                    response,
-                    :content_type => "application/json")
+    assert_select(["real_name"],
+                  [["Yuto Hayamizu"],
+                   ["Ryo Onodera"]],
+                  :table => "users",
+                  :output_columns => "real_name")
   end
 
   def test_select_sortby
