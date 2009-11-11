@@ -222,7 +222,7 @@ put_response_header(grn_ctx *ctx, const char *p, const char *pe)
         if (pd + 2 == p) {
           GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
         } else if (pd + 4 == p && !memcmp(pd + 2, "on", 2)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+          GRN_TEXT_PUTS(ctx, head, "Content-Type: application/json\r\n\r\n");
         }
       } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
         GRN_TEXT_PUTS(ctx, head, "Content-Type: image/jpeg\r\n\r\n");
@@ -245,7 +245,7 @@ put_response_header(grn_ctx *ctx, const char *p, const char *pe)
       break;
     }
   } else {
-    GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+    GRN_TEXT_PUTS(ctx, head, "Content-Type: application/json\r\n\r\n");
   }
 }
 

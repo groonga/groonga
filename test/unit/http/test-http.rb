@@ -30,7 +30,7 @@ class HTTPTest < Test::Unit::TestCase
 
   def test_status
     response = get(command_path(:status))
-    assert_equal("text/javascript", response.content_type)
+    assert_equal("application/json", response.content_type)
     assert_equal(["alloc_count", "starttime", "uptime"],
                  JSON.parse(response.body).keys.sort)
   end
@@ -41,7 +41,7 @@ class HTTPTest < Test::Unit::TestCase
                                 :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     response = get(command_path(:column_create,
                                 :table => "users",
@@ -49,12 +49,12 @@ class HTTPTest < Test::Unit::TestCase
                                 :flags => Column::SCALAR,
                                 :type => "ShortText"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
     response = get(command_path(:load, :table => "users", :values => values))
     assert_response([[Result::SUCCESS], 1], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     response = get(command_path(:select, :table => "users"))
     assert_response([[Result::SUCCESS],
@@ -63,7 +63,7 @@ class HTTPTest < Test::Unit::TestCase
                       [1, "ryoqun", "Ryo Onodera"]
                      ]],
                     response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def test_select
@@ -72,7 +72,7 @@ class HTTPTest < Test::Unit::TestCase
                                 :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     response = get(command_path(:column_create,
                                 :table => "users",
@@ -80,12 +80,12 @@ class HTTPTest < Test::Unit::TestCase
                                 :flags => Column::SCALAR,
                                 :type => "ShortText"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
     response = get(command_path(:load, :table => "users", :values => values))
     assert_response([[Result::SUCCESS], 1], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     response = get(command_path(:select,
                                 :table => "users",
@@ -96,7 +96,7 @@ class HTTPTest < Test::Unit::TestCase
                       [1, "ryoqun", "Ryo Onodera"]
                      ]],
                     response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def test_select_match_column
@@ -145,7 +145,7 @@ class HTTPTest < Test::Unit::TestCase
                       ["Yuto Hayamizu"],
                       ["Ryo Onodera"]]],
                     response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def test_select_sortby
@@ -198,7 +198,7 @@ class HTTPTest < Test::Unit::TestCase
                       *expected
                      ]],
                     response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def assert_response_range(expected, offset, limit, response)
@@ -206,6 +206,6 @@ class HTTPTest < Test::Unit::TestCase
     #   [<number of hits>, <header>, <record1>, <record2>...]
     expected[1] = expected[1][0, 2] + 
                   expected[1][offset + 2, limit]
-    assert_response(expected, response, :content_type => "text/javascript")
+    assert_response(expected, response, :content_type => "application/json")
   end
 end

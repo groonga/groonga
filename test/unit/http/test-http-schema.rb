@@ -30,7 +30,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     response = get(command_path(:table_list))
     assert_response([["id", "name", "path", "flags", "domain"]],
                     response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def test_table_list_exist
@@ -45,7 +45,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                       Type::INT8],
                     ],
                     response,
-                    :content_type => "text/javascript") do |actual|
+                    :content_type => "application/json") do |actual|
       actual[0, 1] + actual[1..-1].collect do |values|
         id, name, path, flags, domain = values
         [id, name, nil, flags, domain]
@@ -59,7 +59,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                 :table => "bookmarks"))
     assert_response([["id", "name", "path", "type", "flags", "domain"]],
                     response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def test_column_list_exist
@@ -77,7 +77,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                       @bookmarks_table_id]
                     ],
                     response,
-                    :content_type => "text/javascript") do |actual|
+                    :content_type => "application/json") do |actual|
       actual[0, 1] + actual[1..-1].collect do |values|
         id, name, path, type, flags, domain = values
         [id, name, nil, type, flags, domain]
@@ -91,7 +91,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     pend("should implement error case") do
       assert_response([[:something_error, :message]],
                       response,
-                      :content_type => "text/javascript")
+                      :content_type => "application/json")
     end
   end
 
@@ -104,7 +104,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                 :value_type => "Object",
                                 :default_tokenizer => ""))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
     @bookmarks_table_id = object_registered
   end
 
@@ -115,7 +115,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                 :flags => Column::SCALAR,
                                 :type => "ShortText"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
     @bookmarks_title_column_id = object_registered
   end
 end

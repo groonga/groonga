@@ -74,7 +74,7 @@ module GroongaHTTPTestUtils
                                 :flags => Table::PAT_KEY,
                                 :key_type => "ShortText"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     response = get(command_path(:column_create,
                                 :table => "users",
@@ -82,7 +82,7 @@ module GroongaHTTPTestUtils
                                 :flags => Column::SCALAR,
                                 :type => "ShortText"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     response = get(command_path(:table_create,
                                 :name => "terms",
@@ -90,7 +90,7 @@ module GroongaHTTPTestUtils
                                 :key_type => "ShortText",
                                 :default_tokenizer => "TokenBigram"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
 
     response = get(command_path(:column_create,
                                 :table => "terms",
@@ -99,7 +99,7 @@ module GroongaHTTPTestUtils
                                 :type => "users",
                                 :source => "real_name"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def load(table, values)
@@ -107,7 +107,7 @@ module GroongaHTTPTestUtils
                                 :table => table,
                                 :values => json(values)))
     assert_response([[Result::SUCCESS], values.size], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def load_users
@@ -122,7 +122,7 @@ module GroongaHTTPTestUtils
                                 :flags => Table::HASH_KEY,
                                 :key_type => "Int32"))
     assert_response([[Result::SUCCESS]], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
   end
 
   def load_bookmarks
@@ -143,7 +143,7 @@ module GroongaHTTPTestUtils
                                 :table => "bookmarks",
                                 :values => json(values)))
     assert_response([[Result::SUCCESS], values.size-1], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
     expected
   end
 
@@ -165,7 +165,7 @@ module GroongaHTTPTestUtils
                                 :table => "bookmarks",
                                 :values => json(values)))
     assert_response([[Result::SUCCESS], values.size-1], response,
-                    :content_type => "text/javascript")
+                    :content_type => "application/json")
     expected
   end
 
@@ -182,7 +182,7 @@ module GroongaHTTPTestUtils
     end
 
     case response.content_type
-    when "text/javascript"
+    when "application/json"
       actual = JSON.parse(response.body)
     when "text/html"
       actual = response.body
