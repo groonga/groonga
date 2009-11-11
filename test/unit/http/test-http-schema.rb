@@ -312,6 +312,111 @@ class HTTPSchemaTest < Test::Unit::TestCase
                         Type::VOID]])
   end
 
+  def test_table_create_patricia_trie_with_normalize_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY | Key::NORMALIZE))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY | Key::NORMALIZE,
+                        Type::VOID]])
+  end
+
+  def test_table_create_patricia_trie_with_normalized_string_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY | Key::NORMALIZE,
+                                :key_type => "ShortText"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY |
+                        Key::NORMALIZE | Key::VAR_SIZE,
+                        Type::SHORT_TEXT]])
+  end
+
+  def test_table_create_patricia_trie_with_long_size_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "Text"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_patricia_trie_with_sis
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY | Key::SIS,
+                                :key_type => "ShortText"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY |
+                        Key::VAR_SIZE | Key::SIS,
+                        Type::SHORT_TEXT]])
+  end
+
+  def test_table_create_patricia_trie_with_nonexistent_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_patricia_trie_with_invalid_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :key_type => "table_create"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_patricia_trie_with_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :value_type => "Int32"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::PAT_KEY,
+                        Type::VOID]])
+  end
+
+  def test_table_create_patricia_trie_with_nonexistent_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::PAT_KEY,
+                                :value_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "should implement error case"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
   def test_table_create_array
     response = get(command_path(:table_create,
                                 :name => "users",
