@@ -430,6 +430,67 @@ class HTTPSchemaTest < Test::Unit::TestCase
                         Type::VOID]])
   end
 
+  def test_table_create_array_with_normalize_key
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::NO_KEY | Key::NORMALIZE))
+    assert_response([[Result::UNKNOWN_ERROR,
+                      "key normalization isn't available"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_array_with_key_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::NO_KEY,
+                                :key_type => "ShortText"))
+    assert_response([[Result::UNKNOWN_ERROR, "key isn't supported"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_array_with_sis
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::NO_KEY | Key::SIS))
+    assert_response([[Result::UNKNOWN_ERROR, "SIS key isn't available"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
+  def test_table_create_array_with_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::NO_KEY,
+                                :value_type => "Int32"))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([["users",
+                        Flag::PERSISTENT | Table::NO_KEY,
+                        Type::INT32]])
+  end
+
+  def test_table_create_array_with_nonexistent_value_type
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::NO_KEY,
+                                :value_type => "nonexistent"))
+    assert_response([[Result::UNKNOWN_ERROR, "value type doesn't exist"]],
+                    response,
+                    :content_type => "application/json")
+
+    assert_table_list([])
+  end
+
   def test_table_create_view
     response = get(command_path(:table_create,
                                 :name => "users",
