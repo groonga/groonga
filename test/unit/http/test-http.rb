@@ -138,62 +138,53 @@ class HTTPTest < Test::Unit::TestCase
 
   def test_select_sortby
     create_bookmarks_table
-    expected = load_shuffled_bookmarks
+    records = load_bookmarks((0...10).to_a.shuffle)
 
-    response = get(command_path(:select,
-                                :table => "bookmarks",
-                                :sortby => "_key"))
-    assert_response_range(expected, 0, 10, response)
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  :table => "bookmarks",
+                  :sortby => "_key")
   end
 
   def test_select_offset
     create_bookmarks_table
-    expected = load_bookmarks
+    records = load_bookmarks
 
-    response = get(command_path(:select,
-                                :table => "bookmarks",
-                                :offset => 3))
-    assert_response_range(expected, 3, 10, response)
+    assert_select(["_id", "_key"],
+                  records[3..-1],
+                  {:table => "bookmarks", :offset => 3},
+                  :n_hits => records.size)
   end
 
   def test_select_limit
     create_bookmarks_table
-    expected = load_bookmarks
+    records = load_bookmarks
 
-    response = get(command_path(:select,
-                                :table => "bookmarks",
-                                :limit => 4))
-    assert_response_range(expected, 0, 4, response)
+    assert_select(["_id", "_key"],
+                  records[0, 4],
+                  {:table => "bookmarks", :limit => 4},
+                  :n_hits => records.size)
   end
 
   def test_select_offset_and_limit
     create_bookmarks_table
-    expected = load_bookmarks
+    records = load_bookmarks
 
-    response = get(command_path(:select,
-                                :table => "bookmarks",
-                                :offset => 3,
-                                :limit => 4))
-    assert_response_range(expected, 3, 4, response)
+    assert_select(["_id", "_key"],
+                  records[3, 4],
+                  {:table => "bookmarks", :offset => 3, :limit => 4},
+                  :n_hits => records.size)
   end
 
   private
-  def assert_select(header, expected, parameters)
+  def assert_select(header, expected, parameters, options={})
     response = get(command_path(:select, parameters))
     assert_response([[Result::SUCCESS],
-                     [[expected.size],
+                     [[options[:n_hits] || expected.size],
                       header,
                       *expected
                      ]],
                     response,
                     :content_type => "application/json")
-  end
-
-  def assert_response_range(expected, offset, limit, response)
-    # expected[1]'s format:
-    #   [<number of hits>, <header>, <record1>, <record2>...]
-    expected[1] = expected[1][0, 2] + 
-                  expected[1][offset + 2, limit]
-    assert_response(expected, response, :content_type => "application/json")
   end
 end

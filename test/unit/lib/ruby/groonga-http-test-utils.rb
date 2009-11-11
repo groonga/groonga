@@ -103,10 +103,12 @@ module GroongaHTTPTestUtils
   end
 
   def load(table, values)
+    n_values = values.size
+    n_values -= 1 if values.first.is_a?(Array)
     response = get(command_path(:load,
                                 :table => table,
                                 :values => json(values)))
-    assert_response([[Result::SUCCESS], values.size], response,
+    assert_response([[Result::SUCCESS], n_values], response,
                     :content_type => "application/json")
   end
 
@@ -125,48 +127,17 @@ module GroongaHTTPTestUtils
                     :content_type => "application/json")
   end
 
-  def load_bookmarks
-    values = [["_key"]]
-    expected = [[Result::SUCCESS]]
-    expected_records = []
-    id = 1
-    (0...10).to_a.each do |number|
-      values.push([number])
-      expected_records.push([id, number])
-      id += 1
-    end
-    expected_records.sort! {|record1, record2| record1[1] <=> record2[1]}
-    expected_records = [[10], ["_id", "_key"]] + expected_records
-    expected.push(expected_records)
+  def load_bookmarks(keys=nil)
+    header = ["_key"]
+    keys ||= (0...10).to_a
 
-    response = get(command_path(:load,
-                                :table => "bookmarks",
-                                :values => json(values)))
-    assert_response([[Result::SUCCESS], values.size-1], response,
-                    :content_type => "application/json")
-    expected
-  end
+    load("bookmarks", [header, *keys.collect {|key| [key]}])
 
-  def load_shuffled_bookmarks
-    srand(Time.now.to_i)
-    values = [["_key"]]
-    expected = [[Result::SUCCESS]]
-    expected_records = []
-    id = 1
-    (0...10).to_a.shuffle.each do |number|
-      values.push([number])
-      expected_records.push([id, number])
+    id = 0
+    keys.collect do |key|
       id += 1
+      [id, key]
     end
-    expected_records.sort! {|record1, record2| record1[1] <=> record2[1]}
-    expected_records = [[10], ["_id", "_key"]] + expected_records
-    expected.push(expected_records)
-    response = get(command_path(:load,
-                                :table => "bookmarks",
-                                :values => json(values)))
-    assert_response([[Result::SUCCESS], values.size-1], response,
-                    :content_type => "application/json")
-    expected
   end
 
   def json(object)
