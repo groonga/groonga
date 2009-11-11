@@ -40,6 +40,7 @@ void test_table_select_search(void);
 void test_table_select_select_search(void);
 void test_table_select_match(void);
 void test_table_select_match_equal(void);
+void test_table_select_match_nonexistent(void);
 
 void data_expr_parse(void);
 void test_expr_parse(gconstpointer data);
@@ -492,20 +493,12 @@ grn_test_assert_select_none(grn_obj *result)
   cut_assert_equal_uint(0, grn_table_size(&context, result));
 }
 
-
 static void
-prepare_data(grn_obj *textbuf, grn_obj *intbuf)
+create_documents_table(void)
 {
   docs = grn_table_create(&context, "docs", 4, NULL,
                           GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, NULL);
   cut_assert_not_null(docs);
-
-  terms = grn_table_create(&context, "terms", 5, NULL,
-                           GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
-  cut_assert_not_null(terms);
-  grn_test_assert(grn_obj_set_info(&context, terms, GRN_INFO_DEFAULT_TOKENIZER,
-				   grn_ctx_at(&context, GRN_DB_BIGRAM)));
 
   size = grn_column_create(&context, docs, "size", 4, NULL,
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
@@ -516,6 +509,17 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
                            grn_ctx_at(&context, GRN_DB_TEXT));
   cut_assert_not_null(body);
+}
+
+static void
+create_terms_table(grn_obj *intbuf)
+{
+  terms = grn_table_create(&context, "terms", 5, NULL,
+                           GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
+                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
+  cut_assert_not_null(terms);
+  grn_test_assert(grn_obj_set_info(&context, terms, GRN_INFO_DEFAULT_TOKENIZER,
+				   grn_ctx_at(&context, GRN_DB_BIGRAM)));
 
   index_body = grn_column_create(&context, terms, "docs_body", 4, NULL,
                                  GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT|GRN_OBJ_WITH_POSITION,
@@ -524,7 +528,11 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 
   GRN_UINT32_SET(&context, intbuf, grn_obj_id(&context, body));
   grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, intbuf);
+}
 
+static void
+insert_data(grn_obj *textbuf, grn_obj *intbuf)
+{
   INSERT_DATA("hoge");
   INSERT_DATA("fuga fuga");
   INSERT_DATA("moge moge moge");
@@ -535,6 +543,14 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
   INSERT_DATA("moge hoge fuga fuga");
   INSERT_DATA("moge hoge moge moge moge");
   INSERT_DATA("poyo moge hoge moge moge moge");
+}
+
+static void
+prepare_data(grn_obj *textbuf, grn_obj *intbuf)
+{
+  create_documents_table();
+  create_terms_table(intbuf);
+  insert_data(textbuf, intbuf);
 }
 
 void
@@ -880,6 +896,43 @@ test_table_select_match_equal(void)
   grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
                                                    "moge hoge hoge",
                                                    NULL), res);
+
+  grn_test_assert(grn_obj_close(&context, res));
+  grn_test_assert(grn_obj_close(&context, cond));
+  grn_test_assert(grn_obj_close(&context, &textbuf));
+}
+
+void
+test_table_select_match_nonexistent(void)
+{
+  grn_obj *cond, *v, *res, textbuf, intbuf;
+  GRN_TEXT_INIT(&textbuf, 0);
+  GRN_UINT32_INIT(&intbuf, 0);
+
+  create_documents_table();
+  insert_data(&textbuf, &intbuf);
+
+  cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
+  v = grn_expr_add_var(&context, cond, NULL, 0);
+  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
+
+  grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &textbuf, "body");
+  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
+  GRN_TEXT_SETS(&context, &textbuf, "moge");
+  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  grn_expr_append_op(&context, cond, GRN_OP_MATCH, 2);
+
+  grn_expr_compile(&context, cond);
+
+  res = grn_table_create(&context, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
+  cut_assert_not_null(res);
+
+  cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
+
+  grn_test_assert_select(NULL, res);
 
   grn_test_assert(grn_obj_close(&context, res));
   grn_test_assert(grn_obj_close(&context, cond));
