@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. groonga実行ファイル &mdash; groonga v0.1.4 documentation</title>
+    <title>2.1. groonga実行ファイル &mdash; groonga v0.1.4 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,8 +20,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
-    <link rel="next" title="2. コマンド一覧" href="commands.html" />
-    <link rel="prev" title="groonga ドキュメント" href="index.html" /> 
+    <link rel="up" title="2. リファレンスマニュアル" href="reference.html" />
+    <link rel="next" title="2.2. 組み込みコマンド一覧" href="commands.html" />
+    <link rel="prev" title="2. リファレンスマニュアル" href="reference.html" /> 
   </head>
   <body>
     <div class="related">
@@ -31,12 +32,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="commands.html" title="2. コマンド一覧"
+          <a href="commands.html" title="2.2. 組み込みコマンド一覧"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="groonga ドキュメント"
+          <a href="reference.html" title="2. リファレンスマニュアル"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">2. リファレンスマニュアル</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -46,24 +48,24 @@
           <div class="body">
             
   <div class="section" id="groonga">
-<h1>1. groonga実行ファイル<a class="headerlink" href="#groonga" title="Permalink to this headline">¶</a></h1>
+<h1>2.1. groonga実行ファイル<a class="headerlink" href="#groonga" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>1.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア</p>
 </div>
 <div class="section" id="id2">
-<h2>1.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>groonga [options] [dest] [command [args]]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>1.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンです。
 groongaのデータベースは、groonga実行ファイルかCライブラリインタフェースを通して操作することができます。このマニュアルページでは、groonga実行ファイルの使い方について説明します。</p>
 </div>
 <div class="section" id="id4">
-<h2>1.4. オプション<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.4. オプション<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <dl class="cmdoption">
 <dt id="cmdoption-n">
 <tt class="descname">-n</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-n" title="Permalink to this definition">¶</a></dt>
@@ -129,7 +131,7 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
 </div>
 <div class="section" id="id5">
-<h2>1.5. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.5. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <dl class="cmdoption">
 <dt>
 <tt class="descname">dest</tt></dt>
@@ -142,7 +144,7 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
 </div>
 <div class="section" id="id6">
-<h2>1.6. コマンド<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.6. コマンド<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コマンドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるようになります。
 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。</p>
 <p>引数は以下の2種類の方法のいずれかで指定することができます。:</p>
@@ -155,7 +157,7 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 <p>標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で区切ります。空白を含む値を指定したい場合は、シングルクォート(&#8216;)かダブルクォート(&#8220;)で値を囲みます。値として指定する文字列の中では、改行文字は&#8217;n&#8217;に置き換えて指定します。また、引用符に使用した文字を値の中で指定する場合には、その文字の前にバックスラッシュ(&#8216;&#8217;) を指定します。バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュを指定します。</p>
 </div>
 <div class="section" id="id7">
-<h2>1.7. 組み込みコマンド<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.7. 組み込みコマンド<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>以下のコマンドは組み込みコマンドとして予め定義されています。</p>
 <blockquote>
 <dl class="docutils">
@@ -189,7 +191,7 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 </blockquote>
 </div>
 <div class="section" id="id8">
-<h2>1.8. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<h2>2.1.8. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>新しいデータベースを作成します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -n /tmp/hoge.db quit
 %
@@ -228,25 +230,25 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">1. groonga実行ファイル</a><ul>
-<li><a class="reference external" href="#id1">1.1. 名前</a></li>
-<li><a class="reference external" href="#id2">1.2. 書式</a></li>
-<li><a class="reference external" href="#id3">1.3. 説明</a></li>
-<li><a class="reference external" href="#id4">1.4. オプション</a></li>
-<li><a class="reference external" href="#id5">1.5. 引数</a></li>
-<li><a class="reference external" href="#id6">1.6. コマンド</a></li>
-<li><a class="reference external" href="#id7">1.7. 組み込みコマンド</a></li>
-<li><a class="reference external" href="#id8">1.8. 例</a></li>
+<li><a class="reference external" href="">2.1. groonga実行ファイル</a><ul>
+<li><a class="reference external" href="#id1">2.1.1. 名前</a></li>
+<li><a class="reference external" href="#id2">2.1.2. 書式</a></li>
+<li><a class="reference external" href="#id3">2.1.3. 説明</a></li>
+<li><a class="reference external" href="#id4">2.1.4. オプション</a></li>
+<li><a class="reference external" href="#id5">2.1.5. 引数</a></li>
+<li><a class="reference external" href="#id6">2.1.6. コマンド</a></li>
+<li><a class="reference external" href="#id7">2.1.7. 組み込みコマンド</a></li>
+<li><a class="reference external" href="#id8">2.1.8. 例</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="index.html"
-                                  title="previous chapter">groonga ドキュメント</a></p>
+            <p class="topless"><a href="reference.html"
+                                  title="previous chapter">2. リファレンスマニュアル</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="commands.html"
-                                  title="next chapter">2. コマンド一覧</a></p>
+                                  title="next chapter">2.2. 組み込みコマンド一覧</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/groonga.txt"
@@ -276,12 +278,13 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="commands.html" title="2. コマンド一覧"
+          <a href="commands.html" title="2.2. 組み込みコマンド一覧"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="groonga ドキュメント"
+          <a href="reference.html" title="2. リファレンスマニュアル"
              >previous</a> |</li>
-        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

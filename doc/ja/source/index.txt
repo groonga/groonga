@@ -9,16 +9,11 @@ groonga ドキュメント
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :numbered:
 
-   groonga
-   commands
-   type
-   pseudo_column
-   http
-   expr
-   functions
+   tutorial
+   reference
 
 Indices and tables
 ==================

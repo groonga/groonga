@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.17. get &mdash; groonga v0.1.4 documentation</title>
+    <title>2.2.16. get &mdash; groonga v0.1.4 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,9 +20,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
-    <link rel="up" title="2. 組み込みコマンド一覧" href="commands.html" />
-    <link rel="next" title="3. データ型" href="type.html" />
-    <link rel="prev" title="2.16. set" href="set.html" /> 
+    <link rel="up" title="2.2. 組み込みコマンド一覧" href="commands.html" />
+    <link rel="next" title="2.3. データ型" href="type.html" />
+    <link rel="prev" title="2.2.15. set" href="set.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,13 +32,14 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="type.html" title="3. データ型"
+          <a href="type.html" title="2.3. データ型"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="set.html" title="2.16. set"
+          <a href="set.html" title="2.2.15. set"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="commands.html" accesskey="U">2. 組み込みコマンド一覧</a> &raquo;</li> 
+          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="commands.html" accesskey="U">2.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,24 +49,24 @@
           <div class="body">
             
   <div class="section" id="get">
-<h1>2.17. get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h1>
+<h1>2.2.16. get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>2.17.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>2.2.16.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>get - 一件のレコードの値の取得</p>
 </div>
 <div class="section" id="id2">
-<h2>2.17.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>2.2.16.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>get table [key [output_columns [output_type [id]]]]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>2.17.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>2.2.16.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるgetについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>getは、使用しているデータベースのテーブルの中の１件のレコードを指定し、カラムの値を取得します。</p>
 </div>
 <div class="section" id="id4">
-<h2>2.17.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>2.2.16.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 値を取得するレコードを含むテーブルの名前を指定します。</blockquote>
@@ -91,8 +92,8 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </dl>
 </div>
 <div class="section" id="id6">
-<h2>2.17.5. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
-<p>テーブルEntryから主キー値が&#8221;abandon&#8217;であるレコードのbodyカラムの値を取得します。:</p>
+<h2>2.2.16.5. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>テーブルEntryから主キー値が&#8221;abandon&#8221;であるレコードのbodyカラムの値を取得します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>get Entry abandon body
 
 [[0],[&quot;放棄する&quot;]]
@@ -100,7 +101,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </div>
 </div>
 <div class="section" id="id7">
-<h2>2.17.6. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>2.2.16.6. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="load.html"><em>load</em></a></p>
 <table class="docutils footnote" frame="void" id="id8" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -125,23 +126,23 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">2.17. get</a><ul>
-<li><a class="reference external" href="#id1">2.17.1. 名前</a></li>
-<li><a class="reference external" href="#id2">2.17.2. 書式</a></li>
-<li><a class="reference external" href="#id3">2.17.3. 説明</a></li>
-<li><a class="reference external" href="#id4">2.17.4. 引数</a></li>
-<li><a class="reference external" href="#id6">2.17.5. 例</a></li>
-<li><a class="reference external" href="#id7">2.17.6. 関連項目</a></li>
+<li><a class="reference external" href="">2.2.16. get</a><ul>
+<li><a class="reference external" href="#id1">2.2.16.1. 名前</a></li>
+<li><a class="reference external" href="#id2">2.2.16.2. 書式</a></li>
+<li><a class="reference external" href="#id3">2.2.16.3. 説明</a></li>
+<li><a class="reference external" href="#id4">2.2.16.4. 引数</a></li>
+<li><a class="reference external" href="#id6">2.2.16.5. 例</a></li>
+<li><a class="reference external" href="#id7">2.2.16.6. 関連項目</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="set.html"
-                                  title="previous chapter">2.16. set</a></p>
+                                  title="previous chapter">2.2.15. set</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="type.html"
-                                  title="next chapter">3. データ型</a></p>
+                                  title="next chapter">2.3. データ型</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/get.txt"
@@ -171,13 +172,14 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="type.html" title="3. データ型"
+          <a href="type.html" title="2.3. データ型"
              >next</a> |</li>
         <li class="right" >
-          <a href="set.html" title="2.16. set"
+          <a href="set.html" title="2.2.15. set"
              >previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="commands.html" >2. 組み込みコマンド一覧</a> &raquo;</li> 
+          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="commands.html" >2.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
