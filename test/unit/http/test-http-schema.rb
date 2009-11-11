@@ -53,6 +53,16 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
   end
 
+  def test_table_list_with_invalid_output_type
+    response = get(command_path(:table_list,
+                                :output_type => "unknown"))
+    pend("should implement error case") do
+      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
+                      response,
+                      :content_type => "application/json")
+    end
+  end
+
   def test_column_list_empty
     create_bookmarks_table
     response = get(command_path(:column_list,
@@ -89,7 +99,38 @@ class HTTPSchemaTest < Test::Unit::TestCase
     response = get(command_path(:column_list,
                                 :table => "nonexistent"))
     pend("should implement error case") do
-      assert_response([[:something_error, :message]],
+      assert_response([[Result::UNKNOWN_ERROR, :message]],
+                      response,
+                      :content_type => "application/json")
+    end
+  end
+
+  def test_column_list_without_table
+    response = get(command_path(:column_list))
+    pend("should implement error case") do
+      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
+                      response,
+                      :content_type => "application/json")
+    end
+  end
+
+  def test_column_list_with_invalid_output_type
+    create_bookmarks_table
+    response = get(command_path(:column_list,
+                                :table => "bookmarks",
+                                :output_type => "unknown"))
+    pend("should implement error case") do
+      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
+                      response,
+                      :content_type => "application/json")
+    end
+  end
+
+  def test_column_list_with_invalid_output_type_without_table
+    response = get(command_path(:column_list,
+                                :output_type => "unknown"))
+    pend("should implement error case") do
+      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
                       response,
                       :content_type => "application/json")
     end
