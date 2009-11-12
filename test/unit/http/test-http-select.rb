@@ -217,6 +217,40 @@ class HTTPSelectTest < Test::Unit::TestCase
                       ["taporobo"]])
   end
 
+  def test_drilldown_offset
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_offset => 2},
+                     [["gunyara-kun"],
+                      ["moritan"],
+                      ["ryoqun"]])
+  end
+
+  def test_drilldown_limit
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_limit => 2},
+                     [["taporobo"],
+                      ["hayamiz"]])
+  end
+
+  def test_drilldown_offset_and_limit
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_offset => 2,
+                      :drilldown_limit => 1},
+                     [["gunyara-kun"]])
+  end
+
   private
   def assert_drilldown(options, values)
     assert_select(["_id", "text", "author"],
