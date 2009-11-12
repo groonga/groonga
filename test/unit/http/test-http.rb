@@ -127,7 +127,7 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   private
-  def create_users_table(key_type, value_type = nil)
+  def create_users_table(key_type, value_type=nil)
     response = get(command_path(:table_create,
                                 :name => "users",
                                 :flags => Table::HASH_KEY,
@@ -137,7 +137,7 @@ class HTTPTest < Test::Unit::TestCase
                     :content_type => "application/json")
   end
 
-  def assert_load_key(user_id = 48)
+  def assert_load_key(user_id=48)
     load("users", [{:_key => user_id}])
     assert_select(["_id", "_key"],
                   [[1, user_id]],
