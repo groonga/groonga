@@ -113,6 +113,16 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :sortby => "_key")
   end
 
+  def test_sortby_reverse
+    create_bookmarks_table
+    records = load_bookmarks((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}.reverse,
+                  :table => "bookmarks",
+                  :sortby => "-_key")
+  end
+
   def test_offset
     create_bookmarks_table
     records = load_bookmarks
