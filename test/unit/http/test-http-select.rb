@@ -99,6 +99,21 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :scorer => "real_name = \"Real Name\"")
   end
 
+  def test_scorer_side_effect
+    populate_users
+
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Real Name"]],
+                  :table => "users",
+                  :query => "real_name:\"Yuto Hayamizu\"",
+                  :scorer => "real_name = \"Real Name\"")
+
+    assert_select(["_id", "_key", "real_name"],
+                  [],
+                  :table => "users",
+                  :query => "real_name:\"Yuto Hayamizu\"")
+  end
+
   def test_output_columns
     populate_users
 
