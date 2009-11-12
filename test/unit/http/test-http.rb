@@ -97,6 +97,26 @@ class HTTPTest < Test::Unit::TestCase
                   :table => "users")
   end
 
+  def test_load_int8_key
+    create_users_table("Int8")
+    assert_load_key
+  end
+
+  def test_load_int16_key
+    create_users_table("Int16")
+    assert_load_key
+  end
+
+  def test_load_int32_key
+    create_users_table("Int32")
+    assert_load_key
+  end
+
+  def test_load_int64_key
+    create_users_table("Int64")
+    assert_load_key
+  end
+
   private
   def create_users_table(key_type)
     response = get(command_path(:table_create,
@@ -105,5 +125,12 @@ class HTTPTest < Test::Unit::TestCase
                                 :key_type => key_type))
     assert_response([[Result::SUCCESS]], response,
                     :content_type => "application/json")
+  end
+
+  def assert_load_key(user_id = 48)
+    load("users", [{:_key => user_id}])
+    assert_select(["_id", "_key"],
+                  [[1, user_id]],
+                  :table => "users")
   end
 end
