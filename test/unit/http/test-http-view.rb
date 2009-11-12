@@ -26,7 +26,7 @@ class HTTPViewTest < Test::Unit::TestCase
     teardown_server
   end
 
-  def test_basic
+  def test_select
     table_create("softwares", :flags => Table::VIEW)
     table_create("search-engines", :key_type => "ShortText")
     table_create("testing-frameworks", :key_type => "ShortText")
@@ -46,7 +46,6 @@ class HTTPViewTest < Test::Unit::TestCase
                   :output_columns => "_key")
 
     view_add("softwares", "testing-frameworks")
-
     assert_select(["_key"],
                   [["groonga"], ["Senna"], ["Cutter"], ["test-unit"]],
                   :table => "softwares",
