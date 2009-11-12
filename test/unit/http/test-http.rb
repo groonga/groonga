@@ -79,16 +79,16 @@ class HTTPTest < Test::Unit::TestCase
                   :table => "users")
   end
 
-  def test_load_int_key_by_objects
+  def test_load_int_key_by_arrays
     create_users_table("Int32")
 
-    load("users", [{:_key => 1000}])
+    load("users", [[:_key], [1000]])
     assert_select(["_id", "_key"],
                   [[1, 1000]],
                   :table => "users")
   end
 
-  def test_load_int_key_by_arrays
+  def test_load_int_key_by_objects
     create_users_table("Int32")
 
     load("users", [{:_key => 1000}])
