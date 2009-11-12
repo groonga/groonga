@@ -193,7 +193,8 @@ class HTTPSelectTest < Test::Unit::TestCase
     load_comments
 
     assert_select(["_id", "text", "author"],
-                  [[1,"Ruby rocks","ryoqun"], [2,"Groonga rocks","hayamiz"]],
+                  [[1, "Ruby rocks", "ryoqun"],
+                   [2, "Groonga rocks", "hayamiz"]],
                   {:table => "comments",
                    :drilldown => "author",
                    :drilldown_output_columns => "real_name",
