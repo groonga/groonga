@@ -253,8 +253,8 @@ do_client()
             switch (proto) {
             case 'H' :
             case 'h' :
-              if (grn_com_send_text(ctx, s->com, buf, size, 0)) {
-                fprintf(stderr, "grn_com_send_text failed\n");
+              if (grn_com_send_http(ctx, s->com, buf, size, 0)) {
+                fprintf(stderr, "grn_com_send_http failed\n");
               }
               s->stat = 2;
               /*

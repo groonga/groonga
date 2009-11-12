@@ -627,7 +627,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 }
 
 grn_rc
-grn_com_send_text(grn_ctx *ctx, grn_com *cs, const char *body, uint32_t size, int flags)
+grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *body, uint32_t size, int flags)
 {
   ssize_t ret;
   grn_obj buf;
