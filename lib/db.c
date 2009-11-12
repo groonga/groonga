@@ -277,6 +277,8 @@ check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
   return GRN_SUCCESS;
 }
 
+#define CHECK_NAME_ERR() ERR(GRN_INVALID_ARGUMENT, "name can't start with with '%c' and contains '%c' or '%c'", GRN_DB_PSEUDO_COLUMN_PREFIX, GRN_DB_DELIMITER, GRN_QUERY_COLUMN)
+
 #define GRN_TYPE_SIZE(type) ((type)->range)
 
 struct _grn_type {
@@ -299,7 +301,7 @@ grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
   }
   GRN_API_ENTER;
   if (check_name(ctx, name, name_size)) {
-    ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
+    CHECK_NAME_ERR();
     GRN_API_RETURN(NULL);
   }
   if (!DB_P(db)) {
@@ -357,7 +359,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size,
   GRN_API_ENTER;
   range = path ? grn_dl_get(ctx, path) : GRN_ID_NIL;
   if (check_name(ctx, name, name_size)) {
-    ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
+    CHECK_NAME_ERR();
     GRN_API_RETURN(NULL);
   }
   if (!DB_P(db)) {
@@ -612,7 +614,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
   }
   GRN_API_ENTER;
   if (check_name(ctx, name, name_size)) {
-    ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
+    CHECK_NAME_ERR();
     GRN_API_RETURN(NULL);
   }
   if (!DB_P(db)) {
@@ -2536,7 +2538,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
   if (check_name(ctx, name, name_size)) {
-    ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
+    CHECK_NAME_ERR();
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
@@ -2647,7 +2649,7 @@ grn_column_open(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
   if (check_name(ctx, name, name_size)) {
-    ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
+    CHECK_NAME_ERR();
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
@@ -6525,7 +6527,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
   }
   GRN_API_ENTER;
   if (check_name(ctx, name, name_size)) {
-    ERR(GRN_INVALID_ARGUMENT, "name contains '%c'", GRN_DB_DELIMITER);
+    CHECK_NAME_ERR();
     GRN_API_RETURN(NULL);
   }
   if (!DB_P(db)) {
