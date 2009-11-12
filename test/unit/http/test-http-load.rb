@@ -71,13 +71,16 @@ class HTTPLoadTest < Test::Unit::TestCase
     assert_key("Int64", 29)
   end
 
-  def _test_int_value
-    create_users_table("Int32", "Int32")
+  def test_int_value
+    table_create("int-hash",
+                 :flags => Table::HASH_KEY,
+                 :key_type => "Int32",
+                 :value_type => "Int32")
 
-    load("users", [{:_key => 48, :_value => 45572}])
+    load("int-hash", [{:_key => 29, :_value => 10}])
     assert_select(["_id", "_key", "_value"],
-                  [[1, 48, 45572]],
-                  :table => "users")
+                  [[1, 29, 10]],
+                  :table => "int-hash")
   end
 
   private
