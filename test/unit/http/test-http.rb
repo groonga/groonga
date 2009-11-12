@@ -35,87 +35,6 @@ class HTTPTest < Test::Unit::TestCase
                  JSON.parse(response.body).keys.sort)
   end
 
-  def test_load
-    table_create("users",
-                 :flags => Table::PAT_KEY,
-                 :key_type => "ShortText")
-    column_create("users", "real_name", Column::SCALAR, "ShortText")
-
-    values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
-    response = get(command_path(:load, :table => "users", :values => values))
-    assert_response([[Result::SUCCESS], 1], response,
-                    :content_type => "application/json")
-
-    assert_select(["_id", "_key", "real_name"],
-                  [[1, "ryoqun", "Ryo Onodera"]],
-                  :table => "users")
-  end
-
-  def test_load_text_key_by_arrays
-    create_users_table("ShortText")
-
-    load("users", [[:_key], ["ryoqun"]])
-    assert_select(["_id", "_key"],
-                  [[1, "ryoqun"]],
-                  :table => "users")
-  end
-
-  def test_load_text_key_by_objects
-    create_users_table("ShortText")
-
-    load("users", [{:_key => "ryoqun"}])
-    assert_select(["_id", "_key"],
-                  [[1, "ryoqun"]],
-                  :table => "users")
-  end
-
-  def test_load_int_key_by_arrays
-    create_users_table("Int32")
-
-    load("users", [[:_key], [1000]])
-    assert_select(["_id", "_key"],
-                  [[1, 1000]],
-                  :table => "users")
-  end
-
-  def test_load_int_key_by_objects
-    create_users_table("Int32")
-
-    load("users", [{:_key => 1000}])
-    assert_select(["_id", "_key"],
-                  [[1, 1000]],
-                  :table => "users")
-  end
-
-  def test_load_int8_key
-    create_users_table("Int8")
-    assert_load_key
-  end
-
-  def test_load_int16_key
-    create_users_table("Int16")
-    assert_load_key
-  end
-
-  def test_load_int32_key
-    create_users_table("Int32")
-    assert_load_key
-  end
-
-  def test_load_int64_key
-    create_users_table("Int64")
-    assert_load_key
-  end
-
-  def test_load_int_value
-    create_users_table("Int32", "Int32")
-
-    load("users", [{:_key => 48, :_value => 45572}])
-    assert_select(["_id", "_key", "_value"],
-                  [[1, 48, 45572]],
-                  :table => "users")
-  end
-
   def test_quit
     response = get(command_path(:quit))
     assert_response([[Result::SUCCESS]], response,
@@ -135,20 +54,5 @@ class HTTPTest < Test::Unit::TestCase
     assert_raise(Errno::ECONNREFUSED) do
       get(command_path(:shutdown))
     end
-  end
-
-  private
-  def create_users_table(key_type, value_type=nil)
-    table_create("users",
-                 :flags => Table::HASH_KEY,
-                 :key_type => key_type,
-                 :value_type => value_type)
-  end
-
-  def assert_load_key(user_id=48)
-    load("users", [{:_key => user_id}])
-    assert_select(["_id", "_key"],
-                  [[1, user_id]],
-                  :table => "users")
   end
 end
