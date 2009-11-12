@@ -120,6 +120,10 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:quit))
     assert_response([[Result::SUCCESS]], response,
                     :content_type => "application/json")
+
+    assert_nothing_raised do
+      get(command_path(:quit))
+    end
   end
 
   def test_shutdown
