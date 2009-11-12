@@ -27,25 +27,9 @@ class HTTPViewTest < Test::Unit::TestCase
   end
 
   def test_basic
-    response = get(command_path(:table_create,
-                                :name => "softwares",
-                                :flags => Table::VIEW))
-    assert_response([[Result::SUCCESS]],
-                    response,
-                    :content_type => "application/json")
-
-    response = get(command_path(:table_create,
-                                :name => "search-engines",
-                                :key_type => "ShortText"))
-    assert_response([[Result::SUCCESS]],
-                    response,
-                    :content_type => "application/json")
-    response = get(command_path(:table_create,
-                                :name => "testing-frameworks",
-                                :key_type => "ShortText"))
-    assert_response([[Result::SUCCESS]],
-                    response,
-                    :content_type => "application/json")
+    table_create("softwares", :flags => Table::VIEW)
+    table_create("search-engines", :key_type => "ShortText")
+    table_create("testing-frameworks", :key_type => "ShortText")
 
     load("search-engines", [{:_key => "groonga"}, {:_key => "Senna"}])
     load("testing-frameworks", [{:_key => "Cutter"}, {:_key => "test-unit"}])
@@ -55,24 +39,13 @@ class HTTPViewTest < Test::Unit::TestCase
                   :table => "softwares",
                   :output_columns => "_key")
 
-    response = get(command_path(:view_add,
-                                :view => "softwares",
-                                :table => "search-engines"))
-    assert_response([[Result::SUCCESS]],
-                    response,
-                    :content_type => "application/json")
-
+    view_add("softwares", "search-engines")
     assert_select(["_key"],
                   [["groonga"], ["Senna"]],
                   :table => "softwares",
                   :output_columns => "_key")
 
-    response = get(command_path(:view_add,
-                                :view => "softwares",
-                                :table => "testing-frameworks"))
-    assert_response([[Result::SUCCESS]],
-                    response,
-                    :content_type => "application/json")
+    view_add("softwares", "testing-frameworks")
 
     assert_select(["_key"],
                   [["groonga"], ["Senna"], ["Cutter"], ["test-unit"]],

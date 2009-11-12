@@ -89,6 +89,15 @@ module GroongaHTTPTestUtils
                     :content_type => "application/json")
   end
 
+  def view_add(view, table)
+    response = get(command_path(:view_add,
+                                :view => view,
+                                :table => table))
+    assert_response([[Result::SUCCESS]],
+                    response,
+                    :content_type => "application/json")
+  end
+
   def create_users_table
     table_create("users",
                  :flags => Table::PAT_KEY,
