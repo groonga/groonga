@@ -80,6 +80,15 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
 
+  def test_no_hit
+    populate_users
+
+    assert_select(["_id", "_key", "real_name"],
+                  [],
+                  :table => "users",
+                  :query => "real_name:\"No Name\"")
+  end
+
   def test_scorer
     populate_users
 
