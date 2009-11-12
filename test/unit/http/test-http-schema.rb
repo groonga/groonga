@@ -600,5 +600,51 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Flag::PERSISTENT | Table::VIEW,
                           Type::VOID]])
     end
+    def test_with_normalize_key
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::VIEW | Key::NORMALIZE))
+      assert_response([[Result::UNKNOWN_ERROR,
+                        "key normalization isn't available"]],
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
+    def test_with_key_type
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::VIEW,
+                                  :key_type => "ShortText"))
+      assert_response([[Result::UNKNOWN_ERROR, "key isn't supported"]],
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
+    def test_with_sis
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::VIEW | Key::SIS))
+      assert_response([[Result::UNKNOWN_ERROR, "SIS key isn't available"]],
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
+    def test_with_value_type
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::VIEW,
+                                  :value_type => "Int32"))
+      assert_response([[Result::UNKNOWN_ERROR, "value isn't available"]],
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([])
+    end
   end
 end
