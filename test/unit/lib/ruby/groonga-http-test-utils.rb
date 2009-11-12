@@ -129,6 +129,15 @@ module GroongaHTTPTestUtils
           {:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
   end
 
+  def load_many_users
+    load("users",
+         [{:_key => "moritan", :real_name => "モリタン"},
+          {:_key => "taporobo", :real_name => "タポロボ"},
+          {:_key => "ryoqun", :real_name => "Ryo Onodera"},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu"},
+          {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA"}])
+  end
+
   def create_bookmarks_table
     table_create("bookmarks", :flags => Table::HASH_KEY, :key_type => "Int32")
   end
@@ -157,6 +166,16 @@ module GroongaHTTPTestUtils
          [[:text, :author],
           ["Ruby rocks", "ryoqun"],
           ["Groonga rocks", "hayamiz"]])
+  end
+
+  def load_many_comments
+    load("comments",
+         [[:text, :author],
+          ["ルビー最高！", "taporobo"],
+          ["グロンガ最高！", "hayamiz"],
+          ["Ruby/Groonga is useful.", "gunyara-kun"],
+          ["Ruby rocks!", "moritan"],
+          ["Groonga rocks!", "ryoqun"]])
   end
 
   def json(object)
