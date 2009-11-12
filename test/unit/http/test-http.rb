@@ -60,4 +60,50 @@ class HTTPTest < Test::Unit::TestCase
                   [[1, "ryoqun", "Ryo Onodera"]],
                   :table => "users")
   end
+
+  def test_load_text_key_by_arrays
+    create_users_table("ShortText")
+
+    load("users", [[:_key], ["ryoqun"]])
+    assert_select(["_id", "_key"],
+                  [[1, "ryoqun"]],
+                  :table => "users")
+  end
+
+  def test_load_text_key_by_objects
+    create_users_table("ShortText")
+
+    load("users", [{:_key => "ryoqun"}])
+    assert_select(["_id", "_key"],
+                  [[1, "ryoqun"]],
+                  :table => "users")
+  end
+
+  def test_load_int_key_by_objects
+    create_users_table("Int32")
+
+    load("users", [{:_key => 1000}])
+    assert_select(["_id", "_key"],
+                  [[1, 1000]],
+                  :table => "users")
+  end
+
+  def test_load_int_key_by_arrays
+    create_users_table("Int32")
+
+    load("users", [{:_key => 1000}])
+    assert_select(["_id", "_key"],
+                  [[1, 1000]],
+                  :table => "users")
+  end
+
+  private
+  def create_users_table(key_type)
+    response = get(command_path(:table_create,
+                                :name => "users",
+                                :flags => Table::HASH_KEY,
+                                :key_type => key_type))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+  end
 end
