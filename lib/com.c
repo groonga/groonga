@@ -627,13 +627,13 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 }
 
 grn_rc
-grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *body, uint32_t size, int flags)
+grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *path, uint32_t path_len, int flags)
 {
   ssize_t ret;
   grn_obj buf;
   GRN_TEXT_INIT(&buf, 0);
   GRN_TEXT_PUTS(ctx, &buf, "GET ");
-  grn_bulk_write(ctx, &buf, body, size);
+  grn_bulk_write(ctx, &buf, path, path_len);
   GRN_TEXT_PUTS(ctx, &buf, " HTTP/1.0\r\n\r\n");
   // todo : refine
   if ((ret = send(cs->fd, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), MSG_NOSIGNAL|flags)) == -1) {
