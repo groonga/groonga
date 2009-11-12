@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1.3. grnslap &mdash; groonga v0.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.4',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
+    <link rel="up" title="2.1. 実行環境" href="process.html" />
+    <link rel="next" title="2.2. 組み込みコマンド一覧" href="commands.html" />
+    <link rel="prev" title="2.1.2. http" href="http.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="2.2. 組み込みコマンド一覧"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="http.html" title="2.1.2. http"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="process.html" accesskey="U">2.1. 実行環境</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="grnslap">
+<h1>2.1.3. grnslap<a class="headerlink" href="#grnslap" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>2.1.3.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール</p>
+</div>
+<div class="section" id="id2">
+<h2>2.1.3.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>grnslap [options] [dest]
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>2.1.3.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスをチェックするためのツールです。</p>
+<p>groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことができます。また、リクエストの多重度を指定することができます。</p>
+<p>クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行うことができます。</p>
+</div>
+<div class="section" id="id4">
+<h2>2.1.3.4. オプション<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<dl class="cmdoption">
+<dt id="cmdoption-P">
+<tt class="descname">-P</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-P" title="Permalink to this definition">¶</a></dt>
+<dd><p>リクエストのプロトコルを指定します。</p>
+<p><cite>http</cite></p>
+<blockquote>
+httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式で標準入力に与えると、それらのパスに順次アクセスします。</blockquote>
+<p><cite>gqtp</cite></p>
+<blockquote>
+gqtpでリクエストします。gqtpのリクエストをLF区切り形式で標準入力に与えると、それらのリクエストを順次行います。</blockquote>
+</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption-m">
+<tt class="descname">-m</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-m" title="Permalink to this definition">¶</a></dt>
+<dd>リクエストの多重度を指定します。初期値は10です。</dd></dl>
+
+</div>
+<div class="section" id="id5">
+<h2>2.1.3.5. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<dl class="cmdoption">
+<dt>
+<tt class="descname">dest</tt></dt>
+<dd>接続先のホスト名とポート番号をを指定します(デフォルト値は&#8217;localhost:10041&#8217;)。ポート番号を指定しない場合には、10041が指定されたものとします。</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">2.1.3. grnslap</a><ul>
+<li><a class="reference external" href="#id1">2.1.3.1. 名前</a></li>
+<li><a class="reference external" href="#id2">2.1.3.2. 書式</a></li>
+<li><a class="reference external" href="#id3">2.1.3.3. 説明</a></li>
+<li><a class="reference external" href="#id4">2.1.3.4. オプション</a></li>
+<li><a class="reference external" href="#id5">2.1.3.5. 引数</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="http.html"
+                                  title="previous chapter">2.1.2. http</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="commands.html"
+                                  title="next chapter">2.2. 組み込みコマンド一覧</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/grnslap.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="2.2. 組み込みコマンド一覧"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="http.html" title="2.1.2. http"
+             >previous</a> |</li>
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="process.html" >2.1. 実行環境</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>
