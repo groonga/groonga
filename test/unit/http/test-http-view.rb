@@ -52,4 +52,41 @@ class HTTPViewTest < Test::Unit::TestCase
                   :table => "softwares",
                   :output_columns => "_key")
   end
+
+  def test_nonexistent
+    table_create("search-engines", :key_type => "ShortText")
+    response = get(command_path(:view_add,
+                                :view => "nonexistent",
+                                :table => "search-engines"))
+    assert_response([[Result::INVALID_ARGUMENT, "invalid view"]], response,
+                    :content_type => "application/json")
+  end
+
+  def test_invalid
+    table_create("search-engines", :key_type => "ShortText")
+    table_create("testing-framework", :key_type => "ShortText")
+    response = get(command_path(:view_add,
+                                :view => "testing-framework",
+                                :table => "search-engines"))
+    assert_response([[Result::INVALID_ARGUMENT, "invalid view"]], response,
+                    :content_type => "application/json")
+  end
+
+  def test_add_nonexistent_table
+    table_create("softwares", :flags => Table::VIEW)
+    response = get(command_path(:view_add,
+                                :view => "softwares",
+                                :table => "nonexistent"))
+    assert_response([[Result::INVALID_ARGUMENT, "invalid table"]], response,
+                    :content_type => "application/json")
+  end
+
+  def test_invalid_table
+    table_create("softwares", :flags => Table::VIEW)
+    response = get(command_path(:view_add,
+                                :view => "softwares",
+                                :table => "ShortText"))
+    assert_response([[Result::INVALID_ARGUMENT, "invalid table"]], response,
+                    :content_type => "application/json")
+  end
 end
