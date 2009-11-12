@@ -65,6 +65,7 @@
 <p>grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスをチェックするためのツールです。</p>
 <p>groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことができます。また、リクエストの多重度を指定することができます。</p>
 <p>クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行うことができます。</p>
+<p>現在は、make installしてもインストールは行われない。</p>
 </div>
 <div class="section" id="id4">
 <h2>2.1.3.4. オプション<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
@@ -94,6 +95,15 @@ gqtpでリクエストします。gqtpのリクエストをLF区切り形式で�
 <dd>接続先のホスト名とポート番号をを指定します(デフォルト値は&#8217;localhost:10041&#8217;)。ポート番号を指定しない場合には、10041が指定されたものとします。</dd></dl>
 
 </div>
+<div class="section" id="id6">
+<h2>2.1.3.6. サンプル<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://localhost:10041/d/status">http://localhost:10041/d/status</a> に、多重度100でリクエストを行う。</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041
+2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000
+2009-11-12 19:34:10.011208|end  : n=100 min=46 max=382 avg=0 qps=7992.966190 etime=0.012511
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -110,6 +120,7 @@ gqtpでリクエストします。gqtpのリクエストをLF区切り形式で�
 <li><a class="reference external" href="#id3">2.1.3.3. 説明</a></li>
 <li><a class="reference external" href="#id4">2.1.3.4. オプション</a></li>
 <li><a class="reference external" href="#id5">2.1.3.5. 引数</a></li>
+<li><a class="reference external" href="#id6">2.1.3.6. サンプル</a></li>
 </ul>
 </li>
 </ul>
