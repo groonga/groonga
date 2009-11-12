@@ -40,6 +40,7 @@ module GroongaHTTPTestUtils
   private
   def shutdown_server
     get(command_path("shutdown"))
+  rescue SystemCallError
   end
 
   def get(path)

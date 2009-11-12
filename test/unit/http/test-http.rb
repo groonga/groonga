@@ -116,6 +116,23 @@ class HTTPTest < Test::Unit::TestCase
                   :table => "users")
   end
 
+  def test_quit
+    response = get(command_path(:quit))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+  end
+
+  def test_shutdown
+    response = get(command_path(:shutdown))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+    @groonga_pid = nil
+
+    assert_raise(Errno::ECONNREFUSED) do
+      get(command_path(:shutdown))
+    end
+  end
+
   private
   def create_users_table(key_type, value_type=nil)
     table_create("users",
