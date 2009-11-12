@@ -117,12 +117,22 @@ class HTTPTest < Test::Unit::TestCase
     assert_load_key
   end
 
+  def test_load_int_value
+    create_users_table("Int32", "Int32")
+
+    load("users", [{:_key => 48, :_value => 45572}])
+    assert_select(["_id", "_key", "_value"],
+                  [[1, 48, 45572]],
+                  :table => "users")
+  end
+
   private
-  def create_users_table(key_type)
+  def create_users_table(key_type, value_type = nil)
     response = get(command_path(:table_create,
                                 :name => "users",
                                 :flags => Table::HASH_KEY,
-                                :key_type => key_type))
+                                :key_type => key_type,
+                                :value_type => value_type))
     assert_response([[Result::SUCCESS]], response,
                     :content_type => "application/json")
   end
