@@ -70,6 +70,16 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
 
+  def test_query_and_filter
+    populate_users
+
+    assert_select(["_id", "_key", "real_name"],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :query => "real_name:\"Yuto Hayamizu\"",
+                  :filter => "real_name == \"Yuto Hayamizu\"")
+  end
+
   def test_scorer
     populate_users
 
