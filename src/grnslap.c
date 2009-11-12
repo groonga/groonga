@@ -241,7 +241,7 @@ do_client()
       if (!THREAD_CREATE(thread, receiver, NULL)) {
         int cnt = 0;
         gettimeofday(&tvb, NULL);
-        lprint(ctx, "begin: max_concurrency=%d max_tp=%d", max_con, max_tp);
+        lprint(ctx, "begin: procotol=%c max_concurrency=%d max_tp=%d", proto, max_con, max_tp);
         while (fgets(buf, BUFSIZE, stdin)) {
           uint32_t size = strlen(buf) - 1;
           session *s = session_alloc(ctx, dests + (cnt++ % dest_cnt));
