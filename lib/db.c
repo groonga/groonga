@@ -3896,7 +3896,7 @@ grn_obj_size(grn_ctx *ctx, grn_obj *obj)
   case GRN_MSG :
     return GRN_BULK_VSIZE(obj);
   case GRN_VECTOR :
-    return GRN_BULK_VSIZE(obj->u.v.body);
+    return obj->u.v.body ? GRN_BULK_VSIZE(obj->u.v.body) : 0;
   default :
     return 0;
   }
@@ -4013,7 +4013,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
               }
               break;
             case GRN_VECTOR :
-              {
+              if (value->u.v.body) {
                 int j;
                 grn_section *v;
                 const char *head = GRN_BULK_HEAD(value->u.v.body);
@@ -10585,10 +10585,11 @@ get_identifier(grn_ctx *ctx, efs_info *q)
     if (len == 1) {
       switch (*s) {
       case '\0' : case '(' : case ')' : case '{' : case '}' :
-      case '[' : case ']' : case ',' : case '.' : case ':' :
-      case '@' : case '?' : case '"' : case '*' : case '+' :
-      case '-' : case '|' : case '/' : case '%' : case '!' :
-      case '^' : case '&' : case '>' : case '<' : case '=' : case '~' :
+      case '[' : case ']' : case ',' : case ':' : case '@' :
+      case '?' : case '"' : case '*' : case '+' : case '-' :
+      case '|' : case '/' : case '%' : case '!' : case '^' :
+      case '&' : case '>' : case '<' : case '=' : case '~' :
+        /* case '.' : */
         goto done;
         break;
       }
