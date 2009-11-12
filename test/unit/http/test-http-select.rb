@@ -202,4 +202,36 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :expected_drilldown => [
                    [[2], ["real_name"], ["Ryo Onodera"], ["Yuto Hayamizu"]]])
   end
+
+  def test_drilldown_sortby
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_sortby => "_key"},
+                     [["gunyara-kun"],
+                      ["hayamiz"],
+                      ["moritan"],
+                      ["ryoqun"],
+                      ["taporobo"]])
+  end
+
+  private
+  def assert_drilldown(options, values)
+    assert_select(["_id", "text", "author"],
+                  [[1, "ルビー最高！", "taporobo"],
+                   [2, "グロンガ最高！", "hayamiz"],
+                   [3, "Ruby/Groonga is useful.", "gunyara-kun"],
+                   [4, "Ruby rocks!", "moritan"],
+                   [5, "Groonga rocks!", "ryoqun"]],
+                  {:table => "comments",
+                   :drilldown => "author",
+                   :drilldown_output_columns => "_key",
+                   :drilldown_limit => 10}.merge(options),
+                  :expected_drilldown => [
+                   [[5],
+                    ["_key"],
+                    *values]])
+  end
 end
