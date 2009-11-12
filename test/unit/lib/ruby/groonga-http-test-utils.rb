@@ -72,38 +72,35 @@ module GroongaHTTPTestUtils
     load_users
   end
 
+  def table_create(name, options={})
+    response = get(command_path(:table_create,
+                                options.merge({:name => name})))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+  end
+
+  def column_create(table, name, flags, type, options={})
+    response = get(command_path(:column_create,
+                                options.merge(:table => table,
+                                              :name => name,
+                                              :flags => flags,
+                                              :type => type)))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+  end
+
   def create_users_table
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "ShortText"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    table_create("users",
+                 :flags => Table::PAT_KEY,
+                 :key_type => "ShortText")
+    column_create("users", "real_name", Column::SCALAR, "ShortText")
 
-    response = get(command_path(:column_create,
-                                :table => "users",
-                                :name => "real_name",
-                                :flags => Column::SCALAR,
-                                :type => "ShortText"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
-
-    response = get(command_path(:table_create,
-                                :name => "terms",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "ShortText",
-                                :default_tokenizer => "TokenBigram"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
-
-    response = get(command_path(:column_create,
-                                :table => "terms",
-                                :name => "users_real_name",
-                                :flags => Column::INDEX,
-                                :type => "users",
-                                :source => "real_name"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    table_create("terms",
+                 :flags => Table::PAT_KEY,
+                 :key_type => "ShortText",
+                 :default_tokenizer => "TokenBigram")
+    column_create("terms", "users_real_name", Column::INDEX, "users",
+                  :source => "real_name")
   end
 
   def load(table, values)
@@ -123,12 +120,7 @@ module GroongaHTTPTestUtils
   end
 
   def create_bookmarks_table
-    response = get(command_path(:table_create,
-                                :name => "bookmarks",
-                                :flags => Table::HASH_KEY,
-                                :key_type => "Int32"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    table_create("bookmarks", :flags => Table::HASH_KEY, :key_type => "Int32")
   end
 
   def load_bookmarks(keys=nil)
@@ -145,27 +137,9 @@ module GroongaHTTPTestUtils
   end
 
   def create_comments_table
-    response = get(command_path(:table_create,
-                                :name => "comments",
-                                :flags => Table::NO_KEY))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
-
-    response = get(command_path(:column_create,
-                                :table => "comments",
-                                :name => "text",
-                                :flags => Column::SCALAR,
-                                :type => "ShortText"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
-
-    response = get(command_path(:column_create,
-                                :table => "comments",
-                                :name => "author",
-                                :flags => Column::SCALAR,
-                                :type => "users"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    table_create("comments", :flags => Table::NO_KEY)
+    column_create("comments", "text", Column::SCALAR, "ShortText")
+    column_create("comments", "author", Column::SCALAR, "users")
   end
 
   def load_comments
