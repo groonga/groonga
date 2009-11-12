@@ -36,20 +36,10 @@ class HTTPTest < Test::Unit::TestCase
   end
 
   def test_load
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "ShortText"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
-
-    response = get(command_path(:column_create,
-                                :table => "users",
-                                :name => "real_name",
-                                :flags => Column::SCALAR,
-                                :type => "ShortText"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    table_create("users",
+                 :flags => Table::PAT_KEY,
+                 :key_type => "ShortText")
+    column_create("users", "real_name", Column::SCALAR, "ShortText")
 
     values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
     response = get(command_path(:load, :table => "users", :values => values))
@@ -128,13 +118,10 @@ class HTTPTest < Test::Unit::TestCase
 
   private
   def create_users_table(key_type, value_type=nil)
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::HASH_KEY,
-                                :key_type => key_type,
-                                :value_type => value_type))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    table_create("users",
+                 :flags => Table::HASH_KEY,
+                 :key_type => key_type,
+                 :value_type => value_type)
   end
 
   def assert_load_key(user_id=48)

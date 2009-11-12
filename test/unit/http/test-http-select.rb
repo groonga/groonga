@@ -29,25 +29,12 @@ class HTTPSelectTest < Test::Unit::TestCase
   end
 
   def test_select
-    response = get(command_path(:table_create,
-                                :name => "users",
-                                :flags => Table::PAT_KEY,
-                                :key_type => "ShortText"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    table_create("users",
+                 :flags => Table::PAT_KEY,
+                 :key_type => "ShortText")
+    column_create("users", "real_name", Column::SCALAR, "ShortText")
 
-    response = get(command_path(:column_create,
-                                :table => "users",
-                                :name => "real_name",
-                                :flags => Column::SCALAR,
-                                :type => "ShortText"))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
-
-    values = JSON.generate([{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
-    response = get(command_path(:load, :table => "users", :values => values))
-    assert_response([[Result::SUCCESS], 1], response,
-                    :content_type => "application/json")
+    load("users", [{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
 
     assert_select(["_id", "_key", "real_name"],
                   [[1, "ryoqun", "Ryo Onodera"]],
