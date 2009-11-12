@@ -315,6 +315,30 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::SHORT_TEXT]])
     end
 
+    def test_view_key
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::VIEW))
+      assert_response([[Result::SUCCESS]],
+                      response,
+                      :content_type => "application/json")
+      users_table_id = object_registered
+
+      response = get(command_path(:table_create,
+                                  :name => "sites",
+                                  :key_type => "users"))
+      assert_response([[Result::SUCCESS]],
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([["sites",
+                          Flag::PERSISTENT | Table::HASH_KEY,
+                          users_table_id],
+                         ["users",
+                          Flag::PERSISTENT | Table::VIEW,
+                          Type::VOID]])
+    end
+
     def test_long_size_key
       response = get(command_path(:table_create,
                                   :name => "users",
@@ -427,6 +451,31 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Flag::PERSISTENT | Table::PAT_KEY |
                           Key::NORMALIZE | Key::VAR_SIZE,
                           Type::SHORT_TEXT]])
+    end
+
+    def test_view_key
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::VIEW))
+      assert_response([[Result::SUCCESS]],
+                      response,
+                      :content_type => "application/json")
+      users_table_id = object_registered
+
+      response = get(command_path(:table_create,
+                                  :name => "sites",
+                                  :flags => Table::PAT_KEY,
+                                  :key_type => "users"))
+      assert_response([[Result::SUCCESS]],
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([["sites",
+                          Flag::PERSISTENT | Table::PAT_KEY,
+                          users_table_id],
+                         ["users",
+                          Flag::PERSISTENT | Table::VIEW,
+                          Type::VOID]])
     end
 
     def test_long_size_key
@@ -570,6 +619,31 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([["users",
                           Flag::PERSISTENT | Table::NO_KEY,
                           Type::INT32]])
+    end
+
+    def test_view_value
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::VIEW))
+      assert_response([[Result::SUCCESS]],
+                      response,
+                      :content_type => "application/json")
+      users_table_id = object_registered
+
+      response = get(command_path(:table_create,
+                                  :name => "sites",
+                                  :flags => Table::NO_KEY,
+                                  :value_type => "users"))
+      assert_response([[Result::SUCCESS]],
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([["sites",
+                          Flag::PERSISTENT | Table::NO_KEY,
+                          users_table_id],
+                         ["users",
+                          Flag::PERSISTENT | Table::VIEW,
+                          Type::VOID]])
     end
 
     def test_nonexistent_value_type
