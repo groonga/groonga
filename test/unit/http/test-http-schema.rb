@@ -287,7 +287,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_with_normalize_key
+    def test_normalize_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Key::NORMALIZE))
@@ -300,7 +300,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_with_normalized_string_key
+    def test_normalized_string_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Key::NORMALIZE,
@@ -315,7 +315,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::SHORT_TEXT]])
     end
 
-    def test_with_long_size_key
+    def test_long_size_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :key_type => "Text"))
@@ -326,7 +326,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_sis
+    def test_sis
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Key::SIS,
@@ -338,7 +338,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_nonexistent_key_type
+    def test_nonexistent_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :key_type => "nonexistent"))
@@ -349,7 +349,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_invalid_key_type
+    def test_invalid_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :key_type => "table_create"))
@@ -360,7 +360,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_value_type
+    def test_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :value_type => "Int32"))
@@ -373,7 +373,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_with_nonexistent_value_type
+    def test_nonexistent_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :value_type => "nonexistent"))
@@ -401,7 +401,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_with_normalize_key
+    def test_normalize_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY | Key::NORMALIZE))
@@ -414,7 +414,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_with_normalized_string_key
+    def test_normalized_string_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY | Key::NORMALIZE,
@@ -429,7 +429,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::SHORT_TEXT]])
     end
 
-    def test_with_long_size_key
+    def test_long_size_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
@@ -441,7 +441,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_sis
+    def test_sis
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY | Key::SIS,
@@ -456,7 +456,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::SHORT_TEXT]])
     end
 
-    def test_with_nonexistent_key_type
+    def test_nonexistent_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
@@ -468,7 +468,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_invalid_key_type
+    def test_invalid_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
@@ -480,7 +480,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_value_type
+    def test_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
@@ -494,7 +494,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_with_nonexistent_value_type
+    def test_nonexistent_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
@@ -523,7 +523,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_with_normalize_key
+    def test_normalize_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY | Key::NORMALIZE))
@@ -535,7 +535,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_key_type
+    def test_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY,
@@ -547,7 +547,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_sis
+    def test_sis
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY | Key::SIS))
@@ -558,7 +558,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_value_type
+    def test_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY,
@@ -572,7 +572,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::INT32]])
     end
 
-    def test_with_nonexistent_value_type
+    def test_nonexistent_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY,
@@ -600,7 +600,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Flag::PERSISTENT | Table::VIEW,
                           Type::VOID]])
     end
-    def test_with_normalize_key
+    def test_normalize_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::VIEW | Key::NORMALIZE))
@@ -612,7 +612,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_key_type
+    def test_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::VIEW,
@@ -624,7 +624,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_sis
+    def test_sis
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::VIEW | Key::SIS))
@@ -635,7 +635,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
-    def test_with_value_type
+    def test_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::VIEW,
