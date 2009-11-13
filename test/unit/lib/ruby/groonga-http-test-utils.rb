@@ -171,8 +171,8 @@ module GroongaHTTPTestUtils
   def load_many_comments
     load("comments",
          [[:text, :author],
-          ["ルビー最高！", "taporobo"],
-          ["グロンガ最高！", "hayamiz"],
+          ["Ruby最高！", "taporobo"],
+          ["Groonga最高！", "hayamiz"],
           ["Ruby/Groonga is useful.", "gunyara-kun"],
           ["Ruby rocks!", "moritan"],
           ["Groonga rocks!", "ryoqun"]])

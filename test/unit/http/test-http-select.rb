@@ -462,8 +462,8 @@ class HTTPSelectTest < Test::Unit::TestCase
   private
   def assert_drilldown(options, values)
     assert_select(["_id", "text", "author"],
-                  [[1, "ルビー最高！", "taporobo"],
-                   [2, "グロンガ最高！", "hayamiz"],
+                  [[1, "Ruby最高！", "taporobo"],
+                   [2, "Groonga最高！", "hayamiz"],
                    [3, "Ruby/Groonga is useful.", "gunyara-kun"],
                    [4, "Ruby rocks!", "moritan"],
                    [5, "Groonga rocks!", "ryoqun"]],
