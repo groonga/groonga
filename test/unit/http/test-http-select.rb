@@ -285,6 +285,24 @@ class HTTPSelectTest < Test::Unit::TestCase
                    [[2], ["real_name"], ["Ryo Onodera"], ["Yuto Hayamizu"]]])
   end
 
+  def test_multiple_drilldown
+    create_users_table
+    load_users
+    create_comments_table
+    load_comments
+
+    assert_select(["_id", "text", "author"],
+                  [[1, "Ruby rocks", "ryoqun"],
+                   [2, "Groonga rocks", "hayamiz"]],
+                  {:table => "comments",
+                   :drilldown => "text author",
+                   :drilldown_output_columns => "_key",
+                   :drilldown_limit => 10},
+                  :expected_drilldown => [
+                   [[2], ["_key"], ["Ruby rocks"], ["Groonga rocks"]],
+                   [[2], ["_key"], ["ryoqun"], ["hayamiz"]]])
+  end
+
   def test_drilldown_sortby
     create_users_table
     load_many_users
