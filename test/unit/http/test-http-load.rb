@@ -83,6 +83,18 @@ class HTTPLoadTest < Test::Unit::TestCase
                   :table => "int-hash")
   end
 
+  def test_int_column_value
+    table_create("int-hash",
+                 :flags => Table::HASH_KEY,
+                 :key_type => "Int32")
+    column_create("int-hash", "int_value", Column::SCALAR, "Int32")
+
+    load("int-hash", [{:_key => 29, :int_value => 10}])
+    assert_select(["_id", "_key", "int_value"],
+                  [[1, 29, 10]],
+                  :table => "int-hash")
+  end
+
   private
   def create_users_table
     table_create("users",
