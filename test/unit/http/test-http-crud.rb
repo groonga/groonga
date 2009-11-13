@@ -137,6 +137,30 @@ module HTTPCRUDTest
                       response,
                       :content_type => "application/json")
     end
+
+    def test_output_columns
+      create_books_table
+
+      response = get(command_path(:add,
+                                  :table => "books",
+                                  :key => "ruby",
+                                  :columns => ["title"],
+                                  :values => json(["Ruby book"]),
+                                  :output_columns => "_key price title"))
+      assert_response([[Result::SUCCESS],
+                       "ruby", nil, "Ruby book"],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    private
+    def create_books_table
+      table_create("books",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+      column_create("books", "title", Column::SCALAR, "ShortText")
+      column_create("books", "price", Column::SCALAR, "Int32")
+    end
   end
 
   class HTTPGetTest < Test::Unit::TestCase
