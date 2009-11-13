@@ -336,6 +336,66 @@ class HTTPSelectTest < Test::Unit::TestCase
                       ["ryoqun"]])
   end
 
+  def test_drilldown_offset_one_larger_than_hits
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    response = get(command_path(:select,
+                                :table => "comments",
+                                :drilldown => "author",
+                                :drilldown_output_columns => "_key",
+                                :drilldown_limit => 10,
+                                :drilldown_offset => 6))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "too large drilldown_offset"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_negative_drilldown_offset_one_larger_than_hits
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    response = get(command_path(:select,
+                                :table => "comments",
+                                :drilldown => "author",
+                                :drilldown_output_columns => "_key",
+                                :drilldown_limit => 10,
+                                :drilldown_offset => -6))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "too small negative drilldown_offset"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_drilldown_offset_equal_to_hits
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_offset => 5},
+                     [])
+  end
+
+  def test_negative_drilldwon_offset_equal_to_hits
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_offset => -5},
+                     [["taporobo"],
+                      ["hayamiz"],
+                      ["gunyara-kun"],
+                      ["moritan"],
+                      ["ryoqun"]])
+  end
+
   def test_drilldown_limit
     create_users_table
     load_many_users
