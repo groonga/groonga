@@ -322,6 +322,30 @@ class HTTPSelectTest < Test::Unit::TestCase
                       ["hayamiz"]])
   end
 
+  def test_zero_drilldown_limit
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_limit => 0}, [])
+  end
+
+  def test_negative_drilldown_limit
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_limit => -3},
+                     [["taporobo"],
+                      ["hayamiz"],
+                      ["gunyara-kun"],
+                      ["moritan"],
+                      ["ryoqun"]])
+
+  end
+
   def test_drilldown_offset_and_limit
     create_users_table
     load_many_users
