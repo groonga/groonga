@@ -196,14 +196,16 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_table_create_with_dot_name
     response = get(command_path(:table_create, :name => "mori.daijiro"))
-    assert_response([[Result::INVALID_ARGUMENT, "name contains '.'"]],
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "name can't start with with '_' and contains '.' or ':'"]],
                     response,
                     :content_type => "application/json")
   end
 
   def test_table_create_with_under_score_started_name
     response = get(command_path(:table_create, :name => "_mori"))
-    assert_response([[Result::INVALID_ARGUMENT, "name starts with '_'"]],
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "name can't start with with '_' and contains '.' or ':'"]],
                     response,
                     :content_type => "application/json")
   end
@@ -217,7 +219,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_table_create_with_colon_name
     response = get(command_path(:table_create, :name => "daijiro:mori"))
-    assert_response([[Result::INVALID_ARGUMENT, "name contains ':'"]],
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "name can't start with with '_' and contains '.' or ':'"]],
                     response,
                     :content_type => "application/json")
   end
