@@ -81,4 +81,32 @@ class HTTPCRUDTest < Test::Unit::TestCase
                     response,
                     :content_type => "application/json")
   end
+
+  def test_add_to_nonexistent_table
+    response = get(command_path(:add,
+                                :table => "nonexistent",
+                                :key => "mori"))
+    assert_response([[Result::UNKNOWN_ERROR, "table doesn't exist"]],
+                     response,
+                     :content_type => "application/json")
+  end
+
+  def test_set_to_nonexistent_table
+    response = get(command_path(:set,
+                                :table => "nonexistent",
+                                :key => "mori",
+                                :values => json({:_value => "mori daijiro"})))
+    assert_response([[Result::UNKNOWN_ERROR, "table doesn't exist"]],
+                     response,
+                     :content_type => "application/json")
+  end
+
+  def test_get_from_nonexistent_table
+    response = get(command_path(:get,
+                                :table => "nonexistent",
+                                :key => "mori"))
+    assert_response([[Result::UNKNOWN_ERROR, "table doesn't exist"]],
+                     response,
+                     :content_type => "application/json")
+  end
 end
