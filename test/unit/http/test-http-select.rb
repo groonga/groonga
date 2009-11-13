@@ -164,6 +164,26 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :n_hits => records.size)
   end
 
+  def test_zero_limit
+    create_bookmarks_table
+    records = load_bookmarks
+
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "bookmarks", :limit => 0},
+                  :n_hits => records.size)
+  end
+
+  def test_negative_limit
+    create_bookmarks_table
+    records = load_bookmarks
+
+    assert_select(["_id", "_key"],
+                  records,
+                  {:table => "bookmarks", :limit => -1},
+                  :n_hits => records.size)
+  end
+
   def test_offset_and_limit
     create_bookmarks_table
     records = load_bookmarks
