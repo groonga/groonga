@@ -138,15 +138,15 @@ module GroongaHTTPTestUtils
           {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA"}])
   end
 
-  def create_bookmarks_table
-    table_create("bookmarks", :flags => Table::HASH_KEY, :key_type => "Int32")
+  def create_user_id_table
+    table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
   end
 
-  def load_bookmarks(keys=nil)
+  def load_user_ids(keys=nil)
     header = ["_key"]
     keys ||= (0...10).to_a
 
-    load("bookmarks", [header, *keys.collect {|key| [key]}])
+    load("user_id", [header, *keys.collect {|key| [key]}])
 
     id = 0
     keys.collect do |key|
