@@ -233,5 +233,106 @@ module HTTPCRUDTest
                       response,
                       :content_type => "application/json")
     end
+
+    def test_no_table
+      response = get(command_path(:get))
+      assert_response([[Result::UNKNOWN_ERROR, "table isn't specified"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_invalid_table
+      response = get(command_path(:get, :table => "Int32"))
+      assert_response([[Result::UNKNOWN_ERROR, "not a table"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_no_key
+      create_users_table
+      response = get(command_path(:get, :table => "users"))
+      assert_response([[Result::UNKNOWN_ERROR, "ID nor key isn't specified"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_key_for_array
+      table_create("users", :flags => Table::NO_KEY)
+
+      response = get(command_path(:get,
+                                  :table => "users",
+                                  :key => "morita"))
+      assert_response([[Result::UNKNOWN_ERROR, "should not specify key"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_id_and_key
+      table_create("users",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+
+      load("users",
+           [{:_key => "morita"},
+            {:_key => "gunyara-kun"}])
+      response = get(command_path(:get,
+                                  :table => "users",
+                                  :key => "morita",
+                                  :id => 2))
+      assert_response([[Result::UNKNOWN_ERROR,
+                        "should not specify both key and ID"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_id_for_array
+      table_create("users", :flags => Table::NO_KEY)
+      column_create("users", "name", Column::SCALAR, "ShortText")
+
+      load("users",
+           [{:name => "morita"},
+            {:name => "gunyara-kun"}])
+      response = get(command_path(:get,
+                                  :table => "users",
+                                  :id => 2,
+                                  :output_columns => "name"))
+      assert_response([[Result::SUCCESS], ["gunyara-kun"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_id_for_key_table
+      table_create("users",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+
+      load("users",
+           [{:_key => "morita"},
+            {:_key => "gunyara-kun"}])
+      response = get(command_path(:get,
+                                  :table => "users",
+                                  :id => 2,
+                                  :output_columns => "_key"))
+      assert_response([[Result::SUCCESS], ["gunyara-kun"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_key_for_key_table
+      table_create("users",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+
+      load("users",
+           [{:_key => "morita"},
+            {:_key => "gunyara-kun"}])
+      response = get(command_path(:get,
+                                  :table => "users",
+                                  :id => "morita",
+                                  :output_columns => "_id _key"))
+      assert_response([[Result::SUCCESS], [1, "morita"]],
+                      response,
+                      :content_type => "application/json")
+    end
   end
 end
