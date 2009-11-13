@@ -144,6 +144,17 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :sortby => "-_key")
   end
 
+  def test_sortby_with_multiple_column
+    create_calendar_table
+    records = load_schedules
+
+    assert_select(["_id","month","day"],
+                  records.sort_by {|id, month, day| [month, day]},
+                  :table => "calendar",
+                  :limit => -1,
+                  :sortby => "month day")
+  end
+
   def test_offset
     create_user_id_table
     records = load_user_ids

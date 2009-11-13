@@ -155,6 +155,36 @@ module GroongaHTTPTestUtils
     end
   end
 
+  def create_calendar_table
+    table_create("calendar", :flags => Table::NO_KEY)
+    column_create("calendar", "month", Column::SCALAR, "Int32")
+    column_create("calendar", "day", Column::SCALAR, "Int32")
+  end
+
+  def load_schedules
+    def range_rand(min,max)
+      min + rand(max-min)
+    end
+    header = ["month", "day"]
+
+    records = []
+    1.upto(12) do |month|
+      days = (1..28).to_a.shuffle
+      1.upto(10) do
+        records.push([month, days.pop])
+      end
+    end
+    records.shuffle!
+
+    load("calendar", [header, *records])
+
+    id = 0
+    records.collect do |record|
+      id += 1
+      [id , *record]
+    end
+  end
+
   def create_comments_table
     table_create("comments", :flags => Table::NO_KEY)
     column_create("comments", "text", Column::SCALAR, "ShortText")
