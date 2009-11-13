@@ -378,8 +378,7 @@ class HTTPSelectTest < Test::Unit::TestCase
     create_comments_table
     load_many_comments
 
-    assert_drilldown({:drilldown_offset => 5},
-                     [])
+    assert_drilldown({:drilldown_offset => 5}, [])
   end
 
   def test_negative_drilldwon_offset_equal_to_hits
