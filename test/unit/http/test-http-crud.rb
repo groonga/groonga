@@ -62,8 +62,28 @@ module HTTPCRUDTest
                                   :table => "nonexistent",
                                   :key => "mori"))
       assert_response([[Result::UNKNOWN_ERROR, "table doesn't exist"]],
-                       response,
-                       :content_type => "application/json")
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_no_key_for_no_key_table
+      create_table("users", :flags => Table::NO_KEY)
+
+      response = get(command_path(:add, :table => "users"))
+      assert_response([[Result::SUCCESS]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_no_key_for_key_table
+      create_table("users",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+
+      response = get(command_path(:add, :table => "users"))
+      assert_response([[Result::UNKNOWN_ERROR, "key isn't required."]],
+                      response,
+                      :content_type => "application/json")
     end
   end
 
