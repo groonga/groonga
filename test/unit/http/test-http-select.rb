@@ -125,60 +125,71 @@ class HTTPSelectTest < Test::Unit::TestCase
   end
 
   def test_sortby
-    create_bookmarks_table
-    records = load_bookmarks((0...10).to_a.shuffle)
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key},
-                  :table => "bookmarks",
+                  :table => "user_id",
                   :sortby => "_key")
   end
 
   def test_sortby_reverse
-    create_bookmarks_table
-    records = load_bookmarks((0...10).to_a.shuffle)
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key}.reverse,
-                  :table => "bookmarks",
+                  :table => "user_id",
                   :sortby => "-_key")
   end
 
+  def test_sortby_with_multiple_column
+    create_calendar_table
+    records = load_schedules
+
+    assert_select(["_id","month","day"],
+                  records.sort_by {|id, month, day| [month, day]},
+                  :table => "calendar",
+                  :limit => -1,
+                  :sortby => "month day")
+  end
+
   def test_offset
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   records[3..-1],
-                  {:table => "bookmarks", :offset => 3},
+                  {:table => "user_id", :offset => 3},
                   :n_hits => records.size)
   end
 
   def test_zero_offset
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   records,
-                  {:table => "bookmarks", :offset => 0},
+                  {:table => "user_id", :offset => 0},
                   :n_hits => records.size)
   end
 
   def test_negative_offset
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   records[-3..-1],
-                  {:table => "bookmarks", :offset => -3},
+                  {:table => "user_id", :offset => -3},
                   :n_hits => records.size)
   end
 
   def test_offset_one_larger_than_hits
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
-    response = get(command_path(:select, :table => "bookmarks", :offset => 11))
+    response = get(command_path(:select, :table => "user_id", :offset => 11))
     assert_response([[Result::INVALID_ARGUMENT,
                       "too large offset"]],
                     response,
@@ -186,10 +197,10 @@ class HTTPSelectTest < Test::Unit::TestCase
   end
 
   def test_negative_offset_one_larger_than_hits
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
-    response = get(command_path(:select, :table => "bookmarks", :offset => -11))
+    response = get(command_path(:select, :table => "user_id", :offset => -11))
     assert_response([[Result::INVALID_ARGUMENT,
                       "too small negative offset"]],
                     response,
@@ -197,62 +208,62 @@ class HTTPSelectTest < Test::Unit::TestCase
   end
 
   def test_offset_equal_to_hits
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   [],
-                  {:table => "bookmarks", :offset => 10},
+                  {:table => "user_id", :offset => 10},
                   :n_hits => records.size)
   end
 
   def test_negative_offset_equal_to_hits
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   records,
-                  {:table => "bookmarks", :offset => -10},
+                  {:table => "user_id", :offset => -10},
                   :n_hits => records.size)
   end
 
   def test_limit
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   records[0, 4],
-                  {:table => "bookmarks", :limit => 4},
+                  {:table => "user_id", :limit => 4},
                   :n_hits => records.size)
   end
 
   def test_zero_limit
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   [],
-                  {:table => "bookmarks", :limit => 0},
+                  {:table => "user_id", :limit => 0},
                   :n_hits => records.size)
   end
 
   def test_negative_limit
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   records,
-                  {:table => "bookmarks", :limit => -1},
+                  {:table => "user_id", :limit => -1},
                   :n_hits => records.size)
   end
 
   def test_offset_and_limit
-    create_bookmarks_table
-    records = load_bookmarks
+    create_user_id_table
+    records = load_user_ids
 
     assert_select(["_id", "_key"],
                   records[3, 4],
-                  {:table => "bookmarks", :offset => 3, :limit => 4},
+                  {:table => "user_id", :offset => 3, :limit => 4},
                   :n_hits => records.size)
   end
 
@@ -462,8 +473,8 @@ class HTTPSelectTest < Test::Unit::TestCase
   private
   def assert_drilldown(options, values)
     assert_select(["_id", "text", "author"],
-                  [[1, "ルビー最高！", "taporobo"],
-                   [2, "グロンガ最高！", "hayamiz"],
+                  [[1, "Ruby最高！", "taporobo"],
+                   [2, "Groonga最高！", "hayamiz"],
                    [3, "Ruby/Groonga is useful.", "gunyara-kun"],
                    [4, "Ruby rocks!", "moritan"],
                    [5, "Groonga rocks!", "ryoqun"]],

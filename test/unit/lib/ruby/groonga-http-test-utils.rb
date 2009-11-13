@@ -138,20 +138,50 @@ module GroongaHTTPTestUtils
           {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA"}])
   end
 
-  def create_bookmarks_table
-    table_create("bookmarks", :flags => Table::HASH_KEY, :key_type => "Int32")
+  def create_user_id_table
+    table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
   end
 
-  def load_bookmarks(keys=nil)
+  def load_user_ids(keys=nil)
     header = ["_key"]
     keys ||= (0...10).to_a
 
-    load("bookmarks", [header, *keys.collect {|key| [key]}])
+    load("user_id", [header, *keys.collect {|key| [key]}])
 
     id = 0
     keys.collect do |key|
       id += 1
       [id, key]
+    end
+  end
+
+  def create_calendar_table
+    table_create("calendar", :flags => Table::NO_KEY)
+    column_create("calendar", "month", Column::SCALAR, "Int32")
+    column_create("calendar", "day", Column::SCALAR, "Int32")
+  end
+
+  def load_schedules
+    def range_rand(min,max)
+      min + rand(max-min)
+    end
+    header = ["month", "day"]
+
+    records = []
+    1.upto(12) do |month|
+      days = (1..28).to_a.shuffle
+      1.upto(10) do
+        records.push([month, days.pop])
+      end
+    end
+    records.shuffle!
+
+    load("calendar", [header, *records])
+
+    id = 0
+    records.collect do |record|
+      id += 1
+      [id , *record]
     end
   end
 
@@ -171,8 +201,8 @@ module GroongaHTTPTestUtils
   def load_many_comments
     load("comments",
          [[:text, :author],
-          ["ルビー最高！", "taporobo"],
-          ["グロンガ最高！", "hayamiz"],
+          ["Ruby最高！", "taporobo"],
+          ["Groonga最高！", "hayamiz"],
           ["Ruby/Groonga is useful.", "gunyara-kun"],
           ["Ruby rocks!", "moritan"],
           ["Groonga rocks!", "ryoqun"]])
