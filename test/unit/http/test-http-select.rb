@@ -174,6 +174,48 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :n_hits => records.size)
   end
 
+  def test_offset_one_larger_than_hits
+    create_bookmarks_table
+    records = load_bookmarks
+
+    response = get(command_path(:select, :table => "bookmarks", :offset => 11))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "too large offset"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_negative_offset_one_larger_than_hits
+    create_bookmarks_table
+    records = load_bookmarks
+
+    response = get(command_path(:select, :table => "bookmarks", :offset => -11))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "too small negative offset"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_offset_equal_to_hits
+    create_bookmarks_table
+    records = load_bookmarks
+
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "bookmarks", :offset => 10},
+                  :n_hits => records.size)
+  end
+
+  def test_negative_offset_equal_to_hits
+    create_bookmarks_table
+    records = load_bookmarks
+
+    assert_select(["_id", "_key"],
+                  records,
+                  {:table => "bookmarks", :offset => -10},
+                  :n_hits => records.size)
+  end
+
   def test_limit
     create_bookmarks_table
     records = load_bookmarks
