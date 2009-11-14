@@ -471,6 +471,29 @@ class HTTPSelectTest < Test::Unit::TestCase
   end
 
   private
+  def create_comments_table
+    table_create("comments", :flags => Table::NO_KEY)
+    column_create("comments", "text", Column::SCALAR, "ShortText")
+    column_create("comments", "author", Column::SCALAR, "users")
+  end
+
+  def load_comments
+    load("comments",
+         [[:text, :author],
+          ["Ruby rocks", "ryoqun"],
+          ["groonga rocks", "hayamiz"]])
+  end
+
+  def load_many_comments
+    load("comments",
+         [[:text, :author],
+          ["Ruby最高！", "taporobo"],
+          ["groonga最高！", "hayamiz"],
+          ["Ruby/groonga is useful.", "gunyara-kun"],
+          ["Ruby rocks!", "moritan"],
+          ["groonga rocks!", "ryoqun"]])
+  end
+
   def assert_drilldown(options, values)
     assert_select(["_id", "text", "author"],
                   [[1, "Ruby最高！", "taporobo"],
