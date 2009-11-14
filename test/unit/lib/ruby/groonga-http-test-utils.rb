@@ -195,17 +195,17 @@ module GroongaHTTPTestUtils
     load("comments",
          [[:text, :author],
           ["Ruby rocks", "ryoqun"],
-          ["Groonga rocks", "hayamiz"]])
+          ["groonga rocks", "hayamiz"]])
   end
 
   def load_many_comments
     load("comments",
          [[:text, :author],
           ["Ruby最高！", "taporobo"],
-          ["Groonga最高！", "hayamiz"],
-          ["Ruby/Groonga is useful.", "gunyara-kun"],
+          ["groonga最高！", "hayamiz"],
+          ["Ruby/groonga is useful.", "gunyara-kun"],
           ["Ruby rocks!", "moritan"],
-          ["Groonga rocks!", "ryoqun"]])
+          ["groonga rocks!", "ryoqun"]])
   end
 
   def json(object)
