@@ -274,7 +274,7 @@ class HTTPSelectTest < Test::Unit::TestCase
     load_comments
 
     assert_select(["_id", "text", "author"],
-                  [[2, "Groonga rocks", "hayamiz"]],
+                  [[2, "groonga rocks", "hayamiz"]],
                   :table => "comments",
                   :query => "author.real_name:\"Yuto Hayamizu\"")
   end
@@ -287,7 +287,7 @@ class HTTPSelectTest < Test::Unit::TestCase
 
     assert_select(["_id", "text", "author"],
                   [[1, "Ruby rocks", "ryoqun"],
-                   [2, "Groonga rocks", "hayamiz"]],
+                   [2, "groonga rocks", "hayamiz"]],
                   {:table => "comments",
                    :drilldown => "author",
                    :drilldown_output_columns => "real_name",
@@ -304,13 +304,13 @@ class HTTPSelectTest < Test::Unit::TestCase
 
     assert_select(["_id", "text", "author"],
                   [[1, "Ruby rocks", "ryoqun"],
-                   [2, "Groonga rocks", "hayamiz"]],
+                   [2, "groonga rocks", "hayamiz"]],
                   {:table => "comments",
                    :drilldown => "text author",
                    :drilldown_output_columns => "_key",
                    :drilldown_limit => 10},
                   :expected_drilldown => [
-                   [[2], ["_key"], ["Ruby rocks"], ["Groonga rocks"]],
+                   [[2], ["_key"], ["Ruby rocks"], ["groonga rocks"]],
                    [[2], ["_key"], ["ryoqun"], ["hayamiz"]]])
   end
 
@@ -474,10 +474,10 @@ class HTTPSelectTest < Test::Unit::TestCase
   def assert_drilldown(options, values)
     assert_select(["_id", "text", "author"],
                   [[1, "Ruby最高！", "taporobo"],
-                   [2, "Groonga最高！", "hayamiz"],
-                   [3, "Ruby/Groonga is useful.", "gunyara-kun"],
+                   [2, "groonga最高！", "hayamiz"],
+                   [3, "Ruby/groonga is useful.", "gunyara-kun"],
                    [4, "Ruby rocks!", "moritan"],
-                   [5, "Groonga rocks!", "ryoqun"]],
+                   [5, "groonga rocks!", "ryoqun"]],
                   {:table => "comments",
                    :drilldown => "author",
                    :drilldown_output_columns => "_key",
