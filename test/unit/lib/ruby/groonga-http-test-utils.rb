@@ -162,9 +162,6 @@ module GroongaHTTPTestUtils
   end
 
   def load_schedules
-    def range_rand(min, max)
-      min + rand(max - min)
-    end
     header = ["month", "day"]
 
     records = []
