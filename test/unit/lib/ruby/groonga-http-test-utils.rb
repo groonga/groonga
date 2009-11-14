@@ -162,9 +162,6 @@ module GroongaHTTPTestUtils
   end
 
   def load_schedules
-    def range_rand(min,max)
-      min + rand(max-min)
-    end
     header = ["month", "day"]
 
     records = []
@@ -183,29 +180,6 @@ module GroongaHTTPTestUtils
       id += 1
       [id , *record]
     end
-  end
-
-  def create_comments_table
-    table_create("comments", :flags => Table::NO_KEY)
-    column_create("comments", "text", Column::SCALAR, "ShortText")
-    column_create("comments", "author", Column::SCALAR, "users")
-  end
-
-  def load_comments
-    load("comments",
-         [[:text, :author],
-          ["Ruby rocks", "ryoqun"],
-          ["Groonga rocks", "hayamiz"]])
-  end
-
-  def load_many_comments
-    load("comments",
-         [[:text, :author],
-          ["Ruby最高！", "taporobo"],
-          ["Groonga最高！", "hayamiz"],
-          ["Ruby/Groonga is useful.", "gunyara-kun"],
-          ["Ruby rocks!", "moritan"],
-          ["Groonga rocks!", "ryoqun"]])
   end
 
   def json(object)
