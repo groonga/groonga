@@ -175,7 +175,9 @@ module HTTPSelectTests
     create_user_id_table
     records = load_user_ids
 
-    response = get(command_path(:select, :table => "user_id", :offset => 11))
+    response = get(command_path(:select,
+                                :table => "user_id",
+                                :offset => records.size + 1))
     assert_response([[Result::INVALID_ARGUMENT,
                       "too large offset"]],
                     response,
@@ -186,7 +188,9 @@ module HTTPSelectTests
     create_user_id_table
     records = load_user_ids
 
-    response = get(command_path(:select, :table => "user_id", :offset => -11))
+    response = get(command_path(:select,
+                                :table => "user_id",
+                                :offset => -(records.size + 1)))
     assert_response([[Result::INVALID_ARGUMENT,
                       "too small negative offset"]],
                     response,
@@ -199,7 +203,7 @@ module HTTPSelectTests
 
     assert_select(["_id", "_key"],
                   [],
-                  {:table => "user_id", :offset => 10},
+                  {:table => "user_id", :offset => records.size},
                   :n_hits => records.size)
   end
 
@@ -209,7 +213,7 @@ module HTTPSelectTests
 
     assert_select(["_id", "_key"],
                   records,
-                  {:table => "user_id", :offset => -10},
+                  {:table => "user_id", :offset => -records.size},
                   :n_hits => records.size)
   end
 
