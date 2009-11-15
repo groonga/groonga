@@ -110,6 +110,16 @@ module HTTPSelectTests
                   :output_columns => "real_name")
   end
 
+  def test_output_columns_wild_card
+    populate_users
+
+    assert_select(["_key", "real_name", "hp"],
+                  [["hayamiz", "Yuto Hayamizu", 200],
+                   ["ryoqun", "Ryo Onodera", 200]],
+                  :table => "users",
+                  :output_columns => "_key *")
+  end
+
   def test_sortby
     create_user_id_table
     records = load_user_ids((0...10).to_a.shuffle)
@@ -631,6 +641,21 @@ module HTTPSelectTests
                       :drilldown_limit => 1,
                       :drilldown_output_columns => "_key"},
                      :n_hits => comments.size)
+  end
+
+  def test_drilldown_output_columns_wild_card
+    create_users_table
+    load_many_users
+    create_comments_table
+    comments = load_many_comments
+
+    assert_drilldown(["real_name", "hp", "_key"],
+                     [["モリタン", 100, "moritan"],
+                      ["タポロボ", 100, "taporobo"],
+                      ["Tasuku SUENAGA", 150, "gunyara-kun"],
+                      ["Yuto Hayamizu", 200, "hayamiz"],
+                      ["Ryo Onodera", 200, "ryoqun"]],
+                     :drilldown_output_columns => "* _key")
   end
 
   private
