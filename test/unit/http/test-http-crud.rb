@@ -67,7 +67,7 @@ module HTTPCRUDTest
     end
 
     def test_no_key_for_no_key_table
-      create_table("users", :flags => Table::NO_KEY)
+      table_create("users", :flags => Table::NO_KEY)
 
       response = get(command_path(:add, :table => "users"))
       assert_response([[Result::SUCCESS], 1],
@@ -76,7 +76,7 @@ module HTTPCRUDTest
     end
 
     def test_no_key_for_key_table
-      create_table("users",
+      table_create("users",
                    :flags => Table::PAT_KEY,
                    :key_type => "ShortText")
 
@@ -244,7 +244,7 @@ module HTTPCRUDTest
     end
 
     def test_nonexistent_key
-      create_table("users",
+      table_create("users",
                    :flags => Table::PAT_KEY,
                    :key_type => "ShortText")
       column_create("users", "name", Column::SCALAR, "ShortText")
@@ -259,7 +259,7 @@ module HTTPCRUDTest
     end
 
     def test_nonexistent_id
-      create_table("users", :flags => Table::NO_KEY)
+      table_create("users", :flags => Table::NO_KEY)
       column_create("users", "name", Column::SCALAR, "ShortText")
 
       response = get(command_path(:set,
@@ -272,7 +272,7 @@ module HTTPCRUDTest
     end
 
     def test_no_key_for_key_table
-      create_table("users",
+      table_create("users",
                    :flags => Table::PAT_KEY,
                    :key_type => "ShortText")
       column_create("users", "name", Column::SCALAR, "ShortText")
@@ -286,7 +286,7 @@ module HTTPCRUDTest
     end
 
     def test_no_id_for_no_key_table
-      create_table("users", :flags => Table::NO_KEY)
+      table_create("users", :flags => Table::NO_KEY)
       column_create("users", "name", Column::SCALAR, "ShortText")
 
       response = get(command_path(:set,
@@ -298,7 +298,7 @@ module HTTPCRUDTest
     end
 
     def test_no_values_with_key
-      create_table("users",
+      table_create("users",
                    :flags => Table::PAT_KEY,
                    :key_type => "ShortText")
       column_create("users", "name", Column::SCALAR, "ShortText")
@@ -313,7 +313,7 @@ module HTTPCRUDTest
     end
 
     def test_no_values_with_id
-      create_table("users", :flags => Table::NO_KEY)
+      table_create("users", :flags => Table::NO_KEY)
       column_create("users", "name", Column::SCALAR, "ShortText")
 
       load("users", [{:name => "daijiro"}])
