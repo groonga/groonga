@@ -175,28 +175,23 @@ module HTTPSelectTests
     create_user_id_table
     records = load_user_ids((0...10).to_a.shuffle)
 
-    response = get(command_path(:select,
-                                :table => "user_id",
-                                :sortby => "_key",
-                                :offset => records.size + 1))
-    assert_response([[Result::INVALID_ARGUMENT,
-                      "too large offset"]],
-                    response,
-                    :content_type => "application/json")
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => records.size + 1},
+                  :n_hits => records.size)
   end
 
   def test_sortby_negative_offset_one_larger_than_hits
     create_user_id_table
     records = load_user_ids((0...10).to_a.shuffle)
 
-    response = get(command_path(:select,
-                                :table => "user_id",
-                                :sortby => "_key",
-                                :offset => -(records.size + 1)))
-    assert_response([[Result::INVALID_ARGUMENT,
-                      "too small negative offset"]],
-                    response,
-                    :content_type => "application/json")
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  :table => "user_id",
+                  :sortby => "_key",
+                  :offset => -(records.size + 1))
   end
 
   def test_sortby_offset_equal_to_hits
