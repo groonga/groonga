@@ -141,6 +141,133 @@ module HTTPSelectTests
                   :sortby => "month day")
   end
 
+  def test_sortby_offset
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[3..-1],
+                  {:table => "user_id", :sortby => "_key", :offset => 3},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_zero_offset
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  {:table => "user_id", :sortby => "_key", :offset => 0},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_negative_offset
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[-3..-1],
+                  {:table => "user_id", :sortby => "_key", :offset => -3},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_offset_one_larger_than_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    response = get(command_path(:select,
+                                :table => "user_id",
+                                :sortby => "_key",
+                                :offset => records.size + 1))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "too large offset"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_sortby_negative_offset_one_larger_than_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    response = get(command_path(:select,
+                                :table => "user_id",
+                                :sortby => "_key",
+                                :offset => -(records.size + 1)))
+    assert_response([[Result::INVALID_ARGUMENT,
+                      "too small negative offset"]],
+                    response,
+                    :content_type => "application/json")
+  end
+
+  def test_sortby_offset_equal_to_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => records.size},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_negative_offset_equal_to_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => -records.size},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[0, 4],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :limit => 4},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_zero_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "user_id", :sortby => "_key", :limit => 0},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_negative_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  {:table => "user_id", :sortby => "_key", :limit => -1},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_offset_and_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[3, 4],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => 3,
+                   :limit => 4},
+                  :n_hits => records.size)
+  end
+
   def test_offset
     create_user_id_table
     records = load_user_ids
