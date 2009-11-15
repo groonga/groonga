@@ -17,7 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-class HTTPSelectTest < Test::Unit::TestCase
+module HTTPSelectTests
   include GroongaHTTPTestUtils
 
   def setup
@@ -495,5 +495,22 @@ class HTTPSelectTest < Test::Unit::TestCase
                    [[5],
                     ["_key"],
                     *values]])
+  end
+end
+
+class HTTPSelectTest < Test::Unit::TestCase
+  include HTTPSelectTests
+end
+
+class HTTPDefineSelectorTest < HTTPSelectTest
+  include HTTPSelectTests
+
+  def assert_select(header, expected, parameters, options={}, &block)
+    name = "custom_select"
+    response = get(command_path("define_selector",
+                                parameters.merge(:name => name)))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+    super(header, expected, {}, options.merge(:command => name), &block)
   end
 end
