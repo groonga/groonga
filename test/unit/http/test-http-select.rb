@@ -440,6 +440,21 @@ module HTTPSelectTests
                       ["taporobo"]])
   end
 
+  def test_drilldown_sortby_with_multiple_column
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown({:drilldown_sortby => "hp _key",
+                      :drilldown_output_columns => "hp _key"},
+                     [[100, "moritan"],
+                      [100, "taporobo"],
+                      [150, "gunyara-kun"],
+                      [200, "hayamiz"],
+                      [200, "ryoqun"]])
+  end
+
   def test_drilldown_offset
     create_users_table
     load_many_users
@@ -624,6 +639,7 @@ module HTTPSelectTests
   end
 
   def assert_drilldown(options, values)
+    drilldown_output_columns = options[:drilldown_output_columns] || "_key"
     assert_select(["_id", "text", "author"],
                   [[1, "Ruby最高！", "taporobo"],
                    [2, "groonga最高！", "hayamiz"],
@@ -632,11 +648,11 @@ module HTTPSelectTests
                    [5, "groonga rocks!", "ryoqun"]],
                   {:table => "comments",
                    :drilldown => "author",
-                   :drilldown_output_columns => "_key",
+                   :drilldown_output_columns => drilldown_output_columns,
                    :drilldown_limit => 10}.merge(options),
                   :expected_drilldown => [
                    [[5],
-                    ["_key"],
+                    drilldown_output_columns.split,
                     *values]])
   end
 end
