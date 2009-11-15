@@ -28,20 +28,6 @@ class HTTPSelectTest < Test::Unit::TestCase
     teardown_server
   end
 
-  def test_select
-    table_create("users",
-                 :flags => Table::PAT_KEY,
-                 :key_type => "ShortText")
-    column_create("users", "real_name", Column::SCALAR, "ShortText")
-
-    load("users", [{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
-
-    assert_select(["_id", "_key", "real_name"],
-                  [[1, "ryoqun", "Ryo Onodera"]],
-                  :table => "users",
-                  :query => "real_name:\"Ryo Onodera\"")
-  end
-
   def test_match_column
     populate_users
 
