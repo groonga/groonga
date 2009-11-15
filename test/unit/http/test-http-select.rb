@@ -457,6 +457,23 @@ module HTTPSelectTests
   end
 
   private
+  def create_user_id_table
+    table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
+  end
+
+  def load_user_ids(keys=nil)
+    header = ["_key"]
+    keys ||= (0...10).to_a
+
+    load("user_id", [header, *keys.collect {|key| [key]}])
+
+    id = 0
+    keys.collect do |key|
+      id += 1
+      [id, key]
+    end
+  end
+
   def create_comments_table
     table_create("comments", :flags => Table::NO_KEY)
     column_create("comments", "text", Column::SCALAR, "ShortText")
