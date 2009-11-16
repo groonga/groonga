@@ -15,6 +15,7 @@ Contents:
    characteristic
    tutorial
    reference
+   developer
 
 Indices and tables
 ==================
