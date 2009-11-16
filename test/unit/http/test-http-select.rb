@@ -17,7 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-class HTTPSelectTest < Test::Unit::TestCase
+module HTTPSelectTests
   include GroongaHTTPTestUtils
 
   def setup
@@ -26,20 +26,6 @@ class HTTPSelectTest < Test::Unit::TestCase
 
   def teardown
     teardown_server
-  end
-
-  def test_select
-    table_create("users",
-                 :flags => Table::PAT_KEY,
-                 :key_type => "ShortText")
-    column_create("users", "real_name", Column::SCALAR, "ShortText")
-
-    load("users", [{:_key => "ryoqun", :real_name => "Ryo Onodera"}])
-
-    assert_select(["_id", "_key", "real_name"],
-                  [[1, "ryoqun", "Ryo Onodera"]],
-                  :table => "users",
-                  :query => "real_name:\"Ryo Onodera\"")
   end
 
   def test_match_column
@@ -124,6 +110,16 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :output_columns => "real_name")
   end
 
+  def test_output_columns_wild_card
+    populate_users
+
+    assert_select(["_key", "real_name", "hp"],
+                  [["hayamiz", "Yuto Hayamizu", 200],
+                   ["ryoqun", "Ryo Onodera", 200]],
+                  :table => "users",
+                  :output_columns => "_key *")
+  end
+
   def test_sortby
     create_user_id_table
     records = load_user_ids((0...10).to_a.shuffle)
@@ -153,6 +149,128 @@ class HTTPSelectTest < Test::Unit::TestCase
                   :table => "calendar",
                   :limit => -1,
                   :sortby => "month day")
+  end
+
+  def test_sortby_offset
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[3..-1],
+                  {:table => "user_id", :sortby => "_key", :offset => 3},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_zero_offset
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  {:table => "user_id", :sortby => "_key", :offset => 0},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_negative_offset
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[-3..-1],
+                  {:table => "user_id", :sortby => "_key", :offset => -3},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_offset_one_larger_than_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => records.size + 1},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_negative_offset_one_larger_than_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  :table => "user_id",
+                  :sortby => "_key",
+                  :offset => -(records.size + 1))
+  end
+
+  def test_sortby_offset_equal_to_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => records.size},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_negative_offset_equal_to_hits
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => -records.size},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[0, 4],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :limit => 4},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_zero_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  [],
+                  {:table => "user_id", :sortby => "_key", :limit => 0},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_negative_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key},
+                  {:table => "user_id", :sortby => "_key", :limit => -1},
+                  :n_hits => records.size)
+  end
+
+  def test_sortby_offset_and_limit
+    create_user_id_table
+    records = load_user_ids((0...10).to_a.shuffle)
+
+    assert_select(["_id", "_key"],
+                  records.sort_by {|id, key| key}[3, 4],
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => 3,
+                   :limit => 4},
+                  :n_hits => records.size)
   end
 
   def test_offset
@@ -189,7 +307,9 @@ class HTTPSelectTest < Test::Unit::TestCase
     create_user_id_table
     records = load_user_ids
 
-    response = get(command_path(:select, :table => "user_id", :offset => 11))
+    response = get(command_path(:select,
+                                :table => "user_id",
+                                :offset => records.size + 1))
     assert_response([[Result::INVALID_ARGUMENT,
                       "too large offset"]],
                     response,
@@ -200,7 +320,9 @@ class HTTPSelectTest < Test::Unit::TestCase
     create_user_id_table
     records = load_user_ids
 
-    response = get(command_path(:select, :table => "user_id", :offset => -11))
+    response = get(command_path(:select,
+                                :table => "user_id",
+                                :offset => -(records.size + 1)))
     assert_response([[Result::INVALID_ARGUMENT,
                       "too small negative offset"]],
                     response,
@@ -213,7 +335,7 @@ class HTTPSelectTest < Test::Unit::TestCase
 
     assert_select(["_id", "_key"],
                   [],
-                  {:table => "user_id", :offset => 10},
+                  {:table => "user_id", :offset => records.size},
                   :n_hits => records.size)
   end
 
@@ -223,7 +345,7 @@ class HTTPSelectTest < Test::Unit::TestCase
 
     assert_select(["_id", "_key"],
                   records,
-                  {:table => "user_id", :offset => -10},
+                  {:table => "user_id", :offset => -records.size},
                   :n_hits => records.size)
   end
 
@@ -292,8 +414,10 @@ class HTTPSelectTest < Test::Unit::TestCase
                    :drilldown => "author",
                    :drilldown_output_columns => "real_name",
                    :drilldown_limit => 10},
-                  :expected_drilldown => [
-                   [[2], ["real_name"], ["Ryo Onodera"], ["Yuto Hayamizu"]]])
+                  :drilldown_results => [[[2],
+                                          ["real_name"],
+                                          ["Ryo Onodera"],
+                                          ["Yuto Hayamizu"]]])
   end
 
   def test_multiple_drilldown
@@ -309,9 +433,14 @@ class HTTPSelectTest < Test::Unit::TestCase
                    :drilldown => "text author",
                    :drilldown_output_columns => "_key",
                    :drilldown_limit => 10},
-                  :expected_drilldown => [
-                   [[2], ["_key"], ["Ruby rocks"], ["groonga rocks"]],
-                   [[2], ["_key"], ["ryoqun"], ["hayamiz"]]])
+                  :drilldown_results => [[[2],
+                                          ["_key"],
+                                          ["Ruby rocks"],
+                                          ["groonga rocks"]],
+                                         [[2],
+                                          ["_key"],
+                                          ["ryoqun"],
+                                          ["hayamiz"]]])
   end
 
   def test_drilldown_sortby
@@ -320,24 +449,45 @@ class HTTPSelectTest < Test::Unit::TestCase
     create_comments_table
     load_many_comments
 
-    assert_drilldown({:drilldown_sortby => "_key"},
+    assert_drilldown(["_key"],
                      [["gunyara-kun"],
                       ["hayamiz"],
                       ["moritan"],
                       ["ryoqun"],
-                      ["taporobo"]])
+                      ["taporobo"]],
+                     :drilldown_sortby => "_key",
+                     :drilldown_output_columns => "_key")
+  end
+
+  def test_drilldown_sortby_with_multiple_column
+    create_users_table
+    load_many_users
+    create_comments_table
+    load_many_comments
+
+    assert_drilldown(["hp", "_key"],
+                     [[100, "moritan"],
+                      [100, "taporobo"],
+                      [150, "gunyara-kun"],
+                      [200, "hayamiz"],
+                      [200, "ryoqun"]],
+                     :drilldown_sortby => "hp _key",
+                     :drilldown_output_columns => "hp _key")
   end
 
   def test_drilldown_offset
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_offset => 2},
+    assert_drilldown(["_key"],
                      [["gunyara-kun"],
                       ["moritan"],
-                      ["ryoqun"]])
+                      ["ryoqun"]],
+                     {:drilldown_offset => 2,
+                      :drilldown_output_columns => "_key"},
+                     :n_hits => comments.size)
   end
 
   def test_zero_drilldown_offset
@@ -346,23 +496,28 @@ class HTTPSelectTest < Test::Unit::TestCase
     create_comments_table
     load_many_comments
 
-    assert_drilldown({:drilldown_offset => 0},
+    assert_drilldown(["_key"],
                      [["taporobo"],
                       ["hayamiz"],
                       ["gunyara-kun"],
                       ["moritan"],
-                      ["ryoqun"]])
+                      ["ryoqun"]],
+                     :drilldown_offset => 0,
+                     :drilldown_output_columns => "_key")
   end
 
   def test_negative_drilldown_offset
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_offset => -2},
+    assert_drilldown(["_key"],
                      [["moritan"],
-                      ["ryoqun"]])
+                      ["ryoqun"]],
+                     {:drilldown_offset => -2,
+                      :drilldown_output_columns => "_key"},
+                     :n_hits => comments.size)
   end
 
   def test_drilldown_offset_one_larger_than_hits
@@ -405,57 +560,72 @@ class HTTPSelectTest < Test::Unit::TestCase
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_offset => 5}, [])
+    assert_drilldown([],
+                     [],
+                     {:drilldown_offset => 5},
+                     :n_hits => comments.size)
   end
 
   def test_negative_drilldwon_offset_equal_to_hits
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_offset => -5},
+    assert_drilldown(["_key"],
                      [["taporobo"],
                       ["hayamiz"],
                       ["gunyara-kun"],
                       ["moritan"],
-                      ["ryoqun"]])
+                      ["ryoqun"]],
+                     {:drilldown_offset => -5,
+                      :drilldown_output_columns => "_key"},
+                     :n_hits => comments.size)
   end
 
   def test_drilldown_limit
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_limit => 2},
+    assert_drilldown(["_key"],
                      [["taporobo"],
-                      ["hayamiz"]])
+                      ["hayamiz"]],
+                     {:drilldown_limit => 2,
+                      :drilldown_output_columns => "_key"},
+                     :n_hits => comments.size)
   end
 
   def test_zero_drilldown_limit
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_limit => 0}, [])
+    assert_drilldown([],
+                     [],
+                     {:drilldown_limit => 0},
+                     :n_hits => comments.size)
   end
 
   def test_negative_drilldown_limit
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_limit => -3},
+    assert_drilldown(["_key"],
                      [["taporobo"],
                       ["hayamiz"],
                       ["gunyara-kun"],
                       ["moritan"],
-                      ["ryoqun"]])
+                      ["ryoqun"]],
+                     {:drilldown_limit => -3,
+                      :drilldown_output_columns => "_key"},
+                     :n_hits => comments.size)
 
   end
 
@@ -463,14 +633,49 @@ class HTTPSelectTest < Test::Unit::TestCase
     create_users_table
     load_many_users
     create_comments_table
-    load_many_comments
+    comments = load_many_comments
 
-    assert_drilldown({:drilldown_offset => 2,
-                      :drilldown_limit => 1},
-                     [["gunyara-kun"]])
+    assert_drilldown(["_key"],
+                     [["gunyara-kun"]],
+                     {:drilldown_offset => 2,
+                      :drilldown_limit => 1,
+                      :drilldown_output_columns => "_key"},
+                     :n_hits => comments.size)
+  end
+
+  def test_drilldown_output_columns_wild_card
+    create_users_table
+    load_many_users
+    create_comments_table
+    comments = load_many_comments
+
+    assert_drilldown(["real_name", "hp", "_key"],
+                     [["モリタン", 100, "moritan"],
+                      ["タポロボ", 100, "taporobo"],
+                      ["Tasuku SUENAGA", 150, "gunyara-kun"],
+                      ["Yuto Hayamizu", 200, "hayamiz"],
+                      ["Ryo Onodera", 200, "ryoqun"]],
+                     :drilldown_output_columns => "* _key")
   end
 
   private
+  def create_user_id_table
+    table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
+  end
+
+  def load_user_ids(keys=nil)
+    header = ["_key"]
+    keys ||= (0...10).to_a
+
+    load("user_id", [header, *keys.collect {|key| [key]}])
+
+    id = 0
+    keys.collect do |key|
+      id += 1
+      [id, key]
+    end
+  end
+
   def create_comments_table
     table_create("comments", :flags => Table::NO_KEY)
     column_create("comments", "text", Column::SCALAR, "ShortText")
@@ -485,16 +690,18 @@ class HTTPSelectTest < Test::Unit::TestCase
   end
 
   def load_many_comments
+    comments = [["Ruby最高！", "taporobo"],
+                ["groonga最高！", "hayamiz"],
+                ["Ruby/groonga is useful.", "gunyara-kun"],
+                ["Ruby rocks!", "moritan"],
+                ["groonga rocks!", "ryoqun"]]
     load("comments",
          [[:text, :author],
-          ["Ruby最高！", "taporobo"],
-          ["groonga最高！", "hayamiz"],
-          ["Ruby/groonga is useful.", "gunyara-kun"],
-          ["Ruby rocks!", "moritan"],
-          ["groonga rocks!", "ryoqun"]])
+          *comments])
+    comments
   end
 
-  def assert_drilldown(options, values)
+  def assert_drilldown(header, expected, parameters, options={})
     assert_select(["_id", "text", "author"],
                   [[1, "Ruby最高！", "taporobo"],
                    [2, "groonga最高！", "hayamiz"],
@@ -503,11 +710,26 @@ class HTTPSelectTest < Test::Unit::TestCase
                    [5, "groonga rocks!", "ryoqun"]],
                   {:table => "comments",
                    :drilldown => "author",
-                   :drilldown_output_columns => "_key",
-                   :drilldown_limit => 10}.merge(options),
-                  :expected_drilldown => [
-                   [[5],
-                    ["_key"],
-                    *values]])
+                   :drilldown_limit => 10}.merge(parameters),
+                  :drilldown_results => [[[options[:n_hits] || expected.size],
+                                          header,
+                                          *expected]])
+  end
+end
+
+class HTTPSelectTest < Test::Unit::TestCase
+  include HTTPSelectTests
+end
+
+class HTTPDefineSelectorTest < HTTPSelectTest
+  include HTTPSelectTests
+
+  def assert_select(header, expected, parameters, options={}, &block)
+    name = "custom_select"
+    response = get(command_path("define_selector",
+                                parameters.merge(:name => name)))
+    assert_response([[Result::SUCCESS]], response,
+                    :content_type => "application/json")
+    super(header, expected, {}, options.merge(:command => name), &block)
   end
 end

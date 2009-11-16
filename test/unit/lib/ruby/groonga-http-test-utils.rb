@@ -104,6 +104,7 @@ module GroongaHTTPTestUtils
                  :flags => Table::PAT_KEY,
                  :key_type => "ShortText")
     column_create("users", "real_name", Column::SCALAR, "ShortText")
+    column_create("users", "hp", Column::SCALAR, "Int32")
 
     table_create("terms",
                  :flags => Table::PAT_KEY,
@@ -119,40 +120,23 @@ module GroongaHTTPTestUtils
     response = get(command_path(:load,
                                 :table => table,
                                 :values => json(values)))
-    assert_response([[Result::SUCCESS], n_values], response,
-                    :content_type => "application/json")
+    # assert_response([[Result::SUCCESS], n_values], response,
+    #                 :content_type => "application/json")
   end
 
   def load_users
     load("users",
-         [{:_key => "ryoqun", :real_name => "Ryo Onodera"},
-          {:_key => "hayamiz", :real_name => "Yuto Hayamizu"}])
+         [{:_key => "ryoqun", :real_name => "Ryo Onodera", :hp => 200},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :hp => 200}])
   end
 
   def load_many_users
     load("users",
-         [{:_key => "moritan", :real_name => "モリタン"},
-          {:_key => "taporobo", :real_name => "タポロボ"},
-          {:_key => "ryoqun", :real_name => "Ryo Onodera"},
-          {:_key => "hayamiz", :real_name => "Yuto Hayamizu"},
-          {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA"}])
-  end
-
-  def create_user_id_table
-    table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
-  end
-
-  def load_user_ids(keys=nil)
-    header = ["_key"]
-    keys ||= (0...10).to_a
-
-    load("user_id", [header, *keys.collect {|key| [key]}])
-
-    id = 0
-    keys.collect do |key|
-      id += 1
-      [id, key]
-    end
+         [{:_key => "moritan", :real_name => "モリタン", :hp => 100},
+          {:_key => "taporobo", :real_name => "タポロボ", :hp => 100},
+          {:_key => "ryoqun", :real_name => "Ryo Onodera", :hp => 200},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :hp => 200},
+          {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA", :hp => 150}])
   end
 
   def create_calendar_table
@@ -208,15 +192,16 @@ module GroongaHTTPTestUtils
   end
 
   def assert_select(header, expected, parameters, options={}, &block)
-    response = get(command_path(:select, parameters))
-    drilldown_records = options[:expected_drilldown] || []
+    command_name = options[:command] || :select
+    response = get(command_path(command_name, parameters))
+    drilldown_results = options[:drilldown_results] || []
 
     assert_response([[Result::SUCCESS],
                      [[options[:n_hits] || expected.size],
                       header,
                       *expected
                      ],
-                     *drilldown_records],
+                     *drilldown_results],
                     response,
                     :content_type => "application/json",
                     &block)

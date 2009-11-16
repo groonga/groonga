@@ -67,7 +67,7 @@ module HTTPCRUDTest
     end
 
     def test_no_key_for_no_key_table
-      create_table("users", :flags => Table::NO_KEY)
+      table_create("users", :flags => Table::NO_KEY)
 
       response = get(command_path(:add, :table => "users"))
       assert_response([[Result::SUCCESS], 1],
@@ -76,7 +76,7 @@ module HTTPCRUDTest
     end
 
     def test_no_key_for_key_table
-      create_table("users",
+      table_create("users",
                    :flags => Table::PAT_KEY,
                    :key_type => "ShortText")
 
@@ -174,7 +174,7 @@ module HTTPCRUDTest
       teardown_server
     end
 
-    def test_normal
+    def test_values
       populate_users
 
       response = get(command_path(:get,
@@ -203,12 +203,124 @@ module HTTPCRUDTest
                       :content_type => "application/json")
     end
 
+    def test_columns
+      populate_users
+
+      response = get(command_path(:get,
+                                  :table => "users",
+                                  :key => "ryoqun",
+                                  :output_columns => "_key real_name"))
+      assert_response([[Result::SUCCESS],
+                       ["ryoqun", "Ryo Onodera"]],
+                      response,
+                      :content_type => "application/json")
+
+      response = get(command_path(:set,
+                                  :table => "users",
+                                  :key => "ryoqun",
+                                  :columns => json([:real_name]),
+                                  :values => json(["daijiro"])))
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
+
+      response = get(command_path(:get,
+                                  :table => "users",
+                                  :key => "ryoqun",
+                                  :output_columns => "_key real_name"))
+      assert_response([[Result::SUCCESS],
+                       ["ryoqun", "daijiro"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
     def test_nonexistent_table
       response = get(command_path(:set,
                                   :table => "nonexistent",
                                   :key => "mori",
                                   :values => json({:_value => "mori daijiro"})))
       assert_response([[Result::UNKNOWN_ERROR, "table doesn't exist"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_nonexistent_key
+      table_create("users",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+      column_create("users", "name", Column::SCALAR, "ShortText")
+
+      response = get(command_path(:set,
+                                  :table => "users",
+                                  :key => "mori",
+                                  :values => json({:name => "daijiro"})))
+      assert_response([[Result::UNKNOWN_ERROR, "entry doesn't exist"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_nonexistent_id
+      table_create("users", :flags => Table::NO_KEY)
+      column_create("users", "name", Column::SCALAR, "ShortText")
+
+      response = get(command_path(:set,
+                                  :table => "users",
+                                  :id => 1,
+                                  :values => json({:name => "daijiro"})))
+      assert_response([[Result::UNKNOWN_ERROR, "entry doesn't exist"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_no_key_for_key_table
+      table_create("users",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+      column_create("users", "name", Column::SCALAR, "ShortText")
+
+      response = get(command_path(:set,
+                                  :table => "users",
+                                  :values => json({:name => "daijiro"})))
+      assert_response([[Result::UNKNOWN_ERROR, "key nor ID isn't specified"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_no_id_for_no_key_table
+      table_create("users", :flags => Table::NO_KEY)
+      column_create("users", "name", Column::SCALAR, "ShortText")
+
+      response = get(command_path(:set,
+                                  :table => "users",
+                                  :values => json({:name => "daijiro"})))
+      assert_response([[Result::UNKNOWN_ERROR, "ID isn't specified"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_no_values_with_key
+      table_create("users",
+                   :flags => Table::PAT_KEY,
+                   :key_type => "ShortText")
+      column_create("users", "name", Column::SCALAR, "ShortText")
+
+      load("users", [{:key => "mori", :name => "daijiro"}])
+      response = get(command_path(:set,
+                                  :table => "users",
+                                  :key => "mori"))
+      assert_response([[Result::UNKNOWN_ERROR, "values isn't specified"]],
+                      response,
+                      :content_type => "application/json")
+    end
+
+    def test_no_values_with_id
+      table_create("users", :flags => Table::NO_KEY)
+      column_create("users", "name", Column::SCALAR, "ShortText")
+
+      load("users", [{:name => "daijiro"}])
+      response = get(command_path(:set,
+                                  :table => "users",
+                                  :id => 1))
+      assert_response([[Result::UNKNOWN_ERROR, "values isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
