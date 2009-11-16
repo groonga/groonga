@@ -40,7 +40,8 @@ static int port = DEFAULT_PORT;
 static int batchmode;
 static int newdb;
 static int useql;
-grn_timeval starttime;
+static int (*do_client)(int argc, char **argv);
+static int (*do_server)(char *path);
 
 static void
 usage(void)
@@ -85,7 +86,6 @@ do_alone(int argc, char **argv)
   grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
-  grn_timeval_now(ctx, &starttime);
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
@@ -149,14 +149,13 @@ recvput(grn_ctx *ctx)
 }
 
 static int
-do_client(int argc, char **argv)
+g_client(int argc, char **argv)
 {
   int rc = -1;
   grn_ctx ctx_, *ctx = &ctx_;
   char *hostname = DEFAULT_DEST;
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
   grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
-  grn_timeval_now(ctx, &starttime);
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {
     if (!argc) {
       char *buf = GRN_MALLOC(BUFSIZE);
@@ -1005,13 +1004,111 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
 #define MAX_CON 0x10000
 
 static int
-server(char *path)
+h_server(char *path)
 {
   int rc = -1;
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  grn_timeval_now(ctx, &starttime);
+  MUTEX_INIT(q_mutex);
+  COND_INIT(q_cond);
+  MUTEX_INIT(cache_mutex);
+  GRN_COM_QUEUE_INIT(&ctx_new);
+  GRN_COM_QUEUE_INIT(&ctx_old);
+#ifndef WIN32
+  {
+    struct rlimit lim;
+    lim.rlim_cur = 4096;
+    lim.rlim_max = 4096;
+    // RLIMIT_OFILE
+    setrlimit(RLIMIT_NOFILE, &lim);
+    lim.rlim_cur = 0;
+    lim.rlim_max = 0;
+    getrlimit(RLIMIT_NOFILE, &lim);
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%d,%d)", lim.rlim_cur, lim.rlim_max);
+  }
+#endif /* WIN32 */
+  if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
+    grn_obj *db;
+    db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
+    if (db) {
+      struct hostent *he;
+      if (!(he = gethostbyname(hostname))) {
+        SERR("gethostbyname");
+        return rc;
+      }
+      ev.opaque = db;
+      grn_edges_init(ctx, dispatcher);
+      if (!grn_com_sopen(ctx, &ev, port, msg_handler, he)) {
+        while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
+          grn_edge *edge;
+          while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
+            grn_obj *msg;
+            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+              grn_msg_close(&edge->ctx, msg);
+            }
+            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+              grn_msg_close(ctx, msg);
+            }
+            grn_ctx_fin(&edge->ctx);
+            if (edge->com->has_sid && edge->com->opaque == edge) {
+              grn_com_close(ctx, edge->com);
+            }
+            grn_edges_delete(ctx, edge);
+          }
+          // todo : log stat
+        }
+        for (;;) {
+          MUTEX_LOCK(q_mutex);
+          if (nthreads == nfthreads) { break; }
+          MUTEX_UNLOCK(q_mutex);
+          usleep(1000);
+        }
+        {
+          grn_edge *edge;
+          GRN_HASH_EACH(ctx, grn_edges, id, NULL, NULL, &edge, {
+              grn_obj *obj;
+            while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+              grn_msg_close(&edge->ctx, obj);
+            }
+            while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+              grn_msg_close(ctx, obj);
+            }
+            grn_ctx_fin(&edge->ctx);
+            if (edge->com->has_sid) {
+              grn_com_close(ctx, edge->com);
+            }
+            grn_edges_delete(ctx, edge);
+          });
+        }
+        {
+          grn_com *com;
+          GRN_HASH_EACH(ctx, ev.hash, id, NULL, NULL, &com, { grn_com_close(ctx, com); });
+        }
+        rc = 0;
+      } else {
+        fprintf(stderr, "grn_com_gqtp_sopen failed (%d)\n", port);
+      }
+      grn_edges_fin(ctx);
+      grn_db_close(ctx, db);
+    } else {
+      fprintf(stderr, "db open failed (%s)\n", path);
+    }
+    grn_com_event_fin(ctx, &ev);
+  } else {
+    fprintf(stderr, "grn_com_event_init failed\n");
+  }
+  grn_ctx_fin(ctx);
+  return rc;
+}
+
+static int
+g_server(char *path)
+{
+  int rc = -1;
+  grn_com_event ev;
+  grn_ctx ctx_, *ctx = &ctx_;
+  grn_ctx_init(ctx, 0);
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   MUTEX_INIT(cache_mutex);
@@ -1130,7 +1227,7 @@ do_daemon(char *path)
     _exit(0);
   }
 #endif /* WIN32 */
-  return server(path);
+  return do_server(path);
 }
 
 enum {
@@ -1217,6 +1314,28 @@ main(int argc, char **argv)
       break;
     }
   }
+  if (protocol) {
+    switch (*protocol) {
+    case 'g' :
+    case 'G' :
+      do_client = g_client;
+      do_server = g_server;
+      break;
+    case 'h' :
+    case 'H' :
+      do_client = g_client;
+      do_server = h_server;
+      break;
+    case 'm' :
+    case 'M' :
+      do_client = g_client;
+      do_server = g_server;
+      break;
+    }
+  } else {
+    do_client = g_client;
+    do_server = g_server;
+  }
   if (max_nfthreadsstr) {
     max_nfthreads = atoi(max_nfthreadsstr);
   }
@@ -1248,7 +1367,7 @@ main(int argc, char **argv)
     r = do_daemon(argc > i ? argv[i] : NULL);
     break;
   case mode_server :
-    r = server(argc > i ? argv[i] : NULL);
+    r = do_server(argc > i ? argv[i] : NULL);
     break;
   default :
     usage(); r = -1;
