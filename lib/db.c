@@ -4022,9 +4022,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                              head + v->offset, v->length, NULL);
                   grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
                 }
-                rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
               }
+              rc = grn_ja_put(ctx, (grn_ja *)obj, id,
+                              GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
               break;
             default :
               ERR(GRN_INVALID_ARGUMENT, "vecotr or bulk required");
