@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.1.3. grnslap &mdash; groonga v0.1.4 documentation</title>
+    <title>3.1.3. grnslap &mdash; groonga v0.1.4 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,9 +20,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
-    <link rel="up" title="2.1. 実行環境" href="process.html" />
-    <link rel="next" title="2.2. 組み込みコマンド一覧" href="commands.html" />
-    <link rel="prev" title="2.1.2. http" href="http.html" /> 
+    <link rel="up" title="3.1. 実行環境" href="process.html" />
+    <link rel="next" title="3.2. 組み込みコマンド一覧" href="commands.html" />
+    <link rel="prev" title="3.1.2. http" href="http.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,14 +32,14 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="commands.html" title="2.2. 組み込みコマンド一覧"
+          <a href="commands.html" title="3.2. 組み込みコマンド一覧"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="http.html" title="2.1.2. http"
+          <a href="http.html" title="3.1.2. http"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="process.html" accesskey="U">2.1. 実行環境</a> &raquo;</li> 
+          <li><a href="reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="process.html" accesskey="U">3.1. 実行環境</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,26 +49,26 @@
           <div class="body">
             
   <div class="section" id="grnslap">
-<h1>2.1.3. grnslap<a class="headerlink" href="#grnslap" title="Permalink to this headline">¶</a></h1>
+<h1>3.1.3. grnslap<a class="headerlink" href="#grnslap" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>2.1.3.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.3.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール</p>
 </div>
 <div class="section" id="id2">
-<h2>2.1.3.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.3.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>grnslap [options] [dest]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>2.1.3.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.3.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスをチェックするためのツールです。</p>
 <p>groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことができます。また、リクエストの多重度を指定することができます。</p>
 <p>クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行うことができます。</p>
 <p>現在は、make installしてもインストールは行われない。</p>
 </div>
 <div class="section" id="id4">
-<h2>2.1.3.4. オプション<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.3.4. オプション<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <dl class="cmdoption">
 <dt id="cmdoption-P">
 <tt class="descname">-P</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-P" title="Permalink to this definition">¶</a></dt>
@@ -88,7 +88,7 @@ gqtpでリクエストします。gqtpのリクエストをLF区切り形式で�
 
 </div>
 <div class="section" id="id5">
-<h2>2.1.3.5. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.3.5. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <dl class="cmdoption">
 <dt>
 <tt class="descname">dest</tt></dt>
@@ -96,7 +96,7 @@ gqtpでリクエストします。gqtpのリクエストをLF区切り形式で�
 
 </div>
 <div class="section" id="id6">
-<h2>2.1.3.6. サンプル<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.1.3.6. サンプル<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://localhost:10041/d/status">http://localhost:10041/d/status</a> に、多重度100でリクエストを行う。</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041
 2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000
@@ -114,23 +114,23 @@ gqtpでリクエストします。gqtpのリクエストをLF区切り形式で�
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">2.1.3. grnslap</a><ul>
-<li><a class="reference external" href="#id1">2.1.3.1. 名前</a></li>
-<li><a class="reference external" href="#id2">2.1.3.2. 書式</a></li>
-<li><a class="reference external" href="#id3">2.1.3.3. 説明</a></li>
-<li><a class="reference external" href="#id4">2.1.3.4. オプション</a></li>
-<li><a class="reference external" href="#id5">2.1.3.5. 引数</a></li>
-<li><a class="reference external" href="#id6">2.1.3.6. サンプル</a></li>
+<li><a class="reference external" href="">3.1.3. grnslap</a><ul>
+<li><a class="reference external" href="#id1">3.1.3.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.1.3.2. 書式</a></li>
+<li><a class="reference external" href="#id3">3.1.3.3. 説明</a></li>
+<li><a class="reference external" href="#id4">3.1.3.4. オプション</a></li>
+<li><a class="reference external" href="#id5">3.1.3.5. 引数</a></li>
+<li><a class="reference external" href="#id6">3.1.3.6. サンプル</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="http.html"
-                                  title="previous chapter">2.1.2. http</a></p>
+                                  title="previous chapter">3.1.2. http</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="commands.html"
-                                  title="next chapter">2.2. 組み込みコマンド一覧</a></p>
+                                  title="next chapter">3.2. 組み込みコマンド一覧</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/grnslap.txt"
@@ -160,14 +160,14 @@ gqtpでリクエストします。gqtpのリクエストをLF区切り形式で�
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="commands.html" title="2.2. 組み込みコマンド一覧"
+          <a href="commands.html" title="3.2. 組み込みコマンド一覧"
              >next</a> |</li>
         <li class="right" >
-          <a href="http.html" title="2.1.2. http"
+          <a href="http.html" title="3.1.2. http"
              >previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="process.html" >2.1. 実行環境</a> &raquo;</li> 
+          <li><a href="reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="process.html" >3.1. 実行環境</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

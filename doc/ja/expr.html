@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.5. grn式 (grn_expr) &mdash; groonga v0.1.4 documentation</title>
+    <title>3.5. grn式 (grn_expr) &mdash; groonga v0.1.4 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,9 +20,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
-    <link rel="up" title="2. リファレンスマニュアル" href="reference.html" />
-    <link rel="next" title="2.6. 組み込み関数一覧" href="functions.html" />
-    <link rel="prev" title="2.4. 疑似カラム (pseudo_column)" href="pseudo_column.html" /> 
+    <link rel="up" title="3. リファレンスマニュアル" href="reference.html" />
+    <link rel="next" title="3.6. 組み込み関数一覧" href="functions.html" />
+    <link rel="prev" title="3.4. 疑似カラム (pseudo_column)" href="pseudo_column.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,13 +32,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="functions.html" title="2.6. 組み込み関数一覧"
+          <a href="functions.html" title="3.6. 組み込み関数一覧"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="pseudo_column.html" title="2.4. 疑似カラム (pseudo_column)"
+          <a href="pseudo_column.html" title="3.4. 疑似カラム (pseudo_column)"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="reference.html" accesskey="U">2. リファレンスマニュアル</a> &raquo;</li> 
+          <li><a href="reference.html" accesskey="U">3. リファレンスマニュアル</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,13 +48,13 @@
           <div class="body">
             
   <div class="section" id="grn-grn-expr">
-<h1>2.5. grn式 (grn_expr)<a class="headerlink" href="#grn-grn-expr" title="Permalink to this headline">¶</a></h1>
+<h1>3.5. grn式 (grn_expr)<a class="headerlink" href="#grn-grn-expr" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>2.5.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.5.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>grn式 - 検索条件やデータベースへの操作を表現する文字列の形式。(読み方:&#8221;ぐるんしき&#8221;)</p>
 </div>
 <div class="section" id="id2">
-<h2>2.5.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.5.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>grn式はquery形式とscript形式のいずれかによって表現することができます。</p>
 <blockquote>
 <p>query形式</p>
@@ -199,14 +199,14 @@
 </blockquote>
 </div>
 <div class="section" id="id6">
-<h2>2.5.3. 説明<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.5.3. 説明<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>grn式は、検索条件やデータベースへの操作を表現するために使用される文字列の形式です。</p>
 <p>selectやloadなどのいくつかの組込コマンドや、API関数grn_table_select()などで使用されます。grn式はquery形式とscript形式という2種類の方式で記述することができます。query形式は、多くのweb検索エンジンなどで検索フォームにユーザが指定可能なクエリ文字列の書式に合わせた形式です。script形式は、ECMAScriptの構文から式(expression)以下の構文要素を抜粋した形式になっており、文(statement)や制御構造などは表現できません。</p>
 <p>query形式のgrn式もscript形式のgrn式も、共通の中間形式に翻訳された上で処理されますので、処理速度や効率には差違はありません。記述できる処理の範囲はscript形式の方がquery形式より広くなっています。たとえば更新系の操作はscript形式のみで記述できます。</p>
 <p>DB-APIレイヤでは、異なる形式で記述された複数のgrn式を結合することも可能です。</p>
 </div>
 <div class="section" id="id7">
-<h2>2.5.4. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.5.4. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>query形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
 <blockquote>
 column1:hoge</blockquote>
@@ -215,7 +215,7 @@ column1:hoge</blockquote>
 column1 == &#8220;hoge&#8221;</blockquote>
 </div>
 <div class="section" id="id8">
-<h2>2.5.5. 構文<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<h2>3.5.5. 構文<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>query形式のgrn式で有効な式の構文を拡張BNF記法で示します。</p>
 <pre>
 <strong id="grammar-token-query">query            </strong> ::=  <a class="reference internal" href="#grammar-token-query_element"><tt class="xref docutils literal"><span class="pre">query_element</span></tt></a>
@@ -328,22 +328,22 @@ column1 == &#8220;hoge&#8221;</blockquote>
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">2.5. grn式 (grn_expr)</a><ul>
-<li><a class="reference external" href="#id1">2.5.1. 名前</a></li>
-<li><a class="reference external" href="#id2">2.5.2. 書式</a></li>
-<li><a class="reference external" href="#id6">2.5.3. 説明</a></li>
-<li><a class="reference external" href="#id7">2.5.4. 例</a></li>
-<li><a class="reference external" href="#id8">2.5.5. 構文</a></li>
+<li><a class="reference external" href="">3.5. grn式 (grn_expr)</a><ul>
+<li><a class="reference external" href="#id1">3.5.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.5.2. 書式</a></li>
+<li><a class="reference external" href="#id6">3.5.3. 説明</a></li>
+<li><a class="reference external" href="#id7">3.5.4. 例</a></li>
+<li><a class="reference external" href="#id8">3.5.5. 構文</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="pseudo_column.html"
-                                  title="previous chapter">2.4. 疑似カラム (pseudo_column)</a></p>
+                                  title="previous chapter">3.4. 疑似カラム (pseudo_column)</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="functions.html"
-                                  title="next chapter">2.6. 組み込み関数一覧</a></p>
+                                  title="next chapter">3.6. 組み込み関数一覧</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/expr.txt"
@@ -373,13 +373,13 @@ column1 == &#8220;hoge&#8221;</blockquote>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="functions.html" title="2.6. 組み込み関数一覧"
+          <a href="functions.html" title="3.6. 組み込み関数一覧"
              >next</a> |</li>
         <li class="right" >
-          <a href="pseudo_column.html" title="2.4. 疑似カラム (pseudo_column)"
+          <a href="pseudo_column.html" title="3.4. 疑似カラム (pseudo_column)"
              >previous</a> |</li>
         <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="reference.html" >2. リファレンスマニュアル</a> &raquo;</li> 
+          <li><a href="reference.html" >3. リファレンスマニュアル</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

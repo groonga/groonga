@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.2.4. define_selector &mdash; groonga v0.1.4 documentation</title>
+    <title>3.2.4. define_selector &mdash; groonga v0.1.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,9 +20,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="../index.html" />
-    <link rel="up" title="2.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="2.2.5. get" href="get.html" />
-    <link rel="prev" title="2.2.3. column_list" href="column_list.html" /> 
+    <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
+    <link rel="next" title="3.2.5. get" href="get.html" />
+    <link rel="prev" title="3.2.3. column_list" href="column_list.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,14 +32,14 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="get.html" title="2.2.5. get"
+          <a href="get.html" title="3.2.5. get"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="column_list.html" title="2.2.3. column_list"
+          <a href="column_list.html" title="3.2.3. column_list"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="../reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="../commands.html" accesskey="U">2.2. 組み込みコマンド一覧</a> &raquo;</li> 
+          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" accesskey="U">3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,13 +49,13 @@
           <div class="body">
             
   <div class="section" id="define-selector">
-<h1>2.2.4. define_selector<a class="headerlink" href="#define-selector" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.4. define_selector<a class="headerlink" href="#define-selector" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>2.2.4.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>define_selector - 検索コマンドを定義</p>
 </div>
 <div class="section" id="id2">
-<h2>2.2.4.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>define_selector name table [match_column [query [filter [scorer [sortby
                 [output_columns [offset [limit [drilldown [drilldown_sortby
                 [drilldown_output_columns [drilldown_offset [drilldown_limit
@@ -64,12 +64,12 @@
 </div>
 </div>
 <div class="section" id="id3">
-<h2>2.2.4.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。</p>
 </div>
 <div class="section" id="id4">
-<h2>2.2.4.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">name</span></tt></p>
 <blockquote>
 定義するselectorコマンドの名前を指定します。</blockquote>
@@ -120,13 +120,13 @@
 出力形式を、json,tsv,xmlのいずれかで指定します。[#]_</blockquote>
 </div>
 <div class="section" id="id5">
-<h2>2.2.4.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>リターンコード</p>
 <blockquote>
 grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す文字列が返されます。</blockquote>
 </div>
 <div class="section" id="id6">
-<h2>2.2.4.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>define_selector entry_selector Entry --output_type json
 [[0]]
@@ -134,7 +134,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </div>
 </div>
 <div class="section" id="id7">
-<h2>2.2.4.7. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.7. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p><tt class="xref docutils literal"><span class="pre">expr</span></tt></p>
 <p class="rubric">脚注</p>
 <table class="docutils footnote" frame="void" id="id8" rules="none">
@@ -154,24 +154,24 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">2.2.4. define_selector</a><ul>
-<li><a class="reference external" href="#id1">2.2.4.1. 名前</a></li>
-<li><a class="reference external" href="#id2">2.2.4.2. 書式</a></li>
-<li><a class="reference external" href="#id3">2.2.4.3. 説明</a></li>
-<li><a class="reference external" href="#id4">2.2.4.4. 引数</a></li>
-<li><a class="reference external" href="#id5">2.2.4.5. 返値</a></li>
-<li><a class="reference external" href="#id6">2.2.4.6. 例</a></li>
-<li><a class="reference external" href="#id7">2.2.4.7. 関連項目</a></li>
+<li><a class="reference external" href="">3.2.4. define_selector</a><ul>
+<li><a class="reference external" href="#id1">3.2.4.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.2.4.2. 書式</a></li>
+<li><a class="reference external" href="#id3">3.2.4.3. 説明</a></li>
+<li><a class="reference external" href="#id4">3.2.4.4. 引数</a></li>
+<li><a class="reference external" href="#id5">3.2.4.5. 返値</a></li>
+<li><a class="reference external" href="#id6">3.2.4.6. 例</a></li>
+<li><a class="reference external" href="#id7">3.2.4.7. 関連項目</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="column_list.html"
-                                  title="previous chapter">2.2.3. column_list</a></p>
+                                  title="previous chapter">3.2.3. column_list</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="get.html"
-                                  title="next chapter">2.2.5. get</a></p>
+                                  title="next chapter">3.2.5. get</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/commands/define_selector.txt"
@@ -201,14 +201,14 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="get.html" title="2.2.5. get"
+          <a href="get.html" title="3.2.5. get"
              >next</a> |</li>
         <li class="right" >
-          <a href="column_list.html" title="2.2.3. column_list"
+          <a href="column_list.html" title="3.2.3. column_list"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
-          <li><a href="../reference.html" >2. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="../commands.html" >2.2. 組み込みコマンド一覧</a> &raquo;</li> 
+          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" >3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

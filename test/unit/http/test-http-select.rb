@@ -31,8 +31,8 @@ module HTTPSelectTests
   def test_match_column
     populate_users
 
-    assert_select(["_id", "_key", "real_name"],
-                  [[2, "hayamiz", "Yuto Hayamizu"]],
+    assert_select(["_id", "_key", "real_name", "hp"],
+                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
                   :match_column => "real_name",
                   :query => "Yuto Hayamizu")
@@ -41,8 +41,8 @@ module HTTPSelectTests
   def test_query
     populate_users
 
-    assert_select(["_id", "_key", "real_name"],
-                  [[2, "hayamiz", "Yuto Hayamizu"]],
+    assert_select(["_id", "_key", "real_name", "hp"],
+                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"")
   end
@@ -50,8 +50,8 @@ module HTTPSelectTests
   def test_filter
     populate_users
 
-    assert_select(["_id", "_key", "real_name"],
-                  [[2, "hayamiz", "Yuto Hayamizu"]],
+    assert_select(["_id", "_key", "real_name", "hp"],
+                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
@@ -59,8 +59,8 @@ module HTTPSelectTests
   def test_query_and_filter
     populate_users
 
-    assert_select(["_id", "_key", "real_name"],
-                  [[2, "hayamiz", "Yuto Hayamizu"]],
+    assert_select(["_id", "_key", "real_name", "hp"],
+                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"",
                   :filter => "real_name == \"Yuto Hayamizu\"")
@@ -69,7 +69,7 @@ module HTTPSelectTests
   def test_no_hit
     populate_users
 
-    assert_select(["_id", "_key", "real_name"],
+    assert_select(["_id", "_key", "real_name", "hp"],
                   [],
                   :table => "users",
                   :query => "real_name:\"No Name\"")
@@ -78,9 +78,9 @@ module HTTPSelectTests
   def test_scorer
     populate_users
 
-    assert_select(["_id", "_key", "real_name"],
-                  [[2, "hayamiz", "Real Name"],
-                   [1, "ryoqun", "Real Name"]],
+    assert_select(["_id", "_key", "real_name", "hp"],
+                  [[2, "hayamiz", "Real Name", 200],
+                   [1, "ryoqun", "Real Name", 200]],
                   :table => "users",
                   :scorer => "real_name = \"Real Name\"")
   end
@@ -88,13 +88,13 @@ module HTTPSelectTests
   def test_scorer_side_effect
     populate_users
 
-    assert_select(["_id", "_key", "real_name"],
-                  [[2, "hayamiz", "Real Name"]],
+    assert_select(["_id", "_key", "real_name", "hp"],
+                  [[2, "hayamiz", "Real Name", 200]],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"",
                   :scorer => "real_name = \"Real Name\"")
 
-    assert_select(["_id", "_key", "real_name"],
+    assert_select(["_id", "_key", "real_name", "hp"],
                   [],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"")
