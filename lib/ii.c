@@ -4487,31 +4487,33 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   grn_ii_updspec **u;
   grn_hash *h = (grn_hash *)out;
   grn_obj *lexicon = ii->lexicon;
-  const char *head = GRN_BULK_HEAD(in->u.v.body);
-  for (j = in->u.v.n_sections, v = in->u.v.sections; j; j--, v++) {
-    if (v->length &&
-        (token = grn_token_open(ctx, lexicon, head + v->offset, v->length, add))) {
-      while (!token->status) {
-        if ((tid = grn_token_next(ctx, token))) {
-          if (posting) { GRN_RECORD_PUT(ctx, posting, tid); }
-          if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
-            break;
-          }
-          if (!*u) {
-            if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-              GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on grn_ii_update failed!");
+  if (in->u.v.body) {
+    const char *head = GRN_BULK_HEAD(in->u.v.body);
+    for (j = in->u.v.n_sections, v = in->u.v.sections; j; j--, v++) {
+      if (v->length &&
+          (token = grn_token_open(ctx, lexicon, head + v->offset, v->length, add))) {
+        while (!token->status) {
+          if ((tid = grn_token_next(ctx, token))) {
+            if (posting) { GRN_RECORD_PUT(ctx, posting, tid); }
+            if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+              break;
+            }
+            if (!*u) {
+              if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
+                GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on grn_ii_update failed!");
+                grn_token_close(ctx, token);
+                return GRN_NO_MEMORY_AVAILABLE;
+              }
+            }
+            if (grn_ii_updspec_add(ctx, *u, token->pos, v->weight)) {
+              GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
               grn_token_close(ctx, token);
               return GRN_NO_MEMORY_AVAILABLE;
             }
           }
-          if (grn_ii_updspec_add(ctx, *u, token->pos, v->weight)) {
-            GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
-            grn_token_close(ctx, token);
-            return GRN_NO_MEMORY_AVAILABLE;
-          }
         }
+        grn_token_close(ctx, token);
       }
-      grn_token_close(ctx, token);
     }
   }
   return GRN_SUCCESS;

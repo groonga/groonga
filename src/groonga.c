@@ -958,7 +958,7 @@ dispatcher(grn_ctx *ctx, grn_edge *edge)
 }
 
 static void
-msg_handler(grn_ctx *ctx, grn_obj *msg)
+h_handler(grn_ctx *ctx, grn_obj *msg)
 {
   grn_edge *edge;
   grn_com *com = ((grn_msg *)msg)->peer;
@@ -1039,7 +1039,7 @@ h_server(char *path)
       }
       ev.opaque = db;
       grn_edges_init(ctx, dispatcher);
-      if (!grn_com_sopen(ctx, &ev, port, msg_handler, he)) {
+      if (!grn_com_sopen(ctx, &ev, port, h_handler, he)) {
         while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
           grn_edge *edge;
           while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
@@ -1102,6 +1102,50 @@ h_server(char *path)
   return rc;
 }
 
+static void
+g_handler(grn_ctx *ctx, grn_obj *msg)
+{
+  grn_edge *edge;
+  grn_com *com = ((grn_msg *)msg)->peer;
+  if (ctx->rc) {
+    if (com->has_sid) {
+      if ((edge = com->opaque)) {
+        MUTEX_LOCK(q_mutex);
+        if (edge->stat == EDGE_IDLE) {
+          grn_com_queue_enque(ctx, &ctx_old, (grn_com_queue_entry *)edge);
+        }
+        edge->stat = EDGE_ABORT;
+        MUTEX_UNLOCK(q_mutex);
+      } else {
+        grn_com_close(ctx, com);
+      }
+    }
+    grn_msg_close(ctx, msg);
+  } else {
+    int added;
+    edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
+    if (added) {
+      grn_ctx_init(&edge->ctx, (useql ? GRN_CTX_USE_QL : 0));
+      GRN_COM_QUEUE_INIT(&edge->recv_new);
+      GRN_COM_QUEUE_INIT(&edge->send_old);
+      grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
+      grn_ctx_recv_handler_set(&edge->ctx, output, edge);
+      com->opaque = edge;
+      grn_obj_close(&edge->ctx, edge->ctx.impl->outbuf);
+      edge->ctx.impl->outbuf = grn_msg_open(&edge->ctx, com, &edge->send_old);
+      edge->com = com;
+      edge->stat = EDGE_IDLE;
+      edge->flags = GRN_EDGE_WORKER;
+    }
+    if (edge->ctx.stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
+      grn_msg_close(ctx, msg);
+    } else {
+      grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
+      dispatcher(ctx, edge);
+    }
+  }
+}
+
 static int
 g_server(char *path)
 {
@@ -1138,7 +1182,7 @@ g_server(char *path)
       }
       ev.opaque = db;
       grn_edges_init(ctx, dispatcher);
-      if (!grn_com_sopen(ctx, &ev, port, msg_handler, he)) {
+      if (!grn_com_sopen(ctx, &ev, port, g_handler, he)) {
         while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
           grn_edge *edge;
           while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
