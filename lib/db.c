@@ -4027,7 +4027,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                               GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
               break;
             default :
-              ERR(GRN_INVALID_ARGUMENT, "vecotr or bulk required");
+              ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");
               break;
             }
             grn_obj_close(ctx, &buf);
@@ -4050,7 +4050,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
               rc = grn_ja_putv(ctx, (grn_ja *)obj, id, value, 0);
               break;
             default :
-              ERR(GRN_INVALID_ARGUMENT, "vecotr or bulk required");
+              ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");
               break;
             }
           }
@@ -4283,7 +4283,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
             }
             break;
           default :
-            ERR(GRN_INVALID_ARGUMENT, "vecotr or bulk required");
+            ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");
             break;
           }
         }
