@@ -62,6 +62,7 @@ usage(void)
           "  -t <max threads>:         max number of free threads (default: %d)\n"
           "  -h, --help:               show usage\n"
           "  --admin-html-path <path>: specify admin html path\n"
+          "  --protocol <protocol>:    server protocol to listen (default: gqtp)\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -1087,7 +1088,7 @@ h_server(char *path)
         }
         rc = 0;
       } else {
-        fprintf(stderr, "grn_com_gqtp_sopen failed (%d)\n", port);
+        fprintf(stderr, "grn_com_sopen failed (%d)\n", port);
       }
       grn_edges_fin(ctx);
       grn_db_close(ctx, db);
@@ -1230,7 +1231,7 @@ g_server(char *path)
         }
         rc = 0;
       } else {
-        fprintf(stderr, "grn_com_gqtp_sopen failed (%d)\n", port);
+        fprintf(stderr, "grn_com_sopen failed (%d)\n", port);
       }
       grn_edges_fin(ctx);
       grn_db_close(ctx, db);
