@@ -158,7 +158,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
   uint32_t etime;
   struct timeval tv;
   grn_msg *m = (grn_msg *)msg;
-  grn_com *com = ((grn_msg *)msg)->peer;
+  grn_com *com = ((grn_msg *)msg)->u.peer;
   session *s = com->opaque;
   s->stat = 3;
   gettimeofday(&tv, NULL);

@@ -34,6 +34,7 @@
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
 #define DEFAULT_MAX_NFTHREADS 8
+#define MAX_CON 0x10000
 
 static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
@@ -249,9 +250,8 @@ put_response_header(grn_ctx *ctx, const char *p, const char *pe)
 }
 
 static void
-do_htreq(grn_ctx *ctx, grn_edge *edge)
+do_htreq(grn_ctx *ctx, grn_msg *msg)
 {
-  grn_msg *msg = edge->msg;
   grn_com_header *header = &msg->header;
   switch (header->qtype) {
   case 'G' : /* GET */
@@ -856,152 +856,71 @@ static grn_com_queue ctx_new;
 static grn_com_queue ctx_old;
 static grn_mutex q_mutex;
 static grn_cond q_cond;
-static uint32_t nthreads = 0, nfthreads = 0,
-                max_nfthreads = DEFAULT_MAX_NFTHREADS;
+static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads = DEFAULT_MAX_NFTHREADS;
 
 static void * CALLBACK
-worker(void *arg)
+h_worker(void *arg)
 {
+  grn_ctx ctx_, *ctx = &ctx_;
+  grn_ctx_init(ctx, 0);
+  grn_ctx_use(ctx, (grn_obj *)arg);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
   MUTEX_LOCK(q_mutex);
   do {
-    grn_ctx *ctx;
-    grn_edge *edge;
+    grn_sock fd;
+    ssize_t ret;
+    grn_obj *msg, *out;
     nfthreads++;
-    while (!(edge = (grn_edge *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
+    while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
       if (grn_gctx.stat == GRN_CTX_QUIT) { goto exit; }
     }
-    ctx = &edge->ctx;
     nfthreads--;
-    if (edge->stat == EDGE_DOING) { continue; }
-    if (edge->stat == EDGE_WAIT) {
-      edge->stat = EDGE_DOING;
-      while (!GRN_COM_QUEUE_EMPTYP(&edge->recv_new)) {
-        grn_obj *msg;
-        MUTEX_UNLOCK(q_mutex);
-        /* if (edge->flags == GRN_EDGE_WORKER) */
-        while (ctx->stat != GRN_CTX_QUIT &&
-               (edge->msg = (grn_msg *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-          grn_com_header *header = &edge->msg->header;
-          msg = (grn_obj *)edge->msg;
-          switch (header->proto) {
-          case GRN_COM_PROTO_HTTP :
-            do_htreq(ctx, edge);
-            break;
-          case GRN_COM_PROTO_MBREQ :
-            do_mbreq(ctx, edge);
-            break;
-          case GRN_COM_PROTO_GQTP :
-            grn_ctx_send(ctx, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), header->flags);
-            ERRCLR(ctx);
-            break;
-          default :
-            ctx->stat = GRN_CTX_QUIT;
-            break;
-          }
-          grn_msg_close(ctx, msg);
-        }
-        while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
-          grn_msg_close(ctx, msg);
-        }
-        MUTEX_LOCK(q_mutex);
-        if (ctx->stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) { break; }
-      }
-    }
-    if (ctx->stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
-      grn_com_queue_enque(&grn_gctx, &ctx_old, (grn_com_queue_entry *)edge);
-      edge->stat = EDGE_ABORT;
-    } else {
-      edge->stat = EDGE_IDLE;
-    }
+    MUTEX_UNLOCK(q_mutex);
+    fd = ((grn_msg *)msg)->u.fd;
+    do_htreq(ctx, (grn_msg *)msg);
+    out = ctx->impl->outbuf;
+    ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), MSG_NOSIGNAL);
+    if (ret == -1) { SERR("send"); }
+    GRN_BULK_REWIND(out);
+    /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
+    grn_msg_close(ctx, msg);
+    /* if not keep alive connection */
+    grn_sock_close(fd);
+    MUTEX_LOCK(q_mutex);
   } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
 exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
+  grn_ctx_fin(ctx);
   return NULL;
-}
-
-static void
-output(grn_ctx *ctx, int flags, void *arg)
-{
-  grn_edge *edge = arg;
-  grn_com *com = edge->com;
-  grn_msg *req = edge->msg, *msg = (grn_msg *)ctx->impl->outbuf;
-  msg->edge_id = req->edge_id;
-  msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
-    ? GRN_COM_PROTO_MBRES : req->header.proto;
-  ERRCLR(ctx);
-  if (grn_msg_send(ctx, (grn_obj *)msg,
-                   (flags & GRN_CTX_MORE) ? GRN_CTX_MORE : GRN_CTX_TAIL)) {
-    edge->stat = EDGE_ABORT;
-  }
-  ctx->impl->outbuf = grn_msg_open(ctx, com, &edge->send_old);
-}
-
-static void
-dispatcher(grn_ctx *ctx, grn_edge *edge)
-{
-  MUTEX_LOCK(q_mutex);
-  if (edge->stat == EDGE_IDLE) {
-    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
-    edge->stat = EDGE_WAIT;
-    if (!nfthreads && nthreads < max_nfthreads) {
-      grn_thread thread;
-      nthreads++;
-      if (THREAD_CREATE(thread, worker, NULL)) { SERR("pthread_create"); }
-    }
-    COND_SIGNAL(q_cond);
-  }
-  MUTEX_UNLOCK(q_mutex);
 }
 
 static void
 h_handler(grn_ctx *ctx, grn_obj *msg)
 {
-  grn_edge *edge;
-  grn_com *com = ((grn_msg *)msg)->peer;
+  grn_com *com = ((grn_msg *)msg)->u.peer;
   if (ctx->rc) {
-    if (com->has_sid) {
-      if ((edge = com->opaque)) {
-        MUTEX_LOCK(q_mutex);
-        if (edge->stat == EDGE_IDLE) {
-          grn_com_queue_enque(ctx, &ctx_old, (grn_com_queue_entry *)edge);
-        }
-        edge->stat = EDGE_ABORT;
-        MUTEX_UNLOCK(q_mutex);
-      } else {
-        grn_com_close(ctx, com);
-      }
-    }
+    grn_com_close(ctx, com);
     grn_msg_close(ctx, msg);
   } else {
-    int added;
-    edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
-    if (added) {
-      grn_ctx_init(&edge->ctx, (useql ? GRN_CTX_USE_QL : 0));
-      GRN_COM_QUEUE_INIT(&edge->recv_new);
-      GRN_COM_QUEUE_INIT(&edge->send_old);
-      grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
-      grn_ctx_recv_handler_set(&edge->ctx, output, edge);
-      com->opaque = edge;
-      grn_obj_close(&edge->ctx, edge->ctx.impl->outbuf);
-      edge->ctx.impl->outbuf = grn_msg_open(&edge->ctx, com, &edge->send_old);
-      edge->com = com;
-      edge->stat = EDGE_IDLE;
-      edge->flags = GRN_EDGE_WORKER;
+    grn_sock fd = com->fd;
+    void *arg = com->ev->opaque;
+    /* if not keep alive connection */
+    grn_com_event_del(ctx, com->ev, fd);
+    ((grn_msg *)msg)->u.fd = fd;
+    MUTEX_LOCK(q_mutex);
+    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
+    if (!nfthreads && nthreads < max_nfthreads) {
+      grn_thread thread;
+      nthreads++;
+      if (THREAD_CREATE(thread, h_worker, arg)) { SERR("pthread_create"); }
     }
-    if (edge->ctx.stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
-      grn_msg_close(ctx, msg);
-    } else {
-      grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
-      dispatcher(ctx, edge);
-    }
+    COND_SIGNAL(q_cond);
+    MUTEX_UNLOCK(q_mutex);
   }
 }
-
-#define MAX_CON 0x10000
 
 static int
 h_server(char *path)
@@ -1038,7 +957,7 @@ h_server(char *path)
         return rc;
       }
       ev.opaque = db;
-      grn_edges_init(ctx, dispatcher);
+      grn_edges_init(ctx, NULL);
       if (!grn_com_sopen(ctx, &ev, port, h_handler, he)) {
         while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
           grn_edge *edge;
@@ -1102,11 +1021,109 @@ h_server(char *path)
   return rc;
 }
 
+static void * CALLBACK
+g_worker(void *arg)
+{
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
+  MUTEX_LOCK(q_mutex);
+  do {
+    grn_ctx *ctx;
+    grn_edge *edge;
+    nfthreads++;
+    while (!(edge = (grn_edge *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
+      COND_WAIT(q_cond, q_mutex);
+      if (grn_gctx.stat == GRN_CTX_QUIT) { goto exit; }
+    }
+    ctx = &edge->ctx;
+    nfthreads--;
+    if (edge->stat == EDGE_DOING) { continue; }
+    if (edge->stat == EDGE_WAIT) {
+      edge->stat = EDGE_DOING;
+      while (!GRN_COM_QUEUE_EMPTYP(&edge->recv_new)) {
+        grn_obj *msg;
+        MUTEX_UNLOCK(q_mutex);
+        /* if (edge->flags == GRN_EDGE_WORKER) */
+        while (ctx->stat != GRN_CTX_QUIT &&
+               (edge->msg = (grn_msg *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+          grn_com_header *header = &edge->msg->header;
+          msg = (grn_obj *)edge->msg;
+          switch (header->proto) {
+          case GRN_COM_PROTO_HTTP :
+            do_htreq(ctx, edge->msg);
+            break;
+          case GRN_COM_PROTO_MBREQ :
+            do_mbreq(ctx, edge);
+            break;
+          case GRN_COM_PROTO_GQTP :
+            grn_ctx_send(ctx, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), header->flags);
+            ERRCLR(ctx);
+            break;
+          default :
+            ctx->stat = GRN_CTX_QUIT;
+            break;
+          }
+          grn_msg_close(ctx, msg);
+        }
+        while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+          grn_msg_close(ctx, msg);
+        }
+        MUTEX_LOCK(q_mutex);
+        if (ctx->stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) { break; }
+      }
+    }
+    if (ctx->stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
+      grn_com_queue_enque(&grn_gctx, &ctx_old, (grn_com_queue_entry *)edge);
+      edge->stat = EDGE_ABORT;
+    } else {
+      edge->stat = EDGE_IDLE;
+    }
+  } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
+exit :
+  nthreads--;
+  MUTEX_UNLOCK(q_mutex);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
+  return NULL;
+}
+
+static void
+dispatcher(grn_ctx *ctx, grn_edge *edge)
+{
+  MUTEX_LOCK(q_mutex);
+  if (edge->stat == EDGE_IDLE) {
+    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
+    edge->stat = EDGE_WAIT;
+    if (!nfthreads && nthreads < max_nfthreads) {
+      grn_thread thread;
+      nthreads++;
+      if (THREAD_CREATE(thread, g_worker, NULL)) { SERR("pthread_create"); }
+    }
+    COND_SIGNAL(q_cond);
+  }
+  MUTEX_UNLOCK(q_mutex);
+}
+
+static void
+output(grn_ctx *ctx, int flags, void *arg)
+{
+  grn_edge *edge = arg;
+  grn_com *com = edge->com;
+  grn_msg *req = edge->msg, *msg = (grn_msg *)ctx->impl->outbuf;
+  msg->edge_id = req->edge_id;
+  msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
+    ? GRN_COM_PROTO_MBRES : req->header.proto;
+  ERRCLR(ctx);
+  if (grn_msg_send(ctx, (grn_obj *)msg,
+                   (flags & GRN_CTX_MORE) ? GRN_CTX_MORE : GRN_CTX_TAIL)) {
+    edge->stat = EDGE_ABORT;
+  }
+  ctx->impl->outbuf = grn_msg_open(ctx, com, &edge->send_old);
+}
+
 static void
 g_handler(grn_ctx *ctx, grn_obj *msg)
 {
   grn_edge *edge;
-  grn_com *com = ((grn_msg *)msg)->peer;
+  grn_com *com = ((grn_msg *)msg)->u.peer;
   if (ctx->rc) {
     if (com->has_sid) {
       if ((edge = com->opaque)) {

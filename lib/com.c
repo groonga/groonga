@@ -118,7 +118,7 @@ grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old)
     msg->ctx = ctx;
   }
   msg->qe.next = NULL;
-  msg->peer = com;
+  msg->u.peer = com;
   msg->old = old;
   memset(&msg->header, 0, sizeof(grn_com_header));
   return (grn_obj *)msg;
@@ -128,7 +128,7 @@ grn_obj *
 grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old)
 {
   grn_msg *req = (grn_msg *)query, *msg = NULL;
-  if (req && (msg = (grn_msg *)grn_msg_open(ctx, req->peer, old))) {
+  if (req && (msg = (grn_msg *)grn_msg_open(ctx, req->u.peer, old))) {
     msg->edge_id = req->edge_id;
     msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
       ? GRN_COM_PROTO_MBRES : req->header.proto;
@@ -155,42 +155,12 @@ grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
   return GRN_SUCCESS;
 }
 
-/******* sender
-
-static void * CALLBACK
-sender(void *arg)
-{
-  grn_com_event *ev = (grn_com_event *)arg;
-  MUTEX_LOCK(ev->mutex);
-  while (ev->ctx->stat != GRN_CTX_QUIT) {
-    while (!(peers_with_msg = get_out_msgs(peers))) {
-      COND_WAIT(ev->cond, ev->mutex);
-      if (ev->ctx->stat == GRN_CTX_QUIT) { goto exit; }
-    }
-    MUTEX_UNLOCK(ev->mutex);
-    peers_writable = poll(peers_with_msg, POLLOUT);
-    for (peer in peers_writable) {
-      msgs = queue_peek_all(peer->send_new);
-      if (!send(msgs)) {
-        queue_deque(peer->send_new, msgs);
-        for (msg in msgs) { enque(msg->edge->send_old, msg); }
-      }
-    }
-    MUTEX_LOCK(ev->mutex);
-  }
-exit :
-  MUTEX_UNLOCK(ev->mutex);
-  return NULL;
-}
-
-********/
-
 grn_rc
 grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
 {
   grn_rc rc;
   grn_msg *m = (grn_msg *)msg;
-  grn_com *peer = m->peer;
+  grn_com *peer = m->u.peer;
   grn_com_header *header = &m->header;
   if (GRN_COM_QUEUE_EMPTYP(&peer->new)) {
     switch (header->proto) {
@@ -285,9 +255,6 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     MUTEX_INIT(ev->mutex);
     COND_INIT(ev->cond);
     GRN_COM_QUEUE_INIT(&ev->recv_old);
-    /*
-    if (THREAD_CREATE(thread, sender, ev)) { SERR("pthread_create"); }
-    */
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
     if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {
@@ -487,8 +454,8 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
     return;
   } else {
     grn_msg *msg = (grn_msg *)grn_msg_open(ctx, com, &ev->recv_old);
-    grn_com_recv(ctx, msg->peer, &msg->header, (grn_obj *)msg);
-    if (msg->peer /* is_edge_request(msg)*/) {
+    grn_com_recv(ctx, msg->u.peer, &msg->header, (grn_obj *)msg);
+    if (msg->u.peer /* is_edge_request(msg)*/) {
       memcpy(&msg->edge_id, &ev->curr_edge_id, sizeof(grn_com_addr));
       if (!com->has_sid) {
         com->has_sid = 1;

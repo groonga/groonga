@@ -205,7 +205,10 @@ typedef struct _grn_msg grn_msg;
 
 struct _grn_msg {
   grn_com_queue_entry qe;
-  grn_com *peer;
+  union {
+    grn_com *peer;
+    grn_sock fd;
+  } u;
   grn_ctx *ctx;
   grn_com_queue *old;
   grn_com_header header;
