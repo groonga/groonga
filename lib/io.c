@@ -45,7 +45,7 @@ typedef struct _grn_io_fileinfo {
 #ifdef WIN32
   HANDLE fh;
   HANDLE fmo;
-  grn_mutex mutex;
+  grn_critical_section cs;
 #else /* WIN32 */
   int fd;
   dev_t dev;
@@ -1436,13 +1436,13 @@ grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit)
 {
   grn_ctx *c;
   uint32_t n = 0;
-  MUTEX_LOCK(grn_glock);
+  CRITICAL_SECTION_ENTER(grn_glock);
   if (grn_gtick) {
     for (c = grn_gctx.next;; c = ctx->next) {
       if (c == &grn_gctx) {
-        MUTEX_UNLOCK(grn_glock);
+        CRITICAL_SECTION_LEAVE(grn_glock);
         n = grn_expire_(ctx, count_thresh, limit);
-        MUTEX_LOCK(grn_glock);
+        CRITICAL_SECTION_ENTER(grn_glock);
         break;
       }
       if ((c->seqno & 1) && (c->seqno == c->seqno2)) { break; }
@@ -1450,7 +1450,7 @@ grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit)
   }
   grn_gtick++;
   for (c = grn_gctx.next; c != &grn_gctx; c = ctx->next) { c->seqno2 = c->seqno; }
-  MUTEX_UNLOCK(grn_glock);
+  CRITICAL_SECTION_LEAVE(grn_glock);
   return n;
 }
 
@@ -1561,7 +1561,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     return ctx->rc;
   }
 exit:
-  MUTEX_INIT(fi->mutex);
+  CRITICAL_SECTION_INIT(fi->cs);
   return GRN_SUCCESS;
 }
 
@@ -1575,7 +1575,7 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
     }
     return GRN_GCALLOC(length);
   }
-  /* MUTEX_LOCK(fi->mutex); */
+  /* CRITICAL_SECTION_ENTER(fi->cs); */
   /* try to create fmo */
   *fmo = CreateFileMapping(fi->fh, NULL, PAGE_READWRITE, 0, offset + length, NULL);
   if (!*fmo) { return NULL; }
@@ -1587,7 +1587,7 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
       return NULL;
     }
   }
-  /* MUTEX_UNLOCK(fi->mutex); */
+  /* CRITICAL_SECTION_LEAVE(fi->cs); */
   mmap_size += length;
   return res;
 }
@@ -1626,7 +1626,7 @@ grn_close(grn_ctx *ctx, fileinfo *fi)
   }
   if (fi->fh != INVALID_HANDLE_VALUE) {
     CloseHandle(fi->fh);
-    MUTEX_DESTROY(fi->mutex);
+    CRITICAL_SECTION_FIN(fi->cs);
     fi->fh = INVALID_HANDLE_VALUE;
   }
   return GRN_SUCCESS;
@@ -1684,7 +1684,7 @@ exit:
   }
   if (fi->fmo != NULL) {
     if (GetLastError() != ERROR_ALREADY_EXISTS ) {
-      MUTEX_INIT(fi->mutex);
+      CRITICAL_SECTION_INIT(fi->cs);
       return GRN_SUCCESS;
     } else {
       GRN_LOG(ctx, GRN_LOG_ERROR, "fmo object already exists! handle=%d", fi->fh);
@@ -1753,7 +1753,7 @@ grn_close(grn_ctx *ctx, fileinfo *fi)
   }
   if (fi->fh != INVALID_HANDLE_VALUE) {
     CloseHandle(fi->fh);
-    MUTEX_DESTROY(fi->mutex);
+    CRITICAL_SECTION_FIN(fi->cs);
     fi->fh = INVALID_HANDLE_VALUE;
   }
   return GRN_SUCCESS;
@@ -1786,7 +1786,7 @@ inline static grn_rc
 grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   DWORD r, len;
-  MUTEX_LOCK(fi->mutex);
+  CRITICAL_SECTION_ENTER(fi->cs);
   r = SetFilePointer(fi->fh, offset, NULL, FILE_BEGIN);
   if (r == INVALID_SET_FILE_POINTER) {
     SERR("SetFilePointer");
@@ -1798,7 +1798,7 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
       ERR(GRN_INPUT_OUTPUT_ERROR, "ReadFile %d != %d", count, len);
     }
   }
-  MUTEX_UNLOCK(fi->mutex);
+  CRITICAL_SECTION_LEAVE(fi->cs);
   return ctx->rc;
 }
 
@@ -1806,7 +1806,7 @@ inline static grn_rc
 grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   DWORD r, len;
-  MUTEX_LOCK(fi->mutex);
+  CRITICAL_SECTION_ENTER(fi->cs);
   r = SetFilePointer(fi->fh, offset, NULL, FILE_BEGIN);
   if (r == INVALID_SET_FILE_POINTER) {
     SERR("SetFilePointer");
@@ -1818,7 +1818,7 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
       ERR(GRN_INPUT_OUTPUT_ERROR, "WriteFile %d != %d", count, len);
     }
   }
-  MUTEX_UNLOCK(fi->mutex);
+  CRITICAL_SECTION_LEAVE(fi->cs);
   return ctx->rc;
 }
 

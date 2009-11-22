@@ -371,7 +371,7 @@ void grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* 
 
 extern grn_ctx grn_gctx;
 extern int grn_pagesize;
-extern grn_mutex grn_glock;
+extern grn_critical_section grn_glock;
 extern uint32_t grn_gtick;
 extern grn_obj *grn_true, *grn_false, *grn_null;
 

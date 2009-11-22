@@ -49,7 +49,7 @@
 
 grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
 int grn_pagesize;
-grn_mutex grn_glock;
+grn_critical_section grn_glock;
 uint32_t grn_gtick;
 
 #ifdef USE_UYIELD
@@ -349,12 +349,12 @@ grn_ctx_init(grn_ctx *ctx, int flags)
     if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   }
   ctx->user_data.ptr = NULL;
-  MUTEX_LOCK(grn_glock);
+  CRITICAL_SECTION_ENTER(grn_glock);
   ctx->next = grn_gctx.next;
   ctx->prev = &grn_gctx;
   grn_gctx.next->prev = ctx;
   grn_gctx.next = ctx;
-  MUTEX_UNLOCK(grn_glock);
+  CRITICAL_SECTION_LEAVE(grn_glock);
   return ctx->rc;
 }
 
@@ -382,10 +382,10 @@ grn_ctx_fin(grn_ctx *ctx)
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   if (ctx->stat == GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
   if (!(ctx->flags & GRN_CTX_ALLOCATED)) {
-    MUTEX_LOCK(grn_glock);
+    CRITICAL_SECTION_ENTER(grn_glock);
     ctx->next->prev = ctx->prev;
     ctx->prev->next = ctx->next;
-    MUTEX_UNLOCK(grn_glock);
+    CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (ctx->impl) {
     grn_ctx_loader_clear(ctx);
@@ -464,11 +464,11 @@ default_logger_func(int level, const char *time, const char *title,
 {
   const char slev[] = " EACewnid-";
   if (!default_logger_fp) {
-    MUTEX_LOCK(grn_glock);
+    CRITICAL_SECTION_ENTER(grn_glock);
     if (!default_logger_fp) {
       default_logger_fp = fopen(GROONGA_LOG_PATH, "a");
     }
-    MUTEX_UNLOCK(grn_glock);
+    CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (default_logger_fp) {
     if (location && *location) {
@@ -498,7 +498,7 @@ grn_init(void)
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
   grn_logger = &default_logger;
-  MUTEX_INIT(grn_glock);
+  CRITICAL_SECTION_INIT(grn_glock);
   grn_gtick = 0;
   grn_ql_init_const();
   ctx->next = ctx;
@@ -638,7 +638,7 @@ grn_fin(void)
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin();
-  MUTEX_DESTROY(grn_glock);
+  CRITICAL_SECTION_FIN(grn_glock);
   return rc;
 }
 

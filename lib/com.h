@@ -56,7 +56,7 @@ struct _grn_com_queue {
   grn_com_queue_entry **tail;
   uint8_t first;
   uint8_t last;
-  grn_mutex mutex;
+  grn_critical_section cs;
 };
 
 #define GRN_COM_QUEUE_INIT(q) {\
@@ -64,7 +64,7 @@ struct _grn_com_queue {
   (q)->tail = &(q)->next;\
   (q)->first = 0;\
   (q)->last = 0;\
-  MUTEX_INIT((q)->mutex);\
+  CRITICAL_SECTION_INIT((q)->cs);\
 }
 
 #define GRN_COM_QUEUE_EMPTYP(q) (((q)->first == (q)->last) && !(q)->next)

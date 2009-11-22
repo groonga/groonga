@@ -51,7 +51,7 @@ struct _grn_tiny_array {
   grn_id max;
   uint16_t element_size;
   uint16_t flags;
-  grn_mutex lock;
+  grn_critical_section lock;
   void *elements[GRN_TINY_ARRAY_N];
 };
 
@@ -83,7 +83,7 @@ struct _grn_tiny_array {
   }\
   if (!*e_) {\
     grn_ctx *ctx = (a)->ctx;\
-    if ((a)->flags & GRN_TINY_ARRAY_THREADSAFE) { MUTEX_LOCK((a)->lock); }\
+    if ((a)->flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_ENTER((a)->lock); }\
     if (!*e_) {\
       if ((a)->flags & GRN_TINY_ARRAY_USE_MALLOC) {\
         if ((a)->flags & GRN_TINY_ARRAY_CLEAR) {\
@@ -95,7 +95,7 @@ struct _grn_tiny_array {
         *e_ = GRN_CTX_ALLOC(ctx, GRN_TINY_ARRAY_S * o_ * (a)->element_size, 0);\
       }\
     }\
-    if ((a)->flags & GRN_TINY_ARRAY_THREADSAFE) { MUTEX_UNLOCK((a)->lock); }\
+    if ((a)->flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_LEAVE((a)->lock); }\
     if (!*e_) { e = NULL; break; }\
   }\
   if (id_ > (a)->max) { (a)->max = id_; }\

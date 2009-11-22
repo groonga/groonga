@@ -47,7 +47,7 @@ struct _grn_db {
   grn_pat *keys;
   grn_ja *specs;
   grn_tiny_array values;
-  grn_mutex lock;
+  grn_critical_section lock;
 };
 
 static grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
@@ -81,7 +81,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
                           GRN_TINY_ARRAY_USE_MALLOC);
       if ((s->keys = grn_pat_create(ctx, path, GRN_PAT_MAX_KEY_SIZE, 0,
                                     GRN_OBJ_KEY_VAR_SIZE))) {
-        MUTEX_INIT(s->lock);
+        CRITICAL_SECTION_INIT(s->lock);
         GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
         s->obj.db = (grn_obj *)s;
         s->obj.header.domain = GRN_ID_NIL;
@@ -134,7 +134,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
         char buffer[PATH_MAX];
         gen_pathname(path, buffer, 0);
         if ((s->specs = grn_ja_open(ctx, buffer))) {
-          MUTEX_INIT(s->lock);
+          CRITICAL_SECTION_INIT(s->lock);
           GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
           s->obj.db = (grn_obj *)s;
           s->obj.header.domain = GRN_ID_NIL;
@@ -177,12 +177,12 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
 #ifdef WIN32
   {
     grn_tiny_array *a = &s->values;
-    MUTEX_DESTROY(a->lock);
+    CRITICAL_SECTION_FIN(a->lock);
   }
 #endif
   grn_tiny_array_fin(&s->values);
   grn_pat_close(ctx, s->keys);
-  MUTEX_DESTROY(s->lock);
+  CRITICAL_SECTION_FIN(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
   GRN_FREE(s);
   if (ctx->impl && ctx->impl->db == db) { ctx->impl->db = NULL; }
@@ -4957,53 +4957,53 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             if (size) {
               switch (spec->header.type) {
               case GRN_TYPE :
-                MUTEX_LOCK(s->lock);
+                CRITICAL_SECTION_ENTER(s->lock);
                 if (!*vp) { *vp = (grn_obj *)grn_type_open(ctx, spec); }
-                MUTEX_UNLOCK(s->lock);
+                CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_HASH_KEY :
                 GET_PATH(spec, buffer, s, id);
-                MUTEX_LOCK(s->lock);
+                CRITICAL_SECTION_ENTER(s->lock);
                 if (!*vp) { *vp = (grn_obj *)grn_hash_open(ctx, buffer); }
-                MUTEX_UNLOCK(s->lock);
+                CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_PAT_KEY :
                 GET_PATH(spec, buffer, s, id);
-                MUTEX_LOCK(s->lock);
+                CRITICAL_SECTION_ENTER(s->lock);
                 if (!*vp) { *vp = (grn_obj *)grn_pat_open(ctx, buffer); }
-                MUTEX_UNLOCK(s->lock);
+                CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_NO_KEY :
                 GET_PATH(spec, buffer, s, id);
-                MUTEX_LOCK(s->lock);
+                CRITICAL_SECTION_ENTER(s->lock);
                 if (!*vp) { *vp = (grn_obj *)grn_array_open(ctx, buffer); }
-                MUTEX_UNLOCK(s->lock);
+                CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_VIEW :
                 GET_PATH(spec, buffer, s, id);
-                MUTEX_LOCK(s->lock);
+                CRITICAL_SECTION_ENTER(s->lock);
                 if (!*vp) { *vp = grn_view_open(ctx, buffer); }
-                MUTEX_UNLOCK(s->lock);
+                CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_COLUMN_VAR_SIZE :
                 GET_PATH(spec, buffer, s, id);
-                MUTEX_LOCK(s->lock);
+                CRITICAL_SECTION_ENTER(s->lock);
                 if (!*vp) { *vp = (grn_obj *)grn_ja_open(ctx, buffer); }
-                MUTEX_UNLOCK(s->lock);
+                CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_COLUMN_FIX_SIZE :
                 GET_PATH(spec, buffer, s, id);
-                MUTEX_LOCK(s->lock);
+                CRITICAL_SECTION_ENTER(s->lock);
                 if (!*vp) { *vp = (grn_obj *)grn_ra_open(ctx, buffer); }
-                MUTEX_UNLOCK(s->lock);
+                CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_COLUMN_INDEX :
                 GET_PATH(spec, buffer, s, id);
                 {
                   grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
-                  MUTEX_LOCK(s->lock);
+                  CRITICAL_SECTION_ENTER(s->lock);
                   if (!*vp) { *vp = (grn_obj *)grn_ii_open(ctx, buffer, table); }
-                  MUTEX_UNLOCK(s->lock);
+                  CRITICAL_SECTION_LEAVE(s->lock);
                 }
                 break;
               case GRN_PROC :

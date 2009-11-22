@@ -190,12 +190,17 @@ typedef int grn_sock;
 #ifdef HAVE_PTHREAD_H
 #include <pthread.h>
 typedef pthread_t grn_thread;
-typedef pthread_mutex_t grn_mutex;
 #define THREAD_CREATE(thread,func,arg) (pthread_create(&(thread), NULL, (func), (arg)))
+typedef pthread_mutex_t grn_mutex;
 #define MUTEX_INIT(m) pthread_mutex_init(&m, NULL)
 #define MUTEX_LOCK(m) pthread_mutex_lock(&m)
 #define MUTEX_UNLOCK(m) pthread_mutex_unlock(&m)
-#define MUTEX_DESTROY(m)
+#define MUTEX_FIN(m)
+typedef pthread_mutex_t grn_critical_section;
+#define CRITICAL_SECTION_INIT(cs) pthread_mutex_init(&(cs), NULL)
+#define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
+#define CRITICAL_SECTION_LEAVE(cs) pthread_mutex_unlock(&(cs))
+#define CRITICAL_SECTION_FIN(cs)
 
 typedef pthread_cond_t grn_cond;
 #define COND_INIT(c) pthread_cond_init(&c, NULL)
@@ -253,22 +258,62 @@ typedef int grn_thread_key;
 
 #ifdef WIN32
 typedef uintptr_t grn_thread;
-typedef CRITICAL_SECTION grn_mutex;
 #define THREAD_CREATE(thread,func,arg) (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
-#define MUTEX_INIT(m) InitializeCriticalSection(&m)
-#define MUTEX_LOCK(m) EnterCriticalSection(&m)
-#define MUTEX_UNLOCK(m) LeaveCriticalSection(&m)
-#define MUTEX_DESTROY(m) DeleteCriticalSection(&m)
+typedef HANDLE grn_mutex;
+#define MUTEX_INIT(m) ((m) = CreateMutex(0, FALSE, NULL))
+#define MUTEX_LOCK(m) WaitForSingleObject((m), INFINITE)
+#define MUTEX_UNLOCK(m) ReleaseMutex(m)
+#define MUTEX_FIN(m) CloseHandle(m)
+typedef CRITICAL_SECTION grn_critical_section;
+#define CRITICAL_SECTION_INIT(cs) InitializeCriticalSection(&(cs))
+#define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
+#define CRITICAL_SECTION_LEAVE(cs) LeaveCriticalSection(&(cs))
+#define CRITICAL_SECTION_FIN(cs) DeleteCriticalSection(&(cs))
+
+typedef struct
+{
+  int waiters_count_;
+  HANDLE waiters_count_lock_;
+  HANDLE sema_;
+  HANDLE waiters_done_;
+} grn_cond;
+
+#define COND_INIT(c) { \
+  (c).waiters_count_ = 0; \
+  (c).sema_ = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
+  MUTEX_INIT((c).waiters_count_lock_); \
+}
+
+#define COND_SIGNAL(c) { \
+  MUTEX_LOCK((c).waiters_count_lock_); \
+  { \
+    int have_waiters = (c).waiters_count_ > 0; \
+    MUTEX_UNLOCK((c).waiters_count_lock_); \
+    if (have_waiters) { \
+      ReleaseSemaphore((c).sema_, 1, 0); \
+    } \
+  } \
+}
+#define COND_WAIT(c,m) { \
+  MUTEX_LOCK((c).waiters_count_lock_); \
+  (c).waiters_count_++; \
+  MUTEX_UNLOCK((c).waiters_count_lock_); \
+  SignalObjectAndWait((m), (c).sema_, INFINITE, FALSE); \
+  MUTEX_LOCK((c).waiters_count_lock_); \
+  (c).waiters_count_--; \
+  MUTEX_UNLOCK((c).waiters_count_lock_); \
+  WaitForSingleObject((m), INFINITE); \
+}
 
 #else /* WIN32 */
 /* todo */
-#endif /* WIN32 */
-
 typedef int grn_cond;
 #define COND_INIT(c) ((c) = 0)
 #define COND_SIGNAL(c)
 #define COND_WAIT(c,m) do { MUTEX_UNLOCK(m); usleep(1000); MUTEX_LOCK(m); } while (0)
 /* todo : must be enhanced! */
+
+#endif /* WIN32 */
 
 #define GRN_TEST_YIELD() \
   do { \

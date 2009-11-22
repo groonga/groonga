@@ -30,7 +30,7 @@ grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *a, uint16_t element_size, uint
   a->element_size = element_size;
   a->flags = flags;
   a->max = 0;
-  if (flags & GRN_TINY_ARRAY_THREADSAFE) { MUTEX_INIT(a->lock); }
+  if (flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_INIT(a->lock); }
   memset(a->elements, 0, sizeof(a->elements));
 }
 

@@ -47,16 +47,16 @@
 grn_rc
 grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e)
 {
-  MUTEX_LOCK(q->mutex);
+  CRITICAL_SECTION_ENTER(q->cs);
   e->next = NULL;
   *q->tail = e;
   q->tail = &e->next;
-  MUTEX_UNLOCK(q->mutex);
+  CRITICAL_SECTION_LEAVE(q->cs);
   /*
   uint8_t i = q->last + 1;
   e->next = NULL;
   if (q->first == i || q->next) {
-    MUTEX_LOCK(q->mutex);
+    CRITICAL_SECTION_ENTER(q->cs);
     if (q->first == i || q->next) {
       *q->tail = e;
       q->tail = &e->next;
@@ -64,7 +64,7 @@ grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e)
       q->bins[q->last] = e;
       q->last = i;
     }
-    MUTEX_UNLOCK(q->mutex);
+    CRITICAL_SECTION_LEAVE(q->cs);
   } else {
     q->bins[q->last] = e;
     q->last = i;
@@ -78,20 +78,20 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
 {
   grn_com_queue_entry *e = NULL;
 
-  MUTEX_LOCK(q->mutex);
+  CRITICAL_SECTION_ENTER(q->cs);
   if (q->next) {
     e = q->next;
     if (!(q->next = e->next)) { q->tail = &q->next; }
   }
-  MUTEX_UNLOCK(q->mutex);
+  CRITICAL_SECTION_LEAVE(q->cs);
 
   /*
   if (q->first == q->last) {
     if (q->next) {
-      MUTEX_LOCK(q->mutex);
+      CRITICAL_SECTION_ENTER(q->cs);
       e = q->next;
       if (!(q->next = e->next)) { q->tail = &q->next; }
-      MUTEX_UNLOCK(q->mutex);
+      CRITICAL_SECTION_LEAVE(q->cs);
     }
   } else {
     e = q->bins[q->first++];

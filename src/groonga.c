@@ -328,7 +328,7 @@ enum {
   MBCMD_PREPENDQ = 0x1a
 };
 
-static grn_mutex cache_mutex;
+static grn_critical_section cache_lock;
 static grn_obj *cache_table = NULL;
 static grn_obj *cache_value = NULL;
 static grn_obj *cache_flags = NULL;
@@ -341,7 +341,7 @@ static grn_obj *
 cache_init(grn_ctx *ctx)
 {
   if (cache_cas) { return cache_cas; }
-  MUTEX_LOCK(cache_mutex);
+  CRITICAL_SECTION_ENTER(cache_lock);
   if (!cache_cas) {
     if ((cache_table = CTX_GET("Memcache"))) {
       cache_value = CTX_GET("Memcache.value");
@@ -368,7 +368,7 @@ cache_init(grn_ctx *ctx)
       }
     }
   }
-  MUTEX_UNLOCK(cache_mutex);
+  CRITICAL_SECTION_LEAVE(cache_lock);
   return cache_cas;
 }
 
@@ -932,7 +932,7 @@ h_server(char *path)
   grn_ctx_init(ctx, 0);
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
-  MUTEX_INIT(cache_mutex);
+  CRITICAL_SECTION_INIT(cache_lock);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
 #ifndef WIN32
@@ -1173,7 +1173,7 @@ g_server(char *path)
   grn_ctx_init(ctx, 0);
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
-  MUTEX_INIT(cache_mutex);
+  CRITICAL_SECTION_INIT(cache_lock);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
 #ifndef WIN32

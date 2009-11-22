@@ -168,14 +168,14 @@ delimit_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #ifndef NO_MECAB
 
 static mecab_t *sole_mecab;
-static grn_mutex sole_mecab_lock;
+static grn_critical_section sole_mecab_lock;
 
 #define SOLE_MECAB_CONFIRM do {\
   if (!sole_mecab) {\
     static char *argv[] = {"", "-Owakati"};\
-    MUTEX_LOCK(sole_mecab_lock);\
+    CRITICAL_SECTION_ENTER(sole_mecab_lock);\
     if (!sole_mecab) { sole_mecab = mecab_new(2, argv); }\
-    MUTEX_UNLOCK(sole_mecab_lock);\
+    CRITICAL_SECTION_LEAVE(sole_mecab_lock);\
   }\
 } while(0)
 
@@ -229,12 +229,12 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       GRN_FREE(token);
       return NULL;
     }
-    MUTEX_LOCK(sole_mecab_lock);
+    CRITICAL_SECTION_ENTER(sole_mecab_lock);
     s = mecab_sparse_tostr3(token->mecab, token->nstr->norm, len, buf, bufsize);
     if (!s) {
       strncpy(mecab_err, mecab_strerror(token->mecab), sizeof(mecab_err) - 1);
     }
-    MUTEX_UNLOCK(sole_mecab_lock);
+    CRITICAL_SECTION_LEAVE(sole_mecab_lock);
     if (s) { break; }
     GRN_FREE(buf);
     if (strstr(mecab_err, "output buffer overflow") == NULL) { break; }
@@ -478,7 +478,7 @@ grn_token_init(void)
   // char *arg[] = {"", "-Owakati"};
   // return mecab_load_dictionary(2, arg) ? GRN_SUCCESS : GRN_TOKENIZER_ERROR;
   sole_mecab = NULL;
-  MUTEX_INIT(sole_mecab_lock);
+  CRITICAL_SECTION_INIT(sole_mecab_lock);
 #endif /* NO_MECAB */
   _grn_uvector_tokenizer.obj.db = NULL;
   _grn_uvector_tokenizer.obj.id = GRN_ID_NIL;
@@ -499,7 +499,7 @@ grn_token_fin(void)
     mecab_destroy(sole_mecab);
     sole_mecab = NULL;
   }
-  MUTEX_DESTROY(sole_mecab_lock);
+  CRITICAL_SECTION_FIN(sole_mecab_lock);
 #endif /* NO_MECAB */
   return GRN_SUCCESS;
 }
