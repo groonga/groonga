@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: support match operation on column without index
+desc: ""
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:41:20.607897 Z
+references: []
+
+id: b31861682a73fdcb023e9af6b43bd11b3129e36e
+log_events: 
+- - 2009-11-24 13:41:21.031158 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

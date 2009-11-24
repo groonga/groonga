@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: keep track of queries on database
+desc: ""
+type: :feature
+component: groonga
+release: 
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 15:44:39.353813 Z
+references: []
+
+id: edf53ced18e61dd42e7f73929325866ce6178f3e
+log_events: 
+- - 2009-11-24 15:44:40.065595 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: optimize the usage of ii chunks
+desc: ""
+type: :feature
+component: groonga
+release: 1.1.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 14:06:51.175721 Z
+references: []
+
+id: b7cd4582011849edbfd75498a89c2b7d29cc8bca
+log_events: 
+- - 2009-11-24 14:06:51.516285 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

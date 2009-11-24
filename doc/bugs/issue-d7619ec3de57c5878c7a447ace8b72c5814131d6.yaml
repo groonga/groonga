@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: create the content of index when defined index after the values stored
+desc: ""
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:40:34.473270 Z
+references: []
+
+id: d7619ec3de57c5878c7a447ace8b72c5814131d6
+log_events: 
+- - 2009-11-24 13:40:34.916891 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

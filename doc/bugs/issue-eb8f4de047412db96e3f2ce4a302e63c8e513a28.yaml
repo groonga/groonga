@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: standardize the format of error reporting amaong builtin commands
+desc: ""
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:47:03.299842 Z
+references: []
+
+id: eb8f4de047412db96e3f2ce4a302e63c8e513a28
+log_events: 
+- - 2009-11-24 13:47:03.733834 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

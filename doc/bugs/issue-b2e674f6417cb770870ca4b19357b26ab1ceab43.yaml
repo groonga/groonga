@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make the output of grn_expr_inspect() easy to parse
+desc: ""
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:27:34.581849 Z
+references: []
+
+id: b2e674f6417cb770870ca4b19357b26ab1ceab43
+log_events: 
+- - 2009-11-24 13:27:35.479187 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

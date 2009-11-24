@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: support for arithmatic operations on grn_expr
+desc: various arithmatic operations should be supported on grn_expr.
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:19:52.905665 Z
+references: []
+
+id: 0a2d1af6cb802368d00cf11bdbb32d48088236d5
+log_events: 
+- - 2009-11-24 13:19:53.603615 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: null support
+desc: ""
+type: :feature
+component: groonga
+release: 1.1.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 14:16:18.542650 Z
+references: []
+
+id: db264aa4065cf1b83d5f6a5ba0c235b731263440
+log_events: 
+- - 2009-11-24 14:16:19.280614 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

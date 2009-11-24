@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: index scan with nested column value condition.
+desc: apply index scan when condition like "aaa.bbb == 'ccc'"
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 12:34:10.313258 Z
+references: []
+
+id: 8c369d9d08c51b104415897fe699aae5e84e88db
+log_events: 
+- - 2009-11-24 12:34:13.241981 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

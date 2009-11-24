@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: variable length stack in grn_expr
+desc: ""
+type: :feature
+component: groonga
+release: 1.1.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:36:28.359419 Z
+references: []
+
+id: 3b74839bacab741757a7b1ab86c0bc91b69b8da2
+log_events: 
+- - 2009-11-24 13:36:28.832896 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

@@ -1,6 +1,6 @@
 --- !ditz.rubyforge.org,2008-03-06/issue 
 title: possible block in grn_com_recv_text().
-desc: ""
+desc: inside grn_com_recv_text(), recieved message length must be checked using FIONREAD at first, then manage the state transition for each socket respectively.
 type: :bugfix
 component: groonga
 release: 1.0.0
@@ -15,4 +15,8 @@ log_events:
 - - 2009-10-06 08:01:43.536471 Z
   - daijiro <daijiro.mori@gmail.com>
   - created
+  - ""
+- - 2009-11-24 12:48:26.270854 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - edited description
   - ""

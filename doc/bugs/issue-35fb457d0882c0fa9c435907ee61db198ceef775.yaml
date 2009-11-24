@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: support grn_db_create_optarg
+desc: ""
+type: :feature
+component: groonga
+release: 1.1.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:59:58.354342 Z
+references: []
+
+id: 35fb457d0882c0fa9c435907ee61db198ceef775
+log_events: 
+- - 2009-11-24 13:59:58.762999 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

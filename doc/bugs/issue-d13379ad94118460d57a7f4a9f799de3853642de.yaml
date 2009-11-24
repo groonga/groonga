@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: support comparison between various typed values in grn_expr
+desc: ""
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 13:35:43.133468 Z
+references: []
+
+id: d13379ad94118460d57a7f4a9f799de3853642de
+log_events: 
+- - 2009-11-24 13:35:43.651589 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""

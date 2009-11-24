@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: variable length doc_id range on inverted index
+desc: ""
+type: :feature
+component: groonga
+release: 1.1.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 14:18:07.322353 Z
+references: []
+
+id: 812e55ebc7b56fff62b27251840b235407e33a00
+log_events: 
+- - 2009-11-24 14:18:07.710770 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""
