@@ -25,7 +25,10 @@
 
 #define OBJECT(name) (grn_ctx_get(&context, (name), strlen(name)))
 
-void test_text(void);
+void data_text_to_bool(void);
+void test_text_to_bool(gconstpointer data);
+void test_text_to_int32(void);
+void test_text_to_uint32(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -49,13 +52,51 @@ cut_teardown(void)
   teardown_grn_logger(logger);
 }
 
-void
-test_text(void)
+static void
+cast_text(const gchar *text)
 {
   grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
-  grn_obj_reinit(&context, &dest, GRN_DB_INT32, 0);
-
-  GRN_TEXT_PUTS(&context, &src, "29");
+  GRN_TEXT_PUTS(&context, &src, text);
   grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
-  cut_assert_equal_int(29, GRN_INT32_VALUE(&dest));
+}
+
+void
+data_text_to_bool(void)
+{
+#define ADD_DATA(label, expected, text)                 \
+  gcut_add_datum(label,                                 \
+                 "expected", G_TYPE_UINT, expected,     \
+                 "text", G_TYPE_STRING, text,           \
+                 NULL)
+
+  ADD_DATA("true", GRN_TRUE, "true");
+  ADD_DATA("false", GRN_FALSE, "false");
+  ADD_DATA("unknown", GRN_FALSE, "unknown");
+
+#undef ADD_DATA
+}
+
+void
+test_text_to_bool(gconstpointer data)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_BOOL, 0);
+  cast_text(gcut_data_get_string(data, "text"));
+  cut_assert_equal_boolean(gcut_data_get_uint(data, "expected"),
+                           GRN_BOOL_VALUE(&dest));
+}
+
+void
+test_text_to_int32(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_INT32, 0);
+  cast_text("-29");
+  cut_assert_equal_int(-29, GRN_INT32_VALUE(&dest));
+}
+
+void
+test_text_to_uint32(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_UINT32, 0);
+  cast_text("29");
+  cut_assert_equal_uint(29, GRN_UINT32_VALUE(&dest));
 }
