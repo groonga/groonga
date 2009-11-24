@@ -36,6 +36,7 @@ void test_text_to_uint32(void);
 void test_text_to_int64(void);
 void test_text_to_uint64(void);
 void test_text_to_float(void);
+void test_text_to_time(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -162,4 +163,16 @@ test_text_to_float(void)
   grn_obj_reinit(&context, &dest, GRN_DB_FLOAT, 0);
   cast_text("29.029");
   cut_assert_equal_double(29.029, 0.001, GRN_FLOAT_VALUE(&dest));
+}
+
+void
+test_text_to_time(void)
+{
+  long long int sec, usec;
+
+  grn_obj_reinit(&context, &dest, GRN_DB_TIME, 0);
+  cast_text("2009/11/24 05:52:10.02929");
+  GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
+  cut_assert_equal_int(1259009530, sec);
+  cut_assert_equal_int(29290, usec);
 }
