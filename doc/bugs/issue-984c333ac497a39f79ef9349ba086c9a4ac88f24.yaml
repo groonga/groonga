@@ -4,11 +4,11 @@ desc: |-
   /search proc takes output_columns/drilldown_output_columns parameters.
   If parameter that has prefix '_key' or ':key' is given as these parameters,
   it is interpreted as '_key'.
-  This may be a bug.
+  This may be a bug. but it may not be a bug.
 type: :bugfix
 component: groonga
 release: 1.0.0
-reporter: Tasuku SUENAGA <tasuku-s-github@titech.ac>
+reporter: tasuku
 status: :unstarted
 disposition: 
 creation_time: 2009-09-16 06:55:25.000692 Z
@@ -23,4 +23,12 @@ log_events:
 - - 2009-10-06 07:47:04.404349 Z
   - daijiro <daijiro.mori@gmail.com>
   - assigned to release 1.0.0 from unassigned
+  - ""
+- - 2009-11-24 11:04:46.812451 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - edited reporter
+  - ""
+- - 2009-11-24 11:21:29.081854 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - edited description, reporter
   - ""

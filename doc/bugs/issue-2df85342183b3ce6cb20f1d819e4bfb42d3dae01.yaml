@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: create multiple _score columns in single select query.
+desc: ""
+type: :feature
+component: groonga
+release: 1.0.0
+reporter: daijiro <daijiro.mori@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-24 12:21:47.778611 Z
+references: []
+
+id: 2df85342183b3ce6cb20f1d819e4bfb42d3dae01
+log_events: 
+- - 2009-11-24 12:21:49.235343 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - created
+  - ""
