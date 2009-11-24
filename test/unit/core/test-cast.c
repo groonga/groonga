@@ -27,8 +27,14 @@
 
 void data_text_to_bool(void);
 void test_text_to_bool(gconstpointer data);
+void test_text_to_int8(void);
+void test_text_to_uint8(void);
+void test_text_to_int16(void);
+void test_text_to_uint16(void);
 void test_text_to_int32(void);
 void test_text_to_uint32(void);
+void test_text_to_int64(void);
+void test_text_to_uint64(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -86,17 +92,65 @@ test_text_to_bool(gconstpointer data)
 }
 
 void
+test_text_to_int8(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_INT8, 0);
+  cast_text("-29");
+  cut_assert_equal_int(-29, GRN_INT32_VALUE(&dest));
+}
+
+void
+test_text_to_uint8(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_UINT8, 0);
+  cast_text("29");
+  cut_assert_equal_uint(29, GRN_UINT32_VALUE(&dest));
+}
+
+void
+test_text_to_int16(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_INT16, 0);
+  cast_text("-2929");
+  cut_assert_equal_int(-2929, GRN_INT32_VALUE(&dest));
+}
+
+void
+test_text_to_uint16(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_UINT16, 0);
+  cast_text("2929");
+  cut_assert_equal_uint(2929, GRN_UINT32_VALUE(&dest));
+}
+
+void
 test_text_to_int32(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_INT32, 0);
-  cast_text("-29");
-  cut_assert_equal_int(-29, GRN_INT32_VALUE(&dest));
+  cast_text("-29292929");
+  cut_assert_equal_int(-29292929, GRN_INT32_VALUE(&dest));
 }
 
 void
 test_text_to_uint32(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_UINT32, 0);
-  cast_text("29");
-  cut_assert_equal_uint(29, GRN_UINT32_VALUE(&dest));
+  cast_text("29292929");
+  cut_assert_equal_uint(29292929, GRN_UINT32_VALUE(&dest));
+}
+
+void
+test_text_to_int64(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_INT64, 0);
+  cast_text("-2929292929292929");
+  cut_assert_equal_int(-2929292929292929, GRN_INT64_VALUE(&dest));
+}
+
+void
+test_text_to_uint64(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_UINT64, 0);
+  cast_text("2929292929292929");
+  cut_assert_equal_uint(2929292929292929, GRN_UINT64_VALUE(&dest));
 }
