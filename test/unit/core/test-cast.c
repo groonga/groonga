@@ -35,6 +35,7 @@ void test_text_to_int32(void);
 void test_text_to_uint32(void);
 void test_text_to_int64(void);
 void test_text_to_uint64(void);
+void test_text_to_float(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -153,4 +154,12 @@ test_text_to_uint64(void)
   grn_obj_reinit(&context, &dest, GRN_DB_UINT64, 0);
   cast_text("2929292929292929");
   cut_assert_equal_uint(2929292929292929, GRN_UINT64_VALUE(&dest));
+}
+
+void
+test_text_to_float(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_FLOAT, 0);
+  cast_text("29.029");
+  cut_assert_equal_double(29.029, 0.001, GRN_FLOAT_VALUE(&dest));
 }
