@@ -1,6 +1,7 @@
 *.la
 *.lo
 *.o
+*.pyc
 .deps
 .ditz-config
 .gdb_history
