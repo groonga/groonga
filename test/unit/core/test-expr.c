@@ -27,6 +27,7 @@ static gchar *tmp_directory;
 static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
+static grn_obj *cond, *v, *res;
 
 void test_accessor(void);
 void test_expr(void);
@@ -77,11 +78,20 @@ cut_setup(void)
   path = g_build_filename(tmp_directory, "text-expr", NULL);
   grn_ctx_init(&context, 0);
   database = grn_db_create(&context, path, NULL);
+
+  cond = NULL;
+  v = NULL;
+  res = NULL;
 }
 
 void
 cut_teardown(void)
 {
+  if (res)
+    grn_obj_close(&context, res);
+  if (cond)
+    grn_obj_close(&context, cond);
+
   grn_db_close(&context, database);
   grn_ctx_fin(&context);
   cut_remove_path(tmp_directory, NULL);
@@ -556,7 +566,7 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 void
 test_table_select_equal(void)
 {
-  grn_obj *cond, *v, *res, textbuf, intbuf;
+  grn_obj textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -584,8 +594,6 @@ test_table_select_equal(void)
                                                    "moge moge moge",
                                                    NULL), res);
 
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
   grn_test_assert(grn_obj_close(&context, &intbuf));
 }
@@ -593,7 +601,7 @@ test_table_select_equal(void)
 void
 test_table_select_equal_indexed(void)
 {
-  grn_obj *cond, *v, *res, textbuf, intbuf;
+  grn_obj textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -618,8 +626,6 @@ test_table_select_equal_indexed(void)
 
   grn_test_assert_select(gcut_take_new_list_string("hoge", NULL), res);
 
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
   grn_test_assert(grn_obj_close(&context, &intbuf));
 }
@@ -627,7 +633,7 @@ test_table_select_equal_indexed(void)
 void
 test_table_select_select(void)
 {
-  grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
+  grn_obj *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -665,8 +671,6 @@ test_table_select_select(void)
                                                    NULL), res);
 
   grn_test_assert(grn_obj_close(&context, expr));
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
   grn_test_assert(grn_obj_close(&context, &intbuf));
 }
@@ -674,7 +678,7 @@ test_table_select_select(void)
 void
 test_table_select_search(void)
 {
-  grn_obj *cond, *expr, *v, textbuf, intbuf;
+  grn_obj *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -737,7 +741,6 @@ test_table_select_search(void)
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_test_assert(grn_obj_close(&context, expr));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
   grn_test_assert(grn_obj_close(&context, &intbuf));
 }
@@ -745,7 +748,7 @@ test_table_select_search(void)
 void
 test_table_select_select_search(void)
 {
-  grn_obj *cond, *expr, *v, textbuf, intbuf;
+  grn_obj *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -808,7 +811,6 @@ test_table_select_select_search(void)
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
   grn_test_assert(grn_obj_close(&context, expr));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
   grn_test_assert(grn_obj_close(&context, &intbuf));
 }
@@ -816,7 +818,7 @@ test_table_select_select_search(void)
 void
 test_table_select_match(void)
 {
-  grn_obj *cond, *v, *res, textbuf, intbuf;
+  grn_obj textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -849,15 +851,13 @@ test_table_select_match(void)
                                                      "moge moge moge",
                                                    NULL), res);
 
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
 
 void
 test_table_select_match_equal(void)
 {
-  grn_obj *cond, *v, *res, textbuf, intbuf;
+  grn_obj textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -897,15 +897,13 @@ test_table_select_match_equal(void)
                                                    "moge hoge hoge",
                                                    NULL), res);
 
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
 
 void
 test_table_select_match_nonexistent(void)
 {
-  grn_obj *cond, *v, *res, textbuf, intbuf;
+  grn_obj textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -934,8 +932,6 @@ test_table_select_match_nonexistent(void)
 
   grn_test_assert_select(NULL, res);
 
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
 
@@ -985,7 +981,7 @@ data_expr_parse(void)
 void
 test_expr_parse(gconstpointer data)
 {
-  grn_obj *cond, *v, *res, textbuf, intbuf;
+  grn_obj textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1031,16 +1027,13 @@ test_expr_parse(gconstpointer data)
                                                    "hoge fuga fuga",
                                                    "moge hoge hoge",
                                                    NULL), res);
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
-
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
 
 void
 test_expr_set_value(void)
 {
-  grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
+  grn_obj *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1082,9 +1075,6 @@ test_expr_set_value(void)
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select_all(res);
-  grn_test_assert(grn_obj_close(&context, res));
-
-  grn_test_assert(grn_obj_close(&context, cond));
 
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
@@ -1092,7 +1082,7 @@ test_expr_set_value(void)
 void
 test_expr_set_value_with_implicit_variable_reference(void)
 {
-  grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
+  grn_obj *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1131,9 +1121,6 @@ test_expr_set_value_with_implicit_variable_reference(void)
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select_all(res);
-  grn_test_assert(grn_obj_close(&context, res));
-
-  grn_test_assert(grn_obj_close(&context, cond));
 
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
@@ -1141,7 +1128,7 @@ test_expr_set_value_with_implicit_variable_reference(void)
 void
 test_expr_set_value_with_query(void)
 {
-  grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
+  grn_obj *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1176,9 +1163,6 @@ test_expr_set_value_with_query(void)
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select_all(res);
-  grn_test_assert(grn_obj_close(&context, res));
-
-  grn_test_assert(grn_obj_close(&context, cond));
 
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
@@ -1186,7 +1170,7 @@ test_expr_set_value_with_query(void)
 void
 test_expr_proc_call(void)
 {
-  grn_obj *cond, *expr, *v, *res, textbuf, intbuf;
+  grn_obj *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1223,9 +1207,6 @@ test_expr_proc_call(void)
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select_none(res);
-  grn_test_assert(grn_obj_close(&context, res));
-
-  grn_test_assert(grn_obj_close(&context, cond));
 
   grn_test_assert(grn_obj_close(&context, &textbuf));
 }
@@ -1233,7 +1214,7 @@ test_expr_proc_call(void)
 void
 test_expr_score_set(void)
 {
-  grn_obj *cond, *expr, *v, *res, *res2, textbuf, intbuf;
+  grn_obj *expr, *res2, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1270,10 +1251,7 @@ test_expr_score_set(void)
                                                    "poyo moge hoge "
                                                    "moge moge moge",
                                                    NULL), res2);
-  grn_test_assert(grn_obj_close(&context, cond));
-
   grn_test_assert(grn_obj_close(&context, res2));
-  grn_test_assert(grn_obj_close(&context, res));
 
   grn_test_assert(grn_obj_close(&context, &textbuf));
   grn_test_assert(grn_obj_close(&context, &intbuf));
@@ -1282,8 +1260,6 @@ test_expr_score_set(void)
 void
 test_expr_key_equal(void)
 {
-  grn_obj *cond, *v, *res;
-
   docs = grn_table_create(&context, "docs", 4, NULL,
                           GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
@@ -1308,15 +1284,13 @@ test_expr_key_equal(void)
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   cut_assert_equal_uint(0, grn_table_size(&context, res));
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
 }
 
 void
 test_expr_value_access(void)
 {
   grn_id id;
-  grn_obj *cond, *expr, *v, *res, intbuf;
+  grn_obj *expr, intbuf;
   GRN_INT32_INIT(&intbuf, 0);
 
   docs = grn_table_create(&context, "docs", 4, NULL,
@@ -1356,14 +1330,12 @@ test_expr_value_access(void)
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   cut_assert_equal_uint(2, grn_table_size(&context, res));
-  grn_test_assert(grn_obj_close(&context, res));
-  grn_test_assert(grn_obj_close(&context, cond));
 }
 
 void
 test_expr_snip(void)
 {
-  grn_obj *expr, *v;
+  grn_obj *expr;
   grn_obj textbuf, intbuf;
 
   GRN_TEXT_INIT(&textbuf, 0);
@@ -1435,7 +1407,7 @@ test_expr_snip(void)
 void
 test_expr_snip_without_tags(void)
 {
-  grn_obj *expr, *v;
+  grn_obj *expr;
   grn_obj textbuf, intbuf;
 
   GRN_TEXT_INIT(&textbuf, 0);
