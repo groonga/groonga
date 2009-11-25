@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: missing null checks
+desc: ""
+type: :bugfix
+component: groonga
+release: 1.0.0
+reporter: Ryo Onodera <onodera@clear-code.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-25 06:41:17.177384 Z
+references: []
+
+id: c804446bb766b21c53313bc888a2bc93ddaec0aa
+log_events: 
+- - 2009-11-25 06:41:18.584543 Z
+  - Ryo Onodera <onodera@clear-code.com>
+  - created
+  - ""

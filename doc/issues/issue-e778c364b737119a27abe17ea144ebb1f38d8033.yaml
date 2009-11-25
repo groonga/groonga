@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: strip out query part of URLs of http static pages
+desc: ""
+type: :bugfix
+component: groonga
+release: 1.0.0
+reporter: Ryo Onodera <onodera@clear-code.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-25 06:37:49.824492 Z
+references: []
+
+id: e778c364b737119a27abe17ea144ebb1f38d8033
+log_events: 
+- - 2009-11-25 06:37:52.321428 Z
+  - Ryo Onodera <onodera@clear-code.com>
+  - created
+  - ""

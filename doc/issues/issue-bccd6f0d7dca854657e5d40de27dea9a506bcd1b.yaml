@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: parse0, parse4... bit field
+desc: ""
+type: :bugfix
+component: groonga
+release: 1.0.0
+reporter: Ryo Onodera <onodera@clear-code.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-11-25 06:41:54.364636 Z
+references: []
+
+id: bccd6f0d7dca854657e5d40de27dea9a506bcd1b
+log_events: 
+- - 2009-11-25 06:41:55.717173 Z
+  - Ryo Onodera <onodera@clear-code.com>
+  - created
+  - ""
