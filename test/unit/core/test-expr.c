@@ -938,18 +938,21 @@ data_expr_parse(void)
                  G_TYPE_INT, query_size_parse_level,                    \
                  NULL)
 
-  ADD_DATUM("column query parse level", "hoge + moge",
+  ADD_DATUM("column query parse level",
+            "hoge + moge",
             GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN,
-                                        "poyo", GRN_EXPR_SYNTAX_QUERY,
-                                        "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN);
-  ADD_DATUM("table query parse level", "body:%hoge + body:%moge",
+            "poyo", GRN_EXPR_SYNTAX_QUERY,
+            "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN);
+  ADD_DATUM("table query parse level",
+            "body:%hoge + body:%moge",
             GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN,
-                                       "body:%poyo", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN,
-                                       "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN);
-  ADD_DATUM("expression parse level", "body@\"hoge\" && body@\"moge\"",
+            "body:%poyo", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN,
+            "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN);
+  ADD_DATUM("expression parse level",
+            "body@\"hoge\" && body@\"moge\"",
             GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE,
-                                      "body@\"poyo\"", GRN_EXPR_SYNTAX_SCRIPT,
-                                      "size == 14", GRN_EXPR_SYNTAX_SCRIPT);
+            "body@\"poyo\"", GRN_EXPR_SYNTAX_SCRIPT,
+            "size == 14", GRN_EXPR_SYNTAX_SCRIPT);
 #undef ADD_DATUM
 }
 
@@ -1061,7 +1064,8 @@ test_expr_set_value_with_implicit_variable_reference(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "size:14",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
@@ -1104,7 +1108,8 @@ test_expr_set_value_with_query(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "size:14",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
@@ -1143,7 +1148,8 @@ test_expr_proc_call(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "size:>14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "size:>14",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select(gcut_take_new_list_string("hoge moge moge moge",
@@ -1184,7 +1190,8 @@ test_expr_score_set(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "size:>0", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "size:>0",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select_all(res);
@@ -1192,7 +1199,8 @@ test_expr_score_set(void)
   cond = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, res, expr, v);
-  PARSE(expr, "_score = size", GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
+  PARSE(expr, "_score = size",
+        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
   GRN_TABLE_EACH(&context, res, 0, 0, id, NULL, 0, NULL, {
     GRN_RECORD_SET(&context, v, id);
     grn_expr_exec(&context, expr, 0);
@@ -1201,7 +1209,8 @@ test_expr_score_set(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, res, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "_score:>9", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "_score:>9",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res2 = grn_table_select(&context, res, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res2);
   grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
@@ -1231,7 +1240,8 @@ test_expr_key_equal(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "_key:moge", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "_key:moge",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   cut_assert_equal_uint(1, grn_table_size(&context, res));
@@ -1243,7 +1253,8 @@ test_expr_key_equal(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "_key:poge", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "_key:poge",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   cut_assert_equal_uint(0, grn_table_size(&context, res));
@@ -1270,7 +1281,8 @@ test_expr_value_access(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "_value:1", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "_value:1",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   cut_assert_equal_uint(1, grn_table_size(&context, res));
@@ -1289,7 +1301,8 @@ test_expr_value_access(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "_value:5", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "_value:5",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   cut_assert_equal_uint(2, grn_table_size(&context, res));
@@ -1305,7 +1318,8 @@ test_expr_snip(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   cut_assert_not_null(expr);
 
-  PARSE(expr, "search engine column", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA);
+  PARSE(expr, "search engine column",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA);
 
   {
     grn_snip *snip;
@@ -1369,7 +1383,8 @@ test_expr_snip_without_tags(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   cut_assert_not_null(expr);
 
-  PARSE(expr, "search engine column", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA);
+  PARSE(expr, "search engine column",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA);
 
   {
     grn_snip *snip;
