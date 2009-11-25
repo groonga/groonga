@@ -156,11 +156,11 @@ test_accessor(void)
     et = (tve.tv_sec - tvb.tv_sec) * 1000000 + (tve.tv_usec - tvb.tv_usec);
     // printf("et=%zu\n", et);
     cut_assert_equal_uint(0, nerr);
-    cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
-    cut_assert_equal_uint(0, grn_obj_close(&context, a));
+    grn_test_assert(grn_table_cursor_close(&context, tc));
+    grn_test_assert(grn_obj_close(&context, a));
   }
-  cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
-  cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
+  grn_test_assert(grn_obj_close(&context, &r1));
+  grn_test_assert(grn_obj_close(&context, &r2));
 }
 
 void
@@ -235,12 +235,12 @@ test_expr(void)
       et = (tve.tv_sec - tvb.tv_sec) * 1000000 + (tve.tv_usec - tvb.tv_usec);
       // printf("et=%zu\n", et);
       cut_assert_equal_uint(0, nerr);
-      cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+      grn_test_assert(grn_table_cursor_close(&context, tc));
     }
   }
-  cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
-  cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
-  cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
+  grn_test_assert(grn_obj_close(&context, &r1));
+  grn_test_assert(grn_obj_close(&context, &r2));
+  grn_test_assert(grn_obj_close(&context, &buf));
 }
 
 #ifdef ENABLE_PERSISTENT_EXPR
@@ -300,7 +300,7 @@ test_persistent_expr(void)
     grn_test_assert(grn_obj_close(&context, expr));
     expr = NULL;
   }
-  cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
+  grn_test_assert(grn_obj_close(&context, &buf));
 
   grn_db_close(&context, database);
   database = grn_db_open(&context, path);
@@ -328,10 +328,10 @@ test_persistent_expr(void)
     et = (tve.tv_sec - tvb.tv_sec) * 1000000 + (tve.tv_usec - tvb.tv_usec);
     // printf("et=%zu\n", et);
     cut_assert_equal_uint(0, nerr);
-    cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+    grn_test_assert(grn_table_cursor_close(&context, tc));
   }
-  cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
-  cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
+  grn_test_assert(grn_obj_close(&context, &r1));
+  grn_test_assert(grn_obj_close(&context, &r2));
 }
 #endif /* ENABLE_PERSISTENT_EXPR */
 
@@ -430,8 +430,6 @@ test_expr_query(void)
 
   grn_expr_exec(&context, expr, 0);
 
-  cut_assert_equal_uint(0, grn_obj_close(&context, expr));
-
   cut_assert_equal_substring("[[2],[\"abhij\",1],[\"fghij\",1]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
 
@@ -484,7 +482,7 @@ grn_test_assert_select(const GList *expected, grn_obj *result)
     records = g_list_append(records, null_terminated_key->str);
     g_string_free(null_terminated_key, FALSE);
   }
-  cut_assert_equal_uint(0, grn_table_cursor_close(&context, cursor));
+  grn_test_assert(grn_table_cursor_close(&context, cursor));
   gcut_take_list(records, g_free);
   expected = g_list_sort((GList *)expected, (GCompareFunc)g_utf8_collate);
   records = g_list_sort((GList *)records, (GCompareFunc)g_utf8_collate);
@@ -668,8 +666,6 @@ test_table_select_select(void)
                                                    "hoge fuga fuga",
                                                    "moge hoge hoge",
                                                    NULL), res);
-
-  grn_test_assert(grn_obj_close(&context, expr));
 }
 
 void
@@ -734,8 +730,6 @@ test_table_select_search(void)
 
   cut_assert_equal_substring("[[2],[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
-
-  grn_test_assert(grn_obj_close(&context, expr));
 }
 
 void
@@ -800,8 +794,6 @@ test_table_select_select_search(void)
 
   cut_assert_equal_substring("[[2],[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
                              GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
-
-  grn_test_assert(grn_obj_close(&context, expr));
 }
 
 void
@@ -990,7 +982,9 @@ test_expr_parse(gconstpointer data)
                                                    "moge moge moge",
                                                    NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
+  res = NULL;
   grn_test_assert(grn_obj_close(&context, cond));
+  cond = NULL;
 
   cond = grn_expr_create(&context, NULL, 0);
   cut_assert_not_null(cond);
@@ -1029,6 +1023,7 @@ test_expr_set_value(void)
                                                    "moge hoge hoge",
                                                    NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
+  res = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
 
@@ -1048,9 +1043,8 @@ test_expr_set_value(void)
       GRN_RECORD_SET(&context, v, id);
       grn_expr_exec(&context, expr, 0);
     }
-    cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+    grn_test_assert(grn_table_cursor_close(&context, tc));
   }
-  grn_test_assert(grn_obj_close(&context, expr));
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
@@ -1075,6 +1069,7 @@ test_expr_set_value_with_implicit_variable_reference(void)
                                                    "moge hoge hoge",
                                                    NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
+  res = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
 
@@ -1091,9 +1086,8 @@ test_expr_set_value_with_implicit_variable_reference(void)
       GRN_RECORD_SET(&context, v, id);
       grn_expr_exec(&context, expr, 0);
     }
-    cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+    grn_test_assert(grn_table_cursor_close(&context, tc));
   }
-  grn_test_assert(grn_obj_close(&context, expr));
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
@@ -1118,6 +1112,7 @@ test_expr_set_value_with_query(void)
                                                    "moge hoge hoge",
                                                    NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
+  res = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   PARSE(expr, "size = 14", GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
@@ -1130,9 +1125,8 @@ test_expr_set_value_with_query(void)
       GRN_RECORD_SET(&context, v, id);
       grn_expr_exec(&context, expr, 0);
     }
-    cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+    grn_test_assert(grn_table_cursor_close(&context, tc));
   }
-  grn_test_assert(grn_obj_close(&context, expr));
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
@@ -1159,6 +1153,7 @@ test_expr_proc_call(void)
                                                      "moge moge moge",
                                                    NULL), res);
   grn_test_assert(grn_obj_close(&context, res));
+  res = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   PARSE(expr, "size = rand(14)", GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
@@ -1171,9 +1166,8 @@ test_expr_proc_call(void)
       GRN_RECORD_SET(&context, v, id);
       grn_expr_exec(&context, expr, 0);
     }
-    cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
+    grn_test_assert(grn_table_cursor_close(&context, tc));
   }
-  grn_test_assert(grn_obj_close(&context, expr));
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
@@ -1195,6 +1189,7 @@ test_expr_score_set(void)
   cut_assert_not_null(res);
   grn_test_assert_select_all(res);
   grn_test_assert(grn_obj_close(&context, cond));
+  cond = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, res, expr, v);
   PARSE(expr, "_score = size", GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
@@ -1202,7 +1197,6 @@ test_expr_score_set(void)
     GRN_RECORD_SET(&context, v, id);
     grn_expr_exec(&context, expr, 0);
   });
-  grn_test_assert(grn_obj_close(&context, expr));
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, res, cond, v);
   cut_assert_not_null(cond);
@@ -1242,7 +1236,9 @@ test_expr_key_equal(void)
   cut_assert_not_null(res);
   cut_assert_equal_uint(1, grn_table_size(&context, res));
   grn_test_assert(grn_obj_close(&context, res));
+  res = NULL;
   grn_test_assert(grn_obj_close(&context, cond));
+  cond = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
@@ -1279,7 +1275,9 @@ test_expr_value_access(void)
   cut_assert_not_null(res);
   cut_assert_equal_uint(1, grn_table_size(&context, res));
   grn_test_assert(grn_obj_close(&context, res));
+  res = NULL;
   grn_test_assert(grn_obj_close(&context, cond));
+  cond = NULL;
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   PARSE(expr, "_value = 5", GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
@@ -1287,7 +1285,6 @@ test_expr_value_access(void)
     GRN_RECORD_SET(&context, v, id);
     grn_expr_exec(&context, expr, 0);
   });
-  grn_test_assert(grn_obj_close(&context, expr));
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
@@ -1360,8 +1357,6 @@ test_expr_snip(void)
 
     grn_test_assert(grn_snip_close(&context, snip));
   }
-
-  grn_test_assert(grn_obj_close(&context, expr));
 }
 
 void
@@ -1422,6 +1417,4 @@ test_expr_snip_without_tags(void)
 
     grn_test_assert(grn_snip_close(&context, snip));
   }
-
-  grn_test_assert(grn_obj_close(&context, expr));
 }
