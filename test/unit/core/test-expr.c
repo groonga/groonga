@@ -27,7 +27,7 @@ static gchar *tmp_directory;
 static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
-static grn_obj *cond, *res;
+static grn_obj *cond, *res, *expr;
 static grn_obj textbuf, intbuf;
 
 void test_accessor(void);
@@ -81,6 +81,7 @@ cut_setup(void)
   database = grn_db_create(&context, path, NULL);
 
   cond = NULL;
+  expr = NULL;
   res = NULL;
 
   GRN_TEXT_INIT(&textbuf, 0);
@@ -95,6 +96,8 @@ cut_teardown(void)
 
   if (res)
     grn_obj_close(&context, res);
+  if (expr)
+    grn_obj_close(&context, expr);
   if (cond)
     grn_obj_close(&context, cond);
 
@@ -190,8 +193,9 @@ test_expr(void)
     grn_obj_set_value(&context, c2, i2, &r1, GRN_OBJ_SET);
   }
   {
-    grn_obj *expr = grn_expr_create(&context, NULL, 0);
     grn_obj *r, *v;
+
+    expr = grn_expr_create(&context, NULL, 0);
     cut_assert_not_null(expr);
     v = grn_expr_add_var(&context, expr, NULL, 0);
     GRN_RECORD_INIT(v, 0, grn_obj_id(&context, t1));
@@ -233,7 +237,6 @@ test_expr(void)
       cut_assert_equal_uint(0, nerr);
       cut_assert_equal_uint(0, grn_table_cursor_close(&context, tc));
     }
-    cut_assert_equal_uint(0, grn_obj_close(&context, expr));
   }
   cut_assert_equal_uint(0, grn_obj_close(&context, &r1));
   cut_assert_equal_uint(0, grn_obj_close(&context, &r2));
@@ -271,8 +274,8 @@ test_persistent_expr(void)
     grn_obj_set_value(&context, c2, i2, &r1, GRN_OBJ_SET);
   }
   {
-    grn_obj *expr = grn_expr_create(&context, "test", 4);
     grn_obj *v;
+    expr = grn_expr_create(&context, "test", 4);
     cut_assert_not_null(expr);
     v = grn_expr_add_var(&context, expr, "foo", 3);
     GRN_RECORD_INIT(v, 0, grn_obj_id(&context, t1));
@@ -294,6 +297,8 @@ test_persistent_expr(void)
 
     grn_expr_append_op(&context, expr, GRN_OP_GET_VALUE, 2);
     grn_expr_compile(&context, expr);
+    grn_test_assert(grn_obj_close(&context, expr));
+    expr = NULL;
   }
   cut_assert_equal_uint(0, grn_obj_close(&context, &buf));
 
@@ -307,7 +312,7 @@ test_persistent_expr(void)
     grn_obj *r, *v;
     grn_table_cursor *tc;
     struct timeval tvb, tve;
-    grn_obj *expr = grn_ctx_get(&context, "test", 4);
+    expr = grn_ctx_get(&context, "test", 4);
     v = grn_expr_get_var(&context, expr, "foo", 3);
     t1 = grn_ctx_get(&context, "t1", 2);
     tc = grn_table_cursor_open(&context, t1, NULL, 0, NULL, 0, 0, -1, 0);
@@ -333,7 +338,7 @@ test_persistent_expr(void)
 void
 test_expr_query(void)
 {
-  grn_obj *t1, *c1, *lc, *ft, *v, *expr;
+  grn_obj *t1, *c1, *lc, *ft, *v;
   grn_id r1, r2, r3, r4;
 
   /* actual table */
@@ -629,7 +634,7 @@ test_table_select_equal_indexed(void)
 void
 test_table_select_select(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -670,7 +675,7 @@ test_table_select_select(void)
 void
 test_table_select_search(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -736,7 +741,7 @@ test_table_select_search(void)
 void
 test_table_select_select_search(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -1009,7 +1014,7 @@ test_expr_parse(gconstpointer data)
 void
 test_expr_set_value(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -1055,7 +1060,7 @@ test_expr_set_value(void)
 void
 test_expr_set_value_with_implicit_variable_reference(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -1098,7 +1103,7 @@ test_expr_set_value_with_implicit_variable_reference(void)
 void
 test_expr_set_value_with_query(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -1137,7 +1142,7 @@ test_expr_set_value_with_query(void)
 void
 test_expr_proc_call(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -1178,7 +1183,7 @@ test_expr_proc_call(void)
 void
 test_expr_score_set(void)
 {
-  grn_obj *v, *expr, *res2;
+  grn_obj *v, *res2;
 
   prepare_data();
 
@@ -1252,7 +1257,7 @@ void
 test_expr_value_access(void)
 {
   grn_id id;
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   docs = grn_table_create(&context, "docs", 4, NULL,
                           GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
@@ -1296,7 +1301,7 @@ test_expr_value_access(void)
 void
 test_expr_snip(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
@@ -1362,7 +1367,7 @@ test_expr_snip(void)
 void
 test_expr_snip_without_tags(void)
 {
-  grn_obj *v, *expr;
+  grn_obj *v;
 
   prepare_data();
 
