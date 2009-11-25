@@ -925,17 +925,20 @@ grn_assert_expr(gchar *inspected, grn_obj *expr)
 void
 data_expr_parse(void)
 {
-#define ADD_DATUM(label,                                                                \
-                  query_hoge_moge, query_hoge_moge_parse_level,                         \
-                  query_poyo, query_poyo_parse_level,                                   \
-                  query_size, query_size_parse_level)                                   \
-  gcut_add_datum(label,                                                                 \
-                 "query_hoge_moge", G_TYPE_STRING, query_hoge_moge,                     \
-                 "query_hoge_moge_parse_level", G_TYPE_INT, query_hoge_moge_parse_level,\
-                 "query_poyo", G_TYPE_STRING, query_poyo,                               \
-                 "query_poyo_parse_level", G_TYPE_INT, query_poyo_parse_level,          \
-                 "query_size", G_TYPE_STRING, query_size,                               \
-                 "query_size_parse_level", G_TYPE_INT, query_size_parse_level,          \
+#define ADD_DATUM(label,                                                \
+                  query_hoge_moge, query_hoge_moge_parse_level,         \
+                  query_poyo, query_poyo_parse_level,                   \
+                  query_size, query_size_parse_level)                   \
+  gcut_add_datum(label,                                                 \
+                 "query_hoge_moge", G_TYPE_STRING, query_hoge_moge,     \
+                 "query_hoge_moge_parse_level",                         \
+                 G_TYPE_INT, query_hoge_moge_parse_level,               \
+                 "query_poyo", G_TYPE_STRING, query_poyo,               \
+                 "query_poyo_parse_level",                              \
+                 G_TYPE_INT, query_poyo_parse_level,                    \
+                 "query_size", G_TYPE_STRING, query_size,               \
+                 "query_size_parse_level",                              \
+                 G_TYPE_INT, query_size_parse_level,                    \
                  NULL)
 
   ADD_DATUM("column query parse level", "hoge + moge", 1,
