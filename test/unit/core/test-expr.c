@@ -57,6 +57,8 @@ void test_expr_snip(void);
 void test_expr_snip_without_tags(void);
 void data_expr_comparison_operator(void);
 void test_expr_comparison_operator(gconstpointer data);
+void data_expr_arithmetic_operator(void);
+void test_expr_arithmetic_operator(gconstpointer data);
 
 void
 cut_startup(void)
@@ -1470,6 +1472,52 @@ data_expr_comparison_operator(void)
 
 void
 test_expr_comparison_operator(gconstpointer data)
+{
+  grn_obj *v;
+
+  prepare_data();
+
+  cond = grn_expr_create(&context, NULL, 0);
+  cut_assert_not_null(cond);
+  v = grn_expr_add_var(&context, cond, NULL, 0);
+  cut_assert_not_null(v);
+  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
+  PARSE(cond,
+        gcut_data_get_string(data, "query"),
+        GRN_EXPR_SYNTAX_SCRIPT);
+
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+  grn_test_assert_select(gcut_data_get_pointer(data, "expected_keys"),
+                         res);
+}
+
+void
+data_expr_arithmetic_operator(void)
+{
+#define ADD_DATUM(label, expected_keys, query)                          \
+  gcut_add_datum(label,                                                 \
+                 "expected_keys", G_TYPE_POINTER, expected_keys,        \
+                 gcut_list_string_free,                                 \
+                 "query", G_TYPE_STRING, query,                         \
+                 NULL)
+
+  ADD_DATUM("unary +",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= +9");
+  ADD_DATUM("+",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (4 + 5)");
+
+  ADD_DATUM("unary -",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= -5 + 14");
+
+#undef ADD_DATUM
+}
+
+void
+test_expr_arithmetic_operator(gconstpointer data)
 {
   grn_obj *v;
 

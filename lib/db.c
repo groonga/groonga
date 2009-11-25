@@ -6680,6 +6680,22 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   (c)->flags = 0;\
 }
 
+#define APPEND_UNARY_OP(e, c_unary_operator) {                  \
+  grn_expr_code *code;                                          \
+  grn_id domain;                                                \
+  unsigned char type;                                           \
+  grn_obj *x;                                                   \
+  DFI_POP(e, dfi);                                              \
+  code = dfi->code;                                             \
+  domain = dfi->domain;                                         \
+  type = dfi->type;                                             \
+  x = code->value;                                              \
+  if (CONSTP(x) && domain == GRN_DB_INT32) {                    \
+    GRN_INT32_SET(ctx, x, c_unary_operator GRN_INT32_VALUE(x)); \
+  }                                                             \
+  DFI_PUT(e, type, domain, code);                               \
+}
+
 grn_obj *
 grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
 {
@@ -6844,21 +6860,23 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       DFI_PUT(e, type, domain, code);
       break;
-    case GRN_OP_MINUS :
+    case GRN_OP_PLUS :
       if (nargs == 1) {
-        grn_expr_code *code;
-        grn_id domain;
-        unsigned char type;
-        grn_obj *x;
-        DFI_POP(e, dfi);
-        code = dfi->code;
-        domain = dfi->domain;
-        type = dfi->type;
-        x = code->value;
-        if (CONSTP(x) && domain == GRN_DB_INT32) {
-          GRN_INT32_SET(ctx, x, -(GRN_INT32_VALUE(x)));
+        APPEND_UNARY_OP(e, +);
+      } else {
+        PUSH_CODE(e, op, obj, nargs, code);
+        {
+          int i = nargs;
+          while (i--) {
+            DFI_POP(e, dfi);
+          }
         }
         DFI_PUT(e, type, domain, code);
+      }
+      break;
+    case GRN_OP_MINUS :
+      if (nargs == 1) {
+        APPEND_UNARY_OP(e, -);
       } else {
         PUSH_CODE(e, op, obj, nargs, code);
         {
@@ -6966,6 +6984,7 @@ exit :
   if (!ctx->rc) { res = obj; }
   GRN_API_RETURN(res);
 }
+#undef APPEND_UNARY_OP
 
 grn_obj *
 grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
@@ -8179,6 +8198,19 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           r = ((ln2 <= ln0) && (ln0 <= ln3) && (la2 <= la0) && (la0 <= la3));
           GRN_INT32_SET(ctx, res, r);
           res->header.domain = GRN_DB_INT32;
+        }
+        code++;
+        break;
+      case GRN_OP_PLUS :
+        {
+          grn_obj *x, *y;
+          POP2ALLOC1(x, y, res);
+          res->header.domain = x->header.domain;
+          if (x->header.domain == y->header.domain) {
+            GRN_INT32_SET(ctx, res, GRN_INT32_VALUE(x) + GRN_INT32_VALUE(y));
+          } else if (!grn_obj_cast(ctx, y, res, GRN_FALSE)) {
+            GRN_INT32_SET(ctx, res, GRN_INT32_VALUE(x) + GRN_INT32_VALUE(res));
+          }
         }
         code++;
         break;
