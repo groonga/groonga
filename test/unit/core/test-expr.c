@@ -441,10 +441,10 @@ static grn_obj *docs, *terms, *size, *body, *index_body;
 #define INSERT_DATA(str) {\
   uint32_t s = (uint32_t)strlen(str);\
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);\
-  GRN_TEXT_SET(&context, textbuf, str, s);\
-  grn_test_assert(grn_obj_set_value(&context, body, docid, textbuf, GRN_OBJ_SET));\
-  GRN_UINT32_SET(&context, intbuf, s);\
-  grn_test_assert(grn_obj_set_value(&context, size, docid, intbuf, GRN_OBJ_SET));\
+  GRN_TEXT_SET(&context, &textbuf, str, s);\
+  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf, GRN_OBJ_SET));\
+  GRN_UINT32_SET(&context, &intbuf, s);\
+  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf, GRN_OBJ_SET));\
 }
 
 static void grn_test_assert_select(const GList* expected, grn_obj *result);
@@ -523,7 +523,7 @@ create_documents_table(void)
 }
 
 static void
-create_terms_table(grn_obj *intbuf)
+create_terms_table(void)
 {
   terms = grn_table_create(&context, "terms", 5, NULL,
                            GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
@@ -537,12 +537,12 @@ create_terms_table(grn_obj *intbuf)
                                  docs);
   cut_assert_not_null(index_body);
 
-  GRN_UINT32_SET(&context, intbuf, grn_obj_id(&context, body));
-  grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, intbuf);
+  GRN_UINT32_SET(&context, &intbuf, grn_obj_id(&context, body));
+  grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, &intbuf);
 }
 
 static void
-insert_data(grn_obj *textbuf, grn_obj *intbuf)
+insert_data(void)
 {
   INSERT_DATA("hoge");
   INSERT_DATA("fuga fuga");
@@ -557,11 +557,11 @@ insert_data(grn_obj *textbuf, grn_obj *intbuf)
 }
 
 static void
-prepare_data(grn_obj *textbuf, grn_obj *intbuf)
+prepare_data(void)
 {
   create_documents_table();
-  create_terms_table(intbuf);
-  insert_data(textbuf, intbuf);
+  create_terms_table();
+  insert_data();
 }
 
 void
@@ -569,7 +569,7 @@ test_table_select_equal(void)
 {
   grn_obj *v;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -599,7 +599,7 @@ test_table_select_equal_indexed(void)
 {
   grn_obj *v;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -626,7 +626,7 @@ test_table_select_select(void)
 {
   grn_obj *v, *expr;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -667,7 +667,7 @@ test_table_select_search(void)
 {
   grn_obj *v, *expr;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -733,7 +733,7 @@ test_table_select_select_search(void)
 {
   grn_obj *v, *expr;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -799,7 +799,7 @@ test_table_select_match(void)
 {
   grn_obj *v;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -834,7 +834,7 @@ test_table_select_match_equal(void)
 {
   grn_obj *v;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -877,7 +877,7 @@ test_table_select_match_nonexistent(void)
   grn_obj *v;
 
   create_documents_table();
-  insert_data(&textbuf, &intbuf);
+  insert_data();
 
   cut_assert_not_null((cond = grn_expr_create(&context, NULL, 0)));
   v = grn_expr_add_var(&context, cond, NULL, 0);
@@ -949,7 +949,8 @@ void
 test_expr_parse(gconstpointer data)
 {
   grn_obj *v;
-  prepare_data(&textbuf, &intbuf);
+
+  prepare_data();
 
   cond = grn_expr_create(&context, NULL, 0);
   cut_assert_not_null(cond);
@@ -998,7 +999,8 @@ void
 test_expr_set_value(void)
 {
   grn_obj *v, *expr;
-  prepare_data(&textbuf, &intbuf);
+
+  prepare_data();
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
@@ -1043,7 +1045,8 @@ void
 test_expr_set_value_with_implicit_variable_reference(void)
 {
   grn_obj *v, *expr;
-  prepare_data(&textbuf, &intbuf);
+
+  prepare_data();
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
@@ -1085,7 +1088,8 @@ void
 test_expr_set_value_with_query(void)
 {
   grn_obj *v, *expr;
-  prepare_data(&textbuf, &intbuf);
+
+  prepare_data();
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
@@ -1123,7 +1127,8 @@ void
 test_expr_proc_call(void)
 {
   grn_obj *v, *expr;
-  prepare_data(&textbuf, &intbuf);
+
+  prepare_data();
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
@@ -1163,7 +1168,8 @@ void
 test_expr_score_set(void)
 {
   grn_obj *v, *expr, *res2;
-  prepare_data(&textbuf, &intbuf);
+
+  prepare_data();
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
@@ -1281,7 +1287,7 @@ test_expr_snip(void)
 {
   grn_obj *v, *expr;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   cut_assert_not_null(expr);
@@ -1347,7 +1353,7 @@ test_expr_snip_without_tags(void)
 {
   grn_obj *v, *expr;
 
-  prepare_data(&textbuf, &intbuf);
+  prepare_data();
 
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   cut_assert_not_null(expr);
