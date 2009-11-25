@@ -27,7 +27,7 @@ static gchar *tmp_directory;
 static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
-static grn_obj *cond, *v, *res;
+static grn_obj *cond, *res;
 
 void test_accessor(void);
 void test_expr(void);
@@ -80,7 +80,6 @@ cut_setup(void)
   database = grn_db_create(&context, path, NULL);
 
   cond = NULL;
-  v = NULL;
   res = NULL;
 }
 
@@ -566,7 +565,7 @@ prepare_data(grn_obj *textbuf, grn_obj *intbuf)
 void
 test_table_select_equal(void)
 {
-  grn_obj textbuf, intbuf;
+  grn_obj *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -601,7 +600,7 @@ test_table_select_equal(void)
 void
 test_table_select_equal_indexed(void)
 {
-  grn_obj textbuf, intbuf;
+  grn_obj *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -633,7 +632,7 @@ test_table_select_equal_indexed(void)
 void
 test_table_select_select(void)
 {
-  grn_obj *expr, textbuf, intbuf;
+  grn_obj *v, *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -678,7 +677,7 @@ test_table_select_select(void)
 void
 test_table_select_search(void)
 {
-  grn_obj *expr, textbuf, intbuf;
+  grn_obj *v, *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -748,7 +747,7 @@ test_table_select_search(void)
 void
 test_table_select_select_search(void)
 {
-  grn_obj *expr, textbuf, intbuf;
+  grn_obj *v, *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -818,7 +817,7 @@ test_table_select_select_search(void)
 void
 test_table_select_match(void)
 {
-  grn_obj textbuf, intbuf;
+  grn_obj *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -857,7 +856,7 @@ test_table_select_match(void)
 void
 test_table_select_match_equal(void)
 {
-  grn_obj textbuf, intbuf;
+  grn_obj *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -903,7 +902,7 @@ test_table_select_match_equal(void)
 void
 test_table_select_match_nonexistent(void)
 {
-  grn_obj textbuf, intbuf;
+  grn_obj *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
 
@@ -981,7 +980,7 @@ data_expr_parse(void)
 void
 test_expr_parse(gconstpointer data)
 {
-  grn_obj textbuf, intbuf;
+  grn_obj *v, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1033,7 +1032,7 @@ test_expr_parse(gconstpointer data)
 void
 test_expr_set_value(void)
 {
-  grn_obj *expr, textbuf, intbuf;
+  grn_obj *v, *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1082,7 +1081,7 @@ test_expr_set_value(void)
 void
 test_expr_set_value_with_implicit_variable_reference(void)
 {
-  grn_obj *expr, textbuf, intbuf;
+  grn_obj *v, *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1128,7 +1127,7 @@ test_expr_set_value_with_implicit_variable_reference(void)
 void
 test_expr_set_value_with_query(void)
 {
-  grn_obj *expr, textbuf, intbuf;
+  grn_obj *v, *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1170,7 +1169,7 @@ test_expr_set_value_with_query(void)
 void
 test_expr_proc_call(void)
 {
-  grn_obj *expr, textbuf, intbuf;
+  grn_obj *v, *expr, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1214,7 +1213,7 @@ test_expr_proc_call(void)
 void
 test_expr_score_set(void)
 {
-  grn_obj *expr, *res2, textbuf, intbuf;
+  grn_obj *v, *expr, *res2, textbuf, intbuf;
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   prepare_data(&textbuf, &intbuf);
@@ -1260,6 +1259,8 @@ test_expr_score_set(void)
 void
 test_expr_key_equal(void)
 {
+  grn_obj *v;
+
   docs = grn_table_create(&context, "docs", 4, NULL,
                           GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                           grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
@@ -1290,7 +1291,7 @@ void
 test_expr_value_access(void)
 {
   grn_id id;
-  grn_obj *expr, intbuf;
+  grn_obj *v, *expr, intbuf;
   GRN_INT32_INIT(&intbuf, 0);
 
   docs = grn_table_create(&context, "docs", 4, NULL,
@@ -1335,7 +1336,7 @@ test_expr_value_access(void)
 void
 test_expr_snip(void)
 {
-  grn_obj *expr;
+  grn_obj *v, *expr;
   grn_obj textbuf, intbuf;
 
   GRN_TEXT_INIT(&textbuf, 0);
@@ -1407,7 +1408,7 @@ test_expr_snip(void)
 void
 test_expr_snip_without_tags(void)
 {
-  grn_obj *expr;
+  grn_obj *v, *expr;
   grn_obj textbuf, intbuf;
 
   GRN_TEXT_INIT(&textbuf, 0);
