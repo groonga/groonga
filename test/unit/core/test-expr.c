@@ -438,14 +438,19 @@ test_expr_query(void)
 
 static grn_obj *docs, *terms, *size, *body, *index_body;
 
-#define INSERT_DATA(str) {\
-  uint32_t s = (uint32_t)strlen(str);\
-  grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);\
-  GRN_TEXT_SET(&context, &textbuf, str, s);\
-  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf, GRN_OBJ_SET));\
-  GRN_UINT32_SET(&context, &intbuf, s);\
-  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf, GRN_OBJ_SET));\
+static void
+insert_document(const gchar *body_content)
+{
+  uint32_t s = (uint32_t)strlen(body_content);
+  grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);
+  GRN_TEXT_SET(&context, &textbuf, body_content, s);
+  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf, GRN_OBJ_SET));
+  GRN_UINT32_SET(&context, &intbuf, s);
+  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf, GRN_OBJ_SET));
 }
+
+#define INSERT_DOCUMENT(body) \
+  cut_trace(insert_document(body))
 
 static void grn_test_assert_select(const GList* expected, grn_obj *result);
 static void grn_test_assert_select_all(grn_obj *result);
@@ -544,16 +549,16 @@ create_terms_table(void)
 static void
 insert_data(void)
 {
-  INSERT_DATA("hoge");
-  INSERT_DATA("fuga fuga");
-  INSERT_DATA("moge moge moge");
-  INSERT_DATA("hoge hoge");
-  INSERT_DATA("hoge fuga fuga");
-  INSERT_DATA("hoge moge moge moge");
-  INSERT_DATA("moge hoge hoge");
-  INSERT_DATA("moge hoge fuga fuga");
-  INSERT_DATA("moge hoge moge moge moge");
-  INSERT_DATA("poyo moge hoge moge moge moge");
+  INSERT_DOCUMENT("hoge");
+  INSERT_DOCUMENT("fuga fuga");
+  INSERT_DOCUMENT("moge moge moge");
+  INSERT_DOCUMENT("hoge hoge");
+  INSERT_DOCUMENT("hoge fuga fuga");
+  INSERT_DOCUMENT("hoge moge moge moge");
+  INSERT_DOCUMENT("moge hoge hoge");
+  INSERT_DOCUMENT("moge hoge fuga fuga");
+  INSERT_DOCUMENT("moge hoge moge moge moge");
+  INSERT_DOCUMENT("poyo moge hoge moge moge moge");
 }
 
 static void
