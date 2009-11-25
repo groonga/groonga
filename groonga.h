@@ -1972,10 +1972,18 @@ GRN_API int grn_obj_columns(grn_ctx *ctx, grn_obj *table,
     (var) = NULL;\
   }
 
+typedef unsigned int grn_expr_flags;
+
+#define GRN_EXPR_SYNTAX_QUERY          (0x00)
+#define GRN_EXPR_SYNTAX_SCRIPT         (0x01)
+#define GRN_EXPR_ALLOW_PRAGMA          (0x02)
+#define GRN_EXPR_ALLOW_COLUMN          (0x04)
+#define GRN_EXPR_ALLOW_UPDATE          (0x08)
+
 GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
                               const char *str, unsigned str_size,
                               grn_obj *default_column, grn_operator default_mode,
-                              grn_operator default_op, int parse_level);
+                              grn_operator default_op, grn_expr_flags flags);
 
 GRN_API grn_snip *grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
                                 unsigned int width, unsigned int max_results,

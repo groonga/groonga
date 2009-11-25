@@ -1299,7 +1299,7 @@ static void yy_reduce(
       case 12: /* query_element ::= EVAL primary_expression */
 #line 53 "expr.y"
 {
-  efsi->parse_level = efsi->default_parse_level;
+  efsi->flags = efsi->default_flags;
 }
 #line 1307 "expr.c"
         break;

@@ -8900,8 +8900,8 @@ typedef struct {
   grn_operator default_op;
   grn_select_optarg opt;
   grn_operator default_mode;
-  int parse_level;
-  int default_parse_level;
+  grn_expr_flags flags;
+  grn_expr_flags default_flags;
   int escalation_threshold;
   int escalation_decaystep;
   int weight_offset;
@@ -9466,15 +9466,18 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       if (cond) {
         if (query_len) {
           grn_expr_parse(ctx, cond, query, query_len,
-                         match_column_, GRN_OP_MATCH, GRN_OP_AND, 2);
+                         match_column_, GRN_OP_MATCH, GRN_OP_AND,
+                         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
           if (filter_len) {
             grn_expr_parse(ctx, cond, filter, filter_len,
-                           match_column_, GRN_OP_MATCH, GRN_OP_AND, 4);
+                           match_column_, GRN_OP_MATCH, GRN_OP_AND,
+                           GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
             grn_expr_append_op(ctx, cond, GRN_OP_AND, 2);
           }
         } else {
           grn_expr_parse(ctx, cond, filter, filter_len,
-                         match_column_, GRN_OP_MATCH, GRN_OP_AND, 4);
+                         match_column_, GRN_OP_MATCH, GRN_OP_AND,
+                         GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
         }
         /*
         grn_obj strbuf;
@@ -9540,7 +9543,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         if (scorer_ && v) {
           grn_table_cursor *tc;
           grn_expr_parse(ctx, scorer_, scorer, scorer_len,
-                         match_column_, GRN_OP_MATCH, GRN_OP_AND, 4);
+                         match_column_, GRN_OP_MATCH, GRN_OP_AND,
+                         GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
           if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
             while (!grn_table_cursor_next_o(ctx, tc, v)) {
               grn_expr_exec(ctx, scorer_, 0);
@@ -10272,7 +10276,8 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
       GRN_EXPR_CREATE_FOR_QUERY(ctx, loader->table, loader->ifexists, v);
       if (loader->ifexists && v) {
         grn_expr_parse(ctx, loader->ifexists, ifexists, ifexists_len,
-                       NULL, GRN_OP_EQUAL, GRN_OP_AND, 4);
+                       NULL, GRN_OP_EQUAL, GRN_OP_AND,
+                       GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
     }
     json_read(ctx, loader, values, values_len);
@@ -10347,7 +10352,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
       q->cur = end;
       break;
     }
-    if (q->parse_level >= 2 && *end == GRN_QUERY_COLUMN) {
+    if (q->flags & GRN_EXPR_ALLOW_COLUMN && *end == GRN_QUERY_COLUMN) {
       grn_obj *c = grn_obj_column(ctx, q->table, start, end - start);
       if (c && end + 1 < q->str_end) {
         //        efs_op op;
@@ -10424,7 +10429,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
 }
 
 static grn_rc
-parse0(grn_ctx *ctx, efs_info *q)
+parse_query(grn_ctx *ctx, efs_info *q)
 {
   int option = 0;
   grn_operator mode;
@@ -10664,7 +10669,7 @@ set_tos_minor_to_curr(grn_ctx *ctx, efs_info *q)
 }
 
 static grn_rc
-parse4(grn_ctx *ctx, efs_info *q)
+parse_script(grn_ctx *ctx, efs_info *q)
 {
   grn_rc rc = GRN_SUCCESS;
   for (;;) {
@@ -10974,7 +10979,7 @@ grn_rc
 grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
                const char *str, unsigned str_size,
                grn_obj *default_column, grn_operator default_mode,
-               grn_operator default_op, int parse_level)
+               grn_operator default_op, grn_expr_flags flags)
 {
   efs_info efsi;
   if (grn_expr_parser_open(ctx)) { return ctx->rc; }
@@ -10996,17 +11001,17 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_PTR_PUT(ctx, &efsi.column_stack, default_column);
     GRN_INT32_PUT(ctx, &efsi.op_stack, default_op);
     GRN_INT32_PUT(ctx, &efsi.mode_stack, default_mode);
-    efsi.default_parse_level = efsi.parse_level = parse_level;
+    efsi.default_flags = efsi.flags = flags;
     efsi.escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
     efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
     efsi.weight_offset = 0;
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
 
-    if (parse_level < 4) {
-      parse0(ctx, &efsi);
+    if (flags & GRN_EXPR_SYNTAX_SCRIPT) {
+      parse_script(ctx, &efsi);
     } else {
-      parse4(ctx, &efsi);
+      parse_query(ctx, &efsi);
     }
 
     /*

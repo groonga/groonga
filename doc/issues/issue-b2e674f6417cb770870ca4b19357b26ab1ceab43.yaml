@@ -3,7 +3,7 @@ title: make the output of grn_expr_inspect() easy to parse
 desc: ""
 type: :feature
 component: groonga
-release: 1.0.0
+release: 1.1.0
 reporter: daijiro <daijiro.mori@gmail.com>
 status: :unstarted
 disposition: 
@@ -15,4 +15,8 @@ log_events:
 - - 2009-11-24 13:27:35.479187 Z
   - daijiro <daijiro.mori@gmail.com>
   - created
+  - ""
+- - 2009-11-25 07:49:31.050273 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - assigned to release 1.1.0 from 1.0.0
   - ""

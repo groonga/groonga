@@ -51,10 +51,10 @@ query_element ::= IDENTIFIER RELATIVE_OP query_element. {
   GRN_UINT32_POP(&efsi->mode_stack, mode);
 }
 query_element ::= BRACEL expression BRACER. {
-  efsi->parse_level = efsi->default_parse_level;
+  efsi->flags = efsi->default_flags;
 }
 query_element ::= EVAL primary_expression. {
-  efsi->parse_level = efsi->default_parse_level;
+  efsi->flags = efsi->default_flags;
 }
 
 expression ::= assignment_expression.
