@@ -9,8 +9,8 @@ type: :bugfix
 component: groonga
 release: 1.0.0
 reporter: tasuku
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-09-16 06:55:25.000692 Z
 references: []
 
@@ -36,3 +36,7 @@ log_events:
   - daijiro <daijiro.mori@gmail.com>
   - edited description
   - ""
+- - 2009-11-26 11:07:36.870985 Z
+  - daijiro <daijiro.mori@gmail.com>
+  - closed with disposition fixed
+  - done

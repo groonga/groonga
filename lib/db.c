@@ -3058,11 +3058,12 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
       if (*sp == GRN_DB_DELIMITER) { break; }
     }
     if (!(len = sp - name)) { goto exit; }
-    if (*name == GRN_DB_PSEUDO_COLUMN_PREFIX || *name == ':') { /* pseudo column */
+    if (*name == GRN_DB_PSEUDO_COLUMN_PREFIX) { /* pseudo column */
       int done = 0;
+      if (len < 2) { goto exit; }
       switch (name[1]) {
       case 'k' : /* key */
-      case 'K' :
+        if (len != 4 || memcmp(name, "_key", 4)) { goto exit; }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -3103,7 +3104,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         }
         break;
       case 'i' : /* id */
-      case 'I' :
+        if (len != 3 || memcmp(name, "_id", 3)) { goto exit; }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -3133,7 +3134,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         }
         break;
       case 'v' : /* value */
-      case 'V' :
+        if (len != 6 || memcmp(name, "_value", 6)) { goto exit; }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -3176,7 +3177,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         }
         break;
       case 's' : /* score */
-      case 'S' :
+        if (len != 6 || memcmp(name, "_score", 6)) { goto exit; }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -3206,7 +3207,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         }
         break;
       case 'n' : /* nsubrecs */
-      case 'N' :
+        if (len != 9 || memcmp(name, "_nsubrecs", 9)) { goto exit; }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;

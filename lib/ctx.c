@@ -926,29 +926,18 @@ grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       }
       goto exit;
     } else {
-      if (ctx->impl->symbols) {
-        grn_ql_feed(ctx, str, str_len, flags);
-        if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
-        if (!ERRP(ctx, GRN_CRIT)) {
-          if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
-            ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
-          }
-        }
-        goto exit;
+      if (str_len && *str == '/') {
+        grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
       } else {
-        if (str_len && *str == '/') {
-          grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
-        } else {
-          grn_ctx_qe_exec(ctx, str, str_len);
-        }
-        if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
-        if (!ERRP(ctx, GRN_CRIT)) {
-          if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
-            ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
-          }
-        }
-        goto exit;
+        grn_ctx_qe_exec(ctx, str, str_len);
       }
+      if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
+      if (!ERRP(ctx, GRN_CRIT)) {
+        if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
+          ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
+        }
+      }
+      goto exit;
     }
   }
   ERR(GRN_INVALID_ARGUMENT, "invalid ctx assigned");
