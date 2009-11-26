@@ -744,7 +744,7 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
       break;
     case 'x':
       if (pd + 3 == p && !memcmp(pd, "xml", 3)) {
-        *ct = GRN_CONTENT_NONE;
+        *ct = GRN_CONTENT_XML;
       }
       break;
     }
