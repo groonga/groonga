@@ -59,6 +59,7 @@ void data_expr_comparison_operator(void);
 void test_expr_comparison_operator(gconstpointer data);
 void data_expr_arithmetic_operator(void);
 void test_expr_arithmetic_operator(gconstpointer data);
+void test_expr_parse_float(void);
 
 void
 cut_startup(void)
@@ -1536,4 +1537,25 @@ test_expr_arithmetic_operator(gconstpointer data)
   cut_assert_not_null(res);
   grn_test_assert_select(gcut_data_get_pointer(data, "expected_keys"),
                          res);
+}
+
+void
+test_expr_parse_float(void)
+{
+  grn_obj *expr;
+  grn_obj *var;
+  const char *str_expr = "var = 3.14159265";
+
+  expr = grn_expr_create(&context, NULL, 0);
+  cut_assert_not_null(expr);
+  var = grn_expr_add_var(&context, expr, "var", strlen("var"));
+  cut_assert_not_null(var);
+
+  GRN_FLOAT_INIT(var, 0);
+  grn_test_assert(grn_expr_parse(&context, expr, str_expr, strlen(str_expr),
+                  NULL, GRN_OP_NOP, GRN_OP_NOP, GRN_EXPR_SYNTAX_SCRIPT));
+
+  grn_test_assert(grn_expr_compile(&context, expr));
+  grn_test_assert(grn_expr_exec(&context, expr, 0));
+  cut_assert_equal_double(3.14159265, 0, GRN_FLOAT_VALUE(var));
 }

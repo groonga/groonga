@@ -10989,12 +10989,35 @@ parse_script(grn_ctx *ctx, efs_info *q)
     case '0' : case '1' : case '2' : case '3' : case '4' :
     case '5' : case '6' : case '7' : case '8' : case '9' :
       {
-        /* todo : support other numeric types */
         const char *rest;
-        int i = grn_atoi(q->cur, q->str_end, &rest);
+        int64_t int64 = grn_atoll(q->cur, q->str_end, &rest);
+        // checks to see grn_atoll was appropriate
+        // (NOTE: *q->cur begins with a digit. Thus, grn_atoll parses at leaset
+        //        one char.)
+        if (q->str_end != rest &&
+            (*rest == '.' || *rest == 'e' || *rest == 'E' ||
+             (*rest >= '0' && *rest <= '9'))) {
+          double d = strtod(q->cur, &rest);
+          grn_obj floatbuf;
+          GRN_FLOAT_INIT(&floatbuf, 0);
+          GRN_FLOAT_SET(ctx, &floatbuf, d);
+          grn_expr_append_const(ctx, q->e, &floatbuf, GRN_OP_PUSH, 1);
+        } else {
+          const char *rest64 = rest;
+          int i = grn_atoi(q->cur, q->str_end, &rest);
+          // checks to see grn_atoi failed (see above NOTE)
+          if (q->str_end != rest && *rest >= '0' && *rest <= '9') {
+            grn_obj int64buf;
+            GRN_INT64_INIT(&int64buf, 0);
+            GRN_INT64_SET(ctx, &int64buf, int64);
+            grn_expr_append_const(ctx, q->e, &int64buf, GRN_OP_PUSH, 1);
+            rest = rest64;
+          } else {
+            grn_expr_append_const_int(ctx, q->e, i, GRN_OP_PUSH, 1);
+          }
+        }
         q->cur = rest;
         PARSE(GRN_EXPR_TOKEN_DECIMAL);
-        grn_expr_append_const_int(ctx, q->e, i, GRN_OP_PUSH, 1);
       }
       break;
     default :
