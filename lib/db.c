@@ -7536,7 +7536,8 @@ truep(grn_ctx *ctx, grn_obj *v)
     set(ctx, res, get(x) operation GRN_UINT64_VALUE(y));                \
     break;                                                              \
   case GRN_DB_FLOAT :                                                   \
-    set(ctx, res, get(x) operation GRN_FLOAT_VALUE(y));                 \
+    res->header.domain = GRN_DB_FLOAT;                                  \
+    GRN_FLOAT_SET(ctx, res, get(x) operation GRN_FLOAT_VALUE(y));       \
     break;                                                              \
   case GRN_DB_SHORT_TEXT :                                              \
   case GRN_DB_TEXT :                                                    \
