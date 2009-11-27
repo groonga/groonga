@@ -6698,6 +6698,17 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   DFI_PUT(e, type, domain, code);                               \
 }
 
+#define PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code) {    \
+  PUSH_CODE(e, op, obj, nargs, code);                           \
+  {                                                             \
+    int i = nargs;                                              \
+    while (i--) {                                               \
+      DFI_POP(e, dfi);                                          \
+    }                                                           \
+  }                                                             \
+  DFI_PUT(e, type, domain, code);                               \
+}
+
 grn_obj *
 grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
 {
@@ -6866,29 +6877,18 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       if (nargs == 1) {
         APPEND_UNARY_OP(e, +);
       } else {
-        PUSH_CODE(e, op, obj, nargs, code);
-        {
-          int i = nargs;
-          while (i--) {
-            DFI_POP(e, dfi);
-          }
-        }
-        DFI_PUT(e, type, domain, code);
+        PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       }
       break;
     case GRN_OP_MINUS :
       if (nargs == 1) {
         APPEND_UNARY_OP(e, -);
       } else {
-        PUSH_CODE(e, op, obj, nargs, code);
-        {
-          int i = nargs;
-          while (i--) {
-            DFI_POP(e, dfi);
-          }
-        }
-        DFI_PUT(e, type, domain, code);
+        PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       }
+      break;
+    case GRN_OP_STAR :
+      PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
     case GRN_OP_GET_VALUE :
       {
@@ -6986,6 +6986,7 @@ exit :
   if (!ctx->rc) { res = obj; }
   GRN_API_RETURN(res);
 }
+#undef PUSH_N_ARGS_ARITHMETIC_OP
 #undef APPEND_UNARY_OP
 
 grn_obj *
@@ -8295,6 +8296,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_MINUS :
         ARITHMETIC_OPERATION(-, /* text: error */,);
+        break;
+      case GRN_OP_STAR :
+        ARITHMETIC_OPERATION(*, /* text: error */,);
         break;
       default :
         break;
