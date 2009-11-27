@@ -7546,7 +7546,12 @@ truep(grn_ctx *ctx, grn_obj *v)
   case GRN_DB_SHORT_TEXT :                                              \
   case GRN_DB_TEXT :                                                    \
   case GRN_DB_LONG_TEXT :                                               \
-    grn_obj_cast(ctx, y, res, GRN_FALSE);                               \
+    set(ctx, res, 0);                                                   \
+    if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {                         \
+      ERR(GRN_INVALID_ARGUMENT,                                         \
+          "not a numerical format: <%s>", GRN_TEXT_VALUE(y));           \
+      goto exit;                                                        \
+    }                                                                   \
     set(ctx, res, get(x) operation get(res));                           \
     break;                                                              \
   default :                                                             \
@@ -8291,11 +8296,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_PLUS :
         ARITHMETIC_OPERATION(+,
-                             {
-                               GRN_BULK_REWIND(res);
-                               grn_obj_cast(ctx, x, res, GRN_FALSE);
-                               grn_obj_cast(ctx, y, res, GRN_FALSE);
-                             },);
+                             GRN_BULK_REWIND(res);
+                             grn_obj_cast(ctx, x, res, GRN_FALSE);
+                             grn_obj_cast(ctx, y, res, GRN_FALSE);
+                             ,);
         break;
       case GRN_OP_MINUS :
         ARITHMETIC_OPERATION(-,

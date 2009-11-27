@@ -1597,6 +1597,11 @@ data_expr_arithmetic_operator_error(void)
                  "query", G_TYPE_STRING, query,                 \
                  NULL)
 
+  ADD_DATUM("int + string",
+            GRN_INVALID_ARGUMENT,
+            "not a numerical format: <hoge>",
+            "size == 100 + \"hoge\"");
+
   ADD_DATUM("string - string",
             GRN_INVALID_ARGUMENT,
             "\"string\" - \"string\" isn't supported",
