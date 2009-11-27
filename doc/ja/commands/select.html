@@ -89,7 +89,7 @@ query引数に指定する検索条件文字列でデフォルトの検索対象
 </blockquote>
 <p><tt class="docutils literal"><span class="pre">sortby</span></tt></p>
 <blockquote>
-<p>ソートキーとなるカラム名のリストを空白(&#8216; &#8216;)区切りで指定します。:</p>
+<p>ソートキーとなるカラム名のリストをカンマ(&#8216;,&#8217;)区切りで指定します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>[-]カラム名1 [-]カラム名2 [-]カラム名3...
 </pre></div>
 </div>
@@ -97,7 +97,7 @@ query引数に指定する検索条件文字列でデフォルトの検索対象
 </blockquote>
 <p><tt class="docutils literal"><span class="pre">output_columns</span></tt></p>
 <blockquote>
-<p>出力するカラム名のリストを空白(&#8216; &#8216;)区切りで指定します。</p>
+<p>出力するカラム名のリストをカンマ(&#8216;,&#8217;)区切りで指定します。</p>
 <p>アスタリスク(&#8216;*&#8217;)を指定すると、全てのカラムが指定されたものとみなされます。または、script形式のgrn式文字列を指定します。 <a class="footnote-reference" href="#id10" id="id5">[1]</a> (デフォルトは、&#8217;_id *&#8217;)</p>
 </blockquote>
 <p><tt class="docutils literal"><span class="pre">offset</span></tt></p>
@@ -108,13 +108,13 @@ query引数に指定する検索条件文字列でデフォルトの検索対象
 検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。実際には、offset + limit がヒットした件数を超えない範囲でレコードが出力されます。</blockquote>
 <p><tt class="docutils literal"><span class="pre">drilldown</span></tt></p>
 <blockquote>
-グループ化のキーとなるカラム名のリストを空白(&#8216; &#8216;)区切りで指定します。検索条件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。</blockquote>
+グループ化のキーとなるカラム名のリストをカンマ(&#8216;,&#8217;)区切りで指定します。検索条件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。</blockquote>
 <p><tt class="docutils literal"><span class="pre">drilldown_sortby</span></tt></p>
 <blockquote>
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソートキーとなるカラム名のリストを空白(&#8216; &#8216;)区切りで指定します。sortbyパラメータと同様に昇降順を指定できます。</blockquote>
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソートキーとなるカラム名のリストをカンマ(&#8216;,&#8217;)区切りで指定します。sortbyパラメータと同様に昇降順を指定できます。</blockquote>
 <p><tt class="docutils literal"><span class="pre">drilldown_output_columns</span></tt></p>
 <blockquote>
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力するカラム名のリストを空白(&#8216; &#8216;)区切りで指定します。</blockquote>
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力するカラム名のリストをカンマ(&#8216;,&#8217;)区切りで指定します。</blockquote>
 <p><tt class="docutils literal"><span class="pre">drilldown_offset</span></tt></p>
 <blockquote>
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力対象となる最初のレコードの番号を0ベースで指定します。</blockquote>
