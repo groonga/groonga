@@ -1050,7 +1050,7 @@ grn_view_transcript(grn_ctx *ctx, const char *path,
 grn_id
 grn_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table)
 {
-  if (view->header.type != GRN_TABLE_VIEW) {
+  if (!view || view->header.type != GRN_TABLE_VIEW) {
     ERR(GRN_INVALID_ARGUMENT, "invalid view");
     return ctx->rc;
   }
