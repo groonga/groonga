@@ -6888,6 +6888,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       break;
     case GRN_OP_STAR :
+    case GRN_OP_SLASH :
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
     case GRN_OP_GET_VALUE :
@@ -8299,6 +8300,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_STAR :
         ARITHMETIC_OPERATION(*, /* text: error */,);
+        break;
+      case GRN_OP_SLASH :
+        ARITHMETIC_OPERATION(/, /* text: error */,);
         break;
       default :
         break;
