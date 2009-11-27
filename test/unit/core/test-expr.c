@@ -1557,5 +1557,5 @@ test_expr_parse_float(void)
 
   grn_test_assert(grn_expr_compile(&context, expr));
   grn_test_assert(grn_expr_exec(&context, expr, 0));
-  cut_assert_equal_double(3.14159265, 0, GRN_FLOAT_VALUE(var));
+  cut_assert_equal_double(3.14159265, 0.00000001, GRN_FLOAT_VALUE(var));
 }
