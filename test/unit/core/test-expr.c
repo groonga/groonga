@@ -60,6 +60,9 @@ void test_expr_comparison_operator(gconstpointer data);
 void data_expr_arithmetic_operator(void);
 void test_expr_arithmetic_operator(gconstpointer data);
 void test_expr_parse_float(void);
+void test_expr_parse_int32(void);
+void test_expr_parse_int64(void);
+void test_expr_parse_long_integer_literal(void);
 
 void
 cut_startup(void)
@@ -1539,12 +1542,11 @@ test_expr_arithmetic_operator(gconstpointer data)
                          res);
 }
 
-void
-test_expr_parse_float(void)
+static grn_obj *
+parse_numeric_literal(const char *str_expr)
 {
   grn_obj *expr;
   grn_obj *var;
-  const char *str_expr = "var = 3.14159265";
 
   expr = grn_expr_create(&context, NULL, 0);
   cut_assert_not_null(expr);
@@ -1557,5 +1559,52 @@ test_expr_parse_float(void)
 
   grn_test_assert(grn_expr_compile(&context, expr));
   grn_test_assert(grn_expr_exec(&context, expr, 0));
+
+  return var;
+}
+
+void
+test_expr_parse_float(void)
+{
+  grn_obj *var;
+  const char *str_expr = "var = 3.14159265";
+
+  var = parse_numeric_literal(str_expr);
+  cut_assert_equal_int(GRN_DB_FLOAT, GRN_OBJ_GET_DOMAIN(var));
   cut_assert_equal_double(3.14159265, 0.00000001, GRN_FLOAT_VALUE(var));
+}
+
+void
+test_expr_parse_int32(void)
+{
+  grn_obj *var;
+  const char *str_expr = "var = 123456";
+
+  var = parse_numeric_literal(str_expr);
+  cut_assert_equal_int(GRN_DB_INT32, GRN_OBJ_GET_DOMAIN(var));
+  cut_assert_equal_int(123456, GRN_INT32_VALUE(var));
+}
+
+void
+test_expr_parse_int64(void)
+{
+  grn_obj *var;
+  const char *str_expr = "var = 123456789012";
+
+  var = parse_numeric_literal(str_expr);
+  cut_assert_equal_int(GRN_DB_INT64, GRN_OBJ_GET_DOMAIN(var));
+  cut_assert_equal_int_least64(123456789012, GRN_INT64_VALUE(var));
+}
+
+void
+test_expr_parse_long_integer_literal(void)
+{
+  grn_obj *var;
+  const char *str_expr = "var = 12345678901234567890";
+
+  var = parse_numeric_literal(str_expr);
+  cut_assert_equal_int(GRN_DB_FLOAT, GRN_OBJ_GET_DOMAIN(var));
+  //IEEE 754 says "double" can presisely hold about 16 digits.
+  //To be safe, assume only 15 digits are preserved.
+  cut_assert_equal_double(12345678901234567890., 100000., GRN_FLOAT_VALUE(var));
 }
