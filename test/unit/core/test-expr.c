@@ -1515,6 +1515,9 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("string +",
             gcut_list_string_new("fuga fuga", NULL),
             "body == \"fuga \" + \"fuga\"");
+  ADD_DATUM("string + int",
+            gcut_list_string_new("nick NICK 29", NULL),
+            "body == \"nick NICK \" + 29");
   ADD_DATUM("int + string",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 4 + \"5\"");
@@ -1535,6 +1538,7 @@ test_expr_arithmetic_operator(gconstpointer data)
   grn_obj *v;
 
   prepare_data();
+  INSERT_DOCUMENT("nick NICK 29");
 
   cond = grn_expr_create(&context, NULL, 0);
   cut_assert_not_null(cond);
