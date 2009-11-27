@@ -7551,6 +7551,54 @@ truep(grn_ctx *ctx, grn_obj *v)
   }                                                                     \
 }
 
+#define ARITHMETIC_OPERATION(operation, text_operation,                 \
+                             invalid_type_error) {                      \
+  grn_obj *x, *y;                                                       \
+  POP2ALLOC1(x, y, res);                                                \
+  res->header.domain = x->header.domain;                                \
+  switch (x->header.domain) {                                           \
+  case GRN_DB_INT32 :                                                   \
+    NUMERIC_ARITHMETIC_OPERATION(GRN_INT32_SET, GRN_INT32_VALUE,        \
+                                 x, y, res, operation,                  \
+                                 invalid_type_error);                   \
+    break;                                                              \
+  case GRN_DB_UINT32 :                                                  \
+    NUMERIC_ARITHMETIC_OPERATION(GRN_UINT32_SET, GRN_UINT32_VALUE,      \
+                                 x, y, res, operation,                  \
+                                 invalid_type_error);                   \
+    break;                                                              \
+  case GRN_DB_INT64 :                                                   \
+    NUMERIC_ARITHMETIC_OPERATION(GRN_UINT64_SET, GRN_UINT64_VALUE,      \
+                                 x, y, res, operation,                  \
+                                 invalid_type_error);                   \
+    break;                                                              \
+  case GRN_DB_TIME :                                                    \
+    NUMERIC_ARITHMETIC_OPERATION(GRN_TIME_SET, GRN_TIME_VALUE,          \
+                                 x, y, res, operation,                  \
+                                 invalid_type_error);                   \
+    break;                                                              \
+  case GRN_DB_UINT64 :                                                  \
+    NUMERIC_ARITHMETIC_OPERATION(GRN_UINT64_SET, GRN_UINT64_VALUE,      \
+                                 x, y, res, operation,                  \
+                                 invalid_type_error);                   \
+    break;                                                              \
+  case GRN_DB_FLOAT :                                                   \
+    NUMERIC_ARITHMETIC_OPERATION(GRN_FLOAT_SET, GRN_FLOAT_VALUE,        \
+                                 x, y, res, operation,                  \
+                                 invalid_type_error);                   \
+    break;                                                              \
+  case GRN_DB_SHORT_TEXT :                                              \
+  case GRN_DB_TEXT :                                                    \
+  case GRN_DB_LONG_TEXT :                                               \
+    text_operation;                                                     \
+    break;                                                              \
+  default:                                                              \
+    invalid_type_error;                                                 \
+    break;                                                              \
+  }                                                                     \
+  code++;                                                               \
+}
+
 grn_rc
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
@@ -8238,48 +8286,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         code++;
         break;
       case GRN_OP_PLUS :
-        {
-          grn_obj *x, *y;
-          POP2ALLOC1(x, y, res);
-          res->header.domain = x->header.domain;
-          switch (x->header.domain) {
-          case GRN_DB_INT32 :
-            NUMERIC_ARITHMETIC_OPERATION(GRN_INT32_SET, GRN_INT32_VALUE,
-                                         x, y, res, +,);
-            break;
-          case GRN_DB_UINT32 :
-            NUMERIC_ARITHMETIC_OPERATION(GRN_UINT32_SET, GRN_UINT32_VALUE,
-                                         x, y, res, +,);
-            break;
-          case GRN_DB_INT64 :
-            NUMERIC_ARITHMETIC_OPERATION(GRN_UINT64_SET, GRN_UINT64_VALUE,
-                                         x, y, res, +,);
-            break;
-          case GRN_DB_TIME :
-            NUMERIC_ARITHMETIC_OPERATION(GRN_TIME_SET, GRN_TIME_VALUE,
-                                         x, y, res, +,);
-            break;
-          case GRN_DB_UINT64 :
-            NUMERIC_ARITHMETIC_OPERATION(GRN_UINT64_SET, GRN_UINT64_VALUE,
-                                         x, y, res, +,);
-            break;
-          case GRN_DB_FLOAT :
-            NUMERIC_ARITHMETIC_OPERATION(GRN_FLOAT_SET, GRN_FLOAT_VALUE,
-                                         x, y, res, +,);
-            break;
-          case GRN_DB_SHORT_TEXT :
-          case GRN_DB_TEXT :
-          case GRN_DB_LONG_TEXT :
-            GRN_BULK_REWIND(res);
-            grn_obj_cast(ctx, x, res, GRN_FALSE);
-            grn_obj_cast(ctx, y, res, GRN_FALSE);
-            break;
-          default:
-            /* TODO: error */
-            break;
-          }
-        }
-        code++;
+        ARITHMETIC_OPERATION(+,
+                             {
+                               GRN_BULK_REWIND(res);
+                               grn_obj_cast(ctx, x, res, GRN_FALSE);
+                               grn_obj_cast(ctx, y, res, GRN_FALSE);
+                             },);
+        break;
+      case GRN_OP_MINUS :
+        ARITHMETIC_OPERATION(-, /* text: error */,);
         break;
       default :
         break;

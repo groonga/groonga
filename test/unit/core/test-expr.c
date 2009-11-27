@@ -1528,6 +1528,9 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("unary -",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5 + 14");
+  ADD_DATUM("-",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 14 - 5");
 
 #undef ADD_DATUM
 }
