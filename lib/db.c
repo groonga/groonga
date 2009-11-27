@@ -4626,6 +4626,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
           goto exit;
         }
         memcpy(v2, v, s);
+        if (DB_OBJ(obj)->source) { GRN_FREE(DB_OBJ(obj)->source); }
         DB_OBJ(obj)->source = v2;
         DB_OBJ(obj)->source_size = s;
 
@@ -8832,6 +8833,29 @@ exit :
   GRN_API_RETURN(res);
 }
 
+/* todo : refine */
+static int
+tokenize(const char *str, size_t str_len, const char **tokbuf, int buf_size, const char **rest)
+{
+  const char **tok = tokbuf, **tok_end = tokbuf + buf_size;
+  if (buf_size > 0) {
+    const char *str_end = str + str_len;
+    for (;;str++) {
+      if (str == str_end) {
+        *tok++ = str;
+        break;
+      }
+      if (' ' == *str || ',' == *str) {
+        // *str = '\0';
+        *tok++ = str;
+        if (tok == tok_end) { break; }
+      }
+    }
+  }
+  if (rest) { *rest = str; }
+  return tok - tokbuf;
+}
+
 // todo : support view
 grn_rc
 grn_obj_columns(grn_ctx *ctx, grn_obj *table,
@@ -8840,7 +8864,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
   grn_obj *col;
   const char *p = (char *)str, *q, *r, *pe = p + str_size, *tokbuf[256];
   while (p < pe) {
-    int i, n = grn_str_tok(p, pe - p, ' ', tokbuf, 256, &q);
+    int i, n = tokenize(p, pe - p, tokbuf, 256, &q);
     for (i = 0; i < n; i++) {
       r = tokbuf[i];
       if (p < r) {
@@ -9437,7 +9461,7 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
   const char **tokbuf;
   grn_table_sort_key *keys = NULL, *k = NULL;
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
-    int i, n = grn_str_tok(str, str_size, ' ', tokbuf, str_size, NULL);
+    int i, n = tokenize(str, str_size, tokbuf, str_size, NULL);
     if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
       k = keys;
       for (i = 0; i < n; i++) {
