@@ -59,6 +59,8 @@ void data_expr_comparison_operator(void);
 void test_expr_comparison_operator(gconstpointer data);
 void data_expr_arithmetic_operator(void);
 void test_expr_arithmetic_operator(gconstpointer data);
+void data_expr_arithmetic_operator_error(void);
+void test_expr_arithmetic_operator_error(gconstpointer data);
 void test_expr_parse_float(void);
 void test_expr_parse_int32(void);
 void test_expr_parse_int64(void);
@@ -1580,8 +1582,56 @@ test_expr_arithmetic_operator(gconstpointer data)
 
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
+  grn_test_assert_context(&context);
   grn_test_assert_select(gcut_data_get_pointer(data, "expected_keys"),
                          res);
+}
+
+void
+data_expr_arithmetic_operator_error(void)
+{
+#define ADD_DATUM(label, rc, message, query)                    \
+  gcut_add_datum(label,                                         \
+                 "rc", G_TYPE_UINT, rc,                         \
+                 "message", G_TYPE_STRING, message,             \
+                 "query", G_TYPE_STRING, query,                 \
+                 NULL)
+
+  ADD_DATUM("string - string",
+            GRN_INVALID_ARGUMENT,
+            "\"string\" - \"string\" isn't supported",
+            "body == \"fuga\" - \"hoge\"");
+
+  ADD_DATUM("string * string",
+            GRN_INVALID_ARGUMENT,
+            "\"string\" * \"string\" isn't supported",
+            "body == \"fuga\" * \"hoge\"");
+
+  ADD_DATUM("string / string",
+            GRN_INVALID_ARGUMENT,
+            "\"string\" / \"string\" isn't supported",
+            "body == \"fuga\" / \"hoge\"");
+
+#undef ADD_DATUM
+}
+
+void
+test_expr_arithmetic_operator_error(gconstpointer data)
+{
+  grn_obj *v;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
+  PARSE(cond,
+        gcut_data_get_string(data, "query"),
+        GRN_EXPR_SYNTAX_SCRIPT);
+
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+  grn_test_assert_error(gcut_data_get_uint(data, "rc"),
+                        gcut_data_get_string(data, "message"),
+                        &context);
 }
 
 static grn_obj *

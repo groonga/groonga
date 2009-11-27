@@ -8296,13 +8296,25 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                              },);
         break;
       case GRN_OP_MINUS :
-        ARITHMETIC_OPERATION(-, /* text: error */,);
+        ARITHMETIC_OPERATION(-,
+                             ERR(GRN_INVALID_ARGUMENT,
+                                 "\"string\" - \"string\" isn't supported");
+                             goto exit;
+                             ,);
         break;
       case GRN_OP_STAR :
-        ARITHMETIC_OPERATION(*, /* text: error */,);
+        ARITHMETIC_OPERATION(*,
+                             ERR(GRN_INVALID_ARGUMENT,
+                                 "\"string\" * \"string\" isn't supported");
+                             goto exit;
+                             ,);
         break;
       case GRN_OP_SLASH :
-        ARITHMETIC_OPERATION(/, /* text: error */,);
+        ARITHMETIC_OPERATION(/,
+                             ERR(GRN_INVALID_ARGUMENT,
+                                 "\"string\" / \"string\" isn't supported");
+                             goto exit;
+                             ,);
         break;
       default :
         break;
