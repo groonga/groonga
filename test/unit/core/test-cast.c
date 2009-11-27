@@ -41,6 +41,9 @@ void test_text_to_uint64(void);
 void test_text_to_float(void);
 void test_text_to_time(void);
 
+void data_text_error(void);
+void test_text_error(gconstpointer data);
+
 void data_int32_to_bool(void);
 void test_int32_to_bool(gconstpointer data);
 void test_int32_to_int8(void);
@@ -230,6 +233,31 @@ test_text_to_time(void)
   GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
   cut_assert_equal_int(1259009530, sec);
   cut_assert_equal_int(29290, usec);
+}
+
+void
+data_text_error(void)
+{
+#define ADD_DATA(label, expected, type, text)           \
+  gcut_add_datum(label,                                 \
+                 "expected", G_TYPE_UINT, expected,     \
+                 "type", G_TYPE_UINT, type,             \
+                 "text", G_TYPE_STRING, text,           \
+                 NULL)
+
+  ADD_DATA("not numeric", GRN_INVALID_ARGUMENT, GRN_DB_INT32, "not-numeric");
+
+#undef ADD_DATA
+}
+
+void
+test_text_error(gconstpointer data)
+{
+  grn_obj_reinit(&context, &dest, gcut_data_get_uint(data, "type"), 0);
+  grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
+  GRN_TEXT_PUTS(&context, &src, gcut_data_get_string(data, "text"));
+  grn_test_assert_equal_rc(gcut_data_get_uint(data, "expected"),
+                           grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
 static void

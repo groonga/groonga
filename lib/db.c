@@ -3496,6 +3496,8 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
       rc = GRN_INVALID_ARGUMENT;\
     }\
     GRN_OBJ_FIN(ctx, &buf);\
+  } else {\
+    rc = GRN_INVALID_ARGUMENT;\
   }\
 }
 
