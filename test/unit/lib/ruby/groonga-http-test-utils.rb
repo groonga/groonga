@@ -61,8 +61,10 @@ module GroongaHTTPTestUtils
     end.compact.join("&")
   end
 
-  def command_path(command, options={}, output_type=nil)
+  def command_path(command, options={})
     path = "/d/#{command}"
+    options = options.dup
+    output_type = options.delete(:output_type)
     path += ".#{output_type}" if output_type
     encoded_options = encode_options(options)
     path += "?#{encoded_options}" unless encoded_options.empty?
@@ -212,9 +214,9 @@ module GroongaHTTPTestUtils
 
   def assert_select_xml(expected, parameters, options={}, &block)
     command_name = options[:command] || :select
-    response = get(command_path(command_name, parameters, "xml"))
+    response = get(command_path(command_name,
+                                parameters.merge(:output_type => "xml")))
 
-    output_type = options[:output_type] || "json"
     assert_response(expected,
                     response,
                     :content_type => "text/xml",
