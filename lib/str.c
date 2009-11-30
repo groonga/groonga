@@ -2555,7 +2555,7 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
         grn_text_itoa(ctx, bulk, format->limit);
         GRN_TEXT_PUTS(ctx, bulk, "\" NHITS=\"");
         grn_text_itoa(ctx, bulk, format->nhits);
-        GRN_TEXT_PUTS(ctx, bulk, "\">");
+        GRN_TEXT_PUTS(ctx, bulk, "\">\n");
         break;
       case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
         GRN_ASSERT(ncolumns == 2);
@@ -2573,7 +2573,7 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
         case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
           GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
           grn_text_itoa(ctx, bulk, i);
-          GRN_TEXT_PUTS(ctx, bulk, "\">");
+          GRN_TEXT_PUTS(ctx, bulk, "\">\n");
           for (j = 0; j < ncolumns; j++) {
             GRN_TEXT_PUTS(ctx, bulk, "<FIELD NAME=\"");
             GRN_BULK_REWIND(&buf);
@@ -2585,9 +2585,9 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
             grn_obj_get_value_o(ctx, columns[j], &id, &buf);
             grn_text_otoxml(ctx, bulk, &buf, NULL);
 
-            GRN_TEXT_PUTS(ctx, bulk, "</FIELD>");
+            GRN_TEXT_PUTS(ctx, bulk, "</FIELD>\n");
           }
-          GRN_TEXT_PUTS(ctx, bulk, "</HIT>");
+          GRN_TEXT_PUTS(ctx, bulk, "</HIT>\n");
           break;
         case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
           GRN_TEXT_PUTS(ctx, bulk, "<NAVIGATIONELEMENT NAME=\"");
@@ -2606,7 +2606,7 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
       }
       switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
       case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
-        GRN_TEXT_PUTS(ctx, bulk, "</RESULTSET>");
+        GRN_TEXT_PUTS(ctx, bulk, "</RESULTSET>\n");
         break;
       case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
         GRN_TEXT_PUTS(ctx, bulk, "</NAVIGATIONELEMENTS></NAVIGATIONENTRY>");

@@ -658,6 +658,34 @@ module HTTPSelectTests
                      :drilldown_output_columns => "* _key")
   end
 
+  def test_xml
+    populate_users
+
+    expected = <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="0" LIMIT="10" NHITS="2">
+<HIT NO="1">
+<FIELD NAME="_id">2</FIELD>
+<FIELD NAME="_key">hayamiz</FIELD>
+<FIELD NAME="real_name">Yuto Hayamizu</FIELD>
+<FIELD NAME="hp">200</FIELD>
+</HIT>
+<HIT NO="2">
+<FIELD NAME="_id">1</FIELD>
+<FIELD NAME="_key">ryoqun</FIELD>
+<FIELD NAME="real_name">Ryo Onodera</FIELD>
+<FIELD NAME="hp">200</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
+EOF
+    assert_select_xml(expected, :table => "users")
+  end
   private
   def create_user_id_table
     table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
