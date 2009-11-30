@@ -5,8 +5,8 @@ type: :feature
 component: groonga
 release: 1.0.0
 reporter: daijiro <daijiro.mori@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-11-24 13:44:55.871925 Z
 references: []
 
@@ -15,4 +15,8 @@ log_events:
 - - 2009-11-24 13:44:56.485026 Z
   - daijiro <daijiro.mori@gmail.com>
   - created
+  - ""
+- - 2009-11-30 04:43:51.019389 Z
+  - Ryo Onodera <onodera@clear-code.com>
+  - closed with disposition fixed
   - ""

@@ -61,8 +61,9 @@ module GroongaHTTPTestUtils
     end.compact.join("&")
   end
 
-  def command_path(command, options={})
+  def command_path(command, options={}, output_type=nil)
     path = "/d/#{command}"
+    path += ".#{output_type}" if output_type
     encoded_options = encode_options(options)
     path += "?#{encoded_options}" unless encoded_options.empty?
     path
@@ -183,6 +184,8 @@ module GroongaHTTPTestUtils
       actual = JSON.parse(response.body)
     when "text/html"
       actual = response.body
+    when "text/xml"
+      actual = response.body
     else
       flunk("unknown content-type: #{response.content_type}")
     end
@@ -204,6 +207,17 @@ module GroongaHTTPTestUtils
                      *drilldown_results],
                     response,
                     :content_type => "application/json",
+                    &block)
+  end
+
+  def assert_select_xml(expected, parameters, options={}, &block)
+    command_name = options[:command] || :select
+    response = get(command_path(command_name, parameters, "xml"))
+
+    output_type = options[:output_type] || "json"
+    assert_response(expected,
+                    response,
+                    :content_type => "text/xml",
                     &block)
   end
 end

@@ -9665,7 +9665,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_text_itoa(ctx, outbuf, ctx->rc);
       break;
     case GRN_CONTENT_XML:
-      GRN_TEXT_PUTS(ctx, outbuf, "<?xml version=\"1.0\" encoding=\"utf-8\" ?><SEGMENTS><SEGMENT><RESULTPAGE>");
+      GRN_TEXT_PUTS(ctx, outbuf, "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<SEGMENTS><SEGMENT><RESULTPAGE>");
       break;
     case GRN_CONTENT_TSV:
       grn_text_itoa(ctx, outbuf, ctx->rc);
@@ -9857,7 +9857,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
       break;
     case GRN_CONTENT_XML:
-      GRN_TEXT_PUTS(ctx, outbuf, "</RESULTPAGE></SEGMENT></SEGMENTS>");
+      GRN_TEXT_PUTS(ctx, outbuf, "</RESULTPAGE></SEGMENT></SEGMENTS>\n");
       break;
     case GRN_CONTENT_NONE:
       break;
