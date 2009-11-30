@@ -5825,7 +5825,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   e = limit + offset;
   if (e <= 0) { goto exit; }
   if (e > n) { e = n; }
-  if (n_keys == 1 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1)) {
+  if (n_keys == 1 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, NULL)) {
     grn_id tid;
     grn_pat *lexicon = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
     grn_pat_cursor *pc = grn_pat_cursor_open(ctx, lexicon, NULL, 0, NULL, 0,
@@ -6032,7 +6032,8 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 }
 
 int
-grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op, grn_obj **indexbuf, int buf_size)
+grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
+                 grn_obj **indexbuf, int buf_size, grn_obj *weight)
 {
   int n = 0;
   grn_hook *hooks;
@@ -8398,6 +8399,7 @@ typedef struct {
   int flags;
   grn_operator op;
   grn_operator logical_op;
+  grn_obj wv;
   grn_obj *index;
   grn_obj *query;
   grn_obj *args[8];
@@ -8415,9 +8417,10 @@ typedef enum {
   if (!((si) = GRN_MALLOCN(scan_info, 1))) {\
     int j;\
     for (j = 0; j < i; j++) { GRN_FREE(sis[j]); }\
-    GRN_FREE(sis);                               \
+    GRN_FREE(sis);\
     return NULL;\
   }\
+  GRN_UINT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
   (si)->logical_op = GRN_OP_OR;\
   (si)->flags = SCAN_PUSH;\
   (si)->index = NULL;\
@@ -8579,10 +8582,10 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         grn_obj **p = si->args, **pe = si->args + si->nargs;
         for (; p < pe; p++) {
           if (GRN_DB_OBJP(*p)) {
-            grn_column_index(ctx, *p, c->op, &si->index, 1);
+            grn_column_index(ctx, *p, c->op, &si->index, 1, &si->wv);
           } else if (ACCESSORP(*p)) {
             si->flags |= SCAN_ACCESSOR;
-            grn_column_index(ctx, *p, c->op, &si->index, 1);
+            grn_column_index(ctx, *p, c->op, &si->index, 1, &si->wv);
           } else {
             si->query = *p;
           }
@@ -8643,10 +8646,10 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           grn_obj **p = si->args, **pe = si->args + si->nargs;
           for (; p < pe; p++) {
             if (GRN_DB_OBJP(*p)) {
-              grn_column_index(ctx, *p, c->op, &si->index, 1);
+              grn_column_index(ctx, *p, c->op, &si->index, 1, &si->wv);
             } else if (ACCESSORP(*p)) {
               si->flags |= SCAN_ACCESSOR;
-              grn_column_index(ctx, *p, c->op, &si->index, 1);
+              grn_column_index(ctx, *p, c->op, &si->index, 1, &si->wv);
             } else {
               si->query = *p;
             }

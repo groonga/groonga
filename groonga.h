@@ -1474,12 +1474,13 @@ GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags fl
  * @op: indexで実行したい操作
  * @indexbuf: indexを格納するバッファ(呼出側で準備する)
  * @buf_size: namebufのサイズ(byte長)
+ * @weight: weight_vectorを格納するgrn_obj(呼出側で準備する)
  *
  * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
  * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
  **/
 GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
-                             grn_obj **indexbuf, int buf_size);
+                             grn_obj **indexbuf, int buf_size, grn_obj *weight);
 
 /* query & snippet */
 
