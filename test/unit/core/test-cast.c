@@ -204,7 +204,8 @@ test_text_to_int64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_INT64, 0);
   cast_text("-2929292929292929");
-  cut_assert_equal_int(-2929292929292929, GRN_INT64_VALUE(&dest));
+  gcut_assert_equal_int64(G_GINT64_CONSTANT(-2929292929292929),
+                          GRN_INT64_VALUE(&dest));
 }
 
 void
@@ -212,7 +213,8 @@ test_text_to_uint64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_UINT64, 0);
   cast_text("2929292929292929");
-  cut_assert_equal_uint(2929292929292929, GRN_UINT64_VALUE(&dest));
+  gcut_assert_equal_uint64(G_GUINT64_CONSTANT(2929292929292929),
+                           GRN_UINT64_VALUE(&dest));
 }
 
 void
@@ -346,15 +348,17 @@ test_int32_to_int64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_INT64, 0);
   cast_int32(-29292929);
-  cut_assert_equal_int(-29292929, GRN_INT64_VALUE(&dest));
+  gcut_assert_equal_int64(G_GINT64_CONSTANT(-29292929),
+                          GRN_INT64_VALUE(&dest));
 }
 
 void
 test_int32_to_uint64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_UINT64, 0);
-  cast_int32(2929292929);
-  cut_assert_equal_uint(2929292929, GRN_UINT64_VALUE(&dest));
+  cast_int32(29292929);
+  gcut_assert_equal_uint64(G_GUINT64_CONSTANT(29292929),
+                           GRN_UINT64_VALUE(&dest));
 }
 
 void
@@ -471,15 +475,17 @@ test_uint32_to_int64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_INT64, 0);
   cast_uint32(29292929);
-  cut_assert_equal_int(29292929, GRN_INT64_VALUE(&dest));
+  gcut_assert_equal_int64(G_GINT64_CONSTANT(29292929),
+                          GRN_INT64_VALUE(&dest));
 }
 
 void
 test_uint32_to_uint64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_UINT64, 0);
-  cast_uint32(2929292929);
-  cut_assert_equal_uint(2929292929, GRN_UINT64_VALUE(&dest));
+  cast_uint32(29292929);
+  gcut_assert_equal_uint64(G_GUINT64_CONSTANT(29292929),
+                           GRN_UINT64_VALUE(&dest));
 }
 
 void
@@ -596,15 +602,17 @@ test_int64_to_int64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_INT64, 0);
   cast_int64(-29292929);
-  cut_assert_equal_int(-29292929, GRN_INT64_VALUE(&dest));
+  gcut_assert_equal_int64(G_GINT64_CONSTANT(-29292929),
+                          GRN_INT64_VALUE(&dest));
 }
 
 void
 test_int64_to_uint64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_UINT64, 0);
-  cast_int64(2929292929);
-  cut_assert_equal_uint(2929292929, GRN_UINT64_VALUE(&dest));
+  cast_int64(G_GINT64_CONSTANT(2929292929));
+  gcut_assert_equal_uint64(G_GUINT64_CONSTANT(2929292929),
+                           GRN_UINT64_VALUE(&dest));
 }
 
 void
@@ -720,16 +728,18 @@ void
 test_uint64_to_int64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_INT64, 0);
-  cast_uint64(29292929);
-  cut_assert_equal_int(29292929, GRN_INT64_VALUE(&dest));
+  cast_uint64(G_GUINT64_CONSTANT(2929292929));
+  gcut_assert_equal_int64(G_GINT64_CONSTANT(2929292929),
+                          GRN_INT64_VALUE(&dest));
 }
 
 void
 test_uint64_to_uint64(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_UINT64, 0);
-  cast_uint64(2929292929);
-  cut_assert_equal_uint(2929292929, GRN_UINT64_VALUE(&dest));
+  cast_uint64(G_GUINT64_CONSTANT(2929292929));
+  gcut_assert_equal_uint64(G_GUINT64_CONSTANT(2929292929),
+                           GRN_UINT64_VALUE(&dest));
 }
 
 void
