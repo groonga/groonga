@@ -11131,11 +11131,13 @@ parse_script(grn_ctx *ctx, efs_info *q)
         if (q->str_end != rest &&
             (*rest == '.' || *rest == 'e' || *rest == 'E' ||
              (*rest >= '0' && *rest <= '9'))) {
-          double d = strtod(q->cur, &rest);
+          char *rest_float;
+          double d = strtod(q->cur, &rest_float);
           grn_obj floatbuf;
           GRN_FLOAT_INIT(&floatbuf, 0);
           GRN_FLOAT_SET(ctx, &floatbuf, d);
           grn_expr_append_const(ctx, q->e, &floatbuf, GRN_OP_PUSH, 1);
+          rest = rest_float;
         } else {
           const char *rest64 = rest;
           int i = grn_atoi(q->cur, q->str_end, &rest);
