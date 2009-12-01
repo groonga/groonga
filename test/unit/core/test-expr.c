@@ -1690,7 +1690,8 @@ test_expr_parse_int64(void)
 
   var = parse_numeric_literal(str_expr);
   cut_assert_equal_int(GRN_DB_INT64, GRN_OBJ_GET_DOMAIN(var));
-  cut_assert_equal_int_least64(123456789012, GRN_INT64_VALUE(var));
+  cut_assert_equal_int_least64(G_GINT64_CONSTANT(123456789012),
+                               GRN_INT64_VALUE(var));
 }
 
 void
