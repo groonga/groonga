@@ -5,7 +5,7 @@ type: :feature
 component: groonga
 release: 1.0.0
 reporter: daijiro <daijiro.mori@gmail.com>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2009-11-24 13:19:52.905665 Z
 references: []
@@ -15,4 +15,42 @@ log_events:
 - - 2009-11-24 13:19:53.603615 Z
   - daijiro <daijiro.mori@gmail.com>
   - created
+  - ""
+- - 2009-12-01 03:50:37.775361 Z
+  - Kouhei Sutou <kou@clear-code.com>
+  - commented
+  - |-
+    arithmetic operator list:
+    done name
+         ASSIGN
+         STAR_ASSIGN
+         SLASH_ASSIGN
+         MOD_ASSIGN
+         PLUS_ASSIGN
+         MINUS_ASSIGN
+         SHIFTL_ASSIGN
+         SHIFTR_ASSIGN
+         SHIFTRR_ASSIGN
+         AND_ASSIGN
+         XOR_ASSIGN
+         OR_ASSIGN
+         BITWISE_OR
+         BITWISE_XOR
+         BITWISE_AND
+         BITWISE_NOT
+         SHIFTL
+         SHIFTR
+         SHIFTRR
+    o    PLUS
+    o    MINUS
+    o    STAR
+    o    SLASH
+         MOD
+         INCR
+         DECR
+         INCR_POST
+         DECR_POST
+- - 2009-12-01 03:52:13.001237 Z
+  - Kouhei Sutou <kou@clear-code.com>
+  - changed status from unstarted to in_progress
   - ""
