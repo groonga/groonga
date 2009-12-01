@@ -2174,7 +2174,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         } else {
           const char *str = GRN_BULK_HEAD(query);
           unsigned int str_len = GRN_BULK_VSIZE(query);
-          rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res, op);
+          rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res, op, optarg);
         }
         break;
       case GRN_QUERY :
@@ -6031,6 +6031,8 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   return ctx->rc;
 }
 
+#define MULTI_COLUMN_INDEXP(i) (DB_OBJ(i)->source_size > sizeof(grn_id))
+
 int
 grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
                  grn_obj **indexbuf, int buf_size, grn_obj *weight)
@@ -6045,8 +6047,10 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
-        /* todo : data->section */
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+        if (MULTI_COLUMN_INDEXP(target)) {
+          GRN_INT32_SET_AT(ctx, weight, data->section - 1, 1);
+        }
         {
           grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
           if (!lexicon) { continue; }
@@ -6063,8 +6067,10 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
-        /* todo : data->section */
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+        if (MULTI_COLUMN_INDEXP(target)) {
+          GRN_INT32_SET_AT(ctx, weight, data->section - 1, 1);
+        }
         if (n < buf_size) {
           *ip++ = target;
         }
@@ -6078,8 +6084,10 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
-        /* todo : data->section */
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+        if (MULTI_COLUMN_INDEXP(target)) {
+          GRN_INT32_SET_AT(ctx, weight, data->section - 1, 1);
+        }
         {
           grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
           if (!lexicon) { continue; }
@@ -8420,7 +8428,7 @@ typedef enum {
     GRN_FREE(sis);\
     return NULL;\
   }\
-  GRN_UINT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
+  GRN_INT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
   (si)->logical_op = GRN_OP_OR;\
   (si)->flags = SCAN_PUSH;\
   (si)->index = NULL;\
@@ -8912,8 +8920,17 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               }
               break;
             case GRN_OP_MATCH :
-              /* todo : support sections */
-              grn_obj_search(ctx, si->index, si->query, res, si->logical_op, NULL);
+              {
+                grn_search_optarg optarg;
+                optarg.mode = GRN_OP_EXACT;
+                optarg.similarity_threshold = 0;
+                optarg.max_interval = 0;
+                optarg.weight_vector = (int *)GRN_BULK_HEAD(&si->wv);
+                optarg.vector_size = GRN_BULK_VSIZE(&si->wv);
+                optarg.proc = NULL;
+                optarg.max_size = 0;
+                grn_obj_search(ctx, si->index, si->query, res, si->logical_op, &optarg);
+              }
               done++;
               break;
             default :

@@ -1777,18 +1777,29 @@ grn_bulk_space(grn_ctx *ctx, grn_obj *buf, unsigned int len)
   return rc;
 }
 
+static grn_rc
+grn_bulk_space_clear(grn_ctx *ctx, grn_obj *buf, unsigned int len)
+{
+  grn_rc rc = grn_bulk_reserve(ctx, buf, len);
+  if (!rc) {
+    memset(GRN_BULK_CURR(buf), 0, len);
+    GRN_BULK_INCR_LEN(buf, len);
+  }
+  return rc;
+}
+
 grn_rc
 grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len)
 {
   if (GRN_BULK_OUTP(bulk)) {
     if ((bulk->u.b.tail - bulk->u.b.head) < len) {
-      return grn_bulk_space(ctx, bulk, len);
+      return grn_bulk_space_clear(ctx, bulk, len);
     } else {
       bulk->u.b.curr = bulk->u.b.head + len;
     }
   } else {
     if (GRN_BULK_BUFSIZE < len) {
-      return grn_bulk_space(ctx, bulk, len);
+      return grn_bulk_space_clear(ctx, bulk, len);
     } else {
       bulk->header.flags = len;
     }

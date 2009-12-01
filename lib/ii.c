@@ -5581,12 +5581,15 @@ exit :
 
 grn_rc
 grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
-           grn_hash *s, grn_operator op)
+           grn_hash *s, grn_operator op, grn_search_optarg *optarg)
 {
   ERRCLR(ctx);
   GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%s)", string);
   {
-    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL};
+    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0,
+                             optarg->vector_size ? optarg->weight_vector : NULL,
+                             optarg->vector_size,
+                             NULL, NULL, 0};
     if (!s) { return GRN_INVALID_ARGUMENT; }
     /* todo : support subrec
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);
