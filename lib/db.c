@@ -1755,7 +1755,8 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
 {
   grn_table_cursor *tc = NULL;
   GRN_API_ENTER;
-  if (table) {
+  if (table && !grn_normalize_offset_and_limit(ctx, grn_table_size(ctx, table),
+                                               &offset, &limit)) {
     switch (table->header.type) {
     case GRN_DB :
       tc = (grn_table_cursor *)grn_pat_cursor_open(ctx, ((grn_db *)table)->keys,
@@ -5814,17 +5815,11 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     goto exit;
   }
   n = grn_table_size(ctx, table);
-  if (offset < 0) {
-    offset += n;
-    if (offset < 0) { offset = 0; }
+  if (grn_normalize_offset_and_limit(ctx, n, &offset, &limit)) {
+    goto exit;
+  } else {
+    e = offset + limit;
   }
-  if (offset >= n) { goto exit; }
-  if (limit < 0) {
-    limit += n + 1;
-  }
-  e = limit + offset;
-  if (e <= 0) { goto exit; }
-  if (e > n) { e = n; }
   if (n_keys == 1 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, NULL)) {
     grn_id tid;
     grn_pat *lexicon = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
@@ -11479,4 +11474,41 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
     }
   }
   GRN_API_RETURN(res);
+}
+
+grn_rc
+grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_limit)
+{
+  int end;
+  int offset = *p_offset;
+  int limit = *p_limit;
+
+  if (offset < 0) {
+    offset += size;
+    if (offset < 0) {
+      ERR(GRN_INVALID_ARGUMENT, "too small offset");
+      return ctx->rc;
+    }
+  } else if (offset != 0 && offset >= size) {
+    ERR(GRN_INVALID_ARGUMENT, "too large offset");
+    return ctx->rc;
+  }
+  if (limit < 0) {
+    limit += size + 1;
+    if (limit < 0) {
+      ERR(GRN_INVALID_ARGUMENT, "too small limit");
+      return ctx->rc;
+    }
+  } else if (limit > size) {
+    limit = size;
+  }
+
+  /* At this point, offset and limit must be zero or positive. */
+  end = offset + limit;
+  if (end > size) {
+    limit -= end - size;
+  }
+  *p_offset = offset;
+  *p_limit = limit;
+  return GRN_SUCCESS;
 }
