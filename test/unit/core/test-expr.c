@@ -1589,6 +1589,14 @@ data_expr_arithmetic_operator_mod(void)
             "size <= 19.1 % \"9.9\"");
 }
 
+static void
+data_expr_arithmetic_operator_incr(void)
+{
+  ADD_DATUM("incr",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "++size <= 10");
+}
+
 void
 data_expr_arithmetic_operator(void)
 {
@@ -1597,6 +1605,7 @@ data_expr_arithmetic_operator(void)
   data_expr_arithmetic_operator_star();
   data_expr_arithmetic_operator_slash();
   data_expr_arithmetic_operator_mod();
+  data_expr_arithmetic_operator_incr();
 }
 #undef ADD_DATUM
 

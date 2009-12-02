@@ -6903,6 +6903,9 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_MOD :
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
+    case GRN_OP_INCR :
+      PUSH_CODE(e, op, obj, nargs, code);
+      break;
     case GRN_OP_GET_VALUE :
       {
         grn_id vdomain = GRN_ID_NIL;
@@ -8386,6 +8389,18 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                         goto exit;
                                       }
                                       ,);
+        break;
+      case GRN_OP_INCR :
+        {
+          grn_obj *x;
+          int value;
+          POP1ALLOC1(x, res);
+          res->header.domain = x->header.domain;
+          value = GRN_INT32_VALUE(x);
+          GRN_INT32_SET(ctx, x, value + 1);
+          GRN_INT32_SET(ctx, res, value + 1);
+        }
+        code++;
         break;
       default :
         break;
