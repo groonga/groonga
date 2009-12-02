@@ -63,6 +63,7 @@ void data_expr_arithmetic_operator_error(void);
 void test_expr_arithmetic_operator_error(gconstpointer data);
 void test_expr_parse_float(void);
 void test_expr_parse_int32(void);
+void test_expr_parse_lager_than_int32(void);
 void test_expr_parse_int64(void);
 void test_expr_parse_long_integer_literal(void);
 
@@ -1482,14 +1483,25 @@ test_expr_parse_float(void)
 }
 
 void
-test_expr_parse_int32(void)
+test_expr_parse_uint32(void)
 {
   grn_obj *var;
   const char *str_expr = "var = 123456";
 
   var = parse_numeric_literal(str_expr);
-  cut_assert_equal_int(GRN_DB_INT32, GRN_OBJ_GET_DOMAIN(var));
-  cut_assert_equal_int(123456, GRN_INT32_VALUE(var));
+  cut_assert_equal_int(GRN_DB_UINT32, GRN_OBJ_GET_DOMAIN(var));
+  cut_assert_equal_int(123456, GRN_UINT32_VALUE(var));
+}
+
+void
+test_expr_parse_lager_than_int32(void)
+{
+  grn_obj *var;
+  const char *str_expr = "var = 3456789012";
+
+  var = parse_numeric_literal(str_expr);
+  cut_assert_equal_int(GRN_DB_UINT32, GRN_OBJ_GET_DOMAIN(var));
+  cut_assert_equal_int(3456789012U, GRN_UINT32_VALUE(var));
 }
 
 void

@@ -11301,7 +11301,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           rest = rest_float;
         } else {
           const char *rest64 = rest;
-          int i = grn_atoi(q->cur, q->str_end, &rest);
+          unsigned int uint32 = grn_atoui(q->cur, q->str_end, &rest);
           // checks to see grn_atoi failed (see above NOTE)
           if (q->str_end != rest && *rest >= '0' && *rest <= '9') {
             grn_obj int64buf;
@@ -11310,7 +11310,10 @@ parse_script(grn_ctx *ctx, efs_info *q)
             grn_expr_append_const(ctx, q->e, &int64buf, GRN_OP_PUSH, 1);
             rest = rest64;
           } else {
-            grn_expr_append_const_int(ctx, q->e, i, GRN_OP_PUSH, 1);
+            grn_obj uint32buf;
+            GRN_UINT32_INIT(&uint32buf, 0);
+            GRN_UINT32_SET(ctx, &uint32buf, uint32);
+            grn_expr_append_const(ctx, q->e, &uint32buf, GRN_OP_PUSH, 1);
           }
         }
         q->cur = rest;
