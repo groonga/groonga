@@ -6910,6 +6910,10 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           type = dfi->type;
           domain = dfi->domain;
           if (dfi->code) {
+            if (CONSTP(dfi->code->value)) {
+              ERR(GRN_INVALID_ARGUMENT, "constant can't be incremented.");
+              goto exit;
+            }
             if (dfi->code->op == GRN_OP_GET_VALUE) {
               dfi->code->op = GRN_OP_GET_REF;
             }
@@ -7720,6 +7724,7 @@ truep(grn_ctx *ctx, grn_obj *v)
     ERR(GRN_INVALID_ARGUMENT,                                           \
         "invalid increment target type: %d "                            \
         "(FIXME: type name is needed)", DB_OBJ(col)->range);            \
+    goto exit;                                                          \
     break;                                                              \
   }                                                                     \
   exec_incr(grn_obj_set_value(ctx, col, rid, &value, GRN_OBJ_INCR);,    \

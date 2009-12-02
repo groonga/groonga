@@ -37,6 +37,8 @@ void data_arithmetic_operator(void);
 void test_arithmetic_operator(gconstpointer data);
 void data_arithmetic_operator_error(void);
 void test_arithmetic_operator_error(gconstpointer data);
+void data_arithmetic_operator_syntax_error(void);
+void test_arithmetic_operator_syntax_error(gconstpointer data);
 
 void
 cut_startup(void)
@@ -471,6 +473,41 @@ test_arithmetic_operator_error(gconstpointer data)
   res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_error(gcut_data_get_uint(data, "rc"),
+                        gcut_data_get_string(data, "message"),
+                        &context);
+}
+
+void
+data_arithmetic_operator_syntax_error(void)
+{
+#define ADD_DATUM(label, message, query)                        \
+  gcut_add_datum(label,                                         \
+                 "message", G_TYPE_STRING, message,             \
+                 "query", G_TYPE_STRING, query,                 \
+                 NULL)
+
+  ADD_DATUM("++constant",
+            cut_take_printf("Syntax error! (++8 <= 9)"),
+            "++8 <= 9");
+
+#undef ADD_DATUM
+}
+
+void
+test_arithmetic_operator_syntax_error(gconstpointer data)
+{
+  grn_obj *v;
+  const gchar *query;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+  query = gcut_data_get_string(data, "query");
+  grn_test_assert_equal_rc(GRN_SYNTAX_ERROR,
+                           grn_expr_parse(&context, expr, query, strlen(query),
+                                          body, GRN_OP_MATCH, GRN_OP_AND,
+                                          GRN_EXPR_SYNTAX_SCRIPT));
+  grn_test_assert_error(GRN_SYNTAX_ERROR,
                         gcut_data_get_string(data, "message"),
                         &context);
 }
