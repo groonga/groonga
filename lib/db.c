@@ -6904,7 +6904,20 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
     case GRN_OP_INCR :
-      PUSH_CODE(e, op, obj, nargs, code);
+      {
+        DFI_POP(e, dfi);
+        if (dfi) {
+          type = dfi->type;
+          domain = dfi->domain;
+          if (dfi->code) {
+            if (dfi->code->op == GRN_OP_GET_VALUE) {
+              dfi->code->op = GRN_OP_GET_REF;
+            }
+          }
+        }
+        PUSH_CODE(e, op, obj, nargs, code);
+      }
+      DFI_PUT(e, type, domain, code);
       break;
     case GRN_OP_GET_VALUE :
       {
@@ -7659,36 +7672,54 @@ truep(grn_ctx *ctx, grn_obj *v)
   increment_sentence
 
 #define INCR_OPERATION_DISPATCH(exec_incr, delta) {                     \
-  grn_obj *x;                                                           \
-  POP1ALLOC1(x, res);                                                   \
-  res->header.domain = x->header.domain;                                \
-  switch (x->header.domain) {                                           \
+  grn_obj *var, *col, value;                                            \
+  grn_id rid;                                                           \
+                                                                        \
+  POP1ALLOC1(var, res);                                                 \
+  if (var->header.type != GRN_PTR) {                                    \
+    ERR(GRN_INVALID_ARGUMENT, "invalid variable type: 0x%0x",           \
+        var->header.type);                                              \
+    goto exit;                                                          \
+  }                                                                     \
+  if (GRN_BULK_VSIZE(var) != (sizeof(grn_obj *) + sizeof(grn_id))) {    \
+    ERR(GRN_INVALID_ARGUMENT,                                           \
+        "invalid variable size: expected: %ld, actual: %ld",            \
+        (sizeof(grn_obj *) + sizeof(grn_id)), GRN_BULK_VSIZE(var));     \
+    goto exit;                                                          \
+  }                                                                     \
+  col = GRN_PTR_VALUE(var);                                             \
+  rid = *(grn_id *)(GRN_BULK_HEAD(var) + sizeof(grn_obj *));            \
+  res->header.type = GRN_VOID;                                          \
+  res->header.domain = DB_OBJ(col)->range;                              \
+  switch (DB_OBJ(col)->range) {                                         \
   case GRN_DB_INT32 :                                                   \
-    exec_incr(GRN_INT32_SET(ctx, x, GRN_INT32_VALUE(x) + delta);,       \
-              GRN_INT32_SET(ctx, res, GRN_INT32_VALUE(x)););            \
+    GRN_INT32_INIT(&value, 0);                                          \
+    GRN_INT32_SET(ctx, &value, delta);                                  \
     break;                                                              \
   case GRN_DB_UINT32 :                                                  \
-    exec_incr(GRN_UINT32_SET(ctx, x, GRN_UINT32_VALUE(x) + delta);,     \
-              GRN_UINT32_SET(ctx, res, GRN_UINT32_VALUE(x)););          \
+    GRN_UINT32_INIT(&value, 0);                                         \
+    GRN_UINT32_SET(ctx, &value, delta);                                 \
     break;                                                              \
   case GRN_DB_INT64 :                                                   \
-    exec_incr(GRN_INT64_SET(ctx, x, GRN_INT64_VALUE(x) + delta);,       \
-              GRN_INT64_SET(ctx, res, GRN_INT64_VALUE(x)););            \
+    GRN_INT64_INIT(&value, 0);                                          \
+    GRN_INT64_SET(ctx, &value, delta);                                  \
     break;                                                              \
   case GRN_DB_UINT64 :                                                  \
-    exec_incr(GRN_UINT64_SET(ctx, x, GRN_UINT64_VALUE(x) + delta);,     \
-              GRN_UINT64_SET(ctx, res, GRN_UINT64_VALUE(x)););          \
+    GRN_UINT64_INIT(&value, 0);                                         \
+    GRN_UINT64_SET(ctx, &value, delta);                                 \
     break;                                                              \
   case GRN_DB_FLOAT :                                                   \
-    exec_incr(GRN_FLOAT_SET(ctx, x, GRN_FLOAT_VALUE(x) + delta);,       \
-              GRN_FLOAT_SET(ctx, res, GRN_FLOAT_VALUE(x)););            \
+    GRN_FLOAT_INIT(&value, 0);                                          \
+    GRN_FLOAT_SET(ctx, &value, delta);                                  \
     break;                                                              \
   default:                                                              \
     ERR(GRN_INVALID_ARGUMENT,                                           \
         "invalid increment target type: %d "                            \
-        "(FIXME: type name is needed)", x->header.domain);              \
+        "(FIXME: type name is needed)", DB_OBJ(col)->range);            \
     break;                                                              \
   }                                                                     \
+  exec_incr(grn_obj_set_value(ctx, col, rid, &value, GRN_OBJ_INCR);,    \
+            grn_obj_get_value(ctx, col, rid, res););                    \
   code++;                                                               \
 }
 
