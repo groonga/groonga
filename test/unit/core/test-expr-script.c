@@ -28,7 +28,7 @@ static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
 static grn_obj *res, *expr;
-static grn_obj textbuf, intbuf;
+static grn_obj textbuf, intbuf, floatbuf;
 
 void data_comparison_operator(void);
 void test_comparison_operator(gconstpointer data);
@@ -66,6 +66,7 @@ cut_setup(void)
 
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
+  GRN_FLOAT_INIT(&floatbuf, 0);
 }
 
 void
@@ -73,6 +74,7 @@ cut_teardown(void)
 {
   grn_obj_close(&context, &textbuf);
   grn_obj_close(&context, &intbuf);
+  grn_obj_close(&context, &floatbuf);
 
   if (res)
     grn_obj_close(&context, res);
@@ -89,7 +91,8 @@ cut_teardown(void)
   grn_test_assert(grn_expr_parse(&context, (expr), (str), strlen(str), \
                                  body, GRN_OP_MATCH, GRN_OP_AND, flags))
 
-static grn_obj *docs, *terms, *size, *size_in_string, *body, *index_body;
+static grn_obj *docs, *terms, *body, *index_body;
+static grn_obj *size, *size_in_string, *size_in_float;
 
 static void
 insert_document(const gchar *body_content)
@@ -109,6 +112,10 @@ insert_document(const gchar *body_content)
   size_string = cut_take_printf("%u", s);
   GRN_TEXT_SET(&context, &textbuf, size_string, strlen(size_string));
   grn_test_assert(grn_obj_set_value(&context, size_in_string, docid, &textbuf,
+                                    GRN_OBJ_SET));
+
+  GRN_FLOAT_SET(&context, &floatbuf, s);
+  grn_test_assert(grn_obj_set_value(&context, size_in_float, docid, &floatbuf,
                                     GRN_OBJ_SET));
 }
 
@@ -131,6 +138,11 @@ create_documents_table(void)
                                      GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
                                      grn_ctx_at(&context, GRN_DB_TEXT));
   cut_assert_not_null(size_in_string);
+
+  size_in_float = grn_column_create(&context, docs, "size_in_float", 13, NULL,
+                                     GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                                     grn_ctx_at(&context, GRN_DB_FLOAT));
+  cut_assert_not_null(size_in_float);
 
   body = grn_column_create(&context, docs, "body", 4, NULL,
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
@@ -333,6 +345,9 @@ data_arithmetic_operator_incr(void)
   ADD_DATUM("++integer",
             gcut_list_string_new("hoge", NULL),
             "++size <= 9");
+  ADD_DATUM("++float",
+            gcut_list_string_new("hoge", NULL),
+            "++size_in_float <= 9");
 }
 
 void
