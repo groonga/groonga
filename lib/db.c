@@ -7712,6 +7712,10 @@ truep(grn_ctx *ctx, grn_obj *v)
     GRN_FLOAT_INIT(&value, 0);                                          \
     GRN_FLOAT_SET(ctx, &value, delta);                                  \
     break;                                                              \
+  case GRN_DB_TIME :                                                    \
+    GRN_TIME_INIT(&value, 0);                                           \
+    GRN_TIME_SET(ctx, &value, GRN_TIME_PACK(delta, 0));                 \
+    break;                                                              \
   default:                                                              \
     ERR(GRN_INVALID_ARGUMENT,                                           \
         "invalid increment target type: %d "                            \

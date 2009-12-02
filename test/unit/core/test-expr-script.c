@@ -18,6 +18,7 @@
 
 #include "db.h"
 #include <stdio.h>
+#include <time.h>
 
 #include <gcutter.h>
 
@@ -28,7 +29,7 @@ static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
 static grn_obj *res, *expr;
-static grn_obj textbuf, intbuf, floatbuf;
+static grn_obj textbuf, intbuf, floatbuf, timebuf;
 
 void data_comparison_operator(void);
 void test_comparison_operator(gconstpointer data);
@@ -67,6 +68,7 @@ cut_setup(void)
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
   GRN_FLOAT_INIT(&floatbuf, 0);
+  GRN_TIME_INIT(&timebuf, 0);
 }
 
 void
@@ -75,6 +77,7 @@ cut_teardown(void)
   grn_obj_close(&context, &textbuf);
   grn_obj_close(&context, &intbuf);
   grn_obj_close(&context, &floatbuf);
+  grn_obj_close(&context, &timebuf);
 
   if (res)
     grn_obj_close(&context, res);
@@ -91,7 +94,7 @@ cut_teardown(void)
   grn_test_assert(grn_expr_parse(&context, (expr), (str), strlen(str), \
                                  body, GRN_OP_MATCH, GRN_OP_AND, flags))
 
-static grn_obj *docs, *terms, *body, *index_body;
+static grn_obj *docs, *terms, *body, *created_at, *index_body;
 static grn_obj *size, *size_in_string, *size_in_float;
 
 static void
@@ -100,6 +103,7 @@ insert_document(const gchar *body_content)
   uint32_t s = (uint32_t)strlen(body_content);
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);
   const gchar *size_string;
+  struct tm time;
 
   GRN_TEXT_SET(&context, &textbuf, body_content, s);
   grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf,
@@ -116,6 +120,19 @@ insert_document(const gchar *body_content)
 
   GRN_FLOAT_SET(&context, &floatbuf, s);
   grn_test_assert(grn_obj_set_value(&context, size_in_float, docid, &floatbuf,
+                                    GRN_OBJ_SET));
+
+  time.tm_sec = s;
+  time.tm_min = 16;
+  time.tm_hour = 15;
+  time.tm_mday = 2;
+  time.tm_mon = 11;
+  time.tm_year = 109;
+  time.tm_wday = 3;
+  time.tm_yday = 336;
+  time.tm_isdst = 0;
+  GRN_TIME_SET(&context, &timebuf, GRN_TIME_PACK(mktime(&time), 0));
+  grn_test_assert(grn_obj_set_value(&context, created_at, docid, &timebuf,
                                     GRN_OBJ_SET));
 }
 
@@ -143,6 +160,11 @@ create_documents_table(void)
                                      GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
                                      grn_ctx_at(&context, GRN_DB_FLOAT));
   cut_assert_not_null(size_in_float);
+
+  created_at = grn_column_create(&context, docs, "created_at", 10, NULL,
+                                 GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                                 grn_ctx_at(&context, GRN_DB_TIME));
+  cut_assert_not_null(created_at);
 
   body = grn_column_create(&context, docs, "body", 4, NULL,
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
@@ -342,12 +364,18 @@ data_arithmetic_operator_mod(void)
 static void
 data_arithmetic_operator_incr(void)
 {
+  int time_at_2009_12_2_15_16_0 = 1259734560;
+
   ADD_DATUM("++integer",
             gcut_list_string_new("hoge", NULL),
             "++size <= 9");
   ADD_DATUM("++float",
             gcut_list_string_new("hoge", NULL),
             "++size_in_float <= 9");
+  ADD_DATUM("++time",
+            gcut_list_string_new("hoge", NULL),
+            cut_take_printf("++created_at <= %d",
+                            time_at_2009_12_2_15_16_0 + 9));
 }
 
 void
