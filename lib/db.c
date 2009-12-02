@@ -11497,8 +11497,8 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
     return ctx->rc;
   }
 
-  if (limit <= 0) {
-    limit += size;
+  if (limit < 0) {
+    limit += size + 1;
     if (limit < 0) {
       ERR(GRN_INVALID_ARGUMENT, "too small limit");
       return ctx->rc;
