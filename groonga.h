@@ -679,7 +679,7 @@ typedef grn_obj grn_table_cursor;
  *         (GRN_OBJ_TABLE_HASH_KEY,GRN_OBJ_TABLE_NO_KEYではGRN_CURSOR_BY_KEYは無視される)
  * @offset: 該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出す。
  * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す。
- *         0が指定された場合は、全件が指定されたものとみなす。
+ *         -1が指定された場合は、全件が指定されたものとみなす。
  *
  * tableに登録されているレコードを順番に取り出すためのカーソルを生成して返す。
  **/
