@@ -78,6 +78,17 @@
       __VA_ARGS__),                                                     \
     grn_test_assert_not_null(context, object))
 
+#define grn_test_assert_select(context, expected, select_result,        \
+                               text_column, ...)                        \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_select_helper((context), (expected),              \
+                                    (select_result), (text_column),     \
+                                    #expected,                          \
+                                    #select_result, #text_column),      \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_select(context, expected, select_result))
+
 
 
 void     grn_test_assert_helper         (grn_rc       rc,
@@ -102,5 +113,12 @@ void     grn_test_assert_null_helper    (grn_ctx     *context,
 void     grn_test_assert_not_null_helper(grn_ctx     *context,
                                          grn_obj     *object,
                                          const gchar *expression);
+void     grn_test_assert_select_helper  (grn_ctx     *context,
+                                         const GList *expected,
+                                         grn_obj     *select_result,
+                                         grn_obj     *text_column,
+                                         const gchar *expected_expression,
+                                         const gchar *select_result_expression,
+                                         const gchar *text_column_expression);
 
 #endif

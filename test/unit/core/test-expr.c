@@ -475,44 +475,14 @@ insert_document(const gchar *body_content)
 #define INSERT_DOCUMENT(body) \
   cut_trace(insert_document(body))
 
-static void grn_test_assert_select(const GList* expected, grn_obj *result);
 static void grn_test_assert_select_all(grn_obj *result);
 static void grn_test_assert_select_none(grn_obj *result);
 
 static void
-grn_test_assert_select(const GList *expected, grn_obj *result)
-{
-  GList *records = NULL;
-  grn_table_cursor *cursor;
-  cursor = grn_table_cursor_open(&context, result, NULL, 0, NULL, 0, 0, -1, 0);
-  cut_assert_not_null(cursor);
-  while (grn_table_cursor_next(&context, cursor) != GRN_ID_NIL) {
-    void *value;
-    int size;
-    grn_obj record_value;
-    GString *null_terminated_key;
-
-    grn_table_cursor_get_key(&context, cursor, &value);
-    GRN_TEXT_INIT(&record_value, 0);
-    grn_obj_get_value(&context, body, *((grn_id *)value), &record_value);
-    value = GRN_TEXT_VALUE(&record_value);
-    size = GRN_TEXT_LEN(&record_value);
-
-    null_terminated_key = g_string_new_len(value, size);
-    records = g_list_append(records, null_terminated_key->str);
-    g_string_free(null_terminated_key, FALSE);
-  }
-  grn_test_assert(grn_table_cursor_close(&context, cursor));
-  gcut_take_list(records, g_free);
-  expected = g_list_sort((GList *)expected, (GCompareFunc)g_utf8_collate);
-  records = g_list_sort((GList *)records, (GCompareFunc)g_utf8_collate);
-  gcut_assert_equal_list_string(expected, records);
-}
-
-static void
 grn_test_assert_select_all(grn_obj *result)
 {
-  grn_test_assert_select(gcut_take_new_list_string("hoge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("hoge",
                                                    "fuga fuga",
                                                    "moge moge moge",
                                                    "hoge hoge",
@@ -523,7 +493,9 @@ grn_test_assert_select_all(grn_obj *result)
                                                    "moge hoge moge moge moge",
                                                    "poyo moge hoge "
                                                      "moge moge moge",
-                                                   NULL), result);
+                                                   NULL),
+                         result,
+                         body);
 }
 
 static void
@@ -622,9 +594,12 @@ test_table_select_equal(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(gcut_take_new_list_string("poyo moge hoge "
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("poyo moge hoge "
                                                    "moge moge moge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
 }
 
 void
@@ -651,7 +626,10 @@ test_table_select_equal_indexed(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(gcut_take_new_list_string("hoge", NULL), res);
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("hoge", NULL),
+                         res,
+                         body);
 }
 
 void
@@ -687,10 +665,13 @@ test_table_select_select(void)
 
   grn_expr_exec(&context, expr, 0);
 
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "hoge fuga fuga",
                                                    "moge hoge hoge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
 }
 
 void
@@ -846,14 +827,17 @@ test_table_select_match(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "hoge moge moge moge",
                                                    "moge hoge hoge",
                                                    "moge hoge fuga fuga",
                                                    "moge hoge moge moge moge",
                                                    "poyo moge hoge "
                                                      "moge moge moge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
 }
 
 void
@@ -893,9 +877,12 @@ test_table_select_match_equal(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "moge hoge hoge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
 }
 
 void
@@ -926,7 +913,7 @@ test_table_select_match_nonexistent(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(NULL, res);
+  grn_test_assert_select(&context, NULL, res, body);
 }
 
 #define PARSE(expr,str,flags) \
@@ -1006,9 +993,12 @@ test_expr_parse(gconstpointer data)
   cut_assert_not_null(res);
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(gcut_take_new_list_string("poyo moge hoge "
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("poyo moge hoge "
                                                    "moge moge moge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
   grn_test_assert(grn_obj_close(&context, cond));
@@ -1027,10 +1017,13 @@ test_expr_parse(gconstpointer data)
   cut_assert_not_null(res);
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "hoge fuga fuga",
                                                    "moge hoge hoge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
 }
 
 void
@@ -1046,10 +1039,13 @@ test_expr_set_value(void)
   PARSE(cond, "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "hoge fuga fuga",
                                                    "moge hoge hoge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -1093,10 +1089,13 @@ test_expr_set_value_with_implicit_variable_reference(void)
         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "hoge fuga fuga",
                                                    "moge hoge hoge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -1137,10 +1136,13 @@ test_expr_set_value_with_query(void)
         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "hoge fuga fuga",
                                                    "moge hoge hoge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -1177,12 +1179,15 @@ test_expr_proc_call(void)
         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
-  grn_test_assert_select(gcut_take_new_list_string("hoge moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("hoge moge moge moge",
                                                    "moge hoge fuga fuga",
                                                    "moge hoge moge moge moge",
                                                    "poyo moge hoge "
                                                      "moge moge moge",
-                                                   NULL), res);
+                                                   NULL),
+                         res,
+                         body);
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -1238,7 +1243,8 @@ test_expr_score_set(void)
         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res2 = grn_table_select(&context, res, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res2);
-  grn_test_assert_select(gcut_take_new_list_string("moge moge moge",
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("moge moge moge",
                                                    "hoge fuga fuga",
                                                    "hoge moge moge moge",
                                                    "moge hoge hoge",
@@ -1246,7 +1252,9 @@ test_expr_score_set(void)
                                                    "moge hoge moge moge moge",
                                                    "poyo moge hoge "
                                                    "moge moge moge",
-                                                   NULL), res2);
+                                                   NULL),
+                         res2,
+                         body);
   grn_test_assert(grn_obj_close(&context, res2));
 }
 
@@ -1457,254 +1465,6 @@ test_expr_snip_without_tags(void)
 
     grn_test_assert(grn_snip_close(&context, snip));
   }
-}
-
-void
-data_expr_comparison_operator(void)
-{
-#define ADD_DATUM(label, expected_keys, query)                          \
-  gcut_add_datum(label,                                                 \
-                 "expected_keys", G_TYPE_POINTER, expected_keys,        \
-                 gcut_list_string_free,                                 \
-                 "query", G_TYPE_STRING, query,                         \
-                 NULL)
-
-  ADD_DATUM("<",
-            gcut_list_string_new("hoge", NULL),
-            "size < 9");
-  ADD_DATUM("<=",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 9");
-  ADD_DATUM(">",
-            gcut_list_string_new("moge hoge moge moge moge",
-                                 "poyo moge hoge moge moge moge",
-                                 NULL),
-            "size > 19");
-  ADD_DATUM(">=",
-            gcut_list_string_new("hoge moge moge moge",
-                                 "moge hoge fuga fuga",
-                                 "moge hoge moge moge moge",
-                                 "poyo moge hoge moge moge moge",
-                                 NULL),
-            "size >= 19");
-
-#undef ADD_DATUM
-}
-
-void
-test_expr_comparison_operator(gconstpointer data)
-{
-  grn_obj *v;
-
-  prepare_data();
-
-  cond = grn_expr_create(&context, NULL, 0);
-  cut_assert_not_null(cond);
-  v = grn_expr_add_var(&context, cond, NULL, 0);
-  cut_assert_not_null(v);
-  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-  PARSE(cond,
-        gcut_data_get_string(data, "query"),
-        GRN_EXPR_SYNTAX_SCRIPT);
-
-  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
-  cut_assert_not_null(res);
-  grn_test_assert_select(gcut_data_get_pointer(data, "expected_keys"),
-                         res);
-}
-
-#define ADD_DATUM(label, expected_keys, query)                          \
-  gcut_add_datum(label,                                                 \
-                 "expected_keys", G_TYPE_POINTER, expected_keys,        \
-                 gcut_list_string_free,                                 \
-                 "query", G_TYPE_STRING, query,                         \
-                 NULL)
-static void
-data_expr_arithmetic_operator_plus(void)
-{
-  ADD_DATUM("unary +",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= +9");
-  ADD_DATUM("+",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (4 + 5)");
-  ADD_DATUM("string +",
-            gcut_list_string_new("fuga fuga", NULL),
-            "body == \"fuga \" + \"fuga\"");
-  ADD_DATUM("string + int",
-            gcut_list_string_new("nick NICK 29", NULL),
-            "body == \"nick NICK \" + 29");
-  ADD_DATUM("int + string",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 4 + \"5\"");
-  ADD_DATUM("int + float",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 4 + 5.0001");
-}
-
-static void
-data_expr_arithmetic_operator_minus(void)
-{
-  ADD_DATUM("unary -",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= -5 + 14");
-  ADD_DATUM("-",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 14 - 5");
-  ADD_DATUM("int - string",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 14 - \"5\"");
-  ADD_DATUM("float - int",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 14.1 - 5");
-}
-
-static void
-data_expr_arithmetic_operator_star(void)
-{
-  ADD_DATUM("*",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 3 * 3");
-  ADD_DATUM("int * string",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 3 * \"3\"");
-  ADD_DATUM("float * int",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 3.1 * 3");
-}
-
-static void
-data_expr_arithmetic_operator_slash(void)
-{
-  ADD_DATUM("/",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 27 / 3");
-  ADD_DATUM("int / string",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 27 / \"3\"");
-  ADD_DATUM("float / int",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 27.1 / 3");
-}
-
-static void
-data_expr_arithmetic_operator_mod(void)
-{
-  ADD_DATUM("%",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 19 % 10");
-  ADD_DATUM("int % string",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 19 % \"10\"");
-  ADD_DATUM("float % int",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 19.1 % 10");
-  ADD_DATUM("float % string",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= 19.1 % \"9.9\"");
-}
-
-static void
-data_expr_arithmetic_operator_incr(void)
-{
-  ADD_DATUM("++integer",
-            gcut_list_string_new("hoge", NULL),
-            "++size <= 9");
-}
-
-void
-data_expr_arithmetic_operator(void)
-{
-  data_expr_arithmetic_operator_plus();
-  data_expr_arithmetic_operator_minus();
-  data_expr_arithmetic_operator_star();
-  data_expr_arithmetic_operator_slash();
-  data_expr_arithmetic_operator_mod();
-  data_expr_arithmetic_operator_incr();
-}
-#undef ADD_DATUM
-
-void
-test_expr_arithmetic_operator(gconstpointer data)
-{
-  grn_obj *v;
-
-  prepare_data();
-  INSERT_DOCUMENT("nick NICK 29");
-
-  cond = grn_expr_create(&context, NULL, 0);
-  cut_assert_not_null(cond);
-  v = grn_expr_add_var(&context, cond, NULL, 0);
-  cut_assert_not_null(v);
-  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-  PARSE(cond,
-        gcut_data_get_string(data, "query"),
-        GRN_EXPR_SYNTAX_SCRIPT);
-
-  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
-  cut_assert_not_null(res);
-  grn_test_assert_context(&context);
-  grn_test_assert_select(gcut_data_get_pointer(data, "expected_keys"),
-                         res);
-}
-
-void
-data_expr_arithmetic_operator_error(void)
-{
-#define ADD_DATUM(label, rc, message, query)                    \
-  gcut_add_datum(label,                                         \
-                 "rc", G_TYPE_UINT, rc,                         \
-                 "message", G_TYPE_STRING, message,             \
-                 "query", G_TYPE_STRING, query,                 \
-                 NULL)
-
-  ADD_DATUM("int + string",
-            GRN_INVALID_ARGUMENT,
-            "not a numerical format: <hoge>",
-            "size == 100 + \"hoge\"");
-
-  ADD_DATUM("string - string",
-            GRN_INVALID_ARGUMENT,
-            "\"string\" - \"string\" isn't supported",
-            "body == \"fuga\" - \"hoge\"");
-
-  ADD_DATUM("string * string",
-            GRN_INVALID_ARGUMENT,
-            "\"string\" * \"string\" isn't supported",
-            "body == \"fuga\" * \"hoge\"");
-
-  ADD_DATUM("string / string",
-            GRN_INVALID_ARGUMENT,
-            "\"string\" / \"string\" isn't supported",
-            "body == \"fuga\" / \"hoge\"");
-
-  ADD_DATUM("++string",
-            GRN_INVALID_ARGUMENT,
-            cut_take_printf("invalid increment target type: %d "
-                            "(FIXME: type name is needed)",
-                            GRN_DB_TEXT),
-            "++size_in_string <= 9");
-
-#undef ADD_DATUM
-}
-
-void
-test_expr_arithmetic_operator_error(gconstpointer data)
-{
-  grn_obj *v;
-
-  prepare_data();
-
-  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
-  PARSE(cond,
-        gcut_data_get_string(data, "query"),
-        GRN_EXPR_SYNTAX_SCRIPT);
-
-  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
-  cut_assert_not_null(res);
-  grn_test_assert_error(gcut_data_get_uint(data, "rc"),
-                        gcut_data_get_string(data, "message"),
-                        &context);
 }
 
 static grn_obj *
