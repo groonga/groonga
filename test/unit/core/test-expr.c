@@ -430,7 +430,7 @@ test_expr_query(void)
   grn_expr_append_op(&context, expr, GRN_OP_OBJ_SEARCH, 4);
 
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, ".c1 .:score");
+  GRN_TEXT_SETS(&context, &textbuf, ".c1 ._score");
   grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
   GRN_BULK_REWIND(&textbuf);
   grn_expr_append_obj(&context, expr, &textbuf, GRN_OP_PUSH, 1);
@@ -726,7 +726,7 @@ test_table_select_search(void)
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, ".size .:score .body");
+  GRN_TEXT_SETS(&context, &textbuf, ".size ._score .body");
   grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
   GRN_BULK_REWIND(&textbuf);
   grn_expr_append_obj(&context, expr, &textbuf, GRN_OP_PUSH, 1);
@@ -790,7 +790,7 @@ test_table_select_select_search(void)
   grn_expr_append_op(&context, expr, GRN_OP_OBJ_SEARCH, 4);
 
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, ".size .:score .body");
+  GRN_TEXT_SETS(&context, &textbuf, ".size ._score .body");
   grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
   GRN_BULK_REWIND(&textbuf);
   grn_expr_append_obj(&context, expr, &textbuf, GRN_OP_PUSH, 1);
