@@ -449,14 +449,13 @@ test_expr_query(void)
   grn_obj_close(&context, t1);
 }
 
-static grn_obj *docs, *terms, *size, *size_in_string, *body, *index_body;
+static grn_obj *docs, *terms, *size, *body, *index_body;
 
 static void
 insert_document(const gchar *body_content)
 {
   uint32_t s = (uint32_t)strlen(body_content);
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);
-  const gchar *size_string;
 
   GRN_TEXT_SET(&context, &textbuf, body_content, s);
   grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf,
@@ -464,11 +463,6 @@ insert_document(const gchar *body_content)
 
   GRN_UINT32_SET(&context, &intbuf, s);
   grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf,
-                                    GRN_OBJ_SET));
-
-  size_string = cut_take_printf("%u", s);
-  GRN_TEXT_SET(&context, &textbuf, size_string, strlen(size_string));
-  grn_test_assert(grn_obj_set_value(&context, size_in_string, docid, &textbuf,
                                     GRN_OBJ_SET));
 }
 
@@ -515,11 +509,6 @@ create_documents_table(void)
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
                            grn_ctx_at(&context, GRN_DB_UINT32));
   cut_assert_not_null(size);
-
-  size_in_string = grn_column_create(&context, docs, "size_in_string", 14, NULL,
-                                     GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
-                                     grn_ctx_at(&context, GRN_DB_TEXT));
-  cut_assert_not_null(size_in_string);
 
   body = grn_column_create(&context, docs, "body", 4, NULL,
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
@@ -920,17 +909,6 @@ test_table_select_match_nonexistent(void)
   grn_test_assert(grn_expr_parse(&context, (expr), (str), strlen(str), \
                                  body, GRN_OP_MATCH, GRN_OP_AND, flags))
 
-static void
-grn_assert_expr(gchar *inspected, grn_obj *expr)
-{
-  grn_obj strbuf;
-  GRN_TEXT_INIT(&strbuf, 0);
-  grn_expr_inspect(&context, &strbuf, expr);
-  GRN_TEXT_PUTC(&context, &strbuf, '\0');
-  cut_assert_equal_string(inspected, GRN_TEXT_VALUE(&strbuf));
-  GRN_OBJ_FIN(&context, &strbuf);
-}
-
 void
 data_expr_parse(void)
 {
@@ -985,9 +963,11 @@ test_expr_parse(gconstpointer data)
   PARSE(cond, gcut_data_get_string(data, "query_poyo"),
               gcut_data_get_int(data, "query_poyo_parse_level"));
   grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
-  grn_assert_expr("noname(?0:\"\"){body GET_VALUE \"hoge\" MATCH "
-                                  "body GET_VALUE \"moge\" MATCH AND "
-                                  "body GET_VALUE \"poyo\" MATCH AND}", cond);
+  grn_test_assert_expr(&context,
+                       "noname(?0:\"\"){body GET_VALUE \"hoge\" MATCH "
+                                       "body GET_VALUE \"moge\" MATCH AND "
+                                       "body GET_VALUE \"poyo\" MATCH AND}",
+                       cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
@@ -1011,7 +991,9 @@ test_expr_parse(gconstpointer data)
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   PARSE(cond, gcut_data_get_string(data, "query_size"),
               gcut_data_get_int(data, "query_size_parse_level"));
-  grn_assert_expr("noname(?0:\"\"){size GET_VALUE 14 EQUAL}", cond);
+  grn_test_assert_expr(&context,
+                       "noname(?0:\"\"){size GET_VALUE 14 EQUAL}",
+                       cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);

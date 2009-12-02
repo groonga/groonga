@@ -27,7 +27,7 @@ static gchar *tmp_directory;
 static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
-static grn_obj *cond, *res, *expr;
+static grn_obj *res, *expr;
 static grn_obj textbuf, intbuf;
 
 void data_comparison_operator(void);
@@ -61,7 +61,6 @@ cut_setup(void)
   grn_ctx_init(&context, 0);
   database = grn_db_create(&context, path, NULL);
 
-  cond = NULL;
   expr = NULL;
   res = NULL;
 
@@ -79,8 +78,6 @@ cut_teardown(void)
     grn_obj_close(&context, res);
   if (expr)
     grn_obj_close(&context, expr);
-  if (cond)
-    grn_obj_close(&context, cond);
 
   grn_db_close(&context, database);
   grn_ctx_fin(&context);
@@ -88,7 +85,7 @@ cut_teardown(void)
   g_free(path);
 }
 
-#define PARSE(expr,str,flags) \
+#define PARSE(expr, str, flags) \
   grn_test_assert(grn_expr_parse(&context, (expr), (str), strlen(str), \
                                  body, GRN_OP_MATCH, GRN_OP_AND, flags))
 
@@ -222,16 +219,16 @@ test_comparison_operator(gconstpointer data)
 
   prepare_data();
 
-  cond = grn_expr_create(&context, NULL, 0);
-  cut_assert_not_null(cond);
-  v = grn_expr_add_var(&context, cond, NULL, 0);
+  expr = grn_expr_create(&context, NULL, 0);
+  cut_assert_not_null(expr);
+  v = grn_expr_add_var(&context, expr, NULL, 0);
   cut_assert_not_null(v);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-  PARSE(cond,
+  PARSE(expr,
         gcut_data_get_string(data, "query"),
         GRN_EXPR_SYNTAX_SCRIPT);
 
-  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select(&context,
                          gcut_data_get_pointer(data, "expected_keys"),
@@ -358,16 +355,16 @@ test_arithmetic_operator(gconstpointer data)
   prepare_data();
   INSERT_DOCUMENT("nick NICK 29");
 
-  cond = grn_expr_create(&context, NULL, 0);
-  cut_assert_not_null(cond);
-  v = grn_expr_add_var(&context, cond, NULL, 0);
+  expr = grn_expr_create(&context, NULL, 0);
+  cut_assert_not_null(expr);
+  v = grn_expr_add_var(&context, expr, NULL, 0);
   cut_assert_not_null(v);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
-  PARSE(cond,
+  PARSE(expr,
         gcut_data_get_string(data, "query"),
         GRN_EXPR_SYNTAX_SCRIPT);
 
-  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_context(&context);
   grn_test_assert_select(&context,
@@ -423,12 +420,12 @@ test_arithmetic_operator_error(gconstpointer data)
 
   prepare_data();
 
-  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
-  PARSE(cond,
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+  PARSE(expr,
         gcut_data_get_string(data, "query"),
         GRN_EXPR_SYNTAX_SCRIPT);
 
-  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_error(gcut_data_get_uint(data, "rc"),
                         gcut_data_get_string(data, "message"),

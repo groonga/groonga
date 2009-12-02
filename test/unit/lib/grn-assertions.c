@@ -198,3 +198,21 @@ grn_test_assert_select_helper (grn_ctx *context,
 
   gcut_assert_equal_list_string(sorted_expected, records);
 }
+
+void
+grn_test_assert_expr_helper (grn_ctx     *context,
+                             const gchar *inspected,
+                             grn_obj     *expr,
+                             const gchar *inspected_expression,
+                             const gchar *expr_expression)
+{
+  grn_obj buffer;
+  const gchar *actual_inspected;
+
+  GRN_TEXT_INIT(&buffer, 0);
+  grn_expr_inspect(context, &buffer, expr);
+  GRN_TEXT_PUTC(context, &buffer, '\0');
+  actual_inspected = cut_take_strdup(GRN_TEXT_VALUE(&buffer));
+  GRN_OBJ_FIN(context, &buffer);
+  cut_assert_equal_string(inspected, actual_inspected);
+}

@@ -89,6 +89,14 @@
       __VA_ARGS__),                                                     \
     grn_test_assert_select(context, expected, select_result))
 
+#define grn_test_assert_expr(context, inspected, expr, ...)             \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_expr_helper((context), (inspected), (expr),       \
+                                  #inspected, #expr),                   \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_expr(context, inspected, expr))
+
 
 
 void     grn_test_assert_helper         (grn_rc       rc,
@@ -120,5 +128,10 @@ void     grn_test_assert_select_helper  (grn_ctx     *context,
                                          const gchar *expected_expression,
                                          const gchar *select_result_expression,
                                          const gchar *text_column_expression);
+void     grn_test_assert_expr_helper    (grn_ctx     *context,
+                                         const gchar *inspected,
+                                         grn_obj     *expr,
+                                         const gchar *inspected_expression,
+                                         const gchar *expr_expression);
 
 #endif
