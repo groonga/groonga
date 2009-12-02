@@ -45,7 +45,7 @@ log_events:
     o    MINUS
     o    STAR
     o    SLASH
-         MOD
+    o    MOD
          INCR
          DECR
          INCR_POST

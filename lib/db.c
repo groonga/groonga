@@ -6900,6 +6900,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_STAR :
     case GRN_OP_SLASH :
+    case GRN_OP_MOD :
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
     case GRN_OP_GET_VALUE :
@@ -7530,27 +7531,37 @@ truep(grn_ctx *ctx, grn_obj *v)
   return bv;
 }
 
-#define NUMERIC_ARITHMETIC_OPERATION(set, get, x, y, res, operation,    \
-                                     invalid_type_error) {              \
+#define NUMERIC_ARITHMETIC_OPERATION_PLUS(x, y) ((x) + (y))
+#define NUMERIC_ARITHMETIC_OPERATION_MINUS(x, y) ((x) - (y))
+#define NUMERIC_ARITHMETIC_OPERATION_STAR(x, y) ((x) * (y))
+#define NUMERIC_ARITHMETIC_OPERATION_SLASH(x, y) ((x) / (y))
+#define INTEGER_ARITHMETIC_OPERATION_MOD(x, y) ((x) % (y))
+#define FLOAT_ARITHMETIC_OPERATION_MOD(x, y) (fmod((x), (y)))
+
+#define NUMERIC_ARITHMETIC_OPERATION_DISPATCH(set, get, x, y, res,      \
+                                              integer_operation,        \
+                                              float_operation,          \
+                                              invalid_type_error) {     \
   switch (y->header.domain) {                                           \
   case GRN_DB_INT32 :                                                   \
-    set(ctx, res, get(x) operation GRN_INT32_VALUE(y));                 \
+    set(ctx, res, integer_operation(get(x), GRN_INT32_VALUE(y)));       \
     break;                                                              \
   case GRN_DB_UINT32 :                                                  \
-    set(ctx, res, get(x) operation GRN_UINT32_VALUE(y));                \
+    set(ctx, res, integer_operation(get(x), GRN_UINT32_VALUE(y)));      \
     break;                                                              \
   case GRN_DB_TIME :                                                    \
-    set(ctx, res, get(x) operation GRN_TIME_VALUE(y));                  \
+    set(ctx, res, integer_operation(get(x), GRN_TIME_VALUE(y)));        \
     break;                                                              \
   case GRN_DB_INT64 :                                                   \
-    set(ctx, res, get(x) operation GRN_INT64_VALUE(y));                 \
+    set(ctx, res, integer_operation(get(x), GRN_INT64_VALUE(y)));       \
     break;                                                              \
   case GRN_DB_UINT64 :                                                  \
-    set(ctx, res, get(x) operation GRN_UINT64_VALUE(y));                \
+    set(ctx, res, integer_operation(get(x), GRN_UINT64_VALUE(y)));      \
     break;                                                              \
   case GRN_DB_FLOAT :                                                   \
     res->header.domain = GRN_DB_FLOAT;                                  \
-    GRN_FLOAT_SET(ctx, res, get(x) operation GRN_FLOAT_VALUE(y));       \
+    GRN_FLOAT_SET(ctx, res,                                             \
+                  float_operation(get(x), GRN_FLOAT_VALUE(y)));         \
     break;                                                              \
   case GRN_DB_SHORT_TEXT :                                              \
   case GRN_DB_TEXT :                                                    \
@@ -7561,7 +7572,7 @@ truep(grn_ctx *ctx, grn_obj *v)
           "not a numerical format: <%s>", GRN_TEXT_VALUE(y));           \
       goto exit;                                                        \
     }                                                                   \
-    set(ctx, res, get(x) operation get(res));                           \
+    set(ctx, res, integer_operation(get(x), get(res)));                 \
     break;                                                              \
   default :                                                             \
     invalid_type_error;                                                 \
@@ -7569,41 +7580,60 @@ truep(grn_ctx *ctx, grn_obj *v)
   }                                                                     \
 }
 
-#define ARITHMETIC_OPERATION(operation, text_operation,                 \
-                             invalid_type_error) {                      \
+#define ARITHMETIC_OPERATION_DISPATCH(integer_operation,                \
+                                      float_operation,                  \
+                                      text_operation,                   \
+                                      invalid_type_error) {             \
   grn_obj *x, *y;                                                       \
   POP2ALLOC1(x, y, res);                                                \
   res->header.domain = x->header.domain;                                \
   switch (x->header.domain) {                                           \
   case GRN_DB_INT32 :                                                   \
-    NUMERIC_ARITHMETIC_OPERATION(GRN_INT32_SET, GRN_INT32_VALUE,        \
-                                 x, y, res, operation,                  \
-                                 invalid_type_error);                   \
+    NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT32_SET,                \
+                                          GRN_INT32_VALUE,              \
+                                          x, y, res,                    \
+                                          integer_operation,            \
+                                          float_operation,              \
+                                          invalid_type_error);          \
     break;                                                              \
   case GRN_DB_UINT32 :                                                  \
-    NUMERIC_ARITHMETIC_OPERATION(GRN_UINT32_SET, GRN_UINT32_VALUE,      \
-                                 x, y, res, operation,                  \
-                                 invalid_type_error);                   \
+    NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT32_SET,               \
+                                          GRN_UINT32_VALUE,             \
+                                          x, y, res,                    \
+                                          integer_operation,            \
+                                          float_operation,              \
+                                          invalid_type_error);          \
     break;                                                              \
   case GRN_DB_INT64 :                                                   \
-    NUMERIC_ARITHMETIC_OPERATION(GRN_UINT64_SET, GRN_UINT64_VALUE,      \
-                                 x, y, res, operation,                  \
-                                 invalid_type_error);                   \
+    NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT64_SET,               \
+                                          GRN_UINT64_VALUE,             \
+                                          x, y, res,                    \
+                                          integer_operation,            \
+                                          float_operation,              \
+                                          invalid_type_error);          \
     break;                                                              \
   case GRN_DB_TIME :                                                    \
-    NUMERIC_ARITHMETIC_OPERATION(GRN_TIME_SET, GRN_TIME_VALUE,          \
-                                 x, y, res, operation,                  \
-                                 invalid_type_error);                   \
+    NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_TIME_SET, GRN_TIME_VALUE, \
+                                          x, y, res,                    \
+                                          integer_operation,            \
+                                          float_operation,              \
+                                          invalid_type_error);          \
     break;                                                              \
   case GRN_DB_UINT64 :                                                  \
-    NUMERIC_ARITHMETIC_OPERATION(GRN_UINT64_SET, GRN_UINT64_VALUE,      \
-                                 x, y, res, operation,                  \
-                                 invalid_type_error);                   \
+    NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT64_SET,               \
+                                          GRN_UINT64_VALUE,             \
+                                          x, y, res,                    \
+                                          integer_operation,            \
+                                          float_operation,              \
+                                          invalid_type_error);          \
     break;                                                              \
   case GRN_DB_FLOAT :                                                   \
-    NUMERIC_ARITHMETIC_OPERATION(GRN_FLOAT_SET, GRN_FLOAT_VALUE,        \
-                                 x, y, res, operation,                  \
-                                 invalid_type_error);                   \
+    NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_FLOAT_SET,                \
+                                          GRN_FLOAT_VALUE,              \
+                                          x, y, res,                    \
+                                          float_operation,              \
+                                          float_operation,              \
+                                          invalid_type_error);          \
     break;                                                              \
   case GRN_DB_SHORT_TEXT :                                              \
   case GRN_DB_TEXT :                                                    \
@@ -8304,32 +8334,58 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         code++;
         break;
       case GRN_OP_PLUS :
-        ARITHMETIC_OPERATION(+,
-                             GRN_BULK_REWIND(res);
-                             grn_obj_cast(ctx, x, res, GRN_FALSE);
-                             grn_obj_cast(ctx, y, res, GRN_FALSE);
-                             ,);
+        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_PLUS,
+                                      NUMERIC_ARITHMETIC_OPERATION_PLUS,
+                                      {
+                                        GRN_BULK_REWIND(res);
+                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
+                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
+                                      }
+                                      ,);
         break;
       case GRN_OP_MINUS :
-        ARITHMETIC_OPERATION(-,
-                             ERR(GRN_INVALID_ARGUMENT,
-                                 "\"string\" - \"string\" isn't supported");
-                             goto exit;
-                             ,);
+        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_MINUS,
+                                      NUMERIC_ARITHMETIC_OPERATION_MINUS,
+                                      {
+                                        ERR(GRN_INVALID_ARGUMENT,
+                                            "\"string\" - \"string\" "
+                                            "isn't supported");
+                                        goto exit;
+                                      }
+                                      ,);
         break;
       case GRN_OP_STAR :
-        ARITHMETIC_OPERATION(*,
-                             ERR(GRN_INVALID_ARGUMENT,
-                                 "\"string\" * \"string\" isn't supported");
-                             goto exit;
-                             ,);
+        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_STAR,
+                                      NUMERIC_ARITHMETIC_OPERATION_STAR,
+                                      {
+                                        ERR(GRN_INVALID_ARGUMENT,
+                                            "\"string\" * \"string\" "
+                                            "isn't supported");
+                                        goto exit;
+                                      }
+                                      ,);
         break;
       case GRN_OP_SLASH :
-        ARITHMETIC_OPERATION(/,
-                             ERR(GRN_INVALID_ARGUMENT,
-                                 "\"string\" / \"string\" isn't supported");
-                             goto exit;
-                             ,);
+        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_SLASH,
+                                      NUMERIC_ARITHMETIC_OPERATION_SLASH,
+                                      {
+                                        ERR(GRN_INVALID_ARGUMENT,
+                                            "\"string\" / \"string\" "
+                                            "isn't supported");
+                                        goto exit;
+                                      }
+                                      ,);
+        break;
+      case GRN_OP_MOD :
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_MOD,
+                                      FLOAT_ARITHMETIC_OPERATION_MOD,
+                                      {
+                                        ERR(GRN_INVALID_ARGUMENT,
+                                            "\"string\" % \"string\" "
+                                            "isn't supported");
+                                        goto exit;
+                                      }
+                                      ,);
         break;
       default :
         break;

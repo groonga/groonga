@@ -1553,12 +1553,25 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("/",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 27 / 3");
-  ADD_DATUM("int * string",
+  ADD_DATUM("int / string",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 27 / \"3\"");
-  ADD_DATUM("float * int",
+  ADD_DATUM("float / int",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 27.1 / 3");
+
+  ADD_DATUM("%",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 19 % 10");
+  ADD_DATUM("int % string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 19 % \"10\"");
+  ADD_DATUM("float % int",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 19.1 % 10");
+  ADD_DATUM("float % string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 19.1 % \"9.9\"");
 
 #undef ADD_DATUM
 }
