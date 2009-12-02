@@ -449,17 +449,27 @@ test_expr_query(void)
   grn_obj_close(&context, t1);
 }
 
-static grn_obj *docs, *terms, *size, *body, *index_body;
+static grn_obj *docs, *terms, *size, *size_in_string, *body, *index_body;
 
 static void
 insert_document(const gchar *body_content)
 {
   uint32_t s = (uint32_t)strlen(body_content);
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);
+  const gchar *size_string;
+
   GRN_TEXT_SET(&context, &textbuf, body_content, s);
-  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf, GRN_OBJ_SET));
+  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf,
+                                    GRN_OBJ_SET));
+
   GRN_UINT32_SET(&context, &intbuf, s);
-  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf, GRN_OBJ_SET));
+  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf,
+                                    GRN_OBJ_SET));
+
+  size_string = cut_take_printf("%u", s);
+  GRN_TEXT_SET(&context, &textbuf, size_string, strlen(size_string));
+  grn_test_assert(grn_obj_set_value(&context, size_in_string, docid, &textbuf,
+                                    GRN_OBJ_SET));
 }
 
 #define INSERT_DOCUMENT(body) \
@@ -533,6 +543,11 @@ create_documents_table(void)
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
                            grn_ctx_at(&context, GRN_DB_UINT32));
   cut_assert_not_null(size);
+
+  size_in_string = grn_column_create(&context, docs, "size_in_string", 14, NULL,
+                                     GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                                     grn_ctx_at(&context, GRN_DB_TEXT));
+  cut_assert_not_null(size_in_string);
 
   body = grn_column_create(&context, docs, "body", 4, NULL,
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
@@ -1592,9 +1607,9 @@ data_expr_arithmetic_operator_mod(void)
 static void
 data_expr_arithmetic_operator_incr(void)
 {
-  ADD_DATUM("incr",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "++size <= 10");
+  ADD_DATUM("++integer",
+            gcut_list_string_new("hoge", NULL),
+            "++size <= 9");
 }
 
 void
@@ -1662,6 +1677,13 @@ data_expr_arithmetic_operator_error(void)
             GRN_INVALID_ARGUMENT,
             "\"string\" / \"string\" isn't supported",
             "body == \"fuga\" / \"hoge\"");
+
+  ADD_DATUM("++string",
+            GRN_INVALID_ARGUMENT,
+            cut_take_printf("invalid increment target type: %d "
+                            "(FIXME: type name is needed)",
+                            GRN_DB_TEXT),
+            "++size_in_string <= 9");
 
 #undef ADD_DATUM
 }

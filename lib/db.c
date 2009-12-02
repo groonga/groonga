@@ -7650,6 +7650,48 @@ truep(grn_ctx *ctx, grn_obj *v)
   code++;                                                               \
 }
 
+#define EXEC_INCR(increment_sentence, assign_sentence)  \
+  increment_sentence                                    \
+  assign_sentence
+
+#define EXEC_INCR_POST(increment_sentence, assign_sentence)     \
+  assign_sentence                                               \
+  increment_sentence
+
+#define INCR_OPERATION_DISPATCH(exec_incr, delta) {                     \
+  grn_obj *x;                                                           \
+  POP1ALLOC1(x, res);                                                   \
+  res->header.domain = x->header.domain;                                \
+  switch (x->header.domain) {                                           \
+  case GRN_DB_INT32 :                                                   \
+    exec_incr(GRN_INT32_SET(ctx, x, GRN_INT32_VALUE(x) + delta);,       \
+              GRN_INT32_SET(ctx, res, GRN_INT32_VALUE(x)););            \
+    break;                                                              \
+  case GRN_DB_UINT32 :                                                  \
+    exec_incr(GRN_UINT32_SET(ctx, x, GRN_UINT32_VALUE(x) + delta);,     \
+              GRN_UINT32_SET(ctx, res, GRN_UINT32_VALUE(x)););          \
+    break;                                                              \
+  case GRN_DB_INT64 :                                                   \
+    exec_incr(GRN_INT64_SET(ctx, x, GRN_INT64_VALUE(x) + delta);,       \
+              GRN_INT64_SET(ctx, res, GRN_INT64_VALUE(x)););            \
+    break;                                                              \
+  case GRN_DB_UINT64 :                                                  \
+    exec_incr(GRN_UINT64_SET(ctx, x, GRN_UINT64_VALUE(x) + delta);,     \
+              GRN_UINT64_SET(ctx, res, GRN_UINT64_VALUE(x)););          \
+    break;                                                              \
+  case GRN_DB_FLOAT :                                                   \
+    exec_incr(GRN_FLOAT_SET(ctx, x, GRN_FLOAT_VALUE(x) + delta);,       \
+              GRN_FLOAT_SET(ctx, res, GRN_FLOAT_VALUE(x)););            \
+    break;                                                              \
+  default:                                                              \
+    ERR(GRN_INVALID_ARGUMENT,                                           \
+        "invalid increment target type: %d "                            \
+        "(FIXME: type name is needed)", x->header.domain);              \
+    break;                                                              \
+  }                                                                     \
+  code++;                                                               \
+}
+
 grn_rc
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
@@ -8391,16 +8433,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ,);
         break;
       case GRN_OP_INCR :
-        {
-          grn_obj *x;
-          int value;
-          POP1ALLOC1(x, res);
-          res->header.domain = x->header.domain;
-          value = GRN_INT32_VALUE(x);
-          GRN_INT32_SET(ctx, x, value + 1);
-          GRN_INT32_SET(ctx, res, value + 1);
-        }
-        code++;
+        INCR_OPERATION_DISPATCH(EXEC_INCR, 1);
         break;
       default :
         break;
