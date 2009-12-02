@@ -1401,6 +1401,9 @@ grn_table_size(grn_ctx *ctx, grn_obj *table)
   GRN_API_ENTER;
   if (table) {
     switch (table->header.type) {
+    case GRN_DB :
+      n = grn_pat_size(ctx, ((grn_db *)table)->keys);
+      break;
     case GRN_TABLE_PAT_KEY :
       n = grn_pat_size(ctx, (grn_pat *)table);
       break;

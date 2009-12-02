@@ -26,6 +26,7 @@ void test_range(void);
 void test_cursor(void);
 void test_get_persistent_object_from_opened_database(void);
 void test_recreate_temporary_object_on_opened_database(void);
+void test_size(void);
 
 static gchar *tmp_directory;
 
@@ -167,4 +168,27 @@ test_recreate_temporary_object_on_opened_database(void)
                                             GRN_OBJ_TABLE_HASH_KEY,
                                             grn_ctx_at(context, GRN_DB_UINT32),
                                             NULL));
+}
+
+void
+test_size(void)
+{
+  guint n_builtin_objects = 255;
+  const gchar table_name[] = "bookmarks";
+
+  database = grn_db_create(context, NULL, NULL);
+
+  cut_assert_equal_uint(n_builtin_objects, grn_table_size(context, database));
+  grn_test_assert_context(context);
+
+  grn_table_create(context,
+                   table_name,
+                   strlen(table_name),
+                   NULL,
+                   GRN_OBJ_TABLE_HASH_KEY,
+                   grn_ctx_at(context, GRN_DB_UINT32),
+                   NULL);
+  cut_assert_equal_uint(n_builtin_objects + 1,
+                        grn_table_size(context, database));
+  grn_test_assert_context(context);
 }
