@@ -5586,11 +5586,12 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
   ERRCLR(ctx);
   GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%s)", string);
   {
-    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0,
-                             optarg->vector_size ? optarg->weight_vector : NULL,
-                             optarg->vector_size,
-                             NULL, NULL, 0};
+    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0};
     if (!s) { return GRN_INVALID_ARGUMENT; }
+    if (optarg && optarg->vector_size > 0) {
+      arg.weight_vector = optarg->weight_vector;
+      arg.vector_size = optarg->vector_size;
+    }
     /* todo : support subrec
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);
     */
