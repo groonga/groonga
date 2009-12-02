@@ -1498,16 +1498,15 @@ test_expr_comparison_operator(gconstpointer data)
                          res);
 }
 
-void
-data_expr_arithmetic_operator(void)
-{
 #define ADD_DATUM(label, expected_keys, query)                          \
   gcut_add_datum(label,                                                 \
                  "expected_keys", G_TYPE_POINTER, expected_keys,        \
                  gcut_list_string_free,                                 \
                  "query", G_TYPE_STRING, query,                         \
                  NULL)
-
+static void
+data_expr_arithmetic_operator_plus(void)
+{
   ADD_DATUM("unary +",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= +9");
@@ -1526,7 +1525,11 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("int + float",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 4 + 5.0001");
+}
 
+static void
+data_expr_arithmetic_operator_minus(void)
+{
   ADD_DATUM("unary -",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5 + 14");
@@ -1539,7 +1542,11 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("float - int",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 14.1 - 5");
+}
 
+static void
+data_expr_arithmetic_operator_star(void)
+{
   ADD_DATUM("*",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 3 * 3");
@@ -1549,7 +1556,11 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("float * int",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 3.1 * 3");
+}
 
+static void
+data_expr_arithmetic_operator_slash(void)
+{
   ADD_DATUM("/",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 27 / 3");
@@ -1559,7 +1570,11 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("float / int",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 27.1 / 3");
+}
 
+static void
+data_expr_arithmetic_operator_mod(void)
+{
   ADD_DATUM("%",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 19 % 10");
@@ -1572,9 +1587,18 @@ data_expr_arithmetic_operator(void)
   ADD_DATUM("float % string",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 19.1 % \"9.9\"");
-
-#undef ADD_DATUM
 }
+
+void
+data_expr_arithmetic_operator(void)
+{
+  data_expr_arithmetic_operator_plus();
+  data_expr_arithmetic_operator_minus();
+  data_expr_arithmetic_operator_star();
+  data_expr_arithmetic_operator_slash();
+  data_expr_arithmetic_operator_mod();
+}
+#undef ADD_DATUM
 
 void
 test_expr_arithmetic_operator(gconstpointer data)
