@@ -731,9 +731,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => "KEY_NORMALIZE"))
-      assert_response("true",
-                      response,
-                      :content_type => "application/json")
+      assert_response("true", response, :content_type => "application/json")
 
       assert_table_list([["users",
                           Flag::PERSISTENT | Table::HASH_KEY | Key::NORMALIZE,
@@ -744,9 +742,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => "TABLE_NO_KEY|KEY_NORMALIZE"))
-      assert_response("true",
-                      response,
-                      :content_type => "application/json")
+      assert_response("true", response, :content_type => "application/json")
 
       assert_table_list([["users",
                           Flag::PERSISTENT | Table::NO_KEY | Key::NORMALIZE,
@@ -757,9 +753,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => " TABLE_NO_KEY | KEY_NORMALIZE "))
-      assert_response("true",
-                      response,
-                      :content_type => "application/json")
+      assert_response("true", response, :content_type => "application/json")
 
       assert_table_list([["users",
                           Flag::PERSISTENT | Table::NO_KEY | Key::NORMALIZE,
@@ -770,9 +764,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => "INVALID_SYMBOL"))
-      assert_response("false",
-                      response,
-                      :content_type => "application/json")
+      assert_response("false", response, :content_type => "application/json")
 
       assert_table_list([])
     end
@@ -785,8 +777,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "name",
                                   :flags => "COLUMN_VECTOR",
                                   :type => "ShortText"))
-      assert_response("true", response,
-                      :content_type => "application/json")
+      assert_response("true", response, :content_type => "application/json")
       @users_name_column_id = object_registered
 
       assert_column_list([[@users_name_column_id,
@@ -804,8 +795,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "name",
                                   :flags => "COLUMN_INDEX|INDEX_WITH_WEIGHT",
                                   :type => "ShortText"))
-      assert_response("true", response,
-                      :content_type => "application/json")
+      assert_response("true", response, :content_type => "application/json")
       @users_name_column_id = object_registered
 
       assert_column_list([[@users_name_column_id,
@@ -824,8 +814,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "name",
                                   :flags => " COLUMN_INDEX | INDEX_WITH_WEIGHT ",
                                   :type => "ShortText"))
-      assert_response("true", response,
-                      :content_type => "application/json")
+      assert_response("true", response, :content_type => "application/json")
       @users_name_column_id = object_registered
 
       assert_column_list([[@users_name_column_id,
@@ -844,8 +833,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "name",
                                   :flags => "INVALID_SYMBOL",
                                   :type => "ShortText"))
-      assert_response("false", response,
-                      :content_type => "application/json")
+      assert_response("false", response, :content_type => "application/json")
       @users_name_column_id = object_registered
 
       assert_column_list([])
@@ -904,9 +892,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
     def create_users_table
       response = get(command_path(:table_create, :name => "users"))
-      assert_response("true",
-                      response,
-                      :content_type => "application/json")
+      assert_response("true", response, :content_type => "application/json")
       @users_table_id = object_registered
 
       assert_table_list([["users", Flag::PERSISTENT | Table::HASH_KEY,
