@@ -167,6 +167,9 @@ grn_parse_table_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "TABLE_NO_KEY", 12)) {
       flags |= GRN_OBJ_TABLE_NO_KEY;
       nptr += 12;
+    } else if (!memcmp(nptr, "TABLE_VIEW", 10)) {
+      flags |= GRN_OBJ_TABLE_VIEW;
+      nptr += 10;
     } else if (!memcmp(nptr, "KEY_NORMALIZE", 13)) {
       flags |= GRN_OBJ_KEY_NORMALIZE;
       nptr += 13;
