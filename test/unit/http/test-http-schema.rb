@@ -738,6 +738,17 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
+    def test_table_create_table_view
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => "TABLE_VIEW"))
+      assert_response("true", response, :content_type => "application/json")
+
+      assert_table_list([["users",
+                          Flag::PERSISTENT | Table::VIEW,
+                          Type::VOID]])
+    end
+
     def test_table_create_combined_symbols
       response = get(command_path(:table_create,
                                   :name => "users",
