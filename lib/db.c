@@ -6902,6 +6902,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
     case GRN_OP_INCR :
+    case GRN_OP_DECR :
       {
         DFI_POP(e, dfi);
         if (dfi) {
@@ -7673,7 +7674,7 @@ truep(grn_ctx *ctx, grn_obj *v)
   assign_sentence                                               \
   increment_sentence
 
-#define INCR_OPERATION_DISPATCH(exec_incr, delta) {                     \
+#define OPERATE_AND_ASSIGN_DISPATCH(exec_incr, delta, set_flags) {      \
   grn_obj *var, *col, value;                                            \
   grn_id rid;                                                           \
                                                                         \
@@ -7725,7 +7726,7 @@ truep(grn_ctx *ctx, grn_obj *v)
     goto exit;                                                          \
     break;                                                              \
   }                                                                     \
-  exec_incr(grn_obj_set_value(ctx, col, rid, &value, GRN_OBJ_INCR);,    \
+  exec_incr(grn_obj_set_value(ctx, col, rid, &value, set_flags);,       \
             grn_obj_get_value(ctx, col, rid, res););                    \
   code++;                                                               \
 }
@@ -8471,7 +8472,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ,);
         break;
       case GRN_OP_INCR :
-        INCR_OPERATION_DISPATCH(EXEC_INCR, 1);
+        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR, 1, GRN_OBJ_INCR);
+        break;
+      case GRN_OP_DECR :
+        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR, 1, GRN_OBJ_DECR);
         break;
       default :
         break;

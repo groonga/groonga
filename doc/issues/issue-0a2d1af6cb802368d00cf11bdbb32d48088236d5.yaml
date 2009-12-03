@@ -47,7 +47,7 @@ log_events:
     o    SLASH
     o    MOD
     o    INCR
-         DECR
+    o    DECR
          INCR_POST
          DECR_POST
 - - 2009-12-01 03:52:13.001237 Z
