@@ -149,6 +149,38 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return outbuf;
 }
 
+static grn_obj_flags
+grn_parse_table_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
+{
+  grn_obj_flags flags = 0;
+  while (nptr < end) {
+    if (*nptr == '|' || *nptr == ' ') {
+      nptr += 1;
+      continue;
+    }
+    if (!memcmp(nptr, "TABLE_HASH_KEY", 14)) {
+      flags |= GRN_OBJ_TABLE_HASH_KEY;
+      nptr += 14;
+    } else if (!memcmp(nptr, "TABLE_PAT_KEY", 13)) {
+      flags |= GRN_OBJ_TABLE_PAT_KEY;
+      nptr += 13;
+    } else if (!memcmp(nptr, "TABLE_NO_KEY", 12)) {
+      flags |= GRN_OBJ_TABLE_NO_KEY;
+      nptr += 12;
+    } else if (!memcmp(nptr, "KEY_NORMALIZE", 13)) {
+      flags |= GRN_OBJ_KEY_NORMALIZE;
+      nptr += 13;
+    } else if (!memcmp(nptr, "KEY_WITH_SIS", 12)) {
+      flags |= GRN_OBJ_KEY_WITH_SIS;
+      nptr += 12;
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %*s", end - nptr, nptr);
+      return 0;
+    }
+  }
+  return flags;
+}
+
 static grn_obj *
 proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -160,8 +192,17 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 
   if (nvars == 6) {
     grn_obj *table;
+    const char *rest;
     grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[1].value),
-                                   GRN_BULK_CURR(&vars[1].value), NULL);
+                                   GRN_BULK_CURR(&vars[1].value), &rest);
+    if (GRN_TEXT_VALUE(&vars[1].value) == rest) {
+      flags = grn_parse_table_create_flags(ctx, GRN_TEXT_VALUE(&vars[1].value),
+                                           GRN_BULK_CURR(&vars[1].value));
+      if (ctx->rc) {
+        GRN_TEXT_PUTS(ctx, buf, "false");
+        return buf;
+      }
+    }
     if (GRN_TEXT_LEN(&vars[0].value)) { flags |= GRN_OBJ_PERSISTENT; }
     table = grn_table_create(ctx,
                              GRN_TEXT_VALUE(&vars[0].value),
