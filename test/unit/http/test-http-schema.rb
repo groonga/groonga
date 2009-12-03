@@ -777,6 +777,25 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
 
+    def test_column_create_single_symbol
+      create_users_table
+
+      response = get(command_path(:column_create,
+                                  :table => "users",
+                                  :name => "name",
+                                  :flags => "COLUMN_VECTOR",
+                                  :type => "ShortText"))
+      assert_response("true", response,
+                      :content_type => "application/json")
+      @users_name_column_id = object_registered
+
+      assert_column_list([[@users_name_column_id,
+                           "name",
+                           "var",
+                           Column::VECTOR | Flag::PERSISTENT | Key::VAR_SIZE,
+                           @users_table_id]])
+    end
+
     private
     def assert_response(expected, response, options=nil)
       actual = nil
@@ -807,6 +826,36 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
       actual = yield(actual) if block_given?
       assert_equal(expected, actual)
+    end
+
+    def assert_column_list(expected)
+      response = get(command_path(:column_list, :table => "users"))
+      expected = expected.collect do |values|
+        id, name, type, flags, domain = values
+        [id, name, nil, type, flags, domain]
+      end
+      assert_response([
+                       ["id", "name", "path", "type", "flags", "domain"],
+                       *expected
+                      ],
+                      response,
+                      :content_type => "application/json") do |actual|
+        actual[0, 1] + actual[1..-1].collect do |values|
+          id, name, path, type, flags, domain = values
+          [id, name, nil, type, flags, domain]
+        end
+      end
+    end
+
+    def create_users_table
+      response = get(command_path(:table_create, :name => "users"))
+      assert_response("true",
+                      response,
+                      :content_type => "application/json")
+      @users_table_id = object_registered
+
+      assert_table_list([["users", Flag::PERSISTENT | Table::HASH_KEY,
+                          Type::VOID]])
     end
   end
 end
