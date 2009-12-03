@@ -725,9 +725,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
   end
 
-  class StringFlagsTest < Test::Unit::TestCase
+  class SymbolFlagsTest < Test::Unit::TestCase
     include Utils
-    def test_normalize_key_by_string
+    def test_single_symbol
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => "KEY_NORMALIZE"))
