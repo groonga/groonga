@@ -796,6 +796,61 @@ class HTTPSchemaTest < Test::Unit::TestCase
                            @users_table_id]])
     end
 
+    def test_column_create_combined_symbols
+      create_users_table
+
+      response = get(command_path(:column_create,
+                                  :table => "users",
+                                  :name => "name",
+                                  :flags => "COLUMN_INDEX|INDEX_WITH_WEIGHT",
+                                  :type => "ShortText"))
+      assert_response("true", response,
+                      :content_type => "application/json")
+      @users_name_column_id = object_registered
+
+      assert_column_list([[@users_name_column_id,
+                           "name",
+                           "index",
+                           Column::INDEX | Flag::WITH_WEIGHT |
+                           Flag::PERSISTENT | Key::VAR_SIZE,
+                           @users_table_id]])
+    end
+
+    def test_column_create_combined_symbols_with_whitespaces
+      create_users_table
+
+      response = get(command_path(:column_create,
+                                  :table => "users",
+                                  :name => "name",
+                                  :flags => " COLUMN_INDEX | INDEX_WITH_WEIGHT ",
+                                  :type => "ShortText"))
+      assert_response("true", response,
+                      :content_type => "application/json")
+      @users_name_column_id = object_registered
+
+      assert_column_list([[@users_name_column_id,
+                           "name",
+                           "index",
+                           Column::INDEX | Flag::WITH_WEIGHT |
+                           Flag::PERSISTENT | Key::VAR_SIZE,
+                           @users_table_id]])
+    end
+
+    def test_column_create_invalid_symbol
+      create_users_table
+
+      response = get(command_path(:column_create,
+                                  :table => "users",
+                                  :name => "name",
+                                  :flags => "INVALID_SYMBOL",
+                                  :type => "ShortText"))
+      assert_response("false", response,
+                      :content_type => "application/json")
+      @users_name_column_id = object_registered
+
+      assert_column_list([])
+    end
+
     private
     def assert_response(expected, response, options=nil)
       actual = nil
