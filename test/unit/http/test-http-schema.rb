@@ -740,6 +740,19 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
+    def test_combined_symbols
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => "TABLE_NO_KEY|KEY_NORMALIZE"))
+      assert_response("true",
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([["users",
+                          Flag::PERSISTENT | Table::NO_KEY | Key::NORMALIZE,
+                          Type::VOID]])
+    end
+
     private
     def assert_response(expected, response, options=nil)
       actual = nil
