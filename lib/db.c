@@ -6691,7 +6691,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   (c)->flags = 0;\
 }
 
-#define APPEND_UNARY_OP(e, c_unary_operator) {                  \
+#define APPEND_UNARY_MINUS_OP(e) {                              \
   grn_expr_code *code;                                          \
   grn_id domain;                                                \
   unsigned char type;                                           \
@@ -6704,16 +6704,25 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   if (CONSTP(x)) {                                              \
     switch (domain) {                                           \
     case GRN_DB_UINT32:                                         \
-      GRN_UINT32_SET(ctx, x,                                    \
-                     c_unary_operator GRN_UINT32_VALUE(x));     \
+      {                                                         \
+        unsigned int value;                                     \
+        value = GRN_UINT32_VALUE(x);                            \
+        if (value > (unsigned int)0x80000000) {                 \
+          domain = GRN_DB_INT64;                                \
+          grn_obj_reinit(ctx, x, domain, 0);                    \
+          GRN_INT64_SET(ctx, x, -((long long int)value));       \
+        } else {                                                \
+          domain = GRN_DB_INT32;                                \
+          grn_obj_reinit(ctx, x, domain, 0);                    \
+          GRN_INT32_SET(ctx, x, -((int)value));                 \
+        }                                                       \
+      }                                                         \
       break;                                                    \
     case GRN_DB_INT64:                                          \
-      GRN_INT64_SET(ctx, x,                                     \
-                    c_unary_operator GRN_INT64_VALUE(x));       \
+      GRN_INT64_SET(ctx, x, -GRN_INT64_VALUE(x));               \
       break;                                                    \
     case GRN_DB_FLOAT:                                          \
-      GRN_FLOAT_SET(ctx, x,                                     \
-                    c_unary_operator GRN_FLOAT_VALUE(x));       \
+      GRN_FLOAT_SET(ctx, x, -GRN_FLOAT_VALUE(x));               \
       break;                                                    \
     default:                                                    \
       break;                                                    \
@@ -6898,15 +6907,13 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       DFI_PUT(e, type, domain, code);
       break;
     case GRN_OP_PLUS :
-      if (nargs == 1) {
-        APPEND_UNARY_OP(e, +);
-      } else {
+      if (nargs > 1) {
         PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       }
       break;
     case GRN_OP_MINUS :
       if (nargs == 1) {
-        APPEND_UNARY_OP(e, -);
+        APPEND_UNARY_MINUS_OP(e);
       } else {
         PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       }
@@ -7565,10 +7572,14 @@ truep(grn_ctx *ctx, grn_obj *v)
   return bv;
 }
 
-#define NUMERIC_ARITHMETIC_OPERATION_PLUS(x, y) ((x) + (y))
-#define NUMERIC_ARITHMETIC_OPERATION_MINUS(x, y) ((x) - (y))
-#define NUMERIC_ARITHMETIC_OPERATION_STAR(x, y) ((x) * (y))
-#define NUMERIC_ARITHMETIC_OPERATION_SLASH(x, y) ((x) / (y))
+#define INTEGER_ARITHMETIC_OPERATION_PLUS(x, y) ((x) + (y))
+#define FLOAT_ARITHMETIC_OPERATION_PLUS(x, y) ((double)(x) + (double)(y))
+#define INTEGER_ARITHMETIC_OPERATION_MINUS(x, y) ((x) - (y))
+#define FLOAT_ARITHMETIC_OPERATION_MINUS(x, y) ((double)(x) - (double)(y))
+#define INTEGER_ARITHMETIC_OPERATION_STAR(x, y) ((x) * (y))
+#define FLOAT_ARITHMETIC_OPERATION_STAR(x, y) ((double)(x) * (double)(y))
+#define INTEGER_ARITHMETIC_OPERATION_SLASH(x, y) ((x) / (y))
+#define FLOAT_ARITHMETIC_OPERATION_SLASH(x, y) ((double)(x) / (double)(y))
 #define INTEGER_ARITHMETIC_OPERATION_MOD(x, y) ((x) % (y))
 #define FLOAT_ARITHMETIC_OPERATION_MOD(x, y) (fmod((x), (y)))
 
@@ -8433,8 +8444,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         code++;
         break;
       case GRN_OP_PLUS :
-        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_PLUS,
-                                      NUMERIC_ARITHMETIC_OPERATION_PLUS,
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_PLUS,
+                                      FLOAT_ARITHMETIC_OPERATION_PLUS,
                                       {
                                         GRN_BULK_REWIND(res);
                                         grn_obj_cast(ctx, x, res, GRN_FALSE);
@@ -8443,8 +8454,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ,);
         break;
       case GRN_OP_MINUS :
-        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_MINUS,
-                                      NUMERIC_ARITHMETIC_OPERATION_MINUS,
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_MINUS,
+                                      FLOAT_ARITHMETIC_OPERATION_MINUS,
                                       {
                                         ERR(GRN_INVALID_ARGUMENT,
                                             "\"string\" - \"string\" "
@@ -8454,8 +8465,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ,);
         break;
       case GRN_OP_STAR :
-        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_STAR,
-                                      NUMERIC_ARITHMETIC_OPERATION_STAR,
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_STAR,
+                                      FLOAT_ARITHMETIC_OPERATION_STAR,
                                       {
                                         ERR(GRN_INVALID_ARGUMENT,
                                             "\"string\" * \"string\" "
@@ -8465,8 +8476,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ,);
         break;
       case GRN_OP_SLASH :
-        ARITHMETIC_OPERATION_DISPATCH(NUMERIC_ARITHMETIC_OPERATION_SLASH,
-                                      NUMERIC_ARITHMETIC_OPERATION_SLASH,
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_SLASH,
+                                      FLOAT_ARITHMETIC_OPERATION_SLASH,
                                       {
                                         ERR(GRN_INVALID_ARGUMENT,
                                             "\"string\" / \"string\" "

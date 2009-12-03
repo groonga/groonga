@@ -307,13 +307,45 @@ data_arithmetic_operator_minus(void)
   ADD_DATUM("-integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5 + 14");
+  ADD_DATUM("-integer maximum",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            cut_take_printf("size <= "
+                            "-%" G_GINT64_FORMAT " + %" G_GINT64_FORMAT,
+                            ((gint64)G_MAXINT32) + 1,
+                            ((gint64)G_MAXINT32) + 1 + 9));
+  ADD_DATUM("-integer overflow",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            cut_take_printf("size <= "
+                            "-%" G_GINT64_FORMAT " + %" G_GINT64_FORMAT,
+                            ((gint64)G_MAXINT32) + 2,
+                            ((gint64)G_MAXINT32) + 2 + 9));
   ADD_DATUM("-integer64",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            cut_take_printf("size <= -%" G_GINT64_FORMAT " + %" G_GINT64_FORMAT,
-                            G_MAXINT64, G_MAXINT64 + 9));
+            cut_take_printf("size <= "
+                            "-%" G_GINT64_FORMAT " + "
+                            "%" G_GINT64_FORMAT " + 9",
+                            G_MAXINT64 / 2, G_MAXINT64 / 2));
+  ADD_DATUM("-integer64 maximum",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            cut_take_printf("size <= "
+                            "-%" G_GINT64_FORMAT " + "
+                            "%" G_GINT64_FORMAT " + 100 + 9",
+                            G_MAXINT64,
+                            G_MAXINT64 - 100));
+  ADD_DATUM("-integer64 overflow",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            cut_take_printf("size <= "
+                            "-%" G_GUINT64_FORMAT " + "
+                            "%" G_GUINT64_FORMAT " + "
+                            /*  "100 + " */
+                            /* NOTE: 100 is disappeared by float error. */
+                            "9",
+                            ((guint64)(G_MAXINT64)) + 1,
+                            ((guint64)(G_MAXINT64)) + 1 - 100));
   ADD_DATUM("-float",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5.9 + 14.9");
+
   ADD_DATUM("integer - integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 14 - 5");
