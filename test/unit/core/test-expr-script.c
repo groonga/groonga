@@ -409,14 +409,15 @@ data_arithmetic_operator_incr(void)
 
   ADD_DATUM("++integer",
             gcut_list_string_new("hoge", NULL),
-            "++size <= 9");
+            "++size == 5 && size == 5");
   ADD_DATUM("++float",
             gcut_list_string_new("hoge", NULL),
-            "++size_in_float <= 9");
+            "++size_in_float == 5 && size_in_float == 5");
   ADD_DATUM("++time",
             gcut_list_string_new("hoge", NULL),
-            cut_take_printf("++created_at <= %d",
-                            time_at_2009_12_2_15_16_0 + 9));
+            cut_take_printf("++created_at == %d && created_at == %d",
+                            time_at_2009_12_2_15_16_0 + 5,
+                            time_at_2009_12_2_15_16_0 + 5));
 }
 
 static void
@@ -426,14 +427,15 @@ data_arithmetic_operator_decr(void)
 
   ADD_DATUM("--integer",
             gcut_list_string_new("hoge", NULL),
-            "--size <= 7");
+            "--size <= 3 && size == 3");
   ADD_DATUM("--float",
             gcut_list_string_new("hoge", NULL),
-            "--size_in_float <= 7");
+            "--size_in_float <= 3 && size_in_float == 3");
   ADD_DATUM("--time",
             gcut_list_string_new("hoge", NULL),
-            cut_take_printf("--created_at <= %d",
-                            time_at_2009_12_2_15_16_0 + 7));
+            cut_take_printf("--created_at == %d && created_at == %d",
+                            time_at_2009_12_2_15_16_0 + 3,
+                            time_at_2009_12_2_15_16_0 + 3));
 }
 
 static void
@@ -443,14 +445,15 @@ data_arithmetic_operator_incr_post(void)
 
   ADD_DATUM("integer++",
             gcut_list_string_new("hoge", NULL),
-            "size++ <= 8");
+            "size++ <= 4 && size == 5");
   ADD_DATUM("float++",
             gcut_list_string_new("hoge", NULL),
-            "size_in_float++ <= 8");
+            "size_in_float++ <= 4 && size_in_float == 5");
   ADD_DATUM("time++",
             gcut_list_string_new("hoge", NULL),
-            cut_take_printf("created_at++ <= %d",
-                            time_at_2009_12_2_15_16_0 + 8));
+            cut_take_printf("created_at++ == %d && created_at == %d",
+                            time_at_2009_12_2_15_16_0 + 4,
+                            time_at_2009_12_2_15_16_0 + 5));
 }
 
 static void
@@ -460,14 +463,15 @@ data_arithmetic_operator_decr_post(void)
 
   ADD_DATUM("integer--",
             gcut_list_string_new("hoge", NULL),
-            "size-- <= 8");
+            "size-- == 4 && size == 3");
   ADD_DATUM("float--",
             gcut_list_string_new("hoge", NULL),
-            "size_in_float-- <= 8");
+            "size_in_float-- == 4 && size_in_float == 3");
   ADD_DATUM("time--",
             gcut_list_string_new("hoge", NULL),
-            cut_take_printf("created_at-- <= %d",
-                            time_at_2009_12_2_15_16_0 + 8));
+            cut_take_printf("created_at-- == %d && created_at == %d",
+                            time_at_2009_12_2_15_16_0 + 4,
+                            time_at_2009_12_2_15_16_0 + 3));
 }
 
 void
