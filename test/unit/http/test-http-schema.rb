@@ -724,4 +724,52 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_table_list([])
     end
   end
+
+  class StringFlagsTest < Test::Unit::TestCase
+    include Utils
+    def test_normalize_key_by_string
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => "KEY_NORMALIZE"))
+      assert_response("true",
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([["users",
+                          Flag::PERSISTENT | Table::HASH_KEY | Key::NORMALIZE,
+                          Type::VOID]])
+    end
+
+    private
+    def assert_response(expected, response, options=nil)
+      actual = nil
+      options ||= {}
+
+      if options[:content_type]
+        assert_equal(options[:content_type], response.content_type)
+      end
+
+      case response.content_type
+      when "application/json"
+        begin
+          actual = JSON.parse(response.body)
+        rescue JSON::ParserError => error
+          if response.body == "true" || response.body == "false"
+            actual = response.body
+          else
+            raise
+          end
+        end
+      when "text/html"
+        actual = response.body
+      when "text/xml"
+        actual = response.body
+      else
+        flunk("unknown content-type: #{response.content_type}")
+      end
+
+      actual = yield(actual) if block_given?
+      assert_equal(expected, actual)
+    end
+  end
 end
