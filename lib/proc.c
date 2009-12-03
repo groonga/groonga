@@ -267,6 +267,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 6) {
+    grn_obj *column, *table, *type;
     const char *rest;
     grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[2].value),
                                    GRN_BULK_CURR(&vars[2].value), &rest);
@@ -278,10 +279,10 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
         return buf;
       }
     }
-    grn_obj *column, *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
-                                          GRN_TEXT_LEN(&vars[0].value));
-    grn_obj *type = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
-                                GRN_TEXT_LEN(&vars[3].value));
+    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
+                        GRN_TEXT_LEN(&vars[0].value));
+    type = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
+                       GRN_TEXT_LEN(&vars[3].value));
     if (GRN_TEXT_LEN(&vars[1].value)) { flags |= GRN_OBJ_PERSISTENT; }
     column = grn_column_create(ctx, table,
                                GRN_TEXT_VALUE(&vars[1].value),
