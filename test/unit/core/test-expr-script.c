@@ -281,13 +281,13 @@ test_comparison_operator(gconstpointer data)
 static void
 data_arithmetic_operator_plus(void)
 {
-  ADD_DATUM("unary +",
+  ADD_DATUM("+integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= +9");
-  ADD_DATUM("+",
+  ADD_DATUM("integer + integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= (4 + 5)");
-  ADD_DATUM("string +",
+  ADD_DATUM("string + string",
             gcut_list_string_new("fuga fuga", NULL),
             "body == \"fuga \" + \"fuga\"");
   ADD_DATUM("string + int",
@@ -304,10 +304,10 @@ data_arithmetic_operator_plus(void)
 static void
 data_arithmetic_operator_minus(void)
 {
-  ADD_DATUM("unary -",
+  ADD_DATUM("-integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5 + 14");
-  ADD_DATUM("-",
+  ADD_DATUM("integer - integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 14 - 5");
   ADD_DATUM("int - string",
@@ -321,7 +321,7 @@ data_arithmetic_operator_minus(void)
 static void
 data_arithmetic_operator_star(void)
 {
-  ADD_DATUM("*",
+  ADD_DATUM("integer * integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 3 * 3");
   ADD_DATUM("int * string",
@@ -335,7 +335,7 @@ data_arithmetic_operator_star(void)
 static void
 data_arithmetic_operator_slash(void)
 {
-  ADD_DATUM("/",
+  ADD_DATUM("integer / integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 27 / 3");
   ADD_DATUM("int / string",
@@ -349,7 +349,7 @@ data_arithmetic_operator_slash(void)
 static void
 data_arithmetic_operator_mod(void)
 {
-  ADD_DATUM("%",
+  ADD_DATUM("integer % integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 19 % 10");
   ADD_DATUM("int % string",
