@@ -6921,6 +6921,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_STAR :
     case GRN_OP_SLASH :
     case GRN_OP_MOD :
+    case GRN_OP_SHIFTL :
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
     case GRN_OP_INCR :
@@ -7584,6 +7585,10 @@ truep(grn_ctx *ctx, grn_obj *v)
 #define FLOAT_ARITHMETIC_OPERATION_SLASH(x, y) ((double)(x) / (double)(y))
 #define INTEGER_ARITHMETIC_OPERATION_MOD(x, y) ((x) % (y))
 #define FLOAT_ARITHMETIC_OPERATION_MOD(x, y) (fmod((x), (y)))
+#define INTEGER_ARITHMETIC_OPERATION_SHIFTL(x, y) ((x) << (y))
+#define FLOAT_ARITHMETIC_OPERATION_SHIFTL(x, y)                         \
+  ((long long unsigned int)(x) << (long long unsigned int)(y))
+
 #define ARITHMETIC_OPERATION_NO_CHECK(y) do {} while (0)
 #define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y) do {        \
   if ((long long int)y == 0) {                                  \
@@ -8581,6 +8586,19 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       {
                                         ERR(GRN_INVALID_ARGUMENT,
                                             "\"string\" % \"string\" "
+                                            "isn't supported");
+                                        goto exit;
+                                      }
+                                      ,);
+        break;
+      case GRN_OP_SHIFTL :
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_SHIFTL,
+                                      FLOAT_ARITHMETIC_OPERATION_SHIFTL,
+                                      ARITHMETIC_OPERATION_NO_CHECK,
+                                      ARITHMETIC_OPERATION_NO_CHECK,
+                                      {
+                                        ERR(GRN_INVALID_ARGUMENT,
+                                            "\"string\" << \"string\" "
                                             "isn't supported");
                                         goto exit;
                                       }
@@ -11381,7 +11399,15 @@ parse_script(grn_ctx *ctx, efs_info *q)
       switch (*q->cur) {
       case '<' :
         q->cur++;
-        PARSE(GRN_EXPR_TOKEN_SHIFTL_ASSIGN);
+        switch (*q->cur) {
+        case '=' :
+          q->cur++;
+          PARSE(GRN_EXPR_TOKEN_SHIFTL_ASSIGN);
+          break;
+        default :
+          PARSE(GRN_EXPR_TOKEN_SHIFTL);
+          break;
+        }
         break;
       case '=' :
         q->cur++;

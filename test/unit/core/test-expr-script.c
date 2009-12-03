@@ -278,6 +278,15 @@ test_comparison_operator(gconstpointer data)
                  gcut_list_string_free,                                 \
                  "query", G_TYPE_STRING, query,                         \
                  NULL)
+
+static void
+data_arithmetic_operator_shift_l(void)
+{
+  ADD_DATUM("integer << integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((2 << 2) + 1)");
+}
+
 static void
 data_arithmetic_operator_plus(void)
 {
@@ -477,6 +486,7 @@ data_arithmetic_operator_decr_post(void)
 void
 data_arithmetic_operator(void)
 {
+  data_arithmetic_operator_shift_l();
   data_arithmetic_operator_plus();
   data_arithmetic_operator_minus();
   data_arithmetic_operator_star();
