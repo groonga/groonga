@@ -436,6 +436,40 @@ data_arithmetic_operator_decr(void)
                             time_at_2009_12_2_15_16_0 + 7));
 }
 
+static void
+data_arithmetic_operator_incr_post(void)
+{
+  int time_at_2009_12_2_15_16_0 = 1259734560;
+
+  ADD_DATUM("integer++",
+            gcut_list_string_new("hoge", NULL),
+            "size++ <= 8");
+  ADD_DATUM("float++",
+            gcut_list_string_new("hoge", NULL),
+            "size_in_float++ <= 8");
+  ADD_DATUM("time++",
+            gcut_list_string_new("hoge", NULL),
+            cut_take_printf("created_at++ <= %d",
+                            time_at_2009_12_2_15_16_0 + 8));
+}
+
+static void
+data_arithmetic_operator_decr_post(void)
+{
+  int time_at_2009_12_2_15_16_0 = 1259734560;
+
+  ADD_DATUM("integer--",
+            gcut_list_string_new("hoge", NULL),
+            "size-- <= 8");
+  ADD_DATUM("float--",
+            gcut_list_string_new("hoge", NULL),
+            "size_in_float-- <= 8");
+  ADD_DATUM("time--",
+            gcut_list_string_new("hoge", NULL),
+            cut_take_printf("created_at-- <= %d",
+                            time_at_2009_12_2_15_16_0 + 8));
+}
+
 void
 data_arithmetic_operator(void)
 {
@@ -446,6 +480,8 @@ data_arithmetic_operator(void)
   data_arithmetic_operator_mod();
   data_arithmetic_operator_incr();
   data_arithmetic_operator_decr();
+  data_arithmetic_operator_incr_post();
+  data_arithmetic_operator_decr_post();
 }
 #undef ADD_DATUM
 
@@ -519,6 +555,20 @@ data_arithmetic_operator_error(void)
                             GRN_DB_TEXT),
             "--size_in_string <= 7");
 
+  ADD_DATUM("string++",
+            GRN_INVALID_ARGUMENT,
+            cut_take_printf("invalid increment target type: %d "
+                            "(FIXME: type name is needed)",
+                            GRN_DB_TEXT),
+            "size_in_string++ <= 8");
+
+  ADD_DATUM("string--",
+            GRN_INVALID_ARGUMENT,
+            cut_take_printf("invalid increment target type: %d "
+                            "(FIXME: type name is needed)",
+                            GRN_DB_TEXT),
+            "size_in_string-- <= 8");
+
 #undef ADD_DATUM
 }
 
@@ -556,6 +606,12 @@ data_arithmetic_operator_syntax_error(void)
   ADD_DATUM("--constant",
             cut_take_printf("Syntax error! (--10 <= 9)"),
             "--10 <= 9");
+  ADD_DATUM("constant++",
+            cut_take_printf("Syntax error! (8++ <= 9)"),
+            "8++ <= 9");
+  ADD_DATUM("constant--",
+            cut_take_printf("Syntax error! (10-- <= 9)"),
+            "10-- <= 9");
 
 #undef ADD_DATUM
 }

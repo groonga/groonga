@@ -48,8 +48,8 @@ log_events:
     o    MOD
     o    INCR
     o    DECR
-         INCR_POST
-         DECR_POST
+    o    INCR_POST
+    o    DECR_POST
 - - 2009-12-01 03:52:13.001237 Z
   - Kouhei Sutou <kou@clear-code.com>
   - changed status from unstarted to in_progress

@@ -6925,6 +6925,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_INCR :
     case GRN_OP_DECR :
+    case GRN_OP_INCR_POST :
+    case GRN_OP_DECR_POST :
       {
         DFI_POP(e, dfi);
         if (dfi) {
@@ -8502,6 +8504,12 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_DECR :
         OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR, 1, GRN_OBJ_DECR);
+        break;
+      case GRN_OP_INCR_POST :
+        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR_POST, 1, GRN_OBJ_INCR);
+        break;
+      case GRN_OP_DECR_POST :
+        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR_POST, 1, GRN_OBJ_DECR);
         break;
       default :
         break;
