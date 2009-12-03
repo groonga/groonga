@@ -181,6 +181,41 @@ grn_parse_table_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
   return flags;
 }
 
+static grn_obj_flags
+grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
+{
+  grn_obj_flags flags = 0;
+  while (nptr < end) {
+    if (*nptr == '|' || *nptr == ' ') {
+      nptr += 1;
+      continue;
+    }
+    if (!memcmp(nptr, "COLUMN_SCALAR", 13)) {
+      flags |= GRN_OBJ_COLUMN_SCALAR;
+      nptr += 13;
+    } else if (!memcmp(nptr, "COLUMN_VECTOR", 13)) {
+      flags |= GRN_OBJ_COLUMN_VECTOR;
+      nptr += 13;
+    } else if (!memcmp(nptr, "COLUMN_INDEX", 12)) {
+      flags |= GRN_OBJ_COLUMN_INDEX;
+      nptr += 12;
+    } else if (!memcmp(nptr, "INDEX_WITH_SECTION", 18)) {
+      flags |= GRN_OBJ_WITH_SECTION;
+      nptr += 18;
+    } else if (!memcmp(nptr, "INDEX_WITH_WEIGHT", 17)) {
+      flags |= GRN_OBJ_WITH_WEIGHT;
+      nptr += 17;
+    } else if (!memcmp(nptr, "INDEX_WITH_POSITION", 19)) {
+      flags |= GRN_OBJ_WITH_POSITION;
+      nptr += 19;
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %*s", end - nptr, nptr);
+      return 0;
+    }
+  }
+  return flags;
+}
+
 static grn_obj *
 proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -232,8 +267,17 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 6) {
+    const char *rest;
     grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[2].value),
-                                   GRN_BULK_CURR(&vars[2].value), NULL);
+                                   GRN_BULK_CURR(&vars[2].value), &rest);
+    if (GRN_TEXT_VALUE(&vars[2].value) == rest) {
+      flags = grn_parse_column_create_flags(ctx, GRN_TEXT_VALUE(&vars[2].value),
+                                            GRN_BULK_CURR(&vars[2].value));
+      if (ctx->rc) {
+        GRN_TEXT_PUTS(ctx, buf, "false");
+        return buf;
+      }
+    }
     grn_obj *column, *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
                                           GRN_TEXT_LEN(&vars[0].value));
     grn_obj *type = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
