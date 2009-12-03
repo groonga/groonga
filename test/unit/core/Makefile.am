@@ -22,6 +22,9 @@ noinst_LTLIBRARIES =				\
 	test-cast.la
 endif
 
+EXTRA_DIST =					\
+	test-dump.rb
+
 INCLUDES =			\
 	-I$(top_srcdir)		\
 	-I$(top_srcdir)/lib	\

@@ -16,6 +16,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 require 'fileutils'
+require 'shellwords'
 require 'groonga-constants'
 
 module GroongaTestUtils
@@ -101,5 +102,12 @@ module GroongaTestUtils
     Timeout.timeout(seconds, &block)
   rescue Timeout::Error
     raise RuntimeError, "timeout #{seconds}s", [caller[0]] + $@
+  end
+
+  def run_groonga(*arguments)
+    command_line = [guess_groonga_path, *arguments].collect do |component|
+      Shellwords.escape(component)
+    end.join(" ")
+    `#{command_line}`
   end
 end

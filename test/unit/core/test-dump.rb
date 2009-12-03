@@ -19,35 +19,22 @@ class DumpTest < Test::Unit::TestCase
   include GroongaTestUtils
 
   def setup
-    @groonga = guess_groonga_path
-
     @tmp_dir = File.join(File.dirname(__FILE__), "tmp")
     FileUtils.rm_rf(@tmp_dir)
     FileUtils.mkdir_p(@tmp_dir)
     @database_path = File.join(@tmp_dir, "database")
-
-    @pipe = IO.popen([@groonga, "-n", @database_path].join(' '), "w+")
   end
 
   def teardown
-    @pipe.close
-    FileUtils.rm_rf(@tmp_dir) if @tmp_dir
-  end
-
-  def puts(*args)
-    timeout(3) do
-      @pipe.puts(*args)
-    end
-  end
-
-  def gets(*args)
-    timeout(3) do
-      @pipe.gets(*args)
-    end
+    FileUtils.rm_rf(@tmp_dir)
   end
 
   def test_dump
-    puts("dump")
-    assert_equal("true\n", gets)
+    assert_equal("true\n", dump)
+  end
+
+  private
+  def dump
+    run_groonga("-n", @database_path, "dump")
   end
 end

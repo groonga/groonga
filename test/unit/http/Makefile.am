@@ -6,5 +6,4 @@ EXTRA_DIST =					\
 	test-http-view.rb			\
 	test-http-crud.rb			\
 	test-http-load.rb			\
-	test-invalid-http.rb			\
-	test-dump.rb
+	test-invalid-http.rb
