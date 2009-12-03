@@ -515,9 +515,6 @@ test_arithmetic_operator(gconstpointer data)
                          body);
 }
 
-void
-data_arithmetic_operator_error(void)
-{
 #define ADD_DATUM(label, rc, message, query)                    \
   gcut_add_datum(label,                                         \
                  "rc", G_TYPE_UINT, rc,                         \
@@ -525,33 +522,65 @@ data_arithmetic_operator_error(void)
                  "query", G_TYPE_STRING, query,                 \
                  NULL)
 
+static void
+data_arithmetic_operator_error_plus(void)
+{
   ADD_DATUM("int + string",
             GRN_INVALID_ARGUMENT,
             "not a numerical format: <hoge>",
             "size == 100 + \"hoge\"");
+}
 
+static void
+data_arithmetic_operator_error_minus(void)
+{
   ADD_DATUM("string - string",
             GRN_INVALID_ARGUMENT,
             "\"string\" - \"string\" isn't supported",
             "body == \"fuga\" - \"hoge\"");
+}
 
+static void
+data_arithmetic_operator_error_star(void)
+{
   ADD_DATUM("string * string",
             GRN_INVALID_ARGUMENT,
             "\"string\" * \"string\" isn't supported",
             "body == \"fuga\" * \"hoge\"");
+}
 
+static void
+data_arithmetic_operator_error_slash(void)
+{
   ADD_DATUM("string / string",
             GRN_INVALID_ARGUMENT,
             "\"string\" / \"string\" isn't supported",
             "body == \"fuga\" / \"hoge\"");
+}
 
+static void
+data_arithmetic_operator_error_mod(void)
+{
+  ADD_DATUM("string / string",
+            GRN_INVALID_ARGUMENT,
+            "\"string\" % \"string\" isn't supported",
+            "body == \"fuga\" % \"hoge\"");
+}
+
+static void
+data_arithmetic_operator_error_incr(void)
+{
   ADD_DATUM("++string",
             GRN_INVALID_ARGUMENT,
             cut_take_printf("invalid increment target type: %d "
                             "(FIXME: type name is needed)",
                             GRN_DB_TEXT),
             "++size_in_string <= 9");
+}
 
+static void
+data_arithmetic_operator_error_decr(void)
+{
   ADD_DATUM("--string",
             GRN_INVALID_ARGUMENT,
             cut_take_printf("invalid increment target type: %d "
@@ -559,22 +588,44 @@ data_arithmetic_operator_error(void)
                             GRN_DB_TEXT),
             "--size_in_string <= 7");
 
+}
+
+static void
+data_arithmetic_operator_error_incr_post(void)
+{
   ADD_DATUM("string++",
             GRN_INVALID_ARGUMENT,
             cut_take_printf("invalid increment target type: %d "
                             "(FIXME: type name is needed)",
                             GRN_DB_TEXT),
             "size_in_string++ <= 8");
+}
 
+static void
+data_arithmetic_operator_error_decr_post(void)
+{
   ADD_DATUM("string--",
             GRN_INVALID_ARGUMENT,
             cut_take_printf("invalid increment target type: %d "
                             "(FIXME: type name is needed)",
                             GRN_DB_TEXT),
             "size_in_string-- <= 8");
-
-#undef ADD_DATUM
 }
+
+void
+data_arithmetic_operator_error(void)
+{
+  data_arithmetic_operator_error_plus();
+  data_arithmetic_operator_error_minus();
+  data_arithmetic_operator_error_star();
+  data_arithmetic_operator_error_slash();
+  data_arithmetic_operator_error_mod();
+  data_arithmetic_operator_error_incr();
+  data_arithmetic_operator_error_decr();
+  data_arithmetic_operator_error_incr_post();
+  data_arithmetic_operator_error_decr_post();
+}
+#undef ADD_DATUM
 
 void
 test_arithmetic_operator_error(gconstpointer data)
