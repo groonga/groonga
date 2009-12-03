@@ -867,6 +867,17 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
+proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *outbuf = args[0];
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  GRN_TEXT_PUTS(ctx, outbuf, "true");
+  return outbuf;
+}
+
+static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
@@ -1252,6 +1263,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "output_type");
   DEF_VAR(vars[4], "id");
   DEF_PROC("get", proc_get, 5, vars);
+
+  DEF_PROC("dump", proc_dump, 0, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", 4, NULL, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);
