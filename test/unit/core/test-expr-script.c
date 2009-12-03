@@ -556,15 +556,23 @@ data_arithmetic_operator_error_slash(void)
             GRN_INVALID_ARGUMENT,
             "\"string\" / \"string\" isn't supported",
             "body == \"fuga\" / \"hoge\"");
+  ADD_DATUM("integer / 0",
+            GRN_INVALID_ARGUMENT,
+            "dividend should not be 0",
+            "size == 10 / 0");
 }
 
 static void
 data_arithmetic_operator_error_mod(void)
 {
-  ADD_DATUM("string / string",
+  ADD_DATUM("string % string",
             GRN_INVALID_ARGUMENT,
             "\"string\" % \"string\" isn't supported",
             "body == \"fuga\" % \"hoge\"");
+  ADD_DATUM("integer % 0",
+            GRN_INVALID_ARGUMENT,
+            "dividend should not be 0",
+            "size == 10 % 0");
 }
 
 static void
