@@ -727,7 +727,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   class SymbolFlagsTest < Test::Unit::TestCase
     include Utils
-    def test_single_symbol
+    def test_table_create_single_symbol
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => "KEY_NORMALIZE"))
@@ -740,7 +740,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_combined_symbols
+    def test_table_create_combined_symbols
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => "TABLE_NO_KEY|KEY_NORMALIZE"))
@@ -753,7 +753,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_combined_symbols_with_whitespaces
+    def test_table_create_combined_symbols_with_whitespaces
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => " TABLE_NO_KEY | KEY_NORMALIZE "))
@@ -766,7 +766,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
-    def test_invalid_symbol
+    def test_table_create_invalid_symbol
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => "INVALID_SYMBOL"))
