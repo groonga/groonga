@@ -73,20 +73,20 @@
 作成するテーブルの名前を指定します。nameはデータベース内で一意な、未定義の名前でなければなりません。組込型名・組込コマンド名・組込関数名は予約済みであり、テーブル名には 使用できません。また、ピリオド(&#8216;.&#8217;), コロン(&#8216;:&#8217;)を含む名前のテーブルは作成できません。</blockquote>
 <p><tt class="docutils literal"><span class="pre">flags</span></tt></p>
 <blockquote>
-<p>作成するテーブルの属性を示す数値を指定します。(デフォルト値は0)</p>
+<p>作成するテーブルの属性を示す数値か、パイプ(&#8216;|&#8217;)で組み合わせたシンボル名を指定します。(デフォルト値は0(=&#8221;TABLE_HASH_KEY&#8221;))</p>
 <blockquote>
 <dl class="docutils">
-<dt>0</dt>
+<dt>0, <tt class="docutils literal"><span class="pre">TABLE_HASH_KEY</span></tt></dt>
 <dd>主キー値をハッシュ表で管理するテーブルを作成します。ハッシュ表を使用したテーブルでは、主キー値に完全一致するレコードを高速に検索することができます。</dd>
-<dt>1</dt>
+<dt>1, <tt class="docutils literal"><span class="pre">TABLE_PAT_KEY</span></tt></dt>
 <dd>主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用したテーブルでは、主キー値に完全一致するレコード、前方一致するレコード、および最長共通接頭辞となるレコードを高速に検索することができます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検索を行うことができます。また、flagsの値に64を加えることによって、後方一致検索も可能となります。</dd>
-<dt>3</dt>
+<dt>3, <tt class="docutils literal"><span class="pre">TABLE_NO_KEY</span></tt></dt>
 <dd>主キーを持たないテーブルを作成します。各レコードはIDのみによって特定することができます。</dd>
-<dt>4</dt>
+<dt>4, <tt class="docutils literal"><span class="pre">TABLE_VIEW</span></tt></dt>
 <dd>複数のテーブルをまとめて操作するための仮想的なテーブル(view)を作成します。</dd>
-<dt>64</dt>
+<dt>64, <tt class="docutils literal"><span class="pre">KEY_WITH_SIS</span></tt></dt>
 <dd>語彙表となるパトリシア木型のテーブルにおいて、後方一致検索を可能とします。</dd>
-<dt>128</dt>
+<dt>128, <tt class="docutils literal"><span class="pre">KEY_NORMALIZE</span></tt></dt>
 <dd>ハッシュ表型か、パトリシア木型のテーブルにおいて、主キー値を正規化した上で登録します。この値が指定されたテーブルではたとえば、主キー値&#8217;abc&#8217;と&#8217;ABC&#8217; は同一のレコードに対応するものとみなされます。</dd>
 </dl>
 </blockquote>
@@ -135,6 +135,9 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </div>
 <p>ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場合には、バイグラムの索引を作成します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>table_create Term --flags 129 --key_type ShortText --default_tokenizer TokenBigram
+[[0]]
+
+table_create Term --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
 [[0]]
 </pre></div>
 </div>

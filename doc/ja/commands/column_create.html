@@ -77,23 +77,23 @@
 </blockquote>
 <p><tt class="docutils literal"><span class="pre">flags</span></tt></p>
 <blockquote>
-<p>カラムの属性を表す以下の数値を指定します。</p>
+<p>カラムの属性を表す以下の数値か、パイプ(&#8216;|&#8217;)で組み合わせたシンボル名を指定します。</p>
 <dl class="docutils">
-<dt>0</dt>
+<dt>0, <tt class="docutils literal"><span class="pre">COLUMN_SCALAR</span></tt></dt>
 <dd>単一の値が格納できるカラムを作成します。</dd>
-<dt>1</dt>
+<dt>1, <tt class="docutils literal"><span class="pre">COLUMN_VECTOR</span></tt></dt>
 <dd>複数の値の配列を格納できるカラムを作成します。</dd>
-<dt>2</dt>
+<dt>2, <tt class="docutils literal"><span class="pre">COLUMN_INDEX</span></tt></dt>
 <dd>インデックス型のカラムを作成します。</dd>
 </dl>
 <p>インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追加の属
 性を指定することができます。</p>
 <dl class="docutils">
-<dt>128</dt>
+<dt>128, <tt class="docutils literal"><span class="pre">INDEX_WITH_SECTION</span></tt></dt>
 <dd>段落情報を格納するインデックスを作成します。</dd>
-<dt>256</dt>
+<dt>256, <tt class="docutils literal"><span class="pre">INDEX_WITH_WEIGHT</span></tt></dt>
 <dd>ウェイト情報を格納するインデックスを作成します。</dd>
-<dt>512</dt>
+<dt>512, <tt class="docutils literal"><span class="pre">INDEX_WITH_POSITION</span></tt></dt>
 <dd>位置情報を格納するインデックス(完全転置インデックス)を作成します。</dd>
 </dl>
 </blockquote>
@@ -122,6 +122,9 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </div>
 <p>テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス型カラム、entry_bodyを作成します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>column_create Term entry_body 514 Entry body --output_type json
+[[0]]
+
+column_create Term entry_body COLUMN_INDEX|INDEX_WITH_POSITION Entry body --output_type json
 [[0]]
 </pre></div>
 </div>
