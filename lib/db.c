@@ -6701,8 +6701,23 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   domain = dfi->domain;                                         \
   type = dfi->type;                                             \
   x = code->value;                                              \
-  if (CONSTP(x) && domain == GRN_DB_INT32) {                    \
-    GRN_INT32_SET(ctx, x, c_unary_operator GRN_INT32_VALUE(x)); \
+  if (CONSTP(x)) {                                              \
+    switch (domain) {                                           \
+    case GRN_DB_UINT32:                                         \
+      GRN_UINT32_SET(ctx, x,                                    \
+                     c_unary_operator GRN_UINT32_VALUE(x));     \
+      break;                                                    \
+    case GRN_DB_INT64:                                          \
+      GRN_INT64_SET(ctx, x,                                     \
+                    c_unary_operator GRN_INT64_VALUE(x));       \
+      break;                                                    \
+    case GRN_DB_FLOAT:                                          \
+      GRN_FLOAT_SET(ctx, x,                                     \
+                    c_unary_operator GRN_FLOAT_VALUE(x));       \
+      break;                                                    \
+    default:                                                    \
+      break;                                                    \
+    }                                                           \
   }                                                             \
   DFI_PUT(e, type, domain, code);                               \
 }

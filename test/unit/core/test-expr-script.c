@@ -307,6 +307,13 @@ data_arithmetic_operator_minus(void)
   ADD_DATUM("-integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5 + 14");
+  ADD_DATUM("-integer64",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            cut_take_printf("size <= -%" G_GINT64_FORMAT " + %" G_GINT64_FORMAT,
+                            G_MAXINT64, G_MAXINT64 + 9));
+  ADD_DATUM("-float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= -5.9 + 14.9");
   ADD_DATUM("integer - integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 14 - 5");
