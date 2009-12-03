@@ -766,6 +766,17 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           Type::VOID]])
     end
 
+    def test_invalid_symbol
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => "INVALID_SYMBOL"))
+      assert_response("false",
+                      response,
+                      :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
     private
     def assert_response(expected, response, options=nil)
       actual = nil
