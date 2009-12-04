@@ -901,7 +901,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   case GRN_TABLE_PAT_KEY:
     domain = grn_ctx_at(ctx, table->header.domain);
     if (!domain) {
-      ERR(GRN_DOMAIN_ERROR, "couldn't get table's domain object");
+      ERR(GRN_DOMAIN_ERROR, "couldn't get table's key_type object");
       return;
     }
     default_flags |= domain->header.flags;
@@ -917,8 +917,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   grn_text_itoa(ctx, outbuf, table->header.flags & ~default_flags);
-  if (table->header.type != GRN_TABLE_NO_KEY &&
-      table->header.type != GRN_TABLE_VIEW) {
+  if (domain) {
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
     dump_obj_name(ctx, outbuf, domain);
   }
