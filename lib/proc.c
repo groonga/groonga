@@ -917,9 +917,9 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj* table, grn_obj *column)
   dump_column_name(ctx, outbuf, column);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   if (type->header.type == GRN_TYPE) {
-    default_flags |= ((grn_db_obj *)type)->header.flags;
+    default_flags |= type->header.flags;
   }
-  grn_text_itoa(ctx, outbuf, table->header.flags & ~default_flags);
+  grn_text_itoa(ctx, outbuf, column->header.flags & ~default_flags);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   dump_obj_name(ctx, outbuf, type);
   GRN_TEXT_PUTC(ctx, outbuf, '\n');

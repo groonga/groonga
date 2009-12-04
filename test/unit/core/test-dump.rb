@@ -68,9 +68,14 @@ class DumpTest < Test::Unit::TestCase
                 end.join)
   end
 
-  def test_column_create
+  def test_column_create_short_text
     assert_dump("table_create Entry 0 ShortText\n" +
                 "column_create Entry body 0 ShortText\n")
+  end
+
+  def test_column_create_int32
+    assert_dump("table_create Entry 0 ShortText\n" +
+                "column_create Entry body 0 Int32\n")
   end
 
   private
