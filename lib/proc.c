@@ -893,12 +893,19 @@ dump_obj_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *obj)
 static void
 dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
-  grn_obj *domain;
-  grn_obj_flags default_flags;
+  grn_obj *domain = NULL;
+  grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
+    domain = grn_ctx_at(ctx, table->header.domain);
+    if (!domain) {
+      ERR(GRN_DOMAIN_ERROR, "couldn't get table's domain object");
+      return;
+    }
+    default_flags |= domain->header.flags;
+    break;
   case GRN_TABLE_NO_KEY:
   case GRN_TABLE_VIEW:
     break;
@@ -906,21 +913,20 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     return;
   }
 
-  domain = grn_ctx_at(ctx, table->header.domain);
-  if (!domain) {
-    return;
-  }
-  default_flags = GRN_OBJ_PERSISTENT | domain->header.flags;
-
   GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   grn_text_itoa(ctx, outbuf, table->header.flags & ~default_flags);
-  GRN_TEXT_PUTC(ctx, outbuf, ' ');
-  dump_obj_name(ctx, outbuf, domain);
+  if (table->header.type != GRN_TABLE_NO_KEY &&
+      table->header.type != GRN_TABLE_VIEW) {
+    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    dump_obj_name(ctx, outbuf, domain);
+  }
   GRN_TEXT_PUTC(ctx, outbuf, '\n');
 
-  grn_obj_unlink(ctx, domain);
+  if (domain) {
+    grn_obj_unlink(ctx, domain);
+  }
 }
 
 static void
@@ -956,7 +962,9 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   /* remove the last newline because another one will be added by the calller.
      maybe, the caller of proc functions currently doesn't consider the
      possibility of multiple-line output from proc functions. */
-  grn_bulk_truncate(ctx, outbuf, GRN_BULK_VSIZE(outbuf) - 1);
+  if (GRN_BULK_VSIZE(outbuf) > 0) {
+    grn_bulk_truncate(ctx, outbuf, GRN_BULK_VSIZE(outbuf) - 1);
+  }
   return outbuf;
 }
 
