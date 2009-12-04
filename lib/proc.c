@@ -873,6 +873,7 @@ dump_name(grn_ctx *ctx, grn_obj *outbuf, const char *name, int name_len)
   GRN_TEXT_INIT(&escaped_name, 0);
   grn_text_esc(ctx, &escaped_name, name, name_len);
   /* is no character escaped? */
+  /* TODO false positive with spaces inside names */
   if (GRN_TEXT_LEN(&escaped_name) == name_len + 2) {
     GRN_TEXT_PUT(ctx, outbuf, name, name_len);
   } else {
@@ -900,7 +901,7 @@ dump_column_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
 }
 
 static void
-dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj* table, grn_obj *column)
+dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
 {
   grn_obj *type;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
