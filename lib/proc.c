@@ -1264,6 +1264,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[4], "id");
   DEF_PROC("get", proc_get, 5, vars);
 
+  /* TODO: Take "output_type" argument. Do we need GRN_CONTENT_GQTP? */
   DEF_PROC("dump", proc_dump, 0, vars);
 
   DEF_VAR(vars[0], "seed");
