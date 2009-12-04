@@ -68,6 +68,11 @@ class DumpTest < Test::Unit::TestCase
                 end.join)
   end
 
+  def test_column_create
+    assert_dump("table_create Entry 0 ShortText\n" +
+                "column_create Entry body 0 ShortText\n")
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")

@@ -891,6 +891,68 @@ dump_obj_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *obj)
 }
 
 static void
+dump_column_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
+{
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_len;
+  name_len = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
+  dump_name(ctx, outbuf, name, name_len);
+}
+
+static void
+dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj* table, grn_obj *column)
+{
+  grn_obj *type;
+  grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
+
+  type = grn_ctx_at(ctx, ((grn_db_obj *)column)->range);
+  if (!type) {
+    ERR(GRN_RANGE_ERROR, "couldn't get column's type object");
+    return;
+  }
+
+  GRN_TEXT_PUTS(ctx, outbuf, "column_create ");
+  dump_obj_name(ctx, outbuf, table);
+  GRN_TEXT_PUTC(ctx, outbuf, ' ');
+  dump_column_name(ctx, outbuf, column);
+  GRN_TEXT_PUTC(ctx, outbuf, ' ');
+  if (type->header.type == GRN_TYPE) {
+    default_flags |= ((grn_db_obj *)type)->header.flags;
+  }
+  grn_text_itoa(ctx, outbuf, table->header.flags & ~default_flags);
+  GRN_TEXT_PUTC(ctx, outbuf, ' ');
+  dump_obj_name(ctx, outbuf, type);
+  GRN_TEXT_PUTC(ctx, outbuf, '\n');
+
+  grn_obj_unlink(ctx, type);
+}
+
+static void
+dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+{
+  grn_hash *columns;
+  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                            GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  if (!columns) {
+    ERR(GRN_ERROR, "couldn't create a hash to hold columns");
+    return;
+  }
+
+  if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)columns) >= 0) {
+    grn_id *key;
+
+    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
+      grn_obj *column;
+      if ((column = grn_ctx_at(ctx, *key))) {
+        dump_column(ctx, outbuf, table, column);
+        grn_obj_unlink(ctx, column);
+      }
+    });
+  }
+  grn_hash_close(ctx, columns);
+}
+
+static void
 dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   grn_obj *domain = NULL, *range = NULL;
@@ -937,6 +999,8 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   if (domain) {
     grn_obj_unlink(ctx, domain);
   }
+
+  dump_columns(ctx, outbuf, table);
 }
 
 static void
