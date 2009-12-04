@@ -943,7 +943,8 @@ dump_tables(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
-  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0))) {
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                                   GRN_CURSOR_BY_ID))) {
     grn_id id;
 
     while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {

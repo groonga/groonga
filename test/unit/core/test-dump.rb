@@ -57,6 +57,17 @@ class DumpTest < Test::Unit::TestCase
     assert_dump("table_create \"Blog\\\"\" 0 ShortText\n")
   end
 
+  def test_multiple_table_create
+    assert_dump("table_create users 0 ShortText\n" +
+                "table_create admin_users 0 users\n")
+  end
+
+  def test_order_of_table_create
+    assert_dump(('a'..'z').to_a.shuffle.collect do |letter|
+                  "table_create #{letter} 0 ShortText\n"
+                end.join)
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")
