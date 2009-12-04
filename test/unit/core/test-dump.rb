@@ -78,6 +78,23 @@ class DumpTest < Test::Unit::TestCase
                 "column_create Entry body 0 Int32\n")
   end
 
+  def test_scaler_column_create
+    assert_dump("table_create Entry 0 ShortText\n" +
+                "column_create Entry body 0 ShortText\n")
+  end
+
+  def test_vector_column_create
+    assert_dump("table_create Entry 1 ShortText\n" +
+                "column_create Entry body 1 ShortText\n")
+  end
+
+  def test_index_column_create
+    assert_dump("table_create Entry 0 ShortText\n" +
+                "column_create Entry body 0 ShortText\n" +
+                "table_create Terms 129 ShortText\n" +
+                "column_create Terms entry_body 2 Entry body\n")
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")

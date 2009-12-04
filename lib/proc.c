@@ -901,6 +901,32 @@ dump_column_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
 }
 
 static void
+dump_index_column_sources(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
+{
+  grn_obj sources;
+  grn_id *source_ids;
+  int i, n;
+
+  GRN_OBJ_INIT(&sources, GRN_BULK, 0, GRN_ID_NIL);
+  grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &sources);
+
+  n = GRN_BULK_VSIZE(&sources) / sizeof(grn_id);
+  source_ids = (grn_id *)GRN_BULK_HEAD(&sources);
+  if (n > 0) {
+    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+  }
+  /* TODO when this index column does really have multiple sources, this
+          function won't dump the right thing. */
+  for (i = 0; i < n; i++) {
+    grn_obj *source;
+    source = grn_ctx_at(ctx, *source_ids);
+    dump_column_name(ctx, outbuf, source);
+    source_ids++;
+  }
+  grn_obj_close(ctx, &sources);
+}
+
+static void
 dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
 {
   grn_obj *type;
@@ -923,6 +949,9 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
   grn_text_itoa(ctx, outbuf, column->header.flags & ~default_flags);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   dump_obj_name(ctx, outbuf, type);
+  if (column->header.flags & GRN_OBJ_COLUMN_INDEX) {
+    dump_index_column_sources(ctx, outbuf, column);
+  }
   GRN_TEXT_PUTC(ctx, outbuf, '\n');
 
   grn_obj_unlink(ctx, type);
