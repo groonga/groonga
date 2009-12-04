@@ -49,6 +49,10 @@ class DumpTest < Test::Unit::TestCase
     assert_dump("table_create Blog 128 ShortText\n")
   end
 
+  def test_table_create_with_value_type
+    assert_dump("table_create Blog 128 ShortText Int32\n")
+  end
+
   def test_table_create_escaped_string
     assert_dump("table_create \"Blog\\\"\" 0 ShortText\n")
   end

@@ -893,7 +893,7 @@ dump_obj_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *obj)
 static void
 dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
-  grn_obj *domain = NULL;
+  grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
 
   switch (table->header.type) {
@@ -921,6 +921,16 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
     dump_obj_name(ctx, outbuf, domain);
   }
+  if (((grn_db_obj *)table)->range != GRN_ID_NIL) {
+    range = grn_ctx_at(ctx, ((grn_db_obj *)table)->range);
+    if (!range) {
+      ERR(GRN_RANGE_ERROR, "couldn't get table's value_type object");
+      return;
+    }
+    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    dump_obj_name(ctx, outbuf, range);
+  }
+
   GRN_TEXT_PUTC(ctx, outbuf, '\n');
 
   if (domain) {
