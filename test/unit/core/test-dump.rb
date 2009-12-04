@@ -30,11 +30,24 @@ class DumpTest < Test::Unit::TestCase
   end
 
   def test_dump
-    assert_equal("true\n", dump)
+    assert_dump("table_create Blog 0 ShortText\n")
   end
 
   private
   def dump
-    run_groonga("-n", @database_path, "dump")
+    run_groonga(@database_path, "dump")
+  end
+
+  def feed_commands(commands)
+    IO.popen(construct_command_line("-n", @database_path), "w+") do |pipe|
+      pipe.write(commands)
+      pipe.write("shutdown\n")
+      pipe.read
+    end
+  end
+
+  def assert_dump(expected)
+    feed_commands(expected)
+    assert_equal(expected, dump)
   end
 end

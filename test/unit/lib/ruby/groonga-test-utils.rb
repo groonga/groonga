@@ -104,10 +104,13 @@ module GroongaTestUtils
     raise RuntimeError, "timeout #{seconds}s", [caller[0]] + $@
   end
 
-  def run_groonga(*arguments)
+  def construct_command_line(*arguments)
     command_line = [guess_groonga_path, *arguments].collect do |component|
       Shellwords.escape(component)
     end.join(" ")
-    `#{command_line}`
+  end
+
+  def run_groonga(*arguments)
+    `#{construct_command_line(*arguments)}`
   end
 end
