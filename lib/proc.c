@@ -929,6 +929,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     }
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
     dump_obj_name(ctx, outbuf, range);
+    grn_obj_unlink(ctx, range);
   }
 
   GRN_TEXT_PUTC(ctx, outbuf, '\n');
