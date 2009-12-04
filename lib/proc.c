@@ -866,6 +866,83 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return outbuf;
 }
 
+static void
+dump_name(grn_ctx *ctx, grn_obj *outbuf, const char *name, int name_len)
+{
+  grn_obj escaped_name;
+  GRN_TEXT_INIT(&escaped_name, 0);
+  grn_text_esc(ctx, &escaped_name, name, name_len);
+  /* is no character escaped? */
+  if (GRN_TEXT_LEN(&escaped_name) == name_len + 2) {
+    GRN_TEXT_PUT(ctx, outbuf, name, name_len);
+  } else {
+    GRN_TEXT_PUT(ctx, outbuf,
+                 GRN_TEXT_VALUE(&escaped_name), GRN_TEXT_LEN(&escaped_name));
+  }
+}
+
+static void
+dump_obj_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *obj)
+{
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_len;
+  name_len = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+  dump_name(ctx, outbuf, name, name_len);
+}
+
+static void
+dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+{
+  grn_obj *domain;
+  grn_obj_flags default_flags;
+
+  switch (table->header.type) {
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_NO_KEY:
+  case GRN_TABLE_VIEW:
+    break;
+  default:
+    return;
+  }
+
+  domain = grn_ctx_at(ctx, table->header.domain);
+  if (!domain) {
+    return;
+  }
+  default_flags = GRN_OBJ_PERSISTENT | domain->header.flags;
+
+  GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
+  dump_obj_name(ctx, outbuf, table);
+  GRN_TEXT_PUTC(ctx, outbuf, ' ');
+  grn_text_itoa(ctx, outbuf, table->header.flags & ~default_flags);
+  GRN_TEXT_PUTC(ctx, outbuf, ' ');
+  dump_obj_name(ctx, outbuf, domain);
+  GRN_TEXT_PUTC(ctx, outbuf, '\n');
+
+  grn_obj_unlink(ctx, domain);
+}
+
+static void
+dump_tables(grn_ctx *ctx, grn_obj *outbuf)
+{
+  grn_obj *db = ctx->impl->db;
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0))) {
+    grn_id id;
+
+    while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *table;
+
+      if ((table = grn_ctx_at(ctx, id))) {
+        dump_table(ctx, outbuf, table);
+        grn_obj_unlink(ctx, table);
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
 static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -873,7 +950,13 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *outbuf = args[0];
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  GRN_TEXT_PUTS(ctx, outbuf, "true");
+
+  dump_tables(ctx, outbuf);
+
+  /* remove the last newline because another one will be added by the calller.
+     maybe, the caller of proc functions currently doesn't consider the
+     possibility of multiple-line output from proc functions. */
+  grn_bulk_truncate(ctx, outbuf, GRN_BULK_VSIZE(outbuf) - 1);
   return outbuf;
 }
 
