@@ -33,6 +33,10 @@ class DumpTest < Test::Unit::TestCase
     assert_dump("table_create Blog 0 ShortText\n")
   end
 
+  def test_create_hash_table_without_key_type
+    assert_dump("table_create Blog 0\n")
+  end
+
   def test_patricia_table_create
     assert_dump("table_create Blog 1 ShortText\n")
   end

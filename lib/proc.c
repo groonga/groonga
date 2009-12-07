@@ -1041,11 +1041,9 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
     domain = grn_ctx_at(ctx, table->header.domain);
-    if (!domain) {
-      ERR(GRN_DOMAIN_ERROR, "couldn't get table's key_type object");
-      return;
+    if (domain) {
+      default_flags |= domain->header.flags;
     }
-    default_flags |= domain->header.flags;
     break;
   case GRN_TABLE_NO_KEY:
   case GRN_TABLE_VIEW:
