@@ -95,6 +95,14 @@ class DumpTest < Test::Unit::TestCase
                 "column_create Terms entry_body 2 Entry body\n")
   end
 
+  def test_load
+    assert_dump("table_create commands 1 ShortText\n" +
+                "column_create commands body 0 ShortText\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"_key":"gcc","body":"a compiler"}' + ",\n" +
+                '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")

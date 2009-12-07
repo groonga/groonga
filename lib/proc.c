@@ -983,6 +983,55 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 }
 
 static void
+dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+{
+  int i, ncolumns;
+  grn_obj columnbuf;
+  grn_obj **columns;
+  grn_table_cursor *cursor;
+  grn_id id;
+
+  GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
+  dump_obj_name(ctx, outbuf, table);
+  GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
+
+  GRN_PTR_INIT(&columnbuf, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_columns(ctx, table, DEFAULT_OUTPUT_COLUMNS,
+                  strlen(DEFAULT_OUTPUT_COLUMNS), &columnbuf);
+  columns = (grn_obj **)GRN_BULK_HEAD(&columnbuf);
+  ncolumns = GRN_BULK_VSIZE(&columnbuf)/sizeof(grn_obj *);
+
+  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
+                                 GRN_CURSOR_BY_ID);
+  for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL; ++i) {
+    int j;
+    grn_obj buf;
+    if (i) { GRN_TEXT_PUTS(ctx, outbuf, ",\n"); }
+    GRN_TEXT_PUTS(ctx, outbuf, "{");
+    for (j = 0; j < ncolumns; j++) {
+      if (j) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+      GRN_TEXT_INIT(&buf, 0);
+      grn_column_name_(ctx, columns[j], &buf);
+      grn_text_otoj(ctx, outbuf, &buf, NULL);
+      grn_obj_unlink(ctx, &buf);
+      GRN_TEXT_PUTC(ctx, outbuf, ':');
+      GRN_TEXT_INIT(&buf, 0);
+      grn_obj_get_value(ctx, columns[j], id, &buf);
+      grn_text_otoj(ctx, outbuf, &buf, NULL);
+      grn_obj_unlink(ctx, &buf);
+    }
+    GRN_TEXT_PUTS(ctx, outbuf, "}");
+  }
+  GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
+
+  grn_table_cursor_close(ctx, cursor);
+  for (i = 0; i < ncolumns; i++) {
+    grn_obj_unlink(ctx, columns[i]);
+  }
+  grn_obj_unlink(ctx, &columnbuf);
+}
+
+static void
 dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   grn_obj *domain = NULL, *range = NULL;
@@ -1031,6 +1080,9 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   }
 
   dump_columns(ctx, outbuf, table);
+  if (grn_table_size(ctx, table) > 0) {
+    dump_records(ctx, outbuf, table);
+  }
 }
 
 static void
