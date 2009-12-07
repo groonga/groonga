@@ -107,6 +107,25 @@ class DumpTest < Test::Unit::TestCase
                 '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
   end
 
+  def test_load_with_reference_key
+    assert_dump(<<EOGQTP)
+table_create users 0 ShortText
+load --table users
+[
+{"_id":1,"_key":"ryoqun"},
+{"_id":2,"_key":"hayamiz"}
+]
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 0 users
+load --table comments
+[
+{"_id":1,"_key":"groonga","text":"it is fast","author":"ryoqun"},
+{"_id":2,"_key":"ruby","text":"it is fun","author":"hayamiz"}
+]
+EOGQTP
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")
