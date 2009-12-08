@@ -1020,6 +1020,20 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   grn_table_cursor *cursor;
   grn_id id;
 
+  switch (table->header.type) {
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_NO_KEY:
+  case GRN_TABLE_VIEW:
+    break;
+  default:
+    return;
+  }
+
+  if (grn_table_size(ctx, table) == 0 || have_index_column(ctx, table)) {
+    return;
+  }
+
   GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
@@ -1114,13 +1128,10 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   }
 
   dump_columns(ctx, outbuf, table);
-  if (grn_table_size(ctx, table) > 0 && !have_index_column(ctx, table)) {
-    dump_records(ctx, outbuf, table);
-  }
 }
 
 static void
-dump_tables(grn_ctx *ctx, grn_obj *outbuf)
+dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
@@ -1140,6 +1151,27 @@ dump_tables(grn_ctx *ctx, grn_obj *outbuf)
   }
 }
 
+static void
+dump_all_records(grn_ctx *ctx, grn_obj *outbuf)
+{
+  grn_obj *db = ctx->impl->db;
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                                   GRN_CURSOR_BY_ID))) {
+    grn_id id;
+
+    while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *table;
+
+      if ((table = grn_ctx_at(ctx, id))) {
+        dump_records(ctx, outbuf, table);
+        grn_obj_unlink(ctx, table);
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
 static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1148,7 +1180,11 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-  dump_tables(ctx, outbuf);
+  dump_scheme(ctx, outbuf);
+  /* To update index columns correctly, we first create the whole scheme, then
+     load non-derivative records, while skipping records of index columns. That
+     way, groonga will silently do the job of updating index columns for us. */
+  dump_all_records(ctx, outbuf);
 
   /* remove the last newline because another one will be added by the calller.
      maybe, the caller of proc functions currently doesn't consider the

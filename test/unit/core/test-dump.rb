@@ -89,14 +89,14 @@ class DumpTest < Test::Unit::TestCase
   def test_load_with_reference_key
     assert_dump(<<EOGQTP)
 table_create users 0 ShortText
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 0 users
 load --table users
 [
 {"_id":1,"_key":"ryoqun"},
 {"_id":2,"_key":"hayamiz"}
 ]
-table_create comments 1 ShortText
-column_create comments text 0 ShortText
-column_create comments author 0 users
 load --table comments
 [
 {"_id":1,"_key":"groonga","text":"it is fast","author":"ryoqun"},
