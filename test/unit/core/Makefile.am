@@ -19,7 +19,8 @@ noinst_LTLIBRARIES =				\
 	test-expr.la				\
 	test-expr-script.la			\
 	test-text.la				\
-	test-cast.la
+	test-cast.la				\
+	test-dump.la
 endif
 
 EXTRA_DIST =					\
@@ -30,7 +31,10 @@ INCLUDES =			\
 	-I$(top_srcdir)/lib	\
 	$(GROONGA_INCLUDEDIR)
 
-AM_CFLAGS = $(GCUTTER_CFLAGS)
+AM_CFLAGS =						\
+	$(GCUTTER_CFLAGS)				\
+	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"
+
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version
 
 LIBS =								\
@@ -63,3 +67,4 @@ test_expr_la_SOURCES			= test-expr.c
 test_expr_script_la_SOURCES		= test-expr-script.c
 test_text_la_SOURCES			= test-text.c
 test_cast_la_SOURCES			= test-cast.c
+test_dump_la_SOURCES			= test-dump.c
