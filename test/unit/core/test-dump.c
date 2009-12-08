@@ -298,11 +298,18 @@ test_table_create(gconstpointer data)
 void
 data_column_create(void)
 {
-  ADD_DATA("column",
+  ADD_DATA("column - scalar",
            "column_create Blog body 0 Text\n",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_SCALAR,
+           "Text",
+           NULL);
+  ADD_DATA("column - vector",
+           "column_create Blog body 1 Text\n",
+           "Blog",
+           "body",
+           GRN_OBJ_COLUMN_VECTOR,
            "Text",
            NULL);
 }
