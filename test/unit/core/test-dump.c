@@ -26,7 +26,8 @@
 
 #define GET(name) grn_ctx_get(&context, name, strlen(name))
 
-void test_hash_table_create(void);
+void data_hash_table_create(void);
+void test_hash_table_create(gconstpointer data);
 
 static GCutEgg *egg = NULL;
 static GString *dumped = NULL;
@@ -141,8 +142,15 @@ grn_test_assert_dump(const gchar *expected)
 
 static void
 table_create(const gchar *name, grn_obj_flags flags,
-             grn_obj *key_type, grn_obj *value_type)
+             const gchar *key_type_name, const gchar *value_type_name)
 {
+  grn_obj *key_type = NULL, *value_type = NULL;
+
+  if (key_type_name)
+    key_type = GET(key_type_name);
+  if (value_type_name)
+    value_type = GET(value_type_name);
+
   grn_table_create(&context,
                    name, strlen(name),
                    NULL,
@@ -152,8 +160,40 @@ table_create(const gchar *name, grn_obj_flags flags,
 }
 
 void
-test_hash_table_create(void)
+data_hash_table_create(void)
 {
-  table_create("Blog", GRN_OBJ_TABLE_HASH_KEY, GET("ShortText"), NULL);
-  grn_test_assert_dump("table_create Blog 0 ShortText\n");
+#define ADD_DATA(label, expected, name, flags,                          \
+                 key_type_name, value_type_name)                        \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "name", G_TYPE_STRING, name,                           \
+                 "flags", G_TYPE_UINT, flags,                           \
+                 "key_type_name", G_TYPE_STRING, key_type_name,         \
+                 "value_type_name", G_TYPE_STRING, value_type_name,     \
+                 NULL)
+
+  ADD_DATA("hash",
+           "table_create Blog 0 ShortText\n",
+           "Blog",
+           GRN_OBJ_TABLE_HASH_KEY,
+           "ShortText",
+           NULL);
+  ADD_DATA("hash - without key",
+           "table_create Blog 0\n",
+           "Blog",
+           GRN_OBJ_TABLE_HASH_KEY,
+           NULL,
+           NULL);
+
+#undef ADD_DATA
+}
+
+void
+test_hash_table_create(gconstpointer data)
+{
+  table_create(gcut_data_get_string(data, "name"),
+               gcut_data_get_uint(data, "flags"),
+               gcut_data_get_string(data, "key_type_name"),
+               gcut_data_get_string(data, "value_type_name"));
+  grn_test_assert_dump(gcut_data_get_string(data, "expected"));
 }
