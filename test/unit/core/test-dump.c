@@ -26,8 +26,8 @@
 
 #define GET(name) grn_ctx_get(&context, name, strlen(name))
 
-void data_hash_table_create(void);
-void test_hash_table_create(gconstpointer data);
+void data_table_create(void);
+void test_table_create(gconstpointer data);
 
 static GCutEgg *egg = NULL;
 static GString *dumped = NULL;
@@ -159,9 +159,6 @@ table_create(const gchar *name, grn_obj_flags flags,
   grn_test_assert_context(&context);
 }
 
-void
-data_hash_table_create(void)
-{
 #define ADD_DATA(label, expected, name, flags,                          \
                  key_type_name, value_type_name)                        \
   gcut_add_datum(label,                                                 \
@@ -172,6 +169,9 @@ data_hash_table_create(void)
                  "value_type_name", G_TYPE_STRING, value_type_name,     \
                  NULL)
 
+static void
+data_hash_table_create(void)
+{
   ADD_DATA("hash",
            "table_create Blog 0 ShortText\n",
            "Blog",
@@ -184,12 +184,53 @@ data_hash_table_create(void)
            GRN_OBJ_TABLE_HASH_KEY,
            NULL,
            NULL);
+}
 
-#undef ADD_DATA
+static void
+data_patricia_trie_create(void)
+{
+  ADD_DATA("patricia trie",
+           "table_create Blog 1 ShortText\n",
+           "Blog",
+           GRN_OBJ_TABLE_PAT_KEY,
+           "ShortText",
+           NULL);
+}
+
+static void
+data_array_create(void)
+{
+  ADD_DATA("array",
+           "table_create Blog 3\n",
+           "Blog",
+           GRN_OBJ_TABLE_NO_KEY,
+           NULL,
+           NULL);
+}
+
+static void
+data_view_create(void)
+{
+  ADD_DATA("view",
+           "table_create Blog 4\n",
+           "Blog",
+           GRN_OBJ_TABLE_VIEW,
+           NULL,
+           NULL);
 }
 
 void
-test_hash_table_create(gconstpointer data)
+data_table_create(void)
+{
+  data_hash_table_create();
+  data_patricia_trie_create();
+  data_array_create();
+  data_view_create();
+}
+#undef ADD_DATA
+
+void
+test_table_create(gconstpointer data)
 {
   table_create(gcut_data_get_string(data, "name"),
                gcut_data_get_uint(data, "flags"),

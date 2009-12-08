@@ -29,26 +29,6 @@ class DumpTest < Test::Unit::TestCase
     FileUtils.rm_rf(@tmp_dir)
   end
 
-  def test_hash_table_create
-    assert_dump("table_create Blog 0 ShortText\n")
-  end
-
-  def test_create_hash_table_without_key_type
-    assert_dump("table_create Blog 0\n")
-  end
-
-  def test_patricia_table_create
-    assert_dump("table_create Blog 1 ShortText\n")
-  end
-
-  def test_no_key_table_create
-    assert_dump("table_create Blog 3\n")
-  end
-
-  def test_view_table_create
-    assert_dump("table_create Blog 4\n")
-  end
-
   def test_table_create_key_normalize
     assert_dump("table_create Blog 128 ShortText\n")
   end
