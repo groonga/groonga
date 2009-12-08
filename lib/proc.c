@@ -1036,6 +1036,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
+  grn_obj *default_tokenizer;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -1069,6 +1070,12 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
     dump_obj_name(ctx, outbuf, range);
     grn_obj_unlink(ctx, range);
+  }
+  default_tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER,
+                                       NULL);
+  if (default_tokenizer) {
+    GRN_TEXT_PUTS(ctx, outbuf, " --default_tokenizer ");
+    dump_obj_name(ctx, outbuf, default_tokenizer);
   }
 
   GRN_TEXT_PUTC(ctx, outbuf, '\n');

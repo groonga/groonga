@@ -95,7 +95,7 @@ class DumpTest < Test::Unit::TestCase
   def test_index_column_create
     assert_dump("table_create Entry 0 ShortText\n" +
                 "column_create Entry body 0 ShortText\n" +
-                "table_create Terms 129 ShortText\n" +
+                "table_create Terms 129 ShortText --default_tokenizer TokenBigram\n" +
                 "column_create Terms entry_body 2 Entry body\n")
   end
 
