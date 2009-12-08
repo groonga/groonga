@@ -317,6 +317,33 @@ data_arithmetic_operator_shift_r(void)
   ADD_DATUM("integer-string >> string",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= ((\"32\" >> \"abc\") - 23)");
+  ADD_DATUM("-integer >> integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((-32 >> 1) + 16 + 9)");
+}
+
+static void
+data_arithmetic_operator_shift_rr(void)
+{
+  ADD_DATUM("integer >>> integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((32 >>> 3) + 5)");
+  ADD_DATUM("float >>> float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((32.1 >>> 3.1) + 5)");
+  ADD_DATUM("integer-string >>> integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"32\" >>> \"3\") + 5)");
+  ADD_DATUM("string >>> integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"abc\" >>> \"2\") + 9)");
+  ADD_DATUM("integer-string >>> string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"32\" >>> \"abc\") - 23)");
+  ADD_DATUM("-integer >>> integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            cut_take_printf("size <= ((-32 >>> 1) - %d + 9)",
+                            G_MAXINT32 - 16));
 }
 
 static void
@@ -518,6 +545,7 @@ data_arithmetic_operator(void)
 {
   data_arithmetic_operator_shift_l();
   data_arithmetic_operator_shift_r();
+  data_arithmetic_operator_shift_rr();
   data_arithmetic_operator_plus();
   data_arithmetic_operator_minus();
   data_arithmetic_operator_star();

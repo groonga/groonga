@@ -40,7 +40,7 @@ log_events:
          BITWISE_NOT
     o    SHIFTL
     o    SHIFTR
-         SHIFTRR
+    o    SHIFTRR
     o    PLUS
     o    MINUS
     o    STAR
