@@ -6922,6 +6922,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_SLASH :
     case GRN_OP_MOD :
     case GRN_OP_SHIFTL :
+    case GRN_OP_SHIFTR :
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
       break;
     case GRN_OP_INCR :
@@ -7587,7 +7588,10 @@ truep(grn_ctx *ctx, grn_obj *v)
 #define FLOAT_ARITHMETIC_OPERATION_MOD(x, y) (fmod((x), (y)))
 #define INTEGER_ARITHMETIC_OPERATION_SHIFTL(x, y) ((x) << (y))
 #define FLOAT_ARITHMETIC_OPERATION_SHIFTL(x, y)                         \
-  ((long long unsigned int)(x) << (long long unsigned int)(y))
+  ((long long int)(x) << (long long int)(y))
+#define INTEGER_ARITHMETIC_OPERATION_SHIFTR(x, y) ((x) >> (y))
+#define FLOAT_ARITHMETIC_OPERATION_SHIFTR(x, y)                         \
+  ((long long int)(x) >> (long long int)(y))
 
 #define ARITHMETIC_OPERATION_NO_CHECK(y) do {} while (0)
 #define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y) do {        \
@@ -8611,6 +8615,29 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                         y_ = GRN_INT64_VALUE(res);
 
                                         GRN_INT64_SET(ctx, res, x_ << y_);
+                                      }
+                                      ,);
+        break;
+      case GRN_OP_SHIFTR :
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_SHIFTR,
+                                      FLOAT_ARITHMETIC_OPERATION_SHIFTR,
+                                      ARITHMETIC_OPERATION_NO_CHECK,
+                                      ARITHMETIC_OPERATION_NO_CHECK,
+                                      {
+                                        long long int x_;
+                                        long long int y_;
+
+                                        res->header.domain = GRN_DB_INT64;
+
+                                        GRN_INT64_SET(ctx, res, 0);
+                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
+                                        x_ = GRN_INT64_VALUE(res);
+
+                                        GRN_INT64_SET(ctx, res, 0);
+                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
+                                        y_ = GRN_INT64_VALUE(res);
+
+                                        GRN_INT64_SET(ctx, res, x_ >> y_);
                                       }
                                       ,);
         break;

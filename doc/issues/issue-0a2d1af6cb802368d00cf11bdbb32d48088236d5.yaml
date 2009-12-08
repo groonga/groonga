@@ -39,7 +39,7 @@ log_events:
          BITWISE_AND
          BITWISE_NOT
     o    SHIFTL
-         SHIFTR
+    o    SHIFTR
          SHIFTRR
     o    PLUS
     o    MINUS
