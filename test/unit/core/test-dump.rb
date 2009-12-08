@@ -29,18 +29,6 @@ class DumpTest < Test::Unit::TestCase
     FileUtils.rm_rf(@tmp_dir)
   end
 
-  def test_table_create_key_normalize
-    assert_dump("table_create Blog 128 ShortText\n")
-  end
-
-  def test_table_create_with_value_type
-    assert_dump("table_create Blog 128 ShortText Int32\n")
-  end
-
-  def test_table_create_escaped_string
-    assert_dump("table_create \"Blog\\\"\" 0 ShortText\n")
-  end
-
   def test_multiple_table_create
     assert_dump("table_create users 0 ShortText\n" +
                 "table_create admin_users 0 users\n")
