@@ -1110,7 +1110,11 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       ERR(GRN_RANGE_ERROR, "couldn't get table's value_type object");
       return;
     }
-    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    if (table->header.type != GRN_TABLE_NO_KEY) {
+      GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    } else {
+      GRN_TEXT_PUTS(ctx, outbuf, " --value_type ");
+    }
     dump_obj_name(ctx, outbuf, range);
     grn_obj_unlink(ctx, range);
   }

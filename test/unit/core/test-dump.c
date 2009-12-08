@@ -224,6 +224,12 @@ data_array_create(void)
            GRN_OBJ_TABLE_NO_KEY,
            NULL,
            NULL);
+  ADD_DATA("array with value",
+           "table_create Blog 3 --value_type Int32\n",
+           "Blog",
+           GRN_OBJ_TABLE_NO_KEY,
+           NULL,
+           "Int32");
 }
 
 static void
