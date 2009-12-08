@@ -233,6 +233,9 @@ GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
 #define GRN_CTX_SET_ENCODING(ctx,enc) \
   ((ctx)->encoding = (enc == GRN_ENC_DEFAULT) ? grn_get_default_encoding() : enc)
 
+GRN_API const char *grn_get_version(void);
+GRN_API const char *grn_get_package(void);
+
 /* obj */
 
 typedef unsigned short int grn_obj_flags;
