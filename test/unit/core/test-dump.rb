@@ -67,6 +67,17 @@ class DumpTest < Test::Unit::TestCase
                 "column_create Terms entry_body 2 Entry body\n")
   end
 
+  def test_table_with_index_column
+    body = "作成するテーブルを語彙表として使用する場合、" +
+           "文字列を分割するトークナイザを指定します。"
+    assert_dump("table_create Entry 0 ShortText\n" +
+                "column_create Entry body 0 ShortText\n" +
+                "table_create Terms 129 ShortText --default_tokenizer TokenBigram\n" +
+                "column_create Terms entry_body 2 Entry body\n" +
+                "load --table Entry\n[\n" +
+                '{"_id":1,"_key":"gcc","body":"' + body + '"}' + "\n]\n")
+  end
+
   def test_load
     assert_dump("table_create commands 1 ShortText\n" +
                 "column_create commands body 0 ShortText\n" +
