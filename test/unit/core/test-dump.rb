@@ -29,34 +29,6 @@ class DumpTest < Test::Unit::TestCase
     FileUtils.rm_rf(@tmp_dir)
   end
 
-  def test_hash_table_create
-    assert_dump("table_create Blog 0 ShortText\n")
-  end
-
-  def test_patricia_table_create
-    assert_dump("table_create Blog 1 ShortText\n")
-  end
-
-  def test_no_key_table_create
-    assert_dump("table_create Blog 3\n")
-  end
-
-  def test_view_table_create
-    assert_dump("table_create Blog 4\n")
-  end
-
-  def test_table_create_key_normalize
-    assert_dump("table_create Blog 128 ShortText\n")
-  end
-
-  def test_table_create_with_value_type
-    assert_dump("table_create Blog 128 ShortText Int32\n")
-  end
-
-  def test_table_create_escaped_string
-    assert_dump("table_create \"Blog\\\"\" 0 ShortText\n")
-  end
-
   def test_multiple_table_create
     assert_dump("table_create users 0 ShortText\n" +
                 "table_create admin_users 0 users\n")
@@ -91,8 +63,46 @@ class DumpTest < Test::Unit::TestCase
   def test_index_column_create
     assert_dump("table_create Entry 0 ShortText\n" +
                 "column_create Entry body 0 ShortText\n" +
-                "table_create Terms 129 ShortText\n" +
+                "table_create Terms 129 ShortText --default_tokenizer TokenBigram\n" +
                 "column_create Terms entry_body 2 Entry body\n")
+  end
+
+  def test_table_with_index_column
+    body = "作成するテーブルを語彙表として使用する場合、" +
+           "文字列を分割するトークナイザを指定します。"
+    assert_dump("table_create Entry 0 ShortText\n" +
+                "column_create Entry body 0 ShortText\n" +
+                "table_create Terms 129 ShortText --default_tokenizer TokenBigram\n" +
+                "column_create Terms entry_body 2 Entry body\n" +
+                "load --table Entry\n[\n" +
+                '{"_id":1,"_key":"gcc","body":"' + body + '"}' + "\n]\n")
+  end
+
+  def test_load
+    assert_dump("table_create commands 1 ShortText\n" +
+                "column_create commands body 0 ShortText\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"_key":"gcc","body":"a compiler"}' + ",\n" +
+                '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
+  end
+
+  def test_load_with_reference_key
+    assert_dump(<<EOGQTP)
+table_create users 0 ShortText
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 0 users
+load --table users
+[
+{"_id":1,"_key":"ryoqun"},
+{"_id":2,"_key":"hayamiz"}
+]
+load --table comments
+[
+{"_id":1,"_key":"groonga","text":"it is fast","author":"ryoqun"},
+{"_id":2,"_key":"ruby","text":"it is fun","author":"hayamiz"}
+]
+EOGQTP
   end
 
   private

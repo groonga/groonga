@@ -957,6 +957,35 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
   grn_obj_unlink(ctx, type);
 }
 
+static int
+have_index_column(grn_ctx *ctx, grn_obj *table)
+{
+  int n_index_columns = 0;
+  grn_hash *columns;
+  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                            GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  if (!columns) {
+    ERR(GRN_ERROR, "couldn't create a hash to hold columns");
+    return 0;
+  }
+
+  if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)columns) >= 0) {
+    grn_id *key;
+
+    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
+      grn_obj *column;
+      if ((column = grn_ctx_at(ctx, *key))) {
+        if (column->header.flags & GRN_OBJ_COLUMN_INDEX) {
+          n_index_columns++;
+        }
+        grn_obj_unlink(ctx, column);
+      }
+    });
+  }
+  grn_hash_close(ctx, columns);
+  return n_index_columns;
+}
+
 static void
 dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
@@ -983,20 +1012,82 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 }
 
 static void
+dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+{
+  int i, ncolumns;
+  grn_obj columnbuf;
+  grn_obj **columns;
+  grn_table_cursor *cursor;
+  grn_id id;
+
+  switch (table->header.type) {
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_NO_KEY:
+  case GRN_TABLE_VIEW:
+    break;
+  default:
+    return;
+  }
+
+  if (grn_table_size(ctx, table) == 0 || have_index_column(ctx, table)) {
+    return;
+  }
+
+  GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
+  dump_obj_name(ctx, outbuf, table);
+  GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
+
+  GRN_PTR_INIT(&columnbuf, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_columns(ctx, table, DEFAULT_OUTPUT_COLUMNS,
+                  strlen(DEFAULT_OUTPUT_COLUMNS), &columnbuf);
+  columns = (grn_obj **)GRN_BULK_HEAD(&columnbuf);
+  ncolumns = GRN_BULK_VSIZE(&columnbuf)/sizeof(grn_obj *);
+
+  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
+                                 GRN_CURSOR_BY_ID);
+  for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL; ++i) {
+    int j;
+    grn_obj buf;
+    if (i) { GRN_TEXT_PUTS(ctx, outbuf, ",\n"); }
+    GRN_TEXT_PUTS(ctx, outbuf, "{");
+    for (j = 0; j < ncolumns; j++) {
+      if (j) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+      GRN_TEXT_INIT(&buf, 0);
+      grn_column_name_(ctx, columns[j], &buf);
+      grn_text_otoj(ctx, outbuf, &buf, NULL);
+      grn_obj_unlink(ctx, &buf);
+      GRN_TEXT_PUTC(ctx, outbuf, ':');
+      GRN_TEXT_INIT(&buf, 0);
+      grn_obj_get_value(ctx, columns[j], id, &buf);
+      grn_text_otoj(ctx, outbuf, &buf, NULL);
+      grn_obj_unlink(ctx, &buf);
+    }
+    GRN_TEXT_PUTS(ctx, outbuf, "}");
+  }
+  GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
+
+  grn_table_cursor_close(ctx, cursor);
+  for (i = 0; i < ncolumns; i++) {
+    grn_obj_unlink(ctx, columns[i]);
+  }
+  grn_obj_unlink(ctx, &columnbuf);
+}
+
+static void
 dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
+  grn_obj *default_tokenizer;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
     domain = grn_ctx_at(ctx, table->header.domain);
-    if (!domain) {
-      ERR(GRN_DOMAIN_ERROR, "couldn't get table's key_type object");
-      return;
+    if (domain) {
+      default_flags |= domain->header.flags;
     }
-    default_flags |= domain->header.flags;
     break;
   case GRN_TABLE_NO_KEY:
   case GRN_TABLE_VIEW:
@@ -1019,9 +1110,19 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       ERR(GRN_RANGE_ERROR, "couldn't get table's value_type object");
       return;
     }
-    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    if (table->header.type != GRN_TABLE_NO_KEY) {
+      GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    } else {
+      GRN_TEXT_PUTS(ctx, outbuf, " --value_type ");
+    }
     dump_obj_name(ctx, outbuf, range);
     grn_obj_unlink(ctx, range);
+  }
+  default_tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER,
+                                       NULL);
+  if (default_tokenizer) {
+    GRN_TEXT_PUTS(ctx, outbuf, " --default_tokenizer ");
+    dump_obj_name(ctx, outbuf, default_tokenizer);
   }
 
   GRN_TEXT_PUTC(ctx, outbuf, '\n');
@@ -1034,7 +1135,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 }
 
 static void
-dump_tables(grn_ctx *ctx, grn_obj *outbuf)
+dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
@@ -1054,6 +1155,27 @@ dump_tables(grn_ctx *ctx, grn_obj *outbuf)
   }
 }
 
+static void
+dump_all_records(grn_ctx *ctx, grn_obj *outbuf)
+{
+  grn_obj *db = ctx->impl->db;
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                                   GRN_CURSOR_BY_ID))) {
+    grn_id id;
+
+    while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *table;
+
+      if ((table = grn_ctx_at(ctx, id))) {
+        dump_records(ctx, outbuf, table);
+        grn_obj_unlink(ctx, table);
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
 static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1062,7 +1184,11 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-  dump_tables(ctx, outbuf);
+  dump_scheme(ctx, outbuf);
+  /* To update index columns correctly, we first create the whole scheme, then
+     load non-derivative records, while skipping records of index columns. That
+     way, groonga will silently do the job of updating index columns for us. */
+  dump_all_records(ctx, outbuf);
 
   /* remove the last newline because another one will be added by the calller.
      maybe, the caller of proc functions currently doesn't consider the

@@ -35,12 +35,12 @@ log_events:
          XOR_ASSIGN
          OR_ASSIGN
          BITWISE_OR
-         BITWISE_XOR
-         BITWISE_AND
-         BITWISE_NOT
-         SHIFTL
-         SHIFTR
-         SHIFTRR
+    o    BITWISE_XOR
+    o    BITWISE_AND
+    o    BITWISE_NOT
+    o    SHIFTL
+    o    SHIFTR
+    o    SHIFTRR
     o    PLUS
     o    MINUS
     o    STAR

@@ -280,11 +280,130 @@ test_comparison_operator(gconstpointer data)
                  NULL)
 
 static void
+data_arithmetic_operator_bitwise_xor(void)
+{
+  ADD_DATUM("integer ^ integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (8 ^ 1)");
+  ADD_DATUM("-integer ^ integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (-8 ^ 1) + 16");
+  ADD_DATUM("float ^ integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (8.1 ^ 1)");
+  ADD_DATUM("integer-string ^ integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (\"8\" ^ 1)");
+  ADD_DATUM("string ^ integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (\"abc\" ^ 1) + 9");
+}
+
+static void
+data_arithmetic_operator_bitwise_and(void)
+{
+  ADD_DATUM("integer & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (25 & 41)");
+  ADD_DATUM("-integer & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (-33 & 41)");
+  ADD_DATUM("float & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (25.3 & 41)");
+  ADD_DATUM("integer-string & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (\"25\" & 41)");
+  ADD_DATUM("string & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (\"abc\" & 41) + 9");
+}
+
+static void
+data_arithmetic_operator_bitwise_not(void)
+{
+  ADD_DATUM("~integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ~9 + 19");
+  ADD_DATUM("~-integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ~-9 + 1");
+  ADD_DATUM("~float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ~9.1 + 19");
+  ADD_DATUM("~integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ~\"9\" + 19");
+  ADD_DATUM("~string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ~\"abc\" + 10");
+}
+
+static void
 data_arithmetic_operator_shift_l(void)
 {
   ADD_DATUM("integer << integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= ((2 << 2) + 1)");
+  ADD_DATUM("float << float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((2.1 << 2.1) + 1)");
+  ADD_DATUM("integer-string << integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"2\" << \"2\") + 1)");
+  ADD_DATUM("string << integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"abc\" << \"2\") + 9)");
+  ADD_DATUM("integer-string << string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"2\" << \"abc\") + 7)");
+}
+
+static void
+data_arithmetic_operator_shift_r(void)
+{
+  ADD_DATUM("integer >> integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((32 >> 3) + 5)");
+  ADD_DATUM("float >> float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((32.1 >> 3.1) + 5)");
+  ADD_DATUM("integer-string >> integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"32\" >> \"3\") + 5)");
+  ADD_DATUM("string >> integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"abc\" >> \"2\") + 9)");
+  ADD_DATUM("integer-string >> string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"32\" >> \"abc\") - 23)");
+  ADD_DATUM("-integer >> integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((-32 >> 1) + 16 + 9)");
+}
+
+static void
+data_arithmetic_operator_shift_rr(void)
+{
+  ADD_DATUM("integer >>> integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((32 >>> 3) + 5)");
+  ADD_DATUM("float >>> float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((32.1 >>> 3.1) + 5)");
+  ADD_DATUM("integer-string >>> integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"32\" >>> \"3\") + 5)");
+  ADD_DATUM("string >>> integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"abc\" >>> \"2\") + 9)");
+  ADD_DATUM("integer-string >>> string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"32\" >>> \"abc\") - 23)");
+  ADD_DATUM("-integer >>> integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            cut_take_printf("size <= ((-32 >>> 1) - %d + 9)",
+                            G_MAXINT32 - 16));
 }
 
 static void
@@ -346,11 +465,9 @@ data_arithmetic_operator_minus(void)
             cut_take_printf("size <= "
                             "-%" G_GUINT64_FORMAT " + "
                             "%" G_GUINT64_FORMAT " + "
-                            /*  "100 + " */
-                            /* NOTE: 100 is disappeared by float error. */
                             "9",
                             ((guint64)(G_MAXINT64)) + 1,
-                            ((guint64)(G_MAXINT64)) + 1 - 100));
+                            ((guint64)(G_MAXINT64)) + 1));
   ADD_DATUM("-float",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5.9 + 14.9");
@@ -486,7 +603,12 @@ data_arithmetic_operator_decr_post(void)
 void
 data_arithmetic_operator(void)
 {
+  data_arithmetic_operator_bitwise_xor();
+  data_arithmetic_operator_bitwise_and();
+  data_arithmetic_operator_bitwise_not();
   data_arithmetic_operator_shift_l();
+  data_arithmetic_operator_shift_r();
+  data_arithmetic_operator_shift_rr();
   data_arithmetic_operator_plus();
   data_arithmetic_operator_minus();
   data_arithmetic_operator_star();
