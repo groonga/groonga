@@ -280,6 +280,26 @@ test_comparison_operator(gconstpointer data)
                  NULL)
 
 static void
+data_arithmetic_operator_bitwise_and(void)
+{
+  ADD_DATUM("integer & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (25 & 41)");
+  ADD_DATUM("-integer & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (-33 & 41)");
+  ADD_DATUM("float & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (25.3 & 41)");
+  ADD_DATUM("integer-string & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (\"25\" & 41)");
+  ADD_DATUM("string & integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (\"abc\" & 41) + 9");
+}
+
+static void
 data_arithmetic_operator_bitwise_not(void)
 {
   ADD_DATUM("~integer",
@@ -563,6 +583,7 @@ data_arithmetic_operator_decr_post(void)
 void
 data_arithmetic_operator(void)
 {
+  data_arithmetic_operator_bitwise_and();
   data_arithmetic_operator_bitwise_not();
   data_arithmetic_operator_shift_l();
   data_arithmetic_operator_shift_r();
