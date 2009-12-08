@@ -38,7 +38,7 @@ log_events:
          BITWISE_XOR
          BITWISE_AND
          BITWISE_NOT
-         SHIFTL
+    o    SHIFTL
          SHIFTR
          SHIFTRR
     o    PLUS

@@ -285,6 +285,18 @@ data_arithmetic_operator_shift_l(void)
   ADD_DATUM("integer << integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= ((2 << 2) + 1)");
+  ADD_DATUM("float << float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((2.1 << 2.1) + 1)");
+  ADD_DATUM("integer-string << integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"2\" << \"2\") + 1)");
+  ADD_DATUM("string << integer-string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"abc\" << \"2\") + 9)");
+  ADD_DATUM("integer-string << string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= ((\"2\" << \"abc\") + 7)");
 }
 
 static void
@@ -346,11 +358,9 @@ data_arithmetic_operator_minus(void)
             cut_take_printf("size <= "
                             "-%" G_GUINT64_FORMAT " + "
                             "%" G_GUINT64_FORMAT " + "
-                            /*  "100 + " */
-                            /* NOTE: 100 is disappeared by float error. */
                             "9",
                             ((guint64)(G_MAXINT64)) + 1,
-                            ((guint64)(G_MAXINT64)) + 1 - 100));
+                            ((guint64)(G_MAXINT64)) + 1));
   ADD_DATUM("-float",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= -5.9 + 14.9");

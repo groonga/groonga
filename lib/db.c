@@ -8597,10 +8597,20 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ARITHMETIC_OPERATION_NO_CHECK,
                                       ARITHMETIC_OPERATION_NO_CHECK,
                                       {
-                                        ERR(GRN_INVALID_ARGUMENT,
-                                            "\"string\" << \"string\" "
-                                            "isn't supported");
-                                        goto exit;
+                                        long long int x_;
+                                        long long int y_;
+
+                                        res->header.domain = GRN_DB_INT64;
+
+                                        GRN_INT64_SET(ctx, res, 0);
+                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
+                                        x_ = GRN_INT64_VALUE(res);
+
+                                        GRN_INT64_SET(ctx, res, 0);
+                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
+                                        y_ = GRN_INT64_VALUE(res);
+
+                                        GRN_INT64_SET(ctx, res, x_ << y_);
                                       }
                                       ,);
         break;
