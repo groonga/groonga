@@ -28,6 +28,8 @@
 
 void data_table_create(void);
 void test_table_create(gconstpointer data);
+void data_column_create(void);
+void test_column_create(gconstpointer data);
 
 static GCutEgg *egg = NULL;
 static GString *dumped = NULL;
@@ -159,6 +161,26 @@ table_create(const gchar *name, grn_obj_flags flags,
   grn_test_assert_context(&context);
 }
 
+static void
+column_create(const gchar *table_name, const gchar *name, grn_obj_flags flags,
+              const gchar *type_name, const gchar *sources)
+{
+  grn_obj *table = NULL, *type = NULL;
+
+  if (table_name)
+    table = GET(table_name);
+  if (type_name)
+    type = GET(type_name);
+
+  grn_column_create(&context,
+                    table,
+                    name, strlen(name),
+                    NULL,
+                    flags | GRN_OBJ_PERSISTENT,
+                    type);
+  grn_test_assert_context(&context);
+}
+
 #define ADD_DATA(label, expected, name, flags,                          \
                  key_type_name, value_type_name)                        \
   gcut_add_datum(label,                                                 \
@@ -261,4 +283,42 @@ test_table_create(gconstpointer data)
                gcut_data_get_string(data, "key_type_name"),
                gcut_data_get_string(data, "value_type_name"));
   grn_test_assert_dump(gcut_data_get_string(data, "expected"));
+}
+
+#define ADD_DATA(label, expected, table, name, flags, type_name, source)\
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "table", G_TYPE_STRING, table,                         \
+                 "name", G_TYPE_STRING, name,                           \
+                 "flags", G_TYPE_UINT, flags,                           \
+                 "type_name", G_TYPE_STRING, type_name,                 \
+                 "source", G_TYPE_STRING, source,                       \
+                 NULL)
+
+void
+data_column_create(void)
+{
+  ADD_DATA("column",
+           "column_create Blog body 0 Text\n",
+           "Blog",
+           "body",
+           GRN_OBJ_COLUMN_SCALAR,
+           "Text",
+           NULL);
+}
+#undef ADD_DATA
+
+void
+test_column_create(gconstpointer data)
+{
+  const gchar *expected;
+  table_create("Blog", 0, NULL, NULL);
+  column_create(gcut_data_get_string(data, "table"),
+                gcut_data_get_string(data, "name"),
+                gcut_data_get_uint(data, "flags"),
+                gcut_data_get_string(data, "type_name"),
+                gcut_data_get_string(data, "source"));
+  expected = gcut_data_get_string(data, "expected");
+  grn_test_assert_dump(cut_take_string(g_strconcat("table_create Blog 0\n",
+                                                   expected, NULL)));
 }
