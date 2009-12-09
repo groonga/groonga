@@ -32,7 +32,7 @@ void data_column_create(void);
 void test_column_create(gconstpointer data);
 
 static GCutEgg *egg = NULL;
-static GString *dumped = NULL;
+static GString *dumped = NULL, *error_output = NULL;
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -68,6 +68,7 @@ cut_setup(void)
 {
   egg = NULL;
   dumped = NULL;
+  error_output = NULL;
 
   logger = setup_grn_logger();
   grn_ctx_init(&context, 0);
@@ -93,6 +94,10 @@ cut_teardown(void)
     g_string_free(dumped, TRUE);
   }
 
+  if (error_output) {
+    g_string_free(error_output, TRUE);
+  }
+
   remove_tmp_directory();
 }
 
@@ -100,6 +105,12 @@ static void
 cb_output_received(GCutEgg *egg, gchar *chunk, guint64 size, gpointer user_data)
 {
   g_string_append_len(dumped, chunk, size);
+}
+
+static void
+cb_error_received(GCutEgg *egg, gchar *chunk, guint64 size, gpointer user_data)
+{
+  g_string_append_len(error_output, chunk, size);
 }
 
 static const gchar *
@@ -120,6 +131,7 @@ grn_test_assert_dump(const gchar *expected)
   GError *error = NULL;
 
   dumped = g_string_new(NULL);
+  error_output = g_string_new(NULL);
   egg = gcut_egg_new(groonga_path(),
                      "-e", "utf8",
                      database_path,
@@ -127,19 +139,24 @@ grn_test_assert_dump(const gchar *expected)
                      NULL);
   g_signal_connect(egg, "output-received",
                    G_CALLBACK(cb_output_received), NULL);
+  g_signal_connect(egg, "error-received",
+                   G_CALLBACK(cb_error_received), NULL);
 
   gcut_egg_hatch(egg, &error);
   gcut_assert_error(error);
   gcut_egg_wait(egg, 1000, &error);
   gcut_assert_error(error);
 
+  fprintf(stderr, "%s", error_output->str);
   cut_assert_equal_string(expected, dumped->str);
 
   g_object_unref(egg);
   egg = NULL;
 
   g_string_free(dumped, TRUE);
+  g_string_free(error_output, TRUE);
   dumped = NULL;
+  error_output = NULL;
 }
 
 static grn_obj *
