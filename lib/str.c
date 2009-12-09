@@ -2416,6 +2416,31 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
     }
     break;
+  case GRN_VECTOR :
+    if (format) {
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "cannot print GRN_VECTOR using grn_obj_format");
+    } else {
+      unsigned int i, n;
+      grn_obj value;
+      GRN_VOID_INIT(&value);
+      n = grn_vector_size(ctx, obj);
+      GRN_TEXT_PUTC(ctx, bulk, '[');
+      for (i = 0; i < n; i++) {
+        const char *_value;
+        unsigned int weight, length;
+        grn_id domain;
+        if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+
+        length = grn_vector_get_element(ctx, obj, i,
+                                        &_value, &weight, &domain);
+        grn_obj_reinit(ctx, &value, domain, 0);
+        grn_bulk_write(ctx, &value, _value, length);
+        grn_text_otoj(ctx, bulk, &value, NULL);
+      }
+      GRN_TEXT_PUTC(ctx, bulk, ']');
+    }
+    break;
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_NO_KEY :
