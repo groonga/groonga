@@ -144,7 +144,7 @@ grn_test_assert_dump(const gchar *expected)
 
   gcut_egg_hatch(egg, &error);
   gcut_assert_error(error);
-  gcut_egg_wait(egg, 1000, &error);
+  gcut_egg_wait(egg, 10000, &error);
   gcut_assert_error(error);
 
   fprintf(stderr, "%s", error_output->str);
