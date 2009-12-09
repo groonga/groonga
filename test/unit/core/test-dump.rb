@@ -86,6 +86,14 @@ class DumpTest < Test::Unit::TestCase
                 '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
   end
 
+  def test_vector_load
+    assert_dump("table_create commands 1 ShortText\n" +
+                "column_create commands body 1 ShortText\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"_key":"gcc","body":["C","and","C++","Compiler"]}' +
+                "\n]\n")
+  end
+
   def test_load_with_reference_key
     assert_dump(<<EOGQTP)
 table_create users 0 ShortText

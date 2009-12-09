@@ -2417,6 +2417,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     }
     break;
   case GRN_VECTOR :
+    if (obj->header.domain == GRN_DB_VOID) {
+      ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
+    }
     if (format) {
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
           "cannot print GRN_VECTOR using grn_obj_format");
@@ -2434,7 +2437,11 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 
         length = grn_vector_get_element(ctx, obj, i,
                                         &_value, &weight, &domain);
-        grn_obj_reinit(ctx, &value, domain, 0);
+        if (domain != GRN_DB_VOID) {
+          grn_obj_reinit(ctx, &value, domain, 0);
+        } else {
+          grn_obj_reinit(ctx, &value, obj->header.domain, 0);
+        }
         grn_bulk_write(ctx, &value, _value, length);
         grn_text_otoj(ctx, bulk, &value, NULL);
       }
