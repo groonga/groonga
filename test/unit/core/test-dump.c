@@ -355,11 +355,11 @@ test_column_create(gconstpointer data)
 void
 data_vector_column(void)
 {
-  ADD_DATA("vector records", "[\"groonga\",\"is\",\"cool\"]", "Text",
+  ADD_DATA("vector records - text", "[\"groonga\",\"is\",\"cool\"]", "Text",
            GRN_TEXT_INIT, GRN_TEXT_PUTS, "groonga", "is", "cool");
-  ADD_DATA("vector records", "[-322,7,9270]", "Int32",
+  ADD_DATA("vector records - int32", "[-322,7,9270]", "Int32",
            GRN_INT32_INIT, GRN_INT32_SET, -322, 7, 9270);
-  ADD_DATA("vector records", "[0.5,12.5,-1.0]", "Float",
+  ADD_DATA("vector records - float", "[0.5,12.5,-1.0]", "Float",
            GRN_FLOAT_INIT, GRN_FLOAT_SET, 0.5, 12.5, -1.0);
 }
 #undef ADD_DATA
