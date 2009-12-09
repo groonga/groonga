@@ -347,8 +347,7 @@ test_column_create(gconstpointer data)
                 gcut_data_get_string(data, "type_name"),
                 gcut_data_get_string(data, "source"));
   expected = gcut_data_get_string(data, "expected");
-  grn_test_assert_dump(cut_take_string(g_strconcat("table_create Blog 0\n",
-                                                   expected, NULL)));
+  grn_test_assert_dump(cut_take_printf("table_create Blog 0\n%s", expected));
 }
 
 #define ADD_DATA(label, expected, type_name, OBJ_INIT, OBJ_SET,         \
