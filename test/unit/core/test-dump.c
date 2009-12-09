@@ -142,10 +142,11 @@ grn_test_assert_dump(const gchar *expected)
   dumped = NULL;
 }
 
-static void
+static grn_obj *
 table_create(const gchar *name, grn_obj_flags flags,
              const gchar *key_type_name, const gchar *value_type_name)
 {
+  grn_obj *table;
   grn_obj *key_type = NULL, *value_type = NULL;
 
   if (key_type_name)
@@ -153,18 +154,20 @@ table_create(const gchar *name, grn_obj_flags flags,
   if (value_type_name)
     value_type = GET(value_type_name);
 
-  grn_table_create(&context,
-                   name, strlen(name),
-                   NULL,
-                   flags | GRN_OBJ_PERSISTENT,
-                   key_type, value_type);
+  table = grn_table_create(&context,
+                           name, strlen(name),
+                           NULL,
+                           flags | GRN_OBJ_PERSISTENT,
+                           key_type, value_type);
   grn_test_assert_context(&context);
+  return table;
 }
 
-static void
+static grn_obj *
 column_create(const gchar *table_name, const gchar *name, grn_obj_flags flags,
               const gchar *type_name, const gchar *sources)
 {
+  grn_obj *column;
   grn_obj *table = NULL, *type = NULL;
 
   if (table_name)
@@ -172,13 +175,14 @@ column_create(const gchar *table_name, const gchar *name, grn_obj_flags flags,
   if (type_name)
     type = GET(type_name);
 
-  grn_column_create(&context,
-                    table,
-                    name, strlen(name),
-                    NULL,
-                    flags | GRN_OBJ_PERSISTENT,
-                    type);
+  column = grn_column_create(&context,
+                             table,
+                             name, strlen(name),
+                             NULL,
+                             flags | GRN_OBJ_PERSISTENT,
+                             type);
   grn_test_assert_context(&context);
+  return column;
 }
 
 #define ADD_DATA(label, expected, name, flags,                          \
@@ -328,4 +332,79 @@ test_column_create(gconstpointer data)
   expected = gcut_data_get_string(data, "expected");
   grn_test_assert_dump(cut_take_string(g_strconcat("table_create Blog 0\n",
                                                    expected, NULL)));
+}
+
+#define ADD_DATA(label, expected, type_name, OBJ_INIT, OBJ_SET,         \
+                 first_element, second_element, third_element) do {     \
+  const int n_of_elements = 3;                                          \
+  grn_obj *elements;                                                    \
+  elements = g_new0(grn_obj, n_of_elements);                            \
+  OBJ_INIT(&elements[0], 0);                                            \
+  OBJ_SET(&context, &elements[0], first_element);                       \
+  OBJ_INIT(&elements[1], 0);                                            \
+  OBJ_SET(&context, &elements[1], second_element);                      \
+  OBJ_INIT(&elements[2], 0);                                            \
+  OBJ_SET(&context, &elements[2], third_element);                       \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "type_name", G_TYPE_STRING, type_name,                 \
+                 "elements", G_TYPE_POINTER, elements, g_free,          \
+                 NULL);                                                 \
+} while(0)
+
+void
+data_vector_column(void)
+{
+  ADD_DATA("vector records", "[\"groonga\",\"is\",\"cool\"]", "Text",
+           GRN_TEXT_INIT, GRN_TEXT_PUTS, "groonga", "is", "cool");
+  ADD_DATA("vector records", "[-322,7,9270]", "Int32",
+           GRN_INT32_INIT, GRN_INT32_SET, -322, 7, 9270);
+  ADD_DATA("vector records", "[0.5,12.5,-1.0]", "Float",
+           GRN_FLOAT_INIT, GRN_FLOAT_SET, 0.5, 12.5, -1.0);
+}
+#undef ADD_DATA
+
+void
+test_vector_column(gconstpointer data)
+{
+  const gchar *expected;
+  grn_id id, type_id;
+  grn_obj vector;
+  grn_obj *elements;
+  grn_obj *table, *column;
+  const gchar *type_name;
+  type_name = gcut_data_get_string(data, "type_name");
+  type_id = grn_obj_id(&context, GET(type_name));
+
+  table = table_create("Table", GRN_OBJ_TABLE_NO_KEY, NULL, NULL);
+  grn_test_assert_context(&context);
+  column = column_create("Table", "Column", GRN_OBJ_COLUMN_VECTOR,
+                         type_name, NULL);
+  grn_test_assert_context(&context);
+  id = grn_table_add(&context, table, NULL, 0, NULL);
+  grn_test_assert_context(&context);
+  cut_assert_equal_int(1, id);
+  elements = (grn_obj *)gcut_data_get_pointer(data, "elements");
+
+  GRN_TEXT_INIT(&vector, GRN_OBJ_VECTOR);
+  grn_vector_add_element(&context, &vector,
+                         GRN_TEXT_VALUE(&elements[0]),
+                         GRN_TEXT_LEN(&elements[0]), 0, type_id);
+  grn_vector_add_element(&context, &vector,
+                         GRN_TEXT_VALUE(&elements[1]),
+                         GRN_TEXT_LEN(&elements[1]), 0, type_id);
+  grn_vector_add_element(&context, &vector,
+                         GRN_TEXT_VALUE(&elements[2]),
+                         GRN_TEXT_LEN(&elements[2]), 0, type_id);
+  grn_obj_set_value(&context, column, id, &vector, GRN_OBJ_SET);
+
+  expected = cut_take_printf("table_create Table 3\n"
+                             "column_create Table Column 1 %s\n"
+                             "load --table Table\n"
+                             "[\n"
+                             "{\"_id\":1,\"Column\":%s}\n"
+                             "]\n",
+                             type_name,
+                             gcut_data_get_string(data, "expected"));
+  grn_test_assert_dump(expected);
 }

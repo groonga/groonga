@@ -1052,16 +1052,69 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     if (i) { GRN_TEXT_PUTS(ctx, outbuf, ",\n"); }
     GRN_TEXT_PUTS(ctx, outbuf, "{");
     for (j = 0; j < ncolumns; j++) {
+      grn_id range;
       if (j) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
       GRN_TEXT_INIT(&buf, 0);
       grn_column_name_(ctx, columns[j], &buf);
       grn_text_otoj(ctx, outbuf, &buf, NULL);
       grn_obj_unlink(ctx, &buf);
       GRN_TEXT_PUTC(ctx, outbuf, ':');
-      GRN_TEXT_INIT(&buf, 0);
-      grn_obj_get_value(ctx, columns[j], id, &buf);
-      grn_text_otoj(ctx, outbuf, &buf, NULL);
-      grn_obj_unlink(ctx, &buf);
+      range = grn_obj_get_range(ctx, columns[j]);
+
+      switch (columns[j]->header.type) {
+      case GRN_COLUMN_VAR_SIZE:
+      case GRN_COLUMN_FIX_SIZE:
+        switch (columns[j]->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+        case GRN_OBJ_COLUMN_VECTOR:
+          {
+            unsigned int i, n;
+            grn_obj value;
+            GRN_OBJ_INIT(&buf, GRN_VECTOR, 0, range);
+            grn_obj_get_value(ctx, columns[j], id, &buf);
+
+            GRN_VOID_INIT(&value);
+            n = grn_vector_size(ctx, &buf);
+            GRN_TEXT_PUTS(ctx, outbuf, "[");
+            for (i = 0; i < n; i++) {
+              const char *_value;
+              unsigned int weight, length;
+              grn_id domain;
+              if (i) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+
+              length = grn_vector_get_element(ctx, &buf, i,
+                                              &_value, &weight, &domain);
+              grn_obj_reinit(ctx, &value, domain, 0);
+              grn_bulk_write(ctx, &value, _value, length);
+              grn_text_otoj(ctx, outbuf, &value, NULL);
+            }
+            GRN_TEXT_PUTS(ctx, outbuf, "]");
+            GRN_OBJ_FIN(ctx, &value);
+            grn_obj_unlink(ctx, &buf);
+          }
+          break;
+        case GRN_OBJ_COLUMN_SCALAR:
+          {
+            GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+            grn_obj_get_value(ctx, columns[j], id, &buf);
+            grn_text_otoj(ctx, outbuf, &buf, NULL);
+            grn_obj_unlink(ctx, &buf);
+          }
+          break;
+        case GRN_OBJ_COLUMN_INDEX:
+        default:
+          ERR(GRN_ERROR, "invalid column type");
+          break;
+        }
+        break;
+      default:
+        {
+          GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+          grn_obj_get_value(ctx, columns[j], id, &buf);
+          grn_text_otoj(ctx, outbuf, &buf, NULL);
+          grn_obj_unlink(ctx, &buf);
+        }
+        break;
+      }
     }
     GRN_TEXT_PUTS(ctx, outbuf, "}");
   }
