@@ -102,6 +102,14 @@ class DumpTest < Test::Unit::TestCase
                 "\n]\n")
   end
 
+  def test_vector_int32_load
+    assert_dump("table_create commands 1 ShortText\n" +
+                "column_create commands body 1 Int32\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"_key":"gcc","body":[827,833,991,2716]}' +
+                "\n]\n")
+  end
+
   def test_load_with_reference_key
     assert_dump(<<EOGQTP)
 table_create users 0 ShortText

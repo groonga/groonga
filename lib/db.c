@@ -10620,11 +10620,19 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
               GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
               while (n--) {
                 if (v->header.domain == GRN_DB_TEXT) {
+                  grn_id range;
+                  grn_obj cast_obj, *element = v;
+                  range = grn_obj_get_range(ctx, col);
+                  if (range != element->header.domain) {
+                    GRN_OBJ_INIT(&cast_obj, GRN_BULK, 0, range);
+                    grn_obj_cast(ctx, element, &cast_obj, 1);
+                    element = &cast_obj;
+                  }
                   grn_vector_add_element(ctx, &buf,
-                                         GRN_TEXT_VALUE(v),
-                                         GRN_TEXT_LEN(v), 0, GRN_ID_NIL);
+                                         GRN_TEXT_VALUE(element),
+                                         GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
                 } else {
-                  // error
+                  ERR(GRN_ERROR, "bad syntax.");
                 }
                 v = values_next(ctx, v);
               }
