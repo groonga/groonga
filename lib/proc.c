@@ -1050,7 +1050,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     int j;
     grn_obj buf;
     if (i) { GRN_TEXT_PUTS(ctx, outbuf, ",\n"); }
-    GRN_TEXT_PUTS(ctx, outbuf, "{");
+    GRN_TEXT_PUTC(ctx, outbuf, '{');
     for (j = 0; j < ncolumns; j++) {
       grn_id range;
       if (j) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
@@ -1097,7 +1097,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         break;
       }
     }
-    GRN_TEXT_PUTS(ctx, outbuf, "}");
+    GRN_TEXT_PUTC(ctx, outbuf, '}');
   }
   GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
 
