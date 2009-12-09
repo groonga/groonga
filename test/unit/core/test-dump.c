@@ -361,6 +361,8 @@ data_vector_column(void)
            GRN_INT32_INIT, GRN_INT32_SET, -322, 7, 9270);
   ADD_DATA("vector records - float", "[0.5,12.5,-1.0]", "Float",
            GRN_FLOAT_INIT, GRN_FLOAT_SET, 0.5, 12.5, -1.0);
+  ADD_DATA("vector records - bool", "[true,false,true]", "Bool",
+           GRN_BOOL_INIT, GRN_BOOL_SET, TRUE, FALSE, TRUE);
 }
 #undef ADD_DATA
 
