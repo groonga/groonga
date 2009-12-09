@@ -2267,28 +2267,6 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
   return GRN_SUCCESS;
 }
 
-static void
-uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
-{
-  grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
-  if (range && range->header.type == GRN_TYPE) {
-    // todo
-  } else {
-    grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
-    if (v < ve) {
-      for (;;) {
-        grn_table_get_key2(ctx, range, *v, buf);
-        v++;
-        if (v < ve) {
-          GRN_TEXT_PUTC(ctx, buf, ' ');
-        } else {
-          break;
-        }
-      }
-    }
-  }
-}
-
 grn_rc
 grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 {
@@ -2412,8 +2390,29 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
     } else {
-      uvector2str(ctx, obj, &buf);
-      grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
+      grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
+      if (range && range->header.type == GRN_TYPE) {
+        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "uvector of GRN_TYPE not supported");
+      } else {
+        grn_id *v = (grn_id *)GRN_BULK_HEAD(obj),
+               *ve = (grn_id *)GRN_BULK_CURR(obj);
+        GRN_TEXT_PUTC(ctx, bulk, '[');
+        if (v < ve) {
+          for (;;) {
+            grn_obj key;
+            GRN_TEXT_INIT(&key, 0);
+            grn_table_get_key2(ctx, range, *v, &key);
+            grn_text_otoj(ctx, bulk, &key, NULL);
+            v++;
+            if (v < ve) {
+              GRN_TEXT_PUTC(ctx, bulk, ',');
+            } else {
+              break;
+            }
+          }
+        }
+        GRN_TEXT_PUTC(ctx, bulk, ']');
+      }
     }
     break;
   case GRN_VECTOR :

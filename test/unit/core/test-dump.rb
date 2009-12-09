@@ -129,6 +129,24 @@ load --table comments
 EOGQTP
   end
 
+  def test_load_with_vector_reference_key
+    assert_dump(<<EOGQTP)
+table_create users 0 ShortText
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 1 users
+load --table users
+[
+{"_id":1,"_key":"ryoqun"},
+{"_id":2,"_key":"hayamiz"}
+]
+load --table comments
+[
+{"_id":1,"_key":"groonga","text":"it is fast","author":["ryoqun","hayamiz"]}
+]
+EOGQTP
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")

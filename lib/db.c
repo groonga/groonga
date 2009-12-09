@@ -4033,8 +4033,11 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
               rc = grn_ja_put(ctx, (grn_ja *)obj, id,
                               GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
               break;
+            case GRN_UVECTOR :
+              rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags);
+              break;
             default :
-              ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");
+              ERR(GRN_INVALID_ARGUMENT, "vector, uvector or bulk required");
               break;
             }
             grn_obj_close(ctx, &buf);
@@ -10617,24 +10620,44 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             if (value->header.domain == OPEN_BRACKET) {
               int n = GRN_UINT32_VALUE(value);
               grn_obj buf, *v = value + 1;
-              GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
-              while (n--) {
-                if (v->header.domain == GRN_DB_TEXT) {
-                  grn_id range;
-                  grn_obj cast_obj, *element = v;
-                  range = grn_obj_get_range(ctx, col);
-                  if (range != element->header.domain) {
-                    GRN_OBJ_INIT(&cast_obj, GRN_BULK, 0, range);
-                    grn_obj_cast(ctx, element, &cast_obj, 1);
-                    element = &cast_obj;
+              grn_id range_id;
+              grn_obj *range;
+              range_id = DB_OBJ(col)->range;
+              range = grn_ctx_at(ctx, range_id);
+              if (GRN_OBJ_TABLEP(range)) {
+                GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, range_id);
+                while (n--) {
+                  if (v->header.domain == GRN_DB_TEXT) {
+                    grn_obj cast_obj, *element = v;
+                    if (range_id != element->header.domain) {
+                      GRN_OBJ_INIT(&cast_obj, GRN_BULK, 0, range_id);
+                      grn_obj_cast(ctx, element, &cast_obj, 1);
+                      element = &cast_obj;
+                    }
+                    GRN_UINT32_PUT(ctx, &buf, GRN_RECORD_VALUE(element));
+                  } else {
+                    ERR(GRN_ERROR, "bad syntax.");
                   }
-                  grn_vector_add_element(ctx, &buf,
-                                         GRN_TEXT_VALUE(element),
-                                         GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
-                } else {
-                  ERR(GRN_ERROR, "bad syntax.");
+                  v = values_next(ctx, v);
                 }
-                v = values_next(ctx, v);
+              } else {
+                GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
+                while (n--) {
+                  if (v->header.domain == GRN_DB_TEXT) {
+                    grn_obj cast_obj, *element = v;
+                    if (range_id != element->header.domain) {
+                      GRN_OBJ_INIT(&cast_obj, GRN_BULK, 0, range_id);
+                      grn_obj_cast(ctx, element, &cast_obj, 1);
+                      element = &cast_obj;
+                    }
+                    grn_vector_add_element(ctx, &buf,
+                                           GRN_TEXT_VALUE(element),
+                                           GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
+                  } else {
+                    ERR(GRN_ERROR, "bad syntax.");
+                  }
+                  v = values_next(ctx, v);
+                }
               }
               grn_obj_set_value(ctx, col, id, &buf, GRN_OBJ_SET);
               GRN_OBJ_FIN(ctx, &buf);
