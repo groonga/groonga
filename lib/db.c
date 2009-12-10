@@ -7634,6 +7634,37 @@ truep(grn_ctx *ctx, grn_obj *v)
 #define FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x) \
   (~((long long int)(x)))
 
+#define TEXT_ARITHMETIC_OPERATION(operator)                             \
+{                                                                       \
+  long long int x_;                                                     \
+  long long int y_;                                                     \
+                                                                        \
+  res->header.domain = GRN_DB_INT64;                                    \
+                                                                        \
+  GRN_INT64_SET(ctx, res, 0);                                           \
+  grn_obj_cast(ctx, x, res, GRN_FALSE);                                 \
+  x_ = GRN_INT64_VALUE(res);                                            \
+                                                                        \
+  GRN_INT64_SET(ctx, res, 0);                                           \
+  grn_obj_cast(ctx, y, res, GRN_FALSE);                                 \
+  y_ = GRN_INT64_VALUE(res);                                            \
+                                                                        \
+  GRN_INT64_SET(ctx, res, x_ operator y_);                              \
+}
+
+#define TEXT_UNARY_ARITHMETIC_OPERATION(unary_operator) \
+{                                                       \
+  long long int x_;                                     \
+                                                        \
+  res->header.domain = GRN_DB_INT64;                    \
+                                                        \
+  GRN_INT64_SET(ctx, res, 0);                           \
+  grn_obj_cast(ctx, x, res, GRN_FALSE);                 \
+  x_ = GRN_INT64_VALUE(res);                            \
+                                                        \
+  GRN_INT64_SET(ctx, res, unary_operator x_);           \
+}
+
 #define ARITHMETIC_OPERATION_NO_CHECK(y) do {} while (0)
 #define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y) do {        \
   if ((long long int)y == 0) {                                  \
@@ -8738,18 +8769,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
-          {
-            long long int x_;
-
-            res->header.domain = GRN_DB_INT64;
-
-            GRN_INT64_SET(ctx, res, 0);
-            grn_obj_cast(ctx, x, res, GRN_FALSE);
-            x_ = GRN_INT64_VALUE(res);
-
-            GRN_INT64_SET(ctx, res, ~x_);
-          }
-          ,);
+          TEXT_UNARY_ARITHMETIC_OPERATION(~),);
         break;
       case GRN_OP_BITWISE_OR :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
@@ -8757,23 +8777,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       FLOAT_ARITHMETIC_OPERATION_BITWISE_OR,
                                       ARITHMETIC_OPERATION_NO_CHECK,
                                       ARITHMETIC_OPERATION_NO_CHECK,
-                                      {
-                                        long long int x_;
-                                        long long int y_;
-
-                                        res->header.domain = GRN_DB_INT64;
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
-                                        x_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
-                                        y_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, x_ | y_);
-                                      }
-                                      ,);
+                                      TEXT_ARITHMETIC_OPERATION(|),);
         break;
       case GRN_OP_BITWISE_XOR :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
@@ -8781,23 +8785,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       FLOAT_ARITHMETIC_OPERATION_BITWISE_XOR,
                                       ARITHMETIC_OPERATION_NO_CHECK,
                                       ARITHMETIC_OPERATION_NO_CHECK,
-                                      {
-                                        long long int x_;
-                                        long long int y_;
-
-                                        res->header.domain = GRN_DB_INT64;
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
-                                        x_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
-                                        y_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, x_ ^ y_);
-                                      }
-                                      ,);
+                                      TEXT_ARITHMETIC_OPERATION(^),);
         break;
       case GRN_OP_BITWISE_AND :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
@@ -8805,23 +8793,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       FLOAT_ARITHMETIC_OPERATION_BITWISE_AND,
                                       ARITHMETIC_OPERATION_NO_CHECK,
                                       ARITHMETIC_OPERATION_NO_CHECK,
-                                      {
-                                        long long int x_;
-                                        long long int y_;
-
-                                        res->header.domain = GRN_DB_INT64;
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
-                                        x_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
-                                        y_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, x_ & y_);
-                                      }
-                                      ,);
+                                      TEXT_ARITHMETIC_OPERATION(&),);
         break;
       case GRN_OP_SHIFTL :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_SHIFTL,
@@ -8829,23 +8801,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       FLOAT_ARITHMETIC_OPERATION_SHIFTL,
                                       ARITHMETIC_OPERATION_NO_CHECK,
                                       ARITHMETIC_OPERATION_NO_CHECK,
-                                      {
-                                        long long int x_;
-                                        long long int y_;
-
-                                        res->header.domain = GRN_DB_INT64;
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
-                                        x_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
-                                        y_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, x_ << y_);
-                                      }
-                                      ,);
+                                      TEXT_ARITHMETIC_OPERATION(<<),);
         break;
       case GRN_OP_SHIFTR :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_SHIFTR,
@@ -8853,23 +8809,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       FLOAT_ARITHMETIC_OPERATION_SHIFTR,
                                       ARITHMETIC_OPERATION_NO_CHECK,
                                       ARITHMETIC_OPERATION_NO_CHECK,
-                                      {
-                                        long long int x_;
-                                        long long int y_;
-
-                                        res->header.domain = GRN_DB_INT64;
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
-                                        x_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, 0);
-                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
-                                        y_ = GRN_INT64_VALUE(res);
-
-                                        GRN_INT64_SET(ctx, res, x_ >> y_);
-                                      }
-                                      ,);
+                                      TEXT_ARITHMETIC_OPERATION(>>),);
         break;
       case GRN_OP_SHIFTRR :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER32_ARITHMETIC_OPERATION_SHIFTRR,
