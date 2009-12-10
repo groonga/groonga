@@ -86,7 +86,31 @@ class DumpTest < Test::Unit::TestCase
                 '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
   end
 
-  def test_load_with_reference_key
+  def test_int32_load
+    assert_dump("table_create commands 1 ShortText\n" +
+                "column_create commands body 0 Int32\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"_key":"gcc","body":32}' + ",\n" +
+                '{"_id":2,"_key":"bash","body":-2715}' + "\n]\n")
+  end
+
+  def test_vector_load
+    assert_dump("table_create commands 1 ShortText\n" +
+                "column_create commands body 1 ShortText\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"_key":"gcc","body":["C","and","C++","Compiler"]}' +
+                "\n]\n")
+  end
+
+  def test_vector_int32_load
+    assert_dump("table_create commands 1 ShortText\n" +
+                "column_create commands body 1 Int32\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"_key":"gcc","body":[827,833,991,2716]}' +
+                "\n]\n")
+  end
+
+  def test_load_with_test_reference_key
     assert_dump(<<EOGQTP)
 table_create users 0 ShortText
 table_create comments 1 ShortText
@@ -101,6 +125,63 @@ load --table comments
 [
 {"_id":1,"_key":"groonga","text":"it is fast","author":"ryoqun"},
 {"_id":2,"_key":"ruby","text":"it is fun","author":"hayamiz"}
+]
+EOGQTP
+  end
+
+  def test_load_with_vector_text_reference_key
+    assert_dump(<<EOGQTP)
+table_create users 0 ShortText
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 1 users
+load --table users
+[
+{"_id":1,"_key":"ryoqun"},
+{"_id":2,"_key":"hayamiz"}
+]
+load --table comments
+[
+{"_id":1,"_key":"groonga","text":"it is fast","author":["ryoqun","hayamiz"]}
+]
+EOGQTP
+  end
+
+  def test_load_with_int32_reference_key
+    assert_dump(<<EOGQTP)
+table_create users 0 Int32
+column_create users name 0 ShortText
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 0 users
+load --table users
+[
+{"_id":1,"_key":1000,"name":"ryoqun"},
+{"_id":2,"_key":1001,"name":"hayamiz"}
+]
+load --table comments
+[
+{"_id":1,"_key":"groonga","text":"it is fast","author":1000},
+{"_id":2,"_key":"ruby","text":"it is fun","author":1001}
+]
+EOGQTP
+  end
+
+  def test_load_with_vector_int32_reference_key
+    assert_dump(<<EOGQTP)
+table_create users 0 Int32
+column_create users name 0 ShortText
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 1 users
+load --table users
+[
+{"_id":1,"_key":1000,"name":"ryoqun"},
+{"_id":2,"_key":1001,"name":"hayamiz"}
+]
+load --table comments
+[
+{"_id":1,"_key":"groonga","text":"it is fast","author":[1000,1001]}
 ]
 EOGQTP
   end

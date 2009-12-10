@@ -2267,28 +2267,6 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
   return GRN_SUCCESS;
 }
 
-static void
-uvector2str(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
-{
-  grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
-  if (range && range->header.type == GRN_TYPE) {
-    // todo
-  } else {
-    grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
-    if (v < ve) {
-      for (;;) {
-        grn_table_get_key2(ctx, range, *v, buf);
-        v++;
-        if (v < ve) {
-          GRN_TEXT_PUTC(ctx, buf, ' ');
-        } else {
-          break;
-        }
-      }
-    }
-  }
-}
-
 grn_rc
 grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 {
@@ -2412,8 +2390,61 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
     } else {
-      uvector2str(ctx, obj, &buf);
-      grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
+      grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
+      if (range && range->header.type == GRN_TYPE) {
+        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "uvector of GRN_TYPE not supported");
+      } else {
+        grn_id *v = (grn_id *)GRN_BULK_HEAD(obj),
+               *ve = (grn_id *)GRN_BULK_CURR(obj);
+        GRN_TEXT_PUTC(ctx, bulk, '[');
+        if (v < ve) {
+          for (;;) {
+            grn_obj key;
+            GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
+            grn_table_get_key2(ctx, range, *v, &key);
+            grn_text_otoj(ctx, bulk, &key, NULL);
+            v++;
+            if (v < ve) {
+              GRN_TEXT_PUTC(ctx, bulk, ',');
+            } else {
+              break;
+            }
+          }
+        }
+        GRN_TEXT_PUTC(ctx, bulk, ']');
+      }
+    }
+    break;
+  case GRN_VECTOR :
+    if (obj->header.domain == GRN_DB_VOID) {
+      ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
+    }
+    if (format) {
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "cannot print GRN_VECTOR using grn_obj_format");
+    } else {
+      unsigned int i, n;
+      grn_obj value;
+      GRN_VOID_INIT(&value);
+      n = grn_vector_size(ctx, obj);
+      GRN_TEXT_PUTC(ctx, bulk, '[');
+      for (i = 0; i < n; i++) {
+        const char *_value;
+        unsigned int weight, length;
+        grn_id domain;
+        if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+
+        length = grn_vector_get_element(ctx, obj, i,
+                                        &_value, &weight, &domain);
+        if (domain != GRN_DB_VOID) {
+          grn_obj_reinit(ctx, &value, domain, 0);
+        } else {
+          grn_obj_reinit(ctx, &value, obj->header.domain, 0);
+        }
+        grn_bulk_write(ctx, &value, _value, length);
+        grn_text_otoj(ctx, bulk, &value, NULL);
+      }
+      GRN_TEXT_PUTC(ctx, bulk, ']');
     }
     break;
   case GRN_TABLE_HASH_KEY :
