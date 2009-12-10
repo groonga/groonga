@@ -965,9 +965,9 @@ test_expr_parse(gconstpointer data)
               gcut_data_get_int(data, "query_poyo_parse_level"));
   grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
   grn_test_assert_expr(&context,
-                       "noname(?0:\"\"){body GET_VALUE \"hoge\" MATCH "
-                                       "body GET_VALUE \"moge\" MATCH AND "
-                                       "body GET_VALUE \"poyo\" MATCH AND}",
+                       "noname(?0:0){body GET_VALUE \"hoge\" MATCH "
+                                    "body GET_VALUE \"moge\" MATCH AND "
+                                    "body GET_VALUE \"poyo\" MATCH AND}",
                        cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
@@ -993,7 +993,7 @@ test_expr_parse(gconstpointer data)
   PARSE(cond, gcut_data_get_string(data, "query_size"),
               gcut_data_get_int(data, "query_size_parse_level"));
   grn_test_assert_expr(&context,
-                       "noname(?0:\"\"){size GET_VALUE 14 EQUAL}",
+                       "noname(?0:0){size GET_VALUE 14 EQUAL}",
                        cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);

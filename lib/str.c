@@ -2348,12 +2348,17 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTC(ctx, bulk, ']');
       } else {
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
-        grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
-        if (accessor) {
-          grn_obj_get_value(ctx, accessor, *((grn_id *)GRN_BULK_HEAD(obj)), &buf);
-          grn_obj_unlink(ctx, accessor);
+        grn_id id = *((grn_id *)GRN_BULK_HEAD(obj));
+        if (table->header.type != GRN_TABLE_NO_KEY) {
+          grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
+          if (accessor) {
+            grn_obj_get_value(ctx, accessor, id, &buf);
+            grn_obj_unlink(ctx, accessor);
+          }
+          grn_text_otoj(ctx, bulk, &buf, format);
+        } else {
+          grn_text_lltoa(ctx, bulk, id);
         }
-        grn_text_otoj(ctx, bulk, &buf, format);
       }
     }
     break;
@@ -2400,9 +2405,13 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         if (v < ve) {
           for (;;) {
             grn_obj key;
-            GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
-            grn_table_get_key2(ctx, range, *v, &key);
-            grn_text_otoj(ctx, bulk, &key, NULL);
+            if (range->header.type != GRN_TABLE_NO_KEY) {
+              GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
+              grn_table_get_key2(ctx, range, *v, &key);
+              grn_text_otoj(ctx, bulk, &key, NULL);
+            } else {
+              grn_text_lltoa(ctx, bulk, *v);
+            }
             v++;
             if (v < ve) {
               GRN_TEXT_PUTC(ctx, bulk, ',');

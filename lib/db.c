@@ -3617,13 +3617,20 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
         if (GRN_OBJ_TABLEP(table)) {
           grn_obj key, *p_key = src;
           grn_id id;
-          if (src->header.domain != table->header.domain) {
-             GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
-             grn_obj_cast(ctx, src, &key, 1);
-             p_key = &key;
+          if (table->header.type != GRN_TABLE_NO_KEY) {
+            if (src->header.domain != table->header.domain) {
+               GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
+               grn_obj_cast(ctx, src, &key, 1);
+               p_key = &key;
+            }
+            id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
+                      : grn_table_get_by_key(ctx, table, p_key);
+          } else {
+            grn_obj record_id;
+            GRN_UINT32_INIT(&record_id, 0);
+            grn_obj_cast(ctx, src, &record_id, 1);
+            id = GRN_UINT32_VALUE(&record_id);
           }
-          id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
-                    : grn_table_get_by_key(ctx, table, p_key);
           GRN_RECORD_SET(ctx, dest, id);
         } else {
           rc = GRN_FUNCTION_NOT_IMPLEMENTED;
