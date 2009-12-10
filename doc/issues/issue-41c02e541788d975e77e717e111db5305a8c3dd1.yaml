@@ -1,0 +1,30 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: arrays with _value column behave as if _value column were _key column
+desc: |-
+  Arrays shouldn't have _key column, yet arrays with _value column violate this
+  definition. This bug is introduced by naive implementation of traversing table
+  records by its _key column, which is used in the sorting functionality. Ideally,
+  the traversing code should behave differently depending on hash and patricia
+  tables or array tables with value column. When the table is of such array type,
+  it should explicitly use _value column as if it were the array table's
+  non-existing _key column. In other words, it shouldn't relay on the lower layer
+  silently returning _value column when requesting _key column.
+type: :bugfix
+component: groonga
+release: 1.0.0
+reporter: Ryo Onodera <onodera@clear-code.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-12-10 09:45:18.676946 Z
+references: []
+
+id: 41c02e541788d975e77e717e111db5305a8c3dd1
+log_events: 
+- - 2009-12-10 09:45:25.385788 Z
+  - Ryo Onodera <onodera@clear-code.com>
+  - created
+  - ""
+- - 2009-12-10 09:48:00.293926 Z
+  - Ryo Onodera <onodera@clear-code.com>
+  - assigned to release 1.0.0 from unassigned
+  - ""

@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>support for arithmatic operations on grn_expr</title>
+<title>arrays with _value column behave as if _value column were _key column</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -13,12 +13,19 @@
 
 <div class="main">
 
-<h1>support for arithmatic operations on grn_expr</h1>
+<h1>arrays with _value column behave as if _value column were _key column</h1>
 <div class="backptr"><a href="index.html">&laquo; groonga project page</a></div>
 
 
   <div class="description">
-  <p>various arithmatic operations should be supported on grn_expr.</p>
+  <p>Arrays shouldn't have _key column, yet arrays with _value column violate this
+definition. This bug is introduced by naive implementation of traversing table
+records by its _key column, which is used in the sorting functionality. Ideally,
+the traversing code should behave differently depending on hash and patricia
+tables or array tables with value column. When the table is of such array type,
+it should explicitly use _value column as if it were the array table's
+non-existing _key column. In other words, it shouldn't relay on the lower layer
+silently returning _value column when requesting _key column.</p>
   </div>
 
 
@@ -27,22 +34,22 @@
   <tbody>
     <tr>
       <td class="attrname">Id:</td>
-      <td class="attrval"><span class="id">0a2d1af6cb802368d00cf11bdbb32d48088236d5</span></td>
+      <td class="attrval"><span class="id">41c02e541788d975e77e717e111db5305a8c3dd1</span></td>
     </tr>
 
     <tr>
       <td class="attrname">Type:</td>
-      <td class="attrval">feature</td>
+      <td class="attrval">bugfix</td>
     </tr>
 
     <tr>
       <td class="attrname">Creation time:</td>
-      <td class="attrval">2009-11-24 13:19 GMT</td>
+      <td class="attrval">2009-12-10 09:45 GMT</td>
     </tr>
 
     <tr>
       <td class="attrname">Creator:</td>
-      <td class="attrval"><span class="person">daijiro &lt;daijiro.mori@...&gt;</span></td>
+      <td class="attrval"><span class="person">Ryo Onodera &lt;onodera@...&gt;</span></td>
     </tr>
 
     
@@ -67,8 +74,8 @@
     <tr>
       <td class="attrname">Status:</td>
       <td class="attrval">
-        in progress
-        <img class="inline-status-image" src="green-bar.png" alt="in progress" title="in progress"/>
+        unstarted
+        
       </td>
     </tr>
 
@@ -84,57 +91,16 @@
   <tbody>
   
     <tr class="even-row">
-      <td class="date">2009-12-01 03:52 GMT</td>
-      <td class="person">Kouhei Sutou &lt;kou@...&gt;</td>
-      <td class="message">changed status from unstarted to in_progress</td>
+      <td class="date">2009-12-10 09:48 GMT</td>
+      <td class="person">Ryo Onodera &lt;onodera@...&gt;</td>
+      <td class="message">assigned to release 1.0.0 from unassigned</td>
     </tr>
     
     <tr><td></td></tr>
   
     <tr class="odd-row">
-      <td class="date">2009-12-01 03:50 GMT</td>
-      <td class="person">Kouhei Sutou &lt;kou@...&gt;</td>
-      <td class="message">commented</td>
-    </tr>
-    
-      <tr><td colspan="3" class="logcomment">
-      arithmetic operator list:
-done name
-     ASSIGN
-     STAR_ASSIGN
-     SLASH_ASSIGN
-     MOD_ASSIGN
-     PLUS_ASSIGN
-     MINUS_ASSIGN
-     SHIFTL_ASSIGN
-     SHIFTR_ASSIGN
-     SHIFTRR_ASSIGN
-     AND_ASSIGN
-     XOR_ASSIGN
-     OR_ASSIGN
-o    BITWISE_OR
-o    BITWISE_XOR
-o    BITWISE_AND
-o    BITWISE_NOT
-o    SHIFTL
-o    SHIFTR
-o    SHIFTRR
-o    PLUS
-o    MINUS
-o    STAR
-o    SLASH
-o    MOD
-o    INCR
-o    DECR
-o    INCR_POST
-o    DECR_POST
-      </td></tr>
-    
-    <tr><td></td></tr>
-  
-    <tr class="even-row">
-      <td class="date">2009-11-24 13:19 GMT</td>
-      <td class="person">daijiro &lt;daijiro.mori@...&gt;</td>
+      <td class="date">2009-12-10 09:45 GMT</td>
+      <td class="person">Ryo Onodera &lt;onodera@...&gt;</td>
       <td class="message">created</td>
     </tr>
     
