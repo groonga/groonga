@@ -102,7 +102,7 @@ class DumpTest < Test::Unit::TestCase
                 '{"_id":2,"_key":"bash","body":-2715}' + "\n]\n")
   end
 
-  def test_vector_load
+  def test_vector_string_load
     assert_dump("table_create commands 1 ShortText\n" +
                 "column_create commands body 1 ShortText\n" +
                 "load --table commands\n[\n" +
