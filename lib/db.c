@@ -7958,15 +7958,16 @@ truep(grn_ctx *ctx, grn_obj *v)
   code++;                                                               \
 }
 
-#define EXEC_INCR(increment_sentence, assign_sentence)  \
-  increment_sentence                                    \
+#define EXEC_OPERATE(operate_sentence, assign_sentence)   \
+  operate_sentence                                        \
   assign_sentence
 
-#define EXEC_INCR_POST(increment_sentence, assign_sentence)     \
+#define EXEC_OPERATE_POST(operate_sentence, assign_sentence)    \
   assign_sentence                                               \
-  increment_sentence
+  operate_sentence
 
-#define OPERATE_AND_ASSIGN_DISPATCH(exec_incr, delta, set_flags) {      \
+#define UNARY_OPERATE_AND_ASSIGN_DISPATCH(exec_operate, delta,          \
+                                          set_flags) {                  \
   grn_obj *var, *col, value;                                            \
   grn_id rid;                                                           \
                                                                         \
@@ -8018,8 +8019,8 @@ truep(grn_ctx *ctx, grn_obj *v)
     goto exit;                                                          \
     break;                                                              \
   }                                                                     \
-  exec_incr(grn_obj_set_value(ctx, col, rid, &value, set_flags);,       \
-            grn_obj_get_value(ctx, col, rid, res););                    \
+  exec_operate(grn_obj_set_value(ctx, col, rid, &value, set_flags);,        \
+               grn_obj_get_value(ctx, col, rid, res););                 \
   code++;                                                               \
 }
 
@@ -8871,16 +8872,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ,);
         break;
       case GRN_OP_INCR :
-        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR, 1, GRN_OBJ_INCR);
+        UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE, 1, GRN_OBJ_INCR);
         break;
       case GRN_OP_DECR :
-        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR, 1, GRN_OBJ_DECR);
+        UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE, 1, GRN_OBJ_DECR);
         break;
       case GRN_OP_INCR_POST :
-        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR_POST, 1, GRN_OBJ_INCR);
+        UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE_POST, 1, GRN_OBJ_INCR);
         break;
       case GRN_OP_DECR_POST :
-        OPERATE_AND_ASSIGN_DISPATCH(EXEC_INCR_POST, 1, GRN_OBJ_DECR);
+        UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE_POST, 1, GRN_OBJ_DECR);
         break;
       default :
         break;
