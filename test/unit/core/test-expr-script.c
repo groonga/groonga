@@ -280,6 +280,36 @@ test_comparison_operator(gconstpointer data)
                  NULL)
 
 static void
+data_arithmetic_operator_assign(void)
+{
+  ADD_DATUM("integer = integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size = 10) && size == 10");
+  ADD_DATUM("integer = float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size = 10.1) && size == 10");
+  ADD_DATUM("integer = string",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size = \"10\") && size == 10");
+
+  ADD_DATUM("float = float",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "(size_in_float = 10.1) && "
+            "size_in_float == 10.1");
+  ADD_DATUM("float = integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "(size_in_float = 10) && "
+            "size_in_float == 10");
+  ADD_DATUM("string = integer",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "(size_in_float = \"10.1\") && "
+            "size_in_float == 10.1");
+}
+
+static void
 data_arithmetic_operator_bitwise_or(void)
 {
   ADD_DATUM("integer | integer",
@@ -628,6 +658,7 @@ data_arithmetic_operator_decr_post(void)
 void
 data_arithmetic_operator(void)
 {
+  data_arithmetic_operator_assign();
   data_arithmetic_operator_bitwise_or();
   data_arithmetic_operator_bitwise_xor();
   data_arithmetic_operator_bitwise_and();
