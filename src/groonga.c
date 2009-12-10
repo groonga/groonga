@@ -881,7 +881,11 @@ h_worker(void *arg)
     fd = ((grn_msg *)msg)->u.fd;
     do_htreq(ctx, (grn_msg *)msg);
     out = ctx->impl->outbuf;
+#ifdef WIN32
+    ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), 0);
+#else
     ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), MSG_NOSIGNAL);
+#endif /* WIN32 */
     if (ret == -1) { SERR("send"); }
     GRN_BULK_REWIND(out);
     /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
