@@ -86,6 +86,14 @@ class DumpTest < Test::Unit::TestCase
                 '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
   end
 
+  def test_load_to_array
+    assert_dump("table_create commands 3\n" +
+                "column_create commands body 0 ShortText\n" +
+                "load --table commands\n[\n" +
+                '{"_id":1,"body":"a compiler"}' + ",\n" +
+                '{"_id":2,"body":"a shell"}' + "\n]\n")
+  end
+
   def test_int32_load
     assert_dump("table_create commands 1 ShortText\n" +
                 "column_create commands body 0 Int32\n" +

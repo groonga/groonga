@@ -10502,7 +10502,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
         }
         break;
       case GRN_TABLE_NO_KEY :
-        if (ndata == ncols) {
+        if (ndata != 0 && ndata == ncols) {
           id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
         } else if (!ncols) {
           while (ndata--) {
