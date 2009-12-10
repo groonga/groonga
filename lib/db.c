@@ -3993,16 +3993,43 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     unsigned int s = grn_obj_size(ctx, value);
     switch (obj->header.type) {
     case GRN_TABLE_PAT_KEY :
-      if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
-      rc = grn_pat_set_value(ctx, (grn_pat *)obj, id, v, flags);
+      {
+        grn_obj buf;
+        if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
+        if (range != value->header.domain) {
+          GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+          if (grn_obj_cast(ctx, value, &buf, 1) == GRN_SUCCESS) {
+            v = GRN_BULK_HEAD(&buf);
+          }
+        }
+        rc = grn_pat_set_value(ctx, (grn_pat *)obj, id, v, flags);
+      }
       break;
     case GRN_TABLE_HASH_KEY :
-      if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
-      rc = grn_hash_set_value(ctx, (grn_hash *)obj, id, v, flags);
+      {
+        grn_obj buf;
+        if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
+        if (range != value->header.domain) {
+          GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+          if (grn_obj_cast(ctx, value, &buf, 1) == GRN_SUCCESS) {
+            v = GRN_BULK_HEAD(&buf);
+          }
+        }
+        rc = grn_hash_set_value(ctx, (grn_hash *)obj, id, v, flags);
+      }
       break;
     case GRN_TABLE_NO_KEY :
-      if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
-      rc = grn_array_set_value(ctx, (grn_array *)obj, id, v, flags);
+      {
+        grn_obj buf;
+        if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
+        if (range != value->header.domain) {
+          GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+          if (grn_obj_cast(ctx, value, &buf, 1) == GRN_SUCCESS) {
+            v = GRN_BULK_HEAD(&buf);
+          }
+        }
+        rc = grn_array_set_value(ctx, (grn_array *)obj, id, v, flags);
+      }
       break;
     case GRN_COLUMN_VAR_SIZE :
       if (call_hook(ctx, obj, id, value, flags)) { goto exit; }

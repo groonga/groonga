@@ -86,6 +86,50 @@ class DumpTest < Test::Unit::TestCase
                 '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
   end
 
+  def test_load_to_value_pseudo_column_of_hash_table
+    assert_dump("table_create users 0 ShortText Int32\n" +
+                "load --table users\n[\n" +
+                '{"_id":1,"_key":"ryoqun","_value":1000}' + ",\n" +
+                '{"_id":2,"_key":"hayamiz","_value":1001}' + "\n]\n")
+  end
+
+  def test_load_to_value_pseudo_column_of_patricia_table
+    assert_dump("table_create users 1 ShortText Int32\n" +
+                "load --table users\n[\n" +
+                '{"_id":1,"_key":"ryoqun","_value":1000}' + ",\n" +
+                '{"_id":2,"_key":"hayamiz","_value":1001}' + "\n]\n")
+  end
+
+  def test_load_to_value_pseudo_column_of_array_table
+    assert_dump("table_create users 3 --value_type Int32\n" +
+                "load --table users\n[\n" +
+                '{"_id":1,"_key":1000,"_value":1000}' + ",\n" +
+                '{"_id":2,"_key":1001,"_value":1001}' + "\n]\n")
+  end
+
+  def test_load_reference_key_to_value_pseudo_column
+    assert_dump("table_create groups 0 ShortText\n" +
+                "table_create users 0 ShortText groups\n" +
+                "load --table groups\n[\n" +
+                '{"_id":1,"_key":"admin"}' + ",\n" +
+                '{"_id":2,"_key":"end_user"}' + "\n]\n" +
+                "load --table users\n[\n" +
+                '{"_id":1,"_key":"ryoqun","_value":"admin"}' + ",\n" +
+                '{"_id":2,"_key":"hayamiz","_value":"end_user"}' + "\n]\n")
+  end
+
+  def test_load_reference_id_to_value_pseudo_column
+    assert_dump("table_create groups 3\n" +
+                "column_create groups name 0 ShortText\n" +
+                "table_create users 0 ShortText groups\n" +
+                "load --table groups\n[\n" +
+                '{"_id":1,"name":"admin"}' + ",\n" +
+                '{"_id":2,"name":"end_user"}' + "\n]\n" +
+                "load --table users\n[\n" +
+                '{"_id":1,"_key":"ryoqun","_value":1}' + ",\n" +
+                '{"_id":2,"_key":"hayamiz","_value":2}' + "\n]\n")
+  end
+
   def test_load_to_array
     assert_dump("table_create commands 3\n" +
                 "column_create commands body 0 ShortText\n" +

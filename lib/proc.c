@@ -1047,6 +1047,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                  GRN_CURSOR_BY_ID);
   for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL; ++i) {
+    int is_value_column;
     int j;
     grn_obj buf;
     if (i) { GRN_TEXT_PUTS(ctx, outbuf, ",\n"); }
@@ -1056,6 +1057,12 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       if (j) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
       GRN_TEXT_INIT(&buf, 0);
       grn_column_name_(ctx, columns[j], &buf);
+      if (!memcmp(GRN_TEXT_VALUE(&buf), "_value",
+                  (GRN_TEXT_LEN(&buf) > 6) ? 6 : GRN_TEXT_LEN(&buf))) {
+        is_value_column = 1;
+      } else {
+        is_value_column = 0;
+      }
       grn_text_otoj(ctx, outbuf, &buf, NULL);
       grn_obj_unlink(ctx, &buf);
       GRN_TEXT_PUTC(ctx, outbuf, ':');
@@ -1087,13 +1094,22 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
           break;
         }
         break;
-      default:
+      case GRN_ACCESSOR:
         {
           GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
           grn_obj_get_value(ctx, columns[j], id, &buf);
+          /* XXX maybe, grn_obj_get_range() should not unconditionally return
+             GRN_DB_INT32 when columns[j] is GRN_ACCESSOR and
+             GRN_ACCESSOR_GET_VALUE */
+          if (is_value_column) {
+            buf.header.domain = ((grn_db_obj *)table)->range;
+          }
           grn_text_otoj(ctx, outbuf, &buf, NULL);
           grn_obj_unlink(ctx, &buf);
         }
+        break;
+      default:
+        ERR(GRN_ERROR, "invalid header type %d", columns[j]->header.type);
         break;
       }
     }
