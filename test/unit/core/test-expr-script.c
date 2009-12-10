@@ -284,16 +284,16 @@ data_arithmetic_operator_bitwise_xor(void)
 {
   ADD_DATUM("integer ^ integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (8 ^ 1)");
+            "size <= (24 ^ 17)");
   ADD_DATUM("-integer ^ integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (-8 ^ 1) + 16");
+            "size <= (-24 ^ 17) + 16");
   ADD_DATUM("float ^ integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (8.1 ^ 1)");
+            "size <= (24.1 ^ 17)");
   ADD_DATUM("integer-string ^ integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
-            "size <= (\"8\" ^ 1)");
+            "size <= (\"24\" ^ 17)");
   ADD_DATUM("string ^ integer",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= (\"abc\" ^ 1) + 9");
