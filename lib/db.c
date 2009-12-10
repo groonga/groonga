@@ -6939,6 +6939,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_SHIFTL :
     case GRN_OP_SHIFTR :
     case GRN_OP_SHIFTRR :
+    case GRN_OP_BITWISE_OR :
     case GRN_OP_BITWISE_XOR :
     case GRN_OP_BITWISE_AND :
       PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
@@ -7617,6 +7618,9 @@ truep(grn_ctx *ctx, grn_obj *v)
 #define FLOAT_ARITHMETIC_OPERATION_SHIFTRR(x, y)                \
   ((long long unsigned int)(x) >> (long long unsigned int)(y))
 
+#define INTEGER_ARITHMETIC_OPERATION_BITWISE_OR(x, y) ((x) | (y))
+#define FLOAT_ARITHMETIC_OPERATION_BITWISE_OR(x, y)                \
+  ((long long int)(x) | (long long int)(y))
 #define INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR(x, y) ((x) ^ (y))
 #define FLOAT_ARITHMETIC_OPERATION_BITWISE_XOR(x, y)                \
   ((long long int)(x) ^ (long long int)(y))
@@ -8746,6 +8750,30 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             GRN_INT64_SET(ctx, res, ~x_);
           }
           ,);
+        break;
+      case GRN_OP_BITWISE_OR :
+        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
+                                      INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
+                                      FLOAT_ARITHMETIC_OPERATION_BITWISE_OR,
+                                      ARITHMETIC_OPERATION_NO_CHECK,
+                                      ARITHMETIC_OPERATION_NO_CHECK,
+                                      {
+                                        long long int x_;
+                                        long long int y_;
+
+                                        res->header.domain = GRN_DB_INT64;
+
+                                        GRN_INT64_SET(ctx, res, 0);
+                                        grn_obj_cast(ctx, x, res, GRN_FALSE);
+                                        x_ = GRN_INT64_VALUE(res);
+
+                                        GRN_INT64_SET(ctx, res, 0);
+                                        grn_obj_cast(ctx, y, res, GRN_FALSE);
+                                        y_ = GRN_INT64_VALUE(res);
+
+                                        GRN_INT64_SET(ctx, res, x_ | y_);
+                                      }
+                                      ,);
         break;
       case GRN_OP_BITWISE_XOR :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
