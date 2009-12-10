@@ -121,8 +121,7 @@ class DumpTest < Test::Unit::TestCase
     assert_dump("table_create commands 1 ShortText\n" +
                 "column_create commands body 1 Int32\n" +
                 "load --table commands\n[\n" +
-                '{"_id":1,"_key":"gcc","body":[827,833,991,2716]}' +
-                "\n]\n")
+                '{"_id":1,"_key":"gcc","body":[827,833,991,2716]}' + "\n]\n")
   end
 
   def test_load_with_test_reference_key
