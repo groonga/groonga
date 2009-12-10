@@ -2441,33 +2441,37 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTC(ctx, bulk, ']');
       }
       GRN_TEXT_INIT(&id, 0);
-      for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
-        GRN_TEXT_PUTS(ctx, bulk, ",[");
-        for (j = 0; j < ncolumns; j++) {
-          if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-          GRN_BULK_REWIND(&buf);
-          grn_obj_get_value_o(ctx, columns[j], &id, &buf);
-          grn_text_otoj(ctx, bulk, &buf, NULL);
+      if (tc) {
+        for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+          GRN_TEXT_PUTS(ctx, bulk, ",[");
+          for (j = 0; j < ncolumns; j++) {
+            if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+            GRN_BULK_REWIND(&buf);
+            grn_obj_get_value_o(ctx, columns[j], &id, &buf);
+            grn_text_otoj(ctx, bulk, &buf, NULL);
+          }
+          GRN_TEXT_PUTC(ctx, bulk, ']');
         }
-        GRN_TEXT_PUTC(ctx, bulk, ']');
+        grn_table_cursor_close(ctx, tc);
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
-      grn_table_cursor_close(ctx, tc);
     } else {
       int i;
       grn_obj id, *column = grn_obj_column(ctx, obj, "_key", 4);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    0, -1, GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');
-      GRN_TEXT_INIT(&id, 0);
-      for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
-        if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-        GRN_BULK_REWIND(&buf);
-        grn_obj_get_value_o(ctx, column, &id, &buf);
-        grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
+      if (tc) {
+        GRN_TEXT_INIT(&id, 0);
+        for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+          if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+          GRN_BULK_REWIND(&buf);
+          grn_obj_get_value_o(ctx, column, &id, &buf);
+          grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
+        }
+        grn_table_cursor_close(ctx, tc);
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
-      grn_table_cursor_close(ctx, tc);
       grn_obj_unlink(ctx, column);
     }
     break;
@@ -2578,42 +2582,45 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
         break;
       }
       /* TODO: add TIME attribute to RESULTSET element. */
-      GRN_TEXT_INIT(&id, 0);
-      for (i = 1; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
-        switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
-        case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
-          GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
-          grn_text_itoa(ctx, bulk, i);
-          GRN_TEXT_PUTS(ctx, bulk, "\">\n");
-          for (j = 0; j < ncolumns; j++) {
-            GRN_TEXT_PUTS(ctx, bulk, "<FIELD NAME=\"");
+      if (tc) {
+        GRN_TEXT_INIT(&id, 0);
+        for (i = 1; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+          switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
+          case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
+            GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
+            grn_text_itoa(ctx, bulk, i);
+            GRN_TEXT_PUTS(ctx, bulk, "\">\n");
+            for (j = 0; j < ncolumns; j++) {
+              GRN_TEXT_PUTS(ctx, bulk, "<FIELD NAME=\"");
+              GRN_BULK_REWIND(&buf);
+              grn_column_name_(ctx, columns[j], &buf);
+              grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+              GRN_TEXT_PUTS(ctx, bulk, "\">");
+
+              GRN_BULK_REWIND(&buf);
+              grn_obj_get_value_o(ctx, columns[j], &id, &buf);
+              grn_text_otoxml(ctx, bulk, &buf, NULL);
+
+              GRN_TEXT_PUTS(ctx, bulk, "</FIELD>\n");
+            }
+            GRN_TEXT_PUTS(ctx, bulk, "</HIT>\n");
+            break;
+          case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
+            GRN_TEXT_PUTS(ctx, bulk, "<NAVIGATIONELEMENT NAME=\"");
             GRN_BULK_REWIND(&buf);
-            grn_column_name_(ctx, columns[j], &buf);
+            grn_obj_get_value_o(ctx, columns[0], &id, &buf);
             grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-            GRN_TEXT_PUTS(ctx, bulk, "\">");
-
+            GRN_TEXT_PUTS(ctx, bulk, "\" MODIFIER=\"");
+            grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+            GRN_TEXT_PUTS(ctx, bulk, "\" COUNT=\"");
             GRN_BULK_REWIND(&buf);
-            grn_obj_get_value_o(ctx, columns[j], &id, &buf);
-            grn_text_otoxml(ctx, bulk, &buf, NULL);
-
-            GRN_TEXT_PUTS(ctx, bulk, "</FIELD>\n");
+            grn_obj_get_value_o(ctx, columns[1], &id, &buf);
+            grn_text_otoxml(ctx, bulk, &buf, format);
+            GRN_TEXT_PUTS(ctx, bulk, "\" />");
+            break;
           }
-          GRN_TEXT_PUTS(ctx, bulk, "</HIT>\n");
-          break;
-        case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
-          GRN_TEXT_PUTS(ctx, bulk, "<NAVIGATIONELEMENT NAME=\"");
-          GRN_BULK_REWIND(&buf);
-          grn_obj_get_value_o(ctx, columns[0], &id, &buf);
-          grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-          GRN_TEXT_PUTS(ctx, bulk, "\" MODIFIER=\"");
-          grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-          GRN_TEXT_PUTS(ctx, bulk, "\" COUNT=\"");
-          GRN_BULK_REWIND(&buf);
-          grn_obj_get_value_o(ctx, columns[1], &id, &buf);
-          grn_text_otoxml(ctx, bulk, &buf, format);
-          GRN_TEXT_PUTS(ctx, bulk, "\" />");
-          break;
         }
+        grn_table_cursor_close(ctx, tc);
       }
       switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
       case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
@@ -2623,7 +2630,6 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
         GRN_TEXT_PUTS(ctx, bulk, "</NAVIGATIONELEMENTS></NAVIGATIONENTRY>");
         break;
       }
-      grn_table_cursor_close(ctx, tc);
     }
     break;
   }
