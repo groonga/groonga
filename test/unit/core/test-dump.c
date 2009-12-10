@@ -319,14 +319,14 @@ test_table_create(gconstpointer data)
 void
 data_column_create(void)
 {
-  ADD_DATA("column - scalar",
+  ADD_DATA("scalar",
            "column_create Blog body 0 Text\n",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_SCALAR,
            "Text",
            NULL);
-  ADD_DATA("column - vector",
+  ADD_DATA("vector",
            "column_create Blog body 1 Text\n",
            "Blog",
            "body",
@@ -371,13 +371,13 @@ test_column_create(gconstpointer data)
 void
 data_vector_column(void)
 {
-  ADD_DATA("vector records - text", "[\"groonga\",\"is\",\"cool\"]", "Text",
+  ADD_DATA("text", "[\"groonga\",\"is\",\"cool\"]", "Text",
            GRN_TEXT_INIT, GRN_TEXT_PUTS, "groonga", "is", "cool");
-  ADD_DATA("vector records - int32", "[-322,7,9270]", "Int32",
+  ADD_DATA("int32", "[-322,7,9270]", "Int32",
            GRN_INT32_INIT, GRN_INT32_SET, -322, 7, 9270);
-  ADD_DATA("vector records - float", "[0.5,12.5,-1.0]", "Float",
+  ADD_DATA("float", "[0.5,12.5,-1.0]", "Float",
            GRN_FLOAT_INIT, GRN_FLOAT_SET, 0.5, 12.5, -1.0);
-  ADD_DATA("vector records - bool", "[true,false,true]", "Bool",
+  ADD_DATA("bool", "[true,false,true]", "Bool",
            GRN_BOOL_INIT, GRN_BOOL_SET, TRUE, FALSE, TRUE);
 }
 #undef ADD_DATA
