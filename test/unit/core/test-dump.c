@@ -350,6 +350,17 @@ test_column_create(gconstpointer data)
   grn_test_assert_dump(cut_take_printf("table_create Blog 0\n%s", expected));
 }
 
+static void
+free_elements(gpointer data)
+{
+  grn_obj *elements = data;
+
+  grn_obj_close(&context, &elements[0]);
+  grn_obj_close(&context, &elements[1]);
+  grn_obj_close(&context, &elements[2]);
+  g_free(elements);
+}
+
 #define ADD_DATA(label, expected, type_name, OBJ_INIT, OBJ_SET,         \
                  first_element, second_element, third_element) do {     \
   const int n_of_elements = 3;                                          \
@@ -364,7 +375,7 @@ test_column_create(gconstpointer data)
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_STRING, expected,                   \
                  "type_name", G_TYPE_STRING, type_name,                 \
-                 "elements", G_TYPE_POINTER, elements, g_free,          \
+                 "elements", G_TYPE_POINTER, elements, free_elements,   \
                  NULL);                                                 \
 } while(0)
 
