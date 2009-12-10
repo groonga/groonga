@@ -239,6 +239,29 @@ load --table comments
 EOGQTP
   end
 
+  def test_load_chained_subtables
+    assert_dump(<<EOGQTP)
+table_create words 0 ShortText
+table_create japanese 0 words
+table_create noun 0 japanese
+load --table words
+[
+{"_id":1,"_key":"file"},
+{"_id":2,"_key":"ファイル"},
+{"_id":3,"_key":"寝る"}
+]
+load --table japanese
+[
+{"_id":2,"_key":"ファイル"},
+{"_id":3,"_key":"寝る"}
+]
+load --table noun
+[
+{"_id":2,"_key":"ファイル"}
+]
+EOGQTP
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")
