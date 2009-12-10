@@ -129,7 +129,7 @@ load --table comments
 EOGQTP
   end
 
-  def test_load_with_vector_reference_key
+  def test_load_with_vector_text_reference_key
     assert_dump(<<EOGQTP)
 table_create users 0 ShortText
 table_create comments 1 ShortText
@@ -143,6 +143,25 @@ load --table users
 load --table comments
 [
 {"_id":1,"_key":"groonga","text":"it is fast","author":["ryoqun","hayamiz"]}
+]
+EOGQTP
+  end
+
+  def test_load_with_vector_int32_reference_key
+    assert_dump(<<EOGQTP)
+table_create users 0 Int32
+column_create users name 0 ShortText
+table_create comments 1 ShortText
+column_create comments text 0 ShortText
+column_create comments author 1 users
+load --table users
+[
+{"_id":1,"_key":1000,"name":"ryoqun"},
+{"_id":2,"_key":1001,"name":"hayamiz"}
+]
+load --table comments
+[
+{"_id":1,"_key":"groonga","text":"it is fast","author":[1000,1001]}
 ]
 EOGQTP
   end

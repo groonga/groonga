@@ -2400,7 +2400,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         if (v < ve) {
           for (;;) {
             grn_obj key;
-            GRN_TEXT_INIT(&key, 0);
+            GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
             grn_table_get_key2(ctx, range, *v, &key);
             grn_text_otoj(ctx, bulk, &key, NULL);
             v++;
