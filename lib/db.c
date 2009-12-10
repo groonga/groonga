@@ -10634,12 +10634,10 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
                 GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, range_id);
                 while (n--) {
                   if (v->header.domain == GRN_DB_TEXT) {
-                    grn_obj cast_obj, *element = v;
-                    if (range_id != element->header.domain) {
-                      GRN_OBJ_INIT(&cast_obj, GRN_BULK, 0, range_id);
-                      grn_obj_cast(ctx, element, &cast_obj, 1);
-                      element = &cast_obj;
-                    }
+                    grn_obj record, *element = v;
+                    GRN_RECORD_INIT(&record, 0, range_id);
+                    grn_obj_cast(ctx, element, &record, 1);
+                    element = &record;
                     GRN_UINT32_PUT(ctx, &buf, GRN_RECORD_VALUE(element));
                   } else {
                     ERR(GRN_ERROR, "bad syntax.");
@@ -10650,11 +10648,11 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
                 GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
                 while (n--) {
                   if (v->header.domain == GRN_DB_TEXT) {
-                    grn_obj cast_obj, *element = v;
+                    grn_obj cast_element, *element = v;
                     if (range_id != element->header.domain) {
-                      GRN_OBJ_INIT(&cast_obj, GRN_BULK, 0, range_id);
-                      grn_obj_cast(ctx, element, &cast_obj, 1);
-                      element = &cast_obj;
+                      GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
+                      grn_obj_cast(ctx, element, &cast_element, 1);
+                      element = &cast_element;
                     }
                     grn_vector_add_element(ctx, &buf,
                                            GRN_TEXT_VALUE(element),
