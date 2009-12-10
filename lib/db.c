@@ -10623,7 +10623,12 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             }
           }
           if (col) {
-            if (value->header.domain == OPEN_BRACKET) {
+            if (value->header.domain == OPEN_BRACKET &&
+                GRN_UINT32_VALUE(value) == 0) {
+              /* json is "[]" => do noting */
+              /* TODO: should wipe existing vector values out? */
+            } else if (value->header.domain == OPEN_BRACKET &&
+                       GRN_UINT32_VALUE(value) > 0) {
               int n = GRN_UINT32_VALUE(value);
               grn_obj buf, *v = value + 1;
               grn_id range_id;

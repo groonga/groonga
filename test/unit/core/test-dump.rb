@@ -273,6 +273,9 @@ EOGQTP
       pipe.write("shutdown\n")
       pipe.read
     end
+    if $?.exitstatus != 0
+      flunk
+    end
   end
 
   def assert_dump(expected)
