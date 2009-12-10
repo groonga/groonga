@@ -7769,7 +7769,8 @@ truep(grn_ctx *ctx, grn_obj *v)
     set(ctx, res, 0);                                                   \
     if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {                         \
       ERR(GRN_INVALID_ARGUMENT,                                         \
-          "not a numerical format: <%s>", GRN_TEXT_VALUE(y));           \
+          "not a numerical format: <%*s>",                              \
+          GRN_TEXT_LEN(y), GRN_TEXT_VALUE(y));                          \
       goto exit;                                                        \
     }                                                                   \
     set(ctx, res, integer_operation(get(x), get(res)));                 \
