@@ -481,6 +481,11 @@ data_arithmetic_operator_minus(void)
   ADD_DATUM("float - int",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 14.1 - 5");
+
+  ADD_DATUM("-variable",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= (-size + size + 9)");
+
 }
 
 static void

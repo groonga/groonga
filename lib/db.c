@@ -6701,15 +6701,15 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 }
 
 #define APPEND_UNARY_MINUS_OP(e) {                              \
-  grn_expr_code *code;                                          \
+  grn_expr_code *code_;                                         \
   grn_id domain;                                                \
   unsigned char type;                                           \
   grn_obj *x;                                                   \
   DFI_POP(e, dfi);                                              \
-  code = dfi->code;                                             \
+  code_ = dfi->code;                                            \
   domain = dfi->domain;                                         \
   type = dfi->type;                                             \
-  x = code->value;                                              \
+  x = code_->value;                                             \
   if (CONSTP(x)) {                                              \
     switch (domain) {                                           \
     case GRN_DB_UINT32:                                         \
@@ -6734,10 +6734,13 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
       GRN_FLOAT_SET(ctx, x, -GRN_FLOAT_VALUE(x));               \
       break;                                                    \
     default:                                                    \
+      PUSH_CODE(e, op, obj, nargs, code);                       \
       break;                                                    \
     }                                                           \
+  } else {                                                      \
+    PUSH_CODE(e, op, obj, nargs, code);                         \
   }                                                             \
-  DFI_PUT(e, type, domain, code);                               \
+  DFI_PUT(e, type, domain, code_);                              \
 }
 
 #define PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code) {    \
@@ -7621,6 +7624,8 @@ truep(grn_ctx *ctx, grn_obj *v)
 #define FLOAT_ARITHMETIC_OPERATION_BITWISE_AND(x, y)                \
   ((long long int)(x) & (long long int)(y))
 
+#define INTEGER_UNARY_ARITHMETIC_OPERATION_MINUS(x) (-(x))
+#define FLOAT_UNARY_ARITHMETIC_OPERATION_MINUS(x) (-(x))
 #define INTEGER_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x) (~(x))
 #define FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x) \
   (~((long long int)(x)))
@@ -8648,18 +8653,38 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
                                       ,);
         break;
       case GRN_OP_MINUS :
-        ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_MINUS,
-                                      INTEGER_ARITHMETIC_OPERATION_MINUS,
-                                      FLOAT_ARITHMETIC_OPERATION_MINUS,
-                                      ARITHMETIC_OPERATION_NO_CHECK,
-                                      ARITHMETIC_OPERATION_NO_CHECK,
-                                      {
-                                        ERR(GRN_INVALID_ARGUMENT,
-                                            "\"string\" - \"string\" "
-                                            "isn't supported");
-                                        goto exit;
-                                      }
-                                      ,);
+        if (code->nargs == 1) {
+          ARITHMETIC_UNARY_OPERATION_DISPATCH(
+            INTEGER_UNARY_ARITHMETIC_OPERATION_MINUS,
+            FLOAT_UNARY_ARITHMETIC_OPERATION_MINUS,
+            ARITHMETIC_OPERATION_NO_CHECK,
+            ARITHMETIC_OPERATION_NO_CHECK,
+            {
+              long long int x_;
+
+              res->header.domain = GRN_DB_INT64;
+
+              GRN_INT64_SET(ctx, res, 0);
+              grn_obj_cast(ctx, x, res, GRN_FALSE);
+              x_ = GRN_INT64_VALUE(res);
+
+              GRN_INT64_SET(ctx, res, -x_);
+            }
+            ,);
+        } else {
+          ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_MINUS,
+                                        INTEGER_ARITHMETIC_OPERATION_MINUS,
+                                        FLOAT_ARITHMETIC_OPERATION_MINUS,
+                                        ARITHMETIC_OPERATION_NO_CHECK,
+                                        ARITHMETIC_OPERATION_NO_CHECK,
+                                        {
+                                          ERR(GRN_INVALID_ARGUMENT,
+                                              "\"string\" - \"string\" "
+                                              "isn't supported");
+                                          goto exit;
+                                        }
+                                        ,);
+        }
         break;
       case GRN_OP_STAR :
         ARITHMETIC_OPERATION_DISPATCH(INTEGER_ARITHMETIC_OPERATION_STAR,
