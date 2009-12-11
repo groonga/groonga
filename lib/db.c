@@ -8579,6 +8579,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           POP2ALLOC1(x, y, res);
           do_eq(x, y, r);
           GRN_INT32_SET(ctx, res, 1 - r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8590,6 +8591,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           POP2ALLOC1(x, y, res);
           do_compare(x, y, r, <);
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8601,6 +8603,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           POP2ALLOC1(x, y, res);
           do_compare(x, y, r, >);
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8612,6 +8615,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           POP2ALLOC1(x, y, res);
           do_compare(x, y, r, <=);
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8623,6 +8627,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           POP2ALLOC1(x, y, res);
           do_compare(x, y, r, >=);
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8642,6 +8647,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
           y = (lat2 - lat1);
           d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_FLOAT;
           GRN_FLOAT_SET(ctx, res, d);
         }
@@ -8662,6 +8668,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           x = sin(fabs(lng2 - lng1) * 0.5);
           y = sin(fabs(lat2 - lat1) * 0.5);
           d = asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GEO_RADIOUS;
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_FLOAT;
           GRN_FLOAT_SET(ctx, res, d);
         }
@@ -8686,6 +8693,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           x = n * cos(p) * fabs(lng1 - lng2);
           y = m * fabs(lat1 - lat2);
           d = sqrt((x * x) + (y * y));
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_FLOAT;
           GRN_FLOAT_SET(ctx, res, d);
         }
@@ -8710,6 +8718,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           x = n * cos(p) * fabs(lng1 - lng2);
           y = m * fabs(lat1 - lat2);
           d = sqrt((x * x) + (y * y));
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_FLOAT;
           GRN_FLOAT_SET(ctx, res, d);
         }
@@ -8744,6 +8753,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             break;
           }
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8772,6 +8782,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           y = (lat2 - lat1);
           r = d <= (x * x) + (y * y);
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8799,6 +8810,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           la3 = GRN_INT32_VALUE(e);
           r = ((ln2 <= ln0) && (ln0 <= ln3) && (la2 <= la0) && (la0 <= la3));
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8827,6 +8839,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             {
               long long int x_;
 
+              res->header.type = GRN_BULK;
               res->header.domain = GRN_DB_INT64;
 
               GRN_INT64_SET(ctx, res, 0);
@@ -8961,6 +8974,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             long long unsigned int x_;
             long long unsigned int y_;
 
+            res->header.type = GRN_BULK;
             res->header.domain = GRN_DB_INT64;
 
             GRN_INT64_SET(ctx, res, 0);
