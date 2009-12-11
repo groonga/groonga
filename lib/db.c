@@ -6753,11 +6753,11 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
         value = GRN_UINT32_VALUE(x);                            \
         if (value > (unsigned int)0x80000000) {                 \
           domain = GRN_DB_INT64;                                \
-          grn_obj_reinit(ctx, x, domain, 0);                    \
+          x->header.domain = domain;                            \
           GRN_INT64_SET(ctx, x, -((long long int)value));       \
         } else {                                                \
           domain = GRN_DB_INT32;                                \
-          grn_obj_reinit(ctx, x, domain, 0);                    \
+          x->header.domain = domain;                            \
           GRN_INT32_SET(ctx, x, -((int)value));                 \
         }                                                       \
       }                                                         \
