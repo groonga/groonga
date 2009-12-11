@@ -8098,12 +8098,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     grn_obj_reinit(ctx, variable_value, col->header.domain, 0);         \
     grn_obj_get_value(ctx, col, rid, variable_value);                   \
                                                                         \
-    grn_obj_reinit(ctx, casted_value, variable_value->header.domain, 0); \
+    casted_value->header.type = GRN_BULK;                               \
+    casted_value->header.domain = variable_value->header.domain;        \
     if (grn_obj_cast(ctx, value, casted_value, GRN_FALSE)) {            \
       ERR(GRN_INVALID_ARGUMENT, "invalid value: string");               \
       goto exit;                                                        \
     }                                                                   \
-    grn_obj_reinit(ctx, res, variable_value->header.domain, 0);         \
+    res->header.type = GRN_BULK;                                        \
+    res->header.domain = variable_value->header.domain;                 \
     ARITHMETIC_OPERATION_DISPATCH(variable_value, casted_value, res,    \
                                   integer32_operation,                  \
                                   integer64_operation,                  \
