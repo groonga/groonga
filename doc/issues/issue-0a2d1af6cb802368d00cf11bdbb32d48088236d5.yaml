@@ -23,17 +23,17 @@ log_events:
     arithmetic operator list:
     done name
          ASSIGN
-     o   STAR_ASSIGN
-     o   SLASH_ASSIGN
-     o   MOD_ASSIGN
-     o   PLUS_ASSIGN
-     o   MINUS_ASSIGN
-     o   SHIFTL_ASSIGN
-     o   SHIFTR_ASSIGN
-     o   SHIFTRR_ASSIGN
-     o   AND_ASSIGN
-     o   XOR_ASSIGN
-     o   OR_ASSIGN
+    o    STAR_ASSIGN
+    o    SLASH_ASSIGN
+    o    MOD_ASSIGN
+    o    PLUS_ASSIGN
+    o    MINUS_ASSIGN
+    o    SHIFTL_ASSIGN
+    o    SHIFTR_ASSIGN
+    o    SHIFTRR_ASSIGN
+    o    AND_ASSIGN
+    o    XOR_ASSIGN
+    o    OR_ASSIGN
     o    BITWISE_OR
     o    BITWISE_XOR
     o    BITWISE_AND
