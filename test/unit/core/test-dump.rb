@@ -23,7 +23,8 @@ class DumpTest < Test::Unit::TestCase
     FileUtils.rm_rf(@tmp_dir)
     FileUtils.mkdir_p(@tmp_dir)
     @database_path = File.join(@tmp_dir, "database")
-    # "shutdown" is needed to prevent groonga from going into the prompt mode.
+    # "shutdown" is needed to prevent groonga from going into the prompt mode
+    # as a placeholder.
     run_groonga("-n", @database_path, "shutdown")
   end
 
@@ -350,7 +351,12 @@ COMMANDS
 
   private
   def dump
-    run_groonga(@database_path, "dump")
+    output = run_groonga(@database_path, "dump")
+    if $?.exitstatus != 255 # should groonga exit with 0, adhering the convention?
+      flunk("groonga exited with unexpected exit status while dumping: " +
+            " #{$?.exitstatus}")
+    end
+    output
   end
 
   def feed_commands(commands)
@@ -361,7 +367,8 @@ COMMANDS
       output = pipe.read
     end
     if $?.exitstatus != 0
-      flunk
+      flunk("groonga exited with unexpected exit status while executing " +
+            "commands: #{$?.exitstatus}")
     end
     output
   end
