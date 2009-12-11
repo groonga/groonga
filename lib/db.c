@@ -11935,8 +11935,13 @@ parse_script(grn_ctx *ctx, efs_info *q)
         PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
         break;
       case '=' :
-        q->cur++;
-        PARSE(GRN_EXPR_TOKEN_AND_ASSIGN);
+        if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
+          q->cur++;
+          PARSE(GRN_EXPR_TOKEN_AND_ASSIGN);
+        } else {
+          ERR(GRN_UPDATE_NOT_ALLOWED,
+              "'&=' is not allowed (%*s)", q->str_end - q->str, q->str);
+        }
         break;
       case '!' :
         q->cur++;
