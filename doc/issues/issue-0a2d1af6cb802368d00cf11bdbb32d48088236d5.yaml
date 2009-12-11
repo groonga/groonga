@@ -24,7 +24,7 @@ log_events:
     done name
          ASSIGN
      o   STAR_ASSIGN
-         SLASH_ASSIGN
+     o   SLASH_ASSIGN
          MOD_ASSIGN
          PLUS_ASSIGN
          MINUS_ASSIGN

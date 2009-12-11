@@ -7062,6 +7062,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_ASSIGN :
     case GRN_OP_STAR_ASSIGN :
+    case GRN_OP_SLASH_ASSIGN :
       {
         if (obj) {
           type = obj->header.type;
@@ -8062,6 +8063,51 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   code++;                                                               \
 }
 
+#define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(integer32_operation,   \
+                                                 integer64_operation,   \
+                                                 float_operation,       \
+                                                 left_expression_check, \
+                                                 right_expression_check,\
+                                                 text_operation)        \
+{                                                                       \
+  grn_obj *value, *casted_value, *variable_value, *var;                 \
+  if (code->value) {                                                    \
+    value = code->value;                                                \
+  } else {                                                              \
+    POP1(value);                                                        \
+  }                                                                     \
+  value = GRN_OBJ_RESOLVE(ctx, value);                                  \
+  POP1(var);                                                            \
+  if (var->header.type == GRN_PTR &&                                    \
+      GRN_BULK_VSIZE(var) == (sizeof(grn_obj *) + sizeof(grn_id))) {    \
+    grn_obj *col = GRN_PTR_VALUE(var);                                  \
+    grn_id rid = *(grn_id *)(GRN_BULK_HEAD(var) + sizeof(grn_obj *));   \
+                                                                        \
+    ALLOC1(res);                                                        \
+    ALLOC1(variable_value);                                             \
+    ALLOC1(casted_value);                                               \
+    grn_obj_reinit(ctx, variable_value, col->header.domain, 0);         \
+    grn_obj_get_value(ctx, col, rid, variable_value);                   \
+                                                                        \
+    grn_obj_reinit(ctx, casted_value, variable_value->header.domain, 0); \
+    if (grn_obj_cast(ctx, value, casted_value, GRN_FALSE)) {            \
+      ERR(GRN_INVALID_ARGUMENT, "invalid value: string");               \
+      goto exit;                                                        \
+    }                                                                   \
+    grn_obj_reinit(ctx, res, variable_value->header.domain, 0);         \
+    ARITHMETIC_OPERATION_DISPATCH(variable_value, casted_value, res,    \
+                                  integer32_operation,                  \
+                                  integer64_operation,                  \
+                                  float_operation,                      \
+                                  left_expression_check,                \
+                                  right_expression_check,               \
+                                  text_operation,);                     \
+    POP1(casted_value);                                                 \
+    POP1(variable_value);                                               \
+    grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);                 \
+  }                                                                     \
+}
+
 grn_rc
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
@@ -8252,50 +8298,28 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         code++;
         break;
       case GRN_OP_STAR_ASSIGN :
-        {
-          grn_obj *value, *casted_value, *variable_value, *var;
-          if (code->value) {
-            value = code->value;
-          } else {
-            POP1(value);
-          }
-          value = GRN_OBJ_RESOLVE(ctx, value);
-          POP1(var);
-          if (var->header.type == GRN_PTR &&
-              GRN_BULK_VSIZE(var) == (sizeof(grn_obj *) + sizeof(grn_id))) {
-            grn_obj *col = GRN_PTR_VALUE(var);
-            grn_id rid = *(grn_id *)(GRN_BULK_HEAD(var) + sizeof(grn_obj *));
-
-            ALLOC1(res);
-            ALLOC1(variable_value);
-            ALLOC1(casted_value);
-            grn_obj_reinit(ctx, variable_value, col->header.domain, 0);
-            grn_obj_get_value(ctx, col, rid, variable_value);
-
-            grn_obj_reinit(ctx, casted_value, variable_value->header.domain, 0);
-            if (grn_obj_cast(ctx, value, casted_value, GRN_FALSE)) {
-              ERR(GRN_INVALID_ARGUMENT, "invalid value: string");
-              goto exit;
-            }
-            grn_obj_reinit(ctx, res, variable_value->header.domain, 0);
-            ARITHMETIC_OPERATION_DISPATCH(variable_value, casted_value, res,
-                                          INTEGER_ARITHMETIC_OPERATION_STAR,
-                                          INTEGER_ARITHMETIC_OPERATION_STAR,
-                                          FLOAT_ARITHMETIC_OPERATION_STAR,
-                                          ARITHMETIC_OPERATION_NO_CHECK,
-                                          ARITHMETIC_OPERATION_NO_CHECK,
-                                          {
-                                            ERR(GRN_INVALID_ARGUMENT,
-                                                "variable *= \"string\" "
-                                                "isn't supported");
-                                            goto exit;
-                                          }
-                                          ,);
-            POP1(casted_value);
-            POP1(variable_value);
-            grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);
-          }
-        }
+        ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_STAR,
+          INTEGER_ARITHMETIC_OPERATION_STAR,
+          FLOAT_ARITHMETIC_OPERATION_STAR,
+          ARITHMETIC_OPERATION_NO_CHECK,
+          ARITHMETIC_OPERATION_NO_CHECK,
+          {
+            ERR(GRN_INVALID_ARGUMENT, "variable *= \"string\" isn't supported");
+            goto exit;
+          });
+        break;
+      case GRN_OP_SLASH_ASSIGN :
+        ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_SLASH,
+          INTEGER_ARITHMETIC_OPERATION_SLASH,
+          FLOAT_ARITHMETIC_OPERATION_SLASH,
+          ARITHMETIC_OPERATION_NO_CHECK,
+          ARITHMETIC_OPERATION_NO_CHECK,
+          {
+            ERR(GRN_INVALID_ARGUMENT, "variable /= \"string\" isn't supported");
+            goto exit;
+          });
         break;
       case GRN_OP_JUMP :
         code += code->nargs + 1;
