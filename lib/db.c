@@ -11798,8 +11798,13 @@ parse_script(grn_ctx *ctx, efs_info *q)
         PARSE(GRN_EXPR_TOKEN_ADJUST);
         break;
       case '=' :
-        q->cur++;
-        PARSE(GRN_EXPR_TOKEN_STAR_ASSIGN);
+        if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
+          q->cur++;
+          PARSE(GRN_EXPR_TOKEN_STAR_ASSIGN);
+        } else {
+          ERR(GRN_UPDATE_NOT_ALLOWED,
+              "'*=' is not allowed (%*s)", q->str_end - q->str, q->str);
+        }
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_STAR);
@@ -11994,8 +11999,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'=' is not allowed (%*s)",
-              q->str_end - q->str, q->str);
+              "'=' is not allowed (%*s)", q->str_end - q->str, q->str);
         }
         break;
       }
