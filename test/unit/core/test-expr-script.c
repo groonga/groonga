@@ -1365,6 +1365,9 @@ data_not_allow_update(void)
   ADD_DATUM(">>=",
             cut_take_printf("'>>=' is not allowed (size >>= 10)"),
             "size >>= 10");
+  ADD_DATUM(">>>=",
+            cut_take_printf("'>>>=' is not allowed (size >>>= 10)"),
+            "size >>>= 10");
 
 #undef ADD_DATUM
 }
