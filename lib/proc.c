@@ -866,6 +866,40 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return outbuf;
 }
 
+static grn_obj *
+proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *outbuf = args[0];
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 4) {
+    grn_content_type ct = GRN_INT32_VALUE(&vars[2].value);
+    grn_obj *table = grn_ctx_get(ctx,
+                                 GRN_TEXT_VALUE(&vars[0].value),
+                                 GRN_TEXT_LEN(&vars[0].value));
+    if (table) {
+      grn_id id;
+      if (GRN_TEXT_LEN(&vars[1].value) && GRN_TEXT_LEN(&vars[3].value)) {
+        ERR(GRN_INVALID_ARGUMENT, "both id and key is specified");
+      } else if (GRN_TEXT_LEN(&vars[1].value)) {
+        GRN_TEXT_PUTS(ctx, outbuf, "key: ");
+        GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&vars[1].value),
+                                  GRN_TEXT_LEN(&vars[1].value));
+        GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      } else if (GRN_TEXT_LEN(&vars[3].value)) {
+        GRN_TEXT_PUTS(ctx, outbuf, "id: ");
+        GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&vars[3].value),
+                                  GRN_TEXT_LEN(&vars[3].value));
+        GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      }
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "unknown table name");
+    }
+  }
+  return outbuf;
+}
+
 static void
 dump_name(grn_ctx *ctx, grn_obj *outbuf, const char *name, int name_len)
 {
@@ -1635,6 +1669,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "output_type");
   DEF_VAR(vars[4], "id");
   DEF_PROC("get", proc_get, 5, vars);
+
+  DEF_VAR(vars[0], "table");
+  DEF_VAR(vars[1], "key");
+  DEF_VAR(vars[2], "output_type");
+  DEF_VAR(vars[3], "id");
+  DEF_PROC("delete", proc_delete, 4, vars);
 
   /* TODO: Take "output_type" argument. Do we need GRN_CONTENT_GQTP? */
   DEF_PROC("dump", proc_dump, 0, vars);
