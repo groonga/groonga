@@ -22,7 +22,7 @@ log_events:
   - |-
     arithmetic operator list:
     done name
-         ASSIGN
+    o    ASSIGN
     o    STAR_ASSIGN
     o    SLASH_ASSIGN
     o    MOD_ASSIGN
