@@ -1048,10 +1048,10 @@ static void
 dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   int i, ncolumns;
-  grn_obj columnbuf;
+  grn_obj columnbuf, delete_commands;
   grn_obj **columns;
   grn_table_cursor *cursor;
-  grn_id id;
+  grn_id old_id = 0, id;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -1067,6 +1067,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     return;
   }
 
+  GRN_TEXT_INIT(&delete_commands, 0);
+
   GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
@@ -1079,11 +1081,23 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 
   cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                  GRN_CURSOR_BY_ID);
-  for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL; ++i) {
+  for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
+       ++i, old_id = id) {
     int is_value_column;
     int j;
     grn_obj buf;
     if (i) { GRN_TEXT_PUTS(ctx, outbuf, ",\n"); }
+    if (old_id + 1 < id) {
+      grn_id current_id;
+      for (current_id = old_id + 1; current_id < id; current_id++) {
+        GRN_TEXT_PUTS(ctx, outbuf, "{},\n");
+        GRN_TEXT_PUTS(ctx, &delete_commands, "delete --table ");
+        dump_obj_name(ctx, &delete_commands, table);
+        GRN_TEXT_PUTS(ctx, &delete_commands, " --id ");
+        grn_text_lltoa(ctx, &delete_commands, current_id);
+        GRN_TEXT_PUTC(ctx, &delete_commands, '\n');
+      }
+    }
     GRN_TEXT_PUTC(ctx, outbuf, '{');
     for (j = 0; j < ncolumns; j++) {
       grn_id range;
@@ -1149,6 +1163,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_TEXT_PUTC(ctx, outbuf, '}');
   }
   GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
+  GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&delete_commands),
+                            GRN_TEXT_LEN(&delete_commands));
+  grn_obj_unlink(ctx, &delete_commands);
 
   grn_table_cursor_close(ctx, cursor);
   for (i = 0; i < ncolumns; i++) {

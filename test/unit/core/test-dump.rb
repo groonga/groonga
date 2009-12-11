@@ -351,6 +351,45 @@ select users
 COMMANDS
   end
 
+  def test_load_unsequential_array_table
+    assert_restore_dump(<<COMMANDS)
+table_create users 3
+column_create users name 0 ShortText
+table_create blog_entries 3
+column_create blog_entries body 0 ShortText
+column_create blog_entries author 0 users
+load --table users
+[
+{"_id":1,"name":"hayamiz"},
+{},
+{},
+{},
+{"_id":5,"name":"mori"},
+{},
+{},
+{"_id":8,"name":"ryoqun"}
+]
+delete --table users --id 2
+delete --table users --id 3
+delete --table users --id 4
+delete --table users --id 6
+delete --table users --id 7
+load --table blog_entries
+[
+{"_id":1,"body":"Today was very chilly.","author":1},
+{"_id":2,"body":"Taiyaki is very yummy.","author":8},
+{"_id":3,"body":"I was programming.","author":5}
+]
+COMMANDS
+
+    result = feed_commands(<<COMMANDS)
+select blog_entries --output_columns author.name
+COMMANDS
+
+    assert_equal('[[0],[[3],["author.name"],["hayamiz"],["ryoqun"],["mori"]]]' +
+                 "\n", result)
+  end
+
   private
   def dump
     output = run_groonga(@database_path, "dump")
