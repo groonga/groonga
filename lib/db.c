@@ -11863,8 +11863,13 @@ parse_script(grn_ctx *ctx, efs_info *q)
       q->cur++;
       switch (*q->cur) {
       case '=' :
-        q->cur++;
-        PARSE(GRN_EXPR_TOKEN_SLASH_ASSIGN);
+        if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
+          q->cur++;
+          PARSE(GRN_EXPR_TOKEN_SLASH_ASSIGN);
+        } else {
+          ERR(GRN_UPDATE_NOT_ALLOWED,
+              "'/=' is not allowed (%*s)", q->str_end - q->str, q->str);
+        }
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_SLASH);
