@@ -30,7 +30,7 @@ log_events:
      o   MINUS_ASSIGN
      o   SHIFTL_ASSIGN
      o   SHIFTR_ASSIGN
-         SHIFTRR_ASSIGN
+     o   SHIFTRR_ASSIGN
          AND_ASSIGN
          XOR_ASSIGN
          OR_ASSIGN

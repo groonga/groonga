@@ -7068,6 +7068,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_MINUS_ASSIGN :
     case GRN_OP_SHIFTL_ASSIGN :
     case GRN_OP_SHIFTR_ASSIGN :
+    case GRN_OP_SHIFTRR_ASSIGN :
       {
         if (obj) {
           type = obj->header.type;
@@ -8383,6 +8384,19 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           ARITHMETIC_OPERATION_NO_CHECK,
           {
             ERR(GRN_INVALID_ARGUMENT, "variable >>= \"string\" isn't supported");
+            goto exit;
+          });
+        break;
+      case GRN_OP_SHIFTRR_ASSIGN :
+        ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
+          INTEGER32_ARITHMETIC_OPERATION_SHIFTRR,
+          INTEGER64_ARITHMETIC_OPERATION_SHIFTRR,
+          FLOAT_ARITHMETIC_OPERATION_SHIFTRR,
+          ARITHMETIC_OPERATION_NO_CHECK,
+          ARITHMETIC_OPERATION_NO_CHECK,
+          {
+            ERR(GRN_INVALID_ARGUMENT,
+                "variable >>>= \"string\" isn't supported");
             goto exit;
           });
         break;

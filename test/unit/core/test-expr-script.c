@@ -622,6 +622,36 @@ data_arithmetic_operator_shift_r_assign(void)
 }
 
 static void
+data_arithmetic_operator_shift_rr_assign(void)
+{
+  ADD_DATUM("integer >>>= integer",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size <= 9 && (size >>>= 1) && size == 4");
+  ADD_DATUM("integer >>>= float",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size <= 9 && ((size >>>= 1.1) || 1) && size == 4");
+  ADD_DATUM("integer >>>= integer-string",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size <= 9 && ((size >>>= \"1\") || 1) && size == 4");
+
+  ADD_DATUM("float >>>= float",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "((size_in_float >>>= 1.1) || 1) && "
+            "3.9 < size_in_float && size_in_float < 5");
+  ADD_DATUM("float >>>= integer",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "((size_in_float >>>= 1) || 1) && "
+            "3.9 < size_in_float && size_in_float < 5");
+  ADD_DATUM("float >>>= float-string",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "((size_in_float >>>= \"1.1\") || 1) && "
+            "3.9 < size_in_float && size_in_float < 5");
+}
+
+static void
 data_arithmetic_operator_bitwise_or(void)
 {
   ADD_DATUM("integer | integer",
@@ -978,6 +1008,7 @@ data_arithmetic_operator(void)
   data_arithmetic_operator_minus_assign();
   data_arithmetic_operator_shift_l_assign();
   data_arithmetic_operator_shift_r_assign();
+  data_arithmetic_operator_shift_rr_assign();
   data_arithmetic_operator_bitwise_or();
   data_arithmetic_operator_bitwise_xor();
   data_arithmetic_operator_bitwise_and();
