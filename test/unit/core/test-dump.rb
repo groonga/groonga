@@ -23,6 +23,8 @@ class DumpTest < Test::Unit::TestCase
     FileUtils.rm_rf(@tmp_dir)
     FileUtils.mkdir_p(@tmp_dir)
     @database_path = File.join(@tmp_dir, "database")
+    # "shutdown" is needed to prevent groonga from going into the prompt mode.
+    run_groonga("-n", @database_path, "shutdown")
   end
 
   def teardown
@@ -353,7 +355,7 @@ COMMANDS
 
   def feed_commands(commands)
     output = ""
-    IO.popen(construct_command_line("-n", @database_path), "w+") do |pipe|
+    IO.popen(construct_command_line(@database_path), "w+") do |pipe|
       pipe.write(commands)
       pipe.write("shutdown\n")
       output = pipe.read
