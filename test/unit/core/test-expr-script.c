@@ -502,6 +502,36 @@ data_arithmetic_operator_mod_assign(void)
 }
 
 static void
+data_arithmetic_operator_plus_assign(void)
+{
+  ADD_DATUM("integer += integer",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size <= 9 && (size += 4) && size == 13");
+  ADD_DATUM("integer += float",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size <= 9 && ((size += 4.1) || 1) && size == 13");
+  ADD_DATUM("integer += integer-string",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size <= 9 && ((size += \"4\") || 1) && size == 13");
+
+  ADD_DATUM("float += float",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "((size_in_float += 4.1) || 1) && "
+            "13 < size_in_float && size_in_float < 14");
+  ADD_DATUM("float += integer",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "((size_in_float += 4) || 1) && "
+            "12.9 < size_in_float && size_in_float < 14.0");
+  ADD_DATUM("float += float-string",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size_in_float <= 9.1 && "
+            "((size_in_float += \"4.1\") || 1) && "
+            "13 < size_in_float && size_in_float < 14");
+}
+
+static void
 data_arithmetic_operator_bitwise_or(void)
 {
   ADD_DATUM("integer | integer",
@@ -854,6 +884,7 @@ data_arithmetic_operator(void)
   data_arithmetic_operator_star_assign();
   data_arithmetic_operator_slash_assign();
   data_arithmetic_operator_mod_assign();
+  data_arithmetic_operator_plus_assign();
   data_arithmetic_operator_bitwise_or();
   data_arithmetic_operator_bitwise_xor();
   data_arithmetic_operator_bitwise_and();
