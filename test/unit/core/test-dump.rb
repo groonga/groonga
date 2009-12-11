@@ -306,24 +306,71 @@ load --table noun
 EOGQTP
   end
 
+  def test_delete_by_key
+    assert_commands(<<EXPECTED, <<COMMANDS)
+true
+3
+true
+[[0],[[2],["_id","_key"],[1,"hayamiz"],[3,"mori"]]]
+EXPECTED
+table_create users 0 ShortText
+load --table users
+[
+{"_key":"hayamiz"},
+{"_key":"ryoqun"},
+{"_key":"mori"}
+]
+delete users --key ryoqun
+select users
+COMMANDS
+  end
+
+  def test_delete_by_id
+    assert_commands(<<EXPECTED, <<COMMANDS)
+true
+true
+3
+true
+[[0],[[2],["_id","name"],[1,"hayamiz"],[3,"mori"]]]
+EXPECTED
+table_create users 3
+column_create users name 0 ShortText
+load --table users
+[
+{"name":"hayamiz"},
+{"name":"ryoqun"},
+{"name":"mori"}
+]
+delete users --id 2
+select users
+COMMANDS
+  end
+
   private
   def dump
     run_groonga(@database_path, "dump")
   end
 
   def feed_commands(commands)
+    output = ""
     IO.popen(construct_command_line("-n", @database_path), "w+") do |pipe|
       pipe.write(commands)
       pipe.write("shutdown\n")
-      pipe.read
+      output = pipe.read
     end
     if $?.exitstatus != 0
       flunk
     end
+    output
   end
 
   def assert_dump(expected)
     feed_commands(expected)
     assert_equal(expected, dump)
+  end
+
+  def assert_commands(expected, commands)
+    actual = feed_commands(commands)
+    assert_equal(expected, actual)
   end
 end

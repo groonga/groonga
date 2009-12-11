@@ -872,31 +872,30 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_obj *outbuf = args[0];
   grn_expr_var *vars;
+  grn_rc rc;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 4) {
-    grn_content_type ct = GRN_INT32_VALUE(&vars[2].value);
     grn_obj *table = grn_ctx_get(ctx,
                                  GRN_TEXT_VALUE(&vars[0].value),
                                  GRN_TEXT_LEN(&vars[0].value));
     if (table) {
-      grn_id id;
       if (GRN_TEXT_LEN(&vars[1].value) && GRN_TEXT_LEN(&vars[3].value)) {
-        ERR(GRN_INVALID_ARGUMENT, "both id and key is specified");
+        ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
       } else if (GRN_TEXT_LEN(&vars[1].value)) {
-        GRN_TEXT_PUTS(ctx, outbuf, "key: ");
-        GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&vars[1].value),
-                                  GRN_TEXT_LEN(&vars[1].value));
-        GRN_TEXT_PUTC(ctx, outbuf, '\n');
+        rc = grn_table_delete(ctx, table, GRN_TEXT_VALUE(&vars[1].value),
+                                          GRN_TEXT_LEN(&vars[1].value));
       } else if (GRN_TEXT_LEN(&vars[3].value)) {
-        GRN_TEXT_PUTS(ctx, outbuf, "id: ");
-        GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&vars[3].value),
-                                  GRN_TEXT_LEN(&vars[3].value));
-        GRN_TEXT_PUTC(ctx, outbuf, '\n');
+        grn_obj id;
+        GRN_RECORD_INIT(&id, 0, grn_obj_id(ctx, table));
+        if ((rc = grn_obj_cast(ctx, &vars[3].value, &id, 0)) == GRN_SUCCESS) {
+          rc = grn_table_delete_by_id(ctx, table, GRN_RECORD_VALUE(&id));
+        }
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT, "unknown table name");
     }
   }
+  GRN_TEXT_PUTS(ctx, outbuf, rc ? "false" : "true");
   return outbuf;
 }
 
