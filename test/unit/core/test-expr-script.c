@@ -31,6 +31,8 @@ static grn_obj *database;
 static grn_obj *res, *expr;
 static grn_obj textbuf, intbuf, floatbuf, timebuf;
 
+void data_logic_operator(void);
+void test_logic_operator(gconstpointer data);
 void data_comparison_operator(void);
 void test_comparison_operator(gconstpointer data);
 void data_arithmetic_operator(void);
@@ -214,6 +216,50 @@ prepare_data(void)
   create_documents_table();
   create_terms_table();
   insert_data();
+}
+
+void
+data_logic_operator(void)
+{
+#define ADD_DATUM(label, expected_keys, query)                          \
+  gcut_add_datum(label,                                                 \
+                 "expected_keys", G_TYPE_POINTER, expected_keys,        \
+                 gcut_list_string_free,                                 \
+                 "query", G_TYPE_STRING, query,                         \
+                 NULL)
+
+  ADD_DATUM("& - 1",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && 1");
+  ADD_DATUM("& - 0",
+            gcut_list_string_new(NULL, NULL),
+            "size <= 9 && 0");
+
+#undef ADD_DATUM
+}
+
+void
+test_logic_operator(gconstpointer data)
+{
+  grn_obj *v;
+
+  prepare_data();
+
+  expr = grn_expr_create(&context, NULL, 0);
+  cut_assert_not_null(expr);
+  v = grn_expr_add_var(&context, expr, NULL, 0);
+  cut_assert_not_null(v);
+  GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
+  PARSE(expr,
+        gcut_data_get_string(data, "query"),
+        GRN_EXPR_SYNTAX_SCRIPT);
+
+  res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+  grn_test_assert_select(&context,
+                         gcut_data_get_pointer(data, "expected_keys"),
+                         res,
+                         body);
 }
 
 void
