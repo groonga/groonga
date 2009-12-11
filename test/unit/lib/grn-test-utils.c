@@ -156,6 +156,8 @@ grn_rc_to_string(grn_rc rc)
     return "GRN_RETRY_MAX";
   case GRN_INCOMPATIBLE_FILE_FORMAT:
     return "GRN_INCOMPATIBLE_FILE_FORMAT";
+  case GRN_UPDATE_NOT_ALLOWED:
+    return "GRN_UPDATE_NOT_ALLOWED";
   default:
     return "GRN_UNKNOWN_STATUS";
   }

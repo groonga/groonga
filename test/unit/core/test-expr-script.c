@@ -41,6 +41,8 @@ void data_arithmetic_operator_error(void);
 void test_arithmetic_operator_error(gconstpointer data);
 void data_arithmetic_operator_syntax_error(void);
 void test_arithmetic_operator_syntax_error(gconstpointer data);
+void data_not_allow_update(void);
+void test_not_allow_update(gconstpointer data);
 
 void
 cut_startup(void)
@@ -1136,7 +1138,7 @@ test_arithmetic_operator(gconstpointer data)
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   PARSE(expr,
         gcut_data_get_string(data, "query"),
-        GRN_EXPR_SYNTAX_SCRIPT);
+        GRN_EXPR_SYNTAX_SCRIPT | GRN_EXPR_ALLOW_UPDATE);
 
   res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
@@ -1326,6 +1328,41 @@ test_arithmetic_operator_syntax_error(gconstpointer data)
                                           body, GRN_OP_MATCH, GRN_OP_AND,
                                           GRN_EXPR_SYNTAX_SCRIPT));
   grn_test_assert_error(GRN_SYNTAX_ERROR,
+                        gcut_data_get_string(data, "message"),
+                        &context);
+}
+
+void
+data_not_allow_update(void)
+{
+#define ADD_DATUM(label, message, query)                        \
+  gcut_add_datum(label,                                         \
+                 "message", G_TYPE_STRING, message,             \
+                 "query", G_TYPE_STRING, query,                 \
+                 NULL)
+
+  ADD_DATUM("=",
+            cut_take_printf("'=' is not allowed (size = 100)"),
+            "size = 100");
+
+#undef ADD_DATUM
+}
+
+void
+test_not_allow_update(gconstpointer data)
+{
+  grn_obj *v;
+  const gchar *query;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+  query = gcut_data_get_string(data, "query");
+  grn_test_assert_equal_rc(GRN_UPDATE_NOT_ALLOWED,
+                           grn_expr_parse(&context, expr, query, strlen(query),
+                                          body, GRN_OP_MATCH, GRN_OP_AND,
+                                          GRN_EXPR_SYNTAX_SCRIPT));
+  grn_test_assert_error(GRN_UPDATE_NOT_ALLOWED,
                         gcut_data_get_string(data, "message"),
                         &context);
 }
