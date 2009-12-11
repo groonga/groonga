@@ -29,7 +29,7 @@ log_events:
      o   PLUS_ASSIGN
      o   MINUS_ASSIGN
      o   SHIFTL_ASSIGN
-         SHIFTR_ASSIGN
+     o   SHIFTR_ASSIGN
          SHIFTRR_ASSIGN
          AND_ASSIGN
          XOR_ASSIGN
