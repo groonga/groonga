@@ -218,9 +218,6 @@ prepare_data(void)
   insert_data();
 }
 
-void
-data_logic_operator(void)
-{
 #define ADD_DATUM(label, expected_keys, query)                          \
   gcut_add_datum(label,                                                 \
                  "expected_keys", G_TYPE_POINTER, expected_keys,        \
@@ -228,32 +225,70 @@ data_logic_operator(void)
                  "query", G_TYPE_STRING, query,                         \
                  NULL)
 
-  ADD_DATUM("& - 1",
+static void
+data_logic_operator_and(void)
+{
+  ADD_DATUM("&& - 1",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 9 && 1");
-  ADD_DATUM("& - 0",
+  ADD_DATUM("&& - 0",
             gcut_list_string_new(NULL, NULL),
             "size <= 9 && 0");
 
-  ADD_DATUM("& - 0.1",
+  ADD_DATUM("&& - 0.1",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 9 && 0.1");
-  ADD_DATUM("& - -0.1",
+  ADD_DATUM("&& - -0.1",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 9 && -0.1");
-  ADD_DATUM("& - 0.0",
+  ADD_DATUM("&& - 0.0",
             gcut_list_string_new(NULL, NULL),
             "size <= 9 && 0.0");
 
-  ADD_DATUM("& - \"abc\"",
+  ADD_DATUM("&& - \"abc\"",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
             "size <= 9 && \"abc\"");
-  ADD_DATUM("& - \"\"",
+  ADD_DATUM("&& - \"\"",
             gcut_list_string_new(NULL, NULL),
             "size <= 9 && \"\"");
+}
+
+static void
+data_logic_operator_or(void)
+{
+  ADD_DATUM("|| - 1",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size == 4 || 1)");
+  ADD_DATUM("|| - 0",
+            gcut_list_string_new("hoge", NULL),
+            "size <= 9 && (size == 4 || 0)");
+
+  ADD_DATUM("|| - 0.1",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size == 4 || 0.1)");
+  ADD_DATUM("|| - -0.1",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size == 4 || -0.1)");
+  ADD_DATUM("|| - 0.0",
+            gcut_list_string_new("hoge", NULL),
+            "size <= 9 && (size == 4 || 0.0)");
+
+  ADD_DATUM("|| - \"abc\"",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size == 4 || \"abc\")");
+  ADD_DATUM("|| - \"\"",
+            gcut_list_string_new("hoge", NULL),
+            "size <= 9 && (size == 4 || \"\")");
+}
+
+void
+data_logic_operator(void)
+{
+  data_logic_operator_and();
+  data_logic_operator_or();
+}
 
 #undef ADD_DATUM
-}
 
 void
 test_logic_operator(gconstpointer data)
