@@ -1101,9 +1101,18 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_TEXT_PUTC(ctx, outbuf, '{');
     for (j = 0; j < ncolumns; j++) {
       grn_id range;
-      if (j) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
       GRN_TEXT_INIT(&buf, 0);
       grn_column_name_(ctx, columns[j], &buf);
+      /* skips unnecessary columns */
+      if (((table->header.type == GRN_TABLE_HASH_KEY ||
+            table->header.type == GRN_TABLE_PAT_KEY) &&
+           !memcmp(GRN_TEXT_VALUE(&buf), "_id",
+                   (GRN_TEXT_LEN(&buf) > 3) ? 3 : GRN_TEXT_LEN(&buf))) ||
+          (table->header.type == GRN_TABLE_NO_KEY &&
+           !memcmp(GRN_TEXT_VALUE(&buf), "_key",
+                   (GRN_TEXT_LEN(&buf) > 4) ? 4 : GRN_TEXT_LEN(&buf)))) {
+        continue;
+      }
       if (!memcmp(GRN_TEXT_VALUE(&buf), "_value",
                   (GRN_TEXT_LEN(&buf) > 6) ? 6 : GRN_TEXT_LEN(&buf))) {
         is_value_column = 1;
@@ -1159,6 +1168,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         ERR(GRN_ERROR, "invalid header type %d", columns[j]->header.type);
         break;
       }
+      if (j + 1 < ncolumns) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
     }
     GRN_TEXT_PUTC(ctx, outbuf, '}');
   }

@@ -80,47 +80,47 @@ class DumpTest < Test::Unit::TestCase
                         " --default_tokenizer TokenBigram\n" +
                         "column_create Terms entry_body 2 Entry body\n" +
                         "load --table Entry\n[\n" +
-                        '{"_id":1,"_key":"gcc","body":"' + body + '"}' + "\n]\n")
+                        '{"_key":"gcc","body":"' + body + '"}' + "\n]\n")
   end
 
   def test_load
     assert_restore_dump("table_create commands 1 ShortText\n" +
                         "column_create commands body 0 ShortText\n" +
                         "load --table commands\n[\n" +
-                        '{"_id":1,"_key":"gcc","body":"a compiler"}' + ",\n" +
-                        '{"_id":2,"_key":"bash","body":"a shell"}' + "\n]\n")
+                        '{"_key":"gcc","body":"a compiler"}' + ",\n" +
+                        '{"_key":"bash","body":"a shell"}' + "\n]\n")
   end
 
   def test_load_to_value_pseudo_column_of_hash_table
     assert_restore_dump("table_create users 0 ShortText Int32\n" +
                         "load --table users\n[\n" +
-                        '{"_id":1,"_key":"ryoqun","_value":1000}' + ",\n" +
-                        '{"_id":2,"_key":"hayamiz","_value":1001}' + "\n]\n")
+                        '{"_key":"ryoqun","_value":1000}' + ",\n" +
+                        '{"_key":"hayamiz","_value":1001}' + "\n]\n")
   end
 
   def test_load_to_value_pseudo_column_of_patricia_table
     assert_restore_dump("table_create users 1 ShortText Int32\n" +
                         "load --table users\n[\n" +
-                        '{"_id":1,"_key":"ryoqun","_value":1000}' + ",\n" +
-                        '{"_id":2,"_key":"hayamiz","_value":1001}' + "\n]\n")
+                        '{"_key":"ryoqun","_value":1000}' + ",\n" +
+                        '{"_key":"hayamiz","_value":1001}' + "\n]\n")
   end
 
   def test_load_to_value_pseudo_column_of_array_table
     assert_restore_dump("table_create users 3 --value_type Int32\n" +
                         "load --table users\n[\n" +
-                        '{"_id":1,"_key":1000,"_value":1000}' + ",\n" +
-                        '{"_id":2,"_key":1001,"_value":1001}' + "\n]\n")
+                        '{"_id":1,"_value":1000}' + ",\n" +
+                        '{"_id":2,"_value":1001}' + "\n]\n")
   end
 
   def test_load_reference_key_to_value_pseudo_column
     assert_restore_dump("table_create groups 0 ShortText\n" +
                         "table_create users 0 ShortText groups\n" +
                         "load --table groups\n[\n" +
-                        '{"_id":1,"_key":"admin"}' + ",\n" +
-                        '{"_id":2,"_key":"end_user"}' + "\n]\n" +
+                        '{"_key":"admin"}' + ",\n" +
+                        '{"_key":"end_user"}' + "\n]\n" +
                         "load --table users\n[\n" +
-                        '{"_id":1,"_key":"ryoqun","_value":"admin"}' + ",\n" +
-                        '{"_id":2,"_key":"hayamiz","_value":"end_user"}' + "\n]\n")
+                        '{"_key":"ryoqun","_value":"admin"}' + ",\n" +
+                        '{"_key":"hayamiz","_value":"end_user"}' + "\n]\n")
   end
 
   def test_load_reference_id_to_value_pseudo_column
@@ -131,8 +131,8 @@ class DumpTest < Test::Unit::TestCase
                         '{"_id":1,"name":"admin"}' + ",\n" +
                         '{"_id":2,"name":"end_user"}' + "\n]\n" +
                         "load --table users\n[\n" +
-                        '{"_id":1,"_key":"ryoqun","_value":1}' + ",\n" +
-                        '{"_id":2,"_key":"hayamiz","_value":2}' + "\n]\n")
+                        '{"_key":"ryoqun","_value":1}' + ",\n" +
+                        '{"_key":"hayamiz","_value":2}' + "\n]\n")
   end
 
   def test_load_to_array
@@ -147,22 +147,22 @@ class DumpTest < Test::Unit::TestCase
     assert_restore_dump("table_create commands 1 ShortText\n" +
                         "column_create commands body 0 Int32\n" +
                         "load --table commands\n[\n" +
-                        '{"_id":1,"_key":"gcc","body":32}' + ",\n" +
-                        '{"_id":2,"_key":"bash","body":-2715}' + "\n]\n")
+                        '{"_key":"gcc","body":32}' + ",\n" +
+                        '{"_key":"bash","body":-2715}' + "\n]\n")
   end
 
   def test_vector_empty_load
     assert_restore_dump("table_create commands 1 ShortText\n" +
                         "column_create commands body 1 ShortText\n" +
                         "load --table commands\n[\n" +
-                        '{"_id":1,"_key":"gcc","body":[]}' + "\n]\n")
+                        '{"_key":"gcc","body":[]}' + "\n]\n")
   end
 
   def test_vector_string_load
     assert_restore_dump("table_create commands 1 ShortText\n" +
                         "column_create commands body 1 ShortText\n" +
                         "load --table commands\n[\n" +
-                        '{"_id":1,"_key":"gcc","body":["C","and","C++","Compiler"]}' +
+                        '{"_key":"gcc","body":["C","and","C++","Compiler"]}' +
                         "\n]\n")
   end
 
@@ -170,7 +170,7 @@ class DumpTest < Test::Unit::TestCase
     assert_restore_dump("table_create commands 1 ShortText\n" +
                         "column_create commands body 1 Int32\n" +
                         "load --table commands\n[\n" +
-                        '{"_id":1,"_key":"gcc","body":[827,833,991,2716]}' + "\n]\n")
+                        '{"_key":"gcc","body":[827,833,991,2716]}' + "\n]\n")
   end
 
   def test_load_with_test_reference_key
@@ -181,13 +181,13 @@ column_create comments text 0 ShortText
 column_create comments author 0 users
 load --table users
 [
-{"_id":1,"_key":"ryoqun"},
-{"_id":2,"_key":"hayamiz"}
+{"_key":"ryoqun"},
+{"_key":"hayamiz"}
 ]
 load --table comments
 [
-{"_id":1,"_key":"groonga","text":"it is fast","author":"ryoqun"},
-{"_id":2,"_key":"ruby","text":"it is fun","author":"hayamiz"}
+{"_key":"groonga","text":"it is fast","author":"ryoqun"},
+{"_key":"ruby","text":"it is fun","author":"hayamiz"}
 ]
 EOGQTP
   end
@@ -200,12 +200,12 @@ column_create comments text 0 ShortText
 column_create comments author 1 users
 load --table users
 [
-{"_id":1,"_key":"ryoqun"},
-{"_id":2,"_key":"hayamiz"}
+{"_key":"ryoqun"},
+{"_key":"hayamiz"}
 ]
 load --table comments
 [
-{"_id":1,"_key":"groonga","text":"it is fast","author":["ryoqun","hayamiz"]}
+{"_key":"groonga","text":"it is fast","author":["ryoqun","hayamiz"]}
 ]
 EOGQTP
   end
@@ -219,13 +219,13 @@ column_create comments text 0 ShortText
 column_create comments author 0 users
 load --table users
 [
-{"_id":1,"_key":1000,"name":"ryoqun"},
-{"_id":2,"_key":1001,"name":"hayamiz"}
+{"_key":1000,"name":"ryoqun"},
+{"_key":1001,"name":"hayamiz"}
 ]
 load --table comments
 [
-{"_id":1,"_key":"groonga","text":"it is fast","author":1000},
-{"_id":2,"_key":"ruby","text":"it is fun","author":1001}
+{"_key":"groonga","text":"it is fast","author":1000},
+{"_key":"ruby","text":"it is fun","author":1001}
 ]
 EOGQTP
   end
@@ -244,8 +244,8 @@ load --table users
 ]
 load --table comments
 [
-{"_id":1,"_key":"groonga","text":"it is fast","author":1},
-{"_id":2,"_key":"ruby","text":"it is fun","author":2}
+{"_key":"groonga","text":"it is fast","author":1},
+{"_key":"ruby","text":"it is fun","author":2}
 ]
 EOGQTP
   end
@@ -259,12 +259,12 @@ column_create comments text 0 ShortText
 column_create comments author 1 users
 load --table users
 [
-{"_id":1,"_key":1000,"name":"ryoqun"},
-{"_id":2,"_key":1001,"name":"hayamiz"}
+{"_key":1000,"name":"ryoqun"},
+{"_key":1001,"name":"hayamiz"}
 ]
 load --table comments
 [
-{"_id":1,"_key":"groonga","text":"it is fast","author":[1000,1001]}
+{"_key":"groonga","text":"it is fast","author":[1000,1001]}
 ]
 EOGQTP
   end
@@ -283,7 +283,7 @@ load --table users
 ]
 load --table comments
 [
-{"_id":1,"_key":"groonga","text":"it is fast","author":[1,2]}
+{"_key":"groonga","text":"it is fast","author":[1,2]}
 ]
 EOGQTP
   end
@@ -295,18 +295,18 @@ table_create japanese 0 words
 table_create noun 0 japanese
 load --table words
 [
-{"_id":1,"_key":"file"},
-{"_id":2,"_key":"ファイル"},
-{"_id":3,"_key":"寝る"}
+{"_key":"file"},
+{"_key":"ファイル"},
+{"_key":"寝る"}
 ]
 load --table japanese
 [
-{"_id":2,"_key":"ファイル"},
-{"_id":3,"_key":"寝る"}
+{"_key":"ファイル"},
+{"_key":"寝る"}
 ]
 load --table noun
 [
-{"_id":2,"_key":"ファイル"}
+{"_key":"ファイル"}
 ]
 EOGQTP
   end
