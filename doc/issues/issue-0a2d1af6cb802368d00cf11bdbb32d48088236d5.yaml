@@ -28,7 +28,7 @@ log_events:
      o   MOD_ASSIGN
      o   PLUS_ASSIGN
      o   MINUS_ASSIGN
-         SHIFTL_ASSIGN
+     o   SHIFTL_ASSIGN
          SHIFTR_ASSIGN
          SHIFTRR_ASSIGN
          AND_ASSIGN
