@@ -33,7 +33,7 @@ log_events:
      o   SHIFTRR_ASSIGN
      o   AND_ASSIGN
          XOR_ASSIGN
-         OR_ASSIGN
+     o   OR_ASSIGN
     o    BITWISE_OR
     o    BITWISE_XOR
     o    BITWISE_AND
