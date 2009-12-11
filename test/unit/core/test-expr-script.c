@@ -1279,7 +1279,7 @@ test_arithmetic_operator_error(gconstpointer data)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
   PARSE(expr,
         gcut_data_get_string(data, "query"),
-        GRN_EXPR_SYNTAX_SCRIPT);
+        GRN_EXPR_SYNTAX_SCRIPT | GRN_EXPR_ALLOW_UPDATE);
 
   res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
@@ -1298,16 +1298,16 @@ data_arithmetic_operator_syntax_error(void)
                  NULL)
 
   ADD_DATUM("++constant",
-            cut_take_printf("Syntax error! (++8 <= 9)"),
+            cut_take_printf("constant can't be incremented (++8 <= 9)"),
             "++8 <= 9");
   ADD_DATUM("--constant",
-            cut_take_printf("Syntax error! (--10 <= 9)"),
+            cut_take_printf("constant can't be decremented (--10 <= 9)"),
             "--10 <= 9");
   ADD_DATUM("constant++",
-            cut_take_printf("Syntax error! (8++ <= 9)"),
+            cut_take_printf("constant can't be incremented (8++ <= 9)"),
             "8++ <= 9");
   ADD_DATUM("constant--",
-            cut_take_printf("Syntax error! (10-- <= 9)"),
+            cut_take_printf("constant can't be decremented (10-- <= 9)"),
             "10-- <= 9");
 
 #undef ADD_DATUM
@@ -1326,7 +1326,8 @@ test_arithmetic_operator_syntax_error(gconstpointer data)
   grn_test_assert_equal_rc(GRN_SYNTAX_ERROR,
                            grn_expr_parse(&context, expr, query, strlen(query),
                                           body, GRN_OP_MATCH, GRN_OP_AND,
-                                          GRN_EXPR_SYNTAX_SCRIPT));
+                                          GRN_EXPR_SYNTAX_SCRIPT |
+                                          GRN_EXPR_ALLOW_UPDATE));
   grn_test_assert_error(GRN_SYNTAX_ERROR,
                         gcut_data_get_string(data, "message"),
                         &context);
@@ -1377,6 +1378,12 @@ data_not_allow_update(void)
   ADD_DATUM("^=",
             cut_take_printf("'^=' is not allowed (size ^= 10)"),
             "size ^= 10");
+  ADD_DATUM("variable++",
+            cut_take_printf("'++' is not allowed (size++)"),
+            "size++");
+  ADD_DATUM("++variable",
+            cut_take_printf("'++' is not allowed (++size)"),
+            "++size");
 
 #undef ADD_DATUM
 }

@@ -6989,10 +6989,6 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           type = dfi->type;
           domain = dfi->domain;
           if (dfi->code) {
-            if (CONSTP(dfi->code->value)) {
-              ERR(GRN_INVALID_ARGUMENT, "constant can't be incremented.");
-              goto exit;
-            }
             if (dfi->code->op == GRN_OP_GET_VALUE) {
               dfi->code->op = GRN_OP_GET_REF;
             }
@@ -11815,8 +11811,13 @@ parse_script(grn_ctx *ctx, efs_info *q)
       q->cur++;
       switch (*q->cur) {
       case '+' :
-        q->cur++;
-        PARSE(GRN_EXPR_TOKEN_INCR);
+        if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
+          q->cur++;
+          PARSE(GRN_EXPR_TOKEN_INCR);
+        } else {
+          ERR(GRN_UPDATE_NOT_ALLOWED,
+              "'++' is not allowed (%*s)", q->str_end - q->str, q->str);
+        }
         break;
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
@@ -11825,6 +11826,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'+=' is not allowed (%*s)", q->str_end - q->str, q->str);
+          goto exit;
         }
         break;
       default :
@@ -12100,7 +12102,8 @@ parse_script(grn_ctx *ctx, efs_info *q)
     if (ctx->rc) { rc = ctx->rc; break; }
   }
 exit :
-  PARSE(0);
+  if (rc >= 0)
+    PARSE(0);
   return rc;
 }
 

@@ -219,10 +219,38 @@ unary_expression ::= DELETE unary_expression. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DELETE, 1);
 }
 unary_expression ::= INCR unary_expression. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be incremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
+  }
 }
 unary_expression ::= DECR unary_expression. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be decremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
+  }
 }
 unary_expression ::= PLUS unary_expression. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 1);
@@ -251,10 +279,38 @@ unary_expression ::= UNSPLIT unary_expression. {
 
 postfix_expression ::= lefthand_side_expression.
 postfix_expression ::= lefthand_side_expression INCR. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be incremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
+  }
 }
 postfix_expression ::= lefthand_side_expression DECR. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be decremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
+  }
 }
 
 lefthand_side_expression ::= call_expression.

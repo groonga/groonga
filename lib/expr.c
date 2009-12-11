@@ -1,13 +1,13 @@
 /* Driver template for the LEMON parser generator.
 ** The author disclaims copyright to this source code.
 */
-/* First off, code is include which follows the "include" declaration
-** in the input file. */
+/* First off, code is included that follows the "include" declaration
+** in the input grammar file. */
 #include <stdio.h>
 #line 3 "expr.y"
 
 #define assert GRN_ASSERT
-#line 13 "expr.c"
+#line 11 "expr.c"
 /* Next is all token values, in a form suitable for use by makeheaders.
 ** This section will be null unless lemon is run with the -m switch.
 */
@@ -62,6 +62,7 @@
 #define YYACTIONTYPE unsigned short int
 #define grn_expr_parserTOKENTYPE  int 
 typedef union {
+  int yyinit;
   grn_expr_parserTOKENTYPE yy0;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
@@ -79,9 +80,22 @@ typedef union {
 
 /* The yyzerominor constant is used to initialize instances of
 ** YYMINORTYPE objects to zero. */
-static const YYMINORTYPE yyzerominor;
+static const YYMINORTYPE yyzerominor = { 0 };
 
-/* Next are that tables used to determine what action to take based on the
+/* Define the yytestcase() macro to be a no-op if is not already defined
+** otherwise.
+**
+** Applications can choose to define yytestcase() in the %include section
+** to a macro that can assist in verifying code coverage.  For production
+** code the yytestcase() macro should be turned off.  But it is useful
+** for testing.
+*/
+#ifndef yytestcase
+# define yytestcase(X)
+#endif
+
+
+/* Next are the tables used to determine what action to take based on the
 ** current state and lookahead token.  These tables are used to implement
 ** functions that take a state number and lookahead value and return an
 ** action integer.  
@@ -511,7 +525,7 @@ static const YYACTIONTYPE yy_default[] = {
 ** 
 **      %fallback ID X Y Z.
 **
-** appears in the grammer, then ID becomes a fallback token for X, Y,
+** appears in the grammar, then ID becomes a fallback token for X, Y,
 ** and Z.  Whenever one of the tokens X, Y, or Z is input to the parser
 ** but it does not parse, the type of the token is changed to ID and
 ** the parse is retried before an error is thrown.
@@ -534,11 +548,11 @@ static const YYCODETYPE yyFallback[] = {
 **      It is sometimes called the "minor" token.
 */
 struct yyStackEntry {
-  int stateno;       /* The state-number */
-  int major;         /* The major token value.  This is the code
-                     ** number for the token at this stack level */
-  YYMINORTYPE minor; /* The user-supplied minor token value.  This
-                     ** is the value of the token  */
+  YYACTIONTYPE stateno;  /* The state-number */
+  YYCODETYPE major;      /* The major token value.  This is the code
+                         ** number for the token at this stack level */
+  YYMINORTYPE minor;     /* The user-supplied minor token value.  This
+                         ** is the value of the token  */
 };
 typedef struct yyStackEntry yyStackEntry;
 
@@ -546,6 +560,9 @@ typedef struct yyStackEntry yyStackEntry;
 ** the following structure */
 struct yyParser {
   int yyidx;                    /* Index of top element in stack */
+#ifdef YYTRACKMAXSTACKDEPTH
+  int yyidxMax;                 /* Maximum value of yyidx */
+#endif
   int yyerrcnt;                 /* Shifts left before out of the error */
   grn_expr_parserARG_SDECL                /* A place to hold %extra_argument */
 #if YYSTACKDEPTH<=0
@@ -787,7 +804,12 @@ void *grn_expr_parserAlloc(void *(*mallocProc)(size_t)){
   pParser = (yyParser*)(*mallocProc)( (size_t)sizeof(yyParser) );
   if( pParser ){
     pParser->yyidx = -1;
+#ifdef YYTRACKMAXSTACKDEPTH
+    pParser->yyidxMax = 0;
+#endif
 #if YYSTACKDEPTH<=0
+    pParser->yystack = NULL;
+    pParser->yystksz = 0;
     yyGrowStack(pParser);
 #endif
   }
@@ -799,7 +821,12 @@ void *grn_expr_parserAlloc(void *(*mallocProc)(size_t)){
 ** "yymajor" is the symbol code, and "yypminor" is a pointer to
 ** the value.
 */
-static void yy_destructor(YYCODETYPE yymajor, YYMINORTYPE *yypminor){
+static void yy_destructor(
+  yyParser *yypParser,    /* The parser */
+  YYCODETYPE yymajor,     /* Type code for object to destroy */
+  YYMINORTYPE *yypminor   /* The object to be destroyed */
+){
+  grn_expr_parserARG_FETCH;
   switch( yymajor ){
     /* Here is inserted the actions which take place when a
     ** terminal or non-terminal is destroyed.  This can happen
@@ -836,7 +863,7 @@ static int yy_pop_parser_stack(yyParser *pParser){
   }
 #endif
   yymajor = yytos->major;
-  yy_destructor( yymajor, &yytos->minor);
+  yy_destructor(pParser, yymajor, &yytos->minor);
   pParser->yyidx--;
   return yymajor;
 }
@@ -867,6 +894,16 @@ void grn_expr_parserFree(
 }
 
 /*
+** Return the peak depth of the stack for a parser.
+*/
+#ifdef YYTRACKMAXSTACKDEPTH
+int grn_expr_parserStackPeak(void *p){
+  yyParser *pParser = (yyParser*)p;
+  return pParser->yyidxMax;
+}
+#endif
+
+/*
 ** Find the appropriate action for a parser given the terminal
 ** look-ahead token iLookAhead.
 **
@@ -889,7 +926,7 @@ static int yy_find_shift_action(
   if( i<0 || i>=YY_SZ_ACTTAB || yy_lookahead[i]!=iLookAhead ){
     if( iLookAhead>0 ){
 #ifdef YYFALLBACK
-      int iFallback;            /* Fallback token */
+      YYCODETYPE iFallback;            /* Fallback token */
       if( iLookAhead<sizeof(yyFallback)/sizeof(yyFallback[0])
              && (iFallback = yyFallback[iLookAhead])!=0 ){
 #ifndef NDEBUG
@@ -981,10 +1018,15 @@ static void yy_shift(
   yyParser *yypParser,          /* The parser to be shifted */
   int yyNewState,               /* The new state to shift in */
   int yyMajor,                  /* The major token to shift in */
-  YYMINORTYPE *yypMinor         /* Pointer ot the minor token to shift in */
+  YYMINORTYPE *yypMinor         /* Pointer to the minor token to shift in */
 ){
   yyStackEntry *yytos;
   yypParser->yyidx++;
+#ifdef YYTRACKMAXSTACKDEPTH
+  if( yypParser->yyidx>yypParser->yyidxMax ){
+    yypParser->yyidxMax = yypParser->yyidx;
+  }
+#endif
 #if YYSTACKDEPTH>0 
   if( yypParser->yyidx>=YYSTACKDEPTH ){
     yyStackOverflow(yypParser, yypMinor);
@@ -1000,8 +1042,8 @@ static void yy_shift(
   }
 #endif
   yytos = &yypParser->yystack[yypParser->yyidx];
-  yytos->stateno = yyNewState;
-  yytos->major = yyMajor;
+  yytos->stateno = (YYACTIONTYPE)yyNewState;
+  yytos->major = (YYCODETYPE)yyMajor;
   yytos->minor = *yypMinor;
 #ifndef NDEBUG
   if( yyTraceFILE && yypParser->yyidx>0 ){
@@ -1193,89 +1235,36 @@ static void yy_reduce(
   **  #line <lineno> <thisfile>
   **     break;
   */
-      case 0: /* input ::= query */
-      case 1: /* input ::= expression */
-      case 2: /* query ::= query_element */
-      case 7: /* query_element ::= QSTRING */
-      case 8: /* query_element ::= PARENL query PARENR */
-      case 13: /* expression ::= assignment_expression */
-      case 15: /* assignment_expression ::= conditional_expression */
-      case 28: /* conditional_expression ::= logical_or_expression */
-      case 30: /* logical_or_expression ::= logical_and_expression */
-      case 32: /* logical_and_expression ::= bitwise_or_expression */
-      case 35: /* bitwise_or_expression ::= bitwise_xor_expression */
-      case 37: /* bitwise_xor_expression ::= bitwise_and_expression */
-      case 39: /* bitwise_and_expression ::= equality_expression */
-      case 41: /* equality_expression ::= relational_expression */
-      case 44: /* relational_expression ::= shift_expression */
-      case 58: /* shift_expression ::= additive_expression */
-      case 62: /* additive_expression ::= multiplicative_expression */
-      case 65: /* multiplicative_expression ::= unary_expression */
-      case 69: /* unary_expression ::= postfix_expression */
-      case 81: /* postfix_expression ::= lefthand_side_expression */
-      case 84: /* lefthand_side_expression ::= call_expression */
-      case 85: /* lefthand_side_expression ::= member_expression */
-      case 87: /* member_expression ::= primary_expression */
-      case 88: /* member_expression ::= member_expression member_expression_part */
-      case 89: /* primary_expression ::= object_literal */
-      case 90: /* primary_expression ::= PARENL expression PARENR */
-      case 91: /* primary_expression ::= IDENTIFIER */
-      case 92: /* primary_expression ::= array_literal */
-      case 93: /* primary_expression ::= DECIMAL */
-      case 94: /* primary_expression ::= HEX_INTEGER */
-      case 95: /* primary_expression ::= STRING */
-      case 96: /* primary_expression ::= BOOLEAN */
-      case 97: /* primary_expression ::= NULL */
-      case 98: /* array_literal ::= BRACKETL elision BRACKETR */
-      case 99: /* array_literal ::= BRACKETL element_list elision BRACKETR */
-      case 100: /* array_literal ::= BRACKETL element_list BRACKETR */
-      case 101: /* elision ::= COMMA */
-      case 102: /* elision ::= elision COMMA */
-      case 103: /* element_list ::= assignment_expression */
-      case 104: /* element_list ::= elision assignment_expression */
-      case 105: /* element_list ::= element_list elision assignment_expression */
-      case 106: /* object_literal ::= BRACEL property_name_and_value_list BRACER */
-      case 107: /* property_name_and_value_list ::= */
-      case 108: /* property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value */
-      case 109: /* property_name_and_value ::= property_name COLON assignment_expression */
-      case 110: /* property_name ::= IDENTIFIER|STRING|DECIMAL */
-      case 111: /* member_expression_part ::= BRACKETL expression BRACKETR */
-      case 112: /* member_expression_part ::= DOT IDENTIFIER */
-#line 23 "expr.y"
-{
-}
-#line 1250 "expr.c"
-        break;
       case 3: /* query ::= query query_element */
 #line 27 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->op_stack, -1), 2);
 }
-#line 1257 "expr.c"
+#line 1244 "expr.c"
         break;
       case 4: /* query ::= query LOGICAL_AND query_element */
-      case 33: /* logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression */
+      case 33: /* logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression */ yytestcase(yyruleno==33);
 #line 30 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
 }
-#line 1265 "expr.c"
+#line 1252 "expr.c"
         break;
       case 5: /* query ::= query LOGICAL_BUT query_element */
-      case 34: /* logical_and_expression ::= logical_and_expression LOGICAL_BUT bitwise_or_expression */
+      case 34: /* logical_and_expression ::= logical_and_expression LOGICAL_BUT bitwise_or_expression */ yytestcase(yyruleno==34);
 #line 33 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
 }
-#line 1273 "expr.c"
+#line 1260 "expr.c"
         break;
       case 6: /* query ::= query LOGICAL_OR query_element */
-      case 31: /* logical_or_expression ::= logical_or_expression LOGICAL_OR logical_and_expression */
+      case 31: /* logical_or_expression ::= logical_or_expression LOGICAL_OR logical_and_expression */ yytestcase(yyruleno==31);
 #line 36 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
 }
-#line 1281 "expr.c"
+#line 1268 "expr.c"
         break;
       case 9: /* query_element ::= RELATIVE_OP query_element */
 #line 43 "expr.y"
@@ -1283,7 +1272,7 @@ static void yy_reduce(
   int mode;
   GRN_UINT32_POP(&efsi->mode_stack, mode);
 }
-#line 1289 "expr.c"
+#line 1276 "expr.c"
         break;
       case 10: /* query_element ::= IDENTIFIER RELATIVE_OP query_element */
 #line 47 "expr.y"
@@ -1293,106 +1282,106 @@ static void yy_reduce(
   GRN_PTR_POP(&efsi->column_stack, c);
   GRN_UINT32_POP(&efsi->mode_stack, mode);
 }
-#line 1299 "expr.c"
+#line 1286 "expr.c"
         break;
       case 11: /* query_element ::= BRACEL expression BRACER */
-      case 12: /* query_element ::= EVAL primary_expression */
+      case 12: /* query_element ::= EVAL primary_expression */ yytestcase(yyruleno==12);
 #line 53 "expr.y"
 {
   efsi->flags = efsi->default_flags;
 }
-#line 1307 "expr.c"
+#line 1294 "expr.c"
         break;
       case 14: /* expression ::= expression COMMA assignment_expression */
 #line 61 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
 }
-#line 1314 "expr.c"
+#line 1301 "expr.c"
         break;
       case 16: /* assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression */
 #line 66 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ASSIGN, 2);
 }
-#line 1321 "expr.c"
+#line 1308 "expr.c"
         break;
       case 17: /* assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression */
 #line 69 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR_ASSIGN, 2);
 }
-#line 1328 "expr.c"
+#line 1315 "expr.c"
         break;
       case 18: /* assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression */
 #line 72 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH_ASSIGN, 2);
 }
-#line 1335 "expr.c"
+#line 1322 "expr.c"
         break;
       case 19: /* assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression */
 #line 75 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD_ASSIGN, 2);
 }
-#line 1342 "expr.c"
+#line 1329 "expr.c"
         break;
       case 20: /* assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression */
 #line 78 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS_ASSIGN, 2);
 }
-#line 1349 "expr.c"
+#line 1336 "expr.c"
         break;
       case 21: /* assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression */
 #line 81 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS_ASSIGN, 2);
 }
-#line 1356 "expr.c"
+#line 1343 "expr.c"
         break;
       case 22: /* assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression */
 #line 84 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL_ASSIGN, 2);
 }
-#line 1363 "expr.c"
+#line 1350 "expr.c"
         break;
       case 23: /* assignment_expression ::= lefthand_side_expression SHIFTR_ASSIGN assignment_expression */
 #line 87 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR_ASSIGN, 2);
 }
-#line 1370 "expr.c"
+#line 1357 "expr.c"
         break;
       case 24: /* assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression */
 #line 90 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR_ASSIGN, 2);
 }
-#line 1377 "expr.c"
+#line 1364 "expr.c"
         break;
       case 25: /* assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression */
 #line 93 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_ASSIGN, 2);
 }
-#line 1384 "expr.c"
+#line 1371 "expr.c"
         break;
       case 26: /* assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression */
 #line 96 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_XOR_ASSIGN, 2);
 }
-#line 1391 "expr.c"
+#line 1378 "expr.c"
         break;
       case 27: /* assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expression */
 #line 99 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR_ASSIGN, 2);
 }
-#line 1398 "expr.c"
+#line 1385 "expr.c"
         break;
       case 29: /* conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression */
 #line 104 "expr.y"
@@ -1401,313 +1390,419 @@ static void yy_reduce(
   e->codes[yymsp[-3].minor.yy0].nargs = yymsp[-1].minor.yy0 - yymsp[-3].minor.yy0;
   e->codes[yymsp[-1].minor.yy0].nargs = e->codes_curr - yymsp[-1].minor.yy0 - 1;
 }
-#line 1407 "expr.c"
+#line 1394 "expr.c"
         break;
       case 36: /* bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression */
 #line 124 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_OR, 2);
 }
-#line 1414 "expr.c"
+#line 1401 "expr.c"
         break;
       case 38: /* bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression */
 #line 129 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_XOR, 2);
 }
-#line 1421 "expr.c"
+#line 1408 "expr.c"
         break;
       case 40: /* bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression */
 #line 134 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_AND, 2);
 }
-#line 1428 "expr.c"
+#line 1415 "expr.c"
         break;
       case 42: /* equality_expression ::= equality_expression EQUAL relational_expression */
 #line 139 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EQUAL, 2);
 }
-#line 1435 "expr.c"
+#line 1422 "expr.c"
         break;
       case 43: /* equality_expression ::= equality_expression NOT_EQUAL relational_expression */
 #line 142 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT_EQUAL, 2);
 }
-#line 1442 "expr.c"
+#line 1429 "expr.c"
         break;
       case 45: /* relational_expression ::= relational_expression LESS shift_expression */
 #line 147 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS, 2);
 }
-#line 1449 "expr.c"
+#line 1436 "expr.c"
         break;
       case 46: /* relational_expression ::= relational_expression GREATER shift_expression */
 #line 150 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER, 2);
 }
-#line 1456 "expr.c"
+#line 1443 "expr.c"
         break;
       case 47: /* relational_expression ::= relational_expression LESS_EQUAL shift_expression */
 #line 153 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS_EQUAL, 2);
 }
-#line 1463 "expr.c"
+#line 1450 "expr.c"
         break;
       case 48: /* relational_expression ::= relational_expression GREATER_EQUAL shift_expression */
 #line 156 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER_EQUAL, 2);
 }
-#line 1470 "expr.c"
+#line 1457 "expr.c"
         break;
       case 49: /* relational_expression ::= relational_expression IN shift_expression */
 #line 159 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_IN, 2);
 }
-#line 1477 "expr.c"
+#line 1464 "expr.c"
         break;
       case 50: /* relational_expression ::= relational_expression MATCH shift_expression */
 #line 162 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
 }
-#line 1484 "expr.c"
+#line 1471 "expr.c"
         break;
       case 51: /* relational_expression ::= relational_expression NEAR shift_expression */
 #line 165 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, 2);
 }
-#line 1491 "expr.c"
+#line 1478 "expr.c"
         break;
       case 52: /* relational_expression ::= relational_expression NEAR2 shift_expression */
 #line 168 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR2, 2);
 }
-#line 1498 "expr.c"
+#line 1485 "expr.c"
         break;
       case 53: /* relational_expression ::= relational_expression SIMILAR shift_expression */
 #line 171 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SIMILAR, 2);
 }
-#line 1505 "expr.c"
+#line 1492 "expr.c"
         break;
       case 54: /* relational_expression ::= relational_expression TERM_EXTRACT shift_expression */
 #line 174 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_TERM_EXTRACT, 2);
 }
-#line 1512 "expr.c"
+#line 1499 "expr.c"
         break;
       case 55: /* relational_expression ::= relational_expression LCP shift_expression */
 #line 177 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LCP, 2);
 }
-#line 1519 "expr.c"
+#line 1506 "expr.c"
         break;
       case 56: /* relational_expression ::= relational_expression PREFIX shift_expression */
 #line 180 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PREFIX, 2);
 }
-#line 1526 "expr.c"
+#line 1513 "expr.c"
         break;
       case 57: /* relational_expression ::= relational_expression SUFFIX shift_expression */
 #line 183 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SUFFIX, 2);
 }
-#line 1533 "expr.c"
+#line 1520 "expr.c"
         break;
       case 59: /* shift_expression ::= shift_expression SHIFTL additive_expression */
 #line 188 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL, 2);
 }
-#line 1540 "expr.c"
+#line 1527 "expr.c"
         break;
       case 60: /* shift_expression ::= shift_expression SHIFTR additive_expression */
 #line 191 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR, 2);
 }
-#line 1547 "expr.c"
+#line 1534 "expr.c"
         break;
       case 61: /* shift_expression ::= shift_expression SHIFTRR additive_expression */
 #line 194 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR, 2);
 }
-#line 1554 "expr.c"
+#line 1541 "expr.c"
         break;
       case 63: /* additive_expression ::= additive_expression PLUS multiplicative_expression */
 #line 199 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 2);
 }
-#line 1561 "expr.c"
+#line 1548 "expr.c"
         break;
       case 64: /* additive_expression ::= additive_expression MINUS multiplicative_expression */
 #line 202 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 2);
 }
-#line 1568 "expr.c"
+#line 1555 "expr.c"
         break;
       case 66: /* multiplicative_expression ::= multiplicative_expression STAR unary_expression */
 #line 207 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR, 2);
 }
-#line 1575 "expr.c"
+#line 1562 "expr.c"
         break;
       case 67: /* multiplicative_expression ::= multiplicative_expression SLASH unary_expression */
 #line 210 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH, 2);
 }
-#line 1582 "expr.c"
+#line 1569 "expr.c"
         break;
       case 68: /* multiplicative_expression ::= multiplicative_expression MOD unary_expression */
 #line 213 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD, 2);
 }
-#line 1589 "expr.c"
+#line 1576 "expr.c"
         break;
       case 70: /* unary_expression ::= DELETE unary_expression */
 #line 218 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DELETE, 1);
 }
-#line 1596 "expr.c"
+#line 1583 "expr.c"
         break;
       case 71: /* unary_expression ::= INCR unary_expression */
 #line 221 "expr.y"
 {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be incremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
+  }
 }
-#line 1603 "expr.c"
+#line 1604 "expr.c"
         break;
       case 72: /* unary_expression ::= DECR unary_expression */
-#line 224 "expr.y"
+#line 238 "expr.y"
 {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be decremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
+  }
 }
-#line 1610 "expr.c"
+#line 1625 "expr.c"
         break;
       case 73: /* unary_expression ::= PLUS unary_expression */
-#line 227 "expr.y"
+#line 255 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 1);
 }
-#line 1617 "expr.c"
+#line 1632 "expr.c"
         break;
       case 74: /* unary_expression ::= MINUS unary_expression */
-#line 230 "expr.y"
+#line 258 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 1);
 }
-#line 1624 "expr.c"
+#line 1639 "expr.c"
         break;
       case 75: /* unary_expression ::= NOT unary_expression */
-#line 233 "expr.y"
+#line 261 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT, 1);
 }
-#line 1631 "expr.c"
+#line 1646 "expr.c"
         break;
       case 76: /* unary_expression ::= BITWISE_NOT unary_expression */
-#line 236 "expr.y"
+#line 264 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_NOT, 1);
 }
-#line 1638 "expr.c"
+#line 1653 "expr.c"
         break;
       case 77: /* unary_expression ::= ADJUST unary_expression */
-#line 239 "expr.y"
+#line 267 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ADJUST, 1);
 }
-#line 1645 "expr.c"
+#line 1660 "expr.c"
         break;
       case 78: /* unary_expression ::= EXACT unary_expression */
-#line 242 "expr.y"
+#line 270 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EXACT, 1);
 }
-#line 1652 "expr.c"
+#line 1667 "expr.c"
         break;
       case 79: /* unary_expression ::= PARTIAL unary_expression */
-#line 245 "expr.y"
+#line 273 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PARTIAL, 1);
 }
-#line 1659 "expr.c"
+#line 1674 "expr.c"
         break;
       case 80: /* unary_expression ::= UNSPLIT unary_expression */
-#line 248 "expr.y"
+#line 276 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_UNSPLIT, 1);
 }
-#line 1666 "expr.c"
+#line 1681 "expr.c"
         break;
       case 82: /* postfix_expression ::= lefthand_side_expression INCR */
-#line 253 "expr.y"
+#line 281 "expr.y"
 {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be incremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
+  }
 }
-#line 1673 "expr.c"
+#line 1702 "expr.c"
         break;
       case 83: /* postfix_expression ::= lefthand_side_expression DECR */
-#line 256 "expr.y"
+#line 298 "expr.y"
 {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
+  grn_ctx *ctx = efsi->ctx;
+  grn_expr *e = (grn_expr *)(efsi->e);
+  grn_expr_dfi *dfi_;
+  unsigned int const_p;
+
+  DFI_POP(e, dfi_);
+  const_p = CONSTP(dfi_->code->value);
+  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  if (const_p) {
+    ERR(GRN_SYNTAX_ERROR,
+        "constant can't be decremented (%*s)",
+        efsi->str_end - efsi->str, efsi->str);
+  } else {
+    grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
+  }
 }
-#line 1680 "expr.c"
+#line 1723 "expr.c"
         break;
       case 86: /* call_expression ::= member_expression arguments */
-#line 263 "expr.y"
+#line 319 "expr.y"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[0].minor.yy0);
 }
-#line 1687 "expr.c"
+#line 1730 "expr.c"
         break;
       case 113: /* arguments ::= PARENL argument_list PARENR */
-#line 302 "expr.y"
+#line 358 "expr.y"
 { yygotominor.yy0 = yymsp[-1].minor.yy0; }
-#line 1692 "expr.c"
+#line 1735 "expr.c"
         break;
       case 114: /* argument_list ::= */
-#line 303 "expr.y"
+#line 359 "expr.y"
 { yygotominor.yy0 = 0; }
-#line 1697 "expr.c"
+#line 1740 "expr.c"
         break;
       case 115: /* argument_list ::= assignment_expression */
-#line 304 "expr.y"
+#line 360 "expr.y"
 { yygotominor.yy0 = 1; }
-#line 1702 "expr.c"
+#line 1745 "expr.c"
         break;
       case 116: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 305 "expr.y"
+#line 361 "expr.y"
 { yygotominor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 1707 "expr.c"
+#line 1750 "expr.c"
+        break;
+      default:
+      /* (0) input ::= query */ yytestcase(yyruleno==0);
+      /* (1) input ::= expression */ yytestcase(yyruleno==1);
+      /* (2) query ::= query_element */ yytestcase(yyruleno==2);
+      /* (7) query_element ::= QSTRING */ yytestcase(yyruleno==7);
+      /* (8) query_element ::= PARENL query PARENR */ yytestcase(yyruleno==8);
+      /* (13) expression ::= assignment_expression */ yytestcase(yyruleno==13);
+      /* (15) assignment_expression ::= conditional_expression */ yytestcase(yyruleno==15);
+      /* (28) conditional_expression ::= logical_or_expression */ yytestcase(yyruleno==28);
+      /* (30) logical_or_expression ::= logical_and_expression */ yytestcase(yyruleno==30);
+      /* (32) logical_and_expression ::= bitwise_or_expression */ yytestcase(yyruleno==32);
+      /* (35) bitwise_or_expression ::= bitwise_xor_expression */ yytestcase(yyruleno==35);
+      /* (37) bitwise_xor_expression ::= bitwise_and_expression */ yytestcase(yyruleno==37);
+      /* (39) bitwise_and_expression ::= equality_expression */ yytestcase(yyruleno==39);
+      /* (41) equality_expression ::= relational_expression */ yytestcase(yyruleno==41);
+      /* (44) relational_expression ::= shift_expression */ yytestcase(yyruleno==44);
+      /* (58) shift_expression ::= additive_expression */ yytestcase(yyruleno==58);
+      /* (62) additive_expression ::= multiplicative_expression */ yytestcase(yyruleno==62);
+      /* (65) multiplicative_expression ::= unary_expression */ yytestcase(yyruleno==65);
+      /* (69) unary_expression ::= postfix_expression */ yytestcase(yyruleno==69);
+      /* (81) postfix_expression ::= lefthand_side_expression */ yytestcase(yyruleno==81);
+      /* (84) lefthand_side_expression ::= call_expression */ yytestcase(yyruleno==84);
+      /* (85) lefthand_side_expression ::= member_expression */ yytestcase(yyruleno==85);
+      /* (87) member_expression ::= primary_expression */ yytestcase(yyruleno==87);
+      /* (88) member_expression ::= member_expression member_expression_part */ yytestcase(yyruleno==88);
+      /* (89) primary_expression ::= object_literal */ yytestcase(yyruleno==89);
+      /* (90) primary_expression ::= PARENL expression PARENR */ yytestcase(yyruleno==90);
+      /* (91) primary_expression ::= IDENTIFIER */ yytestcase(yyruleno==91);
+      /* (92) primary_expression ::= array_literal */ yytestcase(yyruleno==92);
+      /* (93) primary_expression ::= DECIMAL */ yytestcase(yyruleno==93);
+      /* (94) primary_expression ::= HEX_INTEGER */ yytestcase(yyruleno==94);
+      /* (95) primary_expression ::= STRING */ yytestcase(yyruleno==95);
+      /* (96) primary_expression ::= BOOLEAN */ yytestcase(yyruleno==96);
+      /* (97) primary_expression ::= NULL */ yytestcase(yyruleno==97);
+      /* (98) array_literal ::= BRACKETL elision BRACKETR */ yytestcase(yyruleno==98);
+      /* (99) array_literal ::= BRACKETL element_list elision BRACKETR */ yytestcase(yyruleno==99);
+      /* (100) array_literal ::= BRACKETL element_list BRACKETR */ yytestcase(yyruleno==100);
+      /* (101) elision ::= COMMA */ yytestcase(yyruleno==101);
+      /* (102) elision ::= elision COMMA */ yytestcase(yyruleno==102);
+      /* (103) element_list ::= assignment_expression */ yytestcase(yyruleno==103);
+      /* (104) element_list ::= elision assignment_expression */ yytestcase(yyruleno==104);
+      /* (105) element_list ::= element_list elision assignment_expression */ yytestcase(yyruleno==105);
+      /* (106) object_literal ::= BRACEL property_name_and_value_list BRACER */ yytestcase(yyruleno==106);
+      /* (107) property_name_and_value_list ::= */ yytestcase(yyruleno==107);
+      /* (108) property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value */ yytestcase(yyruleno==108);
+      /* (109) property_name_and_value ::= property_name COLON assignment_expression */ yytestcase(yyruleno==109);
+      /* (110) property_name ::= IDENTIFIER|STRING|DECIMAL */ yytestcase(yyruleno==110);
+      /* (111) member_expression_part ::= BRACKETL expression BRACKETR */ yytestcase(yyruleno==111);
+      /* (112) member_expression_part ::= DOT IDENTIFIER */ yytestcase(yyruleno==112);
         break;
   };
   yygoto = yyRuleInfo[yyruleno].lhs;
   yysize = yyRuleInfo[yyruleno].nrhs;
   yypParser->yyidx -= yysize;
-  yyact = yy_find_reduce_action(yymsp[-yysize].stateno,yygoto);
+  yyact = yy_find_reduce_action(yymsp[-yysize].stateno,(YYCODETYPE)yygoto);
   if( yyact < YYNSTATE ){
 #ifdef NDEBUG
     /* If we are not debugging and the reduce action popped at least
@@ -1717,8 +1812,8 @@ static void yy_reduce(
     if( yysize ){
       yypParser->yyidx++;
       yymsp -= yysize-1;
-      yymsp->stateno = yyact;
-      yymsp->major = yygoto;
+      yymsp->stateno = (YYACTIONTYPE)yyact;
+      yymsp->major = (YYCODETYPE)yygoto;
       yymsp->minor = yygotominor;
     }else
 #endif
@@ -1734,6 +1829,7 @@ static void yy_reduce(
 /*
 ** The following code executes when the parse fails
 */
+#ifndef YYNOERRORRECOVERY
 static void yy_parse_failed(
   yyParser *yypParser           /* The parser */
 ){
@@ -1748,6 +1844,7 @@ static void yy_parse_failed(
   ** parser fails */
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
+#endif /* YYNOERRORRECOVERY */
 
 /*
 ** The following code executes when a syntax error first occurs.
@@ -1770,7 +1867,7 @@ static void yy_syntax_error(
     ERR(GRN_SYNTAX_ERROR, "Syntax error! (%s)", GRN_TEXT_VALUE(&buf));
     GRN_OBJ_FIN(ctx, &buf);
   }
-#line 1778 "expr.c"
+#line 1871 "expr.c"
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
@@ -1852,7 +1949,7 @@ void grn_expr_parser(
 #endif
 
   do{
-    yyact = yy_find_shift_action(yypParser,yymajor);
+    yyact = yy_find_shift_action(yypParser,(YYCODETYPE)yymajor);
     if( yyact<YYNSTATE ){
       assert( !yyendofinput );  /* Impossible to shift the $ token */
       yy_shift(yypParser,yyact,yymajor,&yyminorunion);
@@ -1901,7 +1998,7 @@ void grn_expr_parser(
              yyTracePrompt,yyTokenName[yymajor]);
         }
 #endif
-        yy_destructor(yymajor,&yyminorunion);
+        yy_destructor(yypParser, (YYCODETYPE)yymajor,&yyminorunion);
         yymajor = YYNOCODE;
       }else{
          while(
@@ -1914,7 +2011,7 @@ void grn_expr_parser(
           yy_pop_parser_stack(yypParser);
         }
         if( yypParser->yyidx < 0 || yymajor==0 ){
-          yy_destructor(yymajor,&yyminorunion);
+          yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
           yy_parse_failed(yypParser);
           yymajor = YYNOCODE;
         }else if( yymx!=YYERRORSYMBOL ){
@@ -1925,6 +2022,18 @@ void grn_expr_parser(
       }
       yypParser->yyerrcnt = 3;
       yyerrorhit = 1;
+#elif defined(YYNOERRORRECOVERY)
+      /* If the YYNOERRORRECOVERY macro is defined, then do not attempt to
+      ** do any kind of error recovery.  Instead, simply invoke the syntax
+      ** error routine and continue going as if nothing had happened.
+      **
+      ** Applications can set this macro (for example inside %include) if
+      ** they intend to abandon the parse upon the first syntax error seen.
+      */
+      yy_syntax_error(yypParser,yymajor,yyminorunion);
+      yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
+      yymajor = YYNOCODE;
+      
 #else  /* YYERRORSYMBOL is not defined */
       /* This is what we do if the grammar does not define ERROR:
       **
@@ -1939,7 +2048,7 @@ void grn_expr_parser(
         yy_syntax_error(yypParser,yymajor,yyminorunion);
       }
       yypParser->yyerrcnt = 3;
-      yy_destructor(yymajor,&yyminorunion);
+      yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
       if( yyendofinput ){
         yy_parse_failed(yypParser);
       }
