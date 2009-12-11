@@ -235,6 +235,23 @@ data_logic_operator(void)
             gcut_list_string_new(NULL, NULL),
             "size <= 9 && 0");
 
+  ADD_DATUM("& - 0.1",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && 0.1");
+  ADD_DATUM("& - -0.1",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && -0.1");
+  ADD_DATUM("& - 0.0",
+            gcut_list_string_new(NULL, NULL),
+            "size <= 9 && 0.0");
+
+  ADD_DATUM("& - \"abc\"",
+            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && \"abc\"");
+  ADD_DATUM("& - \"\"",
+            gcut_list_string_new(NULL, NULL),
+            "size <= 9 && \"\"");
+
 #undef ADD_DATUM
 }
 

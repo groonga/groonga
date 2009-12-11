@@ -23,6 +23,7 @@
 #include "token.h"
 #include "proc.h"
 #include <string.h>
+#include <float.h>
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
@@ -7609,25 +7610,41 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
 }
 
-static uint32_t
-truep(grn_ctx *ctx, grn_obj *v)
-{
-  uint32_t bv = 0;
-  switch (v->header.type) {
-  case GRN_BULK :
-    switch (v->header.domain) {
-    case GRN_DB_BOOL :
-      bv = GRN_BOOL_VALUE(v);
-      break;
-    case GRN_DB_INT32 :
-      bv = GRN_INT32_VALUE(v);
-      break;
-    case GRN_DB_UINT32 :
-      bv = GRN_UINT32_VALUE(v);
-      break;
-    }
-  }
-  return bv;
+#define truep(ctx, v, result) {                         \
+  switch (v->header.type) {                             \
+  case GRN_BULK :                                       \
+    switch (v->header.domain) {                         \
+    case GRN_DB_BOOL :                                  \
+      result = GRN_BOOL_VALUE(v);                       \
+      break;                                            \
+    case GRN_DB_INT32 :                                 \
+      result = GRN_INT32_VALUE(v) != 0;                 \
+      break;                                            \
+    case GRN_DB_UINT32 :                                \
+      result = GRN_UINT32_VALUE(v) != 0;                \
+      break;                                            \
+    case GRN_DB_FLOAT :                                 \
+      {                                                 \
+        double float_value;                             \
+        float_value = GRN_FLOAT_VALUE(v);               \
+        result = (float_value < -DBL_EPSILON ||         \
+                  DBL_EPSILON < float_value);           \
+      }                                                 \
+      break;                                            \
+    case GRN_DB_SHORT_TEXT :                            \
+    case GRN_DB_TEXT :                                  \
+    case GRN_DB_LONG_TEXT :                             \
+      result = GRN_TEXT_LEN(v) != 0;                    \
+      break;                                            \
+    default :                                           \
+      result = GRN_FALSE;                               \
+      break;                                            \
+    }                                                   \
+    break;                                              \
+  default :                                             \
+    result = GRN_FALSE;                                 \
+    break;                                              \
+  }                                                     \
 }
 
 #define INTEGER_ARITHMETIC_OPERATION_PLUS(x, y) ((x) + (y))
@@ -8286,8 +8303,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_CJUMP :
         {
           grn_obj *v;
+          unsigned int v_boolean;
           POP1(v);
-          if (!truep(ctx, v)) { code += code->nargs; }
+          truep(ctx, v, v_boolean);
+          if (!v_boolean) { code += code->nargs; }
         }
         code++;
         break;
@@ -8487,12 +8506,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_AND :
         {
           grn_obj *x, *y;
+          unsigned int x_boolean, y_boolean;
           POP2ALLOC1(x, y, res);
-          if (GRN_INT32_VALUE(x) == 0 || GRN_INT32_VALUE(y) == 0) {
-            GRN_INT32_SET(ctx, res, 0);
-          } else {
+          truep(ctx, x, x_boolean);
+          truep(ctx, y, y_boolean);
+          if (x_boolean && y_boolean) {
             GRN_INT32_SET(ctx, res, 1);
+          } else {
+            GRN_INT32_SET(ctx, res, 0);
           }
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8506,6 +8529,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           } else {
             GRN_INT32_SET(ctx, res, 1);
           }
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8519,6 +8543,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           } else {
             GRN_INT32_SET(ctx, res, 1);
           }
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -8542,6 +8567,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           POP2ALLOC1(x, y, res);
           do_eq(x, y, r);
           GRN_INT32_SET(ctx, res, r);
+          res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
         }
         code++;
@@ -10576,9 +10602,13 @@ loader_add(grn_ctx *ctx, grn_obj *key)
   grn_id id = grn_table_add_by_key(ctx, loader->table, key, &added);
   if (!added && loader->ifexists) {
     grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->ifexists, 0);
+    grn_obj *result;
+    unsigned int result_boolean;
     GRN_RECORD_SET(ctx, v, id);
     grn_expr_exec(ctx, loader->ifexists, 0);
-    if (!truep(ctx, grn_ctx_pop(ctx))) { id = 0; }
+    result = grn_ctx_pop(ctx);
+    truep(ctx, result, result_boolean);
+    if (!result_boolean) { id = 0; }
   }
   return id;
 }
