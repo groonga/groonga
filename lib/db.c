@@ -2453,8 +2453,8 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_si
 }
 
 #define ACCESSORP(obj) \
- (((grn_obj *)(obj))->header.type == GRN_ACCESSOR ||\
-  ((grn_obj *)(obj))->header.type == GRN_ACCESSOR_VIEW)
+  ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR ||\
+             ((grn_obj *)(obj))->header.type == GRN_ACCESSOR_VIEW))
 
 grn_obj *
 grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size)
