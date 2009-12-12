@@ -864,6 +864,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
   grn_id id = GRN_ID_NIL;
   GRN_API_ENTER;
   if (table) {
+    int added_ = 0;
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       {
@@ -872,10 +873,11 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
           if (grn_io_lock(ctx, pat->io, 10000000)) {
             id = GRN_ID_NIL;
           } else {
-            id = grn_pat_add(ctx, pat, key, key_size, NULL, added);
+            id = grn_pat_add(ctx, pat, key, key_size, NULL, &added_);
             grn_io_unlock(pat->io);
           }
         });
+        if (added) { *added = added_; }
       }
       break;
     case GRN_TABLE_HASH_KEY :
@@ -885,10 +887,11 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
           if (grn_io_lock(ctx, hash->io, 10000000)) {
             id = GRN_ID_NIL;
           } else {
-            id = grn_hash_add(ctx, hash, key, key_size, NULL, added);
+            id = grn_hash_add(ctx, hash, key, key_size, NULL, &added_);
             grn_io_unlock(hash->io);
           }
         });
+        if (added) { *added = added_; }
       }
       break;
     case GRN_TABLE_NO_KEY :
@@ -896,7 +899,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
       if (added) { *added = id ? 1 : 0; }
       break;
     }
-    if (key && key_size && added && *added) {
+    if (added_) {
       grn_hook *hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT];
       if (hooks) {
         // todo : grn_proc_ctx_open()
@@ -12102,8 +12105,9 @@ parse_script(grn_ctx *ctx, efs_info *q)
     if (ctx->rc) { rc = ctx->rc; break; }
   }
 exit :
-  if (rc >= 0)
+  if (rc >= 0) {
     PARSE(0);
+  }
   return rc;
 }
 
