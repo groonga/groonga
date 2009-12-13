@@ -10467,13 +10467,13 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if (filter_len) {
             grn_expr_parse(ctx, cond, filter, filter_len,
                            match_column_, GRN_OP_MATCH, GRN_OP_AND,
-                           GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
+                           GRN_EXPR_SYNTAX_SCRIPT);
             grn_expr_append_op(ctx, cond, GRN_OP_AND, 2);
           }
         } else {
           grn_expr_parse(ctx, cond, filter, filter_len,
                          match_column_, GRN_OP_MATCH, GRN_OP_AND,
-                         GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
+                         GRN_EXPR_SYNTAX_SCRIPT);
         }
         /*
         grn_obj strbuf;
@@ -12105,9 +12105,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
     if (ctx->rc) { rc = ctx->rc; break; }
   }
 exit :
-  if (rc >= 0) {
-    PARSE(0);
-  }
+  PARSE(0);
   return rc;
 }
 
