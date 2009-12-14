@@ -1087,7 +1087,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     int j;
     grn_obj buf;
     if (i) { GRN_TEXT_PUTS(ctx, outbuf, ",\n"); }
-    if (old_id + 1 < id) {
+    if (table->header.type == GRN_TABLE_NO_KEY && old_id + 1 < id) {
       grn_id current_id;
       for (current_id = old_id + 1; current_id < id; current_id++) {
         GRN_TEXT_PUTS(ctx, outbuf, "{},\n");

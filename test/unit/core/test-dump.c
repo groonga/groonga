@@ -32,6 +32,7 @@ void data_column_create(void);
 void test_column_create(gconstpointer data);
 void data_vector_column(void);
 void test_vector_column(gconstpointer data);
+void test_unsequantial_records_in_table_with_keys(void);
 
 static GCutEgg *egg = NULL;
 static GString *dumped = NULL, *error_output = NULL;
@@ -438,4 +439,35 @@ test_vector_column(gconstpointer data)
                              type_name,
                              gcut_data_get_string(data, "expected"));
   grn_test_assert_dump(expected);
+}
+
+void
+test_unsequantial_records_in_table_with_keys(void)
+{
+  grn_obj *table;
+  grn_id id, expected_id = 1;
+  char *keys[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+  int i, n_keys = sizeof(keys)/sizeof(keys[0]);
+
+  table = table_create("Weekdays", GRN_OBJ_TABLE_HASH_KEY, "ShortText", NULL);
+  grn_test_assert_context(&context);
+
+  for (i = 0; i < n_keys; ++i) {
+    id = grn_table_add(&context, table, keys[i], strlen(keys[i]), NULL);
+    cut_assert_equal_int(expected_id++, id);
+    grn_test_assert_context(&context);
+  }
+
+  grn_table_delete_by_id(&context, table, 3);
+  grn_table_delete_by_id(&context, table, 6);
+
+  grn_test_assert_dump("table_create Weekdays 0 ShortText\n"
+                       "load --table Weekdays\n"
+                       "[\n"
+                       "{\"_key\":\"Sun\"},\n"
+                       "{\"_key\":\"Mon\"},\n"
+                       "{\"_key\":\"Wed\"},\n"
+                       "{\"_key\":\"Thu\"},\n"
+                       "{\"_key\":\"Sat\"}\n"
+                       "]\n");
 }
