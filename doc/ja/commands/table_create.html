@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.14. table_create &mdash; groonga v0.1.4 documentation</title>
+    <title>3.2.15. table_create &mdash; groonga v0.1.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -21,8 +21,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.15. table_list" href="table_list.html" />
-    <link rel="prev" title="3.2.13. status" href="status.html" /> 
+    <link rel="next" title="3.2.16. table_list" href="table_list.html" />
+    <link rel="prev" title="3.2.14. status" href="status.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,10 +32,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="table_list.html" title="3.2.15. table_list"
+          <a href="table_list.html" title="3.2.16. table_list"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="status.html" title="3.2.13. status"
+          <a href="status.html" title="3.2.14. status"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -49,25 +49,25 @@
           <div class="body">
             
   <div class="section" id="table-create">
-<h1>3.2.14. table_create<a class="headerlink" href="#table-create" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.15. table_create<a class="headerlink" href="#table-create" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.14.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.15.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>table_create - テーブルの追加</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.14.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.15.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>table_create name [flags [key_type [value_type [default_tokenizer [output_type]]]]]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.14.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.15.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるtable_createについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>table_createコマンドは、使用しているデータベースに対してテーブルを追加します。groongaには名前付きテーブルと名前なしテーブル、永続テーブルと一時テーブルがありますが、table_createコマンドでは、名前付きの永続テーブルのみが作成できます。テーブルはレコードの集合であり、全てのレコードは一意なIDを持ちます。IDはレコードを追加した順序に従って自動的に付与されます。</p>
 <p>テーブルにカラムを追加する時にはcolumn_createコマンドを使用します。また、テーブルを作成した時点でいくつかの疑似カラムが使用可能になっています。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.14.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.15.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">name</span></tt></p>
 <blockquote>
 作成するテーブルの名前を指定します。nameはデータベース内で一意な、未定義の名前でなければなりません。組込型名・組込コマンド名・組込関数名は予約済みであり、テーブル名には 使用できません。また、ピリオド(&#8216;.&#8217;), コロン(&#8216;:&#8217;)を含む名前のテーブルは作成できません。</blockquote>
@@ -121,13 +121,13 @@
 </dl>
 </div>
 <div class="section" id="id6">
-<h2>3.2.14.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.15.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>リターンコード <a class="footnote-reference" href="#id10" id="id7">[2]</a></p>
 <blockquote>
 grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す 文字列が返されます。</blockquote>
 </div>
 <div class="section" id="id8">
-<h2>3.2.14.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.15.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>table_create Entry --key_type ShortText --output_type json
 [[0]]
@@ -165,23 +165,23 @@ table_create Term --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --def
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">3.2.14. table_create</a><ul>
-<li><a class="reference external" href="#id1">3.2.14.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.2.14.2. 書式</a></li>
-<li><a class="reference external" href="#id3">3.2.14.3. 説明</a></li>
-<li><a class="reference external" href="#id4">3.2.14.4. 引数</a></li>
-<li><a class="reference external" href="#id6">3.2.14.5. 返値</a></li>
-<li><a class="reference external" href="#id8">3.2.14.6. 例</a></li>
+<li><a class="reference external" href="">3.2.15. table_create</a><ul>
+<li><a class="reference external" href="#id1">3.2.15.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.2.15.2. 書式</a></li>
+<li><a class="reference external" href="#id3">3.2.15.3. 説明</a></li>
+<li><a class="reference external" href="#id4">3.2.15.4. 引数</a></li>
+<li><a class="reference external" href="#id6">3.2.15.5. 返値</a></li>
+<li><a class="reference external" href="#id8">3.2.15.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="status.html"
-                                  title="previous chapter">3.2.13. status</a></p>
+                                  title="previous chapter">3.2.14. status</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="table_list.html"
-                                  title="next chapter">3.2.15. table_list</a></p>
+                                  title="next chapter">3.2.16. table_list</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/commands/table_create.txt"
@@ -211,10 +211,10 @@ table_create Term --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --def
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="table_list.html" title="3.2.15. table_list"
+          <a href="table_list.html" title="3.2.16. table_list"
              >next</a> |</li>
         <li class="right" >
-          <a href="status.html" title="3.2.13. status"
+          <a href="status.html" title="3.2.14. status"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>

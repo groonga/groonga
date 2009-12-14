@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.11. set &mdash; groonga v0.1.4 documentation</title>
+    <title>3.2.12. set &mdash; groonga v0.1.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -21,8 +21,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.4 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.12. shutdown" href="shutdown.html" />
-    <link rel="prev" title="3.2.10. select" href="select.html" /> 
+    <link rel="next" title="3.2.13. shutdown" href="shutdown.html" />
+    <link rel="prev" title="3.2.11. select" href="select.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,10 +32,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="shutdown.html" title="3.2.12. shutdown"
+          <a href="shutdown.html" title="3.2.13. shutdown"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="select.html" title="3.2.10. select"
+          <a href="select.html" title="3.2.11. select"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -49,24 +49,24 @@
           <div class="body">
             
   <div class="section" id="set">
-<h1>3.2.11. set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.12. set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.11.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>set - 一件のレコードの値の更新 <a class="footnote-reference" href="#id8" id="id2">[1]</a></p>
 </div>
 <div class="section" id="id3">
-<h2>3.2.11.2. 書式<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.2. 書式<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>set table [key [columns [values [output_columns [output_type [id]]]]]]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id4">
-<h2>3.2.11.3. 説明<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.3. 説明<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるsetについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>setは、使用しているデータベースのテーブルの中の１件のレコードについて、カラムの値を更新します。</p>
 </div>
 <div class="section" id="id5">
-<h2>3.2.11.4. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.4. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 値を更新しようとするレコードを含むテーブルの名前を指定します。</blockquote>
@@ -107,7 +107,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </dl>
 </div>
 <div class="section" id="id6">
-<h2>3.2.11.5. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.5. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryにレコードを登録します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>set Entry abandon body 放棄する
 
@@ -116,7 +116,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </div>
 </div>
 <div class="section" id="id7">
-<h2>3.2.11.6. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.6. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="load.html"><em>load</em></a></p>
 <table class="docutils footnote" frame="void" id="id8" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -135,23 +135,23 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">3.2.11. set</a><ul>
-<li><a class="reference external" href="#id1">3.2.11.1. 名前</a></li>
-<li><a class="reference external" href="#id3">3.2.11.2. 書式</a></li>
-<li><a class="reference external" href="#id4">3.2.11.3. 説明</a></li>
-<li><a class="reference external" href="#id5">3.2.11.4. 引数</a></li>
-<li><a class="reference external" href="#id6">3.2.11.5. 例</a></li>
-<li><a class="reference external" href="#id7">3.2.11.6. 関連項目</a></li>
+<li><a class="reference external" href="">3.2.12. set</a><ul>
+<li><a class="reference external" href="#id1">3.2.12.1. 名前</a></li>
+<li><a class="reference external" href="#id3">3.2.12.2. 書式</a></li>
+<li><a class="reference external" href="#id4">3.2.12.3. 説明</a></li>
+<li><a class="reference external" href="#id5">3.2.12.4. 引数</a></li>
+<li><a class="reference external" href="#id6">3.2.12.5. 例</a></li>
+<li><a class="reference external" href="#id7">3.2.12.6. 関連項目</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="select.html"
-                                  title="previous chapter">3.2.10. select</a></p>
+                                  title="previous chapter">3.2.11. select</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="shutdown.html"
-                                  title="next chapter">3.2.12. shutdown</a></p>
+                                  title="next chapter">3.2.13. shutdown</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/commands/set.txt"
@@ -181,10 +181,10 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="shutdown.html" title="3.2.12. shutdown"
+          <a href="shutdown.html" title="3.2.13. shutdown"
              >next</a> |</li>
         <li class="right" >
-          <a href="select.html" title="3.2.10. select"
+          <a href="select.html" title="3.2.11. select"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
