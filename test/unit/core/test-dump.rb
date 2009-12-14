@@ -420,6 +420,26 @@ COMMANDS
                  result)
   end
 
+  def test_view
+    assert_restore_dump(<<COMMANDS)
+table_create View 4
+table_create FreePrograms 1 ShortText
+table_create NonFreePrograms 1 ShortText
+view_add View FreePrograms
+view_add View NonFreePrograms
+load --table FreePrograms
+[
+{"_key":"gnash"},
+{"_key":"poppler"}
+]
+load --table NonFreePrograms
+[
+{"_key":"Windows"},
+{"_key":"Nvidia Video Driver"}
+]
+COMMANDS
+  end
+
   private
   def dump
     output = run_groonga(@database_path, "dump")

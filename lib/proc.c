@@ -1109,6 +1109,29 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 }
 
 static void
+dump_view(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+{
+  grn_view *view = (grn_view *)table;
+  grn_id id;
+  grn_hash_cursor *cursor;
+
+  cursor = grn_hash_cursor_open(ctx, view->hash, NULL, 0, NULL, 0, 0, -1, 0);
+  while ((id = grn_hash_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_id *table_id;
+    int key_size = grn_hash_cursor_get_key(ctx, cursor, ((void **)&table_id));
+    if (key_size != 4) {
+      ERR(GRN_ERROR, "corrupted view table");
+    }
+    GRN_TEXT_PUTS(ctx, outbuf, "view_add ");
+    dump_obj_name(ctx, outbuf, table);
+    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    dump_obj_name(ctx, outbuf, grn_ctx_at(ctx, *table_id));
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  }
+  grn_hash_cursor_close(ctx, cursor);
+}
+
+static void
 dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   int i, ncolumns;
@@ -1121,8 +1144,10 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_NO_KEY:
-  case GRN_TABLE_VIEW:
     break;
+  case GRN_TABLE_VIEW:
+    dump_view(ctx, outbuf, table);
+    return;
   default:
     return;
   }

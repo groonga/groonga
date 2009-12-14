@@ -990,14 +990,6 @@ grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
   return id;
 }
 
-typedef struct {
-  grn_db_obj obj;
-  grn_hash *hash;
-  grn_table_sort_key *keys;
-  int n_keys;
-  int offset;
-} grn_view;
-
 static grn_obj *
 grn_view_create(grn_ctx *ctx, const char *path, grn_obj_flags flags)
 {

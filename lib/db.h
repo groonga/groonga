@@ -126,6 +126,14 @@ typedef struct {
   //  grn_obj_flags flags;
 } grn_db_obj;
 
+typedef struct {
+  grn_db_obj obj;
+  grn_hash *hash;
+  grn_table_sort_key *keys;
+  int n_keys;
+  int offset;
+} grn_view;
+
 #define GRN_OBJ_TMP_OBJECT 0x80000000
 
 #define GRN_DB_OBJ_SET_TYPE(db_obj,obj_type) {\
