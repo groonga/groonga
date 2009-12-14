@@ -30,6 +30,8 @@ void data_table_create(void);
 void test_table_create(gconstpointer data);
 void data_column_create(void);
 void test_column_create(gconstpointer data);
+void data_vector_column(void);
+void test_vector_column(gconstpointer data);
 
 static GCutEgg *egg = NULL;
 static GString *dumped = NULL, *error_output = NULL;
