@@ -948,11 +948,10 @@ dump_index_column_sources(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
   if (n > 0) {
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
   }
-  /* TODO when this index column does really have multiple sources, this
-          function won't dump the right thing. */
   for (i = 0; i < n; i++) {
     grn_obj *source;
     source = grn_ctx_at(ctx, *source_ids);
+    if (i) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
     dump_column_name(ctx, outbuf, source);
     source_ids++;
   }
