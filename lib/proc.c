@@ -147,6 +147,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_text_itoa(ctx, &body, ctx->impl->loader.nrecords);
       print_return_code_with_body(ctx, outbuf,
                                   grn_get_ctype(&vars[5].value), &body);
+      /* maybe necessary : grn_ctx_loader_clear(ctx); */
       grn_obj_unlink(ctx, &body);
     }
   }

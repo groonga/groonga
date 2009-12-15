@@ -147,6 +147,7 @@ typedef struct {
   grn_obj values;
   grn_obj level;
   grn_obj columns;
+  int32_t key_offset;
   grn_obj *table;
   grn_obj *last;
   grn_obj *ifexists;
