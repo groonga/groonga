@@ -20,7 +20,8 @@ noinst_LTLIBRARIES =				\
 	test-expr-script.la			\
 	test-text.la				\
 	test-cast.la				\
-	test-dump.la
+	test-dump.la				\
+	test-encoding.la
 endif
 
 EXTRA_DIST =					\
@@ -68,3 +69,4 @@ test_expr_script_la_SOURCES		= test-expr-script.c
 test_text_la_SOURCES			= test-text.c
 test_cast_la_SOURCES			= test-cast.c
 test_dump_la_SOURCES			= test-dump.c
+test_encoding_la_SOURCES		= test-encoding.c

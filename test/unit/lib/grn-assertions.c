@@ -20,6 +20,10 @@
 #include <gcutter.h>
 #include "grn-assertions.h"
 
+#include <str.h>
+
+grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+
 void
 grn_test_assert_helper(grn_rc rc, const gchar *expression)
 {
@@ -215,4 +219,23 @@ grn_test_assert_expr_helper (grn_ctx     *context,
   actual_inspected = cut_take_strdup(GRN_TEXT_VALUE(&buffer));
   GRN_OBJ_FIN(context, &buffer);
   cut_assert_equal_string(inspected, actual_inspected);
+}
+
+void
+grn_test_assert_equal_encoding_helper (grn_encoding expected,
+                                       grn_encoding actual,
+                                       const gchar *expression_expected,
+                                       const gchar *expression_actual)
+{
+  if (expected == actual) {
+    cut_test_pass();
+  } else {
+    cut_test_fail(cut_take_printf("<%s> == <%s>\n"
+                                  "expected: <%s>\n"
+                                  " but was: <%s>",
+                                  expression_expected,
+                                  expression_actual,
+                                  grn_enctostr(expected),
+                                  grn_enctostr(actual)));
+  }
 }

@@ -97,6 +97,14 @@
       __VA_ARGS__),                                                     \
     grn_test_assert_expr(context, inspected, expr))
 
+#define grn_test_assert_equal_encoding(expected, actual, ...)           \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_equal_encoding_helper((expected), (actual),       \
+                                            #expected, #actual),        \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_equal_encoding(expected, actual))
+
 
 
 void     grn_test_assert_helper         (grn_rc       rc,
@@ -133,5 +141,10 @@ void     grn_test_assert_expr_helper    (grn_ctx     *context,
                                          grn_obj     *expr,
                                          const gchar *inspected_expression,
                                          const gchar *expr_expression);
+void     grn_test_assert_equal_encoding_helper
+                                        (grn_encoding expected,
+                                         grn_encoding actual,
+                                         const gchar *expression_expected,
+                                         const gchar *expression_actual);
 
 #endif
