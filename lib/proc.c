@@ -1238,8 +1238,18 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       case GRN_COLUMN_FIX_SIZE:
         switch (columns[j]->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
         case GRN_OBJ_COLUMN_VECTOR:
-          {
+          /* TODO: We assume that if |range| is GRN_OBJ_KEY_VAR_SIZE, a vector
+                   is GRN_VECTOR, otherwise GRN_UVECTOR. This is not always
+                   the case, especially by using GRNAPI with C, it's possible
+                   to create GRN_VECTOR with values of constant-size type. */
+          if (((struct _grn_type *)grn_ctx_at(ctx, range))->obj.header.flags &
+              GRN_OBJ_KEY_VAR_SIZE) {
             GRN_OBJ_INIT(&buf, GRN_VECTOR, 0, range);
+            grn_obj_get_value(ctx, columns[j], id, &buf);
+            grn_text_otoj(ctx, outbuf, &buf, NULL);
+            grn_obj_unlink(ctx, &buf);
+          } else {
+            GRN_OBJ_INIT(&buf, GRN_UVECTOR, 0, range);
             grn_obj_get_value(ctx, columns[j], id, &buf);
             grn_text_otoj(ctx, outbuf, &buf, NULL);
             grn_obj_unlink(ctx, &buf);

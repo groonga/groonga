@@ -298,10 +298,6 @@ check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 
 #define GRN_TYPE_SIZE(type) ((type)->range)
 
-struct _grn_type {
-  grn_db_obj obj;
-};
-
 static grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db,
                                const char *name, unsigned name_size);
 
@@ -10847,22 +10843,42 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       v = values_next(ctx, v);
     }
   } else {
-    GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
-    while (n--) {
-      if (v->header.domain == GRN_DB_TEXT) {
-        grn_obj cast_element, *element = v;
-        if (range_id != element->header.domain) {
-          GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
-          grn_obj_cast(ctx, element, &cast_element, 1);
-          element = &cast_element;
+    if (((struct _grn_type *)grn_ctx_at(ctx, range_id))->obj.header.flags &
+        GRN_OBJ_KEY_VAR_SIZE) {
+      GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
+      while (n--) {
+        if (v->header.domain == GRN_DB_TEXT) {
+          grn_obj cast_element, *element = v;
+          if (range_id != element->header.domain) {
+            GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
+            grn_obj_cast(ctx, element, &cast_element, 1);
+            element = &cast_element;
+          }
+          grn_vector_add_element(ctx, &buf,
+                                 GRN_TEXT_VALUE(element),
+                                 GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
+        } else {
+          ERR(GRN_ERROR, "bad syntax.");
         }
-        grn_vector_add_element(ctx, &buf,
-                               GRN_TEXT_VALUE(element),
-                               GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
-      } else {
-        ERR(GRN_ERROR, "bad syntax.");
+        v = values_next(ctx, v);
       }
-      v = values_next(ctx, v);
+    } else {
+      grn_id value_size = ((grn_db_obj *)grn_ctx_at(ctx, range_id))->range;
+      GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, range_id);
+      while (n--) {
+        if (v->header.domain == GRN_DB_TEXT) {
+          grn_obj cast_element, *element = v;
+          if (range_id != element->header.domain) {
+            GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
+            grn_obj_cast(ctx, element, &cast_element, 1);
+            element = &cast_element;
+          }
+          grn_bulk_write(ctx, &buf, GRN_TEXT_VALUE(element), value_size);
+        } else {
+          ERR(GRN_ERROR, "bad syntax.");
+        }
+        v = values_next(ctx, v);
+      }
     }
   }
   grn_obj_set_value(ctx, column, id, &buf, GRN_OBJ_SET);

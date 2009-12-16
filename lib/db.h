@@ -126,6 +126,10 @@ typedef struct {
   //  grn_obj_flags flags;
 } grn_db_obj;
 
+struct _grn_type {
+  grn_db_obj obj;
+};
+
 typedef struct {
   grn_db_obj obj;
   grn_hash *hash;

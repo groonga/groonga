@@ -2467,7 +2467,26 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     } else {
       grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
       if (range && range->header.type == GRN_TYPE) {
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "uvector of GRN_TYPE not supported");
+        grn_id value_size = ((struct _grn_type *)range)->obj.range;
+        char *v = (char *)GRN_BULK_HEAD(obj),
+             *ve = (char *)GRN_BULK_CURR(obj);
+        GRN_TEXT_PUTC(ctx, bulk, '[');
+        if (v < ve) {
+          for (;;) {
+            grn_obj value;
+            GRN_OBJ_INIT(&value, GRN_BULK, 0, obj->header.domain);
+            grn_bulk_write_from(ctx, &value, v, 0, value_size);
+            grn_text_otoj(ctx, bulk, &value, NULL);
+
+            v += value_size;
+            if (v < ve) {
+              GRN_TEXT_PUTC(ctx, bulk, ',');
+            } else {
+              break;
+            }
+          }
+        }
+        GRN_TEXT_PUTC(ctx, bulk, ']');
       } else {
         grn_id *v = (grn_id *)GRN_BULK_HEAD(obj),
                *ve = (grn_id *)GRN_BULK_CURR(obj);
