@@ -10077,8 +10077,12 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
           q->cur = end + 2;
           break;
         case '=' :
-          mode = GRN_OP_ASSIGN;
-          q->cur = end + 2;
+          if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
+            mode = GRN_OP_ASSIGN;
+            q->cur = end + 2;
+          } else {
+            get_token(ctx, q, &op, c, mode);
+          }
           break;
         case '<' :
           if (end + 2 < q->str_end && end[2] == '=') {
@@ -11394,8 +11398,13 @@ get_word_(grn_ctx *ctx, efs_info *q)
           q->cur = end + 2;
           break;
         case '=' :
-          mode = GRN_OP_ASSIGN;
-          q->cur = end + 2;
+          if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
+            mode = GRN_OP_ASSIGN;
+            q->cur = end + 2;
+          } else {
+            mode = GRN_OP_EQUAL;
+            q->cur = end + 1;
+          }
           break;
         case '<' :
           if (end + 2 < q->str_end && end[2] == '=') {
