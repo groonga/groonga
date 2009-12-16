@@ -1169,6 +1169,27 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   columns = (grn_obj **)GRN_BULK_HEAD(&columnbuf);
   ncolumns = GRN_BULK_VSIZE(&columnbuf)/sizeof(grn_obj *);
 
+  GRN_TEXT_PUTC(ctx, outbuf, '[');
+  for (i = 0; i < ncolumns; i++) {
+    grn_obj buf;
+    GRN_TEXT_INIT(&buf, 0);
+    grn_column_name_(ctx, columns[i], &buf);
+    /* skips unnecessary columns */
+    if (((table->header.type == GRN_TABLE_HASH_KEY ||
+          table->header.type == GRN_TABLE_PAT_KEY) &&
+         !memcmp(GRN_TEXT_VALUE(&buf), "_id",
+                 (GRN_TEXT_LEN(&buf) > 3) ? 3 : GRN_TEXT_LEN(&buf))) ||
+        (table->header.type == GRN_TABLE_NO_KEY &&
+         !memcmp(GRN_TEXT_VALUE(&buf), "_key",
+                 (GRN_TEXT_LEN(&buf) > 4) ? 4 : GRN_TEXT_LEN(&buf)))) {
+      continue;
+    }
+    grn_text_otoj(ctx, outbuf, &buf, NULL);
+    grn_obj_unlink(ctx, &buf);
+    if (i + 1 < ncolumns) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+  }
+  GRN_TEXT_PUTS(ctx, outbuf, "],\n");
+
   cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                  GRN_CURSOR_BY_ID);
   for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
@@ -1180,7 +1201,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     if (table->header.type == GRN_TABLE_NO_KEY && old_id + 1 < id) {
       grn_id current_id;
       for (current_id = old_id + 1; current_id < id; current_id++) {
-        GRN_TEXT_PUTS(ctx, outbuf, "{},\n");
+        GRN_TEXT_PUTS(ctx, outbuf, "[],\n");
         GRN_TEXT_PUTS(ctx, &delete_commands, "delete --table ");
         dump_obj_name(ctx, &delete_commands, table);
         GRN_TEXT_PUTS(ctx, &delete_commands, " --id ");
@@ -1188,7 +1209,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         GRN_TEXT_PUTC(ctx, &delete_commands, '\n');
       }
     }
-    GRN_TEXT_PUTC(ctx, outbuf, '{');
+    GRN_TEXT_PUTC(ctx, outbuf, '[');
     for (j = 0; j < ncolumns; j++) {
       grn_id range;
       GRN_TEXT_INIT(&buf, 0);
@@ -1209,9 +1230,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       } else {
         is_value_column = 0;
       }
-      grn_text_otoj(ctx, outbuf, &buf, NULL);
       grn_obj_unlink(ctx, &buf);
-      GRN_TEXT_PUTC(ctx, outbuf, ':');
       range = grn_obj_get_range(ctx, columns[j]);
 
       switch (columns[j]->header.type) {
@@ -1260,7 +1279,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       }
       if (j + 1 < ncolumns) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
     }
-    GRN_TEXT_PUTC(ctx, outbuf, '}');
+    GRN_TEXT_PUTC(ctx, outbuf, ']');
   }
   GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
   GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&delete_commands),

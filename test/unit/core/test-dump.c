@@ -434,7 +434,8 @@ test_vector_column(gconstpointer data)
                              "column_create Table Column 1 %s\n"
                              "load --table Table\n"
                              "[\n"
-                             "{\"_id\":1,\"Column\":%s}\n"
+                             "[\"_id\",\"Column\"],\n"
+                             "[1,%s]\n"
                              "]\n",
                              type_name,
                              gcut_data_get_string(data, "expected"));
@@ -464,10 +465,11 @@ test_unsequantial_records_in_table_with_keys(void)
   grn_test_assert_dump("table_create Weekdays 0 ShortText\n"
                        "load --table Weekdays\n"
                        "[\n"
-                       "{\"_key\":\"Sun\"},\n"
-                       "{\"_key\":\"Mon\"},\n"
-                       "{\"_key\":\"Wed\"},\n"
-                       "{\"_key\":\"Thu\"},\n"
-                       "{\"_key\":\"Sat\"}\n"
+                       "[\"_key\"],\n"
+                       "[\"Sun\"],\n"
+                       "[\"Mon\"],\n"
+                       "[\"Wed\"],\n"
+                       "[\"Thu\"],\n"
+                       "[\"Sat\"]\n"
                        "]\n");
 }
