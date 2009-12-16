@@ -10822,6 +10822,59 @@ loader_add(grn_ctx *ctx, grn_obj *key)
   return id;
 }
 
+static void
+set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
+{
+  int n = GRN_UINT32_VALUE(vector);
+  grn_obj buf, *v = vector + 1;
+  grn_id range_id;
+  grn_obj *range;
+
+  if (n == 0) {
+    /* json is "[]" => do noting */
+    /* TODO: should wipe existing vector values out? */
+    return;
+  }
+
+  range_id = DB_OBJ(column)->range;
+  range = grn_ctx_at(ctx, range_id);
+  if (GRN_OBJ_TABLEP(range)) {
+    GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, range_id);
+    while (n--) {
+      if (v->header.domain == GRN_DB_TEXT) {
+        grn_obj record, *element = v;
+        GRN_RECORD_INIT(&record, 0, range_id);
+        grn_obj_cast(ctx, element, &record, 1);
+        element = &record;
+        GRN_UINT32_PUT(ctx, &buf, GRN_RECORD_VALUE(element));
+      } else {
+        ERR(GRN_ERROR, "bad syntax.");
+      }
+      v = values_next(ctx, v);
+    }
+  } else {
+    GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
+    while (n--) {
+      if (v->header.domain == GRN_DB_TEXT) {
+        grn_obj cast_element, *element = v;
+        if (range_id != element->header.domain) {
+          GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
+          grn_obj_cast(ctx, element, &cast_element, 1);
+          element = &cast_element;
+        }
+        grn_vector_add_element(ctx, &buf,
+                               GRN_TEXT_VALUE(element),
+                               GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
+      } else {
+        ERR(GRN_ERROR, "bad syntax.");
+      }
+      v = values_next(ctx, v);
+    }
+  }
+  grn_obj_set_value(ctx, column, id, &buf, GRN_OBJ_SET);
+  GRN_OBJ_FIN(ctx, &buf);
+}
+
 #define PKEY_NAME "_key"
 
 static void
@@ -10898,52 +10951,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
              i++;
              continue;
           }
-          if (value->header.domain == OPEN_BRACKET &&
-              GRN_UINT32_VALUE(value) == 0) {
-            /* json is "[]" => do noting */
-            /* TODO: should wipe existing vector values out? */
-          } else if (value->header.domain == OPEN_BRACKET) {
-            int n = GRN_UINT32_VALUE(value);
-            grn_obj buf, *v = value + 1;
-            grn_id range_id;
-            grn_obj *range;
-            range_id = DB_OBJ(*cols)->range;
-            range = grn_ctx_at(ctx, range_id);
-            if (GRN_OBJ_TABLEP(range)) {
-              GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, range_id);
-              while (n--) {
-                if (v->header.domain == GRN_DB_TEXT) {
-                  grn_obj record, *element = v;
-                  GRN_RECORD_INIT(&record, 0, range_id);
-                  grn_obj_cast(ctx, element, &record, 1);
-                  element = &record;
-                  GRN_UINT32_PUT(ctx, &buf, GRN_RECORD_VALUE(element));
-                } else {
-                  ERR(GRN_ERROR, "bad syntax.");
-                }
-                v = values_next(ctx, v);
-              }
-            } else {
-              GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
-              while (n--) {
-                if (v->header.domain == GRN_DB_TEXT) {
-                  grn_obj cast_element, *element = v;
-                  if (range_id != element->header.domain) {
-                    GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
-                    grn_obj_cast(ctx, element, &cast_element, 1);
-                    element = &cast_element;
-                  }
-                  grn_vector_add_element(ctx, &buf,
-                                         GRN_TEXT_VALUE(element),
-                                         GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
-                } else {
-                  ERR(GRN_ERROR, "bad syntax.");
-                }
-                v = values_next(ctx, v);
-              }
-            }
-            grn_obj_set_value(ctx, *cols, id, &buf, GRN_OBJ_SET);
-            GRN_OBJ_FIN(ctx, &buf);
+          if (value->header.domain == OPEN_BRACKET) {
+            set_vector(ctx, *cols, id, value);
           } else if (value->header.domain == OPEN_BRACE) {
             /* todo */
           } else {
@@ -11026,53 +11035,8 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
           }
           */
           if (col) {
-            if (value->header.domain == OPEN_BRACKET &&
-                GRN_UINT32_VALUE(value) == 0) {
-              /* json is "[]" => do noting */
-              /* TODO: should wipe existing vector values out? */
-            } else if (value->header.domain == OPEN_BRACKET &&
-                       GRN_UINT32_VALUE(value) > 0) {
-              int n = GRN_UINT32_VALUE(value);
-              grn_obj buf, *v = value + 1;
-              grn_id range_id;
-              grn_obj *range;
-              range_id = DB_OBJ(col)->range;
-              range = grn_ctx_at(ctx, range_id);
-              if (GRN_OBJ_TABLEP(range)) {
-                GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, range_id);
-                while (n--) {
-                  if (v->header.domain == GRN_DB_TEXT) {
-                    grn_obj record, *element = v;
-                    GRN_RECORD_INIT(&record, 0, range_id);
-                    grn_obj_cast(ctx, element, &record, 1);
-                    element = &record;
-                    GRN_UINT32_PUT(ctx, &buf, GRN_RECORD_VALUE(element));
-                  } else {
-                    ERR(GRN_ERROR, "bad syntax.");
-                  }
-                  v = values_next(ctx, v);
-                }
-              } else {
-                GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
-                while (n--) {
-                  if (v->header.domain == GRN_DB_TEXT) {
-                    grn_obj cast_element, *element = v;
-                    if (range_id != element->header.domain) {
-                      GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
-                      grn_obj_cast(ctx, element, &cast_element, 1);
-                      element = &cast_element;
-                    }
-                    grn_vector_add_element(ctx, &buf,
-                                           GRN_TEXT_VALUE(element),
-                                           GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
-                  } else {
-                    ERR(GRN_ERROR, "bad syntax.");
-                  }
-                  v = values_next(ctx, v);
-                }
-              }
-              grn_obj_set_value(ctx, col, id, &buf, GRN_OBJ_SET);
-              GRN_OBJ_FIN(ctx, &buf);
+            if (value->header.domain == OPEN_BRACKET) {
+              set_vector(ctx, col, id, value);
             } else if (value->header.domain == OPEN_BRACE) {
               /* todo */
             } else {
