@@ -35,6 +35,8 @@ void data_logic_operator(void);
 void test_logic_operator(gconstpointer data);
 void data_comparison_operator(void);
 void test_comparison_operator(gconstpointer data);
+void data_comparison_operator_syntax_error(void);
+void test_comparison_operator_syntax_error(gconstpointer data);
 void data_arithmetic_operator(void);
 void test_arithmetic_operator(gconstpointer data);
 void data_arithmetic_operator_error(void);
@@ -370,6 +372,41 @@ test_comparison_operator(gconstpointer data)
                          gcut_data_get_pointer(data, "expected_keys"),
                          res,
                          body);
+}
+
+void
+data_comparison_operator_syntax_error(void)
+{
+#define ADD_DATUM(label, message, query)                        \
+  gcut_add_datum(label,                                         \
+                 "message", G_TYPE_STRING, message,             \
+                 "query", G_TYPE_STRING, query,                 \
+                 NULL)
+
+  ADD_DATUM("nonexistent ==",
+            cut_take_printf("Syntax error! (nonexistent == 100)"),
+            "nonexistent == 100");
+
+#undef ADD_DATUM
+}
+
+void
+test_comparison_operator_syntax_error(gconstpointer data)
+{
+  grn_obj *v;
+  const gchar *query;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+  query = gcut_data_get_string(data, "query");
+  grn_test_assert_equal_rc(GRN_SYNTAX_ERROR,
+                           grn_expr_parse(&context, expr, query, strlen(query),
+                                          body, GRN_OP_MATCH, GRN_OP_AND,
+                                          GRN_EXPR_SYNTAX_SCRIPT));
+  grn_test_assert_error(GRN_SYNTAX_ERROR,
+                        gcut_data_get_string(data, "message"),
+                        &context);
 }
 
 #define ADD_DATUM(label, expected_keys, query)                          \
