@@ -18,6 +18,7 @@ noinst_LTLIBRARIES =				\
 	test-table-cursor.la			\
 	test-expr.la				\
 	test-expr-script.la			\
+	test-expr-query.la			\
 	test-text.la				\
 	test-cast.la				\
 	test-dump.la				\
@@ -66,6 +67,7 @@ test_database_la_SOURCES		= test-database.c
 test_table_cursor_la_SOURCES		= test-table-cursor.c
 test_expr_la_SOURCES			= test-expr.c
 test_expr_script_la_SOURCES		= test-expr-script.c
+test_expr_query_la_SOURCES		= test-expr-query.c
 test_text_la_SOURCES			= test-text.c
 test_cast_la_SOURCES			= test-cast.c
 test_dump_la_SOURCES			= test-dump.c
