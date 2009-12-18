@@ -26,7 +26,7 @@ module HTTPSelectDrilldownTests
     teardown_server
   end
 
-  def test_no_limit
+  def test_zero_limit
     table_create("Initial", :flags => Table::PAT_KEY, :key_type => "ShortText")
     table_create("Person", :key_type => "ShortText")
     column_create("Person", "initial", Column::SCALAR, "Initial")
@@ -46,16 +46,17 @@ module HTTPSelectDrilldownTests
     add_user("グニャラくん", "ぐにゃらくん", "か")
     add_user("morita", "もりた", "ま")
     add_user("yu", "ゆう", "や")
-    add_event("グニャラくん", "groongaリリース（前編）", "20091218")
-    add_event("グニャラくん", "groongaリリース（後編）", "20091218")
-    add_event("morita", "groonga（ぐるんが）解説・パート1", "20091218")
-    add_event("yu", "groonga（ぐるんが）解説・パート2", "20091219")
+    add_event("グニャラくん", nil, "groongaリリース（前編）", "20091218")
+    add_event("グニャラくん", nil, "groongaリリース（後編）", "20091218")
+    add_event("morita", nil, "groonga（ぐるんが）解説・パート1", "20091218")
+    add_event("yu", nil, "groonga（ぐるんが）解説・パート2", "20091219")
 
     assert_drilldown(["_key"],
                      [],
-                     ["_key", "_nsubrecs", "initial"],
-                     [["グニャラくん", 2, "か"],
-                      ["morita", 1, "ま"]],
+                     [[[2],
+                       ["_key", "_nsubrecs", "initial"],
+                       ["グニャラくん", 2, "か"],
+                       ["morita", 1, "ま"]]],
                      {
                        :table => "Event",
                        :match_column => "search",
@@ -72,30 +73,104 @@ module HTTPSelectDrilldownTests
                      {:n_hits => 3})
   end
 
+  def test_many_columns
+    table_create("Initial", :flags => Table::PAT_KEY, :key_type => "ShortText")
+    table_create("Person", :key_type => "ShortText")
+    column_create("Person", "initial", Column::SCALAR, "Initial")
+    column_create("Person", "kana", Column::SCALAR, "ShortText")
+    table_create("Place", :key_type => "ShortText")
+    column_create("Place", "name", Column::SCALAR, "ShortText")
+    table_create("Event", :key_type => "ShortText")
+    column_create("Event", "date", Column::SCALAR, "Time")
+    column_create("Event", "person", Column::VECTOR, "Person")
+    column_create("Event", "place", Column::SCALAR, "Place")
+    column_create("Event", "title", Column::SCALAR, "ShortText")
+    column_create("Event", "search", Column::SCALAR, "ShortText")
+    table_create("Bigram",
+                 :flags => Table::PAT_KEY | Key::NORMALIZE,
+                 :key_type => "ShortText",
+                 :default_tokenizer => "TokenBigram")
+    column_create("Bigram", "index", Column::INDEX | Flag::WITH_POSITION,
+                  "Event", :source => "search")
+
+    add_user("グニャラくん", "ぐにゃらくん", "か")
+    add_user("morita", "もりた", "ま")
+    add_user("yu", "ゆう", "や")
+    add_place("razil.jp", "ブラジル")
+    add_place("shinjuku", "新宿")
+    add_event("グニャラくん", "razil.jp", "groongaリリース（前編）", "20091218")
+    add_event("グニャラくん", "shinjuku", "groongaリリース（後編）", "20091218")
+    add_event("morita", "razil.jp",
+              "groonga（ぐるんが）解説・パート1", "20091218")
+    add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート2", "20091219")
+
+    assert_drilldown(["_key", "place", "place.name",
+                      "title", "person", "date"],
+                     [["3", "shinjuku", "新宿",
+                       "groonga（ぐるんが）解説・パート2", ["yu"], 20091219.0],
+                      ["0", "razil.jp", "ブラジル", "groongaリリース（前編）",
+                       ["グニャラくん"], 20091218.0]],
+                     [[[2],
+                       ["_key", "_nsubrecs"],
+                       [20091218.0, 3],
+                       [20091219.0, 1]],
+                      [[3],
+                       ["_key", "_nsubrecs"],
+                       ["グニャラくん", 2],
+                       ["yu", 1],
+                       ["morita", 1]],
+                      [[2],
+                       ["_key", "_nsubrecs", "name"],
+                       ["razil.jp", 2, "ブラジル"],
+                       ["shinjuku", 2, "新宿"]]],
+                     {
+                       :table => "Event",
+                       :match_column => "search",
+                       :query => "groonga",
+                       :filter => "",
+                       :sortby => "-place._key",
+                       :offset => 1,
+                       :limit => 2,
+                       :output_columns => ["_key", "place", "place.name",
+                                           "title", "person", "date"].join(" "),
+                       :drilldown => "date person place",
+                       :drilldown_sortby => "-_nsubrecs",
+                       :drilldown_output_columns => "_key _nsubrecs name",
+                       :drilldown_limit => 3,
+                     },
+                     {:n_hits => 4})
+  end
+
   private
   def add_user(name, kana, initial)
     load("Initial", [{"_key" => initial}])
     load("Person", [{"_key" => name, "kana" => kana, "initial" => initial}])
   end
 
-  def add_event(person, title, date)
+  def add_place(key, name)
+    load("Place", [{"_key" => key, "name" => name}])
+  end
+
+  def add_event(person, place, title, date)
     @event_id ||= 0
-    load("Event", [{"_key" => @event_id,
-                    "title" => title,
-                    "search" => title,
-                    "date" => date,
-                    "person" => person}])
+    attributes = {
+      "_key" => @event_id,
+      "title" => title,
+      "search" => title,
+      "date" => date,
+      "person" => person,
+    }
+    attributes["place"] = place if place
+    load("Event", [attributes])
     @event_id += 1
   end
 
-  def assert_drilldown(header, expected, drilldown_header, drilldown_records,
+  def assert_drilldown(header, expected, drilldown_results,
                        parameters, options={})
     assert_select(header,
                   expected,
                   parameters,
-                  options.merge(:drilldown_results => [[[drilldown_records.size],
-                                                        drilldown_header,
-                                                        *drilldown_records]]))
+                  options.merge(:drilldown_results => drilldown_results))
   end
 end
 
