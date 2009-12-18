@@ -17,7 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-module HTTPSelectTests
+module HTTPSelectBasicTests
   include GroongaHTTPTestUtils
 
   def setup
@@ -746,12 +746,12 @@ EOF
   end
 end
 
-class HTTPSelectTest < Test::Unit::TestCase
-  include HTTPSelectTests
+class HTTPSelectBasicTest < Test::Unit::TestCase
+  include HTTPSelectBasicTests
 end
 
-class HTTPDefineSelectorTest < HTTPSelectTest
-  include HTTPSelectTests
+class HTTPDefineSelectorBasicTest < HTTPSelectBasicTest
+  include HTTPSelectBasicTests
 
   def assert_select(header, expected, parameters, options={}, &block)
     name = "custom_select"
