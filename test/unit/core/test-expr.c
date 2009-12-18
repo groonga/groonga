@@ -1457,7 +1457,9 @@ parse_numeric_literal(const char *str_expr)
 
   GRN_FLOAT_INIT(var, 0);
   grn_test_assert(grn_expr_parse(&context, expr, str_expr, strlen(str_expr),
-                  NULL, GRN_OP_NOP, GRN_OP_NOP, GRN_EXPR_SYNTAX_SCRIPT));
+                                 NULL, GRN_OP_NOP, GRN_OP_NOP,
+                                 GRN_EXPR_SYNTAX_SCRIPT |
+                                 GRN_EXPR_ALLOW_UPDATE));
 
   grn_test_assert(grn_expr_compile(&context, expr));
   grn_test_assert(grn_expr_exec(&context, expr, 0));
