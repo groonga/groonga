@@ -686,6 +686,7 @@ module HTTPSelectTests
 EOF
     assert_select_xml(expected, :table => "users")
   end
+
   private
   def create_user_id_table
     table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
