@@ -114,10 +114,11 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   grn_expr_var *vars;
   grn_obj *outbuf = args[0];
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  if (grn_proc_create(ctx,
-                      GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
-                      NULL, GRN_PROC_PROCEDURE, proc_select, NULL, NULL, nvars - 1, vars + 1)) {
-    GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value));
+  if (nvars == 16) {
+    grn_proc_create(ctx,
+                    GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
+                    NULL, GRN_PROC_PROCEDURE, proc_select, NULL, NULL, nvars - 1, vars + 1);
+    print_return_code(ctx, outbuf, grn_get_ctype(&vars[15].value));
   }
   return outbuf;
 }
