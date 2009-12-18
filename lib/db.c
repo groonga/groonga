@@ -3470,8 +3470,11 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
   return range;
 }
 
-#define NUM2DEST(getvalue,totext) \
+#define NUM2DEST(getvalue,totext,tobool)\
   switch (dest->header.domain) {\
+  case GRN_DB_BOOL :\
+    tobool(ctx, dest, getvalue(src));\
+    break;\
   case GRN_DB_INT8 :\
     GRN_INT8_SET(ctx, dest, getvalue(src));\
     break;\
@@ -3538,28 +3541,36 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
   }\
 }
 
+#define NUM2BOOL(ctx, dest, value) GRN_BOOL_SET(ctx, dest, value != 0)
+#define FLOAT2BOOL(ctx, dest, value)\
+  {\
+    double value_ = value;\
+    GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
+  }
+
+
 grn_rc
 grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (src->header.domain) {
   case GRN_DB_INT32 :
-    NUM2DEST(GRN_INT32_VALUE, grn_text_itoa);
+    NUM2DEST(GRN_INT32_VALUE, grn_text_itoa, NUM2BOOL);
     break;
   case GRN_DB_UINT32 :
-    NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa);
+    NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa, NUM2BOOL);
     break;
   case GRN_DB_INT64 :
-    NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa);
+    NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa, NUM2BOOL);
     break;
   case GRN_DB_TIME :
-    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa);
+    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa, NUM2BOOL);
     break;
   case GRN_DB_UINT64 :
-    NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa);
+    NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa, NUM2BOOL);
     break;
   case GRN_DB_FLOAT :
-    NUM2DEST(GRN_FLOAT_VALUE, grn_text_ftoa);
+    NUM2DEST(GRN_FLOAT_VALUE, grn_text_ftoa, FLOAT2BOOL);
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
