@@ -1317,6 +1317,41 @@ grn_isspace(const char *str, grn_encoding encoding)
   return 0;
 }
 
+int8_t
+grn_atoi8(const char *nptr, const char *end, const char **rest)
+{
+  const char *p = nptr;
+  int8_t v = 0, t, n = 0, o = 0;
+  if (p < end && *p == '-') {
+    p++;
+    n = 1;
+    o = 1;
+  }
+  while (p < end && *p >= '0' && *p <= '9') {
+    t = v * 10 - (*p - '0');
+    if (t > v || (!n && t == INT8_MIN)) { v = 0; break; }
+    v = t;
+    o = 0;
+    p++;
+  }
+  if (rest) { *rest = o ? nptr : p; }
+  return n ? v : -v;
+}
+
+uint8_t
+grn_atoui8(const char *nptr, const char *end, const char **rest)
+{
+  uint8_t v = 0, t;
+  while (nptr < end && *nptr >= '0' && *nptr <= '9') {
+    t = v * 10 + (*nptr - '0');
+    if (t < v) { v = 0; break; }
+    v = t;
+    nptr++;
+  }
+  if (rest) { *rest = nptr; }
+  return v;
+}
+
 int
 grn_atoi(const char *nptr, const char *end, const char **rest)
 {
