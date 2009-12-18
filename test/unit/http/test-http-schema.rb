@@ -106,11 +106,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_list_with_invalid_output_type
     response = get(command_path(:table_list,
                                 :output_type => "unknown"))
-    pend("should implement error case") do
-      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
-                      response,
-                      :content_type => "application/json")
-    end
+    assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
+                    response,
+                    :content_type => "application/json")
   end
 
   def test_column_list_empty
@@ -148,20 +146,16 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_column_list_nonexistent
     response = get(command_path(:column_list,
                                 :table => "nonexistent"))
-    pend("should implement error case") do
-      assert_response([[Result::UNKNOWN_ERROR, :message]],
-                      response,
-                      :content_type => "application/json")
-    end
+    assert_response([[Result::UNKNOWN_ERROR, :message]],
+                    response,
+                    :content_type => "application/json")
   end
 
   def test_column_list_without_table
     response = get(command_path(:column_list))
-    pend("should implement error case") do
-      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
-                      response,
-                      :content_type => "application/json")
-    end
+    assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
+                    response,
+                    :content_type => "application/json")
   end
 
   def test_column_list_with_invalid_output_type
@@ -169,21 +163,17 @@ class HTTPSchemaTest < Test::Unit::TestCase
     response = get(command_path(:column_list,
                                 :table => "bookmarks",
                                 :output_type => "unknown"))
-    pend("should implement error case") do
-      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
-                      response,
-                      :content_type => "application/json")
-    end
+    assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
+                    response,
+                    :content_type => "application/json")
   end
 
   def test_column_list_with_invalid_output_type_without_table
     response = get(command_path(:column_list,
                                 :output_type => "unknown"))
-    pend("should implement error case") do
-      assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
-                      response,
-                      :content_type => "application/json")
-    end
+    assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
+                    response,
+                    :content_type => "application/json")
   end
 
   def test_table_create_without_name
@@ -727,163 +717,144 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   class SymbolFlagsTest < Test::Unit::TestCase
     include Utils
+
     def test_table_create_single_symbol
       response = get(command_path(:table_create,
-                                  :name => "users",
+                                  :name => "books",
                                   :flags => "KEY_NORMALIZE"))
-      assert_response("true", response, :content_type => "application/json")
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
 
-      assert_table_list([["users",
+      assert_table_list([["books",
                           Flag::PERSISTENT | Table::HASH_KEY | Key::NORMALIZE,
                           Type::VOID]])
     end
 
     def test_table_create_table_view
       response = get(command_path(:table_create,
-                                  :name => "users",
+                                  :name => "books",
                                   :flags => "TABLE_VIEW"))
-      assert_response("true", response, :content_type => "application/json")
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
 
-      assert_table_list([["users",
+      assert_table_list([["books",
                           Flag::PERSISTENT | Table::VIEW,
                           Type::VOID]])
     end
 
     def test_table_create_combined_symbols
       response = get(command_path(:table_create,
-                                  :name => "users",
+                                  :name => "books",
                                   :flags => "TABLE_NO_KEY|KEY_NORMALIZE"))
-      assert_response("true", response, :content_type => "application/json")
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
 
-      assert_table_list([["users",
+      assert_table_list([["books",
                           Flag::PERSISTENT | Table::NO_KEY | Key::NORMALIZE,
                           Type::VOID]])
     end
 
     def test_table_create_combined_symbols_with_whitespaces
       response = get(command_path(:table_create,
-                                  :name => "users",
+                                  :name => "books",
                                   :flags => " TABLE_NO_KEY | KEY_NORMALIZE "))
-      assert_response("true", response, :content_type => "application/json")
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
 
-      assert_table_list([["users",
+      assert_table_list([["books",
                           Flag::PERSISTENT | Table::NO_KEY | Key::NORMALIZE,
                           Type::VOID]])
     end
 
     def test_table_create_invalid_symbol
       response = get(command_path(:table_create,
-                                  :name => "users",
+                                  :name => "books",
                                   :flags => "INVALID_SYMBOL"))
-      assert_response("false", response, :content_type => "application/json")
+      assert_response([[Result::INVALID_ARGUMENT,
+                        "invalid flags option: INVALID_SYMBOL"]],
+                      response,
+                      :content_type => "application/json")
 
       assert_table_list([])
     end
 
     def test_column_create_single_symbol
-      create_users_table
+      create_books_table
 
       response = get(command_path(:column_create,
-                                  :table => "users",
+                                  :table => "books",
                                   :name => "name",
                                   :flags => "COLUMN_VECTOR",
                                   :type => "ShortText"))
-      assert_response("true", response, :content_type => "application/json")
-      @users_name_column_id = object_registered
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
+      books_name_column_id = object_registered
 
-      assert_column_list([[@users_name_column_id,
+      assert_column_list([[books_name_column_id,
                            "name",
                            "var",
                            Column::VECTOR | Flag::PERSISTENT | Key::VAR_SIZE,
-                           @users_table_id]])
+                           @books_table_id]])
     end
 
     def test_column_create_combined_symbols
-      create_users_table
+      create_books_table
 
       response = get(command_path(:column_create,
-                                  :table => "users",
+                                  :table => "books",
                                   :name => "name",
                                   :flags => "COLUMN_INDEX|INDEX_WITH_WEIGHT",
                                   :type => "ShortText"))
-      assert_response("true", response, :content_type => "application/json")
-      @users_name_column_id = object_registered
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
+      books_name_column_id = object_registered
 
-      assert_column_list([[@users_name_column_id,
+      assert_column_list([[books_name_column_id,
                            "name",
                            "index",
                            Column::INDEX | Flag::WITH_WEIGHT |
                            Flag::PERSISTENT | Key::VAR_SIZE,
-                           @users_table_id]])
+                           @books_table_id]])
     end
 
     def test_column_create_combined_symbols_with_whitespaces
-      create_users_table
+      create_books_table
 
       response = get(command_path(:column_create,
-                                  :table => "users",
+                                  :table => "books",
                                   :name => "name",
                                   :flags => " COLUMN_INDEX | INDEX_WITH_WEIGHT ",
                                   :type => "ShortText"))
-      assert_response("true", response, :content_type => "application/json")
-      @users_name_column_id = object_registered
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
+      books_name_column_id = object_registered
 
-      assert_column_list([[@users_name_column_id,
+      assert_column_list([[books_name_column_id,
                            "name",
                            "index",
                            Column::INDEX | Flag::WITH_WEIGHT |
                            Flag::PERSISTENT | Key::VAR_SIZE,
-                           @users_table_id]])
+                           @books_table_id]])
     end
 
     def test_column_create_invalid_symbol
-      create_users_table
+      create_books_table
 
       response = get(command_path(:column_create,
-                                  :table => "users",
+                                  :table => "books",
                                   :name => "name",
                                   :flags => "INVALID_SYMBOL",
                                   :type => "ShortText"))
-      assert_response("false", response, :content_type => "application/json")
-      @users_name_column_id = object_registered
-
+      assert_response([[Result::INVALID_ARGUMENT,
+                        "invalid flags option: INVALID_SYMBOL"]],
+                      response,
+                      :content_type => "application/json")
       assert_column_list([])
     end
 
     private
-    def assert_response(expected, response, options=nil)
-      actual = nil
-      options ||= {}
-
-      if options[:content_type]
-        assert_equal(options[:content_type], response.content_type)
-      end
-
-      case response.content_type
-      when "application/json"
-        begin
-          actual = JSON.parse(response.body)
-        rescue JSON::ParserError => error
-          if response.body == "true" || response.body == "false"
-            actual = response.body
-          else
-            raise
-          end
-        end
-      when "text/html"
-        actual = response.body
-      when "text/xml"
-        actual = response.body
-      else
-        flunk("unknown content-type: #{response.content_type}")
-      end
-
-      actual = yield(actual) if block_given?
-      assert_equal(expected, actual)
-    end
-
     def assert_column_list(expected)
-      response = get(command_path(:column_list, :table => "users"))
+      response = get(command_path(:column_list, :table => "books"))
       expected = expected.collect do |values|
         id, name, type, flags, domain = values
         [id, name, nil, type, flags, domain]
@@ -901,12 +872,13 @@ class HTTPSchemaTest < Test::Unit::TestCase
       end
     end
 
-    def create_users_table
-      response = get(command_path(:table_create, :name => "users"))
-      assert_response("true", response, :content_type => "application/json")
-      @users_table_id = object_registered
+    def create_books_table
+      response = get(command_path(:table_create, :name => "books"))
+      assert_response([[Result::SUCCESS]], response,
+                      :content_type => "application/json")
+      @books_table_id = object_registered
 
-      assert_table_list([["users", Flag::PERSISTENT | Table::HASH_KEY,
+      assert_table_list([["books", Flag::PERSISTENT | Table::HASH_KEY,
                           Type::VOID]])
     end
   end
