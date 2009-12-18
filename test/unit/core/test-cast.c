@@ -122,7 +122,8 @@ static void
 cast_text(const gchar *text)
 {
   grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
-  GRN_TEXT_PUTS(&context, &src, text);
+  if (text)
+    GRN_TEXT_PUTS(&context, &src, text);
   grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
@@ -135,9 +136,10 @@ data_text_to_bool(void)
                  "text", G_TYPE_STRING, text,           \
                  NULL)
 
+  ADD_DATA("empty", GRN_FALSE, "");
+  ADD_DATA("NULL", GRN_FALSE, NULL);
   ADD_DATA("true", GRN_TRUE, "true");
-  ADD_DATA("false", GRN_FALSE, "false");
-  ADD_DATA("unknown", GRN_FALSE, "unknown");
+  ADD_DATA("false", GRN_TRUE, "false");
 
 #undef ADD_DATA
 }

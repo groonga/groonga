@@ -3576,6 +3576,9 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
   case GRN_DB_TEXT :
   case GRN_DB_LONG_TEXT :
     switch (dest->header.domain) {
+    case GRN_DB_BOOL :
+      GRN_BOOL_SET(ctx, dest, GRN_TEXT_LEN(src) > 0);
+      break;
     case GRN_DB_INT8 :
       TEXT2DEST(int8_t, grn_atoi8, GRN_INT8_SET);
       break;
