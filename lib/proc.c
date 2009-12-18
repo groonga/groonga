@@ -30,6 +30,28 @@ const char *grn_admin_html_path = NULL;
 #define DEFAULT_LIMIT           10
 #define DEFAULT_OUTPUT_COLUMNS  "_id _key _value *"
 
+static void
+print_error_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
+{
+  switch (ct) {
+  case GRN_CONTENT_JSON:
+    GRN_TEXT_PUTS(ctx, buf, "[[");
+    grn_text_itoa(ctx, buf, ctx->rc);
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTS(ctx, buf, ",");
+      grn_text_esc(ctx, buf, ctx->errbuf, strlen(ctx->errbuf));
+    }
+    GRN_TEXT_PUTS(ctx, buf, "]]");
+    break;
+  case GRN_CONTENT_TSV:
+  case GRN_CONTENT_XML:
+    /* TODO: implement */
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+}
+
 static grn_obj *
 proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -648,17 +670,33 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  uint32_t nvars;
   grn_obj *buf = args[0];
-  ctx->stat = GRN_CTX_QUITTING;
+  grn_expr_var *vars;
+
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 1) {
+    ctx->stat = GRN_CTX_QUITTING;
+    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[0].value));
+  }
+
   return buf;
 }
 
 static grn_obj *
 proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  uint32_t nvars;
   grn_obj *buf = args[0];
-  grn_gctx.stat = GRN_CTX_QUIT;
-  ctx->stat = GRN_CTX_QUITTING;
+  grn_expr_var *vars;
+
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 1) {
+    grn_gctx.stat = GRN_CTX_QUIT;
+    ctx->stat = GRN_CTX_QUITTING;
+    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[0].value));
+  }
+
   return buf;
 }
 
@@ -1672,8 +1710,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[1], "table");
   DEF_PROC("view_add", proc_view_add, 2, vars);
 
-  DEF_PROC("quit", proc_quit, 0, vars);
-  DEF_PROC("shutdown", proc_shutdown, 0, vars);
+  DEF_VAR(vars[0], "output_type");
+  DEF_PROC("quit", proc_quit, 1, vars);
+  DEF_PROC("shutdown", proc_shutdown, 1, vars);
   DEF_PROC("clearlock", proc_clearlock, 0, vars);
 
   DEF_VAR(vars[0], "level");
