@@ -3582,6 +3582,12 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
     case GRN_DB_UINT8 :
       TEXT2DEST(uint8_t, grn_atoui8, GRN_UINT8_SET);
       break;
+    case GRN_DB_INT16 :
+      TEXT2DEST(int16_t, grn_atoi16, GRN_INT16_SET);
+      break;
+    case GRN_DB_UINT16 :
+      TEXT2DEST(uint16_t, grn_atoui16, GRN_UINT16_SET);
+      break;
     case GRN_DB_INT32 :
       TEXT2DEST(int32_t, grn_atoi, GRN_INT32_SET);
       break;
