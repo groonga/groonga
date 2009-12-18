@@ -265,7 +265,7 @@ test_text_error(gconstpointer data)
 }
 
 static void
-cast_int32(int number)
+cast_int32(gint32 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_INT32, 0);
   GRN_INT32_SET(&context, &src, number);
@@ -392,7 +392,7 @@ test_int32_to_text(void)
 }
 
 static void
-cast_uint32(int number)
+cast_uint32(guint32 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_UINT32, 0);
   GRN_UINT32_SET(&context, &src, number);
@@ -519,7 +519,7 @@ test_uint32_to_text(void)
 }
 
 static void
-cast_int64(int number)
+cast_int64(gint64 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_INT64, 0);
   GRN_INT64_SET(&context, &src, number);
@@ -646,7 +646,7 @@ test_int64_to_text(void)
 }
 
 static void
-cast_uint64(int number)
+cast_uint64(guint64 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_UINT64, 0);
   GRN_UINT64_SET(&context, &src, number);
