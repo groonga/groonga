@@ -271,13 +271,15 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   if (nvars == 6) {
     grn_obj *table;
     const char *rest;
+    grn_content_type ct;
     grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[1].value),
                                    GRN_BULK_CURR(&vars[1].value), &rest);
+    ct = grn_get_ctype(&vars[5].value);
     if (GRN_TEXT_VALUE(&vars[1].value) == rest) {
       flags = grn_parse_table_create_flags(ctx, GRN_TEXT_VALUE(&vars[1].value),
                                            GRN_BULK_CURR(&vars[1].value));
       if (ctx->rc) {
-        GRN_TEXT_PUTS(ctx, buf, "false");
+        print_error_code(ctx, buf, ct);
         return buf;
       }
     }
@@ -297,7 +299,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                    GRN_TEXT_LEN(&vars[4].value)));
       grn_obj_unlink(ctx, table);
     }
-    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[5].value));
+    print_error_code(ctx, buf, ct);
   }
   return buf;
 }
@@ -682,7 +684,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                 GRN_TEXT_VALUE(&vars[1].value),
                                 GRN_TEXT_LEN(&vars[1].value));
     grn_view_add(ctx, view, table);
-    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[2].value));
+    print_error_code(ctx, buf, grn_get_ctype(&vars[2].value));
   }
   return buf;
 }
@@ -697,7 +699,7 @@ proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 1) {
     ctx->stat = GRN_CTX_QUITTING;
-    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[0].value));
+    print_error_code(ctx, buf, grn_get_ctype(&vars[0].value));
   }
 
   return buf;
@@ -714,7 +716,7 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (nvars == 1) {
     grn_gctx.stat = GRN_CTX_QUIT;
     ctx->stat = GRN_CTX_QUITTING;
-    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[0].value));
+    print_error_code(ctx, buf, grn_get_ctype(&vars[0].value));
   }
 
   return buf;
