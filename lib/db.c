@@ -51,6 +51,14 @@
   uint8_t _val = (uint8_t)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint8_t));\
 } while (0)
+#define GRN_INT16_SET(ctx,obj,val) do {\
+  int16_t _val = (int16_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int16_t));\
+} while (0)
+#define GRN_UINT16_SET(ctx,obj,val) do {\
+  uint16_t _val = (uint16_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint16_t));\
+} while (0)
 
 struct _grn_db {
   grn_db_obj obj;
@@ -3469,6 +3477,12 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
     break;\
   case GRN_DB_UINT8 :\
     GRN_UINT8_SET(ctx, dest, getvalue(src));\
+    break;\
+  case GRN_DB_INT16 :\
+    GRN_INT16_SET(ctx, dest, getvalue(src));\
+    break;\
+  case GRN_DB_UINT16 :\
+    GRN_UINT16_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_INT32 :\
     GRN_INT32_SET(ctx, dest, getvalue(src));\
