@@ -294,13 +294,15 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   if (nvars == 6) {
     grn_obj *column, *table, *type;
     const char *rest;
+    grn_content_type ct;
     grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[2].value),
                                    GRN_BULK_CURR(&vars[2].value), &rest);
+    ct = grn_get_ctype(&vars[5].value);
     if (GRN_TEXT_VALUE(&vars[2].value) == rest) {
       flags = grn_parse_column_create_flags(ctx, GRN_TEXT_VALUE(&vars[2].value),
                                             GRN_BULK_CURR(&vars[2].value));
       if (ctx->rc) {
-        GRN_TEXT_PUTS(ctx, buf, "false");
+        print_error_code(ctx, buf, ct);
         return buf;
       }
     }
@@ -343,7 +345,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
       }
       grn_obj_unlink(ctx, column);
     }
-    GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+    print_error_code(ctx, buf, ct);
   }
   return buf;
 }
