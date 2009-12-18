@@ -31,7 +31,8 @@ const char *grn_admin_html_path = NULL;
 #define DEFAULT_OUTPUT_COLUMNS  "_id _key _value *"
 
 static void
-print_error_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
+print_error_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
+                           grn_obj *body)
 {
   switch (ct) {
   case GRN_CONTENT_JSON:
@@ -41,7 +42,13 @@ print_error_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
       GRN_TEXT_PUTS(ctx, buf, ",");
       grn_text_esc(ctx, buf, ctx->errbuf, strlen(ctx->errbuf));
     }
-    GRN_TEXT_PUTS(ctx, buf, "]]");
+    if (body) {
+      GRN_TEXT_PUTS(ctx, buf, "],");
+      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+      GRN_TEXT_PUTS(ctx, buf, "]");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "]]");
+    }
     break;
   case GRN_CONTENT_TSV:
   case GRN_CONTENT_XML:
@@ -50,6 +57,12 @@ print_error_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
   case GRN_CONTENT_NONE:
     break;
   }
+}
+
+static void
+print_error_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
+{
+  print_error_code_with_body(ctx, buf, ct, NULL);
 }
 
 static grn_obj *
@@ -118,18 +131,23 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_expr_var *vars;
   grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-  ct = grn_get_ctype(&vars[4].value);
-
   if (nvars == 6) {
+    ct = grn_get_ctype(&vars[4].value);
     grn_load(ctx, ct,
              GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
              GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
              GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
              GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value));
-    if (ctx->impl->loader.stat == GRN_LOADER_END) {
-      grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
-    } else {
+    if (ctx->impl->loader.stat != GRN_LOADER_END) {
       grn_ctx_set_next_expr(ctx, proc);
+    }
+    {
+      grn_obj body;
+      GRN_TEXT_INIT(&body, 0);
+      grn_text_itoa(ctx, &body, ctx->impl->loader.nrecords);
+      print_error_code_with_body(ctx, outbuf,
+                                 grn_get_ctype(&vars[5].value), &body);
+      grn_obj_unlink(ctx, &body);
     }
   }
   return outbuf;
