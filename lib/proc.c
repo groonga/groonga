@@ -279,7 +279,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                    GRN_TEXT_LEN(&vars[4].value)));
       grn_obj_unlink(ctx, table);
     }
-    GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[5].value));
   }
   return buf;
 }
@@ -654,7 +654,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *buf = args[0];
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  if (nvars == 2) {
+  if (nvars == 3) {
     grn_obj *view = grn_ctx_get(ctx,
                                 GRN_TEXT_VALUE(&vars[0].value),
                                 GRN_TEXT_LEN(&vars[0].value));
@@ -662,7 +662,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                 GRN_TEXT_VALUE(&vars[1].value),
                                 GRN_TEXT_LEN(&vars[1].value));
     grn_view_add(ctx, view, table);
-    GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+    print_error_code(ctx, buf, GRN_INT32_VALUE(&vars[2].value));
   }
   return buf;
 }
@@ -1708,7 +1708,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "view");
   DEF_VAR(vars[1], "table");
-  DEF_PROC("view_add", proc_view_add, 2, vars);
+  DEF_VAR(vars[2], "output_type");
+  DEF_PROC("view_add", proc_view_add, 3, vars);
 
   DEF_VAR(vars[0], "output_type");
   DEF_PROC("quit", proc_quit, 1, vars);
