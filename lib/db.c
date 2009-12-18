@@ -43,6 +43,15 @@
   }\
 }
 
+#define GRN_INT8_SET(ctx,obj,val) do {\
+  int8_t _val = (int8_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int8_t));\
+} while (0)
+#define GRN_UINT8_SET(ctx,obj,val) do {\
+  uint8_t _val = (uint8_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint8_t));\
+} while (0)
+
 struct _grn_db {
   grn_db_obj obj;
   grn_pat *keys;
@@ -3455,6 +3464,12 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
 
 #define NUM2DEST(getvalue,totext) \
   switch (dest->header.domain) {\
+  case GRN_DB_INT8 :\
+    GRN_INT8_SET(ctx, dest, getvalue(src));\
+    break;\
+  case GRN_DB_UINT8 :\
+    GRN_UINT8_SET(ctx, dest, getvalue(src));\
+    break;\
   case GRN_DB_INT32 :\
     GRN_INT32_SET(ctx, dest, getvalue(src));\
     break;\

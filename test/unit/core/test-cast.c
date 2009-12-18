@@ -18,8 +18,8 @@
 
 #include <db.h>
 
-#define GRN_INT8_VALUE GRN_INT32_VALUE
-#define GRN_UINT8_VALUE GRN_UINT32_VALUE
+#define GRN_INT8_VALUE(obj) (*((int8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT8_VALUE(obj) (*((uint8_t *)GRN_BULK_HEAD(obj)))
 #define GRN_INT16_VALUE GRN_INT32_VALUE
 #define GRN_UINT16_VALUE GRN_UINT32_VALUE
 
