@@ -3619,16 +3619,18 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
       {
         grn_obj *table = grn_ctx_at(ctx, dest->header.domain);
         if (GRN_OBJ_TABLEP(table)) {
-          grn_obj key, *p_key = src;
+          grn_obj *p_key = src;
           grn_id id;
           if (table->header.type != GRN_TABLE_NO_KEY) {
+            grn_obj key;
+            GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
             if (src->header.domain != table->header.domain) {
-               GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
                grn_obj_cast(ctx, src, &key, 1);
                p_key = &key;
             }
             id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
                       : grn_table_get_by_key(ctx, table, p_key);
+            GRN_OBJ_FIN(ctx, &key);
           } else {
             grn_obj record_id;
             GRN_UINT32_INIT(&record_id, 0);
@@ -4347,10 +4349,10 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       {
         grn_io_win jw;
         void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
+        value->header.type = GRN_BULK;
         if (v) {
           // todo : reduce copy
           // todo : grn_vector_add_element when vector assigned
-          value->header.type = GRN_BULK;
           grn_bulk_write(ctx, value, v, len);
           grn_ja_unref(ctx, &jw);
         }

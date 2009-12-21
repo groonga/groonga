@@ -2349,7 +2349,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       } else {
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
         grn_id id = *((grn_id *)GRN_BULK_HEAD(obj));
-        if (table->header.type != GRN_TABLE_NO_KEY) {
+        if (table && table->header.type != GRN_TABLE_NO_KEY) {
           grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
           if (accessor) {
             grn_obj_get_value(ctx, accessor, id, &buf);
