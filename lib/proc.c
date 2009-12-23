@@ -1630,7 +1630,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     switch (domain) {
     case GRN_DB_TOKYO_GEO_POINT :
       {
-        double lng0, lat0, lng1, lat1, p, q, m, n, x, y;
+        double lng0, lat0, lng1, lat1, p, q, r, m, n, x, y;
         if (pos1->header.domain != domain) {
           GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
           if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
@@ -1642,8 +1642,9 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
         lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->latitude);
         p = (lat0 + lat1) * 0.5;
         q = (1 - GEO_BES_C3 * sin(p) * sin(p));
-        m = GEO_BES_C1 / sqrt(q * q * q);
-        n = GEO_BES_C2 / sqrt(q);
+        r = sqrt(q);
+        m = GEO_BES_C1 / (q * r);
+        n = GEO_BES_C2 / r;
         x = n * cos(p) * fabs(lng0 - lng1);
         y = m * fabs(lat0 - lat1);
         d = sqrt((x * x) + (y * y));
@@ -1651,7 +1652,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
       break;
     case  GRN_DB_WGS84_GEO_POINT :
       {
-        double lng0, lat0, lng1, lat1, p, q, m, n, x, y;
+        double lng0, lat0, lng1, lat1, p, q, r, m, n, x, y;
         if (pos1->header.domain != domain) {
           GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
           if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
@@ -1663,8 +1664,9 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
         lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->latitude);
         p = (lat0 + lat1) * 0.5;
         q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
-        m = GEO_GRS_C1 / sqrt(q * q * q);
-        n = GEO_GRS_C2 / sqrt(q);
+        r = sqrt(q);
+        m = GEO_GRS_C1 / (q * r);
+        n = GEO_GRS_C2 / r;
         x = n * cos(p) * fabs(lng0 - lng1);
         y = m * fabs(lat0 - lat1);
         d = sqrt((x * x) + (y * y));
