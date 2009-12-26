@@ -1439,7 +1439,7 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #define GEO_GRS_C1       6335439
 #define GEO_GRS_C2       6378137
 #define GEO_GRS_C3       0.006694
-#define GEO_INT2RAD(x)   ((M_PI * x) / (GEO_RESOLUTION * 180))
+#define GEO_INT2RAD(x)   ((M_PI / (GEO_RESOLUTION * 180)) * x)
 
 static grn_obj *
 func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
