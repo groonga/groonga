@@ -1626,7 +1626,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
       break;
     case  GRN_DB_WGS84_GEO_POINT :
       {
-        double lng0, lat0, lng1, lat1, p, q, m, n, x, y, d;
+        double lng0, lat0, lng1, lat1, p, q, m, n, x, y;
         if (pos1->header.domain != domain) {
           GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
           if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
