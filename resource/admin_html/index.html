@@ -122,14 +122,33 @@
             <li><a href="#table-tab-createcolumn">カラム作成</a></li>
           </ul>
           <div id="table-tab-recordlist">
-            <label for="tab-recordlist-query">検索クエリ: </label><input type="text" id="tab-recordlist-query">
-            <select id="tab-recordlist-querytype">
-              <option value="query">query</option>
-              <option value="filter">filter</option>
-              <option value="scorer">scorer</option>
-            </select>
+            <input type="checkbox" id="table-tab-recordlist-full-checkbox" /><label for="table-tab-recordlist-full-checkbox">管理モード</label>
+            <div id="table-tab-recordlist-form-simple">
+              <label for="tab-recordlist-simplequery">検索クエリ: </label><input type="text" id="tab-recordlist-simplequery">
+              <select id="tab-recordlist-simplequerytype">
+                <option value="query">query</option>
+                <option value="filter">filter</option>
+              </select>
+              <input type="checkbox" id="tab-recordlist-incremental" /><label for="tab-recordlist-incremental" id="tab-recordlist-incremental-label">インクリメンタル検索</label>
+            </div>
+            <div id="table-tab-recordlist-form-full">
+              <table>
+                <tr><td>match_column</td><td><input type="text" id="tab-recordlist-match_column" /></td></tr>
+                <tr><td>query</td><td><input type="text" id="tab-recordlist-query" /></td></tr>
+                <tr><td>filter</td><td><input type="text" id="tab-recordlist-filter" /></td></tr>
+                <tr><td>scorer</td><td><input type="text" id="tab-recordlist-scorer" /></td></tr>
+                <tr><td>sortby</td><td><input type="text" id="tab-recordlist-sortby" /></td></tr>
+                <tr><td>output_columns</td><td><input type="text" id="tab-recordlist-output_columns" /></td></tr>
+                <tr><td>offset</td><td><input type="text" id="tab-recordlist-offset" /></td></tr>
+                <tr><td>limit</td><td><input type="text" id="tab-recordlist-limit" /></td></tr>
+                <tr><td>drilldown</td><td><input type="text" id="tab-recordlist-drilldown" /></td></tr>
+                <tr><td>drilldown_sortby</td><td><input type="text" id="tab-recordlist-drilldown_sortby" /></td></tr>
+                <tr><td>drilldown_output_columns</td><td><input type="text" id="tab-recordlist-drilldown_output_columns" /></td></tr>
+                <tr><td>drilldown_offset</td><td><input type="text" id="tab-recordlist-drilldown_offset" /></td></tr>
+                <tr><td>drilldown_limit</td><td><input type="text" id="tab-recordlist-drilldown_limit" /></td></tr>
+              </table>
+            </div>
             <input type="button" id="tab-recordlist-submit" value="検索"/>
-            <input type="checkbox" id="tab-recordlist-incremental" /><label for="tab-recordlist-incremental" id="tab-recordlist-incremental-label">インクリメンタル検索</label>
             <div id="tab-recordlist-table">
             </div>
           </div>
@@ -342,6 +361,7 @@ Groonga = {
   }
 };
 GroongaAdmin = {
+  SELECT_PARAMS_LIST: ['match_column', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
   initialize: function() {
     GroongaAdmin.current_table = null;
     GroongaAdmin.statusTimer = null;
@@ -365,8 +385,8 @@ GroongaAdmin = {
       GroongaAdmin.columnlist(GroongaAdmin.current_table);
     })
     $('#tab-recordlist-link').click(function() {
-      $('#tab-recordlist-query').val('');
-      GroongaAdmin.recordlist(GroongaAdmin.current_table, null, null, 1);
+      $('#tab-recordlist-simplequery').val('');
+      GroongaAdmin.recordlist_simple(GroongaAdmin.current_table, null, null, 1);
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
@@ -375,10 +395,27 @@ GroongaAdmin = {
       GroongaAdmin.createcolumn();
     });
     $('#tab-recordlist-submit').click(function() {
-      GroongaAdmin.recordlist(GroongaAdmin.current_table,
-                              $('#tab-recordlist-query').val(),
-                              $('#tab-recordlist-querytype').val(),
-                              1);
+      if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
+        // full
+        var d = {
+          'table': GroongaAdmin.current_table
+        }
+        $.each(GroongaAdmin.SELECT_PARAMS_LIST, function(i, val) {
+          var e = $('#tab-recordlist-' + val);
+          if (e.val()) {
+            d[val] = e.val();
+          }
+        });
+        GroongaAdmin.recordlist(d);
+      } else {
+        // simple
+        GroongaAdmin.recordlist_simple(
+          GroongaAdmin.current_table,
+          $('#tab-recordlist-simplequery').val(),
+          $('#tab-recordlist-simplequerytype').val(),
+          1);
+      }
+
     });
     GroongaAdmin.update_tablelist();
 
@@ -403,7 +440,7 @@ GroongaAdmin = {
       e1.append($('<option />').val(val).text(val));
     });
 
-    $('#tab-recordlist-querytype').change(function() {
+    $('#tab-recordlist-simplequerytype').change(function() {
       if ($(this).val() == 'scorer') {
         $('#tab-recordlist-incremental').hide();
         $('#tab-recordlist-incremental-label').hide();
@@ -414,17 +451,28 @@ GroongaAdmin = {
       $('#tab-recordlist-incremental').change();
     }).change();
 
+    $('#table-tab-recordlist-full-checkbox').change(function() {
+      if ($(this).attr('checked')) {
+        $('#table-tab-recordlist-form-simple').hide();
+        $('#table-tab-recordlist-form-full').show();
+      } else {
+        $('#table-tab-recordlist-form-simple').show();
+        $('#table-tab-recordlist-form-full').hide();
+      }
+    }).change();
+
     $('#tab-recordlist-incremental').change(function() {
       if ($(this).attr('checked') &&
-          $('#tab-recordlist-querytype').val() != 'scorer') {
-        $('#tab-recordlist-query').keyup(function(e) {
-          GroongaAdmin.recordlist(GroongaAdmin.current_table,
-                                  $('#tab-recordlist-query').val(),
-                                  $('#tab-recordlist-querytype').val(),
-                                  1);
+          $('#tab-recordlist-simplequerytype').val() != 'scorer') {
+        $('#tab-recordlist-simplequery').keyup(function(e) {
+          GroongaAdmin.recordlist_simple(
+            GroongaAdmin.current_table,
+            $('#tab-recordlist-simplequery').val(),
+            $('#tab-recordlist-simplequerytype').val(),
+            1);
         });
       } else {
-        $('#tab-recordlist-query').unbind('keyup');
+        $('#tab-recordlist-simplequery').unbind('keyup');
       }
     }).change();
 
@@ -550,8 +598,8 @@ GroongaAdmin = {
                   GroongaAdmin.stop_status_timer();
                   $('#table-tabs').show();
                   GroongaAdmin.columnlist(table_name);
-                  $('#tab-recordlist-query').val('');
-                  GroongaAdmin.recordlist(table_name, null, null, 1);
+                  $('#tab-recordlist-simplequery').val('');
+                  GroongaAdmin.recordlist_simple(table_name, null, null, 1);
                 })
             )
           );
@@ -577,80 +625,96 @@ GroongaAdmin = {
       }
     });
   },
-  pager_element: function(per_page, current_page, total, show_num, func) {
-    var ret = $('<div/>').addClass('pager');
-    if (total) {
-      var last_page = Math.floor((total - 1) / per_page) + 1;
-      var st = current_page - Math.floor(show_num / 2);
-      st = (st < 1) ? 1 : st;
-      var ed = st + show_num - 1;
-      ed = (ed > last_page) ? last_page : ed;
+  pager_element_factory: function(per_page, current_page, show_num, func) {
+    return function (total) {
+      var ret = $('<div/>').addClass('pager');
+      if (total) {
+        var last_page = Math.floor((total - 1) / per_page) + 1;
+        var st = current_page - Math.floor(show_num / 2);
+        st = (st < 1) ? 1 : st;
+        var ed = st + show_num - 1;
+        ed = (ed > last_page) ? last_page : ed;
 
-      if (st > 1) {
-        ret.append(
-          $('<span/>').addClass('pager').append(
-            $('<a/>').attr('href', '#').text('1').click(func)
-          )
-        ).append($('<span/>').text('....'));
-      }
-      for (var i = st; i <= ed; i++) {
-        var s = $('<span/>').append(
-          $('<a/>').attr('href', '#').text(String(i)).click(func)
-        );
-        if (i == current_page) {
-          s.addClass('pager-current');
-        } else {
-          s.addClass('pager');
+        if (st > 1) {
+          ret.append(
+            $('<span/>').addClass('pager').append(
+              $('<a/>').attr('href', '#').text('1').click(func)
+            )
+          ).append($('<span/>').text('....'));
         }
-        ret.append(s);
-      }
-      if (ed < last_page) {
-        ret.append($('<span/>').text('....')).append(
-          $('<span/>').addClass('pager').append(
-            $('<a/>').attr('href', '#').text(String(last_page)).click(func)
+        for (var i = st; i <= ed; i++) {
+          var s = $('<span/>').append(
+            $('<a/>').attr('href', '#').text(String(i)).click(func)
+          );
+          if (i == current_page) {
+            s.addClass('pager-current');
+          } else {
+            s.addClass('pager');
+          }
+          ret.append(s);
+        }
+        if (ed < last_page) {
+          ret.append($('<span/>').text('....')).append(
+            $('<span/>').addClass('pager').append(
+              $('<a/>').attr('href', '#').text(String(last_page)).click(func)
+            )
           )
-        )
+        }
       }
+      return ret;
     }
-    return ret;
   },
-  recordlist: function(table_name, query, query_type, page) {
+  recordlist_simple: function(table_name, simplequery, simplequery_type, page) {
     var d = {
       'table': table_name,
       'offset': (page - 1) * GroongaAdmin.recordlist_count,
       'limit': GroongaAdmin.recordlist_count
-      /* sort_column: :id */
-    };
-    if (query_type) {
-      d[query_type] = query;
     }
+    switch (simplequery_type) {
+    case 'query':
+    case 'filter':
+      if (simplequery) {
+        d[simplequery_type] = simplequery;
+      }
+      GroongaAdmin.recordlist(d,
+        GroongaAdmin.pager_element_factory(
+          GroongaAdmin.recordlist_count,
+          page,
+          13,
+          function() {
+            GroongaAdmin.recordlist_simple(
+              GroongaAdmin.current_table,
+              simplequery,
+              simplequery_type,
+              Number($(this).text()));
+            return false;
+          })
+      );
+      break;
+    }
+  },
+  recordlist: function(params, pager_func) {
     $.ajax({
       url: '/d/select',
-      data: d,
+      data: params,
       dataType: 'json',
       success: function(d) {
         var rc = d.shift();
         if (rc[0] != 0) {
           alert('error');
+          return false;
         }
         var recs = d.shift();
         var all_count = recs.shift()[0];
-        var pager = GroongaAdmin.pager_element(
-          GroongaAdmin.recordlist_count,
-          page,
-          all_count,
-          13,
-          function() {
-            GroongaAdmin.recordlist(GroongaAdmin.current_table,
-                                    query,
-                                    query_type,
-                                    Number($(this).text()));
-            return false;
-          }
-        );
+        var pager;
+        if (pager_func) {
+          pager = pager_func(all_count);
+        } else {
+          pager = $('<span />');
+        }
         $('#tab-recordlist-table')
           .empty()
-          .append($('<h1/>').text('レコード一覧: ' + table_name))
+          .append($('<h1/>').text('レコード一覧: ' + params['table']))
           .append($('<p/>').text('総件数: ' + all_count))
           .append(pager.clone(true))
           .append($('<div/>').html(GroongaAdmin.create_table_element(recs)))
