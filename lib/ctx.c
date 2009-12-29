@@ -669,8 +669,6 @@ grn_ctx_close(grn_ctx *ctx)
   return rc;
 }
 
-#define EXPR_MISSING "expr_missing"
-
 grn_content_type
 grn_get_ctype(grn_obj *var)
 {
@@ -706,21 +704,6 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
   }
   if (pd && pd < p) {
     switch (*++pd) {
-    case 'c' :
-      if (pd + 3 == p && !memcmp(pd, "css", 3)) {
-        *ct = GRN_CONTENT_NONE;
-      }
-      break;
-    case 'g' :
-      if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
-        *ct = GRN_CONTENT_NONE;
-      }
-      break;
-    case 'h' :
-      if (pd + 4 == p && !memcmp(pd, "html", 4)) {
-        *ct = GRN_CONTENT_NONE;
-      }
-      break;
     case 'j' :
       if (!memcmp(pd, "js", 2)) {
         if (pd + 2 == p) {
@@ -729,16 +712,6 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
           *ct = GRN_CONTENT_JSON;
         }
       } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
-        *ct = GRN_CONTENT_NONE;
-      }
-      break;
-    case 'p' :
-      if (pd + 3 == p && !memcmp(pd, "png", 3)) {
-        *ct = GRN_CONTENT_NONE;
-      }
-      break;
-    case 't' :
-      if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
         *ct = GRN_CONTENT_NONE;
       }
       break;
@@ -759,7 +732,7 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
 
 grn_obj *
-grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
+grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_size)
 {
   const char *p, *e;
   grn_obj *expr, *val = NULL;
@@ -768,7 +741,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     ctx->impl->qe_next = NULL;
     if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-      GRN_TEXT_PUT(ctx, val, str, str_size);
+      GRN_TEXT_PUT(ctx, val, path, path_size);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     grn_expr_exec(ctx, expr, 1);
@@ -779,8 +752,8 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
     const char *g, *pe;
     grn_content_type ot;
     GRN_TEXT_INIT(&key, 0);
-    p = str;
-    e = p + str_size;
+    p = path;
+    e = p + path_size;
     g = grn_text_urldec(ctx, &key, p, e, '?');
     pe = get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot);
     if ((GRN_TEXT_LEN(&key) >= 2 &&
@@ -800,16 +773,6 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *str, uint32_t str_size)
         GRN_INT32_SET(ctx, val, (int32_t)ot);
       }
 
-      grn_ctx_push(ctx, ctx->impl->outbuf);
-      grn_expr_exec(ctx, expr, 1);
-      val = grn_ctx_pop(ctx);
-      grn_expr_clear_vars(ctx, expr);
-    } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
-                                   strlen(GRN_EXPR_MISSING_NAME)))) {
-      if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
-        grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-        GRN_TEXT_PUT(ctx, val, str, str_size);
-      }
       grn_ctx_push(ctx, ctx->impl->outbuf);
       grn_expr_exec(ctx, expr, 1);
       val = grn_ctx_pop(ctx);

@@ -189,98 +189,190 @@ exit :
 
 /* server */
 
-static void
-put_response_header(grn_ctx *ctx, const char *p, const char *pe)
+typedef enum {
+  grn_http_request_type_none = 0,
+  grn_http_request_type_get,
+  grn_http_request_type_post
+} grn_http_request_type;
+
+static const char *
+get_content_type(grn_ctx *ctx, const char *p, const char *pe,
+                 grn_content_type *ct, const char **mime_type)
 {
   const char *pd = NULL;
-  grn_obj *head = ctx->impl->outbuf;
   for (; p < pe && *p != '?'; p++) {
     if (*p == '.') {
       pd = p;
     }
   }
-  GRN_TEXT_SETS(ctx, head, "HTTP/1.1 200 OK\r\n");
-  GRN_TEXT_PUTS(ctx, head, "Connection: close\r\n");
   if (pd && pd < p) {
     switch (*++pd) {
     case 'c' :
       if (pd + 3 == p && !memcmp(pd, "css", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/css\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+        *mime_type = "text/css";
       }
       break;
     case 'g' :
       if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/gif\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+        *mime_type = "image/gif";
       }
       break;
     case 'h' :
       if (pd + 4 == p && !memcmp(pd, "html", 4)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/html\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+        *mime_type = "text/html";
       }
       break;
     case 'j' :
       if (!memcmp(pd, "js", 2)) {
         if (pd + 2 == p) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: text/javascript\r\n\r\n");
+          *ct = GRN_CONTENT_NONE;
+          *mime_type = "text/javascript";
         } else if (pd + 4 == p && !memcmp(pd + 2, "on", 2)) {
-          GRN_TEXT_PUTS(ctx, head, "Content-Type: application/json\r\n\r\n");
+          *ct = GRN_CONTENT_JSON;
+          *mime_type = "application/json";
         }
       } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/jpeg\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+        *mime_type = "image/jpeg";
       }
       break;
     case 'p' :
       if (pd + 3 == p && !memcmp(pd, "png", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: image/png\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+        *mime_type = "image/png";
       }
       break;
     case 't' :
       if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/plain\r\n\r\n");
+        *ct = GRN_CONTENT_NONE;
+        *mime_type = "text/plain";
       }
       break;
     case 'x':
       if (pd + 3 == p && !memcmp(pd, "xml", 3)) {
-        GRN_TEXT_PUTS(ctx, head, "Content-Type: text/xml\r\n\r\n");
+        *ct = GRN_CONTENT_XML;
+        *mime_type = "text/xml";
       }
       break;
     }
+    return pd - 1;
   } else {
-    GRN_TEXT_PUTS(ctx, head, "Content-Type: application/json\r\n\r\n");
+    *ct = GRN_CONTENT_JSON;
+    *mime_type = "application/json";
+    return pe;
   }
 }
 
+#define EXPR_MISSING "expr_missing"
+#define OUTPUT_TYPE "output_type"
+#define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
+
 static void
-do_htreq(grn_ctx *ctx, grn_msg *msg)
+do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
 {
+  grn_http_request_type t = grn_http_request_type_none;
   grn_com_header *header = &msg->header;
   switch (header->qtype) {
   case 'G' : /* GET */
-    {
-      char *path = NULL;
-      char *p = GRN_BULK_HEAD((grn_obj *)msg);
-      char *e = GRN_BULK_CURR((grn_obj *)msg);
-      for (;; p++) {
-        if (e <= p + 6) {
-          /* invalid request */
-          goto exit;
-        }
-        if (*p == ' ') {
-          if (!path) {
-            path = p + 1;
-          } else {
-            if (!memcmp(p + 1, "HTTP/1", 6)) {
-              break;
-            }
+    t = grn_http_request_type_get;
+    break;
+  case 'P' : /* POST */
+    t = grn_http_request_type_post;
+    break;
+  }
+  if (t) {
+    char *path = NULL;
+    char *pathe = GRN_BULK_HEAD((grn_obj *)msg);
+    char *e = GRN_BULK_CURR((grn_obj *)msg);
+    for (;; pathe++) {
+      if (e <= pathe + 6) {
+        /* invalid request */
+        goto exit;
+      }
+      if (*pathe == ' ') {
+        if (!path) {
+          path = pathe + 1;
+        } else {
+          if (!memcmp(pathe + 1, "HTTP/1", 6)) {
+            break;
           }
         }
       }
-      if (*path == '/') {
-        put_response_header(ctx, path, p);
-        grn_ctx_send(ctx, path, p - path, 0);
+    }
+    /* TODO: handle post body */
+    if (*path == '/') {
+      grn_obj key;
+      const char *g, *key_end, *mime_type;
+      grn_content_type ot;
+      grn_obj *expr, *val = NULL;
+
+      GRN_TEXT_INIT(&key, 0);
+      GRN_BULK_REWIND(body);
+      g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
+      key_end = get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &mime_type);
+      if ((GRN_TEXT_LEN(&key) >= 2 &&
+           GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
+          (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, key_end - GRN_TEXT_VALUE(&key) - 2))) {
+        while (g < pathe) {
+          GRN_BULK_REWIND(&key);
+          g = grn_text_cgidec(ctx, &key, g, e, '=');
+          if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
+            val = &key;
+          }
+          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+          g = grn_text_cgidec(ctx, val, g, e, '&');
+        }
+        if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
+          grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
+          GRN_INT32_SET(ctx, val, (int32_t)ot);
+        }
+
+        grn_ctx_push(ctx, body);
+        grn_expr_exec(ctx, expr, 1);
+        val = grn_ctx_pop(ctx);
+        grn_expr_clear_vars(ctx, expr);
+      } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
+                                     strlen(GRN_EXPR_MISSING_NAME)))) {
+        if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
+          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+          GRN_TEXT_PUT(ctx, val, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key));
+        }
+        grn_ctx_push(ctx, body);
+        grn_expr_exec(ctx, expr, 1);
+        val = grn_ctx_pop(ctx);
+        grn_expr_clear_vars(ctx, expr);
+      }
+      GRN_OBJ_FIN(ctx, &key);
+
+      /* TODO: Content-Length */
+      if (!ERRP(ctx, GRN_CRIT)) {
+        GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 200 OK\r\n");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Connection: close\r\n");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: ");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, mime_type);
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\nContent-Length: ");
+        grn_text_lltoa(ctx, ctx->impl->outbuf, GRN_TEXT_LEN(body));
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
+        GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+      } else {
+        /* TODO: output backtrace */
+        GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 500 Internal Server Error\r\n");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: text/plain\r\n\r\n");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\n");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errfile);
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ":");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errfunc);
+      }
+
+      if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
+      if (ctx->impl->output) {
+        ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
       }
     }
-    break;
   }
 exit :
   // todo : support "Connection: keep-alive"
@@ -862,8 +954,10 @@ static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads = DEFAULT_MAX_NFTHREA
 static void * CALLBACK
 h_worker(void *arg)
 {
+  grn_obj body;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  GRN_TEXT_INIT(&body, 0);
   grn_ctx_use(ctx, (grn_obj *)arg);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
   MUTEX_LOCK(q_mutex);
@@ -879,7 +973,7 @@ h_worker(void *arg)
     nfthreads--;
     MUTEX_UNLOCK(q_mutex);
     fd = ((grn_msg *)msg)->u.fd;
-    do_htreq(ctx, (grn_msg *)msg);
+    do_htreq(ctx, (grn_msg *)msg, &body);
     out = ctx->impl->outbuf;
 #ifdef WIN32
     ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), 0);
@@ -1053,9 +1147,6 @@ g_worker(void *arg)
           grn_com_header *header = &edge->msg->header;
           msg = (grn_obj *)edge->msg;
           switch (header->proto) {
-          case GRN_COM_PROTO_HTTP :
-            do_htreq(ctx, edge->msg);
-            break;
           case GRN_COM_PROTO_MBREQ :
             do_mbreq(ctx, edge);
             break;

@@ -570,7 +570,10 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
   /* FIXME: implement more smartly with grn_bulk */
   int fd, ret = 0;
   struct stat stat;
-  if ((fd = open(path, O_RDONLY)) == -1) { return ret; }
+  if ((fd = open(path, O_RDONLY)) == -1) {
+    ERR(GRN_INVALID_ARGUMENT, "file is not found");
+    return 0;
+  }
   if (fstat(fd, &stat) != -1) {
     char *buf, *bp;
     off_t rest = stat.st_size;
@@ -583,6 +586,8 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
       ret = 1;
     }
     GRN_FREE(buf);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "cannot stat file");
   }
 exit :
   close(fd);
