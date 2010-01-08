@@ -2624,7 +2624,8 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
       /* TODO: add TIME attribute to RESULTSET element. */
       if (tc) {
         GRN_TEXT_INIT(&id, 0);
-        for (i = 1; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+        for (i = format->offset + 1;
+             !grn_table_cursor_next_o(ctx, tc, &id); i++) {
           switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
           case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
             GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
