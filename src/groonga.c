@@ -318,12 +318,12 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
           (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, key_end - GRN_TEXT_VALUE(&key) - 2))) {
         while (g < pathe) {
           GRN_BULK_REWIND(&key);
-          g = grn_text_cgidec(ctx, &key, g, e, '=');
+          g = grn_text_cgidec(ctx, &key, g, pathe, '=');
           if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
             val = &key;
           }
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-          g = grn_text_cgidec(ctx, val, g, e, '&');
+          g = grn_text_cgidec(ctx, val, g, pathe, '&');
         }
         if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
           grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
