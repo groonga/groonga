@@ -18,7 +18,7 @@ Description: Development files to use groonga as a library
 Package: libgroonga
 Section: libs
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libmecab1
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Library files for groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
