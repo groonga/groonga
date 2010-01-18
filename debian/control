@@ -6,7 +6,7 @@ Standards-Version: 3.7.3
 Homepage: http://groonga.org/
 
 Package: libgroonga-dev
-Section: devel
+Section: libdevel
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, libgroonga (= ${binary:Version})
 Description: Development files to use groonga as a library
