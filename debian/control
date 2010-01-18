@@ -1,13 +1,12 @@
 Source: groonga
-Priority: extra
+Priority: optional
 Maintainer: Kouhei Sutou <kou@clear-code.com>
 Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libmecab-dev
 Standards-Version: 3.7.3
-Section: libs
 Homepage: http://groonga.org/
 
 Package: libgroonga-dev
-Section: libdevel
+Section: devel
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, libgroonga (= ${binary:Version})
 Description: Development files to use groonga as a library
@@ -17,7 +16,7 @@ Description: Development files to use groonga as a library
  This package provides header files to use groonga as a library.
 
 Package: libgroonga
-Section: libdevel
+Section: libs
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, libmecab1
 Description: Library files for groonga.
@@ -27,7 +26,7 @@ Description: Library files for groonga.
  This package provides library files.
 
 Package: groonga
-Section: libdevel
+Section: database
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, libgroonga (= ${binary:Version})
 Description: An open-source fulltext search engine and column store.
