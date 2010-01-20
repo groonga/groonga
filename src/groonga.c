@@ -1500,6 +1500,9 @@ main(int argc, char **argv)
       break;
     }
   }
+  if (!grn_admin_html_path) {
+    grn_admin_html_path = DEFAULT_ADMIN_HTML_PATH;
+  }
   if (protocol) {
     switch (*protocol) {
     case 'g' :
