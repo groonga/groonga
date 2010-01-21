@@ -11,5 +11,5 @@ groonga_LDADD = $(top_builddir)/lib/libgroonga.la
 grnslap_SOURCES = grnslap.c
 grnslap_LDADD = $(top_builddir)/lib/libgroonga.la
 
-grntest_SOURCES = grnslap.c
+grntest_SOURCES = grntest.c
 grntest_LDADD = $(top_builddir)/lib/libgroonga.la
