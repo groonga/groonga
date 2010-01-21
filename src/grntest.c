@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <errno.h>
 #include "lib/ctx.h"
+#include <time.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,7 +20,6 @@
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
 
-static int DEBUG_MODE = 0;
 
 static grn_critical_section CS;
 
@@ -39,6 +38,7 @@ FILE *LogFp;
 typedef SOCKET ftpsocket;
 #define FTPERROR INVALID_SOCKET 
 #define ftpclose closesocket
+#define GROONGA_PATH "c:\\Windows\\System32\\groonga.exe"
 #else
 typedef int ftpsocket;
 #define ftpclose close
@@ -56,6 +56,7 @@ char *OSInfo;
 #else
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/uio.h>
 #include <sys/stat.h>
 #include <netdb.h>
@@ -292,7 +293,6 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
       }
 
       if (report_p(TaskTable[task_id].jobtype)) {
-        int i;
         unsigned char tmpbuf[BUF_LEN];
 
         if (res_len < BUF_LEN) {
@@ -501,7 +501,6 @@ static
 int
 get_sysinfo(char *path, char *result)
 {
-  int ret;
   char tmpbuf[256];
 
 #ifdef WIN32
@@ -569,9 +568,9 @@ get_sysinfo(char *path, char *result)
 #include <sys/utsname.h>
 #include <sys/statvfs.h>
   FILE *fp;
+  int ret;
   int cpunum;
   int minfo;
-  int hddinfo;
   char cpustring[256];
   struct utsname ubuf;
   struct statvfs vfsbuf;
@@ -659,9 +658,9 @@ int
 start_server(char *dbpath, int r)
 {
   int ret;
+#ifdef WIN32
   char tmpbuf[BUF_LEN];
 
-#ifdef WIN32
   PROCESS_INFORMATION pi;
   STARTUPINFO si;
 
@@ -898,7 +897,6 @@ int
 make_task_table(grn_ctx *ctx, int jobnum)
 {
   int i, j, len, line;
-  int task_num = 0;
   int tid = 0;
   FILE *fp;
   struct commandtable *ctable;
@@ -967,6 +965,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
   return tid;
 }
 
+/*
 static
 int
 print_commandlist(int task_id)
@@ -978,6 +977,7 @@ print_commandlist(int task_id)
   }
   return 0;
 }
+*/
 
 /* return num of query */
 static
@@ -1210,8 +1210,7 @@ get_file(ftpsocket socket, char *filename, int size)
   while (total != size) {
     ret = recv(socket, buf, FTPBUF, 0);
     if (ret == -1) {
-      fprintf(stderr, "recv error:2:ret=%d:size=%d:total\n", 
-                       total, ret, size);
+      fprintf(stderr, "recv error:2:ret=%d:size=%d:total\n", ret, size);
       return -1;
     }
     if (ret == 0) {
@@ -1233,6 +1232,7 @@ write_to_server(ftpsocket socket, char *buf)
   fprintf(stderr, "send:%s", buf);
 #endif
   send(socket, buf, strlen(buf), 0);
+  return 0;
 }
 
 static
@@ -1291,8 +1291,6 @@ static
 char *
 get_ftp_date(char *buf)
 {
-  int ret;
-
   while (*buf !=' ') {
     buf++;
     if (*buf == '\0') {
@@ -1326,8 +1324,8 @@ int
 ftp_sub(char *user, char *passwd, char *host, char *filename, 
          int mode, char *cd_dirname, char *retval)
 {
-  int ret, max_sock, size = 0;
-  int status = 0, readable = 0;
+  int size = 0;
+  int status = 0;
   ftpsocket command_socket, data_socket;
   int data_port;
   char data_host[BUF_LEN];
@@ -1535,6 +1533,7 @@ get_scriptname(char *path, char *name, char *suffix)
   return 1;
 }
 
+#ifdef WIN32
 static
 int
 get_tm_from_serverdate(char *serverdate, struct tm *tm)
@@ -1557,9 +1556,9 @@ get_tm_from_serverdate(char *serverdate, struct tm *tm)
   tm->tm_year = year - 1900;
   tm->tm_isdst = -1;
 
-
   return 0;
 }
+#endif /* WIN32 */
 
 
 
