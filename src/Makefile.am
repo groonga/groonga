@@ -1,5 +1,5 @@
 bin_PROGRAMS = groonga
-noinst_PROGRAMS = grnslap
+noinst_PROGRAMS = grnslap grntest
 
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS)
 
@@ -10,3 +10,6 @@ groonga_LDADD = $(top_builddir)/lib/libgroonga.la
 
 grnslap_SOURCES = grnslap.c
 grnslap_LDADD = $(top_builddir)/lib/libgroonga.la
+
+grntest_SOURCES = grnslap.c
+grntest_LDADD = $(top_builddir)/lib/libgroonga.la
