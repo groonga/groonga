@@ -1,4 +1,4 @@
-* -*- c-basic-offset: 2 -*- */
+/* -*- c-basic-offset: 2 -*- */
 /* Copyright(C) 2010 Brazil
 
   This library is free software; you can redistribute it and/or
