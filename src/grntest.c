@@ -79,6 +79,8 @@ char *OSInfo;
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/param.h>
+#include <sys/utsname.h>
+#include <sys/statvfs.h>
 #endif /* WIN32 */
 
 FILE *LOG_FP;
@@ -582,8 +584,6 @@ get_sysinfo(char *path, char *result)
   strcat(result, "}");
 
 #else /* linux only */
-#include <sys/utsname.h>
-#include <sys/statvfs.h>
   FILE *fp;
   int ret;
   int cpunum;
