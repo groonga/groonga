@@ -122,8 +122,9 @@ static void
 cast_text(const gchar *text)
 {
   grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
-  if (text)
+  if (text) {
     GRN_TEXT_PUTS(&context, &src, text);
+  }
   grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
