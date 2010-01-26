@@ -20,6 +20,7 @@
 #include <gcutter.h>
 #include "grn-assertions.h"
 
+#include <groonga_in.h>
 #include <str.h>
 
 grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
