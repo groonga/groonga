@@ -269,9 +269,14 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
   }
 }
 
-#define EXPR_MISSING "expr_missing"
+#define INDEX_HTML "index.html"
 #define OUTPUT_TYPE "output_type"
+#define EXPR_MISSING "expr_missing"
+#define JSON_CALLBACK_PARAM "callback"
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
+
+#define GRN_TEXT_CMPS(obj,str) \
+  (GRN_TEXT_LEN((obj)) == strlen((str)) && !memcmp(GRN_TEXT_VALUE((obj)), (str), strlen((str))))
 
 static void
 do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
@@ -307,14 +312,16 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
     }
     /* TODO: handle post body */
     if (*path == '/') {
-      grn_obj key;
+      grn_obj key, jsonp_func;
       const char *g, *key_end, *mime_type;
       grn_content_type ot;
       grn_obj *expr, *val = NULL;
 
       GRN_TEXT_INIT(&key, 0);
+      GRN_TEXT_INIT(&jsonp_func, 0);
       GRN_BULK_REWIND(body);
       g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
+      if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
       key_end = get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &mime_type);
       if ((GRN_TEXT_LEN(&key) >= 2 &&
            GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
@@ -322,10 +329,12 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         while (g < pathe) {
           GRN_BULK_REWIND(&key);
           g = grn_text_cgidec(ctx, &key, g, pathe, '=');
-          if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
+          if (GRN_TEXT_CMPS(&key, JSON_CALLBACK_PARAM)) {
+            val = &jsonp_func;
+          } else if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
             val = &key;
+            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           }
-          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           g = grn_text_cgidec(ctx, val, g, pathe, '&');
         }
         if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
@@ -341,7 +350,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
                                      strlen(GRN_EXPR_MISSING_NAME)))) {
         if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-          GRN_TEXT_PUT(ctx, val, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key));
+          GRN_TEXT_SET(ctx, val, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key));
         }
         grn_ctx_push(ctx, body);
         grn_expr_exec(ctx, expr, 1);
@@ -359,9 +368,17 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\nContent-Length: ");
         grn_text_lltoa(ctx, ctx->impl->outbuf, GRN_TEXT_LEN(body));
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
-        GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+        if (GRN_TEXT_LEN(&jsonp_func)) {
+          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(&jsonp_func), GRN_TEXT_LEN(&jsonp_func));
+          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '(');
+          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ");");
+        } else {
+          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+        }
       } else {
         /* TODO: output backtrace */
+        /* TODO: output with given output type like json */
         GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 500 Internal Server Error\r\n");
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: text/plain\r\n\r\n");
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
