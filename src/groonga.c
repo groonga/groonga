@@ -269,6 +269,7 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
   }
 }
 
+#define INDEX_HTML "index.html"
 #define EXPR_MISSING "expr_missing"
 #define OUTPUT_TYPE "output_type"
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
@@ -315,6 +316,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       GRN_TEXT_INIT(&key, 0);
       GRN_BULK_REWIND(body);
       g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
+      if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
       key_end = get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &mime_type);
       if ((GRN_TEXT_LEN(&key) >= 2 &&
            GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
@@ -341,7 +343,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
                                      strlen(GRN_EXPR_MISSING_NAME)))) {
         if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-          GRN_TEXT_PUT(ctx, val, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key));
+          GRN_TEXT_SET(ctx, val, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key));
         }
         grn_ctx_push(ctx, body);
         grn_expr_exec(ctx, expr, 1);
