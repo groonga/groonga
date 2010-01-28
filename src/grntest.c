@@ -90,6 +90,7 @@ grn_obj *grntest_db = NULL;
 
 #define MAX_COMMAND 1024
 #define BUF_LEN 1024
+#define MAX_PATH_LEN 256
 #define MAX_COMMAND_LEN 10000
 
 #define J_DO_LOCAL  1  /* do_local */
@@ -1385,6 +1386,16 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
 
   WSAStartup(MAKEWORD(2,0), &ws);
 #endif /* WIN32 */
+
+  if (strlen(filename) >= MAX_PATH_LEN) {
+    fprintf(stderr, "too long filename\n");
+    exit(1);
+  }
+
+  if (strlen(cd_dirname) >= MAX_PATH_LEN) {
+    fprintf(stderr, "too long dirname\n");
+    exit(1);
+  }
 
   command_socket = open_socket(host, 21);
   if (command_socket == FTPERROR) {
