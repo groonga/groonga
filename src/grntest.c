@@ -166,6 +166,7 @@ gqtp_p(int jobtype)
   return 0;
 }
 
+
 static
 int
 report_command(grn_ctx *ctx, char *command, char *ret, int task_id, 
@@ -255,6 +256,7 @@ error_exit_in_thread(intptr_t code)
 #else
   pthread_exit((void *)code);
 #endif /* WIN32 */
+  return 0;
 }
 
 static
@@ -268,6 +270,16 @@ shutdown_server(grn_ctx *ctx)
     exit(1);
   }
   grn_ctx_send(ctx, "shutdown", 8, 0);
+  return 0;
+}
+
+static
+int
+error_command(grn_ctx *ctx, char *command, int task_id)
+{
+  fprintf(stderr, "error!:command=%s task_id = %d\n", command, task_id);
+  fflush(stderr);
+  error_exit_in_thread(1);
   return 0;
 }
 
@@ -324,13 +336,26 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
         }
         report_command(ctx, command, tmpbuf, task_id, &start_time, &end_time);
       }
+      grn_obj_close(ctx, &end_time);
       break;
+    }
+    else {
+      error_command(ctx, command, task_id);
     }
   } while ((flags & GRN_CTX_MORE));
 
   grn_obj_close(ctx, &start_time);
-  grn_obj_close(ctx, &end_time);
 
+  return 0;
+}
+
+static
+int
+comment_p(char *command)
+{
+  if (command[0] == '#') {
+    return 1;
+  }
   return 0;
 }
 
@@ -361,6 +386,9 @@ worker_sub(intptr_t task_id)
         if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
           fprintf(stderr, "Too long commmand in %s\n",TaskTable[task_id].file);
           error_exit_in_thread(1);
+        }
+        if (comment_p(tmpbuf)) {
+          continue;
         }
         tmpbuf[strlen(tmpbuf)-1] = '\0';
         do_command(&CtxTable[task_id], tmpbuf, 
@@ -951,6 +979,9 @@ make_task_table(grn_ctx *ctx, int jobnum)
                    JobTable[i].commandfile);
             fprintf(stderr, "line =%d:%s\n", line + 1, tmpbuf);
             error_exit(ctx, 1);
+          }
+          if (comment_p(tmpbuf)) {
+            continue;
           }
           len = strlen(tmpbuf);
           len--;
