@@ -1361,22 +1361,20 @@ put_file(ftpsocket socket, char *filename)
 
 static
 int
-ftp_list(ftpsocket data_socket, ftpsocket command_socket)
+ftp_list(ftpsocket data_socket)
 {
   int ret;
   char buf[BUF_LEN];
-  char command_buf[BUF_LEN];
 
   while (1) {
     ret = recv(data_socket, buf, BUF_LEN - 2, 0);
     if (ret == 0) {
+      fflush(stdout);
       return 0;
     }
     buf[ret] = '\0';
     fprintf(stdout, "%s", buf);
   }
-  fprintf(stdout, "\n");
-  fflush(stdout);
   
   return 0;
 }
@@ -1640,7 +1638,7 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
 
   switch (mode) {
     case MODE_LIST:
-      ftp_list(data_socket, command_socket);
+      ftp_list(data_socket);
       break;
     case MODE_GET:
       if (get_file(data_socket, filename, size) == -1) {
