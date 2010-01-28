@@ -282,6 +282,74 @@ error_command(grn_ctx *ctx, char *command, int task_id)
 
 static
 int
+do_load_command(grn_ctx *ctx, char *command, int type, int task_id, 
+                long long int *load_start)
+{
+  char *res;
+  int res_len, flags, ret;
+  grn_obj start_time, end_time;
+
+  if (*load_start == 0) {
+    GRN_TIME_INIT(&start_time, 0);
+    GRN_TIME_NOW(ctx, &start_time);
+    *load_start = GRN_TIME_VALUE(&start_time);
+    grn_obj_close(ctx, &start_time);
+  }
+
+  grn_ctx_send(ctx, command, strlen(command), 0);
+/* fix me. 
+   when command fails, ctx->rc is not 0 in local mode!
+  if (ctx->rc) {
+    fprintf(stderr, "ctx_send:rc=%d:command:%s\n", ctx->rc, command);
+    error_exit_in_thread(1);
+  }
+*/
+  do {
+    grn_ctx_recv(ctx, &res, &res_len, &flags);
+    if (ctx->rc) {
+      fprintf(stderr, "ctx_recv:rc=%d\n", ctx->rc);
+      error_exit_in_thread(1);
+      return 0;
+    }
+    if (res_len) {
+      long long int self;
+      GRN_TIME_INIT(&end_time, 0);
+      GRN_TIME_NOW(ctx, &end_time);
+
+      self = GRN_TIME_VALUE(&end_time) - *load_start;
+
+      if (grntest_task[task_id].max < self) {
+        grntest_task[task_id].max = self; 
+      }
+      if (grntest_task[task_id].min > self) {
+        grntest_task[task_id].min = self;
+      }
+
+      if (report_p(grntest_task[task_id].jobtype)) {
+        unsigned char tmpbuf[BUF_LEN];
+
+        if (res_len < BUF_LEN) {
+          strncpy(tmpbuf, res, res_len);
+          tmpbuf[res_len] = '\0';
+        } else {
+          strncpy(tmpbuf, res, BUF_LEN - 2);
+          tmpbuf[BUF_LEN -2] = '\0';
+        }
+        report_command(ctx, "load", tmpbuf, task_id, &start_time, &end_time);
+      }
+      grn_obj_close(ctx, &end_time);
+      ret = 1;
+      break;
+    } else {
+      ret = 0;
+    }
+  } while ((flags & GRN_CTX_MORE));
+
+  return ret;
+}
+
+static
+int
 do_command(grn_ctx *ctx, char *command, int type, int task_id)
 {
   char *res;
@@ -292,7 +360,8 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
   GRN_TIME_NOW(ctx, &start_time);
 
   grn_ctx_send(ctx, command, strlen(command), 0);
-/*
+/* fix me. 
+   when command fails, ctx->rc is not 0 in local mode!
   if (ctx->rc) {
     fprintf(stderr, "ctx_send:rc=%d:command:%s\n", ctx->rc, command);
     error_exit_in_thread(1);
@@ -356,12 +425,31 @@ comment_p(char *command)
 
 static
 int
+load_command_p(char *command)
+{
+  int i = 0;
+
+  while(isspace(command[i])) {
+    i++;
+  }
+  if (command[i] == '\0') {
+    return 0;
+  }
+  if (!strncmp(&command[i], "load", 4)) {
+    return 1;
+  }
+  return 0;
+}
+
+static
+int
 worker_sub(intptr_t task_id)
 {
-  int i;
+  int i, load_mode;
   grn_obj end_time;
   long long int latency, self;
   double sec, qps;
+  long long int load_start;
 
   grntest_task[task_id].max = 0LL;
   grntest_task[task_id].min = 9223372036854775807LL;
@@ -377,18 +465,33 @@ worker_sub(intptr_t task_id)
         error_exit_in_thread(1);
       } 
       tmpbuf[MAX_COMMAND_LEN-2] = '\0';
+      load_mode = 0;
+      load_start = 0LL;
       while (fgets(tmpbuf, MAX_COMMAND_LEN, fp) != NULL) {
         if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
           fprintf(stderr, "Too long commmand in %s\n",grntest_task[task_id].file);
           error_exit_in_thread(1);
         }
+        tmpbuf[strlen(tmpbuf)-1] = '\0';
         if (comment_p(tmpbuf)) {
           continue;
         }
-        tmpbuf[strlen(tmpbuf)-1] = '\0';
+        if (load_command_p(tmpbuf)) {
+          load_mode = 1;
+        }
+        if (load_mode == 1) {
+          if (do_load_command(&grntest_ctx[task_id], tmpbuf, 
+                              grntest_task[task_id].jobtype,
+                              task_id, &load_start)) {
+            grntest_task[task_id].qnum++;
+            load_mode = 0;
+            load_start = 0LL;
+          }
+          continue;
+        }
         do_command(&grntest_ctx[task_id], tmpbuf, 
-                   grntest_task[task_id].jobtype,
-                   task_id);
+                     grntest_task[task_id].jobtype,
+                     task_id);
         grntest_task[task_id].qnum++;
       }
       fclose(fp);
@@ -398,7 +501,21 @@ worker_sub(intptr_t task_id)
         fprintf(stderr, "Fatal error!:check script file!\n");
         error_exit_in_thread(1);
       }
+      load_mode = 0;
       for (line = 0; line < grntest_task[task_id].table->num; line++) {
+        if (load_command_p(grntest_task[task_id].table->command[line])) {
+          load_mode = 1;
+        }
+        if (load_mode == 1) {
+          if (do_load_command(&grntest_ctx[task_id], 
+                              grntest_task[task_id].table->command[line], 
+                              grntest_task[task_id].jobtype, task_id, &load_start)) {
+            load_mode = 0;
+            load_start = 0LL;
+            grntest_task[task_id].qnum++;
+          }
+          continue;
+        }
         do_command(&grntest_ctx[task_id], 
                    grntest_task[task_id].table->command[line], 
                    grntest_task[task_id].jobtype, task_id);
@@ -969,12 +1086,12 @@ make_task_table(grn_ctx *ctx, int jobnum)
             fprintf(stderr, "line =%d:%s\n", line + 1, tmpbuf);
             error_exit(ctx, 1);
           }
-          if (comment_p(tmpbuf)) {
-            continue;
-          }
           len = strlen(tmpbuf);
           len--;
           tmpbuf[len] = '\0';
+          if (comment_p(tmpbuf)) {
+            continue;
+          }
           ctable->command[line] = strdup(tmpbuf);
           if (ctable->command[line] == NULL) {
             fprintf(stderr, "Cannot alloc commandfile:%s\n",
