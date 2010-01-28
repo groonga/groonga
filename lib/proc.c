@@ -141,8 +141,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
              GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value));
     if (ctx->impl->loader.stat != GRN_LOADER_END) {
       grn_ctx_set_next_expr(ctx, proc);
-    }
-    {
+    } else {
       grn_obj body;
       GRN_TEXT_INIT(&body, 0);
       grn_text_itoa(ctx, &body, ctx->impl->loader.nrecords);
