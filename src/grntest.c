@@ -44,7 +44,7 @@ static int grntest_stop_flag = 0;
 static int grntest_detail_on = 0;
 #define TMPFILE "_grntest.tmp"
 
-FILE *LogFp;
+FILE *grntest_logfp;
 
 #define OS_LINUX64   "LINUX64"
 #define OS_LINUX32   "LINUX32"
@@ -136,7 +136,7 @@ static int grntest_jobdone;
 static int grntest_jobnum;
 static grn_ctx grntest_ctx[MAX_CON];
 
-grn_obj StartTime, Jobs_Start;
+grn_obj grntest_starttime, grntest_jobs_start;
 
 static
 int
@@ -196,16 +196,16 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
     strcpy(rettmp, ret);
   }
 
-  start = GRN_TIME_VALUE(start_time) - GRN_TIME_VALUE(&StartTime);
-  end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&StartTime);
+  start = GRN_TIME_VALUE(start_time) - GRN_TIME_VALUE(&grntest_starttime);
+  end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
   if (hash_ret) {
-    fprintf(LogFp, "[%d, \"%s\", %lld, %lld, %s], \n",  
+    fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s], \n",  
             task_id, command, start, end, rettmp);
   } else {
-    fprintf(LogFp, "[%d, \"%s\", %lld, %lld, \"%s\"], \n",  
+    fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, \"%s\"], \n",  
             task_id, command, start, end, rettmp);
   }
-  fflush(LogFp);
+  fflush(grntest_logfp);
   return 0;
 }
 
@@ -220,11 +220,11 @@ output_result_final(grn_ctx *ctx, int qnum)
   GRN_TIME_INIT(&end_time, 0);
   GRN_TIME_NOW(ctx, &end_time);
 
-  latency = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&StartTime);
+  latency = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_starttime);
   self = latency;
   sec = self / (double)1000000;
   qps = (double)qnum / sec;
-  fprintf(LogFp, 
+  fprintf(grntest_logfp, 
          "{\"total\": %lld, \"qps\": %f}]\n", latency, qps);
   grn_obj_close(ctx, &end_time);
   return 0;
@@ -234,7 +234,7 @@ static
 int
 output_sysinfo(char *sysinfo)
 {
-  fprintf(LogFp, "[%s\n", sysinfo);
+  fprintf(grntest_logfp, "[%s\n", sysinfo);
   return 0;
 }
   
@@ -408,8 +408,8 @@ worker_sub(intptr_t task_id)
 
   GRN_TIME_INIT(&end_time, 0);
   GRN_TIME_NOW(&grntest_ctx[task_id], &end_time);
-  latency = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&StartTime);
-  self = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&Jobs_Start);
+  latency = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_starttime);
+  self = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_jobs_start);
 
   CRITICAL_SECTION_ENTER(grntest_cs);
   if (grntest_job[grntest_task[task_id].job_id].max < grntest_task[task_id].max) {
@@ -428,22 +428,22 @@ worker_sub(intptr_t task_id)
     grntest_jobdone++;
     if (grntest_jobdone == 1) {
       if (grntest_detail_on) {
-        fseek(LogFp, -2, SEEK_CUR);
-        fprintf(LogFp, "], \n");
+        fseek(grntest_logfp, -2, SEEK_CUR);
+        fprintf(grntest_logfp, "], \n");
       }
-      fprintf(LogFp, "\"summary\" :[");
+      fprintf(grntest_logfp, "\"summary\" :[");
     }
-    fprintf(LogFp, 
+    fprintf(grntest_logfp, 
             "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld}",
             grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
             grntest_job[grntest_task[task_id].job_id].min,
             grntest_job[grntest_task[task_id].job_id].max);
     if (grntest_jobdone < grntest_jobnum) {
-      fprintf(LogFp, ", ");
+      fprintf(grntest_logfp, ", ");
     } else {
-      fprintf(LogFp, "]");
+      fprintf(grntest_logfp, "]");
     }
-    fflush(LogFp);
+    fflush(grntest_logfp);
   }
   grn_obj_close(&grntest_ctx[task_id], &end_time);
   CRITICAL_SECTION_LEAVE(grntest_cs);
@@ -1060,7 +1060,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     }
   }
   if (grntest_detail_on) {
-    fprintf(LogFp, "\"detail\" :[\n");
+    fprintf(grntest_logfp, "\"detail\" :[\n");
   }
 
   thread_main(ctx, task_num);
@@ -1117,14 +1117,14 @@ do_script(grn_ctx *ctx, char *sfile)
     grntest_jobnum = job_num;
 
     if (job_num > 0) {
-      GRN_TIME_INIT(&Jobs_Start, 0);
-      GRN_TIME_NOW(ctx, &Jobs_Start);
-      fprintf(LogFp, "{\"jobs\": \"%s\",\n", buf);
+      GRN_TIME_INIT(&grntest_jobs_start, 0);
+      GRN_TIME_NOW(ctx, &grntest_jobs_start);
+      fprintf(grntest_logfp, "{\"jobs\": \"%s\",\n", buf);
       qnum = do_jobs(ctx, job_num, line);
-      fprintf(LogFp, "},\n");
+      fprintf(grntest_logfp, "},\n");
       qnum_total = qnum_total + qnum;
 
-      grn_obj_close(ctx, &Jobs_Start);
+      grn_obj_close(ctx, &grntest_jobs_start);
     }
     if (grntest_stop_flag) {
       fprintf(stderr, "Error:Quit\n");
@@ -1176,8 +1176,6 @@ check_server(grn_ctx *ctx)
   return 0;
 }
 
-
-
 #define MODE_LIST 1
 #define MODE_GET  2
 #define MODE_PUT  3
@@ -1204,7 +1202,7 @@ int
 read_response(ftpsocket socket, char *buf)
 {
   int ret;
-  ret = recv(socket, buf, BUF_LEN, 0);
+  ret = recv(socket, buf, BUF_LEN - 1, 0);
   if (ret == -1) {
     fprintf(stderr, "recv error:3\n");
     exit(1);
@@ -1452,7 +1450,7 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
 
   switch (mode) {
     case MODE_LIST:
-      sprintf(send_mesg, "LIST\r\n");
+      sprintf(send_mesg, "LIST \r\n");
       write_to_server(command_socket, send_mesg);
       break;
     case MODE_PUT:
@@ -1482,7 +1480,12 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
     size = get_size(buf);
   }
   if (!strncmp(buf, "213", 3)) {
+    retval[BUF_LEN-2] = '\0';
     strcpy(retval, get_ftp_date(buf));
+    if (retval[BUF_LEN-2] != '\0' ) {
+      fprintf(stderr, "buffer over run in ftp\n");
+      exit(1);
+    }
   }
 
   switch (mode) {
@@ -1574,6 +1577,15 @@ get_scriptname(char *path, char *name, char *suffix)
 {
   int slen = strlen(suffix);
   int len = strlen(path);
+
+  if (len >= BUF_LEN) {
+    fprintf(stderr, "too long script name\n");
+    exit(1);
+  }
+  if (slen > len) {
+    fprintf(stderr, "too long suffux\n");
+    exit(1);
+  }
 
   strcpy(name, path);
   if (strncmp(&name[len-slen], suffix, slen)) {
@@ -1681,6 +1693,10 @@ cache_file(char **flist, char *file, int fnum)
   }
   flist[fnum] = strdup(file);
   fnum++;
+  if (fnum >= BUF_LEN) {
+    fprintf(stderr, "too many uniq commands file!\n");
+    exit(1);
+  }
   return fnum;
 }
 
@@ -1802,16 +1818,16 @@ main(int argc, char **argv)
   get_scriptname(argv[1], grntest_scriptname, ".scr");
   get_username(grntest_username);
 
-  GRN_TIME_INIT(&StartTime, 0);
-  GRN_TIME_NOW(&context, &StartTime);
-  sec = (time_t)(GRN_TIME_VALUE(&StartTime)/1000000);
+  GRN_TIME_INIT(&grntest_starttime, 0);
+  GRN_TIME_NOW(&context, &grntest_starttime);
+  sec = (time_t)(GRN_TIME_VALUE(&grntest_starttime)/1000000);
   get_date(grntest_date, &sec);
   
   sprintf(log, "%s-%s-%lld.log", grntest_scriptname, 
-          grntest_username, GRN_TIME_VALUE(&StartTime));
+          grntest_username, GRN_TIME_VALUE(&grntest_starttime));
 
-  LogFp = fopen(log, "w+b");
-  if (!LogFp) {
+  grntest_logfp = fopen(log, "w+b");
+  if (!grntest_logfp) {
     fprintf(stderr, "Cannot open logfile:%s\n", log);
     shutdown_server(&context);
     goto exit;
@@ -1821,7 +1837,7 @@ main(int argc, char **argv)
 
   qnum = do_script(&context, argv[1]);
   output_result_final(&context, qnum);
-  fclose(LogFp);
+  fclose(grntest_logfp);
 
   if (!remote_mode) {
     shutdown_server(&context);
@@ -1831,7 +1847,7 @@ main(int argc, char **argv)
           "report", NULL);
 exit:
   CRITICAL_SECTION_FIN(grntest_cs);
-  grn_obj_close(&context, &StartTime);
+  grn_obj_close(&context, &grntest_starttime);
   grn_obj_close(&context, grntest_db);
   grn_ctx_fin(&context);
   grn_fin();
