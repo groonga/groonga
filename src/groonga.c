@@ -75,6 +75,12 @@ usage(void)
           DEFAULT_PORT, DEFAULT_MAX_NFTHREADS, DEFAULT_DEST);
 }
 
+static void
+show_version(void)
+{
+  printf("%s\n", PACKAGE_STRING);
+}
+
 inline static void
 prompt(void)
 {
@@ -1413,7 +1419,8 @@ enum {
   mode_client,
   mode_daemon,
   mode_server,
-  mode_usage
+  mode_usage,
+  mode_version
 };
 
 #define MODE_MASK   0x007f
@@ -1452,6 +1459,7 @@ main(int argc, char **argv)
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
     {'\0', "admin-html-path", NULL, 0, getopt_op_none},
     {'\0', "protocol", NULL, 0, getopt_op_none},
+    {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1546,6 +1554,9 @@ main(int argc, char **argv)
     break;
   case mode_server :
     r = do_server(argc > i ? argv[i] : NULL);
+    break;
+  case mode_version :
+    show_version();
     break;
   default :
     usage(); r = -1;
