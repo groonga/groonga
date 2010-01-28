@@ -328,10 +328,11 @@ EOGQTP
 
   def test_delete_by_key
     assert_commands(<<EXPECTED, <<COMMANDS)
-true
-3
+[[0]]
+[[0],3]
 true
 [[0],[[2],["_id","_key"],[1,"hayamiz"],[3,"mori"]]]
+[[0]]
 EXPECTED
 table_create users 0 ShortText
 load --table users
@@ -347,11 +348,12 @@ COMMANDS
 
   def test_delete_by_id
     assert_commands(<<EXPECTED, <<COMMANDS)
-true
-true
-3
+[[0]]
+[[0]]
+[[0],3]
 true
 [[0],[[2],["_id","name"],[1,"hayamiz"],[3,"mori"]]]
+[[0]]
 EXPECTED
 table_create users 3
 column_create users name 0 ShortText
@@ -401,8 +403,9 @@ COMMANDS
 select blog_entries --output_columns author.name
 COMMANDS
 
-    assert_equal('[[0],[[3],["author.name"],["hayamiz"],["ryoqun"],["mori"]]]' +
-                 "\n", result)
+    assert_equal('[[0],[[3],["author.name"],["hayamiz"],["ryoqun"],["mori"]]]' + "\n" +
+                 "[[0]]\n",
+                 result)
   end
 
   private
