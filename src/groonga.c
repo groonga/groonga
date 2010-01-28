@@ -387,6 +387,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ":");
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errfunc);
       }
+      GRN_OBJ_FIN(ctx, &jsonp_func);
 
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (ctx->impl->output) {
