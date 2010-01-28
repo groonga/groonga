@@ -1556,7 +1556,7 @@ main(int argc, char **argv)
     r = do_server(argc > i ? argv[i] : NULL);
     break;
   case mode_version :
-    show_version();
+    show_version(); r = 0;
     break;
   default :
     usage(); r = -1;
