@@ -1361,6 +1361,28 @@ put_file(ftpsocket socket, char *filename)
 
 static
 int
+ftp_list(ftpsocket data_socket, ftpsocket command_socket)
+{
+  int ret;
+  char buf[BUF_LEN];
+  char command_buf[BUF_LEN];
+
+  while (1) {
+    ret = recv(data_socket, buf, BUF_LEN - 2, 0);
+    if (ret == 0) {
+      return 0;
+    }
+    buf[ret] = '\0';
+    fprintf(stdout, "%s", buf);
+  }
+  fprintf(stdout, "\n");
+  fflush(stdout);
+  
+  return 0;
+}
+
+static
+int
 get_file(ftpsocket socket, char *filename, int size)
 {
   FILE *fp;
@@ -1504,12 +1526,12 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
   WSAStartup(MAKEWORD(2,0), &ws);
 #endif /* WIN32 */
 
-  if (strlen(filename) >= MAX_PATH_LEN) {
+  if ((filename != NULL) && (strlen(filename) >= MAX_PATH_LEN)) {
     fprintf(stderr, "too long filename\n");
     exit(1);
   }
 
-  if (strlen(cd_dirname) >= MAX_PATH_LEN) {
+  if ((cd_dirname != NULL) && (strlen(cd_dirname) >= MAX_PATH_LEN)) {
     fprintf(stderr, "too long dirname\n");
     exit(1);
   }
@@ -1618,8 +1640,7 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
 
   switch (mode) {
     case MODE_LIST:
-      read_response(data_socket, buf);
-      fprintf(stderr, "%s\n", buf);
+      ftp_list(data_socket, command_socket);
       break;
     case MODE_GET:
       if (get_file(data_socket, filename, size) == -1) {
