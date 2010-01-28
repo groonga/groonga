@@ -38,10 +38,10 @@
 #define DEFAULT_DEST "localhost"
 
 
-static grn_critical_section CS;
+static grn_critical_section grntest_cs;
 
-static int STOP_FLAG = 0;
-static int Detail_On = 0;
+static int grntest_stop_flag = 0;
+static int grntest_detail_on = 0;
 #define TMPFILE "_grntest.tmp"
 
 FILE *LogFp;
@@ -62,14 +62,13 @@ typedef int ftpsocket;
 #define FTPERROR -1
 #endif /* WIN32 */
 
-char *OSInfo;
+char *grntest_osinfo;
 
 #ifdef WIN32
 #include <Windows.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
-//#pragma comment(lib, "../../groonga/lib/libgroonga.lib")
 #else
 #include <unistd.h>
 #include <sys/types.h>
@@ -83,9 +82,8 @@ char *OSInfo;
 #include <sys/statvfs.h>
 #endif /* WIN32 */
 
-FILE *LOG_FP;
 
-grn_obj *DB = NULL;
+grn_obj *grntest_db = NULL;
 
 #define MAX_CON_JOB 10
 #define MAX_CON 64
@@ -99,10 +97,10 @@ grn_obj *DB = NULL;
 #define J_REP_LOCAL 3  /* rep_local */
 #define J_REP_GQTP  4  /* rep_gqtp */
 
-static char UserName[BUF_LEN];
-static char ScriptName[BUF_LEN];
-static char Date[BUF_LEN];
-static char ServerHost[BUF_LEN];
+static char grntest_username[BUF_LEN];
+static char grntest_scriptname[BUF_LEN];
+static char grntest_date[BUF_LEN];
+static char grntest_serverhost[BUF_LEN];
 
 struct commandtable {
   char *command[MAX_COMMAND];
@@ -132,11 +130,11 @@ struct task {
   long long int min;
 };
 
-static struct task TaskTable[MAX_CON];
-static struct job JobTable[MAX_CON];
-static int JobDoneNum;
-static int JobNum;
-static grn_ctx CtxTable[MAX_CON];
+static struct task grntest_task[MAX_CON];
+static struct job grntest_job[MAX_CON];
+static int grntest_jobdone;
+static int grntest_jobnum;
+static grn_ctx grntest_ctx[MAX_CON];
 
 grn_obj StartTime, Jobs_Start;
 
@@ -191,8 +189,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
       }
       i++;
     }
-  }
-  else {
+  } else {
     if (ret[0] == '{') {
       hash_ret = 1;
     }
@@ -204,8 +201,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   if (hash_ret) {
     fprintf(LogFp, "[%d, \"%s\", %lld, %lld, %s], \n",  
             task_id, command, start, end, rettmp);
-  }
-  else {
+  } else {
     fprintf(LogFp, "[%d, \"%s\", %lld, %lld, \"%s\"], \n",  
             task_id, command, start, end, rettmp);
   }
@@ -248,9 +244,9 @@ error_exit_in_thread(intptr_t code)
 {
   fprintf(stderr, "Fatal error! Check script file!\n");
   fflush(stderr);
-  CRITICAL_SECTION_ENTER(CS);
-  STOP_FLAG = 1;
-  CRITICAL_SECTION_LEAVE(CS);
+  CRITICAL_SECTION_ENTER(grntest_cs);
+  grntest_stop_flag = 1;
+  CRITICAL_SECTION_LEAVE(grntest_cs);
 #ifdef WIN32
   _endthreadex(code);
 #else
@@ -264,7 +260,7 @@ int
 shutdown_server(grn_ctx *ctx)
 {
   int ret;
-  ret = grn_ctx_connect(ctx, ServerHost, DEFAULT_PORT, 0);
+  ret = grn_ctx_connect(ctx, grntest_serverhost, DEFAULT_PORT, 0);
   if (ret) {
     fprintf(stderr, "Cannot connect groonga server(shutdown):ret=%d\n", ret);
     exit(1);
@@ -316,21 +312,20 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
 
       self = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&start_time);
 
-      if (TaskTable[task_id].max < self) {
-        TaskTable[task_id].max = self; 
+      if (grntest_task[task_id].max < self) {
+        grntest_task[task_id].max = self; 
       }
-      if (TaskTable[task_id].min > self) {
-        TaskTable[task_id].min = self;
+      if (grntest_task[task_id].min > self) {
+        grntest_task[task_id].min = self;
       }
 
-      if (report_p(TaskTable[task_id].jobtype)) {
+      if (report_p(grntest_task[task_id].jobtype)) {
         unsigned char tmpbuf[BUF_LEN];
 
         if (res_len < BUF_LEN) {
           strncpy(tmpbuf, res, res_len);
           tmpbuf[res_len] = '\0';
-        }
-        else {
+        } else {
           strncpy(tmpbuf, res, BUF_LEN - 2);
           tmpbuf[BUF_LEN -2] = '\0';
         }
@@ -338,8 +333,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
       }
       grn_obj_close(ctx, &end_time);
       break;
-    }
-    else {
+    } else {
       error_command(ctx, command, task_id);
     }
   } while ((flags & GRN_CTX_MORE));
@@ -368,73 +362,72 @@ worker_sub(intptr_t task_id)
   long long int latency, self;
   double sec, qps;
 
-  TaskTable[task_id].max = 0LL;
-  TaskTable[task_id].min = 9223372036854775807LL;
-  TaskTable[task_id].qnum = 0;
+  grntest_task[task_id].max = 0LL;
+  grntest_task[task_id].min = 9223372036854775807LL;
+  grntest_task[task_id].qnum = 0;
 
-  for (i = 0; i < TaskTable[task_id].ntimes; i++) {
-    if (TaskTable[task_id].file != NULL) {
+  for (i = 0; i < grntest_task[task_id].ntimes; i++) {
+    if (grntest_task[task_id].file != NULL) {
       FILE *fp;
       char tmpbuf[MAX_COMMAND_LEN];
-      fp = fopen(TaskTable[task_id].file, "r");
+      fp = fopen(grntest_task[task_id].file, "r");
       if (!fp) {
-        fprintf(stderr, "Cannot open %s\n",TaskTable[task_id].file);
+        fprintf(stderr, "Cannot open %s\n",grntest_task[task_id].file);
         error_exit_in_thread(1);
       } 
       tmpbuf[MAX_COMMAND_LEN-2] = '\0';
       while (fgets(tmpbuf, MAX_COMMAND_LEN, fp) != NULL) {
         if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
-          fprintf(stderr, "Too long commmand in %s\n",TaskTable[task_id].file);
+          fprintf(stderr, "Too long commmand in %s\n",grntest_task[task_id].file);
           error_exit_in_thread(1);
         }
         if (comment_p(tmpbuf)) {
           continue;
         }
         tmpbuf[strlen(tmpbuf)-1] = '\0';
-        do_command(&CtxTable[task_id], tmpbuf, 
-                   TaskTable[task_id].jobtype,
+        do_command(&grntest_ctx[task_id], tmpbuf, 
+                   grntest_task[task_id].jobtype,
                    task_id);
-        TaskTable[task_id].qnum++;
+        grntest_task[task_id].qnum++;
       }
       fclose(fp);
-    }
-    else {
+    } else {
       int line;
-      if (TaskTable[task_id].table == NULL) {
+      if (grntest_task[task_id].table == NULL) {
         fprintf(stderr, "Fatal error!:check script file!\n");
         error_exit_in_thread(1);
       }
-      for (line = 0; line < TaskTable[task_id].table->num; line++) {
-        do_command(&CtxTable[task_id], 
-                   TaskTable[task_id].table->command[line], 
-                   TaskTable[task_id].jobtype, task_id);
-        TaskTable[task_id].qnum++;
+      for (line = 0; line < grntest_task[task_id].table->num; line++) {
+        do_command(&grntest_ctx[task_id], 
+                   grntest_task[task_id].table->command[line], 
+                   grntest_task[task_id].jobtype, task_id);
+        grntest_task[task_id].qnum++;
       } 
     }
   }
 
   GRN_TIME_INIT(&end_time, 0);
-  GRN_TIME_NOW(&CtxTable[task_id], &end_time);
+  GRN_TIME_NOW(&grntest_ctx[task_id], &end_time);
   latency = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&StartTime);
   self = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&Jobs_Start);
 
-  CRITICAL_SECTION_ENTER(CS);
-  if (JobTable[TaskTable[task_id].job_id].max < TaskTable[task_id].max) {
-    JobTable[TaskTable[task_id].job_id].max = TaskTable[task_id].max;
+  CRITICAL_SECTION_ENTER(grntest_cs);
+  if (grntest_job[grntest_task[task_id].job_id].max < grntest_task[task_id].max) {
+    grntest_job[grntest_task[task_id].job_id].max = grntest_task[task_id].max;
   }
-  if (JobTable[TaskTable[task_id].job_id].min > TaskTable[task_id].min) {
-    JobTable[TaskTable[task_id].job_id].min = TaskTable[task_id].min;
+  if (grntest_job[grntest_task[task_id].job_id].min > grntest_task[task_id].min) {
+    grntest_job[grntest_task[task_id].job_id].min = grntest_task[task_id].min;
   }
 
-  JobTable[TaskTable[task_id].job_id].qnum += TaskTable[task_id].qnum;
-  JobTable[TaskTable[task_id].job_id].done++;
-  if (JobTable[TaskTable[task_id].job_id].done == 
-      JobTable[TaskTable[task_id].job_id].concurrency) {
+  grntest_job[grntest_task[task_id].job_id].qnum += grntest_task[task_id].qnum;
+  grntest_job[grntest_task[task_id].job_id].done++;
+  if (grntest_job[grntest_task[task_id].job_id].done == 
+      grntest_job[grntest_task[task_id].job_id].concurrency) {
     sec = self / (double)1000000;
-    qps = (double)JobTable[TaskTable[task_id].job_id].qnum/ sec;
-    JobDoneNum++;
-    if (JobDoneNum == 1) {
-      if (Detail_On) {
+    qps = (double)grntest_job[grntest_task[task_id].job_id].qnum/ sec;
+    grntest_jobdone++;
+    if (grntest_jobdone == 1) {
+      if (grntest_detail_on) {
         fseek(LogFp, -2, SEEK_CUR);
         fprintf(LogFp, "], \n");
       }
@@ -442,19 +435,18 @@ worker_sub(intptr_t task_id)
     }
     fprintf(LogFp, 
             "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld}",
-            JobTable[TaskTable[task_id].job_id].jobname, latency, self, qps,
-            JobTable[TaskTable[task_id].job_id].min,
-            JobTable[TaskTable[task_id].job_id].max);
-    if (JobDoneNum < JobNum) {
+            grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
+            grntest_job[grntest_task[task_id].job_id].min,
+            grntest_job[grntest_task[task_id].job_id].max);
+    if (grntest_jobdone < grntest_jobnum) {
       fprintf(LogFp, ", ");
-    }
-    else {
+    } else {
       fprintf(LogFp, "]");
     }
     fflush(LogFp);
   }
-  grn_obj_close(&CtxTable[task_id], &end_time);
-  CRITICAL_SECTION_LEAVE(CS);
+  grn_obj_close(&grntest_ctx[task_id], &end_time);
+  CRITICAL_SECTION_LEAVE(grntest_cs);
 
   return 0;
 }
@@ -560,11 +552,11 @@ get_sysinfo(char *path, char *result)
 
   strcpy(result, "{");
 
-  sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", ScriptName);
+  sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
   strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"user\": \"%s\",\n", UserName);
+  sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
   strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"date\": \"%s\",\n", Date);
+  sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
   strcat(result, tmpbuf);
 
   memset(cpustring, 0, 64);
@@ -579,12 +571,11 @@ get_sysinfo(char *path, char *result)
   strcat(result, tmpbuf);
 
   if (sizeof(int *) == 8 ) {
-    OSInfo = OS_WINDOWS64;
+    grntest_osinfo = OS_WINDOWS64;
     sprintf(tmpbuf, "  \"BIT\": 64,\n");
     strcat(result, tmpbuf);
-  }
-  else {
-    OSInfo = OS_WINDOWS32;
+  } else {
+    grntest_osinfo = OS_WINDOWS32;
     sprintf(tmpbuf, "  \"BIT\": 32,\n");
     strcat(result, tmpbuf);
   }
@@ -622,11 +613,11 @@ get_sysinfo(char *path, char *result)
 
   strcpy(result, "{");
 
-  sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", ScriptName);
+  sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
   strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"user\": \"%s\",\n", UserName);
+  sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
   strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"date\": \"%s\",\n", Date);
+  sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
   strcat(result, tmpbuf);
 
   fp = fopen("/proc/cpuinfo", "r");
@@ -648,12 +639,11 @@ get_sysinfo(char *path, char *result)
   strcat(result, tmpbuf);
 
   if (sizeof(int *) == 8 ) {
-    OSInfo = OS_LINUX64;
+    grntest_osinfo = OS_LINUX64;
     sprintf(tmpbuf, "  \"BIT\": 64,\n");
     strcat(result, tmpbuf);
-  }
-  else {
-    OSInfo = OS_LINUX32;
+  } else {
+    grntest_osinfo = OS_LINUX32;
     sprintf(tmpbuf, "  \"BIT\": 32,\n");
     strcat(result, tmpbuf);
   }
@@ -753,15 +743,15 @@ parse_line(char *buf, int start, int end, int num)
   int i, j, flag = 0;
   char tmpbuf[16];
 
-  JobTable[num].concurrency = 1;
-  JobTable[num].ntimes = 1;
-  JobTable[num].done = 0;
-  JobTable[num].qnum = 0;
-  JobTable[num].max = 0LL;
-  JobTable[num].min = 9223372036854775807LL;
+  grntest_job[num].concurrency = 1;
+  grntest_job[num].ntimes = 1;
+  grntest_job[num].done = 0;
+  grntest_job[num].qnum = 0;
+  grntest_job[num].max = 0LL;
+  grntest_job[num].min = 9223372036854775807LL;
 
-  strncpy(JobTable[num].jobname, &buf[start], end - start);
-  JobTable[num].jobname[end - start] = '\0';
+  strncpy(grntest_job[num].jobname, &buf[start], end - start);
+  grntest_job[num].jobname[end - start] = '\0';
   i = start;
   while (i < end) {
     if (isspace(buf[i])) {
@@ -769,22 +759,22 @@ parse_line(char *buf, int start, int end, int num)
       continue;
     }
     if (!strncmp(&buf[i], "do_local", 8)) {
-      JobTable[num].jobtype = J_DO_LOCAL;
+      grntest_job[num].jobtype = J_DO_LOCAL;
       i = i + 8;
       break;
     }
     if (!strncmp(&buf[i], "do_gqtp", 7)) {
-      JobTable[num].jobtype = J_DO_GQTP;
+      grntest_job[num].jobtype = J_DO_GQTP;
       i = i + 7;
       break;
     }
     if (!strncmp(&buf[i], "rep_local", 9)) {
-      JobTable[num].jobtype = J_REP_LOCAL;
+      grntest_job[num].jobtype = J_REP_LOCAL;
       i = i + 9;
       break;
     }
     if (!strncmp(&buf[i], "rep_gqtp", 8)) {
-      JobTable[num].jobtype = J_REP_GQTP;
+      grntest_job[num].jobtype = J_REP_GQTP;
       i = i + 8;
       break;
     }
@@ -812,14 +802,14 @@ parse_line(char *buf, int start, int end, int num)
     if (isspace(buf[i])) {
       break;
     }
-    JobTable[num].commandfile[j] = buf[i];
+    grntest_job[num].commandfile[j] = buf[i];
     i++;
     j++;
     if (j > 255) {
       return 5;
     }
   }
-  JobTable[num].commandfile[j] = '\0';
+  grntest_job[num].commandfile[j] = '\0';
   if (i == end) {
    return 0;
   }
@@ -843,8 +833,8 @@ parse_line(char *buf, int start, int end, int num)
     }
   }
   tmpbuf[j] ='\0';
-  JobTable[num].concurrency = atoi(tmpbuf);
-  if (JobTable[num].concurrency == 0) {
+  grntest_job[num].concurrency = atoi(tmpbuf);
+  if (grntest_job[num].concurrency == 0) {
     return 7;
   }
 
@@ -868,8 +858,8 @@ parse_line(char *buf, int start, int end, int num)
     }
   }
   tmpbuf[j] ='\0';
-  JobTable[num].ntimes = atoi(tmpbuf);
-  if (JobTable[num].ntimes == 0) {
+  grntest_job[num].ntimes = atoi(tmpbuf);
+  if (grntest_job[num].ntimes == 0) {
     return 9;
   }
   if (i == end) {
@@ -915,8 +905,7 @@ get_jobs(grn_ctx *ctx, char *buf, int line)
           fprintf(stderr, "Syntax error:line=%d:ret=%d:%s\n", line, ret, buf);
           error_exit(ctx, 1);
         }
-      }
-      else {
+      } else {
         jnum++;
       }
       start = end + 1;
@@ -930,8 +919,7 @@ get_jobs(grn_ctx *ctx, char *buf, int line)
       fprintf(stderr, "Syntax error:line=%d:ret=%d:%s\n", line, ret, buf);
       error_exit(ctx, 1);
     }
-  }
-  else {
+  } else {
     jnum++;
   }
   return jnum;
@@ -948,26 +936,26 @@ make_task_table(grn_ctx *ctx, int jobnum)
   char tmpbuf[MAX_COMMAND_LEN];
 
   for (i = 0; i < jobnum; i++) {
-    if (JobTable[i].concurrency == 1) {
-      TaskTable[tid].file = JobTable[i].commandfile;
-      TaskTable[tid].table = NULL;
-      TaskTable[tid].ntimes = JobTable[i].ntimes;
-      TaskTable[tid].jobtype = JobTable[i].jobtype;
-      TaskTable[tid].job_id = i;
+    if (grntest_job[i].concurrency == 1) {
+      grntest_task[tid].file = grntest_job[i].commandfile;
+      grntest_task[tid].table = NULL;
+      grntest_task[tid].ntimes = grntest_job[i].ntimes;
+      grntest_task[tid].jobtype = grntest_job[i].jobtype;
+      grntest_task[tid].job_id = i;
       tid++;
       continue;
     }
-    for (j = 0; j < JobTable[i].concurrency; j++) {
+    for (j = 0; j < grntest_job[i].concurrency; j++) {
       if (j == 0) {
         ctable = malloc(sizeof(struct commandtable));
         if (!ctable) {
           fprintf(stderr, "Cannot alloc commandtable\n");
           error_exit(ctx, 1);
         }
-        fp = fopen(JobTable[i].commandfile, "r");
+        fp = fopen(grntest_job[i].commandfile, "r");
         if (!fp) {
           fprintf(stderr, "Cannot alloc commandfile:%s\n",
-                   JobTable[i].commandfile);
+                   grntest_job[i].commandfile);
           error_exit(ctx, 1);
         }
         line = 0;
@@ -976,7 +964,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
           if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
             tmpbuf[MAX_COMMAND_LEN-2] = '\0';
             fprintf(stderr, "Too long command in %s\n", 
-                   JobTable[i].commandfile);
+                   grntest_job[i].commandfile);
             fprintf(stderr, "line =%d:%s\n", line + 1, tmpbuf);
             error_exit(ctx, 1);
           }
@@ -989,24 +977,24 @@ make_task_table(grn_ctx *ctx, int jobnum)
           ctable->command[line] = strdup(tmpbuf);
           if (ctable->command[line] == NULL) {
             fprintf(stderr, "Cannot alloc commandfile:%s\n",
-                    JobTable[i].commandfile);
+                    grntest_job[i].commandfile);
             error_exit(ctx, 1);
           }
           ctable->num = line;
           line++;
           if (line >= MAX_COMMAND) {
             fprintf(stderr, "Too many commands in %s\n", 
-                   JobTable[i].commandfile);
+                   grntest_job[i].commandfile);
             error_exit(ctx, 1);
           }
         }
         ctable->num = line;
       }
-      TaskTable[tid].file = NULL;
-      TaskTable[tid].table = ctable;
-      TaskTable[tid].ntimes = JobTable[i].ntimes;
-      TaskTable[tid].jobtype = JobTable[i].jobtype;
-      TaskTable[tid].job_id = i;
+      grntest_task[tid].file = NULL;
+      grntest_task[tid].table = ctable;
+      grntest_task[tid].ntimes = grntest_job[i].ntimes;
+      grntest_task[tid].jobtype = grntest_job[i].jobtype;
+      grntest_task[tid].job_id = i;
       tid++;
     }
   }
@@ -1020,8 +1008,8 @@ print_commandlist(int task_id)
 {
   int i;
 
-  for (i = 0; i < TaskTable[task_id].table->num; i++) {
-    printf("%s\n", TaskTable[task_id].table->command[i]);
+  for (i = 0; i < grntest_task[task_id].table->num; i++) {
+    printf("%s\n", grntest_task[task_id].table->command[i]);
   }
   return 0;
 }
@@ -1032,16 +1020,16 @@ static
 int
 do_jobs(grn_ctx *ctx, int jobnum, int line)
 {
-  int i, task_num, ret, qnum = 0;
+  int i, j, task_num, ret, qnum = 0;
   int thread_num = 0;
 
   for (i = 0; i < jobnum; i++) {
 /*
-printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, JobTable[i].jobtype,
-        JobTable[i].commandfile, JobTable[i].concurrency, JobTable[i].ntimes);
+printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
+        grntest_job[i].commandfile, JobTable[i].concurrency, JobTable[i].ntimes);
 
 */
-    thread_num = thread_num + JobTable[i].concurrency;
+    thread_num = thread_num + grntest_job[i].concurrency;
   }
 
   if (thread_num >= MAX_CON) {
@@ -1055,34 +1043,49 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, JobTable[i].jobtype,
     error_exit(ctx, 9);
   }
   
-  Detail_On = 0;
+  grntest_detail_on = 0;
   for (i = 0; i < task_num; i++) {
-    grn_ctx_init(&CtxTable[i], 0);
-    if (gqtp_p(TaskTable[i].jobtype)) {
-      ret = grn_ctx_connect(&CtxTable[i], ServerHost, DEFAULT_PORT, 0);
+    grn_ctx_init(&grntest_ctx[i], 0);
+    if (gqtp_p(grntest_task[i].jobtype)) {
+      ret = grn_ctx_connect(&grntest_ctx[i], grntest_serverhost, DEFAULT_PORT, 0);
       if (ret) {
         fprintf(stderr, "Cannot connect groonga server:ret=%d\n", ret);
         error_exit(ctx, 1);
       }
+    } else {
+      grn_ctx_use(&grntest_ctx[i], grntest_db);
     }
-    else {
-      grn_ctx_use(&CtxTable[i], DB);
-    }
-    if (report_p(TaskTable[i].jobtype)) {
-      Detail_On++;
+    if (report_p(grntest_task[i].jobtype)) {
+      grntest_detail_on++;
     }
   }
-  if (Detail_On) {
+  if (grntest_detail_on) {
     fprintf(LogFp, "\"detail\" :[\n");
   }
 
   thread_main(ctx, task_num);
 
-
   for (i = 0; i < task_num; i++) {
-    grn_ctx_fin(&CtxTable[i]);
-    qnum = qnum + TaskTable[i].qnum;
-  }  
+    grn_ctx_fin(&grntest_ctx[i]);
+    qnum = qnum + grntest_task[i].qnum;
+  }
+
+  i = 0;
+  while (i < task_num) {
+    int job_id; 
+    if (grntest_task[i].table != NULL) {
+      job_id = grntest_task[i].job_id;
+      for (j = 0; j < grntest_task[i].table->num; j++) {
+        free(grntest_task[i].table->command[j]);
+      }
+      free(grntest_task[i].table); 
+      while (job_id == grntest_task[i].job_id) {
+        i++;
+      }
+    } else {
+        i++;
+    }
+  }
   return qnum;
 }
 
@@ -1109,9 +1112,9 @@ do_script(grn_ctx *ctx, char *sfile)
       fprintf(stderr, "Too long line in script file:%d\n", line);
       error_exit(ctx, 1);
     }
-    JobDoneNum = 0;
+    grntest_jobdone = 0;
     job_num = get_jobs(ctx, buf, line);
-    JobNum = job_num;
+    grntest_jobnum = job_num;
 
     if (job_num > 0) {
       GRN_TIME_INIT(&Jobs_Start, 0);
@@ -1123,7 +1126,7 @@ do_script(grn_ctx *ctx, char *sfile)
 
       grn_obj_close(ctx, &Jobs_Start);
     }
-    if (STOP_FLAG) {
+    if (grntest_stop_flag) {
       fprintf(stderr, "Error:Quit\n");
       break;
     }
@@ -1136,11 +1139,11 @@ static
 int
 start_local(grn_ctx *ctx, char *dbpath)
 {
-  DB = grn_db_open(ctx, dbpath);
-  if (!DB) {
-    DB = grn_db_create(ctx, dbpath, NULL);
+  grntest_db = grn_db_open(ctx, dbpath);
+  if (!grntest_db) {
+    grntest_db = grn_db_create(ctx, dbpath, NULL);
   }
-  if (!DB) {
+  if (!grntest_db) {
     fprintf(stderr, "Cannot open db:%s\n", dbpath);
     exit(1);
   }
@@ -1153,7 +1156,7 @@ check_server(grn_ctx *ctx)
 {
   int ret, retry = 0;
   while (1) {
-    ret = grn_ctx_connect(ctx, ServerHost, DEFAULT_PORT, 0);
+    ret = grn_ctx_connect(ctx, grntest_serverhost, DEFAULT_PORT, 0);
     if (ret == GRN_CONNECTION_REFUSED) {
       sleep(1);
       retry++;
@@ -1655,8 +1658,7 @@ sync_sub(grn_ctx *ctx, char *filename)
                     NULL);
       return ret;
     }
-  }
-  else {
+  } else {
     fprintf(stderr, "[%s] does not exist in local\n", filename);
     fflush(stderr);
     ret = ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, filename, MODE_GET, "data", 
@@ -1710,9 +1712,9 @@ sync_datafile(grn_ctx *ctx, char *sfile)
     if (job_num > 0) {
       for (i = 0; i < job_num; i++) {
 /*
-printf("commandfile=[%s]:buf=%s\n", JobTable[i].commandfile, buf);
+printf("commandfile=[%s]:buf=%s\n", grntest_job[i].commandfile, buf);
 */
-        fnum = cache_file(filelist, JobTable[i].commandfile, fnum);
+        fnum = cache_file(filelist, grntest_job[i].commandfile, fnum);
       }
     }
   }
@@ -1771,16 +1773,16 @@ main(int argc, char **argv)
     exit(1);
   }
 
-  strcpy(ServerHost, DEFAULT_DEST);
+  strcpy(grntest_serverhost, DEFAULT_DEST);
   if (argc > 4) {
     if (!strncmp(argv[3], "-dest", 5)) {
-      strcpy(ServerHost, argv[4]);
+      strcpy(grntest_serverhost, argv[4]);
       remote_mode = 1;
     }
   }
 
   grn_init();
-  CRITICAL_SECTION_INIT(CS);
+  CRITICAL_SECTION_INIT(grntest_cs);
   
   grn_ctx_init(&context, 0);
   grn_set_default_encoding(GRN_ENC_UTF8);
@@ -1797,16 +1799,16 @@ main(int argc, char **argv)
   }
 
   sync_script(&context, argv[1]);
-  get_scriptname(argv[1], ScriptName, ".scr");
-  get_username(UserName);
+  get_scriptname(argv[1], grntest_scriptname, ".scr");
+  get_username(grntest_username);
 
   GRN_TIME_INIT(&StartTime, 0);
   GRN_TIME_NOW(&context, &StartTime);
   sec = (time_t)(GRN_TIME_VALUE(&StartTime)/1000000);
-  get_date(Date, &sec);
+  get_date(grntest_date, &sec);
   
-  sprintf(log, "%s-%s-%lld.log", ScriptName, 
-          UserName, GRN_TIME_VALUE(&StartTime));
+  sprintf(log, "%s-%s-%lld.log", grntest_scriptname, 
+          grntest_username, GRN_TIME_VALUE(&StartTime));
 
   LogFp = fopen(log, "w+b");
   if (!LogFp) {
@@ -1828,9 +1830,9 @@ main(int argc, char **argv)
   ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3, 
           "report", NULL);
 exit:
-  CRITICAL_SECTION_FIN(CS);
+  CRITICAL_SECTION_FIN(grntest_cs);
   grn_obj_close(&context, &StartTime);
-  grn_obj_close(&context, DB);
+  grn_obj_close(&context, grntest_db);
   grn_ctx_fin(&context);
   grn_fin();
   return 0;
