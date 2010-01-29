@@ -73,6 +73,9 @@ sub common_header()
   ts.write "\"""" \" + vbLf
   ts.write "        -DPACKAGE_VERSION=""\""" 
   ts.write version
+  ts.write "\"""" \" + vbLf
+  ts.write "        -DPACKAGE_STRING=""\""" 
+  ts.write version
   ts.write "\"""" " + vbLf
 
   ts.write "DEL = del" + vbLf
