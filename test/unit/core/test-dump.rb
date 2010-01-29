@@ -83,6 +83,18 @@ class DumpTest < Test::Unit::TestCase
                         '{"_key":"gcc","body":"' + body + '"}' + "\n]\n")
   end
 
+  def test_table_with_index_column_sorted_by_id
+    body = "作成するテーブルを語彙表として使用する場合、" +
+           "文字列を分割するトークナイザを指定します。"
+    assert_restore_dump("table_create Terms 129 ShortText" +
+                        " --default_tokenizer TokenBigram\n" +
+                        "table_create Entry 0 ShortText\n" +
+                        "column_create Entry body 0 ShortText\n" +
+                        "column_create Terms entry_body 2 Entry body\n" +
+                        "load --table Entry\n[\n" +
+                        '{"_key":"gcc","body":"' + body + '"}' + "\n]\n")
+  end
+
   def test_table_with_multiple_index_column
     title = "default_tokenizer"
     body = "作成するテーブルを語彙表として使用する場合、" +
@@ -328,10 +340,11 @@ EOGQTP
 
   def test_delete_by_key
     assert_commands(<<EXPECTED, <<COMMANDS)
-true
-3
+[[0]]
+[[0],3]
 true
 [[0],[[2],["_id","_key"],[1,"hayamiz"],[3,"mori"]]]
+[[0]]
 EXPECTED
 table_create users 0 ShortText
 load --table users
@@ -347,11 +360,12 @@ COMMANDS
 
   def test_delete_by_id
     assert_commands(<<EXPECTED, <<COMMANDS)
-true
-true
-3
+[[0]]
+[[0]]
+[[0],3]
 true
 [[0],[[2],["_id","name"],[1,"hayamiz"],[3,"mori"]]]
+[[0]]
 EXPECTED
 table_create users 3
 column_create users name 0 ShortText
@@ -401,8 +415,9 @@ COMMANDS
 select blog_entries --output_columns author.name
 COMMANDS
 
-    assert_equal('[[0],[[3],["author.name"],["hayamiz"],["ryoqun"],["mori"]]]' +
-                 "\n", result)
+    assert_equal('[[0],[[3],["author.name"],["hayamiz"],["ryoqun"],["mori"]]]' + "\n" +
+                 "[[0]]\n",
+                 result)
   end
 
   private
