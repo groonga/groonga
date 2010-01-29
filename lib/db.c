@@ -10964,7 +10964,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
           name_size = GRN_TEXT_LEN(value);
           col = grn_obj_column(ctx, loader->table, name, name_size);
           value++;
-          /* auto column create */
+          /* auto column create
           if (!col) {
             if (value->header.domain == OPEN_BRACKET) {
               grn_obj *v = value + 1;
@@ -10977,6 +10977,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
                                       grn_ctx_at(ctx, value->header.domain));
             }
           }
+          */
           if (col) {
             if (value->header.domain == OPEN_BRACKET &&
                 GRN_UINT32_VALUE(value) == 0) {
