@@ -32,6 +32,7 @@ static grn_obj textbuf, intbuf;
 
 void test_table_select_equal(void);
 void test_table_select_equal_indexed(void);
+void test_table_select_equal_nil_reference(void);
 void test_table_select_select(void);
 void test_table_select_search(void);
 void test_table_select_select_search(void);
@@ -90,13 +91,19 @@ cut_teardown(void)
   g_free(path);
 }
 
-static grn_obj *docs, *terms, *size, *body, *index_body;
+static grn_obj *properties, *docs, *terms, *size, *body, *author, *index_body;
 
 static void
-insert_document(const gchar *body_content)
+insert_document(const gchar *author_content, const gchar *body_content)
 {
   uint32_t s = (uint32_t)strlen(body_content);
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);
+
+  if (author_content) {
+    GRN_TEXT_SET(&context, &textbuf, author_content, strlen(author_content));
+    grn_test_assert(grn_obj_set_value(&context, author, docid, &textbuf,
+                                      GRN_OBJ_SET));
+  }
 
   GRN_TEXT_SET(&context, &textbuf, body_content, s);
   grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf,
@@ -107,8 +114,18 @@ insert_document(const gchar *body_content)
                                     GRN_OBJ_SET));
 }
 
-#define INSERT_DOCUMENT(body) \
-  cut_trace(insert_document(body))
+#define INSERT_DOCUMENT(author, body)            \
+  cut_trace(insert_document(author, body))
+
+static void
+create_properties_table(void)
+{
+  const gchar *table_name = "properties";
+  properties = grn_table_create(&context, table_name, strlen(table_name), NULL,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
+                                grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
+  cut_assert_not_null(properties);
+}
 
 static void
 create_documents_table(void)
@@ -126,6 +143,11 @@ create_documents_table(void)
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
                            grn_ctx_at(&context, GRN_DB_TEXT));
   cut_assert_not_null(body);
+
+  author = grn_column_create(&context, docs, "author", 6, NULL,
+                             GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                             properties);
+  cut_assert_not_null(author);
 }
 
 static void
@@ -150,25 +172,30 @@ create_terms_table(void)
 static void
 insert_data(void)
 {
-  INSERT_DOCUMENT("hoge");
-  INSERT_DOCUMENT("fuga fuga");
-  INSERT_DOCUMENT("moge moge moge");
-  INSERT_DOCUMENT("hoge hoge");
-  INSERT_DOCUMENT("hoge fuga fuga");
-  INSERT_DOCUMENT("hoge moge moge moge");
-  INSERT_DOCUMENT("moge hoge hoge");
-  INSERT_DOCUMENT("moge hoge fuga fuga");
-  INSERT_DOCUMENT("moge hoge moge moge moge");
-  INSERT_DOCUMENT("poyo moge hoge moge moge moge");
+  INSERT_DOCUMENT("morita", "hoge");
+  INSERT_DOCUMENT("morita", "fuga fuga");
+  INSERT_DOCUMENT("gunyara-kun", "moge moge moge");
+  INSERT_DOCUMENT(NULL, "hoge hoge");
+  INSERT_DOCUMENT(NULL, "hoge fuga fuga");
+  INSERT_DOCUMENT("gunyara-kun", "hoge moge moge moge");
+  INSERT_DOCUMENT("yu", "moge hoge hoge");
+  INSERT_DOCUMENT(NULL, "moge hoge fuga fuga");
+  INSERT_DOCUMENT(NULL, "moge hoge moge moge moge");
+  INSERT_DOCUMENT("morita", "poyo moge hoge moge moge moge");
 }
 
 static void
 prepare_data(void)
 {
+  create_properties_table();
   create_documents_table();
   create_terms_table();
   insert_data();
 }
+
+#define PARSE(expr, str, flags) \
+  grn_test_assert(grn_expr_parse(&context, (expr), (str), strlen(str), \
+                                 body, GRN_OP_MATCH, GRN_OP_AND, flags))
 
 void
 test_table_select_equal(void)
@@ -229,6 +256,30 @@ test_table_select_equal_indexed(void)
 
   grn_test_assert_select(&context,
                          gcut_take_new_list_string("hoge", NULL),
+                         res,
+                         body);
+}
+
+void
+test_table_select_equal_nil_reference(void)
+{
+  grn_obj *v;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
+  cut_assert_not_null(cond);
+  cut_assert_not_null(v);
+  PARSE(cond, "author == \"morita\"", GRN_EXPR_SYNTAX_SCRIPT);
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string(
+                           "fuga fuga",
+                           "hoge",
+                           "poyo moge hoge moge moge moge",
+                           NULL),
                          res,
                          body);
 }
