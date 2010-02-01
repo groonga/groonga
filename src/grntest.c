@@ -55,7 +55,7 @@ FILE *grntest_logfp;
 typedef SOCKET ftpsocket;
 #define FTPERROR INVALID_SOCKET 
 #define ftpclose closesocket
-#define GROONGA_PATH "c:\\Windows\\System32\\groonga.exe"
+#define GROONGA_PATH "groonga.exe"
 #else
 typedef int ftpsocket;
 #define ftpclose close
