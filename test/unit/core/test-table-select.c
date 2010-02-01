@@ -30,16 +30,16 @@ static grn_obj *database;
 static grn_obj *cond, *res, *expr;
 static grn_obj textbuf, intbuf;
 
-void test_table_select_equal(void);
-void test_table_select_equal_indexed(void);
-void test_table_select_equal_by_existent_reference_key(void);
-void test_table_select_equal_by_nonexistent_reference_key(void);
-void test_table_select_select(void);
-void test_table_select_search(void);
-void test_table_select_select_search(void);
-void test_table_select_match(void);
-void test_table_select_match_equal(void);
-void test_table_select_match_nonexistent(void);
+void test_equal(void);
+void test_equal_indexed(void);
+void test_equal_by_existent_reference_key(void);
+void test_equal_by_nonexistent_reference_key(void);
+void test_select(void);
+void test_search(void);
+void test_select_search(void);
+void test_match(void);
+void test_match_equal(void);
+void test_match_nonexistent(void);
 
 void
 cut_startup(void)
@@ -199,7 +199,7 @@ prepare_data(void)
                                  body, GRN_OP_MATCH, GRN_OP_AND, flags))
 
 void
-test_table_select_equal(void)
+test_equal(void)
 {
   grn_obj *v;
 
@@ -232,7 +232,7 @@ test_table_select_equal(void)
 }
 
 void
-test_table_select_equal_indexed(void)
+test_equal_indexed(void)
 {
   grn_obj *v;
 
@@ -262,7 +262,7 @@ test_table_select_equal_indexed(void)
 }
 
 void
-test_table_select_equal_by_existent_reference_key(void)
+test_equal_by_existent_reference_key(void)
 {
   grn_obj *v;
 
@@ -286,7 +286,7 @@ test_table_select_equal_by_existent_reference_key(void)
 }
 
 void
-test_table_select_equal_by_nonexistent_reference_key(void)
+test_equal_by_nonexistent_reference_key(void)
 {
   grn_obj *v;
 
@@ -306,7 +306,7 @@ test_table_select_equal_by_nonexistent_reference_key(void)
 }
 
 void
-test_table_select_select(void)
+test_select(void)
 {
   grn_obj *v;
 
@@ -348,7 +348,7 @@ test_table_select_select(void)
 }
 
 void
-test_table_select_search(void)
+test_search(void)
 {
   grn_obj *v;
 
@@ -412,7 +412,7 @@ test_table_select_search(void)
 }
 
 void
-test_table_select_select_search(void)
+test_select_search(void)
 {
   grn_obj *v;
 
@@ -476,7 +476,7 @@ test_table_select_select_search(void)
 }
 
 void
-test_table_select_match(void)
+test_match(void)
 {
   grn_obj *v;
 
@@ -514,7 +514,7 @@ test_table_select_match(void)
 }
 
 void
-test_table_select_match_equal(void)
+test_match_equal(void)
 {
   grn_obj *v;
 
@@ -559,7 +559,7 @@ test_table_select_match_equal(void)
 }
 
 void
-test_table_select_match_nonexistent(void)
+test_match_nonexistent(void)
 {
   grn_obj *v;
 
