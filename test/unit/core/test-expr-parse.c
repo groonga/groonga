@@ -52,7 +52,7 @@ cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_base_dir(),
                                    "tmp",
-                                   "test-expr",
+                                   "test-expr-parse",
                                    NULL);
 }
 
@@ -67,7 +67,7 @@ cut_setup(void)
 {
   cut_remove_path(tmp_directory, NULL);
   g_mkdir_with_parents(tmp_directory, 0700);
-  path = g_build_filename(tmp_directory, "text-expr", NULL);
+  path = g_build_filename(tmp_directory, "text-expr-parse", NULL);
   grn_ctx_init(&context, 0);
   database = grn_db_create(&context, path, NULL);
 
