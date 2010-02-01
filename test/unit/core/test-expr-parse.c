@@ -320,7 +320,8 @@ test_set_value(void)
   GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
-  PARSE(cond, "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+  PARSE(cond, "size:14",
+        GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
   res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
   cut_assert_not_null(res);
   grn_test_assert_select(&context,
@@ -827,7 +828,7 @@ test_long_integer_literal(void)
 
   var = parse_numeric_literal(str_expr);
   cut_assert_equal_int(GRN_DB_FLOAT, GRN_OBJ_GET_DOMAIN(var));
-  //IEEE 754 says "double" can presisely hold about 16 digits.
-  //To be safe, assume only 15 digits are preserved.
+  /* IEEE 754 says "double" can presisely hold about 16 digits.
+     To be safe, assume only 15 digits are preserved. */
   cut_assert_equal_double(12345678901234567890., 100000., GRN_FLOAT_VALUE(var));
 }
