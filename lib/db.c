@@ -7853,7 +7853,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     set(ctx, res, 0);                                                   \
     if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {                         \
       ERR(GRN_INVALID_ARGUMENT,                                         \
-          "not a numerical format: <%*s>",                              \
+          "not a numerical format: <%.*s>",                             \
           GRN_TEXT_LEN(y), GRN_TEXT_VALUE(y));                          \
       goto exit;                                                        \
     }                                                                   \
@@ -11869,7 +11869,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_STAR_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'*=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'*=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       default :
@@ -11886,7 +11886,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_INCR);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'++' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'++' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       case '=' :
@@ -11895,7 +11895,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_PLUS_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'+=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'+=' is not allowed (%.*s)", q->str_end - q->str, q->str);
           goto exit;
         }
         break;
@@ -11913,7 +11913,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_DECR);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'--' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'--' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       case '=' :
@@ -11922,7 +11922,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_MINUS_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'-=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'-=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       default :
@@ -11943,7 +11943,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_OR_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'|=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'|=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       default :
@@ -11960,7 +11960,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_SLASH_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'/=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'/=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       default :
@@ -11977,7 +11977,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_MOD_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'%%=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'%%=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       default :
@@ -12006,7 +12006,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_XOR_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'^=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'^=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       default :
@@ -12027,7 +12027,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_AND_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'&=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'&=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       case '!' :
@@ -12054,7 +12054,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
               PARSE(GRN_EXPR_TOKEN_SHIFTRR_ASSIGN);
             } else {
               ERR(GRN_UPDATE_NOT_ALLOWED,
-                  "'>>>=' is not allowed (%*s)", q->str_end - q->str, q->str);
+                  "'>>>=' is not allowed (%.*s)", q->str_end - q->str, q->str);
             }
             break;
           default :
@@ -12068,7 +12068,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
             PARSE(GRN_EXPR_TOKEN_SHIFTR_ASSIGN);
           } else {
             ERR(GRN_UPDATE_NOT_ALLOWED,
-                "'>>=' is not allowed (%*s)", q->str_end - q->str, q->str);
+                "'>>=' is not allowed (%.*s)", q->str_end - q->str, q->str);
           }
           break;
         default :
@@ -12097,7 +12097,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
             PARSE(GRN_EXPR_TOKEN_SHIFTL_ASSIGN);
           } else {
             ERR(GRN_UPDATE_NOT_ALLOWED,
-                "'<<=' is not allowed (%*s)", q->str_end - q->str, q->str);
+                "'<<=' is not allowed (%.*s)", q->str_end - q->str, q->str);
           }
           break;
         default :
@@ -12126,7 +12126,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           PARSE(GRN_EXPR_TOKEN_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'=' is not allowed (%*s)", q->str_end - q->str, q->str);
+              "'=' is not allowed (%.*s)", q->str_end - q->str, q->str);
         }
         break;
       }

@@ -217,7 +217,7 @@ grn_parse_table_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
       flags |= GRN_OBJ_KEY_WITH_SIS;
       nptr += 12;
     } else {
-      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %*s", end - nptr, nptr);
+      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s", end - nptr, nptr);
       return 0;
     }
   }
@@ -252,7 +252,7 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
       flags |= GRN_OBJ_WITH_POSITION;
       nptr += 19;
     } else {
-      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %*s", end - nptr, nptr);
+      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s", end - nptr, nptr);
       return 0;
     }
   }
