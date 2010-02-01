@@ -46,6 +46,7 @@ void test_uint32_literal(void);
 void test_lager_than_int32_literal(void);
 void test_int64_literal(void);
 void test_long_integer_literal(void);
+void test_syntax_equal_string_reference_key(void);
 
 void
 cut_startup(void)
@@ -98,13 +99,19 @@ cut_teardown(void)
   g_free(path);
 }
 
-static grn_obj *docs, *terms, *size, *body, *index_body;
+static grn_obj *properties, *docs, *terms, *size, *body, *author, *index_body;
 
 static void
-insert_document(const gchar *body_content)
+insert_document(const gchar *author_content, const gchar *body_content)
 {
   uint32_t s = (uint32_t)strlen(body_content);
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);
+
+  if (author_content) {
+    GRN_TEXT_SET(&context, &textbuf, author_content, strlen(author_content));
+    grn_test_assert(grn_obj_set_value(&context, author, docid, &textbuf,
+                                      GRN_OBJ_SET));
+  }
 
   GRN_TEXT_SET(&context, &textbuf, body_content, s);
   grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf,
@@ -115,8 +122,8 @@ insert_document(const gchar *body_content)
                                     GRN_OBJ_SET));
 }
 
-#define INSERT_DOCUMENT(body) \
-  cut_trace(insert_document(body))
+#define INSERT_DOCUMENT(author, body)            \
+  cut_trace(insert_document(author, body))
 
 static void grn_test_assert_select_all(grn_obj *result);
 static void grn_test_assert_select_none(grn_obj *result);
@@ -148,6 +155,16 @@ grn_test_assert_select_none(grn_obj *result)
 }
 
 static void
+create_properties_table(void)
+{
+  const gchar *table_name = "properties";
+  properties = grn_table_create(&context, table_name, strlen(table_name), NULL,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_PERSISTENT,
+                                grn_ctx_at(&context, GRN_DB_SHORT_TEXT), NULL);
+  cut_assert_not_null(properties);
+}
+
+static void
 create_documents_table(void)
 {
   docs = grn_table_create(&context, "docs", 4, NULL,
@@ -163,6 +180,11 @@ create_documents_table(void)
                            GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
                            grn_ctx_at(&context, GRN_DB_TEXT));
   cut_assert_not_null(body);
+
+  author = grn_column_create(&context, docs, "author", 6, NULL,
+                             GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                             properties);
+  cut_assert_not_null(author);
 }
 
 static void
@@ -187,21 +209,22 @@ create_terms_table(void)
 static void
 insert_data(void)
 {
-  INSERT_DOCUMENT("hoge");
-  INSERT_DOCUMENT("fuga fuga");
-  INSERT_DOCUMENT("moge moge moge");
-  INSERT_DOCUMENT("hoge hoge");
-  INSERT_DOCUMENT("hoge fuga fuga");
-  INSERT_DOCUMENT("hoge moge moge moge");
-  INSERT_DOCUMENT("moge hoge hoge");
-  INSERT_DOCUMENT("moge hoge fuga fuga");
-  INSERT_DOCUMENT("moge hoge moge moge moge");
-  INSERT_DOCUMENT("poyo moge hoge moge moge moge");
+  INSERT_DOCUMENT("morita", "hoge");
+  INSERT_DOCUMENT("morita", "fuga fuga");
+  INSERT_DOCUMENT("gunyara-kun", "moge moge moge");
+  INSERT_DOCUMENT(NULL, "hoge hoge");
+  INSERT_DOCUMENT(NULL, "hoge fuga fuga");
+  INSERT_DOCUMENT("gunyara-kun", "hoge moge moge moge");
+  INSERT_DOCUMENT("yu", "moge hoge hoge");
+  INSERT_DOCUMENT(NULL, "moge hoge fuga fuga");
+  INSERT_DOCUMENT(NULL, "moge hoge moge moge moge");
+  INSERT_DOCUMENT("morita", "poyo moge hoge moge moge moge");
 }
 
 static void
 prepare_data(void)
 {
+  create_properties_table();
   create_documents_table();
   create_terms_table();
   insert_data();
@@ -831,4 +854,20 @@ test_long_integer_literal(void)
   /* IEEE 754 says "double" can presisely hold about 16 digits.
      To be safe, assume only 15 digits are preserved. */
   cut_assert_equal_double(12345678901234567890., 100000., GRN_FLOAT_VALUE(var));
+}
+
+void
+test_syntax_equal_string_reference_key(void)
+{
+  grn_obj *v;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
+  cut_assert_not_null(cond);
+  cut_assert_not_null(v);
+  PARSE(cond, "author == \"morita\"", GRN_EXPR_SYNTAX_SCRIPT);
+  grn_test_assert_expr(&context,
+                       "noname(?0:0){author GET_VALUE \"morita\" EQUAL}",
+                       cond);
 }
