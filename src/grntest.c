@@ -141,6 +141,16 @@ grn_obj grntest_starttime, grntest_jobs_start;
 
 static
 int
+grntest_atoi(const char *str, const char *end, const char **rest)
+{
+  while (grn_isspace(str, GRN_ENC_UTF8) == 1) {
+    str++;
+  }
+  return grn_atoi(str, end, rest);
+}
+  
+static
+int
 report_p(int jobtype)
 {
   if (jobtype == J_REP_LOCAL) {
@@ -165,11 +175,27 @@ gqtp_p(int jobtype)
   return 0;
 }
 
+static
+int
+error_exit_in_thread(intptr_t code)
+{
+  fprintf(stderr, "Fatal error! Check script file!\n");
+  fflush(stderr);
+  CRITICAL_SECTION_ENTER(grntest_cs);
+  grntest_stop_flag = 1;
+  CRITICAL_SECTION_LEAVE(grntest_cs);
+#ifdef WIN32
+  _endthreadex(code);
+#else
+  pthread_exit((void *)code);
+#endif /* WIN32 */
+  return 0;
+}
 
 static
 int
-report_command(grn_ctx *ctx, char *command, char *ret, int task_id, 
-               grn_obj *start_time, grn_obj *end_time)
+report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time, 
+                    grn_obj *end_time)
 {
   int i;
   long long int start, end;
@@ -197,15 +223,50 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
     strcpy(rettmp, ret);
   }
 
-  start = GRN_TIME_VALUE(start_time) - GRN_TIME_VALUE(&grntest_starttime);
+  start = start_time - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
   if (hash_ret) {
-    fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s], \n",  
-            task_id, command, start, end, rettmp);
+    fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s], \n",  
+            task_id,  start, end, rettmp);
   } else {
-    fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, \"%s\"], \n",  
-            task_id, command, start, end, rettmp);
+    fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, \"%s\"], \n",  
+            task_id, start, end, rettmp);
   }
+  fflush(grntest_logfp);
+  return 0;
+}
+
+static
+int
+report_command(grn_ctx *ctx, char *command, char *ret, int task_id, 
+               grn_obj *start_time, grn_obj *end_time)
+{
+  int i, len;
+  long long int start, end;
+  char rettmp[BUF_LEN];
+  char command_escaped[BUF_LEN*2];
+
+  if ((ret[0] == '[') && (ret[1] == '[')) {
+    i = 2;
+    len = 0;
+    while (ret[i] != ']') {
+      i++;
+      len++;
+      if (ret[i] == '\0') {
+        fprintf(stderr, "Error results:command=[%s]\n", command);
+        error_exit_in_thread(3);
+      }
+    }
+    strncpy(rettmp, &ret[1], len);
+    rettmp[len] = '\0';
+  } else {
+    strcpy(rettmp, ret);
+  }
+
+  start = GRN_TIME_VALUE(start_time) - GRN_TIME_VALUE(&grntest_starttime);
+  end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
+  fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s], \n",  
+          task_id, command, start, end, rettmp);
   fflush(grntest_logfp);
   return 0;
 }
@@ -239,22 +300,6 @@ output_sysinfo(char *sysinfo)
   return 0;
 }
   
-static
-int
-error_exit_in_thread(intptr_t code)
-{
-  fprintf(stderr, "Fatal error! Check script file!\n");
-  fflush(stderr);
-  CRITICAL_SECTION_ENTER(grntest_cs);
-  grntest_stop_flag = 1;
-  CRITICAL_SECTION_LEAVE(grntest_cs);
-#ifdef WIN32
-  _endthreadex(code);
-#else
-  pthread_exit((void *)code);
-#endif /* WIN32 */
-  return 0;
-}
 
 static
 int
@@ -335,7 +380,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
           strncpy(tmpbuf, res, BUF_LEN - 2);
           tmpbuf[BUF_LEN -2] = '\0';
         }
-        report_command(ctx, "load", tmpbuf, task_id, &start_time, &end_time);
+        report_load_command(ctx, tmpbuf, task_id, *load_start, &end_time);
       }
       grn_obj_close(ctx, &end_time);
       ret = 1;
@@ -429,7 +474,7 @@ load_command_p(char *command)
 {
   int i = 0;
 
-  while(isspace(command[i])) {
+  while (grn_isspace(&command[i], GRN_ENC_UTF8) == 1) {
     i++;
   }
   if (command[i] == '\0') {
@@ -723,8 +768,8 @@ get_sysinfo(char *path, char *result)
 #else /* linux only */
   FILE *fp;
   int ret;
-  int cpunum;
-  int minfo;
+  int cpunum = 0;
+  int minfo = 0;
   char cpustring[256];
   struct utsname ubuf;
   struct statvfs vfsbuf;
@@ -749,7 +794,7 @@ get_sysinfo(char *path, char *result)
       strcpy(cpustring, &tmpbuf[13]);
     }
     if (!strncmp(tmpbuf, "processor\t: ", 12)) {
-      cpunum = atoi(&tmpbuf[12]);
+      cpunum = grntest_atoi(&tmpbuf[12], &tmpbuf[12] + 20, NULL);
     }
   }
   fclose(fp);
@@ -777,7 +822,7 @@ get_sysinfo(char *path, char *result)
   while (fgets(tmpbuf, 256, fp) != NULL) {
     tmpbuf[strlen(tmpbuf)-1] = '\0';
     if (!strncmp(tmpbuf, "MemTotal:", 9)) {
-      minfo = atoi(&tmpbuf[10]);
+      minfo = grntest_atoi(&tmpbuf[10], &tmpbuf[10] + 40, NULL);
     }
   }
   fclose(fp);
@@ -859,7 +904,7 @@ int
 parse_line(char *buf, int start, int end, int num)
 {
   int i, j, flag = 0;
-  char tmpbuf[16];
+  char tmpbuf[BUF_LEN];
 
   grntest_job[num].concurrency = 1;
   grntest_job[num].ntimes = 1;
@@ -872,7 +917,7 @@ parse_line(char *buf, int start, int end, int num)
   grntest_job[num].jobname[end - start] = '\0';
   i = start;
   while (i < end) {
-    if (isspace(buf[i])) {
+    if (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
       i++;
       continue;
     }
@@ -906,18 +951,18 @@ parse_line(char *buf, int start, int end, int num)
     return 1;
   }
 
-  if (!isspace(buf[i])) {
+  if (grn_isspace(&buf[i], GRN_ENC_UTF8) != 1) {
     return 4;
   }
   i++;
 
-  while (isspace(buf[i])) {
+  while (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
     i++;
     continue;
   }
   j = 0;
   while (i < end) {
-    if (isspace(buf[i])) {
+    if (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
       break;
     }
     grntest_job[num].commandfile[j] = buf[i];
@@ -931,16 +976,17 @@ parse_line(char *buf, int start, int end, int num)
   if (i == end) {
    return 0;
   }
-  while (isspace(buf[i])) {
+  while (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
     i++;
-    continue;
   }
+
   if (i == end) {
    return 0;
   }
+
   j = 0;
   while (i < end) {
-    if (isspace(buf[i])) {
+    if (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
       break;
     }
     tmpbuf[j] = buf[i];
@@ -951,21 +997,21 @@ parse_line(char *buf, int start, int end, int num)
     }
   }
   tmpbuf[j] ='\0';
-  grntest_job[num].concurrency = atoi(tmpbuf);
+  grntest_job[num].concurrency = grntest_atoi(tmpbuf, tmpbuf + j, NULL);
   if (grntest_job[num].concurrency == 0) {
     return 7;
   }
 
-  while (isspace(buf[i])) {
+  while (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
     i++;
-    continue;
   }
   if (i == end) {
    return 0;
   }
+
   j = 0;
   while (i < end) {
-    if (isspace(buf[i])) {
+    if (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
       break;
     }
     tmpbuf[j] = buf[i];
@@ -976,7 +1022,7 @@ parse_line(char *buf, int start, int end, int num)
     }
   }
   tmpbuf[j] ='\0';
-  grntest_job[num].ntimes = atoi(tmpbuf);
+  grntest_job[num].ntimes = grntest_atoi(tmpbuf, tmpbuf + j, NULL);
   if (grntest_job[num].ntimes == 0) {
     return 9;
   }
@@ -985,7 +1031,7 @@ parse_line(char *buf, int start, int end, int num)
   }
 
   while (i < end) {
-    if (isspace(buf[i])) {
+    if (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
       i++;
       continue;
     }
@@ -1502,7 +1548,7 @@ get_size(char *buf)
     }
   }
   buf++;
-  size = atoi(buf);
+  size = grntest_atoi(buf, buf + strlen(buf), NULL);
   
   return size;
 }
@@ -1680,7 +1726,7 @@ ftp_main(int argc, char **argv)
   char val[BUF_LEN];
   val[0] = '\0';
   ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, argv[2], 
-          atoi(argv[3]), argv[4], val);
+          grntest_atoi(argv[3], argv[3] + strlen(argv[3]), NULL), argv[4], val);
   if (val[0] != '\0') {
     printf("val=%s\n", val);
   }
