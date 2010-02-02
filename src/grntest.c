@@ -379,6 +379,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
       break;
     } else {
       ret = 0;
+      break;
     }
   } while ((flags & GRN_CTX_MORE));
 
