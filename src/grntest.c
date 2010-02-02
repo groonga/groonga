@@ -197,41 +197,32 @@ int
 report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time, 
                     grn_obj *end_time)
 {
-  int i;
+  int i, len;
   long long int start, end;
-  int hash_ret = 0; 
   char rettmp[BUF_LEN];
 
-  if (ret[0] == '[') {
-    i = 1;
-    while (ret[i] == '[') {
-     i++;
-    }
-    strcpy(rettmp, &ret[i]);
-    i = 0;
-    while (rettmp[i] != '\0') {
-      if (rettmp[i] == ']') {
-        rettmp[i] = '\0';
-        break;
-      }
+  if ((ret[0] == '[') && (ret[1] == '[')) {
+    i = 2;
+    len = 1;
+    while (ret[i] != ']') {
       i++;
+      len++;
+      if (ret[i] == '\0') {
+        fprintf(stderr, "Error results:load\n");
+        error_exit_in_thread(3);
+      }
     }
+    len++;
+    strncpy(rettmp, &ret[1], len);
+    rettmp[len] = '\0';
   } else {
-    if (ret[0] == '{') {
-      hash_ret = 1;
-    }
     strcpy(rettmp, ret);
   }
 
   start = start_time - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
-  if (hash_ret) {
-    fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s], \n",  
-            task_id,  start, end, rettmp);
-  } else {
-    fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, \"%s\"], \n",  
-            task_id, start, end, rettmp);
-  }
+  fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s], \n",  
+          task_id,  start, end, rettmp);
   fflush(grntest_logfp);
   return 0;
 }
@@ -248,7 +239,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
 
   if ((ret[0] == '[') && (ret[1] == '[')) {
     i = 2;
-    len = 0;
+    len = 1;
     while (ret[i] != ']') {
       i++;
       len++;
@@ -257,6 +248,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
         error_exit_in_thread(3);
       }
     }
+    len++;
     strncpy(rettmp, &ret[1], len);
     rettmp[len] = '\0';
   } else {
