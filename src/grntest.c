@@ -42,6 +42,7 @@ static grn_critical_section grntest_cs;
 
 static int grntest_stop_flag = 0;
 static int grntest_detail_on = 0;
+static int grntest_alloctimes = 0;
 #define TMPFILE "_grntest.tmp"
 
 FILE *grntest_logfp;
@@ -192,6 +193,37 @@ error_exit_in_thread(intptr_t code)
   return 0;
 }
 
+
+static
+int
+escape_command(unsigned char *in, int ilen,  unsigned char *out, int olen)
+{
+  int i = 0, j = 0;
+
+  while (i < ilen) {
+    if (j >= olen) {
+      fprintf(stderr, "too many escapse:%s\n", in);
+      exit(1);
+    }
+
+    if ((in[i] == '\\') || (in[i] == '\"') || (in[i] == '/') || (in[i] == '\b') ||
+        (in[i] == '\f') || (in[i] == '\n') || (in[i] == '\r') || (in[i] == '\t')) {
+      out[j] = 0x5C;
+      j++;
+      out[j] = in[i];
+      j++;
+      i++;
+    } else {
+      out[j] = in[i];
+      j++;
+      i++;
+    }
+  }
+
+  out[j] = '\0';
+  return j;
+}
+
 static
 int
 report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time, 
@@ -232,10 +264,10 @@ int
 report_command(grn_ctx *ctx, char *command, char *ret, int task_id, 
                grn_obj *start_time, grn_obj *end_time)
 {
-  int i, len;
+  int i, len, clen;
   long long int start, end;
   char rettmp[BUF_LEN];
-  char command_escaped[BUF_LEN*2];
+  char command_escaped[MAX_COMMAND_LEN * 2];
 
   if ((ret[0] == '[') && (ret[1] == '[')) {
     i = 2;
@@ -257,8 +289,10 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
 
   start = GRN_TIME_VALUE(start_time) - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
+  clen = strlen(command);
+  escape_command(command, clen, command_escaped, clen * 2);
   fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s], \n",  
-          task_id, command, start, end, rettmp);
+          task_id, command_escaped, start, end, rettmp);
   fflush(grntest_logfp);
   return 0;
 }
@@ -752,7 +786,8 @@ get_sysinfo(char *path, char *result)
 
   osinfo.dwOSVersionInfoSize = sizeof(osinfo); GetVersionEx(&osinfo);
   sprintf(tmpbuf, "  \"OS\": \"Windows %d.%d\",\n", osinfo.dwMajorVersion,
-  osinfo.dwMinorVersion); strcat(result, tmpbuf);
+  osinfo.dwMinorVersion);
+  strcat(result, tmpbuf);
 
   sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
   strcat(result, tmpbuf);
@@ -1105,6 +1140,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
     for (j = 0; j < grntest_job[i].concurrency; j++) {
       if (j == 0) {
         ctable = malloc(sizeof(struct commandtable));
+        grntest_alloctimes++;
         if (!ctable) {
           fprintf(stderr, "Cannot alloc commandtable\n");
           error_exit(ctx, 1);
@@ -1132,6 +1168,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
             continue;
           }
           ctable->command[line] = strdup(tmpbuf);
+          grntest_alloctimes++;
           if (ctable->command[line] == NULL) {
             fprintf(stderr, "Cannot alloc commandfile:%s\n",
                     grntest_job[i].commandfile);
@@ -1234,8 +1271,10 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
       job_id = grntest_task[i].job_id;
       for (j = 0; j < grntest_task[i].table->num; j++) {
         free(grntest_task[i].table->command[j]);
+        grntest_alloctimes--;
       }
       free(grntest_task[i].table); 
+      grntest_alloctimes--;
       while (job_id == grntest_task[i].job_id) {
         i++;
       }
@@ -2037,5 +2076,8 @@ exit:
   grn_obj_close(&context, grntest_db);
   grn_ctx_fin(&context);
   grn_fin();
+/*
+  fprintf(stderr, "grntest_alloctimes=%d\n", grntest_alloctimes);
+*/
   return 0;
 }
