@@ -64,7 +64,7 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 ------------------
 
 スクリプトファイルは、grntest命令を記述したテキストファイルです。
-";"セミコロンを利用して、一行に複数のgrntest命令を記述することができます。
+";"セミコロンを利用して、一行に複数のgrntest命令を記述することができます。一行に複数のgrntestt命令がある場合、各命令は並列に実行されます。
 "#"が先頭に付いた行はコメントとして解釈されます。
 
 
@@ -75,18 +75,19 @@ grntest命令
 
   do_local コマンドファイル [スレッド数] [繰り返し数]
 
-    コマンドファイルをgroonga 単体で実行します。スレッド数指定されている場合、複数のスレッドで同じコマンドファイルを同時実行します。繰り返し数が指定されてい場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数とも省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイル 1 [繰り返し数]と明示的に指定してください。
+    コマンドファイルをgroonga 単体で実行します。スレッド数が指定されている場合、複数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されてい場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数とも省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイル 1 [繰り返し数]と明示的に指定してください。
 
   do_gqpt コマンドファイル [スレッド数] [繰り返し数]
 
-    コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味はdo_localと同じです。
+    コマンドファイルをgroonga サーバで実行します。スレッド数や繰り返し数の意味はdo_localの場合と同じです。
 
   rep_local コマンドファイル [スレッド数] [繰り返し数]
 
-    コマンドファイルをgroonga 単体で実行し、より詳細な報告を行います。スレッド数が1より大きければ複数のスレッドで同じコマンドファイルを同時実行します。繰り返し数が1より大きれば、コマンドファイルの内容を繰り返し実行します。
+    コマンドファイルをgroonga 単体で実行し、より詳細な報告を行います。
 
-  rep_local コマンドファイル [スレッド数] [繰り返し数]
-    コマンドファイルをgroonga 単体で実行し、より詳細な報告を行います。スレッド数が1より大きければ複数のスレッドで同じコマンドファイルを同時実行します。繰り返し数が1より大きれば、コマンドファイルの内容を繰り返し実行します。
+  rep_gqpt コマンドファイル [スレッド数] [繰り返し数]
+
+    コマンドファイルをgroonga サーバ実行し、より詳細な報告を行います。 スレッド数や繰り返し数の意味はdo_localと 同じです。
 
 コマンドファイル
 ^^^^^^^^^^^^^^^^
@@ -119,7 +120,7 @@ grntestが正常に終了すると、(拡張子を除いた)スクリプト名-�
 
   [{"script": "test.scr",
     "user": "homepage",
-    "date": "2010-01-22 07:01:36",
+    "date": "2010-02-04 00:47:40",
     "CPU": Intel(R) Pentium(R) 4 CPU 2.80GHz",
     "BIT": 32,
     "CORE": 1,
@@ -127,30 +128,28 @@ grntestが正常に終了すると、(拡張子を除いた)スクリプト名-�
     "HDD": "257662232KBytes",
     "OS": "Linux 2.4.20-24.7-i686",
     "VERSION": "0.1.5"
-   },
-   {"jobs": "rep_local test.ddl",
-    "detail" :[
-   [0, "table_create res_table --key_type ShortText", 1150, 2913, "true"], 
-   [0, "column_create res_table res_column --type Text", 2982, 5690, "true"], 
-   [0, "column_create res_table user_column --type Text", 5752, 8680, "true"], 
-   [0, "column_create res_table mail_column --type Text", 8737, 11698, "true"], 
-   [0, "column_create res_table time_column --type Time", 11762, 12797, "true"], 
-   [0, "status", 12823, 12850, {"alloc_count":149,"starttime":1264111294,"uptime":2}], 
-   [0, "table_create thread_table --key_type ShortText", 12862, 13963, "true"], 
-   [0, "column_create thread_table thread_title_column --type ShortText", 13992, 16804, "true"], 
-   [0, "status", 16860, 16880, {"alloc_count":158,"starttime":1264111294,"uptime":2}], 
-   [0, "table_create lexicon_table --flags 129 --key_type ShortText --default_tokenizer TokenBigram", 16891, 18137, "true"], 
-   [0, "column_create lexicon_table inv_res_column 514 res_table res_column ", 18163, 33072, "true"], 
-   [0, "column_create lexicon_table inv_thread_column 514 thread_table thread_title_column ", 33165, 48350, "true"], 
-   [0, "status", 48446, 48470, {"alloc_count":181,"starttime":1264111294,"uptime":2}],], 
-   "summary" :[{"job": "rep_local test.ddl", "latency": 48538, "self": 47832, "qps": 271.784579, "min": 20, "max": 15185}]},
-   {"jobs": "do_local test.load; ",
-   "summary" :[{"job": "do_local test.load", "latency": 67642, "self": 18826, "qps": 1062.360565, "min": 176, "max": 5247}]},
-   {"jobs": "do_gqtp test.select 10 10; do_local test.status 10",
-    "summary" :[{"job": " do_local test.status 10", "latency": 404526, "self": 336587, "qps": 118.840003, "min": 4, "max": 157}, {"job": "do_gqtp test.select 10 10", "latency": 742321, "self": 674382, "qps": 2372.542565, "min": 290, "max": 70832}]},
-   {"total": 821438, "qps": 2036.672275}]
-
-
+  },
+  {"jobs": "rep_local test.ddl",
+  "detail" :[
+  [0, "table_create res_table --key_type ShortText", 1352, 2765, [0]], 
+  [0, "column_create res_table res_column --type Text", 2852, 5423, [0]], 
+  [0, "column_create res_table user_column --type Text", 5485, 8229, [0]], 
+  [0, "column_create res_table mail_column --type Text", 8288, 10997, [0]], 
+  [0, "column_create res_table time_column --type Time", 11055, 12067, [0]], 
+  [0, "status", 12090, 12112, {"alloc_count":152,"starttime":1265212060,"uptime":0}], 
+  [0, "table_create thread_table --key_type ShortText", 12123, 13207, [0]], 
+  [0, "column_create thread_table thread_title_column --type ShortText", 13232, 15869, [0]], 
+  [0, "status", 15926, 15948, {"alloc_count":161,"starttime":1265212060,"uptime":0}], 
+  [0, "table_create lexicon_table --flags 129 --key_type ShortText --default_tokenizer TokenBigram", 15958, 17239, [0]], 
+  [0, "column_create lexicon_table inv_res_column 514 res_table res_column ", 17264, 31237, [0]], 
+  [0, "column_create lexicon_table inv_thread_column 514 thread_table thread_title_column ", 31344, 45424, [0]], 
+  [0, "status", 45528, 45547, {"alloc_count":184,"starttime":1265212060,"uptime":0}],], 
+  "summary" :[{"job": "rep_local test.ddl", "latency": 45599, "self": 44784, "qps": 290.282244, "min": 19, "max": 14080}]},
+  {"jobs": "do_local test.load; ",
+  "summary" :[{"job": "do_local test.load", "latency": 64868, "self": 18934, "qps": 1056.300834, "min": 177, "max": 5260}]},
+  {"jobs": "do_gqtp test.select 10 10; do_local test.status 10",
+  "summary" :[{"job": " do_local test.status 10", "latency": 403082, "self": 337924, "qps": 118.369811, "min": 4, "max": 154}, {"job": "do_gqtp test.select 10 10", "latency": 828298, "self": 763140, "qps": 1965.563330, "min": 310, "max": 115700}]},
+  {"total": 910868, "qps": 1726.924209}]
 
 制限事項
 --------
