@@ -728,7 +728,7 @@ error_exit(grn_ctx *ctx, int ret)
 
 static
 int
-get_sysinfo(char *path, char *result)
+get_sysinfo(char *path, char *result, int olen)
 {
   char tmpbuf[256];
 
@@ -875,6 +875,10 @@ get_sysinfo(char *path, char *result)
 
   strcat(result, "},");
 #endif /* WIN32 */
+  if (strlen(result) >= olen) {
+    fprintf(stderr, "buffer overrun in get_sysinfo!\n");
+    exit(1);
+  }
 
   return 0;
 }
@@ -2033,8 +2037,6 @@ main(int argc, char **argv)
     start_server(argv[2], 0);
   }
 
-  get_sysinfo(argv[2], sysinfo);
-
   if (check_server(&context)) {
     goto exit;
   }
@@ -2057,7 +2059,8 @@ main(int argc, char **argv)
     shutdown_server(&context);
     goto exit;
   }
-  get_sysinfo(argv[2], sysinfo);
+
+  get_sysinfo(argv[2], sysinfo, BUF_LEN);
   output_sysinfo(sysinfo);
 
   qnum = do_script(&context, argv[1]);
