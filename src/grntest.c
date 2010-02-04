@@ -19,8 +19,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#define __USE_XOPEN
 #include "lib/ctx.h"
-#include <time.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -1258,7 +1258,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     }
   }
   if (grntest_detail_on) {
-    fprintf(grntest_logfp, "\"detail\" :[\n");
+    fprintf(grntest_logfp, "\"detail\": [\n");
   }
 
   thread_main(ctx, task_num);

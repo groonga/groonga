@@ -112,7 +112,7 @@ test_cursor(void)
 void
 test_get_persistent_object_from_opened_database(void)
 {
-  const gchar table_name[] = "<users>";
+  const gchar table_name[] = "Users";
   const gchar *path;
 
   path = cut_build_path(tmp_directory, "database.groonga", NULL);

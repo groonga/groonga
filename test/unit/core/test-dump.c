@@ -244,12 +244,6 @@ data_hash_table_create(void)
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            "Int32");
-  ADD_DATA("hash - escaped name",
-           "table_create \"Blog\\\"\" 0 ShortText\n",
-           "Blog\"",
-           GRN_OBJ_TABLE_HASH_KEY,
-           "ShortText",
-           NULL);
 }
 
 static void
