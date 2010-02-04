@@ -10830,12 +10830,6 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
   grn_id range_id;
   grn_obj *range;
 
-  if (n == 0) {
-    /* json is "[]" => do noting */
-    /* TODO: should wipe existing vector values out? */
-    return;
-  }
-
   range_id = DB_OBJ(column)->range;
   range = grn_ctx_at(ctx, range_id);
   if (GRN_OBJ_TABLEP(range)) {
