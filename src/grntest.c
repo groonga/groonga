@@ -93,6 +93,7 @@ grn_obj *grntest_db = NULL;
 #define BUF_LEN 1024
 #define MAX_PATH_LEN 256
 #define MAX_COMMAND_LEN 10000
+#define LOGBUF_LEN 10000
 
 #define J_DO_LOCAL  1  /* do_local */
 #define J_DO_GQTP   2  /* do_gqtp */
@@ -103,6 +104,7 @@ static char grntest_username[BUF_LEN];
 static char grntest_scriptname[BUF_LEN];
 static char grntest_date[BUF_LEN];
 static char grntest_serverhost[BUF_LEN];
+static char grntest_log_tmpbuf[BUF_LEN];
 
 struct commandtable {
   char *command[MAX_COMMAND];
@@ -253,7 +255,7 @@ report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_ti
 
   start = start_time - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
-  fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s], \n",  
+  fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s],\n",  
           task_id,  start, end, rettmp);
   fflush(grntest_logfp);
   return 0;
@@ -291,7 +293,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
   clen = strlen(command);
   escape_command(command, clen, command_escaped, clen * 2);
-  fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s], \n",  
+  fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s],\n",  
           task_id, command_escaped, start, end, rettmp);
   fflush(grntest_logfp);
   return 0;
@@ -613,27 +615,32 @@ worker_sub(intptr_t task_id)
   grntest_job[grntest_task[task_id].job_id].done++;
   if (grntest_job[grntest_task[task_id].job_id].done == 
       grntest_job[grntest_task[task_id].job_id].concurrency) {
+    char tmpbuf[BUF_LEN];
     sec = self / (double)1000000;
     qps = (double)grntest_job[grntest_task[task_id].job_id].qnum/ sec;
     grntest_jobdone++;
-    if (grntest_jobdone == 1) {
-      if (grntest_detail_on) {
-        fseek(grntest_logfp, -2, SEEK_CUR);
-        fprintf(grntest_logfp, "], \n");
-      }
-      fprintf(grntest_logfp, "\"summary\" :[");
-    }
-    fprintf(grntest_logfp, 
+    sprintf(tmpbuf, 
             "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld}",
             grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
             grntest_job[grntest_task[task_id].job_id].min,
             grntest_job[grntest_task[task_id].job_id].max);
     if (grntest_jobdone < grntest_jobnum) {
-      fprintf(grntest_logfp, ", ");
-    } else {
-      fprintf(grntest_logfp, "]");
+      strcat(tmpbuf, ",");
     }
-    fflush(grntest_logfp);
+    strcat(grntest_log_tmpbuf, tmpbuf);
+    if (grntest_log_tmpbuf[LOGBUF_LEN - 2] != '\0') {
+      error_exit_in_thread(1);
+    }
+    if (grntest_jobdone == grntest_jobnum) {
+      if (grntest_detail_on) {
+        fseek(grntest_logfp, -2, SEEK_CUR);
+        fprintf(grntest_logfp, "], \n");
+      }
+      fprintf(grntest_logfp, "\"summary\" :[");
+      fprintf(grntest_logfp, "%s", grntest_log_tmpbuf);
+      fprintf(grntest_logfp, "]");
+      fflush(grntest_logfp);
+    }
   }
   grn_obj_close(&grntest_ctx[task_id], &end_time);
   CRITICAL_SECTION_LEAVE(grntest_cs);
@@ -1218,8 +1225,7 @@ static
 int
 do_jobs(grn_ctx *ctx, int jobnum, int line)
 {
-  int i, j, task_num, ret, qnum = 0;
-  int thread_num = 0;
+  int i, j, task_num, ret, qnum = 0,thread_num = 0;
 
   for (i = 0; i < jobnum; i++) {
 /*
@@ -1259,8 +1265,11 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
   }
   if (grntest_detail_on) {
     fprintf(grntest_logfp, "\"detail\": [\n");
+    fflush(grntest_logfp);
   }
 
+  grntest_log_tmpbuf[0] = '\0';
+  grntest_log_tmpbuf[LOGBUF_LEN-2] = '\0';
   thread_main(ctx, task_num);
 
   for (i = 0; i < task_num; i++) {
