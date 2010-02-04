@@ -19,8 +19,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#define __USE_XOPEN
 #include "lib/ctx.h"
-#include <time.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
