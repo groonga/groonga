@@ -63,7 +63,12 @@ test_array_set_data(void)
   gchar value[] = "sample value";
   grn_obj *record_value;
   grn_obj *retrieved_record_value;
-  grn_obj *value_type = grn_type_create(&context, "<value_type>", 12, 0, sizeof(value));
+  gchar *value_type_name = "value_type";
+  grn_obj *value_type;
+
+  value_type = grn_type_create(&context,
+                               value_type_name, strlen(value_type_name),
+                               0, sizeof(value));
   table = grn_table_create(&context, NULL, 0, NULL,
                            GRN_OBJ_TABLE_NO_KEY,
                            NULL, value_type);

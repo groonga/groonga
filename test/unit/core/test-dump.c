@@ -30,7 +30,9 @@ void data_table_create(void);
 void test_table_create(gconstpointer data);
 void data_column_create(void);
 void test_column_create(gconstpointer data);
+void data_uvector_column(void);
 void data_vector_column(void);
+void test_uvector_column(gconstpointer data);
 void test_vector_column(gconstpointer data);
 void test_unsequantial_records_in_table_with_keys(void);
 
@@ -383,10 +385,8 @@ free_elements(gpointer data)
 } while(0)
 
 void
-data_vector_column(void)
+data_uvector_column(void)
 {
-  ADD_DATA("text", "[\"groonga\",\"is\",\"cool\"]", "Text",
-           GRN_TEXT_INIT, GRN_TEXT_PUTS, "groonga", "is", "cool");
   ADD_DATA("int32", "[-322,7,9270]", "Int32",
            GRN_INT32_INIT, GRN_INT32_SET, -322, 7, 9270);
   ADD_DATA("float", "[0.5,12.5,-1.0]", "Float",
@@ -394,7 +394,58 @@ data_vector_column(void)
   ADD_DATA("bool", "[true,false,true]", "Bool",
            GRN_BOOL_INIT, GRN_BOOL_SET, TRUE, FALSE, TRUE);
 }
+
+void
+data_vector_column(void)
+{
+  ADD_DATA("text", "[\"groonga\",\"is\",\"cool\"]", "Text",
+           GRN_TEXT_INIT, GRN_TEXT_PUTS, "groonga", "is", "cool");
+}
+
 #undef ADD_DATA
+
+void
+test_uvector_column(gconstpointer data)
+{
+  const gchar *expected;
+  grn_id id, type_id;
+  grn_obj uvector;
+  grn_obj *elements;
+  grn_obj *table, *column;
+  const gchar *type_name;
+  type_name = gcut_data_get_string(data, "type_name");
+  type_id = grn_obj_id(&context, GET(type_name));
+
+  table = table_create("Table", GRN_OBJ_TABLE_NO_KEY, NULL, NULL);
+  grn_test_assert_context(&context);
+  column = column_create("Table", "Column", GRN_OBJ_COLUMN_VECTOR,
+                         type_name, NULL);
+  grn_test_assert_context(&context);
+  id = grn_table_add(&context, table, NULL, 0, NULL);
+  grn_test_assert_context(&context);
+  cut_assert_equal_int(1, id);
+  elements = (grn_obj *)gcut_data_get_pointer(data, "elements");
+
+  GRN_OBJ_INIT(&uvector, GRN_UVECTOR, 0, type_id);
+  grn_bulk_write(&context, &uvector,
+                 GRN_BULK_HEAD(&elements[0]), GRN_BULK_VSIZE(&elements[0]));
+  grn_bulk_write(&context, &uvector,
+                 GRN_BULK_HEAD(&elements[1]), GRN_BULK_VSIZE(&elements[1]));
+  grn_bulk_write(&context, &uvector,
+                 GRN_BULK_HEAD(&elements[2]), GRN_BULK_VSIZE(&elements[2]));
+  grn_obj_set_value(&context, column, id, &uvector, GRN_OBJ_SET);
+
+  expected = cut_take_printf("table_create Table 3\n"
+                             "column_create Table Column 1 %s\n"
+                             "load --table Table\n"
+                             "[\n"
+                             "[\"_id\",\"Column\"],\n"
+                             "[1,%s]\n"
+                             "]\n",
+                             type_name,
+                             gcut_data_get_string(data, "expected"));
+  grn_test_assert_dump(expected);
+}
 
 void
 test_vector_column(gconstpointer data)
@@ -434,7 +485,8 @@ test_vector_column(gconstpointer data)
                              "column_create Table Column 1 %s\n"
                              "load --table Table\n"
                              "[\n"
-                             "{\"_id\":1,\"Column\":%s}\n"
+                             "[\"_id\",\"Column\"],\n"
+                             "[1,%s]\n"
                              "]\n",
                              type_name,
                              gcut_data_get_string(data, "expected"));
@@ -464,10 +516,11 @@ test_unsequantial_records_in_table_with_keys(void)
   grn_test_assert_dump("table_create Weekdays 0 ShortText\n"
                        "load --table Weekdays\n"
                        "[\n"
-                       "{\"_key\":\"Sun\"},\n"
-                       "{\"_key\":\"Mon\"},\n"
-                       "{\"_key\":\"Wed\"},\n"
-                       "{\"_key\":\"Thu\"},\n"
-                       "{\"_key\":\"Sat\"}\n"
+                       "[\"_key\"],\n"
+                       "[\"Sun\"],\n"
+                       "[\"Mon\"],\n"
+                       "[\"Wed\"],\n"
+                       "[\"Thu\"],\n"
+                       "[\"Sat\"]\n"
                        "]\n");
 }

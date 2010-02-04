@@ -147,6 +147,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_text_itoa(ctx, &body, ctx->impl->loader.nrecords);
       print_return_code_with_body(ctx, outbuf,
                                   grn_get_ctype(&vars[5].value), &body);
+      /* maybe necessary : grn_ctx_loader_clear(ctx); */
       grn_obj_unlink(ctx, &body);
     }
   }
@@ -1109,6 +1110,29 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 }
 
 static void
+dump_view(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+{
+  grn_view *view = (grn_view *)table;
+  grn_id id;
+  grn_hash_cursor *cursor;
+
+  cursor = grn_hash_cursor_open(ctx, view->hash, NULL, 0, NULL, 0, 0, -1, 0);
+  while ((id = grn_hash_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_id *table_id;
+    int key_size = grn_hash_cursor_get_key(ctx, cursor, ((void **)&table_id));
+    if (key_size != 4) {
+      ERR(GRN_ERROR, "corrupted view table");
+    }
+    GRN_TEXT_PUTS(ctx, outbuf, "view_add ");
+    dump_obj_name(ctx, outbuf, table);
+    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+    dump_obj_name(ctx, outbuf, grn_ctx_at(ctx, *table_id));
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  }
+  grn_hash_cursor_close(ctx, cursor);
+}
+
+static void
 dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   int i, ncolumns;
@@ -1121,8 +1145,10 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_NO_KEY:
-  case GRN_TABLE_VIEW:
     break;
+  case GRN_TABLE_VIEW:
+    dump_view(ctx, outbuf, table);
+    return;
   default:
     return;
   }
@@ -1143,6 +1169,27 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   columns = (grn_obj **)GRN_BULK_HEAD(&columnbuf);
   ncolumns = GRN_BULK_VSIZE(&columnbuf)/sizeof(grn_obj *);
 
+  GRN_TEXT_PUTC(ctx, outbuf, '[');
+  for (i = 0; i < ncolumns; i++) {
+    grn_obj buf;
+    GRN_TEXT_INIT(&buf, 0);
+    grn_column_name_(ctx, columns[i], &buf);
+    /* skips unnecessary columns */
+    if (((table->header.type == GRN_TABLE_HASH_KEY ||
+          table->header.type == GRN_TABLE_PAT_KEY) &&
+         !memcmp(GRN_TEXT_VALUE(&buf), "_id",
+                 (GRN_TEXT_LEN(&buf) > 3) ? 3 : GRN_TEXT_LEN(&buf))) ||
+        (table->header.type == GRN_TABLE_NO_KEY &&
+         !memcmp(GRN_TEXT_VALUE(&buf), "_key",
+                 (GRN_TEXT_LEN(&buf) > 4) ? 4 : GRN_TEXT_LEN(&buf)))) {
+      continue;
+    }
+    grn_text_otoj(ctx, outbuf, &buf, NULL);
+    grn_obj_unlink(ctx, &buf);
+    if (i + 1 < ncolumns) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+  }
+  GRN_TEXT_PUTS(ctx, outbuf, "],\n");
+
   cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                  GRN_CURSOR_BY_ID);
   for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
@@ -1154,7 +1201,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     if (table->header.type == GRN_TABLE_NO_KEY && old_id + 1 < id) {
       grn_id current_id;
       for (current_id = old_id + 1; current_id < id; current_id++) {
-        GRN_TEXT_PUTS(ctx, outbuf, "{},\n");
+        GRN_TEXT_PUTS(ctx, outbuf, "[],\n");
         GRN_TEXT_PUTS(ctx, &delete_commands, "delete --table ");
         dump_obj_name(ctx, &delete_commands, table);
         GRN_TEXT_PUTS(ctx, &delete_commands, " --id ");
@@ -1162,7 +1209,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         GRN_TEXT_PUTC(ctx, &delete_commands, '\n');
       }
     }
-    GRN_TEXT_PUTC(ctx, outbuf, '{');
+    GRN_TEXT_PUTC(ctx, outbuf, '[');
     for (j = 0; j < ncolumns; j++) {
       grn_id range;
       GRN_TEXT_INIT(&buf, 0);
@@ -1183,9 +1230,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       } else {
         is_value_column = 0;
       }
-      grn_text_otoj(ctx, outbuf, &buf, NULL);
       grn_obj_unlink(ctx, &buf);
-      GRN_TEXT_PUTC(ctx, outbuf, ':');
       range = grn_obj_get_range(ctx, columns[j]);
 
       switch (columns[j]->header.type) {
@@ -1193,8 +1238,18 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       case GRN_COLUMN_FIX_SIZE:
         switch (columns[j]->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
         case GRN_OBJ_COLUMN_VECTOR:
-          {
+          /* TODO: We assume that if |range| is GRN_OBJ_KEY_VAR_SIZE, a vector
+                   is GRN_VECTOR, otherwise GRN_UVECTOR. This is not always
+                   the case, especially by using GRNAPI with C, it's possible
+                   to create GRN_VECTOR with values of constant-size type. */
+          if (((struct _grn_type *)grn_ctx_at(ctx, range))->obj.header.flags &
+              GRN_OBJ_KEY_VAR_SIZE) {
             GRN_OBJ_INIT(&buf, GRN_VECTOR, 0, range);
+            grn_obj_get_value(ctx, columns[j], id, &buf);
+            grn_text_otoj(ctx, outbuf, &buf, NULL);
+            grn_obj_unlink(ctx, &buf);
+          } else {
+            GRN_OBJ_INIT(&buf, GRN_UVECTOR, 0, range);
             grn_obj_get_value(ctx, columns[j], id, &buf);
             grn_text_otoj(ctx, outbuf, &buf, NULL);
             grn_obj_unlink(ctx, &buf);
@@ -1234,7 +1289,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       }
       if (j + 1 < ncolumns) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
     }
-    GRN_TEXT_PUTC(ctx, outbuf, '}');
+    GRN_TEXT_PUTC(ctx, outbuf, ']');
   }
   GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
   GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&delete_commands),
@@ -1414,7 +1469,7 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #define GEO_GRS_C1       6335439
 #define GEO_GRS_C2       6378137
 #define GEO_GRS_C3       0.006694
-#define GEO_INT2RAD(x)   ((M_PI * x) / (GEO_RESOLUTION * 180))
+#define GEO_INT2RAD(x)   ((M_PI / (GEO_RESOLUTION * 180)) * x)
 
 static grn_obj *
 func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
@@ -1605,7 +1660,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     switch (domain) {
     case GRN_DB_TOKYO_GEO_POINT :
       {
-        double lng0, lat0, lng1, lat1, p, q, m, n, x, y;
+        double lng0, lat0, lng1, lat1, p, q, r, m, n, x, y;
         if (pos1->header.domain != domain) {
           GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
           if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
@@ -1617,8 +1672,9 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
         lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->latitude);
         p = (lat0 + lat1) * 0.5;
         q = (1 - GEO_BES_C3 * sin(p) * sin(p));
-        m = GEO_BES_C1 / sqrt(q * q * q);
-        n = GEO_BES_C2 / sqrt(q);
+        r = sqrt(q);
+        m = GEO_BES_C1 / (q * r);
+        n = GEO_BES_C2 / r;
         x = n * cos(p) * fabs(lng0 - lng1);
         y = m * fabs(lat0 - lat1);
         d = sqrt((x * x) + (y * y));
@@ -1626,7 +1682,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
       break;
     case  GRN_DB_WGS84_GEO_POINT :
       {
-        double lng0, lat0, lng1, lat1, p, q, m, n, x, y, d;
+        double lng0, lat0, lng1, lat1, p, q, r, m, n, x, y;
         if (pos1->header.domain != domain) {
           GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
           if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
@@ -1638,8 +1694,9 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
         lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->latitude);
         p = (lat0 + lat1) * 0.5;
         q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
-        m = GEO_GRS_C1 / sqrt(q * q * q);
-        n = GEO_GRS_C2 / sqrt(q);
+        r = sqrt(q);
+        m = GEO_GRS_C1 / (q * r);
+        n = GEO_GRS_C2 / r;
         x = n * cos(p) * fabs(lng0 - lng1);
         y = m * fabs(lat0 - lat1);
         d = sqrt((x * x) + (y * y));
