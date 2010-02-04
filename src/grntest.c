@@ -1258,7 +1258,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     }
   }
   if (grntest_detail_on) {
-    fprintf(grntest_logfp, "\"detail\" :[\n");
+    fprintf(grntest_logfp, "\"detail\": [\n");
   }
 
   thread_main(ctx, task_num);
