@@ -164,6 +164,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
   if (nvars == 1) {
+    grn_obj body;
     grn_timeval now;
     grn_content_type ct;
     grn_timeval_now(ctx, &now);
@@ -174,13 +175,18 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       /* TODO: implement */
       break;
     case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTS(ctx, outbuf, "{\"alloc_count\":");
-      grn_text_itoa(ctx, outbuf, grn_alloc_count());
-      GRN_TEXT_PUTS(ctx, outbuf, ",\"starttime\":");
-      grn_text_itoa(ctx, outbuf, grn_starttime.tv_sec);
-      GRN_TEXT_PUTS(ctx, outbuf, ",\"uptime\":");
-      grn_text_itoa(ctx, outbuf, now.tv_sec - grn_starttime.tv_sec);
-      GRN_TEXT_PUTC(ctx, outbuf, '}');
+      {
+        GRN_TEXT_INIT(&body, 0);
+        GRN_TEXT_PUTS(ctx, &body, "{\"alloc_count\":");
+        grn_text_itoa(ctx, &body, grn_alloc_count());
+        GRN_TEXT_PUTS(ctx, &body, ",\"starttime\":");
+        grn_text_itoa(ctx, &body, grn_starttime.tv_sec);
+        GRN_TEXT_PUTS(ctx, &body, ",\"uptime\":");
+        grn_text_itoa(ctx, &body, now.tv_sec - grn_starttime.tv_sec);
+        GRN_TEXT_PUTC(ctx, &body, '}');
+        print_return_code_with_body(ctx, outbuf, ct, &body);
+        grn_obj_unlink(ctx, &body);
+      }
       break;
     case GRN_CONTENT_XML:
     case GRN_CONTENT_NONE:
