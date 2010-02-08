@@ -896,9 +896,14 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
     }
     if (len <= c) { break; }
     if (c & 1) {
-      uint8_t *p = pat_node_get_key(ctx, pat, rn);
+      uint8_t *p;
+      pat_node *rn0;
+      grn_id r0 = rn->lr[0];
+      PAT_AT(pat, r0, rn0);
+      if (!rn0) { break; /* corrupt? */ }
+      p = pat_node_get_key(ctx, pat, rn0);
       if (!p) { break; }
-      if (PAT_LEN(rn) <= key_size && !memcmp(p, key, PAT_LEN(rn))) { r2 = r; }
+      if (PAT_LEN(rn0) <= key_size && !memcmp(p, key, PAT_LEN(rn0))) { r2 = r0; }
       r = (c + 1 < len) ? rn->lr[1] : rn->lr[0];
     } else {
       r = rn->lr[nth_bit((uint8_t *)key, c, len)];
