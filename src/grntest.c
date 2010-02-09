@@ -43,8 +43,10 @@ static grn_critical_section grntest_cs;
 static int grntest_stop_flag = 0;
 static int grntest_detail_on = 0;
 static int grntest_alloctimes = 0;
+static int grntest_remote_mode = 0;
 #define TMPFILE "_grntest.tmp"
 
+static grn_ctx grntest_server_context;
 FILE *grntest_logfp;
 
 #define OS_LINUX64   "LINUX64"
@@ -105,6 +107,7 @@ static char grntest_scriptname[BUF_LEN];
 static char grntest_date[BUF_LEN];
 static char grntest_serverhost[BUF_LEN];
 static char grntest_log_tmpbuf[BUF_LEN];
+static int grntest_serverport;
 
 struct commandtable {
   char *command[MAX_COMMAND];
@@ -216,45 +219,45 @@ escape_command(char *in, int ilen,  char *out, int olen)
       i++;
     } else {
       switch (in[i]) {
-        case '\b':
-          out[j] = 0x5C;
-          j++;
-          out[j] = 'b';
-          i++;
-          break;
-        case '\f':
-          out[j] = 0x5C;
-          j++;
-          out[j] = 'f';
-          j++;
-          i++;
-          break;
-        case '\n':
-          out[j] = 0x5C;
-          j++;
-          out[j] = 'n';
-          j++;
-          i++;
-          break;
-        case '\r':
-          out[j] = 0x5C;
-          j++;
-          out[j] = 'r';
-          j++;
-          i++;
-          break;
-        case '\t':
-          out[j] = 0x5C;
-          j++;
-          out[j] = 't';
-          j++;
-          i++;
-          break;
-        default:
-          out[j] = in[i];
-          j++;
-          i++;
-          break;
+      case '\b':
+        out[j] = 0x5C;
+        j++;
+        out[j] = 'b';
+        i++;
+        break;
+      case '\f':
+        out[j] = 0x5C;
+        j++;
+        out[j] = 'f';
+        j++;
+        i++;
+        break;
+      case '\n':
+        out[j] = 0x5C;
+        j++;
+        out[j] = 'n';
+        j++;
+        i++;
+        break;
+      case '\r':
+        out[j] = 0x5C;
+        j++;
+        out[j] = 'r';
+        j++;
+        i++;
+        break;
+      case '\t':
+        out[j] = 0x5C;
+        j++;
+        out[j] = 't';
+        j++;
+        i++;
+        break;
+      default:
+        out[j] = in[i];
+        j++;
+        i++;
+        break;
       }
     }
   }
@@ -368,13 +371,21 @@ output_sysinfo(char *sysinfo)
 
 static
 int
-shutdown_server(grn_ctx *ctx)
+shutdown_server(void)
 {
-  grn_ctx_send(ctx, "shutdown", 8, 0);
-  if (ctx->rc) {
-    fprintf(stderr, "ctx_send:rc=%d\n", ctx->rc);
-    error_exit_in_thread(1);
+  char *res;
+  int flags, res_len;
+
+  if (grntest_remote_mode) {
+    return 0;
   }
+  grn_ctx_send(&grntest_server_context, "shutdown", 8, 0);
+  if (grntest_server_context.rc) {
+    fprintf(stderr, "ctx_send:rc=%d\n", grntest_server_context.rc);
+    exit(1);
+  }
+  grn_ctx_recv(&grntest_server_context, &res, &res_len, &flags);
+
   return 0;
 }
 
@@ -762,7 +773,7 @@ int
 error_exit(grn_ctx *ctx, int ret)
 {
   fflush(stderr);
-  shutdown_server(ctx);
+  shutdown_server();
   grn_ctx_fin(ctx);
   grn_fin();
   exit(ret);
@@ -770,7 +781,7 @@ error_exit(grn_ctx *ctx, int ret)
 
 static
 int
-get_sysinfo(char *path, char *result, int olen)
+get_sysinfo(const char *path, char *result, int olen)
 {
   char tmpbuf[256];
 
@@ -829,6 +840,12 @@ get_sysinfo(char *path, char *result, int olen)
   osinfo.dwOSVersionInfoSize = sizeof(osinfo); GetVersionEx(&osinfo);
   sprintf(tmpbuf, "  \"OS\": \"Windows %d.%d\",\n", osinfo.dwMajorVersion,
   osinfo.dwMinorVersion);
+  strcat(result, tmpbuf);
+
+  sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+  strcat(result, tmpbuf);
+
+  sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
   strcat(result, tmpbuf);
 
   sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
@@ -912,6 +929,12 @@ get_sysinfo(char *path, char *result, int olen)
   sprintf(tmpbuf, "  \"OS\": \"%s %s\",\n", ubuf.sysname, ubuf.release);
   strcat(result, tmpbuf);
 
+  sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+  strcat(result, tmpbuf);
+
+  sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
+  strcat(result, tmpbuf);
+
   sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
   strcat(result, tmpbuf);
 
@@ -927,9 +950,10 @@ get_sysinfo(char *path, char *result, int olen)
 
 static
 int
-start_server(char *dbpath, int r)
+start_server(const char *dbpath, int r)
 {
   int ret;
+  char optbuf[BUF_LEN];
 #ifdef WIN32
   char tmpbuf[BUF_LEN];
 
@@ -943,6 +967,9 @@ start_server(char *dbpath, int r)
 
   strcpy(tmpbuf, GROONGA_PATH);
   strcat(tmpbuf, " -s ");
+  strcat(tmpbuf, " -p ");
+  sprintf(optbuf, "%d", grntest_serverport);
+  strcat(tmpbuf, optbuf);
   strcat(tmpbuf, dbpath);
   memset(&si, 0, sizeof(si));
   si.cb=sizeof(si);
@@ -961,8 +988,9 @@ start_server(char *dbpath, int r)
     fprintf(stderr, "Cannot start groonga server:Cannot fork\n");
     exit(1);
   }
+  sprintf(optbuf, "%d", grntest_serverport);
   if (pid == 0) {
-    ret = execlp("groonga", "groonga", "-s", dbpath, (char*)NULL);
+    ret = execlp("groonga", "groonga", "-s", "-p", optbuf, dbpath, (char*)NULL);
     if (ret == -1) {
       fprintf(stderr, "Cannot start groonga server:errno=%d\n", errno);
       exit(1);
@@ -977,7 +1005,7 @@ static
 int
 parse_line(char *buf, int start, int end, int num)
 {
-  int i, j, flag = 0;
+  int i, j, error_flag = 0;
   char tmpbuf[BUF_LEN];
 
   grntest_job[num].concurrency = 1;
@@ -1015,13 +1043,14 @@ parse_line(char *buf, int start, int end, int num)
       i = i + 8;
       break;
     }
-    flag = 1;
+    error_flag = 1;
     i++;
   }
+
+  if (error_flag) {
+    return 3;
+  }
   if (i == end) {
-    if (flag) {
-      return 3;
-    }
     return 1;
   }
 
@@ -1124,12 +1153,12 @@ get_jobs(grn_ctx *ctx, char *buf, int line)
   len = strlen(buf);
   i = 0;
   while (i < len) {
-   if ((buf[i] == '#') || (buf[i] == '\r') || (buf[i] == '\n')) {
-     buf[i] = '\0';
-     len = i;
-     break;
-   }
-   i++;
+    if ((buf[i] == '#') || (buf[i] == '\r') || (buf[i] == '\n')) {
+      buf[i] = '\0';
+      len = i;
+      break;
+    }
+    i++;
   }
 
   i = 0;
@@ -1286,9 +1315,10 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
   for (i = 0; i < task_num; i++) {
     grn_ctx_init(&grntest_ctx[i], 0);
     if (gqtp_p(grntest_task[i].jobtype)) {
-      ret = grn_ctx_connect(&grntest_ctx[i], grntest_serverhost, DEFAULT_PORT, 0);
+      ret = grn_ctx_connect(&grntest_ctx[i], grntest_serverhost, grntest_serverport, 0);
       if (ret) {
-        fprintf(stderr, "Cannot connect groonga server:ret=%d\n", ret);
+        fprintf(stderr, "Cannot connect groonga server:host=%s:port=%d:ret=%d\n",
+                grntest_serverhost, grntest_serverport, ret);
         error_exit(ctx, 1);
       }
     } else {
@@ -1336,7 +1366,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
 /* return num of query */
 static
 int
-do_script(grn_ctx *ctx, char *sfile)
+do_script(grn_ctx *ctx, const char *sfile)
 {
   int line = 0;
   int job_num;
@@ -1381,7 +1411,7 @@ do_script(grn_ctx *ctx, char *sfile)
 
 static
 int
-start_local(grn_ctx *ctx, char *dbpath)
+start_local(grn_ctx *ctx, const char *dbpath)
 {
   grntest_db = grn_db_open(ctx, dbpath);
   if (!grntest_db) {
@@ -1400,19 +1430,20 @@ check_server(grn_ctx *ctx)
 {
   int ret, retry = 0;
   while (1) {
-    ret = grn_ctx_connect(ctx, grntest_serverhost, DEFAULT_PORT, 0);
+    ret = grn_ctx_connect(ctx, grntest_serverhost, grntest_serverport, 0);
     if (ret == GRN_CONNECTION_REFUSED) {
       sleep(1);
       retry++;
       if (retry > 5) {
-        fprintf(stderr, "Cannot connect groonga server(retry):ret=%d\n", 
-                         ret);
+        fprintf(stderr, "Cannot connect groonga server:host=%s:port=%d:ret=%d\n",
+                grntest_serverhost, grntest_serverport, ret);
         return 1;
       }
       continue;
     }
     if (ret) {
-      fprintf(stderr, "Cannot connect groonga server:ret=%d\n", ret);
+      fprintf(stderr, "Cannot connect groonga server:host=%s:port=%d:ret=%d\n",
+              grntest_serverhost, grntest_serverport, ret);
       return 1;
     }
     break;
@@ -1460,7 +1491,7 @@ read_response(ftpsocket socket, char *buf)
 
 static
 int
-put_file(ftpsocket socket, char *filename)
+put_file(ftpsocket socket, const char *filename)
 {
   FILE *fp;
   int c, ret, size = 0;
@@ -1507,7 +1538,7 @@ ftp_list(ftpsocket data_socket)
 
 static
 int
-get_file(ftpsocket socket, char *filename, int size)
+get_file(ftpsocket socket, const char *filename, int size)
 {
   FILE *fp;
   int ret, total;
@@ -1634,7 +1665,7 @@ get_size(char *buf)
 }
 
 int
-ftp_sub(char *user, char *passwd, char *host, char *filename, 
+ftp_sub(char *user, char *passwd, char *host, const char *filename, 
          int mode, char *cd_dirname, char *retval)
 {
   int size = 0;
@@ -1723,26 +1754,30 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
   }
 
   switch (mode) {
-    case MODE_LIST:
+  case MODE_LIST:
+    if (filename) {
+      sprintf(send_mesg, "LIST %s\r\n", filename);
+    } else {
       sprintf(send_mesg, "LIST \r\n");
-      write_to_server(command_socket, send_mesg);
-      break;
-    case MODE_PUT:
-      sprintf(send_mesg, "STOR %s\r\n", filename);
-      write_to_server(command_socket, send_mesg);
-      break;
-    case MODE_GET:
-      sprintf(send_mesg, "RETR %s\r\n", filename);
-      write_to_server(command_socket, send_mesg);
-      break;
-    case MODE_TIME:
-      sprintf(send_mesg, "MDTM %s\r\n", filename);
-      write_to_server(command_socket, send_mesg);
-      break;
-    default:
-      fprintf(stderr, "invalid mode\n");
-      ftpclose(data_socket);
-      goto exit;
+    }
+    write_to_server(command_socket, send_mesg);
+    break;
+  case MODE_PUT:
+    sprintf(send_mesg, "STOR %s\r\n", filename);
+    write_to_server(command_socket, send_mesg);
+    break;
+  case MODE_GET:
+    sprintf(send_mesg, "RETR %s\r\n", filename);
+    write_to_server(command_socket, send_mesg);
+    break;
+  case MODE_TIME:
+    sprintf(send_mesg, "MDTM %s\r\n", filename);
+    write_to_server(command_socket, send_mesg);
+    break;
+  default:
+    fprintf(stderr, "invalid mode\n");
+    ftpclose(data_socket);
+    goto exit;
   }
 
   read_response(command_socket, buf);
@@ -1763,25 +1798,25 @@ ftp_sub(char *user, char *passwd, char *host, char *filename,
   }
 
   switch (mode) {
-    case MODE_LIST:
-      ftp_list(data_socket);
-      break;
-    case MODE_GET:
-      if (get_file(data_socket, filename, size) == -1) {
-        ftpclose(data_socket);
-        goto exit;
-      }
-      fprintf(stderr, "get:%s\n", filename);
-      break;
-    case MODE_PUT:
-      if (put_file(data_socket, filename) == -1) {
-        ftpclose(data_socket);
-        goto exit;
-      }
-      fprintf(stderr, "put:%s\n", filename);
-      break;
-    default:
-      break;
+  case MODE_LIST:
+    ftp_list(data_socket);
+    break;
+  case MODE_GET:
+    if (get_file(data_socket, filename, size) == -1) {
+      ftpclose(data_socket);
+      goto exit;
+    }
+    fprintf(stderr, "get:%s\n", filename);
+    break;
+  case MODE_PUT:
+    if (put_file(data_socket, filename) == -1) {
+      ftpclose(data_socket);
+      goto exit;
+    }
+    fprintf(stderr, "put:%s\n", filename);
+    break;
+  default:
+    break;
   }
 
   ftpclose(data_socket);
@@ -1799,6 +1834,7 @@ exit:
   return status;
 }
 
+/*
 static
 int
 ftp_main(int argc, char **argv)
@@ -1812,6 +1848,7 @@ ftp_main(int argc, char **argv)
   }
   return 0;
 }
+*/
 
 static
 int
@@ -1846,7 +1883,7 @@ get_date(char *date, time_t *sec)
 
 static
 int
-get_scriptname(char *path, char *name, char *suffix)
+get_scriptname(const char *path, char *name, char *suffix)
 {
   int slen = strlen(suffix);
   int len = strlen(path);
@@ -1900,7 +1937,7 @@ get_tm_from_serverdate(char *serverdate, struct tm *tm)
 
 static
 int
-sync_sub(grn_ctx *ctx, char *filename)
+sync_sub(grn_ctx *ctx, const char *filename)
 {
   int ret;
   char serverdate[BUF_LEN];
@@ -1975,7 +2012,7 @@ cache_file(char **flist, char *file, int fnum)
 
 static
 int
-sync_datafile(grn_ctx *ctx, char *sfile)
+sync_datafile(grn_ctx *ctx, const char *sfile)
 {
   int line = 0;
   int fnum = 0;
@@ -2020,7 +2057,7 @@ printf("commandfile=[%s]:buf=%s\n", grntest_job[i].commandfile, buf);
 
 static
 int
-sync_script(grn_ctx *ctx, char *filename)
+sync_script(grn_ctx *ctx, const char *filename)
 {
   int ret, filenum;
 
@@ -2035,59 +2072,209 @@ sync_script(grn_ctx *ctx, char *filename)
   return 1;
 }
 
+static
+void
+usage(void)
+{
+  fprintf(stderr, 
+         "Usage: grntest [options...] [script] [db]\n"
+         "options:\n"
+         "  -i, --host <ip/hostname>:  server address to listen (default: %s)\n"
+         "  -p  --port <port number>:  server port number (default: %d)\n"
+         "  -dir:                      show script files on ftp server\n"
+         "  --noftp:                   ommit ftp connection\n",
+         DEFAULT_DEST, DEFAULT_PORT);
+  exit(1);
+}
+
+enum {
+  mode_default = 0,
+  mode_list,
+  mode_noftp,
+  mode_usage,
+};
+
+static
+int
+get_token(char *line, char *token, int maxlen, char **next)
+{
+  int i = 0;
+
+  *next = NULL;
+  token[i] = '\0';
+
+  while (*line) {
+    if (grn_isspace(line, GRN_ENC_UTF8) == 1) {
+      line++;
+      continue;
+    }
+    if (*line == ';') {
+      token[0] = ';';
+      token[1] = '\0';
+      *next = line + 1;
+      return 1;
+    }
+    if (*line == '#') {
+      token[0] = ';';
+      token[1] = '\0';
+      *next = line + 1;
+      return 1;
+    }
+    break;
+  }
+
+  while (*line) {
+    token[i] = *line;
+    i++;
+    if (grn_isspace(line + 1, GRN_ENC_UTF8) == 1) {
+      token[i] = '\0';
+      *next = line + 1;
+      return 1;
+    }
+    if (*(line + 1) == ';') {
+      token[i] = '\0';
+      *next = line + 1;
+      return 1;
+    }
+    if (*(line + 1) == '#') {
+      token[i] = '\0';
+      *next = line + 1;
+      return 1;
+    }
+    if (*(line + 1) == '\0') {
+      token[i] = '\0';
+      return 1;
+    }
+    
+    line++;
+  }
+  return 0;
+}
+
+/* SET_PORT and SET_HOST */
+static
+int
+check_script(const char *scrname)
+{
+  FILE *fp;
+  char tmpbuf[BUF_LEN];
+  char token[BUF_LEN];
+  char prev[BUF_LEN];
+  char *next = NULL;
+
+  fp = fopen(scrname, "r");
+  if (!fp) {
+    fprintf(stderr, "Cannot open script:%s\n", scrname);
+    exit(1);
+  }
+
+  tmpbuf[BUF_LEN-2] = '\0';
+  while (fgets(tmpbuf, BUF_LEN, fp) != NULL) {
+    if (tmpbuf[BUF_LEN-2] != '\0') {
+      fprintf(stderr, "Too long line in script:%s\n", scrname);
+      exit(1);
+    }
+    tmpbuf[strlen(tmpbuf)-1] = '\0';
+    get_token(tmpbuf, token, BUF_LEN, &next);
+    strcpy(prev, token);
+    
+    while (next) {
+      get_token(next, token, BUF_LEN, &next);
+      if (!strncmp(prev, "SET_PORT", 8)) {
+        grntest_serverport = grn_atoi(token, token + strlen(token), NULL);
+      }
+      if (!strncmp(prev, "SET_HOST", 8)) {
+        strcpy(grntest_serverhost, token);
+        grntest_remote_mode = 1;
+      }
+      strcpy(prev, token);
+    }
+  }
+
+  fclose(fp);
+  return 0;
+}
+
 int
 main(int argc, char **argv)
 {
-  int qnum;
-  grn_ctx context, server_context;
+  int qnum, i, mode = 0;
+  grn_ctx context;
   char sysinfo[BUF_LEN];
   char log[BUF_LEN];
+  const char *portstr=NULL, *hoststr=NULL, *dbname = NULL, *scrname = NULL;
   time_t sec;
-  int remote_mode = 0;
 
-  if ((argc > 4) && (!strcmp(argv[1], "-ftp"))) {
-    ftp_main(argc, argv);
-    return 0;
+  static grn_str_getopt_opt opts[] = {
+    {'i', "host", NULL, 0, getopt_op_none},
+    {'p', "port", NULL, 0, getopt_op_none},
+    {'\0', "dir", NULL, mode_list, getopt_op_update},
+    {'\0', "noftp", NULL, mode_noftp, getopt_op_update},
+    {'h', "help", NULL, mode_usage, getopt_op_update},
+    {'\0', NULL, NULL, 0, 0}
+  };
+
+  opts[0].arg = &hoststr;
+  opts[1].arg = &portstr;
+
+  i = grn_str_getopt(argc, argv, opts, &mode);
+  if (i < 0) {
+    usage();
+  }
+  if (mode == mode_usage) {
+    usage();
   }
 
-  if ((argc > 1) && (!strncmp(argv[1], "-dir", 4))) {
-    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, NULL, 1, "data", 
+  if (i < argc) {
+    scrname = argv[i];
+  }
+  if (i < argc - 1) {
+    dbname = argv[i+1];
+  }
+
+  if (mode == mode_list) {
+    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data", 
              NULL);
     return 0;
   }
 
-  if (argc < 3) {
-    fprintf(stderr, "Usage:%s script db [-dest <ip/hostname>]\n", argv[0]);
-    fprintf(stderr, " Type %s -dir to get script list. \n", argv[0]);
-    exit(1);
+  if ((scrname == NULL) || (dbname == NULL)) {
+    usage();
+  }
+  
+  strcpy(grntest_serverhost, DEFAULT_DEST);
+  if (hoststr) {
+    grntest_remote_mode++;
+    strcpy(grntest_serverhost, hoststr);
+    printf("%s\n", hoststr);
+  }
+  grntest_serverport = DEFAULT_PORT;
+  if (portstr) {
+    grntest_serverport = grn_atoi(portstr, portstr + strlen(portstr), NULL);
   }
 
-  strcpy(grntest_serverhost, DEFAULT_DEST);
-  if (argc > 4) {
-    if (!strncmp(argv[3], "-dest", 5)) {
-      strcpy(grntest_serverhost, argv[4]);
-      remote_mode = 1;
-    }
-  }
+  check_script(scrname);
 
   grn_init();
   CRITICAL_SECTION_INIT(grntest_cs);
   
   grn_ctx_init(&context, 0);
-  grn_ctx_init(&server_context, 0);
+  grn_ctx_init(&grntest_server_context, 0);
   grn_set_default_encoding(GRN_ENC_UTF8);
 
-  start_local(&context, argv[2]);
-  if (!remote_mode) {
-    start_server(argv[2], 0);
+  start_local(&context, dbname);
+  if (!grntest_remote_mode) {
+    start_server(dbname, 0);
   }
 
-  if (check_server(&server_context)) {
+  if (check_server(&grntest_server_context)) {
     goto exit;
   }
 
-  sync_script(&context, argv[1]);
-  get_scriptname(argv[1], grntest_scriptname, ".scr");
+  if (mode != mode_noftp) {
+    sync_script(&context, scrname);
+  }
+  get_scriptname(scrname, grntest_scriptname, ".scr");
   get_username(grntest_username);
 
   GRN_TIME_INIT(&grntest_starttime, 0);
@@ -2101,31 +2288,29 @@ main(int argc, char **argv)
   grntest_logfp = fopen(log, "w+b");
   if (!grntest_logfp) {
     fprintf(stderr, "Cannot open logfile:%s\n", log);
-    if (!remote_mode) {
-      shutdown_server(&server_context);
-    }
     goto exit;
   }
 
-  get_sysinfo(argv[2], sysinfo, BUF_LEN);
+  get_sysinfo(dbname, sysinfo, BUF_LEN);
   output_sysinfo(sysinfo);
 
-  qnum = do_script(&context, argv[1]);
+  qnum = do_script(&context, scrname);
   output_result_final(&context, qnum);
   fclose(grntest_logfp);
 
-  if (!remote_mode) {
-    shutdown_server(&server_context);
+  if (mode != mode_noftp) {
+    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3, 
+            "report", NULL);
   }
+  fprintf(stderr, "grntest done. logfile=%s\n", log);
 
-  ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3, 
-          "report", NULL);
 exit:
+  shutdown_server();
   CRITICAL_SECTION_FIN(grntest_cs);
   grn_obj_close(&context, &grntest_starttime);
   grn_obj_close(&context, grntest_db);
   grn_ctx_fin(&context);
-  grn_ctx_fin(&server_context);
+  grn_ctx_fin(&grntest_server_context);
   grn_fin();
 /*
   fprintf(stderr, "grntest_alloctimes=%d\n", grntest_alloctimes);
