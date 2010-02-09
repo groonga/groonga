@@ -12389,3 +12389,18 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
   *p_limit = limit;
   return GRN_SUCCESS;
 }
+
+void
+grn_p(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_obj buffer;
+
+  GRN_TEXT_INIT(&buffer, 0);
+  if (obj->header.type == GRN_EXPR) {
+    grn_expr_inspect(ctx, &buffer, obj);
+  } else {
+    grn_text_otoj(ctx, &buffer, obj, NULL);
+  }
+  printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+  grn_obj_unlink(ctx, &buffer);
+}
