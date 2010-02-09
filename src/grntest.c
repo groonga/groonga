@@ -967,8 +967,8 @@ start_server(const char *dbpath, int r)
 
   strcpy(tmpbuf, GROONGA_PATH);
   strcat(tmpbuf, " -s ");
-  strcat(tmpbuf, " -p ");
-  sprintf(optbuf, "%d", grntest_serverport);
+  strcat(tmpbuf, "-p ");
+  sprintf(optbuf, "%d ", grntest_serverport);
   strcat(tmpbuf, optbuf);
   strcat(tmpbuf, dbpath);
   memset(&si, 0, sizeof(si));
