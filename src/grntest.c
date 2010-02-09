@@ -2164,7 +2164,7 @@ check_script(const char *scrname)
 
   fp = fopen(scrname, "r");
   if (!fp) {
-    fprintf(stderr, "Cannot open script:%s\n", scrname);
+    fprintf(stderr, "check_script:Cannot open script:%s\n", scrname);
     exit(1);
   }
 
@@ -2244,7 +2244,7 @@ main(int argc, char **argv)
   
   strcpy(grntest_serverhost, DEFAULT_DEST);
   if (hoststr) {
-    grntest_remote_mode++;
+    grntest_remote_mode = 1;
     strcpy(grntest_serverhost, hoststr);
     printf("%s\n", hoststr);
   }
@@ -2253,7 +2253,6 @@ main(int argc, char **argv)
     grntest_serverport = grn_atoi(portstr, portstr + strlen(portstr), NULL);
   }
 
-  check_script(scrname);
 
   grn_init();
   CRITICAL_SECTION_INIT(grntest_cs);
@@ -2261,6 +2260,11 @@ main(int argc, char **argv)
   grn_ctx_init(&context, 0);
   grn_ctx_init(&grntest_server_context, 0);
   grn_set_default_encoding(GRN_ENC_UTF8);
+
+  if (mode != mode_noftp) {
+    sync_script(&context, scrname);
+  }
+  check_script(scrname);
 
   start_local(&context, dbname);
   if (!grntest_remote_mode) {
@@ -2271,9 +2275,6 @@ main(int argc, char **argv)
     goto exit;
   }
 
-  if (mode != mode_noftp) {
-    sync_script(&context, scrname);
-  }
   get_scriptname(scrname, grntest_scriptname, ".scr");
   get_username(grntest_username);
 
