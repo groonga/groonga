@@ -65,9 +65,9 @@ sub common_header()
   ts.write "        -DNO_ZLIB \" + vbLf
   ts.write "        -DUSE_SELECT \" + vbLf
   ts.write "        -DGROONGA_DEFAULT_ENCODING=""\""utf-8\"""" \" + vbLf
-  ts.write "        -DGROONGA_INITIAL_N_SEGMENTS=""512"" \" + vbLf
   ts.write "        -DGROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD=""0"" \" + vbLf
   ts.write "        -DGROONGA_LOG_PATH=""\""c:\\groonga\\log\\groonga.log\"""" \" + vbLf
+  ts.write "        -DDEFAULT_ADMIN_HTML_PATH=""\""c:\\groonga\\data\\admin_html\"""" \" + vbLf
   ts.write "        -DPACKAGE=""\""" 
   ts.write package
   ts.write "\"""" \" + vbLf
