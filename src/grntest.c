@@ -198,7 +198,7 @@ error_exit_in_thread(intptr_t code)
 
 static
 int
-escape_command(unsigned char *in, int ilen,  unsigned char *out, int olen)
+escape_command(char *in, int ilen,  char *out, int olen)
 {
   int i = 0, j = 0;
 
@@ -208,23 +208,60 @@ escape_command(unsigned char *in, int ilen,  unsigned char *out, int olen)
       exit(1);
     }
 
-    if ((in[i] == '\\') || (in[i] == '\"') || (in[i] == '/') || (in[i] == '\b') ||
-        (in[i] == '\f') || (in[i] == '\n') || (in[i] == '\r') || (in[i] == '\t')) {
+    if ((in[i] == '\\') || (in[i] == '\"') || (in[i] == '/')) {
       out[j] = 0x5C;
       j++;
       out[j] = in[i];
       j++;
       i++;
     } else {
-      out[j] = in[i];
-      j++;
-      i++;
+      switch (in[i]) {
+        case '\b':
+          out[j] = 0x5C;
+          j++;
+          out[j] = 'b';
+          i++;
+          break;
+        case '\f':
+          out[j] = 0x5C;
+          j++;
+          out[j] = 'f';
+          j++;
+          i++;
+          break;
+        case '\n':
+          out[j] = 0x5C;
+          j++;
+          out[j] = 'n';
+          j++;
+          i++;
+          break;
+        case '\r':
+          out[j] = 0x5C;
+          j++;
+          out[j] = 'r';
+          j++;
+          i++;
+          break;
+        case '\t':
+          out[j] = 0x5C;
+          j++;
+          out[j] = 't';
+          j++;
+          i++;
+          break;
+        default:
+          out[j] = in[i];
+          j++;
+          i++;
+          break;
+      }
     }
   }
-
   out[j] = '\0';
   return j;
 }
+
 
 static
 int
@@ -333,13 +370,11 @@ static
 int
 shutdown_server(grn_ctx *ctx)
 {
-  int ret;
-  ret = grn_ctx_connect(ctx, grntest_serverhost, DEFAULT_PORT, 0);
-  if (ret) {
-    fprintf(stderr, "Cannot connect groonga server(shutdown):ret=%d\n", ret);
-    exit(1);
-  }
   grn_ctx_send(ctx, "shutdown", 8, 0);
+  if (ctx->rc) {
+    fprintf(stderr, "ctx_send:rc=%d\n", ctx->rc);
+    error_exit_in_thread(1);
+  }
   return 0;
 }
 
@@ -2004,7 +2039,7 @@ int
 main(int argc, char **argv)
 {
   int qnum;
-  grn_ctx context;
+  grn_ctx context, server_context;
   char sysinfo[BUF_LEN];
   char log[BUF_LEN];
   time_t sec;
@@ -2039,6 +2074,7 @@ main(int argc, char **argv)
   CRITICAL_SECTION_INIT(grntest_cs);
   
   grn_ctx_init(&context, 0);
+  grn_ctx_init(&server_context, 0);
   grn_set_default_encoding(GRN_ENC_UTF8);
 
   start_local(&context, argv[2]);
@@ -2046,7 +2082,7 @@ main(int argc, char **argv)
     start_server(argv[2], 0);
   }
 
-  if (check_server(&context)) {
+  if (check_server(&server_context)) {
     goto exit;
   }
 
@@ -2065,7 +2101,9 @@ main(int argc, char **argv)
   grntest_logfp = fopen(log, "w+b");
   if (!grntest_logfp) {
     fprintf(stderr, "Cannot open logfile:%s\n", log);
-    shutdown_server(&context);
+    if (!remote_mode) {
+      shutdown_server(&server_context);
+    }
     goto exit;
   }
 
@@ -2077,7 +2115,7 @@ main(int argc, char **argv)
   fclose(grntest_logfp);
 
   if (!remote_mode) {
-    shutdown_server(&context);
+    shutdown_server(&server_context);
   }
 
   ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3, 
@@ -2087,6 +2125,7 @@ exit:
   grn_obj_close(&context, &grntest_starttime);
   grn_obj_close(&context, grntest_db);
   grn_ctx_fin(&context);
+  grn_ctx_fin(&server_context);
   grn_fin();
 /*
   fprintf(stderr, "grntest_alloctimes=%d\n", grntest_alloctimes);
