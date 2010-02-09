@@ -1,3 +1,2202 @@
+2010-02-05 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: add missing '.'.
+
+2010-02-04 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: fixed a bug in grn_pat_lcp_search() which made grn_pat_scan()
+ return wrong result.
+
+2010-02-04 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-database.c: don't use '<' and '>' for table name.
+
+ * test/unit/core/test-dump.c: remove needless test pattern.
+
+ * lib/proc.c: 'status' supports return code.
+
+2010-02-04 t2001 <t2001@gol.com>
+
+ * src/grntest.c: define __USE_XOPEN for strptime
+
+2010-01-20 Ryo Onodera <onodera@clear-code.com>
+
+ * src/Makefile.am, src/groonga.c: set the default value for --admin-html-path
+
+2010-02-04 t2001 <t2001@gol.com>
+
+ * src/grntest.c: fixed typo.
+
+2010-02-04 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: update vector column value even if the value is empty.
+
+2009-12-16 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c: factor out common code into set_vector()
+
+ * lib/proc.c, test/unit/core/test-dump.c, test/unit/core/test-dump.rb: dump
+ records as arrays instead of objects
+
+2009-12-15 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/ctx.c, lib/db.c, lib/proc.c, lib/ql.h, test/unit/core/test-dump.rb:
+ make load command behave as ducmented when records passed as arrays
+
+2009-12-26 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c: group constants to take advantage of optimization
+
+2009-12-24 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c: simplify computation: sqrt(q * q * q) -> q * sqrt(q)
+
+2009-12-14 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c, lib/db.h, lib/proc.c, test/unit/core/test-dump.rb: support view
+ tables to dump
+
+2009-12-26 Kouhei Sutou <kou@clear-code.com>
+
+ * test/benchmark/.gitignore, test/benchmark/Makefile.am,
+ test/benchmark/bench-geo-distance.c: add a benchmark for geo distance.
+
+ * lib/proc.c: fix a bug that geo_distance3 with WGS84 always reports 0.  'd'
+ variable inside 'case GRN_DB_WGS84_GEO_POINT' clause hides 'd' variable top
+ of func_geo_distance3().
+
+2010-02-04 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/grntest.html, doc/ja/index.html, doc/ja/process.html,
+ doc/ja/reference.html, doc/ja/searchindex.js, doc/ja/source/process.txt:
+ Added grntest document.
+
+2010-02-04 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table.c: don't use '<' and '>' for type name.
+
+2010-02-04 t2001 <t2001@gol.com>
+
+ * doc/ja/source/grntest.txt: changed sample output.
+
+ * src/grntest.c: refined get_sysinfo
+
+2010-02-03 t2001 <t2001@gol.com>
+
+ * src/grntest.c: suppered escape command.
+
+ * src/grntest.c: fixed(?). infinite loop in "load command"
+
+ * src/grntest.c: refined rep_local and rep_gqtp.
+
+ * src/grntest.c: use grn_atoi and grn_isspace
+
+2010-02-01 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/db.c: Limited table/column name([-_0-9A-Za-z]*).
+
+2010-02-01 t2001 <t2001@gol.com>
+
+ * src/grntest.c: removed needless absolute path.
+
+2010-02-01 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-select.c: remove needless prefixes.
+
+ * test/unit/core/test-table-select.c: add a test for selecting by nonexistent
+ reference key.  Now, this test is failed.
+
+ * lib/db.c, lib/proc.c: add missing '.' to %*s format.
+
+ * test/unit/core/test-table-select.c: add a test for string reference key ==
+ string literal.
+
+ * test/unit/core/test-expr-parse.c: add a test for parsing string literal for
+ string reference key.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-expr.c,
+ test/unit/core/test-table-select.c: move grn_table_select() tests to
+ test-table-select.c.
+
+ * test/unit/core/test-expr-parse.c: use individual path.
+
+ * test/unit/core/test-expr-parse.c: fix style.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-expr-parse.c,
+ test/unit/core/test-expr.c: move expression parsing tests to
+ test-expr-parse.c.
+
+2010-01-29 t2001 <t2001@gol.com>
+
+ * mkmfwin32.vbs: groonga.c needs "-DPACKAGE_STRING"
+
+2010-01-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/ii.c: Fixed the problem in ii.c cause wrong search result for
+ particular term with splited inverted index entries. Stop to create columns
+ automatically in grn_load.
+
+2010-01-29 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-dump.rb: added
+ test_table_with_index_column_sorted_by_id
+
+ * test/unit/core/test-dump.rb: follow the change of returned json format
+
+2010-01-29 t2001 <t2001@gol.com>
+
+ * src/grntest.c: refined. ftp LIST
+
+ * src/grntest.c: refined. ftp LIST
+
+ * src/grntest.c: support multi-line load command.
+
+2010-01-28 t2001 <t2001@gol.com>
+
+ * src/grntest.c: check buffer overrun.
+
+2010-01-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/genindex.html, doc/ja/geo_distance.html, doc/ja/geo_in_circle.html,
+ doc/ja/geo_in_rectangle.html, doc/ja/now.html, doc/ja/rand.html,
+ doc/ja/searchindex.js, doc/ja/source/geo_distance.txt,
+ doc/ja/source/geo_in_circle.txt, doc/ja/source/geo_in_rectangle.txt,
+ doc/ja/source/now.txt, doc/ja/source/rand.txt: Fixed underspecify on document
+ about grn_expr.
+
+ * src/groonga.c: Fixed uninitialized value return on groonga server.
+
+ * src/groonga.c: Added --version option on groonga server.
+
+2010-01-28 t2001 <t2001@gol.com>
+
+ * src/grntest.c: check buffer overrun
+
+ * src/grntest.c: Don't use capital letters.
+
+2010-01-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Fixed a problem in proc_load() that cause too many output.
+
+2010-01-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: Fixed memory leak of jsonp_func.
+
+2010-01-28 t2001 <t2001@gol.com>
+
+ * lib/groonga_in.h: define INT8 nad INT16 for WIN32
+
+2010-01-27 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: Added json callback parameter on http.
+
+ * src/groonga.c: Show index.html if '/' is required with http.
+
+2010-01-27 t2001 <t2001@gol.com>
+
+ * src/grntest.c: refined: error handling
+
+2010-01-26 Kouhei Sutou <kou@clear-code.com>
+
+ * src/.gitignore: add grntest to .gitignore.
+
+ * test/unit/core/test-inverted-index.c: don't change the current directory.
+
+ * test/unit/core/test-cast.c: add missing if braces.
+
+2009-12-18 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-cast.c: fix argument types.
+
+ * lib/db.c, test/unit/core/test-cast.c: grn_obj_cast() supports text ->
+ boolean.
+
+ * lib/db.c, lib/str.c, lib/str.h: grn_obj_cast() supports text ->
+ int16/uint16.
+
+ * lib/db.c, lib/str.c, lib/str.h, test/unit/lib/grn-assertions.c:
+ grn_obj_cast() supports text -> int8/uint8.
+
+ * lib/db.c: grn_obj_cast() supports number -> boolean.
+
+ * lib/db.c, test/unit/core/test-cast.c: grn_obj_cast() supports integer ->
+ int16/uint16.
+
+ * lib/db.c, test/unit/core/test-cast.c: grn_obj_cast() supports integer ->
+ int8/uint8.
+
+ * test/unit/http/test-http-select-drilldown.rb: add a test for complex
+ drilldown.
+
+ * lib/proc.c: define_selector support JSON format result.
+
+ * test/unit/http/Makefile.am, test/unit/http/test-http-select-drilldown.rb:
+ add a test for a bit complex drilldown.
+
+ * lib/proc.c: error code -> return code.
+
+ * test/unit/http/test-http-select-basic.rb: fix method name.
+
+ * test/unit/http/test-http-schema.rb: use JSON format result.
+
+ * lib/proc.c: use grn_get_ctype().
+
+ * lib/proc.c, test/unit/lib/ruby/groonga-http-test-utils.rb: load supports
+ JSON format result.
+
+ * lib/proc.c: column_create supports JSON format result.
+
+ * lib/proc.c: table_create/view_add support JSON format result.
+
+ * lib/proc.c: quit/shutdown accept output_type and support JSON format
+ result.
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/http/test-http-select.rb: rename to existing select via HTTP test
+ to select basic.
+
+ * test/unit/http/test-http-select.rb: add a missing newline.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '--' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/expr.c, lib/expr.y, test/unit/core/test-expr.c: don't overwrite
+ existing error by syntax error.
+
+2009-12-17 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-expr-query.c: add a test
+ for '=' in query syntax.
+
+2009-12-16 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-expr.c: remove needless prototype declarations.
+
+2010-01-26 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/lib/grn-assertions.c: include <groonga_in.h> for int64_t.
+
+ * src/groonga.c: include missing sys/socket.h.  Should we use grn_com_send()
+ instead of send()?
+
+ * src/grntest.c: move #include to outside of function.
+
+2010-01-22 t2001 <t2001@gol.com>
+
+ * src/grntest.c: fixed typo
+
+ * src/grntest.c: add copyright doc.
+
+ * doc/ja/source/grntest.txt: add grntest.txt
+
+ * mkmfwin32.vbs: add mkmfwin32
+
+ * src/grntest.c: cleanup warnings
+
+ * src/Makefile.am: fixed typo
+
+ * src/Makefile.am, src/grntest.c: add grntest.c
+
+2010-01-13 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: fixed bugs on parsing GET parameter on HTTP server.
+
+2010-01-08 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/str.c: Changed spec for NO attr of HIT tag on XML output.
+
+2009-12-29 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/ctx.c, lib/proc.c, src/groonga.c: splited http handler.
+
+ * resource/admin_html/index.html: supported full params of select cmd on
+ html.
+
+2009-12-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/str.c: Fixed a bug in grn_obj_cast() cause memory leak.
+
+2009-12-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Added support for GRN_EXPR_ALLOW_UPDATE to grn_select().
+
+2009-12-15 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-encoding.c,
+ test/unit/lib/grn-assertions.c, test/unit/lib/grn-assertions.h: add a test
+ for grn_{set,get}_default_encoding().
+
+ * test/unit/core/test-expr-script.c: add a test for 'nonexistent_column ==
+ XXX' expression.
+
+2009-12-14 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-dump.rb: support multiple columns for
+ source option
+
+ * lib/proc.c, test/unit/core/test-dump.c: make record id preserved only with
+ no-key tables
+
+ * test/unit/core/test-dump.c: add missing test functions declarations
+
+ * doc/ja/commands.html, doc/ja/commands/delete.html,
+ doc/ja/commands/get.html, doc/ja/commands/load.html,
+ doc/ja/commands/log_level.html, doc/ja/commands/log_put.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/set.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/view_add.html,
+ doc/ja/index.html, doc/ja/reference.html, doc/ja/searchindex.js,
+ doc/ja/source/commands/delete.txt: added documentation of "delete" command
+
+ * doc/ja/commands/get.html, doc/ja/searchindex.js,
+ doc/ja/source/commands/get.txt: corrected documentation of "get" command
+
+2009-12-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: fall back to call PARSE(0) even if rc < 0, in order handle syntax
+ error.
+
+ * lib/db.c: Added NULL check to ACCESSORP().
+
+2009-12-12 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_table_add() that hook doesn't work when added
+ is NULL.
+
+2009-12-11 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, lib/expr.c, lib/expr.y, test/unit/core/test-expr-script.c: '++'
+ isn't allowed without GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '^=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '|=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '&=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '>>>=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '>>=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '<<=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '-=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '+=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '%=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '/=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: '*=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * groonga.h, lib/db.c, test/unit/core/test-expr-script.c,
+ test/unit/lib/grn-test-utils.c: '=' isn't allowed without
+ GRN_EXPR_ALLOW_UPDATE.
+
+ * lib/db.c: use 'header.domain =' instead of grn_obj_reinit().
+
+ * lib/db.c: use 'header.domain =' instead of grn_obj_reinit().
+
+2009-12-11 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-dump.rb: don't output _id and _key columns
+ in some cases
+
+2009-12-11 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-d13379ad94118460d57a7f4a9f799de3853642de.yaml: groonga-16 will be done
+ in the future.
+
+ * ...e-d13379ad94118460d57a7f4a9f799de3853642de.yaml: start groonga-16.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml: done groonga-11.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml: mark assign supported.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml: fix indent.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support ^= in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support |= in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support &= in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support >>>= in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support >>= in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support <<= in script syntax.
+
+2009-12-11 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-dump.rb: support unsequantial arrays
+
+ * test/unit/core/test-dump.rb: rename: assert_dump -> assert_restore_dump
+ assert_restore_dump restores and asserts the result of dump. and the new
+ assert_dump only asserts the result of dump.
+
+2009-12-11 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support -= in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support += in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support %= in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support /= in script syntax.
+
+ * test/unit/core/test-expr-script.c: add tests for ||.
+
+ * lib/db.c: set header.domain to GRN_BULK.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: && and || also supports float
+ and text.
+
+2009-12-11 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-dump.rb: check exit status of groonga more strictly
+
+ * test/unit/core/test-dump.rb: make feed_commands callable multiple times in
+ a test
+
+ * lib/proc.c, test/unit/core/test-dump.rb: actually implement the body of
+ "delete"
+
+ * lib/proc.c: defined skeleton "delete" based on "get"
+
+2009-12-11 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support *= operator in script syntax.
+
+ * test/unit/core/test-expr-script.c: add tests for logic operator '&'.
+
+2009-12-10 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: cleanup.
+
+ * test/unit/core/test-expr-script.c: add tests for = in expression syntax.
+
+ * lib/db.c: use %*s.
+
+2009-12-10 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c, lib/proc.c, test/unit/core/test-dump.rb: support dump/restore of
+ _value more throughly
+
+ * lib/db.c, test/unit/core/test-dump.rb: fix false-positive
+ test_vector_empty_load  actually, test_vector_empty_load was silently
+ failing. this fixes it
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ ...e-41c02e541788d975e77e717e111db5305a8c3dd1.html,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.html,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.html,
+ doc/issues/html/release-1.0.0.html,
+ ...e-41c02e541788d975e77e717e111db5305a8c3dd1.yaml: add new issue of array
+ with _value column (also update html files)
+
+ * test/unit/core/test-dump.rb: add test_load_chained_subtables
+
+ * test/unit/core/test-dump.rb: minor cleanup
+
+ * test/unit/core/test-dump.rb: test_vector_empty_load
+
+ * test/unit/core/test-dump.rb: rename test_vector_load to
+ test_vector_string_load
+
+ * lib/db.c, lib/str.c, test/unit/core/test-dump.rb,
+ test/unit/core/test-expr.c: use ids to reference array records
+
+ * lib/db.c, test/unit/core/test-dump.rb: fixes a bug of adding an empty
+ record
+
+2009-12-10 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: unify operator codes for text.
+
+2009-12-10 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/str.c: Fixed a bug in grn_text_otoj() and grn_text_otoxml() which cause
+ segv when limit assigned out of range.
+
+2009-12-10 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support | in script syntax.
+
+ * test/unit/core/test-expr-script.c: fix test data.
+
+ * test/unit/core/test-dump.c: fix a memory leak.
+
+ * test/unit/core/test-dump.c: remove needless label prefix.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: support -variable.
+
+2009-12-10 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c: refactor some code in brace_close
+
+ * test/unit/core/test-dump.rb: add test_load_with_int32_reference_key
+
+ * lib/db.c, lib/str.c, test/unit/core/test-dump.rb: support vector column of
+ reference keys
+
+2009-12-09 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-dump.rb: use grn_obj_cast when restoring
+ vector columns
+
+ * test/unit/core/test-dump.rb: add test_int32_load
+
+ * lib/str.c, test/unit/core/test-dump.rb: support basic restore and dump of
+ vector column
+
+ * lib/proc.c: replace unnecessary use of GRN_TEXT_PUTS with GRN_TEXT_PUTC
+
+ * test/unit/core/test-dump.c: make timeout 10 seconds from 1 second in
+ test-dump.c
+
+ * test/unit/core/test-dump.c: use cut_take_printf in test_column_create
+
+ * test/unit/core/test-dump.c: print stderr from groonga with dump command
+
+ * lib/proc.c, lib/str.c: move vector-column-printing code to grn_text_otoj
+
+ * test/unit/core/test-dump.c: add a test for bool types to data_vector_column
+
+ * test/unit/core/test-dump.c: properly name each label in data_vector_column
+
+ * lib/proc.c, test/unit/core/test-dump.c: support dumping records in vector
+ columns
+
+2009-12-09 t2001 <t2001@gol.com>
+
+ * src/groonga.c: MSG_NOSIGNAL is not available for WIN32
+
+ * lib/ctx.c: add grn_get_version grn_get_package
+
+ * groonga.h: add get_version api.
+
+2009-12-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c: Fixed a problem in grn_ctx_recv() which didn't work correctly
+ when invoked with local ctx.
+
+2009-12-08 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support ^ in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support & in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support ~ in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support >>> in script syntax.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support >> in script syntax.
+
+2009-12-08 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-dump.c: make test_column_create test against scalar and
+ vector columns
+
+ * test/unit/core/test-dump.c: add test_column_create in test-dump.c
+
+2009-12-08 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support string << string.
+
+2009-12-08 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-dump.c: support arrays with value_type
+
+ * lib/proc.c, test/unit/core/test-dump.rb: dump records after all scheme is
+ dumped
+
+ * lib/proc.c, test/unit/core/test-dump.rb: don't dump records of tables with
+ index columns  note: this is a work-in-progress patch. so, the newly-added
+ test_table_with_index_column fails.
+
+2009-12-08 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-dump.c, test/unit/core/test-dump.rb: move more table
+ dump tests to C from Ruby.
+
+ * test/unit/core/test-dump.c, test/unit/core/test-dump.rb: move simple table
+ dump tests to C from Ruby.
+
+ * test/unit/core/test-dump.c: parameterize hash table dump tests.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-dump.c: rewrite a dump test
+ in C.
+
+2009-12-08 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-dump.rb: support default_tokenizer option
+ of table_create
+
+2009-12-07 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-dump.rb: add test_load_with_reference_key
+
+ * lib/proc.c, test/unit/core/test-dump.rb: add
+ test_create_hash_table_without_key_type and make it pass
+
+ * lib/proc.c, test/unit/core/test-dump.rb: support dumping of record values
+
+2009-12-04 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-dump.rb: support index column's source
+ option in dump
+
+ * lib/proc.c: clean ups
+
+ * lib/proc.c, test/unit/core/test-dump.rb: fixes a bug occured when column's
+ type isn't ShortText
+
+ * lib/proc.c, test/unit/core/test-dump.rb: support dumping of column schema
+
+ * lib/proc.c: add missing grn_obj_unlink
+
+ * lib/proc.c, test/unit/core/test-dump.rb: dump "table_create"s in the
+ correct order.
+
+ * lib/proc.c, test/unit/core/test-dump.rb: support value_type of table_create
+ in dump command
+
+ * lib/proc.c: clean up
+
+ * lib/proc.c, test/unit/core/test-dump.rb: add more tests of dumping table
+ schema
+
+ * lib/proc.c: support dumping of table schema
+
+ * lib/proc.c: add a TODO comment regarding output_type of dump
+
+ * test/unit/core/test-dump.rb, test/unit/lib/ruby/groonga-test-utils.rb: make
+ test_dump more meaningful
+
+2009-12-04 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-dump.rb,
+ test/unit/http/Makefile.am, test/unit/http/test-dump.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: cleanup dump test.
+
+2009-12-03 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/proc.c: add dump command
+
+ * test/unit/http/Makefile.am, test/unit/http/test-dump.rb: add a very
+ primitive test for dump command
+
+2009-12-03 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-expr-script.c: start << support.
+
+2009-12-03 Ryo Onodera <onodera@clear-code.com>
+
+ * doc/ja/commands/column_create.html, doc/ja/commands/table_create.html,
+ doc/ja/searchindex.js, doc/ja/source/commands/column_create.txt,
+ doc/ja/source/commands/table_create.txt: update document to reflect "flags"
+ option change
+
+ * lib/proc.c: support "TABLE_VIEW" being passed as flags option
+
+ * test/unit/http/test-http-schema.rb: add a test of "TABLE_VIEW", which
+ should pass
+
+2009-12-03 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-expr-script.c: check zero division.
+
+2009-12-03 Ryo Onodera <onodera@clear-code.com>
+
+ * ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.yaml: close groonga-27
+
+2009-12-03 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-expr-script.c: split error data.
+
+ * test/unit/core/test-expr-script.c: clean incr/decr test up.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support INCR_POST and DECR_POST.
+
+2009-12-03 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: remove unnecessary line breakings
+
+2009-12-03 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c: don't declare variables in middle of code block.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: handle overflow of -integer32.
+
+2009-12-03 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: add several flags-as-symbol tests of
+ column_create
+
+ * lib/proc.c: support symbols for "flags" option of column_create
+
+ * test/unit/http/test-http-schema.rb: add a test of "flags" option of a
+ symbol
+
+ * test/unit/http/test-http-schema.rb: insert "table_create_" in each test
+ name
+
+ * test/unit/http/test-http-schema.rb: add test_invalid_symbol
+
+ * test/unit/http/test-http-schema.rb: add
+ test_combined_symbls_with_whitespaces
+
+ * test/unit/http/test-http-schema.rb: add test_combined_symbols
+
+ * test/unit/http/test-http-schema.rb: rename: string -> symbol
+
+ * lib/proc.c: support symbols for "flags" option of table_create
+
+ * test/unit/http/test-http-schema.rb: add a test of "flags" option being
+ passed as string
+
+2009-12-03 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-expr-script.c: support -int64 and -float.
+
+ * test/unit/core/test-expr-script.c: improve description.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr-script.c: support DECR.
+
+2009-12-02 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: revert limit == 0 case change.
+
+ * groonga.h: fix limit document.  -1 means all records not 0.
+
+ * lib/db.c: fix limit == 0 border case bug.
+
+ * lib/db.c, test/unit/core/test-database.c: grn_table_size() supports grn_db.
+
+2009-12-01 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c, lib/db.h: enable negative offset and limit to cursor.
+
+2009-12-02 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-expr.c: fallback to uint32 instead of int32
+
+2009-12-02 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml: mark INCR supported.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: report ++CONSTANT as an error.
+
+ * lib/db.c, test/unit/core/test-expr-script.c: support ++TIME.
+
+ * test/unit/core/test-expr-script.c: add a test for ++FLOAT.
+
+ * test/unit/core/test-expr-script.c, test/unit/core/test-expr.c,
+ test/unit/lib/grn-assertions.c, test/unit/lib/grn-assertions.h: make
+ grn_test_assert_expr shared.
+
+ * test/unit/core/test-expr.c: .:score -> ._score.
+
+ * lib/ii.c: add NULL check.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-expr-script.c,
+ test/unit/core/test-expr.c, test/unit/lib/grn-assertions.c,
+ test/unit/lib/grn-assertions.h: split tests for script syntax expression.
+
+ * lib/db.c: support assign on increment.
+
+ * lib/db.c, test/unit/core/test-expr.c: report an error for ++TEXT.
+
+ * lib/db.c, test/unit/core/test-expr.c: support ++INT32.
+
+ * test/unit/core/test-expr.c: separate data generate functions.
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml, lib/db.c,
+ test/unit/core/test-expr.c: support MOD in script syntax.
+
+2009-12-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/ii.c, lib/ii.h, lib/str.c: Apply multi column index if
+ available.
+
+2009-12-01 Kouhei Sutou <kou@clear-code.com>
+
+ * ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml: mark groonga-11 as
+ in-progress.
+
+2009-12-01 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c: fix a compiler warning in parse_script in lib/db.c
+
+2009-12-01 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-cast.c: suppress warnings on 32bit environment.
+
+ * test/unit/core/test-expr.c: suppress an warning on 32bit environment.
+
+2009-11-30 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c: Added weigth parameter to grn_column_index().
+
+2009-11-30 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/db.c, lib/str.c, test/unit/http/test-http-select.rb: use proposed xml
+ output format
+
+2009-11-30 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: pass output_type as a
+ parameter.
+
+2009-11-30 Ryo Onodera <onodera@clear-code.com>
+
+ * ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ doc/issues/html/release-1.0.0.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.yaml, lib/db.c, lib/str.c,
+ test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: put linefeed to the xml
+ output.
+
+2009-11-27 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-expr.c: report an error for casting non
+ numerical text -> numerical.
+
+ * test/unit/core/test-inverted-index.c: .:score -> _score.
+
+ * lib/db.c, test/unit/core/test-cast.c: return GRN_INVALID_ARGUMENT for
+ casting non-numeric text to numeric.
+
+ * lib/db.c, test/unit/core/test-expr.c: handle 'string' -/* 'string' error.
+
+ * lib/db.c, test/unit/core/test-expr.c: support / arithmetic operator.
+
+ * lib/db.c, test/unit/core/test-expr.c: support * arithmetic operator.
+
+ * test/unit/core/test-expr.c: add tests for - operation.
+
+ * lib/db.c, test/unit/core/test-expr.c: support - operation in script type
+ expression.
+
+ * lib/db.c: add missing NULL check.
+
+ * test/unit/core/test-expr.c: add a test for "string + int".
+
+ * lib/db.c, test/unit/core/test-expr.c: "int + float" returns float.
+
+ * test/unit/core/test-expr.c: add a test for 'int + string'
+
+ * lib/db.c, test/unit/core/test-expr.c: support 'string + string'.
+
+2009-11-27 Ryo Onodera <onodera@clear-code.com>
+
+ * ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ doc/issues/html/release-1.0.0.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.yaml: close "groonga-3:
+ grn_expr_parse numeric value handling"
+
+ * ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.html,
+ doc/issues/html/release-1.0.0.html: update ditz html files
+
+ * test/unit/core/test-expr.c: add tests of grn_obj's type of numeric literals
+ for grn_expr_parse
+
+2009-11-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/commands/select.html, doc/ja/geo_distance.html,
+ doc/ja/searchindex.js, doc/ja/source/commands/select.txt,
+ doc/ja/source/conf.py: Temporary removed "source.rdoc" from extensions of
+ conf.py in order to avoid error.
+
+ * ...e-5bbdf2428fdeeaaec9229211204ea89775eef83b.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.html,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.html,
+ doc/issues/html/release-1.0.0.html, doc/issues/html/release-1.1.0.html,
+ ...e-5bbdf2428fdeeaaec9229211204ea89775eef83b.yaml: updated doc/issues/html
+
+2009-11-27 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/core/test-expr.c: use proper tolerance value in
+ test_expr_parse_float
+
+ * lib/db.c, test/unit/core/test-expr.c: make grn_expr_parse handle float
+ literals.
+
+2009-11-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: ',' can be used as delimiter in grn_table_sort_key_from_str() and
+ grn_obj_columns().
+
+2009-11-27 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/ctx.c: fixed bug on handling xml extension.
+
+2009-11-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.yaml, lib/ctx.c, lib/db.c: Now,
+ pseudo column name (like "_key") must not be abbreviated.
+
+2009-11-25 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-expr.c: support unary + and binary +.
+
+ * test/unit/core/test-expr.c: add tests for comparison operators.
+
+ * test/unit/core/test-expr.c: fix style.
+
+ * test/unit/core/test-expr.c: use grn_test_assert() and remove duplicated
+ close.
+
+2009-11-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.yaml, groonga.h, lib/db.c,
+ lib/expr.c, lib/expr.y, test/unit/core/test-expr.c: modified the
+ specification of grn_expr_parse(). changed parse_level to flags.
+
+2009-11-25 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-expr.c: make a common variable static.
+
+ * test/unit/core/test-expr.c: fix style.
+
+ * test/unit/core/test-expr.c: use function instead of macro.
+
+ * test/unit/core/test-expr.c: use static variables.
+
+ * test/unit/core/test-expr.c: make common variables static.
+
+ * test/unit/core/test-expr.c: make non-removable variables local.
+
+ * test/unit/core/test-expr.c: make common variables static.
+
+2009-11-25 Ryo Onodera <ryoqun@erika.(none)>
+
+ * doc/issues/html/release-1.0.0.html: update release-1.0.0.html
+
+2009-11-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml, html/blue-check.png,
+ html/green-bar.png, html/green-check.png,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.html,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.html,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.html,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.html,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.html,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.html,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.html,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.html,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.html,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.html,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.html,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.html,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.html,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.html,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.html,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.html,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.html,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.html,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.html,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.html,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.html,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.html,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.html,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.html,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.html,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.html,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.html,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.html,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.html,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.html,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.html,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.html,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.html,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.html,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.html,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.html,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.html,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.html,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.html,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.html,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.html, html/red-check.png,
+ html/release-1.0.0.html, html/release-1.1.0.html, html/style.css,
+ html/yellow-bar.png: remove duplicated html files.
+
+2009-11-25 Ryo Onodera <ryoqun@erika.example.org>
+
+ * ...e-44a8e2ec39e44e46fbb0be2e73b1250f7b21cc77.html,
+ ...e-690c05001ca0607d16d910a9be30aeb3799a402b.html,
+ ...e-a4d0fff53122fd0a48c91db4379a50b29ad6a55f.html,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.html,
+ ...e-c804446bb766b21c53313bc888a2bc93ddaec0aa.html,
+ ...e-df04c90c558d74906fd043ff0a58bd2d5fcda92c.html,
+ ...e-e01d14efd2ec42ee347c9e3544c043b2a7603849.html,
+ ...e-e778c364b737119a27abe17ea144ebb1f38d8033.html,
+ ...e-44a8e2ec39e44e46fbb0be2e73b1250f7b21cc77.yaml,
+ ...e-690c05001ca0607d16d910a9be30aeb3799a402b.yaml,
+ ...e-a4d0fff53122fd0a48c91db4379a50b29ad6a55f.yaml,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.yaml,
+ ...e-c804446bb766b21c53313bc888a2bc93ddaec0aa.yaml,
+ ...e-df04c90c558d74906fd043ff0a58bd2d5fcda92c.yaml,
+ ...e-e01d14efd2ec42ee347c9e3544c043b2a7603849.yaml,
+ ...e-e778c364b737119a27abe17ea144ebb1f38d8033.yaml: added some issues
+
+2009-11-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/bugs/html/blue-check.png, doc/bugs/html/green-bar.png,
+ doc/bugs/html/green-check.png,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.html,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.html,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.html,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.html,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.html,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.html,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.html,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.html,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.html,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.html,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.html,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.html,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.html,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.html,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.html,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.html,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.html,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.html,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.html,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.html,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.html,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.html,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.html,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.html,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.html,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.html,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.html,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.html,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.html,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.html,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.html,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.html,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.html,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.html,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.html,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.html,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.html,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.html,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.html,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.html,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.html,
+ doc/bugs/html/red-check.png, doc/bugs/html/release-1.0.0.html,
+ doc/bugs/html/release-1.1.0.html, doc/bugs/html/style.css,
+ doc/bugs/html/yellow-bar.png,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.yaml,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.yaml,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.yaml,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.yaml,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.yaml,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.yaml,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.yaml,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.yaml,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.yaml,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.yaml,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.yaml,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.yaml,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.yaml,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.yaml,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.yaml,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.yaml,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.yaml,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.yaml,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.yaml,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.yaml,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.yaml,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.yaml,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.yaml,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.yaml,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.yaml,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.yaml,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.yaml,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.yaml,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.yaml,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.yaml,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.yaml,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.yaml,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.yaml,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.yaml,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.yaml,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.yaml,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.yaml,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.yaml,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.yaml,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.yaml,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.yaml,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.yaml,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.yaml,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.yaml,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.yaml,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.yaml,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.yaml,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.yaml, doc/bugs/project.yaml,
+ doc/issues/html/blue-check.png, doc/issues/html/green-bar.png,
+ doc/issues/html/green-check.png,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.html,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.html,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.html,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.html,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.html,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.html,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.html,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.html,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.html,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.html,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.html,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.html,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.html,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.html,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.html,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.html,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.html,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.html,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.html,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.html,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.html,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.html,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.html,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.html,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.html,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.html,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.html,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.html,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.html,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.html,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.html,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.html,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.html,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.html,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.html,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.html,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.html,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.html,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.html,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.html,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.html,
+ doc/issues/html/red-check.png, doc/issues/html/release-1.0.0.html,
+ doc/issues/html/release-1.1.0.html, doc/issues/html/style.css,
+ doc/issues/html/yellow-bar.png,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.yaml,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.yaml,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.yaml,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.yaml,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.yaml,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.yaml,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.yaml,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.yaml,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.yaml,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.yaml,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.yaml,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.yaml,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.yaml,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.yaml,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.yaml,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.yaml,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.yaml,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.yaml,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.yaml,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.yaml,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.yaml,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.yaml,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.yaml,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.yaml,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.yaml,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.yaml,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.yaml,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.yaml,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.yaml,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.yaml,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.yaml,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.yaml,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.yaml,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.yaml,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.yaml,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.yaml,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.yaml,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.yaml,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.yaml,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.yaml,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.yaml,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.yaml,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.yaml,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.yaml,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.yaml,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.yaml,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.yaml,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.yaml, doc/issues/project.yaml:
+ bugs -> issues
+
+ * ...e-072a87e92a531f903d1c8c750ae487e857229311.html,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.html,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.html,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.html,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.html,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.html,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.html,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.html,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.html,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.html,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.html,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.html,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.html,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.html,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.html,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.html,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.html,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.html,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.html,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.html,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.html,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.html,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.html,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.html,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.html,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.html,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.html,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.html,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.html,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.html,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.html,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.html,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.html,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.html,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.html,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.html,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.html,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.html,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.html,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.html,
+ doc/bugs/html/release-1.0.0.html, doc/bugs/html/release-1.1.0.html,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.yaml,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.yaml,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.yaml,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.yaml,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.yaml,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.yaml,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.yaml,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.yaml,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.yaml,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.yaml,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.yaml,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.yaml,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.yaml,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.yaml,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.yaml,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.yaml,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.yaml,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.yaml,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.yaml,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.yaml,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.yaml,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.yaml,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.yaml,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.yaml,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.yaml,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.yaml,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.yaml,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.yaml,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.yaml,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.yaml,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.yaml,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.yaml,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.yaml,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.yaml,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.yaml,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.yaml,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.yaml,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.yaml,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.yaml,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.yaml,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.yaml,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.yaml,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.yaml,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.html,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.html,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.html,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.html,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.html,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.html,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.html,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.html,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.html,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.html,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.html,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.html,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.html,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.html,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.html,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.html,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.html,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.html,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.html,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.html,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.html,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.html,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.html,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.html,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.html,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.html,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.html,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.html,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.html,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.html,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.html,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.html,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.html,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.html,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.html,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.html,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.html,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.html,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.html,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.html,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.html, html/release-1.0.0.html,
+ html/release-1.1.0.html: Added more issues.
+
+2009-11-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/bugs/html/blue-check.png, doc/bugs/html/green-bar.png,
+ doc/bugs/html/green-check.png,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.html,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.html,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.html,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html,
+ doc/bugs/html/red-check.png, doc/bugs/html/release-1.0.0.html,
+ doc/bugs/html/release-1.1.0.html, doc/bugs/html/style.css,
+ doc/bugs/html/yellow-bar.png,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.yaml,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.yaml,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml, html/blue-check.png,
+ html/green-bar.png, html/green-check.png,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.html,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html, html/red-check.png,
+ html/release-1.0.0.html, html/release-1.1.0.html, html/style.css,
+ html/yellow-bar.png: Added some issues.
+
+2009-11-24 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-cast.c: add tests for int64/uint64 -> XXX cast.
+
+ * test/unit/core/test-cast.c: add tests for int32/uint32 -> XXX cast.
+
+ * test/unit/core/test-cast.c: add text -> time tests.
+
+ * test/unit/core/test-cast.c: add text -> float tests.
+
+ * test/unit/core/test-cast.c: add text -> int*/uint* tests.
+
+ * test/unit/core/test-cast.c: add text -> bool/uint32 tests.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-cast.c: add a test for
+ grn_obj_cast().
+
+ * .gitignore, doc/ja/Makefile, doc/ja/source/conf.py, doc/ja/source/rdoc.py:
+ support RDoc generation.
+
+2009-11-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c: Fixed a bug in grn_ctx_impl_init().
+
+ * lib/com.c, lib/com.h, lib/ctx.c, lib/ctx.h, lib/db.c, lib/groonga_in.h,
+ lib/hash.c, lib/hash.h, lib/io.c, lib/token.c, src/groonga.c: Added
+ grn_critical_section.
+
+2009-11-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/com.c, lib/com.h, src/grnslap.c, src/groonga.c: Now, groonga server
+ accept only HTTP when '--protocol http' assigned as command line option.
+
+2009-11-18 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/groonga.c: Added usage of protocol parameter of groonga.
+
+ * lib/db.c: Fixed typo.
+
+2009-11-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_obj_set_value() that empty value was not
+ updated correctly.
+
+ * lib/ii.c, src/groonga.c: Fixed a bug in grn_ii_column_update() cause segv
+ when empty vector value passed.
+
+2009-11-17 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: reflect the schema change in
+ pupulate_users by dae7d0e8
+
+2009-11-16 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/developer.html, doc/ja/index.html, doc/ja/searchindex.js,
+ doc/ja/source/developer.txt, doc/ja/source/developer/com.txt,
+ doc/ja/source/index.txt: Added com document for developer.
+
+2009-11-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * src/groonga.c: Separated h_server and g_server.
+
+2009-11-16 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-crud.rb: fixes NoMethodErrors: create_table ->
+ table_create
+
+2009-11-15 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: add tests for output_columns
+ with '*'.
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: place expected in
+ assert_drilldown at the first.
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: add a test for multiple
+ drilldown_sortby.
+
+ * test/unit/http/test-http-select.rb: out of offset/limit doesn't report
+ error.
+
+ * test/unit/http/test-http-select.rb: add tests for sortby and offset/limit.
+
+ * test/unit/http/test-http-select.rb: use record.size instead of 10.
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: move user_id related methods
+ to select tests.
+
+ * test/unit/run-test.rb: use UTF-8.
+
+ * test/unit/http/test-http-select.rb: share define_selector tests with
+ select.
+
+ * test/unit/http/test-http-select.rb: remove a needless test.
+
+ * test/unit/http/test-http-crud.rb: add tests for set.
+
+2009-11-14 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: remove needless code.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: fix style.
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: don't share comments related
+ helper methods.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: Groonga -> groonga.
+
+ * test/unit/http/test-http-select.rb: Groonga -> groonga.
+
+2009-11-13 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: add
+ test_sortby_with_multiple_column
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: change name: bookmarks ->
+ user_id(s)
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: corrects typos in example
+ sentences
+
+2009-11-13 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-crud.rb: add tests for get.
+
+ * test/unit/http/test-http-crud.rb: revert accidently removed set tests.
+
+ * test/unit/http/test-http-crud.rb: add tests for output_columns of add.
+
+2009-11-13 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/characteristic.html, doc/ja/commands.html, doc/ja/commands/add.html,
+ doc/ja/commands/column_create.html, doc/ja/commands/column_list.html,
+ doc/ja/commands/define_selector.html, doc/ja/commands/get.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/quit.html,
+ doc/ja/commands/select.html, doc/ja/commands/set.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/view_add.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/geo_distance.html, doc/ja/geo_in_circle.html,
+ doc/ja/geo_in_rectangle.html, doc/ja/grnslap.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/now.html, doc/ja/process.html,
+ doc/ja/pseudo_column.html, doc/ja/rand.html, doc/ja/reference.html,
+ doc/ja/searchindex.js, doc/ja/source/characteristic.txt,
+ doc/ja/source/index.txt, doc/ja/tutorial.html, doc/ja/type.html: Added
+ characteristic document.
+
+2009-11-13 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: add a test of specifying multiple
+ columns to "drilldown"
+
+2009-11-13 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-crud.rb: add tests for columns and values options
+ of add.
+
+2009-11-13 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: corrects a coding-style problem
+
+ * test/unit/http/test-http-select.rb: add tests of corner cases of
+ drilldown_offset to HTTPSelectTest
+
+ * test/unit/http/test-http-select.rb: add tests of zero and negative
+ drilldown_offset to HTTPSelectTest
+
+ * test/unit/http/test-http-select.rb: add tests of zero and negative
+ drilldown_limit to HTTPSelectTest
+
+2009-11-13 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-crud.rb: add tests for adding without key.
+
+ * test/unit/http/test-http-crud.rb: split add/set/get.
+
+2009-11-13 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: add tests of corner cases of offset to
+ HTTPSelectTest
+
+ * test/unit/http/test-http-select.rb: add tests of zero and negative offset
+ to HTTPSelectTest
+
+ * test/unit/http/test-http-select.rb: add tests of zero and negative limit to
+ HTTPSelectTest
+
+2009-11-13 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-crud.rb: add tests for nonexistent cases.
+
+ * test/unit/http/test-http-load.rb: add a test for int (not text) value
+ loading.
+
+ * test/unit/http/test-http-schema.rb: follow invalid name error message.
+
+2009-11-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_load cause segv when empty array passwd as
+ vector value.
+
+2009-11-12 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/grnslap.c: Printed protocol type on grnslap.
+
+ * doc/ja/grnslap.html, doc/ja/searchindex.js, doc/ja/source/grnslap.txt:
+ Added sample of grnslap.
+
+2009-11-12 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: add tests for "drilldown_{offset,
+ limit}" options in HTTPSelectTest
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: add a test for
+ "drilldown_sortby" option in HTTPSelectTest
+
+2009-11-12 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/genindex.html, doc/ja/grnslap.html, doc/ja/index.html,
+ doc/ja/process.html, doc/ja/reference.html, doc/ja/searchindex.js,
+ doc/ja/source/execfile.txt, doc/ja/source/grnslap.txt,
+ doc/ja/source/process.txt: Added grnslap document.
+
+ * lib/com.c, lib/com.h: Renamed parameter name of grn_com_send_http().
+
+ * lib/com.c, lib/com.h, src/grnslap.c: Renamed grn_com_send_text to
+ grn_com_send_http.
+
+2009-11-12 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-load.rb: re-enable int value test.
+
+2009-11-12 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/db.c: Fixed error message for invalid name.
+
+2009-11-12 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/Makefile.am, test/unit/http/test-http-load.rb,
+ test/unit/http/test-http.rb: split load tests.
+
+ * test/unit/http/Makefile.am: add test-http-crud.rb.
+
+ * test/unit/http/test-http-crud.rb: add tests for add, get and set.
+
+ * test/unit/http/test-http-select.rb: fix style.
+
+2009-11-12 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: add test_scorer_side_effect in
+ HTTPSelectTest
+
+2009-11-12 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http.rb: send quit twice.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-http-test-utils.rb:
+ add tests for quit and shutdown.
+
+ * test/unit/http/test-http-view.rb: use more meaningful name.
+
+ * test/unit/http/test-http-view.rb: add error case tests for view_add.
+
+2009-11-12 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: add test_no_hit in HTTPSelectTest
+
+ * test/unit/http/test-http-select.rb: add test_query_and_filter in
+ HTTPSelectTest
+
+2009-11-12 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-select.rb, test/unit/http/test-http.rb: use
+ table_create and column_create.
+
+ * test/unit/http/test-http-view.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: use table_create,
+ column_create and view_add.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: define
+ table_create/column_create and use them.
+
+ * test/unit/http/Makefile.am, test/unit/http/test-http-view.rb: add a test
+ for selecting from view.
+
+2009-11-12 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.rb: cosmetic fixes
+
+ * test/unit/http/test-http.rb: added a test for "load" with integer "_value"
+ (bug found?)  test_load_int_value fails
+
+ * test/unit/http/test-http.rb: added tests for "load" with varying integer
+ length of keys(bug found?)  test_load_int8_key and test_load_int16_key
+ fail....
+
+2009-11-12 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: add tests for view key.
+
+ * test/unit/http/test-http-schema.rb: remove needless 'with'.
+
+ * test/unit/http/test-http-schema.rb: add invalid case tests for view
+ creation.
+
+ * test/unit/Makefile.am: don't require Ruby installation.
+
+2009-11-12 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb: add a test of sorting by the reverse
+ order
+
+ * test/unit/http/test-http.rb: added tests for "load" command with varying
+ formats (exposes a bug?)  test_load_text_key_by_arrays fails...
+
+2009-11-11 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands/add.html, doc/ja/commands/column_create.html,
+ doc/ja/commands/column_list.html, doc/ja/commands/define_selector.html,
+ doc/ja/commands/get.html, doc/ja/commands/load.html,
+ doc/ja/commands/log_level.html, doc/ja/commands/log_put.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/set.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/view_add.html,
+ doc/ja/daemon.html, doc/ja/execfile.html, doc/ja/process.html,
+ doc/ja/reference.html, doc/ja/tutorial.html: Added html document made by
+ Sphinx.
+
+2009-11-11 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: use separated classes for table
+ creation tests.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: improve timeout handling.
+
+ * test/unit/http/test-http-schema.rb: add tests for array creation.
+
+2009-11-11 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/TUTORIAL, doc/ja/add.html, doc/ja/column_create.html,
+ doc/ja/column_list.html, doc/ja/commands.html, doc/ja/define_selector.html,
+ doc/ja/expr.html, doc/ja/functions.html, doc/ja/genindex.html,
+ doc/ja/geo_distance.html, doc/ja/geo_in_circle.html,
+ doc/ja/geo_in_rectangle.html, doc/ja/get.html, doc/ja/groonga.html,
+ doc/ja/http.html, doc/ja/index.html, doc/ja/load.html, doc/ja/log_level.html,
+ doc/ja/log_put.html, doc/ja/now.html, doc/ja/pseudo_column.html,
+ doc/ja/quit.html, doc/ja/rand.html, doc/ja/searchindex.js,
+ doc/ja/select.html, doc/ja/set.html, doc/ja/shutdown.html,
+ doc/ja/source/add.txt, doc/ja/source/column_create.txt,
+ doc/ja/source/column_list.txt, doc/ja/source/commands.txt,
+ doc/ja/source/commands/add.txt, doc/ja/source/commands/column_create.txt,
+ doc/ja/source/commands/column_list.txt,
+ doc/ja/source/commands/define_selector.txt, doc/ja/source/commands/get.txt,
+ doc/ja/source/commands/load.txt, doc/ja/source/commands/log_level.txt,
+ doc/ja/source/commands/log_put.txt, doc/ja/source/commands/quit.txt,
+ doc/ja/source/commands/select.txt, doc/ja/source/commands/set.txt,
+ doc/ja/source/commands/shutdown.txt, doc/ja/source/commands/status.txt,
+ doc/ja/source/commands/table_create.txt,
+ doc/ja/source/commands/table_list.txt, doc/ja/source/commands/view_add.txt,
+ doc/ja/source/define_selector.txt, doc/ja/source/execfile.txt,
+ doc/ja/source/get.txt, doc/ja/source/groonga.txt, doc/ja/source/index.txt,
+ doc/ja/source/load.txt, doc/ja/source/log_level.txt,
+ doc/ja/source/log_put.txt, doc/ja/source/process.txt, doc/ja/source/quit.txt,
+ doc/ja/source/reference.txt, doc/ja/source/select.txt, doc/ja/source/set.txt,
+ doc/ja/source/shutdown.txt, doc/ja/source/status.txt,
+ doc/ja/source/table_create.txt, doc/ja/source/table_list.txt,
+ doc/ja/source/tutorial.txt, doc/ja/source/view_add.txt, doc/ja/status.html,
+ doc/ja/table_create.html, doc/ja/table_list.html, doc/ja/type.html,
+ doc/ja/view_add.html: Removed doc/ja/TUTORIAL.
+
+2009-11-11 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http-select.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: add a test for "drilldown"
+ option of "select" command
+
+2009-11-11 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: add tests for patricia trie.
+
+ * test/unit/http/test-http-schema.rb,
+ test/unit/lib/ruby/groonga-constants.rb: add tests for invalid hash creation
+ case.
+
+ * test/unit/http/test-http-schema.rb: add tests for creating hash table with
+ variable key patterns.
+
+ * test/unit/http/test-http-schema.rb: add tests for creating variable type
+ tables.
+
+ * test/unit/http/test-http-schema.rb: add tests for invalid table name.
+
+ * lib/db.c: fix typos: assigend -> assigned.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: support --protocol.
+
+2009-11-11 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/Makefile.am, test/unit/http/test-http-select.rb,
+ test/unit/http/test-http.rb: move all "select" command tests to
+ test-http-select.rb
+
+2009-11-11 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: add a test for anonymous table
+ creation.
+
+ * test/unit/http/test-http-schema.rb: add tests for error case of
+ table_list/column_list.
+
+2009-11-11 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-http-test-utils.rb:
+ add a test for queries with accessor
+
+2009-11-11 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: add a test for creating index column.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-http-test-utils.rb:
+ move assert_select to utilities.
+
+ * test/unit/core/test-expr.c: add a test for matching against nonexistent
+ index.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-http-test-utils.rb:
+ reuse existing assert_select and load methods.
+
+ * test/unit/http/test-http.rb: use assert_select.
+
+ * test/unit/http/test-http.rb: make assert_select header customizable.
+
+2009-11-11 Ryo Onodera <onodera@clear-code.com>
+
+ * src/groonga.c, test/unit/http/test-http-schema.rb,
+ test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-http-test-utils.rb:
+ change JSON's MIME type to "application/json"
+
+2009-11-10 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.rb: add a test for "scorer" option of "select"
+ command
+
+ * test/unit/http/test-http.rb: add tests for "offset" and/or "limit" options
+ of "select" command
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-http-test-utils.rb:
+ add and use utility functions
+
+ * test/unit/http/test-http.rb: add a test for "sortby" option of "select"
+ command
+
+2009-11-10 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: add a convenience method
+ 'load'.
+
+ * test/unit/http/test-http-schema.rb: add a test for column_list of
+ nonexistent table.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: use shutdown instead of
+ quit.
+
+ * doc/ja/source/commands.txt: remove a duplicate entry.
+
+ * test/unit/http/test-http.c: remove a needless file.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: ignore no-response from
+ quit.
+
+ * test/unit/http/test-http-schema.rb, test/unit/http/test-http.rb,
+ test/unit/lib/ruby/groonga-constants.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: move column_list test.
+
+ * test/unit/http/test-http-schema.rb, test/unit/http/test-http.rb: move
+ table_list test.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: support actual value
+ normalization.
+
+ * test/unit/lib/ruby/groonga-constants.rb: add missing constants.
+
+ * test/unit/http/test-http.rb: use assert_response.
+
+ * test/unit/http/test-http-schema.rb, test/unit/http/test-http.rb,
+ test/unit/http/test-static-html.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: create and use
+ assert_response.
+
+2009-11-10 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.rb: add a test for "output_columns" option of
+ "select" command
+
+2009-11-10 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/Makefile.am, test/unit/http/test-http-schema.rb: add a test
+ for test_list.
+
+ * test/unit/lib/Makefile.am, test/unit/lib/grn-test-memcached-assertions.c,
+ test/unit/lib/grn-test-memcached-assertions.h,
+ test/unit/memcached/Makefile.am, test/unit/memcached/test-memcached.c:
+ improve memcached test message.
+
+ * test/unit/http/test-http.rb, test/unit/http/test-invalid-http.rb,
+ test/unit/http/test-static-html.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: send "quit" before kill
+ server.
+
+ * test/unit/.gitignore, test/unit/run-test.sh: support priority mode.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-http-test-utils.rb:
+ move utility methods to GroongaHTTPTestUtils.
+
+ * test/unit/http/test-invalid-http.rb, test/unit/http/test-static-html.rb:
+ outside admin-html-path should be mapped to admin-html-path root.
+
+2009-11-09 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http.rb: fix a typo.
+
+ * test/unit/http/test-http.rb: use constant.
+
+ * test/unit/http/test-http.rb: remove moved tests.
+
+ * test/unit/http/Makefile.am, test/unit/http/test-static-html.rb: split
+ static HTML tests.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/Makefile.am,
+ test/unit/lib/ruby/groonga-constants.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: move constants to shared file.
+
+ * doc/ja/source/get.txt: fix a typo.
+
+ * test/unit/http/test-http.rb: add tests for static HTML with fragment and
+ query.
+
+ * test/unit/http/test-invalid-http.rb: add a test for symbolic link to
+ outside HTML.
+
+ * test/unit/http/test-invalid-http.rb: add a test for invalid UTF-8 "/".
+
+ * test/unit/http/test-invalid-http.rb: add a test for bad request.  requested
+ path doesn't start with '/'.
+
+ * test/unit/http/test-invalid-http.rb: add a test for accessing outside HTML
+ directory.
+
+ * test/unit/http/test-http.rb: split user load feature from
+ create_users_table.
+
+ * test/unit/http/test-http.rb: fix assert_select API.
+
+2009-11-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/add.html, doc/ja/commands.html, doc/ja/searchindex.js,
+ doc/ja/set.html: html documents updated.
+
+ * doc/ja/add.html, doc/ja/commands.html, doc/ja/get.html, doc/ja/index.html,
+ doc/ja/searchindex.js, doc/ja/set.html, doc/ja/source/add.txt,
+ doc/ja/source/commands.txt, doc/ja/source/get.txt, doc/ja/source/set.txt,
+ lib/proc.c, lib/str.c, tmp/hash: Added a buitin command 'get'.
+
+2009-11-06 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.rb: add tests for match_column, query and filter
+
+2009-11-06 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-invalid-http.rb: add a test for block bug.
+
+ * test/unit/http/test-http.rb: remove needless sort.
+
+ * test/unit/http/test-invalid-http.rb: add tests for long URI.
+
+ * test/unit/http/test-invalid-http.rb: should not access outside HTML
+ directory.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-test-utils.rb,
+ test/unit/run-test.sh: support static HTML test.
+
+2009-11-06 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.rb: add HTTPTest#test_select
+
+ * test/unit/http/test-http.rb: use constants for flags parameter
+
+2009-11-06 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http.rb: fix coding style.
+
+ * test/unit/http/Makefile.am, test/unit/http/test-http.rb,
+ test/unit/http/test-invalid-http.rb: / access should return 404.
+
+2009-11-06 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/http/test-http.rb: add HTTPTest#test_load
+
+2009-11-06 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http.rb: remove needless 'get'.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/Makefile.am,
+ test/unit/lib/ruby/groonga-http-test-utils.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb, test/unit/run-test.rb: specialize
+ to HTTP.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-test-utils.rb:
+ cleanup.
+
+2009-11-06 Ryo Onodera <onodera@clear-code.com>
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: use an empty Hash instea of an
+ empty String
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: use if..else instead of
+ unless..else
+
+ * test/unit/http/test-http.rb: add HTTPTest#test_get_column_list
+
+ * test/unit/http/test-http.rb: add HTTPTest#test_get_table_list
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-test-utils.rb: add
+ GroongaTestUtils#send_command
+
+2009-11-06 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: don't use a space in default value description.
+
+ * configure.ac: use AS_HELP_STRING instead of AC_HELP_STRING.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: don't sleep for waiting groonga
+ server.
+
+ * test/unit/http/test-http.rb, test/unit/lib/ruby/groonga-test-utils.rb: move
+ HTTP GET to utilities.
+
+ * configure.ac, test/unit/http/test-http.rb, test/unit/lib/Makefile.am,
+ test/unit/lib/ruby/Makefile.am, test/unit/lib/ruby/groonga-test-utils.rb,
+ test/unit/run-test.rb: split utility methods.
+
+ * configure.ac, test/unit/Makefile.am, test/unit/http/test-http.rb,
+ test/unit/run-test.rb, test/unit/run-test.sh: start to migrate HTTP test to
+ Ruby.
+
+ * configure.ac, test/unit/Makefile.am, test/unit/http/Makefile.am,
+ test/unit/run-test.rb, test/unit/run-test.sh: support test writing in Ruby.
+
+2009-11-06 t2001 <t2001@gol.com>
+
+ * lib/groonga_in.h: fixed usleep in WIN32
+
+2009-11-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/searchindex.js, doc/ja/select.html, doc/ja/source/select.txt,
+ doc/ja/table_create.html, groonga.h, lib/ctx.c, lib/db.c, lib/str.c,
+ lib/str.h, src/groonga.c: Added GRN_*_SET_AT(), GRN_*_VALUE_AT().
+
+2009-11-05 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/memcached/Makefile.am, test/unit/memcached/test-memcached.c: use
+ GrnTestServer.
+
+ * test/unit/http/test-http.c: use grn_test_server_get_http_uri_base().
+
+ * test/unit/lib/grn-test-server.c, test/unit/lib/grn-test-server.h:
+ GrnTestServer: support address generation.
+
+ * test/unit/http/Makefile.am, test/unit/http/test-http.c,
+ test/unit/lib/Makefile.am, test/unit/lib/grn-test-server.c,
+ test/unit/lib/grn-test-server.h: add GrnTestServer.  GrnTestServer is a
+ convenience class for managing groonga server.
+
+2009-11-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * examples/index.c, groonga.h, lib/db.c, lib/hash.c, lib/ii.c, lib/pat.c,
+ lib/proc.c, lib/ql.c, lib/str.c, test/unit/core/test-database.c,
+ test/unit/core/test-expr.c, test/unit/core/test-hash-sort.c,
+ test/unit/core/test-inverted-index.c,
+ test/unit/core/test-patricia-trie-search.c,
+ test/unit/core/test-patricia-trie.h, test/unit/core/test-table-cursor.c,
+ test/unit/core/test-table.c, test/unit/lib/grn-test-hash-factory.c,
+ test/unit/lib/grn-test-utils.c: Modified specification of grn_*_cursor_open()
+ functions. offset and limit parameter are now signed integer and -1 must be
+ assigned when fetching whole records instead of 0. (you can fetch 0 records
+ when assigned 0 as limit value)
+
+2009-11-04 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-column.c, test/unit/core/test-hash.c,
+ test/unit/core/test-hash.h, test/unit/core/test-inverted-index.c,
+ test/unit/core/test-patricia-trie.c, test/unit/core/test-patricia-trie.h,
+ test/unit/fixtures/performance/test-read-write.c,
+ test/unit/fixtures/stress/test-stress-hash.c,
+ .../fixtures/stress/test-stress-patricia-trie.c,
+ test/unit/lib/grn-assertions.c, test/unit/lib/grn-assertions.h,
+ test/unit/lib/grn-test-utils.h, test/unit/memcached/test-memcached.c,
+ test/unit/util/test-snip.c: use Cutter 1.1.0 API.  cut_set_message() ->
+ cut_test_with_user_message() and cut_message().
+
+ * test/unit/fixtures/performance/test-read-write.c,
+ test/unit/fixtures/stress/Makefile.am,
+ test/unit/fixtures/stress/test-stress-hash.c,
+ .../fixtures/stress/test-stress-patricia-trie.c,
+ test/unit/lib/grn-test-utils.h: also work with Cutter 1.1.0.
+
+2009-11-03 kou <kou@clear-code.com>
+
+ * test/unit/run-test.sh: support no-install make check on Snow Leopard.
+
+2009-11-02 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac: release 0.1.5
+
 2009-11-02 Daijiro MORI <daijiro.mori@gmail.com>
 
  * doc/ja/source/table_create.txt, lib/db.c: Added support for GRN_OP_MINUS.
