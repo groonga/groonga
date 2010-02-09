@@ -2082,7 +2082,7 @@ usage(void)
          "  -i, --host <ip/hostname>:  server address to listen (default: %s)\n"
          "  -p, --port <port number>:  server port number (default: %d)\n"
          "  --dir:                     show script files on ftp server\n"
-         "  --noftp:                   ommit ftp connection\n",
+         "  --noftp:                   omit ftp connection\n",
          DEFAULT_DEST, DEFAULT_PORT);
   exit(1);
 }
