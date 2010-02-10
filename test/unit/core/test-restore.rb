@@ -101,6 +101,28 @@ column_create Terms bookmarks_key 2 Bookmarks _key
 EOC
   end
 
+  def test_no_tokenizer_table_with_index_column
+    assert_same_dump(<<-EOC)
+table_create People 0 ShortText
+column_create People name 0 ShortText
+table_create Bookmarks 0 ShortText
+column_create Bookmarks title 0 ShortText
+column_create Bookmarks people 1 People
+column_create People bookmarks 2 Bookmarks people
+load --table People
+[
+["_key","name"],
+["morita","Daijiro MORI"],
+["gunyara-kun","Tasuku SUENAGA"]
+]
+load --table Bookmarks
+[
+["_key","title","people"],
+["http://groonga.org/","groonga",["morita"]]
+]
+EOC
+  end
+
   def test_table_with_index_column_sorted_by_id
     body = "作成するテーブルを語彙表として使用する場合、" +
            "文字列を分割するトークナイザを指定します。"

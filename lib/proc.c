@@ -1177,11 +1177,11 @@ dump_view(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 static void
 dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
-  int i, ncolumns;
-  grn_obj columnbuf, delete_commands;
   grn_obj **columns;
-  grn_table_cursor *cursor;
   grn_id old_id = 0, id;
+  grn_table_cursor *cursor;
+  int i, ncolumns, n_use_columns;
+  grn_obj columnbuf, delete_commands, use_columns, column_name;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -1195,7 +1195,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     return;
   }
 
-  if (grn_table_size(ctx, table) == 0 || have_index_column(ctx, table)) {
+  if (grn_table_size(ctx, table) == 0 ||
+      (grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, NULL) &&
+       have_index_column(ctx, table))) {
     return;
   }
 
@@ -1211,24 +1213,35 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   columns = (grn_obj **)GRN_BULK_HEAD(&columnbuf);
   ncolumns = GRN_BULK_VSIZE(&columnbuf)/sizeof(grn_obj *);
 
-  GRN_TEXT_PUTC(ctx, outbuf, '[');
+  GRN_PTR_INIT(&use_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&column_name, 0);
   for (i = 0; i < ncolumns; i++) {
-    grn_obj buf;
-    GRN_TEXT_INIT(&buf, 0);
-    grn_column_name_(ctx, columns[i], &buf);
-    /* skips unnecessary columns */
-    if (((table->header.type == GRN_TABLE_HASH_KEY ||
-          table->header.type == GRN_TABLE_PAT_KEY) &&
-         !memcmp(GRN_TEXT_VALUE(&buf), "_id",
-                 (GRN_TEXT_LEN(&buf) > 3) ? 3 : GRN_TEXT_LEN(&buf))) ||
-        (table->header.type == GRN_TABLE_NO_KEY &&
-         !memcmp(GRN_TEXT_VALUE(&buf), "_key",
-                 (GRN_TEXT_LEN(&buf) > 4) ? 4 : GRN_TEXT_LEN(&buf)))) {
+    if (columns[i]->header.type == GRN_COLUMN_INDEX) {
       continue;
     }
-    grn_text_otoj(ctx, outbuf, &buf, NULL);
-    grn_obj_unlink(ctx, &buf);
-    if (i + 1 < ncolumns) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+    GRN_BULK_REWIND(&column_name);
+    grn_column_name_(ctx, columns[i], &column_name);
+    if (((table->header.type == GRN_TABLE_HASH_KEY ||
+          table->header.type == GRN_TABLE_PAT_KEY) &&
+         GRN_TEXT_LEN(&column_name) == 3 &&
+         !memcmp(GRN_TEXT_VALUE(&column_name), "_id", 3)) ||
+        (table->header.type == GRN_TABLE_NO_KEY &&
+         GRN_TEXT_LEN(&column_name) == 4 &&
+         !memcmp(GRN_TEXT_VALUE(&column_name), "_key", 4))) {
+      continue;
+    }
+    GRN_PTR_PUT(ctx, &use_columns, columns[i]);
+  }
+
+  n_use_columns = GRN_BULK_VSIZE(&use_columns) / sizeof(grn_obj *);
+  GRN_TEXT_PUTC(ctx, outbuf, '[');
+  for (i = 0; i < n_use_columns; i++) {
+    grn_obj *column;
+    column = *((grn_obj **)GRN_BULK_HEAD(&use_columns) + i);
+    if (i) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+    GRN_BULK_REWIND(&column_name);
+    grn_column_name_(ctx, column, &column_name);
+    grn_text_otoj(ctx, outbuf, &column_name, NULL);
   }
   GRN_TEXT_PUTS(ctx, outbuf, "],\n");
 
@@ -1252,33 +1265,25 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       }
     }
     GRN_TEXT_PUTC(ctx, outbuf, '[');
-    for (j = 0; j < ncolumns; j++) {
+    for (j = 0; j < n_use_columns; j++) {
       grn_id range;
-      GRN_TEXT_INIT(&buf, 0);
-      grn_column_name_(ctx, columns[j], &buf);
-      /* skips unnecessary columns */
-      if (((table->header.type == GRN_TABLE_HASH_KEY ||
-            table->header.type == GRN_TABLE_PAT_KEY) &&
-           !memcmp(GRN_TEXT_VALUE(&buf), "_id",
-                   (GRN_TEXT_LEN(&buf) > 3) ? 3 : GRN_TEXT_LEN(&buf))) ||
-          (table->header.type == GRN_TABLE_NO_KEY &&
-           !memcmp(GRN_TEXT_VALUE(&buf), "_key",
-                   (GRN_TEXT_LEN(&buf) > 4) ? 4 : GRN_TEXT_LEN(&buf)))) {
-        continue;
-      }
-      if (!memcmp(GRN_TEXT_VALUE(&buf), "_value",
-                  (GRN_TEXT_LEN(&buf) > 6) ? 6 : GRN_TEXT_LEN(&buf))) {
+      grn_obj *column;
+      column = *((grn_obj **)GRN_BULK_HEAD(&use_columns) + j);
+      GRN_BULK_REWIND(&column_name);
+      grn_column_name_(ctx, column, &column_name);
+      if (GRN_TEXT_LEN(&column_name) == 6 &&
+          !memcmp(GRN_TEXT_VALUE(&column_name), "_value", 6)) {
         is_value_column = 1;
       } else {
         is_value_column = 0;
       }
-      grn_obj_unlink(ctx, &buf);
-      range = grn_obj_get_range(ctx, columns[j]);
+      range = grn_obj_get_range(ctx, column);
 
-      switch (columns[j]->header.type) {
+      if (j) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+      switch (column->header.type) {
       case GRN_COLUMN_VAR_SIZE:
       case GRN_COLUMN_FIX_SIZE:
-        switch (columns[j]->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+        switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
         case GRN_OBJ_COLUMN_VECTOR:
           /* TODO: We assume that if |range| is GRN_OBJ_KEY_VAR_SIZE, a vector
                    is GRN_VECTOR, otherwise GRN_UVECTOR. This is not always
@@ -1287,12 +1292,12 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
           if (((struct _grn_type *)grn_ctx_at(ctx, range))->obj.header.flags &
               GRN_OBJ_KEY_VAR_SIZE) {
             GRN_OBJ_INIT(&buf, GRN_VECTOR, 0, range);
-            grn_obj_get_value(ctx, columns[j], id, &buf);
+            grn_obj_get_value(ctx, column, id, &buf);
             grn_text_otoj(ctx, outbuf, &buf, NULL);
             grn_obj_unlink(ctx, &buf);
           } else {
             GRN_OBJ_INIT(&buf, GRN_UVECTOR, 0, range);
-            grn_obj_get_value(ctx, columns[j], id, &buf);
+            grn_obj_get_value(ctx, column, id, &buf);
             grn_text_otoj(ctx, outbuf, &buf, NULL);
             grn_obj_unlink(ctx, &buf);
           }
@@ -1300,12 +1305,13 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         case GRN_OBJ_COLUMN_SCALAR:
           {
             GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-            grn_obj_get_value(ctx, columns[j], id, &buf);
+            grn_obj_get_value(ctx, column, id, &buf);
             grn_text_otoj(ctx, outbuf, &buf, NULL);
             grn_obj_unlink(ctx, &buf);
           }
           break;
         case GRN_OBJ_COLUMN_INDEX:
+          break;
         default:
           ERR(GRN_ERROR, "invalid column type");
           break;
@@ -1314,9 +1320,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       case GRN_ACCESSOR:
         {
           GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-          grn_obj_get_value(ctx, columns[j], id, &buf);
+          grn_obj_get_value(ctx, column, id, &buf);
           /* XXX maybe, grn_obj_get_range() should not unconditionally return
-             GRN_DB_INT32 when columns[j] is GRN_ACCESSOR and
+             GRN_DB_INT32 when column is GRN_ACCESSOR and
              GRN_ACCESSOR_GET_VALUE */
           if (is_value_column) {
             buf.header.domain = ((grn_db_obj *)table)->range;
@@ -1326,10 +1332,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         }
         break;
       default:
-        ERR(GRN_ERROR, "invalid header type %d", columns[j]->header.type);
+        ERR(GRN_ERROR, "invalid header type %d", column->header.type);
         break;
       }
-      if (j + 1 < ncolumns) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
     }
     GRN_TEXT_PUTC(ctx, outbuf, ']');
   }
@@ -1337,6 +1342,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&delete_commands),
                             GRN_TEXT_LEN(&delete_commands));
   grn_obj_unlink(ctx, &delete_commands);
+  grn_obj_unlink(ctx, &column_name);
+  grn_obj_unlink(ctx, &use_columns);
 
   grn_table_cursor_close(ctx, cursor);
   for (i = 0; i < ncolumns; i++) {
