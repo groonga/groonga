@@ -93,6 +93,14 @@ load --table Entry
 EOC
   end
 
+  def test_table_with_key_index_column
+    assert_same_dump(<<-EOC)
+table_create Bookmarks 0 ShortText
+table_create Terms 129 ShortText --default_tokenizer TokenBigram
+column_create Terms bookmarks_key 2 Bookmarks _key
+EOC
+  end
+
   def test_table_with_index_column_sorted_by_id
     body = "作成するテーブルを語彙表として使用する場合、" +
            "文字列を分割するトークナイザを指定します。"

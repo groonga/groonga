@@ -1025,7 +1025,16 @@ dump_index_column_sources(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
     grn_obj *source;
     source = grn_ctx_at(ctx, *source_ids);
     if (i) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
-    dump_column_name(ctx, outbuf, source);
+    switch (source->header.type) {
+    case GRN_TABLE_PAT_KEY:
+    case GRN_TABLE_HASH_KEY:
+    case GRN_TABLE_VIEW:
+      GRN_TEXT_PUTS(ctx, outbuf, "_key");
+      break;
+    default:
+      dump_column_name(ctx, outbuf, source);
+      break;
+    }
     source_ids++;
   }
   grn_obj_close(ctx, &sources);
