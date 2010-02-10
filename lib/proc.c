@@ -1324,11 +1324,8 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       default_flags |= domain->header.flags;
     }
     break;
-  case GRN_TABLE_NO_KEY:
-  case GRN_TABLE_VIEW:
-    break;
   default:
-    return;
+    break;
   }
 
   GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
@@ -1379,11 +1376,20 @@ dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
     grn_id id;
 
     while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
-      grn_obj *table;
+      grn_obj *object;
 
-      if ((table = grn_ctx_at(ctx, id))) {
-        dump_table(ctx, outbuf, table);
-        grn_obj_unlink(ctx, table);
+      if ((object = grn_ctx_at(ctx, id))) {
+        switch (object->header.type) {
+        case GRN_TABLE_HASH_KEY:
+        case GRN_TABLE_PAT_KEY:
+        case GRN_TABLE_NO_KEY:
+        case GRN_TABLE_VIEW:
+          dump_table(ctx, outbuf, object);
+          break;
+        default:
+          break;
+        }
+        grn_obj_unlink(ctx, object);
       }
     }
     grn_table_cursor_close(ctx, cur);
