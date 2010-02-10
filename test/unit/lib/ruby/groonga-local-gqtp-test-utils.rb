@@ -50,9 +50,11 @@ module GroongaLocalGQTPTestUtils
       pipe.write("shutdown\n")
       output = pipe.read
     end
-    if $?.exitstatus != 0
+    unless $?.success?
       flunk("groonga exited with unexpected exit status while executing " +
-            "commands: #{$?.exitstatus}")
+            "commands: #{$?.exitstatus.inspect}:\n" +
+            "commands:\n>>>\n#{commands}\n<<<\n" +
+            "output:\n>>>\n#{output}\n<<<\n")
     end
     output
   end

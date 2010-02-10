@@ -96,7 +96,7 @@ EOC
   def test_table_with_index_column_sorted_by_id
     body = "作成するテーブルを語彙表として使用する場合、" +
            "文字列を分割するトークナイザを指定します。"
-    assert_same_dump(<<-EOC)
+    commands = <<-EOC
 table_create Terms 129 ShortText --default_tokenizer TokenBigram
 table_create Entry 0 ShortText
 column_create Entry body 0 ShortText
@@ -106,6 +106,18 @@ load --table Entry
 {"_key":"gcc","body":"#{body}"}
 ]
 EOC
+
+    assert_dump(<<-EOD, commands)
+table_create Terms 129 ShortText --default_tokenizer TokenBigram
+table_create Entry 0 ShortText
+column_create Entry body 0 ShortText
+column_create Terms entry_body 2 Entry body
+load --table Entry
+[
+["_key","body"],
+["gcc","#{body}"]
+]
+EOD
   end
 
   def test_table_with_multiple_index_column
