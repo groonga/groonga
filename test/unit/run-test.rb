@@ -12,6 +12,7 @@ $LOAD_PATH.unshift(File.join(base_dir, "lib", "ruby"))
 
 require 'groonga-test-utils'
 require 'groonga-http-test-utils'
+require 'groonga-local-gqtp-test-utils'
 
 if Test::Unit::VERSION <= "2.0.5"
   Dir.glob(File.join(File.dirname(__FILE__), "**", "test-*.rb")) do |file|

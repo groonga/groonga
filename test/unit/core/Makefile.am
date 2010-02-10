@@ -28,7 +28,8 @@ noinst_LTLIBRARIES =				\
 endif
 
 EXTRA_DIST =					\
-	test-dump.rb
+	test-restore.rb				\
+	test-load.rb
 
 INCLUDES =			\
 	-I$(top_srcdir)		\
