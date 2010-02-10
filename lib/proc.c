@@ -1090,8 +1090,30 @@ have_index_column(grn_ctx *ctx, grn_obj *table)
   return n_index_columns;
 }
 
+static int
+reference_column_p(grn_ctx *ctx, grn_obj *column)
+{
+  grn_obj *range;
+
+  range = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
+  if (!range) {
+    return GRN_FALSE;
+  }
+
+  switch (range->header.type) {
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_NO_KEY:
+  case GRN_TABLE_VIEW:
+    return GRN_TRUE;
+  default:
+    return GRN_FALSE;
+  }
+}
+
 static void
-dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
+             grn_obj *pending_columns)
 {
   grn_hash *columns;
   columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -1107,8 +1129,12 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
       grn_obj *column;
       if ((column = grn_ctx_at(ctx, *key))) {
-        dump_column(ctx, outbuf, table, column);
-        grn_obj_unlink(ctx, column);
+        if (reference_column_p(ctx, column)) {
+          GRN_PTR_PUT(ctx, pending_columns, column);
+        } else {
+          dump_column(ctx, outbuf, table, column);
+          grn_obj_unlink(ctx, column);
+        }
       }
     });
   }
@@ -1310,7 +1336,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 }
 
 static void
-dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
+dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
+           grn_obj *pending_columns)
 {
   grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
@@ -1363,7 +1390,17 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     grn_obj_unlink(ctx, domain);
   }
 
-  dump_columns(ctx, outbuf, table);
+  dump_columns(ctx, outbuf, table, pending_columns);
+}
+
+/* can we move this to groonga.h? */
+#define GRN_PTR_POP(obj,value) {\
+  if (GRN_BULK_VSIZE(obj) >= sizeof(grn_obj *)) {\
+    GRN_BULK_INCR_LEN((obj), -(sizeof(grn_obj *)));\
+    value = *(grn_obj **)(GRN_BULK_CURR(obj));\
+  } else {\
+    value = NULL;\
+  }\
 }
 
 static void
@@ -1374,7 +1411,9 @@ dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
   if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
                                    GRN_CURSOR_BY_ID))) {
     grn_id id;
+    grn_obj pending_columns;
 
+    GRN_PTR_INIT(&pending_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
     while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
       grn_obj *object;
 
@@ -1384,7 +1423,7 @@ dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
         case GRN_TABLE_PAT_KEY:
         case GRN_TABLE_NO_KEY:
         case GRN_TABLE_VIEW:
-          dump_table(ctx, outbuf, object);
+          dump_table(ctx, outbuf, object, &pending_columns);
           break;
         default:
           break;
@@ -1393,6 +1432,19 @@ dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
       }
     }
     grn_table_cursor_close(ctx, cur);
+
+    while (GRN_TRUE) {
+      grn_obj *table, *column;
+      GRN_PTR_POP(&pending_columns, column);
+      if (!column) {
+        break;
+      }
+      table = grn_ctx_at(ctx, column->header.domain);
+      dump_column(ctx, outbuf, table, column);
+      grn_obj_unlink(ctx, column);
+      grn_obj_unlink(ctx, table);
+    }
+    grn_obj_close(ctx, &pending_columns);
   }
 }
 
