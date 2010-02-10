@@ -355,7 +355,7 @@ output_result_final(grn_ctx *ctx, int qnum)
   sec = self / (double)1000000;
   qps = (double)qnum / sec;
   fprintf(grntest_logfp, 
-         "{\"total\": %lld, \"qps\": %f}]\n", latency, qps);
+         "{\"total\": %lld, \"qps\": %f, \"queries\": %d}]\n", latency, qps, qnum);
   grn_obj_close(ctx, &end_time);
   return 0;
 }
@@ -565,7 +565,7 @@ static
 int
 worker_sub(intptr_t task_id)
 {
-  int i, load_mode;
+  int i, load_mode, load_count;
   grn_obj end_time;
   long long int latency, self;
   double sec, qps;
@@ -586,6 +586,7 @@ worker_sub(intptr_t task_id)
       } 
       tmpbuf[MAX_COMMAND_LEN-2] = '\0';
       load_mode = 0;
+      load_count = 0;
       load_start = 0LL;
       while (fgets(tmpbuf, MAX_COMMAND_LEN, fp) != NULL) {
         if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
@@ -598,15 +599,18 @@ worker_sub(intptr_t task_id)
         }
         if (load_command_p(tmpbuf)) {
           load_mode = 1;
+          load_count = 1;
         }
         if (load_mode == 1) {
           if (do_load_command(&grntest_ctx[task_id], tmpbuf, 
                               grntest_task[task_id].jobtype,
                               task_id, &load_start)) {
-            grntest_task[task_id].qnum++;
+            grntest_task[task_id].qnum += load_count;
             load_mode = 0;
+            load_count = 0;
             load_start = 0LL;
           }
+          load_count++;
           continue;
         }
         do_command(&grntest_ctx[task_id], tmpbuf, 
