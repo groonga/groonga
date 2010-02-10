@@ -985,6 +985,7 @@ dump_name(grn_ctx *ctx, grn_obj *outbuf, const char *name, int name_len)
     GRN_TEXT_PUT(ctx, outbuf,
                  GRN_TEXT_VALUE(&escaped_name), GRN_TEXT_LEN(&escaped_name));
   }
+  grn_obj_close(ctx, &escaped_name);
 }
 
 static void
