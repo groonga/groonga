@@ -28,189 +28,189 @@ class RestoreTest < Test::Unit::TestCase
   end
 
   def test_multiple_table_create
-    assert_restore_dump("table_create users 0 ShortText\n" +
-                        "table_create admin_users 0 users\n")
+    assert_same_dump("table_create users 0 ShortText\n" +
+                     "table_create admin_users 0 users\n")
   end
 
   def test_order_of_table_create
-    assert_restore_dump(('a'..'z').to_a.shuffle.collect do |letter|
-                          "table_create #{letter} 0 ShortText\n"
-                        end.join)
+    assert_same_dump(('a'..'z').to_a.shuffle.collect do |letter|
+                       "table_create #{letter} 0 ShortText\n"
+                     end.join)
   end
 
   def test_column_create_short_text
-    assert_restore_dump("table_create Entry 0 ShortText\n" +
-                        "column_create Entry body 0 ShortText\n")
+    assert_same_dump("table_create Entry 0 ShortText\n" +
+                     "column_create Entry body 0 ShortText\n")
   end
 
   def test_column_create_int32
-    assert_restore_dump("table_create Entry 0 ShortText\n" +
-                        "column_create Entry body 0 Int32\n")
+    assert_same_dump("table_create Entry 0 ShortText\n" +
+                     "column_create Entry body 0 Int32\n")
   end
 
   def test_scaler_column_create
-    assert_restore_dump("table_create Entry 0 ShortText\n" +
-                        "column_create Entry body 0 ShortText\n")
+    assert_same_dump("table_create Entry 0 ShortText\n" +
+                     "column_create Entry body 0 ShortText\n")
   end
 
   def test_vector_column_create
-    assert_restore_dump("table_create Entry 1 ShortText\n" +
-                        "column_create Entry body 1 ShortText\n")
+    assert_same_dump("table_create Entry 1 ShortText\n" +
+                     "column_create Entry body 1 ShortText\n")
   end
 
   def test_index_column_create
-    assert_restore_dump("table_create Entry 0 ShortText\n" +
-                        "column_create Entry body 0 ShortText\n" +
-                        "table_create Terms 129 ShortText" +
-                          " --default_tokenizer TokenBigram\n" +
-                        "column_create Terms entry_body 2 Entry body\n")
+    assert_same_dump("table_create Entry 0 ShortText\n" +
+                     "column_create Entry body 0 ShortText\n" +
+                     "table_create Terms 129 ShortText" +
+                     " --default_tokenizer TokenBigram\n" +
+                     "column_create Terms entry_body 2 Entry body\n")
   end
 
   def test_table_with_index_column
     body = "作成するテーブルを語彙表として使用する場合、" +
            "文字列を分割するトークナイザを指定します。"
-    assert_restore_dump("table_create Entry 0 ShortText\n" +
-                        "column_create Entry body 0 ShortText\n" +
-                        "table_create Terms 129 ShortText" +
-                        " --default_tokenizer TokenBigram\n" +
-                        "column_create Terms entry_body 2 Entry body\n" +
-                        "load --table Entry\n[\n" +
-                        '["_key","body"]' + ",\n" +
-                        '["gcc","' + body + '"]' + "\n]\n")
+    assert_same_dump("table_create Entry 0 ShortText\n" +
+                     "column_create Entry body 0 ShortText\n" +
+                     "table_create Terms 129 ShortText" +
+                     " --default_tokenizer TokenBigram\n" +
+                     "column_create Terms entry_body 2 Entry body\n" +
+                     "load --table Entry\n[\n" +
+                     '["_key","body"]' + ",\n" +
+                     '["gcc","' + body + '"]' + "\n]\n")
   end
 
   def test_table_with_index_column_sorted_by_id
     body = "作成するテーブルを語彙表として使用する場合、" +
            "文字列を分割するトークナイザを指定します。"
-    assert_restore_dump("table_create Terms 129 ShortText" +
-                        " --default_tokenizer TokenBigram\n" +
-                        "table_create Entry 0 ShortText\n" +
-                        "column_create Entry body 0 ShortText\n" +
-                        "column_create Terms entry_body 2 Entry body\n" +
-                        "load --table Entry\n[\n" +
-                        '{"_key":"gcc","body":"' + body + '"}' + "\n]\n")
+    assert_same_dump("table_create Terms 129 ShortText" +
+                     " --default_tokenizer TokenBigram\n" +
+                     "table_create Entry 0 ShortText\n" +
+                     "column_create Entry body 0 ShortText\n" +
+                     "column_create Terms entry_body 2 Entry body\n" +
+                     "load --table Entry\n[\n" +
+                     '{"_key":"gcc","body":"' + body + '"}' + "\n]\n")
   end
 
   def test_table_with_multiple_index_column
     title = "default_tokenizer"
     body = "作成するテーブルを語彙表として使用する場合、" +
            "文字列を分割するトークナイザを指定します。"
-    assert_restore_dump("table_create Entry 0 ShortText\n" +
-                        "column_create Entry title 0 ShortText\n" +
-                        "column_create Entry body 0 ShortText\n" +
-                        "table_create Terms 129 ShortText" +
-                        " --default_tokenizer TokenBigram\n" +
-                        "column_create Terms entry_body 2 Entry title,body\n" +
-                        "load --table Entry\n[\n" +
-                        '["_key","title","body"]' + ",\n" +
-                        '["gcc","' + title + '","' + body + '"]' + "\n]\n")
+    assert_same_dump("table_create Entry 0 ShortText\n" +
+                     "column_create Entry title 0 ShortText\n" +
+                     "column_create Entry body 0 ShortText\n" +
+                     "table_create Terms 129 ShortText" +
+                     " --default_tokenizer TokenBigram\n" +
+                     "column_create Terms entry_body 2 Entry title,body\n" +
+                     "load --table Entry\n[\n" +
+                     '["_key","title","body"]' + ",\n" +
+                     '["gcc","' + title + '","' + body + '"]' + "\n]\n")
   end
 
   def test_load
-    assert_restore_dump("table_create commands 1 ShortText\n" +
-                        "column_create commands body 0 ShortText\n" +
-                        "load --table commands\n[\n" +
-                        '["_key","body"]' + ",\n" +
-                        '["gcc","a compiler"]' + ",\n" +
-                        '["bash","a shell"]' + "\n]\n")
+    assert_same_dump("table_create commands 1 ShortText\n" +
+                     "column_create commands body 0 ShortText\n" +
+                     "load --table commands\n[\n" +
+                     '["_key","body"]' + ",\n" +
+                     '["gcc","a compiler"]' + ",\n" +
+                     '["bash","a shell"]' + "\n]\n")
   end
 
   def test_load_to_value_pseudo_column_of_hash_table
-    assert_restore_dump("table_create users 0 ShortText Int32\n" +
-                        "load --table users\n[\n" +
-                        '["_key","_value"]' + ",\n" +
-                        '["ryoqun",1000]' + ",\n" +
-                        '["hayamiz",1001]' + "\n]\n")
+    assert_same_dump("table_create users 0 ShortText Int32\n" +
+                     "load --table users\n[\n" +
+                     '["_key","_value"]' + ",\n" +
+                     '["ryoqun",1000]' + ",\n" +
+                     '["hayamiz",1001]' + "\n]\n")
   end
 
   def test_load_to_value_pseudo_column_of_patricia_table
-    assert_restore_dump("table_create users 1 ShortText Int32\n" +
-                        "load --table users\n[\n" +
-                        '["_key","_value"]' + ",\n" +
-                        '["ryoqun",1000]' + ",\n" +
-                        '["hayamiz",1001]' + "\n]\n")
+    assert_same_dump("table_create users 1 ShortText Int32\n" +
+                     "load --table users\n[\n" +
+                     '["_key","_value"]' + ",\n" +
+                     '["ryoqun",1000]' + ",\n" +
+                     '["hayamiz",1001]' + "\n]\n")
   end
 
   def test_load_to_value_pseudo_column_of_array_table
-    assert_restore_dump("table_create users 3 --value_type Int32\n" +
-                        "load --table users\n[\n" +
-                        '["_id","_value"]' + ",\n" +
-                        '[1,1000]' + ",\n" +
-                        '[2,1001]' + "\n]\n")
+    assert_same_dump("table_create users 3 --value_type Int32\n" +
+                     "load --table users\n[\n" +
+                     '["_id","_value"]' + ",\n" +
+                     '[1,1000]' + ",\n" +
+                     '[2,1001]' + "\n]\n")
   end
 
   def test_load_reference_key_to_value_pseudo_column
-    assert_restore_dump("table_create groups 0 ShortText\n" +
-                        "table_create users 0 ShortText groups\n" +
-                        "load --table groups\n[\n" +
-                        '["_key"]' + ",\n" +
-                        '["admin"]' + ",\n" +
-                        '["end_user"]' + "\n]\n" +
-                        "load --table users\n[\n" +
-                        '["_key","_value"]' + ",\n" +
-                        '["ryoqun","admin"]' + ",\n" +
-                        '["hayamiz","end_user"]' + "\n]\n")
+    assert_same_dump("table_create groups 0 ShortText\n" +
+                     "table_create users 0 ShortText groups\n" +
+                     "load --table groups\n[\n" +
+                     '["_key"]' + ",\n" +
+                     '["admin"]' + ",\n" +
+                     '["end_user"]' + "\n]\n" +
+                     "load --table users\n[\n" +
+                     '["_key","_value"]' + ",\n" +
+                     '["ryoqun","admin"]' + ",\n" +
+                     '["hayamiz","end_user"]' + "\n]\n")
   end
 
   def test_load_reference_id_to_value_pseudo_column
-    assert_restore_dump("table_create groups 3\n" +
-                        "column_create groups name 0 ShortText\n" +
-                        "table_create users 0 ShortText groups\n" +
-                        "load --table groups\n[\n" +
-                        '["_id","name"]' + ",\n" +
-                        '[1,"admin"]' + ",\n" +
-                        '[2,"end_user"]' + "\n]\n" +
-                        "load --table users\n[\n" +
-                        '["_key","_value"]' + ",\n" +
-                        '["ryoqun",1]' + ",\n" +
-                        '["hayamiz",2]' + "\n]\n")
+    assert_same_dump("table_create groups 3\n" +
+                     "column_create groups name 0 ShortText\n" +
+                     "table_create users 0 ShortText groups\n" +
+                     "load --table groups\n[\n" +
+                     '["_id","name"]' + ",\n" +
+                     '[1,"admin"]' + ",\n" +
+                     '[2,"end_user"]' + "\n]\n" +
+                     "load --table users\n[\n" +
+                     '["_key","_value"]' + ",\n" +
+                     '["ryoqun",1]' + ",\n" +
+                     '["hayamiz",2]' + "\n]\n")
   end
 
   def test_load_to_array
-    assert_restore_dump("table_create commands 3\n" +
-                        "column_create commands body 0 ShortText\n" +
-                        "load --table commands\n[\n" +
-                        '["_id","body"]' + ",\n" +
-                        '[1,"a compiler"]' + ",\n" +
-                        '[2,"a shell"]' + "\n]\n")
+    assert_same_dump("table_create commands 3\n" +
+                     "column_create commands body 0 ShortText\n" +
+                     "load --table commands\n[\n" +
+                     '["_id","body"]' + ",\n" +
+                     '[1,"a compiler"]' + ",\n" +
+                     '[2,"a shell"]' + "\n]\n")
   end
 
   def test_int32_load
-    assert_restore_dump("table_create commands 1 ShortText\n" +
-                        "column_create commands body 0 Int32\n" +
-                        "load --table commands\n[\n" +
-                        '["_key","body"]' + ",\n" +
-                        '["gcc",32]' + ",\n" +
-                        '["bash",-2715]' + "\n]\n")
+    assert_same_dump("table_create commands 1 ShortText\n" +
+                     "column_create commands body 0 Int32\n" +
+                     "load --table commands\n[\n" +
+                     '["_key","body"]' + ",\n" +
+                     '["gcc",32]' + ",\n" +
+                     '["bash",-2715]' + "\n]\n")
   end
 
   def test_vector_empty_load
-    assert_restore_dump("table_create commands 1 ShortText\n" +
-                        "column_create commands body 1 ShortText\n" +
-                        "load --table commands\n[\n" +
-                        '["_key","body"]' + ",\n" +
-                        '["gcc",[]]' + "\n]\n")
+    assert_same_dump("table_create commands 1 ShortText\n" +
+                     "column_create commands body 1 ShortText\n" +
+                     "load --table commands\n[\n" +
+                     '["_key","body"]' + ",\n" +
+                     '["gcc",[]]' + "\n]\n")
   end
 
   def test_vector_string_load
-    assert_restore_dump("table_create commands 1 ShortText\n" +
-                        "column_create commands body 1 ShortText\n" +
-                        "load --table commands\n[\n" +
-                        '["_key","body"]' + ",\n" +
-                        '["gcc",["C","and","C++","Compiler"]]' +
-                        "\n]\n")
+    assert_same_dump("table_create commands 1 ShortText\n" +
+                     "column_create commands body 1 ShortText\n" +
+                     "load --table commands\n[\n" +
+                     '["_key","body"]' + ",\n" +
+                     '["gcc",["C","and","C++","Compiler"]]' +
+                     "\n]\n")
   end
 
   def test_vector_int32_load
-    assert_restore_dump("table_create commands 1 ShortText\n" +
-                        "column_create commands body 1 Int32\n" +
-                        "load --table commands\n[\n" +
-                        '["_key","body"]' + ",\n" +
-                        '["gcc",[827,833,991,2716]]' + "\n]\n")
+    assert_same_dump("table_create commands 1 ShortText\n" +
+                     "column_create commands body 1 Int32\n" +
+                     "load --table commands\n[\n" +
+                     '["_key","body"]' + ",\n" +
+                     '["gcc",[827,833,991,2716]]' + "\n]\n")
   end
 
   def test_load_with_test_reference_key
-    assert_restore_dump(<<EOGQTP)
+    assert_same_dump(<<EOGQTP)
 table_create users 0 ShortText
 table_create comments 1 ShortText
 column_create comments text 0 ShortText
@@ -231,7 +231,7 @@ EOGQTP
   end
 
   def test_load_with_vector_text_reference_key
-    assert_restore_dump(<<EOGQTP)
+    assert_same_dump(<<EOGQTP)
 table_create users 0 ShortText
 table_create comments 1 ShortText
 column_create comments text 0 ShortText
@@ -251,7 +251,7 @@ EOGQTP
   end
 
   def test_load_with_int32_reference_key
-    assert_restore_dump(<<EOGQTP)
+    assert_same_dump(<<EOGQTP)
 table_create users 0 Int32
 column_create users name 0 ShortText
 table_create comments 1 ShortText
@@ -273,7 +273,7 @@ EOGQTP
   end
 
   def test_load_with_reference_id
-    assert_restore_dump(<<EOGQTP)
+    assert_same_dump(<<EOGQTP)
 table_create users 3
 column_create users name 0 ShortText
 table_create comments 1 ShortText
@@ -295,7 +295,7 @@ EOGQTP
   end
 
   def test_load_with_vector_int32_reference_key
-    assert_restore_dump(<<EOGQTP)
+    assert_same_dump(<<EOGQTP)
 table_create users 0 Int32
 column_create users name 0 ShortText
 table_create comments 1 ShortText
@@ -316,7 +316,7 @@ EOGQTP
   end
 
   def test_load_with_vector_reference_id
-    assert_restore_dump(<<EOGQTP)
+    assert_same_dump(<<EOGQTP)
 table_create users 3
 column_create users name 0 ShortText
 table_create comments 1 ShortText
@@ -337,7 +337,7 @@ EOGQTP
   end
 
   def test_load_chained_subtables
-    assert_restore_dump(<<EOGQTP)
+    assert_same_dump(<<EOGQTP)
 table_create words 0 ShortText
 table_create japanese 0 words
 table_create noun 0 japanese
@@ -405,7 +405,7 @@ COMMANDS
   end
 
   def test_load_unsequential_array_table
-    assert_restore_dump(<<COMMANDS)
+    assert_same_dump(<<COMMANDS)
 table_create users 3
 column_create users name 0 ShortText
 table_create blog_entries 3
@@ -447,7 +447,7 @@ COMMANDS
   end
 
   def test_view
-    assert_restore_dump(<<COMMANDS)
+    assert_same_dump(<<COMMANDS)
 table_create View 4
 table_create FreePrograms 1 ShortText
 table_create NonFreePrograms 1 ShortText

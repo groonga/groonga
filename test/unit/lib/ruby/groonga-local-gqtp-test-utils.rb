@@ -57,13 +57,13 @@ module GroongaLocalGQTPTestUtils
     output
   end
 
-  def assert_dump(expected)
+  def assert_dump(expected, commands)
+    feed_commands(commands)
     assert_equal(expected, dump)
   end
 
-  def assert_restore_dump(expected)
-    feed_commands(expected)
-    assert_equal(expected, dump)
+  def assert_same_dump(commands)
+    assert_dump(commands, commands)
   end
 
   def assert_commands(expected, commands)
