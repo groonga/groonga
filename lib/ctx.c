@@ -1737,14 +1737,15 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
     GRN_LOG(ctx, GRN_LOG_WARNING, "ASSERT fail on %s %s:%d", func, file, line);
   }
 }
+
 const char *
 grn_get_version(void)
 {
-  return  PACKAGE_VERSION;
+  return PACKAGE_VERSION;
 }
 
 const char *
 grn_get_package(void)
 {
-  return  PACKAGE;
+  return PACKAGE;
 }

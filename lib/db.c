@@ -3998,11 +3998,11 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
       GRN_UINT32_INIT(&flags_, 0);
       GRN_UINT32_SET(ctx, &id_, id);
       GRN_UINT32_SET(ctx, &flags_, flags);
-      grn_ctx_push(ctx, &id_);
-      grn_ctx_push(ctx, oldvalue);
-      grn_ctx_push(ctx, value);
-      grn_ctx_push(ctx, &flags_);
       while (hooks) {
+        grn_ctx_push(ctx, &id_);
+        grn_ctx_push(ctx, oldvalue);
+        grn_ctx_push(ctx, value);
+        grn_ctx_push(ctx, &flags_);
         pctx.caller = NULL;
         pctx.currh = hooks;
         if (hooks->proc) {
