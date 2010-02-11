@@ -1,0 +1,35 @@
+Source: groonga
+Priority: optional
+Maintainer: Kouhei Sutou <kou@clear-code.com>
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libmecab-dev
+Standards-Version: 3.7.3
+Homepage: http://groonga.org/
+
+Package: libgroonga-dev
+Section: libdevel
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}, libgroonga (= ${binary:Version})
+Description: Development files to use groonga as a library
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides header files to use groonga as a library.
+
+Package: libgroonga
+Section: libs
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Library files for groonga.
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides library files.
+
+Package: groonga
+Section: database
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}, libgroonga (= ${binary:Version})
+Description: An open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides 'groonga' command.
