@@ -1,0 +1,12 @@
+diff -ru groonga-0.1.6.orig/Makefile.in groonga-0.1.6/Makefile.in
+--- groonga-0.1.6.orig/Makefile.in	2010-02-09 16:04:41.000000000 +0900
++++ groonga-0.1.6/Makefile.in	2010-02-11 10:15:25.000000000 +0900
+@@ -708,7 +708,7 @@
+ 
+ install-data-local:
+ 	@$(NORMAL_INSTALL)
+-	test -z "$(DESTDIR)$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
++	test -z "$(DESTDIR)$(pkgdatadir)" || $(mkdir_p) "$(DESTDIR)$(pkgdatadir)"
+ 	cp -R resource/* $(DESTDIR)$(pkgdatadir)
+ 
+ uninstall-local:
