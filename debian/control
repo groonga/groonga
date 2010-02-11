@@ -1,7 +1,7 @@
 Source: groonga
 Priority: optional
 Maintainer: Kouhei Sutou <kou@clear-code.com>
-Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libmecab-dev
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, quilt, libmecab-dev
 Standards-Version: 3.7.3
 Homepage: http://groonga.org/
 
