@@ -12395,6 +12395,11 @@ grn_p(grn_ctx *ctx, grn_obj *obj)
 {
   grn_obj buffer;
 
+  if (!obj) {
+    printf("(NULL)\n");
+    return;
+  }
+
   GRN_TEXT_INIT(&buffer, 0);
   if (obj->header.type == GRN_EXPR) {
     grn_expr_inspect(ctx, &buffer, obj);
