@@ -214,6 +214,8 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
       pd = p;
     }
   }
+  *ct = GRN_CONTENT_JSON;
+  *mime_type = "application/json";
   if (pd && pd < p) {
     switch (*++pd) {
     case 'c' :
@@ -269,8 +271,6 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
     }
     return pd - 1;
   } else {
-    *ct = GRN_CONTENT_JSON;
-    *mime_type = "application/json";
     return pe;
   }
 }
