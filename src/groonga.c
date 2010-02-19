@@ -1469,6 +1469,10 @@ main(int argc, char **argv)
     case 'K' :
       enc = GRN_ENC_KOI8R;
       break;
+    default:
+      do_client = g_client;
+      do_server = g_server;
+      break;
     }
   }
   if (protocol) {
