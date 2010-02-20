@@ -339,8 +339,8 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
             val = &jsonp_func;
           } else if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
             val = &key;
-            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           }
+          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           g = grn_text_cgidec(ctx, val, g, pathe, '&');
         }
         if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
