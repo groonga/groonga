@@ -1317,6 +1317,76 @@ grn_isspace(const char *str, grn_encoding encoding)
   return 0;
 }
 
+int8_t
+grn_atoi8(const char *nptr, const char *end, const char **rest)
+{
+  const char *p = nptr;
+  int8_t v = 0, t, n = 0, o = 0;
+  if (p < end && *p == '-') {
+    p++;
+    n = 1;
+    o = 1;
+  }
+  while (p < end && *p >= '0' && *p <= '9') {
+    t = v * 10 - (*p - '0');
+    if (t > v || (!n && t == INT8_MIN)) { v = 0; break; }
+    v = t;
+    o = 0;
+    p++;
+  }
+  if (rest) { *rest = o ? nptr : p; }
+  return n ? v : -v;
+}
+
+uint8_t
+grn_atoui8(const char *nptr, const char *end, const char **rest)
+{
+  uint8_t v = 0, t;
+  while (nptr < end && *nptr >= '0' && *nptr <= '9') {
+    t = v * 10 + (*nptr - '0');
+    if (t < v) { v = 0; break; }
+    v = t;
+    nptr++;
+  }
+  if (rest) { *rest = nptr; }
+  return v;
+}
+
+int16_t
+grn_atoi16(const char *nptr, const char *end, const char **rest)
+{
+  const char *p = nptr;
+  int16_t v = 0, t, n = 0, o = 0;
+  if (p < end && *p == '-') {
+    p++;
+    n = 1;
+    o = 1;
+  }
+  while (p < end && *p >= '0' && *p <= '9') {
+    t = v * 10 - (*p - '0');
+    if (t > v || (!n && t == INT16_MIN)) { v = 0; break; }
+    v = t;
+    o = 0;
+    p++;
+  }
+  if (rest) { *rest = o ? nptr : p; }
+  return n ? v : -v;
+}
+
+uint16_t
+grn_atoui16(const char *nptr, const char *end, const char **rest)
+{
+  uint16_t v = 0, t;
+  while (nptr < end && *nptr >= '0' && *nptr <= '9') {
+    t = v * 10 + (*nptr - '0');
+    if (t < v) { v = 0; break; }
+    v = t;
+    nptr++;
+  }
+  if (rest) { *rest = nptr; }
+  return v;
+}
+
 int
 grn_atoi(const char *nptr, const char *end, const char **rest)
 {
@@ -2397,7 +2467,26 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     } else {
       grn_obj *range = grn_ctx_at(ctx, obj->header.domain);
       if (range && range->header.type == GRN_TYPE) {
-        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "uvector of GRN_TYPE not supported");
+        grn_id value_size = ((struct _grn_type *)range)->obj.range;
+        char *v = (char *)GRN_BULK_HEAD(obj),
+             *ve = (char *)GRN_BULK_CURR(obj);
+        GRN_TEXT_PUTC(ctx, bulk, '[');
+        if (v < ve) {
+          for (;;) {
+            grn_obj value;
+            GRN_OBJ_INIT(&value, GRN_BULK, 0, obj->header.domain);
+            grn_bulk_write_from(ctx, &value, v, 0, value_size);
+            grn_text_otoj(ctx, bulk, &value, NULL);
+
+            v += value_size;
+            if (v < ve) {
+              GRN_TEXT_PUTC(ctx, bulk, ',');
+            } else {
+              break;
+            }
+          }
+        }
+        GRN_TEXT_PUTC(ctx, bulk, ']');
       } else {
         grn_id *v = (grn_id *)GRN_BULK_HEAD(obj),
                *ve = (grn_id *)GRN_BULK_CURR(obj);

@@ -123,8 +123,8 @@ module GroongaHTTPTestUtils
     response = get(command_path(:load,
                                 :table => table,
                                 :values => json(values)))
-    # assert_response([[Result::SUCCESS], n_values], response,
-    #                 :content_type => "application/json")
+    assert_response([[Result::SUCCESS], n_values], response,
+                    :content_type => "application/json")
   end
 
   def load_users

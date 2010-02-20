@@ -22,14 +22,23 @@ require 'groonga-constants'
 module GroongaTestUtils
   include GroongaConstants
 
-  def setup_server(protocol=nil)
-    @protocol = protocol
-    @groonga = guess_groonga_path
-    @resource_dir = guess_resource_dir
+  def setup_database_path
     @tmp_dir = File.join(File.dirname(__FILE__), "tmp")
     FileUtils.rm_rf(@tmp_dir)
     FileUtils.mkdir_p(@tmp_dir)
     @database_path = File.join(@tmp_dir, "database")
+  end
+
+  def teardown_database_path
+    @tmp_dir ||= nil
+    FileUtils.rm_rf(@tmp_dir) if @tmp_dir
+  end
+
+  def setup_server(protocol=nil)
+    setup_database_path
+    @protocol = protocol
+    @groonga = guess_groonga_path
+    @resource_dir = guess_resource_dir
     @address = "127.0.0.1"
     @port = 5454
     @encoding = "utf8"
@@ -47,7 +56,7 @@ module GroongaTestUtils
       @groonga_pid = nil
     end
 
-    FileUtils.rm_rf(@tmp_dir) if @tmp_dir
+    teardown_database_path
   end
 
   private

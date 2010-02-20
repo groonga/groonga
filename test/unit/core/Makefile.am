@@ -16,8 +16,11 @@ noinst_LTLIBRARIES =				\
 	test-column.la				\
 	test-database.la			\
 	test-table-cursor.la			\
+	test-table-select.la			\
 	test-expr.la				\
 	test-expr-script.la			\
+	test-expr-query.la			\
+	test-expr-parse.la			\
 	test-text.la				\
 	test-cast.la				\
 	test-dump.la				\
@@ -25,7 +28,8 @@ noinst_LTLIBRARIES =				\
 endif
 
 EXTRA_DIST =					\
-	test-dump.rb
+	test-restore.rb				\
+	test-load.rb
 
 INCLUDES =			\
 	-I$(top_srcdir)		\
@@ -64,8 +68,11 @@ test_table_la_SOURCES			= test-table.c
 test_column_la_SOURCES			= test-column.c
 test_database_la_SOURCES		= test-database.c
 test_table_cursor_la_SOURCES		= test-table-cursor.c
+test_table_select_la_SOURCES		= test-table-select.c
 test_expr_la_SOURCES			= test-expr.c
 test_expr_script_la_SOURCES		= test-expr-script.c
+test_expr_query_la_SOURCES		= test-expr-query.c
+test_expr_parse_la_SOURCES		= test-expr-parse.c
 test_text_la_SOURCES			= test-text.c
 test_cast_la_SOURCES			= test-cast.c
 test_dump_la_SOURCES			= test-dump.c

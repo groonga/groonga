@@ -200,6 +200,7 @@ grn_loader_init(grn_loader *loader)
   GRN_TEXT_INIT(&loader->values, 0);
   GRN_UINT32_INIT(&loader->level, GRN_OBJ_VECTOR);
   GRN_PTR_INIT(&loader->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  loader->key_offset = -1;
   loader->table = NULL;
   loader->last = NULL;
   loader->ifexists = NULL;
@@ -1736,14 +1737,15 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
     GRN_LOG(ctx, GRN_LOG_WARNING, "ASSERT fail on %s %s:%d", func, file, line);
   }
 }
+
 const char *
 grn_get_version(void)
 {
-  return  PACKAGE_VERSION;
+  return PACKAGE_VERSION;
 }
 
 const char *
 grn_get_package(void)
 {
-  return  PACKAGE;
+  return PACKAGE;
 }

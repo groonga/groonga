@@ -1,0 +1,11 @@
+groonga (0.1.6) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Kouhei Sutou <kou@clear-code.com>  Wed, 10 Feb 2010 13:00:55 +0900
+
+groonga (0.1.5) unstable; urgency=low
+
+  * Initial release.
+
+ -- Kouhei Sutou <kou@clear-code.com>  Fri, 15 Jan 2010 16:41:04 +0900

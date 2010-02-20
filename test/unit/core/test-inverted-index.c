@@ -623,22 +623,25 @@ test_mroonga_index(void)
   grn_obj *t1,*c1,*lc,*ft;
   grn_obj buff;
   grn_id c1_id,r1,r2,r3,r4;
+  const gchar *mrn_dir;
 
-  remove_tmp_directory();
-  g_mkdir_with_parents(tmp_directory,0700);
-  g_chdir(tmp_directory);
-  g_mkdir_with_parents("mrn",0700);
+  mrn_dir = cut_build_path(tmp_directory, "mrn", NULL);
+  g_mkdir_with_parents(mrn_dir, 0700);
 
-  db = grn_db_create(context,"mroonga.grn",NULL);
+  db = grn_db_create(context,
+                     cut_build_path(mrn_dir, "mroonga.grn", NULL),
+                     NULL);
   cut_assert_not_null(db);
 
   /* actual table */
-  t1 = grn_table_create(context,"t1",2,"mrn/t1.grn",
-			GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT,NULL,0);
+  t1 = grn_table_create(context, "t1", 2,
+                        cut_build_path(mrn_dir, "t1.grn", NULL),
+			GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
   cut_assert_not_null(t1);
 
   /* lexicon table */
-  lc = grn_table_create(context,"lc",2,"mrn/lc.grn",
+  lc = grn_table_create(context, "lc", 2,
+                        cut_build_path(mrn_dir, "lc.grn", NULL),
 			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                         grn_ctx_at(context, GRN_DB_SHORT_TEXT), 0);
   cut_assert_not_null(lc);
@@ -646,14 +649,16 @@ test_mroonga_index(void)
 				   grn_ctx_at(context, GRN_DB_BIGRAM)));
 
   /* actual column */
-  c1 = grn_column_create(context,t1,"c1",2,"mrn/t1.c1.grn",
+  c1 = grn_column_create(context, t1, "c1", 2,
+                         cut_build_path(mrn_dir, "t1.c1.grn", NULL),
 			 GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
 			 grn_ctx_at(context, GRN_DB_TEXT));
   cut_assert_not_null(c1);
 
   /* fulltext index */
-  ft = grn_column_create(context,lc,"ft",2,"mrn/lc.ft.grn",
-			 GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT,t1);
+  ft = grn_column_create(context, lc, "ft", 2,
+                         cut_build_path(mrn_dir, "lc.ft.grn", NULL),
+			 GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(ft);
 
   GRN_TEXT_INIT(&buff,0);
@@ -749,22 +754,25 @@ test_mroonga_index_score(void)
   grn_obj *t1,*c1,*lc,*ft;
   grn_obj buff;
   grn_id r1,r2,r3,r4;
+  const gchar *mrn_dir;
 
-  remove_tmp_directory();
-  g_mkdir_with_parents(tmp_directory,0700);
-  g_chdir(tmp_directory);
-  g_mkdir_with_parents("mrn",0700);
+  mrn_dir = cut_build_path(tmp_directory, "mrn", NULL);
+  g_mkdir_with_parents(mrn_dir, 0700);
 
-  db = grn_db_create(context,"mroonga.grn",NULL);
+  db = grn_db_create(context,
+                     cut_build_path(mrn_dir, "mroonga.grn", NULL),
+                     NULL);
   cut_assert_not_null(db);
 
   /* actual table */
-  t1 = grn_table_create(context,"t1",2,"mrn/t1.grn",
-			GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT,NULL,0);
+  t1 = grn_table_create(context, "t1", 2,
+                        cut_build_path(mrn_dir, "t1.grn", NULL),
+			GRN_OBJ_TABLE_NO_KEY|GRN_OBJ_PERSISTENT, NULL, 0);
   cut_assert_not_null(t1);
 
   /* lexicon table */
-  lc = grn_table_create(context,"lc",2,"mrn/lc.grn",
+  lc = grn_table_create(context, "lc", 2,
+                        cut_build_path(mrn_dir, "lc.grn", NULL),
 			GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
                         grn_ctx_at(context, GRN_DB_SHORT_TEXT), 0);
   cut_assert_not_null(lc);
@@ -772,14 +780,16 @@ test_mroonga_index_score(void)
 				   grn_ctx_at(context, GRN_DB_BIGRAM)));
 
   /* actual column */
-  c1 = grn_column_create(context,t1,"c1",2,"mrn/t1.c1.grn",
+  c1 = grn_column_create(context, t1, "c1", 2,
+                         cut_build_path(mrn_dir, "t1.c1.grn", NULL),
 			 GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
 			 grn_ctx_at(context, GRN_DB_TEXT));
   cut_assert_not_null(c1);
 
   /* fulltext index */
-  ft = grn_column_create(context,lc,"ft",2,"mrn/lc.ft.grn",
-			 GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT,t1);
+  ft = grn_column_create(context, lc, "ft", 2,
+                         cut_build_path(mrn_dir, "lc.ft.grn", NULL),
+			 GRN_OBJ_COLUMN_INDEX|GRN_OBJ_PERSISTENT, t1);
   cut_assert_not_null(ft);
 
   GRN_TEXT_INIT(&buff,0);

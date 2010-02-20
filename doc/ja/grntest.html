@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.1.4. grntest &mdash; groonga v0.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '0.1.4',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.4 documentation" href="index.html" />
+    <link rel="up" title="3.1. 実行環境" href="process.html" />
+    <link rel="next" title="3.2. 組み込みコマンド一覧" href="commands.html" />
+    <link rel="prev" title="3.1.3. grnslap" href="grnslap.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="3.2. 組み込みコマンド一覧"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grnslap.html" title="3.1.3. grnslap"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="process.html" accesskey="U">3.1. 実行環境</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="grntest">
+<h1>3.1.4. grntest<a class="headerlink" href="#grntest" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>3.1.4.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>grntest - groongaテストプログラム</p>
+</div>
+<div class="section" id="id2">
+<h2>3.1.4.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>grntest  [options...] [script] [db]\n&quot;
+       &quot;options:\n&quot;
+        &quot;  -i, --host &lt;ip/hostname&gt;:  server address to listen (default: %s)\n&quot;
+        &quot;  -p  --port &lt;port number&gt;:  server port number (default: %d)\n&quot;
+        &quot;  --dir:                     show script files on ftp server\n&quot;
+        &quot;  --noftp:                   omit ftp connection\n&quot;,
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>3.1.4.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>grntestは、groonga汎用テストツールです。</p>
+<p>groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利用する場合の動作確認や実行速度測定が可能です。</p>
+<p>grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続できる環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。</p>
+<p>現在は、linux 及びWindows上で動作します。make installしてもインストールは行われません。</p>
+</div>
+<div class="section" id="id4">
+<h2>3.1.4.4. オプション<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<dl class="cmdoption">
+<dt id="cmdoption-i">
+<tt class="descname">-i</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--host</tt><tt class="descclassname"> &lt;ip/hostname&gt;</tt><a class="headerlink" href="#cmdoption-i" title="Permalink to this definition">¶</a></dt>
+<dd>接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先にgroongaサーバが立ち上がっていない場合、接続不能となることに注意してください。このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起動して接続します。</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption-p">
+<tt class="descname">-p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--port</tt><tt class="descclassname"> &lt;port number&gt;</tt><a class="headerlink" href="#cmdoption-p" title="Permalink to this definition">¶</a></dt>
+<dd>自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションでしていしたポート番号が異なる場合、接続不能となることに注意してください。</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption--dir">
+<tt class="descname">--dir</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--dir" title="Permalink to this definition">¶</a></dt>
+<dd>ftp.groonga.org に用意されているスクリプトファイルを表示します。</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption--noftp">
+<tt class="descname">--noftp</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--noftp" title="Permalink to this definition">¶</a></dt>
+<dd>通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイルの送信を行います。&#8211;noftp オプションを指定するとftp 通信を一切行わないようになります。存在しないスクリプトファイルを指定した場合、エラーとなることに注意してください。</dd></dl>
+
+</div>
+<div class="section" id="id5">
+<h2>3.1.4.5. 引数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<dl class="cmdoption">
+<dt>
+<tt class="descname">script</tt></dt>
+<dd>grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルです。拡張子は.scrです。</dd></dl>
+
+<dl class="cmdoption">
+<dt>
+<tt class="descname">db</tt></dt>
+<dd>grntestが利用するgroonga データベースです。指定されたデータベースが存在しない場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこの引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースになることに注意してください。</dd></dl>
+
+</div>
+<div class="section" id="id6">
+<h2>3.1.4.6. 使い方<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>まず、シェル上(Windowsならコマンドプロンプト上)で</p>
+<blockquote>
+grntest test.scr 任意のDB名</blockquote>
+<p>とタイプしてください。もしgrntestが正常に動作すれば、</p>
+<blockquote>
+test-ユーザ名-数字.log</blockquote>
+<p>というファイルが作成されるはずです。そうでない場合は、このドキュメントの「トラブルシューティング」の章を参照してください。</p>
+</div>
+<div class="section" id="id7">
+<h2>3.1.4.7. スクリプトファイル<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>スクリプトファイルは、grntest命令を記述したテキストファイルです。
+&#8220;;&#8221;セミコロンを利用して、一行に複数のgrntest命令を記述することができます。一行に複数のgrntestt命令がある場合、各命令は並列に実行されます。
+&#8220;#&#8221;で始まる行はコメントとして扱われます。</p>
+<div class="section" id="id8">
+<h3>3.1.4.7.1. grntest命令<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>現在サポートされているgrntest命令は以下の4つです。</p>
+<blockquote>
+<p>do_local コマンドファイル [スレッド数] [繰り返し数]</p>
+<blockquote>
+コマンドファイルをgroonga 単体で実行します。スレッド数が指定されている場合、複数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されてい場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数とも省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイル 1 [繰り返し数]と明示的に指定してください。</blockquote>
+<p>do_gqpt コマンドファイル [スレッド数] [繰り返し数]</p>
+<blockquote>
+コマンドファイルをgroonga サーバで実行します。スレッド数や繰り返し数の意味はdo_localの場合と同じです。</blockquote>
+<p>rep_local コマンドファイル [スレッド数] [繰り返し数]</p>
+<blockquote>
+コマンドファイルをgroonga 単体で実行し、より詳細な報告を行います。</blockquote>
+<p>rep_gqpt コマンドファイル [スレッド数] [繰り返し数]</p>
+<blockquote>
+コマンドファイルをgroonga サーバ実行し、より詳細な報告を行います。 スレッド数や繰り返し数の意味はdo_localと 同じです。</blockquote>
+</blockquote>
+</div>
+<div class="section" id="id9">
+<h3>3.1.4.7.2. コマンドファイル<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファイルです。拡張子に制限はありません。groonga組み込みコマンドに関しては./commands.htmlを参照してください。</p>
+</div>
+<div class="section" id="id10">
+<h3>3.1.4.7.3. サンプル<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>スクリプトファイルのサンプルです。:</p>
+<div class="highlight-none"><div class="highlight"><pre># sample script
+rep_local test.ddl
+do_local test.load;
+do_gqtp test.select 10 10; do_local test.status 10
+</pre></div>
+</div>
+<p>上記の意味は以下のとおりです。:</p>
+<div class="highlight-none"><div class="highlight"><pre>1行目:コメント行。
+2行目:test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。
+3行目:test.load というコマンドファイルをgroonga単体で実行する。(最後の&quot;;&quot;セミコロンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命令を実行する場合に付与しても問題ありません。)
+4行目:test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行する。各スレッドはtest.selectの中身を10会繰り返す。また同時に、groonga単体でtest.statusというコマンドファイルを10個のスレッドで実行する。
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>3.1.4.7.4. 特殊命令<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>スクリプトファイルのコメント行には特殊コマンドを埋め込むことが可能です。現在サポートされている特殊命令は以下の二つです。</p>
+<p>#SET_HOST &lt;ip/hostname&gt;
+-i, &#8211;hostオプションと同等の機能です。コマンドラインオプションに指定したIPアドレス/ホスト名と、SET_HOSTで指定したIPアドレス/ホスト名が異なる場合、またコマンドラインオプションを指定しなかった場合にもSET_HOSTが優先されます。SET_HOSTを利用した場合、サーバが自動的には起動されないのもコマンドラインオプションで指定した場合と同様です。</p>
+<p>#SET_PORT &lt;port number&gt;</p>
+<p>-p, &#8211;port オプションと同等の機能です。コマンドラインオプションに指定したポート番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプションを指定しなかった場合にもSET_PORTが優先されます。</p>
+<p>特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。</p>
+<p>例えば、</p>
+<div class="highlight-none"><div class="highlight"><pre>$ ./grntest --port 20010 test.scr testdb
+</pre></div>
+</div>
+<p>とコマンド上でポートを指定した場合でも、もしtest.scrの中身が</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>#SET_PORT 10900
+rep_local test.ddl
+do_local test.load;
+rep_gqtp test.select 10 10; rep_local test.status 10
+#SET_PORT 10400</dd>
+</dl>
+<p>であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。</p>
+</div>
+</div>
+<div class="section" id="id12">
+<h2>3.1.4.8. grntest実行結果<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p>grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイルは自動的にftp.groonga.org
+に送信されます。ログファイルは以下のようなjson形式のテキストです。</p>
+<div class="highlight-none"><div class="highlight"><pre>[{&quot;script&quot;: &quot;test.scr&quot;,
+  &quot;user&quot;: &quot;homepage&quot;,
+  &quot;date&quot;: &quot;2010-02-10 06:17:08&quot;,
+  &quot;CPU&quot;: Intel(R) Pentium(R) 4 CPU 2.80GHz&quot;,
+  &quot;BIT&quot;: 32,
+  &quot;CORE&quot;: 1,
+  &quot;RAM&quot;: &quot;975MBytes&quot;,
+  &quot;HDD&quot;: &quot;257662232KBytes&quot;,
+  &quot;OS&quot;: &quot;Linux 2.4.20-24.7-i686&quot;,
+  &quot;HOST&quot;: &quot;localhost&quot;,
+  &quot;PORT&quot;: &quot;10400&quot;,
+  &quot;VERSION&quot;: &quot;0.1.5&quot;
+},
+{&quot;jobs&quot;: &quot;rep_local test.ddl&quot;,
+&quot;detail&quot;: [
+[0, &quot;table_create res_table --key_type ShortText&quot;, 1275, 2692, [0]],
+[0, &quot;column_create res_table res_column --type Text&quot;, 2742, 5248, [0]],
+[0, &quot;column_create res_table user_column --type Text&quot;, 5306, 7901, [0]],
+[0, &quot;column_create res_table mail_column --type Text&quot;, 7963, 10656, [0]],
+[0, &quot;column_create res_table time_column --type Time&quot;, 10715, 11624, [0]],
+[0, &quot;status&quot;, 11641, 11663, [0]],
+[0, &quot;table_create thread_table --key_type ShortText&quot;, 11674, 12690, [0]],
+[0, &quot;column_create thread_table thread_title_column --type ShortText&quot;, 12716, 15281, [0]],
+[0, &quot;status&quot;, 15344, 15367, [0]],
+[0, &quot;table_create lexicon_table --flags 129 --key_type ShortText --default_tokenizer TokenBigram&quot;, 15376, 16552, [0]],
+[0, &quot;column_create lexicon_table inv_res_column 514 res_table res_column &quot;, 16577, 30426, [0]],
+[0, &quot;column_create lexicon_table inv_thread_column 514 thread_table thread_title_column &quot;, 30533, 44591, [0]],
+[0, &quot;status&quot;, 44696, 44721, [0]]],
+&quot;summary&quot; :[{&quot;job&quot;: &quot;rep_local test.ddl&quot;, &quot;latency&quot;: 44777, &quot;self&quot;: 43979, &quot;qps&quot;: 295.595625, &quot;min&quot;: 22, &quot;max&quot;: 14058}]},
+{&quot;jobs&quot;: &quot;do_local test.load; &quot;,
+&quot;summary&quot; :[{&quot;job&quot;: &quot;do_local test.load&quot;, &quot;latency&quot;: 63715, &quot;self&quot;: 18606, &quot;qps&quot;: 1074.922068, &quot;min&quot;: 166, &quot;max&quot;: 5015}]},
+{&quot;jobs&quot;: &quot;do_gqtp test.select 10 10; do_local test.status 10&quot;,
+&quot;summary&quot; :[{&quot;job&quot;: &quot; do_local test.status 10&quot;, &quot;latency&quot;: 493483, &quot;self&quot;: 429467, &quot;qps&quot;: 93.138704, &quot;min&quot;: 5, &quot;max&quot;: 177},{&quot;job&quot;: &quot;do_gqtp test.select 10 10&quot;, &quot;latency&quot;: 802498, &quot;self&quot;: 738482, &quot;qps&quot;: 2031.193719, &quot;min&quot;: 305, &quot;max&quot;: 114292}]},
+{&quot;total&quot;: 849332, &quot;qps&quot;: 1852.043724}]
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>3.1.4.9. 制限事項<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッド数の合計は最大64です。</li>
+<li>コマンドファイル中のgroongaコマンドの長さは最長10000byteです。</li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h2>3.1.4.10. トラブルシューティング<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<p>もし、grntestが正常に動作しない場合、まず以下を確認してください。</p>
+<ul class="simple">
+<li>インターネットに接続しているか？　&#8211;noftp モードを指定しない限り、grntestは動作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、grntestは正常に動作しません。</li>
+<li>groonga サーバが動作していないか？　grntestは、-i, &#8211;host オプションで明示的にサーバを指定しないかぎり、自動的にlocalhostのgroongaサーバを立ち上げます。すでにgroongaサーバが動作している場合、grntestは正常に動作しない可能性があります。</li>
+<li>指定したDBが適切か？ grntestは、引数で指定したDBの中身はチェックしません。もし指定されたDBが存在しなければ自動的にDBを作成しますが、もしファイルとして存在する場合は中身に関わらず動作を続けてしまい、結果が異常になる可能性があります。</li>
+</ul>
+<p>以上の原因でなければ、問題はgrntestかgroongaにあります。ご報告をお願いします。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">3.1.4. grntest</a><ul>
+<li><a class="reference external" href="#id1">3.1.4.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.1.4.2. 書式</a></li>
+<li><a class="reference external" href="#id3">3.1.4.3. 説明</a></li>
+<li><a class="reference external" href="#id4">3.1.4.4. オプション</a></li>
+<li><a class="reference external" href="#id5">3.1.4.5. 引数</a></li>
+<li><a class="reference external" href="#id6">3.1.4.6. 使い方</a></li>
+<li><a class="reference external" href="#id7">3.1.4.7. スクリプトファイル</a><ul>
+<li><a class="reference external" href="#id8">3.1.4.7.1. grntest命令</a></li>
+<li><a class="reference external" href="#id9">3.1.4.7.2. コマンドファイル</a></li>
+<li><a class="reference external" href="#id10">3.1.4.7.3. サンプル</a></li>
+<li><a class="reference external" href="#id11">3.1.4.7.4. 特殊命令</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#id12">3.1.4.8. grntest実行結果</a></li>
+<li><a class="reference external" href="#id13">3.1.4.9. 制限事項</a></li>
+<li><a class="reference external" href="#id14">3.1.4.10. トラブルシューティング</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="grnslap.html"
+                                  title="previous chapter">3.1.3. grnslap</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="commands.html"
+                                  title="next chapter">3.2. 組み込みコマンド一覧</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/grntest.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="3.2. 組み込みコマンド一覧"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="grnslap.html" title="3.1.3. grnslap"
+             >previous</a> |</li>
+        <li><a href="index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="process.html" >3.1. 実行環境</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
+    </div>
+  </body>
+</html>

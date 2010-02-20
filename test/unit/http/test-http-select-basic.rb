@@ -17,7 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-module HTTPSelectTests
+module HTTPSelectBasicTests
   include GroongaHTTPTestUtils
 
   def setup
@@ -122,7 +122,7 @@ module HTTPSelectTests
 
   def test_sortby
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key},
@@ -132,7 +132,7 @@ module HTTPSelectTests
 
   def test_sortby_reverse
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key}.reverse,
@@ -153,7 +153,7 @@ module HTTPSelectTests
 
   def test_sortby_offset
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key}[3..-1],
@@ -163,7 +163,7 @@ module HTTPSelectTests
 
   def test_sortby_zero_offset
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key},
@@ -173,7 +173,7 @@ module HTTPSelectTests
 
   def test_sortby_negative_offset
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key}[-3..-1],
@@ -183,7 +183,7 @@ module HTTPSelectTests
 
   def test_sortby_offset_one_larger_than_hits
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   [],
@@ -195,7 +195,7 @@ module HTTPSelectTests
 
   def test_sortby_negative_offset_one_larger_than_hits
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key},
@@ -206,7 +206,7 @@ module HTTPSelectTests
 
   def test_sortby_offset_equal_to_hits
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   [],
@@ -218,7 +218,7 @@ module HTTPSelectTests
 
   def test_sortby_negative_offset_equal_to_hits
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key},
@@ -230,7 +230,7 @@ module HTTPSelectTests
 
   def test_sortby_limit
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key}[0, 4],
@@ -242,7 +242,7 @@ module HTTPSelectTests
 
   def test_sortby_zero_limit
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   [],
@@ -252,7 +252,7 @@ module HTTPSelectTests
 
   def test_sortby_negative_limit
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key},
@@ -262,7 +262,7 @@ module HTTPSelectTests
 
   def test_sortby_offset_and_limit
     create_user_id_table
-    records = load_user_ids((0...10).to_a.shuffle)
+    records = register_users((0...10).to_a.shuffle)
 
     assert_select(["_id", "_key"],
                   records.sort_by {|id, key| key}[3, 4],
@@ -275,7 +275,7 @@ module HTTPSelectTests
 
   def test_offset
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   records[3..-1],
@@ -285,7 +285,7 @@ module HTTPSelectTests
 
   def test_zero_offset
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   records,
@@ -295,7 +295,7 @@ module HTTPSelectTests
 
   def test_negative_offset
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   records[-3..-1],
@@ -305,7 +305,7 @@ module HTTPSelectTests
 
   def test_offset_one_larger_than_hits
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     response = get(command_path(:select,
                                 :table => "user_id",
@@ -318,7 +318,7 @@ module HTTPSelectTests
 
   def test_negative_offset_one_larger_than_hits
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     response = get(command_path(:select,
                                 :table => "user_id",
@@ -331,7 +331,7 @@ module HTTPSelectTests
 
   def test_offset_equal_to_hits
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   [],
@@ -341,7 +341,7 @@ module HTTPSelectTests
 
   def test_negative_offset_equal_to_hits
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   records,
@@ -351,7 +351,7 @@ module HTTPSelectTests
 
   def test_limit
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   records[0, 4],
@@ -361,7 +361,7 @@ module HTTPSelectTests
 
   def test_zero_limit
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   [],
@@ -371,7 +371,7 @@ module HTTPSelectTests
 
   def test_negative_limit
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   records,
@@ -381,7 +381,7 @@ module HTTPSelectTests
 
   def test_offset_and_limit
     create_user_id_table
-    records = load_user_ids
+    records = register_users
 
     assert_select(["_id", "_key"],
                   records[3, 4],
@@ -686,12 +686,13 @@ module HTTPSelectTests
 EOF
     assert_select_xml(expected, :table => "users")
   end
+
   private
   def create_user_id_table
     table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")
   end
 
-  def load_user_ids(keys=nil)
+  def register_users(keys=nil)
     header = ["_key"]
     keys ||= (0...10).to_a
 
@@ -745,12 +746,12 @@ EOF
   end
 end
 
-class HTTPSelectTest < Test::Unit::TestCase
-  include HTTPSelectTests
+class HTTPSelectBasicTest < Test::Unit::TestCase
+  include HTTPSelectBasicTests
 end
 
-class HTTPDefineSelectorTest < HTTPSelectTest
-  include HTTPSelectTests
+class HTTPDefineSelectorBasicTest < HTTPSelectBasicTest
+  include HTTPSelectBasicTests
 
   def assert_select(header, expected, parameters, options={}, &block)
     name = "custom_select"

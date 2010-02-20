@@ -665,6 +665,7 @@ typedef grn_obj grn_table_cursor;
 #define GRN_CURSOR_LT                  (0x01<<2)
 #define GRN_CURSOR_BY_KEY              (0x00<<3)
 #define GRN_CURSOR_BY_ID               (0x01<<3)
+#define GRN_CURSOR_PREFIX              (0x01<<4)
 
 /**
  * grn_table_cursor_open:
@@ -2236,6 +2237,9 @@ GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
     grn_pat_cursor_close(ctx, _sc);\
   }\
 } while (0)
+
+/* utilities */
+GRN_API void grn_p(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
 }

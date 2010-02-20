@@ -3,7 +3,8 @@ SUBDIRS =	\
 
 if WITH_BENCHMARK
 noinst_PROGRAMS =		\
-	bench-table-factory
+	bench-table-factory	\
+	bench-geo-distance
 endif
 
 INCLUDES =			\
@@ -22,6 +23,7 @@ LIBS =								\
 	$(GLIB_LIBS)
 
 bench_table_factory_SOURCES = bench-table-factory.c
+bench_geo_distance_SOURCES = bench-geo-distance.c
 
 benchmark:
 	@for benchmark in $(noinst_PROGRAMS); do	\

@@ -18,10 +18,10 @@
 
 #include <db.h>
 
-#define GRN_INT8_VALUE GRN_INT32_VALUE
-#define GRN_UINT8_VALUE GRN_UINT32_VALUE
-#define GRN_INT16_VALUE GRN_INT32_VALUE
-#define GRN_UINT16_VALUE GRN_UINT32_VALUE
+#define GRN_INT8_VALUE(obj) (*((int8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT8_VALUE(obj) (*((uint8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT16_VALUE(obj) (*((int16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT16_VALUE(obj) (*((uint16_t *)GRN_BULK_HEAD(obj)))
 
 #include <gcutter.h>
 #include <glib/gstdio.h>
@@ -122,7 +122,9 @@ static void
 cast_text(const gchar *text)
 {
   grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
-  GRN_TEXT_PUTS(&context, &src, text);
+  if (text) {
+    GRN_TEXT_PUTS(&context, &src, text);
+  }
   grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
@@ -135,9 +137,10 @@ data_text_to_bool(void)
                  "text", G_TYPE_STRING, text,           \
                  NULL)
 
+  ADD_DATA("empty", GRN_FALSE, "");
+  ADD_DATA("NULL", GRN_FALSE, NULL);
   ADD_DATA("true", GRN_TRUE, "true");
-  ADD_DATA("false", GRN_FALSE, "false");
-  ADD_DATA("unknown", GRN_FALSE, "unknown");
+  ADD_DATA("false", GRN_TRUE, "false");
 
 #undef ADD_DATA
 }
@@ -263,7 +266,7 @@ test_text_error(gconstpointer data)
 }
 
 static void
-cast_int32(int number)
+cast_int32(gint32 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_INT32, 0);
   GRN_INT32_SET(&context, &src, number);
@@ -390,7 +393,7 @@ test_int32_to_text(void)
 }
 
 static void
-cast_uint32(int number)
+cast_uint32(guint32 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_UINT32, 0);
   GRN_UINT32_SET(&context, &src, number);
@@ -517,7 +520,7 @@ test_uint32_to_text(void)
 }
 
 static void
-cast_int64(int number)
+cast_int64(gint64 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_INT64, 0);
   GRN_INT64_SET(&context, &src, number);
@@ -644,7 +647,7 @@ test_int64_to_text(void)
 }
 
 static void
-cast_uint64(int number)
+cast_uint64(guint64 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_UINT64, 0);
   GRN_UINT64_SET(&context, &src, number);

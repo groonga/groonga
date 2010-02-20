@@ -1421,6 +1421,12 @@ data_not_allow_update(void)
   ADD_DATUM("++variable",
             cut_take_printf("'++' is not allowed (++size)"),
             "++size");
+  ADD_DATUM("variable--",
+            cut_take_printf("'--' is not allowed (size--)"),
+            "size--");
+  ADD_DATUM("--variable",
+            cut_take_printf("'--' is not allowed (--size)"),
+            "--size");
 
 #undef ADD_DATUM
 }

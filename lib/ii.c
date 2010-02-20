@@ -3780,6 +3780,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               }
               c->pc.rid = 0;
               c->pc.sid = 0;
+              c->pc.rest = 0;
               c->curr_chunk++;
               continue;
             } else {

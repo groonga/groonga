@@ -12,11 +12,13 @@
   {
     grn_ctx *ctx = efsi->ctx;
     grn_obj buf;
-    GRN_TEXT_INIT(&buf, 0);
-    GRN_TEXT_PUT(ctx, &buf, efsi->str, efsi->str_end - efsi->str);
-    GRN_TEXT_PUTC(ctx, &buf, '\0');
-    ERR(GRN_SYNTAX_ERROR, "Syntax error! (%s)", GRN_TEXT_VALUE(&buf));
-    GRN_OBJ_FIN(ctx, &buf);
+    if (ctx->rc == GRN_SUCCESS) {
+      GRN_TEXT_INIT(&buf, 0);
+      GRN_TEXT_PUT(ctx, &buf, efsi->str, efsi->str_end - efsi->str);
+      GRN_TEXT_PUTC(ctx, &buf, '\0');
+      ERR(GRN_SYNTAX_ERROR, "Syntax error! (%s)", GRN_TEXT_VALUE(&buf));
+      GRN_OBJ_FIN(ctx, &buf);
+    }
   }
 }
 
