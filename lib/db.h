@@ -243,6 +243,7 @@ typedef struct {
   int32_t nargs;
   grn_operator op;
   uint8_t flags;
+  int32_t modify;
 } grn_expr_code;
 
 struct _grn_expr {
@@ -264,6 +265,7 @@ struct _grn_expr {
 
   grn_obj objs;
   grn_obj dfi;
+  grn_expr_code *code0;
 };
 
 grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
