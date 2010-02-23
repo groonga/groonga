@@ -17,14 +17,14 @@
 #ifndef GRN_PAT_H
 #define GRN_PAT_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
 #include "db.h"
 #include "hash.h"
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 

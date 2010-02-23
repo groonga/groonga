@@ -19,9 +19,9 @@
 
 /* "ii" is for inverted index */
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
 #ifndef GRN_HASH_H
 #include "hash.h"

@@ -17,11 +17,11 @@
 #ifndef GRN_IO_H
 #define GRN_IO_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -103,7 +103,7 @@ struct _grn_io {
 };
 
 grn_io *grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
-		      uint32_t max_segment, grn_io_mode mode, unsigned int flags);
+                      uint32_t max_segment, grn_io_mode mode, unsigned int flags);
 grn_io *grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode);
 grn_rc grn_io_close(grn_ctx *ctx, grn_io *io);
 grn_rc grn_io_remove(grn_ctx *ctx, const char *path);
@@ -112,7 +112,7 @@ grn_rc grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name);
 void *grn_io_header(grn_io *io);
 
 void *grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
-		     uint32_t offset, uint32_t size, grn_io_rw_mode mode);
+                     uint32_t offset, uint32_t size, grn_io_rw_mode mode);
 grn_rc grn_io_win_mapv(grn_io_win **list, grn_ctx *ctx, int nent);
 grn_rc grn_io_win_unmap(grn_io_win *iw);
 
