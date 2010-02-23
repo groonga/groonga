@@ -17,9 +17,9 @@
 #ifndef GRN_SNIP_H
 #define GRN_SNIP_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
 #ifndef GRN_STR_H
 #include "str.h"
@@ -30,7 +30,7 @@
 #define MAX_SNIP_COND_COUNT     32U
 #define MAX_SNIP_RESULT_COUNT   16U
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C"
 {
 #endif
