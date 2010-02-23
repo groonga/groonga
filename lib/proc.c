@@ -1917,7 +1917,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_create(ctx, "geo_in_circle", 13, NULL, GRN_PROC_FUNCTION,
                   func_geo_in_circle, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "geo_in_rectanble", 16, NULL, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_in_rectangle", 16, NULL, GRN_PROC_FUNCTION,
                   func_geo_in_rectangle, NULL, NULL, 0, vars);
 
   grn_proc_create(ctx, "geo_distance", 12, NULL, GRN_PROC_FUNCTION,
