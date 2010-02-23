@@ -18,9 +18,9 @@
 #ifndef GRN_COM_H
 #define GRN_COM_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
 #ifndef GRN_STR_H
 #include "str.h"

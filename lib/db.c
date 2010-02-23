@@ -9859,10 +9859,11 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                 optarg.vector_size = 1;
                 optarg.proc = NULL;
                 optarg.max_size = 0;
+                ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
                 while (j < k) {
                   index = GRN_PTR_VALUE_AT(&si->index, j++);
-                  grn_obj_search(ctx, index, si->query, res,
-                                 j < k ? GRN_OP_OR : si->logical_op, &optarg);
+                  if (j == k) { ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND; }
+                  grn_obj_search(ctx, index, si->query, res, si->logical_op, &optarg);
                   optarg.weight_vector++;
                 }
               }
