@@ -487,7 +487,10 @@ GroongaAdmin = {
           dataType: 'json',
           success: function(d) {
             var idx;
-            if (idx = $.inArray('name', d[0])) {
+            $.each(d[0], function(i, val) {
+              if (val[0] == 'name') { idx = i; }
+            });
+            if (idx) {
               d.shift();
               $.each(d, function(i, val) {
                 cs.append($('<option />').val(val[idx]).text(val[idx]));
