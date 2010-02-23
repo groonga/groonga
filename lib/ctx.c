@@ -456,6 +456,7 @@ grn_ctx_fin(grn_ctx *ctx)
 }
 
 grn_timeval grn_starttime;
+const char *grn_log_path = GROONGA_LOG_PATH;
 
 static FILE *default_logger_fp = NULL;
 
@@ -467,7 +468,7 @@ default_logger_func(int level, const char *time, const char *title,
   if (!default_logger_fp) {
     CRITICAL_SECTION_ENTER(grn_glock);
     if (!default_logger_fp) {
-      default_logger_fp = fopen(GROONGA_LOG_PATH, "a");
+      default_logger_fp = fopen(grn_log_path, "a");
     }
     CRITICAL_SECTION_LEAVE(grn_glock);
   }

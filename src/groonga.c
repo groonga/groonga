@@ -73,6 +73,8 @@ usage(void)
           "  -h, --help:               show usage\n"
           "  --admin-html-path <path>: specify admin html path\n"
           "  --protocol <protocol>:    server protocol to listen (default: gqtp)\n"
+          "  --version:                show groonga version\n"
+          "  --log-path <path>:        specify log path\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -1465,6 +1467,7 @@ main(int argc, char **argv)
     {'\0', "admin-html-path", NULL, 0, getopt_op_none},
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "version", NULL, mode_version, getopt_op_update},
+    {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1474,6 +1477,7 @@ main(int argc, char **argv)
   opts[9].arg = &hostnamestr;
   opts[12].arg = &grn_admin_html_path;
   opts[13].arg = &protocol;
+  opts[15].arg = &grn_log_path;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }
