@@ -361,8 +361,6 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   return ctx->rc;
 }
 
-#define GRN_CTX_ALLOCATED             (0x80)
-
 grn_ctx *
 grn_ctx_open(int flags)
 {

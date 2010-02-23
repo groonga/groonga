@@ -375,6 +375,9 @@ extern grn_critical_section grn_glock;
 extern uint32_t grn_gtick;
 extern grn_obj *grn_true, *grn_false, *grn_null;
 
+#define GRN_CTX_ALLOCATED                            (0x80)
+#define GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND (0x40)
+
 typedef struct {
   int32_t tv_sec;
   int32_t tv_usec;
