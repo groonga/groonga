@@ -525,7 +525,9 @@ GroongaAdmin = {
           var m = line.length;
           for (var j = 0 ; j < m; j++) {
             elms.push('<th>');
-            elms.push(prim2html(line[j], 128));
+            elms.push(prim2html(line[j][0], 128));
+            elms.push('<br />');
+            elms.push(prim2html(line[j][1], 128));
             elms.push('</th>');
           }
           elms.push('</tr>');
@@ -556,7 +558,8 @@ GroongaAdmin = {
       url: '/d/status',
       data: {},
       dataType: 'json',
-      success: function(d) {
+      success: function(b) {
+        var d = b[1];
         $('#status-starttime').text(d.starttime);
         $('#status-uptime').text(d.uptime);
       }
