@@ -532,7 +532,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           case GRN_CONTENT_JSON:
             line_delimiter = ',';
             column_delimiter = ',';
-            GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"]");
+            GRN_TEXT_PUTS(ctx, buf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"type\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"]]");
             break;
           case GRN_CONTENT_XML:
           case GRN_CONTENT_NONE:
@@ -588,7 +588,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
       case GRN_CONTENT_JSON:
         line_delimiter = ',';
         column_delimiter = ',';
-        GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]");
+        GRN_TEXT_PUTS(ctx, buf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"]]");
         break;
       case GRN_CONTENT_XML:
       case GRN_CONTENT_NONE:
