@@ -378,14 +378,17 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: ");
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, mime_type);
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\nContent-Length: ");
-        grn_text_lltoa(ctx, ctx->impl->outbuf, GRN_TEXT_LEN(body));
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
         if (GRN_TEXT_LEN(&jsonp_func)) {
+          grn_text_lltoa(ctx, ctx->impl->outbuf,
+                         GRN_TEXT_LEN(body) + GRN_TEXT_LEN(&jsonp_func));
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
           GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(&jsonp_func), GRN_TEXT_LEN(&jsonp_func));
           GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '(');
           GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
           GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ");");
         } else {
+          grn_text_lltoa(ctx, ctx->impl->outbuf, GRN_TEXT_LEN(body));
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
           GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
         }
       } else {
