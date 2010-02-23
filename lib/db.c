@@ -9481,6 +9481,16 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                   /* type check */
                   GRN_INT32_PUT(ctx, &si->wv, GRN_INT32_VALUE(ec->value));
                   break;
+                case GRN_ACCESSOR :
+                case GRN_ACCESSOR_VIEW :
+                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &wv)) {
+                    si->flags |= SCAN_ACCESSOR;
+                    GRN_PTR_PUT(ctx, &si->index, index);
+                    if (!ec->modify || ec[ec->modify].op != GRN_OP_STAR) {
+                      GRN_INT32_PUT(ctx, &si->wv, 1);
+                    }
+                  }
+                  break;
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &wv)) {
@@ -9500,13 +9510,15 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               }
             }
           } else if (GRN_DB_OBJP(*p)) {
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &si->wv)) {
+            if (grn_column_index(ctx, *p, c->op, &index, 1, &wv /* &si->wv */)) {
               GRN_PTR_PUT(ctx, &si->index, index);
+              GRN_INT32_PUT(ctx, &si->wv, 1);
             }
           } else if (ACCESSORP(*p)) {
             si->flags |= SCAN_ACCESSOR;
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &si->wv)) {
+            if (grn_column_index(ctx, *p, c->op, &index, 1, &wv /* &si->wv */)) {
               GRN_PTR_PUT(ctx, &si->index, index);
+              GRN_INT32_PUT(ctx, &si->wv, 1);
             }
           } else {
             si->query = *p;
