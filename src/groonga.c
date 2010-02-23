@@ -15,6 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "lib/groonga_in.h"
+
 #include "lib/com.h"
 #include "lib/ql.h"
 #include "lib/proc.h"
@@ -33,6 +35,10 @@
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
+
+#ifndef USE_MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif /* USE_MSG_NOSIGNAL */
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
@@ -1002,11 +1008,7 @@ h_worker(void *arg)
     fd = ((grn_msg *)msg)->u.fd;
     do_htreq(ctx, (grn_msg *)msg, &body);
     out = ctx->impl->outbuf;
-#ifdef WIN32
-    ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), 0);
-#else
     ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), MSG_NOSIGNAL);
-#endif /* WIN32 */
     if (ret == -1) { SERR("send"); }
     GRN_BULK_REWIND(out);
     /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
