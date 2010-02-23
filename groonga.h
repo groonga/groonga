@@ -2238,9 +2238,6 @@ GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
   }\
 } while (0)
 
-/* utilities */
-GRN_API void grn_p(grn_ctx *ctx, grn_obj *obj);
-
 #ifdef __cplusplus
 }
 #endif

@@ -273,6 +273,9 @@ grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
 grn_rc grn_expr_parser_close(grn_ctx *ctx);
 grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp);
 
+/* utilities */
+void grn_p(grn_ctx *ctx, grn_obj *obj);
+
 #ifdef __cplusplus
 }
 #endif
