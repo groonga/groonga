@@ -381,6 +381,34 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 }
 
 static grn_obj *
+proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *buf = args[0];
+  grn_expr_var *vars;
+
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+
+  if (nvars == 2) {
+    grn_obj *table;
+    grn_content_type ct;
+
+    ct = grn_get_ctype(&vars[1].value);
+    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
+                             GRN_TEXT_LEN(&vars[0].value));
+
+    if (table) {
+      grn_obj_remove(ctx,table);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "table not found.");
+    }
+
+    print_return_code(ctx, buf, ct);
+  }
+  return buf;
+}
+
+static grn_obj *
 proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
@@ -445,6 +473,48 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   }
   return buf;
 }
+
+
+static grn_obj *
+proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *buf = args[0];
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 3) {
+    grn_obj *table, *col;
+    char *colname,fullname[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned colname_len,fullname_len;
+    grn_content_type ct;
+
+    ct = grn_get_ctype(&vars[2].value);
+
+    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
+                             GRN_TEXT_LEN(&vars[0].value));
+
+    colname = GRN_TEXT_VALUE(&vars[1].value);
+    colname_len = GRN_TEXT_LEN(&vars[1].value);
+
+    if (fullname_len =  grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE)) {
+      fullname[fullname_len] = GRN_DB_DELIMITER;
+      memcpy((fullname + fullname_len + 1), colname, colname_len);
+      fullname_len += colname_len + 1;
+      //TODO:check fullname_len < GRN_TABLE_MAX_KEY_SIZE
+      col = grn_ctx_get(ctx, fullname, fullname_len);
+      if (col) {
+        grn_obj_remove(ctx, col);
+      } else {
+        ERR(GRN_INVALID_ARGUMENT, "column not found.");
+      }
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "table not found.");
+    }
+    print_return_code(ctx, buf, ct);
+  }
+  return buf;
+}
+
 
 #define GRN_STRLEN(s) ((s) ? strlen(s) : 0)
 
