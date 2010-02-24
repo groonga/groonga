@@ -15,6 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "lib/groonga_in.h"
+
 #include "lib/com.h"
 #include "lib/ql.h"
 #include "lib/proc.h"
@@ -33,6 +35,10 @@
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
+
+#ifndef USE_MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif /* USE_MSG_NOSIGNAL */
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
@@ -67,6 +73,8 @@ usage(void)
           "  -h, --help:               show usage\n"
           "  --admin-html-path <path>: specify admin html path\n"
           "  --protocol <protocol>:    server protocol to listen (default: gqtp)\n"
+          "  --version:                show groonga version\n"
+          "  --log-path <path>:        specify log path\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -372,14 +380,17 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: ");
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, mime_type);
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\nContent-Length: ");
-        grn_text_lltoa(ctx, ctx->impl->outbuf, GRN_TEXT_LEN(body));
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
         if (GRN_TEXT_LEN(&jsonp_func)) {
+          grn_text_lltoa(ctx, ctx->impl->outbuf,
+                         GRN_TEXT_LEN(body) + GRN_TEXT_LEN(&jsonp_func) + 3);
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
           GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(&jsonp_func), GRN_TEXT_LEN(&jsonp_func));
           GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '(');
           GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
           GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ");");
         } else {
+          grn_text_lltoa(ctx, ctx->impl->outbuf, GRN_TEXT_LEN(body));
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
           GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
         }
       } else {
@@ -1002,11 +1013,7 @@ h_worker(void *arg)
     fd = ((grn_msg *)msg)->u.fd;
     do_htreq(ctx, (grn_msg *)msg, &body);
     out = ctx->impl->outbuf;
-#ifdef WIN32
-    ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), 0);
-#else
     ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), MSG_NOSIGNAL);
-#endif /* WIN32 */
     if (ret == -1) { SERR("send"); }
     GRN_BULK_REWIND(out);
     /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
@@ -1460,6 +1467,7 @@ main(int argc, char **argv)
     {'\0', "admin-html-path", NULL, 0, getopt_op_none},
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "version", NULL, mode_version, getopt_op_update},
+    {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1469,6 +1477,7 @@ main(int argc, char **argv)
   opts[9].arg = &hostnamestr;
   opts[12].arg = &grn_admin_html_path;
   opts[13].arg = &protocol;
+  opts[15].arg = &grn_log_path;
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }

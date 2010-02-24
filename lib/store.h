@@ -17,9 +17,9 @@
 #ifndef GRN_STORE_H
 #define GRN_STORE_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
 #ifndef GRN_CTX_H
 #include "ctx.h"

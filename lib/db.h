@@ -17,11 +17,11 @@
 #ifndef GRN_DB_H
 #define GRN_DB_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -243,6 +243,7 @@ typedef struct {
   int32_t nargs;
   grn_operator op;
   uint8_t flags;
+  int32_t modify;
 } grn_expr_code;
 
 struct _grn_expr {
@@ -264,12 +265,16 @@ struct _grn_expr {
 
   grn_obj objs;
   grn_obj dfi;
+  grn_expr_code *code0;
 };
 
 grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
 
 grn_rc grn_expr_parser_close(grn_ctx *ctx);
 grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp);
+
+/* utilities */
+void grn_p(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
 }

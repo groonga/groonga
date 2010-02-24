@@ -379,13 +379,30 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 
 #define GRN_STRLEN(s) ((s) ? strlen(s) : 0)
 
+static void
+objid2name(grn_ctx *ctx, grn_id id, grn_obj *bulk)
+{
+  GRN_BULK_REWIND(bulk);
+  if (id == GRN_ID_NIL) {
+    GRN_TEXT_PUTS(ctx, bulk, "null");
+  } else {
+    grn_obj *obj;
+    int name_len;
+    char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+
+    obj = grn_ctx_at(ctx, id);
+    name_len = grn_obj_name(ctx, obj, name_buf, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_TEXT_PUT(ctx, bulk, name_buf, name_len);
+  }
+}
+
 static int
 print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type otype)
 {
+  grn_obj o;
   grn_id id;
-  char *type, name[GRN_TABLE_MAX_KEY_SIZE];
+  char *type;
   const char *path;
-  int name_len;
 
   switch (column->header.type) {
   case GRN_COLUMN_FIX_SIZE:
@@ -403,14 +420,15 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
   }
 
   id = grn_obj_id(ctx, column);
-  name_len = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
   path = grn_obj_path(ctx, column);
+  GRN_TEXT_INIT(&o, 0);
 
   switch (otype) {
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, buf, id);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_esc(ctx, buf, name, name_len);
+    objid2name(ctx, id, &o);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, '\t');
@@ -418,29 +436,38 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_itoa(ctx, buf, column->header.flags);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_itoa(ctx, buf, column->header.domain);
-    /* TODO: flags to str, domain to str */
+    objid2name(ctx, column->header.domain, &o);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    objid2name(ctx, grn_obj_get_range(ctx, column), &o);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     break;
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTC(ctx, buf, '[');
     grn_text_itoa(ctx, buf, id);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_text_esc(ctx, buf, name, name_len);
+    objid2name(ctx, id, &o);
+    grn_text_otoj(ctx, buf, &o, NULL);
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, ',');
     GRN_TEXT_PUTS(ctx, buf, type);
     GRN_TEXT_PUTC(ctx, buf, ',');
+    /* TODO: flags to str */
     grn_text_itoa(ctx, buf, column->header.flags);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_text_itoa(ctx, buf, column->header.domain);
-    /* TODO: flags to str, domain to str */
+    objid2name(ctx, column->header.domain, &o);
+    grn_text_otoj(ctx, buf, &o, NULL);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    objid2name(ctx, grn_obj_get_range(ctx, column), &o);
+    grn_text_otoj(ctx, buf, &o, NULL);
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
   case GRN_CONTENT_XML:
   case GRN_CONTENT_NONE:
     break;
   }
+  grn_obj_close(ctx, &o);
   return 1;
 }
 
@@ -448,9 +475,8 @@ static int
 print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type otype)
 {
   grn_id id;
-  char name[GRN_TABLE_MAX_KEY_SIZE];
+  grn_obj o;
   const char *path;
-  int name_len;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -463,40 +489,50 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
   }
 
   id = grn_obj_id(ctx, table);
-  name_len = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
   path = grn_obj_path(ctx, table);
+  GRN_TEXT_INIT(&o, 0);
 
   switch (otype) {
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, buf, id);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_esc(ctx, buf, name, name_len);
+    objid2name(ctx, id, &o);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_itoa(ctx, buf, table->header.domain);
-    /* TODO: domain to str */
+    objid2name(ctx, table->header.domain, &o);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    objid2name(ctx, grn_obj_get_range(ctx, table), &o);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     break;
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTC(ctx, buf, '[');
     grn_text_itoa(ctx, buf, id);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_text_esc(ctx, buf, name, name_len);
+    objid2name(ctx, id, &o);
+    grn_text_otoj(ctx, buf, &o, NULL);
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, ',');
+    /* TODO: flags to str */
     grn_text_itoa(ctx, buf, table->header.flags);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_text_itoa(ctx, buf, table->header.domain);
-    /* TODO: domain to str */
+    objid2name(ctx, table->header.domain, &o);
+    grn_text_otoj(ctx, buf, &o, NULL);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    objid2name(ctx, grn_obj_get_range(ctx, table), &o);
+    grn_text_otoj(ctx, buf, &o, NULL);
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
   case GRN_CONTENT_XML:
   case GRN_CONTENT_NONE:
     break;
   }
+  grn_obj_close(ctx, &o);
   return 1;
 }
 
@@ -527,12 +563,12 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           case GRN_CONTENT_TSV:
             line_delimiter = '\n';
             column_delimiter = '\t';
-            GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\ttype\tflags\tdomain");
+            GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\ttype\tflags\tdomain\trange");
             break;
           case GRN_CONTENT_JSON:
             line_delimiter = ',';
             column_delimiter = ',';
-            GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"type\",\"flags\",\"domain\"]");
+            GRN_TEXT_PUTS(ctx, buf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"type\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\", \"ShortText\"]]");
             break;
           case GRN_CONTENT_XML:
           case GRN_CONTENT_NONE:
@@ -583,12 +619,12 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
       case GRN_CONTENT_TSV:
         line_delimiter = '\n';
         column_delimiter = '\t';
-        GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\tflags\tdomain");
+        GRN_TEXT_PUTS(ctx, buf, "id\tname\tpath\tflags\tdomain\trange");
         break;
       case GRN_CONTENT_JSON:
         line_delimiter = ',';
         column_delimiter = ',';
-        GRN_TEXT_PUTS(ctx, buf, "[[\"id\",\"name\",\"path\",\"flags\",\"domain\"]");
+        GRN_TEXT_PUTS(ctx, buf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\",\"ShortText\"]]");
         break;
       case GRN_CONTENT_XML:
       case GRN_CONTENT_NONE:
@@ -1917,7 +1953,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_create(ctx, "geo_in_circle", 13, NULL, GRN_PROC_FUNCTION,
                   func_geo_in_circle, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "geo_in_rectanble", 16, NULL, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_in_rectangle", 16, NULL, GRN_PROC_FUNCTION,
                   func_geo_in_rectangle, NULL, NULL, 0, vars);
 
   grn_proc_create(ctx, "geo_distance", 12, NULL, GRN_PROC_FUNCTION,

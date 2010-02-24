@@ -17,15 +17,15 @@
 #ifndef GRN_STR_H
 #define GRN_STR_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
 #ifndef GRN_NFKC_H
 #include "nfkc.h"
 #endif /* GRN_NFKC_H */
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 

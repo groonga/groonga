@@ -21,9 +21,9 @@
 #ifndef GRN_TOKEN_H
 #define GRN_TOKEN_H
 
-#ifndef GROONGA_H
+#ifndef GROONGA_IN_H
 #include "groonga_in.h"
-#endif /* GROONGA_H */
+#endif /* GROONGA_IN_H */
 
 #ifndef GRN_CTX_H
 #include "ctx.h"
@@ -37,7 +37,7 @@
 #include "str.h"
 #endif /* GRN_STR_H */
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
