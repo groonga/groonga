@@ -20,7 +20,6 @@
 #include <string.h>
 #include "ctx.h"
 #include "str.h"
-#include "pat.h"
 
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE
@@ -2416,11 +2415,11 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
             } else {
               int name_len;
               grn_obj *range_obj;
-              char name_buf[GRN_PAT_MAX_KEY_SIZE];
+              char name_buf[GRN_TABLE_MAX_KEY_SIZE];
 
               range_obj = grn_ctx_at(ctx, range_id);
               name_len = grn_obj_name(ctx, range_obj, name_buf,
-                                      GRN_PAT_MAX_KEY_SIZE);
+                                      GRN_TABLE_MAX_KEY_SIZE);
               GRN_BULK_REWIND(&buf);
               GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
               grn_text_otoj(ctx, bulk, &buf, NULL);
@@ -2480,11 +2479,11 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
             } else {
               int name_len;
               grn_obj *range_obj;
-              char name_buf[GRN_PAT_MAX_KEY_SIZE];
+              char name_buf[GRN_TABLE_MAX_KEY_SIZE];
 
               range_obj = grn_ctx_at(ctx, range_id);
               name_len = grn_obj_name(ctx, range_obj, name_buf,
-                                      GRN_PAT_MAX_KEY_SIZE);
+                                      GRN_TABLE_MAX_KEY_SIZE);
               GRN_BULK_REWIND(&buf);
               GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
               grn_text_otoj(ctx, bulk, &buf, NULL);
@@ -2617,11 +2616,11 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
           } else {
             int name_len;
             grn_obj *range_obj;
-            char name_buf[GRN_PAT_MAX_KEY_SIZE];
+            char name_buf[GRN_TABLE_MAX_KEY_SIZE];
 
             range_obj = grn_ctx_at(ctx, range_id);
             name_len = grn_obj_name(ctx, range_obj, name_buf,
-                                    GRN_PAT_MAX_KEY_SIZE);
+                                    GRN_TABLE_MAX_KEY_SIZE);
             GRN_BULK_REWIND(&buf);
             GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
             grn_text_otoj(ctx, bulk, &buf, NULL);
