@@ -295,70 +295,7 @@ Groonga = {
 
   GRN_OBJ_WITH_SECTION:           (0x01<<7),
   GRN_OBJ_WITH_WEIGHT:            (0x01<<8),
-  GRN_OBJ_WITH_POSITION:          (0x01<<9),
-
-  table_flags_to_s: function(flags) {
-    ret = [];
-    if (flags & Groonga.GRN_OBJ_PERSISTENT) {
-      ret.push('永続的');
-    }
-    switch (flags & Groonga.GRN_OBJ_TABLE_TYPE_MASK) {
-    case Groonga.GRN_OBJ_TABLE_HASH_KEY:
-      ret.push('ハッシュテーブル');
-      break;
-    case Groonga.GRN_OBJ_TABLE_PAT_KEY:
-      ret.push('パトリシア木');
-      break;
-    case Groonga.GRN_OBJ_TABLE_NO_KEY:
-      ret.push('キーなし');
-      break;
-    }
-    if (flags & Groonga.GRN_OBJ_KEY_WITH_SIS) {
-      ret.push('keyのSIS自動登録');
-    }
-    if (flags & Groonga.GRN_OBJ_KEY_NORMALIZE) {
-      ret.push('keyの正規化');
-    }
-    return ret.join(' ');
-  },
-  column_flags_to_s: function(flags) {
-    ret = [];
-    if (flags & Groonga.GRN_OBJ_PERSISTENT) {
-      ret.push('永続的');
-    }
-    switch (flags & Groonga.GRN_OBJ_COLUMN_TYPE_MASK) {
-    case Groonga.GRN_OBJ_COLUMN_SCALAR:
-      ret.push('スカラ');
-      break;
-    case Groonga.GRN_OBJ_COLUMN_VECTOR:
-      ret.push('ベクタ');
-      break;
-    case Groonga.GRN_OBJ_COLUMN_INDEX:
-      ret.push('転置インデックス');
-      if (flags & Groonga.GRN_OBJ_WITH_SECTION) {
-        ret.push('セクション情報');
-      }
-      if (flags & Groonga.GRN_OBJ_WITH_WEIGHT) {
-        ret.push('重み情報');
-      }
-      if (flags & Groonga.GRN_OBJ_WITH_POSITION) {
-        ret.push('位置情報');
-      }
-      break;
-    }
-    switch (flags & Groonga.GRN_OBJ_COMPRESS_MASK) {
-    case Groonga.GRN_OBJ_COMPRESS_NONE:
-      ret.push('無圧縮');
-      break;
-    case Groonga.GRN_OBJ_COMPRESS_ZLIB:
-      ret.push('zlib圧縮');
-      break;
-    case Groonga.GRN_OBJ_COMPRESS_LZO:
-      ret.push('lzo圧縮');
-      break;
-    }
-    return ret.join(' ');
-  }
+  GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
 GroongaAdmin = {
   SELECT_PARAMS_LIST: ['match_column', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
@@ -626,7 +563,7 @@ GroongaAdmin = {
         $('#database-tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
         table.find('tr').each(function() {
           var flags_td = $(this).find('td:eq(3)');
-          flags_td.text(Groonga.table_flags_to_s(Number(flags_td.text())));
+          flags_td.text(flags_td.text());
         });
       }
     });
@@ -700,6 +637,7 @@ GroongaAdmin = {
     }
   },
   recordlist: function(params, pager_func) {
+    $('#tab-recordlist-table').empty();
     $.ajax({
       url: '/d/select',
       data: params,
@@ -710,7 +648,8 @@ GroongaAdmin = {
           alert('error');
           return false;
         }
-        var recs = d.shift();
+        var body = d.shift();
+        var recs = body.shift();
         var all_count = recs.shift()[0];
         var pager;
         if (pager_func) {
@@ -741,7 +680,7 @@ GroongaAdmin = {
           .append(table);
         table.find('tr').each(function() {
           var flags_td = $(this).find('td:eq(4)');
-          flags_td.text(Groonga.column_flags_to_s(Number(flags_td.text())));
+          flags_td.text(flags_td.text());
         });
       }
     });

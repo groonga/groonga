@@ -774,6 +774,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_size)
       }
 
       grn_ctx_push(ctx, ctx->impl->outbuf);
+      grn_timeval_now(ctx, &ctx->impl->tv);
       grn_expr_exec(ctx, expr, 1);
       val = grn_ctx_pop(ctx);
       grn_expr_clear_vars(ctx, expr);
@@ -832,6 +833,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
           break;
         }
       }
+      grn_timeval_now(ctx, &ctx->impl->tv);
     }
     GRN_OBJ_FIN(ctx, &buf);
   }
