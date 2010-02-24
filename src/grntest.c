@@ -2205,6 +2205,35 @@ check_script(const char *scrname)
   return 0;
 }
 
+#ifndef WIN32
+static
+void
+timeout(int sig)
+{
+  fprintf(stderr, "timeout:groonga server cannot shutdown!!\n");
+  fprintf(stderr, "Use \"kill -9 %d\"\n",  grntest_server_id);
+  alarm(0);
+}
+
+static
+int
+setsigalarm(int sec)
+{
+  int	ret;
+  struct sigaction sig;
+
+  alarm(sec);
+  sig.sa_handler = timeout;
+  sig.sa_flags = 0;
+  sigemptyset(&sig.sa_mask);
+  ret = sigaction(SIGALRM, &sig, NULL);   
+  if (ret == -1) {
+    fprintf(stderr, "setsigalarm:errno= %d\n", errno);
+  }
+  return ret;
+}
+#endif /* WIN32 */
+
 int
 main(int argc, char **argv)
 {
@@ -2317,17 +2346,23 @@ main(int argc, char **argv)
 
 exit:
   shutdown_server();
+#ifndef WIN32
   if (grntest_server_id) {
     int ret;
+    setsigalarm(20);
     ret = waitpid(grntest_server_id, &pstatus, 0);
     if (ret < 0) {
       fprintf(stderr, "Cannot wait\n");
       exit(1);
     }
+/*
     else {
       fprintf(stderr, "pstatus = %d\n", pstatus);
     }
+*/
+    alarm(0);
   }
+#endif /* WIN32 */
   CRITICAL_SECTION_FIN(grntest_cs);
   grn_obj_close(&context, &grntest_starttime);
   grn_obj_close(&context, grntest_db);
