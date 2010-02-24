@@ -465,6 +465,24 @@ objid2name(grn_ctx *ctx, grn_id id, grn_obj *bulk)
   }
 }
 
+static void
+obj_source_to_json(grn_ctx *ctx, grn_db_obj *obj, grn_obj *bulk)
+{
+  grn_obj o;
+  grn_id *s = obj->source;
+  int i = 0, n = obj->source_size / sizeof(grn_id);
+
+  GRN_TEXT_INIT(&o, 0);
+  GRN_TEXT_PUTC(ctx, bulk, '[');
+  for (i = 0; i < n; i++, s++) {
+    if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+    objid2name(ctx, *s, &o);
+    grn_text_otoj(ctx, bulk, &o, NULL);
+  }
+  GRN_TEXT_PUTC(ctx, bulk, ']');
+  grn_obj_close(ctx, &o);
+}
+
 static int
 print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type otype)
 {
@@ -511,6 +529,9 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, '\t');
     objid2name(ctx, grn_obj_get_range(ctx, column), &o);
     grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
+    GRN_TEXT_PUTC(ctx, buf, '\t');
+    objid2name(ctx, grn_obj_get_range(ctx, column), &o);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     break;
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTC(ctx, buf, '[');
@@ -531,6 +552,8 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, ',');
     objid2name(ctx, grn_obj_get_range(ctx, column), &o);
     grn_text_otoj(ctx, buf, &o, NULL);
+    GRN_TEXT_PUTC(ctx, buf, ',');
+    obj_source_to_json(ctx, (grn_db_obj *)column, buf);
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
   case GRN_CONTENT_XML:
@@ -639,7 +662,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           case GRN_CONTENT_JSON:
             line_delimiter = ',';
             column_delimiter = ',';
-            GRN_TEXT_PUTS(ctx, buf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"type\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\", \"ShortText\"]]");
+            GRN_TEXT_PUTS(ctx, buf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"type\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\", \"ShortText\"],[\"source\",\"ShortText\"]]");
             break;
           case GRN_CONTENT_XML:
           case GRN_CONTENT_NONE:
