@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/wait.h>
 #define __USE_XOPEN
 #include "lib/ctx.h"
 #include <ctype.h>
@@ -60,6 +61,7 @@ typedef SOCKET ftpsocket;
 #define ftpclose closesocket
 #define GROONGA_PATH "groonga.exe"
 #else
+pid_t grntest_server_id = 0;
 typedef int ftpsocket;
 #define ftpclose close
 #define FTPERROR -1
@@ -1000,6 +1002,10 @@ start_server(const char *dbpath, int r)
       exit(1);
     }
   }
+  else {
+    grntest_server_id = pid;
+  }
+
 #endif /* WIN32 */ 
 
   return 0; 
@@ -2202,7 +2208,7 @@ check_script(const char *scrname)
 int
 main(int argc, char **argv)
 {
-  int qnum, i, mode = 0;
+  int pstatus, qnum, i, mode = 0;
   grn_ctx context;
   char sysinfo[BUF_LEN];
   char log[BUF_LEN];
@@ -2311,6 +2317,17 @@ main(int argc, char **argv)
 
 exit:
   shutdown_server();
+  if (grntest_server_id) {
+    int ret;
+    ret = waitpid(grntest_server_id, &pstatus, 0);
+    if (ret < 0) {
+      fprintf(stderr, "Cannot wait\n");
+      exit(1);
+    }
+    else {
+      fprintf(stderr, "pstatus = %d\n", pstatus);
+    }
+  }
   CRITICAL_SECTION_FIN(grntest_cs);
   grn_obj_close(&context, &grntest_starttime);
   grn_obj_close(&context, grntest_db);
