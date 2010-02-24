@@ -2054,6 +2054,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[5], "output_type");
   DEF_PROC("table_create", proc_table_create, 6, vars);
 
+  DEF_VAR(vars[0], "name");
+  DEF_VAR(vars[1], "output_type");
+  DEF_PROC("table_remove", proc_table_remove, 2, vars);
+
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "name");
   DEF_VAR(vars[2], "flags");
@@ -2061,6 +2065,11 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[4], "source");
   DEF_VAR(vars[5], "output_type");
   DEF_PROC("column_create", proc_column_create, 6, vars);
+
+  DEF_VAR(vars[0], "table");
+  DEF_VAR(vars[1], "name");
+  DEF_VAR(vars[2], "output_type");
+  DEF_PROC("column_remove", proc_column_remove, 3, vars);
 
   DEF_VAR(vars[0], "path");
   DEF_VAR(vars[1], "output_type");
