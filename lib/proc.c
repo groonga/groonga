@@ -249,13 +249,13 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "COLUMN_INDEX", 12)) {
       flags |= GRN_OBJ_COLUMN_INDEX;
       nptr += 12;
-    } else if (!memcmp(nptr, "INDEX_WITH_SECTION", 18)) {
+    } else if (!memcmp(nptr, "WITH_SECTION", 18)) {
       flags |= GRN_OBJ_WITH_SECTION;
       nptr += 18;
-    } else if (!memcmp(nptr, "INDEX_WITH_WEIGHT", 17)) {
+    } else if (!memcmp(nptr, "WITH_WEIGHT", 17)) {
       flags |= GRN_OBJ_WITH_WEIGHT;
       nptr += 17;
-    } else if (!memcmp(nptr, "INDEX_WITH_POSITION", 19)) {
+    } else if (!memcmp(nptr, "WITH_POSITION", 19)) {
       flags |= GRN_OBJ_WITH_POSITION;
       nptr += 19;
     } else {
@@ -264,6 +264,75 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     }
   }
   return flags;
+}
+
+static void
+grn_table_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
+{
+  GRN_BULK_REWIND(buf);
+  switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
+  case GRN_OBJ_TABLE_HASH_KEY:
+    GRN_TEXT_PUTS(ctx, buf, "TABLE_HASH_KEY");
+    break;
+  case GRN_OBJ_TABLE_PAT_KEY:
+    GRN_TEXT_PUTS(ctx, buf, "TABLE_PAT_KEY");
+    break;
+  case GRN_OBJ_TABLE_NO_KEY:
+    GRN_TEXT_PUTS(ctx, buf, "TABLE_NO_KEY");
+    break;
+  case GRN_OBJ_TABLE_VIEW:
+    GRN_TEXT_PUTS(ctx, buf, "TABLE_VIEW");
+    break;
+  }
+  if (flags | GRN_OBJ_KEY_WITH_SIS) {
+    GRN_TEXT_PUTS(ctx, buf, "|KEY_WITH_SIS");
+  }
+  if (flags | GRN_OBJ_KEY_NORMALIZE) {
+    GRN_TEXT_PUTS(ctx, buf, "|KEY_NORMALIZE");
+  }
+  if (flags | GRN_OBJ_PERSISTENT) {
+    GRN_TEXT_PUTS(ctx, buf, "|PERSISTENT");
+  }
+}
+
+static void
+grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
+{
+  GRN_BULK_REWIND(buf);
+  switch (flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+  case GRN_OBJ_COLUMN_SCALAR:
+    GRN_TEXT_PUTS(ctx, buf, "COLUMN_SCALAR");
+    break;
+  case GRN_OBJ_COLUMN_VECTOR:
+    GRN_TEXT_PUTS(ctx, buf, "COLUMN_VECTOR");
+    break;
+  case GRN_OBJ_COLUMN_INDEX:
+    GRN_TEXT_PUTS(ctx, buf, "COLUMN_INDEX");
+    if (flags | GRN_OBJ_WITH_SECTION) {
+      GRN_TEXT_PUTS(ctx, buf, "|WITH_SECTION");
+    }
+    if (flags | GRN_OBJ_WITH_WEIGHT) {
+      GRN_TEXT_PUTS(ctx, buf, "|WITH_WEIGHT");
+    }
+    if (flags | GRN_OBJ_WITH_POSITION) {
+      GRN_TEXT_PUTS(ctx, buf, "|WITH_POSITION");
+    }
+    break;
+  }
+  switch (flags & GRN_OBJ_COMPRESS_MASK) {
+  case GRN_OBJ_COMPRESS_NONE:
+    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_NONE");
+    break;
+  case GRN_OBJ_COMPRESS_ZLIB:
+    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_ZLIB");
+    break;
+  case GRN_OBJ_COMPRESS_LZO:
+    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_LZO");
+    break;
+  }
+  if (flags | GRN_OBJ_PERSISTENT) {
+    GRN_TEXT_PUTS(ctx, buf, "|PERSISTENT");
+  }
 }
 
 static grn_obj *
@@ -434,7 +503,8 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, '\t');
     GRN_TEXT_PUTS(ctx, buf, type);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_itoa(ctx, buf, column->header.flags);
+    grn_column_create_flags_to_text(ctx, &o, column->header.flags);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     objid2name(ctx, column->header.domain, &o);
     grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
@@ -453,8 +523,8 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, ',');
     GRN_TEXT_PUTS(ctx, buf, type);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    /* TODO: flags to str */
-    grn_text_itoa(ctx, buf, column->header.flags);
+    grn_column_create_flags_to_text(ctx, &o, column->header.flags);
+    grn_text_otoj(ctx, buf, &o, NULL);
     GRN_TEXT_PUTC(ctx, buf, ',');
     objid2name(ctx, column->header.domain, &o);
     grn_text_otoj(ctx, buf, &o, NULL);
@@ -501,7 +571,8 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_itoa(ctx, buf, table->header.flags);
+    grn_table_create_flags_to_text(ctx, &o, table->header.flags);
+    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     objid2name(ctx, table->header.domain, &o);
     grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
@@ -518,8 +589,8 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
     GRN_TEXT_PUTC(ctx, buf, ',');
-    /* TODO: flags to str */
-    grn_text_itoa(ctx, buf, table->header.flags);
+    grn_table_create_flags_to_text(ctx, &o, table->header.flags);
+    grn_text_otoj(ctx, buf, &o, NULL);
     GRN_TEXT_PUTC(ctx, buf, ',');
     objid2name(ctx, table->header.domain, &o);
     grn_text_otoj(ctx, buf, &o, NULL);
