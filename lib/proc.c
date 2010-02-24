@@ -249,15 +249,15 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "COLUMN_INDEX", 12)) {
       flags |= GRN_OBJ_COLUMN_INDEX;
       nptr += 12;
-    } else if (!memcmp(nptr, "WITH_SECTION", 18)) {
+    } else if (!memcmp(nptr, "WITH_SECTION", 12)) {
       flags |= GRN_OBJ_WITH_SECTION;
-      nptr += 18;
-    } else if (!memcmp(nptr, "WITH_WEIGHT", 17)) {
+      nptr += 12;
+    } else if (!memcmp(nptr, "WITH_WEIGHT", 11)) {
       flags |= GRN_OBJ_WITH_WEIGHT;
-      nptr += 17;
-    } else if (!memcmp(nptr, "WITH_POSITION", 19)) {
+      nptr += 11;
+    } else if (!memcmp(nptr, "WITH_POSITION", 13)) {
       flags |= GRN_OBJ_WITH_POSITION;
-      nptr += 19;
+      nptr += 13;
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s", end - nptr, nptr);
       return 0;
