@@ -637,6 +637,7 @@ GroongaAdmin = {
     }
   },
   recordlist: function(params, pager_func) {
+    $('#tab-recordlist-table').empty();
     $.ajax({
       url: '/d/select',
       data: params,
@@ -647,7 +648,8 @@ GroongaAdmin = {
           alert('error');
           return false;
         }
-        var recs = d.shift();
+        var body = d.shift();
+        var recs = body.shift();
         var all_count = recs.shift()[0];
         var pager;
         if (pager_func) {
