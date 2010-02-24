@@ -274,9 +274,6 @@ grn_db_keys(grn_obj *s)
   return (grn_obj *)(((grn_db *)s)->keys);
 }
 
-#define GRN_DB_DELIMITER            '.'
-#define GRN_DB_PSEUDO_COLUMN_PREFIX '_'
-
 static grn_rc
 check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
