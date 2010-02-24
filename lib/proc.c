@@ -38,6 +38,15 @@ print_return_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTS(ctx, buf, "[[");
     grn_text_itoa(ctx, buf, ctx->rc);
+    {
+      double dv;
+      grn_timeval tv;
+      grn_timeval_now(ctx, &tv);
+      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
+      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      GRN_TEXT_PUTC(ctx, buf, ',');
+      grn_text_ftoa(ctx, buf, dv);
+    }
     if (ctx->rc != GRN_SUCCESS) {
       GRN_TEXT_PUTS(ctx, buf, ",");
       grn_text_esc(ctx, buf, ctx->errbuf, strlen(ctx->errbuf));

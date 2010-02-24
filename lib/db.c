@@ -10631,6 +10631,15 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     case GRN_CONTENT_JSON:
       GRN_TEXT_PUTS(ctx, outbuf, "[[");
       grn_text_itoa(ctx, outbuf, ctx->rc);
+      {
+        double dv;
+        grn_timeval tv;
+        grn_timeval_now(ctx, &tv);
+        dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
+        dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+        GRN_TEXT_PUTC(ctx, outbuf, ',');
+        grn_text_ftoa(ctx, outbuf, dv);
+      }
       break;
     case GRN_CONTENT_XML:
       GRN_TEXT_PUTS(ctx, outbuf, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -10659,7 +10668,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     switch (output_type) {
     case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTC(ctx, outbuf, ']');
+      GRN_TEXT_PUTS(ctx, outbuf, "],[");
       break;
     case GRN_CONTENT_TSV:
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
@@ -10697,7 +10706,6 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
             switch (output_type) {
             case GRN_CONTENT_JSON:
               format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
-              GRN_TEXT_PUTC(ctx, outbuf, ',');
               grn_text_otoj(ctx, outbuf, sorted, &format);
               break;
             case GRN_CONTENT_TSV:
@@ -10722,7 +10730,6 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         switch (output_type) {
         case GRN_CONTENT_JSON:
           format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
-          GRN_TEXT_PUTC(ctx, outbuf, ',');
           grn_text_otoj(ctx, outbuf, res, &format);
           break;
         case GRN_CONTENT_TSV:
@@ -10819,7 +10826,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     switch (output_type) {
     case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTC(ctx, outbuf, ']');
+      GRN_TEXT_PUTS(ctx, outbuf, "]]");
       break;
     case GRN_CONTENT_TSV:
       GRN_TEXT_PUTC(ctx, outbuf, '\n');

@@ -187,6 +187,7 @@ struct _grn_ctx_impl {
   grn_hash *expr_vars;
   grn_obj *qe_next;
   void *parser;
+  grn_timeval tv;
 
   /* loader portion */
   grn_edge *edge;
