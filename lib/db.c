@@ -4904,6 +4904,26 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     break;
   case GRN_COLUMN_VAR_SIZE :
   case GRN_COLUMN_FIX_SIZE :
+    {
+      grn_hook *hooks;
+      for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
+        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+        grn_obj *target = grn_ctx_at(ctx, data->target);
+        if (target->header.type == GRN_COLUMN_INDEX) {
+          //TODO: multicolumn  MULTI_COLUMN_INDEXP
+          grn_obj_remove(ctx, target);
+        } else {
+          //TODO: err
+          char fn[GRN_TABLE_MAX_KEY_SIZE];
+          unsigned flen;
+          flen = grn_obj_name(ctx, target, fn, GRN_TABLE_MAX_KEY_SIZE);
+          fn[flen] = "\0";
+          ERR(GRN_UNKNOWN_ERROR, "column has unsupported hooks, col=%s",fn);
+        }
+      }
+      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, 1);
+    }
+    break;
   case GRN_COLUMN_INDEX :
     grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, 1);
     break;
