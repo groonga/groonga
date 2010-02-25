@@ -457,29 +457,46 @@ grn_ctx_fin(grn_ctx *ctx)
 
 grn_timeval grn_starttime;
 const char *grn_log_path = GROONGA_LOG_PATH;
+const char *grn_qlog_path = NULL;
 
 static FILE *default_logger_fp = NULL;
+static FILE *default_logger_qlog_fp = NULL;
+static grn_critical_section grn_logger_lock;
 
 static void
 default_logger_func(int level, const char *time, const char *title,
                     const char *msg, const char *location, void *func_arg)
 {
   const char slev[] = " EACewnid-";
-  if (!default_logger_fp) {
-    CRITICAL_SECTION_ENTER(grn_glock);
-    if (!default_logger_fp) {
-      default_logger_fp = fopen(grn_log_path, "a");
+  if (level > GRN_LOG_NONE) {
+    if (grn_log_path) {
+      CRITICAL_SECTION_ENTER(grn_logger_lock);
+      if (!default_logger_fp) {
+        default_logger_fp = fopen(grn_log_path, "a");
+      }
+      if (default_logger_fp) {
+        if (location && *location) {
+          fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
+                  time, *(slev + level), title, msg, location);
+        } else {
+          fprintf(default_logger_fp, "%s|%c|%s %s\n", time, *(slev + level), title, msg);
+        }
+        fflush(default_logger_fp);
+      }
+      CRITICAL_SECTION_LEAVE(grn_logger_lock);
     }
-    CRITICAL_SECTION_LEAVE(grn_glock);
-  }
-  if (default_logger_fp) {
-    if (location && *location) {
-      fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
-              time, *(slev + level), title, msg, location);
-    } else {
-      fprintf(default_logger_fp, "%s|%c|%s %s\n", time, *(slev + level), title, msg);
+  } else {
+    if (grn_qlog_path) {
+      CRITICAL_SECTION_ENTER(grn_logger_lock);
+      if (!default_logger_qlog_fp) {
+        default_logger_qlog_fp = fopen(grn_qlog_path, "a");
+      }
+      if (default_logger_qlog_fp) {
+        fprintf(default_logger_qlog_fp, "%s|%s %s\n", time, title, msg);
+        fflush(default_logger_qlog_fp);
+      }
+      CRITICAL_SECTION_LEAVE(grn_logger_lock);
     }
-    fflush(default_logger_fp);
   }
 }
 
@@ -501,6 +518,7 @@ grn_init(void)
   grn_ctx *ctx = &grn_gctx;
   grn_logger = &default_logger;
   CRITICAL_SECTION_INIT(grn_glock);
+  CRITICAL_SECTION_INIT(grn_logger_lock);
   grn_gtick = 0;
   grn_ql_init_const();
   ctx->next = ctx;
@@ -640,6 +658,7 @@ grn_fin(void)
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin();
+  CRITICAL_SECTION_FIN(grn_logger_lock);
   CRITICAL_SECTION_FIN(grn_glock);
   return rc;
 }
@@ -1667,10 +1686,12 @@ grn_ctx_log(grn_ctx *ctx, char *fmt, ...)
 void
 grn_logger_fin(void)
 {
+  CRITICAL_SECTION_ENTER(grn_logger_lock);
   if (default_logger_fp) {
     fclose(default_logger_fp);
     default_logger_fp = NULL;
   }
+  CRITICAL_SECTION_LEAVE(grn_logger_lock);
 }
 
 grn_rc

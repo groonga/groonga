@@ -10578,6 +10578,23 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_column_ = NULL, *cond, *scorer_, *res = NULL, *sorted;
+  /*
+  GRN_LOG(ctx, GRN_LOG_NONE,
+          "%d(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%d)(%d)(%.*s)(%.*s)(%.*s)(%d)(%d)",
+          ctx->seqno,
+          table_len, table,
+          match_column_len, match_column,
+          query_len, query,
+          filter_len, filter,
+          scorer_len, scorer,
+          sortby_len, sortby,
+          output_columns_len, output_columns,
+          offset, limit,
+          drilldown, drilldown_len,
+          drilldown_sortby, drilldown_sortby_len,
+          drilldown_output_columns, drilldown_output_columns_len,
+          drilldown_offset, drilldown_limit);
+  */
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     // match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
     if (query_len || filter_len) {
@@ -10839,6 +10856,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     grn_obj_unlink(ctx, table_);
   }
+  /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
   return ctx->rc;
 }
 
