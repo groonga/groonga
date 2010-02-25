@@ -4915,9 +4915,9 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
         } else {
           //TODO: err
           char fn[GRN_TABLE_MAX_KEY_SIZE];
-          unsigned flen;
+          int flen;
           flen = grn_obj_name(ctx, target, fn, GRN_TABLE_MAX_KEY_SIZE);
-          fn[flen] = "\0";
+          fn[flen] = '\0';
           ERR(GRN_UNKNOWN_ERROR, "column has unsupported hooks, col=%s",fn);
         }
       }

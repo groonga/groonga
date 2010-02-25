@@ -492,7 +492,7 @@ default_logger_func(int level, const char *time, const char *title,
         default_logger_qlog_fp = fopen(grn_qlog_path, "a");
       }
       if (default_logger_qlog_fp) {
-        fprintf(default_logger_qlog_fp, "%s|%s %s\n", time, title, msg);
+        fprintf(default_logger_qlog_fp, "%s|%s\n", time, msg);
         fflush(default_logger_qlog_fp);
       }
       CRITICAL_SECTION_LEAVE(grn_logger_lock);
@@ -915,11 +915,13 @@ grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       GRN_BULK_REWIND(&ctx->impl->subbuf);
       ctx->impl->bufcur = 0;
       */
+      GRN_LOG(ctx, GRN_LOG_NONE, "%08x| %.*s", (intptr_t)ctx, str_len, str);
       if (str_len && *str == '/') {
         grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
       } else {
         grn_ctx_qe_exec(ctx, str, str_len);
       }
+      GRN_LOG(ctx, GRN_LOG_NONE, "%08x| %d", (intptr_t)ctx, ctx->rc);
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (!ERRP(ctx, GRN_CRIT)) {
         if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {

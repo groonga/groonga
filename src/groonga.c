@@ -331,7 +331,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       const char *g, *key_end, *mime_type;
       grn_content_type ot;
       grn_obj *expr, *val = NULL;
-
+      GRN_LOG(ctx, GRN_LOG_NONE, "%08x| %.*s", (intptr_t)ctx, pathe - path, path);
       GRN_TEXT_INIT(&key, 0);
       GRN_TEXT_INIT(&jsonp_func, 0);
       GRN_BULK_REWIND(body);
@@ -411,6 +411,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       if (ctx->impl->output) {
         ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
       }
+      GRN_LOG(ctx, GRN_LOG_NONE, "%08x| %d", (intptr_t)ctx, ctx->rc);
     }
   }
 exit :
