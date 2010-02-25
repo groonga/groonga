@@ -505,7 +505,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     colname = GRN_TEXT_VALUE(&vars[1].value);
     colname_len = GRN_TEXT_LEN(&vars[1].value);
 
-    if (fullname_len =  grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE)) {
+    if (fullname_len = grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE)) {
       fullname[fullname_len] = GRN_DB_DELIMITER;
       memcpy((fullname + fullname_len + 1), colname, colname_len);
       fullname_len += colname_len + 1;
