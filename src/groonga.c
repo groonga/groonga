@@ -75,7 +75,7 @@ usage(void)
           "  --protocol <protocol>:    server protocol to listen (default: gqtp)\n"
           "  --version:                show groonga version\n"
           "  --log-path <path>:        specify log path\n"
-          "  --query-log-path <path>:       specify query log path\n"
+          "  --query-log-path <path>:  specify query log path\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
