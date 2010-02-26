@@ -13,13 +13,7 @@ grntest - groongaテストプログラム
 
 ::
 
-  grntest  [options...] [script] [db]\n"
-         "options:\n"
-          "  -i, --host <ip/hostname>:  server address to listen (default: %s)\n"
-          "  -p  --port <port number>:  server port number (default: %d)\n"
-          "  --dir:                     show script files on ftp server\n"
-          "  --noftp:                   omit ftp connection\n",
- 
+  grntest  [options...] [script] [db]
 
 説明
 ----
@@ -113,13 +107,13 @@ grntest命令
 コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファイルです。拡張子に制限はありません。groonga組み込みコマンドに関しては./commands.htmlを参照してください。
 
 サンプル
-^^^^^^^
+^^^^^^^^
 
 スクリプトファイルのサンプルです。::
 
   # sample script
   rep_local test.ddl
-  do_local test.load; 
+  do_local test.load;
   do_gqtp test.select 10 10; do_local test.status 10
 
 
