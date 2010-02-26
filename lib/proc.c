@@ -42,6 +42,10 @@ print_return_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
       double dv;
       grn_timeval tv;
       grn_timeval_now(ctx, &tv);
+      dv = ctx->impl->tv.tv_sec;
+      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      GRN_TEXT_PUTC(ctx, buf, ',');
+      grn_text_ftoa(ctx, buf, dv);
       dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
       dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
       GRN_TEXT_PUTC(ctx, buf, ',');
@@ -505,7 +509,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     colname = GRN_TEXT_VALUE(&vars[1].value);
     colname_len = GRN_TEXT_LEN(&vars[1].value);
 
-    if (fullname_len = grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE)) {
+    if ((fullname_len = grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE))) {
       fullname[fullname_len] = GRN_DB_DELIMITER;
       memcpy((fullname + fullname_len + 1), colname, colname_len);
       fullname_len += colname_len + 1;

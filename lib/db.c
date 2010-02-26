@@ -10672,6 +10672,10 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         double dv;
         grn_timeval tv;
         grn_timeval_now(ctx, &tv);
+        dv = ctx->impl->tv.tv_sec;
+        dv += ctx->impl->tv.tv_usec / 1000000.0;
+        GRN_TEXT_PUTC(ctx, outbuf, ',');
+        grn_text_ftoa(ctx, outbuf, dv);
         dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
         dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
         GRN_TEXT_PUTC(ctx, outbuf, ',');
