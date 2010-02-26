@@ -75,7 +75,7 @@ usage(void)
           "  --protocol <protocol>:    server protocol to listen (default: gqtp)\n"
           "  --version:                show groonga version\n"
           "  --log-path <path>:        specify log path\n"
-          "  --qlog-path <path>:       specify query log path\n"
+          "  --query-log-path <path>:       specify query log path\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -1470,7 +1470,7 @@ main(int argc, char **argv)
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
-    {'\0', "qlog-path", NULL, 0, getopt_op_none},
+    {'\0', "query-log-path", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
