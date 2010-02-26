@@ -250,7 +250,7 @@ selectコマンドのqueryパラメータには簡易な書式が指定できま
  [1,["_id","_key","title"],[1,"http://hoge.com/","hoge"]]
  >
 
-match_columnパラメータに'title'、queryパラメータに'hoge'という文字列を指定しています。
+match_columnsパラメータに'title'、queryパラメータに'hoge'という文字列を指定しています。
 この場合、titleカラムに対して、'hoge'という文字列で全文検索を行った結果を返します。
 
 selectコマンドのfilterパラメータとscorerパラメータには、

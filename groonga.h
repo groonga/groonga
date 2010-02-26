@@ -2006,7 +2006,7 @@ GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
 
 GRN_API grn_rc grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                           const char *table, unsigned table_len,
-                          const char *match_column, unsigned match_column_len,
+                          const char *match_columns, unsigned match_columns_len,
                           const char *query, unsigned query_len,
                           const char *filter, unsigned filter_len,
                           const char *scorer, unsigned scorer_len,

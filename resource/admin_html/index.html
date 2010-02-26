@@ -133,7 +133,7 @@
             </div>
             <div id="table-tab-recordlist-form-full">
               <table>
-                <tr><td>match_column</td><td><input type="text" id="tab-recordlist-match_column" /></td></tr>
+                <tr><td>match_columns</td><td><input type="text" id="tab-recordlist-match_columns" /></td></tr>
                 <tr><td>query</td><td><input type="text" id="tab-recordlist-query" /></td></tr>
                 <tr><td>filter</td><td><input type="text" id="tab-recordlist-filter" /></td></tr>
                 <tr><td>scorer</td><td><input type="text" id="tab-recordlist-scorer" /></td></tr>
@@ -298,7 +298,7 @@ Groonga = {
   GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
 GroongaAdmin = {
-  SELECT_PARAMS_LIST: ['match_column', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
+  SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
   initialize: function() {
     GroongaAdmin.current_table = null;
     GroongaAdmin.statusTimer = null;

@@ -12,7 +12,7 @@ define_selector - 検索コマンドを定義
 ----
 ::
 
- define_selector name table [match_column [query [filter [scorer [sortby
+ define_selector name table [match_columns [query [filter [scorer [sortby
                  [output_columns [offset [limit [drilldown [drilldown_sortby
                  [drilldown_output_columns [drilldown_offset [drilldown_limit
                  [output_type]]]]]]]]]]]]]]
@@ -35,9 +35,9 @@ define_selectorは、検索条件をカスタマイズした新たな検索コ�
 
   検索対象のテーブルを指定します。
 
-``match_column``
+``match_columns``
 
-  追加するselectorコマンドのmatch_column引数のデフォルト値を指定します。
+  追加するselectorコマンドのmatch_columns引数のデフォルト値を指定します。
 
 ``query``
 

@@ -12,7 +12,7 @@ select - テーブルの中から条件にマッチするレコードを検索�
 ----
 ::
 
- select table [match_column [query [filter [scorer [sortby [output_columns
+ select table [match_columns [query [filter [scorer [sortby [output_columns
               [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
               [drilldown_offset [drilldown_limit [output_type]]]]]]]]]]]]]]
 
@@ -30,9 +30,21 @@ selectは、使用しているデータベースのテーブルの中から条�
 
   検索対象のテーブルを指定します。
 
-``match_column``
+``match_columns``
 
   query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定します。
+
+    カラム名
+
+  カラム名の後ろに'* 数値'を指定することによって、そのカラムにヒットした際のスコアに積算される重みを指定することができます。
+
+    カラム名 * 重み
+
+  複数のカラムを'||'で結合して指定することもできます。
+
+    カラム名1 * 重み1 || カラム名2 * 重み2
+
+  また、カラム名ではなく、検索に使用するインデックス名を指定することもできます。
 
 ``query``
 

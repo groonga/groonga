@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.11. select &mdash; groonga v0.1.4 documentation</title>
+    <title>3.2.11. select &mdash; groonga v0.1.6 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.4',
+        VERSION:     '0.1.6',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="groonga v0.1.4 documentation" href="../index.html" />
+    <link rel="top" title="groonga v0.1.6 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
     <link rel="next" title="3.2.12. set" href="set.html" />
     <link rel="prev" title="3.2.10. quit" href="quit.html" /> 
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="quit.html" title="3.2.10. quit"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+        <li><a href="../index.html">groonga v0.1.6 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
           <li><a href="../commands.html" accesskey="U">3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
@@ -56,7 +56,7 @@
 </div>
 <div class="section" id="id2">
 <h2>3.2.11.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none"><div class="highlight"><pre>select table [match_column [query [filter [scorer [sortby [output_columns
+<div class="highlight-none"><div class="highlight"><pre>select table [match_columns [query [filter [scorer [sortby [output_columns
              [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
              [drilldown_offset [drilldown_limit [output_type]]]]]]]]]]]]]]
 </pre></div>
@@ -72,9 +72,19 @@
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 検索対象のテーブルを指定します。</blockquote>
-<p><tt class="docutils literal"><span class="pre">match_column</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">match_columns</span></tt></p>
 <blockquote>
-query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定します。</blockquote>
+<p>query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定します。</p>
+<blockquote>
+カラム名</blockquote>
+<p>カラム名の後ろに&#8217;* 数値&#8217;を指定することによって、そのカラムにヒットした際のスコアに積算される重みを指定することができます。</p>
+<blockquote>
+カラム名 * 重み</blockquote>
+<p>複数のカラムを&#8217;||&#8217;で結合して指定することもできます。</p>
+<blockquote>
+カラム名1 * 重み1 || カラム名2 * 重み2</blockquote>
+<p>また、カラム名ではなく、検索に使用するインデックス名を指定することもできます。</p>
+</blockquote>
 <p><tt class="docutils literal"><span class="pre">query</span></tt></p>
 <blockquote>
 検索条件をquery形式のgrn式文字列によって指定します。</blockquote>
@@ -247,7 +257,7 @@ select Entry --output_type xml
         <li class="right" >
           <a href="quit.html" title="3.2.10. quit"
              >previous</a> |</li>
-        <li><a href="../index.html">groonga v0.1.4 documentation</a> &raquo;</li>
+        <li><a href="../index.html">groonga v0.1.6 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
           <li><a href="../commands.html" >3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>

@@ -75,13 +75,21 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
    http,gqtpのいずれかを指定します。(デフォルトはgqtp)
 
+.. cmdoption:: --log-path <path>
+
+   ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/groonga.logです)
+
+.. cmdoption:: --query-log-path <path>
+
+   クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されません)
+
 引数
 ----
 
 .. cmdoption:: dest
 
    使用するデータベースのパス名を指定します。
-   
+
    クライアントモードの場合は接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたものとします。
 
 .. cmdoption:: command [args]

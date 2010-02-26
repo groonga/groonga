@@ -10582,7 +10582,7 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned nkeys)
 grn_rc
 grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            const char *table, unsigned table_len,
-           const char *match_column, unsigned match_column_len,
+           const char *match_columns, unsigned match_columns_len,
            const char *query, unsigned query_len,
            const char *filter, unsigned filter_len,
            const char *scorer, unsigned scorer_len,
@@ -10597,13 +10597,13 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   uint32_t nkeys, nhits;
   grn_obj_format format;
   grn_table_sort_key *keys;
-  grn_obj *table_, *match_column_ = NULL, *cond, *scorer_, *res = NULL, *sorted;
+  grn_obj *table_, *match_columns_ = NULL, *cond, *scorer_, *res = NULL, *sorted;
   /*
   GRN_LOG(ctx, GRN_LOG_NONE,
           "%d(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%d)(%d)(%.*s)(%.*s)(%.*s)(%d)(%d)",
           ctx->seqno,
           table_len, table,
-          match_column_len, match_column,
+          match_columns_len, match_columns,
           query_len, query,
           filter_len, filter,
           scorer_len, scorer,
@@ -10616,15 +10616,15 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           drilldown_offset, drilldown_limit);
   */
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
-    // match_column_ = grn_obj_column(ctx, table_, match_column, match_column_len);
+    // match_columns_ = grn_obj_column(ctx, table_, match_columns, match_columns_len);
     if (query_len || filter_len) {
       grn_obj *v;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, cond, v);
       if (cond) {
-        if (match_column_len) {
-          GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, match_column_, v);
-          if (match_column_) {
-            grn_expr_parse(ctx, match_column_, match_column, match_column_len,
+        if (match_columns_len) {
+          GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, match_columns_, v);
+          if (match_columns_) {
+            grn_expr_parse(ctx, match_columns_, match_columns, match_columns_len,
                            NULL, GRN_OP_MATCH, GRN_OP_AND,
                            GRN_EXPR_SYNTAX_SCRIPT);
           } else {
@@ -10633,17 +10633,17 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         }
         if (query_len) {
           grn_expr_parse(ctx, cond, query, query_len,
-                         match_column_, GRN_OP_MATCH, GRN_OP_AND,
+                         match_columns_, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
           if (filter_len) {
             grn_expr_parse(ctx, cond, filter, filter_len,
-                           match_column_, GRN_OP_MATCH, GRN_OP_AND,
+                           match_columns_, GRN_OP_MATCH, GRN_OP_AND,
                            GRN_EXPR_SYNTAX_SCRIPT);
             grn_expr_append_op(ctx, cond, GRN_OP_AND, 2);
           }
         } else {
           grn_expr_parse(ctx, cond, filter, filter_len,
-                         match_column_, GRN_OP_MATCH, GRN_OP_AND,
+                         match_columns_, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_SCRIPT);
         }
         /*
@@ -10655,7 +10655,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_OBJ_FIN(ctx, &strbuf);
         */
         if (!ctx->rc) { res = grn_table_select(ctx, table_, cond, NULL, GRN_OP_OR); }
-        if (match_column_) { grn_obj_unlink(ctx, match_column_); }
+        if (match_columns_) { grn_obj_unlink(ctx, match_columns_); }
         grn_obj_unlink(ctx, cond);
       } else {
         /* todo */

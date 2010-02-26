@@ -2024,7 +2024,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_expr_var vars[16];
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "table");
-  DEF_VAR(vars[2], "match_column");
+  DEF_VAR(vars[2], "match_columns");
   DEF_VAR(vars[3], "query");
   DEF_VAR(vars[4], "filter");
   DEF_VAR(vars[5], "scorer");
