@@ -5644,7 +5644,7 @@ void
 grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
 {
   if (op == GRN_OP_AND
-      && !(ctx->flags && GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND)) {
+      && !(ctx->flags & GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND)) {
     grn_id eid;
     grn_rset_recinfo *ri;
     grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0);
