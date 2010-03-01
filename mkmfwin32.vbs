@@ -42,16 +42,16 @@ sub common_header()
 
   ts.write "LDFLAGS = /nologo "
   if use_64bit = 1 then
-    ts_write "/MACHINE:X64 "
+    ts.write "/MACHINE:X64 "
   else
     ts.write "/MACHINE:X86 "
   end if
   if use_debug = 1 then
-    ts_write "/debug "
+    ts.write "/debug "
   end if
   ts.write "/DYNAMICBASE /OPT:REF /OPT:ICF /NXCOMPAT advapi32.LIB ws2_32.lib"
   if use_mecab = 1 then
-    ts_write "libmecab.lib"
+    ts.write "libmecab.lib"
   end if
   ts.write vbLf
 
@@ -102,14 +102,15 @@ ts.write "        $(LINK) $(LDFLAGS) /out:$@.dll $(OBJ) libgroonga.obj /dll" + v
 ts.write vbLf
 
 ts.write "install:" + vbLf
-ts.write "        copy lingroonga.dll %SystemRoot%\system32" + vbLf
+ts.write "        copy libgroonga.dll %SystemRoot%\system32" + vbLf
 
 ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp *.lib *.i" + vbLf
 
 ts.close
+msgbox "lib/Makefile.msvc updated"
 
-'Makefile for lib
+'Makefile for src
 set ts = fs.opentextfile("src\Makefile.msvc", 2, True) 
 
 common_header
@@ -141,3 +142,4 @@ ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp  *.i" + vbLf
 
 ts.close
+msgbox "src/Makefile.msvc updated"
