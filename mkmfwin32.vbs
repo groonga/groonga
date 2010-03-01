@@ -102,7 +102,7 @@ ts.write "        $(LINK) $(LDFLAGS) /out:$@.dll $(OBJ) libgroonga.obj /dll" + v
 ts.write vbLf
 
 ts.write "install:" + vbLf
-ts.write "        copy lingroonga.dll %SystemRoot%system32
+ts.write "        copy lingroonga.dll %SystemRoot%system32" + vbLf
 
 ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp *.lib *.i" + vbLf
@@ -135,7 +135,7 @@ ts.write "        $(LINK) $(LDFLAGS) /out:$@.exe $(OBJ) grntest.obj" + vbLf
 ts.write vbLf
 
 ts.write "install:" + vbLf
-ts.write "        copy groonga.exe %SystemRoot%system32
+ts.write "        copy groonga.exe %SystemRoot%system32" + vbLf
 
 ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp  *.i" + vbLf
