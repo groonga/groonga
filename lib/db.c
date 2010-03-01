@@ -5990,6 +5990,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                 ERR(GRN_INVALID_ARGUMENT, "unsupported uint value");
                 goto exit;
               }
+              break;
             case GRN_OBJ_KEY_INT :
               switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
               case 1 :
@@ -6008,6 +6009,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                 ERR(GRN_INVALID_ARGUMENT, "unsupported int value");
                 goto exit;
               }
+              break;
             case GRN_OBJ_KEY_FLOAT :
               switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
               case 4 :
@@ -6020,6 +6022,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                 ERR(GRN_INVALID_ARGUMENT, "unsupported float value");
                 goto exit;
               }
+              break;
             }
           }
         } else {

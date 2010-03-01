@@ -438,12 +438,8 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         r += cl;
       }
       if (token->overlap) { status |= GRN_TOKEN_OVERLAP; }
-      if (len < token->ngram_unit) {
-        status |= GRN_TOKEN_UNMATURED;
-        token->overlap = 0;
-      } else {
-        token->overlap = 1;
-      }
+      if (len < token->ngram_unit) { status |= GRN_TOKEN_UNMATURED; }
+      token->overlap = (len > 1) ? 1 : 0;
     }
   }
   token->pos = pos;
