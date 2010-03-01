@@ -1,10 +1,21 @@
 '---------------------------------------------------------------
 '  mkmfwin32.vbs
 '---------------------------------------------------------------
+option explicit 
+dim shell, strarch
+set shell = createobject("wscript.shell")
+strarch = shell.expandenvironmentstrings("%PROCESSOR_ARCHITECTURE%")
+msgbox strarch
+
 'config options
-dim use_debug, use_64, use_mecab
-use_debug = 0
-use_64bit = 0
+'
+dim use_debug, use_64bit, use_mecab
+use_debug = 1
+if strarch = "x86" then
+  use_64bit = 0
+else
+  use_64bit = 1
+end if
 use_mecab = 0
 
 'object files
@@ -87,6 +98,7 @@ set ts = fs.opentextfile("lib/Makefile.msvc", 2, True)
 
 common_header
 
+dim i
 ts.write "OBJ = "
 for each i in objs
   ts.write i + " "
