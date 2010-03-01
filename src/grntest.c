@@ -2242,7 +2242,7 @@ setsigalarm(int sec)
 int
 main(int argc, char **argv)
 {
-  int pstatus, qnum, i, mode = 0;
+  int qnum, i, mode = 0;
   grn_ctx context;
   char sysinfo[BUF_LEN];
   char log[BUF_LEN];
@@ -2353,7 +2353,7 @@ exit:
   shutdown_server();
 #ifndef WIN32
   if (grntest_server_id) {
-    int ret;
+    int ret, pstatus;
     setsigalarm(20);
     ret = waitpid(grntest_server_id, &pstatus, 0);
     if (ret < 0) {
