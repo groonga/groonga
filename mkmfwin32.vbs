@@ -35,9 +35,9 @@ sub common_header()
   ts.write "LINK=link.exe" + vbLf
   ts.write vbLf
   if use_debug = 1 then
-    ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi" + vbLf
+    ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi -I../" + vbLf
   else
-    ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi" + vbLf
+    ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi -I../" + vbLf
   end if
 
   ts.write "LDFLAGS = /nologo "
@@ -101,6 +101,9 @@ ts.write "libgroonga: $(OBJ) libgroonga.obj" + vbLf
 ts.write "        $(LINK) $(LDFLAGS) /out:$@.dll $(OBJ) libgroonga.obj /dll" + vbLf
 ts.write vbLf
 
+ts.write "install:" + vbLf
+ts.write "        copy lingroonga.dll %SystemRoot%system32
+
 ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp *.lib *.i" + vbLf
 
@@ -130,6 +133,9 @@ ts.write vbLf
 ts.write "grntest: $(OBJ) grntest.obj" + vbLf
 ts.write "        $(LINK) $(LDFLAGS) /out:$@.exe $(OBJ) grntest.obj" + vbLf
 ts.write vbLf
+
+ts.write "install:" + vbLf
+ts.write "        copy groonga.exe %SystemRoot%system32
 
 ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp  *.i" + vbLf
