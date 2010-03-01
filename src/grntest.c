@@ -19,6 +19,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+
+#ifdef WIN32
+#include <Windows.h>
+#include <stddef.h>
+#include <sys/types.h>
+#include <sys/timeb.h>
+#include "lib/ctx.h"
+#else
 #include <sys/wait.h>
 #define __USE_XOPEN
 #include "lib/ctx.h"
@@ -26,6 +34,18 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <limits.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/uio.h>
+#include <sys/stat.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/param.h>
+#include <sys/utsname.h>
+#include <sys/statvfs.h>
+#endif /* WIN32 */
+
 
 /*
 #define DEBUG_FTP
@@ -69,23 +89,6 @@ typedef int ftpsocket;
 
 char *grntest_osinfo;
 
-#ifdef WIN32
-#include <Windows.h>
-#include <stddef.h>
-#include <sys/types.h>
-#include <sys/timeb.h>
-#else
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <sys/stat.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/param.h>
-#include <sys/utsname.h>
-#include <sys/statvfs.h>
-#endif /* WIN32 */
 
 
 grn_obj *grntest_db = NULL;
