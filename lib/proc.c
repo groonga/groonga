@@ -945,20 +945,29 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *buf = args[0];
-  grn_obj *db = ctx->impl->db;
-  if (db) {
-    grn_id id;
-    grn_pat *keys = (grn_pat *)grn_db_keys(db);
-    grn_pat_cursor *pc = grn_pat_cursor_open(ctx, keys, NULL, 0, NULL, 0, 0, -1, 0);
-    while ((id = grn_pat_cursor_next(ctx, pc))) {
-      grn_obj *obj = grn_ctx_at(ctx, id);
-      grn_obj_clear_lock(ctx, obj);
+  uint32_t nvars;
+  grn_obj *buf = args[0], *obj;
+  grn_expr_var *vars;
+  int olen;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 2) {
+    olen = GRN_TEXT_LEN(&vars[0].value);
+
+    if (olen) {
+      obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value), olen);
+    } else {
+      obj = ctx->impl->db;
     }
-    grn_pat_cursor_close(ctx, pc);
-    grn_obj_clear_lock(ctx, db);
-    GRN_TEXT_PUTS(ctx, buf, ctx->rc ? "false" : "true");
+
+    if (obj) {
+      grn_obj_clear_lock(ctx, obj);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "clear object not found");
+    }
   }
+
+  print_return_code(ctx, buf, grn_get_ctype(&vars[1].value));
+
   return buf;
 }
 
@@ -2096,7 +2105,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "output_type");
   DEF_PROC("quit", proc_quit, 1, vars);
   DEF_PROC("shutdown", proc_shutdown, 1, vars);
-  DEF_PROC("clearlock", proc_clearlock, 0, vars);
+
+  DEF_VAR(vars[0], "target_name");
+  DEF_VAR(vars[1], "output_type");
+  DEF_PROC("clearlock", proc_clearlock, 2, vars);
 
   DEF_VAR(vars[0], "level");
   DEF_PROC("log_level", proc_log_level, 1, vars);
