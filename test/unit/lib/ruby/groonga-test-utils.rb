@@ -47,6 +47,7 @@ module GroongaTestUtils
   end
 
   def teardown_server
+    @groonga_pid ||= nil
     if @groonga_pid
       Process.kill(:TERM, @groonga_pid)
       begin

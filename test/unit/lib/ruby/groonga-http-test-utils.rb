@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -76,8 +76,7 @@ module GroongaHTTPTestUtils
   def table_create(name, options={})
     response = get(command_path(:table_create,
                                 options.merge({:name => name})))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    assert_success_response(response, :content_type => "application/json")
   end
 
   def column_create(table, name, flags, type, options={})
@@ -86,17 +85,14 @@ module GroongaHTTPTestUtils
                                               :name => name,
                                               :flags => flags,
                                               :type => type)))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    assert_success_response(response, :content_type => "application/json")
   end
 
   def view_add(view, table)
     response = get(command_path(:view_add,
                                 :view => view,
                                 :table => table))
-    assert_response([[Result::SUCCESS]],
-                    response,
-                    :content_type => "application/json")
+    assert_success_response(response, :content_type => "application/json")
   end
 
   def create_users_table
@@ -120,7 +116,7 @@ module GroongaHTTPTestUtils
     response = get(command_path(:load,
                                 :table => table,
                                 :values => json(values)))
-    assert_response([[Result::SUCCESS], n_values], response,
+    assert_response([success_status_response, n_values], response,
                     :content_type => "application/json")
   end
 
@@ -170,6 +166,10 @@ module GroongaHTTPTestUtils
     JSON.generate(object)
   end
 
+  def success_status_response
+    [Result::SUCCESS, 0.0, 0.0]
+  end
+
   def assert_response(expected, response, options=nil)
     actual = nil
     options ||= {}
@@ -181,6 +181,7 @@ module GroongaHTTPTestUtils
     case response.content_type
     when "application/json"
       actual = JSON.parse(response.body)
+      actual[0][1..2] = [0.0, 0.0]
     when "text/html"
       actual = response.body
     when "text/xml"
@@ -193,12 +194,16 @@ module GroongaHTTPTestUtils
     assert_equal(expected, actual)
   end
 
+  def assert_success_response(response, options=nil)
+    assert_response([success_status_response], response, options={})
+  end
+
   def assert_select(header, expected, parameters, options={}, &block)
     command_name = options[:command] || :select
     response = get(command_path(command_name, parameters))
     drilldown_results = options[:drilldown_results] || []
 
-    assert_response([[Result::SUCCESS],
+    assert_response([success_status_response,
                      [[options[:n_hits] || expected.size],
                       header,
                       *expected

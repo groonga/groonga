@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ module HTTPCRUDTest
     include GroongaHTTPTestUtils
 
     def setup
+      omit("add isn't implemented yet.")
       setup_server
     end
 
@@ -94,7 +95,7 @@ module HTTPCRUDTest
                                   :key => "ruby",
                                   :values => json({"title" => "Ruby book",
                                                    "price" => 1000})))
-      assert_response([[Result::SUCCESS],
+      assert_response([success_status_response,
                        1, "ruby", nil],
                       response,
                       :content_type => "application/json")
@@ -108,7 +109,7 @@ module HTTPCRUDTest
                                   :key => "ruby",
                                   :columns => json(["title", "price"]),
                                   :values => json(["Ruby book", 1000])))
-      assert_response([[Result::SUCCESS],
+      assert_response([success_status_response,
                        1, "ruby", nil],
                       response,
                       :content_type => "application/json")
@@ -121,7 +122,8 @@ module HTTPCRUDTest
                                   :table => "books",
                                   :key => "ruby",
                                   :values => json(["Ruby book", 1000])))
-      assert_response([[Result::UNKNOWN_ERROR, "columns isn't specified"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "columns isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
@@ -133,7 +135,8 @@ module HTTPCRUDTest
                                   :table => "books",
                                   :key => "ruby",
                                   :values => json({"nonexistent" => "value"})))
-      assert_response([[Result::UNKNOWN_ERROR, "unknown column"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "unknown column"]],
                       response,
                       :content_type => "application/json")
     end
@@ -147,7 +150,7 @@ module HTTPCRUDTest
                                   :columns => ["title"],
                                   :values => json(["Ruby book"]),
                                   :output_columns => "_key price title"))
-      assert_response([[Result::SUCCESS],
+      assert_response([success_status_response,
                        "ruby", nil, "Ruby book"],
                       response,
                       :content_type => "application/json")
@@ -181,7 +184,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "ryoqun",
                                   :output_columns => "_key real_name"))
-      assert_response([[Result::SUCCESS],
+      assert_response([success_status_response,
                        ["ryoqun", "Ryo Onodera"]],
                       response,
                       :content_type => "application/json")
@@ -190,14 +193,13 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "ryoqun",
                                   :values => json({:real_name => "daijiro"})))
-      assert_response([[Result::SUCCESS]], response,
-                      :content_type => "application/json")
+      assert_success_response(response, :content_type => "application/json")
 
       response = get(command_path(:get,
                                   :table => "users",
                                   :key => "ryoqun",
                                   :output_columns => "_key real_name"))
-      assert_response([[Result::SUCCESS],
+      assert_response([success_status_response,
                        ["ryoqun", "daijiro"]],
                       response,
                       :content_type => "application/json")
@@ -210,7 +212,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "ryoqun",
                                   :output_columns => "_key real_name"))
-      assert_response([[Result::SUCCESS],
+      assert_response([success_status_response,
                        ["ryoqun", "Ryo Onodera"]],
                       response,
                       :content_type => "application/json")
@@ -220,14 +222,13 @@ module HTTPCRUDTest
                                   :key => "ryoqun",
                                   :columns => json([:real_name]),
                                   :values => json(["daijiro"])))
-      assert_response([[Result::SUCCESS]], response,
-                      :content_type => "application/json")
+      assert_success_response(response, :content_type => "application/json")
 
       response = get(command_path(:get,
                                   :table => "users",
                                   :key => "ryoqun",
                                   :output_columns => "_key real_name"))
-      assert_response([[Result::SUCCESS],
+      assert_response([success_status_response,
                        ["ryoqun", "daijiro"]],
                       response,
                       :content_type => "application/json")
@@ -238,7 +239,7 @@ module HTTPCRUDTest
                                   :table => "nonexistent",
                                   :key => "mori",
                                   :values => json({:_value => "mori daijiro"})))
-      assert_response([[Result::UNKNOWN_ERROR, "table doesn't exist"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "table doesn't exist"]],
                       response,
                       :content_type => "application/json")
     end
@@ -253,7 +254,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "mori",
                                   :values => json({:name => "daijiro"})))
-      assert_response([[Result::UNKNOWN_ERROR, "entry doesn't exist"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "entry doesn't exist"]],
                       response,
                       :content_type => "application/json")
     end
@@ -266,7 +267,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :id => 1,
                                   :values => json({:name => "daijiro"})))
-      assert_response([[Result::UNKNOWN_ERROR, "entry doesn't exist"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "entry doesn't exist"]],
                       response,
                       :content_type => "application/json")
     end
@@ -280,7 +281,8 @@ module HTTPCRUDTest
       response = get(command_path(:set,
                                   :table => "users",
                                   :values => json({:name => "daijiro"})))
-      assert_response([[Result::UNKNOWN_ERROR, "key nor ID isn't specified"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "key nor ID isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
@@ -292,7 +294,7 @@ module HTTPCRUDTest
       response = get(command_path(:set,
                                   :table => "users",
                                   :values => json({:name => "daijiro"})))
-      assert_response([[Result::UNKNOWN_ERROR, "ID isn't specified"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "ID isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
@@ -307,7 +309,8 @@ module HTTPCRUDTest
       response = get(command_path(:set,
                                   :table => "users",
                                   :key => "mori"))
-      assert_response([[Result::UNKNOWN_ERROR, "values isn't specified"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "values isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
@@ -320,7 +323,8 @@ module HTTPCRUDTest
       response = get(command_path(:set,
                                   :table => "users",
                                   :id => 1))
-      assert_response([[Result::UNKNOWN_ERROR, "values isn't specified"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "values isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
@@ -341,21 +345,22 @@ module HTTPCRUDTest
       response = get(command_path(:get,
                                   :table => "nonexistent",
                                   :key => "mori"))
-      assert_response([[Result::UNKNOWN_ERROR, "table doesn't exist"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "table doesn't exist"]],
                       response,
                       :content_type => "application/json")
     end
 
     def test_no_table
       response = get(command_path(:get))
-      assert_response([[Result::UNKNOWN_ERROR, "table isn't specified"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "table isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
 
     def test_invalid_table
       response = get(command_path(:get, :table => "Int32"))
-      assert_response([[Result::UNKNOWN_ERROR, "not a table"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "not a table"]],
                       response,
                       :content_type => "application/json")
     end
@@ -363,7 +368,8 @@ module HTTPCRUDTest
     def test_no_key
       create_users_table
       response = get(command_path(:get, :table => "users"))
-      assert_response([[Result::UNKNOWN_ERROR, "ID nor key isn't specified"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "ID nor key isn't specified"]],
                       response,
                       :content_type => "application/json")
     end
@@ -374,7 +380,8 @@ module HTTPCRUDTest
       response = get(command_path(:get,
                                   :table => "users",
                                   :key => "morita"))
-      assert_response([[Result::UNKNOWN_ERROR, "should not specify key"]],
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
+                        "should not specify key"]],
                       response,
                       :content_type => "application/json")
     end
@@ -391,7 +398,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "morita",
                                   :id => 2))
-      assert_response([[Result::UNKNOWN_ERROR,
+      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
                         "should not specify both key and ID"]],
                       response,
                       :content_type => "application/json")
@@ -408,7 +415,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :id => 2,
                                   :output_columns => "name"))
-      assert_response([[Result::SUCCESS], ["gunyara-kun"]],
+      assert_response([success_status_response, ["gunyara-kun"]],
                       response,
                       :content_type => "application/json")
     end
@@ -425,7 +432,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :id => 2,
                                   :output_columns => "_key"))
-      assert_response([[Result::SUCCESS], ["gunyara-kun"]],
+      assert_response([success_status_response, ["gunyara-kun"]],
                       response,
                       :content_type => "application/json")
     end
@@ -442,7 +449,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :id => "morita",
                                   :output_columns => "_id _key"))
-      assert_response([[Result::SUCCESS], [1, "morita"]],
+      assert_response([success_status_response, [1, "morita"]],
                       response,
                       :content_type => "application/json")
     end
