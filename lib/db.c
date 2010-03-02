@@ -6144,7 +6144,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 
 int
 grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
-                 grn_obj **indexbuf, int buf_size, grn_obj *weight)
+                 grn_obj **indexbuf, int buf_size, int *section)
 {
   int n = 0;
   grn_hook *hooks;
@@ -6157,9 +6157,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-        if (MULTI_COLUMN_INDEXP(target)) {
-          GRN_INT32_SET_AT(ctx, weight, data->section - 1, 1);
-        }
+        if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
         {
           grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
           if (!lexicon) { continue; }
@@ -6177,9 +6175,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-        if (MULTI_COLUMN_INDEXP(target)) {
-          GRN_INT32_SET_AT(ctx, weight, data->section - 1, 1);
-        }
+        if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
         if (n < buf_size) {
           *ip++ = target;
         }
@@ -6194,9 +6190,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-        if (MULTI_COLUMN_INDEXP(target)) {
-          GRN_INT32_SET_AT(ctx, weight, data->section - 1, 1);
-        }
+        if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
         {
           grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
           if (!lexicon) { continue; }
@@ -6227,6 +6221,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
             default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
             grn_obj *target = grn_ctx_at(ctx, data->target);
             /* todo : data->section */
+            if (section) { *section = 0; }
             if (target->header.type != GRN_COLUMN_INDEX) { continue; }
             if (n < buf_size) {
               *ip++ = target;
@@ -9401,6 +9396,39 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
   GRN_OBJ_FIN(ctx, &strbuf);\
 }
 
+static void
+scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, int32_t weight)
+{
+  GRN_PTR_PUT(ctx, &si->index, index);
+  GRN_UINT32_PUT(ctx, &si->wv, sid);
+  GRN_INT32_PUT(ctx, &si->wv, weight);
+  {
+    int i, ni = (GRN_BULK_VSIZE(&si->index) / sizeof(grn_obj *)) - 1;
+    grn_obj **pi = &GRN_PTR_VALUE_AT(&si->index, ni);
+    for (i = 0; i < ni; i++, pi--) {
+      if (index == pi[-1]) {
+        if (i) {
+          int32_t *pw = &GRN_INT32_VALUE_AT(&si->wv, (ni - i) * 2);
+          memmove(pw + 2, pw, sizeof(int32_t) * 2 * i);
+          pw[0] = (int32_t) sid;
+          pw[1] = weight;
+          memmove(pi + 1, pi, sizeof(grn_obj *) * i);
+          pi[0] = index;
+        }
+        return;
+      }
+    }
+  }
+}
+
+static int32_t
+get_weight(grn_expr_code *ec)
+{
+  return (ec->modify == 2 && ec[2].op == GRN_OP_STAR &&
+          ec[1].value && ec[1].value->header.type == GRN_BULK &&
+          ec[1].value->header.domain == GRN_DB_UINT32) ? GRN_INT32_VALUE(ec[1].value) : 1;
+}
+
 static scan_info **
 scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 grn_operator op, uint32_t size)
@@ -9487,8 +9515,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       si->end = c - e->codes;
       sis[i++] = si;
       {
-        grn_obj wv, *index, **p = si->args, **pe = si->args + si->nargs;
-        GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
+        uint32_t sid;
+        int32_t weight;
+        grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
         for (; p < pe; p++) {
           if ((*p)->header.type == GRN_EXPR) {
             uint32_t j;
@@ -9497,54 +9526,38 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
             for (j = e->codes_curr, ec = e->codes; j--; ec++) {
               if (ec->value) {
                 switch (ec->value->header.type) {
-                case GRN_BULK :
-                  /* type check */
-                  GRN_INT32_PUT(ctx, &si->wv, GRN_INT32_VALUE(ec->value));
-                  break;
                 case GRN_ACCESSOR :
                 case GRN_ACCESSOR_VIEW :
-                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &wv)) {
+                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
                     si->flags |= SCAN_ACCESSOR;
-                    GRN_PTR_PUT(ctx, &si->index, index);
-                    if (!ec->modify || ec[ec->modify].op != GRN_OP_STAR) {
-                      GRN_INT32_PUT(ctx, &si->wv, 1);
-                    }
+                    scan_info_put_index(ctx, si, index, sid, get_weight(ec));
                   }
                   break;
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
-                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &wv)) {
-                    GRN_PTR_PUT(ctx, &si->index, index);
-                    if (!ec->modify || ec[ec->modify].op != GRN_OP_STAR) {
-                      GRN_INT32_PUT(ctx, &si->wv, 1);
-                    }
+                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
+                    scan_info_put_index(ctx, si, index, sid, get_weight(ec));
                   }
                   break;
                 case GRN_COLUMN_INDEX :
-                  GRN_PTR_PUT(ctx, &si->index, ec->value);
-                  if (!ec->modify || ec[ec->modify].op != GRN_OP_STAR) {
-                    GRN_INT32_PUT(ctx, &si->wv, 1);
-                  }
+                  scan_info_put_index(ctx, si, ec->value, 0, get_weight(ec));
                   break;
                 }
               }
             }
           } else if (GRN_DB_OBJP(*p)) {
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &wv /* &si->wv */)) {
-              GRN_PTR_PUT(ctx, &si->index, index);
-              GRN_INT32_PUT(ctx, &si->wv, 1);
+            if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
+              scan_info_put_index(ctx, si, index, sid, 1);
             }
           } else if (ACCESSORP(*p)) {
             si->flags |= SCAN_ACCESSOR;
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &wv /* &si->wv */)) {
-              GRN_PTR_PUT(ctx, &si->index, index);
-              GRN_INT32_PUT(ctx, &si->wv, 1);
+            if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
+              scan_info_put_index(ctx, si, index, sid, 1);
             }
           } else {
             si->query = *p;
           }
         }
-        GRN_OBJ_FIN(ctx, &wv);
       }
       si = NULL;
       break;
@@ -9601,10 +9614,10 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           grn_obj **p = si->args, **pe = si->args + si->nargs;
           for (; p < pe; p++) {
             if (GRN_DB_OBJP(*p)) {
-              grn_column_index(ctx, *p, c->op, &si->index, 1, &si->wv);
+              grn_column_index(ctx, *p, c->op, &si->index, 1, &sid);
             } else if (ACCESSORP(*p)) {
               si->flags |= SCAN_ACCESSOR;
-              grn_column_index(ctx, *p, c->op, &si->index, 1, &si->wv);
+              grn_column_index(ctx, *p, c->op, &si->index, 1, &sid);
             } else {
               si->query = *p;
             }
@@ -9623,10 +9636,15 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   if (op == GRN_OP_OR && !size) {
     // for debug
     if (!(sis[0]->flags & SCAN_PUSH) || (sis[0]->logical_op != op)) {
+      int j;
       ERR(GRN_INVALID_ARGUMENT, "invalid expr");
+      for (j = 0; j < i; j++) { SI_FREE(sis[j]); }
+      GRN_FREE(sis);
+      return NULL;
+    } else {
+      sis[0]->flags &= ~SCAN_PUSH;
+      sis[0]->logical_op = op;
     }
-    sis[0]->flags &= ~SCAN_PUSH;
-    sis[0]->logical_op = op;
   } else {
     if (!put_logical_op(ctx, sis, &i, op, c - e->codes)) { return NULL; }
   }
@@ -9869,23 +9887,40 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               break;
             case GRN_OP_MATCH :
               {
-                int j = 0, k = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
+                grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
+                int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
+                int32_t *wp = &GRN_INT32_VALUE(&si->wv);
                 grn_search_optarg optarg;
                 optarg.mode = GRN_OP_EXACT;
                 optarg.similarity_threshold = 0;
                 optarg.max_interval = 0;
-                optarg.weight_vector = (int *)GRN_BULK_HEAD(&si->wv);
+                optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
                 /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
                 optarg.vector_size = 1;
                 optarg.proc = NULL;
                 optarg.max_size = 0;
                 ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-                while (j < k) {
-                  index = GRN_PTR_VALUE_AT(&si->index, j++);
-                  if (j == k) { ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND; }
-                  grn_obj_search(ctx, index, si->query, res, si->logical_op, &optarg);
-                  optarg.weight_vector++;
+                GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
+                for (; j--; ip++, wp += 2) {
+                  uint32_t sid = (uint32_t) wp[0];
+                  int32_t weight = wp[1];
+                  if (sid) {
+                    GRN_INT32_SET_AT(ctx, &wv, sid - 1, weight);
+                    optarg.weight_vector = &GRN_INT32_VALUE(&wv);
+                    optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+                  } else {
+                    optarg.weight_vector = NULL;
+                    optarg.vector_size = weight;
+                  }
+                  if (j) {
+                    if (sid && ip[0] == ip[1]) { continue; }
+                  } else {
+                    ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+                  }
+                  grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
+                  GRN_BULK_REWIND(&wv);
                 }
+                GRN_OBJ_FIN(ctx, &wv);
               }
               done++;
               break;
@@ -9907,10 +9942,12 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       GRN_FREE(sis);
       e->codes = codes;
       e->codes_curr = codes_curr;
-      goto exit;
+    } else {
+      if (!ctx->rc) {
+        grn_table_select_(ctx, table, expr, v, res, op);
+      }
     }
   }
-  grn_table_select_(ctx, table, expr, v, res, op);
 exit :
   GRN_API_RETURN(res);
 }
