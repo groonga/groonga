@@ -335,6 +335,7 @@ module HTTPCRUDTest
     include GroongaHTTPTestUtils
 
     def setup
+      omit("get isn't implemented completely yet.")
       setup_server
     end
 
