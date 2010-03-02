@@ -1,6 +1,6 @@
 SUBDIRS = lib src examples test
 #dist_data_DATA =
-EXTRA_DIST = bindings resource
+EXTRA_DIST = bindings resource doc/ja
 pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -12,11 +12,13 @@ LCOV_LCOV = @LCOV@
 LCOV_GENHTML = @GENHTML@
 
 dist-hook:
-# misc
 	rm -rf `find $(distdir) -name '*.loT'`
 	rm -rf `find $(distdir) -name '*.cache'`
 	rm -rf `find $(distdir) -name '*.bak'`
 	rm -rf `find $(distdir) -name '*.orig'`
+	rm -rf $(distdir)/doc/ja/_sources
+	rm -rf $(distdir)/doc/ja/build
+	rm -rf $(distdir)/doc/ja/source
 
 install-data-local:
 	@$(NORMAL_INSTALL)

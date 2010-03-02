@@ -2,23 +2,49 @@
 
 $KCODE = 'utf-8'
 
-require 'rubygems'
-gem 'test-unit'
+base_dir = File.expand_path(File.dirname(__FILE__))
+test_unit_dir = File.join(base_dir, "test-unit-2.0.6")
+
+unless File.exist?(test_unit_dir)
+  require "open-uri"
+  tgz_uri = "http://rubyforge.org/frs/download.php/68513/test-unit-2.0.6.tgz"
+  tgz = File.join(base_dir, File.basename(tgz_uri))
+  File.open(tgz, "wb") do |output|
+    output.print(open(tgz_uri).read)
+  end
+  system("tar", "xfz", tgz, "-C", base_dir)
+end
+
+$LOAD_PATH.unshift(File.join(test_unit_dir, "lib"))
+
 require 'test/unit'
 require 'test/unit/version'
 
-base_dir = File.expand_path(File.dirname(__FILE__))
+json_dir = File.join(base_dir, "json-1.1.9")
+unless File.exist?(json_dir)
+  require "open-uri"
+  require "fileutils"
+  tgz_uri = "http://rubyforge.org/frs/download.php/62984/json-1.1.9.tgz"
+  tgz = File.join(base_dir, File.basename(tgz_uri))
+  File.open(tgz, "wb") do |output|
+    output.print(open(tgz_uri).read)
+  end
+  system("tar", "xfz", tgz, "-C", base_dir)
+  ext_parser_dir = File.join(json_dir, "ext", "json", "ext", "parser")
+  Dir.chdir(ext_parser_dir) do
+    system("ruby", "extconf.rb")
+    system("make")
+  end
+  FileUtils.mv(File.join(ext_parser_dir, "parser.so"),
+               File.join(json_dir, "lib", "json", "ext"))
+end
+$LOAD_PATH.unshift(File.join(json_dir, "lib"))
+
+
 $LOAD_PATH.unshift(File.join(base_dir, "lib", "ruby"))
 
 require 'groonga-test-utils'
 require 'groonga-http-test-utils'
 require 'groonga-local-gqtp-test-utils'
 
-if Test::Unit::VERSION <= "2.0.5"
-  Dir.glob(File.join(File.dirname(__FILE__), "**", "test-*.rb")) do |file|
-    require file.sub(/\.rb$/, '')
-  end
-  exit Test::Unit::AutoRunner.run
-else
-  exit Test::Unit::AutoRunner.run(true, File.dirname($0))
-end
+exit Test::Unit::AutoRunner.run(true, File.dirname($0))

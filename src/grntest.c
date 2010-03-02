@@ -19,13 +19,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/wait.h>
-#define __USE_XOPEN
-#include "lib/ctx.h"
-#include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <limits.h>
+
+#ifndef WIN32
+#include "config.h"
+#endif /* WIN32 */
+
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif /* HAVE_SYS_WAIT_H */
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif /* HAVE_SYS_SOCKET_H */
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif /* HAVE_NETINET_IN_H */
+
+#define __USE_XOPEN
+#include "lib/ctx.h"
+
+
+#ifdef WIN32
+#include <Windows.h>
+#include <stddef.h>
+#else
+#include <sys/param.h>
+#include <sys/utsname.h>
+#include <sys/statvfs.h>
+#endif /* WIN32 */
 
 /*
 #define DEBUG_FTP
@@ -69,23 +91,6 @@ typedef int ftpsocket;
 
 char *grntest_osinfo;
 
-#ifdef WIN32
-#include <Windows.h>
-#include <stddef.h>
-#include <sys/types.h>
-#include <sys/timeb.h>
-#else
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <sys/stat.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/param.h>
-#include <sys/utsname.h>
-#include <sys/statvfs.h>
-#endif /* WIN32 */
 
 
 grn_obj *grntest_db = NULL;
@@ -2237,7 +2242,7 @@ setsigalarm(int sec)
 int
 main(int argc, char **argv)
 {
-  int pstatus, qnum, i, mode = 0;
+  int qnum, i, mode = 0;
   grn_ctx context;
   char sysinfo[BUF_LEN];
   char log[BUF_LEN];
@@ -2348,7 +2353,7 @@ exit:
   shutdown_server();
 #ifndef WIN32
   if (grntest_server_id) {
-    int ret;
+    int ret, pstatus;
     setsigalarm(20);
     ret = waitpid(grntest_server_id, &pstatus, 0);
     if (ret < 0) {
