@@ -4881,7 +4881,24 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
   if (path) { path = GRN_STRDUP(path); }
   switch (obj->header.type) {
   case GRN_DB :
-    /* todo : remove all tables and columns */
+    {
+      grn_table_cursor *cur;
+      if ((cur = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0, 0, -1, 0))) {
+        grn_id id;
+        while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+          grn_obj *tbl = grn_ctx_at(ctx, id);
+          if (tbl) {
+            switch (tbl->header.type) {
+            case GRN_TABLE_HASH_KEY :
+            case GRN_TABLE_NO_KEY:
+            case GRN_TABLE_PAT_KEY:
+              grn_obj_remove(ctx, tbl);
+            }
+          }
+        }
+        grn_table_cursor_close(ctx, cur);
+      }
+    }
     break;
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_HASH_KEY :
