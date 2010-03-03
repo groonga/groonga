@@ -291,7 +291,7 @@ check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
   return GRN_SUCCESS;
 }
 
-#define CHECK_NAME_ERR() ERR(GRN_INVALID_ARGUMENT, "name can't start with with '%c' and contains '%c' or '%c'", GRN_DB_PSEUDO_COLUMN_PREFIX, GRN_DB_DELIMITER, GRN_QUERY_COLUMN)
+#define CHECK_NAME_ERR() ERR(GRN_INVALID_ARGUMENT, "name can't start with '%c' and contains '%c' or '%c'", GRN_DB_PSEUDO_COLUMN_PREFIX, GRN_DB_DELIMITER, GRN_QUERY_COLUMN)
 
 #define GRN_TYPE_SIZE(type) ((type)->range)
 
