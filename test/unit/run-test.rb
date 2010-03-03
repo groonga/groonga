@@ -2,9 +2,14 @@
 
 $KCODE = 'utf-8'
 
-base_dir = File.expand_path(File.dirname(__FILE__))
-test_unit_dir = File.join(base_dir, "test-unit-2.0.6")
+require 'fileutils'
 
+base_dir = File.expand_path(File.dirname(__FILE__))
+
+test_lib_dir = File.expand_path(File.join(base_dir, "..", "lib"))
+FileUtils.mkdir_p(test_lib_dir)
+
+test_unit_dir = File.join(test_lib_dir, "test-unit-2.0.6")
 unless File.exist?(test_unit_dir)
   require "open-uri"
   tgz_uri = "http://rubyforge.org/frs/download.php/68513/test-unit-2.0.6.tgz"
@@ -12,15 +17,14 @@ unless File.exist?(test_unit_dir)
   File.open(tgz, "wb") do |output|
     output.print(open(tgz_uri).read)
   end
-  system("tar", "xfz", tgz, "-C", base_dir)
+  system("tar", "xfz", tgz, "-C", test_lib_dir)
 end
 
 $LOAD_PATH.unshift(File.join(test_unit_dir, "lib"))
 
 require 'test/unit'
-require 'test/unit/version'
 
-json_dir = File.join(base_dir, "json-1.1.9")
+json_dir = File.join(test_lib_dir, "json-1.1.9")
 unless File.exist?(json_dir)
   require "open-uri"
   require "fileutils"
@@ -29,7 +33,7 @@ unless File.exist?(json_dir)
   File.open(tgz, "wb") do |output|
     output.print(open(tgz_uri).read)
   end
-  system("tar", "xfz", tgz, "-C", base_dir)
+  system("tar", "xfz", tgz, "-C", test_lib_dir)
   ext_parser_dir = File.join(json_dir, "ext", "json", "ext", "parser")
   Dir.chdir(ext_parser_dir) do
     system("ruby", "extconf.rb")
