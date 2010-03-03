@@ -204,11 +204,11 @@ module GroongaHTTPTestUtils
     drilldown_results = options[:drilldown_results] || []
 
     assert_response([success_status_response,
-                     [[options[:n_hits] || expected.size],
-                      header,
-                      *expected
-                     ],
-                     *drilldown_results],
+                     [[[options[:n_hits] || expected.size],
+                       header,
+                       *expected
+                      ],
+                     *drilldown_results]],
                     response,
                     :content_type => "application/json",
                     &block)

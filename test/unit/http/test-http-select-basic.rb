@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 # Copyright (C) 2009  Yuto HAYAMIZU <y.hayamizu@gmail.com>
 # Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
 #
@@ -28,20 +28,26 @@ module HTTPSelectBasicTests
     teardown_server
   end
 
-  def test_match_column
+  def test_match_columns
     populate_users
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
-                  :match_column => "real_name",
+                  :match_columns => "real_name",
                   :query => "Yuto Hayamizu")
   end
 
   def test_query
     populate_users
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"")
@@ -50,7 +56,10 @@ module HTTPSelectBasicTests
   def test_filter
     populate_users
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
                   :filter => "real_name == \"Yuto Hayamizu\"")
@@ -59,7 +68,10 @@ module HTTPSelectBasicTests
   def test_query_and_filter
     populate_users
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [[2, "hayamiz", "Yuto Hayamizu", 200]],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"",
@@ -69,7 +81,10 @@ module HTTPSelectBasicTests
   def test_no_hit
     populate_users
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [],
                   :table => "users",
                   :query => "real_name:\"No Name\"")
@@ -78,7 +93,10 @@ module HTTPSelectBasicTests
   def test_scorer
     populate_users
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [[2, "hayamiz", "Real Name", 200],
                    [1, "ryoqun", "Real Name", 200]],
                   :table => "users",
@@ -88,13 +106,19 @@ module HTTPSelectBasicTests
   def test_scorer_side_effect
     populate_users
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [[2, "hayamiz", "Real Name", 200]],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"",
                   :scorer => "real_name = \"Real Name\"")
 
-    assert_select(["_id", "_key", "real_name", "hp"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [],
                   :table => "users",
                   :query => "real_name:\"Yuto Hayamizu\"")
@@ -103,7 +127,7 @@ module HTTPSelectBasicTests
   def test_output_columns
     populate_users
 
-    assert_select(["real_name"],
+    assert_select([["real_name", "ShortText"]],
                   [["Yuto Hayamizu"],
                    ["Ryo Onodera"]],
                   :table => "users",
@@ -113,7 +137,9 @@ module HTTPSelectBasicTests
   def test_output_columns_wild_card
     populate_users
 
-    assert_select(["_key", "real_name", "hp"],
+    assert_select([["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
                   [["hayamiz", "Yuto Hayamizu", 200],
                    ["ryoqun", "Ryo Onodera", 200]],
                   :table => "users",
@@ -124,7 +150,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
                   :table => "user_id",
                   :sortby => "_key")
@@ -134,7 +161,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key}.reverse,
                   :table => "user_id",
                   :sortby => "-_key")
@@ -144,7 +172,9 @@ module HTTPSelectBasicTests
     create_calendar_table
     records = load_schedules
 
-    assert_select(["_id","month","day"],
+    assert_select([["_id", "UInt32"],
+                   ["month", "Int32"],
+                   ["day", "Int32"]],
                   records.sort_by {|id, month, day| [month, day]},
                   :table => "calendar",
                   :limit => -1,
@@ -155,7 +185,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key}[3..-1],
                   {:table => "user_id", :sortby => "_key", :offset => 3},
                   :n_hits => records.size)
@@ -165,7 +196,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
                   {:table => "user_id", :sortby => "_key", :offset => 0},
                   :n_hits => records.size)
@@ -175,7 +207,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key}[-3..-1],
                   {:table => "user_id", :sortby => "_key", :offset => -3},
                   :n_hits => records.size)
@@ -185,7 +218,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   [],
                   {:table => "user_id",
                    :sortby => "_key",
@@ -197,7 +231,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
                   :table => "user_id",
                   :sortby => "_key",
@@ -208,7 +243,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   [],
                   {:table => "user_id",
                    :sortby => "_key",
@@ -220,7 +256,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
                   {:table => "user_id",
                    :sortby => "_key",
@@ -232,7 +269,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key}[0, 4],
                   {:table => "user_id",
                    :sortby => "_key",
@@ -244,7 +282,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   [],
                   {:table => "user_id", :sortby => "_key", :limit => 0},
                   :n_hits => records.size)
@@ -254,7 +293,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
                   {:table => "user_id", :sortby => "_key", :limit => -1},
                   :n_hits => records.size)
@@ -264,7 +304,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records.sort_by {|id, key| key}[3, 4],
                   {:table => "user_id",
                    :sortby => "_key",
@@ -277,7 +318,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records[3..-1],
                   {:table => "user_id", :offset => 3},
                   :n_hits => records.size)
@@ -287,7 +329,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records,
                   {:table => "user_id", :offset => 0},
                   :n_hits => records.size)
@@ -297,7 +340,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records[-3..-1],
                   {:table => "user_id", :offset => -3},
                   :n_hits => records.size)
@@ -310,7 +354,7 @@ module HTTPSelectBasicTests
     response = get(command_path(:select,
                                 :table => "user_id",
                                 :offset => records.size + 1))
-    assert_response([[Result::INVALID_ARGUMENT,
+    assert_response([[Result::INVALID_ARGUMENT, 0.0, 0.0,
                       "too large offset"]],
                     response,
                     :content_type => "application/json")
@@ -323,7 +367,7 @@ module HTTPSelectBasicTests
     response = get(command_path(:select,
                                 :table => "user_id",
                                 :offset => -(records.size + 1)))
-    assert_response([[Result::INVALID_ARGUMENT,
+    assert_response([[Result::INVALID_ARGUMENT, 0.0, 0.0,
                       "too small negative offset"]],
                     response,
                     :content_type => "application/json")
@@ -333,7 +377,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   [],
                   {:table => "user_id", :offset => records.size},
                   :n_hits => records.size)
@@ -343,7 +388,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records,
                   {:table => "user_id", :offset => -records.size},
                   :n_hits => records.size)
@@ -353,7 +399,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records[0, 4],
                   {:table => "user_id", :limit => 4},
                   :n_hits => records.size)
@@ -363,7 +410,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   [],
                   {:table => "user_id", :limit => 0},
                   :n_hits => records.size)
@@ -373,7 +421,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records,
                   {:table => "user_id", :limit => -1},
                   :n_hits => records.size)
@@ -383,7 +432,8 @@ module HTTPSelectBasicTests
     create_user_id_table
     records = register_users
 
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"]],
                   records[3, 4],
                   {:table => "user_id", :offset => 3, :limit => 4},
                   :n_hits => records.size)
@@ -395,7 +445,9 @@ module HTTPSelectBasicTests
     create_comments_table
     load_comments
 
-    assert_select(["_id", "text", "author"],
+    assert_select([["_id", "UInt32"],
+                   ["text", "ShortText"],
+                   ["author", "users"]],
                   [[2, "groonga rocks", "hayamiz"]],
                   :table => "comments",
                   :query => "author.real_name:\"Yuto Hayamizu\"")
@@ -407,7 +459,9 @@ module HTTPSelectBasicTests
     create_comments_table
     load_comments
 
-    assert_select(["_id", "text", "author"],
+    assert_select([["_id", "UInt32"],
+                   ["text", "ShortText"],
+                   ["author", "users"]],
                   [[1, "Ruby rocks", "ryoqun"],
                    [2, "groonga rocks", "hayamiz"]],
                   {:table => "comments",
@@ -415,7 +469,7 @@ module HTTPSelectBasicTests
                    :drilldown_output_columns => "real_name",
                    :drilldown_limit => 10},
                   :drilldown_results => [[[2],
-                                          ["real_name"],
+                                          [["real_name", "ShortText"]],
                                           ["Ryo Onodera"],
                                           ["Yuto Hayamizu"]]])
   end
@@ -426,7 +480,9 @@ module HTTPSelectBasicTests
     create_comments_table
     load_comments
 
-    assert_select(["_id", "text", "author"],
+    assert_select([["_id", "UInt32"],
+                   ["text", "ShortText"],
+                   ["author", "users"]],
                   [[1, "Ruby rocks", "ryoqun"],
                    [2, "groonga rocks", "hayamiz"]],
                   {:table => "comments",
@@ -434,11 +490,11 @@ module HTTPSelectBasicTests
                    :drilldown_output_columns => "_key",
                    :drilldown_limit => 10},
                   :drilldown_results => [[[2],
-                                          ["_key"],
+                                          [["_key", "ShortText"]],
                                           ["Ruby rocks"],
                                           ["groonga rocks"]],
                                          [[2],
-                                          ["_key"],
+                                          [["_key", "ShortText"]],
                                           ["ryoqun"],
                                           ["hayamiz"]]])
   end
@@ -449,7 +505,7 @@ module HTTPSelectBasicTests
     create_comments_table
     load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["gunyara-kun"],
                       ["hayamiz"],
                       ["moritan"],
@@ -465,7 +521,8 @@ module HTTPSelectBasicTests
     create_comments_table
     load_many_comments
 
-    assert_drilldown(["hp", "_key"],
+    assert_drilldown([["hp", "Int32"],
+                      ["_key", "ShortText"]],
                      [[100, "moritan"],
                       [100, "taporobo"],
                       [150, "gunyara-kun"],
@@ -481,7 +538,7 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["gunyara-kun"],
                       ["moritan"],
                       ["ryoqun"]],
@@ -496,7 +553,7 @@ module HTTPSelectBasicTests
     create_comments_table
     load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["taporobo"],
                       ["hayamiz"],
                       ["gunyara-kun"],
@@ -512,7 +569,7 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["moritan"],
                       ["ryoqun"]],
                      {:drilldown_offset => -2,
@@ -532,7 +589,7 @@ module HTTPSelectBasicTests
                                 :drilldown_output_columns => "_key",
                                 :drilldown_limit => 10,
                                 :drilldown_offset => 6))
-    assert_response([[Result::INVALID_ARGUMENT,
+    assert_response([[Result::INVALID_ARGUMENT, 0.0, 0.0,
                       "too large drilldown_offset"]],
                     response,
                     :content_type => "application/json")
@@ -550,7 +607,7 @@ module HTTPSelectBasicTests
                                 :drilldown_output_columns => "_key",
                                 :drilldown_limit => 10,
                                 :drilldown_offset => -6))
-    assert_response([[Result::INVALID_ARGUMENT,
+    assert_response([[Result::INVALID_ARGUMENT, 0.0, 0.0,
                       "too small negative drilldown_offset"]],
                     response,
                     :content_type => "application/json")
@@ -574,7 +631,7 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["taporobo"],
                       ["hayamiz"],
                       ["gunyara-kun"],
@@ -591,7 +648,7 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["taporobo"],
                       ["hayamiz"]],
                      {:drilldown_limit => 2,
@@ -617,7 +674,7 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["taporobo"],
                       ["hayamiz"],
                       ["gunyara-kun"],
@@ -635,7 +692,7 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [["gunyara-kun"]],
                      {:drilldown_offset => 2,
                       :drilldown_limit => 1,
@@ -649,7 +706,9 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown(["real_name", "hp", "_key"],
+    assert_drilldown([["real_name", "ShortText"],
+                      ["hp", "Int32"],
+                      ["_key", "ShortText"]],
                      [["モリタン", 100, "moritan"],
                       ["タポロボ", 100, "taporobo"],
                       ["Tasuku SUENAGA", 150, "gunyara-kun"],
@@ -731,7 +790,9 @@ EOF
   end
 
   def assert_drilldown(header, expected, parameters, options={})
-    assert_select(["_id", "text", "author"],
+    assert_select([["_id", "UInt32"],
+                   ["text", "ShortText"],
+                   ["author", "users"]],
                   [[1, "Ruby最高！", "taporobo"],
                    [2, "groonga最高！", "hayamiz"],
                    [3, "Ruby/groonga is useful.", "gunyara-kun"],
@@ -754,11 +815,12 @@ class HTTPDefineSelectorBasicTest < HTTPSelectBasicTest
   include HTTPSelectBasicTests
 
   def assert_select(header, expected, parameters, options={}, &block)
-    name = "custom_select"
+    @names ||= []
+    name = "custom_select#{@names.size}"
+    @names << name
     response = get(command_path("define_selector",
                                 parameters.merge(:name => name)))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    assert_success_response(response, :content_type => "application/json")
     super(header, expected, {}, options.merge(:command => name), &block)
   end
 end
