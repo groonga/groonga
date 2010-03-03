@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ void test_temporary_table_add(gpointer data);
 void data_array_sort(void);
 void test_array_sort(gconstpointer data);
 void test_nonexistent_column(void);
+void test_create_with_invalid_name(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -306,4 +307,19 @@ test_nonexistent_column(void)
                        grn_obj_column(&context, table,
                                       nonexistent_column_name,
                                       strlen(nonexistent_column_name)));
+}
+
+void
+test_create_with_invalid_name(void)
+{
+  grn_obj *table;
+  char table_name[] = "_users";
+
+  table = grn_table_create(&context, table_name, strlen(table_name),
+                           NULL,
+                           GRN_OBJ_TABLE_NO_KEY,
+                           NULL, NULL);
+  grn_test_assert_error(GRN_INVALID_ARGUMENT,
+                        "name can't start with '_' and contains '.' or ':'",
+                        &context);
 }
