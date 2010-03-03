@@ -51,17 +51,19 @@ module HTTPSelectDrilldownTests
     add_event("morita", nil, "groonga（ぐるんが）解説・パート1", "20091218")
     add_event("yu", nil, "groonga（ぐるんが）解説・パート2", "20091219")
 
-    assert_drilldown(["_key"],
+    assert_drilldown([["_key", "ShortText"]],
                      [],
                      [[[2],
-                       ["_key", "_nsubrecs", "initial"],
+                       [["_key", "ShortText"],
+                        ["_nsubrecs", "Int32"],
+                        ["initial", "Initial"]],
                        ["グニャラくん", 2, "か"],
                        ["morita", 1, "ま"]]],
                      {
                        :table => "Event",
-                       :match_column => "search",
+                       :match_columns => "search",
                        :query => "groonga",
-                       :filter => "date == \"20091218\" &&  person @ \"グニ\"",
+                       :filter => "date == \"20091218\"",
                        :limit => 0,
                        :output_columns => "_key",
                        :drilldown => "person",
@@ -104,28 +106,36 @@ module HTTPSelectDrilldownTests
               "groonga（ぐるんが）解説・パート1", "20091218")
     add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート2", "20091219")
 
-    assert_drilldown(["_key", "place", "place.name",
-                      "title", "person", "date"],
+    assert_drilldown([["_key", "ShortText"],
+                      ["place", "Place"],
+                      ["place.name", "ShortText"],
+                      ["title", "ShortText"],
+                      ["person", "Person"],
+                      ["date", "Time"]],
                      [["3", "shinjuku", "新宿",
                        "groonga（ぐるんが）解説・パート2", ["yu"], 20091219.0],
                       ["0", "razil.jp", "ブラジル", "groongaリリース（前編）",
                        ["グニャラくん"], 20091218.0]],
                      [[[2],
-                       ["_key", "_nsubrecs"],
+                       [["_key", "Time"],
+                        ["_nsubrecs", "Int32"]],
                        [20091218.0, 3],
                        [20091219.0, 1]],
                       [[3],
-                       ["_key", "_nsubrecs"],
+                       [["_key", "ShortText"],
+                        ["_nsubrecs", "Int32"]],
                        ["グニャラくん", 2],
                        ["yu", 1],
                        ["morita", 1]],
                       [[2],
-                       ["_key", "_nsubrecs", "name"],
+                       [["_key", "ShortText"],
+                        ["_nsubrecs", "Int32"],
+                        ["name", "ShortText"]],
                        ["razil.jp", 2, "ブラジル"],
                        ["shinjuku", 2, "新宿"]]],
                      {
                        :table => "Event",
-                       :match_column => "search",
+                       :match_columns => "search",
                        :query => "groonga",
                        :filter => "",
                        :sortby => "-place._key",
@@ -185,7 +195,7 @@ class HTTPDefineSelectorDrilldownTest < HTTPSelectDrilldownTest
     name = "custom_select"
     response = get(command_path("define_selector",
                                 parameters.merge(:name => name)))
-    assert_response([[Result::SUCCESS]], response,
+    assert_response([success_status_response], response,
                     :content_type => "application/json")
     super(header, expected, {}, options.merge(:command => name), &block)
   end
