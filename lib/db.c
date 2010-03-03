@@ -279,10 +279,15 @@ check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
   int len;
   const char *name_end = name + name_size;
+  if (name < name_end &&
+      (*name == GRN_DB_PSEUDO_COLUMN_PREFIX ||
+       (unsigned int)(*name - '0') < 10u)) {
+    return GRN_INVALID_ARGUMENT;
+  }
   while (name < name_end) {
     char c = *name;
     if ((unsigned int)((c | 0x20) - 'a') >= 26u &&
-        (unsigned int)(c - '0') >= 10u && c != '-' && c != '_') {
+        (unsigned int)(c - '0') >= 10u && c != '_') {
       return GRN_INVALID_ARGUMENT;
     }
     if (!(len = grn_charlen(ctx, name, name_end))) { break; }
@@ -291,7 +296,7 @@ check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
   return GRN_SUCCESS;
 }
 
-#define CHECK_NAME_ERR() ERR(GRN_INVALID_ARGUMENT, "name can't start with '%c' and contains '%c' or '%c'", GRN_DB_PSEUDO_COLUMN_PREFIX, GRN_DB_DELIMITER, GRN_QUERY_COLUMN)
+#define CHECK_NAME_ERR() ERR(GRN_INVALID_ARGUMENT, "name can't start with '%c' and 0-9, and contains only 0-9, A-Z, a-z, or _", GRN_DB_PSEUDO_COLUMN_PREFIX)
 
 #define GRN_TYPE_SIZE(type) ((type)->range)
 

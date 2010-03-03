@@ -313,13 +313,22 @@ void
 test_create_with_invalid_name(void)
 {
   grn_obj *table;
-  char table_name[] = "_users";
+  char *table_names[] = {"_users", "0table", "table-name", "table name",
+                         " ", "!", "\"", "#", "$", "%", "&", "'",
+                         "(", ")", "*", "+", ",", "-", ".", "/",
+                         ":", ";", "<", "=", ">", "?", "@",
+                         "[", "\\", "]", "^", "_", "`",
+                         "{", "|", "}", "~"};
+  int i, n_table_name = sizeof(table_names)/sizeof(table_names[0]);
 
-  table = grn_table_create(&context, table_name, strlen(table_name),
-                           NULL,
-                           GRN_OBJ_TABLE_NO_KEY,
-                           NULL, NULL);
-  grn_test_assert_error(GRN_INVALID_ARGUMENT,
-                        "name can't start with '_' and contains '.' or ':'",
-                        &context);
+  for (i = 0; i < n_table_name; i++) {
+    char *table_name = table_names[i];
+    table = grn_table_create(&context, table_name, strlen(table_name),
+                             NULL,
+                             GRN_OBJ_TABLE_NO_KEY,
+                             NULL, NULL);
+    grn_test_assert_error(GRN_INVALID_ARGUMENT,
+                          "name can't start with '_' and 0-9, and contains only 0-9, A-Z, a-z, or _",
+                          &context);
+  }
 }
