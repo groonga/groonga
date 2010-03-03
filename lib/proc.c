@@ -297,13 +297,13 @@ grn_table_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
     GRN_TEXT_PUTS(ctx, buf, "TABLE_VIEW");
     break;
   }
-  if (flags | GRN_OBJ_KEY_WITH_SIS) {
+  if (flags & GRN_OBJ_KEY_WITH_SIS) {
     GRN_TEXT_PUTS(ctx, buf, "|KEY_WITH_SIS");
   }
-  if (flags | GRN_OBJ_KEY_NORMALIZE) {
+  if (flags & GRN_OBJ_KEY_NORMALIZE) {
     GRN_TEXT_PUTS(ctx, buf, "|KEY_NORMALIZE");
   }
-  if (flags | GRN_OBJ_PERSISTENT) {
+  if (flags & GRN_OBJ_PERSISTENT) {
     GRN_TEXT_PUTS(ctx, buf, "|PERSISTENT");
   }
 }
