@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 # Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -35,7 +35,9 @@ class HTTPLoadTest < Test::Unit::TestCase
           ["ryoqun", "Ryo Onodera"],
           ["mori", "mori daijiro"]])
 
-    assert_select(["_id", "_key", "real_name"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"]],
                   [[1, "ryoqun", "Ryo Onodera"],
                    [2, "mori", "mori daijiro"]],
                   :table => "users")
@@ -48,7 +50,9 @@ class HTTPLoadTest < Test::Unit::TestCase
          [{:_key => "ryoqun"},
           {:_key => "mori", :real_name => "mori daijiro"}])
 
-    assert_select(["_id", "_key", "real_name"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"]],
                   [[2, "mori", "mori daijiro"],
                    [1, "ryoqun", ""]],
                   :table => "users",
@@ -78,7 +82,9 @@ class HTTPLoadTest < Test::Unit::TestCase
                  :value_type => "Int32")
 
     load("int-hash", [{:_key => 29, :_value => 10}])
-    assert_select(["_id", "_key", "_value"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"],
+                   ["_value", "Int32"]],
                   [[1, 29, 10]],
                   :table => "int-hash")
   end
@@ -90,7 +96,9 @@ class HTTPLoadTest < Test::Unit::TestCase
     column_create("int-hash", "int_value", Column::SCALAR, "Int32")
 
     load("int-hash", [{:_key => 29, :int_value => 10}])
-    assert_select(["_id", "_key", "int_value"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", "Int32"],
+                   ["int_value", "Int32"]],
                   [[1, 29, 10]],
                   :table => "int-hash")
   end
@@ -109,7 +117,8 @@ class HTTPLoadTest < Test::Unit::TestCase
                  :flags => Table::HASH_KEY,
                  :key_type => key_type)
     load(table_name, [{:_key => key_value}])
-    assert_select(["_id", "_key"],
+    assert_select([["_id", "UInt32"],
+                   ["_key", key_type]],
                   [[1, key_value]],
                   :table => table_name)
   end
