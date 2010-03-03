@@ -2796,17 +2796,18 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
             GRN_TEXT_PUTS(ctx, bulk, "</HIT>\n");
             break;
           case GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY:
-            GRN_TEXT_PUTS(ctx, bulk, "<NAVIGATIONELEMENT NAME=\"");
-            GRN_BULK_REWIND(&buf);
-            grn_obj_get_value_o(ctx, columns[0], &id, &buf);
-            grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-            GRN_TEXT_PUTS(ctx, bulk, "\" MODIFIER=\"");
-            grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-            GRN_TEXT_PUTS(ctx, bulk, "\" COUNT=\"");
-            GRN_BULK_REWIND(&buf);
-            grn_obj_get_value_o(ctx, columns[1], &id, &buf);
-            grn_text_otoxml(ctx, bulk, &buf, format);
-            GRN_TEXT_PUTS(ctx, bulk, "\" />");
+            GRN_TEXT_PUTS(ctx, bulk, "<NAVIGATIONELEMENT ");
+            for (j = 0; j < ncolumns; j++) {
+              GRN_BULK_REWIND(&buf);
+              grn_column_name_(ctx, columns[j], &buf);
+              grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+              GRN_TEXT_PUTS(ctx, bulk, "=\"");
+              GRN_BULK_REWIND(&buf);
+              grn_obj_get_value_o(ctx, columns[j], &id, &buf);
+              grn_text_otoxml(ctx, bulk, &buf, NULL);
+              GRN_TEXT_PUTS(ctx, bulk, "\" ");
+            }
+            GRN_TEXT_PUTS(ctx, bulk, "/>");
             break;
           }
         }

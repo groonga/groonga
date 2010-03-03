@@ -10909,21 +10909,16 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                   grn_table_sort(ctx, g.table, drilldown_offset, drilldown_limit,
                                  sorted, keys, nkeys);
                   GRN_OBJ_FORMAT_INIT(&format, nhits, 0, drilldown_limit);
+                  grn_obj_columns(ctx, sorted,
+                                  drilldown_output_columns, drilldown_output_columns_len,
+                                  &format.columns);
                   switch (output_type) {
                   case GRN_CONTENT_JSON:
-                    grn_obj_columns(ctx, sorted,
-                                    drilldown_output_columns, drilldown_output_columns_len,
-                                    &format.columns);
                     format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
                     GRN_TEXT_PUTC(ctx, outbuf, ',');
                     grn_text_otoj(ctx, outbuf, sorted, &format);
                     break;
                   case GRN_CONTENT_XML:
-                    /* NOTE: drilldown_output_columns parameter is ignored */
-                    grn_obj_columns(ctx, sorted,
-                                    "_key _nsubrecs",
-                                    sizeof("_key _nsubrecs") - 1,
-                                    &format.columns);
                     format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
                     grn_text_otoxml(ctx, outbuf, sorted, &format);
                     break;
@@ -10939,18 +10934,15 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               }
             } else {
               GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit);
+              grn_obj_columns(ctx, g.table, drilldown_output_columns,
+                              drilldown_output_columns_len, &format.columns);
               switch (output_type) {
               case GRN_CONTENT_JSON:
-                grn_obj_columns(ctx, g.table, drilldown_output_columns,
-                                drilldown_output_columns_len, &format.columns);
                 format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
                 GRN_TEXT_PUTC(ctx, outbuf, ',');
                 grn_text_otoj(ctx, outbuf, g.table, &format);
                 break;
               case GRN_CONTENT_XML:
-                /* NOTE: drilldown_output_columns parameter is ignored */
-                grn_obj_columns(ctx, g.table, "_key _nsubrecs",
-                                sizeof("_key _nsubrecs") - 1, &format.columns);
                 format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
                 grn_text_otoxml(ctx, outbuf, g.table, &format);
                 break;
