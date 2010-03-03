@@ -181,7 +181,7 @@ module GroongaHTTPTestUtils
     case response.content_type
     when "application/json"
       actual = JSON.parse(response.body)
-      actual[0][1..2] = [0.0, 0.0]
+      actual[0][1..2] = [0.0, 0.0] if actual[0][0].is_a?(Integer)
     when "text/html"
       actual = response.body
     when "text/xml"
@@ -195,7 +195,11 @@ module GroongaHTTPTestUtils
   end
 
   def assert_success_response(response, options=nil)
-    assert_response([success_status_response], response, options={})
+    assert_response([success_status_response], response, options)
+  end
+
+  def assert_error_response(code, message, response, options=nil)
+    assert_response([[code, 0.0, 0.0, message]], response, options)
   end
 
   def assert_select(header, expected, parameters, options={}, &block)
