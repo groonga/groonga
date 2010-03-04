@@ -7338,6 +7338,13 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
        (((grn_db_obj *)obj)->id & GRN_OBJ_TMP_OBJECT) ||
        obj->header.type == GRN_DB)) {
     grn_obj_close(ctx, obj);
+  } else if (GRN_DB_OBJP(obj)) {
+    grn_db_obj *dob = DB_OBJ(obj);
+    if (dob->finalizer) {
+      dob->finalizer(ctx, 1, &obj, &dob->user_data);
+      dob->finalizer = NULL;
+      dob->user_data.ptr = NULL;
+    }
   }
 }
 
