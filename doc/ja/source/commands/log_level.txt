@@ -26,7 +26,16 @@ log_levelは、ログ出力レベルを設定します。
 
 ``level``
 
-  設定するログ出力レベルの値を数値で指定します。
+  設定するログ出力レベルの値を以下のいずれかで指定します。
+
+     EMERG
+     ALERT
+     CRIT
+     error
+     warning
+     notice
+     info
+     debug
 
 ``output_type``
 
