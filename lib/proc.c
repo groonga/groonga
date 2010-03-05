@@ -1179,17 +1179,20 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         rc = grn_table_delete(ctx, table, GRN_TEXT_VALUE(&vars[1].value),
                                           GRN_TEXT_LEN(&vars[1].value));
       } else if (GRN_TEXT_LEN(&vars[3].value)) {
-        grn_obj id;
-        GRN_RECORD_INIT(&id, 0, grn_obj_id(ctx, table));
-        if ((rc = grn_obj_cast(ctx, &vars[3].value, &id, 0)) == GRN_SUCCESS) {
-          rc = grn_table_delete_by_id(ctx, table, GRN_RECORD_VALUE(&id));
+        const char *end;
+        grn_id id = grn_atoui(GRN_TEXT_VALUE(&vars[3].value),
+                              GRN_BULK_CURR(&vars[3].value), &end);
+        if (end == GRN_BULK_CURR(&vars[3].value)) {
+          rc = grn_table_delete_by_id(ctx, table, id);
+        } else {
+          ERR(GRN_INVALID_ARGUMENT, "invalid id");
         }
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT, "unknown table name");
     }
   }
-  GRN_TEXT_PUTS(ctx, outbuf, rc ? "false" : "true");
+  print_return_code(ctx, outbuf, grn_get_ctype(&vars[2].value));
   return outbuf;
 }
 

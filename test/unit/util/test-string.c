@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,8 @@
 
 #include "../lib/grn-assertions.h"
 
-void test_normalize_utf8(void);
+void data_normalize_utf8(void);
+void test_normalize_utf8(gpointer data);
 void test_charlen_nonnull_broken_utf8(void);
 
 static grn_ctx context;
@@ -60,8 +61,46 @@ teardown (void)
 }
 
 void
-test_normalize_utf8(void)
+data_normalize_utf8(void)
 {
+#define ADD_DATUM(label, expected, input)               \
+  gcut_add_datum(label,                                 \
+                 "expected", G_TYPE_STRING, expected,   \
+                 "input", G_TYPE_STRING, input,         \
+                 NULL)
+
+  ADD_DATUM("with newlines",
+            "groongaは組み込み型の全文検索エンジンです。"
+            "dbmsやスクリプト言語処理系等に組み込むこと"
+            "によって、その全文検索機能を強化することが"
+            "できます。n-gramインデックスと単語インデッ"
+            "クスの特徴を兼ね備えた、高速かつ高精度な転"
+            "置インデックスタイプのエンジンです。コンパ"
+            "クトな実装ですが、大規模な文書量と検索要求"
+            "を処理できるように設計されています。また、"
+            "純粋なn-gramインデックスの作成も可能です。",
+
+            "groongaは組み込み型の全文検索エンジンです。\n"
+            "DBMSやスクリプト言語処理系等に組み込むこと\n"
+            "によって、その全文検索機能を強化することが\n"
+            "できます。n-gramインデックスと単語インデッ\n"
+            "クスの特徴を兼ね備えた、高速かつ高精度な転\n"
+            "置インデックスタイプのエンジンです。コンパ\n"
+            "クトな実装ですが、大規模な文書量と検索要求\n"
+            "を処理できるように設計されています。また、\n"
+            "純粋なn-gramインデックスの作成も可能です。");
+
+  ADD_DATUM("large normalization",
+            "キロメートルキロメートルキロメートルキロメートル",
+            "㌖㌖㌖㌖");
+
+#undef ADD_DATUM
+}
+
+void
+test_normalize_utf8(gpointer data)
+{
+  const gchar *expected, *input;
   grn_str *string;
   const gchar *normalized_text;
   guint normalized_text_len;
@@ -69,13 +108,15 @@ test_normalize_utf8(void)
 
   GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
   flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
-  string = grn_str_open(&context, text_ja_utf8, strlen(text_ja_utf8), flags);
+  input = gcut_data_get_string(data, "input");
+  string = grn_str_open(&context, input, strlen(input), flags);
   normalized_text = cut_take_strndup(string->norm, string->norm_blen);
   normalized_text_len = string->norm_blen;
   grn_test_assert(grn_str_close(&context, string));
 
-  cut_assert_equal_string(normalized_text_ja_utf8, normalized_text);
-  cut_assert_equal_int(strlen(normalized_text_ja_utf8), normalized_text_len);
+  expected = gcut_data_get_string(data, "expected");
+  cut_assert_equal_string(expected, normalized_text);
+  cut_assert_equal_int(strlen(expected), normalized_text_len);
 }
 
 void
