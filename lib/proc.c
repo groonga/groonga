@@ -1021,6 +1021,20 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
+proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_obj *buf = args[0];
+  grn_expr_var *vars;
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  if (nvars == 1) {
+    grn_log_reopen(ctx);
+    print_return_code(ctx, buf, grn_get_ctype(&vars[1].value));
+  }
+  return buf;
+}
+
+static grn_obj *
 proc_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   /* todo */
@@ -2119,6 +2133,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "level");
   DEF_VAR(vars[1], "message");
   DEF_PROC("log_put", proc_log_put, 2, vars);
+
+  DEF_VAR(vars[0], "output_type");
+  DEF_PROC("log_reopen", proc_log_reopen, 1, vars);
+
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");

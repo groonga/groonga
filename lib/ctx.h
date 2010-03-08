@@ -409,6 +409,7 @@ typedef struct {
 void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);
 void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
+void grn_log_reopen(grn_ctx *ctx);
 
 grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);

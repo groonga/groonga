@@ -500,6 +500,34 @@ default_logger_func(int level, const char *time, const char *title,
   }
 }
 
+void
+grn_log_reopen(grn_ctx *ctx)
+{
+  if (grn_log_path) {
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "log closing..");
+    CRITICAL_SECTION_ENTER(grn_logger_lock);
+
+    if (default_logger_fp) {
+      fclose(default_logger_fp);
+    }
+    default_logger_fp = fopen(grn_log_path, "a");
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "log open");
+    CRITICAL_SECTION_LEAVE(grn_logger_lock);
+  }
+
+  if (grn_qlog_path) {
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "qlog closing..");
+    CRITICAL_SECTION_ENTER(grn_logger_lock);
+
+    if (default_logger_qlog_fp) {
+      fclose(default_logger_qlog_fp);
+    }
+    default_logger_qlog_fp = fopen(grn_qlog_path, "a");
+    CRITICAL_SECTION_LEAVE(grn_logger_lock);
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "qlog open");
+  }
+}
+
 static grn_logger_info default_logger = {
   GRN_LOG_DEFAULT_LEVEL,
   GRN_LOG_TIME|GRN_LOG_MESSAGE,
