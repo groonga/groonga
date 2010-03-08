@@ -82,6 +82,7 @@ typedef SOCKET ftpsocket;
 #define FTPERROR INVALID_SOCKET 
 #define ftpclose closesocket
 #define GROONGA_PATH "groonga.exe"
+PROCESS_INFORMATION grntest_pi;
 #else
 pid_t grntest_server_id = 0;
 typedef int ftpsocket;
@@ -968,7 +969,6 @@ start_server(const char *dbpath, int r)
 #ifdef WIN32
   char tmpbuf[BUF_LEN];
 
-  PROCESS_INFORMATION pi;
   STARTUPINFO si;
 
   if (strlen(dbpath) > BUF_LEN - 100) {
@@ -985,7 +985,7 @@ start_server(const char *dbpath, int r)
   memset(&si, 0, sizeof(si));
   si.cb=sizeof(si);
   ret = CreateProcess(NULL, tmpbuf, NULL, NULL, FALSE,
-		      0, NULL, NULL, &si, &pi);
+		      0, NULL, NULL, &si, &grntest_pi);
 
   if (ret == 0) {
     fprintf(stderr, "Cannot start groonga server:error=%d\n", GetLastError());
@@ -2351,7 +2351,17 @@ main(int argc, char **argv)
 
 exit:
   shutdown_server();
-#ifndef WIN32
+#ifdef WIN32
+  if (!grntest_remote_mode) {
+    int ret;
+    ret = WaitForSingleObject(grntest_pi.hProcess, 20000);
+    if (ret == WAIT_TIMEOUT) {
+      fprintf(stderr, "timeout:groonga server cannot shutdown!!\n");
+      fprintf(stderr, "Cannot wait\n");
+      exit(1);
+    }
+  }
+#else
   if (grntest_server_id) {
     int ret, pstatus;
     setsigalarm(20);
