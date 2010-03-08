@@ -475,7 +475,7 @@ EOGQTP
     assert_commands(<<EXPECTED, <<COMMANDS)
 [[0,0.0,0.0]]
 [[0,0.0,0.0],3]
-true
+[[0,0.0,0.0]]
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"]],[1,"hayamiz"],[3,"mori"]]]]
 [[0,0.0,0.0]]
 EXPECTED
@@ -496,7 +496,7 @@ COMMANDS
 [[0,0.0,0.0]]
 [[0,0.0,0.0]]
 [[0,0.0,0.0],3]
-true
+[[0,0.0,0.0]]
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["name","ShortText"]],[1,"hayamiz"],[3,"mori"]]]]
 [[0,0.0,0.0]]
 EXPECTED
