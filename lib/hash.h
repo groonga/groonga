@@ -169,6 +169,7 @@ struct _grn_array_cursor {
 
 #define GRN_ARRAY_SIZE(array) (*((array)->n_entries))
 
+grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);
 
@@ -288,6 +289,8 @@ typedef enum {
   grn_rec_userdef,
   grn_rec_none
 } grn_rec_unit;
+
+grn_rc grn_hash_truncate(grn_ctx *ctx, grn_hash *hash);
 
 int grn_rec_unit_size(grn_rec_unit unit, int rec_size);
 

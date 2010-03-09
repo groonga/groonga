@@ -349,12 +349,11 @@ delinfo_new(grn_ctx *ctx, grn_pat *pat)
 
 /* pat operation */
 
-grn_pat *
-grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
-               uint32_t value_size, uint32_t flags)
-{
+inline static grn_pat *
+_grn_pat_create(grn_ctx *ctx, grn_pat *pat,
+                const char *path, uint32_t key_size,
+                uint32_t value_size, uint32_t flags) {
   grn_io *io;
-  grn_pat *pat;
   pat_node *node0;
   struct grn_pat_header *header;
   uint32_t entry_size, w_of_element;
@@ -392,10 +391,6 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   header->curr_del3 = 0;
   header->n_garbages = 0;
   header->tokenizer = 0;
-  if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
-    grn_io_close(ctx, io);
-    return NULL;
-  }
   GRN_DB_OBJ_SET_TYPE(pat, GRN_TABLE_PAT_KEY);
   pat->io = io;
   pat->header = header;
@@ -412,6 +407,21 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   node0->lr[1] = 0;
   node0->lr[0] = 0;
   node0->key = 0;
+  return pat;
+}
+
+grn_pat *
+grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
+               uint32_t value_size, uint32_t flags)
+{
+  grn_pat *pat;
+  if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
+    return NULL;
+  }
+  if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {
+    GRN_FREE(pat);
+    return NULL;
+  }
   return pat;
 }
 
@@ -471,6 +481,34 @@ grn_pat_remove(grn_ctx *ctx, const char *path)
     return GRN_INVALID_ARGUMENT;
   }
   return grn_io_remove(ctx, path);
+}
+
+grn_rc
+grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
+{
+  grn_rc rc;
+  char *path;
+  uint32_t key_size, value_size, flags;
+
+  if ((path = (char *)grn_io_path(pat->io))) {
+    if (!(path = GRN_STRDUP(path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  }
+  key_size = pat->key_size;
+  value_size = pat->value_size;
+  flags = pat->obj.header.flags;
+
+  if ((rc = grn_io_close(ctx, pat->io))) { return rc; }
+  if ((rc = grn_io_remove(ctx, path))) { return rc; }
+  if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {
+    pat->io = NULL;
+    return GRN_UNKNOWN_ERROR;
+  }
+  if (path) { GRN_FREE(path); }
+
+  return GRN_SUCCESS;
 }
 
 inline static grn_id

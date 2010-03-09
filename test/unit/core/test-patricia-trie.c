@@ -700,3 +700,49 @@ test_add_and_delete(gconstpointer data)
 
   cut_assert_equal_int(0, grn_pat_size(context, trie));
 }
+
+#define cut_assert_truncate(key) do                                      \
+{                                                                        \
+  const gchar *_key;                                                     \
+  uint32_t key_size = 0;                                                 \
+  grn_search_flags flags;                                                \
+                                                                         \
+  _key = (key);                                                          \
+  if (_key)                                                              \
+    key_size = strlen(_key);                                             \
+                                                                         \
+  grn_test_assert(grn_pat_truncate(context, trie, _key, key_size, NULL));\
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,                         \
+                           grn_pat_delete(context, trie,                 \
+                                         _key, key_size, NULL));         \
+                                                                         \
+  flags = 0;                                                             \
+  cut_assert_lookup_failed(_key, key_size, &flags);                      \
+} while (0)
+
+void
+data_truncate(void)
+{
+  cut_add_data("default",
+               test_data_new("29", NULL),
+               test_data_free,
+               "sis",
+               test_data_new("29", set_sis),
+               test_data_free,
+               "sis - multi byte key",
+               test_data_new("肉ニク", set_sis_and_utf8_encoding),
+               test_data_free);
+}
+
+void
+test_truncate(gconstpointer data)
+{
+  const grn_trie_test_data *test_data = data;
+
+  trie_test_data_set_parameters(test_data);
+
+  cut_assert_create_trie();
+  cut_assert_lookup_add(test_data->key);
+  cut_assert_delete(test_data->key);
+}
+
