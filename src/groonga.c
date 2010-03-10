@@ -87,7 +87,7 @@ usage(void)
 static void
 show_version(void)
 {
-  printf("%s\n", PACKAGE_STRING);
+  printf("%s %s\n", grn_get_package(), grn_get_version());
 }
 
 inline static void

@@ -21,6 +21,7 @@
 #include "ql.h"
 #include "pat.h"
 #include "snip.h"
+#include "version.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
@@ -1793,7 +1794,7 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
 const char *
 grn_get_version(void)
 {
-  return PACKAGE_VERSION;
+  return GROONGA_VERSION;
 }
 
 const char *

@@ -1,6 +1,6 @@
 SUBDIRS = lib src examples test
 #dist_data_DATA =
-EXTRA_DIST = bindings resource doc/ja
+EXTRA_DIST = bindings resource doc/ja version-gen.sh
 pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -11,6 +11,12 @@ LCOV_HTML = lcov_html
 LCOV_LCOV = @LCOV@
 LCOV_GENHTML = @GENHTML@
 
+.PHONY: FORCE
+
+version.sh: FORCE
+	@$(SHELL_PATH) ./version-gen.sh
+-include version.sh
+
 dist-hook:
 	rm -rf `find $(distdir) -name '*.loT'`
 	rm -rf `find $(distdir) -name '*.cache'`
@@ -19,6 +25,7 @@ dist-hook:
 	rm -rf $(distdir)/doc/ja/_sources
 	rm -rf $(distdir)/doc/ja/build
 	rm -rf $(distdir)/doc/ja/source
+	echo "$(GROONGA_VERSION)" > $(distdir)/version
 
 install-data-local:
 	@$(NORMAL_INSTALL)
