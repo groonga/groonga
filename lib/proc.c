@@ -116,6 +116,8 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                GRN_TEXT_VALUE(&vars[11].value), GRN_TEXT_LEN(&vars[11].value),
                grn_atoi(GRN_TEXT_VALUE(&vars[12].value), GRN_BULK_CURR(&vars[12].value), NULL),
                grn_atoi(GRN_TEXT_VALUE(&vars[13].value), GRN_BULK_CURR(&vars[13].value), NULL));
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 15);
   }
   return outbuf;
 }
@@ -132,6 +134,8 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
                     GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                     NULL, GRN_PROC_PROCEDURE, proc_select, NULL, NULL, nvars - 1, vars + 1);
     print_return_code(ctx, outbuf, grn_get_ctype(&vars[15].value));
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 16);
   }
   return outbuf;
 }
@@ -163,6 +167,8 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       /* maybe necessary : grn_ctx_loader_clear(ctx); */
       grn_obj_unlink(ctx, &body);
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
   }
   return outbuf;
 }
@@ -205,6 +211,8 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     case GRN_CONTENT_NONE:
       break;
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
   return outbuf;
 }
@@ -389,6 +397,8 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       grn_obj_unlink(ctx, table);
     }
     print_return_code(ctx, buf, ct);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
   }
   return buf;
 }
@@ -417,6 +427,8 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     }
 
     print_return_code(ctx, buf, ct);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
   return buf;
 }
@@ -483,6 +495,8 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
       grn_obj_unlink(ctx, column);
     }
     print_return_code(ctx, buf, ct);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
   }
   return buf;
 }
@@ -524,6 +538,8 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
       ERR(GRN_INVALID_ARGUMENT, "table not found.");
     }
     print_return_code(ctx, buf, ct);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 3);
   }
   return buf;
 }
@@ -770,6 +786,8 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
       }
       grn_obj_unlink(ctx, table);
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
   return buf;
 }
@@ -885,6 +903,8 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                path + grn_admin_html_path_len + 1,
                                PATH_MAX - grn_admin_html_path_len - 1);
     grn_bulk_put_from_file(ctx, buf, path);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
   return buf;
 }
@@ -905,6 +925,8 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                 GRN_TEXT_LEN(&vars[1].value));
     grn_view_add(ctx, view, table);
     print_return_code(ctx, buf, grn_get_ctype(&vars[2].value));
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 3);
   }
   return buf;
 }
@@ -920,6 +942,8 @@ proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (nvars == 1) {
     ctx->stat = GRN_CTX_QUITTING;
     print_return_code(ctx, buf, grn_get_ctype(&vars[0].value));
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
 
   return buf;
@@ -937,6 +961,8 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_gctx.stat = GRN_CTX_QUIT;
     ctx->stat = GRN_CTX_QUITTING;
     print_return_code(ctx, buf, grn_get_ctype(&vars[0].value));
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
 
   return buf;
@@ -964,6 +990,8 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     } else {
       ERR(GRN_INVALID_ARGUMENT, "clear object not found");
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
 
   print_return_code(ctx, buf, grn_get_ctype(&vars[1].value));
@@ -995,6 +1023,8 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     } else {
       GRN_TEXT_PUTS(ctx, buf, "invalid level");
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
   return buf;
 }
@@ -1016,6 +1046,8 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       GRN_TEXT_PUTS(ctx, buf, "invalid level");
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 3);
   }
   return buf;
 }
@@ -1030,6 +1062,8 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   if (nvars == 1) {
     grn_log_reopen(ctx);
     print_return_code(ctx, buf, grn_get_ctype(&vars[1].value));
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
   return buf;
 }
@@ -1037,7 +1071,8 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 static grn_obj *
 proc_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  /* todo */
+  /* TODO: implement */
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "proc_add is not implemented.");
   return NULL;
 }
 
@@ -1105,6 +1140,8 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       /* todo : error handling */
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
   }
   return outbuf;
 }
@@ -1170,6 +1207,8 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       /* todo : error handling */
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 5);
   }
   return outbuf;
 }
@@ -1205,6 +1244,8 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       ERR(GRN_INVALID_ARGUMENT, "unknown table name");
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 4);
   }
   print_return_code(ctx, outbuf, grn_get_ctype(&vars[2].value));
   return outbuf;
