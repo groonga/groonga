@@ -1061,10 +1061,10 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 1) {
     grn_log_reopen(ctx);
-    print_return_code(ctx, buf, grn_get_ctype(&vars[1].value));
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
+  print_return_code(ctx, buf, grn_get_ctype(&vars[0].value));
   return buf;
 }
 
