@@ -90,6 +90,7 @@ struct _grn_pat_cursor {
 grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
 
 /* private */
+grn_rc grn_pat_truncate(grn_ctx *ctx, grn_pat *pat);
 const char *_grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size);
 grn_id grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id);
 const char *grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size);

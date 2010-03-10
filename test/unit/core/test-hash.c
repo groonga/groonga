@@ -568,3 +568,43 @@ test_add_and_delete(gconstpointer data)
   }
   cut_assert_equal_int(0, GRN_HASH_SIZE(hash));
 }
+
+#define cut_assert_truncate(key) do                                     \
+{                                                                       \
+  const void *_key;                                                     \
+  grn_search_flags flags;                                               \
+                                                                        \
+  _key = (key);                                                         \
+                                                                        \
+  flags = GRN_TABLE_ADD;                                                \
+  cut_assert_lookup(_key, &flags);                                      \
+                                                                        \
+  grn_test_assert(grn_hash_truncate(context, hash));                    \
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,                        \
+                           grn_hash_delete(context,                     \
+                                           hash, _key, key_size, NULL));\
+                                                                        \
+  flags = 0;                                                            \
+  cut_assert_lookup_failed(_key, &flags);                               \
+} while (0)
+
+void
+data_truncate(void)
+{
+  add_variable_key_size_test_data();
+}
+
+void
+test_truncate(gconstpointer data)
+{
+  const grn_test_data *test_data = data;
+
+  if (test_data->set_parameters)
+    test_data->set_parameters();
+
+  cut_assert_create_hash();
+
+  if (grn_test_hash_factory_get_flags(factory) & GRN_OBJ_KEY_VAR_SIZE)
+    key_size = strlen(test_data->key);
+  cut_assert_truncate(test_data->key);
+}

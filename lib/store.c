@@ -542,7 +542,8 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         while (SEGMENTS_AT(ja, seg)) {
           if (++seg >= JA_N_DSEGMENTS) {
             grn_io_unlock(ja->io);
-            return GRN_NO_MEMORY_AVAILABLE;
+            GRN_LOG(ctx, GRN_LOG_CRIT, "ja full. seg=%d.", seg);
+            return GRN_NOT_ENOUGH_SPACE;
           }
         }
         SEGMENTS_SEQ_ON(ja, seg);

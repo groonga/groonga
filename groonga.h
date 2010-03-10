@@ -652,6 +652,8 @@ GRN_API grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
  * @table: 対象table
  *
  * tableの全レコードを一括して削除する。
+ * 注意: multithread環境では他のthreadのアクセスによって
+ *       存在しないアドレスへアクセスし、SIGSEGVが発生する可能性がある。
  **/
 GRN_API grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 

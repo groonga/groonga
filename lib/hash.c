@@ -185,14 +185,24 @@ io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   return GRN_SUCCESS;
 }
 
+inline static grn_array *
+_grn_array_create(grn_ctx *ctx, grn_array *array,
+                  const char *path, uint32_t value_size, uint32_t flags)
+{
+  if (!((flags & GRN_ARRAY_TINY) ?
+        tiny_array_init(ctx, array, path, value_size, flags) :
+        io_array_init(ctx, array, path, value_size, flags))) {
+    return array;
+  }
+  return NULL;
+}
+
 grn_array *
 grn_array_create(grn_ctx *ctx, const char *path, uint32_t value_size, uint32_t flags)
 {
   grn_array *array;
   if (ctx && (array = GRN_MALLOC(sizeof(grn_array)))) {
-    if (!((flags & GRN_ARRAY_TINY) ?
-          tiny_array_init(ctx, array, path, value_size, flags) :
-          io_array_init(ctx, array, path, value_size, flags))) {
+    if (_grn_array_create(ctx, array, path, value_size, flags)) {
       return array;
     }
     GRN_FREE(array);
@@ -259,6 +269,33 @@ grn_array_remove(grn_ctx *ctx, const char *path)
 {
   if (!ctx || !path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(ctx, path);
+}
+
+grn_rc
+grn_array_truncate(grn_ctx *ctx, grn_array *array)
+{
+  grn_rc rc;
+  char *path;
+  uint32_t value_size, flags;
+
+  if ((path = (char *)grn_io_path(array->io))) {
+    if (!(path = GRN_STRDUP(path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  }
+  value_size = array->value_size;
+  flags = array->obj.header.flags;
+
+  if ((rc = grn_io_close(ctx, array->io))) { return rc; }
+  if ((rc = grn_io_remove(ctx, path))) { return rc; }
+  if (!_grn_array_create(ctx, array, path, value_size, flags)) {
+    array->io = NULL;
+    return GRN_UNKNOWN_ERROR;
+  }
+  if (path) { GRN_FREE(path); }
+
+  return GRN_SUCCESS;
 }
 
 int
@@ -863,22 +900,33 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
   return GRN_SUCCESS;
 }
 
+inline static grn_hash *
+_grn_hash_create(grn_ctx *ctx, grn_hash *hash, const char *path,
+                 uint32_t key_size, uint32_t value_size, uint32_t flags)
+{
+  grn_encoding encoding = ctx->encoding;
+  if (!((flags & GRN_HASH_TINY) ?
+        tiny_hash_init(hash, ctx, path, key_size, value_size, flags, encoding) :
+        io_hash_init(hash, ctx, path, key_size, value_size, flags, encoding, 0))) {
+    return hash;
+  }
+  return NULL;
+}
+
 grn_hash *
 grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t value_size,
                 uint32_t flags)
 {
   grn_hash *hash;
-  grn_encoding encoding = ctx->encoding;
   if (key_size > GRN_HASH_MAX_KEY_SIZE) { return NULL; }
-  if ((hash = GRN_MALLOC(sizeof(grn_hash)))) {
-    if (!((flags & GRN_HASH_TINY) ?
-          tiny_hash_init(hash, ctx, path, key_size, value_size, flags, encoding) :
-          io_hash_init(hash, ctx, path, key_size, value_size, flags, encoding, 0))) {
-      return hash;
-    }
-    GRN_FREE(hash);
+  if (!(hash = GRN_MALLOC(sizeof(grn_hash)))) {
+    return NULL;
   }
-  return NULL;
+  if (!_grn_hash_create(ctx, hash, path, key_size, value_size, flags)) {
+    GRN_FREE(hash);
+    return NULL;
+  }
+  return hash;
 }
 
 grn_hash *
@@ -966,6 +1014,34 @@ grn_hash_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(ctx, path);
+}
+
+grn_rc
+grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
+{
+  grn_rc rc;
+  char *path;
+  uint32_t key_size, value_size, flags;
+
+  if ((path = (char *)grn_io_path(hash->io))) {
+    if (!(path = GRN_STRDUP(path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  }
+  key_size = hash->key_size;
+  value_size = hash->value_size;
+  flags = hash->obj.header.flags;
+
+  if ((rc = grn_io_close(ctx, hash->io))) { return rc; }
+  if ((rc = grn_io_remove(ctx, path))) { return rc; }
+  if (!_grn_hash_create(ctx, hash, path, key_size, value_size, flags)) {
+    hash->io = NULL;
+    return GRN_UNKNOWN_ERROR;
+  }
+  if (path) { GRN_FREE(path); }
+
+  return GRN_SUCCESS;
 }
 
 grn_rc

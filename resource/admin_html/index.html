@@ -424,12 +424,13 @@ GroongaAdmin = {
           dataType: 'json',
           success: function(d) {
             var idx;
-            $.each(d[0], function(i, val) {
+            var b = d[1];
+            $.each(b[0], function(i, val) {
               if (val[0] == 'name') { idx = i; }
             });
             if (idx) {
-              d.shift();
-              $.each(d, function(i, val) {
+              b.shift();
+              $.each(b, function(i, val) {
                 cs.append($('<option />').val(val[idx]).text(val[idx]));
               });
             }
@@ -528,7 +529,9 @@ GroongaAdmin = {
                       })
           )
         )
-        $.each(d, function(i, val) {
+        var b = d.shift();
+        b.shift();
+        $.each(b, function(i, val) {
           var table_name = val[1];
           tl.append(
             $('<li />').append(
@@ -559,12 +562,9 @@ GroongaAdmin = {
       data: {},
       dataType: 'json',
       success: function(d) {
-        var table = $(GroongaAdmin.create_table_element(d));
+        var b = d[1];
+        var table = $(GroongaAdmin.create_table_element(b));
         $('#database-tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
-        table.find('tr').each(function() {
-          var flags_td = $(this).find('td:eq(3)');
-          flags_td.text(flags_td.text());
-        });
       }
     });
   },
@@ -673,15 +673,12 @@ GroongaAdmin = {
       data: {'table': table_name},
       dataType: 'json',
       success: function(d) {
-        var table = $(GroongaAdmin.create_table_element(d));
+        var b = d[1];
+        var table = $(GroongaAdmin.create_table_element(b));
         $('#table-tab-columnlist')
           .empty()
           .append($('<h1/>').text('カラム一覧: ' + table_name))
           .append(table);
-        table.find('tr').each(function() {
-          var flags_td = $(this).find('td:eq(4)');
-          flags_td.text(flags_td.text());
-        });
       }
     });
   },

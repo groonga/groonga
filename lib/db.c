@@ -1368,7 +1368,17 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (table) {
-    rc = GRN_SUCCESS;
+    switch (table->header.type) {
+    case GRN_TABLE_PAT_KEY :
+      rc = grn_pat_truncate(ctx, (grn_pat *)table);
+      break;
+    case GRN_TABLE_HASH_KEY :
+      rc = grn_hash_truncate(ctx, (grn_hash *)table);
+      break;
+    case GRN_TABLE_NO_KEY :
+      rc = grn_array_truncate(ctx, (grn_array *)table);
+      break;
+    }
   }
   GRN_API_RETURN(rc);
 }

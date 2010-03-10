@@ -381,3 +381,27 @@ test_create_with_invalid_name(gpointer data)
                         "0-9, and contains only 0-9, A-Z, a-z, or _",
                         &context);
 }
+
+void
+test_array_truncate(void)
+{
+  grn_obj *table;
+  grn_id record_id;
+  gchar value[] = "sample value";
+  grn_obj *record_value;
+  grn_obj *retrieved_record_value;
+  gchar *value_type_name = "value_type";
+  grn_obj *value_type;
+
+  value_type = grn_type_create(&context,
+                               value_type_name, strlen(value_type_name),
+                               0, sizeof(value));
+  table = grn_table_create(&context, NULL, 0, NULL,
+                           GRN_OBJ_TABLE_NO_KEY,
+                           NULL, value_type);
+  record_id = grn_table_add(&context, table, NULL, 0, NULL);
+
+  grn_test_assert(grn_table_truncate(&context, table));
+
+  /* TODO: check deleted record existence */
+}
