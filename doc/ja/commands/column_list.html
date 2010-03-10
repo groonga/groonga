@@ -71,14 +71,37 @@
 <dt><tt class="docutils literal"><span class="pre">table</span></tt></dt>
 <dd>カラム情報を出力するテーブルの名前を指定します。</dd>
 <dt><tt class="docutils literal"><span class="pre">output_type</span></tt></dt>
-<dd>出力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id9" id="id5">[1]</a></dd>
+<dd>出力形式を、json,tsv,xmlのいずれかで指定します。</dd>
 </dl>
 </div>
-<div class="section" id="id6">
-<h2>3.2.3.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
-<p>リターンコード <a class="footnote-reference" href="#id10" id="id7">[2]</a></p>
+<div class="section" id="id5">
+<h2>3.2.3.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>以下のようなjson形式で値が返却されます。 <a class="footnote-reference" href="#id8" id="id6">[1]</a></p>
+<div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間],]
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">リターンコード</span></tt></p>
 <blockquote>
-grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す文字列が返されます。</blockquote>
+grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
+文字列が返されます。</blockquote>
+<p><tt class="docutils literal"><span class="pre">処理開始時間</span></tt></p>
+<blockquote>
+処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">処理時間</span></tt></p>
+<blockquote>
+処理にかかった秒数を返します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">リスト</span></tt></p>
+<blockquote>
+<p>テーブル名一覧が以下の形式で返却されます。</p>
+<blockquote>
+[[検索件数], [[カラム名1,カラム型1],..], 検索結果1,..]</blockquote>
+<p><tt class="docutils literal"><span class="pre">検索件数</span></tt></p>
+<blockquote>
+検索件数が出力されます。</blockquote>
+<p><tt class="docutils literal"><span class="pre">カラム名n</span></tt></p>
+<blockquote>
+<p>output_columnsに指定された条件に従って、対象となるカラム名が出力されます。
+カラム名ごとに格納されている情報は、以下のとおりです。</p>
 <p><tt class="docutils literal"><span class="pre">id</span></tt></p>
 <blockquote>
 カラムオブジェクトに割り当てられたID</blockquote>
@@ -97,24 +120,33 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 <p><tt class="docutils literal"><span class="pre">domain</span></tt></p>
 <blockquote>
 カラムの値の属する型</blockquote>
+<p><tt class="docutils literal"><span class="pre">range</span></tt></p>
+<blockquote>
+テーブルのkeyの型</blockquote>
+<p><tt class="docutils literal"><span class="pre">source</span></tt></p>
+<blockquote>
+インデックスカラムのとき、インデックス対象カラム名の配列</blockquote>
+</blockquote>
+<p><tt class="docutils literal"><span class="pre">カラム型n</span></tt></p>
+<blockquote>
+output_columnsに指定された条件に従って、対象となるカラム型が出力されます。</blockquote>
+<p><tt class="docutils literal"><span class="pre">テーブル情報n</span></tt></p>
+<blockquote>
+テーブル情報が出力されます。</blockquote>
+</blockquote>
 </div>
-<div class="section" id="id8">
-<h2>3.2.3.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h2>3.2.3.6. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>column_list Entry --output_type json
-[[0],[[&quot;id&quot;,&quot;name&quot;,&quot;path&quot;,&quot;type&quot;,&quot;flags&quot;,&quot;domain&quot;],[258,&quot;body&quot;,&quot;/tmp/hoge.0000102&quot;,&quot;var&quot;,49152,256]]]
+
+[[0,1268214107.89182,6.5e-05],[[[&quot;id&quot;, &quot;UInt32&quot;],[&quot;name&quot;,&quot;ShortText&quot;],[&quot;path&quot;,&quot;ShortText&quot;],[&quot;type&quot;,&quot;ShortText&quot;],[&quot;flags&quot;,&quot;ShortText&quot;],[&quot;domain&quot;, &quot;ShortText&quot;],[&quot;range&quot;, &quot;ShortText&quot;],[&quot;source&quot;,&quot;ShortText&quot;]],[258,&quot;Entry.body&quot;,&quot;test.db.0000102&quot;,&quot;var&quot;,&quot;COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT&quot;,&quot;Entry&quot;,&quot;ShortText&quot;,[]]]]
 </pre></div>
 </div>
 <p class="rubric">脚注</p>
-<table class="docutils footnote" frame="void" id="id9" rules="none">
+<table class="docutils footnote" frame="void" id="id8" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td>tsv,xml出力はv1.0でサポートされます。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id10" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td>リターンコード出力はv1.0でサポートされます。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id6">[1]</a></td><td>tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。</td></tr>
 </tbody>
 </table>
 </div>
@@ -128,13 +160,13 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">3.2.3. column_list</a><ul>
+<li><a class="reference external" href="#">3.2.3. column_list</a><ul>
 <li><a class="reference external" href="#id1">3.2.3.1. 名前</a></li>
 <li><a class="reference external" href="#id2">3.2.3.2. 書式</a></li>
 <li><a class="reference external" href="#id3">3.2.3.3. 説明</a></li>
 <li><a class="reference external" href="#id4">3.2.3.4. 引数</a></li>
-<li><a class="reference external" href="#id6">3.2.3.5. 返値</a></li>
-<li><a class="reference external" href="#id8">3.2.3.6. 例</a></li>
+<li><a class="reference external" href="#id5">3.2.3.5. 返値</a></li>
+<li><a class="reference external" href="#id7">3.2.3.6. 例</a></li>
 </ul>
 </li>
 </ul>
@@ -186,7 +218,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
     </div>
     <div class="footer">
       &copy; Copyright 2009, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
     </div>
   </body>
 </html>
