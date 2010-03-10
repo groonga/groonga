@@ -25,6 +25,8 @@
 extern "C" {
 #endif
 
+#define GRN_ID_NOTFOUND (GRN_ID_MAX + 1)
+
 #define GRN_DB_DELIMITER            '.'
 #define GRN_DB_PSEUDO_COLUMN_PREFIX '_'
 

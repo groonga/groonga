@@ -3684,6 +3684,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
             }
             id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
                       : grn_table_get_by_key(ctx, table, p_key);
+            if (!id) { id = GRN_ID_NOTFOUND; }
             GRN_OBJ_FIN(ctx, &key);
           } else {
             grn_obj record_id;
@@ -9597,7 +9598,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       sis[i++] = si;
       {
         uint32_t sid;
-        int32_t weight;
         grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
         for (; p < pe; p++) {
           if ((*p)->header.type == GRN_EXPR) {
@@ -9935,10 +9935,10 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                       memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
                       if (pi.rid) {
                         res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
                       }
                       done++;
                     }
+                    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
                     GRN_OBJ_FIN(ctx, &dest);
                     break;
                   case GRN_ACCESSOR_GET_KEY :
@@ -9948,10 +9948,10 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                                                   GRN_BULK_HEAD(&dest),
                                                   GRN_BULK_VSIZE(&dest)))) {
                         res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
                       }
                       done++;
                     }
+                    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
                     GRN_OBJ_FIN(ctx, &dest);
                     break;
                   }
@@ -10029,7 +10029,6 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       }
     }
   }
-exit :
   GRN_API_RETURN(res);
 }
 
