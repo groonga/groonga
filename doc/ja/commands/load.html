@@ -99,20 +99,30 @@
 出力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id10" id="id6">[1]</a></blockquote>
 <p>返値
 &#8212;</p>
-<p>リターンコード <a class="footnote-reference" href="#id11" id="id7">[2]</a></p>
+<p>以下のようなjson形式で値が返却されます。 <a class="footnote-reference" href="#id10" id="id7">[1]</a></p>
+<div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間], 登録件数]
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">リターンコード</span></tt></p>
 <blockquote>
-grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す文字列が返されます。</blockquote>
-<dl class="docutils">
-<dt>件数</dt>
-<dd>テーブルに登録されたレコードの件数が返されます。</dd>
-</dl>
+grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
+文字列が返されます。</blockquote>
+<p><tt class="docutils literal"><span class="pre">処理開始時間</span></tt></p>
+<blockquote>
+処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">処理時間</span></tt></p>
+<blockquote>
+処理にかかった秒数を返します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">登録件数</span></tt></p>
+<blockquote>
+テーブルに登録されたレコードの件数が返されます。</blockquote>
 </div>
 <div class="section" id="id8">
 <h2>3.2.7.5. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryにレコードを登録します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --output_type json --values [{\&quot;_key\&quot;:\&quot;abandon\&quot;,\&quot;body\&quot;:\&quot;放棄する\&quot;}]
 
-[[0],1]
+[[0,1268211658.00739,0.000361],1]
 </pre></div>
 </div>
 <p>標準入力からvaluesの値を与えます。:</p>
@@ -121,24 +131,24 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 {&quot;_key&quot;: &quot;abbreviate&quot;, &quot;body&quot;: &quot;短縮する&quot;}
 ]
 
-[[0],1]
+[[0,1268211658.00739,0.000361],1]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id9">
 <h2>3.2.7.6. 関連項目<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
-<p><tt class="xref docutils literal"><span class="pre">expr</span></tt></p>
+<p><a class="reference external" href="../expr.html"><em>grn式 (grn_expr)</em></a></p>
 <p class="rubric">脚注</p>
 <table class="docutils footnote" frame="void" id="id10" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> tsv,xml入力はv1.0でサポートされます。</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id7">[1]</a></td><td>リターンコード出力はv1.0でサポートされます。</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id11" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td>リターンコード出力はv1.0でサポートされます。</td></tr>
+<tr><td class="label">[2]</td><td>tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。</td></tr>
 </tbody>
 </table>
 </div>
@@ -152,7 +162,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">3.2.7. load</a><ul>
+<li><a class="reference external" href="#">3.2.7. load</a><ul>
 <li><a class="reference external" href="#id1">3.2.7.1. 名前</a></li>
 <li><a class="reference external" href="#id2">3.2.7.2. 書式</a></li>
 <li><a class="reference external" href="#id3">3.2.7.3. 説明</a></li>
@@ -210,7 +220,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
     </div>
     <div class="footer">
       &copy; Copyright 2009, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
     </div>
   </body>
 </html>

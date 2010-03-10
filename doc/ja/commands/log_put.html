@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.6 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.10. quit" href="quit.html" />
+    <link rel="next" title="3.2.10. log_reopen" href="log_reopen.html" />
     <link rel="prev" title="3.2.8. log_level" href="log_level.html" /> 
   </head>
   <body>
@@ -32,7 +32,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="quit.html" title="3.2.10. quit"
+          <a href="log_reopen.html" title="3.2.10. log_reopen"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="log_level.html" title="3.2.8. log_level"
@@ -75,32 +75,36 @@
 出力する文字列を指定します。</blockquote>
 <p><tt class="docutils literal"><span class="pre">output_type</span></tt></p>
 <blockquote>
-出力形式を、json,tsv,xmlのいずれかで指定します。 <a class="footnote-reference" href="#id9" id="id5">[1]</a></blockquote>
+出力形式を、json,tsv,xmlのいずれかで指定します。</blockquote>
 </div>
-<div class="section" id="id6">
-<h2>3.2.9.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
-<p>リターンコード <a class="footnote-reference" href="#id10" id="id7">[2]</a></p>
+<div class="section" id="id5">
+<h2>3.2.9.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>以下のようなjson形式で値が返却されます。</p>
+<div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間]]
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">リターンコード</span></tt></p>
 <blockquote>
 grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
 文字列が返されます。</blockquote>
+<p><tt class="docutils literal"><span class="pre">処理開始時間</span></tt></p>
+<blockquote>
+処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">処理時間</span></tt></p>
+<blockquote>
+処理にかかった秒数を返します。</blockquote>
 </div>
-<div class="section" id="id8">
-<h2>3.2.9.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none"><div class="highlight"><pre>log_put 4 hogehoge
-[[0]]
+<div class="section" id="id6">
+<h2>3.2.9.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>log_put ERROR hogehoge
+[[0,1268213004.27459,0.000111]]
 </pre></div>
 </div>
 <p class="rubric">脚注</p>
-<table class="docutils footnote" frame="void" id="id9" rules="none">
+<table class="docutils footnote" frame="void" id="id7" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td>tsv,xml出力はv1.0でサポートされます。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id10" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[2]</a></td><td>リターンコード出力はv1.0でサポートされます。</td></tr>
+<tr><td class="label">[1]</td><td>tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。</td></tr>
 </tbody>
 </table>
 </div>
@@ -114,13 +118,13 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">3.2.9. log_put</a><ul>
+<li><a class="reference external" href="#">3.2.9. log_put</a><ul>
 <li><a class="reference external" href="#id1">3.2.9.1. 名前</a></li>
 <li><a class="reference external" href="#id2">3.2.9.2. 書式</a></li>
 <li><a class="reference external" href="#id3">3.2.9.3. 説明</a></li>
 <li><a class="reference external" href="#id4">3.2.9.4. 引数</a></li>
-<li><a class="reference external" href="#id6">3.2.9.5. 返値</a></li>
-<li><a class="reference external" href="#id8">3.2.9.6. 例</a></li>
+<li><a class="reference external" href="#id5">3.2.9.5. 返値</a></li>
+<li><a class="reference external" href="#id6">3.2.9.6. 例</a></li>
 </ul>
 </li>
 </ul>
@@ -129,8 +133,8 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
             <p class="topless"><a href="log_level.html"
                                   title="previous chapter">3.2.8. log_level</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="quit.html"
-                                  title="next chapter">3.2.10. quit</a></p>
+            <p class="topless"><a href="log_reopen.html"
+                                  title="next chapter">3.2.10. log_reopen</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/commands/log_put.txt"
@@ -160,7 +164,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="quit.html" title="3.2.10. quit"
+          <a href="log_reopen.html" title="3.2.10. log_reopen"
              >next</a> |</li>
         <li class="right" >
           <a href="log_level.html" title="3.2.8. log_level"
@@ -172,7 +176,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
     </div>
     <div class="footer">
       &copy; Copyright 2009, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
     </div>
   </body>
 </html>
