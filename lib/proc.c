@@ -982,7 +982,7 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_obj *buf = args[0];
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  if (nvars == 1) {
+  if (nvars == 2) {
     char *p;
     if (GRN_TEXT_LEN(&vars[0].value) &&
         (p = strchr(slev, GRN_TEXT_VALUE(&vars[0].value)[0]))) {
@@ -1006,7 +1006,7 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *buf = args[0];
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  if (nvars == 2) {
+  if (nvars == 3) {
     char *p;
     if (GRN_TEXT_LEN(&vars[0].value) &&
         (p = strchr(slev, GRN_TEXT_VALUE(&vars[0].value)[0]))) {
@@ -2128,11 +2128,13 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_PROC("clearlock", proc_clearlock, 2, vars);
 
   DEF_VAR(vars[0], "level");
-  DEF_PROC("log_level", proc_log_level, 1, vars);
+  DEF_VAR(vars[1], "output_type");
+  DEF_PROC("log_level", proc_log_level, 2, vars);
 
   DEF_VAR(vars[0], "level");
   DEF_VAR(vars[1], "message");
-  DEF_PROC("log_put", proc_log_put, 2, vars);
+  DEF_VAR(vars[2], "output_type");
+  DEF_PROC("log_put", proc_log_put, 3, vars);
 
   DEF_VAR(vars[0], "output_type");
   DEF_PROC("log_reopen", proc_log_reopen, 1, vars);
