@@ -21,6 +21,8 @@ FreeBSD)
 	;;
 esac
 
+# generate version number.
+./version-gen.sh
 
 # libtoolize
 echo "Searching libtoolize..."
