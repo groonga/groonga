@@ -1,5 +1,4 @@
 #!/bin/sh
-GRN_VERSION_H=version.h
 GRN_VERSION_SH=version.sh
 
 if test -f version
@@ -20,6 +19,5 @@ else
 fi
 
 test "$GRN_VN_OLD" = "$GRN_VN" || {
-	echo "#define GROONGA_VERSION \"$GRN_VN\"" >$GRN_VERSION_H
 	echo "GROONGA_VERSION=$GRN_VN" >$GRN_VERSION_SH
 }

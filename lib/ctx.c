@@ -21,7 +21,6 @@
 #include "ql.h"
 #include "pat.h"
 #include "snip.h"
-#include "version.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
