@@ -501,11 +501,10 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   flags = pat->obj.header.flags;
 
   if ((rc = grn_io_close(ctx, pat->io))) { goto exit; }
+  pat->io = NULL;
   if ((rc = grn_io_remove(ctx, path))) { goto exit; }
   if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {
-    pat->io = NULL;
     rc = GRN_UNKNOWN_ERROR;
-    goto exit;
   }
 exit:
   if (path) { GRN_FREE(path); }
