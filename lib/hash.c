@@ -275,10 +275,10 @@ grn_rc
 grn_array_truncate(grn_ctx *ctx, grn_array *array)
 {
   grn_rc rc;
-  char *path;
+  char *path = NULL;
   uint32_t value_size, flags;
 
-  if ((path = (char *)grn_io_path(array->io))) {
+  if (IO_ARRAYP(array) && (path = (char *)grn_io_path(array->io))) {
     if (!(path = GRN_STRDUP(path))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
       return GRN_NO_MEMORY_AVAILABLE;
@@ -287,12 +287,15 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   value_size = array->value_size;
   flags = array->obj.header.flags;
 
-  if ((rc = grn_io_close(ctx, array->io))) { goto exit; }
-  if ((rc = grn_io_remove(ctx, path))) { goto exit; }
-  if (!_grn_array_create(ctx, array, path, value_size, flags)) {
+  if (IO_ARRAYP(array)) {
+    if ((rc = grn_io_close(ctx, array->io))) { goto exit; }
     array->io = NULL;
+    if ((rc = grn_io_remove(ctx, path))) { goto exit; }
+  } else {
+    rc = GRN_SUCCESS;
+  }
+  if (!_grn_array_create(ctx, array, path, value_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
-    goto exit;
   }
 exit:
   if (path) { GRN_FREE(path); }
@@ -1036,12 +1039,13 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
 
   if (IO_HASHP(hash)) {
     if ((rc = grn_io_close(ctx, hash->io))) { goto exit; }
+    hash->io = NULL;
     if ((rc = grn_io_remove(ctx, path))) { goto exit; }
+  } else {
+    rc = GRN_SUCCESS;
   }
   if (!_grn_hash_create(ctx, hash, path, key_size, value_size, flags)) {
-    hash->io = NULL;
     rc = GRN_UNKNOWN_ERROR;
-    goto exit;
   }
 exit:
   if (path) { GRN_FREE(path); }

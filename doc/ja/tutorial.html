@@ -59,7 +59,7 @@
 </ul>
 <p><a class="reference external" href="http://groonga.org/download">http://groonga.org/download</a>/よりtar.gzファイルを取得し、
 インストール先の環境にファイルを展開して、</p>
-<div class="highlight-none"><div class="highlight"><pre>./configure; make; sudo make install
+<div class="highlight-none"><div class="highlight"><pre>./configure &amp;&amp; make &amp;&amp; sudo make install
 </pre></div>
 </div>
 <p>のように実行することでインストールできます。</p>
@@ -99,7 +99,7 @@
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga /var/tmp/hoge.db
 &gt; table_list
-[[&quot;id&quot;,&quot;name&quot;,&quot;path&quot;,&quot;flags&quot;,&quot;domain&quot;]]
+[[0,1268293926.38794,0.00033],[[[&quot;id&quot;, &quot;UInt32&quot;],[&quot;name&quot;,&quot;ShortText&quot;],[&quot;path&quot;,&quot;ShortText&quot;],[&quot;flags&quot;,&quot;ShortText&quot;],[&quot;domain&quot;, &quot;ShortText&quot;],[&quot;range&quot;,&quot;ShortText&quot;]]]]
 &gt; ctrl-d
 %
 </pre></div>
@@ -113,8 +113,8 @@
 </div>
 <p>既存のデーターベースのフルパス名をDBパス名に指定します。
 指定したポート番号でTCPサービスを開始します。
-(ポート番号を省略した場合は10041が使用されます)
-当該ポートに対して、groongaの専用プロトコルに加えて、HTTPやmemcachedバイナリプロトコルが使用できます。</p>
+(ポート番号を省略した場合は10041が使用されます)</p>
+<p>オプションを指定しない場合は、当該ポートに対して、groongaの専用プロトコルで通信することができます。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -d /var/tmp/hoge.db
 %
@@ -133,7 +133,7 @@
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -c
 &gt; table_list
-[[&quot;id&quot;,&quot;name&quot;,&quot;path&quot;,&quot;flags&quot;,&quot;domain&quot;]]
+[[0,1268294045.30181,0.00032],[[[&quot;id&quot;, &quot;UInt32&quot;],[&quot;name&quot;,&quot;ShortText&quot;],[&quot;path&quot;,&quot;ShortText&quot;],[&quot;flags&quot;,&quot;ShortText&quot;],[&quot;domain&quot;, &quot;ShortText&quot;],[&quot;range&quot;,&quot;ShortText&quot;]]]]
 &gt; ctrl-d
 %
 </pre></div>
@@ -164,14 +164,10 @@
 <dd>DBにテーブルを追加します。</dd>
 <dt>column_create</dt>
 <dd>テーブルにカラムを追加します。</dd>
-<dt>view_add</dt>
-<dd>VIEW型のテーブルに要素となるテーブルを追加します。</dd>
 <dt>select</dt>
 <dd>テーブルに含まれるレコードを検索して表示します。</dd>
 <dt>load</dt>
 <dd>テーブルにレコードを挿入します。</dd>
-<dt>define_selector</dt>
-<dd>検索条件をカスタマイズした新たな検索コマンドを定義します。</dd>
 </dl>
 </blockquote>
 </div>
@@ -181,20 +177,20 @@
 <p><a class="reference external" href="commands/table_create.html"><em>table_create</em></a></p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create Blog 0 ShortText
-true
+[[0,1268294088.70744,0.098794]]
 &gt;
 </pre></div>
 </div>
 <p>ShortText型の主キー値を持つ、&#8217;Blog&#8217;という名前のテーブルを作成しました。</p>
 <p>全文検索を行う場合は、語彙表テーブルを作成します。</p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; table_create Terms 129 ShortText Void TokenBigram
-true
+<div class="highlight-none"><div class="highlight"><pre>&gt; table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText Void TokenBigram
+[[0,1268294159.76784,0.049841]]
 &gt;
 </pre></div>
 </div>
 <p>ShortText型の主キー値を持つ、&#8217;Terms&#8217;という名前のテーブルを作成しました。</p>
-<p>実行例のflagsの129という値は、主キー値をパトリシア木を使用し、各語彙を正規化して登録することを示しています。</p>
+<p>実行例のflagsのTABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木を使用し、各語彙を正規化して登録することを示しています。</p>
 <p>語彙表として使用するテーブルは、対象の文書をトークナイズする方式を、default_tokenizerパラメータで与えます。
 この例ではバイグラムを指定しています。組み込みトークナイザとして以下が選べます。</p>
 <blockquote>
@@ -205,7 +201,7 @@ true
 <dd>空白で区切った単位を語彙とします。</dd>
 <dt>TokenUnigram</dt>
 <dd>1文字ずつ区切った単位を語彙とします。</dd>
-<dt>TokenBigram:</dt>
+<dt>TokenBigram</dt>
 <dd>文字バイグラムを語彙とします。</dd>
 <dt>TokenTrigram</dt>
 <dd>文字トライグラムを語彙とします。</dd>
@@ -218,21 +214,21 @@ true
 <p><a class="reference external" href="commands/column_create.html"><em>column_create</em></a></p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; column_create Blog title 0 ShortText
-true
+[[0,1268294203.38404,0.056593]]
 &gt;
 </pre></div>
 </div>
 <p>ShortText型の値を持つ、&#8217;title&#8217;という名前のカラムを&#8217;Blog&#8217;テーブルに追加しました。</p>
 <p>このカラムに登録した文字列に対して全文検索を行う場合は、語彙表テーブルに対応するインデックス型のカラムを作成します。</p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; column_create Terms blog_title 514 Blog title
-true
+<div class="highlight-none"><div class="highlight"><pre>&gt; column_create Terms blog_title COLUMN_INDEX|WITH_POSITION Blog title
+[[0,1268294247.01333,0.129917]]
 &gt;
 </pre></div>
 </div>
 <p>Blogテーブルのtitleカラムを検索対象とする、&#8217;blog_title&#8217;という名前のインデックス型カラムをTermsテーブルに作成しました。</p>
 <p>インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsourceに指定します。</p>
-<p>実行例のflagsの514という値は、位置情報を格納するインデックス型のカラムであることを示しています。</p>
+<p>実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、位置情報を格納するインデックス型のカラムであることを示しています。</p>
 </div>
 <div class="section" id="id11">
 <h4>2.2.2.4. データのロード<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>

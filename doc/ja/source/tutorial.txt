@@ -16,7 +16,7 @@
 http://groonga.org/download/よりtar.gzファイルを取得し、
 インストール先の環境にファイルを展開して、 ::
 
- ./configure; make; sudo make install
+ ./configure && make && sudo make install
 
 のように実行することでインストールできます。
 
@@ -64,7 +64,7 @@ DBの操作
 
   % groonga /var/tmp/hoge.db
   > table_list
-  [["id","name","path","flags","domain"]]
+  [[0,1268293926.38794,0.00033],[[["id", "UInt32"],["name","ShortText"],["path","ShortText"],["flags","ShortText"],["domain", "ShortText"],["range","ShortText"]]]]
   > ctrl-d
   %
 
@@ -78,7 +78,8 @@ groongaサーバの起動
 既存のデーターベースのフルパス名をDBパス名に指定します。
 指定したポート番号でTCPサービスを開始します。
 (ポート番号を省略した場合は10041が使用されます)
-当該ポートに対して、groongaの専用プロトコルに加えて、HTTPやmemcachedバイナリプロトコルが使用できます。
+
+オプションを指定しない場合は、当該ポートに対して、groongaの専用プロトコルで通信することができます。
 
 実行例::
 
@@ -100,7 +101,7 @@ groongaサーバへの接続
 
   % groonga -c
   > table_list
-  [["id","name","path","flags","domain"]]
+  [[0,1268294045.30181,0.00032],[[["id", "UInt32"],["name","ShortText"],["path","ShortText"],["flags","ShortText"],["domain", "ShortText"],["range","ShortText"]]]]
   > ctrl-d
   %
 
@@ -129,14 +130,10 @@ groonga実行ファイルやgroongaサーバを介して様々なコマンドを
   DBにテーブルを追加します。
  column_create
   テーブルにカラムを追加します。
- view_add
-  VIEW型のテーブルに要素となるテーブルを追加します。
  select
   テーブルに含まれるレコードを検索して表示します。
  load
   テーブルにレコードを挿入します。
- define_selector
-  検索条件をカスタマイズした新たな検索コマンドを定義します。
 
 テーブルの作成
 """"""""""""""
@@ -148,7 +145,7 @@ table_createコマンドを使用してテーブルを作成します。
 実行例::
 
   > table_create Blog 0 ShortText
-  true
+  [[0,1268294088.70744,0.098794]]
   >
 
 ShortText型の主キー値を持つ、'Blog'という名前のテーブルを作成しました。
@@ -157,13 +154,13 @@ ShortText型の主キー値を持つ、'Blog'という名前のテーブルを�
 
 実行例::
 
-  > table_create Terms 129 ShortText Void TokenBigram
-  true
+  > table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText Void TokenBigram
+  [[0,1268294159.76784,0.049841]]
   >
 
 ShortText型の主キー値を持つ、'Terms'という名前のテーブルを作成しました。
 
-実行例のflagsの129という値は、主キー値をパトリシア木を使用し、各語彙を正規化して登録することを示しています。
+実行例のflagsのTABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木を使用し、各語彙を正規化して登録することを示しています。
 
 語彙表として使用するテーブルは、対象の文書をトークナイズする方式を、default_tokenizerパラメータで与えます。
 この例ではバイグラムを指定しています。組み込みトークナイザとして以下が選べます。
@@ -174,7 +171,7 @@ ShortText型の主キー値を持つ、'Terms'という名前のテーブルを�
   空白で区切った単位を語彙とします。
  TokenUnigram
   1文字ずつ区切った単位を語彙とします。
- TokenBigram:
+ TokenBigram
   文字バイグラムを語彙とします。
  TokenTrigram
   文字トライグラムを語彙とします。
@@ -189,7 +186,7 @@ column_createコマンドを使用してカラムを作成します。
 実行例::
 
  > column_create Blog title 0 ShortText
- true
+ [[0,1268294203.38404,0.056593]]
  >
 
 ShortText型の値を持つ、'title'という名前のカラムを'Blog'テーブルに追加しました。
@@ -198,15 +195,15 @@ ShortText型の値を持つ、'title'という名前のカラムを'Blog'テー�
 
 実行例::
 
- > column_create Terms blog_title 514 Blog title
- true
+ > column_create Terms blog_title COLUMN_INDEX|WITH_POSITION Blog title
+ [[0,1268294247.01333,0.129917]]
  >
 
 Blogテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデックス型カラムをTermsテーブルに作成しました。
 
 インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsourceに指定します。
 
-実行例のflagsの514という値は、位置情報を格納するインデックス型のカラムであることを示しています。
+実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、位置情報を格納するインデックス型のカラムであることを示しています。
 
 データのロード
 """"""""""""""

@@ -146,6 +146,16 @@ module HTTPSelectBasicTests
                   :output_columns => "_key *")
   end
 
+  def test_output_columns_nonexistent
+    populate_users
+
+    assert_select([["nonexistent"], ["real_name", "ShortText"]],
+                  [[nil, "Yuto Hayamizu"],
+                   [nil, "Ryo Onodera"]],
+                  :table => "users",
+                  :output_columns => "nonexistent real_name")
+  end
+
   def test_sortby
     create_user_id_table
     records = register_users((0...10).to_a.shuffle)
