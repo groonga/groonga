@@ -47,6 +47,7 @@ dim revision, objwshshell, objexec
 set objwshshell = createobject("wscript.shell")
 set objexec = objwshshell.exec("git describe --abbrev=7 HEAD")
 revision = objexec.stdout.readline
+revision = mid(revision, 2)
 
 sub common_header()
   ts.write "CC = cl.exe" + vbLf
