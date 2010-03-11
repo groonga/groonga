@@ -37,6 +37,7 @@ void test_array_sort(gpointer data);
 void test_nonexistent_column(void);
 void data_create_with_invalid_name(void);
 void test_create_with_invalid_name(gpointer data);
+void test_array_truncate(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
