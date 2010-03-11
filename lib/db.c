@@ -8320,6 +8320,44 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   }                                                                     \
 }
 
+void
+pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
+{
+  grn_str *a = NULL, *b = NULL;
+
+  switch (x->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    a = grn_str_open(ctx, GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x), GRN_STR_NORMALIZE);
+    break;
+  default:
+    break;
+  }
+
+  switch (y->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    b = grn_str_open(ctx, GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y), GRN_STR_NORMALIZE);
+    break;
+  default:
+    break;
+  }
+
+  /* normalized str doesn't contain '\0'. */
+  if (a && b && strstr(a->norm, b->norm)) {
+    GRN_INT32_SET(ctx, res, 1);
+  } else {
+    GRN_INT32_SET(ctx, res, 0);
+  }
+  res->header.type = GRN_BULK;
+  res->header.domain = GRN_DB_INT32;
+
+  if (a) { grn_str_close(ctx, a); }
+  if (b) { grn_str_close(ctx, b); }
+}
+
 grn_rc
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
@@ -8901,7 +8939,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_MATCH :
         {
-          /* todo */
+          grn_obj *x, *y;
+          POP2ALLOC1(x, y, res);
+          pseudo_query_scan(ctx, x, y, res);
         }
         code++;
         break;
