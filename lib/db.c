@@ -1218,45 +1218,94 @@ grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk)
   GRN_API_RETURN(r);
 }
 
+
+static grn_rc
+grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
+{
+  grn_rc rc = GRN_SUCCESS;
+  if (GRN_DB_OBJP(obj)) {
+    grn_obj buf;
+    grn_id range = DB_OBJ(obj)->range;
+    GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+    switch (obj->header.type) {
+    case GRN_COLUMN_VAR_SIZE :
+      rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
+      break;
+    case GRN_COLUMN_FIX_SIZE :
+      grn_bulk_truncate(ctx, &buf, ((grn_ra *)obj)->header->element_size);
+      rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
+      break;
+    }
+    GRN_OBJ_FIN(ctx, &buf);
+  }
+  return rc;
+}
+
+static void
+call_delete_hook(grn_ctx *ctx, grn_obj *table, grn_id rid)
+{
+  if (rid) {
+    grn_hook *hooks = DB_OBJ(table)->hooks[GRN_HOOK_DELETE];
+    if (hooks) {
+      // todo : grn_proc_ctx_open()
+      grn_obj id_, flags_, oldvalue_, value_;
+      grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
+      GRN_UINT32_INIT(&id_, 0);
+      GRN_UINT32_INIT(&flags_, 0);
+      GRN_TEXT_INIT(&oldvalue_, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TEXT_INIT(&value_, 0);
+      // GRN_TEXT_SET_REF(&oldvalue_, key, key_size);
+      GRN_UINT32_SET(ctx, &id_, rid);
+      GRN_UINT32_SET(ctx, &flags_, GRN_OBJ_SET);
+      grn_ctx_push(ctx, &id_);
+      grn_ctx_push(ctx, &oldvalue_);
+      grn_ctx_push(ctx, &value_);
+      grn_ctx_push(ctx, &flags_);
+      while (hooks) {
+        pctx.caller = NULL;
+        pctx.currh = hooks;
+        if (hooks->proc) {
+          hooks->proc->funcs[PROC_INIT](ctx, 1, &table, &pctx.user_data);
+        } else {
+          default_set_value_hook(ctx, 1, &table, &pctx.user_data);
+        }
+        if (ctx->rc) { break; }
+        hooks = hooks->next;
+        pctx.offset++;
+      }
+    }
+  }
+}
+
+static void
+clear_column_values(grn_ctx *ctx, grn_obj *table, grn_id rid)
+{
+  if (rid) {
+    grn_hash *cols;
+    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+        grn_id *key;
+        GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+          grn_obj *col = grn_ctx_at(ctx, *key);
+          if (col) { grn_obj_clear_value(ctx, col, rid); }
+        });
+      }
+      grn_hash_close(ctx, cols);
+    }
+  }
+}
+
 grn_rc
 grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size)
 {
+  grn_id rid = GRN_ID_NIL;
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (table) {
     if (key && key_size) {
-      grn_id id = grn_table_get(ctx, table, key, key_size);
-      if (id) {
-        grn_hook *hooks = DB_OBJ(table)->hooks[GRN_HOOK_DELETE];
-        if (hooks) {
-          // todo : grn_proc_ctx_open()
-          grn_obj id_, flags_, oldvalue_, value_;
-          grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
-          GRN_UINT32_INIT(&id_, 0);
-          GRN_UINT32_INIT(&flags_, 0);
-          GRN_TEXT_INIT(&oldvalue_, GRN_OBJ_DO_SHALLOW_COPY);
-          GRN_TEXT_INIT(&value_, 0);
-          GRN_TEXT_SET_REF(&oldvalue_, key, key_size);
-          GRN_UINT32_SET(ctx, &id_, id);
-          GRN_UINT32_SET(ctx, &flags_, GRN_OBJ_SET);
-          grn_ctx_push(ctx, &id_);
-          grn_ctx_push(ctx, &oldvalue_);
-          grn_ctx_push(ctx, &value_);
-          grn_ctx_push(ctx, &flags_);
-          while (hooks) {
-            pctx.caller = NULL;
-            pctx.currh = hooks;
-            if (hooks->proc) {
-              hooks->proc->funcs[PROC_INIT](ctx, 1, &table, &pctx.user_data);
-            } else {
-              default_set_value_hook(ctx, 1, &table, &pctx.user_data);
-            }
-            if (ctx->rc) { break; }
-            hooks = hooks->next;
-            pctx.offset++;
-          }
-        }
-      }
+      rid = grn_table_get(ctx, table, key, key_size);
+      call_delete_hook(ctx, table, rid);
     }
     switch (table->header.type) {
     case GRN_DB :
@@ -1289,7 +1338,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
       });
       break;
     }
-    /* todo : clear_all_column_values */
+    clear_column_values(ctx, table, rid);
   }
   GRN_API_RETURN(rc);
 }
@@ -1298,19 +1347,24 @@ grn_rc
 _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                        grn_table_delete_optarg *optarg)
 {
+  grn_rc rc = GRN_INVALID_ARGUMENT;
   if (table) {
+    call_delete_hook(ctx, table, id);
     // todo : support optarg
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      return grn_pat_delete_by_id(ctx, (grn_pat *)table, id, optarg);
+      rc = grn_pat_delete_by_id(ctx, (grn_pat *)table, id, optarg);
+      break;
     case GRN_TABLE_HASH_KEY :
-      return grn_hash_delete_by_id(ctx, (grn_hash *)table, id, optarg);
+      rc = grn_hash_delete_by_id(ctx, (grn_hash *)table, id, optarg);
+      break;
     case GRN_TABLE_NO_KEY :
-      return grn_array_delete_by_id(ctx, (grn_array *)table, id, optarg);
+      rc = grn_array_delete_by_id(ctx, (grn_array *)table, id, optarg);
+      break;
     }
-    // todo : support hook
+    clear_column_values(ctx, table, id);
   }
-  return GRN_INVALID_ARGUMENT;
+  return rc;
 }
 
 static grn_io*

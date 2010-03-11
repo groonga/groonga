@@ -44,6 +44,8 @@ void test_set_value(void);
 void test_set_value_with_null_value(void);
 void data_add_and_delete(void);
 void test_add_and_delete(gconstpointer data);
+void data_truncate(void);
+void test_truncate(gconstpointer data);
 
 static GArray *ids;
 static GList *expected_keys, *actual_keys;

@@ -9,7 +9,7 @@ msgbox strarch
 
 'config options
 '
-dim use_debug, use_64bit, use_mecab
+dim use_debug, use_64bit, use_mecab, make_lib
 use_debug = 1
 if strarch = "x86" then
   use_64bit = 0
@@ -35,11 +35,18 @@ do until ts.atendofstream
     sarray = split(sline, ",")
   end if
 loop
+ts.close
 package = sarray(0)
 version = sarray(1)
 slen = len(package)
 package = mid(package, 10, slen - 10)
 
+'get_revision
+dim revision, objwshshell, objexec
+
+set objwshshell = createobject("wscript.shell")
+set objexec = objwshshell.exec("git describe --abbrev=7 HEAD")
+revision = objexec.stdout.readline
 
 sub common_header()
   ts.write "CC = cl.exe" + vbLf
@@ -68,7 +75,7 @@ sub common_header()
 
   ts.write "DEFS =  -D_CRT_SECURE_NO_DEPRECATE \" + vbLf
   ts.write "        -DWIN32 \" + vbLf
-  if (use_mecab = 0) then
+  if use_mecab = 0 then
     ts.write "        -DNO_MECAB \" + vbLf
   end if
   ts.write "        -DDLL_EXPORT \" + vbLf
@@ -85,6 +92,11 @@ sub common_header()
   ts.write "        -DPACKAGE_VERSION=""\""" 
   ts.write version
   ts.write "\"""" \" + vbLf
+  if make_lib = 1 then
+  ts.write "        -DGROONGA_VERSION=""\""" 
+  ts.write revision
+  ts.write "\"""" \" + vbLf
+  end if 
   ts.write "        -DPACKAGE_STRING=""\""" 
   ts.write version
   ts.write "\"""" " + vbLf
@@ -95,7 +107,7 @@ end sub
 
 'Makefile for lib
 set ts = fs.opentextfile("lib/Makefile.msvc", 2, True) 
-
+make_lib = 1
 common_header
 
 dim i
@@ -125,6 +137,7 @@ msgbox "lib/Makefile.msvc updated"
 'Makefile for src
 set ts = fs.opentextfile("src\Makefile.msvc", 2, True) 
 
+make_lib = 0
 common_header
 
 ts.write "OBJ = "
