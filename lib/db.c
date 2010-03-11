@@ -6348,7 +6348,26 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       if (buf_size) { indexbuf[n++] = obj; }
       break;
     case GRN_OP_PREFIX :
+      {
+        grn_accessor *a = (grn_accessor *)obj;
+        if (a->action == GRN_ACCESSOR_GET_KEY) {
+          if (a->obj->header.type == GRN_TABLE_PAT_KEY) {
+            if (buf_size) { indexbuf[n++] = obj; }
+          }
+        }
+      }
+      break;
     case GRN_OP_SUFFIX :
+      {
+        grn_accessor *a = (grn_accessor *)obj;
+        if (a->action == GRN_ACCESSOR_GET_KEY) {
+          if (a->obj->header.type == GRN_TABLE_PAT_KEY &&
+              a->obj->header.flags & GRN_OBJ_KEY_WITH_SIS) {
+            if (buf_size) { indexbuf[n++] = obj; }
+          }
+        }
+      }
+      break;
     case GRN_OP_MATCH :
       {
         grn_accessor *a = (grn_accessor *)obj;
@@ -8977,13 +8996,26 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_PREFIX :
         {
-          /* todo */
+          grn_obj *x, *y;
+          POP2ALLOC1(x, y, res);
+          GRN_INT32_SET(ctx, res,
+                        (GRN_TEXT_LEN(x) >= GRN_TEXT_LEN(y) &&
+                         !memcmp(GRN_TEXT_VALUE(x), GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y))));
+          res->header.type = GRN_BULK;
+          res->header.domain = GRN_DB_INT32;
         }
         code++;
         break;
       case GRN_OP_SUFFIX :
         {
-          /* todo */
+          grn_obj *x, *y;
+          POP2ALLOC1(x, y, res);
+          GRN_INT32_SET(ctx, res,
+                        (GRN_TEXT_LEN(x) >= GRN_TEXT_LEN(y) &&
+                         !memcmp(GRN_TEXT_VALUE(x) + GRN_TEXT_LEN(x) - GRN_TEXT_LEN(y),
+                                 GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y))));
+          res->header.type = GRN_BULK;
+          res->header.domain = GRN_DB_INT32;
         }
         code++;
         break;
