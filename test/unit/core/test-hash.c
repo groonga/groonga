@@ -218,7 +218,7 @@ test_data_free(grn_test_data *test_data)
 }
 
 static void
-test_data_append_n_data(guint n, grn_test_data *test_data)
+test_data_add_n_data(guint n, grn_test_data *test_data)
 {
   guint i;
 
@@ -576,7 +576,7 @@ test_add_and_delete(gconstpointer data)
 
   cut_assert_create_hash();
 
-  test_data_append_n_data(n_operations, test_data);
+  test_data_add_n_data(n_operations, test_data);
 
   cut_assert_equal_int(n_operations, GRN_HASH_SIZE(hash));
   for (i = 0; i < ids->len; i++) {
@@ -608,7 +608,7 @@ test_truncate(gconstpointer data)
   cut_assert_create_hash();
 
   cut_assert_equal_uint(0, GRN_HASH_SIZE(hash));
-  test_data_append_n_data(n_data, test_data);
+  test_data_add_n_data(n_data, test_data);
   cut_assert_equal_uint(n_data, GRN_HASH_SIZE(hash));
   grn_test_assert(grn_hash_truncate(context, hash));
   cut_assert_equal_uint(0, GRN_HASH_SIZE(hash));
