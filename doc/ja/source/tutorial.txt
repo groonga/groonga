@@ -214,8 +214,9 @@ loadコマンドを使用します。
 
 実行例::
 
- > load [{"_key":"http://hoge.com/","title":"hoge"},{"_key":"http://fuga.com/","title":"fuga"}] Blog
- 2
+ > load --table Blog
+ [{"_key":"http://hoge.com/","title":"hoge"},{"_key":"http://fuga.com/","title":"fuga"}]
+ [[0,1268380982.80157,0.002685],2]
  >
 
 検索
@@ -228,7 +229,7 @@ selectコマンドを使用します。
 実行例::
 
  > select Blog
- [2,["_id","_key","title"],[1,"http://hoge.com/","hoge"],[2,"http://fuga.com/","fuga"]]
+ [[0,1268381030.41737,2.7e-05],[[[2],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://hoge.com/","hoge"],[2,"http://fuga.com/","fuga"]]]]
  >
 
 tableパラメータだけを指定すると、他のパラメータはデフォルト値として解釈され、
@@ -244,7 +245,7 @@ selectコマンドのqueryパラメータには簡易な書式が指定できま
 実行例 ::
 
  > select Blog title hoge
- [1,["_id","_key","title"],[1,"http://hoge.com/","hoge"]]
+ [[0,1268381101.20846,0.000401],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://hoge.com/","hoge"]]]]
  >
 
 match_columnsパラメータに'title'、queryパラメータに'hoge'という文字列を指定しています。
@@ -255,10 +256,10 @@ JavaScriptライクな文法で様々な条件を指定することができま�
 
 実行例 ::
 
- > /select?table=Blog&filter=_id<=2&scorer=_score=rand()&output_columns=_id+_key+_score&sortby=_score
- [2,["_id","_key","_score"],[1,"http://hoge.com/",424238335],[2,"http://fuga.com/",719885386]]
- > /select?table=Blog&filter=_id<=2&scorer=_score=rand()&output_columns=_id+_key+_score&sortby=_score
- [2,["_id","_key","_score"],[2,"http://fuga.com/",596516649],[1,"http://hoge.com/",1649760492]]
+ > /d/select?table=Blog&filter=_id<=2&scorer=_score=rand()&output_columns=_id+_key+_score&sortby=_score
+ [[0,1268381229.56842,0.000219],[[[2],[["_id","UInt32"],["_key","ShortText"],["_score","Int32"]],[2,"http://fuga.com/",846930886],[1,"http://hoge.com/",1804289383]]]]
+ > /d/select?table=Blog&filter=_id<=2&scorer=_score=rand()&output_columns=_id+_key+_score&sortby=_score
+ [[0,1268381300.12763,0.000164],[[[2],[["_id","UInt32"],["_key","ShortText"],["_score","Int32"]],[1,"http://hoge.com/",1681692777],[2,"http://fuga.com/",1714636915]]]]
  >
 
 filterパラメータには

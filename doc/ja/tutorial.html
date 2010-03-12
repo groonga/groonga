@@ -235,8 +235,9 @@
 <p>loadコマンドを使用します。</p>
 <p><a class="reference external" href="commands/load.html"><em>load</em></a></p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; load [{&quot;_key&quot;:&quot;http://hoge.com/&quot;,&quot;title&quot;:&quot;hoge&quot;},{&quot;_key&quot;:&quot;http://fuga.com/&quot;,&quot;title&quot;:&quot;fuga&quot;}] Blog
-2
+<div class="highlight-none"><div class="highlight"><pre>&gt; load --table Blog
+[{&quot;_key&quot;:&quot;http://hoge.com/&quot;,&quot;title&quot;:&quot;hoge&quot;},{&quot;_key&quot;:&quot;http://fuga.com/&quot;,&quot;title&quot;:&quot;fuga&quot;}]
+[[0,1268380982.80157,0.002685],2]
 &gt;
 </pre></div>
 </div>
@@ -247,7 +248,7 @@
 <p><a class="reference external" href="commands/select.html"><em>select</em></a></p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select Blog
-[2,[&quot;_id&quot;,&quot;_key&quot;,&quot;title&quot;],[1,&quot;http://hoge.com/&quot;,&quot;hoge&quot;],[2,&quot;http://fuga.com/&quot;,&quot;fuga&quot;]]
+[[0,1268381030.41737,2.7e-05],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://hoge.com/&quot;,&quot;hoge&quot;],[2,&quot;http://fuga.com/&quot;,&quot;fuga&quot;]]]]
 &gt;
 </pre></div>
 </div>
@@ -260,7 +261,7 @@
 <p>selectコマンドのqueryパラメータには簡易な書式が指定できます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select Blog title hoge
-[1,[&quot;_id&quot;,&quot;_key&quot;,&quot;title&quot;],[1,&quot;http://hoge.com/&quot;,&quot;hoge&quot;]]
+[[0,1268381101.20846,0.000401],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://hoge.com/&quot;,&quot;hoge&quot;]]]]
 &gt;
 </pre></div>
 </div>
@@ -269,10 +270,10 @@
 <p>selectコマンドのfilterパラメータとscorerパラメータには、
 JavaScriptライクな文法で様々な条件を指定することができます。</p>
 <p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; /select?table=Blog&amp;filter=_id&lt;=2&amp;scorer=_score=rand()&amp;output_columns=_id+_key+_score&amp;sortby=_score
-[2,[&quot;_id&quot;,&quot;_key&quot;,&quot;_score&quot;],[1,&quot;http://hoge.com/&quot;,424238335],[2,&quot;http://fuga.com/&quot;,719885386]]
-&gt; /select?table=Blog&amp;filter=_id&lt;=2&amp;scorer=_score=rand()&amp;output_columns=_id+_key+_score&amp;sortby=_score
-[2,[&quot;_id&quot;,&quot;_key&quot;,&quot;_score&quot;],[2,&quot;http://fuga.com/&quot;,596516649],[1,&quot;http://hoge.com/&quot;,1649760492]]
+<div class="highlight-none"><div class="highlight"><pre>&gt; /d/select?table=Blog&amp;filter=_id&lt;=2&amp;scorer=_score=rand()&amp;output_columns=_id+_key+_score&amp;sortby=_score
+[[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[2,&quot;http://fuga.com/&quot;,846930886],[1,&quot;http://hoge.com/&quot;,1804289383]]]]
+&gt; /d/select?table=Blog&amp;filter=_id&lt;=2&amp;scorer=_score=rand()&amp;output_columns=_id+_key+_score&amp;sortby=_score
+[[0,1268381300.12763,0.000164],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[1,&quot;http://hoge.com/&quot;,1681692777],[2,&quot;http://fuga.com/&quot;,1714636915]]]]
 &gt;
 </pre></div>
 </div>
