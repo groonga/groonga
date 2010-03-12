@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -60,11 +60,18 @@ cut_setup(void)
   actual_keys = NULL;
 }
 
-void
-cut_teardown(void)
+static void
+ids_free(void)
 {
   if (ids)
     g_array_free(ids, TRUE);
+  ids = NULL;
+}
+
+void
+cut_teardown(void)
+{
+  ids_free();
   if (expected_keys)
     gcut_list_string_free(expected_keys);
   if (actual_keys)
@@ -641,8 +648,29 @@ utf8_string_same_prefix_increment(grn_trie_test_data *data)
   }
 }
 
-void
-data_add_and_delete(void)
+static void
+increment_test_data_add_n_data(guint n, grn_trie_test_data *test_data)
+{
+  guint i;
+
+  ids_free();
+  ids = g_array_new(TRUE, TRUE, sizeof(grn_id));
+  for (i = 0; i < n; i++) {
+    cut_assert_lookup_add(test_data->key);
+    test_data->increment(test_data);
+    g_array_append_val(ids, id);
+  }
+}
+
+static gboolean
+is_sis_utf8_increment_test_data(grn_trie_test_data *test_data)
+{
+  return test_data->increment == utf8_string_increment ||
+    test_data->increment == utf8_string_same_prefix_increment;
+}
+
+static void
+add_increment_test_data(void)
 {
   cut_add_data("default",
                increment_test_data_new("Cutter", string_increment, NULL),
@@ -661,27 +689,28 @@ data_add_and_delete(void)
 }
 
 void
+data_add_and_delete(void)
+{
+  add_increment_test_data();
+}
+
+void
 test_add_and_delete(gconstpointer data)
 {
-  const grn_trie_test_data *test_data = data;
+  grn_trie_test_data *test_data;
   guint i;
-  const guint n_operations = 7500;
+  const guint n_operations = 750;
   gboolean sis_utf8_data = FALSE;
 
-  if (test_data->increment == utf8_string_increment ||
-      test_data->increment == utf8_string_same_prefix_increment)
+  test_data = (grn_trie_test_data *)data;
+  if (is_sis_utf8_increment_test_data(test_data))
     sis_utf8_data = TRUE;
 
   trie_test_data_set_parameters(test_data);
 
   cut_assert_create_trie();
 
-  ids = g_array_new(TRUE, TRUE, sizeof(grn_id));
-  for (i = 0; i < n_operations; i++) {
-    cut_assert_lookup_add(test_data->key);
-    test_data->increment((grn_trie_test_data *)test_data);
-    g_array_append_val(ids, id);
-  }
+  increment_test_data_add_n_data(n_operations, test_data);
 
   if (sis_utf8_data)
     cut_assert_operator_int(n_operations, <, grn_pat_size(context, trie));
@@ -725,26 +754,31 @@ test_add_and_delete(gconstpointer data)
 void
 data_truncate(void)
 {
-  cut_add_data("default",
-               test_data_new("29", NULL),
-               test_data_free,
-               "sis",
-               test_data_new("29", set_sis),
-               test_data_free,
-               "sis - multi byte key",
-               test_data_new("肉ニク", set_sis_and_utf8_encoding),
-               test_data_free);
+  add_increment_test_data();
 }
 
 void
 test_truncate(gconstpointer data)
 {
-  const grn_trie_test_data *test_data = data;
+  grn_trie_test_data *test_data;
+  gboolean sis_utf8_data = FALSE;
+  guint n_data = 100;
+
+  test_data = (grn_trie_test_data *)data;
+  if (is_sis_utf8_increment_test_data(test_data))
+    sis_utf8_data = TRUE;
 
   trie_test_data_set_parameters(test_data);
-
   cut_assert_create_trie();
-  cut_assert_lookup_add(test_data->key);
-  cut_assert_delete(test_data->key);
-}
+  cut_assert_equal_uint(0, grn_pat_size(context, trie));
 
+  increment_test_data_add_n_data(n_data, test_data);
+  if (sis_utf8_data) {
+    cut_assert_operator_uint(n_data, <, grn_pat_size(context, trie));
+  } else {
+    cut_assert_equal_uint(n_data, grn_pat_size(context, trie));
+  }
+
+  grn_test_assert(grn_pat_truncate(context, trie));
+  cut_assert_equal_uint(0, grn_pat_size(context, trie));
+}
