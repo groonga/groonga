@@ -490,11 +490,13 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   char *path;
   uint32_t key_size, value_size, flags;
 
-  if ((path = (char *)grn_io_path(pat->io))) {
+  if ((path = (char *)grn_io_path(pat->io)) && *path != '\0') {
     if (!(path = GRN_STRDUP(path))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
       return GRN_NO_MEMORY_AVAILABLE;
     }
+  } else {
+    path = NULL;
   }
   key_size = pat->key_size;
   value_size = pat->value_size;
@@ -502,7 +504,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
 
   if ((rc = grn_io_close(ctx, pat->io))) { goto exit; }
   pat->io = NULL;
-  if ((rc = grn_io_remove(ctx, path))) { goto exit; }
+  if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
   if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
   }
