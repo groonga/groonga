@@ -259,9 +259,9 @@ data_parse(void)
             "poyo", GRN_EXPR_SYNTAX_QUERY,
             "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN);
   ADD_DATUM("table query parse level",
-            "body:%hoge + body:%moge",
+            "body:@hoge + body:@moge",
             GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN,
-            "body:%poyo", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN,
+            "body:@poyo", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN,
             "size:14", GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_COLUMN);
   ADD_DATUM("expression parse level",
             "body@\"hoge\" && body@\"moge\"",
