@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -66,11 +66,18 @@ cut_setup(void)
   ids = NULL;
 }
 
-void
-cut_teardown(void)
+static void
+ids_free(void)
 {
   if (ids)
     g_array_free(ids, TRUE);
+  ids = NULL;
+}
+
+void
+cut_teardown(void)
+{
+  ids_free();
   teardown_hash_common();
 }
 
@@ -208,6 +215,22 @@ test_data_free(grn_test_data *test_data)
 {
   g_free(test_data->key);
   g_free(test_data);
+}
+
+static void
+test_data_append_n_data(guint n, grn_test_data *test_data)
+{
+  guint i;
+
+  ids_free();
+  ids = g_array_new(TRUE, TRUE, sizeof(grn_id));
+  for (i = 0; i < n; i++) {
+    if (grn_test_hash_factory_get_flags(factory) & GRN_OBJ_KEY_VAR_SIZE)
+      key_size = strlen(test_data->key);
+    cut_assert_lookup_add(test_data->key);
+    test_data->increment((grn_test_data *)test_data);
+    g_array_append_val(ids, id);
+  }
 }
 
 static gpointer
@@ -542,23 +565,18 @@ data_add_and_delete(void)
 void
 test_add_and_delete(gconstpointer data)
 {
-  const grn_test_data *test_data = data;
+  grn_test_data *test_data;
   guint i;
-  const guint n_operations = 7500;
+  const guint n_operations = 750;
+
+  test_data = (grn_test_data *)data;
 
   if (test_data->set_parameters)
     test_data->set_parameters();
 
   cut_assert_create_hash();
 
-  ids = g_array_new(TRUE, TRUE, sizeof(grn_id));
-  for (i = 0; i < n_operations; i++) {
-    if (grn_test_hash_factory_get_flags(factory) & GRN_OBJ_KEY_VAR_SIZE)
-      key_size = strlen(test_data->key);
-    cut_assert_lookup_add(test_data->key);
-    test_data->increment((grn_test_data *)test_data);
-    g_array_append_val(ids, id);
-  }
+  test_data_append_n_data(n_operations, test_data);
 
   cut_assert_equal_int(n_operations, GRN_HASH_SIZE(hash));
   for (i = 0; i < ids->len; i++) {
@@ -571,25 +589,6 @@ test_add_and_delete(gconstpointer data)
   cut_assert_equal_int(0, GRN_HASH_SIZE(hash));
 }
 
-#define cut_assert_truncate(key) do                                     \
-{                                                                       \
-  const void *_key;                                                     \
-  grn_search_flags flags;                                               \
-                                                                        \
-  _key = (key);                                                         \
-                                                                        \
-  flags = GRN_TABLE_ADD;                                                \
-  cut_assert_lookup(_key, &flags);                                      \
-                                                                        \
-  grn_test_assert(grn_hash_truncate(context, hash));                    \
-  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,                        \
-                           grn_hash_delete(context,                     \
-                                           hash, _key, key_size, NULL));\
-                                                                        \
-  flags = 0;                                                            \
-  cut_assert_lookup_failed(_key, &flags);                               \
-} while (0)
-
 void
 data_truncate(void)
 {
@@ -599,14 +598,18 @@ data_truncate(void)
 void
 test_truncate(gconstpointer data)
 {
-  const grn_test_data *test_data = data;
+  grn_test_data *test_data;
+  guint n_data = 100;
 
+  test_data = (grn_test_data *)data;
   if (test_data->set_parameters)
     test_data->set_parameters();
 
   cut_assert_create_hash();
 
-  if (grn_test_hash_factory_get_flags(factory) & GRN_OBJ_KEY_VAR_SIZE)
-    key_size = strlen(test_data->key);
-  cut_assert_truncate(test_data->key);
+  cut_assert_equal_uint(0, GRN_HASH_SIZE(hash));
+  test_data_append_n_data(n_data, test_data);
+  cut_assert_equal_uint(n_data, GRN_HASH_SIZE(hash));
+  grn_test_assert(grn_hash_truncate(context, hash));
+  cut_assert_equal_uint(0, GRN_HASH_SIZE(hash));
 }
