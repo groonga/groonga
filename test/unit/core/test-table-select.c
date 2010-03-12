@@ -39,7 +39,7 @@ void test_search(void);
 void test_select_search(void);
 void test_match(void);
 void test_match_equal(void);
-void test_match_nonexistent(void);
+void test_match_without_index(void);
 
 void
 cut_startup(void)
@@ -559,7 +559,7 @@ test_match_equal(void)
 }
 
 void
-test_match_nonexistent(void)
+test_match_without_index(void)
 {
   grn_obj *v;
 
@@ -586,5 +586,15 @@ test_match_nonexistent(void)
 
   cut_assert_not_null(grn_table_select(&context, docs, cond, res, GRN_OP_OR));
 
-  grn_test_assert_select(&context, NULL, res, body);
+  grn_test_assert_select(
+    &context,
+    gcut_take_new_list_string("moge moge moge",
+                              "hoge moge moge moge",
+                              "moge hoge hoge",
+                              "moge hoge fuga fuga",
+                              "moge hoge moge moge moge",
+                              "poyo moge hoge moge moge moge",
+                              NULL),
+    res,
+    body);
 }
