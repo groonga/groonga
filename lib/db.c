@@ -11955,6 +11955,14 @@ get_word_(grn_ctx *ctx, efs_info *q)
           mode = GRN_OP_MATCH;
           q->cur = end + 2;
           break;
+        case '^' :
+          mode = GRN_OP_PREFIX;
+          q->cur = end + 2;
+          break;
+        case '$' :
+          mode = GRN_OP_SUFFIX;
+          q->cur = end + 2;
+          break;
         default :
           mode = GRN_OP_EQUAL;
           q->cur = end + 1;
