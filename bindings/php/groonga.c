@@ -87,7 +87,7 @@ PHP_MINFO_FUNCTION(groonga)
 {
   php_info_print_box_start(0);
   php_printf("<p>Groonga</p>\n");
-  php_printf("<p>Version 0.1 (ctx, ql)</p>\n");
+  php_printf("<p>Version 0.2 (ctx)</p>\n");
   php_printf("<p><b>Authors:</b></p>\n");
   php_printf("<p>yu &lt;yu@irx.jp&gt; (lead)</p>\n");
   php_info_print_box_end();
@@ -170,10 +170,9 @@ PHP_FUNCTION(grn_ctx_send)
   zval *res = NULL;
   int res_id = -1;
 
-  grn_rc rc;
   grn_ctx *ctx;
   char *query = NULL;
-  unsigned int query_len = 0;
+  unsigned int query_len, qid;
   long flags = 0;
 
 
@@ -182,27 +181,29 @@ PHP_FUNCTION(grn_ctx_send)
   }
 
   ZEND_FETCH_RESOURCE(ctx, grn_ctx *, &res, res_id, "grn_ctx", le_grn_ctx);
-
-  if ((rc = grn_ctx_send(ctx, query, query_len, flags)) != GRN_SUCCESS) {
+  qid = grn_ctx_send(ctx, query, query_len, flags);
+  if (ctx->rc != GRN_SUCCESS) {
     RETURN_FALSE;
   }
 
-  RETURN_TRUE;
+  RETURN_LONG(qid)
+
 }
 
 
 PHP_FUNCTION(grn_ctx_recv)
 {
-  zval *res = NULL;
+  zval *res,*ret = NULL;
   int res_id = -1;
   grn_ctx *ctx;
 
   char *str;
   int flags;
-  unsigned int str_len;
-  grn_rc rc;
+  unsigned int str_len, qid;
 
+  MAKE_STD_ZVAL(ret);
 
+  array_init(ret);
   array_init(return_value);
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &res) == FAILURE) {
@@ -211,9 +212,16 @@ PHP_FUNCTION(grn_ctx_recv)
 
   ZEND_FETCH_RESOURCE(ctx, grn_ctx *, &res, res_id, "grn_ctx", le_grn_ctx);
 
-  rc = grn_ctx_recv(ctx, &str, &str_len, &flags);
-  add_next_index_stringl(return_value, str, str_len, 1);
-  add_next_index_long(return_value, flags);
+  qid = grn_ctx_recv(ctx, &str, &str_len, &flags);
+
+  if (ctx->rc != GRN_SUCCESS) {
+    RETURN_FALSE;
+  }
+
+  add_next_index_long(ret, flags);
+  add_next_index_stringl(ret, str, str_len, 1);
+
+  add_index_zval(return_value, qid, ret);
 }
 
 #endif /* HAVE_GROONGA */

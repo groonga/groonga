@@ -1,12 +1,10 @@
 /*
    +----------------------------------------------------------------------+
-   | unknown license:                                                      |
+   | unknown license:                                                     |
    +----------------------------------------------------------------------+
    | Authors: yu <yu@irx.jp>                                              |
    +----------------------------------------------------------------------+
 */
-
-/* $ Id: $ */ 
 
 #ifndef PHP_GROONGA_H
 #define PHP_GROONGA_H
@@ -125,13 +123,3 @@ ZEND_END_ARG_INFO()
 #endif /* PHP_HAVE_GROONGA */
 
 #endif /* PHP_GROONGA_H */
-
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */
