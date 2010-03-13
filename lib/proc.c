@@ -747,7 +747,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   grn_obj *buf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 2) ? GRN_INT32_VALUE(&vars[1].value) : GRN_CONTENT_JSON;
+  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
 
   if (nvars == 2) {
     grn_obj *table;
@@ -818,7 +818,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_obj *buf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 1) ? GRN_INT32_VALUE(&vars[0].value) : GRN_CONTENT_JSON;
+  ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
 
   if (nvars == 1) {
     grn_table_cursor *cur;
@@ -831,7 +831,6 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
       GRN_TEXT_INIT(&body, 0);
 
       grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-      ct = grn_get_ctype(&vars[0].value);
 
       switch (ct) {
       case GRN_CONTENT_TSV:
@@ -1133,11 +1132,14 @@ static grn_obj *
 proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
-  grn_obj *outbuf = args[0];
   grn_expr_var *vars;
+  grn_content_type ct;
+  grn_obj *outbuf = args[0];
+
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  ct = (nvars >= 6) ? grn_get_ctype(&vars[5].value) : GRN_CONTENT_JSON;
+
   if (nvars == 6) {
-    grn_content_type ct = grn_get_ctype(&vars[5].value);
     grn_obj *table = grn_ctx_get(ctx,
                                  GRN_TEXT_VALUE(&vars[0].value),
                                  GRN_TEXT_LEN(&vars[0].value));
@@ -1203,11 +1205,14 @@ static grn_obj *
 proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
-  grn_obj *outbuf = args[0];
   grn_expr_var *vars;
+  grn_content_type ct;
+  grn_obj *outbuf = args[0];
+
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
+
   if (nvars == 5) {
-    grn_content_type ct = grn_get_ctype(&vars[3].value);
     grn_obj *table = grn_ctx_get(ctx,
                                  GRN_TEXT_VALUE(&vars[0].value),
                                  GRN_TEXT_LEN(&vars[0].value));
