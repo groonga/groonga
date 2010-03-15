@@ -81,6 +81,10 @@
 <dd>比較条件(カラム値 &gt;= 値)</dd>
 <dt>カラム名:&#64;文字列</dt>
 <dd>全文検索条件(カラム値が指定された文字列を含んでいる)</dd>
+<dt>カラム名:^文字列</dt>
+<dd>前方一致条件(カラム値が指定された文字列に前方一致する)</dd>
+<dt>カラム名:$文字列</dt>
+<dd>後方一致条件(カラム値が指定された文字列に後方一致する)</dd>
 </dl>
 </dd>
 <dt>補助演算子 <a class="footnote-reference" href="#id11" id="id3">[1]</a></dt>
@@ -253,7 +257,7 @@ column1 == &#8220;hoge&#8221;</blockquote>
 <strong id="grammar-token-equality_operator">equality_operator           </strong> ::=  ( &quot;==&quot; | &quot;!=&quot; )
 <strong id="grammar-token-relational_expression">relational_expression       </strong> ::=  <a class="reference internal" href="#grammar-token-shift_expression"><tt class="xref docutils literal"><span class="pre">shift_expression</span></tt></a>
                                   | ( <a class="reference internal" href="#grammar-token-relational_expression"><tt class="xref docutils literal"><span class="pre">relational_expression</span></tt></a> <a class="reference internal" href="#grammar-token-relational_operator"><tt class="xref docutils literal"><span class="pre">relational_operator</span></tt></a> <a class="reference internal" href="#grammar-token-shift_expression"><tt class="xref docutils literal"><span class="pre">shift_expression</span></tt></a> )
-<strong id="grammar-token-relational_operator">relational_operator         </strong> ::=  ( &quot;&lt;&quot; | &quot;&gt;&quot; | &quot;&lt;=&quot; | &quot;&gt;=&quot; | &quot;in&quot; | &quot;&#64;&quot; )
+<strong id="grammar-token-relational_operator">relational_operator         </strong> ::=  ( &quot;&lt;&quot; | &quot;&gt;&quot; | &quot;&lt;=&quot; | &quot;&gt;=&quot; | &quot;in&quot; | &quot;&#64;&quot; | &quot;&#64;^&quot; | &quot;&#64;$&quot; )
 <strong id="grammar-token-shift_expression">shift_expression            </strong> ::=  <a class="reference internal" href="#grammar-token-additive_expression"><tt class="xref docutils literal"><span class="pre">additive_expression</span></tt></a>
                                   | ( <a class="reference internal" href="#grammar-token-shift_expression"><tt class="xref docutils literal"><span class="pre">shift_expression</span></tt></a> <a class="reference internal" href="#grammar-token-shift_operator"><tt class="xref docutils literal"><span class="pre">shift_operator</span></tt></a> <a class="reference internal" href="#grammar-token-additive_expression"><tt class="xref docutils literal"><span class="pre">additive_expression</span></tt></a> )
 <strong id="grammar-token-shift_operator">shift_operator              </strong> ::=  ( &quot;&lt;&lt;&quot; | &quot;&gt;&gt;&quot; | &quot;&gt;&gt;&gt;&quot; )
