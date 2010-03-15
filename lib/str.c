@@ -2382,7 +2382,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
           grn_id *idp = (grn_id *)GRN_BULK_HEAD(&buf);
           if (a->next) {
             GRN_TEXT_PUTC(ctx, bulk, '[');
-            for (vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id); vs; vs--, idp++) {
+            for (vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id); vs--; idp++) {
               grn_text_atoj(ctx, bulk, (grn_obj *)a->next, *idp);
               if (vs) { GRN_TEXT_PUTC(ctx, bulk, ','); }
             }
@@ -2392,7 +2392,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
             GRN_RECORD_INIT(&b, 0, DB_OBJ(a->obj)->range);
             GRN_TEXT_PUTC(ctx, bulk, '[');
             /* todo: support other fixe sized data types */
-            for (vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id); vs; vs--) {
+            for (vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id); vs--; idp++) {
               GRN_RECORD_SET(ctx, &b, *idp);
               grn_text_otoj(ctx, bulk, &b, NULL);
               if (vs) { GRN_TEXT_PUTC(ctx, bulk, ','); }
