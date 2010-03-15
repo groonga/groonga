@@ -198,6 +198,45 @@ struct _grn_proc {
   //  grn_obj results[16];
 };
 
+typedef struct _grn_accessor_view grn_accessor_view;
+
+struct _grn_accessor_view {
+  grn_obj_header header;
+  grn_id range;
+  /* -- compatible with grn_db_obj -- */
+  uint32_t naccessors;
+  grn_obj **accessors;
+};
+
+typedef struct _grn_accessor grn_accessor;
+
+struct _grn_accessor {
+  grn_obj_header header;
+  grn_id range;
+  /* -- compatible with grn_db_obj -- */
+  uint8_t action;
+  int offset;
+  grn_obj *obj;
+  grn_accessor *next;
+};
+
+enum {
+  GRN_ACCESSOR_VOID = 0,
+  GRN_ACCESSOR_GET_ID,
+  GRN_ACCESSOR_GET_KEY,
+  GRN_ACCESSOR_GET_VALUE,
+  GRN_ACCESSOR_GET_SCORE,
+  GRN_ACCESSOR_GET_NSUBRECS,
+  GRN_ACCESSOR_GET_COLUMN_VALUE,
+  GRN_ACCESSOR_GET_DB_OBJ,
+  GRN_ACCESSOR_LOOKUP,
+  GRN_ACCESSOR_FUNCALL
+};
+
+#define DB_OBJ(obj) ((grn_db_obj *)obj)
+
+const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
+
 /* vector */
 
 /*

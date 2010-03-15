@@ -27,8 +27,6 @@
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
-#define DB_OBJ(obj) ((grn_db_obj *)obj)
-
 #define WITH_NORMALIZE(table,key,key_size,block) {\
   if ((table)->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {\
     grn_str *nstr;\
@@ -3056,31 +3054,6 @@ grn_vector_to_sections(grn_ctx *ctx, grn_obj *vector, grn_obj *sections)
 
 /**** accessor ****/
 
-typedef struct _grn_accessor grn_accessor;
-
-struct _grn_accessor {
-  grn_obj_header header;
-  grn_id range;
-  /* -- compatible with grn_db_obj -- */
-  uint8_t action;
-  int offset;
-  grn_obj *obj;
-  grn_accessor *next;
-};
-
-enum {
-  GRN_ACCESSOR_VOID = 0,
-  GRN_ACCESSOR_GET_ID,
-  GRN_ACCESSOR_GET_KEY,
-  GRN_ACCESSOR_GET_VALUE,
-  GRN_ACCESSOR_GET_SCORE,
-  GRN_ACCESSOR_GET_NSUBRECS,
-  GRN_ACCESSOR_GET_COLUMN_VALUE,
-  GRN_ACCESSOR_GET_DB_OBJ,
-  GRN_ACCESSOR_LOOKUP,
-  GRN_ACCESSOR_FUNCALL
-};
-
 static grn_accessor *
 accessor_new(grn_ctx *ctx)
 {
@@ -3368,16 +3341,6 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
   GRN_API_RETURN((grn_obj *)res);
 }
 
-typedef struct _grn_accessor_view grn_accessor_view;
-
-struct _grn_accessor_view {
-  grn_obj_header header;
-  grn_id range;
-  /* -- compatible with grn_db_obj -- */
-  uint32_t naccessors;
-  grn_obj **accessors;
-};
-
 static grn_obj *
 grn_view_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name_size)
 {
@@ -3501,7 +3464,7 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
       case GRN_ACCESSOR_GET_ID :
         range = GRN_DB_UINT32;
         break;
-      case GRN_ACCESSOR_GET_VALUE :
+      case GRN_ACCESSOR_GET_VALUE :/* fix me */
       case GRN_ACCESSOR_GET_SCORE :
       case GRN_ACCESSOR_GET_NSUBRECS :
         range = GRN_DB_INT32;

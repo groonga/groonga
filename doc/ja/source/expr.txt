@@ -45,6 +45,12 @@ grn式はquery形式とscript形式のいずれかによって表現すること
      カラム名:@文字列
        全文検索条件(カラム値が指定された文字列を含んでいる)
 
+     カラム名:^文字列
+       前方一致条件(カラム値が指定された文字列に前方一致する)
+
+     カラム名:$文字列
+       後方一致条件(カラム値が指定された文字列に後方一致する)
+
    補助演算子 [#]_
      全文検索条件の挙動を制御する以下の演算子が指定できます。
 
@@ -229,7 +235,7 @@ script形式のgrn式で有効な式の構文を拡張BNF記法で示します�
    equality_operator : ( "==" | "!=" )
    relational_expression : `shift_expression`
                          : | ( `relational_expression` `relational_operator` `shift_expression` )
-   relational_operator : ( "<" | ">" | "<=" | ">=" | "in" | "@" )
+   relational_operator : ( "<" | ">" | "<=" | ">=" | "in" | "@" | "@^" | "@$" )
    shift_expression : `additive_expression`
                     : | ( `shift_expression` `shift_operator` `additive_expression` )
    shift_operator : ( "<<" | ">>" | ">>>" )
