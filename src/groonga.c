@@ -338,10 +338,13 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       const char *g, *key_end, *mime_type;
       grn_content_type ot;
       grn_obj *expr, *val = NULL;
-      GRN_LOG(ctx, GRN_LOG_NONE, "%08x| %.*s", (intptr_t)ctx, pathe - path, path);
+
+      grn_timeval_now(ctx, &ctx->impl->tv); /* should be initialized in grn_ctx_qe_exec() */
+      GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, pathe - path, path);
       GRN_TEXT_INIT(&key, 0);
       GRN_TEXT_INIT(&jsonp_func, 0);
       GRN_BULK_REWIND(body);
+
       g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
       if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
       key_end = parse_htpath(GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &mime_type);
@@ -422,7 +425,14 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       if (ctx->impl->output) {
         ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
       }
-      GRN_LOG(ctx, GRN_LOG_NONE, "%08x| %d", (intptr_t)ctx, ctx->rc);
+      {
+        uint64_t et;
+        grn_timeval tv;
+        grn_timeval_now(ctx, &tv);
+        et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
+          + (tv.tv_usec - ctx->impl->tv.tv_usec);
+        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
+      }
     }
   }
 exit :

@@ -10863,6 +10863,15 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned nkeys)
   return ctx->rc;
 }
 
+#define LAP(msg) {\
+  uint64_t et;\
+  grn_timeval tv;\
+  grn_timeval_now(ctx, &tv);\
+  et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC\
+    + (tv.tv_usec - ctx->impl->tv.tv_usec);\
+  GRN_LOG(ctx, GRN_LOG_NONE, "%08x:l%012zu %s", (intptr_t)ctx, et, msg);\
+}
+
 grn_rc
 grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            const char *table, unsigned table_len,
@@ -10948,6 +10957,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     } else {
       res = table_;
     }
+    LAP("select");
     switch (output_type) {
     case GRN_CONTENT_JSON:
       GRN_TEXT_PUTS(ctx, outbuf, "[[");
@@ -11019,6 +11029,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           }
           grn_obj_unlink(ctx, scorer_);
         }
+        LAP("score");
       }
       nhits = grn_table_size(ctx, res);
       if (sortby_len) {
@@ -11026,6 +11037,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
+            LAP("sort");
             GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
             switch (output_type) {
@@ -11070,6 +11082,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         }
         GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
+      LAP("output");
       if (drilldown_len) {
         uint32_t i, ngkeys;
         grn_table_sort_key *gkeys;
@@ -11136,6 +11149,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
             }
             grn_obj_unlink(ctx, g.table);
           }
+          LAP("drilldown");
         }
         grn_table_sort_key_close(ctx, gkeys, ngkeys);
       }

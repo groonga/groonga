@@ -827,7 +827,6 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_size)
       }
 
       grn_ctx_push(ctx, ctx->impl->outbuf);
-      grn_timeval_now(ctx, &ctx->impl->tv);
       grn_expr_exec(ctx, expr, 1);
       val = grn_ctx_pop(ctx);
       grn_expr_clear_vars(ctx, expr);
@@ -886,7 +885,6 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
           break;
         }
       }
-      grn_timeval_now(ctx, &ctx->impl->tv);
     }
     GRN_OBJ_FIN(ctx, &buf);
   }
@@ -944,23 +942,26 @@ grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       }
       goto exit;
     } else {
-      uint64_t et;
-      grn_timeval tv0, tv1;
       /*
       GRN_BULK_REWIND(ctx->impl->outbuf);
       GRN_BULK_REWIND(&ctx->impl->subbuf);
       ctx->impl->bufcur = 0;
       */
-      grn_timeval_now(ctx, &tv0);
-      GRN_LOG(ctx, GRN_LOG_NONE, "%08x>%.*s", (intptr_t)ctx, str_len, str);
+      grn_timeval_now(ctx, &ctx->impl->tv);
+      GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
       if (str_len && *str == '/') {
         grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
       } else {
         grn_ctx_qe_exec(ctx, str, str_len);
       }
-      grn_timeval_now(ctx, &tv1);
-      et = (tv1.tv_sec - tv0.tv_sec) * GRN_TIME_USEC_PER_SEC + (tv1.tv_usec - tv0.tv_usec);
-      GRN_LOG(ctx, GRN_LOG_NONE, "%08x<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
+      {
+        uint64_t et;
+        grn_timeval tv;
+        grn_timeval_now(ctx, &tv);
+        et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
+          + (tv.tv_usec - ctx->impl->tv.tv_usec);
+        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
+      }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (!ERRP(ctx, GRN_CRIT)) {
         if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
