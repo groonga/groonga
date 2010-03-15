@@ -724,7 +724,9 @@ grn_content_type
 grn_get_ctype(grn_obj *var)
 {
   grn_content_type ct = GRN_CONTENT_JSON;
-  if (GRN_TEXT_LEN(var)) {
+  if (var->header.domain == GRN_DB_INT32) {
+    ct = GRN_INT32_VALUE(var);
+  } else if (GRN_TEXT_LEN(var)) {
     switch (*(GRN_TEXT_VALUE(var))) {
     case 't' :
     case 'T' :
@@ -734,8 +736,8 @@ grn_get_ctype(grn_obj *var)
     case 'J' :
       ct = GRN_CONTENT_JSON;
       break;
-    case 'f' :
-    case 'F' :
+    case 'x' :
+    case 'X' :
       ct = GRN_CONTENT_XML;
       break;
     }

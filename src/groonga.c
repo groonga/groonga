@@ -213,9 +213,67 @@ typedef enum {
   grn_http_request_type_post
 } grn_http_request_type;
 
+void
+get_content_mime_type(const char *p, const char *pe,
+                      grn_content_type *ct, const char **mime_type)
+{
+  switch (*p) {
+  case 'c' :
+    if (p + 3 == pe && !memcmp(p, "css", 3)) {
+      *ct = GRN_CONTENT_NONE;
+      *mime_type = "text/css";
+    }
+    break;
+  case 'g' :
+    if (p + 3 == pe && !memcmp(p, "gif", 3)) {
+      *ct = GRN_CONTENT_NONE;
+      *mime_type = "image/gif";
+    }
+    break;
+  case 'h' :
+    if (p + 4 == pe && !memcmp(p, "html", 4)) {
+      *ct = GRN_CONTENT_NONE;
+      *mime_type = "text/html";
+    }
+    break;
+  case 'j' :
+    if (!memcmp(p, "js", 2)) {
+      if (p + 2 == pe) {
+        *ct = GRN_CONTENT_NONE;
+        *mime_type = "text/javascript";
+      } else if (p + 4 == pe && !memcmp(p + 2, "on", 2)) {
+        *ct = GRN_CONTENT_JSON;
+        *mime_type = "application/json";
+      }
+    } else if (p + 3 == pe && !memcmp(p, "jpg", 3)) {
+      *ct = GRN_CONTENT_NONE;
+      *mime_type = "image/jpeg";
+    }
+    break;
+  case 'p' :
+    if (p + 3 == pe && !memcmp(p, "png", 3)) {
+      *ct = GRN_CONTENT_NONE;
+      *mime_type = "image/png";
+    }
+    break;
+  case 't' :
+    if (p + 3 == pe && !memcmp(p, "txt", 3)) {
+      *ct = GRN_CONTENT_NONE;
+      *mime_type = "text/plain";
+    }
+    break;
+  case 'x':
+    if (p + 3 == pe && !memcmp(p, "xml", 3)) {
+      *ct = GRN_CONTENT_XML;
+      *mime_type = "text/xml";
+    }
+    break;
+  }
+}
+
 static const char *
-get_content_type(grn_ctx *ctx, const char *p, const char *pe,
-                 grn_content_type *ct, const char **mime_type)
+parse_htpath(const char *p, const char *pe,
+             grn_content_type *ct, const char **mime_type)
 {
   const char *pd = NULL;
   for (; p < pe && *p != '?'; p++) {
@@ -226,59 +284,8 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
   *ct = GRN_CONTENT_JSON;
   *mime_type = "application/json";
   if (pd && pd < p) {
-    switch (*++pd) {
-    case 'c' :
-      if (pd + 3 == p && !memcmp(pd, "css", 3)) {
-        *ct = GRN_CONTENT_NONE;
-        *mime_type = "text/css";
-      }
-      break;
-    case 'g' :
-      if (pd + 3 == p && !memcmp(pd, "gif", 3)) {
-        *ct = GRN_CONTENT_NONE;
-        *mime_type = "image/gif";
-      }
-      break;
-    case 'h' :
-      if (pd + 4 == p && !memcmp(pd, "html", 4)) {
-        *ct = GRN_CONTENT_NONE;
-        *mime_type = "text/html";
-      }
-      break;
-    case 'j' :
-      if (!memcmp(pd, "js", 2)) {
-        if (pd + 2 == p) {
-          *ct = GRN_CONTENT_NONE;
-          *mime_type = "text/javascript";
-        } else if (pd + 4 == p && !memcmp(pd + 2, "on", 2)) {
-          *ct = GRN_CONTENT_JSON;
-          *mime_type = "application/json";
-        }
-      } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
-        *ct = GRN_CONTENT_NONE;
-        *mime_type = "image/jpeg";
-      }
-      break;
-    case 'p' :
-      if (pd + 3 == p && !memcmp(pd, "png", 3)) {
-        *ct = GRN_CONTENT_NONE;
-        *mime_type = "image/png";
-      }
-      break;
-    case 't' :
-      if (pd + 3 == p && !memcmp(pd, "txt", 3)) {
-        *ct = GRN_CONTENT_NONE;
-        *mime_type = "text/plain";
-      }
-      break;
-    case 'x':
-      if (pd + 3 == p && !memcmp(pd, "xml", 3)) {
-        *ct = GRN_CONTENT_XML;
-        *mime_type = "text/xml";
-      }
-      break;
-    }
-    return pd - 1;
+    get_content_mime_type(pd + 1, p, ct, mime_type);
+    return pd;
   } else {
     return pe;
   }
@@ -337,7 +344,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       GRN_BULK_REWIND(body);
       g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
       if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
-      key_end = get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &mime_type);
+      key_end = parse_htpath(GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &mime_type);
       if ((GRN_TEXT_LEN(&key) >= 2 &&
            GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
           (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, key_end - GRN_TEXT_VALUE(&key) - 2))) {
@@ -351,12 +358,16 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
           }
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           g = grn_text_cgidec(ctx, val, g, pathe, '&');
+          if (GRN_TEXT_CMPS(&key, OUTPUT_TYPE)) {
+            get_content_mime_type(GRN_TEXT_VALUE(val),
+                                  GRN_TEXT_VALUE(val) + GRN_TEXT_LEN(val),
+                                  &ot, &mime_type);
+          }
         }
         if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
           grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
           GRN_INT32_SET(ctx, val, (int32_t)ot);
         }
-
         grn_ctx_push(ctx, body);
         grn_expr_exec(ctx, expr, 1);
         val = grn_ctx_pop(ctx);
