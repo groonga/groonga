@@ -65,7 +65,6 @@ static grn_critical_section grntest_cs;
 
 static int grntest_stop_flag = 0;
 static int grntest_detail_on = 0;
-static int grntest_alloctimes = 0;
 static int grntest_remote_mode = 0;
 #define TMPFILE "_grntest.tmp"
 
@@ -1229,8 +1228,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
     }
     for (j = 0; j < grntest_job[i].concurrency; j++) {
       if (j == 0) {
-        ctable = malloc(sizeof(struct commandtable));
-        grntest_alloctimes++;
+        ctable = GRN_MALLOC(sizeof(struct commandtable));
         if (!ctable) {
           fprintf(stderr, "Cannot alloc commandtable\n");
           error_exit(ctx, 1);
@@ -1257,8 +1255,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
           if (comment_p(tmpbuf)) {
             continue;
           }
-          ctable->command[line] = strdup(tmpbuf);
-          grntest_alloctimes++;
+          ctable->command[line] = GRN_STRDUP(tmpbuf);
           if (ctable->command[line] == NULL) {
             fprintf(stderr, "Cannot alloc commandfile:%s\n",
                     grntest_job[i].commandfile);
@@ -1363,11 +1360,9 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     if (grntest_task[i].table != NULL) {
       job_id = grntest_task[i].job_id;
       for (j = 0; j < grntest_task[i].table->num; j++) {
-        free(grntest_task[i].table->command[j]);
-        grntest_alloctimes--;
+        GRN_FREE(grntest_task[i].table->command[j]);
       }
-      free(grntest_task[i].table); 
-      grntest_alloctimes--;
+      GRN_FREE(grntest_task[i].table); 
       while (job_id == grntest_task[i].job_id) {
         i++;
       }
@@ -2007,7 +2002,7 @@ sync_sub(grn_ctx *ctx, const char *filename)
 
 static
 int
-cache_file(char **flist, char *file, int fnum)
+cache_file(grn_ctx *ctx, char **flist, char *file, int fnum)
 {
   int i;
 
@@ -2016,7 +2011,7 @@ cache_file(char **flist, char *file, int fnum)
       return fnum;
     }
   }
-  flist[fnum] = strdup(file);
+  flist[fnum] = GRN_STRDUP(file);
   fnum++;
   if (fnum >= BUF_LEN) {
     fprintf(stderr, "too many uniq commands file!\n");
@@ -2055,7 +2050,7 @@ sync_datafile(grn_ctx *ctx, const char *sfile)
 /*
 printf("commandfile=[%s]:buf=%s\n", grntest_job[i].commandfile, buf);
 */
-        fnum = cache_file(filelist, grntest_job[i].commandfile, fnum);
+        fnum = cache_file(ctx, filelist, grntest_job[i].commandfile, fnum);
       }
     }
   }
@@ -2064,7 +2059,7 @@ printf("commandfile=[%s]:buf=%s\n", grntest_job[i].commandfile, buf);
       fprintf(stderr, "updated!:%s\n", filelist[i]);
       fflush(stderr);
     }
-    free(filelist[i]);
+    GRN_FREE(filelist[i]);
   } 
   fclose(fp);
   return fnum;
@@ -2384,8 +2379,5 @@ exit:
   grn_ctx_fin(&context);
   grn_ctx_fin(&grntest_server_context);
   grn_fin();
-/*
-  fprintf(stderr, "grntest_alloctimes=%d\n", grntest_alloctimes);
-*/
   return 0;
 }
