@@ -90,6 +90,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   ct = (nvars >= 15) ? grn_get_ctype(&vars[14].value) : GRN_CONTENT_JSON;
 
   if (nvars == 15) {
+    grn_obj body; /* FIXME: double buffering! */
     int offset = GRN_TEXT_LEN(&vars[7].value)
       ? grn_atoi(GRN_TEXT_VALUE(&vars[7].value), GRN_BULK_CURR(&vars[7].value), NULL)
       : 0;
@@ -102,20 +103,27 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       output_columns = DEFAULT_OUTPUT_COLUMNS;
       output_columns_len = strlen(DEFAULT_OUTPUT_COLUMNS);
     }
-    grn_select(ctx, outbuf, ct,
-               GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
-               GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
-               GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
-               GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value),
-               GRN_TEXT_VALUE(&vars[4].value), GRN_TEXT_LEN(&vars[4].value),
-               GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value),
-               output_columns, output_columns_len,
-               offset, limit,
-               GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
-               GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
-               GRN_TEXT_VALUE(&vars[11].value), GRN_TEXT_LEN(&vars[11].value),
-               grn_atoi(GRN_TEXT_VALUE(&vars[12].value), GRN_BULK_CURR(&vars[12].value), NULL),
-               grn_atoi(GRN_TEXT_VALUE(&vars[13].value), GRN_BULK_CURR(&vars[13].value), NULL));
+
+    GRN_TEXT_INIT(&body, 0);
+    if (grn_select(ctx, &body, ct,
+                   GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
+                   GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
+                   GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
+                   GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value),
+                   GRN_TEXT_VALUE(&vars[4].value), GRN_TEXT_LEN(&vars[4].value),
+                   GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value),
+                   output_columns, output_columns_len,
+                   offset, limit,
+                   GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
+                   GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
+                   GRN_TEXT_VALUE(&vars[11].value), GRN_TEXT_LEN(&vars[11].value),
+                   grn_atoi(GRN_TEXT_VALUE(&vars[12].value), GRN_BULK_CURR(&vars[12].value), NULL),
+                   grn_atoi(GRN_TEXT_VALUE(&vars[13].value), GRN_BULK_CURR(&vars[13].value), NULL))) {
+      print_return_code(ctx, outbuf, ct);
+    } else {
+      print_return_code_with_body(ctx, outbuf, ct, &body);
+    }
+    grn_obj_unlink(ctx, &body);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 15);
     print_return_code(ctx, outbuf, ct);

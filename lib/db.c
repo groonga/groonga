@@ -10958,21 +10958,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     LAP("select");
     switch (output_type) {
     case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTS(ctx, outbuf, "[[");
-      grn_text_itoa(ctx, outbuf, ctx->rc);
-      {
-        double dv;
-        grn_timeval tv;
-        grn_timeval_now(ctx, &tv);
-        dv = ctx->impl->tv.tv_sec;
-        dv += ctx->impl->tv.tv_usec / 1000000.0;
-        GRN_TEXT_PUTC(ctx, outbuf, ',');
-        grn_text_ftoa(ctx, outbuf, dv);
-        dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-        dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
-        GRN_TEXT_PUTC(ctx, outbuf, ',');
-        grn_text_ftoa(ctx, outbuf, dv);
-      }
+      GRN_TEXT_PUTS(ctx, outbuf, "[");
       break;
     case GRN_CONTENT_XML:
       GRN_TEXT_PUTS(ctx, outbuf, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -10980,33 +10966,6 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       break;
     case GRN_CONTENT_TSV:
       grn_text_itoa(ctx, outbuf, ctx->rc);
-    case GRN_CONTENT_NONE:
-      break;
-    }
-    if (ctx->rc) {
-      switch (output_type) {
-      case GRN_CONTENT_JSON:
-        GRN_TEXT_PUTC(ctx, outbuf, ',');
-        grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
-        break;
-      case GRN_CONTENT_XML:
-        break;
-      case GRN_CONTENT_TSV:
-        GRN_TEXT_PUTC(ctx, outbuf, '\t');
-        GRN_TEXT_PUTS(ctx, outbuf, ctx->errbuf);
-        break;
-      case GRN_CONTENT_NONE:
-        break;
-      }
-    }
-    switch (output_type) {
-    case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTS(ctx, outbuf, "],[");
-      break;
-    case GRN_CONTENT_TSV:
-      GRN_TEXT_PUTC(ctx, outbuf, '\n');
-      break;
-    case GRN_CONTENT_XML:
     case GRN_CONTENT_NONE:
       break;
     }
@@ -11059,7 +11018,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           }
           grn_obj_unlink(ctx, sorted);
         }
-      } else {
+      } else if (!grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit)) {
         GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         switch (output_type) {
@@ -11124,7 +11083,9 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 }
                 grn_table_sort_key_close(ctx, keys, nkeys);
               }
-            } else {
+            } else if (!grn_normalize_offset_and_limit(ctx, nhits,
+                                                       &drilldown_offset,
+                                                       &drilldown_limit)) {
               GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);
@@ -11155,7 +11116,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     switch (output_type) {
     case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTS(ctx, outbuf, "]]");
+      GRN_TEXT_PUTS(ctx, outbuf, "]");
       break;
     case GRN_CONTENT_TSV:
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
