@@ -1638,8 +1638,6 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
   return NULL;
 }
 
-const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
-
 const char *
 grn_table_cursor_get_sort_key_value_(grn_ctx *ctx, grn_table_cursor *tc, int offset,
                                      uint32_t *size, grn_table_sort_key **key)
