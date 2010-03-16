@@ -677,10 +677,11 @@ worker_sub(intptr_t task_id)
     qps = (double)grntest_job[grntest_task[task_id].job_id].qnum/ sec;
     grntest_jobdone++;
     sprintf(tmpbuf, 
-            "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld}",
+            "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld, \"queries\": %d}",
             grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
             grntest_job[grntest_task[task_id].job_id].min,
-            grntest_job[grntest_task[task_id].job_id].max);
+            grntest_job[grntest_task[task_id].job_id].max,
+            grntest_job[grntest_task[task_id].job_id].qnum);
     if (grntest_jobdone < grntest_jobnum) {
       strcat(tmpbuf, ",");
     }
