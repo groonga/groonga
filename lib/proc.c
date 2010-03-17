@@ -65,7 +65,9 @@ print_return_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
     break;
   case GRN_CONTENT_TSV:
   case GRN_CONTENT_XML:
-    /* TODO: implement */
+    if (body) {
+      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
