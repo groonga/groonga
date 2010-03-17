@@ -136,6 +136,35 @@ grn_ra_unref(grn_ctx *ctx, grn_ra *ra, grn_id id)
   return GRN_SUCCESS;
 }
 
+void *
+grn_ra_ref_cache(grn_ctx *ctx, grn_ra *ra, grn_id id, grn_ra_cache *cache)
+{
+  void *p = NULL;
+  uint16_t seg;
+  if (id > GRN_ID_MAX) { return NULL; }
+  seg = id >> ra->element_width;
+  if (seg == cache->seg) {
+    p = cache->p;
+  } else {
+    if (cache->seg != -1) { GRN_IO_SEG_UNREF(ra->io, cache->seg); }
+    GRN_IO_SEG_REF(ra->io, seg, p);
+    cache->seg = seg;
+    cache->p = p;
+  }
+  if (!p) { return NULL; }
+  return (void *)(((byte *)p) + ((id & ra->element_mask) * ra->header->element_size));
+}
+
+grn_rc
+grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
+{
+  uint16_t seg;
+  if (id > GRN_ID_MAX) { return GRN_INVALID_ARGUMENT; }
+  seg = id >> ra->element_width;
+  GRN_IO_SEG_UNREF(ra->io, seg);
+  return GRN_SUCCESS;
+}
+
 /**** jagged arrays ****/
 
 #define GRN_JA_W_SEGREGATE_THRESH      7

@@ -67,6 +67,21 @@ grn_rc grn_ra_remove(grn_ctx *ctx, const char *path);
 void *grn_ra_ref(grn_ctx *ctx, grn_ra *ra, grn_id id);
 grn_rc grn_ra_unref(grn_ctx *ctx, grn_ra *ra, grn_id id);
 
+typedef struct _grn_ra_cache grn_ra_cache;
+
+struct _grn_ra_cache {
+  void *p;
+  int32_t seg;
+};
+
+#define GRN_RA_CACHE_INIT(ra,c) \
+{ (c)->p = NULL; (c)->seg = -1; }
+
+#define GRN_RA_CACHE_FIN(ra,c) \
+{ if ((c)->seg != -1) { GRN_IO_SEG_UNREF((ra)->io, (c)->seg); }}
+
+void *grn_ra_ref_cache(grn_ctx *ctx, grn_ra *ra, grn_id id, grn_ra_cache *cache);
+
 /**** variable sized elements ****/
 
 typedef struct _grn_ja grn_ja;
