@@ -271,23 +271,25 @@ get_content_mime_type(const char *p, const char *pe,
   }
 }
 
-static const char *
+static void
 parse_htpath(const char *p, const char *pe,
+             const char **key_end, const char **filename_end,
              grn_content_type *ct, const char **mime_type)
 {
   const char *pd = NULL;
-  for (; p < pe && *p != '?'; p++) {
+  for (; p < pe && *p != '?' && *p != '#'; p++) {
     if (*p == '.') {
       pd = p;
     }
   }
+  *filename_end = p;
   *ct = GRN_CONTENT_JSON;
   *mime_type = "application/json";
   if (pd && pd < p) {
     get_content_mime_type(pd + 1, p, ct, mime_type);
-    return pd;
+    *key_end = pd;
   } else {
-    return pe;
+    *key_end = pe;
   }
 }
 
@@ -334,10 +336,10 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
     }
     /* TODO: handle post body */
     if (*path == '/') {
-      grn_obj key, jsonp_func;
-      const char *g, *key_end, *mime_type;
       grn_content_type ot;
+      grn_obj key, jsonp_func;
       grn_obj *expr, *val = NULL;
+      const char *g, *key_end, *filename_end, *mime_type;
 
       grn_timeval_now(ctx, &ctx->impl->tv); /* should be initialized in grn_ctx_qe_exec() */
       GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, pathe - path, path);
@@ -347,7 +349,8 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
 
       g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
       if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
-      key_end = parse_htpath(GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot, &mime_type);
+      parse_htpath(GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key),
+                   &key_end, &filename_end, &ot, &mime_type);
       if ((GRN_TEXT_LEN(&key) >= 2 &&
            GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
           (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, key_end - GRN_TEXT_VALUE(&key) - 2))) {
@@ -379,7 +382,8 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
                                      strlen(GRN_EXPR_MISSING_NAME)))) {
         if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-          GRN_TEXT_SET(ctx, val, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key));
+          GRN_TEXT_SET(ctx, val,
+                       GRN_TEXT_VALUE(&key), filename_end - GRN_TEXT_VALUE(&key));
         }
         grn_ctx_push(ctx, body);
         grn_expr_exec(ctx, expr, 1);
