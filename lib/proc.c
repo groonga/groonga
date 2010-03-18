@@ -55,7 +55,7 @@ print_return_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
       GRN_TEXT_PUTS(ctx, buf, ",");
       grn_text_esc(ctx, buf, ctx->errbuf, strlen(ctx->errbuf));
     }
-    if (body) {
+    if (body && GRN_TEXT_LEN(body)) {
       GRN_TEXT_PUTS(ctx, buf, "],");
       GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
       GRN_TEXT_PUTS(ctx, buf, "]");

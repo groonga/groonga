@@ -2272,6 +2272,86 @@ static grn_rc grn_view_group(grn_ctx *ctx, grn_obj *table,
                              grn_table_sort_key *keys, int n_keys,
                              grn_table_group_result *results, int n_results);
 
+static int
+accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res)
+{
+  if (key->header.type == GRN_ACCESSOR) {
+    grn_accessor *a = (grn_accessor *)key;
+    if (a->action == GRN_ACCESSOR_GET_KEY &&
+        a->next && a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+        a->next->obj && !a->next->next) {
+      grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, key));
+      int idp = GRN_OBJ_TABLEP(range);
+      grn_table_cursor *tc;
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+        switch (a->next->obj->header.type) {
+        case GRN_COLUMN_FIX_SIZE :
+          {
+            grn_id id;
+            grn_ra *ra = (grn_ra *)a->next->obj;
+            unsigned element_size = (ra)->header->element_size;
+            grn_ra_cache cache;
+            GRN_RA_CACHE_INIT(ra, &cache);
+            while ((id = grn_table_cursor_next(ctx, tc))) {
+              void *v, *value;
+              grn_id *id_;
+              uint32_t key_size;
+              grn_rset_recinfo *ri = NULL;
+              if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+                grn_table_cursor_get_value(ctx, tc, (void **)&ri);
+              }
+              id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
+              v = grn_ra_ref_cache(ctx, ra, *id_, &cache);
+              if ((!idp || *((grn_id *)v)) &&
+                  grn_table_add_v(ctx, res, v, element_size, &value, NULL)) {
+                grn_table_add_subrec(res, value, ri ? ri->score : 0, NULL, 0);
+              }
+            }
+            GRN_RA_CACHE_FIN(ra, &cache);
+          }
+          break;
+        case GRN_COLUMN_VAR_SIZE :
+          if (idp) { /* todo : support other type */
+            grn_id id;
+            grn_ja *ja = (grn_ja *)a->next->obj;
+            while ((id = grn_table_cursor_next(ctx, tc))) {
+              grn_io_win jw;
+              unsigned int len = 0;
+              void *value;
+              grn_id *v, *id_;
+              uint32_t key_size;
+              grn_rset_recinfo *ri = NULL;
+              if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+                grn_table_cursor_get_value(ctx, tc, (void **)&ri);
+              }
+              id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
+              if ((v = grn_ja_ref(ctx, ja, *id_, &jw, &len))) {
+                while (len) {
+                  if ((*v != GRN_ID_NIL) &&
+                      grn_table_add_v(ctx, res, v, sizeof(grn_id), &value, NULL)) {
+                    grn_table_add_subrec(res, value, ri ? ri->score : 0, NULL, 0);
+                  }
+                  v++;
+                  len -= sizeof(grn_id);
+                }
+                grn_ja_unref(ctx, &jw);
+              }
+            }
+          } else {
+            return 0;
+          }
+          break;
+        default :
+          return 0;
+        }
+        grn_table_cursor_close(ctx, tc);
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
 grn_rc
 grn_table_group(grn_ctx *ctx, grn_obj *table,
                 grn_table_sort_key *keys, int n_keys,
@@ -2306,52 +2386,54 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     GRN_TEXT_INIT(&bulk, 0);
     if (n_keys == 1 && n_results == 1) {
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
-        grn_id id;
-        grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys->key));
-        int idp = GRN_OBJ_TABLEP(range);
-        while ((id = grn_table_cursor_next(ctx, tc))) {
-          void *value;
-          grn_rset_recinfo *ri = NULL;
-          GRN_BULK_REWIND(&bulk);
-          if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
-            grn_table_cursor_get_value(ctx, tc, (void **)&ri);
-          }
-          grn_obj_get_value(ctx, keys->key, id, &bulk);
-          switch (bulk.header.type) {
-          case GRN_UVECTOR :
-            {
-              // todo : support objects except grn_id
-              grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
-              grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
-              while (v < ve) {
-                if ((*v != GRN_ID_NIL) &&
-                    grn_table_add_v(ctx, results->table, v, sizeof(grn_id), &value, NULL)) {
+      if (!accelerated_table_group(ctx, table, keys->key, results->table)) {
+        if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+          grn_id id;
+          grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys->key));
+          int idp = GRN_OBJ_TABLEP(range);
+          while ((id = grn_table_cursor_next(ctx, tc))) {
+            void *value;
+            grn_rset_recinfo *ri = NULL;
+            GRN_BULK_REWIND(&bulk);
+            if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+              grn_table_cursor_get_value(ctx, tc, (void **)&ri);
+            }
+            grn_obj_get_value(ctx, keys->key, id, &bulk);
+            switch (bulk.header.type) {
+            case GRN_UVECTOR :
+              {
+                // todo : support objects except grn_id
+                grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
+                grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
+                while (v < ve) {
+                  if ((*v != GRN_ID_NIL) &&
+                      grn_table_add_v(ctx, results->table, v, sizeof(grn_id), &value, NULL)) {
+                    grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
+                  }
+                  v++;
+                }
+              }
+              break;
+            case GRN_VECTOR :
+              ERR(GRN_OPERATION_NOT_SUPPORTED, "sorry.. not implemented yet");
+              /* todo */
+              break;
+            case GRN_BULK :
+              {
+                if ((!idp || *((grn_id *)GRN_BULK_HEAD(&bulk))) &&
+                    grn_table_add_v(ctx, results->table,
+                                    GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, NULL)) {
                   grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
                 }
-                v++;
               }
+              break;
+            default :
+              ERR(GRN_INVALID_ARGUMENT, "invalid column");
+              break;
             }
-            break;
-          case GRN_VECTOR :
-            ERR(GRN_OPERATION_NOT_SUPPORTED, "sorry.. not implemented yet");
-            /* todo */
-            break;
-          case GRN_BULK :
-            {
-              if ((!idp || *((grn_id *)GRN_BULK_HEAD(&bulk))) &&
-                  grn_table_add_v(ctx, results->table,
-                                  GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, NULL)) {
-                grn_table_add_subrec(results->table, value, ri ? ri->score : 0, NULL, 0);
-              }
-            }
-            break;
-          default :
-            ERR(GRN_INVALID_ARGUMENT, "invalid column");
-            break;
           }
+          grn_table_cursor_close(ctx, tc);
         }
-        grn_table_cursor_close(ctx, tc);
       }
     } else {
       if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
