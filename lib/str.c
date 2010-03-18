@@ -20,6 +20,7 @@
 #include <string.h>
 #include "ctx.h"
 #include "str.h"
+#include "db.h" /* for GRN_(U)INT8/16_VALUE */
 
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE
