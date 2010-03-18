@@ -31,14 +31,14 @@ class HTTPTest < Test::Unit::TestCase
   def test_status
     response = get(command_path(:status))
     assert_equal("application/json", response.content_type)
-    assert_equal(["alloc_count", "starttime", "uptime"],
-                 JSON.parse(response.body).keys.sort)
+    assert_equal(["alloc_count", "starttime", "uptime", "version"],
+                 JSON.parse(response.body)[1].keys.sort)
   end
 
   def test_quit
     response = get(command_path(:quit))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    assert_success_response(response,
+                            :content_type => "application/json")
 
     assert_nothing_raised do
       get(command_path(:quit))
@@ -47,8 +47,8 @@ class HTTPTest < Test::Unit::TestCase
 
   def test_shutdown
     response = get(command_path(:shutdown))
-    assert_response([[Result::SUCCESS]], response,
-                    :content_type => "application/json")
+    assert_success_response(response,
+                            :content_type => "application/json")
     @groonga_pid = nil
 
     assert_raise(Errno::ECONNREFUSED) do
