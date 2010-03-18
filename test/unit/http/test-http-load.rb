@@ -112,7 +112,7 @@ class HTTPLoadTest < Test::Unit::TestCase
   end
 
   def assert_key(key_type, key_value)
-    table_name = "#{key_type}-hash"
+    table_name = "#{key_type}_hash"
     table_create(table_name,
                  :flags => Table::HASH_KEY,
                  :key_type => key_type)
