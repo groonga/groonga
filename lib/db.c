@@ -11071,6 +11071,10 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         LAP("score");
       }
       nhits = grn_table_size(ctx, res);
+
+      grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
+      ERRCLR(ctx);
+
       if (sortby_len) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
@@ -11100,7 +11104,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           }
           grn_obj_unlink(ctx, sorted);
         }
-      } else if (!grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit)) {
+      } else {
         GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         switch (output_type) {
@@ -11122,6 +11126,12 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
       LAP("output");
+
+      grn_normalize_offset_and_limit(ctx, nhits,
+                                     &drilldown_offset,
+                                     &drilldown_limit);
+      ERRCLR(ctx);
+
       if (drilldown_len) {
         uint32_t i, ngkeys;
         grn_table_sort_key *gkeys;
@@ -11165,9 +11175,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 }
                 grn_table_sort_key_close(ctx, keys, nkeys);
               }
-            } else if (!grn_normalize_offset_and_limit(ctx, nhits,
-                                                       &drilldown_offset,
-                                                       &drilldown_limit)) {
+            } else {
               GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);

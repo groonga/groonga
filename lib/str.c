@@ -2714,6 +2714,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
+      if (!tc) { ERRCLR(ctx); }
       GRN_TEXT_PUTS(ctx, bulk, "[[");
       grn_text_itoa(ctx, bulk, format->nhits);
       GRN_TEXT_PUTC(ctx, bulk, ']');

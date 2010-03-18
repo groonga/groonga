@@ -86,6 +86,8 @@ module GroongaTestUtils
       exec(@groonga, *arguments)
     end
 
+    sleep 0.3 # wait for groonga server initialize
+
     begin
       timeout(1) do
         loop do
