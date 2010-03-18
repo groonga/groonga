@@ -64,7 +64,7 @@ module GroongaTestUtils
   def guess_groonga_path
     groonga = ENV["GROONGA"]
     groonga ||= File.join(File.dirname(__FILE__),
-                          "..", "..", "..", "..", "..",
+                          "..", "..", "..", "..",
                           "src", "groonga")
     File.expand_path(groonga)
   end
