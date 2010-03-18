@@ -218,6 +218,9 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         grn_text_itoa(ctx, &body, grn_starttime.tv_sec);
         GRN_TEXT_PUTS(ctx, &body, ",\"uptime\":");
         grn_text_itoa(ctx, &body, now.tv_sec - grn_starttime.tv_sec);
+        GRN_TEXT_PUTS(ctx, &body, ",\"version\":\"");
+        GRN_TEXT_PUTS(ctx, &body, grn_get_version());
+        GRN_TEXT_PUTC(ctx, &body, '"');
         GRN_TEXT_PUTC(ctx, &body, '}');
         print_return_code_with_body(ctx, outbuf, ct, &body);
         grn_obj_unlink(ctx, &body);
