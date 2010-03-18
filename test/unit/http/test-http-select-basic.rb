@@ -629,27 +629,31 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown([],
-                     [],
-                     {:drilldown_offset => 5},
-                     :n_hits => comments.size)
+    response = get(command_path(:select,
+                                :drilldown_offset => 5))
+
+    p response.body
+
+    assert_response([[Result::INVALID_ARGUMENT, 0.0, 0.0,
+                      "too large offset"]],
+                    response,
+                    :content_type => "application/json")
   end
 
-  def test_negative_drilldwon_offset_equal_to_hits
+  def test_negative_drilldown_offset_equal_to_hits
     create_users_table
     load_many_users
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown([["_key", "ShortText"]],
-                     [["taporobo"],
-                      ["hayamiz"],
-                      ["gunyara-kun"],
-                      ["moritan"],
-                      ["ryoqun"]],
-                     {:drilldown_offset => -5,
-                      :drilldown_output_columns => "_key"},
-                     :n_hits => comments.size)
+    response = get(command_path(:select,
+                                :drilldown_output_columns => "_key",
+                                :drilldown_offset => -5))
+
+    assert_response([[Result::INVALID_ARGUMENT, 0.0, 0.0,
+                      "too large offset"]],
+                    response,
+                    :content_type => "application/json")
   end
 
   def test_drilldown_limit
