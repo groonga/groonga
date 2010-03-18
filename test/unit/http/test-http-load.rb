@@ -76,31 +76,31 @@ class HTTPLoadTest < Test::Unit::TestCase
   end
 
   def test_int_value
-    table_create("int-hash",
+    table_create("int_hash",
                  :flags => Table::HASH_KEY,
                  :key_type => "Int32",
                  :value_type => "Int32")
 
-    load("int-hash", [{:_key => 29, :_value => 10}])
+    load("int_hash", [{:_key => 29, :_value => 10}])
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"],
                    ["_value", "Int32"]],
                   [[1, 29, 10]],
-                  :table => "int-hash")
+                  :table => "int_hash")
   end
 
   def test_int_column_value
-    table_create("int-hash",
+    table_create("int_hash",
                  :flags => Table::HASH_KEY,
                  :key_type => "Int32")
-    column_create("int-hash", "int_value", Column::SCALAR, "Int32")
+    column_create("int_hash", "int_value", Column::SCALAR, "Int32")
 
-    load("int-hash", [{:_key => 29, :int_value => 10}])
+    load("int_hash", [{:_key => 29, :int_value => 10}])
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"],
                    ["int_value", "Int32"]],
                   [[1, 29, 10]],
-                  :table => "int-hash")
+                  :table => "int_hash")
   end
 
   private

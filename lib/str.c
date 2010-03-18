@@ -2478,6 +2478,18 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTS(ctx, bulk, "false");
       }
       break;
+    case GRN_DB_INT8 :
+      grn_text_itoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT8_VALUE(obj) : 0);
+      break;
+    case GRN_DB_UINT8 :
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_UINT8_VALUE(obj) : 0);
+      break;
+    case GRN_DB_INT16 :
+      grn_text_itoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT16_VALUE(obj) : 0);
+      break;
+    case GRN_DB_UINT16 :
+      grn_text_lltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_UINT16_VALUE(obj) : 0);
+      break;
     case GRN_DB_INT32 :
       grn_text_itoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_INT32_VALUE(obj) : 0);
       break;
