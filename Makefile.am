@@ -1,3 +1,4 @@
+AUTOMAKE_OPTIONS = 1.9.7
 SUBDIRS = lib src examples test
 #dist_data_DATA =
 EXTRA_DIST = bindings resource doc/ja version-gen.sh
