@@ -335,65 +335,73 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       }
     }
     /* TODO: handle post body */
-    if (*path == '/') {
-      grn_content_type ot;
-      grn_obj key, jsonp_func;
-      grn_obj *expr, *val = NULL;
-      const char *g, *key_end, *filename_end, *mime_type;
+    {
+      grn_rc expr_rc;
+      grn_obj jsonp_func;
+      const char *mime_type;
 
-      grn_timeval_now(ctx, &ctx->impl->tv); /* should be initialized in grn_ctx_qe_exec() */
-      GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, pathe - path, path);
-      GRN_TEXT_INIT(&key, 0);
       GRN_TEXT_INIT(&jsonp_func, 0);
-      GRN_BULK_REWIND(body);
 
-      g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
-      if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
-      parse_htpath(GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key),
-                   &key_end, &filename_end, &ot, &mime_type);
-      if ((GRN_TEXT_LEN(&key) >= 2 &&
-           GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
-          (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, key_end - GRN_TEXT_VALUE(&key) - 2))) {
-        while (g < pathe) {
-          GRN_BULK_REWIND(&key);
-          g = grn_text_cgidec(ctx, &key, g, pathe, '=');
-          if (GRN_TEXT_CMPS(&key, JSON_CALLBACK_PARAM)) {
-            val = &jsonp_func;
-          } else if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
-            val = &key;
+      if (*path != '/') {
+        expr_rc = GRN_INVALID_ARGUMENT;
+      } else {
+        grn_obj key;
+        grn_content_type ot;
+        grn_obj *expr, *val = NULL;
+        const char *g, *key_end, *filename_end;
+
+        grn_timeval_now(ctx, &ctx->impl->tv); /* should be initialized in grn_ctx_qe_exec() */
+        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, pathe - path, path);
+        GRN_TEXT_INIT(&key, 0);
+        GRN_BULK_REWIND(body);
+
+        g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
+        if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
+        parse_htpath(GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key),
+                     &key_end, &filename_end, &ot, &mime_type);
+        if ((GRN_TEXT_LEN(&key) >= 2 &&
+             GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
+            (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, key_end - GRN_TEXT_VALUE(&key) - 2))) {
+          while (g < pathe) {
+            GRN_BULK_REWIND(&key);
+            g = grn_text_cgidec(ctx, &key, g, pathe, '=');
+            if (GRN_TEXT_CMPS(&key, JSON_CALLBACK_PARAM)) {
+              val = &jsonp_func;
+            } else if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
+              val = &key;
+            }
+            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+            g = grn_text_cgidec(ctx, val, g, pathe, '&');
+            if (GRN_TEXT_CMPS(&key, OUTPUT_TYPE)) {
+              get_content_mime_type(GRN_TEXT_VALUE(val),
+                                    GRN_TEXT_VALUE(val) + GRN_TEXT_LEN(val),
+                                    &ot, &mime_type);
+            }
           }
-          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-          g = grn_text_cgidec(ctx, val, g, pathe, '&');
-          if (GRN_TEXT_CMPS(&key, OUTPUT_TYPE)) {
-            get_content_mime_type(GRN_TEXT_VALUE(val),
-                                  GRN_TEXT_VALUE(val) + GRN_TEXT_LEN(val),
-                                  &ot, &mime_type);
+          if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
+            grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
+            GRN_INT32_SET(ctx, val, (int32_t)ot);
           }
+          grn_ctx_push(ctx, body);
+          expr_rc = grn_expr_exec(ctx, expr, 1);
+          val = grn_ctx_pop(ctx);
+          grn_expr_clear_vars(ctx, expr);
+        } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
+                                       strlen(GRN_EXPR_MISSING_NAME)))) {
+          if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
+            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+            GRN_TEXT_SET(ctx, val,
+                         GRN_TEXT_VALUE(&key), filename_end - GRN_TEXT_VALUE(&key));
+          }
+          grn_ctx_push(ctx, body);
+          expr_rc = grn_expr_exec(ctx, expr, 1);
+          val = grn_ctx_pop(ctx);
+          grn_expr_clear_vars(ctx, expr);
         }
-        if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
-          grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
-          GRN_INT32_SET(ctx, val, (int32_t)ot);
-        }
-        grn_ctx_push(ctx, body);
-        grn_expr_exec(ctx, expr, 1);
-        val = grn_ctx_pop(ctx);
-        grn_expr_clear_vars(ctx, expr);
-      } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
-                                     strlen(GRN_EXPR_MISSING_NAME)))) {
-        if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
-          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-          GRN_TEXT_SET(ctx, val,
-                       GRN_TEXT_VALUE(&key), filename_end - GRN_TEXT_VALUE(&key));
-        }
-        grn_ctx_push(ctx, body);
-        grn_expr_exec(ctx, expr, 1);
-        val = grn_ctx_pop(ctx);
-        grn_expr_clear_vars(ctx, expr);
+        GRN_OBJ_FIN(ctx, &key);
       }
-      GRN_OBJ_FIN(ctx, &key);
-
       /* TODO: Content-Length */
-      if (!ERRP(ctx, GRN_CRIT)) {
+      if (!expr_rc) {
         GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 200 OK\r\n");
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Connection: close\r\n");
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: ");
@@ -413,18 +421,32 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
           GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
         }
       } else {
-        /* TODO: output backtrace */
-        /* TODO: output with given output type like json */
-        GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 500 Internal Server Error\r\n");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: text/plain\r\n\r\n");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\n");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errfile);
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ":");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errfunc);
+        if (expr_rc == GRN_NO_SUCH_FILE_OR_DIRECTORY) {
+          GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 404 Not Found\r\n");
+        } else {
+          GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 500 Internal Server Error\r\n");
+        }
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: application/json\r\n\r\n");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "[[");
+        grn_text_itoa(ctx, ctx->impl->outbuf, expr_rc);
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ",0,0");
+        if (ctx->errbuf && strlen(ctx->errbuf)) {
+          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+          grn_text_esc(ctx, ctx->impl->outbuf, ctx->errbuf, strlen(ctx->errbuf));
+          if (ctx->errfunc && ctx->errfile) {
+            /* TODO: output backtrace */
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ",[[");
+            grn_text_esc(ctx, ctx->impl->outbuf, ctx->errfunc, strlen(ctx->errfile));
+            GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+            grn_text_esc(ctx, ctx->impl->outbuf, ctx->errfile, strlen(ctx->errfile));
+            GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+            grn_text_itoa(ctx, ctx->impl->outbuf, ctx->errline);
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "]]");
+          }
+        }
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "]]");
       }
       GRN_OBJ_FIN(ctx, &jsonp_func);
-
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (ctx->impl->output) {
         ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
