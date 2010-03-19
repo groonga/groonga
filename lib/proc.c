@@ -17,10 +17,15 @@
 
 #include <string.h>
 #include <stdlib.h>
+#define __USE_GNU
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "proc.h"
 #include "ql.h"
+
+#ifndef O_NOFOLLOW
+#define O_NOFOLLOW 0
+#endif
 
 /**** globals for procs ****/
 const char *grn_admin_html_path = NULL;
@@ -901,8 +906,21 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
   /* FIXME: implement more smartly with grn_bulk */
   int fd, ret = 0;
   struct stat stat;
-  if ((fd = open(path, O_RDONLY)) == -1) {
-    ERR(GRN_INVALID_ARGUMENT, "file is not found");
+  if ((fd = open(path, O_RDONLY|O_NOFOLLOW)) == -1) {
+    switch (errno) {
+    case EACCES :
+      ERR(GRN_OPERATION_NOT_PERMITTED, "request is not allowed.");
+      break;
+    case ENOENT :
+      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY, "no such file.");
+      break;
+    case ELOOP :
+      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY, "symbolic link is not allowed.");
+      break;
+    default :
+      ERR(GRN_UNKNOWN_ERROR, "open() failed(errno: %d).", errno);
+      break;
+    }
     return 0;
   }
   if (fstat(fd, &stat) != -1) {
@@ -947,7 +965,8 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     char path[PATH_MAX];
     memcpy(path, grn_admin_html_path, grn_admin_html_path_len);
     path[grn_admin_html_path_len] = PATH_SEPARATOR[0];
-    grn_str_url_path_normalize(GRN_TEXT_VALUE(&vars[0].value),
+    grn_str_url_path_normalize(ctx,
+                               GRN_TEXT_VALUE(&vars[0].value),
                                GRN_TEXT_LEN(&vars[0].value),
                                path + grn_admin_html_path_len + 1,
                                PATH_MAX - grn_admin_html_path_len - 1);

@@ -186,7 +186,10 @@ module GroongaHTTPTestUtils
         raise "JSON ParserError #{e.message}\nJSON is ...\n" \
               "---\n#{response.body}\n---"
       end
-      actual[0][1..2] = [0.0, 0.0] if actual[0][0].is_a?(Integer)
+      if actual[0][0].is_a?(Integer)
+        actual[0][1..2] = [0.0, 0.0]
+        actual[0][4] = nil if actual[0][4]
+      end
     when "text/html"
       actual = response.body
     when "text/xml"
@@ -208,7 +211,7 @@ module GroongaHTTPTestUtils
   end
 
   def assert_error_response(code, message, response, options=nil)
-    assert_response([[code, 0.0, 0.0, message]], response, options)
+    assert_response([[code, 0.0, 0.0, message, nil]], response, options)
   end
 
   def assert_select(header, expected, parameters, options={}, &block)

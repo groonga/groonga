@@ -1,3 +1,4 @@
+AC_PREREQ(2.59)
 AC_INIT([groonga],[0.1.6],[groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 

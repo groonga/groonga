@@ -3011,7 +3011,8 @@ grn_text_cgidec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d
 }
 
 void
-grn_str_url_path_normalize(const char *path, size_t path_len, char *buf, size_t buf_len)
+grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
+                           char *buf, size_t buf_len)
 {
   char *b = buf, *be = buf + buf_len - 1;
   const char *p = path, *pe = path + path_len, *pc;
@@ -3026,7 +3027,10 @@ grn_str_url_path_normalize(const char *path, size_t path_len, char *buf, size_t 
         if (b - buf >= 2) {
           for (b -= 2; *b != PATH_SEPARATOR[0] && b >= buf; b--) {}
         }
-        if (*b == PATH_SEPARATOR[0]) { b++; }
+        if (*b == PATH_SEPARATOR[0]) {
+          b++;
+          ERR(GRN_INVALID_ARGUMENT, "parent path doesn't exist.");
+        }
         p = pc + 1;
         continue;
       } else if (pc == p + 1) {
