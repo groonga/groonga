@@ -312,6 +312,9 @@ const char *_grn_hash_strkey_by_val(void *v, uint16_t *size);
 
 const char *grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *size);
 
+grn_rc grn_hash_remove(grn_ctx *ctx, const char *path);
+grn_rc grn_array_remove(grn_ctx *ctx, const char *path);
+
 #ifdef __cplusplus
 }
 #endif
