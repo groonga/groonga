@@ -315,6 +315,67 @@ grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
 grn_rc grn_expr_parser_close(grn_ctx *ctx);
 grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp);
 
+/* obj value setter/getter require <stdint.h> */
+#define GRN_INT8_SET(ctx,obj,val) do {\
+  int8_t _val = (int8_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int8_t));\
+} while (0)
+#define GRN_UINT8_SET(ctx,obj,val) do {\
+  uint8_t _val = (uint8_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint8_t));\
+} while (0)
+#define GRN_INT16_SET(ctx,obj,val) do {\
+  int16_t _val = (int16_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int16_t));\
+} while (0)
+#define GRN_UINT16_SET(ctx,obj,val) do {\
+  uint16_t _val = (uint16_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint16_t));\
+} while (0)
+#define GRN_INT8_SET_AT(ctx,obj,offset,val) do {\
+  int8_t _val = (int8_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(int8_t), sizeof(int8_t));\
+} while (0)
+#define GRN_UINT8_SET_AT(ctx,obj,offset,val) do { \
+  uint8_t _val = (uint8_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(uint8_t), sizeof(uint8_t));\
+} while (0)
+#define GRN_INT16_SET_AT(ctx,obj,offset,val) do {\
+  int16_t _val = (int16_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(int16_t), sizeof(int16_t));\
+} while (0)
+#define GRN_UINT16_SET_AT(ctx,obj,offset,val) do { \
+  uint16_t _val = (uint16_t)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(uint16_t), sizeof(uint16_t));\
+} while (0)
+#define GRN_INT8_VALUE(obj) (*((int8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT8_VALUE(obj) (*((uint8_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT16_VALUE(obj) (*((int16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT16_VALUE(obj) (*((uint16_t *)GRN_BULK_HEAD(obj)))
+#define GRN_INT8_VALUE_AT(obj,offset) (((int8_t *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_UINT8_VALUE_AT(obj,offset) (((uint8_t *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_INT16_VALUE_AT(obj,offset) (((int16_t *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_UINT16_VALUE_AT(obj,offset) (((uint16_t *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_INT8_PUT(ctx,obj,val) do {\
+  int8_t _val = (int8_t)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int8_t));\
+} while (0)
+#define GRN_UINT8_PUT(ctx,obj,val) do {\
+  uint8_t _val = (uint8_t)(val);\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(uint8_t));\
+} while (0)
+#define GRN_INT16_PUT(ctx,obj,val) do {\
+  int16_t _val = (int16_t)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int16_t));\
+} while (0)
+#define GRN_UINT16_PUT(ctx,obj,val) do {\
+  uint16_t _val = (uint16_t)(val);\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(uint16_t));\
+} while (0)
+
+
 /* utilities */
 void grn_p(grn_ctx *ctx, grn_obj *obj);
 

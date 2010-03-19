@@ -55,18 +55,19 @@ class HTTPSchemaTest < Test::Unit::TestCase
         name, flags, domain, range = values
         [nil, name, nil, flags, domain, range]
       end
-      assert_response([
-                       [["id", "UInt32"],
-                        ["name", "ShortText"],
-                        ["path", "ShortText"],
-                        ["flags", "ShortText"],
-                        ["domain", "ShortText"],
-                        ["range", "ShortText"]],
-                       *expected
-                      ],
-                      response,
-                      :content_type => "application/json") do |actual|
-        actual[0, 1] + actual[1..-1].collect do |values|
+      assert_response(
+        [
+          [["id", "UInt32"],
+          ["name", "ShortText"],
+          ["path", "ShortText"],
+          ["flags", "ShortText"],
+          ["domain", "ShortText"],
+          ["range", "ShortText"]],
+          *expected
+        ],
+        response,
+        :content_type => "application/json") do |actual|
+        actual[1][0, 1] + actual[1][1..-1].collect do |values|
           id, name, path, flags, domain, range = values
           [nil, name, nil, flags, domain, range]
         end
@@ -102,7 +103,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                     ],
                     response,
                     :content_type => "application/json") do |actual|
-      actual[0, 1] + actual[1..-1].collect do |values|
+      actual[1][0, 1] + actual[1][1..-1].collect do |values|
         id, name, path, flags, domain, range = values
         path = normalized_path if path
         [id, name, path, flags, domain, range]
@@ -111,6 +112,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   end
 
   def test_table_list_with_invalid_output_type
+    omit('now invalid output types are interpreted to json')
     response = get(command_path(:table_list,
                                 :output_type => "unknown"))
     assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
@@ -122,16 +124,17 @@ class HTTPSchemaTest < Test::Unit::TestCase
     create_bookmarks_table
     response = get(command_path(:column_list,
                                 :table => "bookmarks"))
-    assert_response([[["id", "UInt32"],
-                      ["name", "ShortText"],
-                      ["path", "ShortText"],
-                      ["type", "ShortText"],
-                      ["flags", "ShortText"],
-                      ["domain", "ShortText"],
-                      ["range", "ShortText"],
-                      ["source", "ShortText"]]],
-                    response,
-                    :content_type => "application/json")
+    assert_response_body(
+      [[["id", "UInt32"],
+      ["name", "ShortText"],
+      ["path", "ShortText"],
+      ["type", "ShortText"],
+      ["flags", "ShortText"],
+      ["domain", "ShortText"],
+      ["range", "ShortText"],
+      ["source", "ShortText"]]],
+      response,
+      :content_type => "application/json")
   end
 
   def test_column_list_exist
@@ -139,27 +142,32 @@ class HTTPSchemaTest < Test::Unit::TestCase
     create_bookmark_title_column
     response = get(command_path(:column_list,
                                 :table => "bookmarks"))
-    assert_response([
-                     [["id", "UInt32"],
-                      ["name", "ShortText"],
-                      ["path", "ShortText"],
-                      ["type", "ShortText"],
-                      ["flags", "ShortText"],
-                      ["domain", "ShortText"],
-                      ["range", "ShortText"],
-                      ["source", "ShortText"]],
-                     [@bookmarks_title_column_id,
-                      "title",
-                      nil,
-                      "var",
-                      "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
-                      "bookmarks",
-                      "ShortText",
-                      []]
-                     ],
-                    response,
-                    :content_type => "application/json") do |actual|
-      actual[0, 1] + actual[1..-1].collect do |values|
+    assert_response(
+      [
+        [
+          ["id", "UInt32"],
+          ["name", "ShortText"],
+          ["path", "ShortText"],
+          ["type", "ShortText"],
+          ["flags", "ShortText"],
+          ["domain", "ShortText"],
+          ["range", "ShortText"],
+          ["source", "ShortText"]
+        ],
+        [
+          @bookmarks_title_column_id,
+          "title",
+          nil,
+          "var",
+          "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
+          "bookmarks",
+          "ShortText",
+          []
+        ]
+      ],
+      response,
+      :content_type => "application/json") do |actual|
+      actual[1][0, 1] + actual[1][1..-1].collect do |values|
         id, name, path, type, flags, domain, range, source = values
         [id, name, nil, type, flags, domain, range, source]
       end
@@ -169,19 +177,20 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_column_list_nonexistent
     response = get(command_path(:column_list,
                                 :table => "nonexistent"))
-    assert_error_response(Result::UNKNOWN_ERROR, "should be implemented",
+    assert_error_response(Result::INVALID_ARGUMENT, "table 'nonexistent' is not exist.",
                           response,
                           :content_type => "application/json")
   end
 
   def test_column_list_without_table
     response = get(command_path(:column_list))
-    assert_error_response(Result::UNKNOWN_ERROR, "should be implemented",
+    assert_error_response(Result::INVALID_ARGUMENT, "table '' is not exist.",
                           response,
                           :content_type => "application/json")
   end
 
   def test_column_list_with_invalid_output_type
+    omit('now invalid output types are interpreted to json')
     create_bookmarks_table
     response = get(command_path(:column_list,
                                 :table => "bookmarks",
@@ -192,6 +201,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   end
 
   def test_column_list_with_invalid_output_type_without_table
+    omit('now invalid output types are interpreted to json')
     response = get(command_path(:column_list,
                                 :output_type => "unknown"))
     assert_error_response(Result::UNKNOWN_ERROR, "should be implemented",
@@ -201,7 +211,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_table_create_without_name
     response = get(command_path(:table_create))
-    assert_error_response(Result::UNKNOWN_ERROR,
+    assert_error_response(Result::INVALID_ARGUMENT,
                           "should not create anonymous table",
                           response,
                           :content_type => "application/json")
@@ -210,7 +220,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_dot_name
     response = get(command_path(:table_create, :name => "mori.daijiro"))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "name can't start with '_' and contains '.' or ':'",
+                          "name can't start with '_' and 0-9, and contains only 0-9, A-Z, a-z, or _",
                           response,
                           :content_type => "application/json")
   end
@@ -218,7 +228,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_under_score_started_name
     response = get(command_path(:table_create, :name => "_mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "name can't start with '_' and contains '.' or ':'",
+                          "name can't start with '_' and 0-9, and contains only 0-9, A-Z, a-z, or _",
                           response,
                           :content_type => "application/json")
   end
@@ -231,7 +241,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_colon_name
     response = get(command_path(:table_create, :name => "daijiro:mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "name can't start with '_' and contains '.' or ':'",
+                          "name can't start with '_' and 0-9, and contains only 0-9, A-Z, a-z, or _",
                           response,
                           :content_type => "application/json")
   end
@@ -265,7 +275,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
     response = get(command_path(:column_create,
                                 :table => "terms",
-                                :name => "bookmarks-title",
+                                :name => "bookmarks_title",
                                 :flags => Column::INDEX | Flag::WITH_POSITION,
                                 :type => "bookmarks",
                                 :source => "title"))

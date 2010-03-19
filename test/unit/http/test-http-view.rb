@@ -28,47 +28,49 @@ class HTTPViewTest < Test::Unit::TestCase
 
   def test_select
     table_create("softwares", :flags => Table::VIEW)
-    table_create("search-engines", :key_type => "ShortText")
-    table_create("testing-frameworks", :key_type => "ShortText")
+    table_create("search_engines", :key_type => "ShortText")
+    table_create("testing_frameworks", :key_type => "ShortText")
 
-    load("search-engines", [{:_key => "groonga"}, {:_key => "Senna"}])
-    load("testing-frameworks", [{:_key => "Cutter"}, {:_key => "test-unit"}])
+    load("search_engines", [{:_key => "groonga"}, {:_key => "Senna"}])
+    load("testing_frameworks", [{:_key => "Cutter"}, {:_key => "test-unit"}])
 
     assert_select([],
                   [],
                   :table => "softwares",
                   :output_columns => "_key")
 
-    view_add("softwares", "search-engines")
-    assert_select(["_key"],
+    view_add("softwares", "search_engines")
+    assert_select([["_key", "Object"]],
                   [["groonga"], ["Senna"]],
                   :table => "softwares",
                   :output_columns => "_key")
 
-    view_add("softwares", "testing-frameworks")
-    assert_select(["_key"],
+    view_add("softwares", "testing_frameworks")
+    assert_select([["_key", "Object"]],
                   [["groonga"], ["Senna"], ["Cutter"], ["test-unit"]],
                   :table => "softwares",
                   :output_columns => "_key")
   end
 
   def test_nonexistent
-    table_create("search-engines", :key_type => "ShortText")
+    table_create("search_engines", :key_type => "ShortText")
     response = get(command_path(:view_add,
                                 :view => "nonexistent",
-                                :table => "search-engines"))
-    assert_response([[Result::INVALID_ARGUMENT, "invalid view"]], response,
-                    :content_type => "application/json")
+                                :table => "search_engines"))
+    assert_error_response(Result::INVALID_ARGUMENT, "invalid view",
+                          response,
+                          :content_type => "application/json")
   end
 
   def test_invalid
-    table_create("search-engines", :key_type => "ShortText")
-    table_create("testing-framework", :key_type => "ShortText")
+    table_create("search_engines", :key_type => "ShortText")
+    table_create("testing_framework", :key_type => "ShortText")
     response = get(command_path(:view_add,
-                                :view => "testing-framework",
-                                :table => "search-engines"))
-    assert_response([[Result::INVALID_ARGUMENT, "invalid view"]], response,
-                    :content_type => "application/json")
+                                :view => "testing_framework",
+                                :table => "search_engines"))
+    assert_error_response(Result::INVALID_ARGUMENT, "invalid view",
+                          response,
+                          :content_type => "application/json")
   end
 
   def test_add_nonexistent_table
@@ -76,8 +78,9 @@ class HTTPViewTest < Test::Unit::TestCase
     response = get(command_path(:view_add,
                                 :view => "softwares",
                                 :table => "nonexistent"))
-    assert_response([[Result::INVALID_ARGUMENT, "invalid table"]], response,
-                    :content_type => "application/json")
+    assert_error_response(Result::INVALID_ARGUMENT, "invalid table",
+                          response,
+                          :content_type => "application/json")
   end
 
   def test_invalid_table
@@ -85,7 +88,8 @@ class HTTPViewTest < Test::Unit::TestCase
     response = get(command_path(:view_add,
                                 :view => "softwares",
                                 :table => "ShortText"))
-    assert_response([[Result::INVALID_ARGUMENT, "invalid table"]], response,
-                    :content_type => "application/json")
+    assert_error_response(Result::INVALID_ARGUMENT, "invalid table",
+                          response,
+                          :content_type => "application/json")
   end
 end

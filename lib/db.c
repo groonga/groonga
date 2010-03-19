@@ -41,23 +41,6 @@
   }\
 }
 
-#define GRN_INT8_SET(ctx,obj,val) do {\
-  int8_t _val = (int8_t)(val);\
-  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int8_t));\
-} while (0)
-#define GRN_UINT8_SET(ctx,obj,val) do {\
-  uint8_t _val = (uint8_t)(val);\
-  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint8_t));\
-} while (0)
-#define GRN_INT16_SET(ctx,obj,val) do {\
-  int16_t _val = (int16_t)(val);\
-  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int16_t));\
-} while (0)
-#define GRN_UINT16_SET(ctx,obj,val) do {\
-  uint16_t _val = (uint16_t)(val);\
-  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint16_t));\
-} while (0)
-
 struct _grn_db {
   grn_db_obj obj;
   grn_pat *keys;
@@ -3650,6 +3633,18 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (src->header.domain) {
+  case GRN_DB_INT8 :
+    NUM2DEST(GRN_INT8_VALUE, grn_text_itoa, NUM2BOOL);
+    break;
+  case GRN_DB_UINT8 :
+    NUM2DEST(GRN_UINT8_VALUE, grn_text_lltoa, NUM2BOOL);
+    break;
+  case GRN_DB_INT16 :
+    NUM2DEST(GRN_INT16_VALUE, grn_text_itoa, NUM2BOOL);
+    break;
+  case GRN_DB_UINT16 :
+    NUM2DEST(GRN_UINT16_VALUE, grn_text_lltoa, NUM2BOOL);
+    break;
   case GRN_DB_INT32 :
     NUM2DEST(GRN_INT32_VALUE, grn_text_itoa, NUM2BOOL);
     break;
@@ -4019,6 +4014,42 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
 
 #define INCRDECR(op) \
   switch (DB_OBJ(obj)->range) {\
+  case GRN_DB_INT8 :\
+    if (s == sizeof(int8_t)) {\
+      int8_t *vp = (int8_t *)p;\
+      *vp op *(int8_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_UINT8 :\
+    if (s == sizeof(uint8_t)) {\
+      uint8_t *vp = (uint8_t *)p;\
+      *vp op *(int8_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_INT16 :\
+    if (s == sizeof(int16_t)) {\
+      int16_t *vp = (int16_t *)p;\
+      *vp op *(int16_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_UINT16 :\
+    if (s == sizeof(uint16_t)) {\
+      uint16_t *vp = (uint16_t *)p;\
+      *vp op *(int16_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
   case GRN_DB_INT32 :\
     if (s == sizeof(int32_t)) {\
       int32_t *vp = (int32_t *)p;\
@@ -11072,6 +11103,10 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         LAP("score");
       }
       nhits = grn_table_size(ctx, res);
+
+      grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
+      ERRCLR(ctx);
+
       if (sortby_len) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
@@ -11101,7 +11136,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           }
           grn_obj_unlink(ctx, sorted);
         }
-      } else if (!grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit)) {
+      } else {
         GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         switch (output_type) {
@@ -11123,6 +11158,12 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
       LAP("output");
+
+      grn_normalize_offset_and_limit(ctx, nhits,
+                                     &drilldown_offset,
+                                     &drilldown_limit);
+      ERRCLR(ctx);
+
       if (drilldown_len) {
         uint32_t i, ngkeys;
         grn_table_sort_key *gkeys;
@@ -11166,9 +11207,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 }
                 grn_table_sort_key_close(ctx, keys, nkeys);
               }
-            } else if (!grn_normalize_offset_and_limit(ctx, nhits,
-                                                       &drilldown_offset,
-                                                       &drilldown_limit)) {
+            } else {
               GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);

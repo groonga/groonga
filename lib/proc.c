@@ -400,21 +400,25 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
         return buf;
       }
     }
-    if (GRN_TEXT_LEN(&vars[0].value)) { flags |= GRN_OBJ_PERSISTENT; }
-    table = grn_table_create(ctx,
-                             GRN_TEXT_VALUE(&vars[0].value),
-                             GRN_TEXT_LEN(&vars[0].value),
-                             NULL, flags,
-                             grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[2].value),
-                                         GRN_TEXT_LEN(&vars[2].value)),
-                             grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
-                                         GRN_TEXT_LEN(&vars[3].value)));
-    if (table) {
-      grn_obj_set_info(ctx, table,
-                       GRN_INFO_DEFAULT_TOKENIZER,
-                       grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[4].value),
-                                   GRN_TEXT_LEN(&vars[4].value)));
-      grn_obj_unlink(ctx, table);
+    if (GRN_TEXT_LEN(&vars[0].value)) {
+      flags |= GRN_OBJ_PERSISTENT;
+      table = grn_table_create(ctx,
+                               GRN_TEXT_VALUE(&vars[0].value),
+                               GRN_TEXT_LEN(&vars[0].value),
+                               NULL, flags,
+                               grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[2].value),
+                                           GRN_TEXT_LEN(&vars[2].value)),
+                               grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
+                                           GRN_TEXT_LEN(&vars[3].value)));
+      if (table) {
+        grn_obj_set_info(ctx, table,
+                         GRN_INFO_DEFAULT_TOKENIZER,
+                         grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[4].value),
+                                     GRN_TEXT_LEN(&vars[4].value)));
+        grn_obj_unlink(ctx, table);
+      }
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "should not create anonymous table");
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
@@ -814,6 +818,11 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         grn_hash_close(ctx, cols);
       }
       grn_obj_unlink(ctx, table);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "table '%.*s' is not exist.",
+        GRN_TEXT_LEN(&vars[0].value),
+        GRN_TEXT_VALUE(&vars[0].value));
+      print_return_code(ctx, buf, ct);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);

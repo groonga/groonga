@@ -1756,6 +1756,14 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 
 #define GRN_BOOL_INIT(obj,flags) \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_BOOL)
+#define GRN_INT8_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_INT8)
+#define GRN_UINT8_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_UINT8)
+#define GRN_INT16_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_INT16)
+#define GRN_UINT16_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_UINT16)
 #define GRN_INT32_INIT(obj,flags) \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_INT32)
 #define GRN_UINT32_INIT(obj,flags) \
@@ -2050,6 +2058,8 @@ struct _grn_ctx_info {
 };
 
 GRN_API grn_rc grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info);
+
+GRN_API grn_rc grn_set_segv_handler(void);
 
 /* hash */
 
