@@ -5142,33 +5142,35 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
         grn_table_cursor_close(ctx, cur);
       }
     }
-    if (path) {
-      grn_pat_remove(ctx, path);
-    }
+    grn_obj_close(ctx, obj);
+    if (path) { grn_pat_remove(ctx, path); }
     break;
   case GRN_TABLE_PAT_KEY :
     remove_index(ctx, obj, GRN_HOOK_INSERT);
     remove_columns(ctx, obj);
+    grn_obj_close(ctx, obj);
     if (path) {
       grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
-      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, id, 1);
+      grn_obj_delete_by_id(ctx, db, id, 1);
       grn_pat_remove(ctx, path);
     }
     break;
   case GRN_TABLE_HASH_KEY :
     remove_index(ctx, obj, GRN_HOOK_INSERT);
     remove_columns(ctx, obj);
+    grn_obj_close(ctx, obj);
     if (path) {
       grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
-      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, id, 1);
+      grn_obj_delete_by_id(ctx, db, id, 1);
       grn_hash_remove(ctx, path);
     }
     break;
   case GRN_TABLE_NO_KEY :
     remove_columns(ctx, obj);
+    grn_obj_close(ctx, obj);
     if (path) {
       grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
-      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, id, 1);
+      grn_obj_delete_by_id(ctx, db, id, 1);
       grn_array_remove(ctx, path);
     }
     break;
