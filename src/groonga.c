@@ -1574,6 +1574,7 @@ main(int argc, char **argv)
   if (grn_init()) { return -1; }
   grn_set_default_encoding(enc);
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
+  grn_set_segv_handler();
   if (hostnamestr) {
     size_t hostnamelen = strlen(hostnamestr);
     if (hostnamelen > HOST_NAME_MAX) {

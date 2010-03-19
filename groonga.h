@@ -2059,6 +2059,8 @@ struct _grn_ctx_info {
 
 GRN_API grn_rc grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info);
 
+GRN_API grn_rc grn_set_segv_handler(void);
+
 /* hash */
 
 typedef struct _grn_hash grn_hash;

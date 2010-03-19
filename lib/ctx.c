@@ -1813,3 +1813,58 @@ grn_get_package(void)
 {
   return PACKAGE;
 }
+
+static int segv_received = 0;
+static void
+segv_handler(int signal_number, siginfo_t *info, void *context)
+{
+  grn_ctx *ctx = &grn_gctx;
+
+  if (segv_received) {
+    GRN_LOG(ctx, GRN_LOG_CRIT, "SEGV received in SEGV handler.");
+    exit(EXIT_FAILURE);
+  }
+  segv_received = 1;
+
+  GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
+#ifdef HAVE_EXECINFO_H
+#  define N_TRACE_LEVEL 1024
+  {
+    static void *trace[N_TRACE_LEVEL];
+    int n = backtrace(trace, N_TRACE_LEVEL);
+    char **symbols = backtrace_symbols(trace, n);
+    int i;
+
+    if (symbols) {
+      for (i = 0; i < n; i++) {
+        GRN_LOG(ctx, GRN_LOG_CRIT, "%s", symbols[i]);
+      }
+      free(symbols);
+    }
+  }
+#else
+  GRN_LOG(ctx, GRN_LOG_CRIT, "backtrace() isn't available.");
+#endif
+  GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
+  abort();
+}
+
+grn_rc
+grn_set_segv_handler(void)
+{
+  grn_rc rc = GRN_SUCCESS;
+#ifdef HAVE_SIGNAL_H
+  grn_ctx *ctx = &grn_gctx;
+  struct sigaction action;
+
+  sigemptyset(&action.sa_mask);
+  action.sa_sigaction = segv_handler;
+  action.sa_flags = SA_SIGINFO | SA_ONSTACK;
+
+  if (sigaction(SIGSEGV, &action, NULL)) {
+    SERR("failed to set SIGSEGV action");
+    rc = ctx->rc;
+  };
+#endif
+  return rc;
+}
