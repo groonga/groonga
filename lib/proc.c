@@ -1998,8 +1998,8 @@ func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     }
   }
 exit :
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_BOOL, 0))) {
-    GRN_BOOL_SET(ctx, obj, r);
+  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_UINT32, 0))) {
+    GRN_UINT32_SET(ctx, obj, r);
   }
   return obj;
 }
@@ -2035,8 +2035,8 @@ func_geo_in_rectangle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
     }
   }
 exit :
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_BOOL, 0))) {
-    GRN_BOOL_SET(ctx, obj, r);
+  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_UINT32, 0))) {
+    GRN_UINT32_SET(ctx, obj, r);
   }
   return obj;
 }
