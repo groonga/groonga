@@ -1780,7 +1780,6 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
 #else
   strcpy(buf, filename);
   base = basename(buf);
-printf("base=%s\n", base);
 #endif /* WIN32 */
 
   switch (mode) {
@@ -2307,7 +2306,6 @@ main(int argc, char **argv)
   if (hoststr) {
     grntest_remote_mode = 1;
     strcpy(grntest_serverhost, hoststr);
-    printf("%s\n", hoststr);
   }
   grntest_serverport = DEFAULT_PORT;
   if (portstr) {
