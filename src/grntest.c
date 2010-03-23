@@ -47,11 +47,10 @@
 #include <sys/param.h>
 #include <sys/utsname.h>
 #include <sys/statvfs.h>
+#include <libgen.h>
 #endif /* WIN32 */
 
-/*
 #define DEBUG_FTP
-*/
 
 #define FTPUSER "anonymous"
 #define FTPPASSWD "grntest"
@@ -1687,6 +1686,12 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
   char send_mesg[BUF_LEN]; 
   char buf[BUF_LEN];
 #ifdef WIN32
+  char base[BUF_LEN];
+#else
+  char *base;
+#endif /* WIN32 */
+
+#ifdef WIN32
   WSADATA ws;
 
   WSAStartup(MAKEWORD(2,0), &ws);
@@ -1764,6 +1769,13 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
     goto exit;
   }
 
+#ifdef WIN32
+  _splitpath(filename, NULL, NULL, NULL, base);
+#else
+  strcpy(buf, filename);
+  base = basename(buf);
+#endif /* WIN32 */
+
   switch (mode) {
   case MODE_LIST:
     if (filename) {
@@ -1774,15 +1786,15 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
     write_to_server(command_socket, send_mesg);
     break;
   case MODE_PUT:
-    sprintf(send_mesg, "STOR %s\r\n", filename);
+    sprintf(send_mesg, "STOR %s\r\n", base);
     write_to_server(command_socket, send_mesg);
     break;
   case MODE_GET:
-    sprintf(send_mesg, "RETR %s\r\n", filename);
+    sprintf(send_mesg, "RETR %s\r\n", base);
     write_to_server(command_socket, send_mesg);
     break;
   case MODE_TIME:
-    sprintf(send_mesg, "MDTM %s\r\n", filename);
+    sprintf(send_mesg, "MDTM %s\r\n", base);
     write_to_server(command_socket, send_mesg);
     break;
   default:
@@ -2242,12 +2254,13 @@ main(int argc, char **argv)
   grn_ctx context;
   char sysinfo[BUF_LEN];
   char log[BUF_LEN];
-  const char *portstr=NULL, *hoststr=NULL, *dbname = NULL, *scrname = NULL;
+  const char *portstr=NULL, *hoststr=NULL, *dbname=NULL, *scrname=NULL, *outdir=NULL;
   time_t sec;
 
   static grn_str_getopt_opt opts[] = {
     {'i', "host", NULL, 0, getopt_op_none},
     {'p', "port", NULL, 0, getopt_op_none},
+    {'\0', "log-output-dir", NULL, 0, getopt_op_none},
     {'\0', "dir", NULL, mode_list, getopt_op_update},
     {'\0', "noftp", NULL, mode_noftp, getopt_op_update},
     {'h', "help", NULL, mode_usage, getopt_op_update},
@@ -2256,6 +2269,7 @@ main(int argc, char **argv)
 
   opts[0].arg = &hoststr;
   opts[1].arg = &portstr;
+  opts[2].arg = &outdir;
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
@@ -2293,7 +2307,6 @@ main(int argc, char **argv)
     grntest_serverport = grn_atoi(portstr, portstr + strlen(portstr), NULL);
   }
 
-
   grn_init();
   CRITICAL_SECTION_INIT(grntest_cs);
   
@@ -2323,8 +2336,13 @@ main(int argc, char **argv)
   sec = (time_t)(GRN_TIME_VALUE(&grntest_starttime)/1000000);
   get_date(grntest_date, &sec);
   
-  sprintf(log, "%s-%s-%lld.log", grntest_scriptname, 
-          grntest_username, GRN_TIME_VALUE(&grntest_starttime));
+  if (outdir) {
+    sprintf(log, "%s/%s-%s-%lld.log", outdir, grntest_scriptname, 
+            grntest_username, GRN_TIME_VALUE(&grntest_starttime));
+  } else {
+    sprintf(log, "%s-%s-%lld.log", grntest_scriptname, 
+            grntest_username, GRN_TIME_VALUE(&grntest_starttime));
+  }
 
   grntest_logfp = fopen(log, "w+b");
   if (!grntest_logfp) {
