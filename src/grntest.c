@@ -50,7 +50,9 @@
 #include <libgen.h>
 #endif /* WIN32 */
 
+/*
 #define DEBUG_FTP
+*/
 
 #define FTPUSER "anonymous"
 #define FTPPASSWD "grntest"
