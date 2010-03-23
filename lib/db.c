@@ -4753,7 +4753,7 @@ del_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, grn_obj *hld)
   hld_value = GRN_BULK_HEAD(hld);
   hld_size = GRN_BULK_VSIZE(hld);
   if (!hld_size) { return; }
-  for (i = 0, last = &DB_OBJ(obj)->hooks[entry]; last; i++, last = &(*last)->next) {
+  for (i = 0, last = &DB_OBJ(obj)->hooks[entry]; *last; i++, last = &(*last)->next) {
     if (!memcmp(NEXT_ADDR(*last), hld_value, hld_size)) {
       grn_obj_delete_hook(ctx, obj, entry, i);
     }
