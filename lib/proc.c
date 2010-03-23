@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include "proc.h"
 #include "ql.h"
+#include <errno.h>
 
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0
@@ -914,9 +915,11 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
     case ENOENT :
       ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY, "no such file.");
       break;
+#ifndef WIN32
     case ELOOP :
       ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY, "symbolic link is not allowed.");
       break;
+#endif /* WIN32 */
     default :
       ERR(GRN_UNKNOWN_ERROR, "open() failed(errno: %d).", errno);
       break;
