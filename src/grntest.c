@@ -1687,6 +1687,8 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
   char buf[BUF_LEN];
 #ifdef WIN32
   char base[BUF_LEN];
+  char fname[BUF_LEN];
+  char ext[BUF_LEN];
 #else
   char *base;
 #endif /* WIN32 */
@@ -1770,10 +1772,13 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
   }
 
 #ifdef WIN32
-  _splitpath(filename, NULL, NULL, NULL, base);
+  _splitpath(filename, NULL, NULL, fname, ext);
+  strcpy(base, fname);
+  strcat(base, ext);
 #else
   strcpy(buf, filename);
   base = basename(buf);
+printf("base=%s\n", base);
 #endif /* WIN32 */
 
   switch (mode) {
