@@ -5191,7 +5191,10 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
         grn_table_cursor_close(ctx, cur);
       }
       grn_obj_close(ctx, obj);
-      if (spath) { grn_ja_remove(ctx, spath); }
+      if (spath) {
+        grn_ja_remove(ctx, spath);
+        GRN_FREE(spath);
+      }
       if (path) { grn_pat_remove(ctx, path); }
     }
     break;
@@ -11328,11 +11331,6 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
       LAP("output");
 
-      grn_normalize_offset_and_limit(ctx, nhits,
-                                     &drilldown_offset,
-                                     &drilldown_limit);
-      ERRCLR(ctx);
-
       if (drilldown_len) {
         uint32_t i, ngkeys;
         grn_table_sort_key *gkeys;
@@ -11344,6 +11342,10 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                     gkeys[i].key, NULL))) {
             grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
             nhits = grn_table_size(ctx, g.table);
+
+            grn_normalize_offset_and_limit(ctx, nhits, &drilldown_offset, &drilldown_limit);
+            ERRCLR(ctx);
+
             if (drilldown_sortby_len) {
               if ((keys = grn_table_sort_key_from_str(ctx,
                                                       drilldown_sortby, drilldown_sortby_len,
