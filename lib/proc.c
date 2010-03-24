@@ -1409,17 +1409,18 @@ dump_index_column_sources(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
   }
   for (i = 0; i < n; i++) {
     grn_obj *source;
-    source = grn_ctx_at(ctx, *source_ids);
-    if (i) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
-    switch (source->header.type) {
-    case GRN_TABLE_PAT_KEY:
-    case GRN_TABLE_HASH_KEY:
-    case GRN_TABLE_VIEW:
-      GRN_TEXT_PUTS(ctx, outbuf, "_key");
-      break;
-    default:
-      dump_column_name(ctx, outbuf, source);
-      break;
+    if ((source = grn_ctx_at(ctx, *source_ids))) {
+      if (i) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+      switch (source->header.type) {
+      case GRN_TABLE_PAT_KEY:
+      case GRN_TABLE_HASH_KEY:
+      case GRN_TABLE_VIEW:
+        GRN_TEXT_PUTS(ctx, outbuf, "_key");
+        break;
+      default:
+        dump_column_name(ctx, outbuf, source);
+        break;
+      }
     }
     source_ids++;
   }
@@ -1434,7 +1435,7 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
 
   type = grn_ctx_at(ctx, ((grn_db_obj *)column)->range);
   if (!type) {
-    ERR(GRN_RANGE_ERROR, "couldn't get column's type object");
+    // ERR(GRN_RANGE_ERROR, "couldn't get column's type object");
     return;
   }
 
@@ -1769,7 +1770,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   if (((grn_db_obj *)table)->range != GRN_ID_NIL) {
     range = grn_ctx_at(ctx, ((grn_db_obj *)table)->range);
     if (!range) {
-      ERR(GRN_RANGE_ERROR, "couldn't get table's value_type object");
+      // ERR(GRN_RANGE_ERROR, "couldn't get table's value_type object");
       return;
     }
     if (table->header.type != GRN_TABLE_NO_KEY) {

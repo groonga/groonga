@@ -717,7 +717,7 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
       }
     } else {
       if (++retry > RETRY_MAX) {
-        ERR(GRN_RETRY_MAX, "retry max in recv text");
+        // ERR(GRN_RETRY_MAX, "retry max in recv text");
         goto exit;
       }
     }
@@ -766,7 +766,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       rest -= ret, p += ret;
     } else {
       if (++retry > RETRY_MAX) {
-        ERR(GRN_RETRY_MAX, "retry max in recv header (%d)", com->fd);
+        // ERR(GRN_RETRY_MAX, "retry max in recv header (%d)", com->fd);
         goto exit;
       }
     }
@@ -800,7 +800,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
           GRN_BULK_INCR_LEN(buf, ret);
         } else {
           if (++retry > RETRY_MAX) {
-            ERR(GRN_RETRY_MAX, "retry max in recv body");
+            // ERR(GRN_RETRY_MAX, "retry max in recv body");
             goto exit;
           }
         }
