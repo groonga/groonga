@@ -1480,9 +1480,8 @@ grn_pat_cursor_next_by_id(grn_ctx *ctx, grn_pat_cursor *c)
     c->curr_rec += dir;
     if (pat->header->n_garbages) {
       uint32_t key_size;
-      if (grn_pat_get(ctx, pat,
-                      _grn_pat_key(ctx, pat, c->curr_rec, &key_size),
-                      key_size, NULL) != c->curr_rec) {
+      const void *key = _grn_pat_key(ctx, pat, c->curr_rec, &key_size);
+      if (grn_pat_get(ctx, pat, key, key_size, NULL) != c->curr_rec) {
         continue;
       }
     }
