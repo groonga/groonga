@@ -1881,7 +1881,7 @@ ftp_main(int argc, char **argv)
 
 static
 int
-get_username(char *name)
+get_username(char *name, int maxlen)
 {
   char *env=NULL;
   strcpy(name, "nobody");
@@ -1890,6 +1890,10 @@ get_username(char *name)
 #else
   env = getenv("USER");
 #endif /* WIN32 */
+  if (strlen(env) > maxlen) {
+    fprintf(stderr, "too long username:%s\n", env);
+    exit(1);
+  }
   if (env) {
     strcpy(name, env);
   }
@@ -2339,7 +2343,7 @@ main(int argc, char **argv)
   }
 
   get_scriptname(scrname, grntest_scriptname, ".scr");
-  get_username(grntest_username);
+  get_username(grntest_username, 256);
 
   GRN_TIME_INIT(&grntest_starttime, 0);
   GRN_TIME_NOW(&context, &grntest_starttime);
