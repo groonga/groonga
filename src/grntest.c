@@ -1883,11 +1883,16 @@ static
 int
 get_username(char *name)
 {
+  char *env=NULL;
+  strcpy(name, "nobody");
 #ifdef WIN32
-  strcpy(name, getenv("USERNAME"));
+  env = getenv("USERNAME");
 #else
-  strcpy(name, getenv("USER"));
-#endif
+  env = getenv("USER");
+#endif /* WIN32 */
+  if (env) {
+    strcpy(name, env);
+  }
   return 0;
 }
 
