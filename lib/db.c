@@ -11340,10 +11340,13 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if ((g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
                                                     GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                                     gkeys[i].key, NULL))) {
+            int n_drilldown_offset = drilldown_offset,
+                n_drilldown_limit = drilldown_limit;
+
             grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
             nhits = grn_table_size(ctx, g.table);
 
-            grn_normalize_offset_and_limit(ctx, nhits, &drilldown_offset, &drilldown_limit);
+            grn_normalize_offset_and_limit(ctx, nhits, &n_drilldown_offset, &n_drilldown_limit);
             ERRCLR(ctx);
 
             if (drilldown_sortby_len) {
@@ -11352,9 +11355,9 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                       g.table, &nkeys))) {
                 if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                                NULL, g.table))) {
-                  grn_table_sort(ctx, g.table, drilldown_offset, drilldown_limit,
+                  grn_table_sort(ctx, g.table, n_drilldown_offset, n_drilldown_limit,
                                  sorted, keys, nkeys);
-                  GRN_OBJ_FORMAT_INIT(&format, nhits, 0, drilldown_limit);
+                  GRN_OBJ_FORMAT_INIT(&format, nhits, 0, n_drilldown_limit);
                   grn_obj_columns(ctx, sorted,
                                   drilldown_output_columns, drilldown_output_columns_len,
                                   &format.columns);
@@ -11379,7 +11382,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 grn_table_sort_key_close(ctx, keys, nkeys);
               }
             } else {
-              GRN_OBJ_FORMAT_INIT(&format, nhits, drilldown_offset, drilldown_limit);
+              GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset, n_drilldown_limit);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);
               switch (output_type) {
@@ -13059,18 +13062,18 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
     offset += size;
     if (offset < 0) {
       ERR(GRN_INVALID_ARGUMENT, "too small offset");
-      return ctx->rc;
+      goto exit;
     }
   } else if (offset != 0 && offset >= size) {
     ERR(GRN_INVALID_ARGUMENT, "too large offset");
-    return ctx->rc;
+    goto exit;
   }
 
   if (limit < 0) {
     limit += size + 1;
     if (limit < 0) {
       ERR(GRN_INVALID_ARGUMENT, "too small limit");
-      return ctx->rc;
+      goto exit;
     }
   } else if (limit > size) {
     limit = size;
@@ -13084,6 +13087,10 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
   *p_offset = offset;
   *p_limit = limit;
   return GRN_SUCCESS;
+exit:
+  *p_offset = 0;
+  *p_limit = 0;
+  return ctx->rc;
 }
 
 void
