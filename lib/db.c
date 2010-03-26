@@ -7587,8 +7587,11 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
 {
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
-  if (!obj) { return NULL; }
   GRN_API_ENTER;
+  if (!obj) {
+    ERR(GRN_SYNTAX_ERROR, "constant is null");
+    goto exit;
+  }
   if (GRN_DB_OBJP(obj) || ACCESSORP(obj)) {
     res = obj;
   } else {
