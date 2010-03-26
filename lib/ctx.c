@@ -529,14 +529,14 @@ grn_log_reopen(grn_ctx *ctx)
   }
 
   if (grn_qlog_path) {
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "query log will be closed.");
+    GRN_LOG(ctx, GRN_LOG_NONE, "query log will be closed.");
     CRITICAL_SECTION_ENTER(grn_logger_lock);
     if (default_logger_qlog_fp) {
       fclose(default_logger_qlog_fp);
-      default_logger_fp = NULL;
+      default_logger_qlog_fp = NULL;
     }
     CRITICAL_SECTION_LEAVE(grn_logger_lock);
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "query log re-opened.");
+    GRN_LOG(ctx, GRN_LOG_NONE, "query log opened.");
   }
 }
 
