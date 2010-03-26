@@ -7420,7 +7420,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           if (dfi) {
             dfi->code->flags |= GRN_EXPR_CODE_RELATIONAL_EXPRESSION;
           } else {
-            GRN_LOG(ctx, GRN_LOG_WARNING, "stack under flow in relative op");
+            ERR(GRN_SYNTAX_ERROR, "stack under flow in relative op");
           }
         }
       }
