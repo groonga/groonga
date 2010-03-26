@@ -1785,6 +1785,22 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   unsigned char _val = (unsigned char)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(unsigned char));\
 } while (0)
+#define GRN_INT8_SET(ctx,obj,val) do {\
+  signed char _val = (signed char)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(signed char));\
+} while (0)
+#define GRN_UINT8_SET(ctx,obj,val) do {\
+  unsigned char _val = (unsigned char)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(unsigned char));\
+} while (0)
+#define GRN_INT16_SET(ctx,obj,val) do {\
+  signed short _val = (signed short)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(signed short));\
+} while (0)
+#define GRN_UINT16_SET(ctx,obj,val) do {\
+  unsigned short _val = (unsigned short)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(unsigned short));\
+} while (0)
 #define GRN_INT32_SET(ctx,obj,val) do {\
   int _val = (int)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(int));\
@@ -1819,6 +1835,26 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   unsigned char _val = (unsigned char)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val,\
                       (offset), sizeof(unsigned char));\
+} while (0)
+#define GRN_INT8_SET_AT(ctx,obj,offset,val) do {\
+  signed char _val = (signed char)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(signed char), sizeof(signed char));\
+} while (0)
+#define GRN_UINT8_SET_AT(ctx,obj,offset,val) do { \
+  unsigned char _val = (unsigned char)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(unsigned char), sizeof(unsigned char));\
+} while (0)
+#define GRN_INT16_SET_AT(ctx,obj,offset,val) do {\
+  signed short _val = (signed short)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(signed short), sizeof(signed short));\
+} while (0)
+#define GRN_UINT16_SET_AT(ctx,obj,offset,val) do { \
+  unsigned short _val = (unsigned short)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(unsigned short), sizeof(unsigned short));\
 } while (0)
 #define GRN_INT32_SET_AT(ctx,obj,offset,val) do {\
   int _val = (int)(val);\
@@ -1870,6 +1906,10 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 #define GRN_TIME_NOW(ctx,obj) (grn_time_now((ctx), (obj)))
 
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
+#define GRN_INT8_VALUE(obj) (*((signed char *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT8_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
+#define GRN_INT16_VALUE(obj) (*((signed short *)GRN_BULK_HEAD(obj)))
+#define GRN_UINT16_VALUE(obj) (*((unsigned short *)GRN_BULK_HEAD(obj)))
 #define GRN_INT32_VALUE(obj) (*((int *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT32_VALUE(obj) (*((unsigned int *)GRN_BULK_HEAD(obj)))
 #define GRN_INT64_VALUE(obj) (*((long long int *)GRN_BULK_HEAD(obj)))
@@ -1880,6 +1920,10 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 #define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
 
 #define GRN_BOOL_VALUE_AT(obj,offset) (((unsigned char *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_INT8_VALUE_AT(obj,offset) (((signed char *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_UINT8_VALUE_AT(obj,offset) (((unsigned char *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_INT16_VALUE_AT(obj,offset) (((signed short *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_UINT16_VALUE_AT(obj,offset) (((unsigned short *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_INT32_VALUE_AT(obj,offset) (((int *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_UINT32_VALUE_AT(obj,offset) (((unsigned int *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_INT64_VALUE_AT(obj,offset) (((long long int *)GRN_BULK_HEAD(obj))[offset])
@@ -1892,6 +1936,20 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 #define GRN_BOOL_PUT(ctx,obj,val) do {\
   unsigned char _val = (unsigned char)(val);\
   grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(unsigned char));\
+} while (0)
+#define GRN_INT8_PUT(ctx,obj,val) do {\
+  signed char _val = (signed char)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(signed char));\
+} while (0)
+#define GRN_UINT8_PUT(ctx,obj,val) do {\
+  unsigned char _val = (unsigned char)(val);\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(unsigned char));\
+} while (0)
+#define GRN_INT16_PUT(ctx,obj,val) do {\
+  signed short _val = (signed short)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(signed short));\
+} while (0)
+#define GRN_UINT16_PUT(ctx,obj,val) do {\
+  unsigned short _val = (unsigned short)(val);\
+  grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(unsigned short));\
 } while (0)
 #define GRN_INT32_PUT(ctx,obj,val) do {\
   int _val = (int)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(int));\
