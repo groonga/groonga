@@ -162,7 +162,7 @@ typedef struct {
   grn_expr_var *vars;
 } grn_expr_vars;
 
-#define GRN_STACK_SIZE 256
+#define GRN_STACK_SIZE 1024
 
 struct _grn_ctx_impl {
   grn_encoding encoding;

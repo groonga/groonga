@@ -705,6 +705,10 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   grn_id r0;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   if (!key || !key_size) { return GRN_ID_NIL; }
+  if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
+    ERR(GRN_INVALID_ARGUMENT, "too long key");
+    return GRN_ID_NIL;
+  }
   KEY_ENCODE(pat, keybuf, key, key_size);
   r0 = _grn_pat_add(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
   if (added) { *added = new; }
@@ -1368,10 +1372,20 @@ grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   while (++id <= pat->header->curr_rec) {
     uint32_t key_size;
-    if (id == grn_pat_get(ctx, pat, _grn_pat_key(ctx, pat, id, &key_size), key_size, NULL)) {
+    const char *key = _grn_pat_key(ctx, pat, id, &key_size);
+    if (id == grn_pat_get(ctx, pat, key, key_size, NULL)) {
       return id;
     }
   }
+  return GRN_ID_NIL;
+}
+
+grn_id
+grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
+{
+  uint32_t key_size;
+  const char *key = _grn_pat_key(ctx, pat, id, &key_size);
+  if (id == grn_pat_get(ctx, pat, key, key_size, NULL)) { return id; }
   return GRN_ID_NIL;
 }
 
@@ -1784,10 +1798,9 @@ grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
   if (pat->header->n_garbages) {
     while (offset && c->curr_rec != c->tail) {
       uint32_t key_size;
+      const void *key = _grn_pat_key(ctx, pat, c->curr_rec, &key_size);
       c->curr_rec += dir;
-      if (grn_pat_get(ctx, pat,
-                      _grn_pat_key(ctx, pat, c->curr_rec, &key_size),
-                      key_size, NULL) == c->curr_rec) {
+      if (grn_pat_get(ctx, pat, key, key_size, NULL) == c->curr_rec) {
         offset--;
       }
     }

@@ -1093,6 +1093,28 @@ grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
 }
 
 grn_id
+grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id)
+{
+  GRN_API_ENTER;
+  if (table) {
+    switch (table->header.type) {
+    case GRN_TABLE_PAT_KEY :
+      id = grn_pat_at(ctx, (grn_pat *)table, id);
+      break;
+    case GRN_TABLE_HASH_KEY :
+      id = grn_hash_at(ctx, (grn_hash *)table, id);
+      break;
+    case GRN_TABLE_NO_KEY :
+      id = grn_array_at(ctx, (grn_array *)table, id);
+      break;
+    default :
+      id = GRN_ID_NIL;
+    }
+  }
+  GRN_API_RETURN(id);
+}
+
+grn_id
 grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                 void **value, int *added)
 {
@@ -7060,7 +7082,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
   }
   id = grn_obj_register(ctx, db, name, name_size);
   if (id && (expr = GRN_MALLOCN(grn_expr, 1))) {
-    int size = 256;
+    int size = GRN_STACK_SIZE;
     expr->consts = NULL;
     expr->nconsts = 0;
     GRN_TEXT_INIT(&expr->name_buf, 0);
@@ -10340,7 +10362,9 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                     if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
                       memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
                       if (pi.rid) {
-                        res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+                        if (pi.rid == grn_table_at(ctx, table, pi.rid)) {
+                          res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+                        }
                       }
                       done++;
                     }
