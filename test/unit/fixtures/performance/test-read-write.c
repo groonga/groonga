@@ -26,16 +26,16 @@ void test_read_write(gconstpointer *data);
 #define VALUE_SIZE 1024
 #define N_THREADS 100
 
-static grn_ctx *contexts[N_THREADS];
+static grn_ctx contexts[N_THREADS];
 static grn_obj *tables[N_THREADS];
 
 void
 cut_startup(void)
 {
   int i;
-
+  grn_init();
   for (i = 0; i < N_THREADS; i++) {
-    contexts[i] = NULL;
+    // contexts[i] = NULL;
     tables[i] = NULL;
   }
 }
@@ -48,7 +48,7 @@ cut_shutdown(void)
   for (i = 0; i < N_THREADS; i++) {
     grn_ctx *context;
 
-    context = contexts[i];
+    context = &contexts[i];
     if (context) {
       grn_obj *table;
 
@@ -60,6 +60,7 @@ cut_shutdown(void)
       grn_ctx_fin(context);
     }
   }
+  grn_fin();
 }
 
 
@@ -116,9 +117,9 @@ test_read_write(gconstpointer *data)
   if (process_number_string)
     process_number = atoi(process_number_string);
 
-  rc = grn_ctx_init(contexts[i], GRN_CTX_USE_QL);
+  rc = grn_ctx_init(&contexts[i], GRN_CTX_USE_QL);
   grn_test_assert(rc, cut_set_message("context: %d (%d)", i, process_number));
-  context = contexts[i];
+  context = &contexts[i];
 
   path = g_getenv(GRN_TEST_ENV_TABLE_PATH);
   cut_assert_not_null(path);
@@ -150,6 +151,6 @@ test_read_write(gconstpointer *data)
   tables[i] = NULL;
   grn_test_assert(grn_obj_close(context, table));
 
-  contexts[i] = NULL;
+  //  contexts[i] = NULL;
   grn_test_assert(grn_ctx_fin(context));
 }

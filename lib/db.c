@@ -5165,7 +5165,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
   char *path;
   grn_obj *db;
   GRN_API_ENTER;
-  {
+  if (ctx->impl && ctx->impl->db) {
     uint32_t s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
     GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:obj_remove %.*s", s, n);
