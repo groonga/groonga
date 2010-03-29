@@ -418,6 +418,14 @@ int grn_alloc_count(void);
 
 grn_content_type grn_get_ctype(grn_obj *var);
 
+/**** cache ****/
+
+void grn_cache_init(void);
+void grn_cache_unref(const char *str, uint32_t str_size);
+void grn_cache_update(const char *str, uint32_t str_size, grn_obj *value);
+void grn_cache_expire(uint32_t size);
+void grn_cache_fin(void);
+
 /**** receive handler ****/
 
 void grn_ctx_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),
