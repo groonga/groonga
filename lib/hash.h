@@ -229,7 +229,8 @@ struct grn_hash_header {
   uint32_t n_entries;
   uint32_t n_garbages;
   uint32_t lock;
-  uint32_t reserved[16];
+  grn_timeval tv;
+  uint32_t reserved[14];
   grn_id garbages[GRN_HASH_MAX_KEY_SIZE];
 };
 

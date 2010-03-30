@@ -11202,23 +11202,46 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_columns_ = NULL, *cond, *scorer_, *res = NULL, *sorted;
-  /*
-  GRN_LOG(ctx, GRN_LOG_NONE,
-          "%d(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%.*s)(%d)(%d)(%.*s)(%.*s)(%.*s)(%d)(%d)",
-          ctx->seqno,
-          table_len, table,
-          match_columns_len, match_columns,
-          query_len, query,
-          filter_len, filter,
-          scorer_len, scorer,
-          sortby_len, sortby,
-          output_columns_len, output_columns,
-          offset, limit,
-          drilldown, drilldown_len,
-          drilldown_sortby, drilldown_sortby_len,
-          drilldown_output_columns, drilldown_output_columns_len,
-          drilldown_offset, drilldown_limit);
-  */
+  char cache_key[GRN_TABLE_MAX_KEY_SIZE];
+  uint32_t cache_key_size = table_len + 1 + match_columns_len + 1 + query_len + 1 +
+    filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
+    drilldown_len + 1 + drilldown_sortby_len + 1 + drilldown_output_columns_len +
+    sizeof(grn_content_type) + sizeof(int) * 4;
+  if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
+    grn_obj *cache;
+    char *cp = cache_key;
+    memcpy(cp, table, table_len);
+    cp += table_len; *cp++ = '\0';
+    memcpy(cp, match_columns, match_columns_len);
+    cp += match_columns_len; *cp++ = '\0';
+    memcpy(cp, query, query_len);
+    cp += query_len; *cp++ = '\0';
+    memcpy(cp, filter, filter_len);
+    cp += filter_len; *cp++ = '\0';
+    memcpy(cp, scorer, scorer_len);
+    cp += scorer_len; *cp++ = '\0';
+    memcpy(cp, sortby, sortby_len);
+    cp += sortby_len; *cp++ = '\0';
+    memcpy(cp, output_columns, output_columns_len);
+    cp += output_columns_len; *cp++ = '\0';
+    memcpy(cp, drilldown, drilldown_len);
+    cp += drilldown_len; *cp++ = '\0';
+    memcpy(cp, drilldown_sortby, drilldown_sortby_len);
+    cp += drilldown_sortby_len; *cp++ = '\0';
+    memcpy(cp, drilldown_output_columns, drilldown_output_columns_len);
+    cp += drilldown_output_columns_len; *cp++ = '\0';
+    memcpy(cp, &output_type, sizeof(grn_content_type)); cp += sizeof(grn_content_type);
+    memcpy(cp, &offset, sizeof(int)); cp += sizeof(int);
+    memcpy(cp, &limit, sizeof(int)); cp += sizeof(int);
+    memcpy(cp, &drilldown_offset, sizeof(int)); cp += sizeof(int);
+    memcpy(cp, &drilldown_limit, sizeof(int)); cp += sizeof(int);
+    if ((cache = grn_cache_fetch(cache_key, cache_key_size))) {
+      GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(cache), GRN_TEXT_LEN(cache));
+      grn_cache_unref(cache_key, cache_key_size);
+      LAP("cache");
+      return ctx->rc;
+    }
+  }
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     // match_columns_ = grn_obj_column(ctx, table_, match_columns, match_columns_len);
     if (query_len || filter_len) {
@@ -11451,6 +11474,9 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       break;
     }
     grn_obj_unlink(ctx, table_);
+  }
+  if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
+    grn_cache_update(ctx, cache_key, cache_key_size, outbuf);
   }
   /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
   return ctx->rc;

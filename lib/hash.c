@@ -88,7 +88,8 @@ struct grn_array_header {
   uint32_t n_garbages;
   grn_id garbages;
   uint32_t lock;
-  uint32_t reserved[5];
+  grn_timeval tv;
+  uint32_t reserved[3];
 };
 
 enum {
