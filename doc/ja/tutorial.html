@@ -59,10 +59,11 @@
 </ul>
 <p><a class="reference external" href="http://groonga.org/download">http://groonga.org/download</a>/よりtar.gzファイルを取得し、
 インストール先の環境にファイルを展開して、</p>
-<div class="highlight-none"><div class="highlight"><pre>./configure &amp;&amp; make &amp;&amp; sudo make install
+<div class="highlight-none"><div class="highlight"><pre>./configure --prefix=/usr &amp;&amp; make &amp;&amp; sudo make install
 </pre></div>
 </div>
 <p>のように実行することでインストールできます。</p>
+<p>prefixは、インストール先を指定するパラメータで、通常/usrを指定します。prefixを指定しない場合には、/usr/localが指定されたものとみなします。</p>
 </div>
 <div class="section" id="id3">
 <h2>2.2. 使用方法<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
@@ -70,8 +71,7 @@
 <p>本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。</p>
 <div class="section" id="groonga">
 <h3>2.2.1. groonga実行ファイル<a class="headerlink" href="#groonga" title="Permalink to this headline">¶</a></h3>
-<p>groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続などの
-操作が行えます。</p>
+<p>groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続などの操作が行えます。</p>
 <div class="section" id="db">
 <h4>2.2.1.1. DBの作成<a class="headerlink" href="#db" title="Permalink to this headline">¶</a></h4>
 <p>書式</p>
@@ -93,17 +93,20 @@
 </pre></div>
 </div>
 <p>既存のデータベースのフルパス名をDBパス名に指定します。
-コマンドを指定すると、実行結果を返します。
-コマンドを指定しなかった場合は、対話モードに入ります。
+コマンドを指定すると、実行結果を返します。</p>
+<p>コマンドを指定しない場合には、対話モードに入ります。
 対話モードでは、標準入力からコマンドを読み込み、順次実行します。</p>
+<p>Ctrlキーを押しながらdキーを押すと、対話モードから抜けることができます。</p>
+<p>たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groongaの実行状態を返すコマンドです。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga /var/tmp/hoge.db
-&gt; table_list
-[[0,1268293926.38794,0.00033],[[[&quot;id&quot;, &quot;UInt32&quot;],[&quot;name&quot;,&quot;ShortText&quot;],[&quot;path&quot;,&quot;ShortText&quot;],[&quot;flags&quot;,&quot;ShortText&quot;],[&quot;domain&quot;, &quot;ShortText&quot;],[&quot;range&quot;,&quot;ShortText&quot;]]]]
+&gt; status
+[[0,1269935682.29616,0.000122],{&quot;alloc_count&quot;:124,&quot;starttime&quot;:1269935680,&quot;uptime&quot;:2,&quot;version&quot;:&quot;0.1.7-10-g6bf93ba&quot;}]
 &gt; ctrl-d
 %
 </pre></div>
 </div>
+<p>以上のように、コマンドの実行結果は基本的にjsonという形式で返却されます。jsonの配列の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番目の様子に、コマンドの実行結果が入ります。</p>
 </div>
 <div class="section" id="id5">
 <h4>2.2.1.3. groongaサーバの起動<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
@@ -111,10 +114,9 @@
 <div class="highlight-none"><div class="highlight"><pre>groonga [-p ポート番号] -d DBパス名
 </pre></div>
 </div>
-<p>既存のデーターベースのフルパス名をDBパス名に指定します。
-指定したポート番号でTCPサービスを開始します。
+<p>既存のデータベースのフルパス名をDBパス名に指定します。
+groongaがデーモンモードで起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすることができます。
 (ポート番号を省略した場合は10041が使用されます)</p>
-<p>オプションを指定しない場合は、当該ポートに対して、groongaの専用プロトコルで通信することができます。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -d /var/tmp/hoge.db
 %
@@ -128,12 +130,12 @@
 </pre></div>
 </div>
 <p>対象ホストで動作しているgroongaサーバに接続します。
-対象ホスト名を省略した場合はlocalhostに対して接続します。
+対象ホスト名を省略した場合はlocalhostに対して接続し、対象ポート番号を省略した場合は10041ポートに対して接続します。
 接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行します。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -c
-&gt; table_list
-[[0,1268294045.30181,0.00032],[[[&quot;id&quot;, &quot;UInt32&quot;],[&quot;name&quot;,&quot;ShortText&quot;],[&quot;path&quot;,&quot;ShortText&quot;],[&quot;flags&quot;,&quot;ShortText&quot;],[&quot;domain&quot;, &quot;ShortText&quot;],[&quot;range&quot;,&quot;ShortText&quot;]]]]
+&gt; status
+[[0,1269936150.9489,6.5e-05],{&quot;alloc_count&quot;:125,&quot;starttime&quot;:1269935680,&quot;uptime&quot;:470,&quot;version&quot;:&quot;0.1.7-10-g6bf93ba&quot;}]
 &gt; ctrl-d
 %
 </pre></div>
@@ -143,124 +145,117 @@
 <div class="section" id="id7">
 <h3>2.2.2. コマンド<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作することができます。
-コマンドは以下の二つの書式のいずれかで与えることができます。</p>
-<div class="highlight-none"><div class="highlight"><pre>書式1: コマンド名 引数1 引数2..
+コマンドは以下の書式のうちいずれかで与えることができます。</p>
+<div class="highlight-none"><div class="highlight"><pre>書式1: コマンド名 引数1 引数2 ..
 
-書式2: /d/コマンド名?引数名1=値1&amp;引数名2=値2..
+書式2: コマンド名 --引数名1 値1 --引数名2 値2 ..
 </pre></div>
 </div>
-<p>書式2で引数を渡す場合は、コマンド文字列をURLエンコードする必要があります。</p>
+<p>書式1と2は混ぜて使うことができます。</p>
+<p>書式2において、空白や、記号「&#8221;&#8217;()」のうちいずれかを含む値を指定したい場合は、シングルクォート(&#8216;)かダブルクォート(&#8220;)で値を囲みます。</p>
+<p>詳しくは、:doc:<cite>execfile</cite> のコマンドの項を参考にしてください。</p>
 <div class="section" id="id8">
 <h4>2.2.2.1. 主なコマンド<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <dl class="docutils">
-<dt>status</dt>
+<dt><a class="reference external" href="commands/status.html"><em>status</em></a></dt>
 <dd>groongaプロセスの状態を表示します。</dd>
-<dt>table_list</dt>
+<dt><a class="reference external" href="commands/table_list.html"><em>table_list</em></a></dt>
 <dd>DBに定義されているテーブルのリストを表示します。</dd>
-<dt>column_list</dt>
+<dt><a class="reference external" href="commands/column_list.html"><em>column_list</em></a></dt>
 <dd>テーブルに定義されているカラムのリストを表示します。</dd>
-<dt>table_create</dt>
+<dt><a class="reference external" href="commands/table_create.html"><em>table_create</em></a></dt>
 <dd>DBにテーブルを追加します。</dd>
-<dt>column_create</dt>
+<dt><a class="reference external" href="commands/column_create.html"><em>column_create</em></a></dt>
 <dd>テーブルにカラムを追加します。</dd>
-<dt>select</dt>
+<dt><a class="reference external" href="commands/select.html"><em>select</em></a></dt>
 <dd>テーブルに含まれるレコードを検索して表示します。</dd>
-<dt>load</dt>
+<dt><a class="reference external" href="commands/load.html"><em>load</em></a></dt>
 <dd>テーブルにレコードを挿入します。</dd>
 </dl>
 </blockquote>
 </div>
 <div class="section" id="id9">
 <h4>2.2.2.2. テーブルの作成<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
-<p>table_createコマンドを使用してテーブルを作成します。</p>
-<p><a class="reference external" href="commands/table_create.html"><em>table_create</em></a></p>
+<p><a class="reference external" href="commands/table_create.html"><em>table_create</em></a> コマンドを使用してテーブルを作成します。</p>
+<p>groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主キーには型と、その格納方法を指定する必要があります。</p>
+<p>型については、本チュートリアルでは触れません。:doc:<cite>type</cite> の項を参照してください。主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まります。しかし、本チュートリアルでは触れません。</p>
+<p>ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、&#8217;Blog&#8217;という名前のテーブルを作成します。</p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; table_create Blog 0 ShortText
+<div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Blog --flags TABLE_HASH_KEY --key_type ShortText
 [[0,1268294088.70744,0.098794]]
 &gt;
 </pre></div>
 </div>
-<p>ShortText型の主キー値を持つ、&#8217;Blog&#8217;という名前のテーブルを作成しました。</p>
-<p>全文検索を行う場合は、語彙表テーブルを作成します。</p>
+</div>
+<div class="section" id="id10">
+<h4>2.2.2.3. 検索<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="commands/select.html"><em>select</em></a> コマンドを用いて、テーブルの中身を表示することができます。</p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText Void TokenBigram
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog
+[[0,1269854691.80132,0.000106],[[[0],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]]]]]
+&gt;
+</pre></div>
+</div>
+<p>selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。</p>
+<p>table_createコマンドで作成したテーブルには、最初から&#8217;_id&#8217; &#8216;_key&#8217;という２つのカラムがあります。&#8217;_id&#8217;はgroongaが自動的に付与するID番号が格納されるカラムです。&#8217;_key&#8217;は主キーが格納されるカラムです。これらのカラム名を変更することはできません。</p>
+</div>
+<div class="section" id="id11">
+<h4>2.2.2.4. カラムの作成<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="commands/column_create.html"><em>column_create</em></a> コマンドを用いて、カラムを作成することができます。</p>
+<p>実行例:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Blog --name title --flags COLUMN_SCALAR --type ShortText
+[[0,1268294203.38404,0.056593]]
+&gt; select --table Blog
+[[0,1269854897.8173,0.000105],[[[0],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]]]]]
+</pre></div>
+</div>
+<p>ShortText型の値を持つ、&#8217;title&#8217;という名前のカラムを&#8217;Blog&#8217;テーブルに追加しました。COLUMN_SCALARについては、通常のカラムであることを示しています。</p>
+</div>
+<div class="section" id="id12">
+<h4>2.2.2.5. 全文検索用の語彙テーブル・インデックスカラムの作成<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。</p>
+<p>全文検索を行う場合は、まず語彙テーブルを作成する必要があります。
+語彙表テーブルとは、文書の中にある単語が主キーとなるテーブルです。
+ここでは、ShortText型の主キー値を持つ、&#8217;Terms&#8217;という名前のテーブルを作成しました。</p>
+<p>実行例:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
 [[0,1268294159.76784,0.049841]]
 &gt;
 </pre></div>
 </div>
-<p>ShortText型の主キー値を持つ、&#8217;Terms&#8217;という名前のテーブルを作成しました。</p>
-<p>実行例のflagsのTABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木を使用し、各語彙を正規化して登録することを示しています。</p>
-<p>語彙表として使用するテーブルは、対象の文書をトークナイズする方式を、default_tokenizerパラメータで与えます。
-この例ではバイグラムを指定しています。組み込みトークナイザとして以下が選べます。</p>
-<blockquote>
-<dl class="docutils">
-<dt>TokenMecab</dt>
-<dd>形態素解析(MeCab)で分かち書きした単位を語彙とします。</dd>
-<dt>TokenDelimit</dt>
-<dd>空白で区切った単位を語彙とします。</dd>
-<dt>TokenUnigram</dt>
-<dd>1文字ずつ区切った単位を語彙とします。</dd>
-<dt>TokenBigram</dt>
-<dd>文字バイグラムを語彙とします。</dd>
-<dt>TokenTrigram</dt>
-<dd>文字トライグラムを語彙とします。</dd>
-</dl>
-</blockquote>
-</div>
-<div class="section" id="id10">
-<h4>2.2.2.3. カラムの作成<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
-<p>column_createコマンドを使用してカラムを作成します。</p>
-<p><a class="reference external" href="commands/column_create.html"><em>column_create</em></a></p>
+<p>この実行例には、多くのパラメータが指定されています。本チュートリアルでは、これらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ばしてもらってかまいません。</p>
+<p>実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に格納し、各語彙を正規化して登録することを示しています。</p>
+<p>実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例ではTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデックス方式を選択しています。</p>
+<p>さて、Blogテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、語彙テーブルにインデックス型のカラムを作成します。</p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; column_create Blog title 0 ShortText
-[[0,1268294203.38404,0.056593]]
-&gt;
-</pre></div>
-</div>
-<p>ShortText型の値を持つ、&#8217;title&#8217;という名前のカラムを&#8217;Blog&#8217;テーブルに追加しました。</p>
-<p>このカラムに登録した文字列に対して全文検索を行う場合は、語彙表テーブルに対応するインデックス型のカラムを作成します。</p>
-<p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; column_create Terms blog_title COLUMN_INDEX|WITH_POSITION Blog title
+<div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Blog --source title
 [[0,1268294247.01333,0.129917]]
 &gt;
 </pre></div>
 </div>
-<p>Blogテーブルのtitleカラムを検索対象とする、&#8217;blog_title&#8217;という名前のインデックス型カラムをTermsテーブルに作成しました。</p>
-<p>インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsourceに指定します。</p>
-<p>実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、位置情報を格納するインデックス型のカラムであることを示しています。</p>
-</div>
-<div class="section" id="id11">
-<h4>2.2.2.4. データのロード<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
-<p>loadコマンドを使用します。</p>
-<p><a class="reference external" href="commands/load.html"><em>load</em></a></p>
-<p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; load --table Blog
-[{&quot;_key&quot;:&quot;http://hoge.com/&quot;,&quot;title&quot;:&quot;hoge&quot;},{&quot;_key&quot;:&quot;http://fuga.com/&quot;,&quot;title&quot;:&quot;fuga&quot;}]
-[[0,1268380982.80157,0.002685],2]
-&gt;
-</pre></div>
-</div>
-</div>
-<div class="section" id="id12">
-<h4>2.2.2.5. 検索<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
-<p>selectコマンドを使用します。</p>
-<p><a class="reference external" href="commands/select.html"><em>select</em></a></p>
-<p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select Blog
-[[0,1268381030.41737,2.7e-05],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://hoge.com/&quot;,&quot;hoge&quot;],[2,&quot;http://fuga.com/&quot;,&quot;fuga&quot;]]]]
-&gt;
-</pre></div>
-</div>
-<p>tableパラメータだけを指定すると、他のパラメータはデフォルト値として解釈され、
-先頭10件の全カラムが出力されます。</p>
+<p>Blogテーブルのtitleカラムを検索対象とする、&#8217;blog_title&#8217;という名前のインデックス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtypeに、インデックス対象となるカラムをsourceに指定します。</p>
+<p>実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、位置情報を格納するインデックス型のカラムであることを示しています。通常の全文検索インデックスでは、COLUMN_INDEX|WITH_POSITIONを指定してください。位置情報を格納する意味については、本チュートリアルでは触れません。</p>
 </div>
 <div class="section" id="id13">
-<h4>2.2.2.6. クエリ文字列の書式<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<h4>2.2.2.6. データのロード<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="commands/load.html"><em>load</em></a> コマンドを使用します。</p>
+<p>実行例:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; load --table Blog
+&gt; [{&quot;_key&quot;:&quot;http://hoge.com/&quot;,&quot;title&quot;:&quot;hoge&quot;},{&quot;_key&quot;:&quot;http://fuga.com/&quot;,&quot;title&quot;:&quot;fuga&quot;}]
+[[0,1268380982.80157,0.002685],2]
+&gt; select Blog
+[[0,1269855382.8395,0.000121],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://hoge.com/&quot;,&quot;hoge&quot;],[2,&quot;http://fuga.com/&quot;,&quot;fuga&quot;]]]]
+&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h4>2.2.2.7. クエリ文字列の書式<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
 <p>groongaのクエリ文字列には2種類の書式があります。</p>
-<p>selectコマンドのqueryパラメータには簡易な書式が指定できます。</p>
+<p>selectコマンドのqueryパラメータには、通常の検索エンジンが受け付けるような、簡易な書式でクエリを書くことができます。</p>
 <p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select Blog title hoge
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog --match_columns title --query hoge
 [[0,1268381101.20846,0.000401],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://hoge.com/&quot;,&quot;hoge&quot;]]]]
 &gt;
 </pre></div>
@@ -270,9 +265,9 @@
 <p>selectコマンドのfilterパラメータとscorerパラメータには、
 JavaScriptライクな文法で様々な条件を指定することができます。</p>
 <p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; /d/select?table=Blog&amp;filter=_id&lt;=2&amp;scorer=_score=rand()&amp;output_columns=_id+_key+_score&amp;sortby=_score
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog --filter _id&lt;=2 --scorer &quot;_score=rand()&quot; --output_columns _id,_key,_score --sortby _score
 [[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[2,&quot;http://fuga.com/&quot;,846930886],[1,&quot;http://hoge.com/&quot;,1804289383]]]]
-&gt; /d/select?table=Blog&amp;filter=_id&lt;=2&amp;scorer=_score=rand()&amp;output_columns=_id+_key+_score&amp;sortby=_score
+&gt; select --table Blog --filter _id&lt;=2 --scorer &quot;_score=rand()&quot; --output_columns _id,_key,_score --sortby _score
 [[0,1268381300.12763,0.000164],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[1,&quot;http://hoge.com/&quot;,1681692777],[2,&quot;http://fuga.com/&quot;,1714636915]]]]
 &gt;
 </pre></div>
@@ -316,10 +311,11 @@ _score</blockquote>
 <li><a class="reference external" href="#id7">2.2.2. コマンド</a><ul>
 <li><a class="reference external" href="#id8">2.2.2.1. 主なコマンド</a></li>
 <li><a class="reference external" href="#id9">2.2.2.2. テーブルの作成</a></li>
-<li><a class="reference external" href="#id10">2.2.2.3. カラムの作成</a></li>
-<li><a class="reference external" href="#id11">2.2.2.4. データのロード</a></li>
-<li><a class="reference external" href="#id12">2.2.2.5. 検索</a></li>
-<li><a class="reference external" href="#id13">2.2.2.6. クエリ文字列の書式</a></li>
+<li><a class="reference external" href="#id10">2.2.2.3. 検索</a></li>
+<li><a class="reference external" href="#id11">2.2.2.4. カラムの作成</a></li>
+<li><a class="reference external" href="#id12">2.2.2.5. 全文検索用の語彙テーブル・インデックスカラムの作成</a></li>
+<li><a class="reference external" href="#id13">2.2.2.6. データのロード</a></li>
+<li><a class="reference external" href="#id14">2.2.2.7. クエリ文字列の書式</a></li>
 </ul>
 </li>
 </ul>
