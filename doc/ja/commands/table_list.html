@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.17. table_list &mdash; groonga v0.1.6 documentation</title>
+    <title>3.2.18. table_list &mdash; groonga v0.1.6 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -21,8 +21,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.6 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.18. view_add" href="view_add.html" />
-    <link rel="prev" title="3.2.16. table_create" href="table_create.html" /> 
+    <link rel="next" title="3.2.19. view_add" href="view_add.html" />
+    <link rel="prev" title="3.2.17. table_create" href="table_create.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,10 +32,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="view_add.html" title="3.2.18. view_add"
+          <a href="view_add.html" title="3.2.19. view_add"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="table_create.html" title="3.2.16. table_create"
+          <a href="table_create.html" title="3.2.17. table_create"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.6 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -49,31 +49,31 @@
           <div class="body">
             
   <div class="section" id="table-list">
-<h1>3.2.17. table_list<a class="headerlink" href="#table-list" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.18. table_list<a class="headerlink" href="#table-list" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.17.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.18.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>table_list - DBに定義されているテーブルをリスト表示</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.17.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.18.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>table_list [output_type]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.17.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.18.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>table_listは、DBに定義されているテーブルのリストを表示します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.17.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.18.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">output_type</span></tt></dt>
 <dd>出力形式を、json,tsv,xmlのいずれかで指定します。</dd>
 </dl>
 </div>
 <div class="section" id="id5">
-<h2>3.2.17.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.18.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>以下のようなjson形式で値が返却されます。 <a class="footnote-reference" href="#id8" id="id6">[1]</a></p>
 <div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間],リスト]
 </pre></div>
@@ -128,7 +128,7 @@ output_columnsに指定された条件に従って、対象となるカラム型
 </blockquote>
 </div>
 <div class="section" id="id7">
-<h2>3.2.17.6. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.18.6. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>table_list Entry --output_type json
 
 [[0,1268214044.00307,0.000777],[[[&quot;id&quot;, &quot;UInt32&quot;],[&quot;name&quot;,&quot;ShortText&quot;],[&quot;path&quot;,&quot;ShortText&quot;],[&quot;flags&quot;,&quot;ShortText&quot;],[&quot;domain&quot;, &quot;ShortText&quot;],[&quot;range&quot;,&quot;ShortText&quot;]],[256,&quot;Entry&quot;,&quot;test.db.0000100&quot;,&quot;TABLE_HASH_KEY|PERSISTENT&quot;,&quot;ShortText&quot;,&quot;null&quot;],[257,&quot;Term&quot;,&quot;test.db.0000101&quot;,&quot;TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT&quot;,&quot;ShortText&quot;,&quot;null&quot;]]]
@@ -152,23 +152,23 @@ output_columnsに指定された条件に従って、対象となるカラム型
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="#">3.2.17. table_list</a><ul>
-<li><a class="reference external" href="#id1">3.2.17.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.2.17.2. 書式</a></li>
-<li><a class="reference external" href="#id3">3.2.17.3. 説明</a></li>
-<li><a class="reference external" href="#id4">3.2.17.4. 引数</a></li>
-<li><a class="reference external" href="#id5">3.2.17.5. 返値</a></li>
-<li><a class="reference external" href="#id7">3.2.17.6. 例</a></li>
+<li><a class="reference external" href="">3.2.18. table_list</a><ul>
+<li><a class="reference external" href="#id1">3.2.18.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.2.18.2. 書式</a></li>
+<li><a class="reference external" href="#id3">3.2.18.3. 説明</a></li>
+<li><a class="reference external" href="#id4">3.2.18.4. 引数</a></li>
+<li><a class="reference external" href="#id5">3.2.18.5. 返値</a></li>
+<li><a class="reference external" href="#id7">3.2.18.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="table_create.html"
-                                  title="previous chapter">3.2.16. table_create</a></p>
+                                  title="previous chapter">3.2.17. table_create</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="view_add.html"
-                                  title="next chapter">3.2.18. view_add</a></p>
+                                  title="next chapter">3.2.19. view_add</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/commands/table_list.txt"
@@ -198,10 +198,10 @@ output_columnsに指定された条件に従って、対象となるカラム型
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="view_add.html" title="3.2.18. view_add"
+          <a href="view_add.html" title="3.2.19. view_add"
              >next</a> |</li>
         <li class="right" >
-          <a href="table_create.html" title="3.2.16. table_create"
+          <a href="table_create.html" title="3.2.17. table_create"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.6 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -210,7 +210,7 @@ output_columnsに指定された条件に従って、対象となるカラム型
     </div>
     <div class="footer">
       &copy; Copyright 2009, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
     </div>
   </body>
 </html>

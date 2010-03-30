@@ -188,12 +188,6 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
-grn_timeval *
-grn_obj_tv(grn_ctx *ctx, grn_obj *obj)
-{
-
-}
-
 static grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep);
 
 grn_obj *
@@ -259,6 +253,20 @@ grn_obj *
 grn_db_keys(grn_obj *s)
 {
   return (grn_obj *)(((grn_db *)s)->keys);
+}
+
+uint32_t
+grn_db_lastmod(grn_obj *s)
+{
+  return (((grn_db *)s)->keys)->io->header->lastmod;
+}
+
+void
+grn_db_touch(grn_ctx *ctx, grn_obj *s)
+{
+  grn_timeval tv;
+  grn_timeval_now(ctx, &tv);
+  (((grn_db *)s)->keys)->io->header->lastmod = tv.tv_sec;
 }
 
 static grn_rc
@@ -3585,6 +3593,37 @@ grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
     range = GRN_DB_OBJECT;
   }
   return range;
+}
+
+int
+grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
+{
+  int res = 0;
+  if (GRN_DB_OBJP(obj)) {
+    res = (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) ? 0 : 1;
+  } else if (obj->header.type == GRN_ACCESSOR) {
+    grn_accessor *a;
+    for (a = (grn_accessor *)obj; a; a = a->next) {
+      switch (a->action) {
+      case GRN_ACCESSOR_GET_SCORE :
+      case GRN_ACCESSOR_GET_NSUBRECS :
+        res = 0;
+        break;
+      case GRN_ACCESSOR_GET_ID :
+      case GRN_ACCESSOR_GET_VALUE :
+      case GRN_ACCESSOR_GET_COLUMN_VALUE :
+      case GRN_ACCESSOR_GET_KEY :
+        if (GRN_DB_OBJP(a->obj)) { res = (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) ? 0 : 1; }
+        break;
+      default :
+        if (GRN_DB_OBJP(a->obj)) { res = (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) ? 0 : 1; }
+        break;
+      }
+    }
+  } else if (obj->header.type == GRN_ACCESSOR_VIEW) {
+    /* todo */
+  }
+  return res;
 }
 
 #define NUM2DEST(getvalue,totext,tobool)\
@@ -7097,6 +7136,8 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
     expr->code0 = NULL;
     expr->vars = NULL;
     expr->nvars = 0;
+    expr->cacheable = 1;
+    expr->taintable = 0;
     expr->values_curr = 0;
     expr->values_tail = 0;
     expr->values_size = size;
@@ -7334,6 +7375,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       if (!obj) { DFI_POP(e, dfi); }
       // todo : increment e->values_tail.
       DFI_PUT(e, type, domain, code); /* cannot identify type of return value */
+      e->cacheable = 0;
       break;
     case GRN_OP_INTERN :
       if (obj && CONSTP(obj)) {
@@ -7493,6 +7535,10 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
             if (dfi->code->op == GRN_OP_GET_VALUE) {
               dfi->code->op = GRN_OP_GET_REF;
             }
+            if (dfi->code->value && grn_obj_is_persistent(ctx, dfi->code->value)) {
+              e->cacheable = 0;
+              e->taintable = 1;
+            }
           }
         }
         PUSH_CODE(e, op, obj, nargs, code);
@@ -7584,6 +7630,10 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         if (dfi && (dfi->code)) {
           if (dfi->code->op == GRN_OP_GET_VALUE) {
             dfi->code->op = GRN_OP_GET_REF;
+          }
+          if (dfi->code->value && grn_obj_is_persistent(ctx, dfi->code->value)) {
+            e->cacheable = 0;
+            e->taintable = 1;
           }
         }
         PUSH_CODE(e, op, obj, nargs, code);
@@ -11205,6 +11255,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            int drilldown_offset, int drilldown_limit)
 {
   uint32_t nkeys, nhits;
+  uint16_t cacheable = 1, taintable = 0;
   grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *table_, *match_columns_ = NULL, *cond, *scorer_, *res = NULL, *sorted;
@@ -11279,6 +11330,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                          match_columns_, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_SCRIPT);
         }
+        cacheable *= ((grn_expr *)cond)->cacheable;
+        taintable += ((grn_expr *)cond)->taintable;
         /*
         grn_obj strbuf;
         GRN_TEXT_INIT(&strbuf, 0);
@@ -11319,6 +11372,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_table_cursor *tc;
           grn_expr_parse(ctx, scorer_, scorer, scorer_len, NULL, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
+          cacheable *= ((grn_expr *)scorer_)->cacheable;
+          taintable += ((grn_expr *)scorer_)->taintable;
           if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
             while (!grn_table_cursor_next_o(ctx, tc, v)) {
               grn_expr_exec(ctx, scorer_, 0);
@@ -11479,10 +11534,11 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     case GRN_CONTENT_NONE:
       break;
     }
+    if (cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
+      grn_cache_update(ctx, cache_key, cache_key_size, outbuf);
+    }
+    if (taintable) { grn_db_touch(ctx, DB_OBJ(table_)->db); }
     grn_obj_unlink(ctx, table_);
-  }
-  if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
-    grn_cache_update(ctx, cache_key, cache_key_size, outbuf);
   }
   /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
   return ctx->rc;
@@ -12092,7 +12148,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
   }
 }
 
-grn_com_addr *addr;
+static grn_com_addr *addr;
 
 grn_rc
 grn_load(grn_ctx *ctx, grn_content_type input_type,

@@ -22,7 +22,6 @@
 #include "pat.h"
 #include "snip.h"
 #include <stdarg.h>
-#include <stdio.h>
 #include <time.h>
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
@@ -1158,7 +1157,13 @@ grn_cache_init(void)
   grn_gcache.hash = grn_hash_create(&grn_gctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                     sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
   MUTEX_INIT(grn_gcache.mutex);
-  grn_gcache.max_nentries = 0;
+  grn_gcache.max_nentries = 100;
+}
+
+uint32_t *
+grn_cach_max_nentries(void)
+{
+  return &grn_gcache.max_nentries;
 }
 
 static void
@@ -1180,7 +1185,7 @@ grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_size)
   if (!ctx->impl || !ctx->impl->db) { return obj; }
   MUTEX_LOCK(grn_gcache.mutex);
   if (grn_hash_get(&grn_gctx, grn_gcache.hash, str, str_size, (void **)&ce)) {
-    if (ce->tv.tv_sec < 100) {
+    if (ce->tv.tv_sec < grn_db_lastmod(ctx->impl->db)) {
       grn_cache_expire_entry(ce);
       goto exit;
     }
@@ -1265,12 +1270,6 @@ grn_cache_expire(uint32_t size)
   MUTEX_LOCK(grn_gcache.mutex);
   while (ce0 != ce0->prev && size--) { grn_cache_expire_entry(ce0->prev); }
   MUTEX_UNLOCK(grn_gcache.mutex);
-}
-
-void
-grn_cache_taint(grn_ctx *ctx)
-{
-  //  if (ctx->impl && ctx->impl->tv.tv_sec) { grn_gcache.tv = ctx->impl->tv; }
 }
 
 void

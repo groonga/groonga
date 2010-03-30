@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.12. select &mdash; groonga v0.1.6 documentation</title>
+    <title>3.2.13. select &mdash; groonga v0.1.6 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -21,8 +21,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.6 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.13. set" href="set.html" />
-    <link rel="prev" title="3.2.11. quit" href="quit.html" /> 
+    <link rel="next" title="3.2.14. set" href="set.html" />
+    <link rel="prev" title="3.2.12. quit" href="quit.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,10 +32,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="set.html" title="3.2.13. set"
+          <a href="set.html" title="3.2.14. set"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="quit.html" title="3.2.11. quit"
+          <a href="quit.html" title="3.2.12. quit"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.6 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -49,13 +49,13 @@
           <div class="body">
             
   <div class="section" id="select">
-<h1>3.2.12. select<a class="headerlink" href="#select" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.13. select<a class="headerlink" href="#select" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.12.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>select - テーブルの中から条件にマッチするレコードを検索して出力する</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.12.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>select table [match_columns [query [filter [scorer [sortby [output_columns
              [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
              [drilldown_offset [drilldown_limit [output_type]]]]]]]]]]]]]]
@@ -63,12 +63,12 @@
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.12.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるselectについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>selectは、使用しているデータベースのテーブルの中から条件にマッチするレコードを検索して出力します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.12.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 検索対象のテーブルを指定します。</blockquote>
@@ -136,7 +136,7 @@ drilldown条件に指定されたカラムの値毎にとりまとめられた�
 出力形式を、json,tsv,xmlのいずれかで指定します。</blockquote>
 </div>
 <div class="section" id="id6">
-<h2>3.2.12.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>以下のようなjson形式で値が返却されます。 <a href="#id11"><span class="problematic" id="id12"><span id="id7"></span>[#]_</span></a></p>
 <div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間], [検索結果, ドリルダウン結果]]
 </pre></div>
@@ -191,7 +191,7 @@ drilldown_output_columns, drilldown_offset, drilldown_limitによって指定さ
 </blockquote>
 </div>
 <div class="section" id="id8">
-<h2>3.2.12.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.6. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryの全レコード・全カラムの値を出力します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>select Entry --output_type json
 
@@ -204,7 +204,7 @@ select Entry --output_type xml
 </div>
 </div>
 <div class="section" id="id9">
-<h2>3.2.12.7. 関連項目<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.7. 関連項目<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="../expr.html"><em>grn式 (grn_expr)</em></a></p>
 <p class="rubric">脚注</p>
 <table class="docutils footnote" frame="void" id="id10" rules="none">
@@ -224,24 +224,24 @@ select Entry --output_type xml
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="#">3.2.12. select</a><ul>
-<li><a class="reference external" href="#id1">3.2.12.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.2.12.2. 書式</a></li>
-<li><a class="reference external" href="#id3">3.2.12.3. 説明</a></li>
-<li><a class="reference external" href="#id4">3.2.12.4. 引数</a></li>
-<li><a class="reference external" href="#id6">3.2.12.5. 返値</a></li>
-<li><a class="reference external" href="#id8">3.2.12.6. 例</a></li>
-<li><a class="reference external" href="#id9">3.2.12.7. 関連項目</a></li>
+<li><a class="reference external" href="">3.2.13. select</a><ul>
+<li><a class="reference external" href="#id1">3.2.13.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.2.13.2. 書式</a></li>
+<li><a class="reference external" href="#id3">3.2.13.3. 説明</a></li>
+<li><a class="reference external" href="#id4">3.2.13.4. 引数</a></li>
+<li><a class="reference external" href="#id6">3.2.13.5. 返値</a></li>
+<li><a class="reference external" href="#id8">3.2.13.6. 例</a></li>
+<li><a class="reference external" href="#id9">3.2.13.7. 関連項目</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="quit.html"
-                                  title="previous chapter">3.2.11. quit</a></p>
+                                  title="previous chapter">3.2.12. quit</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="set.html"
-                                  title="next chapter">3.2.13. set</a></p>
+                                  title="next chapter">3.2.14. set</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/commands/select.txt"
@@ -271,10 +271,10 @@ select Entry --output_type xml
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="set.html" title="3.2.13. set"
+          <a href="set.html" title="3.2.14. set"
              >next</a> |</li>
         <li class="right" >
-          <a href="quit.html" title="3.2.11. quit"
+          <a href="quit.html" title="3.2.12. quit"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.1.6 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -283,7 +283,7 @@ select Entry --output_type xml
     </div>
     <div class="footer">
       &copy; Copyright 2009, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
     </div>
   </body>
 </html>

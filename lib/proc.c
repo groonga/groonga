@@ -185,6 +185,9 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       GRN_TEXT_INIT(&body, 0);
       grn_text_itoa(ctx, &body, ctx->impl->loader.nrecords);
       print_return_code_with_body(ctx, outbuf, ct, &body);
+      if (ctx->impl->loader.table) {
+        grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
+      }
       /* maybe necessary : grn_ctx_loader_clear(ctx); */
       grn_obj_unlink(ctx, &body);
     }
@@ -1897,6 +1900,29 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
+proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_expr_var *vars;
+  grn_content_type ct;
+  grn_obj *buf = args[0], body;
+  uint32_t *mp = grn_cach_max_nentries();
+  GRN_TEXT_INIT(&body, 0);
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
+  grn_text_lltoa(ctx, &body, *mp);
+  if (nvars == 2 && GRN_TEXT_LEN(&vars[0].value)) {
+    const char *rest;
+    uint32_t max = grn_atoui(GRN_TEXT_VALUE(&vars[0].value),
+                             GRN_BULK_CURR(&vars[0].value), &rest);
+    *mp = max;
+  }
+  print_return_code_with_body(ctx, buf, ct, &body);
+  grn_obj_unlink(ctx, &body);
+  return buf;
+}
+
+static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
@@ -2310,6 +2336,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "output_type");
   DEF_VAR(vars[3], "id");
   DEF_PROC("delete", proc_delete, 4, vars);
+
+  DEF_VAR(vars[0], "max");
+  DEF_VAR(vars[1], "output_type");
+  DEF_PROC("cache_limit", proc_cache_limit, 2, vars);
 
   /* TODO: Take "output_type" argument. Do we need GRN_CONTENT_GQTP? */
   DEF_PROC("dump", proc_dump, 0, vars);
