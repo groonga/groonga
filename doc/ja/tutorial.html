@@ -146,16 +146,14 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
 <h3>2.2.2. コマンド<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作することができます。
 コマンドは以下の書式のうちいずれかで与えることができます。</p>
-<div class="highlight-none"><div class="highlight"><pre>書式1: コマンド名 引数1 引数2..
+<div class="highlight-none"><div class="highlight"><pre>書式1: コマンド名 引数1 引数2 ..
 
-書式2: コマンド名 --引数名1 値1 --引数名2 値2,..
-
-書式3: /d/コマンド名?引数名1=値1&amp;引数名2=値2..
+書式2: コマンド名 --引数名1 値1 --引数名2 値2 ..
 </pre></div>
 </div>
-<p>書式1と2は混ぜて使うことができます。
-書式3で引数を渡す場合は、コマンド文字列をURLエンコードする必要があります。
-詳しくは、:doc:<cite>execfile</cite> を参考にしてください。</p>
+<p>書式1と2は混ぜて使うことができます。</p>
+<p>書式2において、空白や、記号「&#8221;&#8217;()」のうちいずれかを含む値を指定したい場合は、シングルクォート(&#8216;)かダブルクォート(&#8220;)で値を囲みます。</p>
+<p>詳しくは、:doc:<cite>execfile</cite> のコマンドの項を参考にしてください。</p>
 <div class="section" id="id8">
 <h4>2.2.2.1. 主なコマンド<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
 <blockquote>
@@ -267,9 +265,9 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
 <p>selectコマンドのfilterパラメータとscorerパラメータには、
 JavaScriptライクな文法で様々な条件を指定することができます。</p>
 <p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog --filter _id&lt;=2 --scorer _score=rand() --output_columns _id,_key,_score --sortby _score
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog --filter _id&lt;=2 --scorer &quot;_score=rand()&quot; --output_columns _id,_key,_score --sortby _score
 [[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[2,&quot;http://fuga.com/&quot;,846930886],[1,&quot;http://hoge.com/&quot;,1804289383]]]]
-&gt; select --table=Blog --filter _id&lt;=2 --scorer _score=rand() --output_columns _id,_key,_score --sortby _score
+&gt; select --table Blog --filter _id&lt;=2 --scorer &quot;_score=rand()&quot; --output_columns _id,_key,_score --sortby _score
 [[0,1268381300.12763,0.000164],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[1,&quot;http://hoge.com/&quot;,1681692777],[2,&quot;http://fuga.com/&quot;,1714636915]]]]
 &gt;
 </pre></div>
