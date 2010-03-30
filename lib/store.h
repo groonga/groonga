@@ -54,7 +54,7 @@ struct _grn_ra {
 };
 
 struct grn_ra_header {
-  unsigned element_size;
+  uint32_t element_size;
   uint32_t nrecords; /* nrecords is not maintained by default */
   uint32_t reserved[10];
 };

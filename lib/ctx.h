@@ -34,10 +34,6 @@
 #include "io.h"
 #endif /* GRN_IO_H */
 
-#ifndef GRN_COM_H
-#include "com.h"
-#endif /* GRN_COM_H */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -421,8 +417,10 @@ grn_content_type grn_get_ctype(grn_obj *var);
 /**** cache ****/
 
 void grn_cache_init(void);
+grn_obj *grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_size);
 void grn_cache_unref(const char *str, uint32_t str_size);
-void grn_cache_update(const char *str, uint32_t str_size, grn_obj *value);
+void grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_size, grn_obj *value);
+void grn_cache_taint(grn_ctx *ctx);
 void grn_cache_expire(uint32_t size);
 void grn_cache_fin(void);
 

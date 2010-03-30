@@ -29,6 +29,7 @@
 #endif /* HAVE_NETINET_TCP_H */
 
 #include "ctx.h"
+#include "com.h"
 
 #ifndef PF_INET
 #define PF_INET AF_INET

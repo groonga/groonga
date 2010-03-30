@@ -283,6 +283,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
   ctx->impl->output = NULL /* grn_ctx_concat_func */;
   ctx->impl->data.ptr = NULL;
+  ctx->impl->tv.tv_sec = 0;
+  ctx->impl->tv.tv_usec = 0;
   GRN_TEXT_INIT(&ctx->impl->subbuf, 0);
   ctx->impl->edge = NULL;
   grn_loader_init(&ctx->impl->loader);
@@ -1134,6 +1136,7 @@ typedef struct {
   grn_cache_entry *prev;
   grn_hash *hash;
   grn_mutex mutex;
+  uint32_t max_nentries;
 } grn_cache;
 
 struct _grn_cache_entry {
@@ -1150,21 +1153,37 @@ static grn_cache grn_gcache;
 void
 grn_cache_init(void)
 {
-  MUTEX_INIT(grn_gcache.mutex);
-  grn_gcache.hash = grn_hash_create(&grn_gctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
-                                    sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
   grn_gcache.next = (grn_cache_entry *) &grn_gcache;
   grn_gcache.prev = (grn_cache_entry *) &grn_gcache;
+  grn_gcache.hash = grn_hash_create(&grn_gctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
+                                    sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
+  MUTEX_INIT(grn_gcache.mutex);
+  grn_gcache.max_nentries = 0;
+}
+
+static void
+grn_cache_expire_entry(grn_cache_entry *ce)
+{
+  if (!ce->nref) {
+    ce->prev->next = ce->next;
+    ce->next->prev = ce->prev;
+    grn_obj_close(&grn_gctx, ce->value);
+    grn_hash_delete_by_id(&grn_gctx, grn_gcache.hash, ce->id, NULL);
+  }
 }
 
 grn_obj *
-grn_cache_fetch(const char *str, uint32_t str_size)
+grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   grn_cache_entry *ce;
-  grn_ctx *ctx = &grn_gctx;
   grn_obj *obj = NULL;
+  if (!ctx->impl || !ctx->impl->db) { return obj; }
   MUTEX_LOCK(grn_gcache.mutex);
-  if (grn_hash_get(ctx, grn_gcache.hash, str, str_size, (void **)&ce)) {
+  if (grn_hash_get(&grn_gctx, grn_gcache.hash, str, str_size, (void **)&ce)) {
+    if (ce->tv.tv_sec < 100) {
+      grn_cache_expire_entry(ce);
+      goto exit;
+    }
     ce->nref++;
     obj = ce->value;
     ce->prev->next = ce->next;
@@ -1177,6 +1196,7 @@ grn_cache_fetch(const char *str, uint32_t str_size)
       ce0->next = ce;
     }
   }
+exit :
   MUTEX_UNLOCK(grn_gcache.mutex);
   return obj;
 }
@@ -1194,20 +1214,18 @@ grn_cache_unref(const char *str, uint32_t str_size)
 }
 
 void
-grn_cache_update(const char *str, uint32_t str_size, grn_obj *value)
+grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_size, grn_obj *value)
 {
   grn_id id;
   int added = 0;
-  grn_timeval tv;
   grn_cache_entry *ce;
   grn_rc rc = GRN_SUCCESS;
-  grn_ctx *ctx = &grn_gctx;
-  grn_obj *old = NULL, *obj = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
-  if (!obj) { return; }
-  grn_timeval_now(ctx, &tv);
-  GRN_TEXT_PUT(ctx, obj, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+  grn_obj *old = NULL, *obj;
+  if (!ctx->impl || !grn_gcache.max_nentries) { return; }
+  if (!(obj = grn_obj_open(&grn_gctx, GRN_BULK, 0, GRN_DB_TEXT))) { return; }
+  GRN_TEXT_PUT(&grn_gctx, obj, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
   MUTEX_LOCK(grn_gcache.mutex);
-  if ((id = grn_hash_add(ctx, grn_gcache.hash, str, str_size, (void **)&ce, &added))) {
+  if ((id = grn_hash_add(&grn_gctx, grn_gcache.hash, str, str_size, (void **)&ce, &added))) {
     if (!added) {
       if (ce->nref) {
         rc = GRN_RESOURCE_BUSY;
@@ -1219,7 +1237,7 @@ grn_cache_update(const char *str, uint32_t str_size, grn_obj *value)
     }
     ce->id = id;
     ce->value = obj;
-    ce->tv = tv;
+    ce->tv = ctx->impl->tv;
     ce->nref = 0;
     {
       grn_cache_entry *ce0 = (grn_cache_entry *)&grn_gcache;
@@ -1228,32 +1246,31 @@ grn_cache_update(const char *str, uint32_t str_size, grn_obj *value)
       ce0->next->prev = ce;
       ce0->next = ce;
     }
+    if (GRN_HASH_SIZE(grn_gcache.hash) > grn_gcache.max_nentries) {
+      grn_cache_expire_entry(grn_gcache.prev);
+    }
   } else {
     rc = GRN_NO_MEMORY_AVAILABLE;
   }
 exit :
   MUTEX_UNLOCK(grn_gcache.mutex);
-  if (rc) { grn_obj_close(ctx, obj); }
-  if (old) { grn_obj_close(ctx, old); }
+  if (rc) { grn_obj_close(&grn_gctx, obj); }
+  if (old) { grn_obj_close(&grn_gctx, old); }
 }
 
 void
 grn_cache_expire(uint32_t size)
 {
-  grn_cache_entry *ce, *ce0 = (grn_cache_entry *)&grn_gcache;
-  grn_ctx *ctx = &grn_gctx;
+  grn_cache_entry *ce0 = (grn_cache_entry *)&grn_gcache;
   MUTEX_LOCK(grn_gcache.mutex);
-  for (ce = ce0->prev; size-- && ce != ce0; ce = ce0->prev) {
-    if (ce->nref) {
-      ce0 = ce;
-    } else {
-      ce->prev->next = ce0;
-      ce0->prev = ce->prev;
-      grn_obj_close(ctx, ce->value);
-      grn_hash_delete_by_id(ctx, grn_gcache.hash, ce->id, NULL);
-    }
-  }
+  while (ce0 != ce0->prev && size--) { grn_cache_expire_entry(ce0->prev); }
   MUTEX_UNLOCK(grn_gcache.mutex);
+}
+
+void
+grn_cache_taint(grn_ctx *ctx)
+{
+  //  if (ctx->impl && ctx->impl->tv.tv_sec) { grn_gcache.tv = ctx->impl->tv; }
 }
 
 void
@@ -1262,7 +1279,7 @@ grn_cache_fin(void)
   grn_ctx *ctx = &grn_gctx;
   grn_cache_entry *vp;
   GRN_HASH_EACH(ctx, grn_gcache.hash, id, NULL, NULL, &vp, {
-    GRN_OBJ_FIN(ctx, vp->value);
+    grn_obj_close(ctx, vp->value);
   });
   grn_hash_close(ctx, grn_gcache.hash);
   MUTEX_FIN(grn_gcache.mutex);
