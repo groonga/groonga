@@ -188,6 +188,12 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
+grn_timeval *
+grn_obj_tv(grn_ctx *ctx, grn_obj *obj)
+{
+
+}
+
 static grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep);
 
 grn_obj *
@@ -11235,7 +11241,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     memcpy(cp, &limit, sizeof(int)); cp += sizeof(int);
     memcpy(cp, &drilldown_offset, sizeof(int)); cp += sizeof(int);
     memcpy(cp, &drilldown_limit, sizeof(int)); cp += sizeof(int);
-    if ((cache = grn_cache_fetch(cache_key, cache_key_size))) {
+    if ((cache = grn_cache_fetch(ctx, cache_key, cache_key_size))) {
       GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(cache), GRN_TEXT_LEN(cache));
       grn_cache_unref(cache_key, cache_key_size);
       LAP("cache");

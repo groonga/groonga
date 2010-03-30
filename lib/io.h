@@ -84,6 +84,21 @@ typedef struct {
 
 typedef struct _grn_io_array_info grn_io_array_info;
 
+struct _grn_io_header {
+  char idstr[16];
+  uint32_t type;
+  uint32_t version;
+  uint32_t flags;
+  uint32_t header_size;
+  uint32_t segment_size;
+  uint32_t max_segment;
+  uint32_t n_arrays;
+  uint32_t lock;
+  uint64_t curr_size;
+  uint32_t segment_tail;
+  uint32_t lastmod;
+};
+
 struct _grn_io {
   char path[PATH_MAX];
   struct _grn_io_header *header;

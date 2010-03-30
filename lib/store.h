@@ -56,8 +56,7 @@ struct _grn_ra {
 struct grn_ra_header {
   uint32_t element_size;
   uint32_t nrecords; /* nrecords is not maintained by default */
-  grn_timeval tv;
-  uint32_t reserved[8];
+  uint32_t reserved[10];
 };
 
 grn_ra *grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size);

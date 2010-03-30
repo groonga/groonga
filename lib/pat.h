@@ -62,8 +62,7 @@ struct grn_pat_header {
   int32_t curr_del2;
   int32_t curr_del3;
   uint32_t n_garbages;
-  grn_timeval tv;
-  uint32_t reserved[1003];
+  uint32_t reserved[1005];
   grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
   grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
 };

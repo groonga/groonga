@@ -417,7 +417,7 @@ grn_content_type grn_get_ctype(grn_obj *var);
 /**** cache ****/
 
 void grn_cache_init(void);
-grn_obj *grn_cache_fetch(const char *str, uint32_t str_size);
+grn_obj *grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_size);
 void grn_cache_unref(const char *str, uint32_t str_size);
 void grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_size, grn_obj *value);
 void grn_cache_taint(grn_ctx *ctx);

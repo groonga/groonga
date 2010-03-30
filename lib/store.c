@@ -256,7 +256,6 @@ struct grn_ja_header {
   uint32_t ngarbages[JA_N_ELEMENT_VARIATION];
   uint32_t dsegs[JA_N_DSEGMENTS];
   uint32_t esegs[JA_N_ESEGMENTS];
-  grn_timeval tv;
 };
 
 #define SEG_SEQ        (0x10000000U)

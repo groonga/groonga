@@ -1135,7 +1135,6 @@ typedef struct {
   grn_cache_entry *next;
   grn_cache_entry *prev;
   grn_hash *hash;
-  grn_timeval tv;
   grn_mutex mutex;
   uint32_t max_nentries;
 } grn_cache;
@@ -1158,8 +1157,6 @@ grn_cache_init(void)
   grn_gcache.prev = (grn_cache_entry *) &grn_gcache;
   grn_gcache.hash = grn_hash_create(&grn_gctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                     sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
-  grn_gcache.tv.tv_sec = 0;
-  grn_gcache.tv.tv_usec = 0;
   MUTEX_INIT(grn_gcache.mutex);
   grn_gcache.max_nentries = 0;
 }
@@ -1176,14 +1173,14 @@ grn_cache_expire_entry(grn_cache_entry *ce)
 }
 
 grn_obj *
-grn_cache_fetch(const char *str, uint32_t str_size)
+grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_size)
 {
   grn_cache_entry *ce;
-  grn_ctx *ctx = &grn_gctx;
   grn_obj *obj = NULL;
+  if (!ctx->impl || !ctx->impl->db) { return obj; }
   MUTEX_LOCK(grn_gcache.mutex);
-  if (grn_hash_get(ctx, grn_gcache.hash, str, str_size, (void **)&ce)) {
-    if (ce->tv.tv_sec < grn_gcache.tv.tv_sec) {
+  if (grn_hash_get(&grn_gctx, grn_gcache.hash, str, str_size, (void **)&ce)) {
+    if (ce->tv.tv_sec < 100) {
       grn_cache_expire_entry(ce);
       goto exit;
     }
@@ -1273,7 +1270,7 @@ grn_cache_expire(uint32_t size)
 void
 grn_cache_taint(grn_ctx *ctx)
 {
-  if (ctx->impl && ctx->impl->tv.tv_sec) { grn_gcache.tv = ctx->impl->tv; }
+  //  if (ctx->impl && ctx->impl->tv.tv_sec) { grn_gcache.tv = ctx->impl->tv; }
 }
 
 void
