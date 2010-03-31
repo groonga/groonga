@@ -58,6 +58,16 @@ module HTTPSelectDrilldownTests
     add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート2", "20091219")
     add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート3", "20091220")
     add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート4", "20091220")
+
+    add_event("morita", "razil.jp", "肉の会・パート1", "20091221")
+    add_event("morita", "razil.jp", "肉の会・パート2", "20091222")
+    add_event("morita", "razil.jp", "肉の会・パート3", "20091223")
+    add_event("morita", "razil.jp", "肉の会・パート4", "20091224")
+    add_event("morita", "razil.jp", "肉の会・パート5", "20091225")
+    add_event("morita", "razil.jp", "肉の会・パート6", "20091226")
+    add_event("morita", "razil.jp", "肉の会・パート7", "20091227")
+    add_event("morita", "razil.jp", "肉の会・パート8", "20091228")
+    add_event("morita", "razil.jp", "肉の会・パート9", "20091229")
   end
 
   def teardown
@@ -158,6 +168,35 @@ module HTTPSelectDrilldownTests
                        :drilldown_limit => 2,
                      },
                      {:n_hits => 6})
+  end
+
+  def test_default_limit
+    assert_drilldown([["title", "ShortText"],
+                      ["date", "Time"]],
+                     [["肉の会・パート1", 20091221.0]],
+                     [[[12],
+                       [["_key", "Time"],
+                        ["_nsubrecs", "Int32"]],
+                       [20091229.0, 1],
+                       [20091228.0, 1],
+                       [20091227.0, 1],
+                       [20091226.0, 1],
+                       [20091225.0, 1],
+                       [20091224.0, 1],
+                       [20091223.0, 1],
+                       [20091222.0, 1],
+                       [20091221.0, 1],
+                       [20091220.0, 2]]],
+                     {
+                       :table => "Event",
+                       :sortby => "title",
+                       :limit => 1,
+                       :output_columns => "title date",
+                       :drilldown => "date",
+                       :drilldown_sortby => "-_key",
+                       :drilldown_output_columns => "_key _nsubrecs",
+                     },
+                     {:n_hits => 15})
   end
 
   private

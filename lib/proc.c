@@ -35,6 +35,7 @@ const char *grn_admin_html_path = NULL;
 
 #define DEFAULT_LIMIT           10
 #define DEFAULT_OUTPUT_COLUMNS  "_id _key _value *"
+#define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key _nsubrecs"
 
 static void
@@ -110,6 +111,12 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     uint32_t output_columns_len = GRN_TEXT_LEN(&vars[6].value);
     char *drilldown_output_columns = GRN_TEXT_VALUE(&vars[11].value);
     uint32_t drilldown_output_columns_len = GRN_TEXT_LEN(&vars[11].value);
+    int drilldown_offset = GRN_TEXT_LEN(&vars[12].value)
+      ? grn_atoi(GRN_TEXT_VALUE(&vars[12].value), GRN_BULK_CURR(&vars[12].value), NULL)
+      : 0;
+    int drilldown_limit = GRN_TEXT_LEN(&vars[13].value)
+      ? grn_atoi(GRN_TEXT_VALUE(&vars[13].value), GRN_BULK_CURR(&vars[13].value), NULL)
+      : DEFAULT_DRILLDOWN_LIMIT;
     if (!output_columns_len) {
       output_columns = DEFAULT_OUTPUT_COLUMNS;
       output_columns_len = strlen(DEFAULT_OUTPUT_COLUMNS);
@@ -132,8 +139,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                    GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
                    GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
                    drilldown_output_columns, drilldown_output_columns_len,
-                   grn_atoi(GRN_TEXT_VALUE(&vars[12].value), GRN_BULK_CURR(&vars[12].value), NULL),
-                   grn_atoi(GRN_TEXT_VALUE(&vars[13].value), GRN_BULK_CURR(&vars[13].value), NULL))) {
+                   drilldown_offset, drilldown_limit)) {
       print_return_code(ctx, outbuf, ct);
     } else {
       print_return_code_with_body(ctx, outbuf, ct, &body);
