@@ -93,8 +93,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                            :content_type => "application/json") do |actual|
         status, result = actual
         header, *values = result
-        values = values.collect do |values|
-          id, name, path, type, flags, domain, range, source = values
+        values = values.collect do |value|
+          id, name, path, type, flags, domain, range, source = value
           [id, name, nil, type, flags, domain, range, source]
         end
         [status, [header, *values]]
@@ -156,8 +156,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     create_bookmarks_table
     create_bookmark_title_column
     assert_column_list([[@bookmarks_title_column_id,
-                         "title",
-                         nil,
+                         "bookmarks.title",
                          "var",
                          "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
                          "bookmarks",
