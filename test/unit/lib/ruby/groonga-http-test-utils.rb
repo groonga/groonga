@@ -77,6 +77,7 @@ module GroongaHTTPTestUtils
     response = get(command_path(:table_create,
                                 options.merge({:name => name})))
     assert_success_response(response, :content_type => "application/json")
+    object_registered
   end
 
   def column_create(table, name, flags, type, options={})
@@ -86,6 +87,7 @@ module GroongaHTTPTestUtils
                                               :flags => flags,
                                               :type => type)))
     assert_success_response(response, :content_type => "application/json")
+    object_registered
   end
 
   def view_add(view, table)

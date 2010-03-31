@@ -28,14 +28,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     private
-    def create_table(options)
-      response = get(command_path(:table_create, options))
-      assert_success_response(response, :content_type => "application/json")
-      object_registered
-    end
-
     def create_bookmarks_table
-      @bookmarks_table_id = create_table(:name => "bookmarks",
+      @bookmarks_table_id = table_create("bookmarks",
                                          :flags => Table::PAT_KEY,
                                          :key_type => "ShortText",
                                          :value_type => "Object",
@@ -43,13 +37,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def create_bookmark_title_column
-      response = get(command_path(:column_create,
-                                  :table => "bookmarks",
-                                  :name => "title",
-                                  :flags => Column::SCALAR,
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      @bookmarks_title_column_id = object_registered
+      @bookmarks_title_column_id = column_create("bookmarks",
+                                                 "title",
+                                                 Column::SCALAR,
+                                                 "ShortText")
     end
 
     def assert_table_list(expected)
@@ -273,7 +264,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      table_id = create_table(:name => "users")
+      table_id = table_create("users")
       assert_table_list([[table_id,
                           "users",
                           "TABLE_HASH_KEY|PERSISTENT",
@@ -282,8 +273,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_normalize_key
-      table_id = create_table(:name => "users",
-                              :flags => Key::NORMALIZE)
+      table_id = table_create("users", :flags => Key::NORMALIZE)
       assert_table_list([[table_id,
                           "users",
                           "TABLE_HASH_KEY|KEY_NORMALIZE|PERSISTENT",
@@ -292,7 +282,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_normalized_string_key
-      table_id = create_table(:name => "users",
+      table_id = table_create("users",
                               :flags => Key::NORMALIZE,
                               :key_type => "ShortText")
       assert_table_list([[table_id,
@@ -303,10 +293,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_view_key
-      users_table_id = create_table(:name => "users",
-                                    :flags => Table::VIEW)
-      sites_table_id = create_table(:name => "sites",
-                                    :key_type => "users")
+      users_table_id = table_create("users", :flags => Table::VIEW)
+      sites_table_id = table_create("sites", :key_type => "users")
       assert_table_list([[sites_table_id,
                           "sites",
                           "TABLE_HASH_KEY|PERSISTENT",
@@ -369,8 +357,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_value_type
-      table_id = create_table(:name => "users",
-                              :value_type => "Int32")
+      table_id = table_create("users", :value_type => "Int32")
       assert_table_list([[table_id,
                           "users",
                           "TABLE_HASH_KEY|PERSISTENT",
@@ -395,8 +382,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      table_id = create_table(:name => "users",
-                              :flags => Table::PAT_KEY)
+      table_id = table_create("users", :flags => Table::PAT_KEY)
       assert_table_list([[table_id,
                           "users",
                           "TABLE_PAT_KEY|PERSISTENT",
@@ -405,7 +391,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_normalize_key
-      table_id = create_table(:name => "users",
+      table_id = table_create("users",
                               :flags => Table::PAT_KEY | Key::NORMALIZE)
       assert_table_list([[table_id,
                           "users",
@@ -415,7 +401,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_normalized_string_key
-      table_id = create_table(:name => "users",
+      table_id = table_create("users",
                               :flags => Table::PAT_KEY | Key::NORMALIZE,
                               :key_type => "ShortText")
       assert_table_list([[table_id,
@@ -426,9 +412,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_view_key
-      users_table_id = create_table(:name => "users",
-                                    :flags => Table::VIEW)
-      sites_table_id = create_table(:name => "sites",
+      users_table_id = table_create("users", :flags => Table::VIEW)
+      sites_table_id = table_create("sites",
                                     :flags => Table::PAT_KEY,
                                     :key_type => "users")
       assert_table_list([[sites_table_id,
@@ -457,7 +442,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_sis
-      table_id = create_table(:name => "users",
+      table_id = table_create("users",
                               :flags => Table::PAT_KEY | Key::SIS,
                               :key_type => "ShortText")
       assert_table_list([[table_id,
@@ -494,7 +479,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_value_type
-      table_id = create_table(:name => "users",
+      table_id = table_create("users",
                               :flags => Table::PAT_KEY,
                               :value_type => "Int32")
       assert_table_list([[table_id,
@@ -522,8 +507,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      table_id = create_table(:name => "users",
-                              :flags => Table::NO_KEY)
+      table_id = table_create("users", :flags => Table::NO_KEY)
       assert_table_list([[table_id,
                           "users",
                           "TABLE_NO_KEY|PERSISTENT",
@@ -569,7 +553,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_value_type
-      table_id = create_table(:name => "users",
+      table_id = table_create("users",
                               :flags => Table::NO_KEY,
                               :value_type => "Int32")
       assert_table_list([[table_id,
@@ -580,9 +564,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_view_value
-      users_table_id = create_table(:name => "users",
-                                    :flags => Table::VIEW)
-      sites_table_id = create_table(:name => "sites",
+      users_table_id = table_create("users", :flags => Table::VIEW)
+      sites_table_id = table_create("sites",
                                     :flags => Table::NO_KEY,
                                     :value_type => "users")
       assert_table_list([[sites_table_id,
@@ -615,8 +598,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      table_id = create_table(:name => "users",
-                              :flags => Table::VIEW)
+      table_id = table_create("users", :flags => Table::VIEW)
       assert_table_list([[table_id,
                           "users",
                           "TABLE_VIEW|PERSISTENT",
@@ -678,8 +660,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_table_create_single_symbol
-      table_id = create_table(:name => "books",
-                              :flags => "KEY_NORMALIZE")
+      table_id = table_create("books", :flags => "KEY_NORMALIZE")
       assert_table_list([[table_id,
                           "books",
                           "TABLE_HASH_KEY|KEY_NORMALIZE|PERSISTENT",
@@ -687,9 +668,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           "null"]])
     end
 
-    def test_table_create_table_view
-      table_id = create_table(:name => "books",
-                              :flags => "TABLE_VIEW")
+    def test_table_table_create_view
+      table_id = table_create("books", :flags => "TABLE_VIEW")
       assert_table_list([[table_id,
                           "books",
                           "TABLE_VIEW|PERSISTENT",
@@ -698,7 +678,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_table_create_combined_symbols
-      table_id = create_table(:name => "books",
+      table_id = table_create("books",
                               :flags => "TABLE_NO_KEY|KEY_NORMALIZE")
       assert_table_list([[table_id,
                           "books",
@@ -708,7 +688,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_table_create_combined_symbols_with_whitespaces
-      table_id = create_table(:name => "books",
+      table_id = table_create("books",
                               :flags => " TABLE_NO_KEY | KEY_NORMALIZE ")
       assert_table_list([[table_id,
                           "books",
@@ -811,7 +791,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def create_books_table
       response = get(command_path(:table_create, :name => "books"))
       assert_success_response(response, :content_type => "application/json")
-      @books_table_id = create_table(:name => "books")
+      @books_table_id = table_create("books")
 
       assert_table_list([[@books_table_id,
                           "books",
