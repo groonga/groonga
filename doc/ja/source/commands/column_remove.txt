@@ -1,7 +1,7 @@
 .. highlightlang:: none
 
 column_remove
-===========
+=============
 
 名前
 ----
