@@ -230,20 +230,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     create_bookmarks_table
     create_bookmark_title_column
 
-    response = get(command_path(:table_create,
-                                :name => "terms",
-                                :flags => Table::PAT_KEY | Key::NORMALIZE,
-                                :key_type => "ShortText",
-                                :default_tokenizer => "TokenBigram"))
-    assert_success_response(response, :content_type => "application/json")
-
-    response = get(command_path(:column_create,
-                                :table => "terms",
-                                :name => "bookmarks_title",
-                                :flags => Column::INDEX | Flag::WITH_POSITION,
-                                :type => "bookmarks",
-                                :source => "title"))
-    assert_success_response(response, :content_type => "application/json")
+    table_create("terms",
+                 :flags => Table::PAT_KEY | Key::NORMALIZE,
+                 :key_type => "ShortText",
+                 :default_tokenizer => "TokenBigram")
+    column_create("terms", "bookmarks_title",
+                  Column::INDEX | Flag::WITH_POSITION,
+                  "bookmarks",
+                  :source => "title")
 
     groonga_title = "groonga - an open-source fulltext search engine " +
                     "and column store."
@@ -712,14 +706,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_column_create_single_symbol
       create_books_table
 
-      response = get(command_path(:column_create,
-                                  :table => "books",
-                                  :name => "name",
-                                  :flags => "COLUMN_VECTOR",
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      books_name_column_id = object_registered
-
+      books_name_column_id = column_create("books",
+                                           "name",
+                                           "COLUMN_VECTOR",
+                                           "ShortText")
       assert_column_list([[books_name_column_id,
                            "books.name",
                            "var",
@@ -733,14 +723,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_column_create_combined_symbols
       create_books_table
 
-      response = get(command_path(:column_create,
-                                  :table => "books",
-                                  :name => "name",
-                                  :flags => "COLUMN_INDEX|WITH_WEIGHT",
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      books_name_column_id = object_registered
-
+      books_name_column_id = column_create("books",
+                                           "name",
+                                           "COLUMN_INDEX|WITH_WEIGHT",
+                                           "ShortText")
       assert_column_list([[books_name_column_id,
                            "books.name",
                            "index",
@@ -754,14 +740,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_column_create_combined_symbols_with_whitespaces
       create_books_table
 
-      response = get(command_path(:column_create,
-                                  :table => "books",
-                                  :name => "name",
-                                  :flags => " COLUMN_INDEX | WITH_WEIGHT ",
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      books_name_column_id = object_registered
-
+      books_name_column_id = column_create("books",
+                                           "name",
+                                           " COLUMN_INDEX | WITH_WEIGHT ",
+                                           "ShortText")
       assert_column_list([[books_name_column_id,
                            "books.name",
                            "index",
