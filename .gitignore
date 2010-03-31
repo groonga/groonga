@@ -29,6 +29,7 @@
 /src/grnslap
 Makefile
 Makefile.in
+version.sh
 /examples/kv
 /examples/index
 /doc/ja/.buildinfo
