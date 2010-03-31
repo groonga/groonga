@@ -814,7 +814,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       books_name_column_id = object_registered
 
       assert_column_list([[books_name_column_id,
-                           "name",
+                           "books.name",
                            "var",
                            "COLUMN_VECTOR|COMPRESS_NONE|PERSISTENT",
                            "books",
@@ -834,7 +834,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       books_name_column_id = object_registered
 
       assert_column_list([[books_name_column_id,
-                           "name",
+                           "books.name",
                            "index",
                            "WITH_WEIGHT|PERSISTENT",
                            "books",
@@ -853,7 +853,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       books_name_column_id = object_registered
 
       assert_column_list([[books_name_column_id,
-                           "name",
+                           "books.name",
                            "index",
                            "COLUMN_INDEX|WITH_WEIGHT|PERSISTENT",
                            "books"]])
