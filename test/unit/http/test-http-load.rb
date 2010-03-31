@@ -57,7 +57,7 @@ class HTTPLoadTest < Test::Unit::TestCase
                   [[2, "mori", "mori daijiro"],
                    [1, "ryoqun", ""]],
                   :table => "users",
-                  :sort_by => "_key")
+                  :sortby => "_key")
   end
 
   def test_int8_key
