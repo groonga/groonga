@@ -40,7 +40,8 @@ class HTTPLoadTest < Test::Unit::TestCase
                    ["real_name", "ShortText"]],
                   [[1, "ryoqun", "Ryo Onodera"],
                    [2, "mori", "mori daijiro"]],
-                  :table => "users")
+                  :table => "users",
+                  :sortby => "_id")
   end
 
   def test_values
@@ -56,7 +57,7 @@ class HTTPLoadTest < Test::Unit::TestCase
                   [[2, "mori", "mori daijiro"],
                    [1, "ryoqun", ""]],
                   :table => "users",
-                  :sort_by => "_key")
+                  :sortby => "_key")
   end
 
   def test_int8_key

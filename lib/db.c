@@ -269,6 +269,32 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
   (((grn_db *)s)->keys)->io->header->lastmod = tv.tv_sec;
 }
 
+#define IS_TEMP(obj) (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)
+
+void
+grn_obj_touch(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_timeval tv;
+  grn_timeval_now(ctx, &tv);
+  if (obj) {
+    switch (obj->header.type) {
+    case GRN_DB :
+      ((grn_db *)obj)->keys->io->header->lastmod = tv.tv_sec;
+      break;
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_NO_KEY :
+    case GRN_COLUMN_VAR_SIZE :
+    case GRN_COLUMN_FIX_SIZE :
+    case GRN_COLUMN_INDEX :
+      if (!IS_TEMP(obj)) {
+        ((grn_db *)DB_OBJ(obj)->db)->keys->io->header->lastmod = tv.tv_sec;
+      }
+      break;
+    }
+  }
+}
+
 static grn_rc
 check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
@@ -1359,6 +1385,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
       break;
     }
     clear_column_values(ctx, table, rid);
+    grn_obj_touch(ctx, table);
   }
   GRN_API_RETURN(rc);
 }
@@ -1433,6 +1460,7 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
   } else {
     rc = _grn_table_delete_by_id(ctx, table, id, NULL);
   }
+  grn_obj_touch(ctx, table);
   GRN_API_RETURN(rc);
 }
 
@@ -3600,7 +3628,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
 {
   int res = 0;
   if (GRN_DB_OBJP(obj)) {
-    res = (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) ? 0 : 1;
+    res = IS_TEMP(obj) ? 0 : 1;
   } else if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a;
     for (a = (grn_accessor *)obj; a; a = a->next) {
@@ -3613,10 +3641,10 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
       case GRN_ACCESSOR_GET_VALUE :
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
       case GRN_ACCESSOR_GET_KEY :
-        if (GRN_DB_OBJP(a->obj)) { res = (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) ? 0 : 1; }
+        if (GRN_DB_OBJP(a->obj)) { res = IS_TEMP(obj) ? 0 : 1; }
         break;
       default :
-        if (GRN_DB_OBJP(a->obj)) { res = (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) ? 0 : 1; }
+        if (GRN_DB_OBJP(a->obj)) { res = IS_TEMP(obj) ? 0 : 1; }
         break;
       }
     }
