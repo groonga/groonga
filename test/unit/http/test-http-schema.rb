@@ -881,23 +881,26 @@ class HTTPSchemaTest < Test::Unit::TestCase
         id, name, type, flags, domain, range, source = values
         [id, name, nil, type, flags, domain, range, source]
       end
-      assert_response([
-                       [["id", "UInt32"],
-                        ["name", "ShortText"],
-                        ["path", "ShortText"],
-                        ["type", "ShortText"],
-                        ["flags", "ShortText"],
-                        ["domain", "ShortText"],
-                        ["range", "ShortText"],
-                        ["source", "ShortText"]],
-                       *expected
+      assert_response([success_status_response,
+                       [[["id", "UInt32"],
+                         ["name", "ShortText"],
+                         ["path", "ShortText"],
+                         ["type", "ShortText"],
+                         ["flags", "ShortText"],
+                         ["domain", "ShortText"],
+                         ["range", "ShortText"],
+                         ["source", "ShortText"]],
+                        *expected],
                       ],
                       response,
                       :content_type => "application/json") do |actual|
-        actual[0, 1] + actual[1..-1].collect do |values|
+        status, result = actual
+        header, *values = result
+        values = values.collect do |values|
           id, name, path, type, flags, domain, range, source = values
           [id, name, nil, type, flags, domain, range, source]
         end
+        [status, [header, *values]]
       end
     end
 
