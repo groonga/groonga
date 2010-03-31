@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,62 +20,11 @@ module HTTPSelectDrilldownTests
 
   def setup
     setup_server
+    setup_ddl
+    setup_data
   end
 
-  def teardown
-    teardown_server
-  end
-
-  def test_zero_limit
-    table_create("Initial", :flags => Table::PAT_KEY, :key_type => "ShortText")
-    table_create("Person", :key_type => "ShortText")
-    column_create("Person", "initial", Column::SCALAR, "Initial")
-    column_create("Person", "kana", Column::SCALAR, "ShortText")
-    table_create("Event", :key_type => "ShortText")
-    column_create("Event", "date", Column::SCALAR, "Time")
-    column_create("Event", "person", Column::VECTOR, "Person")
-    column_create("Event", "title", Column::SCALAR, "ShortText")
-    column_create("Event", "search", Column::SCALAR, "ShortText")
-    table_create("Bigram",
-                 :flags => Table::PAT_KEY | Key::NORMALIZE,
-                 :key_type => "ShortText",
-                 :default_tokenizer => "TokenBigram")
-    column_create("Bigram", "index", Column::INDEX | Flag::WITH_POSITION,
-                  "Event", :source => "search")
-
-    add_user("グニャラくん", "ぐにゃらくん", "か")
-    add_user("morita", "もりた", "ま")
-    add_user("yu", "ゆう", "や")
-    add_event("グニャラくん", nil, "groongaリリース（前編）", "20091218")
-    add_event("グニャラくん", nil, "groongaリリース（後編）", "20091218")
-    add_event("morita", nil, "groonga（ぐるんが）解説・パート1", "20091218")
-    add_event("yu", nil, "groonga（ぐるんが）解説・パート2", "20091219")
-
-    assert_drilldown([["_key", "ShortText"]],
-                     [],
-                     [[[2],
-                       [["_key", "ShortText"],
-                        ["_nsubrecs", "Int32"],
-                        ["initial", "Initial"]],
-                       ["グニャラくん", 2, "か"],
-                       ["morita", 1, "ま"]]],
-                     {
-                       :table => "Event",
-                       :match_columns => "search",
-                       :query => "groonga",
-                       :filter => "date == \"20091218\"",
-                       :limit => 0,
-                       :output_columns => "_key",
-                       :drilldown => "person",
-                       :drilldown_sortby => "kana",
-                       :drilldown_output_columns => "_key _nsubrecs initial",
-                       :drilldown_offset => 0,
-                       :drilldown_limit => -1,
-                     },
-                     {:n_hits => 3})
-  end
-
-  def test_many_columns
+  def setup_ddl
     table_create("Initial", :flags => Table::PAT_KEY, :key_type => "ShortText")
     table_create("Person", :key_type => "ShortText")
     column_create("Person", "initial", Column::SCALAR, "Initial")
@@ -94,10 +43,12 @@ module HTTPSelectDrilldownTests
                  :default_tokenizer => "TokenBigram")
     column_create("Bigram", "index", Column::INDEX | Flag::WITH_POSITION,
                   "Event", :source => "search")
+  end
 
-    add_user("グニャラくん", "ぐにゃらくん", "か")
-    add_user("morita", "もりた", "ま")
-    add_user("yu", "ゆう", "や")
+  def setup_data
+    add_user("グニャラくん", "ぐにゃらくん", "く")
+    add_user("morita", "もりた", "も")
+    add_user("yu", "ゆう", "ゆ")
     add_place("razil.jp", "ブラジル")
     add_place("shinjuku", "新宿")
     add_event("グニャラくん", "razil.jp", "groongaリリース（前編）", "20091218")
@@ -105,34 +56,78 @@ module HTTPSelectDrilldownTests
     add_event("morita", "razil.jp",
               "groonga（ぐるんが）解説・パート1", "20091218")
     add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート2", "20091219")
+    add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート3", "20091220")
+    add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート4", "20091220")
 
+    add_event("morita", "razil.jp", "肉の会・パート1", "20091221")
+    add_event("morita", "razil.jp", "肉の会・パート2", "20091222")
+    add_event("morita", "razil.jp", "肉の会・パート3", "20091223")
+    add_event("morita", "razil.jp", "肉の会・パート4", "20091224")
+    add_event("morita", "razil.jp", "肉の会・パート5", "20091225")
+    add_event("morita", "razil.jp", "肉の会・パート6", "20091226")
+    add_event("morita", "razil.jp", "肉の会・パート7", "20091227")
+    add_event("morita", "razil.jp", "肉の会・パート8", "20091228")
+    add_event("morita", "razil.jp", "肉の会・パート9", "20091229")
+  end
+
+  def teardown
+    teardown_server
+  end
+
+  def test_zero_limit
+    assert_drilldown([["_key", "ShortText"]],
+                     [],
+                     [[[2],
+                       [["_key", "ShortText"],
+                        ["_nsubrecs", "Int32"],
+                        ["initial", "Initial"]],
+                       ["グニャラくん", 2, "く"],
+                       ["morita", 1, "も"]]],
+                     {
+                       :table => "Event",
+                       :match_columns => "search",
+                       :query => "groonga",
+                       :filter => "date == \"20091218\"",
+                       :limit => 0,
+                       :output_columns => "_key",
+                       :drilldown => "person",
+                       :drilldown_sortby => "kana",
+                       :drilldown_output_columns => "_key _nsubrecs initial",
+                       :drilldown_offset => 0,
+                       :drilldown_limit => -1,
+                     },
+                     {:n_hits => 3})
+  end
+
+  def test_many_columns
     assert_drilldown([["_key", "ShortText"],
                       ["place", "Place"],
                       ["place.name", "ShortText"],
                       ["title", "ShortText"],
                       ["person", "Person"],
                       ["date", "Time"]],
-                     [["3", "shinjuku", "新宿",
-                       "groonga（ぐるんが）解説・パート2", ["yu"], 20091219.0],
-                      ["0", "razil.jp", "ブラジル", "groongaリリース（前編）",
-                       ["グニャラくん"], 20091218.0]],
-                     [[[2],
+                     [["4", "shinjuku", "新宿",
+                       "groonga（ぐるんが）解説・パート3", ["yu"], 20091220.0],
+                      ["3", "shinjuku", "新宿",
+                       "groonga（ぐるんが）解説・パート2", ["yu"], 20091219.0]],
+                     [[[3],
                        [["_key", "Time"],
                         ["_nsubrecs", "Int32"]],
                        [20091218.0, 3],
+                       [20091220.0, 2],
                        [20091219.0, 1]],
                       [[3],
                        [["_key", "ShortText"],
                         ["_nsubrecs", "Int32"]],
+                       ["yu", 3],
                        ["グニャラくん", 2],
-                       ["yu", 1],
                        ["morita", 1]],
                       [[2],
                        [["_key", "ShortText"],
                         ["_nsubrecs", "Int32"],
                         ["name", "ShortText"]],
-                       ["razil.jp", 2, "ブラジル"],
-                       ["shinjuku", 2, "新宿"]]],
+                       ["shinjuku", 4, "新宿"],
+                       ["razil.jp", 2, "ブラジル"]]],
                      {
                        :table => "Event",
                        :match_columns => "search",
@@ -148,7 +143,60 @@ module HTTPSelectDrilldownTests
                        :drilldown_output_columns => "_key _nsubrecs name",
                        :drilldown_limit => 3,
                      },
-                     {:n_hits => 4})
+                     {:n_hits => 6})
+  end
+
+  def test_default_output_columns
+    assert_drilldown([["title", "ShortText"],
+                      ["person", "Person"]],
+                     [["groongaリリース（前編）", ["グニャラくん"]],
+                      ["groongaリリース（後編）", ["グニャラくん"]]],
+                     [[[3],
+                       [["_key", "ShortText"],
+                        ["_nsubrecs", "Int32"]],
+                       ["yu", 3],
+                       ["グニャラくん", 2]]],
+                     {
+                       :table => "Event",
+                       :match_columns => "search",
+                       :query => "groonga",
+                       :sortby => "title",
+                       :limit => 2,
+                       :output_columns => "title person",
+                       :drilldown => "person",
+                       :drilldown_sortby => "-_nsubrecs",
+                       :drilldown_limit => 2,
+                     },
+                     {:n_hits => 6})
+  end
+
+  def test_default_limit
+    assert_drilldown([["title", "ShortText"],
+                      ["date", "Time"]],
+                     [["肉の会・パート1", 20091221.0]],
+                     [[[12],
+                       [["_key", "Time"],
+                        ["_nsubrecs", "Int32"]],
+                       [20091229.0, 1],
+                       [20091228.0, 1],
+                       [20091227.0, 1],
+                       [20091226.0, 1],
+                       [20091225.0, 1],
+                       [20091224.0, 1],
+                       [20091223.0, 1],
+                       [20091222.0, 1],
+                       [20091221.0, 1],
+                       [20091220.0, 2]]],
+                     {
+                       :table => "Event",
+                       :sortby => "title",
+                       :limit => 1,
+                       :output_columns => "title date",
+                       :drilldown => "date",
+                       :drilldown_sortby => "-_key",
+                       :drilldown_output_columns => "_key _nsubrecs",
+                     },
+                     {:n_hits => 15})
   end
 
   private

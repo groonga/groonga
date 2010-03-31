@@ -29,48 +29,69 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
     private
     def create_bookmarks_table
-      response = get(command_path(:table_create,
-                                  :name => "bookmarks",
-                                  :flags => Table::PAT_KEY,
-                                  :key_type => "ShortText",
-                                  :value_type => "Object",
-                                  :default_tokenizer => ""))
-      assert_success_response(response, :content_type => "application/json")
-      @bookmarks_table_id = object_registered
+      @bookmarks_table_id = table_create("bookmarks",
+                                         :flags => Table::PAT_KEY,
+                                         :key_type => "ShortText",
+                                         :value_type => "Object",
+                                         :default_tokenizer => "")
     end
 
     def create_bookmark_title_column
-      response = get(command_path(:column_create,
-                                  :table => "bookmarks",
-                                  :name => "title",
-                                  :flags => Column::SCALAR,
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      @bookmarks_title_column_id = object_registered
+      @bookmarks_title_column_id = column_create("bookmarks",
+                                                 "title",
+                                                 Column::SCALAR,
+                                                 "ShortText")
     end
 
     def assert_table_list(expected)
       response = get(command_path(:table_list))
       expected = expected.collect do |values|
-        name, flags, domain, range = values
-        [nil, name, nil, flags, domain, range]
+        id, name, flags, domain, range = values
+        [id, name, nil, flags, domain, range]
       end
-      assert_response(
-        [
-          [["id", "UInt32"],
-          ["name", "ShortText"],
-          ["path", "ShortText"],
-          ["flags", "ShortText"],
-          ["domain", "ShortText"],
-          ["range", "ShortText"]],
-          *expected
-        ],
-        response,
-        :content_type => "application/json") do |actual|
-        actual[1][0, 1] + actual[1][1..-1].collect do |values|
-          id, name, path, flags, domain, range = values
-          [nil, name, nil, flags, domain, range]
+      assert_response_body([[["id", "UInt32"],
+                             ["name", "ShortText"],
+                             ["path", "ShortText"],
+                             ["flags", "ShortText"],
+                             ["domain", "ShortText"],
+                             ["range", "ShortText"]],
+                            *expected],
+                           response,
+                           :content_type => "application/json") do |actual|
+        status, result = actual
+        header, *values = result
+        values = values.collect do |value|
+          id, name, path, flags, domain, range = value
+          [id, name, nil, flags, domain, range]
         end
+        [status, [header, *values]]
+      end
+    end
+
+    def assert_column_list(expected, options)
+      response = get(command_path(:column_list, options))
+      expected = expected.collect do |values|
+        id, name, type, flags, domain, range, source = values
+        [id, name, nil, type, flags, domain, range, source]
+      end
+      assert_response_body([[["id", "UInt32"],
+                             ["name", "ShortText"],
+                             ["path", "ShortText"],
+                             ["type", "ShortText"],
+                             ["flags", "ShortText"],
+                             ["domain", "ShortText"],
+                             ["range", "ShortText"],
+                             ["source", "ShortText"]],
+                            *expected],
+                           response,
+                           :content_type => "application/json") do |actual|
+        status, result = actual
+        header, *values = result
+        values = values.collect do |value|
+          id, name, path, type, flags, domain, range, source = value
+          [id, name, nil, type, flags, domain, range, source]
+        end
+        [status, [header, *values]]
       end
     end
   end
@@ -78,37 +99,16 @@ class HTTPSchemaTest < Test::Unit::TestCase
   include Utils
 
   def test_table_list_empty
-    response = get(command_path(:table_list))
     assert_table_list([])
   end
 
   def test_table_list_exist
     create_bookmarks_table
-
-    response = get(command_path(:table_list))
-    normalized_path = "/path/to/table"
-    assert_response([
-                     [["id", "UInt32"],
-                      ["name", "ShortText"],
-                      ["path", "ShortText"],
-                      ["flags", "ShortText"],
-                      ["domain", "ShortText"],
-                      ["range", "ShortText"]],
-                     [@bookmarks_table_id,
-                      "bookmarks",
-                      normalized_path,
-                      "TABLE_PAT_KEY|PERSISTENT",
-                      "ShortText",
-                      "Object"],
-                    ],
-                    response,
-                    :content_type => "application/json") do |actual|
-      actual[1][0, 1] + actual[1][1..-1].collect do |values|
-        id, name, path, flags, domain, range = values
-        path = normalized_path if path
-        [id, name, path, flags, domain, range]
-      end
-    end
+    assert_table_list([[@bookmarks_table_id,
+                        "bookmarks",
+                        "TABLE_PAT_KEY|PERSISTENT",
+                        "ShortText",
+                        "Object"]])
   end
 
   def test_table_list_with_invalid_output_type
@@ -122,56 +122,20 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_column_list_empty
     create_bookmarks_table
-    response = get(command_path(:column_list,
-                                :table => "bookmarks"))
-    assert_response_body(
-      [[["id", "UInt32"],
-      ["name", "ShortText"],
-      ["path", "ShortText"],
-      ["type", "ShortText"],
-      ["flags", "ShortText"],
-      ["domain", "ShortText"],
-      ["range", "ShortText"],
-      ["source", "ShortText"]]],
-      response,
-      :content_type => "application/json")
+    assert_column_list([], :table => "bookmarks")
   end
 
   def test_column_list_exist
     create_bookmarks_table
     create_bookmark_title_column
-    response = get(command_path(:column_list,
-                                :table => "bookmarks"))
-    assert_response(
-      [
-        [
-          ["id", "UInt32"],
-          ["name", "ShortText"],
-          ["path", "ShortText"],
-          ["type", "ShortText"],
-          ["flags", "ShortText"],
-          ["domain", "ShortText"],
-          ["range", "ShortText"],
-          ["source", "ShortText"]
-        ],
-        [
-          @bookmarks_title_column_id,
-          "title",
-          nil,
-          "var",
-          "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
-          "bookmarks",
-          "ShortText",
-          []
-        ]
-      ],
-      response,
-      :content_type => "application/json") do |actual|
-      actual[1][0, 1] + actual[1][1..-1].collect do |values|
-        id, name, path, type, flags, domain, range, source = values
-        [id, name, nil, type, flags, domain, range, source]
-      end
-    end
+    assert_column_list([[@bookmarks_title_column_id,
+                         "bookmarks.title",
+                         "var",
+                         "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
+                         "bookmarks",
+                         "ShortText",
+                         []]],
+                       :table => "bookmarks")
   end
 
   def test_column_list_nonexistent
@@ -266,20 +230,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     create_bookmarks_table
     create_bookmark_title_column
 
-    response = get(command_path(:table_create,
-                                :name => "terms",
-                                :flags => Table::PAT_KEY | Key::NORMALIZE,
-                                :key_type => "ShortText",
-                                :default_tokenizer => "TokenBigram"))
-    assert_success_response(response, :content_type => "application/json")
-
-    response = get(command_path(:column_create,
-                                :table => "terms",
-                                :name => "bookmarks_title",
-                                :flags => Column::INDEX | Flag::WITH_POSITION,
-                                :type => "bookmarks",
-                                :source => "title"))
-    assert_success_response(response, :content_type => "application/json")
+    table_create("terms",
+                 :flags => Table::PAT_KEY | Key::NORMALIZE,
+                 :key_type => "ShortText",
+                 :default_tokenizer => "TokenBigram")
+    column_create("terms", "bookmarks_title",
+                  Column::INDEX | Flag::WITH_POSITION,
+                  "bookmarks",
+                  :source => "title")
 
     groonga_title = "groonga - an open-source fulltext search engine " +
                     "and column store."
@@ -300,57 +258,44 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      response = get(command_path(:table_create, :name => "users"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users")
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_HASH_KEY|PERSISTENT",
                           "null",
                           "null"]])
     end
 
     def test_normalize_key
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Key::NORMALIZE))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users", :flags => Key::NORMALIZE)
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_HASH_KEY|KEY_NORMALIZE|PERSISTENT",
                           "null",
                           "null"]])
     end
 
     def test_normalized_string_key
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Key::NORMALIZE,
-                                  :key_type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users",
+                              :flags => Key::NORMALIZE,
+                              :key_type => "ShortText")
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_HASH_KEY|KEY_NORMALIZE|PERSISTENT",
                           "ShortText",
                           "null"]])
     end
 
     def test_view_key
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::VIEW))
-      assert_success_response(response, :content_type => "application/json")
-      users_table_id = object_registered
-
-      response = get(command_path(:table_create,
-                                  :name => "sites",
-                                  :key_type => "users"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["sites",
+      users_table_id = table_create("users", :flags => Table::VIEW)
+      sites_table_id = table_create("sites", :key_type => "users")
+      assert_table_list([[sites_table_id,
+                          "sites",
                           "TABLE_HASH_KEY|PERSISTENT",
                           "users",
                           "null"],
-                         ["users",
+                         [users_table_id,
+                          "users",
                           "TABLE_VIEW|PERSISTENT",
                           "null",
                           "null"]])
@@ -406,12 +351,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_value_type
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :value_type => "Int32"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users", :value_type => "Int32")
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_HASH_KEY|PERSISTENT",
                           "null",
                           "Int32"]])
@@ -434,60 +376,47 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::PAT_KEY))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users", :flags => Table::PAT_KEY)
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_PAT_KEY|PERSISTENT",
                           "null",
                           "null"]])
     end
 
     def test_normalize_key
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::PAT_KEY | Key::NORMALIZE))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users",
+                              :flags => Table::PAT_KEY | Key::NORMALIZE)
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT",
                           "null",
                           "null"]])
     end
 
     def test_normalized_string_key
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::PAT_KEY | Key::NORMALIZE,
-                                  :key_type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users",
+                              :flags => Table::PAT_KEY | Key::NORMALIZE,
+                              :key_type => "ShortText")
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT",
                           "ShortText",
                           "null"]])
     end
 
     def test_view_key
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::VIEW))
-      assert_success_response(response, :content_type => "application/json")
-      users_table_id = object_registered
-
-      response = get(command_path(:table_create,
-                                  :name => "sites",
-                                  :flags => Table::PAT_KEY,
-                                  :key_type => "users"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["sites",
+      users_table_id = table_create("users", :flags => Table::VIEW)
+      sites_table_id = table_create("sites",
+                                    :flags => Table::PAT_KEY,
+                                    :key_type => "users")
+      assert_table_list([[sites_table_id,
+                          "sites",
                           "TABLE_PAT_KEY|PERSISTENT",
                           "users",
                           "null"],
-                         ["users",
+                         [users_table_id,
+                          "users",
                           "TABLE_VIEW|PERSISTENT",
                           "null",
                           "null"]])
@@ -507,13 +436,11 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_sis
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::PAT_KEY | Key::SIS,
-                                  :key_type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users",
+                              :flags => Table::PAT_KEY | Key::SIS,
+                              :key_type => "ShortText")
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_PAT_KEY|KEY_WITH_SIS|PERSISTENT",
                           "ShortText",
                           "null"]])
@@ -546,13 +473,11 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_value_type
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::PAT_KEY,
-                                  :value_type => "Int32"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users",
+                              :flags => Table::PAT_KEY,
+                              :value_type => "Int32")
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_PAT_KEY|PERSISTENT",
                           "null",
                           "Int32"]])
@@ -576,12 +501,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::NO_KEY))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users", :flags => Table::NO_KEY)
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_NO_KEY|PERSISTENT",
                           "null",
                           "null"]])
@@ -625,36 +547,28 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_value_type
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::NO_KEY,
-                                  :value_type => "Int32"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users",
+                              :flags => Table::NO_KEY,
+                              :value_type => "Int32")
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_NO_KEY|PERSISTENT",
                           "Int32",
                           "Int32"]])
     end
 
     def test_view_value
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::VIEW))
-      assert_success_response(response, :content_type => "application/json")
-      users_table_id = object_registered
-
-      response = get(command_path(:table_create,
-                                  :name => "sites",
-                                  :flags => Table::NO_KEY,
-                                  :value_type => "users"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["sites",
+      users_table_id = table_create("users", :flags => Table::VIEW)
+      sites_table_id = table_create("sites",
+                                    :flags => Table::NO_KEY,
+                                    :value_type => "users")
+      assert_table_list([[sites_table_id,
+                          "sites",
                           "TABLE_NO_KEY|PERSISTENT",
                           "null",
                           "users"],
-                         ["users",
+                         [users_table_id,
+                          "users",
                           "TABLE_VIEW|PERSISTENT",
                           "null",
                           "null"]])
@@ -678,12 +592,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_simple
-      response = get(command_path(:table_create,
-                                  :name => "users",
-                                  :flags => Table::VIEW))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["users",
+      table_id = table_create("users", :flags => Table::VIEW)
+      assert_table_list([[table_id,
+                          "users",
                           "TABLE_VIEW|PERSISTENT",
                           "null",
                           "null"]])
@@ -743,48 +654,38 @@ class HTTPSchemaTest < Test::Unit::TestCase
     include Utils
 
     def test_table_create_single_symbol
-      response = get(command_path(:table_create,
-                                  :name => "books",
-                                  :flags => "KEY_NORMALIZE"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["books",
+      table_id = table_create("books", :flags => "KEY_NORMALIZE")
+      assert_table_list([[table_id,
+                          "books",
                           "TABLE_HASH_KEY|KEY_NORMALIZE|PERSISTENT",
                           "null",
                           "null"]])
     end
 
-    def test_table_create_table_view
-      response = get(command_path(:table_create,
-                                  :name => "books",
-                                  :flags => "TABLE_VIEW"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["books",
+    def test_table_table_create_view
+      table_id = table_create("books", :flags => "TABLE_VIEW")
+      assert_table_list([[table_id,
+                          "books",
                           "TABLE_VIEW|PERSISTENT",
                           "null",
                           "null"]])
     end
 
     def test_table_create_combined_symbols
-      response = get(command_path(:table_create,
-                                  :name => "books",
-                                  :flags => "TABLE_NO_KEY|KEY_NORMALIZE"))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["books",
+      table_id = table_create("books",
+                              :flags => "TABLE_NO_KEY|KEY_NORMALIZE")
+      assert_table_list([[table_id,
+                          "books",
                           "TABLE_NO_KEY|KEY_NORMALIZE|PERSISTENT",
                           "null",
                           "null"]])
     end
 
     def test_table_create_combined_symbols_with_whitespaces
-      response = get(command_path(:table_create,
-                                  :name => "books",
-                                  :flags => " TABLE_NO_KEY | KEY_NORMALIZE "))
-      assert_success_response(response, :content_type => "application/json")
-
-      assert_table_list([["books",
+      table_id = table_create("books",
+                              :flags => " TABLE_NO_KEY | KEY_NORMALIZE ")
+      assert_table_list([[table_id,
+                          "books",
                           "TABLE_NO_KEY|KEY_NORMALIZE|PERSISTENT",
                           "null",
                           "null"]])
@@ -805,58 +706,52 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_column_create_single_symbol
       create_books_table
 
-      response = get(command_path(:column_create,
-                                  :table => "books",
-                                  :name => "name",
-                                  :flags => "COLUMN_VECTOR",
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      books_name_column_id = object_registered
-
+      books_name_column_id = column_create("books",
+                                           "name",
+                                           "COLUMN_VECTOR",
+                                           "Shorttext")
       assert_column_list([[books_name_column_id,
-                           "name",
+                           "books.name",
                            "var",
-                           "COLUMN_VECTOR|COMPRESS_NONE|PERSISTENT",
+                           "column_vector|compress_none|persistent",
                            "books",
-                           "ShortText",
-                           []]])
+                           "shorttext",
+                           []]],
+                         :table => "books")
     end
 
     def test_column_create_combined_symbols
       create_books_table
 
-      response = get(command_path(:column_create,
-                                  :table => "books",
-                                  :name => "name",
-                                  :flags => "COLUMN_INDEX|WITH_WEIGHT",
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      books_name_column_id = object_registered
-
+      books_name_column_id = column_create("books",
+                                           "name",
+                                           "column_index|with_weight",
+                                           "shorttext")
       assert_column_list([[books_name_column_id,
-                           "name",
+                           "books.name",
                            "index",
-                           "WITH_WEIGHT|PERSISTENT",
+                           "column_index|with_weight|compress_none|persistent",
                            "books",
-                           []]])
+                           "shorttext",
+                           []]],
+                         :table => "books")
     end
 
     def test_column_create_combined_symbols_with_whitespaces
       create_books_table
 
-      response = get(command_path(:column_create,
-                                  :table => "books",
-                                  :name => "name",
-                                  :flags => " COLUMN_INDEX | WITH_WEIGHT ",
-                                  :type => "ShortText"))
-      assert_success_response(response, :content_type => "application/json")
-      books_name_column_id = object_registered
-
+      books_name_column_id = column_create("books",
+                                           "name",
+                                           " column_index | with_weight ",
+                                           "shorttext")
       assert_column_list([[books_name_column_id,
-                           "name",
+                           "books.name",
                            "index",
-                           "COLUMN_INDEX|WITH_WEIGHT|PERSISTENT",
-                           "books"]])
+                           "column_index|with_weight|compress_none|persistent",
+                           "books",
+                           "shorttext",
+                           []]],
+                         :table => "books")
     end
 
     def test_column_create_invalid_symbol
@@ -871,42 +766,17 @@ class HTTPSchemaTest < Test::Unit::TestCase
                             "invalid flags option: INVALID_SYMBOL",
                             response,
                             :content_type => "application/json")
-      assert_column_list([])
+      assert_column_list([], :table => "books")
     end
 
     private
-    def assert_column_list(expected)
-      response = get(command_path(:column_list, :table => "books"))
-      expected = expected.collect do |values|
-        id, name, type, flags, domain, range, source = values
-        [id, name, nil, type, flags, domain, range, source]
-      end
-      assert_response([
-                       [["id", "UInt32"],
-                        ["name", "ShortText"],
-                        ["path", "ShortText"],
-                        ["type", "ShortText"],
-                        ["flags", "ShortText"],
-                        ["domain", "ShortText"],
-                        ["range", "ShortText"],
-                        ["source", "ShortText"]],
-                       *expected
-                      ],
-                      response,
-                      :content_type => "application/json") do |actual|
-        actual[0, 1] + actual[1..-1].collect do |values|
-          id, name, path, type, flags, domain, range, source = values
-          [id, name, nil, type, flags, domain, range, source]
-        end
-      end
-    end
-
     def create_books_table
       response = get(command_path(:table_create, :name => "books"))
       assert_success_response(response, :content_type => "application/json")
-      @books_table_id = object_registered
+      @books_table_id = table_create("books")
 
-      assert_table_list([["books",
+      assert_table_list([[@books_table_id,
+                          "books",
                           "TABLE_HASH_KEY|PERSISTENT",
                           "null",
                           "null"]])
