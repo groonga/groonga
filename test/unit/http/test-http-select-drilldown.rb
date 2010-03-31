@@ -56,6 +56,8 @@ module HTTPSelectDrilldownTests
     add_event("morita", "razil.jp",
               "groonga（ぐるんが）解説・パート1", "20091218")
     add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート2", "20091219")
+    add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート3", "20091220")
+    add_event("yu", "shinjuku", "groonga（ぐるんが）解説・パート4", "20091220")
   end
 
   def teardown
@@ -94,27 +96,28 @@ module HTTPSelectDrilldownTests
                       ["title", "ShortText"],
                       ["person", "Person"],
                       ["date", "Time"]],
-                     [["3", "shinjuku", "新宿",
-                       "groonga（ぐるんが）解説・パート2", ["yu"], 20091219.0],
-                      ["0", "razil.jp", "ブラジル", "groongaリリース（前編）",
-                       ["グニャラくん"], 20091218.0]],
-                     [[[2],
+                     [["4", "shinjuku", "新宿",
+                       "groonga（ぐるんが）解説・パート3", ["yu"], 20091220.0],
+                      ["3", "shinjuku", "新宿",
+                       "groonga（ぐるんが）解説・パート2", ["yu"], 20091219.0]],
+                     [[[3],
                        [["_key", "Time"],
                         ["_nsubrecs", "Int32"]],
                        [20091218.0, 3],
+                       [20091220.0, 2],
                        [20091219.0, 1]],
                       [[3],
                        [["_key", "ShortText"],
                         ["_nsubrecs", "Int32"]],
+                       ["yu", 3],
                        ["グニャラくん", 2],
-                       ["yu", 1],
                        ["morita", 1]],
                       [[2],
                        [["_key", "ShortText"],
                         ["_nsubrecs", "Int32"],
                         ["name", "ShortText"]],
-                       ["razil.jp", 2, "ブラジル"],
-                       ["shinjuku", 2, "新宿"]]],
+                       ["shinjuku", 4, "新宿"],
+                       ["razil.jp", 2, "ブラジル"]]],
                      {
                        :table => "Event",
                        :match_columns => "search",
@@ -130,7 +133,31 @@ module HTTPSelectDrilldownTests
                        :drilldown_output_columns => "_key _nsubrecs name",
                        :drilldown_limit => 3,
                      },
-                     {:n_hits => 4})
+                     {:n_hits => 6})
+  end
+
+  def test_default_output_columns
+    assert_drilldown([["title", "ShortText"],
+                      ["person", "Person"]],
+                     [["groongaリリース（前編）", ["グニャラくん"]],
+                      ["groongaリリース（後編）", ["グニャラくん"]]],
+                     [[[3],
+                       [["_key", "ShortText"],
+                        ["_nsubrecs", "Int32"]],
+                       ["yu", 3],
+                       ["グニャラくん", 2]]],
+                     {
+                       :table => "Event",
+                       :match_columns => "search",
+                       :query => "groonga",
+                       :sortby => "title",
+                       :limit => 2,
+                       :output_columns => "title person",
+                       :drilldown => "person",
+                       :drilldown_sortby => "-_nsubrecs",
+                       :drilldown_limit => 2,
+                     },
+                     {:n_hits => 6})
   end
 
   private
