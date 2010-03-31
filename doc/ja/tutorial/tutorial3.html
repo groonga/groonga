@@ -52,22 +52,24 @@
 <p>groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソート、ドリルダウン検索、位置情報(緯度・経度)を用いた絞込・ソートを行うことができます。</p>
 <div class="section" id="javascript">
 <h2>2.3.1. JavaScriptに似た文法での絞込・全文検索<a class="headerlink" href="#javascript" title="Permalink to this headline">¶</a></h2>
-<p>selectコマンドのfilterパラメータには、
-JavaScriptに似たな文法で様々な条件を指定することができます。</p>
+<p>selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメータには、JavaScriptの式に似た文法で条件を指定する点です。</p>
 <p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --filter &quot;_id &lt;= 2&quot; --output_columns _id,_key
-[[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;],[2,&quot;http://example.net/&quot;]]]]
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --filter &quot;_id &lt;= 1&quot; --output_columns _id,_key
+[[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;]]]]
 </pre></div>
 </div>
-<p>filterパラメータには</p>
+<p>ここで、filterパラメータには</p>
 <blockquote>
-_id &lt;= 2</blockquote>
-<p>という条件を指定しています。この場合は2件のレコードにヒットします。</p>
+_id &lt;= 1</blockquote>
+<p>という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果として得られます。</p>
+<p>queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。</p>
 </div>
 <div class="section" id="scorer">
 <h2>2.3.2. scorerの利用<a class="headerlink" href="#scorer" title="Permalink to this headline">¶</a></h2>
-<p>selectコマンドのscorerパラメータは、filterパラメータと同様に、
-JavaScriptに似たな文法で様々な条件を指定することができます。</p>
+<p>selectコマンドのscorerパラメータは、
+全文検索を行った結果の各レコードに対して処理を行うためのパラメータです。</p>
+<p>filterパラメータと同様に、
+JavaScriptの式に似たな文法で様々な条件を指定することができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --scorer &quot;_score = rand()&quot; --output_columns _id,_key,_score --sortby _score
 [[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[2,&quot;http://example.net/&quot;,846930886],[1,&quot;http://example.org/&quot;,1804289383]]]]
@@ -75,15 +77,16 @@ JavaScriptに似たな文法で様々な条件を指定することができま�
 [[0,1268381300.12763,0.000164],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[1,&quot;http://example.org/&quot;,1681692777],[2,&quot;http://example.net/&quot;,1714636915]]]]
 </pre></div>
 </div>
-<p>scorerパラメータには、</p>
+<p>検索結果には、&#8217;_score&#8217;というなめの、全文検索のスコアが代入されている仮想的なカラムが付与されることをチュートリアル中ソートの項目で説明しました。</p>
+<p>上記の実行例では、scorerパラメータに</p>
 <blockquote>
 _score = rand()</blockquote>
-<p>という条件を指定しています。各レコードのスコア値にランダムな値を設定しています。</p>
+<p>という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全文検索のスコアを乱数で上書きしています。</p>
 <p>sortbyパラメータには、</p>
 <blockquote>
 _score</blockquote>
-<p>を指定しています。スコア順に昇順にソートすることを意味しています。</p>
-<p>このように指定すると、検索する度にランダムな順序で結果を表示することができます。</p>
+<p>を指定しています。これは、スコア順に昇順にソートすることを意味しています。</p>
+<p>よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わります。</p>
 </div>
 <div class="section" id="id2">
 <h2>2.3.3. ドリルダウン<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
@@ -91,6 +94,12 @@ _score</blockquote>
 </div>
 <div class="section" id="id3">
 <h2>2.3.4. 位置情報の利用<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>filterパラメータにおいて、 <a class="reference external" href="../functions/geo_in_circle.html"><em>geo_in_circle</em></a> / <a class="reference external" href="../functions/geo_in_rectangle.html"><em>geo_in_rectangle</em></a> の両関数を用いることができます。それぞれ、指定されたカラムに保存された位置情報が、あるポイントから円の範囲、矩形の範囲に存在するかどうかを返す関数です。この関数を用いることにより、位置情報での検索が可能となります。</p>
+<p>位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存します。</p>
+<p>scorerパラメータにおいて、:doc:<cite>../functions/geo_distance</cite> 関数を用いることにより、２点間の距離を計算することができます。</p>
+</div>
+<div class="section" id="id4">
+<h2>2.3.5. マルチカラム検索<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>執筆中です。</p>
 </div>
 </div>
@@ -108,6 +117,7 @@ _score</blockquote>
 <li><a class="reference external" href="#scorer">2.3.2. scorerの利用</a></li>
 <li><a class="reference external" href="#id2">2.3.3. ドリルダウン</a></li>
 <li><a class="reference external" href="#id3">2.3.4. 位置情報の利用</a></li>
+<li><a class="reference external" href="#id4">2.3.5. マルチカラム検索</a></li>
 </ul>
 </li>
 </ul>
