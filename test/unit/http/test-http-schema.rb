@@ -105,7 +105,6 @@ class HTTPSchemaTest < Test::Unit::TestCase
   include Utils
 
   def test_table_list_empty
-    response = get(command_path(:table_list))
     assert_table_list([])
   end
 
