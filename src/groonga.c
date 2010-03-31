@@ -1559,8 +1559,7 @@ main(int argc, char **argv)
       enc = GRN_ENC_KOI8R;
       break;
     default:
-      do_client = g_client;
-      do_server = g_server;
+      enc = GRN_ENC_DEFAULT;
       break;
     }
   }
@@ -1581,6 +1580,10 @@ main(int argc, char **argv)
       break;
     case 'm' :
     case 'M' :
+      do_client = g_client;
+      do_server = g_server;
+      break;
+    default :
       do_client = g_client;
       do_server = g_server;
       break;

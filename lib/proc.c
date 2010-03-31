@@ -613,6 +613,16 @@ objid2name(grn_ctx *ctx, grn_id id, grn_obj *bulk)
 }
 
 static void
+column2name(grn_ctx *ctx, grn_obj *obj, grn_obj *bulk)
+{
+  int name_len;
+  char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+
+  name_len = grn_column_name(ctx, obj, name_buf, GRN_TABLE_MAX_KEY_SIZE);
+  GRN_TEXT_PUT(ctx, bulk, name_buf, name_len);
+}
+
+static void
 obj_source_to_json(grn_ctx *ctx, grn_db_obj *obj, grn_obj *bulk)
 {
   grn_obj o;
@@ -661,7 +671,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, buf, id);
     GRN_TEXT_PUTC(ctx, buf, '\t');
-    objid2name(ctx, id, &o);
+    column2name(ctx, column, &o);
     grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
     GRN_TEXT_PUTC(ctx, buf, '\t');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
@@ -684,7 +694,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
     GRN_TEXT_PUTC(ctx, buf, '[');
     grn_text_itoa(ctx, buf, id);
     GRN_TEXT_PUTC(ctx, buf, ',');
-    objid2name(ctx, id, &o);
+    column2name(ctx, column, &o);
     grn_text_otoj(ctx, buf, &o, NULL);
     GRN_TEXT_PUTC(ctx, buf, ',');
     grn_text_esc(ctx, buf, path, GRN_STRLEN(path));

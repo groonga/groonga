@@ -670,7 +670,8 @@ module HTTPSelectBasicTests
     create_comments_table
     comments = load_many_comments
 
-    assert_drilldown([],
+    assert_drilldown([["_key", "ShortText"],
+                      ["_nsubrecs", "Int32"]],
                      [],
                      {:drilldown_limit => 0},
                      :n_hits => comments.size)
