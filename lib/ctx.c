@@ -789,7 +789,7 @@ get_content_type(grn_ctx *ctx, const char *p, const char *pe,
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
 
 grn_obj *
-grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_size)
+grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
 {
   const char *p, *e;
   grn_obj *expr, *val = NULL;
@@ -798,7 +798,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_size)
     ctx->impl->qe_next = NULL;
     if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-      GRN_TEXT_PUT(ctx, val, path, path_size);
+      GRN_TEXT_PUT(ctx, val, path, path_len);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
     grn_expr_exec(ctx, expr, 1);
@@ -808,9 +808,11 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_size)
     grn_obj key;
     const char *g, *pe;
     grn_content_type ot;
+    grn_timeval_now(ctx, &ctx->impl->tv);
+    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, path_len, path);
     GRN_TEXT_INIT(&key, 0);
     p = path;
-    e = p + path_size;
+    e = p + path_len;
     g = grn_text_urldec(ctx, &key, p, e, '?');
     pe = get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot);
     if ((GRN_TEXT_LEN(&key) >= 2 &&
@@ -841,7 +843,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_size)
 }
 
 grn_obj *
-grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
+grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
 {
   grn_obj *expr = NULL, *val = NULL;
   if (ctx->impl->qe_next) {
@@ -849,13 +851,15 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_size)
     ctx->impl->qe_next = NULL;
     if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-      GRN_TEXT_PUT(ctx, val, str, str_size);
+      GRN_TEXT_PUT(ctx, val, str, str_len);
     }
   } else {
     grn_obj buf;
     char tok_type;
     int offset = 0;
-    const char *v, *p = str, *e = str + str_size;
+    const char *v, *p = str, *e = str + str_len;
+    grn_timeval_now(ctx, &ctx->impl->tv);
+    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
     GRN_TEXT_INIT(&buf, 0);
     p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
     if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf)))) {
@@ -951,8 +955,6 @@ grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
       GRN_BULK_REWIND(&ctx->impl->subbuf);
       ctx->impl->bufcur = 0;
       */
-      grn_timeval_now(ctx, &ctx->impl->tv);
-      GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
       if (str_len && *str == '/') {
         grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
       } else {
@@ -1179,14 +1181,14 @@ grn_cache_expire_entry(grn_cache_entry *ce)
 }
 
 grn_obj *
-grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_size)
+grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_len)
 {
   grn_cache_entry *ce;
   grn_obj *obj = NULL;
   if (!ctx->impl || !ctx->impl->db) { return obj; }
   MUTEX_LOCK(grn_gcache.mutex);
-  if (grn_hash_get(&grn_gctx, grn_gcache.hash, str, str_size, (void **)&ce)) {
-    if (ce->tv.tv_sec < grn_db_lastmod(ctx->impl->db)) {
+  if (grn_hash_get(&grn_gctx, grn_gcache.hash, str, str_len, (void **)&ce)) {
+    if (ce->tv.tv_sec <= grn_db_lastmod(ctx->impl->db)) {
       grn_cache_expire_entry(ce);
       goto exit;
     }
@@ -1208,19 +1210,19 @@ exit :
 }
 
 void
-grn_cache_unref(const char *str, uint32_t str_size)
+grn_cache_unref(const char *str, uint32_t str_len)
 {
   grn_cache_entry *ce;
   grn_ctx *ctx = &grn_gctx;
   MUTEX_LOCK(grn_gcache.mutex);
-  if (grn_hash_get(ctx, grn_gcache.hash, str, str_size, (void **)&ce)) {
+  if (grn_hash_get(ctx, grn_gcache.hash, str, str_len, (void **)&ce)) {
     if (ce->nref) { ce->nref--; }
   }
   MUTEX_UNLOCK(grn_gcache.mutex);
 }
 
 void
-grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_size, grn_obj *value)
+grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_len, grn_obj *value)
 {
   grn_id id;
   int added = 0;
@@ -1231,7 +1233,7 @@ grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_size, grn_obj *valu
   if (!(obj = grn_obj_open(&grn_gctx, GRN_BULK, 0, GRN_DB_TEXT))) { return; }
   GRN_TEXT_PUT(&grn_gctx, obj, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
   MUTEX_LOCK(grn_gcache.mutex);
-  if ((id = grn_hash_add(&grn_gctx, grn_gcache.hash, str, str_size, (void **)&ce, &added))) {
+  if ((id = grn_hash_add(&grn_gctx, grn_gcache.hash, str, str_len, (void **)&ce, &added))) {
     if (!added) {
       if (ce->nref) {
         rc = GRN_RESOURCE_BUSY;

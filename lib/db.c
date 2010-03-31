@@ -272,14 +272,17 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
 #define IS_TEMP(obj) (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)
 
 void
-grn_obj_touch(grn_ctx *ctx, grn_obj *obj)
+grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
 {
-  grn_timeval tv;
-  grn_timeval_now(ctx, &tv);
+  grn_timeval tv_;
+  if (!tv) {
+    grn_timeval_now(ctx, &tv_);
+    tv = &tv_;
+  }
   if (obj) {
     switch (obj->header.type) {
     case GRN_DB :
-      ((grn_db *)obj)->keys->io->header->lastmod = tv.tv_sec;
+      ((grn_db *)obj)->keys->io->header->lastmod = tv->tv_sec;
       break;
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_HASH_KEY :
@@ -288,7 +291,7 @@ grn_obj_touch(grn_ctx *ctx, grn_obj *obj)
     case GRN_COLUMN_FIX_SIZE :
     case GRN_COLUMN_INDEX :
       if (!IS_TEMP(obj)) {
-        ((grn_db *)DB_OBJ(obj)->db)->keys->io->header->lastmod = tv.tv_sec;
+        ((grn_db *)DB_OBJ(obj)->db)->keys->io->header->lastmod = tv->tv_sec;
       }
       break;
     }
@@ -1385,7 +1388,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
       break;
     }
     clear_column_values(ctx, table, rid);
-    grn_obj_touch(ctx, table);
+    grn_obj_touch(ctx, table, NULL);
   }
   GRN_API_RETURN(rc);
 }
@@ -1460,7 +1463,7 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
   } else {
     rc = _grn_table_delete_by_id(ctx, table, id, NULL);
   }
-  grn_obj_touch(ctx, table);
+  grn_obj_touch(ctx, table, NULL);
   GRN_API_RETURN(rc);
 }
 
