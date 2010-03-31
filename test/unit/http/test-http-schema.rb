@@ -828,8 +828,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_column_list([[books_name_column_id,
                            "books.name",
                            "index",
-                           "WITH_WEIGHT|PERSISTENT",
+                           "COLUMN_INDEX|WITH_WEIGHT|COMPRESS_NONE|PERSISTENT",
                            "books",
+                           "ShortText",
                            []]],
                          :table => "books")
     end
@@ -848,8 +849,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_column_list([[books_name_column_id,
                            "books.name",
                            "index",
-                           "COLUMN_INDEX|WITH_WEIGHT|PERSISTENT",
-                           "books"]],
+                           "COLUMN_INDEX|WITH_WEIGHT|COMPRESS_NONE|PERSISTENT",
+                           "books",
+                           "ShortText",
+                           []]],
                          :table => "books")
     end
 
