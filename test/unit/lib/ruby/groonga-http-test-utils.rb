@@ -206,8 +206,8 @@ module GroongaHTTPTestUtils
     assert_response([success_status_response], response, options)
   end
 
-  def assert_response_body(body, response, options=nil)
-    assert_response([success_status_response, body], response, options)
+  def assert_response_body(body, response, options=nil, &block)
+    assert_response([success_status_response, body], response, options, &block)
   end
 
   def assert_error_response(code, message, response, options=nil)
