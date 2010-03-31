@@ -73,6 +73,33 @@ class HTTPSchemaTest < Test::Unit::TestCase
         end
       end
     end
+
+    def assert_column_list(expected, options)
+      response = get(command_path(:column_list, options))
+      expected = expected.collect do |values|
+        id, name, type, flags, domain, range, source = values
+        [id, name, nil, type, flags, domain, range, source]
+      end
+      assert_response_body([[["id", "UInt32"],
+                             ["name", "ShortText"],
+                             ["path", "ShortText"],
+                             ["type", "ShortText"],
+                             ["flags", "ShortText"],
+                             ["domain", "ShortText"],
+                             ["range", "ShortText"],
+                             ["source", "ShortText"]],
+                            *expected],
+                           response,
+                           :content_type => "application/json") do |actual|
+        status, result = actual
+        header, *values = result
+        values = values.collect do |values|
+          id, name, path, type, flags, domain, range, source = values
+          [id, name, nil, type, flags, domain, range, source]
+        end
+        [status, [header, *values]]
+      end
+    end
   end
 
   include Utils
@@ -122,56 +149,21 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_column_list_empty
     create_bookmarks_table
-    response = get(command_path(:column_list,
-                                :table => "bookmarks"))
-    assert_response_body(
-      [[["id", "UInt32"],
-      ["name", "ShortText"],
-      ["path", "ShortText"],
-      ["type", "ShortText"],
-      ["flags", "ShortText"],
-      ["domain", "ShortText"],
-      ["range", "ShortText"],
-      ["source", "ShortText"]]],
-      response,
-      :content_type => "application/json")
+    assert_column_list([], :table => "bookmarks")
   end
 
   def test_column_list_exist
     create_bookmarks_table
     create_bookmark_title_column
-    response = get(command_path(:column_list,
-                                :table => "bookmarks"))
-    assert_response(
-      [
-        [
-          ["id", "UInt32"],
-          ["name", "ShortText"],
-          ["path", "ShortText"],
-          ["type", "ShortText"],
-          ["flags", "ShortText"],
-          ["domain", "ShortText"],
-          ["range", "ShortText"],
-          ["source", "ShortText"]
-        ],
-        [
-          @bookmarks_title_column_id,
-          "title",
-          nil,
-          "var",
-          "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
-          "bookmarks",
-          "ShortText",
-          []
-        ]
-      ],
-      response,
-      :content_type => "application/json") do |actual|
-      actual[1][0, 1] + actual[1][1..-1].collect do |values|
-        id, name, path, type, flags, domain, range, source = values
-        [id, name, nil, type, flags, domain, range, source]
-      end
-    end
+    assert_column_list([[@bookmarks_title_column_id,
+                         "title",
+                         nil,
+                         "var",
+                         "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
+                         "bookmarks",
+                         "ShortText",
+                         []]],
+                       :table => "bookmarks")
   end
 
   def test_column_list_nonexistent
@@ -819,7 +811,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                            "COLUMN_VECTOR|COMPRESS_NONE|PERSISTENT",
                            "books",
                            "ShortText",
-                           []]])
+                           []]],
+                         :table => "books")
     end
 
     def test_column_create_combined_symbols
@@ -838,7 +831,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                            "index",
                            "WITH_WEIGHT|PERSISTENT",
                            "books",
-                           []]])
+                           []]],
+                         :table => "books")
     end
 
     def test_column_create_combined_symbols_with_whitespaces
@@ -856,7 +850,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                            "books.name",
                            "index",
                            "COLUMN_INDEX|WITH_WEIGHT|PERSISTENT",
-                           "books"]])
+                           "books"]],
+                         :table => "books")
     end
 
     def test_column_create_invalid_symbol
@@ -871,37 +866,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
                             "invalid flags option: INVALID_SYMBOL",
                             response,
                             :content_type => "application/json")
-      assert_column_list([])
+      assert_column_list([], :table => "books")
     end
 
     private
-    def assert_column_list(expected)
-      response = get(command_path(:column_list, :table => "books"))
-      expected = expected.collect do |values|
-        id, name, type, flags, domain, range, source = values
-        [id, name, nil, type, flags, domain, range, source]
-      end
-      assert_response_body([[["id", "UInt32"],
-                             ["name", "ShortText"],
-                             ["path", "ShortText"],
-                             ["type", "ShortText"],
-                             ["flags", "ShortText"],
-                             ["domain", "ShortText"],
-                             ["range", "ShortText"],
-                             ["source", "ShortText"]],
-                            *expected],
-                           response,
-                           :content_type => "application/json") do |actual|
-        status, result = actual
-        header, *values = result
-        values = values.collect do |values|
-          id, name, path, type, flags, domain, range, source = values
-          [id, name, nil, type, flags, domain, range, source]
-        end
-        [status, [header, *values]]
-      end
-    end
-
     def create_books_table
       response = get(command_path(:table_create, :name => "books"))
       assert_success_response(response, :content_type => "application/json")
