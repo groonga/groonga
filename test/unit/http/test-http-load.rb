@@ -40,7 +40,8 @@ class HTTPLoadTest < Test::Unit::TestCase
                    ["real_name", "ShortText"]],
                   [[1, "ryoqun", "Ryo Onodera"],
                    [2, "mori", "mori daijiro"]],
-                  :table => "users")
+                  :table => "users",
+                  :sortby => "_id")
   end
 
   def test_values
