@@ -129,7 +129,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     create_bookmarks_table
     create_bookmark_title_column
     assert_column_list([[@bookmarks_title_column_id,
-                         "bookmarks.title",
+                         "title",
                          "var",
                          "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
                          "bookmarks",
@@ -711,7 +711,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                            "COLUMN_VECTOR",
                                            "Shorttext")
       assert_column_list([[books_name_column_id,
-                           "books.name",
+                           "name",
                            "var",
                            "column_vector|compress_none|persistent",
                            "books",
@@ -728,7 +728,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                            "column_index|with_weight",
                                            "shorttext")
       assert_column_list([[books_name_column_id,
-                           "books.name",
+                           "name",
                            "index",
                            "column_index|with_weight|compress_none|persistent",
                            "books",
@@ -745,7 +745,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                            " column_index | with_weight ",
                                            "shorttext")
       assert_column_list([[books_name_column_id,
-                           "books.name",
+                           "name",
                            "index",
                            "column_index|with_weight|compress_none|persistent",
                            "books",
