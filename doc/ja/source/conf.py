@@ -12,6 +12,7 @@
 # serve to show the default.
 
 SPHINX_VERSION_REQUIRED = "0.6.5"
+RST2PDF_VERSION_REQUIRED = "0.14.2"
 
 import re
 import sphinx
@@ -34,6 +35,13 @@ if parse_version(sphinx.__version__) < parse_version(SPHINX_VERSION_REQUIRED):
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 #extensions = ["source.rdoc"]
 extensions = []
+try:
+  import rst2pdf
+  if parse_version(rst2pdf.version) >= parse_version(RST2PDF_VERSION_REQUIRED):
+    extensions.append('sphinx.ext.autodoc')
+    extensions.append('rst2pdf.pdfbuilder')
+except:
+  pass
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -213,3 +221,13 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+# -- Options for rst2pdf output --------------------------------------------------
+pdf_documents = [
+  ('index',
+   u'groonga-%s' % (release,),
+   u'groonga %s document' % (release,),
+   u'groonga project')
+]
+
+pdf_stylesheets = ['sphinx', 'kerning', 'a4', 'ja']
