@@ -10542,6 +10542,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                 int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
                 int32_t *wp = &GRN_INT32_VALUE(&si->wv);
                 grn_search_optarg optarg;
+                GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
                 optarg.mode = GRN_OP_EXACT;
                 optarg.similarity_threshold = 0;
                 optarg.max_interval = 0;
@@ -10551,7 +10552,6 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                 optarg.proc = NULL;
                 optarg.max_size = 0;
                 ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-                GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
                 for (; j--; ip++, wp += 2) {
                   uint32_t sid = (uint32_t) wp[0];
                   int32_t weight = wp[1];
