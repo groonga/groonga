@@ -1435,6 +1435,9 @@ grn_obj_io(grn_obj *obj)
     case GRN_TABLE_NO_KEY :
       io = ((grn_array *)obj)->io;
       break;
+    case GRN_TABLE_VIEW :
+      io = ((grn_view *)obj)->hash->io;
+      break;
     case GRN_COLUMN_VAR_SIZE :
       io = ((grn_ja *)obj)->io;
       break;
