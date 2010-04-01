@@ -54,15 +54,27 @@
 <p>grn式 - 検索条件やデータベースへの操作を表現する文字列の形式。(読み方:&#8221;ぐるんしき&#8221;)</p>
 </div>
 <div class="section" id="id2">
-<h2>3.5.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>grn式はquery形式とscript形式のいずれかによって表現することができます。</p>
+<h2>3.5.2. 説明<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>grn式は、検索条件やデータベースへの操作を表現するために使用される文字列の形式です。</p>
+<p>selectやloadなどのいくつかの組込コマンドや、API関数grn_table_select()などで使用されます。grn式はquery形式とscript形式という2種類の方式で記述することができます。query形式は、多くのweb検索エンジンなどで検索フォームにユーザが指定可能なクエリ文字列の書式に合わせた形式です。script形式は、ECMAScriptの構文から式(expression)以下の構文要素を抜粋した形式になっており、文(statement)や制御構造などは表現できません。</p>
+<p>query形式のgrn式もscript形式のgrn式も、共通の中間形式に翻訳された上で処理されますので、処理速度や効率には差違はありません。記述できる処理の範囲はscript形式の方がquery形式より広くなっています。たとえば更新系の操作はscript形式のみで記述できます。</p>
+<p>DB-APIレイヤでは、異なる形式で記述された複数のgrn式を結合することも可能です。</p>
+</div>
+<div class="section" id="id3">
+<h2>3.5.3. 例<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>query形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
 <blockquote>
-<p>query形式</p>
+column1:hoge</blockquote>
+<p>script形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
 <blockquote>
+column1 == &#8220;hoge&#8221;</blockquote>
+</div>
+<div class="section" id="query">
+<h2>3.5.4. query形式<a class="headerlink" href="#query" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h3>3.5.4.1. 条件式<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>以下の条件式が使用できます。</p>
 <dl class="docutils">
-<dt>条件式</dt>
-<dd><p class="first">以下の条件式が使用できます。</p>
-<dl class="last docutils">
 <dt>文字列</dt>
 <dd>全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)</dd>
 <dt>&#8220;文字列&#8221;</dt>
@@ -86,10 +98,11 @@
 <dt>カラム名:$文字列</dt>
 <dd>後方一致条件(カラム値が指定された文字列に後方一致する)</dd>
 </dl>
-</dd>
-<dt>補助演算子 <a class="footnote-reference" href="#id11" id="id3">[1]</a></dt>
-<dd><p class="first">全文検索条件の挙動を制御する以下の演算子が指定できます。</p>
-<dl class="last docutils">
+</div>
+<div class="section" id="id5">
+<h3>3.5.4.2. 補助演算子<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>全文検索条件の挙動を制御する以下の演算子が指定できます。[#]_</p>
+<dl class="docutils">
 <dt>~文字列</dt>
 <dd>文字列を含んでいた場合は、そのレコードのスコアを下げます。</dd>
 <dt>&lt;文字列</dt>
@@ -101,15 +114,13 @@
 <dt>*S[数値]&#8221;文字列&#8221;</dt>
 <dd>文字列と関連する文書を検索します。文字列から抽出する特徴語の数を数値に指定します。</dd>
 <dt>*N[数値]&#8221;文字列&#8221;</dt>
-<dd>文字列に含まれる複数の語が、近傍に含まれる文書を検索します。近傍の範囲の上限とな
-る語数を数値に指定します。N-gramの場合は、文字数を指定します。</dd>
+<dd>文字列に含まれる複数の語が、近傍に含まれる文書を検索します。近傍の範囲の上限となる語数を数値に指定します。N-gramの場合は、文字数を指定します。</dd>
 </dl>
-</dd>
-<dt>結合演算子</dt>
-<dd><p class="first">複数の条件式を結合するために以下の演算子が使用できる。演算子を伴わずに複数の条件式
-が空白(&#8216; &#8216;)区切りで指定された場合は、デフォルトの結合演算子が指定されたものとみな
-される。</p>
-<dl class="last docutils">
+</div>
+<div class="section" id="id6">
+<h3>3.5.4.3. 結合演算子<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>複数の条件式を結合するために以下の演算子が使用できる。演算子を伴わずに複数の条件式が空白(&#8216; &#8216;)区切りで指定された場合は、デフォルトの結合演算子が指定されたものとみなされる。</p>
+<dl class="docutils">
 <dt>a OR b</dt>
 <dd>論理和(aとbといずれかの条件がマッチする)</dd>
 <dt>a + b</dt>
@@ -119,20 +130,17 @@
 <dt>( )</dt>
 <dd>複数の条件をまとめる</dd>
 </dl>
-</dd>
-<dt>プラグマ <a class="footnote-reference" href="#id12" id="id4">[2]</a></dt>
-<dd><p class="first">query形式文字列の先頭に、処理方法を指定するプラグマを埋め込むことができます。</p>
-<p>プラグマは必ずクエリ文字列の冒頭に存在しなければなりません。(先頭に空白を入れては
-いけません)</p>
+</div>
+<div class="section" id="id7">
+<h3>3.5.4.4. プラグマ<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>query形式文字列の先頭に、処理方法を指定するプラグマを埋め込むことができます。[#]_</p>
+<p>プラグマは必ずクエリ文字列の冒頭に存在しなければなりません。(先頭に空白を入れてはいけません)</p>
 <p>一つのクエリに複数のプラグマを指定することができます。</p>
 <p>複数のプラグマを指定する場合は、間に空白を入れてはいけません。</p>
-<dl class="last docutils">
-<dt>*E数値1[,数値2]</dt>
-<dd><p class="first">検索結果の数が数値1よりも小さい場合、完全一致→非わかち書き→部分一致の順に自動
-的に検索処理方法を切り替えます。完全一致でヒットした文書と比べて非わかち書き一致、
-部分一致でヒットした文書には数値2分だけ小さいスコアを付与します。数値2を省略した
-場合は既定値(=2)と解釈されます。数値1に負の数を指定した場合は以下のように処理し
-ます。</p>
+<p>*E数値1[,数値2]</p>
+<blockquote>
+<p>検索結果の数が数値1よりも小さい場合、完全一致→非わかち書き→部分一致の順に自動的に検索処理方法を切り替えます。完全一致でヒットした文書と比べて非わかち書き一致、部分一致でヒットした文書には数値2分だけ小さいスコアを付与します。数値2を省略した場合は既定値(=2)と解釈されます。数値1に負の数を指定した場合は以下のように処理します。</p>
+<blockquote>
 <table class="docutils option-list" frame="void" rules="none">
 <col class="option" />
 <col class="description" />
@@ -160,16 +168,17 @@
 <td>完全一致検索,非わかち書き検索,部分一致検索の全てを行う</td></tr>
 </tbody>
 </table>
-<p>例:</p>
-<blockquote class="last">
-<p>*E10,3</p>
-<p>検索結果数が10件以下だった場合に検索処理方法を順次切り替え、スコアを3ずつ小さ
-くします。</p>
 </blockquote>
-</dd>
-<dt>*D演算子</dt>
-<dd><p class="first">結合演算子の既定値(演算子を省略した場合にどの演算を行うか)を指定します。指定できる演
-算子は、OR, +, - のいずれかです。</p>
+<p>例:</p>
+<blockquote>
+<p>*E10,3</p>
+<blockquote>
+検索結果数が10件以下だった場合に検索処理方法を順次切り替え、スコアを3ずつ小さくします。</blockquote>
+</blockquote>
+</blockquote>
+<p>*D演算子</p>
+<blockquote>
+<p>結合演算子の既定値(演算子を省略した場合にどの演算を行うか)を指定します。指定できる演算子は、OR, +, - のいずれかです。</p>
 <p>例1:</p>
 <blockquote>
 *D+ abc def</blockquote>
@@ -177,148 +186,46 @@
 <p>例2:</p>
 <blockquote>
 *DOR abc def</blockquote>
-<p class="last">abcとdefのいずれかを含む文書を検索します。</p>
-</dd>
-<dt>*W[数値[:重み][,数値[:重み]]...</dt>
-<dd>数値で指定されたセクション番号のみを対象に検索します。セクションごとに検索スコア
-の倍数を指定することができます。重みは、省略された場合1となります。負の重みも指
-定することができます。</dd>
-</dl>
-</dd>
-</dl>
+<p>abcとdefのいずれかを含む文書を検索します。</p>
 </blockquote>
-<p>script形式 <a class="footnote-reference" href="#id13" id="id5">[3]</a></p>
+<p>*W[数値[:重み][,数値[:重み]]...</p>
 <blockquote>
-<p>ECMAScript風の構文で検索条件やレコードへの操作を記述します。</p>
+数値で指定されたセクション番号のみを対象に検索します。セクションごとに検索スコアの倍数を指定することができます。重みは、省略された場合1となります。負の重みも指定することができます。</blockquote>
+</div>
+</div>
+<div class="section" id="script">
+<h2>3.5.5. script形式<a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h2>
+<p>ECMAScript風の構文で検索条件やレコードへの操作を記述します。[#]_</p>
 <p>式中のIDENTIFIER(識別子)は、以下のいずれかを指します。</p>
-<dl class="docutils">
-<dt>引数名</dt>
-<dd>grn式が受け取る引数の名前</dd>
-<dt>カラム名</dt>
-<dd>操作対象としているレコードのカラム名</dd>
-<dt>型名・関数名・テーブル名</dt>
-<dd>データベースに定義された型・テーブル・関数の名前</dd>
-</dl>
-</blockquote>
-</blockquote>
-</div>
-<div class="section" id="id6">
-<h2>3.5.3. 説明<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
-<p>grn式は、検索条件やデータベースへの操作を表現するために使用される文字列の形式です。</p>
-<p>selectやloadなどのいくつかの組込コマンドや、API関数grn_table_select()などで使用されます。grn式はquery形式とscript形式という2種類の方式で記述することができます。query形式は、多くのweb検索エンジンなどで検索フォームにユーザが指定可能なクエリ文字列の書式に合わせた形式です。script形式は、ECMAScriptの構文から式(expression)以下の構文要素を抜粋した形式になっており、文(statement)や制御構造などは表現できません。</p>
-<p>query形式のgrn式もscript形式のgrn式も、共通の中間形式に翻訳された上で処理されますので、処理速度や効率には差違はありません。記述できる処理の範囲はscript形式の方がquery形式より広くなっています。たとえば更新系の操作はscript形式のみで記述できます。</p>
-<p>DB-APIレイヤでは、異なる形式で記述された複数のgrn式を結合することも可能です。</p>
-</div>
-<div class="section" id="id7">
-<h2>3.5.4. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
-<p>query形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
-<blockquote>
-column1:hoge</blockquote>
-<p>script形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
-<blockquote>
-column1 == &#8220;hoge&#8221;</blockquote>
-</div>
-<div class="section" id="id8">
-<h2>3.5.5. 構文<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
-<p>query形式のgrn式で有効な式の構文を拡張BNF記法で示します。</p>
-<pre>
-<strong id="grammar-token-query">query            </strong> ::=  <a class="reference internal" href="#grammar-token-query_element"><tt class="xref docutils literal"><span class="pre">query_element</span></tt></a>
-                       | ( <a class="reference internal" href="#grammar-token-query"><tt class="xref docutils literal"><span class="pre">query</span></tt></a> <a class="reference internal" href="#grammar-token-query_element"><tt class="xref docutils literal"><span class="pre">query_element</span></tt></a> )
-                       | ( <a class="reference internal" href="#grammar-token-query"><tt class="xref docutils literal"><span class="pre">query</span></tt></a> &quot;+&quot; <a class="reference internal" href="#grammar-token-query_element"><tt class="xref docutils literal"><span class="pre">query_element</span></tt></a> )
-                       | ( <a class="reference internal" href="#grammar-token-query"><tt class="xref docutils literal"><span class="pre">query</span></tt></a> &quot;-&quot; <a class="reference internal" href="#grammar-token-query_element"><tt class="xref docutils literal"><span class="pre">query_element</span></tt></a> )
-                       | ( <a class="reference internal" href="#grammar-token-query"><tt class="xref docutils literal"><span class="pre">query</span></tt></a> &quot;OR&quot; <a class="reference internal" href="#grammar-token-query_element"><tt class="xref docutils literal"><span class="pre">query_element</span></tt></a> )
-<strong id="grammar-token-query_element">query_element    </strong> ::=  STRING
-                       | ( &quot;(&quot; <a class="reference internal" href="#grammar-token-query"><tt class="xref docutils literal"><span class="pre">query</span></tt></a> &quot;)&quot; )
-                       | ( IDENTIFIER <a class="reference internal" href="#grammar-token-relative_operator"><tt class="xref docutils literal"><span class="pre">relative_operator</span></tt></a> <a class="reference internal" href="#grammar-token-query_element"><tt class="xref docutils literal"><span class="pre">query_element</span></tt></a> )
-<strong id="grammar-token-relative_operator">relative_operator</strong> ::=  ( &quot;:&quot; | &quot;:!&quot; | &quot;:&lt;&quot; | &quot;:&gt;&quot; | &quot;:&lt;=&quot; | &quot;:&gt;=&quot; | &quot;:&#64;&quot; )
-</pre>
-<p>script形式のgrn式で有効な式の構文を拡張BNF記法で示します。</p>
-<pre>
-<strong id="grammar-token-expression">expression                  </strong> ::=  <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a>
-<strong id="id9">expression                  </strong> ::=  ( <a class="reference internal" href="#grammar-token-expression"><tt class="xref docutils literal"><span class="pre">expression</span></tt></a> &quot;,&quot; <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> )
-<strong id="grammar-token-assignment_expression">assignment_expression       </strong> ::=  <a class="reference internal" href="#grammar-token-conditional_expression"><tt class="xref docutils literal"><span class="pre">conditional_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-lefthand_side_expression"><tt class="xref docutils literal"><span class="pre">lefthand_side_expression</span></tt></a> <a class="reference internal" href="#grammar-token-assign_operator"><tt class="xref docutils literal"><span class="pre">assign_operator</span></tt></a> <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> )
-<strong id="grammar-token-assign_operator">assign_operator             </strong> ::=  ( &quot;=&quot; | &quot;*=&quot; | &quot;/=&quot; | &quot;%=&quot; | &quot;+=&quot; | &quot;-=&quot; | &quot;&lt;&lt;=&quot; | &quot;&gt;&gt;=&quot; | &quot;&gt;&gt;&gt;=&quot; | &quot;&amp;=&quot; | &quot;^=&quot; | &quot;|=&quot; )
-<strong id="grammar-token-conditional_expression">conditional_expression      </strong> ::=  <a class="reference internal" href="#grammar-token-logical_or_expression"><tt class="xref docutils literal"><span class="pre">logical_or_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-logical_or_expression"><tt class="xref docutils literal"><span class="pre">logical_or_expression</span></tt></a> &quot;?&quot; <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> )
-<strong id="grammar-token-logical_or_expression">logical_or_expression       </strong> ::=  <a class="reference internal" href="#grammar-token-logical_and_expression"><tt class="xref docutils literal"><span class="pre">logical_and_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-logical_or_expression"><tt class="xref docutils literal"><span class="pre">logical_or_expression</span></tt></a> &quot;||&quot; <a class="reference internal" href="#grammar-token-logical_and_expression"><tt class="xref docutils literal"><span class="pre">logical_and_expression</span></tt></a> )
-<strong id="grammar-token-logical_and_expression">logical_and_expression      </strong> ::=  <a class="reference internal" href="#grammar-token-bitwise_or_expression"><tt class="xref docutils literal"><span class="pre">bitwise_or_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-logical_and_expression"><tt class="xref docutils literal"><span class="pre">logical_and_expression</span></tt></a> <a class="reference internal" href="#grammar-token-logical_and_operator"><tt class="xref docutils literal"><span class="pre">logical_and_operator</span></tt></a> <a class="reference internal" href="#grammar-token-bitwise_or_expression"><tt class="xref docutils literal"><span class="pre">bitwise_or_expression</span></tt></a> )
-<strong id="grammar-token-logical_and_operator">logical_and_operator        </strong> ::=  ( &quot;&amp;&amp;&quot; | &quot;&amp;!&quot; )
-<strong id="grammar-token-bitwise_or_expression">bitwise_or_expression       </strong> ::=  <a class="reference internal" href="#grammar-token-bitwise_xor_expression"><tt class="xref docutils literal"><span class="pre">bitwise_xor_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-bitwise_or_expression"><tt class="xref docutils literal"><span class="pre">bitwise_or_expression</span></tt></a> &quot;|&quot; <a class="reference internal" href="#grammar-token-bitwise_xor_expression"><tt class="xref docutils literal"><span class="pre">bitwise_xor_expression</span></tt></a> )
-<strong id="grammar-token-bitwise_xor_expression">bitwise_xor_expression      </strong> ::=  <a class="reference internal" href="#grammar-token-bitwise_and_expression"><tt class="xref docutils literal"><span class="pre">bitwise_and_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-bitwise_xor_expression"><tt class="xref docutils literal"><span class="pre">bitwise_xor_expression</span></tt></a> &quot;^&quot; <a class="reference internal" href="#grammar-token-bitwise_and_expression"><tt class="xref docutils literal"><span class="pre">bitwise_and_expression</span></tt></a> )
-<strong id="grammar-token-bitwise_and_expression">bitwise_and_expression      </strong> ::=  <a class="reference internal" href="#grammar-token-equality_expression"><tt class="xref docutils literal"><span class="pre">equality_expression</span></tt></a>
-                                  | <a class="reference internal" href="#grammar-token-bitwise_and_expression"><tt class="xref docutils literal"><span class="pre">bitwise_and_expression</span></tt></a> &quot;&amp;&quot; <a class="reference internal" href="#grammar-token-equality_expression"><tt class="xref docutils literal"><span class="pre">equality_expression</span></tt></a> )
-<strong id="grammar-token-equality_expression">equality_expression         </strong> ::=  <a class="reference internal" href="#grammar-token-relational_expression"><tt class="xref docutils literal"><span class="pre">relational_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-equality_expression"><tt class="xref docutils literal"><span class="pre">equality_expression</span></tt></a> <a class="reference internal" href="#grammar-token-equality_operator"><tt class="xref docutils literal"><span class="pre">equality_operator</span></tt></a> <a class="reference internal" href="#grammar-token-relational_expression"><tt class="xref docutils literal"><span class="pre">relational_expression</span></tt></a> )
-<strong id="grammar-token-equality_operator">equality_operator           </strong> ::=  ( &quot;==&quot; | &quot;!=&quot; )
-<strong id="grammar-token-relational_expression">relational_expression       </strong> ::=  <a class="reference internal" href="#grammar-token-shift_expression"><tt class="xref docutils literal"><span class="pre">shift_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-relational_expression"><tt class="xref docutils literal"><span class="pre">relational_expression</span></tt></a> <a class="reference internal" href="#grammar-token-relational_operator"><tt class="xref docutils literal"><span class="pre">relational_operator</span></tt></a> <a class="reference internal" href="#grammar-token-shift_expression"><tt class="xref docutils literal"><span class="pre">shift_expression</span></tt></a> )
-<strong id="grammar-token-relational_operator">relational_operator         </strong> ::=  ( &quot;&lt;&quot; | &quot;&gt;&quot; | &quot;&lt;=&quot; | &quot;&gt;=&quot; | &quot;in&quot; | &quot;&#64;&quot; | &quot;&#64;^&quot; | &quot;&#64;$&quot; )
-<strong id="grammar-token-shift_expression">shift_expression            </strong> ::=  <a class="reference internal" href="#grammar-token-additive_expression"><tt class="xref docutils literal"><span class="pre">additive_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-shift_expression"><tt class="xref docutils literal"><span class="pre">shift_expression</span></tt></a> <a class="reference internal" href="#grammar-token-shift_operator"><tt class="xref docutils literal"><span class="pre">shift_operator</span></tt></a> <a class="reference internal" href="#grammar-token-additive_expression"><tt class="xref docutils literal"><span class="pre">additive_expression</span></tt></a> )
-<strong id="grammar-token-shift_operator">shift_operator              </strong> ::=  ( &quot;&lt;&lt;&quot; | &quot;&gt;&gt;&quot; | &quot;&gt;&gt;&gt;&quot; )
-<strong id="grammar-token-additive_expression">additive_expression         </strong> ::=  <a class="reference internal" href="#grammar-token-multiplicative_expression"><tt class="xref docutils literal"><span class="pre">multiplicative_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-additive_expression"><tt class="xref docutils literal"><span class="pre">additive_expression</span></tt></a> <a class="reference internal" href="#grammar-token-additive_operator"><tt class="xref docutils literal"><span class="pre">additive_operator</span></tt></a> <a class="reference internal" href="#grammar-token-multiplicative_expression"><tt class="xref docutils literal"><span class="pre">multiplicative_expression</span></tt></a> )
-<strong id="grammar-token-additive_operator">additive_operator           </strong> ::=  ( &quot;+&quot; | &quot;-&quot; )
-<strong id="grammar-token-multiplicative_expression">multiplicative_expression   </strong> ::=  <a class="reference internal" href="#grammar-token-unary_expression"><tt class="xref docutils literal"><span class="pre">unary_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-multiplicative_expression"><tt class="xref docutils literal"><span class="pre">multiplicative_expression</span></tt></a> <a class="reference internal" href="#grammar-token-multiplicative_operator"><tt class="xref docutils literal"><span class="pre">multiplicative_operator</span></tt></a> <a class="reference internal" href="#grammar-token-unary_expression"><tt class="xref docutils literal"><span class="pre">unary_expression</span></tt></a> )
-<strong id="grammar-token-multiplicative_operator">multiplicative_operator     </strong> ::=  ( &quot;*&quot; | &quot;/&quot; | &quot;%&quot; )
-<strong id="grammar-token-unary_expression">unary_expression            </strong> ::=  <a class="reference internal" href="#grammar-token-postfix_expression"><tt class="xref docutils literal"><span class="pre">postfix_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-unary_operator"><tt class="xref docutils literal"><span class="pre">unary_operator</span></tt></a> <a class="reference internal" href="#grammar-token-unary_expression"><tt class="xref docutils literal"><span class="pre">unary_expression</span></tt></a> )
-<strong id="grammar-token-unary_operator">unary_operator              </strong> ::=  ( &quot;delete&quot; : &quot;++&quot; : &quot;--&quot; : &quot;+&quot; : &quot;-&quot; : &quot;!&quot; : &quot;~&quot; )
-<strong id="grammar-token-postfix_expression">postfix_expression          </strong> ::=  <a class="reference internal" href="#grammar-token-lefthand_side_expression"><tt class="xref docutils literal"><span class="pre">lefthand_side_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-lefthand_side_expression"><tt class="xref docutils literal"><span class="pre">lefthand_side_expression</span></tt></a> <a class="reference internal" href="#grammar-token-postfix_operator"><tt class="xref docutils literal"><span class="pre">postfix_operator</span></tt></a> )
-<strong id="grammar-token-postfix_operator">postfix_operator            </strong> ::=  ( &quot;++&quot; | &quot;--&quot; )
-<strong id="grammar-token-lefthand_side_expression">lefthand_side_expression    </strong> ::=  (<a class="reference internal" href="#grammar-token-call_expression"><tt class="xref docutils literal"><span class="pre">call_expression</span></tt></a> | <a class="reference internal" href="#grammar-token-member_expression"><tt class="xref docutils literal"><span class="pre">member_expression</span></tt></a>)
-<strong id="grammar-token-call_expression">call_expression             </strong> ::=  <a class="reference internal" href="#grammar-token-member_expression"><tt class="xref docutils literal"><span class="pre">member_expression</span></tt></a> <a class="reference internal" href="#grammar-token-arguments"><tt class="xref docutils literal"><span class="pre">arguments</span></tt></a>
-<strong id="grammar-token-member_expression">member_expression           </strong> ::=  <a class="reference internal" href="#grammar-token-primary_expression"><tt class="xref docutils literal"><span class="pre">primary_expression</span></tt></a>
-<strong id="id10">member_expression           </strong> ::=  <a class="reference internal" href="#grammar-token-member_expression"><tt class="xref docutils literal"><span class="pre">member_expression</span></tt></a> <a class="reference internal" href="#grammar-token-member_expression_part"><tt class="xref docutils literal"><span class="pre">member_expression_part</span></tt></a>
-<strong id="grammar-token-primary_expression">primary_expression          </strong> ::=  <a class="reference internal" href="#grammar-token-object_literal"><tt class="xref docutils literal"><span class="pre">object_literal</span></tt></a>
-                                  | ( &quot;(&quot; <a class="reference internal" href="#grammar-token-expression"><tt class="xref docutils literal"><span class="pre">expression</span></tt></a> &quot;)&quot; )
-                                  | IDENTIFIER
-                                  | <a class="reference internal" href="#grammar-token-array_literal"><tt class="xref docutils literal"><span class="pre">array_literal</span></tt></a>
-                                  | DECIMAL
-                                  | HEX_INTEGER
-                                  | STRING
-                                  | &quot;true&quot;
-                                  | &quot;false
-                                  | &quot;null&quot;
-<strong id="grammar-token-array_literal">array_literal               </strong> ::=  ( &quot;[&quot; <a class="reference internal" href="#grammar-token-elision"><tt class="xref docutils literal"><span class="pre">elision</span></tt></a> &quot;]&quot; )
-                                  | ( &quot;[&quot; `element_list elision` &quot;]&quot; )
-                                  | ( &quot;[&quot; <a class="reference internal" href="#grammar-token-element_list"><tt class="xref docutils literal"><span class="pre">element_list</span></tt></a> &quot;]&quot; )
-<strong id="grammar-token-elision">elision                     </strong> ::=  &quot;,&quot; | ( <a class="reference internal" href="#grammar-token-elision"><tt class="xref docutils literal"><span class="pre">elision</span></tt></a> &quot;,&quot; )
-<strong id="grammar-token-element_list">element_list                </strong> ::=  <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a>
-                                  | ( <a class="reference internal" href="#grammar-token-elision"><tt class="xref docutils literal"><span class="pre">elision</span></tt></a> <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> )
-                                  | ( <a class="reference internal" href="#grammar-token-element_list"><tt class="xref docutils literal"><span class="pre">element_list</span></tt></a> <a class="reference internal" href="#grammar-token-elision"><tt class="xref docutils literal"><span class="pre">elision</span></tt></a> <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> )
-<strong id="grammar-token-object_literal">object_literal              </strong> ::=  ( &quot;{&quot; <a class="reference internal" href="#grammar-token-property_name_and_value_list"><tt class="xref docutils literal"><span class="pre">property_name_and_value_list</span></tt></a> &quot;}&quot; )
-<strong id="grammar-token-property_name_and_value_list">property_name_and_value_list</strong> ::=  ( <a class="reference internal" href="#grammar-token-property_name_and_value_list"><tt class="xref docutils literal"><span class="pre">property_name_and_value_list</span></tt></a> &quot;,&quot; <a class="reference internal" href="#grammar-token-property_name_and_value"><tt class="xref docutils literal"><span class="pre">property_name_and_value</span></tt></a> )
-<strong id="grammar-token-property_name_and_value">property_name_and_value     </strong> ::=  ( <a class="reference internal" href="#grammar-token-property_name"><tt class="xref docutils literal"><span class="pre">property_name</span></tt></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> )
-<strong id="grammar-token-property_name">property_name               </strong> ::=  IDENTIFIER | STRING | DECIMAL
-<strong id="grammar-token-member_expression_part">member_expression_part      </strong> ::=  &quot;[&quot; <a class="reference internal" href="#grammar-token-expression"><tt class="xref docutils literal"><span class="pre">expression</span></tt></a> &quot;]&quot; | ( &quot;.&quot; IDENTIFIER )
-<strong id="grammar-token-arguments">arguments                   </strong> ::=  ( &quot;(&quot; <a class="reference internal" href="#grammar-token-argument_list"><tt class="xref docutils literal"><span class="pre">argument_list</span></tt></a> &quot;)&quot; )
-<strong id="grammar-token-argument_list">argument_list               </strong> ::=  <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> | ( <a class="reference internal" href="#grammar-token-argument_list"><tt class="xref docutils literal"><span class="pre">argument_list</span></tt></a> &quot;,&quot; <a class="reference internal" href="#grammar-token-assignment_expression"><tt class="xref docutils literal"><span class="pre">assignment_expression</span></tt></a> )
-</pre>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">引数名:</th><td class="field-body">grn式が受け取る引数の名前</td>
+</tr>
+<tr class="field"><th class="field-name">カラム名:</th><td class="field-body">操作対象としているレコードのカラム名</td>
+</tr>
+<tr class="field"><th class="field-name">型名・関数名・テーブル名:</th><td class="field-body">データベースに定義された型・テーブル・関数の名前</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">脚注</p>
-<table class="docutils footnote" frame="void" id="id11" rules="none">
+<table class="docutils footnote" frame="void" id="id8" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>補助演算子はv1.0でサポートされます。</td></tr>
+<tr><td class="label">[1]</td><td>補助演算子はv1.0でサポートされます。</td></tr>
 </tbody>
 </table>
-<table class="docutils footnote" frame="void" id="id12" rules="none">
+<table class="docutils footnote" frame="void" id="id9" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>プラグマはv1.0でサポートされます。</td></tr>
+<tr><td class="label">[2]</td><td>プラグマはv1.0でサポートされます。</td></tr>
 </tbody>
 </table>
-<table class="docutils footnote" frame="void" id="id13" rules="none">
+<table class="docutils footnote" frame="void" id="id10" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[3]</a></td><td>script形式のgrn式はv1.0でサポートされます。</td></tr>
+<tr><td class="label">[3]</td><td>script形式のgrn式はv1.0でサポートされます。</td></tr>
 </tbody>
 </table>
 </div>
@@ -334,10 +241,16 @@ column1 == &#8220;hoge&#8221;</blockquote>
             <ul>
 <li><a class="reference external" href="#">3.5. grn式 (grn_expr)</a><ul>
 <li><a class="reference external" href="#id1">3.5.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.5.2. 書式</a></li>
-<li><a class="reference external" href="#id6">3.5.3. 説明</a></li>
-<li><a class="reference external" href="#id7">3.5.4. 例</a></li>
-<li><a class="reference external" href="#id8">3.5.5. 構文</a></li>
+<li><a class="reference external" href="#id2">3.5.2. 説明</a></li>
+<li><a class="reference external" href="#id3">3.5.3. 例</a></li>
+<li><a class="reference external" href="#query">3.5.4. query形式</a><ul>
+<li><a class="reference external" href="#id4">3.5.4.1. 条件式</a></li>
+<li><a class="reference external" href="#id5">3.5.4.2. 補助演算子</a></li>
+<li><a class="reference external" href="#id6">3.5.4.3. 結合演算子</a></li>
+<li><a class="reference external" href="#id7">3.5.4.4. プラグマ</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#script">3.5.5. script形式</a></li>
 </ul>
 </li>
 </ul>

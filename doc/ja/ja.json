@@ -1,13 +1,13 @@
 {
   "embeddedFonts" : [
-#    ["VL-Gothic-Regular.ttf","VL-PGothic-Regular.ttf","ipam.otf","ipag.otf","ipagp.otf","ipamp.otf"]
+    ["ipag.ttf", "ipagp.ttf", "ipaexg.ttf"]
   ],
   "fontsAlias" : {
-#    "stdFont": "M+2P+IPAG",
-#    "stdBold": "M+2P+IPAG",
-#    "stdItalic": "M+2P+IPAG",
-#    "stdBoldItalic": "M+2P+IPAG",
-#    "stdMono": "M+2P+IPAG-circle"
+    "stdFont": "IPAexGothic",
+    "stdBold": "IPAexGothic",
+    "stdItalic": "IPAexGothic",
+    "stdBoldItalic": "IPAexGothic",
+    "stdMono": "IPA Gothic"
   },
   "styles" : [
     ["base" , {
