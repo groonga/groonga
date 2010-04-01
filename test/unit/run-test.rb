@@ -9,10 +9,10 @@ base_dir = File.expand_path(File.dirname(__FILE__))
 test_lib_dir = File.expand_path(File.join(base_dir, "..", "lib"))
 FileUtils.mkdir_p(test_lib_dir)
 
-test_unit_dir = File.join(test_lib_dir, "test-unit-2.0.6")
+test_unit_dir = File.join(test_lib_dir, "test-unit-2.0.7")
 unless File.exist?(test_unit_dir)
   require "open-uri"
-  tgz_uri = "http://rubyforge.org/frs/download.php/68513/test-unit-2.0.6.tgz"
+  tgz_uri = "http://rubyforge.org/frs/download.php/69597/test-unit-2.0.7.tgz"
   tgz = File.join(base_dir, File.basename(tgz_uri))
   File.open(tgz, "wb") do |output|
     output.print(open(tgz_uri).read)
