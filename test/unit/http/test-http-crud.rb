@@ -282,10 +282,10 @@ module HTTPCRUDTest
       response = get(command_path(:set,
                                   :table => "users",
                                   :values => json({:name => "daijiro"})))
-      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
-                        "key nor ID isn't specified"]],
-                      response,
-                      :content_type => "application/json")
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key nor ID isn't specified",
+                            response,
+                            :content_type => "application/json")
     end
 
     def test_no_id_for_no_key_table
@@ -362,16 +362,17 @@ module HTTPCRUDTest
 
     def test_invalid_table
       response = get(command_path(:get, :table => "Int32"))
-      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "not a table"]],
-                      response,
-                      :content_type => "application/json")
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "not a table: <Int32>",
+                            response,
+                            :content_type => "application/json")
     end
 
     def test_no_key
       create_users_table
       response = get(command_path(:get, :table => "users"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "key isn't specified: table: <users>",
+                            "key nor ID isn't specified: table: <users>",
                             response,
                             :content_type => "application/json")
     end
@@ -383,7 +384,7 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "morita"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "should not specify key",
+                            "should not specify key for NO_KEY table: <users>",
                             response,
                             :content_type => "application/json")
     end
@@ -400,10 +401,11 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "morita",
                                   :id => 2))
-      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
-                        "should not specify both key and ID"]],
-                      response,
-                      :content_type => "application/json")
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "should not specify both key and ID: " +
+                            "key: <morita>: ID: <2>: table: <users>",
+                            response,
+                            :content_type => "application/json")
     end
 
     def test_id_for_array
@@ -417,9 +419,9 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :id => 2,
                                   :output_columns => "name"))
-      assert_response([success_status_response, ["gunyara-kun"]],
-                      response,
-                      :content_type => "application/json")
+      assert_response_body(["gunyara-kun"],
+                           response,
+                           :content_type => "application/json")
     end
 
     def test_id_for_key_table
@@ -434,9 +436,9 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :id => 2,
                                   :output_columns => "_key"))
-      assert_response([success_status_response, ["gunyara-kun"]],
-                      response,
-                      :content_type => "application/json")
+      assert_response_body(["gunyara-kun"],
+                           response,
+                           :content_type => "application/json")
     end
 
     def test_key_for_key_table
@@ -451,9 +453,9 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "morita",
                                   :output_columns => "_id _key"))
-      assert_response([success_status_response, [1, "morita"]],
-                      response,
-                      :content_type => "application/json")
+      assert_response_body([1, "morita"],
+                           response,
+                           :content_type => "application/json")
     end
   end
 end

@@ -1280,6 +1280,7 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *outbuf = args[0];
   grn_obj *table;
   grn_id id;
+  int id_length, key_length;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
@@ -1307,24 +1308,93 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return outbuf;
   }
 
-  if (GRN_TEXT_LEN(&vars[1].value)) {
+  key_length = GRN_TEXT_LEN(&vars[1].value);
+  id_length = GRN_TEXT_LEN(&vars[4].value);
+  switch (table->header.type) {
+  case GRN_TABLE_NO_KEY:
+    if (key_length) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "should not specify key for NO_KEY table: <%.*s>",
+          GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+      print_return_code(ctx, outbuf, ct);
+      return outbuf;
+    }
+    if (id_length) {
+      const char *start, *end, *rest = NULL;
+      start = GRN_TEXT_VALUE(&vars[4].value);
+      end = start + id_length;
+      id = grn_atoi(start, end, &rest);
+      if (rest == start) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "ID should be a number: <%.*s>: table: <%.*s>",
+            id_length, GRN_TEXT_VALUE(&vars[4].value),
+            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+        print_return_code(ctx, outbuf, ct);
+        return outbuf;
+      }
+    } else {
+      ERR(GRN_INVALID_ARGUMENT,
+          "ID isn't specified: table: <%.*s>",
+          GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+      print_return_code(ctx, outbuf, ct);
+      return outbuf;
+    }
+    break;
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_VIEW:
+    if (key_length && id_length) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "should not specify both key and ID: "
+            "key: <%.*s>: ID: <%.*s>: table: <%.*s>",
+            key_length, GRN_TEXT_VALUE(&vars[1].value),
+            id_length, GRN_TEXT_VALUE(&vars[4].value),
+            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+        print_return_code(ctx, outbuf, ct);
+      return outbuf;
+    }
+    if (key_length) {
+      id = grn_table_get(ctx, table,
+                         GRN_TEXT_VALUE(&vars[1].value),
+                         key_length);
+      if (!id) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "nonexistent key: <%.*s>: table: <%.*s>",
+            key_length, GRN_TEXT_VALUE(&vars[1].value),
+            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+        print_return_code(ctx, outbuf, ct);
+        return outbuf;
+      }
+    } else {
+      if (id_length) {
+        const char *start, *end, *rest = NULL;
+        start = GRN_TEXT_VALUE(&vars[4].value);
+        end = start + id_length;
+        id = grn_atoi(start, end, &rest);
+        if (rest == start) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "ID should be a number: <%.*s>: table: <%.*s>",
+              GRN_TEXT_LEN(&vars[4].value), GRN_TEXT_VALUE(&vars[4].value),
+              GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+          print_return_code(ctx, outbuf, ct);
+          return outbuf;
+        }
+      } else {
+        ERR(GRN_INVALID_ARGUMENT,
+            "key nor ID isn't specified: table: <%.*s>",
+            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+        print_return_code(ctx, outbuf, ct);
+        return outbuf;
+      }
+    }
+    break;
+  default:
     ERR(GRN_INVALID_ARGUMENT,
-        "key isn't specified: table: <%.*s>",
+        "not a table: <%.*s>",
         GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
     print_return_code(ctx, outbuf, ct);
     return outbuf;
-  }
-
-  id = grn_table_get(ctx, table,
-                     GRN_TEXT_VALUE(&vars[1].value),
-                     GRN_TEXT_LEN(&vars[1].value));
-  if (!id) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "nonexistent key: <%.*s>: table: <%.*s>",
-        GRN_TEXT_LEN(&vars[1].value), GRN_TEXT_VALUE(&vars[1].value),
-        GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
-    print_return_code(ctx, outbuf, ct);
-    return outbuf;
+    break;
   }
 
   {
