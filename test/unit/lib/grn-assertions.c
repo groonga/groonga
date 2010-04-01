@@ -158,8 +158,9 @@ grn_test_assert_not_null_helper (grn_ctx *context,
   if (object) {
     cut_test_pass();
   } else {
-    cut_test_fail(cut_take_printf("expected: <%s> is not NULL",
-                                  expression));
+    cut_test_fail(cut_take_printf("expected: <%s> is not NULL: <%s>",
+                                  expression,
+                                  context->errbuf));
   }
 }
 
