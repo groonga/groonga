@@ -11350,11 +11350,11 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_expr_parse(ctx, cond, query, query_len,
                          match_columns_, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
-          if (filter_len) {
+          if (!ctx->rc && filter_len) {
             grn_expr_parse(ctx, cond, filter, filter_len,
                            match_columns_, GRN_OP_MATCH, GRN_OP_AND,
                            GRN_EXPR_SYNTAX_SCRIPT);
-            grn_expr_append_op(ctx, cond, GRN_OP_AND, 2);
+            if (!ctx->rc) { grn_expr_append_op(ctx, cond, GRN_OP_AND, 2); }
           }
         } else {
           grn_expr_parse(ctx, cond, filter, filter_len,
@@ -11565,7 +11565,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     case GRN_CONTENT_NONE:
       break;
     }
-    if (cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
+    if (!ctx->rc && cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
       grn_cache_update(ctx, cache_key, cache_key_size, outbuf);
     }
     if (taintable) { grn_db_touch(ctx, DB_OBJ(table_)->db); }
@@ -12389,7 +12389,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
   efs_op op_, *op = &op_;
   op->op = q->default_op;
   op->weight = DEFAULT_WEIGHT;
-  for (;;) {
+  while (!ctx->rc) {
     skip_space(ctx, q);
     if (q->cur >= q->str_end) { goto exit; }
     switch (*q->cur) {
