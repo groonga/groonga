@@ -1273,7 +1273,7 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 static grn_rc
 proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
-                            grn_content_type ct, grn_obj **table, grn_id *id)
+                            grn_obj **table, grn_id *id)
 {
   const char *table_text, *id_text, *key_text;
   int table_length, id_length, key_length;
@@ -1282,7 +1282,6 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
   table_length = GRN_TEXT_LEN(&vars[0].value);
   if (table_length == 0) {
     ERR(GRN_INVALID_ARGUMENT, "table isn't specified");
-    print_return_code(ctx, outbuf, ct);
     return ctx->rc;
   }
 
@@ -1290,7 +1289,6 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
   if (!*table) {
     ERR(GRN_INVALID_ARGUMENT,
         "table doesn't exist: <%.*s>", table_length, table_text);
-    print_return_code(ctx, outbuf, ct);
     return ctx->rc;
   }
 
@@ -1305,7 +1303,6 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
           "should not specify key for NO_KEY table: <%.*s>: table: <%.*s>",
           key_length, key_text,
           table_length, table_text);
-      print_return_code(ctx, outbuf, ct);
       return ctx->rc;
     }
     if (id_length) {
@@ -1316,26 +1313,23 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
             "ID should be a number: <%.*s>: table: <%.*s>",
             id_length, id_text,
             table_length, table_text);
-        print_return_code(ctx, outbuf, ct);
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT,
           "ID isn't specified: table: <%.*s>",
           table_length, table_text);
-      print_return_code(ctx, outbuf, ct);
     }
     break;
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_VIEW:
     if (key_length && id_length) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "should not specify both key and ID: "
-            "key: <%.*s>: ID: <%.*s>: table: <%.*s>",
-            key_length, key_text,
-            id_length, id_text,
-            table_length, table_text);
-        print_return_code(ctx, outbuf, ct);
+      ERR(GRN_INVALID_ARGUMENT,
+          "should not specify both key and ID: "
+          "key: <%.*s>: ID: <%.*s>: table: <%.*s>",
+          key_length, key_text,
+          id_length, id_text,
+          table_length, table_text);
       return ctx->rc;
     }
     if (key_length) {
@@ -1345,7 +1339,6 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
             "nonexistent key: <%.*s>: table: <%.*s>",
             key_length, key_text,
             table_length, table_text);
-        print_return_code(ctx, outbuf, ct);
       }
     } else {
       if (id_length) {
@@ -1356,19 +1349,16 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
               "ID should be a number: <%.*s>: table: <%.*s>",
               id_length, id_text,
               table_length, table_text);
-          print_return_code(ctx, outbuf, ct);
         }
       } else {
         ERR(GRN_INVALID_ARGUMENT,
             "key nor ID isn't specified: table: <%.*s>",
             table_length, table_text);
-        print_return_code(ctx, outbuf, ct);
       }
     }
     break;
   default:
     ERR(GRN_INVALID_ARGUMENT, "not a table: <%.*s>", table_length, table_text);
-    print_return_code(ctx, outbuf, ct);
     break;
   }
 
@@ -1394,7 +1384,9 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return outbuf;
   }
 
-  if (!proc_get_resolve_parameters(ctx, vars, outbuf, ct, &table, &id)) {
+  if (proc_get_resolve_parameters(ctx, vars, outbuf, &table, &id)) {
+    print_return_code(ctx, outbuf, ct);
+  } else {
     grn_obj obj, body;
     grn_obj_format format;
     GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
