@@ -1283,60 +1283,76 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
 
   if (nvars == 5) {
-    grn_obj *table = grn_ctx_get(ctx,
-                                 GRN_TEXT_VALUE(&vars[0].value),
-                                 GRN_TEXT_LEN(&vars[0].value));
-    if (table) {
-      grn_id id;
-      if (GRN_TEXT_LEN(&vars[1].value)) {
-        if ((id = grn_table_get(ctx, table,
-                                GRN_TEXT_VALUE(&vars[1].value),
-                                GRN_TEXT_LEN(&vars[1].value)))) {
-          grn_obj obj;
-          grn_obj_format format;
-          GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
-          GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1);
-          GRN_RECORD_SET(ctx, &obj, id);
-          grn_obj_columns(ctx, table,
-                          GRN_TEXT_VALUE(&vars[2].value),
-                          GRN_TEXT_LEN(&vars[2].value), &format.columns);
-          switch (ct) {
-          case GRN_CONTENT_JSON:
-            format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
-            GRN_TEXT_PUTS(ctx, outbuf, "[[");
-            grn_text_itoa(ctx, outbuf, ctx->rc);
-            if (ctx->rc) {
+    if (GRN_TEXT_LEN(&vars[0].value)) {
+      grn_obj *table = grn_ctx_get(ctx,
+                                   GRN_TEXT_VALUE(&vars[0].value),
+                                   GRN_TEXT_LEN(&vars[0].value));
+      if (table) {
+        grn_id id;
+        if (GRN_TEXT_LEN(&vars[1].value)) {
+          if ((id = grn_table_get(ctx, table,
+                                  GRN_TEXT_VALUE(&vars[1].value),
+                                  GRN_TEXT_LEN(&vars[1].value)))) {
+            grn_obj obj;
+            grn_obj_format format;
+            GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
+            GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1);
+            GRN_RECORD_SET(ctx, &obj, id);
+            grn_obj_columns(ctx, table,
+                            GRN_TEXT_VALUE(&vars[2].value),
+                            GRN_TEXT_LEN(&vars[2].value), &format.columns);
+            switch (ct) {
+            case GRN_CONTENT_JSON:
+              format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
+              GRN_TEXT_PUTS(ctx, outbuf, "[[");
+              grn_text_itoa(ctx, outbuf, ctx->rc);
+              if (ctx->rc) {
+                GRN_TEXT_PUTC(ctx, outbuf, ',');
+                grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
+              }
+              GRN_TEXT_PUTC(ctx, outbuf, ']');
               GRN_TEXT_PUTC(ctx, outbuf, ',');
-              grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
+              grn_text_otoj(ctx, outbuf, &obj, &format);
+              GRN_TEXT_PUTC(ctx, outbuf, ']');
+              break;
+            case GRN_CONTENT_TSV:
+              GRN_TEXT_PUTC(ctx, outbuf, '\n');
+              /* TODO: implement */
+              break;
+            case GRN_CONTENT_XML:
+              format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+              grn_text_otoxml(ctx, outbuf, &obj, &format);
+              break;
+            case GRN_CONTENT_NONE:
+              break;
             }
-            GRN_TEXT_PUTC(ctx, outbuf, ']');
-            GRN_TEXT_PUTC(ctx, outbuf, ',');
-            grn_text_otoj(ctx, outbuf, &obj, &format);
-            GRN_TEXT_PUTC(ctx, outbuf, ']');
-            break;
-          case GRN_CONTENT_TSV:
-            GRN_TEXT_PUTC(ctx, outbuf, '\n');
-            /* TODO: implement */
-            break;
-          case GRN_CONTENT_XML:
-            format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-            grn_text_otoxml(ctx, outbuf, &obj, &format);
-            break;
-          case GRN_CONTENT_NONE:
-            break;
+            GRN_OBJ_FORMAT_FIN(ctx, &format);
+          } else {
+            ERR(GRN_INVALID_ARGUMENT,
+                "nonexistent key: <%.*s>: table: <%.*s>",
+                GRN_TEXT_LEN(&vars[1].value), GRN_TEXT_VALUE(&vars[1].value),
+                GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+            print_return_code(ctx, outbuf, ct);
           }
-          GRN_OBJ_FORMAT_FIN(ctx, &format);
         } else {
-          /* todo : error handling */
+          ERR(GRN_INVALID_ARGUMENT,
+              "key isn't specified: table: <%.*s>",
+              GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+          print_return_code(ctx, outbuf, ct);
         }
       } else {
-        /* todo : get_by_id */
+        ERR(GRN_INVALID_ARGUMENT,
+            "table doesn't exist: <%.*s>",
+            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+        print_return_code(ctx, outbuf, ct);
       }
     } else {
-      /* todo : error handling */
+      ERR(GRN_INVALID_ARGUMENT, "table isn't specified");
+      print_return_code(ctx, outbuf, ct);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 5);
+    print_return_code(ctx, outbuf, ct);
   }
   return outbuf;
 }

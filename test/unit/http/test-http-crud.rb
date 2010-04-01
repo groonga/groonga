@@ -335,7 +335,6 @@ module HTTPCRUDTest
     include GroongaHTTPTestUtils
 
     def setup
-      omit("get isn't implemented completely yet.")
       setup_server
     end
 
@@ -347,17 +346,18 @@ module HTTPCRUDTest
       response = get(command_path(:get,
                                   :table => "nonexistent",
                                   :key => "mori"))
-      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0, "table doesn't exist"]],
-                      response,
-                      :content_type => "application/json")
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "table doesn't exist: <nonexistent>",
+                            response,
+                            :content_type => "application/json")
     end
 
     def test_no_table
       response = get(command_path(:get))
-      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
-                        "table isn't specified"]],
-                      response,
-                      :content_type => "application/json")
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "table isn't specified",
+                            response,
+                            :content_type => "application/json")
     end
 
     def test_invalid_table
@@ -370,10 +370,10 @@ module HTTPCRUDTest
     def test_no_key
       create_users_table
       response = get(command_path(:get, :table => "users"))
-      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
-                        "ID nor key isn't specified"]],
-                      response,
-                      :content_type => "application/json")
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key isn't specified: table: <users>",
+                            response,
+                            :content_type => "application/json")
     end
 
     def test_key_for_array
@@ -382,10 +382,10 @@ module HTTPCRUDTest
       response = get(command_path(:get,
                                   :table => "users",
                                   :key => "morita"))
-      assert_response([[Result::UNKNOWN_ERROR, 0.0, 0.0,
-                        "should not specify key"]],
-                      response,
-                      :content_type => "application/json")
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "should not specify key",
+                            response,
+                            :content_type => "application/json")
     end
 
     def test_id_and_key
@@ -449,7 +449,7 @@ module HTTPCRUDTest
             {:_key => "gunyara-kun"}])
       response = get(command_path(:get,
                                   :table => "users",
-                                  :id => "morita",
+                                  :key => "morita",
                                   :output_columns => "_id _key"))
       assert_response([success_status_response, [1, "morita"]],
                       response,
