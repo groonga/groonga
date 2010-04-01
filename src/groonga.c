@@ -87,7 +87,50 @@ usage(void)
 static void
 show_version(void)
 {
-  printf("%s %s\n", grn_get_package(), grn_get_version());
+  printf("%s %s [",
+         grn_get_package(),
+         grn_get_version());
+
+  /* FIXME: Should we detect host information dynamically on Windows? */
+#ifdef HOST_OS
+  printf("%s,", HOST_OS);
+#endif
+#ifdef HOST_CPU
+  printf("%s,", HOST_CPU);
+#endif
+  printf("%s", GROONGA_DEFAULT_ENCODING);
+
+#ifdef GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD
+  printf(",query-cache=%ds", GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD);
+#endif
+
+#ifndef NO_NFKC
+  printf(",nfkc");
+#endif
+#ifndef NO_MECAB
+  printf(",mecab");
+#endif
+#ifndef NO_ZLIB
+  printf(",zlib");
+#endif
+#ifndef NO_LZO
+  printf(",lzo");
+#endif
+#ifdef USE_KQUEUE
+  printf(",kqueue");
+#endif
+#ifdef USE_EPOLL
+  printf(",epoll");
+#endif
+#ifdef USE_POLL
+  printf(",poll");
+#endif
+  printf("]\n");
+
+#ifdef CONFIGURE_OPTIONS
+  printf("\n");
+  printf("configure options: <%s>\n", CONFIGURE_OPTIONS);
+#endif
 }
 
 inline static void
