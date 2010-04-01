@@ -1738,7 +1738,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   GRN_TEXT_PUTS(ctx, outbuf, "],\n");
 
   cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
-                                 GRN_CURSOR_BY_ID);
+                                 GRN_CURSOR_BY_KEY);
   for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
        ++i, old_id = id) {
     int is_value_column;
