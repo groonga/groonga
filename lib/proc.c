@@ -1398,7 +1398,7 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
 
   {
-    grn_obj obj;
+    grn_obj obj, body;
     grn_obj_format format;
     GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
     GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1);
@@ -1408,17 +1408,11 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                     GRN_TEXT_LEN(&vars[2].value), &format.columns);
     switch (ct) {
     case GRN_CONTENT_JSON:
+      GRN_TEXT_INIT(&body, 0);
       format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
-      GRN_TEXT_PUTS(ctx, outbuf, "[[");
-      grn_text_itoa(ctx, outbuf, ctx->rc);
-      if (ctx->rc) {
-        GRN_TEXT_PUTC(ctx, outbuf, ',');
-        grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
-      }
-      GRN_TEXT_PUTC(ctx, outbuf, ']');
-      GRN_TEXT_PUTC(ctx, outbuf, ',');
-      grn_text_otoj(ctx, outbuf, &obj, &format);
-      GRN_TEXT_PUTC(ctx, outbuf, ']');
+      grn_text_otoj(ctx, &body, &obj, &format);
+      print_return_code_with_body(ctx, outbuf, ct, &body);
+      grn_obj_unlink(ctx, &body);
       break;
     case GRN_CONTENT_TSV:
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
