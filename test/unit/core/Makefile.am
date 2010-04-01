@@ -24,7 +24,8 @@ noinst_LTLIBRARIES =				\
 	test-text.la				\
 	test-cast.la				\
 	test-dump.la				\
-	test-encoding.la
+	test-encoding.la			\
+	test-view.la
 endif
 
 EXTRA_DIST =					\
@@ -77,3 +78,4 @@ test_text_la_SOURCES			= test-text.c
 test_cast_la_SOURCES			= test-cast.c
 test_dump_la_SOURCES			= test-dump.c
 test_encoding_la_SOURCES		= test-encoding.c
+test_view_la_SOURCES			= test-view.c
