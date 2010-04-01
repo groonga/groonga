@@ -1179,61 +1179,61 @@ h_server(char *path)
       struct hostent *he;
       if (!(he = gethostbyname(hostname))) {
         SERR("gethostbyname");
-        return rc;
-      }
-      ev.opaque = db;
-      grn_edges_init(ctx, NULL);
-      if (!grn_com_sopen(ctx, &ev, port, h_handler, he)) {
-        while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
-          grn_edge *edge;
-          while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
-            grn_obj *msg;
-            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
-              grn_msg_close(&edge->ctx, msg);
-            }
-            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-              grn_msg_close(ctx, msg);
-            }
-            grn_ctx_fin(&edge->ctx);
-            if (edge->com->has_sid && edge->com->opaque == edge) {
-              grn_com_close(ctx, edge->com);
-            }
-            grn_edges_delete(ctx, edge);
-          }
-          // todo : log stat
-        }
-        for (;;) {
-          MUTEX_LOCK(q_mutex);
-          if (nthreads == nfthreads) { break; }
-          MUTEX_UNLOCK(q_mutex);
-          usleep(1000);
-        }
-        {
-          grn_edge *edge;
-          GRN_HASH_EACH(ctx, grn_edges, id, NULL, NULL, &edge, {
-              grn_obj *obj;
-            while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
-              grn_msg_close(&edge->ctx, obj);
-            }
-            while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-              grn_msg_close(ctx, obj);
-            }
-            grn_ctx_fin(&edge->ctx);
-            if (edge->com->has_sid) {
-              grn_com_close(ctx, edge->com);
-            }
-            grn_edges_delete(ctx, edge);
-          });
-        }
-        {
-          grn_com *com;
-          GRN_HASH_EACH(ctx, ev.hash, id, NULL, NULL, &com, { grn_com_close(ctx, com); });
-        }
-        rc = 0;
       } else {
-        fprintf(stderr, "grn_com_sopen failed (%d)\n", port);
+        ev.opaque = db;
+        grn_edges_init(ctx, NULL);
+        if (!grn_com_sopen(ctx, &ev, port, h_handler, he)) {
+          while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
+            grn_edge *edge;
+            while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
+              grn_obj *msg;
+              while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+                grn_msg_close(&edge->ctx, msg);
+              }
+              while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+                grn_msg_close(ctx, msg);
+              }
+              grn_ctx_fin(&edge->ctx);
+              if (edge->com->has_sid && edge->com->opaque == edge) {
+                grn_com_close(ctx, edge->com);
+              }
+              grn_edges_delete(ctx, edge);
+            }
+            // todo : log stat
+          }
+          for (;;) {
+            MUTEX_LOCK(q_mutex);
+            if (nthreads == nfthreads) { break; }
+            MUTEX_UNLOCK(q_mutex);
+            usleep(1000);
+          }
+          {
+            grn_edge *edge;
+            GRN_HASH_EACH(ctx, grn_edges, id, NULL, NULL, &edge, {
+                grn_obj *obj;
+              while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+                grn_msg_close(&edge->ctx, obj);
+              }
+              while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+                grn_msg_close(ctx, obj);
+              }
+              grn_ctx_fin(&edge->ctx);
+              if (edge->com->has_sid) {
+                grn_com_close(ctx, edge->com);
+              }
+              grn_edges_delete(ctx, edge);
+            });
+          }
+          {
+            grn_com *com;
+            GRN_HASH_EACH(ctx, ev.hash, id, NULL, NULL, &com, { grn_com_close(ctx, com); });
+          }
+          rc = 0;
+        } else {
+          fprintf(stderr, "grn_com_sopen failed (%d)\n", port);
+        }
+        grn_edges_fin(ctx);
       }
-      grn_edges_fin(ctx);
       grn_db_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
@@ -1417,61 +1417,61 @@ g_server(char *path)
       struct hostent *he;
       if (!(he = gethostbyname(hostname))) {
         SERR("gethostbyname");
-        goto exit;
-      }
-      ev.opaque = db;
-      grn_edges_init(ctx, dispatcher);
-      if (!grn_com_sopen(ctx, &ev, port, g_handler, he)) {
-        while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
-          grn_edge *edge;
-          while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
-            grn_obj *msg;
-            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
-              grn_msg_close(&edge->ctx, msg);
-            }
-            while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-              grn_msg_close(ctx, msg);
-            }
-            grn_ctx_fin(&edge->ctx);
-            if (edge->com->has_sid && edge->com->opaque == edge) {
-              grn_com_close(ctx, edge->com);
-            }
-            grn_edges_delete(ctx, edge);
-          }
-          // todo : log stat
-        }
-        for (;;) {
-          MUTEX_LOCK(q_mutex);
-          if (nthreads == nfthreads) { break; }
-          MUTEX_UNLOCK(q_mutex);
-          usleep(1000);
-        }
-        {
-          grn_edge *edge;
-          GRN_HASH_EACH(ctx, grn_edges, id, NULL, NULL, &edge, {
-              grn_obj *obj;
-            while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
-              grn_msg_close(&edge->ctx, obj);
-            }
-            while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-              grn_msg_close(ctx, obj);
-            }
-            grn_ctx_fin(&edge->ctx);
-            if (edge->com->has_sid) {
-              grn_com_close(ctx, edge->com);
-            }
-            grn_edges_delete(ctx, edge);
-          });
-        }
-        {
-          grn_com *com;
-          GRN_HASH_EACH(ctx, ev.hash, id, NULL, NULL, &com, { grn_com_close(ctx, com); });
-        }
-        rc = 0;
       } else {
-        fprintf(stderr, "grn_com_sopen failed (%d)\n", port);
+        ev.opaque = db;
+        grn_edges_init(ctx, dispatcher);
+        if (!grn_com_sopen(ctx, &ev, port, g_handler, he)) {
+          while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
+            grn_edge *edge;
+            while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
+              grn_obj *msg;
+              while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+                grn_msg_close(&edge->ctx, msg);
+              }
+              while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+                grn_msg_close(ctx, msg);
+              }
+              grn_ctx_fin(&edge->ctx);
+              if (edge->com->has_sid && edge->com->opaque == edge) {
+                grn_com_close(ctx, edge->com);
+              }
+              grn_edges_delete(ctx, edge);
+            }
+            // todo : log stat
+          }
+          for (;;) {
+            MUTEX_LOCK(q_mutex);
+            if (nthreads == nfthreads) { break; }
+            MUTEX_UNLOCK(q_mutex);
+            usleep(1000);
+          }
+          {
+            grn_edge *edge;
+            GRN_HASH_EACH(ctx, grn_edges, id, NULL, NULL, &edge, {
+                grn_obj *obj;
+              while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
+                grn_msg_close(&edge->ctx, obj);
+              }
+              while ((obj = (grn_obj *)grn_com_queue_deque(ctx, &edge->recv_new))) {
+                grn_msg_close(ctx, obj);
+              }
+              grn_ctx_fin(&edge->ctx);
+              if (edge->com->has_sid) {
+                grn_com_close(ctx, edge->com);
+              }
+              grn_edges_delete(ctx, edge);
+            });
+          }
+          {
+            grn_com *com;
+            GRN_HASH_EACH(ctx, ev.hash, id, NULL, NULL, &com, { grn_com_close(ctx, com); });
+          }
+          rc = 0;
+        } else {
+          fprintf(stderr, "grn_com_sopen failed (%d)\n", port);
+        }
+        grn_edges_fin(ctx);
       }
-      grn_edges_fin(ctx);
       grn_db_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
@@ -1480,7 +1480,6 @@ g_server(char *path)
   } else {
     fprintf(stderr, "grn_com_event_init failed\n");
   }
-exit :
   grn_ctx_fin(ctx);
   return rc;
 }
