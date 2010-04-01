@@ -71,7 +71,7 @@ filterパラメータにおいて、 :doc:`../functions/geo_in_circle` / :doc:`.
 
 .. ここに実例を追加する。
 
-scorerパラメータにおいて、:doc:`../functions/geo_distance` 関数を用いることにより、２点間の距離を計算することができます。
+scorerパラメータにおいて、 :doc:`../functions/geo_distance` 関数を用いることにより、２点間の距離を計算することができます。
 
 .. ここに実例を追加する。
 
