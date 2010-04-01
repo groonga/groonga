@@ -1280,7 +1280,8 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *outbuf = args[0];
   grn_obj *table;
   grn_id id;
-  int id_length, key_length;
+  const char *table_text, *id_text, *key_text;
+  int table_length, id_length, key_length;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
@@ -1291,51 +1292,51 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return outbuf;
   }
 
-  if (GRN_TEXT_LEN(&vars[0].value) == 0) {
+  table_text = GRN_TEXT_VALUE(&vars[0].value);
+  table_length = GRN_TEXT_LEN(&vars[0].value);
+  if (table_length == 0) {
     ERR(GRN_INVALID_ARGUMENT, "table isn't specified");
     print_return_code(ctx, outbuf, ct);
     return outbuf;
   }
 
-  table = grn_ctx_get(ctx,
-                      GRN_TEXT_VALUE(&vars[0].value),
-                      GRN_TEXT_LEN(&vars[0].value));
+  table = grn_ctx_get(ctx, table_text, table_length);
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT,
-        "table doesn't exist: <%.*s>",
-        GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+        "table doesn't exist: <%.*s>", table_length, table_text);
     print_return_code(ctx, outbuf, ct);
     return outbuf;
   }
 
+  key_text = GRN_TEXT_VALUE(&vars[1].value);
   key_length = GRN_TEXT_LEN(&vars[1].value);
+  id_text = GRN_TEXT_VALUE(&vars[4].value);
   id_length = GRN_TEXT_LEN(&vars[4].value);
   switch (table->header.type) {
   case GRN_TABLE_NO_KEY:
     if (key_length) {
       ERR(GRN_INVALID_ARGUMENT,
-          "should not specify key for NO_KEY table: <%.*s>",
-          GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+          "should not specify key for NO_KEY table: <%.*s>: table: <%.*s>",
+          key_length, key_text,
+          table_length, table_text);
       print_return_code(ctx, outbuf, ct);
       return outbuf;
     }
     if (id_length) {
-      const char *start, *end, *rest = NULL;
-      start = GRN_TEXT_VALUE(&vars[4].value);
-      end = start + id_length;
-      id = grn_atoi(start, end, &rest);
-      if (rest == start) {
+      const char *rest = NULL;
+      id = grn_atoi(id_text, id_text + id_length, &rest);
+      if (rest == id_text) {
         ERR(GRN_INVALID_ARGUMENT,
             "ID should be a number: <%.*s>: table: <%.*s>",
-            id_length, GRN_TEXT_VALUE(&vars[4].value),
-            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+            id_length, id_text,
+            table_length, table_text);
         print_return_code(ctx, outbuf, ct);
         return outbuf;
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT,
           "ID isn't specified: table: <%.*s>",
-          GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+          table_length, table_text);
       print_return_code(ctx, outbuf, ct);
       return outbuf;
     }
@@ -1347,51 +1348,45 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         ERR(GRN_INVALID_ARGUMENT,
             "should not specify both key and ID: "
             "key: <%.*s>: ID: <%.*s>: table: <%.*s>",
-            key_length, GRN_TEXT_VALUE(&vars[1].value),
-            id_length, GRN_TEXT_VALUE(&vars[4].value),
-            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+            key_length, key_text,
+            id_length, id_text,
+            table_length, table_text);
         print_return_code(ctx, outbuf, ct);
       return outbuf;
     }
     if (key_length) {
-      id = grn_table_get(ctx, table,
-                         GRN_TEXT_VALUE(&vars[1].value),
-                         key_length);
+      id = grn_table_get(ctx, table, key_text, key_length);
       if (!id) {
         ERR(GRN_INVALID_ARGUMENT,
             "nonexistent key: <%.*s>: table: <%.*s>",
-            key_length, GRN_TEXT_VALUE(&vars[1].value),
-            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+            key_length, key_text,
+            table_length, table_text);
         print_return_code(ctx, outbuf, ct);
         return outbuf;
       }
     } else {
       if (id_length) {
-        const char *start, *end, *rest = NULL;
-        start = GRN_TEXT_VALUE(&vars[4].value);
-        end = start + id_length;
-        id = grn_atoi(start, end, &rest);
-        if (rest == start) {
+        const char *rest = NULL;
+        id = grn_atoi(id_text, id_text + id_length, &rest);
+        if (rest == id_text) {
           ERR(GRN_INVALID_ARGUMENT,
               "ID should be a number: <%.*s>: table: <%.*s>",
-              GRN_TEXT_LEN(&vars[4].value), GRN_TEXT_VALUE(&vars[4].value),
-              GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+              id_length, id_text,
+              table_length, table_text);
           print_return_code(ctx, outbuf, ct);
           return outbuf;
         }
       } else {
         ERR(GRN_INVALID_ARGUMENT,
             "key nor ID isn't specified: table: <%.*s>",
-            GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+            table_length, table_text);
         print_return_code(ctx, outbuf, ct);
         return outbuf;
       }
     }
     break;
   default:
-    ERR(GRN_INVALID_ARGUMENT,
-        "not a table: <%.*s>",
-        GRN_TEXT_LEN(&vars[0].value), GRN_TEXT_VALUE(&vars[0].value));
+    ERR(GRN_INVALID_ARGUMENT, "not a table: <%.*s>", table_length, table_text);
     print_return_code(ctx, outbuf, ct);
     return outbuf;
     break;

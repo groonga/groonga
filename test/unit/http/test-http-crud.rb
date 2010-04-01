@@ -384,7 +384,8 @@ module HTTPCRUDTest
                                   :table => "users",
                                   :key => "morita"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "should not specify key for NO_KEY table: <users>",
+                            "should not specify key for NO_KEY table: " +
+                            "<morita>: table: <users>",
                             response,
                             :content_type => "application/json")
     end
