@@ -1417,7 +1417,7 @@ g_server(char *path)
       struct hostent *he;
       if (!(he = gethostbyname(hostname))) {
         SERR("gethostbyname");
-        return rc;
+        goto exit;
       }
       ev.opaque = db;
       grn_edges_init(ctx, dispatcher);
@@ -1480,6 +1480,7 @@ g_server(char *path)
   } else {
     fprintf(stderr, "grn_com_event_init failed\n");
   }
+exit :
   grn_ctx_fin(ctx);
   return rc;
 }
