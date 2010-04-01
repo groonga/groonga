@@ -1271,48 +1271,34 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return outbuf;
 }
 
-static grn_obj *
-proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static grn_rc
+proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
+                            grn_content_type ct, grn_obj **table, grn_id *id)
 {
-  uint32_t nvars;
-  grn_expr_var *vars;
-  grn_content_type ct;
-  grn_obj *outbuf = args[0];
-  grn_obj *table;
-  grn_id id;
   const char *table_text, *id_text, *key_text;
   int table_length, id_length, key_length;
-
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
-
-  if (nvars != 5) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 5);
-    print_return_code(ctx, outbuf, ct);
-    return outbuf;
-  }
 
   table_text = GRN_TEXT_VALUE(&vars[0].value);
   table_length = GRN_TEXT_LEN(&vars[0].value);
   if (table_length == 0) {
     ERR(GRN_INVALID_ARGUMENT, "table isn't specified");
     print_return_code(ctx, outbuf, ct);
-    return outbuf;
+    return ctx->rc;
   }
 
-  table = grn_ctx_get(ctx, table_text, table_length);
-  if (!table) {
+  *table = grn_ctx_get(ctx, table_text, table_length);
+  if (!*table) {
     ERR(GRN_INVALID_ARGUMENT,
         "table doesn't exist: <%.*s>", table_length, table_text);
     print_return_code(ctx, outbuf, ct);
-    return outbuf;
+    return ctx->rc;
   }
 
   key_text = GRN_TEXT_VALUE(&vars[1].value);
   key_length = GRN_TEXT_LEN(&vars[1].value);
   id_text = GRN_TEXT_VALUE(&vars[4].value);
   id_length = GRN_TEXT_LEN(&vars[4].value);
-  switch (table->header.type) {
+  switch ((*table)->header.type) {
   case GRN_TABLE_NO_KEY:
     if (key_length) {
       ERR(GRN_INVALID_ARGUMENT,
@@ -1320,25 +1306,23 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           key_length, key_text,
           table_length, table_text);
       print_return_code(ctx, outbuf, ct);
-      return outbuf;
+      return ctx->rc;
     }
     if (id_length) {
       const char *rest = NULL;
-      id = grn_atoi(id_text, id_text + id_length, &rest);
+      *id = grn_atoi(id_text, id_text + id_length, &rest);
       if (rest == id_text) {
         ERR(GRN_INVALID_ARGUMENT,
             "ID should be a number: <%.*s>: table: <%.*s>",
             id_length, id_text,
             table_length, table_text);
         print_return_code(ctx, outbuf, ct);
-        return outbuf;
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT,
           "ID isn't specified: table: <%.*s>",
           table_length, table_text);
       print_return_code(ctx, outbuf, ct);
-      return outbuf;
     }
     break;
   case GRN_TABLE_HASH_KEY:
@@ -1352,47 +1336,65 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
             id_length, id_text,
             table_length, table_text);
         print_return_code(ctx, outbuf, ct);
-      return outbuf;
+      return ctx->rc;
     }
     if (key_length) {
-      id = grn_table_get(ctx, table, key_text, key_length);
-      if (!id) {
+      *id = grn_table_get(ctx, *table, key_text, key_length);
+      if (!*id) {
         ERR(GRN_INVALID_ARGUMENT,
             "nonexistent key: <%.*s>: table: <%.*s>",
             key_length, key_text,
             table_length, table_text);
         print_return_code(ctx, outbuf, ct);
-        return outbuf;
       }
     } else {
       if (id_length) {
         const char *rest = NULL;
-        id = grn_atoi(id_text, id_text + id_length, &rest);
+        *id = grn_atoi(id_text, id_text + id_length, &rest);
         if (rest == id_text) {
           ERR(GRN_INVALID_ARGUMENT,
               "ID should be a number: <%.*s>: table: <%.*s>",
               id_length, id_text,
               table_length, table_text);
           print_return_code(ctx, outbuf, ct);
-          return outbuf;
         }
       } else {
         ERR(GRN_INVALID_ARGUMENT,
             "key nor ID isn't specified: table: <%.*s>",
             table_length, table_text);
         print_return_code(ctx, outbuf, ct);
-        return outbuf;
       }
     }
     break;
   default:
     ERR(GRN_INVALID_ARGUMENT, "not a table: <%.*s>", table_length, table_text);
     print_return_code(ctx, outbuf, ct);
-    return outbuf;
     break;
   }
 
-  {
+  return ctx->rc;
+}
+
+static grn_obj *
+proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_expr_var *vars;
+  grn_content_type ct;
+  grn_obj *outbuf = args[0];
+  grn_obj *table = NULL;
+  grn_id id;
+
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
+
+  if (nvars != 5) {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 5);
+    print_return_code(ctx, outbuf, ct);
+    return outbuf;
+  }
+
+  if (!proc_get_resolve_parameters(ctx, vars, outbuf, ct, &table, &id)) {
     grn_obj obj, body;
     grn_obj_format format;
     GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
