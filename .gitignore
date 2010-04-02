@@ -38,3 +38,4 @@ version.sh
 /doc/ja/build/
 /doc/ja/modindex.html
 /doc/ja/objects.inv
+/lib/icudump
