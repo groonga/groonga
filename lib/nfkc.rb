@@ -18,9 +18,7 @@
 
 $KCODE = 'u'
 
-EXTERNAL_PATTERNS = {
-  "〜" => "~"
-}
+CUSTOM_RULE_PATH = 'nfkc-custom-rules.txt'
 
 def gen_bc(file, hash, level)
   bl = ' ' * (level * 2)
@@ -145,11 +143,16 @@ def create_map1()
     ccpush(cc, src.split(//), dst)
   }
   map1 = {}
-  EXTERNAL_PATTERNS.each{|src,dst| map_entry(map1, cc, src, dst) }
   open('|./icudump --nfkd').each{|l|
     n,src,dst = l.chomp.split("\t")
     map_entry(map1, cc, src, dst)
   }
+  if File.readable?(CUSTOM_RULE_PATH)
+    open(CUSTOM_RULE_PATH).each{|l|
+      src,dst = l.chomp.split("\t")
+      map_entry(map1, cc, src, dst)
+    }
+  end
   unless $case_sensitive
     for c in 'A'..'Z'
       map1[c] = c.downcase
