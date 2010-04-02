@@ -40,6 +40,7 @@ static const gchar text_ja_utf8[] =
   "インデックスタイプのエンジンです。コンパクトな実装ですが、大規模な文書\n"
   "量と検索要求を処理できるように設計されています。また、純粋なn-gramイン\n"
   "デックスの作成も可能です。";
+
 static const gchar normalized_text_ja_utf8[] =
   "groongaは組み込み型の全文検索エンジンです。dbmsやスクリプト言語処理系等に"
   "組み込むことによって、その全文検索機能を強化することができます。n-gram"
@@ -93,6 +94,10 @@ data_normalize_utf8(void)
   ADD_DATUM("large normalization",
             "キロメートルキロメートルキロメートルキロメートル",
             "㌖㌖㌖㌖");
+
+  ADD_DATUM("tilde and fullwidth tilde and wave dash",
+            "~～〜",
+            "~~~");
 
 #undef ADD_DATUM
 }
