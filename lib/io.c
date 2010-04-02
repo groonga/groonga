@@ -53,20 +53,6 @@ typedef struct _grn_io_fileinfo {
 #endif /* WIN32 */
 } fileinfo;
 
-typedef struct _grn_io_header {
-  char idstr[16];
-  uint32_t type;
-  uint32_t version;
-  uint32_t flags;
-  uint32_t header_size;
-  uint32_t segment_size;
-  uint32_t max_segment;
-  uint32_t n_arrays;
-  uint32_t lock;
-  uint64_t curr_size;
-  uint32_t segment_tail;
-} io_header;
-
 #define IO_HEADER_SIZE 64
 
 inline static grn_rc grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize);
@@ -140,10 +126,10 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
   grn_io *io;
   unsigned int b;
   uint32_t total_header_size;
-  io_header *header;
+  struct _grn_io_header *header;
   total_header_size = IO_HEADER_SIZE + header_size;
   b = (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
-  if ((header = (io_header *)GRN_MMAP(&grn_gctx, NULL, NULL, 0, b))) {
+  if ((header = (struct _grn_io_header *)GRN_MMAP(&grn_gctx, NULL, NULL, 0, b))) {
     header->header_size = header_size;
     header->segment_size = segment_size;
     header->max_segment = max_segment;
@@ -203,7 +189,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   fileinfo *fis;
   unsigned int b, max_nfiles;
   uint32_t bs, total_header_size;
-  io_header *header;
+  struct _grn_io_header *header;
   if (!path) {
     return grn_io_create_tmp(header_size, segment_size, max_segment, mode, flags);
   }
@@ -217,7 +203,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   if ((fis = GRN_GMALLOCN(fileinfo, max_nfiles))) {
     grn_fileinfo_init(fis, max_nfiles);
     if (!grn_open(ctx, fis, path, O_RDWR|O_CREAT|O_EXCL, GRN_IO_FILE_SIZE)) {
-      if ((header = (io_header *)GRN_MMAP(&grn_gctx, &fis->fmo, fis, 0, b))) {
+      if ((header = (struct _grn_io_header *)GRN_MMAP(&grn_gctx, &fis->fmo, fis, 0, b))) {
         header->header_size = header_size;
         header->segment_size = segment_size;
         header->max_segment = max_segment;
@@ -403,13 +389,13 @@ grn_io_array_at(grn_ctx *ctx, grn_io *io, uint32_t array, off_t offset, int *fla
 uint32_t
 grn_io_detect_type(grn_ctx *ctx, const char *path)
 {
-  io_header h;
+  struct _grn_io_header h;
   uint32_t res = 0;
   int fd = open(path, O_RDWR);
   if (fd != -1) {
     struct stat s;
-    if (fstat(fd, &s) != -1 && s.st_size >= sizeof(io_header)) {
-      if (read(fd, &h, sizeof(io_header)) == sizeof(io_header)) {
+    if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
+      if (read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
         if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
           res = h.type;
         } else {
@@ -440,11 +426,11 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   uint32_t header_size = 0, segment_size = 0, max_segment = 0, bs;
   if (!path || !*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   {
-    io_header h;
+    struct _grn_io_header h;
     int fd = open(path, O_RDWR);
     if (fd == -1) { SERR(path); return NULL; }
-    if (fstat(fd, &s) != -1 && s.st_size >= sizeof(io_header)) {
-      if (read(fd, &h, sizeof(io_header)) == sizeof(io_header)) {
+    if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
+      if (read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
         if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
           header_size = h.header_size;
           segment_size = h.segment_size;
@@ -467,7 +453,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   if (!(fis = GRN_GMALLOCN(fileinfo, max_nfiles))) { return NULL; }
   grn_fileinfo_init(fis, max_nfiles);
   if (!grn_open(ctx, fis, path, O_RDWR, GRN_IO_FILE_SIZE)) {
-    io_header *header;
+    struct _grn_io_header *header;
     if ((header = GRN_MMAP(&grn_gctx, &fis->fmo, fis, 0, b))) {
       if ((io = GRN_GMALLOC(sizeof(grn_io)))) {
         grn_io_mapinfo *maps = NULL;

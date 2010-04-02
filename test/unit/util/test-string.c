@@ -40,6 +40,7 @@ static const gchar text_ja_utf8[] =
   "インデックスタイプのエンジンです。コンパクトな実装ですが、大規模な文書\n"
   "量と検索要求を処理できるように設計されています。また、純粋なn-gramイン\n"
   "デックスの作成も可能です。";
+
 static const gchar normalized_text_ja_utf8[] =
   "groongaは組み込み型の全文検索エンジンです。dbmsやスクリプト言語処理系等に"
   "組み込むことによって、その全文検索機能を強化することができます。n-gram"
@@ -94,6 +95,10 @@ data_normalize_utf8(void)
             "キロメートルキロメートルキロメートルキロメートル",
             "㌖㌖㌖㌖");
 
+  ADD_DATUM("tilde and fullwidth tilde and wave dash",
+            "~～〜",
+            "~~~");
+
 #undef ADD_DATUM
 }
 
@@ -109,8 +114,6 @@ test_normalize_utf8(gpointer data)
   GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
   flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
   input = gcut_data_get_string(data, "input");
-  if (strcmp(input, "㌖㌖㌖㌖") == 0)
-      cut_omit("will be SEGVed. Please FIXME!!!");
   string = grn_str_open(&context, input, strlen(input), flags);
   normalized_text = cut_take_strndup(string->norm, string->norm_blen);
   normalized_text_len = string->norm_blen;

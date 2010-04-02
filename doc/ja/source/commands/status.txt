@@ -25,7 +25,7 @@ statusコマンドは、groongaプロセスの状態を表示します。主にg
 ----
 
 ``output_type``
-  出力形式を、json,tsv,xmlのいずれかで指定します。 [#]_
+  出力形式を、json,tsv,xmlのいずれかで指定します。
 
 返値
 ----

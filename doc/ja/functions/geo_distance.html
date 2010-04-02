@@ -5,41 +5,41 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.6.5. geo_distance &mdash; groonga v0.1.6 documentation</title>
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <title>3.7.1. geo_distance &mdash; groonga v0.1.8 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
-        VERSION:     '0.1.6',
+        URL_ROOT:    '../',
+        VERSION:     '0.1.8',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="groonga v0.1.6 documentation" href="index.html" />
-    <link rel="up" title="3.6. 組み込み関数一覧" href="functions.html" />
-    <link rel="next" title="4. groonga開発者向け情報" href="developer.html" />
-    <link rel="prev" title="3.6.4. geo_in_rectangle" href="geo_in_rectangle.html" /> 
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.8 documentation" href="../index.html" />
+    <link rel="up" title="3.7. 組み込み関数一覧" href="../functions.html" />
+    <link rel="next" title="3.7.2. geo_in_circle" href="geo_in_circle.html" />
+    <link rel="prev" title="3.7. 組み込み関数一覧" href="../functions.html" /> 
   </head>
   <body>
     <div class="related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="developer.html" title="4. groonga開発者向け情報"
+          <a href="geo_in_circle.html" title="3.7.2. geo_in_circle"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="geo_in_rectangle.html" title="3.6.4. geo_in_rectangle"
+          <a href="../functions.html" title="3.7. 組み込み関数一覧"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">groonga v0.1.6 documentation</a> &raquo;</li>
-          <li><a href="reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="functions.html" accesskey="U">3.6. 組み込み関数一覧</a> &raquo;</li> 
+        <li><a href="../index.html">groonga v0.1.8 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../functions.html" accesskey="U">3.7. 組み込み関数一覧</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,25 +49,25 @@
           <div class="body">
             
   <div class="section" id="geo-distance">
-<h1>3.6.5. geo_distance<a class="headerlink" href="#geo-distance" title="Permalink to this headline">¶</a></h1>
+<h1>3.7.1. geo_distance<a class="headerlink" href="#geo-distance" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.6.5.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.7.1.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>geo_distance - 指定した2点の距離を計算する</p>
 </div>
 <div class="section" id="id2">
-<h2>3.6.5.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.7.1.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>geo_distance(point1, point2)
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.6.5.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.7.1.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、script形式のgrn式中で呼び出すことができます。</p>
 <p>geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距離(近似値)を求めます。
 geo_distance()の他に、距離計算アルゴリズムの異なる、geo_distance2()、geo_distance3()が使用できます。それぞれ、長方形近似、球面近似、ヒュベニの距離計算式によって距離を算出します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.6.5.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.7.1.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">point1</span></tt></p>
 <blockquote>
 距離を求める2点のうち一つを指定します。Point型の値を指定できます。 <a class="footnote-reference" href="#id8" id="id5">[1]</a></blockquote>
@@ -76,11 +76,11 @@ geo_distance()の他に、距離計算アルゴリズムの異なる、geo_dista
 距離を求める2点のうちもう一つを指定します。Point型の値、あるいは座標を示す文字列を指定できます。</blockquote>
 </div>
 <div class="section" id="id6">
-<h2>3.6.5.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.7.1.5. 返値<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>指定した2点の距離をFloat型の値(単位:メートル)として返します。</p>
 </div>
 <div class="section" id="id7">
-<h2>3.6.5.6. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.7.1.6. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>geo_distance(pos, &quot;150x150&quot;)
 100
 </pre></div>
@@ -101,33 +101,33 @@ geo_distance()の他に、距離計算アルゴリズムの異なる、geo_dista
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="index.html">Table Of Contents</a></h3>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="#">3.6.5. geo_distance</a><ul>
-<li><a class="reference external" href="#id1">3.6.5.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.6.5.2. 書式</a></li>
-<li><a class="reference external" href="#id3">3.6.5.3. 説明</a></li>
-<li><a class="reference external" href="#id4">3.6.5.4. 引数</a></li>
-<li><a class="reference external" href="#id6">3.6.5.5. 返値</a></li>
-<li><a class="reference external" href="#id7">3.6.5.6. 例</a></li>
+<li><a class="reference external" href="#">3.7.1. geo_distance</a><ul>
+<li><a class="reference external" href="#id1">3.7.1.1. 名前</a></li>
+<li><a class="reference external" href="#id2">3.7.1.2. 書式</a></li>
+<li><a class="reference external" href="#id3">3.7.1.3. 説明</a></li>
+<li><a class="reference external" href="#id4">3.7.1.4. 引数</a></li>
+<li><a class="reference external" href="#id6">3.7.1.5. 返値</a></li>
+<li><a class="reference external" href="#id7">3.7.1.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="geo_in_rectangle.html"
-                                  title="previous chapter">3.6.4. geo_in_rectangle</a></p>
+            <p class="topless"><a href="../functions.html"
+                                  title="previous chapter">3.7. 組み込み関数一覧</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="developer.html"
-                                  title="next chapter">4. groonga開発者向け情報</a></p>
+            <p class="topless"><a href="geo_in_circle.html"
+                                  title="next chapter">3.7.2. geo_in_circle</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/geo_distance.txt"
+              <li><a href="../_sources/functions/geo_distance.txt"
                      rel="nofollow">Show Source</a></li>
             </ul>
           <div id="searchbox" style="display: none">
             <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
+              <form class="search" action="../search.html" method="get">
                 <input type="text" name="q" size="18" />
                 <input type="submit" value="Go" />
                 <input type="hidden" name="check_keywords" value="yes" />
@@ -146,22 +146,22 @@ geo_distance()の他に、距離計算アルゴリズムの異なる、geo_dista
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="developer.html" title="4. groonga開発者向け情報"
+          <a href="geo_in_circle.html" title="3.7.2. geo_in_circle"
              >next</a> |</li>
         <li class="right" >
-          <a href="geo_in_rectangle.html" title="3.6.4. geo_in_rectangle"
+          <a href="../functions.html" title="3.7. 組み込み関数一覧"
              >previous</a> |</li>
-        <li><a href="index.html">groonga v0.1.6 documentation</a> &raquo;</li>
-          <li><a href="reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="functions.html" >3.6. 組み込み関数一覧</a> &raquo;</li> 
+        <li><a href="../index.html">groonga v0.1.8 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../functions.html" >3.7. 組み込み関数一覧</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
+      &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
   </body>
 </html>

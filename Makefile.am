@@ -23,6 +23,7 @@ dist-hook:
 	rm -rf `find $(distdir) -name '*.cache'`
 	rm -rf `find $(distdir) -name '*.bak'`
 	rm -rf `find $(distdir) -name '*.orig'`
+	find $(distdir)/doc/ja -type f | grep -Ev "/(README|.+\.(rd|js|html|css|png))$$" | xargs rm -f
 	rm -rf $(distdir)/doc/ja/_sources
 	rm -rf $(distdir)/doc/ja/build
 	rm -rf $(distdir)/doc/ja/source

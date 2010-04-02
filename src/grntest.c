@@ -37,8 +37,8 @@
 #endif /* HAVE_NETINET_IN_H */
 
 #define __USE_XOPEN
-#include "lib/ctx.h"
-
+#include "lib/str.h"
+#include "lib/com.h"
 
 #ifdef WIN32
 #include <Windows.h>

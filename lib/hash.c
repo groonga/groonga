@@ -419,6 +419,14 @@ exit :
   return rc;
 }
 
+grn_id
+grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
+{
+  uint8_t res;
+  ARRAY_BITMAP_AT(array, id, res);
+  return res ? id : GRN_ID_NIL;
+}
+
 grn_rc
 grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array, grn_table_sort_key *keys, int n_keys)
 {
@@ -1673,6 +1681,14 @@ grn_hash_next(grn_ctx *ctx, grn_hash *hash, grn_id id)
     if (res) { return id; }
   }
   return GRN_ID_NIL;
+}
+
+grn_id
+grn_hash_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
+{
+  uint8_t res;
+  BITMAP_AT(hash, id, res);
+  return res ? id : GRN_ID_NIL;
 }
 
 int

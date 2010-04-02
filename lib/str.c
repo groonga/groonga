@@ -18,9 +18,9 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include "db.h"
 #include "ctx.h"
 #include "str.h"
-#include "db.h" /* for GRN_(U)INT8/16_VALUE */
 
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE
@@ -428,34 +428,33 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
   const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
-  unsigned char *d, *d_;
-  uint_least8_t *cp, *ctypes;
-  size_t length = 0, ls, lp, size = nstr->orig_blen;
+  unsigned char *d, *d_, *de;
+  uint_least8_t *cp;
+  size_t length = 0, ls, lp, size = nstr->orig_blen, ds = size * 3;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
-  if (!(nstr->norm = GRN_MALLOC(size * 5 + 1))) { /* todo: realloc unless enough */
+  if (!(nstr->norm = GRN_MALLOC(ds + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (nstr->flags & GRN_STR_WITH_CHECKS) {
-    if (!(nstr->checks = GRN_MALLOC(size * 5 * sizeof(int16_t) + 1))) { /* todo: realloc unless enough */
-      GRN_FREE(nstr->norm);
-      nstr->norm = NULL;
+    if (!(nstr->checks = GRN_MALLOC(ds * sizeof(int16_t) + 1))) {
+      GRN_FREE(nstr->norm); nstr->norm = NULL;
       return GRN_NO_MEMORY_AVAILABLE;
     }
   }
   ch = nstr->checks;
   if (nstr->flags & GRN_STR_WITH_CTYPES) {
-    if (!(nstr->ctypes = GRN_MALLOC(size * 3 + 1))) { /* todo: realloc unless enough */
-      GRN_FREE(nstr->checks);
-      GRN_FREE(nstr->norm);
-      nstr->checks = NULL;
-      nstr->norm = NULL;
+    if (!(nstr->ctypes = GRN_MALLOC(ds + 1))) {
+      if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+      GRN_FREE(nstr->norm); nstr->norm = NULL;
       return GRN_NO_MEMORY_AVAILABLE;
     }
   }
-  cp = ctypes = nstr->ctypes;
+  cp = nstr->ctypes;
+  d = (unsigned char *)nstr->norm;
+  de = d + ds;
+  d_ = NULL;
   e = (unsigned char *)nstr->orig + size;
-  for (s = s_ = (unsigned char *)nstr->orig,
-       d = (unsigned char *)nstr->norm, d_ = NULL; ; s += ls) {
+  for (s = s_ = (unsigned char *)nstr->orig; ; s += ls) {
     if (!(ls = grn_str_charlen_utf8(ctx, s, e))) {
       break;
     }
@@ -480,10 +479,44 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
       if (!(lp = grn_str_charlen_utf8(ctx, p, pe))) {
         break;
       }
-      if ((*p == ' ' && removeblankp)
-          || *p < 0x20  /* skip unprintable ascii */ ) {
-        if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
+      if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
+        if (cp > nstr->ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
       } else {
+        if (de <= d + lp) {
+          unsigned char *norm;
+          ds += (ds >> 1) + lp;
+          if (!(norm = GRN_REALLOC(nstr->norm, ds + 1))) {
+            if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+            if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+            GRN_FREE(nstr->norm); nstr->norm = NULL;
+            return GRN_NO_MEMORY_AVAILABLE;
+          }
+          de = norm + ds;
+          d = norm + (d - (unsigned char *)nstr->norm);
+          nstr->norm = norm;
+          if (ch) {
+            int16_t *checks;
+            if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(int16_t)+ 1))) {
+              if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+              GRN_FREE(nstr->checks); nstr->checks = NULL;
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              return GRN_NO_MEMORY_AVAILABLE;
+            }
+            ch = checks + (ch - nstr->checks);
+            nstr->checks = checks;
+          }
+          if (cp) {
+            uint_least8_t *ctypes;
+            if (!(ctypes = GRN_REALLOC(nstr->ctypes, ds + 1))) {
+              GRN_FREE(nstr->ctypes); nstr->ctypes = NULL;
+              if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              return GRN_NO_MEMORY_AVAILABLE;
+            }
+            cp = ctypes + (cp - nstr->ctypes);
+            nstr->ctypes = ctypes;
+          }
+        }
         memcpy(d, p, lp);
         d_ = d;
         d += lp;

@@ -1,8 +1,12 @@
 AC_PREREQ(2.59)
-AC_INIT([groonga],[0.1.7],[groonga@razil.jp])
+AC_INIT([groonga],[0.1.8],[groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+
+AC_CANONICAL_HOST
+AC_DEFINE_UNQUOTED(HOST_CPU, ["$host_cpu"], [host CPU])
+AC_DEFINE_UNQUOTED(HOST_OS, ["$host_os"], [host OS])
 
 AC_C_BIGENDIAN
 AC_PROG_CC

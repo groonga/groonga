@@ -1,0 +1,20 @@
+{
+  "embeddedFonts" : [
+    ["ipag.ttf", "ipagp.ttf", "ipaexg.ttf"]
+  ],
+  "fontsAlias" : {
+    "stdFont": "IPAexGothic",
+    "stdBold": "IPAexGothic",
+    "stdItalic": "IPAexGothic",
+    "stdBoldItalic": "IPAexGothic",
+    "stdMono": "IPA Gothic"
+  },
+  "styles" : [
+    ["base" , {
+      "wordWrap": "CJK"
+    }],
+    ["literal" , {
+      "wordWrap": "None"
+    }]
+  ]
+}

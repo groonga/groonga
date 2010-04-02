@@ -29,6 +29,7 @@
 /src/grnslap
 Makefile
 Makefile.in
+version.sh
 /examples/kv
 /examples/index
 /doc/ja/.buildinfo
@@ -37,3 +38,4 @@ Makefile.in
 /doc/ja/build/
 /doc/ja/modindex.html
 /doc/ja/objects.inv
+/lib/icudump

@@ -315,6 +315,9 @@ const char *grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_
 grn_rc grn_hash_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_array_remove(grn_ctx *ctx, const char *path);
 
+grn_id grn_hash_at(grn_ctx *ctx, grn_hash *hash, grn_id id);
+grn_id grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id);
+
 #ifdef __cplusplus
 }
 #endif

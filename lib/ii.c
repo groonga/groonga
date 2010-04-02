@@ -5412,7 +5412,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   btr *bt = NULL;
   grn_rc rc = GRN_SUCCESS;
   int rep, orp, weight, max_interval = 0;
-  token_info *ti, **tis, **tip, **tie;
+  token_info *ti, **tis = NULL, **tip, **tie;
   uint32_t n = 0, rid, sid, nrid, nsid;
   grn_operator mode = GRN_OP_EXACT;
   grn_wv_mode wvm = grn_wv_none;
@@ -5438,6 +5438,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   */
   rep = 0;
   orp = op == GRN_OP_OR;
+  if (!string_len) { goto exit; }
   if (!(tis = GRN_MALLOC(sizeof(token_info *) * string_len * 2))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -5565,7 +5566,7 @@ exit :
   for (tip = tis; tip < tis + n; tip++) {
     if (*tip) { token_info_close(ctx, *tip); }
   }
-  GRN_FREE(tis);
+  if (tis) { GRN_FREE(tis); }
   grn_ii_resolve_sel_and(ctx, s, op);
   //  grn_hash_cursor_clear(r);
   bt_close(ctx, bt);
