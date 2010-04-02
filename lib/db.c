@@ -1487,6 +1487,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       rc = grn_array_truncate(ctx, (grn_array *)table);
       break;
     }
+    grn_obj_touch(ctx, table, NULL);
   }
   GRN_API_RETURN(rc);
 }
@@ -5308,6 +5309,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_pat_remove(ctx, path);
     }
+    grn_obj_touch(ctx, db, NULL);
     break;
   case GRN_TABLE_HASH_KEY :
     remove_index(ctx, obj, GRN_HOOK_INSERT);
@@ -5318,6 +5320,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_hash_remove(ctx, path);
     }
+    grn_obj_touch(ctx, db, NULL);
     break;
   case GRN_TABLE_NO_KEY :
     remove_columns(ctx, obj);
@@ -5327,6 +5330,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_array_remove(ctx, path);
     }
+    grn_obj_touch(ctx, db, NULL);
     break;
   case GRN_COLUMN_VAR_SIZE :
     remove_index(ctx, obj, GRN_HOOK_SET);
@@ -5336,6 +5340,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_ja_remove(ctx, path);
     }
+    grn_obj_touch(ctx, db, NULL);
     break;
   case GRN_COLUMN_FIX_SIZE :
     remove_index(ctx, obj, GRN_HOOK_SET);
@@ -5345,6 +5350,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_ra_remove(ctx, path);
     }
+    grn_obj_touch(ctx, db, NULL);
     break;
   case GRN_COLUMN_INDEX :
     delete_source_hook(ctx, obj);
@@ -5354,6 +5360,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_ii_remove(ctx, path);
     }
+    grn_obj_touch(ctx, db, NULL);
     break;
   default :
     if (GRN_DB_OBJP(obj)) {
@@ -5362,6 +5369,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
         grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
         grn_obj_delete_by_id(ctx, db, id, 1);
       }
+      grn_obj_touch(ctx, db, NULL);
     } else {
       grn_obj_close(ctx, obj);
     }
