@@ -96,8 +96,8 @@ data_normalize_utf8(void)
             "㌖㌖㌖㌖");
 
   ADD_DATUM("tilde and fullwidth tilde and wave dash",
-            "~～〜",
-            "~~~");
+            "~~~",
+            "~～〜");
 
 #undef ADD_DATUM
 }
