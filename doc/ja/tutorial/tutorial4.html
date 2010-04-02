@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.4. さまざまな検索条件の指定 &mdash; groonga v0.1.8 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.8',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.8 documentation" href="../index.html" />
+    <link rel="up" title="2. チュートリアル" href="../tutorial.html" />
+    <link rel="next" title="2.5. 高度な検索" href="tutorial5.html" />
+    <link rel="prev" title="2.3. さまざまな種類をもったデータの保存" href="tutorial3.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial5.html" title="2.5. 高度な検索"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial3.html" title="2.3. さまざまな種類をもったデータの保存"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.8 documentation</a> &raquo;</li>
+          <li><a href="../tutorial.html" accesskey="U">2. チュートリアル</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1>2.4. さまざまな検索条件の指定<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行うことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことができます。</p>
+<div class="section" id="javascript">
+<h2>2.4.1. JavaScriptに似た文法での絞込・全文検索<a class="headerlink" href="#javascript" title="Permalink to this headline">¶</a></h2>
+<p>selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメータには、JavaScriptの式に似た文法で条件を指定する点です。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --filter &quot;_id &lt;= 1&quot; --output_columns _id,_key
+[[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;]]]]
+</pre></div>
+</div>
+<p>ここで、filterパラメータには</p>
+<blockquote>
+_id &lt;= 1</blockquote>
+<p>という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果として得られます。</p>
+<p>queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。</p>
+</div>
+<div class="section" id="scorer">
+<h2>2.4.2. scorerを利用したソート<a class="headerlink" href="#scorer" title="Permalink to this headline">¶</a></h2>
+<p>selectコマンドのscorerパラメータは、
+全文検索を行った結果の各レコードに対して処理を行うためのパラメータです。</p>
+<p>filterパラメータと同様に、
+JavaScriptの式に似たな文法で様々な条件を指定することができます。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --scorer &quot;_score = rand()&quot; --output_columns _id,_key,_score --sortby _score
+[[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[2,&quot;http://example.net/&quot;,846930886],[1,&quot;http://example.org/&quot;,1804289383]]]]
+&gt; select --table Site --scorer &quot;_score = rand()&quot; --output_columns _id,_key,_score --sortby _score
+[[0,1268381300.12763,0.000164],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[1,&quot;http://example.org/&quot;,1681692777],[2,&quot;http://example.net/&quot;,1714636915]]]]
+</pre></div>
+</div>
+<p>検索結果には、&#8217;_score&#8217;という名前の、全文検索のスコアが代入されている仮想的なカラムが付与されることをチュートリアル中ソートの項目で説明しました。</p>
+<p>上記の実行例では、scorerパラメータに</p>
+<blockquote>
+_score = rand()</blockquote>
+<p>という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全文検索のスコアを乱数で上書きしています。</p>
+<p>sortbyパラメータには、</p>
+<blockquote>
+_score</blockquote>
+<p>を指定しています。これは、スコア順に昇順にソートすることを意味しています。</p>
+<p>よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わります。</p>
+</div>
+<div class="section" id="id2">
+<h2>2.4.3. 位置情報を用いた絞込・ソート<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度を用いて絞込やソートができます。</p>
+<p>位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存します。</p>
+<p>経緯度をデータを入力するためには、&#8221;緯度のミリ秒x経度のミリ秒&#8221;という形式の文字列を代入する必要があります。</p>
+<p>ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列はそれぞれ&#8221;128452975x503157902&#8221;/&#8221;128487316x502920929&#8221;となります。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name location --type WGS84GeoPoint
+[[0,1270201535.64472,0.021989]]
+&gt; load --table Site
+&gt; [
+&gt;  {&quot;_key&quot;:&quot;http://example.org/&quot;,&quot;location&quot;:&quot;128452975x503157902&quot;}
+&gt;  {&quot;_key&quot;:&quot;http://example.net/&quot;,&quot;location&quot;:&quot;128487316x502920929&quot;},
+&gt; ]
+[[0,1270201983.7626,16.321463],2]
+&gt; select --table Site --query _id:1 OR _id:2 --output_columns _key,location
+[[0,1270212859.17031,0.000546],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;]],[&quot;http://example.org/&quot;,&quot;128487316x502920929&quot;],[&quot;http://example.net/&quot;,&quot;128452975x503157902&quot;]]]]
+</pre></div>
+</div>
+<p>scorerパラメータにおいて、 <a class="reference external" href="../functions/geo_distance.html"><em>geo_distance</em></a> 関数を用いることにより、２点間の距離を計算することができます。</p>
+<p>ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、geo_distance関数に与える文字列は&#8221;128515259x503187188&#8221;となります。</p>
+<p>実行例:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_id:1 OR _id:2&quot; --output_columns _key,location,_score --scorer &#39;_score = geo_distance(location, &quot;128515259x503187188&quot;)&#39;
+[[0,1270213835.41697,0.000657],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http://example.org/&quot;,&quot;128452975x503157902&quot;,2054],[&quot;http://example.net/&quot;,&quot;128487316x502920929&quot;,6720]]]]
+</pre></div>
+</div>
+<p>この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れているようです。</p>
+<p>geo_distance関数は、_scoreを通じてソートでも用いることができます。</p>
+<p>実行例:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_id:1 OR _id:2&quot; --output_columns _key,location,_score --scorer &#39;_score = geo_distance(location, &quot;128515259x503187188&quot;)&#39; --sortby -_score
+[[0,1270213835.41697,0.000657],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http://example.org/&quot;,&quot;128452975x503157902&quot;,2054],[&quot;http://example.net/&quot;,&quot;128487316x502920929&quot;,6720]]]]
+</pre></div>
+</div>
+<p>「ある地点から何m以内に存在する」といった絞込も可能です。</p>
+<p>filterパラメータにおいて、 <a class="reference external" href="../functions/geo_in_circle.html"><em>geo_in_circle</em></a> 関数を用いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することができます。</p>
+<p>たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。</p>
+<p>実行例:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --output_columns _key,location --filter &#39;geo_in_circle(location, &quot;128515259x503187188&quot;, 5000)&#39;
+</pre></div>
+</div>
+<p>また、経緯度が指定の矩形領域内であるかどうかを判定する <a class="reference external" href="../functions/geo_in_rectangle.html"><em>geo_in_rectangle</em></a> 関数も存在します。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">2.4. さまざまな検索条件の指定</a><ul>
+<li><a class="reference external" href="#javascript">2.4.1. JavaScriptに似た文法での絞込・全文検索</a></li>
+<li><a class="reference external" href="#scorer">2.4.2. scorerを利用したソート</a></li>
+<li><a class="reference external" href="#id2">2.4.3. 位置情報を用いた絞込・ソート</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="tutorial3.html"
+                                  title="previous chapter">2.3. さまざまな種類をもったデータの保存</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="tutorial5.html"
+                                  title="next chapter">2.5. 高度な検索</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/tutorial/tutorial4.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial5.html" title="2.5. 高度な検索"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial3.html" title="2.3. さまざまな種類をもったデータの保存"
+             >previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.8 documentation</a> &raquo;</li>
+          <li><a href="../tutorial.html" >2. チュートリアル</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>

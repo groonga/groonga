@@ -21,7 +21,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.8 documentation" href="index.html" />
     <link rel="up" title="3. リファレンスマニュアル" href="reference.html" />
-    <link rel="next" title="3.5. 疑似カラム (pseudo_column)" href="pseudo_column.html" />
+    <link rel="next" title="3.4. 疑似カラム (pseudo_column)" href="pseudo_column.html" />
     <link rel="prev" title="3.2.21. view_add" href="commands/view_add.html" /> 
   </head>
   <body>
@@ -32,7 +32,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="pseudo_column.html" title="3.5. 疑似カラム (pseudo_column)"
+          <a href="pseudo_column.html" title="3.4. 疑似カラム (pseudo_column)"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="commands/view_add.html" title="3.2.21. view_add"
@@ -66,7 +66,7 @@
 <p>以下の型が組込型としてあらかじめ定義されています。</p>
 <p><tt class="docutils literal"><span class="pre">Object</span></tt></p>
 <blockquote>
-任意のテーブルに属する全てのレコード <a class="footnote-reference" href="#id7" id="id5">[1]</a></blockquote>
+任意のテーブルに属する全てのレコード <a class="footnote-reference" href="#id9" id="id5">[1]</a></blockquote>
 <p><tt class="docutils literal"><span class="pre">Bool</span></tt></p>
 <blockquote>
 bool型。trueとfalse。</blockquote>
@@ -111,23 +111,34 @@ ieee754形式の64bit浮動小数点数。</blockquote>
 2Gbyte以下の文字列。</blockquote>
 <p><tt class="docutils literal"><span class="pre">TokyoGeoPoint</span></tt></p>
 <blockquote>
-日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。</blockquote>
+日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。
+&#8220;経度のミリ秒x緯度のミリ秒&#8221;という文字列表現を持つ。
+度分秒形式であれば、x度y分z秒は(((x * 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。</blockquote>
 <p><tt class="docutils literal"><span class="pre">WGS84GeoPoint</span></tt></p>
 <blockquote>
-世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。</blockquote>
-</div>
+世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。
+&#8220;経度のミリ秒x緯度のミリ秒&#8221;という文字列表現を持つ。
+度分秒形式であれば、x度y分z秒は(((x * 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。</blockquote>
 </div>
 <div class="section" id="id6">
-<h1>3.4. ベクトルとして格納できない型<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<h2>3.3.4. 型に関する制限事項<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h3>3.3.4.1. テーブルの主キーに指定できない型<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>Text型とLongText型については、テーブルの主キーに指定することはできません。</p>
+</div>
+<div class="section" id="id8">
+<h3>3.3.4.2. ベクトルとして格納できない型<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>groongaのカラムは、ある型のベクトルを保存することができます。しかし、ShortText, Text, LongTextの３つの型についてはベクトルとして保存することはできません。</p>
 <p>テーブル型は、ベクトルとして格納することができます。よって、ShortTextのベクトルを保存したい場合には、主キーがShortText型のテーブルを別途作成し、そのテーブルを型として利用します。</p>
 <p class="rubric">脚注</p>
-<table class="docutils footnote" frame="void" id="id7" rules="none">
+<table class="docutils footnote" frame="void" id="id9" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id5">[1]</a></td><td>Object型はv1.2でサポートされます。</td></tr>
 </tbody>
 </table>
+</div>
+</div>
 </div>
 
 
@@ -142,9 +153,13 @@ ieee754形式の64bit浮動小数点数。</blockquote>
 <li><a class="reference external" href="#id2">3.3.1. 名前</a></li>
 <li><a class="reference external" href="#id3">3.3.2. 説明</a></li>
 <li><a class="reference external" href="#id4">3.3.3. 組込型</a></li>
+<li><a class="reference external" href="#id6">3.3.4. 型に関する制限事項</a><ul>
+<li><a class="reference external" href="#id7">3.3.4.1. テーブルの主キーに指定できない型</a></li>
+<li><a class="reference external" href="#id8">3.3.4.2. ベクトルとして格納できない型</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#id6">3.4. ベクトルとして格納できない型</a></li>
+</ul>
+</li>
 </ul>
 
             <h4>Previous topic</h4>
@@ -152,7 +167,7 @@ ieee754形式の64bit浮動小数点数。</blockquote>
                                   title="previous chapter">3.2.21. view_add</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="pseudo_column.html"
-                                  title="next chapter">3.5. 疑似カラム (pseudo_column)</a></p>
+                                  title="next chapter">3.4. 疑似カラム (pseudo_column)</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/type.txt"
@@ -182,7 +197,7 @@ ieee754形式の64bit浮動小数点数。</blockquote>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="pseudo_column.html" title="3.5. 疑似カラム (pseudo_column)"
+          <a href="pseudo_column.html" title="3.4. 疑似カラム (pseudo_column)"
              >next</a> |</li>
         <li class="right" >
           <a href="commands/view_add.html" title="3.2.21. view_add"

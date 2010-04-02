@@ -150,7 +150,8 @@
 <h3>2.1.2.5. テーブルの作成<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="../commands/table_create.html"><em>table_create</em></a> コマンドを使用してテーブルを作成します。</p>
 <p>groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主キーには型と、その格納方法を指定する必要があります。</p>
-<p>型については、本チュートリアルでは触れません。:doc:<cite>type</cite> の項を参照してください。主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まります。しかし、本チュートリアルでは触れません。</p>
+<p>型については、のちのチュートリアルで触れます。データの種類をあらわしているもの、とイメージしてください。</p>
+<p>主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まります。これも、のちのチュートリアルで触れます。</p>
 <p>ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、&#8217;Site&#8217;という名前のテーブルを作成します。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
@@ -245,11 +246,11 @@
 <p>queryパラメータに与えた「_id:1」というのは、&#8217;_id&#8217;という名前のカラムに&#8216;1&#8217;という値が入っているレコードを検索する、という意味です。</p>
 <p>_keyでも検索してみましょう。</p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_key:\&quot;http://example.org/\^^
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_key:\&quot;http://example.org/\&quot;&quot;
 [[0,1269964004.37746,0.0006],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
-<p>queryパラメータに与えた「&#8221;_key:&#8221;<a class="reference external" href="http://example.org/">http://example.org/</a>^^」というのは、&#8217;_key&#8217;という名前のカラムに&#8217;&#8221;<a class="reference external" href="http://example.org/">http://example.org/</a>&#8220;&#8217;という値が入っているレコードを検索する、という意味です。</p>
+<p>queryパラメータに与えた「_key:&#8221;<a class="reference external" href="http://example.org/">http://example.org/</a>&#8220;」というのは、&#8217;_key&#8217;という名前のカラムに&#8217;&#8221;<a class="reference external" href="http://example.org/">http://example.org/</a>&#8220;&#8217;という値が入っているレコードを検索する、という意味です。</p>
 </div>
 <div class="section" id="id14">
 <h3>2.1.2.12. 全文検索<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
@@ -302,11 +303,14 @@
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --sortby -_id
 [[0,1270032573.15816,0.000224],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[9,&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;],[8,&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;],[7,&quot;http://example.net/atv&quot;,&quot;test test test record seven.&quot;],[6,&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;],[5,&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;],[4,&quot;http://example.net/afr&quot;,&quot;test record four.&quot;],[3,&quot;http://example.com/&quot;,&quot;test test record three.&quot;],[2,&quot;http://example.net/&quot;,&quot;test record 2.&quot;],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
-&gt; select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
-[[0,1270094939.95113,0.000409],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_score&quot;,&quot;Int32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,1,&quot;This is test record 1!&quot;],[2,1,&quot;test record 2.&quot;],[4,1,&quot;test record four.&quot;],[3,2,&quot;test test record three.&quot;],[9,2,&quot;test test record nine.&quot;],[8,2,&quot;test test record eight.&quot;],[7,3,&quot;test test test record seven.&quot;],[5,3,&quot;test test test record five.&quot;],[6,4,&quot;test test test test record six.&quot;]]]]
 </pre></div>
 </div>
 <p>出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことができます。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
+[[0,1270094939.95113,0.000409],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_score&quot;,&quot;Int32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,1,&quot;This is test record 1!&quot;],[2,1,&quot;test record 2.&quot;],[4,1,&quot;test record four.&quot;],[3,2,&quot;test test record three.&quot;],[9,2,&quot;test test record nine.&quot;],[8,2,&quot;test test record eight.&quot;],[7,3,&quot;test test test record seven.&quot;],[5,3,&quot;test test test record five.&quot;],[6,4,&quot;test test test test record six.&quot;]]]]
+</pre></div>
+</div>
 <p>ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数のカラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカラムの値でソートさせることができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query title:@test --output_columns _id,_score,title --sortby _score,_id

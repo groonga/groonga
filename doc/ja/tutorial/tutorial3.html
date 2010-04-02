@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2.3. 高度な検索 &mdash; groonga v0.1.8 documentation</title>
+    <title>2.3. さまざまな種類をもったデータの保存 &mdash; groonga v0.1.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.8 documentation" href="../index.html" />
     <link rel="up" title="2. チュートリアル" href="../tutorial.html" />
-    <link rel="next" title="3. リファレンスマニュアル" href="../reference.html" />
+    <link rel="next" title="2.4. さまざまな検索条件の指定" href="tutorial4.html" />
     <link rel="prev" title="2.2. ネットワークを通じた利用" href="tutorial2.html" /> 
   </head>
   <body>
@@ -32,7 +32,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../reference.html" title="3. リファレンスマニュアル"
+          <a href="tutorial4.html" title="2.4. さまざまな検索条件の指定"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="tutorial2.html" title="2.2. ネットワークを通じた利用"
@@ -48,59 +48,67 @@
           <div class="body">
             
   <div class="section" id="id1">
-<h1>2.3. 高度な検索<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
-<p>groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソート、ドリルダウン検索、位置情報(緯度・経度)を用いた絞込・ソートを行うことができます。</p>
-<div class="section" id="javascript">
-<h2>2.3.1. JavaScriptに似た文法での絞込・全文検索<a class="headerlink" href="#javascript" title="Permalink to this headline">¶</a></h2>
-<p>selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメータには、JavaScriptの式に似た文法で条件を指定する点です。</p>
-<p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --filter &quot;_id &lt;= 1&quot; --output_columns _id,_key
-[[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;]]]]
-</pre></div>
-</div>
-<p>ここで、filterパラメータには</p>
-<blockquote>
-_id &lt;= 1</blockquote>
-<p>という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果として得られます。</p>
-<p>queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。</p>
-</div>
-<div class="section" id="scorer">
-<h2>2.3.2. scorerの利用<a class="headerlink" href="#scorer" title="Permalink to this headline">¶</a></h2>
-<p>selectコマンドのscorerパラメータは、
-全文検索を行った結果の各レコードに対して処理を行うためのパラメータです。</p>
-<p>filterパラメータと同様に、
-JavaScriptの式に似たな文法で様々な条件を指定することができます。</p>
-<p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --scorer &quot;_score = rand()&quot; --output_columns _id,_key,_score --sortby _score
-[[0,1268381229.56842,0.000219],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[2,&quot;http://example.net/&quot;,846930886],[1,&quot;http://example.org/&quot;,1804289383]]]]
-&gt; select --table Site --scorer &quot;_score = rand()&quot; --output_columns _id,_key,_score --sortby _score
-[[0,1268381300.12763,0.000164],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[1,&quot;http://example.org/&quot;,1681692777],[2,&quot;http://example.net/&quot;,1714636915]]]]
-</pre></div>
-</div>
-<p>検索結果には、&#8217;_score&#8217;というなめの、全文検索のスコアが代入されている仮想的なカラムが付与されることをチュートリアル中ソートの項目で説明しました。</p>
-<p>上記の実行例では、scorerパラメータに</p>
-<blockquote>
-_score = rand()</blockquote>
-<p>という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全文検索のスコアを乱数で上書きしています。</p>
-<p>sortbyパラメータには、</p>
-<blockquote>
-_score</blockquote>
-<p>を指定しています。これは、スコア順に昇順にソートすることを意味しています。</p>
-<p>よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わります。</p>
-</div>
+<h1>2.3. さまざまな種類をもったデータの保存<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>groongaでは、さまざまなデータを格納させることが出来ます。</p>
 <div class="section" id="id2">
-<h2>2.3.3. ドリルダウン<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>執筆中です。</p>
+<h2>2.3.1. データ型<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>groongaでは、数値（整数・小数）や文字列や時刻や経緯度などの情報を格納することができます。</p>
+<p>ここでは、Int32型のカラムに整数を格納、Float型のカラムに浮動小数点の小数を、ShortText型のカラムに文字列を、Time型のカラムに時間を格納する例を示します。経緯度の格納については、のちのチュートリアルで触れます。</p>
+<p>その他のデータ型の一覧は、 <a class="reference external" href="../type.html"><em>データ型</em></a> を参照してください。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
+[[0,1270207173.01411,0.004999]]
+&gt; column_create --table Type --name number --type Int32
+[[0,1270207175.98991,0.013264]]
+&gt; column_create --table Type --name float --type Float
+[[0,1270207178.55963,0.015518]]
+&gt; column_create --table Type --name string --type ShortText
+[[0,1270207181.1696,0.021165]]
+&gt; column_create --table Type --name time --type Time
+[[0,1270207184.08842,0.020519]]
+&gt; load --table Type
+&gt; [{&quot;_key&quot;:&quot;sample&quot;,&quot;number&quot;:12345,&quot;float&quot;:42.195,&quot;string&quot;:&quot;GROONGA&quot;,&quot;Time&quot;:1234567890.12}]
+[[0,1270207187.28363,2.457387],1]
+&gt; select --table Type
+[[0,1270207192.45432,0.00027],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;time&quot;,&quot;Time&quot;],[&quot;string&quot;,&quot;ShortText&quot;],[&quot;number&quot;,&quot;Int32&quot;],[&quot;float&quot;,&quot;Float&quot;]],[1,&quot;sample&quot;,0.0,&quot;GROONGA&quot;,12345,42.195]]]]
+</pre></div>
+</div>
 </div>
 <div class="section" id="id3">
-<h2>2.3.4. 位置情報の利用<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>filterパラメータにおいて、 <a class="reference external" href="../functions/geo_in_circle.html"><em>geo_in_circle</em></a> / <a class="reference external" href="../functions/geo_in_rectangle.html"><em>geo_in_rectangle</em></a> の両関数を用いることができます。それぞれ、指定されたカラムに保存された位置情報が、あるポイントから円の範囲、矩形の範囲に存在するかどうかを返す関数です。この関数を用いることにより、位置情報での検索が可能となります。</p>
-<p>位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存します。</p>
-<p>scorerパラメータにおいて、 <a class="reference external" href="../functions/geo_distance.html"><em>geo_distance</em></a> 関数を用いることにより、２点間の距離を計算することができます。</p>
+<h2>2.3.2. テーブル型<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>table_createで作成したテーブルを、カラムの型として使うことが出来ます。</p>
+<p>また、output_columnsにおいて「.」を区切りとして、参照先のテーブルに存在するカラムを指定すると、指定したカラムの値を表示することができます。</p>
+<p>ここでは、先のチュートリアルで作成したSiteテーブルに手を加え、どのサイトをリンクしているのかを保存してみましょう。</p>
+<p>他のテーブルを参照するカラムにデータを入力する場合には、参照先のテーブルの_keyカラムの値を代入する必要があります。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name link --type Site
+[[0,1270195299.07024,0.00774]]
+&gt; load --table Site
+&gt; [{&quot;_key&quot;:&quot;http://example.org/&quot;,&quot;link&quot;:&quot;http://example.net/&quot;}]
+[[0,1270195299.07804,0.02184],1]
+&gt; select --table Site --output_columns _key,title,link._key,link.title --query title:@this
+[[0,1270195334.29349,0.000411],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;link._key&quot;,&quot;ShortText&quot;],[&quot;link.title&quot;,&quot;ShortText&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,&quot;http://example.net/&quot;,&quot;test record 2.&quot;]]]]
+</pre></div>
+</div>
+<p>このように、linkカラムに他のサイトへの参照を保存することができました。また、参照先の_keyとtitleカラムの内容を表示することができました。</p>
 </div>
 <div class="section" id="id4">
-<h2>2.3.5. マルチカラム検索<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
-<p>執筆中です。</p>
+<h2>2.3.3. ベクターカラム<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>column_createコマンドでカラムを作成するとき、&#8211;flagsオプションでCOLUMN_VECTORフラグを指定すると、複数の値を配列で格納できるカラムが作成されます。</p>
+<p>テーブル型で配列を格納するカラムは、1対多の参照関係を表すのに有効です。</p>
+<p>テーブル型のチュートリアルでは、Siteテーブルに手を加え、どのサイトをリンクしているのかを保存しました。しかし、通常は1つのサイトから多くのサイトにリンクが張られています。複数のリンク情報を格納するために、複数の参照関係を保存するカラムを作成してみましょう。</p>
+<p>他のテーブルを参照するベクターカラムにデータを入力する場合には、参照先のテーブルの_keyカラムの値の「配列」を代入する必要があります。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name links --flags COLUMN_VECTOR --type Site
+[[0,1270196209.44907,0.025909]]
+&gt; load --table Site
+&gt; [{&quot;_key&quot;:&quot;http://example.org/&quot;,&quot;links&quot;:[&quot;http://example.net/&quot;,&quot;http://example.org/&quot;,&quot;http://example.com/&quot;]}]
+[[0,1270196221.00445,50.638141],1]
+&gt; select --table Site --output_columns _key,title,links._key,links.title --query title:@this
+[[0,1270196347.7695,0.000375],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;links._key&quot;,&quot;ShortText&quot;],[&quot;links.title&quot;,&quot;ShortText&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,[&quot;http://example.net/&quot;,&quot;http://example.org/&quot;,&quot;http://example.com/&quot;],[&quot;test record 2.&quot;,&quot;This is test record 1!&quot;,&quot;test test record three.&quot;]]]]]
+</pre></div>
+</div>
+<p>このように、複数の参照関係が保存できました。また、output_columnsによって、複数の参照先のカラム値も表示させることができました。</p>
 </div>
 </div>
 
@@ -112,12 +120,10 @@ _score</blockquote>
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="#">2.3. 高度な検索</a><ul>
-<li><a class="reference external" href="#javascript">2.3.1. JavaScriptに似た文法での絞込・全文検索</a></li>
-<li><a class="reference external" href="#scorer">2.3.2. scorerの利用</a></li>
-<li><a class="reference external" href="#id2">2.3.3. ドリルダウン</a></li>
-<li><a class="reference external" href="#id3">2.3.4. 位置情報の利用</a></li>
-<li><a class="reference external" href="#id4">2.3.5. マルチカラム検索</a></li>
+<li><a class="reference external" href="#">2.3. さまざまな種類をもったデータの保存</a><ul>
+<li><a class="reference external" href="#id2">2.3.1. データ型</a></li>
+<li><a class="reference external" href="#id3">2.3.2. テーブル型</a></li>
+<li><a class="reference external" href="#id4">2.3.3. ベクターカラム</a></li>
 </ul>
 </li>
 </ul>
@@ -126,8 +132,8 @@ _score</blockquote>
             <p class="topless"><a href="tutorial2.html"
                                   title="previous chapter">2.2. ネットワークを通じた利用</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="../reference.html"
-                                  title="next chapter">3. リファレンスマニュアル</a></p>
+            <p class="topless"><a href="tutorial4.html"
+                                  title="next chapter">2.4. さまざまな検索条件の指定</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/tutorial/tutorial3.txt"
@@ -157,7 +163,7 @@ _score</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../reference.html" title="3. リファレンスマニュアル"
+          <a href="tutorial4.html" title="2.4. さまざまな検索条件の指定"
              >next</a> |</li>
         <li class="right" >
           <a href="tutorial2.html" title="2.2. ネットワークを通じた利用"

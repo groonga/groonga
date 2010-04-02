@@ -21,7 +21,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.1.8 documentation" href="index.html" />
     <link rel="next" title="3.1. 実行環境" href="process.html" />
-    <link rel="prev" title="2.3. 高度な検索" href="tutorial/tutorial3.html" /> 
+    <link rel="prev" title="2.5. 高度な検索" href="tutorial/tutorial5.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,7 +34,7 @@
           <a href="process.html" title="3.1. 実行環境"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tutorial/tutorial3.html" title="2.3. 高度な検索"
+          <a href="tutorial/tutorial5.html" title="2.5. 高度な検索"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">groonga v0.1.8 documentation</a> &raquo;</li> 
       </ul>
@@ -83,28 +83,28 @@
 <li class="toctree-l2"><a class="reference external" href="type.html#id2">3.3.1. 名前</a></li>
 <li class="toctree-l2"><a class="reference external" href="type.html#id3">3.3.2. 説明</a></li>
 <li class="toctree-l2"><a class="reference external" href="type.html#id4">3.3.3. 組込型</a></li>
+<li class="toctree-l2"><a class="reference external" href="type.html#id6">3.3.4. 型に関する制限事項</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="type.html#id6">3.4. ベクトルとして格納できない型</a></li>
-<li class="toctree-l1"><a class="reference external" href="pseudo_column.html">3.5. 疑似カラム (pseudo_column)</a><ul>
-<li class="toctree-l2"><a class="reference external" href="pseudo_column.html#id1">3.5.1. 名前</a></li>
-<li class="toctree-l2"><a class="reference external" href="pseudo_column.html#id2">3.5.2. 説明</a></li>
+<li class="toctree-l1"><a class="reference external" href="pseudo_column.html">3.4. 疑似カラム (pseudo_column)</a><ul>
+<li class="toctree-l2"><a class="reference external" href="pseudo_column.html#id1">3.4.1. 名前</a></li>
+<li class="toctree-l2"><a class="reference external" href="pseudo_column.html#id2">3.4.2. 説明</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="expr.html">3.6. grn式 (grn_expr)</a><ul>
-<li class="toctree-l2"><a class="reference external" href="expr.html#id1">3.6.1. 名前</a></li>
-<li class="toctree-l2"><a class="reference external" href="expr.html#id2">3.6.2. 説明</a></li>
-<li class="toctree-l2"><a class="reference external" href="expr.html#id3">3.6.3. 例</a></li>
-<li class="toctree-l2"><a class="reference external" href="expr.html#query">3.6.4. query形式</a></li>
-<li class="toctree-l2"><a class="reference external" href="expr.html#script">3.6.5. script形式</a></li>
+<li class="toctree-l1"><a class="reference external" href="expr.html">3.5. grn式 (grn_expr)</a><ul>
+<li class="toctree-l2"><a class="reference external" href="expr.html#id1">3.5.1. 名前</a></li>
+<li class="toctree-l2"><a class="reference external" href="expr.html#id2">3.5.2. 説明</a></li>
+<li class="toctree-l2"><a class="reference external" href="expr.html#id3">3.5.3. 例</a></li>
+<li class="toctree-l2"><a class="reference external" href="expr.html#query">3.5.4. query形式</a></li>
+<li class="toctree-l2"><a class="reference external" href="expr.html#script">3.5.5. script形式</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="functions.html">3.7. 組み込み関数一覧</a><ul>
-<li class="toctree-l2"><a class="reference external" href="functions/geo_distance.html">3.7.1. geo_distance</a></li>
-<li class="toctree-l2"><a class="reference external" href="functions/geo_in_circle.html">3.7.2. geo_in_circle</a></li>
-<li class="toctree-l2"><a class="reference external" href="functions/geo_in_rectangle.html">3.7.3. geo_in_rectangle</a></li>
-<li class="toctree-l2"><a class="reference external" href="functions/now.html">3.7.4. now</a></li>
-<li class="toctree-l2"><a class="reference external" href="functions/rand.html">3.7.5. rand</a></li>
+<li class="toctree-l1"><a class="reference external" href="functions.html">3.6. 組み込み関数一覧</a><ul>
+<li class="toctree-l2"><a class="reference external" href="functions/geo_distance.html">3.6.1. geo_distance</a></li>
+<li class="toctree-l2"><a class="reference external" href="functions/geo_in_circle.html">3.6.2. geo_in_circle</a></li>
+<li class="toctree-l2"><a class="reference external" href="functions/geo_in_rectangle.html">3.6.3. geo_in_rectangle</a></li>
+<li class="toctree-l2"><a class="reference external" href="functions/now.html">3.6.4. now</a></li>
+<li class="toctree-l2"><a class="reference external" href="functions/rand.html">3.6.5. rand</a></li>
 </ul>
 </li>
 </ul>
@@ -117,8 +117,8 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <h4>Previous topic</h4>
-            <p class="topless"><a href="tutorial/tutorial3.html"
-                                  title="previous chapter">2.3. 高度な検索</a></p>
+            <p class="topless"><a href="tutorial/tutorial5.html"
+                                  title="previous chapter">2.5. 高度な検索</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="process.html"
                                   title="next chapter">3.1. 実行環境</a></p>
@@ -154,7 +154,7 @@
           <a href="process.html" title="3.1. 実行環境"
              >next</a> |</li>
         <li class="right" >
-          <a href="tutorial/tutorial3.html" title="2.3. 高度な検索"
+          <a href="tutorial/tutorial5.html" title="2.5. 高度な検索"
              >previous</a> |</li>
         <li><a href="index.html">groonga v0.1.8 documentation</a> &raquo;</li> 
       </ul>
