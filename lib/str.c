@@ -450,10 +450,11 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
     }
   }
   cp = nstr->ctypes;
+  d = (unsigned char *)nstr->norm;
   de = d + ds;
+  d_ = NULL;
   e = (unsigned char *)nstr->orig + size;
-  for (s = s_ = (unsigned char *)nstr->orig,
-       d = (unsigned char *)nstr->norm, d_ = NULL; ; s += ls) {
+  for (s = s_ = (unsigned char *)nstr->orig; ; s += ls) {
     if (!(ls = grn_str_charlen_utf8(ctx, s, e))) {
       break;
     }
