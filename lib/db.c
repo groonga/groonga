@@ -1267,7 +1267,6 @@ grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk)
   GRN_API_RETURN(r);
 }
 
-
 static grn_rc
 grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
 {
@@ -1291,7 +1290,7 @@ grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
 }
 
 static void
-call_delete_hook(grn_ctx *ctx, grn_obj *table, grn_id rid)
+call_delete_hook(grn_ctx *ctx, grn_obj *table, grn_id rid, const void *key, unsigned key_size)
 {
   if (rid) {
     grn_hook *hooks = DB_OBJ(table)->hooks[GRN_HOOK_DELETE];
@@ -1303,7 +1302,7 @@ call_delete_hook(grn_ctx *ctx, grn_obj *table, grn_id rid)
       GRN_UINT32_INIT(&flags_, 0);
       GRN_TEXT_INIT(&oldvalue_, GRN_OBJ_DO_SHALLOW_COPY);
       GRN_TEXT_INIT(&value_, 0);
-      // GRN_TEXT_SET_REF(&oldvalue_, key, key_size);
+      GRN_TEXT_SET_REF(&oldvalue_, key, key_size);
       GRN_UINT32_SET(ctx, &id_, rid);
       GRN_UINT32_SET(ctx, &flags_, GRN_OBJ_SET);
       grn_ctx_push(ctx, &id_);
@@ -1354,7 +1353,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
   if (table) {
     if (key && key_size) {
       rid = grn_table_get(ctx, table, key, key_size);
-      call_delete_hook(ctx, table, rid);
+      call_delete_hook(ctx, table, rid, key, key_size);
     }
     switch (table->header.type) {
     case GRN_DB :
@@ -1399,7 +1398,11 @@ _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   if (table) {
-    call_delete_hook(ctx, table, id);
+    const void *key;
+    unsigned key_size;
+    if ((key = _grn_table_key(ctx, table, id, &key_size))) {
+      call_delete_hook(ctx, table, id, key, key_size);
+    }
     // todo : support optarg
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
