@@ -132,6 +132,7 @@ typedef SOCKET grn_sock;
 #define CALLBACK __stdcall
 
 #include <intrin.h>
+#include <errno.h>
 #else /* WIN32 */
 
 #define GROONGA_API
