@@ -229,7 +229,7 @@
 </div>
 <p>selectコマンドで、データが入っていることを確認しましょう。:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site
-[[0,1269855382.8395,0.000121],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;],[2,&quot;http://example.net/&quot;,&quot;test record 2.&quot;]]]]
+[[0,1270094085.02055,0.000149],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;],[2,&quot;http://example.net/&quot;,&quot;test record 2.&quot;],[3,&quot;http://example.com/&quot;,&quot;test test record three.&quot;],[4,&quot;http://example.net/afr&quot;,&quot;test record four.&quot;],[5,&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;],[6,&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;],[7,&quot;http://example.net/atv&quot;,&quot;test test test record seven.&quot;],[8,&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;],[9,&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;]]]]
 </pre></div>
 </div>
 </div>
@@ -274,8 +274,8 @@
 <p>selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表示するカラムを指定することが出来ます。</p>
 <p>複数のカラムを指定する場合は、カンマ(,)区切りで指定します。</p>
 <p>実行例</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --output_columns _key,title
-[[0,1270020944.60754,0.000107],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;],[&quot;http://example.net/&quot;,&quot;test record 2.&quot;]]]]
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --output_columns _key,title,_score --query title:@test
+[[0,1270094680.9463,0.000353],[[[9],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,1],[&quot;http://example.net/&quot;,&quot;test record 2.&quot;,1],[&quot;http://example.com/&quot;,&quot;test test record three.&quot;,2],[&quot;http://example.net/afr&quot;,&quot;test record four.&quot;,1],[&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;,3],[&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;,4],[&quot;http://example.net/atv&quot;,&quot;test test test record seven.&quot;,3],[&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;,2],[&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;,2]]]]
 </pre></div>
 </div>
 <p>groongaの検索結果には、「_score」という名前のカラムが追加されています。このカラムは、全文検索の条件が合致する文書ほど高い数値が入ります。</p>
@@ -302,6 +302,8 @@
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --sortby -_id
 [[0,1270032573.15816,0.000224],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[9,&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;],[8,&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;],[7,&quot;http://example.net/atv&quot;,&quot;test test test record seven.&quot;],[6,&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;],[5,&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;],[4,&quot;http://example.net/afr&quot;,&quot;test record four.&quot;],[3,&quot;http://example.com/&quot;,&quot;test test record three.&quot;],[2,&quot;http://example.net/&quot;,&quot;test record 2.&quot;],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
+&gt; select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
+[[0,1270094939.95113,0.000409],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_score&quot;,&quot;Int32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,1,&quot;This is test record 1!&quot;],[2,1,&quot;test record 2.&quot;],[4,1,&quot;test record four.&quot;],[3,2,&quot;test test record three.&quot;],[9,2,&quot;test test record nine.&quot;],[8,2,&quot;test test record eight.&quot;],[7,3,&quot;test test test record seven.&quot;],[5,3,&quot;test test test record five.&quot;],[6,4,&quot;test test test test record six.&quot;]]]]
 </pre></div>
 </div>
 <p>出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことができます。</p>

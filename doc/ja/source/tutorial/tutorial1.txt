@@ -219,9 +219,7 @@ Siteテーブルのtitleカラムを検索対象とする、'blog_title'とい�
 selectコマンドで、データが入っていることを確認しましょう。::
 
  > select --table Site
- [[0,1269855382.8395,0.000121],[[[2],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"],[2,"http://example.net/","test record 2."]]]]
-
-.. FIXME: 実行例を最新のものに更新する。
+ [[0,1270094085.02055,0.000149],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"],[2,"http://example.net/","test record 2."],[3,"http://example.com/","test test record three."],[4,"http://example.net/afr","test record four."],[5,"http://example.org/aba","test test test record five."],[6,"http://example.com/rab","test test test test record six."],[7,"http://example.net/atv","test test test record seven."],[8,"http://example.org/gat","test test record eight."],[9,"http://example.com/vdw","test test record nine."]]]]
 
 データの検索
 ^^^^^^^^^^^^
@@ -256,8 +254,6 @@ queryパラメータでは、インデックスを用いた全文検索を行う
  > select --table Site --query title:@this
  [[0,1268381101.20846,0.000401],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
 
-.. FIXME: 実行例を最新のものに更新する。
-
 titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。
 
 queryパラメータに与えた「title:@this」というのが、'title'という名前のカラムに'this'という文字列が含まれているレコードを検索する、という意味です。
@@ -271,7 +267,6 @@ match_columnsパラメータに'title'、queryパラメータに'this'という�
  > select --table Site --match_columns title --query this
  [[0,1268381101.20846,0.000401],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
 
-.. FIXME: 実行例を最新のものに更新する。
 
 出力カラムの指定
 ^^^^^^^^^^^^^^^^
@@ -282,12 +277,11 @@ selectコマンドにおいて、output_columnsパラメータを用いること
 
 実行例 ::
 
- > select --table Site --output_columns _key,title
- [[0,1270020944.60754,0.000107],[[[2],[["_key","ShortText"],["title","ShortText"]],["http://example.org/","This is test record 1!"],["http://example.net/","test record 2."]]]]
+ > select --table Site --output_columns _key,title,_score --query title:@test
+ [[0,1270094680.9463,0.000353],[[[9],[["_key","ShortText"],["title","ShortText"],["_score","Int32"]],["http://example.org/","This is test record 1!",1],["http://example.net/","test record 2.",1],["http://example.com/","test test record three.",2],["http://example.net/afr","test record four.",1],["http://example.org/aba","test test test record five.",3],["http://example.com/rab","test test test test record six.",4],["http://example.net/atv","test test test record seven.",3],["http://example.org/gat","test test record eight.",2],["http://example.com/vdw","test test record nine.",2]]]]
 
 groongaの検索結果には、「_score」という名前のカラムが追加されています。このカラムは、全文検索の条件が合致する文書ほど高い数値が入ります。
 
-.. FIXME: _key,title,_scoreの３つをoutput_columnsに指定した実行例を追加する。
 
 表示範囲指定
 ^^^^^^^^^^^^
@@ -318,10 +312,10 @@ sortbyパラメータにカラム名を指定することで、そのカラム�
 
  > select --table Site --sortby -_id
  [[0,1270032573.15816,0.000224],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[9,"http://example.com/vdw","test test record nine."],[8,"http://example.org/gat","test test record eight."],[7,"http://example.net/atv","test test test record seven."],[6,"http://example.com/rab","test test test test record six."],[5,"http://example.org/aba","test test test record five."],[4,"http://example.net/afr","test record four."],[3,"http://example.com/","test test record three."],[2,"http://example.net/","test record 2."],[1,"http://example.org/","This is test record 1!"]]]]
+ > select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
+ [[0,1270094939.95113,0.000409],[[[9],[["_id","UInt32"],["_score","Int32"],["title","ShortText"]],[1,1,"This is test record 1!"],[2,1,"test record 2."],[4,1,"test record four."],[3,2,"test test record three."],[9,2,"test test record nine."],[8,2,"test test record eight."],[7,3,"test test test record seven."],[5,3,"test test test record five."],[6,4,"test test test test record six."]]]]
 
 出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことができます。
-
-.. FIXME: _scoreカラムのみでソートした実行結果を追加する。
 
 ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数のカラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカラムの値でソートさせることができます。
 
