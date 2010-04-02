@@ -10386,7 +10386,7 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   grn_timeval_now(ctx, &tv);\
   et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC\
     + (tv.tv_usec - ctx->impl->tv.tv_usec);\
-  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012zu %s", (intptr_t)ctx, et, msg);\
+  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s", (intptr_t)ctx, et, msg);\
 }
 
 grn_obj *
