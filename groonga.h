@@ -1730,7 +1730,7 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_TEXT)
 #define GRN_SHORT_TEXT_INIT(obj,flags) \
   GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_SHORT_TEXT)
-#define GRN_LONG_TEXT_INIT(obj) \
+#define GRN_LONG_TEXT_INIT(obj,flags) \
   GRN_VALUE_VAR_SIZE_INIT(obj, flags, GRN_DB_LONG_TEXT)
 #define GRN_TEXT_SET_REF(obj,str,len) do {\
   (obj)->u.b.head = (char *)(str);\
