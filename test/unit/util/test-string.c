@@ -289,8 +289,243 @@ test_cgidec_invalid(void)
   const char *str = "%1%2%3";
 
   GRN_TEXT_INIT(&buf, 0);
-  grn_text_urldec(&context, &buf, str, strchr(str, 0), '\0');
+  grn_text_cgidec(&context, &buf, str, strchr(str, 0), '\0');
   GRN_TEXT_PUTC(&context, &buf, '\0');
   cut_assert_equal_string("%1%2%3", GRN_TEXT_VALUE(&buf));
   grn_obj_unlink(&context, &buf);
+}
+
+void
+test_url_path_normalize(void)
+{
+  char buf[1024];
+  const char *str = "/a/b/../c/d/././e";
+
+  grn_str_url_path_normalize(&context, str, strlen(str), buf, 1024);
+  cut_assert_equal_string("/a/c/d/e", buf);
+}
+
+void
+test_url_path_normalize_above_parent(void)
+{
+  char buf[1024];
+  const char *str = "/a/../../b";
+
+  grn_str_url_path_normalize(&context, str, strlen(str), buf, 1024);
+  /* NOTE: not in GRN_API_ENTER, rc is not seted */
+  grn_test_assert_error(GRN_SUCCESS,
+                        "parent path doesn't exist.",
+                        &context);
+}
+
+void
+test_text_otoj(void)
+{
+  /* TODO: json spec. */
+  grn_obj obj, buf;
+  const char str_pattern[] = "\"'\\aAzZ09 \n\t\r日本語",
+             str_esc_pattern[] = "\"\\\"'\\\\aAzZ09 \\n\\t\\r日本語\"";
+
+  cut_omit("grn_text_otoj for obj of GRN_VOID type may be null.");
+
+  GRN_TEXT_INIT(&buf, 0);
+
+  /* SHORT_TEXT */
+  GRN_SHORT_TEXT_INIT(&obj, 0);
+  GRN_TEXT_PUTS(&context, &obj, str_pattern);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &obj, '\0');
+  cut_assert_equal_string(str_esc_pattern, GRN_TEXT_VALUE(&buf));
+  GRN_BULK_REWIND(&buf); grn_obj_unlink(&context, &obj);
+
+  /* TEXT */
+  GRN_TEXT_INIT(&obj, 0);
+  GRN_TEXT_PUTS(&context, &obj, str_pattern);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &obj, '\0');
+  cut_assert_equal_string(str_esc_pattern, GRN_TEXT_VALUE(&buf));
+  GRN_BULK_REWIND(&buf); grn_obj_unlink(&context, &obj);
+
+  /* LONG_TEXT */
+  GRN_LONG_TEXT_INIT(&obj, 0);
+  GRN_TEXT_PUTS(&context, &obj, str_pattern);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &obj, '\0');
+  cut_assert_equal_string(str_esc_pattern, GRN_TEXT_VALUE(&buf));
+  GRN_BULK_REWIND(&buf); grn_obj_unlink(&context, &obj);
+
+  /* VOID */
+  GRN_VOID_INIT(&obj);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* BOOL */
+  GRN_BOOL_INIT(&obj, 0);
+  GRN_BOOL_SET(&context, &obj, 1);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_BOOL_SET(&context, &obj, 0);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* INT8 */
+  GRN_INT8_INIT(&obj, 0);
+  GRN_INT8_SET(&context, &obj, INT8_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_INT8_SET(&context, &obj, INT8_MIN);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* UINT8 */
+  GRN_UINT8_INIT(&obj, 0);
+  GRN_UINT8_SET(&context, &obj, UINT8_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_UINT8_SET(&context, &obj, 0);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* INT16 */
+  GRN_INT16_INIT(&obj, 0);
+  GRN_INT16_SET(&context, &obj, INT16_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_INT16_SET(&context, &obj, INT16_MIN);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* UINT16 */
+  GRN_UINT16_INIT(&obj, 0);
+  GRN_UINT16_SET(&context, &obj, UINT16_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_UINT16_SET(&context, &obj, 0);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* INT32 */
+  GRN_INT32_INIT(&obj, 0);
+  GRN_INT32_SET(&context, &obj, INT32_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_INT32_SET(&context, &obj, INT32_MIN);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* UINT32 */
+  GRN_UINT32_INIT(&obj, 0);
+  GRN_UINT32_SET(&context, &obj, UINT32_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_UINT32_SET(&context, &obj, 0);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* INT64 */
+  GRN_INT64_INIT(&obj, 0);
+  GRN_INT64_SET(&context, &obj, INT64_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_INT64_SET(&context, &obj, INT64_MIN);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* UINT64 */
+  GRN_UINT64_INIT(&obj, 0);
+  GRN_UINT64_SET(&context, &obj, UINT64_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_UINT64_SET(&context, &obj, 0);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  /* TIME: TIME is same as INT64  */
+  GRN_TIME_INIT(&obj, 0);
+  GRN_TIME_SET(&context, &obj, INT64_MAX);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  GRN_TEXT_PUTC(&context, &buf, ' ');
+  GRN_TIME_SET(&context, &obj, INT64_MIN);
+  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
+  grn_obj_unlink(&context, &obj);
+  GRN_TEXT_PUTC(&context, &buf, '\0');
+
+  cut_assert_equal_string(cut_take_printf(
+    "%s "
+    "%s %s "
+    "%" PRId8 " %" PRId8 " "
+    "%" PRIu8 " %" PRIu8 " "
+    "%" PRId16 " %" PRId16 " "
+    "%" PRIu16 " %" PRIu16 " "
+    "%" PRId32 " %" PRId32 " "
+    "%" PRIu32 " %" PRIu32 " "
+    "%" PRId64 " %" PRId64 " "
+    "%" PRIu64 " %" PRIu64 " "
+    "%#.15g %#.15g", /* Time sec float*/
+    "null",
+    "true", "false",
+    INT8_MAX, INT8_MIN,
+    UINT8_MAX, (uint8_t)0,
+    INT16_MAX, INT16_MIN,
+    UINT16_MAX, (uint16_t)0,
+    INT32_MAX, INT32_MIN,
+    UINT32_MAX, (uint32_t)0,
+    INT64_MAX, INT64_MIN,
+    UINT64_MAX, (uint64_t)0,
+    (double)INT64_MAX / GRN_TIME_USEC_PER_SEC, (double)INT64_MIN / GRN_TIME_USEC_PER_SEC
+  ), GRN_TEXT_VALUE(&buf));
+
+  /* FIXME: FLOAT */
+
+  /* FIXME: create macro for TOKYO_GEO_POINT/WGS84_GEO_POINT */
+  /* FIXME* unknown bulk */
+  /* FIXME: GRN_UVECTOR */
+  /* FIXME: GRN_VECTOR */
+  /* FIXME: table with format */
+  /* FIXME: table without format */
+  /* FIXME: grn_text_atoj */
+
+  grn_obj_unlink(&context, &buf);
+}
+
+void
+data_str_len(void)
+{
+#define ADD_DATUM(label, expected, input)               \
+  gcut_add_datum(label,                                 \
+                 "expected", G_TYPE_UINT, expected,   \
+                 "input", G_TYPE_STRING, input,         \
+                 NULL)
+
+  ADD_DATUM("halfwidth",
+            11,
+            "ABC! & ABC!");
+
+  ADD_DATUM("with newlines",
+            209,
+            "groongaは組み込み型の全文検索エンジンです。\n"
+            "DBMSやスクリプト言語処理系等に組み込むこと\n"
+            "によって、その全文検索機能を強化することが\n"
+            "できます。n-gramインデックスと単語インデッ\n"
+            "クスの特徴を兼ね備えた、高速かつ高精度な転\n"
+            "置インデックスタイプのエンジンです。コンパ\n"
+            "クトな実装ですが、大規模な文書量と検索要求\n"
+            "を処理できるように設計されています。また、\n"
+            "純粋なn-gramインデックスの作成も可能です。");
+#undef ADD_DATUM
+}
+
+/* TODO: support all encoding supported by groonga */
+void
+test_str_len(gpointer data)
+{
+  size_t result, expected;
+  const gchar *input;
+  const char *input_end;
+
+  input = gcut_data_get_string(data, "input");
+  input_end = strchr(input, '\0');
+  result = grn_str_len(&context, input, GRN_ENC_UTF8, &input_end);
+  expected = (size_t)gcut_data_get_uint(data, "expected");
+  cut_assert_equal_size(expected, result);
 }
