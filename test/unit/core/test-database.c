@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,12 +21,15 @@
 
 #include "../lib/grn-assertions.h"
 
+#include <str.h>
+
 void test_domain(void);
 void test_range(void);
 void test_cursor(void);
 void test_get_persistent_object_from_opened_database(void);
 void test_recreate_temporary_object_on_opened_database(void);
 void test_size(void);
+void test_expire_cache_on_recreate(void);
 
 static gchar *tmp_directory;
 
@@ -191,4 +194,66 @@ test_size(void)
   cut_assert_equal_uint(n_builtin_objects + 1,
                         grn_table_size(context, database));
   grn_test_assert_context(context);
+}
+
+static const gchar *
+send_command(gchar *command)
+{
+  unsigned int send_id, receive_id;
+  int flags = 0;
+  grn_rc rc = GRN_SUCCESS;
+  gchar *result, *result_status_end;
+  unsigned int result_length;
+  const gchar *result_status_start_mark = "[[";
+  const gchar *result_status_end_mark = "],";
+
+  send_id = grn_ctx_send(context, command, strlen(command), flags);
+  receive_id = grn_ctx_recv(context, &result, &result_length, &flags);
+  cut_assert_equal_uint(send_id, receive_id);
+
+  cut_assert_not_equal_uint(0, result_length);
+  if (g_str_has_prefix(result, result_status_start_mark)) {
+    const gchar *result_status_start;
+    const gchar *rest;
+
+    result_status_start = result + strlen(result_status_start_mark);
+    rc = grn_atoi(result_status_start, result + result_length, &rest);
+    cut_assert_not_equal_string(result_status_start, rest);
+    grn_test_assert(rc, cut_message("<%.*s>", result_length, result));
+  }
+
+  result_status_end = g_strstr_len(result, result_length,
+                                   result_status_end_mark);
+  if (result_status_end) {
+    const gchar *result_end_mark = "]";
+    const gchar *result_body;
+    size_t result_body_length;
+
+    result_body = result_status_end + strlen(result_status_end_mark);
+    result_body_length =
+      result_length - (result_body - result) - strlen(result_end_mark);
+    return cut_take_strndup(result_body, result_body_length);
+  } else {
+    return cut_take_strndup(result, result_length);
+  }
+}
+
+void
+test_expire_cache_on_recreate(void)
+{
+  const gchar *path;
+
+  path = cut_build_path(tmp_directory, "database.groonga", NULL);
+  database = grn_db_create(context, path, NULL);
+  send_command("table_create Sites 0 ShortText");
+  send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
+  cut_assert_equal_string("[[[1],[[\"_key\",\"ShortText\"]],[\"groonga.org\"]]]",
+                          send_command("select Sites --output_columns _key"));
+  send_command("table_remove Sites");
+  grn_obj_remove(context, database);
+
+  database = grn_db_create(context, path, NULL);
+  send_command("table_create Sites 0 ShortText");
+  cut_assert_equal_string("[[[0],[[\"_key\",\"ShortText\"]]]]",
+                          send_command("select Sites --output_columns _key"));
 }
