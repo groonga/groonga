@@ -1,0 +1,38 @@
+.. highlightlang:: none
+
+ドキュメント作成
+================
+
+Sphinxのインストール
+--------------------------
+
+groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは以下のように導入します。::
+
+ # aptitude install python_setuptools
+ # eazy_install sphinx
+
+htmlの作成
+----------------
+
+以下のコマンドでhtmlが作成されます。::
+
+ % make html
+
+pdfの作成
+---------------
+
+groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント(IPA Gothic/IPAexGothic)が必要となります。
+
+rst2pdfのインストール
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+以下のようにしてインストールできます。::
+
+ # eazy_install rst2pdf
+
+pdfの作成
+^^^^^^^^^^^^^^^
+
+以下のコマンドでpdfが作成されます。::
+
+ % make pdf

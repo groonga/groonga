@@ -125,7 +125,19 @@ html_theme = 'default'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+  'rightsidebar': 'true',
+  'stickysidebar': 'true',
+  'relbarbgcolor': '#ED4517',
+  'relbartextcolor': 'white',
+  'relbarlinkcolor': '#F8F0FF',
+  'footerbgcolor': '#ED4517',
+  'footertextcolor': 'white',
+  'sidebarbgcolor': '#FFd587',
+  'sidebartextcolor': '#ED4517',
+  'sidebarlinkcolor': '#666666',
+  'bodyfont': '#666666',
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []

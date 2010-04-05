@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.5. ドリルダウン &mdash; groonga v0.1.8 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.8',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.1.8 documentation" href="../index.html" />
+    <link rel="up" title="2. チュートリアル" href="../tutorial.html" />
+    <link rel="next" title="2.6. タグ検索・参照関係の逆引き" href="tutorial06.html" />
+    <link rel="prev" title="2.4. さまざまな検索条件の指定" href="tutorial04.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial06.html" title="2.6. タグ検索・参照関係の逆引き"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial04.html" title="2.4. さまざまな検索条件の指定"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.8 documentation</a> &raquo;</li>
+          <li><a href="../tutorial.html" accesskey="U">2. チュートリアル</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1>2.5. ドリルダウン<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>groongaでは、特定のカラム値で検索結果をグループ化することができます。これをドリルダウンと呼びます。</p>
+<p>ドリルダウンを行ったテーブルに対して、カラム値を取得することもできます。ドリルダウンを行ったテーブルには、_nsubrecsという仮想的なカラムが追加されます。このカラムには、ドリルダウンされる前の検索結果に存在したレコード数が入ります。</p>
+<p>複数のカラムに対して、それぞれドリルダウンを行うことができます。複数のカラムに対してドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えます。</p>
+<p>ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順で並び替えることができます。</p>
+<p>ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラメータと、drilldown_limitパラメータによって、offsetとlimitを指定することができます。</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="tutorial04.html"
+                                  title="previous chapter">2.4. さまざまな検索条件の指定</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="tutorial06.html"
+                                  title="next chapter">2.6. タグ検索・参照関係の逆引き</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/tutorial/tutorial05.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial06.html" title="2.6. タグ検索・参照関係の逆引き"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial04.html" title="2.4. さまざまな検索条件の指定"
+             >previous</a> |</li>
+        <li><a href="../index.html">groonga v0.1.8 documentation</a> &raquo;</li>
+          <li><a href="../tutorial.html" >2. チュートリアル</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>
