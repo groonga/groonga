@@ -70,5 +70,8 @@ void        grn_test_object_inspect       (GString          *output,
                                            grn_ctx          *context,
                                            grn_obj          *object);
 
+const gchar *grn_test_send_command        (grn_ctx          *context,
+                                           const gchar      *command);
+
 
 #endif
