@@ -553,6 +553,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
       if (test_p(grntest_task[task_id].jobtype)) {
         char logbuf[LOGBUF_LEN];
         int loglen;
+        FILE *outfp = grntest_job[grntest_task[task_id].job_id].outputlog;
         logbuf[LOGBUF_LEN-2] = '\0';
         if (fgets(logbuf, LOGBUF_LEN, 
                   grntest_job[grntest_task[task_id].job_id].inputlog) == NULL) {
@@ -568,11 +569,12 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
         logbuf[loglen] = '\0';
 
         if (diff_result(logbuf, loglen, res, res_len)) {
-          fprintf(stderr, "DIFF:command:%s\n", command);
-          fprintf(stderr, "DIFF:result:");
-          fwrite(res, 1, res_len, stderr);
-          fputc('\n', stderr);
-          fprintf(stderr, "DIFF:expect:%s\n", logbuf);
+          fprintf(outfp, "DIFF:command:%s\n", command);
+          fprintf(outfp, "DIFF:result:");
+          fwrite(res, 1, res_len, outfp);
+          fputc('\n', outfp);
+          fprintf(outfp, "DIFF:expect:%s\n", logbuf);
+          fflush(outfp);
         }
       }
       grn_obj_close(ctx, &end_time);
@@ -649,6 +651,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
       if (test_p(grntest_task[task_id].jobtype)) {
         char logbuf[LOGBUF_LEN];
         int loglen;
+        FILE *outfp = grntest_job[grntest_task[task_id].job_id].outputlog;
         logbuf[LOGBUF_LEN-2] = '\0';
         if (fgets(logbuf, LOGBUF_LEN, 
                   grntest_job[grntest_task[task_id].job_id].inputlog) == NULL) {
@@ -664,11 +667,12 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
         logbuf[loglen] = '\0';
 
         if (diff_result(logbuf, loglen, res, res_len)) {
-          fprintf(stderr, "DIFF:command:%s\n", command);
-          fprintf(stderr, "DIFF:result:");
-          fwrite(res, 1, res_len, stderr);
-          fputc('\n', stderr);
-          fprintf(stderr, "DIFF:expect:%s\n", logbuf);
+          fprintf(outfp, "DIFF:command:%s\n", command);
+          fprintf(outfp, "DIFF:result:");
+          fwrite(res, 1, res_len, outfp);
+          fputc('\n', outfp);
+          fprintf(outfp, "DIFF:expect:%s\n", logbuf);
+          fflush(outfp);
         }
       }
       grn_obj_close(ctx, &end_time);
@@ -1293,10 +1297,17 @@ parse_line(char *buf, int start, int end, int num)
         return 13;
       }
     } else {
+      char outlog[BUF_LEN];
       grntest_job[num].inputlog = fopen(tmpbuf, "rb");
       if (grntest_job[num].inputlog == NULL) {
         fprintf(stderr, "Cannot open %s\n", tmpbuf);
         return 14;
+      }
+      sprintf(outlog, "%s.diff", tmpbuf);
+      grntest_job[num].outputlog = fopen(outlog, "wb");
+      if (grntest_job[num].outputlog == NULL) {
+        fprintf(stderr, "Cannot open %s\n", outlog);
+        return 15;
       }
     }
     strcpy(grntest_job[num].logfile, tmpbuf);
