@@ -16,7 +16,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "grn-test-utils.h"
+#include "grn-assertions.h"
+#include <str.h>
 
 const gchar *
 grn_rc_to_string(grn_rc rc)
@@ -571,4 +572,46 @@ grn_test_object_inspect (GString *output, grn_ctx *context, grn_obj *object)
   }
 
   g_string_append(output, ">");
+}
+
+const gchar *
+grn_test_send_command(grn_ctx *context, const gchar *command)
+{
+  unsigned int send_id, receive_id;
+  int flags = 0;
+  grn_rc rc = GRN_SUCCESS;
+  gchar *result, *result_status_end;
+  unsigned int result_length;
+  const gchar *result_status_start_mark = "[[";
+  const gchar *result_status_end_mark = "],";
+
+  send_id = grn_ctx_send(context, command, strlen(command), flags);
+  receive_id = grn_ctx_recv(context, &result, &result_length, &flags);
+  cut_assert_equal_uint(send_id, receive_id);
+
+  cut_assert_not_equal_uint(0, result_length);
+  if (g_str_has_prefix(result, result_status_start_mark)) {
+    const gchar *result_status_start;
+    const gchar *rest;
+
+    result_status_start = result + strlen(result_status_start_mark);
+    rc = grn_atoi(result_status_start, result + result_length, &rest);
+    cut_assert_not_equal_string(result_status_start, rest);
+    grn_test_assert(rc, cut_message("<%.*s>", result_length, result));
+  }
+
+  result_status_end = g_strstr_len(result, result_length,
+                                   result_status_end_mark);
+  if (result_status_end) {
+    const gchar *result_end_mark = "]";
+    const gchar *result_body;
+    size_t result_body_length;
+
+    result_body = result_status_end + strlen(result_status_end_mark);
+    result_body_length =
+      result_length - (result_body - result) - strlen(result_end_mark);
+    return cut_take_strndup(result_body, result_body_length);
+  } else {
+    return cut_take_strndup(result, result_length);
+  }
 }
