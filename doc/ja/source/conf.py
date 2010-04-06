@@ -128,14 +128,14 @@ html_theme = 'default'
 html_theme_options = {
   'rightsidebar': 'true',
   'stickysidebar': 'true',
-  'relbarbgcolor': '#ED4517',
-  'relbartextcolor': 'white',
-  'relbarlinkcolor': '#F8F0FF',
-  'footerbgcolor': '#ED4517',
-  'footertextcolor': 'white',
-  'sidebarbgcolor': '#FFd587',
-  'sidebartextcolor': '#ED4517',
-  'sidebarlinkcolor': '#666666',
+#  'relbarbgcolor': '#ED4517',
+#  'relbartextcolor': 'white',
+#  'relbarlinkcolor': '#F8F0FF',
+#  'footerbgcolor': '#ED4517',
+#  'footertextcolor': 'white',
+#  'sidebarbgcolor': '#FFd587',
+#  'sidebartextcolor': '#ED4517',
+#  'sidebarlinkcolor': '#666666',
   'bodyfont': '#666666',
 }
 
