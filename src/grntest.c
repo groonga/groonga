@@ -103,18 +103,22 @@ grn_obj *grntest_db = NULL;
 #define BUF_LEN 1024
 #define MAX_PATH_LEN 256
 #define MAX_COMMAND_LEN 200000
-#define LOGBUF_LEN 10000
+#define LOGBUF_LEN 200000
 
 #define J_DO_LOCAL  1  /* do_local */
 #define J_DO_GQTP   2  /* do_gqtp */
 #define J_REP_LOCAL 3  /* rep_local */
 #define J_REP_GQTP  4  /* rep_gqtp */
+#define J_LOG_LOCAL 5  /* log_local */
+#define J_LOG_GQTP  6  /* log_gqtp */
+#define J_TEST_LOCAL 7  /* test_local */
+#define J_TEST_GQTP  8  /* test_gqtp */
 
 static char grntest_username[BUF_LEN];
 static char grntest_scriptname[BUF_LEN];
 static char grntest_date[BUF_LEN];
 static char grntest_serverhost[BUF_LEN];
-static char grntest_log_tmpbuf[BUF_LEN];
+static char grntest_log_tmpbuf[LOGBUF_LEN];
 static int grntest_serverport;
 
 struct commandtable {
@@ -132,6 +136,8 @@ struct job {
   int done;
   long long int max;
   long long int min;
+  FILE *log;
+  char logfile[BUF_LEN];
 };
 
 struct task {
@@ -162,7 +168,33 @@ grntest_atoi(const char *str, const char *end, const char **rest)
   }
   return grn_atoi(str, end, rest);
 }
-  
+
+static
+int
+log_p(int jobtype)
+{
+  if (jobtype == J_LOG_LOCAL) {
+    return 1;
+  }
+  if (jobtype == J_LOG_GQTP) {
+    return 1;
+  }
+  return 0;
+}
+
+static
+int
+test_p(int jobtype)
+{
+  if (jobtype == J_TEST_LOCAL) {
+    return 1;
+  }
+  if (jobtype == J_TEST_GQTP) {
+    return 1;
+  }
+  return 0;
+}
+
 static
 int
 report_p(int jobtype)
@@ -184,6 +216,12 @@ gqtp_p(int jobtype)
     return 1;
   }
   if (jobtype == J_REP_GQTP) {
+    return 1;
+  }
+  if (jobtype == J_LOG_GQTP) {
+    return 1;
+  }
+  if (jobtype == J_TEST_GQTP) {
     return 1;
   }
   return 0;
@@ -409,6 +447,48 @@ error_command(grn_ctx *ctx, char *command, int task_id)
 
 static
 int
+diff_result(char *expect, int elen, char *result, int rlen)
+{
+  int i;
+  char *e = NULL, *r = NULL;
+
+  i = 0;
+  while(i < elen) {
+    if (!strncmp(&expect[i], "],", 2)) {
+      e = &expect[i] + 2;
+      break;
+    }
+    i++;
+  }
+  if (e == NULL) {
+    fputc('[', stderr);
+    fwrite(expect, 1, elen, stderr);
+    fputc(']', stderr);
+    fprintf(stderr, " is not groonga command output");
+    return 1;
+  }
+
+  i = 0;
+  while(i < rlen) {
+    if (!strncmp(&result[i], "],", 2)) {
+      r = &result[i] + 2;
+      break;
+    }
+    i++;
+  }
+  if (r == NULL) {
+    fputc('[', stderr);
+    fwrite(result, 1, rlen, stderr);
+    fputc(']', stderr);
+    fprintf(stderr, " is not groonga command output");
+    return 1;
+  }
+  
+  return strncmp(e, r, strlen(e));
+}
+
+static
+int
 do_load_command(grn_ctx *ctx, char *command, int type, int task_id, 
                 long long int *load_start)
 {
@@ -464,6 +544,36 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
         }
         report_load_command(ctx, tmpbuf, task_id, *load_start, &end_time);
       }
+      if (log_p(grntest_task[task_id].jobtype)) {
+        fwrite(res, 1, res_len, grntest_job[grntest_task[task_id].job_id].log);
+        fputc('\n', grntest_job[grntest_task[task_id].job_id].log);
+        fflush(grntest_job[grntest_task[task_id].job_id].log);
+      }
+      if (test_p(grntest_task[task_id].jobtype)) {
+        char logbuf[LOGBUF_LEN];
+        int loglen;
+        logbuf[LOGBUF_LEN-2] = '\0';
+        if (fgets(logbuf, LOGBUF_LEN, 
+                  grntest_job[grntest_task[task_id].job_id].log) == NULL) {
+          fprintf(stderr, "Cannot get input-log\n");
+          error_exit_in_thread(55);
+        }
+        if (logbuf[LOGBUF_LEN-2] != '\0') {
+          fprintf(stderr, "too long line input-log\n");
+          error_exit_in_thread(56);
+        }
+        loglen = strlen(logbuf);
+        loglen--;
+        logbuf[loglen] = '\0';
+
+        if (diff_result(logbuf, loglen, res, res_len)) {
+          fprintf(stderr, "DIFF:command:%s\n", command);
+          fprintf(stderr, "DIFF:result:");
+          fwrite(res, 1, res_len, stderr);
+          fputc('\n', stderr);
+          fprintf(stderr, "DIFF:expect:%s\n", logbuf);
+        }
+      }
       grn_obj_close(ctx, &end_time);
       ret = 1;
       break;
@@ -475,6 +585,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
 
   return ret;
 }
+
 
 static
 int
@@ -490,11 +601,11 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
   grn_ctx_send(ctx, command, strlen(command), 0);
 /* fix me. 
    when command fails, ctx->rc is not 0 in local mode!
+*/
   if (ctx->rc) {
     fprintf(stderr, "ctx_send:rc=%d:command:%s\n", ctx->rc, command);
     error_exit_in_thread(1);
   }
-*/
 
   do {
     grn_ctx_recv(ctx, &res, &res_len, &flags);
@@ -528,6 +639,36 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
           tmpbuf[BUF_LEN -2] = '\0';
         }
         report_command(ctx, command, tmpbuf, task_id, &start_time, &end_time);
+      }
+      if (log_p(grntest_task[task_id].jobtype)) {
+        fwrite(res, 1, res_len, grntest_job[grntest_task[task_id].job_id].log);
+        fputc('\n', grntest_job[grntest_task[task_id].job_id].log);
+        fflush(grntest_job[grntest_task[task_id].job_id].log);
+      }
+      if (test_p(grntest_task[task_id].jobtype)) {
+        char logbuf[LOGBUF_LEN];
+        int loglen;
+        logbuf[LOGBUF_LEN-2] = '\0';
+        if (fgets(logbuf, LOGBUF_LEN, 
+                  grntest_job[grntest_task[task_id].job_id].log) == NULL) {
+          fprintf(stderr, "Cannot get input-log\n");
+          error_exit_in_thread(55);
+        }
+        if (logbuf[LOGBUF_LEN-2] != '\0') {
+          fprintf(stderr, "too long line input-log\n");
+          error_exit_in_thread(56);
+        }
+        loglen = strlen(logbuf);
+        loglen--;
+        logbuf[loglen] = '\0';
+
+        if (diff_result(logbuf, loglen, res, res_len)) {
+          fprintf(stderr, "DIFF:command:%s\n", command);
+          fprintf(stderr, "DIFF:result:");
+          fwrite(res, 1, res_len, stderr);
+          fputc('\n', stderr);
+          fprintf(stderr, "DIFF:expect:%s\n", logbuf);
+        }
       }
       grn_obj_close(ctx, &end_time);
       break;
@@ -1021,7 +1162,7 @@ static
 int
 parse_line(char *buf, int start, int end, int num)
 {
-  int i, j, error_flag = 0;
+  int i, j, error_flag = 0, log_or_test = 0;
   char tmpbuf[BUF_LEN];
 
   grntest_job[num].concurrency = 1;
@@ -1030,6 +1171,7 @@ parse_line(char *buf, int start, int end, int num)
   grntest_job[num].qnum = 0;
   grntest_job[num].max = 0LL;
   grntest_job[num].min = 9223372036854775807LL;
+  grntest_job[num].log = NULL;
 
   strncpy(grntest_job[num].jobname, &buf[start], end - start);
   grntest_job[num].jobname[end - start] = '\0';
@@ -1057,6 +1199,30 @@ parse_line(char *buf, int start, int end, int num)
     if (!strncmp(&buf[i], "rep_gqtp", 8)) {
       grntest_job[num].jobtype = J_REP_GQTP;
       i = i + 8;
+      break;
+    }
+    if (!strncmp(&buf[i], "log_local", 9)) {
+      grntest_job[num].jobtype = J_LOG_LOCAL;
+      i = i + 9;
+      log_or_test = 1;
+      break;
+    }
+    if (!strncmp(&buf[i], "log_gqtp", 8)) {
+      grntest_job[num].jobtype = J_LOG_GQTP;
+      i = i + 8;
+      log_or_test = 1;
+      break;
+    }
+    if (!strncmp(&buf[i], "test_local", 10)) {
+      grntest_job[num].jobtype = J_TEST_LOCAL;
+      i = i + 10;
+      log_or_test = 1;
+      break;
+    }
+    if (!strncmp(&buf[i], "test_gqtp", 9)) {
+      grntest_job[num].jobtype = J_TEST_GQTP;
+      i = i + 9;
+      log_or_test = 1;
       break;
     }
     error_flag = 1;
@@ -1092,15 +1258,17 @@ parse_line(char *buf, int start, int end, int num)
     }
   }
   grntest_job[num].commandfile[j] = '\0';
-  if (i == end) {
-   return 0;
-  }
+
   while (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
     i++;
   }
 
   if (i == end) {
-   return 0;
+    if (log_or_test) {
+      fprintf(stderr, "log(test)_local(gqtp) needs log(test)_filename\n");
+      return 11;
+    }
+    return 0;
   }
 
   j = 0;
@@ -1116,16 +1284,31 @@ parse_line(char *buf, int start, int end, int num)
     }
   }
   tmpbuf[j] ='\0';
-  grntest_job[num].concurrency = grntest_atoi(tmpbuf, tmpbuf + j, NULL);
-  if (grntest_job[num].concurrency == 0) {
-    return 7;
+  if (log_or_test) {
+    if (log_p(grntest_job[num].jobtype)) { 
+      grntest_job[num].log = fopen(tmpbuf, "wb");
+    } else {
+      grntest_job[num].log = fopen(tmpbuf, "rb");
+    }
+    if (grntest_job[num].log == NULL) {
+      fprintf(stderr, "Cannot open %s\n", tmpbuf);
+      return 13;
+    }
+    strcpy(grntest_job[num].logfile, tmpbuf);
+    return 0;
+  } else {
+    grntest_job[num].concurrency = grntest_atoi(tmpbuf, tmpbuf + j, NULL);
+    if (grntest_job[num].concurrency == 0) {
+      return 7;
+    }
   }
 
   while (grn_isspace(&buf[i], GRN_ENC_UTF8) == 1) {
     i++;
   }
+
   if (i == end) {
-   return 0;
+    return 0;
   }
 
   j = 0;
@@ -1369,7 +1552,17 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
         i++;
       }
     } else {
-        i++;
+      i++;
+    }
+  }
+  for (i = 0; i < jobnum; i++) {
+    if (grntest_job[i].log) {
+      int ret;
+      ret = fclose(grntest_job[i].log);
+      if (ret) {
+        fprintf(stderr, "Cannot close %s\n", grntest_job[i].logfile);
+        exit(1);
+      }
     }
   }
   return qnum;
