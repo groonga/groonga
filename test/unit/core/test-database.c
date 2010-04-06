@@ -30,6 +30,7 @@ void test_get_persistent_object_from_opened_database(void);
 void test_recreate_temporary_object_on_opened_database(void);
 void test_size(void);
 void test_expire_cache_on_recreate(void);
+void test_expression_lifetime_over_database(void);
 
 static gchar *tmp_directory;
 
@@ -197,7 +198,7 @@ test_size(void)
 }
 
 static const gchar *
-send_command(gchar *command)
+send_command(const gchar *command)
 {
   unsigned int send_id, receive_id;
   int flags = 0;
@@ -256,4 +257,63 @@ test_expire_cache_on_recreate(void)
   send_command("table_create Sites 0 ShortText");
   cut_assert_equal_string("[[[0],[[\"_key\",\"ShortText\"]]]]",
                           send_command("select Sites --output_columns _key"));
+}
+
+void
+test_expression_lifetime_over_database(void)
+{
+  const gchar *path;
+  gint i, n_tries = 100;
+  grn_obj *expression;
+
+  path = cut_build_path(tmp_directory, "database.groonga", NULL);
+  for (i = 0; i < n_tries; i++) {
+    gint j, n_records = 100;
+    const gchar *query;
+    grn_obj *table, *variable;
+    grn_obj default_column;
+
+    database = grn_db_create(context, path, NULL);
+    grn_test_assert_context(context);
+
+    send_command("table_create Sites 0 ShortText");
+    send_command("column_create Sites point COLUMN_SCALAR Int32");
+    for (j = 0; j < n_records; j++) {
+      gchar *command;
+
+      command = g_strdup_printf("load '"
+                                "[[\"_key\", \"point\"],"
+                                "[\"http://groonga.org/version/%d\",%d]]' "
+                                "Sites",
+                                j, j);
+      send_command(command);
+      g_free(command);
+    }
+
+    table = grn_ctx_get(context, "Sites", strlen("Sites"));
+    GRN_EXPR_CREATE_FOR_QUERY(context, table, expression, variable);
+    grn_obj_unlink(context, table);
+
+    GRN_TEXT_INIT(&default_column, 0);
+    GRN_TEXT_PUTS(context, &default_column, "point");
+    query = "point:50";
+    grn_expr_parse(context, expression,
+                   query, strlen(query),
+                   &default_column,
+                   GRN_OP_MATCH, GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_QUERY | GRN_EXPR_ALLOW_COLUMN);
+    grn_test_assert_context(context);
+    grn_obj_unlink(context, &default_column);
+    grn_expr_compile(context, expression);
+
+    grn_obj_remove(context, database);
+    database = NULL;
+
+    remove_tmp_directory();
+    g_mkdir_with_parents(tmp_directory, 0700);
+  }
+
+  grn_ctx_fin(context);
+  g_free(context);
+  context = NULL;
 }
