@@ -21,9 +21,16 @@ selectコマンドのfilterパラメータは、queryパラメータと同様に
 
 という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果として得られます。
 
-queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。
+また、&& や || を使って、条件のAND・OR指定をすることもできます。
 
-.. && や || での複数条件の指定方法を書く。
+実行例 ::
+
+ > select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
+ [[0,1270546187.15385,0.000376],[[[3],[["_id","UInt32"],["_key","ShortText"]],[4,"http://example.net/afr"],[5,"http://example.org/aba"],[6,"http://example.com/rab"]]]]
+ > select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
+ [[0,1270546191.08878,0.000363],[[[5],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"],[2,"http://example.net/"],[7,"http://example.net/atv"],[8,"http://example.org/gat"],[9,"http://example.com/vdw"]]]]
+
+queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。
 
 scorerを利用したソート
 ----------------------

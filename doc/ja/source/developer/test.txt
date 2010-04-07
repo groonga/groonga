@@ -11,7 +11,9 @@ Cutterのインストール
 
 groongaは、テストのフレームワークとしてCutterを用いています。
 
-DebianやUbuntuでは、GLib2.0とintltoolsの新しめの版が必要です。以下のようにしてインストールできます。::
+詳細はhttp://cutter.sourceforge.net/をごらんください。
+
+Cutterをインストールするためには、GLib2.0とintltoolsの新しめの版が必要です。DebianやUbuntuでは、以下のようにしてインストールできます。::
 
  # aptitude install libglib2.0-dev intltools
 
@@ -82,13 +84,13 @@ groongaのトップディレクトリで、以下のコマンドを実行しま�
 不正メモリアクセス・メモリリーク検出
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-環境変数CUTTER_LEAK_CHECKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。
+環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。
 
 run-test.shのみならず、make checkでも利用可能です。
 
 実行例::
 
- % CUTTER_LEAK_CHECK=yes make check
+ % CUTTER_CHECK_LEAK=yes make check
 
 デバッガ上でのテスト実行
 ^^^^^^^^^^^^^^^^^^^^^^^^

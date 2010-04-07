@@ -3,20 +3,104 @@
 タグ検索・参照関係の逆引き
 ==========================
 
-先のチュートリアルで、groongaはカラム値として他のテーブルの値の配列を持つことができることを紹介いたしました。実は、そのようなデータを保存することによって、いわゆるタグ検索を行うことが可能となります。
+本チュートリアルで、groongaはカラム値として他のテーブルへの参照の配列を持つことができることを紹介いたしました。実は、テーブルへの参照の配列データを用いることによって、いわゆるタグ検索を行うことが可能となります。
+
+タグ検索はgroongaの転置インデックスというデータ構造を用いて高速に行われます。
 
 タグ検索
 --------
 
-動画共有サイトの検索エンジンを作ることを想定します。1つの動画には、その動画の特徴を表す、複数の語句が付与されています。groongaは、「ある語句が付与されている動画の一覧を取得する」検索を高速に行うことができます。
+動画共有サイトの検索エンジンを作ることを想定します。1つの動画には、その動画の特徴を表す、複数の語句が付与されています。「ある語句が付与されている動画の一覧を取得する」検索を行いたいとします。
 
-.. タグ検索の実例
+実際に、動画情報のテーブルを作成し、検索をしてみましょう。
+
+動画の情報を保存する、Videoテーブルを作成します。Videoテーブルでは、動画のタイトルをtitleカラムに、動画のタグ情報をtagsカラムにTagテーブル型で複数格納しています。
+タグの情報を保存する、Tagテーブルを作成します。Tagテーブルでは、タグ文字列を主キーに格納し、Videoテーブルのtagsカラムに対するインデックスをindex_tagsカラムに格納しています。
+
+実行例 ::
+
+ > table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
+ [[0,1270462421.38847,0.004463]]
+ > table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
+ [[0,1270462424.3463,0.003999]]
+ > column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
+ [[0,1270462428.16529,0.004502]]
+ > column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
+ [[0,1270462431.86807,0.00462]]
+ > column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
+ [[0,1270462434.81266,0.036219]]
+ > load --table Video
+ > [
+ > {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
+ > {"_key":2,"title":"Zenigata Kinjirou","tags":["Variety","Money"]},
+ > {"_key":3,"title":"groonga Demo","tags":["IT","Server","groonga"]},
+ > {"_key":4,"title":"Moero!! Ultra Baseball","tags":["Sports","Baseball"]},
+ > {"_key":5,"title":"Hex Gone!","tags":["Variety","Quiz"]},
+ > {"_key":6,"title":"Pikonyan 1","tags":["Animation","Pikonyan"]},
+ > {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
+ > {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
+ > ]
+ [[0,1270462438.89699,0.144398],8]
+
+インデックスカラムを作成すると、全文検索が高速に行えるようになります。インデックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に更新されます。
+
+「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。
+
+実行例 ::
+
+ > select --table Video --query tags:@Variety --output_columns _key,title
+ [[0,1270462444.04748,0.000503],[[[2],[["_key","UInt32"],["title","ShortText"]],[2,"Zenigata Kinjirou"],[5,"Hex Gone!"]]]]
+ > select --table Video --query tags:@Sports --output_columns _key,title
+ [[0,1270462455.27726,0.000308],[[[2],[["_key","UInt32"],["title","ShortText"]],[1,"Soccer 2010"],[4,"Moero!! Ultra Baseball"]]]]
+ > select --table Video --query tags:@Animation --output_columns _key,title
+ [[0,1270462470.39651,0.000326],[[[3],[["_key","UInt32"],["title","ShortText"]],[6,"Pikonyan 1"],[7,"Draw 8 Month"],[8,"K.O."]]]]
+
+このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うことができました。
 
 参照関係の逆引き
 ----------------
 
-もっと一般的には、groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与することができます。タグ検索は、その1例にすぎません。
+groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与することができます。タグ検索は、その1例にすぎません。
 
 例えば、ソーシャルネットワーキングサイトにおける友人関係を逆引き検索することができます。
 
-.. マイミクされてるユーザ一覧の実例
+以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納するusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのインデックスのindex_friendsカラムを追加しています。
+
+実行例 ::
+
+ > table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
+ [[0,1270465894.62824,0.023599]]
+ > column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
+ [[0,1270466038.4294,0.018187]]
+ > column_create --table User --name friends --flags COLUMN_VECTOR --type User
+ [[0,1270466042.59198,0.018745]]
+ > column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
+ [[0,1270466046.13084,0.036433]]
+ > load --table User
+ > [
+ > {"_key":"ken","username":"健作","friends":["taro","jiro","tomo","moritapo"]}
+ > {"_key":"moritapo","username":"森田","friends":["ken","tomo"]}
+ > {"_key":"taro","username":"ぐるんが太郎","friends":["jiro","tomo"]}
+ > {"_key":"jiro","username":"ぐるんが次郎","friends":["taro","tomo"]}
+ > {"_key":"tomo","username":"トモちゃん","friends":["ken","hana"]}
+ > {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
+ > ]
+ [[0,1270466050.12869,0.117421],6]
+
+指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。
+
+実行例 ::
+
+ > select --table User --query friends:@tomo --output_columns _key,username
+ [[0,1270466054.23261,0.000369],[[[5],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["jiro","ぐるんが次郎"],["moritapo","森田"],["hana"," 花子"]]]]
+ > select --table User --query friends:@jiro --output_columns _key,username
+ [[0,1270466066.03867,0.000315],[[[3],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["hana","花子"]]]]
+
+さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみましょう。
+
+実行例 ::
+
+ > select --table User --limit 0 --drilldown friends
+ [[0,1270466082.00132,0.000313],[[[6],[["_id","UInt32"],["_key","ShortText"],["username","ShortText"],["index_friends","User"],["friends","User"]]],[[6],[["_key","ShortText"],["_nsubrecs","Int32"]],["taro",3],["jiro",3],["tomo",5],["moritapo",2],["ken",3],["hana",1]]]]
+
+このように、テーブルの参照関係を逆にたどる検索ができました。

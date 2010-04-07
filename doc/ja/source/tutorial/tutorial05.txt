@@ -5,20 +5,65 @@
 
 groongaでは、特定のカラム値で検索結果をグループ化することができます。これをドリルダウンと呼びます。
 
-.. ドリルダウンの簡単な例を示す。(selectで、drilldownパラメータ(カラム1つ)のみ指定)
+Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCounteryテーブルとします。
 
-ドリルダウンを行ったテーブルに対して、カラム値を取得することもできます。ドリルダウンを行ったテーブルには、_nsubrecsという仮想的なカラムが追加されます。このカラムには、ドリルダウンされる前の検索結果に存在したレコード数が入ります。
+実行例 ::
 
-.. ドリルダウンの簡単な例を示す。(selectで、drilldownパラメータ(カラム1つ)と、drilldown_output_columnsの指定)
+ > table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText
+ [[0,1270469136.42244,0.019242]]
+ > table_create --name SiteCountry --flags TABLE_HASH_KEY --key_type ShortText
+ [[0,1270469140.45659,0.016909]]
+ > column_create --table Site --name domain --flags COLUMN_SCALAR --type SiteDomain
+ [[0,1270469142.74619,0.012951]]
+ > column_create --table Site --name country --flags COLUMN_SCALAR --type SiteCountry
+ [[0,1270469145.46461,0.012251]]
+ > load --table Site
+ > [
+ > {"_key":"http://example.org/","domain":".org","country":"japan"},
+ > {"_key":"http://example.net/","domain":".net","country":"brazil"},
+ > {"_key":"http://example.com/","domain":".com","country":"japan"},
+ > {"_key":"http://example.net/afr","domain":".net","country":"usa"},
+ > {"_key":"http://example.org/aba","domain":".org","country":"korea"},
+ > {"_key":"http://example.com/rab","domain":".com","country":"china"},
+ > {"_key":"http://example.net/atv","domain":".net","country":"china"},
+ > {"_key":"http://example.org/gat","domain":".org","country":"usa"},
+ > {"_key":"http://example.com/vdw","domain":".com","country":"japan"}
+ > ]
+ [[0,1270469149.16135,0.158894],9]
 
-複数のカラムに対して、それぞれドリルダウンを行うことができます。複数のカラムに対してドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えます。
+domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。
 
-.. 簡単な例を示す。(selectで、drilldownパラメータにカンマ区切りで複数のパラメータの指定)
+実行例 ::
+
+ > select --table Site --limit 0 --drilldown domain
+ [[0,1270469152.56277,0.000358],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[3],[["_key","ShortText"],["_nsubrecs","Int32"]],[".org",3],[".net",3],[".com",3]]]]
+
+テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存在するカラム値を取得することもできます。ドリルダウンを行ったテーブルには、_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ化されたレコード数が入ります。
+
+実行例 ::
+
+ > select --table Site --limit 0 --drilldown domain --drilldown_output_columns _id,_key,_nsubrecs
+ [[0,1270469155.88574,0.000325],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[3],[["_id","UInt32"],["_key","ShortText"],["_nsubrecs","Int32"]],[1,".org",3],[2,".net",3],[3,".com",3]]]]
+
+複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対してドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えます。
+
+実行例 ::
+
+ > select --table Site --limit 0 --drilldown domain,country
+ [[0,1270469158.76906,0.000429],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[3],[["_key","ShortText"],["_nsubrecs","Int32"]],[".org",3],[".net",3],[".com",3]],[[5],[["_key","ShortText"],["_nsubrecs","Int32"]],["japan",3],["brazil",1],["usa",2],["korea",1],["china",2]]]]
 
 ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順で並び替えることができます。
 
-.. 例を示す。(selectで、drilldownパラメータ(カラム1つ)と、drilldown_sortbyパラメータ)
+実行例 ::
+
+ > select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs
+ [[0,1270469161.55772,0.000398],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[5],[["_key","ShortText"],["_nsubrecs","Int32"]],["brazil",1],["korea",1],["usa",2],["china",2],["japan",3]]]]
 
 ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラメータと、drilldown_limitパラメータによって、offsetとlimitを指定することができます。
 
-.. 例を示す。(selectで、drilldownパラメータ(カラム1つ)と、drilldown_offset/drilldown_limit)
+実行例 ::
+
+ > select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs --drilldown_limit 2 --drilldown_offset 2
+ [[0,1270469164.58081,0.000382],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[5],[["_key","ShortText"],["_nsubrecs","Int32"]],["usa",2],["china",2]]]]
+
+文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速です。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文字列型を主キーとするテーブルを別途作成し、そのテーブルを型とするカラムを作成します。
