@@ -1284,7 +1284,7 @@ parse_line(char *buf, int start, int end, int num)
     tmpbuf[j] = buf[i];
     i++;
     j++;
-    if (j > 16) {
+    if (j >= BUF_LEN) {
       return 6;
     }
   }
