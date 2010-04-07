@@ -51,16 +51,22 @@
 <h1>2.8. 主キーによる前方一致検索<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p>groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方一致検索を行うことができます。また、追加のオプションを指定することにより、主キーの後方一致検索をも行うことができます。</p>
 <div class="section" id="id2">
-<h2>2.8.1. パトリシア木のテーブル作成方法<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>現在、執筆中です。</p>
+<h2>2.8.1. 主キーによる前方一致検索<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キーによる前方一致検索ができるようになります。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
+[[0,1270635562.31987,0.005155]]
+&gt; load --table PatPre
+&gt; [
+&gt; {&quot;_key&quot;:&quot;ひろゆき&quot;},
+&gt; {&quot;_key&quot;:&quot;まろゆき&quot;},
+&gt; {&quot;_key&quot;:&quot;ひろあき&quot;}
+&gt; ]
+[[0,1270635565.7892,0.085917],3]
+&gt; select --table PatPre --query _key:@ひろ
+[[0,1270635568.81702,0.000386],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[3,&quot;ひろあき&quot;],[1,&quot;ひろゆき&quot;]]]]
+</pre></div>
 </div>
-<div class="section" id="id3">
-<h2>2.8.2. 主キーによる前方一致検索<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>現在、執筆中です。</p>
-</div>
-<div class="section" id="id4">
-<h2>2.8.3. 主キーによる後方一致検索<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
-<p>現在、執筆中です。</p>
 </div>
 </div>
 
@@ -73,9 +79,7 @@
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="#">2.8. 主キーによる前方一致検索</a><ul>
-<li><a class="reference external" href="#id2">2.8.1. パトリシア木のテーブル作成方法</a></li>
-<li><a class="reference external" href="#id3">2.8.2. 主キーによる前方一致検索</a></li>
-<li><a class="reference external" href="#id4">2.8.3. 主キーによる後方一致検索</a></li>
+<li><a class="reference external" href="#id2">2.8.1. 主キーによる前方一致検索</a></li>
 </ul>
 </li>
 </ul>
