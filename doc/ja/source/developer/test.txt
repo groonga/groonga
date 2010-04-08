@@ -20,9 +20,9 @@ Cutterをインストールするためには、GLib2.0とintltoolsの新しめ�
 lcovのインストール
 ^^^^^^^^^^^^^^^^^^
 
-カバレッジ情報を計測するためには、lcov 1.6以上が必要です。以下のようにしてインストールできます。::
+カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは以下のようにしてインストールできます。::
 
- # aptitude install libglib2.0-dev intltools
+ % sudo aptitude install -y lcov
 
 libmemcachedのインストール
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
