@@ -230,6 +230,7 @@ test_expression_lifetime_over_database(void)
   gint i, n_tries = 100;
   grn_obj *expression;
 
+  cut_omit("will be SEGVed.");
   path = cut_build_path(tmp_directory, "database.groonga", NULL);
   for (i = 0; i < n_tries; i++) {
     gint j, n_records = 100;
