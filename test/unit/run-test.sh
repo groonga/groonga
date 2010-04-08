@@ -55,16 +55,24 @@ case `uname` in
 	;;
 esac
 
-result=0
+no_test=1
+
+cutter_result=0
 if test "$NO_CUTTER" != "yes" -a -n "$CUTTER"; then
     $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
-    result=$?
+    cutter_result=$?
+    no_test=0
 fi
 
+ruby_result=0
 if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
-    if ! $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"; then
-	result=$?
-    fi
+    $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"; then
+    ruby_result=$?
+    no_test=0
 fi
 
-exit $result
+if [ $no_test = 0 -a $cutter_result = 0 -a $ruby_result = 0 ]
+    exit 0
+else
+    exit 1
+fi
