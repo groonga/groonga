@@ -71,7 +71,7 @@ if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
     no_test=0
 fi
 
-if [ $no_test = 0 -a $cutter_result = 0 -a $ruby_result = 0 ]
+if [ $no_test = 0 -a $cutter_result = 0 -a $ruby_result = 0 ]; then
     exit 0
 else
     exit 1
