@@ -228,7 +228,7 @@ test_equal(void)
                                                    "moge moge moge",
                                                    NULL),
                          res,
-                         body);
+                              "body");
 }
 
 void
@@ -258,7 +258,7 @@ test_equal_indexed(void)
   grn_test_assert_select(&context,
                          gcut_take_new_list_string("hoge", NULL),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -282,7 +282,7 @@ test_equal_by_existent_reference_key(void)
                            "poyo moge hoge moge moge moge",
                            NULL),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -302,7 +302,7 @@ test_equal_by_nonexistent_reference_key(void)
   grn_test_assert_select(&context,
                          NULL,
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -344,7 +344,7 @@ test_select(void)
                                                    "moge hoge hoge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -510,7 +510,7 @@ test_match(void)
                                                      "moge moge moge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -555,7 +555,7 @@ test_match_equal(void)
                                                    "moge hoge hoge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -596,5 +596,5 @@ test_match_without_index(void)
                               "poyo moge hoge moge moge moge",
                               NULL),
     res,
-    body);
+    "body");
 }

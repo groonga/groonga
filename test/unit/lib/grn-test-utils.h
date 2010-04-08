@@ -73,5 +73,9 @@ void        grn_test_object_inspect       (GString          *output,
 const gchar *grn_test_send_command        (grn_ctx          *context,
                                            const gchar      *command);
 
+const GList *grn_test_table_collect_string(grn_ctx          *context,
+                                           grn_obj          *table,
+                                           const gchar      *text_column_name);
+
 
 #endif

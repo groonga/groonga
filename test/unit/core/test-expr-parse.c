@@ -145,7 +145,7 @@ grn_test_assert_select_all(grn_obj *result)
                                                      "moge moge moge",
                                                    NULL),
                          result,
-                         body);
+                         "body");
 }
 
 static void
@@ -303,7 +303,7 @@ test_parse(gconstpointer data)
                                                    "moge moge moge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
   grn_test_assert(grn_obj_close(&context, cond));
@@ -330,7 +330,7 @@ test_parse(gconstpointer data)
                                                    "moge hoge hoge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -353,7 +353,7 @@ test_set_value(void)
                                                    "moge hoge hoge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -399,11 +399,11 @@ test_set_value_with_implicit_variable_reference(void)
   cut_assert_not_null(res);
   grn_test_assert_select(&context,
                          gcut_take_new_list_string("moge moge moge",
-                                                   "hoge fuga fuga",
+                                                        "hoge fuga fuga",
                                                    "moge hoge hoge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -450,7 +450,7 @@ test_set_value_with_query(void)
                                                    "moge hoge hoge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -495,7 +495,7 @@ test_proc_call(void)
                                                      "moge moge moge",
                                                    NULL),
                          res,
-                         body);
+                         "body");
   grn_test_assert(grn_obj_close(&context, res));
   res = NULL;
 
@@ -562,7 +562,7 @@ test_score_set(void)
                                                    "moge moge moge",
                                                    NULL),
                          res2,
-                         body);
+                         "body");
   grn_test_assert(grn_obj_close(&context, res2));
 }
 

@@ -315,7 +315,7 @@ test_logic_operator(gconstpointer data)
   grn_test_assert_select(&context,
                          gcut_data_get_pointer(data, "expected_keys"),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -371,7 +371,7 @@ test_comparison_operator(gconstpointer data)
   grn_test_assert_select(&context,
                          gcut_data_get_pointer(data, "expected_keys"),
                          res,
-                         body);
+                         "body");
 }
 
 void
@@ -1183,7 +1183,7 @@ test_arithmetic_operator(gconstpointer data)
   grn_test_assert_select(&context,
                          gcut_data_get_pointer(data, "expected_keys"),
                          res,
-                         body);
+                         "body");
 }
 
 #define ADD_DATUM(label, rc, message, query)                    \
