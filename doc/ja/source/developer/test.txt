@@ -24,14 +24,6 @@ lcovのインストール
 
  # aptitude install libglib2.0-dev intltools
 
-test-unitのインストール
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Rubyで書かれたテスト（主にHTTPのテスト）を実行するためには、test-unitの新しめの版が必要です。以下のようにしてインストールできます。::
-
- # aptitude install rubygems
- # gem install test-unit
-
 libmemcachedのインストール
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
