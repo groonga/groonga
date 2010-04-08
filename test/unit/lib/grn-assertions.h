@@ -105,6 +105,17 @@
       __VA_ARGS__),                                                     \
     grn_test_assert_equal_encoding(expected, actual))
 
+#define grn_test_assert_equal_view(context, expected, view,             \
+                                   text_column_name, ...)               \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_equal_view_helper((context), (expected), (view),  \
+                                        (text_column_name),             \
+                                        #expected, #view,               \
+                                        #text_column_name),             \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_equal_view(context, expected, view, text_column_name))
+
 
 
 void     grn_test_assert_helper         (grn_rc       rc,
@@ -146,5 +157,13 @@ void     grn_test_assert_equal_encoding_helper
                                          grn_encoding actual,
                                          const gchar *expression_expected,
                                          const gchar *expression_actual);
+void     grn_test_assert_equal_view_helper
+                                        (grn_ctx     *context,
+                                         const GList *expected,
+                                         grn_obj     *view,
+                                         const gchar *text_column_name,
+                                         const gchar *expected_expression,
+                                         const gchar *view_expression,
+                                         const gchar *text_column_name_expression);
 
 #endif
