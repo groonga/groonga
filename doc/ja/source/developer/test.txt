@@ -9,13 +9,12 @@
 Cutterのインストール
 ^^^^^^^^^^^^^^^^^^^^
 
-groongaは、テストのフレームワークとしてCutterを用いています。
+groongaは、テストのフレームワークとして Cutter_ を用いています。
 
-詳細はhttp://cutter.sourceforge.net/をごらんください。
+Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご覧下さい。
 
-Cutterをインストールするためには、GLib2.0とintltoolsの新しめの版が必要です。DebianやUbuntuでは、以下のようにしてインストールできます。::
-
- # aptitude install libglib2.0-dev intltools
+.. _Cutter: http://cutter.sourceforge.net/
+.. _プラットフォーム毎のCutterのインストール方法: http://cutter.sourceforge.net/reference/ja/install.html
 
 lcovのインストール
 ^^^^^^^^^^^^^^^^^^
