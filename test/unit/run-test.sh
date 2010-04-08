@@ -66,7 +66,7 @@ fi
 
 ruby_result=0
 if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
-    $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"; then
+    $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"
     ruby_result=$?
     no_test=0
 fi
