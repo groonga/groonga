@@ -35,7 +35,12 @@ cut_startup(void)
   int i;
   grn_init();
   for (i = 0; i < N_THREADS; i++) {
+    grn_ctx *context;
+
+    context = &contexts[i];
+    grn_ctx_init(context, 0);
     // contexts[i] = NULL;
+    // grn_ctx_fin(context);
     tables[i] = NULL;
   }
 }

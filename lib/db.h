@@ -320,6 +320,40 @@ grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
 grn_rc grn_expr_parser_close(grn_ctx *ctx);
 grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp);
 
+/**
+ * grn_table_open:
+ * @name: 開こうとするtableの名前。NULLなら無名tableとなる。
+ * @path: 開こうとするtableのファイルパス。
+ *
+ * ctxが使用するdbの中でnameに対応付けて既存のtableを開く。
+ * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい。
+ **/
+grn_obj *grn_table_open(grn_ctx *ctx,
+                        const char *name, unsigned name_size, const char *path);
+
+/**
+ * grn_column_open:
+ * @table: 対象table
+ * @name: カラム名
+ * @path: カラムを格納するファイルパス。
+ * @type: カラム値の型。
+ *
+ * 既存の永続的なcolumnを、tableのnameに対応するcolumnとして開く
+ * 永続dbに登録されている永続テーブルのカラムを開く場合はgrn_ctx_get()を使用するのが望ましい。
+ **/
+grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
+                         const char *name, unsigned name_size,
+                         const char *path, grn_obj *type);
+
+/**
+ * grn_obj_rename:
+ * @old_path: 旧ファイルパス
+ * @new_path: 新ファイルパス
+ *
+ * old_pathに該当するオブジェクトのファイル名をnew_pathに変更する。
+ **/
+grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
+
 /* utilities */
 void grn_p(grn_ctx *ctx, grn_obj *obj);
 

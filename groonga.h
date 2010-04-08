@@ -559,16 +559,6 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned name_size,
                                   const char *path, grn_obj_flags flags,
                                   grn_obj *key_type, grn_obj *value_type);
-/**
- * grn_table_open:
- * @name: 開こうとするtableの名前。NULLなら無名tableとなる。
- * @path: 開こうとするtableのファイルパス。
- *
- * ctxが使用するdbの中でnameに対応付けて既存のtableを開く。
- * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい。
- **/
-GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
-                                const char *name, unsigned name_size, const char *path);
 
 #define GRN_TABLE_OPEN_OR_CREATE(ctx,name,name_size,path,flags,key_type,value_type,table) \
   (((table) = grn_ctx_get((ctx), (name), (name_size))) ||\
@@ -1030,20 +1020,6 @@ GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
    ((column) = grn_column_create((ctx), (table), (name), (name_size), (path), (flags), (type))))
 
 /**
- * grn_column_open:
- * @table: 対象table
- * @name: カラム名
- * @path: カラムを格納するファイルパス。
- * @type: カラム値の型。
- *
- * 既存の永続的なcolumnを、tableのnameに対応するcolumnとして開く
- * 永続dbに登録されている永続テーブルのカラムを開く場合はgrn_ctx_get()を使用するのが望ましい。
- **/
-GRN_API grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
-                                 const char *name, unsigned name_size,
-                                 const char *path, grn_obj *type);
-
-/**
  * grn_column_index_update
  * @column: 対象column
  * @id: 対象レコードのID
@@ -1202,15 +1178,6 @@ GRN_API grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj 
  * 該当するファイル一式を削除する。
  **/
 GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
-
-/**
- * grn_obj_rename:
- * @old_path: 旧ファイルパス
- * @new_path: 新ファイルパス
- *
- * old_pathに該当するオブジェクトのファイル名をnew_pathに変更する。
- **/
-GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
 /**
  * grn_obj_close:

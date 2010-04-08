@@ -215,7 +215,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
           GRN_FUTEX_WAIT(pnref);\
           continue;\
         }\
-        if (nref >= 10000) {\
+        if (nref >= 0x40000000) {\
           ALERT("strange nref value!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref); \
         }\
         if (!info->map) {\
