@@ -387,10 +387,7 @@ void
 test_array_truncate(void)
 {
   grn_obj *table;
-  grn_id record_id;
   gchar value[] = "sample value";
-  grn_obj *record_value;
-  grn_obj *retrieved_record_value;
   gchar *value_type_name = "value_type";
   grn_obj *value_type;
 
@@ -400,9 +397,9 @@ test_array_truncate(void)
   table = grn_table_create(&context, NULL, 0, NULL,
                            GRN_OBJ_TABLE_NO_KEY,
                            NULL, value_type);
-  record_id = grn_table_add(&context, table, NULL, 0, NULL);
+  grn_test_assert_not_nil(grn_table_add(&context, table, NULL, 0, NULL));
 
+  cut_assert_equal_uint(1, grn_table_size(&context, table));
   grn_test_assert(grn_table_truncate(&context, table));
-
-  /* TODO: check deleted record existence */
+  cut_assert_equal_uint(0, grn_table_size(&context, table));
 }
