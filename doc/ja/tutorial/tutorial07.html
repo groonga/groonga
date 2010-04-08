@@ -49,15 +49,80 @@
             
   <div class="section" id="id1">
 <h1>2.7. 複数のカラムを対象とした全文検索<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
-<p>groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、bブログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとしましょう。「タイトルもしくは内容に特定の単語を含む」検索を行うことができます。</p>
+<p>groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、ブログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとしましょう。「タイトルもしくは内容に特定の単語を含む」検索を行いたいとします。</p>
 <p>この場合、2つのインデックス作成方式があります。1つは、それぞれのカラムに1つずつインデックスを付与する方式です。もう1つは、複数のカラムに対して1つのインデックスを付与する方式です。groongaでは、どちらの形式のインデックスが存在している場合でも、同一の記法で全文検索を行うことができます。</p>
 <div class="section" id="id2">
 <h2>2.7.1. カラムごとにインデックスを付与する場合<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>この項目は執筆中です。</p>
+<p>Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のmessageカラムを追加しています。
+インデックス用のIndexBlog1テーブルも作り、titleカラムのインデックス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、それぞれ1カラムごとに1つずつ追加しています。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
+[[0,1270621767.15403,0.003677]]
+&gt; column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
+[[0,1270621770.50074,0.004502]]
+&gt; column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
+[[0,1270621776.94744,0.004671]]
+&gt; table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+[[0,1270621780.19092,0.003858]]
+&gt; column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
+[[0,1270621784.69439,0.009783]]
+&gt; column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
+[[0,1270622150.4094,0.042598]]
+&gt; load --table Blog1
+&gt; [
+&gt; {&quot;_key&quot;:&quot;grn1&quot;,&quot;title&quot;:&quot;groonga test&quot;,&quot;message&quot;:&quot;groonga message&quot;},
+&gt; {&quot;_key&quot;:&quot;grn2&quot;,&quot;title&quot;:&quot;baseball result&quot;,&quot;message&quot;:&quot;rakutan eggs 4 - 4 groonga moritars&quot;},
+&gt; {&quot;_key&quot;:&quot;grn3&quot;,&quot;title&quot;:&quot;groonga message&quot;,&quot;message&quot;:&quot;none&quot;}
+&gt; ]
+[[0,1270622165.48685,0.087433],3]
+</pre></div>
+</div>
+<p>match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全文検索することができます。</p>
+<p>実際に検索してみましょう。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog1 --match_columns title||message --query groonga
+[[0,1270622218.30523,0.000477],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;],[2,&quot;grn2&quot;,&quot;baseball result&quot;,&quot;rakutan eggs 4 - 4 groonga moritars&quot;]]]]
+&gt; select --table Blog1 --match_columns title||message --query message
+[[0,1270622221.74937,0.000453],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;]]]]
+&gt; select --table Blog1 --match_columns title --query message
+[[0,1270622226.25906,0.000414],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+</pre></div>
+</div>
 </div>
 <div class="section" id="id3">
 <h2>2.7.2. 複数のカラムにまたがったインデックスを付与する場合<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>この項目は執筆中です。</p>
+<p>内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックスが共通になっており、インデックスカラムが1つしかありません。</p>
+<p>共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
+[[0,1270623009.8691,0.003603]]
+&gt; column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
+[[0,1270623012.42783,0.004444]]
+&gt; column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
+[[0,1270623015.01106,0.004845]]
+&gt; table_create --name IndexBlog2 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+[[0,1270623017.68453,0.003958]]
+&gt; column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
+[[0,1270623019.96037,0.042354]]
+&gt; load --table Blog2
+&gt; [
+&gt; {&quot;_key&quot;:&quot;grn1&quot;,&quot;title&quot;:&quot;groonga test&quot;,&quot;message&quot;:&quot;groonga message&quot;},
+&gt; {&quot;_key&quot;:&quot;grn2&quot;,&quot;title&quot;:&quot;baseball result&quot;,&quot;message&quot;:&quot;rakutan eggs 4 - 4 groonga moritars&quot;},
+&gt; {&quot;_key&quot;:&quot;grn3&quot;,&quot;title&quot;:&quot;groonga message&quot;,&quot;message&quot;:&quot;none&quot;}
+&gt; ]
+[[0,1270623023.42418,0.076944],3]
+</pre></div>
+</div>
+<p>実際に検索してみましょう。結果は上の例と同じになります。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog2 --match_columns title||message --query groonga
+[[0,1270623026.20362,0.000483],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[2,&quot;grn2&quot;,&quot;baseball result&quot;,&quot;rakutan eggs 4 - 4 groonga moritars&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+&gt; select --table Blog2 --match_columns title||message --query message
+[[0,1270623029.23266,0.000448],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+&gt; select --table Blog2 --match_columns title --query message
+[[0,1270623031.75317,0.00041],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+</pre></div>
+</div>
 </div>
 </div>
 

@@ -1987,6 +1987,7 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
       break;
     case GRN_CURSOR_TABLE_VIEW :
       grn_view_cursor_close(ctx, (grn_view_cursor *)tc);
+      break;
     default :
       rc = GRN_INVALID_ARGUMENT;
       break;

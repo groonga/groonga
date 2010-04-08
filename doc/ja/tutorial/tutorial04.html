@@ -62,6 +62,14 @@
 <blockquote>
 _id &lt;= 1</blockquote>
 <p>という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果として得られます。</p>
+<p>また、&amp;&amp; や || を使って、条件のAND・OR指定をすることもできます。</p>
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --filter &quot;_id &gt;= 4 &amp;&amp; _id &lt;= 6&quot; --output_columns _id,_key
+[[0,1270546187.15385,0.000376],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[4,&quot;http://example.net/afr&quot;],[5,&quot;http://example.org/aba&quot;],[6,&quot;http://example.com/rab&quot;]]]]
+&gt; select --table Site --filter &quot;_id &lt;= 2 || _id &gt;= 7&quot; --output_columns _id,_key
+[[0,1270546191.08878,0.000363],[[[5],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;],[2,&quot;http://example.net/&quot;],[7,&quot;http://example.net/atv&quot;],[8,&quot;http://example.org/gat&quot;],[9,&quot;http://example.com/vdw&quot;]]]]
+</pre></div>
+</div>
 <p>queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。</p>
 </div>
 <div class="section" id="scorer">

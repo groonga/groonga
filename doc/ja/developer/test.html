@@ -50,7 +50,8 @@
 <div class="section" id="cutter">
 <h3>4.3.1.1. Cutterのインストール<a class="headerlink" href="#cutter" title="Permalink to this headline">¶</a></h3>
 <p>groongaは、テストのフレームワークとしてCutterを用いています。</p>
-<p>DebianやUbuntuでは、GLib2.0とintltoolsの新しめの版が必要です。以下のようにしてインストールできます。:</p>
+<p>詳細はhttp://cutter.sourceforge.net/をごらんください。</p>
+<p>Cutterをインストールするためには、GLib2.0とintltoolsの新しめの版が必要です。DebianやUbuntuでは、以下のようにしてインストールできます。:</p>
 <div class="highlight-none"><div class="highlight"><pre># aptitude install libglib2.0-dev intltools
 </pre></div>
 </div>
@@ -114,10 +115,10 @@ libmemcachedの導入が必要です。</p>
 </div>
 <div class="section" id="id8">
 <h3>4.3.4.3. 不正メモリアクセス・メモリリーク検出<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
-<p>環境変数CUTTER_LEAK_CHECKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。</p>
+<p>環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。</p>
 <p>run-test.shのみならず、make checkでも利用可能です。</p>
 <p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>% CUTTER_LEAK_CHECK=yes make check
+<div class="highlight-none"><div class="highlight"><pre>% CUTTER_CHECK_LEAK=yes make check
 </pre></div>
 </div>
 </div>

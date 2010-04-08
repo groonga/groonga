@@ -79,13 +79,14 @@
     grn_test_assert_not_null(context, object))
 
 #define grn_test_assert_select(context, expected, select_result,        \
-                               text_column, ...)                        \
+                               text_column_name, ...)                   \
   cut_trace_with_info_expression(                                       \
     cut_test_with_user_message(                                         \
       grn_test_assert_select_helper((context), (expected),              \
-                                    (select_result), (text_column),     \
+                                    (select_result),                    \
+                                    (text_column_name),                 \
                                     #expected,                          \
-                                    #select_result, #text_column),      \
+                                    #select_result, #text_column_name), \
       __VA_ARGS__),                                                     \
     grn_test_assert_select(context, expected, select_result))
 
@@ -104,6 +105,28 @@
                                             #expected, #actual),        \
       __VA_ARGS__),                                                     \
     grn_test_assert_equal_encoding(expected, actual))
+
+#define grn_test_assert_equal_table(context, expected, table,           \
+                                    text_column_name, ...)              \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_equal_table_helper((context), (expected),         \
+                                         (table), (text_column_name),   \
+                                         #expected, #table,             \
+                                         #text_column_name),            \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_equal_table(context, expected, table))
+
+#define grn_test_assert_equal_view(context, expected, view,             \
+                                   text_column_name, ...)               \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_equal_view_helper((context), (expected), (view),  \
+                                        (text_column_name),             \
+                                        #expected, #view,               \
+                                        #text_column_name),             \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_equal_view(context, expected, view, text_column_name))
 
 
 
@@ -132,10 +155,10 @@ void     grn_test_assert_not_null_helper(grn_ctx     *context,
 void     grn_test_assert_select_helper  (grn_ctx     *context,
                                          const GList *expected,
                                          grn_obj     *select_result,
-                                         grn_obj     *text_column,
+                                         const gchar *text_column_name,
                                          const gchar *expected_expression,
                                          const gchar *select_result_expression,
-                                         const gchar *text_column_expression);
+                                         const gchar *text_column_name_expression);
 void     grn_test_assert_expr_helper    (grn_ctx     *context,
                                          const gchar *inspected,
                                          grn_obj     *expr,
@@ -146,5 +169,21 @@ void     grn_test_assert_equal_encoding_helper
                                          grn_encoding actual,
                                          const gchar *expression_expected,
                                          const gchar *expression_actual);
+void     grn_test_assert_equal_table_helper
+                                        (grn_ctx     *context,
+                                         const GList *expected,
+                                         grn_obj     *table,
+                                         const gchar *text_column_name,
+                                         const gchar *expected_expression,
+                                         const gchar *select_result_expression,
+                                         const gchar *text_column_name_expression);
+void     grn_test_assert_equal_view_helper
+                                        (grn_ctx     *context,
+                                         const GList *expected,
+                                         grn_obj     *view,
+                                         const gchar *text_column_name,
+                                         const gchar *expected_expression,
+                                         const gchar *view_expression,
+                                         const gchar *text_column_name_expression);
 
 #endif

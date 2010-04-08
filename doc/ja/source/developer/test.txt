@@ -9,32 +9,26 @@
 Cutterのインストール
 ^^^^^^^^^^^^^^^^^^^^
 
-groongaは、テストのフレームワークとしてCutterを用いています。
+groongaは、テストのフレームワークとして Cutter_ を用いています。
 
-DebianやUbuntuでは、GLib2.0とintltoolsの新しめの版が必要です。以下のようにしてインストールできます。::
+Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご覧下さい。
 
- # aptitude install libglib2.0-dev intltools
+.. _Cutter: http://cutter.sourceforge.net/
+.. _プラットフォーム毎のCutterのインストール方法: http://cutter.sourceforge.net/reference/ja/install.html
 
 lcovのインストール
 ^^^^^^^^^^^^^^^^^^
 
-カバレッジ情報を計測するためには、lcov 1.6以上が必要です。以下のようにしてインストールできます。::
+カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは以下のようにしてインストールできます。::
 
- # aptitude install libglib2.0-dev intltools
-
-test-unitのインストール
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Rubyで書かれたテスト（主にHTTPのテスト）を実行するためには、test-unitの新しめの版が必要です。以下のようにしてインストールできます。::
-
- # aptitude install rubygems
- # gem install test-unit
+ % sudo aptitude install -y lcov
 
 libmemcachedのインストール
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-memcachedのバイナリプロトコルのテストを動作させるためには、
-libmemcachedの導入が必要です。
+memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインストールできます。::
+
+ % sudo aptitude install -y libmemcached-dev
 
 テストの動作
 ------------
@@ -82,13 +76,13 @@ groongaのトップディレクトリで、以下のコマンドを実行しま�
 不正メモリアクセス・メモリリーク検出
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-環境変数CUTTER_LEAK_CHECKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。
+環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。
 
 run-test.shのみならず、make checkでも利用可能です。
 
 実行例::
 
- % CUTTER_LEAK_CHECK=yes make check
+ % CUTTER_CHECK_LEAK=yes make check
 
 デバッガ上でのテスト実行
 ^^^^^^^^^^^^^^^^^^^^^^^^

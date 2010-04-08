@@ -20,12 +20,20 @@
 #include <glib/gstdio.h>
 
 #include "../lib/grn-assertions.h"
+#include <db.h>
+
+#define get(name)                               \
+  grn_ctx_get(context, name, strlen(name))
+#define send_command(command)                   \
+  grn_test_send_command(context, command)
 
 void data_create(void);
 void test_create(gconstpointer data);
+void test_add(void);
+void test_sort(void);
 
 static grn_logger_info *logger;
-static grn_ctx context;
+static grn_ctx *context;
 static grn_obj *database, *view;
 
 static gchar *tmp_directory;
@@ -60,27 +68,33 @@ cut_setup(void)
   view = NULL;
 
   logger = setup_grn_logger();
-  grn_ctx_init(&context, 0);
+
+  context = g_new(grn_ctx, 1);
+  grn_ctx_init(context, 0);
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
 
-  database = grn_db_create(&context, database_path, NULL);
-  grn_test_assert_context(&context);
+  database = grn_db_create(context, database_path, NULL);
+  grn_test_assert_context(context);
 }
 
 void
 cut_teardown(void)
 {
   if (view) {
-    grn_obj_unlink(&context, view);
+    grn_obj_unlink(context, view);
   }
 
   if (database) {
-    grn_obj_unlink(&context, database);
+    grn_obj_unlink(context, database);
   }
 
-  grn_ctx_fin(&context);
+  if (context) {
+    grn_ctx_fin(context);
+    g_free(context);
+  }
+
   teardown_grn_logger(logger);
 
   remove_tmp_directory();
@@ -116,10 +130,79 @@ test_create(gconstpointer data)
     flags |= GRN_OBJ_PERSISTENT;
   }
 
-  view = grn_table_create(&context,
+  view = grn_table_create(context,
                           name, name ? strlen(name) : 0,
                           path,
                           flags,
                           NULL, NULL);
-  grn_test_assert_not_null(&context, view);
+  grn_test_assert_not_null(context, view);
+}
+
+void
+test_add(void)
+{
+  grn_obj *entries, *users, *dogs;
+
+  send_command("table_create Entries TABLE_VIEW");
+  send_command("table_create Users --key_type ShortText");
+  send_command("table_create Dogs --key_type ShortText");
+
+  entries = get("Entries");
+  users = get("Users");
+  dogs = get("Dogs");
+  grn_view_add(context, entries, users);
+  grn_test_assert_context(context);
+  grn_view_add(context, entries, dogs);
+  grn_test_assert_context(context);
+
+  cut_assert_equal_uint(0, grn_table_size(context, entries));
+  send_command("load '[[\"_key\"],[\"morita\"]]' Users");
+  cut_assert_equal_uint(1, grn_table_size(context, entries));
+  send_command("load '[[\"_key\"],[\"pochi\"]]' Dogs");
+  cut_assert_equal_uint(2, grn_table_size(context, entries));
+}
+
+void
+test_sort(void)
+{
+  grn_obj *entries, *users, *dogs;
+  grn_obj *result;
+  grn_table_sort_key keys[1];
+  gint limit, n_records;
+
+  send_command("table_create Entries TABLE_VIEW");
+  send_command("table_create Users --key_type ShortText");
+  send_command("table_create Dogs --key_type ShortText");
+
+  send_command("load '[[\"_key\"],[\"morita\"],[\"gunyara-kun\"],[\"yu\"]]' "
+               "Users");
+  send_command("load '[[\"_key\"],[\"pochi\"],[\"bob\"],[\"taro\"]]' Dogs");
+
+  entries = get("Entries");
+  users = get("Users");
+  dogs = get("Dogs");
+
+  grn_view_add(context, entries, users);
+  grn_view_add(context, entries, dogs);
+
+  result = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_VIEW, NULL, NULL);
+  grn_view_add(context, result,
+               grn_table_create(context, NULL, 0, NULL, GRN_TABLE_NO_KEY,
+                                NULL, users));
+  grn_view_add(context, result,
+               grn_table_create(context, NULL, 0, NULL, GRN_TABLE_NO_KEY,
+                                NULL, dogs));
+
+  keys[0].key = grn_obj_column(context, entries, "_key", strlen("_key"));
+  keys[0].flags = GRN_TABLE_SORT_DESC;
+  limit = 2;
+  n_records = grn_table_sort(context, entries, 0, limit, result,
+                             keys, sizeof(keys[0]) / sizeof(keys));
+  grn_test_assert_equal_view(context,
+                             gcut_take_new_list_string("yu",
+                                                       "taro",
+                                                       NULL),
+                             result,
+                             "_key");
+  cut_assert_equal_int(limit, n_records);
 }

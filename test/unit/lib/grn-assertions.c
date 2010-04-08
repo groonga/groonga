@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,13 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <str.h>
-
 #include <cutter/cut-helper.h>
 #include <gcutter.h>
 #include "grn-assertions.h"
 
 #include <groonga_in.h>
 #include <str.h>
+#include <db.h>
 
 grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 
@@ -168,43 +167,27 @@ void
 grn_test_assert_select_helper (grn_ctx *context,
                                const GList *expected,
                                grn_obj *select_result,
-                               grn_obj *text_column,
+                               const gchar *text_column_name,
                                const gchar *expected_expression,
                                const gchar *select_result_expression,
-                               const gchar *text_column_expression)
+                               const gchar *text_column_name_expression)
 {
-  GList *records = NULL, *sorted_expected;
-  grn_table_cursor *cursor;
+  const GList *records;
+  GList *sorted_records, *sorted_expected;
 
-  cursor = grn_table_cursor_open(context, select_result,
-                                 NULL, 0, NULL, 0, 0, -1, 0);
-  cut_assert_not_null(cursor);
-  while (grn_table_cursor_next(context, cursor) != GRN_ID_NIL) {
-    void *value;
-    int size;
-    grn_obj record_value;
-    GString *null_terminated_key;
-
-    grn_table_cursor_get_key(context, cursor, &value);
-    GRN_TEXT_INIT(&record_value, 0);
-    grn_obj_get_value(context, text_column, *((grn_id *)value), &record_value);
-    value = GRN_TEXT_VALUE(&record_value);
-    size = GRN_TEXT_LEN(&record_value);
-
-    null_terminated_key = g_string_new_len(value, size);
-    records = g_list_append(records, null_terminated_key->str);
-    g_string_free(null_terminated_key, FALSE);
-  }
-  grn_test_assert(grn_table_cursor_close(context, cursor));
+  records = grn_test_table_collect_string(context,
+                                          select_result,
+                                          text_column_name);
 
   sorted_expected = g_list_copy((GList *)expected);
   sorted_expected = g_list_sort(sorted_expected, (GCompareFunc)g_utf8_collate);
   gcut_take_list(sorted_expected, NULL);
 
-  records = g_list_sort(records, (GCompareFunc)g_utf8_collate);
-  gcut_take_list(records, g_free);
+  sorted_records = g_list_copy((GList *)records);
+  sorted_records = g_list_sort(sorted_records, (GCompareFunc)g_utf8_collate);
+  gcut_take_list(sorted_records, NULL);
 
-  gcut_assert_equal_list_string(sorted_expected, records);
+  gcut_assert_equal_list_string(sorted_expected, sorted_records);
 }
 
 void
@@ -242,4 +225,57 @@ grn_test_assert_equal_encoding_helper (grn_encoding expected,
                                   grn_enctostr(expected),
                                   grn_enctostr(actual)));
   }
+}
+
+void
+grn_test_assert_equal_table_helper (grn_ctx *context,
+                                    const GList *expected,
+                                    grn_obj *table,
+                                    const gchar *text_column_name,
+                                    const gchar *expected_expression,
+                                    const gchar *select_result_expression,
+                                    const gchar *text_column_name_expression)
+{
+  const GList *records;
+
+  records = grn_test_table_collect_string(context, table, text_column_name);
+  gcut_assert_equal_list_string(expected, records);
+}
+
+void
+grn_test_assert_equal_view_helper (grn_ctx *context,
+                                   const GList *expected,
+                                   grn_obj *view,
+                                   const gchar *text_column_name,
+                                   const gchar *expected_expression,
+                                   const gchar *view_expression,
+                                   const gchar *text_column_name_expression)
+{
+  GList *records = NULL;
+  grn_table_cursor *cursor;
+  grn_obj id, value;
+  grn_obj *text_column;
+
+  cursor = grn_table_cursor_open(context, view, NULL, 0, NULL, 0,
+                                 0, -1, GRN_CURSOR_ASCENDING);
+  cut_assert_not_null(cursor);
+  GRN_TEXT_INIT(&id, 0);
+  GRN_TEXT_INIT(&value, 0);
+  text_column = grn_obj_column(context, view,
+                               text_column_name, strlen(text_column_name));
+  while (grn_table_cursor_next_o(context, cursor, &id) == GRN_SUCCESS) {
+    GRN_BULK_REWIND(&value);
+    grn_obj_get_value_o(context, text_column, &id, &value);
+    records = g_list_append(records, g_strndup(GRN_TEXT_VALUE(&value),
+                                               GRN_TEXT_LEN(&value)));
+  }
+  grn_obj_unlink(context, &id);
+  grn_obj_unlink(context, &value);
+  grn_obj_unlink(context, text_column);
+  gcut_take_list(records, g_free);
+
+  grn_test_assert(grn_table_cursor_close(context, cursor));
+  grn_test_assert_context(context);
+
+  gcut_assert_equal_list_string(expected, records);
 }

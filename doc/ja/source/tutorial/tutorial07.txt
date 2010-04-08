@@ -3,21 +3,88 @@
 複数のカラムを対象とした全文検索
 ================================
 
-groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、bブログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとしましょう。「タイトルもしくは内容に特定の単語を含む」検索を行うことができます。
+groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、ブログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとしましょう。「タイトルもしくは内容に特定の単語を含む」検索を行いたいとします。
 
 この場合、2つのインデックス作成方式があります。1つは、それぞれのカラムに1つずつインデックスを付与する方式です。もう1つは、複数のカラムに対して1つのインデックスを付与する方式です。groongaでは、どちらの形式のインデックスが存在している場合でも、同一の記法で全文検索を行うことができます。
 
 カラムごとにインデックスを付与する場合
 --------------------------------------
 
-この項目は執筆中です。
+Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のmessageカラムを追加しています。
+インデックス用のIndexBlog1テーブルも作り、titleカラムのインデックス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、それぞれ1カラムごとに1つずつ追加しています。
 
-.. match_columnsに複数のカラムを指定する。
+実行例 ::
+
+ > table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
+ [[0,1270621767.15403,0.003677]]
+ > column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
+ [[0,1270621770.50074,0.004502]]
+ > column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
+ [[0,1270621776.94744,0.004671]]
+ > table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+ [[0,1270621780.19092,0.003858]]
+ > column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
+ [[0,1270621784.69439,0.009783]]
+ > column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
+ [[0,1270622150.4094,0.042598]]
+ > load --table Blog1
+ > [
+ > {"_key":"grn1","title":"groonga test","message":"groonga message"},
+ > {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
+ > {"_key":"grn3","title":"groonga message","message":"none"}
+ > ]
+ [[0,1270622165.48685,0.087433],3]
+
+match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全文検索することができます。
+
+実際に検索してみましょう。
+
+実行例 ::
+
+ > select --table Blog1 --match_columns title||message --query groonga
+ [[0,1270622218.30523,0.000477],[[[3],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[1,"grn1","groonga test","groonga message"],[3,"grn3","groonga message","none"],[2,"grn2","baseball result","rakutan eggs 4 - 4 groonga moritars"]]]]
+ > select --table Blog1 --match_columns title||message --query message
+ [[0,1270622221.74937,0.000453],[[[2],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[3,"grn3","groonga message","none"],[1,"grn1","groonga test","groonga message"]]]]
+ > select --table Blog1 --match_columns title --query message
+ [[0,1270622226.25906,0.000414],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[3,"grn3","groonga message","none"]]]]
 
 複数のカラムにまたがったインデックスを付与する場合
 --------------------------------------------------
 
-この項目は執筆中です。
+内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックスが共通になっており、インデックスカラムが1つしかありません。
 
-.. 複数のカラムにまたがったインデックスを作成する。--flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION。WITH_SECTIONがキモ。
-.. match_columnsに複数のカラムを指定する。
+共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。
+
+実行例 ::
+
+ > table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
+ [[0,1270623009.8691,0.003603]]
+ > column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
+ [[0,1270623012.42783,0.004444]]
+ > column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
+ [[0,1270623015.01106,0.004845]]
+ > table_create --name IndexBlog2 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+ [[0,1270623017.68453,0.003958]]
+ > column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
+ [[0,1270623019.96037,0.042354]]
+ > load --table Blog2
+ > [
+ > {"_key":"grn1","title":"groonga test","message":"groonga message"},
+ > {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
+ > {"_key":"grn3","title":"groonga message","message":"none"}
+ > ]
+ [[0,1270623023.42418,0.076944],3]
+
+実際に検索してみましょう。結果は上の例と同じになります。
+
+実行例 ::
+
+ > select --table Blog2 --match_columns title||message --query groonga
+ [[0,1270623026.20362,0.000483],[[[3],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[1,"grn1","groonga test","groonga message"],[2,"grn2","baseball result","rakutan eggs 4 - 4 groonga moritars"],[3,"grn3","groonga message","none"]]]]
+ > select --table Blog2 --match_columns title||message --query message
+ [[0,1270623029.23266,0.000448],[[[2],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[1,"grn1","groonga test","groonga message"],[3,"grn3","groonga message","none"]]]]
+ > select --table Blog2 --match_columns title --query message
+ [[0,1270623031.75317,0.00041],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[3,"grn3","groonga message","none"]]]]
+
+.. TODO: match_columnsにインデックス名を指定しての検索についても触れる。
+.. TODO: match_columnsの重み指定機能についても触れる。

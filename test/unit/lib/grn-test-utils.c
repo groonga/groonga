@@ -16,7 +16,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "grn-test-utils.h"
+#include "grn-assertions.h"
+#include <str.h>
 
 const gchar *
 grn_rc_to_string(grn_rc rc)
@@ -571,4 +572,77 @@ grn_test_object_inspect (GString *output, grn_ctx *context, grn_obj *object)
   }
 
   g_string_append(output, ">");
+}
+
+const gchar *
+grn_test_send_command(grn_ctx *context, const gchar *command)
+{
+  unsigned int send_id, receive_id;
+  int flags = 0;
+  grn_rc rc = GRN_SUCCESS;
+  gchar *result, *result_status_end;
+  unsigned int result_length;
+  const gchar *result_status_start_mark = "[[";
+  const gchar *result_status_end_mark = "],";
+
+  send_id = grn_ctx_send(context, command, strlen(command), flags);
+  receive_id = grn_ctx_recv(context, &result, &result_length, &flags);
+  cut_assert_equal_uint(send_id, receive_id);
+
+  cut_assert_not_equal_uint(0, result_length);
+  if (g_str_has_prefix(result, result_status_start_mark)) {
+    const gchar *result_status_start;
+    const gchar *rest;
+
+    result_status_start = result + strlen(result_status_start_mark);
+    rc = grn_atoi(result_status_start, result + result_length, &rest);
+    cut_assert_not_equal_string(result_status_start, rest);
+    grn_test_assert(rc, cut_message("<%.*s>", result_length, result));
+  }
+
+  result_status_end = g_strstr_len(result, result_length,
+                                   result_status_end_mark);
+  if (result_status_end) {
+    const gchar *result_end_mark = "]";
+    const gchar *result_body;
+    size_t result_body_length;
+
+    result_body = result_status_end + strlen(result_status_end_mark);
+    result_body_length =
+      result_length - (result_body - result) - strlen(result_end_mark);
+    return cut_take_strndup(result_body, result_body_length);
+  } else {
+    return cut_take_strndup(result, result_length);
+  }
+}
+
+const GList *
+grn_test_table_collect_string(grn_ctx          *context,
+                              grn_obj          *table,
+                              const gchar      *text_column_name)
+{
+  GList *records = NULL;
+  grn_table_cursor *cursor;
+  grn_id id;
+  grn_obj *text_column;
+  grn_obj record_value;
+
+  cursor = grn_table_cursor_open(context, table, NULL, 0, NULL, 0,
+                                 0, -1, GRN_CURSOR_ASCENDING);
+  grn_test_assert_context(context);
+  text_column = grn_obj_column(context, table,
+                               text_column_name, strlen(text_column_name));
+  GRN_TEXT_INIT(&record_value, 0);
+  while ((id = grn_table_cursor_next(context, cursor)) != GRN_ID_NIL) {
+    GRN_BULK_REWIND(&record_value);
+    grn_obj_get_value(context, text_column, id, &record_value);
+    records = g_list_append(records, g_strndup(GRN_TEXT_VALUE(&record_value),
+                                               GRN_TEXT_LEN(&record_value)));
+  }
+  grn_obj_unlink(context, &record_value);
+  grn_obj_unlink(context, text_column);
+  gcut_take_list(records, g_free);
+  grn_test_assert(grn_table_cursor_close(context, cursor));
+
+  return records;
 }
