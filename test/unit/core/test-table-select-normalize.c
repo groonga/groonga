@@ -96,6 +96,12 @@ setup_data(void)
 static void
 setup_database(void)
 {
+  remove_tmp_directory();
+  g_mkdir_with_parents(tmp_directory, 0700);
+
+  database = grn_db_create(context, database_path, NULL);
+  grn_test_assert_context(context);
+
   setup_ddl();
   setup_data();
 }
@@ -109,12 +115,6 @@ cut_setup(void)
 
   context = g_new(grn_ctx, 1);
   grn_ctx_init(context, 0);
-
-  remove_tmp_directory();
-  g_mkdir_with_parents(tmp_directory, 0700);
-
-  database = grn_db_create(context, database_path, NULL);
-  grn_test_assert_context(context);
 
   setup_database();
 
