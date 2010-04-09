@@ -76,6 +76,9 @@ const gchar *grn_test_send_command        (grn_ctx          *context,
 const GList *grn_test_table_collect_string(grn_ctx          *context,
                                            grn_obj          *table,
                                            const gchar      *text_column_name);
+const GList *grn_test_view_collect_string (grn_ctx          *context,
+                                           grn_obj          *view,
+                                           const gchar      *text_column_name);
 
 
 #endif
