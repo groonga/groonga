@@ -28,7 +28,9 @@
 #include "../lib/grn-assertions.h"
 
 void data_normalize(void);
-void test_normalize(gpointer data);
+void test_normalize(gconstpointer data);
+void data_normalize_broken(void);
+void test_normalize_broken(gconstpointer data);
 void test_normalize_utf8_short_strlen(void);
 void test_normalize_utf8_null_str(void);
 void test_normalize_utf8_euc(void);
@@ -166,7 +168,7 @@ convert_encoding(const gchar *utf8, grn_encoding encoding)
 }
 
 void
-test_normalize(gpointer data)
+test_normalize(gconstpointer data)
 {
   const gchar *utf8_expected, *encoded_expected;
   const gchar *utf8_input, *encoded_input;
@@ -193,18 +195,44 @@ test_normalize(gpointer data)
 }
 
 void
-test_normalize_utf8_short_strlen(void)
+data_normalize_broken(void)
+{
+#define ADD_DATUM(label, input, input_encoding, input_length,           \
+                  context_encoding)                                     \
+  gcut_add_datum(label,                                                 \
+                 "input", G_TYPE_STRING, input,                         \
+                 "input-encoding", G_TYPE_INT, input_encoding,          \
+                 "input-length", G_TYPE_INT, input_length,              \
+                 "context-encoding", G_TYPE_INT, context_encoding,      \
+                 NULL)
+
+  ADD_DATUM("short", "あ", GRN_ENC_UTF8, 1, GRN_ENC_UTF8);
+
+#undef ADD_DATUM
+}
+
+void
+test_normalize_broken(gconstpointer data)
 {
   grn_str *string;
-  const gchar *utf8;
+  const gchar *input, *encoded_input;
+  grn_encoding input_encoding, context_encoding;
+  gint input_length;
   int flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
 
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
+  context_encoding = gcut_data_get_int(data, "context-encoding");
+  GRN_CTX_SET_ENCODING(&context, context_encoding);
 
-  utf8 = "あ";
-  string = grn_str_open(&context, utf8, 1, flags);
+  input = gcut_data_get_string(data, "input");
+  input_encoding = gcut_data_get_int(data, "input-encoding");
+  input_length = gcut_data_get_int(data, "input-length");
+  encoded_input = convert_encoding(input, input_encoding);
+  if (input_length < 0) {
+    input_length = strlen(encoded_input);
+  }
+  string = grn_str_open(&context, encoded_input, input_length, flags);
   cut_assert_equal_string("", string->norm);
-  cut_assert_equal_int(string->norm_blen, 0);
+  cut_assert_equal_int(0, string->norm_blen);
   grn_test_assert(grn_str_close(&context, string));
 }
 
