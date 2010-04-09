@@ -626,24 +626,25 @@ grn_test_table_collect_string(grn_ctx          *context,
   grn_table_cursor *cursor;
   grn_id id;
   grn_obj *text_column;
-  grn_obj record_value;
+  grn_obj value;
 
   cursor = grn_table_cursor_open(context, table, NULL, 0, NULL, 0,
                                  0, -1, GRN_CURSOR_ASCENDING);
   grn_test_assert_context(context);
   text_column = grn_obj_column(context, table,
                                text_column_name, strlen(text_column_name));
-  GRN_TEXT_INIT(&record_value, 0);
+  GRN_TEXT_INIT(&value, 0);
   while ((id = grn_table_cursor_next(context, cursor)) != GRN_ID_NIL) {
-    GRN_BULK_REWIND(&record_value);
-    grn_obj_get_value(context, text_column, id, &record_value);
-    records = g_list_append(records, g_strndup(GRN_TEXT_VALUE(&record_value),
-                                               GRN_TEXT_LEN(&record_value)));
+    GRN_BULK_REWIND(&value);
+    grn_obj_get_value(context, text_column, id, &value);
+    records = g_list_append(records, g_strndup(GRN_TEXT_VALUE(&value),
+                                               GRN_TEXT_LEN(&value)));
   }
-  grn_obj_unlink(context, &record_value);
+  grn_obj_unlink(context, &value);
   grn_obj_unlink(context, text_column);
   gcut_take_list(records, g_free);
   grn_test_assert(grn_table_cursor_close(context, cursor));
+  grn_test_assert_context(context);
 
   return records;
 }
