@@ -25,11 +25,11 @@
 void data_create(void);
 void test_create(gconstpointer data);
 void test_add(void);
-void test_sort(void);
 
 static grn_logger_info *logger;
 static grn_ctx *context;
 static grn_obj *database, *view;
+static grn_obj *entries, *users, *dogs;
 
 static gchar *tmp_directory;
 static gchar *database_path;
@@ -39,7 +39,7 @@ cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_base_dir(),
                                    "tmp",
-                                   "test-database",
+                                   "test-view",
                                    NULL);
   database_path = g_build_filename(tmp_directory, "database.groonga", NULL);
 }
@@ -61,6 +61,9 @@ void
 cut_setup(void)
 {
   view = NULL;
+  entries = NULL;
+  users = NULL;
+  dogs = NULL;
 
   logger = setup_grn_logger();
 
@@ -74,11 +77,23 @@ cut_setup(void)
   grn_test_assert_context(context);
 }
 
-void
-cut_teardown(void)
+static void
+teardown_database(void)
 {
   if (view) {
     grn_obj_unlink(context, view);
+  }
+
+  if (entries) {
+    grn_obj_unlink(context, entries);
+  }
+
+  if (users) {
+    grn_obj_unlink(context, users);
+  }
+
+  if (dogs) {
+    grn_obj_unlink(context, dogs);
   }
 
   if (database) {
@@ -89,6 +104,12 @@ cut_teardown(void)
     grn_ctx_fin(context);
     g_free(context);
   }
+}
+
+void
+cut_teardown(void)
+{
+  teardown_database();
 
   teardown_grn_logger(logger);
 
@@ -136,8 +157,6 @@ test_create(gconstpointer data)
 void
 test_add(void)
 {
-  grn_obj *entries, *users, *dogs;
-
   assert_send_command("table_create Entries TABLE_VIEW");
   assert_send_command("table_create Users --key_type ShortText");
   assert_send_command("table_create Dogs --key_type ShortText");
@@ -145,6 +164,7 @@ test_add(void)
   entries = get_object("Entries");
   users = get_object("Users");
   dogs = get_object("Dogs");
+
   grn_view_add(context, entries, users);
   grn_test_assert_context(context);
   grn_view_add(context, entries, dogs);
@@ -155,49 +175,4 @@ test_add(void)
   cut_assert_equal_uint(1, grn_table_size(context, entries));
   assert_send_command("load '[[\"_key\"],[\"pochi\"]]' Dogs");
   cut_assert_equal_uint(2, grn_table_size(context, entries));
-}
-
-void
-test_sort(void)
-{
-  grn_obj *entries, *users, *dogs;
-  grn_obj *result;
-  grn_table_sort_key keys[1];
-  gint limit, n_records;
-
-  assert_send_command("table_create Entries TABLE_VIEW");
-  assert_send_command("table_create Users --key_type ShortText");
-  assert_send_command("table_create Dogs --key_type ShortText");
-
-  assert_send_command("load '[[\"_key\"],[\"morita\"],[\"gunyara-kun\"],[\"yu\"]]' "
-                      "Users");
-  assert_send_command("load '[[\"_key\"],[\"pochi\"],[\"bob\"],[\"taro\"]]' Dogs");
-
-  entries = get_object("Entries");
-  users = get_object("Users");
-  dogs = get_object("Dogs");
-
-  grn_view_add(context, entries, users);
-  grn_view_add(context, entries, dogs);
-
-  result = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_VIEW, NULL, NULL);
-  grn_view_add(context, result,
-               grn_table_create(context, NULL, 0, NULL, GRN_TABLE_NO_KEY,
-                                NULL, users));
-  grn_view_add(context, result,
-               grn_table_create(context, NULL, 0, NULL, GRN_TABLE_NO_KEY,
-                                NULL, dogs));
-
-  keys[0].key = grn_obj_column(context, entries, "_key", strlen("_key"));
-  keys[0].flags = GRN_TABLE_SORT_DESC;
-  limit = 2;
-  n_records = grn_table_sort(context, entries, 0, limit, result,
-                             keys, sizeof(keys[0]) / sizeof(keys));
-  grn_test_assert_equal_view(context,
-                             gcut_take_new_list_string("yu",
-                                                       "taro",
-                                                       NULL),
-                             result,
-                             "_key");
-  cut_assert_equal_int(limit, n_records);
 }
