@@ -19,6 +19,7 @@
 #include <groonga.h>
 #include <gcutter.h>
 #include "../lib/grn-assertions.h"
+#include <db.h>
 
 void data_read_write(void);
 void test_read_write(gconstpointer *data);
