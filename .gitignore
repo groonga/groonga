@@ -2,6 +2,8 @@
 *.lo
 *.o
 *.pyc
+*.gcno
+*.gcda
 .deps
 .ditz-config
 .gdb_history
@@ -39,3 +41,5 @@ version.sh
 /doc/ja/modindex.html
 /doc/ja/objects.inv
 /lib/icudump
+/coverage
+/coverage.info
