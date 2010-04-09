@@ -29,6 +29,12 @@
 #  define cut_test_with_user_message(assertion, set_user_message) (assertion)
 #endif
 
+#ifndef GCUT_TYPE_SIZE
+#  define GCUT_TYPE_SIZE G_TYPE_UINT
+#  define gcut_data_get_size(data, field_name) \
+            (gsize)gcut_data_get_uint(data, field_name)
+#endif
+
 #include <string.h>
 
 #define GRN_TEST_ENV_TABLE_PATH "GRN_TEST_TABLE_PATH"

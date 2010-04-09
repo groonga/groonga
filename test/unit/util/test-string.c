@@ -493,7 +493,7 @@ data_str_len(void)
 {
 #define ADD_DATUM(label, expected, input)               \
   gcut_add_datum(label,                                 \
-                 "expected", G_TYPE_UINT, expected,   \
+                 "expected", GCUT_TYPE_SIZE, expected,  \
                  "input", G_TYPE_STRING, input,         \
                  NULL)
 
@@ -526,6 +526,6 @@ test_str_len(gpointer data)
   input = gcut_data_get_string(data, "input");
   input_end = strchr(input, '\0');
   result = grn_str_len(&context, input, GRN_ENC_UTF8, &input_end);
-  expected = (size_t)gcut_data_get_uint(data, "expected");
+  expected = gcut_data_get_size(data, "expected");
   cut_assert_equal_size(expected, result);
 }
