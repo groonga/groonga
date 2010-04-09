@@ -22,7 +22,6 @@
 
 #include <groonga_in.h>
 #include <str.h>
-#include <db.h>
 
 grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 
@@ -251,31 +250,8 @@ grn_test_assert_equal_view_helper (grn_ctx *context,
                                    const gchar *view_expression,
                                    const gchar *text_column_name_expression)
 {
-  GList *records = NULL;
-  grn_table_cursor *cursor;
-  grn_obj id, value;
-  grn_obj *text_column;
+  const GList *records;
 
-  cursor = grn_table_cursor_open(context, view, NULL, 0, NULL, 0,
-                                 0, -1, GRN_CURSOR_ASCENDING);
-  cut_assert_not_null(cursor);
-  GRN_TEXT_INIT(&id, 0);
-  GRN_TEXT_INIT(&value, 0);
-  text_column = grn_obj_column(context, view,
-                               text_column_name, strlen(text_column_name));
-  while (grn_table_cursor_next_o(context, cursor, &id) == GRN_SUCCESS) {
-    GRN_BULK_REWIND(&value);
-    grn_obj_get_value_o(context, text_column, &id, &value);
-    records = g_list_append(records, g_strndup(GRN_TEXT_VALUE(&value),
-                                               GRN_TEXT_LEN(&value)));
-  }
-  grn_obj_unlink(context, &id);
-  grn_obj_unlink(context, &value);
-  grn_obj_unlink(context, text_column);
-  gcut_take_list(records, g_free);
-
-  grn_test_assert(grn_table_cursor_close(context, cursor));
-  grn_test_assert_context(context);
-
+  records = grn_test_view_collect_string(context, view, text_column_name);
   gcut_assert_equal_list_string(expected, records);
 }
