@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 #define __GRN_ASSERTIONS_H__
 
 #include "grn-test-utils.h"
+#include "grn-test-shortcut.h"
 
 #define grn_test_assert(expression, ...)                        \
   cut_trace_with_info_expression(                               \

@@ -24,8 +24,6 @@
 
 #define get(name)                               \
   grn_ctx_get(context, name, strlen(name))
-#define send_command(command)                   \
-  grn_test_send_command(context, command)
 
 void data_create(void);
 void test_create(gconstpointer data);
@@ -143,9 +141,9 @@ test_add(void)
 {
   grn_obj *entries, *users, *dogs;
 
-  send_command("table_create Entries TABLE_VIEW");
-  send_command("table_create Users --key_type ShortText");
-  send_command("table_create Dogs --key_type ShortText");
+  assert_send_command("table_create Entries TABLE_VIEW");
+  assert_send_command("table_create Users --key_type ShortText");
+  assert_send_command("table_create Dogs --key_type ShortText");
 
   entries = get("Entries");
   users = get("Users");
@@ -156,9 +154,9 @@ test_add(void)
   grn_test_assert_context(context);
 
   cut_assert_equal_uint(0, grn_table_size(context, entries));
-  send_command("load '[[\"_key\"],[\"morita\"]]' Users");
+  assert_send_command("load '[[\"_key\"],[\"morita\"]]' Users");
   cut_assert_equal_uint(1, grn_table_size(context, entries));
-  send_command("load '[[\"_key\"],[\"pochi\"]]' Dogs");
+  assert_send_command("load '[[\"_key\"],[\"pochi\"]]' Dogs");
   cut_assert_equal_uint(2, grn_table_size(context, entries));
 }
 
@@ -170,13 +168,13 @@ test_sort(void)
   grn_table_sort_key keys[1];
   gint limit, n_records;
 
-  send_command("table_create Entries TABLE_VIEW");
-  send_command("table_create Users --key_type ShortText");
-  send_command("table_create Dogs --key_type ShortText");
+  assert_send_command("table_create Entries TABLE_VIEW");
+  assert_send_command("table_create Users --key_type ShortText");
+  assert_send_command("table_create Dogs --key_type ShortText");
 
-  send_command("load '[[\"_key\"],[\"morita\"],[\"gunyara-kun\"],[\"yu\"]]' "
-               "Users");
-  send_command("load '[[\"_key\"],[\"pochi\"],[\"bob\"],[\"taro\"]]' Dogs");
+  assert_send_command("load '[[\"_key\"],[\"morita\"],[\"gunyara-kun\"],[\"yu\"]]' "
+                      "Users");
+  assert_send_command("load '[[\"_key\"],[\"pochi\"],[\"bob\"],[\"taro\"]]' Dogs");
 
   entries = get("Entries");
   users = get("Users");

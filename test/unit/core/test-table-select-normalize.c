@@ -21,8 +21,6 @@
 
 #define get(name)                               \
   grn_ctx_get(context, name, strlen(name))
-#define send_command(command)                   \
-  cut_trace(grn_test_send_command(context, command))
 
 void test_with_japanese_parenthesis(void);
 
@@ -71,26 +69,27 @@ remove_tmp_directory(void)
 static void
 setup_ddl(void)
 {
-  send_command("table_create Comments TABLE_HASH_KEY ShortText");
+  assert_send_command("table_create Comments TABLE_HASH_KEY ShortText");
   comments = get("Comments");
-  send_command("column_create Comments content COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Comments content COLUMN_SCALAR ShortText");
   content = get("Comments.content");
 
-  send_command("table_create Terms "
-               "--flags TABLE_PAT_KEY|KEY_NORMALIZE "
-               "--key_type ShortText "
-               "--default_tokenizer TokenBigram");
-  send_command("column_create Terms comment_content COLUMN_INDEX Comments "
-               "--source content");
+  assert_send_command("table_create Terms "
+                      "--flags TABLE_PAT_KEY|KEY_NORMALIZE "
+                      "--key_type ShortText "
+                      "--default_tokenizer TokenBigram");
+  assert_send_command("column_create Terms comment_content COLUMN_INDEX "
+                      "Comments "
+                      "--source content");
 }
 
 static void
 setup_data(void)
 {
-  send_command("load "
-               "'[[\"_key\",\"content\"],"
-               "[\"ボロ\",\"うちのボロTV（アナログ...）はまだ現役です\"]]' "
-               "Comments");
+  assert_send_command("load "
+                      "'[[\"_key\",\"content\"],"
+                      "[\"ボロ\",\"うちのボロTV（アナログ...）はまだ現役です\"]]' "
+                      "Comments");
 }
 
 static void

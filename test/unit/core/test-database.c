@@ -197,12 +197,6 @@ test_size(void)
   grn_test_assert_context(context);
 }
 
-static const gchar *
-send_command(const gchar *command)
-{
-  return grn_test_send_command(context, command);
-}
-
 void
 test_expire_cache_on_recreate(void)
 {
@@ -210,15 +204,15 @@ test_expire_cache_on_recreate(void)
 
   path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, path, NULL);
-  send_command("table_create Sites 0 ShortText");
-  send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
+  assert_send_command("table_create Sites 0 ShortText");
+  assert_send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
   cut_assert_equal_string("[[[1],[[\"_key\",\"ShortText\"]],[\"groonga.org\"]]]",
                           send_command("select Sites --output_columns _key"));
-  send_command("table_remove Sites");
+  assert_send_command("table_remove Sites");
   grn_obj_remove(context, database);
 
   database = grn_db_create(context, path, NULL);
-  send_command("table_create Sites 0 ShortText");
+  assert_send_command("table_create Sites 0 ShortText");
   cut_assert_equal_string("[[[0],[[\"_key\",\"ShortText\"]]]]",
                           send_command("select Sites --output_columns _key"));
 }
@@ -241,8 +235,8 @@ test_expression_lifetime_over_database(void)
     database = grn_db_create(context, path, NULL);
     grn_test_assert_context(context);
 
-    send_command("table_create Sites 0 ShortText");
-    send_command("column_create Sites point COLUMN_SCALAR Int32");
+    assert_send_command("table_create Sites 0 ShortText");
+    assert_send_command("column_create Sites point COLUMN_SCALAR Int32");
     for (j = 0; j < n_records; j++) {
       gchar *command;
 
@@ -251,7 +245,7 @@ test_expression_lifetime_over_database(void)
                                 "[\"http://groonga.org/version/%d\",%d]]' "
                                 "Sites",
                                 j, j);
-      send_command(command);
+      assert_send_command(command);
       g_free(command);
     }
 

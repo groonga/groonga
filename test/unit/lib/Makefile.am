@@ -38,6 +38,7 @@ LIBS =						\
 
 noinst_HEADERS =				\
 	grn-test-utils.h			\
+	grn-test-shortcut.h			\
 	grn-assertions.h			\
 	grn-test-hash-factory.h			\
 	grn-test-hash-assertions.h		\
