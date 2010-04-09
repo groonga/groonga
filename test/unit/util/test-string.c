@@ -207,6 +207,17 @@ data_normalize_broken(void)
                  NULL)
 
   ADD_DATUM("short", "あ", GRN_ENC_UTF8, 1, GRN_ENC_UTF8);
+  ADD_DATUM("NULL", "\0", GRN_ENC_UTF8, 1, GRN_ENC_UTF8);
+
+#define ADD_DATUM_JAPANESE_NON_UTF8(label, input, input_length)         \
+  ADD_DATUM("eucJP with UTF-8 context: " label " <" input ">",          \
+            input, GRN_ENC_EUC_JP, input_length, GRN_ENC_UTF8);         \
+  ADD_DATUM("ShiftJIS with UTF-8 context : " label " <" input ">",      \
+            input, GRN_ENC_SJIS, input_length, GRN_ENC_UTF8);
+
+  ADD_DATUM_JAPANESE_NON_UTF8("different encoding", "日本語", -1);
+
+#undef ADD_DATUM_JAPANESE_NON_UTF8
 
 #undef ADD_DATUM
 }
@@ -233,55 +244,6 @@ test_normalize_broken(gconstpointer data)
   string = grn_str_open(&context, encoded_input, input_length, flags);
   cut_assert_equal_string("", string->norm);
   cut_assert_equal_int(0, string->norm_blen);
-  grn_test_assert(grn_str_close(&context, string));
-}
-
-void
-test_normalize_utf8_null_str(void)
-{
-  grn_str *string;
-  const gchar *utf8;
-  int flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
-
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
-
-  utf8 = "\0";
-  string = grn_str_open(&context, utf8, 1, flags);
-  cut_assert_equal_string("", string->norm);
-  cut_assert_equal_int(string->norm_blen, 0);
-  grn_test_assert(grn_str_close(&context, string));
-}
-
-void
-test_normalize_utf8_euc(void)
-{
-  grn_str *string;
-  const gchar *utf8;
-  int flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
-
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
-
-  utf8 = "\xC6\xFC\xCB\xDC\xB8\xEC"; /* 日本語 on EUC */
-  string = grn_str_open(&context, utf8, strlen(utf8), flags);
-  cut_assert_equal_string("", string->norm);
-  cut_assert_equal_int(string->norm_blen, 0);
-  grn_test_assert(grn_str_close(&context, string));
-}
-
-void
-test_normalize_utf8_sjis(void)
-{
-  grn_str *string;
-  const gchar *utf8;
-  int flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
-
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
-
-  utf8 = "\x93\xFA\x96\x7B\x8C\xEA"; /* 日本語 on ShiftJIS */
-  cut_assert_equal_uint(0, grn_charlen(&context, utf8, strchr(utf8, 0)));
-  string = grn_str_open(&context, utf8, strlen(utf8), flags);
-  cut_assert_equal_string("", string->norm);
-  cut_assert_equal_int(string->norm_blen, 0);
   grn_test_assert(grn_str_close(&context, string));
 }
 
