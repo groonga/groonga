@@ -23,10 +23,12 @@
 #include <db.h>
 
 void test_sort(void);
+void test_select(void);
 
 static grn_logger_info *logger;
 static grn_ctx *context;
-static grn_obj *database, *entries, *users, *dogs;
+static grn_obj *database, *entries, *users, *dogs, *result;
+static grn_obj *expression, *variable;
 
 static gchar *tmp_directory;
 static gchar *database_path;
@@ -95,6 +97,9 @@ cut_setup(void)
   entries = NULL;
   users = NULL;
   dogs = NULL;
+  result = NULL;
+  expression = NULL;
+  variable = NULL;
 
   logger = setup_grn_logger();
 
@@ -107,9 +112,21 @@ cut_setup(void)
   setup_database();
 }
 
-void
-cut_teardown(void)
+static void
+teardown_database(void)
 {
+  if (variable) {
+    grn_obj_unlink(context, variable);
+  }
+
+  if (expression) {
+    grn_obj_unlink(context, expression);
+  }
+
+  if (result) {
+    grn_obj_unlink(context, result);
+  }
+
   if (entries) {
     grn_obj_unlink(context, entries);
   }
@@ -130,6 +147,12 @@ cut_teardown(void)
     grn_ctx_fin(context);
     g_free(context);
   }
+}
+
+void
+cut_teardown(void)
+{
+  teardown_database();
 
   teardown_grn_logger(logger);
 
@@ -163,4 +186,31 @@ test_sort(void)
                              result,
                              "_key");
   cut_assert_equal_int(limit, n_records);
+}
+
+static grn_obj *
+query(const gchar *string)
+{
+  GRN_EXPR_CREATE_FOR_QUERY(context, entries, expression, variable);
+  grn_test_assert(grn_expr_parse(context, expression,
+                                 string, strlen(string),
+                                 NULL, GRN_OP_MATCH, GRN_OP_AND,
+                                 GRN_EXPR_SYNTAX_QUERY |
+                                 GRN_EXPR_ALLOW_PRAGMA |
+                                 GRN_EXPR_ALLOW_COLUMN));
+  grn_test_assert_context(context);
+  return expression;
+}
+
+void
+test_select(void)
+{
+  result = grn_table_select(context, entries, query("_key:@ta"),
+                            NULL, GRN_OP_OR);
+  grn_test_assert_equal_view(context,
+                             gcut_take_new_list_string("morita",
+                                                       "taro",
+                                                       NULL),
+                             result,
+                             "_key");
 }
