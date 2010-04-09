@@ -19,7 +19,7 @@
 
 #include "../lib/grn-assertions.h"
 
-void test_with_japanese_parenthesis(void);
+void test_japanese_parenthesis(void);
 
 static gchar *tmp_directory;
 static gchar *database_path;
@@ -178,7 +178,7 @@ query(const gchar *string)
 }
 
 void
-test_create(gconstpointer data)
+test_japanese_parenthesis(gconstpointer data)
 {
   cut_assert_not_null(grn_table_select(context, comments,
                                        query("content:@）は"),
