@@ -178,7 +178,7 @@ query(const gchar *string)
 }
 
 void
-test_japanese_parenthesis(gconstpointer data)
+test_japanese_parenthesis(void)
 {
   cut_assert_not_null(grn_table_select(context, comments,
                                        query("content:@）は"),
