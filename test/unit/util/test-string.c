@@ -73,93 +73,123 @@ teardown (void)
 void
 data_normalize(void)
 {
-#define ADD_DATUM(label, expected, input)               \
-  gcut_add_datum(label,                                 \
-                 "expected", G_TYPE_STRING, expected,   \
-                 "input", G_TYPE_STRING, input,         \
+#define ADD_DATUM_WITH_ENCODING(label, expected, input, encoding)       \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "input", G_TYPE_STRING, input,                         \
+                 "encoding", G_TYPE_INT, encoding,                      \
                  NULL)
+#define ADD_DATUM_JAPANESE(label, expected, input)                      \
+  ADD_DATUM_WITH_ENCODING("Japanese (UTF-8): " label " <" input ">",    \
+                          expected, input, GRN_ENC_UTF8);               \
+  ADD_DATUM_WITH_ENCODING("Japanese (eucJP): " label " <" input ">",    \
+                          expected, input, GRN_ENC_EUC_JP);             \
+  ADD_DATUM_WITH_ENCODING("Japanese (Shift_JIS): " label " <" input ">",\
+                          expected, input, GRN_ENC_SJIS)
 
-  ADD_DATUM("with newlines",
-            "groongaは組み込み型の全文検索エンジンです。"
-            "dbmsやスクリプト言語処理系等に組み込むこと"
-            "によって、その全文検索機能を強化することが"
-            "できます。n-gramインデックスと単語インデッ"
-            "クスの特徴を兼ね備えた、高速かつ高精度な転"
-            "置インデックスタイプのエンジンです。コンパ"
-            "クトな実装ですが、大規模な文書量と検索要求"
-            "を処理できるように設計されています。また、"
-            "純粋なn-gramインデックスの作成も可能です。",
+#define ADD_DATUM_JAPANESE_NO_SJIS(label, expected, input)              \
+  ADD_DATUM_WITH_ENCODING("Japanese (UTF-8): " label " <" input ">",\
+                          expected, input, GRN_ENC_UTF8);               \
+  ADD_DATUM_WITH_ENCODING("Japanese (eucJP): " label " <" input ">",    \
+                          expected, input, GRN_ENC_EUC_JP)
 
-            "groongaは組み込み型の全文検索エンジンです。\n"
-            "DBMSやスクリプト言語処理系等に組み込むこと\n"
-            "によって、その全文検索機能を強化することが\n"
-            "できます。n-gramインデックスと単語インデッ\n"
-            "クスの特徴を兼ね備えた、高速かつ高精度な転\n"
-            "置インデックスタイプのエンジンです。コンパ\n"
-            "クトな実装ですが、大規模な文書量と検索要求\n"
-            "を処理できるように設計されています。また、\n"
-            "純粋なn-gramインデックスの作成も可能です。");
+#define ADD_DATUM_JAPANESE_UTF_8(label, expected, input)                \
+  ADD_DATUM_WITH_ENCODING("Japanese (UTF-8): " label " <" input ">",    \
+                          expected, input, GRN_ENC_UTF8)
 
-  ADD_DATUM("large normalization",
-            "キロメートルキロメートルキロメートルキロメートル",
-            "㌖㌖㌖㌖");
+  ADD_DATUM_JAPANESE("with newlines",
+                     "groongaは組み込み型の全文検索エンジンです。"
+                     "dbmsやスクリプト言語処理系等に組み込むこと"
+                     "によって、その全文検索機能を強化することが"
+                     "できます。n-gramインデックスと単語インデッ"
+                     "クスの特徴を兼ね備えた、高速かつ高精度な転"
+                     "置インデックスタイプのエンジンです。コンパ"
+                     "クトな実装ですが、大規模な文書量と検索要求"
+                     "を処理できるように設計されています。また、"
+                     "純粋なn-gramインデックスの作成も可能です。",
 
-  ADD_DATUM("tilde and fullwidth tilde and wave dash",
-            "~~~",
-            "~～〜");
+                     "groongaは組み込み型の全文検索エンジンです。\n"
+                     "DBMSやスクリプト言語処理系等に組み込むこと\n"
+                     "によって、その全文検索機能を強化することが\n"
+                     "できます。n-gramインデックスと単語インデッ\n"
+                     "クスの特徴を兼ね備えた、高速かつ高精度な転\n"
+                     "置インデックスタイプのエンジンです。コンパ\n"
+                     "クトな実装ですが、大規模な文書量と検索要求\n"
+                     "を処理できるように設計されています。また、\n"
+                     "純粋なn-gramインデックスの作成も可能です。");
 
-#undef ADD_DATUM
+  ADD_DATUM_JAPANESE_UTF_8("large normalization",
+                           "キロメートルキロメートルキロメートルキロメートル",
+                           "㌖㌖㌖㌖");
+
+  ADD_DATUM_JAPANESE_UTF_8("tilde and fullwidth tilde and wave dash",
+                           "~~~",
+                           "~～〜");
+
+#undef ADD_DATUM_JAPANESE_NO_SJIS
+#undef ADD_DATUM_JAPANESE
+#undef ADD_DATUM_WITH_ENCODING
 }
 
-/* TODO: clean up for multiple encoding */
-/* TODO: support all encoding supported by groonga */
+static const gchar *
+convert_encoding(const gchar *utf8, grn_encoding encoding)
+{
+  const gchar *encoded;
+  GError *error = NULL;
+
+  switch (encoding) {
+  case GRN_ENC_DEFAULT:
+  case GRN_ENC_NONE:
+  case GRN_ENC_UTF8:
+    encoded = utf8;
+    break;
+  case GRN_ENC_EUC_JP:
+    encoded = cut_take_string(g_convert(utf8, -1, "eucJP", "UTF-8",
+                                        NULL, NULL, &error));
+    break;
+  case GRN_ENC_SJIS:
+    encoded = cut_take_string(g_convert(utf8, -1, "CP932", "UTF-8",
+                                        NULL, NULL, &error));
+    break;
+  case GRN_ENC_LATIN1:
+    encoded = cut_take_string(g_convert(utf8, -1, "CP1252", "UTF-8",
+                                        NULL, NULL, &error));
+    break;
+  case GRN_ENC_KOI8R:
+    encoded = cut_take_string(g_convert(utf8, -1, "KOI8-R", "UTF-8",
+                                        NULL, NULL, &error));
+    break;
+  }
+  gcut_assert_error(error);
+
+  return encoded;
+}
+
 void
 test_normalize(gpointer data)
 {
-  const gchar *expected, *input;
-  gchar *conv_input, *conv_input_check, *conv_expected;
+  const gchar *utf8_expected, *encoded_expected;
+  const gchar *utf8_input, *encoded_input;
   grn_str *string;
   const gchar *normalized_text;
   guint normalized_text_len;
   int flags;
+  grn_encoding encoding;
 
-  /* utf8 */
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
+  encoding = gcut_data_get_int(data, "encoding");
+  GRN_CTX_SET_ENCODING(&context, encoding);
   flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
-  input = gcut_data_get_string(data, "input");
-  string = grn_str_open(&context, input, strlen(input), flags);
+  utf8_input = gcut_data_get_string(data, "input");
+  encoded_input = convert_encoding(utf8_input, encoding);
+  string = grn_str_open(&context, encoded_input, strlen(encoded_input), flags);
   normalized_text = cut_take_strndup(string->norm, string->norm_blen);
   normalized_text_len = string->norm_blen;
   grn_test_assert(grn_str_close(&context, string));
 
-  expected = gcut_data_get_string(data, "expected");
-  cut_assert_equal_string(expected, normalized_text);
-  cut_assert_equal_int(strlen(expected), normalized_text_len);
-
-  /* Shift-JIS */
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_SJIS);
-  flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
-  input = gcut_data_get_string(data, "input");
-  conv_input = g_convert(input, -1, "CP932", "UTF-8", NULL, NULL, NULL);
-  if (conv_input) {
-    conv_input_check = g_convert(conv_input, -1, "UTF-8", "CP932", NULL, NULL, NULL);
-    if (conv_input_check) {
-      if (!strcmp(input, conv_input_check)) {
-        string = grn_str_open(&context, conv_input, strlen(conv_input), flags);
-        normalized_text = cut_take_strndup(string->norm, string->norm_blen);
-        normalized_text_len = string->norm_blen;
-        grn_test_assert(grn_str_close(&context, string));
-
-        expected = gcut_data_get_string(data, "expected");
-        conv_expected = g_convert_with_fallback(expected, -1, "CP932", "UTF-8", NULL, NULL, NULL, NULL);
-        cut_assert_equal_string(conv_expected, normalized_text);
-        cut_assert_equal_int(strlen(conv_expected), normalized_text_len);
-        g_free(conv_expected);
-      }
-      g_free(conv_input_check);
-    }
-    g_free(conv_input);
-  }
+  utf8_expected = gcut_data_get_string(data, "expected");
+  encoded_expected = convert_encoding(utf8_expected, encoding);
+  cut_assert_equal_string(encoded_expected, normalized_text);
+  cut_assert_equal_int(strlen(encoded_expected), normalized_text_len);
 }
 
 void
