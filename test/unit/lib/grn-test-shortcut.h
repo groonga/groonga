@@ -19,6 +19,9 @@
 #ifndef __GRN_TEST_SHORTCUT_H__
 #define __GRN_TEST_SHORTCUT_H__
 
+#define get_object(name)                        \
+  grn_ctx_get(context, (name), strlen((name)))
+
 #define send_command(command)                   \
   grn_test_send_command(context, (command))
 

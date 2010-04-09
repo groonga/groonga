@@ -22,9 +22,6 @@
 #include "../lib/grn-assertions.h"
 #include <db.h>
 
-#define get(name)                               \
-  grn_ctx_get(context, name, strlen(name))
-
 void data_create(void);
 void test_create(gconstpointer data);
 void test_add(void);
@@ -145,9 +142,9 @@ test_add(void)
   assert_send_command("table_create Users --key_type ShortText");
   assert_send_command("table_create Dogs --key_type ShortText");
 
-  entries = get("Entries");
-  users = get("Users");
-  dogs = get("Dogs");
+  entries = get_object("Entries");
+  users = get_object("Users");
+  dogs = get_object("Dogs");
   grn_view_add(context, entries, users);
   grn_test_assert_context(context);
   grn_view_add(context, entries, dogs);
@@ -176,9 +173,9 @@ test_sort(void)
                       "Users");
   assert_send_command("load '[[\"_key\"],[\"pochi\"],[\"bob\"],[\"taro\"]]' Dogs");
 
-  entries = get("Entries");
-  users = get("Users");
-  dogs = get("Dogs");
+  entries = get_object("Entries");
+  users = get_object("Users");
+  dogs = get_object("Dogs");
 
   grn_view_add(context, entries, users);
   grn_view_add(context, entries, dogs);

@@ -19,9 +19,6 @@
 
 #include "../lib/grn-assertions.h"
 
-#define get(name)                               \
-  grn_ctx_get(context, name, strlen(name))
-
 void test_with_japanese_parenthesis(void);
 
 static gchar *tmp_directory;
@@ -70,9 +67,9 @@ static void
 setup_ddl(void)
 {
   assert_send_command("table_create Comments TABLE_HASH_KEY ShortText");
-  comments = get("Comments");
+  comments = get_object("Comments");
   assert_send_command("column_create Comments content COLUMN_SCALAR ShortText");
-  content = get("Comments.content");
+  content = get_object("Comments.content");
 
   assert_send_command("table_create Terms "
                       "--flags TABLE_PAT_KEY|KEY_NORMALIZE "

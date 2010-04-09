@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,34 @@
 
 #include "../lib/grn-assertions.h"
 
-#define OBJECT(name) (grn_ctx_get(&context, (name), strlen(name)))
-
 void data_table(void);
 void test_table(gpointer data);
 
 static grn_logger_info *logger;
-static grn_ctx context;
+static grn_ctx *context;
 static grn_obj *database;
 
 void
 cut_setup(void)
 {
+  context = NULL;
+
   logger = setup_grn_logger();
-  grn_ctx_init(&context, 0);
-  database = grn_db_create(&context, NULL, NULL);
+
+  context = g_new0(grn_ctx, 1);
+  grn_ctx_init(context, 0);
+
+  database = grn_db_create(context, NULL, NULL);
 }
 
 void
 cut_teardown(void)
 {
-  grn_ctx_fin(&context);
+  if (context) {
+    grn_ctx_fin(context);
+    g_free(context);
+  }
+
   teardown_grn_logger(logger);
 }
 
@@ -67,11 +74,11 @@ test_table(gpointer data)
   grn_obj_flags flags = GPOINTER_TO_INT(data);
   grn_table_cursor *cursor;
 
-  table = grn_table_create(&context, NULL, 0, NULL,
+  table = grn_table_create(context, NULL, 0, NULL,
                            flags,
-                           OBJECT("<shorttext>"),
+                           get_object("ShortText"),
                            NULL);
-  cursor = grn_table_cursor_open(&context, table, NULL, 0, NULL, 0, 0, -1, 0);
+  cursor = grn_table_cursor_open(context, table, NULL, 0, NULL, 0, 0, -1, 0);
   /* FIXME: grn_test_assert_equal_object() */
-  cut_assert_equal_pointer(table, grn_table_cursor_table(&context, cursor));
+  cut_assert_equal_pointer(table, grn_table_cursor_table(context, cursor));
 }

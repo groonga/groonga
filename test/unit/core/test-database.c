@@ -249,7 +249,7 @@ test_expression_lifetime_over_database(void)
       g_free(command);
     }
 
-    table = grn_ctx_get(context, "Sites", strlen("Sites"));
+    table = get_object("Sites");
     GRN_EXPR_CREATE_FOR_QUERY(context, table, expression, variable);
     grn_obj_unlink(context, table);
 

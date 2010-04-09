@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
-  Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,6 @@
 
 #include "../lib/grn-assertions.h"
 
-#define GET(name) grn_ctx_get(&context, name, strlen(name))
-
 void data_table_create(void);
 void test_table_create(gconstpointer data);
 void data_column_create(void);
@@ -40,7 +38,7 @@ static GCutEgg *egg = NULL;
 static GString *dumped = NULL, *error_output = NULL;
 
 static grn_logger_info *logger;
-static grn_ctx context;
+static grn_ctx *context;
 static grn_obj *database;
 static gchar *tmp_directory;
 static gchar *database_path;
@@ -76,19 +74,21 @@ cut_setup(void)
   error_output = NULL;
 
   logger = setup_grn_logger();
-  grn_ctx_init(&context, 0);
+  context = g_new0(grn_ctx, 1);
+  grn_ctx_init(context, 0);
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
 
-  database = grn_db_create(&context, database_path, NULL);
-  grn_test_assert_context(&context);
+  database = grn_db_create(context, database_path, NULL);
+  grn_test_assert_context(context);
 }
 
 void
 cut_teardown(void)
 {
-  grn_ctx_fin(&context);
+  grn_ctx_fin(context);
+  g_free(context);
   teardown_grn_logger(logger);
 
   if (egg) {
@@ -172,16 +172,16 @@ table_create(const gchar *name, grn_obj_flags flags,
   grn_obj *key_type = NULL, *value_type = NULL;
 
   if (key_type_name)
-    key_type = GET(key_type_name);
+    key_type = get_object(key_type_name);
   if (value_type_name)
-    value_type = GET(value_type_name);
+    value_type = get_object(value_type_name);
 
-  table = grn_table_create(&context,
+  table = grn_table_create(context,
                            name, strlen(name),
                            NULL,
                            flags | GRN_OBJ_PERSISTENT,
                            key_type, value_type);
-  grn_test_assert_context(&context);
+  grn_test_assert_context(context);
   return table;
 }
 
@@ -193,17 +193,17 @@ column_create(const gchar *table_name, const gchar *name, grn_obj_flags flags,
   grn_obj *table = NULL, *type = NULL;
 
   if (table_name)
-    table = GET(table_name);
+    table = get_object(table_name);
   if (type_name)
-    type = GET(type_name);
+    type = get_object(type_name);
 
-  column = grn_column_create(&context,
+  column = grn_column_create(context,
                              table,
                              name, strlen(name),
                              NULL,
                              flags | GRN_OBJ_PERSISTENT,
                              type);
-  grn_test_assert_context(&context);
+  grn_test_assert_context(context);
   return column;
 }
 
@@ -354,9 +354,9 @@ free_elements(gpointer data)
 {
   grn_obj *elements = data;
 
-  grn_obj_close(&context, &elements[0]);
-  grn_obj_close(&context, &elements[1]);
-  grn_obj_close(&context, &elements[2]);
+  grn_obj_close(context, &elements[0]);
+  grn_obj_close(context, &elements[1]);
+  grn_obj_close(context, &elements[2]);
   g_free(elements);
 }
 
@@ -366,11 +366,11 @@ free_elements(gpointer data)
   grn_obj *elements;                                                    \
   elements = g_new0(grn_obj, n_of_elements);                            \
   OBJ_INIT(&elements[0], 0);                                            \
-  OBJ_SET(&context, &elements[0], first_element);                       \
+  OBJ_SET(context, &elements[0], first_element);                       \
   OBJ_INIT(&elements[1], 0);                                            \
-  OBJ_SET(&context, &elements[1], second_element);                      \
+  OBJ_SET(context, &elements[1], second_element);                      \
   OBJ_INIT(&elements[2], 0);                                            \
-  OBJ_SET(&context, &elements[2], third_element);                       \
+  OBJ_SET(context, &elements[2], third_element);                       \
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_STRING, expected,                   \
                  "type_name", G_TYPE_STRING, type_name,                 \
@@ -408,26 +408,26 @@ test_uvector_column(gconstpointer data)
   grn_obj *table, *column;
   const gchar *type_name;
   type_name = gcut_data_get_string(data, "type_name");
-  type_id = grn_obj_id(&context, GET(type_name));
+  type_id = grn_obj_id(context, get_object(type_name));
 
   table = table_create("Table", GRN_OBJ_TABLE_NO_KEY, NULL, NULL);
-  grn_test_assert_context(&context);
+  grn_test_assert_context(context);
   column = column_create("Table", "Column", GRN_OBJ_COLUMN_VECTOR,
                          type_name, NULL);
-  grn_test_assert_context(&context);
-  id = grn_table_add(&context, table, NULL, 0, NULL);
-  grn_test_assert_context(&context);
+  grn_test_assert_context(context);
+  id = grn_table_add(context, table, NULL, 0, NULL);
+  grn_test_assert_context(context);
   cut_assert_equal_int(1, id);
   elements = (grn_obj *)gcut_data_get_pointer(data, "elements");
 
   GRN_OBJ_INIT(&uvector, GRN_UVECTOR, 0, type_id);
-  grn_bulk_write(&context, &uvector,
+  grn_bulk_write(context, &uvector,
                  GRN_BULK_HEAD(&elements[0]), GRN_BULK_VSIZE(&elements[0]));
-  grn_bulk_write(&context, &uvector,
+  grn_bulk_write(context, &uvector,
                  GRN_BULK_HEAD(&elements[1]), GRN_BULK_VSIZE(&elements[1]));
-  grn_bulk_write(&context, &uvector,
+  grn_bulk_write(context, &uvector,
                  GRN_BULK_HEAD(&elements[2]), GRN_BULK_VSIZE(&elements[2]));
-  grn_obj_set_value(&context, column, id, &uvector, GRN_OBJ_SET);
+  grn_obj_set_value(context, column, id, &uvector, GRN_OBJ_SET);
 
   expected = cut_take_printf("table_create Table 3\n"
                              "column_create Table Column 1 %s\n"
@@ -451,29 +451,29 @@ test_vector_column(gconstpointer data)
   grn_obj *table, *column;
   const gchar *type_name;
   type_name = gcut_data_get_string(data, "type_name");
-  type_id = grn_obj_id(&context, GET(type_name));
+  type_id = grn_obj_id(context, get_object(type_name));
 
   table = table_create("Table", GRN_OBJ_TABLE_NO_KEY, NULL, NULL);
-  grn_test_assert_context(&context);
+  grn_test_assert_context(context);
   column = column_create("Table", "Column", GRN_OBJ_COLUMN_VECTOR,
                          type_name, NULL);
-  grn_test_assert_context(&context);
-  id = grn_table_add(&context, table, NULL, 0, NULL);
-  grn_test_assert_context(&context);
+  grn_test_assert_context(context);
+  id = grn_table_add(context, table, NULL, 0, NULL);
+  grn_test_assert_context(context);
   cut_assert_equal_int(1, id);
   elements = (grn_obj *)gcut_data_get_pointer(data, "elements");
 
   GRN_TEXT_INIT(&vector, GRN_OBJ_VECTOR);
-  grn_vector_add_element(&context, &vector,
+  grn_vector_add_element(context, &vector,
                          GRN_TEXT_VALUE(&elements[0]),
                          GRN_TEXT_LEN(&elements[0]), 0, type_id);
-  grn_vector_add_element(&context, &vector,
+  grn_vector_add_element(context, &vector,
                          GRN_TEXT_VALUE(&elements[1]),
                          GRN_TEXT_LEN(&elements[1]), 0, type_id);
-  grn_vector_add_element(&context, &vector,
+  grn_vector_add_element(context, &vector,
                          GRN_TEXT_VALUE(&elements[2]),
                          GRN_TEXT_LEN(&elements[2]), 0, type_id);
-  grn_obj_set_value(&context, column, id, &vector, GRN_OBJ_SET);
+  grn_obj_set_value(context, column, id, &vector, GRN_OBJ_SET);
 
   expected = cut_take_printf("table_create Table 3\n"
                              "column_create Table Column 1 %s\n"
@@ -496,16 +496,16 @@ test_unsequantial_records_in_table_with_keys(void)
   int i, n_keys = sizeof(keys)/sizeof(keys[0]);
 
   table = table_create("Weekdays", GRN_OBJ_TABLE_HASH_KEY, "ShortText", NULL);
-  grn_test_assert_context(&context);
+  grn_test_assert_context(context);
 
   for (i = 0; i < n_keys; ++i) {
-    id = grn_table_add(&context, table, keys[i], strlen(keys[i]), NULL);
+    id = grn_table_add(context, table, keys[i], strlen(keys[i]), NULL);
     cut_assert_equal_int(expected_id++, id);
-    grn_test_assert_context(&context);
+    grn_test_assert_context(context);
   }
 
-  grn_table_delete_by_id(&context, table, 3);
-  grn_table_delete_by_id(&context, table, 6);
+  grn_table_delete_by_id(context, table, 3);
+  grn_table_delete_by_id(context, table, 6);
 
   grn_test_assert_dump("table_create Weekdays 0 ShortText\n"
                        "load --table Weekdays\n"
