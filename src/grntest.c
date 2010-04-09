@@ -102,7 +102,7 @@ grn_obj *grntest_db = NULL;
 #define MAX_COMMAND 1000000
 #define BUF_LEN 1024
 #define MAX_PATH_LEN 256
-#define MAX_COMMAND_LEN 200000
+#define MAX_COMMAND_LEN 1000000
 #define LOGBUF_LEN 200000
 
 #define J_DO_LOCAL  1  /* do_local */
