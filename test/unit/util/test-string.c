@@ -31,12 +31,8 @@ void data_normalize(void);
 void test_normalize(gconstpointer data);
 void data_normalize_broken(void);
 void test_normalize_broken(gconstpointer data);
-void test_normalize_utf8_short_strlen(void);
-void test_normalize_utf8_null_str(void);
-void test_normalize_utf8_euc(void);
-void test_normalize_utf8_sjis(void);
-void test_charlen_utf8_nonnull_broken(void);
-void test_charlen_utf8_null_broken(gpointer data);
+void data_charlen_broken(void);
+void test_charlen_broken(gconstpointer data);
 void test_urldec(void);
 void test_urldec_invalid(void);
 void test_cgidec(void);
@@ -248,19 +244,66 @@ test_normalize_broken(gconstpointer data)
 }
 
 void
-test_charlen_utf8_nonnull_broken(void)
+data_charlen_broken(void)
 {
-  const gchar utf8[] = "あ";
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
-  cut_assert_equal_uint(0, grn_charlen(&context, utf8, utf8 + 1));
+#define ADD_DATUM_WITH_ENCODING(label, input, input_length, encoding)   \
+  gcut_add_datum(label,                                                 \
+                 "input", G_TYPE_STRING, input,                         \
+                 "input-length", G_TYPE_INT, input_length,              \
+                 "encoding", G_TYPE_INT, encoding,                      \
+                 NULL)
+
+#define ADD_DATUM(label, input, input_length)                           \
+  ADD_DATUM_WITH_ENCODING("(None): " label " <" input ">",              \
+                          input, input_length, GRN_ENC_NONE);           \
+  ADD_DATUM_WITH_ENCODING("(UTF-8): " label " <" input ">",             \
+                          input, input_length, GRN_ENC_UTF8);           \
+  ADD_DATUM_WITH_ENCODING("(eucJP): " label " <" input ">",             \
+                          input, input_length, GRN_ENC_EUC_JP);         \
+  ADD_DATUM_WITH_ENCODING("(Shift_JIS): " label " <" input ">",         \
+                          input, input_length, GRN_ENC_SJIS);           \
+  ADD_DATUM_WITH_ENCODING("(Latin1): " label " <" input ">",            \
+                          input, input_length, GRN_ENC_LATIN1);         \
+  ADD_DATUM_WITH_ENCODING("(KOI8R): " label " <" input ">",             \
+                          input, input_length, GRN_ENC_KOI8R)
+
+#define ADD_DATUM_JAPANESE(label, input, input_length)                  \
+  ADD_DATUM_WITH_ENCODING("Japanese (UTF-8): " label " <" input ">",    \
+                          input, input_length, GRN_ENC_UTF8);           \
+  ADD_DATUM_WITH_ENCODING("Japanese (eucJP): " label " <" input ">",    \
+                          input, input_length, GRN_ENC_EUC_JP);         \
+  ADD_DATUM_WITH_ENCODING("Japanese (Shift_JIS): " label " <" input ">",\
+                          input, input_length, GRN_ENC_SJIS)
+
+  ADD_DATUM_JAPANESE("short length", "あ", 1);
+
+  ADD_DATUM_WITH_ENCODING("NULL", "\0", 1, GRN_ENC_UTF8);
+
+#undef ADD_DATUM_JAPANESE
+#undef ADD_DATUM
+#undef ADD_DATUM_WITH_ENCODING
 }
 
 void
-test_charlen_utf8_null_broken(gpointer data)
+test_charlen_broken(gconstpointer data)
 {
-  const gchar utf8[] = "\0";
-  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
-  cut_assert_equal_uint(0, grn_charlen(&context, utf8, utf8 + 1));
+  const gchar *input, *encoded_input, *encoded_input_end;
+  grn_encoding encoding;
+  gint input_length;
+
+  encoding = gcut_data_get_int(data, "encoding");
+  GRN_CTX_SET_ENCODING(&context, encoding);
+
+  input = gcut_data_get_string(data, "input");
+  input_length = gcut_data_get_int(data, "input-length");
+  encoded_input = convert_encoding(input, encoding);
+  if (input_length < 0) {
+    input_length = strlen(encoded_input);
+  }
+  encoded_input_end = encoded_input + input_length;
+  cut_assert_equal_uint(0, grn_charlen(&context,
+                                       encoded_input,
+                                       encoded_input_end));
 }
 
 void
