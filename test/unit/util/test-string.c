@@ -33,7 +33,8 @@ void data_normalize_broken(void);
 void test_normalize_broken(gconstpointer data);
 void data_charlen_broken(void);
 void test_charlen_broken(gconstpointer data);
-void test_urldec(void);
+void data_urldec(void);
+void test_urldec(gconstpointer data);
 void test_urldec_invalid(void);
 void test_cgidec(void);
 void test_cgidec_invalid(void);
@@ -307,29 +308,49 @@ test_charlen_broken(gconstpointer data)
 }
 
 void
-test_urldec(void)
+data_urldec(void)
 {
-  grn_obj buf;
-  const char *str = "+%e6%97%a5%e6%9c%ac%e8%aa%9e%e3%81%a7%e3%81%99%e3%80%82+$yo";
+#define ADD_DATUM(label, expected, input, input_length, end_char)       \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "input", G_TYPE_STRING, input,                         \
+                 "input-length", G_TYPE_INT, input_length,              \
+                 "end-char", G_TYPE_CHAR, end_char,                     \
+                 NULL)
 
-  GRN_TEXT_INIT(&buf, 0);
-  grn_text_urldec(&context, &buf, str, strchr(str, 0), '$');
-  GRN_TEXT_PUTC(&context, &buf, '\0');
-  cut_assert_equal_string("+日本語です。+", GRN_TEXT_VALUE(&buf));
-  grn_obj_unlink(&context, &buf);
+  ADD_DATUM("Japanese",
+            "+日本語です。+",
+            "+%e6%97%a5%e6%9c%ac%e8%aa%9e%e3%81%a7%e3%81%99%e3%80%82+$yo",
+            -1,
+            '$');
+  ADD_DATUM("invalid", "%1%2%3", "%1%2%3", -1, '\0');
+
+#undef ADD_DATUM
 }
 
 void
-test_urldec_invalid(void)
+test_urldec(gconstpointer data)
 {
-  grn_obj buf;
-  const char *str = "%1%2%3";
+  grn_obj buffer;
+  const gchar *expected, *input;
+  gint input_length;
+  gchar end_char;
 
-  GRN_TEXT_INIT(&buf, 0);
-  grn_text_urldec(&context, &buf, str, strchr(str, 0), '\0');
-  GRN_TEXT_PUTC(&context, &buf, '\0');
-  cut_assert_equal_string("%1%2%3", GRN_TEXT_VALUE(&buf));
-  grn_obj_unlink(&context, &buf);
+  expected = gcut_data_get_string(data, "expected");
+  input = gcut_data_get_string(data, "input");
+  input_length = gcut_data_get_int(data, "input-length");
+  end_char = gcut_data_get_char(data, "end-char");
+
+  if (input_length < 0) {
+    input_length = strchr(input, '\0') - input;
+  }
+
+  GRN_TEXT_INIT(&buffer, 0);
+  grn_text_urldec(&context, &buffer, input, input + input_length, end_char);
+  cut_assert_equal_substring(expected,
+                             GRN_TEXT_VALUE(&buffer),
+                             GRN_TEXT_LEN(&buffer));
+  grn_obj_unlink(&context, &buffer);
 }
 
 void

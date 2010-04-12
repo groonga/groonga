@@ -35,6 +35,13 @@
             (gsize)gcut_data_get_uint(data, field_name)
 #endif
 
+#ifndef gcut_data_get_char
+#  undef G_TYPE_CHAR
+#  define G_TYPE_CHAR G_TYPE_INT
+#  define gcut_data_get_char(data, field_name) \
+            (gchar)gcut_data_get_int(data, field_name)
+#endif
+
 #include <string.h>
 
 #define GRN_TEST_ENV_TABLE_PATH "GRN_TEST_TABLE_PATH"
