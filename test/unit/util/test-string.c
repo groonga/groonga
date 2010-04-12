@@ -37,6 +37,8 @@ void data_urldec(void);
 void test_urldec(gconstpointer data);
 void data_cgidec(void);
 void test_cgidec(gconstpointer data);
+void data_url_path_normalize(void);
+void test_url_path_normalize(gconstpointer data);
 
 static grn_ctx context;
 
@@ -399,26 +401,71 @@ test_cgidec(gconstpointer data)
 }
 
 void
-test_url_path_normalize(void)
+data_url_path_normalize(void)
 {
-  char buf[1024];
-  const char *str = "/a/b/../c/d/././e";
+#define ADD_DATUM(label, expected, input)                               \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "input", G_TYPE_STRING, input,                         \
+                 NULL)
 
-  grn_str_url_path_normalize(&context, str, strlen(str), buf, 1024);
-  cut_assert_equal_string("/a/c/d/e", buf);
+  ADD_DATUM("no '.' and '..'",
+            "/a/b/c/",
+            "/a/b/c/");
+  ADD_DATUM("with '.' and '..'",
+            "/a/c/d/e",
+            "/a/b/../c/d/././e");
+
+#undef ADD_DATUM
 }
 
 void
-test_url_path_normalize_above_parent(void)
+test_url_path_normalize(gconstpointer data)
 {
-  char buf[1024];
-  const char *str = "/a/../../b";
+#define BUFFER_SIZE 1024
+  gchar buffer[BUFFER_SIZE];
+  const gchar *expected, *input;
 
-  grn_str_url_path_normalize(&context, str, strlen(str), buf, 1024);
-  /* NOTE: not in GRN_API_ENTER, rc is not seted */
-  grn_test_assert_error(GRN_SUCCESS,
-                        "parent path doesn't exist.",
-                        &context);
+  expected = gcut_data_get_string(data, "expected");
+  input = gcut_data_get_string(data, "input");
+
+  grn_str_url_path_normalize(&context, input, strlen(input),
+                             buffer, BUFFER_SIZE);
+  cut_assert_equal_string(expected, buffer);
+#undef BUFFER_SIZE
+}
+
+void
+data_url_path_normalize_invalid(void)
+{
+#define ADD_DATUM(label, error_message, input)                          \
+  gcut_add_datum(label,                                                 \
+                 "error-message", G_TYPE_STRING, error_message,         \
+                 "input", G_TYPE_STRING, input,                         \
+                 NULL)
+
+  ADD_DATUM("too many '..'",
+            "parent path doesn't exist.",
+            "/a/../../b");
+
+#undef ADD_DATUM
+}
+
+void
+test_url_path_normalize_invalid(gconstpointer data)
+{
+#define BUFFER_SIZE 1024
+  gchar buffer[BUFFER_SIZE];
+  const gchar *error_message, *input;
+
+  error_message = gcut_data_get_string(data, "error-message");
+  input = gcut_data_get_string(data, "input");
+
+  grn_str_url_path_normalize(&context, input, strlen(input),
+                             buffer, BUFFER_SIZE);
+  /* NOTE: not in GRN_API_ENTER, rc is not set. */
+  grn_test_assert_error(GRN_SUCCESS, error_message, &context);
+#undef BUFFER_SIZE
 }
 
 void
