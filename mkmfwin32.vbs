@@ -68,7 +68,7 @@ sub common_header()
   if use_debug = 1 then
     ts.write "/debug "
   end if
-  ts.write "/DYNAMICBASE /OPT:REF /OPT:ICF /NXCOMPAT advapi32.LIB ws2_32.lib "
+  ts.write "/STACK:2097152 /DYNAMICBASE /OPT:REF /OPT:ICF /NXCOMPAT advapi32.LIB ws2_32.lib "
   if use_mecab = 1 then
     ts.write "libmecab.lib"
   end if
