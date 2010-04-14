@@ -27,6 +27,17 @@
 
 #include "../lib/grn-assertions.h"
 
+#define GRN_TOKYO_GEO_POINT_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_TOKYO_GEO_POINT)
+#define GRN_WGS84_GEO_POINT_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_WGS84_GEO_POINT)
+
+#define GRN_GEO_POINT_PACK(latitude,longitude) \
+  (((long long unsigned int)(latitude)) + \
+   (((long long unsigned int)(longitude)) << 32))
+#define GRN_GEO_POINT_SET(ctx,obj,latitude,longitude) \
+  GRN_UINT64_SET(ctx, obj, GRN_GEO_POINT_PACK(latitude, longitude))
+
 void data_normalize(void);
 void test_normalize(gconstpointer data);
 void data_normalize_broken(void);
@@ -39,6 +50,10 @@ void data_cgidec(void);
 void test_cgidec(gconstpointer data);
 void data_url_path_normalize(void);
 void test_url_path_normalize(gconstpointer data);
+void data_url_path_normalize_invalid(void);
+void test_url_path_normalize_invalid(gconstpointer data);
+void data_text_otoj(void);
+void test_text_otoj(gconstpointer data);
 
 static grn_ctx context;
 
@@ -469,165 +484,96 @@ test_url_path_normalize_invalid(gconstpointer data)
 }
 
 void
-test_text_otoj(void)
+data_text_otoj(void)
 {
-  /* TODO: json spec. */
-  grn_obj obj, buf;
-  const char str_pattern[] = "\"'\\aAzZ09 \n\t\r日本語",
-             str_esc_pattern[] = "\"\\\"'\\\\aAzZ09 \\n\\t\\r日本語\"";
+#define ADD_DATUM(label, expected, type, ...)                   \
+  gcut_add_datum(label,                                         \
+                 "expected", G_TYPE_STRING, expected,           \
+                 "type", G_TYPE_INT, type,                      \
+                 __VA_ARGS__);
 
-  cut_omit("grn_text_otoj for obj of GRN_VOID type may be null.");
+  ADD_DATUM("Void", "null", GRN_DB_VOID, NULL);
+  ADD_DATUM("Bool", "true", GRN_DB_BOOL,
+            "value", G_TYPE_BOOLEAN, TRUE,
+            NULL);
+  ADD_DATUM("Bool", "false", GRN_DB_BOOL,
+            "value", G_TYPE_BOOLEAN, FALSE,
+            NULL);
+  ADD_DATUM("Int8 (min)", cut_take_printf("%d", INT8_MIN), GRN_DB_INT8,
+            "value", G_TYPE_INT, INT8_MIN,
+            NULL);
+  ADD_DATUM("Int8 (max)", cut_take_printf("%d", INT8_MAX), GRN_DB_INT8,
+            "value", G_TYPE_INT, INT8_MAX,
+            NULL);
+  ADD_DATUM("UInt8 (min)", "0", GRN_DB_UINT8,
+            "value", G_TYPE_UINT, 0,
+            NULL);
+  ADD_DATUM("UInt8 (max)", cut_take_printf("%u", UINT8_MAX), GRN_DB_UINT8,
+            "value", G_TYPE_UINT, UINT8_MAX,
+            NULL);
+  ADD_DATUM("Int16 (min)", cut_take_printf("%d", INT16_MIN), GRN_DB_INT16,
+            "value", G_TYPE_INT, INT16_MIN,
+            NULL);
+  ADD_DATUM("Int16 (max)", cut_take_printf("%d", INT16_MAX), GRN_DB_INT16,
+            "value", G_TYPE_INT, INT16_MAX,
+            NULL);
+  ADD_DATUM("UInt16 (min)", "0", GRN_DB_UINT16,
+            "value", G_TYPE_UINT, 0,
+            NULL);
+  ADD_DATUM("UInt16 (max)", cut_take_printf("%u", UINT16_MAX), GRN_DB_UINT16,
+            "value", G_TYPE_UINT, UINT16_MAX,
+            NULL);
+  ADD_DATUM("Int32 (min)", cut_take_printf("%d", INT32_MIN), GRN_DB_INT32,
+            "value", G_TYPE_INT, INT32_MIN,
+            NULL);
+  ADD_DATUM("Int32 (max)", cut_take_printf("%d", INT32_MAX), GRN_DB_INT32,
+            "value", G_TYPE_INT, INT32_MAX,
+            NULL);
+  ADD_DATUM("UInt32 (min)", "0", GRN_DB_UINT32,
+            "value", G_TYPE_UINT, 0,
+            NULL);
+  ADD_DATUM("UInt32 (max)", cut_take_printf("%u", UINT32_MAX), GRN_DB_UINT32,
+            "value", G_TYPE_UINT, UINT32_MAX,
+            NULL);
+  ADD_DATUM("Int64 (min)", cut_take_printf("%ld", INT64_MIN), GRN_DB_INT64,
+            "value", G_TYPE_INT64, INT64_MIN,
+            NULL);
+  ADD_DATUM("Int64 (max)", cut_take_printf("%ld", INT64_MAX), GRN_DB_INT64,
+            "value", G_TYPE_INT64, INT64_MAX,
+            NULL);
+  ADD_DATUM("UInt64 (min)", "0", GRN_DB_UINT64,
+            "value", G_TYPE_UINT64, G_GUINT64_CONSTANT(0),
+            NULL);
+  ADD_DATUM("UInt64 (max)", cut_take_printf("%lu", UINT64_MAX), GRN_DB_UINT64,
+            "value", G_TYPE_UINT64, UINT64_MAX,
+            NULL);
+  ADD_DATUM("Float", cut_take_printf("%g", 2.9), GRN_DB_FLOAT,
+            "value", G_TYPE_DOUBLE, 2.9,
+            NULL);
+  ADD_DATUM("Time", "1271053050.21148", GRN_DB_TIME,
+            "value", G_TYPE_INT64, GRN_TIME_PACK(1271053050, 211479),
+            NULL);
+  ADD_DATUM("ShortText",
+            "\"\\\"'\\\\aAzZ09 \\n\\t\\r日本語\"", GRN_DB_SHORT_TEXT,
+            "value", G_TYPE_STRING, "\"'\\aAzZ09 \n\t\r日本語",
+            NULL);
+  ADD_DATUM("Text",
+            "\"\\\"'\\\\aAzZ09 \\n\\t\\r日本語\"", GRN_DB_TEXT,
+            "value", G_TYPE_STRING, "\"'\\aAzZ09 \n\t\r日本語",
+            NULL);
+  ADD_DATUM("LongText",
+            "\"\\\"'\\\\aAzZ09 \\n\\t\\r日本語\"", GRN_DB_TEXT,
+            "value", G_TYPE_STRING, "\"'\\aAzZ09 \n\t\r日本語",
+            NULL);
+  ADD_DATUM("TokyoGeoPoint", "\"35681396x139766049\"", GRN_DB_TOKYO_GEO_POINT,
+            "latitude", G_TYPE_INT, 35681396,
+            "longitude", G_TYPE_INT, 139766049,
+            NULL);
+  ADD_DATUM("WGS84GeoPoint", "\"36032548x140164867\"", GRN_DB_WGS84_GEO_POINT,
+            "latitude", G_TYPE_INT, 36032548,
+            "longitude", G_TYPE_INT, 140164867,
+            NULL);
 
-  GRN_TEXT_INIT(&buf, 0);
-
-  /* SHORT_TEXT */
-  GRN_SHORT_TEXT_INIT(&obj, 0);
-  GRN_TEXT_PUTS(&context, &obj, str_pattern);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &obj, '\0');
-  cut_assert_equal_string(str_esc_pattern, GRN_TEXT_VALUE(&buf));
-  GRN_BULK_REWIND(&buf); grn_obj_unlink(&context, &obj);
-
-  /* TEXT */
-  GRN_TEXT_INIT(&obj, 0);
-  GRN_TEXT_PUTS(&context, &obj, str_pattern);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &obj, '\0');
-  cut_assert_equal_string(str_esc_pattern, GRN_TEXT_VALUE(&buf));
-  GRN_BULK_REWIND(&buf); grn_obj_unlink(&context, &obj);
-
-  /* LONG_TEXT */
-  GRN_LONG_TEXT_INIT(&obj, 0);
-  GRN_TEXT_PUTS(&context, &obj, str_pattern);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &obj, '\0');
-  cut_assert_equal_string(str_esc_pattern, GRN_TEXT_VALUE(&buf));
-  GRN_BULK_REWIND(&buf); grn_obj_unlink(&context, &obj);
-
-  /* VOID */
-  GRN_VOID_INIT(&obj);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* BOOL */
-  GRN_BOOL_INIT(&obj, 0);
-  GRN_BOOL_SET(&context, &obj, 1);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_BOOL_SET(&context, &obj, 0);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* INT8 */
-  GRN_INT8_INIT(&obj, 0);
-  GRN_INT8_SET(&context, &obj, INT8_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_INT8_SET(&context, &obj, INT8_MIN);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* UINT8 */
-  GRN_UINT8_INIT(&obj, 0);
-  GRN_UINT8_SET(&context, &obj, UINT8_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_UINT8_SET(&context, &obj, 0);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* INT16 */
-  GRN_INT16_INIT(&obj, 0);
-  GRN_INT16_SET(&context, &obj, INT16_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_INT16_SET(&context, &obj, INT16_MIN);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* UINT16 */
-  GRN_UINT16_INIT(&obj, 0);
-  GRN_UINT16_SET(&context, &obj, UINT16_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_UINT16_SET(&context, &obj, 0);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* INT32 */
-  GRN_INT32_INIT(&obj, 0);
-  GRN_INT32_SET(&context, &obj, INT32_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_INT32_SET(&context, &obj, INT32_MIN);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* UINT32 */
-  GRN_UINT32_INIT(&obj, 0);
-  GRN_UINT32_SET(&context, &obj, UINT32_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_UINT32_SET(&context, &obj, 0);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* INT64 */
-  GRN_INT64_INIT(&obj, 0);
-  GRN_INT64_SET(&context, &obj, INT64_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_INT64_SET(&context, &obj, INT64_MIN);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* UINT64 */
-  GRN_UINT64_INIT(&obj, 0);
-  GRN_UINT64_SET(&context, &obj, UINT64_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_UINT64_SET(&context, &obj, 0);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  /* TIME: TIME is same as INT64  */
-  GRN_TIME_INIT(&obj, 0);
-  GRN_TIME_SET(&context, &obj, INT64_MAX);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  GRN_TEXT_PUTC(&context, &buf, ' ');
-  GRN_TIME_SET(&context, &obj, INT64_MIN);
-  grn_test_assert(grn_text_otoj(&context, &buf, &obj, NULL));
-  grn_obj_unlink(&context, &obj);
-  GRN_TEXT_PUTC(&context, &buf, '\0');
-
-  cut_assert_equal_string(cut_take_printf(
-    "%s "
-    "%s %s "
-    "%" PRId8 " %" PRId8 " "
-    "%" PRIu8 " %" PRIu8 " "
-    "%" PRId16 " %" PRId16 " "
-    "%" PRIu16 " %" PRIu16 " "
-    "%" PRId32 " %" PRId32 " "
-    "%" PRIu32 " %" PRIu32 " "
-    "%" PRId64 " %" PRId64 " "
-    "%" PRIu64 " %" PRIu64 " "
-    "%#.15g %#.15g", /* Time sec float*/
-    "null",
-    "true", "false",
-    INT8_MAX, INT8_MIN,
-    UINT8_MAX, (uint8_t)0,
-    INT16_MAX, INT16_MIN,
-    UINT16_MAX, (uint16_t)0,
-    INT32_MAX, INT32_MIN,
-    UINT32_MAX, (uint32_t)0,
-    INT64_MAX, INT64_MIN,
-    UINT64_MAX, (uint64_t)0,
-    (double)INT64_MAX / GRN_TIME_USEC_PER_SEC, (double)INT64_MIN / GRN_TIME_USEC_PER_SEC
-  ), GRN_TEXT_VALUE(&buf));
-
-  /* FIXME: FLOAT */
-
-  /* FIXME: create macro for TOKYO_GEO_POINT/WGS84_GEO_POINT */
   /* FIXME* unknown bulk */
   /* FIXME: GRN_UVECTOR */
   /* FIXME: GRN_VECTOR */
@@ -635,7 +581,107 @@ test_text_otoj(void)
   /* FIXME: table without format */
   /* FIXME: grn_text_atoj */
 
-  grn_obj_unlink(&context, &buf);
+#undef ADD_DATUM
+}
+
+static void
+construct_object(gconstpointer data, grn_builtin_type type, grn_obj *object)
+{
+  switch (type) {
+  case GRN_DB_VOID:
+    GRN_VOID_INIT(object);
+    break;
+  case GRN_DB_BOOL:
+    GRN_BOOL_INIT(object, 0);
+    GRN_BOOL_SET(&context, object, gcut_data_get_boolean(data, "value"));
+    break;
+  case GRN_DB_INT8:
+    GRN_INT8_INIT(object, 0);
+    GRN_INT8_SET(&context, object, gcut_data_get_int(data, "value"));
+    break;
+  case GRN_DB_UINT8:
+    GRN_UINT8_INIT(object, 0);
+    GRN_UINT8_SET(&context, object, gcut_data_get_uint(data, "value"));
+    break;
+  case GRN_DB_INT16:
+    GRN_INT16_INIT(object, 0);
+    GRN_INT16_SET(&context, object, gcut_data_get_int(data, "value"));
+    break;
+  case GRN_DB_UINT16:
+    GRN_UINT16_INIT(object, 0);
+    GRN_UINT16_SET(&context, object, gcut_data_get_uint(data, "value"));
+    break;
+  case GRN_DB_INT32:
+    GRN_INT32_INIT(object, 0);
+    GRN_INT32_SET(&context, object, gcut_data_get_int(data, "value"));
+    break;
+  case GRN_DB_UINT32:
+    GRN_UINT32_INIT(object, 0);
+    GRN_UINT32_SET(&context, object, gcut_data_get_uint(data, "value"));
+    break;
+  case GRN_DB_INT64:
+    GRN_INT64_INIT(object, 0);
+    GRN_INT64_SET(&context, object, gcut_data_get_int64(data, "value"));
+    break;
+  case GRN_DB_UINT64:
+    GRN_UINT64_INIT(object, 0);
+    GRN_UINT64_SET(&context, object, gcut_data_get_uint64(data, "value"));
+    break;
+  case GRN_DB_FLOAT:
+    GRN_FLOAT_INIT(object, 0);
+    GRN_FLOAT_SET(&context, object, gcut_data_get_double(data, "value"));
+    break;
+  case GRN_DB_TIME:
+    GRN_TIME_INIT(object, 0);
+    GRN_TIME_SET(&context, object, gcut_data_get_int64(data, "value"));
+    break;
+  case GRN_DB_SHORT_TEXT:
+    GRN_SHORT_TEXT_INIT(object, 0);
+    GRN_TEXT_SETS(&context, object, gcut_data_get_string(data, "value"));
+    break;
+  case GRN_DB_TEXT:
+    GRN_TEXT_INIT(object, 0);
+    GRN_TEXT_SETS(&context, object, gcut_data_get_string(data, "value"));
+    break;
+  case GRN_DB_LONG_TEXT:
+    GRN_LONG_TEXT_INIT(object, 0);
+    GRN_TEXT_SETS(&context, object, gcut_data_get_string(data, "value"));
+    break;
+  case GRN_DB_TOKYO_GEO_POINT:
+    GRN_TOKYO_GEO_POINT_INIT(object, 0);
+    GRN_GEO_POINT_SET(&context, object,
+                      gcut_data_get_int(data, "latitude"),
+                      gcut_data_get_int(data, "longitude"));
+    break;
+  case GRN_DB_WGS84_GEO_POINT:
+    GRN_WGS84_GEO_POINT_INIT(object, 0);
+    GRN_GEO_POINT_SET(&context, object,
+                      gcut_data_get_int(data, "latitude"),
+                      gcut_data_get_int(data, "longitude"));
+    break;
+  default:
+    cut_fail("unknown type: %d", type);
+    break;
+  }
+}
+
+void
+test_text_otoj(gconstpointer data)
+{
+  grn_obj object, json;
+  grn_builtin_type type;
+  const gchar *expected;
+
+  GRN_TEXT_INIT(&json, 0);
+
+  expected = gcut_data_get_string(data, "expected");
+  type = gcut_data_get_int(data, "type");
+  cut_trace(construct_object(data, type, &object));
+  grn_text_otoj(&context, &json, &object, NULL);
+  grn_obj_unlink(&context, &object);
+  cut_assert_equal_substring(expected,
+                             GRN_TEXT_VALUE(&json), GRN_TEXT_LEN(&json));
+  grn_obj_unlink(&context, &json);
 }
 
 void
