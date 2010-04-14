@@ -687,41 +687,68 @@ test_text_otoj(gconstpointer data)
 void
 data_str_len(void)
 {
-#define ADD_DATUM(label, expected, input)               \
+#define ADD_DATUM(label, expected, input, encoding)     \
   gcut_add_datum(label,                                 \
                  "expected", GCUT_TYPE_SIZE, expected,  \
                  "input", G_TYPE_STRING, input,         \
+                 "encoding", G_TYPE_INT, encoding,      \
                  NULL)
 
-  ADD_DATUM("halfwidth",
-            11,
-            "ABC! & ABC!");
+#define ADD_DATUM_ALL_ENCODING(label, expected, input)  \
+  ADD_DATUM(label " (none) <" input ">",                \
+            expected, input, GRN_ENC_NONE);             \
+  ADD_DATUM(label " (eucjP) <" input ">",               \
+            expected, input, GRN_ENC_EUC_JP);           \
+  ADD_DATUM(label " (UTF-8) <" input ">",               \
+            expected, input, GRN_ENC_UTF8);             \
+  ADD_DATUM(label " (Shift_JIS-8) <" input ">",         \
+            expected, input, GRN_ENC_SJIS);             \
+  ADD_DATUM(label " (Latin1) <" input ">",              \
+            expected, input, GRN_ENC_LATIN1);           \
+  ADD_DATUM(label " (KOI8R) <" input ">",               \
+            expected, input, GRN_ENC_KOI8R);
 
-  ADD_DATUM("with newlines",
-            209,
-            "groongaは組み込み型の全文検索エンジンです。\n"
-            "DBMSやスクリプト言語処理系等に組み込むこと\n"
-            "によって、その全文検索機能を強化することが\n"
-            "できます。n-gramインデックスと単語インデッ\n"
-            "クスの特徴を兼ね備えた、高速かつ高精度な転\n"
-            "置インデックスタイプのエンジンです。コンパ\n"
-            "クトな実装ですが、大規模な文書量と検索要求\n"
-            "を処理できるように設計されています。また、\n"
-            "純粋なn-gramインデックスの作成も可能です。");
+#define ADD_DATUM_JAPANESE(label, expected, input)                      \
+  ADD_DATUM("Japanese: " label " (eucjP) <" input ">",                  \
+            expected, cut_take_convert(input, "eucJP", "UTF-8"),        \
+            GRN_ENC_EUC_JP);                                            \
+  ADD_DATUM("Japanese: " label " (UTF-8) <" input ">",                  \
+            expected, input, GRN_ENC_UTF8);                             \
+  ADD_DATUM("Japanese: " label " (Shift_JIS) <" input ">",              \
+            expected, cut_take_convert(input, "CP932", "UTF-8"),        \
+            GRN_ENC_SJIS);
+
+  ADD_DATUM_ALL_ENCODING("half width", 11, "ABC! & ABC!");
+
+  ADD_DATUM_JAPANESE("with newlines",
+                     209,
+                     "groongaは組み込み型の全文検索エンジンです。\n"
+                     "DBMSやスクリプト言語処理系等に組み込むこと\n"
+                     "によって、その全文検索機能を強化することが\n"
+                     "できます。n-gramインデックスと単語インデッ\n"
+                     "クスの特徴を兼ね備えた、高速かつ高精度な転\n"
+                     "置インデックスタイプのエンジンです。コンパ\n"
+                     "クトな実装ですが、大規模な文書量と検索要求\n"
+                     "を処理できるように設計されています。また、\n"
+                     "純粋なn-gramインデックスの作成も可能です。");
+
+#undef ADD_DATUM_JAPANESE
+#undef ADD_DATUM_ALL_ENCODING
 #undef ADD_DATUM
 }
 
-/* TODO: support all encoding supported by groonga */
 void
 test_str_len(gpointer data)
 {
   size_t result, expected;
   const gchar *input;
   const char *input_end;
+  grn_encoding encoding;
 
   input = gcut_data_get_string(data, "input");
   input_end = strchr(input, '\0');
-  result = grn_str_len(&context, input, GRN_ENC_UTF8, &input_end);
+  encoding = gcut_data_get_int(data, "encoding");
+  result = grn_str_len(&context, input, encoding, &input_end);
   expected = gcut_data_get_size(data, "expected");
   cut_assert_equal_size(expected, result);
 }
