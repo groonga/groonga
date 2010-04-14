@@ -22,25 +22,6 @@
 #include <groonga.h>
 
 #include <gcutter.h>
-#ifndef cut_message
-#  define cut_message(...)
-#endif
-#ifndef cut_test_with_user_message
-#  define cut_test_with_user_message(assertion, set_user_message) (assertion)
-#endif
-
-#ifndef GCUT_TYPE_SIZE
-#  define GCUT_TYPE_SIZE G_TYPE_UINT
-#  define gcut_data_get_size(data, field_name) \
-            (gsize)gcut_data_get_uint(data, field_name)
-#endif
-
-#ifndef gcut_data_get_char
-#  undef G_TYPE_CHAR
-#  define G_TYPE_CHAR G_TYPE_INT
-#  define gcut_data_get_char(data, field_name) \
-            (gchar)gcut_data_get_int(data, field_name)
-#endif
 
 #include <string.h>
 

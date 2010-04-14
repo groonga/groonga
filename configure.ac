@@ -314,8 +314,9 @@ GROONGA="\$(abs_top_srcdir)/src/groonga"
 AC_SUBST(GROONGA)
 
 # check Cutter with GLib support if available
+REQUIRED_MINIMUM_CUTTER_VERSION=1.1.3
 m4_ifdef([AC_CHECK_GCUTTER], [
-AC_CHECK_GCUTTER
+AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)
 ],
 [ac_cv_use_cutter="no"])
 
@@ -334,7 +335,7 @@ if test "$ac_cv_use_cutter" != "no"; then
   fi
 
   m4_ifdef([AC_CHECK_SOUPCUTTER], [
-  AC_CHECK_SOUPCUTTER
+  AC_CHECK_SOUPCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)
   ],
   [ac_cv_use_soupcutter="no"])
   AM_CONDITIONAL([WITH_SOUPCUTTER],
