@@ -77,7 +77,7 @@
 <dl class="cmdoption">
 <dt id="cmdoption-p">
 <tt class="descname">-p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--port</tt><tt class="descclassname"> &lt;port number&gt;</tt><a class="headerlink" href="#cmdoption-p" title="Permalink to this definition">¶</a></dt>
-<dd>自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションでしていしたポート番号が異なる場合、接続不能となることに注意してください。</dd></dl>
+<dd>自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションで指定したポート番号が異なる場合、接続不能となることに注意してください。</dd></dl>
 
 <dl class="cmdoption">
 <dt id="cmdoption--dir">
@@ -88,6 +88,11 @@
 <dt id="cmdoption--noftp">
 <tt class="descname">--noftp</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--noftp" title="Permalink to this definition">¶</a></dt>
 <dd>通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイルの送信を行います。&#8211;noftp オプションを指定するとftp 通信を一切行わないようになります。存在しないスクリプトファイルを指定した場合、エラーとなることに注意してください。</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption--log-output-dir">
+<tt class="descname">--log-output-dir</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--log-output-dir" title="Permalink to this definition">¶</a></dt>
+<dd>デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリです。このオプションを利用すると、任意のディレクトリに出力先を変更することができます。</dd></dl>
 
 </div>
 <div class="section" id="id5">
@@ -111,7 +116,7 @@ grntest test.scr 任意のDB名</blockquote>
 <p>とタイプしてください。もしgrntestが正常に動作すれば、</p>
 <blockquote>
 test-ユーザ名-数字.log</blockquote>
-<p>というファイルが作成されるはずです。そうでない場合は、このドキュメントの「トラブルシューティング」の章を参照してください。</p>
+<p>というファイルが作成されるはずです。作成されない場合、、このドキュメントの「トラブルシューティング」の章を参照してください。</p>
 </div>
 <div class="section" id="id7">
 <h2>3.1.4.7. スクリプトファイル<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
@@ -120,20 +125,34 @@ test-ユーザ名-数字.log</blockquote>
 &#8220;#&#8221;で始まる行はコメントとして扱われます。</p>
 <div class="section" id="id8">
 <h3>3.1.4.7.1. grntest命令<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
-<p>現在サポートされているgrntest命令は以下の4つです。</p>
+<p>現在サポートされているgrntest命令は以下の8つです。</p>
 <blockquote>
 <p>do_local コマンドファイル [スレッド数] [繰り返し数]</p>
 <blockquote>
-コマンドファイルをgroonga 単体で実行します。スレッド数が指定されている場合、複数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されてい場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数とも省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイル 1 [繰り返し数]と明示的に指定してください。</blockquote>
+コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されてい場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数とも省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイル 1 [繰り返し数]と明示的に指定してください。</blockquote>
 <p>do_gqpt コマンドファイル [スレッド数] [繰り返し数]</p>
 <blockquote>
-コマンドファイルをgroonga サーバで実行します。スレッド数や繰り返し数の意味はdo_localの場合と同じです。</blockquote>
+コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味はdo_localの場合と同じです。</blockquote>
 <p>rep_local コマンドファイル [スレッド数] [繰り返し数]</p>
 <blockquote>
-コマンドファイルをgroonga 単体で実行し、より詳細な報告を行います。</blockquote>
+コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。</blockquote>
 <p>rep_gqpt コマンドファイル [スレッド数] [繰り返し数]</p>
 <blockquote>
-コマンドファイルをgroonga サーバ実行し、より詳細な報告を行います。 スレッド数や繰り返し数の意味はdo_localと 同じです。</blockquote>
+コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド数や繰り返し数の意味はdo_localと 同じです。</blockquote>
+<p>out_local コマンドファイル 入力ファイル名</p>
+<blockquote>
+<p>コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファイル&#8221;に書きだします。この結果は、test_local,　test_gqtp命令で利用します。なおこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別のものです。grntestではコメントが利用できる以外、</p>
+<blockquote>
+groonga &lt; コマンドファイル &gt; 出力ファイル</blockquote>
+<p>とした場合と同じです。</p>
+</blockquote>
+<p>out_gqtp コマンドファイル 出力ファイル名</p>
+<blockquote>
+コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等です。</blockquote>
+<dl class="docutils">
+<dt>test_local コマンドファイル 入力ファイル名</dt>
+<dd>コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル.diffというファイルに書きだします。</dd>
+</dl>
 </blockquote>
 </div>
 <div class="section" id="id9">
@@ -187,7 +206,7 @@ rep_gqtp test.select 10 10; rep_local test.status 10
 に送信されます。ログファイルは以下のようなjson形式のテキストです。</p>
 <div class="highlight-none"><div class="highlight"><pre>[{&quot;script&quot;: &quot;test.scr&quot;,
   &quot;user&quot;: &quot;homepage&quot;,
-  &quot;date&quot;: &quot;2010-02-10 06:17:08&quot;,
+  &quot;date&quot;: &quot;2010-04-14 22:47:04&quot;,
   &quot;CPU&quot;: Intel(R) Pentium(R) 4 CPU 2.80GHz&quot;,
   &quot;BIT&quot;: 32,
   &quot;CORE&quot;: 1,
@@ -195,38 +214,53 @@ rep_gqtp test.select 10 10; rep_local test.status 10
   &quot;HDD&quot;: &quot;257662232KBytes&quot;,
   &quot;OS&quot;: &quot;Linux 2.4.20-24.7-i686&quot;,
   &quot;HOST&quot;: &quot;localhost&quot;,
-  &quot;PORT&quot;: &quot;10400&quot;,
-  &quot;VERSION&quot;: &quot;0.1.5&quot;
+  &quot;PORT&quot;: &quot;10041&quot;,
+  &quot;VERSION&quot;: &quot;0.1.8-100-ga54c5f8&quot;
 },
 {&quot;jobs&quot;: &quot;rep_local test.ddl&quot;,
 &quot;detail&quot;: [
-[0, &quot;table_create res_table --key_type ShortText&quot;, 1275, 2692, [0]],
-[0, &quot;column_create res_table res_column --type Text&quot;, 2742, 5248, [0]],
-[0, &quot;column_create res_table user_column --type Text&quot;, 5306, 7901, [0]],
-[0, &quot;column_create res_table mail_column --type Text&quot;, 7963, 10656, [0]],
-[0, &quot;column_create res_table time_column --type Time&quot;, 10715, 11624, [0]],
-[0, &quot;status&quot;, 11641, 11663, [0]],
-[0, &quot;table_create thread_table --key_type ShortText&quot;, 11674, 12690, [0]],
-[0, &quot;column_create thread_table thread_title_column --type ShortText&quot;, 12716, 15281, [0]],
-[0, &quot;status&quot;, 15344, 15367, [0]],
-[0, &quot;table_create lexicon_table --flags 129 --key_type ShortText --default_tokenizer TokenBigram&quot;, 15376, 16552, [0]],
-[0, &quot;column_create lexicon_table inv_res_column 514 res_table res_column &quot;, 16577, 30426, [0]],
-[0, &quot;column_create lexicon_table inv_thread_column 514 thread_table thread_title_column &quot;, 30533, 44591, [0]],
-[0, &quot;status&quot;, 44696, 44721, [0]]],
-&quot;summary&quot; :[{&quot;job&quot;: &quot;rep_local test.ddl&quot;, &quot;latency&quot;: 44777, &quot;self&quot;: 43979, &quot;qps&quot;: 295.595625, &quot;min&quot;: 22, &quot;max&quot;: 14058}]},
+[0, &quot;table_create res_table --key_type ShortText&quot;, 1490, 3086, [0,1271252824.25846,0.00144
+7]],
+[0, &quot;column_create res_table res_column --type Text&quot;, 3137, 5956, [0,1271252824.2601,0.002
+741]],
+[0, &quot;column_create res_table user_column --type Text&quot;, 6020, 8935, [0,1271252824.26298,0.0
+02841]],
+[0, &quot;column_create res_table mail_column --type Text&quot;, 8990, 11925, [0,1271252824.26595,0.
+002861]],
+[0, &quot;column_create res_table time_column --type Time&quot;, 12008, 13192, [0,1271252824.26897,0
+.001147]],
+[0, &quot;status&quot;, 13214, 13277, [0,1271252824.27018,3.0e-05]],
+[0, &quot;table_create thread_table --key_type ShortText&quot;, 13289, 14541, [0,1271252824.27025,0.
+001213]],
+[0, &quot;column_create thread_table thread_title_column --type ShortText&quot;, 14570, 17380, [0,12
+71252824.27153,0.002741]],
+[0, &quot;status&quot;, 17435, 17480, [0,1271252824.2744,2.7e-05]],
+[0, &quot;table_create lexicon_table --flags 129 --key_type ShortText --default_tokenizer Token
+Bigram&quot;, 17491, 18970, [0,1271252824.27446,0.001431]],
+[0, &quot;column_create lexicon_table inv_res_column 514 res_table res_column &quot;, 18998, 33248,
+[0,1271252824.27596,0.01418]],
+[0, &quot;column_create lexicon_table inv_thread_column 514 thread_table thread_title_column &quot;,
+ 33285, 48472, [0,1271252824.29025,0.015119]],
+[0, &quot;status&quot;, 48509, 48554, [0,1271252824.30547,2.7e-05]]],
+&quot;summary&quot; :[{&quot;job&quot;: &quot;rep_local test.ddl&quot;, &quot;latency&quot;: 48607, &quot;self&quot;: 47719, &quot;qps&quot;: 272.4281
+73, &quot;min&quot;: 45, &quot;max&quot;: 15187, &quot;queries&quot;: 13}]},
 {&quot;jobs&quot;: &quot;do_local test.load; &quot;,
-&quot;summary&quot; :[{&quot;job&quot;: &quot;do_local test.load&quot;, &quot;latency&quot;: 63715, &quot;self&quot;: 18606, &quot;qps&quot;: 1074.922068, &quot;min&quot;: 166, &quot;max&quot;: 5015}]},
+&quot;summary&quot; :[{&quot;job&quot;: &quot;do_local test.load&quot;, &quot;latency&quot;: 68693, &quot;self&quot;: 19801, &quot;qps&quot;: 1010.049
+997, &quot;min&quot;: 202, &quot;max&quot;: 5453, &quot;queries&quot;: 20}]},
 {&quot;jobs&quot;: &quot;do_gqtp test.select 10 10; do_local test.status 10&quot;,
-&quot;summary&quot; :[{&quot;job&quot;: &quot; do_local test.status 10&quot;, &quot;latency&quot;: 493483, &quot;self&quot;: 429467, &quot;qps&quot;: 93.138704, &quot;min&quot;: 5, &quot;max&quot;: 177},{&quot;job&quot;: &quot;do_gqtp test.select 10 10&quot;, &quot;latency&quot;: 802498, &quot;self&quot;: 738482, &quot;qps&quot;: 2031.193719, &quot;min&quot;: 305, &quot;max&quot;: 114292}]},
-{&quot;total&quot;: 849332, &quot;qps&quot;: 1852.043724}]
+&quot;summary&quot; :[{&quot;job&quot;: &quot; do_local test.status 10&quot;, &quot;latency&quot;: 805990, &quot;self&quot;: 737014, &quot;qps&quot;:
+54.273053, &quot;min&quot;: 24, &quot;max&quot;: 218, &quot;queries&quot;: 40},{&quot;job&quot;: &quot;do_gqtp test.select 10 10&quot;, &quot;lat
+ency&quot;: 831495, &quot;self&quot;: 762519, &quot;qps&quot;: 1967.164097, &quot;min&quot;: 73, &quot;max&quot;: 135631, &quot;queries&quot;: 15
+00}]},
+{&quot;total&quot;: 915408, &quot;qps&quot;: 1718.359464, &quot;queries&quot;: 1573}]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id13">
 <h2>3.1.4.9. 制限事項<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッド数の合計は最大64です。</li>
-<li>コマンドファイル中のgroongaコマンドの長さは最長10000byteです。</li>
+<li>スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッド数の合計は最大64までに制限されます。</li>
+<li>コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。</li>
 </ul>
 </div>
 <div class="section" id="id14">

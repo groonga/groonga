@@ -35,7 +35,7 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 
 .. cmdoption:: -p, --port <port number>
 
-  自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションでしていしたポート番号が異なる場合、接続不能となることに注意してください。
+  自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションで指定したポート番号が異なる場合、接続不能となることに注意してください。
 
 
 .. cmdoption:: --dir
@@ -45,6 +45,10 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 .. cmdoption:: --noftp
 
   通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないようになります。存在しないスクリプトファイルを指定した場合、エラーとなることに注意してください。
+
+.. cmdoption:: --log-output-dir
+
+  デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリです。このオプションを利用すると、任意のディレクトリに出力先を変更することができます。
 
 引数
 ----
@@ -68,7 +72,7 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 
    test-ユーザ名-数字.log
 
-というファイルが作成されるはずです。そうでない場合は、このドキュメントの「トラブルシューティング」の章を参照してください。
+というファイルが作成されるはずです。作成されない場合、、このドキュメントの「トラブルシューティング」の章を参照してください。
 
 
 スクリプトファイル
@@ -83,23 +87,39 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 grntest命令
 ^^^^^^^^^^^
 
-現在サポートされているgrntest命令は以下の4つです。
+現在サポートされているgrntest命令は以下の8つです。
 
   do_local コマンドファイル [スレッド数] [繰り返し数]
 
-    コマンドファイルをgroonga 単体で実行します。スレッド数が指定されている場合、複数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されてい場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数とも省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイル 1 [繰り返し数]と明示的に指定してください。
+    コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されてい場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数とも省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイル 1 [繰り返し数]と明示的に指定してください。
 
   do_gqpt コマンドファイル [スレッド数] [繰り返し数]
 
-    コマンドファイルをgroonga サーバで実行します。スレッド数や繰り返し数の意味はdo_localの場合と同じです。
+    コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味はdo_localの場合と同じです。
 
   rep_local コマンドファイル [スレッド数] [繰り返し数]
 
-    コマンドファイルをgroonga 単体で実行し、より詳細な報告を行います。
+    コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。
 
   rep_gqpt コマンドファイル [スレッド数] [繰り返し数]
 
-    コマンドファイルをgroonga サーバ実行し、より詳細な報告を行います。 スレッド数や繰り返し数の意味はdo_localと 同じです。
+    コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド数や繰り返し数の意味はdo_localと 同じです。
+
+  out_local コマンドファイル 入力ファイル名
+
+    コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファイル"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。なおこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別のものです。grntestではコメントが利用できる以外、
+
+     groonga < コマンドファイル > 出力ファイル ::
+
+    とした場合と同じです。
+
+  out_gqtp コマンドファイル 出力ファイル名
+
+    コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等です。
+
+  test_local コマンドファイル 入力ファイル名
+    コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル.diffというファイルに書きだします。
+ 
 
 コマンドファイル
 ^^^^^^^^^^^^^^^^
@@ -167,7 +187,7 @@ grntestが正常に終了すると、(拡張子を除いた)スクリプト名-�
 
   [{"script": "test.scr",
     "user": "homepage",
-    "date": "2010-02-10 06:17:08",
+    "date": "2010-04-14 22:47:04",
     "CPU": Intel(R) Pentium(R) 4 CPU 2.80GHz",
     "BIT": 32,
     "CORE": 1,
@@ -175,38 +195,54 @@ grntestが正常に終了すると、(拡張子を除いた)スクリプト名-�
     "HDD": "257662232KBytes",
     "OS": "Linux 2.4.20-24.7-i686",
     "HOST": "localhost",
-    "PORT": "10400",
-    "VERSION": "0.1.5"
+    "PORT": "10041",
+    "VERSION": "0.1.8-100-ga54c5f8"
   },
   {"jobs": "rep_local test.ddl",
   "detail": [
-  [0, "table_create res_table --key_type ShortText", 1275, 2692, [0]],
-  [0, "column_create res_table res_column --type Text", 2742, 5248, [0]],
-  [0, "column_create res_table user_column --type Text", 5306, 7901, [0]],
-  [0, "column_create res_table mail_column --type Text", 7963, 10656, [0]],
-  [0, "column_create res_table time_column --type Time", 10715, 11624, [0]],
-  [0, "status", 11641, 11663, [0]],
-  [0, "table_create thread_table --key_type ShortText", 11674, 12690, [0]],
-  [0, "column_create thread_table thread_title_column --type ShortText", 12716, 15281, [0]],
-  [0, "status", 15344, 15367, [0]],
-  [0, "table_create lexicon_table --flags 129 --key_type ShortText --default_tokenizer TokenBigram", 15376, 16552, [0]],
-  [0, "column_create lexicon_table inv_res_column 514 res_table res_column ", 16577, 30426, [0]],
-  [0, "column_create lexicon_table inv_thread_column 514 thread_table thread_title_column ", 30533, 44591, [0]],
-  [0, "status", 44696, 44721, [0]]], 
-  "summary" :[{"job": "rep_local test.ddl", "latency": 44777, "self": 43979, "qps": 295.595625, "min": 22, "max": 14058}]},
+  [0, "table_create res_table --key_type ShortText", 1490, 3086, [0,1271252824.25846,0.00144
+  7]],
+  [0, "column_create res_table res_column --type Text", 3137, 5956, [0,1271252824.2601,0.002
+  741]],
+  [0, "column_create res_table user_column --type Text", 6020, 8935, [0,1271252824.26298,0.0
+  02841]],
+  [0, "column_create res_table mail_column --type Text", 8990, 11925, [0,1271252824.26595,0.
+  002861]],
+  [0, "column_create res_table time_column --type Time", 12008, 13192, [0,1271252824.26897,0
+  .001147]],
+  [0, "status", 13214, 13277, [0,1271252824.27018,3.0e-05]],
+  [0, "table_create thread_table --key_type ShortText", 13289, 14541, [0,1271252824.27025,0.
+  001213]],
+  [0, "column_create thread_table thread_title_column --type ShortText", 14570, 17380, [0,12
+  71252824.27153,0.002741]],
+  [0, "status", 17435, 17480, [0,1271252824.2744,2.7e-05]],
+  [0, "table_create lexicon_table --flags 129 --key_type ShortText --default_tokenizer Token
+  Bigram", 17491, 18970, [0,1271252824.27446,0.001431]],
+  [0, "column_create lexicon_table inv_res_column 514 res_table res_column ", 18998, 33248,
+  [0,1271252824.27596,0.01418]],
+  [0, "column_create lexicon_table inv_thread_column 514 thread_table thread_title_column ",
+   33285, 48472, [0,1271252824.29025,0.015119]],
+  [0, "status", 48509, 48554, [0,1271252824.30547,2.7e-05]]],
+  "summary" :[{"job": "rep_local test.ddl", "latency": 48607, "self": 47719, "qps": 272.4281
+  73, "min": 45, "max": 15187, "queries": 13}]},
   {"jobs": "do_local test.load; ",
-  "summary" :[{"job": "do_local test.load", "latency": 63715, "self": 18606, "qps": 1074.922068, "min": 166, "max": 5015}]},
+  "summary" :[{"job": "do_local test.load", "latency": 68693, "self": 19801, "qps": 1010.049
+  997, "min": 202, "max": 5453, "queries": 20}]},
   {"jobs": "do_gqtp test.select 10 10; do_local test.status 10",
-  "summary" :[{"job": " do_local test.status 10", "latency": 493483, "self": 429467, "qps": 93.138704, "min": 5, "max": 177},{"job": "do_gqtp test.select 10 10", "latency": 802498, "self": 738482, "qps": 2031.193719, "min": 305, "max": 114292}]},
-  {"total": 849332, "qps": 1852.043724}]
+  "summary" :[{"job": " do_local test.status 10", "latency": 805990, "self": 737014, "qps":
+  54.273053, "min": 24, "max": 218, "queries": 40},{"job": "do_gqtp test.select 10 10", "lat
+  ency": 831495, "self": 762519, "qps": 1967.164097, "min": 73, "max": 135631, "queries": 15
+  00}]},
+  {"total": 915408, "qps": 1718.359464, "queries": 1573}]
+  
 
 
 制限事項
 --------
 
-* スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッド数の合計は最大64です。 
+* スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッド数の合計は最大64までに制限されます。
 
-* コマンドファイル中のgroongaコマンドの長さは最長10000byteです。
+* コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。
 
 
 トラブルシューティング
