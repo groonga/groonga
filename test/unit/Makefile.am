@@ -8,7 +8,6 @@ SUBDIRS =		\
 
 TESTS = run-test.sh
 TESTS_ENVIRONMENT =				\
-	IGNORE_EXIT_STATUS=yes			\
 	NO_MAKE=yes				\
 	CUTTER="$(CUTTER)"			\
 	RUBY="$(RUBY)"				\
