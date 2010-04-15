@@ -401,7 +401,6 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   pat->obj.header.flags = flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
     grn_io_close(ctx, io);
-    GRN_FREE(pat);
     return NULL;
   }
   node0->lr[1] = 0;
