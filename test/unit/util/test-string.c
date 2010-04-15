@@ -535,16 +535,19 @@ data_text_otoj(void)
   ADD_DATUM("UInt32 (max)", cut_take_printf("%u", UINT32_MAX), GRN_DB_UINT32,
             "value", G_TYPE_UINT, UINT32_MAX,
             NULL);
-  ADD_DATUM("Int64 (min)", cut_take_printf("%ld", INT64_MIN), GRN_DB_INT64,
+  ADD_DATUM("Int64 (min)",
+            cut_take_printf("%" G_GINT64_FORMAT, INT64_MIN), GRN_DB_INT64,
             "value", G_TYPE_INT64, INT64_MIN,
             NULL);
-  ADD_DATUM("Int64 (max)", cut_take_printf("%ld", INT64_MAX), GRN_DB_INT64,
+  ADD_DATUM("Int64 (max)",
+            cut_take_printf("%" G_GINT64_FORMAT, INT64_MAX), GRN_DB_INT64,
             "value", G_TYPE_INT64, INT64_MAX,
             NULL);
   ADD_DATUM("UInt64 (min)", "0", GRN_DB_UINT64,
             "value", G_TYPE_UINT64, G_GUINT64_CONSTANT(0),
             NULL);
-  ADD_DATUM("UInt64 (max)", cut_take_printf("%lu", UINT64_MAX), GRN_DB_UINT64,
+  ADD_DATUM("UInt64 (max)",
+            cut_take_printf("%" G_GUINT64_FORMAT, UINT64_MAX), GRN_DB_UINT64,
             "value", G_TYPE_UINT64, UINT64_MAX,
             NULL);
   ADD_DATUM("Float", cut_take_printf("%g", 2.9), GRN_DB_FLOAT,
