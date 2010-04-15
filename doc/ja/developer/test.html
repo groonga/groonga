@@ -49,43 +49,33 @@
 <h2>4.3.1. テスト環境の構築<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="cutter">
 <h3>4.3.1.1. Cutterのインストール<a class="headerlink" href="#cutter" title="Permalink to this headline">¶</a></h3>
-<p>groongaは、テストのフレームワークとしてCutterを用いています。</p>
-<p>詳細はhttp://cutter.sourceforge.net/をごらんください。</p>
-<p>Cutterをインストールするためには、GLib2.0とintltoolsの新しめの版が必要です。DebianやUbuntuでは、以下のようにしてインストールできます。:</p>
-<div class="highlight-none"><div class="highlight"><pre># aptitude install libglib2.0-dev intltools
-</pre></div>
-</div>
+<p>groongaは、テストのフレームワークとして <a class="reference external" href="http://cutter.sourceforge.net/">Cutter</a> を用いています。</p>
+<p>Cutterのインストール方法は <a class="reference external" href="http://cutter.sourceforge.net/reference/ja/install.html">プラットフォーム毎のCutterのインストール方法</a> をご覧下さい。</p>
 </div>
 <div class="section" id="lcov">
 <h3>4.3.1.2. lcovのインストール<a class="headerlink" href="#lcov" title="Permalink to this headline">¶</a></h3>
-<p>カバレッジ情報を計測するためには、lcov 1.6以上が必要です。以下のようにしてインストールできます。:</p>
-<div class="highlight-none"><div class="highlight"><pre># aptitude install libglib2.0-dev intltools
-</pre></div>
-</div>
-</div>
-<div class="section" id="test-unit">
-<h3>4.3.1.3. test-unitのインストール<a class="headerlink" href="#test-unit" title="Permalink to this headline">¶</a></h3>
-<p>Rubyで書かれたテスト（主にHTTPのテスト）を実行するためには、test-unitの新しめの版が必要です。以下のようにしてインストールできます。:</p>
-<div class="highlight-none"><div class="highlight"><pre># aptitude install rubygems
-# gem install test-unit
+<p>カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは以下のようにしてインストールできます。:</p>
+<div class="highlight-none"><div class="highlight"><pre>% sudo aptitude install -y lcov
 </pre></div>
 </div>
 </div>
 <div class="section" id="libmemcached">
-<h3>4.3.1.4. libmemcachedのインストール<a class="headerlink" href="#libmemcached" title="Permalink to this headline">¶</a></h3>
-<p>memcachedのバイナリプロトコルのテストを動作させるためには、
-libmemcachedの導入が必要です。</p>
+<h3>4.3.1.3. libmemcachedのインストール<a class="headerlink" href="#libmemcached" title="Permalink to this headline">¶</a></h3>
+<p>memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインストールできます。:</p>
+<div class="highlight-none"><div class="highlight"><pre>% sudo aptitude install -y libmemcached-dev
+</pre></div>
 </div>
 </div>
-<div class="section" id="id3">
-<h2>4.3.2. テストの動作<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id5">
+<h2>4.3.2. テストの動作<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>groongaのトップディレクトリで、以下のコマンドを実行します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>make check
 </pre></div>
 </div>
 </div>
-<div class="section" id="id4">
-<h2>4.3.3. カバレッジ情報<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>4.3.3. カバレッジ情報<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>groongaのトップディレクトリで、以下のコマンドを実行します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>make coverage
 </pre></div>
@@ -94,27 +84,27 @@ libmemcachedの導入が必要です。</p>
 <p>カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテストされるようになっていることを心がけてください。</p>
 <p>テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカバーしている部分を増やすことも重要です。</p>
 </div>
-<div class="section" id="id5">
-<h2>4.3.4. 様々なテスト<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h2>4.3.4. 様々なテスト<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>テストは、test/unitディレクトリにおいて、./run-test.shを実行することによっても行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test.sh &#8211;helpを実行しヘルプをご覧ください。</p>
-<div class="section" id="id6">
-<h3>4.3.4.1. 特定のテスト関数のみテストする<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>4.3.4.1. 特定のテスト関数のみテストする<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% ./run-test.sh -n test_text_otoj
 </pre></div>
 </div>
 </div>
-<div class="section" id="id7">
-<h3>4.3.4.2. 特定のテストファイルのみテストする<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>4.3.4.2. 特定のテストファイルのみテストする<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <p>特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができます。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>% ./run-test.sh -t test_string
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>4.3.4.3. 不正メモリアクセス・メモリリーク検出<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>4.3.4.3. 不正メモリアクセス・メモリリーク検出<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <p>環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。</p>
 <p>run-test.shのみならず、make checkでも利用可能です。</p>
 <p>実行例:</p>
@@ -122,8 +112,8 @@ libmemcachedの導入が必要です。</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id9">
-<h3>4.3.4.4. デバッガ上でのテスト実行<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>4.3.4.4. デバッガ上でのテスト実行<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <p>環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実行されます。gdb上でrunを行うと、テストの実行が開始されます。</p>
 <p>run-test.shのみならず、make checkでも利用可能です。</p>
 <p>実行例:</p>
@@ -146,17 +136,16 @@ libmemcachedの導入が必要です。</p>
 <li><a class="reference external" href="#id2">4.3.1. テスト環境の構築</a><ul>
 <li><a class="reference external" href="#cutter">4.3.1.1. Cutterのインストール</a></li>
 <li><a class="reference external" href="#lcov">4.3.1.2. lcovのインストール</a></li>
-<li><a class="reference external" href="#test-unit">4.3.1.3. test-unitのインストール</a></li>
-<li><a class="reference external" href="#libmemcached">4.3.1.4. libmemcachedのインストール</a></li>
+<li><a class="reference external" href="#libmemcached">4.3.1.3. libmemcachedのインストール</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#id3">4.3.2. テストの動作</a></li>
-<li><a class="reference external" href="#id4">4.3.3. カバレッジ情報</a></li>
-<li><a class="reference external" href="#id5">4.3.4. 様々なテスト</a><ul>
-<li><a class="reference external" href="#id6">4.3.4.1. 特定のテスト関数のみテストする</a></li>
-<li><a class="reference external" href="#id7">4.3.4.2. 特定のテストファイルのみテストする</a></li>
-<li><a class="reference external" href="#id8">4.3.4.3. 不正メモリアクセス・メモリリーク検出</a></li>
-<li><a class="reference external" href="#id9">4.3.4.4. デバッガ上でのテスト実行</a></li>
+<li><a class="reference external" href="#id5">4.3.2. テストの動作</a></li>
+<li><a class="reference external" href="#id6">4.3.3. カバレッジ情報</a></li>
+<li><a class="reference external" href="#id7">4.3.4. 様々なテスト</a><ul>
+<li><a class="reference external" href="#id8">4.3.4.1. 特定のテスト関数のみテストする</a></li>
+<li><a class="reference external" href="#id9">4.3.4.2. 特定のテストファイルのみテストする</a></li>
+<li><a class="reference external" href="#id10">4.3.4.3. 不正メモリアクセス・メモリリーク検出</a></li>
+<li><a class="reference external" href="#id11">4.3.4.4. デバッガ上でのテスト実行</a></li>
 </ul>
 </li>
 </ul>
