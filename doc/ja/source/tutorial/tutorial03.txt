@@ -27,10 +27,11 @@ groongaでは、数値（整数・小数）や文字列や時刻や経緯度な�
  > column_create --table Type --name time --type Time
  [[0,1270207184.08842,0.020519]]
  > load --table Type
- > [{"_key":"sample","number":12345,"float":42.195,"string":"GROONGA","Time":1234567890.12}]
- [[0,1270207187.28363,2.457387],1]
+ > [{"_key":"sample","number":12345,"float":42.195,"string":"GROONGA","time":1234567890.12}]
+ [[0,1271314770.93001,0.0222],1]
  > select --table Type
- [[0,1270207192.45432,0.00027],[[[1],[["_id","UInt32"],["_key","ShortText"],["time","Time"],["string","ShortText"],["number","Int32"],["float","Float"]],[1,"sample",0.0,"GROONGA",12345,42.195]]]]
+ [[0,1271314774.77299,0.000158],[[[1],[["_id","UInt32"],["_key","ShortText"],["time","Time"],["string","ShortText"],["number","Int32"],["float","Float"]],[1,"sample",1234567890.12,"GROONGA",12345,42.195]]]]
+
 
 テーブル型
 ----------

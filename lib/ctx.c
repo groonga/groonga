@@ -943,7 +943,7 @@ grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
 }
 
 unsigned int
-grn_ctx_send(grn_ctx *ctx, char *str, unsigned int str_len, int flags)
+grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
 {
   if (!ctx) { return 0; }
   GRN_API_ENTER;

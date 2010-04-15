@@ -23,6 +23,13 @@ lcovのインストール
 
  % sudo aptitude install -y lcov
 
+clangのインストール
+^^^^^^^^^^^^^^^^^^^
+
+ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要があります。DebianやUbuntuでは以下のようにしてインストールできます。::
+
+ % sudo aptitude install -y clang
+
 libmemcachedのインストール
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -94,3 +101,14 @@ run-test.shのみならず、make checkでも利用可能です。
 実行例::
 
  % CUTTER_DEBUG=yes make check
+
+静的解析
+--------
+
+scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildというディレクトリに解析結果のhtmlが出力されます。::
+
+ % scan-build ./configure --prefix=/usr
+ % make clean
+ % scan-build -o ./scan_build make -j4
+
+configureは１度のみ実行する必要があります。

@@ -57,6 +57,8 @@
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
+#define BGQSIZE 16
+
 struct grn_ii_header {
   uint64_t total_chunk_size;
   uint64_t bmax;
@@ -65,7 +67,11 @@ struct grn_ii_header {
   uint32_t smax;
   uint32_t param1;
   uint32_t param2;
-  uint32_t reserved[307];
+  uint32_t pnext;
+  uint32_t bgqhead;
+  uint32_t bgqtail;
+  uint32_t bgqbody[BGQSIZE];
+  uint32_t reserved[288];
   uint32_t ainfo[MAX_LSEG];
   uint32_t binfo[MAX_LSEG];
   uint32_t free_chunks[N_CHUNK_VARIATION + 1];
@@ -79,16 +85,29 @@ struct grn_ii_header {
 inline static uint32_t
 segment_get(grn_ctx *ctx, grn_ii *ii)
 {
-  int i;
   uint32_t pseg;
-  char *used = GRN_CALLOC(MAX_PSEG);
-  if (!used) { return MAX_PSEG; }
-  for (i = 0; i < MAX_LSEG; i++) {
-    if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
-    if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
+  if (ii->header->bgqtail == ((ii->header->bgqhead + 1) & (BGQSIZE - 1))) {
+    pseg = ii->header->bgqbody[ii->header->bgqtail];
+    ii->header->bgqtail = (ii->header->bgqtail + 1) & (BGQSIZE - 1);
+  } else {
+#ifdef ALLOC_PSEGMENT_BY_PNEXT
+    pseg = ii->header->pnext;
+    if (ii->header->pnext < MAX_PSEG) { ii->header->pnext++; }
+#else /* ALLOC_PSEGMENT_BY_PNEXT */
+    int i;
+    char *used = GRN_CALLOC(MAX_PSEG);
+    if (!used) { return MAX_PSEG; }
+    for (i = 0; i < MAX_LSEG; i++) {
+      if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
+      if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
+    }
+    for (pseg = 0; used[pseg] && pseg < MAX_PSEG; pseg++) ;
+    GRN_FREE(used);
+    if (ii->header->pnext <= pseg && pseg < MAX_PSEG) {
+      ii->header->pnext = pseg + 1;
+    }
+#endif /* ALLOC_PSEGMENT_BY_PNEXT */
   }
-  for (pseg = 0; used[pseg] && pseg < MAX_PSEG; pseg++) ;
-  GRN_FREE(used);
   return pseg;
 }
 
@@ -140,43 +159,45 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
                        uint32_t *lseg0, uint32_t *pseg0,
                        uint32_t *lseg1, uint32_t *pseg1)
 {
-  uint32_t i = 0, pseg;
-  char *used = GRN_CALLOC(MAX_PSEG);
-  if (!used) { return GRN_NO_MEMORY_AVAILABLE; }
+  uint32_t i = 0;
   for (;; i++) {
-    if (i == MAX_LSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
+    if (i == MAX_LSEG) { return GRN_NO_MEMORY_AVAILABLE; }
     if (ii->header->binfo[i] == NOT_ASSIGNED) { break; }
   }
   *lseg0 = i++;
   for (;; i++) {
-    if (i == MAX_LSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
+    if (i == MAX_LSEG) { return GRN_NO_MEMORY_AVAILABLE; }
     if (ii->header->binfo[i] == NOT_ASSIGNED) { break; }
   }
   *lseg1 = i;
-  for (i = 0; i < MAX_LSEG; i++) {
-    if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
-    if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
-  }
-  for (pseg = 0;; pseg++) {
-    if (pseg == MAX_PSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
-    if (!used[pseg]) { break; }
-  }
-  *pseg0 = pseg++;
-  for (;; pseg++) {
-    if (pseg == MAX_PSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
-    if (!used[pseg]) { break; }
-  }
-  *pseg1 = pseg;
-  GRN_FREE(used);
+  if ((*pseg0 = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
+  if ((*pseg1 = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
   return GRN_SUCCESS;
 }
 
-static void
-buffer_segment_update(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, uint32_t pseg)
+#define BGQENQUE(lseg) {\
+  if (ii->header->binfo[lseg] != NOT_ASSIGNED) {\
+    ii->header->bgqbody[ii->header->bgqhead] = ii->header->binfo[lseg];\
+    ii->header->bgqhead = (ii->header->bgqhead + 1) & (BGQSIZE - 1);\
+    GRN_ASSERT(ii->header->bgqhead != ii->header->bgqtail);\
+  }\
+}
+
+inline static void
+buffer_segment_update(grn_ii *ii, uint32_t lseg, uint32_t pseg)
 {
+  BGQENQUE(lseg);
   // smb_wmb();
   ii->header->binfo[lseg] = pseg;
   if (lseg >= ii->header->bmax) { ii->header->bmax = lseg + 1; }
+}
+
+inline static void
+buffer_segment_clear(grn_ii *ii, uint32_t lseg)
+{
+  BGQENQUE(lseg);
+  // smb_wmb();
+  ii->header->binfo[lseg] = NOT_ASSIGNED;
 }
 
 /* chunk */
@@ -2800,8 +2821,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
               db->header.chunk = actual_chunk_size ? dcn : NOT_ASSIGNED;
               fake_map2(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
               if (!(rc = grn_io_win_unmap2(&dw))) {
-                // smb_wmb();
-                ii->header->binfo[seg] = ds;
+                buffer_segment_update(ii, seg, ds);
                 ii->header->total_chunk_size += actual_chunk_size;
                 if (scn != NOT_ASSIGNED) {
                   grn_io_win_unmap2(&sw);
@@ -2958,11 +2978,11 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                         fake_map2(ctx, ii->chunk, &dw1, dc1, dcn1, actual_db1_chunk_size);
                         if (!(rc = grn_io_win_unmap2(&dw1))) {
                           db1->header.chunk = actual_db1_chunk_size ? dcn1 : NOT_ASSIGNED;
-                          buffer_segment_update(ctx, ii, dls0, dps0);
-                          buffer_segment_update(ctx, ii, dls1, dps1);
+                          buffer_segment_update(ii, dls0, dps0);
+                          buffer_segment_update(ii, dls1, dps1);
                           array_update(ctx, ii, dls0, db0);
                           array_update(ctx, ii, dls1, db1);
-                          ii->header->binfo[seg] = NOT_ASSIGNED;
+                          buffer_segment_clear(ii, seg);
                           ii->header->total_chunk_size += actual_db0_chunk_size;
                           ii->header->total_chunk_size += actual_db1_chunk_size;
                           if (scn != NOT_ASSIGNED) {
@@ -3172,6 +3192,7 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
     grn_io_close(ctx, chunk);
     return NULL;
   }
+  header->flags = flags;
   GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
   ii->seg = seg;
   ii->chunk = chunk;
@@ -3179,8 +3200,6 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   ii->lflags = lflags;
   ii->encoding = encoding;
   ii->header = header;
-  ii->header->total_chunk_size = 0;
-  ii->header->flags = flags;
   ii->n_elements = 2;
   if ((flags & GRN_OBJ_WITH_SECTION)) { ii->n_elements++; }
   if ((flags & GRN_OBJ_WITH_WEIGHT)) { ii->n_elements++; }
@@ -3618,6 +3637,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
         int i;
         grn_id crid;
         GRN_B_DEC(c->nchunks, c->cp);
+        // check_reused
         if (!(c->cinfo = GRN_MALLOCN(chunk_info, c->nchunks))) {
           buffer_close(ctx, ii, c->buffer_pseg);
           grn_io_win_unmap2(&c->iw);
