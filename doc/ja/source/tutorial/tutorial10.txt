@@ -5,16 +5,362 @@
 
 これまで学んだgroongaの機能を用いて、マイクロブログの検索システムを作成してみましょう。マイクロブログとは、Twitterのような短いメッセージを投稿するブログです。
 
-この項は執筆中です。
+テーブルの作成
+--------------
 
-.. <凡例>おさらいする機能: どうやるか
-.. テーブル型/ベクターカラム: follower、favorite
-.. データベース: あるユーザがfollowしているユーザの発言を、時系列順の逆順で並べて10件のみ表示。
-.. タグ検索: ハッシュタグ検索。
-.. 位置情報: ユーザの位置情報での検索。発言の位置情報での検索。
-.. 複数カラムでの検索: ユーザについて、ユーザ名、紹介文での全文検索。
-.. 参照関係の逆引き: followerから、ある人がfollowされているユーザの一覧を出す。favoriteをつけてくれたユーザの一覧を出す。
-.. 全文検索: 発言での全文検索。
-.. ドリルダウン: 発言を全文検索、ユーザごとにドリルダウン
+まずは、テーブルを作成します。
+
+::
+
+ table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText
+ table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText
+ table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText
+ table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+
+ column_create --table Users --name name --flags COLUMN_SCALAR --type ShortText
+ column_create --table Users --name follower --flags COLUMN_VECTOR --type Users
+ column_create --table Users --name favorites --flags COLUMN_VECTOR --type Comments
+ column_create --table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
+ column_create --table Users --name location_str --flags COLUMN_SCALAR --type ShortText
+ column_create --table Users --name description --flags COLUMN_SCALAR --type ShortText
+ column_create --table Users --name folowee --flags COLUMN_INDEX --type Users --source follower
+
+ column_create --table Comments --name comment --flags COLUMN_SCALAR --type ShortText
+ column_create --table Comments --name last_modified --flags COLUMN_SCALAR --type Time
+ column_create --table Comments --name replied_to --flags COLUMN_SCALAR --type Comments
+ column_create --table Comments --name replied_users --flags COLUMN_VECTOR --type Users
+ column_create --table Comments --name hash_tags --flags COLUMN_VECTOR --type HashTags
+ column_create --table Comments --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
+ column_create --table Comments --name posted_by --flags COLUMN_SCALAR --type Users
+ column_create --table Comments --name favorited_by --flags COLUMN_INDEX --type Users --source favorites
+
+ column_create --table HashTags --name hash_index --flags COLUMN_INDEX --type Comments --source hash_tags
+
+ column_create --table Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Users --source name,location_str,description
+ column_create --table Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type Comments --source comment
+
+Usersテーブル
+^^^^^^^^^^^^^
+
+ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を格納するためのテーブルです。
+
+``_key``
+  ユーザーID
+
+``name``
+  ユーザー名
+
+``follower``
+  フォローしているユーザーの一覧
+
+``favorites``
+  お気に入りのコメント一覧
+
+``location``
+  ユーザーの現在地（緯度経度座標）
+
+``location_str``
+  ユーザーの現在地（文字列）
+
+``description``
+  ユーザーの自己紹介
+
+``folowee``
+  Usersテーブルのfollowerカラムに対するインデックス。
+  このインデックスを作ることで、あるユーザーをフォローしているユーザーを検索できるようになります。
+
+Commentsテーブル
+^^^^^^^^^^^^^^^^
+
+コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブルです。
+
+``_key``
+  コメントID
+
+``comment``
+  コメント内容
+
+``last_modified``
+  投稿日時
+
+``replied_to``
+  返信元のコメント内容
+
+``replied_users``
+  返信先のユーザーの一覧
+
+``hash_tags``
+  コメントのハッシュタグの一覧
+
+``location``
+  投稿場所(緯度経度座標のため)
+
+``posted_by``
+  コメントを書いたユーザー
+
+``favorited_by``
+  Usersテーブルのfavoritesカラムに対するインデックス。
+  このインデックスを作ることで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになります。
+
+HashTagsテーブル
+^^^^^^^^^^^^^^^^
+
+コメントのハッシュタグを一覧で保存するためのテーブルです。
+
+``_key``
+  ハッシュタグ
+
+``hash_index``
+  「Comments.hash_tags」のインデックス。
+  このインデックスを作ることで、指定したハッシュタグのついているコメントの一覧を出すことが出来るようになります。
+
+Bigramテーブル
+^^^^^^^^^^^^^^
+
+ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納するテーブルです。
+
+``_key``
+  単語
+
+``users_index``
+  ユーザー情報のインデックス。
+  このカラムは、ユーザー名「Users.name」、現在地「Users.location_str」、自己紹介文「Users.description」のインデックスになっています。
+
+``comment_index``
+  コメント内容「Comments.comment」のインデックス
+
+データのロード
+--------------
+
+つづいて、テスト用データをロードします。
+
+::
+
+ load --table Users
+ [
+   {
+     "_key": "daijiro",
+     "name": "hsiomaneki",
+     "follower": ["tasukuchan"],
+     "favorites": [],
+     "location": "127678039x502643091",
+     "location_str": "神奈川県",
+     "description": "groonga developer"
+   },
+   {
+     "_key": "tasukuchan",
+     "name": "グニャラくん",
+     "follower": ["daijiro","OffGao"],
+     "favorites": ["daijiro:1","OffGao:1"],
+     "location": "128423343x502929252",
+     "location_str": "東京都渋谷区",
+     "description": "エロいおっさん"
+   },
+   {
+     "_key": "OffGao",
+     "name": "OffGao",
+     "follower": ["tasukuchan","daijiro"],
+     "favorites": ["tasukuchan:1","daijiro:1"],
+     "location": "128544408x502801502",
+     "location_str": "東京都中野区",
+     "description": "がおがお"
+   }
+ ]
+
+ load --table Comments
+ [
+   {
+     "_key": "daijiro:1",
+     "comment": "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。",
+     "last_modified": "2010/03/17 12:05:00",
+     "posted_by": "daijiro",
+   },
+   {
+     "_key": "tasukuchan:1",
+     "comment": "初の書き込み。テストテスト。",
+     "last_modified": "2010/03/17 12:00:00",
+     "posted_by": "tasukuchan",
+   },
+   {
+     "_key": "daijiro:2",
+     "comment": "@tasukuchan ようこそ!!!",
+     "last_modified": "2010/03/17 12:05:00",
+     "replied_to": "tasuku:1",
+     "replied_users": ["tasukuchan"],
+     "posted_by": "daijiro",
+   },
+   {
+     "_key": "tasukuchan:2",
+     "comment": "@daijiro ありがとう！",
+     "last_modified": "2010/03/17 13:00:00",
+     "replied_to": "daijiro:2",
+     "replied_users": ["daijiro"],
+     "posted_by": "tasukuchan",
+   },
+   {
+     "_key": "tasukuchan:3",
+     "comment": "groongaなう #groonga",
+     "last_modified": "2010/03/17 14:00:00",
+     "hash_tags": ["groonga"],
+     "location": "127972422x503117107",
+     "posted_by": "tasukuchan",
+   },
+   {
+     "_key": "tasukuchan:4",
+     "comment": "groonga開発合宿のため羽田空港に来ました！ #groonga #travel",
+     "last_modified": "2010/03/17 14:05:00",
+     "hash_tags": ["groonga", "travel"],
+     "location": "127975798x502919856",
+     "posted_by": "tasukuchan",
+   },
+   {
+     "_key": "OffGao:1",
+     "comment": "@daijiro @tasukuchan 登録してみましたよー！",
+     "last_modified": "2010/03/17 15:00:00",
+     "replied_users": ["daijiro", "tasukuchan"],
+     "location": "128551935x502796433",
+     "posted_by": "OffGao",
+   }
+   {
+     "_key": "OffGao:2",
+     "comment": "中野ブロードウェイなうなう",
+     "last_modified": "2010/03/17 15:05:00",
+     "location": "128551935x502796434",
+     "posted_by": "OffGao",
+   }
+ ]
+
+Usersテーブルのfollowerカラムとfavoritesカラム、そしてCommentsテーブルのreplied_usersカラムは、ベクターカラムです。そのため、これらのカラムは配列で値を指定します。
+
+Usersテーブルのlocationカラムと、Commentsテーブルのlocationカラムは、GeoPoint型です。この型での値の指定は、"[緯度]x[経度]"と記述して指定します。
+
+Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値の指定方法は、マイクロ秒数の値を直接指定する方法のほかに、文字列で指定する方法もあります。"年/月/日 時:分:秒"というフォーマットで記述することで、データロードの際に文字列からキャストされ、マイクロ秒数の値が格納されます。
+
+
+検索
+----
+
+それでは、実際に検索をしてみましょう。
+
+キーワードでユーザー検索
+^^^^^^^^^^^^^^^^^^^^^^^^
+ここでは、 :doc:`tutorial07` で扱った、複数カラムを対象とした検索を行います。
+指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。
+
+実行例 ::
+
+ > select --table Users --match_columns name,location_str,description --query 東京 --output_columns _key,name
+ [[0,1271228398.00265,0.000442],[[[2],[["_key","ShortText"],["name","ShortText"]],["tasukuchan","グニャラくん"],["OffGao","OffGao"]]]]
+
+「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラくん」と「OffGao」がヒットしました。
+
+GeoPointでユーザー検索
+^^^^^^^^^^^^^^^^^^^^^^
+
+ここでは、 :doc:`tutorial04` で扱った、GeoPoint型のカラムで検索をします。
+以下の例では、指定された位置から5000m以内にいるユーザーを検索しています。
+
+実行例 ::
+
+ > select --table Users --filter 'geo_in_circle(location,"128484216x502919856",5000)' --output_columns _key,name
+ [[0,1271232699.22516,0.000397],[[[2],[["_key","ShortText"],["name","ShortText"]],["tasukuchan","グニャラくん"],["OffGao","OffGao"]]]]
+
+新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と「OffGao」がヒットしました。
+
+あるユーザーをフォローしているユーザーの検索
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ここでは、 :doc:`tutorial06` で扱った、参照関係の逆引きをします。
+以下の例では、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。
+
+実行例 ::
+
+ > select --table Users --query follower:@tasukuchan --output_columns _key,name
+ [[0,1271233703.37351,0.000358],[[[2],[["_key","ShortText"],["name","ShortText"]],["daijiro","hsiomaneki"],["OffGao","OffGao"]]]]
+
+「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしました。
+
+GeoPointでコメント検索
+^^^^^^^^^^^^^^^^^^^^^^
+ある範囲内で書かれたコメントを検索します。
+また、 :doc:`tutorial05` で扱ったドリルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、ユーザー別・ハッシュタグ別のカウントを出します。
+
+実行例 ::
+
+ > select --table Comments --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
+ [[0,1271233924.75585,0.00067],[[[4],[["posted_by.name","ShortText"],["comment","ShortText"]],["OffGao","@daijiro @tasukuchan 登録してみましたよー！"],["グニャラくん","groongaなう #groonga"],["グニャラくん","groonga開発合宿のため羽田空港に来ました！ #groonga #travel"],["OffGao","中野ブロードウェイなうなう"]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["groonga",2],["travel",1]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["OffGao",2],["tasukuchan",2]]]]
+
+範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そして、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つ、投稿者は「グニャラくん」「OffGao」がそれぞれ2件ずつであることがわかります。
+
+キーワードでコメント検索
+^^^^^^^^^^^^^^^^^^^^^^^^
+あるキーワードを含むコメントを検索します。
+さらに、 :doc:`tutorial04` で扱った、スコア値_scoreも出してみましょう。
+
+実行例 ::
+
+ > select --table Comments --query comment:@なう --output_columns comment,_score
+ [[0,1271238964.9251,0.000363],[[[2],[["comment","ShortText"],["_score","Int32"]],["groongaなう #groonga",1],["中野ブロードウェイなうなう",2]]]]
+
+「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。また、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できます。
+
+GeoPointとキーワードでコメント検索
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filterの両方を使用した場合、両方の条件に一致するレコードがヒットします。
+
+実行例 ::
+
+ > select --table Comments --query comment:@羽田 --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
+ [[0,1271241879.58662,0.000706],[[[1],[["posted_by.name","ShortText"],["comment","ShortText"]],["グニャラくん","groonga開発合宿のため羽田空港に来ました！ #groonga #travel"]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["groonga",1],["travel",1]],[[1],[["_key","ShortText"],["_nsubrecs","Int32"]],["tasukuchan",1]]]]
+
+両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返ってきており、「グニャラくん」のコメント1件であることがわかります。
+
+ハッシュタグでコメント検索
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+あるハッシュタグのついているコメントを検索します。
+これも、 :doc:`tutorial06` で扱った、参照関係の逆引きを使います。
+
+実行例 ::
+
+ > select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
+ [[0,1271242858.35696,0.00053],[[[2],[["posted_by.name","ShortText"],["comment","ShortText"]],["グニャラくん","groongaなう #groonga"],["グニャラくん","groonga開発合宿のため羽田空港 に来ました！ #groonga #travel"]],[[1],[["_key","ShortText"],["_nsubrecs","Int32"]],["tasukuchan",2]]]]
+
+#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。
+
+ユーザーIDでコメント検索
+^^^^^^^^^^^^^^^^^^^^^^^^
+あるユーザーが投稿したコメントを検索します。
+
+実行例 ::
+
+ select --table Comments --query posted_by:tasukuchan --output_columns comment --drilldown hash_tags
+ [[0,1271244306.98651,0.000534],[[[4],[["comment","ShortText"]],["初の書き込み。テストテス ト。"],["@daijiro ありがとう！"],["groongaなう #groonga"],["groonga開発合宿のため羽田空港 に来ました！ #groonga #travel"]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["groonga",2],["travel",1]]]]
+
+「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグでドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つあることがわかります。
+
+ユーザーのお気に入りコメントを検索
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+あるユーザーがお気に入りに入れているコメントを検索します。
+
+実行例 ::
+
+ > select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
+ [[0,1271244612.17006,0.000373],[[[1],[["favorites.posted_by","Users"],["favorites.comment","ShortText"]],[["daijiro","OffGao"],["マイクロブログ作ってみました（甘栗むいちゃいました 的な感じで）。","@daijiro @tasukuchan 登録してみましたよー！"]]]]]
+
+「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。
+
+投稿時間でコメント検索
+^^^^^^^^^^^^^^^^^^^^^^
+コメントの投稿時間で検索をします。Time型については :doc:`tutorial03` で扱っています。
+この例では、指定した時間よりも前に投稿されているコメントを検索します。
+
+実行例 ::
+
+ > select Comments --filter 'last_modified<=1268802000' --output_columns posted_by.name,comment,last_modified --drilldown hash_tags,posted_by
+ [[0,1271244692.31404,0.000714],[[[6],[["posted_by.name","ShortText"],["comment","ShortText"],["last_modified","Time"]],["hsiomaneki","マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。",1268795100.0],["グニャラくん","初の書き込み。テストテスト。",1268794800.0],["hsiomaneki","@tasukuchan ようこそ!!!",1268795100.0],["","",0.0],["グニャラくん","@daijiro ありがとう！",1268798400.0],["グニャラくん","groongaなう #groonga",1268802000.0]],[[1],[["_key","ShortText"],["_nsubrecs","Int32"]],["groonga",1]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["daijiro",2],["tasukuchan",3]]]]
+
+2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒットしていることがわかります。
+
+.. TODO: 以下の機能はgroonga本体での支援が必要。
+.. タイムライン表示: あるユーザがfollowしているユーザの発言を、時系列順の逆順で並べて10件のみ表示。
 .. 複数の条件での検索: favoriteの数がn以上の発言で全文検索、さらにユーザでドリルダウン
-.. 主キーによる前方一致検索: ハッシュタグ前方一致検索。
