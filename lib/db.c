@@ -142,12 +142,8 @@ grn_db_open(grn_ctx *ctx, const char *path)
           grn_db_init_builtin_tokenizers(ctx);
           grn_db_init_builtin_query(ctx);
           GRN_API_RETURN((grn_obj *)s);
-        } else {
-          ERR(GRN_NO_MEMORY_AVAILABLE, "ja open failed");
         }
         grn_pat_close(ctx, s->keys);
-      } else {
-        ERR(GRN_NO_MEMORY_AVAILABLE, "s->keys open failed");
       }
       grn_tiny_array_fin(&s->values);
       GRN_FREE(s);
