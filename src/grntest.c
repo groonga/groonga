@@ -462,11 +462,14 @@ diff_result(char *expect, int elen, char *result, int rlen)
     i++;
   }
   if (e == NULL) {
+/*
     fputc('[', stderr);
     fwrite(expect, 1, elen, stderr);
     fputc(']', stderr);
-    fprintf(stderr, " is not groonga command output");
+    fprintf(stderr, " is not groonga command output\n", );
     return 1;
+*/
+    e = expect;
   }
 
   i = 0;
@@ -478,11 +481,14 @@ diff_result(char *expect, int elen, char *result, int rlen)
     i++;
   }
   if (r == NULL) {
+/*
     fputc('[', stderr);
     fwrite(result, 1, rlen, stderr);
     fputc(']', stderr);
-    fprintf(stderr, " is not groonga command output");
+    fprintf(stderr, " is not groonga command output\n");
     return 1;
+*/
+    r = result;
   }
   
   return strncmp(e, r, strlen(e));
