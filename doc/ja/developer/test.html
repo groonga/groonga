@@ -59,8 +59,15 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="clang">
+<h3>4.3.1.3. clangのインストール<a class="headerlink" href="#clang" title="Permalink to this headline">¶</a></h3>
+<p>ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要があります。DebianやUbuntuでは以下のようにしてインストールできます。:</p>
+<div class="highlight-none"><div class="highlight"><pre>% sudo aptitude install -y clang
+</pre></div>
+</div>
+</div>
 <div class="section" id="libmemcached">
-<h3>4.3.1.3. libmemcachedのインストール<a class="headerlink" href="#libmemcached" title="Permalink to this headline">¶</a></h3>
+<h3>4.3.1.4. libmemcachedのインストール<a class="headerlink" href="#libmemcached" title="Permalink to this headline">¶</a></h3>
 <p>memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインストールできます。:</p>
 <div class="highlight-none"><div class="highlight"><pre>% sudo aptitude install -y libmemcached-dev
 </pre></div>
@@ -122,6 +129,16 @@
 </div>
 </div>
 </div>
+<div class="section" id="id12">
+<h2>4.3.5. 静的解析<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p>scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildというディレクトリに解析結果のhtmlが出力されます。:</p>
+<div class="highlight-none"><div class="highlight"><pre>% scan-build ./configure --prefix=/usr
+% make clean
+% scan-build -o ./scan_build make -j4
+</pre></div>
+</div>
+<p>configureは１度のみ実行する必要があります。</p>
+</div>
 </div>
 
 
@@ -136,7 +153,8 @@
 <li><a class="reference external" href="#id2">4.3.1. テスト環境の構築</a><ul>
 <li><a class="reference external" href="#cutter">4.3.1.1. Cutterのインストール</a></li>
 <li><a class="reference external" href="#lcov">4.3.1.2. lcovのインストール</a></li>
-<li><a class="reference external" href="#libmemcached">4.3.1.3. libmemcachedのインストール</a></li>
+<li><a class="reference external" href="#clang">4.3.1.3. clangのインストール</a></li>
+<li><a class="reference external" href="#libmemcached">4.3.1.4. libmemcachedのインストール</a></li>
 </ul>
 </li>
 <li><a class="reference external" href="#id5">4.3.2. テストの動作</a></li>
@@ -148,6 +166,7 @@
 <li><a class="reference external" href="#id11">4.3.4.4. デバッガ上でのテスト実行</a></li>
 </ul>
 </li>
+<li><a class="reference external" href="#id12">4.3.5. 静的解析</a></li>
 </ul>
 </li>
 </ul>
