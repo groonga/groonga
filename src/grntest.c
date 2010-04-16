@@ -79,7 +79,7 @@ FILE *grntest_logfp;
 
 #ifdef WIN32
 typedef SOCKET ftpsocket;
-#define FTPERROR INVALID_SOCKET 
+#define FTPERROR INVALID_SOCKET
 #define ftpclose closesocket
 #define GROONGA_PATH "groonga.exe"
 PROCESS_INFORMATION grntest_pi;
@@ -315,7 +315,7 @@ escape_command(char *in, int ilen,  char *out, int olen)
 
 static
 int
-report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time, 
+report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time,
                     grn_obj *end_time)
 {
   int i, len;
@@ -342,7 +342,7 @@ report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_ti
 
   start = start_time - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
-  fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s],\n",  
+  fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s],\n",
           task_id,  start, end, rettmp);
   fflush(grntest_logfp);
   return 0;
@@ -350,7 +350,7 @@ report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_ti
 
 static
 int
-report_command(grn_ctx *ctx, char *command, char *ret, int task_id, 
+report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
                grn_obj *start_time, grn_obj *end_time)
 {
   int i, len, clen;
@@ -380,7 +380,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
   clen = strlen(command);
   escape_command(command, clen, command_escaped, clen * 2);
-  fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s],\n",  
+  fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s],\n",
           task_id, command_escaped, start, end, rettmp);
   fflush(grntest_logfp);
   return 0;
@@ -401,7 +401,7 @@ output_result_final(grn_ctx *ctx, int qnum)
   self = latency;
   sec = self / (double)1000000;
   qps = (double)qnum / sec;
-  fprintf(grntest_logfp, 
+  fprintf(grntest_logfp,
          "{\"total\": %lld, \"qps\": %f, \"queries\": %d}]\n", latency, qps, qnum);
   grn_obj_close(ctx, &end_time);
   return 0;
@@ -414,7 +414,6 @@ output_sysinfo(char *sysinfo)
   fprintf(grntest_logfp, "[%s\n", sysinfo);
   return 0;
 }
-  
 
 static
 int
@@ -490,13 +489,13 @@ diff_result(char *expect, int elen, char *result, int rlen)
 */
     r = result;
   }
-  
+
   return strncmp(e, r, strlen(e));
 }
 
 static
 int
-do_load_command(grn_ctx *ctx, char *command, int type, int task_id, 
+do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
                 long long int *load_start)
 {
   char *res;
@@ -511,7 +510,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
   }
 
   grn_ctx_send(ctx, command, strlen(command), 0);
-/* fix me. 
+/* fix me.
    when command fails, ctx->rc is not 0 in local mode!
   if (ctx->rc) {
     fprintf(stderr, "ctx_send:rc=%d:command:%s\n", ctx->rc, command);
@@ -533,7 +532,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
       self = GRN_TIME_VALUE(&end_time) - *load_start;
 
       if (grntest_task[task_id].max < self) {
-        grntest_task[task_id].max = self; 
+        grntest_task[task_id].max = self;
       }
       if (grntest_task[task_id].min > self) {
         grntest_task[task_id].min = self;
@@ -561,7 +560,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
         int loglen;
         FILE *outfp = grntest_job[grntest_task[task_id].job_id].outputlog;
         logbuf[LOGBUF_LEN-2] = '\0';
-        if (fgets(logbuf, LOGBUF_LEN, 
+        if (fgets(logbuf, LOGBUF_LEN,
                   grntest_job[grntest_task[task_id].job_id].inputlog) == NULL) {
           fprintf(stderr, "Cannot get input-log\n");
           error_exit_in_thread(55);
@@ -608,7 +607,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
   GRN_TIME_NOW(ctx, &start_time);
 
   grn_ctx_send(ctx, command, strlen(command), 0);
-/* fix me. 
+/* fix me.
    when command fails, ctx->rc is not 0 in local mode!
 */
   if (ctx->rc) {
@@ -631,7 +630,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
       self = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&start_time);
 
       if (grntest_task[task_id].max < self) {
-        grntest_task[task_id].max = self; 
+        grntest_task[task_id].max = self;
       }
       if (grntest_task[task_id].min > self) {
         grntest_task[task_id].min = self;
@@ -659,7 +658,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
         int loglen;
         FILE *outfp = grntest_job[grntest_task[task_id].job_id].outputlog;
         logbuf[LOGBUF_LEN-2] = '\0';
-        if (fgets(logbuf, LOGBUF_LEN, 
+        if (fgets(logbuf, LOGBUF_LEN,
                   grntest_job[grntest_task[task_id].job_id].inputlog) == NULL) {
           fprintf(stderr, "Cannot get inputlog\n");
           error_exit_in_thread(55);
@@ -743,7 +742,7 @@ worker_sub(intptr_t task_id)
       if (!fp) {
         fprintf(stderr, "Cannot open %s\n",grntest_task[task_id].file);
         error_exit_in_thread(1);
-      } 
+      }
       tmpbuf[MAX_COMMAND_LEN-2] = '\0';
       load_mode = 0;
       load_count = 0;
@@ -762,7 +761,7 @@ worker_sub(intptr_t task_id)
           load_count = 1;
         }
         if (load_mode == 1) {
-          if (do_load_command(&grntest_ctx[task_id], tmpbuf, 
+          if (do_load_command(&grntest_ctx[task_id], tmpbuf,
                               grntest_task[task_id].jobtype,
                               task_id, &load_start)) {
             grntest_task[task_id].qnum += load_count;
@@ -773,7 +772,7 @@ worker_sub(intptr_t task_id)
           load_count++;
           continue;
         }
-        do_command(&grntest_ctx[task_id], tmpbuf, 
+        do_command(&grntest_ctx[task_id], tmpbuf,
                      grntest_task[task_id].jobtype,
                      task_id);
         grntest_task[task_id].qnum++;
@@ -790,8 +789,8 @@ worker_sub(intptr_t task_id)
           load_mode = 1;
         }
         if (load_mode == 1) {
-          if (do_load_command(&grntest_ctx[task_id], 
-                              grntest_task[task_id].table->command[line], 
+          if (do_load_command(&grntest_ctx[task_id],
+                              grntest_task[task_id].table->command[line],
                               grntest_task[task_id].jobtype, task_id, &load_start)) {
             load_mode = 0;
             load_start = 0LL;
@@ -799,11 +798,11 @@ worker_sub(intptr_t task_id)
           }
           continue;
         }
-        do_command(&grntest_ctx[task_id], 
-                   grntest_task[task_id].table->command[line], 
+        do_command(&grntest_ctx[task_id],
+                   grntest_task[task_id].table->command[line],
                    grntest_task[task_id].jobtype, task_id);
         grntest_task[task_id].qnum++;
-      } 
+      }
     }
   }
 
@@ -822,13 +821,13 @@ worker_sub(intptr_t task_id)
 
   grntest_job[grntest_task[task_id].job_id].qnum += grntest_task[task_id].qnum;
   grntest_job[grntest_task[task_id].job_id].done++;
-  if (grntest_job[grntest_task[task_id].job_id].done == 
+  if (grntest_job[grntest_task[task_id].job_id].done ==
       grntest_job[grntest_task[task_id].job_id].concurrency) {
     char tmpbuf[BUF_LEN];
     sec = self / (double)1000000;
     qps = (double)grntest_job[grntest_task[task_id].job_id].qnum/ sec;
     grntest_jobdone++;
-    sprintf(tmpbuf, 
+    sprintf(tmpbuf,
             "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld, \"queries\": %d}",
             grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
             grntest_job[grntest_task[task_id].job_id].min,
@@ -861,7 +860,7 @@ worker_sub(intptr_t task_id)
 #ifdef WIN32
 static
 int
-__stdcall 
+__stdcall
 worker(void *val)
 {
   worker_sub((intptr_t) val);
@@ -920,7 +919,7 @@ thread_main(grn_ctx *ctx, int num)
       error_exit_in_thread(1);
     }
   }
-  
+
   for (i = 0; i < num; i++) {
     ret = pthread_join(pthread[i], NULL);
     if (ret) {
@@ -993,7 +992,7 @@ get_sysinfo(const char *path, char *result, int olen)
 
   minfo.dwLength = sizeof(minfo);
   GlobalMemoryStatusEx(&minfo);
-  sprintf(tmpbuf, "  \"RAM\": \"%I64dMByte\",\n", 
+  sprintf(tmpbuf, "  \"RAM\": \"%I64dMByte\",\n",
           minfo.ullTotalPhys/(1024*1024));
   strcat(result, tmpbuf);
 
@@ -1044,11 +1043,9 @@ get_sysinfo(const char *path, char *result, int olen)
     if (!strncmp(tmpbuf, "model name\t: ", 13)) {
       strcpy(cpustring, &tmpbuf[13]);
     }
-    if (!strncmp(tmpbuf, "processor\t: ", 12)) {
-      cpunum = grntest_atoi(&tmpbuf[12], &tmpbuf[12] + 20, NULL);
-    }
   }
   fclose(fp);
+  cpunum = sysconf(_SC_NPROCESSORS_CONF);
   sprintf(tmpbuf, "  \"CPU\": %s\",\n", cpustring);
   strcat(result, tmpbuf);
 
@@ -1062,7 +1059,7 @@ get_sysinfo(const char *path, char *result, int olen)
     strcat(result, tmpbuf);
   }
 
-  sprintf(tmpbuf, "  \"CORE\": %d,\n", cpunum + 1);
+  sprintf(tmpbuf, "  \"CORE\": %d,\n", cpunum);
   strcat(result, tmpbuf);
 
   fp = fopen("/proc/meminfo", "r");
@@ -1125,7 +1122,7 @@ start_server(const char *dbpath, int r)
 
   if (strlen(dbpath) > BUF_LEN - 100) {
     fprintf(stderr, "too long dbpath!\n");
-    exit(1); 
+    exit(1);
   }
 
   strcpy(tmpbuf, GROONGA_PATH);
@@ -1163,9 +1160,9 @@ start_server(const char *dbpath, int r)
     grntest_server_id = pid;
   }
 
-#endif /* WIN32 */ 
+#endif /* WIN32 */
 
-  return 0; 
+  return 0;
 }
 
 static
@@ -1296,7 +1293,7 @@ parse_line(char *buf, int start, int end, int num)
   }
   tmpbuf[j] ='\0';
   if (out_or_test) {
-    if (out_p(grntest_job[num].jobtype)) { 
+    if (out_p(grntest_job[num].jobtype)) {
       grntest_job[num].outputlog = fopen(tmpbuf, "wb");
       if (grntest_job[num].outputlog == NULL) {
         fprintf(stderr, "Cannot open %s\n", tmpbuf);
@@ -1451,7 +1448,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
         while (fgets(tmpbuf, MAX_COMMAND_LEN, fp) != NULL) {
           if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
             tmpbuf[MAX_COMMAND_LEN-2] = '\0';
-            fprintf(stderr, "Too long command in %s\n", 
+            fprintf(stderr, "Too long command in %s\n",
                    grntest_job[i].commandfile);
             fprintf(stderr, "line =%d:%s\n", line + 1, tmpbuf);
             error_exit(ctx, 1);
@@ -1471,7 +1468,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
           ctable->num = line;
           line++;
           if (line >= MAX_COMMAND) {
-            fprintf(stderr, "Too many commands in %s\n", 
+            fprintf(stderr, "Too many commands in %s\n",
                    grntest_job[i].commandfile);
             error_exit(ctx, 1);
           }
@@ -1529,7 +1526,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     fprintf(stderr, "Logical error\n");
     error_exit(ctx, 9);
   }
-  
+
   grntest_detail_on = 0;
   for (i = 0; i < task_num; i++) {
     grn_ctx_init(&grntest_ctx[i], 0);
@@ -1563,13 +1560,13 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
 
   i = 0;
   while (i < task_num) {
-    int job_id; 
+    int job_id;
     if (grntest_task[i].table != NULL) {
       job_id = grntest_task[i].job_id;
       for (j = 0; j < grntest_task[i].table->num; j++) {
         GRN_FREE(grntest_task[i].table->command[j]);
       }
-      GRN_FREE(grntest_task[i].table); 
+      GRN_FREE(grntest_task[i].table);
       while (job_id == grntest_task[i].job_id) {
         i++;
       }
@@ -1767,7 +1764,7 @@ ftp_list(ftpsocket data_socket)
     buf[ret] = '\0';
     fprintf(stdout, "%s", buf);
   }
-  
+
   return 0;
 }
 
@@ -1852,7 +1849,7 @@ open_socket(char *host, int port)
   server.sin_family = AF_INET;
   server.sin_port = htons(port);
   server.sin_addr = *(struct in_addr*)&inaddr;
-   
+
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock == -1) {
     fprintf(stderr, "socket error\n");
@@ -1877,7 +1874,7 @@ get_ftp_date(char *buf)
     }
   }
   buf++;
-  
+
   return buf;
 }
 
@@ -1895,12 +1892,12 @@ get_size(char *buf)
   }
   buf++;
   size = grntest_atoi(buf, buf + strlen(buf), NULL);
-  
+
   return size;
 }
 
 int
-ftp_sub(char *user, char *passwd, char *host, const char *filename, 
+ftp_sub(char *user, char *passwd, char *host, const char *filename,
          int mode, char *cd_dirname, char *retval)
 {
   int size = 0;
@@ -1908,7 +1905,7 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
   ftpsocket command_socket, data_socket;
   int data_port;
   char data_host[BUF_LEN];
-  char send_mesg[BUF_LEN]; 
+  char send_mesg[BUF_LEN];
   char buf[BUF_LEN];
 #ifdef WIN32
   char base[BUF_LEN];
@@ -2093,7 +2090,7 @@ ftp_main(int argc, char **argv)
 {
   char val[BUF_LEN];
   val[0] = '\0';
-  ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, argv[2], 
+  ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, argv[2],
           grntest_atoi(argv[3], argv[3] + strlen(argv[3]), NULL), argv[4], val);
   if (val[0] != '\0') {
     printf("val=%s\n", val);
@@ -2175,7 +2172,7 @@ get_tm_from_serverdate(char *serverdate, struct tm *tm)
   int res;
   int year, month, day, hour, minute, second;
 
-  res = sscanf(serverdate, "%4d%2d%2d%2d%2d%2d", 
+  res = sscanf(serverdate, "%4d%2d%2d%2d%2d%2d",
                &year, &month, &day, &hour, &minute, &second);
 
 /*
@@ -2210,7 +2207,7 @@ sync_sub(grn_ctx *ctx, const char *filename)
   time_t st, lt;
   struct tm stm;
 
-  ret = ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, filename, MODE_TIME, "data", 
+  ret = ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, filename, MODE_TIME, "data",
                serverdate);
   if (ret == 0) {
     fprintf(stderr, "[%s] does not exist in server\n", filename);
@@ -2237,14 +2234,14 @@ sync_sub(grn_ctx *ctx, const char *filename)
     if (lt < st) {
       fprintf(stderr, "newer [%s] exists in server\n", filename);
       fflush(stderr);
-      ret = ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, filename, MODE_GET, "data", 
+      ret = ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, filename, MODE_GET, "data",
                     NULL);
       return ret;
     }
   } else {
     fprintf(stderr, "[%s] does not exist in local\n", filename);
     fflush(stderr);
-    ret = ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, filename, MODE_GET, "data", 
+    ret = ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, filename, MODE_GET, "data",
                   NULL);
     return ret;
   }
@@ -2311,7 +2308,7 @@ printf("commandfile=[%s]:buf=%s\n", grntest_job[i].commandfile, buf);
       fflush(stderr);
     }
     GRN_FREE(filelist[i]);
-  } 
+  }
   fclose(fp);
   return fnum;
 }
@@ -2337,7 +2334,7 @@ static
 void
 usage(void)
 {
-  fprintf(stderr, 
+  fprintf(stderr,
          "Usage: grntest [options...] [script] [db]\n"
          "options:\n"
          "  -i, --host <ip/hostname>:  server address to listen (default: %s)\n"
@@ -2407,7 +2404,7 @@ get_token(char *line, char *token, int maxlen, char **next)
       token[i] = '\0';
       return 1;
     }
-    
+
     line++;
   }
   return 0;
@@ -2439,7 +2436,7 @@ check_script(const char *scrname)
     tmpbuf[strlen(tmpbuf)-1] = '\0';
     get_token(tmpbuf, token, BUF_LEN, &next);
     strcpy(prev, token);
-    
+
     while (next) {
       get_token(next, token, BUF_LEN, &next);
       if (!strncmp(prev, "SET_PORT", 8)) {
@@ -2478,7 +2475,7 @@ setsigalarm(int sec)
   sig.sa_handler = timeout;
   sig.sa_flags = 0;
   sigemptyset(&sig.sa_mask);
-  ret = sigaction(SIGALRM, &sig, NULL);   
+  ret = sigaction(SIGALRM, &sig, NULL);
   if (ret == -1) {
     fprintf(stderr, "setsigalarm:errno= %d\n", errno);
   }
@@ -2526,7 +2523,7 @@ main(int argc, char **argv)
   }
 
   if (mode == mode_list) {
-    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data", 
+    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data",
              NULL);
     return 0;
   }
@@ -2534,7 +2531,7 @@ main(int argc, char **argv)
   if ((scrname == NULL) || (dbname == NULL)) {
     usage();
   }
-  
+
   strcpy(grntest_serverhost, DEFAULT_DEST);
   if (hoststr) {
     grntest_remote_mode = 1;
@@ -2547,7 +2544,7 @@ main(int argc, char **argv)
 
   grn_init();
   CRITICAL_SECTION_INIT(grntest_cs);
-  
+
   grn_ctx_init(&context, 0);
   grn_ctx_init(&grntest_server_context, 0);
   grn_set_default_encoding(GRN_ENC_UTF8);
@@ -2573,12 +2570,12 @@ main(int argc, char **argv)
   GRN_TIME_NOW(&context, &grntest_starttime);
   sec = (time_t)(GRN_TIME_VALUE(&grntest_starttime)/1000000);
   get_date(grntest_date, &sec);
-  
+
   if (outdir) {
-    sprintf(log, "%s/%s-%s-%lld.log", outdir, grntest_scriptname, 
+    sprintf(log, "%s/%s-%s-%lld.log", outdir, grntest_scriptname,
             grntest_username, GRN_TIME_VALUE(&grntest_starttime));
   } else {
-    sprintf(log, "%s-%s-%lld.log", grntest_scriptname, 
+    sprintf(log, "%s-%s-%lld.log", grntest_scriptname,
             grntest_username, GRN_TIME_VALUE(&grntest_starttime));
   }
 
@@ -2596,7 +2593,7 @@ main(int argc, char **argv)
   fclose(grntest_logfp);
 
   if (mode != mode_noftp) {
-    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3, 
+    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3,
             "report", NULL);
   }
   fprintf(stderr, "grntest done. logfile=%s\n", log);
