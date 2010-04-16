@@ -52,6 +52,7 @@ static int newdb;
 static int useql;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
+static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
 
 static void
 usage(void)
@@ -81,7 +82,7 @@ usage(void)
           "  <db pathname> [<command>]: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
           hostname,
-          DEFAULT_PORT, DEFAULT_MAX_NFTHREADS, DEFAULT_DEST);
+          DEFAULT_PORT, default_max_nfthreads, DEFAULT_DEST);
 }
 
 static void
@@ -1079,7 +1080,7 @@ static grn_com_queue ctx_new;
 static grn_com_queue ctx_old;
 static grn_mutex q_mutex;
 static grn_cond q_cond;
-static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads = DEFAULT_MAX_NFTHREADS;
+static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads;
 
 static void * CALLBACK
 h_worker(void *arg)
@@ -1535,6 +1536,18 @@ enum {
   grn_logger_info_set(&grn_gctx, &info);\
 } while(0)
 
+uint32_t
+get_core_number(void)
+{
+#ifdef WIN32
+  SYSTEM_INFO sinfo;
+  GetSystemInfo(&sinfo);
+  return sinfo.dwNumberOfProcessors;
+#else /* WIN32 */
+  return sysconf(_SC_NPROCESSORS_CONF);
+#endif /* WIN32 */
+}
+
 int
 main(int argc, char **argv)
 {
@@ -1572,6 +1585,9 @@ main(int argc, char **argv)
   opts[13].arg = &protocol;
   opts[15].arg = &grn_log_path;
   opts[16].arg = &grn_qlog_path;
+  if (!(default_max_nfthreads = get_core_number())) {
+    default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
+  }
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_usage; }
   if (portstr) { port = atoi(portstr); }
@@ -1637,6 +1653,8 @@ main(int argc, char **argv)
   }
   if (max_nfthreadsstr) {
     max_nfthreads = atoi(max_nfthreadsstr);
+  } else {
+    max_nfthreads = default_max_nfthreads;
   }
   batchmode = !isatty(0);
   if (grn_init()) { return -1; }
