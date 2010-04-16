@@ -2692,7 +2692,7 @@ main(int argc, char **argv)
     grntest_serverport = grn_atoi(portstr, portstr + strlen(portstr), NULL);
   }
 
-  if (!strcmp(outtype, "tsv") ) {
+  if (outtype && !strcmp(outtype, "tsv")) {
     grntest_outtype = OUT_TSV;
   }
 
