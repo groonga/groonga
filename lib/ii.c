@@ -90,23 +90,29 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
     pseg = ii->header->bgqbody[ii->header->bgqtail];
     ii->header->bgqtail = (ii->header->bgqtail + 1) & (BGQSIZE - 1);
   } else {
-#ifdef ALLOC_PSEGMENT_BY_PNEXT
     pseg = ii->header->pnext;
+#ifndef CUT_OFF_COMPATIBILITY
+    if (!pseg) {
+      int i;
+      uint32_t pmax = 0;
+      char *used = GRN_CALLOC(MAX_PSEG);
+      if (!used) { return MAX_PSEG; }
+      for (i = 0; i < MAX_LSEG; i++) {
+        if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) {
+          if (pseg > pmax) { pmax = pseg; }
+          used[pseg] = 1;
+        }
+        if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) {
+          if (pseg > pmax) { pmax = pseg; }
+          used[pseg] = 1;
+        }
+      }
+      for (pseg = 0; used[pseg] && pseg < MAX_PSEG; pseg++) ;
+      GRN_FREE(used);
+      ii->header->pnext = pmax + 1;
+    } else
+#endif /* CUT_OFF_COMPATIBILITY */
     if (ii->header->pnext < MAX_PSEG) { ii->header->pnext++; }
-#else /* ALLOC_PSEGMENT_BY_PNEXT */
-    int i;
-    char *used = GRN_CALLOC(MAX_PSEG);
-    if (!used) { return MAX_PSEG; }
-    for (i = 0; i < MAX_LSEG; i++) {
-      if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
-      if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
-    }
-    for (pseg = 0; used[pseg] && pseg < MAX_PSEG; pseg++) ;
-    GRN_FREE(used);
-    if (ii->header->pnext <= pseg && pseg < MAX_PSEG) {
-      ii->header->pnext = pseg + 1;
-    }
-#endif /* ALLOC_PSEGMENT_BY_PNEXT */
   }
   return pseg;
 }
@@ -172,6 +178,28 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
   *lseg1 = i;
   if ((*pseg0 = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
   if ((*pseg1 = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
+  /*
+  {
+    uint32_t pseg;
+    char *used = GRN_CALLOC(MAX_PSEG);
+    if (!used) { return GRN_NO_MEMORY_AVAILABLE; }
+    for (i = 0; i < MAX_LSEG; i++) {
+      if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
+      if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
+    }
+    for (pseg = 0;; pseg++) {
+      if (pseg == MAX_PSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
+      if (!used[pseg]) { break; }
+    }
+    *pseg0 = pseg++;
+    for (;; pseg++) {
+      if (pseg == MAX_PSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
+      if (!used[pseg]) { break; }
+    }
+    *pseg1 = pseg;
+    GRN_FREE(used);
+  }
+  */
   return GRN_SUCCESS;
 }
 
