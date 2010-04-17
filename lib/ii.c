@@ -3621,72 +3621,76 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
   grn_ii_cursor *c  = NULL;
   uint32_t pos, *a;
   if (!(a = array_at(ctx, ii, tid))) { return NULL; }
-  if (!(pos = a[0])) { goto exit; }
-  if (!(c = GRN_MALLOC(sizeof(grn_ii_cursor)))) { goto exit; }
-  memset(c, 0, sizeof(grn_ii_cursor));
-  c->ctx = ctx;
-  c->ii = ii;
-  c->id = tid;
-  c->min = min;
-  c->max = max;
-  c->nelements = nelements;
-  c->flags = flags;
-  if (pos & 1) {
-    c->stat = 0;
-    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-      c->pb.rid = BIT31_12(pos);
-      c->pb.sid = BIT11_01(pos);
+  for (;;) {
+    if (!(pos = a[0])) { goto exit; }
+    if (!(c = GRN_MALLOC(sizeof(grn_ii_cursor)))) { goto exit; }
+    memset(c, 0, sizeof(grn_ii_cursor));
+    c->ctx = ctx;
+    c->ii = ii;
+    c->id = tid;
+    c->min = min;
+    c->max = max;
+    c->nelements = nelements;
+    c->flags = flags;
+    if (pos & 1) {
+      c->stat = 0;
+      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+        c->pb.rid = BIT31_12(pos);
+        c->pb.sid = BIT11_01(pos);
+      } else {
+        c->pb.rid = pos >> 1;
+        c->pb.sid = 1;
+      }
+      c->pb.tf = 1;
+      c->pb.weight = 0;
+      c->pb.pos = a[1];
     } else {
-      c->pb.rid = pos >> 1;
-      c->pb.sid = 1;
-    }
-    c->pb.tf = 1;
-    c->pb.weight = 0;
-    c->pb.pos = a[1];
-  } else {
-    uint32_t chunk;
-    buffer_term *bt;
-    if ((c->buffer_pseg = buffer_open(ctx, ii, pos, &bt, &c->buf)) == NOT_ASSIGNED) {
-      GRN_FREE(c);
-      c = NULL;
-      goto exit;
-    }
-    c->ppseg = &ii->header->binfo[LSEG(pos)];
-    if (bt->size_in_chunk && (chunk = c->buf->header.chunk) != NOT_ASSIGNED) {
-      if (!(c->cp = WIN_MAP2(ii->chunk, ctx, &c->iw, chunk, bt->pos_in_chunk,
-                                   bt->size_in_chunk, grn_io_rdonly))) {
-        buffer_close(ctx, ii, c->buffer_pseg);
+      uint32_t chunk;
+      buffer_term *bt;
+      if ((c->buffer_pseg = buffer_open(ctx, ii, pos, &bt, &c->buf)) == NOT_ASSIGNED) {
         GRN_FREE(c);
         c = NULL;
         goto exit;
       }
-      c->cpe = c->cp + bt->size_in_chunk;
-      if ((bt->tid & CHUNK_SPLIT)) {
-        int i;
-        grn_id crid;
-        GRN_B_DEC(c->nchunks, c->cp);
-        // check_reused
-        if (!(c->cinfo = GRN_MALLOCN(chunk_info, c->nchunks))) {
+      c->ppseg = &ii->header->binfo[LSEG(pos)];
+      if (bt->size_in_chunk && (chunk = c->buf->header.chunk) != NOT_ASSIGNED) {
+        if (!(c->cp = WIN_MAP2(ii->chunk, ctx, &c->iw, chunk, bt->pos_in_chunk,
+                                     bt->size_in_chunk, grn_io_rdonly))) {
           buffer_close(ctx, ii, c->buffer_pseg);
-          grn_io_win_unmap2(&c->iw);
           GRN_FREE(c);
           c = NULL;
           goto exit;
         }
-        for (i = 0, crid = GRN_ID_NIL; i < c->nchunks; i++) {
-          GRN_B_DEC(c->cinfo[i].segno, c->cp);
-          GRN_B_DEC(c->cinfo[i].size, c->cp);
-          GRN_B_DEC(c->cinfo[i].dgap, c->cp);
-          crid += c->cinfo[i].dgap;
-          if (crid < min) { c->curr_chunk = i + 1; }
+        c->cpe = c->cp + bt->size_in_chunk;
+        if ((bt->tid & CHUNK_SPLIT)) {
+          int i;
+          grn_id crid;
+          GRN_B_DEC(c->nchunks, c->cp);
+          // check_reused
+          if (!(c->cinfo = GRN_MALLOCN(chunk_info, c->nchunks))) {
+            buffer_close(ctx, ii, c->buffer_pseg);
+            grn_io_win_unmap2(&c->iw);
+            GRN_FREE(c);
+            c = NULL;
+            goto exit;
+          }
+          for (i = 0, crid = GRN_ID_NIL; i < c->nchunks; i++) {
+            GRN_B_DEC(c->cinfo[i].segno, c->cp);
+            GRN_B_DEC(c->cinfo[i].size, c->cp);
+            GRN_B_DEC(c->cinfo[i].dgap, c->cp);
+            crid += c->cinfo[i].dgap;
+            if (crid < min) { c->curr_chunk = i + 1; }
+          }
+        }
+        if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+          c->rdv[ii->n_elements - 1].flags = ODD;
         }
       }
-      if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-        c->rdv[ii->n_elements - 1].flags = ODD;
-      }
+      c->nextb = bt->pos_in_buffer;
+      c->stat = CHUNK_USED|BUFFER_USED;
     }
-    c->nextb = bt->pos_in_buffer;
-    c->stat = CHUNK_USED|BUFFER_USED;
+    if (pos == a[0]) { break; }
+    grn_ii_cursor_close(ctx, c);
   }
 exit :
   array_unref(ii, tid);
