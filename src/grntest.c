@@ -61,6 +61,10 @@
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
 
+#define OUT_JSON 0
+#define OUT_TSV  1 
+
+static int grntest_outtype = OUT_JSON;
 
 static grn_critical_section grntest_cs;
 
@@ -342,8 +346,13 @@ report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_ti
 
   start = start_time - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
-  fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s],\n",
-          task_id,  start, end, rettmp);
+  if (grntest_outtype == OUT_TSV) {
+    fprintf(grntest_logfp, "report\t%d\tload\t%lld\t%lld\t%s\n",
+            task_id,  start, end, rettmp);
+  } else {
+    fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s],\n",
+            task_id,  start, end, rettmp);
+  }
   fflush(grntest_logfp);
   return 0;
 }
@@ -380,8 +389,13 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
   clen = strlen(command);
   escape_command(command, clen, command_escaped, clen * 2);
-  fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s],\n",
-          task_id, command_escaped, start, end, rettmp);
+  if (grntest_outtype == OUT_TSV) {
+    fprintf(grntest_logfp, "report\t%d\t%s\t%lld\t%lld\t%s\n",
+            task_id, command_escaped, start, end, rettmp);
+  } else {
+    fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s],\n",
+            task_id, command_escaped, start, end, rettmp);
+  }
   fflush(grntest_logfp);
   return 0;
 }
@@ -401,8 +415,12 @@ output_result_final(grn_ctx *ctx, int qnum)
   self = latency;
   sec = self / (double)1000000;
   qps = (double)qnum / sec;
-  fprintf(grntest_logfp,
-         "{\"total\": %lld, \"qps\": %f, \"queries\": %d}]\n", latency, qps, qnum);
+  if (grntest_outtype == OUT_TSV) {
+    fprintf(grntest_logfp, "total\t%lld\t%f\t%d\n", latency, qps, qnum);
+  } else {
+    fprintf(grntest_logfp,
+           "{\"total\": %lld, \"qps\": %f, \"queries\": %d}]\n", latency, qps, qnum);
+  }
   grn_obj_close(ctx, &end_time);
   return 0;
 }
@@ -411,7 +429,11 @@ static
 int
 output_sysinfo(char *sysinfo)
 {
-  fprintf(grntest_logfp, "[%s\n", sysinfo);
+  if (grntest_outtype == OUT_TSV) {
+    fprintf(grntest_logfp, "%s", sysinfo);
+  } else {
+    fprintf(grntest_logfp, "[%s\n", sysinfo);
+  }
   return 0;
 }
 
@@ -461,11 +483,14 @@ diff_result(char *expect, int elen, char *result, int rlen)
     i++;
   }
   if (e == NULL) {
+/*
     fputc('[', stderr);
     fwrite(expect, 1, elen, stderr);
     fputc(']', stderr);
-    fprintf(stderr, " is not groonga command output");
+    fprintf(stderr, " is not groonga command output\n", );
     return 1;
+*/
+    e = expect;
   }
 
   i = 0;
@@ -477,11 +502,14 @@ diff_result(char *expect, int elen, char *result, int rlen)
     i++;
   }
   if (r == NULL) {
+/*
     fputc('[', stderr);
     fwrite(result, 1, rlen, stderr);
     fputc(']', stderr);
-    fprintf(stderr, " is not groonga command output");
+    fprintf(stderr, " is not groonga command output\n");
     return 1;
+*/
+    r = result;
   }
 
   return strncmp(e, r, strlen(e));
@@ -821,27 +849,40 @@ worker_sub(intptr_t task_id)
     sec = self / (double)1000000;
     qps = (double)grntest_job[grntest_task[task_id].job_id].qnum/ sec;
     grntest_jobdone++;
-    sprintf(tmpbuf,
-            "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld, \"queries\": %d}",
-            grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
-            grntest_job[grntest_task[task_id].job_id].min,
-            grntest_job[grntest_task[task_id].job_id].max,
-            grntest_job[grntest_task[task_id].job_id].qnum);
-    if (grntest_jobdone < grntest_jobnum) {
-      strcat(tmpbuf, ",");
+    if (grntest_outtype == OUT_TSV) {
+      sprintf(tmpbuf,
+              "job\t%s\t%lld\t%lld\t%f\t%lld\t%lld\t%d\n",
+              grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
+              grntest_job[grntest_task[task_id].job_id].min,
+              grntest_job[grntest_task[task_id].job_id].max,
+              grntest_job[grntest_task[task_id].job_id].qnum);
+    } else {
+      sprintf(tmpbuf,
+              "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld, \"queries\": %d}",
+              grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
+              grntest_job[grntest_task[task_id].job_id].min,
+              grntest_job[grntest_task[task_id].job_id].max,
+              grntest_job[grntest_task[task_id].job_id].qnum);
+      if (grntest_jobdone < grntest_jobnum) {
+        strcat(tmpbuf, ",");
+      } 
     }
     strcat(grntest_log_tmpbuf, tmpbuf);
     if (grntest_log_tmpbuf[LOGBUF_LEN - 2] != '\0') {
       error_exit_in_thread(1);
     }
     if (grntest_jobdone == grntest_jobnum) {
-      if (grntest_detail_on) {
-        fseek(grntest_logfp, -2, SEEK_CUR);
-        fprintf(grntest_logfp, "], \n");
+      if (grntest_outtype == OUT_TSV) {
+        fprintf(grntest_logfp, "%s", grntest_log_tmpbuf);
+      } else {
+        if (grntest_detail_on) {
+          fseek(grntest_logfp, -2, SEEK_CUR);
+          fprintf(grntest_logfp, "], \n");
+        }
+        fprintf(grntest_logfp, "\"summary\" :[");
+        fprintf(grntest_logfp, "%s", grntest_log_tmpbuf);
+        fprintf(grntest_logfp, "]");
       }
-      fprintf(grntest_logfp, "\"summary\" :[");
-      fprintf(grntest_logfp, "%s", grntest_log_tmpbuf);
-      fprintf(grntest_logfp, "]");
       fflush(grntest_logfp);
     }
   }
@@ -950,14 +991,23 @@ get_sysinfo(const char *path, char *result, int olen)
   MEMORYSTATUSEX minfo;
   OSVERSIONINFO osinfo;
 
-  strcpy(result, "{");
-
-  sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
-  strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
-  strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
-  strcat(result, tmpbuf);
+  if (grntest_outtype == OUT_TSV) {
+    result[0] = '\0';
+    sprintf(tmpbuf, "sctipt\t%s\n", grntest_scriptname);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "user\t%s\n", grntest_username);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "date\t%s\n", grntest_date);
+    strcat(result, tmpbuf);
+  } else {
+    strcpy(result, "{");
+    sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
+    strcat(result, tmpbuf);
+  }
 
   memset(cpustring, 0, 64);
   __cpuid(cinfo, 0x80000002);
@@ -967,47 +1017,88 @@ get_sysinfo(const char *path, char *result, int olen)
   __cpuid(cinfo, 0x80000004);
   memcpy(cpustring+32, cinfo, 16);
 
-  sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpustring);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%s\n", cpustring);
+  } else {
+    sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpustring);
+  }
   strcat(result, tmpbuf);
 
-  if (sizeof(int *) == 8 ) {
+  if (sizeof(int *) == 8) {
     grntest_osinfo = OS_WINDOWS64;
-    sprintf(tmpbuf, "  \"BIT\": 64,\n");
-    strcat(result, tmpbuf);
+    if (grntest_outtype == OUT_TSV) {
+      sprintf(tmpbuf, "64BIT\n");
+    } else {
+      sprintf(tmpbuf, "  \"BIT\": 64,\n");
+    }
   } else {
     grntest_osinfo = OS_WINDOWS32;
-    sprintf(tmpbuf, "  \"BIT\": 32,\n");
-    strcat(result, tmpbuf);
+    if (grntest_outtype == OUT_TSV) {
+      sprintf(tmpbuf, "32BIT\n");
+    } else {
+      sprintf(tmpbuf, "  \"BIT\": 32,\n");
+    }
   }
+  strcat(result, tmpbuf);
 
   GetSystemInfo(&sinfo);
-  sprintf(tmpbuf, "  \"CORE\": %d,\n", sinfo.dwNumberOfProcessors);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "CORE\t%d\n", sinfo.dwNumberOfProcessors);
+  } else {
+    sprintf(tmpbuf, "  \"CORE\": %d,\n", sinfo.dwNumberOfProcessors);
+  }
   strcat(result, tmpbuf);
 
   minfo.dwLength = sizeof(minfo);
   GlobalMemoryStatusEx(&minfo);
-  sprintf(tmpbuf, "  \"RAM\": \"%I64dMByte\",\n",
-          minfo.ullTotalPhys/(1024*1024));
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "RAM\t%I64dMByte\n", minfo.ullTotalPhys/(1024*1024));
+  } else {
+    sprintf(tmpbuf, "  \"RAM\": \"%I64dMByte\",\n", minfo.ullTotalPhys/(1024*1024));
+  }
   strcat(result, tmpbuf);
 
   GetDiskFreeSpaceEx(NULL, NULL, &dinfo, NULL);
-  sprintf(tmpbuf, "  \"HDD\": \"%I64dKBytes\",\n", dinfo.QuadPart/1024 );
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "HDD\t%I64dKBytes\n", dinfo.QuadPart/1024 );
+  } else {
+    sprintf(tmpbuf, "  \"HDD\": \"%I64dKBytes\",\n", dinfo.QuadPart/1024 );
+  }
   strcat(result, tmpbuf);
 
   osinfo.dwOSVersionInfoSize = sizeof(osinfo); GetVersionEx(&osinfo);
-  sprintf(tmpbuf, "  \"OS\": \"Windows %d.%d\",\n", osinfo.dwMajorVersion,
-  osinfo.dwMinorVersion);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "Windows %d.%d\n", osinfo.dwMajorVersion, osinfo.dwMinorVersion);
+  } else {
+    sprintf(tmpbuf, "  \"OS\": \"Windows %d.%d\",\n", osinfo.dwMajorVersion,
+            osinfo.dwMinorVersion);
+  }
   strcat(result, tmpbuf);
 
-  sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%s\n", grntest_serverhost);
+  } else {
+    sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+  }
   strcat(result, tmpbuf);
 
-  sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%d\n", grntest_serverport);
+  } else {
+    sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
+  }
   strcat(result, tmpbuf);
 
-  sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%s\"\n", grn_get_version());
+  } else {
+    sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
+  }
+
   strcat(result, tmpbuf);
-  strcat(result, "}");
+  if (grntest_outtype != OUT_TSV) {
+    strcat(result, "}");
+  }
 
 #else /* linux only */
   FILE *fp;
@@ -1018,14 +1109,23 @@ get_sysinfo(const char *path, char *result, int olen)
   struct utsname ubuf;
   struct statvfs vfsbuf;
 
-  strcpy(result, "{");
-
-  sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
-  strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
-  strcat(result, tmpbuf);
-  sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
-  strcat(result, tmpbuf);
+  if (grntest_outtype == OUT_TSV) {
+    result[0] = '\0';
+    sprintf(tmpbuf, "sctipt\t%s\n", grntest_scriptname);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "user\t%s\n", grntest_username);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "date\t%s\n", grntest_date);
+    strcat(result, tmpbuf);
+  } else {
+    strcpy(result, "{");
+    sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
+    strcat(result, tmpbuf);
+  }
 
   fp = fopen("/proc/cpuinfo", "r");
   if (!fp) {
@@ -1040,20 +1140,36 @@ get_sysinfo(const char *path, char *result, int olen)
   }
   fclose(fp);
   cpunum = sysconf(_SC_NPROCESSORS_CONF);
-  sprintf(tmpbuf, "  \"CPU\": %s\",\n", cpustring);
+
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%s\n", cpustring);
+  } else {
+    sprintf(tmpbuf, "  \"CPU\": %s\",\n", cpustring);
+  }
   strcat(result, tmpbuf);
 
-  if (sizeof(int *) == 8 ) {
+  if (sizeof(int *) == 8) {
     grntest_osinfo = OS_LINUX64;
-    sprintf(tmpbuf, "  \"BIT\": 64,\n");
-    strcat(result, tmpbuf);
+    if (grntest_outtype == OUT_TSV) {
+      sprintf(tmpbuf, "64BIT\n");
+    } else {
+      sprintf(tmpbuf, "  \"BIT\": 64,\n");
+    }
   } else {
     grntest_osinfo = OS_LINUX32;
-    sprintf(tmpbuf, "  \"BIT\": 32,\n");
-    strcat(result, tmpbuf);
+    if (grntest_outtype == OUT_TSV) {
+      sprintf(tmpbuf, "32BIT\n");
+    } else {
+      sprintf(tmpbuf, "  \"BIT\": 32,\n");
+    }
   }
+  strcat(result, tmpbuf);
 
-  sprintf(tmpbuf, "  \"CORE\": %d,\n", cpunum);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "CORE\t%d\n", cpunum);
+  } else {
+    sprintf(tmpbuf, "  \"CORE\": %d,\n", cpunum);
+  }
   strcat(result, tmpbuf);
 
   fp = fopen("/proc/meminfo", "r");
@@ -1068,7 +1184,11 @@ get_sysinfo(const char *path, char *result, int olen)
     }
   }
   fclose(fp);
-  sprintf(tmpbuf, "  \"RAM\": \"%dMBytes\",\n", minfo/1024);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%dMBytes\n", minfo/1024);
+  } else {
+    sprintf(tmpbuf, "  \"RAM\": \"%dMBytes\",\n", minfo/1024);
+  }
   strcat(result, tmpbuf);
 
   ret = statvfs(path, &vfsbuf);
@@ -1077,29 +1197,50 @@ get_sysinfo(const char *path, char *result, int olen)
     exit(1);
   }
 
-  sprintf(tmpbuf, "  \"HDD\": \"%ldKBytes\",\n", vfsbuf.f_blocks * 4);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%ldKBytes\n", vfsbuf.f_blocks * 4);
+  } else {
+    sprintf(tmpbuf, "  \"HDD\": \"%ldKBytes\",\n", vfsbuf.f_blocks * 4);
+  }
   strcat(result, tmpbuf);
 
   uname(&ubuf);
-  sprintf(tmpbuf, "  \"OS\": \"%s %s\",\n", ubuf.sysname, ubuf.release);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%s %s\n", ubuf.sysname, ubuf.release);
+  } else {
+    sprintf(tmpbuf, "  \"OS\": \"%s %s\",\n", ubuf.sysname, ubuf.release);
+  }
   strcat(result, tmpbuf);
 
-  sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%s\n", grntest_serverhost);
+  } else {
+    sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+  }
   strcat(result, tmpbuf);
 
-  sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%d\n", grntest_serverport);
+  } else {
+    sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
+  }
   strcat(result, tmpbuf);
 
-  sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
+  if (grntest_outtype == OUT_TSV) {
+    sprintf(tmpbuf, "%s\n", grn_get_version());
+  } else {
+    sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
+  }
   strcat(result, tmpbuf);
 
-  strcat(result, "},");
+  if (grntest_outtype != OUT_TSV) {
+    strcat(result, "},");
+  }
 #endif /* WIN32 */
   if (strlen(result) >= olen) {
     fprintf(stderr, "buffer overrun in get_sysinfo!\n");
     exit(1);
   }
-
   return 0;
 }
 
@@ -1539,7 +1680,12 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     }
   }
   if (grntest_detail_on) {
-    fprintf(grntest_logfp, "\"detail\": [\n");
+    if (grntest_outtype == OUT_TSV) {
+      ;
+    }
+    else {
+      fprintf(grntest_logfp, "\"detail\": [\n");
+    }
     fflush(grntest_logfp);
   }
 
@@ -1619,9 +1765,17 @@ do_script(grn_ctx *ctx, const char *sfile)
     if (job_num > 0) {
       GRN_TIME_INIT(&grntest_jobs_start, 0);
       GRN_TIME_NOW(ctx, &grntest_jobs_start);
-      fprintf(grntest_logfp, "{\"jobs\": \"%s\",\n", buf);
+      if (grntest_outtype == OUT_TSV) {
+        fprintf(grntest_logfp, "jobs-start\t%s\n", buf);
+      } else {
+        fprintf(grntest_logfp, "{\"jobs\": \"%s\",\n", buf);
+      }
       qnum = do_jobs(ctx, job_num, line);
-      fprintf(grntest_logfp, "},\n");
+      if (grntest_outtype == OUT_TSV) {
+        fprintf(grntest_logfp, "jobs-end\t%s\n", buf);
+      } else {
+        fprintf(grntest_logfp, "},\n");
+      }
       qnum_total = qnum_total + qnum;
 
       grn_obj_close(ctx, &grntest_jobs_start);
@@ -2484,13 +2638,14 @@ main(int argc, char **argv)
   grn_ctx context;
   char sysinfo[BUF_LEN];
   char log[BUF_LEN];
-  const char *portstr=NULL, *hoststr=NULL, *dbname=NULL, *scrname=NULL, *outdir=NULL;
+  const char *portstr=NULL, *hoststr=NULL, *dbname=NULL, *scrname=NULL, *outdir=NULL, *outtype=NULL;
   time_t sec;
 
   static grn_str_getopt_opt opts[] = {
     {'i', "host", NULL, 0, getopt_op_none},
     {'p', "port", NULL, 0, getopt_op_none},
     {'\0', "log-output-dir", NULL, 0, getopt_op_none},
+    {'\0', "output-type", NULL, 0, getopt_op_none},
     {'\0', "dir", NULL, mode_list, getopt_op_update},
     {'\0', "noftp", NULL, mode_noftp, getopt_op_update},
     {'h', "help", NULL, mode_usage, getopt_op_update},
@@ -2500,6 +2655,7 @@ main(int argc, char **argv)
   opts[0].arg = &hoststr;
   opts[1].arg = &portstr;
   opts[2].arg = &outdir;
+  opts[3].arg = &outtype;
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
@@ -2534,6 +2690,10 @@ main(int argc, char **argv)
   grntest_serverport = DEFAULT_PORT;
   if (portstr) {
     grntest_serverport = grn_atoi(portstr, portstr + strlen(portstr), NULL);
+  }
+
+  if (outtype && !strcmp(outtype, "tsv")) {
+    grntest_outtype = OUT_TSV;
   }
 
   grn_init();
