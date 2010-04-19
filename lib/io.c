@@ -1762,7 +1762,7 @@ grn_opened(fileinfo *fi)
 }
 
 inline static int
-grn_msync(void *start, size_t length)
+grn_msync(grn_ctx *ctx, void *start, size_t length)
 {
   /* return value may be wrong... */
   return FlushViewOfFile(start, length);
