@@ -75,9 +75,12 @@
 
 #define GRN_API __declspec(dllexport)
 
-#ifndef __GNUC__
-#pragma warning(disable: 4996)
-#include <io.h>
+#ifdef __GNUC__
+#  include <w32api.h>
+#  define WINVER Windows2000
+#else
+#  pragma warning(disable: 4996)
+#  include <io.h>
 #endif
 
 #include <basetsd.h>
