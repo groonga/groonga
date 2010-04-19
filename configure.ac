@@ -104,7 +104,7 @@ AC_CONFIG_FILES([Makefile
                  test/benchmark/lib/Makefile
                 ])
 
-AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/param.h sys/types.h pthread.h sys/resource.h)
+AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h pthread.h sys/resource.h)
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h)
 AC_CHECK_FUNCS(localtime_r)

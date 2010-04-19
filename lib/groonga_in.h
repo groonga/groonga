@@ -62,9 +62,10 @@
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#else /* HAVE_SYS_TIME_H */
-#include <sys/timeb.h>
 #endif /* HAVE_SYS_TIME_H */
+#ifdef HAVE_SYS_TIMEB_H
+#include <sys/timeb.h>
+#endif /* HAVE_SYS_TIMEB_H */
 
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
