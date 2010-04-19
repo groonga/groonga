@@ -1747,6 +1747,10 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_PTR_INIT(obj,flags,domain)\
   GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_PVECTOR : GRN_PTR,\
                ((flags) & GRN_OBJ_DO_SHALLOW_COPY), (domain))
+#define GRN_TOKYO_GEO_POINT_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_TOKYO_GEO_POINT)
+#define GRN_WGS84_GEO_POINT_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_WGS84_GEO_POINT)
 
 #define GRN_BOOL_SET(ctx,obj,val) do {\
   unsigned char _val = (unsigned char)(val);\
@@ -1796,6 +1800,18 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_PTR_SET(ctx,obj,val) do {\
   grn_obj *_val = (grn_obj *)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_obj *));\
+} while (0)
+
+typedef struct {
+  int latitude;
+  int longitude;
+} grn_geo_point;
+
+#define GRN_GEO_POINT_SET(ctx,obj,_latitude,_longitude) do {\
+  grn_geo_point _val;\
+  _val.latitude = (int)(_latitude);\
+  _val.longitude = (int)(_longitude);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_geo_point));\
 } while (0)
 
 #define GRN_BOOL_SET_AT(ctx,obj,offset,val) do {\
@@ -1885,6 +1901,11 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 #define GRN_TIME_VALUE GRN_INT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
+#define GRN_GEO_POINT_VALUE(obj,latitude,longitude) do {\
+  grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);\
+  latitude = _val->latitude;\
+  longitude = _val->longitude;\
+} while (0)
 
 #define GRN_BOOL_VALUE_AT(obj,offset) (((unsigned char *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_INT8_VALUE_AT(obj,offset) (((signed char *)GRN_BULK_HEAD(obj))[offset])
