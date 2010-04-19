@@ -380,7 +380,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
     }
     /* TODO: handle post body */
     {
-      grn_rc expr_rc;
+      grn_rc expr_rc = GRN_SUCCESS;
       grn_obj jsonp_func;
       const char *mime_type;
 
