@@ -8,6 +8,31 @@ AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED(HOST_CPU, ["$host_cpu"], [host CPU])
 AC_DEFINE_UNQUOTED(HOST_OS, ["$host_os"], [host OS])
 
+AC_MSG_CHECKING([for native Win32])
+case "$host" in
+  *-*-mingw*)
+    os_win32=yes
+    ;;
+  *)
+    os_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$os_win32])
+
+AC_MSG_CHECKING([for some Win32 platform])
+case "$host" in
+  *-*-mingw*|*-*-cygwin*)
+    platform_win32=yes
+    ;;
+  *)
+    platform_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$platform_win32])
+
+AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
+
 AC_C_BIGENDIAN
 AC_PROG_CC
 AM_PROG_CC_C_O
@@ -57,6 +82,7 @@ if test "$GCC" = "yes"; then
 #  CHECK_CFLAG([-Wwrite-strings])
 #  CHECK_CFLAG([-Winline])
 fi
+AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 AC_CONFIG_FILES([Makefile
                  src/Makefile
@@ -130,7 +156,9 @@ AC_ARG_WITH(query_escalation_threshold,
 AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD, $GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD, "specified query escalation threshold")
 
 AC_CHECK_LIB(m, log, [M_LIBS="-lm"], [AC_MSG_ERROR("No libm found")])
-AC_CHECK_LIB(pthread, pthread_mutex_init, [PTHREAD_LIBS="-lpthread"], [AC_MSG_ERROR("No libpthread found")])
+AC_CHECK_LIB(pthread, pthread_mutex_init,
+             [PTHREAD_LIBS="-lpthread"],
+             [test "$os_win32" != "yes" && AC_MSG_ERROR("No libpthread found")])
 AC_CHECK_LIB(nsl, gethostbyname, [NSL_LIBS="-lnsl"])
 AC_CHECK_LIB(socket, socket, [SOCKET_LIBS="-lsocket"])
 AC_CHECK_LIB(dl, dlopen, [NSL_LIBS="-ldl"])
@@ -260,13 +288,19 @@ if test "x$have_epoll" != "xyes"; then
       ])
     ])
     if test "x$have_poll" != "xyes"; then
-      AC_CHECK_FUNC(select, [
-        have_select="yes"
-        AC_CHECK_HEADERS(sys/select.h)
+      if test "$os_win32" = "yes"; then
+	AC_CHECK_HEADER(winsock2.h, [have_select="yes"])
+      else
+        AC_CHECK_FUNC(select, [
+          have_select="yes"
+          AC_CHECK_HEADERS(sys/select.h)
+        ])
+      fi
+      if test "x$have_select" = "xyes"; then
         AC_DEFINE(USE_SELECT, [1], [use select])
-      ],[
+      else
         AC_MSG_ERROR([epoll/kqueue/poll/select is missing.])
-      ])
+      fi
     fi
   fi
 fi
@@ -308,6 +342,17 @@ int main(int argc, char **argv)
     [
       AC_MSG_RESULT(no)
     ])
+
+# MinGW
+if test "$os_win32" = "yes"; then
+  WINDOWS_LDFLAGS="-mwindows"
+  WINDOWS_LIBS="-ladvapi32 -lws2_32"
+else
+  WINDOWS_LDFLAGS=
+  WINDOWS_LIBS=
+fi
+AC_SUBST(WINDOWS_LDFLAGS)
+AC_SUBST(WINDOWS_LIBS)
 
 # groonga binary path
 GROONGA="\$(abs_top_srcdir)/src/groonga"
@@ -461,7 +506,7 @@ AC_MSG_RESULT($enable_futex)
 
 # flags for compile groonga
 CFLAGS="$CFLAGS $MECAB_CFLAGS $OPT_CFLAGS"
-LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS"
+LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # flags for groonga-cfg
