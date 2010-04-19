@@ -37,20 +37,48 @@ void data_create_with_invalid_name(void);
 void test_create_with_invalid_name(gpointer data);
 void test_array_truncate(void);
 
+static gchar *tmp_directory;
+
 static grn_logger_info *logger;
 static grn_ctx *context;
 static grn_obj *database;
 
 void
+cut_startup(void)
+{
+  tmp_directory = g_build_filename(grn_test_get_base_dir(),
+                                   "tmp",
+                                   "test-database",
+                                   NULL);
+}
+
+void
+cut_shutdown(void)
+{
+  g_free(tmp_directory);
+}
+
+static void
+remove_tmp_directory(void)
+{
+  cut_remove_path(tmp_directory, NULL);
+}
+
+void
 cut_setup(void)
 {
+  remove_tmp_directory();
+  g_mkdir_with_parents(tmp_directory, 0700);
+
   context = NULL;
   logger = setup_grn_logger();
 
   context = g_new0(grn_ctx, 1);
   grn_ctx_init(context, 0);
 
-  database = grn_db_create(context, NULL, NULL);
+  database = grn_db_create(context,
+                           cut_build_path(tmp_directory, "table.db", NULL),
+                           NULL);
 }
 
 void
@@ -61,6 +89,7 @@ cut_teardown(void)
     g_free(context);
   }
   teardown_grn_logger(logger);
+  cut_remove_path(tmp_directory, NULL);
 }
 
 void
@@ -225,7 +254,8 @@ test_array_sort(gpointer data)
   const gint32 values[] = {
     5, 6, 18, 9, 0, 4, 13, 12, 8, 14, 19, 11, 7, 3, 1, 10, 15, 2, 17, 16
   };
-  const int n_values = sizeof(values)/sizeof(values[0]);
+  const int n_values = sizeof(values) / sizeof(values[0]);
+  const gchar table_name[] = "Store";
   const gchar column_name[] = "sample_column";
   const int n_keys = 1;
   grn_table_sort_key keys[n_keys];
@@ -238,8 +268,9 @@ test_array_sort(gpointer data)
   guint n_expected_values;
   GList *expected_values, *sorted_values = NULL;
 
-  table = grn_table_create(context, NULL, 0, NULL,
-                           GRN_OBJ_TABLE_NO_KEY,
+  table = grn_table_create(context, table_name, strlen(table_name),
+                           NULL,
+                           GRN_OBJ_TABLE_NO_KEY | GRN_OBJ_PERSISTENT,
                            NULL,
                            NULL);
   column = grn_column_create(context,
