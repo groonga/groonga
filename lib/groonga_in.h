@@ -75,8 +75,11 @@
 
 #define GRN_API __declspec(dllexport)
 
+#ifndef __GNUC__
 #pragma warning(disable: 4996)
 #include <io.h>
+#endif
+
 #include <basetsd.h>
 #include <process.h>
 #include <winsock2.h>
@@ -86,8 +89,12 @@
 #include <float.h>
 #include <time.h>
 #include <sys/types.h>
+
+#ifndef __GNUC__
 #define PATH_MAX (MAX_PATH - 1)
 #define inline _inline
+#endif
+
 #define snprintf _snprintf
 #if _MSC_VER < 1500
   #define vsnprintf _vsnprintf
@@ -97,13 +104,17 @@
 #define lseek _lseek
 #define read _read
 #define getpid _getpid
-#if _MSC_VER < 1400
+#if !defined(__GNUC__) && _MSC_VER < 1400
 # define fstat _fstat
-#endif /* _MSC_VER < 1400 */
+#endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
 #define write _write
 #define close _close
 #define usleep(x) Sleep((x) / 1000)
 #define sleep(x) Sleep((x) * 1000)
+
+#ifdef __GNUC__
+#include <stdint.h>
+#else
 #define uint8_t UINT8
 #define int8_t INT8
 #define int_least8_t INT8
@@ -116,6 +127,8 @@
 #define uint64_t UINT64
 #define ssize_t SSIZE_T
 #define pid_t int
+#endif
+
 #undef MSG_WAITALL
 #define MSG_WAITALL 0 /* before Vista, not supported... */
 #define PATH_SEPARATOR "\\"
@@ -132,7 +145,9 @@ typedef SOCKET grn_sock;
 
 #define CALLBACK __stdcall
 
+#ifndef __GNUC__
 #include <intrin.h>
+#endif
 #include <errno.h>
 #else /* WIN32 */
 
