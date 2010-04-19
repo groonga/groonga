@@ -2838,7 +2838,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
       if ((dc = GRN_MALLOC(max_dest_chunk_size))) {
         if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
             (sc = WIN_MAP2(ii->chunk, ctx, &sw, scn, 0,
-                                 sb->header.chunk_size, grn_io_rdonly))) {
+                           sb->header.chunk_size, grn_io_rdonly))) {
           uint16_t n = sb->header.nterms;
           memset(db, 0, S_SEGMENT);
           memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
@@ -2990,7 +2990,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
           if ((dc1 = GRN_MALLOC(max_dest_chunk_size))) {
             if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
                 (sc = WIN_MAP2(ii->chunk, ctx, &sw, scn, 0,
-                                     sb->header.chunk_size, grn_io_rdonly))) {
+                               sb->header.chunk_size, grn_io_rdonly))) {
               term_split(ctx, ii->lexicon, sb, db0, db1);
               if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db0, dc0))) {
                 actual_db0_chunk_size = db0->header.chunk_size;
@@ -3700,11 +3700,15 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
       c->ppseg = &ii->header->binfo[LSEG(pos)];
       if (bt->size_in_chunk && (chunk = c->buf->header.chunk) != NOT_ASSIGNED) {
         if (!(c->cp = WIN_MAP2(ii->chunk, ctx, &c->iw, chunk, bt->pos_in_chunk,
-                                     bt->size_in_chunk, grn_io_rdonly))) {
+                               bt->size_in_chunk, grn_io_rdonly))) {
           buffer_close(ctx, ii, c->buffer_pseg);
           GRN_FREE(c);
           c = NULL;
           goto exit;
+        }
+        if (buffer_is_reused(ctx, ii, c)) {
+          grn_ii_cursor_close(ctx, c);
+          continue;
         }
         c->cpe = c->cp + bt->size_in_chunk;
         if ((bt->tid & CHUNK_SPLIT)) {
@@ -3860,8 +3864,8 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
                 grn_io_win iw;
                 uint32_t size = c->cinfo[c->curr_chunk].size;
                 if (size && (cp = WIN_MAP2(c->ii->chunk, ctx, &iw,
-                                         c->cinfo[c->curr_chunk].segno, 0,
-                                         size, grn_io_rdonly))) {
+                                           c->cinfo[c->curr_chunk].segno, 0,
+                                           size, grn_io_rdonly))) {
                   grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap2(&iw);
                 } else {
@@ -3898,7 +3902,10 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
         if (c->nextb) {
           uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
           buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
-          /* todo : if (c->buffer_pseg != *c->ppseg) { retry; } */
+          if (buffer_is_reused(ctx, ii, c)) {
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+            // todo : rewind;
+          }
           c->bp = NEXT_ADDR(br);
           GRN_B_DEC(c->pb.rid, c->bp);
           if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
@@ -3987,6 +3994,10 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
             return NULL;
           }
         } else if (c->post == &c->pb) {
+          if (buffer_is_reused(ctx, ii, c)) {
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+            // todo : rewind;
+          }
           if (c->pb.rest) {
             c->pb.rest--;
             GRN_B_DEC(gap, c->bp);
