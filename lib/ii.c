@@ -1598,8 +1598,46 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   return rp - res;
 }
 
+#define GRN_B_DEC_CHECK(v,p,pe) \
+{ \
+  uint8_t *_p = (uint8_t *)p; \
+  uint32_t _v;\
+  if (_p >= pe) { return 0; }\
+  _v = *_p++;\
+  switch (_v >> 4) { \
+  case 0x08 : \
+    if (_v == 0x8f) { \
+      if (_p + sizeof(uint32_t) > pe) { return 0; }\
+      memcpy(&_v, _p, sizeof(uint32_t));\
+      _p += sizeof(uint32_t); \
+    } \
+    break; \
+  case 0x09 : \
+    if (_p + 3 > pe) { return 0; }\
+    _v = (_v - 0x90) * 0x100 + *_p++; \
+    _v = _v * 0x100 + *_p++; \
+    _v = _v * 0x100 + *_p++ + 0x20408f; \
+    break; \
+  case 0x0a : \
+  case 0x0b : \
+    if (_p + 2 > pe) { return 0; }\
+    _v = (_v - 0xa0) * 0x100 + *_p++; \
+    _v = _v * 0x100 + *_p++ + 0x408f; \
+    break; \
+  case 0x0c : \
+  case 0x0d : \
+  case 0x0e : \
+  case 0x0f : \
+    if (_p + 1 > pe) { return 0; }\
+    _v = (_v - 0xc0) * 0x100 + *_p++ + 0x8f; \
+    break; \
+  } \
+  v = _v; \
+  p = _p; \
+}
+
 static uint8_t *
-unpack(uint8_t *dp, int i, uint32_t *rp)
+unpack(uint8_t *dp, uint8_t *dpe, int i, uint32_t *rp)
 {
   uint8_t ne = 0, k = 0, w = *dp++;
   uint32_t m, *p = rp;
@@ -1612,6 +1650,7 @@ unpack(uint8_t *dp, int i, uint32_t *rp)
     m = (1 << w) - 1;
   }
   while (i >= 8) {
+    if (dp + w > dpe) { return NULL; }
     switch (w) {
     case 0 : memset(p, 0, sizeof(uint32_t) * 8); break;
     case 1 : dp = unpack_1(p, dp); break;
@@ -1653,7 +1692,7 @@ unpack(uint8_t *dp, int i, uint32_t *rp)
   {
     int b;
     uint32_t v, *pe;
-    for (b = 8 - w, v = 0, pe = p + i; p < pe;) {
+    for (b = 8 - w, v = 0, pe = p + i; p < pe && dp < dpe;) {
       if (b > 0) {
         *p++ = v + ((*dp >> b) & m);
         b -= w;
@@ -1675,13 +1714,13 @@ unpack(uint8_t *dp, int i, uint32_t *rp)
       while (ne--) {
         pp = &rp[k];
         k = *pp;
-        GRN_B_DEC(*pp, dp);
+        GRN_B_DEC_CHECK(*pp, dp, dpe);
         *pp += (m + 1);
       }
     } else {
       while (ne--) {
         k = *dp++;
-        GRN_B_DEC(rp[k], dp);
+        GRN_B_DEC_CHECK(rp[k], dp, dpe);
         rp[k] += (m + 1);
       }
     }
@@ -1692,7 +1731,7 @@ unpack(uint8_t *dp, int i, uint32_t *rp)
 int
 grn_p_dec(grn_ctx *ctx, uint8_t *data, uint32_t data_size, uint32_t nreq, uint32_t **res)
 {
-  uint8_t *dp = data;
+  uint8_t *dp = data, *dpe = data + data_size;
   uint32_t rest, orig_size, *rp, *rpe;
   GRN_B_DEC(orig_size, dp);
   if (!orig_size) {
@@ -1709,10 +1748,10 @@ grn_p_dec(grn_ctx *ctx, uint8_t *data, uint32_t data_size, uint32_t nreq, uint32
     }
     if (!nreq || nreq > orig_size) { nreq = orig_size; }
     for (rest = nreq; rest >= UNIT_SIZE; rest -= UNIT_SIZE) {
-      dp = unpack(dp, UNIT_SIZE, rp);
+      if (!(dp = unpack(dp, dpe, UNIT_SIZE, rp))) { return 0; }
       rp += UNIT_SIZE;
     }
-    if (rest) { dp = unpack(dp, rest, rp); }
+    if (rest) { if (!(dp = unpack(dp, dpe, rest, rp))) { return 0; } }
     GRN_ASSERT(data + data_size == dp);
     return nreq;
   }
@@ -1732,7 +1771,7 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     if (dv[nreq].flags & CUT_OFF) { break; }
   }
   if (!nreq) { return 0; }
-  GRN_B_DEC(df, dp);
+  GRN_B_DEC_CHECK(df, dp, dpe);
   if ((df & 1)) {
     df >>= 1;
     size = nreq == dvlen ? data_size : df * nreq;
@@ -1747,17 +1786,17 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
       if (dv[l].flags & CUT_OFF) { break; }
       dv[l].data = rp;
       if (l < dvlen - 1) {
-        for (i = 0; i < df; i++, rp++) { GRN_B_DEC(*rp, dp); }
+        for (i = 0; i < df; i++, rp++) { GRN_B_DEC_CHECK(*rp, dp, dpe); }
       } else {
-        for (i = 0; dp < dpe; i++, rp++) { GRN_B_DEC(*rp, dp); }
+        for (i = 0; dp < dpe; i++, rp++) { GRN_B_DEC_CHECK(*rp, dp, dpe); }
       }
       dv[l].data_size = i;
     }
   } else {
     uint32_t n, rest, usep = df >> 1;
-    GRN_B_DEC(df, dp);
+    GRN_B_DEC_CHECK(df, dp, dpe);
     if (dv[dvlen -1].flags & ODD) {
-      GRN_B_DEC(rest, dp);
+      GRN_B_DEC_CHECK(rest, dp, dpe);
     } else {
       rest = 0;
     }
@@ -1775,17 +1814,17 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
       dv[l].data_size = n = (l < dvlen - 1) ? df : df + rest;
       if (usep & (1 << l)) {
         for (; n >= UNIT_SIZE; n -= UNIT_SIZE) {
-          dp = unpack(dp, UNIT_SIZE, rp);
+          if (!(dp = unpack(dp, dpe, UNIT_SIZE, rp))) { return 0; }
           rp += UNIT_SIZE;
         }
         if (n) {
-          dp = unpack(dp, n, rp);
+          if (!(dp = unpack(dp, dpe, n, rp))) { return 0; }
           rp += n;
         }
         dv[l].flags |= USE_P_ENC;
       } else {
         for (; n; n--, rp++) {
-          GRN_B_DEC(*rp, dp);
+          GRN_B_DEC_CHECK(*rp, dp, dpe);
         }
       }
     }
@@ -3902,7 +3941,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
         if (c->nextb) {
           uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
           buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
-          if (buffer_is_reused(ctx, ii, c)) {
+          if (buffer_is_reused(ctx, c->ii, c)) {
             GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
             // todo : rewind;
           }
@@ -3994,7 +4033,7 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
             return NULL;
           }
         } else if (c->post == &c->pb) {
-          if (buffer_is_reused(ctx, ii, c)) {
+          if (buffer_is_reused(ctx, c->ii, c)) {
             GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
             // todo : rewind;
           }
