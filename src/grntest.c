@@ -22,9 +22,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifndef WIN32
+#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* WIN32 */
+#endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -41,7 +41,7 @@
 #include "lib/com.h"
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <stddef.h>
 #else
 #include <sys/param.h>
