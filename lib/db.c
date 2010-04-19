@@ -2537,6 +2537,10 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
     goto exit;
   }
+  if (DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT) {
+    ERR(GRN_INVALID_ARGUMENT, "temporary table doesn't support column");
+    goto exit;
+  }
   {
     uint32_t s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(table)->id, &s);
