@@ -3607,6 +3607,51 @@ struct _grn_ii_cursor {
   uint32_t *ppseg;
 };
 
+static int
+buffer_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c)
+{
+  if (*c->ppseg != c->buffer_pseg) {
+    uint32_t i;
+    for (i = ii->header->bgqtail; i != ii->header->bgqhead; i = (i + 1) & (BGQSIZE - 1)) {
+      if (ii->header->bgqbody[i] == c->buffer_pseg) { return 0; }
+    }
+    return 1;
+  }
+  return 0;
+}
+
+static int
+chunk_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c, uint32_t offset, uint32_t size)
+{
+  if (*c->ppseg != c->buffer_pseg) {
+    uint32_t i, m, gseg;
+    if (size > S_CHUNK) { return 1; }
+    if (size > (1 << W_LEAST_CHUNK)) {
+      int es = size - 1;
+      GRN_BIT_SCAN_REV(es, m);
+      m++;
+    } else {
+      m = W_LEAST_CHUNK;
+    }
+    gseg = ii->header->garbages[m - W_LEAST_CHUNK];
+    while (gseg != NOT_ASSIGNED) {
+      grn_io_win iw;
+      grn_ii_ginfo *ginfo = WIN_MAP2(ii->chunk, ctx, &iw, gseg, 0, S_GARBAGE, grn_io_rdwr);
+      if (!ginfo) { break; }
+      for (i = 0; i < ginfo->nrecs; i++) {
+        if (ginfo->recs[i] == offset) {
+          grn_io_win_unmap2(&iw);
+          return 0;
+        }
+      }
+      gseg = ginfo->next;
+      grn_io_win_unmap2(&iw);
+    }
+    return 1;
+  }
+  return 0;
+}
+
 #define GRN_II_CURSOR_CMP(c1,c2) \
   (((c1)->post->rid > (c2)->post->rid) || \
    (((c1)->post->rid == (c2)->post->rid) && \
@@ -3666,7 +3711,10 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
           int i;
           grn_id crid;
           GRN_B_DEC(c->nchunks, c->cp);
-          // check_reused
+          if (chunk_is_reused(ctx, ii, c, chunk, c->buf->header.chunk_size)) {
+            grn_ii_cursor_close(ctx, c);
+            continue;
+          }
           if (!(c->cinfo = GRN_MALLOCN(chunk_info, c->nchunks))) {
             buffer_close(ctx, ii, c->buffer_pseg);
             grn_io_win_unmap2(&c->iw);
@@ -3680,6 +3728,10 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
             GRN_B_DEC(c->cinfo[i].dgap, c->cp);
             crid += c->cinfo[i].dgap;
             if (crid < min) { c->curr_chunk = i + 1; }
+          }
+          if (chunk_is_reused(ctx, ii, c, chunk, c->buf->header.chunk_size)) {
+            grn_ii_cursor_close(ctx, c);
+            continue;
           }
         }
         if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
