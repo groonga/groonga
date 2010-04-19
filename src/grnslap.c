@@ -281,7 +281,7 @@ do_client()
           if (!(nsent % 1000)) { lprint(ctx, "     : %d", nsent); }
         }
         done = 1;
-        pthread_join(thread, NULL);
+        THREAD_JOIN(thread);
         gettimeofday(&tve, NULL);
         {
           double qps;

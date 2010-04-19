@@ -1984,7 +1984,7 @@ grn_get_package(void)
   return PACKAGE;
 }
 
-#ifdef HAVE_SIGNAL_H
+#if defined(HAVE_SIGNAL_H) && !defined(WIN32)
 static int segv_received = 0;
 static void
 segv_handler(int signal_number, siginfo_t *info, void *context)
@@ -2019,13 +2019,13 @@ segv_handler(int signal_number, siginfo_t *info, void *context)
   GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
   abort();
 }
-#endif /* HAVE_SIGNAL_H */
+#endif /* defined(HAVE_SIGNAL_H) && !defined(WIN32) */
 
 grn_rc
 grn_set_segv_handler(void)
 {
   grn_rc rc = GRN_SUCCESS;
-#ifdef HAVE_SIGNAL_H
+#if defined(HAVE_SIGNAL_H) && !defined(WIN32)
   grn_ctx *ctx = &grn_gctx;
   struct sigaction action;
 

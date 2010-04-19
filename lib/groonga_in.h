@@ -23,9 +23,9 @@
 #define _GNU_SOURCE
 #endif /* __GNUC__ */
 
-#ifndef WIN32
+#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* WIN32 */
+#endif /* HAVE_CONFIG_H */
 
 #ifdef USE_AIO
 /* #define __USE_XOPEN2K 1 */
@@ -62,9 +62,10 @@
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#else /* HAVE_SYS_TIME_H */
-#include <sys/timeb.h>
 #endif /* HAVE_SYS_TIME_H */
+#ifdef HAVE_SYS_TIMEB_H
+#include <sys/timeb.h>
+#endif /* HAVE_SYS_TIMEB_H */
 
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
@@ -74,8 +75,14 @@
 
 #define GRN_API __declspec(dllexport)
 
-#pragma warning(disable: 4996)
-#include <io.h>
+#ifdef __GNUC__
+#  include <w32api.h>
+#  define WINVER Windows2000
+#else
+#  pragma warning(disable: 4996)
+#  include <io.h>
+#endif
+
 #include <basetsd.h>
 #include <process.h>
 #include <winsock2.h>
@@ -85,8 +92,12 @@
 #include <float.h>
 #include <time.h>
 #include <sys/types.h>
+
+#ifndef __GNUC__
 #define PATH_MAX (MAX_PATH - 1)
 #define inline _inline
+#endif
+
 #define snprintf _snprintf
 #if _MSC_VER < 1500
   #define vsnprintf _vsnprintf
@@ -96,13 +107,17 @@
 #define lseek _lseek
 #define read _read
 #define getpid _getpid
-#if _MSC_VER < 1400
+#if !defined(__GNUC__) && _MSC_VER < 1400
 # define fstat _fstat
-#endif /* _MSC_VER < 1400 */
+#endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
 #define write _write
 #define close _close
 #define usleep(x) Sleep((x) / 1000)
 #define sleep(x) Sleep((x) * 1000)
+
+#ifdef __GNUC__
+#include <stdint.h>
+#else
 #define uint8_t UINT8
 #define int8_t INT8
 #define int_least8_t INT8
@@ -115,6 +130,8 @@
 #define uint64_t UINT64
 #define ssize_t SSIZE_T
 #define pid_t int
+#endif
+
 #undef MSG_WAITALL
 #define MSG_WAITALL 0 /* before Vista, not supported... */
 #define PATH_SEPARATOR "\\"
@@ -131,7 +148,9 @@ typedef SOCKET grn_sock;
 
 #define CALLBACK __stdcall
 
+#ifndef __GNUC__
 #include <intrin.h>
+#endif
 #include <errno.h>
 #else /* WIN32 */
 
@@ -208,6 +227,7 @@ typedef int grn_sock;
 #include <pthread.h>
 typedef pthread_t grn_thread;
 #define THREAD_CREATE(thread,func,arg) (pthread_create(&(thread), NULL, (func), (arg)))
+#define THREAD_JOIN(thread) pthread_join(thread, NULL);
 typedef pthread_mutex_t grn_mutex;
 #define MUTEX_INIT(m) pthread_mutex_init(&m, NULL)
 #define MUTEX_LOCK(m) pthread_mutex_lock(&m)
@@ -276,6 +296,7 @@ typedef int grn_thread_key;
 #ifdef WIN32
 typedef uintptr_t grn_thread;
 #define THREAD_CREATE(thread,func,arg) (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
+#define THREAD_JOIN(thread) WaitForSingleObject((thread), INFINITE);
 typedef HANDLE grn_mutex;
 #define MUTEX_INIT(m) ((m) = CreateMutex(0, FALSE, NULL))
 #define MUTEX_LOCK(m) WaitForSingleObject((m), INFINITE)

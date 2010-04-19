@@ -1,6 +1,7 @@
 *.la
 *.lo
 *.o
+*.exe
 *.pyc
 *.gcno
 *.gcda
@@ -20,6 +21,7 @@
 /config.sub
 /configure
 /depcomp
+/dist
 /install-sh
 /libtool
 /ltmain.sh

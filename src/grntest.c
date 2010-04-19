@@ -22,9 +22,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifndef WIN32
+#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* WIN32 */
+#endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -41,7 +41,7 @@
 #include "lib/com.h"
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <stddef.h>
 #else
 #include <sys/param.h>
@@ -1010,12 +1010,14 @@ get_sysinfo(const char *path, char *result, int olen)
   }
 
   memset(cpustring, 0, 64);
+#ifndef __GNUC__
   __cpuid(cinfo, 0x80000002);
   memcpy(cpustring, cinfo, 16);
   __cpuid(cinfo, 0x80000003);
   memcpy(cpustring+16, cinfo, 16);
   __cpuid(cinfo, 0x80000004);
   memcpy(cpustring+32, cinfo, 16);
+#endif
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%s\n", cpustring);
@@ -2272,18 +2274,26 @@ static
 int
 get_date(char *date, time_t *sec)
 {
-#ifdef WIN32
+#ifdef __GNUC__
+#  ifdef HAVE_LOCALTIME_R
+  struct tm result;
+  struct tm *tm = &result;
+  localtime_r(sec, tm);
+#  else /* HAVE_LOCALTIME_R */
+  struct tm *tm = localtime(sec);
+#  endif /* HAVE_LOCALTIME_R */
+#else /* __GNUC__ */
   struct tm tmbuf;
   struct tm *tm = &tmbuf;
   localtime_s(tm, sec);
-#else
-  struct tm *tm = localtime(sec);
-#endif /* WIN32 */
+#endif /* __GNUC__ */
+
 #ifdef WIN32
   strftime(date, 128, "%Y-%m-%d %H:%M:%S", tm);
 #else
   strftime(date, 128, "%F %T", tm);
 #endif /* WIN32 */
+
   return 1;
 }
 

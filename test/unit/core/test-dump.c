@@ -349,32 +349,14 @@ test_column_create(gconstpointer data)
   grn_test_assert_dump(cut_take_printf("table_create Blog 0\n%s", expected));
 }
 
-static void
-free_elements(gpointer data)
-{
-  grn_obj *elements = data;
-
-  grn_obj_close(context, &elements[0]);
-  grn_obj_close(context, &elements[1]);
-  grn_obj_close(context, &elements[2]);
-  g_free(elements);
-}
-
-#define ADD_DATA(label, expected, type_name, OBJ_INIT, OBJ_SET,         \
+#define ADD_DATA(label, expected, type_name, element_type,              \
                  first_element, second_element, third_element) do {     \
-  const int n_of_elements = 3;                                          \
-  grn_obj *elements;                                                    \
-  elements = g_new0(grn_obj, n_of_elements);                            \
-  OBJ_INIT(&elements[0], 0);                                            \
-  OBJ_SET(context, &elements[0], first_element);                       \
-  OBJ_INIT(&elements[1], 0);                                            \
-  OBJ_SET(context, &elements[1], second_element);                      \
-  OBJ_INIT(&elements[2], 0);                                            \
-  OBJ_SET(context, &elements[2], third_element);                       \
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_STRING, expected,                   \
                  "type_name", G_TYPE_STRING, type_name,                 \
-                 "elements", G_TYPE_POINTER, elements, free_elements,   \
+                 "first_element", element_type, first_element,          \
+                 "second_element", element_type, second_element,        \
+                 "third_element", element_type, third_element,          \
                  NULL);                                                 \
 } while(0)
 
@@ -382,21 +364,61 @@ void
 data_uvector_column(void)
 {
   ADD_DATA("int32", "[-322,7,9270]", "Int32",
-           GRN_INT32_INIT, GRN_INT32_SET, -322, 7, 9270);
+           G_TYPE_INT, -322, 7, 9270);
   ADD_DATA("float", "[0.5,12.5,-1.0]", "Float",
-           GRN_FLOAT_INIT, GRN_FLOAT_SET, 0.5, 12.5, -1.0);
+           G_TYPE_DOUBLE, 0.5, 12.5, -1.0);
   ADD_DATA("bool", "[true,false,true]", "Bool",
-           GRN_BOOL_INIT, GRN_BOOL_SET, TRUE, FALSE, TRUE);
+           G_TYPE_BOOLEAN, TRUE, FALSE, TRUE);
 }
 
 void
 data_vector_column(void)
 {
   ADD_DATA("text", "[\"groonga\",\"is\",\"cool\"]", "Text",
-           GRN_TEXT_INIT, GRN_TEXT_PUTS, "groonga", "is", "cool");
+           G_TYPE_STRING, "groonga", "is", "cool");
 }
 
 #undef ADD_DATA
+
+static grn_obj *
+construct_elements(gconstpointer data)
+{
+  const int n_of_elements = 3;
+  grn_obj *elements;
+  const gchar *type_name;
+
+  elements = g_new0(grn_obj, n_of_elements);
+  type_name = gcut_data_get_string(data, "type_name");
+
+#define SET_VALUE(index, name)                          \
+  if (g_str_equal(type_name, "Int32")) {                \
+    GRN_INT32_INIT(&elements[index], 0);                \
+    GRN_INT32_SET(context, &elements[index],            \
+                  gcut_data_get_int(data, name));       \
+  } if (g_str_equal(type_name, "Float")) {              \
+    GRN_FLOAT_INIT(&elements[index], 0);                \
+    GRN_FLOAT_SET(context, &elements[index],            \
+                  gcut_data_get_double(data, name));    \
+  } if (g_str_equal(type_name, "Bool")) {               \
+    GRN_BOOL_INIT(&elements[index], 0);                 \
+    GRN_BOOL_SET(context, &elements[index],             \
+                 gcut_data_get_boolean(data, name));    \
+  } if (g_str_equal(type_name, "Text")) {               \
+    GRN_TEXT_INIT(&elements[index], 0);                 \
+    GRN_TEXT_SETS(context, &elements[index],            \
+                  gcut_data_get_string(data, name));    \
+  }
+
+  SET_VALUE(0, "first_element");
+  SET_VALUE(1, "second_element");
+  SET_VALUE(2, "third_element");
+
+#undef SET_VALUE
+
+  cut_take_memory(elements);
+
+  return elements;
+}
 
 void
 test_uvector_column(gconstpointer data)
@@ -418,7 +440,7 @@ test_uvector_column(gconstpointer data)
   id = grn_table_add(context, table, NULL, 0, NULL);
   grn_test_assert_context(context);
   cut_assert_equal_int(1, id);
-  elements = (grn_obj *)gcut_data_get_pointer(data, "elements");
+  elements = construct_elements(data);
 
   GRN_OBJ_INIT(&uvector, GRN_UVECTOR, 0, type_id);
   grn_bulk_write(context, &uvector,
@@ -461,7 +483,7 @@ test_vector_column(gconstpointer data)
   id = grn_table_add(context, table, NULL, 0, NULL);
   grn_test_assert_context(context);
   cut_assert_equal_int(1, id);
-  elements = (grn_obj *)gcut_data_get_pointer(data, "elements");
+  elements = construct_elements(data);
 
   GRN_TEXT_INIT(&vector, GRN_OBJ_VECTOR);
   grn_vector_add_element(context, &vector,
