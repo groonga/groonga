@@ -23,9 +23,9 @@
 #define _GNU_SOURCE
 #endif /* __GNUC__ */
 
-#ifndef WIN32
+#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif /* WIN32 */
+#endif /* HAVE_CONFIG_H */
 
 #ifdef USE_AIO
 /* #define __USE_XOPEN2K 1 */
