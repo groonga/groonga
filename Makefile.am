@@ -35,3 +35,14 @@ uninstall-local:
 
 benchmark:
 	cd test/benchmark && $(MAKE) $(AM_MAKEFLAGS) benchmark
+
+win32-installer: all
+	rm -rf dist
+	$(MKDIR_P) dist/bin/ dist/include/ dist/lib/ dist/doc/
+	cp -p $(builddir)/src/.libs/*.exe dist/bin/
+	cp -p $(builddir)/lib/.libs/*.dll dist/bin/
+	cp -p $(builddir)/lib/.libs/*.dll.a dist/lib/
+	cp -p $(builddir)/lib/.libs/libgroonga.dll.a dist/lib/groonga.lib
+	cp -p $(builddir)/groonga.h dist/include/
+	nkf -Wsc $(builddir)/doc/ja/README > dist/doc/README.txt
+	makensis setup.nsi

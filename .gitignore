@@ -21,6 +21,7 @@
 /config.sub
 /configure
 /depcomp
+/dist
 /install-sh
 /libtool
 /ltmain.sh
