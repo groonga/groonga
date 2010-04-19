@@ -1849,7 +1849,7 @@ grn_dl_sym(grn_ctx *ctx, grn_id id, const char *symbol)
   HMODULE *dlp;
   FARPROC func;
   if (!grn_hash_get_value(ctx, grn_dls, id, &dlp)) {
-    return GRN_INVALID_ARGUMENT;
+    return NULL;
   }
   if (!(func = GetProcAddress(dlp, symbol))) {
     SERR("GetProcAddress");
