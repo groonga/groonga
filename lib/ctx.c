@@ -2040,3 +2040,32 @@ grn_set_segv_handler(void)
 #endif
   return rc;
 }
+
+#if defined(HAVE_SIGNAL_H) && !defined(WIN32)
+static struct sigaction old_int_handler;
+static void
+int_handler(int signal_number, siginfo_t *info, void *context)
+{
+  grn_gctx.stat = GRN_CTX_QUIT;
+  sigaction(signal_number, &old_int_handler, NULL);
+}
+#endif /* defined(HAVE_SIGNAL_H) && !defined(WIN32) */
+
+grn_rc
+grn_set_int_handler(void)
+{
+  grn_rc rc = GRN_SUCCESS;
+#if defined(HAVE_SIGNAL_H) && !defined(WIN32)
+  grn_ctx *ctx = &grn_gctx;
+  struct sigaction action;
+
+  sigemptyset(&action.sa_mask);
+  action.sa_sigaction = int_handler;
+
+  if (sigaction(SIGINT, &action, &old_int_handler)) {
+    SERR("failed to set SIGINT action");
+    rc = ctx->rc;
+  };
+#endif
+  return rc;
+}
