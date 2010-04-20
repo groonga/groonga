@@ -62,7 +62,7 @@
 #define DEFAULT_DEST "localhost"
 
 #define OUT_JSON 0
-#define OUT_TSV  1 
+#define OUT_TSV  1
 
 static int grntest_outtype = OUT_JSON;
 
@@ -461,7 +461,7 @@ static
 int
 error_command(grn_ctx *ctx, char *command, int task_id)
 {
-  fprintf(stderr, "error!:command=%s task_id = %d\n", command, task_id);
+  fprintf(stderr, "error!:command=[%s] task_id = %d\n", command, task_id);
   fflush(stderr);
   error_exit_in_thread(1);
   return 0;
@@ -778,6 +778,9 @@ worker_sub(intptr_t task_id)
         if (comment_p(tmpbuf)) {
           continue;
         }
+        if (tmpbuf[0] == '\0') {
+          continue;
+        }
         if (load_command_p(tmpbuf)) {
           load_mode = 1;
           load_count = 1;
@@ -865,7 +868,7 @@ worker_sub(intptr_t task_id)
               grntest_job[grntest_task[task_id].job_id].qnum);
       if (grntest_jobdone < grntest_jobnum) {
         strcat(tmpbuf, ",");
-      } 
+      }
     }
     strcat(grntest_log_tmpbuf, tmpbuf);
     if (grntest_log_tmpbuf[LOGBUF_LEN - 2] != '\0') {
@@ -1594,6 +1597,9 @@ make_task_table(grn_ctx *ctx, int jobnum)
           len--;
           tmpbuf[len] = '\0';
           if (comment_p(tmpbuf)) {
+            continue;
+          }
+          if (tmpbuf[0] == '\0') {
             continue;
           }
           ctable->command[line] = GRN_STRDUP(tmpbuf);
