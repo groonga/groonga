@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = 1.9.7
-SUBDIRS = lib src examples test
+SUBDIRS = lib src examples test apt
 #dist_data_DATA =
 EXTRA_DIST = bindings resource doc/ja version-gen.sh
 pkginclude_HEADERS = groonga.h

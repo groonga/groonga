@@ -88,6 +88,7 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  lib/Makefile
                  examples/Makefile
+                 apt/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
@@ -519,6 +520,14 @@ AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure
 #AC_SUBST(GROONGA_INCLUDEDIR)
 #AC_SUBST(GROONGA_CFLAGS)
 #AC_SUBST(GROONGA_LIBS)
+
+# For Debian package release
+AC_ARG_WITH(rsync-path,
+            [AS_HELP_STRING([--with-rsync-path=PATH],
+            [specify rsync path to upload groonga Debian packages.])],
+            [RSYNC_PATH="$withval"],
+            [RSYNC_PATH=""])
+AC_SUBST(RSYNC_PATH)
 
 AC_OUTPUT([
   groonga.spec

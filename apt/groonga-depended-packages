@@ -1,0 +1,5 @@
+debhelper
+cdbs
+autotools-dev
+quilt
+libmecab-dev
