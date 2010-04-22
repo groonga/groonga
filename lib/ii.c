@@ -20,7 +20,6 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "ctx.h"
 #include "ii.h"
 #include "ql.h"
 #include "token.h"

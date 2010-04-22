@@ -17,7 +17,6 @@
 #include "groonga_in.h"
 #include "str.h"
 #include "store.h"
-#include "ctx.h"
 #include "ql.h"
 #include <string.h>
 

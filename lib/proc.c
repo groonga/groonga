@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include "proc.h"
 #include "ql.h"
+#include "db.h"
 
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0

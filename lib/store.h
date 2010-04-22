@@ -33,10 +33,6 @@
 #include "io.h"
 #endif /* GRN_IO_H */
 
-#ifndef GRN_DB_H
-#include "db.h"
-#endif /* GRN_DB_H */
-
 #ifdef __cplusplus
 extern "C" {
 #endif

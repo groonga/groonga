@@ -414,6 +414,51 @@ int grn_alloc_count(void);
 
 grn_content_type grn_get_ctype(grn_obj *var);
 
+/**** db_obj ****/
+
+/* flag values used for grn_obj.header.impl_flags */
+
+#define GRN_OBJ_ALLOCATED              (0x01<<2) /* allocated by ctx */
+#define GRN_OBJ_EXPRVALUE              (0x01<<3) /* value allocated by grn_expr */
+#define GRN_OBJ_EXPRCONST              (0x01<<4) /* constant allocated by grn_expr */
+
+typedef struct _grn_hook grn_hook;
+
+typedef struct {
+  grn_obj_header header;
+  grn_id range;  /* table: type of subrecords, column: type of values */
+  /* -- compatible with grn_accessor -- */
+  grn_id id;
+  grn_obj *db;
+  grn_user_data user_data;
+  grn_proc_func *finalizer;
+  grn_hook *hooks[5];
+  void *source;
+  uint32_t source_size;
+  uint32_t max_n_subrecs;
+  uint8_t subrec_size;
+  uint8_t subrec_offset;
+  uint8_t record_unit;
+  uint8_t subrec_unit;
+  //  grn_obj_flags flags;
+} grn_db_obj;
+
+#define GRN_DB_OBJ_SET_TYPE(db_obj,obj_type) {\
+  (db_obj)->obj.header.type = (obj_type);\
+  (db_obj)->obj.header.impl_flags = 0;\
+  (db_obj)->obj.header.flags = 0;\
+  (db_obj)->obj.id = GRN_ID_NIL;\
+  (db_obj)->obj.user_data.ptr = NULL;\
+  (db_obj)->obj.finalizer = NULL;\
+  (db_obj)->obj.hooks[0] = NULL;\
+  (db_obj)->obj.hooks[1] = NULL;\
+  (db_obj)->obj.hooks[2] = NULL;\
+  (db_obj)->obj.hooks[3] = NULL;\
+  (db_obj)->obj.hooks[4] = NULL;\
+  (db_obj)->obj.source = NULL;\
+  (db_obj)->obj.source_size = 0;\
+}
+
 /**** cache ****/
 
 void grn_cache_init(void);

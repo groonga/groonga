@@ -21,6 +21,14 @@
 #include "groonga_in.h"
 #endif /* GROONGA_IN_H */
 
+#ifndef GRN_CTX_H
+#include "ctx.h"
+#endif /* GRN_CTX_H */
+
+#ifndef GRN_STORE_H
+#include "store.h"
+#endif /* GRN_STORE_H */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,6 +62,19 @@ typedef struct {
 
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
+
+struct _grn_db {
+  grn_db_obj obj;
+  grn_pat *keys;
+  grn_ja *specs;
+  grn_tiny_array values;
+  grn_critical_section lock;
+};
+
+typedef struct {
+  grn_obj_header header;
+  grn_id range;
+} grn_obj_spec;
 
 grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
 
@@ -99,38 +120,11 @@ grn_rc grn_obj_set_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *val
 
 grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offset, int *limit);
 
-typedef struct _grn_hook grn_hook;
-
-struct _grn_hook {
-  grn_hook *next;
-  grn_proc *proc;
-  uint32_t hld_size;
-};
-
 typedef enum {
   PROC_INIT = 0,
   PROC_NEXT,
   PROC_FIN
 } grn_proc_phase;
-
-typedef struct {
-  grn_obj_header header;
-  grn_id range;  /* table: type of subrecords, column: type of values */
-  /* -- compatible with grn_accessor -- */
-  grn_id id;
-  grn_obj *db;
-  grn_user_data user_data;
-  grn_proc_func *finalizer;
-  grn_hook *hooks[5];
-  void *source;
-  uint32_t source_size;
-  uint32_t max_n_subrecs;
-  uint8_t subrec_size;
-  uint8_t subrec_offset;
-  uint8_t record_unit;
-  uint8_t subrec_unit;
-  //  grn_obj_flags flags;
-} grn_db_obj;
 
 struct _grn_type {
   grn_db_obj obj;
@@ -145,22 +139,6 @@ typedef struct {
 } grn_view;
 
 #define GRN_OBJ_TMP_OBJECT 0x80000000
-
-#define GRN_DB_OBJ_SET_TYPE(db_obj,obj_type) {\
-  (db_obj)->obj.header.type = (obj_type);\
-  (db_obj)->obj.header.impl_flags = 0;\
-  (db_obj)->obj.header.flags = 0;\
-  (db_obj)->obj.id = GRN_ID_NIL;\
-  (db_obj)->obj.user_data.ptr = NULL;\
-  (db_obj)->obj.finalizer = NULL;\
-  (db_obj)->obj.hooks[0] = NULL;\
-  (db_obj)->obj.hooks[1] = NULL;\
-  (db_obj)->obj.hooks[2] = NULL;\
-  (db_obj)->obj.hooks[3] = NULL;\
-  (db_obj)->obj.hooks[4] = NULL;\
-  (db_obj)->obj.source = NULL;\
-  (db_obj)->obj.source_size = 0;\
-}
 
 #define GRN_DB_OBJP(obj) \
   (obj &&\
@@ -260,12 +238,6 @@ grn_rc grn_vector_delimit(grn_ctx *ctx, grn_obj *v, unsigned int weight, grn_id 
 
 grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
-/* flag values used for grn_obj.header.impl_flags */
-
-#define GRN_OBJ_ALLOCATED              (0x01<<2) /* allocated by ctx */
-#define GRN_OBJ_EXPRVALUE              (0x01<<3) /* value allocated by grn_expr */
-#define GRN_OBJ_EXPRCONST              (0x01<<4) /* constant allocated by grn_expr */
-
 /* flag value used for grn_obj.header.flags */
 
 #define GRN_OBJ_CUSTOM_NAME            (0x01<<12) /* db_obj which has custom name */
@@ -354,6 +326,80 @@ grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
  **/
 grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
+grn_rc grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size);
+#define GRN_DB_CHECK_NAME_ERR() ERR(GRN_INVALID_ARGUMENT, "name can't start with '%c' and 0-9, and contains only 0-9, A-Z, a-z, or _", GRN_DB_PSEUDO_COLUMN_PREFIX)
+
+#define GRN_DB_P(s) ((s) && ((grn_db *)s)->obj.header.type == GRN_DB)
+#define GRN_DB_PERSISTENT_P(s) (((grn_db *)s)->specs)
+
+#define GRN_OBJ_GET_VALUE_IMD (0xffffffffU)
+
+grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
+
+#define GRN_ACCESSORP(obj) \
+  ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR ||\
+             ((grn_obj *)(obj))->header.type == GRN_ACCESSOR_VIEW))
+
+grn_obj *grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec);
+
+#define GRN_TRUEP(ctx, v, result) {\
+  switch (v->header.type) {                             \
+  case GRN_BULK :                                       \
+    switch (v->header.domain) {                         \
+    case GRN_DB_BOOL :                                  \
+      result = GRN_BOOL_VALUE(v);                       \
+      break;                                            \
+    case GRN_DB_INT32 :                                 \
+      result = GRN_INT32_VALUE(v) != 0;                 \
+      break;                                            \
+    case GRN_DB_UINT32 :                                \
+      result = GRN_UINT32_VALUE(v) != 0;                \
+      break;                                            \
+    case GRN_DB_FLOAT :                                 \
+      {                                                 \
+        double float_value;                             \
+        float_value = GRN_FLOAT_VALUE(v);               \
+        result = (float_value < -DBL_EPSILON ||         \
+                  DBL_EPSILON < float_value);           \
+      }                                                 \
+      break;                                            \
+    case GRN_DB_SHORT_TEXT :                            \
+    case GRN_DB_TEXT :                                  \
+    case GRN_DB_LONG_TEXT :                             \
+      result = GRN_TEXT_LEN(v) != 0;                    \
+      break;                                            \
+    default :                                           \
+      result = GRN_FALSE;                               \
+      break;                                            \
+    }                                                   \
+    break;                                              \
+  default :                                             \
+    result = GRN_FALSE;                                 \
+    break;                                              \
+  }                                                     \
+}
+
+grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size);
+int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
+void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
+
+#define GRN_UINT32_POP(obj,value) {\
+  if (GRN_BULK_VSIZE(obj) >= sizeof(uint32_t)) {\
+    GRN_BULK_INCR_LEN((obj), -(sizeof(uint32_t)));\
+    value = *(uint32_t *)(GRN_BULK_CURR(obj));\
+  } else {\
+    value = 0;\
+  }\
+}
+
+void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe);
+grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
+
+grn_obj *grn_table_create_for_group(grn_ctx *ctx, const char *name, unsigned name_size,
+                                    const char *path, grn_obj_flags flags,
+                                    grn_obj *group_key, grn_obj *value_type);
 /* utilities */
 void grn_p(grn_ctx *ctx, grn_obj *obj);
 

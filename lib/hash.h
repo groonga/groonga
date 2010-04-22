@@ -25,10 +25,6 @@
 #include "ctx.h"
 #endif /* GRN_CTX_H */
 
-#ifndef GRN_DB_H
-#include "db.h"
-#endif /* GRN_DB_H */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -298,9 +294,6 @@ const char * _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *ke
 
 int grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                            void *keybuf, int bufsize, void *valuebuf);
-
-void grn_rhash_add_subrec(grn_hash *s, grn_rset_recinfo *ri,
-                          int score, void *body, int dir);
 
 int _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                             void **key, void **value);

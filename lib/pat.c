@@ -17,7 +17,6 @@
 #include "groonga_in.h"
 #include <string.h>
 #include <limits.h>
-#include "ctx.h"
 #include "pat.h"
 
 #define GRN_PAT_DELETED (GRN_ID_MAX + 1)
