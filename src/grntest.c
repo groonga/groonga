@@ -2742,11 +2742,11 @@ main(int argc, char **argv)
   get_date(grntest_date, &sec);
 
   if (outdir) {
-    sprintf(log, "%s/%s-%s-%lld.log", outdir, grntest_scriptname,
-            grntest_username, GRN_TIME_VALUE(&grntest_starttime));
+    sprintf(log, "%s/%s-%s-%lld-%s.log", outdir, grntest_scriptname,
+            grntest_username, GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
   } else {
-    sprintf(log, "%s-%s-%lld.log", grntest_scriptname,
-            grntest_username, GRN_TIME_VALUE(&grntest_starttime));
+    sprintf(log, "%s-%s-%lld-%s.log", grntest_scriptname,
+            grntest_username, GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
   }
 
   grntest_logfp = fopen(log, "w+b");
