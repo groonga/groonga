@@ -14,6 +14,6 @@ libgroonga_la_LDFLAGS =				\
 
 noinst_HEADERS = com.h io.h ql.h nfkc.h groonga_in.h snip.h store.h str.h ctx.h hash.h db.h pat.h ii.h token.h proc.h
 
-EXTRA_DIST = expr.c expr.h expr.y
+EXTRA_DIST = ecmascript.c ecmascript.h ecmascript.y
 
 CLEANFILES = *.gcno *.gcda

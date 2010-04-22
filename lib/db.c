@@ -12266,8 +12266,8 @@ grn_int32_value_at(grn_obj *obj, int offset)
     : 0;
 }
 
-#include "expr.h"
-#include "expr.c"
+#include "ecmascript.h"
+#include "ecmascript.c"
 
 static grn_rc
 grn_expr_parser_open(grn_ctx *ctx)
