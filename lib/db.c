@@ -167,7 +167,10 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   CRITICAL_SECTION_FIN(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
   GRN_FREE(s);
-  if (ctx->impl && ctx->impl->db == db) { ctx->impl->db = NULL; }
+  if (ctx->impl && ctx->impl->db == db) {
+    grn_cache_expire(-1);
+    ctx->impl->db = NULL;
+  }
   GRN_API_RETURN(GRN_SUCCESS);
 }
 

@@ -1275,7 +1275,7 @@ exit :
 }
 
 void
-grn_cache_expire(uint32_t size)
+grn_cache_expire(int32_t size)
 {
   grn_cache_entry *ce0 = (grn_cache_entry *)&grn_gcache;
   MUTEX_LOCK(grn_gcache.mutex);
