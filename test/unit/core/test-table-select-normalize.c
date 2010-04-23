@@ -180,8 +180,21 @@ query(const gchar *string)
 void
 test_japanese_parenthesis(void)
 {
+  cut_omit("token->uni_symbol sould be customzable");
   cut_assert_not_null(grn_table_select(context, comments,
                                        query("content:@）は"),
+                                       result, GRN_OP_OR));
+  grn_test_assert_select(context,
+                         gcut_take_new_list_string("ボロ", NULL),
+                         result,
+                         "_key");
+}
+
+void
+test_japanese_dot_parenthesis(void)
+{
+  cut_assert_not_null(grn_table_select(context, comments,
+                                       query("content:@...）は"),
                                        result, GRN_OP_OR));
   grn_test_assert_select(context,
                          gcut_take_new_list_string("ボロ", NULL),
