@@ -5316,7 +5316,12 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 }
                 break;
               case GRN_PROC :
-                if (!*vp) { *vp = grn_proc_open(ctx, spec); }
+                GET_PATH(spec, buffer, s, id);
+                CRITICAL_SECTION_ENTER(s->lock);
+                if (!*vp) { grn_db_load(ctx, buffer); }
+                CRITICAL_SECTION_LEAVE(s->lock);
+                res = *vp;
+                goto exit;
                 break;
               case GRN_EXPR :
                 {

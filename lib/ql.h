@@ -193,6 +193,9 @@ struct _grn_ctx_impl {
   grn_edge *edge;
   grn_loader loader;
 
+  /* module portion */
+  const char *module_path;
+
   /* ql portion */
   uint32_t ncells;
   uint32_t seqno;

@@ -512,8 +512,7 @@ typedef enum {
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
-                                 const char *name, unsigned name_size,
-                                 const char *path, grn_proc_type type,
+                                 const char *name, unsigned name_size, grn_proc_type type,
                                  grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
                                  unsigned nvars, grn_expr_var *vars);
 /**

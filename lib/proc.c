@@ -166,7 +166,7 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   if (nvars == 16) {
     grn_proc_create(ctx,
                     GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
-                    NULL, GRN_PROC_PROCEDURE, proc_select, NULL, NULL, nvars - 1, vars + 1);
+                    GRN_PROC_PROCEDURE, proc_select, NULL, NULL, nvars - 1, vars + 1);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 16);
   }
@@ -2317,7 +2317,7 @@ exit :
 }
 
 #define DEF_PROC(name, func, nvars, vars)\
-  (grn_proc_create(ctx, (name), (sizeof(name) - 1), NULL,\
+  (grn_proc_create(ctx, (name), (sizeof(name) - 1),\
                    GRN_PROC_PROCEDURE, (func), NULL, NULL, (nvars), (vars)))
 
 void
@@ -2447,22 +2447,22 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_PROC("dump", proc_dump, 0, vars);
 
   DEF_VAR(vars[0], "seed");
-  grn_proc_create(ctx, "rand", 4, NULL, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "now", 3, NULL, GRN_PROC_FUNCTION, func_now, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "now", 3, GRN_PROC_FUNCTION, func_now, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "geo_in_circle", 13, NULL, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_in_circle", 13, GRN_PROC_FUNCTION,
                   func_geo_in_circle, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "geo_in_rectangle", 16, NULL, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_in_rectangle", 16, GRN_PROC_FUNCTION,
                   func_geo_in_rectangle, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "geo_distance", 12, NULL, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_distance", 12, GRN_PROC_FUNCTION,
                   func_geo_distance, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "geo_distance2", 13, NULL, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_distance2", 13, GRN_PROC_FUNCTION,
                   func_geo_distance2, NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "geo_distance3", 13, NULL, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_distance3", 13, GRN_PROC_FUNCTION,
                   func_geo_distance3, NULL, NULL, 0, vars);
 }

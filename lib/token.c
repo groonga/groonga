@@ -659,20 +659,20 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[1].value, 0);
   GRN_UINT32_INIT(&vars[2].value, 0);
 #ifndef NO_MECAB
-  obj = grn_proc_create(ctx, "TokenMecab", 10, NULL, GRN_PROC_TOKENIZER,
+  obj = grn_proc_create(ctx, "TokenMecab", 10, GRN_PROC_TOKENIZER,
                         mecab_init, mecab_next, mecab_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
 #endif /* NO_MECAB */
-  obj = grn_proc_create(ctx, "TokenDelimit", 12, NULL, GRN_PROC_TOKENIZER,
+  obj = grn_proc_create(ctx, "TokenDelimit", 12, GRN_PROC_TOKENIZER,
                         delimit_init, delimited_next, delimited_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_DELIMIT) { return GRN_FILE_CORRUPT; }
-  obj = grn_proc_create(ctx, "TokenUnigram", 12, NULL, GRN_PROC_TOKENIZER,
+  obj = grn_proc_create(ctx, "TokenUnigram", 12, GRN_PROC_TOKENIZER,
                         unigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_UNIGRAM) { return GRN_FILE_CORRUPT; }
-  obj = grn_proc_create(ctx, "TokenBigram", 11, NULL, GRN_PROC_TOKENIZER,
+  obj = grn_proc_create(ctx, "TokenBigram", 11, GRN_PROC_TOKENIZER,
                         bigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_BIGRAM) { return GRN_FILE_CORRUPT; }
-  obj = grn_proc_create(ctx, "TokenTrigram", 12, NULL, GRN_PROC_TOKENIZER,
+  obj = grn_proc_create(ctx, "TokenTrigram", 12, GRN_PROC_TOKENIZER,
                         trigram_init, ngram_next, ngram_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) { return GRN_FILE_CORRUPT; }
   return GRN_SUCCESS;

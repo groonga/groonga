@@ -20,8 +20,7 @@
 #include "ql.h"
 
 grn_obj *
-grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size,
-                const char *path, grn_proc_type type,
+grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size, grn_proc_type type,
                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
                 unsigned nvars, grn_expr_var *vars)
 {
@@ -30,6 +29,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size,
   grn_id range;
   int added = 0;
   grn_obj *db;
+  const char *path = ctx->impl->module_path;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
     ERR(GRN_INVALID_ARGUMENT, "db not initialized");
     return NULL;
@@ -97,27 +97,6 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size,
   GRN_API_RETURN((grn_obj *)res);
 }
 
-grn_obj *
-grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec)
-{
-  grn_proc *res;
-  res = GRN_MALLOC(sizeof(grn_proc));
-  if (res) {
-    GRN_DB_OBJ_SET_TYPE(res, GRN_PROC);
-    res->funcs[PROC_INIT] = NULL;
-    res->funcs[PROC_NEXT] = NULL;
-    res->funcs[PROC_FIN] = NULL;
-    GRN_TEXT_INIT(&res->name_buf, 0);
-    res->vars = NULL;
-    res->nvars = 0;
-    res->obj.header = spec->header;
-    if (res->obj.range) {
-      // todo : grn_dl_load should be called.
-    }
-  }
-  return (grn_obj *)res;
-}
-
 #define GRN_PROC_INIT_PREFIX "grn_init_"
 
 grn_rc
@@ -141,7 +120,9 @@ grn_db_load(grn_ctx *ctx, const char *path)
       strcpy(buffer, GRN_PROC_INIT_PREFIX);
       strcat(buffer, p);
       if ((func = grn_dl_sym(ctx, id, buffer))) {
+        ctx->impl->module_path = path;
         ctx->rc = func(ctx, path);
+        ctx->impl->module_path = NULL;
       } else {
         ERR(GRN_INVALID_FORMAT, "init_func not found(%s)", buffer);
       }

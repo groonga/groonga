@@ -339,8 +339,6 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
   ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR ||\
              ((grn_obj *)(obj))->header.type == GRN_ACCESSOR_VIEW))
 
-grn_obj *grn_proc_open(grn_ctx *ctx, grn_obj_spec *spec);
-
 #define GRN_TRUEP(ctx, v, result) {\
   switch (v->header.type) {                             \
   case GRN_BULK :                                       \

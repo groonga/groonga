@@ -288,6 +288,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_TEXT_INIT(&ctx->impl->subbuf, 0);
   ctx->impl->edge = NULL;
   grn_loader_init(&ctx->impl->loader);
+  ctx->impl->module_path = NULL;
 }
 
 void
