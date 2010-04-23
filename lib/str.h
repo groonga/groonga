@@ -50,12 +50,12 @@ size_t grn_str_len(grn_ctx *ctx, const char *str, grn_encoding encoding, const c
 #define GRN_STR_ISBLANK(c) (c & 0x80)
 #define GRN_STR_CTYPE(c) (c & 0x7f)
 
-int grn_isspace(const char *s, grn_encoding encoding);
+GRN_API int grn_isspace(const char *s, grn_encoding encoding);
 int8_t grn_atoi8(const char *nptr, const char *end, const char **rest);
 uint8_t grn_atoui8(const char *nptr, const char *end, const char **rest);
 int16_t grn_atoi16(const char *nptr, const char *end, const char **rest);
 uint16_t grn_atoui16(const char *nptr, const char *end, const char **rest);
-int grn_atoi(const char *nptr, const char *end, const char **rest);
+GRN_API int grn_atoi(const char *nptr, const char *end, const char **rest);
 unsigned int grn_atoui(const char *nptr, const char *end, const char **rest);
 unsigned int grn_htoui(const char *nptr, const char *end, const char **rest);
 int64_t grn_atoll(const char *nptr, const char *end, const char **rest);
@@ -67,7 +67,7 @@ grn_encoding grn_strtoenc(const char *str);
 
 void grn_itoh(unsigned int i, char *p, unsigned int len);
 int grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, int buf_size, const char **rest);
-int grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts, int *flags);
+GRN_API int grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts, int *flags);
 
 extern int grn_str_margin_size;
 
@@ -97,8 +97,8 @@ grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int 
   }\
 }
 
-const char *grn_text_cgidec(grn_ctx *ctx, grn_obj *buf,
-                                 const char *p, const char *e, char d);
+GRN_API const char *grn_text_cgidec(grn_ctx *ctx, grn_obj *buf,
+                                    const char *p, const char *e, char d);
 
 #define GRN_TOK_VOID                   (0x00)
 #define GRN_TOK_SYMBOL                 (0x01)

@@ -219,7 +219,7 @@ static int
 do_client()
 {
   int rc = -1;
-  char *buf;
+  grn_obj text;
   grn_thread thread;
   struct timeval tvb, tve;
   grn_com_header sheader;
@@ -235,7 +235,10 @@ do_client()
   sheader.status = 0;
   sheader.opaque = 0;
   sheader.cas = 0;
-  if ((buf = GRN_MALLOC(BUFSIZE))) {
+  GRN_TEXT_INIT(&text, 0);
+  rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
+  if (!rc) {
+    char *buf = GRN_TEXT_VALUE(&text);
     if (!grn_com_event_init(ctx, &ev, 1000, sizeof(grn_com))) {
       ev.msg_handler = msg_handler;
       if (!THREAD_CREATE(thread, receiver, NULL)) {
@@ -305,8 +308,8 @@ do_client()
     } else {
       fprintf(stderr, "grn_com_event_init failed\n");
     }
-    GRN_FREE(buf);
   }
+  grn_obj_unlink(ctx, &text);
   grn_hash_close(ctx, sessions);
   grn_ctx_fin(ctx);
   return rc;
