@@ -228,7 +228,7 @@ test_equal(void)
                                                    "moge moge moge",
                                                    NULL),
                          res,
-                              "body");
+                         "body");
 }
 
 void
