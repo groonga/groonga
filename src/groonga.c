@@ -171,7 +171,7 @@ do_alone(int argc, char **argv)
     } else {
       grn_ctx_sendv(ctx, argc, argv, 0);
     }
-    grn_db_close(ctx, db);
+    grn_obj_close(ctx, db);
   } else {
     fprintf(stderr, "db open failed (%s)\n", path);
   }
