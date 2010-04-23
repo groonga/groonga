@@ -136,6 +136,7 @@ typedef struct {
   grn_table_sort_key *keys;
   int n_keys;
   int offset;
+  int limit;
 } grn_view;
 
 #define GRN_OBJ_TMP_OBJECT 0x80000000

@@ -188,6 +188,36 @@ test_sort(void)
   cut_assert_equal_int(limit, n_records);
 }
 
+void
+test_sort_offset(void)
+{
+  grn_obj *result;
+  grn_table_sort_key keys[1];
+  gint offset, limit, n_records;
+
+  result = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_VIEW, NULL, NULL);
+  grn_view_add(context, result,
+               grn_table_create(context, NULL, 0, NULL, GRN_TABLE_NO_KEY,
+                                NULL, users));
+  grn_view_add(context, result,
+               grn_table_create(context, NULL, 0, NULL, GRN_TABLE_NO_KEY,
+                                NULL, dogs));
+
+  keys[0].key = grn_obj_column(context, entries, "_key", strlen("_key"));
+  keys[0].flags = GRN_TABLE_SORT_DESC;
+  offset = 1;
+  limit = 2;
+  n_records = grn_table_sort(context, entries, offset, limit, result,
+                             keys, sizeof(keys[0]) / sizeof(keys));
+  grn_test_assert_equal_view(context,
+                             gcut_take_new_list_string("taro",
+                                                       "pochi",
+                                                       NULL),
+                             result,
+                             "_key");
+  cut_assert_equal_int(limit, n_records);
+}
+
 static grn_obj *
 query(const gchar *string)
 {

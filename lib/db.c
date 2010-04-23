@@ -1476,6 +1476,7 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
       offset += v->offset;
       while (offset--) { if (!grn_view_cursor_next(ctx, vc)) { break; } }
       vc->rest = (limit < 0) ? GRN_ID_MAX : limit;
+      if (v->limit < vc->rest) { vc->rest = v->limit; }
       return vc;
     }
     GRN_FREE(vc);
@@ -6137,6 +6138,7 @@ grn_view_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     rv->keys = keys;
     rv->n_keys = n_keys;
     rv->offset = offset;
+    rv->limit = limit;
     for (ks = keys, kd =keys_; ks < ke ; ks++, kd++) { kd->flags = ks->flags; }
     GRN_HASH_EACH(ctx, th, id, &tp, NULL, NULL, {
       grn_hash_get_key(ctx, rh, id, &rid, sizeof(grn_id));
@@ -6151,6 +6153,7 @@ grn_view_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
       }
     });
     GRN_FREE(keys_);
+    if (i > limit) { i = limit; }
   }
   return i;
 }
