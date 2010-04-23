@@ -20,6 +20,7 @@
 #include "lib/com.h"
 #include "lib/ql.h"
 #include "lib/proc.h"
+#include "lib/db.h"
 #include <string.h>
 #include <stdio.h>
 #ifdef HAVE_SYS_WAIT_H
