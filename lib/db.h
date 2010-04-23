@@ -118,8 +118,6 @@ grn_rc grn_table_cursor_next_o(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *id);
 grn_obj *grn_obj_get_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value);
 grn_rc grn_obj_set_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value, int flags);
 
-grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offset, int *limit);
-
 typedef enum {
   PROC_INIT = 0,
   PROC_NEXT,
@@ -401,9 +399,6 @@ grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
 grn_obj *grn_table_create_for_group(grn_ctx *ctx, const char *name, unsigned name_size,
                                     const char *path, grn_obj_flags flags,
                                     grn_obj *group_key, grn_obj *value_type);
-/* utilities */
-void grn_p(grn_ctx *ctx, grn_obj *obj);
-
 #ifdef __cplusplus
 }
 #endif

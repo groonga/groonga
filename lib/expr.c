@@ -20,6 +20,7 @@
 #include <string.h>
 #include <float.h>
 #include "ii.h"
+#include "util.h"
 
 grn_obj *
 grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size,
