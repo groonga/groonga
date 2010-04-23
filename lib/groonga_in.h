@@ -72,8 +72,14 @@
 #endif /* HAVE_SYS_RESOURCE_H */
 
 #ifdef WIN32
+#  define GRN_API __declspec(dllexport)
+#  define GRN_VAR __declspec(dllexport)
+#else
+#  define GRN_API
+#  define GRN_VAR extern
+#endif
 
-#define GRN_API __declspec(dllexport)
+#ifdef WIN32
 
 #ifdef __GNUC__
 #  include <w32api.h>

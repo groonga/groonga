@@ -92,7 +92,7 @@ extern "C" {
 #define BACKTRACE(ctx)
 #endif /* HAVE_EXECINFO_H */
 
-void grn_ctx_impl_err(grn_ctx *ctx);
+GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 
 #ifdef HAVE_EXECINFO_H
 #define LOGTRACE(ctx,lvl) {\
@@ -346,10 +346,10 @@ char *grn_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const 
 #  define grn_strdup grn_strdup_default
 #endif
 
-void *grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
+GRN_API void *grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
-char *grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
+GRN_API char *grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 
 #ifdef USE_FAIL_MALLOC
 int grn_fail_malloc_check(size_t size, const char *file, int line, const char *func);
@@ -359,19 +359,19 @@ void *grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, i
 char *grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 #endif
 
-void grn_free(grn_ctx *ctx, void *ptr, const char* file, int line);
+GRN_API void grn_free(grn_ctx *ctx, void *ptr, const char* file, int line);
 
 void grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func);
 
 /**** grn_ctx ****/
 
-extern grn_ctx grn_gctx;
+GRN_VAR grn_ctx grn_gctx;
 extern int grn_pagesize;
 extern grn_critical_section grn_glock;
 extern uint32_t grn_gtick;
 extern grn_obj *grn_true, *grn_false, *grn_null;
-extern const char *grn_log_path;
-extern const char *grn_qlog_path;
+GRN_VAR const char *grn_log_path;
+GRN_VAR const char *grn_qlog_path;
 
 #define GRN_CTX_ALLOCATED                            (0x80)
 #define GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND (0x40)
@@ -390,16 +390,16 @@ extern grn_timeval grn_starttime;
 #define GRN_TIMEVAL_STR_FORMAT "%04d-%02d-%02d %02d:%02d:%02d.%06d"
 #endif /* GRN_TIMEVAL_STR_FORMAT */
 
-grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
-grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
+GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
+GRN_API grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
 grn_rc grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv);
 
-void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);
+GRN_API void grn_ctx_log(grn_ctx *ctx, char *fmt, ...);
 void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 void grn_log_reopen(grn_ctx *ctx);
 
-grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
+GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
 
 int grn_alloc_count(void);
@@ -463,11 +463,11 @@ uint32_t *grn_cach_max_nentries(void);
 
 /**** receive handler ****/
 
-void grn_ctx_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),
-                              void *func_arg);
+GRN_API void grn_ctx_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),
+                                      void *func_arg);
 
 void grn_ctx_concat_func(grn_ctx *ctx, int flags, void *dummy);
-void grn_ctx_stream_out_func(grn_ctx *c, int flags, void *stream);
+GRN_API void grn_ctx_stream_out_func(grn_ctx *c, int flags, void *stream);
 
 grn_rc grn_db_init_builtin_procs(grn_ctx *ctx);
 
