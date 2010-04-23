@@ -27,17 +27,6 @@
 
 #include "../lib/grn-assertions.h"
 
-#define GRN_TOKYO_GEO_POINT_INIT(obj,flags) \
-  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_TOKYO_GEO_POINT)
-#define GRN_WGS84_GEO_POINT_INIT(obj,flags) \
-  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_WGS84_GEO_POINT)
-
-#define GRN_GEO_POINT_PACK(latitude,longitude) \
-  (((long long unsigned int)(latitude)) + \
-   (((long long unsigned int)(longitude)) << 32))
-#define GRN_GEO_POINT_SET(ctx,obj,latitude,longitude) \
-  GRN_UINT64_SET(ctx, obj, GRN_GEO_POINT_PACK(latitude, longitude))
-
 void data_normalize(void);
 void test_normalize(gconstpointer data);
 void data_normalize_broken(void);

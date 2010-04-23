@@ -2538,6 +2538,10 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
     goto exit;
   }
+  if (DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT) {
+    ERR(GRN_INVALID_ARGUMENT, "temporary table doesn't support column");
+    goto exit;
+  }
   {
     uint32_t s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(table)->id, &s);
@@ -3643,14 +3647,14 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
     case GRN_DB_TOKYO_GEO_POINT :
     case GRN_DB_WGS84_GEO_POINT :
       {
-        grn_geo_point gp;
+        int latitude, longitude;
         const char *cur, *str = GRN_TEXT_VALUE(src);
         const char *str_end = GRN_BULK_CURR(src);
-        gp.latitude = grn_atoi(str, str_end, &cur);
+        latitude = grn_atoi(str, str_end, &cur);
         if (cur + 1 < str_end) {
-          gp.longitude = grn_atoi(cur + 1, str_end, &cur);
+          longitude = grn_atoi(cur + 1, str_end, &cur);
           if (cur == str_end) {
-            GRN_GEOPOINT_SET(ctx, dest, gp);
+            GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
           } else {
             rc = GRN_INVALID_ARGUMENT;
           }

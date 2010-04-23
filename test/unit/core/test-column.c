@@ -24,6 +24,8 @@
 #include "../lib/grn-assertions.h"
 
 void test_fix_size_set_value_set(void);
+void test_fix_size_set_value_increment(void);
+void test_create_on_temporary_table(void);
 
 static grn_logger_info *logger;
 static grn_ctx *context;
@@ -151,4 +153,27 @@ test_fix_size_set_value_increment(void)
          GRN_BULK_VSIZE(retrieved_record_value));
   cut_assert_equal_int(count + increment_count, retrieved_count);
   grn_obj_close(context, retrieved_record_value);
+}
+
+void
+test_create_on_temporary_table(void)
+{
+  grn_obj *table;
+  grn_obj *column;
+  const gchar *column_name = "count";
+
+  table = grn_table_create(context, NULL, 0, NULL,
+                           GRN_OBJ_TABLE_NO_KEY,
+                           NULL,
+                           NULL);
+  grn_test_assert_context(context);
+  column = grn_column_create(context,
+                             table,
+                             column_name,
+                             strlen(column_name),
+                             NULL, 0,
+                             get_object("Int32"));
+  grn_test_assert_error(GRN_INVALID_ARGUMENT,
+                        "temporary table doesn't support column",
+                        context);
 }

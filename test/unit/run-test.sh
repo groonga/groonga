@@ -39,7 +39,10 @@ if test x"$PRIORITY_MODE" = x"yes"; then
     # CUTTER_ARGS="$CUTTER_ARGS --priority-mode"
 fi
 
-CUTTER_ARGS="$CUTTER_ARGS -s $BASE_DIR -v v"
+CUTTER_ARGS="$CUTTER_ARGS -s $BASE_DIR"
+if test x"$CUTTER_VERBOSE" = x"yes"; then
+    CUTTER_ARGS="$CUTTER_ARGS -v v"
+fi
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-file test-performance.so"

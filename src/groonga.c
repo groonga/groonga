@@ -20,6 +20,7 @@
 #include "lib/com.h"
 #include "lib/ql.h"
 #include "lib/proc.h"
+#include "lib/db.h"
 #include <string.h>
 #include <stdio.h>
 #ifdef HAVE_SYS_WAIT_H
@@ -155,23 +156,25 @@ do_alone(int argc, char **argv)
   if (db) {
     grn_ctx_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
     if (!argc) {
-      char *buf = GRN_MALLOC(BUFSIZE);
-      if (buf) {
+      grn_obj text;
+      GRN_TEXT_INIT(&text, 0);
+      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
+      if (!rc) {
+        char *buf = GRN_TEXT_VALUE(&text);
         while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
           uint32_t size = strlen(buf) - 1;
           buf[size] = '\0';
           grn_ctx_send(ctx, buf, size, 0);
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
-        GRN_FREE(buf);
-        rc = 0;
       } else {
-        fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
+        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
       }
+      grn_obj_unlink(ctx, &text);
     } else {
       grn_ctx_sendv(ctx, argc, argv, 0);
     }
-    grn_db_close(ctx, db);
+    grn_obj_close(ctx, db);
   } else {
     fprintf(stderr, "db open failed (%s)\n", path);
   }
@@ -222,8 +225,11 @@ g_client(int argc, char **argv)
   grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {
     if (!argc) {
-      char *buf = GRN_MALLOC(BUFSIZE);
-      if (buf) {
+      grn_obj text;
+      GRN_TEXT_INIT(&text, 0);
+      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
+      if (!rc) {
+        char *buf = GRN_TEXT_VALUE(&text);
         if (batchmode) { BATCHMODE(ctx); }
         while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
           uint32_t size = strlen(buf) - 1;
@@ -232,11 +238,10 @@ g_client(int argc, char **argv)
           if (recvput(ctx)) { goto exit; }
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
-        GRN_FREE(buf);
-        rc = 0;
       } else {
-        fprintf(stderr, "grn_malloc failed (%d)\n", BUFSIZE);
+        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
       }
+      grn_obj_unlink(ctx, &text);
     } else {
       grn_ctx_sendv(ctx, argc, argv, 0);
       if (recvput(ctx)) { goto exit; }
@@ -1235,7 +1240,7 @@ h_server(char *path)
         }
         grn_edges_fin(ctx);
       }
-      grn_db_close(ctx, db);
+      grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
     }
@@ -1473,7 +1478,7 @@ g_server(char *path)
         }
         grn_edges_fin(ctx);
       }
-      grn_db_close(ctx, db);
+      grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
     }
@@ -1661,6 +1666,7 @@ main(int argc, char **argv)
   grn_set_default_encoding(enc);
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
   grn_set_segv_handler();
+  grn_set_int_handler();
   if (hostnamestr) {
     size_t hostnamelen = strlen(hostnamestr);
     if (hostnamelen > HOST_NAME_MAX) {

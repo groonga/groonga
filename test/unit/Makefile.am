@@ -10,6 +10,7 @@ TESTS = run-test.sh
 TESTS_ENVIRONMENT =				\
 	NO_MAKE=yes				\
 	CUTTER="$(CUTTER)"			\
+	CUTTER_VERBOSE=yes			\
 	RUBY="$(RUBY)"				\
 	GROONGA="$(GROONGA)"
 
