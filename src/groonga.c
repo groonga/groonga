@@ -1240,7 +1240,7 @@ h_server(char *path)
         }
         grn_edges_fin(ctx);
       }
-      grn_db_close(ctx, db);
+      grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
     }
@@ -1478,7 +1478,7 @@ g_server(char *path)
         }
         grn_edges_fin(ctx);
       }
-      grn_db_close(ctx, db);
+      grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
     }
