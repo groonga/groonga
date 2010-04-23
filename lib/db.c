@@ -22,6 +22,7 @@
 #include "ql.h"
 #include "token.h"
 #include "proc.h"
+#include "util.h"
 #include <string.h>
 #include <float.h>
 
@@ -199,40 +200,6 @@ grn_obj *
 grn_ctx_db(grn_ctx *ctx)
 {
   return (ctx && ctx->impl) ? ctx->impl->db : NULL;
-}
-
-#define GRN_PROC_INIT_PREFIX "grn_init_"
-
-grn_rc
-grn_db_load(grn_ctx *ctx, const char *path)
-{
-  grn_id id;
-  grn_obj *db;
-  if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
-    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
-    return ctx->rc;
-  }
-  GRN_API_ENTER;
-  if (GRN_DB_P(db)) {
-    if ((id = grn_dl_open(ctx, path))) {
-      grn_proc_init_func *func;
-      const char *p;
-      char buffer[PATH_MAX];
-      for (p = path + strlen(path); path < p; p--) {
-        if (*p == PATH_SEPARATOR[0]) { p++; break; }
-      }
-      strcpy(buffer, GRN_PROC_INIT_PREFIX);
-      strcat(buffer, p);
-      if ((func = grn_dl_sym(ctx, id, buffer))) {
-        ctx->rc = func(ctx, path);
-      } else {
-        ERR(GRN_INVALID_FORMAT, "init_func not found(%s)", buffer);
-      }
-    }
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
-  }
-  GRN_API_RETURN(ctx->rc);
 }
 
 grn_obj *
