@@ -71,6 +71,7 @@ static grn_critical_section grntest_cs;
 static int grntest_stop_flag = 0;
 static int grntest_detail_on = 0;
 static int grntest_remote_mode = 0;
+static int grntest_localonly = 0;
 #define TMPFILE "_grntest.tmp"
 
 static grn_ctx grntest_server_context;
@@ -2501,11 +2502,13 @@ usage(void)
   fprintf(stderr,
          "Usage: grntest [options...] [script] [db]\n"
          "options:\n"
-         "  -i, --host <ip/hostname>:  server address to listen (default: %s)\n"
-         "  -p, --port <port number>:  server port number (default: %d)\n"
          "  --dir:                     show script files on ftp server\n"
+         "  -i, --host <ip/hostname>:  server address to listen (default: %s)\n"
+         "  --localonly:               omit server connection\n"
+         "  --log-output-dir:          specify output dir (default: current)\n"
          "  --noftp:                   omit ftp connection\n"
-         "  --log-output-dir:          specify output dir (default: current)\n",
+         "  --output-type <tsv/json>:  specify output-type (default: json)\n"
+         "  -p, --port <port number>:  server port number (default: %d)\n",
          DEFAULT_DEST, DEFAULT_PORT);
   exit(1);
 }
@@ -2515,6 +2518,7 @@ enum {
   mode_list,
   mode_noftp,
   mode_usage,
+  mode_localonly,
 };
 
 static
@@ -2665,6 +2669,7 @@ main(int argc, char **argv)
     {'\0', "dir", NULL, mode_list, getopt_op_update},
     {'\0', "noftp", NULL, mode_noftp, getopt_op_update},
     {'h', "help", NULL, mode_usage, getopt_op_update},
+    {'\0', "localonly", NULL, mode_localonly, getopt_op_update},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2692,6 +2697,10 @@ main(int argc, char **argv)
     ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data",
              NULL);
     return 0;
+  }
+  if (mode == mode_localonly) {
+    grntest_localonly = 1;
+    grntest_remote_mode = 1;
   }
 
   if ((scrname == NULL) || (dbname == NULL)) {
@@ -2729,8 +2738,10 @@ main(int argc, char **argv)
     start_server(dbname, 0);
   }
 
-  if (check_server(&grntest_server_context)) {
-    goto exit;
+  if (!grntest_localonly) {
+    if (check_server(&grntest_server_context)) {
+      goto exit;
+    }
   }
 
   get_scriptname(scrname, grntest_scriptname, ".scr");
