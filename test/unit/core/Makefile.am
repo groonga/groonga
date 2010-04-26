@@ -23,7 +23,7 @@ noinst_LTLIBRARIES =				\
 	test-expr-query.la			\
 	test-expr-parse.la			\
 	test-text.la				\
-	test-cast.la				\
+	test-cast-basic.la			\
 	test-dump.la				\
 	test-encoding.la			\
 	test-view.la				\
@@ -78,7 +78,7 @@ test_expr_script_la_SOURCES		= test-expr-script.c
 test_expr_query_la_SOURCES		= test-expr-query.c
 test_expr_parse_la_SOURCES		= test-expr-parse.c
 test_text_la_SOURCES			= test-text.c
-test_cast_la_SOURCES			= test-cast.c
+test_cast_basic_la_SOURCES		= test-cast-basic.c
 test_dump_la_SOURCES			= test-dump.c
 test_encoding_la_SOURCES		= test-encoding.c
 test_view_la_SOURCES			= test-view.c
