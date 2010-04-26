@@ -62,22 +62,34 @@ exit:
   return ctx->rc;
 }
 
+grn_obj *
+grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
+{
+  if (!buffer) {
+    buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  }
+
+  if (!obj) {
+    GRN_TEXT_PUTS(ctx, buffer, "(NULL)");
+    return buffer;
+  }
+
+  if (obj->header.type == GRN_EXPR) {
+    grn_expr_inspect(ctx, buffer, obj);
+    return buffer;
+  }
+
+  grn_text_otoj(ctx, buffer, obj, NULL);
+  return buffer;
+}
+
 void
 grn_p(grn_ctx *ctx, grn_obj *obj)
 {
   grn_obj buffer;
 
-  if (!obj) {
-    printf("(NULL)\n");
-    return;
-  }
-
   GRN_TEXT_INIT(&buffer, 0);
-  if (obj->header.type == GRN_EXPR) {
-    grn_expr_inspect(ctx, &buffer, obj);
-  } else {
-    grn_text_otoj(ctx, &buffer, obj, NULL);
-  }
+  grn_inspect(ctx, &buffer, obj);
   printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
   grn_obj_unlink(ctx, &buffer);
 }

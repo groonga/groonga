@@ -31,6 +31,7 @@ extern "C" {
 
 grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offset, int *limit);
 
+grn_obj *grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 void grn_p(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
