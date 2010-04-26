@@ -77,12 +77,12 @@ grn_test_assert_equal_id_helper(grn_ctx *context,
     grn_inspect(context, &inspected_expected_object, expected_object);
     grn_inspect(context, &inspected_actual_object, actual_object);
     cut_set_expected(
-      cut_take_printf("%d: %.*s",
+      cut_take_printf("%d: <%.*s>",
                       expected,
                       (int)GRN_TEXT_LEN(&inspected_expected_object),
                       GRN_TEXT_VALUE(&inspected_expected_object)));
     cut_set_actual(
-      cut_take_printf("%d: %.*s",
+      cut_take_printf("%d: <%.*s>",
                       actual,
                       (int)GRN_TEXT_LEN(&inspected_actual_object),
                       GRN_TEXT_VALUE(&inspected_actual_object)));
@@ -96,6 +96,44 @@ grn_test_assert_equal_id_helper(grn_ctx *context,
                                   expression_actual,
                                   expression_context,
                                   context));
+  }
+}
+
+void
+grn_test_assert_equal_record_id_helper(grn_ctx *context, grn_obj *table,
+                                       grn_id expected, grn_id actual,
+                                       const gchar *expression_context,
+                                       const gchar *expression_table,
+                                       const gchar *expression_expected,
+                                       const gchar *expression_actual)
+{
+  if (expected == actual) {
+    cut_test_pass();
+  } else {
+    gchar key[GRN_TABLE_MAX_KEY_SIZE];
+    int key_size;
+    const gchar *message;
+    grn_obj inspected_table;
+
+    key_size = grn_table_get_key(context, table, expected, key, sizeof(key));
+    cut_set_expected(cut_take_printf("%d: <%.*s>", expected, key_size, key));
+    key_size = grn_table_get_key(context, table, actual, key, sizeof(key));
+    cut_set_actual(cut_take_printf("%d: <%.*s>", actual, key_size, key));
+
+    GRN_TEXT_INIT(&inspected_table, 0);
+    grn_inspect(context, &inspected_table, table);
+    message = cut_take_printf("<%s> == <%s> (context: <%s>, table: <%s>)\n"
+                              " context: <%p>\n"
+                              "   table: <%.*s>",
+                              expression_expected,
+                              expression_actual,
+                              expression_context,
+                              expression_table,
+                              context,
+                              (int)GRN_TEXT_LEN(&inspected_table),
+                              GRN_TEXT_VALUE(&inspected_table));
+    grn_obj_unlink(context, &inspected_table);
+    cut_test_fail(message);
   }
 }
 

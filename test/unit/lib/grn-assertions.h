@@ -47,6 +47,17 @@
       __VA_ARGS__),                                                     \
     grn_test_assert_equal_id(context, expected, actual))
 
+#define grn_test_assert_equal_record_id(context, table,                 \
+                                        expected, actual, ...)          \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_equal_record_id_helper((context), (table),        \
+                                             (expected), (actual),      \
+                                             #context, #table,          \
+                                             #expected, #actual),       \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_equal_record_id(context, table, expected, actual))
+
 #define grn_test_assert_nil(expression, ...)                    \
   cut_trace_with_info_expression(                               \
     cut_test_with_user_message(                                 \
@@ -151,6 +162,15 @@ void     grn_test_assert_equal_id_helper(grn_ctx     *context,
                                          grn_id       expected,
                                          grn_id       actual,
                                          const gchar *expression_context,
+                                         const gchar *expression_expected,
+                                         const gchar *expression_actual);
+void     grn_test_assert_equal_record_id_helper
+                                        (grn_ctx     *context,
+                                         grn_obj     *table,
+                                         grn_id       expected,
+                                         grn_id       actual,
+                                         const gchar *expression_context,
+                                         const gchar *expression_table,
                                          const gchar *expression_expected,
                                          const gchar *expression_actual);
 void     grn_test_assert_nil_helper     (grn_id       id,
