@@ -21,6 +21,7 @@
 #include "grn-assertions.h"
 
 #include <groonga_in.h>
+#include <util.h>
 #include <str.h>
 
 grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
@@ -53,6 +54,48 @@ grn_test_assert_equal_rc_helper(grn_rc expected, grn_rc actual,
                                   expression_actual,
                                   grn_rc_to_string(expected),
                                   grn_rc_to_string(actual)));
+  }
+}
+
+void
+grn_test_assert_equal_id_helper(grn_ctx *context,
+                                grn_id expected, grn_id actual,
+                                const gchar *expression_context,
+                                const gchar *expression_expected,
+                                const gchar *expression_actual)
+{
+  if (expected == actual) {
+    cut_test_pass();
+  } else {
+    grn_obj *expected_object, *actual_object;
+    grn_obj inspected_expected_object, inspected_actual_object;
+
+    expected_object = grn_ctx_at(context, expected);
+    actual_object = grn_ctx_at(context, actual);
+    GRN_TEXT_INIT(&inspected_expected_object, 0);
+    GRN_TEXT_INIT(&inspected_actual_object, 0);
+    grn_inspect(context, &inspected_expected_object, expected_object);
+    grn_inspect(context, &inspected_actual_object, actual_object);
+    cut_set_expected(
+      cut_take_printf("%d: %.*s",
+                      expected,
+                      (int)GRN_TEXT_LEN(&inspected_expected_object),
+                      GRN_TEXT_VALUE(&inspected_expected_object)));
+    cut_set_actual(
+      cut_take_printf("%d: %.*s",
+                      actual,
+                      (int)GRN_TEXT_LEN(&inspected_actual_object),
+                      GRN_TEXT_VALUE(&inspected_actual_object)));
+    grn_obj_unlink(context, &inspected_expected_object);
+    grn_obj_unlink(context, &inspected_actual_object);
+    grn_obj_unlink(context, expected_object);
+    grn_obj_unlink(context, actual_object);
+    cut_test_fail(cut_take_printf("<%s> == <%s> (%s)\n"
+                                  " context: <%p>",
+                                  expression_expected,
+                                  expression_actual,
+                                  expression_context,
+                                  context));
   }
 }
 
