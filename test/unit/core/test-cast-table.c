@@ -137,7 +137,7 @@ data_text_to_table(void)
                  NULL)
 
   ADD_DATA("existence", 1, "daijiro");
-  ADD_DATA("nonexistence", GRN_ID_NIL, "yu");
+  ADD_DATA("nonexistence", GRN_ID_NIL, "");
 
 #undef ADD_DATA
 }
