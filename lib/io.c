@@ -1451,7 +1451,7 @@ grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
 {
   /* support WIN32 */
 #ifdef WIN32
-  return GRN_FREE(mi->map); 
+  return GRN_FREE(mi->map);
 #endif
   GRN_MUNMAP(ctx, &mi->fmo, mi->map, length);
 }

@@ -1672,7 +1672,7 @@ grn_free(grn_ctx *ctx, void *ptr, const char* file, int line)
   {
     free(ptr);
     if (ptr) {
-        GRN_ADD_ALLOC_COUNT(-1);
+      GRN_ADD_ALLOC_COUNT(-1);
     } else {
       GRN_LOG(ctx, GRN_LOG_ALERT, "free fail (%p) (%s:%d) <%d>", ptr, file, line, alloc_count);
     }
