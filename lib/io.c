@@ -30,6 +30,7 @@
 #include "io.h"
 #include "hash.h"
 #include "ql.h"
+#include "module.h"
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 

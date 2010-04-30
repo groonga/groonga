@@ -18,6 +18,7 @@
 #include <string.h>
 #include "db.h"
 #include "ql.h"
+#include "module.h"
 
 grn_obj *
 grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size, grn_proc_type type,

@@ -12,7 +12,7 @@ libgroonga_la_LDFLAGS =				\
 	-no-undefined				\
 	$(WINDOWS_LDFLAGS)
 
-noinst_HEADERS = com.h io.h ql.h nfkc.h groonga_in.h snip.h store.h str.h ctx.h hash.h db.h pat.h ii.h token.h proc.h util.h
+noinst_HEADERS = com.h io.h ql.h nfkc.h groonga_in.h snip.h store.h str.h ctx.h hash.h db.h pat.h ii.h token.h proc.h util.h module.h
 
 EXTRA_DIST = ecmascript.c ecmascript.h ecmascript.y
 
