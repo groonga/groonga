@@ -173,6 +173,7 @@ struct _grn_proc {
   grn_proc_type type;
   grn_proc_func *funcs[3];
 
+  grn_id module;
   //  uint32_t nargs;
   //  uint32_t nresults;
   //  grn_obj results[16];

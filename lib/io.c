@@ -28,6 +28,7 @@
 
 #include "ctx.h"
 #include "io.h"
+#include "module.h"
 #include "hash.h"
 #include "ql.h"
 #include "module.h"
@@ -85,39 +86,16 @@ inline static int grn_msync(grn_ctx *ctx, void *start, size_t length);
 inline static grn_rc grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 
-static grn_hash *grn_dls = NULL;
-
 grn_rc
 grn_io_init(void)
 {
-  grn_dls = grn_hash_create(&grn_gctx, NULL, PATH_MAX, sizeof(void *),
-                            GRN_OBJ_KEY_VAR_SIZE);
-  if (!grn_dls) { return GRN_NO_MEMORY_AVAILABLE; }
   return GRN_SUCCESS;
 }
 
 grn_rc
 grn_io_fin(void)
 {
-  grn_ctx *ctx = &grn_gctx;
-  if (!grn_dls) { return GRN_INVALID_ARGUMENT; }
-  GRN_HASH_EACH(ctx, grn_dls, id, NULL, NULL, NULL, { grn_dl_close(ctx, id); });
-  return grn_hash_close(&grn_gctx, grn_dls);
-}
-
-#define PATHLEN(filename) (strlen(filename) + 1)
-
-grn_id
-grn_dl_get(grn_ctx *ctx, const char *filename)
-{
-  return grn_hash_get(ctx, grn_dls, filename, PATHLEN(filename), NULL);
-}
-
-const char *
-grn_dl_path(grn_ctx *ctx, grn_id id)
-{
-  uint32_t key_size;
-  return _grn_hash_key(ctx, grn_dls, id, &key_size);
+  return GRN_SUCCESS;
 }
 
 grn_io *
@@ -1411,7 +1389,7 @@ grn_expire_(grn_ctx *ctx, int count_thresh, uint32_t limit)
   uint32_t n = 0;
   grn_cell *obj;
   GRN_HASH_EACH(ctx, grn_gctx.impl->symbols, id, NULL, NULL, (void **) &obj, {
-    grn_dl_close(ctx, id);
+    grn_module_close(ctx, id);
     n += grn_io_expire(ctx, (grn_io *) obj->u.p.value, count_thresh, limit);
     if (n >= limit) { break; }
   });
@@ -1809,55 +1787,6 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
   return ctx->rc;
 }
 
-grn_id
-grn_dl_open(grn_ctx *ctx, const char *filename)
-{
-  grn_id id;
-  HMODULE dl, *dlp;
-  if ((id = grn_hash_get(ctx, grn_dls, filename, PATHLEN(filename), (void **)&dlp))) {
-    return id;
-  }
-  if ((dl = LoadLibrary(filename))) {
-    if ((id = grn_hash_add(ctx, grn_dls, filename, PATHLEN(filename), (void *)&dlp, NULL))) {
-      *dlp = dl;
-    } else {
-      if (!FreeLibrary(dl)) {
-        SERR("FreeLibrary");
-      }
-    }
-  } else {
-    SERR("LoadLibrary");
-  }
-  return id;
-}
-
-grn_rc
-grn_dl_close(grn_ctx *ctx, grn_id id)
-{
-  HMODULE *dlp;
-  if (!grn_hash_get_value(ctx, grn_dls, id, &dlp)) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (!FreeLibrary(*dlp)) {
-    SERR("FreeLibrary");
-  }
-  return grn_hash_delete_by_id(ctx, grn_dls, id, NULL);
-}
-
-void *
-grn_dl_sym(grn_ctx *ctx, grn_id id, const char *symbol)
-{
-  HMODULE *dlp;
-  FARPROC func;
-  if (!grn_hash_get_value(ctx, grn_dls, id, &dlp)) {
-    return NULL;
-  }
-  if (!(func = GetProcAddress(dlp, symbol))) {
-    SERR("GetProcAddress");
-  }
-  return func;
-}
-
 #else /* WIN32 */
 
 inline static grn_rc
@@ -2005,58 +1934,6 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
     return ctx->rc;
   }
   return GRN_SUCCESS;
-}
-
-#include <dlfcn.h>
-
-grn_id
-grn_dl_open(grn_ctx *ctx, const char *filename)
-{
-  grn_id id;
-  void *dl, **dlp;
-  if ((id = grn_hash_get(ctx, grn_dls, filename, PATHLEN(filename), (void **)&dlp))) {
-    return id;
-  }
-  if ((dl = dlopen(filename, 0))) {
-    if ((id = grn_hash_add(ctx, grn_dls, filename, PATHLEN(filename), (void **)&dlp, NULL))) {
-      *dlp = dl;
-    } else {
-      if (dlclose(dl)) {
-        SERR(dlerror());
-      }
-    }
-  } else {
-    SERR(dlerror());
-  }
-  return id;
-}
-
-grn_rc
-grn_dl_close(grn_ctx *ctx, grn_id id)
-{
-  int r;
-  void **dlp;
-  if (!grn_hash_get_value(ctx, grn_dls, id, &dlp)) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if ((r = dlclose(*dlp))) {
-    SERR(dlerror());
-  }
-  return grn_hash_delete_by_id(ctx, grn_dls, id, NULL);
-}
-
-void *
-grn_dl_sym(grn_ctx *ctx, grn_id id, const char *symbol)
-{
-  void *func, **dlp;
-  if (!grn_hash_get_value(ctx, grn_dls, id, &dlp)) {
-    return NULL;
-  }
-  dlerror(); /* clear */
-  if (!(func = dlsym(*dlp, symbol))) {
-    SERR(dlerror());
-  }
-  return func;
 }
 
 #endif /* WIN32 */

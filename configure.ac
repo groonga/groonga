@@ -87,6 +87,8 @@ AM_PROG_LIBTOOL
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  lib/Makefile
+                 modules/Makefile
+                 modules/tokenizers/Makefile
                  examples/Makefile
                  apt/Makefile
                  test/Makefile
@@ -481,11 +483,19 @@ else
   if test "x$MECAB_CONFIG" = "xno"; then
     AC_DEFINE(NO_MECAB, [1], [without MeCab])
   else
-    MECAB_CFLAGS="-I`$MECAB_CONFIG --inc-dir`"
-    LDFLAGS="$LDFLAGS -L`$MECAB_CONFIG --libs-only-L`"
-    AC_CHECK_LIB(mecab, mecab_new, [], [AC_MSG_ERROR("No libmecab found")])
-    CPPFLAGS="$CPPFLAGS $MECAB_CFLAGS"
+    MECAB_CPPFLAGS="-I`$MECAB_CONFIG --inc-dir`"
+    MECAB_LDFLAGS="-L`$MECAB_CONFIG --libs-only-L`"
+    AC_SEARCH_LIBS(mecab_new,
+                   mecab,
+                   [MECAB_LIBS="-lmecab"],
+                   [AC_MSG_ERROR("No libmecab found")])
+    _SAVE_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $MECAB_CPPFLAGS"
     AC_CHECK_HEADER(mecab.h, , [AC_MSG_ERROR("No mecab.h found")])
+    CPPFLAGS="$_SAVE_CPPFLAGS"
+    AC_SUBST(MECAB_CPPFLAGS)
+    AC_SUBST(MECAB_LDFLAGS)
+    AC_SUBST(MECAB_LIBS)
   fi
 fi
 
@@ -505,8 +515,22 @@ fi
 AC_MSG_CHECKING([whether enable futex])
 AC_MSG_RESULT($enable_futex)
 
+# modules check
+modulesdir="\${libdir}/\$(PACKAGE)/modules"
+AC_SUBST(modulesdir)
+
+tokenizer_modulesdir="\${modulesdir}/tokenizers"
+AC_SUBST(tokenizer_modulesdir)
+
+AC_MSG_CHECKING(for the suffix of module shared libraries)
+suffix=$(./libtool --config | grep '^shrext_cmds=' | sed -e 's/shrext_cmds=//')
+AC_MSG_RESULT($suffix)
+AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, [$suffix], "module suffix")
+
+
 # flags for compile groonga
-CFLAGS="$CFLAGS $MECAB_CFLAGS $OPT_CFLAGS"
+CFLAGS="$CFLAGS $OPT_CFLAGS "
+CFLAGS="$CFLAGS -DTOKENIZER_MODULES_DIR=\\\"\"\$(tokenizer_modulesdir)\"\\\""
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
