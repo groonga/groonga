@@ -130,14 +130,16 @@ cast_text(const gchar *text)
 void
 data_text_to_table(void)
 {
-#define ADD_DATA(label, expected, text)                 \
-  gcut_add_datum(label,                                 \
-                 "expected", G_TYPE_UINT, expected,     \
-                 "text", G_TYPE_STRING, text,           \
+#define ADD_DATA(label, expected, expected_size, text)                  \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_UINT, expected,                     \
+                 "expected-size", GCUT_TYPE_SIZE, expected_size,        \
+                 "text", G_TYPE_STRING, text,                           \
                  NULL)
 
-  ADD_DATA("existence", 1, "daijiro");
-  ADD_DATA("nonexistence", GRN_ID_NIL, "");
+  ADD_DATA("existence", 1, sizeof(grn_id), "daijiro");
+  ADD_DATA("nonexistence", GRN_ID_NIL, 0, "yu");
+  ADD_DATA("empty key", GRN_ID_NIL, sizeof(grn_id), "");
 
 #undef ADD_DATA
 }
@@ -145,11 +147,18 @@ data_text_to_table(void)
 void
 test_text_to_table(gconstpointer data)
 {
+  gsize expected_size;
+
   grn_obj_reinit(&context, &dest, users, 0);
   cast_text(gcut_data_get_string(data, "text"));
-  grn_test_assert_equal_record_id(&context,
-                                  grn_ctx_at(&context, users),
-                                  gcut_data_get_uint(data, "expected"),
-                                  GRN_RECORD_VALUE(&dest));
-  cut_assert_not_equal_uint(0, GRN_BULK_VSIZE(&dest));
+  expected_size = gcut_data_get_size(data, "expected-size");
+  if (expected_size == 0) {
+    cut_assert_equal_uint(0, GRN_BULK_VSIZE(&dest));
+  } else {
+    grn_test_assert_equal_record_id(&context,
+                                    grn_ctx_at(&context, users),
+                                    gcut_data_get_uint(data, "expected"),
+                                    GRN_RECORD_VALUE(&dest));
+    cut_assert_equal_uint(expected_size, GRN_BULK_VSIZE(&dest));
+  }
 }
