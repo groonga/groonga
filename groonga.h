@@ -483,6 +483,7 @@ GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_s
 
 GRN_API grn_rc grn_db_register(grn_ctx *ctx, const char *path);
 GRN_API grn_rc grn_db_register_tokenizer(grn_ctx *ctx, const char *name);
+GRN_API grn_rc grn_db_register_function(grn_ctx *ctx, const char *name);
 
 /**
  * grn_proc_create:

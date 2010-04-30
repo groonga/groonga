@@ -357,22 +357,39 @@ grn_db_register(grn_ctx *ctx, const char *path)
   GRN_API_RETURN(ctx->rc);
 }
 
-grn_rc
-grn_db_register_tokenizer(grn_ctx *ctx, const char *name)
+static grn_rc
+grn_db_register_by_name(grn_ctx *ctx, const char *name,
+                        const char *env_name, const char *default_dir)
 {
-  const char *tokenizer_modules_dir;
+  const char *modules_dir;
   char dir_last_char;
   char path[PATH_MAX];
 
-  tokenizer_modules_dir = getenv("GRN_TOKENIZER_MODULES_DIR");
-  if (!tokenizer_modules_dir) {
-    tokenizer_modules_dir = TOKENIZER_MODULES_DIR;
+  modules_dir = getenv(env_name);
+  if (!modules_dir) {
+    modules_dir = default_dir;
   }
-  strcpy(path, tokenizer_modules_dir);
-  dir_last_char = tokenizer_modules_dir[strlen(tokenizer_modules_dir) - 1];
+  strcpy(path, modules_dir);
+  dir_last_char = modules_dir[strlen(modules_dir) - 1];
   if (dir_last_char != PATH_SEPARATOR[0]) {
     strcat(path, PATH_SEPARATOR);
   }
-  strncat(path, name, PATH_MAX - strlen(tokenizer_modules_dir) - 1);
+  strncat(path, name, PATH_MAX - strlen(modules_dir) - 1);
   return grn_db_register(ctx, path);
+}
+
+grn_rc
+grn_db_register_tokenizer(grn_ctx *ctx, const char *name)
+{
+  return grn_db_register_by_name(ctx, name,
+                                 "GRN_TOKENIZER_MODULES_DIR",
+                                 TOKENIZER_MODULES_DIR);
+}
+
+grn_rc
+grn_db_register_function(grn_ctx *ctx, const char *name)
+{
+  return grn_db_register_by_name(ctx, name,
+                                 "GRN_FUNCTION_MODULES_DIR",
+                                 FUNCTION_MODULES_DIR);
 }

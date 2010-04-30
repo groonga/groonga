@@ -1,2 +1,3 @@
 SUBDIRS =		\
-	tokenizers
+	tokenizers	\
+	functions

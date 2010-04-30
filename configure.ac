@@ -89,6 +89,7 @@ AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  modules/Makefile
                  modules/tokenizers/Makefile
+                 modules/functions/Makefile
                  examples/Makefile
                  apt/Makefile
                  test/Makefile
@@ -522,6 +523,9 @@ AC_SUBST(modulesdir)
 tokenizer_modulesdir="\${modulesdir}/tokenizers"
 AC_SUBST(tokenizer_modulesdir)
 
+function_modulesdir="\${modulesdir}/functions"
+AC_SUBST(function_modulesdir)
+
 AC_MSG_CHECKING(for the suffix of module shared libraries)
 suffix=$(./libtool --config | grep '^shrext_cmds=' | sed -e 's/shrext_cmds=//')
 AC_MSG_RESULT($suffix)
@@ -531,6 +535,7 @@ AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, [$suffix], "module suffix")
 # flags for compile groonga
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 CFLAGS="$CFLAGS -DTOKENIZER_MODULES_DIR=\\\"\"\$(tokenizer_modulesdir)\"\\\""
+CFLAGS="$CFLAGS -DFUNCTION_MODULES_DIR=\\\"\"\$(function_modulesdir)\"\\\""
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 

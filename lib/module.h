@@ -46,8 +46,6 @@ typedef struct _grn_module grn_module;
 
 struct _grn_module {
   grn_dl dl;
-  char *path;
-  char *base_name;
   grn_module_func init_func;
   grn_module_func register_func;
   grn_module_func unregister_func;
