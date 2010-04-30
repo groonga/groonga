@@ -3345,11 +3345,26 @@ scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, i
 }
 
 static int32_t
-get_weight(grn_expr_code *ec)
+get_weight(grn_ctx *ctx, grn_expr_code *ec)
 {
-  return (ec->modify == 2 && ec[2].op == GRN_OP_STAR &&
-          ec[1].value && ec[1].value->header.type == GRN_BULK &&
-          ec[1].value->header.domain == GRN_DB_UINT32) ? GRN_INT32_VALUE(ec[1].value) : 1;
+  if (ec->modify == 2 && ec[2].op == GRN_OP_STAR &&
+      ec[1].value && ec[1].value->header.type == GRN_BULK) {
+    if (ec[1].value->header.domain == GRN_DB_INT32 ||
+        ec[1].value->header.domain == GRN_DB_UINT32) {
+      return GRN_INT32_VALUE(ec[1].value);
+    } else {
+      int32_t weight = 1;
+      grn_obj weight_buffer;
+      GRN_INT32_INIT(&weight_buffer, 0);
+      if (!grn_obj_cast(ctx, ec[1].value, &weight_buffer, 0)) {
+        weight = GRN_INT32_VALUE(&weight_buffer);
+      }
+      grn_obj_unlink(ctx, &weight_buffer);
+      return weight;
+    }
+  } else {
+    return 1;
+  }
 }
 
 static scan_info **
@@ -3456,17 +3471,17 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 case GRN_ACCESSOR_VIEW :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
                     si->flags |= SCAN_ACCESSOR;
-                    scan_info_put_index(ctx, si, index, sid, get_weight(ec));
+                    scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
                   }
                   break;
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    scan_info_put_index(ctx, si, index, sid, get_weight(ec));
+                    scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
                   }
                   break;
                 case GRN_COLUMN_INDEX :
-                  scan_info_put_index(ctx, si, ec->value, 0, get_weight(ec));
+                  scan_info_put_index(ctx, si, ec->value, 0, get_weight(ctx, ec));
                   break;
                 }
               }

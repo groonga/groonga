@@ -3643,17 +3643,21 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
                grn_obj_cast(ctx, src, &key, 1);
                p_key = &key;
             }
-            id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
-                      : grn_table_get_by_key(ctx, table, p_key);
+            if (GRN_BULK_VSIZE(p_key)) {
+              id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
+                        : grn_table_get_by_key(ctx, table, p_key);
+              if (id) { GRN_RECORD_SET(ctx, dest, id); }
+            } else {
+              GRN_RECORD_SET(ctx, dest, GRN_ID_NIL);
+            }
             GRN_OBJ_FIN(ctx, &key);
           } else {
             grn_obj record_id;
             GRN_UINT32_INIT(&record_id, 0);
             grn_obj_cast(ctx, src, &record_id, 1);
             id = GRN_UINT32_VALUE(&record_id);
+            if (id) { GRN_RECORD_SET(ctx, dest, id); }
           }
-          /* if not symbol */
-          if (id) { GRN_RECORD_SET(ctx, dest, id); }
         } else {
           rc = GRN_FUNCTION_NOT_IMPLEMENTED;
         }

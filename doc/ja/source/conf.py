@@ -66,7 +66,7 @@ copyright = u'2009-' + unicode(datetime.today().year) + ', Brazil, Inc'
 
 # read version from env/file.
 if os.environ.has_key('GROONGA_VERSION'):
-  version_sh = os.environ['GROONGA_VERSION']
+  version_sh = 'GROONGA_VERSION=' + os.environ['GROONGA_VERSION']
 else:
   version_sh = open(os.path.join(os.path.dirname(__file__), '../../../version.sh')).read()
 
