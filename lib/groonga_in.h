@@ -156,8 +156,9 @@ typedef SOCKET grn_sock;
 
 #ifndef __GNUC__
 #include <intrin.h>
-#endif
+#include <sys/timeb.h>
 #include <errno.h>
+#endif
 #else /* WIN32 */
 
 #define GROONGA_API

@@ -20,7 +20,7 @@ use_mecab = 0
 
 'object files
 dim objs
-objs = array("com.obj", "ctx.obj", "db.obj", "hash.obj", "ii.obj", "io.obj", "nfkc.obj", "pat.obj", "ql.obj", "query.obj", "scm.obj", "snip.obj", "store.obj", "str.obj", "token.obj", "proc.obj")
+objs = array("com.obj", "ctx.obj", "db.obj", "hash.obj", "ii.obj", "io.obj", "nfkc.obj", "pat.obj", "ql.obj", "query.obj", "scm.obj", "snip.obj", "store.obj", "str.obj", "token.obj", "proc.obj", "module.obj", "util.obj", "expr.obj")
 
 dim fs
 set fs = wscript.createobject("scripting.filesystemobject")
