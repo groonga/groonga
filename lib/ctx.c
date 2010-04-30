@@ -808,7 +808,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   } else {
     grn_obj key;
     const char *g, *pe;
-    grn_content_type ot;
+    grn_content_type ot = GRN_CONTENT_NONE;
     grn_timeval_now(ctx, &ctx->impl->tv);
     GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, path_len, path);
     GRN_TEXT_INIT(&key, 0);
