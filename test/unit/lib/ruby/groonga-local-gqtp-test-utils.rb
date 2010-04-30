@@ -61,6 +61,7 @@ module GroongaLocalGQTPTestUtils
 
   def assert_dump(expected, commands)
     feed_commands(commands)
+    omit("dump test is now omitted.")
     assert_equal(expected, dump)
   end
 
