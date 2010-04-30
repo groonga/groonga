@@ -1,5 +1,5 @@
-bin_PROGRAMS = groonga
-noinst_PROGRAMS = grnslap grntest
+bin_PROGRAMS = groonga grntest
+noinst_PROGRAMS = grnslap
 
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) \
             -DDEFAULT_ADMIN_HTML_PATH=\"$(pkgdatadir)/admin_html\"
