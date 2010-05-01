@@ -28,7 +28,7 @@ static grn_hash *grn_modules = NULL;
 #ifdef WIN32
 #  define grn_dl_open(filename)    LoadLibrary(filename)
 #  define grn_dl_open_error_label  "LoadLibrary"
-#  define grn_dl_close(dl)         FreeLibrary(dl)
+#  define grn_dl_close(dl)         (FreeLibrary(dl) != 0)
 #  define grn_dl_close_error_label "FreeLibrary"
 #  define grn_dl_sym(dl, symbol)   GetProcAddress(dl, symbol)
 #  define grn_dl_sym_error_label   "GetProcAddress"
@@ -37,7 +37,7 @@ static grn_hash *grn_modules = NULL;
 #  include <dlfcn.h>
 #  define grn_dl_open(filename)    dlopen(filename, RTLD_LAZY | RTLD_GLOBAL)
 #  define grn_dl_open_error_label  dlerror()
-#  define grn_dl_close(dl)         dlclose(dl)
+#  define grn_dl_close(dl)         (dlclose(dl) == 0)
 #  define grn_dl_close_error_label dlerror()
 #  define grn_dl_sym(dl, symbol)   dlsym(dl, symbol)
 #  define grn_dl_sym_error_label   dlerror()
