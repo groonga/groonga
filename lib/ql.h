@@ -163,6 +163,7 @@ typedef struct {
 } grn_expr_vars;
 
 #define GRN_STACK_SIZE 1024
+#define GRN_CTX_N_SEGMENTS 512
 
 struct _grn_ctx_impl {
   grn_encoding encoding;
@@ -170,8 +171,7 @@ struct _grn_ctx_impl {
   /* memory pool portion */
   int32_t lifoseg;
   int32_t currseg;
-  grn_io_mapinfo mi;
-  grn_io_mapinfo *segs;
+  grn_io_mapinfo segs[GRN_CTX_N_SEGMENTS];
 
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
   /* memory allocation portion */

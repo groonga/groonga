@@ -167,14 +167,12 @@ char *grn_fmalloc_file = NULL;
 int grn_fmalloc_line = 0;
 #endif /* USE_FAIL_MALLOC */
 
-#define N_SEGMENTS 512
+#define GRN_CTX_SEGMENT_SIZE    (1<<22)
+#define GRN_CTX_SEGMENT_MASK    (GRN_CTX_SEGMENT_SIZE - 1)
 
-#define SEGMENT_SIZE    (1<<22)
-#define SEGMENT_MASK    (SEGMENT_SIZE - 1)
-
-#define SEGMENT_WORD    (1<<31)
-#define SEGMENT_VLEN    (1<<30)
-#define SEGMENT_LIFO    (1<<29)
+#define GRN_CTX_SEGMENT_WORD    (1<<31)
+#define GRN_CTX_SEGMENT_VLEN    (1<<30)
+#define GRN_CTX_SEGMENT_LIFO    (1<<29)
 
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
 static void
@@ -226,13 +224,14 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   grn_loader_init(loader);
 }
 
+#define IMPL_SIZE ((sizeof(struct _grn_ctx_impl) + (grn_pagesize - 1)) & ~(grn_pagesize - 1))
+
 static void
 grn_ctx_impl_init(grn_ctx *ctx)
 {
-  if (!(ctx->impl = GRN_MALLOC(sizeof(struct _grn_ctx_impl)))) { return; }
-  if (!(ctx->impl->segs = grn_io_anon_map(ctx, &ctx->impl->mi,
-                                          sizeof(grn_io_mapinfo) * N_SEGMENTS))) {
-    GRN_FREE(ctx->impl);
+
+  grn_io_mapinfo mi;
+  if (!(ctx->impl = grn_io_anon_map(ctx, &mi, IMPL_SIZE))) {
     ctx->impl = NULL;
     return;
   }
@@ -241,8 +240,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #endif
   if (!(ctx->impl->values = grn_array_create(ctx, NULL, sizeof(grn_tmp_db_obj),
                                              GRN_ARRAY_TINY))) {
-    grn_io_anon_unmap(ctx, &ctx->impl->mi, sizeof(grn_io_mapinfo) * N_SEGMENTS);
-    GRN_FREE(ctx->impl);
+    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
     return;
   }
@@ -392,6 +390,7 @@ grn_ctx_fin(grn_ctx *ctx)
     CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (ctx->impl) {
+    grn_io_mapinfo mi;
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->objects) {
       grn_cell *o;
@@ -429,17 +428,16 @@ grn_ctx_fin(grn_ctx *ctx)
     {
       int i;
       grn_io_mapinfo *mi;
-      for (i = 0, mi = ctx->impl->segs; i < N_SEGMENTS; i++, mi++) {
+      for (i = 0, mi = ctx->impl->segs; i < GRN_CTX_N_SEGMENTS; i++, mi++) {
         if (mi->map) {
-          if (mi->count & SEGMENT_VLEN) {
+          if (mi->count & GRN_CTX_SEGMENT_VLEN) {
             grn_io_anon_unmap(ctx, mi, mi->nref * grn_pagesize);
           } else {
-            grn_io_anon_unmap(ctx, mi, SEGMENT_SIZE);
+            grn_io_anon_unmap(ctx, mi, GRN_CTX_SEGMENT_SIZE);
           }
         }
       }
     }
-    grn_io_anon_unmap(ctx, &ctx->impl->mi, sizeof(grn_io_mapinfo) * N_SEGMENTS);
     {
       uint32_t i;
       grn_expr_var *v;
@@ -452,7 +450,8 @@ grn_ctx_fin(grn_ctx *ctx)
       });
     }
     grn_hash_close(ctx, ctx->impl->expr_vars);
-    GRN_FREE(ctx->impl);
+    mi.map = (void *)ctx->impl;
+    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
   }
   ctx->stat = GRN_CTX_FIN;
   return rc;
@@ -1315,14 +1314,14 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
     uint64_t *header;
     grn_io_mapinfo *mi;
     size = ((size + ALIGN_MASK) & ~ALIGN_MASK) + ALIGN_SIZE;
-    if (size > SEGMENT_SIZE) {
+    if (size > GRN_CTX_SEGMENT_SIZE) {
       uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
       if (npages >= (1LL<<32)) {
         MERR("too long request size=%zu", size);
         return NULL;
       }
       for (i = 0, mi = ctx->impl->segs;; i++, mi++) {
-        if (i >= N_SEGMENTS) {
+        if (i >= GRN_CTX_N_SEGMENTS) {
           MERR("all segments are full");
           return NULL;
         }
@@ -1331,7 +1330,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
       if (!grn_io_anon_map(ctx, mi, npages * grn_pagesize)) { return NULL; }
       //GRN_LOG(ctx, GRN_LOG_NOTICE, "map i=%d (%d)", i, npages * grn_pagesize);
       mi->nref = (uint32_t) npages;
-      mi->count = SEGMENT_VLEN;
+      mi->count = GRN_CTX_SEGMENT_VLEN;
       ctx->impl->currseg = -1;
       header = mi->map;
       *header = (uint64_t) i;
@@ -1339,18 +1338,18 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
     } else {
       i = ctx->impl->currseg;
       mi = &ctx->impl->segs[i];
-      if (i < 0 || size + mi->nref > SEGMENT_SIZE) {
+      if (i < 0 || size + mi->nref > GRN_CTX_SEGMENT_SIZE) {
         for (i = 0, mi = ctx->impl->segs;; i++, mi++) {
-          if (i >= N_SEGMENTS) {
+          if (i >= GRN_CTX_N_SEGMENTS) {
             MERR("all segments are full");
             return NULL;
           }
           if (!mi->map) { break; }
         }
-        if (!grn_io_anon_map(ctx, mi, SEGMENT_SIZE)) { return NULL; }
+        if (!grn_io_anon_map(ctx, mi, GRN_CTX_SEGMENT_SIZE)) { return NULL; }
         //GRN_LOG(ctx, GRN_LOG_NOTICE, "map i=%d", i);
         mi->nref = 0;
-        mi->count = SEGMENT_WORD;
+        mi->count = GRN_CTX_SEGMENT_WORD;
         ctx->impl->currseg = i;
       }
       header = (uint64_t *)((byte *)mi->map + mi->nref);
@@ -1373,14 +1372,14 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
   }
   {
     uint64_t *header = &((uint64_t *)ptr)[-1];
-    if (*header >= N_SEGMENTS) {
+    if (*header >= GRN_CTX_N_SEGMENTS) {
       ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%zu", ptr, *header);
       return;
     }
     {
       int32_t i = (int32_t)*header;
       grn_io_mapinfo *mi = &ctx->impl->segs[i];
-      if (mi->count & SEGMENT_VLEN) {
+      if (mi->count & GRN_CTX_SEGMENT_VLEN) {
         if (mi->map != header) {
           ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed.. ptr=%p seg=%d", ptr, i);
           return;
@@ -1394,13 +1393,13 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
           return;
         }
         mi->count--;
-        if (!(mi->count & SEGMENT_MASK)) {
+        if (!(mi->count & GRN_CTX_SEGMENT_MASK)) {
           //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d", i);
           if (i == ctx->impl->currseg) {
             memset(mi->map, 0, mi->nref);
             mi->nref = 0;
           } else {
-            grn_io_anon_unmap(ctx, mi, SEGMENT_SIZE);
+            grn_io_anon_unmap(ctx, mi, GRN_CTX_SEGMENT_SIZE);
             mi->map = NULL;
           }
         }
@@ -1446,14 +1445,14 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size, int flags,
   {
     int32_t i = ctx->impl->lifoseg;
     grn_io_mapinfo *mi = &ctx->impl->segs[i];
-    if (size > SEGMENT_SIZE) {
+    if (size > GRN_CTX_SEGMENT_SIZE) {
       uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
       if (npages >= (1LL<<32)) {
         MERR("too long request size=%zu", size);
         return NULL;
       }
       for (;;) {
-        if (++i >= N_SEGMENTS) {
+        if (++i >= GRN_CTX_N_SEGMENTS) {
           MERR("all segments are full");
           return NULL;
         }
@@ -1462,22 +1461,22 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size, int flags,
       }
       if (!grn_io_anon_map(ctx, mi, npages * grn_pagesize)) { return NULL; }
       mi->nref = (uint32_t) npages;
-      mi->count = SEGMENT_VLEN|SEGMENT_LIFO;
+      mi->count = GRN_CTX_SEGMENT_VLEN|GRN_CTX_SEGMENT_LIFO;
       ctx->impl->lifoseg = i;
       return mi->map;
     } else {
       size = (size + ALIGN_MASK) & ~ALIGN_MASK;
-      if (i < 0 || (mi->count & SEGMENT_VLEN) || size + mi->nref > SEGMENT_SIZE) {
+      if (i < 0 || (mi->count & GRN_CTX_SEGMENT_VLEN) || size + mi->nref > GRN_CTX_SEGMENT_SIZE) {
         for (;;) {
-          if (++i >= N_SEGMENTS) {
+          if (++i >= GRN_CTX_N_SEGMENTS) {
             MERR("all segments are full");
             return NULL;
           }
           if (!(++mi)->map) { break; }
         }
-        if (!grn_io_anon_map(ctx, mi, SEGMENT_SIZE)) { return NULL; }
+        if (!grn_io_anon_map(ctx, mi, GRN_CTX_SEGMENT_SIZE)) { return NULL; }
         mi->nref = 0;
-        mi->count = SEGMENT_WORD|SEGMENT_LIFO;
+        mi->count = GRN_CTX_SEGMENT_WORD|GRN_CTX_SEGMENT_LIFO;
         ctx->impl->lifoseg = i;
       }
       {
@@ -1506,9 +1505,9 @@ grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
       return;
     }
     for (; i >= 0; i--, mi--) {
-      if (!(mi->count & SEGMENT_LIFO)) { continue; }
+      if (!(mi->count & GRN_CTX_SEGMENT_LIFO)) { continue; }
       if (done) { break; }
-      if (mi->count & SEGMENT_VLEN) {
+      if (mi->count & GRN_CTX_SEGMENT_VLEN) {
         if (mi->map == ptr) { done = 1; }
         grn_io_anon_unmap(ctx, mi, mi->nref * grn_pagesize);
         mi->map = NULL;
@@ -1521,7 +1520,7 @@ grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
             break;
           }
         }
-        grn_io_anon_unmap(ctx, mi, SEGMENT_SIZE);
+        grn_io_anon_unmap(ctx, mi, GRN_CTX_SEGMENT_SIZE);
         mi->map = NULL;
       }
     }
