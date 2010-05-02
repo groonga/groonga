@@ -238,15 +238,15 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
   grn_ctx_impl_init_malloc(ctx);
 #endif
+  ctx->impl->encoding = ctx->encoding;
+  ctx->impl->lifoseg = -1;
+  ctx->impl->currseg = -1;
   if (!(ctx->impl->values = grn_array_create(ctx, NULL, sizeof(grn_tmp_db_obj),
                                              GRN_ARRAY_TINY))) {
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
     return;
   }
-  ctx->impl->encoding = ctx->encoding;
-  ctx->impl->lifoseg = -1;
-  ctx->impl->currseg = -1;
   ctx->impl->db = NULL;
 
   ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_expr_vars), 0);
@@ -390,7 +390,6 @@ grn_ctx_fin(grn_ctx *ctx)
     CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (ctx->impl) {
-    grn_io_mapinfo mi;
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->objects) {
       grn_cell *o;
@@ -426,6 +425,18 @@ grn_ctx_fin(grn_ctx *ctx)
     rc = grn_obj_close(ctx, ctx->impl->outbuf);
     rc = grn_bulk_fin(ctx, &ctx->impl->subbuf);
     {
+      uint32_t i;
+      grn_expr_var *v;
+      grn_expr_vars *vp;
+      GRN_HASH_EACH(ctx, ctx->impl->expr_vars, id, NULL, NULL, &vp, {
+        for (v = vp->vars, i = vp->nvars; i; v++, i--) {
+          GRN_OBJ_FIN(ctx, &v->value);
+        }
+        GRN_FREE(vp->vars);
+      });
+    }
+    grn_hash_close(ctx, ctx->impl->expr_vars);
+    {
       int i;
       grn_io_mapinfo *mi;
       for (i = 0, mi = ctx->impl->segs; i < GRN_CTX_N_SEGMENTS; i++, mi++) {
@@ -439,19 +450,10 @@ grn_ctx_fin(grn_ctx *ctx)
       }
     }
     {
-      uint32_t i;
-      grn_expr_var *v;
-      grn_expr_vars *vp;
-      GRN_HASH_EACH(ctx, ctx->impl->expr_vars, id, NULL, NULL, &vp, {
-        for (v = vp->vars, i = vp->nvars; i; v++, i--) {
-          GRN_OBJ_FIN(ctx, &v->value);
-        }
-        GRN_FREE(vp->vars);
-      });
+      grn_io_mapinfo mi;
+      mi.map = (void *)ctx->impl;
+      grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     }
-    grn_hash_close(ctx, ctx->impl->expr_vars);
-    mi.map = (void *)ctx->impl;
-    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
   }
   ctx->stat = GRN_CTX_FIN;
   return rc;
@@ -1405,7 +1407,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
     ERR(GRN_INVALID_ARGUMENT,"ctx without impl passed.");
     return;
   }
-  {
+  if (ptr) {
     int32_t *header = &((int32_t *)ptr)[-2];
     if (header[0] >= GRN_CTX_N_SEGMENTS) {
       ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%zu", ptr, *header);
@@ -1700,7 +1702,7 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
 }
 
 void
-grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line)
+grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func)
 {
   if (!ctx) { return; }
   {

@@ -778,6 +778,7 @@ grn_view_create(grn_ctx *ctx, const char *path, grn_obj_flags flags)
       res->obj.header.domain = GRN_ID_NIL;
       res->n_keys = 0;
       res->offset = 0;
+      res->limit = -1;
       res->keys = NULL;
       return (grn_obj *)res;
     }
@@ -1443,7 +1444,7 @@ grn_view_cursor_open(grn_ctx *ctx, grn_obj *view,
       offset += v->offset;
       while (offset--) { if (!grn_view_cursor_next(ctx, vc)) { break; } }
       vc->rest = (limit < 0) ? GRN_ID_MAX : limit;
-      if (v->limit < vc->rest) { vc->rest = v->limit; }
+      if (v->limit >= 0 && v->limit < vc->rest) { vc->rest = v->limit; }
       return vc;
     }
     GRN_FREE(vc);
