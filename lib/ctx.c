@@ -1301,7 +1301,7 @@ grn_cache_fin(void)
 #define ALIGN_MASK (ALIGN_SIZE-1)
 
 void *
-grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
+grn_ctx_alloc(grn_ctx *ctx, size_t size,
               const char* file, int line, const char *func)
 {
   if (!ctx) { return NULL; }
@@ -1436,7 +1436,7 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
 }
 
 void *
-grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size, int flags,
+grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
                    const char* file, int line, const char *func)
 {
   if (!ctx) { return NULL; }

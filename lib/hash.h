@@ -88,7 +88,7 @@ struct _grn_tiny_array {
           *e_ = GRN_MALLOC(GRN_TINY_ARRAY_S * o_ * (a)->element_size);\
         }\
       } else {\
-        *e_ = GRN_CTX_ALLOC(ctx, GRN_TINY_ARRAY_S * o_ * (a)->element_size, 0);\
+        *e_ = GRN_CTX_ALLOC(ctx, GRN_TINY_ARRAY_S * o_ * (a)->element_size);\
       }\
     }\
     if ((a)->flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_LEAVE((a)->lock); }\

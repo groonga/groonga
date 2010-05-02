@@ -771,7 +771,7 @@ put_key(grn_ctx *ctx, grn_hash *hash, entry_str *n, uint32_t h, const char *key,
         memcpy(&((entry_astr *)n)->str, key, len);
       } else {
         grn_ctx *ctx = hash->ctx;
-        if (!(((entry_astr *)n)->str = GRN_CTX_ALLOC(ctx, len, 0))) {
+        if (!(((entry_astr *)n)->str = GRN_CTX_ALLOC(ctx, len))) {
           return GRN_NO_MEMORY_AVAILABLE;
         }
         memcpy(((entry_astr *)n)->str, key, len);
@@ -879,7 +879,7 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
 {
   uint32_t entry_size;
   if (path) { return GRN_INVALID_ARGUMENT; }
-  if (!(ah->index = GRN_CTX_ALLOC(ctx, INITIAL_INDEX_SIZE * sizeof(grn_id), 0))) {
+  if (!(ah->index = GRN_CTX_ALLOC(ctx, INITIAL_INDEX_SIZE * sizeof(grn_id)))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (flags & GRN_OBJ_KEY_VAR_SIZE) {
@@ -1086,7 +1086,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     }
   } else {
     GRN_ASSERT(ctx == hash->ctx);
-    if (!(index = GRN_CTX_ALLOC(ctx, n * sizeof(grn_id), 0))) {
+    if (!(index = GRN_CTX_ALLOC(ctx, n * sizeof(grn_id)))) {
       return GRN_NO_MEMORY_AVAILABLE;
     }
     sp = hash->index;
