@@ -22,6 +22,7 @@
 #include "ql.h"
 #include "token.h"
 #include "proc.h"
+#include "module.h"
 #include "util.h"
 #include <string.h>
 #include <float.h>
@@ -5323,7 +5324,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               case GRN_PROC :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { grn_db_load(ctx, buffer); }
+                if (!*vp) { grn_db_register(ctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 res = *vp;
                 goto exit;
@@ -5499,6 +5500,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         }
         GRN_REALLOC(p->vars, 0);
         grn_obj_close(ctx, &p->name_buf);
+        grn_module_close(ctx, p->obj.range);
         GRN_FREE(obj);
         rc = GRN_SUCCESS;
       }
@@ -5598,10 +5600,10 @@ grn_obj_path(grn_ctx *ctx, grn_obj *obj)
 {
   grn_io *io;
   char *path = NULL;
-  GRN_API_ENTER;
   if (obj->header.type == GRN_PROC) {
-    return grn_dl_path(ctx, DB_OBJ(obj)->range);
+    return grn_module_path(ctx, DB_OBJ(obj)->range);
   }
+  GRN_API_ENTER;
   io = grn_obj_io(obj);
   if (io && !(io->flags & GRN_IO_TEMPORARY)) { path = io->path; }
   GRN_API_RETURN(path);
@@ -6374,9 +6376,6 @@ grn_db_init_builtin_types(grn_ctx *ctx)
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);
   }
-#ifdef NO_MECAB
-  grn_obj_register(ctx, db, "TokenMecab", 10);
-#endif /* NO_MECAB */
   grn_db_init_builtin_tokenizers(ctx);
   for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < 128; id++) {
     grn_itoh(id, buf + 3, 2);

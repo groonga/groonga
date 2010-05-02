@@ -481,7 +481,9 @@ GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                                  grn_obj_flags flags, unsigned int size);
 
-GRN_API grn_rc grn_db_load(grn_ctx *ctx, const char *path);
+GRN_API grn_rc grn_db_register(grn_ctx *ctx, const char *path);
+GRN_API grn_rc grn_db_register_tokenizer(grn_ctx *ctx, const char *name);
+GRN_API grn_rc grn_db_register_function(grn_ctx *ctx, const char *name);
 
 /**
  * grn_proc_create:
@@ -502,7 +504,7 @@ typedef struct {
   grn_obj value;
 } grn_expr_var;
 
-typedef grn_rc grn_proc_init_func(grn_ctx *ctx, const char *path);
+typedef grn_rc (*grn_module_func)(grn_ctx *ctx);
 
 typedef enum {
   GRN_PROC_TOKENIZER = 1,

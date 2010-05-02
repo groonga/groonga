@@ -20,6 +20,7 @@
 #include "token.h"
 #include "ql.h"
 #include "pat.h"
+#include "module.h"
 #include "snip.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -619,10 +620,6 @@ grn_init(void)
     grn_fmalloc_line = atoi(getenv("GRN_FMALLOC_LINE"));
   }
 #endif /* USE_FAIL_MALLOC */
-  if ((rc = grn_token_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_token_init failed (%d)", rc);
-    return rc;
-  }
   if ((rc = grn_com_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_com_init failed (%d)", rc);
     return rc;
@@ -634,6 +631,14 @@ grn_init(void)
   }
   if ((rc = grn_io_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "io initialize failed (%d)", rc);
+    return rc;
+  }
+  if ((rc = grn_modules_init())) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "modules initialize failed (%d)", rc);
+    return rc;
+  }
+  if ((rc = grn_token_init())) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_token_init failed (%d)", rc);
     return rc;
   }
   /*
@@ -690,9 +695,10 @@ grn_fin(void)
     }
   }
   grn_cache_fin();
+  grn_token_fin();
+  grn_modules_fin();
   grn_io_fin();
   grn_ctx_fin(ctx);
-  grn_token_fin();
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin();
