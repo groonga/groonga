@@ -310,6 +310,8 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 
 void *grn_ctx_alloc(grn_ctx *ctx, size_t size,
                      const char* file, int line, const char *func);
+void *grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
+                      const char* file, int line, const char *func);
 void grn_ctx_free(grn_ctx *ctx, void *ptr,
                   const char* file, int line, const char *func);
 void *grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,

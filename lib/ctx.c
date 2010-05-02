@@ -1363,6 +1363,26 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size,
   }
 }
 
+void *
+grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
+                const char* file, int line, const char *func)
+{
+  void *res = NULL;
+  if (size) {
+    /* todo : expand if possible */
+    res = grn_ctx_alloc(ctx, size, file, line, func);
+    if (res && ptr) {
+      int32_t *header = &((int32_t *)ptr)[-2];
+      size_t size_ = header[1];
+      memcpy(res, ptr, size_ > size ? size : size_);
+      grn_ctx_free(ctx, ptr, file, line, func);
+    }
+  } else {
+    grn_ctx_free(ctx, ptr, file, line, func);
+  }
+  return res;
+}
+
 void
 grn_ctx_free(grn_ctx *ctx, void *ptr,
              const char* file, int line, const char *func)
