@@ -1311,7 +1311,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
   }
   {
     int32_t i;
-    uint64_t *header;
+    int32_t *header;
     grn_io_mapinfo *mi;
     size = ((size + ALIGN_MASK) & ~ALIGN_MASK) + ALIGN_SIZE;
     if (size > GRN_CTX_SEGMENT_SIZE) {
@@ -1333,8 +1333,9 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
       mi->count = GRN_CTX_SEGMENT_VLEN;
       ctx->impl->currseg = -1;
       header = mi->map;
-      *header = (uint64_t) i;
-      return &header[1];
+      header[0] = i;
+      header[1] = (int32_t) size;
+      return &header[2];
     } else {
       i = ctx->impl->currseg;
       mi = &ctx->impl->segs[i];
@@ -1352,11 +1353,12 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
         mi->count = GRN_CTX_SEGMENT_WORD;
         ctx->impl->currseg = i;
       }
-      header = (uint64_t *)((byte *)mi->map + mi->nref);
+      header = (int32_t *)((byte *)mi->map + mi->nref);
       mi->nref += size;
       mi->count++;
-      *header = (uint64_t) i;
-      return &header[1];
+      header[0] = i;
+      header[1] = (int32_t) size;
+      return &header[2];
     }
   }
 }
@@ -1371,13 +1373,13 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
     return;
   }
   {
-    uint64_t *header = &((uint64_t *)ptr)[-1];
-    if (*header >= GRN_CTX_N_SEGMENTS) {
+    int32_t *header = &((int32_t *)ptr)[-2];
+    if (header[0] >= GRN_CTX_N_SEGMENTS) {
       ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%zu", ptr, *header);
       return;
     }
     {
-      int32_t i = (int32_t)*header;
+      int32_t i = header[0];
       grn_io_mapinfo *mi = &ctx->impl->segs[i];
       if (mi->count & GRN_CTX_SEGMENT_VLEN) {
         if (mi->map != header) {
