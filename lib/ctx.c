@@ -1383,6 +1383,19 @@ grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
   return res;
 }
 
+char *
+grn_ctx_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const char *func)
+{
+  void *res = NULL;
+  if (s) {
+    size_t size = strlen(s) + 1;
+    if ((res = grn_ctx_alloc(ctx, size, file, line, func))) {
+      memcpy(res, s, size);
+    }
+  }
+  return res;
+}
+
 void
 grn_ctx_free(grn_ctx *ctx, void *ptr,
              const char* file, int line, const char *func)
@@ -1687,7 +1700,7 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
 }
 
 void
-grn_free(grn_ctx *ctx, void *ptr, const char* file, int line)
+grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line)
 {
   if (!ctx) { return; }
   {

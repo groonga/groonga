@@ -346,12 +346,14 @@ char *grn_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const 
 #  define grn_calloc grn_calloc_default
 #  define grn_realloc grn_realloc_default
 #  define grn_strdup grn_strdup_default
+#  define grn_free grn_free_default
 #endif
 
 GRN_API void *grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
 GRN_API char *grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
+GRN_API void grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line);
 
 #ifdef USE_FAIL_MALLOC
 int grn_fail_malloc_check(size_t size, const char *file, int line, const char *func);
@@ -360,8 +362,6 @@ void *grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, con
 void *grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
 char *grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 #endif
-
-GRN_API void grn_free(grn_ctx *ctx, void *ptr, const char* file, int line);
 
 void grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func);
 
