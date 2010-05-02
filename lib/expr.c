@@ -3954,7 +3954,6 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       }
     }
   }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "(%d)", grn_table_size(ctx, res));
   GRN_API_RETURN(res);
 }
 

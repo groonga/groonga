@@ -174,6 +174,7 @@ int grn_fmalloc_line = 0;
 #define GRN_CTX_SEGMENT_WORD    (1<<31)
 #define GRN_CTX_SEGMENT_VLEN    (1<<30)
 #define GRN_CTX_SEGMENT_LIFO    (1<<29)
+#define GRN_CTX_SEGMENT_DIRTY   (1<<28)
 
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
 static void
@@ -1307,9 +1308,10 @@ grn_cache_fin(void)
 
 #define ALIGN_SIZE (1<<3)
 #define ALIGN_MASK (ALIGN_SIZE-1)
+#define GRN_CTX_ALLOC_CLEAR 1
 
 void *
-grn_ctx_alloc(grn_ctx *ctx, size_t size,
+grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
               const char* file, int line, const char *func)
 {
   if (!ctx) { return NULL; }
@@ -1366,9 +1368,26 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size,
       mi->count++;
       header[0] = i;
       header[1] = (int32_t) size;
+      if ((flags & GRN_CTX_ALLOC_CLEAR) && (mi->count & GRN_CTX_SEGMENT_DIRTY)) {
+        memset(&header[2], 0, size);
+      }
       return &header[2];
     }
   }
+}
+
+void *
+grn_ctx_malloc(grn_ctx *ctx, size_t size,
+              const char* file, int line, const char *func)
+{
+  return grn_ctx_alloc(ctx, size, 0, file, line, func);
+}
+
+void *
+grn_ctx_calloc(grn_ctx *ctx, size_t size,
+              const char* file, int line, const char *func)
+{
+  return grn_ctx_alloc(ctx, size, GRN_CTX_ALLOC_CLEAR, file, line, func);
 }
 
 void *
@@ -1378,7 +1397,7 @@ grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
   void *res = NULL;
   if (size) {
     /* todo : expand if possible */
-    res = grn_ctx_alloc(ctx, size, file, line, func);
+    res = grn_ctx_alloc(ctx, size, 0, file, line, func);
     if (res && ptr) {
       int32_t *header = &((int32_t *)ptr)[-2];
       size_t size_ = header[1];
@@ -1397,7 +1416,7 @@ grn_ctx_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const ch
   void *res = NULL;
   if (s) {
     size_t size = strlen(s) + 1;
-    if ((res = grn_ctx_alloc(ctx, size, file, line, func))) {
+    if ((res = grn_ctx_alloc(ctx, size, 0, file, line, func))) {
       memcpy(res, s, size);
     }
   }
@@ -1439,7 +1458,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
         if (!(mi->count & GRN_CTX_SEGMENT_MASK)) {
           //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d", i);
           if (i == ctx->impl->currseg) {
-            memset(mi->map, 0, mi->nref);
+            mi->count |= GRN_CTX_SEGMENT_DIRTY;
             mi->nref = 0;
           } else {
             grn_io_anon_unmap(ctx, mi, GRN_CTX_SEGMENT_SIZE);

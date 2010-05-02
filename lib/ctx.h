@@ -303,13 +303,17 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 #define GRN_ASSERT(s)
 #endif
 
-#define GRN_CTX_ALLOC(ctx,s) grn_ctx_alloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_CTX_ALLOC(ctx,s) grn_ctx_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_CTX_FREE(ctx,p) grn_ctx_free(ctx,p,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_CTX_ALLOC_L(ctx,s) grn_ctx_alloc_lifo(ctx,s,f,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_CTX_FREE_L(ctx,p) grn_ctx_free_lifo(ctx,p,__FILE__,__LINE__,__FUNCTION__)
 
-void *grn_ctx_alloc(grn_ctx *ctx, size_t size,
-                     const char* file, int line, const char *func);
+void *grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
+                    const char* file, int line, const char *func);
+void *grn_ctx_malloc(grn_ctx *ctx, size_t size,
+                    const char* file, int line, const char *func);
+void *grn_ctx_calloc(grn_ctx *ctx, size_t size,
+                    const char* file, int line, const char *func);
 void *grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
                       const char* file, int line, const char *func);
 char *grn_ctx_strdup(grn_ctx *ctx, const char *s,
