@@ -486,10 +486,13 @@ else
   else
     MECAB_CPPFLAGS="-I`$MECAB_CONFIG --inc-dir`"
     MECAB_LDFLAGS="-L`$MECAB_CONFIG --libs-only-L`"
+    _SAVE_LDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $MECAB_LDFLAGS"
     AC_SEARCH_LIBS(mecab_new,
                    mecab,
                    [MECAB_LIBS="-lmecab"],
                    [AC_MSG_ERROR("No libmecab found")])
+    LDFLAGS="$_SAVE_LDFLAGS"
     _SAVE_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $MECAB_CPPFLAGS"
     AC_CHECK_HEADER(mecab.h, , [AC_MSG_ERROR("No mecab.h found")])
