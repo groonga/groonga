@@ -534,6 +534,7 @@ AC_SUBST(function_modulesdir)
 
 AC_MSG_CHECKING(for the suffix of module shared libraries)
 suffix=$(./libtool --config | grep '^shrext_cmds=' | sed -e 's/shrext_cmds=//')
+suffix=$(echo "$suffix" | sed -e "s/'/\"/g")
 AC_MSG_RESULT($suffix)
 AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, [$suffix], "module suffix")
 
