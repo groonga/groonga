@@ -123,10 +123,10 @@ grn_module_open(grn_ctx *ctx, const char *filename)
   if ((dl = grn_dl_open(filename))) {
     if ((id = grn_hash_add(ctx, grn_modules, filename, PATHLEN(filename),
                            (void **)&module, NULL))) {
-      *module = GRN_MALLOCN(grn_module, 1);
+      *module = GRN_GMALLOCN(grn_module, 1);
       if (*module) {
         if (grn_module_initialize(ctx, *module, dl, filename)) {
-          GRN_FREE(*module);
+          GRN_GFREE(*module);
           *module = NULL;
         }
       }
@@ -160,7 +160,7 @@ grn_module_close(grn_ctx *ctx, grn_id id)
   if (!grn_dl_close(module->dl)) {
     SERR(grn_dl_close_error_label);
   }
-  GRN_FREE(module);
+  GRN_GFREE(module);
   return grn_hash_delete_by_id(ctx, grn_modules, id, NULL);
 }
 
