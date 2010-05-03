@@ -155,7 +155,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   if (!s) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
   GRN_TINY_ARRAY_EACH(&s->values, 1, grn_pat_curr_id(ctx, s->keys), id, vp, {
-    if (*vp) { grn_obj_close(ctx, *vp); }
+    if (*vp) { grn_obj_close(&grn_gctx, *vp); }
   });
 /* grn_tiny_array_fin should be refined.. */ 
 #ifdef WIN32
