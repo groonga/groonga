@@ -5273,43 +5273,43 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               switch (spec->header.type) {
               case GRN_TYPE :
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { *vp = (grn_obj *)grn_type_open(ctx, spec); }
+                if (!*vp) { *vp = (grn_obj *)grn_type_open(&grn_gctx, spec); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_HASH_KEY :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { *vp = (grn_obj *)grn_hash_open(ctx, buffer); }
+                if (!*vp) { *vp = (grn_obj *)grn_hash_open(&grn_gctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_PAT_KEY :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { *vp = (grn_obj *)grn_pat_open(ctx, buffer); }
+                if (!*vp) { *vp = (grn_obj *)grn_pat_open(&grn_gctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_NO_KEY :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { *vp = (grn_obj *)grn_array_open(ctx, buffer); }
+                if (!*vp) { *vp = (grn_obj *)grn_array_open(&grn_gctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_TABLE_VIEW :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { *vp = grn_view_open(ctx, buffer); }
+                if (!*vp) { *vp = grn_view_open(&grn_gctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_COLUMN_VAR_SIZE :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { *vp = (grn_obj *)grn_ja_open(ctx, buffer); }
+                if (!*vp) { *vp = (grn_obj *)grn_ja_open(&grn_gctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_COLUMN_FIX_SIZE :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { *vp = (grn_obj *)grn_ra_open(ctx, buffer); }
+                if (!*vp) { *vp = (grn_obj *)grn_ra_open(&grn_gctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 break;
               case GRN_COLUMN_INDEX :
@@ -5317,14 +5317,14 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 {
                   grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
                   CRITICAL_SECTION_ENTER(s->lock);
-                  if (!*vp) { *vp = (grn_obj *)grn_ii_open(ctx, buffer, table); }
+                  if (!*vp) { *vp = (grn_obj *)grn_ii_open(&grn_gctx, buffer, table); }
                   CRITICAL_SECTION_LEAVE(s->lock);
                 }
                 break;
               case GRN_PROC :
                 GET_PATH(spec, buffer, s, id);
                 CRITICAL_SECTION_ENTER(s->lock);
-                if (!*vp) { grn_db_register(ctx, buffer); }
+                if (!*vp) { grn_db_register(&grn_gctx, buffer); }
                 CRITICAL_SECTION_LEAVE(s->lock);
                 res = *vp;
                 goto exit;
