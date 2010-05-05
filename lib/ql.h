@@ -171,6 +171,7 @@ struct _grn_ctx_impl {
   /* memory pool portion */
   int32_t lifoseg;
   int32_t currseg;
+  grn_critical_section lock;
   grn_io_mapinfo segs[GRN_CTX_N_SEGMENTS];
 
 #ifdef USE_DYNAMIC_MALLOC_CHANGE

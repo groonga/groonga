@@ -111,7 +111,9 @@ grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path)
 {
   grn_db *s;
+  grn_ctx *ctx_ = ctx;
   GRN_API_ENTER;
+  ctx = &grn_gctx;
   if (path && strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
       grn_tiny_array_init(ctx, &s->values, sizeof(grn_obj *),
@@ -128,6 +130,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
           s->obj.header.domain = GRN_ID_NIL;
           DB_OBJ(&s->obj)->range = GRN_ID_NIL;
           grn_ctx_use(ctx, (grn_obj *)s);
+          grn_ctx_use(ctx_, (grn_obj *)s);
           grn_db_init_builtin_tokenizers(ctx);
           grn_db_init_builtin_query(ctx);
           GRN_API_RETURN((grn_obj *)s);
@@ -5344,13 +5347,13 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 r->db = db;
                 size = grn_vector_get_element(ctx, &v, 2, &p, NULL, NULL);
                 if (size) {
-                  if ((r->source = GRN_MALLOC(size))) {
+                  if ((r->source = GRN_GMALLOC(size))) {
                     memcpy(r->source, p, size);
                     r->source_size = size;
                   }
                 }
                 size = grn_vector_get_element(ctx, &v, 3, &p, NULL, NULL);
-                grn_hook_unpack(ctx, r, p, size);
+                grn_hook_unpack(&grn_gctx, r, p, size);
               }
             }
             grn_obj_close(ctx, &v);
@@ -5460,7 +5463,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       rc = GRN_SUCCESS;
       break;
     case GRN_DB :
-      rc = grn_db_close(ctx, obj);
+      rc = grn_db_close(&grn_gctx, obj);
       break;
     case GRN_TABLE_PAT_KEY :
       rc = grn_pat_close(ctx, (grn_pat *)obj);
