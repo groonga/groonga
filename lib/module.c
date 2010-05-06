@@ -15,6 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <stdio.h>
 #include <string.h>
 #include "db.h"
 #include "module.h"
@@ -340,10 +341,14 @@ grn_db_register(grn_ctx *ctx, const char *path)
   }
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
+    FILE *module_file;
     char complemented_path[PATH_MAX];
 
-    id = grn_module_open(ctx, path);
-    if (!id) {
+    module_file = fopen(path, "r");
+    if (module_file) {
+      fclose(module_file);
+      id = grn_module_open(ctx, path);
+    } else {
       ctx->errlvl = GRN_OK;
       ctx->rc = GRN_SUCCESS;
       strcpy(complemented_path, path);
