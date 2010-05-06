@@ -102,6 +102,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/fixtures/inverted-index/Makefile
                  test/unit/fixtures/stress/Makefile
                  test/unit/fixtures/performance/Makefile
+                 test/unit/fixtures/function-modules/Makefile
                  test/unit/util/Makefile
                  test/unit/core/Makefile
                  test/unit/memcached/Makefile

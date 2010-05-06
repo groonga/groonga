@@ -2025,6 +2025,60 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
 }
 
 static grn_obj *
+proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_expr_var *vars;
+  grn_content_type ct;
+  grn_obj *buf = args[0];
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
+  if (GRN_TEXT_LEN(&vars[0].value)) {
+    const char *path;
+    path = GRN_TEXT_VALUE(&vars[0].value);
+    grn_db_register(ctx, path);
+  }
+  print_return_code(ctx, buf, ct);
+  return buf;
+}
+
+static grn_obj *
+proc_register_tokenizer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_expr_var *vars;
+  grn_content_type ct;
+  grn_obj *buf = args[0];
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
+  if (GRN_TEXT_LEN(&vars[0].value)) {
+    const char *name;
+    name = GRN_TEXT_VALUE(&vars[0].value);
+    grn_db_register_tokenizer(ctx, name);
+  }
+  print_return_code(ctx, buf, ct);
+  return buf;
+}
+
+static grn_obj *
+proc_register_function(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  uint32_t nvars;
+  grn_expr_var *vars;
+  grn_content_type ct;
+  grn_obj *buf = args[0];
+  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
+  if (GRN_TEXT_LEN(&vars[0].value)) {
+    const char *name;
+    name = GRN_TEXT_VALUE(&vars[0].value);
+    grn_db_register_function(ctx, name);
+  }
+  print_return_code(ctx, buf, ct);
+  return buf;
+}
+
+static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
@@ -2192,6 +2246,18 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   /* TODO: Take "output_type" argument. Do we need GRN_CONTENT_GQTP? */
   DEF_PROC("dump", proc_dump, 0, vars);
+
+  DEF_VAR(vars[0], "path");
+  DEF_VAR(vars[1], "output_type");
+  DEF_PROC("register", proc_register, 2, vars);
+
+  DEF_VAR(vars[0], "name");
+  DEF_VAR(vars[1], "output_type");
+  DEF_PROC("register_tokenizer", proc_register_tokenizer, 2, vars);
+
+  DEF_VAR(vars[0], "name");
+  DEF_VAR(vars[1], "output_type");
+  DEF_PROC("register_function", proc_register_function, 2, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);

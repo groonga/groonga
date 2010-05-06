@@ -28,7 +28,8 @@ noinst_LTLIBRARIES =				\
 	test-dump.la				\
 	test-encoding.la			\
 	test-view.la				\
-	test-view-operations.la
+	test-view-operations.la			\
+	test-register-function.la
 endif
 
 EXTRA_DIST =					\
@@ -85,3 +86,4 @@ test_dump_la_SOURCES			= test-dump.c
 test_encoding_la_SOURCES		= test-encoding.c
 test_view_la_SOURCES			= test-view.c
 test_view_operations_la_SOURCES		= test-view-operations.c
+test_register_function_la_SOURCES	= test-register-function.c
