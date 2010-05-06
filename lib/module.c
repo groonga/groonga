@@ -87,7 +87,9 @@ grn_module_initialize(grn_ctx *ctx, grn_module *module,
   grn_dl_clear_error;                                                   \
   module->type ## _func = grn_dl_sym(dl, type ## _func_name);           \
   if (!module->type ## _func) {                                         \
-    SERR(grn_dl_sym_error_label);                                       \
+    const char *label;                                                  \
+    label = grn_dl_sym_error_label;                                     \
+    SERR(label);                                                        \
   }
 
   GET_SYMBOL(init);
@@ -133,17 +135,23 @@ grn_module_open(grn_ctx *ctx, const char *filename)
       if (!*module) {
         grn_hash_delete_by_id(ctx, grn_modules, id, NULL);
         if (!grn_dl_close(dl)) {
-          SERR(grn_dl_close_error_label);
+          const char *label;
+          label = grn_dl_close_error_label;
+          SERR(label);
         }
         id = GRN_ID_NIL;
       }
     } else {
       if (!grn_dl_close(dl)) {
-        SERR(grn_dl_close_error_label);
+        const char *label;
+        label = grn_dl_close_error_label;
+        SERR(label);
       }
     }
   } else {
-    SERR(grn_dl_open_error_label);
+    const char *label;
+    label = grn_dl_open_error_label;
+    SERR(label);
   }
   return id;
 }
@@ -158,7 +166,9 @@ grn_module_close(grn_ctx *ctx, grn_id id)
     return GRN_INVALID_ARGUMENT;
   }
   if (!grn_dl_close(module->dl)) {
-    SERR(grn_dl_close_error_label);
+    const char *label;
+    label = grn_dl_close_error_label;
+    SERR(label);
   }
   GRN_GFREE(module);
   return grn_hash_delete_by_id(ctx, grn_modules, id, NULL);
@@ -175,7 +185,9 @@ grn_module_sym(grn_ctx *ctx, grn_id id, const char *symbol)
   }
   grn_dl_clear_error;
   if (!(func = grn_dl_sym(module->dl, symbol))) {
-    SERR(grn_dl_sym_error_label);
+    const char *label;
+    label = grn_dl_sym_error_label;
+    SERR(label);
   }
   return func;
 }
