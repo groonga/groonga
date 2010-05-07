@@ -472,6 +472,8 @@ AC_ARG_WITH(mecab,
     [use mecab for morphological analysis. [default=yes]])],
   [with_mecab="$withval"],
   [with_mecab="yes"])
+AC_MSG_CHECKING([whether enable MeCab])
+AC_MSG_RESULT($with_mecab)
 if test "x$with_mecab" = "xno"; then
   AC_DEFINE(NO_MECAB, [1], [without MeCab])
 else
