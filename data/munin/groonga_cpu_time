@@ -4,7 +4,7 @@
 #%# capabilities=autoconf
 
 label = ENV["label"]
-pid_file = ENV["pidfile"]
+pid_file = ENV["pid_file"]
 
 command = ARGV.shift
 

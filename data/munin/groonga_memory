@@ -36,6 +36,11 @@ EOF
     *)
 esac
 
+if [ -z "${pid_file}" ]; then
+    echo "PID file isn't specified by env.pid_file"
+    exit 1
+fi
+
 groonga_pid=$(cat ${pid_file})
 memory_in_kb=$(ps h -o rss -p ${groonga_pid})
 echo "memory.value ${memory_in_kb}000"
