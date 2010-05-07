@@ -19,7 +19,7 @@ def parse(result)
   else
     [false, header[3]]
   end
-rescue JSON::ParseError
+rescue JSON::ParserError
   [false, $!.message]
 end
 
