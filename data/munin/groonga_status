@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+#%# family=auto
+#%# capabilities=autoconf
+
+require 'json'
+
+label = ENV["label"]
+@groonga = ENV["groonga"] || "groonga"
+@host = ENV["host"] || "localhost"
+@port = ENV["port"] || 10042
+
+command = ARGV.shift
+
+def parse(result)
+  header, body = JSON.parse(result)
+  if header[0].zero?
+    [true, body]
+  else
+    [false, header[3]]
+  end
+rescue JSON::ParseError
+  [false, $!.message]
+end
+
+def run(command, *args)
+  parse(`#{@groonga} -p #{@port} -c #{@host} #{command} #{args.join(' ')}`)
+end
+
+def parse_list(header, list)
+  list.collect do |item|
+    parsed_item = {}
+    header.each_with_index do |(name, type), i|
+      parsed_item[name] = item[i]
+    end
+    parsed_item
+  end
+end
+
+case command
+when "autoconf", "detect"
+  success, body = run("status")
+  if success
+    puts "yes"
+    exit(true)
+  else
+    puts "no (#{body})"
+    exit(false)
+  end
+when "config"
+  if label.nil?
+    title = "groonga: status"
+  else
+    title = "groonga: #{label}: status"
+  end
+  puts <<EOF
+graph_title #{title}
+graph_vlabel status
+graph_category groonga
+graph_info groonga status
+
+alloc_count.label alloc count
+alloc_count.type GAUGE
+EOF
+  exit(true)
+end
+
+success, body = run("status")
+exit(false) unless success
+puts <<EOF
+alloc_count.value #{body["alloc_count"]}
+EOF

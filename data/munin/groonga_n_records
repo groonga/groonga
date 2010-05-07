@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+
+#%# family=auto
+#%# capabilities=autoconf
+
+require 'json'
+
+label = ENV["label"]
+@groonga = ENV["groonga"] || "groonga"
+@host = ENV["host"] || "localhost"
+@port = ENV["port"] || 10042
+
+command = ARGV.shift
+
+def parse(result)
+  header, body = JSON.parse(result)
+  if header[0].zero?
+    [true, body]
+  else
+    [false, header[3]]
+  end
+rescue JSON::ParseError
+  [false, $!.message]
+end
+
+def run(command, *args)
+  parse(`#{@groonga} -p #{@port} -c #{@host} #{command} #{args.join(' ')}`)
+end
+
+def parse_list(header, list)
+  list.collect do |item|
+    parsed_item = {}
+    header.each_with_index do |(name, type), i|
+      parsed_item[name] = item[i]
+    end
+    parsed_item
+  end
+end
+
+case command
+when "autoconf", "detect"
+  success, body = run("status")
+  if success
+    puts "yes"
+    exit(true)
+  else
+    puts "no (#{body})"
+    exit(false)
+  end
+when "config"
+  if label.nil?
+    title = "groonga: number of records"
+  else
+    title = "groonga: #{label}: number of records"
+  end
+  puts <<EOF
+graph_title #{title}
+graph_vlabel records
+graph_category groonga
+graph_info number of records in groonga table
+EOF
+  success, body = run("table_list")
+  exit(false) unless success
+  parse_list(body[0], body[1..-1]).each do |table|
+    name = table["name"]
+    puts <<EOF
+
+#{name}.label #{name}
+#{name}.type GAUGE
+EOF
+  end
+  exit(true)
+end
+
+success, body = run("table_list")
+exit(false) unless success
+parse_list(body[0], body[1..-1]).each do |table|
+  name = table["name"]
+  success, body = run("select", "#{name} --limit 0")
+  exit(false) unless success
+  n_records = body[0][0][0]
+  puts <<EOF
+#{name}.value #{n_records}
+EOF
+end

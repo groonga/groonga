@@ -92,6 +92,8 @@ AC_CONFIG_FILES([Makefile
                  modules/functions/Makefile
                  examples/Makefile
                  apt/Makefile
+                 data/Makefile
+                 data/munin/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
