@@ -8,7 +8,7 @@ require 'json'
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @host = ENV["host"] || "localhost"
-@port = ENV["port"] || 10042
+@port = ENV["port"] || 10041
 
 command = ARGV.shift
 
