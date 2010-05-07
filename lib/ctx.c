@@ -1377,7 +1377,10 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
       }
     }
     /*
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "+(%p) %s:%d(%s) (%d:%d)%p mi(%d:%d)", ctx, file, line, func, header[0], header[1], &header[2], mi->nref, (mi->count & GRN_CTX_SEGMENT_MASK));
+    {
+      char g = (ctx == &grn_gctx) ? 'g' : ' ';
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "+%c(%p) %s:%d(%s) (%d:%d)%p mi(%d:%d)", g, ctx, file, line, func, header[0], header[1], &header[2], mi->nref, (mi->count & GRN_CTX_SEGMENT_MASK));
+    }
     */
     res = &header[2];
   }
@@ -1453,14 +1456,13 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
     /*
     {
       int32_t i = header[0];
-      char c = 'X';
+      char c = 'X', g = (ctx == &grn_gctx) ? 'g' : ' ';
       grn_io_mapinfo *mi = &ctx->impl->segs[i];
       if (!(mi->count & GRN_CTX_SEGMENT_VLEN) &&
           mi->map <= (void *)header && (char *)header < ((char *)mi->map + GRN_CTX_SEGMENT_SIZE)) { c = '-'; }
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "%c(%p) %s:%d(%s) (%d:%d)%p mi(%d:%d)", c, ctx, file, line, func, header[0], header[1], &header[2], mi->nref, (mi->count & GRN_CTX_SEGMENT_MASK));
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "%c%c(%p) %s:%d(%s) (%d:%d)%p mi(%d:%d)", c, g, ctx, file, line, func, header[0], header[1], &header[2], mi->nref, (mi->count & GRN_CTX_SEGMENT_MASK));
     }
     */
-
     {
       int32_t i = header[0];
       grn_io_mapinfo *mi = &ctx->impl->segs[i];

@@ -5516,6 +5516,27 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN(rc);
 }
 
+void
+grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
+{
+  if (obj &&
+      (!GRN_DB_OBJP(obj) ||
+       (((grn_db_obj *)obj)->id & GRN_OBJ_TMP_OBJECT) ||
+       obj->header.type == GRN_DB)) {
+    grn_obj_close(ctx, obj);
+  }
+#ifdef CALL_FINALIZER
+  else if (GRN_DB_OBJP(obj)) {
+    grn_db_obj *dob = DB_OBJ(obj);
+    if (dob->finalizer) {
+      dob->finalizer(ctx, 1, &obj, &dob->user_data);
+      dob->finalizer = NULL;
+      dob->user_data.ptr = NULL;
+    }
+  }
+#endif /* CALL_FINALIZER */
+}
+
 #define VECTOR_CLEAR(ctx,obj) {\
   if ((obj)->u.v.body && !((obj)->header.impl_flags & GRN_OBJ_REFER)) {\
     grn_obj_close((ctx), (obj)->u.v.body);\
