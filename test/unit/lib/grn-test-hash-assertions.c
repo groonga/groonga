@@ -49,7 +49,7 @@ grn_test_assert_open_hash_helper(grn_hash **hash, GrnTestHashFactory *factory)
   *hash = grn_test_hash_factory_open(factory, &error);
   gcut_assert_error(error);
   cut_assert_not_null(*hash);
-  gcut_assert_equal_list_string(NULL, grn_collect_logger_get_messages(logger));
+  gcut_assert_equal_list_string("unmap in ctx_fin(0,0,0)", grn_collect_logger_get_messages(logger));
 }
 
 void
