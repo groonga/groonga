@@ -173,10 +173,10 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   }
 #endif
   grn_tiny_array_fin(&s->values);
-  grn_pat_close(ctx, s->keys);
+  grn_pat_close(&grn_gctx, s->keys);
   CRITICAL_SECTION_FIN(s->lock);
-  if (s->specs) { grn_ja_close(ctx, s->specs); }
-  GRN_FREE(s);
+  if (s->specs) { grn_ja_close(&grn_gctx, s->specs); }
+  GRN_GFREE(s);
   if (ctx->impl && ctx->impl->db == db) {
     grn_cache_expire(-1);
     ctx->impl->db = NULL;
@@ -5546,7 +5546,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       rc = GRN_SUCCESS;
       break;
     case GRN_DB :
-      rc = grn_db_close(&grn_gctx, obj);
+      rc = grn_db_close(ctx, obj);
       break;
     case GRN_TABLE_PAT_KEY :
       rc = grn_pat_close(ctx, (grn_pat *)obj);
