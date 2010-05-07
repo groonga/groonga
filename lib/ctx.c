@@ -444,7 +444,7 @@ grn_ctx_fin(grn_ctx *ctx)
       grn_io_mapinfo *mi;
       for (i = 0, mi = ctx->impl->segs; i < GRN_CTX_N_SEGMENTS; i++, mi++) {
         if (mi->map) {
-          GRN_LOG(ctx, GRN_LOG_NOTICE, "unmap in ctx_fin(%d,%d,%d)", i, (mi->count & GRN_CTX_SEGMENT_MASK), mi->nref);
+          //GRN_LOG(ctx, GRN_LOG_NOTICE, "unmap in ctx_fin(%d,%d,%d)", i, (mi->count & GRN_CTX_SEGMENT_MASK), mi->nref);
           if (mi->count & GRN_CTX_SEGMENT_VLEN) {
             grn_io_anon_unmap(ctx, mi, mi->nref * grn_pagesize);
           } else {
