@@ -18,6 +18,9 @@
 #include <groonga_in.h>
 #include <ctx.h>
 #include <db.h>
+
+#ifndef NO_MECAB
+
 #include <str.h>
 #include <token.h>
 
@@ -26,7 +29,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifndef NO_MECAB
 static mecab_t *sole_mecab;
 static grn_critical_section sole_mecab_lock;
 

@@ -92,6 +92,8 @@ AC_CONFIG_FILES([Makefile
                  modules/functions/Makefile
                  examples/Makefile
                  apt/Makefile
+                 data/Makefile
+                 data/munin/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
@@ -398,24 +400,19 @@ else
 fi
 
 # check GLib for benchmark
-AC_MSG_NOTICE(chcking if benchmark is available)
 m4_ifdef([AM_PATH_GLIB_2_0], [
 GLIB_REQUIRED=2.8.0
 AC_SUBST(GLIB_REQUIRED)
 AM_PATH_GLIB_2_0($GLIB_REQUIRED,
-                 [ac_cv_benchmark_available="yes"],
-                 [ac_cv_benchmark_available="no"],
+                 [ac_benchmark_available="yes"],
+                 [ac_benchmark_available="no"],
                  [gobject gthread])
 ],
-[ac_cv_benchmark_available="no"])
-if test "$ac_cv_benchmark_available" = "yes"; then
-  AC_MSG_NOTICE(benchmark is available)
-else
-  AC_MSG_NOTICE(benchmark isn't available)
-fi
-
-AM_CONDITIONAL([WITH_BENCHMARK], [test "$ac_cv_benchmark_available" = "yes"])
-if test "$ac_cv_benchmark_available" = "yes"; then
+[ac_benchmark_available="no"])
+AC_MSG_CHECKING(for benchmark availablity)
+AC_MSG_RESULT($ac_benchmark_available)
+AM_CONDITIONAL([WITH_BENCHMARK], [test "$ac_benchmark_available" = "yes"])
+if test "$ac_benchmark_available" = "yes"; then
   AC_DEFINE(WITH_BENCHMARK, 1, [Define to 1 if benchamrk is available])
 fi
 
@@ -472,6 +469,8 @@ AC_ARG_WITH(mecab,
     [use mecab for morphological analysis. [default=yes]])],
   [with_mecab="$withval"],
   [with_mecab="yes"])
+AC_MSG_CHECKING([whether enable MeCab])
+AC_MSG_RESULT($with_mecab)
 if test "x$with_mecab" = "xno"; then
   AC_DEFINE(NO_MECAB, [1], [without MeCab])
 else
