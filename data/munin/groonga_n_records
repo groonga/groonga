@@ -3,12 +3,14 @@
 #%# family=auto
 #%# capabilities=autoconf
 
+require 'shellwords'
 require 'json'
 
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @host = ENV["host"] || "localhost"
 @port = ENV["port"] || 10041
+@path = ENV["path"]
 
 command = ARGV.shift
 
@@ -24,7 +26,12 @@ rescue JSON::ParserError
 end
 
 def run(command, *args)
-  parse(`#{@groonga} -p #{@port} -c #{@host} #{command} #{args.join(' ')}`)
+  if @path
+    path = Shellwords.shellescape(@path)
+    parse(`#{@groonga} #{path} #{command} #{args.join(' ')}`)
+  else
+    parse(`#{@groonga} -p #{@port} -c #{@host} #{command} #{args.join(' ')}`)
+  end
 end
 
 def parse_list(header, list)
