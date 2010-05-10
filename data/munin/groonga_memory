@@ -44,6 +44,8 @@ if [ -z "${pid_file}" ]; then
 fi
 
 groonga_pid=$(cat ${pid_file})
-ps h -o rss,vsz -p ${groonga_pid} | read rss_in_kb vsz_in_kb
+read rss_in_kb vsz_in_kb <<EOC
+$(ps h -o rss,vsz -p ${groonga_pid})
+EOC
 echo "rss.value ${rss_in_kb}000"
 echo "vsz.value ${vsz_in_kb}000"
