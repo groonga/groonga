@@ -113,7 +113,7 @@ AC_CONFIG_FILES([Makefile
 AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h pthread.h sys/resource.h)
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h)
-AC_CHECK_FUNCS(localtime_r)
+AC_CHECK_FUNCS(localtime_r gmtime_r)
 AC_SYS_LARGEFILE
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T

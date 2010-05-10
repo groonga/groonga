@@ -94,14 +94,14 @@ grn_rc
 grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
 {
   struct tm *ltm;
-#ifdef WIN32
-  time_t tvsec = (time_t) tv->tv_sec;
-  ltm = localtime(&tvsec);
-#else /* WIN32 */
+#ifdef HAVE_LOCALTIME_R
   struct tm tm;
   time_t t = tv->tv_sec;
   ltm = localtime_r(&t, &tm);
-#endif /* WIN32 */
+#else /* HAVE_LOCALTIME_R */
+  time_t tvsec = (time_t) tv->tv_sec;
+  ltm = localtime(&tvsec);
+#endif /* HAVE_LOCALTIME_R */
   if (!ltm) { SERR("localtime"); }
   snprintf(buf, GRN_TIMEVAL_STR_SIZE - 1, GRN_TIMEVAL_STR_FORMAT,
            ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
