@@ -510,11 +510,11 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
   GRN_UINT32_INIT(&vars[2].value, 0);
 
   if (grn_db_register_tokenizer(ctx, "mecab")) {
+    int added;
     grn_obj *db;
     grn_id id;
-
     db = grn_ctx_db(ctx);
-    id = grn_obj_register(ctx, db, "TokenMecab", 10);
+    id = grn_pat_add(ctx, ((grn_db *)db)->keys, "TokenMecab", 10, NULL, &added);
     if (id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
     ctx->errlvl = GRN_OK;
     ctx->rc = GRN_SUCCESS;
