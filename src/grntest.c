@@ -259,7 +259,7 @@ escape_command(char *in, int ilen,  char *out, int olen)
 
   while (i < ilen) {
     if (j >= olen) {
-      fprintf(stderr, "too many escapse:%s\n", in);
+      fprintf(stderr, "too many escape:%s\n", in);
       exit(1);
     }
 
