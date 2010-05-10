@@ -87,6 +87,7 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
+  grn_obj_close(context, database);
   grn_ctx_fin(context);
   g_free(context);
   teardown_grn_logger(logger);
@@ -461,6 +462,7 @@ test_uvector_column(gconstpointer data)
                              type_name,
                              gcut_data_get_string(data, "expected"));
   grn_test_assert_dump(expected);
+  GRN_OBJ_FIN(context, &uvector);
 }
 
 void
@@ -507,6 +509,7 @@ test_vector_column(gconstpointer data)
                              type_name,
                              gcut_data_get_string(data, "expected"));
   grn_test_assert_dump(expected);
+  GRN_OBJ_FIN(context, &vector);
 }
 
 void
