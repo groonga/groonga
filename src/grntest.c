@@ -72,6 +72,7 @@ static int grntest_stop_flag = 0;
 static int grntest_detail_on = 0;
 static int grntest_remote_mode = 0;
 static int grntest_localonly = 0;
+static int grntest_owndb_mode = 0;
 #define TMPFILE "_grntest.tmp"
 
 static grn_ctx grntest_server_context;
@@ -125,6 +126,7 @@ static char grntest_date[BUF_LEN];
 static char grntest_serverhost[BUF_LEN];
 static char grntest_log_tmpbuf[LOGBUF_LEN];
 static int grntest_serverport;
+static const char *grntest_dbpath;
 
 struct commandtable {
   char *command[MAX_COMMAND];
@@ -162,6 +164,7 @@ static struct job grntest_job[MAX_CON];
 static int grntest_jobdone;
 static int grntest_jobnum;
 static grn_ctx grntest_ctx[MAX_CON];
+static grn_obj *grntest_owndb[MAX_CON];
 
 grn_obj grntest_starttime, grntest_jobs_start;
 
@@ -1558,7 +1561,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
   int i, j, len, line;
   int tid = 0;
   FILE *fp;
-  struct commandtable *ctable;
+  struct commandtable *ctable = NULL;
   char tmpbuf[MAX_COMMAND_LEN];
 
   for (i = 0; i < jobnum; i++) {
@@ -1682,7 +1685,16 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
         error_exit(ctx, 1);
       }
     } else {
-      grn_ctx_use(&grntest_ctx[i], grntest_db);
+      if (grntest_owndb_mode) {
+        grntest_owndb[i] = grn_db_open(&grntest_ctx[i], grntest_dbpath);
+        if (grntest_owndb[i] == NULL) {
+          fprintf(stderr, "Cannot open db:%s\n", grntest_dbpath);
+          exit(1);
+        }
+      }
+      else {
+        grn_ctx_use(&grntest_ctx[i], grntest_db);
+      }
     }
     if (report_p(grntest_task[i].jobtype)) {
       grntest_detail_on++;
@@ -1703,6 +1715,9 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
   thread_main(ctx, task_num);
 
   for (i = 0; i < task_num; i++) {
+    if (grntest_owndb_mode) {
+      grn_obj_close(&grntest_ctx[i], grntest_owndb[i]);
+    }
     grn_ctx_fin(&grntest_ctx[i]);
     qnum = qnum + grntest_task[i].qnum;
   }
@@ -2508,6 +2523,7 @@ usage(void)
          "  --log-output-dir:          specify output dir (default: current)\n"
          "  --noftp:                   omit ftp connection\n"
          "  --output-type <tsv/json>:  specify output-type (default: json)\n"
+         "  --own_db  open dbs for each ctx\n"
          "  -p, --port <port number>:  server port number (default: %d)\n",
          DEFAULT_DEST, DEFAULT_PORT);
   exit(1);
@@ -2519,6 +2535,7 @@ enum {
   mode_noftp,
   mode_usage,
   mode_localonly,
+  mode_owndb,
 };
 
 static
@@ -2670,6 +2687,7 @@ main(int argc, char **argv)
     {'\0', "noftp", NULL, mode_noftp, getopt_op_update},
     {'h', "help", NULL, mode_usage, getopt_op_update},
     {'\0', "localonly", NULL, mode_localonly, getopt_op_update},
+    {'\0', "owndb", NULL, mode_owndb, getopt_op_update},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2692,6 +2710,7 @@ main(int argc, char **argv)
   if (i < argc - 1) {
     dbname = argv[i+1];
   }
+  grntest_dbpath = dbname;
 
   if (mode == mode_list) {
     ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data",
@@ -2701,6 +2720,12 @@ main(int argc, char **argv)
   if (mode == mode_localonly) {
     grntest_localonly = 1;
     grntest_remote_mode = 1;
+  }
+
+  if (mode == mode_owndb) {
+    grntest_localonly = 1;
+    grntest_remote_mode = 1;
+    grntest_owndb_mode = 1;
   }
 
   if ((scrname == NULL) || (dbname == NULL)) {
