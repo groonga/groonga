@@ -19,8 +19,6 @@
 #include <ctx.h>
 #include <db.h>
 
-#ifndef NO_MECAB
-
 #include <str.h>
 #include <token.h>
 
@@ -159,15 +157,12 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_FREE(token);
   return NULL;
 }
-#endif
 
 grn_rc
 grn_module_init_mecab(grn_ctx *ctx)
 {
-#ifndef NO_MECAB
   sole_mecab = NULL;
   CRITICAL_SECTION_INIT(sole_mecab_lock);
-#endif
 
   return GRN_SUCCESS;
 }
@@ -175,14 +170,6 @@ grn_module_init_mecab(grn_ctx *ctx)
 grn_rc
 grn_module_register_mecab(grn_ctx *ctx)
 {
-#ifdef NO_MECAB
-  grn_obj *db;
-  grn_id id;
-
-  db = grn_ctx_db(ctx);
-  id = grn_obj_register(ctx, db, "TokenMecab", 10);
-  if (id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
-#else
   grn_obj *obj;
   grn_expr_var vars[] = {
     {NULL, 0},
@@ -196,7 +183,6 @@ grn_module_register_mecab(grn_ctx *ctx)
   obj = grn_proc_create(ctx, "TokenMecab", 10, GRN_PROC_TOKENIZER,
                         mecab_init, mecab_next, mecab_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
-#endif
 
   return GRN_SUCCESS;
 }
@@ -204,13 +190,11 @@ grn_module_register_mecab(grn_ctx *ctx)
 grn_rc
 grn_module_fin_mecab(grn_ctx *ctx)
 {
-#ifndef NO_MECAB
   if (sole_mecab) {
     mecab_destroy(sole_mecab);
     sole_mecab = NULL;
   }
   CRITICAL_SECTION_FIN(sole_mecab_lock);
-#endif
 
   return GRN_SUCCESS;
 }

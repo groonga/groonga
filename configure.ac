@@ -471,9 +471,7 @@ AC_ARG_WITH(mecab,
   [with_mecab="yes"])
 AC_MSG_CHECKING([whether enable MeCab])
 AC_MSG_RESULT($with_mecab)
-if test "x$with_mecab" = "xno"; then
-  AC_DEFINE(NO_MECAB, [1], [without MeCab])
-else
+if test "x$with_mecab" = "xyes"; then
   # mecab-config
   AC_ARG_WITH(mecab-config,
     [AS_HELP_STRING([--with-mecab-config=PATH],
@@ -481,7 +479,7 @@ else
     [AC_CHECK_FILE("$withval", MECAB_CONFIG="$withval", MECAB_CONFIG=no)],
     [AC_PATH_PROG(MECAB_CONFIG, mecab-config, no)])
   if test "x$MECAB_CONFIG" = "xno"; then
-    AC_DEFINE(NO_MECAB, [1], [without MeCab])
+    with_mecab="no"
   else
     MECAB_CPPFLAGS="-I`$MECAB_CONFIG --inc-dir`"
     MECAB_LDFLAGS="-L`$MECAB_CONFIG --libs-only-L`"
@@ -504,6 +502,10 @@ else
     AC_SUBST(MECAB_LIBS)
   fi
 fi
+if test "x$with_mecab" = "xyes"; then
+  AC_DEFINE(WITH_MECAB, [1], [use MeCab])
+fi
+AM_CONDITIONAL(WITH_MECAB, test "x$with_mecab" = "xyes")
 
 # futex check
 AC_ARG_ENABLE(futex,

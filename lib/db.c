@@ -6508,6 +6508,9 @@ grn_db_init_builtin_types(grn_ctx *ctx)
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);
   }
+#ifndef WITH_MECAB
+  grn_obj_register(ctx, db, "TokenMecab", 10);
+#endif
   grn_db_init_builtin_tokenizers(ctx);
   for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < 128; id++) {
     grn_itoh(id, buf + 3, 2);

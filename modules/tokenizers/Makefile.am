@@ -11,7 +11,10 @@ AM_LDFLAGS =					\
 LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
 
-tokenizer_modules_LTLIBRARIES = mecab.la
+tokenizer_modules_LTLIBRARIES =
+if WITH_MECAB
+tokenizer_modules_LTLIBRARIES += mecab.la
+endif
 
 mecab_la_CPPFLAGS = $(MECAB_CPPFLAGS)
 mecab_la_SOURCES = mecab.c

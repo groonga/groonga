@@ -76,6 +76,7 @@ grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
 grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
 grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);
 
+grn_rc grn_db_init_mecab_tokenizer(grn_ctx *ctx);
 grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
 
 #ifdef __cplusplus
