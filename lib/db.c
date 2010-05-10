@@ -59,6 +59,7 @@ gen_pathname(const char *path, char *buffer, int fno)
 typedef struct {
   grn_obj *ptr;
   uint32_t lock;
+  uint32_t done;
 } db_value;
 
 grn_obj *
@@ -5373,7 +5374,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         GRN_ATOMIC_ADD_EX(pl, -1, l);
         GRN_FUTEX_WAIT(pl);
       }
-      if (s->specs && !vp->ptr) {
+      if (s->specs && !vp->ptr && !vp->done) {
         if (!l) {
           grn_io_win jw;
           uint32_t value_len;
@@ -5447,11 +5448,12 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             }
             grn_ja_unref(ctx, &jw);
           }
+          vp->done = 1;
           GRN_FUTEX_WAKE(vp->ptr);
         } else {
           for (ntrial = 0; !vp->ptr; ntrial++) {
             if (ntrial >= 1000) {
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "max trial in ctx_at(%p,%d)!", vp->ptr, vp->lock);
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "max trial in ctx_at(%d,%p,%d)!", id, vp->ptr, vp->lock);
               break;
             }
             GRN_FUTEX_WAIT(vp->ptr);
@@ -5637,6 +5639,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
         if (l == GRN_IO_MAX_REF) {
 #ifdef CALL_FINALIZER
           grn_obj_close(ctx, obj);
+          vp->done = 0;
           if (dob->finalizer) {
             dob->finalizer(ctx, 1, &obj, &dob->user_data);
             dob->finalizer = NULL;
