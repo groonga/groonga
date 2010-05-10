@@ -28,8 +28,10 @@ graph_vlabel memory usage
 graph_category groonga
 graph_info groonga memory usage
 
-memory.label Memory
-memory.type GAUGE
+rss.label resident set size
+rss.type GAUGE
+vsz.label virtual memory size
+vsz.type GAUGE
 EOF
         exit 0
         ;;
@@ -42,5 +44,6 @@ if [ -z "${pid_file}" ]; then
 fi
 
 groonga_pid=$(cat ${pid_file})
-memory_in_kb=$(ps h -o rss -p ${groonga_pid})
-echo "memory.value ${memory_in_kb}000"
+ps h -o rss,vsz -p ${groonga_pid} | read rss_in_kb vsz_in_kb
+echo "rss.value ${rss_in_kb}000"
+echo "vsz.value ${vsz_in_kb}000"

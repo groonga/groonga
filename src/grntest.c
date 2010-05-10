@@ -997,7 +997,7 @@ get_sysinfo(const char *path, char *result, int olen)
 
   if (grntest_outtype == OUT_TSV) {
     result[0] = '\0';
-    sprintf(tmpbuf, "sctipt\t%s\n", grntest_scriptname);
+    sprintf(tmpbuf, "script\t%s\n", grntest_scriptname);
     strcat(result, tmpbuf);
     sprintf(tmpbuf, "user\t%s\n", grntest_username);
     strcat(result, tmpbuf);
