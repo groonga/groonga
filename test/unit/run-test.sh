@@ -48,10 +48,8 @@ CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-file test-performance.so"
 
-GRN_TOKENIZER_MODULES_DIR="$top_dir/modules/tokenizers/.libs"
-export GRN_TOKENIZER_MODULES_DIR
-GRN_FUNCTION_MODULES_DIR="$top_dir/modules/functions/.libs"
-export GRN_FUNCTION_MODULES_DIR
+GRN_MODULES_DIR="$top_dir/modules"
+export GRN_MODULES_DIR
 
 case `uname` in
     Darwin)

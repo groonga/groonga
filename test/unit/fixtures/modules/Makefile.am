@@ -6,11 +6,12 @@ INCLUDES = 			\
 AM_LDFLAGS =					\
 	-avoid-version				\
 	-module					\
-	-no-undefined
+	-no-undefined				\
+	-rpath $(libdir)
 
 LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
 
-function_modules_LTLIBRARIES = string.la
+noinst_LTLIBRARIES = string.la
 
 string_la_SOURCES = string.c

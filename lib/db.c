@@ -137,6 +137,9 @@ grn_db_open(grn_ctx *ctx, const char *path)
           DB_OBJ(&s->obj)->range = GRN_ID_NIL;
           grn_ctx_use(ctx, (grn_obj *)s);
           grn_ctx_use(ctx_, (grn_obj *)s);
+#ifdef WITH_MECAB
+          grn_db_init_mecab_tokenizer(ctx);
+#endif
           grn_db_init_builtin_tokenizers(ctx);
           grn_db_init_builtin_query(ctx);
           GRN_API_RETURN((grn_obj *)s);
@@ -6517,8 +6520,12 @@ grn_db_init_builtin_types(grn_ctx *ctx)
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);
   }
-#ifndef WITH_MECAB
-  grn_obj_register(ctx, db, "TokenMecab", 10);
+#ifdef WITH_MECAB
+  if (grn_db_init_mecab_tokenizer(ctx)) {
+#endif
+    grn_obj_register(ctx, db, "TokenMecab", 10);
+#ifdef WITH_MECAB
+  }
 #endif
   grn_db_init_builtin_tokenizers(ctx);
   for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < 128; id++) {

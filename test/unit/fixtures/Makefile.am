@@ -2,7 +2,7 @@ SUBDIRS =					\
 	stress					\
 	performance				\
 	inverted-index				\
-	function-modules
+	modules
 
 if WITH_CUTTER
 noinst_LTLIBRARIES =				\

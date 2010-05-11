@@ -23,9 +23,9 @@
 
 #include <str.h>
 
-void test_register(void);
+void test_register_function(void);
 
-static gchar *tmp_directory, *function_modules_dir, *function_modules_dir_env;
+static gchar *tmp_directory, *modules_dir, *modules_dir_env;
 
 static grn_ctx *context;
 static grn_obj *database;
@@ -35,7 +35,7 @@ cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_base_dir(),
                                    "tmp",
-                                   "register-function",
+                                   "register",
                                    NULL);
 }
 
@@ -52,15 +52,15 @@ remove_tmp_directory(void)
 }
 
 static void
-setup_function_modules_dir(void)
+setup_modules_dir(void)
 {
-  function_modules_dir = g_build_filename(grn_test_get_base_dir(),
-                                          "fixtures",
-                                          "function-modules",
-                                          ".libs",
-                                          NULL);
-  function_modules_dir_env = g_strdup(g_getenv("GRN_FUNCTION_MODULES_DIR"));
-  g_setenv("GRN_FUNCTION_MODULES_DIR", function_modules_dir, TRUE);
+  modules_dir = g_build_filename(grn_test_get_base_dir(),
+                                 "fixtures",
+                                 "modules",
+                                 ".libs",
+                                 NULL);
+  modules_dir_env = g_strdup(g_getenv("GRN_MODULES_DIR"));
+  g_setenv("GRN_MODULES_DIR", modules_dir, TRUE);
 }
 
 void
@@ -77,25 +77,25 @@ cut_setup(void)
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
 
-  setup_function_modules_dir();
+  setup_modules_dir();
 }
 
 static void
-teardown_function_modules_dir(void)
+teardown_modules_dir(void)
 {
-  if (function_modules_dir_env) {
-    g_setenv("GRN_FUNCTION_MODULES_DIR", function_modules_dir_env, TRUE);
+  if (modules_dir_env) {
+    g_setenv("GRN_MODULES_DIR", modules_dir_env, TRUE);
   } else {
-    g_unsetenv("GRN_FUNCTION_MODULES_DIR");
+    g_unsetenv("GRN_MODULES_DIR");
   }
-  g_free(function_modules_dir_env);
-  g_free(function_modules_dir);
+  g_free(modules_dir_env);
+  g_free(modules_dir);
 }
 
 void
 cut_teardown(void)
 {
-  teardown_function_modules_dir();
+  teardown_modules_dir();
 
   if (context) {
     grn_ctx_fin(context);
@@ -106,9 +106,9 @@ cut_teardown(void)
 }
 
 void
-test_register(void)
+test_register_function(void)
 {
-  assert_send_command("register_function string");
+  assert_send_command("register string");
   assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
   assert_send_command("table_create Terms "
                       "TABLE_PAT_KEY|KEY_NORMALIZE ShortText " \

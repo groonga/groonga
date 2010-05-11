@@ -755,6 +755,30 @@ EOF
     assert_select_xml(expected, :table => "users")
   end
 
+  def test_no_existent_key
+    populate_users
+
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
+                  [],
+                  :table => "users",
+                  :query => "_key:ababa")
+  end
+
+  def test_no_existent_id
+    populate_users
+
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"],
+                   ["hp", "Int32"]],
+                  [],
+                  :table => "users",
+                  :query => "_id:1234")
+  end
+
   private
   def create_user_id_table
     table_create("user_id", :flags => Table::HASH_KEY, :key_type => "Int32")

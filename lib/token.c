@@ -499,7 +499,7 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
 grn_rc
 grn_db_init_mecab_tokenizer(grn_ctx *ctx)
 {
-  return grn_db_register_tokenizer(ctx, "mecab");
+  return grn_db_register_by_name(ctx, "tokenizers/mecab");
 }
 
 grn_rc
@@ -515,9 +515,6 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[1].value, 0);
   GRN_UINT32_INIT(&vars[2].value, 0);
 
-#ifdef WITH_MECAB
-  grn_db_init_mecab_tokenizer(ctx);
-#endif
   obj = grn_proc_create(ctx, "TokenDelimit", 12, GRN_PROC_TOKENIZER,
                         delimit_init, delimited_next, delimited_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_DELIMIT) { return GRN_FILE_CORRUPT; }
