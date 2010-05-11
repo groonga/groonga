@@ -1648,64 +1648,67 @@ unpack(uint8_t *dp, uint8_t *dpe, int i, uint32_t *rp)
   } else {
     m = (1 << w) - 1;
   }
-  while (i >= 8) {
-    if (dp + w > dpe) { return NULL; }
-    switch (w) {
-    case 0 : memset(p, 0, sizeof(uint32_t) * 8); break;
-    case 1 : dp = unpack_1(p, dp); break;
-    case 2 : dp = unpack_2(p, dp); break;
-    case 3 : dp = unpack_3(p, dp); break;
-    case 4 : dp = unpack_4(p, dp); break;
-    case 5 : dp = unpack_5(p, dp); break;
-    case 6 : dp = unpack_6(p, dp); break;
-    case 7 : dp = unpack_7(p, dp); break;
-    case 8 : dp = unpack_8(p, dp); break;
-    case 9 : dp = unpack_9(p, dp); break;
-    case 10 : dp = unpack_10(p, dp); break;
-    case 11 : dp = unpack_11(p, dp); break;
-    case 12 : dp = unpack_12(p, dp); break;
-    case 13 : dp = unpack_13(p, dp); break;
-    case 14 : dp = unpack_14(p, dp); break;
-    case 15 : dp = unpack_15(p, dp); break;
-    case 16 : dp = unpack_16(p, dp); break;
-    case 17 : dp = unpack_17(p, dp); break;
-    case 18 : dp = unpack_18(p, dp); break;
-    case 19 : dp = unpack_19(p, dp); break;
-    case 20 : dp = unpack_20(p, dp); break;
-    case 21 : dp = unpack_21(p, dp); break;
-    case 22 : dp = unpack_22(p, dp); break;
-    case 23 : dp = unpack_23(p, dp); break;
-    case 24 : dp = unpack_24(p, dp); break;
-    case 25 : dp = unpack_25(p, dp); break;
-    case 26 : dp = unpack_26(p, dp); break;
-    case 27 : dp = unpack_27(p, dp); break;
-    case 28 : dp = unpack_28(p, dp); break;
-    case 29 : dp = unpack_29(p, dp); break;
-    case 30 : dp = unpack_30(p, dp); break;
-    case 31 : dp = unpack_31(p, dp); break;
-    case 32 : dp = unpack_32(p, dp); break;
-    }
-    i -= 8;
-    p += 8;
-  }
-  {
-    int b;
-    uint32_t v, *pe;
-    for (b = 8 - w, v = 0, pe = p + i; p < pe && dp < dpe;) {
-      if (b > 0) {
-        *p++ = v + ((*dp >> b) & m);
-        b -= w;
-        v = 0;
-      } else if (b < 0) {
-        v += (*dp++ << -b) & m;
-        b += 8;
-      } else {
-        *p++ = v + (*dp++ & m);
-        b = 8 - w;
-        v = 0;
+  if (w) {
+    while (i >= 8) {
+      if (dp + w > dpe) { return NULL; }
+      switch (w) {
+      case 1 : dp = unpack_1(p, dp); break;
+      case 2 : dp = unpack_2(p, dp); break;
+      case 3 : dp = unpack_3(p, dp); break;
+      case 4 : dp = unpack_4(p, dp); break;
+      case 5 : dp = unpack_5(p, dp); break;
+      case 6 : dp = unpack_6(p, dp); break;
+      case 7 : dp = unpack_7(p, dp); break;
+      case 8 : dp = unpack_8(p, dp); break;
+      case 9 : dp = unpack_9(p, dp); break;
+      case 10 : dp = unpack_10(p, dp); break;
+      case 11 : dp = unpack_11(p, dp); break;
+      case 12 : dp = unpack_12(p, dp); break;
+      case 13 : dp = unpack_13(p, dp); break;
+      case 14 : dp = unpack_14(p, dp); break;
+      case 15 : dp = unpack_15(p, dp); break;
+      case 16 : dp = unpack_16(p, dp); break;
+      case 17 : dp = unpack_17(p, dp); break;
+      case 18 : dp = unpack_18(p, dp); break;
+      case 19 : dp = unpack_19(p, dp); break;
+      case 20 : dp = unpack_20(p, dp); break;
+      case 21 : dp = unpack_21(p, dp); break;
+      case 22 : dp = unpack_22(p, dp); break;
+      case 23 : dp = unpack_23(p, dp); break;
+      case 24 : dp = unpack_24(p, dp); break;
+      case 25 : dp = unpack_25(p, dp); break;
+      case 26 : dp = unpack_26(p, dp); break;
+      case 27 : dp = unpack_27(p, dp); break;
+      case 28 : dp = unpack_28(p, dp); break;
+      case 29 : dp = unpack_29(p, dp); break;
+      case 30 : dp = unpack_30(p, dp); break;
+      case 31 : dp = unpack_31(p, dp); break;
+      case 32 : dp = unpack_32(p, dp); break;
       }
+      i -= 8;
+      p += 8;
     }
-    if (b + w != 8) { dp++; }
+    {
+      int b;
+      uint32_t v, *pe;
+      for (b = 8 - w, v = 0, pe = p + i; p < pe && dp < dpe;) {
+        if (b > 0) {
+          *p++ = v + ((*dp >> b) & m);
+          b -= w;
+          v = 0;
+        } else if (b < 0) {
+          v += (*dp++ << -b) & m;
+          b += 8;
+        } else {
+          *p++ = v + (*dp++ & m);
+          b = 8 - w;
+          v = 0;
+        }
+      }
+      if (b + w != 8) { dp++; }
+    }
+  } else {
+    memset(p, 0, sizeof(uint32_t) * i);
   }
   if (ne) {
     if (m >= UNIT_MASK) {
@@ -2713,6 +2716,37 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     MERGE_BC(1);
     GRN_ASSERT(posp < dv[ii->n_elements].data);
     ndf = ridp - dv[0].data;
+    /*
+    {
+      grn_obj buf;
+      uint32_t rid, sid, tf, i, pos, *pp;
+      GRN_TEXT_INIT(&buf, 0);
+      rid = 0;
+      pp = dv[3].data;
+      for (i = 0; i < ndf; i++) {
+        GRN_BULK_REWIND(&buf);
+        rid += dv[0].data[i];
+        if (dv[0].data[i]) { sid = 0; }
+        sid += dv[1].data[i] + 1;
+        tf = dv[2].data[i] + 1;
+        pos = 0;
+        grn_text_itoa(ctx, &buf, rid);
+        GRN_TEXT_PUTC(ctx, &buf, ':');
+        grn_text_itoa(ctx, &buf, sid);
+        GRN_TEXT_PUTC(ctx, &buf, ':');
+        grn_text_itoa(ctx, &buf, tf);
+        GRN_TEXT_PUTC(ctx, &buf, ':');
+        while (tf--) {
+          pos += *pp++;
+          grn_text_itoa(ctx, &buf, pos);
+          if (tf) { GRN_TEXT_PUTC(ctx, &buf, ','); }
+        }
+        GRN_TEXT_PUTC(ctx, &buf, '\0');
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "Posting:%s", GRN_TEXT_VALUE(&buf));
+      }
+      GRN_OBJ_FIN(ctx, &buf);
+    }
+    */
     {
       grn_id tid = bt->tid & GRN_ID_MAX;
       uint32_t *a = array_at(ctx, ii, tid);
@@ -3888,6 +3922,30 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               c->pc.weight = 0;
             }
             c->pc.pos = 0;
+            /*
+            {
+              static int count = 0;
+              int tf = c->pc.tf, pos = 0, *pp = (int *)c->cpp;
+              grn_obj buf;
+              GRN_TEXT_INIT(&buf, 0);
+              grn_text_itoa(ctx, &buf, c->pc.rid);
+              GRN_TEXT_PUTC(ctx, &buf, ':');
+              grn_text_itoa(ctx, &buf, c->pc.sid);
+              GRN_TEXT_PUTC(ctx, &buf, ':');
+              grn_text_itoa(ctx, &buf, c->pc.tf);
+              GRN_TEXT_PUTC(ctx, &buf, '(');
+              while (tf--) {
+                pos += *pp++;
+                count++;
+                grn_text_itoa(ctx, &buf, pos);
+                if (tf) { GRN_TEXT_PUTC(ctx, &buf, ':'); }
+              }
+              GRN_TEXT_PUTC(ctx, &buf, ')');
+              GRN_TEXT_PUTC(ctx, &buf, '\0');
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "posting(%d):%s", count, GRN_TEXT_VALUE(&buf));
+              GRN_OBJ_FIN(ctx, &buf);
+            }
+            */
           } else {
             if (c->curr_chunk <= c->nchunks) {
               if (c->curr_chunk == c->nchunks) {
