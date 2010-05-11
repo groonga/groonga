@@ -274,9 +274,28 @@ grn_db_register(grn_ctx *ctx, const char *path)
       ctx->errlvl = GRN_OK;
       ctx->rc = GRN_SUCCESS;
       strcpy(complemented_path, path);
-      strncat(complemented_path, GRN_MODULE_SUFFIX, PATH_MAX - strlen(path) - 1);
-      path = complemented_path;
-      id = grn_module_open(ctx, path);
+      strcat(complemented_path, GRN_MODULE_SUFFIX);
+      id = grn_module_open(ctx, complemented_path);
+      if (id) {
+        path = complemented_path;
+      } else {
+        const char *base_name;
+
+        base_name = strrchr(path, '/');
+        if (base_name) {
+          ctx->errlvl = GRN_OK;
+          ctx->rc = GRN_SUCCESS;
+          complemented_path[0] = '\0';
+          strncat(complemented_path, path, base_name - path);
+          strcat(complemented_path, "/.libs");
+          strcat(complemented_path, base_name);
+          strcat(complemented_path, GRN_MODULE_SUFFIX);
+          id = grn_module_open(ctx, complemented_path);
+          if (id) {
+            path = complemented_path;
+          }
+        }
+      }
     }
 
     if (id) {
@@ -296,39 +315,22 @@ grn_db_register(grn_ctx *ctx, const char *path)
   GRN_API_RETURN(ctx->rc);
 }
 
-static grn_rc
-grn_db_register_by_name(grn_ctx *ctx, const char *name,
-                        const char *env_name, const char *default_dir)
+grn_rc
+grn_db_register_by_name(grn_ctx *ctx, const char *name)
 {
   const char *modules_dir;
   char dir_last_char;
   char path[PATH_MAX];
 
-  modules_dir = getenv(env_name);
+  modules_dir = getenv("GRN_MODULES_DIR");
   if (!modules_dir) {
-    modules_dir = default_dir;
+    modules_dir = MODULES_DIR;
   }
   strcpy(path, modules_dir);
   dir_last_char = modules_dir[strlen(modules_dir) - 1];
   if (dir_last_char != PATH_SEPARATOR[0]) {
     strcat(path, PATH_SEPARATOR);
   }
-  strncat(path, name, PATH_MAX - strlen(modules_dir) - 1);
+  strcat(path, name);
   return grn_db_register(ctx, path);
-}
-
-grn_rc
-grn_db_register_tokenizer(grn_ctx *ctx, const char *name)
-{
-  return grn_db_register_by_name(ctx, name,
-                                 "GRN_TOKENIZER_MODULES_DIR",
-                                 TOKENIZER_MODULES_DIR);
-}
-
-grn_rc
-grn_db_register_function(grn_ctx *ctx, const char *name)
-{
-  return grn_db_register_by_name(ctx, name,
-                                 "GRN_FUNCTION_MODULES_DIR",
-                                 FUNCTION_MODULES_DIR);
 }

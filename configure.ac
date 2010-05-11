@@ -102,7 +102,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/fixtures/inverted-index/Makefile
                  test/unit/fixtures/stress/Makefile
                  test/unit/fixtures/performance/Makefile
-                 test/unit/fixtures/function-modules/Makefile
+                 test/unit/fixtures/modules/Makefile
                  test/unit/util/Makefile
                  test/unit/core/Makefile
                  test/unit/memcached/Makefile
@@ -543,8 +543,7 @@ AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, [$suffix], "module suffix")
 
 # flags for compile groonga
 CFLAGS="$CFLAGS $OPT_CFLAGS "
-CFLAGS="$CFLAGS -DTOKENIZER_MODULES_DIR=\\\"\"\$(tokenizer_modulesdir)\"\\\""
-CFLAGS="$CFLAGS -DFUNCTION_MODULES_DIR=\\\"\"\$(function_modulesdir)\"\\\""
+CFLAGS="$CFLAGS -DMODULES_DIR=\\\"\"\$(modulesdir)\"\\\""
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 

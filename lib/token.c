@@ -499,7 +499,7 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
 grn_rc
 grn_db_init_mecab_tokenizer(grn_ctx *ctx)
 {
-  return grn_db_register_tokenizer(ctx, "mecab");
+  return grn_db_register_by_name(ctx, "tokenizers/mecab");
 }
 
 grn_rc
