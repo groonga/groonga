@@ -24,6 +24,7 @@
 #include <str.h>
 
 void test_in_circle(void);
+void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 
 static gchar *tmp_directory;
 
@@ -114,4 +115,34 @@ test_in_circle(void)
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+}
+
+void
+test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void)
+{
+  gdouble tokyo_tocho_latitude = 35.689444;
+  gdouble tokyo_tocho_longitude = 139.691667;
+
+  cut_assert_equal_string(
+    "[[[31],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"さざれ\",4110],"
+    "[\"広瀬屋\",4149],"
+    "[\"そばたいやき空\",4507],"
+    "[\"たい焼 カタオカ\",5210],"
+    "[\"車\",5600],"
+    "[\"吾妻屋\",6099],"
+    "[\"たいやき工房白家 阿佐ヶ谷店\",7646],"
+    "[\"たいやき本舗 藤家 阿佐ヶ谷店\",7861],"
+    "[\"たいやきひいらぎ\",8463],"
+    "[\"代官山たい焼き黒鯛\",8668]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '+_score, +name' "
+        "--output_columns 'name, _score' "
+        "--filter 'tags @ \"たいやき\"' "
+        "--scorer '_score=geo_distance(location, \"%s\")",
+        grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
 }
