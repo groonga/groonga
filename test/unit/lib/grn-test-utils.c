@@ -721,13 +721,27 @@ grn_test_coordinate_in_milliseconds(gdouble coordinate_in_degree)
   return coordinate_in_milliseconds;
 }
 
+gdouble
+grn_test_coordinate_in_degree(gint coordinate_in_milliseconds)
+{
+  gdouble coordinate_in_degree;
+
+  coordinate_in_degree = (coordinate_in_milliseconds % 1000) * 0.0000001;
+  coordinate_in_degree += coordinate_in_milliseconds / (gdouble)(1000 * 60 * 60);
+
+  return coordinate_in_degree;
+}
+
 const gchar *
-grn_test_location_string(gdouble latitude, gdouble longitude)
+grn_test_location_string(gdouble latitude_in_degree,
+                         gdouble longitude_in_degree)
 {
   gint latitude_in_milliseconds, longitude_in_milliseconds;
 
-  latitude_in_milliseconds = grn_test_coordinate_in_milliseconds(latitude);
-  longitude_in_milliseconds = grn_test_coordinate_in_milliseconds(longitude);
+  latitude_in_milliseconds =
+    grn_test_coordinate_in_milliseconds(latitude_in_degree);
+  longitude_in_milliseconds =
+    grn_test_coordinate_in_milliseconds(longitude_in_degree);
 
   return cut_take_printf("%dx%d",
                          latitude_in_milliseconds, longitude_in_milliseconds);

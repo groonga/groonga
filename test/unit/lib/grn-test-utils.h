@@ -84,8 +84,9 @@ const GList *grn_test_view_collect_string  (grn_ctx          *context,
 
 gint         grn_test_coordinate_in_milliseconds
                                            (gdouble           coordinate_in_degree);
-const gchar *grn_test_location_string      (gdouble           latitude,
-                                            gdouble           longitude);
+gdouble      grn_test_coordinate_in_degree (gint              coordinate_in_milliseconds);
+const gchar *grn_test_location_string      (gdouble           latitude_in_degree,
+                                            gdouble           longitude_in_degree);
 
 
 #endif

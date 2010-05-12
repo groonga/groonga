@@ -70,6 +70,9 @@ cut_setup(void)
 
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
+
+  assert_send_commands(cut_get_fixture_data_string("ddl.grn", NULL));
+  assert_send_command(cut_get_fixture_data_string("shops.grn", NULL));
 }
 
 void
@@ -91,11 +94,9 @@ test_in_circle(void)
   gdouble yurakucho_longitude = 139.76352;
   gint distance = 3 * 1000;
 
-  assert_send_commands(cut_get_fixture_data_string("ddl.grn", NULL));
-  assert_send_command(cut_get_fixture_data_string("shops.grn", NULL));
   cut_assert_equal_string(
     "[[[6],"
-    "[[\"_key\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
     "[\"銀座 かずや\",795],"
     "[\"たいやき神田達磨 八重洲店\",1079],"
     "[\"たい焼き鉄次 大丸東京店\",1390],"
@@ -106,8 +107,8 @@ test_in_circle(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '+_score, +_key' "
-        "--output_columns '_key, _score' "
+        "--sortby '+_score, +name' "
+        "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer '_score=geo_distance(location, \"%s\")",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
