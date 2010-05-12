@@ -25,6 +25,7 @@ void test_in_circle(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_but_white(void);
 void test_drilldown(void);
+void test_weight_match(void);
 
 static gchar *tmp_directory;
 
@@ -239,6 +240,52 @@ test_drilldown(void)
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance(location, \"%s\")' "
+        "--drilldown_output_columns '_key, _nsubrecs' "
+        "--drilldown_sortby '-_nsubrecs' "
+        "--drilldown 'tags' ",
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        distance,
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+}
+
+void
+test_weight_match(void)
+{
+  gdouble yurakucho_latitude = 35.67487;
+  gdouble yurakucho_longitude = 139.76352;
+  gint distance = 10 * 1000;
+
+  cut_assert_equal_string(
+    "[[[13],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"たいやき神田達磨 八重洲店\",9922],"
+    "[\"たい焼き鉄次 大丸東京店\",8611],"
+    "[\"築地 さのきや\",8278],"
+    "[\"にしみや 甘味処\",8001],"
+    "[\"しげ田\",7729],"
+    "[\"柳屋 たい焼き\",6315],"
+    "[\"たいやきひいらぎ\",1759],"
+    "[\"尾長屋 錦糸町店\",1687],"
+    "[\"横浜 くりこ庵 浅草店\",1607],"
+    "[\"たい焼き写楽\",651]],"
+    "[[6],"
+    "[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
+    "[\"たいやき\",13],"
+    "[\"天然\",3],"
+    "[\"白\",1],"
+    "[\"マグロ\",1],"
+    "[\"和菓子\",1],"
+    "[\"おでん\",1]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '-_score, +name' "
+        "--output_columns 'name, _score' "
+        "--match_columns 'name * 1000 || tags * 10000' "
+        "--query たいやき "
+        "--filter 'geo_in_circle(location, \"%s\", %d)' "
+        "--scorer '_score -= geo_distance(location, \"%s\")' "
         "--drilldown_output_columns '_key, _nsubrecs' "
         "--drilldown_sortby '-_nsubrecs' "
         "--drilldown 'tags' ",
