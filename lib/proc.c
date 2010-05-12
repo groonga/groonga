@@ -166,7 +166,7 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   if (nvars == 16) {
     grn_proc_create(ctx,
                     GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
-                    GRN_PROC_PROCEDURE, proc_select, NULL, NULL, nvars - 1, vars + 1);
+                    GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 16);
   }
@@ -2083,7 +2083,7 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 #define DEF_PROC(name, func, nvars, vars)\
   (grn_proc_create(ctx, (name), (sizeof(name) - 1),\
-                   GRN_PROC_PROCEDURE, (func), NULL, NULL, (nvars), (vars)))
+                   GRN_PROC_COMMAND, (func), NULL, NULL, (nvars), (vars)))
 
 void
 grn_db_init_builtin_query(grn_ctx *ctx)

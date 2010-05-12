@@ -507,7 +507,7 @@ typedef grn_rc (*grn_module_func)(grn_ctx *ctx);
 
 typedef enum {
   GRN_PROC_TOKENIZER = 1,
-  GRN_PROC_PROCEDURE,
+  GRN_PROC_COMMAND,
   GRN_PROC_FUNCTION,
   GRN_PROC_HOOK
 } grn_proc_type;
