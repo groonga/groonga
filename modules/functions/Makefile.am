@@ -11,6 +11,6 @@ AM_LDFLAGS =					\
 LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
 
-function_modules_LTLIBRARIES = geo.la
+function_modules_LTLIBRARIES = cast.la
 
-geo_la_SOURCES = geo.c
+cast_la_SOURCES = cast.c
