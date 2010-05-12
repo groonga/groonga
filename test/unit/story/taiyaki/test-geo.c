@@ -21,11 +21,10 @@
 
 #include "../../lib/grn-assertions.h"
 
-#include <str.h>
-
 void test_in_circle(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_but_white(void);
+void test_drilldown(void);
 
 static gchar *tmp_directory;
 
@@ -112,7 +111,7 @@ test_in_circle(void)
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
-        "--scorer '_score=geo_distance(location, \"%s\")",
+        "--scorer '_score=geo_distance(location, \"%s\")'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
@@ -144,7 +143,7 @@ test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void)
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'tags @ \"たいやき\"' "
-        "--scorer '_score=geo_distance(location, \"%s\")",
+        "--scorer '_score=geo_distance(location, \"%s\")'",
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
 }
 
@@ -168,7 +167,7 @@ test_in_circle_and_tag(void)
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
-        "--scorer '_score=geo_distance(location, \"%s\")",
+        "--scorer '_score=geo_distance(location, \"%s\")'",
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude),
         distance,
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
@@ -198,8 +197,52 @@ test_but_white(void)
         "--filter '" \
         "geo_in_circle(location, \"%s\", %d) && " \
         "tags @ \"たいやき\" &! tags @ \"白\"' "
-        "--scorer '_score=geo_distance(location, \"%s\")",
+        "--scorer '_score=geo_distance(location, \"%s\")'",
         grn_test_location_string(asagaya_latitude, asagaya_longitude),
         distance,
         grn_test_location_string(asagaya_latitude, asagaya_longitude))));
+}
+
+void
+test_drilldown(void)
+{
+  gdouble yurakucho_latitude = 35.67487;
+  gdouble yurakucho_longitude = 139.76352;
+  gint distance = 10 * 1000;
+
+  cut_assert_equal_string(
+    "[[[13],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"たいやき神田達磨 八重洲店\",1079],"
+    "[\"たい焼き鉄次 大丸東京店\",1390],"
+    "[\"築地 さのきや\",1723],"
+    "[\"にしみや 甘味処\",2000],"
+    "[\"しげ田\",2272],"
+    "[\"柳屋 たい焼き\",3686],"
+    "[\"根津のたいやき\",7812],"
+    "[\"尾長屋 錦糸町店\",8314],"
+    "[\"横浜 くりこ庵 浅草店\",8394],"
+    "[\"たいやきひいらぎ\",9242]],"
+    "[[6],"
+    "[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
+    "[\"たいやき\",13],"
+    "[\"天然\",3],"
+    "[\"白\",1],"
+    "[\"マグロ\",1],"
+    "[\"和菓子\",1],"
+    "[\"おでん\",1]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '+_score, +name' "
+        "--output_columns 'name, _score' "
+        "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
+        "--scorer '_score=geo_distance(location, \"%s\")' "
+        "--drilldown_output_columns '_key, _nsubrecs' "
+        "--drilldown_sortby '-_nsubrecs' "
+        "--drilldown 'tags' ",
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        distance,
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
 }
