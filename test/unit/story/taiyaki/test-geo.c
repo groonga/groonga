@@ -25,6 +25,7 @@
 
 void test_in_circle(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
+void test_but_white(void);
 
 static gchar *tmp_directory;
 
@@ -171,4 +172,34 @@ test_in_circle_and_tag(void)
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude),
         distance,
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
+}
+
+void
+test_but_white(void)
+{
+  gdouble asagaya_latitude = 35.70452;
+  gdouble asagaya_longitude = 139.6351;
+  gint distance = 10 * 1000;
+
+  cut_assert_equal_string(
+    "[[[5],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"吾妻屋\",2385],"
+    "[\"そばたいやき空\",5592],"
+    "[\"たい焼き / たつみや\",7148],"
+    "[\"さざれ\",7671],"
+    "[\"広瀬屋\",7830]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '+_score, +name' "
+        "--output_columns 'name, _score' "
+        "--filter '" \
+        "geo_in_circle(location, \"%s\", %d) && " \
+        "tags @ \"たいやき\" &! tags @ \"白\"' "
+        "--scorer '_score=geo_distance(location, \"%s\")",
+        grn_test_location_string(asagaya_latitude, asagaya_longitude),
+        distance,
+        grn_test_location_string(asagaya_latitude, asagaya_longitude))));
 }
