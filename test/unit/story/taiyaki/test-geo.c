@@ -146,3 +146,29 @@ test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void)
         "--scorer '_score=geo_distance(location, \"%s\")",
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
 }
+
+void
+test_in_circle_and_tag(void)
+{
+  gdouble tokyo_tocho_latitude = 35.689444;
+  gdouble tokyo_tocho_longitude = 139.691667;
+  gint distance = 5 * 1000;
+
+  cut_assert_equal_string(
+    "[[[3],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"さざれ\",4110],"
+    "[\"広瀬屋\",4149],"
+    "[\"そばたいやき空\",4507]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '+_score, +name' "
+        "--output_columns 'name, _score' "
+        "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
+        "--scorer '_score=geo_distance(location, \"%s\")",
+        grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude),
+        distance,
+        grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
+}
