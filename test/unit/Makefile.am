@@ -4,7 +4,8 @@ SUBDIRS =		\
 	util		\
 	core		\
 	memcached	\
-	http
+	http		\
+	story
 
 TESTS = run-test.sh
 TESTS_ENVIRONMENT =				\

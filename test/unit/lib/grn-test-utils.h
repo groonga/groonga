@@ -72,6 +72,8 @@ void         grn_test_object_inspect       (GString          *output,
 
 const gchar *grn_test_send_command         (grn_ctx          *context,
                                             const gchar      *command);
+void         grn_test_send_commands        (grn_ctx          *context,
+                                            const gchar      *line_separated_commands);
 
 const GList *grn_test_table_collect_string (grn_ctx          *context,
                                             grn_obj          *table,
@@ -79,6 +81,11 @@ const GList *grn_test_table_collect_string (grn_ctx          *context,
 const GList *grn_test_view_collect_string  (grn_ctx          *context,
                                             grn_obj          *view,
                                             const gchar      *text_column_name);
+
+gint         grn_test_coordinate_in_milliseconds
+                                           (gdouble           coordinate_in_degree);
+const gchar *grn_test_location_string      (gdouble           latitude,
+                                            gdouble           longitude);
 
 
 #endif

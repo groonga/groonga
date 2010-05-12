@@ -581,39 +581,61 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
   unsigned int send_id, receive_id;
   int flags = 0;
   grn_rc rc = GRN_SUCCESS;
-  gchar *result, *result_status_end;
-  unsigned int result_length;
+  gchar *result_status_end;
+  GString *result;
   const gchar *result_status_start_mark = "[[";
   const gchar *result_status_end_mark = "],";
+  const gchar **lines;
 
-  send_id = grn_ctx_send(context, command, strlen(command), flags);
-  receive_id = grn_ctx_recv(context, &result, &result_length, &flags);
-  cut_assert_equal_uint(send_id, receive_id);
+  result = g_string_new(NULL);
+  lines = cut_take_string_array(g_strsplit(command, "\n", 0));
+  for (; *lines; lines++) {
+    gchar *command_result;
+    unsigned int command_result_length;
 
-  cut_assert_not_equal_uint(0, result_length);
-  if (g_str_has_prefix(result, result_status_start_mark)) {
+    send_id = grn_ctx_send(context, *lines, strlen(*lines), 0);
+    receive_id = grn_ctx_recv(context, &command_result, &command_result_length,
+                              &flags);
+    cut_assert_equal_uint(send_id, receive_id);
+    g_string_append_len(result, command_result, command_result_length);
+  }
+
+  cut_assert_not_equal_uint(0, result->len, cut_message("<%s>", command));
+  if (g_str_has_prefix(result->str, result_status_start_mark)) {
     const gchar *result_status_start;
     const gchar *rest;
 
-    result_status_start = result + strlen(result_status_start_mark);
-    rc = grn_atoi(result_status_start, result + result_length, &rest);
+    result_status_start = result->str + strlen(result_status_start_mark);
+    rc = grn_atoi(result_status_start, result->str + result->len, &rest);
     cut_assert_not_equal_string(result_status_start, rest);
-    grn_test_assert(rc, cut_message("<%.*s>", result_length, result));
+    grn_test_assert(rc, cut_message("<%s>", result->str));
   }
 
-  result_status_end = g_strstr_len(result, result_length,
+  result_status_end = g_strstr_len(result->str, result->len,
                                    result_status_end_mark);
   if (result_status_end) {
     const gchar *result_end_mark = "]";
-    const gchar *result_body;
-    size_t result_body_length;
 
-    result_body = result_status_end + strlen(result_status_end_mark);
-    result_body_length =
-      result_length - (result_body - result) - strlen(result_end_mark);
-    return cut_take_strndup(result_body, result_body_length);
-  } else {
-    return cut_take_strndup(result, result_length);
+    g_string_erase(result,
+                   0,
+                   result_status_end - result->str +
+                   strlen(result_status_end_mark));
+    g_string_truncate(result,
+                      result->len - strlen(result_end_mark));
+  }
+  return cut_take_strdup(g_string_free(result, FALSE));
+}
+
+void
+grn_test_send_commands(grn_ctx *context, const gchar *line_separated_commands)
+{
+  const gchar **commands;
+
+  commands = cut_take_string_array(g_strsplit(line_separated_commands, "\n", 0));
+  for (; *commands; commands++) {
+    if (*commands[0] != '\0') {
+      grn_test_send_command(context, *commands);
+    }
   }
 }
 
@@ -681,4 +703,32 @@ grn_test_view_collect_string(grn_ctx          *context,
   grn_test_assert_context(context);
 
   return records;
+}
+
+gint
+grn_test_coordinate_in_milliseconds(gdouble coordinate_in_degree)
+{
+  gint coordinate_in_milliseconds;
+
+  coordinate_in_milliseconds = (gint)coordinate_in_degree * 60 * 60 * 1000;
+  coordinate_in_milliseconds +=
+    ((gint)(coordinate_in_degree * 100) % 100) * 60 * 1000;
+  coordinate_in_milliseconds +=
+    ((gint)(coordinate_in_degree * 10000) % 100) * 1000;
+  coordinate_in_milliseconds +=
+    ((gint)(coordinate_in_degree * 10000000) % 1000);
+
+  return coordinate_in_milliseconds;
+}
+
+const gchar *
+grn_test_location_string(gdouble latitude, gdouble longitude)
+{
+  gint latitude_in_milliseconds, longitude_in_milliseconds;
+
+  latitude_in_milliseconds = grn_test_coordinate_in_milliseconds(latitude);
+  longitude_in_milliseconds = grn_test_coordinate_in_milliseconds(longitude);
+
+  return cut_take_printf("%dx%d",
+                         latitude_in_milliseconds, longitude_in_milliseconds);
 }

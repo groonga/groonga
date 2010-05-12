@@ -1,0 +1,14 @@
+table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+
+table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Words name COLUMN_SCALAR ShortText
+
+table_create Shops TABLE_HASH_KEY ShortText
+column_create Shops name COLUMN_SCALAR ShortText
+column_create Shops word COLUMN_VECTOR Words
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+column_create Shops latitude COLUMN_SCALAR Int32
+column_create Shops longitude COLUMN_SCALAR Int32
+
+column_create Words index COLUMN_INDEX Shops word
+column_create Bigram name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Shops name
