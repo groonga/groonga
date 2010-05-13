@@ -1152,7 +1152,7 @@ entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
       if (!ee) { return GRN_ID_NIL; }
       hh->garbages[size] = ee->key;
       if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-        /* keep ee->size */
+        /* keep ee->size && ee->str */
         memset(((entry_str *)ee)->dummy, 0, hh->value_size);
       } else {
         memset(ee, 0, hh->entry_size);
