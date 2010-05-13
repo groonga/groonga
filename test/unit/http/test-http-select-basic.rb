@@ -755,6 +755,42 @@ EOF
     assert_select_xml(expected, :table => "users")
   end
 
+  def test_xml_with_offset
+    create_users_table
+    load_many_users
+    expected = <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="2" LIMIT="3" NHITS="5">
+<HIT NO="3">
+<FIELD NAME="_id">1</FIELD>
+<FIELD NAME="_key">moritan</FIELD>
+<FIELD NAME="real_name">モリタン</FIELD>
+<FIELD NAME="hp">100</FIELD>
+</HIT>
+<HIT NO="4">
+<FIELD NAME="_id">3</FIELD>
+<FIELD NAME="_key">ryoqun</FIELD>
+<FIELD NAME="real_name">Ryo Onodera</FIELD>
+<FIELD NAME="hp">200</FIELD>
+</HIT>
+<HIT NO="5">
+<FIELD NAME="_id">2</FIELD>
+<FIELD NAME="_key">taporobo</FIELD>
+<FIELD NAME="real_name">タポロボ</FIELD>
+<FIELD NAME="hp">100</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
+EOF
+    assert_select_xml(expected,
+                      {:table => "users", :sortby => "_key", :offset => 2})
+  end
+
   def test_no_existent_key
     populate_users
 
