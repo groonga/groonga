@@ -2131,35 +2131,37 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       }
       break;
     case GRN_COLUMN_INDEX :
-      switch (query->header.type) {
-      case GRN_BULK :
-        if (query->header.domain == obj->header.domain &&
-            GRN_BULK_VSIZE(query) == sizeof(grn_id)) {
-          grn_id tid = *((grn_id *)GRN_BULK_HEAD(query));
-          grn_ii_cursor *c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
-                                                GRN_ID_NIL, GRN_ID_MAX, 1, 0);
-          if (c) {
-            grn_ii_posting *pos;
-            grn_hash *s = (grn_hash *)res;
-            while ((pos = grn_ii_cursor_next(ctx, c))) {
-              /* todo: support orgarg(op)
-              res_add(ctx, s, (grn_rset_posinfo *) pos,
-                      get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
-              */
-              grn_hash_add(ctx, s, pos, s->key_size, NULL, NULL);
+      if (DB_OBJ(obj)->range == res->header.domain) {
+        switch (query->header.type) {
+        case GRN_BULK :
+          if (query->header.domain == obj->header.domain &&
+              GRN_BULK_VSIZE(query) == sizeof(grn_id)) {
+            grn_id tid = *((grn_id *)GRN_BULK_HEAD(query));
+            grn_ii_cursor *c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
+                                                  GRN_ID_NIL, GRN_ID_MAX, 1, 0);
+            if (c) {
+              grn_ii_posting *pos;
+              grn_hash *s = (grn_hash *)res;
+              while ((pos = grn_ii_cursor_next(ctx, c))) {
+                /* todo: support orgarg(op)
+                res_add(ctx, s, (grn_rset_posinfo *) pos,
+                        get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
+                */
+                grn_hash_add(ctx, s, pos, s->key_size, NULL, NULL);
+              }
+              grn_ii_cursor_close(ctx, c);
             }
-            grn_ii_cursor_close(ctx, c);
+            return GRN_SUCCESS;
+          } else {
+            const char *str = GRN_BULK_HEAD(query);
+            unsigned int str_len = GRN_BULK_VSIZE(query);
+            rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res, op, optarg);
           }
-          return GRN_SUCCESS;
-        } else {
-          const char *str = GRN_BULK_HEAD(query);
-          unsigned int str_len = GRN_BULK_VSIZE(query);
-          rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res, op, optarg);
+          break;
+        case GRN_QUERY :
+          rc = grn_query_search(ctx, (grn_ii *)obj, (grn_query *)query, (grn_hash *)res, op);
+          break;
         }
-        break;
-      case GRN_QUERY :
-        rc = grn_query_search(ctx, (grn_ii *)obj, (grn_query *)query, (grn_hash *)res, op);
-        break;
       }
       break;
     }
