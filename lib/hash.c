@@ -732,24 +732,28 @@ get_value(grn_hash *hash, entry_str *n)
   }
 }
 
-inline static uint32_t
-put_key_(grn_ctx *ctx, grn_hash *hash, const char *key, int len)
+inline static void
+put_key_(grn_ctx *ctx, grn_hash *hash, entry_str *n, const char *key, int len)
 {
   uint32_t res, ts;
-  if (len >= GRN_HASH_SEGMENT_SIZE) { return 0; /* error */ }
-  res = hash->header->curr_key;
-  ts = (res + len) >> W_OF_KEY_IN_A_SEGMENT;
-  if (res >> W_OF_KEY_IN_A_SEGMENT != ts) {
-    res = hash->header->curr_key = ts << W_OF_KEY_IN_A_SEGMENT;
+  if (n->size) {
+    res = n->str;
+  } else {
+    if (len >= GRN_HASH_SEGMENT_SIZE) { return; /* error */ }
+    res = hash->header->curr_key;
+    ts = (res + len) >> W_OF_KEY_IN_A_SEGMENT;
+    if (res >> W_OF_KEY_IN_A_SEGMENT != ts) {
+      res = hash->header->curr_key = ts << W_OF_KEY_IN_A_SEGMENT;
+    }
+    hash->header->curr_key += len;
+    n->str = res;
   }
   {
     uint8_t *dest;
     KEY_AT(hash, res, dest);
-    if (!dest) { return 0; }
+    if (!dest) { return; }
     memcpy(dest, key, len);
   }
-  hash->header->curr_key += len;
-  return res;
 }
 
 inline static grn_rc
@@ -763,7 +767,7 @@ put_key(grn_ctx *ctx, grn_hash *hash, entry_str *n, uint32_t h, const char *key,
         memcpy(&n->str, key, len);
       } else {
         n->flag = 0;
-        n->str = put_key_(ctx, hash, key, len);
+        put_key_(ctx, hash, n, key, len);
       }
     } else {
       if (len <= sizeof(char *)) {
@@ -1147,7 +1151,12 @@ entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
       ENTRY_AT_(hash, e, ee, GRN_TABLE_ADD);
       if (!ee) { return GRN_ID_NIL; }
       hh->garbages[size] = ee->key;
-      memset(ee, 0, hh->entry_size);
+      if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+        /* keep ee->size */
+        memset(((entry_str *)ee)->dummy, 0, hh->value_size);
+      } else {
+        memset(ee, 0, hh->entry_size);
+      }
     } else {
       e = ++hh->curr_rec;
     }
