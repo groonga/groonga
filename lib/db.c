@@ -5366,6 +5366,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
       db_value *vp;
       uint32_t l, *pl, ntrial;
       if (!(vp = grn_tiny_array_at(&s->values, id))) { goto exit; }
+#ifdef USE_NREF
       pl = &vp->lock;
       for (ntrial = 0;; ntrial++) {
         GRN_ATOMIC_ADD_EX(pl, 1, l);
@@ -5377,7 +5378,21 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         GRN_ATOMIC_ADD_EX(pl, -1, l);
         GRN_FUTEX_WAIT(pl);
       }
+#endif /* USE_NREF */
       if (s->specs && !vp->ptr && !vp->done) {
+#ifndef USE_NREF
+        pl = &vp->lock;
+        for (ntrial = 0;; ntrial++) {
+          GRN_ATOMIC_ADD_EX(pl, 1, l);
+          if (l < GRN_IO_MAX_REF) { break; }
+          if (ntrial >= 10) {
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "max trial in ctx_at(%p,%d)", vp->ptr, vp->lock);
+            break;
+          }
+          GRN_ATOMIC_ADD_EX(pl, -1, l);
+          GRN_FUTEX_WAIT(pl);
+        }
+#endif /* USE_NREF */
         if (!l) {
           grn_io_win jw;
           uint32_t value_len;
@@ -5627,6 +5642,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
        obj->header.type == GRN_DB)) {
     grn_obj_close(ctx, obj);
   } else if (GRN_DB_OBJP(obj)) {
+#ifdef USE_NREF
     grn_db_obj *dob = DB_OBJ(obj);
     grn_db *s = (grn_db *)dob->db;
     db_value *vp = grn_tiny_array_at(&s->values, dob->id);
@@ -5654,6 +5670,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
         GRN_FUTEX_WAKE(pl);
       }
     }
+#endif /* USE_NREF */
   }
 }
 
