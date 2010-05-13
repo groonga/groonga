@@ -510,7 +510,7 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* WORDS_BIGENDIAN */
 #define grn_ntoh grn_hton
 
-#ifdef USE_FUTEX
+#ifdef HAVE_LINUX_FUTEX_H
 #include <linux/futex.h>
 #include <sys/syscall.h>
 
@@ -533,10 +533,10 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 
 #define GRN_FUTEX_WAKE(p) \
   syscall(SYS_futex, p, FUTEX_WAKE, 1)
-#else /* USE_FUTEX */
+#else /* HAVE_LINUX_FUTEX_H */
 #define GRN_FUTEX_WAIT(p) usleep(1000)
 #define GRN_FUTEX_WAKE(p)
-#endif /* USE_FUTEX */
+#endif /* HAVE_LINUX_FUTEX_H */
 
 #ifndef HOST_NAME_MAX
 #ifdef _POSIX_HOST_NAME_MAX

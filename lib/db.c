@@ -5467,14 +5467,14 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             grn_ja_unref(ctx, &jw);
           }
           vp->done = 1;
-          GRN_FUTEX_WAKE(vp->ptr);
+          GRN_FUTEX_WAKE(&vp->ptr);
         } else {
           for (ntrial = 0; !vp->ptr; ntrial++) {
             if (ntrial >= 1000) {
               GRN_LOG(ctx, GRN_LOG_NOTICE, "max trial in ctx_at(%d,%p,%d)!", id, vp->ptr, vp->lock);
               break;
             }
-            GRN_FUTEX_WAIT(vp->ptr);
+            GRN_FUTEX_WAIT(&vp->ptr);
           }
         }
       }
