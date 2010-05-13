@@ -107,6 +107,7 @@ module GroongaHTTPTestUtils
                  :flags => Table::PAT_KEY,
                  :key_type => "ShortText")
     column_create("users", "real_name", Column::SCALAR, "ShortText")
+    column_create("users", "description", Column::SCALAR, "ShortText")
     column_create("users", "hp", Column::SCALAR, "Int32")
 
     table_create("terms",
@@ -133,17 +134,17 @@ module GroongaHTTPTestUtils
 
   def load_users
     load("users",
-         [{:_key => "ryoqun", :real_name => "Ryo Onodera", :hp => 200},
-          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :hp => 200}])
+         [{:_key => "ryoqun", :real_name => "Ryo Onodera", :description => "ryoくんです。", :hp => 200},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :description => "λかわいいよλ", :hp => 200}])
   end
 
   def load_many_users
     load("users",
-         [{:_key => "moritan", :real_name => "モリタン", :hp => 100},
-          {:_key => "taporobo", :real_name => "タポロボ", :hp => 100},
-          {:_key => "ryoqun", :real_name => "Ryo Onodera", :hp => 200},
-          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :hp => 200},
-          {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA", :hp => 150}])
+         [{:_key => "moritan", :real_name => "モリタン", :description => "モリタンはモリタポ星からやってきました。", :hp => 100},
+          {:_key => "taporobo", :real_name => "タポロボ", :description => "モリモリモリタポをあつめるタポロボです。", :hp => 100},
+          {:_key => "ryoqun", :real_name => "Ryo Onodera", :description => "ryoくんです。", :hp => 200},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :description => "λかわいいよλ", :hp => 200},
+          {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA", :description => "エロいおっさん", :hp => 150}])
   end
 
   def load_tags
