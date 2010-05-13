@@ -33,11 +33,11 @@ module HTTPSelectBasicTests
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
-                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
+                   ["real_name", "ShortText"]],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
                   :match_columns => "real_name",
+                  :output_columns => "_id,_key,real_name",
                   :query => "Yuto Hayamizu")
   end
 
@@ -46,10 +46,10 @@ module HTTPSelectBasicTests
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
-                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
+                   ["real_name", "ShortText"]],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :query => "real_name:\"Yuto Hayamizu\"")
   end
 
@@ -58,10 +58,10 @@ module HTTPSelectBasicTests
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
-                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
+                   ["real_name", "ShortText"]],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
 
@@ -70,10 +70,10 @@ module HTTPSelectBasicTests
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
-                  [[2, "hayamiz", "Yuto Hayamizu", 200]],
+                   ["real_name", "ShortText"]],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :query => "real_name:\"Yuto Hayamizu\"",
                   :filter => "real_name == \"Yuto Hayamizu\"")
   end
@@ -83,10 +83,10 @@ module HTTPSelectBasicTests
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
+                   ["real_name", "ShortText"]],
                   [],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :query => "real_name:\"No Name\"")
   end
 
@@ -95,11 +95,11 @@ module HTTPSelectBasicTests
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
-                  [[2, "hayamiz", "Real Name", 200],
-                   [1, "ryoqun", "Real Name", 200]],
+                   ["real_name", "ShortText"]],
+                  [[2, "hayamiz", "Real Name"],
+                   [1, "ryoqun", "Real Name"]],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :scorer => "real_name = \"Real Name\"")
   end
 
@@ -108,19 +108,19 @@ module HTTPSelectBasicTests
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
-                  [[2, "hayamiz", "Real Name", 200]],
+                   ["real_name", "ShortText"]],
+                  [[2, "hayamiz", "Real Name"]],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :query => "real_name:\"Yuto Hayamizu\"",
                   :scorer => "real_name = \"Real Name\"")
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
+                   ["real_name", "ShortText"]],
                   [],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :query => "real_name:\"Yuto Hayamizu\"")
   end
 
@@ -139,9 +139,10 @@ module HTTPSelectBasicTests
 
     assert_select([["_key", "ShortText"],
                    ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
-                  [["hayamiz", "Yuto Hayamizu", 200],
-                   ["ryoqun", "Ryo Onodera", 200]],
+                   ["hp", "Int32"],
+                   ["description", "ShortText"]],
+                  [["hayamiz", "Yuto Hayamizu", 200, "λかわいいよλ"],
+                   ["ryoqun", "Ryo Onodera", 200, "ryoくんです。"]],
                   :table => "users",
                   :output_columns => "_key *")
   end
@@ -752,7 +753,8 @@ module HTTPSelectBasicTests
 </SEGMENT>
 </SEGMENTS>
 EOF
-    assert_select_xml(expected, :table => "users")
+    assert_select_xml(expected, {:table => "users",
+                                 :output_columns => "_id,_key,real_name,hp"})
   end
 
   def test_xml_with_offset
@@ -788,31 +790,67 @@ EOF
 </SEGMENTS>
 EOF
     assert_select_xml(expected,
-                      {:table => "users", :sortby => "_key", :offset => 2})
+                      {:table => "users", :sortby => "_key", :offset => 2,
+                       :output_columns => "_id,_key,real_name,hp"})
   end
 
-  def test_no_existent_key
+  def test_no_existent_pat_key
     populate_users
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
+                   ["real_name", "ShortText"]],
                   [],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :query => "_key:ababa")
   end
 
-  def test_no_existent_id
+  def test_no_existent_pat_id
     populate_users
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["hp", "Int32"]],
+                   ["real_name", "ShortText"]],
                   [],
                   :table => "users",
+                  :output_columns => "_id,_key,real_name",
                   :query => "_id:1234")
+  end
+
+  def test_no_existent_hash_key
+    populate_tags
+
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"]],
+                  [],
+                  :table => "tags",
+                  :output_columns => "_id,_key",
+                  :query => "_key:ababa")
+  end
+
+  def test_no_existent_hash_id
+    populate_tags
+
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"]],
+                  [],
+                  :table => "tags",
+                  :output_columns => "_id,_key",
+                  :query => "_id:1234")
+  end
+
+  def test_multi_match_columns
+    populate_users
+
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"],
+                   ["real_name", "ShortText"]],
+                  [[2, "hayamiz", "Yuto Hayamizu"]],
+                  :table => "users",
+                  :match_columns => "real_name",
+                  :output_columns => "_id,_key,real_name",
+                  :query => "Yuto Hayamizu")
   end
 
   private
