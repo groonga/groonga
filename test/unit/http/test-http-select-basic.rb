@@ -791,7 +791,7 @@ EOF
                       {:table => "users", :sortby => "_key", :offset => 2})
   end
 
-  def test_no_existent_key
+  def test_no_existent_pat_key
     populate_users
 
     assert_select([["_id", "UInt32"],
@@ -803,7 +803,7 @@ EOF
                   :query => "_key:ababa")
   end
 
-  def test_no_existent_id
+  def test_no_existent_pat_id
     populate_users
 
     assert_select([["_id", "UInt32"],
@@ -812,6 +812,26 @@ EOF
                    ["hp", "Int32"]],
                   [],
                   :table => "users",
+                  :query => "_id:1234")
+  end
+
+  def test_no_existent_hash_key
+    populate_tags
+
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"]],
+                  [],
+                  :table => "tags",
+                  :query => "_key:ababa")
+  end
+
+  def test_no_existent_hash_id
+    populate_tags
+
+    assert_select([["_id", "UInt32"],
+                   ["_key", "ShortText"]],
+                  [],
+                  :table => "tags",
                   :query => "_id:1234")
   end
 
