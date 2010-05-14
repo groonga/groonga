@@ -109,16 +109,25 @@ module GroongaHTTPTestUtils
     column_create("users", "real_name", Column::SCALAR, "ShortText")
     column_create("users", "description", Column::SCALAR, "ShortText")
     column_create("users", "hp", Column::SCALAR, "Int32")
+    column_create("users", "prefecture", Column::SCALAR, "ShortText")
+    column_create("users", "city", Column::SCALAR, "ShortText")
 
     table_create("terms",
                  :flags => Table::PAT_KEY,
                  :key_type => "ShortText",
                  :default_tokenizer => "TokenBigram")
-    column_create("terms", "users_real_name", Column::INDEX, "users",
+    column_create("terms", "users_real_name",
+                  Column::INDEX | Flag::WITH_POSITION,
+                  "users",
                   :source => "real_name")
-    column_create("terms", "users_descrption", Column::INDEX, "users",
+    column_create("terms", "users_descrption",
+                  Column::INDEX | Flag::WITH_POSITION,
+                  "users",
                   :source => "description")
-    # TODO: multi column index
+    column_create("terms", "users_prefecture_city",
+                  Column::INDEX | Flag::WITH_POSITION | Flag::WITH_SECTION,
+                  "users",
+                  :source => "prefecture,city")
 
     table_create("tags",
                  :flags => Table::HASH_KEY,
@@ -137,17 +146,17 @@ module GroongaHTTPTestUtils
 
   def load_users
     load("users",
-         [{:_key => "ryoqun", :real_name => "Ryo Onodera", :description => "ryoくんです。", :hp => 200},
-          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :description => "λかわいいよλ", :hp => 200}])
+         [{:_key => "ryoqun", :real_name => "Ryo Onodera", :description => "ryoくんです。", :hp => 200, :prefecture => "不明", :city => "不明"},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :description => "λかわいいよλ", :hp => 200, :prefecture => "富山県", :city => "富山市"}])
   end
 
   def load_many_users
     load("users",
-         [{:_key => "moritan", :real_name => "モリタン", :description => "モリタンはモリタポ星からやってきました。", :hp => 100},
-          {:_key => "taporobo", :real_name => "タポロボ", :description => "モリモリモリタポをあつめるタポロボです。", :hp => 100},
-          {:_key => "ryoqun", :real_name => "Ryo Onodera", :description => "ryoくんです。", :hp => 200},
-          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :description => "λかわいいよλ", :hp => 200},
-          {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA", :description => "エロいおっさん", :hp => 150}])
+         [{:_key => "moritan", :real_name => "モリタン", :description => "モリタンはモリタポ星からやってきました。", :hp => 100, :prefecture => "モリタポ県", :city => "モリタポ市"},
+          {:_key => "taporobo", :real_name => "タポロボ", :description => "モリモリモリタポをあつめるタポロボです。", :hp => 100, :prefecture => "モリタポ県", :city => "タポロボ市"},
+          {:_key => "ryoqun", :real_name => "Ryo Onodera", :description => "ryoくんです。", :hp => 200, :prefecture => "不明", :city => "不明"},
+          {:_key => "hayamiz", :real_name => "Yuto Hayamizu", :description => "λかわいいよλ", :hp => 200, :prefecture => "富山県", :city => "富山市"},
+          {:_key => "gunyara-kun", :real_name => "Tasuku SUENAGA", :description => "エロいおっさん", :hp => 150, :prefecture => "長崎県", :city => "長崎市"}])
   end
 
   def load_tags

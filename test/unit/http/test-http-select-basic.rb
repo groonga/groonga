@@ -139,10 +139,12 @@ module HTTPSelectBasicTests
 
     assert_select([["_key", "ShortText"],
                    ["real_name", "ShortText"],
+                   ["prefecture", "ShortText"],
                    ["hp", "Int32"],
-                   ["description", "ShortText"]],
-                  [["hayamiz", "Yuto Hayamizu", 200, "λかわいいよλ"],
-                   ["ryoqun", "Ryo Onodera", 200, "ryoくんです。"]],
+                   ["description", "ShortText"],
+                   ["city", "ShortText"]],
+                  [["hayamiz", "Yuto Hayamizu", "富山県", 200, "λかわいいよλ", "富山市"],
+                   ["ryoqun", "Ryo Onodera", "不明", 200, "ryoくんです。", "不明"]],
                   :table => "users",
                   :output_columns => "_key *")
   end
@@ -838,46 +840,6 @@ EOF
                   :table => "tags",
                   :output_columns => "_id,_key",
                   :query => "_id:1234")
-  end
-
-  def test_multi_match_columns
-    create_users_table
-    load_many_users
-
-    assert_select([["_id", "UInt32"],
-                   ["_key", "ShortText"],
-                   ["_score", "Int32"]],
-                  [[2, "taporobo", 15],
-                   [1, "moritan", 11]],
-                  :table => "users",
-                  :match_columns => "real_name * 1 || description * 5",
-                  :sortby => '-_score',
-                  :output_columns => "_id,_key,_score",
-                  :query => "モリ")
-
-    assert_select([["_id", "UInt32"],
-                   ["_key", "ShortText"],
-                   ["_score", "Int32"]],
-                  [[1, "moritan", 7],
-                   [2, "taporobo", 3]],
-                  :table => "users",
-                  :match_columns => "real_name * 5 || description * 1",
-                  :sortby => '-_score',
-                  :output_columns => "_id,_key,_score",
-                  :query => "モリ")
-  end
-
-  def test_multi_match_columns_without_index_partial
-    cut_omit('not handled properly')
-
-    assert_select([["_id", "UInt32"],
-                   ["_key", "ShortText"],
-                   ["real_name", "ShortText"]],
-                  [[2, "hayamiz", "Yuto Hayamizu"]],
-                  :table => "users",
-                  :match_columns => "_key || real_name",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "Yuto")
   end
 
   private
