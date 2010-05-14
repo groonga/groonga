@@ -116,6 +116,9 @@ module GroongaHTTPTestUtils
                  :default_tokenizer => "TokenBigram")
     column_create("terms", "users_real_name", Column::INDEX, "users",
                   :source => "real_name")
+    column_create("terms", "users_descrption", Column::INDEX, "users",
+                  :source => "description")
+    # TODO: multi column index
 
     table_create("tags",
                  :flags => Table::HASH_KEY,
