@@ -26,17 +26,20 @@ module HTTPSelectDrilldownTests
 
   def setup_ddl
     table_create("Initial", :flags => Table::PAT_KEY, :key_type => "ShortText")
+    table_create("Tag", :flags => Table::HASH_KEY | Key::NORMALIZE,
+                 :key_type => "ShortText")
     table_create("Person", :key_type => "ShortText")
     column_create("Person", "initial", Column::SCALAR, "Initial")
     column_create("Person", "kana", Column::SCALAR, "ShortText")
+    column_create("Person", "tags", Column::VECTOR, "Tag")
     table_create("Place", :key_type => "ShortText")
     column_create("Place", "name", Column::SCALAR, "ShortText")
     table_create("Event", :key_type => "ShortText")
-    column_create("Event", "date", Column::SCALAR, "Time")
     column_create("Event", "person", Column::VECTOR, "Person")
     column_create("Event", "place", Column::SCALAR, "Place")
     column_create("Event", "title", Column::SCALAR, "ShortText")
     column_create("Event", "search", Column::SCALAR, "ShortText")
+    column_create("Event", "date", Column::SCALAR, "Time")
     table_create("Bigram",
                  :flags => Table::PAT_KEY | Key::NORMALIZE,
                  :key_type => "ShortText",
@@ -46,9 +49,9 @@ module HTTPSelectDrilldownTests
   end
 
   def setup_data
-    add_user("グニャラくん", "ぐにゃらくん", "く")
-    add_user("morita", "もりた", "も")
-    add_user("yu", "ゆう", "ゆ")
+    add_user("グニャラくん", "ぐにゃらくん", "く", ["ごくつぶし"])
+    add_user("morita", "もりた", "も", ["役員", "プログラマ", "管理職"])
+    add_user("yu", "ゆう", "ゆ", ["サーバ管理"])
     add_place("razil.jp", "ブラジル")
     add_place("shinjuku", "新宿")
     add_event("グニャラくん", "razil.jp", "groongaリリース（前編）", "20091218")
@@ -92,7 +95,7 @@ module HTTPSelectDrilldownTests
                        :output_columns => "_key",
                        :drilldown => "person",
                        :drilldown_sortby => "kana",
-                       :drilldown_output_columns => "_key _nsubrecs initial",
+                       :drilldown_output_columns => "_key,_nsubrecs,initial",
                        :drilldown_offset => 0,
                        :drilldown_limit => -1,
                      },
@@ -140,7 +143,7 @@ module HTTPSelectDrilldownTests
                                            "title", "person", "date"].join(" "),
                        :drilldown => "date person place",
                        :drilldown_sortby => "-_nsubrecs",
-                       :drilldown_output_columns => "_key _nsubrecs name",
+                       :drilldown_output_columns => "_key,_nsubrecs,name",
                        :drilldown_limit => 3,
                      },
                      {:n_hits => 6})
@@ -162,7 +165,7 @@ module HTTPSelectDrilldownTests
                        :query => "groonga",
                        :sortby => "title",
                        :limit => 2,
-                       :output_columns => "title person",
+                       :output_columns => "title,person",
                        :drilldown => "person",
                        :drilldown_sortby => "-_nsubrecs",
                        :drilldown_limit => 2,
@@ -194,15 +197,40 @@ module HTTPSelectDrilldownTests
                        :output_columns => "title date",
                        :drilldown => "date",
                        :drilldown_sortby => "-_key",
-                       :drilldown_output_columns => "_key _nsubrecs",
+                       :drilldown_output_columns => "_key,_nsubrecs",
                      },
                      {:n_hits => 15})
   end
 
+  def test_for_commit_d9dfaaa360756077b58ad9a036e19bdf14d91e44
+    # and 5042839e560c3eba3f9ce09b5052acaf65981e0c
+    assert_drilldown([["_key", "ShortText"]],
+                     [["morita"]],
+                     [[[3],
+                       [["_key", "ShortText"],
+                        ["_nsubrecs", "Int32"]],
+                       ["管理職", 1],
+                       ["役員", 1],
+                       ["プログラマ", 1]]],
+                     {
+                       :table => "Person",
+                       :query => "_key:morita",
+                       :output_columns => "_key",
+                       :drilldown => "tags",
+                       :drilldown_sortby => "-_key",
+                       :drilldown_limit => -1,
+                       :drilldown_output_columns => "_key,_nsubrecs",
+                     },
+                     {:n_hits => 1})
+  end
+
   private
-  def add_user(name, kana, initial)
+  def add_user(name, kana, initial, tags)
     load("Initial", [{"_key" => initial}])
-    load("Person", [{"_key" => name, "kana" => kana, "initial" => initial}])
+    tags.each{|tag|
+      load("Tag", [{"_key" => tag}])
+    }
+    load("Person", [{"_key" => name, "kana" => kana, "initial" => initial, "tags" => tags}])
   end
 
   def add_place(key, name)
