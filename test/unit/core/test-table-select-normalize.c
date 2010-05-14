@@ -85,7 +85,8 @@ setup_data(void)
 {
   assert_send_command("load "
                       "'[[\"_key\",\"content\"],"
-                      "[\"ボロ\",\"うちのボロTV（アナログ...）はまだ現役です\"]]' "
+                      "[\"ボロ\",\"うちのボロTV（アナログ...）はまだ現役です\"],"
+                      "[\"ロボ\",\"ロボット 鉄\"]]'"
                       "Comments");
 }
 
@@ -198,6 +199,18 @@ test_japanese_dot_parenthesis(void)
                                        result, GRN_OP_OR));
   grn_test_assert_select(context,
                          gcut_take_new_list_string("ボロ", NULL),
+                         result,
+                         "_key");
+}
+
+void
+test_bigram_end_with_space_and_single_char(void)
+{
+  cut_assert_not_null(grn_table_select(context, comments,
+                                       query("content:@\"ロボット 鉄\""),
+                                       result, GRN_OP_OR));
+  grn_test_assert_select(context,
+                         gcut_take_new_list_string("ロボ", NULL),
                          result,
                          "_key");
 }
