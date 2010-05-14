@@ -519,7 +519,9 @@ AC_ARG_ENABLE(futex,
   [enable_futex="no"])
 if test "x$enable_futex" != "xno"; then
   AC_CHECK_HEADERS(linux/futex.h sys/syscall.h, [
-    AC_DEFINE(USE_UYIELD, [1], [use uyield])
+    if test "x$enable_uyield" != "xno"; then
+      AC_DEFINE(USE_UYIELD, [1], [use uyield])
+    fi
   ], [
     AC_MSG_ERROR("linux/futex.h or sys/syscall.h not found")
   ])
