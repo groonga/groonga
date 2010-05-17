@@ -10,8 +10,8 @@ pkgconfig_DATA = groonga.pc
 .PHONY: FORCE
 
 version.sh: FORCE
-	@$(SHELL_PATH) ./version-gen.sh
--include version.sh
+	@$(SHELL_PATH) $(srcdir)/version-gen.sh
+	$(am__include) version.sh
 
 dist-hook:
 	rm -rf `find $(distdir) -name '*.loT'`

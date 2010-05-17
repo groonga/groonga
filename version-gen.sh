@@ -1,4 +1,8 @@
 #!/bin/sh
+case "$0" in
+*/*) cd "${0%/*}";;
+esac
+
 GRN_VERSION_SH=version.sh
 
 if test -f version
