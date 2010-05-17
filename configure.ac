@@ -538,13 +538,14 @@ function_modulesdir="\${modulesdir}/functions"
 AC_SUBST(function_modulesdir)
 
 AC_MSG_CHECKING(for the suffix of module shared libraries)
-suffix=$(./libtool --config | grep '^shrext_cmds=' | sed -e 's/shrext_cmds=//')
-suffix=$(echo "$suffix" | sed -e "s/'/\"/g")
+shrext_cmds=$(./libtool --config | grep '^shrext_cmds=')
+eval $shrext_cmds
+module=yes eval suffix="$shrext_cmds"
 AC_MSG_RESULT($suffix)
 if test -z "$suffix"; then
   AC_MSG_ERROR([can't detect module suffix])
 fi
-AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, [$suffix], "module suffix")
+AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, ["$suffix"], "module suffix")
 
 
 # flags for compile groonga
