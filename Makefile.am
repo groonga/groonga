@@ -11,7 +11,7 @@ pkgconfig_DATA = groonga.pc
 
 version.sh: FORCE
 	@$(SHELL_PATH) ./version-gen.sh
--include version.sh
+sinclude version.sh
 
 dist-hook:
 	rm -rf `find $(distdir) -name '*.loT'`
