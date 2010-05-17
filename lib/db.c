@@ -1322,6 +1322,10 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
+
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "grn_table_truncate() is not implemented.");
+  rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+#if 0
   if (table) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
@@ -1336,6 +1340,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
     }
     grn_obj_touch(ctx, table, NULL);
   }
+#endif
   GRN_API_RETURN(rc);
 }
 
