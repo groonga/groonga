@@ -1,6 +1,6 @@
 noinst_PROGRAMS = kv
 
-INCLUDES = $(GROONGA_INCLUDEDIR)
+DEFAULT_INCLUDES = -I$(top_srcdir) $(GROONGA_INCLUDEDIR)
 
 kv_SOURCES = kv.c
 kv_LDADD = $(top_builddir)/lib/libgroonga.la

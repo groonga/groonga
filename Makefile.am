@@ -10,7 +10,7 @@ pkgconfig_DATA = groonga.pc
 .PHONY: FORCE
 
 version.sh: FORCE
-	@$(SHELL_PATH) ./version-gen.sh
+	@$(SHELL_PATH) $(srcdir)/version-gen.sh
 sinclude version.sh
 
 dist-hook:

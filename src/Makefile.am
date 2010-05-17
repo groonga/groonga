@@ -4,7 +4,7 @@ noinst_PROGRAMS = grnslap
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) \
             -DDEFAULT_ADMIN_HTML_PATH=\"$(pkgdatadir)/admin_html\"
 
-INCLUDES = -I. -I.. $(GROONGA_INCLUDEDIR)
+DEFAULT_INCLUDES = -I$(top_builddir) -I$(srcdir) -I$(top_srcdir) $(GROONGA_INCLUDEDIR)
 
 groonga_SOURCES = groonga.c
 groonga_LDADD = $(top_builddir)/lib/libgroonga.la
