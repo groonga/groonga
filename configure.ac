@@ -84,6 +84,8 @@ if test "$GCC" = "yes"; then
 fi
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
+m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  lib/Makefile
