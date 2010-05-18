@@ -45,6 +45,8 @@ void data_arithmetic_operator_syntax_error(void);
 void test_arithmetic_operator_syntax_error(gconstpointer data);
 void data_not_allow_update(void);
 void test_not_allow_update(gconstpointer data);
+void data_valid(void);
+void test_valid(gconstpointer data);
 
 void
 cut_startup(void)
@@ -1448,4 +1450,34 @@ test_not_allow_update(gconstpointer data)
   grn_test_assert_error(GRN_UPDATE_NOT_ALLOWED,
                         gcut_data_get_string(data, "message"),
                         &context);
+}
+
+void
+data_valid(void)
+{
+#define ADD_DATUM(label, query)                 \
+  gcut_add_datum(label,                         \
+                 "query", G_TYPE_STRING, query, \
+                 NULL)
+
+  ADD_DATUM("quote",
+            "body == \"hoge\" && size == 4");
+
+#undef ADD_DATUM
+}
+
+void
+test_valid(gconstpointer data)
+{
+  grn_obj *v;
+  const gchar *query;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, expr, v);
+  query = gcut_data_get_string(data, "query");
+  grn_test_assert(grn_expr_parse(&context, expr, query, strlen(query),
+                                 body, GRN_OP_MATCH, GRN_OP_AND,
+                                 GRN_EXPR_SYNTAX_SCRIPT),
+                  cut_message("%s", query));
 }
