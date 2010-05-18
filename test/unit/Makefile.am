@@ -20,7 +20,8 @@ noinst_LTLIBRARIES = suite-groonga-test.la
 endif
 
 EXTRA_DIST =					\
-	run-test.sh
+	run-test.sh				\
+	run-test.rb
 
 INCLUDES =			\
 	-I$(srcdir)		\
