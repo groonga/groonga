@@ -27,7 +27,7 @@ dist-hook:
 install-data-local:
 	@$(NORMAL_INSTALL)
 	test -z "$(DESTDIR)$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	cp -R resource/* $(DESTDIR)$(pkgdatadir)
+	cp -R "$(srcdir)"/resource/* $(DESTDIR)$(pkgdatadir)
 
 uninstall-local:
 	@$(NORMAL_UNINSTALL)
