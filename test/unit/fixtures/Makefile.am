@@ -2,7 +2,8 @@ SUBDIRS =					\
 	stress					\
 	performance				\
 	inverted-index				\
-	modules
+	modules					\
+	story
 
 if WITH_CUTTER
 noinst_LTLIBRARIES =				\
