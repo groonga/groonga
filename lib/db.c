@@ -119,7 +119,6 @@ grn_db_open(grn_ctx *ctx, const char *path)
   grn_db *s;
   grn_ctx *ctx_ = ctx;
   GRN_API_ENTER;
-  ctx = &grn_gctx;
   if (path && strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
       grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
@@ -167,7 +166,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   if (!s) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
   GRN_TINY_ARRAY_EACH(&s->values, 1, grn_pat_curr_id(ctx, s->keys), id, vp, {
-    if (vp->ptr) { grn_obj_close(&grn_gctx, vp->ptr); }
+    if (vp->ptr) { grn_obj_close(ctx, vp->ptr); }
   });
 /* grn_tiny_array_fin should be refined.. */
 #ifdef WIN32
@@ -177,10 +176,10 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   }
 #endif
   grn_tiny_array_fin(&s->values);
-  grn_pat_close(&grn_gctx, s->keys);
+  grn_pat_close(ctx, s->keys);
   CRITICAL_SECTION_FIN(s->lock);
-  if (s->specs) { grn_ja_close(&grn_gctx, s->specs); }
-  GRN_GFREE(s);
+  if (s->specs) { grn_ja_close(ctx, s->specs); }
+  GRN_FREE(s);
   if (ctx->impl && ctx->impl->db == db) {
     grn_cache_expire(-1);
     ctx->impl->db = NULL;
@@ -5345,13 +5344,13 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
     r->db = (grn_obj *)s;\
     size = grn_vector_get_element(ctx, &v, 2, &p, NULL, NULL);\
     if (size) {\
-      if ((r->source = GRN_GMALLOC(size))) {\
+      if ((r->source = GRN_MALLOC(size))) {\
         memcpy(r->source, p, size);\
         r->source_size = size;\
       }\
     }\
     size = grn_vector_get_element(ctx, &v, 3, &p, NULL, NULL);\
-    grn_hook_unpack(&grn_gctx, r, p, size);\
+    grn_hook_unpack(ctx, r, p, size);\
   }\
 }
 
@@ -5417,50 +5416,50 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               if (size) {
                 switch (spec->header.type) {
                 case GRN_TYPE :
-                  vp->ptr = (grn_obj *)grn_type_open(&grn_gctx, spec);
+                  vp->ptr = (grn_obj *)grn_type_open(ctx, spec);
                   UNPACK_INFO();
                   break;
                 case GRN_TABLE_HASH_KEY :
                   GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_hash_open(&grn_gctx, buffer);
+                  vp->ptr = (grn_obj *)grn_hash_open(ctx, buffer);
                   UNPACK_INFO();
                   break;
                 case GRN_TABLE_PAT_KEY :
                   GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_pat_open(&grn_gctx, buffer);
+                  vp->ptr = (grn_obj *)grn_pat_open(ctx, buffer);
                   UNPACK_INFO();
                   break;
                 case GRN_TABLE_NO_KEY :
                   GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_array_open(&grn_gctx, buffer);
+                  vp->ptr = (grn_obj *)grn_array_open(ctx, buffer);
                   UNPACK_INFO();
                   break;
                 case GRN_TABLE_VIEW :
                   GET_PATH(spec, buffer, s, id);
-                  vp->ptr = grn_view_open(&grn_gctx, buffer);
+                  vp->ptr = grn_view_open(ctx, buffer);
                   UNPACK_INFO();
                   break;
                 case GRN_COLUMN_VAR_SIZE :
                   GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_ja_open(&grn_gctx, buffer);
+                  vp->ptr = (grn_obj *)grn_ja_open(ctx, buffer);
                   UNPACK_INFO();
                   break;
                 case GRN_COLUMN_FIX_SIZE :
                   GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_ra_open(&grn_gctx, buffer);
+                  vp->ptr = (grn_obj *)grn_ra_open(ctx, buffer);
                   UNPACK_INFO();
                   break;
                 case GRN_COLUMN_INDEX :
                   GET_PATH(spec, buffer, s, id);
                   {
                     grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
-                    vp->ptr = (grn_obj *)grn_ii_open(&grn_gctx, buffer, table);
+                    vp->ptr = (grn_obj *)grn_ii_open(ctx, buffer, table);
                   }
                   UNPACK_INFO();
                   break;
                 case GRN_PROC :
                   GET_PATH(spec, buffer, s, id);
-                  grn_db_register(&grn_gctx, buffer);
+                  grn_db_register(ctx, buffer);
                   break;
                 case GRN_EXPR :
                   {
