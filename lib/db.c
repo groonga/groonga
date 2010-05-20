@@ -6636,6 +6636,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
   } else if (GRN_ACCESSORP(obj)) {
     switch (op) {
     case GRN_OP_EQUAL :
+    case GRN_OP_TERM_EXTRACT :
       if (buf_size) { indexbuf[n++] = obj; }
       break;
     case GRN_OP_PREFIX :

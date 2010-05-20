@@ -872,6 +872,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_JSON_PUT :
     case GRN_OP_GET_REF :
     case GRN_OP_ADJUST :
+    case GRN_OP_TERM_EXTRACT :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs) {
         int i = nargs - 1;
@@ -3113,6 +3114,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE_POST, 1, GRN_OBJ_DECR);
         break;
       default :
+        ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "not implemented operator assigned");
         break;
       }
     }
@@ -3370,6 +3372,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GEO_WITHINP5 :
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
+    case GRN_OP_TERM_EXTRACT :
       if (stat < SCAN_COL1 || SCAN_CONST < stat) { return NULL; }
       stat = SCAN_START;
       m++;
@@ -3431,6 +3434,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GEO_WITHINP5 :
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
+    case GRN_OP_TERM_EXTRACT :
       stat = SCAN_START;
       si->op = c->op;
       si->end = c - e->codes;
@@ -3907,6 +3911,22 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                 GRN_OBJ_FIN(ctx, &wv);
               }
               done++;
+              break;
+            case GRN_OP_TERM_EXTRACT :
+              if (si->flags & SCAN_ACCESSOR) {
+                if (index->header.type == GRN_ACCESSOR &&
+                    !((grn_accessor *)index)->next) {
+                  grn_accessor *a = (grn_accessor *)index;
+                  switch (a->action) {
+                  case GRN_ACCESSOR_GET_KEY :
+                    grn_table_search(ctx, table,
+                                     GRN_TEXT_VALUE(si->query), GRN_TEXT_LEN(si->query),
+                                     GRN_OP_TERM_EXTRACT, res, si->logical_op);
+                    done++;
+                    break;
+                  }
+                }
+              }
               break;
             default :
               /* todo : implement */
