@@ -8,9 +8,9 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <title>groonga admin</title>
 <link rel="stylesheet" type="text/css" href="/css/admin.css">
-<link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.7.2.custom.css">
-<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.1.custom.css">
+<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.1.custom.min.js"></script>
 </head>
 <body>
 <div id="header">
@@ -302,6 +302,8 @@ GroongaAdmin = {
   initialize: function() {
     GroongaAdmin.current_table = null;
     GroongaAdmin.statusTimer = null;
+    GroongaAdmin.semaphore = new Array();
+    GroongaAdmin.current_status = 0;
 
     GroongaAdmin.database_tabs = $('#database-tabs').tabs({
       show: function(e, ui) {
@@ -352,7 +354,6 @@ GroongaAdmin = {
           $('#tab-recordlist-simplequerytype').val(),
           1);
       }
-
     });
     GroongaAdmin.update_tablelist();
 
@@ -399,6 +400,7 @@ GroongaAdmin = {
     }).change();
 
     $('#tab-recordlist-incremental').change(function() {
+      $('#tab-recordlist-simplequery').unbind('keyup');
       if ($(this).attr('checked') &&
           $('#tab-recordlist-simplequerytype').val() != 'scorer') {
         $('#tab-recordlist-simplequery').keyup(function(e) {
@@ -406,10 +408,9 @@ GroongaAdmin = {
             GroongaAdmin.current_table,
             $('#tab-recordlist-simplequery').val(),
             $('#tab-recordlist-simplequerytype').val(),
-            1);
+            1,
+            true);
         });
-      } else {
-        $('#tab-recordlist-simplequery').unbind('keyup');
       }
     }).change();
 
@@ -418,24 +419,31 @@ GroongaAdmin = {
       var cs = $('#createcolumn-source');
       if (s.length > 0) {
         cs.empty().removeAttr('disabled');
-        $.ajax({
-          url: '/d/column_list',
-          data: {'table': s.val()},
-          dataType: 'json',
-          success: function(d) {
-            var idx;
-            var b = d[1];
-            $.each(b[0], function(i, val) {
-              if (val[0] == 'name') { idx = i; }
-            });
-            if (idx) {
-              b.shift();
-              $.each(b, function(i, val) {
-                cs.append($('<option />').val(val[idx]).text(val[idx]));
+        GroongaAdmin.showloading(
+          $.ajax({
+            url: '/d/column_list',
+            data: {'table': s.val()},
+            dataType: 'json',
+            success: function(d) {
+              if(GroongaAdmin.validateajax(d) < 0) { return; }
+              var idx;
+              var b = d[1];
+              $.each(b[0], function(i, val) {
+                if (val[0] == 'name') { idx = i; }
               });
+              if (idx) {
+                b.shift();
+                $.each(b, function(i, val) {
+                  cs.append($('<option />').val(val[idx]).text(val[idx]));
+                });
+              }
+              GroongaAdmin.hideloading();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+              GroongaAdmin.errorloading(XMLHttpRequest);
             }
-          }
-        });
+          })
+        );
       } else {
         cs.empty().attr('disabled', 'disabled');
       }
@@ -444,8 +452,13 @@ GroongaAdmin = {
     GroongaAdmin.recordlist_count = 30;
   },
   start_status_timer: function() {
+    GroongaAdmin.stop_status_timer();
     GroongaAdmin.status();
     GroongaAdmin.statusTimer = setInterval(GroongaAdmin.status, 1000);
+  },
+  change_status_timer: function(time) {
+    GroongaAdmin.stop_status_timer();
+    GroongaAdmin.statusTimer = setInterval(GroongaAdmin.status, time);
   },
   stop_status_timer: function() {
     if (GroongaAdmin.statusTimer) {
@@ -464,7 +477,7 @@ GroongaAdmin = {
         if ($.isArray(line)) {
           elms.push('<tr>');
           var m = line.length;
-          for (var j = 0 ; j < m; j++) {
+          for (var j = 0; j < m; j++) {
             elms.push('<th>');
             elms.push(prim2html(line[j][0], 128));
             elms.push('<br />');
@@ -480,7 +493,7 @@ GroongaAdmin = {
           if ($.isArray(line)) {
             elms.push('<tr>');
             var m = line.length;
-            for (var j = 0 ; j < m; j++) {
+            for (var j = 0; j < m; j++) {
               elms.push('<td>');
               elms.push(prim2html(line[j], 128));
               elms.push('</td>');
@@ -495,78 +508,105 @@ GroongaAdmin = {
     return elms.join('');
   },
   status: function() {
+    if (GroongaAdmin.current_status > 0) { return; }
+    GroongaAdmin.current_status++;
     $.ajax({
       url: '/d/status',
       data: {},
       dataType: 'json',
       success: function(b) {
+        GroongaAdmin.current_status--;
+        if (!b) {
+          GroongaAdmin.change_status_timer(10000);
+          return;
+        }
         var d = b[1];
         $('#status-starttime').text(d.starttime);
         $('#status-uptime').text(d.uptime);
+        GroongaAdmin.change_status_timer(1000);
+      },
+      error: function() {
+        GroongaAdmin.current_status--;
+        GroongaAdmin.change_status_timer(10000);
       }
     });
   },
   update_tablelist: function() {
-    $.ajax({
-      url: '/d/table_list',
-      data: {},
-      dataType: 'json',
-      success: function(d) {
-        d.shift();
-        var tl = $('#side-menu-tablelist').empty();
-        var tt = $('#createtable-key-type-table').empty();
-        var vt = $('#createtable-value-type-table').empty();
-        var ct = $('#createcolumn-type-table').empty();
-        tl.append(
-          $('<li />').append(
-            $('<a />').attr('href', '#side-menu-database')
-                      .text('サマリー')
-                      .click(function() {
-                        GroongaAdmin.current_table = null;
-                        $('#table-tabs').hide();
-                        $('#database-tabs').show();
-                        GroongaAdmin.start_status_timer();
-                      })
-          )
-        )
-        var b = d.shift();
-        b.shift();
-        $.each(b, function(i, val) {
-          var table_name = val[1];
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/table_list',
+        data: {},
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          d.shift();
+          var tl = $('#side-menu-tablelist').empty();
+          var tt = $('#createtable-key-type-table').empty();
+          var vt = $('#createtable-value-type-table').empty();
+          var ct = $('#createcolumn-type-table').empty();
           tl.append(
             $('<li />').append(
-              $('<a />')
-                .attr('href', '#side-menu-tablelist-' + table_name)
-                .text(table_name)
-                .click(function() {
-                  GroongaAdmin.current_table = table_name;
-                  $('#database-tabs').hide();
-                  GroongaAdmin.stop_status_timer();
-                  $('#table-tabs').show();
-                  GroongaAdmin.columnlist(table_name);
-                  $('#tab-recordlist-simplequery').val('');
-                  GroongaAdmin.recordlist_simple(table_name, null, null, 1);
-                })
+              $('<a />').attr('href', '#side-menu-database')
+                        .text('サマリー')
+                        .click(function() {
+                          GroongaAdmin.current_table = null;
+                          $('#table-tabs').hide();
+                          $('#database-tabs').show();
+                          GroongaAdmin.start_status_timer();
+                        })
             )
-          );
-          tt.append($('<option />').val(val[1]).text(val[1]));
-          vt.append($('<option />').val(val[1]).text(val[1]));
-          ct.append($('<option />').val(val[1]).text(val[1]));
-        });
-      }
-    });
+          )
+          var b = d.shift();
+          b.shift();
+          $.each(b, function(i, val) {
+            var table_name = val[1];
+            tl.append(
+              $('<li />').append(
+                $('<a />')
+                  .attr('href', '#side-menu-tablelist-' + table_name)
+                  .text(table_name)
+                  .click(function() {
+                    GroongaAdmin.current_table = table_name;
+                    $('#database-tabs').hide();
+                    GroongaAdmin.stop_status_timer();
+                    $('#table-tabs').show();
+                    GroongaAdmin.columnlist(table_name);
+                    $('#tab-recordlist-simplequery').val('');
+                    GroongaAdmin.recordlist_simple(table_name, null, null, 1);
+                  })
+              )
+            );
+            tt.append($('<option />').val(val[1]).text(val[1]));
+            vt.append($('<option />').val(val[1]).text(val[1]));
+            ct.append($('<option />').val(val[1]).text(val[1]));
+          });
+          GroongaAdmin.hideloading();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
+        }
+      })
+    );
   },
   tablelist: function() {
-    $.ajax({
-      url: '/d/table_list',
-      data: {},
-      dataType: 'json',
-      success: function(d) {
-        var b = d[1];
-        var table = $(GroongaAdmin.create_table_element(b));
-        $('#database-tab-tablelist').empty().append($('<h1/>').text('テーブル一覧')).append(table);
-      }
-    });
+    $('#database-tab-tablelist').empty();
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/table_list',
+        data: {},
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          var b = d[1];
+          var table = $(GroongaAdmin.create_table_element(b));
+          $('#database-tab-tablelist').append($('<h1/>').text('テーブル一覧')).append(table);
+          GroongaAdmin.hideloading();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
+        }
+      })
+    );
   },
   pager_element_factory: function(per_page, current_page, show_num, func) {
     return function (total) {
@@ -607,7 +647,7 @@ GroongaAdmin = {
       return ret;
     }
   },
-  recordlist_simple: function(table_name, simplequery, simplequery_type, page) {
+  recordlist_simple: function(table_name, simplequery, simplequery_type, page, hide_dialog) {
     var d = {
       'table': table_name,
       'offset': (page - 1) * GroongaAdmin.recordlist_count,
@@ -616,6 +656,7 @@ GroongaAdmin = {
     switch (simplequery_type) {
     case 'query':
     case 'filter':
+    case null:
       if (simplequery) {
         d[simplequery_type] = simplequery;
       }
@@ -631,56 +672,72 @@ GroongaAdmin = {
               simplequery_type,
               Number($(this).text()));
             return false;
-          })
+        }
+        ),
+        hide_dialog
       );
       break;
     }
   },
-  recordlist: function(params, pager_func) {
-    $('#tab-recordlist-table').empty();
-    $.ajax({
-      url: '/d/select',
-      data: params,
-      dataType: 'json',
-      success: function(d) {
-        var rc = d.shift();
-        if (rc[0] != 0) {
-          alert('error');
-          return false;
+  recordlist: function(params, pager_func, hide_dialog) {
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/select',
+        data: params,
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d, hide_dialog) < 0) { return; }
+          var rc = d.shift();
+          if (rc[0] != 0) {
+            alert('error');
+            return false;
+          }
+          var body = d.shift();
+          var recs = body.shift();
+          var all_count = recs.shift()[0];
+          var pager;
+          if (pager_func) {
+            pager = pager_func(all_count);
+          } else {
+            pager = $('<span />');
+          }
+          $('#tab-recordlist-table')
+            .empty()
+            .append($('<h1/>').text('レコード一覧: ' + params['table']))
+            .append($('<p/>').text('総件数: ' + all_count))
+            .append(pager.clone(true))
+            .append($('<div/>').html(GroongaAdmin.create_table_element(recs)))
+            .append(pager);
+          GroongaAdmin.hideloading();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest, hide_dialog);
         }
-        var body = d.shift();
-        var recs = body.shift();
-        var all_count = recs.shift()[0];
-        var pager;
-        if (pager_func) {
-          pager = pager_func(all_count);
-        } else {
-          pager = $('<span />');
-        }
-        $('#tab-recordlist-table')
-          .empty()
-          .append($('<h1/>').text('レコード一覧: ' + params['table']))
-          .append($('<p/>').text('総件数: ' + all_count))
-          .append(pager.clone(true))
-          .append($('<div/>').html(GroongaAdmin.create_table_element(recs)))
-          .append(pager);
-      }
-    });
+      })
+    ,hide_dialog);
   },
   columnlist: function(table_name) {
-    $.ajax({
-      url: '/d/column_list',
-      data: {'table': table_name},
-      dataType: 'json',
-      success: function(d) {
-        var b = d[1];
-        var table = $(GroongaAdmin.create_table_element(b));
-        $('#table-tab-columnlist')
-          .empty()
-          .append($('<h1/>').text('カラム一覧: ' + table_name))
-          .append(table);
-      }
-    });
+    $('#table-tab-columnlist').empty();
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/column_list',
+        data: {'table': table_name},
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          var b = d[1];
+          var table = $(GroongaAdmin.create_table_element(b));
+          $('#table-tab-columnlist')
+            .empty()
+            .append($('<h1/>').text('カラム一覧: ' + table_name))
+            .append(table);
+          GroongaAdmin.hideloading();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
+        }
+      })
+    );
   },
   createtable: function() {
     var flags = 0;
@@ -688,25 +745,28 @@ GroongaAdmin = {
       flags |= Groonga[$(this).val()];
     });
     flags |= Groonga[$('#createtable-key-index').val()];
-    $.ajax({
-      url: '/d/table_create',
-      data: {
-        name: $('#createtable-name').val(),
-        'flags': flags,
-        key_type: $('#createtable-key-type').val(),
-        value_type: $('#createtable-value-type').val(),
-        default_tokenizer: $('#createtable-default-tokenizer').val()
-      },
-      dataType: 'json',
-      success: function(d) {
-        if (d) {
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/table_create',
+        data: {
+          name: $('#createtable-name').val(),
+          'flags': flags,
+          key_type: $('#createtable-key-type').val(),
+          value_type: $('#createtable-value-type').val(),
+          default_tokenizer: $('#createtable-default-tokenizer').val()
+        },
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          GroongaAdmin.hideloading();
           alert('テーブルを作成しました。');
           GroongaAdmin.update_tablelist();
-        } else {
-          alert('テーブルが作成できませんでした。');
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
         }
-      }
-    });
+      })
+    );
   },
   createcolumn: function() {
     var flags = 0;
@@ -727,23 +787,117 @@ GroongaAdmin = {
     if ($('#createcolumn-source').val()) {
       d['source'] = $('#createcolumn-source').val();
     }
-    $.ajax({
-      url: '/d/column_create',
-      data: d,
-      dataType: 'json',
-      success: function(d) {
-        if (d) {
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/column_create',
+        data: d,
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          GroongaAdmin.hideloading();
           alert('カラムを作成しました。');
-        } else {
-          alert('カラムが作成できませんでした。');
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
         }
+      })
+    );
+  },
+  showloading: function(obj, hide_dialog) {
+    if (obj == null) { return; }
+    GroongaAdmin.semaphore[GroongaAdmin.semaphore.length] = obj;
+    if ( $("#loadingdialog").size() > 0 || hide_dialog) { return; }
+    $("<div/>")
+      .attr("id", "loadingdialog")
+      .attr("style", "text-align: center;")
+      .append($("<img/>").attr("src", "images/loading.gif"))
+      .append(" Loading...")
+      .dialog({
+        title: "",
+        width: 200,
+        height: 110,
+        minHeight: 110,
+        modal: true,
+        resizable: false,
+        draggable: false,
+        position: ["right", "bottom"],
+        autoOpen: false,
+        buttons: {
+          中止: function() {
+            if (obj) { obj.abort(); }
+            GroongaAdmin.hideloading();
+          }
+        }
+      });
+    $("#loadingdialog").parents(".ui-dialog").children(".ui-dialog-titlebar").remove();
+    $("#loadingdialog").dialog("open");
+    $(".ui-widget-overlay").css("opacity", "0.0");
+  },
+  hideloading: function() {
+    for ( i = 0; i < GroongaAdmin.semaphore.length; i++) {
+      if ( GroongaAdmin.semaphore[i].readyState == 4) {
+        GroongaAdmin.semaphore.splice(i, 1);
+        i--;
       }
-    });
+    }
+    if ( GroongaAdmin.semaphore.length == 0) {
+      $("#loadingdialog").dialog("close");
+      $("#loadingdialog").remove();
+    }
+  },
+  errorloading: function(ajax, hide_dialog) {
+    var json = null;
+    if (ajax) {
+      json = jQuery.parseJSON(ajax.responseText);
+    }
+    GroongaAdmin.hideloading();
+    for ( i = 0; i < GroongaAdmin.semaphore.length; i++) {
+      GroongaAdmin.semaphore[i].abort();
+      GroongaAdmin.semaphore.splice(i, 1);
+      i--;
+    }
+    if ( $("#loadingdialog").size() == 0 && !hide_dialog) {
+      var errtext;
+      if (json){
+        errtext = "groongaでエラーが発生しました。<br>" + json[0][3] + "(" + json[0][0] + ")";
+      } else if (ajax) {
+        errtext = "通信エラーが発生しました。<br>" + ajax.status + ajax.statusText;
+      } else {
+        errtext = "通信エラーが発生しました。";
+      }
+      $("<div/>")
+        .append(errtext)
+        .attr("id", "loadingdialog")
+        .dialog({
+          title: "",
+          width: 340,
+          height: 160,
+          minHeight: 160,
+          modal: true,
+          resizable: false,
+          draggable: false,
+          open: function() {
+            $(this).parents(".ui-dialog").children(".ui-dialog-titlebar").remove();
+          },
+          buttons: { OK: function() { GroongaAdmin.hideloading(); } }
+        });
+    }
+  },
+  validateajax: function(d, hide_dialog) {
+    if (!d) {
+      GroongaAdmin.errorloading(null, hide_dialog);
+      return -1;
+    }
+    return 0;
   }
 };
 $(function() {
   GroongaAdmin.initialize();
   GroongaAdmin.tablelist();
+  $.ajaxSetup({
+    timeout: 10000,
+    cache: false
+  });
 });
 </script>
 </body>
