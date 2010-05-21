@@ -71,8 +71,10 @@ static grn_critical_section grntest_cs;
 static int grntest_stop_flag = 0;
 static int grntest_detail_on = 0;
 static int grntest_remote_mode = 0;
-static int grntest_localonly = 0;
+static int grntest_localonly_mode = 0;
 static int grntest_owndb_mode = 0;
+static int grntest_onmemory_mode = 0;
+static int grntest_noftp_mode = 0;
 #define TMPFILE "_grntest.tmp"
 
 static grn_ctx grntest_server_context;
@@ -1565,7 +1567,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
   char tmpbuf[MAX_COMMAND_LEN];
 
   for (i = 0; i < jobnum; i++) {
-    if (grntest_job[i].concurrency == 1) {
+    if ((grntest_job[i].concurrency == 1) && (!grntest_onmemory_mode)) {
       grntest_task[tid].file = grntest_job[i].commandfile;
       grntest_task[tid].table = NULL;
       grntest_task[tid].ntimes = grntest_job[i].ntimes;
@@ -2522,8 +2524,9 @@ usage(void)
          "  --localonly:               omit server connection\n"
          "  --log-output-dir:          specify output dir (default: current)\n"
          "  --noftp:                   omit ftp connection\n"
+         "  --onmemory:                load all commands into memory\n"
          "  --output-type <tsv/json>:  specify output-type (default: json)\n"
-         "  --own_db  open dbs for each ctx\n"
+         "  --owndb:                   open dbs for each ctx\n"
          "  -p, --port <port number>:  server port number (default: %d)\n",
          DEFAULT_DEST, DEFAULT_PORT);
   exit(1);
@@ -2532,11 +2535,15 @@ usage(void)
 enum {
   mode_default = 0,
   mode_list,
-  mode_noftp,
   mode_usage,
-  mode_localonly,
-  mode_owndb,
 };
+
+#define MODE_MASK      0x007f
+#define MODE_NOFTP     0x0080
+#define MODE_LOCALONLY 0x0100
+#define MODE_OWNDB     0x0800
+#define MODE_ONMEMORY  0x1000
+
 
 static
 int
@@ -2684,10 +2691,11 @@ main(int argc, char **argv)
     {'\0', "log-output-dir", NULL, 0, getopt_op_none},
     {'\0', "output-type", NULL, 0, getopt_op_none},
     {'\0', "dir", NULL, mode_list, getopt_op_update},
-    {'\0', "noftp", NULL, mode_noftp, getopt_op_update},
+    {'\0', "noftp", NULL, MODE_NOFTP, getopt_op_on},
     {'h', "help", NULL, mode_usage, getopt_op_update},
-    {'\0', "localonly", NULL, mode_localonly, getopt_op_update},
-    {'\0', "owndb", NULL, mode_owndb, getopt_op_update},
+    {'\0', "localonly", NULL, MODE_LOCALONLY, getopt_op_on},
+    {'\0', "onmemory", NULL, MODE_ONMEMORY, getopt_op_on},
+    {'\0', "owndb", NULL, MODE_OWNDB, getopt_op_on},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2700,10 +2708,20 @@ main(int argc, char **argv)
   if (i < 0) {
     usage();
   }
-  if (mode == mode_usage) {
-    usage();
-  }
 
+  switch (mode & MODE_MASK) {
+  case mode_list :
+    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data",
+             NULL);
+    return 0;
+    break;
+  case mode_usage :
+    usage();
+    break;
+  default :
+    break;
+  }
+  
   if (i < argc) {
     scrname = argv[i];
   }
@@ -2712,20 +2730,23 @@ main(int argc, char **argv)
   }
   grntest_dbpath = dbname;
 
-  if (mode == mode_list) {
-    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data",
-             NULL);
-    return 0;
-  }
-  if (mode == mode_localonly) {
-    grntest_localonly = 1;
+  if (mode & MODE_LOCALONLY) {
+    grntest_localonly_mode = 1;
     grntest_remote_mode = 1;
   }
 
-  if (mode == mode_owndb) {
-    grntest_localonly = 1;
+  if (mode & MODE_OWNDB) {
+    grntest_localonly_mode = 1;
     grntest_remote_mode = 1;
     grntest_owndb_mode = 1;
+  }
+
+  if (mode & MODE_ONMEMORY) {
+    grntest_onmemory_mode= 1;
+  }
+
+  if (mode & MODE_NOFTP) {
+    grntest_noftp_mode= 1;
   }
 
   if ((scrname == NULL) || (dbname == NULL)) {
@@ -2753,7 +2774,7 @@ main(int argc, char **argv)
   grn_ctx_init(&grntest_server_context, 0);
   grn_set_default_encoding(GRN_ENC_UTF8);
 
-  if (mode != mode_noftp) {
+  if (!grntest_noftp_mode) {
     sync_script(&context, scrname);
   }
   check_script(scrname);
@@ -2763,7 +2784,7 @@ main(int argc, char **argv)
     start_server(dbname, 0);
   }
 
-  if (!grntest_localonly) {
+  if (!grntest_localonly_mode) {
     if (check_server(&grntest_server_context)) {
       goto exit;
     }
@@ -2798,7 +2819,7 @@ main(int argc, char **argv)
   output_result_final(&context, qnum);
   fclose(grntest_logfp);
 
-  if (mode != mode_noftp) {
+  if (!grntest_noftp_mode) {
     ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3,
             "report", NULL);
   }
