@@ -5275,7 +5275,10 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep)
       db_value *vp;
       grn_db *s = (grn_db *)db;
       if ((vp = grn_tiny_array_at(&s->values, id))) {
+        GRN_ASSERT(!vp->lock);
+        vp->lock = 0;
         vp->ptr = NULL;
+        vp->done = 0;
       }
       return removep ? grn_pat_delete_by_id(ctx, s->keys, id, NULL) : GRN_SUCCESS;
     }
@@ -5386,7 +5389,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         GRN_FUTEX_WAIT(pl);
       }
 #endif /* USE_NREF */
-      if (s->specs && !vp->ptr) {
+      if (s->specs && !vp->ptr /* && !vp->done */) {
 #ifndef USE_NREF
         pl = &vp->lock;
         for (ntrial = 0;; ntrial++) {
@@ -5473,9 +5476,9 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             }
             grn_ja_unref(ctx, &jw);
           }
-          if (!vp->ptr) {
-            GRN_ATOMIC_ADD_EX(pl, -1, l);
-          }
+#ifndef USE_NREF
+          GRN_ATOMIC_ADD_EX(pl, -1, l);
+#endif /* USE_NREF */
           vp->done = 1;
           GRN_FUTEX_WAKE(&vp->ptr);
         } else {
