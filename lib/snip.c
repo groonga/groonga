@@ -435,6 +435,7 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
     GRN_FREE(ret);
     return NULL;
   }
+  GRN_API_ENTER;
   ret->encoding = ctx->encoding;
   ret->flags = flags;
   ret->width = width;
@@ -449,7 +450,7 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
                                defaultopentag, defaultopentag_len,
                                copy_tag)) {
     GRN_FREE(ret);
-    return NULL;
+    GRN_API_RETURN(NULL);
   }
 
   if (grn_snip_set_default_tag(ctx,
@@ -461,7 +462,7 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
       GRN_FREE((void *)ret->defaultopentag);
     }
     GRN_FREE(ret);
-    return NULL;
+    GRN_API_RETURN(NULL);
   }
 
   ret->cond_len = 0;
@@ -470,7 +471,7 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
   ret->tag_count = 0;
   ret->snip_count = 0;
 
-  return ret;
+  GRN_API_RETURN(ret);
 }
 
 static grn_rc
@@ -495,6 +496,7 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
 {
   snip_cond *cond, *cond_end;
   if (!snip) { return GRN_INVALID_ARGUMENT; }
+  GRN_API_ENTER;
   if (snip->flags & GRN_SNIP_COPY_TAG) {
     int i;
     snip_cond *sc;
@@ -514,7 +516,7 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
     grn_snip_cond_close(ctx, cond);
   }
   GRN_FREE(snip);
-  return GRN_SUCCESS;
+  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 grn_rc
@@ -526,6 +528,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
   if (!snip || !string || !nresults || !max_tagged_len) {
     return GRN_INVALID_ARGUMENT;
   }
+  GRN_API_ENTER;
   exec_clean(ctx, snip);
   *nresults = 0;
   if (snip->flags & GRN_SNIP_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
@@ -533,7 +536,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
   if (!snip->nstr) {
     exec_clean(ctx, snip);
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_str_open on grn_snip_exec failed !");
-    return GRN_NO_MEMORY_AVAILABLE;
+    GRN_API_RETURN(ctx->rc);
   }
   for (i = 0; i < snip->cond_len; i++) {
     grn_bm_tunedbm(snip->cond + i, snip->nstr, snip->flags);
@@ -683,7 +686,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
 
   snip->max_tagged_len = *max_tagged_len;
 
-  return GRN_SUCCESS;
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
@@ -699,6 +702,7 @@ grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int index, char
 
   GRN_ASSERT(snip->snip_count != 0 && snip->tag_count != 0);
 
+  GRN_API_ENTER;
   sres = &snip->snip_result[index];
   j = sres->first_tag_result_idx;
   for (p = result, i = sres->start_offset; i < sres->end_offset; i++) {
@@ -765,5 +769,5 @@ grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int index, char
   if(result_len) { *result_len = (unsigned int)(p - result); }
   GRN_ASSERT((unsigned int)(p - result) <= snip->max_tagged_len);
 
-  return GRN_SUCCESS;
+  GRN_API_RETURN(ctx->rc);
 }

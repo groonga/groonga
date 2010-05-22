@@ -27,6 +27,7 @@ void test_simple_exec(void);
 void test_simple_exec_euc_jp(void);
 void test_simple_exec_sjis(void);
 void test_simple_exec_utf8(void);
+void test_exec_with_empty_string(void);
 void test_exec_with_invalid_argument(void);
 void data_proper_tag_insertion(void);
 void test_proper_tag_insertion(gconstpointer data);
@@ -400,6 +401,19 @@ test_simple_exec_utf8(void)
                           "コンパクトな実装ですが、",
                           result);
   cut_assert_equal_uint(104, result_len);
+}
+
+void
+test_exec_with_empty_string(void)
+{
+  unsigned int n_results;
+  unsigned int max_tagged_len;
+
+  cut_assert_open_snip();
+
+  grn_test_assert(grn_snip_exec(&context, snip, "", 0,
+                                &n_results, &max_tagged_len));
+  cut_assert_equal_uint(0, n_results);
 }
 
 void

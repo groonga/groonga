@@ -1,4 +1,442 @@
+2010-05-20 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/snip.c, test/unit/util/test-snip.c: grn_snip_exec() don't report error
+ for empty string.
+
+2010-05-20 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * .../ui-bg_highlight-soft_75_ffe45c_1x100.png,
+ .../images/ui-icons_222222_256x240.png,
+ .../images/ui-icons_228ef1_256x240.png,
+ .../images/ui-icons_ef8c08_256x240.png,
+ .../images/ui-icons_ffd27a_256x240.png,
+ .../images/ui-icons_ffffff_256x240.png,
+ .../css/ui-lightness/jquery-ui-1.7.2.custom.css,
+ .../css/ui-lightness/jquery-ui-1.8.1.custom.css,
+ resource/admin_html/index.html, resource/admin_html/js/jquery-1.3.2.min.js,
+ resource/admin_html/js/jquery-1.4.2.min.js,
+ .../admin_html/js/jquery-ui-1.7.2.custom.min.js,
+ .../admin_html/js/jquery-ui-1.8.1.custom.min.js: Added loading dialog on html
+ admin tool.
+
+2010-05-20 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/expr.c: Supported GRN_OP_TERM_EXTRACT.
+
+ * lib/db.c: stop using grn_gctx in db.c which cause wrong error detection.
+
+2010-05-18 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac, doc/ja/characteristic.html, doc/ja/commands.html,
+ doc/ja/commands/add.html, doc/ja/commands/cache_limit.html,
+ doc/ja/commands/column_create.html, doc/ja/commands/column_list.html,
+ doc/ja/commands/column_remove.html, doc/ja/commands/define_selector.html,
+ doc/ja/commands/delete.html, doc/ja/commands/get.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/set.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/table_remove.html,
+ doc/ja/commands/view_add.html, doc/ja/developer.html,
+ doc/ja/developer/com.html, doc/ja/developer/document.html,
+ doc/ja/developer/test.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/functions/geo_distance.html,
+ doc/ja/functions/geo_in_circle.html, doc/ja/functions/geo_in_rectangle.html,
+ doc/ja/functions/now.html, doc/ja/functions/rand.html, doc/ja/genindex.html,
+ doc/ja/grnslap.html, doc/ja/grntest.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/process.html, doc/ja/pseudo_column.html,
+ doc/ja/reference.html, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/tutorial.html, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial09.html,
+ doc/ja/tutorial/tutorial10.html, doc/ja/type.html: release 0.7.1
+
+2010-05-18 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/Makefile.am: add missing run-test.rb.
+
+ * test/unit/core/test-expr-script.c: add a test for valid script syntax.
+
+ * configure.ac, test/unit/fixtures/Makefile.am: add missing story test
+ fixture.
+
+ * configure.ac: create libtool in configure. [#295]
+
+2010-05-18 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * Makefile.am: Install resources from source directory.
+
+2010-05-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Expire query cache when column created.
+
+2010-05-17 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * Makefile.am, examples/Makefile.am, lib/Makefile.am, src/Makefile.am,
+ version-gen.sh: support for build-directory different from the source.
+
+ * test/unit/fixtures/modules/string.c: Get rid of a GNU extension function.
+
+2010-05-17 Yutaro Shimamura <yu@irx.jp>
+
+ * Makefile.am: using am__include in Makefile.am.
+
+2010-05-17 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/db.c, test/unit/core/test-table.c: grn_table_truncate() is not
+ implemented yet.
+
+2010-05-17 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: support module suffix detection on MacOS X.
+
+2010-05-17 Yutaro Shimamura <yu@irx.jp>
+
+ * Makefile.am: gmake needless on FreeBSD.
+
+2010-05-17 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: error on no module suffix detection.
+
+2010-05-14 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/http/test-http-select-weight.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: Added multi section index test
+ via HTTP.
+
+ * configure.ac: Fixed bug --enable-futex is interpreted to --enable-uyield.
+
+ * test/unit/core/test-table-select-normalize.c: Added test for serach with
+ bigram like "ロボット 鉄".
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: Added test for multi-index
+ match_columns with weight.
+
+2010-05-14 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * configure.ac: Stop enabling uyield unless enable_uyield is assigned
+ explicitly although futex.h was found.
+
+ * lib/db.c: Check whether index->range and res->domain are equivalent.
+
+2010-05-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/groonga_in.h: Fixed a bug in grn_ctx_at() cause segv when
+ enable FUTEX.
+
+2010-05-13 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands/load.html, doc/ja/searchindex.js,
+ doc/ja/source/commands/load.txt: Added more described instruction for columns
+ parameter of load command.
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: Added description column to
+ user atable on http test.
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: Added tests for non-existent
+ key/id search for hash table on http.
+
+2010-05-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/hash.c: Disabled per object lock.
+
+ * lib/hash.c: Fixed memory leak bug in grn_hash_add().
+
+2010-05-13 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/http/test-http-select-basic.rb: Added test for HITS number on
+ XML.
+
+2010-05-12 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/story/taiyaki/test-geo.c: add a test for weight match.
+
+ * test/unit/story/taiyaki/test-geo.c: add a test for drilldown.
+
+ * test/unit/fixtures/story/taiyaki/shops.grn,
+ test/unit/story/taiyaki/test-geo.c: add a test for logical but.
+
+ * test/unit/story/taiyaki/test-geo.c: add a test for geo_in_circle() and tag
+ search.
+
+ * test/unit/fixtures/story/taiyaki/ddl.grn,
+ test/unit/fixtures/story/taiyaki/shops.grn,
+ test/unit/story/taiyaki/test-geo.c: add a test for tag match and geo distance
+ score.
+
+ * test/unit/fixtures/story/taiyaki/shops.grn, test/unit/lib/grn-test-utils.c,
+ test/unit/lib/grn-test-utils.h, test/unit/story/taiyaki/test-geo.c: use name
+ column.
+
+ * configure.ac, test/unit/Makefile.am, test/unit/fixtures/story/Makefile.am,
+ test/unit/fixtures/story/taiyaki/Makefile.am,
+ test/unit/fixtures/story/taiyaki/ddl.grn,
+ test/unit/fixtures/story/taiyaki/shops.grn,
+ test/unit/lib/grn-test-shortcut.h, test/unit/lib/grn-test-utils.c,
+ test/unit/lib/grn-test-utils.h, test/unit/story/Makefile.am,
+ test/unit/story/taiyaki/Makefile.am, test/unit/story/taiyaki/test-geo.c: add
+ story based test: taiyaki.
+
+2010-05-12 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c, modules/functions/Makefile.am, modules/functions/cast.c,
+ modules/functions/geo.c: Added cast function module.
+
+ * groonga.h, lib/proc.c: Renamed GRN_PROC_PROCEDURE to GRN_PROC_COMMAND.
+
+ * lib/ii.c: Fixed a bug in grn_p_decv() cause wrong search result.
+
+2010-05-11 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/http/test-http-select-basic.rb: Added tests for non-existent
+ key/id search on http.
+
+2010-05-11 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, lib/token.c: work on MeCab enabled even if mecab.so is failed to
+ load.
+
+ * configure.ac, groonga.h, lib/module.c, lib/proc.c, lib/token.c,
+ test/unit/core/Makefile.am, test/unit/core/test-register-function.c,
+ test/unit/core/test-register.c, test/unit/fixtures/Makefile.am,
+ test/unit/fixtures/function-modules/Makefile.am,
+ test/unit/fixtures/function-modules/string.c,
+ test/unit/fixtures/modules/Makefile.am, test/unit/fixtures/modules/string.c,
+ test/unit/run-test.sh: remove register_*. just use only register.
+
+2010-05-10 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * test/unit/core/test-dump.c: Fixed some memory leak bugs in unit test.
+
+ * lib/db.c: Added db_value.done.
+
+2010-05-10 t2001 <t2001@bakuon.(none)>
+
+ * src/grntest.c: support owndb mode (experimental).
+
+2010-05-10 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Retry while other thread seems to be opening the target object.
+
+2010-05-10 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_memory: use here document instead of pipe.
+
+2010-05-06 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, lib/proc.c, test/unit/core/Makefile.am,
+ test/unit/core/test-register-function.c, test/unit/fixtures/Makefile.am,
+ test/unit/fixtures/function-modules/Makefile.am,
+ test/unit/fixtures/function-modules/string.c: add register functions.
+
+2010-05-10 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, lib/db.c, lib/token.c, lib/token.h,
+ modules/tokenizers/Makefile.am, modules/tokenizers/mecab.c: don't install
+ MeCab tokenizer on --without-mecab.
+
+2010-05-10 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac, lib/ctx.c, lib/str.c: Thread safe time function detection
+ without architecture.
+
+2010-05-10 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/token.c: Avoid to call grn_obj_register inside
+ grn_db_init_builtin_tokenizers().
+
+2010-05-10 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_memory: show also vsz in memory graph.
+
+2010-05-10 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/grntest.c: Fixed a typo.
+
+2010-05-10 t2001 <t2001@gol.com>
+
+ * src/grntest.c: fixed a typo.
+
+2010-05-09 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_n_records: work without groonga server.
+
+2010-05-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * test/unit/core/test-table-select-normalize.c: Fixed a typo.
+
+2010-05-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Use per object lock instead of db->lock.
+
+2010-05-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug in grn_db_close() cause cache expire missing.
+
+ * lib/ctx.c, test/unit/lib/grn-test-hash-assertions.c: Gave up adding new log
+ output.
+
+ * lib/db.c, lib/module.c: Moved grn_proc_create() from module.c to db.c.
+ Modified value type of db.values to db_value.
+
+ * test/unit/lib/grn-test-hash-assertions.c: Follow new log output.
+
+ * lib/ctx.c, lib/db.c, lib/expr.c: Moved grn_obj_unlink() from expr.c to
+ db.c.
+
+2010-05-07 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_n_records, data/munin/groonga_status: fix typos.
+
+ * data/munin/groonga_n_records, data/munin/groonga_status: fix default port.
+
+ * data/munin/groonga_cpu_load, data/munin/groonga_cpu_time,
+ data/munin/groonga_memory: use pid_file instead of pidfile.
+
+ * Makefile.am, configure.ac, data/Makefile.am, data/munin/Makefile.am,
+ data/munin/groonga_cpu_load, data/munin/groonga_cpu_time,
+ data/munin/groonga_memory, data/munin/groonga_n_records,
+ data/munin/groonga_status: add Munin plugins.
+
+ * configure.ac: fix 'checking' message usage.
+
+ * modules/tokenizers/mecab.c: don't include mecab.h on --without-mecab.
+
+ * configure.ac: show whether MeCab is enabled or not message.
+
+2010-05-06 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/module.c: check file is readable before dlopen().
+
+ * lib/module.c: keep error message in log.
+
+2010-05-06 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/db.c, lib/ql.h: Put lock/unlock in grn_ctx_alloc() and
+ grn_ctx_free().
+
+2010-05-04 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: ensure using " for GRN_MODULE_SUFFIX.
+
+2010-05-03 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/module.c: assing module object from global_ctx.
+
+ * lib/db.c: Close sharable objects using grn_gctx.
+
+ * lib/db.c: sharable object should be assigned from gctx.
+
+2010-05-03 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: don't modify LIBS in MeCab detection.
+
+ * configure.ac: use LDFLAGS for mecab on checking -lmecab.
+
+ * lib/token.h: remove needless mecab.h inclusion.
+
+2010-05-03 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/ctx.h, lib/expr.c: Added grn_ctx_malloc() and
+ grn_ctx_calloc().
+
+2010-05-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/ctx.h, lib/db.c, lib/expr.c: Added func argument to
+ grn_free_default()
+
+2010-05-01 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/module.c: fix grn_dl_close() return value check.
+
+2010-04-30 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, groonga.h, lib/module.c, lib/module.h, lib/proc.c,
+ modules/Makefile.am, modules/functions/Makefile.am, modules/functions/geo.c,
+ test/unit/run-test.sh: support modulized function.
+
+ * Makefile.am, configure.ac, groonga.h, lib/ctx.c, lib/db.c, lib/db.h,
+ lib/io.c, lib/module.c, lib/module.h, lib/token.c, modules/Makefile.am,
+ modules/tokenizers/Makefile.am, modules/tokenizers/mecab.c,
+ test/unit/run-test.sh: support modulized tokenizer.
+
+2010-05-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/ctx.h: Added grn_ctx_strdup(). Renamed grn_free() to
+ grn_free_default().
+
+ * lib/ctx.c, lib/ctx.h: Added grn_ctx_realloc().
+
+ * lib/ctx.c, lib/ctx.h, lib/hash.c, lib/hash.h: Removed flags argument from
+ grn_ctx_alloc() and grn_ctx_alloc_lifo().
+
+ * lib/ctx.c: keep size info in grn_ctx_alloc().
+
+2010-05-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c, lib/ql.h: Removed malloc call from grn_impl_init().
+
+ * lib/Makefile.am, lib/io.c, lib/io.h, lib/module.c, lib/module.h: Moved
+ declaration of grn_dl_* from io.h to module.h
+
+2010-04-30 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-cast-table.c: add a test for cast text to table with
+ nonexistece key.
+
+2010-04-30 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * configure.ac, lib/ctx.c, lib/io.c: Modified default value of
+ enable-exact-alloc-count to 'yes'.
+
+ * lib/ctx.c: Initialize ot in grn_ctx_qe_exec_uri().
+
+2010-04-30 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * .../unit/lib/ruby/groonga-local-gqtp-test-utils.rb: Omit dump test because
+ of sort sequence.
+
+2010-04-30 t2001 <t2001@gol.com>
+
+ * lib/groonga_in.h, mkmfwin32.vbs: for WIN32(vc only).
+
+ * src/Makefile.am: install grntest.
+
 2010-04-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac, doc/ja/characteristic.html, doc/ja/commands.html,
+ doc/ja/commands/add.html, doc/ja/commands/cache_limit.html,
+ doc/ja/commands/column_create.html, doc/ja/commands/column_list.html,
+ doc/ja/commands/column_remove.html, doc/ja/commands/define_selector.html,
+ doc/ja/commands/delete.html, doc/ja/commands/get.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/set.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/table_remove.html,
+ doc/ja/commands/view_add.html, doc/ja/developer.html,
+ doc/ja/developer/com.html, doc/ja/developer/document.html,
+ doc/ja/developer/test.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/functions/geo_distance.html,
+ doc/ja/functions/geo_in_circle.html, doc/ja/functions/geo_in_rectangle.html,
+ doc/ja/functions/now.html, doc/ja/functions/rand.html, doc/ja/genindex.html,
+ doc/ja/grnslap.html, doc/ja/grntest.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/process.html, doc/ja/pseudo_column.html,
+ doc/ja/reference.html, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/tutorial.html, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial09.html,
+ doc/ja/tutorial/tutorial10.html, doc/ja/type.html: release 0.7.0
 
  * doc/ja/source/conf.py: Fixed documentation version env handling.
 
