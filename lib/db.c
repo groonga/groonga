@@ -5386,7 +5386,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         GRN_FUTEX_WAIT(pl);
       }
 #endif /* USE_NREF */
-      if (s->specs && !vp->ptr && !vp->done) {
+      if (s->specs && !vp->ptr) {
 #ifndef USE_NREF
         pl = &vp->lock;
         for (ntrial = 0;; ntrial++) {
@@ -5472,6 +5472,9 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               grn_obj_close(ctx, &v);
             }
             grn_ja_unref(ctx, &jw);
+          }
+          if (!vp->ptr) {
+            GRN_ATOMIC_ADD_EX(pl, -1, l);
           }
           vp->done = 1;
           GRN_FUTEX_WAKE(&vp->ptr);
