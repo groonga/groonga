@@ -2076,7 +2076,8 @@ GRN_API grn_rc grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output
                           const char *drilldown_sortby, unsigned drilldown_sortby_len,
                           const char *drilldown_output_columns,
                           unsigned drilldown_output_columns_len,
-                          int drilldown_offset, int drilldown_hits);
+                          int drilldown_offset, int drilldown_hits,
+                          const char *cache, unsigned cache_len);
 
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned table_len,

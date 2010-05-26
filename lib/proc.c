@@ -97,9 +97,9 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 15) ? grn_get_ctype(&vars[14].value) : GRN_CONTENT_JSON;
+  ct = (nvars >= 16) ? grn_get_ctype(&vars[15].value) : GRN_CONTENT_JSON;
 
-  if (nvars == 15) {
+  if (nvars == 16) {
     grn_obj body; /* FIXME: double buffering! */
     int offset = GRN_TEXT_LEN(&vars[7].value)
       ? grn_atoi(GRN_TEXT_VALUE(&vars[7].value), GRN_BULK_CURR(&vars[7].value), NULL)
@@ -139,7 +139,8 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                    GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
                    GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
                    drilldown_output_columns, drilldown_output_columns_len,
-                   drilldown_offset, drilldown_limit)) {
+                   drilldown_offset, drilldown_limit,
+                   GRN_TEXT_VALUE(&vars[14].value), GRN_TEXT_LEN(&vars[14].value))) {
       print_return_code(ctx, outbuf, ct);
     } else {
       print_return_code_with_body(ctx, outbuf, ct, &body);
@@ -161,9 +162,9 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 16) ? grn_get_ctype(&vars[15].value) : GRN_CONTENT_JSON;
+  ct = (nvars >= 17) ? grn_get_ctype(&vars[16].value) : GRN_CONTENT_JSON;
 
-  if (nvars == 16) {
+  if (nvars == 17) {
     grn_proc_create(ctx,
                     GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                     GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
@@ -2341,7 +2342,8 @@ exit :
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
 {
-  grn_expr_var vars[16];
+  grn_expr_var vars[17];
+
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "table");
   DEF_VAR(vars[2], "match_columns");
@@ -2357,9 +2359,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[12], "drilldown_output_columns");
   DEF_VAR(vars[13], "drilldown_offset");
   DEF_VAR(vars[14], "drilldown_limit");
-  DEF_VAR(vars[15], "output_type");
-  DEF_COMMAND("define_selector", proc_define_selector, 16, vars);
-  DEF_COMMAND("select", proc_select, 15, vars + 1);
+  DEF_VAR(vars[15], "cache");
+  DEF_VAR(vars[16], "output_type");
+  DEF_COMMAND("define_selector", proc_define_selector, 17, vars);
+  DEF_COMMAND("select", proc_select, 16, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");

@@ -5462,7 +5462,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
            const char *drilldown, unsigned drilldown_len,
            const char *drilldown_sortby, unsigned drilldown_sortby_len,
            const char *drilldown_output_columns, unsigned drilldown_output_columns_len,
-           int drilldown_offset, int drilldown_limit)
+           int drilldown_offset, int drilldown_limit,
+           const char *cache, unsigned cache_len)
 {
   uint32_t nkeys, nhits;
   uint16_t cacheable = 1, taintable = 0;
@@ -5744,7 +5745,8 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     case GRN_CONTENT_NONE:
       break;
     }
-    if (!ctx->rc && cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
+    if (!ctx->rc && cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE
+        && (!cache || cache_len != 2 || *cache != 'n' || *(cache + 1) != 'o')) {
       grn_cache_update(ctx, cache_key, cache_key_size, outbuf);
     }
     if (taintable) { grn_db_touch(ctx, DB_OBJ(table_)->db); }
