@@ -14,7 +14,7 @@ select - テーブルの中から条件にマッチするレコードを検索�
 
  select table [match_columns [query [filter [scorer [sortby [output_columns
               [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
-              [drilldown_offset [drilldown_limit [output_type]]]]]]]]]]]]]]
+              [drilldown_offset [drilldown_limit [cache [output_type]]]]]]]]]]]]]]]
 
 説明
 ----
@@ -103,6 +103,14 @@ query引数とfilter引数をどちらも指定した場合は、両方の条件
 ``drilldown_limit``
 
   drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。
+
+``cache``
+
+  クエリキャッシュに関する動作を設定します。
+
+    ``no``
+
+      検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。
 
 ``output_type``
 

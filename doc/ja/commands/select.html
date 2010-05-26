@@ -58,7 +58,7 @@
 <h2>3.2.14.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>select table [match_columns [query [filter [scorer [sortby [output_columns
              [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
-             [drilldown_offset [drilldown_limit [output_type]]]]]]]]]]]]]]
+             [drilldown_offset [drilldown_limit [cache [output_type]]]]]]]]]]]]]]]
 </pre></div>
 </div>
 </div>
@@ -131,6 +131,15 @@ drilldown条件に指定されたカラムの値毎にとりまとめられた�
 <p><tt class="docutils literal"><span class="pre">drilldown_limit</span></tt></p>
 <blockquote>
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。</blockquote>
+<p><tt class="docutils literal"><span class="pre">cache</span></tt></p>
+<blockquote>
+<p>クエリキャッシュに関する動作を設定します。</p>
+<blockquote>
+<p><tt class="docutils literal"><span class="pre">no</span></tt></p>
+<blockquote>
+検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。</blockquote>
+</blockquote>
+</blockquote>
 <p><tt class="docutils literal"><span class="pre">output_type</span></tt></p>
 <blockquote>
 出力形式を、json,tsv,xmlのいずれかで指定します。</blockquote>
