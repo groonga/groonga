@@ -2955,7 +2955,7 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
       switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
       case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
         GRN_TEXT_PUTS(ctx, bulk, "<RESULTSET OFFSET=\"");
-        grn_text_itoa(ctx, bulk, format->offset);
+        grn_text_itoa(ctx, bulk, format->hits_offset);
         GRN_TEXT_PUTS(ctx, bulk, "\" LIMIT=\"");
         grn_text_itoa(ctx, bulk, format->limit);
         GRN_TEXT_PUTS(ctx, bulk, "\" NHITS=\"");
@@ -2973,13 +2973,14 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
       }
       /* TODO: add TIME attribute to RESULTSET element. */
       if (tc) {
+        int hit_no;
         GRN_TEXT_INIT(&id, 0);
-        for (i = format->offset + 1;
-             !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+        for (i = format->offset + 1, hit_no = format->hits_offset + 1;
+             !grn_table_cursor_next_o(ctx, tc, &id); i++, hit_no++) {
           switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
           case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
             GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
-            grn_text_itoa(ctx, bulk, i);
+            grn_text_itoa(ctx, bulk, hit_no);
             GRN_TEXT_PUTS(ctx, bulk, "\">\n");
             for (j = 0; j < ncolumns; j++) {
               GRN_TEXT_PUTS(ctx, bulk, "<FIELD NAME=\"");

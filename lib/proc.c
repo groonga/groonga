@@ -1225,7 +1225,7 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
             grn_obj obj;
             grn_obj_format format;
             GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
-            GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1);
+            GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
             GRN_RECORD_SET(ctx, &obj, id);
             grn_obj_columns(ctx, table,
                             GRN_TEXT_VALUE(&vars[4].value),
@@ -1391,7 +1391,7 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_obj obj, body;
     grn_obj_format format;
     GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
-    GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1);
+    GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
     GRN_RECORD_SET(ctx, &obj, id);
     grn_obj_columns(ctx, table,
                     GRN_TEXT_VALUE(&vars[2].value),

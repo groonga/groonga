@@ -1658,14 +1658,16 @@ struct _grn_obj_format {
   int nhits;
   int offset;
   int limit;
+  int hits_offset;
   int flags;
 };
 
-#define GRN_OBJ_FORMAT_INIT(format,format_nhits,format_offset,format_limit) do { \
+#define GRN_OBJ_FORMAT_INIT(format,format_nhits,format_offset,format_limit,format_hits_offset) do { \
   GRN_PTR_INIT(&(format)->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);\
   (format)->nhits = (format_nhits);\
   (format)->offset = (format_offset);\
   (format)->limit = (format_limit);\
+  (format)->hits_offset = (format_hits_offset);\
 } while (0)
 
 #define GRN_OBJ_FORMAT_FIN(ctx,format) do {\

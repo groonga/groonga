@@ -2579,7 +2579,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           str = GRN_OBJ_RESOLVE(ctx, str);
           POP1(table);
           table = GRN_OBJ_RESOLVE(ctx, table);
-          GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, -1);
+          GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, table), 0, -1, 0);
           format.flags = 0;
           grn_obj_columns(ctx, table,
                           GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str), &format.columns);
@@ -5607,7 +5607,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
             LAP("sort");
-            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit);
+            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, offset);
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
             switch (output_type) {
             case GRN_CONTENT_JSON:
@@ -5631,7 +5631,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit);
+        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, 0);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         switch (output_type) {
         case GRN_CONTENT_JSON:
@@ -5679,7 +5679,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                NULL, g.table))) {
                   grn_table_sort(ctx, g.table, n_drilldown_offset, n_drilldown_limit,
                                  sorted, keys, nkeys);
-                  GRN_OBJ_FORMAT_INIT(&format, nhits, 0, n_drilldown_limit);
+                  GRN_OBJ_FORMAT_INIT(&format, nhits, 0, n_drilldown_limit, n_drilldown_offset);
                   grn_obj_columns(ctx, sorted,
                                   drilldown_output_columns, drilldown_output_columns_len,
                                   &format.columns);
@@ -5704,7 +5704,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 grn_table_sort_key_close(ctx, keys, nkeys);
               }
             } else {
-              GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset, n_drilldown_limit);
+              GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset, n_drilldown_limit, 0);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);
               switch (output_type) {
