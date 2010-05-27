@@ -161,7 +161,7 @@ grn_rc_to_string(grn_rc rc)
   case GRN_UPDATE_NOT_ALLOWED:
     return "GRN_UPDATE_NOT_ALLOWED";
   default:
-    return "GRN_UNKNOWN_STATUS";
+    return cut_take_printf("GRN_UNKNOWN_STATUS (%d)", rc);
   }
 }
 
@@ -606,7 +606,7 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
     const gchar *rest;
 
     result_status_start = result->str + strlen(result_status_start_mark);
-    rc = grn_atoi(result_status_start, result->str + result->len, &rest);
+    rc = -grn_atoi(result_status_start, result->str + result->len, &rest);
     cut_assert_not_equal_string(result_status_start, rest);
     grn_test_assert(rc, cut_message("<%s>", result->str));
   }
