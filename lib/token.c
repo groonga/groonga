@@ -250,6 +250,10 @@ bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 { return ngram_init(ctx, args[0], user_data, 2, 0, 0, 0, 0); }
 
 static grn_obj *
+bigrami_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{ return ngram_init(ctx, args[0], user_data, 2, 1, 1, 1, 1); }
+
+static grn_obj *
 bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 { return ngram_init(ctx, args[0], user_data, 2, 1, 1, 0, 1); }
 
@@ -273,7 +277,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (!token->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
+      if (/* !token->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != grn_str_alpha) { break; }
     }
     token->next = r;
@@ -282,7 +286,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (!token->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
+      if (/* !token->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != grn_str_digit) { break; }
     }
     token->next = r;
@@ -565,6 +569,8 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                 bigramsa_init, ngram_next, ngram_fin, vars);
   DEF_TOKENIZER("TokenBigramSplitSymbolAlphaDigit",
                 bigramsad_init, ngram_next, ngram_fin, vars);
+  DEF_TOKENIZER("TokenBigramIgnoreBlank",
+                bigrami_init, ngram_next, ngram_fin, vars);
   DEF_TOKENIZER("TokenBigramIgnoreBlankSplitSymbol",
                 bigramis_init, ngram_next, ngram_fin, vars);
   DEF_TOKENIZER("TokenBigramIgnoreBlankSplitSymbolAlpha",
