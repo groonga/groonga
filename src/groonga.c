@@ -965,9 +965,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
     }
     break;
   case MBCMD_NOOP :
-    GRN_MSG_MBRES({
-      MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
-    });
     break;
   case MBCMD_VERSION :
     GRN_MSG_MBRES({
