@@ -1237,8 +1237,8 @@ h_server(char *path)
           }
           rc = 0;
         } else {
-          fprintf(stderr, "grn_com_sopen failed (%s:%d)\n",
-                  listen_address, port);
+          fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
+                  listen_address, port, ctx->errbuf);
         }
         grn_edges_fin(ctx);
       }
@@ -1476,8 +1476,8 @@ g_server(char *path)
           }
           rc = 0;
         } else {
-          fprintf(stderr, "grn_com_sopen failed (%s:%d)\n",
-                  listen_address, port);
+          fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
+                  listen_address, port, ctx->errbuf);
         }
         grn_edges_fin(ctx);
       }
