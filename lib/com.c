@@ -17,6 +17,7 @@
 
 #include "groonga_in.h"
 
+#include <stdio.h>
 #include <string.h>
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -882,19 +883,41 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
 #define LISTEN_BACKLOG 0x1000
 
 grn_rc
-grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
-              grn_msg_handler *func, struct hostent *he)
+grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
+              const char *listen_address, int port, grn_msg_handler *func,
+              struct hostent *he)
 {
   grn_sock lfd;
   grn_com *cs = NULL;
-  struct sockaddr_in addr;
-  memset(&addr, 0, sizeof(struct sockaddr_in));
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = INADDR_ANY;
-  addr.sin_port = htons(port);
-  if ((lfd = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
-    SERR("socket");
+  int getaddrinfo_result;
+  struct addrinfo *listen_address_info = NULL;
+  char port_string[6]; /* ceil(log10(65535)) + 1 ('\0')*/
+
+  if (!listen_address) {
+    listen_address = "0.0.0.0";
+  }
+  snprintf(port_string, sizeof(port_string), "%d", port);
+  getaddrinfo_result = getaddrinfo(listen_address, port_string,
+                                   NULL, &listen_address_info);
+  if (getaddrinfo_result != 0) {
+    switch (getaddrinfo_result) {
+    case EAI_MEMORY:
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "getaddrinfo: %s", gai_strerror(getaddrinfo_result));
+      break;
+    case EAI_SYSTEM:
+      SERR("getaddrinfo");
+      break;
+    default:
+      ERR(GRN_INVALID_ARGUMENT,
+          "getaddrinfo: %s", gai_strerror(getaddrinfo_result));
+      break;
+    }
     return ctx->rc;
+  }
+  if ((lfd = socket(listen_address_info->ai_family, SOCK_STREAM, 0)) == -1) {
+    SERR("socket");
+    goto exit;
   }
   memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
   ev->curr_edge_id.port = htons(port);
@@ -910,7 +933,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
       goto exit;
     }
   }
-  if (bind(lfd, (struct sockaddr *) &addr, sizeof addr) < 0) {
+  if (bind(lfd, listen_address_info->ai_addr, listen_address_info->ai_addrlen) < 0) {
     SERR("bind");
     goto exit;
   }
@@ -932,6 +955,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
   }
 exit :
   if (!cs) { grn_sock_close(lfd); }
+  if (listen_address_info) { freeaddrinfo(listen_address_info); }
   return ctx->rc;
 }
 
