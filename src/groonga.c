@@ -168,12 +168,13 @@ do_alone(int argc, char **argv)
           grn_ctx_send(ctx, buf, size, 0);
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
+        rc = ctx->rc;
       } else {
         fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
       }
       grn_obj_unlink(ctx, &text);
     } else {
-      grn_ctx_sendv(ctx, argc, argv, 0);
+      rc = grn_ctx_sendv(ctx, argc, argv, 0);
     }
     grn_obj_close(ctx, db);
   } else {
@@ -235,7 +236,8 @@ g_client(int argc, char **argv)
         while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
           uint32_t size = strlen(buf) - 1;
           grn_ctx_send(ctx, buf, size, 0);
-          if (ctx->rc) { break; }
+          rc = ctx->rc;
+          if (rc) { break; }
           if (recvput(ctx)) { goto exit; }
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
@@ -244,7 +246,7 @@ g_client(int argc, char **argv)
       }
       grn_obj_unlink(ctx, &text);
     } else {
-      grn_ctx_sendv(ctx, argc, argv, 0);
+      rc = grn_ctx_sendv(ctx, argc, argv, 0);
       if (recvput(ctx)) { goto exit; }
     }
   } else {
