@@ -5631,7 +5631,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_unlink(ctx, sorted);
         }
       } else {
-        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, 0);
+        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, offset);
         grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
         switch (output_type) {
         case GRN_CONTENT_JSON:
@@ -5704,7 +5704,7 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 grn_table_sort_key_close(ctx, keys, nkeys);
               }
             } else {
-              GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset, n_drilldown_limit, 0);
+              GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset, n_drilldown_limit, n_drilldown_offset);
               grn_obj_columns(ctx, g.table, drilldown_output_columns,
                               drilldown_output_columns_len, &format.columns);
               switch (output_type) {

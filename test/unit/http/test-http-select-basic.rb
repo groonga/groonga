@@ -767,6 +767,28 @@ EOF
 <SEGMENTS>
 <SEGMENT>
 <RESULTPAGE>
+<RESULTSET OFFSET="2" LIMIT="1" NHITS="5">
+<HIT NO="3">
+<FIELD NAME="_id">1</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
+EOF
+    assert_select_xml(expected,
+                      {:table => "users", :offset => 2, :limit => 1,
+                       :output_columns => "_id"})
+  end
+
+  def test_xml_with_offset_sortby
+    create_users_table
+    load_many_users
+    expected = <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
 <RESULTSET OFFSET="2" LIMIT="3" NHITS="5">
 <HIT NO="3">
 <FIELD NAME="_id">1</FIELD>
