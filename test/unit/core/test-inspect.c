@@ -33,6 +33,7 @@ void test_uint8(void);
 void test_uint16(void);
 void test_uint32(void);
 void test_uint64(void);
+void test_float(void);
 
 static gchar *tmp_directory;
 
@@ -42,6 +43,7 @@ static grn_obj *database;
 static grn_obj *inspected;
 static grn_obj *int8, *int16, *int32, *int64;
 static grn_obj *uint8, *uint16, *uint32, *uint64;
+static grn_obj *float_value;
 
 void
 cut_startup(void)
@@ -72,6 +74,7 @@ cut_setup(void)
   inspected = NULL;
   int8 = int16 = int32 = int64 = NULL;
   uint8 = uint16 = uint32 = uint64 = NULL;
+  float_value = NULL;
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
@@ -94,6 +97,7 @@ cut_teardown(void)
   grn_obj_close(context, uint16);
   grn_obj_close(context, uint32);
   grn_obj_close(context, uint64);
+  grn_obj_close(context, float_value);
   grn_obj_close(context, inspected);
 
   if (context) {
@@ -199,3 +203,11 @@ test_uint64(void)
                           inspected_string());
 }
 
+void
+test_float(void)
+{
+  float_value = grn_obj_open(context, GRN_BULK, 0, GRN_DB_FLOAT);
+  GRN_FLOAT_SET(context, float_value, 0.29);
+  inspected = grn_inspect(context, NULL, float_value);
+  cut_assert_equal_string("0.29", inspected_string());
+}
