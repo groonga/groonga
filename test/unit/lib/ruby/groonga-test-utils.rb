@@ -83,7 +83,7 @@ module GroongaTestUtils
 
   def start_server
     arguments = ["-s",
-                 "-i", @address,
+                 "-a", @address,
                  "-p", @port.to_s,
                  "-e", @encoding,
                  "--admin-html-path", @resource_dir]
