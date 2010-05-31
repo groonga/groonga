@@ -39,6 +39,8 @@ void test_time(void);
 void test_bool_true(void);
 void test_bool_false(void);
 void test_text(void);
+void test_geo_point_tokyo(void);
+void test_geo_point_wgs84(void);
 
 static gchar *tmp_directory;
 
@@ -54,6 +56,7 @@ static grn_obj *float_value;
 static grn_obj *time_value;
 static grn_obj *bool_value;
 static grn_obj *text;
+static grn_obj *geo_point_tokyo, *geo_point_wgs84;
 
 void
 cut_startup(void)
@@ -86,6 +89,7 @@ setup_values(void)
   time_value = NULL;
   bool_value = NULL;
   text = NULL;
+  geo_point_tokyo = geo_point_wgs84 = NULL;
 }
 
 void
@@ -122,6 +126,8 @@ teardown_values(void)
   grn_obj_close(context, time_value);
   grn_obj_close(context, bool_value);
   grn_obj_close(context, text);
+  grn_obj_close(context, geo_point_tokyo);
+  grn_obj_close(context, geo_point_wgs84);
 }
 
 void
@@ -291,4 +297,32 @@ test_text(void)
   GRN_TEXT_PUTS(context, text, "niku");
   inspected = grn_inspect(context, NULL, text);
   cut_assert_equal_string("\"niku\"", inspected_string());
+}
+
+void
+test_geo_point_tokyo(void)
+{
+  gint takane_latitude, takane_longitude;
+
+  takane_latitude = grn_test_coordinate_in_milliseconds(35.6954581363924);
+  takane_longitude = grn_test_coordinate_in_milliseconds(139.564207350021);
+
+  geo_point_tokyo = grn_obj_open(context, GRN_BULK, 0, GRN_DB_TOKYO_GEO_POINT);
+  GRN_GEO_POINT_SET(context, geo_point_tokyo, takane_latitude, takane_longitude);
+  inspected = grn_inspect(context, NULL, geo_point_tokyo);
+  cut_assert_equal_string("\"130194581x503802073\"", inspected_string());
+}
+
+void
+test_geo_point_wgs84(void)
+{
+  gint takane_latitude, takane_longitude;
+
+  takane_latitude = grn_test_coordinate_in_milliseconds(35.69869);
+  takane_longitude = grn_test_coordinate_in_milliseconds(139.56099);
+
+  geo_point_wgs84 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
+  GRN_GEO_POINT_SET(context, geo_point_wgs84, takane_latitude, takane_longitude);
+  inspected = grn_inspect(context, NULL, geo_point_wgs84);
+  cut_assert_equal_string("\"130226900x503769900\"", inspected_string());
 }
