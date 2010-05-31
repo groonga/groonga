@@ -1,9 +1,10 @@
 #!/bin/sh
 
-if test -z "$BASE_DIR"; then
-    export BASE_DIR="`dirname $0`"
+export BASE_DIR="`dirname $0`"
+if test -z "$BUILD_DIR"; then
+    BUILD_DIR="$BASE_DIR"
 fi
-top_dir="$BASE_DIR/../.."
+top_dir="$BUILD_DIR/../.."
 top_dir=$(cd $top_dir; pwd)
 
 if test x"$NO_MAKE" != x"yes"; then
@@ -68,7 +69,7 @@ no_test=1
 
 cutter_result=0
 if test "$NO_CUTTER" != "yes" -a -n "$CUTTER"; then
-    $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
+    $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BUILD_DIR
     cutter_result=$?
     no_test=0
 fi
