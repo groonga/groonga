@@ -30,6 +30,8 @@ static gchar *tmp_directory;
 
 static grn_ctx *context;
 static grn_obj *database;
+static grn_obj *inspected;
+
 
 void
 cut_startup(void)
@@ -57,6 +59,8 @@ cut_setup(void)
 {
   const gchar *database_path;
 
+  inspected = NULL;
+
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
 
@@ -70,6 +74,10 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
+  if (inspected) {
+    grn_obj_close(context, inspected);
+  }
+
   if (context) {
     grn_ctx_fin(context);
     g_free(context);
@@ -81,11 +89,9 @@ cut_teardown(void)
 void
 test_null(void)
 {
-  grn_obj inspected;
-  GRN_TEXT_INIT(&inspected, 0);
-  grn_inspect(context, &inspected, NULL);
+  inspected = grn_inspect(context, NULL, NULL);
   cut_assert_equal_string("(NULL)",
                           cut_take_printf("%.*s",
-                                          (int)GRN_TEXT_LEN(&inspected),
-                                          GRN_TEXT_VALUE(&inspected)));
+                                          (int)GRN_TEXT_LEN(inspected),
+                                          GRN_TEXT_VALUE(inspected)));
 }
