@@ -30,6 +30,7 @@ noinst_LTLIBRARIES =				\
 	test-view.la				\
 	test-view-operations.la			\
 	test-register.la			\
+	test-function-cast.la			\
 	test-load.la
 endif
 
@@ -89,4 +90,5 @@ test_encoding_la_SOURCES		= test-encoding.c
 test_view_la_SOURCES			= test-view.c
 test_view_operations_la_SOURCES		= test-view-operations.c
 test_register_la_SOURCES		= test-register.c
+test_function_cast_la_SOURCES		= test-function-cast.c
 test_load_la_SOURCES			= test-load.c
