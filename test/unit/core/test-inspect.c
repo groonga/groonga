@@ -35,6 +35,8 @@ void test_uint32(void);
 void test_uint64(void);
 void test_float(void);
 void test_time(void);
+void test_bool_true(void);
+void test_bool_false(void);
 
 static gchar *tmp_directory;
 
@@ -46,6 +48,7 @@ static grn_obj *int8, *int16, *int32, *int64;
 static grn_obj *uint8, *uint16, *uint32, *uint64;
 static grn_obj *float_value;
 static grn_obj *time_value;
+static grn_obj *bool_value;
 
 void
 cut_startup(void)
@@ -75,6 +78,7 @@ setup_values(void)
   uint8 = uint16 = uint32 = uint64 = NULL;
   float_value = NULL;
   time_value = NULL;
+  bool_value = NULL;
 }
 
 void
@@ -108,6 +112,7 @@ teardown_values(void)
   grn_obj_close(context, uint64);
   grn_obj_close(context, float_value);
   grn_obj_close(context, time_value);
+  grn_obj_close(context, bool_value);
 }
 
 void
@@ -241,4 +246,22 @@ test_time(void)
   inspected = grn_inspect(context, NULL, time_value);
   cut_assert_equal_string(cut_take_printf("%ld.29", g_time_value.tv_sec),
                           inspected_string());
+}
+
+void
+test_bool_true(void)
+{
+  bool_value = grn_obj_open(context, GRN_BULK, 0, GRN_DB_BOOL);
+  GRN_BOOL_SET(context, bool_value, GRN_TRUE);
+  inspected = grn_inspect(context, NULL, bool_value);
+  cut_assert_equal_string("true", inspected_string());
+}
+
+void
+test_bool_false(void)
+{
+  bool_value = grn_obj_open(context, GRN_BULK, 0, GRN_DB_BOOL);
+  GRN_BOOL_SET(context, bool_value, GRN_FALSE);
+  inspected = grn_inspect(context, NULL, bool_value);
+  cut_assert_equal_string("false", inspected_string());
 }
