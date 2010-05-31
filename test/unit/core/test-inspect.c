@@ -25,6 +25,7 @@
 #include <util.h>
 
 void test_null(void);
+void test_void(void);
 void test_int8(void);
 void test_int16(void);
 void test_int32(void);
@@ -45,6 +46,8 @@ static grn_ctx *context;
 static grn_obj *database;
 
 static grn_obj *inspected;
+
+static grn_obj *void_value;
 static grn_obj *int8, *int16, *int32, *int64;
 static grn_obj *uint8, *uint16, *uint32, *uint64;
 static grn_obj *float_value;
@@ -76,6 +79,7 @@ remove_tmp_directory(void)
 static void
 setup_values(void)
 {
+  void_value = NULL;
   int8 = int16 = int32 = int64 = NULL;
   uint8 = uint16 = uint32 = uint64 = NULL;
   float_value = NULL;
@@ -105,6 +109,7 @@ cut_setup(void)
 static void
 teardown_values(void)
 {
+  grn_obj_close(context, void_value);
   grn_obj_close(context, int8);
   grn_obj_close(context, int16);
   grn_obj_close(context, int32);
@@ -147,6 +152,15 @@ test_null(void)
 {
   inspected = grn_inspect(context, NULL, NULL);
   cut_assert_equal_string("(NULL)", inspected_string());
+}
+
+void
+test_void_value(void)
+{
+  void_value = grn_obj_open(context, GRN_BULK, 0, GRN_DB_VOID);
+  GRN_TEXT_PUTS(context, void_value, "void");
+  inspected = grn_inspect(context, NULL, void_value);
+  cut_assert_equal_string("\"void\"", inspected_string());
 }
 
 void
