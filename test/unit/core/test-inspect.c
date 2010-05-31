@@ -29,6 +29,10 @@ void test_int8(void);
 void test_int16(void);
 void test_int32(void);
 void test_int64(void);
+void test_uint8(void);
+void test_uint16(void);
+void test_uint32(void);
+void test_uint64(void);
 
 static gchar *tmp_directory;
 
@@ -37,6 +41,7 @@ static grn_obj *database;
 
 static grn_obj *inspected;
 static grn_obj *int8, *int16, *int32, *int64;
+static grn_obj *uint8, *uint16, *uint32, *uint64;
 
 void
 cut_startup(void)
@@ -66,6 +71,7 @@ cut_setup(void)
 
   inspected = NULL;
   int8 = int16 = int32 = int64 = NULL;
+  uint8 = uint16 = uint32 = uint64 = NULL;
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
@@ -84,6 +90,10 @@ cut_teardown(void)
   grn_obj_close(context, int16);
   grn_obj_close(context, int32);
   grn_obj_close(context, int64);
+  grn_obj_close(context, uint8);
+  grn_obj_close(context, uint16);
+  grn_obj_close(context, uint32);
+  grn_obj_close(context, uint64);
   grn_obj_close(context, inspected);
 
   if (context) {
@@ -146,6 +156,46 @@ test_int64(void)
   GRN_INT64_SET(context, int64, G_MAXINT64);
   inspected = grn_inspect(context, NULL, int64);
   cut_assert_equal_string(cut_take_printf("%" G_GINT64_FORMAT, G_MAXINT64),
+                          inspected_string());
+}
+
+void
+test_uint8(void)
+{
+  uint8 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_UINT8);
+  GRN_UINT8_SET(context, uint8, G_MAXUINT8);
+  inspected = grn_inspect(context, NULL, uint8);
+  cut_assert_equal_string(cut_take_printf("%u", G_MAXUINT8),
+                          inspected_string());
+}
+
+void
+test_uint16(void)
+{
+  uint16 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_UINT16);
+  GRN_UINT16_SET(context, uint16, G_MAXUINT16);
+  inspected = grn_inspect(context, NULL, uint16);
+  cut_assert_equal_string(cut_take_printf("%" G_GUINT16_FORMAT, G_MAXUINT16),
+                          inspected_string());
+}
+
+void
+test_uint32(void)
+{
+  uint32 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_UINT32);
+  GRN_UINT32_SET(context, uint32, G_MAXUINT32);
+  inspected = grn_inspect(context, NULL, uint32);
+  cut_assert_equal_string(cut_take_printf("%" G_GUINT32_FORMAT, G_MAXUINT32),
+                          inspected_string());
+}
+
+void
+test_uint64(void)
+{
+  uint64 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_UINT64);
+  GRN_UINT64_SET(context, uint64, G_MAXUINT64);
+  inspected = grn_inspect(context, NULL, uint64);
+  cut_assert_equal_string(cut_take_printf("%" G_GUINT64_FORMAT, G_MAXUINT64),
                           inspected_string());
 }
 
