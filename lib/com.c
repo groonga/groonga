@@ -893,6 +893,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   struct addrinfo *listen_address_info = NULL;
   char port_string[6]; /* ceil(log10(65535)) + 1 ('\0')*/
 
+  GRN_API_ENTER;
   if (!listen_address) {
     listen_address = "0.0.0.0";
   }
@@ -903,17 +904,19 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     switch (getaddrinfo_result) {
     case EAI_MEMORY:
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "getaddrinfo: %s", gai_strerror(getaddrinfo_result));
+          "getaddrinfo: <%s:%s>: %s",
+          listen_address, port_string, gai_strerror(getaddrinfo_result));
       break;
     case EAI_SYSTEM:
       SERR("getaddrinfo");
       break;
     default:
       ERR(GRN_INVALID_ARGUMENT,
-          "getaddrinfo: %s", gai_strerror(getaddrinfo_result));
+          "getaddrinfo: <%s:%s>: %s",
+          listen_address, port_string, gai_strerror(getaddrinfo_result));
       break;
     }
-    return ctx->rc;
+    goto exit;
   }
   if ((lfd = socket(listen_address_info->ai_family, SOCK_STREAM, 0)) == -1) {
     SERR("socket");
@@ -956,7 +959,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
 exit :
   if (!cs) { grn_sock_close(lfd); }
   if (listen_address_info) { freeaddrinfo(listen_address_info); }
-  return ctx->rc;
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_hash *grn_edges;

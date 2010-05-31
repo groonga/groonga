@@ -967,9 +967,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
     }
     break;
   case MBCMD_NOOP :
-    GRN_MSG_MBRES({
-      MBRES(ctx, re, MBRES_SUCCESS, 0, 0, 0);
-    });
     break;
   case MBCMD_VERSION :
     GRN_MSG_MBRES({
@@ -1239,8 +1236,8 @@ h_server(char *path)
           }
           rc = 0;
         } else {
-          fprintf(stderr, "grn_com_sopen failed (%s:%d)\n",
-                  listen_address, port);
+          fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
+                  listen_address, port, ctx->errbuf);
         }
         grn_edges_fin(ctx);
       }
@@ -1478,8 +1475,8 @@ g_server(char *path)
           }
           rc = 0;
         } else {
-          fprintf(stderr, "grn_com_sopen failed (%s:%d)\n",
-                  listen_address, port);
+          fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
+                  listen_address, port, ctx->errbuf);
         }
         grn_edges_fin(ctx);
       }
