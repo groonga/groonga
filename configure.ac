@@ -111,6 +111,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/core/Makefile
                  test/unit/memcached/Makefile
                  test/unit/http/Makefile
+                 test/unit/gqtp/Makefile
                  test/unit/story/Makefile
                  test/unit/story/taiyaki/Makefile
                  test/benchmark/Makefile

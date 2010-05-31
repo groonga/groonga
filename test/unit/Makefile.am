@@ -5,6 +5,7 @@ SUBDIRS =		\
 	core		\
 	memcached	\
 	http		\
+	gqtp		\
 	story
 
 TESTS = run-test.sh

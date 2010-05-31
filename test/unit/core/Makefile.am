@@ -35,11 +35,6 @@ noinst_LTLIBRARIES =				\
 	test-inspect.la
 endif
 
-EXTRA_DIST =					\
-	test-cache.rb				\
-	test-restore.rb				\
-	test-load.rb
-
 INCLUDES =			\
 	-I$(top_srcdir)		\
 	-I$(top_srcdir)/lib	\
