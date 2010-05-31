@@ -34,6 +34,7 @@ void test_uint16(void);
 void test_uint32(void);
 void test_uint64(void);
 void test_float(void);
+void test_time(void);
 
 static gchar *tmp_directory;
 
@@ -44,6 +45,7 @@ static grn_obj *inspected;
 static grn_obj *int8, *int16, *int32, *int64;
 static grn_obj *uint8, *uint16, *uint32, *uint64;
 static grn_obj *float_value;
+static grn_obj *time_value;
 
 void
 cut_startup(void)
@@ -66,15 +68,22 @@ remove_tmp_directory(void)
   cut_remove_path(tmp_directory, NULL);
 }
 
+static void
+setup_values(void)
+{
+  int8 = int16 = int32 = int64 = NULL;
+  uint8 = uint16 = uint32 = uint64 = NULL;
+  float_value = NULL;
+  time_value = NULL;
+}
+
 void
 cut_setup(void)
 {
   const gchar *database_path;
 
   inspected = NULL;
-  int8 = int16 = int32 = int64 = NULL;
-  uint8 = uint16 = uint32 = uint64 = NULL;
-  float_value = NULL;
+  setup_values();
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
@@ -86,8 +95,8 @@ cut_setup(void)
   database = grn_db_create(context, database_path, NULL);
 }
 
-void
-cut_teardown(void)
+static void
+teardown_values(void)
 {
   grn_obj_close(context, int8);
   grn_obj_close(context, int16);
@@ -98,6 +107,14 @@ cut_teardown(void)
   grn_obj_close(context, uint32);
   grn_obj_close(context, uint64);
   grn_obj_close(context, float_value);
+  grn_obj_close(context, time_value);
+}
+
+void
+cut_teardown(void)
+{
+  teardown_values();
+
   grn_obj_close(context, inspected);
 
   if (context) {
@@ -210,4 +227,18 @@ test_float(void)
   GRN_FLOAT_SET(context, float_value, 0.29);
   inspected = grn_inspect(context, NULL, float_value);
   cut_assert_equal_string("0.29", inspected_string());
+}
+
+void
+test_time(void)
+{
+  GTimeVal g_time_value;
+
+  g_time_val_from_iso8601("2010-05-31T11:50:29.29+0900", &g_time_value);
+  time_value = grn_obj_open(context, GRN_BULK, 0, GRN_DB_TIME);
+  GRN_TIME_SET(context, time_value,
+               g_time_value.tv_sec * G_USEC_PER_SEC + g_time_value.tv_usec);
+  inspected = grn_inspect(context, NULL, time_value);
+  cut_assert_equal_string(cut_take_printf("%ld.29", g_time_value.tv_sec),
+                          inspected_string());
 }
