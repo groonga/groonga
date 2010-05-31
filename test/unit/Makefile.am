@@ -10,6 +10,7 @@ SUBDIRS =		\
 TESTS = run-test.sh
 TESTS_ENVIRONMENT =				\
 	NO_MAKE=yes				\
+	BASE_DIR="$(builddir)"			\
 	CUTTER="$(CUTTER)"			\
 	CUTTER_VERBOSE=yes			\
 	RUBY="$(RUBY)"				\

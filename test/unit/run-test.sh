@@ -1,6 +1,8 @@
 #!/bin/sh
 
-export BASE_DIR="`dirname $0`"
+if test -z "$BASE_DIR"; then
+    export BASE_DIR="`dirname $0`"
+fi
 top_dir="$BASE_DIR/../.."
 top_dir=$(cd $top_dir; pwd)
 
