@@ -24,6 +24,8 @@
 #include <str.h>
 #include <util.h>
 
+#define get(name) grn_ctx_get(context, name, strlen(name))
+
 void test_null(void);
 void test_void(void);
 void test_int8(void);
@@ -41,6 +43,7 @@ void test_bool_false(void);
 void test_text(void);
 void test_geo_point_tokyo(void);
 void test_geo_point_wgs84(void);
+void test_array_empty(void);
 
 static gchar *tmp_directory;
 
@@ -113,21 +116,21 @@ cut_setup(void)
 static void
 teardown_values(void)
 {
-  grn_obj_close(context, void_value);
-  grn_obj_close(context, int8);
-  grn_obj_close(context, int16);
-  grn_obj_close(context, int32);
-  grn_obj_close(context, int64);
-  grn_obj_close(context, uint8);
-  grn_obj_close(context, uint16);
-  grn_obj_close(context, uint32);
-  grn_obj_close(context, uint64);
-  grn_obj_close(context, float_value);
-  grn_obj_close(context, time_value);
-  grn_obj_close(context, bool_value);
-  grn_obj_close(context, text);
-  grn_obj_close(context, geo_point_tokyo);
-  grn_obj_close(context, geo_point_wgs84);
+  grn_obj_unlink(context, void_value);
+  grn_obj_unlink(context, int8);
+  grn_obj_unlink(context, int16);
+  grn_obj_unlink(context, int32);
+  grn_obj_unlink(context, int64);
+  grn_obj_unlink(context, uint8);
+  grn_obj_unlink(context, uint16);
+  grn_obj_unlink(context, uint32);
+  grn_obj_unlink(context, uint64);
+  grn_obj_unlink(context, float_value);
+  grn_obj_unlink(context, time_value);
+  grn_obj_unlink(context, bool_value);
+  grn_obj_unlink(context, text);
+  grn_obj_unlink(context, geo_point_tokyo);
+  grn_obj_unlink(context, geo_point_wgs84);
 }
 
 void
@@ -135,7 +138,7 @@ cut_teardown(void)
 {
   teardown_values();
 
-  grn_obj_close(context, inspected);
+  grn_obj_unlink(context, inspected);
 
   if (context) {
     grn_ctx_fin(context);
@@ -325,4 +328,12 @@ test_geo_point_wgs84(void)
   GRN_GEO_POINT_SET(context, geo_point_wgs84, takane_latitude, takane_longitude);
   inspected = grn_inspect(context, NULL, geo_point_wgs84);
   cut_assert_equal_string("\"130226900x503769900\"", inspected_string());
+}
+
+void
+test_array_empty(void)
+{
+  assert_send_command("table_create Sites TABLE_NO_KEY");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[]", inspected_string());
 }
