@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -189,6 +189,33 @@ grn_test_get_base_dir(void)
   }
 
   return base_dir;
+}
+
+static gchar *build_dir = NULL;
+const gchar *
+grn_test_get_build_dir(void)
+{
+  const gchar *dir;
+
+  if (build_dir)
+    return build_dir;
+
+  dir = g_getenv("BUILD_DIR");
+  if (dir) {
+    if (g_path_is_absolute(dir)) {
+      build_dir = g_strdup(dir);
+    } else {
+      gchar *current_dir;
+
+      current_dir = g_get_current_dir();
+      build_dir = g_build_filename(current_dir, dir, NULL);
+      g_free(current_dir);
+    }
+  } else {
+    build_dir = grn_test_get_base_dir();
+  }
+
+  return build_dir;
 }
 
 typedef struct _grn_log

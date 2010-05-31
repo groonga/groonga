@@ -4,6 +4,8 @@ export BASE_DIR="`dirname $0`"
 if test -z "$BUILD_DIR"; then
     BUILD_DIR="$BASE_DIR"
 fi
+export BUILD_DIR
+
 top_dir="$BUILD_DIR/../.."
 top_dir=$(cd $top_dir; pwd)
 
