@@ -24,6 +24,7 @@
 #include <str.h>
 
 void test_success(void);
+void test_fail(void);
 
 static gchar *tmp_directory;
 
