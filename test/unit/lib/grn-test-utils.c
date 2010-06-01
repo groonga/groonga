@@ -201,18 +201,18 @@ grn_test_get_build_dir(void)
     return build_dir;
 
   dir = g_getenv("BUILD_DIR");
-  if (dir) {
-    if (g_path_is_absolute(dir)) {
-      build_dir = g_strdup(dir);
-    } else {
-      gchar *current_dir;
+  if (!dir) {
+    return grn_test_get_base_dir();
+  }
 
-      current_dir = g_get_current_dir();
-      build_dir = g_build_filename(current_dir, dir, NULL);
-      g_free(current_dir);
-    }
+  if (g_path_is_absolute(dir)) {
+    build_dir = g_strdup(dir);
   } else {
-    build_dir = grn_test_get_base_dir();
+    gchar *current_dir;
+
+    current_dir = g_get_current_dir();
+    build_dir = g_build_filename(current_dir, dir, NULL);
+    g_free(current_dir);
   }
 
   return build_dir;
