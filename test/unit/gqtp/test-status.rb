@@ -28,6 +28,6 @@ class StatusTest < Test::Unit::TestCase
 
   def test_status_exit_successfully
     output = run_groonga(@database_path, "status")
-    assert($?.success?)
+    assert_predicate($?, :success?)
   end
 end
