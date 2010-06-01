@@ -15,6 +15,7 @@ noinst_LTLIBRARIES =				\
 	test-table.la				\
 	test-column.la				\
 	test-database.la			\
+	test-database-create.la			\
 	test-table-cursor.la			\
 	test-table-select.la			\
 	test-table-select-normalize.la		\
@@ -71,6 +72,7 @@ test_query_la_SOURCES			= test-query.c
 test_table_la_SOURCES			= test-table.c
 test_column_la_SOURCES			= test-column.c
 test_database_la_SOURCES		= test-database.c
+test_database_create_la_SOURCES		= test-database-create.c
 test_table_cursor_la_SOURCES		= test-table-cursor.c
 test_table_select_la_SOURCES		= test-table-select.c
 test_table_select_normalize_la_SOURCES	= test-table-select-normalize.c
