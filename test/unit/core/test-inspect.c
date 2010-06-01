@@ -44,6 +44,7 @@ void test_text(void);
 void test_geo_point_tokyo(void);
 void test_geo_point_wgs84(void);
 void test_array_empty(void);
+void test_array_with_records(void);
 
 static gchar *tmp_directory;
 
@@ -336,4 +337,17 @@ test_array_empty(void)
   assert_send_command("table_create Sites TABLE_NO_KEY");
   inspected = grn_inspect(context, NULL, get("Sites"));
   cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_array_with_records(void)
+{
+  cut_omit("array with record isn't supported yet.");
+  assert_send_command("table_create Sites TABLE_NO_KEY");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Text");
+  assert_send_command("load "
+                      "'[[\"name\"],[\"groonga.org\"],[\"razil.jp\"]]' "
+                      "Sites");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[1, 2]", inspected_string());
 }
