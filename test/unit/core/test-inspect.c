@@ -45,6 +45,12 @@ void test_geo_point_tokyo(void);
 void test_geo_point_wgs84(void);
 void test_array_empty(void);
 void test_array_with_records(void);
+void test_hash_empty(void);
+void test_hash_with_records(void);
+void test_patricia_trie_empty(void);
+void test_patricia_trie_with_records(void);
+void test_uvector(void);
+void test_uvector_with_records(void);
 
 static gchar *tmp_directory;
 
@@ -61,6 +67,7 @@ static grn_obj *time_value;
 static grn_obj *bool_value;
 static grn_obj *text;
 static grn_obj *geo_point_tokyo, *geo_point_wgs84;
+static grn_obj *uvector;
 
 void
 cut_startup(void)
@@ -94,6 +101,7 @@ setup_values(void)
   bool_value = NULL;
   text = NULL;
   geo_point_tokyo = geo_point_wgs84 = NULL;
+  uvector = NULL;
 }
 
 void
@@ -132,6 +140,7 @@ teardown_values(void)
   grn_obj_unlink(context, text);
   grn_obj_unlink(context, geo_point_tokyo);
   grn_obj_unlink(context, geo_point_wgs84);
+  grn_obj_unlink(context, uvector);
 }
 
 void
@@ -350,4 +359,77 @@ test_array_with_records(void)
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
   cut_assert_equal_string("[1, 2]", inspected_string());
+}
+
+void
+test_hash_empty(void)
+{
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_hash_with_records(void)
+{
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Text");
+  assert_send_command("load "
+                      "'["
+                      "[\"_key\",\"name\"],"
+                      "[\"groonga.org\",\"groonga\"],"
+                      "[\"razil.jp\",\"Brazil\"]"
+                      "]' "
+                      "Sites");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+}
+
+void
+test_patricia_trie_empty(void)
+{
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_patricia_trie_with_records(void)
+{
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Text");
+  assert_send_command("load "
+                      "'["
+                      "[\"_key\",\"name\"],"
+                      "[\"groonga.org\",\"groonga\"],"
+                      "[\"razil.jp\",\"Brazil\"]"
+                      "]' "
+                      "Sites");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+}
+
+void
+test_uvector_empty(void)
+{
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  uvector = grn_obj_open(context, GRN_UVECTOR, 0,
+                         grn_obj_id(context, get("Sites")));
+  inspected = grn_inspect(context, NULL, uvector);
+  cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_uvector_with_records(void)
+{
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("load "
+                      "'[[\"_key\"],[\"groonga.org\"],[\"razil.jp\"]]' "
+                      "Sites");
+  uvector = grn_obj_open(context, GRN_UVECTOR, 0,
+                         grn_obj_id(context, get("Sites")));
+  GRN_RECORD_PUT(context, uvector, 1);
+  GRN_RECORD_PUT(context, uvector, 2);
+  inspected = grn_inspect(context, NULL, uvector);
+  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
 }
