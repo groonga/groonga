@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$KCODE = 'utf-8'
+$KCODE = 'utf-8' unless defined?(Encoding)
 
 require 'fileutils'
 
