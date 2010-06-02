@@ -30,7 +30,7 @@ class InvalidHTTPTest < Test::Unit::TestCase
     response = get("/")
     assert_equal("200", response.code)
     path = File.join(@resource_dir, 'index.html')
-    assert_equal(File.read(path), response.body)
+    assert_equal(utf8(File.read(path)), utf8(response.body))
   end
 
   def test_outside_html_outside_existent_inner_nonexistent
