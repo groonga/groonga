@@ -252,9 +252,8 @@ test_memcached_cas(void)
       memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas),
       cut_message("memcached cas failed."));
 
-    /* TODO: fix rc after libmemcached fix */
     grn_test_memcached_assert_equal_rc(
-      MEMCACHED_PROTOCOL_ERROR, /* MEMCACHED_DATA_EXISTS */
+      MEMCACHED_NOTSTORED,
       memcached_cas(memc, key, key_len, "cas changed", 12, 0, 0, cas),
       cut_message("memcached cas value is same."));
 

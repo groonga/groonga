@@ -188,7 +188,8 @@ struct _grn_com_header {
 };
 
 GRN_API grn_com *grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
-GRN_API grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev, int port,
+GRN_API grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
+                             const char *listen_address, int port,
                              grn_msg_handler *func, struct hostent *he);
 
 GRN_API void grn_com_close_(grn_ctx *ctx, grn_com *com);

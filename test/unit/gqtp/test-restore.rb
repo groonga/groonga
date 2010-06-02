@@ -175,8 +175,8 @@ column_create commands body 0 ShortText
 load --table commands
 [
 ["_key","body"],
-["gcc","a compiler"],
-["bash","a shell"]
+["bash","a shell"],
+["gcc","a compiler"]
 ]
 EOC
   end
@@ -199,8 +199,8 @@ table_create users 1 ShortText Int32
 load --table users
 [
 ["_key","_value"],
-["ryoqun",1000],
-["hayamiz",1001]
+["hayamiz",1001],
+["ryoqun",1000]
 ]
 EOC
   end
@@ -276,8 +276,8 @@ column_create commands body 0 Int32
 load --table commands
 [
 ["_key","body"],
-["gcc",32],
-["bash",-2715]
+["bash",-2715],
+["gcc",32]
 ]
 EOC
   end
@@ -572,8 +572,8 @@ load --table FreePrograms
 load --table NonFreePrograms
 [
 ["_key"],
-["Windows"],
-["Nvidia Video Driver"]
+["Nvidia Video Driver"],
+["Windows"]
 ]
 COMMANDS
   end

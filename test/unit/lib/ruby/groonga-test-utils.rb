@@ -63,20 +63,27 @@ module GroongaTestUtils
   private
   def guess_groonga_path
     groonga = ENV["GROONGA"]
-    groonga ||= File.join(File.dirname(__FILE__),
-                          "..", "..", "..", "..",
-                          "src", "groonga")
+    groonga ||= File.join(guess_top_source_dir, "src", "groonga")
     File.expand_path(groonga)
   end
 
   def guess_resource_dir
-    File.expand_path(File.join(File.dirname(@groonga), "..",
-                               "resource", "admin_html"))
+    File.join(guess_top_source_dir, "resource", "admin_html")
+  end
+
+  def guess_top_source_dir
+    base_dir = ENV["BASE_DIR"]
+    if base_dir
+      top_source_dir = File.join(base_dir, "..", "..")
+    else
+      top_source_dir = File.join(File.dirname(__FILE__), "..", "..", "..", "..")
+    end
+    File.expand_path(top_source_dir)
   end
 
   def start_server
     arguments = ["-s",
-                 "-i", @address,
+                 "-a", @address,
                  "-p", @port.to_s,
                  "-e", @encoding,
                  "--admin-html-path", @resource_dir]
@@ -124,5 +131,10 @@ module GroongaTestUtils
 
   def run_groonga(*arguments)
     `#{construct_command_line(*arguments)}`
+  end
+
+  def utf8(string)
+    string.force_encoding("UTF-8") if string.respond_to?(:force_encoding)
+    string
   end
 end

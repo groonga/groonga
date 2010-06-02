@@ -5,11 +5,13 @@ SUBDIRS =		\
 	core		\
 	memcached	\
 	http		\
+	gqtp		\
 	story
 
 TESTS = run-test.sh
 TESTS_ENVIRONMENT =				\
 	NO_MAKE=yes				\
+	BUILD_DIR="$(builddir)"			\
 	CUTTER="$(CUTTER)"			\
 	CUTTER_VERBOSE=yes			\
 	RUBY="$(RUBY)"				\

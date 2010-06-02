@@ -54,7 +54,7 @@ remove_tmp_directory(void)
 static void
 setup_modules_dir(void)
 {
-  modules_dir = g_build_filename(grn_test_get_base_dir(),
+  modules_dir = g_build_filename(grn_test_get_build_dir(),
                                  "fixtures",
                                  "modules",
                                  ".libs",

@@ -36,9 +36,9 @@ module GroongaLocalGQTPTestUtils
 
   def dump
     output = run_groonga(@database_path, "dump")
-    if $?.exitstatus != 255 # should groonga exit with 0, adhering the convention?
+    unless $?.success?
       flunk("groonga exited with unexpected exit status while dumping: " +
-            " #{$?.exitstatus}")
+            "#{$?.exitstatus}")
     end
     output
   end
@@ -61,7 +61,6 @@ module GroongaLocalGQTPTestUtils
 
   def assert_dump(expected, commands)
     feed_commands(commands)
-    omit("dump test is now omitted.")
     assert_equal(expected, dump)
   end
 

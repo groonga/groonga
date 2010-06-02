@@ -111,6 +111,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/core/Makefile
                  test/unit/memcached/Makefile
                  test/unit/http/Makefile
+                 test/unit/gqtp/Makefile
                  test/unit/story/Makefile
                  test/unit/story/taiyaki/Makefile
                  test/benchmark/Makefile
@@ -368,7 +369,7 @@ AC_SUBST(WINDOWS_LDFLAGS)
 AC_SUBST(WINDOWS_LIBS)
 
 # groonga binary path
-GROONGA="\$(abs_top_srcdir)/src/groonga"
+GROONGA="\$(abs_top_builddir)/src/groonga"
 AC_SUBST(GROONGA)
 
 # check Cutter with GLib support if available

@@ -1,7 +1,12 @@
 #!/bin/sh
 
 export BASE_DIR="`dirname $0`"
-top_dir="$BASE_DIR/../.."
+if test -z "$BUILD_DIR"; then
+    BUILD_DIR="$BASE_DIR"
+fi
+export BUILD_DIR
+
+top_dir="$BUILD_DIR/../.."
 top_dir=$(cd $top_dir; pwd)
 
 if test x"$NO_MAKE" != x"yes"; then
@@ -9,17 +14,17 @@ if test x"$NO_MAKE" != x"yes"; then
 fi
 
 if test -z "$CUTTER"; then
-    CUTTER="`make -s -C $BASE_DIR echo-cutter`"
+    CUTTER="`make -s -C $BUILD_DIR echo-cutter`"
 fi
 export CUTTER
 
 if test -z "$RUBY"; then
-    RUBY="`make -s -C $BASE_DIR echo-ruby`"
+    RUBY="`make -s -C $BUILD_DIR echo-ruby`"
 fi
 export RUBY
 
 if test -z "$GROONGA"; then
-    GROONGA="`make -s -C $BASE_DIR echo-groonga`"
+    GROONGA="`make -s -C $BUILD_DIR echo-groonga`"
 fi
 export GROONGA
 
@@ -66,7 +71,7 @@ no_test=1
 
 cutter_result=0
 if test "$NO_CUTTER" != "yes" -a -n "$CUTTER"; then
-    $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BASE_DIR
+    $CUTTER_WRAPPER $CUTTER $CUTTER_ARGS "$@" $BUILD_DIR
     cutter_result=$?
     no_test=0
 fi
