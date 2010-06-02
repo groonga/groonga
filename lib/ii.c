@@ -2566,7 +2566,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
         posp = dv[j].data;
       }
       GETNEXTC();
-      MERGE_BC(cid.rid);
+      MERGE_BC(bid.rid <= rid || cid.rid);
       *sbpp = sbp;
       *nextbp = nextb;
       *bidp = bid;
