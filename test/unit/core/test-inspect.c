@@ -46,6 +46,7 @@ void test_geo_point_wgs84(void);
 void test_array_empty(void);
 void test_array_with_records(void);
 void test_hash_empty(void);
+void test_hash_with_records(void);
 
 static gchar *tmp_directory;
 
@@ -359,4 +360,20 @@ test_hash_empty(void)
   assert_send_command("table_create Sites TABLE_HASH_KEY");
   inspected = grn_inspect(context, NULL, get("Sites"));
   cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_hash_with_records(void)
+{
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Text");
+  assert_send_command("load "
+                      "'["
+                      "[\"_key\",\"name\"],"
+                      "[\"groonga.org\",\"groonga\"],"
+                      "[\"razil.jp\",\"Brazil\"]"
+                      "]' "
+                      "Sites");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
 }
