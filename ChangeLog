@@ -1,3 +1,225 @@
+2010-06-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Fixed again a bug in chunk_merge.
+
+2010-06-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-inspect.c: add tests for uvector inspection.
+
+ * test/unit/core/test-inspect.c: add tests for patricia trie inspection.
+
+ * test/unit/core/test-inspect.c: add a test for hash inspection with records.
+
+ * test/unit/core/test-inspect.c: add a test for empty hash inspection.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: set UTF-8 to XML response.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: set UTF-8 encoding.
+
+2010-06-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Fixed a bug in chunk_merge which cause wrong search result.
+
+2010-06-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-invalid-http.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: set UTF-8 to HTTP response
+ body for Ruby 1.9.x.
+
+ * test/unit/run-test.rb: ignore run-test.rb from auto load files.
+
+ * test/unit/run-test.rb: update test-unit: 2.0.8 -> 2.0.9.
+
+ * test/unit/run-test.rb: update test-unit: 2.0.7 -> 2.0.8.
+
+ * test/unit/run-test.rb: support running test in different directory.
+
+2010-06-02 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/store.c, test/unit/core/Makefile.am, test/unit/core/test-store-ja.c:
+ test for loading empty vector which causes SEGV. #320
+
+2010-06-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/run-test.rb: don't set $KCODE on Ruby 1.9.x.
+
+2010-06-01 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-database-create.c,
+ test/unit/core/test-store.c: reenable test-store.c and rename to
+ test-database-create.c.
+
+ * test/unit/core/test-inspect.c: add a test for inspection array with
+ records.
+
+ * test/unit/lib/grn-test-utils.c: remove needless inversion.
+
+ * test/unit/lib/grn-test-utils.c: suppress a warning.
+
+ * test/unit/gqtp/test-status.rb: use assert_predicate instead of assert.
+
+ * test/unit/gqtp/test-status.rb: fix a typo.
+
+2010-05-31 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/gqtp/test-status.rb: add test for #311.
+
+ * test/unit/gqtp/test-restore.rb: expected dump should be sorted.
+
+ * lib/store.c: get rid of SEGV when body is empty.
+
+2010-05-31 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-inspect.c: add a test for empty array inspect.
+
+ * test/unit/gqtp/Makefile.am: add missing Makefile.am.
+
+ * configure.ac, test/unit/Makefile.am, test/unit/core/Makefile.am: add
+ missing Makefile.am and configure.ac change for moving test files.
+
+2010-05-31 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/test-cache.rb, test/unit/core/test-load.rb,
+ test/unit/core/test-restore.rb, test/unit/gqtp/test-cache.rb,
+ test/unit/gqtp/test-load.rb, test/unit/gqtp/test-restore.rb: moved gqtp tests
+ from test/unit/core.
+
+2010-05-31 Kouhei Sutou <kou@clear-code.com>
+
+ * .../unit/lib/ruby/groonga-local-gqtp-test-utils.rb: enable dump test.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: follow groonga's '-a' and '-i'
+ command line option change.
+
+ * test/unit/run-test.sh: use Makefile in build directory.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: use admin html in source
+ directory.
+
+ * test/unit/core/test-register.c, test/unit/lib/grn-test-utils.c,
+ test/unit/lib/grn-test-utils.h, test/unit/run-test.sh: Cutter tests work on
+ different build directory.
+
+ * test/unit/Makefile.am, test/unit/run-test.sh: use both build dir and base
+ dir.
+
+ * configure.ac: fix built groonga path.
+
+ * test/unit/Makefile.am, test/unit/run-test.sh: use build dir as test base
+ directory.
+
+ * test/unit/core/test-inspect.c: add a test for geo point inspect.
+
+ * test/unit/core/test-inspect.c: add a test for void value inspect.
+
+ * test/unit/core/test-inspect.c: add a test for text inspect.
+
+ * test/unit/core/test-inspect.c: add tests for bool value inspect.
+
+ * test/unit/core/test-inspect.c: add a test for time value inspect.
+
+ * test/unit/core/test-inspect.c: add a test for float value inspect.
+
+ * test/unit/core/test-inspect.c: add tests for uint values inspect.
+
+ * test/unit/core/test-inspect.c: add tests for int values inspect.
+
+ * test/unit/core/test-inspect.c: ensure close inspected buffer.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-inspect.c: add a test for
+ grn_inspect() for NULL.
+
+ * test/unit/core/test-function-cast.c: add missing prototype declaration.
+
+ * modules/functions/cast.c, test/unit/core/Makefile.am,
+ test/unit/core/test-function-cast.c: add tests for cast().
+
+2010-05-28 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * src/groonga.c: exit with result code.
+
+2010-05-28 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/memcached/test-memcached.c: follow libmemcached fix.
+
+ * src/groonga.c: don't return response on NOOP.
+
+2010-05-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/expr.c, test/unit/http/test-http-select-basic.rb: Fixed XML OFFSET and
+ NO attr. without sortby. [#288]
+
+2010-05-28 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/com.c, src/groonga.c: show more information on error.
+
+ * lib/com.c, lib/com.h, src/groonga.c: suppot listen address. [#282]
+
+2010-05-27 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/Makefile.am, test/unit/core/test-load.c,
+ test/unit/lib/grn-test-utils.c: support --columns in load. [#292]
+
+ * test/unit/core/Makefile.am: add missing test file.
+
+2010-05-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/token.c: Added TokenBigramIgnoreBlank
+
+ * lib/token.c: Added bigram variations.
+
+2010-05-26 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h, lib/expr.c, lib/proc.c, lib/str.c: Fixed OFFSET attr. of
+ RESULTSET and NO attr. of HIT tag.  Fixed bug reported on Ticket #288.
+
+ * doc/ja/commands/select.html, doc/ja/searchindex.js,
+ doc/ja/source/commands/select.txt: Added cache parameter document for select
+ command.
+
+ * groonga.h, lib/expr.c, lib/proc.c: Added cache parameter for
+ select/define_selector.
+
+2010-05-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: unlock object in grn_ctx_at()
+
+ * lib/db.c: retry to open object in grn_ctx_at()
+
+2010-05-21 t2001 <t2001@gol.com>
+
+ * src/grntest.c: support onmemory mode.
+
+2010-05-20 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac, doc/ja/characteristic.html, doc/ja/commands.html,
+ doc/ja/commands/add.html, doc/ja/commands/cache_limit.html,
+ doc/ja/commands/column_create.html, doc/ja/commands/column_list.html,
+ doc/ja/commands/column_remove.html, doc/ja/commands/define_selector.html,
+ doc/ja/commands/delete.html, doc/ja/commands/get.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/set.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/table_remove.html,
+ doc/ja/commands/view_add.html, doc/ja/developer.html,
+ doc/ja/developer/com.html, doc/ja/developer/document.html,
+ doc/ja/developer/test.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/functions/geo_distance.html,
+ doc/ja/functions/geo_in_circle.html, doc/ja/functions/geo_in_rectangle.html,
+ doc/ja/functions/now.html, doc/ja/functions/rand.html, doc/ja/genindex.html,
+ doc/ja/grnslap.html, doc/ja/grntest.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/process.html, doc/ja/pseudo_column.html,
+ doc/ja/reference.html, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/tutorial.html, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial09.html,
+ doc/ja/tutorial/tutorial10.html, doc/ja/type.html: release 0.7.2
+
 2010-05-20 Kouhei Sutou <kou@clear-code.com>
 
  * lib/snip.c, test/unit/util/test-snip.c: grn_snip_exec() don't report error
