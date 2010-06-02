@@ -224,7 +224,7 @@ module GroongaHTTPTestUtils
     when "text/html"
       actual = utf8(response.body)
     when "text/xml"
-      actual = response.body
+      actual = utf8(response.body)
     else
       flunk("unknown content-type: #{response.content_type}")
     end
