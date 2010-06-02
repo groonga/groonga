@@ -132,4 +132,9 @@ module GroongaTestUtils
   def run_groonga(*arguments)
     `#{construct_command_line(*arguments)}`
   end
+
+  def utf8(string)
+    string.force_encoding("UTF-8") if string.respond_to?(:force_encoding)
+    string
+  end
 end

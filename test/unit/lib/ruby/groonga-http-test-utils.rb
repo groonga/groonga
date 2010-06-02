@@ -46,11 +46,6 @@ module GroongaHTTPTestUtils
     end
   end
 
-  def utf8(string)
-    string.force_encoding("UTF-8") if string.respond_to?(:force_encoding)
-    string
-  end
-
   def encode_options(options)
     return "" if options.empty?
 
@@ -227,7 +222,7 @@ module GroongaHTTPTestUtils
         actual[0][4] = nil if actual[0][4]
       end
     when "text/html"
-      actual = response.body
+      actual = utf8(response.body)
     when "text/xml"
       actual = response.body
     else
