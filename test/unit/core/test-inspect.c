@@ -45,6 +45,7 @@ void test_geo_point_tokyo(void);
 void test_geo_point_wgs84(void);
 void test_array_empty(void);
 void test_array_with_records(void);
+void test_hash_empty(void);
 
 static gchar *tmp_directory;
 
@@ -350,4 +351,12 @@ test_array_with_records(void)
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
   cut_assert_equal_string("[1, 2]", inspected_string());
+}
+
+void
+test_hash_empty(void)
+{
+  assert_send_command("table_create Sites TABLE_HASH_KEY");
+  inspected = grn_inspect(context, NULL, get("Sites"));
+  cut_assert_equal_string("[]", inspected_string());
 }
