@@ -55,4 +55,5 @@ require 'groonga-test-utils'
 require 'groonga-http-test-utils'
 require 'groonga-local-gqtp-test-utils'
 
+ARGV.unshift("--exclude", "run-test.rb")
 exit Test::Unit::AutoRunner.run(true, File.dirname($0))
