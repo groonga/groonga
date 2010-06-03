@@ -7144,6 +7144,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
 static void
 json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
 {
+  const char *const beg = str;
   char c;
   int len;
   const char *se = str + str_len;
@@ -7203,8 +7204,13 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
           values_add(ctx, loader);
         } else {
           if ((len = grn_charlen(ctx, str, se))) {
+            GRN_LOG(ctx, GRN_LOG_ERROR, "ignored invalid char('%c') at", c);
+            GRN_LOG(ctx, GRN_LOG_ERROR, "%.*s", (int)(str - beg) + len, beg);
+            GRN_LOG(ctx, GRN_LOG_ERROR, "%*s", (int)(str - beg) + 1, "^");
             str += len;
           } else {
+            GRN_LOG(ctx, GRN_LOG_ERROR, "ignored invalid char(\\x%.2x) after", c);
+            GRN_LOG(ctx, GRN_LOG_ERROR, "%.*s", (int)(str - beg), beg);
             str = se;
           }
         }
@@ -7301,6 +7307,8 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
           GRN_TEXT_PUT(ctx, loader->last, str, len);
           str += len;
         } else {
+          GRN_LOG(ctx, GRN_LOG_ERROR, "ignored invalid char(\\x%.2x) after", c);
+          GRN_LOG(ctx, GRN_LOG_ERROR, "%.*s", (int)(str - beg), beg);
           str = se;
         }
         break;
