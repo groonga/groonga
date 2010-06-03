@@ -53,6 +53,7 @@ void test_uvector_empty(void);
 void test_uvector_with_records(void);
 void test_uvector_bool(void);
 void test_vector_empty(void);
+void test_pvector_empty(void);
 
 static gchar *tmp_directory;
 
@@ -70,6 +71,7 @@ static grn_obj *bool_value;
 static grn_obj *text;
 static grn_obj *geo_point_tokyo, *geo_point_wgs84;
 static grn_obj *uvector;
+static grn_obj *pvector;
 static grn_obj *vector;
 
 void
@@ -105,6 +107,7 @@ setup_values(void)
   text = NULL;
   geo_point_tokyo = geo_point_wgs84 = NULL;
   uvector = NULL;
+  pvector = NULL;
   vector = NULL;
 }
 
@@ -145,6 +148,7 @@ teardown_values(void)
   grn_obj_unlink(context, geo_point_tokyo);
   grn_obj_unlink(context, geo_point_wgs84);
   grn_obj_unlink(context, uvector);
+  grn_obj_unlink(context, pvector);
   grn_obj_unlink(context, vector);
 }
 
@@ -447,6 +451,30 @@ test_uvector_bool(void)
   GRN_BOOL_PUT(context, uvector, FALSE);
   inspected = grn_inspect(context, NULL, uvector);
   cut_assert_equal_string("[true,false]", inspected_string());
+}
+
+void
+test_pvector_empty(void)
+{
+  pvector = grn_obj_open(context, GRN_PVECTOR, 0, GRN_ID_NIL);
+  inspected = grn_inspect(context, NULL, pvector);
+  cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_pvector_with_records(void)
+{
+  grn_obj *groonga, *razil;
+
+  pvector = grn_obj_open(context, GRN_PVECTOR, 0, GRN_ID_NIL);
+  groonga = grn_obj_open(context, GRN_BULK, 0, GRN_DB_SHORT_TEXT);
+  razil = grn_obj_open(context, GRN_BULK, 0, GRN_DB_SHORT_TEXT);
+  GRN_TEXT_PUTS(context, groonga, "groonga");
+  GRN_TEXT_PUTS(context, razil, "razil");
+  GRN_PTR_PUT(context, pvector, groonga);
+  GRN_PTR_PUT(context, pvector, razil);
+  inspected = grn_inspect(context, NULL, pvector);
+  cut_assert_equal_string("[\"groonga\",\"razil\"]", inspected_string());
 }
 
 void

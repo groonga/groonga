@@ -2784,6 +2784,24 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       GRN_TEXT_PUTC(ctx, bulk, ']');
     }
     break;
+  case GRN_PVECTOR :
+    if (format) {
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "cannot print GRN_PVECTOR using grn_obj_format");
+    } else {
+      unsigned int i, n;
+      GRN_TEXT_PUTC(ctx, bulk, '[');
+      n = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
+      for (i = 0; i < n; i++) {
+        grn_obj *value;
+
+        if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
+        value = GRN_PTR_VALUE_AT(obj, i);
+        grn_text_otoj(ctx, bulk, value, NULL);
+      }
+      GRN_TEXT_PUTC(ctx, bulk, ']');
+    }
+    break;
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_NO_KEY :
