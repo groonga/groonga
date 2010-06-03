@@ -263,6 +263,7 @@ typedef struct _grn_logger_context
   grn_logger_info *logger;
   GList *logs;
   GList *messages;
+  GString *collected_message;
 } grn_logger_context;
 
 static grn_logger_context *
@@ -274,6 +275,7 @@ grn_logger_context_new(grn_logger_info *logger)
   context->logger = logger;
   context->logs = NULL;
   context->messages = NULL;
+  context->collected_message = NULL;
 
   return context;
 }
@@ -284,6 +286,10 @@ grn_logger_context_clear_messages(grn_logger_context *context)
   g_list_foreach(context->messages, (GFunc)g_free, NULL);
   g_list_free(context->messages);
   context->messages = NULL;
+  if (context->collected_message) {
+    g_string_free(context->collected_message, TRUE);
+    context->collected_message = NULL;
+  }
 }
 
 static void
@@ -310,8 +316,12 @@ grn_collect_logger_log_func(int level, const char *time, const char *title,
   grn_log *log;
 
   log = grn_log_new(level, time, title, message, location);
-  context->logs = g_list_prepend(context->logs, log);
+  context->logs = g_list_append(context->logs, log);
   context->messages = g_list_append(context->messages, g_strdup(message));
+  if (context->collected_message) {
+    g_string_free(context->collected_message, TRUE);
+    context->collected_message = NULL;
+  }
 }
 
 grn_logger_info *
@@ -344,21 +354,25 @@ grn_collect_logger_get_messages(grn_logger_info *logger)
   return context->messages;
 }
 
-gchar *
+const gchar *
 grn_collect_logger_to_string(grn_logger_info *logger)
 {
-  GString *string;
+  grn_logger_context *context = logger->func_arg;
   const GList *messages;
 
-  string = g_string_new(NULL);
+  if (context->collected_message) {
+    return context->collected_message->str;
+  }
+
+  context->collected_message = g_string_new(NULL);
   for (messages = grn_collect_logger_get_messages(logger);
        messages;
        messages = g_list_next(messages)) {
     const gchar *message = messages->data;
-    g_string_append_printf(string, "%s\n", message);
+    g_string_append_printf(context->collected_message, "%s\n", message);
   }
 
-  return g_string_free(string, FALSE);
+  return context->collected_message->str;
 }
 
 void

@@ -45,7 +45,7 @@ void         grn_collect_logger_clear_messages
                                            (grn_logger_info *logger);
 const GList *grn_collect_logger_get_messages
                                            (grn_logger_info *logger);
-gchar       *grn_collect_logger_to_string  (grn_logger_info *logger);
+const gchar *grn_collect_logger_to_string  (grn_logger_info *logger);
 void         grn_collect_logger_print_messages
                                            (grn_logger_info *logger);
 void         grn_collect_logger_free       (grn_logger_info  *logger);
