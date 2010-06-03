@@ -194,14 +194,8 @@ cut_teardown(void)
 {                                                               \
   inverted_index = grn_ii_create(context, path, lexicon, 0);    \
   cut_assert_not_null(inverted_index);                          \
-  cut_assert_file_exist(strconcat(path, ".c"));                 \
+  cut_assert_file_exist(cut_take_printf("%s.c", path));         \
 } while (0)
-
-static const gchar *
-strconcat(const char *string1, const char *string2)
-{
-  return cut_take_string(g_strconcat(string1, string2, NULL));
-}
 
 void
 test_create(void)
