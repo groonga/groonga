@@ -3162,8 +3162,8 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
 #define SCALE_FACTOR 2048
 #define MAX_NTERMS   8192
 #define SPLIT_COND  (b->header.nterms > 1024 ||\
-                     b->header.chunk_size * 100 > ii->header->total_chunk_size)
-//#define SPLIT_COND (b->header.nterms > 1000)
+                     (b->header.nterms > 1 &&\
+                      b->header.chunk_size * 100 > ii->header->total_chunk_size))
 
 inline static uint32_t
 buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
