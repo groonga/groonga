@@ -311,7 +311,7 @@ grn_collect_logger_log_func(int level, const char *time, const char *title,
 
   log = grn_log_new(level, time, title, message, location);
   context->logs = g_list_prepend(context->logs, log);
-  context->messages = g_list_prepend(context->messages, g_strdup(message));
+  context->messages = g_list_append(context->messages, g_strdup(message));
 }
 
 grn_logger_info *
