@@ -54,6 +54,7 @@ void test_uvector_with_records(void);
 void test_uvector_bool(void);
 void test_vector_empty(void);
 void test_pvector_empty(void);
+void test_pvector_with_records(void);
 
 static gchar *tmp_directory;
 
