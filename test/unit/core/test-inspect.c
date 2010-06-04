@@ -55,6 +55,7 @@ void test_uvector_bool(void);
 void test_vector_empty(void);
 void test_pvector_empty(void);
 void test_pvector_with_records(void);
+void test_accessor(void);
 
 static gchar *tmp_directory;
 
@@ -484,4 +485,21 @@ test_vector_empty(void)
   vector = grn_obj_open(context, GRN_VECTOR, 0, GRN_DB_TEXT);
   inspected = grn_inspect(context, NULL, vector);
   cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_accessor_column_name(void)
+{
+  grn_obj *accessor;
+  const char column[] = "name.site.name";
+
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Names");
+  assert_send_command("column_create Names site COLUMN_SCALAR Sites");
+  accessor = grn_obj_column(context, get_object("Sites"),
+			    column, sizeof(column) - 1);
+  cut_assert_not_null(accessor);
+  inspected = grn_inspect(context, NULL, accessor);
+  cut_assert_equal_string(column, inspected_string());
 }

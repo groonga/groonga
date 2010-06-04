@@ -62,6 +62,12 @@ exit:
   return ctx->rc;
 }
 
+grn_rc
+grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  return grn_column_name_(ctx, obj, buf);
+}
+
 grn_obj *
 grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 {
@@ -74,8 +80,12 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     return buffer;
   }
 
-  if (obj->header.type == GRN_EXPR) {
+  switch (obj->header.type) {
+  case GRN_EXPR:
     grn_expr_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_ACCESSOR:
+    grn_accessor_inspect(ctx, buffer, obj);
     return buffer;
   }
 
