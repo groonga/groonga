@@ -5652,83 +5652,87 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
       LAP("output");
-
-      if (drilldown_len) {
+      if (!ctx->rc && drilldown_len) {
         uint32_t i, ngkeys;
         grn_table_sort_key *gkeys;
         grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
-        gkeys = grn_table_sort_key_from_str(ctx, drilldown, drilldown_len, res, &ngkeys);
-        for (i = 0; i < ngkeys; i++) {
-          if ((g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
-                                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                                    gkeys[i].key, NULL))) {
-            int n_drilldown_offset = drilldown_offset,
-                n_drilldown_limit = drilldown_limit;
+        if ((gkeys = grn_table_sort_key_from_str(ctx, drilldown,
+                                                 drilldown_len, res, &ngkeys))) {
+          for (i = 0; i < ngkeys; i++) {
+            if ((g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
+                                                      GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                                      gkeys[i].key, NULL))) {
+              int n_drilldown_offset = drilldown_offset,
+                  n_drilldown_limit = drilldown_limit;
 
-            grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
-            nhits = grn_table_size(ctx, g.table);
+              grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
+              nhits = grn_table_size(ctx, g.table);
 
-            grn_normalize_offset_and_limit(ctx, nhits, &n_drilldown_offset, &n_drilldown_limit);
-            ERRCLR(ctx);
+              grn_normalize_offset_and_limit(ctx, nhits,
+                                             &n_drilldown_offset, &n_drilldown_limit);
+              ERRCLR(ctx);
 
-            if (drilldown_sortby_len) {
-              if ((keys = grn_table_sort_key_from_str(ctx,
-                                                      drilldown_sortby, drilldown_sortby_len,
-                                                      g.table, &nkeys))) {
-                if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                               NULL, g.table))) {
-                  grn_table_sort(ctx, g.table, n_drilldown_offset, n_drilldown_limit,
-                                 sorted, keys, nkeys);
-                  GRN_OBJ_FORMAT_INIT(&format, nhits, 0, n_drilldown_limit, n_drilldown_offset);
-                  grn_obj_columns(ctx, sorted,
-                                  drilldown_output_columns, drilldown_output_columns_len,
-                                  &format.columns);
-                  switch (output_type) {
-                  case GRN_CONTENT_JSON:
-                    format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
-                    GRN_TEXT_PUTC(ctx, outbuf, ',');
-                    grn_text_otoj(ctx, outbuf, sorted, &format);
-                    break;
-                  case GRN_CONTENT_XML:
-                    format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
-                    grn_text_otoxml(ctx, outbuf, sorted, &format);
-                    break;
-                  case GRN_CONTENT_NONE:
-                  case GRN_CONTENT_TSV:
-                    /* TODO: implement */
-                    break;
+              if (drilldown_sortby_len) {
+                if ((keys = grn_table_sort_key_from_str(ctx,
+                                                        drilldown_sortby, drilldown_sortby_len,
+                                                        g.table, &nkeys))) {
+                  if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
+                                                 NULL, g.table))) {
+                    grn_table_sort(ctx, g.table, n_drilldown_offset, n_drilldown_limit,
+                                   sorted, keys, nkeys);
+                    GRN_OBJ_FORMAT_INIT(&format, nhits, 0,
+                                        n_drilldown_limit, n_drilldown_offset);
+                    grn_obj_columns(ctx, sorted,
+                                    drilldown_output_columns, drilldown_output_columns_len,
+                                    &format.columns);
+                    switch (output_type) {
+                    case GRN_CONTENT_JSON:
+                      format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
+                      GRN_TEXT_PUTC(ctx, outbuf, ',');
+                      grn_text_otoj(ctx, outbuf, sorted, &format);
+                      break;
+                    case GRN_CONTENT_XML:
+                      format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+                      grn_text_otoxml(ctx, outbuf, sorted, &format);
+                      break;
+                    case GRN_CONTENT_NONE:
+                    case GRN_CONTENT_TSV:
+                      /* TODO: implement */
+                      break;
+                    }
+                    GRN_OBJ_FORMAT_FIN(ctx, &format);
+                    grn_obj_unlink(ctx, sorted);
                   }
-                  GRN_OBJ_FORMAT_FIN(ctx, &format);
-                  grn_obj_unlink(ctx, sorted);
+                  grn_table_sort_key_close(ctx, keys, nkeys);
                 }
-                grn_table_sort_key_close(ctx, keys, nkeys);
+              } else {
+                GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset,
+                                    n_drilldown_limit, n_drilldown_offset);
+                grn_obj_columns(ctx, g.table, drilldown_output_columns,
+                                drilldown_output_columns_len, &format.columns);
+                switch (output_type) {
+                case GRN_CONTENT_JSON:
+                  format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
+                  GRN_TEXT_PUTC(ctx, outbuf, ',');
+                  grn_text_otoj(ctx, outbuf, g.table, &format);
+                  break;
+                case GRN_CONTENT_XML:
+                  format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+                  grn_text_otoxml(ctx, outbuf, g.table, &format);
+                  break;
+                case GRN_CONTENT_NONE:
+                case GRN_CONTENT_TSV:
+                  /* TODO: implement */
+                  break;
+                }
+                GRN_OBJ_FORMAT_FIN(ctx, &format);
               }
-            } else {
-              GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset, n_drilldown_limit, n_drilldown_offset);
-              grn_obj_columns(ctx, g.table, drilldown_output_columns,
-                              drilldown_output_columns_len, &format.columns);
-              switch (output_type) {
-              case GRN_CONTENT_JSON:
-                format.flags = GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
-                GRN_TEXT_PUTC(ctx, outbuf, ',');
-                grn_text_otoj(ctx, outbuf, g.table, &format);
-                break;
-              case GRN_CONTENT_XML:
-                format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
-                grn_text_otoxml(ctx, outbuf, g.table, &format);
-                break;
-              case GRN_CONTENT_NONE:
-              case GRN_CONTENT_TSV:
-                /* TODO: implement */
-                break;
-              }
-              GRN_OBJ_FORMAT_FIN(ctx, &format);
+              grn_obj_unlink(ctx, g.table);
             }
-            grn_obj_unlink(ctx, g.table);
+            LAP("drilldown");
           }
-          LAP("drilldown");
+          grn_table_sort_key_close(ctx, gkeys, ngkeys);
         }
-        grn_table_sort_key_close(ctx, gkeys, ngkeys);
       }
       if (res != table_) { grn_obj_unlink(ctx, res); }
     }

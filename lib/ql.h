@@ -197,6 +197,9 @@ struct _grn_ctx_impl {
   /* module portion */
   const char *module_path;
 
+  /* output portion */
+  grn_content_type output_type;
+
   /* ql portion */
   uint32_t ncells;
   uint32_t seqno;

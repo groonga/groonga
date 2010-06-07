@@ -6813,15 +6813,23 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
           k->flags = GRN_TABLE_SORT_DESC;
           str++;
         }
-        if ((k->key = grn_obj_column(ctx, table, str, tokbuf[i] - str))) {
-          k++;
+        if (!(k->key = grn_obj_column(ctx, table, str, tokbuf[i] - str))) {
+          WARN(GRN_INVALID_ARGUMENT, "invalid sort key");
+          break;
         }
+        k++;
         str = tokbuf[i] + 1;
       }
     }
     GRN_FREE(tokbuf);
   }
-  *nkeys = k - keys;
+  if (!ctx->rc) {
+    *nkeys = k - keys;
+  } else {
+    GRN_FREE(keys);
+    *nkeys =0;
+    keys = NULL;
+  }
   return keys;
 }
 
@@ -6829,10 +6837,12 @@ grn_rc
 grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned nkeys)
 {
   int i;
-  for (i = 0; i < nkeys; i++) {
-    grn_obj_unlink(ctx, keys[i].key);
+  if (keys) {
+    for (i = 0; i < nkeys; i++) {
+      grn_obj_unlink(ctx, keys[i].key);
+    }
+    GRN_FREE(keys);
   }
-  GRN_FREE(keys);
   return ctx->rc;
 }
 
