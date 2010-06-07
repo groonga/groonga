@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -194,14 +194,8 @@ cut_teardown(void)
 {                                                               \
   inverted_index = grn_ii_create(context, path, lexicon, 0);    \
   cut_assert_not_null(inverted_index);                          \
-  cut_assert_file_exist(strconcat(path, ".c"));                 \
+  cut_assert_file_exist(cut_take_printf("%s.c", path));         \
 } while (0)
-
-static const gchar *
-strconcat(const char *string1, const char *string2)
-{
-  return cut_take_string(g_strconcat(string1, string2, NULL));
-}
 
 void
 test_create(void)
@@ -274,17 +268,22 @@ test_open_invalid_segment_file(void)
 {
   grn_io *io;
   gchar *id_string;
+  gchar *expected_error_message = "syscall error";
 
-  io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+  io = grn_io_create(context, path, 10, 10, 10,
+                     grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
   cut_assert_not_null(io);
   id_string = grn_io_header(io);
   strcpy(id_string, "WRONG-ID");
   grn_io_close(context, io);
 
+  clear_messages();
   inverted_index = grn_ii_open(context, path, lexicon);
   cut_assert_null(inverted_index);
 
-  cut_assert_not_null(strstr(g_list_nth_data((GList *)messages(), 1), "syscall error"));
+  cut_assert_equal_substring(expected_error_message,
+                             messages()->data,
+                             strlen(expected_error_message));
 }
 
 void
@@ -292,6 +291,7 @@ test_open_invalid_chunk_file(void)
 {
   grn_io *io;
   gchar *id_string;
+  gchar expected_error_message[] = "file type unmatch";
 
   io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
   cut_assert_not_null(io);
@@ -304,12 +304,13 @@ test_open_invalid_chunk_file(void)
   cut_assert_not_null(io);
   grn_io_close(context, io);
 
+  clear_messages();
   inverted_index = grn_ii_open(context, path, lexicon);
   cut_assert_null(inverted_index);
 
-  expected_messages = gcut_list_string_new("file type unmatch", NULL);
-
-  cut_assert_not_null(strstr(g_list_nth_data((GList *)messages(), 1), "file type unmatch"));
+  cut_assert_equal_substring(expected_error_message,
+                             messages()->data,
+                             strlen(expected_error_message));
 }
 
 void

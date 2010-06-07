@@ -176,11 +176,15 @@ test_remove(void)
 void
 test_remove_with_null_as_path(void)
 {
+  gchar expected_error_message[] = "path is null";
+
   cut_assert_open_context();
   gcut_assert_equal_list_string(NULL, messages());
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                            grn_pat_remove(context, NULL));
-  cut_assert_not_null(strstr(g_list_nth_data((GList *)messages(), 1), "path is null"));
+  cut_assert_equal_substring(expected_error_message,
+                             messages()->data,
+                             strlen(expected_error_message));
 }
 
 static grn_trie_test_data *

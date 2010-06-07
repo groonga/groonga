@@ -49,8 +49,13 @@ void test_hash_empty(void);
 void test_hash_with_records(void);
 void test_patricia_trie_empty(void);
 void test_patricia_trie_with_records(void);
-void test_uvector(void);
+void test_uvector_empty(void);
 void test_uvector_with_records(void);
+void test_uvector_bool(void);
+void test_vector_empty(void);
+void test_pvector_empty(void);
+void test_pvector_with_records(void);
+void test_accessor(void);
 
 static gchar *tmp_directory;
 
@@ -68,6 +73,8 @@ static grn_obj *bool_value;
 static grn_obj *text;
 static grn_obj *geo_point_tokyo, *geo_point_wgs84;
 static grn_obj *uvector;
+static grn_obj *pvector;
+static grn_obj *vector;
 
 void
 cut_startup(void)
@@ -102,6 +109,8 @@ setup_values(void)
   text = NULL;
   geo_point_tokyo = geo_point_wgs84 = NULL;
   uvector = NULL;
+  pvector = NULL;
+  vector = NULL;
 }
 
 void
@@ -141,6 +150,8 @@ teardown_values(void)
   grn_obj_unlink(context, geo_point_tokyo);
   grn_obj_unlink(context, geo_point_wgs84);
   grn_obj_unlink(context, uvector);
+  grn_obj_unlink(context, pvector);
+  grn_obj_unlink(context, vector);
 }
 
 void
@@ -432,4 +443,82 @@ test_uvector_with_records(void)
   GRN_RECORD_PUT(context, uvector, 2);
   inspected = grn_inspect(context, NULL, uvector);
   cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+}
+
+void
+test_uvector_bool(void)
+{
+  uvector = grn_obj_open(context, GRN_UVECTOR, 0, GRN_DB_BOOL);
+  GRN_BOOL_PUT(context, uvector, TRUE);
+  GRN_BOOL_PUT(context, uvector, FALSE);
+  inspected = grn_inspect(context, NULL, uvector);
+  cut_assert_equal_string("[true,false]", inspected_string());
+}
+
+void
+test_pvector_empty(void)
+{
+  pvector = grn_obj_open(context, GRN_PVECTOR, 0, GRN_ID_NIL);
+  inspected = grn_inspect(context, NULL, pvector);
+  cut_assert_equal_string("[]", inspected_string());
+}
+
+void
+test_pvector_with_records(void)
+{
+  grn_obj *groonga, *razil;
+
+  pvector = grn_obj_open(context, GRN_PVECTOR, 0, GRN_ID_NIL);
+  groonga = grn_obj_open(context, GRN_BULK, 0, GRN_DB_SHORT_TEXT);
+  razil = grn_obj_open(context, GRN_BULK, 0, GRN_DB_SHORT_TEXT);
+  GRN_TEXT_PUTS(context, groonga, "groonga");
+  GRN_TEXT_PUTS(context, razil, "razil");
+  GRN_PTR_PUT(context, pvector, groonga);
+  GRN_PTR_PUT(context, pvector, razil);
+  inspected = grn_inspect(context, NULL, pvector);
+  cut_assert_equal_string("[\"groonga\",\"razil\"]", inspected_string());
+}
+
+void
+test_vector_empty(void)
+{
+  vector = grn_obj_open(context, GRN_VECTOR, 0, GRN_DB_TEXT);
+  inspected = grn_inspect(context, NULL, vector);
+  cut_assert_equal_string("[]", inspected_string());
+}
+
+static void
+assert_accessor_column(grn_obj *obj, const char *name, size_t size, const char *expected)
+{
+  grn_obj *accessor = grn_obj_column(context, obj, name, size);
+  cut_assert_not_null(accessor);
+  inspected = grn_inspect(context, NULL, accessor);
+  cut_assert_equal_string(expected, inspected_string());
+}
+
+void
+test_accessor_column_name(void)
+{
+  grn_obj *obj;
+#define assert_accessor_column_expected(n, ex) assert_accessor_column(obj, n, strlen(n), ex)
+#define assert_accessor_column_roundtrip(n) assert_accessor_column_expected(n, n)
+
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Names");
+  assert_send_command("column_create Names site COLUMN_SCALAR Sites");
+  obj = get_object("Sites");
+  assert_accessor_column_roundtrip("_id");
+  assert_accessor_column_roundtrip("_key");
+  assert_accessor_column_roundtrip("name.site");
+  assert_accessor_column_roundtrip("name._id");
+  assert_accessor_column_roundtrip("name._key");
+  assert_accessor_column_roundtrip("name.site.name");
+  obj = get_object("Names");
+  assert_accessor_column_roundtrip("_id");
+  assert_accessor_column_roundtrip("_key");
+  assert_accessor_column_roundtrip("site.name");
+  assert_accessor_column_roundtrip("site._id");
+  assert_accessor_column_roundtrip("site._key");
+  assert_accessor_column_roundtrip("site.name.site");
 }

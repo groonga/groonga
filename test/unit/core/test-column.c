@@ -49,7 +49,7 @@ create_bookmarks_table(void)
   grn_test_assert_context(context);
   cut_assert_not_null(
     bookmarks,
-    cut_message("%s", cut_take_string(grn_collect_logger_to_string(logger))));
+    cut_message("%s", grn_collect_logger_to_string(logger)));
 }
 
 static void
@@ -66,7 +66,7 @@ add_count_column_to_bookmarks_table (void)
   grn_test_assert_context(context);
   cut_assert_not_null(
     count_column,
-    cut_message("%s", cut_take_string(grn_collect_logger_to_string(logger))));
+    cut_message("%s", grn_collect_logger_to_string(logger)));
 }
 
 static void
@@ -78,7 +78,7 @@ add_groonga_bookmark(void)
   grn_test_assert_context(context);
   grn_test_assert_not_nil(
     groonga_bookmark_id,
-    cut_message("%s", cut_take_string(grn_collect_logger_to_string(logger))));
+    cut_message("%s", grn_collect_logger_to_string(logger)));
 }
 
 void
