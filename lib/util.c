@@ -85,6 +85,7 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     grn_expr_inspect(ctx, buffer, obj);
     return buffer;
   case GRN_ACCESSOR:
+  case GRN_ACCESSOR_VIEW:
     grn_accessor_inspect(ctx, buffer, obj);
     return buffer;
   }
