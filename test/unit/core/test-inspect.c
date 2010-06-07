@@ -488,10 +488,9 @@ test_vector_empty(void)
 }
 
 static void
-assert_accessor_column(const char *obj_name, const char *name, size_t size, const char *expected)
+assert_accessor_column(grn_obj *obj, const char *name, size_t size, const char *expected)
 {
-  grn_obj *accessor = grn_obj_column(context, get_object(obj_name),
-				       name, size);
+  grn_obj *accessor = grn_obj_column(context, obj, name, size);
   cut_assert_not_null(accessor);
   inspected = grn_inspect(context, NULL, accessor);
   cut_assert_equal_string(expected, inspected_string());
@@ -500,23 +499,26 @@ assert_accessor_column(const char *obj_name, const char *name, size_t size, cons
 void
 test_accessor_column_name(void)
 {
-#define assert_accessor_column_expected(obj, n, ex) assert_accessor_column(obj, n, strlen(n), ex)
-#define assert_accessor_column_roundtrip(obj, n) assert_accessor_column_expected(obj, n, n)
+  grn_obj *obj;
+#define assert_accessor_column_expected(n, ex) assert_accessor_column(obj, n, strlen(n), ex)
+#define assert_accessor_column_roundtrip(n) assert_accessor_column_expected(n, n)
 
   assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
   assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
   assert_send_command("column_create Sites name COLUMN_SCALAR Names");
   assert_send_command("column_create Names site COLUMN_SCALAR Sites");
-  assert_accessor_column_roundtrip("Sites", "_id");
-  assert_accessor_column_roundtrip("Sites", "_key");
-  assert_accessor_column_roundtrip("Sites", "name.site");
-  assert_accessor_column_roundtrip("Sites", "name._id");
-  assert_accessor_column_roundtrip("Sites", "name._key");
-  assert_accessor_column_roundtrip("Sites", "name.site.name");
-  assert_accessor_column_roundtrip("Names", "_id");
-  assert_accessor_column_roundtrip("Names", "_key");
-  assert_accessor_column_roundtrip("Names", "site.name");
-  assert_accessor_column_roundtrip("Names", "site._id");
-  assert_accessor_column_roundtrip("Names", "site._key");
-  assert_accessor_column_roundtrip("Names", "site.name.site");
+  obj = get_object("Sites");
+  assert_accessor_column_roundtrip("_id");
+  assert_accessor_column_roundtrip("_key");
+  assert_accessor_column_roundtrip("name.site");
+  assert_accessor_column_roundtrip("name._id");
+  assert_accessor_column_roundtrip("name._key");
+  assert_accessor_column_roundtrip("name.site.name");
+  obj = get_object("Names");
+  assert_accessor_column_roundtrip("_id");
+  assert_accessor_column_roundtrip("_key");
+  assert_accessor_column_roundtrip("site.name");
+  assert_accessor_column_roundtrip("site._id");
+  assert_accessor_column_roundtrip("site._key");
+  assert_accessor_column_roundtrip("site.name.site");
 }
