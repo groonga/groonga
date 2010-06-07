@@ -7098,7 +7098,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             if (v->header.domain == GRN_DB_TEXT &&
                 (name_equal(column_name, column_name_size, PKEY_NAME) ||
                  name_equal(column_name, column_name_size, PID_NAME))) {
-              if (loader->key_offset != -1) {
+              if (key_value) {
                 GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s and %.*s",
                         GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value),
                         column_name_size, column_name);
@@ -7109,7 +7109,6 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
               if (v->header.domain == GRN_DB_TEXT) {
                 id = loader_add(ctx, v);
               }
-              break;
             } else {
               v = values_next(ctx, v);
             }

@@ -116,6 +116,21 @@ test_no_key(void)
 }
 
 void
+test_duplicated_key(void)
+{
+  GList *log = NULL;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
+  grn_collect_logger_clear_messages(logger);
+  assert_send_command("load --table Users --input_type json\n"
+                      "{\"_key\": \"groonga\", \"_id\": 1}\n"
+                      "");
+  log = g_list_next(grn_collect_logger_get_messages(logger));
+  cut_assert_equal_string("duplicated key columns: _key and _id", g_list_nth_data(log, 0));
+}
+
+void
 test_invalid_column(void)
 {
   GList *log = NULL;
