@@ -56,6 +56,7 @@ static int useql;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
 static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
+static const char *pidfile_path;
 
 static void
 usage(void)
@@ -80,6 +81,7 @@ usage(void)
           "  --version:                show groonga version\n"
           "  --log-path <path>:        specify log path\n"
           "  --query-log-path <path>:  specify query log path\n"
+          "  --pid-file <path>:        specify pid file path (daemon mode only)\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -1515,7 +1517,17 @@ do_daemon(char *path)
     perror("fork");
     return -1;
   default:
-    fprintf(stderr, "%d\n", pid);
+    {
+      FILE *pidfile = NULL;
+      if (pidfile_path) {
+        pidfile = fopen(pidfile_path, "w");
+      }
+      if (!pidfile) pidfile = stderr;
+      fprintf(pidfile, "%d\n", pid);
+      if (pidfile != stderr) {
+        fclose(pidfile);
+      }
+    }
     _exit(0);
   }
   {
@@ -1591,6 +1603,7 @@ main(int argc, char **argv)
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', "query-log-path", NULL, 0, getopt_op_none},
+    {'\0', "pid-file", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1603,6 +1616,7 @@ main(int argc, char **argv)
   opts[13].arg = &protocol;
   opts[15].arg = &grn_log_path;
   opts[16].arg = &grn_qlog_path;
+  opts[17].arg = &pidfile_path;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
