@@ -93,8 +93,6 @@ test_vector_empty_load(void)
   uint32_t len;
   grn_io_win iw;
 
-  cut_omit("currently SEGV");
-
   cut_assert_equal_int(0, grn_ja_size(context, ja, 1));
   ptr = grn_ja_ref(context, ja, 1, &iw, &len);
   grn_ja_unref(context, &iw);

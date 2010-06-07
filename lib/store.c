@@ -788,11 +788,11 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
     grn_ja_einfo einfo;
     grn_obj *body = vector->u.v.body;
     size_t sizeh = GRN_BULK_VSIZE(&header);
-    size_t sizev = GRN_BULK_VSIZE(body);
+    size_t sizev = body ? GRN_BULK_VSIZE(body) : 0;
     size_t sizef = GRN_BULK_VSIZE(&footer);
     if ((rc = grn_ja_alloc(ctx, ja, id, sizeh + sizev + sizef, &einfo, &iw))) { goto exit; }
     memcpy(iw.addr, GRN_BULK_HEAD(&header), sizeh);
-    memcpy((char *)iw.addr + sizeh, GRN_BULK_HEAD(body), sizev);
+    if (body) { memcpy((char *)iw.addr + sizeh, GRN_BULK_HEAD(body), sizev); }
     if (f) { memcpy((char *)iw.addr + sizeh + sizev, GRN_BULK_HEAD(&footer), sizef); }
     grn_io_win_unmap2(&iw);
     rc = grn_ja_replace(ctx, ja, id, &einfo);
