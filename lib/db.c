@@ -6964,6 +6964,15 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 }
 
 #define PKEY_NAME "_key"
+#define PID_NAME "_id"
+
+static inline int
+name_equal(const char *p, unsigned size, const char *name)
+{
+  if (strlen(name) != size) return 0;
+  if (*p != GRN_DB_PSEUDO_COLUMN_PREFIX) return 0;
+  return !memcmp(p + 1, name + 1, size - 1);
+}
 
 static void
 bracket_close(grn_ctx *ctx, grn_loader *loader)
@@ -6988,13 +6997,20 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           id = loader_add(ctx, value + loader->key_offset);
         } else if (loader->key_offset == -1) {
           int i = 0;
+          grn_obj *key_value = NULL;
           while (ndata--) {
             char *column_name = GRN_TEXT_VALUE(value);
             unsigned column_name_size = GRN_TEXT_LEN(value);
             if (value->header.domain == GRN_DB_TEXT &&
-                column_name_size == strlen(PKEY_NAME) &&
-                (*column_name == ':' || *column_name == '_') &&
-                !memcmp(column_name + 1, "key", 3)) {
+                (name_equal(column_name, column_name_size, PKEY_NAME) ||
+                 name_equal(column_name, column_name_size, PID_NAME))) {
+              if (loader->key_offset != -1) {
+                GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s at %d and %.*s at %i",
+                        GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value), loader->key_offset,
+                        column_name_size, column_name, i);
+                return;
+              }
+              key_value = value;
               loader->key_offset = i;
             } else {
               col = grn_obj_column(ctx, loader->table,
@@ -7075,12 +7091,20 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
       case GRN_TABLE_HASH_KEY :
       case GRN_TABLE_PAT_KEY :
         {
-          grn_obj *v;
+          grn_obj *v, *key_value = 0;
           for (v = value; v + 1 < ve; v = values_next(ctx, v)) {
-            char *p = GRN_TEXT_VALUE(v);
+            char *column_name = GRN_TEXT_VALUE(v);
+            unsigned column_name_size = GRN_TEXT_LEN(v);
             if (v->header.domain == GRN_DB_TEXT &&
-                GRN_TEXT_LEN(v) == strlen(PKEY_NAME) &&
-                (*p == ':' || *p == '_') && !memcmp(p + 1, "key", 3)) {
+                (name_equal(column_name, column_name_size, PKEY_NAME) ||
+                 name_equal(column_name, column_name_size, PID_NAME))) {
+              if (loader->key_offset != -1) {
+                GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s and %.*s",
+                        GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value),
+                        column_name_size, column_name);
+                return;
+              }
+              key_value = value;
               v++;
               if (v->header.domain == GRN_DB_TEXT) {
                 id = loader_add(ctx, v);
@@ -7131,10 +7155,14 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
               grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
             }
             grn_obj_unlink(ctx, col);
+          } else {
+            GRN_LOG(ctx, GRN_LOG_ERROR, "invalid column('%.*s')", (int)name_size, name);
           }
           value = values_next(ctx, value);
         }
         loader->nrecords++;
+      } else {
+        GRN_LOG(ctx, GRN_LOG_ERROR, "neither _key nor _id is assigned");
       }
     }
     loader->values_size = begin;
