@@ -23,6 +23,7 @@
 #include "lib/db.h"
 #include <string.h>
 #include <stdio.h>
+#include <fcntl.h>
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
