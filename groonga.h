@@ -2110,6 +2110,7 @@ GRN_API grn_rc grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info);
 
 GRN_API grn_rc grn_set_segv_handler(void);
 GRN_API grn_rc grn_set_int_handler(void);
+GRN_API grn_rc grn_set_term_handler(void);
 
 /* hash */
 

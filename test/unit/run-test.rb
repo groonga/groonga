@@ -25,6 +25,33 @@ end
 $LOAD_PATH.unshift(File.join(test_unit_dir, "lib"))
 
 require 'test/unit'
+require 'test/unit/version'
+
+if Test::Unit::VERSION < "2.1.0"
+  module Test::Unit::Assertions
+    def assert_path_exist(path, message=nil)
+      _wrap_assertion do
+        failure_message = build_message(message,
+                                        "<?> expected to exist",
+                                        path)
+        assert_block(failure_message) do
+          File.exist?(path)
+        end
+      end
+    end
+
+    def assert_path_not_exist(path, message=nil)
+      _wrap_assertion do
+        failure_message = build_message(message,
+                                        "<?> expected to not exist",
+                                        path)
+        assert_block(failure_message) do
+          not File.exist?(path)
+        end
+      end
+    end
+  end
+end
 
 json_dir = File.join(test_lib_dir, "json-1.1.9")
 unless File.exist?(json_dir)

@@ -57,6 +57,8 @@ void test_pvector_empty(void);
 void test_pvector_with_records(void);
 void data_accessor_column_name(void);
 void test_accessor_column_name(gconstpointer data);
+void data_accessor_dynamic_pseudo_column_name(void);
+void test_accessor_dynamic_pseudo_column_name(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -491,23 +493,20 @@ test_vector_empty(void)
 void
 data_accessor_column_name(void)
 {
-#define ADD_DATUM(table, accessor) \
-  gcut_add_datum(table "." accessor, \
-		 "table", G_TYPE_STRING, table, \
-		 "accessor", G_TYPE_STRING, accessor, \
-		 NULL)
+#define ADD_DATUM(table, accessor)                      \
+  gcut_add_datum(table "." accessor,                    \
+                 "table", G_TYPE_STRING, table,         \
+                 "accessor", G_TYPE_STRING, accessor,   \
+                 NULL)
 
   ADD_DATUM("Sites", "_id");
   ADD_DATUM("Sites", "_key");
-  ADD_DATUM("Sites", "name.site");
+  ADD_DATUM("Sites", "_value");
   ADD_DATUM("Sites", "name._id");
   ADD_DATUM("Sites", "name._key");
+  ADD_DATUM("Sites", "name._value");
+  ADD_DATUM("Sites", "name.site");
   ADD_DATUM("Sites", "name.site.name");
-  ADD_DATUM("Names", "_id");
-  ADD_DATUM("Names", "_key");
-  ADD_DATUM("Names", "site.name");
-  ADD_DATUM("Names", "site._id");
-  ADD_DATUM("Names", "site._key");
   ADD_DATUM("Names", "site.name.site");
 
 #undef ADD_DATUM
@@ -520,12 +519,60 @@ test_accessor_column_name(gconstpointer data)
   const char *accessor_name = gcut_data_get_string(data, "accessor");
   grn_obj *object, *accessor;
 
-  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
-  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText Int32");
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText UInt32");
   assert_send_command("column_create Sites name COLUMN_SCALAR Names");
   assert_send_command("column_create Names site COLUMN_SCALAR Sites");
+
   object = get_object(table_name);
-  accessor = grn_obj_column(context, object, accessor_name, strlen(accessor_name));
+  accessor = grn_obj_column(context, object,
+                            accessor_name, strlen(accessor_name));
+  cut_assert_not_null(accessor);
+  inspected = grn_inspect(context, NULL, accessor);
+  cut_assert_equal_string(accessor_name, inspected_string());
+}
+
+void
+data_accessor_dynamic_pseudo_column_name(void)
+{
+#define ADD_DATUM(accessor)                             \
+  gcut_add_datum(accessor,                              \
+                 "accessor", G_TYPE_STRING, accessor,   \
+                 NULL)
+
+  ADD_DATUM("_score");
+  ADD_DATUM("_nsubrecs");
+
+#undef ADD_DATUM
+}
+
+void
+test_accessor_dynamic_pseudo_column_name(gconstpointer data)
+{
+  const char *query, *accessor_name;
+  grn_obj *table, *result, *expression, *variable, *accessor;
+
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites uri COLUMN_SCALAR ShortText");
+  assert_send_command("load "
+                      "'["
+                      "[\"_key\",\"uri\"],"
+                      "[\"groonga\",\"http://groonga.org/\"]"
+                      "]' "
+                      "Sites");
+
+  accessor_name = gcut_data_get_string(data, "accessor");
+
+  table = get_object("Sites");
+  GRN_EXPR_CREATE_FOR_QUERY(context, table, expression, variable);
+  query = "_key:groonga";
+  grn_expr_parse(context, expression,
+                 query, strlen(query),
+                 NULL, GRN_OP_MATCH, GRN_OP_AND,
+                 GRN_EXPR_SYNTAX_QUERY | GRN_EXPR_ALLOW_COLUMN);
+  result = grn_table_select(context, table, expression, NULL, GRN_OP_AND);
+  accessor = grn_obj_column(context, result,
+                            accessor_name, strlen(accessor_name));
   cut_assert_not_null(accessor);
   inspected = grn_inspect(context, NULL, accessor);
   cut_assert_equal_string(accessor_name, inspected_string());
