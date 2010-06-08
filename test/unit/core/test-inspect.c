@@ -56,7 +56,7 @@ void test_vector_empty(void);
 void test_pvector_empty(void);
 void test_pvector_with_records(void);
 void data_accessor_column_name(void);
-void test_accessor_column_name(gconstpointer);
+void test_accessor_column_name(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -489,24 +489,6 @@ test_vector_empty(void)
 }
 
 void
-test_accessor_column_name(gconstpointer data)
-{
-  const char *table_name = gcut_data_get_string(data, "table");
-  const char *accessor_name = gcut_data_get_string(data, "accessor");
-  grn_obj *obj, *accessor;
-
-  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
-  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
-  assert_send_command("column_create Sites name COLUMN_SCALAR Names");
-  assert_send_command("column_create Names site COLUMN_SCALAR Sites");
-  obj = get_object(table_name);
-  accessor = grn_obj_column(context, obj, accessor_name, strlen(accessor_name));
-  cut_assert_not_null(accessor);
-  inspected = grn_inspect(context, NULL, accessor);
-  cut_assert_equal_string(accessor_name, inspected_string());
-}
-
-void
 data_accessor_column_name(void)
 {
 #define ADD_DATUM(table, accessor) \
@@ -529,4 +511,22 @@ data_accessor_column_name(void)
   ADD_DATUM("Names", "site.name.site");
 
 #undef ADD_DATUM
+}
+
+void
+test_accessor_column_name(gconstpointer data)
+{
+  const char *table_name = gcut_data_get_string(data, "table");
+  const char *accessor_name = gcut_data_get_string(data, "accessor");
+  grn_obj *obj, *accessor;
+
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Names");
+  assert_send_command("column_create Names site COLUMN_SCALAR Sites");
+  obj = get_object(table_name);
+  accessor = grn_obj_column(context, obj, accessor_name, strlen(accessor_name));
+  cut_assert_not_null(accessor);
+  inspected = grn_inspect(context, NULL, accessor);
+  cut_assert_equal_string(accessor_name, inspected_string());
 }
