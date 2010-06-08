@@ -6973,8 +6973,8 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-#define PKEY_NAME "_key"
-#define PID_NAME "_id"
+#define KEY_NAME "_key"
+#define ID_NAME "_id"
 
 static inline int
 name_equal(const char *p, unsigned size, const char *name)
@@ -7012,8 +7012,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
             char *column_name = GRN_TEXT_VALUE(value);
             unsigned column_name_size = GRN_TEXT_LEN(value);
             if (value->header.domain == GRN_DB_TEXT &&
-                (name_equal(column_name, column_name_size, PKEY_NAME) ||
-                 name_equal(column_name, column_name_size, PID_NAME))) {
+                (name_equal(column_name, column_name_size, KEY_NAME) ||
+                 name_equal(column_name, column_name_size, ID_NAME))) {
               if (loader->key_offset != -1) {
                 GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s at %d and %.*s at %i",
                         GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value), loader->key_offset,
@@ -7106,8 +7106,8 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             char *column_name = GRN_TEXT_VALUE(v);
             unsigned column_name_size = GRN_TEXT_LEN(v);
             if (v->header.domain == GRN_DB_TEXT &&
-                (name_equal(column_name, column_name_size, PKEY_NAME) ||
-                 name_equal(column_name, column_name_size, PID_NAME))) {
+                (name_equal(column_name, column_name_size, KEY_NAME) ||
+                 name_equal(column_name, column_name_size, ID_NAME))) {
               if (key_value) {
                 GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s and %.*s",
                         GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value),
