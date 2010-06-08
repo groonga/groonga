@@ -1495,6 +1495,12 @@ g_server(char *path)
   return rc;
 }
 
+static void
+remove_pidfile(void)
+{
+  unlink(pidfile_path);
+}
+
 static int
 do_daemon(char *path)
 {
@@ -1522,7 +1528,11 @@ do_daemon(char *path)
       if (pidfile_path) {
         pidfile = fopen(pidfile_path, "w");
       }
-      if (!pidfile) pidfile = stderr;
+      if (!pidfile) {
+	pidfile = stderr;
+      } else {
+	atexit(remove_pidfile);
+      }
       fprintf(pidfile, "%d\n", pid);
       if (pidfile != stderr) {
         fclose(pidfile);
