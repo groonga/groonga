@@ -491,11 +491,11 @@ test_vector_empty(void)
 void
 data_accessor_column_name(void)
 {
-#define ADD_DATUM(table, accessor) \
-  gcut_add_datum(table "." accessor, \
-		 "table", G_TYPE_STRING, table, \
-		 "accessor", G_TYPE_STRING, accessor, \
-		 NULL)
+#define ADD_DATUM(table, accessor)                      \
+  gcut_add_datum(table "." accessor,                    \
+                 "table", G_TYPE_STRING, table,         \
+                 "accessor", G_TYPE_STRING, accessor,   \
+                 NULL)
 
   ADD_DATUM("Sites", "_id");
   ADD_DATUM("Sites", "_key");
