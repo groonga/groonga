@@ -518,14 +518,14 @@ test_accessor_column_name(gconstpointer data)
 {
   const char *table_name = gcut_data_get_string(data, "table");
   const char *accessor_name = gcut_data_get_string(data, "accessor");
-  grn_obj *obj, *accessor;
+  grn_obj *object, *accessor;
 
   assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
   assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
   assert_send_command("column_create Sites name COLUMN_SCALAR Names");
   assert_send_command("column_create Names site COLUMN_SCALAR Sites");
-  obj = get_object(table_name);
-  accessor = grn_obj_column(context, obj, accessor_name, strlen(accessor_name));
+  object = get_object(table_name);
+  accessor = grn_obj_column(context, object, accessor_name, strlen(accessor_name));
   cut_assert_not_null(accessor);
   inspected = grn_inspect(context, NULL, accessor);
   cut_assert_equal_string(accessor_name, inspected_string());
