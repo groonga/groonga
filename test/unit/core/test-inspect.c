@@ -507,13 +507,6 @@ data_accessor_column_name(void)
   ADD_DATUM("Sites", "name._value");
   ADD_DATUM("Sites", "name.site");
   ADD_DATUM("Sites", "name.site.name");
-  ADD_DATUM("Names", "_id");
-  ADD_DATUM("Names", "_key");
-  ADD_DATUM("Names", "_value");
-  ADD_DATUM("Names", "site._id");
-  ADD_DATUM("Names", "site._key");
-  ADD_DATUM("Names", "site._value");
-  ADD_DATUM("Names", "site.name");
   ADD_DATUM("Names", "site.name.site");
 
 #undef ADD_DATUM
