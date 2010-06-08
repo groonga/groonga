@@ -499,15 +499,19 @@ data_accessor_column_name(void)
 
   ADD_DATUM("Sites", "_id");
   ADD_DATUM("Sites", "_key");
-  ADD_DATUM("Sites", "name.site");
+  ADD_DATUM("Sites", "_value");
   ADD_DATUM("Sites", "name._id");
   ADD_DATUM("Sites", "name._key");
+  ADD_DATUM("Sites", "name._value");
+  ADD_DATUM("Sites", "name.site");
   ADD_DATUM("Sites", "name.site.name");
   ADD_DATUM("Names", "_id");
   ADD_DATUM("Names", "_key");
-  ADD_DATUM("Names", "site.name");
+  ADD_DATUM("Names", "_value");
   ADD_DATUM("Names", "site._id");
   ADD_DATUM("Names", "site._key");
+  ADD_DATUM("Names", "site._value");
+  ADD_DATUM("Names", "site.name");
   ADD_DATUM("Names", "site.name.site");
 
 #undef ADD_DATUM
@@ -520,12 +524,14 @@ test_accessor_column_name(gconstpointer data)
   const char *accessor_name = gcut_data_get_string(data, "accessor");
   grn_obj *object, *accessor;
 
-  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
-  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText Int32");
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText UInt32");
   assert_send_command("column_create Sites name COLUMN_SCALAR Names");
   assert_send_command("column_create Names site COLUMN_SCALAR Sites");
+
   object = get_object(table_name);
-  accessor = grn_obj_column(context, object, accessor_name, strlen(accessor_name));
+  accessor = grn_obj_column(context, object,
+                            accessor_name, strlen(accessor_name));
   cut_assert_not_null(accessor);
   inspected = grn_inspect(context, NULL, accessor);
   cut_assert_equal_string(accessor_name, inspected_string());
