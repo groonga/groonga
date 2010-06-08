@@ -1522,7 +1522,9 @@ do_daemon(char *path)
       if (pidfile_path) {
         pidfile = fopen(pidfile_path, "w");
       }
-      if (!pidfile) pidfile = stderr;
+      if (!pidfile) {
+        pidfile = stderr;
+      }
       fprintf(pidfile, "%d\n", pid);
       if (pidfile != stderr) {
         fclose(pidfile);
