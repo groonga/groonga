@@ -504,10 +504,6 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         GRN_TEXT_PUTS(ctx, body, "]]");
       }
       GRN_OBJ_FIN(ctx, &jsonp_func);
-      if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
-      if (ctx->impl->output) {
-        ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
-      }
       if (send(fd, GRN_BULK_HEAD(body), GRN_BULK_VSIZE(body), MSG_NOSIGNAL) == -1) {
         SERR("send");
       }
