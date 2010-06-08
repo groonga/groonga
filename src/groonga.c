@@ -360,6 +360,7 @@ parse_htpath(const char *p, const char *pe,
 static void
 do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
 {
+  grn_sock fd = msg->u.fd;
   grn_http_request_type t = grn_http_request_type_none;
   grn_com_header *header = &msg->header;
   switch (header->qtype) {
@@ -408,7 +409,6 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         grn_timeval_now(ctx, &ctx->impl->tv); /* should be initialized in grn_ctx_qe_exec() */
         GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, pathe - path, path);
         GRN_TEXT_INIT(&key, 0);
-        GRN_BULK_REWIND(body);
 
         g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
         if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
@@ -437,7 +437,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
             grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
             GRN_INT32_SET(ctx, val, (int32_t)ot);
           }
-          grn_ctx_push(ctx, body);
+          grn_ctx_push(ctx, ctx->impl->outbuf);
           expr_rc = grn_expr_exec(ctx, expr, 1);
           val = grn_ctx_pop(ctx);
           grn_expr_clear_vars(ctx, expr);
@@ -448,7 +448,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
             GRN_TEXT_SET(ctx, val,
                          GRN_TEXT_VALUE(&key), filename_end - GRN_TEXT_VALUE(&key));
           }
-          grn_ctx_push(ctx, body);
+          grn_ctx_push(ctx, ctx->impl->outbuf);
           expr_rc = grn_expr_exec(ctx, expr, 1);
           val = grn_ctx_pop(ctx);
           grn_expr_clear_vars(ctx, expr);
@@ -457,55 +457,62 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
       }
       /* TODO: Content-Length */
       if (!expr_rc) {
-        GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 200 OK\r\n");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Connection: close\r\n");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: ");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, mime_type);
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\nContent-Length: ");
+        GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
+        GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
+        GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
+        GRN_TEXT_PUTS(ctx, body, mime_type);
+        GRN_TEXT_PUTS(ctx, body, "\r\nContent-Length: ");
         if (GRN_TEXT_LEN(&jsonp_func)) {
-          grn_text_lltoa(ctx, ctx->impl->outbuf,
-                         GRN_TEXT_LEN(body) + GRN_TEXT_LEN(&jsonp_func) + 3);
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
-          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(&jsonp_func), GRN_TEXT_LEN(&jsonp_func));
-          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '(');
-          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ");");
+          grn_text_lltoa(ctx, body,
+                         GRN_TEXT_LEN(ctx->impl->outbuf) + GRN_TEXT_LEN(&jsonp_func) + 3);
+          GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
+          GRN_TEXT_PUT(ctx, body, GRN_TEXT_VALUE(&jsonp_func), GRN_TEXT_LEN(&jsonp_func));
+          GRN_TEXT_PUTC(ctx, body, '(');
+          GRN_TEXT_PUT(ctx, body, GRN_TEXT_VALUE(ctx->impl->outbuf),
+                       GRN_TEXT_LEN(ctx->impl->outbuf));
+          GRN_TEXT_PUTS(ctx, body, ");");
         } else {
-          grn_text_lltoa(ctx, ctx->impl->outbuf, GRN_TEXT_LEN(body));
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "\r\n\r\n");
-          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+          grn_text_lltoa(ctx, body, GRN_TEXT_LEN(ctx->impl->outbuf));
+          GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
+          GRN_TEXT_PUT(ctx, body, GRN_TEXT_VALUE(ctx->impl->outbuf),
+                       GRN_TEXT_LEN(ctx->impl->outbuf));
         }
       } else {
         if (expr_rc == GRN_NO_SUCH_FILE_OR_DIRECTORY) {
-          GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 404 Not Found\r\n");
+          GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
         } else {
-          GRN_TEXT_SETS(ctx, ctx->impl->outbuf, "HTTP/1.1 500 Internal Server Error\r\n");
+          GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
         }
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Content-Type: application/json\r\n\r\n");
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "[[");
-        grn_text_itoa(ctx, ctx->impl->outbuf, expr_rc);
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ",0,0");
+        GRN_TEXT_PUTS(ctx, body, "Content-Type: application/json\r\n\r\n");
+        GRN_TEXT_PUTS(ctx, body, "[[");
+        grn_text_itoa(ctx, body, expr_rc);
+        GRN_TEXT_PUTS(ctx, body, ",0,0");
         if (ctx->errbuf && strlen(ctx->errbuf)) {
-          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-          grn_text_esc(ctx, ctx->impl->outbuf, ctx->errbuf, strlen(ctx->errbuf));
+          GRN_TEXT_PUTC(ctx, body, ',');
+          grn_text_esc(ctx, body, ctx->errbuf, strlen(ctx->errbuf));
           if (ctx->errfunc && ctx->errfile) {
             /* TODO: output backtrace */
-            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ",[[");
-            grn_text_esc(ctx, ctx->impl->outbuf, ctx->errfunc, strlen(ctx->errfile));
-            GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-            grn_text_esc(ctx, ctx->impl->outbuf, ctx->errfile, strlen(ctx->errfile));
-            GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-            grn_text_itoa(ctx, ctx->impl->outbuf, ctx->errline);
-            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "]]");
+            GRN_TEXT_PUTS(ctx, body, ",[[");
+            grn_text_esc(ctx, body, ctx->errfunc, strlen(ctx->errfile));
+            GRN_TEXT_PUTC(ctx, body, ',');
+            grn_text_esc(ctx, body, ctx->errfile, strlen(ctx->errfile));
+            GRN_TEXT_PUTC(ctx, body, ',');
+            grn_text_itoa(ctx, body, ctx->errline);
+            GRN_TEXT_PUTS(ctx, body, "]]");
           }
         }
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "]]");
+        GRN_TEXT_PUTS(ctx, body, "]]");
       }
       GRN_OBJ_FIN(ctx, &jsonp_func);
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (ctx->impl->output) {
         ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
       }
+      if (send(fd, GRN_BULK_HEAD(body), GRN_BULK_VSIZE(body), MSG_NOSIGNAL) == -1) {
+        SERR("send");
+      }
+      GRN_BULK_REWIND(body);
+      GRN_BULK_REWIND(ctx->impl->outbuf);
       {
         uint64_t et;
         grn_timeval tv;
@@ -519,6 +526,10 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
 exit :
   // todo : support "Connection: keep-alive"
   ctx->stat = GRN_CTX_QUIT;
+  /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
+  grn_msg_close(ctx, (grn_obj *)msg);
+  /* if not keep alive connection */
+  grn_sock_close(fd);
 }
 
 enum {
@@ -1101,9 +1112,7 @@ h_worker(void *arg)
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
   MUTEX_LOCK(q_mutex);
   do {
-    grn_sock fd;
-    ssize_t ret;
-    grn_obj *msg, *out;
+    grn_obj *msg;
     nfthreads++;
     while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
@@ -1111,16 +1120,7 @@ h_worker(void *arg)
     }
     nfthreads--;
     MUTEX_UNLOCK(q_mutex);
-    fd = ((grn_msg *)msg)->u.fd;
     do_htreq(ctx, (grn_msg *)msg, &body);
-    out = ctx->impl->outbuf;
-    ret = send(fd, GRN_BULK_HEAD(out), GRN_BULK_VSIZE(out), MSG_NOSIGNAL);
-    if (ret == -1) { SERR("send"); }
-    GRN_BULK_REWIND(out);
-    /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
-    grn_msg_close(ctx, msg);
-    /* if not keep alive connection */
-    grn_sock_close(fd);
     MUTEX_LOCK(q_mutex);
   } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
 exit :
