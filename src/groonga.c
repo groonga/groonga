@@ -1704,6 +1704,7 @@ main(int argc, char **argv)
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
   grn_set_segv_handler();
   grn_set_int_handler();
+  grn_set_term_handler();
   if (listen_addressstr) {
     size_t listen_addresslen = strlen(listen_addressstr);
     if (listen_addresslen > HOST_NAME_MAX) {
