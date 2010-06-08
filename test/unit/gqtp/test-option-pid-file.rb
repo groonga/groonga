@@ -16,35 +16,29 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class OptionPidFileTest < Test::Unit::TestCase
-  include GroongaLocalGQTPTestUtils
+  include GroongaTestUtils
 
   def setup
-    #setup_local_database
+    setup_database_path
   end
 
   def teardown
-    #teardown_local_database
+    teardown_database_path
   end
 
   def test_daemon_pid_file
-    require 'tmpdir'
-    tmpdir = Dir.mktmpdir
-    pidfile = File.join(tmpdir, "groonga.pid")
-    output = run_groonga("-d", "--pid-file", pidfile)
-    assert_equal("", output)
-    pid = open(pidfile) do |f|
-      assert(f.stat.file?)
+    pid_file = File.join(@tmp_dir, "groonga.pid")
+    assert_path_not_exist(pid_file)
+    assert_equal("", run_groonga("-d", "--pid-file", pid_file))
+    assert_path_exist(pid_file)
+    pid = File.open(pid_file) do |f|
       Integer(f.read)
     end
-    assert_equal(1, Process.kill(0, pid))
-    sleep 1
-    run_groonga("-c", "localhost", "shutdown")
-    assert_raise(Errno::ESRCH) do
-      while Process.kill(0, pid)
-        sleep 0.1
-      end
+    assert_equal(1, Process.kill(:INT, pid))
+    10.times do
+      break unless File.exist?(pid_file)
+      sleep 0.1
     end
-  ensure
-    FileUtils.rm_rf(tmpdir)
+    assert_path_not_exist(pid_file)
   end
 end
