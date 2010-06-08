@@ -1495,17 +1495,14 @@ g_server(char *path)
   return rc;
 }
 
-static void
-remove_pidfile(void)
-{
-  unlink(pidfile_path);
-}
-
 static int
 do_daemon(char *path)
 {
+  int rc;
 #ifndef WIN32
   pid_t pid;
+  FILE *pidfile = NULL;
+
   switch (fork()) {
   case 0:
     break;
@@ -1516,6 +1513,9 @@ do_daemon(char *path)
     wait(NULL);
     return 0;
   }
+  if (pidfile_path) {
+    pidfile = fopen(pidfile_path, "w");
+  }
   switch ((pid = fork())) {
   case 0:
     break;
@@ -1523,20 +1523,11 @@ do_daemon(char *path)
     perror("fork");
     return -1;
   default:
-    {
-      FILE *pidfile = NULL;
-      if (pidfile_path) {
-        pidfile = fopen(pidfile_path, "w");
-      }
-      if (!pidfile) {
-	pidfile = stderr;
-      } else {
-	atexit(remove_pidfile);
-      }
+    if (!pidfile) {
+      fprintf(stderr, "%d\n", pid);
+    } else {
       fprintf(pidfile, "%d\n", pid);
-      if (pidfile != stderr) {
-        fclose(pidfile);
-      }
+      fclose(pidfile);
     }
     _exit(0);
   }
@@ -1550,7 +1541,15 @@ do_daemon(char *path)
     }
   }
 #endif /* WIN32 */
-  return do_server(path);
+  rc = do_server(path);
+#ifndef WIN32
+  if (pidfile) {
+    fclose(pidfile);
+    unlink(pidfile_path);
+  }
+#endif
+
+  return rc;
 }
 
 enum {

@@ -35,7 +35,7 @@ class OptionPidFileTest < Test::Unit::TestCase
       Integer(f.read)
     end
     assert_equal(1, Process.kill(:INT, pid))
-    10.times do
+    30.times do
       break unless File.exist?(pid_file)
       sleep 0.1
     end
