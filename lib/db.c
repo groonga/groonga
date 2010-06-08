@@ -3163,7 +3163,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
             (*rp)->action = GRN_ACCESSOR_GET_ID;
             done++;
           } else {
-            obj = grn_ctx_at(ctx, obj->header.domain);
+            if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
             switch (obj->header.type) {
             case GRN_DB :
             case GRN_TYPE :
@@ -3200,7 +3204,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
             }
             done++;
           } else {
-            obj = grn_ctx_at(ctx, obj->header.domain);
+            if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
             switch (obj->header.type) {
             case GRN_DB :
             case GRN_TYPE :
@@ -3253,7 +3261,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
               res = NULL;
               goto exit;
             }
-            obj = grn_ctx_at(ctx, obj->header.domain);
+            if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
           }
         }
         break;
@@ -3283,7 +3295,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
               res = NULL;
               goto exit;
             }
-            obj = grn_ctx_at(ctx, obj->header.domain);
+            if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
           }
         }
         break;
@@ -3318,7 +3334,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
           }
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          obj = grn_ctx_at(ctx, obj->header.domain);
+          if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+            grn_obj_close(ctx, (grn_obj *)res);
+            res = NULL;
+            goto exit;
+          }
           switch (obj->header.type) {
           case GRN_TABLE_PAT_KEY :
           case GRN_TABLE_HASH_KEY :
