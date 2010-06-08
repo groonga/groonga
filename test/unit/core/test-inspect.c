@@ -55,7 +55,8 @@ void test_uvector_bool(void);
 void test_vector_empty(void);
 void test_pvector_empty(void);
 void test_pvector_with_records(void);
-void test_accessor_column_name(void);
+void data_accessor_column_name(void);
+void test_accessor_column_name(gconstpointer);
 
 static gchar *tmp_directory;
 
@@ -487,38 +488,45 @@ test_vector_empty(void)
   cut_assert_equal_string("[]", inspected_string());
 }
 
-static void
-assert_accessor_column(grn_obj *obj, const char *name, size_t size, const char *expected)
-{
-  grn_obj *accessor = grn_obj_column(context, obj, name, size);
-  cut_assert_not_null(accessor);
-  inspected = grn_inspect(context, NULL, accessor);
-  cut_assert_equal_string(expected, inspected_string());
-}
-
 void
-test_accessor_column_name(void)
+test_accessor_column_name(gconstpointer data)
 {
-  grn_obj *obj;
-#define assert_accessor_column_expected(n, ex) assert_accessor_column(obj, n, strlen(n), ex)
-#define assert_accessor_column_roundtrip(n) assert_accessor_column_expected(n, n)
+  const char *table_name = gcut_data_get_string(data, "table");
+  const char *accessor_name = gcut_data_get_string(data, "accessor");
+  grn_obj *obj, *accessor;
 
   assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
   assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
   assert_send_command("column_create Sites name COLUMN_SCALAR Names");
   assert_send_command("column_create Names site COLUMN_SCALAR Sites");
-  obj = get_object("Sites");
-  assert_accessor_column_roundtrip("_id");
-  assert_accessor_column_roundtrip("_key");
-  assert_accessor_column_roundtrip("name.site");
-  assert_accessor_column_roundtrip("name._id");
-  assert_accessor_column_roundtrip("name._key");
-  assert_accessor_column_roundtrip("name.site.name");
-  obj = get_object("Names");
-  assert_accessor_column_roundtrip("_id");
-  assert_accessor_column_roundtrip("_key");
-  assert_accessor_column_roundtrip("site.name");
-  assert_accessor_column_roundtrip("site._id");
-  assert_accessor_column_roundtrip("site._key");
-  assert_accessor_column_roundtrip("site.name.site");
+  obj = get_object(table_name);
+  accessor = grn_obj_column(context, obj, accessor_name, strlen(accessor_name));
+  cut_assert_not_null(accessor);
+  inspected = grn_inspect(context, NULL, accessor);
+  cut_assert_equal_string(accessor_name, inspected_string());
+}
+
+void
+data_accessor_column_name(void)
+{
+#define ADD_DATUM(table, accessor) \
+  gcut_add_datum(table "." accessor, \
+		 "table", G_TYPE_STRING, table, \
+		 "accessor", G_TYPE_STRING, accessor, \
+		 NULL)
+
+  ADD_DATUM("Sites", "_id");
+  ADD_DATUM("Sites", "_key");
+  ADD_DATUM("Sites", "name.site");
+  ADD_DATUM("Sites", "name._id");
+  ADD_DATUM("Sites", "name._key");
+  ADD_DATUM("Sites", "name.site.name");
+  ADD_DATUM("Names", "_id");
+  ADD_DATUM("Names", "_key");
+  ADD_DATUM("Names", "site.name");
+  ADD_DATUM("Names", "site._id");
+  ADD_DATUM("Names", "site._key");
+  ADD_DATUM("Names", "site.name.site");
+
+#undef ADD_DATUM
 }
