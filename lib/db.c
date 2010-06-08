@@ -6979,8 +6979,8 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 static inline int
 name_equal(const char *p, unsigned size, const char *name)
 {
-  if (strlen(name) != size) return 0;
-  if (*p != GRN_DB_PSEUDO_COLUMN_PREFIX) return 0;
+  if (strlen(name) != size) { return 0; }
+  if (*p != GRN_DB_PSEUDO_COLUMN_PREFIX) { return 0; }
   return !memcmp(p + 1, name + 1, size - 1);
 }
 
