@@ -358,53 +358,134 @@ parse_htpath(const char *p, const char *pe,
   (GRN_TEXT_LEN((obj)) == strlen((str)) && !memcmp(GRN_TEXT_VALUE((obj)), (str), strlen((str))))
 
 static void
-print_return_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
-                            grn_obj *body)
+print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
 {
-  switch (ct) {
+  switch (ctx->impl->output_type) {
   case GRN_CONTENT_JSON:
-    GRN_TEXT_PUTS(ctx, buf, "[[");
-    grn_text_itoa(ctx, buf, ctx->rc);
+    GRN_TEXT_PUTS(ctx, head, "[[");
+    grn_text_itoa(ctx, head, rc);
     {
       double dv;
       grn_timeval tv;
       grn_timeval_now(ctx, &tv);
       dv = ctx->impl->tv.tv_sec;
       dv += ctx->impl->tv.tv_usec / 1000000.0;
-      GRN_TEXT_PUTC(ctx, buf, ',');
-      grn_text_ftoa(ctx, buf, dv);
+      GRN_TEXT_PUTC(ctx, head, ',');
+      grn_text_ftoa(ctx, head, dv);
       dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
       dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
-      GRN_TEXT_PUTC(ctx, buf, ',');
-      grn_text_ftoa(ctx, buf, dv);
+      GRN_TEXT_PUTC(ctx, head, ',');
+      grn_text_ftoa(ctx, head, dv);
     }
-    if (ctx->rc != GRN_SUCCESS) {
-      GRN_TEXT_PUTS(ctx, buf, ",");
-      grn_text_esc(ctx, buf, ctx->errbuf, strlen(ctx->errbuf));
+    if (rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTC(ctx, head, ',');
+      grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+      if (ctx->errfunc && ctx->errfile) {
+        /* TODO: output backtrace */
+        GRN_TEXT_PUTS(ctx, head, ",[[");
+        grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+        GRN_TEXT_PUTC(ctx, head, ',');
+        grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+        GRN_TEXT_PUTC(ctx, head, ',');
+        grn_text_itoa(ctx, head, ctx->errline);
+        GRN_TEXT_PUTS(ctx, head, "]]");
+      }
     }
-    if (body && GRN_TEXT_LEN(body)) {
-      GRN_TEXT_PUTS(ctx, buf, "],");
-      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
-      GRN_TEXT_PUTS(ctx, buf, "]");
-    } else {
-      GRN_TEXT_PUTS(ctx, buf, "]]");
-    }
+    GRN_TEXT_PUTC(ctx, head, ']');
+    if (GRN_TEXT_LEN(body)) { GRN_TEXT_PUTC(ctx, head, ','); }
+    GRN_TEXT_PUTC(ctx, foot, ']');
     break;
   case GRN_CONTENT_TSV:
   case GRN_CONTENT_XML:
-    if (body) {
-      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
-    }
-    break;
   case GRN_CONTENT_NONE:
     break;
   }
 }
 
 static void
-print_return_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
+h_output(grn_ctx *ctx, grn_rc expr_rc, grn_sock fd,
+         grn_obj *jsonp_func, grn_obj *body, const char *mime_type)
 {
-  print_return_code_with_body(ctx, buf, ct, NULL);
+  grn_obj head, foot, *outbuf = ctx->impl->outbuf;
+  GRN_TEXT_INIT(&head, 0);
+  GRN_TEXT_INIT(&foot, 0);
+  if (!expr_rc) {
+    if (GRN_TEXT_LEN(jsonp_func)) {
+      GRN_TEXT_PUT(ctx, &head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
+      GRN_TEXT_PUTC(ctx, &head, '(');
+      print_return_code(ctx, expr_rc, &head, outbuf, &foot);
+      GRN_TEXT_PUTS(ctx, &foot, ");");
+    } else {
+      print_return_code(ctx, expr_rc, &head, outbuf, &foot);
+    }
+    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
+    GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
+    GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
+    GRN_TEXT_PUTS(ctx, body, mime_type);
+    GRN_TEXT_PUTS(ctx, body, "\r\nContent-Length: ");
+    grn_text_lltoa(ctx, body,
+                   GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot));
+    GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
+  } else {
+    GRN_BULK_REWIND(outbuf);
+    print_return_code(ctx, expr_rc, &head, outbuf, &foot);
+    if (expr_rc == GRN_NO_SUCH_FILE_OR_DIRECTORY) {
+      GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
+    } else {
+      GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
+    }
+    GRN_TEXT_PUTS(ctx, body, "Content-Type: application/json\r\n\r\n");
+  }
+  {
+    ssize_t ret;
+#ifdef WIN32
+    WSABUF wsabufs[4];
+    wsabufs[0].buf = GRN_TEXT_VALUE(body);
+    wsabufs[0].len = GRN_TEXT_LEN(body);
+    wsabufs[1].buf = GRN_TEXT_VALUE(&head);
+    wsabufs[1].len = GRN_TEXT_LEN(&head);
+    wsabufs[2].buf = GRN_TEXT_VALUE(outbuf);
+    wsabufs[2].len = GRN_TEXT_LEN(outbuf);
+    wsabufs[3].buf = GRN_TEXT_VALUE(&foot);
+    wsabufs[4].len = GRN_TEXT_LEN(&foot);
+    if (WSASend(fd, wsabufs, 4, &ret, 0, NULL, NULL) == SOCKET_ERROR) {
+      SERR("WSASend");
+    }
+#else /* WIN32 */
+    struct iovec msg_iov[4];
+    struct msghdr msg;
+    msg.msg_name = NULL;
+    msg.msg_namelen = 0;
+    msg.msg_iov = msg_iov;
+    msg.msg_iovlen = 4;
+    msg.msg_control = NULL;
+    msg.msg_controllen = 0;
+    msg.msg_flags = 0;
+    msg_iov[0].iov_base = GRN_TEXT_VALUE(body);
+    msg_iov[0].iov_len = GRN_TEXT_LEN(body);
+    msg_iov[1].iov_base = GRN_TEXT_VALUE(&head);
+    msg_iov[1].iov_len = GRN_TEXT_LEN(&head);
+    msg_iov[2].iov_base = GRN_TEXT_VALUE(outbuf);
+    msg_iov[2].iov_len = GRN_TEXT_LEN(outbuf);
+    msg_iov[3].iov_base = GRN_TEXT_VALUE(&foot);
+    msg_iov[3].iov_len = GRN_TEXT_LEN(&foot);
+    if ((ret = sendmsg(fd, &msg, MSG_NOSIGNAL)) == -1) {
+      SERR("sendmsg");
+    }
+#endif /* WIN32 */
+  }
+  GRN_BULK_REWIND(body);
+  GRN_BULK_REWIND(outbuf);
+  GRN_OBJ_FIN(ctx, &foot);
+  GRN_OBJ_FIN(ctx, &head);
+  {
+    uint64_t et;
+    grn_timeval tv;
+    grn_timeval_now(ctx, &tv);
+    et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
+      + (tv.tv_usec - ctx->impl->tv.tv_usec);
+    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
+  }
 }
 
 static void
@@ -442,12 +523,10 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
     }
     /* TODO: handle post body */
     {
+      const char *mime_type = NULL;
       grn_rc expr_rc = GRN_SUCCESS;
       grn_obj jsonp_func;
-      const char *mime_type;
-
       GRN_TEXT_INIT(&jsonp_func, 0);
-
       if (*path != '/') {
         expr_rc = GRN_INVALID_ARGUMENT;
       } else {
@@ -466,7 +545,8 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
                      &key_end, &filename_end, &ot, &mime_type);
         if ((GRN_TEXT_LEN(&key) >= 2 &&
              GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
-            (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, key_end - GRN_TEXT_VALUE(&key) - 2))) {
+            (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2,
+                                key_end - GRN_TEXT_VALUE(&key) - 2))) {
           while (g < pathe) {
             GRN_BULK_REWIND(&key);
             g = grn_text_cgidec(ctx, &key, g, pathe, '=');
@@ -487,6 +567,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
             grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
             GRN_INT32_SET(ctx, val, (int32_t)ot);
           }
+          ctx->impl->output_type = ot;
           grn_ctx_push(ctx, ctx->impl->outbuf);
           expr_rc = grn_expr_exec(ctx, expr, 1);
           val = grn_ctx_pop(ctx);
@@ -498,6 +579,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
             GRN_TEXT_SET(ctx, val,
                          GRN_TEXT_VALUE(&key), filename_end - GRN_TEXT_VALUE(&key));
           }
+          ctx->impl->output_type = ot;
           grn_ctx_push(ctx, ctx->impl->outbuf);
           expr_rc = grn_expr_exec(ctx, expr, 1);
           val = grn_ctx_pop(ctx);
@@ -505,68 +587,8 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         }
         GRN_OBJ_FIN(ctx, &key);
       }
-      /* TODO: Content-Length */
-      if (!expr_rc) {
-        GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
-        GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
-        GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
-        GRN_TEXT_PUTS(ctx, body, mime_type);
-        GRN_TEXT_PUTS(ctx, body, "\r\nContent-Length: ");
-        if (GRN_TEXT_LEN(&jsonp_func)) {
-          grn_text_lltoa(ctx, body,
-                         GRN_TEXT_LEN(ctx->impl->outbuf) + GRN_TEXT_LEN(&jsonp_func) + 3);
-          GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
-          GRN_TEXT_PUT(ctx, body, GRN_TEXT_VALUE(&jsonp_func), GRN_TEXT_LEN(&jsonp_func));
-          GRN_TEXT_PUTC(ctx, body, '(');
-          GRN_TEXT_PUT(ctx, body, GRN_TEXT_VALUE(ctx->impl->outbuf),
-                       GRN_TEXT_LEN(ctx->impl->outbuf));
-          GRN_TEXT_PUTS(ctx, body, ");");
-        } else {
-          grn_text_lltoa(ctx, body, GRN_TEXT_LEN(ctx->impl->outbuf));
-          GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
-          GRN_TEXT_PUT(ctx, body, GRN_TEXT_VALUE(ctx->impl->outbuf),
-                       GRN_TEXT_LEN(ctx->impl->outbuf));
-        }
-      } else {
-        if (expr_rc == GRN_NO_SUCH_FILE_OR_DIRECTORY) {
-          GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
-        } else {
-          GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
-        }
-        GRN_TEXT_PUTS(ctx, body, "Content-Type: application/json\r\n\r\n");
-        GRN_TEXT_PUTS(ctx, body, "[[");
-        grn_text_itoa(ctx, body, expr_rc);
-        GRN_TEXT_PUTS(ctx, body, ",0,0");
-        if (ctx->errbuf && strlen(ctx->errbuf)) {
-          GRN_TEXT_PUTC(ctx, body, ',');
-          grn_text_esc(ctx, body, ctx->errbuf, strlen(ctx->errbuf));
-          if (ctx->errfunc && ctx->errfile) {
-            /* TODO: output backtrace */
-            GRN_TEXT_PUTS(ctx, body, ",[[");
-            grn_text_esc(ctx, body, ctx->errfunc, strlen(ctx->errfile));
-            GRN_TEXT_PUTC(ctx, body, ',');
-            grn_text_esc(ctx, body, ctx->errfile, strlen(ctx->errfile));
-            GRN_TEXT_PUTC(ctx, body, ',');
-            grn_text_itoa(ctx, body, ctx->errline);
-            GRN_TEXT_PUTS(ctx, body, "]]");
-          }
-        }
-        GRN_TEXT_PUTS(ctx, body, "]]");
-      }
+      h_output(ctx, expr_rc, fd, &jsonp_func, body, mime_type);
       GRN_OBJ_FIN(ctx, &jsonp_func);
-      if (send(fd, GRN_BULK_HEAD(body), GRN_BULK_VSIZE(body), MSG_NOSIGNAL) == -1) {
-        SERR("send");
-      }
-      GRN_BULK_REWIND(body);
-      GRN_BULK_REWIND(ctx->impl->outbuf);
-      {
-        uint64_t et;
-        grn_timeval tv;
-        grn_timeval_now(ctx, &tv);
-        et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
-          + (tv.tv_usec - ctx->impl->tv.tv_usec);
-        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
-      }
     }
   }
 exit :
