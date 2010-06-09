@@ -38,56 +38,6 @@ const char *grn_admin_html_path = NULL;
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key _nsubrecs"
 
-static void
-print_return_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
-                            grn_obj *body)
-{
-  switch (ct) {
-  case GRN_CONTENT_JSON:
-    GRN_TEXT_PUTS(ctx, buf, "[[");
-    grn_text_itoa(ctx, buf, ctx->rc);
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_usec / 1000000.0;
-      GRN_TEXT_PUTC(ctx, buf, ',');
-      grn_text_ftoa(ctx, buf, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
-      GRN_TEXT_PUTC(ctx, buf, ',');
-      grn_text_ftoa(ctx, buf, dv);
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      GRN_TEXT_PUTS(ctx, buf, ",");
-      grn_text_esc(ctx, buf, ctx->errbuf, strlen(ctx->errbuf));
-    }
-    if (body && GRN_TEXT_LEN(body)) {
-      GRN_TEXT_PUTS(ctx, buf, "],");
-      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
-      GRN_TEXT_PUTS(ctx, buf, "]");
-    } else {
-      GRN_TEXT_PUTS(ctx, buf, "]]");
-    }
-    break;
-  case GRN_CONTENT_TSV:
-  case GRN_CONTENT_XML:
-    if (body) {
-      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
-    }
-    break;
-  case GRN_CONTENT_NONE:
-    break;
-  }
-}
-
-static void
-print_return_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
-{
-  print_return_code_with_body(ctx, buf, ct, NULL);
-}
-
 static grn_obj *
 proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -100,7 +50,6 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   ct = (nvars >= 16) ? grn_get_ctype(&vars[15].value) : GRN_CONTENT_JSON;
 
   if (nvars == 16) {
-    grn_obj body; /* FIXME: double buffering! */
     int offset = GRN_TEXT_LEN(&vars[7].value)
       ? grn_atoi(GRN_TEXT_VALUE(&vars[7].value), GRN_BULK_CURR(&vars[7].value), NULL)
       : 0;
@@ -126,8 +75,8 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       drilldown_output_columns_len = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
     }
 
-    GRN_TEXT_INIT(&body, 0);
-    if (grn_select(ctx, &body, ct,
+    GRN_TEXT_INIT(outbuf, 0);
+    if (grn_select(ctx, outbuf, ct,
                    GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                    GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
                    GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
@@ -141,14 +90,9 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                    drilldown_output_columns, drilldown_output_columns_len,
                    drilldown_offset, drilldown_limit,
                    GRN_TEXT_VALUE(&vars[14].value), GRN_TEXT_LEN(&vars[14].value))) {
-      print_return_code(ctx, outbuf, ct);
-    } else {
-      print_return_code_with_body(ctx, outbuf, ct, &body);
     }
-    grn_obj_unlink(ctx, &body);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 15);
-    print_return_code(ctx, outbuf, ct);
   }
   return outbuf;
 }
@@ -171,7 +115,6 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 16);
   }
-  print_return_code(ctx, outbuf, ct);
   return outbuf;
 }
 
@@ -195,19 +138,14 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (ctx->impl->loader.stat != GRN_LOADER_END) {
       grn_ctx_set_next_expr(ctx, proc);
     } else {
-      grn_obj body;
-      GRN_TEXT_INIT(&body, 0);
-      grn_text_itoa(ctx, &body, ctx->impl->loader.nrecords);
-      print_return_code_with_body(ctx, outbuf, ct, &body);
+      grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
       if (ctx->impl->loader.table) {
         grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
       }
       /* maybe necessary : grn_ctx_loader_clear(ctx); */
-      grn_obj_unlink(ctx, &body);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
-    print_return_code(ctx, outbuf, ct);
   }
   return outbuf;
 }
@@ -224,7 +162,6 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
 
   if (nvars == 1) {
-    grn_obj body;
     grn_timeval now;
     grn_timeval_now(ctx, &now);
 
@@ -234,19 +171,17 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       break;
     case GRN_CONTENT_JSON:
       {
-        GRN_TEXT_INIT(&body, 0);
-        GRN_TEXT_PUTS(ctx, &body, "{\"alloc_count\":");
-        grn_text_itoa(ctx, &body, grn_alloc_count());
-        GRN_TEXT_PUTS(ctx, &body, ",\"starttime\":");
-        grn_text_itoa(ctx, &body, grn_starttime.tv_sec);
-        GRN_TEXT_PUTS(ctx, &body, ",\"uptime\":");
-        grn_text_itoa(ctx, &body, now.tv_sec - grn_starttime.tv_sec);
-        GRN_TEXT_PUTS(ctx, &body, ",\"version\":\"");
-        GRN_TEXT_PUTS(ctx, &body, grn_get_version());
-        GRN_TEXT_PUTC(ctx, &body, '"');
-        GRN_TEXT_PUTC(ctx, &body, '}');
-        print_return_code_with_body(ctx, outbuf, ct, &body);
-        grn_obj_unlink(ctx, &body);
+        GRN_TEXT_INIT(outbuf, 0);
+        GRN_TEXT_PUTS(ctx, outbuf, "{\"alloc_count\":");
+        grn_text_itoa(ctx, outbuf, grn_alloc_count());
+        GRN_TEXT_PUTS(ctx, outbuf, ",\"starttime\":");
+        grn_text_itoa(ctx, outbuf, grn_starttime.tv_sec);
+        GRN_TEXT_PUTS(ctx, outbuf, ",\"uptime\":");
+        grn_text_itoa(ctx, outbuf, now.tv_sec - grn_starttime.tv_sec);
+        GRN_TEXT_PUTS(ctx, outbuf, ",\"version\":\"");
+        GRN_TEXT_PUTS(ctx, outbuf, grn_get_version());
+        GRN_TEXT_PUTC(ctx, outbuf, '"');
+        GRN_TEXT_PUTC(ctx, outbuf, '}');
       }
       break;
     case GRN_CONTENT_XML:
@@ -255,7 +190,6 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
-    print_return_code(ctx, outbuf, ct);
   }
   return outbuf;
 }
@@ -405,7 +339,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 6) ? grn_get_ctype(&vars[5].value) : GRN_CONTENT_JSON;
@@ -419,8 +353,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       flags = grn_parse_table_create_flags(ctx, GRN_TEXT_VALUE(&vars[1].value),
                                            GRN_BULK_CURR(&vars[1].value));
       if (ctx->rc) {
-        print_return_code(ctx, buf, ct);
-        return buf;
+        return outbuf;
       }
     }
     if (GRN_TEXT_LEN(&vars[0].value)) {
@@ -446,8 +379,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -456,7 +388,7 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
@@ -475,8 +407,7 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -485,7 +416,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 6) ? grn_get_ctype(&vars[5].value) : GRN_CONTENT_JSON;
@@ -499,8 +430,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
       flags = grn_parse_column_create_flags(ctx, GRN_TEXT_VALUE(&vars[2].value),
                                             GRN_BULK_CURR(&vars[2].value));
       if (ctx->rc) {
-        print_return_code(ctx, buf, ct);
-        return buf;
+        return outbuf;
       }
     }
     table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
@@ -545,8 +475,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 6);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 
@@ -556,7 +485,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 3) ? grn_get_ctype(&vars[2].value) : GRN_CONTENT_JSON;
@@ -589,8 +518,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 3);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 
@@ -794,7 +722,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
@@ -811,21 +739,18 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
                                   GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
         if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)cols) >= 0) {
           grn_id *key;
-          grn_obj body;
           char line_delimiter, column_delimiter;
-
-          GRN_TEXT_INIT(&body, 0);
 
           switch (ct) {
           case GRN_CONTENT_TSV:
             line_delimiter = '\n';
             column_delimiter = '\t';
-            GRN_TEXT_PUTS(ctx, &body, "id\tname\tpath\ttype\tflags\tdomain\trange");
+            GRN_TEXT_PUTS(ctx, outbuf, "id\tname\tpath\ttype\tflags\tdomain\trange");
             break;
           case GRN_CONTENT_JSON:
             line_delimiter = ',';
             column_delimiter = ',';
-            GRN_TEXT_PUTS(ctx, &body, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"type\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\", \"ShortText\"],[\"source\",\"ShortText\"]]");
+            GRN_TEXT_PUTS(ctx, outbuf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"type\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\", \"ShortText\"],[\"source\",\"ShortText\"]]");
             break;
           case GRN_CONTENT_XML:
           case GRN_CONTENT_NONE:
@@ -835,18 +760,16 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
             grn_obj *col;
             if ((col = grn_ctx_at(ctx, *key))) {
-              GRN_TEXT_PUTC(ctx, &body, line_delimiter);
-              if (!print_columninfo(ctx, col, &body, ct)) {
-                grn_bulk_truncate(ctx, &body, GRN_BULK_VSIZE(&body) - 1);
+              GRN_TEXT_PUTC(ctx, outbuf, line_delimiter);
+              if (!print_columninfo(ctx, col, outbuf, ct)) {
+                grn_bulk_truncate(ctx, outbuf, GRN_BULK_VSIZE(outbuf) - 1);
               }
               grn_obj_unlink(ctx, col);
             }
           });
           if (ct == GRN_CONTENT_JSON) {
-            GRN_TEXT_PUTC(ctx, &body, ']');
+            GRN_TEXT_PUTC(ctx, outbuf, ']');
           }
-          print_return_code_with_body(ctx, buf, ct, &body);
-          grn_obj_unlink(ctx, &body);
         }
         grn_hash_close(ctx, cols);
       }
@@ -855,13 +778,11 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
       ERR(GRN_INVALID_ARGUMENT, "table '%.*s' is not exist.",
         GRN_TEXT_LEN(&vars[0].value),
         GRN_TEXT_VALUE(&vars[0].value));
-      print_return_code(ctx, buf, ct);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
-    print_return_code(ctx, buf, ct);
   }
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -870,7 +791,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
@@ -880,10 +801,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
     if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
       grn_id id;
-      grn_obj body;
       char line_delimiter, column_delimiter;
-
-      GRN_TEXT_INIT(&body, 0);
 
       grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
@@ -891,12 +809,12 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
       case GRN_CONTENT_TSV:
         line_delimiter = '\n';
         column_delimiter = '\t';
-        GRN_TEXT_PUTS(ctx, &body, "id\tname\tpath\tflags\tdomain\trange");
+        GRN_TEXT_PUTS(ctx, outbuf, "id\tname\tpath\tflags\tdomain\trange");
         break;
       case GRN_CONTENT_JSON:
         line_delimiter = ',';
         column_delimiter = ',';
-        GRN_TEXT_PUTS(ctx, &body, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\",\"ShortText\"]]");
+        GRN_TEXT_PUTS(ctx, outbuf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\",\"ShortText\"]]");
         break;
       case GRN_CONTENT_XML:
       case GRN_CONTENT_NONE:
@@ -906,25 +824,22 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
         grn_obj *o;
 
         if ((o = grn_ctx_at(ctx, id))) {
-          GRN_TEXT_PUTC(ctx, &body, line_delimiter);
-          if (!print_tableinfo(ctx, o, &body, ct)) {
-            grn_bulk_truncate(ctx, &body, GRN_BULK_VSIZE(&body) - 1);
+          GRN_TEXT_PUTC(ctx, outbuf, line_delimiter);
+          if (!print_tableinfo(ctx, o, outbuf, ct)) {
+            grn_bulk_truncate(ctx, outbuf, GRN_BULK_VSIZE(outbuf) - 1);
           }
           grn_obj_unlink(ctx, o);
         }
       }
       if (ct == GRN_CONTENT_JSON) {
-        GRN_TEXT_PUTC(ctx, &body, ']');
+        GRN_TEXT_PUTC(ctx, outbuf, ']');
       }
       grn_table_cursor_close(ctx, cur);
-      print_return_code_with_body(ctx, buf, ct, &body);
-      grn_obj_unlink(ctx, &body);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
-    print_return_code(ctx, buf, ct);
   }
-  return buf;
+  return outbuf;
 }
 
 /* bulk must be initialized grn_bulk or grn_msg */
@@ -977,14 +892,14 @@ static grn_obj *
 proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars, plen;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
   grn_expr_var *vars;
   static int grn_admin_html_path_len = -1;
-  if (!grn_admin_html_path) { return buf; }
+  if (!grn_admin_html_path) { return outbuf; }
   if (grn_admin_html_path_len < 0) {
     size_t l;
     if ((l = strlen(grn_admin_html_path)) > PATH_MAX) {
-      return buf;
+      return outbuf;
     }
     grn_admin_html_path_len = (int)l;
     if (l > 0 && grn_admin_html_path[l - 1] == PATH_SEPARATOR[0]) { grn_admin_html_path_len--; }
@@ -1000,12 +915,11 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                GRN_TEXT_LEN(&vars[0].value),
                                path + grn_admin_html_path_len + 1,
                                PATH_MAX - grn_admin_html_path_len - 1);
-    grn_bulk_put_from_file(ctx, buf, path);
+    grn_bulk_put_from_file(ctx, outbuf, path);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
-    print_return_code(ctx, buf, GRN_CONTENT_JSON);
   }
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -1014,7 +928,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 3) ? grn_get_ctype(&vars[2].value) : GRN_CONTENT_JSON;
@@ -1030,8 +944,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 3);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -1040,7 +953,7 @@ proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
@@ -1050,8 +963,7 @@ proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -1060,7 +972,7 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
@@ -1071,8 +983,7 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -1082,7 +993,7 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0], *obj;
+  grn_obj *outbuf = args[0], *obj;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
@@ -1104,8 +1015,7 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static char slev[] = " EACewnid-";
@@ -1118,7 +1028,7 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
@@ -1138,8 +1048,7 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -1148,7 +1057,7 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 3) ? grn_get_ctype(&vars[2].value) : GRN_CONTENT_JSON;
@@ -1165,8 +1074,7 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 3);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -1175,7 +1083,7 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
@@ -1185,18 +1093,16 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 1);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
 proc_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
   /* TODO: implement */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "proc_add is not implemented.");
-  print_return_code(ctx, buf, GRN_CONTENT_JSON);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -1381,14 +1287,11 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   if (nvars != 5) {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 5);
-    print_return_code(ctx, outbuf, ct);
     return outbuf;
   }
 
-  if (proc_get_resolve_parameters(ctx, vars, outbuf, &table, &id)) {
-    print_return_code(ctx, outbuf, ct);
-  } else {
-    grn_obj obj, body;
+  if (!proc_get_resolve_parameters(ctx, vars, outbuf, &table, &id)) {
+    grn_obj obj;
     grn_obj_format format;
     GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
     GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
@@ -1398,11 +1301,8 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                     GRN_TEXT_LEN(&vars[2].value), &format.columns);
     switch (ct) {
     case GRN_CONTENT_JSON:
-      GRN_TEXT_INIT(&body, 0);
       format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
-      grn_text_otoj(ctx, &body, &obj, &format);
-      print_return_code_with_body(ctx, outbuf, ct, &body);
-      grn_obj_unlink(ctx, &body);
+      grn_text_otoj(ctx, outbuf, &obj, &format);
       break;
     case GRN_CONTENT_TSV:
       GRN_TEXT_PUTC(ctx, outbuf, '\n');
@@ -1417,7 +1317,6 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
     GRN_OBJ_FORMAT_FIN(ctx, &format);
   }
-
   return outbuf;
 }
 
@@ -1459,7 +1358,6 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 4);
   }
-  print_return_code(ctx, outbuf, ct);
   return outbuf;
 }
 
@@ -2008,21 +1906,18 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0], body;
+  grn_obj *outbuf = args[0];
   uint32_t *mp = grn_cach_max_nentries();
-  GRN_TEXT_INIT(&body, 0);
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
-  grn_text_lltoa(ctx, &body, *mp);
+  grn_text_lltoa(ctx, outbuf, *mp);
   if (nvars == 2 && GRN_TEXT_LEN(&vars[0].value)) {
     const char *rest;
     uint32_t max = grn_atoui(GRN_TEXT_VALUE(&vars[0].value),
                              GRN_BULK_CURR(&vars[0].value), &rest);
     *mp = max;
   }
-  print_return_code_with_body(ctx, buf, ct, &body);
-  grn_obj_unlink(ctx, &body);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *
@@ -2031,7 +1926,7 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   uint32_t nvars;
   grn_expr_var *vars;
   grn_content_type ct;
-  grn_obj *buf = args[0];
+  grn_obj *outbuf = args[0];
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
   if (GRN_TEXT_LEN(&vars[0].value)) {
@@ -2039,8 +1934,7 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     name = GRN_TEXT_VALUE(&vars[0].value);
     grn_db_register_by_name(ctx, name);
   }
-  print_return_code(ctx, buf, ct);
-  return buf;
+  return outbuf;
 }
 
 static grn_obj *

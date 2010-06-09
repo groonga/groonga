@@ -358,6 +358,56 @@ parse_htpath(const char *p, const char *pe,
   (GRN_TEXT_LEN((obj)) == strlen((str)) && !memcmp(GRN_TEXT_VALUE((obj)), (str), strlen((str))))
 
 static void
+print_return_code_with_body(grn_ctx *ctx, grn_obj *buf, grn_content_type ct,
+                            grn_obj *body)
+{
+  switch (ct) {
+  case GRN_CONTENT_JSON:
+    GRN_TEXT_PUTS(ctx, buf, "[[");
+    grn_text_itoa(ctx, buf, ctx->rc);
+    {
+      double dv;
+      grn_timeval tv;
+      grn_timeval_now(ctx, &tv);
+      dv = ctx->impl->tv.tv_sec;
+      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      GRN_TEXT_PUTC(ctx, buf, ',');
+      grn_text_ftoa(ctx, buf, dv);
+      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
+      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      GRN_TEXT_PUTC(ctx, buf, ',');
+      grn_text_ftoa(ctx, buf, dv);
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTS(ctx, buf, ",");
+      grn_text_esc(ctx, buf, ctx->errbuf, strlen(ctx->errbuf));
+    }
+    if (body && GRN_TEXT_LEN(body)) {
+      GRN_TEXT_PUTS(ctx, buf, "],");
+      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+      GRN_TEXT_PUTS(ctx, buf, "]");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "]]");
+    }
+    break;
+  case GRN_CONTENT_TSV:
+  case GRN_CONTENT_XML:
+    if (body) {
+      GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+    }
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+}
+
+static void
+print_return_code(grn_ctx *ctx, grn_obj *buf, grn_content_type ct)
+{
+  print_return_code_with_body(ctx, buf, ct, NULL);
+}
+
+static void
 do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
 {
   grn_sock fd = msg->u.fd;
