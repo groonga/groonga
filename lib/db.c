@@ -6843,7 +6843,8 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
             p++;
           }
           if (!(k->key = grn_obj_column(ctx, table, p, r - p))) {
-            WARN(GRN_INVALID_ARGUMENT, "invalid sort key: <%.*s>", tokbuf[i] - p, p);
+            WARN(GRN_INVALID_ARGUMENT, "invalid sort key: <%.*s>(<%.*s>)",
+                 tokbuf[i] - p, p, str_size, str);
             break;
           }
           k++;
