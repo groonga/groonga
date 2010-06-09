@@ -6819,6 +6819,7 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
                             grn_obj *table, unsigned *nkeys)
 {
   const char **tokbuf;
+  const char *original_str = str;
   grn_table_sort_key *keys = NULL, *k = NULL;
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     int i, n = tokenize(str, str_size, tokbuf, str_size, NULL);
@@ -6834,7 +6835,8 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
           str++;
         }
         if (!(k->key = grn_obj_column(ctx, table, str, tokbuf[i] - str))) {
-          WARN(GRN_INVALID_ARGUMENT, "invalid sort key");
+          WARN(GRN_INVALID_ARGUMENT, "invalid sort key: <%.*s>(<%.*s>)",
+               tokbuf[i] - str, str, str_size, original_str);
           break;
         }
         k++;
