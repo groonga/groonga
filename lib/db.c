@@ -6849,7 +6849,7 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
     *nkeys = k - keys;
   } else {
     GRN_FREE(keys);
-    *nkeys =0;
+    *nkeys = 0;
     keys = NULL;
   }
   return keys;
