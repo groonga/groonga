@@ -6725,7 +6725,8 @@ tokenize(const char *str, size_t str_len, const char **tokbuf, int buf_size, con
   const char **tok = tokbuf, **tok_end = tokbuf + buf_size;
   if (buf_size > 0) {
     const char *str_end = str + str_len;
-    for (;;str++) {
+    while (str < str_end && (' ' == *str || ',' == *str)) { str++; }
+    for (;;) {
       if (str == str_end) {
         *tok++ = str;
         break;
@@ -6734,6 +6735,9 @@ tokenize(const char *str, size_t str_len, const char **tokbuf, int buf_size, con
         // *str = '\0';
         *tok++ = str;
         if (tok == tok_end) { break; }
+        do { str++; } while (str < str_end && (' ' == *str || ',' == *str));
+      } else {
+        str++;
       }
     }
   }
@@ -6752,6 +6756,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
     int i, n = tokenize(p, pe - p, tokbuf, 256, &q);
     for (i = 0; i < n; i++) {
       r = tokbuf[i];
+      while (p < r && (' ' == *p || ',' == *p)) { p++; }
       if (p < r) {
         if (r[-1] == '*') {
           grn_hash *cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -6807,7 +6812,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
           GRN_PTR_PUT(ctx, res, col);
         }
       }
-      p = r + 1;
+      p = r;
     }
     p = q;
   }
@@ -6825,20 +6830,24 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
     if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
       k = keys;
       for (i = 0; i < n; i++) {
-        k->flags = GRN_TABLE_SORT_ASC;
-        k->offset = 0;
-        if (*str == '+') {
-          str++;
-        } else if (*str == '-') {
-          k->flags = GRN_TABLE_SORT_DESC;
-          str++;
+        const char *r = tokbuf[i];
+        while (str < r && (' ' == *str || ',' == *str)) { str++; }
+        if (str < r) {
+          k->flags = GRN_TABLE_SORT_ASC;
+          k->offset = 0;
+          if (*str == '+') {
+            str++;
+          } else if (*str == '-') {
+            k->flags = GRN_TABLE_SORT_DESC;
+            str++;
+          }
+          if (!(k->key = grn_obj_column(ctx, table, str, r - str))) {
+            WARN(GRN_INVALID_ARGUMENT, "invalid sort key: <%.*s>", tokbuf[i] - str, str);
+            break;
+          }
+          k++;
         }
-        if (!(k->key = grn_obj_column(ctx, table, str, tokbuf[i] - str))) {
-          WARN(GRN_INVALID_ARGUMENT, "invalid sort key");
-          break;
-        }
-        k++;
-        str = tokbuf[i] + 1;
+        str = r;
       }
     }
     GRN_FREE(tokbuf);
@@ -6846,7 +6855,7 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
   if (!ctx->rc) {
     *nkeys = k - keys;
   } else {
-    GRN_FREE(keys);
+    if (keys) { GRN_FREE(keys); }
     *nkeys =0;
     keys = NULL;
   }
