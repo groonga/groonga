@@ -75,7 +75,6 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       drilldown_output_columns_len = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
     }
 
-    GRN_TEXT_INIT(outbuf, 0);
     if (grn_select(ctx, outbuf, ct,
                    GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
                    GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
