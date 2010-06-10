@@ -158,11 +158,52 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+static void
+check_mecab_dictionary_encoding(grn_ctx *ctx)
+{
+  mecab_t *mecab;
+
+  mecab = mecab_new(0, NULL);
+  if (mecab) {
+    grn_encoding encoding;
+    const mecab_dictionary_info_t *dictionary;
+    int have_same_encoding_dictionary = 0;
+
+    encoding = GRN_CTX_GET_ENCODING(ctx);
+    dictionary = mecab_dictionary_info(mecab);
+    for (; dictionary; dictionary = dictionary->next) {
+      switch (encoding) {
+      case GRN_ENC_EUC_JP:
+        if (strcmp(dictionary->charset, "EUC-JP") == 0) {
+          have_same_encoding_dictionary = 1;
+        }
+        break;
+      case GRN_ENC_UTF8:
+        if (strcmp(dictionary->charset, "UTF-8") == 0) {
+          have_same_encoding_dictionary = 1;
+        }
+        break;
+      default:
+        break;
+      }
+    }
+    mecab_destroy(mecab);
+
+    if (!have_same_encoding_dictionary) {
+      ERR(GRN_TOKENIZER_ERROR,
+          "MeCab has no dictionary that uses the context encoding: <%s>",
+          grn_enctostr(encoding));
+    }
+  }
+}
+
 grn_rc
 grn_module_init_mecab(grn_ctx *ctx)
 {
   sole_mecab = NULL;
   CRITICAL_SECTION_INIT(sole_mecab_lock);
+
+  check_mecab_dictionary_encoding(ctx);
 
   return GRN_SUCCESS;
 }
