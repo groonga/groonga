@@ -203,8 +203,7 @@ test_expr(void)
       gettimeofday(&tvb, NULL);
       while ((id = grn_table_cursor_next(context, tc))) {
         GRN_RECORD_SET(context, v, id);
-        grn_expr_exec(context, expr, 0);
-        r = grn_ctx_pop(context);
+        r = grn_expr_exec(context, expr, 0);
         if (GRN_RECORD_VALUE(r) != id) { nerr++; }
       }
       gettimeofday(&tve, NULL);
@@ -296,8 +295,7 @@ test_persistent_expr(void)
     gettimeofday(&tvb, NULL);
     while ((id = grn_table_cursor_next(context, tc))) {
       GRN_RECORD_SET(context, v, id);
-      grn_expr_exec(context, expr, 0);
-      r = grn_ctx_pop(context);
+      r = grn_expr_exec(context, expr, 0);
       if (GRN_RECORD_VALUE(r) != id) { nerr++; }
     }
     gettimeofday(&tve, NULL);
