@@ -711,7 +711,9 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
       grn_obj_close(ctx, &end_time);
       break;
     } else {
+/*
       error_command(ctx, command, task_id);
+*/
     }
   } while ((flags & GRN_CTX_MORE));
 
