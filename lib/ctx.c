@@ -812,8 +812,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
       grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
       GRN_TEXT_PUT(ctx, val, path, path_len);
     }
-    grn_ctx_push(ctx, ctx->impl->outbuf);
-    val = grn_expr_exec(ctx, expr, 1);
+    val = grn_expr_exec(ctx, expr, 0);
     grn_expr_clear_vars(ctx, expr);
   } else {
     grn_obj key;
@@ -843,8 +842,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
         GRN_INT32_SET(ctx, val, (int32_t)ot);
       }
 
-      grn_ctx_push(ctx, ctx->impl->outbuf);
-      val = grn_expr_exec(ctx, expr, 1);
+      val = grn_expr_exec(ctx, expr, 0);
       grn_expr_clear_vars(ctx, expr);
     }
     GRN_OBJ_FIN(ctx, &key);
@@ -920,8 +918,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
       grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
       GRN_INT32_SET(ctx, val, (int32_t)ot);
     }
-    grn_ctx_push(ctx, ctx->impl->outbuf);
-    val = grn_expr_exec(ctx, expr, 1);
+    val = grn_expr_exec(ctx, expr, 0);
     grn_expr_clear_vars(ctx, expr);
   }
   if (!ctx->impl->qe_next) {

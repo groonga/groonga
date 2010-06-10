@@ -568,8 +568,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
             GRN_INT32_SET(ctx, val, (int32_t)ot);
           }
           ctx->impl->output_type = ot;
-          grn_ctx_push(ctx, ctx->impl->outbuf);
-          val = grn_expr_exec(ctx, expr, 1);
+          val = grn_expr_exec(ctx, expr, 0);
           expr_rc = ctx->rc;
           grn_expr_clear_vars(ctx, expr);
         } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
@@ -580,8 +579,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
                          GRN_TEXT_VALUE(&key), filename_end - GRN_TEXT_VALUE(&key));
           }
           ctx->impl->output_type = ot;
-          grn_ctx_push(ctx, ctx->impl->outbuf);
-          val = grn_expr_exec(ctx, expr, 1);
+          val = grn_expr_exec(ctx, expr, 0);
           expr_rc = ctx->rc;
           grn_expr_clear_vars(ctx, expr);
         }
