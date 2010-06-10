@@ -6929,8 +6929,7 @@ loader_add(grn_ctx *ctx, grn_obj *key)
     grn_obj *result;
     unsigned int result_boolean;
     GRN_RECORD_SET(ctx, v, id);
-    grn_expr_exec(ctx, loader->ifexists, 0);
-    result = grn_ctx_pop(ctx);
+    result = grn_expr_exec(ctx, loader->ifexists, 0);
     GRN_TRUEP(ctx, result, result_boolean);
     if (!result_boolean) { id = 0; }
   }

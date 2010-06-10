@@ -569,8 +569,8 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
           }
           ctx->impl->output_type = ot;
           grn_ctx_push(ctx, ctx->impl->outbuf);
-          expr_rc = grn_expr_exec(ctx, expr, 1);
-          val = grn_ctx_pop(ctx);
+          val = grn_expr_exec(ctx, expr, 1);
+          expr_rc = ctx->rc;
           grn_expr_clear_vars(ctx, expr);
         } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
                                        strlen(GRN_EXPR_MISSING_NAME)))) {
@@ -581,8 +581,8 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
           }
           ctx->impl->output_type = ot;
           grn_ctx_push(ctx, ctx->impl->outbuf);
-          expr_rc = grn_expr_exec(ctx, expr, 1);
-          val = grn_ctx_pop(ctx);
+          val = grn_expr_exec(ctx, expr, 1);
+          expr_rc = ctx->rc;
           grn_expr_clear_vars(ctx, expr);
         }
         GRN_OBJ_FIN(ctx, &key);

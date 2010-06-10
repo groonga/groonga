@@ -2015,12 +2015,9 @@ GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
 GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
 
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
-GRN_API grn_rc grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs);
+GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs);
 GRN_API grn_rc grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_obj *grn_ctx_pop(grn_ctx *ctx);
-
-#define GRN_EXPR_CALL(ctx,expr,nargs) \
-  (grn_expr_exec((ctx), (expr), (nargs)), grn_ctx_pop(ctx))
 
 GRN_API grn_obj *grn_expr_alloc(grn_ctx *ctx, grn_obj *expr,
                                 grn_id domain, grn_obj_flags flags);

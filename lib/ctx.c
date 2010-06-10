@@ -813,8 +813,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
       GRN_TEXT_PUT(ctx, val, path, path_len);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
-    grn_expr_exec(ctx, expr, 1);
-    val = grn_ctx_pop(ctx);
+    val = grn_expr_exec(ctx, expr, 1);
     grn_expr_clear_vars(ctx, expr);
   } else {
     grn_obj key;
@@ -845,8 +844,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
       }
 
       grn_ctx_push(ctx, ctx->impl->outbuf);
-      grn_expr_exec(ctx, expr, 1);
-      val = grn_ctx_pop(ctx);
+      val = grn_expr_exec(ctx, expr, 1);
       grn_expr_clear_vars(ctx, expr);
     }
     GRN_OBJ_FIN(ctx, &key);
@@ -923,8 +921,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
       GRN_INT32_SET(ctx, val, (int32_t)ot);
     }
     grn_ctx_push(ctx, ctx->impl->outbuf);
-    grn_expr_exec(ctx, expr, 1);
-    val = grn_ctx_pop(ctx);
+    val = grn_expr_exec(ctx, expr, 1);
     grn_expr_clear_vars(ctx, expr);
   }
   if (!ctx->impl->qe_next) {

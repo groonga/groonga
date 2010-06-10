@@ -2060,9 +2060,10 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
   if (b) { grn_str_close(ctx, b); }
 }
 
-grn_rc
+grn_obj *
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
+  grn_obj *val = NULL;
   uint32_t stack_curr = ctx->impl->stack_curr;
   GRN_API_ENTER;
   if (expr->header.type == GRN_PROC) {
@@ -3120,15 +3121,18 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
     }
     ctx->impl->stack_curr = sp - s_;
   }
-  if (ctx->impl->stack_curr + nargs != stack_curr + 1) {
-    /*
-    GRN_LOG(ctx, GRN_LOG_WARNING, "nargs=%d stack balance=%d",
-            nargs, stack_curr - ctx->impl->stack_curr);
-    */
-    ctx->impl->stack_curr = stack_curr + 1 - nargs;
+  if (ctx->impl->stack_curr + nargs > stack_curr) {
+    val = grn_ctx_pop(ctx);
+    if (ctx->impl->stack_curr + nargs > stack_curr) {
+      /*
+        GRN_LOG(ctx, GRN_LOG_WARNING, "nargs=%d stack balance=%d",
+        nargs, stack_curr - ctx->impl->stack_curr);
+      */
+      ctx->impl->stack_curr = stack_curr - nargs;
+    }
   }
 exit :
-  GRN_API_RETURN(ctx->rc);
+  GRN_API_RETURN(val);
 }
 
 grn_obj *
@@ -3592,8 +3596,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
     if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
       while ((id = grn_table_cursor_next(ctx, tc))) {
         GRN_RECORD_SET(ctx, v, id);
-        grn_expr_exec(ctx, expr, 0);
-        r = grn_ctx_pop(ctx);
+        r = grn_expr_exec(ctx, expr, 0);
         if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_rset_recinfo *ri;
           if (grn_hash_add(ctx, s, &id, s->key_size, (void **)&ri, NULL)) {
@@ -3609,8 +3612,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
-        grn_expr_exec(ctx, expr, 0);
-        r = grn_ctx_pop(ctx);
+        r = grn_expr_exec(ctx, expr, 0);
         if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
@@ -3627,8 +3629,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
-        grn_expr_exec(ctx, expr, 0);
-        r = grn_ctx_pop(ctx);
+        r = grn_expr_exec(ctx, expr, 0);
         if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_hash_cursor_delete(ctx, hc, NULL);
         }
@@ -3641,8 +3642,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
-        grn_expr_exec(ctx, expr, 0);
-        r = grn_ctx_pop(ctx);
+        r = grn_expr_exec(ctx, expr, 0);
         if (r && (score = GRN_UINT32_VALUE(r))) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
@@ -5588,7 +5588,6 @@ grn_select(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
             while (!grn_table_cursor_next_o(ctx, tc, v)) {
               grn_expr_exec(ctx, scorer_, 0);
-              grn_ctx_pop(ctx);
             }
             grn_table_cursor_close(ctx, tc);
           }

@@ -793,7 +793,8 @@ parse_numeric_literal(const char *str_expr)
                                  GRN_EXPR_ALLOW_UPDATE));
 
   grn_test_assert(grn_expr_compile(&context, expr));
-  grn_test_assert(grn_expr_exec(&context, expr, 0));
+  grn_expr_exec(&context, expr, 0);
+  grn_test_assert(context.rc);
 
   return var;
 }
