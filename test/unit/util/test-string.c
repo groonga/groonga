@@ -43,6 +43,8 @@ void data_url_path_normalize_invalid(void);
 void test_url_path_normalize_invalid(gconstpointer data);
 void data_text_otoj(void);
 void test_text_otoj(gconstpointer data);
+void data_text_str_len(void);
+void test_text_str_len(gconstpointer data);
 
 static grn_ctx context;
 
@@ -662,7 +664,7 @@ test_text_otoj(gconstpointer data)
 {
   grn_obj object, json;
   grn_builtin_type type;
-  const gchar *expected;
+  const gchar *expected, *actual;
 
   GRN_TEXT_INIT(&json, 0);
 
@@ -671,9 +673,10 @@ test_text_otoj(gconstpointer data)
   cut_trace(construct_object(data, type, &object));
   grn_text_otoj(&context, &json, &object, NULL);
   grn_obj_unlink(&context, &object);
-  cut_assert_equal_substring(expected,
-                             GRN_TEXT_VALUE(&json), GRN_TEXT_LEN(&json));
+  actual = cut_take_printf("%.*s",
+                           (int)GRN_TEXT_LEN(&json), GRN_TEXT_VALUE(&json));
   grn_obj_unlink(&context, &json);
+  cut_assert_equal_string(expected, actual);
 }
 
 void
@@ -730,7 +733,7 @@ data_str_len(void)
 }
 
 void
-test_str_len(gpointer data)
+test_str_len(gconstpointer data)
 {
   size_t result, expected;
   const gchar *input;
