@@ -59,10 +59,10 @@ static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
 static const char *pidfile_path;
 
 static void
-usage(void)
+usage(FILE *output)
 {
   gethostname(hostname, HOST_NAME_MAX);
-  fprintf(stderr,
+  fprintf(output,
           "Usage: groonga [options...] [dest]\n"
           "options:\n"
           "  -n:                       create new database\n"
@@ -1624,7 +1624,8 @@ enum {
   mode_daemon,
   mode_server,
   mode_usage,
-  mode_version
+  mode_version,
+  mode_error
 };
 
 #define MODE_MASK   0x007f
@@ -1697,7 +1698,7 @@ main(int argc, char **argv)
   }
   strcpy(listen_address, "0.0.0.0");
   i = grn_str_getopt(argc, argv, opts, &mode);
-  if (i < 0) { mode = mode_usage; }
+  if (i < 0) { mode = mode_error; }
   if (portstr) { port = atoi(portstr); }
   if (encstr) {
     switch (*encstr) {
@@ -1809,8 +1810,11 @@ main(int argc, char **argv)
   case mode_version :
     show_version(); r = 0;
     break;
+  case mode_usage :
+    usage(stdout); r = 0;
+    break;
   default :
-    usage(); r = -1;
+    usage(stderr); r = -1;
     break;
   }
   grn_fin();
