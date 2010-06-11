@@ -211,15 +211,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
   end
 
   def test_table_create_with_duplicated_name
-    response = get(command_path(:table_create, :name => "table_create"))
-    assert_error_response(Result::INVALID_ARGUMENT,
-                          "already used name was assigned",
-                          response,
-                          :content_type => "application/json")
-  end
-
-  def test_table_create_with_duplicated_name
-    response = get(command_path(:table_create, :name => "table_create"))
+    response = get(command_path(:table_create, :name => "daijiro"))
+    assert_success_response(response, :content_type => "application/json")
+    response = get(command_path(:table_create, :name => "daijiro"))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "already used name was assigned",
                           response,
