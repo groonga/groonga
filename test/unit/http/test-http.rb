@@ -51,7 +51,7 @@ class HTTPTest < Test::Unit::TestCase
                             :content_type => "application/json")
     @groonga_pid = nil
 
-    assert_raise(Errno::ECONNREFUSED) do
+    assert_raise(Errno::ECONNREFUSED, EOFError) do
       get(command_path(:shutdown))
     end
   end
