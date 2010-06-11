@@ -43,8 +43,8 @@ void data_url_path_normalize_invalid(void);
 void test_url_path_normalize_invalid(gconstpointer data);
 void data_text_otoj(void);
 void test_text_otoj(gconstpointer data);
-void data_text_str_len(void);
-void test_text_str_len(gconstpointer data);
+void data_str_len(void);
+void test_str_len(gconstpointer data);
 
 static grn_ctx context;
 
