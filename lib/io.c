@@ -1439,7 +1439,7 @@ grn_rc
 grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
 {
   static int _ncalls = 0, _ncolls = 0;
-  uint32_t count;
+  uint32_t count, count_log_border = 1000;
   _ncalls++;
   if (!io) { return GRN_INVALID_ARGUMENT; }
   for (count = 0;; count++) {
@@ -1447,12 +1447,23 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
     GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
     if (lock) {
       GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
-      if (!timeout || (timeout > 0 && timeout == count)) { break; }
+      if (count == count_log_border) {
+        GRN_LOG(ctx, GRN_LOG_NOTICE,
+                "io(%s) collisions(%d/%d): lock failed %d times",
+                io->path, _ncolls, _ncalls, count_log_border);
+      }
+      if (!timeout || (timeout > 0 && timeout == count)) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "[DB Locked] time out(%d): io(%s) collisions(%d/%d)",
+                timeout, io->path, _ncolls, _ncalls);
+        break;
+      }
       if (!(++_ncolls % 1000000) && (_ncolls > _ncalls)) {
         if (_ncolls < 0 || _ncalls < 0) {
           _ncolls = 0; _ncalls = 0;
         } else {
-          GRN_LOG(ctx, GRN_LOG_NOTICE, "io(%p) collisions(%d/%d)", io, _ncolls, _ncalls);
+          GRN_LOG(ctx, GRN_LOG_NOTICE,
+                  "io(%s) collisions(%d/%d)", io->path, _ncolls, _ncalls);
         }
       }
       usleep(1000);
