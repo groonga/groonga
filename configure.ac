@@ -577,6 +577,13 @@ AC_ARG_WITH(rsync-path,
             [RSYNC_PATH=""])
 AC_SUBST(RSYNC_PATH)
 
+GRN_CONFIG_PATH="`
+  test \"$prefix\" = NONE && prefix=
+  eval echo ${sysconfdir}/groonga/groonga.conf
+`"
+AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
+  [Default command line option configuration file.])
+
 AC_OUTPUT([
   groonga.spec
   groonga.pc

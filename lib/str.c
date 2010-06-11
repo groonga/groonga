@@ -1814,7 +1814,7 @@ grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts,
   }
   return i;
 exit:
-  fprintf(stderr, "cannot recognize option '%s'.\n", argv[i]);
+  fprintf(stderr, "%s: cannot recognize option '%s'.\n", argv[0], argv[i]);
   return -1;
 }
 

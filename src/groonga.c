@@ -23,6 +23,7 @@
 #include "lib/db.h"
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <fcntl.h>
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -65,23 +66,23 @@ usage(FILE *output)
   fprintf(output,
           "Usage: groonga [options...] [dest]\n"
           "options:\n"
-          "  -n:                       create new database\n"
-          "  -c:                       run in client mode\n"
-          "  -s:                       run in server mode\n"
-          "  -d:                       run in daemon mode\n"
-          "  -e:                       encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
-          "  -l <log level>:           log level\n"
-          "  -a <ip/hostname>:         server address to listen (default: %s)\n"
-          "  -p <port number>:         server port number (default: %d)\n"
-          "  -i <ip/hostname>:         server ID address (default: %s)\n"
-          "  -t <max threads>:         max number of free threads (default: %d)\n"
-          "  -h, --help:               show usage\n"
-          "  --admin-html-path <path>: specify admin html path\n"
-          "  --protocol <protocol>:    server protocol to listen (default: gqtp)\n"
-          "  --version:                show groonga version\n"
-          "  --log-path <path>:        specify log path\n"
-          "  --query-log-path <path>:  specify query log path\n"
-          "  --pid-file <path>:        specify pid file path (daemon mode only)\n"
+          "  -n:                               create new database\n"
+          "  -c:                               run in client mode\n"
+          "  -s:                               run in server mode\n"
+          "  -d:                               run in daemon mode\n"
+          "  -e, --default-encoding:           encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
+          "  -l, --log-level <log level>:      log level\n"
+          "  -a, --address <ip/hostname>:      server address to listen (default: %s)\n"
+          "  -p, --port <port number>:         server port number (default: %d)\n"
+          "  -i, --server-id <ip/hostname>:    server ID address (default: %s)\n"
+          "  -t, --max-threads <max threads>:  max number of free threads (default: %d)\n"
+          "  -h, --help:                       show usage\n"
+          "  --admin-html-path <path>:         specify admin html path\n"
+          "  --protocol <protocol>:            server protocol to listen (default: gqtp)\n"
+          "  --version:                        show groonga version\n"
+          "  --log-path <path>:                specify log path\n"
+          "  --query-log-path <path>:          specify query log path\n"
+          "  --pid-file <path>:                specify pid file path (daemon mode only)\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -1653,6 +1654,59 @@ get_core_number(void)
 #endif /* WIN32 */
 }
 
+static inline char *
+skipspace(char *str)
+{
+  while (*str == ' ' || *str == '\t') { ++str; }
+  return str;
+}
+
+static int
+load_config_file(const char *path,
+                 const grn_str_getopt_opt *opts, int *flags)
+{
+  int name_len, value_len;
+  char buf[1024+2], *str, *name, *value, *args[4];
+  FILE *file;
+
+  if (!(file = fopen(path, "r"))) return 0;
+
+  args[0] = (char *)path;
+  args[3] = NULL;
+  while ((str = fgets(buf + 2, sizeof(buf) - 2, file))) {
+    str = skipspace(str);
+    switch (*str) {
+    case '#': case ';': case '\0':
+      continue;
+    }
+    name = str;
+    while (*str && !isspace(*str) && *str != '=') { str++; }
+    if ((name_len = (int)(str - name)) == 0) {
+      continue;
+    }
+    value_len = 0;
+    if (*str && (*str == '=' || *(str = skipspace(str)) == '=')) {
+      str++;
+      value = str = skipspace(str);
+      while (*str && *str != '#' && *str != ';') {
+        if (!isspace(*str)) {
+          value_len = (int)(str - value) + 1;
+        }
+        str++;
+      }
+      value[value_len] = '\0';
+    }
+    name[name_len] = '\0';
+    memset(name -= 2, '-', 2);
+    args[1] = name;
+    args[2] = value;
+    grn_str_getopt((value_len > 0) + 2, args, opts, flags);
+  }
+  fclose(file);
+
+  return 1;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -1662,16 +1716,16 @@ main(int argc, char **argv)
     *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
-    {'p', NULL, NULL, 0, getopt_op_none},
-    {'e', NULL, NULL, 0, getopt_op_none},
-    {'t', NULL, NULL, 0, getopt_op_none},
+    {'p', "port", NULL, 0, getopt_op_none},
+    {'e', "default-encoding", NULL, 0, getopt_op_none},
+    {'t', "max-threads", NULL, 0, getopt_op_none},
     {'h', "help", NULL, mode_usage, getopt_op_update},
-    {'a', NULL, NULL, 0, getopt_op_none},
+    {'a', "address", NULL, 0, getopt_op_none},
     {'c', NULL, NULL, mode_client, getopt_op_update},
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
     {'s', NULL, NULL, mode_server, getopt_op_update},
-    {'l', NULL, NULL, 0, getopt_op_none},
-    {'i', NULL, NULL, 0, getopt_op_none},
+    {'l', "log-level", NULL, 0, getopt_op_none},
+    {'i', "server", NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
     {'\0', "admin-html-path", NULL, 0, getopt_op_none},
@@ -1697,6 +1751,13 @@ main(int argc, char **argv)
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
   strcpy(listen_address, "0.0.0.0");
+  {
+    const char *config_path = getenv("GRN_CONFIG_PATH");
+    if (!config_path) {
+      config_path = GRN_CONFIG_PATH;
+    }
+    load_config_file(config_path, opts, &mode);
+  }
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_error; }
   if (portstr) { port = atoi(portstr); }
