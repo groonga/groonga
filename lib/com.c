@@ -537,8 +537,11 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
 #endif /* USE_KQUEUE */
 #endif /* USE_EPOLL */
   if (nevents < 0) {
-    SERR("poll");
-    if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) { ERRCLR(ctx); }
+    if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
+      ERRCLR(ctx);
+    } else {
+      SERR("poll");
+    }
     return ctx->rc;
   }
   if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "poll returns 0 events"); }
