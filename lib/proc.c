@@ -169,7 +169,6 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       break;
     case GRN_CONTENT_JSON:
       {
-        GRN_TEXT_INIT(outbuf, 0);
         GRN_TEXT_PUTS(ctx, outbuf, "{\"alloc_count\":");
         grn_text_itoa(ctx, outbuf, grn_alloc_count());
         GRN_TEXT_PUTS(ctx, outbuf, ",\"starttime\":");
