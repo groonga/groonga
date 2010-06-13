@@ -186,6 +186,7 @@ struct _grn_ctx_impl {
   grn_obj *stack[GRN_STACK_SIZE];
   uint32_t stack_curr;
   grn_hash *expr_vars;
+  grn_obj *curr_expr;
   grn_obj *qe_next;
   void *parser;
   grn_timeval tv;
@@ -199,6 +200,7 @@ struct _grn_ctx_impl {
 
   /* output portion */
   grn_content_type output_type;
+  const char *mime_type;
 
   /* ql portion */
   uint32_t ncells;

@@ -761,175 +761,190 @@ grn_get_ctype(grn_obj *var)
   return ct;
 }
 
-static const char *
-get_content_type(grn_ctx *ctx, const char *p, const char *pe,
-                 grn_content_type *ct)
+static void
+get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
 {
-  const char *pd = NULL;
-  for (; p < pe && *p != '?'; p++) {
-    if (*p == '.') {
-      pd = p;
-    }
-  }
-  if (pd && pd < p) {
-    switch (*++pd) {
+  if (p + 2 <= pe) {
+    switch (*p) {
+    case 'c' :
+      if (p + 3 == pe && !memcmp(p, "css", 3)) {
+        ctx->impl->output_type = GRN_CONTENT_NONE;
+        ctx->impl->mime_type = "text/css";
+      }
+      break;
+    case 'g' :
+      if (p + 3 == pe && !memcmp(p, "gif", 3)) {
+        ctx->impl->output_type = GRN_CONTENT_NONE;
+        ctx->impl->mime_type = "image/gif";
+      }
+      break;
+    case 'h' :
+      if (p + 4 == pe && !memcmp(p, "html", 4)) {
+        ctx->impl->output_type = GRN_CONTENT_NONE;
+        ctx->impl->mime_type = "text/html";
+      }
+      break;
     case 'j' :
-      if (!memcmp(pd, "js", 2)) {
-        if (pd + 2 == p) {
-          *ct = GRN_CONTENT_NONE;
-        } else if (pd + 4 == p && !memcmp(pd + 2, "on", 2)) {
-          *ct = GRN_CONTENT_JSON;
+      if (!memcmp(p, "js", 2)) {
+        if (p + 2 == pe) {
+          ctx->impl->output_type = GRN_CONTENT_NONE;
+          ctx->impl->mime_type = "text/javascript";
+        } else if (p + 4 == pe && !memcmp(p + 2, "on", 2)) {
+          ctx->impl->output_type = GRN_CONTENT_JSON;
+          ctx->impl->mime_type = "application/json";
         }
-      } else if (pd + 3 == p && !memcmp(pd, "jpg", 3)) {
-        *ct = GRN_CONTENT_NONE;
+      } else if (p + 3 == pe && !memcmp(p, "jpg", 3)) {
+        ctx->impl->output_type = GRN_CONTENT_NONE;
+        ctx->impl->mime_type = "image/jpeg";
+      }
+      break;
+    case 'p' :
+      if (p + 3 == pe && !memcmp(p, "png", 3)) {
+        ctx->impl->output_type = GRN_CONTENT_NONE;
+        ctx->impl->mime_type = "image/png";
+      }
+      break;
+    case 't' :
+      if (p + 3 == pe && !memcmp(p, "txt", 3)) {
+        ctx->impl->output_type = GRN_CONTENT_NONE;
+        ctx->impl->mime_type = "text/plain";
+      } else if (p + 3 == pe && !memcmp(p, "tsv", 3)) {
+        ctx->impl->output_type = GRN_CONTENT_TSV;
+        ctx->impl->mime_type = "text/plain";
       }
       break;
     case 'x':
-      if (pd + 3 == p && !memcmp(pd, "xml", 3)) {
-        *ct = GRN_CONTENT_XML;
+      if (p + 3 == pe && !memcmp(p, "xml", 3)) {
+        ctx->impl->output_type = GRN_CONTENT_XML;
+        ctx->impl->mime_type = "text/xml";
       }
       break;
     }
-    return pd - 1;
-  } else {
-    *ct = GRN_CONTENT_JSON;
-    return pe;
   }
 }
 
+static void
+grn_str_get_mime_type(grn_ctx *ctx, const char *p, const char *pe,
+                     const char **key_end, const char **filename_end)
+{
+  const char *pd = NULL;
+  for (; p < pe && *p != '?' && *p != '#'; p++) {
+    if (*p == '.') { pd = p; }
+  }
+  *filename_end = p;
+  if (pd && pd < p) {
+    get_content_mime_type(ctx, pd + 1, p);
+    *key_end = pd;
+  } else {
+    *key_end = pe;
+  }
+}
+
+#define INDEX_HTML "index.html"
 #define OUTPUT_TYPE "output_type"
+#define EXPR_MISSING "expr_missing"
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
 
 grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
 {
-  const char *p, *e;
-  grn_obj *expr, *val = NULL;
-  if (ctx->impl->qe_next) {
-    expr = ctx->impl->qe_next;
-    ctx->impl->qe_next = NULL;
-    if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
-      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-      GRN_TEXT_PUT(ctx, val, path, path_len);
-    }
-    val = grn_expr_exec(ctx, expr, 0);
-    grn_expr_clear_vars(ctx, expr);
-  } else {
-    grn_obj key;
-    const char *g, *pe;
-    grn_content_type ot = GRN_CONTENT_NONE;
-    grn_timeval_now(ctx, &ctx->impl->tv);
-    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, path_len, path);
-    GRN_TEXT_INIT(&key, 0);
-    p = path;
-    e = p + path_len;
-    g = grn_text_urldec(ctx, &key, p, e, '?');
-    pe = get_content_type(ctx, GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key), &ot);
-    if ((GRN_TEXT_LEN(&key) >= 2 &&
-         GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
-        (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2, pe - GRN_TEXT_VALUE(&key) - 2))) {
-      while (g < e) {
-        GRN_BULK_REWIND(&key);
-        g = grn_text_cgidec(ctx, &key, g, e, '=');
-        if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
-          val = &key;
+  grn_obj buf, *expr, *val;
+  const char *p = path, *e = path + path_len, *v, *key_end, *filename_end;
+  GRN_TEXT_INIT(&buf, 0);
+  p = grn_text_urldec(ctx, &buf, p, e, '?');
+  if (!GRN_TEXT_LEN(&buf)) { GRN_TEXT_SETS(ctx, &buf, INDEX_HTML); }
+  v = GRN_TEXT_VALUE(&buf);
+  grn_str_get_mime_type(ctx, v, GRN_BULK_CURR(&buf), &key_end, &filename_end);
+  if ((GRN_TEXT_LEN(&buf) >= 2 && v[0] == 'd' && v[1] == '/') &&
+      (expr = grn_ctx_get(ctx, v + 2, key_end - (v + 2)))) {
+    while (p < e) {
+      int l;
+      GRN_BULK_REWIND(&buf);
+      p = grn_text_cgidec(ctx, &buf, p, e, '=');
+      v = GRN_TEXT_VALUE(&buf);
+      l = GRN_TEXT_LEN(&buf);
+      if (l == OUTPUT_TYPE_LEN && !memcmp(v, OUTPUT_TYPE, OUTPUT_TYPE_LEN)) {
+        GRN_BULK_REWIND(&buf);
+        p = grn_text_cgidec(ctx, &buf, p, e, '&');
+        v = GRN_TEXT_VALUE(&buf);
+        get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
+      } else {
+        if (!(val = grn_expr_get_var(ctx, expr, v, l)) &&
+            !(val = grn_expr_add_var(ctx, expr, v, l))) {
+          val = &buf;
         }
         grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-        g = grn_text_cgidec(ctx, val, g, e, '&');
+        p = grn_text_cgidec(ctx, val, p, e, '&');
       }
-      if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
-        grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
-        GRN_INT32_SET(ctx, val, (int32_t)ot);
-      }
-
-      val = grn_expr_exec(ctx, expr, 0);
-      grn_expr_clear_vars(ctx, expr);
     }
-    GRN_OBJ_FIN(ctx, &key);
+    ctx->impl->curr_expr = expr;
+    grn_expr_exec(ctx, expr, 0);
+  } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
+                                 strlen(GRN_EXPR_MISSING_NAME)))) {
+    if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
+      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+      GRN_TEXT_SET(ctx, val, v, filename_end - v);
+    }
+    ctx->impl->curr_expr = expr;
+    grn_expr_exec(ctx, expr, 0);
   }
-  if (!ctx->impl->qe_next) {
-    uint64_t et;
-    grn_timeval tv;
-    grn_timeval_now(ctx, &tv);
-    et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
-      + (tv.tv_usec - ctx->impl->tv.tv_usec);
-    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
-  }
-  return val;
+  GRN_OBJ_FIN(ctx, &buf);
+  return expr;
 }
 
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
 {
-  grn_obj *expr = NULL, *val = NULL;
-  if (ctx->impl->qe_next) {
-    expr = ctx->impl->qe_next;
-    ctx->impl->qe_next = NULL;
-    if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
-      grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-      GRN_TEXT_PUT(ctx, val, str, str_len);
-    }
-  } else {
-    grn_obj buf;
-    char tok_type;
-    int offset = 0;
-    const char *v, *p = str, *e = str + str_len;
-    grn_timeval_now(ctx, &ctx->impl->tv);
-    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
-    GRN_TEXT_INIT(&buf, 0);
-    p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
-    if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf)))) {
-      while (p < e) {
-        GRN_BULK_REWIND(&buf);
-        p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
-        switch (tok_type) {
-        case GRN_TOK_VOID :
-          p = e;
-          break;
-        case GRN_TOK_SYMBOL :
-          v = GRN_TEXT_VALUE(&buf);
-          if (GRN_TEXT_LEN(&buf) > 2 && v[0] == '-' && v[1] == '-') {
-            if ((val = grn_expr_get_var(ctx, expr, v + 2, GRN_TEXT_LEN(&buf) - 2))) {
-              grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-              p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
-            } else {
-              p = e;
-            }
-            break;
-          }
-          // fallthru
-        case GRN_TOK_STRING :
-        case GRN_TOK_QUOTE :
-          if ((val = grn_expr_get_var_by_offset(ctx, expr, offset++))) {
+  char tok_type;
+  int offset = 0;
+  grn_obj buf, *expr = NULL, *val = NULL;
+  const char *p = str, *e = str + str_len, *v;
+  GRN_TEXT_INIT(&buf, 0);
+  p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+  if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf)))) {
+    while (p < e) {
+      GRN_BULK_REWIND(&buf);
+      p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+      v = GRN_TEXT_VALUE(&buf);
+      switch (tok_type) {
+      case GRN_TOK_VOID :
+        p = e;
+        break;
+      case GRN_TOK_SYMBOL :
+        if (GRN_TEXT_LEN(&buf) > 2 && v[0] == '-' && v[1] == '-') {
+          int l = GRN_TEXT_LEN(&buf) - 2;
+          v += 2;
+          if (l == OUTPUT_TYPE_LEN && !memcmp(v, OUTPUT_TYPE, OUTPUT_TYPE_LEN)) {
+            GRN_BULK_REWIND(&buf);
+            p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+            v = GRN_TEXT_VALUE(&buf);
+            get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
+          } else if ((val = grn_expr_get_var(ctx, expr, v, l)) ||
+                     (val = grn_expr_add_var(ctx, expr, v, l))) {
             grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-            GRN_TEXT_PUT(ctx, val, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+            p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
           } else {
             p = e;
           }
           break;
         }
+        // fallthru
+      case GRN_TOK_STRING :
+      case GRN_TOK_QUOTE :
+        if ((val = grn_expr_get_var_by_offset(ctx, expr, offset++))) {
+          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+          GRN_TEXT_PUT(ctx, val, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+        } else {
+          p = e;
+        }
+        break;
       }
     }
-    GRN_OBJ_FIN(ctx, &buf);
+    ctx->impl->curr_expr = expr;
+    grn_expr_exec(ctx, expr, 0);
   }
-  if (expr) {
-    if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
-      grn_content_type ot = grn_get_ctype(val);
-      grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
-      GRN_INT32_SET(ctx, val, (int32_t)ot);
-    }
-    val = grn_expr_exec(ctx, expr, 0);
-    grn_expr_clear_vars(ctx, expr);
-  }
-  if (!ctx->impl->qe_next) {
-    uint64_t et;
-    grn_timeval tv;
-    grn_timeval_now(ctx, &tv);
-    et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
-      + (tv.tv_usec - ctx->impl->tv.tv_usec);
-    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
-  }
-  return val;
+  GRN_OBJ_FIN(ctx, &buf);
+  return expr;
 }
 
 grn_rc
@@ -972,21 +987,41 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       goto exit;
     } else {
-      /*
-      GRN_BULK_REWIND(ctx->impl->outbuf);
-      GRN_BULK_REWIND(&ctx->impl->subbuf);
-      ctx->impl->bufcur = 0;
-      */
-      if (str_len && *str == '/') {
-        grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
+      grn_obj *expr;
+      if (ctx->impl->qe_next) {
+        grn_obj *val;
+        expr = ctx->impl->qe_next;
+        ctx->impl->qe_next = NULL;
+        if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
+          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+          GRN_TEXT_PUT(ctx, val, str, str_len);
+        }
+        grn_expr_exec(ctx, expr, 0);
       } else {
-        grn_ctx_qe_exec(ctx, str, str_len);
+        ctx->impl->mime_type = "application/json";
+        ctx->impl->output_type = GRN_CONTENT_JSON;
+        grn_timeval_now(ctx, &ctx->impl->tv);
+        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
+        if (str_len && *str == '/') {
+          expr = grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
+        } else {
+          expr = grn_ctx_qe_exec(ctx, str, str_len);
+        }
       }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (!ERRP(ctx, GRN_CRIT)) {
         if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
           ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
         }
+      }
+      if (expr) { grn_expr_clear_vars(ctx, expr); }
+      if (!ctx->impl->qe_next) {
+        uint64_t et;
+        grn_timeval tv;
+        grn_timeval_now(ctx, &tv);
+        et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
+          + (tv.tv_usec - ctx->impl->tv.tv_usec);
+        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
       }
       goto exit;
     }

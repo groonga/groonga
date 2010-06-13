@@ -269,95 +269,6 @@ typedef enum {
   grn_http_request_type_post
 } grn_http_request_type;
 
-void
-get_content_mime_type(const char *p, const char *pe,
-                      grn_content_type *ct, const char **mime_type)
-{
-  switch (*p) {
-  case 'c' :
-    if (p + 3 == pe && !memcmp(p, "css", 3)) {
-      *ct = GRN_CONTENT_NONE;
-      *mime_type = "text/css";
-    }
-    break;
-  case 'g' :
-    if (p + 3 == pe && !memcmp(p, "gif", 3)) {
-      *ct = GRN_CONTENT_NONE;
-      *mime_type = "image/gif";
-    }
-    break;
-  case 'h' :
-    if (p + 4 == pe && !memcmp(p, "html", 4)) {
-      *ct = GRN_CONTENT_NONE;
-      *mime_type = "text/html";
-    }
-    break;
-  case 'j' :
-    if (!memcmp(p, "js", 2)) {
-      if (p + 2 == pe) {
-        *ct = GRN_CONTENT_NONE;
-        *mime_type = "text/javascript";
-      } else if (p + 4 == pe && !memcmp(p + 2, "on", 2)) {
-        *ct = GRN_CONTENT_JSON;
-        *mime_type = "application/json";
-      }
-    } else if (p + 3 == pe && !memcmp(p, "jpg", 3)) {
-      *ct = GRN_CONTENT_NONE;
-      *mime_type = "image/jpeg";
-    }
-    break;
-  case 'p' :
-    if (p + 3 == pe && !memcmp(p, "png", 3)) {
-      *ct = GRN_CONTENT_NONE;
-      *mime_type = "image/png";
-    }
-    break;
-  case 't' :
-    if (p + 3 == pe && !memcmp(p, "txt", 3)) {
-      *ct = GRN_CONTENT_NONE;
-      *mime_type = "text/plain";
-    }
-    break;
-  case 'x':
-    if (p + 3 == pe && !memcmp(p, "xml", 3)) {
-      *ct = GRN_CONTENT_XML;
-      *mime_type = "text/xml";
-    }
-    break;
-  }
-}
-
-static void
-parse_htpath(const char *p, const char *pe,
-             const char **key_end, const char **filename_end,
-             grn_content_type *ct, const char **mime_type)
-{
-  const char *pd = NULL;
-  for (; p < pe && *p != '?' && *p != '#'; p++) {
-    if (*p == '.') {
-      pd = p;
-    }
-  }
-  *filename_end = p;
-  *ct = GRN_CONTENT_JSON;
-  *mime_type = "application/json";
-  if (pd && pd < p) {
-    get_content_mime_type(pd + 1, p, ct, mime_type);
-    *key_end = pd;
-  } else {
-    *key_end = pe;
-  }
-}
-
-#define INDEX_HTML "index.html"
-#define OUTPUT_TYPE "output_type"
-#define EXPR_MISSING "expr_missing"
-#define JSON_CALLBACK_PARAM "callback"
-#define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
-
-#define GRN_TEXT_CMPS(obj,str) \
-  (GRN_TEXT_LEN((obj)) == strlen((str)) && !memcmp(GRN_TEXT_VALUE((obj)), (str), strlen((str))))
-
 static void
 print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
 {
@@ -403,15 +314,29 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
   }
 }
 
+#define JSON_CALLBACK_PARAM "callback"
+
+typedef struct {
+  grn_obj body;
+  grn_msg *msg;
+} ht_context;
+
 static void
-h_output(grn_ctx *ctx, grn_rc expr_rc, grn_sock fd,
-         grn_obj *jsonp_func, grn_obj *body, const char *mime_type)
+h_output(grn_ctx *ctx, int flags, void *arg)
 {
+  grn_rc expr_rc = ctx->rc;
+  ht_context *hc = (ht_context *)arg;
+  grn_sock fd = hc->msg->u.fd;
+  grn_obj *expr = ctx->impl->curr_expr;
+  grn_obj *jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
+                                         strlen(JSON_CALLBACK_PARAM));
+  grn_obj *body = &hc->body;
+  const char *mime_type = ctx->impl->mime_type;
   grn_obj head, foot, *outbuf = ctx->impl->outbuf;
   GRN_TEXT_INIT(&head, 0);
   GRN_TEXT_INIT(&foot, 0);
   if (!expr_rc) {
-    if (GRN_TEXT_LEN(jsonp_func)) {
+    if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
       GRN_TEXT_PUT(ctx, &head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
       GRN_TEXT_PUTC(ctx, &head, '(');
       print_return_code(ctx, expr_rc, &head, outbuf, &foot);
@@ -479,18 +404,10 @@ h_output(grn_ctx *ctx, grn_rc expr_rc, grn_sock fd,
   GRN_BULK_REWIND(outbuf);
   GRN_OBJ_FIN(ctx, &foot);
   GRN_OBJ_FIN(ctx, &head);
-  {
-    uint64_t et;
-    grn_timeval tv;
-    grn_timeval_now(ctx, &tv);
-    et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC
-      + (tv.tv_usec - ctx->impl->tv.tv_usec);
-    GRN_LOG(ctx, GRN_LOG_NONE, "%08x|<%012zu rc=%d", (intptr_t)ctx, et, ctx->rc);
-  }
 }
 
 static void
-do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
+do_htreq(grn_ctx *ctx, grn_msg *msg)
 {
   grn_sock fd = msg->u.fd;
   grn_http_request_type t = grn_http_request_type_none;
@@ -522,73 +439,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg, grn_obj *body)
         }
       }
     }
-    /* TODO: handle post body */
-    {
-      const char *mime_type = NULL;
-      grn_rc expr_rc = GRN_SUCCESS;
-      grn_obj jsonp_func;
-      GRN_TEXT_INIT(&jsonp_func, 0);
-      if (*path != '/') {
-        expr_rc = GRN_INVALID_ARGUMENT;
-      } else {
-        grn_obj key;
-        grn_content_type ot;
-        grn_obj *expr, *val = NULL;
-        const char *g, *key_end, *filename_end;
-
-        grn_timeval_now(ctx, &ctx->impl->tv); /* should be initialized in grn_ctx_qe_exec() */
-        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, pathe - path, path);
-        GRN_TEXT_INIT(&key, 0);
-
-        g = grn_text_urldec(ctx, &key, path + 1, pathe, '?');
-        if (!GRN_TEXT_LEN(&key)) { GRN_TEXT_SETS(ctx, &key, INDEX_HTML); }
-        parse_htpath(GRN_TEXT_VALUE(&key), GRN_BULK_CURR(&key),
-                     &key_end, &filename_end, &ot, &mime_type);
-        if ((GRN_TEXT_LEN(&key) >= 2 &&
-             GRN_TEXT_VALUE(&key)[0] == 'd' && GRN_TEXT_VALUE(&key)[1] == '/') &&
-            (expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&key) + 2,
-                                key_end - GRN_TEXT_VALUE(&key) - 2))) {
-          while (g < pathe) {
-            GRN_BULK_REWIND(&key);
-            g = grn_text_cgidec(ctx, &key, g, pathe, '=');
-            if (GRN_TEXT_CMPS(&key, JSON_CALLBACK_PARAM)) {
-              val = &jsonp_func;
-            } else if (!(val = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(&key), GRN_TEXT_LEN(&key)))) {
-              val = &key;
-            }
-            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-            g = grn_text_cgidec(ctx, val, g, pathe, '&');
-            if (GRN_TEXT_CMPS(&key, OUTPUT_TYPE)) {
-              get_content_mime_type(GRN_TEXT_VALUE(val),
-                                    GRN_TEXT_VALUE(val) + GRN_TEXT_LEN(val),
-                                    &ot, &mime_type);
-            }
-          }
-          if ((val = grn_expr_get_var(ctx, expr, OUTPUT_TYPE, OUTPUT_TYPE_LEN))) {
-            grn_obj_reinit(ctx, val, GRN_DB_INT32, 0);
-            GRN_INT32_SET(ctx, val, (int32_t)ot);
-          }
-          ctx->impl->output_type = ot;
-          val = grn_expr_exec(ctx, expr, 0);
-          expr_rc = ctx->rc;
-          grn_expr_clear_vars(ctx, expr);
-        } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
-                                       strlen(GRN_EXPR_MISSING_NAME)))) {
-          if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
-            grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-            GRN_TEXT_SET(ctx, val,
-                         GRN_TEXT_VALUE(&key), filename_end - GRN_TEXT_VALUE(&key));
-          }
-          ctx->impl->output_type = ot;
-          val = grn_expr_exec(ctx, expr, 0);
-          expr_rc = ctx->rc;
-          grn_expr_clear_vars(ctx, expr);
-        }
-        GRN_OBJ_FIN(ctx, &key);
-      }
-      h_output(ctx, expr_rc, fd, &jsonp_func, body, mime_type);
-      GRN_OBJ_FIN(ctx, &jsonp_func);
-    }
+    grn_ctx_send(ctx, path, pathe - path, 0);
   }
 exit :
   // todo : support "Connection: keep-alive"
@@ -1171,11 +1022,12 @@ static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads;
 static void * CALLBACK
 h_worker(void *arg)
 {
-  grn_obj body;
+  ht_context hc;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  GRN_TEXT_INIT(&body, 0);
+  GRN_TEXT_INIT(&hc.body, 0);
   grn_ctx_use(ctx, (grn_obj *)arg);
+  grn_ctx_recv_handler_set(ctx, h_output, &hc);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
   MUTEX_LOCK(q_mutex);
   do {
@@ -1187,13 +1039,15 @@ h_worker(void *arg)
     }
     nfthreads--;
     MUTEX_UNLOCK(q_mutex);
-    do_htreq(ctx, (grn_msg *)msg, &body);
+    hc.msg = (grn_msg *)msg;
+    do_htreq(ctx, (grn_msg *)msg);
     MUTEX_LOCK(q_mutex);
   } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
 exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
+  GRN_OBJ_FIN(ctx, &hc.body);
   grn_ctx_fin(ctx);
   return NULL;
 }
