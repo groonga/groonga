@@ -2207,8 +2207,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[13], "drilldown_offset");
   DEF_VAR(vars[14], "drilldown_limit");
   DEF_VAR(vars[15], "cache");
-  DEF_VAR(vars[16], "output_type");
-  DEF_COMMAND("define_selector", proc_define_selector, 17, vars);
+  DEF_COMMAND("define_selector", proc_define_selector, 16, vars);
   DEF_COMMAND("select", proc_select, 16, vars + 1);
 
   DEF_VAR(vars[0], "values");
@@ -2216,107 +2215,86 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "ifexists");
   DEF_VAR(vars[4], "input_type");
-  DEF_VAR(vars[5], "output_type");
-  DEF_COMMAND("load", proc_load, 6, vars);
+  DEF_COMMAND("load", proc_load, 5, vars);
 
-  DEF_VAR(vars[0], "output_type");
-  DEF_COMMAND("status", proc_status, 1, vars);
+  DEF_COMMAND("status", proc_status, 0, vars);
 
-  DEF_VAR(vars[0], "output_type");
-  DEF_COMMAND("table_list", proc_table_list, 1, vars);
+  DEF_COMMAND("table_list", proc_table_list, 0, vars);
 
   DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "output_type");
-  DEF_COMMAND("column_list", proc_column_list, 2, vars);
+  DEF_COMMAND("column_list", proc_column_list, 1, vars);
 
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "flags");
   DEF_VAR(vars[2], "key_type");
   DEF_VAR(vars[3], "value_type");
   DEF_VAR(vars[4], "default_tokenizer");
-  DEF_VAR(vars[5], "output_type");
-  DEF_COMMAND("table_create", proc_table_create, 6, vars);
+  DEF_COMMAND("table_create", proc_table_create, 5, vars);
 
   DEF_VAR(vars[0], "name");
-  DEF_VAR(vars[1], "output_type");
-  DEF_COMMAND("table_remove", proc_table_remove, 2, vars);
+  DEF_COMMAND("table_remove", proc_table_remove, 1, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "name");
   DEF_VAR(vars[2], "flags");
   DEF_VAR(vars[3], "type");
   DEF_VAR(vars[4], "source");
-  DEF_VAR(vars[5], "output_type");
-  DEF_COMMAND("column_create", proc_column_create, 6, vars);
+  DEF_COMMAND("column_create", proc_column_create, 5, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "name");
-  DEF_VAR(vars[2], "output_type");
-  DEF_COMMAND("column_remove", proc_column_remove, 3, vars);
+  DEF_COMMAND("column_remove", proc_column_remove, 2, vars);
 
   DEF_VAR(vars[0], "path");
-  DEF_VAR(vars[1], "output_type");
-  DEF_COMMAND(GRN_EXPR_MISSING_NAME, proc_missing, 2, vars);
+  DEF_COMMAND(GRN_EXPR_MISSING_NAME, proc_missing, 1, vars);
 
   DEF_VAR(vars[0], "view");
   DEF_VAR(vars[1], "table");
-  DEF_VAR(vars[2], "output_type");
-  DEF_COMMAND("view_add", proc_view_add, 3, vars);
+  DEF_COMMAND("view_add", proc_view_add, 2, vars);
 
-  DEF_VAR(vars[0], "output_type");
-  DEF_COMMAND("quit", proc_quit, 1, vars);
-  DEF_COMMAND("shutdown", proc_shutdown, 1, vars);
+  DEF_COMMAND("quit", proc_quit, 0, vars);
+
+  DEF_COMMAND("shutdown", proc_shutdown, 0, vars);
 
   DEF_VAR(vars[0], "target_name");
-  DEF_VAR(vars[1], "output_type");
-  DEF_COMMAND("clearlock", proc_clearlock, 2, vars);
+  DEF_COMMAND("clearlock", proc_clearlock, 1, vars);
 
   DEF_VAR(vars[0], "level");
-  DEF_VAR(vars[1], "output_type");
-  DEF_COMMAND("log_level", proc_log_level, 2, vars);
+  DEF_COMMAND("log_level", proc_log_level, 1, vars);
 
   DEF_VAR(vars[0], "level");
   DEF_VAR(vars[1], "message");
-  DEF_VAR(vars[2], "output_type");
-  DEF_COMMAND("log_put", proc_log_put, 3, vars);
+  DEF_COMMAND("log_put", proc_log_put, 2, vars);
 
-  DEF_VAR(vars[0], "output_type");
-  DEF_COMMAND("log_reopen", proc_log_reopen, 1, vars);
-
+  DEF_COMMAND("log_reopen", proc_log_reopen, 0, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "values");
   DEF_VAR(vars[4], "output_columns");
-  DEF_VAR(vars[5], "output_type");
-  DEF_VAR(vars[6], "id");
-  DEF_COMMAND("add", proc_add, 6, vars);
-  DEF_COMMAND("set", proc_set, 7, vars);
+  DEF_VAR(vars[5], "id");
+  DEF_COMMAND("add", proc_add, 5, vars);
+  DEF_COMMAND("set", proc_set, 6, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
   DEF_VAR(vars[2], "output_columns");
-  DEF_VAR(vars[3], "output_type");
-  DEF_VAR(vars[4], "id");
-  DEF_COMMAND("get", proc_get, 5, vars);
+  DEF_VAR(vars[3], "id");
+  DEF_COMMAND("get", proc_get, 4, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
-  DEF_VAR(vars[2], "output_type");
-  DEF_VAR(vars[3], "id");
-  DEF_COMMAND("delete", proc_delete, 4, vars);
+  DEF_VAR(vars[2], "id");
+  DEF_COMMAND("delete", proc_delete, 3, vars);
 
   DEF_VAR(vars[0], "max");
-  DEF_VAR(vars[1], "output_type");
-  DEF_COMMAND("cache_limit", proc_cache_limit, 2, vars);
+  DEF_COMMAND("cache_limit", proc_cache_limit, 1, vars);
 
-  /* TODO: Take "output_type" argument. Do we need GRN_CONTENT_GQTP? */
   DEF_COMMAND("dump", proc_dump, 0, vars);
 
   DEF_VAR(vars[0], "path");
-  DEF_VAR(vars[1], "output_type");
-  DEF_COMMAND("register", proc_register, 2, vars);
+  DEF_COMMAND("register", proc_register, 1, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);
