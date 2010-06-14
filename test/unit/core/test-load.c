@@ -26,6 +26,8 @@
 void test_columns(void);
 void attributes_bool(void);
 void test_bool(void);
+void attributes_bool_0(void);
+void test_bool_0(void);
 
 static gchar *tmp_directory;
 
@@ -108,7 +110,7 @@ test_columns(void)
 void
 attributes_bool(void)
 {
-  cut_set_attributes("bug", "123",
+  cut_set_attributes("bug", "304",
                      NULL);
 }
 
@@ -123,6 +125,37 @@ test_bool(void)
                  "[\n"
                  "  [\"mori\",true],\n"
                  "  [\"tapo\",false]\n"
+                 "]"));
+  cut_assert_equal_string("[[[2],"
+                          "["
+                          "[\"_id\",\"UInt32\"],"
+                          "[\"_key\",\"ShortText\"],"
+                          "[\"enabled\",\"Bool\"]"
+                          "],"
+                          "[1,\"mori\",true],"
+                          "[2,\"tapo\",false]"
+                          "]]",
+                          send_command("select Users"));
+}
+
+void
+attributes_bool_0(void)
+{
+  cut_set_attributes("bug", "123",
+                     NULL);
+}
+
+void
+test_bool_0(void)
+{
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users enabled COLUMN_SCALAR Bool");
+  cut_assert_equal_string(
+    "2",
+    send_command("load --table Users --columns '_key,enabled'\n"
+                 "[\n"
+                 "  [\"mori\",1],\n"
+                 "  [\"tapo\",0]\n"
                  "]"));
   cut_assert_equal_string("[[[2],"
                           "["
