@@ -25,9 +25,8 @@
 
 void test_columns(void);
 void attributes_bool(void);
-void test_bool(void);
-void attributes_bool_0(void);
-void test_bool_0(void);
+void data_bool(void);
+void test_bool(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -110,53 +109,48 @@ test_columns(void)
 void
 attributes_bool(void)
 {
-  cut_set_attributes("bug", "304",
+  cut_set_attributes("bug", "123, 304",
                      NULL);
 }
 
 void
-test_bool(void)
+data_bool(void)
 {
-  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
-  assert_send_command("column_create Users enabled COLUMN_SCALAR Bool");
-  cut_assert_equal_string(
-    "2",
-    send_command("load --table Users --columns '_key,enabled'\n"
-                 "[\n"
-                 "  [\"mori\",true],\n"
-                 "  [\"tapo\",false]\n"
-                 "]"));
-  cut_assert_equal_string("[[[2],"
-                          "["
-                          "[\"_id\",\"UInt32\"],"
-                          "[\"_key\",\"ShortText\"],"
-                          "[\"enabled\",\"Bool\"]"
-                          "],"
-                          "[1,\"mori\",true],"
-                          "[2,\"tapo\",false]"
-                          "]]",
-                          send_command("select Users"));
+#define ADD_DATUM(label, load_command)                          \
+  gcut_add_datum(label,                                         \
+                 "load-command", G_TYPE_STRING, load_command,   \
+                 NULL)
+
+  ADD_DATUM("symbol",
+            "load --table Users --columns '_key,enabled'\n"
+            "[\n"
+            "  [\"mori\",true],\n"
+            "  [\"tapo\",false]\n"
+            "]");
+  ADD_DATUM("number",
+            "load --table Users --columns '_key,enabled'\n"
+            "[\n"
+            "  [\"mori\",1],\n"
+            "  [\"tapo\",0]\n"
+            "]");
+  ADD_DATUM("string (is this test OK?)",
+            "load --table Users --columns '_key,enabled'\n"
+            "[\n"
+            "  [\"mori\",\"1\"],\n"
+            "  [\"tapo\",\"0\"]\n"
+            "]");
+
+#undef ADD_DATUM
 }
 
 void
-attributes_bool_0(void)
-{
-  cut_set_attributes("bug", "123",
-                     NULL);
-}
-
-void
-test_bool_0(void)
+test_bool(gconstpointer data)
 {
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
   assert_send_command("column_create Users enabled COLUMN_SCALAR Bool");
-  cut_assert_equal_string(
-    "2",
-    send_command("load --table Users --columns '_key,enabled'\n"
-                 "[\n"
-                 "  [\"mori\",1],\n"
-                 "  [\"tapo\",0]\n"
-                 "]"));
+  cut_assert_equal_string("2",
+                          send_command(gcut_data_get_string(data,
+                                                            "load-command")));
   cut_assert_equal_string("[[[2],"
                           "["
                           "[\"_id\",\"UInt32\"],"
