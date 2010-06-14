@@ -428,7 +428,6 @@ grn_ctx_fin(grn_ctx *ctx)
     rc = grn_obj_close(ctx, ctx->impl->outbuf);
     rc = grn_bulk_fin(ctx, &ctx->impl->subbuf);
     {
-      uint32_t i;
       grn_hash **vp;
       grn_obj *value;
       GRN_HASH_EACH(ctx, ctx->impl->expr_vars, eid, NULL, NULL, &vp, {

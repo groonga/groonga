@@ -192,6 +192,9 @@ grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
 grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                         grn_id domain, grn_obj_flags flags);
 
+grn_obj *grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr,
+                                 const char *name, unsigned name_size);
+
 typedef struct _grn_accessor_view grn_accessor_view;
 
 struct _grn_accessor_view {
