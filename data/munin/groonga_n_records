@@ -14,24 +14,27 @@ label = ENV["label"]
 
 command = ARGV.shift
 
-def parse(result)
-  header, body = JSON.parse(result)
-  if header[0].zero?
-    [true, body]
+def parse(success, result)
+  if success
+    begin
+      [success, JSON.parse(result)]
+    rescue JSON::ParserError
+      [false, $!.message]
+    end
   else
-    [false, header[3]]
+    [success, result]
   end
-rescue JSON::ParserError
-  [false, $!.message]
 end
 
 def run(command, *args)
   if @path
     path = Shellwords.shellescape(@path)
-    parse(`#{@groonga} #{path} #{command} #{args.join(' ')}`)
+    result = `#{@groonga} #{path} #{command} #{args.join(' ')} 2>&1`
   else
-    parse(`#{@groonga} -p #{@port} -c #{@host} #{command} #{args.join(' ')}`)
+    groonga = "#{@groonga} -p #{@port} -c #{@host}"
+    result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
   end
+  parse($?.success?, result)
 end
 
 def parse_list(header, list)
