@@ -24,6 +24,8 @@
 #include <str.h>
 
 void test_columns(void);
+void attributes_bool(void);
+void test_bool(void);
 
 static gchar *tmp_directory;
 
@@ -83,11 +85,13 @@ test_columns(void)
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
   assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
-  assert_send_command("load --table Users --columns '_key,name,desc'\n"
-                      "[\n"
-                      "  [\"mori\", \"モリ\", \"タポ\"],\n"
-                      "  [\"tapo\", \"タポ\", \"モリモリモリタポ\"]\n"
-                      "]");
+  cut_assert_equal_string(
+    "2",
+    send_command("load --table Users --columns '_key,name,desc'\n"
+                 "[\n"
+                 "  [\"mori\", \"モリ\", \"タポ\"],\n"
+                 "  [\"tapo\", \"タポ\", \"モリモリモリタポ\"]\n"
+                 "]"));
   cut_assert_equal_string("[[[2],"
                           "["
                           "[\"_id\",\"UInt32\"],"
@@ -97,6 +101,37 @@ test_columns(void)
                           "],"
                           "[1,\"mori\",\"モリ\",\"タポ\"],"
                           "[2,\"tapo\",\"タポ\",\"モリモリモリタポ\"]"
+                          "]]",
+                          send_command("select Users"));
+}
+
+void
+attributes_bool(void)
+{
+  cut_set_attributes("bug", "123",
+                     NULL);
+}
+
+void
+test_bool(void)
+{
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users enabled COLUMN_SCALAR Bool");
+  cut_assert_equal_string(
+    "2",
+    send_command("load --table Users --columns '_key,enabled'\n"
+                 "[\n"
+                 "  [\"mori\",true],\n"
+                 "  [\"tapo\",false]\n"
+                 "]"));
+  cut_assert_equal_string("[[[2],"
+                          "["
+                          "[\"_id\",\"UInt32\"],"
+                          "[\"_key\",\"ShortText\"],"
+                          "[\"enabled\",\"Bool\"]"
+                          "],"
+                          "[1,\"mori\",true],"
+                          "[2,\"tapo\",false]"
                           "]]",
                           send_command("select Users"));
 }
