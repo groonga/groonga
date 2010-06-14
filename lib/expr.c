@@ -98,12 +98,14 @@ grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (caller) { *caller = pctx->caller; }
   if (pctx->proc) {
-    *vars = pctx->proc->vars;
-    *nvars = pctx->proc->nvars;
-    // *vars = grn_expr_get_vars(ctx, (grn_obj *)pctx->proc, nvars);
+    if (vars) {
+      *vars = pctx->proc->vars;
+   // *vars = grn_expr_get_vars(ctx, (grn_obj *)pctx->proc, nvars);
+    }
+    if (nvars) { *nvars = pctx->proc->nvars; }
   } else {
-    *vars = NULL;
-    *nvars = 0;
+    if (vars) { *vars = NULL; }
+    if (nvars) { *nvars = 0; }
   }
   return (grn_obj *)pctx->proc;
 }

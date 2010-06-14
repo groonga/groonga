@@ -92,35 +92,24 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
 {
   uint32_t nvars;
   grn_expr_var *vars;
-
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-
-  if (nvars == 17) {
-    grn_proc_create(ctx,
-                    GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
-                    GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 16);
-  }
+  grn_proc_create(ctx,
+                  GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+                  GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
   return NULL;
 }
 
 static grn_obj *
 proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  uint32_t nvars;
   grn_obj *outbuf = ctx->impl->outbuf;
-  grn_expr_var *vars;
-
-  grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-
   grn_load(ctx, grn_get_ctype(VAR(4)),
            GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
            GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
            GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
            GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)));
   if (ctx->impl->loader.stat != GRN_LOADER_END) {
-    grn_ctx_set_next_expr(ctx, proc);
+    grn_ctx_set_next_expr(ctx, grn_proc_get_info(ctx, user_data, NULL, NULL, NULL));
   } else {
     grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
     if (ctx->impl->loader.table) {
@@ -1702,17 +1691,14 @@ static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
-  grn_obj *obj, *caller;
-  uint32_t nvars;
-  grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
+  grn_obj *obj;
   if (nargs > 0) {
     int max = GRN_INT32_VALUE(args[0]);
     val = (int) (1.0 * max * rand() / (RAND_MAX + 1.0));
   } else {
     val = rand();
   }
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_INT32, 0))) {
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_INT32, 0))) {
     GRN_INT32_SET(ctx, obj, val);
   }
   return obj;
@@ -1721,11 +1707,8 @@ func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  uint32_t nvars;
-  grn_expr_var *vars;
-  grn_obj *obj, *caller;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_TIME, 0))) {
+  grn_obj *obj;
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_TIME, 0))) {
     GRN_TIME_NOW(ctx, obj);
   }
   return obj;
@@ -1744,11 +1727,8 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *obj, *caller;
-  uint32_t nvars;
-  grn_expr_var *vars;
+  grn_obj *obj;
   unsigned char r = GRN_FALSE;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if (nargs == 3) {
     grn_obj *pos = args[0], *pos1 = args[1], *pos2 = args[2], pos1_, pos2_;
     grn_id domain = pos->header.domain;
@@ -1804,7 +1784,7 @@ func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     }
   }
 exit :
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_UINT32, 0))) {
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, r);
   }
   return obj;
@@ -1813,11 +1793,8 @@ exit :
 static grn_obj *
 func_geo_in_rectangle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *obj, *caller;
-  uint32_t nvars;
-  grn_expr_var *vars;
+  grn_obj *obj;
   unsigned char r = GRN_FALSE;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if (nargs == 3) {
     grn_obj *pos = args[0], *pos1 = args[1], *pos2 = args[2], pos1_, pos2_;
     grn_geo_point *p, *p1, *p2;
@@ -1841,7 +1818,7 @@ func_geo_in_rectangle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
     }
   }
 exit :
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_UINT32, 0))) {
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, r);
   }
   return obj;
@@ -1850,11 +1827,8 @@ exit :
 static grn_obj *
 func_geo_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *obj, *caller;
-  uint32_t nvars;
-  grn_expr_var *vars;
+  grn_obj *obj;
   double d = 0;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if (nargs == 2) {
     grn_obj *pos = args[0], *pos1 = args[1], pos1_;
     grn_id domain = pos->header.domain;
@@ -1875,7 +1849,7 @@ func_geo_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     }
   }
 exit :
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_FLOAT, 0))) {
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_FLOAT, 0))) {
     GRN_FLOAT_SET(ctx, obj, d);
   }
   return obj;
@@ -1884,11 +1858,8 @@ exit :
 static grn_obj *
 func_geo_distance2(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *obj, *caller;
-  uint32_t nvars;
-  grn_expr_var *vars;
+  grn_obj *obj;
   double d = 0;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
   if (nargs == 2) {
     grn_obj *pos = args[0], *pos1 = args[1], pos1_;
     grn_id domain = pos->header.domain;
@@ -1909,7 +1880,7 @@ func_geo_distance2(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     }
   }
 exit :
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_FLOAT, 0))) {
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_FLOAT, 0))) {
     GRN_FLOAT_SET(ctx, obj, d);
   }
   return obj;
@@ -1918,12 +1889,8 @@ exit :
 static grn_obj *
 func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *obj, *caller;
-  uint32_t nvars;
-  grn_expr_var *vars;
+  grn_obj *obj;
   double d = 0;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
-
   if (nargs == 2) {
     grn_obj *pos = args[0], *pos1 = args[1], pos1_;
     grn_id domain = pos->header.domain;
@@ -1978,7 +1945,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     }
   }
 exit :
-  if ((obj = grn_expr_alloc(ctx, caller, GRN_DB_FLOAT, 0))) {
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_FLOAT, 0))) {
     GRN_FLOAT_SET(ctx, obj, d);
   }
   return obj;
