@@ -157,11 +157,6 @@ typedef struct {
   grn_loader_stat stat;
 } grn_loader;
 
-typedef struct {
-  uint32_t nvars;
-  grn_expr_var *vars;
-} grn_expr_vars;
-
 #define GRN_STACK_SIZE 1024
 #define GRN_CTX_N_SEGMENTS 512
 

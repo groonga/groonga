@@ -179,6 +179,19 @@ struct _grn_proc {
   //  grn_obj results[16];
 };
 
+#define GRN_PROC_GET_VAR(name) (grn_proc_get_var(ctx, user_data, name, strlen(name)))
+#define GRN_PROC_GET_VAR_BY_OFFSET(offset) (grn_proc_get_var_by_offset(ctx, user_data, offset))
+#define GRN_PROC_ALLOC(offset) (grn_proc_alloc(ctx, user_data, domain, flags))
+
+grn_obj *grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
+                          const char *name, unsigned name_size);
+
+grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
+                                    unsigned int offset);
+
+grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
+                        grn_id domain, grn_obj_flags flags);
+
 typedef struct _grn_accessor_view grn_accessor_view;
 
 struct _grn_accessor_view {

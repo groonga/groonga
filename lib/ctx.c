@@ -252,7 +252,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   CRITICAL_SECTION_INIT(ctx->impl->lock);
   ctx->impl->db = NULL;
 
-  ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_expr_vars), 0);
+  ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_obj *), 0);
   ctx->impl->stack_curr = 0;
   ctx->impl->qe_next = NULL;
   ctx->impl->parser = NULL;
@@ -429,13 +429,15 @@ grn_ctx_fin(grn_ctx *ctx)
     rc = grn_bulk_fin(ctx, &ctx->impl->subbuf);
     {
       uint32_t i;
-      grn_expr_var *v;
-      grn_expr_vars *vp;
-      GRN_HASH_EACH(ctx, ctx->impl->expr_vars, id, NULL, NULL, &vp, {
-        for (v = vp->vars, i = vp->nvars; i; v++, i--) {
-          GRN_OBJ_FIN(ctx, &v->value);
+      grn_hash **vp;
+      grn_obj *value;
+      GRN_HASH_EACH(ctx, ctx->impl->expr_vars, eid, NULL, NULL, &vp, {
+        if (*vp) {
+          GRN_HASH_EACH(ctx, *vp, id, NULL, NULL, &value, {
+            GRN_OBJ_FIN(ctx, value);
+          });
         }
-        GRN_FREE(vp->vars);
+        grn_hash_close(ctx, *vp);
       });
     }
     grn_hash_close(ctx, ctx->impl->expr_vars);
@@ -869,8 +871,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
         v = GRN_TEXT_VALUE(&buf);
         get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
       } else {
-        if (!(val = grn_expr_get_var(ctx, expr, v, l)) &&
-            !(val = grn_expr_add_var(ctx, expr, v, l))) {
+        if (!(val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
           val = &buf;
         }
         grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
@@ -919,8 +920,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
             p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
             v = GRN_TEXT_VALUE(&buf);
             get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
-          } else if ((val = grn_expr_get_var(ctx, expr, v, l)) ||
-                     (val = grn_expr_add_var(ctx, expr, v, l))) {
+          } else if ((val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
             grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
             p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
           } else {

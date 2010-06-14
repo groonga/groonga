@@ -31,6 +31,8 @@
 /**** globals for procs ****/
 const char *grn_admin_html_path = NULL;
 
+#define VAR GRN_PROC_GET_VAR_BY_OFFSET
+
 /**** procs ****/
 
 #define DEFAULT_LIMIT           10
@@ -43,28 +45,27 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+  grn_content_type ct = ctx->impl->output_type;
   grn_obj *outbuf = ctx->impl->outbuf;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 16) ? grn_get_ctype(&vars[15].value) : GRN_CONTENT_JSON;
 
   if (nvars == 16) {
-    int offset = GRN_TEXT_LEN(&vars[7].value)
-      ? grn_atoi(GRN_TEXT_VALUE(&vars[7].value), GRN_BULK_CURR(&vars[7].value), NULL)
+    int offset = GRN_TEXT_LEN(VAR(7))
+      ? grn_atoi(GRN_TEXT_VALUE(VAR(7)), GRN_BULK_CURR(VAR(7)), NULL)
       : 0;
-    int limit = GRN_TEXT_LEN(&vars[8].value)
-      ? grn_atoi(GRN_TEXT_VALUE(&vars[8].value), GRN_BULK_CURR(&vars[8].value), NULL)
+    int limit = GRN_TEXT_LEN(VAR(8))
+      ? grn_atoi(GRN_TEXT_VALUE(VAR(8)), GRN_BULK_CURR(VAR(8)), NULL)
       : DEFAULT_LIMIT;
-    char *output_columns = GRN_TEXT_VALUE(&vars[6].value);
-    uint32_t output_columns_len = GRN_TEXT_LEN(&vars[6].value);
-    char *drilldown_output_columns = GRN_TEXT_VALUE(&vars[11].value);
-    uint32_t drilldown_output_columns_len = GRN_TEXT_LEN(&vars[11].value);
-    int drilldown_offset = GRN_TEXT_LEN(&vars[12].value)
-      ? grn_atoi(GRN_TEXT_VALUE(&vars[12].value), GRN_BULK_CURR(&vars[12].value), NULL)
+    char *output_columns = GRN_TEXT_VALUE(VAR(6));
+    uint32_t output_columns_len = GRN_TEXT_LEN(VAR(6));
+    char *drilldown_output_columns = GRN_TEXT_VALUE(VAR(11));
+    uint32_t drilldown_output_columns_len = GRN_TEXT_LEN(VAR(11));
+    int drilldown_offset = GRN_TEXT_LEN(VAR(12))
+      ? grn_atoi(GRN_TEXT_VALUE(VAR(12)), GRN_BULK_CURR(VAR(12)), NULL)
       : 0;
-    int drilldown_limit = GRN_TEXT_LEN(&vars[13].value)
-      ? grn_atoi(GRN_TEXT_VALUE(&vars[13].value), GRN_BULK_CURR(&vars[13].value), NULL)
+    int drilldown_limit = GRN_TEXT_LEN(VAR(13))
+      ? grn_atoi(GRN_TEXT_VALUE(VAR(13)), GRN_BULK_CURR(VAR(13)), NULL)
       : DEFAULT_DRILLDOWN_LIMIT;
     if (!output_columns_len) {
       output_columns = DEFAULT_OUTPUT_COLUMNS;
@@ -76,19 +77,19 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
 
     if (grn_select(ctx, outbuf, ct,
-                   GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
-                   GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
-                   GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
-                   GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value),
-                   GRN_TEXT_VALUE(&vars[4].value), GRN_TEXT_LEN(&vars[4].value),
-                   GRN_TEXT_VALUE(&vars[5].value), GRN_TEXT_LEN(&vars[5].value),
+                   GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+                   GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
+                   GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
+                   GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)),
+                   GRN_TEXT_VALUE(VAR(4)), GRN_TEXT_LEN(VAR(4)),
+                   GRN_TEXT_VALUE(VAR(5)), GRN_TEXT_LEN(VAR(5)),
                    output_columns, output_columns_len,
                    offset, limit,
-                   GRN_TEXT_VALUE(&vars[9].value), GRN_TEXT_LEN(&vars[9].value),
-                   GRN_TEXT_VALUE(&vars[10].value), GRN_TEXT_LEN(&vars[10].value),
+                   GRN_TEXT_VALUE(VAR(9)), GRN_TEXT_LEN(VAR(9)),
+                   GRN_TEXT_VALUE(VAR(10)), GRN_TEXT_LEN(VAR(10)),
                    drilldown_output_columns, drilldown_output_columns_len,
                    drilldown_offset, drilldown_limit,
-                   GRN_TEXT_VALUE(&vars[14].value), GRN_TEXT_LEN(&vars[14].value))) {
+                   GRN_TEXT_VALUE(VAR(14)), GRN_TEXT_LEN(VAR(14)))) {
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 15);
@@ -101,14 +102,12 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 17) ? grn_get_ctype(&vars[16].value) : GRN_CONTENT_JSON;
 
   if (nvars == 17) {
     grn_proc_create(ctx,
-                    GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
+                    GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
                     GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 16);
@@ -120,19 +119,17 @@ static grn_obj *
 proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
-  grn_content_type ct;
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_expr_var *vars;
+
   grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-  ct = (nvars >= 6) ? grn_get_ctype(&vars[5].value) : GRN_CONTENT_JSON;
-
   if (nvars == 6) {
-    grn_load(ctx, grn_get_ctype(&vars[4].value),
-             GRN_TEXT_VALUE(&vars[1].value), GRN_TEXT_LEN(&vars[1].value),
-             GRN_TEXT_VALUE(&vars[2].value), GRN_TEXT_LEN(&vars[2].value),
-             GRN_TEXT_VALUE(&vars[0].value), GRN_TEXT_LEN(&vars[0].value),
-             GRN_TEXT_VALUE(&vars[3].value), GRN_TEXT_LEN(&vars[3].value));
+    grn_load(ctx, grn_get_ctype(VAR(4)),
+             GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
+             GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
+             GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+             GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)));
     if (ctx->impl->loader.stat != GRN_LOADER_END) {
       grn_ctx_set_next_expr(ctx, proc);
     } else {
@@ -153,11 +150,10 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+  grn_content_type ct = ctx->impl->output_type;
   grn_obj *outbuf = ctx->impl->outbuf;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
 
   if (nvars == 1) {
     grn_timeval now;
@@ -335,38 +331,36 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 6) ? grn_get_ctype(&vars[5].value) : GRN_CONTENT_JSON;
 
   if (nvars == 6) {
     grn_obj *table;
     const char *rest;
-    grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[1].value),
-                                   GRN_BULK_CURR(&vars[1].value), &rest);
-    if (GRN_TEXT_VALUE(&vars[1].value) == rest) {
-      flags = grn_parse_table_create_flags(ctx, GRN_TEXT_VALUE(&vars[1].value),
-                                           GRN_BULK_CURR(&vars[1].value));
+    grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(VAR(1)),
+                                   GRN_BULK_CURR(VAR(1)), &rest);
+    if (GRN_TEXT_VALUE(VAR(1)) == rest) {
+      flags = grn_parse_table_create_flags(ctx, GRN_TEXT_VALUE(VAR(1)),
+                                           GRN_BULK_CURR(VAR(1)));
       if (ctx->rc) {
         return NULL;
       }
     }
-    if (GRN_TEXT_LEN(&vars[0].value)) {
+    if (GRN_TEXT_LEN(VAR(0))) {
       flags |= GRN_OBJ_PERSISTENT;
       table = grn_table_create(ctx,
-                               GRN_TEXT_VALUE(&vars[0].value),
-                               GRN_TEXT_LEN(&vars[0].value),
+                               GRN_TEXT_VALUE(VAR(0)),
+                               GRN_TEXT_LEN(VAR(0)),
                                NULL, flags,
-                               grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[2].value),
-                                           GRN_TEXT_LEN(&vars[2].value)),
-                               grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
-                                           GRN_TEXT_LEN(&vars[3].value)));
+                               grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(2)),
+                                           GRN_TEXT_LEN(VAR(2))),
+                               grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
+                                           GRN_TEXT_LEN(VAR(3))));
       if (table) {
         grn_obj_set_info(ctx, table,
                          GRN_INFO_DEFAULT_TOKENIZER,
-                         grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[4].value),
-                                     GRN_TEXT_LEN(&vars[4].value)));
+                         grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(4)),
+                                     GRN_TEXT_LEN(VAR(4))));
         grn_obj_unlink(ctx, table);
       }
     } else {
@@ -383,16 +377,14 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
 
   if (nvars == 2) {
     grn_obj *table;
 
-    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
-                             GRN_TEXT_LEN(&vars[0].value));
+    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
+                             GRN_TEXT_LEN(VAR(0)));
 
     if (table) {
       grn_obj_remove(ctx,table);
@@ -410,40 +402,38 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 6) ? grn_get_ctype(&vars[5].value) : GRN_CONTENT_JSON;
 
   if (nvars == 6) {
     grn_obj *column, *table, *type;
     const char *rest;
-    grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(&vars[2].value),
-                                   GRN_BULK_CURR(&vars[2].value), &rest);
-    if (GRN_TEXT_VALUE(&vars[2].value) == rest) {
-      flags = grn_parse_column_create_flags(ctx, GRN_TEXT_VALUE(&vars[2].value),
-                                            GRN_BULK_CURR(&vars[2].value));
+    grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(VAR(2)),
+                                   GRN_BULK_CURR(VAR(2)), &rest);
+    if (GRN_TEXT_VALUE(VAR(2)) == rest) {
+      flags = grn_parse_column_create_flags(ctx, GRN_TEXT_VALUE(VAR(2)),
+                                            GRN_BULK_CURR(VAR(2)));
       if (ctx->rc) {
         return NULL;
       }
     }
-    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
-                        GRN_TEXT_LEN(&vars[0].value));
-    type = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[3].value),
-                       GRN_TEXT_LEN(&vars[3].value));
-    if (GRN_TEXT_LEN(&vars[1].value)) { flags |= GRN_OBJ_PERSISTENT; }
+    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
+                        GRN_TEXT_LEN(VAR(0)));
+    type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
+                       GRN_TEXT_LEN(VAR(3)));
+    if (GRN_TEXT_LEN(VAR(1))) { flags |= GRN_OBJ_PERSISTENT; }
     column = grn_column_create(ctx, table,
-                               GRN_TEXT_VALUE(&vars[1].value),
-                               GRN_TEXT_LEN(&vars[1].value),
+                               GRN_TEXT_VALUE(VAR(1)),
+                               GRN_TEXT_LEN(VAR(1)),
                                NULL, flags, type);
     if (column) {
-      if (GRN_TEXT_LEN(&vars[4].value)) {
+      if (GRN_TEXT_LEN(VAR(4))) {
         grn_obj sources, source_ids, **p, **pe;
         GRN_PTR_INIT(&sources, GRN_OBJ_VECTOR, GRN_ID_NIL);
         GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
         grn_obj_columns(ctx, type,
-                        GRN_TEXT_VALUE(&vars[4].value),
-                        GRN_TEXT_LEN(&vars[4].value),
+                        GRN_TEXT_VALUE(VAR(4)),
+                        GRN_TEXT_LEN(VAR(4)),
                         &sources);
         p = (grn_obj **)GRN_BULK_HEAD(&sources);
         pe = (grn_obj **)GRN_BULK_CURR(&sources);
@@ -478,21 +468,19 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 3) ? grn_get_ctype(&vars[2].value) : GRN_CONTENT_JSON;
 
   if (nvars == 3) {
     grn_obj *table, *col;
     char *colname,fullname[GRN_TABLE_MAX_KEY_SIZE];
     unsigned colname_len,fullname_len;
 
-    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
-                             GRN_TEXT_LEN(&vars[0].value));
+    table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
+                             GRN_TEXT_LEN(VAR(0)));
 
-    colname = GRN_TEXT_VALUE(&vars[1].value);
-    colname_len = GRN_TEXT_LEN(&vars[1].value);
+    colname = GRN_TEXT_VALUE(VAR(1));
+    colname_len = GRN_TEXT_LEN(VAR(1));
 
     if ((fullname_len = grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE))) {
       fullname[fullname_len] = GRN_DB_DELIMITER;
@@ -714,19 +702,18 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+  grn_content_type ct = ctx->impl->output_type;
   grn_obj *outbuf = ctx->impl->outbuf;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
 
   if (nvars == 2) {
     grn_obj *table;
 
     grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-    if ((table = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value),
-                             GRN_TEXT_LEN(&vars[0].value)))) {
+    if ((table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
+                             GRN_TEXT_LEN(VAR(0))))) {
       grn_hash *cols;
       if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                   GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
@@ -769,8 +756,8 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
       grn_obj_unlink(ctx, table);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "table '%.*s' is not exist.",
-        GRN_TEXT_LEN(&vars[0].value),
-        GRN_TEXT_VALUE(&vars[0].value));
+        GRN_TEXT_LEN(VAR(0)),
+        GRN_TEXT_VALUE(VAR(0)));
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 2);
@@ -783,11 +770,10 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+  grn_content_type ct = ctx->impl->output_type;
   grn_obj *outbuf = ctx->impl->outbuf;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
 
   if (nvars == 1) {
     grn_table_cursor *cur;
@@ -899,13 +885,13 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
   if (nvars == 2 &&
-      (plen = GRN_TEXT_LEN(&vars[0].value)) + grn_admin_html_path_len < PATH_MAX) {
+      (plen = GRN_TEXT_LEN(VAR(0))) + grn_admin_html_path_len < PATH_MAX) {
     char path[PATH_MAX];
     memcpy(path, grn_admin_html_path, grn_admin_html_path_len);
     path[grn_admin_html_path_len] = PATH_SEPARATOR[0];
     grn_str_url_path_normalize(ctx,
-                               GRN_TEXT_VALUE(&vars[0].value),
-                               GRN_TEXT_LEN(&vars[0].value),
+                               GRN_TEXT_VALUE(VAR(0)),
+                               GRN_TEXT_LEN(VAR(0)),
                                path + grn_admin_html_path_len + 1,
                                PATH_MAX - grn_admin_html_path_len - 1);
     grn_bulk_put_from_file(ctx, outbuf, path);
@@ -920,18 +906,16 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 3) ? grn_get_ctype(&vars[2].value) : GRN_CONTENT_JSON;
 
   if (nvars == 3) {
     grn_obj *view = grn_ctx_get(ctx,
-                                GRN_TEXT_VALUE(&vars[0].value),
-                                GRN_TEXT_LEN(&vars[0].value));
+                                GRN_TEXT_VALUE(VAR(0)),
+                                GRN_TEXT_LEN(VAR(0)));
     grn_obj *table = grn_ctx_get(ctx,
-                                GRN_TEXT_VALUE(&vars[1].value),
-                                GRN_TEXT_LEN(&vars[1].value));
+                                GRN_TEXT_VALUE(VAR(1)),
+                                GRN_TEXT_LEN(VAR(1)));
     grn_view_add(ctx, view, table);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 3);
@@ -944,10 +928,8 @@ proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
 
   if (nvars == 1) {
     ctx->stat = GRN_CTX_QUITTING;
@@ -962,10 +944,8 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
 
   if (nvars == 1) {
     grn_gctx.stat = GRN_CTX_QUIT;
@@ -982,17 +962,15 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   int olen;
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
   grn_obj *obj;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
 
   if (nvars == 2) {
-    olen = GRN_TEXT_LEN(&vars[0].value);
+    olen = GRN_TEXT_LEN(VAR(0));
 
     if (olen) {
-      obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(&vars[0].value), olen);
+      obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), olen);
     } else {
       obj = ctx->impl->db;
     }
@@ -1017,15 +995,13 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
 
   if (nvars == 2) {
     char *p;
-    if (GRN_TEXT_LEN(&vars[0].value) &&
-        (p = strchr(slev, GRN_TEXT_VALUE(&vars[0].value)[0]))) {
+    if (GRN_TEXT_LEN(VAR(0)) &&
+        (p = strchr(slev, GRN_TEXT_VALUE(VAR(0))[0]))) {
       info.max_level = (int)(p - slev);
       info.flags = GRN_LOG_TIME|GRN_LOG_MESSAGE;
       info.func = NULL;
@@ -1045,17 +1021,15 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 3) ? grn_get_ctype(&vars[2].value) : GRN_CONTENT_JSON;
 
   if (nvars == 3) {
     char *p;
-    if (GRN_TEXT_LEN(&vars[0].value) &&
-        (p = strchr(slev, GRN_TEXT_VALUE(&vars[0].value)[0]))) {
-      GRN_TEXT_PUTC(ctx, &vars[1].value, '\0');
-      GRN_LOG(ctx, (int)(p - slev), "%s", GRN_TEXT_VALUE(&vars[1].value));
+    if (GRN_TEXT_LEN(VAR(0)) &&
+        (p = strchr(slev, GRN_TEXT_VALUE(VAR(0))[0]))) {
+      GRN_TEXT_PUTC(ctx, VAR(1), '\0');
+      GRN_LOG(ctx, (int)(p - slev), "%s", GRN_TEXT_VALUE(VAR(1)));
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
     }
@@ -1070,10 +1044,8 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 1) ? grn_get_ctype(&vars[0].value) : GRN_CONTENT_JSON;
 
   if (nvars == 1) {
     grn_log_reopen(ctx);
@@ -1096,22 +1068,21 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+  grn_content_type ct = ctx->impl->output_type;
   grn_obj *outbuf = ctx->impl->outbuf;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 6) ? grn_get_ctype(&vars[5].value) : GRN_CONTENT_JSON;
 
   if (nvars == 6) {
     grn_obj *table = grn_ctx_get(ctx,
-                                 GRN_TEXT_VALUE(&vars[0].value),
-                                 GRN_TEXT_LEN(&vars[0].value));
+                                 GRN_TEXT_VALUE(VAR(0)),
+                                 GRN_TEXT_LEN(VAR(0)));
     if (table) {
       grn_id id;
-      if (GRN_TEXT_LEN(&vars[1].value)) {
+      if (GRN_TEXT_LEN(VAR(1))) {
         if ((id = grn_table_get(ctx, table,
-                                GRN_TEXT_VALUE(&vars[1].value),
-                                GRN_TEXT_LEN(&vars[1].value)))) {
+                                GRN_TEXT_VALUE(VAR(1)),
+                                GRN_TEXT_LEN(VAR(1))))) {
           /* todo */
           {
             grn_obj obj;
@@ -1120,8 +1091,8 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
             GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
             GRN_RECORD_SET(ctx, &obj, id);
             grn_obj_columns(ctx, table,
-                            GRN_TEXT_VALUE(&vars[4].value),
-                            GRN_TEXT_LEN(&vars[4].value), &format.columns);
+                            GRN_TEXT_VALUE(VAR(4)),
+                            GRN_TEXT_LEN(VAR(4)), &format.columns);
             switch (ct) {
             case GRN_CONTENT_JSON:
               format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
@@ -1165,14 +1136,15 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_rc
-proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
+proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
+                            grn_expr_var *vars, grn_obj *outbuf,
                             grn_obj **table, grn_id *id)
 {
   const char *table_text, *id_text, *key_text;
   int table_length, id_length, key_length;
 
-  table_text = GRN_TEXT_VALUE(&vars[0].value);
-  table_length = GRN_TEXT_LEN(&vars[0].value);
+  table_text = GRN_TEXT_VALUE(VAR(0));
+  table_length = GRN_TEXT_LEN(VAR(0));
   if (table_length == 0) {
     ERR(GRN_INVALID_ARGUMENT, "table isn't specified");
     return ctx->rc;
@@ -1185,10 +1157,10 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_expr_var *vars, grn_obj *outbuf,
     return ctx->rc;
   }
 
-  key_text = GRN_TEXT_VALUE(&vars[1].value);
-  key_length = GRN_TEXT_LEN(&vars[1].value);
-  id_text = GRN_TEXT_VALUE(&vars[4].value);
-  id_length = GRN_TEXT_LEN(&vars[4].value);
+  key_text = GRN_TEXT_VALUE(VAR(1));
+  key_length = GRN_TEXT_LEN(VAR(1));
+  id_text = GRN_TEXT_VALUE(VAR(4));
+  id_length = GRN_TEXT_LEN(VAR(4));
   switch ((*table)->header.type) {
   case GRN_TABLE_NO_KEY:
     if (key_length) {
@@ -1263,28 +1235,27 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+  grn_content_type ct = ctx->impl->output_type;
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_obj *table = NULL;
   grn_id id;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
 
   if (nvars != 5) {
     ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 5);
     return NULL;
   }
 
-  if (!proc_get_resolve_parameters(ctx, vars, outbuf, &table, &id)) {
+  if (!proc_get_resolve_parameters(ctx, user_data, vars, outbuf, &table, &id)) {
     grn_obj obj;
     grn_obj_format format;
     GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
     GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
     GRN_RECORD_SET(ctx, &obj, id);
     grn_obj_columns(ctx, table,
-                    GRN_TEXT_VALUE(&vars[2].value),
-                    GRN_TEXT_LEN(&vars[2].value), &format.columns);
+                    GRN_TEXT_VALUE(VAR(2)),
+                    GRN_TEXT_LEN(VAR(2)), &format.columns);
     switch (ct) {
     case GRN_CONTENT_JSON:
       format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
@@ -1312,26 +1283,24 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_rc rc;
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 4) ? grn_get_ctype(&vars[3].value) : GRN_CONTENT_JSON;
 
   if (nvars == 4) {
     grn_obj *table = grn_ctx_get(ctx,
-                                 GRN_TEXT_VALUE(&vars[0].value),
-                                 GRN_TEXT_LEN(&vars[0].value));
+                                 GRN_TEXT_VALUE(VAR(0)),
+                                 GRN_TEXT_LEN(VAR(0)));
     if (table) {
-      if (GRN_TEXT_LEN(&vars[1].value) && GRN_TEXT_LEN(&vars[3].value)) {
+      if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(3))) {
         ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
-      } else if (GRN_TEXT_LEN(&vars[1].value)) {
-        rc = grn_table_delete(ctx, table, GRN_TEXT_VALUE(&vars[1].value),
-                                          GRN_TEXT_LEN(&vars[1].value));
-      } else if (GRN_TEXT_LEN(&vars[3].value)) {
+      } else if (GRN_TEXT_LEN(VAR(1))) {
+        rc = grn_table_delete(ctx, table, GRN_TEXT_VALUE(VAR(1)),
+                                          GRN_TEXT_LEN(VAR(1)));
+      } else if (GRN_TEXT_LEN(VAR(3))) {
         const char *end;
-        grn_id id = grn_atoui(GRN_TEXT_VALUE(&vars[3].value),
-                              GRN_BULK_CURR(&vars[3].value), &end);
-        if (end == GRN_BULK_CURR(&vars[3].value)) {
+        grn_id id = grn_atoui(GRN_TEXT_VALUE(VAR(3)),
+                              GRN_BULK_CURR(VAR(3)), &end);
+        if (end == GRN_BULK_CURR(VAR(3))) {
           rc = grn_table_delete_by_id(ctx, table, id);
         } else {
           ERR(GRN_INVALID_ARGUMENT, "invalid id");
@@ -1890,16 +1859,16 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+
   grn_obj *outbuf = ctx->impl->outbuf;
   uint32_t *mp = grn_cach_max_nentries();
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
+
   grn_text_lltoa(ctx, outbuf, *mp);
-  if (nvars == 2 && GRN_TEXT_LEN(&vars[0].value)) {
+  if (nvars == 2 && GRN_TEXT_LEN(VAR(0))) {
     const char *rest;
-    uint32_t max = grn_atoui(GRN_TEXT_VALUE(&vars[0].value),
-                             GRN_BULK_CURR(&vars[0].value), &rest);
+    uint32_t max = grn_atoui(GRN_TEXT_VALUE(VAR(0)),
+                             GRN_BULK_CURR(VAR(0)), &rest);
     *mp = max;
   }
   return NULL;
@@ -1910,12 +1879,12 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t nvars;
   grn_expr_var *vars;
-  grn_content_type ct;
+
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-  ct = (nvars >= 2) ? grn_get_ctype(&vars[1].value) : GRN_CONTENT_JSON;
-  if (GRN_TEXT_LEN(&vars[0].value)) {
+
+  if (GRN_TEXT_LEN(VAR(0))) {
     const char *name;
-    name = GRN_TEXT_VALUE(&vars[0].value);
+    name = GRN_TEXT_VALUE(VAR(0));
     grn_db_register_by_name(ctx, name);
   }
   return NULL;
