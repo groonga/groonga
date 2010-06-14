@@ -114,21 +114,19 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   grn_obj *proc = grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-  if (nvars == 6) {
-    grn_load(ctx, grn_get_ctype(VAR(4)),
-             GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
-             GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
-             GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
-             GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)));
-    if (ctx->impl->loader.stat != GRN_LOADER_END) {
-      grn_ctx_set_next_expr(ctx, proc);
-    } else {
-      grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
-      if (ctx->impl->loader.table) {
-        grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
-      }
-      /* maybe necessary : grn_ctx_loader_clear(ctx); */
+  grn_load(ctx, grn_get_ctype(VAR(4)),
+           GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
+           GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
+           GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+           GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)));
+  if (ctx->impl->loader.stat != GRN_LOADER_END) {
+    grn_ctx_set_next_expr(ctx, proc);
+  } else {
+    grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
+    if (ctx->impl->loader.table) {
+      grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
     }
+    /* maybe necessary : grn_ctx_loader_clear(ctx); */
   }
   return NULL;
 }
@@ -1080,11 +1078,6 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
 
-  if (nvars != 5) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid argument number. %d for %d", nvars, 5);
-    return NULL;
-  }
-
   if (!proc_get_resolve_parameters(ctx, user_data, vars, outbuf, &table, &id)) {
     grn_obj obj;
     grn_obj_format format;
@@ -2023,7 +2016,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[14], "drilldown_limit");
   DEF_VAR(vars[15], "cache");
   DEF_COMMAND("define_selector", proc_define_selector, 16, vars);
-  DEF_COMMAND("select", proc_select, 16, vars + 1);
+  DEF_COMMAND("select", proc_select, 15, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
