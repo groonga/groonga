@@ -621,11 +621,7 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
 {
   unsigned int send_id, receive_id;
   int flags = 0;
-  grn_rc rc = GRN_SUCCESS;
-  gchar *result_status_end;
   GString *result;
-  const gchar *result_status_start_mark = "[[";
-  const gchar *result_status_end_mark = "],";
   const gchar **lines;
 
   result = g_string_new(NULL);
@@ -639,31 +635,10 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
                               &flags);
     cut_assert_equal_uint(send_id, receive_id);
     g_string_append_len(result, command_result, command_result_length);
+    grn_test_assert_context(context,
+                            cut_message("<%s>:<%s>", command, result->str));
   }
 
-  cut_assert_not_equal_uint(0, result->len, cut_message("<%s>", command));
-  if (g_str_has_prefix(result->str, result_status_start_mark)) {
-    const gchar *result_status_start;
-    const gchar *rest;
-
-    result_status_start = result->str + strlen(result_status_start_mark);
-    rc = grn_atoi(result_status_start, result->str + result->len, &rest);
-    cut_assert_not_equal_string(result_status_start, rest);
-    grn_test_assert(rc, cut_message("<%s>", result->str));
-  }
-
-  result_status_end = g_strstr_len(result->str, result->len,
-                                   result_status_end_mark);
-  if (result_status_end) {
-    const gchar *result_end_mark = "]";
-
-    g_string_erase(result,
-                   0,
-                   result_status_end - result->str +
-                   strlen(result_status_end_mark));
-    g_string_truncate(result,
-                      result->len - strlen(result_end_mark));
-  }
   return cut_take_strdup(g_string_free(result, FALSE));
 }
 
