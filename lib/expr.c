@@ -687,11 +687,11 @@ grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned 
   grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
   if (vars) {
     int added = 0;
-    char name_buf[256];
+    char name_buf[16];
     if (!name_size) {
       char *rest;
       name_buf[0] = '$';
-      grn_itoa((int)GRN_HASH_SIZE(vars) + 1, name_buf + 1, name_buf + 256, &rest);
+      grn_itoa((int)GRN_HASH_SIZE(vars) + 1, name_buf + 1, name_buf + 16, &rest);
       name_size = rest - name_buf;
       name = name_buf;
     }
@@ -3403,7 +3403,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   int i, m = 0, o = 0;
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
-  grn_expr *e = (grn_expr *)expr;  if (!e->nvars || !(var = &e->vars[0].value)) { return NULL; }
+  grn_expr *e = (grn_expr *)expr;
+  if (!(var = grn_expr_get_var_by_offset(ctx, expr, 0))) { return NULL; }
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
