@@ -639,27 +639,31 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  if (!e->vars) {
-    if (!(e->vars = GRN_MALLOCN(grn_expr_var, GRN_STACK_SIZE))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "malloc failed");
+  if (DB_OBJ(expr)->id & GRN_OBJ_TMP_OBJECT) {
+    res = grn_expr_get_or_add_var(ctx, expr, name, name_size);
+  } else {
+    if (!e->vars) {
+      if (!(e->vars = GRN_MALLOCN(grn_expr_var, GRN_STACK_SIZE))) {
+        ERR(GRN_NO_MEMORY_AVAILABLE, "malloc failed");
+      }
     }
-  }
-  if (e->vars && e->nvars < GRN_STACK_SIZE) {
-    v = e->vars + e->nvars++;
-    if (name_size) {
-      GRN_TEXT_PUT(ctx, &e->name_buf, name, name_size);
-    } else {
-      uint32_t ol = GRN_TEXT_LEN(&e->name_buf);
-      GRN_TEXT_PUTC(ctx, &e->name_buf, '$');
-      grn_text_itoa(ctx, &e->name_buf, e->nvars);
-      name_size = GRN_TEXT_LEN(&e->name_buf) - ol;
-    }
-    v->name_size = name_size;
-    res = &v->value;
-    GRN_VOID_INIT(res);
-    for (i = e->nvars, p = GRN_TEXT_VALUE(&e->name_buf), v = e->vars; i; i--, v++) {
-      v->name = p;
-      p += v->name_size;
+    if (e->vars && e->nvars < GRN_STACK_SIZE) {
+      v = e->vars + e->nvars++;
+      if (name_size) {
+        GRN_TEXT_PUT(ctx, &e->name_buf, name, name_size);
+      } else {
+        uint32_t ol = GRN_TEXT_LEN(&e->name_buf);
+        GRN_TEXT_PUTC(ctx, &e->name_buf, '$');
+        grn_text_itoa(ctx, &e->name_buf, e->nvars);
+        name_size = GRN_TEXT_LEN(&e->name_buf) - ol;
+      }
+      v->name_size = name_size;
+      res = &v->value;
+      GRN_VOID_INIT(res);
+      for (i = e->nvars, p = GRN_TEXT_VALUE(&e->name_buf), v = e->vars; i; i--, v++) {
+        v->name = p;
+        p += v->name_size;
+      }
     }
   }
   GRN_API_RETURN(res);
@@ -683,6 +687,14 @@ grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned 
   grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
   if (vars) {
     int added = 0;
+    char name_buf[256];
+    if (!name_size) {
+      char *rest;
+      name_buf[0] = '$';
+      grn_itoa((int)GRN_HASH_SIZE(vars) + 1, name_buf + 1, name_buf + 256, &rest);
+      name_size = rest - name_buf;
+      name = name_buf;
+    }
     grn_hash_add(ctx, vars, name, name_size, (void **)&res, &added);
     if (added) { GRN_TEXT_INIT(res, 0); }
   }
