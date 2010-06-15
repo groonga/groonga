@@ -23,15 +23,12 @@
 static grn_obj *
 func_cast(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *obj, *caller;
-  uint32_t nvars;
-  grn_expr_var *vars;
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, &caller);
+  grn_obj *obj;
   if (nargs == 2 && GRN_DB_OBJP(args[1])) {
-    obj = grn_expr_alloc(ctx, caller, DB_OBJ(args[1])->id, 0);
+    obj = GRN_PROC_ALLOC(DB_OBJ(args[1])->id, 0);
     grn_obj_cast(ctx, args[0], obj, 0);
   } else {
-    obj = grn_expr_alloc(ctx, caller, GRN_DB_INT32, 0);
+    obj = GRN_PROC_ALLOC(GRN_DB_INT32, 0);
   }
   return obj;
 }
