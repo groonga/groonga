@@ -646,7 +646,14 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
   }
   if (e->vars && e->nvars < GRN_STACK_SIZE) {
     v = e->vars + e->nvars++;
-    GRN_TEXT_PUT(ctx, &e->name_buf, name, name_size);
+    if (name_size) {
+      GRN_TEXT_PUT(ctx, &e->name_buf, name, name_size);
+    } else {
+      uint32_t ol = GRN_TEXT_LEN(&e->name_buf);
+      GRN_TEXT_PUTC(ctx, &e->name_buf, '$');
+      grn_text_itoa(ctx, &e->name_buf, e->nvars);
+      name_size = GRN_TEXT_LEN(&e->name_buf) - ol;
+    }
     v->name_size = name_size;
     res = &v->value;
     GRN_VOID_INIT(res);
