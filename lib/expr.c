@@ -603,6 +603,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
     grn_hash_delete(ctx, ctx->impl->qe, &e->obj.header.domain, sizeof(grn_id), NULL);
   }
   */
+  grn_expr_clear_vars(ctx, expr);
   for (i = 0; i < e->nconsts; i++) {
     grn_obj_close(ctx, &e->consts[i]);
   }
