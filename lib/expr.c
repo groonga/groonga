@@ -231,18 +231,20 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
   grn_expr_var *var;
   grn_expr_code *code;
   grn_expr *e = (grn_expr *)expr;
+  grn_hash *vars = grn_expr_get_vars(ctx, expr, &i);
   GRN_TEXT_PUTS(ctx, buf, "noname");
   GRN_TEXT_PUTC(ctx, buf, '(');
-  for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
-    if (i) { GRN_TEXT_PUTC(ctx, buf, ','); }
-    GRN_TEXT_PUTC(ctx, buf, '?');
-    if (var->name_size) {
-      GRN_TEXT_PUT(ctx, buf, var->name, var->name_size);
-    } else {
-      grn_text_itoa(ctx, buf, (int)i);
-    }
-    GRN_TEXT_PUTC(ctx, buf, ':');
-    put_value(ctx, buf, &var->value);
+  {
+    int i = 0;
+    grn_obj *value;
+    const char *name;
+    uint32_t name_len;
+    GRN_HASH_EACH(ctx, vars, id, &name, &name_len, &value, {
+      if (i++) { GRN_TEXT_PUTC(ctx, buf, ','); }
+      GRN_TEXT_PUT(ctx, buf, name, name_len);
+      GRN_TEXT_PUTC(ctx, buf, ':');
+      put_value(ctx, buf, value);
+    });
   }
   GRN_TEXT_PUTC(ctx, buf, ')');
   GRN_TEXT_PUTC(ctx, buf, '{');
