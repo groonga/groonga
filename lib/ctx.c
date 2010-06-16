@@ -257,6 +257,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->qe_next = NULL;
   ctx->impl->parser = NULL;
 
+  GRN_TEXT_INIT(&ctx->impl->names, 0);
+  GRN_TEXT_INIT(&ctx->impl->levels, 0);
+
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;
   ctx->impl->dump = NIL;
@@ -425,6 +428,8 @@ grn_ctx_fin(grn_ctx *ctx)
       grn_ctx_send(ctx, "ACK", 3, GRN_CTX_HEAD);
       rc = grn_com_close(ctx, ctx->impl->com);
     }
+    GRN_OBJ_FIN(ctx, &ctx->impl->names);
+    GRN_OBJ_FIN(ctx, &ctx->impl->levels);
     rc = grn_obj_close(ctx, ctx->impl->outbuf);
     rc = grn_bulk_fin(ctx, &ctx->impl->subbuf);
     {
@@ -999,6 +1004,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       } else {
         ctx->impl->mime_type = "application/json";
         ctx->impl->output_type = GRN_CONTENT_JSON;
+        ctx->impl->opened = 1;
         grn_timeval_now(ctx, &ctx->impl->tv);
         GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
         if (str_len && *str == '/') {

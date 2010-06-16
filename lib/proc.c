@@ -23,6 +23,8 @@
 #include "proc.h"
 #include "ql.h"
 #include "db.h"
+#include "util.h"
+#include "output.h"
 
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0
@@ -40,11 +42,259 @@ const char *grn_admin_html_path = NULL;
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key _nsubrecs"
 
+#define LAP(msg) {\
+  uint64_t et;\
+  grn_timeval tv;\
+  grn_timeval_now(ctx, &tv);\
+  et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC\
+    + (tv.tv_usec - ctx->impl->tv.tv_usec);\
+  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s", (intptr_t)ctx, et, msg);\
+}
+
+grn_rc
+grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
+           const char *match_columns, unsigned match_columns_len,
+           const char *query, unsigned query_len,
+           const char *filter, unsigned filter_len,
+           const char *scorer, unsigned scorer_len,
+           const char *sortby, unsigned sortby_len,
+           const char *output_columns, unsigned output_columns_len,
+           int offset, int limit,
+           const char *drilldown, unsigned drilldown_len,
+           const char *drilldown_sortby, unsigned drilldown_sortby_len,
+           const char *drilldown_output_columns, unsigned drilldown_output_columns_len,
+           int drilldown_offset, int drilldown_limit,
+           const char *cache, unsigned cache_len)
+{
+  uint32_t nkeys, nhits;
+  uint16_t cacheable = 1, taintable = 0;
+  grn_obj_format format;
+  grn_table_sort_key *keys;
+  grn_obj *outbuf = ctx->impl->outbuf;
+  grn_content_type output_type = ctx->impl->output_type;
+  grn_obj *table_, *match_columns_ = NULL, *cond, *scorer_, *res = NULL, *sorted;
+  char cache_key[GRN_TABLE_MAX_KEY_SIZE];
+  uint32_t cache_key_size = table_len + 1 + match_columns_len + 1 + query_len + 1 +
+    filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
+    drilldown_len + 1 + drilldown_sortby_len + 1 + drilldown_output_columns_len +
+    sizeof(grn_content_type) + sizeof(int) * 4;
+  if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
+    grn_obj *cache;
+    char *cp = cache_key;
+    memcpy(cp, table, table_len);
+    cp += table_len; *cp++ = '\0';
+    memcpy(cp, match_columns, match_columns_len);
+    cp += match_columns_len; *cp++ = '\0';
+    memcpy(cp, query, query_len);
+    cp += query_len; *cp++ = '\0';
+    memcpy(cp, filter, filter_len);
+    cp += filter_len; *cp++ = '\0';
+    memcpy(cp, scorer, scorer_len);
+    cp += scorer_len; *cp++ = '\0';
+    memcpy(cp, sortby, sortby_len);
+    cp += sortby_len; *cp++ = '\0';
+    memcpy(cp, output_columns, output_columns_len);
+    cp += output_columns_len; *cp++ = '\0';
+    memcpy(cp, drilldown, drilldown_len);
+    cp += drilldown_len; *cp++ = '\0';
+    memcpy(cp, drilldown_sortby, drilldown_sortby_len);
+    cp += drilldown_sortby_len; *cp++ = '\0';
+    memcpy(cp, drilldown_output_columns, drilldown_output_columns_len);
+    cp += drilldown_output_columns_len; *cp++ = '\0';
+    memcpy(cp, &output_type, sizeof(grn_content_type)); cp += sizeof(grn_content_type);
+    memcpy(cp, &offset, sizeof(int)); cp += sizeof(int);
+    memcpy(cp, &limit, sizeof(int)); cp += sizeof(int);
+    memcpy(cp, &drilldown_offset, sizeof(int)); cp += sizeof(int);
+    memcpy(cp, &drilldown_limit, sizeof(int)); cp += sizeof(int);
+    if ((cache = grn_cache_fetch(ctx, cache_key, cache_key_size))) {
+      GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(cache), GRN_TEXT_LEN(cache));
+      grn_cache_unref(cache_key, cache_key_size);
+      LAP("cache");
+      return ctx->rc;
+    }
+  }
+  if ((table_ = grn_ctx_get(ctx, table, table_len))) {
+    // match_columns_ = grn_obj_column(ctx, table_, match_columns, match_columns_len);
+    if (query_len || filter_len) {
+      grn_obj *v;
+      GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, cond, v);
+      if (cond) {
+        if (match_columns_len) {
+          GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, match_columns_, v);
+          if (match_columns_) {
+            grn_expr_parse(ctx, match_columns_, match_columns, match_columns_len,
+                           NULL, GRN_OP_MATCH, GRN_OP_AND,
+                           GRN_EXPR_SYNTAX_SCRIPT);
+          } else {
+            /* todo */
+          }
+        }
+        if (query_len) {
+          grn_expr_parse(ctx, cond, query, query_len,
+                         match_columns_, GRN_OP_MATCH, GRN_OP_AND,
+                         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+          if (!ctx->rc && filter_len) {
+            grn_expr_parse(ctx, cond, filter, filter_len,
+                           match_columns_, GRN_OP_MATCH, GRN_OP_AND,
+                           GRN_EXPR_SYNTAX_SCRIPT);
+            if (!ctx->rc) { grn_expr_append_op(ctx, cond, GRN_OP_AND, 2); }
+          }
+        } else {
+          grn_expr_parse(ctx, cond, filter, filter_len,
+                         match_columns_, GRN_OP_MATCH, GRN_OP_AND,
+                         GRN_EXPR_SYNTAX_SCRIPT);
+        }
+        cacheable *= ((grn_expr *)cond)->cacheable;
+        taintable += ((grn_expr *)cond)->taintable;
+        /*
+        grn_obj strbuf;
+        GRN_TEXT_INIT(&strbuf, 0);
+        grn_expr_inspect(ctx, &strbuf, cond);
+        GRN_TEXT_PUTC(ctx, &strbuf, '\0');
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
+        GRN_OBJ_FIN(ctx, &strbuf);
+        */
+        if (!ctx->rc) { res = grn_table_select(ctx, table_, cond, NULL, GRN_OP_OR); }
+        if (match_columns_) { grn_obj_unlink(ctx, match_columns_); }
+        grn_obj_unlink(ctx, cond);
+      } else {
+        /* todo */
+        ERRCLR(ctx);
+      }
+    } else {
+      res = table_;
+    }
+    LAP("select");
+    grn_output_array_open(ctx, "RESULTPAGE", -1);
+    if (res) {
+      if (scorer && scorer_len) {
+        grn_obj *v;
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, res, scorer_, v);
+        if (scorer_ && v) {
+          grn_table_cursor *tc;
+          grn_expr_parse(ctx, scorer_, scorer, scorer_len, NULL, GRN_OP_MATCH, GRN_OP_AND,
+                         GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
+          cacheable *= ((grn_expr *)scorer_)->cacheable;
+          taintable += ((grn_expr *)scorer_)->taintable;
+          if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
+            while (!grn_table_cursor_next_o(ctx, tc, v)) {
+              grn_expr_exec(ctx, scorer_, 0);
+            }
+            grn_table_cursor_close(ctx, tc);
+          }
+          grn_obj_unlink(ctx, scorer_);
+        }
+        LAP("score");
+      }
+      nhits = grn_table_size(ctx, res);
+
+      grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
+      ERRCLR(ctx);
+
+      if (sortby_len) {
+        if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
+                                       GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
+          if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
+            grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
+            LAP("sort");
+            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, offset);
+            format.flags =
+              GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+              GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+            grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
+            grn_output_obj(ctx, sorted, &format);
+            GRN_OBJ_FORMAT_FIN(ctx, &format);
+            grn_table_sort_key_close(ctx, keys, nkeys);
+          }
+          grn_obj_unlink(ctx, sorted);
+        }
+      } else {
+        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, offset);
+        format.flags =
+          GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+          GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+        grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
+        grn_output_obj(ctx, res, &format);
+        GRN_OBJ_FORMAT_FIN(ctx, &format);
+      }
+      LAP("output");
+      if (!ctx->rc && drilldown_len) {
+        uint32_t i, ngkeys;
+        grn_table_sort_key *gkeys;
+        grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
+        if ((gkeys = grn_table_sort_key_from_str(ctx, drilldown,
+                                                 drilldown_len, res, &ngkeys))) {
+          for (i = 0; i < ngkeys; i++) {
+            if ((g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
+                                                      GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                                      gkeys[i].key, NULL))) {
+              int n_drilldown_offset = drilldown_offset,
+                  n_drilldown_limit = drilldown_limit;
+
+              grn_table_group(ctx, res, &gkeys[i], 1, &g, 1);
+              nhits = grn_table_size(ctx, g.table);
+
+              grn_normalize_offset_and_limit(ctx, nhits,
+                                             &n_drilldown_offset, &n_drilldown_limit);
+              ERRCLR(ctx);
+
+              if (drilldown_sortby_len) {
+                if ((keys = grn_table_sort_key_from_str(ctx,
+                                                        drilldown_sortby, drilldown_sortby_len,
+                                                        g.table, &nkeys))) {
+                  if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
+                                                 NULL, g.table))) {
+                    grn_table_sort(ctx, g.table, n_drilldown_offset, n_drilldown_limit,
+                                   sorted, keys, nkeys);
+                    GRN_OBJ_FORMAT_INIT(&format, nhits, 0,
+                                        n_drilldown_limit, n_drilldown_offset);
+                    format.flags =
+                      GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+                      GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+                    grn_obj_columns(ctx, sorted,
+                                    drilldown_output_columns, drilldown_output_columns_len,
+                                    &format.columns);
+                    grn_output_obj(ctx, sorted, &format);
+                    GRN_OBJ_FORMAT_FIN(ctx, &format);
+                    grn_obj_unlink(ctx, sorted);
+                  }
+                  grn_table_sort_key_close(ctx, keys, nkeys);
+                }
+              } else {
+                GRN_OBJ_FORMAT_INIT(&format, nhits, n_drilldown_offset,
+                                    n_drilldown_limit, n_drilldown_offset);
+                format.flags =
+                  GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+                  GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+                grn_obj_columns(ctx, g.table, drilldown_output_columns,
+                                drilldown_output_columns_len, &format.columns);
+                grn_output_obj(ctx, g.table, &format);
+                GRN_OBJ_FORMAT_FIN(ctx, &format);
+              }
+              grn_obj_unlink(ctx, g.table);
+            }
+            LAP("drilldown");
+          }
+          grn_table_sort_key_close(ctx, gkeys, ngkeys);
+        }
+      }
+      if (res != table_) { grn_obj_unlink(ctx, res); }
+    }
+    grn_output_array_close(ctx);
+    if (!ctx->rc && cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE
+        && (!cache || cache_len != 2 || *cache != 'n' || *(cache + 1) != 'o')) {
+      grn_cache_update(ctx, cache_key, cache_key_size, outbuf);
+    }
+    if (taintable) { grn_db_touch(ctx, DB_OBJ(table_)->db); }
+    grn_obj_unlink(ctx, table_);
+  }
+  /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
+  return ctx->rc;
+}
+
 static grn_obj *
 proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_content_type ct = ctx->impl->output_type;
-  grn_obj *outbuf = ctx->impl->outbuf;
   int offset = GRN_TEXT_LEN(VAR(7))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(7)), GRN_BULK_CURR(VAR(7)), NULL)
     : 0;
@@ -69,8 +319,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     drilldown_output_columns = DEFAULT_DRILLDOWN_OUTPUT_COLUMNS;
     drilldown_output_columns_len = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
   }
-  if (grn_select(ctx, outbuf, ct,
-                 GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+  if (grn_select(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
                  GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
                  GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
                  GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)),
