@@ -220,7 +220,7 @@ grn_module_register (grn_ctx *ctx, grn_id id)
 }
 
 grn_rc
-grn_module_fin (grn_ctx *ctx, grn_id id)
+grn_module_fin(grn_ctx *ctx, grn_id id)
 {
   grn_module *module;
   if (!grn_hash_get_value(ctx, grn_modules, id, &module)) {
