@@ -2186,6 +2186,7 @@ grn_set_int_handler(void)
 
   sigemptyset(&action.sa_mask);
   action.sa_sigaction = int_handler;
+  action.sa_flags = SA_SIGINFO;
 
   if (sigaction(SIGINT, &action, &old_int_handler)) {
     SERR("failed to set SIGINT action");
@@ -2205,6 +2206,7 @@ grn_set_term_handler(void)
 
   sigemptyset(&action.sa_mask);
   action.sa_sigaction = term_handler;
+  action.sa_flags = SA_SIGINFO;
 
   if (sigaction(SIGINT, &action, &old_term_handler)) {
     SERR("failed to set SIGTERM action");
