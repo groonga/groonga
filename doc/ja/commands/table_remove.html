@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.26. table_remove &mdash; groonga v0.7.3 documentation</title>
+    <title>3.2.21. table_remove &mdash; groonga v0.7.2 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.7.3',
+        VERSION:     '0.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,10 +22,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
+    <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.27. view_add" href="view_add.html" />
-    <link rel="prev" title="3.2.25. table_list" href="table_list.html" /> 
+    <link rel="next" title="3.2.22. view_add" href="view_add.html" />
+    <link rel="prev" title="3.2.20. table_list" href="table_list.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,12 +35,12 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="view_add.html" title="3.2.27. view_add"
+          <a href="view_add.html" title="3.2.22. view_add"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="table_list.html" title="3.2.25. table_list"
+          <a href="table_list.html" title="3.2.20. table_list"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">groonga v0.7.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
           <li><a href="../commands.html" accesskey="U">3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
@@ -52,24 +52,24 @@
           <div class="body">
             
   <div class="section" id="table-remove">
-<h1>3.2.26. table_remove<a class="headerlink" href="#table-remove" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.21. table_remove<a class="headerlink" href="#table-remove" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.26.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.21.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>table_remove - テーブルの削除</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.26.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.21.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>table_remove table [output_type]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.26.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.21.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるtable_removeについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>table_removeはテーブルと定義されているカラムを削除します。カラムに付随するインデックスも再帰的に削除されます。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.26.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.21.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">table</span></tt></dt>
 <dd>削除対象のカラムが定義されているテーブルの名前を指定します。</dd>
@@ -78,7 +78,7 @@
 </dl>
 </div>
 <div class="section" id="id5">
-<h2>3.2.26.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.21.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>以下のようなjson形式で値が返却されます。 <a class="footnote-reference" href="#id8" id="id6">[1]</a></p>
 <div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間]]
 </pre></div>
@@ -95,7 +95,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 処理にかかった秒数を返します。</blockquote>
 </div>
 <div class="section" id="id7">
-<h2>3.2.26.6. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.21.6. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>column_remove Entry body --output_type json
 
 [[0,1268214107.89182,6.5e-05]]
@@ -119,23 +119,23 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.2.26. table_remove</a><ul>
-<li><a class="reference internal" href="#id1">3.2.26.1. 名前</a></li>
-<li><a class="reference internal" href="#id2">3.2.26.2. 書式</a></li>
-<li><a class="reference internal" href="#id3">3.2.26.3. 説明</a></li>
-<li><a class="reference internal" href="#id4">3.2.26.4. 引数</a></li>
-<li><a class="reference internal" href="#id5">3.2.26.5. 返値</a></li>
-<li><a class="reference internal" href="#id7">3.2.26.6. 例</a></li>
+<li><a class="reference internal" href="#">3.2.21. table_remove</a><ul>
+<li><a class="reference internal" href="#id1">3.2.21.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.21.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.21.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.21.4. 引数</a></li>
+<li><a class="reference internal" href="#id5">3.2.21.5. 返値</a></li>
+<li><a class="reference internal" href="#id7">3.2.21.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="table_list.html"
-                        title="previous chapter">3.2.25. table_list</a></p>
+                        title="previous chapter">3.2.20. table_list</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="view_add.html"
-                        title="next chapter">3.2.27. view_add</a></p>
+                        title="next chapter">3.2.22. view_add</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/commands/table_remove.txt"
@@ -165,12 +165,12 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="view_add.html" title="3.2.27. view_add"
+          <a href="view_add.html" title="3.2.22. view_add"
              >next</a> |</li>
         <li class="right" >
-          <a href="table_list.html" title="3.2.25. table_list"
+          <a href="table_list.html" title="3.2.20. table_list"
              >previous</a> |</li>
-        <li><a href="../index.html">groonga v0.7.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
           <li><a href="../commands.html" >3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
