@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
     <link rel="up" title="4. groonga開発者向け情報" href="../developer.html" />
@@ -147,51 +150,51 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">4.3. テスト方法</a><ul>
-<li><a class="reference external" href="#id2">4.3.1. テスト環境の構築</a><ul>
-<li><a class="reference external" href="#cutter">4.3.1.1. Cutterのインストール</a></li>
-<li><a class="reference external" href="#lcov">4.3.1.2. lcovのインストール</a></li>
-<li><a class="reference external" href="#clang">4.3.1.3. clangのインストール</a></li>
-<li><a class="reference external" href="#libmemcached">4.3.1.4. libmemcachedのインストール</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4.3. テスト方法</a><ul>
+<li><a class="reference internal" href="#id2">4.3.1. テスト環境の構築</a><ul>
+<li><a class="reference internal" href="#cutter">4.3.1.1. Cutterのインストール</a></li>
+<li><a class="reference internal" href="#lcov">4.3.1.2. lcovのインストール</a></li>
+<li><a class="reference internal" href="#clang">4.3.1.3. clangのインストール</a></li>
+<li><a class="reference internal" href="#libmemcached">4.3.1.4. libmemcachedのインストール</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#id5">4.3.2. テストの動作</a></li>
-<li><a class="reference external" href="#id6">4.3.3. カバレッジ情報</a></li>
-<li><a class="reference external" href="#id7">4.3.4. 様々なテスト</a><ul>
-<li><a class="reference external" href="#id8">4.3.4.1. 特定のテスト関数のみテストする</a></li>
-<li><a class="reference external" href="#id9">4.3.4.2. 特定のテストファイルのみテストする</a></li>
-<li><a class="reference external" href="#id10">4.3.4.3. 不正メモリアクセス・メモリリーク検出</a></li>
-<li><a class="reference external" href="#id11">4.3.4.4. デバッガ上でのテスト実行</a></li>
+<li><a class="reference internal" href="#id5">4.3.2. テストの動作</a></li>
+<li><a class="reference internal" href="#id6">4.3.3. カバレッジ情報</a></li>
+<li><a class="reference internal" href="#id7">4.3.4. 様々なテスト</a><ul>
+<li><a class="reference internal" href="#id8">4.3.4.1. 特定のテスト関数のみテストする</a></li>
+<li><a class="reference internal" href="#id9">4.3.4.2. 特定のテストファイルのみテストする</a></li>
+<li><a class="reference internal" href="#id10">4.3.4.3. 不正メモリアクセス・メモリリーク検出</a></li>
+<li><a class="reference internal" href="#id11">4.3.4.4. デバッガ上でのテスト実行</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#id12">4.3.5. 静的解析</a></li>
+<li><a class="reference internal" href="#id12">4.3.5. 静的解析</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="document.html"
-                                  title="previous chapter">4.2. ドキュメント作成</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/developer/test.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="document.html"
+                        title="previous chapter">4.2. ドキュメント作成</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/developer/test.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -210,8 +213,8 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

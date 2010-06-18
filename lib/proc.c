@@ -381,6 +381,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     /* TODO: implement */
     break;
   case GRN_CONTENT_JSON:
+
     {
       GRN_TEXT_PUTS(ctx, outbuf, "{\"alloc_count\":");
       grn_text_itoa(ctx, outbuf, grn_alloc_count());
@@ -393,6 +394,18 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       GRN_TEXT_PUTC(ctx, outbuf, '"');
       GRN_TEXT_PUTC(ctx, outbuf, '}');
     }
+    /*
+    grn_output_map_open(ctx, "STATUS", -1);
+    grn_output_str(ctx, "alloc_count");
+    grn_output_int32(ctx, grn_alloc_count());
+    grn_output_str(ctx, "starttime");
+    grn_output_int32(ctx, grn_starttime.tv_sec);
+    grn_output_str(ctx, "uptime");
+    grn_output_int32(ctx, now.tv_sec - grn_starttime.tv_sec);
+    grn_output_str(ctx, "version");
+    grn_output_str(ctx, grn_get_version());
+    grn_output_map_close(ctx);
+    */
     break;
   case GRN_CONTENT_XML:
   case GRN_CONTENT_NONE:

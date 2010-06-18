@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,14 +12,15 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
+        URL_ROOT:    '',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="index.html" />
     <link rel="next" title="2. チュートリアル" href="tutorial.html" />
@@ -93,45 +96,45 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">1. groongaの特徴</a><ul>
-<li><a class="reference external" href="#senna">1.1. 全文検索ライブラリSennaの後継</a></li>
-<li><a class="reference external" href="#http">1.2. HTTPなどの複数プロトコルに対応したサーバ</a></li>
-<li><a class="reference external" href="#id1">1.3. 高速なデータ更新</a></li>
-<li><a class="reference external" href="#id2">1.4. 複数プロセス・複数スレッドで共有できるストレージ</a></li>
-<li><a class="reference external" href="#id3">1.5. ドリルダウンなどの集計系クエリを高速に実現</a></li>
-<li><a class="reference external" href="#id4">1.6. Sennaの転置インデックス実装をさらに改良</a></li>
-<li><a class="reference external" href="#id5">1.7. 位置情報（緯度・経度）検索</a></li>
-<li><a class="reference external" href="#id6">1.8. 自動クエリキャッシュ機構</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. groongaの特徴</a><ul>
+<li><a class="reference internal" href="#senna">1.1. 全文検索ライブラリSennaの後継</a></li>
+<li><a class="reference internal" href="#http">1.2. HTTPなどの複数プロトコルに対応したサーバ</a></li>
+<li><a class="reference internal" href="#id1">1.3. 高速なデータ更新</a></li>
+<li><a class="reference internal" href="#id2">1.4. 複数プロセス・複数スレッドで共有できるストレージ</a></li>
+<li><a class="reference internal" href="#id3">1.5. ドリルダウンなどの集計系クエリを高速に実現</a></li>
+<li><a class="reference internal" href="#id4">1.6. Sennaの転置インデックス実装をさらに改良</a></li>
+<li><a class="reference internal" href="#id5">1.7. 位置情報（緯度・経度）検索</a></li>
+<li><a class="reference internal" href="#id6">1.8. 自動クエリキャッシュ機構</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="index.html"
-                                  title="previous chapter">groonga ドキュメント</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="tutorial.html"
-                                  title="next chapter">2. チュートリアル</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/characteristic.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">groonga ドキュメント</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="next chapter">2. チュートリアル</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/characteristic.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -152,8 +155,8 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

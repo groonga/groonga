@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,14 +12,15 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
+        URL_ROOT:    '',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="index.html" />
     <link rel="up" title="3.1. 実行環境" href="process.html" />
@@ -72,27 +75,32 @@
 <dl class="cmdoption">
 <dt id="cmdoption-i">
 <tt class="descname">-i</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--host</tt><tt class="descclassname"> &lt;ip/hostname&gt;</tt><a class="headerlink" href="#cmdoption-i" title="Permalink to this definition">¶</a></dt>
-<dd>接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先にgroongaサーバが立ち上がっていない場合、接続不能となることに注意してください。このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起動して接続します。</dd></dl>
+<dd><p>接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先にgroongaサーバが立ち上がっていない場合、接続不能となることに注意してください。このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起動して接続します。</p>
+</dd></dl>
 
 <dl class="cmdoption">
 <dt id="cmdoption-p">
 <tt class="descname">-p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--port</tt><tt class="descclassname"> &lt;port number&gt;</tt><a class="headerlink" href="#cmdoption-p" title="Permalink to this definition">¶</a></dt>
-<dd>自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションで指定したポート番号が異なる場合、接続不能となることに注意してください。</dd></dl>
+<dd><p>自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションで指定したポート番号が異なる場合、接続不能となることに注意してください。</p>
+</dd></dl>
 
 <dl class="cmdoption">
 <dt id="cmdoption--dir">
 <tt class="descname">--dir</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--dir" title="Permalink to this definition">¶</a></dt>
-<dd>ftp.groonga.org に用意されているスクリプトファイルを表示します。</dd></dl>
+<dd><p>ftp.groonga.org に用意されているスクリプトファイルを表示します。</p>
+</dd></dl>
 
 <dl class="cmdoption">
 <dt id="cmdoption--noftp">
 <tt class="descname">--noftp</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--noftp" title="Permalink to this definition">¶</a></dt>
-<dd>通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイルの送信を行います。&#8211;noftp オプションを指定するとftp 通信を一切行わないようになります。存在しないスクリプトファイルを指定した場合、エラーとなることに注意してください。</dd></dl>
+<dd><p>通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイルの送信を行います。&#8211;noftp オプションを指定するとftp 通信を一切行わないようになります。存在しないスクリプトファイルを指定した場合、エラーとなることに注意してください。</p>
+</dd></dl>
 
 <dl class="cmdoption">
 <dt id="cmdoption--log-output-dir">
 <tt class="descname">--log-output-dir</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--log-output-dir" title="Permalink to this definition">¶</a></dt>
-<dd>デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリです。このオプションを利用すると、任意のディレクトリに出力先を変更することができます。</dd></dl>
+<dd><p>デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリです。このオプションを利用すると、任意のディレクトリに出力先を変更することができます。</p>
+</dd></dl>
 
 </div>
 <div class="section" id="id5">
@@ -100,12 +108,14 @@
 <dl class="cmdoption">
 <dt>
 <tt class="descname">script</tt></dt>
-<dd>grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルです。拡張子は.scrです。</dd></dl>
+<dd><p>grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルです。拡張子は.scrです。</p>
+</dd></dl>
 
 <dl class="cmdoption">
 <dt>
 <tt class="descname">db</tt></dt>
-<dd>grntestが利用するgroonga データベースです。指定されたデータベースが存在しない場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこの引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースになることに注意してください。</dd></dl>
+<dd><p>grntestが利用するgroonga データベースです。指定されたデータベースが存在しない場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこの引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースになることに注意してください。</p>
+</dd></dl>
 
 </div>
 <div class="section" id="id6">
@@ -282,53 +292,53 @@ ency&quot;: 831495, &quot;self&quot;: 762519, &quot;qps&quot;: 1967.164097, &quo
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">3.1.4. grntest</a><ul>
-<li><a class="reference external" href="#id1">3.1.4.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.1.4.2. 書式</a></li>
-<li><a class="reference external" href="#id3">3.1.4.3. 説明</a></li>
-<li><a class="reference external" href="#id4">3.1.4.4. オプション</a></li>
-<li><a class="reference external" href="#id5">3.1.4.5. 引数</a></li>
-<li><a class="reference external" href="#id6">3.1.4.6. 使い方</a></li>
-<li><a class="reference external" href="#id7">3.1.4.7. スクリプトファイル</a><ul>
-<li><a class="reference external" href="#id8">3.1.4.7.1. grntest命令</a></li>
-<li><a class="reference external" href="#id9">3.1.4.7.2. コマンドファイル</a></li>
-<li><a class="reference external" href="#id10">3.1.4.7.3. サンプル</a></li>
-<li><a class="reference external" href="#id11">3.1.4.7.4. 特殊命令</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.1.4. grntest</a><ul>
+<li><a class="reference internal" href="#id1">3.1.4.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.1.4.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.1.4.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.1.4.4. オプション</a></li>
+<li><a class="reference internal" href="#id5">3.1.4.5. 引数</a></li>
+<li><a class="reference internal" href="#id6">3.1.4.6. 使い方</a></li>
+<li><a class="reference internal" href="#id7">3.1.4.7. スクリプトファイル</a><ul>
+<li><a class="reference internal" href="#id8">3.1.4.7.1. grntest命令</a></li>
+<li><a class="reference internal" href="#id9">3.1.4.7.2. コマンドファイル</a></li>
+<li><a class="reference internal" href="#id10">3.1.4.7.3. サンプル</a></li>
+<li><a class="reference internal" href="#id11">3.1.4.7.4. 特殊命令</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#id12">3.1.4.8. grntest実行結果</a></li>
-<li><a class="reference external" href="#id13">3.1.4.9. 制限事項</a></li>
-<li><a class="reference external" href="#id14">3.1.4.10. トラブルシューティング</a></li>
+<li><a class="reference internal" href="#id12">3.1.4.8. grntest実行結果</a></li>
+<li><a class="reference internal" href="#id13">3.1.4.9. 制限事項</a></li>
+<li><a class="reference internal" href="#id14">3.1.4.10. トラブルシューティング</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="grnslap.html"
-                                  title="previous chapter">3.1.3. grnslap</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="commands.html"
-                                  title="next chapter">3.2. 組み込みコマンド一覧</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/grntest.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="grnslap.html"
+                        title="previous chapter">3.1.3. grnslap</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="commands.html"
+                        title="next chapter">3.2. 組み込みコマンド一覧</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/grntest.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -351,8 +361,8 @@ ency&quot;: 831495, &quot;self&quot;: 762519, &quot;qps&quot;: 1967.164097, &quo
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

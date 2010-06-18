@@ -34,6 +34,7 @@ grn_output_array_open(grn_ctx *ctx, const char *name, int nelements)
                   "<SEGMENTS>\n<SEGMENT>\n<RESULTPAGE>\n");
     break;
   case GRN_CONTENT_TSV:
+    if (!ctx->impl->opened) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
     grn_text_itoa(ctx, outbuf, ctx->rc);
   case GRN_CONTENT_NONE:
     break;
@@ -63,7 +64,7 @@ grn_output_array_close(grn_ctx *ctx)
 }
 
 void
-grn_output_map_open(grn_ctx *ctx, int nelements)
+grn_output_map_open(grn_ctx *ctx, const char *name, int nelements)
 {
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_content_type output_type = ctx->impl->output_type;
@@ -77,6 +78,7 @@ grn_output_map_open(grn_ctx *ctx, int nelements)
                   "<SEGMENTS>\n<SEGMENT>\n<RESULTPAGE>\n");
     break;
   case GRN_CONTENT_TSV:
+    if (!ctx->impl->opened) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
     grn_text_itoa(ctx, outbuf, ctx->rc);
   case GRN_CONTENT_NONE:
     break;
@@ -106,7 +108,7 @@ grn_output_map_close(grn_ctx *ctx)
 }
 
 void
-grn_output_int(grn_ctx *ctx, int value)
+grn_output_int32(grn_ctx *ctx, int value)
 {
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_content_type output_type = ctx->impl->output_type;
@@ -116,10 +118,34 @@ grn_output_int(grn_ctx *ctx, int value)
     grn_text_itoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_TSV:
+    if (!ctx->impl->opened) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
     grn_text_itoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_XML:
     grn_text_itoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  ctx->impl->opened = 0;
+}
+
+void
+grn_output_str(grn_ctx *ctx, const char *value)
+{
+  grn_obj *outbuf = ctx->impl->outbuf;
+  grn_content_type output_type = ctx->impl->output_type;
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    if (!ctx->impl->opened) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
+    grn_text_esc(ctx, outbuf, value, strlen(value));
+    break;
+  case GRN_CONTENT_TSV:
+    if (!ctx->impl->opened) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
+    grn_text_esc(ctx, outbuf, value, strlen(value));
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, outbuf, value);
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -138,6 +164,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *obj, grn_obj_format *format)
     grn_text_otoj(ctx, outbuf, obj, format);
     break;
   case GRN_CONTENT_TSV:
+    if (!ctx->impl->opened) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
     GRN_TEXT_PUTC(ctx, outbuf, '\n');
     /* TODO: implement grn_text_ototsv */
     break;

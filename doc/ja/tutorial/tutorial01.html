@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
     <link rel="up" title="2. チュートリアル" href="../tutorial.html" />
@@ -122,32 +125,32 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 </div>
 <p>書式1と2は混ぜて使うことができます。</p>
 <p>書式2において、空白や、記号「&#8221;&#8217;()」のうちいずれかを含む値を指定したい場合は、シングルクォート(&#8216;)かダブルクォート(&#8220;)で値を囲みます。</p>
-<p>詳しくは、 <a class="reference external" href="../execfile.html"><em>groonga実行ファイル</em></a> のコマンドの項を参考にしてください。</p>
+<p>詳しくは、 <a class="reference internal" href="../execfile.html"><em>groonga実行ファイル</em></a> のコマンドの項を参考にしてください。</p>
 </div>
 <div class="section" id="id6">
 <h3>2.1.2.4. 主なコマンド<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <dl class="docutils">
-<dt><a class="reference external" href="../commands/status.html"><em>status</em></a></dt>
+<dt><a class="reference internal" href="../commands/status.html"><em>status</em></a></dt>
 <dd>groongaプロセスの状態を表示します。</dd>
-<dt><a class="reference external" href="../commands/table_list.html"><em>table_list</em></a></dt>
+<dt><a class="reference internal" href="../commands/table_list.html"><em>table_list</em></a></dt>
 <dd>DBに定義されているテーブルのリストを表示します。</dd>
-<dt><a class="reference external" href="../commands/column_list.html"><em>column_list</em></a></dt>
+<dt><a class="reference internal" href="../commands/column_list.html"><em>column_list</em></a></dt>
 <dd>テーブルに定義されているカラムのリストを表示します。</dd>
-<dt><a class="reference external" href="../commands/table_create.html"><em>table_create</em></a></dt>
+<dt><a class="reference internal" href="../commands/table_create.html"><em>table_create</em></a></dt>
 <dd>DBにテーブルを追加します。</dd>
-<dt><a class="reference external" href="../commands/column_create.html"><em>column_create</em></a></dt>
+<dt><a class="reference internal" href="../commands/column_create.html"><em>column_create</em></a></dt>
 <dd>テーブルにカラムを追加します。</dd>
-<dt><a class="reference external" href="../commands/select.html"><em>select</em></a></dt>
+<dt><a class="reference internal" href="../commands/select.html"><em>select</em></a></dt>
 <dd>テーブルに含まれるレコードを検索して表示します。</dd>
-<dt><a class="reference external" href="../commands/load.html"><em>load</em></a></dt>
+<dt><a class="reference internal" href="../commands/load.html"><em>load</em></a></dt>
 <dd>テーブルにレコードを挿入します。</dd>
 </dl>
 </blockquote>
 </div>
 <div class="section" id="id7">
 <h3>2.1.2.5. テーブルの作成<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="../commands/table_create.html"><em>table_create</em></a> コマンドを使用してテーブルを作成します。</p>
+<p><a class="reference internal" href="../commands/table_create.html"><em>table_create</em></a> コマンドを使用してテーブルを作成します。</p>
 <p>groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主キーには型と、その格納方法を指定する必要があります。</p>
 <p>型については、のちのチュートリアルで触れます。データの種類をあらわしているもの、とイメージしてください。</p>
 <p>主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まります。これも、のちのチュートリアルで触れます。</p>
@@ -160,7 +163,7 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 </div>
 <div class="section" id="id8">
 <h3>2.1.2.6. 検索<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="../commands/select.html"><em>select</em></a> コマンドを用いて、テーブルの中身を表示することができます。</p>
+<p><a class="reference internal" href="../commands/select.html"><em>select</em></a> コマンドを用いて、テーブルの中身を表示することができます。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site
 [[0,1269854691.80132,0.000106],[[[0],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]]]]]
@@ -171,7 +174,7 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 </div>
 <div class="section" id="id9">
 <h3>2.1.2.7. カラムの作成<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="../commands/column_create.html"><em>column_create</em></a> コマンドを用いて、カラムを作成することができます。</p>
+<p><a class="reference internal" href="../commands/column_create.html"><em>column_create</em></a> コマンドを用いて、カラムを作成することができます。</p>
 <p>ShortText型の値を持つ、&#8217;comment&#8217;という名前のカラムを&#8217;Site&#8217;テーブルに追加しましょう。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
@@ -210,7 +213,7 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 </div>
 <div class="section" id="id12">
 <h3>2.1.2.10. データのロード<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="../commands/load.html"><em>load</em></a> コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。</p>
+<p><a class="reference internal" href="../commands/load.html"><em>load</em></a> コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; load --table Site
 &gt; [
@@ -333,56 +336,56 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">2.1. インストールと基本的な操作</a><ul>
-<li><a class="reference external" href="#id2">2.1.1. インストール方法</a></li>
-<li><a class="reference external" href="#id3">2.1.2. 基本的な操作</a><ul>
-<li><a class="reference external" href="#db">2.1.2.1. DBの作成</a></li>
-<li><a class="reference external" href="#id4">2.1.2.2. DBの操作</a></li>
-<li><a class="reference external" href="#id5">2.1.2.3. コマンド</a></li>
-<li><a class="reference external" href="#id6">2.1.2.4. 主なコマンド</a></li>
-<li><a class="reference external" href="#id7">2.1.2.5. テーブルの作成</a></li>
-<li><a class="reference external" href="#id8">2.1.2.6. 検索</a></li>
-<li><a class="reference external" href="#id9">2.1.2.7. カラムの作成</a></li>
-<li><a class="reference external" href="#id10">2.1.2.8. 全文検索用の語彙テーブルの作成</a></li>
-<li><a class="reference external" href="#id11">2.1.2.9. 全文検索用のインデックスカラムの作成</a></li>
-<li><a class="reference external" href="#id12">2.1.2.10. データのロード</a></li>
-<li><a class="reference external" href="#id13">2.1.2.11. データの検索</a></li>
-<li><a class="reference external" href="#id14">2.1.2.12. 全文検索</a></li>
-<li><a class="reference external" href="#id15">2.1.2.13. 出力カラムの指定</a></li>
-<li><a class="reference external" href="#id16">2.1.2.14. 表示範囲指定</a></li>
-<li><a class="reference external" href="#id17">2.1.2.15. 並び替え</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.1. インストールと基本的な操作</a><ul>
+<li><a class="reference internal" href="#id2">2.1.1. インストール方法</a></li>
+<li><a class="reference internal" href="#id3">2.1.2. 基本的な操作</a><ul>
+<li><a class="reference internal" href="#db">2.1.2.1. DBの作成</a></li>
+<li><a class="reference internal" href="#id4">2.1.2.2. DBの操作</a></li>
+<li><a class="reference internal" href="#id5">2.1.2.3. コマンド</a></li>
+<li><a class="reference internal" href="#id6">2.1.2.4. 主なコマンド</a></li>
+<li><a class="reference internal" href="#id7">2.1.2.5. テーブルの作成</a></li>
+<li><a class="reference internal" href="#id8">2.1.2.6. 検索</a></li>
+<li><a class="reference internal" href="#id9">2.1.2.7. カラムの作成</a></li>
+<li><a class="reference internal" href="#id10">2.1.2.8. 全文検索用の語彙テーブルの作成</a></li>
+<li><a class="reference internal" href="#id11">2.1.2.9. 全文検索用のインデックスカラムの作成</a></li>
+<li><a class="reference internal" href="#id12">2.1.2.10. データのロード</a></li>
+<li><a class="reference internal" href="#id13">2.1.2.11. データの検索</a></li>
+<li><a class="reference internal" href="#id14">2.1.2.12. 全文検索</a></li>
+<li><a class="reference internal" href="#id15">2.1.2.13. 出力カラムの指定</a></li>
+<li><a class="reference internal" href="#id16">2.1.2.14. 表示範囲指定</a></li>
+<li><a class="reference internal" href="#id17">2.1.2.15. 並び替え</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="../tutorial.html"
-                                  title="previous chapter">2. チュートリアル</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="tutorial02.html"
-                                  title="next chapter">2.2. ネットワークを通じた利用</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/tutorial/tutorial01.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../tutorial.html"
+                        title="previous chapter">2. チュートリアル</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial02.html"
+                        title="next chapter">2.2. ネットワークを通じた利用</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/tutorial01.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -404,8 +407,8 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

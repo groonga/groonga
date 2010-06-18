@@ -257,8 +257,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->qe_next = NULL;
   ctx->impl->parser = NULL;
 
-  GRN_TEXT_INIT(&ctx->impl->names, 0);
-  GRN_TEXT_INIT(&ctx->impl->levels, 0);
+  GRN_TEXT_INIT(&ctx->impl->names, GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&ctx->impl->levels, GRN_OBJ_VECTOR);
 
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;

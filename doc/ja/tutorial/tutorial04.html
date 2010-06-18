@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
     <link rel="up" title="2. チュートリアル" href="../tutorial.html" />
@@ -115,7 +118,7 @@ _score</blockquote>
 [[0,1270212859.17031,0.000546],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;]],[&quot;http://example.org/&quot;,&quot;128487316x502920929&quot;],[&quot;http://example.net/&quot;,&quot;128452975x503157902&quot;]]]]
 </pre></div>
 </div>
-<p>scorerパラメータにおいて、 <a class="reference external" href="../functions/geo_distance.html"><em>geo_distance</em></a> 関数を用いることにより、２点間の距離を計算することができます。</p>
+<p>scorerパラメータにおいて、 <a class="reference internal" href="../functions/geo_distance.html"><em>geo_distance</em></a> 関数を用いることにより、２点間の距離を計算することができます。</p>
 <p>ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、geo_distance関数に与える文字列は&#8221;128515259x503187188&#8221;となります。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_id:1 OR _id:2&quot; --output_columns _key,location,_score --scorer &#39;_score = geo_distance(location, &quot;128515259x503187188&quot;)&#39;
@@ -130,13 +133,13 @@ _score</blockquote>
 </pre></div>
 </div>
 <p>「ある地点から何m以内に存在する」といった絞込も可能です。</p>
-<p>filterパラメータにおいて、 <a class="reference external" href="../functions/geo_in_circle.html"><em>geo_in_circle</em></a> 関数を用いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することができます。</p>
+<p>filterパラメータにおいて、 <a class="reference internal" href="../functions/geo_in_circle.html"><em>geo_in_circle</em></a> 関数を用いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することができます。</p>
 <p>たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。</p>
 <p>実行例:</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --output_columns _key,location --filter &#39;geo_in_circle(location, &quot;128515259x503187188&quot;, 5000)&#39;
 </pre></div>
 </div>
-<p>また、経緯度が指定の矩形領域内であるかどうかを判定する <a class="reference external" href="../functions/geo_in_rectangle.html"><em>geo_in_rectangle</em></a> 関数も存在します。</p>
+<p>また、経緯度が指定の矩形領域内であるかどうかを判定する <a class="reference internal" href="../functions/geo_in_rectangle.html"><em>geo_in_rectangle</em></a> 関数も存在します。</p>
 </div>
 </div>
 
@@ -146,40 +149,40 @@ _score</blockquote>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">2.4. さまざまな検索条件の指定</a><ul>
-<li><a class="reference external" href="#javascript">2.4.1. JavaScriptに似た文法での絞込・全文検索</a></li>
-<li><a class="reference external" href="#scorer">2.4.2. scorerを利用したソート</a></li>
-<li><a class="reference external" href="#id2">2.4.3. 位置情報を用いた絞込・ソート</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.4. さまざまな検索条件の指定</a><ul>
+<li><a class="reference internal" href="#javascript">2.4.1. JavaScriptに似た文法での絞込・全文検索</a></li>
+<li><a class="reference internal" href="#scorer">2.4.2. scorerを利用したソート</a></li>
+<li><a class="reference internal" href="#id2">2.4.3. 位置情報を用いた絞込・ソート</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="tutorial03.html"
-                                  title="previous chapter">2.3. さまざまな種類をもったデータの保存</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="tutorial05.html"
-                                  title="next chapter">2.5. ドリルダウン</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/tutorial/tutorial04.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial03.html"
+                        title="previous chapter">2.3. さまざまな種類をもったデータの保存</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial05.html"
+                        title="next chapter">2.5. ドリルダウン</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/tutorial04.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -201,8 +204,8 @@ _score</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>
