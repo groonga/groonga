@@ -372,45 +372,18 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_content_type ct = ctx->impl->output_type;
-  grn_obj *outbuf = ctx->impl->outbuf;
   grn_timeval now;
   grn_timeval_now(ctx, &now);
-  switch (ct) {
-  case GRN_CONTENT_TSV:
-    /* TODO: implement */
-    break;
-  case GRN_CONTENT_JSON:
-
-    {
-      GRN_TEXT_PUTS(ctx, outbuf, "{\"alloc_count\":");
-      grn_text_itoa(ctx, outbuf, grn_alloc_count());
-      GRN_TEXT_PUTS(ctx, outbuf, ",\"starttime\":");
-      grn_text_itoa(ctx, outbuf, grn_starttime.tv_sec);
-      GRN_TEXT_PUTS(ctx, outbuf, ",\"uptime\":");
-      grn_text_itoa(ctx, outbuf, now.tv_sec - grn_starttime.tv_sec);
-      GRN_TEXT_PUTS(ctx, outbuf, ",\"version\":\"");
-      GRN_TEXT_PUTS(ctx, outbuf, grn_get_version());
-      GRN_TEXT_PUTC(ctx, outbuf, '"');
-      GRN_TEXT_PUTC(ctx, outbuf, '}');
-    }
-    /*
-    grn_output_map_open(ctx, "STATUS", -1);
-    grn_output_str(ctx, "alloc_count");
-    grn_output_int32(ctx, grn_alloc_count());
-    grn_output_str(ctx, "starttime");
-    grn_output_int32(ctx, grn_starttime.tv_sec);
-    grn_output_str(ctx, "uptime");
-    grn_output_int32(ctx, now.tv_sec - grn_starttime.tv_sec);
-    grn_output_str(ctx, "version");
-    grn_output_str(ctx, grn_get_version());
-    grn_output_map_close(ctx);
-    */
-    break;
-  case GRN_CONTENT_XML:
-  case GRN_CONTENT_NONE:
-    break;
-  }
+  grn_output_map_open(ctx, "STATUS", -1);
+  grn_output_str(ctx, "alloc_count");
+  grn_output_int32(ctx, grn_alloc_count());
+  grn_output_str(ctx, "starttime");
+  grn_output_int32(ctx, grn_starttime.tv_sec);
+  grn_output_str(ctx, "uptime");
+  grn_output_int32(ctx, now.tv_sec - grn_starttime.tv_sec);
+  grn_output_str(ctx, "version");
+  grn_output_str(ctx, grn_get_version());
+  grn_output_map_close(ctx);
   return NULL;
 }
 
@@ -820,12 +793,11 @@ print_columninfo(grn_ctx *ctx, grn_obj *column, grn_obj *buf, grn_content_type o
 }
 
 static int
-print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type otype)
+print_tableinfo(grn_ctx *ctx, grn_obj *table)
 {
   grn_id id;
   grn_obj o;
   const char *path;
-
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
@@ -835,53 +807,22 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table, grn_obj *buf, grn_content_type oty
   default:
     return 0;
   }
-
   id = grn_obj_id(ctx, table);
   path = grn_obj_path(ctx, table);
   GRN_TEXT_INIT(&o, 0);
-
-  switch (otype) {
-  case GRN_CONTENT_TSV:
-    grn_text_itoa(ctx, buf, id);
-    GRN_TEXT_PUTC(ctx, buf, '\t');
-    objid2name(ctx, id, &o);
-    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
-    GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
-    GRN_TEXT_PUTC(ctx, buf, '\t');
-    grn_table_create_flags_to_text(ctx, &o, table->header.flags);
-    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
-    GRN_TEXT_PUTC(ctx, buf, '\t');
-    objid2name(ctx, table->header.domain, &o);
-    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
-    GRN_TEXT_PUTC(ctx, buf, '\t');
-    objid2name(ctx, grn_obj_get_range(ctx, table), &o);
-    grn_text_esc(ctx, buf, GRN_TEXT_VALUE(&o), GRN_TEXT_LEN(&o));
-    break;
-  case GRN_CONTENT_JSON:
-    GRN_TEXT_PUTC(ctx, buf, '[');
-    grn_text_itoa(ctx, buf, id);
-    GRN_TEXT_PUTC(ctx, buf, ',');
-    objid2name(ctx, id, &o);
-    grn_text_otoj(ctx, buf, &o, NULL);
-    GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_text_esc(ctx, buf, path, GRN_STRLEN(path));
-    GRN_TEXT_PUTC(ctx, buf, ',');
-    grn_table_create_flags_to_text(ctx, &o, table->header.flags);
-    grn_text_otoj(ctx, buf, &o, NULL);
-    GRN_TEXT_PUTC(ctx, buf, ',');
-    objid2name(ctx, table->header.domain, &o);
-    grn_text_otoj(ctx, buf, &o, NULL);
-    GRN_TEXT_PUTC(ctx, buf, ',');
-    objid2name(ctx, grn_obj_get_range(ctx, table), &o);
-    grn_text_otoj(ctx, buf, &o, NULL);
-    GRN_TEXT_PUTC(ctx, buf, ']');
-    break;
-  case GRN_CONTENT_XML:
-  case GRN_CONTENT_NONE:
-    break;
-  }
-  grn_obj_close(ctx, &o);
+  grn_output_array_open(ctx, "", -1);
+  grn_output_int64(ctx, id);
+  objid2name(ctx, id, &o);
+  grn_output_obj(ctx, &o, NULL);
+  grn_output_str(ctx, path);
+  grn_table_create_flags_to_text(ctx, &o, table->header.flags);
+  grn_output_obj(ctx, &o, NULL);
+  objid2name(ctx, table->header.domain, &o);
+  grn_output_obj(ctx, &o, NULL);
+  objid2name(ctx, grn_obj_get_range(ctx, table), &o);
+  grn_output_obj(ctx, &o, NULL);
+  grn_output_array_close(ctx);
+  GRN_OBJ_FIN(ctx, &o);
   return 1;
 }
 
@@ -944,42 +885,44 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
 static grn_obj *
 proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_content_type ct = ctx->impl->output_type;
-  grn_obj *outbuf = ctx->impl->outbuf;
   grn_table_cursor *cur;
-
   if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
     grn_id id;
-    char line_delimiter, column_delimiter;
-    switch (ct) {
-    case GRN_CONTENT_TSV:
-      line_delimiter = '\n';
-      column_delimiter = '\t';
-      GRN_TEXT_PUTS(ctx, outbuf, "id\tname\tpath\tflags\tdomain\trange");
-      break;
-    case GRN_CONTENT_JSON:
-      line_delimiter = ',';
-      column_delimiter = ',';
-      GRN_TEXT_PUTS(ctx, outbuf, "[[[\"id\", \"UInt32\"],[\"name\",\"ShortText\"],[\"path\",\"ShortText\"],[\"flags\",\"ShortText\"],[\"domain\", \"ShortText\"],[\"range\",\"ShortText\"]]");
-      break;
-    case GRN_CONTENT_XML:
-    case GRN_CONTENT_NONE:
-      break;
-    }
+    grn_output_array_open(ctx, "", -1);
+    grn_output_array_open(ctx, "", -1);
+    grn_output_array_open(ctx, "", -1);
+    grn_output_str(ctx, "id");
+    grn_output_str(ctx, "UInt32");
+    grn_output_array_close(ctx);
+    grn_output_array_open(ctx, "", -1);
+    grn_output_str(ctx, "name");
+    grn_output_str(ctx, "ShortText");
+    grn_output_array_close(ctx);
+    grn_output_array_open(ctx, "", -1);
+    grn_output_str(ctx, "path");
+    grn_output_str(ctx, "ShortText");
+    grn_output_array_close(ctx);
+    grn_output_array_open(ctx, "", -1);
+    grn_output_str(ctx, "flags");
+    grn_output_str(ctx, "ShortText");
+    grn_output_array_close(ctx);
+    grn_output_array_open(ctx, "", -1);
+    grn_output_str(ctx, "domain");
+    grn_output_str(ctx, "ShortText");
+    grn_output_array_close(ctx);
+    grn_output_array_open(ctx, "", -1);
+    grn_output_str(ctx, "range");
+    grn_output_str(ctx, "ShortText");
+    grn_output_array_close(ctx);
+    grn_output_array_close(ctx);
     while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
       grn_obj *o;
-
       if ((o = grn_ctx_at(ctx, id))) {
-        GRN_TEXT_PUTC(ctx, outbuf, line_delimiter);
-        if (!print_tableinfo(ctx, o, outbuf, ct)) {
-          grn_bulk_truncate(ctx, outbuf, GRN_BULK_VSIZE(outbuf) - 1);
-        }
+        print_tableinfo(ctx, o);
         grn_obj_unlink(ctx, o);
       }
     }
-    if (ct == GRN_CONTENT_JSON) {
-      GRN_TEXT_PUTC(ctx, outbuf, ']');
-    }
+    grn_output_array_close(ctx);
     grn_table_cursor_close(ctx, cur);
   }
   return NULL;
@@ -1926,9 +1869,8 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
   uint32_t *mp = grn_cach_max_nentries();
-  grn_text_lltoa(ctx, outbuf, *mp);
+  grn_output_int64(ctx, *mp);
   if (GRN_TEXT_LEN(VAR(0))) {
     const char *rest;
     uint32_t max = grn_atoui(GRN_TEXT_VALUE(VAR(0)),

@@ -38,6 +38,7 @@ void grn_output_array_close(grn_ctx *ctx);
 void grn_output_map_open(grn_ctx *ctx, const char *name, int nelements);
 void grn_output_map_close(grn_ctx *ctx);
 void grn_output_int32(grn_ctx *ctx, int value);
+void grn_output_int64(grn_ctx *ctx, long long value);
 void grn_output_str(grn_ctx *ctx, const char *value);
 void grn_output_obj(grn_ctx *ctx, grn_obj *obj, grn_obj_format *format);
 
