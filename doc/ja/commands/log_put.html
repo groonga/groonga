@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.17. log_put &mdash; groonga v0.7.3 documentation</title>
+    <title>3.2.12. log_put &mdash; groonga v0.7.2 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.7.3',
+        VERSION:     '0.7.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,10 +22,10 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
+    <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.18. log_reopen" href="log_reopen.html" />
-    <link rel="prev" title="3.2.16. log_level" href="log_level.html" /> 
+    <link rel="next" title="3.2.13. log_reopen" href="log_reopen.html" />
+    <link rel="prev" title="3.2.11. log_level" href="log_level.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,12 +35,12 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="log_reopen.html" title="3.2.18. log_reopen"
+          <a href="log_reopen.html" title="3.2.13. log_reopen"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="log_level.html" title="3.2.16. log_level"
+          <a href="log_level.html" title="3.2.11. log_level"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">groonga v0.7.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
           <li><a href="../commands.html" accesskey="U">3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
@@ -52,24 +52,24 @@
           <div class="body">
             
   <div class="section" id="log-put">
-<h1>3.2.17. log_put<a class="headerlink" href="#log-put" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.12. log_put<a class="headerlink" href="#log-put" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.17.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>log_put - ログ出力</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.17.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>log_put level message [output_type]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.17.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>log_putは、ログにmessageを出力します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.17.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">level</span></tt></p>
 <blockquote>
 出力するmessageのログレベルを数値で指定します。</blockquote>
@@ -81,7 +81,7 @@
 出力形式を、json,tsv,xmlのいずれかで指定します。</blockquote>
 </div>
 <div class="section" id="id5">
-<h2>3.2.17.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>以下のようなjson形式で値が返却されます。</p>
 <div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間]]
 </pre></div>
@@ -98,7 +98,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 処理にかかった秒数を返します。</blockquote>
 </div>
 <div class="section" id="id6">
-<h2>3.2.17.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.12.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>log_put ERROR hogehoge
 [[0,1268213004.27459,0.000111]]
 </pre></div>
@@ -121,23 +121,23 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.2.17. log_put</a><ul>
-<li><a class="reference internal" href="#id1">3.2.17.1. 名前</a></li>
-<li><a class="reference internal" href="#id2">3.2.17.2. 書式</a></li>
-<li><a class="reference internal" href="#id3">3.2.17.3. 説明</a></li>
-<li><a class="reference internal" href="#id4">3.2.17.4. 引数</a></li>
-<li><a class="reference internal" href="#id5">3.2.17.5. 返値</a></li>
-<li><a class="reference internal" href="#id6">3.2.17.6. 例</a></li>
+<li><a class="reference internal" href="#">3.2.12. log_put</a><ul>
+<li><a class="reference internal" href="#id1">3.2.12.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.12.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.12.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.12.4. 引数</a></li>
+<li><a class="reference internal" href="#id5">3.2.12.5. 返値</a></li>
+<li><a class="reference internal" href="#id6">3.2.12.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="log_level.html"
-                        title="previous chapter">3.2.16. log_level</a></p>
+                        title="previous chapter">3.2.11. log_level</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="log_reopen.html"
-                        title="next chapter">3.2.18. log_reopen</a></p>
+                        title="next chapter">3.2.13. log_reopen</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/commands/log_put.txt"
@@ -167,12 +167,12 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="log_reopen.html" title="3.2.18. log_reopen"
+          <a href="log_reopen.html" title="3.2.13. log_reopen"
              >next</a> |</li>
         <li class="right" >
-          <a href="log_level.html" title="3.2.16. log_level"
+          <a href="log_level.html" title="3.2.11. log_level"
              >previous</a> |</li>
-        <li><a href="../index.html">groonga v0.7.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
           <li><a href="../commands.html" >3.2. 組み込みコマンド一覧</a> &raquo;</li> 
       </ul>
