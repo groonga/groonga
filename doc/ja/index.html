@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,14 +12,15 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
+        URL_ROOT:    '',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="#" />
     <link rel="next" title="1. groongaの特徴" href="characteristic.html" /> 
@@ -43,155 +46,163 @@
             
   <div class="section" id="groonga">
 <h1>groonga ドキュメント<a class="headerlink" href="#groonga" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference external" href="characteristic.html">1. groongaの特徴</a><ul>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#senna">1.1. 全文検索ライブラリSennaの後継</a></li>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#http">1.2. HTTPなどの複数プロトコルに対応したサーバ</a></li>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#id1">1.3. 高速なデータ更新</a></li>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#id2">1.4. 複数プロセス・複数スレッドで共有できるストレージ</a></li>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#id3">1.5. ドリルダウンなどの集計系クエリを高速に実現</a></li>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#id4">1.6. Sennaの転置インデックス実装をさらに改良</a></li>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#id5">1.7. 位置情報（緯度・経度）検索</a></li>
-<li class="toctree-l2"><a class="reference external" href="characteristic.html#id6">1.8. 自動クエリキャッシュ機構</a></li>
+<li class="toctree-l1"><a class="reference internal" href="characteristic.html">1. groongaの特徴</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#senna">1.1. 全文検索ライブラリSennaの後継</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#http">1.2. HTTPなどの複数プロトコルに対応したサーバ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#id1">1.3. 高速なデータ更新</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#id2">1.4. 複数プロセス・複数スレッドで共有できるストレージ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#id3">1.5. ドリルダウンなどの集計系クエリを高速に実現</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#id4">1.6. Sennaの転置インデックス実装をさらに改良</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#id5">1.7. 位置情報（緯度・経度）検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="characteristic.html#id6">1.8. 自動クエリキャッシュ機構</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="tutorial.html">2. チュートリアル</a><ul>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial01.html">2.1. インストールと基本的な操作</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial01.html#id2">2.1.1. インストール方法</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial01.html#id3">2.1.2. 基本的な操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">2. チュートリアル</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial01.html">2.1. インストールと基本的な操作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial01.html#id2">2.1.1. インストール方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial01.html#id3">2.1.2. 基本的な操作</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial02.html">2.2. ネットワークを通じた利用</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial02.html#groonga">2.2.1. groonga専用プロトコルによる通信</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial02.html#http">2.2.2. HTTPによる通信</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial02.html#id6">2.2.3. セキュリティ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial02.html">2.2. ネットワークを通じた利用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial02.html#groonga">2.2.1. groonga専用プロトコルによる通信</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial02.html#http">2.2.2. HTTPによる通信</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial02.html#id6">2.2.3. セキュリティ</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial03.html">2.3. さまざまな種類をもったデータの保存</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial03.html#id2">2.3.1. データ型</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial03.html#id3">2.3.2. テーブル型</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial03.html#id4">2.3.3. ベクターカラム</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial03.html">2.3. さまざまな種類をもったデータの保存</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial03.html#id2">2.3.1. データ型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial03.html#id3">2.3.2. テーブル型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial03.html#id4">2.3.3. ベクターカラム</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial04.html">2.4. さまざまな検索条件の指定</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial04.html#javascript">2.4.1. JavaScriptに似た文法での絞込・全文検索</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial04.html#scorer">2.4.2. scorerを利用したソート</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial04.html#id2">2.4.3. 位置情報を用いた絞込・ソート</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial04.html">2.4. さまざまな検索条件の指定</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial04.html#javascript">2.4.1. JavaScriptに似た文法での絞込・全文検索</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial04.html#scorer">2.4.2. scorerを利用したソート</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial04.html#id2">2.4.3. 位置情報を用いた絞込・ソート</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial05.html">2.5. ドリルダウン</a></li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial06.html">2.6. タグ検索・参照関係の逆引き</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial06.html#id2">2.6.1. タグ検索</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial06.html#id3">2.6.2. 参照関係の逆引き</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial05.html">2.5. ドリルダウン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial06.html">2.6. タグ検索・参照関係の逆引き</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial06.html#id2">2.6.1. タグ検索</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial06.html#id3">2.6.2. 参照関係の逆引き</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial07.html">2.7. match_columnsパラメータ</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial07.html#id1">2.7.1. 複数のカラムを対象とした全文検索</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial07.html#id4">2.7.2. インデックス名を指定した全文検索</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial07.html#id5">2.7.3. インデックスの重み</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial07.html">2.7. match_columnsパラメータ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial07.html#id1">2.7.1. 複数のカラムを対象とした全文検索</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial07.html#id4">2.7.2. インデックス名を指定した全文検索</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial07.html#id5">2.7.3. インデックスの重み</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial08.html">2.8. 主キーによる前方一致検索</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial08.html#id2">2.8.1. 主キーによる前方一致検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial08.html">2.8. 主キーによる前方一致検索</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial08.html#id2">2.8.1. 主キーによる前方一致検索</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial09.html">2.9. 全文検索の語彙表に対する追加情報</a></li>
-<li class="toctree-l2"><a class="reference external" href="tutorial/tutorial10.html">2.10. マイクロブログ検索システムの作成</a><ul>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial10.html#id2">2.10.1. テーブルの作成</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial10.html#id3">2.10.2. データのロード</a></li>
-<li class="toctree-l3"><a class="reference external" href="tutorial/tutorial10.html#id4">2.10.3. 検索</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference external" href="reference.html">3. リファレンスマニュアル</a><ul>
-<li class="toctree-l2"><a class="reference external" href="process.html">3.1. 実行環境</a><ul>
-<li class="toctree-l3"><a class="reference external" href="execfile.html">3.1.1. groonga実行ファイル</a></li>
-<li class="toctree-l3"><a class="reference external" href="http.html">3.1.2. http</a></li>
-<li class="toctree-l3"><a class="reference external" href="grnslap.html">3.1.3. grnslap</a></li>
-<li class="toctree-l3"><a class="reference external" href="grntest.html">3.1.4. grntest</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference external" href="commands.html">3.2. 組み込みコマンド一覧</a><ul>
-<li class="toctree-l3"><a class="reference external" href="commands/add.html">3.2.1. add</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/cache_limit.html">3.2.2. cache_limit</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/column_create.html">3.2.3. column_create</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/column_list.html">3.2.4. column_list</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/column_remove.html">3.2.5. column_remove</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/define_selector.html">3.2.6. define_selector</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/delete.html">3.2.7. delete</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/get.html">3.2.8. get</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/load.html">3.2.9. load</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/log_level.html">3.2.10. log_level</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/log_put.html">3.2.11. log_put</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/log_reopen.html">3.2.12. log_reopen</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/quit.html">3.2.13. quit</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/select.html">3.2.14. select</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/set.html">3.2.15. set</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/shutdown.html">3.2.16. shutdown</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/status.html">3.2.17. status</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/table_create.html">3.2.18. table_create</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/table_list.html">3.2.19. table_list</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/table_remove.html">3.2.20. table_remove</a></li>
-<li class="toctree-l3"><a class="reference external" href="commands/view_add.html">3.2.21. view_add</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference external" href="type.html">3.3. データ型</a><ul>
-<li class="toctree-l3"><a class="reference external" href="type.html#id2">3.3.1. 名前</a></li>
-<li class="toctree-l3"><a class="reference external" href="type.html#id3">3.3.2. 説明</a></li>
-<li class="toctree-l3"><a class="reference external" href="type.html#id4">3.3.3. 組込型</a></li>
-<li class="toctree-l3"><a class="reference external" href="type.html#id6">3.3.4. 型に関する制限事項</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference external" href="pseudo_column.html">3.4. 疑似カラム (pseudo_column)</a><ul>
-<li class="toctree-l3"><a class="reference external" href="pseudo_column.html#id1">3.4.1. 名前</a></li>
-<li class="toctree-l3"><a class="reference external" href="pseudo_column.html#id2">3.4.2. 説明</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference external" href="expr.html">3.5. grn式 (grn_expr)</a><ul>
-<li class="toctree-l3"><a class="reference external" href="expr.html#id1">3.5.1. 名前</a></li>
-<li class="toctree-l3"><a class="reference external" href="expr.html#id2">3.5.2. 説明</a></li>
-<li class="toctree-l3"><a class="reference external" href="expr.html#id3">3.5.3. 例</a></li>
-<li class="toctree-l3"><a class="reference external" href="expr.html#query">3.5.4. query形式</a></li>
-<li class="toctree-l3"><a class="reference external" href="expr.html#script">3.5.5. script形式</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference external" href="functions.html">3.6. 組み込み関数一覧</a><ul>
-<li class="toctree-l3"><a class="reference external" href="functions/geo_distance.html">3.6.1. geo_distance</a></li>
-<li class="toctree-l3"><a class="reference external" href="functions/geo_in_circle.html">3.6.2. geo_in_circle</a></li>
-<li class="toctree-l3"><a class="reference external" href="functions/geo_in_rectangle.html">3.6.3. geo_in_rectangle</a></li>
-<li class="toctree-l3"><a class="reference external" href="functions/now.html">3.6.4. now</a></li>
-<li class="toctree-l3"><a class="reference external" href="functions/rand.html">3.6.5. rand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial09.html">2.9. 全文検索の語彙表に対する追加情報</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/tutorial10.html">2.10. マイクロブログ検索システムの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial10.html#id2">2.10.1. テーブルの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial10.html#id3">2.10.2. データのロード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tutorial10.html#id4">2.10.3. 検索</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="developer.html">4. groonga開発者向け情報</a><ul>
-<li class="toctree-l2"><a class="reference external" href="developer/com.html">4.1. groonga 通信アーキテクチャ</a><ul>
-<li class="toctree-l3"><a class="reference external" href="developer/com.html#gqtp">4.1.1. gqtpでのアーキテクチャ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">3. リファレンスマニュアル</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="process.html">3.1. 実行環境</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="execfile.html">3.1.1. groonga実行ファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http.html">3.1.2. http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="grnslap.html">3.1.3. grnslap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="grntest.html">3.1.4. grntest</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="developer/document.html">4.2. ドキュメント作成</a><ul>
-<li class="toctree-l3"><a class="reference external" href="developer/document.html#sphinx">4.2.1. Sphinxのインストール</a></li>
-<li class="toctree-l3"><a class="reference external" href="developer/document.html#html">4.2.2. htmlの作成</a></li>
-<li class="toctree-l3"><a class="reference external" href="developer/document.html#pdf">4.2.3. pdfの作成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html">3.2. 組み込みコマンド一覧</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="commands/add.html">3.2.1. add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/cache_limit.html">3.2.2. cache_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/clearlock.html">3.2.3. 名前</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/clearlock.html#id2">3.2.4. 書式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/clearlock.html#id3">3.2.5. 説明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/clearlock.html#id4">3.2.6. 引数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/clearlock.html#id7">3.2.7. 例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/clearlock.html#id8">3.2.8. 関連項目</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/column_create.html">3.2.9. column_create</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/column_list.html">3.2.10. column_list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/column_remove.html">3.2.11. column_remove</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/define_selector.html">3.2.12. define_selector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/delete.html">3.2.13. delete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/get.html">3.2.14. get</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/load.html">3.2.15. load</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/log_level.html">3.2.16. log_level</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/log_put.html">3.2.17. log_put</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/log_reopen.html">3.2.18. log_reopen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/quit.html">3.2.19. quit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/select.html">3.2.20. select</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/set.html">3.2.21. set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/shutdown.html">3.2.22. shutdown</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/status.html">3.2.23. status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/table_create.html">3.2.24. table_create</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/table_list.html">3.2.25. table_list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/table_remove.html">3.2.26. table_remove</a></li>
+<li class="toctree-l3"><a class="reference internal" href="commands/view_add.html">3.2.27. view_add</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference external" href="developer/test.html">4.3. テスト方法</a><ul>
-<li class="toctree-l3"><a class="reference external" href="developer/test.html#id2">4.3.1. テスト環境の構築</a></li>
-<li class="toctree-l3"><a class="reference external" href="developer/test.html#id5">4.3.2. テストの動作</a></li>
-<li class="toctree-l3"><a class="reference external" href="developer/test.html#id6">4.3.3. カバレッジ情報</a></li>
-<li class="toctree-l3"><a class="reference external" href="developer/test.html#id7">4.3.4. 様々なテスト</a></li>
-<li class="toctree-l3"><a class="reference external" href="developer/test.html#id12">4.3.5. 静的解析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type.html">3.3. データ型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="type.html#id2">3.3.1. 名前</a></li>
+<li class="toctree-l3"><a class="reference internal" href="type.html#id3">3.3.2. 説明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="type.html#id4">3.3.3. 組込型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="type.html#id6">3.3.4. 型に関する制限事項</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pseudo_column.html">3.4. 疑似カラム (pseudo_column)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pseudo_column.html#id1">3.4.1. 名前</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pseudo_column.html#id2">3.4.2. 説明</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="expr.html">3.5. grn式 (grn_expr)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="expr.html#id1">3.5.1. 名前</a></li>
+<li class="toctree-l3"><a class="reference internal" href="expr.html#id2">3.5.2. 説明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="expr.html#id3">3.5.3. 例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="expr.html#query">3.5.4. query形式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="expr.html#script">3.5.5. script形式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html">3.6. 組み込み関数一覧</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="functions/geo_distance.html">3.6.1. geo_distance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="functions/geo_in_circle.html">3.6.2. geo_in_circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="functions/geo_in_rectangle.html">3.6.3. geo_in_rectangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="functions/now.html">3.6.4. now</a></li>
+<li class="toctree-l3"><a class="reference internal" href="functions/rand.html">3.6.5. rand</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">4. groonga開発者向け情報</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer/com.html">4.1. groonga 通信アーキテクチャ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer/com.html#gqtp">4.1.1. gqtpでのアーキテクチャ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer/document.html">4.2. ドキュメント作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer/document.html#sphinx">4.2.1. Sphinxのインストール</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer/document.html#html">4.2.2. htmlの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer/document.html#pdf">4.2.3. pdfの作成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer/test.html">4.3. テスト方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer/test.html#id2">4.3.1. テスト環境の構築</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer/test.html#id5">4.3.2. テストの動作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer/test.html#id6">4.3.3. カバレッジ情報</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer/test.html#id7">4.3.4. 様々なテスト</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer/test.html#id12">4.3.5. 静的解析</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+</div>
 <ul class="simple">
-<li><a class="reference external" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference external" href="modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference external" href="search.html"><em>Search Page</em></a></li>
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
 </ul>
 </div>
 
@@ -201,27 +212,27 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h4>Next topic</h4>
-            <p class="topless"><a href="characteristic.html"
-                                  title="next chapter">1. groongaの特徴</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/index.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="characteristic.html"
+                        title="next chapter">1. groongaの特徴</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -239,8 +250,8 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

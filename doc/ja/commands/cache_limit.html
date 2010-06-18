@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,16 +14,17 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.3. column_create" href="column_create.html" />
+    <link rel="next" title="3.2.3. 名前" href="clearlock.html" />
     <link rel="prev" title="3.2.1. add" href="add.html" /> 
   </head>
   <body>
@@ -32,7 +35,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="column_create.html" title="3.2.3. column_create"
+          <a href="clearlock.html" title="3.2.3. 名前"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="add.html" title="3.2.1. add"
@@ -115,43 +118,43 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">3.2.2. cache_limit</a><ul>
-<li><a class="reference external" href="#id1">3.2.2.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.2.2.2. 書式</a></li>
-<li><a class="reference external" href="#id3">3.2.2.3. 説明</a></li>
-<li><a class="reference external" href="#id4">3.2.2.4. 引数</a></li>
-<li><a class="reference external" href="#id5">3.2.2.5. 返値</a></li>
-<li><a class="reference external" href="#id6">3.2.2.6. 例</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.2.2. cache_limit</a><ul>
+<li><a class="reference internal" href="#id1">3.2.2.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.2.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.2.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.2.4. 引数</a></li>
+<li><a class="reference internal" href="#id5">3.2.2.5. 返値</a></li>
+<li><a class="reference internal" href="#id6">3.2.2.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="add.html"
-                                  title="previous chapter">3.2.1. add</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="column_create.html"
-                                  title="next chapter">3.2.3. column_create</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/commands/cache_limit.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="add.html"
+                        title="previous chapter">3.2.1. add</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="clearlock.html"
+                        title="next chapter">3.2.3. 名前</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/commands/cache_limit.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -163,7 +166,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="column_create.html" title="3.2.3. column_create"
+          <a href="clearlock.html" title="3.2.3. 名前"
              >next</a> |</li>
         <li class="right" >
           <a href="add.html" title="3.2.1. add"
@@ -174,8 +177,8 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

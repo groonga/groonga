@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
     <link rel="up" title="2. チュートリアル" href="../tutorial.html" />
@@ -54,7 +57,7 @@
 <h2>2.3.1. データ型<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>groongaでは、数値（整数・小数）や文字列や時刻や経緯度などの情報を格納することができます。</p>
 <p>ここでは、Int32型のカラムに整数を格納、Float型のカラムに浮動小数点の小数を、ShortText型のカラムに文字列を、Time型のカラムに時間を格納する例を示します。経緯度の格納については、のちのチュートリアルで触れます。</p>
-<p>その他のデータ型の一覧は、 <a class="reference external" href="../type.html"><em>データ型</em></a> を参照してください。</p>
+<p>その他のデータ型の一覧は、 <a class="reference internal" href="../type.html"><em>データ型</em></a> を参照してください。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
 [[0,1270207173.01411,0.004999]]
@@ -118,40 +121,40 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">2.3. さまざまな種類をもったデータの保存</a><ul>
-<li><a class="reference external" href="#id2">2.3.1. データ型</a></li>
-<li><a class="reference external" href="#id3">2.3.2. テーブル型</a></li>
-<li><a class="reference external" href="#id4">2.3.3. ベクターカラム</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.3. さまざまな種類をもったデータの保存</a><ul>
+<li><a class="reference internal" href="#id2">2.3.1. データ型</a></li>
+<li><a class="reference internal" href="#id3">2.3.2. テーブル型</a></li>
+<li><a class="reference internal" href="#id4">2.3.3. ベクターカラム</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="tutorial02.html"
-                                  title="previous chapter">2.2. ネットワークを通じた利用</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="tutorial04.html"
-                                  title="next chapter">2.4. さまざまな検索条件の指定</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/tutorial/tutorial03.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial02.html"
+                        title="previous chapter">2.2. ネットワークを通じた利用</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial04.html"
+                        title="next chapter">2.4. さまざまな検索条件の指定</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/tutorial03.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -173,8 +176,8 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

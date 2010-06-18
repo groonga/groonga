@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,14 +12,15 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
+        URL_ROOT:    '',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="index.html" />
     <link rel="up" title="3. リファレンスマニュアル" href="reference.html" />
@@ -237,48 +240,48 @@ column1 == &#8220;hoge&#8221;</blockquote>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">3.5. grn式 (grn_expr)</a><ul>
-<li><a class="reference external" href="#id1">3.5.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.5.2. 説明</a></li>
-<li><a class="reference external" href="#id3">3.5.3. 例</a></li>
-<li><a class="reference external" href="#query">3.5.4. query形式</a><ul>
-<li><a class="reference external" href="#id4">3.5.4.1. 条件式</a></li>
-<li><a class="reference external" href="#id5">3.5.4.2. 補助演算子</a></li>
-<li><a class="reference external" href="#id6">3.5.4.3. 結合演算子</a></li>
-<li><a class="reference external" href="#id7">3.5.4.4. プラグマ</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.5. grn式 (grn_expr)</a><ul>
+<li><a class="reference internal" href="#id1">3.5.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.5.2. 説明</a></li>
+<li><a class="reference internal" href="#id3">3.5.3. 例</a></li>
+<li><a class="reference internal" href="#query">3.5.4. query形式</a><ul>
+<li><a class="reference internal" href="#id4">3.5.4.1. 条件式</a></li>
+<li><a class="reference internal" href="#id5">3.5.4.2. 補助演算子</a></li>
+<li><a class="reference internal" href="#id6">3.5.4.3. 結合演算子</a></li>
+<li><a class="reference internal" href="#id7">3.5.4.4. プラグマ</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#script">3.5.5. script形式</a></li>
+<li><a class="reference internal" href="#script">3.5.5. script形式</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="pseudo_column.html"
-                                  title="previous chapter">3.4. 疑似カラム (pseudo_column)</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="functions.html"
-                                  title="next chapter">3.6. 組み込み関数一覧</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/expr.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pseudo_column.html"
+                        title="previous chapter">3.4. 疑似カラム (pseudo_column)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="functions.html"
+                        title="next chapter">3.6. 組み込み関数一覧</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/expr.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -300,8 +303,8 @@ column1 == &#8220;hoge&#8221;</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>

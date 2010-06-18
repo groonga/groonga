@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,24 +7,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.7. delete &mdash; groonga v0.7.3 documentation</title>
+    <title>3.2.13. delete &mdash; groonga v0.7.3 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.7.3',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.3 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.8. get" href="get.html" />
-    <link rel="prev" title="3.2.6. define_selector" href="define_selector.html" /> 
+    <link rel="next" title="3.2.14. get" href="get.html" />
+    <link rel="prev" title="3.2.12. define_selector" href="define_selector.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,10 +35,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="get.html" title="3.2.8. get"
+          <a href="get.html" title="3.2.14. get"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="define_selector.html" title="3.2.6. define_selector"
+          <a href="define_selector.html" title="3.2.12. define_selector"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.3 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -49,24 +52,24 @@
           <div class="body">
             
   <div class="section" id="delete">
-<h1>3.2.7. delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.13. delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.7.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>delete - 一件のレコードの削除</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.7.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>delete table [key [output_type [id]]]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.7.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.7.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 レコードを削除しようとするテーブルの名前を指定します。</blockquote>
@@ -97,7 +100,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 処理にかかった秒数を返します。</blockquote>
 </div>
 <div class="section" id="id7">
-<h2>3.2.7.5. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.13.5. 例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryからレコードを削除します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>delete Entry abandon
 
@@ -106,8 +109,8 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 </div>
 </div>
 <div class="section" id="id8">
-<h2>3.2.7.6. 関連項目<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="load.html"><em>load</em></a></p>
+<h2>3.2.13.6. 関連項目<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="load.html"><em>load</em></a></p>
 <table class="docutils footnote" frame="void" id="id9" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
@@ -123,43 +126,43 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">3.2.7. delete</a><ul>
-<li><a class="reference external" href="#id1">3.2.7.1. 名前</a></li>
-<li><a class="reference external" href="#id2">3.2.7.2. 書式</a></li>
-<li><a class="reference external" href="#id3">3.2.7.3. 説明</a></li>
-<li><a class="reference external" href="#id4">3.2.7.4. 引数</a></li>
-<li><a class="reference external" href="#id7">3.2.7.5. 例</a></li>
-<li><a class="reference external" href="#id8">3.2.7.6. 関連項目</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.2.13. delete</a><ul>
+<li><a class="reference internal" href="#id1">3.2.13.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.13.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.13.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.13.4. 引数</a></li>
+<li><a class="reference internal" href="#id7">3.2.13.5. 例</a></li>
+<li><a class="reference internal" href="#id8">3.2.13.6. 関連項目</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="define_selector.html"
-                                  title="previous chapter">3.2.6. define_selector</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="get.html"
-                                  title="next chapter">3.2.8. get</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/commands/delete.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="define_selector.html"
+                        title="previous chapter">3.2.12. define_selector</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="get.html"
+                        title="next chapter">3.2.14. get</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/commands/delete.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -171,10 +174,10 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="get.html" title="3.2.8. get"
+          <a href="get.html" title="3.2.14. get"
              >next</a> |</li>
         <li class="right" >
-          <a href="define_selector.html" title="3.2.6. define_selector"
+          <a href="define_selector.html" title="3.2.12. define_selector"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.3 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -182,8 +185,8 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009-2010, Brazil, Inc.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0b2.
     </div>
   </body>
 </html>
