@@ -40,7 +40,11 @@ put_delimiter(grn_ctx *ctx)
   case GRN_CONTENT_XML:
     break;
   case GRN_CONTENT_TSV:
-    if (DEPTH > 1) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
+    if (DEPTH == 1) {
+      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    } else if (DEPTH > 1) {
+      GRN_TEXT_PUTC(ctx, outbuf, '\t');
+    }
   case GRN_CONTENT_NONE:
     break;
   }
@@ -79,13 +83,9 @@ grn_output_array_close(grn_ctx *ctx)
     GRN_TEXT_PUTC(ctx, outbuf, ']');
     break;
   case GRN_CONTENT_TSV:
-    if (DEPTH > 1) {
-      if (DEPTH == 2) {
-        GRN_TEXT_PUTC(ctx, outbuf, '\n');
-      } else {
-        if (CURR_LEVEL >= 2) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
-        GRN_TEXT_PUTC(ctx, outbuf, ']');
-      }
+    if (DEPTH > 2) {
+      if (CURR_LEVEL >= 2) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
+      GRN_TEXT_PUTC(ctx, outbuf, ']');
     }
     break;
   case GRN_CONTENT_XML:
@@ -132,13 +132,9 @@ grn_output_map_close(grn_ctx *ctx)
     GRN_TEXT_PUTS(ctx, outbuf, "}");
     break;
   case GRN_CONTENT_TSV:
-    if (DEPTH) {
-      if (DEPTH == 1) {
-        GRN_TEXT_PUTC(ctx, outbuf, '\n');
-      } else {
-        if (CURR_LEVEL >= 2) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
-        GRN_TEXT_PUTC(ctx, outbuf, '}');
-      }
+    if (DEPTH > 2) {
+      if (CURR_LEVEL >= 2) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
+      GRN_TEXT_PUTC(ctx, outbuf, '}');
     }
     break;
   case GRN_CONTENT_XML:
