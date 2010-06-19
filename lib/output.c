@@ -41,7 +41,7 @@ put_delimiter(grn_ctx *ctx)
     break;
   case GRN_CONTENT_TSV:
     if (DEPTH == 1) {
-      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      GRN_TEXT_PUTC(ctx, outbuf, ((level & 3) == 3) ? '\t' : '\n');
     } else if (DEPTH > 1) {
       GRN_TEXT_PUTC(ctx, outbuf, '\t');
     }
