@@ -351,7 +351,6 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
 static grn_obj *
 proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
   grn_load(ctx, grn_get_ctype(VAR(4)),
            GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
            GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
@@ -360,7 +359,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (ctx->impl->loader.stat != GRN_LOADER_END) {
     grn_ctx_set_next_expr(ctx, grn_proc_get_info(ctx, user_data, NULL, NULL, NULL));
   } else {
-    grn_text_itoa(ctx, outbuf, ctx->impl->loader.nrecords);
+    grn_output_int64(ctx, ctx->impl->loader.nrecords);
     if (ctx->impl->loader.table) {
       grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
     }
@@ -1071,54 +1070,22 @@ proc_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_content_type ct = ctx->impl->output_type;
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_obj *table = grn_ctx_get(ctx,
-                               GRN_TEXT_VALUE(VAR(0)),
-                               GRN_TEXT_LEN(VAR(0)));
+  grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
   if (table) {
     grn_id id;
     if (GRN_TEXT_LEN(VAR(1))) {
-      if ((id = grn_table_get(ctx, table,
-                              GRN_TEXT_VALUE(VAR(1)),
-                              GRN_TEXT_LEN(VAR(1))))) {
-        /* todo */
-        {
-          grn_obj obj;
-          grn_obj_format format;
-          GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
-          GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
-          GRN_RECORD_SET(ctx, &obj, id);
-          grn_obj_columns(ctx, table,
-                          GRN_TEXT_VALUE(VAR(4)),
-                          GRN_TEXT_LEN(VAR(4)), &format.columns);
-          switch (ct) {
-          case GRN_CONTENT_JSON:
-            format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
-            GRN_TEXT_PUTS(ctx, outbuf, "[[");
-            grn_text_itoa(ctx, outbuf, ctx->rc);
-            if (ctx->rc) {
-              GRN_TEXT_PUTC(ctx, outbuf, ',');
-              grn_text_esc(ctx, outbuf, ctx->errbuf, strlen(ctx->errbuf));
-            }
-            GRN_TEXT_PUTC(ctx, outbuf, ']');
-            GRN_TEXT_PUTC(ctx, outbuf, ',');
-            grn_text_otoj(ctx, outbuf, &obj, &format);
-            GRN_TEXT_PUTC(ctx, outbuf, ']');
-            break;
-          case GRN_CONTENT_TSV:
-            GRN_TEXT_PUTC(ctx, outbuf, '\n');
-            /* TODO: implement */
-            break;
-          case GRN_CONTENT_XML:
-            format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-            grn_text_otoxml(ctx, outbuf, &obj, &format);
-            break;
-          case GRN_CONTENT_NONE:
-            break;
-          }
-          GRN_OBJ_FORMAT_FIN(ctx, &format);
-        }
+      if ((id = grn_table_get(ctx, table, GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1))))) {
+        grn_obj obj;
+        grn_obj_format format;
+        GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
+        GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
+        GRN_RECORD_SET(ctx, &obj, id);
+        grn_obj_columns(ctx, table,
+                        GRN_TEXT_VALUE(VAR(4)),
+                        GRN_TEXT_LEN(VAR(4)), &format.columns);
+        format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
+        grn_output_obj(ctx, &obj, &format);
+        GRN_OBJ_FORMAT_FIN(ctx, &format);
       } else {
         /* todo : error handling */
       }
@@ -1132,9 +1099,7 @@ proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_rc
-proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
-                            grn_expr_var *vars, grn_obj *outbuf,
-                            grn_obj **table, grn_id *id)
+proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data, grn_obj **table, grn_id *id)
 {
   const char *table_text, *id_text, *key_text;
   int table_length, id_length, key_length;
@@ -1229,40 +1194,17 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
 static grn_obj *
 proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  uint32_t nvars;
-  grn_expr_var *vars;
-  grn_content_type ct = ctx->impl->output_type;
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_obj *table = NULL;
   grn_id id;
-
-  grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
-
-  if (!proc_get_resolve_parameters(ctx, user_data, vars, outbuf, &table, &id)) {
+  grn_obj *table = NULL;
+  if (!proc_get_resolve_parameters(ctx, user_data, &table, &id)) {
     grn_obj obj;
     grn_obj_format format;
     GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
     GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
     GRN_RECORD_SET(ctx, &obj, id);
-    grn_obj_columns(ctx, table,
-                    GRN_TEXT_VALUE(VAR(2)),
-                    GRN_TEXT_LEN(VAR(2)), &format.columns);
-    switch (ct) {
-    case GRN_CONTENT_JSON:
-      format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
-      grn_text_otoj(ctx, outbuf, &obj, &format);
-      break;
-    case GRN_CONTENT_TSV:
-      GRN_TEXT_PUTC(ctx, outbuf, '\n');
-      /* TODO: implement */
-      break;
-    case GRN_CONTENT_XML:
-      format.flags = GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-      grn_text_otoxml(ctx, outbuf, &obj, &format);
-      break;
-    case GRN_CONTENT_NONE:
-      break;
-    }
+    grn_obj_columns(ctx, table, GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)), &format.columns);
+    format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
+    grn_output_obj(ctx, &obj, &format);
     GRN_OBJ_FORMAT_FIN(ctx, &format);
   }
   return NULL;
