@@ -1,3 +1,4 @@
+
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
@@ -85,13 +86,13 @@ test_columns(void)
   cut_assert_equal_string(
       cut_take_printf("["
                       "["
-                      "[\"id\", \"UInt32\"],"
+                      "[\"id\",\"UInt32\"],"
                       "[\"name\",\"ShortText\"],"
                       "[\"path\",\"ShortText\"],"
                       "[\"type\",\"ShortText\"],"
                       "[\"flags\",\"ShortText\"],"
-                      "[\"domain\", \"ShortText\"],"
-                      "[\"range\", \"ShortText\"],"
+                      "[\"domain\",\"ShortText\"],"
+                      "[\"range\",\"ShortText\"],"
                       "[\"source\",\"ShortText\"]"
                       "],"
                       "[258,"
