@@ -2062,21 +2062,6 @@ GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys, unsigned nkeys);
 
-GRN_API grn_rc grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
-                          const char *match_columns, unsigned match_columns_len,
-                          const char *query, unsigned query_len,
-                          const char *filter, unsigned filter_len,
-                          const char *scorer, unsigned scorer_len,
-                          const char *sortby, unsigned sortby_len,
-                          const char *output_columns, unsigned output_columns_len,
-                          int offset, int hits,
-                          const char *drilldown, unsigned drilldown_len,
-                          const char *drilldown_sortby, unsigned drilldown_sortby_len,
-                          const char *drilldown_output_columns,
-                          unsigned drilldown_output_columns_len,
-                          int drilldown_offset, int drilldown_hits,
-                          const char *cache, unsigned cache_len);
-
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned table_len,
                         const char *columns, unsigned columns_len,
