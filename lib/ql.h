@@ -196,7 +196,6 @@ struct _grn_ctx_impl {
   /* output portion */
   grn_content_type output_type;
   const char *mime_type;
-  uint32_t opened;
   grn_obj names;
   grn_obj levels;
 

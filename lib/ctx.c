@@ -1004,7 +1004,6 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       } else {
         ctx->impl->mime_type = "application/json";
         ctx->impl->output_type = GRN_CONTENT_JSON;
-        ctx->impl->opened = 1;
         grn_timeval_now(ctx, &ctx->impl->tv);
         GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
         if (str_len && *str == '/') {

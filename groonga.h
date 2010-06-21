@@ -1918,7 +1918,7 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 #define GRN_UINT32_VALUE_AT(obj,offset) (((unsigned int *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_INT64_VALUE_AT(obj,offset) (((long long int *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_UINT64_VALUE_AT(obj,offset) (((long long unsigned int *)GRN_BULK_HEAD(obj))[offset])
-#define GRN_FLOAT_VALUE_AT(ob,offsetj) (((double *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_FLOAT_VALUE_AT(obj,offset) (((double *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_TIME_VALUE_AT GRN_INT64_VALUE_AT
 #define GRN_RECORD_VALUE_AT(obj,offset) (((grn_id *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_PTR_VALUE_AT(obj,offset) (((grn_obj **)GRN_BULK_HEAD(obj))[offset])
@@ -2061,21 +2061,6 @@ GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
                                                         grn_obj *table, unsigned *nkeys);
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys, unsigned nkeys);
-
-GRN_API grn_rc grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
-                          const char *match_columns, unsigned match_columns_len,
-                          const char *query, unsigned query_len,
-                          const char *filter, unsigned filter_len,
-                          const char *scorer, unsigned scorer_len,
-                          const char *sortby, unsigned sortby_len,
-                          const char *output_columns, unsigned output_columns_len,
-                          int offset, int hits,
-                          const char *drilldown, unsigned drilldown_len,
-                          const char *drilldown_sortby, unsigned drilldown_sortby_len,
-                          const char *drilldown_output_columns,
-                          unsigned drilldown_output_columns_len,
-                          int drilldown_offset, int drilldown_hits,
-                          const char *cache, unsigned cache_len);
 
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned table_len,
