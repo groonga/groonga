@@ -70,7 +70,10 @@ graph_category groonga
 graph_info number of records in groonga table
 EOF
   success, body = run("table_list")
-  exit(false) unless success
+  unless success
+    puts "error: #{body}"
+    exit(false)
+  end
   parse_list(body[0], body[1..-1]).each do |table|
     name = table["name"]
     puts <<EOF
@@ -87,7 +90,10 @@ exit(false) unless success
 parse_list(body[0], body[1..-1]).each do |table|
   name = table["name"]
   success, body = run("select", "#{name} --limit 0")
-  exit(false) unless success
+  unless success
+    puts("error: #{body}")
+    exit(false)
+  end
   n_records = body[0][0][0]
   puts <<EOF
 #{name}.value #{n_records}
