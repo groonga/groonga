@@ -33,14 +33,41 @@
 extern "C" {
 #endif
 
-void grn_output_array_open(grn_ctx *ctx, const char *name, int nelements);
-void grn_output_array_close(grn_ctx *ctx);
-void grn_output_map_open(grn_ctx *ctx, const char *name, int nelements);
-void grn_output_map_close(grn_ctx *ctx);
-void grn_output_int32(grn_ctx *ctx, int value);
-void grn_output_int64(grn_ctx *ctx, long long value);
-void grn_output_str(grn_ctx *ctx, const char *value);
-void grn_output_obj(grn_ctx *ctx, grn_obj *obj, grn_obj_format *format);
+void grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                           const char *name, int nelements);
+void grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
+void grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                         const char *name, int nelements);
+void grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
+void grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                      int32_t value);
+void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                      int64_t value);
+void grn_output_cstr(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                     const char *value);
+void grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                    const char *value, size_t value_len);
+void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                    grn_obj *obj, grn_obj_format *format);
+
+#define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
+  (grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type, name, nelements))
+#define GRN_OUTPUT_ARRAY_CLOSE() \
+  (grn_output_array_close(ctx, ctx->impl->outbuf, ctx->impl->output_type))
+#define GRN_OUTPUT_MAP_OPEN(name,nelements) \
+  (grn_output_map_open(ctx, ctx->impl->outbuf, ctx->impl->output_type, name, nelements))
+#define GRN_OUTPUT_MAP_CLOSE() \
+  (grn_output_map_close(ctx, ctx->impl->outbuf, ctx->impl->output_type))
+#define GRN_OUTPUT_INT32(value) \
+  (grn_output_int32(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+#define GRN_OUTPUT_INT64(value) \
+  (grn_output_int64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+#define GRN_OUTPUT_CSTR(value)\
+  (grn_output_cstr(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+#define GRN_OUTPUT_STR(value,value_len)\
+  (grn_output_str(ctx, ctx->impl->outbuf, ctx->impl->output_type, value, value_len))
+#define GRN_OUTPUT_OBJ(obj,format)\
+  (grn_output_obj(ctx, ctx->impl->outbuf, ctx->impl->output_type, obj, format))
 
 #ifdef __cplusplus
 }

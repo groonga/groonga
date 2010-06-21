@@ -15,9 +15,15 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef GROONGA_IN_H
+#include "groonga_in.h"
+#endif /* GROONGA_IN_H */
+
 #include <string.h>
-#include "output.h"
+#include "str.h"
 #include "ql.h"
+#include "db.h"
+#include "output.h"
 
 #define LEVELS (&ctx->impl->levels)
 #define DEPTH (GRN_BULK_VSIZE(LEVELS)>>2)
@@ -27,11 +33,9 @@
 #define INCR_LENGTH (DEPTH ? (GRN_UINT32_VALUE_AT(LEVELS, (DEPTH - 1)) += 2) : 0)
 
 static void
-put_delimiter(grn_ctx *ctx)
+put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 {
   uint32_t level = CURR_LEVEL;
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
   if (level < 2) { return; }
   switch (output_type) {
   case GRN_CONTENT_JSON:
@@ -51,11 +55,10 @@ put_delimiter(grn_ctx *ctx)
 }
 
 void
-grn_output_array_open(grn_ctx *ctx, const char *name, int nelements)
+grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                      const char *name, int nelements)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
-  put_delimiter(ctx);
+  put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTC(ctx, outbuf, '[');
@@ -74,10 +77,8 @@ grn_output_array_open(grn_ctx *ctx, const char *name, int nelements)
 }
 
 void
-grn_output_array_close(grn_ctx *ctx)
+grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTC(ctx, outbuf, ']');
@@ -100,11 +101,10 @@ grn_output_array_close(grn_ctx *ctx)
 }
 
 void
-grn_output_map_open(grn_ctx *ctx, const char *name, int nelements)
+grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                    const char *name, int nelements)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
-  put_delimiter(ctx);
+  put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTS(ctx, outbuf, "{");
@@ -123,10 +123,8 @@ grn_output_map_open(grn_ctx *ctx, const char *name, int nelements)
 }
 
 void
-grn_output_map_close(grn_ctx *ctx)
+grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTS(ctx, outbuf, "}");
@@ -149,11 +147,9 @@ grn_output_map_close(grn_ctx *ctx)
 }
 
 void
-grn_output_int32(grn_ctx *ctx, int value)
+grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int value)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
-  put_delimiter(ctx);
+  put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
     grn_text_itoa(ctx, outbuf, value);
@@ -171,11 +167,9 @@ grn_output_int32(grn_ctx *ctx, int value)
 }
 
 void
-grn_output_int64(grn_ctx *ctx, long long value)
+grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int64_t value)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
-  put_delimiter(ctx);
+  put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
     grn_text_lltoa(ctx, outbuf, value);
@@ -193,20 +187,19 @@ grn_output_int64(grn_ctx *ctx, long long value)
 }
 
 void
-grn_output_str(grn_ctx *ctx, const char *value)
+grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+               const char *value, size_t value_len)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
-  put_delimiter(ctx);
+  put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
-    grn_text_esc(ctx, outbuf, value, strlen(value));
+    grn_text_esc(ctx, outbuf, value, value_len);
     break;
   case GRN_CONTENT_TSV:
-    grn_text_esc(ctx, outbuf, value, strlen(value));
+    grn_text_esc(ctx, outbuf, value, value_len);
     break;
   case GRN_CONTENT_XML:
-    GRN_TEXT_PUTS(ctx, outbuf, value);
+    grn_text_escape_xml(ctx, outbuf, value, value_len);
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -215,11 +208,16 @@ grn_output_str(grn_ctx *ctx, const char *value)
 }
 
 void
-grn_output_obj(grn_ctx *ctx, grn_obj *obj, grn_obj_format *format)
+grn_output_cstr(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                const char *value)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
-  put_delimiter(ctx);
+  grn_output_str(ctx, outbuf, output_type, value, strlen(value));
+}
+
+void
+grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn_obj *obj, grn_obj_format *format)
+{
+  put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
     grn_text_otoj(ctx, outbuf, obj, format);
@@ -235,3 +233,4 @@ grn_output_obj(grn_ctx *ctx, grn_obj *obj, grn_obj_format *format)
   }
   INCR_LENGTH;
 }
+
