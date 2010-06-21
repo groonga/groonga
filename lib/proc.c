@@ -806,7 +806,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     }
     grn_obj_unlink(ctx, table);
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "table '%.*s' is not exist.",
+    ERR(GRN_INVALID_ARGUMENT, "table '%.*s' does not exist.",
         GRN_TEXT_LEN(VAR(0)),
         GRN_TEXT_VALUE(VAR(0)));
   }
