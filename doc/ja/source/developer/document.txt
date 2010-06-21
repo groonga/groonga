@@ -9,7 +9,7 @@ Sphinxのインストール
 groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは以下のように導入します。::
 
  # aptitude install python_setuptools
- # eazy_install sphinx
+ # eazy_install -U sphinx
 
 htmlの作成
 ----------------
