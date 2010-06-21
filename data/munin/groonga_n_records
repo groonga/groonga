@@ -86,7 +86,10 @@ EOF
 end
 
 success, body = run("table_list")
-exit(false) unless success
+unless success
+  puts("error: #{body}")
+  exit(false)
+end
 parse_list(body[0], body[1..-1]).each do |table|
   name = table["name"]
   success, body = run("select", "#{name} --limit 0")
