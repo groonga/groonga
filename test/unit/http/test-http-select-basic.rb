@@ -755,8 +755,9 @@ module HTTPSelectBasicTests
 </SEGMENT>
 </SEGMENTS>
 EOF
-    assert_select_xml(expected, {:table => "users",
-                                 :output_columns => "_id,_key,real_name,hp"})
+    assert_select_xml(expected.strip,
+                      {:table => "users",
+                       :output_columns => "_id,_key,real_name,hp"})
   end
 
   def test_xml_with_offset
@@ -776,7 +777,7 @@ EOF
 </SEGMENT>
 </SEGMENTS>
 EOF
-    assert_select_xml(expected,
+    assert_select_xml(expected.strip,
                       {:table => "users", :offset => 2, :limit => 1,
                        :output_columns => "_id"})
   end
@@ -813,7 +814,7 @@ EOF
 </SEGMENT>
 </SEGMENTS>
 EOF
-    assert_select_xml(expected,
+    assert_select_xml(expected.strip,
                       {:table => "users", :sortby => "_key", :offset => 2,
                        :output_columns => "_id,_key,real_name,hp"})
   end
