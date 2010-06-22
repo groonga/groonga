@@ -22,6 +22,9 @@
 
 #include "../lib/grn-assertions.h"
 
+void test_nil_column_reference_value(void);
+void test_output_columns_with_space(void);
+
 static gchar *tmp_directory;
 
 static grn_ctx *context;
@@ -96,4 +99,24 @@ test_nil_column_reference_value(void)
                            "[\"link\",\"Sites\"]],"
                           "[1,\"groonga.org\",0,\"\"],"
                           "[2,\"razil.jp\",0,\"\"]]]", actual);
+}
+
+void
+test_output_columns_with_space(void)
+{
+  assert_send_commands("table_create Sites TABLE_HASH_KEY ShortText\n"
+                       "column_create Sites uri COLUMN_SCALAR ShortText\n"
+                       "load --table Sites\n"
+                       "[\n"
+                       "[\"_key\",\"uri\"],\n"
+                       "[\"groonga\",\"http://groonga.org/\"],\n"
+                       "[\"razil\",\"http://razil.jp/\"]\n"
+                       "]");
+  cut_assert_equal_string("[[[2],"
+                          "[[\"_key\",\"ShortText\"],"
+                           "[\"uri\",\"ShortText\"]],"
+                          "[\"groonga\",\"http://groonga.org/\"],"
+                          "[\"razil\",\"http://razil.jp/\"]]]",
+                          send_command("select Sites "
+                                       "--output_columns '_key, uri'"));
 }
