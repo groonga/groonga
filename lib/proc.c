@@ -806,7 +806,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     }
     grn_obj_unlink(ctx, table);
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "table '%.*s' is not exist.",
+    ERR(GRN_INVALID_ARGUMENT, "table '%.*s' does not exist.",
         GRN_TEXT_LEN(VAR(0)),
         GRN_TEXT_VALUE(VAR(0)));
   }
@@ -964,6 +964,13 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                path + grn_admin_html_path_len + 1,
                                PATH_MAX - grn_admin_html_path_len - 1);
     grn_bulk_put_from_file(ctx, outbuf, path);
+  } else {
+    uint32_t abbrlen = 32;
+    ERR(GRN_INVALID_ARGUMENT,
+        "too long path name: <%s%c%.*s...> %u(%u)",
+        grn_admin_html_path, PATH_SEPARATOR[0],
+        abbrlen < plen ? abbrlen : plen, GRN_TEXT_VALUE(VAR(0)),
+        plen + grn_admin_html_path_len, PATH_MAX);
   }
   return NULL;
 }

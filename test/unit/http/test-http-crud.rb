@@ -166,6 +166,47 @@ module HTTPCRUDTest
     end
   end
 
+  class HTTPDeleteTest < Test::Unit::TestCase
+    include GroongaHTTPTestUtils
+
+    def setup
+      setup_server
+    end
+
+    def teardown
+      teardown_server
+    end
+
+    def test_normal
+      populate_users
+
+      response = get(command_path(:select,
+                                  :table => "users",
+                                  :output_columns => "_key real_name"))
+      assert_response_body([[[2],
+                             [["_key", "ShortText"], ["real_name", "ShortText"]],
+                             ["hayamiz", "Yuto Hayamizu"],
+                             ["ryoqun", "Ryo Onodera"]]],
+                           response,
+                           :content_type => "application/json")
+
+      response = get(command_path(:delete,
+                                  :table => "users",
+                                  :key => "hayamiz"))
+      assert_success_response(response,
+                              :content_type => "application/json")
+
+      response = get(command_path(:select,
+                                  :table => "users",
+                                  :output_columns => "_key real_name"))
+      assert_response_body([[[2],
+                             [["_key", "ShortText"], ["real_name", "ShortText"]],
+                             ["ryoqun", "Ryo Onodera"]]],
+                           response,
+                           :content_type => "application/json")
+    end
+  end
+
   class HTTPSetTest < Test::Unit::TestCase
     include GroongaHTTPTestUtils
 

@@ -94,6 +94,15 @@ test_columns(void)
                       "[\"range\",\"ShortText\"],"
                       "[\"source\",\"ShortText\"]"
                       "],"
+                      "[0,"
+                      "\"_key\","
+                      "\"\","
+                      "\"\","
+                      "\"COLUMN_SCALAR|COMPRESS_NONE\","
+                      "\"Users\","
+                      "\"ShortText\","
+                      "[]"
+                      "],"
                       "[258,"
                       "\"comment\","
                       "\"%s.0000102\","
@@ -115,4 +124,46 @@ test_columns(void)
                       "]",
                       database_path, database_path),
       send_command("column_list Users"));
+}
+
+void
+test_index_columns(void)
+{
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  assert_send_command("table_create Terms TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Terms Sites_key "
+                      "COLUMN_INDEX|WITH_POSITION Sites _key");
+  assert_send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
+  cut_assert_equal_string(
+      cut_take_printf("["
+                      "["
+                      "[\"id\",\"UInt32\"],"
+                      "[\"name\",\"ShortText\"],"
+                      "[\"path\",\"ShortText\"],"
+                      "[\"type\",\"ShortText\"],"
+                      "[\"flags\",\"ShortText\"],"
+                      "[\"domain\",\"ShortText\"],"
+                      "[\"range\",\"ShortText\"],"
+                      "[\"source\",\"ShortText\"]"
+                      "],"
+                      "[0,"
+                      "\"_key\","
+                      "\"\","
+                      "\"\","
+                      "\"COLUMN_SCALAR|COMPRESS_NONE\","
+                      "\"Terms\","
+                      "\"ShortText\","
+                      "[]"
+                      "],"
+                      "[258,"
+                      "\"Sites_key\","
+                      "\"%s.0000102\","
+                      "\"index\",\"COLUMN_INDEX|WITH_POSITION|COMPRESS_NONE|PERSISTENT\","
+                      "\"Terms\","
+                      "\"Sites\","
+                      "[\"Sites\"]"
+                      "]"
+                      "]",
+                      database_path),
+      send_command("column_list Terms"));
 }

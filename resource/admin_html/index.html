@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.1.custom.css">
 <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="/js/jquery-ui-1.8.1.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery.json-2.2.min.js"></script>
 </head>
 <body>
 <div id="header">
@@ -43,6 +44,9 @@
             </ul>
           </div>
           <div id="database-tab-tablelist">
+            <div id="tab-tablelist-table">
+            </div>
+            <input type="button" id="tablelist-remove-table" value="選択テーブル削除">
           </div>
           <div id="database-tab-createtable">
             <table>
@@ -118,7 +122,7 @@
           <ul>
             <li><a href="#table-tab-recordlist" id="tab-recordlist-link">レコード一覧</a></li>
             <li><a href="#table-tab-columnlist" id="tab-columnlist-link">カラム一覧</a></li>
-            <li><a href="#table-tab-createrecord">レコード作成</a></li>
+            <li><a href="#table-tab-createrecord" id="tab-createrecord-link">レコード作成</a></li>
             <li><a href="#table-tab-createcolumn">カラム作成</a></li>
           </ul>
           <div id="table-tab-recordlist">
@@ -151,11 +155,17 @@
             <input type="button" id="tab-recordlist-submit" value="検索"/>
             <div id="tab-recordlist-table">
             </div>
+            <input type="button" id="recordlist-remove-record" value="選択レコード削除">
           </div>
           <div id="table-tab-columnlist">
+            <div id="tab-columnlist-table">
+            </div>
+            <input type="button" id="columnlist-remove-column" value="選択カラム削除">
           </div>
           <div id="table-tab-createrecord">
-            <!-- TODO: implement -->
+            <table id="table-createrecord">
+            </table>
+            <input type="button" id="createrecord-add-record" value="レコード追加">
           </div>
           <div id="table-tab-createcolumn">
             <table>
@@ -264,14 +274,15 @@ function escapeHTML(str) {
 }
 Groonga = {
   key_type_list: ['Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
-                  'Int64', 'UInt64', 'Float', 'Time', 'ShortText'],
+                  'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
+                  'TokyoGeoPoint', 'WGS84GeoPoint'],
   value_type_list: ['Object', 'Bool',
                     'Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                     'Int64', 'UInt64', 'Float', 'Time'],
   column_type_list: ['Object', 'Bool',
                      'Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                      'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
-                     'Text', 'LongText'],
+                     'Text', 'LongText', 'TokyoGeoPoint', 'WGS84GeoPoint'],
   tokenizer_list: ['TokenDelimit', 'TokenUnigram', 'TokenBigram', 'TokenTrigram', 'TokenMecab'],
   GRN_OBJ_PERSISTENT:             (0x01<<15),
 
@@ -311,7 +322,7 @@ GroongaAdmin = {
         if (ui.panel.id == 'database-tab-summary') {
           GroongaAdmin.start_status_timer();
         }
-      },
+      }
     });
     GroongaAdmin.table_tabs = $('#table-tabs').tabs({
       show: function(e, ui) {
@@ -322,7 +333,10 @@ GroongaAdmin = {
     });
     $('#tab-columnlist-link').click(function() {
       GroongaAdmin.columnlist(GroongaAdmin.current_table);
-    })
+    });
+    $('#tab-createrecord-link').click(function() {
+      GroongaAdmin.update_createrecord(GroongaAdmin.current_table);
+    });
     $('#tab-recordlist-link').click(function() {
       $('#tab-recordlist-simplequery').val('');
       GroongaAdmin.recordlist_simple(GroongaAdmin.current_table, null, null, 1);
@@ -330,8 +344,20 @@ GroongaAdmin = {
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
     });
+    $('#createrecord-add-record').click(function() {
+      GroongaAdmin.createrecord();
+    });
     $('#createcolumn-add-column').click(function() {
       GroongaAdmin.createcolumn();
+    });
+    $('#recordlist-remove-record').click(function() {
+      GroongaAdmin.removerecord();
+    });
+    $('#columnlist-remove-column').click(function() {
+      GroongaAdmin.removecolumn();
+    });
+    $('#tablelist-remove-table').click(function() {
+      GroongaAdmin.removetable();
     });
     $('#tab-recordlist-submit').click(function() {
       if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
@@ -363,6 +389,7 @@ GroongaAdmin = {
     });
 
     e1 = $('#createtable-value-type-builtin');
+    e1.append($('<option />').val('').text('なし'));
     $.each(Groonga.value_type_list, function(i, val) {
       e1.append($('<option />').val(val).text(val));
     });
@@ -466,7 +493,7 @@ GroongaAdmin = {
       GroongaAdmin.statusTimer = null;
     }
   },
-  create_table_element: function (d) {
+  create_table_element: function (d, check, button) {
     var elms = ['<table class="records">'];
     if ($.isArray(d)) {
       elms.push('<thead>');
@@ -477,12 +504,18 @@ GroongaAdmin = {
         if ($.isArray(line)) {
           elms.push('<tr>');
           var m = line.length;
+          if (check) {
+            elms.push('<th/>');
+          }
           for (var j = 0; j < m; j++) {
             elms.push('<th>');
             elms.push(prim2html(line[j][0], 128));
             elms.push('<br />');
             elms.push(prim2html(line[j][1], 128));
             elms.push('</th>');
+          }
+          if (button) {
+            elms.push('<th/>');
           }
           elms.push('</tr>');
         }
@@ -493,10 +526,30 @@ GroongaAdmin = {
           if ($.isArray(line)) {
             elms.push('<tr>');
             var m = line.length;
+            switch(check) {// チェックボックスの値を何にするか
+            case 1: // 1番目の要素(レコード一覧の_id等)
+            case 2: // 2番目の要素(テーブル・カラム一覧のname等)
+              elms.push('<td><input type="checkbox" value="');
+              elms.push(line[check-1]);
+              elms.push('" /></td>');
+              break;
+            }
             for (var j = 0; j < m; j++) {
               elms.push('<td>');
               elms.push(prim2html(line[j], 128));
               elms.push('</td>');
+            }
+            switch(button) {
+            case 1: // Edit record
+              elms.push('<td><input type="button" onClick="GroongaAdmin.show_edit_record(');
+              elms.push(line[0]);
+              elms.push(');" value="編集" /></td>');
+              break;
+            case 2: // Table
+              elms.push('<td><input type="button" onClick="$(\'#side-menu-tablelist-link-');
+              elms.push(line[1]);
+              elms.push('\').click();" value="詳細" /></td>');
+              break;
             }
             elms.push('</tr>');
           }
@@ -506,6 +559,10 @@ GroongaAdmin = {
     }
     elms.push('</table>');
     return elms.join('');
+  },
+  show_edit_record: function(id) {
+    $('#table-tabs').tabs('select', 2);
+    GroongaAdmin.update_createrecord(GroongaAdmin.current_table, id);
   },
   status: function() {
     if (GroongaAdmin.current_status > 0) { return; }
@@ -563,6 +620,7 @@ GroongaAdmin = {
             tl.append(
               $('<li />').append(
                 $('<a />')
+                  .attr('id', 'side-menu-tablelist-link-' + table_name)
                   .attr('href', '#side-menu-tablelist-' + table_name)
                   .text(table_name)
                   .click(function() {
@@ -573,6 +631,7 @@ GroongaAdmin = {
                     GroongaAdmin.columnlist(table_name);
                     $('#tab-recordlist-simplequery').val('');
                     GroongaAdmin.recordlist_simple(table_name, null, null, 1);
+                    GroongaAdmin.update_createrecord(GroongaAdmin.current_table);
                   })
               )
             );
@@ -589,7 +648,7 @@ GroongaAdmin = {
     );
   },
   tablelist: function() {
-    $('#database-tab-tablelist').empty();
+    $('#tab-tablelist-table').empty();
     GroongaAdmin.showloading(
       $.ajax({
         url: '/d/table_list',
@@ -598,8 +657,8 @@ GroongaAdmin = {
         success: function(d) {
           if (GroongaAdmin.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(GroongaAdmin.create_table_element(b));
-          $('#database-tab-tablelist').append($('<h1/>').text('テーブル一覧')).append(table);
+          var table = $(GroongaAdmin.create_table_element(b, 2, 2));
+          $('#tab-tablelist-table').append($('<h1 />').text('テーブル一覧')).append(table);
           GroongaAdmin.hideloading();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -610,7 +669,7 @@ GroongaAdmin = {
   },
   pager_element_factory: function(per_page, current_page, show_num, func) {
     return function (total) {
-      var ret = $('<div/>').addClass('pager');
+      var ret = $('<div />').addClass('pager');
       if (total) {
         var last_page = Math.floor((total - 1) / per_page) + 1;
         var st = current_page - Math.floor(show_num / 2);
@@ -620,14 +679,14 @@ GroongaAdmin = {
 
         if (st > 1) {
           ret.append(
-            $('<span/>').addClass('pager').append(
-              $('<a/>').attr('href', '#').text('1').click(func)
+            $('<span />').addClass('pager').append(
+              $('<a />').attr('href', '#').text('1').click(func)
             )
-          ).append($('<span/>').text('....'));
+          ).append($('<span />').text('....'));
         }
         for (var i = st; i <= ed; i++) {
-          var s = $('<span/>').append(
-            $('<a/>').attr('href', '#').text(String(i)).click(func)
+          var s = $('<span />').append(
+            $('<a />').attr('href', '#').text(String(i)).click(func)
           );
           if (i == current_page) {
             s.addClass('pager-current');
@@ -637,9 +696,9 @@ GroongaAdmin = {
           ret.append(s);
         }
         if (ed < last_page) {
-          ret.append($('<span/>').text('....')).append(
-            $('<span/>').addClass('pager').append(
-              $('<a/>').attr('href', '#').text(String(last_page)).click(func)
+          ret.append($('<span />').text('....')).append(
+            $('<span />').addClass('pager').append(
+              $('<a />').attr('href', '#').text(String(last_page)).click(func)
             )
           )
         }
@@ -672,7 +731,7 @@ GroongaAdmin = {
               simplequery_type,
               Number($(this).text()));
             return false;
-        }
+          }
         ),
         hide_dialog
       );
@@ -703,10 +762,10 @@ GroongaAdmin = {
           }
           $('#tab-recordlist-table')
             .empty()
-            .append($('<h1/>').text('レコード一覧: ' + params['table']))
-            .append($('<p/>').text('総件数: ' + all_count))
+            .append($('<h1 />').text('レコード一覧: ' + params['table']))
+            .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
-            .append($('<div/>').html(GroongaAdmin.create_table_element(recs)))
+            .append($('<div />').html(GroongaAdmin.create_table_element(recs, 1, 1)))
             .append(pager);
           GroongaAdmin.hideloading();
         },
@@ -717,7 +776,7 @@ GroongaAdmin = {
     ,hide_dialog);
   },
   columnlist: function(table_name) {
-    $('#table-tab-columnlist').empty();
+    $('#tab-columnlist-table').empty();
     GroongaAdmin.showloading(
       $.ajax({
         url: '/d/column_list',
@@ -726,12 +785,183 @@ GroongaAdmin = {
         success: function(d) {
           if (GroongaAdmin.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(GroongaAdmin.create_table_element(b));
-          $('#table-tab-columnlist')
-            .empty()
-            .append($('<h1/>').text('カラム一覧: ' + table_name))
+          var table = $(GroongaAdmin.create_table_element(b, 2));
+          $('#tab-columnlist-table')
+            .append($('<h1 />').text('カラム一覧: ' + table_name))
             .append(table);
           GroongaAdmin.hideloading();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
+        }
+      })
+    );
+  },
+  add_record_inputbox: function(type, value) {
+    var inputbox = null;
+    switch(type){
+    case "Bool":
+      inputbox = $('<input />')
+          .attr("type","checkbox")
+          .attr("value","true");
+      if (value) {
+        inputbox.attr("checked","");
+      }
+      break;
+    case "UInt8":
+    case "UInt16":
+    case "UInt32":
+    case "UInt64":
+    case "Int8":
+    case "Int16":
+    case "Int32":
+    case "Int64":
+    case "Float":
+      inputbox = $('<input />')
+          .attr("type", "text")
+          .val(isNaN(value) ? "" : value);
+      break;
+    case "Text":
+    case "ShortText":
+    case "LongText":
+      inputbox = $('<textarea />')
+          .attr("cols", "50")
+          .attr("rows", "2")
+          .text(value ? value : "");
+      break;
+    case "TokyoGeoPoint":
+    case "WGS84GeoPoint":
+    case "Time":
+      inputbox = $('<input />')
+          .attr("type", "text")
+          .attr("size", "40")
+          .val(value ? value : "");
+      break;
+    case "Object":
+      inputbox = $('<input />')
+          .attr("type", "text")
+          .attr("disabled", "disabled");
+      break;
+    default:
+      inputbox = $('<input />')
+          .attr("type", "text")
+          .val(value ? value : "");
+    }
+    inputbox.addClass('column_values');
+    return inputbox;
+  },
+  add_record_deletebutton: function(){
+    var ret =
+      $('<span />')
+        .append("[×]")
+        .css('cursor', 'pointer')
+        .click(function() {
+          $(this).prev().remove();
+          $(this).next().remove();
+          $(this).remove();
+        });
+    return ret;
+  },
+  update_createrecord_loadcomplete: function(d_sel, d_col) {
+    var b = d_sel[1][0];
+    var columns = $('<tbody />');
+    var listofs = b[1].length - (d_col[1].length - 1);
+    for (var i = 1; i < b[1].length; i++) {
+      var line = b[1][i];
+      var value = null;
+      if (b[2]) value = b[2][i];
+      if ($.isArray(line)) {
+        var tr = $('<tr/ >')
+          .addClass('create-record-columns')
+          .append(
+            $('<td />')
+              .addClass('columnname')
+              .append(prim2html(line[0], 128))
+          )
+          .append(
+            $('<td />')
+              .addClass('columntype')
+              .append("(")
+              .append($('<span />')
+                .append(prim2html(line[1], 128))
+              )
+              .append(")")
+          );
+        var inputtd = $('<td />').addClass('columnval');
+        if (i >= listofs && d_col[1][i - listofs + 1][4].indexOf("COLUMN_VECTOR") >= 0){
+          var type = line[1];
+          if (value != null) {
+            for (var j = 0; j < value.length; j++) {
+              inputtd
+                .append(GroongaAdmin.add_record_inputbox(line[1], value[j]))
+                .append(GroongaAdmin.add_record_deletebutton())
+                .append('<br />');
+            }
+          }
+          inputtd
+            .append($('<span />')
+              .append("[値を追加]")
+              .css('cursor', 'pointer')
+              .click(function() {
+                var target = $(this).parent();
+                target
+                  .append(GroongaAdmin.add_record_inputbox($(this).parent().prev().children().text()))
+                  .append(GroongaAdmin.add_record_deletebutton())
+                  .append("<br />");
+                $(this).appendTo(target);
+              })
+            );
+        } else {
+          inputtd.append(GroongaAdmin.add_record_inputbox(line[1], value));
+          if (line[0] == "_key" && value != null) {
+            inputtd.children().attr("disabled", "disabled");
+          }
+        }
+        tr.append(inputtd);
+        columns.append(tr);
+      }
+    }
+    $("#table-createrecord").append(columns);
+    GroongaAdmin.hideloading();
+  },
+  update_createrecord: function(table_name, id) {
+    var d_sel = null;
+    var d_col = null;
+    $('#table-createrecord').empty();
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/select',
+        data: {
+          'table' : table_name,
+          'limit' : 1,
+          'query' : '_id:' + id
+        },
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          d_sel = d;
+          if (d_col) {
+            GroongaAdmin.update_createrecord_loadcomplete(d_sel, d_col);
+          }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
+        }
+      })
+    );
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/column_list',
+        data: {
+          'table' : table_name
+        },
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          d_col = d;
+          if (d_sel) {
+            GroongaAdmin.update_createrecord_loadcomplete(d_sel, d_col);
+          }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           GroongaAdmin.errorloading(XMLHttpRequest);
@@ -803,14 +1033,194 @@ GroongaAdmin = {
       })
     );
   },
+  createrecord_getvalue: function(type, inputbox) {
+    switch(type){
+    case "Bool":
+      if (inputbox.is('input:checked')) {
+        return true;
+      } else {
+        return false;
+      }
+    default:
+      return inputbox.val();
+    }
+  },
+  createrecord: function() {
+    var d = {};
+    $('.create-record-columns').each(function() {
+      if (!$(this).children('.columnval').children().attr('disabled')
+        || $(this).children('.columnname').text() == "_key") {
+        var type = $(this).children('.columntype').children().text();
+        if ($(this).children('.columnval').children('span').length) {
+          var arr = [];
+          $(this).children('.columnval').children('.column_values').each(function() {
+            arr.push(GroongaAdmin.createrecord_getvalue(type, $(this)));
+          });
+          d[$(this).children('.columnname').text()] = arr;
+        } else {
+          d[$(this).children('.columnname').text()] =
+            GroongaAdmin.createrecord_getvalue(type, $(this).children('.columnval').children());
+        }
+      }
+    });
+    GroongaAdmin.showloading(
+      $.ajax({
+        url: '/d/load',
+        data: {
+          "table" : GroongaAdmin.current_table,
+          "input_type" : "json",
+          "output_type" : "json",
+          "values" : $.toJSON([d])
+        },
+        dataType: 'json',
+        success: function(d) {
+          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          GroongaAdmin.hideloading();
+          alert('レコードを作成しました。');
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          GroongaAdmin.errorloading(XMLHttpRequest);
+        }
+      })
+    );
+  },
+  removerecord: function() {
+    var checklist = $("#tab-recordlist-table").find("input:checked");
+    var completecount = checklist.length;
+    if (completecount > 0) {
+      $('<div />')
+        .append("選択した" + completecount + "件のレコードを削除しますか？")
+        .dialog({
+          modal: true,
+          buttons: {
+            'いいえ': function() {
+              $(this).dialog('close');
+            },
+            'はい': function() {
+              $(this).dialog('close');
+              checklist.each(function(i, val) {
+                GroongaAdmin.showloading(
+                  $.ajax({
+                    url: '/d/delete',
+                    data: {
+                      "table" : GroongaAdmin.current_table,
+                      "id" : val.value
+                    },
+                    dataType: 'json',
+                    success: function() {
+                      if (--completecount == 0) {
+                        $('#tab-recordlist-submit').click();
+                        alert('レコードを削除しました。');
+                      } else if (completecount < 0){
+                        GroongaAdmin.hideloading();
+                      }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                      completecount = 0;
+                      GroongaAdmin.errorloading(XMLHttpRequest);
+                    }
+                  })
+                );
+              });
+            }
+          }
+        });
+    }
+  },
+  removecolumn: function() {
+    var checklist = $("#tab-columnlist-table").find("input:checked");
+    var completecount = checklist.length;
+    if (completecount) {
+      $('<div />')
+        .append("選択した" + completecount + "件のカラムを削除しますか？")
+        .dialog({
+          modal: true,
+          buttons: {
+            'いいえ': function() {
+              $(this).dialog('close');
+            },
+            'はい': function() {
+              $(this).dialog('close');
+              checklist.each(function(i, val) {
+                GroongaAdmin.showloading(
+                  $.ajax({
+                    url: '/d/column_remove',
+                    data: {
+                      "table" : GroongaAdmin.current_table,
+                      "name" : val.value
+                    },
+                    dataType: 'json',
+                    success: function() {
+                      if (!(--completecount)) {
+                        GroongaAdmin.columnlist(GroongaAdmin.current_table);
+                        alert('カラムを削除しました。');
+                      } else if (completecount < 0){
+                        GroongaAdmin.hideloading();
+                      }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                      completecount = 0;
+                      GroongaAdmin.errorloading(XMLHttpRequest);
+                    }
+                  })
+                );
+              });
+            }
+          }
+        });
+    }
+  },
+  removetable: function() {
+    var checklist = $("#tab-tablelist-table").find("input:checked");
+    var completecount = checklist.length;
+    if (completecount > 0) {
+      $('<div />')
+        .append("選択した" + completecount + "件のテーブルを削除しますか？")
+        .dialog({
+          modal: true,
+          buttons: {
+            'いいえ': function() {
+              $(this).dialog('close');
+            },
+            'はい': function() {
+              $(this).dialog('close');
+              checklist.each(function(i, val) {
+                GroongaAdmin.showloading(
+                  $.ajax({
+                    url: '/d/table_remove',
+                    data: {
+                      "name" : val.value
+                    },
+                    dataType: 'json',
+                    success: function() {
+                      if (--completecount == 0) {
+                        GroongaAdmin.tablelist();
+                        GroongaAdmin.update_tablelist();
+                        alert('テーブルを削除しました。');
+                      } else if (completecount < 0){
+                        GroongaAdmin.hideloading();
+                      }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                      completecount = 0;
+                      GroongaAdmin.errorloading(XMLHttpRequest);
+                    }
+                  })
+                );
+              });
+            }
+          }
+        });
+    }
+  },
   showloading: function(obj, hide_dialog) {
     if (obj == null) { return; }
     GroongaAdmin.semaphore[GroongaAdmin.semaphore.length] = obj;
     if ( $("#loadingdialog").size() > 0 || hide_dialog) { return; }
-    $("<div/>")
+    $("<div />")
       .attr("id", "loadingdialog")
       .attr("style", "text-align: center;")
-      .append($("<img/>").attr("src", "images/loading.gif"))
+      .append($("<img />").attr("src", "images/loading.gif"))
       .append(" Loading...")
       .dialog({
         title: "",
@@ -823,7 +1233,7 @@ GroongaAdmin = {
         position: ["right", "bottom"],
         autoOpen: false,
         buttons: {
-          中止: function() {
+          '中止': function() {
             if (obj) { obj.abort(); }
             GroongaAdmin.hideloading();
           }
@@ -865,7 +1275,7 @@ GroongaAdmin = {
       } else {
         errtext = "通信エラーが発生しました。";
       }
-      $("<div/>")
+      $("<div />")
         .append(errtext)
         .attr("id", "loadingdialog")
         .dialog({

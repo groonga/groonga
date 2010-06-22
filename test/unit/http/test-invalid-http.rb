@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -82,6 +82,17 @@ class InvalidHTTPTest < Test::Unit::TestCase
   def test_long_path
     response = get("/0123456789" * 10000)
     assert_equal("500", response.code)
+    assert_response([[Result::INVALID_ARGUMENT,
+                      0.0,
+                      0.0,
+                      "too long path name: <PATH...> LENGTH(MAX_LENGTH)",
+                      nil]],
+                    response, :content_type => "application/json") do |_response|
+      message = _response[0][3]
+      message.gsub!(/<(.+?)\.\.\.>/, '<PATH...>')
+      message.gsub!(/(\d+)\((\d+)\)/, 'LENGTH(MAX_LENGTH)')
+      _response
+    end
   end
 
   def test_long_query

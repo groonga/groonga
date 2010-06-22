@@ -1918,7 +1918,7 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 #define GRN_UINT32_VALUE_AT(obj,offset) (((unsigned int *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_INT64_VALUE_AT(obj,offset) (((long long int *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_UINT64_VALUE_AT(obj,offset) (((long long unsigned int *)GRN_BULK_HEAD(obj))[offset])
-#define GRN_FLOAT_VALUE_AT(ob,offsetj) (((double *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_FLOAT_VALUE_AT(obj,offset) (((double *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_TIME_VALUE_AT GRN_INT64_VALUE_AT
 #define GRN_RECORD_VALUE_AT(obj,offset) (((grn_id *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_PTR_VALUE_AT(obj,offset) (((grn_obj **)GRN_BULK_HEAD(obj))[offset])
