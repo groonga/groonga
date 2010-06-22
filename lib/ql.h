@@ -155,6 +155,7 @@ typedef struct {
   uint32_t values_size;
   uint32_t nrecords;
   grn_loader_stat stat;
+  grn_content_type input_type;
 } grn_loader;
 
 #define GRN_STACK_SIZE 1024

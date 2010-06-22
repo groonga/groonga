@@ -7557,32 +7557,28 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     /* build msg */
     grn_edge_dispatch(ctx, edge, msg);
   }
+  if (table && table_len) {
+    grn_ctx_loader_clear(ctx);
+    loader->table = grn_ctx_get(ctx, table, table_len);
+    if (loader->table && columns && columns_len) {
+      int i, n_columns;
+      grn_obj parsed_columns;
 
-  switch (input_type) {
-  case GRN_CONTENT_JSON :
-    if (table && table_len) {
-      grn_ctx_loader_clear(ctx);
-      loader->table = grn_ctx_get(ctx, table, table_len);
-      if (loader->table && columns && columns_len) {
-        int i, n_columns;
-        grn_obj parsed_columns;
-
-        GRN_PTR_INIT(&parsed_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-        grn_obj_columns(ctx, loader->table, columns, columns_len,
-                        &parsed_columns);
-        n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);
-        for (i = 0; i < n_columns; i++) {
-          grn_obj *column;
-          column = GRN_PTR_VALUE_AT(&parsed_columns, i);
-          if (column->header.type == GRN_ACCESSOR &&
-              ((grn_accessor *)column)->action == GRN_ACCESSOR_GET_KEY) {
-            loader->key_offset = i;
-          } else {
-            GRN_PTR_PUT(ctx, &loader->columns, column);
-          }
+      GRN_PTR_INIT(&parsed_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      grn_obj_columns(ctx, loader->table, columns, columns_len,
+                      &parsed_columns);
+      n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);
+      for (i = 0; i < n_columns; i++) {
+        grn_obj *column;
+        column = GRN_PTR_VALUE_AT(&parsed_columns, i);
+        if (column->header.type == GRN_ACCESSOR &&
+            ((grn_accessor *)column)->action == GRN_ACCESSOR_GET_KEY) {
+          loader->key_offset = i;
+        } else {
+          GRN_PTR_PUT(ctx, &loader->columns, column);
         }
-        GRN_OBJ_FIN(ctx, &parsed_columns);
       }
+      GRN_OBJ_FIN(ctx, &parsed_columns);
     }
     if (ifexists && ifexists_len) {
       grn_obj *v;
@@ -7593,6 +7589,12 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
                        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
     }
+    loader->input_type = input_type;
+  } else {
+    input_type = loader->input_type;
+  }
+  switch (input_type) {
+  case GRN_CONTENT_JSON :
     json_read(ctx, loader, values, values_len);
     break;
   case GRN_CONTENT_NONE :
