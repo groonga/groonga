@@ -309,6 +309,39 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
     break;
   case GRN_CONTENT_TSV:
   case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
+    grn_text_itoa(ctx, head, rc);
+    GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
+    {
+      double dv;
+      grn_timeval tv;
+      grn_timeval_now(ctx, &tv);
+      dv = ctx->impl->tv.tv_sec;
+      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      grn_text_ftoa(ctx, head, dv);
+      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
+      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
+      grn_text_ftoa(ctx, head, dv);
+      GRN_TEXT_PUTS(ctx, head, "\">");
+    }
+    if (rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTS(ctx, head, "<ERROR>");
+      grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+      if (ctx->errfunc && ctx->errfile) {
+        /* TODO: output backtrace */
+        GRN_TEXT_PUTS(ctx, head, "<INFO FUNC=\"");
+        grn_text_escape_xml(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+        GRN_TEXT_PUTS(ctx, head, "\" FILE=\"");
+        grn_text_escape_xml(ctx, head, ctx->errfile, strlen(ctx->errfile));
+        GRN_TEXT_PUTS(ctx, head, "\" LINE=\"");
+        grn_text_itoa(ctx, head, ctx->errline);
+        GRN_TEXT_PUTS(ctx, head, "\">");
+      }
+      GRN_TEXT_PUTS(ctx, head, "</ERROR>");
+    }
+    GRN_TEXT_PUTS(ctx, foot, "</RESULT>");
+    break;
   case GRN_CONTENT_NONE:
     break;
   }

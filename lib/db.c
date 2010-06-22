@@ -2913,6 +2913,34 @@ exit :
   GRN_API_RETURN(length);
 }
 
+unsigned int
+grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
+                       const char **str, unsigned int *weight, grn_id *domain)
+{
+  unsigned int offset, length = 0;
+  GRN_API_ENTER;
+  if (!vector || vector->header.type != GRN_VECTOR) {
+    ERR(GRN_INVALID_ARGUMENT, "invalid vector");
+    goto exit;
+  }
+  if (!vector->u.v.n_sections) {
+    ERR(GRN_RANGE_ERROR, "offset out of range");
+    goto exit;
+  }
+  offset = --vector->u.v.n_sections;
+  {
+    grn_section *vp = &vector->u.v.sections[offset];
+    grn_obj *body = grn_vector_body(ctx, vector);
+    *str = GRN_BULK_HEAD(body) + vp->offset;
+    if (weight) { *weight = vp->weight; }
+    if (domain) { *domain = vp->domain; }
+    length = vp->length;
+    grn_bulk_truncate(ctx, body, vp->offset);
+  }
+exit :
+  GRN_API_RETURN(length);
+}
+
 #define W_SECTIONS_UNIT 8
 #define S_SECTIONS_UNIT (1 << W_SECTIONS_UNIT)
 #define M_SECTIONS_UNIT (S_SECTIONS_UNIT - 1)
