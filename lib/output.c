@@ -40,6 +40,7 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
   case GRN_CONTENT_JSON:
     if (level < 2) { return; }
     GRN_TEXT_PUTC(ctx, outbuf, ((level & 3) == 3) ? ':' : ',');
+    if (DEPTH == 1 && ((level & 3) != 3)) { GRN_TEXT_PUTC(ctx, outbuf, '\n'); }
     break;
   case GRN_CONTENT_XML:
     if (!DEPTH) { return; }
