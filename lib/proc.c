@@ -373,7 +373,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_timeval now;
   grn_timeval_now(ctx, &now);
-  GRN_OUTPUT_MAP_OPEN("STATUS", -1);
+  GRN_OUTPUT_MAP_OPEN("STATUS", 8);
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
@@ -717,7 +717,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column)
   id = grn_obj_id(ctx, column);
   path = grn_obj_path(ctx, column);
   GRN_TEXT_INIT(&o, 0);
-  GRN_OUTPUT_ARRAY_OPEN("", -1);
+  GRN_OUTPUT_ARRAY_OPEN("", 8);
   GRN_OUTPUT_INT64(id);
   column2name(ctx, column, &o);
   GRN_OUTPUT_OBJ(&o, NULL);
@@ -733,7 +733,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column)
     grn_db_obj *obj = (grn_db_obj *)column;
     grn_id *s = obj->source;
     int i = 0, n = obj->source_size / sizeof(grn_id);
-    GRN_OUTPUT_ARRAY_OPEN("", -1);
+    GRN_OUTPUT_ARRAY_OPEN("", n);
     for (i = 0; i < n; i++, s++) {
       objid2name(ctx, *s, &o);
       GRN_OUTPUT_OBJ(&o, NULL);
@@ -757,36 +757,36 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
       GRN_OUTPUT_ARRAY_OPEN("", -1);
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 8);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("id");
       GRN_OUTPUT_CSTR("UInt32");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("name");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("path");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("type");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("flags");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("domain");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("range");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
+      GRN_OUTPUT_ARRAY_OPEN("", 2);
       GRN_OUTPUT_CSTR("source");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
@@ -831,7 +831,7 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table)
   id = grn_obj_id(ctx, table);
   path = grn_obj_path(ctx, table);
   GRN_TEXT_INIT(&o, 0);
-  GRN_OUTPUT_ARRAY_OPEN("TABLE", -1);
+  GRN_OUTPUT_ARRAY_OPEN("TABLE", 6);
   GRN_OUTPUT_INT64(id);
   objid2name(ctx, id, &o);
   GRN_OUTPUT_OBJ(&o, NULL);
@@ -854,28 +854,28 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
     grn_id id;
     GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", -1);
-    GRN_OUTPUT_ARRAY_OPEN("COLUMNS", -1);
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", -1);
+    GRN_OUTPUT_ARRAY_OPEN("COLUMNS", 6);
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
     GRN_OUTPUT_CSTR("id");
     GRN_OUTPUT_CSTR("UInt32");
     GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", -1);
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
     GRN_OUTPUT_CSTR("name");
     GRN_OUTPUT_CSTR("ShortText");
     GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", -1);
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
     GRN_OUTPUT_CSTR("path");
     GRN_OUTPUT_CSTR("ShortText");
     GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", -1);
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
     GRN_OUTPUT_CSTR("flags");
     GRN_OUTPUT_CSTR("ShortText");
     GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", -1);
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
     GRN_OUTPUT_CSTR("domain");
     GRN_OUTPUT_CSTR("ShortText");
     GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", -1);
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
     GRN_OUTPUT_CSTR("range");
     GRN_OUTPUT_CSTR("ShortText");
     GRN_OUTPUT_ARRAY_CLOSE();

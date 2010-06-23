@@ -2700,6 +2700,12 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
             grn_text_otoj(ctx, bulk, &buf, NULL);
           }
           GRN_TEXT_PUTC(ctx, bulk, ']');
+          v++;
+          if (v < ve) {
+            GRN_TEXT_PUTC(ctx, bulk, ',');
+          } else {
+            break;
+          }
         }
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
