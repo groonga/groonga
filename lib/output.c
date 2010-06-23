@@ -53,6 +53,9 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
     } else if (DEPTH > 1) {
       GRN_TEXT_PUTC(ctx, outbuf, '\t');
     }
+  case GRN_CONTENT_MSGPACK :
+    // todo
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -75,6 +78,9 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
     break;
   case GRN_CONTENT_TSV:
     if (DEPTH > 1) { GRN_TEXT_PUTS(ctx, outbuf, "[\t"); }
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -104,6 +110,9 @@ grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_ty
       GRN_TEXT_PUTC(ctx, outbuf, '>');
     }
     break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -128,6 +137,9 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     break;
   case GRN_CONTENT_TSV:
     if (DEPTH > 1) { GRN_TEXT_PUTS(ctx, outbuf, "{\t"); }
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -157,6 +169,9 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
       GRN_TEXT_PUTC(ctx, outbuf, '>');
     }
     break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -180,6 +195,9 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     grn_text_itoa(ctx, outbuf, value);
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -201,6 +219,9 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     GRN_TEXT_PUTS(ctx, outbuf, "<INT>");
     grn_text_lltoa(ctx, outbuf, value);
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -224,6 +245,9 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, i
     grn_text_ulltoa(ctx, outbuf, value);
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -245,6 +269,9 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     GRN_TEXT_PUTS(ctx, outbuf, "<FLOAT>");
     grn_text_ftoa(ctx, outbuf, value);
     GRN_TEXT_PUTS(ctx, outbuf, "</FLOAT>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -268,6 +295,9 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_TEXT_PUTS(ctx, outbuf, "<TEXT>");
     grn_text_escape_xml(ctx, outbuf, value, value_len);
     GRN_TEXT_PUTS(ctx, outbuf, "</TEXT>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -298,6 +328,9 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, cha
     GRN_TEXT_PUTS(ctx, outbuf, value ? "true" : "false");
     GRN_TEXT_PUTS(ctx, outbuf, "</BOOL>");
     break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -321,6 +354,9 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
     GRN_TEXT_PUTS(ctx, outbuf, "<DATE>");
     grn_text_ftoa(ctx, outbuf, dv);
     GRN_TEXT_PUTS(ctx, outbuf, "</DATE>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -364,6 +400,9 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
       grn_text_itoa(ctx, outbuf, value->longitude);
     }
     GRN_TEXT_PUTS(ctx, outbuf, "</GEO_POINT>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -507,6 +546,9 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn_
     break;
   case GRN_CONTENT_XML:
     grn_text_otoxml(ctx, outbuf, obj, format);
+    break;
+  case GRN_CONTENT_MSGPACK :
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
