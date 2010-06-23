@@ -446,6 +446,21 @@ fi
 AC_SUBST(RUBY)
 AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
 
+# libedit
+AC_ARG_WITH(libedit,
+  [AS_HELP_STRING([--with-libedit],
+    [use libedit for console. [default=yes]])],
+  [with_libedit="$withval"],
+  [with_libedit="yes"])
+AC_CHECK_LIB(edit,el_init,
+  [with_libedit="yes"],
+  [with_libedit="no"])
+if test "x$with_libedit" = "xyes"; then
+  AC_DEFINE(WITH_LIBEDIT, [1], [with libedit])
+  EDIT_LIBS="-ledit"
+fi
+
+
 # zlib
 AC_ARG_WITH(zlib,
   [AS_HELP_STRING([--with-zlib],
@@ -555,7 +570,7 @@ AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, ["$suffix"], "module suffix")
 # flags for compile groonga
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 CFLAGS="$CFLAGS -DMODULES_DIR=\\\"\"\$(modulesdir)\"\\\""
-LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
+LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS $EDIT_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # flags for groonga-cfg

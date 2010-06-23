@@ -59,6 +59,20 @@ static int (*do_server)(char *path);
 static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
 static const char *pidfile_path;
 
+#ifdef WITH_LIBEDIT
+#include <histedit.h>
+static EditLine   *el;
+static History    *elh;
+static HistEvent  elhv;
+
+inline static const char *
+disp_prompt(EditLine *e __attribute__((unused)))
+{
+  return "> ";
+}
+
+#endif
+
 static void
 usage(FILE *output)
 {
@@ -140,13 +154,34 @@ show_version(void)
 #endif
 }
 
-inline static void
-prompt(void)
-{
-  if (!batchmode) { fputs("> ", stderr); }
-}
-
 #define BUFSIZE 0x1000000
+
+inline static int
+prompt(char *buf)
+{
+  int len;
+  if (!batchmode) {
+#ifdef WITH_LIBEDIT
+    const char *es;
+    es = el_gets(el, &len);
+    if (len > 0 && BUFSIZE > len) {
+      history(elh, &elhv, H_ENTER, es);
+      strncpy(buf,es,len);
+    } else {
+      buf = "";
+      len = 0;
+    }
+#else
+    fprintf(stderr, "> ");
+    fgets(buf, BUFSIZE, stdin);
+    len = strlen(buf);
+#endif
+  } else {
+    fgets(buf, BUFSIZE, stdin);
+    len = strlen(buf);
+  }
+  return len;
+}
 
 static int
 do_alone(int argc, char **argv)
@@ -166,9 +201,9 @@ do_alone(int argc, char **argv)
       rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
       if (!rc) {
         char *buf = GRN_TEXT_VALUE(&text);
-        while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
-          uint32_t size = strlen(buf) - 1;
-          buf[size] = '\0';
+        int  len;
+        while ((len = prompt(buf))) {
+          uint32_t size = len - 1;
           grn_ctx_send(ctx, buf, size, 0);
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
@@ -236,9 +271,10 @@ g_client(int argc, char **argv)
       rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
       if (!rc) {
         char *buf = GRN_TEXT_VALUE(&text);
+        int   len;
         if (batchmode) { BATCHMODE(ctx); }
-        while ((prompt(), fgets(buf, BUFSIZE, stdin))) {
-          uint32_t size = strlen(buf) - 1;
+        while ((len = prompt(buf))) {
+          uint32_t size = len - 1;
           grn_ctx_send(ctx, buf, size, 0);
           rc = ctx->rc;
           if (rc) { break; }
@@ -1714,6 +1750,14 @@ main(int argc, char **argv)
     max_nfthreads = default_max_nfthreads;
   }
   batchmode = !isatty(0);
+#ifdef WITH_LIBEDIT
+  el = el_init(argv[0],stdin,stdout,stderr);
+  el_set(el, EL_PROMPT, &disp_prompt);
+  el_set(el, EL_EDITOR, "emacs");
+  elh = history_init();
+  history(elh, &elhv, H_SETSIZE, 200);
+  el_set(el, EL_HIST, history, elh);
+#endif
   if (grn_init()) { return -1; }
   grn_set_default_encoding(enc);
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
@@ -1765,6 +1809,10 @@ main(int argc, char **argv)
     usage(stderr); r = -1;
     break;
   }
+#ifdef WITH_LIBEDIT
+  history_end(elh);
+  el_end(el);
+#endif
   grn_fin();
   return r;
 }
