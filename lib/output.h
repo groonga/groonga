@@ -47,8 +47,6 @@ void grn_output_cstr(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
                      const char *value);
 void grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                     const char *value, size_t value_len);
-void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                    grn_obj *obj, grn_obj_format *format);
 
 #define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
   (grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type, name, nelements))

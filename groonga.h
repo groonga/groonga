@@ -1678,6 +1678,10 @@ struct _grn_obj_format {
   GRN_OBJ_FIN((ctx), &(format)->columns);\
 } while (0)
 
+GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                            grn_obj *obj, grn_obj_format *format);
+
+/* obsolete */
 GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
                              grn_obj_format *format);
 
