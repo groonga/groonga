@@ -166,19 +166,25 @@ prompt(char *buf)
     es = el_gets(el, &len);
     if (len > 0 && BUFSIZE > len) {
       history(elh, &elhv, H_ENTER, es);
-      strncpy(buf,es,len);
+      strncpy(buf, es, len);
     } else {
       buf = "";
       len = 0;
     }
 #else
     fprintf(stderr, "> ");
-    fgets(buf, BUFSIZE, stdin);
-    len = strlen(buf);
+    if (fgets(buf, BUFSIZE, stdin)) {
+      len = strlen(buf);
+    } else {
+      len = 0;
+    }
 #endif
   } else {
-    fgets(buf, BUFSIZE, stdin);
-    len = strlen(buf);
+    if (fgets(buf, BUFSIZE, stdin)) {
+      len = strlen(buf);
+    } else {
+      len = 0;
+    }
   }
   return len;
 }
@@ -377,6 +383,9 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
       GRN_TEXT_PUTS(ctx, head, "</ERROR>");
     }
     GRN_TEXT_PUTS(ctx, foot, "</RESULT>");
+    break;
+  case GRN_CONTENT_MSGPACK:
+    // todo
     break;
   case GRN_CONTENT_NONE:
     break;
