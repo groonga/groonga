@@ -161,6 +161,7 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static void
 check_mecab_dictionary_encoding(grn_ctx *ctx)
 {
+#ifdef HAVE_MECAB_DICTIONARY_INFO_T
   mecab_t *mecab;
 
   mecab = mecab_new(0, NULL);
@@ -195,6 +196,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
           grn_enctostr(encoding));
     }
   }
+#endif
 }
 
 grn_rc
