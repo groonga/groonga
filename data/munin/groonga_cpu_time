@@ -28,7 +28,7 @@ when "config"
   end
   puts <<EOF
 graph_title #{title}
-graph_vlabel CPU time (%)
+graph_vlabel CPU time (days)
 graph_category groonga
 graph_info groonga CPU time
 
