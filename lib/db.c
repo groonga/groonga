@@ -7175,9 +7175,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
               }
               key_value = value;
               v++;
-              if (v->header.domain == GRN_DB_TEXT) {
-                id = loader_add(ctx, v);
-              }
+              id = loader_add(ctx, v);
             } else {
               v = values_next(ctx, v);
             }
