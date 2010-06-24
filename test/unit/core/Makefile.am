@@ -32,11 +32,11 @@ noinst_LTLIBRARIES =				\
 	test-view-operations.la			\
 	test-register.la			\
 	test-function-cast.la			\
-	test-load.la				\
 	test-store-ja.la			\
 	test-log.la				\
 	test-table-sort-key.la			\
 	test-inspect.la				\
+	test-command-load.la			\
 	test-command-column-list.la		\
 	test-command-select.la
 endif
@@ -94,10 +94,10 @@ test_view_la_SOURCES			= test-view.c
 test_view_operations_la_SOURCES		= test-view-operations.c
 test_register_la_SOURCES		= test-register.c
 test_function_cast_la_SOURCES		= test-function-cast.c
-test_load_la_SOURCES			= test-load.c
 test_store_ja_la_SOURCES		= test-store-ja.c
 test_log_la_SOURCES			= test-log.c
 test_table_sort_key_la_SOURCES		= test-table-sort-key.c
 test_inspect_la_SOURCES			= test-inspect.c
+test_command_load_la_SOURCES		= test-command-load.c
 test_command_column_list_la_SOURCES	= test-command-column-list.c
 test_command_select_la_SOURCES		= test-command-select.c
