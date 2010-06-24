@@ -4422,6 +4422,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
 {
   unsigned int len = 0;
   GRN_API_ENTER;
+  if (!id) { goto exit; }
   if (!obj) {
     ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_value failed");
     goto exit;
