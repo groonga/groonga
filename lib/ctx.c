@@ -1405,8 +1405,9 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
       mi->count++;
       header[0] = i;
       header[1] = (int32_t) size;
-      if ((flags & GRN_CTX_ALLOC_CLEAR) && (mi->count & GRN_CTX_SEGMENT_DIRTY)) {
-        memset(&header[2], 0, size);
+      if ((flags & GRN_CTX_ALLOC_CLEAR) &&
+          (mi->count & GRN_CTX_SEGMENT_DIRTY) && (size > ALIGN_SIZE)) {
+        memset(&header[2], 0, size - ALIGN_SIZE);
       }
     }
     /*
