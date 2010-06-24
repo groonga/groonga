@@ -150,7 +150,23 @@
       __VA_ARGS__),                                                     \
     grn_test_assert_equal_view(context, expected, view, text_column_name))
 
-
+#define grn_test_assert_send_command_error(context, expected_rc,        \
+                                           expected_message, command,   \
+                                            ...)                        \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_send_command_error_helper((context),              \
+                                                (expected_rc),          \
+                                                (expected_message),     \
+                                                (command),              \
+                                                #expected_rc,           \
+                                                #expected_message,      \
+                                                #command),              \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_send_command_error(context,                         \
+                                       expected_rc,                     \
+                                       expected_message,                \
+                                       command))
 
 void     grn_test_assert_helper         (grn_rc       rc,
                                          const gchar *expression);
@@ -222,5 +238,13 @@ void     grn_test_assert_equal_view_helper
                                          const gchar *expected_expression,
                                          const gchar *view_expression,
                                          const gchar *text_column_name_expression);
+void     grn_test_assert_send_command_error_helper
+                                        (grn_ctx     *context,
+                                         grn_rc       expected_rc,
+                                         const gchar *expected_message,
+                                         const gchar *command,
+                                         const gchar *expected_rc_expression,
+                                         const gchar *expected_message_expression,
+                                         const gchar *command_expression);
 
 #endif

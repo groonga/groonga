@@ -1790,7 +1790,13 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     const char *rest;
     uint32_t max = grn_atoui(GRN_TEXT_VALUE(VAR(0)),
                              GRN_BULK_CURR(VAR(0)), &rest);
-    *mp = max;
+    if (GRN_BULK_CURR(VAR(0)) == rest) {
+      *mp = max;
+    } else {
+      ERR(GRN_INVALID_ARGUMENT,
+          "max value is invalid unsigned integer format: <%.*s>",
+          GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    }
   }
   return NULL;
 }

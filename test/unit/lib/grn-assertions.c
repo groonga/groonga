@@ -336,3 +336,36 @@ grn_test_assert_equal_view_helper (grn_ctx *context,
   records = grn_test_view_collect_string(context, view, text_column_name);
   gcut_assert_equal_list_string(expected, records);
 }
+
+void
+grn_test_assert_send_command_error_helper (grn_ctx     *context,
+                                           grn_rc       expected_rc,
+                                           const gchar *expected_message,
+                                           const gchar *command,
+                                           const gchar *expected_rc_expression,
+                                           const gchar *expected_message_expression,
+                                           const gchar *command_expression)
+{
+  grn_ctx_send(context, command, strlen(command), 0);
+  if (context->rc == expected_rc &&
+      cut_equal_string(expected_message, context->errbuf)) {
+    gchar *command_result;
+    unsigned int command_result_length;
+    int flags = 0;
+
+    cut_test_pass();
+    grn_ctx_recv(context, &command_result, &command_result_length, &flags);
+  } else {
+    cut_set_expected(cut_take_printf("<%s>(%s)",
+                                     expected_message,
+                                     grn_rc_to_string(expected_rc)));
+    cut_set_actual(cut_take_printf("<%s>(%s)",
+                                   context->errbuf,
+                                   grn_rc_to_string(context->rc)));
+    cut_test_fail(cut_take_printf("<send(\"%s\")>\n"
+                                  "%s:%d: %s():",
+                                  command_expression,
+                                  context->errfile, context->errline,
+                                  context->errfunc));
+  }
+}
