@@ -168,7 +168,6 @@ prompt(char *buf)
       history(elh, &elhv, H_ENTER, es);
       strncpy(buf, es, len);
     } else {
-      buf = "";
       len = 0;
     }
 #else
@@ -1789,12 +1788,14 @@ main(int argc, char **argv)
   }
   batchmode = !isatty(0);
 #ifdef WITH_LIBEDIT
-  el = el_init(argv[0],stdin,stdout,stderr);
-  el_set(el, EL_PROMPT, &disp_prompt);
-  el_set(el, EL_EDITOR, "emacs");
-  elh = history_init();
-  history(elh, &elhv, H_SETSIZE, 200);
-  el_set(el, EL_HIST, history, elh);
+  if (!batchmode) {
+    el = el_init(argv[0],stdin,stdout,stderr);
+    el_set(el, EL_PROMPT, &disp_prompt);
+    el_set(el, EL_EDITOR, "emacs");
+    elh = history_init();
+    history(elh, &elhv, H_SETSIZE, 200);
+    el_set(el, EL_HIST, history, elh);
+  }
 #endif
   if (grn_init()) { return -1; }
   grn_set_default_encoding(enc);
@@ -1848,8 +1849,10 @@ main(int argc, char **argv)
     break;
   }
 #ifdef WITH_LIBEDIT
-  history_end(elh);
-  el_end(el);
+  if (batchmode) {
+    history_end(elh);
+    el_end(el);
+  }
 #endif
   grn_fin();
   return r;
