@@ -556,7 +556,7 @@ data_text_otoj(void)
             "value", G_TYPE_STRING, "\"'\\aAzZ09 \n\t\r日本語",
             NULL);
   ADD_DATUM("LongText",
-            "\"\\\"'\\\\aAzZ09 \\n\\t\\r日本語\"", GRN_DB_TEXT,
+            "\"\\\"'\\\\aAzZ09 \\n\\t\\r日本語\"", GRN_DB_LONG_TEXT,
             "value", G_TYPE_STRING, "\"'\\aAzZ09 \n\t\r日本語",
             NULL);
   ADD_DATUM("TokyoGeoPoint", "\"35681396x139766049\"", GRN_DB_TOKYO_GEO_POINT,
