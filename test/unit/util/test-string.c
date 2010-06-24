@@ -483,7 +483,7 @@ data_text_otoj(void)
                  "type", G_TYPE_INT, type,                      \
                  __VA_ARGS__);
 
-  ADD_DATUM("Void", "null", GRN_DB_VOID, NULL);
+  ADD_DATUM("Void", "", GRN_DB_VOID, NULL);
   ADD_DATUM("Bool", "true", GRN_DB_BOOL,
             "value", G_TYPE_BOOLEAN, TRUE,
             NULL);

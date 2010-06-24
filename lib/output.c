@@ -338,6 +338,33 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, cha
 }
 
 void
+grn_output_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                const char *value, size_t value_len)
+{
+  if (value_len == sizeof(grn_id) && *(grn_id *)value == GRN_ID_NIL) {
+    put_delimiter(ctx, outbuf, output_type);
+    switch (output_type) {
+    case GRN_CONTENT_JSON:
+      GRN_TEXT_PUTS(ctx, outbuf, "null");
+      break;
+    case GRN_CONTENT_TSV:
+      break;
+    case GRN_CONTENT_XML:
+      GRN_TEXT_PUTS(ctx, outbuf, "<NULL/>");
+      break;
+    case GRN_CONTENT_MSGPACK :
+      // todo
+      break;
+    case GRN_CONTENT_NONE:
+      break;
+    }
+    INCR_LENGTH;
+  } else {
+    grn_output_str(ctx, outbuf, output_type, value, value_len);
+  }
+}
+
+void
 grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int64_t value)
 {
   double dv = value;
@@ -568,6 +595,8 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   case GRN_BULK :
     switch (obj->header.domain) {
     case GRN_DB_VOID :
+      grn_output_void(ctx, outbuf, output_type, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
+      break;
     case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
     case GRN_DB_LONG_TEXT :

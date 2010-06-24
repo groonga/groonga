@@ -7323,7 +7323,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         case 'n' :
           if (GRN_TEXT_LEN(loader->last) == 4 && !memcmp(v, "null", 4)) {
             loader->last->header.domain = GRN_DB_VOID;
-            GRN_BULK_REWIND(loader->last);
+            GRN_UINT32_SET(ctx, loader->last, GRN_ID_NIL);
           }
           break;
         case 't' :
