@@ -519,6 +519,12 @@ if test "x$with_mecab" = "xyes"; then
     _SAVE_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS $MECAB_CPPFLAGS"
     AC_CHECK_HEADER(mecab.h, , [AC_MSG_ERROR("No mecab.h found")])
+    AC_CHECK_TYPE([mecab_dictionary_info_t],
+                  [AC_DEFINE([HAVE_MECAB_DICTIONARY_INFO_T],
+                             [1],
+                             [Define to 1 if MeCab has the type `mecab_dictionary_info_t'.])],
+                  [],
+                  [[#include <mecab.h>]])
     CPPFLAGS="$_SAVE_CPPFLAGS"
     AC_SUBST(MECAB_CPPFLAGS)
     AC_SUBST(MECAB_LDFLAGS)
