@@ -7236,6 +7236,8 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   }
 }
 
+#define CAST_IN_JSON_READ
+
 static void
 json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
 {
