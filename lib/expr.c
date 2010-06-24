@@ -622,7 +622,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   for (i = 0; i < e->nvars; i++) {
     grn_obj_close(ctx, &e->vars[i].value);
   }
-  GRN_FREE(e->vars);
+  if (e->vars) { GRN_FREE(e->vars); }
   for (i = 0; i < e->values_tail; i++) {
     grn_obj_close(ctx, &e->values[i]);
   }
