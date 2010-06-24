@@ -3787,8 +3787,8 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
             grn_obj key;
             GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
             if (src->header.domain != table->header.domain) {
-               grn_obj_cast(ctx, src, &key, 1);
-               p_key = &key;
+              grn_obj_cast(ctx, src, &key, 1);
+              p_key = &key;
             }
             if (GRN_BULK_VSIZE(p_key)) {
               id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
