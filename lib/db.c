@@ -7236,8 +7236,6 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   }
 }
 
-#define CAST_IN_JSON_READ
-
 static void
 json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
 {
@@ -7296,7 +7294,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         values_add(ctx, loader);
         break;
       default :
-        if ('A' <= c && c <= 'z') {
+        if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
           loader->stat = GRN_LOADER_SYMBOL;
           values_add(ctx, loader);
         } else {
@@ -7315,11 +7313,10 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
       }
       break;
     case GRN_LOADER_SYMBOL :
-      if ('A' <= c && c <= 'z') {
+      if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
         GRN_TEXT_PUTC(ctx, loader->last, c);
         str++;
       } else {
-#ifdef CAST_IN_JSON_READ
         char *v = GRN_TEXT_VALUE(loader->last);
         switch (*v) {
         case 'n' :
@@ -7343,7 +7340,6 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         default :
           break;
         }
-#endif /* CAST_IN_JSON_READ */
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
       }
       break;
@@ -7356,7 +7352,6 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         str++;
         break;
       default :
-#ifdef CAST_IN_JSON_READ
         {
           const char *cur, *str = GRN_BULK_HEAD(loader->last);
           const char *str_end = GRN_BULK_CURR(loader->last);
@@ -7380,7 +7375,6 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
             GRN_OBJ_FIN(ctx, &buf);
           }
         }
-#endif /* CAST_IN_JSON_READ */
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
         break;
       }

@@ -137,7 +137,13 @@ data_bool(void)
             "load --table Users --columns '_key,enabled'\n"
             "[\n"
             "  [\"mori\",\"1\"],\n"
-            "  [\"tapo\",\"0\"]\n"
+            "  [\"tapo\",\"\"]\n"
+            "]");
+  ADD_DATUM("string (null)",
+            "load --table Users --columns '_key,enabled'\n"
+            "[\n"
+            "  [\"mori\",\"0\"],\n"
+            "  [\"tapo\",null]\n"
             "]");
 
 #undef ADD_DATUM
