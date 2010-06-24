@@ -38,7 +38,8 @@ noinst_LTLIBRARIES =				\
 	test-inspect.la				\
 	test-command-load.la			\
 	test-command-column-list.la		\
-	test-command-select.la
+	test-command-select.la			\
+	test-command-cache-limit.la
 endif
 
 INCLUDES =			\
@@ -101,3 +102,4 @@ test_inspect_la_SOURCES			= test-inspect.c
 test_command_load_la_SOURCES		= test-command-load.c
 test_command_column_list_la_SOURCES	= test-command-column-list.c
 test_command_select_la_SOURCES		= test-command-select.c
+test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c
