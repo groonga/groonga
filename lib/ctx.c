@@ -1217,7 +1217,7 @@ grn_cache_init(void)
 }
 
 uint32_t *
-grn_cach_max_nentries(void)
+grn_cache_max_nentries(void)
 {
   return &grn_gcache.max_nentries;
 }
