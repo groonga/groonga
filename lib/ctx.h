@@ -467,7 +467,7 @@ void grn_cache_unref(const char *str, uint32_t str_size);
 void grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_size, grn_obj *value);
 void grn_cache_expire(int32_t size);
 void grn_cache_fin(void);
-uint32_t *grn_cach_max_nentries(void);
+uint32_t *grn_cache_max_nentries(void);
 
 /**** receive handler ****/
 

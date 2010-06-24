@@ -1784,7 +1784,7 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  uint32_t *mp = grn_cach_max_nentries();
+  uint32_t *mp = grn_cache_max_nentries();
   GRN_OUTPUT_INT64(*mp);
   if (GRN_TEXT_LEN(VAR(0))) {
     const char *rest;
