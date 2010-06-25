@@ -1805,18 +1805,18 @@ main(int argc, char **argv)
   grn_set_term_handler();
   if (listen_addressstr) {
     size_t listen_addresslen = strlen(listen_addressstr);
-    if (listen_addresslen > HOST_NAME_MAX) {
+    if (listen_addresslen > HOST_NAME_MAX - 1) {
       memcpy(listen_address, listen_addressstr, HOST_NAME_MAX - 1);
-      listen_address[HOST_NAME_MAX] = '\0';
+      listen_address[HOST_NAME_MAX - 1] = '\0';
     } else {
       strcpy(listen_address, listen_addressstr);
     }
   }
   if (hostnamestr) {
     size_t hostnamelen = strlen(hostnamestr);
-    if (hostnamelen > HOST_NAME_MAX) {
+    if (hostnamelen > HOST_NAME_MAX - 1) {
       memcpy(hostname, hostnamestr, HOST_NAME_MAX - 1);
-      hostname[HOST_NAME_MAX] = '\0';
+      hostname[HOST_NAME_MAX - 1] = '\0';
     } else {
       strcpy(hostname, hostnamestr);
     }
