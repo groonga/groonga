@@ -268,7 +268,11 @@ module GroongaHTTPTestUtils
 
     assert_response(expected,
                     response,
-                    :content_type => "text/xml",
-                    &block)
+                    :content_type => "text/xml") do |xml|
+      xml = xml.gsub(/UP="\d+\.\d+" ELAPSED="\d+\.\d+"/,
+                     "UP=\"0.0\" ELAPSED=\"0.0\"")
+      xml = block.call(xml) if block
+      xml
+    end
   end
 end

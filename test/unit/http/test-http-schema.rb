@@ -141,14 +141,15 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_column_list_nonexistent
     response = get(command_path(:column_list,
                                 :table => "nonexistent"))
-    assert_error_response(Result::INVALID_ARGUMENT, "table 'nonexistent' is not exist.",
+    assert_error_response(Result::INVALID_ARGUMENT,
+                          "table 'nonexistent' does not exist.",
                           response,
                           :content_type => "application/json")
   end
 
   def test_column_list_without_table
     response = get(command_path(:column_list))
-    assert_error_response(Result::INVALID_ARGUMENT, "table '' is not exist.",
+    assert_error_response(Result::INVALID_ARGUMENT, "table '' does not exist.",
                           response,
                           :content_type => "application/json")
   end
