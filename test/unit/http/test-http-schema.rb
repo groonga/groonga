@@ -520,8 +520,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :flags => Table::NO_KEY,
                                   :key_type => "ShortText"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "key isn't supported",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key_type assigned for no key table: <users>",
                             response,
                             :content_type => "application/json")
 

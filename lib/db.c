@@ -497,6 +497,15 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     GRN_API_RETURN(NULL);
   }
   if (key_type) {
+    if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
+      if (name_size > 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "key_type assigned for no key table: <%.*s>", name_size, name);
+      } else {
+        ERR(GRN_INVALID_ARGUMENT, "key_type assigned for no key table");
+      }
+      GRN_API_RETURN(NULL);
+    }
     domain = DB_OBJ(key_type)->id;
     switch (key_type->header.type) {
     case GRN_TYPE :
@@ -595,9 +604,6 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     }
     break;
   case GRN_OBJ_TABLE_NO_KEY :
-    if (key_type) {
-      GRN_LOG(ctx, GRN_LOG_WARNING, "key_type assigned for no key table");
-    }
     if (value_type && value_type->header.type == GRN_TABLE_VIEW) {
       res = grn_view_transcript(ctx, path, key_type, value_type, flags);
     } else {
