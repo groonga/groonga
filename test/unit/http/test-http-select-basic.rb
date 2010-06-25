@@ -765,17 +765,15 @@ EOF
     load_many_users
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<SEGMENTS>
-<SEGMENT>
-<RESULTPAGE>
-<RESULTSET OFFSET="2" LIMIT="1" NHITS="5">
-<HIT NO="3">
-<FIELD NAME="_id">1</FIELD>
-</HIT>
-</RESULTSET>
-</RESULTPAGE>
-</SEGMENT>
-</SEGMENTS>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULTPAGE>
+<RESULTSET>
+<NHITS>5</NHITS>
+<COLUMNS>
+<COLUMN>
+<TEXT>_id</TEXT>
+<TEXT>UInt32</TEXT></COLUMN></COLUMNS>
+<HIT>
+<INT>1</INT></HIT></RESULTSET></RESULTPAGE></RESULT>
 EOF
     assert_select_xml(expected.strip,
                       {:table => "users", :offset => 2, :limit => 1,
