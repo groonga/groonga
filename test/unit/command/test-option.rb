@@ -15,16 +15,32 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-class OptionHelpTest < Test::Unit::TestCase
+class OptionTest < Test::Unit::TestCase
   include GroongaTestUtils
 
-  # def setup
-  #   setup_database_path
-  # end
+  def setup
+    setup_database_path
+  end
 
-  # def teardown
-  #   teardown_database_path
-  # end
+  def teardown
+    teardown_database_path
+  end
+
+  def test_daemon_pid_file
+    pid_file = File.join(@tmp_dir, "groonga.pid")
+    assert_path_not_exist(pid_file)
+    assert_equal("", run_groonga("-d", "--pid-file", pid_file))
+    assert_path_exist(pid_file)
+    pid = File.open(pid_file) do |f|
+      Integer(f.read)
+    end
+    assert_equal(1, Process.kill(:INT, pid))
+    30.times do
+      break unless File.exist?(pid_file)
+      sleep 0.1
+    end
+    assert_path_not_exist(pid_file)
+  end
 
   def test_help_option
     usage = run_groonga("--help")
