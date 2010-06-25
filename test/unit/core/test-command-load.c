@@ -27,6 +27,7 @@ void test_columns(void);
 void attributes_bool(void);
 void data_bool(void);
 void test_bool(gconstpointer data);
+void test_int32_key(void);
 
 static gchar *tmp_directory;
 
@@ -133,7 +134,7 @@ data_bool(void)
             "  [\"mori\",1],\n"
             "  [\"tapo\",0]\n"
             "]");
-  ADD_DATUM("string (is this test OK?)",
+  ADD_DATUM("string",
             "load --table Users --columns '_key,enabled'\n"
             "[\n"
             "  [\"mori\",\"1\"],\n"
@@ -167,4 +168,24 @@ test_bool(gconstpointer data)
                           "[2,\"tapo\",false]"
                           "]]",
                           send_command("select Users"));
+}
+
+void
+test_int32_key(void)
+{
+  assert_send_command("table_create Students TABLE_HASH_KEY Int32");
+  assert_send_command("column_create Students name COLUMN_SCALAR ShortText");
+  cut_assert_equal_string(
+    "1",
+    send_command("load --table Students\n"
+                 "[{\"_key\": 1, \"name\": \"morita\"}]"));
+  cut_assert_equal_string("[[[1],"
+                          "["
+                          "[\"_id\",\"UInt32\"],"
+                          "[\"_key\",\"Int32\"],"
+                          "[\"name\",\"ShortText\"]"
+                          "],"
+                          "[1,1,\"morita\"]"
+                          "]]",
+                          send_command("select Students"));
 }
