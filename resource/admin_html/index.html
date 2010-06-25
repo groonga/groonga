@@ -564,6 +564,11 @@ GroongaAdmin = {
     $('#table-tabs').tabs('select', 2);
     GroongaAdmin.update_createrecord(GroongaAdmin.current_table, id);
   },
+  format_unix_time: function(unix_time) {
+    var date = new Date();
+    date.setTime(unix_time * 1000);
+    return date.toLocaleString();
+  },
   format_duration: function(duration_in_seconds) {
     var duration = "";
     var days = Math.floor(duration_in_seconds / 3600 / 24);
@@ -603,7 +608,7 @@ GroongaAdmin = {
           return;
         }
         var d = b[1];
-        $('#status-starttime').text(d.starttime);
+        $('#status-starttime').text(GroongaAdmin.format_unix_time(d.starttime));
         $('#status-uptime').text(GroongaAdmin.format_duration(d.uptime));
         GroongaAdmin.change_status_timer(1000);
       },
