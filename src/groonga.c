@@ -222,7 +222,7 @@ do_alone(int argc, char **argv)
     }
     grn_obj_close(ctx, db);
   } else {
-    fprintf(stderr, "db open failed (%s)\n", path);
+    fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
   }
   grn_ctx_fin(ctx);
   return rc;

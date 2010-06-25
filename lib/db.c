@@ -99,8 +99,6 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
         }
         grn_pat_close(ctx, s->keys);
         grn_pat_remove(ctx, path);
-      } else {
-        ERR(GRN_NO_MEMORY_AVAILABLE, "s->keys create failed");
       }
       grn_tiny_array_fin(&s->values);
       GRN_FREE(s);
