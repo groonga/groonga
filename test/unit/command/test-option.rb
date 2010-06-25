@@ -42,9 +42,20 @@ class OptionTest < Test::Unit::TestCase
     assert_path_not_exist(pid_file)
   end
 
-  def test_help_option
-    usage = run_groonga("--help")
+  def test_help
+    assert_run_groonga(/\AUsage: groonga \[options\.\.\.\] \[dest\]$/,
+                       "",
+                       [CONFIG_ENV, "--help"])
     assert_predicate($?, :success?)
-    assert_match(/\AUsage: groonga \[options\.\.\.\] \[dest\]$/, usage)
+  end
+
+  def test_mandatory_argument_missing
+    usage = 'Usage: groonga \[options\.\.\.\] \[dest\]$'
+    %w[-e -l -a -p -i -t
+       --admin-html-path --protocol --log-path
+       --query-log-path --pid-file --config-path].each do |option|
+      status = assert_run_groonga("", /: option '#{option}' needs argument\.$/, option)
+      assert_not_predicate(status, :success?)
+    end
   end
 end

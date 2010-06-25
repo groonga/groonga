@@ -1735,9 +1735,9 @@ grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, in
   return tok - tokbuf;
 }
 
-inline static void
+inline static int
 op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
-               int argc, char * const argv[], int *i, const char *optvalue)
+               int argc, char * const argv[], int i, const char *optvalue)
 {
   switch (o->op) {
     case getopt_op_none:
@@ -1752,19 +1752,18 @@ op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
       *flags = o->flag;
       break;
     default:
-      return;
+      return i;
   }
   if (o->arg) {
     if (optvalue) {
       *o->arg = (char *)optvalue;
+    } else if (++i < argc) {
+      *o->arg = argv[i];
     } else {
-      if (++(*i) < argc) {
-        *o->arg = argv[*i];
-      } else {
-        /* TODO: error */
-      }
+      return -1;
     }
   }
+  return i;
 }
 
 int
@@ -1787,8 +1786,12 @@ grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts,
         for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
           if (o->longopt && strlen(o->longopt) == len &&
               !memcmp(v, o->longopt, len)) {
-            op_getopt_flag(flags, o, argc, argv, &i,
-                           (*eq == '\0' ? NULL : eq + 1));
+            i = op_getopt_flag(flags, o, argc, argv, i,
+                               (*eq == '\0' ? NULL : eq + 1));
+            if (i < 0) {
+              fprintf(stderr, "%s: option '--%s' needs argument.\n", argv[0], o->longopt);
+              return -1;
+            }
             found = 1;
             break;
           }
@@ -1800,7 +1803,11 @@ grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts,
           found = 0;
           for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
             if (o->opt && *p == o->opt) {
-              op_getopt_flag(flags, o, argc, argv, &i, NULL);
+              i = op_getopt_flag(flags, o, argc, argv, i, NULL);
+              if (i < 0) {
+                fprintf(stderr, "%s: option '-%c' needs argument.\n", argv[0], *p);
+                return -1;
+              }
               found = 1;
               break;
             }
