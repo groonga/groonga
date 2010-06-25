@@ -1225,16 +1225,16 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                GRN_TEXT_VALUE(VAR(0)),
                                GRN_TEXT_LEN(VAR(0)));
   if (table) {
-    if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(3))) {
+    if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2))) {
       ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
     } else if (GRN_TEXT_LEN(VAR(1))) {
       rc = grn_table_delete(ctx, table, GRN_TEXT_VALUE(VAR(1)),
                                         GRN_TEXT_LEN(VAR(1)));
-    } else if (GRN_TEXT_LEN(VAR(3))) {
+    } else if (GRN_TEXT_LEN(VAR(2))) {
       const char *end;
-      grn_id id = grn_atoui(GRN_TEXT_VALUE(VAR(3)),
-                            GRN_BULK_CURR(VAR(3)), &end);
-      if (end == GRN_BULK_CURR(VAR(3))) {
+      grn_id id = grn_atoui(GRN_TEXT_VALUE(VAR(2)),
+                            GRN_BULK_CURR(VAR(2)), &end);
+      if (end == GRN_BULK_CURR(VAR(2))) {
         rc = grn_table_delete_by_id(ctx, table, id);
       } else {
         ERR(GRN_INVALID_ARGUMENT, "invalid id");
