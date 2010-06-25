@@ -97,6 +97,7 @@ usage(FILE *output)
           "  --log-path <path>:                specify log path\n"
           "  --query-log-path <path>:          specify query log path\n"
           "  --pid-file <path>:                specify pid file path (daemon mode only)\n"
+          "  --config-path <path>:             specify config file path\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -1586,6 +1587,7 @@ enum {
   mode_server,
   mode_usage,
   mode_version,
+  mode_config,
   mode_error
 };
 
@@ -1626,7 +1628,7 @@ load_config_file(const char *path,
                  const grn_str_getopt_opt *opts, int *flags)
 {
   int name_len, value_len;
-  char buf[1024+2], *str, *name, *value, *args[4];
+  char buf[1024+2], *str, *name, *value = NULL, *args[4];
   FILE *file;
 
   if (!(file = fopen(path, "r"))) return 0;
@@ -1667,6 +1669,42 @@ load_config_file(const char *path,
   return 1;
 }
 
+static void
+show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
+{
+  const grn_str_getopt_opt *o;
+
+  for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
+    switch (o->op) {
+    case getopt_op_none:
+      if (o->arg && *o->arg) {
+        if (o->longopt) {
+          fprintf(out, "%s=%s\n", o->longopt, *o->arg);
+        }
+      }
+      break;
+    case getopt_op_on:
+      if (flags & o->flag) {
+        goto no_arg;
+      }
+      break;
+    case getopt_op_off:
+      if (!(flags & o->flag)) {
+        goto no_arg;
+      }
+      break;
+    case getopt_op_update:
+      if (flags == o->flag) {
+      no_arg:
+        if (o->longopt) {
+          fprintf(out, "%s\n", o->longopt);
+        }
+      }
+      break;
+    }
+  }
+}
+
 int
 main(int argc, char **argv)
 {
@@ -1674,6 +1712,7 @@ main(int argc, char **argv)
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
     *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL;
+  const char *config_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, getopt_op_none},
@@ -1694,6 +1733,8 @@ main(int argc, char **argv)
     {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', "query-log-path", NULL, 0, getopt_op_none},
     {'\0', "pid-file", NULL, 0, getopt_op_none},
+    {'\0', "config-path", NULL, 0, getopt_op_none},
+    {'\0', "show-config", NULL, mode_config, getopt_op_update},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1707,19 +1748,51 @@ main(int argc, char **argv)
   opts[15].arg = &grn_log_path;
   opts[16].arg = &grn_qlog_path;
   opts[17].arg = &pidfile_path;
+  opts[18].arg = &config_path;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
   strcpy(listen_address, "0.0.0.0");
-  {
-    const char *config_path = getenv("GRN_CONFIG_PATH");
+  i = grn_str_getopt(argc, argv, opts, &mode);
+  if (i < 0) {
+    usage(stderr);
+    return EXIT_FAILURE;
+  }
+  opts[18].arg = NULL;
+  if (config_path) {
+    if (!load_config_file(config_path, opts, &mode)) {
+      fprintf(stderr, "%s: can't open config file: %s (%s)\n",
+              argv[0], config_path, strerror(errno));
+      return EXIT_FAILURE;
+    }
+  } else {
+    config_path = getenv("GRN_CONFIG_PATH");
     if (!config_path) {
       config_path = GRN_CONFIG_PATH;
     }
-    load_config_file(config_path, opts, &mode);
+    if (*config_path) {
+      load_config_file(config_path, opts, &mode);
+    }
   }
+  /* ignore mode option in config file */
+  mode = (mode == mode_error) ? mode_alone :
+    ((mode & ~MODE_MASK) | mode_alone);
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_error; }
+  switch (mode & MODE_MASK) {
+  case mode_version :
+    show_version();
+    return EXIT_SUCCESS;
+  case mode_usage :
+    usage(stdout);
+    return EXIT_SUCCESS;
+  case mode_config :
+    show_config(stdout, opts, mode & ~MODE_MASK);
+    return EXIT_SUCCESS;
+  case mode_error :
+    usage(stderr);
+    return EXIT_FAILURE;
+  }
   if (portstr) { port = atoi(portstr); }
   if (encstr) {
     switch (*encstr) {
@@ -1838,14 +1911,8 @@ main(int argc, char **argv)
   case mode_server :
     r = do_server(argc > i ? argv[i] : NULL);
     break;
-  case mode_version :
-    show_version(); r = 0;
-    break;
-  case mode_usage :
-    usage(stdout); r = 0;
-    break;
-  default :
-    usage(stderr); r = -1;
+  default:
+    r = -1;
     break;
   }
 #ifdef WITH_LIBEDIT
