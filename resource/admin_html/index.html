@@ -564,6 +564,31 @@ GroongaAdmin = {
     $('#table-tabs').tabs('select', 2);
     GroongaAdmin.update_createrecord(GroongaAdmin.current_table, id);
   },
+  format_duration: function(duration_in_seconds) {
+    var duration = "";
+    var days = Math.floor(duration_in_seconds / 3600 / 24);
+    var hours = Math.floor(duration_in_seconds / 3600 % 24);
+    var minutes = Math.floor(duration_in_seconds / 60 % 60);
+    var seconds = Math.floor(duration_in_seconds % 60);
+
+    if (days > 0) {
+      duration += days;
+      if (days == 1) {
+        duration += " day, ";
+      } else {
+        duration += " days, ";
+      }
+    }
+    if (days > 0 || hours > 0) {
+      duration += hours + ":" + minutes + ":" + seconds;
+    } else if (minutes > 0) {
+      duration += minutes + ":" + seconds;
+    } else {
+      duration += seconds;
+    }
+
+    return duration;
+  },
   status: function() {
     if (GroongaAdmin.current_status > 0) { return; }
     GroongaAdmin.current_status++;
@@ -579,7 +604,7 @@ GroongaAdmin = {
         }
         var d = b[1];
         $('#status-starttime').text(d.starttime);
-        $('#status-uptime').text(d.uptime);
+        $('#status-uptime').text(GroongaAdmin.format_duration(d.uptime));
         GroongaAdmin.change_status_timer(1000);
       },
       error: function() {
