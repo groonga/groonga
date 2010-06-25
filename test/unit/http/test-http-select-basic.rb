@@ -734,26 +734,32 @@ module HTTPSelectBasicTests
 
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<SEGMENTS>
-<SEGMENT>
-<RESULTPAGE>
-<RESULTSET OFFSET="0" LIMIT="2" NHITS="2">
-<HIT NO="1">
-<FIELD NAME="_id">2</FIELD>
-<FIELD NAME="_key">hayamiz</FIELD>
-<FIELD NAME="real_name">Yuto Hayamizu</FIELD>
-<FIELD NAME="hp">200</FIELD>
-</HIT>
-<HIT NO="2">
-<FIELD NAME="_id">1</FIELD>
-<FIELD NAME="_key">ryoqun</FIELD>
-<FIELD NAME="real_name">Ryo Onodera</FIELD>
-<FIELD NAME="hp">200</FIELD>
-</HIT>
-</RESULTSET>
-</RESULTPAGE>
-</SEGMENT>
-</SEGMENTS>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULTPAGE>
+<RESULTSET>
+<NHITS>2</NHITS>
+<COLUMNS>
+<COLUMN>
+<TEXT>_id</TEXT>
+<TEXT>UInt32</TEXT></COLUMN>
+<COLUMN>
+<TEXT>_key</TEXT>
+<TEXT>ShortText</TEXT></COLUMN>
+<COLUMN>
+<TEXT>real_name</TEXT>
+<TEXT>ShortText</TEXT></COLUMN>
+<COLUMN>
+<TEXT>hp</TEXT>
+<TEXT>Int32</TEXT></COLUMN></COLUMNS>
+<HIT>
+<INT>2</INT>
+<TEXT>hayamiz</TEXT>
+<TEXT>Yuto Hayamizu</TEXT>
+<INT>200</INT></HIT>
+<HIT>
+<INT>1</INT>
+<TEXT>ryoqun</TEXT>
+<TEXT>Ryo Onodera</TEXT>
+<INT>200</INT></HIT></RESULTSET></RESULTPAGE></RESULT>
 EOF
     assert_select_xml(expected.strip,
                       {:table => "users",
