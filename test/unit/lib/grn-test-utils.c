@@ -620,7 +620,6 @@ const gchar *
 grn_test_send_command(grn_ctx *context, const gchar *command)
 {
   unsigned int send_id, receive_id;
-  int flags = 0;
   GString *result;
   const gchar **lines;
 
@@ -629,6 +628,7 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
   for (; *lines; lines++) {
     gchar *command_result;
     unsigned int command_result_length;
+    int flags = 0;
 
     send_id = grn_ctx_send(context, *lines, strlen(*lines), 0);
     receive_id = grn_ctx_recv(context, &command_result, &command_result_length,
