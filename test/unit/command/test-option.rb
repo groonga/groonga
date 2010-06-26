@@ -45,7 +45,7 @@ class OptionTest < Test::Unit::TestCase
   def test_help
     assert_run_groonga(/\AUsage: groonga \[options\.\.\.\] \[dest\]$/,
                        "",
-                       [CONFIG_ENV, "--help"])
+                       ["--help"])
     assert_predicate($?, :success?)
   end
 
