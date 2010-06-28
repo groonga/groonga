@@ -34,11 +34,12 @@ noinst_LTLIBRARIES =				\
 	test-function-cast.la			\
 	test-store-ja.la			\
 	test-log.la				\
-	test-table-sort-key.la			\
+	test-table-sort-key-from-str.la		\
 	test-inspect.la				\
 	test-command-load.la			\
 	test-command-column-list.la		\
 	test-command-select.la			\
+	test-command-select-sort.la		\
 	test-command-cache-limit.la
 endif
 
@@ -97,9 +98,10 @@ test_register_la_SOURCES		= test-register.c
 test_function_cast_la_SOURCES		= test-function-cast.c
 test_store_ja_la_SOURCES		= test-store-ja.c
 test_log_la_SOURCES			= test-log.c
-test_table_sort_key_la_SOURCES		= test-table-sort-key.c
+test_table_sort_key_from_str_la_SOURCES	= test-table-sort-key-from-str.c
 test_inspect_la_SOURCES			= test-inspect.c
 test_command_load_la_SOURCES		= test-command-load.c
 test_command_column_list_la_SOURCES	= test-command-column-list.c
 test_command_select_la_SOURCES		= test-command-select.c
+test_command_select_sort_la_SOURCES	= test-command-select-sort.c
 test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c

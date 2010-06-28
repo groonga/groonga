@@ -23,10 +23,10 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_table_sort_key_from_str(void);
-void test_table_sort_key_from_str(gconstpointer data);
-void data_table_sort_key_from_str_invalid(void);
-void test_table_sort_key_from_str_invalid(gconstpointer data);
+void data_valid(void);
+void test_valid(gconstpointer data);
+void data_invalid(void);
+void test_invalid(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -39,7 +39,7 @@ cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_base_dir(),
                                    "tmp",
-                                   "table-sort-key",
+                                   "table-sort-key-from-str",
                                    NULL);
 }
 
@@ -87,7 +87,7 @@ cut_teardown(void)
 }
 
 void
-data_table_sort_key_from_str(void)
+data_valid(void)
 {
 #define ADD_DATUM(str, count)                   \
   gcut_add_datum("[" str "] == " #count,        \
@@ -115,7 +115,7 @@ data_table_sort_key_from_str(void)
 }
 
 void
-test_table_sort_key_from_str(gconstpointer data)
+test_valid(gconstpointer data)
 {
   unsigned i, nkeys;
   const char *str = gcut_data_get_string(data, "keys");
@@ -129,7 +129,7 @@ test_table_sort_key_from_str(gconstpointer data)
 }
 
 void
-data_table_sort_key_from_str_invalid(void)
+data_invalid(void)
 {
 #define ADD_DATUM(str)                          \
   gcut_add_datum("[" str "] is invalid",        \
@@ -147,7 +147,7 @@ data_table_sort_key_from_str_invalid(void)
 }
 
 void
-test_table_sort_key_from_str_invalid(gconstpointer data)
+test_invalid(gconstpointer data)
 {
   unsigned nkeys;
   const char *str = gcut_data_get_string(data, "keys");
