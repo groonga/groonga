@@ -51,6 +51,55 @@ remove_tmp_directory(void)
   cut_remove_path(tmp_directory, NULL);
 }
 
+static void
+setup_ddl(void)
+{
+  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
+                       "column_create Sites score COLUMN_SCALAR Int32\n"
+                       "column_create Sites age COLUMN_SCALAR Int32");
+
+  assert_send_commands("table_create Users TABLE_PAT_KEY ShortText\n"
+                       "column_create Users name COLUMN_SCALAR ShortText");
+
+  assert_send_commands("table_create Bookmarks TABLE_NO_KEY\n"
+                       "column_create Bookmarks site COLUMN_SCALAR Sites\n"
+                       "column_create Bookmarks user COLUMN_SCALAR Users\n"
+                       "column_create Bookmarks rank COLUMN_SCALAR Int32");
+
+  assert_send_commands("column_create Users bookmarks COLUMN_VECTOR Bookmarks "
+                       "--source Bookmarks.user");
+}
+
+static void
+setup_data(void)
+{
+  assert_send_commands("load --table Sites\n"
+                       "[\n"
+                       "[\"_key\", \"score\", \"age\"],\n"
+                       "[\"groonga.org\", 100, 2],\n"
+                       "[\"qwik.jp/senna/FrontPageJ.html\", 100, 5],\n"
+                       "[\"2ch.net\", 10, 11]\n"
+                       "]");
+
+  assert_send_commands("load --table Users\n"
+                       "[\n"
+                       "[\"_key\", \"name\"],\n"
+                       "[\"morita\", \"Daijiro MORI\"],\n"
+                       "[\"gunyara-kun\", \"Tasuku SUENAGA\"],\n"
+                       "[\"yu\", \"Yutaro Shimamura\"]\n"
+                       "]");
+
+  assert_send_commands("load --table Bookmarks\n"
+                       "[\n"
+                       "[\"site\", \"user\", \"rank\"],\n"
+                       "[\"groonga.org\", \"morita\", 100],\n"
+                       "[\"groonga.org\", \"gunyara-kun\", 100],\n"
+                       "[\"groonga.org\", \"yu\", 50],\n"
+                       "[\"2ch.net\", \"gunyara-kun\", null],\n"
+                       "[\"2ch.net\", \"yu\", 10]\n"
+                       "]");
+}
+
 void
 cut_setup(void)
 {
@@ -64,6 +113,9 @@ cut_setup(void)
 
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
+
+  setup_ddl();
+  setup_data();
 }
 
 void
@@ -81,16 +133,6 @@ cut_teardown(void)
 void
 test_int(void)
 {
-  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
-                       "column_create Sites score COLUMN_SCALAR Int32\n"
-                       "column_create Sites age COLUMN_SCALAR Int32\n"
-                       "load --table Sites\n"
-                       "[\n"
-                       "[\"_key\", \"score\", \"age\"],\n"
-                       "[\"groonga.org\", 100, 2],\n"
-                       "[\"qwik.jp/senna/FrontPageJ.html\", 100, 5],\n"
-                       "[\"2ch.net\", 10, 11]\n"
-                       "]");
   cut_assert_equal_string(
       "[[[3],"
        "[[\"_key\",\"ShortText\"],"
@@ -102,4 +144,43 @@ test_int(void)
       send_command("select Sites "
                    "--sortby \"-score -age\" "
                    "--output_columns \"_key score age\""));
+}
+
+void
+test_drilldown(void)
+{
+  cut_assert_equal_string(
+      "[[[5],"
+       "[[\"site._key\",\"ShortText\"],"
+        "[\"user._key\",\"ShortText\"],"
+        "[\"rank\",\"Int32\"]],"
+       "[\"groonga.org\",\"morita\",100],"
+       "[\"groonga.org\",\"gunyara-kun\",100],"
+       "[\"groonga.org\",\"yu\",50],"
+       "[\"2ch.net\",\"gunyara-kun\",0],"
+       "[\"2ch.net\",\"yu\",10]],\n"
+       "[[2],"
+        "[[\"_key\",\"ShortText\"],"
+         "[\"_nsubrecs\",\"Int32\"]],"
+        "[\"2ch.net\",2],"
+        "[\"groonga.org\",3]],\n"
+       "[[3],"
+        "[[\"_key\",\"ShortText\"],"
+         "[\"_nsubrecs\",\"Int32\"]],"
+        "[\"gunyara-kun\",2],"
+        "[\"morita\",1],"
+        "[\"yu\",2]],\n"
+       "[[4],"
+         "[[\"_key\",\"Int32\"],"
+          "[\"_nsubrecs\",\"Int32\"]],"
+        "[0,1],"
+        "[10,1],"
+        "[50,1],"
+        "[100,2]]]",
+      send_command("select Bookmarks "
+                   "--output_columns \"site._key user._key rank\" "
+                   "--sortby \"-site.score -site.age\" "
+                   "--drilldown \"site user rank\" "
+                   "--drilldown_output_columns \"_key _nsubrecs\" "
+                   "--drilldown_sortby \"_key\""));
 }
