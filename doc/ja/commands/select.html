@@ -115,10 +115,10 @@
 </blockquote>
 <p><tt class="docutils literal"><span class="pre">offset</span></tt></p>
 <blockquote>
-検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベースで指定します。(デフォルト値は0) offsetに負の値を指定した場合は、ヒットした件数 + offset によって算出される値が指定されたものとみなされます。</blockquote>
+検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットした件数 + offset によって算出される値が指定されたものとみなされます。</blockquote>
 <p><tt class="docutils literal"><span class="pre">limit</span></tt></p>
 <blockquote>
-検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。実際には、offset + limit がヒットした件数を超えない範囲でレコードが出力されます。</blockquote>
+検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + limit + 1 によって算出される値が指定されたものとみなされます。</blockquote>
 <p><tt class="docutils literal"><span class="pre">drilldown</span></tt></p>
 <blockquote>
 グループ化のキーとなるカラム名のリストをカンマ(&#8216;,&#8217;)区切りで指定します。検索条件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。</blockquote>
@@ -130,10 +130,10 @@ drilldown条件に指定されたカラムの値毎にとりまとめられた�
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力するカラム名のリストをカンマ(&#8216;,&#8217;)区切りで指定します。</blockquote>
 <p><tt class="docutils literal"><span class="pre">drilldown_offset</span></tt></p>
 <blockquote>
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力対象となる最初のレコードの番号を0ベースで指定します。</blockquote>
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetによって算出される値が指定されたものとみなされます。</blockquote>
 <p><tt class="docutils literal"><span class="pre">drilldown_limit</span></tt></p>
 <blockquote>
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。</blockquote>
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + drilldown_limit + 1 によって算出される値が指定されたものとみなされます。</blockquote>
 <p><tt class="docutils literal"><span class="pre">cache</span></tt></p>
 <blockquote>
 <p>クエリキャッシュに関する動作を設定します。</p>
