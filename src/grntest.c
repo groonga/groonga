@@ -1576,8 +1576,7 @@ start_server(const char *dbpath, int r)
   }
   sprintf(optbuf, "%d", grntest_serverport);
   if (pid == 0) {
-    ret = execlp("groonga", "groonga", "-s", "--protocol", "http",
-                 "-p", optbuf, dbpath, (char*)NULL);
+    ret = execlp("groonga", "groonga", "-s", "-p", optbuf, dbpath, (char*)NULL);
     if (ret == -1) {
       fprintf(stderr, "Cannot start groonga server:errno=%d\n", errno);
       exit(1);
