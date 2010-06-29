@@ -1598,6 +1598,45 @@ bitcmp(const void *s1, const void *s2, int offset, int length)
 }
 
 inline static grn_rc
+set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
+                  const void *key, uint32_t key_size, int flags)
+{
+  int c0 = -1, ch;
+  const uint8_t *k;
+  uint32_t len = key_size * 16;
+  grn_id id;
+  pat_node *node;
+  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
+  KEY_ENCODE(pat, keybuf, key, key_size);
+  PAT_AT(pat, 0, node);
+  id = node->lr[1];
+  while (id) {
+    PAT_AT(pat, id, node);
+    if (!node) { return GRN_FILE_CORRUPT; }
+    ch = PAT_CHK(node);
+    if (c0 < ch && ch < len - 1) {
+      if (ch & 1) {
+        id = (ch + 1 < len) ? node->lr[1] : node->lr[0];
+      } else {
+        id = node->lr[nth_bit((uint8_t *)key, ch, len)];
+      }
+      c0 = ch;
+      continue;
+    }
+    if (!(k = pat_node_get_key(ctx, pat, node))) { break; }
+    if (PAT_LEN(node) < key_size) { break; }
+    if (!memcmp(k, key, key_size)) {
+      push(c, node->lr[1], ch);
+      if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
+        push(c, node->lr[0], ch);
+      }
+    }
+    break;
+  }
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
 set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
                   const void *key, uint32_t key_size, int flags)
 {
@@ -1607,6 +1646,9 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   int r, check = -1, ch, c2;
   uint32_t len = key_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
+  if (flags & GRN_CURSOR_PREFIX) {
+    return set_cursor_prefix(ctx, pat, c, key, key_size, flags);
+  }
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, node);
   for (id = node->lr[1]; id;) {
