@@ -33,6 +33,8 @@ void data_normalize_broken(void);
 void test_normalize_broken(gconstpointer data);
 void data_charlen_broken(void);
 void test_charlen_broken(gconstpointer data);
+void data_urlenc(void);
+void test_urlenc(gconstpointer data);
 void data_urldec(void);
 void test_urldec(gconstpointer data);
 void data_cgidec(void);
@@ -312,6 +314,48 @@ test_charlen_broken(gconstpointer data)
   cut_assert_equal_uint(0, grn_charlen(&context,
                                        encoded_input,
                                        encoded_input_end));
+}
+
+void
+data_urlenc(void)
+{
+#define ADD_DATUM(label, expected, input, input_length)                 \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "input", G_TYPE_STRING, input,                         \
+                 "input-length", G_TYPE_INT, input_length,              \
+                 NULL)
+
+  ADD_DATUM("Japanese",
+            "%20%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%A7%E3%81%99%E3%80%82%20",
+            " 日本語です。 ",
+            -1);
+  ADD_DATUM("percent", "%251%252%253", "%1%2%3", -1);
+
+#undef ADD_DATUM
+}
+
+void
+test_urlenc(gconstpointer data)
+{
+  grn_obj buffer;
+  const gchar *expected, *input;
+  gint input_length;
+
+  expected = gcut_data_get_string(data, "expected");
+  input = gcut_data_get_string(data, "input");
+  input_length = gcut_data_get_int(data, "input-length");
+
+  if (input_length < 0) {
+    input_length = strchr(input, '\0') - input;
+  }
+
+  GRN_TEXT_INIT(&buffer, 0);
+  grn_text_urlenc(&context, &buffer, input, input_length);
+  cut_assert_equal_substring(expected,
+                             GRN_TEXT_VALUE(&buffer),
+                             GRN_TEXT_LEN(&buffer));
+  GRN_OBJ_FIN(&context, &buffer);
 }
 
 void
