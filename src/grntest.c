@@ -39,6 +39,7 @@
 #define __USE_XOPEN
 #include "lib/str.h"
 #include "lib/com.h"
+#include "lib/db.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -52,6 +53,7 @@
 
 /*
 #define DEBUG_FTP
+#define DEBUG_HTTP
 */
 
 #define FTPUSER "anonymous"
@@ -86,16 +88,16 @@ FILE *grntest_logfp;
 #define OS_WINDOWS32 "WINDOWS32"
 
 #ifdef WIN32
-typedef SOCKET ftpsocket;
-#define FTPERROR INVALID_SOCKET
-#define ftpclose closesocket
+typedef SOCKET socket_t;
+#define SOCKETERROR INVALID_SOCKET
+#define socketclose closesocket
 #define GROONGA_PATH "groonga.exe"
 PROCESS_INFORMATION grntest_pi;
 #else
 pid_t grntest_server_id = 0;
-typedef int ftpsocket;
-#define ftpclose close
-#define FTPERROR -1
+typedef int socket_t;
+#define socketclose close
+#define SOCKETERROR -1
 #endif /* WIN32 */
 
 char *grntest_osinfo;
@@ -115,12 +117,16 @@ grn_obj *grntest_db = NULL;
 
 #define J_DO_LOCAL  1  /* do_local */
 #define J_DO_GQTP   2  /* do_gqtp */
-#define J_REP_LOCAL 3  /* rep_local */
-#define J_REP_GQTP  4  /* rep_gqtp */
-#define J_OUT_LOCAL 5  /* out_local */
-#define J_OUT_GQTP  6  /* out_gqtp */
-#define J_TEST_LOCAL 7  /* test_local */
-#define J_TEST_GQTP  8  /* test_gqtp */
+#define J_DO_HTTP   3  /* do_http */
+#define J_REP_LOCAL 4  /* rep_local */
+#define J_REP_GQTP  5  /* rep_gqtp */
+#define J_REP_HTTP  6  /* rep_http */
+#define J_OUT_LOCAL 7  /* out_local */
+#define J_OUT_GQTP  8  /* out_gqtp */
+#define J_OUT_HTTP  9  /* out_http */
+#define J_TEST_LOCAL 10  /* test_local */
+#define J_TEST_GQTP  11  /* test_gqtp */
+#define J_TEST_HTTP  12  /* test_http */
 
 static char grntest_username[BUF_LEN];
 static char grntest_scriptname[BUF_LEN];
@@ -159,6 +165,8 @@ struct task {
   int job_id;
   long long int max;
   long long int min;
+  socket_t http_socket;
+  grn_obj http_response;
 };
 
 static struct task grntest_task[MAX_CON];
@@ -190,6 +198,9 @@ out_p(int jobtype)
   if (jobtype == J_OUT_GQTP) {
     return 1;
   }
+  if (jobtype == J_OUT_HTTP) {
+    return 1;
+  }
   return 0;
 }
 
@@ -203,6 +214,9 @@ test_p(int jobtype)
   if (jobtype == J_TEST_GQTP) {
     return 1;
   }
+  if (jobtype == J_TEST_HTTP) {
+    return 1;
+  }
   return 0;
 }
 
@@ -214,6 +228,9 @@ report_p(int jobtype)
     return 1;
   }
   if (jobtype == J_REP_GQTP) {
+    return 1;
+  }
+  if (jobtype == J_REP_HTTP) {
     return 1;
   }
   return 0;
@@ -233,6 +250,25 @@ gqtp_p(int jobtype)
     return 1;
   }
   if (jobtype == J_TEST_GQTP) {
+    return 1;
+  }
+  return 0;
+}
+
+static
+int
+http_p(int jobtype)
+{
+  if (jobtype == J_DO_HTTP) {
+    return 1;
+  }
+  if (jobtype == J_REP_HTTP) {
+    return 1;
+  }
+  if (jobtype == J_OUT_HTTP) {
+    return 1;
+  }
+  if (jobtype == J_TEST_HTTP) {
     return 1;
   }
   return 0;
@@ -522,6 +558,273 @@ diff_result(char *expect, int elen, char *result, int rlen)
 }
 
 static
+socket_t
+open_socket(char *host, int port)
+{
+  socket_t sock;
+  struct hostent *servhost;
+  struct sockaddr_in server;
+  u_long inaddr;
+  int ret;
+
+  servhost = gethostbyname(host);
+  if (servhost == NULL){
+    fprintf(stderr, "Bad hostname [%s]\n", host);
+    return -1;
+  }
+  inaddr = *(u_long*)(servhost->h_addr_list[0]);
+
+  memset(&server, 0, sizeof(server));
+  server.sin_family = AF_INET;
+  server.sin_port = htons(port);
+  server.sin_addr = *(struct in_addr*)&inaddr;
+
+  sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (sock == -1) {
+    fprintf(stderr, "socket error\n");
+    return -1;
+  }
+  ret = connect(sock, (struct sockaddr *)&server, sizeof(server));
+  if (ret == -1) {
+    fprintf(stderr, "connect error\n");
+    return -1;
+  }
+  return sock;
+}
+
+static
+int
+write_to_server(socket_t socket, char *buf)
+{
+#ifdef DEBUG_FTP
+  fprintf(stderr, "send:%s", buf);
+#endif
+  send(socket, buf, strlen(buf), 0);
+  return 0;
+}
+
+#define OUTPUT_TYPE "output_type"
+#define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
+
+static
+void
+command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
+{
+  char tok_type;
+  int offset = 0, have_key = 0;
+  const char *p, *e, *v;
+  grn_obj buf, *expr = NULL;
+  grn_expr_var *vars;
+  unsigned nvars;
+
+  GRN_TEXT_INIT(&buf, 0);
+  p = command;
+  e = command + strlen(command);
+  p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+  if ((expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf)))) {
+    grn_obj params, output_type;
+
+    GRN_TEXT_INIT(&params, 0);
+    GRN_TEXT_INIT(&output_type, 0);
+    vars = ((grn_proc *)expr)->vars;
+    nvars = ((grn_proc *)expr)->nvars;
+    GRN_TEXT_PUTS(ctx, uri, "/d/");
+    GRN_TEXT_PUT(ctx, uri, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+    while (p < e) {
+      GRN_BULK_REWIND(&buf);
+      p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+      v = GRN_TEXT_VALUE(&buf);
+      switch (tok_type) {
+      case GRN_TOK_VOID :
+        p = e;
+        break;
+      case GRN_TOK_SYMBOL :
+        if (GRN_TEXT_LEN(&buf) > 2 && v[0] == '-' && v[1] == '-') {
+          int l = GRN_TEXT_LEN(&buf) - 2;
+          v += 2;
+          if (l == OUTPUT_TYPE_LEN && !memcmp(v, OUTPUT_TYPE, OUTPUT_TYPE_LEN)) {
+            GRN_BULK_REWIND(&output_type);
+            p = grn_text_unesc_tok(ctx, &output_type, p, e, &tok_type);
+            break;
+          }
+          if (GRN_TEXT_LEN(&params)) {
+            GRN_TEXT_PUTS(ctx, &params, "&");
+          }
+          grn_text_urlenc(ctx, &params, v, l);
+          have_key = 1;
+          break;
+        }
+        /* fallthru */
+      case GRN_TOK_STRING :
+      case GRN_TOK_QUOTE :
+        if (!have_key) {
+          if (offset < nvars) {
+            if (GRN_TEXT_LEN(&params)) {
+              GRN_TEXT_PUTS(ctx, &params, "&");
+            }
+            grn_text_urlenc(ctx, &params,
+                            vars[offset].name, vars[offset].name_size);
+            offset++;
+          }
+        }
+        GRN_TEXT_PUTS(ctx, &params, "=");
+        grn_text_urlenc(ctx, &params, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+        have_key = 0;
+        break;
+      }
+    }
+    GRN_TEXT_PUTS(ctx, uri, ".");
+    if (GRN_TEXT_LEN(&output_type)) {
+      GRN_TEXT_PUT(ctx, uri,
+                   GRN_TEXT_VALUE(&output_type), GRN_TEXT_LEN(&output_type));
+    } else {
+      GRN_TEXT_PUTS(ctx, uri, "json");
+    }
+    if (GRN_TEXT_LEN(&params) > 0) {
+      GRN_TEXT_PUTS(ctx, uri, "?");
+      GRN_TEXT_PUT(ctx, uri, GRN_TEXT_VALUE(&params), GRN_TEXT_LEN(&params));
+    }
+  }
+}
+
+static
+void
+command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
+{
+  socket_t http_socket;
+  grn_obj buf;
+
+  http_socket = open_socket(grntest_serverhost, grntest_serverport);
+  if (http_socket == SOCKETERROR) {
+    fprintf(stderr, "failed to connect to groonga at %s:%d via HTTP: ",
+            grntest_serverhost, grntest_serverport);
+#ifdef WIN32
+    fprintf(stderr, "%d\n", GetLastError());
+#else
+    fprintf(stderr, "%s\n", strerror(errno));
+#endif
+    error_exit_in_thread(100);
+  }
+  grntest_task[task_id].http_socket = http_socket;
+  GRN_BULK_REWIND(&grntest_task[task_id].http_response);
+
+  GRN_TEXT_INIT(&buf, 0);
+  GRN_TEXT_PUTS(ctx, &buf, "GET ");
+  command_line_to_uri_path(ctx, &buf, command);
+#ifdef DEBUG_HTTP
+  fprintf(stderr, "command: <%s>\n", command);
+  fprintf(stderr, "path:    <%.*s>\n",
+          (int)GRN_TEXT_LEN(&buf), GRN_TEXT_VALUE(&buf));
+#endif
+  GRN_TEXT_PUTS(ctx, &buf, " HTTP/1.1\r\n");
+  GRN_TEXT_PUTS(ctx, &buf, "Host: ");
+  GRN_TEXT_PUTS(ctx, &buf, grntest_serverhost);
+  GRN_TEXT_PUTS(ctx, &buf, "\r\n");
+  GRN_TEXT_PUTS(ctx, &buf, "User-Agent: grntest/");
+  GRN_TEXT_PUTS(ctx, &buf, grn_get_version());
+  GRN_TEXT_PUTS(ctx, &buf, "\r\n");
+  GRN_TEXT_PUTS(ctx, &buf, "Connection: close\r\n");
+  GRN_TEXT_PUTS(ctx, &buf, "\r\n");
+  GRN_TEXT_PUTC(ctx, &buf, '\0');
+  write_to_server(http_socket, GRN_TEXT_VALUE(&buf));
+  GRN_OBJ_FIN(ctx, &buf);
+}
+
+static
+void
+command_send_ctx(grn_ctx *ctx, char *command, int type, int task_id)
+{
+  grn_ctx_send(ctx, command, strlen(command), 0);
+/* fix me.
+   when command fails, ctx->rc is not 0 in local mode!
+  if (ctx->rc) {
+    fprintf(stderr, "ctx_send:rc=%d:command:%s\n", ctx->rc, command);
+    error_exit_in_thread(1);
+  }
+*/
+}
+
+static
+void
+command_send(grn_ctx *ctx, char *command, int type, int task_id)
+{
+  if (http_p(type)) {
+    command_send_http(ctx, command, type, task_id);
+  } else {
+    command_send_ctx(ctx, command, type, task_id);
+  }
+}
+
+static
+void
+command_recv_http(grn_ctx *ctx, int type, int task_id,
+                  char **res, int *res_len, int *flags)
+{
+  int len;
+  char buf[BUF_LEN];
+  char *p, *e;
+  socket_t http_socket;
+  grn_obj *http_response;
+
+  http_socket = grntest_task[task_id].http_socket;
+  http_response = &grntest_task[task_id].http_response;
+  while ((len = recv(http_socket, buf, BUF_LEN - 1, 0))) {
+#ifdef DEBUG_HTTP
+    fprintf(stderr, "receive: <%.*s>\n", len, buf);
+#endif
+    GRN_TEXT_PUT(ctx, http_response, buf, len);
+  }
+
+  p = GRN_TEXT_VALUE(http_response);
+  e = p + GRN_TEXT_LEN(http_response);
+  while (p < e) {
+    if (p[0] != '\r') {
+      p++;
+      continue;
+    }
+    if (e - p >= 4) {
+      if (!memcmp(p, "\r\n\r\n", 4)) {
+        *res = p + 4;
+        *res_len = e - *res;
+#ifdef DEBUG_HTTP
+        fprintf(stderr, "body: <%.*s>\n", *res_len, *res);
+#endif
+        return;
+      }
+      p += 4;
+    } else {
+      *res = NULL;
+      *res_len = 0;
+      return;
+    }
+  }
+}
+
+static
+void
+command_recv_ctx(grn_ctx *ctx, int type, int task_id,
+                 char **res, int *res_len, int *flags)
+{
+  grn_ctx_recv(ctx, res, res_len, flags);
+  if (ctx->rc) {
+    fprintf(stderr, "ctx_recv:rc=%d\n", ctx->rc);
+    error_exit_in_thread(1);
+  }
+}
+
+static
+void
+command_recv(grn_ctx *ctx, int type, int task_id,
+             char **res, int *res_len, int *flags)
+{
+  if (http_p(type)) {
+    command_recv_http(ctx, type, task_id, res, res_len, flags);
+  } else {
+    command_recv_ctx(ctx, type, task_id, res, res_len, flags);
+  }
+}
+
+static
 int
 do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
                 long long int *load_start)
@@ -537,21 +840,9 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
     grn_obj_close(ctx, &start_time);
   }
 
-  grn_ctx_send(ctx, command, strlen(command), 0);
-/* fix me.
-   when command fails, ctx->rc is not 0 in local mode!
-  if (ctx->rc) {
-    fprintf(stderr, "ctx_send:rc=%d:command:%s\n", ctx->rc, command);
-    error_exit_in_thread(1);
-  }
-*/
+  command_send(ctx, command, type, task_id);
   do {
-    grn_ctx_recv(ctx, &res, &res_len, &flags);
-    if (ctx->rc) {
-      fprintf(stderr, "ctx_recv:rc=%d\n", ctx->rc);
-      error_exit_in_thread(1);
-      return 0;
-    }
+    command_recv(ctx, type, task_id, &res, &res_len, &flags);
     if (res_len) {
       long long int self;
       GRN_TIME_INIT(&end_time, 0);
@@ -634,22 +925,9 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
   GRN_TIME_INIT(&start_time, 0);
   GRN_TIME_NOW(ctx, &start_time);
 
-  grn_ctx_send(ctx, command, strlen(command), 0);
-/* fix me.
-   when command fails, ctx->rc is not 0 in local mode!
-*/
-  if (ctx->rc) {
-    fprintf(stderr, "ctx_send:rc=%d:command:%s\n", ctx->rc, command);
-    error_exit_in_thread(1);
-  }
-
+  command_send(ctx, command, type, task_id);
   do {
-    grn_ctx_recv(ctx, &res, &res_len, &flags);
-    if (ctx->rc) {
-      fprintf(stderr, "ctx_recv:rc=%d\n", ctx->rc);
-      error_exit_in_thread(1);
-      return 0;
-    }
+    command_recv(ctx, type, task_id, &res, &res_len, &flags);
     if (res_len) {
       long long int self;
       GRN_TIME_INIT(&end_time, 0);
@@ -1298,7 +1576,8 @@ start_server(const char *dbpath, int r)
   }
   sprintf(optbuf, "%d", grntest_serverport);
   if (pid == 0) {
-    ret = execlp("groonga", "groonga", "-s", "-p", optbuf, dbpath, (char*)NULL);
+    ret = execlp("groonga", "groonga", "-s", "--protocol", "http",
+                 "-p", optbuf, dbpath, (char*)NULL);
     if (ret == -1) {
       fprintf(stderr, "Cannot start groonga server:errno=%d\n", errno);
       exit(1);
@@ -1347,6 +1626,11 @@ parse_line(char *buf, int start, int end, int num)
       i = i + 7;
       break;
     }
+    if (!strncmp(&buf[i], "do_http", 7)) {
+      grntest_job[num].jobtype = J_DO_HTTP;
+      i = i + 7;
+      break;
+    }
     if (!strncmp(&buf[i], "rep_local", 9)) {
       grntest_job[num].jobtype = J_REP_LOCAL;
       i = i + 9;
@@ -1354,6 +1638,11 @@ parse_line(char *buf, int start, int end, int num)
     }
     if (!strncmp(&buf[i], "rep_gqtp", 8)) {
       grntest_job[num].jobtype = J_REP_GQTP;
+      i = i + 8;
+      break;
+    }
+    if (!strncmp(&buf[i], "rep_http", 8)) {
+      grntest_job[num].jobtype = J_REP_HTTP;
       i = i + 8;
       break;
     }
@@ -1369,6 +1658,12 @@ parse_line(char *buf, int start, int end, int num)
       out_or_test = 1;
       break;
     }
+    if (!strncmp(&buf[i], "out_http", 8)) {
+      grntest_job[num].jobtype = J_OUT_HTTP;
+      i = i + 8;
+      out_or_test = 1;
+      break;
+    }
     if (!strncmp(&buf[i], "test_local", 10)) {
       grntest_job[num].jobtype = J_TEST_LOCAL;
       i = i + 10;
@@ -1377,6 +1672,12 @@ parse_line(char *buf, int start, int end, int num)
     }
     if (!strncmp(&buf[i], "test_gqtp", 9)) {
       grntest_job[num].jobtype = J_TEST_GQTP;
+      i = i + 9;
+      out_or_test = 1;
+      break;
+    }
+    if (!strncmp(&buf[i], "test_http", 9)) {
+      grntest_job[num].jobtype = J_TEST_HTTP;
       i = i + 9;
       out_or_test = 1;
       break;
@@ -1421,7 +1722,7 @@ parse_line(char *buf, int start, int end, int num)
 
   if (i == end) {
     if (out_or_test) {
-      fprintf(stderr, "log(test)_local(gqtp) needs log(test)_filename\n");
+      fprintf(stderr, "log(test)_local(gqtp|http) needs log(test)_filename\n");
       return 11;
     }
     return 0;
@@ -1681,12 +1982,25 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
   grntest_detail_on = 0;
   for (i = 0; i < task_num; i++) {
     grn_ctx_init(&grntest_ctx[i], 0);
+    grntest_owndb[i] = NULL;
     if (gqtp_p(grntest_task[i].jobtype)) {
       ret = grn_ctx_connect(&grntest_ctx[i], grntest_serverhost, grntest_serverport, 0);
       if (ret) {
         fprintf(stderr, "Cannot connect groonga server:host=%s:port=%d:ret=%d\n",
                 grntest_serverhost, grntest_serverport, ret);
         error_exit(ctx, 1);
+      }
+    } else if (http_p(grntest_task[i].jobtype)) {
+      grntest_task[i].http_socket = 0;
+      GRN_TEXT_INIT(&grntest_task[i].http_response, 0);
+      if (grntest_owndb_mode) {
+        grntest_owndb[i] = grn_db_open(&grntest_ctx[i], grntest_dbpath);
+        if (grntest_owndb[i] == NULL) {
+          fprintf(stderr, "Cannot open db:%s\n", grntest_dbpath);
+          exit(1);
+        }
+      } else {
+        grntest_owndb[i] = grn_db_create(&grntest_ctx[i], NULL, NULL);
       }
     } else {
       if (grntest_owndb_mode) {
@@ -1719,8 +2033,11 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
   thread_main(ctx, task_num);
 
   for (i = 0; i < task_num; i++) {
-    if (grntest_owndb_mode) {
+    if (grntest_owndb[i]) {
       grn_obj_close(&grntest_ctx[i], grntest_owndb[i]);
+    }
+    if (http_p(grntest_task[i].jobtype)) {
+      GRN_OBJ_FIN(&grntest_ctx[i], &grntest_task[i].http_response);
     }
     grn_ctx_fin(&grntest_ctx[i]);
     qnum = qnum + grntest_task[i].qnum;
@@ -1882,7 +2199,7 @@ check_response(char *buf)
 
 static
 int
-read_response(ftpsocket socket, char *buf)
+read_response(socket_t socket, char *buf)
 {
   int ret;
   ret = recv(socket, buf, BUF_LEN - 1, 0);
@@ -1899,7 +2216,7 @@ read_response(ftpsocket socket, char *buf)
 
 static
 int
-put_file(ftpsocket socket, const char *filename)
+put_file(socket_t socket, const char *filename)
 {
   FILE *fp;
   int c, ret, size = 0;
@@ -1926,7 +2243,7 @@ put_file(ftpsocket socket, const char *filename)
 
 static
 int
-ftp_list(ftpsocket data_socket)
+ftp_list(socket_t data_socket)
 {
   int ret;
   char buf[BUF_LEN];
@@ -1946,7 +2263,7 @@ ftp_list(ftpsocket data_socket)
 
 static
 int
-get_file(ftpsocket socket, const char *filename, int size)
+get_file(socket_t socket, const char *filename, int size)
 {
   FILE *fp;
   int ret, total;
@@ -1978,17 +2295,6 @@ get_file(ftpsocket socket, const char *filename, int size)
 
 static
 int
-write_to_server(ftpsocket socket, char *buf)
-{
-#ifdef DEBUG_FTP
-  fprintf(stderr, "send:%s", buf);
-#endif
-  send(socket, buf, strlen(buf), 0);
-  return 0;
-}
-
-static
-int
 get_port(char *buf, char *host, int *port)
 {
   int ret,d1,d2,d3,d4,d5,d6;
@@ -2002,41 +2308,6 @@ get_port(char *buf, char *host, int *port)
   *port = d5 * 256 + d6;
   sprintf(host, "%d.%d.%d.%d", d1, d2, d3, d4);
   return 1;
-}
-
-static
-ftpsocket
-open_socket(char *host, int port)
-{
-  ftpsocket sock;
-  struct hostent *servhost;
-  struct sockaddr_in server;
-  u_long inaddr;
-  int ret;
-
-  servhost = gethostbyname(host);
-  if (servhost == NULL){
-    fprintf(stderr, "Bad hostname [%s]\n", host);
-    return -1;
-  }
-  inaddr = *(u_long*)(servhost->h_addr_list[0]);
-
-  memset(&server, 0, sizeof(server));
-  server.sin_family = AF_INET;
-  server.sin_port = htons(port);
-  server.sin_addr = *(struct in_addr*)&inaddr;
-
-  sock = socket(AF_INET, SOCK_STREAM, 0);
-  if (sock == -1) {
-    fprintf(stderr, "socket error\n");
-    return -1;
-  }
-  ret = connect(sock, (struct sockaddr *)&server, sizeof(server));
-  if (ret == -1) {
-    fprintf(stderr, "connect error\n");
-    return -1;
-  }
-  return sock;
 }
 
 static
@@ -2078,7 +2349,7 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
 {
   int size = 0;
   int status = 0;
-  ftpsocket command_socket, data_socket;
+  socket_t command_socket, data_socket;
   int data_port;
   char data_host[BUF_LEN];
   char send_mesg[BUF_LEN];
@@ -2108,7 +2379,7 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
   }
 
   command_socket = open_socket(host, 21);
-  if (command_socket == FTPERROR) {
+  if (command_socket == SOCKETERROR) {
     return 0;
   }
 
@@ -2154,7 +2425,7 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
   }
 
   data_socket = open_socket(data_host, data_port);
-  if (data_socket == FTPERROR) {
+  if (data_socket == SOCKETERROR) {
     goto exit;
   }
 
@@ -2165,7 +2436,7 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
 
   read_response(command_socket, buf);
   if (!check_response(buf)) {
-    ftpclose(data_socket);
+    socketclose(data_socket);
     goto exit;
   }
 
@@ -2201,13 +2472,13 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
     break;
   default:
     fprintf(stderr, "invalid mode\n");
-    ftpclose(data_socket);
+    socketclose(data_socket);
     goto exit;
   }
 
   read_response(command_socket, buf);
   if (!check_response(buf)) {
-    ftpclose(data_socket);
+    socketclose(data_socket);
     goto exit;
   }
   if (!strncmp(buf, "150", 3)) {
@@ -2228,14 +2499,14 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
     break;
   case MODE_GET:
     if (get_file(data_socket, filename, size) == -1) {
-      ftpclose(data_socket);
+      socketclose(data_socket);
       goto exit;
     }
     fprintf(stderr, "get:%s\n", filename);
     break;
   case MODE_PUT:
     if (put_file(data_socket, filename) == -1) {
-      ftpclose(data_socket);
+      socketclose(data_socket);
       goto exit;
     }
     fprintf(stderr, "put:%s\n", filename);
@@ -2244,14 +2515,14 @@ ftp_sub(char *user, char *passwd, char *host, const char *filename,
     break;
   }
 
-  ftpclose(data_socket);
+  socketclose(data_socket);
   if ((mode == MODE_GET) || (mode == MODE_PUT)) {
     read_response(command_socket, buf);
   }
   write_to_server(command_socket, "QUIT\n");
   status = 1;
 exit:
-  ftpclose(command_socket);
+  socketclose(command_socket);
 
 #ifdef WIN32
   WSACleanup();
