@@ -1626,9 +1626,16 @@ set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     if (!(k = pat_node_get_key(ctx, pat, node))) { break; }
     if (PAT_LEN(node) < key_size) { break; }
     if (!memcmp(k, key, key_size)) {
-      push(c, node->lr[1], ch);
-      if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-        push(c, node->lr[0], ch);
+      if (flags & GRN_CURSOR_DESCENDING) {
+        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
+          push(c, node->lr[0], ch);
+        }
+        push(c, node->lr[1], ch);
+      } else {
+        push(c, node->lr[1], ch);
+        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
+          push(c, node->lr[0], ch);
+        }
       }
     }
     break;
@@ -1646,9 +1653,6 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   int r, check = -1, ch, c2;
   uint32_t len = key_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  if (flags & GRN_CURSOR_PREFIX) {
-    return set_cursor_prefix(ctx, pat, c, key, key_size, flags);
-  }
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, node);
   for (id = node->lr[1]; id;) {
@@ -1877,53 +1881,57 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
   c->rest = GRN_ID_MAX;
   c->curr_rec = GRN_ID_NIL;
   c->obj.header.domain = GRN_ID_NIL;
-  if (flags & GRN_CURSOR_DESCENDING) {
-    if (min) {
-      set_cursor_ascend(ctx, pat, c, min, min_size, flags);
-      c->obj.header.flags = GRN_CURSOR_ASCENDING;
-      c->tail = grn_pat_cursor_next(ctx, c);
-      c->sp = 0;
-      if (!c->tail) { goto exit; }
-    }
-    if (max) {
-      set_cursor_descend(ctx, pat, c, max, max_size, flags);
-    } else {
-      PAT_AT(pat, 0, node);
-      if (!node) {
-        grn_pat_cursor_close(ctx, c);
-        return NULL;
+  if (flags & GRN_CURSOR_PREFIX) {
+    set_cursor_prefix(ctx, pat, c, min, min_size, flags);
+  } else {
+    if (flags & GRN_CURSOR_DESCENDING) {
+      if (min) {
+        set_cursor_ascend(ctx, pat, c, min, min_size, flags);
+        c->obj.header.flags = GRN_CURSOR_ASCENDING;
+        c->tail = grn_pat_cursor_next(ctx, c);
+        c->sp = 0;
+        if (!c->tail) { goto exit; }
       }
-      if ((id = node->lr[1])) {
-        PAT_AT(pat, id, node);
-        if (node) {
-          int ch = PAT_CHK(node);
-          push(c, node->lr[0], ch);
-          push(c, node->lr[1], ch);
+      if (max) {
+        set_cursor_descend(ctx, pat, c, max, max_size, flags);
+      } else {
+        PAT_AT(pat, 0, node);
+        if (!node) {
+          grn_pat_cursor_close(ctx, c);
+          return NULL;
+        }
+        if ((id = node->lr[1])) {
+          PAT_AT(pat, id, node);
+          if (node) {
+            int ch = PAT_CHK(node);
+            push(c, node->lr[0], ch);
+            push(c, node->lr[1], ch);
+          }
         }
       }
-    }
-  } else {
-    if (max) {
-      set_cursor_descend(ctx, pat, c, max, max_size, flags);
-      c->obj.header.flags = GRN_CURSOR_DESCENDING;
-      c->tail = grn_pat_cursor_next(ctx, c);
-      c->sp = 0;
-      if (!c->tail) { goto exit; }
-    }
-    if (min) {
-      set_cursor_ascend(ctx, pat, c, min, min_size, flags);
     } else {
-      PAT_AT(pat, 0, node);
-      if (!node) {
-        grn_pat_cursor_close(ctx, c);
-        return NULL;
+      if (max) {
+        set_cursor_descend(ctx, pat, c, max, max_size, flags);
+        c->obj.header.flags = GRN_CURSOR_DESCENDING;
+        c->tail = grn_pat_cursor_next(ctx, c);
+        c->sp = 0;
+        if (!c->tail) { goto exit; }
       }
-      if ((id = node->lr[1])) {
-        PAT_AT(pat, id, node);
-        if (node) {
-          int ch = PAT_CHK(node);
-          push(c, node->lr[1], ch);
-          push(c, node->lr[0], ch);
+      if (min) {
+        set_cursor_ascend(ctx, pat, c, min, min_size, flags);
+      } else {
+        PAT_AT(pat, 0, node);
+        if (!node) {
+          grn_pat_cursor_close(ctx, c);
+          return NULL;
+        }
+        if ((id = node->lr[1])) {
+          PAT_AT(pat, id, node);
+          if (node) {
+            int ch = PAT_CHK(node);
+            push(c, node->lr[1], ch);
+            push(c, node->lr[0], ch);
+          }
         }
       }
     }
