@@ -789,15 +789,18 @@ command_recv_http(grn_ctx *ctx, int type, int task_id,
 #ifdef DEBUG_HTTP
         fprintf(stderr, "body: <%.*s>\n", *res_len, *res);
 #endif
-        return;
+        break;
       }
       p += 4;
     } else {
       *res = NULL;
       *res_len = 0;
-      return;
+      break;
     }
   }
+
+  socketclose(http_socket);
+  grntest_task[task_id].http_socket = 0;
 }
 
 static
