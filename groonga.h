@@ -252,6 +252,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_OBJ_KEY_UINT               (0x00<<3)
 #define GRN_OBJ_KEY_INT                (0x01<<3)
 #define GRN_OBJ_KEY_FLOAT              (0x02<<3)
+#define GRN_OBJ_KEY_GEO_POINT          (0x03<<3)
 
 #define GRN_OBJ_KEY_WITH_SIS           (0x01<<6)
 #define GRN_OBJ_KEY_NORMALIZE          (0x01<<7)

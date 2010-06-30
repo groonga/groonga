@@ -6452,6 +6452,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
             uint8_t key_type = range->header.flags & GRN_OBJ_KEY_MASK;
             switch (key_type) {
             case GRN_OBJ_KEY_UINT :
+            case GRN_OBJ_KEY_GEO_POINT :
               switch (GRN_TYPE_SIZE(DB_OBJ(range))) {
               case 1 :
                 kp->offset = KEY_UINT8;
@@ -6594,10 +6595,10 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_TEXT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "TokyoGeoPoint",
-                GRN_OBJ_KEY_UINT, sizeof(grn_geo_point));
+                GRN_OBJ_KEY_GEO_POINT, sizeof(grn_geo_point));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TOKYO_GEO_POINT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "WGS84GeoPoint",
-                GRN_OBJ_KEY_UINT, sizeof(grn_geo_point));
+                GRN_OBJ_KEY_GEO_POINT, sizeof(grn_geo_point));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_WGS84_GEO_POINT) { return GRN_FILE_CORRUPT; }
   for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < GRN_DB_MECAB; id++) {
     grn_itoh(id, buf + 3, 2);
