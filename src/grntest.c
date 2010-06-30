@@ -684,7 +684,10 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
       GRN_TEXT_PUTS(ctx, uri, "?");
       GRN_TEXT_PUT(ctx, uri, GRN_TEXT_VALUE(&params), GRN_TEXT_LEN(&params));
     }
+    GRN_OBJ_FIN(ctx, &params);
+    GRN_OBJ_FIN(ctx, &output_type);
   }
+  GRN_OBJ_FIN(ctx, &buf);
 }
 
 static
@@ -789,15 +792,18 @@ command_recv_http(grn_ctx *ctx, int type, int task_id,
 #ifdef DEBUG_HTTP
         fprintf(stderr, "body: <%.*s>\n", *res_len, *res);
 #endif
-        return;
+        break;
       }
       p += 4;
     } else {
       *res = NULL;
       *res_len = 0;
-      return;
+      break;
     }
   }
+
+  socketclose(http_socket);
+  grntest_task[task_id].http_socket = 0;
 }
 
 static
