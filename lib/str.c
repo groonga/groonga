@@ -2418,9 +2418,9 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
 {
   int vs;
   grn_obj buf;
-  GRN_TEXT_INIT(&buf, 0);
   if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a = (grn_accessor *)obj;
+    GRN_TEXT_INIT(&buf, 0);
     for (;;) {
       GRN_BULK_REWIND(&buf);
       switch (a->action) {
@@ -2452,11 +2452,11 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
         buf.header.domain = GRN_DB_INT32;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
-        /* todo : support vector */
-        grn_obj_get_value(ctx, a->obj, id, &buf);
         if ((a->obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
-          grn_id *idp = (grn_id *)GRN_BULK_HEAD(&buf);
           if (a->next) {
+            grn_id *idp;
+            grn_obj_get_value(ctx, a->obj, id, &buf);
+            idp = (grn_id *)GRN_BULK_HEAD(&buf);
             GRN_TEXT_PUTC(ctx, bulk, '[');
             for (vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id); vs--; idp++) {
               grn_text_atoj(ctx, bulk, (grn_obj *)a->next, *idp);
@@ -2464,19 +2464,11 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
             }
             GRN_TEXT_PUTC(ctx, bulk, ']');
           } else {
-            grn_obj b;
-            GRN_RECORD_INIT(&b, 0, DB_OBJ(a->obj)->range);
-            GRN_TEXT_PUTC(ctx, bulk, '[');
-            /* todo: support other fixe sized data types */
-            for (vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id); vs--; idp++) {
-              GRN_RECORD_SET(ctx, &b, *idp);
-              grn_text_otoj(ctx, bulk, &b, NULL);
-              if (vs) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-            }
-            GRN_TEXT_PUTC(ctx, bulk, ']');
-            GRN_OBJ_FIN(ctx, &b);
+            grn_text_atoj(ctx, bulk, a->obj, id);
           }
           goto exit;
+        } else {
+          grn_obj_get_value(ctx, a->obj, id, &buf);
         }
         break;
       case GRN_ACCESSOR_GET_DB_OBJ :
@@ -2497,6 +2489,29 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
       }
     }
   } else {
+    switch (obj->header.type) {
+    case GRN_COLUMN_FIX_SIZE :
+      GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
+      break;
+    case GRN_COLUMN_VAR_SIZE :
+      if ((obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
+        grn_obj *range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
+        if (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+          GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+        } else {
+          GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+        }
+      } else {
+        GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
+      }
+      break;
+    case GRN_COLUMN_INDEX :
+      GRN_UINT32_INIT(&buf, 0);
+      break;
+    default:
+      GRN_TEXT_INIT(&buf, 0);
+      break;
+    }
     grn_obj_get_value(ctx, obj, id, &buf);
   }
   grn_text_otoj(ctx, bulk, &buf, NULL);
