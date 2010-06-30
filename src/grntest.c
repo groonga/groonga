@@ -684,7 +684,10 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
       GRN_TEXT_PUTS(ctx, uri, "?");
       GRN_TEXT_PUT(ctx, uri, GRN_TEXT_VALUE(&params), GRN_TEXT_LEN(&params));
     }
+    GRN_OBJ_FIN(ctx, &params);
+    GRN_OBJ_FIN(ctx, &output_type);
   }
+  GRN_OBJ_FIN(ctx, &buf);
 }
 
 static
