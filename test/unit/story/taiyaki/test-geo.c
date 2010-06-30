@@ -288,27 +288,11 @@ test_drilldown_with_broken_reference(void)
     "[\"尾長屋 錦糸町店\",8314],"
     "[\"横浜 くりこ庵 浅草店\",8394],"
     "[\"たいやきひいらぎ\",9242]],\n"
-    "[[6],"
-     "[[\"_key\",\"ShortText\"],"
-      "[\"name\",\"ShortText\"],"
-      "[\"_nsubrecs\",\"Int32\"]],"
-     "[\"おでん\",\"\",1],"
-     "[\"たいやき\",\"\",13],"
-     "[\"マグロ\",\"\",1],"
-     "[\"和菓子\",\"\",1],"
-     "[\"天然\",\"\",3],"
-     "[\"白\",\"\",1]],\n"
-    "[[2],"
-     "[[\"_key\",\"ShortText\"],"
-      "[\"name\",\"ShortText\"],"
-      "[\"_nsubrecs\",\"Int32\"]],"
-     "[\"category0001\",\"和食\",1],"
-     "[\"category0003\",\"おやつ\",1]],\n"
     "[[1],"
      "[[\"_key\",\"ShortText\"],"
       "[\"name\",\"ShortText\"],"
       "[\"_nsubrecs\",\"Int32\"]],"
-     "[\"area00013\",\"東京都渋谷区\",1]]"
+     "[\"area0013\",\"東京都渋谷区\",1]]"
      "]",
     send_command(
       cut_take_printf(
@@ -317,9 +301,8 @@ test_drilldown_with_broken_reference(void)
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance(location, \"%s\")' "
-        "--drilldown 'tags categories area' "
-        "--drilldown_output_columns '_key, name, _nsubrecs' "
-        "--drilldown_sortby '_key'",
+        "--drilldown 'area' "
+        "--drilldown_output_columns '_key, name, _nsubrecs'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
