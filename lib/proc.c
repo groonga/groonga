@@ -345,6 +345,7 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   grn_proc_create(ctx,
                   GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
                   GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -535,9 +536,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   if (GRN_TEXT_VALUE(VAR(1)) == rest) {
     flags = grn_parse_table_create_flags(ctx, GRN_TEXT_VALUE(VAR(1)),
                                          GRN_BULK_CURR(VAR(1)));
-    if (ctx->rc) {
-      return NULL;
-    }
+    if (ctx->rc) { goto exit; }
   }
   if (GRN_TEXT_LEN(VAR(0))) {
     flags |= GRN_OBJ_PERSISTENT;
@@ -559,6 +558,8 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   } else {
     ERR(GRN_INVALID_ARGUMENT, "should not create anonymous table");
   }
+exit:
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -573,6 +574,7 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   } else {
     ERR(GRN_INVALID_ARGUMENT, "table not found.");
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -586,9 +588,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   if (GRN_TEXT_VALUE(VAR(2)) == rest) {
     flags = grn_parse_column_create_flags(ctx, GRN_TEXT_VALUE(VAR(2)),
                                           GRN_BULK_CURR(VAR(2)));
-    if (ctx->rc) {
-      return NULL;
-    }
+    if (ctx->rc) { goto exit; }
   }
   table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
                       GRN_TEXT_LEN(VAR(0)));
@@ -629,6 +629,8 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     }
     grn_obj_unlink(ctx, column);
   }
+exit:
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -659,6 +661,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   } else {
     ERR(GRN_INVALID_ARGUMENT, "table not found.");
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -985,6 +988,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                               GRN_TEXT_VALUE(VAR(1)),
                               GRN_TEXT_LEN(VAR(1)));
   grn_view_add(ctx, view, table);
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -1021,6 +1025,7 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   } else {
     ERR(GRN_INVALID_ARGUMENT, "clear object not found");
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -1042,6 +1047,7 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -1056,6 +1062,7 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -1063,6 +1070,7 @@ static grn_obj *
 proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_log_reopen(ctx);
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -1077,6 +1085,7 @@ proc_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  /* TODO: implement */
   grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
   if (table) {
     grn_id id;
@@ -1243,6 +1252,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "unknown table name");
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -1798,6 +1808,7 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     }
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -1808,7 +1819,10 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     const char *name;
     name = GRN_TEXT_VALUE(VAR(0));
     grn_db_register_by_name(ctx, name);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "path is required");
   }
+  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
