@@ -6858,6 +6858,67 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
   return ctx->rc;
 }
 
+static grn_table_sort_key *
+grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned str_size,
+                                grn_obj *table, unsigned *nkeys)
+{
+  const char **tokbuf;
+  const char *p = str, *pe = str + str_size;
+  grn_table_sort_key *keys = NULL, *k = NULL;
+  while ((*p++ != '(')) { if (p == pe) { return NULL; } }
+  str = p;
+  while ((*p != ')')) { if (++p == pe) { return NULL; } }
+  str_size = p - str;
+  if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
+    grn_id domain = GRN_ID_NIL;
+    int i, n = tokenize(str, str_size, tokbuf, str_size, NULL);
+    if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
+      k = keys;
+      for (i = 0; i < n; i++) {
+        const char *r = tokbuf[i];
+        while (p < r && (' ' == *p || ',' == *p)) { p++; }
+        if (p < r) {
+          k->flags = GRN_TABLE_SORT_ASC;
+          k->offset = 0;
+          if (*p == '+') {
+            p++;
+          } else if (*p == '-') {
+            k->flags = GRN_TABLE_SORT_DESC;
+            p++;
+          }
+          if (k == keys) {
+            if (!(k->key = grn_obj_column(ctx, table, p, r - p))) {
+              WARN(GRN_INVALID_ARGUMENT, "invalid sort key: <%.*s>(<%.*s>)",
+                   tokbuf[i] - p, p, str_size, str);
+              break;
+            }
+            domain = k->key->header.domain;
+          } else {
+            grn_obj buf;
+            GRN_TEXT_INIT(&buf, GRN_OBJ_DO_SHALLOW_COPY);
+            GRN_TEXT_SET(ctx, &buf, p, r - p);
+            k->key = grn_obj_open(ctx, GRN_BULK, 0, domain);
+            grn_obj_cast(ctx, &buf, k->key, 0);
+            GRN_OBJ_FIN(ctx, &buf);
+          }
+          k->flags |= GRN_TABLE_SORT_GEO;
+          k++;
+        }
+        p = r;
+      }
+    }
+    GRN_FREE(tokbuf);
+  }
+  if (!ctx->rc) {
+    *nkeys = k - keys;
+  } else {
+    if (keys) { GRN_FREE(keys); }
+    *nkeys =0;
+    keys = NULL;
+  }
+  return keys;
+}
+
 grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
                             grn_obj *table, unsigned *nkeys)
@@ -6865,6 +6926,9 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
   const char *p = str;
   const char **tokbuf;
   grn_table_sort_key *keys = NULL, *k = NULL;
+  if ((keys = grn_table_sort_key_from_str_geo(ctx, str, str_size, table, nkeys))) {
+    return keys;
+  }
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     int i, n = tokenize(str, str_size, tokbuf, str_size, NULL);
     if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
