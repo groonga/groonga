@@ -2218,6 +2218,10 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
               }
               id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
               v = grn_ra_ref_cache(ctx, ra, *id_, &cache);
+              if (idp && *((grn_id *)v) &&
+                  grn_table_at(ctx, range, *((grn_id *)v)) == GRN_ID_NIL) {
+                continue;
+              }
               if ((!idp || *((grn_id *)v)) &&
                   grn_table_add_v(ctx, res, v, element_size, &value, NULL)) {
                 grn_table_add_subrec(res, value, ri ? ri->score : 0, NULL, 0);

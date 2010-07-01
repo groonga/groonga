@@ -1849,7 +1849,7 @@ main(int argc, char **argv)
     break;
   }
 #ifdef WITH_LIBEDIT
-  if (batchmode) {
+  if (!batchmode) {
     history_end(elh);
     el_end(el);
   }

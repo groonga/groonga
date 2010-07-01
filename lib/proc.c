@@ -166,7 +166,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
       res = table_;
     }
     LAP("select");
-    GRN_OUTPUT_ARRAY_OPEN("RESULTPAGE", -1);
+    GRN_OUTPUT_ARRAY_OPEN("RESULT", -1);
     if (res) {
       if (scorer && scorer_len) {
         grn_obj *v;
@@ -346,7 +346,9 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
   grn_proc_create(ctx,
                   GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
                   GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -375,7 +377,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_timeval now;
   grn_timeval_now(ctx, &now);
-  GRN_OUTPUT_MAP_OPEN("STATUS", 8);
+  GRN_OUTPUT_MAP_OPEN("RESULT", 8);
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
@@ -560,7 +562,9 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     ERR(GRN_INVALID_ARGUMENT, "should not create anonymous table");
   }
 exit:
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -575,7 +579,9 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   } else {
     ERR(GRN_INVALID_ARGUMENT, "table not found.");
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -631,7 +637,9 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     grn_obj_unlink(ctx, column);
   }
 exit:
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -662,7 +670,9 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   } else {
     ERR(GRN_INVALID_ARGUMENT, "table not found.");
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -989,7 +999,9 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                               GRN_TEXT_VALUE(VAR(1)),
                               GRN_TEXT_LEN(VAR(1)));
   grn_view_add(ctx, view, table);
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -1026,7 +1038,9 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   } else {
     ERR(GRN_INVALID_ARGUMENT, "clear object not found");
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -1048,7 +1062,9 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -1063,7 +1079,9 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -1071,7 +1089,9 @@ static grn_obj *
 proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_log_reopen(ctx);
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -1253,7 +1273,9 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "unknown table name");
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -1809,7 +1831,9 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     }
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -1823,7 +1847,9 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "path is required");
   }
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();;
   return NULL;
 }
 
@@ -2314,3 +2340,4 @@ grn_db_init_builtin_query(grn_ctx *ctx)
                   func_geo_distance3, NULL, NULL, 0, NULL);
 
 }
+
