@@ -6432,8 +6432,8 @@ grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
         }
       } else {
         double lng1, lat1, lng2, lat2, x, y, d;
-        geo_entry *array, *ep;
-        int n = e + 100;
+        geo_entry *array, *ep, *p;
+        int n = e + e;
         if ((ep = array = GRN_MALLOC(sizeof(geo_entry) * n))) {
           lng1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(arg))->longitude);
           lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(arg))->latitude);
@@ -6449,8 +6449,12 @@ grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
               y = (lat2 - lat1);
               d = ((x * x) + (y * y));
               while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
-                ep->id = posting->rid;
-                ep->d = d;
+                for (p = ep; array < p && p[-1].d > d; p--) {
+                  p->id = p[-1].id;
+                  p->d = p[-1].d;
+                }
+                p->id = posting->rid;
+                p->d = d;
                 ep++;
                 i++;
               }
