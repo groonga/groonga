@@ -26,6 +26,7 @@ void test_nil_column_reference_value(void);
 void test_output_columns_with_space(void);
 void test_vector_geo_point(void);
 void test_vector_geo_point_with_query(void);
+void test_unmatched_output_columns(void);
 
 static gchar *tmp_directory;
 
@@ -171,4 +172,40 @@ test_vector_geo_point_with_query(void)
                           "[\"130094061x505025099\",\"130185500x505009000\"]]"
                           "]]",
                           send_command("select Shops --query _key:daruma"));
+}
+
+void
+test_unmatched_output_columns(void)
+{
+  assert_send_command("table_create Answer 0 ShortText");
+  assert_send_command("column_create Answer value 0 UInt32");
+  assert_send_command("table_create Question 0 ShortText");
+  assert_send_command("column_create Question num 0 UInt32");
+  assert_send_command("column_create Question answer 0 Answer");
+  assert_send_command("load '"
+                      "["
+                      "[\"_key\",\"value\"],"
+                      "[\"ultimate\",42]"
+                      "]' "
+                      "Answer");
+  assert_send_command("load '"
+                      "["
+                      "[\"_key\",\"answer\"],"
+                      "[\"universe\",\"ultimate\"]"
+                      "[\"mankind\",\"\"],"
+                      "]' "
+                      "Question");
+  cut_assert_equal_string("[["
+                          "[2],"
+                          "["
+                          "[\"_key\",\"ShortText\"],"
+                          "[\"num\",\"UInt32\"],"
+                          "[\"answer.value\",\"UInt32\"]"
+                          "],"
+                          "[\"universe\",0,42],"
+                          "[\"mankind\",0,0]"
+                          "]]",
+                          send_command("select Question"
+                                       " --output_columns"
+                                       " \"_key, num, answer.value\""));
 }
