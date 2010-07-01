@@ -302,7 +302,8 @@ test_drilldown_with_broken_reference(void)
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance(location, \"%s\")' "
         "--drilldown 'area' "
-        "--drilldown_output_columns '_key, name, _nsubrecs'",
+        "--drilldown_output_columns '_key, name, _nsubrecs' "
+        "--drilldown_sortby '_key'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
