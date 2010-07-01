@@ -1,0 +1,6 @@
+load --table Categories
+[
+{"_key":"category0001",name:"和食"},
+{"_key":"category0002",name:"中華"},
+{"_key":"category0003",name:"おやつ"}
+]

@@ -25,6 +25,7 @@ void test_in_circle(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_but_white(void);
 void test_drilldown(void);
+void test_drilldown_with_broken_reference(void);
 void test_weight_match(void);
 
 static gchar *tmp_directory;
@@ -74,6 +75,8 @@ cut_setup(void)
   database = grn_db_create(context, database_path, NULL);
 
   assert_send_commands(cut_get_fixture_data_string("ddl.grn", NULL));
+  assert_send_command(cut_get_fixture_data_string("areas.grn", NULL));
+  assert_send_command(cut_get_fixture_data_string("categories.grn", NULL));
   assert_send_command(cut_get_fixture_data_string("shops.grn", NULL));
 }
 
@@ -223,16 +226,31 @@ test_drilldown(void)
     "[\"根津のたいやき\",7812],"
     "[\"尾長屋 錦糸町店\",8314],"
     "[\"横浜 くりこ庵 浅草店\",8394],"
-    "[\"たいやきひいらぎ\",9242]],"
+    "[\"たいやきひいらぎ\",9242]],\n"
     "[[6],"
-    "[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
-    "[\"たいやき\",13],"
-    "[\"天然\",3],"
-    "[\"白\",1],"
-    "[\"マグロ\",1],"
-    "[\"和菓子\",1],"
-    "[\"おでん\",1]"
-    "]]",
+     "[[\"_key\",\"ShortText\"],"
+      "[\"name\",\"ShortText\"],"
+      "[\"_nsubrecs\",\"Int32\"]],"
+     "[\"おでん\",\"\",1],"
+     "[\"たいやき\",\"\",13],"
+     "[\"マグロ\",\"\",1],"
+     "[\"和菓子\",\"\",1],"
+     "[\"天然\",\"\",3],"
+     "[\"白\",\"\",1]],\n"
+    "[[2],"
+     "[[\"_key\",\"ShortText\"],"
+      "[\"name\",\"ShortText\"],"
+      "[\"_nsubrecs\",\"Int32\"]],"
+     "[\"category0001\",\"和食\",1],"
+     "[\"category0003\",\"おやつ\",1]],\n"
+    "[[3],"
+     "[[\"_key\",\"ShortText\"],"
+      "[\"name\",\"ShortText\"],"
+      "[\"_nsubrecs\",\"Int32\"]],"
+     "[\"area0002\",\"東京都中央区\",3],"
+     "[\"area0005\",\"東京都文京区\",1],"
+     "[\"area0013\",\"東京都渋谷区\",1]]"
+     "]",
     send_command(
       cut_take_printf(
         "select Shops "
@@ -240,9 +258,52 @@ test_drilldown(void)
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance(location, \"%s\")' "
-        "--drilldown_output_columns '_key, _nsubrecs' "
-        "--drilldown_sortby '-_nsubrecs' "
-        "--drilldown 'tags' ",
+        "--drilldown 'tags categories area' "
+        "--drilldown_output_columns '_key, name, _nsubrecs' "
+        "--drilldown_sortby '_key'",
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        distance,
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+}
+
+void
+test_drilldown_with_broken_reference(void)
+{
+  gdouble yurakucho_latitude = 35.67487;
+  gdouble yurakucho_longitude = 139.76352;
+  gint distance = 10 * 1000;
+
+  assert_send_commands("delete Areas area0002");
+  assert_send_commands("delete Areas area0005");
+  cut_assert_equal_string(
+    "[[[13],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"たいやき神田達磨 八重洲店\",1079],"
+    "[\"たい焼き鉄次 大丸東京店\",1390],"
+    "[\"築地 さのきや\",1723],"
+    "[\"にしみや 甘味処\",2000],"
+    "[\"しげ田\",2272],"
+    "[\"柳屋 たい焼き\",3686],"
+    "[\"根津のたいやき\",7812],"
+    "[\"尾長屋 錦糸町店\",8314],"
+    "[\"横浜 くりこ庵 浅草店\",8394],"
+    "[\"たいやきひいらぎ\",9242]],\n"
+    "[[1],"
+     "[[\"_key\",\"ShortText\"],"
+      "[\"name\",\"ShortText\"],"
+      "[\"_nsubrecs\",\"Int32\"]],"
+     "[\"area0013\",\"東京都渋谷区\",1]]"
+     "]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '+_score, +name' "
+        "--output_columns 'name, _score' "
+        "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
+        "--scorer '_score=geo_distance(location, \"%s\")' "
+        "--drilldown 'area' "
+        "--drilldown_output_columns '_key, name, _nsubrecs' "
+        "--drilldown_sortby '_key'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
@@ -267,7 +328,7 @@ test_weight_match(void)
     "[\"たいやきひいらぎ\",1759],"
     "[\"尾長屋 錦糸町店\",1687],"
     "[\"横浜 くりこ庵 浅草店\",1607],"
-    "[\"たい焼き写楽\",651]],"
+    "[\"たい焼き写楽\",651]],\n"
     "[[6],"
     "[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
     "[\"たいやき\",13],"

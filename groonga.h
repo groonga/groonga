@@ -664,18 +664,52 @@ typedef grn_obj grn_table_cursor;
 /**
  * grn_table_cursor_open:
  * @table: 対象table
- * @min: keyの下限 (NULLは下限なしと見なす)
- * @min_size: @minのsize
- * @max: keyの上限 (NULLは上限なしと見なす)
- * @max_size: @maxのsize
+ * @min: keyの下限 (NULLは下限なしと見なす)、GRN_CURSOR_PREFIXについては後述
+ * @min_size: @minのsize、GRN_CURSOR_PREFIXについては後述
+ * @max: keyの上限 (NULLは上限なしと見なす)、GRN_CURSOR_PREFIXについては後述
+ * @max_size: @maxのsize、GRN_CURSOR_PREFIXについては無視される場合がある
  * @flags: GRN_CURSOR_ASCENDINGを指定すると昇順にレコードを取り出す。
  *         GRN_CURSOR_DESCENDINGを指定すると降順にレコードを取り出す。
+ *         (下記GRN_CURSOR_PREFIXを指定し、
+ *          似ているレコードを取得する場合、
+ *          もしくは、common prefix searchを行う場合には、
+ *          GRN_CURSOR_ASCENDING/DESCENDINGは無視される)
  *         GRN_CURSOR_GTを指定するとminに一致したkeyをcursorの範囲に含まない。
+ *         (minがNULLの場合もしくは、下記GRN_CURSOR_PREFIXを指定し、
+ *          似ているレコードを取得する場合、
+ *          もしくは、common prefix searchを行う場合には、
+ *          GRN_CURSOR_GTは無視される)
  *         GRN_CURSOR_LTを指定するとmaxに一致したkeyをcursorの範囲に含まない。
+ *         (maxがNULLの場合もしくは、下記GRN_CURSOR_PREFIXを指定した場合には、
+ *          GRN_CURSOR_LTは無視される)
  *         GRN_CURSOR_BY_IDを指定するとID順にレコードを取り出す。
+ *         (下記GRN_CURSOR_PREFIXを指定した場合には、
+ *          GRN_CURSOR_BY_IDは無視される)
  *         GRN_OBJ_TABLE_PAT_KEYを指定したtableについては、
  *         GRN_CURSOR_BY_KEYを指定するとkey順にレコードを取り出す。
- *         (GRN_OBJ_TABLE_HASH_KEY,GRN_OBJ_TABLE_NO_KEYではGRN_CURSOR_BY_KEYは無視される)
+ *         (GRN_OBJ_TABLE_HASH_KEY,GRN_OBJ_TABLE_NO_KEYを指定したテーブルでは
+ *          GRN_CURSOR_BY_KEYは無視される)
+ *         GRN_CURSOR_PREFIXを指定すると、
+ *         GRN_OBJ_TABLE_PAT_KEYを指定したテーブルに関する
+ *         下記のレコードを取り出すカーソルが作成される。
+ *         maxがNULLの場合には、minと主キーが前方一致するレコードを取り出す。
+ *         maxが指定され、かつ、テーブルの主キーがShortText型である場合、
+ *         maxとcommon prefix searchを行い、
+ *         common prefixがmin_sizeバイト以上のレコードを取り出す。
+ *         この場合、minパラメータは無視される。
+ *         maxが指定され、かつ、テーブルの主キーが固定長型の場合、
+ *         maxと似ている順番にレコードを取り出す。
+ *         ただし、主キーのパトリシア木で、min_sizeバイト未満のビットに対する
+ *         ノードで、maxと異なった方向にあるノードに対応するレコードについては
+ *         取り出さない。
+ *         「似ている」ことの定義は、主キーの型によって異なる。
+ *         (GeoPoint型では、地理的に近いものほど似ているとし、
+ *          数値型では、数値が近いものほど似ているとする)
+ *         この場合、maxで与えられるポインタが指す値は、
+ *         対象テーブルの主キーサイズと同じか超える幅である必要がある。
+ *         minとmax_sizeは無視される。
+ *         GRN_CURSOR_BY_ID/GRN_CURSOR_BY_KEY/GRN_CURSOR_PREFIXの3フラグは、
+ *         同時に指定することができない。
  * @offset: 該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出す。
  * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す。
  *         -1が指定された場合は、全件が指定されたものとみなす。

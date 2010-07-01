@@ -202,8 +202,7 @@ module HTTPSelectDrilldownTests
                      {:n_hits => 15})
   end
 
-  def test_for_commit_d9dfaaa360756077b58ad9a036e19bdf14d91e44
-    # and 5042839e560c3eba3f9ce09b5052acaf65981e0c
+  def test_no_limit
     assert_drilldown([["_key", "ShortText"]],
                      [["morita"]],
                      [[[3],
