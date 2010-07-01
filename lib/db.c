@@ -6384,6 +6384,41 @@ range_is_idp(grn_obj *obj)
   return 0;
 }
 
+static int
+grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
+                   grn_obj *result, grn_table_sort_key *keys, int n_keys)
+{
+  grn_obj *index;
+  int i = 0, e = offset + limit, sid;
+  if (n_keys == 2 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, &sid)) {
+    grn_id tid;
+    grn_obj *arg = keys[1].key;
+    grn_pat *pat = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
+    grn_pat_cursor *pc = grn_pat_cursor_open(ctx, pat, NULL, 0,
+                                             GRN_BULK_HEAD(arg), GRN_BULK_VSIZE(arg),
+                                             0, -1, GRN_CURSOR_PREFIX);
+    if (pc) {
+      while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
+        grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
+        if (ic) {
+          grn_ii_posting *posting;
+          while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
+            if (offset <= i) {
+              grn_id *v;
+              if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
+              *v = posting->rid;
+            }
+            i++;
+          }
+          grn_ii_cursor_close(ctx, ic);
+        }
+      }
+      grn_pat_cursor_close(ctx, pc);
+    }
+  }
+  return i;
+}
+
 int
 grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                grn_obj *result, grn_table_sort_key *keys, int n_keys)
@@ -6414,12 +6449,16 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   } else {
     e = offset + limit;
   }
+  if (keys->flags & GRN_TABLE_SORT_GEO) {
+    i = grn_table_sort_geo(ctx, table, offset, limit, result, keys, n_keys);
+    goto exit;
+  }
   if (n_keys == 1 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, NULL)) {
     grn_id tid;
     grn_pat *lexicon = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
     grn_pat_cursor *pc = grn_pat_cursor_open(ctx, lexicon, NULL, 0, NULL, 0,
                                              0 /* offset : can be used in unique index */,
-                                             -1 /* limit : can be used in unique index  */,
+                                             -1 /* limit : can be used in unique index */,
                                              (keys->flags & GRN_TABLE_SORT_DESC)
                                              ? GRN_CURSOR_DESCENDING
                                              : GRN_CURSOR_ASCENDING);
