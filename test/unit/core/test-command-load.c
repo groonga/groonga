@@ -28,6 +28,8 @@ void attributes_bool(void);
 void data_bool(void);
 void test_bool(gconstpointer data);
 void test_int32_key(void);
+void data_null(void);
+void test_null(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -187,5 +189,94 @@ test_int32_key(void)
                           "],"
                           "[1,1,\"morita\"]"
                           "]]",
+                          send_command("select Students"));
+}
+
+void
+data_null(void)
+{
+#define ADD_DATUM(label, expected, load)                        \
+  gcut_add_datum(label,                                         \
+                 "expected", G_TYPE_STRING, expected,           \
+                 "load", G_TYPE_STRING, load,                   \
+                 NULL)
+
+  ADD_DATUM("string - null",
+            "[[[1],"
+              "[[\"_id\",\"UInt32\"],"
+               "[\"_key\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"],"
+               "[\"nick\",\"ShortText\"]],"
+             "[1,\"Daijiro MORI\",[5,5,5],\"\"]]]",
+            "load --table Students --columns '_key, nick'\n"
+            "[\n"
+            "  [\"Daijiro MORI\", null]\n"
+            "]");
+  ADD_DATUM("string - empty string",
+            "[[[1],"
+              "[[\"_id\",\"UInt32\"],"
+               "[\"_key\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"],"
+               "[\"nick\",\"ShortText\"]],"
+             "[1,\"Daijiro MORI\",[5,5,5],\"\"]]]",
+            "load --table Students --columns '_key, nick'\n"
+            "[\n"
+            "  [\"Daijiro MORI\", \"\"]\n"
+            "]");
+
+  ADD_DATUM("vector - empty null",
+            "[[[1],"
+              "[[\"_id\",\"UInt32\"],"
+               "[\"_key\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"],"
+               "[\"nick\",\"ShortText\"]],"
+             "[1,\"Daijiro MORI\",[],\"morita\"]]]",
+            "load --table Students --columns '_key, scores'\n"
+            "[\n"
+            "  [\"Daijiro MORI\", null]\n"
+            "]");
+  ADD_DATUM("vector - empty string",
+            "[[[1],"
+              "[[\"_id\",\"UInt32\"],"
+               "[\"_key\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"],"
+               "[\"nick\",\"ShortText\"]],"
+             "[1,\"Daijiro MORI\",[],\"morita\"]]]",
+            "load --table Students --columns '_key, scores'\n"
+            "[\n"
+            "  [\"Daijiro MORI\", \"\"]\n"
+            "]");
+  ADD_DATUM("vector - empty array",
+            "[[[1],"
+              "[[\"_id\",\"UInt32\"],"
+               "[\"_key\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"],"
+               "[\"nick\",\"ShortText\"]],"
+             "[1,\"Daijiro MORI\",[],\"morita\"]]]",
+            "load --table Students --columns '_key, scores'\n"
+            "[\n"
+            "  [\"Daijiro MORI\", []]\n"
+            "]");
+
+#undef ADD_DATUM
+}
+
+void
+test_null(gconstpointer data)
+{
+  cut_omit("not implemented yet");
+
+  assert_send_command("table_create Students TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Students nick COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Students scores COLUMN_VECTOR Int32");
+
+  cut_assert_equal_string("1",
+                          send_command("load --table Students\n"
+                                       "[{\"_key\": \"Daijiro MORI\", "
+                                         "\"nick\": \"morita\", "
+                                         "\"scores\": [5, 5, 5]}]"));
+  cut_assert_equal_string("1",
+                          send_command(gcut_data_get_string(data, "load")));
+  cut_assert_equal_string(gcut_data_get_string(data, "expected"),
                           send_command("select Students"));
 }
