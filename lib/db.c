@@ -6384,6 +6384,21 @@ range_is_idp(grn_obj *obj)
   return 0;
 }
 
+#define GEO_RESOLUTION   3600000
+#define GEO_RADIOUS      6357303
+#define GEO_BES_C1       6334834
+#define GEO_BES_C2       6377397
+#define GEO_BES_C3       0.006674
+#define GEO_GRS_C1       6335439
+#define GEO_GRS_C2       6378137
+#define GEO_GRS_C3       0.006694
+#define GEO_INT2RAD(x)   ((M_PI / (GEO_RESOLUTION * 180)) * x)
+
+typedef struct {
+  grn_id id;
+  double d;
+} geo_entry;
+
 static int
 grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                    grn_obj *result, grn_table_sort_key *keys, int n_keys)
@@ -6394,23 +6409,63 @@ grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     grn_id tid;
     grn_obj *arg = keys[1].key;
     grn_pat *pat = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
+    grn_id domain = pat->obj.header.domain;
     grn_pat_cursor *pc = grn_pat_cursor_open(ctx, pat, NULL, 0,
                                              GRN_BULK_HEAD(arg), GRN_BULK_VSIZE(arg),
                                              0, -1, GRN_CURSOR_PREFIX);
     if (pc) {
-      while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
-        grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
-        if (ic) {
-          grn_ii_posting *posting;
-          while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
-            if (offset <= i) {
-              grn_id *v;
-              if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
-              *v = posting->rid;
+      if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
+        while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
+          grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
+          if (ic) {
+            grn_ii_posting *posting;
+            while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
+              if (offset <= i) {
+                grn_id *v;
+                if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
+                *v = posting->rid;
+              }
+              i++;
             }
-            i++;
+            grn_ii_cursor_close(ctx, ic);
           }
-          grn_ii_cursor_close(ctx, ic);
+        }
+      } else {
+        double lng1, lat1, lng2, lat2, x, y, d;
+        geo_entry *array, *ep;
+        int n = e + 100;
+        if ((ep = array = GRN_MALLOC(sizeof(geo_entry) * n))) {
+          lng1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(arg))->longitude);
+          lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(arg))->latitude);
+          while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
+            grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
+            if (ic) {
+              grn_geo_point pos;
+              grn_ii_posting *posting;
+              grn_pat_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
+              lng2 = GEO_INT2RAD(pos.longitude);
+              lat2 = GEO_INT2RAD(pos.latitude);
+              x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+              y = (lat2 - lat1);
+              d = ((x * x) + (y * y));
+              while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
+                ep->id = posting->rid;
+                ep->d = d;
+                ep++;
+                i++;
+              }
+              grn_ii_cursor_close(ctx, ic);
+            }
+          }
+          /* sort */
+          {
+            grn_id *v;
+            for (i = 0, ep = array + offset; i < limit && ep < array + n; i++, ep++) {
+              if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
+              *v = ep->id;
+            }
+            GRN_FREE(array);
+          }
         }
       }
       grn_pat_cursor_close(ctx, pc);
