@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include "proc.h"
 #include "ql.h"
+#include "ii.h"
 #include "db.h"
 #include "util.h"
 #include "output.h"
@@ -1927,6 +1928,88 @@ exit :
     GRN_UINT32_SET(ctx, obj, r);
   }
   return obj;
+}
+
+grn_rc
+grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
+               grn_obj *res, grn_operator op)
+{
+  grn_id domain;
+  double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
+  grn_obj *pos1 = args[1], *pos2 = args[2], pos1_, pos2_;
+  grn_obj *pat = grn_ctx_at(ctx, obj->header.domain);
+  if (nargs != 3) { goto exit; }
+  domain = pat->header.domain;
+  if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) { goto exit; }
+  if (pos1->header.domain != domain) {
+    GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
+    if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
+    pos1 = &pos1_;
+  }
+  lng1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->longitude);
+  lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->latitude);
+  switch (pos2->header.domain) {
+  case GRN_DB_INT32 :
+    d = GRN_INT32_VALUE(pos2);
+    d = d * d / GEO_RADIOUS;
+    break;
+  case GRN_DB_UINT32 :
+    d = GRN_UINT32_VALUE(pos2);
+    d = d * d / GEO_RADIOUS;
+    break;
+  case GRN_DB_INT64 :
+    d = GRN_INT64_VALUE(pos2);
+    d = d * d / GEO_RADIOUS;
+    break;
+  case GRN_DB_UINT64 :
+    d = GRN_UINT64_VALUE(pos2);
+    d = d * d / GEO_RADIOUS;
+    break;
+  case GRN_DB_FLOAT :
+    d = GRN_FLOAT_VALUE(pos2);
+    d = d * d / GEO_RADIOUS;
+    break;
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    GRN_OBJ_INIT(&pos2_, GRN_BULK, 0, domain);
+    if (grn_obj_cast(ctx, pos2, &pos2_, 0)) { goto exit; }
+    pos2 = &pos2_;
+    /* fallthru */
+  case GRN_DB_TOKYO_GEO_POINT :
+  case GRN_DB_WGS84_GEO_POINT :
+    if (domain != pos2->header.domain) { /* todo */ goto exit; }
+    lng2 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos2))->longitude);
+    lat2 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos2))->latitude);
+    x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+    y = (lat2 - lat1);
+    d = ((x * x) + (y * y));
+    break;
+  default :
+    goto exit;
+  }
+  {
+    grn_id tid;
+    grn_geo_point pos;
+    grn_table_cursor *tc = grn_table_cursor_open(ctx, pat, NULL, 0,
+                                                 GRN_BULK_HEAD(pos1),
+                                                 sizeof(grn_geo_point),
+                                                 0, -1, GRN_CURSOR_PREFIX);
+    while ((tid = grn_table_cursor_next(ctx, tc))) {
+      grn_table_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
+      lng0 = GEO_INT2RAD(pos.longitude);
+      lat0 = GEO_INT2RAD(pos.latitude);
+      x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
+      y = (lat1 - lat0);
+      if (((x * x) + (y * y)) <= d) {
+        grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, op);
+      }
+    }
+    grn_table_cursor_close(ctx, tc);
+  }
+exit :
+  grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+  return ctx->rc;
 }
 
 static grn_obj *

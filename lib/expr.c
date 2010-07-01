@@ -3582,21 +3582,25 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         si->op = c->op;
         si->end = c - e->codes;
         sis[i++] = si;
-        /* index may be applicable occasionaly
+        /* better index resolving framework for functions should be implemented */
         {
-          grn_obj **p = si->args, **pe = si->args + si->nargs;
+          uint32_t sid;
+          grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
           for (; p < pe; p++) {
             if (GRN_DB_OBJP(*p)) {
-              grn_column_index(ctx, *p, c->op, &si->index, 1, &sid);
+              if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
+                scan_info_put_index(ctx, si, index, sid, 1);
+              }
             } else if (GRN_ACCESSORP(*p)) {
               si->flags |= SCAN_ACCESSOR;
-              grn_column_index(ctx, *p, c->op, &si->index, 1, &sid);
+              if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
+                scan_info_put_index(ctx, si, index, sid, 1);
+              }
             } else {
               si->query = *p;
             }
           }
         }
-        */
         si = NULL;
       } else {
         stat = SCAN_COL2;
@@ -3759,6 +3763,9 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     + (tv.tv_usec - ctx->impl->tv.tv_usec);\
   GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s", (intptr_t)ctx, et, msg);\
 }
+
+grn_rc grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
+                      grn_obj *res, grn_operator op);
 
 grn_obj *
 grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
@@ -3971,6 +3978,14 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                     break;
                   }
                 }
+              }
+              break;
+            case GRN_OP_CALL :
+              /* geo_in_circle only */
+              if (si->flags & SCAN_ACCESSOR) {
+              } else {
+                grn_geo_search(ctx, index, si->args, si->nargs, res, si->logical_op);
+                done++;
               }
               break;
             default :
