@@ -12,7 +12,7 @@ log_put - ログ出力
 ----
 ::
 
- log_put level message [output_type]
+ log_put level message
 
 説明
 ----
@@ -26,45 +26,44 @@ log_putは、ログにmessageを出力します。
 
 ``level``
 
-  出力するmessageのログレベルを数値で指定します。
+  設定するログ出力レベルの値を以下のいずれかで指定します。
+
+     EMERG
+     ALERT
+     CRIT
+     error
+     warning
+     notice
+     info
+     debug
 
 ``message``
 
   出力する文字列を指定します。
 
-``output_type``
-
-  出力形式を、json,tsv,xmlのいずれかで指定します。
-
 返値
 ----
 
-以下のようなjson形式で値が返却されます。 
+json形式
+^^^^^^^^
 
 ::
 
- [[リターンコード, 処理開始時間, 処理時間]]
+ [成功かどうかのフラグ]
 
-``リターンコード``
+ ``成功かどうかのフラグ``
 
-  grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
-  文字列が返されます。
-
-``処理開始時間``
-
-  処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。
-
-``処理時間``
-
-  処理にかかった秒数を返します。
+   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
 
 例
 --
 ::
 
- log_put ERROR hogehoge
- [[0,1268213004.27459,0.000111]]
+ log_put ERROR ****MESSAGE****
+ [true]
 
-.. rubric:: 脚注
+関連項目
+--------
 
-.. [#] tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。
+:doc:`log_level`
+:doc:`log_reopen`
