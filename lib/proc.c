@@ -1981,23 +1981,23 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
   switch (pos2->header.domain) {
   case GRN_DB_INT32 :
     d = GRN_INT32_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_UINT32 :
     d = GRN_UINT32_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_INT64 :
     d = GRN_INT64_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_UINT64 :
     d = GRN_UINT64_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_FLOAT :
     d = GRN_FLOAT_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
@@ -2019,13 +2019,14 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
     goto exit;
   }
   {
+    uint32_t s, h;
     grn_id tid;
     grn_geo_point pos;
     grn_table_cursor *tc = grn_table_cursor_open(ctx, pat, NULL, 0,
                                                  GRN_BULK_HEAD(pos1),
                                                  sizeof(grn_geo_point),
                                                  0, -1, GRN_CURSOR_PREFIX);
-    while ((tid = grn_table_cursor_next(ctx, tc))) {
+    for (s = 0, h = 256; s <= h * 16 && (tid = grn_table_cursor_next(ctx, tc)); s++) {
       grn_table_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
       lng0 = GEO_INT2RAD(pos.longitude);
       lat0 = GEO_INT2RAD(pos.latitude);
@@ -2033,6 +2034,7 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
       y = (lat1 - lat0);
       if (((x * x) + (y * y)) <= d) {
         grn_ii_at(ctx, (grn_ii *)obj, tid, (grn_hash *)res, op);
+        h++;
       }
     }
     grn_table_cursor_close(ctx, tc);
