@@ -1979,23 +1979,23 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
   switch (pos2->header.domain) {
   case GRN_DB_INT32 :
     d = GRN_INT32_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_UINT32 :
     d = GRN_UINT32_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_INT64 :
     d = GRN_INT64_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_UINT64 :
     d = GRN_UINT64_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_FLOAT :
     d = GRN_FLOAT_VALUE(pos2);
-    d = d * d / GEO_RADIOUS;
+    d = (d / GEO_RADIOUS) * (d / GEO_RADIOUS);
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
