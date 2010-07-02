@@ -3455,7 +3455,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       }
       break;
     case GRN_OP_CALL :
-      if (c->flags & GRN_EXPR_CODE_RELATIONAL_EXPRESSION) {
+      if (c->flags & GRN_EXPR_CODE_RELATIONAL_EXPRESSION || c + 1 == ce) {
         stat = SCAN_START;
         m++;
       } else {
@@ -3577,7 +3577,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       break;
     case GRN_OP_CALL :
       if (!si) { SI_ALLOC(si, i, c - e->codes); }
-      if (c->flags & GRN_EXPR_CODE_RELATIONAL_EXPRESSION) {
+      if (c->flags & GRN_EXPR_CODE_RELATIONAL_EXPRESSION || c + 1 == ce) {
         stat = SCAN_START;
         si->op = c->op;
         si->end = c - e->codes;
