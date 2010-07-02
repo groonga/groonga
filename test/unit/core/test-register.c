@@ -117,9 +117,9 @@ test_register_function(void)
                       "COLUMN_INDEX|WITH_POSITION Sites _key");
   assert_send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
   cut_assert_equal_string("[[[1],[[\"_score\",\"Int32\"]],[11]]]",
-                          send_command("select Sites "                  \
-                                       "--output_columns _score "       \
-                                       "--match_columns _key "          \
-                                       "--query groonga "               \
+                          send_command("select Sites "
+                                       "--output_columns _score "
+                                       "--match_columns _key "
+                                       "--query groonga "
                                        "--scorer '_score=str_len(_key)'"));
 }
