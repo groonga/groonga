@@ -27,6 +27,7 @@ void test_output_columns_with_space(void);
 void test_vector_geo_point(void);
 void test_vector_geo_point_with_query(void);
 void test_unmatched_output_columns(void);
+void test_vector_text(void);
 
 static gchar *tmp_directory;
 
@@ -208,4 +209,44 @@ test_unmatched_output_columns(void)
                           send_command("select Question"
                                        " --output_columns"
                                        " \"_key, num, answer.value\""));
+}
+
+void
+test_vector_text(void)
+{
+  assert_send_command("table_create Blogs TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Blogs articles COLUMN_VECTOR Text");
+  assert_send_command("table_create Terms "
+                      "TABLE_PAT_KEY|KEY_NORMALIZE ShortText "
+                      "--default_tokenizer TokenBigram");
+  assert_send_command("column_create Terms Blogs_articles "
+                      "COLUMN_INDEX|WITH_POSITION Blogs articles");
+
+  assert_send_command("load --table Blogs --columns '_key, articles' \n"
+                      "[\n"
+                      " [\"gunya-gunya\", "
+                      "  [\"hello all!\", "
+                      "   \"hello groonga!\", "
+                      "   \"hello Senna!\"]],\n"
+                      " [\"groonga\", "
+                      "  [\"Release!\", "
+                      "   \"My name is groonga!\"]],\n"
+                      " [\"Senna\", "
+                      "  [\"Release!\", "
+                      "   \"My name is Senna!\"]]\n"
+                      "]");
+  cut_assert_equal_string("[[[2],"
+                            "[[\"_key\",\"ShortText\"],"
+                             "[\"articles\",\"Text\"]],"
+                            "[\"gunya-gunya\","
+                             "[\"hello all!\","
+                              "\"hello groonga!\","
+                              "\"hello Senna!\"]],"
+                            "[\"groonga\","
+                             "[\"Release!\","
+                              "\"My name is groonga!\"]]]]",
+                          send_command("select Blogs "
+                                       "--output_columns _key,articles "
+                                       "--match_columns articles "
+                                       "--query groonga"));
 }
