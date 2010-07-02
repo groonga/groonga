@@ -1961,9 +1961,12 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
 {
   grn_id domain;
   double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
-  grn_obj *pos1 = args[1], *pos2 = args[2], pos1_, pos2_;
-  grn_obj *pat = grn_ctx_at(ctx, obj->header.domain);
-  if (nargs != 3) { goto exit; }
+  grn_obj *proc, *pat, *pos1, *pos2, pos1_, pos2_;
+  if (nargs != 4) { goto exit; }
+  pat = grn_ctx_at(ctx, obj->header.domain);
+  proc = args[0];
+  pos1 = args[2];
+  pos2 = args[3];
   domain = pat->header.domain;
   if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) { goto exit; }
   if (pos1->header.domain != domain) {
@@ -2027,7 +2030,7 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
       x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
       y = (lat1 - lat0);
       if (((x * x) + (y * y)) <= d) {
-        grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, op);
+        grn_ii_at(ctx, (grn_ii *)obj, tid, (grn_hash *)res, op);
       }
     }
     grn_table_cursor_close(ctx, tc);

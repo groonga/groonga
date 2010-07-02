@@ -18,6 +18,8 @@
 class OptionTest < Test::Unit::TestCase
   include GroongaTestUtils
 
+  CONFIG_ENV = {"GRN_CONFIG_PATH" => ""}
+
   def setup
     setup_database_path
   end
@@ -57,5 +59,39 @@ class OptionTest < Test::Unit::TestCase
       status = assert_run_groonga("", /: option '#{option}' needs argument\.$/, option)
       assert_not_predicate(status, :success?)
     end
+  end
+
+  def test_config_path
+    test_options = %W[
+      port=1.1.1.1 default-encoding=none default-encoding=euc-jp
+      max-threads=12345 address=localhost
+      log-level=1 server=localhost
+    ]
+    config_file = File.join(@tmp_dir, "test-option.config")
+    assert_path_not_exist(config_file)
+    status = assert_run_groonga("",
+                                /can't open config file: #{Regexp.quote(config_file)} /,
+                                [CONFIG_ENV, "--config-path=#{config_file}"])
+    assert_not_predicate(status, :success?)
+    open(config_file, "w") {}
+    status = assert_run_groonga("", "", [CONFIG_ENV, "--config-path=#{config_file}"])
+    assert_predicate(status, :success?)
+
+    default_config = run_groonga("--show-config")
+
+    test_options.each do |opt|
+      status = assert_run_groonga([opt, default_config].join("\n"), "",
+                                  [CONFIG_ENV, "--#{opt}", "--config-path=#{config_file}", "--show-config"])
+      assert_predicate(status, :success?)
+    end
+
+    test_options.each do |opt|
+      open(config_file, "w") {|f| f.puts opt}
+      status = assert_run_groonga([opt, default_config].join("\n"), "",
+                                  [CONFIG_ENV, "--config-path=#{config_file}", "--show-config"])
+      assert_predicate(status, :success?)
+    end
+  ensure
+    FileUtils.rm_f(config_file)
   end
 end

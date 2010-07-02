@@ -17,13 +17,14 @@
 
 require 'fileutils'
 require 'shellwords'
+require 'tmpdir'
 require 'groonga-constants'
 
 module GroongaTestUtils
   include GroongaConstants
 
   def setup_database_path
-    @tmp_dir = File.join(File.dirname(__FILE__), "tmp")
+    @tmp_dir = Dir.mktmpdir("tmp", ENV["BUILD_DIR"])
     FileUtils.rm_rf(@tmp_dir)
     FileUtils.mkdir_p(@tmp_dir)
     @database_path = File.join(@tmp_dir, "database")
