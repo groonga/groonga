@@ -178,11 +178,11 @@ test_vector_geo_point_with_query(void)
 void
 test_unmatched_output_columns(void)
 {
-  assert_send_command("table_create Answer 0 ShortText");
-  assert_send_command("column_create Answer value 0 UInt32");
-  assert_send_command("table_create Question 0 ShortText");
-  assert_send_command("column_create Question num 0 UInt32");
-  assert_send_command("column_create Question answer 0 Answer");
+  assert_send_command("table_create Answer TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Answer value COLUMN_SCALAR UInt32");
+  assert_send_command("table_create Question TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Question num COLUMN_SCALAR UInt32");
+  assert_send_command("column_create Question answer COLUMN_SCALAR Answer");
   assert_send_command("load '"
                       "["
                       "[\"_key\",\"value\"],"
