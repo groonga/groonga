@@ -12,7 +12,7 @@ column_list - テーブルに定義されているカラムのリスト表示
 ----
 ::
 
- column_list table [output_type]
+ column_list table
 
 説明
 ----
@@ -27,32 +27,13 @@ column_listはテーブルに定義されているカラムをリスト表示し
 ``table``
   カラム情報を出力するテーブルの名前を指定します。
 
-``output_type``
-  出力形式を、json,tsv,xmlのいずれかで指定します。
-
 返値
 ----
 
-以下のようなjson形式で値が返却されます。 [#]_
+json形式
+^^^^^^^^
 
 ::
-
- [[リターンコード, 処理開始時間, 処理時間],]
-
-``リターンコード``
-
-  grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
-  文字列が返されます。
-
-``処理開始時間``
-
-  処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。
-
-``処理時間``
-
-  処理にかかった秒数を返します。
-
-``リスト``
 
   テーブル名一覧が以下の形式で返却されます。
 
@@ -111,10 +92,6 @@ column_listはテーブルに定義されているカラムをリスト表示し
 --
 ::
 
- column_list Entry --output_type json
+ column_list Entry
 
- [[0,1268214107.89182,6.5e-05],[[["id", "UInt32"],["name","ShortText"],["path","ShortText"],["type","ShortText"],["flags","ShortText"],["domain", "ShortText"],["range", "ShortText"],["source","ShortText"]],[258,"Entry.body","test.db.0000102","var","COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT","Entry","ShortText",[]]]]
-
-.. rubric:: 脚注
-
-.. [#] tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。
+ [[["id", "UInt32"],["name","ShortText"],["path","ShortText"],["type","ShortText"],["flags","ShortText"],["domain", "ShortText"],["range", "ShortText"],["source","ShortText"]],[258,"Entry.body","test.db.0000102","var","COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT","Entry","ShortText",[]]]

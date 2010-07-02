@@ -14,7 +14,7 @@ select - テーブルの中から条件にマッチするレコードを検索�
 
  select table [match_columns [query [filter [scorer [sortby [output_columns
               [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
-              [drilldown_offset [drilldown_limit [cache [output_type]]]]]]]]]]]]]]]
+              [drilldown_offset [drilldown_limit [cache]]]]]]]]]]]]]]
 
 説明
 ----
@@ -112,10 +112,6 @@ query引数とfilter引数をどちらも指定した場合は、両方の条件
 
       検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。
 
-``output_type``
-
-  出力形式を、json,tsv,xmlのいずれかで指定します。
-
 返値
 ----
 
@@ -187,19 +183,11 @@ query引数とfilter引数をどちらも指定した場合は、両方の条件
 
 テーブルEntryの全レコード・全カラムの値を出力します。::
 
- select Entry --output_type json
+ select Entry
 
- [[0,1268213158.65153,0.000246],[[[2],[["_id", "UInt32"],["_key","ShortText"],["body","ShortText"]],[1,"abandon","放棄する"],[2,"abbreviate","短縮する"]]]]
-
- select Entry --output_type xml
-
- <SEGMENTS><SEGMENT><RESULTPAGE><RESULTSET OFFSET="0" LIMIT="10" NHITS="2"><HIT NO="1"><FIELD NAME="_id">1</FIELD><FIELD NAME="_key">abandon</FIELD><FIELD NAME="body">放棄する</FIELD></HIT><HIT NO="2"><FIELD NAME="_id">2</FIELD><FIELD NAME="_key">abbreviate</FIELD><FIELD NAME="body">短縮する</FIELD></HIT></RESULTSET></RESULTPAGE></SEGMENT></SEGMENTS>
+ [[[2],[["_id", "UInt32"],["_key","ShortText"],["body","ShortText"]],[1,"abandon","放棄する"],[2,"abbreviate","短縮する"]]]
 
 関連項目
 --------
 
 :doc:`../expr`
-
-.. rubric:: 脚注
-
-.. [#] tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。

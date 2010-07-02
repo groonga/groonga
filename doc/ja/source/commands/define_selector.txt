@@ -14,8 +14,7 @@ define_selector - 検索コマンドを定義
 
  define_selector name table [match_columns [query [filter [scorer [sortby
                  [output_columns [offset [limit [drilldown [drilldown_sortby
-                 [drilldown_output_columns [drilldown_offset [drilldown_limit
-                 [output_type]]]]]]]]]]]]]]
+                 [drilldown_output_columns [drilldown_offset [drilldown_limit]]]]]]]]]]]]]
 
 説明
 ----
@@ -87,31 +86,19 @@ define_selectorは、検索条件をカスタマイズした新たな検索コ�
 
   追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。
 
-``output_type``
-
-  出力形式を、json,tsv,xmlのいずれかで指定します。
-
 返値
 ----
 
-以下のようなjson形式で値が返却されます。 [#]_
+json形式
+^^^^^^^^
 
 ::
 
- [[リターンコード, 処理開始時間, 処理時間]]
+ [成功かどうかのフラグ]
 
-``リターンコード``
+ ``成功かどうかのフラグ``
 
-  grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
-  文字列が返されます。
-
-``処理開始時間``
-
-  処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。
-
-``処理時間``
-
-  処理にかかった秒数を返します。
+   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
 
 例
 --
@@ -119,13 +106,9 @@ define_selectorは、検索条件をカスタマイズした新たな検索コ�
 テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義します。::
 
  define_selector entry_selector Entry --output_type json
- [[0,1268211605.11912,9.6e-05]]
+ [true]
 
 関連項目
 --------
 
 :doc:`../expr`
-
-.. rubric:: 脚注
-
-.. [#] tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。

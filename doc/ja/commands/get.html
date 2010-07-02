@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.9. get &mdash; groonga v0.7.2 documentation</title>
+    <title>get &mdash; groonga v0.7.2 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -22,10 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" />
-    <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.10. load" href="load.html" />
-    <link rel="prev" title="3.2.8. delete" href="delete.html" /> 
+    <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,15 +31,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="load.html" title="3.2.10. load"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="delete.html" title="3.2.8. delete"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
-          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="../commands.html" accesskey="U">3.2. 組み込みコマンド一覧</a> &raquo;</li> 
+        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,24 +41,24 @@
           <div class="body">
             
   <div class="section" id="get">
-<h1>3.2.9. get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h1>
+<h1>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.9.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>get - 一件のレコードの値の取得</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.9.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>get table [key [output_columns [output_type [id]]]]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.9.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるgetについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>getは、使用しているデータベースのテーブルの中の１件のレコードを指定し、カラムの値を取得します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.9.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 値を取得するレコードを含むテーブルの名前を指定します。</blockquote>
@@ -106,7 +95,7 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
 output_columnsで指定されたカラムの値。</blockquote>
 </div>
 <div class="section" id="id8">
-<h2>3.2.9.5. 例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<h2>例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryから主キー値が&#8221;abandon&#8221;であるレコードのbodyカラムの値を取得します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>get Entry abandon body
 
@@ -115,7 +104,7 @@ output_columnsで指定されたカラムの値。</blockquote>
 </div>
 </div>
 <div class="section" id="id9">
-<h2>3.2.9.6. 関連項目<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<h2>関連項目<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="load.html"><em>load</em></a></p>
 <table class="docutils footnote" frame="void" id="id10" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -146,23 +135,17 @@ output_columnsで指定されたカラムの値。</blockquote>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.2.9. get</a><ul>
-<li><a class="reference internal" href="#id1">3.2.9.1. 名前</a></li>
-<li><a class="reference internal" href="#id2">3.2.9.2. 書式</a></li>
-<li><a class="reference internal" href="#id3">3.2.9.3. 説明</a></li>
-<li><a class="reference internal" href="#id4">3.2.9.4. 引数</a></li>
-<li><a class="reference internal" href="#id8">3.2.9.5. 例</a></li>
-<li><a class="reference internal" href="#id9">3.2.9.6. 関連項目</a></li>
+<li><a class="reference internal" href="#">get</a><ul>
+<li><a class="reference internal" href="#id1">名前</a></li>
+<li><a class="reference internal" href="#id2">書式</a></li>
+<li><a class="reference internal" href="#id3">説明</a></li>
+<li><a class="reference internal" href="#id4">引数</a></li>
+<li><a class="reference internal" href="#id8">例</a></li>
+<li><a class="reference internal" href="#id9">関連項目</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="delete.html"
-                        title="previous chapter">3.2.8. delete</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="load.html"
-                        title="next chapter">3.2.10. load</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/commands/get.txt"
@@ -191,15 +174,7 @@ output_columnsで指定されたカラムの値。</blockquote>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="load.html" title="3.2.10. load"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="delete.html" title="3.2.8. delete"
-             >previous</a> |</li>
-        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
-          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
-          <li><a href="../commands.html" >3.2. 組み込みコマンド一覧</a> &raquo;</li> 
+        <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

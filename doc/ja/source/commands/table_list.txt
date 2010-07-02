@@ -12,7 +12,7 @@ table_list - DBに定義されているテーブルをリスト表示
 ----
 ::
 
- table_list [output_type]
+ table_list
 
 説明
 ----
@@ -24,33 +24,15 @@ table_listは、DBに定義されているテーブルのリストを表示し�
 引数
 ----
 
-``output_type``
-  出力形式を、json,tsv,xmlのいずれかで指定します。
+ありません。
 
 返値
 ----
 
-以下のようなjson形式で値が返却されます。 [#]_
+json形式
+^^^^^^^^
 
 ::
-
- [[リターンコード, 処理開始時間, 処理時間],リスト]
-
-``リターンコード``
-
-  grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
-  文字列が返されます。
-
-``処理開始時間``
-
-  処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。
-
-``処理時間``
-
-  処理にかかった秒数を返します。
-
-``リスト``
-
   テーブル名一覧が以下の形式で返却されます。
 
     [[検索件数], [[カラム名1,カラム型1],..], 検索結果1,..]
@@ -100,10 +82,6 @@ table_listは、DBに定義されているテーブルのリストを表示し�
 --
 ::
 
- table_list Entry --output_type json
+ table_list Entry
 
- [[0,1268214044.00307,0.000777],[[["id", "UInt32"],["name","ShortText"],["path","ShortText"],["flags","ShortText"],["domain", "ShortText"],["range","ShortText"]],[256,"Entry","test.db.0000100","TABLE_HASH_KEY|PERSISTENT","ShortText","null"],[257,"Term","test.db.0000101","TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT","ShortText","null"]]]
-
-.. rubric:: 脚注
-
-.. [#] tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。
+ [[["id", "UInt32"],["name","ShortText"],["path","ShortText"],["flags","ShortText"],["domain", "ShortText"],["range","ShortText"]],[256,"Entry","test.db.0000100","TABLE_HASH_KEY|PERSISTENT","ShortText","null"],[257,"Term","test.db.0000101","TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT","ShortText","null"]]

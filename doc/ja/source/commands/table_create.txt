@@ -12,7 +12,7 @@ table_create - テーブルの追加
 ----
 ::
 
- table_create name [flags [key_type [value_type [default_tokenizer [output_type]]]]]
+ table_create name [flags [key_type [value_type [default_tokenizer]]]]
 
 説明
 ----
@@ -83,49 +83,29 @@ table_createコマンドは、使用しているデータベースに対して�
 
   トークナイザが指定されなかった場合は、対象の文字列を分割せずに語彙表に登録します。
 
-``output_type``
-  出力形式を、json,tsv,xmlのいずれかで指定します。
-
 返値
 ----
 
-以下のようなjson形式で値が返却されます。 [#]_
+json形式
+^^^^^^^^
 
 ::
 
- [[リターンコード, 処理開始時間, 処理時間]]
+ [成功かどうかのフラグ]
 
-``リターンコード``
+ ``成功かどうかのフラグ``
 
-  grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
-  文字列が返されます。
-
-``処理開始時間``
-
-  処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。
-
-``処理時間``
-
-  処理にかかった秒数を返します。
+   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
 
 例
 --
 
 ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。::
 
-  table_create Entry --key_type ShortText --output_type json
-  [[0,1268211304.87641,0.063105]]
+  table_create Entry --key_type ShortText
+  [true]
 
 ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場合には、バイグラムの索引を作成します。::
 
-  table_create Term --flags 129 --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1268211315.5884,0.077477]]
-
-または::
-
   table_create Term --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1268211315.5884,0.077477]]
-
-.. rubric:: 脚注
-
-.. [#] tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。
+  [true]

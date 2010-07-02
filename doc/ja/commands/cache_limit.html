@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.2. cache_limit &mdash; groonga v0.7.2 documentation</title>
+    <title>3.2.1. cache_limit &mdash; groonga v0.7.2 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.3. 名前" href="clearlock.html" />
-    <link rel="prev" title="3.2.1. add" href="add.html" /> 
+    <link rel="next" title="3.2.2. clearlock" href="clearlock.html" />
+    <link rel="prev" title="3.2. 組み込みコマンド一覧" href="../commands.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,10 +35,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="clearlock.html" title="3.2.3. 名前"
+          <a href="clearlock.html" title="3.2.2. clearlock"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="add.html" title="3.2.1. add"
+          <a href="../commands.html" title="3.2. 組み込みコマンド一覧"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -52,63 +52,49 @@
           <div class="body">
             
   <div class="section" id="cache-limit">
-<h1>3.2.2. cache_limit<a class="headerlink" href="#cache-limit" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.1. cache_limit<a class="headerlink" href="#cache-limit" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.2.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.1.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>cache_limit - cacheサイズの設定・取得</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.2.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none"><div class="highlight"><pre>cache_limit max [output_type]
+<h2>3.2.1.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>cache_limit max
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.2.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.1.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.2.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.1.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">max</span></tt></p>
 <blockquote>
 クエリキャッシュの最大件数を整数で指定します。
 maxが指定されなかった場合には、クエリキャッシュの最大件数は変更せず、
 現在の設定値のみが返されます。</blockquote>
-<p><tt class="docutils literal"><span class="pre">output_type</span></tt></p>
-<blockquote>
-出力形式を、json,tsv,xmlのいずれかで指定します。</blockquote>
 </div>
 <div class="section" id="id5">
-<h2>3.2.2.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
-<p>以下のようなjson形式で値が返却されます。</p>
-<div class="highlight-none"><div class="highlight"><pre>[[リターンコード, 処理開始時間, 処理時間],それまでのクエリキャッシュの最大件数]
+<h2>3.2.1.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="json">
+<h3>3.2.1.5.1. json<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-none"><div class="highlight"><pre>[以前の設定値]
+
+``以前の設定値``
+
+  すでに設定されていたクエリキャッシュの最大件数を返す。
 </pre></div>
 </div>
-<p><tt class="docutils literal"><span class="pre">リターンコード</span></tt></p>
-<blockquote>
-grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
-文字列が返されます。</blockquote>
-<p><tt class="docutils literal"><span class="pre">処理開始時間</span></tt></p>
-<blockquote>
-処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。</blockquote>
-<p><tt class="docutils literal"><span class="pre">処理時間</span></tt></p>
-<blockquote>
-処理にかかった秒数を返します。</blockquote>
+</div>
 </div>
 <div class="section" id="id6">
-<h2>3.2.2.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.1.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>cache_limit 4
-[[0,1268212826.92784,3.1e-05],100]
+[100]
 </pre></div>
 </div>
-<p class="rubric">脚注</p>
-<table class="docutils footnote" frame="void" id="id7" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td>tsv,xml出力はv1.0でサポートされます。また、処理開始時間・処理時間については正確でない場合があります。</td></tr>
-</tbody>
-</table>
 </div>
 </div>
 
@@ -120,23 +106,26 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.2.2. cache_limit</a><ul>
-<li><a class="reference internal" href="#id1">3.2.2.1. 名前</a></li>
-<li><a class="reference internal" href="#id2">3.2.2.2. 書式</a></li>
-<li><a class="reference internal" href="#id3">3.2.2.3. 説明</a></li>
-<li><a class="reference internal" href="#id4">3.2.2.4. 引数</a></li>
-<li><a class="reference internal" href="#id5">3.2.2.5. 返値</a></li>
-<li><a class="reference internal" href="#id6">3.2.2.6. 例</a></li>
+<li><a class="reference internal" href="#">3.2.1. cache_limit</a><ul>
+<li><a class="reference internal" href="#id1">3.2.1.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.1.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.1.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.1.4. 引数</a></li>
+<li><a class="reference internal" href="#id5">3.2.1.5. 返値</a><ul>
+<li><a class="reference internal" href="#json">3.2.1.5.1. json</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">3.2.1.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="add.html"
-                        title="previous chapter">3.2.1. add</a></p>
+  <p class="topless"><a href="../commands.html"
+                        title="previous chapter">3.2. 組み込みコマンド一覧</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="clearlock.html"
-                        title="next chapter">3.2.3. 名前</a></p>
+                        title="next chapter">3.2.2. clearlock</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/commands/cache_limit.txt"
@@ -166,10 +155,10 @@ grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="clearlock.html" title="3.2.3. 名前"
+          <a href="clearlock.html" title="3.2.2. clearlock"
              >next</a> |</li>
         <li class="right" >
-          <a href="add.html" title="3.2.1. add"
+          <a href="../commands.html" title="3.2. 組み込みコマンド一覧"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
