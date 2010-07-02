@@ -447,6 +447,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     grn_accessor *a = (grn_accessor *)obj;
     GRN_TEXT_INIT(&buf, 0);
     for (;;) {
+      buf.header.domain = grn_obj_get_range(ctx, obj);
       GRN_BULK_REWIND(&buf);
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
@@ -508,7 +509,11 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
       if (a->next) {
         a = a->next;
-        id = *((grn_id *)GRN_BULK_HEAD(&buf));
+        if (GRN_BULK_VSIZE(&buf) >= sizeof(grn_id)) {
+          id = *((grn_id *)GRN_BULK_HEAD(&buf));
+        } else {
+          id = GRN_ID_NIL;
+        }
       } else {
         break;
       }
