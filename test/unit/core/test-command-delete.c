@@ -23,9 +23,10 @@
 
 #include <str.h>
 
-void test_register_function(void);
+void test_by_id(void);
+void test_by_key(void);
 
-static gchar *tmp_directory, *modules_dir, *modules_dir_env;
+static gchar *tmp_directory;
 
 static grn_ctx *context;
 static grn_obj *database;
@@ -35,7 +36,7 @@ cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_base_dir(),
                                    "tmp",
-                                   "register",
+                                   "command-delete",
                                    NULL);
 }
 
@@ -52,15 +53,14 @@ remove_tmp_directory(void)
 }
 
 static void
-setup_modules_dir(void)
+setup_data(void)
 {
-  modules_dir = g_build_filename(grn_test_get_build_dir(),
-                                 "fixtures",
-                                 "modules",
-                                 ".libs",
-                                 NULL);
-  modules_dir_env = g_strdup(g_getenv("GRN_MODULES_DIR"));
-  g_setenv("GRN_MODULES_DIR", modules_dir, TRUE);
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("load --table Users --columns '_key'\n"
+                      "[\n"
+                      "  [\"mori\"],\n"
+                      "  [\"tapo\"]\n"
+                      "]");
 }
 
 void
@@ -77,26 +77,12 @@ cut_setup(void)
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
 
-  setup_modules_dir();
-}
-
-static void
-teardown_modules_dir(void)
-{
-  if (modules_dir_env) {
-    g_setenv("GRN_MODULES_DIR", modules_dir_env, TRUE);
-  } else {
-    g_unsetenv("GRN_MODULES_DIR");
-  }
-  g_free(modules_dir_env);
-  g_free(modules_dir);
+  setup_data();
 }
 
 void
 cut_teardown(void)
 {
-  teardown_modules_dir();
-
   if (context) {
     grn_ctx_fin(context);
     g_free(context);
@@ -106,20 +92,23 @@ cut_teardown(void)
 }
 
 void
-test_register_function(void)
+test_by_id(void)
 {
-  assert_send_command("register string");
-  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
-  assert_send_command("table_create Terms "
-                      "TABLE_PAT_KEY|KEY_NORMALIZE ShortText " \
-                      "--default_tokenizer TokenBigram");
-  assert_send_command("column_create Terms Sites_key "
-                      "COLUMN_INDEX|WITH_POSITION Sites _key");
-  assert_send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
-  cut_assert_equal_string("[[[1],[[\"_score\",\"Int32\"]],[11]]]",
-                          send_command("select Sites "
-                                       "--output_columns _score "
-                                       "--match_columns _key "
-                                       "--query groonga "
-                                       "--scorer '_score=str_len(_key)'"));
+  assert_send_command("delete Users --id 1");
+  cut_assert_equal_string("[[[1],"
+                            "[[\"_key\",\"ShortText\"]],"
+                            "[\"tapo\"]]]",
+                          send_command("select Users "
+                                       "--output_columns _key"));
+}
+
+void
+test_by_delete(void)
+{
+  assert_send_command("delete Users tapo");
+  cut_assert_equal_string("[[[1],"
+                            "[[\"_key\",\"ShortText\"]],"
+                            "[\"mori\"]]]",
+                          send_command("select Users "
+                                       "--output_columns _key"));
 }

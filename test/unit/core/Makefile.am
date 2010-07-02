@@ -40,7 +40,8 @@ noinst_LTLIBRARIES =				\
 	test-command-column-list.la		\
 	test-command-select.la			\
 	test-command-select-sort.la		\
-	test-command-cache-limit.la
+	test-command-cache-limit.la		\
+	test-command-delete.la
 endif
 
 INCLUDES =			\
@@ -105,3 +106,4 @@ test_command_column_list_la_SOURCES	= test-command-column-list.c
 test_command_select_la_SOURCES		= test-command-select.c
 test_command_select_sort_la_SOURCES	= test-command-select-sort.c
 test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c
+test_command_delete_la_SOURCES		= test-command-delete.c

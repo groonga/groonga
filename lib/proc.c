@@ -348,7 +348,7 @@ proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *use
                   GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -564,7 +564,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 exit:
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -581,7 +581,7 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -639,7 +639,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 exit:
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -672,7 +672,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1001,7 +1001,7 @@ proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_view_add(ctx, view, table);
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1040,7 +1040,7 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1064,7 +1064,7 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1081,7 +1081,7 @@ proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1091,7 +1091,7 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_log_reopen(ctx);
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1275,7 +1275,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1833,7 +1833,7 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1849,7 +1849,7 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();;
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
