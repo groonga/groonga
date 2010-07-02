@@ -90,7 +90,7 @@ test_columns(void)
   assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   cut_assert_equal_string(
-    "2",
+    "[2]",
     send_command("load --table Users --columns '_key,name,desc'\n"
                  "[\n"
                  "  [\"mori\", \"モリ\", \"タポ\"],\n"
@@ -157,7 +157,7 @@ test_bool(gconstpointer data)
 {
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
   assert_send_command("column_create Users enabled COLUMN_SCALAR Bool");
-  cut_assert_equal_string("2",
+  cut_assert_equal_string("[2]",
                           send_command(gcut_data_get_string(data,
                                                             "load-command")));
   cut_assert_equal_string("[[[2],"
@@ -178,7 +178,7 @@ test_int32_key(void)
   assert_send_command("table_create Students TABLE_HASH_KEY Int32");
   assert_send_command("column_create Students name COLUMN_SCALAR ShortText");
   cut_assert_equal_string(
-    "1",
+    "[1]",
     send_command("load --table Students\n"
                  "[{\"_key\": 1, \"name\": \"morita\"}]"));
   cut_assert_equal_string("[[[1],"
