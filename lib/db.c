@@ -6404,7 +6404,7 @@ grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                    grn_obj *result, grn_table_sort_key *keys, int n_keys)
 {
   grn_obj *index;
-  int i = 0, e = offset + limit, sid;
+  int i = 0, e = offset + limit, sid, accessorp = GRN_ACCESSORP(keys->key);
   if (n_keys == 2 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, &sid)) {
     grn_id tid;
     grn_obj *arg = keys[1].key;
@@ -6433,11 +6433,11 @@ grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
       } else {
         double lng1, lat1, lng2, lat2, x, y, d;
         geo_entry *array, *ep, *p;
-        int n = e + e;
+        int n = e << 4;
         if ((ep = array = GRN_MALLOC(sizeof(geo_entry) * n))) {
           lng1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(arg))->longitude);
           lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(arg))->latitude);
-          while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
+          while (i < n && (tid = grn_pat_cursor_next(ctx, pc))) {
             grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
             if (ic) {
               grn_geo_point pos;
@@ -6448,15 +6448,20 @@ grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
               x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
               y = (lat2 - lat1);
               d = ((x * x) + (y * y));
-              while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
-                for (p = ep; array < p && p[-1].d > d; p--) {
-                  p->id = p[-1].id;
-                  p->d = p[-1].d;
+              while (i < n && (posting = grn_ii_cursor_next(ctx, ic))) {
+                grn_id rid = accessorp
+                  ? grn_table_get(ctx, table, &posting->rid, sizeof(grn_id))
+                  : posting->rid;
+                if (rid) {
+                  for (p = ep; array < p && p[-1].d > d; p--) {
+                    p->id = p[-1].id;
+                    p->d = p[-1].d;
+                  }
+                  p->id = rid;
+                  p->d = d;
+                  ep++;
+                  i++;
                 }
-                p->id = posting->rid;
-                p->d = d;
-                ep++;
-                i++;
               }
               grn_ii_cursor_close(ctx, ic);
             }
@@ -6846,7 +6851,26 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_GREATER :
     case GRN_OP_LESS_EQUAL :
     case GRN_OP_GREATER_EQUAL :
-      /* todo */
+      {
+        grn_accessor *a = (grn_accessor *)obj;
+        if (a->action == GRN_ACCESSOR_GET_KEY &&
+            a->next &&
+            a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+            a->next->obj) {
+          obj = a->next->obj;
+          for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
+            default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+            grn_obj *target = grn_ctx_at(ctx, data->target);
+            /* todo : data->section */
+            if (section) { *section = 0; }
+            if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+            if (n < buf_size) {
+              *ip++ = target;
+            }
+            n++;
+          }
+        }
+      }
       break;
     default :
       break;
