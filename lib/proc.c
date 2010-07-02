@@ -1818,7 +1818,9 @@ static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t *mp = grn_cache_max_nentries();
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_INT64(*mp);
+  GRN_OUTPUT_ARRAY_CLOSE();
   if (GRN_TEXT_LEN(VAR(0))) {
     const char *rest;
     uint32_t max = grn_atoui(GRN_TEXT_VALUE(VAR(0)),
@@ -1831,9 +1833,6 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     }
   }
-  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
-  GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
