@@ -223,6 +223,152 @@ module HTTPSelectDrilldownTests
                      {:n_hits => 1})
   end
 
+  def test_xml
+    expected = <<-EOX
+<?xml version="1.0" encoding="utf-8"?>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
+<RESULTSET>
+<NHITS>6</NHITS>
+<COLUMNS>
+<COLUMN>
+<TEXT>_key</TEXT>
+<TEXT>ShortText</TEXT></COLUMN>
+<COLUMN>
+<TEXT>place</TEXT>
+<TEXT>Place</TEXT></COLUMN>
+<COLUMN>
+<TEXT>place.name</TEXT>
+<TEXT>ShortText</TEXT></COLUMN>
+<COLUMN>
+<TEXT>title</TEXT>
+<TEXT>ShortText</TEXT></COLUMN>
+<COLUMN>
+<TEXT>person</TEXT>
+<TEXT>Person</TEXT></COLUMN>
+<COLUMN>
+<TEXT>date</TEXT>
+<TEXT>Time</TEXT></COLUMN></COLUMNS>
+<HIT>
+<TEXT>0</TEXT>
+<TEXT>razil.jp</TEXT>
+<TEXT>ブラジル</TEXT>
+<TEXT>groongaリリース（前編）</TEXT>
+<VECTOR>
+<TEXT>グニャラくん</TEXT></VECTOR>
+<DATE>20091218.0</DATE></HIT>
+<HIT>
+<TEXT>1</TEXT>
+<TEXT>shinjuku</TEXT>
+<TEXT>新宿</TEXT>
+<TEXT>groongaリリース（後編）</TEXT>
+<VECTOR>
+<TEXT>グニャラくん</TEXT></VECTOR>
+<DATE>20091218.0</DATE></HIT>
+<HIT>
+<TEXT>2</TEXT>
+<TEXT>razil.jp</TEXT>
+<TEXT>ブラジル</TEXT>
+<TEXT>groonga（ぐるんが）解説・パート1</TEXT>
+<VECTOR>
+<TEXT>morita</TEXT></VECTOR>
+<DATE>20091218.0</DATE></HIT>
+<HIT>
+<TEXT>3</TEXT>
+<TEXT>shinjuku</TEXT>
+<TEXT>新宿</TEXT>
+<TEXT>groonga（ぐるんが）解説・パート2</TEXT>
+<VECTOR>
+<TEXT>yu</TEXT></VECTOR>
+<DATE>20091219.0</DATE></HIT>
+<HIT>
+<TEXT>4</TEXT>
+<TEXT>shinjuku</TEXT>
+<TEXT>新宿</TEXT>
+<TEXT>groonga（ぐるんが）解説・パート3</TEXT>
+<VECTOR>
+<TEXT>yu</TEXT></VECTOR>
+<DATE>20091220.0</DATE></HIT>
+<HIT>
+<TEXT>5</TEXT>
+<TEXT>shinjuku</TEXT>
+<TEXT>新宿</TEXT>
+<TEXT>groonga（ぐるんが）解説・パート4</TEXT>
+<VECTOR>
+<TEXT>yu</TEXT></VECTOR>
+<DATE>20091220.0</DATE></HIT></RESULTSET>
+<RESULTSET>
+<NHITS>3</NHITS>
+<COLUMNS>
+<COLUMN>
+<TEXT>_key</TEXT>
+<TEXT>Time</TEXT></COLUMN>
+<COLUMN>
+<TEXT>_nsubrecs</TEXT>
+<TEXT>Int32</TEXT></COLUMN></COLUMNS>
+<HIT>
+<DATE>20091218.0</DATE>
+<INT>3</INT></HIT>
+<HIT>
+<DATE>20091220.0</DATE>
+<INT>2</INT></HIT>
+<HIT>
+<DATE>20091219.0</DATE>
+<INT>1</INT></HIT></RESULTSET>
+<RESULTSET>
+<NHITS>3</NHITS>
+<COLUMNS>
+<COLUMN>
+<TEXT>_key</TEXT>
+<TEXT>ShortText</TEXT></COLUMN>
+<COLUMN>
+<TEXT>_nsubrecs</TEXT>
+<TEXT>Int32</TEXT></COLUMN></COLUMNS>
+<HIT>
+<TEXT>yu</TEXT>
+<INT>3</INT></HIT>
+<HIT>
+<TEXT>グニャラくん</TEXT>
+<INT>2</INT></HIT>
+<HIT>
+<TEXT>morita</TEXT>
+<INT>1</INT></HIT></RESULTSET>
+<RESULTSET>
+<NHITS>2</NHITS>
+<COLUMNS>
+<COLUMN>
+<TEXT>_key</TEXT>
+<TEXT>ShortText</TEXT></COLUMN>
+<COLUMN>
+<TEXT>_nsubrecs</TEXT>
+<TEXT>Int32</TEXT></COLUMN>
+<COLUMN>
+<TEXT>name</TEXT>
+<TEXT>ShortText</TEXT></COLUMN></COLUMNS>
+<HIT>
+<TEXT>shinjuku</TEXT>
+<INT>4</INT>
+<TEXT>新宿</TEXT></HIT>
+<HIT>
+<TEXT>razil.jp</TEXT>
+<INT>2</INT>
+<TEXT>ブラジル</TEXT></HIT></RESULTSET></RESULT></RESULT>
+EOX
+    assert_drilldown_xml(expected.strip,
+                         {
+                           :table => "Event",
+                           :match_columns => "search",
+                           :query => "groonga",
+                           :output_columns => ["_key", "place", "place.name",
+                                               "title", "person",
+                                               "date"].join(" "),
+                           :drilldown => "date person place",
+                           :drilldown_sortby => "-_nsubrecs",
+                           :drilldown_output_columns => ["_key", "_nsubrecs",
+                                                         "name"].join(" "),
+                         },
+                         {:n_hits => 1})
+  end
+
   private
   def add_user(name, kana, initial, tags)
     load("Initial", [{"_key" => initial}])
@@ -256,6 +402,10 @@ module HTTPSelectDrilldownTests
                   expected,
                   parameters,
                   options.merge(:drilldown_results => drilldown_results))
+  end
+
+  def assert_drilldown_xml(expected, parameters, options={})
+    assert_select_xml(expected, parameters, options)
   end
 end
 

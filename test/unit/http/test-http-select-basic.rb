@@ -734,7 +734,7 @@ module HTTPSelectBasicTests
 
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULTPAGE>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
 <RESULTSET>
 <NHITS>2</NHITS>
 <COLUMNS>
@@ -759,7 +759,7 @@ module HTTPSelectBasicTests
 <INT>1</INT>
 <TEXT>ryoqun</TEXT>
 <TEXT>Ryo Onodera</TEXT>
-<INT>200</INT></HIT></RESULTSET></RESULTPAGE></RESULT>
+<INT>200</INT></HIT></RESULTSET></RESULT></RESULT>
 EOF
     assert_select_xml(expected.strip,
                       {:table => "users",
@@ -771,7 +771,7 @@ EOF
     load_many_users
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULTPAGE>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
 <RESULTSET>
 <NHITS>5</NHITS>
 <COLUMNS>
@@ -779,7 +779,7 @@ EOF
 <TEXT>_id</TEXT>
 <TEXT>UInt32</TEXT></COLUMN></COLUMNS>
 <HIT>
-<INT>1</INT></HIT></RESULTSET></RESULTPAGE></RESULT>
+<INT>1</INT></HIT></RESULTSET></RESULT></RESULT>
 EOF
     assert_select_xml(expected.strip,
                       {:table => "users", :offset => 2, :limit => 1,
@@ -791,7 +791,7 @@ EOF
     load_many_users
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULTPAGE>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
 <RESULTSET>
 <NHITS>5</NHITS>
 <COLUMNS>
@@ -821,7 +821,7 @@ EOF
 <INT>2</INT>
 <TEXT>taporobo</TEXT>
 <TEXT>タポロボ</TEXT>
-<INT>100</INT></HIT></RESULTSET></RESULTPAGE></RESULT>
+<INT>100</INT></HIT></RESULTSET></RESULT></RESULT>
 EOF
     assert_select_xml(expected.strip,
                       {:table => "users", :sortby => "_key", :offset => 2,
