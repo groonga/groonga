@@ -24,6 +24,9 @@
 #include "../lib/grn-assertions.h"
 
 void test_int(void);
+void test_drilldown(void);
+void test_score_without_query(void);
+void test_score_drilldown_without_query(void);
 
 static gchar *tmp_directory;
 
@@ -180,6 +183,58 @@ test_drilldown(void)
       send_command("select Bookmarks "
                    "--output_columns \"site._key user._key rank\" "
                    "--sortby \"-site.score -site.age\" "
+                   "--drilldown \"site user rank\" "
+                   "--drilldown_output_columns \"_key _nsubrecs\" "
+                   "--drilldown_sortby \"_key\""));
+}
+
+void
+test_score_without_query(void)
+{
+  cut_assert_equal_string(
+      "[[[3],"
+       "[[\"_key\",\"ShortText\"]],"
+       "[\"2ch.net\"],"
+       "[\"groonga.org\"],"
+       "[\"qwik.jp/senna/FrontPageJ.html\"]]]",
+      send_command("select Sites "
+                   "--sortby \"_score\" "
+                   "--output_columns \"_key\""));
+}
+
+void
+test_score_drilldown_without_query(void)
+{
+  cut_assert_equal_string(
+      "[[[5],"
+       "[[\"site._key\",\"ShortText\"],"
+        "[\"user._key\",\"ShortText\"]],"
+       "[\"groonga.org\",\"morita\"],"
+       "[\"groonga.org\",\"gunyara-kun\"],"
+       "[\"groonga.org\",\"yu\"],"
+       "[\"2ch.net\",\"gunyara-kun\"],"
+       "[\"2ch.net\",\"yu\"]],\n"
+       "[[2],"
+        "[[\"_key\",\"ShortText\"],"
+         "[\"_nsubrecs\",\"Int32\"]],"
+        "[\"2ch.net\",2],"
+        "[\"groonga.org\",3]],\n"
+       "[[3],"
+        "[[\"_key\",\"ShortText\"],"
+         "[\"_nsubrecs\",\"Int32\"]],"
+        "[\"gunyara-kun\",2],"
+        "[\"morita\",1],"
+        "[\"yu\",2]],\n"
+       "[[4],"
+         "[[\"_key\",\"Int32\"],"
+          "[\"_nsubrecs\",\"Int32\"]],"
+        "[0,1],"
+        "[10,1],"
+        "[50,1],"
+        "[100,2]]]",
+      send_command("select Bookmarks "
+                   "--sortby \"_score\" "
+                   "--output_columns \"site._key user._key\" "
                    "--drilldown \"site user rank\" "
                    "--drilldown_output_columns \"_key _nsubrecs\" "
                    "--drilldown_sortby \"_key\""));
