@@ -28,6 +28,7 @@ void test_vector_geo_point(void);
 void test_vector_geo_point_with_query(void);
 void test_unmatched_output_columns(void);
 void test_vector_text(void);
+void test_nonexistent_id(void);
 
 static gchar *tmp_directory;
 
@@ -249,4 +250,23 @@ test_vector_text(void)
                                        "--output_columns _key,articles "
                                        "--match_columns articles "
                                        "--query groonga"));
+}
+
+void
+test_nonexistent_id(void)
+{
+  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
+                       "column_create Sites link COLUMN_SCALAR Sites\n"
+                       "load --table Sites\n"
+                       "[\n"
+                       "[\"_key\"],\n"
+                       "[\"groonga.org\"],\n"
+                       "[\"razil.jp\"]\n"
+                       "]");
+  cut_assert_equal_string("[[[0],"
+                          "[[\"_id\",\"UInt32\"],"
+                           "[\"_key\",\"ShortText\"]]]]",
+                          send_command("select Sites "
+                                       "--output_columns '_id _key' "
+                                       "--filter '_id == 100'"));
 }
