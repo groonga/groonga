@@ -52,10 +52,6 @@
 #include <sys/param.h>
 #endif /* HAVE_SYS_PARAM_H */
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif /* HAVE_UNISTD_H */
-
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif /* HAVE_SYS_MMAN_H */
@@ -163,6 +159,10 @@ typedef SOCKET grn_sock;
 #else /* WIN32 */
 
 #define GROONGA_API
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif /* HAVE_UNISTD_H */
 
 # ifndef PATH_MAX
 #  if defined(MAXPATHLEN)
