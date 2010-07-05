@@ -191,8 +191,8 @@ grn_obj *grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
 grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
                                     unsigned int offset);
 
-grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
-                        grn_id domain, grn_obj_flags flags);
+GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
+                                grn_id domain, grn_obj_flags flags);
 
 grn_obj *grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr,
                                  const char *name, unsigned name_size);
@@ -311,7 +311,7 @@ struct _grn_expr {
 GRN_API grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
 
 grn_rc grn_expr_parser_close(grn_ctx *ctx);
-grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp);
+GRN_API grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp);
 
 /**
  * grn_table_open:
