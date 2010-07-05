@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 #ifdef WIN32
-typedef MODULE grn_dl;
+typedef HINSTANCE grn_dl;
 typedef FARPROC grn_dl_symbol;
 
 #else
