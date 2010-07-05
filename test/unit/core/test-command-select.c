@@ -29,6 +29,7 @@ void test_vector_geo_point_with_query(void);
 void test_unmatched_output_columns(void);
 void test_vector_text(void);
 void test_nonexistent_id(void);
+void test_bigram_split_symbol_tokenizer(void);
 
 static gchar *tmp_directory;
 
@@ -269,4 +270,31 @@ test_nonexistent_id(void)
                           send_command("select Sites "
                                        "--output_columns '_id _key' "
                                        "--filter '_id == 100'"));
+}
+
+void
+test_bigram_split_symbol_tokenizer(void)
+{
+  assert_send_commands("table_create Softwares TABLE_HASH_KEY ShortText\n"
+                       "column_create Softwares comment "
+                       "COLUMN_SCALAR ShortText\n"
+                       "table_create Terms TABLE_PAT_KEY ShortText "
+                       "--default_tokenizer TokenBigramSplitSymbol\n"
+                       "column_create Terms Softwares_comment "
+                       "COLUMN_INDEX|WITH_POSITION Softwares comment\n"
+                       "load --table Softwares\n"
+                       "[\n"
+                       "[\"_key\", \"comment\"],\n"
+                       "[\"groonga\", \"うむ上々な仕上がりだね。\"],\n"
+                       "[\"Cutter\", \"使いやすいじゃないか。\"]\n"
+                       "[\"Senna\", \"悪くないね。上々だよ。\"]\n"
+                       "]");
+  cut_assert_equal_string("[[[2],"
+                           "[[\"_key\",\"ShortText\"]],"
+                           "[\"groonga\"],"
+                           "[\"Senna\"]]]",
+                          send_command("select Softwares "
+                                       "--output_columns '_key' "
+                                       "--match_columns comment "
+                                       "--query 上々"));
 }
