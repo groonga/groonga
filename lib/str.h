@@ -44,7 +44,7 @@ typedef struct {
   grn_str_getopt_op op;
 } grn_str_getopt_opt;
 
-size_t grn_str_len(grn_ctx *ctx, const char *str, grn_encoding encoding, const char **last);
+GRN_API size_t grn_str_len(grn_ctx *ctx, const char *str, grn_encoding encoding, const char **last);
 
 #define GRN_STR_BLANK 0x80
 #define GRN_STR_ISBLANK(c) (c & 0x80)
@@ -107,8 +107,9 @@ GRN_API const char *grn_text_cgidec(grn_ctx *ctx, grn_obj *buf,
 #define GRN_TOK_STRING                 (0x02)
 #define GRN_TOK_QUOTE                  (0x03)
 
-const char *grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e,
-                               char *tok_type);
+GRN_API const char *grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf,
+                                       const char *p, const char *e,
+                                       char *tok_type);
 
 void grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
                                 char *buf, size_t buf_len);
