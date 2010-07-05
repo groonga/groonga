@@ -407,22 +407,30 @@ else
   AM_CONDITIONAL([WITH_SOUPCUTTER], false)
 fi
 
-# check GLib for benchmark
-m4_ifdef([AM_PATH_GLIB_2_0], [
-GLIB_REQUIRED=2.8.0
-AC_SUBST(GLIB_REQUIRED)
-AM_PATH_GLIB_2_0($GLIB_REQUIRED,
-                 [ac_benchmark_available="yes"],
-                 [ac_benchmark_available="no"],
-                 [gobject gthread])
-],
-[ac_benchmark_available="no"])
-AC_MSG_CHECKING(for benchmark availablity)
-AC_MSG_RESULT($ac_benchmark_available)
-AM_CONDITIONAL([WITH_BENCHMARK], [test "$ac_benchmark_available" = "yes"])
+# check for benchmark
+AC_ARG_ENABLE(benchmark,
+  [AS_HELP_STRING([--disable-benchmark],
+    [don't build benchmark programs.])],,
+  [enable_benchmark="yes"])
+if test "x$enable_benchmark" == "xno"; then
+  ac_benchmark_available="no"
+else
+  m4_ifdef([AM_PATH_GLIB_2_0], [
+  GLIB_REQUIRED=2.8.0
+  AC_SUBST(GLIB_REQUIRED)
+  AM_PATH_GLIB_2_0($GLIB_REQUIRED,
+		   [ac_benchmark_available="yes"],
+		   [ac_benchmark_available="no"],
+		   [gobject gthread])
+  ],
+  [ac_benchmark_available="no"])
+  AC_MSG_CHECKING(for benchmark availablity)
+  AC_MSG_RESULT($ac_benchmark_available)
+fi
 if test "$ac_benchmark_available" = "yes"; then
   AC_DEFINE(WITH_BENCHMARK, 1, [Define to 1 if benchamrk is available])
 fi
+AM_CONDITIONAL([WITH_BENCHMARK], [test "$ac_benchmark_available" = "yes"])
 
 # check Ruby for HTTP test
 ac_cv_ruby_available="no"
