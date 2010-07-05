@@ -1011,6 +1011,9 @@ static grn_obj *
 proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   ctx->stat = GRN_CTX_QUITTING;
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
+  GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
@@ -1019,6 +1022,9 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_gctx.stat = GRN_CTX_QUIT;
   ctx->stat = GRN_CTX_QUITTING;
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
+  GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
