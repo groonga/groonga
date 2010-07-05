@@ -29,12 +29,11 @@ class CacheTest < Test::Unit::TestCase
 
   def test_cache_with_illegal_select
     assert_commands(<<EXPECTED, <<COMMANDS)
-[[0,0.0,0.0]]
-[[0,0.0,0.0]]
-[[0,0.0,0.0]]
-[[0,0.0,0.0]]
-[[0,0.0,0.0],1]
-[[0,0.0,0.0]]
+[true]
+[true]
+[true]
+[true]
+[1]
 EXPECTED
 table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
 column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
@@ -47,9 +46,8 @@ load --table Site
 COMMANDS
 
     expected= <<EXPECTED
-[[-63,0.0,0.0,"Syntax error! (<)"]]
-[[-63,0.0,0.0,"Syntax error! (<)"]]
-[[0,0.0,0.0]]
+[]
+[]
 EXPECTED
 
     commands = <<COMMANDS
