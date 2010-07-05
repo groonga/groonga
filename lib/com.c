@@ -19,15 +19,20 @@
 
 #include <stdio.h>
 #include <string.h>
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif /* HAVE_SYS_SOCKET_H */
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif /* HAVE_NETINET_IN_H */
-#ifdef HAVE_NETINET_TCP_H
-#include <netinet/tcp.h>
-#endif /* HAVE_NETINET_TCP_H */
+
+#ifdef WIN32
+#  include <ws2tcpip.h>
+#else
+#  ifdef HAVE_SYS_SOCKET_H
+#    include <sys/socket.h>
+#  endif /* HAVE_SYS_SOCKET_H */
+#  ifdef HAVE_NETINET_IN_H
+#    include <netinet/in.h>
+#  endif /* HAVE_NETINET_IN_H */
+#  ifdef HAVE_NETINET_TCP_H
+#   include <netinet/tcp.h>
+#  endif /* HAVE_NETINET_TCP_H */
+#endif /* WIN32 */
 
 #include "ctx.h"
 #include "com.h"
@@ -910,9 +915,11 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
           "getaddrinfo: <%s:%s>: %s",
           listen_address, port_string, gai_strerror(getaddrinfo_result));
       break;
+#ifdef EAI_SYSTEM
     case EAI_SYSTEM:
       SERR("getaddrinfo");
       break;
+#endif
     default:
       ERR(GRN_INVALID_ARGUMENT,
           "getaddrinfo: <%s:%s>: %s",
