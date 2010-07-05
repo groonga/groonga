@@ -83,7 +83,7 @@
 
 #ifdef __GNUC__
 #  include <w32api.h>
-#  define WINVER Windows2000
+#  define WINVER WindowsXP
 #else
 #  pragma warning(disable: 4996)
 #  include <io.h>
@@ -92,6 +92,7 @@
 #include <basetsd.h>
 #include <process.h>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <stddef.h>
 #include <windef.h>
