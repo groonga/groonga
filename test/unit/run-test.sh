@@ -78,6 +78,8 @@ fi
 
 ruby_result=0
 if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
+    : ${TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE:=30000}
+    export TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE
     $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"
     ruby_result=$?
     no_test=0
