@@ -477,6 +477,7 @@ EOGQTP
 [3]
 [true]
 [[[2],[["_id","UInt32"],["_key","ShortText"]],[1,"hayamiz"],[3,"mori"]]]
+[true]
 EXPECTED
 table_create users 0 ShortText
 load --table users
@@ -497,6 +498,7 @@ COMMANDS
 [3]
 [true]
 [[[2],[["_id","UInt32"],["name","ShortText"]],[1,"hayamiz"],[3,"mori"]]]
+[true]
 EXPECTED
 table_create users 3
 column_create users name 0 ShortText

@@ -34,6 +34,7 @@ class CacheTest < Test::Unit::TestCase
 [true]
 [true]
 [1]
+[true]
 EXPECTED
 table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
 column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
@@ -48,6 +49,7 @@ COMMANDS
     expected= <<EXPECTED
 []
 []
+[true]
 EXPECTED
 
     commands = <<COMMANDS

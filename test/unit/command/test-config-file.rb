@@ -33,6 +33,6 @@ class ConfigFileTest < Test::Unit::TestCase
 
   def test_config_empty
     open(@config_path, "w") {|f|}
-    assert_equal("", run_groonga("-n", @database_path, "quit"))
+    assert_equal("[true]\n", run_groonga("-n", @database_path, "quit"))
   end
 end

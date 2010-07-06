@@ -32,6 +32,7 @@ class LoadTest < Test::Unit::TestCase
 [true]
 [2]
 [[[2],[["_id","UInt32"],["_key","ShortText"]],[2,"bash"],[1,"gcc"]]]
+[true]
 EXPECTED
 table_create commands 1 ShortText
 load --table commands
@@ -50,6 +51,7 @@ COMMANDS
 [true]
 [2]
 [[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[2,"bash","a shell"],[1,"gcc","a compiler"]]]
+[true]
 EXPECTED
 table_create commands 1 ShortText
 column_create commands body 0 ShortText
@@ -70,6 +72,7 @@ COMMANDS
 [true]
 [2]
 [[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]
+[true]
 EXPECTED
 table_create commands 1 ShortText
 column_create commands body 0 ShortText
@@ -91,6 +94,7 @@ COMMANDS
 [true]
 [2]
 [[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]
+[true]
 EXPECTED
 table_create commands 1 ShortText
 column_create commands body 0 ShortText
@@ -110,6 +114,7 @@ COMMANDS
 [true]
 [2]
 [[[2],[["_id","UInt32"]],[1],[2]]]
+[true]
 EXPECTED
 table_create commands 3
 load --table commands
@@ -128,6 +133,7 @@ COMMANDS
 [true]
 [2]
 [[[2],[["_id","UInt32"],["body","ShortText"]],[1,\"a compiler\"],[2,\"a shell\"]]]
+[true]
 EXPECTED
 table_create commands 3
 column_create commands body 0 ShortText
@@ -148,6 +154,7 @@ COMMANDS
 [true]
 [2]
 [[[2],[["_id","UInt32"],["location","ShortText"],["body","ShortText"]],[1,"/usr/bin/gcc","a compiler"],[2,"/bin/bash","a shell"]]]
+[true]
 EXPECTED
 table_create commands 3
 column_create commands body 0 ShortText
