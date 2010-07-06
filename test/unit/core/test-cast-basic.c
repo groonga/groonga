@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,8 @@ void test_text_to_int64(void);
 void test_text_to_uint64(void);
 void test_text_to_float(void);
 void test_text_to_time(void);
+void test_text_to_geo_point(void);
+void test_text_to_geo_point_invalid(void);
 
 void data_text_error(void);
 void test_text_error(gconstpointer data);
@@ -114,12 +116,18 @@ cut_teardown(void)
 }
 
 static void
-cast_text(const gchar *text)
+set_text(const gchar *text)
 {
   grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
   if (text) {
     GRN_TEXT_PUTS(&context, &src, text);
   }
+}
+
+static void
+cast_text(const gchar *text)
+{
+  set_text(text);
   grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
@@ -233,6 +241,27 @@ test_text_to_time(void)
   GRN_TIME_UNPACK(GRN_TIME_VALUE(&dest), sec, usec);
   cut_assert_equal_int(1259009530, sec);
   cut_assert_equal_int(29290, usec);
+}
+
+void
+test_text_to_geo_point(void)
+{
+  gint takane_latitude, takane_longitude;
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  cast_text("130226900x503769900");
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(130226900, takane_latitude);
+  cut_assert_equal_int(503769900, takane_longitude);
+}
+
+void
+test_text_to_geo_point_invalid(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  set_text("130226900?503769900");
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_obj_cast(&context, &src, &dest, FALSE));
 }
 
 void
