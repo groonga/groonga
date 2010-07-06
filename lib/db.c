@@ -5780,6 +5780,8 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
     case GRN_DB_UINT64 :
     case GRN_DB_FLOAT :
     case GRN_DB_TIME :
+    case GRN_DB_TOKYO_GEO_POINT :
+    case GRN_DB_WGS84_GEO_POINT :
       if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
       obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       obj->header.domain = domain;
