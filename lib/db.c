@@ -3651,6 +3651,11 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
   }
 
+#define DEGREE2MSEC(degree)\
+  (((int)degree * 60 * 60 * 1000) +\
+   (((int)(degree * 100) % 100) * 60 * 1000) +\
+   (((int)(degree * 10000) % 100) * 1000) +\
+   ((int)(degree * 10000000) % 1000))
 
 grn_rc
 grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
@@ -3770,12 +3775,46 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
     case GRN_DB_WGS84_GEO_POINT :
       {
         int latitude, longitude;
+        double degree;
         const char *cur, *str = GRN_TEXT_VALUE(src);
         const char *str_end = GRN_BULK_CURR(src);
+        char *end;
+        grn_obj buf, *buf_p = NULL;
         latitude = grn_atoi(str, str_end, &cur);
-        if (cur + 1 < str_end) {
-          longitude = grn_atoi(cur + 1, str_end, &cur);
-          if (cur == str_end) {
+        if (cur[0] == '.') {
+          GRN_TEXT_INIT(&buf, 0);
+          GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          buf_p = &buf;
+          errno = 0;
+          degree = strtod(GRN_TEXT_VALUE(buf_p), &end);
+          if (errno) {
+            rc = GRN_INVALID_ARGUMENT;
+          } else {
+            latitude = DEGREE2MSEC(degree);
+            cur = str + (end - GRN_TEXT_VALUE(buf_p));
+          }
+        }
+        if (!rc && (cur[0] == 'x' || cur[0] == ',') && cur + 1 < str_end) {
+          const char *c = cur + 1;
+          longitude = grn_atoi(c, str_end, &cur);
+          if (cur[0] == '.') {
+            if (!buf_p) {
+              GRN_TEXT_INIT(&buf, 0);
+              GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
+              GRN_TEXT_PUTC(ctx, &buf, '\0');
+              buf_p = &buf;
+            }
+            errno = 0;
+            degree = strtod(GRN_TEXT_VALUE(buf_p) + (c - str), &end);
+            if (errno) {
+              rc = GRN_INVALID_ARGUMENT;
+            } else {
+              longitude = DEGREE2MSEC(degree);
+              cur = str + (end - GRN_TEXT_VALUE(buf_p));
+            }
+          }
+          if (!rc && cur == str_end) {
             GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
           } else {
             rc = GRN_INVALID_ARGUMENT;
@@ -3783,6 +3822,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
         } else {
           rc = GRN_INVALID_ARGUMENT;
         }
+        if (buf_p) { GRN_OBJ_FIN(ctx, buf_p); }
       }
       break;
     default :
@@ -5780,6 +5820,8 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
     case GRN_DB_UINT64 :
     case GRN_DB_FLOAT :
     case GRN_DB_TIME :
+    case GRN_DB_TOKYO_GEO_POINT :
+    case GRN_DB_WGS84_GEO_POINT :
       if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
       obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       obj->header.domain = domain;
@@ -7035,8 +7077,8 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned str_size
   if (!ctx->rc) {
     *nkeys = k - keys;
   } else {
-    if (keys) { GRN_FREE(keys); }
-    *nkeys =0;
+    grn_table_sort_key_close(ctx, keys, k - keys);
+    *nkeys = 0;
     keys = NULL;
   }
   return keys;

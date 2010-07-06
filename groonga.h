@@ -1943,10 +1943,10 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 #define GRN_TIME_VALUE GRN_INT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
 #define GRN_PTR_VALUE(obj) (*((grn_obj **)GRN_BULK_HEAD(obj)))
-#define GRN_GEO_POINT_VALUE(obj,latitude,longitude) do {\
+#define GRN_GEO_POINT_VALUE(obj,_latitude,_longitude) do {\
   grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);\
-  latitude = _val->latitude;\
-  longitude = _val->longitude;\
+  _latitude = _val->latitude;\
+  _longitude = _val->longitude;\
 } while (0)
 
 #define GRN_BOOL_VALUE_AT(obj,offset) (((unsigned char *)GRN_BULK_HEAD(obj))[offset])
