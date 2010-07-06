@@ -7035,8 +7035,8 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned str_size
   if (!ctx->rc) {
     *nkeys = k - keys;
   } else {
-    if (keys) { GRN_FREE(keys); }
-    *nkeys =0;
+    grn_table_sort_key_close(ctx, keys, k - keys);
+    *nkeys = 0;
     keys = NULL;
   }
   return keys;
