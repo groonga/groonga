@@ -249,17 +249,17 @@ test_text_to_geo_point(void)
   gint takane_latitude, takane_longitude;
 
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
-  cast_text("130226900x503769900");
+  cast_text("130194581x503802073");
   GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
-  cut_assert_equal_int(130226900, takane_latitude);
-  cut_assert_equal_int(503769900, takane_longitude);
+  cut_assert_equal_int(130194581, takane_latitude);
+  cut_assert_equal_int(503802073, takane_longitude);
 }
 
 void
 test_text_to_geo_point_invalid(void)
 {
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
-  set_text("130226900?503769900");
+  set_text("130194581?503802073");
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                            grn_obj_cast(&context, &src, &dest, FALSE));
 }
