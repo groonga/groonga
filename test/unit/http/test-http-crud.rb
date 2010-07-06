@@ -199,7 +199,7 @@ module HTTPCRUDTest
       response = get(command_path(:select,
                                   :table => "users",
                                   :output_columns => "_key real_name"))
-      assert_response_body([[[2],
+      assert_response_body([[[1],
                              [["_key", "ShortText"], ["real_name", "ShortText"]],
                              ["ryoqun", "Ryo Onodera"]]],
                            response,
