@@ -1861,6 +1861,53 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
+proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
+  if (!obj) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "no such object '%.*s>'", GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    GRN_OUTPUT_BOOL(!ctx->rc);
+  } else {
+    switch (obj->header.type) {
+    case GRN_DB :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_NO_KEY :
+    case GRN_COLUMN_VAR_SIZE :
+    case GRN_COLUMN_FIX_SIZE :
+      GRN_OUTPUT_BOOL(!ctx->rc);
+      break;
+    case GRN_COLUMN_INDEX :
+      {
+        grn_ii *ii = (grn_ii *)obj;
+        GRN_OUTPUT_INT64(ii->header->total_chunk_size);
+        GRN_OUTPUT_INT64(ii->header->bmax);
+        GRN_OUTPUT_INT64(ii->header->flags);
+        GRN_OUTPUT_INT64(ii->header->amax);
+        GRN_OUTPUT_INT64(ii->header->smax);
+        GRN_OUTPUT_INT64(ii->header->param1);
+        GRN_OUTPUT_INT64(ii->header->param2);
+        GRN_OUTPUT_INT64(ii->header->pnext);
+        GRN_OUTPUT_INT64(ii->header->bgqhead);
+        GRN_OUTPUT_INT64(ii->header->bgqtail);
+        GRN_OUTPUT_INT64(ii->header->bgqbody[0]);
+        GRN_OUTPUT_INT64(ii->header->ainfo[0]);
+        GRN_OUTPUT_INT64(ii->header->binfo[0]);
+        GRN_OUTPUT_INT64(ii->header->free_chunks[0]);
+        GRN_OUTPUT_INT64(ii->header->garbages[0]);
+        GRN_OUTPUT_INT64(ii->header->ngarbages[0]);
+        GRN_OUTPUT_INT64(ii->header->chunks[0]);
+      }
+      break;
+    }
+  }
+  GRN_OUTPUT_ARRAY_CLOSE();
+  return NULL;
+}
+
+static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
@@ -2331,6 +2378,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "path");
   DEF_COMMAND("register", proc_register, 1, vars);
 
+  DEF_VAR(vars[0], "obj");
+  DEF_COMMAND("check", proc_check, 1, vars);
+
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);
 
@@ -2352,4 +2402,3 @@ grn_db_init_builtin_query(grn_ctx *ctx)
                   func_geo_distance3, NULL, NULL, 0, NULL);
 
 }
-
