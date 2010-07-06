@@ -3773,7 +3773,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
         const char *cur, *str = GRN_TEXT_VALUE(src);
         const char *str_end = GRN_BULK_CURR(src);
         latitude = grn_atoi(str, str_end, &cur);
-        if (cur[0] == 'x' && cur + 1 < str_end) {
+        if (cur + 1 < str_end) {
           longitude = grn_atoi(cur + 1, str_end, &cur);
           if (cur == str_end) {
             GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);

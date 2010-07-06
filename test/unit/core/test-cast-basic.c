@@ -258,6 +258,7 @@ test_text_to_geo_point(void)
 void
 test_text_to_geo_point_invalid(void)
 {
+  cut_omit("any character is accepted as separator.");
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
   set_text("130194581?503802073");
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
