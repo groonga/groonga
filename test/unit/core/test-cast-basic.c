@@ -36,7 +36,12 @@ void test_text_to_uint64(void);
 void test_text_to_float(void);
 void test_text_to_time(void);
 void test_text_to_geo_point(void);
+void test_text_to_geo_point_comma(void);
 void test_text_to_geo_point_invalid(void);
+void test_text_to_geo_point_in_degree(void);
+void test_text_to_geo_point_in_degree_invalid(void);
+void test_text_to_geo_point_mixed(void);
+void test_text_to_geo_point_mixed_invalid(void);
 
 void data_text_error(void);
 void test_text_error(gconstpointer data);
@@ -256,11 +261,64 @@ test_text_to_geo_point(void)
 }
 
 void
+test_text_to_geo_point_comma(void)
+{
+  gint takane_latitude, takane_longitude;
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  cast_text("130194581,503802073");
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(130194581, takane_latitude);
+  cut_assert_equal_int(503802073, takane_longitude);
+}
+
+void
 test_text_to_geo_point_invalid(void)
 {
-  cut_omit("any character is accepted as separator.");
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
   set_text("130194581?503802073");
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_obj_cast(&context, &src, &dest, FALSE));
+}
+
+void
+test_text_to_geo_point_in_degree(void)
+{
+  gint takane_latitude, takane_longitude;
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  cast_text("35.6954581363924x139.564207350021");
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(130194581, takane_latitude);
+  cut_assert_equal_int(503802073, takane_longitude);
+}
+
+void
+test_text_to_geo_point_in_degree_invalid(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  set_text("35.6954581363924?139.564207350021");
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_obj_cast(&context, &src, &dest, FALSE));
+}
+
+void
+test_text_to_geo_point_mixed(void)
+{
+  gint takane_latitude, takane_longitude;
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  cast_text("35.6954581363924x503802073");
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(130194581, takane_latitude);
+  cut_assert_equal_int(503802073, takane_longitude);
+}
+
+void
+test_text_to_geo_point_mixed_invalid(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  set_text("35.6954581363924x503802073garbage");
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                            grn_obj_cast(&context, &src, &dest, FALSE));
 }
