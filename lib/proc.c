@@ -1864,11 +1864,12 @@ static grn_obj *
 proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
-  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   if (!obj) {
     ERR(GRN_INVALID_ARGUMENT,
         "no such object '%.*s>'", GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
     GRN_OUTPUT_BOOL(!ctx->rc);
+    GRN_OUTPUT_ARRAY_CLOSE();
   } else {
     switch (obj->header.type) {
     case GRN_DB :
@@ -1877,33 +1878,81 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     case GRN_TABLE_NO_KEY :
     case GRN_COLUMN_VAR_SIZE :
     case GRN_COLUMN_FIX_SIZE :
+      GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
       GRN_OUTPUT_BOOL(!ctx->rc);
+      GRN_OUTPUT_ARRAY_CLOSE();
       break;
     case GRN_COLUMN_INDEX :
       {
         grn_ii *ii = (grn_ii *)obj;
-        GRN_OUTPUT_INT64(ii->header->total_chunk_size);
-        GRN_OUTPUT_INT64(ii->header->bmax);
-        GRN_OUTPUT_INT64(ii->header->flags);
-        GRN_OUTPUT_INT64(ii->header->amax);
-        GRN_OUTPUT_INT64(ii->header->smax);
-        GRN_OUTPUT_INT64(ii->header->param1);
-        GRN_OUTPUT_INT64(ii->header->param2);
-        GRN_OUTPUT_INT64(ii->header->pnext);
-        GRN_OUTPUT_INT64(ii->header->bgqhead);
-        GRN_OUTPUT_INT64(ii->header->bgqtail);
-        GRN_OUTPUT_INT64(ii->header->bgqbody[0]);
-        GRN_OUTPUT_INT64(ii->header->ainfo[0]);
-        GRN_OUTPUT_INT64(ii->header->binfo[0]);
-        GRN_OUTPUT_INT64(ii->header->free_chunks[0]);
-        GRN_OUTPUT_INT64(ii->header->garbages[0]);
-        GRN_OUTPUT_INT64(ii->header->ngarbages[0]);
-        GRN_OUTPUT_INT64(ii->header->chunks[0]);
+        struct grn_ii_header *h = ii->header;
+        char buf[8];
+        GRN_OUTPUT_MAP_OPEN("RESULT", 8);
+        GRN_OUTPUT_CSTR("flags");
+        grn_itoh(h->flags, buf, 8);
+        GRN_OUTPUT_STR(buf, 8);
+        GRN_OUTPUT_CSTR("max sid");
+        GRN_OUTPUT_INT64(h->smax);
+        {
+          uint32_t i, j, g =0, a = 0, b = 0;
+          uint32_t max = 0;
+          for (i = h->bgqtail; i != h->bgqhead; i = ((i + 1) & (GRN_II_BGQSIZE - 1))) {
+            j = h->bgqbody[i];
+            g++;
+            if (j > max) { max = j; }
+          }
+          for (i = 0; i < GRN_II_MAX_LSEG; i++) {
+            j = h->binfo[i];
+            if (j < 0x20000) {
+              if (j > max) { max = j; }
+              b++;
+            }
+          }
+          for (i = 0; i < GRN_II_MAX_LSEG; i++) {
+            j = h->ainfo[i];
+            if (j < 0x20000) {
+              if (j > max) { max = j; }
+              a++;
+            }
+          }
+          GRN_OUTPUT_CSTR("number of garbage segments");
+          GRN_OUTPUT_INT64(g);
+          GRN_OUTPUT_CSTR("number of array segments");
+          GRN_OUTPUT_INT64(a);
+          GRN_OUTPUT_CSTR("max id of array segment");
+          GRN_OUTPUT_INT64(h->amax);
+          GRN_OUTPUT_CSTR("number of buffer segments");
+          GRN_OUTPUT_INT64(b);
+          GRN_OUTPUT_CSTR("max id of buffer segment");
+          GRN_OUTPUT_INT64(h->bmax);
+          GRN_OUTPUT_CSTR("max id of physical segment in use");
+          GRN_OUTPUT_INT64(max);
+          GRN_OUTPUT_CSTR("number of unmanaged segments");
+          GRN_OUTPUT_INT64(h->pnext - a - b - g);
+          GRN_OUTPUT_CSTR("total chunk size");
+          GRN_OUTPUT_INT64(h->total_chunk_size);
+          for (max = 0, i = 0; i < (GRN_II_MAX_CHUNK >> 3); i++) {
+            if ((j = h->chunks[i])) {
+              int k;
+              for (k = 0; k < 8; k++) {
+                if ((j & (1 << k))) { max = (i << 3) + j; }
+              }
+            }
+          }
+          GRN_OUTPUT_CSTR("max id of chunk segments in use");
+          GRN_OUTPUT_INT64(max);
+          GRN_OUTPUT_CSTR("number of garbage chunk");
+          GRN_OUTPUT_ARRAY_OPEN("NGARBAGES", 1);
+          for (i = 0; i <= GRN_II_N_CHUNK_VARIATION; i++) {
+            GRN_OUTPUT_INT64(h->ngarbages[i]);
+          }
+          GRN_OUTPUT_ARRAY_CLOSE();
+        }
+        GRN_OUTPUT_MAP_CLOSE();
       }
       break;
     }
   }
-  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 
