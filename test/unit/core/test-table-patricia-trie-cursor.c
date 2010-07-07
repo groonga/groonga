@@ -27,6 +27,8 @@ void data_prefix_short_text(void);
 void test_prefix_short_text(gpointer data);
 void data_near_uint32(void);
 void test_near_uint32(gpointer data);
+void data_common_prefix_search(void);
+void test_common_prefix_search(gpointer data);
 
 static gchar *tmp_directory;
 
@@ -144,13 +146,13 @@ create_uint32_table(void)
 void
 data_prefix_short_text(void)
 {
-#define ADD_DATA(label, expected, key_min, offset, limit, flags)        \
+#define ADD_DATA(label, expected, min, offset, limit, flags)            \
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_POINTER,                            \
                  expected, gcut_list_string_free,                       \
-                 "key-min", G_TYPE_STRING, key_min,                     \
+                 "min", G_TYPE_STRING, min,                             \
                  "offset", G_TYPE_INT, offset,                          \
-                 "limit", G_TYPE_INT, limit,                           \
+                 "limit", G_TYPE_INT, limit,                            \
                  "flags", G_TYPE_INT, flags,                            \
                  NULL)
 
@@ -216,29 +218,29 @@ void
 test_prefix_short_text(gpointer data)
 {
   grn_id id;
-  const gchar *key_min;
+  const gchar *min;
   int offset, limit, flags;
   const GList *expected_keys;
   GList *actual_keys = NULL;
 
   create_short_text_table();
 
-  key_min = gcut_data_get_string(data, "key-min");
+  min = gcut_data_get_string(data, "min");
   offset = gcut_data_get_int(data, "offset");
   limit = gcut_data_get_int(data, "limit");
   flags = gcut_data_get_int(data, "flags");
   cursor = grn_table_cursor_open(context, table,
-                                 key_min, strlen(key_min),
+                                 min, strlen(min),
                                  NULL, 0,
                                  offset, limit,
                                  flags | GRN_CURSOR_PREFIX);
   grn_test_assert_context(context);
   while ((id = grn_table_cursor_next(context, cursor))) {
     gchar *key;
-    int key_length;
+    int key_size;
 
-    key_length = grn_table_cursor_get_key(context, cursor, (void **)&key);
-    actual_keys = g_list_append(actual_keys, g_strndup(key, key_length));
+    key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
+    actual_keys = g_list_append(actual_keys, g_strndup(key, key_size));
   }
   gcut_take_list(actual_keys, g_free);
 
@@ -266,11 +268,11 @@ uint_list_new(gint n, guint value, ...)
 void
 data_near_uint32(void)
 {
-#define ADD_DATA(label, expected, min_length, max, offset, limit, flags) \
+#define ADD_DATA(label, expected, min_size, max, offset, limit, flags)  \
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_POINTER,                            \
                  expected, g_list_free,                                 \
-                 "min-length", G_TYPE_INT, min_length,                  \
+                 "min-size", G_TYPE_INT, min_size,                      \
                  "max", G_TYPE_UINT, max,                               \
                  "offset", G_TYPE_INT, offset,                          \
                  "limit", G_TYPE_INT, limit,                            \
@@ -297,33 +299,141 @@ void
 test_near_uint32(gpointer data)
 {
   grn_id id;
-  int min_length, offset, limit, flags;
+  int min_size, offset, limit, flags;
   guint32 max;
   const GList *expected_keys;
   GList *actual_keys = NULL;
 
   create_uint32_table();
 
-  min_length = gcut_data_get_int(data, "min-length");
+  min_size = gcut_data_get_int(data, "min-size");
   max = gcut_data_get_uint(data, "max");
   offset = gcut_data_get_int(data, "offset");
   limit = gcut_data_get_int(data, "limit");
   flags = gcut_data_get_int(data, "flags");
   cursor = grn_table_cursor_open(context, table,
-                                 NULL, min_length,
+                                 NULL, min_size,
                                  &max, sizeof(max),
                                  offset, limit,
                                  flags | GRN_CURSOR_PREFIX);
   grn_test_assert_context(context);
   while ((id = grn_table_cursor_next(context, cursor))) {
     guint32 *key;
-    int key_length;
+    int key_size;
 
-    key_length = grn_table_cursor_get_key(context, cursor, (void **)&key);
+    key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
     actual_keys = g_list_append(actual_keys, GUINT_TO_POINTER(*key));
   }
   gcut_take_list(actual_keys, NULL);
 
   expected_keys = gcut_data_get_pointer(data, "expected");
   gcut_assert_equal_list_uint(expected_keys, actual_keys);
+}
+
+void
+data_common_prefix_search(void)
+{
+#define ADD_DATA(label, expected, min_size, max, offset, limit, flags)  \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_POINTER,                            \
+                 expected, gcut_list_string_free,                       \
+                 "min-size", G_TYPE_INT, min_size,                      \
+                 "max", G_TYPE_STRING, max,                             \
+                 "offset", G_TYPE_INT, offset,                          \
+                 "limit", G_TYPE_INT, limit,                            \
+                 "flags", G_TYPE_INT, flags,                            \
+                 NULL)
+
+  ADD_DATA("alphabet - ascending",
+           gcut_list_string_new("abra", "abracada", "abracadabra", "abubu",
+                                NULL),
+           0, "ab",
+           0, -1,
+           0);
+  ADD_DATA("alphabet - descending",
+           gcut_list_string_new("abubu", "abracadabra", "abracada", "abra",
+                                NULL),
+           0, "ab",
+           0, -1,
+           GRN_CURSOR_DESCENDING);
+  ADD_DATA("alphabet - ascending - min size",
+           gcut_list_string_new("abracada", "abracadabra", "abubu", NULL),
+           5, "ab",
+           0, -1,
+           GRN_CURSOR_GT);
+  ADD_DATA("alphabet - descending - greater than",
+           gcut_list_string_new("abubu", "abracadabra", "abracada", NULL),
+           5, "ab",
+           0, -1,
+           GRN_CURSOR_DESCENDING | GRN_CURSOR_GT);
+  ADD_DATA("alphabet - offset and limit",
+           gcut_list_string_new("abracadabra", NULL),
+           0, "ab",
+           2, 1,
+           0);
+  ADD_DATA("no match",
+           NULL,
+           0, "bubuzera",
+           0, -1,
+           0);
+  ADD_DATA("no match - common prefix",
+           NULL,
+           0, "abraura",
+           0, -1,
+           0);
+  ADD_DATA("empty key",
+           gcut_list_string_new("abra", "abracada", "abracadabra", "abubu",
+                                "あ", "ああ", "あああ", "い",
+                                NULL),
+           0, "",
+           0, -1,
+           0);
+  {
+    gchar *long_key;
+    long_key = g_alloca(GRN_TABLE_MAX_KEY_SIZE + 2);
+    memset(long_key, 'a', GRN_TABLE_MAX_KEY_SIZE + 1);
+    ADD_DATA("long key",
+             NULL,
+             0, long_key,
+             0, -1,
+             0);
+  }
+
+#undef ADD_DATA
+}
+
+void
+test_common_prefix_search(gpointer data)
+{
+  grn_id id;
+  const gchar *max;
+  int min_size, offset, limit, flags;
+  const GList *expected_keys;
+  GList *actual_keys = NULL;
+
+  cut_omit("crashed. Is it right usage?");
+  create_short_text_table();
+
+  min_size = gcut_data_get_int(data, "min-size");
+  max = gcut_data_get_string(data, "max");
+  offset = gcut_data_get_int(data, "offset");
+  limit = gcut_data_get_int(data, "limit");
+  flags = gcut_data_get_int(data, "flags");
+  cursor = grn_table_cursor_open(context, table,
+                                 NULL, min_size,
+                                 max, strlen(max),
+                                 offset, limit,
+                                 flags | GRN_CURSOR_PREFIX);
+  grn_test_assert_context(context);
+  while ((id = grn_table_cursor_next(context, cursor))) {
+    gchar *key;
+    int key_size;
+
+    key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
+    actual_keys = g_list_append(actual_keys, g_strndup(key, key_size));
+  }
+  gcut_take_list(actual_keys, g_free);
+
+  expected_keys = gcut_data_get_pointer(data, "expected");
+  gcut_assert_equal_list_string(expected_keys, actual_keys);
 }
