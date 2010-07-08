@@ -69,7 +69,7 @@ grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_column_inspect_common(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   int name_size;
   grn_id range_id;
@@ -83,17 +83,26 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   range_id = grn_obj_get_range(ctx, obj);
   if (range_id) {
     grn_obj *range = grn_ctx_at(ctx, range_id);
+    GRN_TEXT_PUTS(ctx, buf, " range:");
     if (range) {
-      GRN_TEXT_PUTS(ctx, buf, " range:");
       name_size = grn_obj_name(ctx, range, NULL, 0);
       if (name_size) {
         grn_bulk_space(ctx, buf, name_size);
         grn_obj_name(ctx, range, GRN_BULK_CURR(buf) - name_size, name_size);
       }
       grn_obj_unlink(ctx, range);
+    } else {
+      grn_text_lltoa(ctx, buf, range_id);
     }
   }
 
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_column_inspect_common(ctx, buf, obj);
   GRN_TEXT_PUTS(ctx, buf, " type:");
   switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
   case GRN_OBJ_COLUMN_VECTOR :
@@ -147,28 +156,10 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_obj sources;
   int name_size, i, n, have_flags = 0;
-  grn_id range_id, *source_ids;
+  grn_id *source_ids;
 
   GRN_TEXT_PUTS(ctx, buf, "#<column:index ");
-  name_size = grn_obj_name(ctx, obj, NULL, 0);
-  if (name_size) {
-    grn_bulk_space(ctx, buf, name_size);
-    grn_obj_name(ctx, obj, GRN_BULK_CURR(buf) - name_size, name_size);
-  }
-
-  range_id = grn_obj_get_range(ctx, obj);
-  if (range_id) {
-    grn_obj *range = grn_ctx_at(ctx, range_id);
-    if (range) {
-      GRN_TEXT_PUTS(ctx, buf, " range:");
-      name_size = grn_obj_name(ctx, range, NULL, 0);
-      if (name_size) {
-        grn_bulk_space(ctx, buf, name_size);
-        grn_obj_name(ctx, range, GRN_BULK_CURR(buf) - name_size, name_size);
-      }
-      grn_obj_unlink(ctx, range);
-    }
-  }
+  grn_column_inspect_common(ctx, buf, obj);
 
   GRN_TEXT_INIT(&sources, 0);
   grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &sources);
