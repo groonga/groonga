@@ -1860,6 +1860,8 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+void grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg);
+
 static grn_obj *
 proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1942,11 +1944,14 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           GRN_OUTPUT_CSTR("max id of chunk segments in use");
           GRN_OUTPUT_INT64(max);
           GRN_OUTPUT_CSTR("number of garbage chunk");
-          GRN_OUTPUT_ARRAY_OPEN("NGARBAGES", 1);
+          GRN_OUTPUT_ARRAY_OPEN("NGARBAGES", GRN_II_N_CHUNK_VARIATION);
           for (i = 0; i <= GRN_II_N_CHUNK_VARIATION; i++) {
             GRN_OUTPUT_INT64(h->ngarbages[i]);
           }
           GRN_OUTPUT_ARRAY_CLOSE();
+          for (i = 0; i < GRN_II_MAX_LSEG; i++) {
+            if (h->binfo[i] < 0x20000) { grn_ii_buffer_check(ctx, ii, i); }
+          }
         }
         GRN_OUTPUT_MAP_CLOSE();
       }
