@@ -69,6 +69,49 @@ grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_type_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int name_size;
+  grn_id range_id;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<type ");
+  name_size = grn_obj_name(ctx, obj, NULL, 0);
+  if (name_size) {
+    grn_bulk_space(ctx, buf, name_size);
+    grn_obj_name(ctx, obj, GRN_BULK_CURR(buf) - name_size, name_size);
+  }
+
+  range_id = grn_obj_get_range(ctx, obj);
+  GRN_TEXT_PUTS(ctx, buf, " size:");
+  grn_text_lltoa(ctx, buf, range_id);
+
+  GRN_TEXT_PUTS(ctx, buf, " type:");
+  if (obj->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    GRN_TEXT_PUTS(ctx, buf, "var_size");
+  } else {
+    switch (obj->header.flags & GRN_OBJ_KEY_MASK) {
+    case GRN_OBJ_KEY_UINT :
+      GRN_TEXT_PUTS(ctx, buf, "uint");
+      break;
+    case GRN_OBJ_KEY_INT :
+      GRN_TEXT_PUTS(ctx, buf, "int");
+      break;
+    case GRN_OBJ_KEY_FLOAT :
+      GRN_TEXT_PUTS(ctx, buf, "float");
+      break;
+    case GRN_OBJ_KEY_GEO_POINT :
+      GRN_TEXT_PUTS(ctx, buf, "geo_point");
+      break;
+    default :
+      break;
+    }
+  }
+
+  GRN_TEXT_PUTS(ctx, buf, ">");
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_column_inspect_common(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   int name_size;
@@ -228,6 +271,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   case GRN_ACCESSOR :
   case GRN_ACCESSOR_VIEW :
     grn_accessor_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_TYPE :
+    grn_type_inspect(ctx, buffer, obj);
     return buffer;
   case GRN_COLUMN_FIX_SIZE :
     grn_ra_inspect(ctx, buffer, obj);

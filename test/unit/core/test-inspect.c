@@ -62,6 +62,7 @@ void test_accessor_dynamic_pseudo_column_name(gconstpointer data);
 void test_column_fix_size(void);
 void test_column_var_size(void);
 void test_column_index(void);
+void test_type(void);
 
 static gchar *tmp_directory;
 
@@ -635,6 +636,21 @@ test_column_index(void)
                           "range:Sites "
                           "sources:[Sites] "
                           "flags:NONE"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_type(void)
+{
+  grn_obj *type;
+
+  type = get_object("ShortText");
+  inspected = grn_inspect(context, NULL, type);
+  cut_assert_equal_string("#<type "
+                          "ShortText "
+                          "size:4096 "
+                          "type:var_size"
                           ">",
                           inspected_string());
 }
