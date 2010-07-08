@@ -69,13 +69,54 @@ grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_type_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  grn_obj sources;
-  int name_size, i, n, have_flags = 0;
-  grn_id range_id, *source_ids;
+  int name_size;
+  grn_id range_id;
 
-  GRN_TEXT_PUTS(ctx, buf, "#<column:index ");
+  GRN_TEXT_PUTS(ctx, buf, "#<type ");
+  name_size = grn_obj_name(ctx, obj, NULL, 0);
+  if (name_size) {
+    grn_bulk_space(ctx, buf, name_size);
+    grn_obj_name(ctx, obj, GRN_BULK_CURR(buf) - name_size, name_size);
+  }
+
+  range_id = grn_obj_get_range(ctx, obj);
+  GRN_TEXT_PUTS(ctx, buf, " size:");
+  grn_text_lltoa(ctx, buf, range_id);
+
+  GRN_TEXT_PUTS(ctx, buf, " type:");
+  if (obj->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    GRN_TEXT_PUTS(ctx, buf, "var_size");
+  } else {
+    switch (obj->header.flags & GRN_OBJ_KEY_MASK) {
+    case GRN_OBJ_KEY_UINT :
+      GRN_TEXT_PUTS(ctx, buf, "uint");
+      break;
+    case GRN_OBJ_KEY_INT :
+      GRN_TEXT_PUTS(ctx, buf, "int");
+      break;
+    case GRN_OBJ_KEY_FLOAT :
+      GRN_TEXT_PUTS(ctx, buf, "float");
+      break;
+    case GRN_OBJ_KEY_GEO_POINT :
+      GRN_TEXT_PUTS(ctx, buf, "geo_point");
+      break;
+    default :
+      break;
+    }
+  }
+
+  GRN_TEXT_PUTS(ctx, buf, ">");
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_column_inspect_common(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int name_size;
+  grn_id range_id;
+
   name_size = grn_obj_name(ctx, obj, NULL, 0);
   if (name_size) {
     grn_bulk_space(ctx, buf, name_size);
@@ -85,16 +126,83 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   range_id = grn_obj_get_range(ctx, obj);
   if (range_id) {
     grn_obj *range = grn_ctx_at(ctx, range_id);
+    GRN_TEXT_PUTS(ctx, buf, " range:");
     if (range) {
-      GRN_TEXT_PUTS(ctx, buf, " range:");
       name_size = grn_obj_name(ctx, range, NULL, 0);
       if (name_size) {
         grn_bulk_space(ctx, buf, name_size);
         grn_obj_name(ctx, range, GRN_BULK_CURR(buf) - name_size, name_size);
       }
       grn_obj_unlink(ctx, range);
+    } else {
+      grn_text_lltoa(ctx, buf, range_id);
     }
   }
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_column_inspect_common(ctx, buf, obj);
+  GRN_TEXT_PUTS(ctx, buf, " type:");
+  switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+  case GRN_OBJ_COLUMN_VECTOR :
+    GRN_TEXT_PUTS(ctx, buf, "vector");
+    break;
+  case GRN_OBJ_COLUMN_SCALAR :
+    GRN_TEXT_PUTS(ctx, buf, "scalar");
+    break;
+  default:
+    break;
+  }
+
+  GRN_TEXT_PUTS(ctx, buf, " compress:");
+  switch (obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
+  case GRN_OBJ_COMPRESS_NONE :
+    GRN_TEXT_PUTS(ctx, buf, "none");
+    break;
+  case GRN_OBJ_COMPRESS_ZLIB :
+    GRN_TEXT_PUTS(ctx, buf, "zlib");
+    break;
+  case GRN_OBJ_COMPRESS_LZO :
+    GRN_TEXT_PUTS(ctx, buf, "lzo");
+    break;
+  default:
+    break;
+  }
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ra_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  GRN_TEXT_PUTS(ctx, buf, "#<column:fix_size ");
+  grn_store_inspect_body(ctx, buf, obj);
+  GRN_TEXT_PUTS(ctx, buf, ">");
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  GRN_TEXT_PUTS(ctx, buf, "#<column:var_size ");
+  grn_store_inspect_body(ctx, buf, obj);
+  GRN_TEXT_PUTS(ctx, buf, ">");
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_obj sources;
+  int name_size, i, n, have_flags = 0;
+  grn_id *source_ids;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<column:index ");
+  grn_column_inspect_common(ctx, buf, obj);
 
   GRN_TEXT_INIT(&sources, 0);
   grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &sources);
@@ -164,8 +272,18 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   case GRN_ACCESSOR_VIEW :
     grn_accessor_inspect(ctx, buffer, obj);
     return buffer;
+  case GRN_TYPE :
+    grn_type_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_COLUMN_FIX_SIZE :
+    grn_ra_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_COLUMN_VAR_SIZE :
+    grn_ja_inspect(ctx, buffer, obj);
+    return buffer;
   case GRN_COLUMN_INDEX :
     grn_ii_inspect(ctx, buffer, obj);
+    return buffer;
   default:
     break;
   }
