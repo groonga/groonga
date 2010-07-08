@@ -2939,8 +2939,14 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   grn_rc rc;
   grn_io_win sw;
   buffer *sb;
-  uint8_t *sc;
-  uint32_t pseg, scn;
+  uint8_t *sc = NULL;
+  uint32_t pseg, scn, nerrors = 0, nterm_with_chunk = 0;
+  buffer_term *bt;
+  uint8_t *sbp = NULL;
+  datavec rdv[MAX_N_ELEMENTS + 1];
+  uint16_t n;
+  int nterms_void = 0;
+  int size_in_buffer = 0;
   if (ii->header->binfo[seg] == NOT_ASSIGNED) {
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
@@ -2950,116 +2956,105 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
   }
+  datavec_init(ctx, rdv, ii->n_elements, 0, 0);
+  if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+    rdv[ii->n_elements - 1].flags = ODD;
+  }
   GRN_OUTPUT_CSTR("buffer id");
   GRN_OUTPUT_INT64(seg);
+  if ((scn = sb->header.chunk) == NOT_ASSIGNED) {
+    GRN_OUTPUT_CSTR("void chunk size");
+    GRN_OUTPUT_INT64(sb->header.chunk_size);
+  } else {
+    if ((sc = WIN_MAP2(ii->chunk, ctx, &sw, scn, 0, sb->header.chunk_size, grn_io_rdonly))) {
+      GRN_OUTPUT_CSTR("chunk size");
+      GRN_OUTPUT_INT64(sb->header.chunk_size);
+    } else {
+      GRN_OUTPUT_CSTR("unmappable chunk size");
+      GRN_OUTPUT_INT64(sb->header.chunk_size);
+    }
+  }
+  GRN_OUTPUT_CSTR("buffer term");
+  GRN_OUTPUT_ARRAY_OPEN("TERMS", sb->header.nterms);
 
-  GRN_OUTPUT_CSTR("chunk");
-  GRN_OUTPUT_INT64(sb->header.chunk);
-  GRN_OUTPUT_CSTR("chunk size");
-  GRN_OUTPUT_INT64(sb->header.chunk_size);
+  for (bt = sb->terms, n = sb->header.nterms; n; n--, bt++) {
+    char key[GRN_TABLE_MAX_KEY_SIZE];
+    int key_size;
+    uint16_t nextb;
+    uint32_t nchunks = 0;
+    chunk_info *cinfo = NULL;
+    grn_id crid = GRN_ID_NIL;
+    docinfo bid = {0, 0};
+    uint32_t sdf = 0, snn = 0;
+    uint32_t *srp = NULL, *ssp = NULL, *stp = NULL, *sop = NULL, *snp = NULL;
+    if (!bt->tid) {
+      nterms_void++;
+      continue;
+    }
+    key_size = grn_table_get_key(ctx, ii->lexicon, bt->tid, key, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(key, key_size);
+    nextb = bt->pos_in_buffer;
+    size_in_buffer += bt->size_in_buffer;
+    GETNEXTB();
+    if (sc && bt->size_in_chunk) {
+      uint8_t *scp = sc + bt->pos_in_chunk;
+      uint8_t *sce = scp + bt->size_in_chunk;
+      size_t size = S_SEGMENT * ii->n_elements;
+      if ((bt->tid & CHUNK_SPLIT)) {
+        int i;
+        GRN_B_DEC(nchunks, scp);
+        if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
+          datavec_fin(ctx, rdv);
+          return;
+        }
+        for (i = 0; i < nchunks; i++) {
+          GRN_B_DEC(cinfo[i].segno, scp);
+          GRN_B_DEC(cinfo[i].size, scp);
+          GRN_B_DEC(cinfo[i].dgap, scp);
+          crid += cinfo[i].dgap;
+        }
+      }
+      if (sce > scp) {
+        size += grn_p_decv(ctx, scp, sce - scp, rdv, ii->n_elements);
+        {
+          int j = 0;
+          sdf = rdv[j].data_size;
+          srp = rdv[j++].data;
+          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { ssp = rdv[j++].data; }
+          if (sdf != rdv[j].data_size) {
+            nerrors++;
+          }
+          stp = rdv[j++].data;
+          if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { sop = rdv[j++].data; }
+          snn = rdv[j].data_size;
+          snp = rdv[j].data;
+        }
+        nterm_with_chunk++;
+      }
+    }
+    if (cinfo) { GRN_FREE(cinfo); }
+  }
+  GRN_OUTPUT_ARRAY_CLOSE();
+
   GRN_OUTPUT_CSTR("buffer free");
   GRN_OUTPUT_INT64(sb->header.buffer_free);
+  GRN_OUTPUT_CSTR("size in buffer");
+  GRN_OUTPUT_INT64(size_in_buffer);
   GRN_OUTPUT_CSTR("nterms");
   GRN_OUTPUT_INT64(sb->header.nterms);
-  GRN_OUTPUT_CSTR("nterms void");
-  GRN_OUTPUT_INT64(sb->header.nterms_void);
-
-  if ((scn = sb->header.chunk) != NOT_ASSIGNED &&
-      (sc = WIN_MAP2(ii->chunk, ctx, &sw, scn, 0,
-                     sb->header.chunk_size, grn_io_rdonly))) {
-     buffer_term *bt;
-     uint8_t *sbp = NULL;
-     datavec rdv[MAX_N_ELEMENTS + 1];
-     uint16_t n = sb->header.nterms, nterms_void = 0;
-     datavec_init(ctx, rdv, ii->n_elements, 0, 0);
-     if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-       rdv[ii->n_elements - 1].flags = ODD;
-     }
-     for (bt = sb->terms; n; n--, bt++) {
-       uint16_t nextb;
-       uint64_t spos = 0;
-       uint32_t *ridp, *sidp = NULL, *tfp, *weightp = NULL, *posp, nchunks = 0;
-       chunk_info *cinfo = NULL;
-       grn_id crid = GRN_ID_NIL;
-       docinfo cid = {0, 0, 0, 0, 0}, lid = {0, 0, 0, 0, 0}, bid = {0, 0};
-       uint32_t sdf = 0, snn = 0;
-       uint32_t *srp = NULL, *ssp = NULL, *stp = NULL, *sop = NULL, *snp = NULL;
-       if (!bt->tid) {
-         nterms_void++;
-         continue;
-       }
-       nextb = bt->pos_in_buffer;
-       GETNEXTB();
-       if (sc && bt->size_in_chunk) {
-         uint8_t *scp = sc + bt->pos_in_chunk;
-         uint8_t *sce = scp + bt->size_in_chunk;
-         size_t size = S_SEGMENT * ii->n_elements;
-         if ((bt->tid & CHUNK_SPLIT)) {
-           int i;
-           GRN_B_DEC(nchunks, scp);
-           if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
-             datavec_fin(ctx, rdv);
-             return;
-           }
-           for (i = 0; i < nchunks; i++) {
-             GRN_B_DEC(cinfo[i].segno, scp);
-             GRN_B_DEC(cinfo[i].size, scp);
-             GRN_B_DEC(cinfo[i].dgap, scp);
-             crid += cinfo[i].dgap;
-           }
-         }
-         if (sce > scp) {
-           size += grn_p_decv(ctx, scp, sce - scp, rdv, ii->n_elements);
-           {
-             int j = 0;
-             sdf = rdv[j].data_size;
-             srp = rdv[j++].data;
-             if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { ssp = rdv[j++].data; }
-             stp = rdv[j++].data;
-             if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { sop = rdv[j++].data; }
-             snn = rdv[j].data_size;
-             snp = rdv[j].data;
-           }
-         }
-       }
-       GETNEXTC();
-       /*
-       {
-         grn_obj buf;
-         uint32_t rid, sid, tf, i, pos, *pp;
-         GRN_TEXT_INIT(&buf, 0);
-         rid = 0;
-         pp = dv[3].data;
-         for (i = 0; i < ndf; i++) {
-           GRN_BULK_REWIND(&buf);
-           rid += dv[0].data[i];
-           if (dv[0].data[i]) { sid = 0; }
-           sid += dv[1].data[i] + 1;
-           tf = dv[2].data[i] + 1;
-           pos = 0;
-           grn_text_itoa(ctx, &buf, rid);
-           GRN_TEXT_PUTC(ctx, &buf, ':');
-           grn_text_itoa(ctx, &buf, sid);
-           GRN_TEXT_PUTC(ctx, &buf, ':');
-           grn_text_itoa(ctx, &buf, tf);
-           GRN_TEXT_PUTC(ctx, &buf, ':');
-           while (tf--) {
-             pos += *pp++;
-             grn_text_itoa(ctx, &buf, pos);
-             if (tf) { GRN_TEXT_PUTC(ctx, &buf, ','); }
-           }
-           GRN_TEXT_PUTC(ctx, &buf, '\0');
-           GRN_LOG(ctx, GRN_LOG_NOTICE, "Posting:%s", GRN_TEXT_VALUE(&buf));
-         }
-         GRN_OBJ_FIN(ctx, &buf);
-       }
-       */
-
-      if (cinfo) { GRN_FREE(cinfo); }
-    }
-    datavec_fin(ctx, rdv);
-    grn_io_win_unmap2(&sw);
+  if (nterms_void != sb->header.nterms_void) {
+    GRN_OUTPUT_CSTR("nterms void gap");
+    GRN_OUTPUT_INT64(nterms_void - sb->header.nterms_void);
   }
+  GRN_OUTPUT_CSTR("nterms with chunk");
+  GRN_OUTPUT_INT64(nterm_with_chunk);
+  if (nerrors) {
+    GRN_OUTPUT_CSTR("nterms with corrupt chunk");
+    GRN_OUTPUT_INT64(nerrors);
+  }
+  datavec_fin(ctx, rdv);
+  if (sc) { grn_io_win_unmap2(&sw); }
+
   buffer_close(ctx, ii, pseg);
 }
 
