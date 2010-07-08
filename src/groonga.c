@@ -97,7 +97,7 @@ usage(FILE *output)
           "  --version:                        show groonga version\n"
           "  --log-path <path>:                specify log path\n"
           "  --query-log-path <path>:          specify query log path\n"
-          "  --pid-file <path>:                specify pid file path (daemon mode only)\n"
+          "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
           "  --config-path <path>:             specify config file path\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
@@ -1743,7 +1743,7 @@ main(int argc, char **argv)
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', "query-log-path", NULL, 0, getopt_op_none},
-    {'\0', "pid-file", NULL, 0, getopt_op_none},
+    {'\0', "pid-path", NULL, 0, getopt_op_none},
     {'\0', "config-path", NULL, 0, getopt_op_none},
     {'\0', "show-config", NULL, mode_config, getopt_op_update},
     {'\0', NULL, NULL, 0, 0}
