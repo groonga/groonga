@@ -69,12 +69,11 @@ grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   int name_size;
   grn_id range_id;
 
-  GRN_TEXT_PUTS(ctx, buf, "#<column:var_size ");
   name_size = grn_obj_name(ctx, obj, NULL, 0);
   if (name_size) {
     grn_bulk_space(ctx, buf, name_size);
@@ -122,8 +121,24 @@ grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     break;
   }
 
-  GRN_TEXT_PUTS(ctx, buf, ">");
+  return GRN_SUCCESS;
+}
 
+static grn_rc
+grn_ra_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  GRN_TEXT_PUTS(ctx, buf, "#<column:fix_size ");
+  grn_store_inspect_body(ctx, buf, obj);
+  GRN_TEXT_PUTS(ctx, buf, ">");
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  GRN_TEXT_PUTS(ctx, buf, "#<column:var_size ");
+  grn_store_inspect_body(ctx, buf, obj);
+  GRN_TEXT_PUTS(ctx, buf, ">");
   return GRN_SUCCESS;
 }
 
@@ -223,6 +238,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   case GRN_ACCESSOR_VIEW :
     grn_accessor_inspect(ctx, buffer, obj);
     return buffer;
+  case GRN_COLUMN_FIX_SIZE :
+    grn_ra_inspect(ctx, buffer, obj);
+    break;
   case GRN_COLUMN_VAR_SIZE :
     grn_ja_inspect(ctx, buffer, obj);
     break;
