@@ -69,6 +69,65 @@ grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int name_size;
+  grn_id range_id;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<column:var_size ");
+  name_size = grn_obj_name(ctx, obj, NULL, 0);
+  if (name_size) {
+    grn_bulk_space(ctx, buf, name_size);
+    grn_obj_name(ctx, obj, GRN_BULK_CURR(buf) - name_size, name_size);
+  }
+
+  range_id = grn_obj_get_range(ctx, obj);
+  if (range_id) {
+    grn_obj *range = grn_ctx_at(ctx, range_id);
+    if (range) {
+      GRN_TEXT_PUTS(ctx, buf, " range:");
+      name_size = grn_obj_name(ctx, range, NULL, 0);
+      if (name_size) {
+        grn_bulk_space(ctx, buf, name_size);
+        grn_obj_name(ctx, range, GRN_BULK_CURR(buf) - name_size, name_size);
+      }
+      grn_obj_unlink(ctx, range);
+    }
+  }
+
+  GRN_TEXT_PUTS(ctx, buf, " type:");
+  switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+  case GRN_OBJ_COLUMN_VECTOR :
+    GRN_TEXT_PUTS(ctx, buf, "vector");
+    break;
+  case GRN_OBJ_COLUMN_SCALAR :
+    GRN_TEXT_PUTS(ctx, buf, "scalar");
+    break;
+  default:
+    break;
+  }
+
+  GRN_TEXT_PUTS(ctx, buf, " compress:");
+  switch (obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
+  case GRN_OBJ_COMPRESS_NONE :
+    GRN_TEXT_PUTS(ctx, buf, "none");
+    break;
+  case GRN_OBJ_COMPRESS_ZLIB :
+    GRN_TEXT_PUTS(ctx, buf, "zlib");
+    break;
+  case GRN_OBJ_COMPRESS_LZO :
+    GRN_TEXT_PUTS(ctx, buf, "lzo");
+    break;
+  default:
+    break;
+  }
+
+  GRN_TEXT_PUTS(ctx, buf, ">");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_obj sources;
@@ -164,6 +223,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   case GRN_ACCESSOR_VIEW :
     grn_accessor_inspect(ctx, buffer, obj);
     return buffer;
+  case GRN_COLUMN_VAR_SIZE :
+    grn_ja_inspect(ctx, buffer, obj);
+    break;
   case GRN_COLUMN_INDEX :
     grn_ii_inspect(ctx, buffer, obj);
   default:
