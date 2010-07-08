@@ -43,13 +43,13 @@ const char *grn_admin_html_path = NULL;
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key _nsubrecs"
 
-#define LAP(msg) {\
+#define LAP(msg,num) {\
   uint64_t et;\
   grn_timeval tv;\
   grn_timeval_now(ctx, &tv);\
   et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC\
     + (tv.tv_usec - ctx->impl->tv.tv_usec);\
-  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s", (intptr_t)ctx, et, msg);\
+  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s(%d)", (intptr_t)ctx, et, msg, num);\
 }
 
 grn_rc
@@ -110,7 +110,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
     if ((cache = grn_cache_fetch(ctx, cache_key, cache_key_size))) {
       GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(cache), GRN_TEXT_LEN(cache));
       grn_cache_unref(cache_key, cache_key_size);
-      LAP("cache");
+      LAP("cache", GRN_TEXT_LEN(cache));
       return ctx->rc;
     }
   }
@@ -165,7 +165,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
     } else {
       res = table_;
     }
-    LAP("select");
+    nhits = res ? grn_table_size(ctx, res) : 0;
+    LAP("select", nhits);
     GRN_OUTPUT_ARRAY_OPEN("RESULT", -1);
     if (res) {
       if (scorer && scorer_len) {
@@ -185,9 +186,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
           }
           grn_obj_unlink(ctx, scorer_);
         }
-        LAP("score");
+        LAP("score", nhits);
       }
-      nhits = grn_table_size(ctx, res);
 
       grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
       ERRCLR(ctx);
@@ -197,7 +197,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
           if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
             grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
-            LAP("sort");
+            LAP("sort", limit);
             GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, offset);
             format.flags =
               GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
@@ -218,7 +218,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
         GRN_OUTPUT_OBJ(res, &format);
         GRN_OBJ_FORMAT_FIN(ctx, &format);
       }
-      LAP("output");
+      LAP("output", limit);
       if (!ctx->rc && drilldown_len) {
         uint32_t i, ngkeys;
         grn_table_sort_key *gkeys;
@@ -274,7 +274,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
               }
               grn_obj_unlink(ctx, g.table);
             }
-            LAP("drilldown");
+            LAP("drilldown", nhits);
           }
           grn_table_sort_key_close(ctx, gkeys, ngkeys);
         }
