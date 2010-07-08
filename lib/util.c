@@ -231,12 +231,13 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     return buffer;
   case GRN_COLUMN_FIX_SIZE :
     grn_ra_inspect(ctx, buffer, obj);
-    break;
+    return buffer;
   case GRN_COLUMN_VAR_SIZE :
     grn_ja_inspect(ctx, buffer, obj);
-    break;
+    return buffer;
   case GRN_COLUMN_INDEX :
     grn_ii_inspect(ctx, buffer, obj);
+    return buffer;
   default:
     break;
   }
