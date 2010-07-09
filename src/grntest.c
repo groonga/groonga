@@ -532,7 +532,11 @@ diff_result(char *expect, int elen, char *result, int rlen)
     fprintf(stderr, " is not groonga command output\n", );
     return 1;
 */
-    e = expect;
+    if (elen > 2 && strncmp(expect + elen - 2, "]]", 2)) {
+      e = expect + elen;
+    } else {
+      e = expect;
+    }
   }
 
   i = 0;
@@ -551,7 +555,11 @@ diff_result(char *expect, int elen, char *result, int rlen)
     fprintf(stderr, " is not groonga command output\n");
     return 1;
 */
-    r = result;
+    if (rlen > 2 && strncmp(result + rlen - 2, "]]", 2)) {
+      r = result + rlen;
+    } else {
+      r = result;
+    }
   }
 
   return strncmp(e, r, strlen(e));

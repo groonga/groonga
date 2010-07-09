@@ -59,16 +59,17 @@ static int (*do_server)(char *path);
 static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
 static const char *pidfile_path;
 
-#ifdef WITH_LIBEDIT
+#ifdef HAVE_LIBEDIT
+#include <locale.h>
 #include <histedit.h>
 static EditLine   *el;
-static History    *elh;
-static HistEvent  elhv;
+static HistoryW   *elh;
+static HistEventW elhv;
 
-inline static const char *
+inline static const wchar_t *
 disp_prompt(EditLine *e __attribute__((unused)))
 {
-  return "> ";
+  return L"> ";
 }
 
 #endif
@@ -96,8 +97,9 @@ usage(FILE *output)
           "  --version:                        show groonga version\n"
           "  --log-path <path>:                specify log path\n"
           "  --query-log-path <path>:          specify query log path\n"
-          "  --pid-file <path>:                specify pid file path (daemon mode only)\n"
+          "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
           "  --config-path <path>:             specify config file path\n"
+          "  --cache-limit <limit>:            specify the max number of cache data\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -162,12 +164,22 @@ prompt(char *buf)
 {
   int len;
   if (!batchmode) {
-#ifdef WITH_LIBEDIT
-    const char *es;
-    es = el_gets(el, &len);
-    if (len > 0 && BUFSIZE > len) {
-      history(elh, &elhv, H_ENTER, es);
-      strncpy(buf, es, len);
+#ifdef HAVE_LIBEDIT
+    const wchar_t *es;
+    int nchar;
+    es = el_wgets(el, &nchar);
+    if (nchar > 0 && BUFSIZE > (MB_LEN_MAX * nchar + 1)) {
+      int i;
+      char *p;
+      mbstate_t ps;
+      history_w(elh, &elhv, H_ENTER, es);
+      wcrtomb(NULL, L'\0', &ps);
+      p = buf;
+      for (i = 0; i < nchar; i++) {
+        p += wcrtomb(p, es[i], &ps);
+      }
+      p[0] = '\0';
+      len = p - buf;
     } else {
       len = 0;
     }
@@ -1711,7 +1723,8 @@ main(int argc, char **argv)
   grn_encoding enc = GRN_ENC_DEFAULT;
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
-    *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL;
+    *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
+    *cache_limitstr = NULL;
   const char *config_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
@@ -1732,9 +1745,10 @@ main(int argc, char **argv)
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', "query-log-path", NULL, 0, getopt_op_none},
-    {'\0', "pid-file", NULL, 0, getopt_op_none},
+    {'\0', "pid-path", NULL, 0, getopt_op_none},
     {'\0', "config-path", NULL, 0, getopt_op_none},
     {'\0', "show-config", NULL, mode_config, getopt_op_update},
+    {'\0', "cache-limit", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1749,6 +1763,7 @@ main(int argc, char **argv)
   opts[16].arg = &grn_qlog_path;
   opts[17].arg = &pidfile_path;
   opts[18].arg = &config_path;
+  opts[20].arg = &cache_limitstr;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -1860,14 +1875,15 @@ main(int argc, char **argv)
     max_nfthreads = default_max_nfthreads;
   }
   batchmode = !isatty(0);
-#ifdef WITH_LIBEDIT
+#ifdef HAVE_LIBEDIT
   if (!batchmode) {
+    setlocale(LC_ALL, "");
     el = el_init(argv[0],stdin,stdout,stderr);
-    el_set(el, EL_PROMPT, &disp_prompt);
-    el_set(el, EL_EDITOR, "emacs");
-    elh = history_init();
-    history(elh, &elhv, H_SETSIZE, 200);
-    el_set(el, EL_HIST, history, elh);
+    el_wset(el, EL_PROMPT, &disp_prompt);
+    el_wset(el, EL_EDITOR, L"emacs");
+    elh = history_winit();
+    history_w(elh, &elhv, H_SETSIZE, 200);
+    el_set(el, EL_HIST, history_w, elh);
   }
 #endif
   if (grn_init()) { return -1; }
@@ -1896,6 +1912,18 @@ main(int argc, char **argv)
   } else {
     gethostname(hostname, HOST_NAME_MAX);
   }
+  if (cache_limitstr) {
+    uint32_t max, *max_nentries;
+    const char *end, *rest;
+    end = cache_limitstr + strlen(cache_limitstr);
+    max_nentries = grn_cache_max_nentries();
+    max = grn_atoui(cache_limitstr, end, &rest);
+    if (end == rest) {
+      *max_nentries = max;
+    } else {
+      fprintf(stderr, "invalid --cache-limit value: <%s>\n", cache_limitstr);
+    }
+  }
   newdb = (mode & MODE_NEW_DB);
   useql = (mode & MODE_USE_QL);
   switch (mode & MODE_MASK) {
@@ -1915,9 +1943,9 @@ main(int argc, char **argv)
     r = -1;
     break;
   }
-#ifdef WITH_LIBEDIT
+#ifdef HAVE_LIBEDIT
   if (!batchmode) {
-    history_end(elh);
+    history_wend(elh);
     el_end(el);
   }
 #endif
