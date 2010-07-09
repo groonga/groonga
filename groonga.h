@@ -106,6 +106,9 @@ typedef enum {
   GRN_RETRY_MAX = -64,
   GRN_INCOMPATIBLE_FILE_FORMAT = -65,
   GRN_UPDATE_NOT_ALLOWED = -66,
+  GRN_TOO_SMALL_OFFSET = -67,
+  GRN_TOO_LARGE_OFFSET = -68,
+  GRN_TOO_SMALL_LIMIT = -69
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);

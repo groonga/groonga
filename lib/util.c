@@ -30,19 +30,22 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
   if (offset < 0) {
     offset += size;
     if (offset < 0) {
-      ERR(GRN_INVALID_ARGUMENT, "too small offset");
-      goto exit;
+      *p_offset = 0;
+      *p_limit = 0;
+      return GRN_TOO_SMALL_OFFSET;
     }
   } else if (offset != 0 && offset >= size) {
-    ERR(GRN_INVALID_ARGUMENT, "too large offset");
-    goto exit;
+    *p_offset = 0;
+    *p_limit = 0;
+    return GRN_TOO_LARGE_OFFSET;
   }
 
   if (limit < 0) {
     limit += size + 1;
     if (limit < 0) {
-      ERR(GRN_INVALID_ARGUMENT, "too small limit");
-      goto exit;
+      *p_offset = 0;
+      *p_limit = 0;
+      return GRN_TOO_SMALL_LIMIT;
     }
   } else if (limit > size) {
     limit = size;
@@ -56,10 +59,6 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
   *p_offset = offset;
   *p_limit = limit;
   return GRN_SUCCESS;
-exit:
-  *p_offset = 0;
-  *p_limit = 0;
-  return ctx->rc;
 }
 
 static grn_rc

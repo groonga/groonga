@@ -190,7 +190,6 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
       }
 
       grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
-      ERRCLR(ctx);
 
       if (sortby_len) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
@@ -237,7 +236,6 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
 
               grn_normalize_offset_and_limit(ctx, nhits,
                                              &n_drilldown_offset, &n_drilldown_limit);
-              ERRCLR(ctx);
 
               if (drilldown_sortby_len) {
                 if ((keys = grn_table_sort_key_from_str(ctx,
