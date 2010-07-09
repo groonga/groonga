@@ -456,18 +456,27 @@ AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
 
 # libedit
 AC_ARG_WITH(libedit,
-  [AS_HELP_STRING([--with-libedit],
-    [use libedit for console. [default=yes]])],
-  [with_libedit="$withval"],
-  [with_libedit="yes"])
-AC_CHECK_LIB(edit,el_init,
-  [with_libedit="yes"],
-  [with_libedit="no"])
-if test "x$with_libedit" = "xyes"; then
-  AC_DEFINE(WITH_LIBEDIT, [1], [with libedit])
-  EDIT_LIBS="-ledit"
+  [AS_HELP_STRING([--disable-libedit],
+    [use libedit for console. [default=auto-detect]])],
+  [enable_libedit="$withval"],
+  [enable_libedit="auto"])
+if test "x$enable_libedit" != "xno"; then
+  PKG_CHECK_MODULES([LIBEDIT], [libedit >= 3.0],
+    [LDFLAGS_SAVE="$LDFLAGS"
+     LDFLAGS="$LIBEDIT_LIBS $LDFLAGS"
+     AC_CHECK_LIB(edit, el_wline,
+       [libedit_available=yes],
+       [libedit_available=no])
+     LDFLAGS="$LDFLAGS_SAVE"],
+    [libedit_available=no])
+  if test "x$libedit_available" = "xyes"; then
+    AC_DEFINE(HAVE_LIBEDIT, [1], [Use libedit with multibyte support.])
+  else
+    if test "x$enable_editline" = "xyes"; then
+      AC_MSG_ERROR("No libedit found")
+    fi
+  fi
 fi
-
 
 # zlib
 AC_ARG_WITH(zlib,
@@ -584,7 +593,7 @@ AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, ["$suffix"], "module suffix")
 # flags for compile groonga
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 CFLAGS="$CFLAGS -DMODULES_DIR=\\\"\"\$(modulesdir)\"\\\""
-LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS $EDIT_LIBS"
+LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # flags for groonga-cfg
