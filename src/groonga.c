@@ -99,6 +99,7 @@ usage(FILE *output)
           "  --query-log-path <path>:          specify query log path\n"
           "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
           "  --config-path <path>:             specify config file path\n"
+          "  --cache-limit <limit>:            specify the max number of cache data\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -1722,7 +1723,8 @@ main(int argc, char **argv)
   grn_encoding enc = GRN_ENC_DEFAULT;
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
-    *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL;
+    *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
+    *cache_limitstr = NULL;
   const char *config_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
@@ -1746,6 +1748,7 @@ main(int argc, char **argv)
     {'\0', "pid-path", NULL, 0, getopt_op_none},
     {'\0', "config-path", NULL, 0, getopt_op_none},
     {'\0', "show-config", NULL, mode_config, getopt_op_update},
+    {'\0', "cache-limit", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1760,6 +1763,7 @@ main(int argc, char **argv)
   opts[16].arg = &grn_qlog_path;
   opts[17].arg = &pidfile_path;
   opts[18].arg = &config_path;
+  opts[20].arg = &cache_limitstr;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -1907,6 +1911,18 @@ main(int argc, char **argv)
     }
   } else {
     gethostname(hostname, HOST_NAME_MAX);
+  }
+  if (cache_limitstr) {
+    uint32_t max, *max_nentries;
+    const char *end, *rest;
+    end = cache_limitstr + strlen(cache_limitstr);
+    max_nentries = grn_cache_max_nentries();
+    max = grn_atoui(cache_limitstr, end, &rest);
+    if (end == rest) {
+      *max_nentries = max;
+    } else {
+      fprintf(stderr, "invalid --cache-limit value: <%s>\n", cache_limitstr);
+    }
   }
   newdb = (mode & MODE_NEW_DB);
   useql = (mode & MODE_USE_QL);
