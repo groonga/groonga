@@ -100,6 +100,7 @@ graph_title #{title}
 graph_vlabel Bytes
 graph_category groonga
 graph_info disk usage in groonga tables and columns
+graph_args --base 1024
 graph_total Total
 
 database.label Database
