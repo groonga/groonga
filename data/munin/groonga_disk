@@ -101,7 +101,6 @@ graph_vlabel Bytes
 graph_category groonga
 graph_info disk usage in groonga tables and columns
 graph_total Total
-graph_args --base 1024
 
 database.label Database
 database.type GAUGE
@@ -128,7 +127,7 @@ EOF
 end
 
 path = Shellwords.shellescape(@path)
-du_result = `#{@du} #{path}*`
+du_result = `#{@du} -B1 #{path}*`
 unless $?.success?
   puts("error: #{du_result}")
   exit(false)
