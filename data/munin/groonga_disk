@@ -11,7 +11,6 @@ label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @du = ENV["du"] || "du"
 @path = ENV["path"]
-@show_total = (ENV["show_total"] == "yes")
 
 command = ARGV.shift
 
@@ -101,13 +100,10 @@ graph_title #{title}
 graph_vlabel Bytes
 graph_category groonga
 graph_info disk usage in groonga tables and columns
-EOF
-  puts "graph_total Total" if @show_total
-
-  puts <<EOF
+graph_total Total
 
 database.label Database
-database.type GAUGE
+database.type AREA
 EOF
   schema.each do |table|
     table_key = table["key"]
@@ -115,7 +111,7 @@ EOF
     puts <<EOF
 
 #{table_key}.label #{table_name}
-#{table_key}.type GAUGE
+#{table_key}.type STACK
 EOF
     table["columns"].each do |column|
       column_key = column["key"]
@@ -123,7 +119,7 @@ EOF
       puts <<EOF
 
 #{column_key}.label #{column_name}
-#{column_key}.type GAUGE
+#{column_key}.type STACK
 EOF
     end
   end
