@@ -103,7 +103,7 @@ graph_info disk usage in groonga tables and columns
 graph_total Total
 
 database.label Database
-database.type AREA
+database.draw AREA
 EOF
   schema.each do |table|
     table_key = table["key"]
@@ -111,7 +111,7 @@ EOF
     puts <<EOF
 
 #{table_key}.label #{table_name}
-#{table_key}.type STACK
+#{table_key}.draw STACK
 EOF
     table["columns"].each do |column|
       column_key = column["key"]
@@ -119,7 +119,7 @@ EOF
       puts <<EOF
 
 #{column_key}.label #{column_name}
-#{column_key}.type STACK
+#{column_key}.draw STACK
 EOF
     end
   end
