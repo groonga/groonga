@@ -321,9 +321,9 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
 static void
 s_output(grn_ctx *ctx, int flags, void *arg)
 {
-  if (ctx && ctx->impl) {
+  if (ctx && ctx->impl && (flags & GRN_CTX_TAIL)) {
     grn_obj *buf = ctx->impl->outbuf;
-    if (GRN_TEXT_LEN(buf)) {
+    if (GRN_TEXT_LEN(buf) || ctx->rc) {
       FILE * stream = (FILE *) arg;
       grn_obj head, foot;
       GRN_TEXT_INIT(&head, 0);
@@ -394,7 +394,7 @@ do_alone(int argc, char **argv)
 } while (0)
 
 static int
-g_output(grn_ctx *ctx)
+c_output(grn_ctx *ctx)
 {
   int flags;
   char *str;
@@ -407,7 +407,7 @@ g_output(grn_ctx *ctx)
       return -1;
     }
     */
-    if (str_len) {
+    if (str_len || ctx->rc) {
       grn_obj head, body, foot;
       GRN_TEXT_INIT(&head, 0);
       GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
@@ -449,7 +449,7 @@ g_client(int argc, char **argv)
           grn_ctx_send(ctx, buf, size, 0);
           rc = ctx->rc;
           if (rc) { break; }
-          if (g_output(ctx)) { goto exit; }
+          if (c_output(ctx)) { goto exit; }
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
       } else {
@@ -458,7 +458,7 @@ g_client(int argc, char **argv)
       grn_obj_unlink(ctx, &text);
     } else {
       rc = grn_ctx_sendv(ctx, argc, argv, 0);
-      if (g_output(ctx)) { goto exit; }
+      if (c_output(ctx)) { goto exit; }
     }
   } else {
     fprintf(stderr, "grn_ctx_connect failed (%s:%d)\n", hostname, port);
@@ -489,6 +489,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   grn_obj *body = &hc->body;
   const char *mime_type = ctx->impl->mime_type;
   grn_obj head, foot, *outbuf = ctx->impl->outbuf;
+  if (!(flags & GRN_CTX_TAIL)) { return; }
   GRN_TEXT_INIT(&head, 0);
   GRN_TEXT_INIT(&foot, 0);
   if (!expr_rc) {
@@ -1412,7 +1413,7 @@ dispatcher(grn_ctx *ctx, grn_edge *edge)
 }
 
 static void
-output(grn_ctx *ctx, int flags, void *arg)
+g_output(grn_ctx *ctx, int flags, void *arg)
 {
   grn_edge *edge = arg;
   grn_com *com = edge->com;
@@ -1454,7 +1455,7 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
-      grn_ctx_recv_handler_set(&edge->ctx, output, edge);
+      grn_ctx_recv_handler_set(&edge->ctx, g_output, edge);
       com->opaque = edge;
       grn_obj_close(&edge->ctx, edge->ctx.impl->outbuf);
       edge->ctx.impl->outbuf = grn_msg_open(&edge->ctx, com, &edge->send_old);
