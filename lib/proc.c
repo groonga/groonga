@@ -1779,6 +1779,7 @@ static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *outbuf = ctx->impl->outbuf;
+  ctx->impl->output_type = GRN_CONTENT_NONE;
   dump_scheme(ctx, outbuf);
   /* To update index columns correctly, we first create the whole scheme, then
      load non-derivative records, while skipping records of index columns. That
