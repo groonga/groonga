@@ -394,7 +394,7 @@ do_alone(int argc, char **argv)
 } while (0)
 
 static int
-recvput(grn_ctx *ctx)
+g_output(grn_ctx *ctx)
 {
   int flags;
   char *str;
@@ -449,7 +449,7 @@ g_client(int argc, char **argv)
           grn_ctx_send(ctx, buf, size, 0);
           rc = ctx->rc;
           if (rc) { break; }
-          if (recvput(ctx)) { goto exit; }
+          if (g_output(ctx)) { goto exit; }
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
       } else {
@@ -458,7 +458,7 @@ g_client(int argc, char **argv)
       grn_obj_unlink(ctx, &text);
     } else {
       rc = grn_ctx_sendv(ctx, argc, argv, 0);
-      if (recvput(ctx)) { goto exit; }
+      if (g_output(ctx)) { goto exit; }
     }
   } else {
     fprintf(stderr, "grn_ctx_connect failed (%s:%d)\n", hostname, port);
@@ -1420,7 +1420,6 @@ output(grn_ctx *ctx, int flags, void *arg)
   msg->edge_id = req->edge_id;
   msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
     ? GRN_COM_PROTO_MBRES : req->header.proto;
-  ERRCLR(ctx);
   if (grn_msg_send(ctx, (grn_obj *)msg,
                    (flags & GRN_CTX_MORE) ? GRN_CTX_MORE : GRN_CTX_TAIL)) {
     edge->stat = EDGE_ABORT;

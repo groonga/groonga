@@ -977,6 +977,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
     if (ctx->impl->com) {
       grn_rc rc;
       grn_com_header sheader;
+      grn_timeval_now(ctx, &ctx->impl->tv);
       if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
       if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
       sheader.proto = GRN_COM_PROTO_GQTP;
@@ -1064,7 +1065,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
           *flags = (header.flags & GRN_CTX_TAIL) ? 0 : GRN_CTX_MORE;
         }
         ctx->impl->output_type = header.qtype;
-        ctx->rc = header.status;
+        ctx->rc = (int16_t) header.status;
       }
       goto exit;
     } else {
