@@ -315,6 +315,7 @@ GroongaAdmin = {
     GroongaAdmin.statusTimer = null;
     GroongaAdmin.semaphore = new Array();
     GroongaAdmin.current_status = 0;
+    GroongaAdmin.reload_record_func = function(){};
 
     GroongaAdmin.database_tabs = $('#database-tabs').tabs({
       show: function(e, ui) {
@@ -338,8 +339,7 @@ GroongaAdmin = {
       GroongaAdmin.update_createrecord(GroongaAdmin.current_table);
     });
     $('#tab-recordlist-link').click(function() {
-      $('#tab-recordlist-simplequery').val('');
-      GroongaAdmin.recordlist_simple(GroongaAdmin.current_table, null, null, 1);
+      GroongaAdmin.reload_record_func();
     });
     $('#createtable-add-table').click(function() {
       GroongaAdmin.createtable();
@@ -371,7 +371,7 @@ GroongaAdmin = {
             d[val] = e.val();
           }
         });
-        GroongaAdmin.recordlist(d);
+        GroongaAdmin.recordlist(d, true);
       } else {
         // simple
         GroongaAdmin.recordlist_simple(
@@ -749,26 +749,14 @@ GroongaAdmin = {
       if (simplequery) {
         d[simplequery_type] = simplequery;
       }
-      GroongaAdmin.recordlist(d,
-        GroongaAdmin.pager_element_factory(
-          GroongaAdmin.recordlist_count,
-          page,
-          13,
-          function() {
-            GroongaAdmin.recordlist_simple(
-              GroongaAdmin.current_table,
-              simplequery,
-              simplequery_type,
-              Number($(this).text()));
-            return false;
-          }
-        ),
-        hide_dialog
-      );
+      GroongaAdmin.recordlist(d, true, hide_dialog);
       break;
     }
   },
-  recordlist: function(params, pager_func, hide_dialog) {
+  recordlist: function(params, show_pager, hide_dialog) {
+    GroongaAdmin.reload_record_func = function(){
+      GroongaAdmin.recordlist(params, show_pager, hide_dialog);
+    };
     GroongaAdmin.showloading(
       $.ajax({
         url: '/d/select',
@@ -785,8 +773,27 @@ GroongaAdmin = {
           var recs = body.shift();
           var all_count = recs.shift()[0];
           var pager;
-          if (pager_func) {
-            pager = pager_func(all_count);
+          if (show_pager) {
+            offset = params['offset'] || 0;
+            rows = params['limit'] || 10;
+            if (rows < 0){
+              rows = all_count + parseInt(rows) + 1;
+            }
+            if (rows != '' && !parseInt(rows)) {
+              pager = $('<span />');
+            } else {
+              pager =
+                GroongaAdmin.pager_element_factory(
+                  rows,
+                  Math.floor(offset/rows)+1,
+                  13,
+                  function() {
+                    params['offset'] = (Number($(this).text()) - 1) * rows;
+                    GroongaAdmin.recordlist(params, true, false);
+                    return false;
+                  }
+                )(all_count);
+            }
           } else {
             pager = $('<span />');
           }
