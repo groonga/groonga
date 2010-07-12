@@ -1062,9 +1062,8 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         } else {
           *flags = (header.flags & GRN_CTX_TAIL) ? 0 : GRN_CTX_MORE;
         }
-      }
-      if (ctx->rc) {
-        ERR(ctx->rc, "grn_com_recv failed!");
+        ctx->impl->output_type = header.qtype;
+        ctx->impl->rc = header.status;
       }
       goto exit;
     } else {
