@@ -5,4 +5,5 @@ dist_munin_plugins_SCRIPTS =			\
 	groonga_status				\
 	groonga_memory				\
 	groonga_n_records			\
-	groonga_query_performance
+	groonga_query_performance		\
+	groonga_disk

@@ -1739,10 +1739,14 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const void *max, unsigned max_size,
                       int offset, int limit, int flags)
 {
+  grn_rc rc;
   grn_table_cursor *tc = NULL;
+  if (!table) { return tc; }
   GRN_API_ENTER;
-  if (table && !grn_normalize_offset_and_limit(ctx, grn_table_size(ctx, table),
-                                               &offset, &limit)) {
+  rc = grn_normalize_offset_and_limit(ctx, grn_table_size(ctx, table), &offset, &limit);
+  if (rc) {
+    ERR(rc, "grn_normalize_offset_and_limit failed");
+  } else {
     switch (table->header.type) {
     case GRN_DB :
       tc = (grn_table_cursor *)grn_pat_cursor_open(ctx, ((grn_db *)table)->keys,
@@ -6529,6 +6533,7 @@ int
 grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                grn_obj *result, grn_table_sort_key *keys, int n_keys)
 {
+  grn_rc rc;
   grn_obj *index;
   int n, e, i = 0;
   sort_entry *array, *ep;
@@ -6550,7 +6555,8 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     goto exit;
   }
   n = grn_table_size(ctx, table);
-  if (grn_normalize_offset_and_limit(ctx, n, &offset, &limit)) {
+  if ((rc = grn_normalize_offset_and_limit(ctx, n, &offset, &limit))) {
+    ERR(rc, "grn_normalize_offset_and_limit failed");
     goto exit;
   } else {
     e = offset + limit;

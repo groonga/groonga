@@ -59,16 +59,17 @@ static int (*do_server)(char *path);
 static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
 static const char *pidfile_path;
 
-#ifdef WITH_LIBEDIT
+#ifdef HAVE_LIBEDIT
+#include <locale.h>
 #include <histedit.h>
 static EditLine   *el;
-static History    *elh;
-static HistEvent  elhv;
+static HistoryW   *elh;
+static HistEventW elhv;
 
-inline static const char *
+inline static const wchar_t *
 disp_prompt(EditLine *e __attribute__((unused)))
 {
-  return "> ";
+  return L"> ";
 }
 
 #endif
@@ -96,8 +97,9 @@ usage(FILE *output)
           "  --version:                        show groonga version\n"
           "  --log-path <path>:                specify log path\n"
           "  --query-log-path <path>:          specify query log path\n"
-          "  --pid-file <path>:                specify pid file path (daemon mode only)\n"
+          "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
           "  --config-path <path>:             specify config file path\n"
+          "  --cache-limit <limit>:            specify the max number of cache data\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -162,12 +164,22 @@ prompt(char *buf)
 {
   int len;
   if (!batchmode) {
-#ifdef WITH_LIBEDIT
-    const char *es;
-    es = el_gets(el, &len);
-    if (len > 0 && BUFSIZE > len) {
-      history(elh, &elhv, H_ENTER, es);
-      strncpy(buf, es, len);
+#ifdef HAVE_LIBEDIT
+    const wchar_t *es;
+    int nchar;
+    es = el_wgets(el, &nchar);
+    if (nchar > 0 && BUFSIZE > (MB_LEN_MAX * nchar + 1)) {
+      int i;
+      char *p;
+      mbstate_t ps;
+      history_w(elh, &elhv, H_ENTER, es);
+      wcrtomb(NULL, L'\0', &ps);
+      p = buf;
+      for (i = 0; i < nchar; i++) {
+        p += wcrtomb(p, es[i], &ps);
+      }
+      p[0] = '\0';
+      len = p - buf;
     } else {
       len = 0;
     }
@@ -188,122 +200,6 @@ prompt(char *buf)
   }
   return len;
 }
-
-static int
-do_alone(int argc, char **argv)
-{
-  int rc = -1;
-  char *path = NULL;
-  grn_obj *db;
-  grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
-  if (argc > 0 && argv) { path = *argv++; argc--; }
-  db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
-  if (db) {
-    grn_ctx_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
-    if (!argc) {
-      grn_obj text;
-      GRN_TEXT_INIT(&text, 0);
-      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
-      if (!rc) {
-        char *buf = GRN_TEXT_VALUE(&text);
-        int  len;
-        while ((len = prompt(buf))) {
-          uint32_t size = len - 1;
-          grn_ctx_send(ctx, buf, size, 0);
-          if (ctx->stat == GRN_CTX_QUIT) { break; }
-        }
-        rc = ctx->rc;
-      } else {
-        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
-      }
-      grn_obj_unlink(ctx, &text);
-    } else {
-      rc = grn_ctx_sendv(ctx, argc, argv, 0);
-    }
-    grn_obj_close(ctx, db);
-  } else {
-    fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
-  }
-  grn_ctx_fin(ctx);
-  return rc;
-}
-
-#define BATCHMODE(ctx) do {\
-  int flags;\
-  unsigned int str_len;\
-  char *str, *query = "(batchmode #t)";\
-  grn_ctx_send(ctx, query, strlen(query), 0);\
-  do {\
-    if (grn_ctx_recv(ctx, &str, &str_len, &flags)) {\
-      fprintf(stderr, "grn_ctx_recv failed\n");\
-    }\
-  } while ((flags & GRN_CTX_MORE));\
-} while (0)
-
-static int
-recvput(grn_ctx *ctx)
-{
-  int flags;
-  char *str;
-  unsigned int str_len;
-  do {
-    grn_ctx_recv(ctx, &str, &str_len, &flags);
-    if (ctx->rc) {
-      fprintf(stderr, "grn_ctx_recv failed\n");
-      return -1;
-    }
-    if (str_len) {
-      fwrite(str, 1, str_len, stdout);
-      putchar('\n');
-      fflush(stdout);
-    }
-  } while ((flags & GRN_CTX_MORE));
-  return 0;
-}
-
-static int
-g_client(int argc, char **argv)
-{
-  int rc = -1;
-  grn_ctx ctx_, *ctx = &ctx_;
-  char *hostname = DEFAULT_DEST;
-  if (argc > 0 && argv) { hostname = *argv++; argc--; }
-  grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
-  if (!grn_ctx_connect(ctx, hostname, port, 0)) {
-    if (!argc) {
-      grn_obj text;
-      GRN_TEXT_INIT(&text, 0);
-      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
-      if (!rc) {
-        char *buf = GRN_TEXT_VALUE(&text);
-        int   len;
-        if (batchmode) { BATCHMODE(ctx); }
-        while ((len = prompt(buf))) {
-          uint32_t size = len - 1;
-          grn_ctx_send(ctx, buf, size, 0);
-          rc = ctx->rc;
-          if (rc) { break; }
-          if (recvput(ctx)) { goto exit; }
-          if (ctx->stat == GRN_CTX_QUIT) { break; }
-        }
-      } else {
-        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
-      }
-      grn_obj_unlink(ctx, &text);
-    } else {
-      rc = grn_ctx_sendv(ctx, argc, argv, 0);
-      if (recvput(ctx)) { goto exit; }
-    }
-  } else {
-    fprintf(stderr, "grn_ctx_connect failed (%s:%d)\n", hostname, port);
-  }
-exit :
-  grn_ctx_fin(ctx);
-  return rc;
-}
-
-/* server */
 
 typedef enum {
   grn_http_request_type_none = 0,
@@ -377,7 +273,8 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         grn_text_itoa(ctx, head, ctx->errline);
       }
     }
-    GRN_TEXT_PUTC(ctx, head, '\n');
+    GRN_TEXT_PUTS(ctx, head, "\n");
+    GRN_TEXT_PUTS(ctx, foot, "\nEND");
     break;
   case GRN_CONTENT_XML:
     GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
@@ -420,6 +317,158 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
     break;
   }
 }
+
+static void
+s_output(grn_ctx *ctx, int flags, void *arg)
+{
+  if (ctx && ctx->impl) {
+    grn_obj *buf = ctx->impl->outbuf;
+    if (GRN_TEXT_LEN(buf)) {
+      FILE * stream = (FILE *) arg;
+      grn_obj head, foot;
+      GRN_TEXT_INIT(&head, 0);
+      GRN_TEXT_INIT(&foot, 0);
+      print_return_code(ctx, ctx->rc, &head, buf, &foot);
+      fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stream);
+      fwrite(GRN_TEXT_VALUE(buf), 1, GRN_TEXT_LEN(buf), stream);
+      fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
+      fputc('\n', stream);
+      fflush(stream);
+      GRN_BULK_REWIND(buf);
+      GRN_OBJ_FIN(ctx, &head);
+      GRN_OBJ_FIN(ctx, &foot);
+    }
+  }
+}
+
+static int
+do_alone(int argc, char **argv)
+{
+  int rc = -1;
+  char *path = NULL;
+  grn_obj *db;
+  grn_ctx ctx_, *ctx = &ctx_;
+  grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
+  if (argc > 0 && argv) { path = *argv++; argc--; }
+  db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
+  if (db) {
+    grn_ctx_recv_handler_set(ctx, s_output, stdout);
+    if (!argc) {
+      grn_obj text;
+      GRN_TEXT_INIT(&text, 0);
+      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
+      if (!rc) {
+        char *buf = GRN_TEXT_VALUE(&text);
+        int  len;
+        while ((len = prompt(buf))) {
+          uint32_t size = len - 1;
+          grn_ctx_send(ctx, buf, size, 0);
+          if (ctx->stat == GRN_CTX_QUIT) { break; }
+        }
+        rc = ctx->rc;
+      } else {
+        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
+      }
+      grn_obj_unlink(ctx, &text);
+    } else {
+      rc = grn_ctx_sendv(ctx, argc, argv, 0);
+    }
+    grn_obj_close(ctx, db);
+  } else {
+    fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
+  }
+  grn_ctx_fin(ctx);
+  return rc;
+}
+
+#define BATCHMODE(ctx) do {\
+  int flags;\
+  unsigned int str_len;\
+  char *str, *query = "(batchmode #t)";\
+  grn_ctx_send(ctx, query, strlen(query), 0);\
+  do {\
+    if (grn_ctx_recv(ctx, &str, &str_len, &flags)) {\
+      fprintf(stderr, "grn_ctx_recv failed\n");\
+    }\
+  } while ((flags & GRN_CTX_MORE));\
+} while (0)
+
+static int
+g_output(grn_ctx *ctx)
+{
+  int flags;
+  char *str;
+  unsigned int str_len;
+  do {
+    grn_ctx_recv(ctx, &str, &str_len, &flags);
+    /*
+    if (ctx->rc) {
+      fprintf(stderr, "grn_ctx_recv failed\n");
+      return -1;
+    }
+    */
+    if (str_len) {
+      grn_obj head, body, foot;
+      GRN_TEXT_INIT(&head, 0);
+      GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TEXT_INIT(&foot, 0);
+      GRN_TEXT_SET(ctx, &body, str, str_len);
+      print_return_code(ctx, ctx->rc, &head, &body, &foot);
+      fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stdout);
+      fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), stdout);
+      fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stdout);
+      fputc('\n', stdout);
+      fflush(stdout);
+      GRN_OBJ_FIN(ctx, &head);
+      GRN_OBJ_FIN(ctx, &body);
+      GRN_OBJ_FIN(ctx, &foot);
+    }
+  } while ((flags & GRN_CTX_MORE));
+  return 0;
+}
+
+static int
+g_client(int argc, char **argv)
+{
+  int rc = -1;
+  grn_ctx ctx_, *ctx = &ctx_;
+  char *hostname = DEFAULT_DEST;
+  if (argc > 0 && argv) { hostname = *argv++; argc--; }
+  grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
+  if (!grn_ctx_connect(ctx, hostname, port, 0)) {
+    if (!argc) {
+      grn_obj text;
+      GRN_TEXT_INIT(&text, 0);
+      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
+      if (!rc) {
+        char *buf = GRN_TEXT_VALUE(&text);
+        int   len;
+        if (batchmode) { BATCHMODE(ctx); }
+        while ((len = prompt(buf))) {
+          uint32_t size = len - 1;
+          grn_ctx_send(ctx, buf, size, 0);
+          rc = ctx->rc;
+          if (rc) { break; }
+          if (g_output(ctx)) { goto exit; }
+          if (ctx->stat == GRN_CTX_QUIT) { break; }
+        }
+      } else {
+        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
+      }
+      grn_obj_unlink(ctx, &text);
+    } else {
+      rc = grn_ctx_sendv(ctx, argc, argv, 0);
+      if (g_output(ctx)) { goto exit; }
+    }
+  } else {
+    fprintf(stderr, "grn_ctx_connect failed (%s:%d)\n", hostname, port);
+  }
+exit :
+  grn_ctx_fin(ctx);
+  return rc;
+}
+
+/* server */
 
 #define JSON_CALLBACK_PARAM "callback"
 
@@ -1371,7 +1420,6 @@ output(grn_ctx *ctx, int flags, void *arg)
   msg->edge_id = req->edge_id;
   msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
     ? GRN_COM_PROTO_MBRES : req->header.proto;
-  ERRCLR(ctx);
   if (grn_msg_send(ctx, (grn_obj *)msg,
                    (flags & GRN_CTX_MORE) ? GRN_CTX_MORE : GRN_CTX_TAIL)) {
     edge->stat = EDGE_ABORT;
@@ -1711,7 +1759,8 @@ main(int argc, char **argv)
   grn_encoding enc = GRN_ENC_DEFAULT;
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
-    *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL;
+    *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
+    *cache_limitstr = NULL;
   const char *config_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
@@ -1732,9 +1781,10 @@ main(int argc, char **argv)
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', "query-log-path", NULL, 0, getopt_op_none},
-    {'\0', "pid-file", NULL, 0, getopt_op_none},
+    {'\0', "pid-path", NULL, 0, getopt_op_none},
     {'\0', "config-path", NULL, 0, getopt_op_none},
     {'\0', "show-config", NULL, mode_config, getopt_op_update},
+    {'\0', "cache-limit", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -1749,6 +1799,7 @@ main(int argc, char **argv)
   opts[16].arg = &grn_qlog_path;
   opts[17].arg = &pidfile_path;
   opts[18].arg = &config_path;
+  opts[20].arg = &cache_limitstr;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -1860,14 +1911,15 @@ main(int argc, char **argv)
     max_nfthreads = default_max_nfthreads;
   }
   batchmode = !isatty(0);
-#ifdef WITH_LIBEDIT
+#ifdef HAVE_LIBEDIT
   if (!batchmode) {
+    setlocale(LC_ALL, "");
     el = el_init(argv[0],stdin,stdout,stderr);
-    el_set(el, EL_PROMPT, &disp_prompt);
-    el_set(el, EL_EDITOR, "emacs");
-    elh = history_init();
-    history(elh, &elhv, H_SETSIZE, 200);
-    el_set(el, EL_HIST, history, elh);
+    el_wset(el, EL_PROMPT, &disp_prompt);
+    el_wset(el, EL_EDITOR, L"emacs");
+    elh = history_winit();
+    history_w(elh, &elhv, H_SETSIZE, 200);
+    el_set(el, EL_HIST, history_w, elh);
   }
 #endif
   if (grn_init()) { return -1; }
@@ -1896,6 +1948,18 @@ main(int argc, char **argv)
   } else {
     gethostname(hostname, HOST_NAME_MAX);
   }
+  if (cache_limitstr) {
+    uint32_t max, *max_nentries;
+    const char *end, *rest;
+    end = cache_limitstr + strlen(cache_limitstr);
+    max_nentries = grn_cache_max_nentries();
+    max = grn_atoui(cache_limitstr, end, &rest);
+    if (end == rest) {
+      *max_nentries = max;
+    } else {
+      fprintf(stderr, "invalid --cache-limit value: <%s>\n", cache_limitstr);
+    }
+  }
   newdb = (mode & MODE_NEW_DB);
   useql = (mode & MODE_USE_QL);
   switch (mode & MODE_MASK) {
@@ -1915,9 +1979,9 @@ main(int argc, char **argv)
     r = -1;
     break;
   }
-#ifdef WITH_LIBEDIT
+#ifdef HAVE_LIBEDIT
   if (!batchmode) {
-    history_end(elh);
+    history_wend(elh);
     el_end(el);
   }
 #endif

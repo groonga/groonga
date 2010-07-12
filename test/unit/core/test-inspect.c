@@ -59,6 +59,10 @@ void data_accessor_column_name(void);
 void test_accessor_column_name(gconstpointer data);
 void data_accessor_dynamic_pseudo_column_name(void);
 void test_accessor_dynamic_pseudo_column_name(gconstpointer data);
+void test_column_fix_size(void);
+void test_column_var_size(void);
+void test_column_index(void);
+void test_type(void);
 
 static gchar *tmp_directory;
 
@@ -576,4 +580,77 @@ test_accessor_dynamic_pseudo_column_name(gconstpointer data)
   cut_assert_not_null(accessor);
   inspected = grn_inspect(context, NULL, accessor);
   cut_assert_equal_string(accessor_name, inspected_string());
+}
+
+void
+test_column_fix_size(void)
+{
+  grn_obj *column;
+
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites score COLUMN_SCALAR Int32");
+
+  column = get_object("Sites.score");
+  inspected = grn_inspect(context, NULL, column);
+  cut_assert_equal_string("#<column:fix_size "
+                          "Sites.score "
+                          "range:Int32 "
+                          "type:scalar "
+                          "compress:none"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_column_var_size(void)
+{
+  grn_obj *column;
+
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR ShortText");
+
+  column = get_object("Sites.name");
+  inspected = grn_inspect(context, NULL, column);
+  cut_assert_equal_string("#<column:var_size "
+                          "Sites.name "
+                          "range:ShortText "
+                          "type:scalar "
+                          "compress:none"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_column_index(void)
+{
+  grn_obj *column;
+
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Terms TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Terms Sites_key COLUMN_INDEX Sites _key");
+
+  column = get_object("Terms.Sites_key");
+  inspected = grn_inspect(context, NULL, column);
+  cut_assert_equal_string("#<column:index "
+                          "Terms.Sites_key "
+                          "range:Sites "
+                          "sources:[Sites] "
+                          "flags:NONE"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_type(void)
+{
+  grn_obj *type;
+
+  type = get_object("ShortText");
+  inspected = grn_inspect(context, NULL, type);
+  cut_assert_equal_string("#<type "
+                          "ShortText "
+                          "size:4096 "
+                          "type:var_size"
+                          ">",
+                          inspected_string());
 }

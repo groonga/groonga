@@ -52,7 +52,34 @@ struct _grn_ii {
   struct grn_ii_header *header;
 };
 
-struct grn_ii_header;
+#define GRN_II_BGQSIZE 16
+#define GRN_II_MAX_LSEG                 0x10000
+#define GRN_II_W_TOTAL_CHUNK            40
+#define GRN_II_W_CHUNK                  22
+#define GRN_II_W_LEAST_CHUNK            (GRN_II_W_TOTAL_CHUNK - 32)
+#define GRN_II_MAX_CHUNK                (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK))
+#define GRN_II_N_CHUNK_VARIATION        (GRN_II_W_CHUNK - GRN_II_W_LEAST_CHUNK)
+
+struct grn_ii_header {
+  uint64_t total_chunk_size;
+  uint64_t bmax;
+  uint32_t flags;
+  uint32_t amax;
+  uint32_t smax;
+  uint32_t param1;
+  uint32_t param2;
+  uint32_t pnext;
+  uint32_t bgqhead;
+  uint32_t bgqtail;
+  uint32_t bgqbody[GRN_II_BGQSIZE];
+  uint32_t reserved[288];
+  uint32_t ainfo[GRN_II_MAX_LSEG];
+  uint32_t binfo[GRN_II_MAX_LSEG];
+  uint32_t free_chunks[GRN_II_N_CHUNK_VARIATION + 1];
+  uint32_t garbages[GRN_II_N_CHUNK_VARIATION + 1];
+  uint32_t ngarbages[GRN_II_N_CHUNK_VARIATION + 1];
+  uint8_t chunks[GRN_II_MAX_CHUNK >> 3];
+};
 
 struct _grn_ii_pos {
   struct _grn_ii_pos *next;

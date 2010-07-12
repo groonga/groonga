@@ -254,6 +254,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_obj *), 0);
   ctx->impl->stack_curr = 0;
+  ctx->impl->curr_expr = NULL;
   ctx->impl->qe_next = NULL;
   ctx->impl->parser = NULL;
 
@@ -976,6 +977,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
     if (ctx->impl->com) {
       grn_rc rc;
       grn_com_header sheader;
+      grn_timeval_now(ctx, &ctx->impl->tv);
       if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
       if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
       sheader.proto = GRN_COM_PROTO_GQTP;
@@ -1062,9 +1064,8 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         } else {
           *flags = (header.flags & GRN_CTX_TAIL) ? 0 : GRN_CTX_MORE;
         }
-      }
-      if (ctx->rc) {
-        ERR(ctx->rc, "grn_com_recv failed!");
+        ctx->impl->output_type = header.qtype;
+        ctx->rc = (int16_t) header.status;
       }
       goto exit;
     } else {
