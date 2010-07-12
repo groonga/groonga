@@ -1064,7 +1064,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
           *flags = (header.flags & GRN_CTX_TAIL) ? 0 : GRN_CTX_MORE;
         }
         ctx->impl->output_type = header.qtype;
-        ctx->impl->rc = header.status;
+        ctx->rc = header.status;
       }
       goto exit;
     } else {

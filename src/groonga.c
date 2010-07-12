@@ -401,14 +401,27 @@ recvput(grn_ctx *ctx)
   unsigned int str_len;
   do {
     grn_ctx_recv(ctx, &str, &str_len, &flags);
+    /*
     if (ctx->rc) {
       fprintf(stderr, "grn_ctx_recv failed\n");
       return -1;
     }
+    */
     if (str_len) {
-      fwrite(str, 1, str_len, stdout);
-      putchar('\n');
+      grn_obj head, body, foot;
+      GRN_TEXT_INIT(&head, 0);
+      GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TEXT_INIT(&foot, 0);
+      GRN_TEXT_SET(ctx, &body, str, str_len);
+      print_return_code(ctx, ctx->rc, &head, &body, &foot);
+      fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stdout);
+      fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), stdout);
+      fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stdout);
+      fputc('\n', stdout);
       fflush(stdout);
+      GRN_OBJ_FIN(ctx, &head);
+      GRN_OBJ_FIN(ctx, &body);
+      GRN_OBJ_FIN(ctx, &foot);
     }
   } while ((flags & GRN_CTX_MORE));
   return 0;
