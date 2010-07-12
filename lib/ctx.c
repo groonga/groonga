@@ -254,6 +254,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_obj *), 0);
   ctx->impl->stack_curr = 0;
+  ctx->impl->curr_expr = NULL;
   ctx->impl->qe_next = NULL;
   ctx->impl->parser = NULL;
 
