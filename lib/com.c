@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "ql.h"
 
 #ifdef WIN32
 #  include <ws2tcpip.h>
@@ -186,11 +187,11 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       {
         if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
         if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
-        header->qtype = 0;
+        header->qtype = (uint8_t) ctx->impl->output_type;
         header->keylen = 0;
         header->level = 0;
         header->flags = flags;
-        header->status = 0;
+        header->status = (uint16_t) ctx->rc;
         header->opaque = 0;
         header->cas = 0;
         //todo : MSG_DONTWAIT
