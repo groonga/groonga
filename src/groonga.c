@@ -389,7 +389,7 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         grn_text_itoa(ctx, head, ctx->errline);
       }
     }
-    GRN_TEXT_PUTC(ctx, head, '\n');
+    GRN_TEXT_PUTS(ctx, head, "\nEND\n");
     break;
   case GRN_CONTENT_XML:
     GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
