@@ -89,14 +89,14 @@ cut_teardown(void)
 void
 test_get(void)
 {
-  cut_assert_equal_string("[100]", send_command("cache_limit"));
+  cut_assert_equal_string("100", send_command("cache_limit"));
 }
 
 void
 test_set(void)
 {
-  cut_assert_equal_string("[100]", send_command("cache_limit --max 1000"));
-  cut_assert_equal_string("[1000]", send_command("cache_limit"));
+  cut_assert_equal_string("100", send_command("cache_limit --max 1000"));
+  cut_assert_equal_string("1000", send_command("cache_limit"));
 }
 
 void
@@ -107,7 +107,7 @@ test_set_invalid_minus(void)
     GRN_INVALID_ARGUMENT,
     "max value is invalid unsigned integer format: <-1>",
     "cache_limit --max -1");
-  cut_assert_equal_string("[100]", send_command("cache_limit"));
+  cut_assert_equal_string("100", send_command("cache_limit"));
 }
 
 void
@@ -118,5 +118,5 @@ test_set_invalid_string(void)
     GRN_INVALID_ARGUMENT,
     "max value is invalid unsigned integer format: <LIMIT>",
     "cache_limit --max LIMIT");
-  cut_assert_equal_string("[100]", send_command("cache_limit"));
+  cut_assert_equal_string("100", send_command("cache_limit"));
 }
