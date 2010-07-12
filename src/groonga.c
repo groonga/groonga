@@ -201,6 +201,146 @@ prompt(char *buf)
   return len;
 }
 
+typedef enum {
+  grn_http_request_type_none = 0,
+  grn_http_request_type_get,
+  grn_http_request_type_post
+} grn_http_request_type;
+
+static void
+print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
+{
+  switch (ctx->impl->output_type) {
+  case GRN_CONTENT_JSON:
+    GRN_TEXT_PUTS(ctx, head, "[[");
+    grn_text_itoa(ctx, head, rc);
+    {
+      double dv;
+      grn_timeval tv;
+      grn_timeval_now(ctx, &tv);
+      dv = ctx->impl->tv.tv_sec;
+      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      GRN_TEXT_PUTC(ctx, head, ',');
+      grn_text_ftoa(ctx, head, dv);
+      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
+      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      GRN_TEXT_PUTC(ctx, head, ',');
+      grn_text_ftoa(ctx, head, dv);
+    }
+    if (rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTC(ctx, head, ',');
+      grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+      if (ctx->errfunc && ctx->errfile) {
+        /* TODO: output backtrace */
+        GRN_TEXT_PUTS(ctx, head, ",[[");
+        grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+        GRN_TEXT_PUTC(ctx, head, ',');
+        grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+        GRN_TEXT_PUTC(ctx, head, ',');
+        grn_text_itoa(ctx, head, ctx->errline);
+        GRN_TEXT_PUTS(ctx, head, "]]");
+      }
+    }
+    GRN_TEXT_PUTC(ctx, head, ']');
+    if (GRN_TEXT_LEN(body)) { GRN_TEXT_PUTC(ctx, head, ','); }
+    GRN_TEXT_PUTC(ctx, foot, ']');
+    break;
+  case GRN_CONTENT_TSV:
+    grn_text_itoa(ctx, head, rc);
+    GRN_TEXT_PUTC(ctx, head, '\t');
+    {
+      double dv;
+      grn_timeval tv;
+      grn_timeval_now(ctx, &tv);
+      dv = ctx->impl->tv.tv_sec;
+      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      grn_text_ftoa(ctx, head, dv);
+      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
+      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      GRN_TEXT_PUTC(ctx, head, '\t');
+      grn_text_ftoa(ctx, head, dv);
+    }
+    if (rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTC(ctx, head, '\t');
+      grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+      if (ctx->errfunc && ctx->errfile) {
+        /* TODO: output backtrace */
+        GRN_TEXT_PUTC(ctx, head, '\t');
+        grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+        GRN_TEXT_PUTC(ctx, head, '\t');
+        grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+        GRN_TEXT_PUTC(ctx, head, '\t');
+        grn_text_itoa(ctx, head, ctx->errline);
+      }
+    }
+    GRN_TEXT_PUTS(ctx, head, "\n");
+    GRN_TEXT_PUTS(ctx, foot, "\nEND");
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
+    grn_text_itoa(ctx, head, rc);
+    GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
+    {
+      double dv;
+      grn_timeval tv;
+      grn_timeval_now(ctx, &tv);
+      dv = ctx->impl->tv.tv_sec;
+      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      grn_text_ftoa(ctx, head, dv);
+      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
+      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
+      grn_text_ftoa(ctx, head, dv);
+      GRN_TEXT_PUTS(ctx, head, "\">");
+    }
+    if (rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTS(ctx, head, "<ERROR>");
+      grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+      if (ctx->errfunc && ctx->errfile) {
+        /* TODO: output backtrace */
+        GRN_TEXT_PUTS(ctx, head, "<INFO FUNC=\"");
+        grn_text_escape_xml(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+        GRN_TEXT_PUTS(ctx, head, "\" FILE=\"");
+        grn_text_escape_xml(ctx, head, ctx->errfile, strlen(ctx->errfile));
+        GRN_TEXT_PUTS(ctx, head, "\" LINE=\"");
+        grn_text_itoa(ctx, head, ctx->errline);
+        GRN_TEXT_PUTS(ctx, head, "\">");
+      }
+      GRN_TEXT_PUTS(ctx, head, "</ERROR>");
+    }
+    GRN_TEXT_PUTS(ctx, foot, "</RESULT>");
+    break;
+  case GRN_CONTENT_MSGPACK:
+    // todo
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+}
+
+static void
+s_output(grn_ctx *ctx, int flags, void *arg)
+{
+  if (ctx && ctx->impl) {
+    grn_obj *buf = ctx->impl->outbuf;
+    if (GRN_TEXT_LEN(buf)) {
+      FILE * stream = (FILE *) arg;
+      grn_obj head, foot;
+      GRN_TEXT_INIT(&head, 0);
+      GRN_TEXT_INIT(&foot, 0);
+      print_return_code(ctx, ctx->rc, &head, buf, &foot);
+      fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stream);
+      fwrite(GRN_TEXT_VALUE(buf), 1, GRN_TEXT_LEN(buf), stream);
+      fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
+      fputc('\n', stream);
+      fflush(stream);
+      GRN_BULK_REWIND(buf);
+      GRN_OBJ_FIN(ctx, &head);
+      GRN_OBJ_FIN(ctx, &foot);
+    }
+  }
+}
+
 static int
 do_alone(int argc, char **argv)
 {
@@ -212,7 +352,7 @@ do_alone(int argc, char **argv)
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
-    grn_ctx_recv_handler_set(ctx, grn_ctx_stream_out_func, stdout);
+    grn_ctx_recv_handler_set(ctx, s_output, stdout);
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
@@ -316,122 +456,6 @@ exit :
 }
 
 /* server */
-
-typedef enum {
-  grn_http_request_type_none = 0,
-  grn_http_request_type_get,
-  grn_http_request_type_post
-} grn_http_request_type;
-
-static void
-print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
-{
-  switch (ctx->impl->output_type) {
-  case GRN_CONTENT_JSON:
-    GRN_TEXT_PUTS(ctx, head, "[[");
-    grn_text_itoa(ctx, head, rc);
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_usec / 1000000.0;
-      GRN_TEXT_PUTC(ctx, head, ',');
-      grn_text_ftoa(ctx, head, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
-      GRN_TEXT_PUTC(ctx, head, ',');
-      grn_text_ftoa(ctx, head, dv);
-    }
-    if (rc != GRN_SUCCESS) {
-      GRN_TEXT_PUTC(ctx, head, ',');
-      grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
-      if (ctx->errfunc && ctx->errfile) {
-        /* TODO: output backtrace */
-        GRN_TEXT_PUTS(ctx, head, ",[[");
-        grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
-        GRN_TEXT_PUTC(ctx, head, ',');
-        grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
-        GRN_TEXT_PUTC(ctx, head, ',');
-        grn_text_itoa(ctx, head, ctx->errline);
-        GRN_TEXT_PUTS(ctx, head, "]]");
-      }
-    }
-    GRN_TEXT_PUTC(ctx, head, ']');
-    if (GRN_TEXT_LEN(body)) { GRN_TEXT_PUTC(ctx, head, ','); }
-    GRN_TEXT_PUTC(ctx, foot, ']');
-    break;
-  case GRN_CONTENT_TSV:
-    grn_text_itoa(ctx, head, rc);
-    GRN_TEXT_PUTC(ctx, head, '\t');
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_usec / 1000000.0;
-      grn_text_ftoa(ctx, head, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
-      GRN_TEXT_PUTC(ctx, head, '\t');
-      grn_text_ftoa(ctx, head, dv);
-    }
-    if (rc != GRN_SUCCESS) {
-      GRN_TEXT_PUTC(ctx, head, '\t');
-      grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
-      if (ctx->errfunc && ctx->errfile) {
-        /* TODO: output backtrace */
-        GRN_TEXT_PUTC(ctx, head, '\t');
-        grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
-        GRN_TEXT_PUTC(ctx, head, '\t');
-        grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
-        GRN_TEXT_PUTC(ctx, head, '\t');
-        grn_text_itoa(ctx, head, ctx->errline);
-      }
-    }
-    GRN_TEXT_PUTS(ctx, head, "\nEND\n");
-    break;
-  case GRN_CONTENT_XML:
-    GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
-    grn_text_itoa(ctx, head, rc);
-    GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_usec / 1000000.0;
-      grn_text_ftoa(ctx, head, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
-      GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
-      grn_text_ftoa(ctx, head, dv);
-      GRN_TEXT_PUTS(ctx, head, "\">");
-    }
-    if (rc != GRN_SUCCESS) {
-      GRN_TEXT_PUTS(ctx, head, "<ERROR>");
-      grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
-      if (ctx->errfunc && ctx->errfile) {
-        /* TODO: output backtrace */
-        GRN_TEXT_PUTS(ctx, head, "<INFO FUNC=\"");
-        grn_text_escape_xml(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
-        GRN_TEXT_PUTS(ctx, head, "\" FILE=\"");
-        grn_text_escape_xml(ctx, head, ctx->errfile, strlen(ctx->errfile));
-        GRN_TEXT_PUTS(ctx, head, "\" LINE=\"");
-        grn_text_itoa(ctx, head, ctx->errline);
-        GRN_TEXT_PUTS(ctx, head, "\">");
-      }
-      GRN_TEXT_PUTS(ctx, head, "</ERROR>");
-    }
-    GRN_TEXT_PUTS(ctx, foot, "</RESULT>");
-    break;
-  case GRN_CONTENT_MSGPACK:
-    // todo
-    break;
-  case GRN_CONTENT_NONE:
-    break;
-  }
-}
 
 #define JSON_CALLBACK_PARAM "callback"
 

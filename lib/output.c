@@ -48,9 +48,9 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
     break;
   case GRN_CONTENT_TSV:
     if (level < 2) { return; }
-    if (DEPTH == 1) {
+    if (DEPTH <= 2) {
       GRN_TEXT_PUTC(ctx, outbuf, ((level & 3) == 3) ? '\t' : '\n');
-    } else if (DEPTH > 1) {
+    } else {
       GRN_TEXT_PUTC(ctx, outbuf, '\t');
     }
   case GRN_CONTENT_MSGPACK :
@@ -77,7 +77,7 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
     grn_vector_add_element(ctx, &ctx->impl->names, name, strlen(name), 0, GRN_DB_SHORT_TEXT);
     break;
   case GRN_CONTENT_TSV:
-    if (DEPTH > 1) { GRN_TEXT_PUTS(ctx, outbuf, "[\t"); }
+    if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "[\t"); }
     break;
   case GRN_CONTENT_MSGPACK :
     // todo
@@ -96,7 +96,7 @@ grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_ty
     GRN_TEXT_PUTC(ctx, outbuf, ']');
     break;
   case GRN_CONTENT_TSV:
-    if (DEPTH > 2) {
+    if (DEPTH > 3) {
       if (CURR_LEVEL >= 2) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
       GRN_TEXT_PUTC(ctx, outbuf, ']');
     }
@@ -136,7 +136,7 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     grn_vector_add_element(ctx, &ctx->impl->names, name, strlen(name), 0, GRN_DB_SHORT_TEXT);
     break;
   case GRN_CONTENT_TSV:
-    if (DEPTH > 1) { GRN_TEXT_PUTS(ctx, outbuf, "{\t"); }
+    if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "{\t"); }
     break;
   case GRN_CONTENT_MSGPACK :
     // todo
@@ -155,7 +155,7 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
     GRN_TEXT_PUTS(ctx, outbuf, "}");
     break;
   case GRN_CONTENT_TSV:
-    if (DEPTH > 2) {
+    if (DEPTH > 3) {
       if (CURR_LEVEL >= 2) { GRN_TEXT_PUTC(ctx, outbuf, '\t'); }
       GRN_TEXT_PUTC(ctx, outbuf, '}');
     }
