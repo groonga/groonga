@@ -86,7 +86,7 @@ usage(FILE *output)
           "  -c:                               run in client mode\n"
           "  -s:                               run in server mode\n"
           "  -d:                               run in daemon mode\n"
-          "  -e, --default-encoding:           encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
+          "  -e, --encoding <encoding>:        encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
           "  -l, --log-level <log level>:      log level\n"
           "  -a, --address <ip/hostname>:      server address to listen (default: %s)\n"
           "  -p, --port <port number>:         server port number (default: %d)\n"
@@ -2015,7 +2015,7 @@ main(int argc, char **argv)
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, getopt_op_none},
-    {'e', "default-encoding", NULL, 0, getopt_op_none},
+    {'e', "encoding", NULL, 0, getopt_op_none},
     {'t', "max-threads", NULL, 0, getopt_op_none},
     {'h', "help", NULL, mode_usage, getopt_op_update},
     {'a', "address", NULL, 0, getopt_op_none},
