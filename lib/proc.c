@@ -1854,12 +1854,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         grn_ii *ii = (grn_ii *)obj;
         struct grn_ii_header *h = ii->header;
         char buf[8];
-        GRN_OUTPUT_MAP_OPEN("RESULT", 8);
-        GRN_OUTPUT_CSTR("flags");
-        grn_itoh(h->flags, buf, 8);
-        GRN_OUTPUT_STR(buf, 8);
-        GRN_OUTPUT_CSTR("max sid");
-        GRN_OUTPUT_INT64(h->smax);
+        GRN_OUTPUT_ARRAY_OPEN("RESULT", 8);
         {
           uint32_t i, j, g =0, a = 0, b = 0;
           uint32_t max = 0;
@@ -1882,6 +1877,12 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
               a++;
             }
           }
+          GRN_OUTPUT_MAP_OPEN("SUMMARY", 8);
+          GRN_OUTPUT_CSTR("flags");
+          grn_itoh(h->flags, buf, 8);
+          GRN_OUTPUT_STR(buf, 8);
+          GRN_OUTPUT_CSTR("max sid");
+          GRN_OUTPUT_INT64(h->smax);
           GRN_OUTPUT_CSTR("number of garbage segments");
           GRN_OUTPUT_INT64(g);
           GRN_OUTPUT_CSTR("number of array segments");
@@ -1914,11 +1915,12 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
             GRN_OUTPUT_INT64(h->ngarbages[i]);
           }
           GRN_OUTPUT_ARRAY_CLOSE();
+          GRN_OUTPUT_MAP_CLOSE();
           for (i = 0; i < GRN_II_MAX_LSEG; i++) {
             if (h->binfo[i] < 0x20000) { grn_ii_buffer_check(ctx, ii, i); }
           }
         }
-        GRN_OUTPUT_MAP_CLOSE();
+        GRN_OUTPUT_ARRAY_CLOSE();
       }
       break;
     }

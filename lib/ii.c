@@ -2960,6 +2960,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
     rdv[ii->n_elements - 1].flags = ODD;
   }
+  GRN_OUTPUT_MAP_OPEN("BUFFER", -1);
   GRN_OUTPUT_CSTR("buffer id");
   GRN_OUTPUT_INT64(seg);
   if ((scn = sb->header.chunk) == NOT_ASSIGNED) {
@@ -3052,9 +3053,9 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     GRN_OUTPUT_CSTR("nterms with corrupt chunk");
     GRN_OUTPUT_INT64(nerrors);
   }
+  GRN_OUTPUT_MAP_CLOSE();
   datavec_fin(ctx, rdv);
   if (sc) { grn_io_win_unmap2(&sw); }
-
   buffer_close(ctx, ii, pseg);
 }
 
