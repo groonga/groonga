@@ -951,8 +951,10 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
   } else {
     GRN_BULK_REWIND(&buf);
     grn_text_unesc_tok(ctx, &buf, str, str + str_len, &tok_type);
-    ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
-        GRN_TEXT_LEN(&buf), GRN_TEXT_VALUE(&buf));
+    if (GRN_TEXT_LEN(&buf)) {
+      ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
+          GRN_TEXT_LEN(&buf), GRN_TEXT_VALUE(&buf));
+    }
   }
   GRN_OBJ_FIN(ctx, &buf);
   return expr;
