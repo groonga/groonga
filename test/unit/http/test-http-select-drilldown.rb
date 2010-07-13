@@ -226,134 +226,64 @@ module HTTPSelectDrilldownTests
   def test_xml
     expected = <<-EOX
 <?xml version="1.0" encoding="utf-8"?>
-<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
-<RESULTSET>
-<NHITS>6</NHITS>
-<COLUMNS>
-<COLUMN>
-<TEXT>_key</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>place</TEXT>
-<TEXT>Place</TEXT></COLUMN>
-<COLUMN>
-<TEXT>place.name</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>title</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>person</TEXT>
-<TEXT>Person</TEXT></COLUMN>
-<COLUMN>
-<TEXT>date</TEXT>
-<TEXT>Time</TEXT></COLUMN></COLUMNS>
-<HIT>
-<TEXT>0</TEXT>
-<TEXT>razil.jp</TEXT>
-<TEXT>ブラジル</TEXT>
-<TEXT>groongaリリース（前編）</TEXT>
-<VECTOR>
-<TEXT>グニャラくん</TEXT></VECTOR>
-<DATE>20091218.0</DATE></HIT>
-<HIT>
-<TEXT>1</TEXT>
-<TEXT>shinjuku</TEXT>
-<TEXT>新宿</TEXT>
-<TEXT>groongaリリース（後編）</TEXT>
-<VECTOR>
-<TEXT>グニャラくん</TEXT></VECTOR>
-<DATE>20091218.0</DATE></HIT>
-<HIT>
-<TEXT>2</TEXT>
-<TEXT>razil.jp</TEXT>
-<TEXT>ブラジル</TEXT>
-<TEXT>groonga（ぐるんが）解説・パート1</TEXT>
-<VECTOR>
-<TEXT>morita</TEXT></VECTOR>
-<DATE>20091218.0</DATE></HIT>
-<HIT>
-<TEXT>3</TEXT>
-<TEXT>shinjuku</TEXT>
-<TEXT>新宿</TEXT>
-<TEXT>groonga（ぐるんが）解説・パート2</TEXT>
-<VECTOR>
-<TEXT>yu</TEXT></VECTOR>
-<DATE>20091219.0</DATE></HIT>
-<HIT>
-<TEXT>4</TEXT>
-<TEXT>shinjuku</TEXT>
-<TEXT>新宿</TEXT>
-<TEXT>groonga（ぐるんが）解説・パート3</TEXT>
-<VECTOR>
-<TEXT>yu</TEXT></VECTOR>
-<DATE>20091220.0</DATE></HIT>
-<HIT>
-<TEXT>5</TEXT>
-<TEXT>shinjuku</TEXT>
-<TEXT>新宿</TEXT>
-<TEXT>groonga（ぐるんが）解説・パート4</TEXT>
-<VECTOR>
-<TEXT>yu</TEXT></VECTOR>
-<DATE>20091220.0</DATE></HIT></RESULTSET>
-<RESULTSET>
-<NHITS>3</NHITS>
-<COLUMNS>
-<COLUMN>
-<TEXT>_key</TEXT>
-<TEXT>Time</TEXT></COLUMN>
-<COLUMN>
-<TEXT>_nsubrecs</TEXT>
-<TEXT>Int32</TEXT></COLUMN></COLUMNS>
-<HIT>
-<DATE>20091218.0</DATE>
-<INT>3</INT></HIT>
-<HIT>
-<DATE>20091220.0</DATE>
-<INT>2</INT></HIT>
-<HIT>
-<DATE>20091219.0</DATE>
-<INT>1</INT></HIT></RESULTSET>
-<RESULTSET>
-<NHITS>3</NHITS>
-<COLUMNS>
-<COLUMN>
-<TEXT>_key</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>_nsubrecs</TEXT>
-<TEXT>Int32</TEXT></COLUMN></COLUMNS>
-<HIT>
-<TEXT>yu</TEXT>
-<INT>3</INT></HIT>
-<HIT>
-<TEXT>グニャラくん</TEXT>
-<INT>2</INT></HIT>
-<HIT>
-<TEXT>morita</TEXT>
-<INT>1</INT></HIT></RESULTSET>
-<RESULTSET>
-<NHITS>2</NHITS>
-<COLUMNS>
-<COLUMN>
-<TEXT>_key</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>_nsubrecs</TEXT>
-<TEXT>Int32</TEXT></COLUMN>
-<COLUMN>
-<TEXT>name</TEXT>
-<TEXT>ShortText</TEXT></COLUMN></COLUMNS>
-<HIT>
-<TEXT>shinjuku</TEXT>
-<INT>4</INT>
-<TEXT>新宿</TEXT></HIT>
-<HIT>
-<TEXT>razil.jp</TEXT>
-<INT>2</INT>
-<TEXT>ブラジル</TEXT></HIT></RESULTSET></RESULT></RESULT>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="0" LIMIT="6" NHITS="6">
+<HIT NO="1">
+<FIELD NAME="_key">0</FIELD>
+<FIELD NAME="place">razil.jp</FIELD>
+<FIELD NAME="place.name">ブラジル</FIELD>
+<FIELD NAME="title">groongaリリース（前編）</FIELD>
+<FIELD NAME="person"></FIELD>
+<FIELD NAME="date">20091218.0</FIELD>
+</HIT>
+<HIT NO="2">
+<FIELD NAME="_key">1</FIELD>
+<FIELD NAME="place">shinjuku</FIELD>
+<FIELD NAME="place.name">新宿</FIELD>
+<FIELD NAME="title">groongaリリース（後編）</FIELD>
+<FIELD NAME="person"></FIELD>
+<FIELD NAME="date">20091218.0</FIELD>
+</HIT>
+<HIT NO="3">
+<FIELD NAME="_key">2</FIELD>
+<FIELD NAME="place">razil.jp</FIELD>
+<FIELD NAME="place.name">ブラジル</FIELD>
+<FIELD NAME="title">groonga（ぐるんが）解説・パート1</FIELD>
+<FIELD NAME="person"></FIELD>
+<FIELD NAME="date">20091218.0</FIELD>
+</HIT>
+<HIT NO="4">
+<FIELD NAME="_key">3</FIELD>
+<FIELD NAME="place">shinjuku</FIELD>
+<FIELD NAME="place.name">新宿</FIELD>
+<FIELD NAME="title">groonga（ぐるんが）解説・パート2</FIELD>
+<FIELD NAME="person"></FIELD>
+<FIELD NAME="date">20091219.0</FIELD>
+</HIT>
+<HIT NO="5">
+<FIELD NAME="_key">4</FIELD>
+<FIELD NAME="place">shinjuku</FIELD>
+<FIELD NAME="place.name">新宿</FIELD>
+<FIELD NAME="title">groonga（ぐるんが）解説・パート3</FIELD>
+<FIELD NAME="person"></FIELD>
+<FIELD NAME="date">20091220.0</FIELD>
+</HIT>
+<HIT NO="6">
+<FIELD NAME="_key">5</FIELD>
+<FIELD NAME="place">shinjuku</FIELD>
+<FIELD NAME="place.name">新宿</FIELD>
+<FIELD NAME="title">groonga（ぐるんが）解説・パート4</FIELD>
+<FIELD NAME="person"></FIELD>
+<FIELD NAME="date">20091220.0</FIELD>
+</HIT>
+</RESULTSET>
+<NAVIGATIONENTRY><NAVIGATIONELEMENTS COUNT="3"><NAVIGATIONELEMENT _key="20091218.0" _nsubrecs="3" /><NAVIGATIONELEMENT _key="20091220.0" _nsubrecs="2" /><NAVIGATIONELEMENT _key="20091219.0" _nsubrecs="1" /></NAVIGATIONELEMENTS></NAVIGATIONENTRY><NAVIGATIONENTRY><NAVIGATIONELEMENTS COUNT="3"><NAVIGATIONELEMENT _key="yu" _nsubrecs="3" /><NAVIGATIONELEMENT _key="グニャラくん" _nsubrecs="2" /><NAVIGATIONELEMENT _key="morita" _nsubrecs="1" /></NAVIGATIONELEMENTS></NAVIGATIONENTRY><NAVIGATIONENTRY><NAVIGATIONELEMENTS COUNT="2"><NAVIGATIONELEMENT _key="shinjuku" _nsubrecs="4" name="新宿" /><NAVIGATIONELEMENT _key="razil.jp" _nsubrecs="2" name="ブラジル" /></NAVIGATIONELEMENTS></NAVIGATIONENTRY></RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
 EOX
-    assert_drilldown_xml(expected.strip,
+    assert_drilldown_xml(expected,
                          {
                            :table => "Event",
                            :match_columns => "search",

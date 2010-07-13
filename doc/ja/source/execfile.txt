@@ -28,10 +28,6 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
    新たなデータベースを作成します。
 
-.. cmdoption:: -a
-
-   スタンドアロンモードで実行します(デフォルト)。
-
 .. cmdoption:: -c
 
    クライアントモードで実行します。
@@ -44,22 +40,26 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
    デーモンモードで実行します。(forkする点がサーバモードと異なる)
 
-.. cmdoption:: -e <encoding>
+.. cmdoption:: -e, --encoding <encoding>
 
    データベースで使用する文字エンコーディング方式を指定します。新たなデータベースを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指定できます。
 
-.. cmdoption:: -l <log level>
+.. cmdoption:: -l, --log-level <log level>
 
    ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログが出力されます。
 
-.. cmdoption:: -i <ip/hostname>
+.. cmdoption:: -a, --address <ip/hostname>
 
    サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。(デフォルトは`hostname`の返すホスト名)
 
-.. cmdoption:: -p <port number>
+.. cmdoption:: -p, --port <port number>
 
    クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。
    (デフォルトは10041番)
+
+.. cmdoption:: -i, --server-id <ip/hostname>
+
+   サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定します。(デフォルトは`hostname`の返すホスト名)
 
 .. cmdoption:: -h, --help
 
@@ -82,6 +82,35 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 .. cmdoption:: --query-log-path <path>
 
    クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されません)
+
+.. cmdoption:: -t, --max-threads <max threasd>
+
+   最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数です)
+
+.. cmdoption:: --pid-path <path>
+
+   PIDを保存するパスを指定します。(デフォルトでは保存しません)
+
+.. cmdoption:: --config-path <path>
+
+   設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになります。::
+
+     # '#'以降はコメント。
+     ; ';'以降もコメント。
+
+     # 'キー = 値'でオプションを指定。
+     pid-file = /var/run/groonga.pid
+
+     # '='の前後の空白はは無視される。↓は↑と同じ意味。
+     pid-file=/var/run/groonga.pid
+
+     # 'キー'は'--XXX'スタイルのオプション名と同じものが使える。
+     # 例えば、'--pid-path'に対応するキーは'pid-path'。
+     # ただし、キーが'config-path'のオプションは無視される。
+
+.. cmdoption:: --cache-limit <limit>
+
+   キャッシュ数の最大値を指定します。(デフォルトは100です)
 
 引数
 ----

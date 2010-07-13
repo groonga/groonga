@@ -28,20 +28,20 @@ class OptionTest < Test::Unit::TestCase
     teardown_database_path
   end
 
-  def test_daemon_pid_file
-    pid_file = File.join(@tmp_dir, "groonga.pid")
-    assert_path_not_exist(pid_file)
-    assert_equal("", run_groonga("-d", "--pid-file", pid_file))
-    assert_path_exist(pid_file)
-    pid = File.open(pid_file) do |f|
+  def test_daemon_pid_path
+    pid_path = File.join(@tmp_dir, "groonga.pid")
+    assert_path_not_exist(pid_path)
+    assert_equal("", run_groonga("-d", "--pid-path", pid_path))
+    assert_path_exist(pid_path)
+    pid = File.open(pid_path) do |f|
       Integer(f.read)
     end
     assert_equal(1, Process.kill(:INT, pid))
     30.times do
-      break unless File.exist?(pid_file)
+      break unless File.exist?(pid_path)
       sleep 0.1
     end
-    assert_path_not_exist(pid_file)
+    assert_path_not_exist(pid_path)
   end
 
   def test_help
@@ -55,7 +55,7 @@ class OptionTest < Test::Unit::TestCase
     usage = 'Usage: groonga \[options\.\.\.\] \[dest\]$'
     %w[-e -l -a -p -i -t
        --admin-html-path --protocol --log-path
-       --query-log-path --pid-file --config-path].each do |option|
+       --query-log-path --pid-path --config-path].each do |option|
       status = assert_run_groonga("", /: option '#{option}' needs argument\.$/, option)
       assert_not_predicate(status, :success?)
     end

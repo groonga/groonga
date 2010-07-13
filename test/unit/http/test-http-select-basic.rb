@@ -734,34 +734,28 @@ module HTTPSelectBasicTests
 
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
-<RESULTSET>
-<NHITS>2</NHITS>
-<COLUMNS>
-<COLUMN>
-<TEXT>_id</TEXT>
-<TEXT>UInt32</TEXT></COLUMN>
-<COLUMN>
-<TEXT>_key</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>real_name</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>hp</TEXT>
-<TEXT>Int32</TEXT></COLUMN></COLUMNS>
-<HIT>
-<INT>2</INT>
-<TEXT>hayamiz</TEXT>
-<TEXT>Yuto Hayamizu</TEXT>
-<INT>200</INT></HIT>
-<HIT>
-<INT>1</INT>
-<TEXT>ryoqun</TEXT>
-<TEXT>Ryo Onodera</TEXT>
-<INT>200</INT></HIT></RESULTSET></RESULT></RESULT>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="0" LIMIT="2" NHITS="2">
+<HIT NO="1">
+<FIELD NAME="_id">2</FIELD>
+<FIELD NAME="_key">hayamiz</FIELD>
+<FIELD NAME="real_name">Yuto Hayamizu</FIELD>
+<FIELD NAME="hp">200</FIELD>
+</HIT>
+<HIT NO="2">
+<FIELD NAME="_id">1</FIELD>
+<FIELD NAME="_key">ryoqun</FIELD>
+<FIELD NAME="real_name">Ryo Onodera</FIELD>
+<FIELD NAME="hp">200</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
 EOF
-    assert_select_xml(expected.strip,
+    assert_select_xml(expected,
                       {:table => "users",
                        :output_columns => "_id,_key,real_name,hp"})
   end
@@ -771,17 +765,19 @@ EOF
     load_many_users
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
-<RESULTSET>
-<NHITS>5</NHITS>
-<COLUMNS>
-<COLUMN>
-<TEXT>_id</TEXT>
-<TEXT>UInt32</TEXT></COLUMN></COLUMNS>
-<HIT>
-<INT>1</INT></HIT></RESULTSET></RESULT></RESULT>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="2" LIMIT="1" NHITS="5">
+<HIT NO="3">
+<FIELD NAME="_id">1</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
 EOF
-    assert_select_xml(expected.strip,
+    assert_select_xml(expected,
                       {:table => "users", :offset => 2, :limit => 1,
                        :output_columns => "_id"})
   end
@@ -791,39 +787,34 @@ EOF
     load_many_users
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
-<RESULT CODE="0" UP="0.0" ELAPSED="0.0"><RESULT>
-<RESULTSET>
-<NHITS>5</NHITS>
-<COLUMNS>
-<COLUMN>
-<TEXT>_id</TEXT>
-<TEXT>UInt32</TEXT></COLUMN>
-<COLUMN>
-<TEXT>_key</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>real_name</TEXT>
-<TEXT>ShortText</TEXT></COLUMN>
-<COLUMN>
-<TEXT>hp</TEXT>
-<TEXT>Int32</TEXT></COLUMN></COLUMNS>
-<HIT>
-<INT>1</INT>
-<TEXT>moritan</TEXT>
-<TEXT>モリタン</TEXT>
-<INT>100</INT></HIT>
-<HIT>
-<INT>3</INT>
-<TEXT>ryoqun</TEXT>
-<TEXT>Ryo Onodera</TEXT>
-<INT>200</INT></HIT>
-<HIT>
-<INT>2</INT>
-<TEXT>taporobo</TEXT>
-<TEXT>タポロボ</TEXT>
-<INT>100</INT></HIT></RESULTSET></RESULT></RESULT>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="2" LIMIT="3" NHITS="5">
+<HIT NO="3">
+<FIELD NAME="_id">1</FIELD>
+<FIELD NAME="_key">moritan</FIELD>
+<FIELD NAME="real_name">モリタン</FIELD>
+<FIELD NAME="hp">100</FIELD>
+</HIT>
+<HIT NO="4">
+<FIELD NAME="_id">3</FIELD>
+<FIELD NAME="_key">ryoqun</FIELD>
+<FIELD NAME="real_name">Ryo Onodera</FIELD>
+<FIELD NAME="hp">200</FIELD>
+</HIT>
+<HIT NO="5">
+<FIELD NAME="_id">2</FIELD>
+<FIELD NAME="_key">taporobo</FIELD>
+<FIELD NAME="real_name">タポロボ</FIELD>
+<FIELD NAME="hp">100</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
 EOF
-    assert_select_xml(expected.strip,
+    assert_select_xml(expected,
                       {:table => "users", :sortby => "_key", :offset => 2,
                        :output_columns => "_id,_key,real_name,hp"})
   end
