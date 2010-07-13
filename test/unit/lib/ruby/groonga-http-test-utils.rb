@@ -140,7 +140,7 @@ module GroongaHTTPTestUtils
     response = get(command_path(:load,
                                 :table => table,
                                 :values => json(values)))
-    assert_response([success_status_response, [n_values]], response,
+    assert_response([success_status_response, n_values], response,
                     :content_type => "application/json")
   end
 
@@ -234,7 +234,7 @@ module GroongaHTTPTestUtils
   end
 
   def assert_success_response(response, options=nil)
-    assert_response([success_status_response, [true]], response, options)
+    assert_response([success_status_response, true], response, options)
   end
 
   def assert_response_body(body, response, options=nil, &block)
