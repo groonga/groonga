@@ -1926,7 +1926,7 @@ load_config_file(const char *path,
                  const grn_str_getopt_opt *opts, int *flags)
 {
   int name_len, value_len;
-  char buf[1024+2], *str, *name, *value = NULL, *args[4];
+  char buf[1024+2], *str, *name, *args[4];
   FILE *file;
 
   if (!(file = fopen(path, "r"))) return 0;
@@ -1934,6 +1934,7 @@ load_config_file(const char *path,
   args[0] = (char *)path;
   args[3] = NULL;
   while ((str = fgets(buf + 2, sizeof(buf) - 2, file))) {
+    char *value = NULL;
     str = skipspace(str);
     switch (*str) {
     case '#': case ';': case '\0':
@@ -1959,7 +1960,7 @@ load_config_file(const char *path,
     name[name_len] = '\0';
     memset(name -= 2, '-', 2);
     args[1] = name;
-    args[2] = value;
+    args[2] = value ? strdup(value) : NULL;
     grn_str_getopt((value_len > 0) + 2, args, opts, flags);
   }
   fclose(file);
