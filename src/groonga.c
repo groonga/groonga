@@ -2059,7 +2059,6 @@ main(int argc, char **argv)
     usage(stderr);
     return EXIT_FAILURE;
   }
-  opts[18].arg = NULL;
   if (config_path) {
     if (!load_config_file(config_path, opts, &mode)) {
       fprintf(stderr, "%s: can't open config file: %s (%s)\n",
