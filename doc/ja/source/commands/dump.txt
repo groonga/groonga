@@ -1,0 +1,62 @@
+.. highlightlang:: none
+
+dump
+====
+
+名前
+----
+
+dump - データベースのスキーマとデータを出力する
+
+書式
+----
+::
+
+  dump
+
+説明
+----
+
+groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+
+dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力します。dumpの結果は大きくなるため、主にコマンドラインから使うことを想定しています。データベースのバックアップが主な利用方法です。
+
+dumpが出力するフォーマットは直接groongaが解釈できるフォーマットです。そのため、以下のようにしてデータベースをコピーすることができます。::
+
+  % groonga original/db dump > dump.grn
+  % mkdir backup
+  % groonga -n backup/db < dump.grn
+
+引数
+----
+
+ありません。
+
+返値
+----
+
+データベースのスキーマとデータをgroongaの組み込みコマンド呼び出し形式で出力します。output_type指定は無視されます。
+
+例
+--
+::
+
+  dump
+
+  table_create LocalNames 48 ShortText
+  table_create Entries 48 ShortText
+  column_create Entries local_name 0 LocalNames
+  column_create LocalNames Entries_local_name 2 Entries local_name
+  ...
+
+  load --table LocalNames
+  [
+  ["_key"],
+  ["Items"],
+  ["BLT"],
+  ...
+  ]
+  ...
+
+
+
