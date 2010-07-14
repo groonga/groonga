@@ -1983,7 +1983,7 @@ show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
     switch (o->op) {
     case getopt_op_none:
       if (o->arg && *o->arg) {
-        if (o->longopt) {
+        if (o->longopt && strcmp(o->longopt, "config-path")) {
           fprintf(out, "%s=%s\n", o->longopt, *o->arg);
         }
       }
