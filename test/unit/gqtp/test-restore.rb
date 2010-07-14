@@ -318,7 +318,7 @@ load --table commands
 EOC
   end
 
-  def test_load_with_test_reference_key
+  def test_load_with_text_reference_key
     assert_same_dump(<<EOGQTP)
 table_create users 0 ShortText
 table_create comments 1 ShortText
