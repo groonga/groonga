@@ -40,25 +40,23 @@ groongaサーバへの接続
 
 接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行します。
 
-実行例::
-
-  % groonga -c
-  > status
-  [[0,1269936150.9489,6.5e-05],{"alloc_count":125,"starttime":1269935680,"uptime":470,"version":"0.1.7-10-g6bf93ba"}]
-  > ctrl-d
-  %
+.. groonga-command
+.. include:: ../example/tutorial02-1.log
+.. .. % groonga -c
+.. status
+.. .. > ctrl-d
+.. .. %
 
 groongaデーモンの終了
 ^^^^^^^^^^^^^^^^^^^^^
 
 groongaデーモンにshutdownコマンドを発行することにより、終了させることができます。
 
-実行例::
-
-  % groonga -c
-  > shutdown
-  [[0,1270188017.75553,0.000104]]
-  %
+.. groonga-command
+.. include:: ../example/tutorial02-2.log
+.. .. % groonga -c
+.. .. > shutdown
+.. .. %
 
 HTTPによる通信
 --------------
@@ -89,7 +87,7 @@ groongaがHTTPプロトコルモードで起動されているとき、「/d/コ
    レスポンス：[[0,1270106793.0733,5.6e-05],{"alloc_count":171,"starttime":1270106348,"uptime":445,"version":"0.1.8-4-g4404d63"}]
 
   http://[IPまたはホスト名]:[ポート番号]/d/select?table=Site&query=title:@this
-   レスポンス：[[0,1270106743.60756,0.000903],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+   レスポンス：[[0,1270106743.60756,0.000903],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http../example/.org/","This is test record 1!"]]]]
 
 セキュリティ
 ------------

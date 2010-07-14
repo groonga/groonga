@@ -1,0 +1,7 @@
+実行例 ::
+
+  > column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
+  [[0,1279106639.35656,0.081725],true]
+  > select --table Site
+  [[0,1279106639.63911,0.000166],[[[0],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]]]]]
+  

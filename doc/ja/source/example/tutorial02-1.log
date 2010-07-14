@@ -1,0 +1,8 @@
+実行例 ::
+
+  % groonga -c
+  > status
+  [[0,1279106638.26709,1.9e-05],{"alloc_count":474,"starttime":1279106556,"uptime":82,"version":"0.7.2-5-g2a77275"}]
+  > ctrl-d
+  %
+  

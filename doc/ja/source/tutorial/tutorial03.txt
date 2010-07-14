@@ -1,5 +1,7 @@
 .. highlightlang:: none
 
+.. groonga-include : tutorial01.txt
+
 さまざまな種類をもったデータの保存
 ==================================
 
@@ -14,23 +16,17 @@ groongaでは、数値（整数・小数）や文字列や時刻や経緯度な�
 
 その他のデータ型の一覧は、 :doc:`../type` を参照してください。
 
-実行例 ::
-
- > table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
- [[0,1270207173.01411,0.004999]]
- > column_create --table Type --name number --type Int32
- [[0,1270207175.98991,0.013264]]
- > column_create --table Type --name float --type Float
- [[0,1270207178.55963,0.015518]]
- > column_create --table Type --name string --type ShortText
- [[0,1270207181.1696,0.021165]]
- > column_create --table Type --name time --type Time
- [[0,1270207184.08842,0.020519]]
- > load --table Type
- > [{"_key":"sample","number":12345,"float":42.195,"string":"GROONGA","time":1234567890.12}]
- [[0,1271314770.93001,0.0222],1]
- > select --table Type
- [[0,1271314774.77299,0.000158],[[[1],[["_id","UInt32"],["_key","ShortText"],["time","Time"],["string","ShortText"],["number","Int32"],["float","Float"]],[1,"sample",1234567890.12,"GROONGA",12345,42.195]]]]
+.. groonga-command
+.. table_remove Type
+.. include:: ../example/tutorial03-1.log
+.. table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
+.. column_create --table Type --name number --type Int32
+.. column_create --table Type --name float --type Float
+.. column_create --table Type --name string --type ShortText
+.. column_create --table Type --name time --type Time
+.. load --table Type
+.. [{"_key":"sample","number":12345,"float":42.195,"string":"GROONGA","time":1234567890.12}]
+.. select --table Type
 
 
 テーブル型
@@ -44,15 +40,12 @@ table_createで作成したテーブルを、カラムの型として使うこ�
 
 他のテーブルを参照するカラムにデータを入力する場合には、参照先のテーブルの_keyカラムの値を代入する必要があります。
 
-実行例 ::
-
- > column_create --table Site --name link --type Site
- [[0,1270195299.07024,0.00774]]
- > load --table Site
- > [{"_key":"http://example.org/","link":"http://example.net/"}]
- [[0,1270195299.07804,0.02184],1]
- > select --table Site --output_columns _key,title,link._key,link.title --query title:@this
- [[0,1270195334.29349,0.000411],[[[1],[["_key","ShortText"],["title","ShortText"],["link._key","ShortText"],["link.title","ShortText"]],["http://example.org/","This is test record 1!","http://example.net/","test record 2."]]]]
+.. groonga-command
+.. include:: ../example/tutorial03-2.log
+.. column_create --table Site --name link --type Site
+.. load --table Site
+.. [{"_key":"http../example/.org/","link":"http../example/.net/"}]
+.. select --table Site --output_columns _key,title,link._key,link.title --query title:@this
 
 このように、linkカラムに他のサイトへの参照を保存することができました。また、参照先の_keyとtitleカラムの内容を表示することができました。
 
@@ -69,14 +62,11 @@ column_createコマンドでカラムを作成するとき、--flagsオプショ
 
 .. FIXME: _idの配列ではダメなのかどうか。検証する。
 
-実行例 ::
-
- > column_create --table Site --name links --flags COLUMN_VECTOR --type Site
- [[0,1270196209.44907,0.025909]]
- > load --table Site
- > [{"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]}]
- [[0,1270196221.00445,50.638141],1]
- > select --table Site --output_columns _key,title,links._key,links.title --query title:@this
- [[0,1270196347.7695,0.000375],[[[1],[["_key","ShortText"],["title","ShortText"],["links._key","ShortText"],["links.title","ShortText"]],["http://example.org/","This is test record 1!",["http://example.net/","http://example.org/","http://example.com/"],["test record 2.","This is test record 1!","test test record three."]]]]]
+.. groonga-command
+.. include:: ../example/tutorial03-3.log
+.. column_create --table Site --name links --flags COLUMN_VECTOR --type Site
+.. load --table Site
+.. [{"_key":"http../example/.org/","links":["http../example/.net/","http../example/.org/","http../example/.com/"]}]
+.. select --table Site --output_columns _key,title,links._key,links.title --query title:@this
 
 このように、複数の参照関係が保存できました。また、output_columnsによって、複数の参照先のカラム値も表示させることができました。

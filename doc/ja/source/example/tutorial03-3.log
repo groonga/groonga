@@ -1,0 +1,10 @@
+実行例 ::
+
+  > column_create --table Site --name links --flags COLUMN_VECTOR --type Site
+  [[0,1279106576.12178,0.079537],true]
+  > load --table Site
+  > [{"_key":"http../example/.org/","links":["http../example/.net/","http../example/.org/","http../example/.com/"]}]
+  [[0,1279106576.40213,0.200731],1]
+  > select --table Site --output_columns _key,title,links._key,links.title --query title:@this
+  [[0,1279106576.80353,0.000481],[[[1],[["_key","ShortText"],["title","ShortText"],["links._key","ShortText"],["links.title","ShortText"]],["http../example//.org/","This is test record 1!",[],[]]]]]
+  

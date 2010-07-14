@@ -1,0 +1,5 @@
+実行例 ::
+
+  > select --table Users --match_columns name,location_str,description --query 東京 --output_columns _key,name
+  [[0,1279106622.21901,0.000521],[[[2],[["_key","ShortText"],["name","ShortText"]],["tasukuchan","グニャラくん"],["OffGao","OffGao"]]]]
+  

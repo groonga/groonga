@@ -30,7 +30,7 @@ from pkg_resources import parse_version
 #  sys.exit(1)
 
 if sphinx.__version__ != SPHINX_VERSION_REQUIRED:
-  print 'sphinx version is different. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION
+  print 'sphinx version is different. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION_REQUIRED
   sys.exit(1)
 
 # -- General configuration -----------------------------------------------------

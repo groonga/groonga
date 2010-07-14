@@ -1,5 +1,8 @@
 .. highlightlang:: none
 
+.. groonga-command
+.. table_remove Site
+
 インストールと基本的な操作
 ==========================
 
@@ -72,11 +75,10 @@ DBの操作
 
 たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groongaの実行状態を返すコマンドです。
 
-実行例::
-
-  % groonga /tmp/tutorial.db
-  > status
-  [[0,1269935682.29616,0.000122],{"alloc_count":124,"starttime":1269935680,"uptime":2,"version":"0.1.7-10-g6bf93ba"}]
+.. groonga-command
+.. include:: ../example//tutorial01-1.log
+.. .. % groonga /tmp/tutorial.db
+.. status
 
 以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番目の様子に、コマンドの実行結果が入ります。
 
@@ -127,20 +129,18 @@ groongaでは、多くの場合テーブルを作成する際に主キーが必�
 
 ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'という名前のテーブルを作成します。
 
-実行例::
-
-  > table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1268294088.70744,0.098794]]
+.. groonga-command
+.. include:: ../example//tutorial01-2.log
+.. table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
 
 検索
 ^^^^
 
 :doc:`../commands/select` コマンドを用いて、テーブルの中身を表示することができます。
 
-実行例::
-
- > select --table Site
- [[0,1269854691.80132,0.000106],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-3.log
+.. select --table Site
 
 selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は検索されたレコードの件数、["_id","Uint32"]は値がUInt32型である"_id'という名前のカラム、["_key","ShortText"]は値がShortText型である'_key'という名前のカラムを示しています。
 
@@ -153,12 +153,10 @@ table_createコマンドで作成したテーブルには、最初から'_id'/'_
 
 ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しましょう。
 
-実行例::
-
- > column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
- [[0,1268294203.38404,0.056593]]
- > select --table Site
- [[0,1269854897.8173,0.000105],[[[0],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-4.log
+.. column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
+.. select --table Site
 
 COLUMN_SCALARについては、通常のカラムであることを示しています。
 
@@ -171,10 +169,9 @@ COLUMN_SCALARについては、通常のカラムであることを示してい�
 語彙表テーブルとは、文書の中にある単語が主キーとなるテーブルです。
 ここでは、ShortText型の主キー値を持つ、'Terms'という名前のテーブルを作成しました。
 
-実行例::
-
-  > table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1268294159.76784,0.049841]]
+.. groonga-command
+.. include:: ../example//tutorial01-5.log
+.. table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
 
 この実行例には、多くのパラメータが指定されています。本チュートリアルでは、これらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ばしてもらってかまいません。
 
@@ -187,10 +184,9 @@ COLUMN_SCALARについては、通常のカラムであることを示してい�
 
 Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、語彙テーブルにインデックス型のカラムを作成します。
 
-実行例::
-
- > column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
- [[0,1268294247.01333,0.129917]]
+.. groonga-command
+.. include:: ../example//tutorial01-6.log
+.. column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
 
 Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデックス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtypeに、インデックス対象となるカラムをsourceに指定します。
 
@@ -201,26 +197,26 @@ Siteテーブルのtitleカラムを検索対象とする、'blog_title'とい�
 
 :doc:`../commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。
 
-実行例::
+.. groonga-command
+.. include:: ../example//tutorial01-7.log
+.. load --table Site
+.. [
+.. {"_key":"http../example//.org/","title":"This is test record 1!"},
+.. {"_key":"http../example//.net/","title":"test record 2."},
+.. {"_key":"http../example//.com/","title":"test test record three."},
+.. {"_key":"http../example//.net/afr","title":"test record four."},
+.. {"_key":"http../example//.org/aba","title":"test test test record five."},
+.. {"_key":"http../example//.com/rab","title":"test test test test record six."},
+.. {"_key":"http../example//.net/atv","title":"test test test record seven."},
+.. {"_key":"http../example//.org/gat","title":"test test record eight."},
+.. {"_key":"http../example//.com/vdw","title":"test test record nine."},
+.. ]
 
- > load --table Site
- > [
- > {"_key":"http://example.org/","title":"This is test record 1!"},
- > {"_key":"http://example.net/","title":"test record 2."},
- > {"_key":"http://example.com/","title":"test test record three."},
- > {"_key":"http://example.net/afr","title":"test record four."},
- > {"_key":"http://example.org/aba","title":"test test test record five."},
- > {"_key":"http://example.com/rab","title":"test test test test record six."},
- > {"_key":"http://example.net/atv","title":"test test test record seven."},
- > {"_key":"http://example.org/gat","title":"test test record eight."},
- > {"_key":"http://example.com/vdw","title":"test test record nine."},
- > ]
- [[0,1268380982.80157,0.002685],9]
+selectコマンドで、データが入っていることを確認しましょう。
 
-selectコマンドで、データが入っていることを確認しましょう。::
-
- > select --table Site
- [[0,1270094085.02055,0.000149],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"],[2,"http://example.net/","test record 2."],[3,"http://example.com/","test test record three."],[4,"http://example.net/afr","test record four."],[5,"http://example.org/aba","test test test record five."],[6,"http://example.com/rab","test test test test record six."],[7,"http://example.net/atv","test test test record seven."],[8,"http://example.org/gat","test test record eight."],[9,"http://example.com/vdw","test test record nine."]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-8.log
+.. select --table Site
 
 データの検索
 ^^^^^^^^^^^^
@@ -229,31 +225,28 @@ groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一�
 
 selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができます。
 
-実行例::
-
- > select --table Site --query _id:1
- [[0,1269961834.61914,0.001204],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-9.log
+.. select --table Site --query _id:1
 
 queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'という値が入っているレコードを検索する、という意味です。
 
 _keyでも検索してみましょう。
 
-実行例::
+.. groonga-command
+.. include:: ../example//tutorial01-10.log
+.. select --table Site --query "_key:\"http../example//.org/\""
 
- > select --table Site --query "_key:\"http://example.org/\""
- [[0,1269964004.37746,0.0006],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
-
-queryパラメータに与えた「_key:\"http://example.org/\"」というのは、'_key'という名前のカラムに'"http://example.org/"'という値が入っているレコードを検索する、という意味です。
+queryパラメータに与えた「_key:\"http../example//.org/\"」というのは、'_key'という名前のカラムに'"http../example//.org/"'という値が入っているレコードを検索する、という意味です。
 
 全文検索
 ^^^^^^^^
 
 queryパラメータでは、インデックスを用いた全文検索を行うこともできます。
 
-実行例 ::
-
- > select --table Site --query title:@this
- [[0,1268381101.20846,0.000401],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-11.log
+.. select --table Site --query title:@this
 
 titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。
 
@@ -263,11 +256,9 @@ selectコマンドには、match_columnsというパラメータが存在しま�
 
 match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定すると、上記のクエリと同じ結果を得ることができます。
 
-実行例 ::
-
- > select --table Site --match_columns title --query this
- [[0,1268381101.20846,0.000401],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
-
+.. groonga-command
+.. include:: ../example//tutorial01-12.log
+.. select --table Site --match_columns title --query this
 
 出力カラムの指定
 ^^^^^^^^^^^^^^^^
@@ -276,10 +267,9 @@ selectコマンドにおいて、output_columnsパラメータを用いること
 
 複数のカラムを指定する場合は、カンマ(,)区切りで指定します。
 
-実行例 ::
-
- > select --table Site --output_columns _key,title,_score --query title:@test
- [[0,1270094680.9463,0.000353],[[[9],[["_key","ShortText"],["title","ShortText"],["_score","Int32"]],["http://example.org/","This is test record 1!",1],["http://example.net/","test record 2.",1],["http://example.com/","test test record three.",2],["http://example.net/afr","test record four.",1],["http://example.org/aba","test test test record five.",3],["http://example.com/rab","test test test test record six.",4],["http://example.net/atv","test test test record seven.",3],["http://example.org/gat","test test record eight.",2],["http://example.com/vdw","test test record nine.",2]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-13.log
+.. select --table Site --output_columns _key,title,_score --query title:@test
 
 groongaの検索結果には、「_score」という名前のカラムが追加されています。このカラムは、全文検索の条件が合致する文書ほど高い数値が入ります。
 
@@ -293,14 +283,11 @@ offsetパラメータには、検索結果を返す始点を指定します。1�
 
 limitパラメータには、検索結果を何件表示するのかを指定します。
 
-実行例 ::
-
- > select --table Site --offset 0 --limit 3
- [[0,1270032573.11593,9.7e-05],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"],[2,"http://example.net/","test record 2."],[3,"http://example.com/","test test record three."]]]]
- > select --table Site --offset 3 --limit 3
- [[0,1270032573.13517,9.4e-05],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[4,"http://example.net/afr","test record four."],[5,"http://example.org/aba","test test test record five."],[6,"http://example.com/rab","test test test test record six."]]]]
- > select --table Site --offset 7 --limit 3
- [[0,1270032573.14992,8.0e-05],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[8,"http://example.org/gat","test test record eight."],[9,"http://example.com/vdw","test test record nine."]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-14.log
+.. select --table Site --offset 0 --limit 3
+.. select --table Site --offset 3 --limit 3
+.. select --table Site --offset 7 --limit 3
 
 並び替え
 ^^^^^^^^
@@ -309,25 +296,23 @@ selectコマンドにおいて、sortbyパラメータを用いることで、�
 
 sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートします。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出来ます。
 
-実行例 ::
-
- > select --table Site --sortby -_id
- [[0,1270032573.15816,0.000224],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[9,"http://example.com/vdw","test test record nine."],[8,"http://example.org/gat","test test record eight."],[7,"http://example.net/atv","test test test record seven."],[6,"http://example.com/rab","test test test test record six."],[5,"http://example.org/aba","test test test record five."],[4,"http://example.net/afr","test record four."],[3,"http://example.com/","test test record three."],[2,"http://example.net/","test record 2."],[1,"http://example.org/","This is test record 1!"]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-15.log
+.. select --table Site --sortby -_id
 
 出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことができます。
 
-実行例 ::
-
- > select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
- [[0,1270094939.95113,0.000409],[[[9],[["_id","UInt32"],["_score","Int32"],["title","ShortText"]],[1,1,"This is test record 1!"],[2,1,"test record 2."],[4,1,"test record four."],[3,2,"test test record three."],[9,2,"test test record nine."],[8,2,"test test record eight."],[7,3,"test test test record seven."],[5,3,"test test test record five."],[6,4,"test test test test record six."]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-16.log
+.. select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
 
 ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数のカラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカラムの値でソートさせることができます。
 
-実行例 ::
-
- > select --table Site --query title:@test --output_columns _id,_score,title --sortby _score,_id
- [[0,1270032573.17619,0.000357],[[[9],[["_id","UInt32"],["_score","Int32"],["title","ShortText"]],[1,1,"This is test record 1!"],[2,1,"test record 2."],[4,1,"test record four."],[3,2,"test test record three."],[8,2,"test test record eight."],[9,2,"test test record nine."],[5,3,"test test test record five."],[7,3,"test test test record seven."],[6,4,"test test test test record six."]]]]
+.. groonga-command
+.. include:: ../example//tutorial01-17.log
+.. select --table Site --query title:@test --output_columns _id,_score,title --sortby _score,_id
 
 .. rubric:: 脚注
 
 .. [1] 現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columnsパラメータを利用することをができます。通常のカラムでの絞り込みには利用できません。
+

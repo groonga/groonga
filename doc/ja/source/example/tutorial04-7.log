@@ -1,0 +1,5 @@
+実行例 ::
+
+  > select --table Site --output_columns _key,location --filter 'geo_in_circle(location, "128515259x503187188", 5000)'
+  [[0,1279106638.06474,0.000331],[[[1],[["_key","ShortText"],["location","WGS84GeoPoint"]],["http../example/.org/","128452975x503157902"]]]]
+  

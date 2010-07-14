@@ -53,6 +53,14 @@
     <dd><dl>
       <dt><a href="execfile.html#cmdoption--admin-html-path">command line option</a></dt>
   </dl></dd>
+    <dt>--cache-limit &lt;limit&gt;</dt>
+    <dd><dl>
+      <dt><a href="execfile.html#cmdoption--cache-limit">command line option</a></dt>
+  </dl></dd>
+    <dt>--config-path &lt;path&gt;</dt>
+    <dd><dl>
+      <dt><a href="execfile.html#cmdoption--config-path">command line option</a></dt>
+  </dl></dd>
     <dt>--dir</dt>
     <dd><dl>
       <dt><a href="grntest.html#cmdoption--dir">command line option</a></dt>
@@ -69,6 +77,10 @@
     <dd><dl>
       <dt><a href="grntest.html#cmdoption--noftp">command line option</a></dt>
   </dl></dd>
+    <dt>--pid-path &lt;path&gt;</dt>
+    <dd><dl>
+      <dt><a href="execfile.html#cmdoption--pid-path">command line option</a></dt>
+  </dl></dd>
     <dt>--protocol &lt;protocol&gt;</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption--protocol">command line option</a></dt>
@@ -77,7 +89,7 @@
     <dd><dl>
       <dt><a href="execfile.html#cmdoption--query-log-path">command line option</a></dt>
   </dl></dd>
-    <dt>-a</dt>
+    <dt>-a, --address &lt;ip/hostname&gt;</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption-a">command line option</a></dt>
   </dl></dd>
@@ -85,29 +97,29 @@
     <dd><dl>
       <dt><a href="execfile.html#cmdoption-c">command line option</a></dt>
   </dl></dd>
+</dl></td>
+  <td width="33%" valign="top"><dl>
     <dt>-d</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption-d">command line option</a></dt>
   </dl></dd>
-    <dt>-e &lt;encoding&gt;</dt>
+    <dt>-e, --encoding &lt;encoding&gt;</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption-e">command line option</a></dt>
   </dl></dd>
-</dl></td>
-  <td width="33%" valign="top"><dl>
     <dt>-h, --help</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption-h">command line option</a></dt>
-  </dl></dd>
-    <dt>-i &lt;ip/hostname&gt;</dt>
-    <dd><dl>
-      <dt><a href="execfile.html#cmdoption-i">command line option</a></dt>
   </dl></dd>
     <dt>-i, --host &lt;ip/hostname&gt;</dt>
     <dd><dl>
       <dt><a href="grntest.html#cmdoption-i">command line option</a></dt>
   </dl></dd>
-    <dt>-l &lt;log level&gt;</dt>
+    <dt>-i, --server-id &lt;ip/hostname&gt;</dt>
+    <dd><dl>
+      <dt><a href="execfile.html#cmdoption-i">command line option</a></dt>
+  </dl></dd>
+    <dt>-l, --log-level &lt;log level&gt;</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption-l">command line option</a></dt>
   </dl></dd>
@@ -123,17 +135,17 @@
     <dd><dl>
       <dt><a href="grnslap.html#cmdoption-P">command line option</a></dt>
   </dl></dd>
-    <dt>-p &lt;port number&gt;</dt>
-    <dd><dl>
-      <dt><a href="execfile.html#cmdoption-p">command line option</a></dt>
-  </dl></dd>
     <dt>-p, --port &lt;port number&gt;</dt>
     <dd><dl>
-      <dt><a href="grntest.html#cmdoption-p">command line option</a></dt>
+      <dt><a href="grntest.html#cmdoption-p">command line option</a>, <a href="execfile.html#cmdoption-p">[1]</a></dt>
   </dl></dd>
     <dt>-s</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption-s">command line option</a></dt>
+  </dl></dd>
+    <dt>-t, --max-threads &lt;max threasd&gt;</dt>
+    <dd><dl>
+      <dt><a href="execfile.html#cmdoption-t">command line option</a></dt>
   </dl></dd>
 </dl></td>
 </tr></table>
@@ -144,26 +156,29 @@
     <dt>command line option</dt>
     <dd><dl>
       <dt><a href="execfile.html#cmdoption--admin-html-path">--admin-html-path &lt;path&gt;</a></dt>
+      <dt><a href="execfile.html#cmdoption--cache-limit">--cache-limit &lt;limit&gt;</a></dt>
+      <dt><a href="execfile.html#cmdoption--config-path">--config-path &lt;path&gt;</a></dt>
       <dt><a href="grntest.html#cmdoption--dir">--dir</a></dt>
       <dt><a href="grntest.html#cmdoption--log-output-dir">--log-output-dir</a></dt>
       <dt><a href="execfile.html#cmdoption--log-path">--log-path &lt;path&gt;</a></dt>
       <dt><a href="grntest.html#cmdoption--noftp">--noftp</a></dt>
+      <dt><a href="execfile.html#cmdoption--pid-path">--pid-path &lt;path&gt;</a></dt>
       <dt><a href="execfile.html#cmdoption--protocol">--protocol &lt;protocol&gt;</a></dt>
       <dt><a href="execfile.html#cmdoption--query-log-path">--query-log-path &lt;path&gt;</a></dt>
       <dt><a href="grnslap.html#cmdoption-P">-P</a></dt>
-      <dt><a href="execfile.html#cmdoption-a">-a</a></dt>
+      <dt><a href="execfile.html#cmdoption-a">-a, --address &lt;ip/hostname&gt;</a></dt>
       <dt><a href="execfile.html#cmdoption-c">-c</a></dt>
       <dt><a href="execfile.html#cmdoption-d">-d</a></dt>
-      <dt><a href="execfile.html#cmdoption-e">-e &lt;encoding&gt;</a></dt>
+      <dt><a href="execfile.html#cmdoption-e">-e, --encoding &lt;encoding&gt;</a></dt>
       <dt><a href="execfile.html#cmdoption-h">-h, --help</a></dt>
-      <dt><a href="execfile.html#cmdoption-i">-i &lt;ip/hostname&gt;</a></dt>
       <dt><a href="grntest.html#cmdoption-i">-i, --host &lt;ip/hostname&gt;</a></dt>
-      <dt><a href="execfile.html#cmdoption-l">-l &lt;log level&gt;</a></dt>
+      <dt><a href="execfile.html#cmdoption-i">-i, --server-id &lt;ip/hostname&gt;</a></dt>
+      <dt><a href="execfile.html#cmdoption-l">-l, --log-level &lt;log level&gt;</a></dt>
       <dt><a href="grnslap.html#cmdoption-m">-m</a></dt>
       <dt><a href="execfile.html#cmdoption-n">-n</a></dt>
-      <dt><a href="execfile.html#cmdoption-p">-p &lt;port number&gt;</a></dt>
-      <dt><a href="grntest.html#cmdoption-p">-p, --port &lt;port number&gt;</a></dt>
+      <dt><a href="grntest.html#cmdoption-p">-p, --port &lt;port number&gt;</a>, <a href="execfile.html#cmdoption-p">[1]</a></dt>
       <dt><a href="execfile.html#cmdoption-s">-s</a></dt>
+      <dt><a href="execfile.html#cmdoption-t">-t, --max-threads &lt;max threasd&gt;</a></dt>
   </dl></dd>
 </dl></td>
 </tr></table>
