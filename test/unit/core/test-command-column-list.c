@@ -23,7 +23,10 @@
 
 #include <str.h>
 
-void test_success(void);
+#define get(name) grn_ctx_get(context, name, strlen(name))
+
+void test_columns(void);
+void test_index_columns(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -94,7 +97,7 @@ test_columns(void)
                       "[\"range\",\"ShortText\"],"
                       "[\"source\",\"ShortText\"]"
                       "],"
-                      "[0,"
+                      "[%d,"
                       "\"_key\","
                       "\"\","
                       "\"\","
@@ -103,7 +106,7 @@ test_columns(void)
                       "\"ShortText\","
                       "[]"
                       "],"
-                      "[258,"
+                      "[%d,"
                       "\"comment\","
                       "\"%s.0000102\","
                       "\"var\","
@@ -112,7 +115,7 @@ test_columns(void)
                       "\"Text\","
                       "[]"
                       "],"
-                      "[257,"
+                      "[%d,"
                       "\"age\","
                       "\"%s.0000101\","
                       "\"fix\","
@@ -122,7 +125,9 @@ test_columns(void)
                       "[]"
                       "]"
                       "]",
-                      database_path, database_path),
+                      grn_obj_id(context, get("Users")),
+                      grn_obj_id(context, get("Users.comment")), database_path,
+                      grn_obj_id(context, get("Users.age")), database_path),
       send_command("column_list Users"));
 }
 
@@ -146,7 +151,7 @@ test_index_columns(void)
                       "[\"range\",\"ShortText\"],"
                       "[\"source\",\"ShortText\"]"
                       "],"
-                      "[0,"
+                      "[%d,"
                       "\"_key\","
                       "\"\","
                       "\"\","
@@ -155,7 +160,7 @@ test_index_columns(void)
                       "\"ShortText\","
                       "[]"
                       "],"
-                      "[258,"
+                      "[%d,"
                       "\"Sites_key\","
                       "\"%s.0000102\","
                       "\"index\",\"COLUMN_INDEX|WITH_POSITION|COMPRESS_NONE|PERSISTENT\","
@@ -164,6 +169,8 @@ test_index_columns(void)
                       "[\"Sites\"]"
                       "]"
                       "]",
+                      grn_obj_id(context, get("Terms")),
+                      grn_obj_id(context, get("Terms.Sites_key")),
                       database_path),
       send_command("column_list Terms"));
 }

@@ -56,7 +56,7 @@ module GroongaLocalGQTPTestUtils
             "commands:\n>>>\n#{commands}\n<<<\n" +
             "output:\n>>>\n#{output}\n<<<\n")
     end
-    output.gsub(/^\[\[0,[\d\.e\-]+,[\d\.e\-]+\]/, "[[0,0.0,0.0]")
+    normalize_json_result(output)
   end
 
   def assert_dump(expected, commands)

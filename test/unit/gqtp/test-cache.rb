@@ -29,12 +29,12 @@ class CacheTest < Test::Unit::TestCase
 
   def test_cache_with_illegal_select
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[true]
-[true]
-[true]
-[1]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],1]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
 column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
@@ -47,9 +47,9 @@ load --table Site
 COMMANDS
 
     expected= <<EXPECTED
-[]
-[]
-[true]
+[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19]]],[]]
+[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19]]],[]]
+[[0,0.0,0.0],true]
 EXPECTED
 
     commands = <<COMMANDS
@@ -70,8 +70,8 @@ COMMANDS
 
   private
   def assert_error_command_output(expected, actual)
-    actual = actual.gsub(/^\[\[(-63|0),[\d\.e\-]+,[\d\.e\-]+(,".*"|)\]/) do
-      "[[#{$1},0.0,0.0#{$2}]"
+    actual = actual.gsub(/^\[\[(-63|0),[\d\.e\-]+,[\d\.e\-]+/) do
+      "[[#{$1},0.0,0.0"
     end
     assert_equal(expected, actual)
   end

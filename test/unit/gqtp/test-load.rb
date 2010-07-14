@@ -29,10 +29,10 @@ class LoadTest < Test::Unit::TestCase
 
   def test_table_with_key_with_no_column
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[2]
-[[[2],[["_id","UInt32"],["_key","ShortText"]],[2,"bash"],[1,"gcc"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],2]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"]],[2,"bash"],[1,"gcc"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create commands 1 ShortText
 load --table commands
@@ -47,11 +47,11 @@ COMMANDS
 
   def test_table_with_key_with_one_column
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[true]
-[2]
-[[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[2,"bash","a shell"],[1,"gcc","a compiler"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],2]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[2,"bash","a shell"],[1,"gcc","a compiler"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create commands 1 ShortText
 column_create commands body 0 ShortText
@@ -67,12 +67,12 @@ COMMANDS
 
   def test_table_with_key_with_two_columns
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[true]
-[true]
-[2]
-[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],2]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create commands 1 ShortText
 column_create commands body 0 ShortText
@@ -89,12 +89,12 @@ COMMANDS
 
   def test_key_at_not_first_position
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[true]
-[true]
-[2]
-[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],2]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create commands 1 ShortText
 column_create commands body 0 ShortText
@@ -111,10 +111,10 @@ COMMANDS
 
   def test_table_with_no_key_with_no_column
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[2]
-[[[2],[["_id","UInt32"]],[1],[2]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],2]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"]],[1],[2]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create commands 3
 load --table commands
@@ -129,11 +129,11 @@ COMMANDS
 
   def test_table_with_no_key_with_one_column
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[true]
-[2]
-[[[2],[["_id","UInt32"],["body","ShortText"]],[1,\"a compiler\"],[2,\"a shell\"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],2]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["body","ShortText"]],[1,\"a compiler\"],[2,\"a shell\"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create commands 3
 column_create commands body 0 ShortText
@@ -149,12 +149,12 @@ COMMANDS
 
   def test_table_with_no_key_with_two_columns
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[true]
-[true]
-[2]
-[[[2],[["_id","UInt32"],["location","ShortText"],["body","ShortText"]],[1,"/usr/bin/gcc","a compiler"],[2,"/bin/bash","a shell"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],2]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["location","ShortText"],["body","ShortText"]],[1,"/usr/bin/gcc","a compiler"],[2,"/bin/bash","a shell"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create commands 3
 column_create commands body 0 ShortText

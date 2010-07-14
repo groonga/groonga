@@ -7310,9 +7310,6 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-#define KEY_NAME "_key"
-#define ID_NAME "_id"
-
 static inline int
 name_equal(const char *p, unsigned size, const char *name)
 {

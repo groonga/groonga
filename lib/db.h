@@ -419,6 +419,10 @@ grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
 grn_obj *grn_table_create_for_group(grn_ctx *ctx, const char *name, unsigned name_size,
                                     const char *path, grn_obj_flags flags,
                                     grn_obj *group_key, grn_obj *value_type);
+
+#define KEY_NAME "_key"
+#define ID_NAME "_id"
+
 #ifdef __cplusplus
 }
 #endif
