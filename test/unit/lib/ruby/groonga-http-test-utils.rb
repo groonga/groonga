@@ -120,7 +120,7 @@ module GroongaHTTPTestUtils
                   Column::INDEX | Flag::WITH_POSITION,
                   "users",
                   :source => "real_name")
-    column_create("terms", "users_descrption",
+    column_create("terms", "users_description",
                   Column::INDEX | Flag::WITH_POSITION,
                   "users",
                   :source => "description")
