@@ -131,7 +131,11 @@ module GroongaTestUtils
   end
 
   def run_groonga(*arguments)
-    `#{construct_command_line(*arguments)}`
+    normalize_json_result(`#{construct_command_line(*arguments)}`)
+  end
+
+  def normalize_json_result(result)
+    result.gsub(/^\[\[0,[\d\.e\-]+,[\d\.e\-]+\]/, "[[0,0.0,0.0]")
   end
 
   def utf8(string)
