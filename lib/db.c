@@ -1191,6 +1191,35 @@ clear_column_values(grn_ctx *ctx, grn_obj *table, grn_id rid)
   }
 }
 
+static int
+is_deletable(grn_ctx *ctx, grn_obj *table, grn_id id)
+{
+  int res = 1;
+  if (id) {
+    grn_hash *cols;
+    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+        grn_id *key;
+        uint32_t esize;
+        GRN_HASH_EACH(ctx, cols, tid, &key, NULL, NULL, {
+          grn_obj *col = grn_ctx_at(ctx, *key);
+          if (col && col->header.type == GRN_COLUMN_INDEX &&
+              (esize = grn_ii_estimate_size(ctx, (grn_ii *)col, id))) {
+            GRN_LOG(ctx, GRN_WARN, "undeletable record(%d:%d) has value (%d:%d)",
+                    DB_OBJ(table)->id, id, *key, esize);
+            res = 0;
+          }
+        });
+      }
+      grn_hash_close(ctx, cols);
+    }
+  } else {
+    res = 0;
+  }
+  return res;
+}
+
 grn_rc
 grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size)
 {
@@ -1202,39 +1231,41 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
       rid = grn_table_get(ctx, table, key, key_size);
       call_delete_hook(ctx, table, rid, key, key_size);
     }
-    switch (table->header.type) {
-    case GRN_DB :
-      /* todo : delete tables and columns from db */
-      break;
-    case GRN_TABLE_PAT_KEY :
-      WITH_NORMALIZE((grn_pat *)table, key, key_size, {
-        grn_pat *pat = (grn_pat *)table;
-        if (pat->io && !(pat->io->flags & GRN_IO_TEMPORARY)) {
-          if (!(rc = grn_io_lock(ctx, pat->io, 10000000))) {
+    if (is_deletable(ctx, table, rid)) {
+      switch (table->header.type) {
+      case GRN_DB :
+        /* todo : delete tables and columns from db */
+        break;
+      case GRN_TABLE_PAT_KEY :
+        WITH_NORMALIZE((grn_pat *)table, key, key_size, {
+          grn_pat *pat = (grn_pat *)table;
+          if (pat->io && !(pat->io->flags & GRN_IO_TEMPORARY)) {
+            if (!(rc = grn_io_lock(ctx, pat->io, 10000000))) {
+              rc = grn_pat_delete(ctx, pat, key, key_size, NULL);
+              grn_io_unlock(pat->io);
+            }
+          } else {
             rc = grn_pat_delete(ctx, pat, key, key_size, NULL);
-            grn_io_unlock(pat->io);
           }
-        } else {
-          rc = grn_pat_delete(ctx, pat, key, key_size, NULL);
-        }
-      });
-      break;
-    case GRN_TABLE_HASH_KEY :
-      WITH_NORMALIZE((grn_hash *)table, key, key_size, {
-        grn_hash *hash = (grn_hash *)table;
-        if (hash->io && !(hash->io->flags & GRN_IO_TEMPORARY)) {
-          if (!(rc = grn_io_lock(ctx, hash->io, 10000000))) {
+        });
+        break;
+      case GRN_TABLE_HASH_KEY :
+        WITH_NORMALIZE((grn_hash *)table, key, key_size, {
+          grn_hash *hash = (grn_hash *)table;
+          if (hash->io && !(hash->io->flags & GRN_IO_TEMPORARY)) {
+            if (!(rc = grn_io_lock(ctx, hash->io, 10000000))) {
+              rc = grn_hash_delete(ctx, hash, key, key_size, NULL);
+              grn_io_unlock(hash->io);
+            }
+          } else {
             rc = grn_hash_delete(ctx, hash, key, key_size, NULL);
-            grn_io_unlock(hash->io);
           }
-        } else {
-          rc = grn_hash_delete(ctx, hash, key, key_size, NULL);
-        }
-      });
-      break;
+        });
+        break;
+      }
+      clear_column_values(ctx, table, rid);
+      grn_obj_touch(ctx, table, NULL);
     }
-    clear_column_values(ctx, table, rid);
-    grn_obj_touch(ctx, table, NULL);
   }
   GRN_API_RETURN(rc);
 }
@@ -1247,22 +1278,24 @@ _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
   if (table) {
     const void *key;
     unsigned key_size;
-    if ((key = _grn_table_key(ctx, table, id, &key_size))) {
-      call_delete_hook(ctx, table, id, key, key_size);
+    if (is_deletable(ctx, table, id)) {
+      if ((key = _grn_table_key(ctx, table, id, &key_size))) {
+        call_delete_hook(ctx, table, id, key, key_size);
+      }
+      // todo : support optarg
+      switch (table->header.type) {
+      case GRN_TABLE_PAT_KEY :
+        rc = grn_pat_delete_by_id(ctx, (grn_pat *)table, id, optarg);
+        break;
+      case GRN_TABLE_HASH_KEY :
+        rc = grn_hash_delete_by_id(ctx, (grn_hash *)table, id, optarg);
+        break;
+      case GRN_TABLE_NO_KEY :
+        rc = grn_array_delete_by_id(ctx, (grn_array *)table, id, optarg);
+        break;
+      }
+      clear_column_values(ctx, table, id);
     }
-    // todo : support optarg
-    switch (table->header.type) {
-    case GRN_TABLE_PAT_KEY :
-      rc = grn_pat_delete_by_id(ctx, (grn_pat *)table, id, optarg);
-      break;
-    case GRN_TABLE_HASH_KEY :
-      rc = grn_hash_delete_by_id(ctx, (grn_hash *)table, id, optarg);
-      break;
-    case GRN_TABLE_NO_KEY :
-      rc = grn_array_delete_by_id(ctx, (grn_array *)table, id, optarg);
-      break;
-    }
-    clear_column_values(ctx, table, id);
   }
   return rc;
 }
