@@ -769,7 +769,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     GRN_TEXT_PUTS(ctx, body, "Content-Type: application/json\r\n\r\n");
   }
   {
-    ssize_t ret;
+    ssize_t ret, len;
 #ifdef WIN32
     WSABUF wsabufs[4];
     wsabufs[0].buf = GRN_TEXT_VALUE(body);
@@ -805,6 +805,12 @@ h_output(grn_ctx *ctx, int flags, void *arg)
       SERR("sendmsg");
     }
 #endif /* WIN32 */
+    len = GRN_TEXT_LEN(body) + GRN_TEXT_LEN(&head) +
+      GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot);
+    if (ret != len) {
+      GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "couldn't send all data (%d/%d)",
+              ret, len);
+    }
   }
   GRN_BULK_REWIND(body);
   GRN_BULK_REWIND(outbuf);
