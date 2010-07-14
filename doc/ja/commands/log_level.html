@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.9. log_level &mdash; groonga v0.7.2 documentation</title>
+    <title>3.2.11. log_level &mdash; groonga v0.7.2 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.10. log_put" href="log_put.html" />
-    <link rel="prev" title="3.2.8. load" href="load.html" /> 
+    <link rel="next" title="3.2.12. log_put" href="log_put.html" />
+    <link rel="prev" title="3.2.10. load" href="load.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,10 +35,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="log_put.html" title="3.2.10. log_put"
+          <a href="log_put.html" title="3.2.12. log_put"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="load.html" title="3.2.8. load"
+          <a href="load.html" title="3.2.10. load"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -52,24 +52,24 @@
           <div class="body">
             
   <div class="section" id="log-level">
-<h1>3.2.9. log_level<a class="headerlink" href="#log-level" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.11. log_level<a class="headerlink" href="#log-level" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.9.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.11.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>log_level - ログ出力レベルの設定</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.9.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.11.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>log_level level [output_type]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.9.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.11.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>log_levelは、ログ出力レベルを設定します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.9.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.11.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">level</span></tt></p>
 <blockquote>
 <p>設定するログ出力レベルの値を以下のいずれかで指定します。</p>
@@ -85,9 +85,9 @@ debug</blockquote>
 </blockquote>
 </div>
 <div class="section" id="id5">
-<h2>3.2.9.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.11.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="json">
-<h3>3.2.9.5.1. json形式<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
+<h3>3.2.11.5.1. json形式<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-none"><div class="highlight"><pre>[成功かどうかのフラグ]
 
 ``成功かどうかのフラグ``
@@ -98,14 +98,14 @@ debug</blockquote>
 </div>
 </div>
 <div class="section" id="id6">
-<h2>3.2.9.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.11.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>log_level warning
 [true]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id7">
-<h2>3.2.9.7. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.11.7. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="log_put.html"><em>log_put</em></a>
 <a class="reference internal" href="log_reopen.html"><em>log_reopen</em></a></p>
 </div>
@@ -119,27 +119,27 @@ debug</blockquote>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.2.9. log_level</a><ul>
-<li><a class="reference internal" href="#id1">3.2.9.1. 名前</a></li>
-<li><a class="reference internal" href="#id2">3.2.9.2. 書式</a></li>
-<li><a class="reference internal" href="#id3">3.2.9.3. 説明</a></li>
-<li><a class="reference internal" href="#id4">3.2.9.4. 引数</a></li>
-<li><a class="reference internal" href="#id5">3.2.9.5. 返値</a><ul>
-<li><a class="reference internal" href="#json">3.2.9.5.1. json形式</a></li>
+<li><a class="reference internal" href="#">3.2.11. log_level</a><ul>
+<li><a class="reference internal" href="#id1">3.2.11.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.11.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.11.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.11.4. 引数</a></li>
+<li><a class="reference internal" href="#id5">3.2.11.5. 返値</a><ul>
+<li><a class="reference internal" href="#json">3.2.11.5.1. json形式</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id6">3.2.9.6. 例</a></li>
-<li><a class="reference internal" href="#id7">3.2.9.7. 関連項目</a></li>
+<li><a class="reference internal" href="#id6">3.2.11.6. 例</a></li>
+<li><a class="reference internal" href="#id7">3.2.11.7. 関連項目</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="load.html"
-                        title="previous chapter">3.2.8. load</a></p>
+                        title="previous chapter">3.2.10. load</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="log_put.html"
-                        title="next chapter">3.2.10. log_put</a></p>
+                        title="next chapter">3.2.12. log_put</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/commands/log_level.txt"
@@ -169,10 +169,10 @@ debug</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="log_put.html" title="3.2.10. log_put"
+          <a href="log_put.html" title="3.2.12. log_put"
              >next</a> |</li>
         <li class="right" >
-          <a href="load.html" title="3.2.8. load"
+          <a href="load.html" title="3.2.10. load"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>

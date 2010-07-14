@@ -1,0 +1,6 @@
+実行例 ::
+
+  % groonga -c
+  > shutdown
+  %
+  

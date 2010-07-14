@@ -81,10 +81,10 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
 <p>対象ホストで動作しているgroongaサーバに接続します。</p>
 <p>対象ホスト名を省略した場合はlocalhostに対して接続し、対象ポート番号を省略した場合は10041ポートに対して接続します。</p>
 <p>接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行します。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -c
 &gt; status
-[[0,1269936150.9489,6.5e-05],{&quot;alloc_count&quot;:125,&quot;starttime&quot;:1269935680,&quot;uptime&quot;:470,&quot;version&quot;:&quot;0.1.7-10-g6bf93ba&quot;}]
+[[0,1279106638.26709,1.9e-05],{&quot;alloc_count&quot;:474,&quot;starttime&quot;:1279106556,&quot;uptime&quot;:82,&quot;version&quot;:&quot;0.7.2-5-g2a77275&quot;}]
 &gt; ctrl-d
 %
 </pre></div>
@@ -93,10 +93,9 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
 <div class="section" id="id4">
 <h3>2.2.1.3. groongaデーモンの終了<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>groongaデーモンにshutdownコマンドを発行することにより、終了させることができます。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -c
 &gt; shutdown
-[[0,1270188017.75553,0.000104]]
 %
 </pre></div>
 </div>
@@ -123,7 +122,7 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
  レスポンス：[[0,1270106793.0733,5.6e-05],{&quot;alloc_count&quot;:171,&quot;starttime&quot;:1270106348,&quot;uptime&quot;:445,&quot;version&quot;:&quot;0.1.8-4-g4404d63&quot;}]
 
 http://[IPまたはホスト名]:[ポート番号]/d/select?table=Site&amp;query=title:@this
- レスポンス：[[0,1270106743.60756,0.000903],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
+ レスポンス：[[0,1270106743.60756,0.000903],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example/.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
 </div>

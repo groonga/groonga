@@ -1,0 +1,20 @@
+実行例 ::
+
+  > table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
+  [[0,1279106561.18746,0.08219],true]
+  > column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
+  [[0,1279106561.47044,0.058777],true]
+  > column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
+  [[0,1279106561.73,0.058087],true]
+  > table_create --name IndexBlog2 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+  [[0,1279106561.98885,0.082267],true]
+  > column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
+  [[0,1279106562.27187,0.13067],true]
+  > load --table Blog2
+  > [
+  > {"_key":"grn1","title":"groonga test","message":"groonga message"},
+  > {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
+  > {"_key":"grn3","title":"groonga message","message":"none"}
+  > ]
+  [[0,1279106562.60333,1.001385],3]
+  

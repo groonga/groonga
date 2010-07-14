@@ -1,5 +1,8 @@
 .. highlightlang:: none
 
+.. groonga-command
+.. table_remove PatPre
+
 主キーによる前方一致検索
 ========================
 
@@ -10,19 +13,17 @@ groongaのテーブルは、テーブル作成時にパトリシア木オプシ�
 
 table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キーによる前方一致検索ができるようになります。
 
-実行例 ::
-
- > table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
- [[0,1270635562.31987,0.005155]]
- > load --table PatPre
- > [
- > {"_key":"ひろゆき"},
- > {"_key":"まろゆき"},
- > {"_key":"ひろあき"}
- > ]
- [[0,1270635565.7892,0.085917],3]
- > select --table PatPre --query _key:@ひろ
- [[0,1270635568.81702,0.000386],[[[2],[["_id","UInt32"],["_key","ShortText"]],[3,"ひろあき"],[1,"ひろゆき"]]]]
+.. groonga-command
+.. include:: ../example/tutorial08-1.log
+..
+   table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
+   load --table PatPre
+   [
+   {"_key":"ひろゆき"},
+   {"_key":"まろゆき"},
+   {"_key":"ひろあき"}
+   ]
+   select --table PatPre --query _key:@ひろ
 
 .. #主キーによる後方一致検索
 .. #------------------------

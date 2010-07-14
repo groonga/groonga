@@ -77,12 +77,6 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 </dd></dl>
 
 <dl class="cmdoption">
-<dt id="cmdoption-a">
-<tt class="descname">-a</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-a" title="Permalink to this definition">¶</a></dt>
-<dd><p>スタンドアロンモードで実行します(デフォルト)。</p>
-</dd></dl>
-
-<dl class="cmdoption">
 <dt id="cmdoption-c">
 <tt class="descname">-c</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-c" title="Permalink to this definition">¶</a></dt>
 <dd><p>クライアントモードで実行します。</p>
@@ -102,27 +96,33 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
 <dl class="cmdoption">
 <dt id="cmdoption-e">
-<tt class="descname">-e</tt><tt class="descclassname"> &lt;encoding&gt;</tt><a class="headerlink" href="#cmdoption-e" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">-e</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--encoding</tt><tt class="descclassname"> &lt;encoding&gt;</tt><a class="headerlink" href="#cmdoption-e" title="Permalink to this definition">¶</a></dt>
 <dd><p>データベースで使用する文字エンコーディング方式を指定します。新たなデータベースを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指定できます。</p>
 </dd></dl>
 
 <dl class="cmdoption">
 <dt id="cmdoption-l">
-<tt class="descname">-l</tt><tt class="descclassname"> &lt;log level&gt;</tt><a class="headerlink" href="#cmdoption-l" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">-l</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--log-level</tt><tt class="descclassname"> &lt;log level&gt;</tt><a class="headerlink" href="#cmdoption-l" title="Permalink to this definition">¶</a></dt>
 <dd><p>ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログが出力されます。</p>
 </dd></dl>
 
 <dl class="cmdoption">
-<dt id="cmdoption-i">
-<tt class="descname">-i</tt><tt class="descclassname"> &lt;ip/hostname&gt;</tt><a class="headerlink" href="#cmdoption-i" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-a">
+<tt class="descname">-a</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--address</tt><tt class="descclassname"> &lt;ip/hostname&gt;</tt><a class="headerlink" href="#cmdoption-a" title="Permalink to this definition">¶</a></dt>
 <dd><p>サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。(デフォルトは`hostname`の返すホスト名)</p>
 </dd></dl>
 
 <dl class="cmdoption">
 <dt id="cmdoption-p">
-<tt class="descname">-p</tt><tt class="descclassname"> &lt;port number&gt;</tt><a class="headerlink" href="#cmdoption-p" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">-p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--port</tt><tt class="descclassname"> &lt;port number&gt;</tt><a class="headerlink" href="#cmdoption-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。
 (デフォルトは10041番)</p>
+</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption-i">
+<tt class="descname">-i</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--server-id</tt><tt class="descclassname"> &lt;ip/hostname&gt;</tt><a class="headerlink" href="#cmdoption-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定します。(デフォルトは`hostname`の返すホスト名)</p>
 </dd></dl>
 
 <dl class="cmdoption">
@@ -154,6 +154,44 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 <dt id="cmdoption--query-log-path">
 <tt class="descname">--query-log-path</tt><tt class="descclassname"> &lt;path&gt;</tt><a class="headerlink" href="#cmdoption--query-log-path" title="Permalink to this definition">¶</a></dt>
 <dd><p>クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されません)</p>
+</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption-t">
+<tt class="descname">-t</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--max-threads</tt><tt class="descclassname"> &lt;max threasd&gt;</tt><a class="headerlink" href="#cmdoption-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数です)</p>
+</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption--pid-path">
+<tt class="descname">--pid-path</tt><tt class="descclassname"> &lt;path&gt;</tt><a class="headerlink" href="#cmdoption--pid-path" title="Permalink to this definition">¶</a></dt>
+<dd><p>PIDを保存するパスを指定します。(デフォルトでは保存しません)</p>
+</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption--config-path">
+<tt class="descname">--config-path</tt><tt class="descclassname"> &lt;path&gt;</tt><a class="headerlink" href="#cmdoption--config-path" title="Permalink to this definition">¶</a></dt>
+<dd><p>設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになります。:</p>
+<div class="highlight-none"><div class="highlight"><pre># &#39;#&#39;以降はコメント。
+; &#39;;&#39;以降もコメント。
+
+# &#39;キー = 値&#39;でオプションを指定。
+pid-file = /var/run/groonga.pid
+
+# &#39;=&#39;の前後の空白はは無視される。↓は↑と同じ意味。
+pid-file=/var/run/groonga.pid
+
+# &#39;キー&#39;は&#39;--XXX&#39;スタイルのオプション名と同じものが使える。
+# 例えば、&#39;--pid-path&#39;に対応するキーは&#39;pid-path&#39;。
+# ただし、キーが&#39;config-path&#39;のオプションは無視される。
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cmdoption">
+<dt id="cmdoption--cache-limit">
+<tt class="descname">--cache-limit</tt><tt class="descclassname"> &lt;limit&gt;</tt><a class="headerlink" href="#cmdoption--cache-limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>キャッシュ数の最大値を指定します。(デフォルトは100です)</p>
 </dd></dl>
 
 </div>

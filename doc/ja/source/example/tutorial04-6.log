@@ -1,0 +1,5 @@
+実行例 ::
+
+  > select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sortby -_score
+  [[0,1279106637.86191,0.000497],[[[2],[["_key","ShortText"],["location","WGS84GeoPoint"],["_score","Int32"]],["http../example//.org/","0x0",15284432],["http../example//.net/","0x0",15284432]]]]
+  

@@ -1,5 +1,7 @@
 .. highlightlang:: none
 
+.. groonga-include : tutorial05.txt
+
 タグ検索・参照関係の逆引き
 ==========================
 
@@ -17,43 +19,34 @@
 動画の情報を保存する、Videoテーブルを作成します。Videoテーブルでは、動画のタイトルをtitleカラムに、動画のタグ情報をtagsカラムにTagテーブル型で複数格納しています。
 タグの情報を保存する、Tagテーブルを作成します。Tagテーブルでは、タグ文字列を主キーに格納し、Videoテーブルのtagsカラムに対するインデックスをindex_tagsカラムに格納しています。
 
-実行例 ::
-
- > table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
- [[0,1270462421.38847,0.004463]]
- > table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
- [[0,1270462424.3463,0.003999]]
- > column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
- [[0,1270462428.16529,0.004502]]
- > column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
- [[0,1270462431.86807,0.00462]]
- > column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
- [[0,1270462434.81266,0.036219]]
- > load --table Video
- > [
- > {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
- > {"_key":2,"title":"Zenigata Kinjirou","tags":["Variety","Money"]},
- > {"_key":3,"title":"groonga Demo","tags":["IT","Server","groonga"]},
- > {"_key":4,"title":"Moero!! Ultra Baseball","tags":["Sports","Baseball"]},
- > {"_key":5,"title":"Hex Gone!","tags":["Variety","Quiz"]},
- > {"_key":6,"title":"Pikonyan 1","tags":["Animation","Pikonyan"]},
- > {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
- > {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
- > ]
- [[0,1270462438.89699,0.144398],8]
+.. groonga-command
+.. include:: ../example/tutorial06-1.log
+.. table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
+.. table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
+.. column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
+.. column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
+.. column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
+.. load --table Video
+.. [
+.. {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
+.. {"_key":2,"title":"Zenigata Kinjirou","tags":["Variety","Money"]},
+.. {"_key":3,"title":"groonga Demo","tags":["IT","Server","groonga"]},
+.. {"_key":4,"title":"Moero!! Ultra Baseball","tags":["Sports","Baseball"]},
+.. {"_key":5,"title":"Hex Gone!","tags":["Variety","Quiz"]},
+.. {"_key":6,"title":"Pikonyan 1","tags":["Animation","Pikonyan"]},
+.. {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
+.. {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
+.. ]
 
 インデックスカラムを作成すると、全文検索が高速に行えるようになります。インデックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に更新されます。
 
 「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。
 
-実行例 ::
-
- > select --table Video --query tags:@Variety --output_columns _key,title
- [[0,1270462444.04748,0.000503],[[[2],[["_key","UInt32"],["title","ShortText"]],[2,"Zenigata Kinjirou"],[5,"Hex Gone!"]]]]
- > select --table Video --query tags:@Sports --output_columns _key,title
- [[0,1270462455.27726,0.000308],[[[2],[["_key","UInt32"],["title","ShortText"]],[1,"Soccer 2010"],[4,"Moero!! Ultra Baseball"]]]]
- > select --table Video --query tags:@Animation --output_columns _key,title
- [[0,1270462470.39651,0.000326],[[[3],[["_key","UInt32"],["title","ShortText"]],[6,"Pikonyan 1"],[7,"Draw 8 Month"],[8,"K.O."]]]]
+.. groonga-command
+.. include:: ../example/tutorial06-2.log
+.. select --table Video --query tags:@Variety --output_columns _key,title
+.. select --table Video --query tags:@Sports --output_columns _key,title
+.. select --table Video --query tags:@Animation --output_columns _key,title
 
 このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うことができました。
 
@@ -66,41 +59,33 @@ groongaはテーブル間の参照関係の逆引きを高速に行うための�
 
 以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納するusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのインデックスのindex_friendsカラムを追加しています。
 
-実行例 ::
-
- > table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
- [[0,1270465894.62824,0.023599]]
- > column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
- [[0,1270466038.4294,0.018187]]
- > column_create --table User --name friends --flags COLUMN_VECTOR --type User
- [[0,1270466042.59198,0.018745]]
- > column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
- [[0,1270466046.13084,0.036433]]
- > load --table User
- > [
- > {"_key":"ken","username":"健作","friends":["taro","jiro","tomo","moritapo"]}
- > {"_key":"moritapo","username":"森田","friends":["ken","tomo"]}
- > {"_key":"taro","username":"ぐるんが太郎","friends":["jiro","tomo"]}
- > {"_key":"jiro","username":"ぐるんが次郎","friends":["taro","tomo"]}
- > {"_key":"tomo","username":"トモちゃん","friends":["ken","hana"]}
- > {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
- > ]
- [[0,1270466050.12869,0.117421],6]
+.. groonga-command
+.. include:: ../example/tutorial06-3.log
+.. table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
+.. column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
+.. column_create --table User --name friends --flags COLUMN_VECTOR --type User
+.. column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
+.. load --table User
+.. [
+.. {"_key":"ken","username":"健作","friends":["taro","jiro","tomo","moritapo"]}
+.. {"_key":"moritapo","username":"森田","friends":["ken","tomo"]}
+.. {"_key":"taro","username":"ぐるんが太郎","friends":["jiro","tomo"]}
+.. {"_key":"jiro","username":"ぐるんが次郎","friends":["taro","tomo"]}
+.. {"_key":"tomo","username":"トモちゃん","friends":["ken","hana"]}
+.. {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
+.. ]
 
 指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。
 
-実行例 ::
-
- > select --table User --query friends:@tomo --output_columns _key,username
- [[0,1270466054.23261,0.000369],[[[5],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["jiro","ぐるんが次郎"],["moritapo","森田"],["hana"," 花子"]]]]
- > select --table User --query friends:@jiro --output_columns _key,username
- [[0,1270466066.03867,0.000315],[[[3],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["hana","花子"]]]]
+.. groonga-command
+.. include:: ../example/tutorial06-4.log
+.. select --table User --query friends:@tomo --output_columns _key,username
+.. select --table User --query friends:@jiro --output_columns _key,username
 
 さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみましょう。
 
-実行例 ::
-
- > select --table User --limit 0 --drilldown friends
- [[0,1270466082.00132,0.000313],[[[6],[["_id","UInt32"],["_key","ShortText"],["username","ShortText"],["index_friends","User"],["friends","User"]]],[[6],[["_key","ShortText"],["_nsubrecs","Int32"]],["taro",3],["jiro",3],["tomo",5],["moritapo",2],["ken",3],["hana",1]]]]
+.. groonga-command
+.. include:: ../example/tutorial06-5.log
+.. select --table User --limit 0 --drilldown friends
 
 このように、テーブルの参照関係を逆にたどる検索ができました。

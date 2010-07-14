@@ -1,0 +1,6 @@
+実行例 ::
+
+  % groonga /tmp/tutorial.db
+  > status
+  [[0,1279106638.67408,2.3e-05],{"alloc_count":444,"starttime":1279106556,"uptime":82,"version":"0.7.2-5-g2a77275"}]
+  

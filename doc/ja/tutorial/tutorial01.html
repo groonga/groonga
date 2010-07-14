@@ -106,10 +106,10 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 対話モードでは、標準入力からコマンドを読み込み、順次実行します。
 本チュートリアルでは、対話モードを主に使用します。</p>
 <p>たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groongaの実行状態を返すコマンドです。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga /tmp/tutorial.db
 &gt; status
-[[0,1269935682.29616,0.000122],{&quot;alloc_count&quot;:124,&quot;starttime&quot;:1269935680,&quot;uptime&quot;:2,&quot;version&quot;:&quot;0.1.7-10-g6bf93ba&quot;}]
+[[0,1279106638.67408,2.3e-05],{&quot;alloc_count&quot;:444,&quot;starttime&quot;:1279106556,&quot;uptime&quot;:82,&quot;version&quot;:&quot;0.7.2-5-g2a77275&quot;}]
 </pre></div>
 </div>
 <p>以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番目の様子に、コマンドの実行結果が入ります。</p>
@@ -155,18 +155,18 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <p>型については、のちのチュートリアルで触れます。データの種類をあらわしているもの、とイメージしてください。</p>
 <p>主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まります。これも、のちのチュートリアルで触れます。</p>
 <p>ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、&#8217;Site&#8217;という名前のテーブルを作成します。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
-[[0,1268294088.70744,0.098794]]
+[[0,1279106638.87577,0.078296],true]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id8">
 <h3>2.1.2.6. 検索<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="../commands/select.html"><em>select</em></a> コマンドを用いて、テーブルの中身を表示することができます。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site
-[[0,1269854691.80132,0.000106],[[[0],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]]]]]
+[[0,1279106639.15513,0.000163],[[[0],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]]]]]
 </pre></div>
 </div>
 <p>selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は検索されたレコードの件数、[&#8220;_id&#8221;,&#8221;Uint32&#8221;]は値がUInt32型である&#8221;_id&#8217;という名前のカラム、[&#8220;_key&#8221;,&#8221;ShortText&#8221;]は値がShortText型である&#8217;_key&#8217;という名前のカラムを示しています。</p>
@@ -176,11 +176,11 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <h3>2.1.2.7. カラムの作成<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="../commands/column_create.html"><em>column_create</em></a> コマンドを用いて、カラムを作成することができます。</p>
 <p>ShortText型の値を持つ、&#8217;comment&#8217;という名前のカラムを&#8217;Site&#8217;テーブルに追加しましょう。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
-[[0,1268294203.38404,0.056593]]
+[[0,1279106639.35656,0.081725],true]
 &gt; select --table Site
-[[0,1269854897.8173,0.000105],[[[0],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]]]]]
+[[0,1279106639.63911,0.000166],[[[0],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]]]]]
 </pre></div>
 </div>
 <p>COLUMN_SCALARについては、通常のカラムであることを示しています。</p>
@@ -191,9 +191,9 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <p>全文検索を行う場合は、まず語彙テーブルを作成する必要があります。
 語彙表テーブルとは、文書の中にある単語が主キーとなるテーブルです。
 ここでは、ShortText型の主キー値を持つ、&#8217;Terms&#8217;という名前のテーブルを作成しました。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-[[0,1268294159.76784,0.049841]]
+[[-22,1279106639.841,0.000331,&quot;already used name was assigned&quot;,[[&quot;grn_obj_register&quot;,&quot;db.c&quot;,5390]]],false]
 </pre></div>
 </div>
 <p>この実行例には、多くのパラメータが指定されています。本チュートリアルでは、これらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ばしてもらってかまいません。</p>
@@ -203,9 +203,9 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <div class="section" id="id11">
 <h3>2.1.2.9. 全文検索用のインデックスカラムの作成<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <p>Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、語彙テーブルにインデックス型のカラムを作成します。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
-[[0,1268294247.01333,0.129917]]
+[[0,1279106640.04295,0.132575],true]
 </pre></div>
 </div>
 <p>Siteテーブルのtitleカラムを検索対象とする、&#8217;blog_title&#8217;という名前のインデックス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtypeに、インデックス対象となるカラムをsourceに指定します。</p>
@@ -214,25 +214,26 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <div class="section" id="id12">
 <h3>2.1.2.10. データのロード<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="../commands/load.html"><em>load</em></a> コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; load --table Site
 &gt; [
-&gt; {&quot;_key&quot;:&quot;http://example.org/&quot;,&quot;title&quot;:&quot;This is test record 1!&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.net/&quot;,&quot;title&quot;:&quot;test record 2.&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.com/&quot;,&quot;title&quot;:&quot;test test record three.&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.net/afr&quot;,&quot;title&quot;:&quot;test record four.&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.org/aba&quot;,&quot;title&quot;:&quot;test test test record five.&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.com/rab&quot;,&quot;title&quot;:&quot;test test test test record six.&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.net/atv&quot;,&quot;title&quot;:&quot;test test test record seven.&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.org/gat&quot;,&quot;title&quot;:&quot;test test record eight.&quot;},
-&gt; {&quot;_key&quot;:&quot;http://example.com/vdw&quot;,&quot;title&quot;:&quot;test test record nine.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.org/&quot;,&quot;title&quot;:&quot;This is test record 1!&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.net/&quot;,&quot;title&quot;:&quot;test record 2.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.com/&quot;,&quot;title&quot;:&quot;test test record three.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.net/afr&quot;,&quot;title&quot;:&quot;test record four.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.org/aba&quot;,&quot;title&quot;:&quot;test test test record five.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.com/rab&quot;,&quot;title&quot;:&quot;test test test test record six.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.net/atv&quot;,&quot;title&quot;:&quot;test test test record seven.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.org/gat&quot;,&quot;title&quot;:&quot;test test record eight.&quot;},
+&gt; {&quot;_key&quot;:&quot;http../example//.com/vdw&quot;,&quot;title&quot;:&quot;test test record nine.&quot;},
 &gt; ]
-[[0,1268380982.80157,0.002685],9]
+[[0,1279106640.37657,2.203039],9]
 </pre></div>
 </div>
-<p>selectコマンドで、データが入っていることを確認しましょう。:</p>
+<p>selectコマンドで、データが入っていることを確認しましょう。</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site
-[[0,1270094085.02055,0.000149],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;],[2,&quot;http://example.net/&quot;,&quot;test record 2.&quot;],[3,&quot;http://example.com/&quot;,&quot;test test record three.&quot;],[4,&quot;http://example.net/afr&quot;,&quot;test record four.&quot;],[5,&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;],[6,&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;],[7,&quot;http://example.net/atv&quot;,&quot;test test test record seven.&quot;],[8,&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;],[9,&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;]]]]
+[[0,1279106642.78049,0.000146],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;],[2,&quot;http../example//.net/&quot;,&quot;test record 2.&quot;],[3,&quot;http../example//.com/&quot;,&quot;test test record three.&quot;],[4,&quot;http../example//.net/afr&quot;,&quot;test record four.&quot;],[5,&quot;http../example//.org/aba&quot;,&quot;test test test record five.&quot;],[6,&quot;http../example//.com/rab&quot;,&quot;test test test test record six.&quot;],[7,&quot;http../example//.net/atv&quot;,&quot;test test test record seven.&quot;],[8,&quot;http../example//.org/gat&quot;,&quot;test test record eight.&quot;],[9,&quot;http../example//.com/vdw&quot;,&quot;test test record nine.&quot;]]]]
 </pre></div>
 </div>
 </div>
@@ -240,26 +241,26 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <h3>2.1.2.11. データの検索<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <p>groongaでは、&#8217;_id&#8217;カラムと&#8217;_key&#8217;カラムの値はテーブル中で一意です。よって、それを用いて検索してみましょう。</p>
 <p>selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができます。</p>
-<p>実行例:</p>
+<p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query _id:1
-[[0,1269961834.61914,0.001204],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
+[[0,1279106642.98702,0.000358],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
 <p>queryパラメータに与えた「_id:1」というのは、&#8217;_id&#8217;という名前のカラムに&#8216;1&#8217;という値が入っているレコードを検索する、という意味です。</p>
 <p>_keyでも検索してみましょう。</p>
-<p>実行例:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_key:\&quot;http://example.org/\&quot;&quot;
-[[0,1269964004.37746,0.0006],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
+<p>実行例</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_key:\&quot;http../example//.org/\&quot;&quot;
+[[0,1279106643.18947,0.000292],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
-<p>queryパラメータに与えた「_key:&#8221;<a class="reference external" href="http://example.org/">http://example.org/</a>&#8220;」というのは、&#8217;_key&#8217;という名前のカラムに&#8217;&#8221;<a class="reference external" href="http://example.org/">http://example.org/</a>&#8220;&#8217;という値が入っているレコードを検索する、という意味です。</p>
+<p>queryパラメータに与えた「_key:&#8221;http../example//.org/&#8221;」というのは、&#8217;_key&#8217;という名前のカラムに&#8216;&#8220;http../example//.org/&#8221;&#8217;という値が入っているレコードを検索する、という意味です。</p>
 </div>
 <div class="section" id="id14">
 <h3>2.1.2.12. 全文検索<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <p>queryパラメータでは、インデックスを用いた全文検索を行うこともできます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query title:@this
-[[0,1268381101.20846,0.000401],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
+[[0,1279106643.3917,0.000308],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
 <p>titleカラムに対して、&#8217;this&#8217;という文字列で全文検索を行った結果を返します。</p>
@@ -268,7 +269,7 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <p>match_columnsパラメータに&#8217;title&#8217;、queryパラメータに&#8217;this&#8217;という文字列を指定すると、上記のクエリと同じ結果を得ることができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --match_columns title --query this
-[[0,1268381101.20846,0.000401],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
+[[0,1279106643.59404,0.000361],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
 </div>
@@ -278,7 +279,7 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <p>複数のカラムを指定する場合は、カンマ(,)区切りで指定します。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --output_columns _key,title,_score --query title:@test
-[[0,1270094680.9463,0.000353],[[[9],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,1],[&quot;http://example.net/&quot;,&quot;test record 2.&quot;,1],[&quot;http://example.com/&quot;,&quot;test test record three.&quot;,2],[&quot;http://example.net/afr&quot;,&quot;test record four.&quot;,1],[&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;,3],[&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;,4],[&quot;http://example.net/atv&quot;,&quot;test test test record seven.&quot;,3],[&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;,2],[&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;,2]]]]
+[[0,1279106643.79638,0.000351],[[[9],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;,1],[&quot;http../example//.net/&quot;,&quot;test record 2.&quot;,1],[&quot;http../example//.com/&quot;,&quot;test test record three.&quot;,2],[&quot;http../example//.net/afr&quot;,&quot;test record four.&quot;,1],[&quot;http../example//.org/aba&quot;,&quot;test test test record five.&quot;,3],[&quot;http../example//.com/rab&quot;,&quot;test test test test record six.&quot;,4],[&quot;http../example//.net/atv&quot;,&quot;test test test record seven.&quot;,3],[&quot;http../example//.org/gat&quot;,&quot;test test record eight.&quot;,2],[&quot;http../example//.com/vdw&quot;,&quot;test test record nine.&quot;,2]]]]
 </pre></div>
 </div>
 <p>groongaの検索結果には、「_score」という名前のカラムが追加されています。このカラムは、全文検索の条件が合致する文書ほど高い数値が入ります。</p>
@@ -290,11 +291,11 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <p>limitパラメータには、検索結果を何件表示するのかを指定します。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --offset 0 --limit 3
-[[0,1270032573.11593,9.7e-05],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;],[2,&quot;http://example.net/&quot;,&quot;test record 2.&quot;],[3,&quot;http://example.com/&quot;,&quot;test test record three.&quot;]]]]
+[[0,1279106644.00314,0.000101],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;],[2,&quot;http../example//.net/&quot;,&quot;test record 2.&quot;],[3,&quot;http../example//.com/&quot;,&quot;test test record three.&quot;]]]]
 &gt; select --table Site --offset 3 --limit 3
-[[0,1270032573.13517,9.4e-05],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[4,&quot;http://example.net/afr&quot;,&quot;test record four.&quot;],[5,&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;],[6,&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;]]]]
+[[0,1279106644.20611,0.000103],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[4,&quot;http../example//.net/afr&quot;,&quot;test record four.&quot;],[5,&quot;http../example//.org/aba&quot;,&quot;test test test record five.&quot;],[6,&quot;http../example//.com/rab&quot;,&quot;test test test test record six.&quot;]]]]
 &gt; select --table Site --offset 7 --limit 3
-[[0,1270032573.14992,8.0e-05],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[8,&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;],[9,&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;]]]]
+[[0,1279106644.40923,9.2e-05],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[8,&quot;http../example//.org/gat&quot;,&quot;test test record eight.&quot;],[9,&quot;http../example//.com/vdw&quot;,&quot;test test record nine.&quot;]]]]
 </pre></div>
 </div>
 </div>
@@ -304,19 +305,19 @@ groongaのインストール前にMeCab (<a class="reference external" href="htt
 <p>sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートします。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出来ます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --sortby -_id
-[[0,1270032573.15816,0.000224],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[9,&quot;http://example.com/vdw&quot;,&quot;test test record nine.&quot;],[8,&quot;http://example.org/gat&quot;,&quot;test test record eight.&quot;],[7,&quot;http://example.net/atv&quot;,&quot;test test test record seven.&quot;],[6,&quot;http://example.com/rab&quot;,&quot;test test test test record six.&quot;],[5,&quot;http://example.org/aba&quot;,&quot;test test test record five.&quot;],[4,&quot;http://example.net/afr&quot;,&quot;test record four.&quot;],[3,&quot;http://example.com/&quot;,&quot;test test record three.&quot;],[2,&quot;http://example.net/&quot;,&quot;test record 2.&quot;],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
+[[0,1279106644.61192,0.00023],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[9,&quot;http../example//.com/vdw&quot;,&quot;test test record nine.&quot;],[8,&quot;http../example//.org/gat&quot;,&quot;test test record eight.&quot;],[7,&quot;http../example//.net/atv&quot;,&quot;test test test record seven.&quot;],[6,&quot;http../example//.com/rab&quot;,&quot;test test test test record six.&quot;],[5,&quot;http../example//.org/aba&quot;,&quot;test test test record five.&quot;],[4,&quot;http../example//.net/afr&quot;,&quot;test record four.&quot;],[3,&quot;http../example//.com/&quot;,&quot;test test record three.&quot;],[2,&quot;http../example//.net/&quot;,&quot;test record 2.&quot;],[1,&quot;http../example//.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
 <p>出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
-[[0,1270094939.95113,0.000409],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_score&quot;,&quot;Int32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,1,&quot;This is test record 1!&quot;],[2,1,&quot;test record 2.&quot;],[4,1,&quot;test record four.&quot;],[3,2,&quot;test test record three.&quot;],[9,2,&quot;test test record nine.&quot;],[8,2,&quot;test test record eight.&quot;],[7,3,&quot;test test test record seven.&quot;],[5,3,&quot;test test test record five.&quot;],[6,4,&quot;test test test test record six.&quot;]]]]
+[[0,1279106644.81844,0.00044],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_score&quot;,&quot;Int32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,1,&quot;This is test record 1!&quot;],[2,1,&quot;test record 2.&quot;],[4,1,&quot;test record four.&quot;],[3,2,&quot;test test record three.&quot;],[9,2,&quot;test test record nine.&quot;],[8,2,&quot;test test record eight.&quot;],[7,3,&quot;test test test record seven.&quot;],[5,3,&quot;test test test record five.&quot;],[6,4,&quot;test test test test record six.&quot;]]]]
 </pre></div>
 </div>
 <p>ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数のカラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカラムの値でソートさせることができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query title:@test --output_columns _id,_score,title --sortby _score,_id
-[[0,1270032573.17619,0.000357],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_score&quot;,&quot;Int32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,1,&quot;This is test record 1!&quot;],[2,1,&quot;test record 2.&quot;],[4,1,&quot;test record four.&quot;],[3,2,&quot;test test record three.&quot;],[8,2,&quot;test test record eight.&quot;],[9,2,&quot;test test record nine.&quot;],[5,3,&quot;test test test record five.&quot;],[7,3,&quot;test test test record seven.&quot;],[6,4,&quot;test test test test record six.&quot;]]]]
+[[0,1279106645.02324,0.000427],[[[9],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_score&quot;,&quot;Int32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,1,&quot;This is test record 1!&quot;],[2,1,&quot;test record 2.&quot;],[4,1,&quot;test record four.&quot;],[3,2,&quot;test test record three.&quot;],[8,2,&quot;test test record eight.&quot;],[9,2,&quot;test test record nine.&quot;],[5,3,&quot;test test test record five.&quot;],[7,3,&quot;test test test record seven.&quot;],[6,4,&quot;test test test test record six.&quot;]]]]
 </pre></div>
 </div>
 <p class="rubric">脚注</p>

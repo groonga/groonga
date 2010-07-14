@@ -1,0 +1,5 @@
+実行例 ::
+
+  > select --table Site --filter "_id <= 1" --output_columns _id,_key
+  [[0,1279106635.16672,0.000296],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"http../example//.org/"]]]]
+  

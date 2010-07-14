@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.2. clearlock &mdash; groonga v0.7.2 documentation</title>
+    <title>3.2.3. clearlock &mdash; groonga v0.7.2 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.3. column_create" href="column_create.html" />
-    <link rel="prev" title="3.2.1. cache_limit" href="cache_limit.html" /> 
+    <link rel="next" title="3.2.4. column_create" href="column_create.html" />
+    <link rel="prev" title="3.2.2. check" href="check.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,10 +35,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="column_create.html" title="3.2.3. column_create"
+          <a href="column_create.html" title="3.2.4. column_create"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="cache_limit.html" title="3.2.1. cache_limit"
+          <a href="check.html" title="3.2.2. check"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -52,31 +52,31 @@
           <div class="body">
             
   <div class="section" id="clearlock">
-<h1>3.2.2. clearlock<a class="headerlink" href="#clearlock" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.3. clearlock<a class="headerlink" href="#clearlock" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.2.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.3.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>clearlock - オブジェクトにセットされたロックを解除する</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.2.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.3.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>clearlock objname
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.2.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.3.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指定し、オブジェクトにかけられたロックを再帰的に解除します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.2.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.3.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">objname</span></tt></p>
 <blockquote>
 対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対象となります。</blockquote>
 <p>返値
 &#8212;</p>
 <div class="section" id="json">
-<h3>3.2.2.4.1. json形式<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
+<h3>3.2.3.4.1. json形式<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-none"><div class="highlight"><pre>[成功かどうかのフラグ]
 
 ``成功かどうかのフラグ``
@@ -87,7 +87,7 @@
 </div>
 </div>
 <div class="section" id="id5">
-<h2>3.2.2.5. 例<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.3.5. 例<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>開いているデータベースのロックをすべて解除する:</p>
 <div class="highlight-none"><div class="highlight"><pre>clearlock
 [true]
@@ -100,7 +100,7 @@
 </div>
 </div>
 <div class="section" id="id6">
-<h2>3.2.2.6. 関連項目<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.3.6. 関連項目<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="load.html"><em>load</em></a></p>
 </div>
 </div>
@@ -113,26 +113,26 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.2.2. clearlock</a><ul>
-<li><a class="reference internal" href="#id1">3.2.2.1. 名前</a></li>
-<li><a class="reference internal" href="#id2">3.2.2.2. 書式</a></li>
-<li><a class="reference internal" href="#id3">3.2.2.3. 説明</a></li>
-<li><a class="reference internal" href="#id4">3.2.2.4. 引数</a><ul>
-<li><a class="reference internal" href="#json">3.2.2.4.1. json形式</a></li>
+<li><a class="reference internal" href="#">3.2.3. clearlock</a><ul>
+<li><a class="reference internal" href="#id1">3.2.3.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.3.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.3.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.3.4. 引数</a><ul>
+<li><a class="reference internal" href="#json">3.2.3.4.1. json形式</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id5">3.2.2.5. 例</a></li>
-<li><a class="reference internal" href="#id6">3.2.2.6. 関連項目</a></li>
+<li><a class="reference internal" href="#id5">3.2.3.5. 例</a></li>
+<li><a class="reference internal" href="#id6">3.2.3.6. 関連項目</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="cache_limit.html"
-                        title="previous chapter">3.2.1. cache_limit</a></p>
+  <p class="topless"><a href="check.html"
+                        title="previous chapter">3.2.2. check</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="column_create.html"
-                        title="next chapter">3.2.3. column_create</a></p>
+                        title="next chapter">3.2.4. column_create</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/commands/clearlock.txt"
@@ -162,10 +162,10 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="column_create.html" title="3.2.3. column_create"
+          <a href="column_create.html" title="3.2.4. column_create"
              >next</a> |</li>
         <li class="right" >
-          <a href="cache_limit.html" title="3.2.1. cache_limit"
+          <a href="check.html" title="3.2.2. check"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>

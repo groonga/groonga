@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.2.3. column_create &mdash; groonga v0.7.2 documentation</title>
+    <title>3.2.4. column_create &mdash; groonga v0.7.2 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="groonga v0.7.2 documentation" href="../index.html" />
     <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
-    <link rel="next" title="3.2.4. column_list" href="column_list.html" />
-    <link rel="prev" title="3.2.2. clearlock" href="clearlock.html" /> 
+    <link rel="next" title="3.2.5. column_list" href="column_list.html" />
+    <link rel="prev" title="3.2.3. clearlock" href="clearlock.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,10 +35,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="column_list.html" title="3.2.4. column_list"
+          <a href="column_list.html" title="3.2.5. column_list"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="clearlock.html" title="3.2.2. clearlock"
+          <a href="clearlock.html" title="3.2.3. clearlock"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
@@ -52,24 +52,24 @@
           <div class="body">
             
   <div class="section" id="column-create">
-<h1>3.2.3. column_create<a class="headerlink" href="#column-create" title="Permalink to this headline">¶</a></h1>
+<h1>3.2.4. column_create<a class="headerlink" href="#column-create" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>3.2.3.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>column_create - カラムの追加</p>
 </div>
 <div class="section" id="id2">
-<h2>3.2.3.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>column_create table name flags type [source]
 </pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h2>3.2.3.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
 <p>column_createは、使用しているデータベースのテーブルに対してカラムを追加します。</p>
 </div>
 <div class="section" id="id4">
-<h2>3.2.3.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">table</span></tt></p>
 <blockquote>
 カラムを追加するテーブルの名前を指定します。</blockquote>
@@ -108,9 +108,9 @@
 インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource引数に指定します。</blockquote>
 </div>
 <div class="section" id="id5">
-<h2>3.2.3.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="json">
-<h3>3.2.3.5.1. json形式<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
+<h3>3.2.4.5.1. json形式<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-none"><div class="highlight"><pre>[成功かどうかのフラグ]
 
 ``成功かどうかのフラグ``
@@ -121,7 +121,7 @@
 </div>
 </div>
 <div class="section" id="id6">
-<h2>3.2.3.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<h2>3.2.4.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>column_create Entry body --type ShortText
 [true]
@@ -143,26 +143,26 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.2.3. column_create</a><ul>
-<li><a class="reference internal" href="#id1">3.2.3.1. 名前</a></li>
-<li><a class="reference internal" href="#id2">3.2.3.2. 書式</a></li>
-<li><a class="reference internal" href="#id3">3.2.3.3. 説明</a></li>
-<li><a class="reference internal" href="#id4">3.2.3.4. 引数</a></li>
-<li><a class="reference internal" href="#id5">3.2.3.5. 返値</a><ul>
-<li><a class="reference internal" href="#json">3.2.3.5.1. json形式</a></li>
+<li><a class="reference internal" href="#">3.2.4. column_create</a><ul>
+<li><a class="reference internal" href="#id1">3.2.4.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.4.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.4.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.4.4. 引数</a></li>
+<li><a class="reference internal" href="#id5">3.2.4.5. 返値</a><ul>
+<li><a class="reference internal" href="#json">3.2.4.5.1. json形式</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id6">3.2.3.6. 例</a></li>
+<li><a class="reference internal" href="#id6">3.2.4.6. 例</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="clearlock.html"
-                        title="previous chapter">3.2.2. clearlock</a></p>
+                        title="previous chapter">3.2.3. clearlock</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="column_list.html"
-                        title="next chapter">3.2.4. column_list</a></p>
+                        title="next chapter">3.2.5. column_list</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/commands/column_create.txt"
@@ -192,10 +192,10 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="column_list.html" title="3.2.4. column_list"
+          <a href="column_list.html" title="3.2.5. column_list"
              >next</a> |</li>
         <li class="right" >
-          <a href="clearlock.html" title="3.2.2. clearlock"
+          <a href="clearlock.html" title="3.2.3. clearlock"
              >previous</a> |</li>
         <li><a href="../index.html">groonga v0.7.2 documentation</a> &raquo;</li>
           <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
