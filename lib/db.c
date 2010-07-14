@@ -1208,6 +1208,7 @@ is_deletable(grn_ctx *ctx, grn_obj *table, grn_id id)
               (esize = grn_ii_estimate_size(ctx, (grn_ii *)col, id))) {
             GRN_LOG(ctx, GRN_WARN, "undeletable record(%d:%d) has value (%d:%d)",
                     DB_OBJ(table)->id, id, *key, esize);
+            LOGTRACE(ctx, GRN_WARN);
             res = 0;
           }
         });
