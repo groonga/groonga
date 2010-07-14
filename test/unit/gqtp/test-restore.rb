@@ -473,11 +473,11 @@ EOGQTP
 
   def test_delete_by_key
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[3]
-[true]
-[[[2],[["_id","UInt32"],["_key","ShortText"]],[1,"hayamiz"],[3,"mori"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],3]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"]],[1,"hayamiz"],[3,"mori"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create users 0 ShortText
 load --table users
@@ -493,12 +493,12 @@ COMMANDS
 
   def test_delete_by_id
     assert_commands(<<EXPECTED, <<COMMANDS)
-[true]
-[true]
-[3]
-[true]
-[[[2],[["_id","UInt32"],["name","ShortText"]],[1,"hayamiz"],[3,"mori"]]]
-[true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],3]
+[[0,0.0,0.0],true]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["name","ShortText"]],[1,"hayamiz"],[3,"mori"]]]]
+[[0,0.0,0.0],true]
 EXPECTED
 table_create users 3
 column_create users name 0 ShortText
