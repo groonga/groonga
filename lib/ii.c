@@ -2940,7 +2940,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   grn_io_win sw;
   buffer *sb;
   uint8_t *sc = NULL;
-  uint32_t pseg, scn, nerrors = 0, nterm_with_chunk = 0;
+  uint32_t pseg, scn, nterms_with_corrupt_chunk = 0, nterm_with_chunk = 0;
+  uint32_t ndeleted_terms_with_value = 0;
   buffer_term *bt;
   uint8_t *sbp = NULL;
   datavec rdv[MAX_N_ELEMENTS + 1];
@@ -2979,6 +2980,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   GRN_OUTPUT_ARRAY_OPEN("TERMS", sb->header.nterms);
 
   for (bt = sb->terms, n = sb->header.nterms; n; n--, bt++) {
+    grn_id tid;
     char key[GRN_TABLE_MAX_KEY_SIZE];
     int key_size;
     uint16_t nextb;
@@ -2992,11 +2994,20 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
       nterms_void++;
       continue;
     }
+    GRN_OUTPUT_ARRAY_OPEN("TERM", -1);
     key_size = grn_table_get_key(ctx, ii->lexicon, bt->tid, key, GRN_TABLE_MAX_KEY_SIZE);
+    tid = grn_table_get(ctx, ii->lexicon, key, key_size);
     GRN_OUTPUT_STR(key, key_size);
+    GRN_OUTPUT_INT64(bt->tid);
+    GRN_OUTPUT_INT64(tid);
     nextb = bt->pos_in_buffer;
     size_in_buffer += bt->size_in_buffer;
+    if (tid != bt->tid && (bt->size_in_buffer || bt->size_in_chunk)) {
+      ndeleted_terms_with_value++;
+    }
     GETNEXTB();
+    GRN_OUTPUT_INT64(bt->size_in_buffer);
+    GRN_OUTPUT_INT64(bt->size_in_chunk);
     if (sc && bt->size_in_chunk) {
       uint8_t *scp = sc + bt->pos_in_chunk;
       uint8_t *sce = scp + bt->size_in_chunk;
@@ -3020,23 +3031,25 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
         {
           int j = 0;
           sdf = rdv[j].data_size;
+          GRN_OUTPUT_INT64(sdf);
           srp = rdv[j++].data;
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { ssp = rdv[j++].data; }
           if (sdf != rdv[j].data_size) {
-            nerrors++;
+            nterms_with_corrupt_chunk++;
           }
           stp = rdv[j++].data;
           if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { sop = rdv[j++].data; }
+          GRN_OUTPUT_INT64(rdv[j].data_size);
           snn = rdv[j].data_size;
           snp = rdv[j].data;
         }
         nterm_with_chunk++;
       }
     }
+    GRN_OUTPUT_ARRAY_CLOSE();
     if (cinfo) { GRN_FREE(cinfo); }
   }
   GRN_OUTPUT_ARRAY_CLOSE();
-
   GRN_OUTPUT_CSTR("buffer free");
   GRN_OUTPUT_INT64(sb->header.buffer_free);
   GRN_OUTPUT_CSTR("size in buffer");
@@ -3049,9 +3062,13 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   }
   GRN_OUTPUT_CSTR("nterms with chunk");
   GRN_OUTPUT_INT64(nterm_with_chunk);
-  if (nerrors) {
+  if (nterms_with_corrupt_chunk) {
     GRN_OUTPUT_CSTR("nterms with corrupt chunk");
-    GRN_OUTPUT_INT64(nerrors);
+    GRN_OUTPUT_INT64(nterms_with_corrupt_chunk);
+  }
+  if (ndeleted_terms_with_value) {
+    GRN_OUTPUT_CSTR("number of deleted terms with value");
+    GRN_OUTPUT_INT64(ndeleted_terms_with_value);
   }
   GRN_OUTPUT_MAP_CLOSE();
   datavec_fin(ctx, rdv);
