@@ -122,13 +122,27 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_column_list_empty
     create_bookmarks_table
-    assert_column_list([], :table => "bookmarks")
+    assert_column_list([[@bookmarks_table_id,
+                         "_key",
+                         "",
+                         "COLUMN_SCALAR|COMPRESS_NONE",
+                         "bookmarks",
+                         "ShortText",
+                         []]],
+                       :table => "bookmarks")
   end
 
   def test_column_list_exist
     create_bookmarks_table
     create_bookmark_title_column
-    assert_column_list([[@bookmarks_title_column_id,
+    assert_column_list([[@bookmarks_table_id,
+                         "_key",
+                         "",
+                         "COLUMN_SCALAR|COMPRESS_NONE",
+                         "bookmarks",
+                         "ShortText",
+                          []],
+                        [@bookmarks_title_column_id,
                          "title",
                          "var",
                          "COLUMN_SCALAR|COMPRESS_NONE|PERSISTENT",
