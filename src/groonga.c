@@ -779,7 +779,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     wsabufs[2].buf = GRN_TEXT_VALUE(outbuf);
     wsabufs[2].len = GRN_TEXT_LEN(outbuf);
     wsabufs[3].buf = GRN_TEXT_VALUE(&foot);
-    wsabufs[4].len = GRN_TEXT_LEN(&foot);
+    wsabufs[3].len = GRN_TEXT_LEN(&foot);
     if (WSASend(fd, wsabufs, 4, &ret, 0, NULL, NULL) == SOCKET_ERROR) {
       SERR("WSASend");
     }
