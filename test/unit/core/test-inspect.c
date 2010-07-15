@@ -63,6 +63,7 @@ void test_column_fix_size(void);
 void test_column_var_size(void);
 void test_column_index(void);
 void test_type(void);
+void test_record(void);
 
 static gchar *tmp_directory;
 
@@ -82,6 +83,7 @@ static grn_obj *geo_point_tokyo, *geo_point_wgs84;
 static grn_obj *uvector;
 static grn_obj *pvector;
 static grn_obj *vector;
+static grn_obj *record;
 
 void
 cut_startup(void)
@@ -118,6 +120,7 @@ setup_values(void)
   uvector = NULL;
   pvector = NULL;
   vector = NULL;
+  record = NULL;
 }
 
 void
@@ -159,6 +162,7 @@ teardown_values(void)
   grn_obj_unlink(context, uvector);
   grn_obj_unlink(context, pvector);
   grn_obj_unlink(context, vector);
+  grn_obj_unlink(context, record);
 }
 
 void
@@ -700,6 +704,31 @@ test_type(void)
                           "ShortText "
                           "size:4096 "
                           "type:var_size"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_record(void)
+{
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Text");
+  assert_send_command("load "
+                      "'["
+                      "[\"_key\",\"name\"],"
+                      "[\"groonga.org\",\"groonga\"],"
+                      "[\"razil.jp\",\"Brazil\"]"
+                      "]' "
+                      "Sites");
+
+  record = grn_obj_open(context, GRN_BULK, 0,
+                        grn_obj_id(context, get_object("Sites")));
+  GRN_RECORD_SET(context, record, 1);
+  inspected = grn_inspect(context, NULL, record);
+  cut_assert_equal_string("#<record:hash "
+                          "id:1 "
+                          "key:\"groonga.org\" "
+                          "name:\"groonga\""
                           ">",
                           inspected_string());
 }

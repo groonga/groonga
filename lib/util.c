@@ -250,13 +250,8 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_table_type_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  grn_hash *cols;
-  grn_id range_id;
-  grn_obj *range;
-
-  GRN_TEXT_PUTS(ctx, buf, "#<table:");
   switch (obj->header.type) {
   case GRN_TABLE_HASH_KEY:
     GRN_TEXT_PUTS(ctx, buf, "hash");
@@ -268,6 +263,19 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     GRN_TEXT_PUTS(ctx, buf, "no_key");
     break;
   }
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_hash *cols;
+  grn_id range_id;
+  grn_obj *range;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<table:");
+  grn_table_type_inspect(ctx, buf, obj);
   GRN_TEXT_PUTS(ctx, buf, " ");
 
   grn_name_inspect(ctx, buf, obj);
@@ -309,12 +317,13 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       int i = 0;
       grn_id *key;
       GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
-        grn_obj *col = grn_ctx_at(ctx, *key);
-        if (col) {
-          if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
-          grn_column_name_(ctx, col, buf);
-        }
-      });
+          grn_obj *col = grn_ctx_at(ctx, *key);
+          if (col) {
+            if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
+            grn_column_name_(ctx, col, buf);
+            grn_obj_unlink(ctx, col);
+          }
+        });
     }
     grn_hash_close(ctx, cols);
   }
@@ -373,9 +382,66 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   return GRN_SUCCESS;
 }
 
+static grn_rc
+grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_id id;
+  grn_obj *table;
+  grn_hash *cols;
+
+  table = grn_ctx_at(ctx, obj->header.domain);
+  GRN_TEXT_PUTS(ctx, buf, "#<record:");
+  grn_table_type_inspect(ctx, buf, table);
+
+  GRN_TEXT_PUTS(ctx, buf, " id:");
+  id = GRN_RECORD_VALUE(obj);
+  grn_text_lltoa(ctx, buf, id);
+
+  if (grn_table_at(ctx, table, id)) {
+    if (table->header.type != GRN_TABLE_NO_KEY) {
+      grn_obj key;
+      GRN_TEXT_PUTS(ctx, buf, " key:");
+      GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
+      grn_table_get_key2(ctx, table, id, &key);
+      grn_inspect(ctx, buf, &key);
+      GRN_OBJ_FIN(ctx, &key);
+    }
+    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+        grn_id *key;
+        GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+            grn_obj *col = grn_ctx_at(ctx, *key);
+            if (col) {
+              grn_obj value;
+              GRN_TEXT_INIT(&value, 0);
+              GRN_TEXT_PUTS(ctx, buf, " ");
+              grn_column_name_(ctx, col, buf);
+              GRN_TEXT_PUTS(ctx, buf, ":");
+              grn_obj_get_value(ctx, col, id, &value);
+              grn_inspect(ctx, buf, &value);
+              GRN_OBJ_FIN(ctx, &value);
+              grn_obj_unlink(ctx, col);
+            }
+          });
+      }
+      grn_hash_close(ctx, cols);
+    }
+  } else {
+    GRN_TEXT_PUTS(ctx, buf, "(nonexistent)");
+  }
+  GRN_TEXT_PUTS(ctx, buf, ">");
+
+  grn_obj_unlink(ctx, table);
+
+  return GRN_SUCCESS;
+}
+
 grn_obj *
 grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 {
+  grn_obj *domain;
+
   if (!buffer) {
     buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
   }
@@ -386,6 +452,22 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   }
 
   switch (obj->header.type) {
+  case GRN_BULK :
+    domain = grn_ctx_at(ctx, obj->header.domain);
+    if (domain) {
+      grn_id type = domain->header.type;
+      grn_obj_unlink(ctx, domain);
+      switch (type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_NO_KEY :
+        grn_record_inspect(ctx, buffer, obj);
+        return buffer;
+      default :
+        break;
+      }
+    }
+    break;
   case GRN_EXPR :
     grn_expr_inspect(ctx, buffer, obj);
     return buffer;
