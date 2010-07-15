@@ -63,7 +63,6 @@ void test_column_fix_size(void);
 void test_column_var_size(void);
 void test_column_index(void);
 void test_type(void);
-void test_table_hash(void);
 
 static gchar *tmp_directory;
 
