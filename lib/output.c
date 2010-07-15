@@ -810,12 +810,13 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                *ve = (grn_id *)GRN_BULK_CURR(obj);
         grn_output_array_open(ctx, outbuf, output_type, "VECTOR", -1);
         if (v < ve) {
+          grn_obj key;
+          GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
           for (;;) {
-            grn_obj key;
             if (range->header.type != GRN_TABLE_NO_KEY) {
-              GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
               grn_table_get_key2(ctx, range, *v, &key);
               grn_output_obj(ctx, outbuf, output_type, &key, NULL);
+              GRN_BULK_REWIND(&key);
             } else {
               grn_text_lltoa(ctx, outbuf, *v);
             }
@@ -826,6 +827,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               break;
             }
           }
+          GRN_OBJ_FIN(ctx, &key);
         }
         grn_output_array_close(ctx, outbuf, output_type);
       }
