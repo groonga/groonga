@@ -63,6 +63,7 @@ void test_column_fix_size(void);
 void test_column_var_size(void);
 void test_column_index(void);
 void test_type(void);
+void test_table_hash(void);
 
 static gchar *tmp_directory;
 
@@ -363,20 +364,33 @@ test_array_empty(void)
 {
   assert_send_command("table_create Sites TABLE_NO_KEY");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[]", inspected_string());
+  cut_assert_equal_string("#<table:no_key "
+                          "Sites "
+                          "value:(nil) "
+                          "size:0 "
+                          "columns:[] "
+                          "ids:[]"
+                          ">",
+                          inspected_string());
 }
 
 void
 test_array_with_records(void)
 {
-  cut_omit("array with record isn't supported yet.");
   assert_send_command("table_create Sites TABLE_NO_KEY");
   assert_send_command("column_create Sites name COLUMN_SCALAR Text");
   assert_send_command("load "
                       "'[[\"name\"],[\"groonga.org\"],[\"razil.jp\"]]' "
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[1, 2]", inspected_string());
+  cut_assert_equal_string("#<table:no_key "
+                          "Sites "
+                          "value:(nil) "
+                          "size:2 "
+                          "columns:[name] "
+                          "ids:[1, 2]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -384,7 +398,16 @@ test_hash_empty(void)
 {
   assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[]", inspected_string());
+  cut_assert_equal_string("#<table:hash "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:0 "
+                          "columns:[] "
+                          "default_tokenizer:(nil) "
+                          "keys:[]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -400,7 +423,16 @@ test_hash_with_records(void)
                       "]' "
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+  cut_assert_equal_string("#<table:hash "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:2 "
+                          "columns:[name] "
+                          "default_tokenizer:(nil) "
+                          "keys:[\"groonga.org\", \"razil.jp\"]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -408,7 +440,16 @@ test_patricia_trie_empty(void)
 {
   assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[]", inspected_string());
+  cut_assert_equal_string("#<table:pat "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:0 "
+                          "columns:[] "
+                          "default_tokenizer:(nil) "
+                          "keys:[]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -424,7 +465,16 @@ test_patricia_trie_with_records(void)
                       "]' "
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+  cut_assert_equal_string("#<table:pat "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:2 "
+                          "columns:[name] "
+                          "default_tokenizer:(nil) "
+                          "keys:[\"groonga.org\", \"razil.jp\"]"
+                          ">",
+                          inspected_string());
 }
 
 void
