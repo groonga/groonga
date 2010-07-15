@@ -45,3 +45,4 @@ version.sh
 /lib/icudump
 /coverage
 /coverage.info
+/test/unit/lib/*-*.*.*/
