@@ -502,7 +502,11 @@ test_uvector_with_records(void)
   GRN_RECORD_PUT(context, uvector, 1);
   GRN_RECORD_PUT(context, uvector, 2);
   inspected = grn_inspect(context, NULL, uvector);
-  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+  cut_assert_equal_string("["
+                          "#<record:pat:Sites id:1 key:\"groonga.org\">, "
+                          "#<record:pat:Sites id:2 key:\"razil.jp\">"
+                          "]",
+                          inspected_string());
 }
 
 void
@@ -725,7 +729,7 @@ test_record(void)
                         grn_obj_id(context, get_object("Sites")));
   GRN_RECORD_SET(context, record, 1);
   inspected = grn_inspect(context, NULL, record);
-  cut_assert_equal_string("#<record:hash "
+  cut_assert_equal_string("#<record:hash:Sites "
                           "id:1 "
                           "key:\"groonga.org\" "
                           "name:\"groonga\""

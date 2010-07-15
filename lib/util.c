@@ -392,6 +392,8 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   table = grn_ctx_at(ctx, obj->header.domain);
   GRN_TEXT_PUTS(ctx, buf, "#<record:");
   grn_table_type_inspect(ctx, buf, table);
+  GRN_TEXT_PUTS(ctx, buf, ":");
+  grn_name_inspect(ctx, buf, table);
 
   GRN_TEXT_PUTS(ctx, buf, " id:");
   id = GRN_RECORD_VALUE(obj);
@@ -437,6 +439,29 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   return GRN_SUCCESS;
 }
 
+static grn_rc
+grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int i;
+  grn_id *v, *ve;
+  grn_obj record;
+
+  v = (grn_id *)GRN_BULK_HEAD(obj);
+  ve = (grn_id *)GRN_BULK_CURR(obj);
+  GRN_RECORD_INIT(&record, 0, obj->header.domain);
+  GRN_TEXT_PUTS(ctx, buf, "[");
+  while (v < ve) {
+    if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
+    GRN_RECORD_SET(ctx, &record, *v);
+    grn_inspect(ctx, buf, &record);
+    v++;
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+  GRN_OBJ_FIN(ctx, &record);
+
+  return GRN_SUCCESS;
+}
+
 grn_obj *
 grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 {
@@ -462,6 +487,22 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_NO_KEY :
         grn_record_inspect(ctx, buffer, obj);
+        return buffer;
+      default :
+        break;
+      }
+    }
+    break;
+  case GRN_UVECTOR :
+    domain = grn_ctx_at(ctx, obj->header.domain);
+    if (domain) {
+      grn_id type = domain->header.type;
+      grn_obj_unlink(ctx, domain);
+      switch (type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_NO_KEY :
+        grn_uvector_record_inspect(ctx, buffer, obj);
         return buffer;
       default :
         break;
