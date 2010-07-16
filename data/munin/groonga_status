@@ -75,7 +75,10 @@ EOF
 end
 
 success, body = run("status")
-exit(false) unless success
+unless success
+  puts("error: #{body}")
+  exit(false)
+end
 puts <<EOF
 alloc_count.value #{body["alloc_count"]}
 EOF
