@@ -2177,8 +2177,7 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     batchmode = GRN_TRUE;
-  }
-  else {
+  } else {
     batchmode = !isatty(0);
   }
 #ifdef HAVE_LIBEDIT
