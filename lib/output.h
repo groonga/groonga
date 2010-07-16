@@ -29,6 +29,10 @@
 #include "store.h"
 #endif /* GRN_STORE_H */
 
+#ifndef GRN_QL_H
+#include "ql.h"
+#endif /* GRN_QL_H */
+
 #ifdef __cplusplus
 extern "C" {
 #endif

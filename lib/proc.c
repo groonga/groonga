@@ -1866,7 +1866,11 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     switch (obj->header.type) {
     case GRN_DB :
+      GRN_OUTPUT_BOOL(!ctx->rc);
+      break;
     case GRN_TABLE_PAT_KEY :
+      grn_pat_check(ctx, (grn_pat *)obj);
+      break;
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_NO_KEY :
     case GRN_COLUMN_VAR_SIZE :

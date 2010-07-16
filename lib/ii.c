@@ -2980,7 +2980,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   GRN_OUTPUT_ARRAY_OPEN("TERMS", sb->header.nterms);
 
   for (bt = sb->terms, n = sb->header.nterms; n; n--, bt++) {
-    grn_id tid;
+    grn_id tid, tid_;
     char key[GRN_TABLE_MAX_KEY_SIZE];
     int key_size;
     uint16_t nextb;
@@ -2995,14 +2995,15 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
       continue;
     }
     GRN_OUTPUT_ARRAY_OPEN("TERM", -1);
-    key_size = grn_table_get_key(ctx, ii->lexicon, bt->tid, key, GRN_TABLE_MAX_KEY_SIZE);
-    tid = grn_table_get(ctx, ii->lexicon, key, key_size);
+    tid = (bt->tid & GRN_ID_MAX);
+    key_size = grn_table_get_key(ctx, ii->lexicon, tid, key, GRN_TABLE_MAX_KEY_SIZE);
+    tid_ = grn_table_get(ctx, ii->lexicon, key, key_size);
     GRN_OUTPUT_STR(key, key_size);
     GRN_OUTPUT_INT64(bt->tid);
-    GRN_OUTPUT_INT64(tid);
+    GRN_OUTPUT_INT64(tid_);
     nextb = bt->pos_in_buffer;
     size_in_buffer += bt->size_in_buffer;
-    if (tid != bt->tid && (bt->size_in_buffer || bt->size_in_chunk)) {
+    if (tid != tid_ && (bt->size_in_buffer || bt->size_in_chunk)) {
       ndeleted_terms_with_value++;
     }
     GETNEXTB();

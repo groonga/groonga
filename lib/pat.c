@@ -18,6 +18,7 @@
 #include <string.h>
 #include <limits.h>
 #include "pat.h"
+#include "output.h"
 
 #define GRN_PAT_DELETED (GRN_ID_MAX + 1)
 
@@ -2151,4 +2152,37 @@ grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
                       grn_table_delete_optarg *optarg)
 {
   return grn_pat_delete_by_id(ctx, c->pat, c->curr_rec, optarg);
+}
+
+void
+grn_pat_check(grn_ctx *ctx, grn_pat *pat)
+{
+  char buf[8];
+  struct grn_pat_header *h = pat->header;
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 8);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 8);
+  GRN_OUTPUT_CSTR("flags");
+  grn_itoh(h->flags, buf, 8);
+  GRN_OUTPUT_STR(buf, 8);
+  GRN_OUTPUT_CSTR("key size");
+  GRN_OUTPUT_INT64(h->key_size);
+  GRN_OUTPUT_CSTR("value_size");
+  GRN_OUTPUT_INT64(h->value_size);
+  GRN_OUTPUT_CSTR("tokenizer");
+  GRN_OUTPUT_INT64(h->tokenizer);
+  GRN_OUTPUT_CSTR("n_entries");
+  GRN_OUTPUT_INT64(h->n_entries);
+  GRN_OUTPUT_CSTR("curr_rec");
+  GRN_OUTPUT_INT64(h->curr_rec);
+  GRN_OUTPUT_CSTR("curr_key");
+  GRN_OUTPUT_INT64(h->curr_key);
+  GRN_OUTPUT_CSTR("curr_del");
+  GRN_OUTPUT_INT64(h->curr_del);
+  GRN_OUTPUT_CSTR("curr_del2");
+  GRN_OUTPUT_INT64(h->curr_del2);
+  GRN_OUTPUT_CSTR("curr_del3");
+  GRN_OUTPUT_INT64(h->curr_del3);
+  GRN_OUTPUT_CSTR("n_garbages");
+  GRN_OUTPUT_INT64(h->n_garbages);
+  GRN_OUTPUT_ARRAY_CLOSE();
 }
