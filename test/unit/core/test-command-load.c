@@ -264,8 +264,6 @@ data_null(void)
 void
 test_null(gconstpointer data)
 {
-  cut_omit("not implemented yet");
-
   assert_send_command("table_create Students TABLE_HASH_KEY ShortText");
   assert_send_command("column_create Students nick COLUMN_SCALAR ShortText");
   assert_send_command("column_create Students scores COLUMN_VECTOR Int32");

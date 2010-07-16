@@ -4384,7 +4384,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           } else {
             switch (value->header.type) {
             case GRN_BULK :
-              {
+              if (!GRN_BULK_VSIZE(value)) {
+                rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags);
+              } else {
                 grn_obj v;
                 GRN_OBJ_INIT(&v, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
                 v.u.v.body = value;
@@ -7610,7 +7612,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         case 'n' :
           if (GRN_TEXT_LEN(loader->last) == 4 && !memcmp(v, "null", 4)) {
             loader->last->header.domain = GRN_DB_VOID;
-            GRN_UINT32_SET(ctx, loader->last, GRN_ID_NIL);
+            GRN_BULK_REWIND(loader->last);
           }
           break;
         case 't' :
