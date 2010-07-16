@@ -101,6 +101,7 @@ usage(FILE *output)
           "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
           "  --config-path <path>:             specify config file path\n"
           "  --cache-limit <limit>:            specify the max number of cache data\n"
+          "  -f <path>:                        read commands from specified file\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -2019,6 +2020,7 @@ main(int argc, char **argv)
     *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
     *cache_limitstr = NULL;
   const char *config_path = NULL;
+  const char *input_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, getopt_op_none},
@@ -2042,6 +2044,7 @@ main(int argc, char **argv)
     {'\0', "config-path", NULL, 0, getopt_op_none},
     {'\0', "show-config", NULL, mode_config, getopt_op_update},
     {'\0', "cache-limit", NULL, 0, getopt_op_none},
+    {'f', NULL, NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -2057,6 +2060,7 @@ main(int argc, char **argv)
   opts[17].arg = &pidfile_path;
   opts[18].arg = &config_path;
   opts[20].arg = &cache_limitstr;
+  opts[21].arg = &input_path;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -2166,7 +2170,17 @@ main(int argc, char **argv)
   } else {
     max_nfthreads = default_max_nfthreads;
   }
-  batchmode = !isatty(0);
+  if (input_path) {
+    if (!freopen(input_path, "r", stdin)) {
+      fprintf(stderr, "can't open input file: %s (%s)\n",
+              input_path, strerror(errno));
+      return EXIT_FAILURE;
+    }
+    batchmode = GRN_TRUE;
+  }
+  else {
+    batchmode = !isatty(0);
+  }
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
     setlocale(LC_ALL, "");
