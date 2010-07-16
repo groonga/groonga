@@ -30,6 +30,7 @@ void test_unmatched_output_columns(void);
 void test_vector_text(void);
 void test_nonexistent_id(void);
 void test_bigram_split_symbol_tokenizer(void);
+void test_nonexistent_table(void);
 
 static gchar *tmp_directory;
 
@@ -297,4 +298,15 @@ test_bigram_split_symbol_tokenizer(void)
                                        "--output_columns '_key' "
                                        "--match_columns comment "
                                        "--query 上々"));
+}
+
+void
+test_nonexistent_table(void)
+{
+  const gchar *command = "select nonexistent";
+
+  grn_ctx_send(context, command, strlen(command), 0);
+  grn_test_assert_error(GRN_INVALID_ARGUMENT,
+                        "invalid table name: nonexistent",
+                        context);
 }

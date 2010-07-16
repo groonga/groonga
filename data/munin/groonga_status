@@ -15,7 +15,13 @@ command = ARGV.shift
 def parse(success, result)
   if success
     begin
-      [success, JSON.parse(result)]
+      status, body = JSON.parse(result)
+      return_code, start_time, elapsed, error_message = status
+      if return_code.zero?
+        [success, body]
+      else
+        [false, error_message]
+      end
     rescue JSON::ParserError
       [false, $!.message]
     end
@@ -69,7 +75,10 @@ EOF
 end
 
 success, body = run("status")
-exit(false) unless success
+unless success
+  puts("error: #{body}")
+  exit(false)
+end
 puts <<EOF
 alloc_count.value #{body["alloc_count"]}
 EOF

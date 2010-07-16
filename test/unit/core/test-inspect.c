@@ -63,6 +63,7 @@ void test_column_fix_size(void);
 void test_column_var_size(void);
 void test_column_index(void);
 void test_type(void);
+void test_record(void);
 
 static gchar *tmp_directory;
 
@@ -82,6 +83,7 @@ static grn_obj *geo_point_tokyo, *geo_point_wgs84;
 static grn_obj *uvector;
 static grn_obj *pvector;
 static grn_obj *vector;
+static grn_obj *record;
 
 void
 cut_startup(void)
@@ -118,6 +120,7 @@ setup_values(void)
   uvector = NULL;
   pvector = NULL;
   vector = NULL;
+  record = NULL;
 }
 
 void
@@ -159,6 +162,7 @@ teardown_values(void)
   grn_obj_unlink(context, uvector);
   grn_obj_unlink(context, pvector);
   grn_obj_unlink(context, vector);
+  grn_obj_unlink(context, record);
 }
 
 void
@@ -363,20 +367,33 @@ test_array_empty(void)
 {
   assert_send_command("table_create Sites TABLE_NO_KEY");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[]", inspected_string());
+  cut_assert_equal_string("#<table:no_key "
+                          "Sites "
+                          "value:(nil) "
+                          "size:0 "
+                          "columns:[] "
+                          "ids:[]"
+                          ">",
+                          inspected_string());
 }
 
 void
 test_array_with_records(void)
 {
-  cut_omit("array with record isn't supported yet.");
   assert_send_command("table_create Sites TABLE_NO_KEY");
   assert_send_command("column_create Sites name COLUMN_SCALAR Text");
   assert_send_command("load "
                       "'[[\"name\"],[\"groonga.org\"],[\"razil.jp\"]]' "
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[1, 2]", inspected_string());
+  cut_assert_equal_string("#<table:no_key "
+                          "Sites "
+                          "value:(nil) "
+                          "size:2 "
+                          "columns:[name] "
+                          "ids:[1, 2]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -384,7 +401,16 @@ test_hash_empty(void)
 {
   assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[]", inspected_string());
+  cut_assert_equal_string("#<table:hash "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:0 "
+                          "columns:[] "
+                          "default_tokenizer:(nil) "
+                          "keys:[]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -400,7 +426,16 @@ test_hash_with_records(void)
                       "]' "
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+  cut_assert_equal_string("#<table:hash "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:2 "
+                          "columns:[name] "
+                          "default_tokenizer:(nil) "
+                          "keys:[\"groonga.org\", \"razil.jp\"]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -408,7 +443,16 @@ test_patricia_trie_empty(void)
 {
   assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[]", inspected_string());
+  cut_assert_equal_string("#<table:pat "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:0 "
+                          "columns:[] "
+                          "default_tokenizer:(nil) "
+                          "keys:[]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -424,7 +468,16 @@ test_patricia_trie_with_records(void)
                       "]' "
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+  cut_assert_equal_string("#<table:pat "
+                          "Sites "
+                          "key:ShortText "
+                          "value:(nil) "
+                          "size:2 "
+                          "columns:[name] "
+                          "default_tokenizer:(nil) "
+                          "keys:[\"groonga.org\", \"razil.jp\"]"
+                          ">",
+                          inspected_string());
 }
 
 void
@@ -449,7 +502,11 @@ test_uvector_with_records(void)
   GRN_RECORD_PUT(context, uvector, 1);
   GRN_RECORD_PUT(context, uvector, 2);
   inspected = grn_inspect(context, NULL, uvector);
-  cut_assert_equal_string("[\"groonga.org\",\"razil.jp\"]", inspected_string());
+  cut_assert_equal_string("["
+                          "#<record:pat:Sites id:1 key:\"groonga.org\">, "
+                          "#<record:pat:Sites id:2 key:\"razil.jp\">"
+                          "]",
+                          inspected_string());
 }
 
 void
@@ -651,6 +708,31 @@ test_type(void)
                           "ShortText "
                           "size:4096 "
                           "type:var_size"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_record(void)
+{
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Text");
+  assert_send_command("load "
+                      "'["
+                      "[\"_key\",\"name\"],"
+                      "[\"groonga.org\",\"groonga\"],"
+                      "[\"razil.jp\",\"Brazil\"]"
+                      "]' "
+                      "Sites");
+
+  record = grn_obj_open(context, GRN_BULK, 0,
+                        grn_obj_id(context, get_object("Sites")));
+  GRN_RECORD_SET(context, record, 1);
+  inspected = grn_inspect(context, NULL, record);
+  cut_assert_equal_string("#<record:hash:Sites "
+                          "id:1 "
+                          "key:\"groonga.org\" "
+                          "name:\"groonga\""
                           ">",
                           inspected_string());
 }
