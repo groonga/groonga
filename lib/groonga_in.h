@@ -489,7 +489,7 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key;\
-  if (size) { *buf_++ = 0x80 ^ *key_++; size_--; }\
+  if (size_) { *buf_++ = 0x80 ^ *key_++; size_--; }\
   while (size_) { *buf_++ = *key_++; size_--; }\
 }
 #else /* WORDS_BIGENDIAN */
