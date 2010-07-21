@@ -14,6 +14,7 @@ noinst_LTLIBRARIES =				\
 	test-query.la				\
 	test-table.la				\
 	test-table-patricia-trie-cursor.la	\
+	test-table-patricia-trie-sort.la	\
 	test-column.la				\
 	test-database.la			\
 	test-database-create.la			\
@@ -41,6 +42,7 @@ noinst_LTLIBRARIES =				\
 	test-command-column-list.la		\
 	test-command-select.la			\
 	test-command-select-sort.la		\
+	test-command-select-prefix-search.la	\
 	test-command-cache-limit.la		\
 	test-command-delete.la
 endif
@@ -80,6 +82,7 @@ test_public_context_la_SOURCES		= test-public-context.c
 test_query_la_SOURCES			= test-query.c
 test_table_la_SOURCES			= test-table.c
 test_table_patricia_trie_cursor_la_SOURCES	= test-table-patricia-trie-cursor.c
+test_table_patricia_trie_sort_la_SOURCES	= test-table-patricia-trie-sort.c
 test_column_la_SOURCES			= test-column.c
 test_database_la_SOURCES		= test-database.c
 test_database_create_la_SOURCES		= test-database-create.c
@@ -107,5 +110,6 @@ test_command_load_la_SOURCES		= test-command-load.c
 test_command_column_list_la_SOURCES	= test-command-column-list.c
 test_command_select_la_SOURCES		= test-command-select.c
 test_command_select_sort_la_SOURCES	= test-command-select-sort.c
+test_command_select_prefix_search_la_SOURCES	= test-command-select-prefix-search.c
 test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c
 test_command_delete_la_SOURCES		= test-command-delete.c
