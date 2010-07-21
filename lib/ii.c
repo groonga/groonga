@@ -5172,11 +5172,6 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
           GRN_HASH_EACH(ctx, h, id, &tp, NULL, NULL, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-
-              int kkkey_size;
-              const char *kkkey = _grn_table_key(ctx, lexicon, *tp, &kkkey_size);
-              GRN_LOG(ctx, GRN_LOG_ERROR, "%d heap('%.*s')", *tp, kkkey_size, kkkey);
-
               cursor_heap_push(ctx, ti->cursors, ii, *tp, 0);
               ti->ntoken++;
               ti->size += s;
