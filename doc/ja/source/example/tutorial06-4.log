@@ -1,7 +1,7 @@
 実行例 ::
 
   > select --table User --query friends:@tomo --output_columns _key,username
-  [[0,1279106670.98059,0.000451],[[[5],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["jiro","ぐるんが次郎"],["moritapo","森田"],["hana","花子"]]]]
+  [[0,1279698430.3936,0.000455],[[[5],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["jiro","ぐるんが次郎"],["moritapo","森田"],["hana","花子"]]]]
   > select --table User --query friends:@jiro --output_columns _key,username
-  [[0,1279106671.18331,0.000294],[[[3],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["hana","花子"]]]]
+  [[0,1279698430.59638,0.000285],[[[3],[["_key","ShortText"],["username","ShortText"]],["ken","健作"],["taro","ぐるんが太郎"],["hana","花子"]]]]
   

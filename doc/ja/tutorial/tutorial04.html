@@ -58,7 +58,7 @@
 <p>selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメータには、JavaScriptの式に似た文法で条件を指定する点です。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --filter &quot;_id &lt;= 1&quot; --output_columns _id,_key
-[[0,1279106635.16672,0.000296],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;]]]]
+[[0,1279698394.39018,0.000294],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;]]]]
 </pre></div>
 </div>
 <p>ここで、filterパラメータには</p>
@@ -68,9 +68,9 @@ _id &lt;= 1</blockquote>
 <p>また、&amp;&amp; や || を使って、条件のAND・OR指定をすることもできます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --filter &quot;_id &gt;= 4 &amp;&amp; _id &lt;= 6&quot; --output_columns _id,_key
-[[0,1279106635.36853,0.000309],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[4,&quot;http../example//.net/afr&quot;],[5,&quot;http../example//.org/aba&quot;],[6,&quot;http../example//.com/rab&quot;]]]]
+[[0,1279698394.59204,0.000307],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[4,&quot;http://example.net/afr&quot;],[5,&quot;http://example.org/aba&quot;],[6,&quot;http://example.com/rab&quot;]]]]
 &gt; select --table Site --filter &quot;_id &lt;= 2 || _id &gt;= 7&quot; --output_columns _id,_key
-[[0,1279106635.57087,0.000357],[[[8],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http../example//.org/&quot;],[2,&quot;http../example//.net/&quot;],[7,&quot;http../example//.net/atv&quot;],[8,&quot;http../example//.org/gat&quot;],[9,&quot;http../example//.com/vdw&quot;],[10,&quot;http../example/.org/&quot;],[11,&quot;http../example/.net/&quot;],[12,&quot;http../example/.com/&quot;]]]]
+[[0,1279698394.79435,0.000318],[[[8],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;],[2,&quot;http://example.net/&quot;],[7,&quot;http://example.net/atv&quot;],[8,&quot;http://example.org/gat&quot;],[9,&quot;http://example.com/vdw&quot;],[10,&quot;http../example/.org/&quot;],[11,&quot;http../example/.net/&quot;],[12,&quot;http../example/.com/&quot;]]]]
 </pre></div>
 </div>
 <p>queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。</p>
@@ -83,9 +83,9 @@ _id &lt;= 1</blockquote>
 JavaScriptの式に似たな文法で様々な条件を指定することができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --scorer &quot;_score = rand()&quot; --output_columns _id,_key,_score --sortby _score
-[[-63,1279106635.77467,0.000437,&quot;Syntax error! (_score = rand())&quot;,[[&quot;yy_syntax_error&quot;,&quot;ecmascript.y&quot;,19]]],[]]
+[[-63,1279698394.99826,0.000464,&quot;Syntax error! (_score = rand())&quot;,[[&quot;yy_syntax_error&quot;,&quot;ecmascript.y&quot;,19]]],[]]
 &gt; select --table Site --scorer &quot;_score = rand()&quot; --output_columns _id,_key,_score --sortby _score
-[[-63,1279106635.97653,0.000385,&quot;Syntax error! (_score = rand())&quot;,[[&quot;yy_syntax_error&quot;,&quot;ecmascript.y&quot;,19]]],[]]
+[[-63,1279698395.2001,0.000391,&quot;Syntax error! (_score = rand())&quot;,[[&quot;yy_syntax_error&quot;,&quot;ecmascript.y&quot;,19]]],[]]
 </pre></div>
 </div>
 <p>検索結果には、&#8217;_score&#8217;という名前の、全文検索のスコアが代入されている仮想的なカラムが付与されることをチュートリアル中ソートの項目で説明しました。</p>
@@ -107,29 +107,29 @@ _score</blockquote>
 <p>ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列はそれぞれ&#8221;128452975x503157902&#8221;/&#8221;128487316x502920929&#8221;となります。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name location --type WGS84GeoPoint
-[[0,1279106636.17854,0.075568],true]
+[[0,1279698395.40216,0.099359],true]
 &gt; load --table Site
 &gt; [
 &gt;  {&quot;_key&quot;:&quot;http../example/.org/&quot;,&quot;location&quot;:&quot;128452975x503157902&quot;}
 &gt;  {&quot;_key&quot;:&quot;http../example/.net/&quot;,&quot;location&quot;:&quot;128487316x502920929&quot;},
 &gt; ]
-[[0,1279106636.45489,0.801064],2]
+[[0,1279698395.70235,0.801159],2]
 &gt; select --table Site --query &quot;_id:1 OR _id:2&quot; --output_columns _key,location
-[[0,1279106637.45656,0.000377],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;]],[&quot;http../example//.org/&quot;,&quot;0x0&quot;],[&quot;http../example//.net/&quot;,&quot;0x0&quot;]]]]
+[[0,1279698396.70421,0.000393],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;]],[&quot;http://example.org/&quot;,&quot;0x0&quot;],[&quot;http://example.net/&quot;,&quot;0x0&quot;]]]]
 </pre></div>
 </div>
 <p>scorerパラメータにおいて、 <a class="reference internal" href="../functions/geo_distance.html"><em>geo_distance</em></a> 関数を用いることにより、２点間の距離を計算することができます。</p>
 <p>ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、geo_distance関数に与える文字列は&#8221;128515259x503187188&#8221;となります。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_id:1 OR _id:2&quot; --output_columns _key,location,_score --scorer &#39;_score = geo_distance(location, &quot;128515259x503187188&quot;)&#39;
-[[0,1279106637.65898,0.000411],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http../example//.org/&quot;,&quot;0x0&quot;,15284432],[&quot;http../example//.net/&quot;,&quot;0x0&quot;,15284432]]]]
+[[0,1279698396.90676,0.000414],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http://example.org/&quot;,&quot;0x0&quot;,15284432],[&quot;http://example.net/&quot;,&quot;0x0&quot;,15284432]]]]
 </pre></div>
 </div>
 <p>この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れているようです。</p>
 <p>geo_distance関数は、_scoreを通じてソートでも用いることができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --query &quot;_id:1 OR _id:2&quot; --output_columns _key,location,_score --scorer &#39;_score = geo_distance(location, &quot;128515259x503187188&quot;)&#39; --sortby -_score
-[[0,1279106637.86191,0.000497],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http../example//.org/&quot;,&quot;0x0&quot;,15284432],[&quot;http../example//.net/&quot;,&quot;0x0&quot;,15284432]]]]
+[[0,1279698397.10962,0.000513],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;http://example.org/&quot;,&quot;0x0&quot;,15284432],[&quot;http://example.net/&quot;,&quot;0x0&quot;,15284432]]]]
 </pre></div>
 </div>
 <p>「ある地点から何m以内に存在する」といった絞込も可能です。</p>
@@ -137,7 +137,7 @@ _score</blockquote>
 <p>たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Site --output_columns _key,location --filter &#39;geo_in_circle(location, &quot;128515259x503187188&quot;, 5000)&#39;
-[[0,1279106638.06474,0.000331],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;]],[&quot;http../example/.org/&quot;,&quot;128452975x503157902&quot;]]]]
+[[0,1279698397.31255,0.00032],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;location&quot;,&quot;WGS84GeoPoint&quot;]],[&quot;http../example/.org/&quot;,&quot;128452975x503157902&quot;]]]]
 </pre></div>
 </div>
 <p>また、経緯度が指定の矩形領域内であるかどうかを判定する <a class="reference internal" href="../functions/geo_in_rectangle.html"><em>geo_in_rectangle</em></a> 関数も存在します。</p>

@@ -1,7 +1,7 @@
 実行例 ::
 
   > select --table Site --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
-  [[-63,1279106635.77467,0.000437,"Syntax error! (_score = rand())",[["yy_syntax_error","ecmascript.y",19]]],[]]
+  [[-63,1279698394.99826,0.000464,"Syntax error! (_score = rand())",[["yy_syntax_error","ecmascript.y",19]]],[]]
   > select --table Site --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
-  [[-63,1279106635.97653,0.000385,"Syntax error! (_score = rand())",[["yy_syntax_error","ecmascript.y",19]]],[]]
+  [[-63,1279698395.2001,0.000391,"Syntax error! (_score = rand())",[["yy_syntax_error","ecmascript.y",19]]],[]]
   

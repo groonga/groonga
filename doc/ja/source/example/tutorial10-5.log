@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Comments --query comment:@なう --output_columns comment,_score
-  [[0,1279106623.03235,0.00032],[[[2],[["comment","ShortText"],["_score","Int32"]],["groongaなう #groonga",1],["中野ブロードウェイなうなう",2]]]]
+  [[0,1279698382.42106,0.00032],[[[2],[["comment","ShortText"],["_score","Int32"]],["groongaなう #groonga",1],["中野ブロードウェイなうなう",2]]]]
   

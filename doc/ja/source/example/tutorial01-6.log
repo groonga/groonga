@@ -1,5 +1,5 @@
 実行例 ::
 
   > column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
-  [[0,1279106640.04295,0.132575],true]
+  [[0,1279698399.33178,0.131599],true]
   

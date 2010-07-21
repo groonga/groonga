@@ -62,15 +62,15 @@
 タグの情報を保存する、Tagテーブルを作成します。Tagテーブルでは、タグ文字列を主キーに格納し、Videoテーブルのtagsカラムに対するインデックスをindex_tagsカラムに格納しています。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
-[[0,1279106663.87331,0.068507],true]
+[[0,1279698423.25366,0.068018],true]
 &gt; table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
-[[0,1279106664.14262,0.074636],true]
+[[0,1279698423.52246,0.075518],true]
 &gt; column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
-[[0,1279106664.41806,0.067093],true]
+[[0,1279698423.79872,0.058815],true]
 &gt; column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
-[[0,1279106664.68592,0.058045],true]
+[[0,1279698424.05835,0.066281],true]
 &gt; column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
-[[0,1279106664.94474,0.104906],true]
+[[0,1279698424.32543,0.121583],true]
 &gt; load --table Video
 &gt; [
 &gt; {&quot;_key&quot;:1,&quot;title&quot;:&quot;Soccer 2010&quot;,&quot;tags&quot;:[&quot;Sports&quot;,&quot;Soccer&quot;]},
@@ -82,18 +82,18 @@
 &gt; {&quot;_key&quot;:7,&quot;title&quot;:&quot;Draw 8 Month&quot;,&quot;tags&quot;:[&quot;Animation&quot;,&quot;Raccoon&quot;]},
 &gt; {&quot;_key&quot;:8,&quot;title&quot;:&quot;K.O.&quot;,&quot;tags&quot;:[&quot;Animation&quot;,&quot;Music&quot;]}
 &gt; ]
-[[0,1279106665.2504,2.00276],8]
+[[0,1279698424.64778,2.002693],8]
 </pre></div>
 </div>
 <p>インデックスカラムを作成すると、全文検索が高速に行えるようになります。インデックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に更新されます。</p>
 <p>「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Video --query tags:@Variety --output_columns _key,title
-[[0,1279106667.45405,0.000435],[[[2],[[&quot;_key&quot;,&quot;UInt32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[2,&quot;Zenigata Kinjirou&quot;],[5,&quot;Hex Gone!&quot;]]]]
+[[0,1279698426.85136,0.000448],[[[2],[[&quot;_key&quot;,&quot;UInt32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[2,&quot;Zenigata Kinjirou&quot;],[5,&quot;Hex Gone!&quot;]]]]
 &gt; select --table Video --query tags:@Sports --output_columns _key,title
-[[0,1279106667.65595,0.000288],[[[2],[[&quot;_key&quot;,&quot;UInt32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;Soccer 2010&quot;],[4,&quot;Moero!! Ultra Baseball&quot;]]]]
+[[0,1279698427.05344,0.00029],[[[2],[[&quot;_key&quot;,&quot;UInt32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;Soccer 2010&quot;],[4,&quot;Moero!! Ultra Baseball&quot;]]]]
 &gt; select --table Video --query tags:@Animation --output_columns _key,title
-[[0,1279106667.85853,0.000285],[[[3],[[&quot;_key&quot;,&quot;UInt32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[6,&quot;Pikonyan 1&quot;],[7,&quot;Draw 8 Month&quot;],[8,&quot;K.O.&quot;]]]]
+[[0,1279698427.25525,0.000283],[[[3],[[&quot;_key&quot;,&quot;UInt32&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[6,&quot;Pikonyan 1&quot;],[7,&quot;Draw 8 Month&quot;],[8,&quot;K.O.&quot;]]]]
 </pre></div>
 </div>
 <p>このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うことができました。</p>
@@ -105,13 +105,13 @@
 <p>以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納するusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのインデックスのindex_friendsカラムを追加しています。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
-[[0,1279106668.06058,0.091221],true]
+[[0,1279698427.4573,0.075046],true]
 &gt; column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
-[[0,1279106668.35258,0.058747],true]
+[[0,1279698427.73313,0.067045],true]
 &gt; column_create --table User --name friends --flags COLUMN_VECTOR --type User
-[[0,1279106668.6121,0.057978],true]
+[[0,1279698428.00097,0.066303],true]
 &gt; column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
-[[0,1279106668.87084,0.105902],true]
+[[0,1279698428.2681,0.121543],true]
 &gt; load --table User
 &gt; [
 &gt; {&quot;_key&quot;:&quot;ken&quot;,&quot;username&quot;:&quot;健作&quot;,&quot;friends&quot;:[&quot;taro&quot;,&quot;jiro&quot;,&quot;tomo&quot;,&quot;moritapo&quot;]}
@@ -121,21 +121,21 @@
 &gt; {&quot;_key&quot;:&quot;tomo&quot;,&quot;username&quot;:&quot;トモちゃん&quot;,&quot;friends&quot;:[&quot;ken&quot;,&quot;hana&quot;]}
 &gt; {&quot;_key&quot;:&quot;hana&quot;,&quot;username&quot;:&quot;花子&quot;,&quot;friends&quot;:[&quot;ken&quot;,&quot;taro&quot;,&quot;jiro&quot;,&quot;moritapo&quot;,&quot;tomo&quot;]}
 &gt; ]
-[[0,1279106669.17748,1.602174],6]
+[[0,1279698428.5904,1.602212],6]
 </pre></div>
 </div>
 <p>指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table User --query friends:@tomo --output_columns _key,username
-[[0,1279106670.98059,0.000451],[[[5],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;username&quot;,&quot;ShortText&quot;]],[&quot;ken&quot;,&quot;健作&quot;],[&quot;taro&quot;,&quot;ぐるんが太郎&quot;],[&quot;jiro&quot;,&quot;ぐるんが次郎&quot;],[&quot;moritapo&quot;,&quot;森田&quot;],[&quot;hana&quot;,&quot;花子&quot;]]]]
+[[0,1279698430.3936,0.000455],[[[5],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;username&quot;,&quot;ShortText&quot;]],[&quot;ken&quot;,&quot;健作&quot;],[&quot;taro&quot;,&quot;ぐるんが太郎&quot;],[&quot;jiro&quot;,&quot;ぐるんが次郎&quot;],[&quot;moritapo&quot;,&quot;森田&quot;],[&quot;hana&quot;,&quot;花子&quot;]]]]
 &gt; select --table User --query friends:@jiro --output_columns _key,username
-[[0,1279106671.18331,0.000294],[[[3],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;username&quot;,&quot;ShortText&quot;]],[&quot;ken&quot;,&quot;健作&quot;],[&quot;taro&quot;,&quot;ぐるんが太郎&quot;],[&quot;hana&quot;,&quot;花子&quot;]]]]
+[[0,1279698430.59638,0.000285],[[[3],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;username&quot;,&quot;ShortText&quot;]],[&quot;ken&quot;,&quot;健作&quot;],[&quot;taro&quot;,&quot;ぐるんが太郎&quot;],[&quot;hana&quot;,&quot;花子&quot;]]]]
 </pre></div>
 </div>
 <p>さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみましょう。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table User --limit 0 --drilldown friends
-[[0,1279106671.3856,0.000278],[[[6],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;username&quot;,&quot;ShortText&quot;],[&quot;index_friends&quot;,&quot;User&quot;],[&quot;friends&quot;,&quot;User&quot;]]],[[6],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;taro&quot;,3],[&quot;jiro&quot;,3],[&quot;tomo&quot;,5],[&quot;moritapo&quot;,2],[&quot;ken&quot;,3],[&quot;hana&quot;,1]]]]
+[[0,1279698430.79878,0.000265],[[[6],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;username&quot;,&quot;ShortText&quot;],[&quot;index_friends&quot;,&quot;User&quot;],[&quot;friends&quot;,&quot;User&quot;]]],[[6],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;taro&quot;,3],[&quot;jiro&quot;,3],[&quot;tomo&quot;,5],[&quot;moritapo&quot;,2],[&quot;ken&quot;,3],[&quot;hana&quot;,1]]]]
 </pre></div>
 </div>
 <p>このように、テーブルの参照関係を逆にたどる検索ができました。</p>

@@ -1,7 +1,7 @@
 実行例 ::
 
   > select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
-  [[0,1279106635.36853,0.000309],[[[3],[["_id","UInt32"],["_key","ShortText"]],[4,"http../example//.net/afr"],[5,"http../example//.org/aba"],[6,"http../example//.com/rab"]]]]
+  [[0,1279698394.59204,0.000307],[[[3],[["_id","UInt32"],["_key","ShortText"]],[4,"http://example.net/afr"],[5,"http://example.org/aba"],[6,"http://example.com/rab"]]]]
   > select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
-  [[0,1279106635.57087,0.000357],[[[8],[["_id","UInt32"],["_key","ShortText"]],[1,"http../example//.org/"],[2,"http../example//.net/"],[7,"http../example//.net/atv"],[8,"http../example//.org/gat"],[9,"http../example//.com/vdw"],[10,"http../example/.org/"],[11,"http../example/.net/"],[12,"http../example/.com/"]]]]
+  [[0,1279698394.79435,0.000318],[[[8],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"],[2,"http://example.net/"],[7,"http://example.net/atv"],[8,"http://example.org/gat"],[9,"http://example.com/vdw"],[10,"http../example/.org/"],[11,"http../example/.net/"],[12,"http../example/.com/"]]]]
   
