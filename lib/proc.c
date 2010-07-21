@@ -26,6 +26,7 @@
 #include "db.h"
 #include "util.h"
 #include "output.h"
+#include "pat.h"
 
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0
