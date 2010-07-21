@@ -201,15 +201,15 @@ Siteテーブルのtitleカラムを検索対象とする、'blog_title'とい�
 .. include:: ../example//tutorial01-7.log
 .. load --table Site
 .. [
-.. {"_key":"http../example//.org/","title":"This is test record 1!"},
-.. {"_key":"http../example//.net/","title":"test record 2."},
-.. {"_key":"http../example//.com/","title":"test test record three."},
-.. {"_key":"http../example//.net/afr","title":"test record four."},
-.. {"_key":"http../example//.org/aba","title":"test test test record five."},
-.. {"_key":"http../example//.com/rab","title":"test test test test record six."},
-.. {"_key":"http../example//.net/atv","title":"test test test record seven."},
-.. {"_key":"http../example//.org/gat","title":"test test record eight."},
-.. {"_key":"http../example//.com/vdw","title":"test test record nine."},
+.. {"_key":"http://example.org/","title":"This is test record 1!"},
+.. {"_key":"http://example.net/","title":"test record 2."},
+.. {"_key":"http://example.com/","title":"test test record three."},
+.. {"_key":"http://example.net/afr","title":"test record four."},
+.. {"_key":"http://example.org/aba","title":"test test test record five."},
+.. {"_key":"http://example.com/rab","title":"test test test test record six."},
+.. {"_key":"http://example.net/atv","title":"test test test record seven."},
+.. {"_key":"http://example.org/gat","title":"test test record eight."},
+.. {"_key":"http://example.com/vdw","title":"test test record nine."},
 .. ]
 
 selectコマンドで、データが入っていることを確認しましょう。
@@ -235,9 +235,9 @@ _keyでも検索してみましょう。
 
 .. groonga-command
 .. include:: ../example//tutorial01-10.log
-.. select --table Site --query "_key:\"http../example//.org/\""
+.. select --table Site --query "_key:\"http://example.org/\""
 
-queryパラメータに与えた「_key:\"http../example//.org/\"」というのは、'_key'という名前のカラムに'"http../example//.org/"'という値が入っているレコードを検索する、という意味です。
+queryパラメータに与えた「_key:\"http://example.org/\"」というのは、'_key'という名前のカラムに'"http://example.org/"'という値が入っているレコードを検索する、という意味です。
 
 全文検索
 ^^^^^^^^
