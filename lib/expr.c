@@ -615,7 +615,11 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
     grn_obj *obj;
     GRN_PTR_POP(&e->objs, obj);
     if (obj) {
-      grn_obj_unlink(ctx, obj);
+      if (obj->header.type) {
+        grn_obj_unlink(ctx, obj);
+      } else {
+        GRN_LOG(ctx, GRN_LOG_WARNING, "GRN_VOID object is tried to be unlinked");
+      }
     } else { break; }
   }
   grn_obj_close(ctx, &e->objs);
