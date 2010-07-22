@@ -222,25 +222,25 @@ static void
 data_hash_table_create(void)
 {
   ADD_DATA("hash",
-           "table_create Blog 0 ShortText\n",
+           "table_create Blog TABLE_HASH_KEY ShortText\n",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY,
            "ShortText",
            NULL);
   ADD_DATA("hash - without key",
-           "table_create Blog 0\n",
+           "table_create Blog TABLE_HASH_KEY\n",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY,
            NULL,
            NULL);
   ADD_DATA("hash - key normalize",
-           "table_create Blog 128 ShortText\n",
+           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText\n",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            NULL);
   ADD_DATA("hash - key normalize - value",
-           "table_create Blog 128 ShortText Int32\n",
+           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText Int32\n",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
@@ -251,7 +251,7 @@ static void
 data_patricia_trie_create(void)
 {
   ADD_DATA("patricia trie",
-           "table_create Blog 1 ShortText\n",
+           "table_create Blog TABLE_PAT_KEY ShortText\n",
            "Blog",
            GRN_OBJ_TABLE_PAT_KEY,
            "ShortText",
@@ -262,13 +262,13 @@ static void
 data_array_create(void)
 {
   ADD_DATA("array",
-           "table_create Blog 3\n",
+           "table_create Blog TABLE_NO_KEY\n",
            "Blog",
            GRN_OBJ_TABLE_NO_KEY,
            NULL,
            NULL);
   ADD_DATA("array with value",
-           "table_create Blog 3 --value_type Int32\n",
+           "table_create Blog TABLE_NO_KEY --value_type Int32\n",
            "Blog",
            GRN_OBJ_TABLE_NO_KEY,
            NULL,
@@ -279,7 +279,7 @@ static void
 data_view_create(void)
 {
   ADD_DATA("view",
-           "table_create Blog 4\n",
+           "table_create Blog TABLE_VIEW\n",
            "Blog",
            GRN_OBJ_TABLE_VIEW,
            NULL,
@@ -320,14 +320,14 @@ void
 data_column_create(void)
 {
   ADD_DATA("scalar",
-           "column_create Blog body 0 Text\n",
+           "column_create Blog body COLUMN_SCALAR|COMPRESS_NONE Text\n",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_SCALAR,
            "Text",
            NULL);
   ADD_DATA("vector",
-           "column_create Blog body 1 Text\n",
+           "column_create Blog body COLUMN_VECTOR|COMPRESS_NONE Text\n",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_VECTOR,
@@ -347,7 +347,7 @@ test_column_create(gconstpointer data)
                 gcut_data_get_string(data, "type_name"),
                 gcut_data_get_string(data, "source"));
   expected = gcut_data_get_string(data, "expected");
-  grn_test_assert_dump(cut_take_printf("table_create Blog 0\n%s", expected));
+  grn_test_assert_dump(cut_take_printf("table_create Blog TABLE_HASH_KEY\n%s", expected));
 }
 
 #define ADD_DATA(label, expected, type_name, element_type,              \
@@ -452,8 +452,8 @@ test_uvector_column(gconstpointer data)
                  GRN_BULK_HEAD(&elements[2]), GRN_BULK_VSIZE(&elements[2]));
   grn_obj_set_value(context, column, id, &uvector, GRN_OBJ_SET);
 
-  expected = cut_take_printf("table_create Table 3\n"
-                             "column_create Table Column 1 %s\n"
+  expected = cut_take_printf("table_create Table TABLE_NO_KEY\n"
+                             "column_create Table Column COLUMN_VECTOR|COMPRESS_NONE %s\n"
                              "load --table Table\n"
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
@@ -499,8 +499,8 @@ test_vector_column(gconstpointer data)
                          GRN_TEXT_LEN(&elements[2]), 0, type_id);
   grn_obj_set_value(context, column, id, &vector, GRN_OBJ_SET);
 
-  expected = cut_take_printf("table_create Table 3\n"
-                             "column_create Table Column 1 %s\n"
+  expected = cut_take_printf("table_create Table TABLE_NO_KEY\n"
+                             "column_create Table Column COLUMN_VECTOR|COMPRESS_NONE %s\n"
                              "load --table Table\n"
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
@@ -532,7 +532,7 @@ test_unsequantial_records_in_table_with_keys(void)
   grn_table_delete_by_id(context, table, 3);
   grn_table_delete_by_id(context, table, 6);
 
-  grn_test_assert_dump("table_create Weekdays 0 ShortText\n"
+  grn_test_assert_dump("table_create Weekdays TABLE_HASH_KEY ShortText\n"
                        "load --table Weekdays\n"
                        "[\n"
                        "[\"_key\"],\n"

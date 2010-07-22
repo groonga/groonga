@@ -1359,6 +1359,7 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
 {
   grn_obj *type;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
+  grn_obj buf;
 
   type = grn_ctx_at(ctx, ((grn_db_obj *)column)->range);
   if (!type) {
@@ -1374,7 +1375,10 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
   if (type->header.type == GRN_TYPE) {
     default_flags |= type->header.flags;
   }
-  grn_text_itoa(ctx, outbuf, column->header.flags & ~default_flags);
+  GRN_TEXT_INIT(&buf, 0);
+  grn_column_create_flags_to_text(ctx, &buf, column->header.flags & ~default_flags);
+  GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+  GRN_OBJ_FIN(ctx, &buf);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   dump_obj_name(ctx, outbuf, type);
   if (column->header.flags & GRN_OBJ_COLUMN_INDEX) {
@@ -1673,6 +1677,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
   grn_obj *default_tokenizer;
+  grn_obj buf;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -1689,7 +1694,10 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
-  grn_text_itoa(ctx, outbuf, table->header.flags & ~default_flags);
+  GRN_TEXT_INIT(&buf, 0);
+  grn_table_create_flags_to_text(ctx, &buf, table->header.flags & ~default_flags);
+  GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+  GRN_OBJ_FIN(ctx, &buf);
   if (domain) {
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
     dump_obj_name(ctx, outbuf, domain);
