@@ -37,8 +37,7 @@ static uint32_t default_cache_n_entries;
 void
 cut_startup(void)
 {
-  tmp_directory = g_build_filename(grn_test_get_base_dir(),
-                                   "tmp",
+  tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
                                    "cache-limit",
                                    NULL);
   default_cache_n_entries = *grn_cache_max_nentries();

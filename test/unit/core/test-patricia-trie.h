@@ -71,7 +71,7 @@ setup_trie_common(const gchar *default_path_component)
   sample_value = cut_take_string(g_strdup("patricia trie test"));
   sample_id = GRN_ID_NIL;
 
-  base_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
+  base_dir = grn_test_get_tmp_dir();
   default_path = g_build_filename(base_dir, default_path_component, NULL);
   default_key_size = GRN_PAT_MAX_KEY_SIZE / 2;
   default_value_size = DEFAULT_VALUE_SIZE;

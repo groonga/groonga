@@ -149,7 +149,7 @@ grn_test_server_ensure_base_directory(GrnTestServer *server, GError **error)
   if (priv->base_directory)
     return TRUE;
 
-  priv->base_directory = g_build_filename(grn_test_get_base_dir(),
+  priv->base_directory = g_build_filename(grn_test_get_tmp_dir(),
                                           "tmp-server", NULL);
   cut_utils_remove_path_recursive_force(priv->base_directory);
   if (g_mkdir_with_parents(priv->base_directory, 0700) == -1) {

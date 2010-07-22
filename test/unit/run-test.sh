@@ -7,7 +7,7 @@ fi
 export BUILD_DIR
 
 top_dir="$BUILD_DIR/../.."
-top_dir=$(cd $top_dir; pwd)
+top_dir=$(cd -P "$top_dir" 2>/dev/null || cd "$top_dir"; pwd)
 
 if test x"$NO_MAKE" != x"yes"; then
     make -C $top_dir > /dev/null || exit 1

@@ -36,8 +36,7 @@ static grn_id users, daijiro;
 static void
 setup_database(void)
 {
-  tmp_directory = g_build_filename(grn_test_get_base_dir(),
-                                   "tmp",
+  tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
                                    NULL);
   database_path = g_build_filename(tmp_directory,
                                    "cast-table.db",

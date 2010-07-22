@@ -37,8 +37,7 @@ static grn_db_create_optarg *options;
 void
 cut_startup(void)
 {
-  tmp_directory = g_build_filename(grn_test_get_base_dir(),
-                                   "tmp",
+  tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
                                    "function-cast",
                                    NULL);
 }

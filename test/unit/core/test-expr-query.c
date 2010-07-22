@@ -39,8 +39,7 @@ void test_allow_update(gconstpointer data);
 void
 cut_startup(void)
 {
-  tmp_directory = g_build_filename(grn_test_get_base_dir(),
-                                   "tmp",
+  tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
                                    "test-expr-query",
                                    NULL);
 }

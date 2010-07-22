@@ -39,7 +39,7 @@ cut_setup(void)
   db = NULL;
   context = g_new0(grn_ctx, 1);
 
-  base_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
+  base_dir = grn_test_get_tmp_dir();
   default_path = g_build_filename(base_dir, "db", NULL);
   default_encoding = GRN_ENC_DEFAULT;
   default_context_flags = GRN_CTX_USE_QL;

@@ -218,6 +218,17 @@ grn_test_get_build_dir(void)
   return build_dir;
 }
 
+static gchar *tmp_dir = NULL;
+const gchar *
+grn_test_get_tmp_dir(void)
+{
+  if (!tmp_dir) {
+    tmp_dir = g_build_filename(grn_test_get_build_dir(), "tmp", NULL);
+  }
+
+  return tmp_dir;
+}
+
 typedef struct _grn_log
 {
   gint level;

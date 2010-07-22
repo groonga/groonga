@@ -85,7 +85,7 @@ setup_hash_common(const gchar *default_path_component)
   sample_value = cut_take_string(g_strdup("hash test"));
   sample_id = GRN_ID_NIL;
 
-  base_dir = g_build_filename(grn_test_get_base_dir(), "tmp", NULL);
+  base_dir = grn_test_get_tmp_dir();
   default_path = g_build_filename(base_dir, "hash", NULL);
   grn_test_hash_factory_set_path(factory, default_path);
   g_free(default_path);
