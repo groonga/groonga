@@ -19,6 +19,7 @@
 #include <limits.h>
 #include "pat.h"
 #include "output.h"
+#include "util.h"
 
 #define GRN_PAT_DELETED (GRN_ID_MAX + 1)
 
@@ -2185,4 +2186,51 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
   GRN_OUTPUT_CSTR("n_garbages");
   GRN_OUTPUT_INT64(h->n_garbages);
   GRN_OUTPUT_ARRAY_CLOSE();
+}
+
+static void
+grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
+                     grn_obj *key_buf, grn_obj *buf)
+{
+  pat_node *node = NULL;
+  int key_size;
+
+  grn_text_lltoa(ctx, buf, id);
+  PAT_AT(pat, id, node);
+  key_size = PAT_LEN(node);
+  if (key_size > 1) {
+    GRN_BULK_REWIND(key_buf);
+    grn_bulk_space(ctx, key_buf, key_size);
+    grn_pat_get_key(ctx, pat, id, GRN_BULK_HEAD(key_buf), key_size);
+    GRN_TEXT_PUTS(ctx, buf, "(");
+    grn_inspect(ctx, buf, key_buf);
+    GRN_TEXT_PUTS(ctx, buf, ")");
+  }
+  GRN_TEXT_PUTS(ctx, buf, "[");
+  if (PAT_CHK(node) > check) {
+    int i;
+    for (i = 0; i < 2; i++) {
+      if (node->lr[i]) {
+        grn_pat_inspect_node(ctx, pat, node->lr[i], PAT_CHK(node), key_buf, buf);
+      } else {
+        GRN_TEXT_PUTS(ctx, buf, "nil");
+      }
+      if (i == 0) {
+        GRN_TEXT_PUTS(ctx, buf, ", ");
+      }
+    }
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+}
+
+void
+grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
+{
+  pat_node *node;
+  grn_obj key_buf;
+
+  GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, pat->obj.header.domain);
+  PAT_AT(pat, GRN_ID_NIL, node);
+  grn_pat_inspect_node(ctx, pat, node->lr[1], -1, &key_buf, buf);
+  GRN_OBJ_FIN(ctx, &key_buf);
 }

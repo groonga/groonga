@@ -96,6 +96,7 @@ grn_id grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id);
 const char *grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size);
 grn_id grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id);
 void grn_pat_check(grn_ctx *ctx, grn_pat *pat);
+void grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf);
 
 #ifdef __cplusplus
 }

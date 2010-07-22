@@ -18,6 +18,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "db.h"
+#include "pat.h"
 #include "util.h"
 
 grn_rc
@@ -375,6 +376,11 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       grn_table_cursor_close(ctx, tc);
     }
     GRN_TEXT_PUTS(ctx, buf, "]");
+  }
+
+  if (obj->header.type == GRN_TABLE_PAT_KEY) {
+    GRN_TEXT_PUTS(ctx, buf, " nodes:");
+    grn_pat_inspect_nodes(ctx, obj, buf);
   }
 
   GRN_TEXT_PUTS(ctx, buf, ">");
