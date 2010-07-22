@@ -7584,7 +7584,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         values_add(ctx, loader);
         break;
       default :
-        if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
+        if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || ('_' == c)) {
           loader->stat = GRN_LOADER_SYMBOL;
           values_add(ctx, loader);
         } else {
@@ -7603,7 +7603,8 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
       }
       break;
     case GRN_LOADER_SYMBOL :
-      if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
+      if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') ||
+          ('0' <= c && c <= '9') || ('_' == c)) {
         GRN_TEXT_PUTC(ctx, loader->last, c);
         str++;
       } else {
