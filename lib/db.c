@@ -7303,16 +7303,18 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       grn_id value_size = ((grn_db_obj *)grn_ctx_at(ctx, range_id))->range;
       GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, range_id);
       while (n--) {
-        if (v->header.domain == GRN_DB_TEXT) {
-          grn_obj cast_element, *element = v;
-          if (range_id != element->header.domain) {
-            GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
-            grn_obj_cast(ctx, element, &cast_element, 1);
-            element = &cast_element;
+        int cast_failed = 0;
+        grn_obj cast_element, *element = v;
+        if (range_id != element->header.domain) {
+          GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
+          if (grn_obj_cast(ctx, element, &cast_element, 1)) {
+            cast_failed = 1;
+            ERR(GRN_ERROR, "bad syntax.");
           }
+          element = &cast_element;
+        }
+        if (!cast_failed) {
           grn_bulk_write(ctx, &buf, GRN_TEXT_VALUE(element), value_size);
-        } else {
-          ERR(GRN_ERROR, "bad syntax.");
         }
         v = values_next(ctx, v);
       }

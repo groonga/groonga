@@ -27,6 +27,7 @@ void test_output_columns_with_space(void);
 void test_vector_geo_point(void);
 void test_vector_geo_point_with_query(void);
 void test_unmatched_output_columns(void);
+void test_vector_int32(void);
 void test_vector_text(void);
 void test_vector_reference_id(void);
 void test_nonexistent_id(void);
@@ -213,6 +214,24 @@ test_unmatched_output_columns(void)
                           send_command("select Question"
                                        " --output_columns"
                                        " \"_key, num, answer.value\""));
+}
+
+void
+test_vector_int32(void)
+{
+  assert_send_command("table_create Students TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Students scores COLUMN_VECTOR Int32");
+
+  cut_assert_equal_string("1",
+                          send_command("load --table Students\n"
+                                       "[{\"_key\": \"Daijiro MORI\", "
+                                         "\"scores\": [5, 5, 5]}]"));
+  cut_assert_equal_string("[[[1],"
+                           "[[\"_id\",\"UInt32\"],"
+                            "[\"_key\",\"ShortText\"],"
+                            "[\"scores\",\"Int32\"]],"
+                           "[1,\"Daijiro MORI\",[5,5,5]]]]",
+                          send_command("select Students"));
 }
 
 void
