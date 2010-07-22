@@ -3652,8 +3652,15 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     totext(ctx, dest, getvalue(src));\
     break;\
   default :\
-    rc = GRN_FUNCTION_NOT_IMPLEMENTED;\
-    break;\
+    {\
+      grn_obj *domain = grn_ctx_at(ctx, dest->header.domain);\
+      if (domain && domain->header.type == GRN_TABLE_NO_KEY) {\
+        GRN_RECORD_SET(ctx, dest, getvalue(src));\
+      } else {\
+        rc = GRN_FUNCTION_NOT_IMPLEMENTED;\
+      }\
+      break;\
+    }\
   }
 
 #define TEXT2DEST(type,tonum,setvalue) {\
@@ -7257,14 +7264,18 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
   if (GRN_OBJ_TABLEP(range)) {
     GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, range_id);
     while (n--) {
-      if (v->header.domain == GRN_DB_TEXT) {
-        grn_obj record, *element = v;
+      int cast_failed = 0;
+      grn_obj record, *element = v;
+      if (range_id != element->header.domain) {
         GRN_RECORD_INIT(&record, 0, range_id);
-        grn_obj_cast(ctx, element, &record, 1);
+        if (grn_obj_cast(ctx, element, &record, 1)) {
+          cast_failed = 1;
+          ERR(GRN_ERROR, "bad syntax.");
+        }
         element = &record;
+      }
+      if (!cast_failed) {
         GRN_UINT32_PUT(ctx, &buf, GRN_RECORD_VALUE(element));
-      } else {
-        ERR(GRN_ERROR, "bad syntax.");
       }
       v = values_next(ctx, v);
     }

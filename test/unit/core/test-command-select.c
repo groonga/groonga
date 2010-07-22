@@ -28,6 +28,7 @@ void test_vector_geo_point(void);
 void test_vector_geo_point_with_query(void);
 void test_unmatched_output_columns(void);
 void test_vector_text(void);
+void test_vector_reference_id(void);
 void test_nonexistent_id(void);
 void test_bigram_split_symbol_tokenizer(void);
 void test_nonexistent_table(void);
@@ -252,6 +253,37 @@ test_vector_text(void)
                                        "--output_columns _key,articles "
                                        "--match_columns articles "
                                        "--query groonga"));
+}
+
+void
+test_vector_reference_id(void)
+{
+  assert_send_command("table_create Users TABLE_NO_KEY");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  assert_send_command("table_create Comments TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Comments text COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Comments authors COLUMN_VECTOR Users");
+
+  cut_assert_equal_string("2",
+                          send_command("load --table Users\n"
+                                       "[\n"
+                                       " [\"_id\", \"name\"],\n"
+                                       " [1, \"ryoqun\"],\n"
+                                       " [2, \"hayamiz\"]\n"
+                                       "]"));
+  cut_assert_equal_string("1",
+                          send_command("load --table Comments\n"
+                                       "[\n"
+                                       " [\"_key\", \"text\", \"authors\"],\n"
+                                       " [\"groonga\", \"it is fast\", [1, 2]]\n"
+                                       "]"));
+  cut_assert_equal_string("[[[1],"
+                           "[[\"_id\",\"UInt32\"],"
+                            "[\"_key\",\"ShortText\"],"
+                            "[\"text\",\"ShortText\"],"
+                            "[\"authors\",\"Users\"]],"
+                           "[1,\"groonga\",\"it is fast\",[1,2]]]]",
+                          send_command("select Comments"));
 }
 
 void

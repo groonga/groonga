@@ -818,7 +818,11 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               grn_output_obj(ctx, outbuf, output_type, &key, NULL);
               GRN_BULK_REWIND(&key);
             } else {
-              grn_text_lltoa(ctx, outbuf, *v);
+              grn_obj id;
+              GRN_UINT32_INIT(&id, 0);
+              GRN_UINT32_SET(ctx, &id, *v);
+              grn_output_obj(ctx, outbuf, output_type, &id, NULL);
+              GRN_OBJ_FIN(ctx, &id);
             }
             v++;
             if (v < ve) {
