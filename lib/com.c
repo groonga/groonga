@@ -390,7 +390,7 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
       struct kevent e[2];
       EV_SET(&e[0], (fd), GRN_COM_POLLIN|GRN_COM_POLLOUT, EV_DELETE, 0, 0, NULL);
       EV_SET(&e[1], (fd), events, EV_ADD, 0, 0, NULL);
-      if (kevent(ev->kqfd, &e, 2, NULL, 0, NULL) == -1) {
+      if (kevent(ev->kqfd, e, 2, NULL, 0, NULL) == -1) {
         SERR("kevent");
         return ctx->rc;
       }
