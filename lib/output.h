@@ -47,6 +47,8 @@ void grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
                       int32_t value);
 void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                       int64_t value);
+void grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                      double value);
 void grn_output_cstr(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                      const char *value);
 void grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
@@ -66,6 +68,8 @@ void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
   (grn_output_int32(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
 #define GRN_OUTPUT_INT64(value) \
   (grn_output_int64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+#define GRN_OUTPUT_FLOAT(value) \
+  (grn_output_float(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
 #define GRN_OUTPUT_CSTR(value)\
   (grn_output_cstr(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
 #define GRN_OUTPUT_STR(value,value_len)\

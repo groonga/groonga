@@ -41,6 +41,8 @@
             <ul>
               <li>開始時間: <span id="status-starttime"></span></li>
               <li>uptime: <span id="status-uptime"></span></li>
+              <li>クエリ数: <span id="status-n-queries"></span></li>
+              <li>キャッシュヒット率: <span id="status-cache-hit-rate"></span></li>
             </ul>
           </div>
           <div id="database-tab-tablelist">
@@ -610,6 +612,8 @@ GroongaAdmin = {
         var d = b[1];
         $('#status-starttime').text(GroongaAdmin.format_unix_time(d.starttime));
         $('#status-uptime').text(GroongaAdmin.format_duration(d.uptime));
+        $('#status-n-queries').text(d.n_queries);
+        $('#status-cache-hit-rate').text(d.cache_hit_rate);
         GroongaAdmin.change_status_timer(1000);
       },
       error: function() {

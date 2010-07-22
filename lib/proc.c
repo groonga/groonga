@@ -375,8 +375,10 @@ static grn_obj *
 proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_timeval now;
+  grn_cache_statistics statistics;
   grn_timeval_now(ctx, &now);
-  GRN_OUTPUT_MAP_OPEN("RESULT", 8);
+  grn_cache_get_statistics(ctx, &statistics);
+  GRN_OUTPUT_MAP_OPEN("RESULT", 12);
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
@@ -385,6 +387,14 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_INT32(now.tv_sec - grn_starttime.tv_sec);
   GRN_OUTPUT_CSTR("version");
   GRN_OUTPUT_CSTR(grn_get_version());
+  GRN_OUTPUT_CSTR("n_queries");
+  GRN_OUTPUT_INT64(statistics.nfetches);
+  GRN_OUTPUT_CSTR("cache_hit_rate");
+  if (statistics.nfetches == 0) {
+    GRN_OUTPUT_FLOAT(0.0);
+  } else {
+    GRN_OUTPUT_FLOAT((double)statistics.nhits / (double)statistics.nfetches * 100.0);
+  }
   GRN_OUTPUT_MAP_CLOSE();
   return NULL;
 }
