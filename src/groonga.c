@@ -101,7 +101,7 @@ usage(FILE *output)
           "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
           "  --config-path <path>:             specify config file path\n"
           "  --cache-limit <limit>:            specify the max number of cache data\n"
-          "  -f <path>:                        read commands from specified file\n"
+          "  --file <path>:                    read commands from specified file\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -2044,7 +2044,7 @@ main(int argc, char **argv)
     {'\0', "config-path", NULL, 0, getopt_op_none},
     {'\0', "show-config", NULL, mode_config, getopt_op_update},
     {'\0', "cache-limit", NULL, 0, getopt_op_none},
-    {'f', NULL, NULL, 0, getopt_op_none},
+    {'\0', "file", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
