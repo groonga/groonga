@@ -339,8 +339,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :key_type => "nonexistent"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key type doesn't exist: <nonexistent>",
                             response,
                             :content_type => "application/json")
 
@@ -372,8 +372,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :value_type => "nonexistent"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "value type doesn't exist: <nonexistent>",
                             response,
                             :content_type => "application/json")
 
@@ -460,8 +460,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
                                   :key_type => "nonexistent"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key type doesn't exist: <nonexistent>",
                             response,
                             :content_type => "application/json")
 
@@ -497,8 +497,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
                                   :value_type => "nonexistent"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "value type doesn't exist: <nonexistent>",
                             response,
                             :content_type => "application/json")
 
@@ -588,8 +588,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :flags => Table::NO_KEY,
                                   :value_type => "nonexistent"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "value type doesn't exist",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "value type doesn't exist: <nonexistent>",
                             response,
                             :content_type => "application/json")
 

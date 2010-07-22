@@ -551,15 +551,34 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     if (ctx->rc) { goto exit; }
   }
   if (GRN_TEXT_LEN(VAR(0))) {
+    grn_obj *key_type = NULL, *value_type = NULL;
+    if (GRN_TEXT_LEN(VAR(2)) > 0) {
+      key_type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(2)),
+                             GRN_TEXT_LEN(VAR(2)));
+      if (!key_type) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "key type doesn't exist: <%.*s>",
+            GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
+        return NULL;
+      }
+    }
+    if (GRN_TEXT_LEN(VAR(3)) > 0) {
+      value_type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
+                               GRN_TEXT_LEN(VAR(3)));
+      if (!value_type) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "value type doesn't exist: <%.*s>",
+            GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3)));
+        return NULL;
+      }
+    }
     flags |= GRN_OBJ_PERSISTENT;
     table = grn_table_create(ctx,
                              GRN_TEXT_VALUE(VAR(0)),
                              GRN_TEXT_LEN(VAR(0)),
                              NULL, flags,
-                             grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(2)),
-                                         GRN_TEXT_LEN(VAR(2))),
-                             grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
-                                         GRN_TEXT_LEN(VAR(3))));
+                             key_type,
+                             value_type);
     if (table) {
       grn_obj_set_info(ctx, table,
                        GRN_INFO_DEFAULT_TOKENIZER,
