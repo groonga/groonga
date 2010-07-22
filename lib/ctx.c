@@ -1074,6 +1074,10 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         }
         ctx->impl->output_type = header.qtype;
         ctx->rc = (int16_t) header.status;
+        ctx->errbuf[0] = '\0';
+        ctx->errline = 0;
+        ctx->errfile = "";
+        ctx->errfunc = "";
       }
       goto exit;
     } else {
