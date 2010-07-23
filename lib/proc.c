@@ -1086,6 +1086,32 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   return NULL;
 }
 
+static grn_obj *
+proc_defrag(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *obj;
+  int olen, threshold;
+  olen = GRN_TEXT_LEN(VAR(0));
+
+  if (olen) {
+    obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), olen);
+  } else {
+    obj = ctx->impl->db;
+  }
+
+  threshold = GRN_TEXT_LEN(VAR(1))
+    ? grn_atoi(GRN_TEXT_VALUE(VAR(1)), GRN_BULK_CURR(VAR(1)), NULL)
+    : 0;
+
+  if (obj) {
+    grn_obj_defrag(ctx, obj, threshold);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "defrag object not found");
+  }
+  GRN_OUTPUT_BOOL(!ctx->rc);
+  return NULL;
+}
+
 static char slev[] = " EACewnid-";
 
 static grn_logger_info info;
@@ -2427,6 +2453,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "target_name");
   DEF_COMMAND("clearlock", proc_clearlock, 1, vars);
+
+  DEF_VAR(vars[0], "target_name");
+  DEF_VAR(vars[1], "threshold");
+  DEF_COMMAND("defrag", proc_defrag, 2, vars);
 
   DEF_VAR(vars[0], "level");
   DEF_COMMAND("log_level", proc_log_level, 1, vars);
