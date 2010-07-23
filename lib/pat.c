@@ -42,8 +42,9 @@ typedef struct {
     lr[0]: the left node.
     lr[1]: the right node.
 
-    The left node has smaller nodes rather than the current node.
-    The right node has larger nodes rather than the current node.
+    The left node has 0 at the nth bit at the nth byte.
+    The right node has 1 at the nth bit at the nth byte.
+    'check' value indicate 'at the nth bit at the nth byte'.
 
     The both available nodes has larger check value rather
     than the current node.
