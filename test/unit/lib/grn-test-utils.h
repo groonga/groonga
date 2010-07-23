@@ -38,6 +38,7 @@ typedef void (*grn_test_set_parameters_func) (void);
 const gchar *grn_rc_to_string              (grn_rc rc);
 const gchar *grn_test_get_base_dir         (void);
 const gchar *grn_test_get_build_dir        (void);
+const gchar *grn_test_get_tmp_dir          (void);
 
 grn_logger_info *
              grn_collect_logger_new        (void);
