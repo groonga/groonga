@@ -2219,37 +2219,64 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
 
 static void
 grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
-                     grn_obj *key_buf, grn_obj *buf)
+                     grn_obj *key_buf, int indent, const char *prefix,
+                     grn_obj *buf)
 {
   pat_node *node = NULL;
-  int key_size;
+  int i, c;
 
-  grn_text_lltoa(ctx, buf, id);
   PAT_AT(pat, id, node);
-  key_size = PAT_LEN(node);
-  if (key_size > 1) {
+  c = PAT_CHK(node);
+
+  for (i = 0; i < indent; i++) {
+    GRN_TEXT_PUTC(ctx, buf, ' ');
+  }
+  GRN_TEXT_PUTS(ctx, buf, prefix);
+  grn_text_lltoa(ctx, buf, id);
+
+  if (c > check) {
+    int key_size;
+    uint8_t *key;
+
+    key_size = PAT_LEN(node);
     GRN_BULK_REWIND(key_buf);
     grn_bulk_space(ctx, key_buf, key_size);
     grn_pat_get_key(ctx, pat, id, GRN_BULK_HEAD(key_buf), key_size);
     GRN_TEXT_PUTS(ctx, buf, "(");
     grn_inspect(ctx, buf, key_buf);
     GRN_TEXT_PUTS(ctx, buf, ")");
-  }
-  GRN_TEXT_PUTS(ctx, buf, "[");
-  if (PAT_CHK(node) > check) {
-    int i;
-    for (i = 0; i < 2; i++) {
-      if (node->lr[i]) {
-        grn_pat_inspect_node(ctx, pat, node->lr[i], PAT_CHK(node), key_buf, buf);
-      } else {
-        GRN_TEXT_PUTS(ctx, buf, "nil");
+
+    GRN_TEXT_PUTS(ctx, buf, "{");
+    grn_text_lltoa(ctx, buf, c >> 4);
+    GRN_TEXT_PUTS(ctx, buf, ",");
+    grn_text_lltoa(ctx, buf, (c >> 1) & 7);
+    GRN_TEXT_PUTS(ctx, buf, ",");
+    grn_text_lltoa(ctx, buf, c & 1);
+    GRN_TEXT_PUTS(ctx, buf, "}");
+
+    GRN_TEXT_PUTS(ctx, buf, "[");
+    key = pat_node_get_key(ctx, pat, node);
+    for (i = 0; i < key_size; i++) {
+      int j;
+      uint8_t byte = key[i];
+      if (i != 0) {
+        GRN_TEXT_PUTS(ctx, buf, " ");
       }
-      if (i == 0) {
-        GRN_TEXT_PUTS(ctx, buf, ", ");
+      for (j = 0; j < 8; j++) {
+        grn_text_lltoa(ctx, buf, (byte >> (7 - j)) & 1);
       }
     }
+    GRN_TEXT_PUTS(ctx, buf, "]");
   }
-  GRN_TEXT_PUTS(ctx, buf, "]");
+
+  if (c > check) {
+    GRN_TEXT_PUTS(ctx, buf, "\n");
+    grn_pat_inspect_node(ctx, pat, node->lr[0], c, key_buf,
+                         indent + 2, "L:", buf);
+    GRN_TEXT_PUTS(ctx, buf, "\n");
+    grn_pat_inspect_node(ctx, pat, node->lr[1], c, key_buf,
+                         indent + 2, "R:", buf);
+  }
 }
 
 void
@@ -2258,8 +2285,14 @@ grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
   pat_node *node;
   grn_obj key_buf;
 
-  GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, pat->obj.header.domain);
+  GRN_TEXT_PUTS(ctx, buf, "{");
   PAT_AT(pat, GRN_ID_NIL, node);
-  grn_pat_inspect_node(ctx, pat, node->lr[1], -1, &key_buf, buf);
-  GRN_OBJ_FIN(ctx, &key_buf);
+  if (node->lr[1]) {
+    GRN_TEXT_PUTS(ctx, buf, "\n");
+    GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, pat->obj.header.domain);
+    grn_pat_inspect_node(ctx, pat, node->lr[1], -1, &key_buf, 0, "", buf);
+    GRN_OBJ_FIN(ctx, &key_buf);
+    GRN_TEXT_PUTS(ctx, buf, "\n");
+  }
+  GRN_TEXT_PUTS(ctx, buf, "}");
 }

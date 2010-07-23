@@ -449,7 +449,8 @@ test_patricia_trie_empty(void)
                           "size:0 "
                           "columns:[] "
                           "default_tokenizer:(nil) "
-                          "keys:[]"
+                          "keys:[] "
+                          "nodes:{}"
                           ">",
                           inspected_string());
 }
@@ -467,16 +468,27 @@ test_patricia_trie_with_records(void)
                       "]' "
                       "Sites");
   inspected = grn_inspect(context, NULL, get("Sites"));
-  cut_assert_equal_string("#<table:pat "
-                          "Sites "
-                          "key:ShortText "
-                          "value:(nil) "
-                          "size:2 "
-                          "columns:[name] "
-                          "default_tokenizer:(nil) "
-                          "keys:[\"groonga.org\", \"razil.jp\"]"
-                          ">",
-                          inspected_string());
+  cut_assert_equal_string(
+    "#<table:pat "
+    "Sites "
+    "key:ShortText "
+    "value:(nil) "
+    "size:2 "
+    "columns:[name] "
+    "default_tokenizer:(nil) "
+    "keys:[\"groonga.org\", \"razil.jp\"] "
+    "nodes:{\n"
+    "2(\"razil.jp\"){0,3,0}[01110010 01100001 01111010 01101001 "
+                           "01101100 00101110 01101010 01110000]\n"
+    "  L:1(\"groonga.org\"){10,7,0}[01100111 01110010 01101111 01101111 "
+                                   "01101110 01100111 01100001 00101110 "
+                                   "01101111 01110010 01100111]\n"
+    "    L:0\n"
+    "    R:1\n"
+    "  R:2\n"
+    "}"
+    ">",
+    inspected_string());
 }
 
 void
