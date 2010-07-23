@@ -49,6 +49,8 @@ void test_hash_empty(void);
 void test_hash_with_records(void);
 void test_patricia_trie_empty(void);
 void test_patricia_trie_with_records(void);
+void test_patricia_trie_cursor_empty(void);
+void test_patricia_trie_cursor_with_records(void);
 void test_uvector_empty(void);
 void test_uvector_with_records(void);
 void test_uvector_bool(void);
@@ -84,6 +86,7 @@ static grn_obj *uvector;
 static grn_obj *pvector;
 static grn_obj *vector;
 static grn_obj *record;
+static grn_table_cursor *cursor;
 
 void
 cut_startup(void)
@@ -120,6 +123,7 @@ setup_values(void)
   pvector = NULL;
   vector = NULL;
   record = NULL;
+  cursor = NULL;
 }
 
 void
@@ -162,6 +166,7 @@ teardown_values(void)
   grn_obj_unlink(context, pvector);
   grn_obj_unlink(context, vector);
   grn_obj_unlink(context, record);
+  grn_table_cursor_close(context, cursor);
 }
 
 void
@@ -489,6 +494,52 @@ test_patricia_trie_with_records(void)
     "}"
     ">",
     inspected_string());
+}
+
+void
+test_patricia_trie_cursor_empty(void)
+{
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  cursor = grn_table_cursor_open(context, get("Sites"),
+                                 NULL, 0,
+                                 NULL, 0,
+                                 0, -1, GRN_CURSOR_ASCENDING);
+  inspected = grn_inspect(context, NULL, cursor);
+  cut_assert_equal_string("#<cursor:pat:Sites "
+                          "current:0 "
+                          "tail:0 "
+                          "flags:ascending|greater|less "
+                          "rest:0 "
+                          "entries:[]"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_patricia_trie_cursor_with_records(void)
+{
+  assert_send_command("table_create Sites TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Sites name COLUMN_SCALAR Text");
+  assert_send_command("load "
+                      "'["
+                      "[\"_key\",\"name\"],"
+                      "[\"groonga.org\",\"groonga\"],"
+                      "[\"razil.jp\",\"Brazil\"]"
+                      "]' "
+                      "Sites");
+  cursor = grn_table_cursor_open(context, get("Sites"),
+                                 NULL, 0,
+                                 NULL, 0,
+                                 0, -1, GRN_CURSOR_ASCENDING);
+  inspected = grn_inspect(context, NULL, cursor);
+  cut_assert_equal_string("#<cursor:pat:Sites "
+                          "current:0 "
+                          "tail:0 "
+                          "flags:ascending|greater|less "
+                          "rest:2 "
+                          "entries:[[2,{0,3,0}], [1,{0,3,0}]]"
+                          ">",
+                          inspected_string());
 }
 
 void

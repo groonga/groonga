@@ -1751,12 +1751,15 @@ set_cursor_near(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
     }
     check = ch;
-    if (nth_bit((uint8_t *)key, check, pat->key_size)) {
-      if (check >= min) { push(c, node->lr[0], check); }
-      id = node->lr[1];
+    if (check == 0) {
     } else {
-      if (check >= min) { push(c, node->lr[1], check); }
-      id = node->lr[0];
+      if (nth_bit((uint8_t *)key, check, pat->key_size)) {
+        if (check >= min) { push(c, node->lr[0], check); }
+        id = node->lr[1];
+      } else {
+        if (check >= min) { push(c, node->lr[1], check); }
+        id = node->lr[0];
+      }
     }
   }
   return GRN_SUCCESS;
@@ -2218,6 +2221,18 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
 }
 
 static void
+grn_pat_inspect_check(grn_ctx *ctx, grn_obj *buf, int check)
+{
+    GRN_TEXT_PUTS(ctx, buf, "{");
+    grn_text_lltoa(ctx, buf, check >> 4);
+    GRN_TEXT_PUTS(ctx, buf, ",");
+    grn_text_lltoa(ctx, buf, (check >> 1) & 7);
+    GRN_TEXT_PUTS(ctx, buf, ",");
+    grn_text_lltoa(ctx, buf, check & 1);
+    GRN_TEXT_PUTS(ctx, buf, "}");
+}
+
+static void
 grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
                      grn_obj *key_buf, int indent, const char *prefix,
                      grn_obj *buf)
@@ -2246,13 +2261,7 @@ grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
     grn_inspect(ctx, buf, key_buf);
     GRN_TEXT_PUTS(ctx, buf, ")");
 
-    GRN_TEXT_PUTS(ctx, buf, "{");
-    grn_text_lltoa(ctx, buf, c >> 4);
-    GRN_TEXT_PUTS(ctx, buf, ",");
-    grn_text_lltoa(ctx, buf, (c >> 1) & 7);
-    GRN_TEXT_PUTS(ctx, buf, ",");
-    grn_text_lltoa(ctx, buf, c & 1);
-    GRN_TEXT_PUTS(ctx, buf, "}");
+    grn_pat_inspect_check(ctx, buf, c);
 
     GRN_TEXT_PUTS(ctx, buf, "[");
     key = pat_node_get_key(ctx, pat, node);
@@ -2295,4 +2304,78 @@ grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
     GRN_TEXT_PUTS(ctx, buf, "\n");
   }
   GRN_TEXT_PUTS(ctx, buf, "}");
+}
+
+static void
+grn_pat_cursor_inspect_entries(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf)
+{
+  int i;
+  GRN_TEXT_PUTS(ctx, buf, "[");
+  for (i = 0; i < c->sp; i++) {
+    grn_pat_cursor_entry *e = c->ss + i;
+    if (i != 0) {
+      GRN_TEXT_PUTS(ctx, buf, ", ");
+    }
+    GRN_TEXT_PUTS(ctx, buf, "[");
+    grn_text_lltoa(ctx, buf, e->id);
+    GRN_TEXT_PUTS(ctx, buf, ",");
+    grn_pat_inspect_check(ctx, buf, e->check);
+    GRN_TEXT_PUTS(ctx, buf, "]");
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+}
+
+void
+grn_pat_cursor_inspect(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf)
+{
+  GRN_TEXT_PUTS(ctx, buf, "#<cursor:pat:");
+  grn_inspect_name(ctx, buf, (grn_obj *)(c->pat));
+
+  GRN_TEXT_PUTS(ctx, buf, " ");
+  GRN_TEXT_PUTS(ctx, buf, "current:");
+  grn_text_lltoa(ctx, buf, c->curr_rec);
+
+  GRN_TEXT_PUTS(ctx, buf, " ");
+  GRN_TEXT_PUTS(ctx, buf, "tail:");
+  grn_text_lltoa(ctx, buf, c->tail);
+
+  GRN_TEXT_PUTS(ctx, buf, " ");
+  GRN_TEXT_PUTS(ctx, buf, "flags:");
+  if (c->obj.header.flags & GRN_CURSOR_PREFIX) {
+    GRN_TEXT_PUTS(ctx, buf, "prefix");
+  } else {
+    if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
+      GRN_TEXT_PUTS(ctx, buf, "descending");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "ascending");
+    }
+    GRN_TEXT_PUTS(ctx, buf, "|");
+    if (c->obj.header.flags & GRN_CURSOR_GT) {
+      GRN_TEXT_PUTS(ctx, buf, "greater-than");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "greater");
+    }
+    GRN_TEXT_PUTS(ctx, buf, "|");
+    if (c->obj.header.flags & GRN_CURSOR_LT) {
+      GRN_TEXT_PUTS(ctx, buf, "less-than");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "less");
+    }
+    if (c->obj.header.flags & GRN_CURSOR_BY_ID) {
+      GRN_TEXT_PUTS(ctx, buf, "|by-id");
+    }
+    if (c->obj.header.flags & GRN_CURSOR_BY_KEY) {
+      GRN_TEXT_PUTS(ctx, buf, "|by-key");
+    }
+  }
+
+  GRN_TEXT_PUTS(ctx, buf, " ");
+  GRN_TEXT_PUTS(ctx, buf, "rest:");
+  grn_text_lltoa(ctx, buf, c->rest);
+
+  GRN_TEXT_PUTS(ctx, buf, " ");
+  GRN_TEXT_PUTS(ctx, buf, "entries:");
+  grn_pat_cursor_inspect_entries(ctx, c, buf);
+
+  GRN_TEXT_PUTS(ctx, buf, ">");
 }

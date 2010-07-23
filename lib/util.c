@@ -62,8 +62,8 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
   return GRN_SUCCESS;
 }
 
-static grn_rc
-grn_name_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_obj *
+grn_inspect_name(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   int name_size;
 
@@ -75,7 +75,7 @@ grn_name_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     GRN_TEXT_PUTS(ctx, buf, "(nil)");
   }
 
-  return GRN_SUCCESS;
+  return buf;
 }
 
 static grn_rc
@@ -90,7 +90,7 @@ grn_type_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   grn_id range_id;
 
   GRN_TEXT_PUTS(ctx, buf, "#<type ");
-  grn_name_inspect(ctx, buf, obj);
+  grn_inspect_name(ctx, buf, obj);
 
   range_id = grn_obj_get_range(ctx, obj);
   GRN_TEXT_PUTS(ctx, buf, " size:");
@@ -127,14 +127,14 @@ grn_column_inspect_common(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_id range_id;
 
-  grn_name_inspect(ctx, buf, obj);
+  grn_inspect_name(ctx, buf, obj);
 
   range_id = grn_obj_get_range(ctx, obj);
   if (range_id) {
     grn_obj *range = grn_ctx_at(ctx, range_id);
     GRN_TEXT_PUTS(ctx, buf, " range:");
     if (range) {
-      grn_name_inspect(ctx, buf, range);
+      grn_inspect_name(ctx, buf, range);
       grn_obj_unlink(ctx, range);
     } else {
       grn_text_lltoa(ctx, buf, range_id);
@@ -218,7 +218,7 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     source_id = source_ids[i];
     source = grn_ctx_at(ctx, source_id);
     if (source) {
-      grn_name_inspect(ctx, buf, source);
+      grn_inspect_name(ctx, buf, source);
     } else {
       grn_text_lltoa(ctx, buf, source_id);
     }
@@ -279,7 +279,7 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   grn_table_type_inspect(ctx, buf, obj);
   GRN_TEXT_PUTS(ctx, buf, " ");
 
-  grn_name_inspect(ctx, buf, obj);
+  grn_inspect_name(ctx, buf, obj);
 
   if (obj->header.type != GRN_TABLE_NO_KEY) {
     grn_obj *domain;
@@ -288,7 +288,7 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     domain_id = obj->header.domain;
     domain = grn_ctx_at(ctx, domain_id);
     if (domain) {
-      grn_name_inspect(ctx, buf, domain);
+      grn_inspect_name(ctx, buf, domain);
       grn_obj_unlink(ctx, domain);
     } else if (domain_id) {
       grn_text_lltoa(ctx, buf, domain_id);
@@ -301,7 +301,7 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   range_id = grn_obj_get_range(ctx, obj);
   range = grn_ctx_at(ctx, range_id);
   if (range) {
-    grn_name_inspect(ctx, buf, range);
+    grn_inspect_name(ctx, buf, range);
   } else if (range_id) {
     grn_text_lltoa(ctx, buf, range_id);
   } else {
@@ -353,7 +353,7 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     default_tokenizer = grn_obj_get_info(ctx, obj,
                                          GRN_INFO_DEFAULT_TOKENIZER, NULL);
     if (default_tokenizer) {
-      grn_name_inspect(ctx, buf, default_tokenizer);
+      grn_inspect_name(ctx, buf, default_tokenizer);
     } else {
       GRN_TEXT_PUTS(ctx, buf, "(nil)");
     }
@@ -399,7 +399,7 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   GRN_TEXT_PUTS(ctx, buf, "#<record:");
   grn_table_type_inspect(ctx, buf, table);
   GRN_TEXT_PUTS(ctx, buf, ":");
-  grn_name_inspect(ctx, buf, table);
+  grn_inspect_name(ctx, buf, table);
 
   GRN_TEXT_PUTS(ctx, buf, " id:");
   id = GRN_RECORD_VALUE(obj);
@@ -533,6 +533,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     return buffer;
   case GRN_COLUMN_INDEX :
     grn_ii_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_CURSOR_TABLE_PAT_KEY :
+    grn_pat_cursor_inspect(ctx, (grn_pat_cursor *)obj, buffer);
     return buffer;
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
