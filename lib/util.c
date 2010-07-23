@@ -380,7 +380,7 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 
   if (obj->header.type == GRN_TABLE_PAT_KEY) {
     GRN_TEXT_PUTS(ctx, buf, " nodes:");
-    grn_pat_inspect_nodes(ctx, obj, buf);
+    grn_pat_inspect_nodes(ctx, (grn_pat *)obj, buf);
   }
 
   GRN_TEXT_PUTS(ctx, buf, ">");
