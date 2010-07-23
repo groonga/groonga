@@ -1751,15 +1751,12 @@ set_cursor_near(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
     }
     check = ch;
-    if (check == 0) {
+    if (nth_bit((uint8_t *)key, check, pat->key_size)) {
+      if (check >= min) { push(c, node->lr[0], check); }
+      id = node->lr[1];
     } else {
-      if (nth_bit((uint8_t *)key, check, pat->key_size)) {
-        if (check >= min) { push(c, node->lr[0], check); }
-        id = node->lr[1];
-      } else {
-        if (check >= min) { push(c, node->lr[1], check); }
-        id = node->lr[0];
-      }
+      if (check >= min) { push(c, node->lr[1], check); }
+      id = node->lr[0];
     }
   }
   return GRN_SUCCESS;
