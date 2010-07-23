@@ -39,7 +39,7 @@ static uint32_t sample_key;
 static const gchar *sample_value;
 static grn_id sample_id;
 
-static gchar *base_dir;
+static const gchar *base_dir;
 
 static uint32_t key_size;
 static gchar *not_uint32_size_key;
@@ -115,7 +115,6 @@ teardown_hash_common(void)
 
   if (base_dir) {
     cut_remove_path(base_dir, NULL);
-    g_free(base_dir);
   }
 
   teardown_grn_logger(logger);

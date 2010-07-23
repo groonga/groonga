@@ -39,7 +39,7 @@ static gchar *sample_key;
 static const gchar *sample_value;
 static grn_id sample_id;
 
-static gchar *base_dir;
+static const gchar *base_dir;
 
 static gchar *default_path;
 static uint32_t default_key_size;
@@ -144,7 +144,6 @@ teardown_trie_common(void)
 
   if (base_dir) {
     cut_remove_path(base_dir, NULL);
-    g_free(base_dir);
   }
 
   teardown_grn_logger(logger);

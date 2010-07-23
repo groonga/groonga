@@ -27,7 +27,7 @@ void test_load(void);
 
 static grn_obj *db;
 static grn_ctx *context;
-static gchar *base_dir;
+static const gchar *base_dir;
 static gchar *default_path;
 static int default_context_flags;
 static grn_encoding default_encoding;
@@ -68,7 +68,6 @@ cut_teardown(void)
 
   if (base_dir) {
     cut_remove_path(base_dir, NULL);
-    g_free(base_dir);
   }
 
   if (sample_ql_program) {
