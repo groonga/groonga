@@ -38,8 +38,37 @@
 
 typedef struct {
   grn_id lr[2];
+  /*
+    lr[0]: the left node.
+    lr[1]: the right node.
+
+    The left node has smaller nodes rather than the current node.
+    The right node has larger nodes rather than the current node.
+
+    The both available nodes has larger check value rather
+    than the current node.
+
+    The first node (PAT_AT(pat, GRN_ID_NIL, node)) has only
+    the right node and the node is the start point.
+   */
   uint32_t key;
+  /*
+    PAT_IMD(node) == 0: key bytes offset in memory map.
+    PAT_IMD(node) == 1: the key bytes.
+   */
   uint16_t check;
+  /*
+    nth byte: 12, nth bit: 3, terminated: 1
+
+    nth byte is different in key bytes: (check >> 4): max == 4095
+    the left most byte is the 0th byte and the right most byte is the 11th byte.
+
+    nth bit is different in nth byte: ((check >> 1) & 0b111)
+    the left most bit is the 0th bit and the right most bit is the 7th bit.
+
+    terminated: (check & 0b1)
+    terminated == 1: key is terminated.
+   */
   uint16_t bits;
   /* length : 13, deleting : 1, immediate : 1 */
 } pat_node;
