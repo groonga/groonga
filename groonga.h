@@ -1359,6 +1359,15 @@ GRN_API grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
 GRN_API unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
 
 /**
+ * grn_obj_defrag;
+ * @obj: 対象object
+ *
+ * objの占有するDBファイル領域のうち、可能な領域をthresholdを指標としてフラグメントの解消を行う。
+ * フラグメント解消が実行されたセグメントの数を返す。
+ **/
+GRN_API int grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
+
+/**
  * grn_obj_db:
  * @obj: 対象object
  *
