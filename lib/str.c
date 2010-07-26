@@ -3162,7 +3162,7 @@ grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
       memcpy(b, p, (pc - p));
       b += pc - p;
       p = pc;
-      if (*pc == '/' && be > b) {
+      if (p < pe && *pc == '/' && be > b) {
         *b++ = PATH_SEPARATOR[0];
         p++;
       }
