@@ -21,15 +21,15 @@ Siteテーブルに２つのカラムを追加します。TLDドメイン名を�
 .. column_create --table Site --name country --flags COLUMN_SCALAR --type SiteCountry
 .. load --table Site
 .. [
-.. {"_key":"http../example/.org/","domain":".org","country":"japan"},
-.. {"_key":"http../example/.net/","domain":".net","country":"brazil"},
-.. {"_key":"http../example/.com/","domain":".com","country":"japan"},
-.. {"_key":"http../example/.net/afr","domain":".net","country":"usa"},
-.. {"_key":"http../example/.org/aba","domain":".org","country":"korea"},
-.. {"_key":"http../example/.com/rab","domain":".com","country":"china"},
-.. {"_key":"http../example/.net/atv","domain":".net","country":"china"},
-.. {"_key":"http../example/.org/gat","domain":".org","country":"usa"},
-.. {"_key":"http../example/.com/vdw","domain":".com","country":"japan"}
+.. {"_key":"http://example.org/","domain":".org","country":"japan"},
+.. {"_key":"http://example.net/","domain":".net","country":"brazil"},
+.. {"_key":"http://example.com/","domain":".com","country":"japan"},
+.. {"_key":"http://example.net/afr","domain":".net","country":"usa"},
+.. {"_key":"http://example.org/aba","domain":".org","country":"korea"},
+.. {"_key":"http://example.com/rab","domain":".com","country":"china"},
+.. {"_key":"http://example.net/atv","domain":".net","country":"china"},
+.. {"_key":"http://example.org/gat","domain":".org","country":"usa"},
+.. {"_key":"http://example.com/vdw","domain":".com","country":"japan"}
 .. ]
 
 domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。

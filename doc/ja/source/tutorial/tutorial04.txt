@@ -42,8 +42,8 @@ JavaScriptの式に似たな文法で様々な条件を指定することがで�
 
 .. groonga-command
 .. include:: ../example/tutorial04-3.log
-.. select --table Site --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
-.. select --table Site --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
+.. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
+.. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
 
 検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的なカラムが付与されることをチュートリアル中ソートの項目で説明しました。
 
@@ -77,8 +77,8 @@ groongaでは、位置情報（経緯度）を保存することができます�
 .. column_create --table Site --name location --type WGS84GeoPoint
 .. load --table Site
 .. [
-..  {"_key":"http../example/.org/","location":"128452975x503157902"}
-..  {"_key":"http../example/.net/","location":"128487316x502920929"},
+..  {"_key":"http://example.org/","location":"128452975x503157902"}
+..  {"_key":"http://example.net/","location":"128487316x502920929"},
 .. ]
 .. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location
 
