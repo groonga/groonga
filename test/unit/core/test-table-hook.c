@@ -99,6 +99,8 @@ cut_teardown(void)
     grn_ctx_fin(context);
     g_free(context);
   }
+
+  remove_tmp_directory();
 }
 
 static void
