@@ -1937,9 +1937,11 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       break;
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_NO_KEY :
-    case GRN_COLUMN_VAR_SIZE :
     case GRN_COLUMN_FIX_SIZE :
       GRN_OUTPUT_BOOL(!ctx->rc);
+      break;
+    case GRN_COLUMN_VAR_SIZE :
+      grn_ja_check(ctx, (grn_ja *)obj);
       break;
     case GRN_COLUMN_INDEX :
       {

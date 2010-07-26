@@ -18,6 +18,7 @@
 #include "str.h"
 #include "store.h"
 #include "ql.h"
+#include "output.h"
 #include <string.h>
 
 /* rectangular arrays */
@@ -1031,8 +1032,8 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
     if (id & DELETED) {
       element_size = (id & ~DELETED);
     } else {
-      element_size = grn_ja_size(ctx, ja, id) + sizeof(uint32_t);
-      if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, 0)) {
+      element_size = grn_ja_size(ctx, ja, id);
+      if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET)) {
         return ctx->rc;
       }
       element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
@@ -1061,6 +1062,42 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
     }
   }
   return nsegs;
+}
+
+void
+grn_ja_check(grn_ctx *ctx, grn_ja *ja)
+{
+  char buf[8];
+  uint32_t seg;
+  struct grn_ja_header *h = ja->header;
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 8);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 8);
+  GRN_OUTPUT_CSTR("flags");
+  grn_itoh(h->flags, buf, 8);
+  GRN_OUTPUT_STR(buf, 8);
+  GRN_OUTPUT_CSTR("curr seg");
+  GRN_OUTPUT_INT64(h->curr_seg);
+  GRN_OUTPUT_CSTR("curr pos");
+  GRN_OUTPUT_INT64(h->curr_pos);
+  GRN_OUTPUT_CSTR("max_element_size");
+  GRN_OUTPUT_INT64(h->max_element_size);
+  GRN_OUTPUT_MAP_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("DETAIL", 8);
+  for (seg = 0; seg < JA_N_DSEGMENTS; seg++) {
+    int dseg = SEGMENTS_AT(ja, seg);
+    if (dseg) {
+      GRN_OUTPUT_MAP_OPEN("SEG", -1);
+      GRN_OUTPUT_CSTR("seg id");
+      GRN_OUTPUT_INT64(seg);
+      GRN_OUTPUT_CSTR("seg type");
+      GRN_OUTPUT_INT64((dseg & SEG_MASK)>>28);
+      GRN_OUTPUT_CSTR("seg value");
+      GRN_OUTPUT_INT64(dseg & ~SEG_MASK);
+      GRN_OUTPUT_MAP_CLOSE();
+    }
+  }
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_CLOSE();
 }
 
 /**** vgram ****/

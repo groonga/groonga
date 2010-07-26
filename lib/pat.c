@@ -2215,6 +2215,7 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
   GRN_OUTPUT_INT64(h->curr_del3);
   GRN_OUTPUT_CSTR("n_garbages");
   GRN_OUTPUT_INT64(h->n_garbages);
+  GRN_OUTPUT_MAP_CLOSE();
   GRN_OUTPUT_ARRAY_CLOSE();
 }
 

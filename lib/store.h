@@ -104,6 +104,8 @@ int grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold);
 
 grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags);
 
+void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
+
 /*
 
 typedef struct _grn_vgram_vnode
