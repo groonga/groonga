@@ -44,7 +44,7 @@ table_createで作成したテーブルを、カラムの型として使うこ�
 .. include:: ../example/tutorial03-2.log
 .. column_create --table Site --name link --type Site
 .. load --table Site
-.. [{"_key":"http../example/.org/","link":"http../example/.net/"}]
+.. [{"_key":"http://example.org/","link":"http://example.net/"}]
 .. select --table Site --output_columns _key,title,link._key,link.title --query title:@this
 
 このように、linkカラムに他のサイトへの参照を保存することができました。また、参照先の_keyとtitleカラムの内容を表示することができました。
@@ -66,7 +66,7 @@ column_createコマンドでカラムを作成するとき、--flagsオプショ
 .. include:: ../example/tutorial03-3.log
 .. column_create --table Site --name links --flags COLUMN_VECTOR --type Site
 .. load --table Site
-.. [{"_key":"http../example/.org/","links":["http../example/.net/","http../example/.org/","http../example/.com/"]}]
+.. [{"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]}]
 .. select --table Site --output_columns _key,title,links._key,links.title --query title:@this
 
 このように、複数の参照関係が保存できました。また、output_columnsによって、複数の参照先のカラム値も表示させることができました。
