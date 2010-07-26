@@ -6161,6 +6161,34 @@ grn_obj_id(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN(id);
 }
 
+int
+grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
+{
+  int r = 0;
+  GRN_API_ENTER;
+  switch (obj->header.type) {
+  case GRN_DB:
+    {
+      grn_table_cursor *cur;
+      if ((cur = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0, 0, -1, 0))) {
+        grn_id id;
+        while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+          grn_obj *ja = grn_ctx_at(ctx, id);
+          if (ja && ja->header.type == GRN_COLUMN_VAR_SIZE) {
+            r += grn_ja_defrag(ctx, (grn_ja *)ja, threshold);
+          }
+        }
+        grn_table_cursor_close(ctx, cur);
+      }
+    }
+    break;
+  case GRN_COLUMN_VAR_SIZE:
+    r = grn_ja_defrag(ctx, (grn_ja *)obj, threshold);
+    break;
+  }
+  GRN_API_RETURN(r);
+}
+
 /**** sort ****/
 
 typedef struct {
