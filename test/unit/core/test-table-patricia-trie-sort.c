@@ -198,6 +198,38 @@ data_near_geo(void)
                        0, 0, 0),
            0, -1);
 
+  ADD_DATA("limit",
+           gcut_list_string_new(INSPECTED_POINT(1, 2, 3,
+                                                4, 5, 6),
+                                INSPECTED_POINT(1, 2, 3,
+                                                7, 8, 9),
+                                INSPECTED_POINT(7, 8, 9,
+                                                4, 5, 6),
+                                INSPECTED_POINT(-89, -59, -59,
+                                                1, 2, 3),
+                                INSPECTED_POINT(89, 59, 59,
+                                                -178, -58, -57),
+                                NULL),
+           TAKEN_POINT(0, 0, 0,
+                       0, 0, 0),
+           0, 5);
+
+  ADD_DATA("offset - limit",
+           gcut_list_string_new(INSPECTED_POINT(7, 8, 9,
+                                                4, 5, 6),
+                                INSPECTED_POINT(-89, -59, -59,
+                                                1, 2, 3),
+                                INSPECTED_POINT(89, 59, 59,
+                                                -178, -58, -57),
+                                INSPECTED_POINT(-88, -58, -57,
+                                                -178, -58, -57),
+                                INSPECTED_POINT(88, 58, 58,
+                                                178, 58, 58),
+                                NULL),
+           TAKEN_POINT(0, 0, 0,
+                       0, 0, 0),
+           2, 5);
+
 #undef ADD_DATA
 }
 
@@ -229,7 +261,7 @@ test_near_geo(gpointer data)
                                    TAKEN_POINT(89, 59, 59,
                                                179, 59, 59),
                                    TAKEN_POINT(89, 59, 59,
-                                               -178, -58, -58),
+                                               -178, -58, -57),
                                    TAKEN_POINT(88, 58, 58,
                                                178, 58, 58),
                                    TAKEN_POINT(-89, -59, -59,
