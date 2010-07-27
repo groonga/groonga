@@ -1014,7 +1014,8 @@ static grn_rc
 grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
 {
   byte *v = NULL, *ve;
-  uint32_t element_size, cum = 0, sum = (SEGMENTS_AT(ja,seg) & ~SEG_MASK);
+  uint32_t element_size, cum = 0, *seginfo = &SEGMENTS_AT(ja,seg), sum;
+  sum = (*seginfo & ~SEG_MASK);
   GRN_IO_SEG_REF(ja->io, seg, v);
   if (!v) { return GRN_NO_MEMORY_AVAILABLE; }
   ve = v + JA_SEGMENT_SIZE;
@@ -1032,8 +1033,8 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
     }
     v += sizeof(uint32_t) + element_size;
   }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "dseges[%d] = %d after defrag",
-          seg, (SEGMENTS_AT(ja,seg) & ~SEG_MASK));
+  GRN_LOG(ctx, *seginfo ? GRN_LOG_WARNING : GRN_LOG_NOTICE,
+          "dseges[%d] = %d after defrag", seg, *seginfo);
   GRN_IO_SEG_UNREF(ja->io, seg);
   return GRN_SUCCESS;
 }
