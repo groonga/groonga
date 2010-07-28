@@ -829,6 +829,40 @@ grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id)
   return size;
 }
 
+grn_rc
+grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
+                    uint64_t *cas, uint32_t *pos, uint32_t *size)
+{
+  uint32_t pseg = ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
+  if (pseg == JA_ESEG_VOID) {
+    return GRN_INVALID_ARGUMENT;
+  } else {
+    grn_ja_einfo *einfo = NULL;
+    GRN_IO_SEG_REF(ja->io, pseg, einfo);
+    if (einfo) {
+      grn_ja_einfo *ei;
+      *cas = *((uint64_t *)&einfo[id & JA_M_EINFO_IN_A_SEGMENT]);
+      ei = (grn_ja_einfo *)cas;
+      if (ETINY_P(ei)) {
+        ETINY_DEC(ei, *size);
+        *pos = 0;
+      } else {
+        uint32_t jag, vpos, vsize;
+        if (EHUGE_P(ei)) {
+          EHUGE_DEC(ei, jag, *size);
+          *pos = 0;
+        } else {
+          EINFO_DEC(ei, jag, *pos, *size);
+        }
+      }
+      GRN_IO_SEG_UNREF(ja->io, pseg);
+    } else {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 #ifndef NO_ZLIB
 #include <zlib.h>
 
@@ -999,7 +1033,7 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
 
 grn_rc
 grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
-           int flags, void *cas)
+           int flags, uint64_t *cas)
 {
 #ifndef NO_ZLIB
   if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
@@ -1025,12 +1059,22 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
   ve = v + JA_SEGMENT_SIZE;
   while (v < ve && cum < sum) {
     grn_id id = *((grn_id *)v);
+    if (!id) { break; }
     if (id & DELETED) {
       element_size = (id & ~DELETED);
     } else {
-      element_size = grn_ja_size(ctx, ja, id);
-      if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET, NULL)) {
-        return ctx->rc;
+      uint64_t cas;
+      uint32_t pos;
+      if (grn_ja_element_info(ctx, ja, id, &cas, &pos, &element_size)) { break; }
+      if (v != ve - JA_SEGMENT_SIZE + pos) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "dseges[%d] = pos unmatch (%d != %d)", seg, pos, v + JA_SEGMENT_SIZE - ve);
+        break;
+      }
+      if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET, &cas)) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "dseges[%d] = put failed (%d)", seg, id);
+        break;
       }
       element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
       cum += sizeof(uint32_t) + element_size;
