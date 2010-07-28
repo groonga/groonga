@@ -6570,42 +6570,51 @@ grn_table_sort_geo_detect_mesh(grn_ctx *ctx, grn_obj *table,
 {
   int i;
   int diff_bit_mask = 0;
-  uint8_t geo_key_base[4], geo_key_far[4], geo_key_min[4], geo_key_max[4];
+  uint8_t geo_key_base[sizeof(grn_geo_point)];
+  uint8_t geo_key_far[sizeof(grn_geo_point)];
+  uint8_t geo_key_min[sizeof(grn_geo_point)];
+  uint8_t geo_key_max[sizeof(grn_geo_point)];
   grn_geo_point point;
 
-  grn_gton(geo_key_base, base_point, 4);
+  grn_gton(geo_key_base, base_point, sizeof(grn_geo_point));
   point.latitude = lat_far;
   point.longitude = lng_far;
-  grn_gton(geo_key_far, &point, 4);
-  for (i = 0; i < 4; i++) {
+  grn_gton(geo_key_far, &point, sizeof(grn_geo_point));
+  for (i = 0; i < sizeof(grn_geo_point); i++) {
     if (((geo_key_base[i] >> 6) & 3) != ((geo_key_far[i] >> 6) & 3)) {
       *diff_bit = 0;
-      diff_bit_mask = 0xff >> 2;
+      diff_bit_mask = 0xff >> 0;
       break;
     } else if (((geo_key_base[i] >> 4) & 3) != ((geo_key_far[i] >> 4) & 3)) {
       *diff_bit = 2;
-      diff_bit_mask = 0xff >> 4;
+      diff_bit_mask = 0xff >> 2;
       break;
     } else if (((geo_key_base[i] >> 2) & 3) != ((geo_key_far[i] >> 2) & 3)) {
       *diff_bit = 4;
-      diff_bit_mask = 0xff >> 6;
+      diff_bit_mask = 0xff >> 4;
       break;
     } else if (((geo_key_base[i] >> 0) & 3) != ((geo_key_far[i] >> 0) & 3)) {
       *diff_bit = 6;
-      diff_bit_mask = 0xff >> 8;
+      diff_bit_mask = 0xff >> 6;
       break;
     }
   }
   *diff_byte = i;
   memcpy(geo_key_min, geo_key_base, i + 1);
   geo_key_min[i] &= ~diff_bit_mask;
-  memset(geo_key_min + i + 1, 0, 4 - i - 1);
+  memset(geo_key_min + i + 1, 0, sizeof(grn_geo_point) - i - 1);
   memcpy(geo_key_max, geo_key_base, i + 1);
   geo_key_max[i] |= diff_bit_mask;
-  memset(geo_key_max + i + 1, 0xff, 4 - i - 1);
-  grn_ntog((uint8_t *)geo_min, geo_key_min, 4);
-  grn_ntog((uint8_t *)geo_max, geo_key_max, 4);
+  memset(geo_key_max + i + 1, 0xff, sizeof(grn_geo_point) - i - 1);
+  grn_ntog((uint8_t *)geo_min, geo_key_min, sizeof(grn_geo_point));
+  grn_ntog((uint8_t *)geo_max, geo_key_max, sizeof(grn_geo_point));
 }
+
+typedef struct
+{
+  grn_geo_point key;
+  int key_size;
+} mesh_entry;
 
 static void
 grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
@@ -6615,12 +6624,12 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   int lng_far, int lat_far, double d_far,
                                   geo_entry **entries, int *n_entries)
 {
-  int e;
-  uint8_t geos[4][4];
-  grn_geo_point geo_min, geo_max, geo_base, keys[4];
+  int n_meshes, e;
+  grn_geo_point geo_min, geo_max, geo_base;
+  mesh_entry meshes[20];
   int diff_byte = 0, diff_bit = 0, key_size;
   int lat_diff, lng_diff;
-  double lng1, lat1;
+  double lng1, lat1, lng2, lat2, x, y, d;
   geo_entry *ep, *p;
 
   grn_table_sort_geo_detect_mesh(ctx, table, base_point, lng_far, lat_far, d_far,
@@ -6645,27 +6654,76 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       geo_base.longitude = geo_min.longitude;
     }
   }
-  keys[0].latitude = geo_base.latitude + lat_diff;
-  keys[0].longitude = geo_base.longitude + lng_diff;
-  keys[1].latitude = geo_base.latitude + lat_diff;
-  keys[1].longitude = geo_base.longitude - lng_diff;
-  keys[2].latitude = geo_base.latitude - lat_diff;
-  keys[2].longitude = geo_base.longitude - lng_diff;
-  keys[3].latitude = geo_base.latitude - lat_diff;
-  keys[3].longitude = geo_base.longitude + lng_diff;
-  grn_gton(geos[0], keys + 0, 4);
-  grn_gton(geos[1], keys + 1, 4);
-  grn_gton(geos[2], keys + 2, 4);
-  grn_gton(geos[3], keys + 3, 4);
+
+  n_meshes = 0;
+
+#define add_mesh(lat_diff_,lng_diff_,key_size_)\
+  meshes[n_meshes].key.latitude = geo_min.latitude + lat_diff_;\
+  meshes[n_meshes].key.longitude = geo_min.longitude + lng_diff_;\
+  meshes[n_meshes].key_size = key_size_;\
+  n_meshes++;
+
+  add_mesh(0, 0, key_size);
+  add_mesh(0, -lng_diff, key_size);
+  add_mesh(-lat_diff, -lng_diff, key_size);
+  add_mesh(-lat_diff, 0, key_size);
+
+#define add_sub_mesh(lat_diff_cmp,lng_diff_cmp,lat_diff_base,lng_diff_base)\
+  lat2 = geo_base.latitude + lat_diff_cmp;\
+  lng2 = geo_base.longitude + lng_diff_cmp;\
+  x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);\
+  y = (lat2 - lat1);\
+  d = ((x * x) + (y * y));\
+  if (d > d_far) {\
+    add_mesh(lat_diff_base, lng_diff_base, key_size + 2);\
+  }
+
+  add_sub_mesh(lat_diff + 1, -lng_diff / 2,
+               lat_diff + 1, -lng_diff);
+  add_sub_mesh(lat_diff + 1, 0,
+               lat_diff + 1, -lng_diff / 2);
+  add_sub_mesh(lat_diff + 1, 0,
+               lat_diff + 1, 0);
+  add_sub_mesh(lat_diff + 1, lng_diff / 2 + 1,
+               lat_diff + 1, lng_diff / 2 + 1);
+
+  add_sub_mesh(lat_diff / 2 + 1, lng_diff + 1,
+               lat_diff / 2 + 1, lng_diff + 1);
+  add_sub_mesh(0, lng_diff + 1,
+               0, lng_diff + 1);
+  add_sub_mesh(0, lng_diff + 1,
+               -lat_diff / 2, lng_diff + 1);
+  add_sub_mesh(-lat_diff / 2, lng_diff + 1,
+               -lat_diff, lng_diff + 1);
+
+  add_sub_mesh(-lat_diff, lng_diff / 2,
+               -lat_diff * 2, lng_diff / 2 + 1);
+  add_sub_mesh(-lat_diff, 0,
+               -lat_diff * 2, 0);
+  add_sub_mesh(-lat_diff, 0,
+               -lat_diff * 2, -lng_diff / 2);
+  add_sub_mesh(-lat_diff, -lng_diff / 2,
+               -lat_diff * 2, -lng_diff);
+
+  add_sub_mesh(-lat_diff / 2, -lng_diff,
+               -lat_diff, -lng_diff * 2);
+  add_sub_mesh(0, -lng_diff,
+               -lat_diff / 2, -lng_diff * 2);
+  add_sub_mesh(0, -lng_diff,
+               0, -lng_diff * 2);
+  add_sub_mesh(lat_diff / 2 + 1, -lng_diff,
+               lat_diff / 2 + 1, -lng_diff * 2);
+
+#undef add_sub_mesh
+#undef add_mesh
 
   e = 0;
   if ((ep = *entries = GRN_MALLOC(sizeof(geo_entry) * (n + 1)))) {
-    int i;
     grn_id tid;
-    double lng2, lat2, x, y, d;
-    for (i = 0; i < 4; i++) {
+    while (n_meshes--) {
       grn_pat_cursor *pc = grn_pat_cursor_open(ctx, pat,
-                                               keys + i, key_size,
+                                               &(meshes[n_meshes].key),
+                                               meshes[n_meshes].key_size,
                                                NULL, 0,
                                                0, -1,
                                                GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
