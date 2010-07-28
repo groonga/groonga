@@ -1675,19 +1675,6 @@ bitcmp(const void *s1, const void *s2, int offset, int length)
   return (*a & mask) - (*b & mask);
 }
 
-static int
-bitcmp2(const char *a, const char *b, uint32_t key_size)
-{
-  uint32_t o = key_size >> 3;
-  uint32_t m = key_size & 7;
-  int r = o ? memcmp(a, b, o) : 0;
-  if (!r && m) {
-    uint8_t mask = 0xff << (8 - m);
-    r = (a[o] & mask) - (b[o] & mask);
-  }
-  return r;
-}
-
 inline static grn_rc
 set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
                   const void *key, uint32_t key_size, int flags)
@@ -1724,7 +1711,7 @@ set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     if (!(k = pat_node_get_key(ctx, pat, node))) { break; }
     if (PAT_LEN(node) < byte_len) { break; }
     if ((flags & GRN_CURSOR_SIZE_BY_BIT)
-        ? !bitcmp2(k, key, key_size)
+        ? !bitcmp(k, key, 0, key_size)
         : !memcmp(k, key, key_size)) {
       if (flags & GRN_CURSOR_DESCENDING) {
         if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
