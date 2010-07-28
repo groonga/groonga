@@ -1675,17 +1675,37 @@ bitcmp(const void *s1, const void *s2, int offset, int length)
   return (*a & mask) - (*b & mask);
 }
 
+static int
+bitcmp2(const char *a, const char *b, uint32_t key_size)
+{
+  uint32_t o = key_size >> 3;
+  uint32_t m = key_size & 7;
+  int r = o ? memcmp(a, b, o) : 0;
+  if (!r && m) {
+    uint8_t mask = 0xff << (8 - m);
+    r = (a[o] & mask) - (b[o] & mask);
+  }
+  return r;
+}
+
 inline static grn_rc
 set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
                   const void *key, uint32_t key_size, int flags)
 {
   int c0 = -1, ch;
   const uint8_t *k;
-  uint32_t len = key_size * 16;
+  uint32_t len, byte_len;
   grn_id id;
   pat_node *node;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  KEY_ENCODE(pat, keybuf, key, key_size);
+  if (flags & GRN_CURSOR_SIZE_BY_BIT) {
+    len = key_size * 2;
+    byte_len = key_size >> 3;
+  } else {
+    len = key_size * 16;
+    byte_len = key_size;
+  }
+  KEY_ENCODE(pat, keybuf, key, byte_len);
   PAT_AT(pat, 0, node);
   id = node->lr[1];
   while (id) {
@@ -1702,8 +1722,10 @@ set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       continue;
     }
     if (!(k = pat_node_get_key(ctx, pat, node))) { break; }
-    if (PAT_LEN(node) < key_size) { break; }
-    if (!memcmp(k, key, key_size)) {
+    if (PAT_LEN(node) < byte_len) { break; }
+    if ((flags & GRN_CURSOR_SIZE_BY_BIT)
+        ? !bitcmp2(k, key, key_size)
+        : !memcmp(k, key, key_size)) {
       if (flags & GRN_CURSOR_DESCENDING) {
         if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
           push(c, node->lr[0], ch);
