@@ -95,7 +95,7 @@ grn_rc grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size);
 grn_rc grn_ja_close(grn_ctx *ctx, grn_ja *ja);
 grn_rc grn_ja_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id,
-                  void *value, uint32_t value_len, int flags);
+                  void *value, uint32_t value_len, int flags, void *cas);
 int grn_ja_at(grn_ctx *ctx, grn_ja *ja, grn_id id, void *valbuf, int buf_size);
 
 void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len);

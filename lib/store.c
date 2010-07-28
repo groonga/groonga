@@ -577,6 +577,9 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       }
       *(grn_id *)(addr + pos) = id;
       aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
+      if (pos + aligned_size < JA_SEGMENT_SIZE) {
+        *(grn_id *)(addr + pos + aligned_size) = GRN_ID_NIL;
+      }
       SEGMENTS_AT(ja, seg) += aligned_size + sizeof(grn_id);
       pos += sizeof(grn_id);
       EINFO_ENC(einfo, seg, pos, element_size);
@@ -995,7 +998,8 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
 #endif /* NO_LZO */
 
 grn_rc
-grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len, int flags)
+grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
+           int flags, void *cas)
 {
 #ifndef NO_ZLIB
   if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
@@ -1025,7 +1029,7 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
       element_size = (id & ~DELETED);
     } else {
       element_size = grn_ja_size(ctx, ja, id);
-      if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET)) {
+      if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET, NULL)) {
         return ctx->rc;
       }
       element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
