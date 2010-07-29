@@ -1096,8 +1096,9 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
     }
     v += sizeof(uint32_t) + element_size;
   }
-  GRN_LOG(ctx, *seginfo ? GRN_LOG_WARNING : GRN_LOG_NOTICE,
-          "dseges[%d] = %d after defrag", seg, (*seginfo & ~SEG_MASK));
+  if (*seginfo) {
+    GRN_LOG(ctx, GRN_LOG_WARNING, "dseges[%d] = %d after defrag", seg, (*seginfo & ~SEG_MASK));
+  }
   GRN_IO_SEG_UNREF(ja->io, seg);
   return GRN_SUCCESS;
 }
