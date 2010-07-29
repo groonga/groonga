@@ -2834,7 +2834,7 @@ default_column_set_value(grn_ctx *ctx, grn_proc_ctx *pctx, grn_obj *in, grn_obj 
     switch (pctx->obj->header.type) {
     case GRN_COLUMN_VAR_SIZE :
       return grn_ja_put(ctx, (grn_ja *)pctx->obj, arg->id,
-                        in->u.p.ptr, value_size, 0); // todo type->flag
+                        in->u.p.ptr, value_size, 0, NULL); // todo type->flag
     case GRN_COLUMN_FIX_SIZE :
       if (((grn_ra *)pctx->obj)->header->element_size < value_size) {
         ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", value_size);
@@ -4335,7 +4335,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
       switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_SCALAR :
-        rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags);
+        rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
         break;
       case GRN_OBJ_COLUMN_VECTOR :
         {
@@ -4356,7 +4356,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   grn_token_close(ctx, token);
                 }
                 rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
+                                GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags, NULL);
               }
               break;
             case GRN_VECTOR :
@@ -4371,10 +4371,10 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                 }
               }
               rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                              GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags);
+                              GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags, NULL);
               break;
             case GRN_UVECTOR :
-              rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags);
+              rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
               break;
             default :
               ERR(GRN_INVALID_ARGUMENT, "vector, uvector or bulk required");
@@ -4385,7 +4385,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
             switch (value->header.type) {
             case GRN_BULK :
               if (!GRN_BULK_VSIZE(value)) {
-                rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags);
+                rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
               } else {
                 grn_obj v;
                 GRN_OBJ_INIT(&v, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
@@ -4396,7 +4396,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
               }
               break;
             case GRN_UVECTOR :
-              rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags);
+              rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
               break;
             case GRN_VECTOR :
               rc = grn_ja_putv(ctx, (grn_ja *)obj, id, value, 0);
@@ -5305,7 +5305,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     remove_columns(ctx, obj);
     grn_obj_close(ctx, obj);
     if (path) {
-      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
+      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_pat_remove(ctx, path);
     }
@@ -5316,7 +5316,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     remove_columns(ctx, obj);
     grn_obj_close(ctx, obj);
     if (path) {
-      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
+      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_hash_remove(ctx, path);
     }
@@ -5326,7 +5326,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     remove_columns(ctx, obj);
     grn_obj_close(ctx, obj);
     if (path) {
-      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
+      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_array_remove(ctx, path);
     }
@@ -5336,7 +5336,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     remove_index(ctx, obj, GRN_HOOK_SET);
     grn_obj_close(ctx, obj);
     if (path) {
-      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
+      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_ja_remove(ctx, path);
     }
@@ -5346,7 +5346,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     remove_index(ctx, obj, GRN_HOOK_SET);
     grn_obj_close(ctx, obj);
     if (path) {
-      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
+      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_ra_remove(ctx, path);
     }
@@ -5356,7 +5356,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     delete_source_hook(ctx, obj);
     grn_obj_close(ctx, obj);
     if (path) {
-      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
+      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
       grn_obj_delete_by_id(ctx, db, id, 1);
       grn_ii_remove(ctx, path);
     }
@@ -5366,7 +5366,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     if (GRN_DB_OBJP(obj)) {
       grn_obj_close(ctx, obj);
       if (!(id & GRN_OBJ_TMP_OBJECT)) {
-        grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET);
+        grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
         grn_obj_delete_by_id(ctx, db, id, 1);
       }
       grn_obj_touch(ctx, db, NULL);

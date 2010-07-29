@@ -108,7 +108,8 @@ typedef enum {
   GRN_UPDATE_NOT_ALLOWED = -66,
   GRN_TOO_SMALL_OFFSET = -67,
   GRN_TOO_LARGE_OFFSET = -68,
-  GRN_TOO_SMALL_LIMIT = -69
+  GRN_TOO_SMALL_LIMIT = -69,
+  GRN_CAS_ERROR = -70
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);
@@ -663,6 +664,7 @@ typedef grn_obj grn_table_cursor;
 #define GRN_CURSOR_BY_KEY              (0x00<<3)
 #define GRN_CURSOR_BY_ID               (0x01<<3)
 #define GRN_CURSOR_PREFIX              (0x01<<4)
+#define GRN_CURSOR_SIZE_BY_BIT         (0x01<<5)
 
 /**
  * grn_table_cursor_open:
