@@ -857,7 +857,7 @@ grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
         ETINY_DEC(ei, *size);
         *pos = 0;
       } else {
-        uint32_t jag, vpos, vsize;
+        uint32_t jag;
         if (EHUGE_P(ei)) {
           EHUGE_DEC(ei, jag, *size);
           *pos = 0;
@@ -1159,6 +1159,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             GRN_OUTPUT_CSTR("id");
             GRN_OUTPUT_INT64(id);
             */
+            if (!id) { break; }
             if (id & DELETED) {
               element_size = (id & ~DELETED);
               n_del_elements++;
