@@ -1,5 +1,5 @@
 実行例 ::
 
   > table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1279698398.12393,0.127766],true]
+  [[0,1280378897.32146,0.105979],true]
   

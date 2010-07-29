@@ -1,15 +1,15 @@
 実行例 ::
 
   > table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
-  [[0,1279698423.25366,0.068018],true]
+  [[0,1280378923.03769,0.060105],true]
   > table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1279698423.52246,0.075518],true]
+  [[0,1280378923.29856,0.057985],true]
   > column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
-  [[0,1279698423.79872,0.058815],true]
+  [[0,1280378923.55728,0.067165],true]
   > column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
-  [[0,1279698424.05835,0.066281],true]
+  [[0,1280378923.82522,0.066382],true]
   > column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
-  [[0,1279698424.32543,0.121583],true]
+  [[0,1280378924.0924,0.122744],true]
   > load --table Video
   > [
   > {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
@@ -21,5 +21,5 @@
   > {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
   > {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
   > ]
-  [[0,1279698424.64778,2.002693],8]
+  [[0,1280378924.41589,2.002628],8]
   

@@ -58,16 +58,16 @@
 <p>table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キーによる前方一致検索ができるようになります。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt;    table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
-[[0,1279698323.8485,0.088836],true]
+[[0,1280378814.93737,0.10571],true]
 &gt;    load --table PatPre
 &gt;    [
 &gt;    {&quot;_key&quot;:&quot;ひろゆき&quot;},
 &gt;    {&quot;_key&quot;:&quot;まろゆき&quot;},
 &gt;    {&quot;_key&quot;:&quot;ひろあき&quot;}
 &gt;    ]
-[[0,1279698324.13813,1.001297],3]
+[[0,1280378815.24384,1.001289],3]
 &gt;    select --table PatPre --query _key:@ひろ
-[[0,1279698325.34005,0.000534],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[3,&quot;ひろあき&quot;],[1,&quot;ひろゆき&quot;]]]]
+[[0,1280378816.44578,0.022706],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;]],[3,&quot;ひろあき&quot;],[1,&quot;ひろゆき&quot;]]]]
 </pre></div>
 </div>
 </div>

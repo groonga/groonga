@@ -268,7 +268,7 @@ load --table Comments
 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Users --match_columns name,location_str,description --query 東京 --output_columns _key,name
-[[0,1279698381.60687,0.000524],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;name&quot;,&quot;ShortText&quot;]],[&quot;tasukuchan&quot;,&quot;グニャラくん&quot;],[&quot;OffGao&quot;,&quot;OffGao&quot;]]]]
+[[0,1280378873.00607,0.00053],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;name&quot;,&quot;ShortText&quot;]],[&quot;tasukuchan&quot;,&quot;グニャラくん&quot;],[&quot;OffGao&quot;,&quot;OffGao&quot;]]]]
 </pre></div>
 </div>
 <p>「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラくん」と「OffGao」がヒットしました。</p>
@@ -279,7 +279,7 @@ load --table Comments
 以下の例では、指定された位置から5000m以内にいるユーザーを検索しています。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Users --filter &#39;geo_in_circle(location,&quot;128484216x502919856&quot;,5000)&#39; --output_columns _key,name
-[[0,1279698381.80953,0.000335],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;name&quot;,&quot;ShortText&quot;]],[&quot;tasukuchan&quot;,&quot;グニャラくん&quot;],[&quot;OffGao&quot;,&quot;OffGao&quot;]]]]
+[[0,1280378873.20845,0.000337],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;name&quot;,&quot;ShortText&quot;]],[&quot;tasukuchan&quot;,&quot;グニャラくん&quot;],[&quot;OffGao&quot;,&quot;OffGao&quot;]]]]
 </pre></div>
 </div>
 <p>新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と「OffGao」がヒットしました。</p>
@@ -290,7 +290,7 @@ load --table Comments
 以下の例では、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Users --query follower:@tasukuchan --output_columns _key,name
-[[0,1279698382.01202,0.000288],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;name&quot;,&quot;ShortText&quot;]],[&quot;daijiro&quot;,&quot;hsiomaneki&quot;],[&quot;OffGao&quot;,&quot;OffGao&quot;]]]]
+[[0,1280378873.4108,0.000311],[[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;name&quot;,&quot;ShortText&quot;]],[&quot;daijiro&quot;,&quot;hsiomaneki&quot;],[&quot;OffGao&quot;,&quot;OffGao&quot;]]]]
 </pre></div>
 </div>
 <p>「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしました。</p>
@@ -301,7 +301,7 @@ load --table Comments
 また、 <a class="reference internal" href="tutorial05.html"><em>ドリルダウン</em></a> で扱ったドリルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、ユーザー別・ハッシュタグ別のカウントを出します。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Comments --filter &#39;geo_in_circle(location,&quot;127975798x502919856&quot;,20000)&#39; --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
-[[0,1279698382.21435,0.000677],[[[4],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;OffGao&quot;,&quot;@daijiro @tasukuchan 登録してみましたよー！&quot;],[&quot;グニャラくん&quot;,&quot;groongaなう #groonga&quot;],[&quot;グニャラくん&quot;,&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;],[&quot;OffGao&quot;,&quot;中野ブロードウェイなうなう&quot;]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,2],[&quot;travel&quot;,1]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;OffGao&quot;,2],[&quot;tasukuchan&quot;,2]]]]
+[[0,1280378873.61299,0.000702],[[[4],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;OffGao&quot;,&quot;@daijiro @tasukuchan 登録してみましたよー！&quot;],[&quot;グニャラくん&quot;,&quot;groongaなう #groonga&quot;],[&quot;グニャラくん&quot;,&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;],[&quot;OffGao&quot;,&quot;中野ブロードウェイなうなう&quot;]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,2],[&quot;travel&quot;,1]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;OffGao&quot;,2],[&quot;tasukuchan&quot;,2]]]]
 </pre></div>
 </div>
 <p>範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そして、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つ、投稿者は「グニャラくん」「OffGao」がそれぞれ2件ずつであることがわかります。</p>
@@ -312,7 +312,7 @@ load --table Comments
 さらに、 <a class="reference internal" href="tutorial04.html"><em>さまざまな検索条件の指定</em></a> で扱った、スコア値_scoreも出してみましょう。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Comments --query comment:@なう --output_columns comment,_score
-[[0,1279698382.42106,0.00032],[[[2],[[&quot;comment&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;groongaなう #groonga&quot;,1],[&quot;中野ブロードウェイなうなう&quot;,2]]]]
+[[0,1280378873.81946,0.000332],[[[2],[[&quot;comment&quot;,&quot;ShortText&quot;],[&quot;_score&quot;,&quot;Int32&quot;]],[&quot;groongaなう #groonga&quot;,1],[&quot;中野ブロードウェイなうなう&quot;,2]]]]
 </pre></div>
 </div>
 <p>「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。また、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できます。</p>
@@ -322,7 +322,7 @@ load --table Comments
 <p>今度は、キーワードとGeoPointの両方を条件に検索をしてみます。&#8211;queryと&#8211;filterの両方を使用した場合、両方の条件に一致するレコードがヒットします。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Comments --query comment:@羽田 --filter &#39;geo_in_circle(location,&quot;127975798x502919856&quot;,20000)&#39; --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
-[[0,1279698382.62365,0.000603],[[[1],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;グニャラくん&quot;,&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,1],[&quot;travel&quot;,1]],[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;tasukuchan&quot;,1]]]]
+[[0,1280378874.02194,0.000669],[[[1],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;グニャラくん&quot;,&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,1],[&quot;travel&quot;,1]],[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;tasukuchan&quot;,1]]]]
 </pre></div>
 </div>
 <p>両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返ってきており、「グニャラくん」のコメント1件であることがわかります。</p>
@@ -333,7 +333,7 @@ load --table Comments
 これも、 <a class="reference internal" href="tutorial06.html"><em>タグ検索・参照関係の逆引き</em></a> で扱った、参照関係の逆引きを使います。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
-[[0,1279698382.82832,0.000455],[[[2],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;グニャラくん&quot;,&quot;groongaなう #groonga&quot;],[&quot;グニャラくん&quot;,&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;]],[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;tasukuchan&quot;,2]]]]
+[[0,1280378874.22658,0.000485],[[[2],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;グニャラくん&quot;,&quot;groongaなう #groonga&quot;],[&quot;グニャラくん&quot;,&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;]],[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;tasukuchan&quot;,2]]]]
 </pre></div>
 </div>
 <p>#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。</p>
@@ -343,7 +343,7 @@ load --table Comments
 <p>あるユーザーが投稿したコメントを検索します。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Comments --query posted_by:tasukuchan --output_columns comment --drilldown hash_tags
-[[0,1279698383.03249,0.000461],[[[4],[[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;初の書き込み。テストテスト。&quot;],[&quot;@daijiro ありがとう！&quot;],[&quot;groongaなう #groonga&quot;],[&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,2],[&quot;travel&quot;,1]]]]
+[[0,1280378874.43074,0.000502],[[[4],[[&quot;comment&quot;,&quot;ShortText&quot;]],[&quot;初の書き込み。テストテスト。&quot;],[&quot;@daijiro ありがとう！&quot;],[&quot;groongaなう #groonga&quot;],[&quot;groonga開発合宿のため羽田空港に来ました！ #groonga #travel&quot;]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,2],[&quot;travel&quot;,1]]]]
 </pre></div>
 </div>
 <p>「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグでドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つあることがわかります。</p>
@@ -353,7 +353,7 @@ load --table Comments
 <p>あるユーザーがお気に入りに入れているコメントを検索します。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
-[[0,1279698383.23708,0.000306],[[[1],[[&quot;favorites.posted_by&quot;,&quot;Users&quot;],[&quot;favorites.comment&quot;,&quot;ShortText&quot;]],[[&quot;daijiro&quot;,&quot;OffGao&quot;],[&quot;マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。&quot;,&quot;@daijiro @tasukuchan 登録してみましたよー！&quot;]]]]]
+[[0,1280378874.63511,0.000327],[[[1],[[&quot;favorites.posted_by&quot;,&quot;Users&quot;],[&quot;favorites.comment&quot;,&quot;ShortText&quot;]],[[&quot;daijiro&quot;,&quot;OffGao&quot;],[&quot;マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。&quot;,&quot;@daijiro @tasukuchan 登録してみましたよー！&quot;]]]]]
 </pre></div>
 </div>
 <p>「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。</p>
@@ -364,7 +364,7 @@ load --table Comments
 この例では、指定した時間よりも前に投稿されているコメントを検索します。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select Comments --filter &#39;last_modified&lt;=1268802000&#39; --output_columns posted_by.name,comment,last_modified --drilldown hash_tags,posted_by
-[[0,1279698383.44283,0.000619],[[[5],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;],[&quot;last_modified&quot;,&quot;Time&quot;]],[&quot;hsiomaneki&quot;,&quot;マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。&quot;,1268795100.0],[&quot;グニャラくん&quot;,&quot;初の書き込み。テストテスト。&quot;,1268794800.0],[&quot;hsiomaneki&quot;,&quot;@tasukuchan ようこそ!!!&quot;,1268795100.0],[&quot;グニャラくん&quot;,&quot;@daijiro ありがとう！&quot;,1268798400.0],[&quot;グニャラくん&quot;,&quot;groongaなう #groonga&quot;,1268802000.0]],[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,1]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;daijiro&quot;,2],[&quot;tasukuchan&quot;,3]]]]
+[[0,1280378874.83883,0.000681],[[[5],[[&quot;posted_by.name&quot;,&quot;ShortText&quot;],[&quot;comment&quot;,&quot;ShortText&quot;],[&quot;last_modified&quot;,&quot;Time&quot;]],[&quot;hsiomaneki&quot;,&quot;マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。&quot;,1268795100.0],[&quot;グニャラくん&quot;,&quot;初の書き込み。テストテスト。&quot;,1268794800.0],[&quot;hsiomaneki&quot;,&quot;@tasukuchan ようこそ!!!&quot;,1268795100.0],[&quot;グニャラくん&quot;,&quot;@daijiro ありがとう！&quot;,1268798400.0],[&quot;グニャラくん&quot;,&quot;groongaなう #groonga&quot;,1268802000.0]],[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;groonga&quot;,1]],[[2],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;_nsubrecs&quot;,&quot;Int32&quot;]],[&quot;daijiro&quot;,2],[&quot;tasukuchan&quot;,3]]]]
 </pre></div>
 </div>
 <p>2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒットしていることがわかります。</p>

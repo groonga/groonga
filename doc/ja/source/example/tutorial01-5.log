@@ -1,5 +1,5 @@
 実行例 ::
 
   > table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[-22,1279698399.12995,0.000298,"already used name was assigned",[["grn_obj_register","db.c",5391]]],false]
+  [[0,1280378898.33069,0.089422],true]
   

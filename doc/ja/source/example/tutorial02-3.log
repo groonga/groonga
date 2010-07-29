@@ -1,0 +1,12 @@
+実行例 ::
+
+  http://[IPまたはホスト名]:[ポート番号]/d/status
+  実行される処理：
+  > status
+  [[0,1280378896.31131,1.4e-05],{"alloc_count":463,"starttime":1280378807,"uptime":89,"version":"0.7.2-5-g2a77275"}]
+  
+  http://[IPまたはホスト名]:[ポート番号]/d/select?table=Site&query=title:@this
+  実行される処理：
+  > select --table Site --query title:@this
+  [[0,1280378896.51281,6.0e-05],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+  

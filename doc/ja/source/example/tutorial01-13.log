@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Site --output_columns _key,title,_score --query title:@test
-  [[0,1279698403.08434,0.000354],[[[9],[["_key","ShortText"],["title","ShortText"],["_score","Int32"]],["http://example.org/","This is test record 1!",1],["http://example.net/","test record 2.",1],["http://example.com/","test test record three.",2],["http://example.net/afr","test record four.",1],["http://example.org/aba","test test test record five.",3],["http://example.com/rab","test test test test record six.",4],["http://example.net/atv","test test test record seven.",3],["http://example.org/gat","test test record eight.",2],["http://example.com/vdw","test test record nine.",2]]]]
+  [[0,1280378902.72695,0.000387],[[[9],[["_key","ShortText"],["title","ShortText"],["_score","Int32"]],["http://example.org/","This is test record 1!",1],["http://example.net/","test record 2.",1],["http://example.com/","test test record three.",2],["http://example.net/afr","test record four.",1],["http://example.org/aba","test test test record five.",3],["http://example.com/rab","test test test test record six.",4],["http://example.net/atv","test test test record seven.",3],["http://example.org/gat","test test record eight.",2],["http://example.com/vdw","test test record nine.",2]]]]
   

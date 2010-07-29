@@ -1,24 +1,24 @@
 実行例 ::
 
   > table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1279698350.4911,0.060115],true]
+  [[0,1280378842.01708,0.06822],true]
   > table_create --name SiteCountry --flags TABLE_HASH_KEY --key_type ShortText
+  [[0,1280378842.28607,0.066339],true]
   > column_create --table Site --name domain --flags COLUMN_SCALAR --type SiteDomain
-  [[0,1279698350.75201,0.342917],true]
-  [[0,1279698351.09501,0.058668],true]
+  [[0,1280378842.55314,0.066281],true]
   > column_create --table Site --name country --flags COLUMN_SCALAR --type SiteCountry
-  [[0,1279698351.3544,0.058078],true]
+  [[0,1280378842.82013,0.057988],true]
   > load --table Site
   > [
-  > {"_key":"http../example/.org/","domain":".org","country":"japan"},
-  > {"_key":"http../example/.net/","domain":".net","country":"brazil"},
-  > {"_key":"http../example/.com/","domain":".com","country":"japan"},
-  > {"_key":"http../example/.net/afr","domain":".net","country":"usa"},
-  > {"_key":"http../example/.org/aba","domain":".org","country":"korea"},
-  > {"_key":"http../example/.com/rab","domain":".com","country":"china"},
-  > {"_key":"http../example/.net/atv","domain":".net","country":"china"},
-  > {"_key":"http../example/.org/gat","domain":".org","country":"usa"},
-  > {"_key":"http../example/.com/vdw","domain":".com","country":"japan"}
+  > {"_key":"http://example.org/","domain":".org","country":"japan"},
+  > {"_key":"http://example.net/","domain":".net","country":"brazil"},
+  > {"_key":"http://example.com/","domain":".com","country":"japan"},
+  > {"_key":"http://example.net/afr","domain":".net","country":"usa"},
+  > {"_key":"http://example.org/aba","domain":".org","country":"korea"},
+  > {"_key":"http://example.com/rab","domain":".com","country":"china"},
+  > {"_key":"http://example.net/atv","domain":".net","country":"china"},
+  > {"_key":"http://example.org/gat","domain":".org","country":"usa"},
+  > {"_key":"http://example.com/vdw","domain":".com","country":"japan"}
   > ]
-  [[0,1279698351.6132,2.203108],9]
+  [[0,1280378843.07883,2.202888],9]
   

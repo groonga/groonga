@@ -62,35 +62,35 @@
 インデックス用のIndexBlog1テーブルも作り、titleカラムのインデックス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、それぞれ1カラムごとに1つずつ追加しています。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
-[[0,1279698316.90903,0.055634],true]
+[[0,1280378807.97095,0.074659],true]
 &gt; column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
-[[0,1279698317.16544,0.058727],true]
+[[0,1280378808.24637,0.058739],true]
 &gt; column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
-[[0,1279698317.42501,0.074586],true]
+[[0,1280378808.50589,0.074658],true]
 &gt; table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-[[0,1279698317.7004,0.065595],true]
+[[0,1280378808.78136,0.065557],true]
 &gt; column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
-[[0,1279698317.96675,0.114009],true]
+[[0,1280378809.04764,0.147413],true]
 &gt; column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
-[[0,1279698318.28155,0.116752],true]
+[[0,1280378809.39584,0.124963],true]
 &gt; load --table Blog1
 &gt; [
 &gt; {&quot;_key&quot;:&quot;grn1&quot;,&quot;title&quot;:&quot;groonga test&quot;,&quot;message&quot;:&quot;groonga message&quot;},
 &gt; {&quot;_key&quot;:&quot;grn2&quot;,&quot;title&quot;:&quot;baseball result&quot;,&quot;message&quot;:&quot;rakutan eggs 4 - 4 groonga moritars&quot;},
 &gt; {&quot;_key&quot;:&quot;grn3&quot;,&quot;title&quot;:&quot;groonga message&quot;,&quot;message&quot;:&quot;none&quot;}
 &gt; ]
-[[0,1279698318.59906,1.001334],3]
+[[0,1280378809.72157,1.001442],3]
 </pre></div>
 </div>
 <p>match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全文検索することができます。</p>
 <p>実際に検索してみましょう。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog1 --match_columns title||message --query groonga
-[[0,1279698319.80135,0.000838],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;],[2,&quot;grn2&quot;,&quot;baseball result&quot;,&quot;rakutan eggs 4 - 4 groonga moritars&quot;]]]]
+[[0,1280378810.92387,0.0008],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;],[2,&quot;grn2&quot;,&quot;baseball result&quot;,&quot;rakutan eggs 4 - 4 groonga moritars&quot;]]]]
 &gt; select --table Blog1 --match_columns title||message --query message
-[[0,1279698320.00529,0.000533],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;]]]]
+[[0,1280378811.12754,0.000547],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;]]]]
 &gt; select --table Blog1 --match_columns title --query message
-[[0,1279698320.20829,0.000456],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+[[0,1280378811.33043,0.000482],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
 </pre></div>
 </div>
 </div>
@@ -100,32 +100,32 @@
 <p>共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
-[[0,1279698320.411,0.091052],true]
+[[0,1280378811.53299,0.099804],true]
 &gt; column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
-[[0,1279698320.70283,0.067079],true]
+[[0,1280378811.83359,0.058761],true]
 &gt; column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
-[[0,1279698320.97073,0.066324],true]
+[[0,1280378812.09316,0.05801],true]
 &gt; table_create --name IndexBlog2 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-[[0,1279698321.23784,0.07388],true]
+[[0,1280378812.35194,0.057196],true]
 &gt; column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
-[[0,1279698321.51244,0.122309],true]
+[[0,1280378812.60988,0.113983],true]
 &gt; load --table Blog2
 &gt; [
 &gt; {&quot;_key&quot;:&quot;grn1&quot;,&quot;title&quot;:&quot;groonga test&quot;,&quot;message&quot;:&quot;groonga message&quot;},
 &gt; {&quot;_key&quot;:&quot;grn2&quot;,&quot;title&quot;:&quot;baseball result&quot;,&quot;message&quot;:&quot;rakutan eggs 4 - 4 groonga moritars&quot;},
 &gt; {&quot;_key&quot;:&quot;grn3&quot;,&quot;title&quot;:&quot;groonga message&quot;,&quot;message&quot;:&quot;none&quot;}
 &gt; ]
-[[0,1279698321.8355,1.001386],3]
+[[0,1280378812.92463,1.001314],3]
 </pre></div>
 </div>
 <p>実際に検索してみましょう。結果は上の例と同じになります。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; select --table Blog2 --match_columns title||message --query groonga
-[[0,1279698323.03774,0.000586],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[2,&quot;grn2&quot;,&quot;baseball result&quot;,&quot;rakutan eggs 4 - 4 groonga moritars&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+[[0,1280378814.12681,0.000585],[[[3],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[2,&quot;grn2&quot;,&quot;baseball result&quot;,&quot;rakutan eggs 4 - 4 groonga moritars&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
 &gt; select --table Blog2 --match_columns title||message --query message
-[[0,1279698323.24142,0.000498],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+[[0,1280378814.33044,0.000508],[[[2],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[1,&quot;grn1&quot;,&quot;groonga test&quot;,&quot;groonga message&quot;],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
 &gt; select --table Blog2 --match_columns title --query message
-[[0,1279698323.44425,0.000455],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
+[[0,1280378814.53323,0.000486],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;message&quot;,&quot;ShortText&quot;]],[3,&quot;grn3&quot;,&quot;groonga message&quot;,&quot;none&quot;]]]]
 </pre></div>
 </div>
 </div>

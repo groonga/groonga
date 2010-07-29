@@ -1,9 +1,9 @@
 実行例 ::
 
   > select --table Video --query tags:@Variety --output_columns _key,title
-  [[0,1279698426.85136,0.000448],[[[2],[["_key","UInt32"],["title","ShortText"]],[2,"Zenigata Kinjirou"],[5,"Hex Gone!"]]]]
+  [[0,1280378926.6193,0.000444],[[[2],[["_key","UInt32"],["title","ShortText"]],[2,"Zenigata Kinjirou"],[5,"Hex Gone!"]]]]
   > select --table Video --query tags:@Sports --output_columns _key,title
-  [[0,1279698427.05344,0.00029],[[[2],[["_key","UInt32"],["title","ShortText"]],[1,"Soccer 2010"],[4,"Moero!! Ultra Baseball"]]]]
+  [[0,1280378926.82132,0.000302],[[[2],[["_key","UInt32"],["title","ShortText"]],[1,"Soccer 2010"],[4,"Moero!! Ultra Baseball"]]]]
   > select --table Video --query tags:@Animation --output_columns _key,title
-  [[0,1279698427.25525,0.000283],[[[3],[["_key","UInt32"],["title","ShortText"]],[6,"Pikonyan 1"],[7,"Draw 8 Month"],[8,"K.O."]]]]
+  [[0,1280378927.02314,0.000295],[[[3],[["_key","UInt32"],["title","ShortText"]],[6,"Pikonyan 1"],[7,"Draw 8 Month"],[8,"K.O."]]]]
   

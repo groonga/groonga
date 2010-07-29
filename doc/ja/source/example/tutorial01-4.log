@@ -1,7 +1,7 @@
 実行例 ::
 
   > column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
-  [[0,1279698398.65417,0.07322],true]
+  [[0,1280378897.82996,0.098188],true]
   > select --table Site
-  [[0,1279698398.92816,0.000128],[[[0],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]]]]]
+  [[0,1280378898.12897,0.000124],[[[0],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]]]]]
   

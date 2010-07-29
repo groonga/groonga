@@ -1,18 +1,18 @@
 実行例 ::
 
   > table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1279698332.54102,0.062936],true]
+  [[0,1280378823.87922,0.063618],true]
   > column_create --table Type --name number --type Int32
-  [[0,1279698332.80474,0.066226],true]
+  [[0,1280378824.14361,0.066276],true]
   > column_create --table Type --name float --type Float
-  [[0,1279698333.07173,0.067259],true]
+  [[0,1280378824.41063,0.0673],true]
   > column_create --table Type --name string --type ShortText
-  [[0,1279698333.33972,0.075514],true]
+  [[0,1280378824.67863,0.067213],true]
   > column_create --table Type --name time --type Time
-  [[0,1279698333.61604,0.065403],true]
+  [[0,1280378824.94662,0.05711],true]
   > load --table Type
   > [{"_key":"sample","number":12345,"float":42.195,"string":"GROONGA","time":1234567890.12}]
-  [[0,1279698333.88221,0.201644],1]
+  [[0,1280378825.20443,0.201835],1]
   > select --table Type
-  [[0,1279698334.2845,0.000161],[[[1],[["_id","UInt32"],["_key","ShortText"],["time","Time"],["string","ShortText"],["number","Int32"],["float","Float"]],[1,"sample",1234567890.0,"GROONGA",12345,42.195]]]]
+  [[0,1280378825.60691,0.000155],[[[1],[["_id","UInt32"],["_key","ShortText"],["time","Time"],["string","ShortText"],["number","Int32"],["float","Float"]],[1,"sample",1234567890.0,"GROONGA",12345,42.195]]]]
   

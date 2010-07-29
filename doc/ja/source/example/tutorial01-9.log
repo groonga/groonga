@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Site --query _id:1
-  [[0,1279698402.27486,0.000367],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+  [[0,1280378901.91744,0.000364],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
   

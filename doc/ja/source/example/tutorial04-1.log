@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Site --filter "_id <= 1" --output_columns _id,_key
-  [[0,1279698394.39018,0.000294],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"]]]]
+  [[0,1280378885.95759,0.000306],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"]]]]
   

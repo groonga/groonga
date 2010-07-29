@@ -84,7 +84,7 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>% groonga -c
 &gt; status
-[[0,1279698397.51505,2.2e-05],{&quot;alloc_count&quot;:474,&quot;starttime&quot;:1279698315,&quot;uptime&quot;:82,&quot;version&quot;:&quot;0.7.2-5-g2a77275&quot;}]
+[[0,1280378896.10941,1.8e-05],{&quot;alloc_count&quot;:463,&quot;starttime&quot;:1280378807,&quot;uptime&quot;:89,&quot;version&quot;:&quot;0.7.2-5-g2a77275&quot;}]
 &gt; ctrl-d
 %
 </pre></div>
@@ -119,10 +119,14 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
 <p>コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション=値&amp;オプション=値 …」という書式になります。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>http://[IPまたはホスト名]:[ポート番号]/d/status
- レスポンス：[[0,1270106793.0733,5.6e-05],{&quot;alloc_count&quot;:171,&quot;starttime&quot;:1270106348,&quot;uptime&quot;:445,&quot;version&quot;:&quot;0.1.8-4-g4404d63&quot;}]
+実行される処理：
+&gt; status
+[[0,1280378896.31131,1.4e-05],{&quot;alloc_count&quot;:463,&quot;starttime&quot;:1280378807,&quot;uptime&quot;:89,&quot;version&quot;:&quot;0.7.2-5-g2a77275&quot;}]
 
 http://[IPまたはホスト名]:[ポート番号]/d/select?table=Site&amp;query=title:@this
- レスポンス：[[0,1270106743.60756,0.000903],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http../example/.org/&quot;,&quot;This is test record 1!&quot;]]]]
+実行される処理：
+&gt; select --table Site --query title:@this
+[[0,1280378896.51281,6.0e-05],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;]],[1,&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;]]]]
 </pre></div>
 </div>
 </div>

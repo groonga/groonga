@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Comments --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
-  [[0,1279698382.21435,0.000677],[[[4],[["posted_by.name","ShortText"],["comment","ShortText"]],["OffGao","@daijiro @tasukuchan 登録してみましたよー！"],["グニャラくん","groongaなう #groonga"],["グニャラくん","groonga開発合宿のため羽田空港に来ました！ #groonga #travel"],["OffGao","中野ブロードウェイなうなう"]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["groonga",2],["travel",1]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["OffGao",2],["tasukuchan",2]]]]
+  [[0,1280378873.61299,0.000702],[[[4],[["posted_by.name","ShortText"],["comment","ShortText"]],["OffGao","@daijiro @tasukuchan 登録してみましたよー！"],["グニャラくん","groongaなう #groonga"],["グニャラくん","groonga開発合宿のため羽田空港に来ました！ #groonga #travel"],["OffGao","中野ブロードウェイなうなう"]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["groonga",2],["travel",1]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["OffGao",2],["tasukuchan",2]]]]
   

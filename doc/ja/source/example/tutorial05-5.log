@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs
-  [[0,1279698354.63009,0.00034],[[[18],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[5],[["_key","ShortText"],["_nsubrecs","Int32"]],["brazil",1],["korea",1],["usa",2],["china",2],["japan",3]]]]
+  [[0,1280378846.09517,0.000359],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[5],[["_key","ShortText"],["_nsubrecs","Int32"]],["brazil",1],["korea",1],["usa",2],["china",2],["japan",3]]]]
   

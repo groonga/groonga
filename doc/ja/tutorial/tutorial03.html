@@ -60,20 +60,20 @@
 <p>その他のデータ型の一覧は、 <a class="reference internal" href="../type.html"><em>データ型</em></a> を参照してください。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
-[[0,1279698332.54102,0.062936],true]
+[[0,1280378823.87922,0.063618],true]
 &gt; column_create --table Type --name number --type Int32
-[[0,1279698332.80474,0.066226],true]
+[[0,1280378824.14361,0.066276],true]
 &gt; column_create --table Type --name float --type Float
-[[0,1279698333.07173,0.067259],true]
+[[0,1280378824.41063,0.0673],true]
 &gt; column_create --table Type --name string --type ShortText
-[[0,1279698333.33972,0.075514],true]
+[[0,1280378824.67863,0.067213],true]
 &gt; column_create --table Type --name time --type Time
-[[0,1279698333.61604,0.065403],true]
+[[0,1280378824.94662,0.05711],true]
 &gt; load --table Type
 &gt; [{&quot;_key&quot;:&quot;sample&quot;,&quot;number&quot;:12345,&quot;float&quot;:42.195,&quot;string&quot;:&quot;GROONGA&quot;,&quot;time&quot;:1234567890.12}]
-[[0,1279698333.88221,0.201644],1]
+[[0,1280378825.20443,0.201835],1]
 &gt; select --table Type
-[[0,1279698334.2845,0.000161],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;time&quot;,&quot;Time&quot;],[&quot;string&quot;,&quot;ShortText&quot;],[&quot;number&quot;,&quot;Int32&quot;],[&quot;float&quot;,&quot;Float&quot;]],[1,&quot;sample&quot;,1234567890.0,&quot;GROONGA&quot;,12345,42.195]]]]
+[[0,1280378825.60691,0.000155],[[[1],[[&quot;_id&quot;,&quot;UInt32&quot;],[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;time&quot;,&quot;Time&quot;],[&quot;string&quot;,&quot;ShortText&quot;],[&quot;number&quot;,&quot;Int32&quot;],[&quot;float&quot;,&quot;Float&quot;]],[1,&quot;sample&quot;,1234567890.0,&quot;GROONGA&quot;,12345,42.195]]]]
 </pre></div>
 </div>
 </div>
@@ -85,12 +85,12 @@
 <p>他のテーブルを参照するカラムにデータを入力する場合には、参照先のテーブルの_keyカラムの値を代入する必要があります。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name link --type Site
-[[0,1279698334.48729,0.069465],true]
+[[0,1280378825.80958,0.094424],true]
 &gt; load --table Site
-&gt; [{&quot;_key&quot;:&quot;http../example/.org/&quot;,&quot;link&quot;:&quot;http../example/.net/&quot;}]
-[[0,1279698334.75754,0.200659],1]
+&gt; [{&quot;_key&quot;:&quot;http://example.org/&quot;,&quot;link&quot;:&quot;http://example.net/&quot;}]
+[[0,1280378826.10477,0.200507],1]
 &gt; select --table Site --output_columns _key,title,link._key,link.title --query title:@this
-[[0,1279698335.15886,0.00054],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;link._key&quot;,&quot;ShortText&quot;],[&quot;link.title&quot;,&quot;ShortText&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,&quot;&quot;,&quot;&quot;]]]]
+[[0,1280378826.50595,0.000522],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;link._key&quot;,&quot;ShortText&quot;],[&quot;link.title&quot;,&quot;ShortText&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,&quot;http://example.net/&quot;,&quot;test record 2.&quot;]]]]
 </pre></div>
 </div>
 <p>このように、linkカラムに他のサイトへの参照を保存することができました。また、参照先の_keyとtitleカラムの内容を表示することができました。</p>
@@ -103,12 +103,12 @@
 <p>他のテーブルを参照するベクターカラムにデータを入力する場合には、参照先のテーブルの_keyカラムの値の「配列」を代入する必要があります。</p>
 <p>実行例</p>
 <div class="highlight-none"><div class="highlight"><pre>&gt; column_create --table Site --name links --flags COLUMN_VECTOR --type Site
-[[0,1279698335.36189,0.096108],true]
+[[0,1280378826.70921,0.087662],true]
 &gt; load --table Site
-&gt; [{&quot;_key&quot;:&quot;http../example/.org/&quot;,&quot;links&quot;:[&quot;http../example/.net/&quot;,&quot;http../example/.org/&quot;,&quot;http../example/.com/&quot;]}]
-[[0,1279698335.65889,0.301132],1]
+&gt; [{&quot;_key&quot;:&quot;http://example.org/&quot;,&quot;links&quot;:[&quot;http://example.net/&quot;,&quot;http://example.org/&quot;,&quot;http://example.com/&quot;]}]
+[[0,1280378826.99769,0.200643],1]
 &gt; select --table Site --output_columns _key,title,links._key,links.title --query title:@this
-[[0,1279698336.16073,0.000547],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;links._key&quot;,&quot;ShortText&quot;],[&quot;links.title&quot;,&quot;ShortText&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,[],[]]]]]
+[[0,1280378827.39899,0.000499],[[[1],[[&quot;_key&quot;,&quot;ShortText&quot;],[&quot;title&quot;,&quot;ShortText&quot;],[&quot;links._key&quot;,&quot;ShortText&quot;],[&quot;links.title&quot;,&quot;ShortText&quot;]],[&quot;http://example.org/&quot;,&quot;This is test record 1!&quot;,[&quot;http://example.net/&quot;,&quot;http://example.org/&quot;,&quot;http://example.com/&quot;],[&quot;test record 2.&quot;,&quot;This is test record 1!&quot;,&quot;test test record three.&quot;]]]]]
 </pre></div>
 </div>
 <p>このように、複数の参照関係が保存できました。また、output_columnsによって、複数の参照先のカラム値も表示させることができました。</p>
