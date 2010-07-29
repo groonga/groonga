@@ -1,3 +1,1591 @@
+2010-07-29 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands.html, doc/ja/commands/delete.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/table_remove.html, doc/ja/commands/view_add.html,
+ doc/ja/index.html, doc/ja/reference.html, doc/ja/searchindex.js,
+ doc/ja/source/example/tutorial01-1.log,
+ doc/ja/source/example/tutorial01-10.log,
+ doc/ja/source/example/tutorial01-11.log,
+ doc/ja/source/example/tutorial01-12.log,
+ doc/ja/source/example/tutorial01-13.log,
+ doc/ja/source/example/tutorial01-14.log,
+ doc/ja/source/example/tutorial01-15.log,
+ doc/ja/source/example/tutorial01-16.log,
+ doc/ja/source/example/tutorial01-17.log,
+ doc/ja/source/example/tutorial01-2.log,
+ doc/ja/source/example/tutorial01-3.log,
+ doc/ja/source/example/tutorial01-4.log,
+ doc/ja/source/example/tutorial01-5.log,
+ doc/ja/source/example/tutorial01-6.log,
+ doc/ja/source/example/tutorial01-7.log,
+ doc/ja/source/example/tutorial01-8.log,
+ doc/ja/source/example/tutorial01-9.log,
+ doc/ja/source/example/tutorial02-1.log,
+ doc/ja/source/example/tutorial02-3.log,
+ doc/ja/source/example/tutorial03-1.log,
+ doc/ja/source/example/tutorial03-2.log,
+ doc/ja/source/example/tutorial03-3.log,
+ doc/ja/source/example/tutorial04-1.log,
+ doc/ja/source/example/tutorial04-2.log,
+ doc/ja/source/example/tutorial04-3.log,
+ doc/ja/source/example/tutorial04-4.log,
+ doc/ja/source/example/tutorial04-5.log,
+ doc/ja/source/example/tutorial04-6.log,
+ doc/ja/source/example/tutorial04-7.log,
+ doc/ja/source/example/tutorial05-1.log,
+ doc/ja/source/example/tutorial05-2.log,
+ doc/ja/source/example/tutorial05-3.log,
+ doc/ja/source/example/tutorial05-4.log,
+ doc/ja/source/example/tutorial05-5.log,
+ doc/ja/source/example/tutorial05-6.log,
+ doc/ja/source/example/tutorial06-1.log,
+ doc/ja/source/example/tutorial06-2.log,
+ doc/ja/source/example/tutorial06-3.log,
+ doc/ja/source/example/tutorial06-4.log,
+ doc/ja/source/example/tutorial06-5.log,
+ doc/ja/source/example/tutorial07-1.log,
+ doc/ja/source/example/tutorial07-2.log,
+ doc/ja/source/example/tutorial07-3.log,
+ doc/ja/source/example/tutorial07-4.log,
+ doc/ja/source/example/tutorial08-1.log,
+ doc/ja/source/example/tutorial10-1.log,
+ doc/ja/source/example/tutorial10-10.log,
+ doc/ja/source/example/tutorial10-2.log,
+ doc/ja/source/example/tutorial10-3.log,
+ doc/ja/source/example/tutorial10-4.log,
+ doc/ja/source/example/tutorial10-5.log,
+ doc/ja/source/example/tutorial10-6.log,
+ doc/ja/source/example/tutorial10-7.log,
+ doc/ja/source/example/tutorial10-8.log,
+ doc/ja/source/example/tutorial10-9.log, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial10.html: Updated
+ documents.
+
+2010-07-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/store.c: Removed putting log in grn_ja_defrag_seg() when it works
+ successfully.
+
+ * lib/store.c: Fixed a bug in grn_ja_check().
+
+2010-07-29 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ctx.h, lib/str.h, lib/util.h: add missing GRN_APIs.
+
+2010-07-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/store.c: Minor change in grn_ja_check()
+
+ * groonga.h, lib/store.c: Enabled CAS for grn_ja_put().
+
+ * lib/store.c, lib/store.h: Added grn_ja_element_info().
+
+2010-07-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/store.c, lib/store.h: Added cas argument to grn_ja_put().
+
+ * lib/pat.c: Cut off bitcmp2().
+
+ * groonga.h, lib/pat.c: Added GRN_CURSOR_SIZE_BY_BIT.
+
+2010-07-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/store.c: Output log event as GRN_LOG_WARNING when seginfo is not
+ cleared after grn_ja_defrag_seg().
+
+ * lib/store.c: Enhanced grn_ja_check().
+
+ * lib/store.c: only active records are moved in grn_ja_defrag_seg().
+
+2010-07-27 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-sort.c: use more suitable test
+ data.
+
+ * test/unit/core/test-table-patricia-trie-sort.c: add tests for
+ grn_table_sort() for geo with offset and limit.
+
+2010-07-26 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-sort.c: add a test for
+ grn_table_sort() for geo.  This test is still failed.
+
+2010-07-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/store.c: Expanded critical section in grn_ja_replace().
+
+ * lib/pat.c, lib/proc.c, lib/store.c, lib/store.h: Fixed a fatal bug in
+ grn_ja_defrag_seg().
+
+2010-07-26 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-hook.c: add missing temporary directory removing.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-table-hook.c: add a test
+ for zero index value. #398
+
+2010-07-26 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/source/tutorial/tutorial01.txt,
+ doc/ja/source/tutorial/tutorial02.txt, doc/ja/source/tutorial/tutorial03.txt,
+ doc/ja/source/tutorial/tutorial04.txt, doc/ja/source/tutorial/tutorial05.txt:
+ Fixed documentation bugs.
+
+2010-07-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/str.c: Fixed a buffer over run problem.
+
+2010-07-23 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/commands/defrag.txt: Added man page of defrag command.
+
+ * lib/proc.c: Added defrag command.
+
+ * groonga.h, lib/db.c: Added grn_obj_defrag().
+
+2010-07-23 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/pat.c: fix left and right node description.
+
+ * lib/pat.c, lib/pat.h, lib/util.c, lib/util.h,
+ test/unit/core/test-inspect.c: support pat key cursor inspection.
+
+ * lib/pat.c, test/unit/core/test-inspect.c: show nodes on patricia trie
+ inspection.
+
+ * lib/util.c: add a missing cast.
+
+ * lib/pat.c: add comments for pat_node fields.
+
+2010-07-23 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/test-hash.h, test/unit/core/test-patricia-trie.h,
+ test/unit/core/test-performance.c, test/unit/core/test-public-context.c,
+ test/unit/core/test-stress.c: do not free string from grn_test_get_tmp_dir().
+
+2010-07-23 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/lib/grn-test-utils.h: add a missing prototype declaration.
+
+2010-07-23 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/test-cast-table.c,
+ test/unit/core/test-command-cache-limit.c,
+ test/unit/core/test-command-column-list.c,
+ test/unit/core/test-command-delete.c, test/unit/core/test-command-load.c,
+ test/unit/core/test-command-select-prefix-search.c,
+ test/unit/core/test-command-select-sort.c,
+ test/unit/core/test-command-select.c, test/unit/core/test-database-create.c,
+ test/unit/core/test-database.c, test/unit/core/test-dump.c,
+ test/unit/core/test-expr-parse.c, test/unit/core/test-expr-query.c,
+ test/unit/core/test-expr-script.c, test/unit/core/test-expr.c,
+ test/unit/core/test-function-cast.c, test/unit/core/test-hash.h,
+ test/unit/core/test-inspect.c, test/unit/core/test-inverted-index.c,
+ test/unit/core/test-log.c, test/unit/core/test-patricia-trie.h,
+ test/unit/core/test-performance.c, test/unit/core/test-public-context.c,
+ test/unit/core/test-register.c, test/unit/core/test-store-ja.c,
+ test/unit/core/test-stress.c,
+ test/unit/core/test-table-patricia-trie-cursor.c,
+ test/unit/core/test-table-patricia-trie-sort.c,
+ test/unit/core/test-table-select-normalize.c,
+ test/unit/core/test-table-select.c,
+ test/unit/core/test-table-sort-key-from-str.c, test/unit/core/test-table.c,
+ test/unit/core/test-view-operations.c, test/unit/core/test-view.c,
+ test/unit/lib/grn-test-server.c, test/unit/lib/grn-test-utils.c,
+ test/unit/run-test.sh, test/unit/story/taiyaki/test-geo.c: use build_dir as
+ tmp.  #370
+
+2010-07-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c, test/unit/http/test-http-schema.rb: report nonexistent type
+ error on table_create. #342
+
+ * lib/db.c: adapt acceptable symbol characters to ECMAScript. #344
+
+2010-07-16 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-command-load.c: support null and "" as empty
+ vector.
+
+2010-07-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ctx.c, lib/ctx.h, lib/output.h, lib/proc.c,
+ resource/admin_html/index.html, test/unit/http/test-http.rb: add cache
+ statistics to status result.
+
+2010-07-22 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/com.c: fix argument type.
+
+ * src/groonga.c: changed -f option to --file option.  #381
+
+ * lib/proc.c, test/unit/core/test-dump.c: use flag names for data and column
+ dump.  #352
+
+2010-07-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-command-select.c: support loading vector for
+ integer. #395
+
+2010-07-22 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/expr.c: guard grn_obj_unlink with obj->header.type
+
+2010-07-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, lib/output.c, test/unit/core/test-command-select.c: support
+ loading vector for reference ID of no-key-table. #396
+
+2010-07-22 Ryo Onodera <onodera@clear-code.com>
+
+ * lib/ctx.c: reset various error information when error occurs on remote
+ groonga
+
+2010-07-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/pat.c, lib/pat.h, lib/util.c: inspect pat nodes.
+
+2010-07-21 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c: add missing include.
+
+2010-07-21 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/searchindex.js, doc/ja/source/example/tutorial01-1.log,
+ doc/ja/source/example/tutorial01-10.log,
+ doc/ja/source/example/tutorial01-11.log,
+ doc/ja/source/example/tutorial01-12.log,
+ doc/ja/source/example/tutorial01-13.log,
+ doc/ja/source/example/tutorial01-14.log,
+ doc/ja/source/example/tutorial01-15.log,
+ doc/ja/source/example/tutorial01-16.log,
+ doc/ja/source/example/tutorial01-17.log,
+ doc/ja/source/example/tutorial01-2.log,
+ doc/ja/source/example/tutorial01-3.log,
+ doc/ja/source/example/tutorial01-4.log,
+ doc/ja/source/example/tutorial01-5.log,
+ doc/ja/source/example/tutorial01-6.log,
+ doc/ja/source/example/tutorial01-7.log,
+ doc/ja/source/example/tutorial01-8.log,
+ doc/ja/source/example/tutorial01-9.log,
+ doc/ja/source/example/tutorial02-1.log,
+ doc/ja/source/example/tutorial03-1.log,
+ doc/ja/source/example/tutorial03-2.log,
+ doc/ja/source/example/tutorial03-3.log,
+ doc/ja/source/example/tutorial04-1.log,
+ doc/ja/source/example/tutorial04-2.log,
+ doc/ja/source/example/tutorial04-3.log,
+ doc/ja/source/example/tutorial04-4.log,
+ doc/ja/source/example/tutorial04-5.log,
+ doc/ja/source/example/tutorial04-6.log,
+ doc/ja/source/example/tutorial04-7.log,
+ doc/ja/source/example/tutorial05-1.log,
+ doc/ja/source/example/tutorial05-2.log,
+ doc/ja/source/example/tutorial05-3.log,
+ doc/ja/source/example/tutorial05-4.log,
+ doc/ja/source/example/tutorial05-5.log,
+ doc/ja/source/example/tutorial05-6.log,
+ doc/ja/source/example/tutorial06-1.log,
+ doc/ja/source/example/tutorial06-2.log,
+ doc/ja/source/example/tutorial06-3.log,
+ doc/ja/source/example/tutorial06-4.log,
+ doc/ja/source/example/tutorial06-5.log,
+ doc/ja/source/example/tutorial07-1.log,
+ doc/ja/source/example/tutorial07-2.log,
+ doc/ja/source/example/tutorial07-3.log,
+ doc/ja/source/example/tutorial07-4.log,
+ doc/ja/source/example/tutorial08-1.log,
+ doc/ja/source/example/tutorial10-1.log,
+ doc/ja/source/example/tutorial10-10.log,
+ doc/ja/source/example/tutorial10-2.log,
+ doc/ja/source/example/tutorial10-3.log,
+ doc/ja/source/example/tutorial10-4.log,
+ doc/ja/source/example/tutorial10-5.log,
+ doc/ja/source/example/tutorial10-6.log,
+ doc/ja/source/example/tutorial10-7.log,
+ doc/ja/source/example/tutorial10-8.log,
+ doc/ja/source/example/tutorial10-9.log, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial10.html: Updated
+ execution example on documents.
+
+2010-07-21 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/groonga_in.h: fix a typo.
+
+2010-07-21 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/source/tutorial/tutorial01.txt: Fixed miss-replacement of domains on
+ tutorials.
+
+2010-07-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: cut off verbose log
+
+2010-07-20 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-table-patricia-trie-sort.c:
+ add a test for sorting integer with index. (failed yet)
+
+ * test/unit/core/Makefile.am,
+ test/unit/core/test-command-select-prefix-search.c: add a tests for prefix
+ search expression. #358
+
+2010-07-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c, lib/output.h, lib/pat.c, lib/pat.h, lib/proc.c: Added
+ grn_pat_check().
+
+2010-07-16 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_status: show error message on error.
+
+ * data/munin/groonga_disk, data/munin/groonga_n_records,
+ data/munin/groonga_status: follow returned JSON format change.
+
+ * test/unit/core/test-command-select.c: add a test for select with
+ nonexistent table.
+
+2010-07-16 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * src/groonga.c: cuddle else.
+
+ * src/groonga.c: add traditional -f option.  #381
+
+2010-07-15 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/util.c, test/unit/core/test-inspect.c: support record uvector
+ inspection.
+
+ * lib/util.c, test/unit/core/test-inspect.c: support record inspection.
+
+ * test/unit/core/test-inspect.c: remove a garbage.
+
+ * lib/util.c, test/unit/core/test-inspect.c: add more details to table
+ inspectioin.
+
+ * lib/output.c: fix a memory leak.
+
+2010-07-15 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * .gitignore: ignore extra sources.
+
+2010-07-14 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: output logtrace in is_deletable().
+
+2010-07-14 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands.html, doc/ja/commands/cache_limit.html,
+ doc/ja/commands/clearlock.html, doc/ja/commands/column_create.html,
+ doc/ja/commands/column_list.html, doc/ja/commands/column_remove.html,
+ doc/ja/commands/define_selector.html, doc/ja/commands/delete.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/table_remove.html, doc/ja/commands/view_add.html,
+ doc/ja/execfile.html, doc/ja/genindex.html, doc/ja/index.html,
+ doc/ja/reference.html, doc/ja/searchindex.js, doc/ja/source/conf.py,
+ doc/ja/source/example/tutorial01-1.log,
+ doc/ja/source/example/tutorial01-10.log,
+ doc/ja/source/example/tutorial01-11.log,
+ doc/ja/source/example/tutorial01-12.log,
+ doc/ja/source/example/tutorial01-13.log,
+ doc/ja/source/example/tutorial01-14.log,
+ doc/ja/source/example/tutorial01-15.log,
+ doc/ja/source/example/tutorial01-16.log,
+ doc/ja/source/example/tutorial01-17.log,
+ doc/ja/source/example/tutorial01-2.log,
+ doc/ja/source/example/tutorial01-3.log,
+ doc/ja/source/example/tutorial01-4.log,
+ doc/ja/source/example/tutorial01-5.log,
+ doc/ja/source/example/tutorial01-6.log,
+ doc/ja/source/example/tutorial01-7.log,
+ doc/ja/source/example/tutorial01-8.log,
+ doc/ja/source/example/tutorial01-9.log,
+ doc/ja/source/example/tutorial02-1.log,
+ doc/ja/source/example/tutorial02-2.log,
+ doc/ja/source/example/tutorial03-1.log,
+ doc/ja/source/example/tutorial03-2.log,
+ doc/ja/source/example/tutorial03-3.log,
+ doc/ja/source/example/tutorial04-1.log,
+ doc/ja/source/example/tutorial04-2.log,
+ doc/ja/source/example/tutorial04-3.log,
+ doc/ja/source/example/tutorial04-4.log,
+ doc/ja/source/example/tutorial04-5.log,
+ doc/ja/source/example/tutorial04-6.log,
+ doc/ja/source/example/tutorial04-7.log,
+ doc/ja/source/example/tutorial05-1.log,
+ doc/ja/source/example/tutorial05-2.log,
+ doc/ja/source/example/tutorial05-3.log,
+ doc/ja/source/example/tutorial05-4.log,
+ doc/ja/source/example/tutorial05-5.log,
+ doc/ja/source/example/tutorial05-6.log,
+ doc/ja/source/example/tutorial06-1.log,
+ doc/ja/source/example/tutorial06-2.log,
+ doc/ja/source/example/tutorial06-3.log,
+ doc/ja/source/example/tutorial06-4.log,
+ doc/ja/source/example/tutorial06-5.log,
+ doc/ja/source/example/tutorial07-1.log,
+ doc/ja/source/example/tutorial07-2.log,
+ doc/ja/source/example/tutorial07-3.log,
+ doc/ja/source/example/tutorial07-4.log,
+ doc/ja/source/example/tutorial08-1.log,
+ doc/ja/source/example/tutorial10-1.log,
+ doc/ja/source/example/tutorial10-10.log,
+ doc/ja/source/example/tutorial10-2.log,
+ doc/ja/source/example/tutorial10-3.log,
+ doc/ja/source/example/tutorial10-4.log,
+ doc/ja/source/example/tutorial10-5.log,
+ doc/ja/source/example/tutorial10-6.log,
+ doc/ja/source/example/tutorial10-7.log,
+ doc/ja/source/example/tutorial10-8.log,
+ doc/ja/source/example/tutorial10-9.log,
+ doc/ja/source/tutorial/tutorial01.txt, doc/ja/source/tutorial/tutorial02.txt,
+ doc/ja/source/tutorial/tutorial03.txt, doc/ja/source/tutorial/tutorial04.txt,
+ doc/ja/source/tutorial/tutorial05.txt, doc/ja/source/tutorial/tutorial06.txt,
+ doc/ja/source/tutorial/tutorial07.txt, doc/ja/source/tutorial/tutorial08.txt,
+ doc/ja/source/tutorial/tutorial09.txt, doc/ja/source/tutorial/tutorial10.txt,
+ doc/ja/source/update_execution_example.py, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial10.html,
+ doc/ja/type.html: Updated execute examples.
+
+2010-07-14 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: check whether deletable or not in grn_table_delete().
+
+2010-07-14 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/gqtp/test-restore.rb: fix a typo.
+
+ * test/unit/gqtp/test-restore.rb: follow JSON format change.
+
+ * test/unit/http/test-http-schema.rb: follow JSON format change.
+
+ * test/unit/gqtp/test-load.rb: follow JSON format change.
+
+ * test/unit/gqtp/test-cache.rb: follow JSON format change.
+
+ * src/groonga.c, test/unit/command/test-option.rb: don't show config-path in
+ --show-config output.
+
+ * test/unit/command/test-config-file.rb,
+ .../unit/lib/ruby/groonga-local-gqtp-test-utils.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: follow JSON output format change.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: fix a typo.
+
+ * doc/ja/source/commands/check.txt: update check format.
+
+ * lib/db.c, lib/db.h, lib/proc.c, test/unit/core/test-command-column-list.c:
+ column_list outputs _key. #305
+
+ * src/groonga.c: log sendmsg() failed case.
+
+ * src/groonga.c: fix wrong index access.
+
+2010-07-14 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Enhanced grn_ii_buffer_check().
+
+2010-07-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c, lib/proc.c: Modified output structure of check command.
+
+2010-07-13 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/execfile.txt: update command line option document.
+
+ * src/groonga.c: allocate memory to config value.
+
+ * src/groonga.c: remove needless config_path address reset.
+
+ * src/groonga.c: --default-encoding -> --encoding.
+
+ * doc/ja/source/commands/dump.txt: add a document for dump.
+
+ * doc/ja/source/commands/select.txt: update select error handling.
+
+ * doc/ja/source/commands/check.txt: add a document for check command.
+
+ * test/unit/command/test-option.rb: --pid-file -> --pid-path.
+
+ * src/groonga.c: revert select XML format change.
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/http/test-http-select-drilldown.rb: use old XML format.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: follow the recent return
+ value form change.
+
+2010-07-12 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c: 2009 -> 2009-2010.
+
+2010-07-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c: Don't output error for empty input.
+
+2010-07-12 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Force proc_dump() to use GRN_CONTENT_NONE as output_type.
+
+ * test/unit/core/test-command-cache-limit.c,
+ test/unit/core/test-command-load.c,
+ test/unit/core/test-command-select-sort.c: Fixed some tests following new
+ command behavior.
+
+ * lib/ctx.c, lib/proc.c, src/groonga.c: Returns error when invalid command
+ name is assinged.
+
+2010-07-12 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * resource/admin_html/index.html: Added pager on admin html with advanced
+ mode.
+
+2010-07-12 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Stop wrapping result value with an array.
+
+ * lib/ctx.c, src/groonga.c: call grn_timeval_now() in grn_ctx_send() even
+ when acts as client.
+
+ * lib/ctx.c, src/groonga.c: call print_return_code() from recvput().
+
+ * lib/ctx.c: clear curr_expr in grn_ctx_impl_init().
+
+ * lib/ctx.c: copy rc and output_type from grn_com_header to grn_ctx in
+ grn_ctx_recv().
+
+ * lib/com.c: return output_type and rc value in grn_com_header.
+
+ * lib/output.c, src/groonga.c: output return code in stand alone mode.
+
+ * src/groonga.c: output "END" each end of the reply when tsv assigned as
+ output type.
+
+2010-07-10 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_disk: use 1024 for SI units.
+
+ * data/munin/groonga_disk: fix key name.
+
+ * data/munin/groonga_disk: use area and stack.
+
+ * data/munin/groonga_disk: make total value optional.
+
+ * data/munin/groonga_disk: fix size unit.
+
+2010-07-09 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_disk: size -> usage.
+
+ * data/munin/Makefile.am: add missing Makefile entry.
+
+ * data/munin/groonga_disk: add a Munin plugin for groonga database disk
+ usage.
+
+2010-07-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/proc.c, lib/util.c: Stopped raising error in
+ grn_normalize_offset_and_limit().
+
+2010-07-09 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c: add --cache-limit option.
+
+2010-07-08 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c: --pid-file -> --pid-path.
+
+2010-07-09 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, src/Makefile.am, src/groonga.c: use libedit with multibyte
+ support.
+
+ * src/grntest.c: handle both no select results are the same result.
+
+2010-07-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/expr.c, lib/proc.c: output number of results to query.log
+
+ * lib/ii.c: Enhanced grn_ii_buffer_check().
+
+ * lib/ii.c, lib/proc.c: Added grn_ii_buffer_check().
+
+2010-07-08 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/util.c, test/unit/core/test-inspect.c: add inspector for type.
+
+ * lib/util.c: use return instead of break.
+
+ * lib/util.c: share common code.
+
+ * lib/util.c, test/unit/core/test-inspect.c: add inspector for fix size
+ column.
+
+ * lib/util.c, test/unit/core/test-inspect.c: add inspector for var_size
+ column.
+
+ * test/unit/core/test-command-column-list.c,
+ test/unit/core/test-command-select-sort.c: remove new lines from JSON output.
+
+ * test/unit/story/taiyaki/test-geo.c: remove new lines from JSON output.
+
+2010-07-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Enhanced proc_check().
+
+2010-07-07 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/util.c, test/unit/core/test-inspect.c: add ii inspector.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add tests for near cursor
+ on geo point but they're failed for now.  Is it not implemented yet? Or wrong
+ usage?
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add tests for common
+ prefix search cursor but they're disabled for now.  Is it right usage?
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add tests for near cursor
+ on UInt32. [#383]
+
+ * test/unit/core/Makefile.am,
+ test/unit/core/test-table-patricia-trie-cursor.c: add tests for
+ GRN_CURSOR_PREFIX on ShortText. [#383]
+
+2010-07-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c, lib/ii.h, lib/proc.c: Added proc_check().
+
+2010-07-06 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/output.c: Modified comment about grn_table_cursor_open().
+ stop putting return code when JSON assigned as output_type.
+
+2010-07-06 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-cast-basic.c: support geo point in degree.
+
+ * lib/db.c, test/unit/core/test-cast-basic.c: don't restrict geo point
+ separator character.
+
+ * test/unit/core/test-cast-basic.c: fix test data.
+
+ * lib/db.c, test/unit/core/test-cast-basic.c: add a input error check for geo
+ point.  A separator between latitude and longitude must be 'x':
+ "LATITUDExLONGITUDE" form is valid.
+
+ * lib/db.c: grn_obj_reinit() supports geo point data types:  geo point data
+ types: GRN_DB_TOKYO_GEO_POINT and GRN_DB_WGS84_GEO_POINT.
+
+ * groonga.h: fix name collision.
+
+ * test/unit/core/test-command-column-list.c: add new lines to JSON result.
+
+ * lib/db.c: fix a memory leak.
+
+ * test/unit/http/test-http-crud.rb: fix wrong expected value.
+
+ * test/unit/command/test-config-file.rb, test/unit/gqtp/test-cache.rb,
+ test/unit/gqtp/test-load.rb, test/unit/gqtp/test-restore.rb: follow a change
+ that shutdown and quit returns [true].
+
+2010-07-05 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-select-drilldown.rb: define_selector returns
+ [true].
+
+ * lib/proc.c: quit and shutdown commands return [true] or [false].
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/http/test-http-select-drilldown.rb: RESULTPAGE -> RESULT. Is it OK?
+
+ * test/unit/gqtp/test-restore.rb: follow HTML return value change.
+
+ * test/unit/gqtp/test-load.rb: follow HTML output change in gqtp.
+
+ * test/unit/gqtp/test-cache.rb: follow HTML output change in gqtp.
+
+ * test/unit/lib/ruby/groonga-http-test-utils.rb: follow HTML return value
+ change.
+
+ * test/unit/run-test.sh: increase max diff size.
+
+ * test/unit/core/test-command-select.c: add a test for
+ TokenBigramSplitSymbol.
+
+ * test/unit/core/test-command-select.c: add a test for nonexistent ID select.
+
+ * lib/str.h: export grn_str_len() and grn_text_unesc_tok() as API.
+
+ * lib/db.h: export grn_obj_cast() and grn_proc_alloc() as API.
+
+ * lib/com.c: check EAI_SYSTEM availability.
+
+ * lib/groonga_in.h: include unistd.h on no-WIN32 environment.
+
+ * lib/groonga_in.h: use Windows XP API in MinGW for getaddrinfo().
+
+ * lib/module.h: use HINSTANCE instead of MODULE for MinGW.
+
+ * lib/Makefile.am: don't include needless lib/ path.
+
+ * configure.ac: add --disable-benchmark option.
+
+ * test/unit/core/test-command-select-sort.c: add tests for sorting by _score
+ without query.
+
+ * lib/db.c: fix a memory leak.
+
+2010-07-02 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/core/test-command-cache-limit.c,
+ test/unit/core/test-command-load.c: Updated test for proc. which returns a
+ bare number.
+
+2010-07-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Fixed a bug in buffer_new() wrong key was used.
+
+2010-07-02 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands.html, doc/ja/commands/add.html,
+ doc/ja/commands/cache_limit.html, doc/ja/commands/clearlock.html,
+ doc/ja/commands/column_create.html, doc/ja/commands/column_list.html,
+ doc/ja/commands/column_remove.html, doc/ja/commands/define_selector.html,
+ doc/ja/commands/delete.html, doc/ja/commands/get.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/set.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/table_remove.html,
+ doc/ja/commands/view_add.html, doc/ja/index.html, doc/ja/reference.html,
+ doc/ja/searchindex.js, doc/ja/source/commands/cache_limit.txt,
+ doc/ja/source/commands/clearlock.txt,
+ doc/ja/source/commands/column_create.txt,
+ doc/ja/source/commands/column_list.txt,
+ doc/ja/source/commands/column_remove.txt,
+ doc/ja/source/commands/define_selector.txt,
+ doc/ja/source/commands/delete.txt, doc/ja/source/commands/load.txt,
+ doc/ja/source/commands/log_level.txt, doc/ja/source/commands/log_put.txt,
+ doc/ja/source/commands/log_reopen.txt, doc/ja/source/commands/quit.txt,
+ doc/ja/source/commands/select.txt, doc/ja/source/commands/shutdown.txt,
+ doc/ja/source/commands/status.txt, doc/ja/source/commands/table_create.txt,
+ doc/ja/source/commands/table_list.txt,
+ doc/ja/source/commands/table_remove.txt, doc/ja/source/commands/view_add.txt,
+ doc/ja/type.html: Proc. documents catched up with current implementation.
+
+ * lib/proc.c: Changed output of proc_load from bare number to array.
+
+ * doc/ja/source/commands/add.txt, doc/ja/source/commands/get.txt,
+ doc/ja/source/commands/set.txt,
+ doc/ja/source/commands_not_implemented/add.txt,
+ doc/ja/source/commands_not_implemented/get.txt,
+ doc/ja/source/commands_not_implemented/set.txt: Removed documents for
+ not/half implemented procs.
+
+2010-07-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Added cut off logic to grn_geo_search().
+
+ * lib/expr.c, lib/proc.c: Fixed wrong distance calculation in
+ grn_geo_search().
+
+ * lib/output.c: type_of_unmatched_column
+
+2010-07-02 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/proc.c: Fixed output of cache_limit proc.
+
+2010-06-25 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * src/groonga.c, test/unit/command/test-option.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: --config-path option
+
+2010-07-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/expr.c, lib/proc.c: Fixed a bug in grn_geo_search().
+
+2010-07-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-delete.c: add tests for delete command.
+
+ * test/unit/core/Makefile.am: add tests for delete command.
+
+2010-07-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: grn_table_sort_geo() supports search result table.
+
+2010-07-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-select.c: use symbol instead of number for
+ flags.
+
+ * test/unit/core/test-register.c: remove needless backslash escapes.
+
+ * test/unit/core/test-command-select.c: add a test for text vector search.
+
+ * lib/proc.c: remove too much ';'.
+
+2010-07-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Enhanced sort logic in grn_table_sort_geo().
+
+ * lib/db.c: Fixed bugs in grn_table_sort_key_from_str_geo().
+
+ * lib/db.c: Calculate distance in grn_table_sort_geo().
+
+ * lib/db.c: Added grn_table_sort_geo().
+
+ * lib/db.c: Added grn_table_sort_key_from_str_geo().
+
+2010-07-01 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/test-command-select.c: test for #376
+
+2010-07-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.h: Added GRN_TABLE_SORT_GEO.
+
+2010-07-01 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/proc.c: Fixed some response of procs (bare true/false).  bare literals
+ are not allowed in JSON spec.
+
+2010-07-01 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c: fix inverted condition.
+
+ * test/unit/core/test-command-load.c: add tests for null value loading.
+
+ * lib/db.c: add broken reference value check into grn_table_group().
+
+2010-07-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/expr.c, lib/proc.c: Added grn_geo_search().
+
+2010-07-01 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-select-drilldown.rb: use more meaningful name.
+
+ * test/unit/story/taiyaki/test-geo.c: add --drilldown_sortby to cause SEGV.
+
+ * test/unit/story/taiyaki/test-geo.c: remove needless drilldowns.
+
+ * test/unit/fixtures/story/taiyaki/areas.grn,
+ test/unit/fixtures/story/taiyaki/categories.grn,
+ test/unit/fixtures/story/taiyaki/ddl.grn,
+ test/unit/fixtures/story/taiyaki/shops.grn,
+ test/unit/story/taiyaki/test-geo.c: add a test for broken reference
+ drilldown.
+
+2010-06-30 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h: Added parameter descriptions of grn_table_cursor_open.
+
+2010-06-30 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/output.c, lib/str.c, test/unit/core/test-command-select.c: support
+ vector value in select. 325
+
+2010-06-30 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/output.h, lib/proc.c: Make some procs return true/false depends on
+ ctx->rc.
+
+2010-06-30 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/db.c, lib/pat.c: Added GRN_OBJ_KEY_GEO_POINT.
+
+2010-06-30 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: fix memory leaks.
+
+ * src/grntest.c: close socket on receive HTTP response.
+
+2010-06-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Added set_cursor_near() and set_cursor_common_prefix().
+
+2010-06-29 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: revert '--protocol http' option.
+
+ * src/grntest.c: support HTTP but load isn't worked yet.
+
+2010-06-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: set_cursor_prefix() supports GRN_CURSOR_DESCENDING.
+
+ * lib/pat.c: Added set_cursor_prefix().
+
+2010-06-29 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/util/test-string.c: add tests for grn_text_urlenc.
+
+2010-06-28 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/output.c: fixed argument type.
+
+2010-06-28 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands/select.html, doc/ja/developer/document.html,
+ doc/ja/searchindex.js, doc/ja/source/commands/select.txt: Added more detailed
+ description for parameters on proc_select.
+
+ * doc/ja/source/developer/document.txt: Fixed document to install
+ Sphinx(#368).
+
+2010-06-28 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-select-sort.c: add more sortby test.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-command-select-sort.c: add
+ a test for two sortby columns.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-table-sort-key-from-str.c,
+ test/unit/core/test-table-sort-key.c: test-table-sort-key ->
+ test-table-sort-key-from-str.
+
+2010-06-26 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/command/test-option.rb: removed a not-yet-supported feature
+
+2010-06-25 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/str.c, test/unit/command/test-option.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb: check argv boundary
+
+2010-06-25 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: follow error message cange.
+
+2010-06-25 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * src/groonga.c: fix writing out of bounds
+
+2010-06-25 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-select-basic.rb: follow XML format change.
+
+ * test/unit/http/test-http-select-basic.rb: follow XML format change.
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: follow XML format change.
+
+2010-06-25 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/proc.c: Fixed non-existent var reference in proc_delete.
+
+2010-06-25 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, src/groonga.c: fix error message on grn_db_open(). #97
+
+ * lib/db.c, test/unit/http/test-http-schema.rb: make key_type for
+ TABLE_NO_KEY error. #341
+
+ * resource/admin_html/index.html: show start time in human readable format.
+
+ * resource/admin_html/index.html: show uptime in human readable format.
+
+ * test/unit/core/test-command-load.c: add a test for integer key load. #362
+
+2010-06-25 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/command/test-option-help.rb,
+ test/unit/command/test-option-pid-file.rb, test/unit/command/test-option.rb:
+ merged test scripts for command line options.
+
+2010-06-25 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-command-cache-limit.c,
+ test/unit/lib/grn-assertions.c, test/unit/lib/grn-assertions.h,
+ test/unit/lib/grn-test-utils.c: check invalid cache_limit's --max value.
+
+2010-06-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/expr.c: Fixed freeing null pointer.
+
+ * lib/db.c: Fixed a bug in grn_load() cause insert fail when key is not text.
+
+2010-06-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: return "" when GRN_ID_NIL is assigned as id for
+ grn_obj_get_value().
+
+ * lib/db.c, test/unit/core/test-command-load.c: Fixed wrong bool value cast
+ in json_read().
+
+2010-06-24 Yutaro Shimamura <yu@irx.jp>
+
+ * src/groonga.c: groonga.c: do not use libedit if batchmode.
+
+2010-06-24 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/command/Makefile.am, test/unit/command/test-config-file.rb,
+ test/unit/command/test-option-help.rb,
+ test/unit/command/test-option-pid-file.rb, test/unit/gqtp/Makefile.am,
+ test/unit/gqtp/test-config-file.rb, test/unit/gqtp/test-option-help.rb,
+ test/unit/gqtp/test-option-pid-file.rb: moved tests for groonga command.
+
+2010-06-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Enabled CAST_IN_JSON_READ
+
+2010-06-24 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/util/test-string.c: fix a typo.
+
+2010-06-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/output.c, test/unit/util/test-string.c: Added
+ grn_output_void().
+
+2010-06-24 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-command-cache-limit.c: add
+ a test for cache_limit command.
+
+ * lib/proc.c: follow typo fixing.
+
+ * lib/ctx.c, lib/ctx.h: fix typos.
+
+2010-06-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed wrong indent.
+
+2010-06-24 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-command-load.c,
+ test/unit/core/test-load.c: test-load.c -> test-command-load.c.
+
+2010-06-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c: Fixed a bug in grn_ctx_alloc() cause segv.
+
+ * src/groonga.c: Output header info in tsv format when requested in
+ h_server()
+
+2010-06-23 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_cpu_time: fix a label.
+
+ * configure.ac, modules/tokenizers/mecab.c: check mecab_dictionary_info_t
+ availability for old MeCab. #355
+
+2010-06-23 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * src/groonga.c: Fixed missing fgets error handling.
+
+2010-06-23 Yutaro Shimamura <yu@irx.jp>
+
+ * configure.ac, src/groonga.c: groonga.c using libedit.
+
+2010-06-23 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/Makefile.am, data/munin/groonga_query_performance:
+
+2010-06-23 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/output.h: Export grn_output_obj. grn_text_otoj will be
+ obsolete.
+
+ * groonga.h, lib/db.c, lib/output.c: Added GRN_CONTENT_MSGPACK.
+
+ * lib/output.c, lib/proc.c, lib/str.c: Assign nelements argument for
+ grn_output_array_open() properly as possible.
+
+2010-06-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/ql.h: Preparing to support tsv/xml on grn_load().
+
+ * lib/output.c: output return code in put_delimiter().
+
+ * lib/db.c, lib/db.h, lib/output.c, lib/proc.c, src/groonga.c: XML supported
+ in grn_output_obj().
+
+2010-06-22 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-crud.rb: add a test for delete HTTP command.
+
+ * test/unit/http/test-http-select-basic.rb: work HTTP XML response test
+ again.
+
+ * lib/proc.c, test/unit/http/test-invalid-http.rb: work long path name HTTP
+ request test.
+
+2010-06-22 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/test-command-column-list.c: test for index column.
+
+2010-06-22 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-select.c: add a test for output_columns with
+ spaces.
+
+2010-06-22 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/test-command-column-list.c: test for #305.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-command-select.c: test for
+ #268.
+
+2010-06-21 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/developer/document.html, doc/ja/searchindex.js,
+ doc/ja/source/developer/document.txt: Added easy_install option for sphinx.
+
+ * resource/admin_html/index.html: Added data load function on html admin
+ tool.
+
+2010-06-21 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c: fix a typo.
+
+ * groonga.h: fix a typo.
+
+2010-06-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/output.c, lib/output.h, lib/proc.c, lib/str.h: Added outbuf and
+ output_type to grn_output_* functions.
+
+2010-06-21 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_n_records: add missing error message output.
+
+ * data/munin/groonga_n_records: report message on error.
+
+ * test/unit/core/test-command-column-list.c: remove a garbage line.
+
+2010-06-20 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Got rid of all "switch (content_type)" in proc.c
+
+ * groonga.h: Removed grn_select() from groonga.h
+
+ * test/unit/core/test-command-column-list.c: Follow new behavior on
+ test_columns().
+
+2010-06-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/output.c: output key/value pair in each line for level one map when tsv
+ assigned.
+
+ * lib/output.c: output return code in put_delimiter()
+
+ * doc/ja/commands/clearlock.html: Added clearlock.html
+
+ * lib/proc.c: proc_column_list() uses grn_output_* functions.
+
+ * lib/ctx.c, lib/output.c, lib/output.h, lib/proc.c, lib/ql.h: Use
+ ctx->impl->levels instead of ctx->impl->opened.
+
+2010-06-18 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/characteristic.html, doc/ja/commands.html, doc/ja/commands/add.html,
+ doc/ja/commands/cache_limit.html, doc/ja/commands/column_create.html,
+ doc/ja/commands/column_list.html, doc/ja/commands/column_remove.html,
+ doc/ja/commands/define_selector.html, doc/ja/commands/delete.html,
+ doc/ja/commands/get.html, doc/ja/commands/load.html,
+ doc/ja/commands/log_level.html, doc/ja/commands/log_put.html,
+ doc/ja/commands/log_reopen.html, doc/ja/commands/quit.html,
+ doc/ja/commands/select.html, doc/ja/commands/set.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/table_remove.html, doc/ja/commands/view_add.html,
+ doc/ja/developer.html, doc/ja/developer/com.html,
+ doc/ja/developer/document.html, doc/ja/developer/test.html,
+ doc/ja/execfile.html, doc/ja/expr.html, doc/ja/functions.html,
+ doc/ja/functions/geo_distance.html, doc/ja/functions/geo_in_circle.html,
+ doc/ja/functions/geo_in_rectangle.html, doc/ja/functions/now.html,
+ doc/ja/functions/rand.html, doc/ja/genindex.html, doc/ja/grnslap.html,
+ doc/ja/grntest.html, doc/ja/http.html, doc/ja/index.html,
+ doc/ja/process.html, doc/ja/pseudo_column.html, doc/ja/reference.html,
+ doc/ja/search.html, doc/ja/searchindex.js, doc/ja/tutorial.html,
+ doc/ja/tutorial/tutorial01.html, doc/ja/tutorial/tutorial02.html,
+ doc/ja/tutorial/tutorial03.html, doc/ja/tutorial/tutorial04.html,
+ doc/ja/tutorial/tutorial05.html, doc/ja/tutorial/tutorial06.html,
+ doc/ja/tutorial/tutorial07.html, doc/ja/tutorial/tutorial08.html,
+ doc/ja/tutorial/tutorial09.html, doc/ja/tutorial/tutorial10.html,
+ doc/ja/type.html: Updated html documents.
+
+ * doc/ja/source/commands/clearlock.txt: Fixed miss formatting on
+ commands/clearlock.txt.
+
+ * doc/ja/source/conf.py: Document building now requires sphinx 1.0b2.
+
+2010-06-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/_static/basic.css, doc/ja/_static/default.css,
+ doc/ja/_static/doctools.js, doc/ja/_static/jquery.js,
+ doc/ja/_static/searchtools.js, doc/ja/characteristic.html,
+ doc/ja/commands.html, doc/ja/commands/add.html,
+ doc/ja/commands/cache_limit.html, doc/ja/commands/column_create.html,
+ doc/ja/commands/column_list.html, doc/ja/commands/column_remove.html,
+ doc/ja/commands/define_selector.html, doc/ja/commands/delete.html,
+ doc/ja/commands/get.html, doc/ja/commands/load.html,
+ doc/ja/commands/log_level.html, doc/ja/commands/log_put.html,
+ doc/ja/commands/log_reopen.html, doc/ja/commands/quit.html,
+ doc/ja/commands/select.html, doc/ja/commands/set.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/table_remove.html, doc/ja/commands/view_add.html,
+ doc/ja/developer.html, doc/ja/developer/com.html,
+ doc/ja/developer/document.html, doc/ja/developer/test.html,
+ doc/ja/execfile.html, doc/ja/expr.html, doc/ja/functions.html,
+ doc/ja/functions/geo_distance.html, doc/ja/functions/geo_in_circle.html,
+ doc/ja/functions/geo_in_rectangle.html, doc/ja/functions/now.html,
+ doc/ja/functions/rand.html, doc/ja/genindex.html, doc/ja/grnslap.html,
+ doc/ja/grntest.html, doc/ja/http.html, doc/ja/index.html,
+ doc/ja/process.html, doc/ja/pseudo_column.html, doc/ja/reference.html,
+ doc/ja/search.html, doc/ja/searchindex.js, doc/ja/tutorial.html,
+ doc/ja/tutorial/tutorial01.html, doc/ja/tutorial/tutorial02.html,
+ doc/ja/tutorial/tutorial03.html, doc/ja/tutorial/tutorial04.html,
+ doc/ja/tutorial/tutorial05.html, doc/ja/tutorial/tutorial06.html,
+ doc/ja/tutorial/tutorial07.html, doc/ja/tutorial/tutorial08.html,
+ doc/ja/tutorial/tutorial09.html, doc/ja/tutorial/tutorial10.html,
+ doc/ja/type.html, lib/ctx.c, lib/output.c, lib/output.h, lib/proc.c: Updated
+ html documents.
+
+2010-06-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/Makefile.am, lib/ctx.c, lib/expr.c, lib/output.c,
+ lib/output.h, lib/proc.c, lib/ql.h, lib/str.h: Added output.c and output.h
+
+2010-06-16 Yutaro Shimamura <yu@irx.jp>
+
+ * doc/ja/source/commands/clearlock.txt, doc/ja/source/execfile.txt: document
+ clearlock added.
+
+2010-06-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/module.c: Removed a space between functiona name and open parenthesis.
+
+ * lib/ctx.c: Added initialization of sa_flags field in sigaction structure.
+
+ * lib/expr.c, test/unit/core/test-expr-parse.c: grn_expr_inspect() follows
+ hash based vars in grn_expr
+
+ * lib/expr.c: Fixed missing grn_expr_clear_vars in grn_expr_close()
+
+2010-06-15 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/expr.c: Stopped accessing e->vars from scan_info_build().
+
+ * lib/expr.c: Temporary expr use only hash table for variables.
+
+ * lib/expr.c: grn_expr_add_var() interprets the name of variable as '$nvars'
+ when name is void
+
+2010-06-15 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c: fix indent.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-command-column-list.c: add
+ a test for column_list.
+
+2010-06-15 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/functions/cast.c: Use GRN_PROC_ALLOC instead of grn_expr_alloc from
+ cast.c
+
+ * lib/db.h, lib/expr.c, lib/proc.c: Reduced grn_proc_get_info call from
+ proc.c moreover.
+
+ * lib/proc.c: Fixed wrong number of variables in proc.c
+
+ * lib/proc.c: Removed grn_proc_get_info() call from many procs.
+
+2010-06-14 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Got rid of output_type variable from all procs.
+
+ * lib/ctx.c, lib/db.h: FIxed missing prototype declaration of
+ grn_expr_get_or_add_var()
+
+ * lib/ctx.c, lib/db.h, lib/expr.c, lib/proc.c, lib/ql.h: Added
+ grn_proc_get_var().
+
+2010-06-14 Kouhei Sutou <kou@clear-code.com>
+
+ * data/munin/groonga_n_records, data/munin/groonga_status: follow the recent
+ groonga output format changes.
+
+ * test/unit/core/test-load.c: use data driven test.
+
+ * test/unit/core/test-load.c: really add a test for Bug #123.  The previous
+ thest is for Bug #304.
+
+ * test/unit/core/test-load.c: add a test for Bug #123.
+
+ * test/unit/lib/grn-test-utils.c: don't require status result on gqtp.
+
+2010-06-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/com.c: Don't report error when GRN_INTERRUPTED_FUNCTION_CALL occured in
+ grn_com_event_poll().
+
+ * lib/proc.c: Fixed a memory leak bug.
+
+ * lib/ctx.c, lib/ql.h, src/groonga.c: Stop calling grn_expr_exec() from
+ groonga.c
+
+2010-06-11 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: remove duplicated test.
+
+ * test/unit/gqtp/test-config-file.rb: fix test case name.
+
+ * test/unit/http/test-http.rb: add EOFError for shutdown check too.
+
+2010-06-11 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * configure.ac, lib/str.c, src/groonga.c, test/unit/gqtp/Makefile.am,
+ test/unit/gqtp/test-config-file.rb: load default values of command line
+ options from the config file.  #66
+
+ * src/groonga.c, test/unit/gqtp/Makefile.am,
+ test/unit/gqtp/test-option-help.rb: emits usage to stdout and exits
+ gracefully.  #340
+
+ * test/unit/util/test-string.c: fixed typo.
+
+2010-06-11 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/io.c: show more log messages on lock.
+
+ * test/unit/util/test-string.c: fix a memory leak.
+
+2010-06-10 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * test/unit/core/test-expr.c: Avoid segv in test-expr.
+
+ * lib/ctx.c, lib/proc.c, src/groonga.c: Stopped passing outbuf as the
+ argument for command procedures.
+
+ * groonga.h, lib/ctx.c, lib/db.c, lib/expr.c, src/groonga.c,
+ test/unit/core/test-expr-parse.c: grn_expr_exec() returns the result of
+ expression.
+
+ * lib/proc.c: Fixed a bug cause memory leak.
+
+2010-06-10 Kouhei Sutou <kou@clear-code.com>
+
+ * modules/tokenizers/mecab.c: report encoding difference between groonga and
+ MeCab. #85
+
+2010-06-10 t2001 <t2001@gol.com>
+
+ * src/grntest.c: temporary patch to catch up change of groonga commands.
+
+2010-06-10 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: show also original keys string. #333
+
+ * lib/db.c: keep original string pointer.
+
+2010-06-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * src/groonga.c: return code and error info would be output in http mode.
+
+ * lib/proc.c, src/groonga.c: Moved print_return_code() from proc.c to
+ groonga.c. it will be supported only in http.
+
+2010-06-09 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-table-sort-key.c: tests for
+ #330.
+
+2010-06-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Allow series of delimiters in grn_table_sort_key_from_str()
+
+2010-06-09 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: add a missing space.
+
+ * lib/db.c: show more info for invalid sort key.
+
+2010-06-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * src/groonga.c: Don't call output() from do_htreq().
+
+ * src/groonga.c: Swapped the role of body and ctx->outbuf.
+
+2010-06-08 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-inspect.c: remove needless test data.
+
+ * test/unit/core/test-inspect.c: add tests for inspecting _score and
+ _nsubrecs.
+
+ * test/unit/core/test-inspect.c: add tests for _value accessor.
+
+ * test/unit/core/test-inspect.c: tab -> spaces.
+
+2010-06-08 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * groonga.h, lib/ctx.c, src/groonga.c: handle SIGTERM as well as SIGINT.
+
+ * src/groonga.c, test/unit/gqtp/test-option-pid-file.rb: remove pid file
+ after the daemon server finished, since atexit handler won't be called when
+ exiting by signal.
+
+2010-06-08 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/gqtp/test-option-pid-file.rb, test/unit/run-test.rb: use SIGINT
+ instead of 0.
+
+2010-06-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed a bug cause segv when invalid column is assigned as output.
+
+2010-06-08 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/test-inspect.c: un-abbreviated local variable name.
+
+ * test/unit/core/test-inspect.c: inversed functions order.
+
+ * test/unit/core/test-inspect.c: DDT.
+
+ * src/groonga.c: remove pid file at exit.
+
+2010-06-08 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/gqtp/Makefile.am: add a missing test file.
+
+ * src/groonga.c: add missing braces.
+
+2010-06-08 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/db.c: style fix.
+
+2010-06-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Renamed PKEY_NAME/PID_NAME to KEY_NAME/ID_NAME.
+
+2010-06-08 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/store.c, test/unit/core/test-store-ja.c: get rid of SEGV on loading
+ empty vector.  #320
+
+ * lib/db.c, test/unit/core/test-log.c: fix for duplicated key in hash.
+
+2010-06-08 mori daijiro <mori@fracture.(none)>
+
+ * lib/db.c, lib/expr.c: Fixed a bug which cause segv when invalid sort key is
+ assigned.
+
+2010-06-08 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/db.c, test/unit/core/test-log.c: check key columns.  #310
+
+2010-06-07 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * src/groonga.c, test/unit/gqtp/test-option-pid-file.rb: added --pid-file
+ option.  #283
+
+ * src/groonga.c: needs fcntl.h.
+
+ * src/groonga.c: close stdios, when becoming daemon.  #321
+
+ * test/unit/core/test-inspect.c: fixed prototype.
+
+ * test/unit/core/test-inspect.c: reduced redundant get_object() calls.
+
+ * test/unit/core/test-inspect.c: more tests.
+
+ * lib/util.c: support for GRN_ACCESSOR_VIEW.
+
+2010-06-04 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/util.c, test/unit/core/test-inspect.c: grn_accessor_inspect() for
+ column names.
+
+ * test/unit/core/test-inspect.c: added missing prototype.
+
+2010-06-03 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ql.h: Added output_type to grn_ctx_impl.
+
+ * lib/ii.c: Modified the condition for splitting buffer to avoid meanless
+ buffer_split() call.
+
+2010-06-03 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/str.c, test/unit/core/test-inspect.c: grn_text_otoj() supports
+ GRN_PVECTOR.
+
+ * test/unit/core/test-inspect.c: add tests for vector inspection.
+
+2010-06-03 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * test/unit/core/Makefile.am: forgotten to add.
+
+2010-06-03 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-inverted-index.c: use cut_take_printf().
+
+ * test/unit/core/test-patricia-trie.c: use equal_substring() instead of
+ not_null() and strstr().
+
+ * test/unit/core/test-inverted-index.c: fix broken tests.
+
+ * test/unit/core/test-column.c, test/unit/lib/grn-test-utils.c,
+ test/unit/lib/grn-test-utils.h: own log message by logger.
+
+2010-06-03 Nobuyoshi Nakada <nobu@ruby-lang.org>
+
+ * lib/db.c, test/unit/core/test-log.c: log invalid char which is ignored.
+
+ * test/unit/lib/grn-test-utils.c: append logs in-order.
+
+2010-06-02 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac, doc/ja/characteristic.html, doc/ja/commands.html,
+ doc/ja/commands/add.html, doc/ja/commands/cache_limit.html,
+ doc/ja/commands/column_create.html, doc/ja/commands/column_list.html,
+ doc/ja/commands/column_remove.html, doc/ja/commands/define_selector.html,
+ doc/ja/commands/delete.html, doc/ja/commands/get.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/set.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/table_remove.html,
+ doc/ja/commands/view_add.html, doc/ja/developer.html,
+ doc/ja/developer/com.html, doc/ja/developer/document.html,
+ doc/ja/developer/test.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/functions/geo_distance.html,
+ doc/ja/functions/geo_in_circle.html, doc/ja/functions/geo_in_rectangle.html,
+ doc/ja/functions/now.html, doc/ja/functions/rand.html, doc/ja/genindex.html,
+ doc/ja/grnslap.html, doc/ja/grntest.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/process.html, doc/ja/pseudo_column.html,
+ doc/ja/reference.html, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/tutorial.html, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial09.html,
+ doc/ja/tutorial/tutorial10.html, doc/ja/type.html: release 0.7.3
+
 2010-06-02 Daijiro MORI <daijiro.mori@gmail.com>
 
  * lib/ii.c: Fixed again a bug in chunk_merge.
