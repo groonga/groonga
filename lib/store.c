@@ -423,6 +423,10 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
     aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
     *(uint32_t *)(addr + pos - sizeof(grn_id)) = DELETED|aligned_size;
+    if (SEGMENTS_AT(ja, seg) < (aligned_size + sizeof(grn_id)) + SEG_SEQ) {
+      GRN_LOG(ctx, GRN_WARN, "inconsistent ja entry detected (%d > %d)",
+              element_size, SEGMENTS_AT(ja, seg) - SEG_SEQ);
+    }
     SEGMENTS_AT(ja, seg) -= (aligned_size + sizeof(grn_id));
     if (SEGMENTS_AT(ja, seg) == SEG_SEQ) {
       /* reuse the segment */
@@ -1076,9 +1080,10 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
       uint64_t cas;
       uint32_t pos;
       if (grn_ja_element_info(ctx, ja, id, &cas, &pos, &element_size)) { break; }
-      if (v != ve - JA_SEGMENT_SIZE + pos) {
+      if (v + sizeof(uint32_t) != ve - JA_SEGMENT_SIZE + pos) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
-                "dseges[%d] = pos unmatch (%d != %d)", seg, pos, v + JA_SEGMENT_SIZE - ve);
+                "dseges[%d] = pos unmatch (%d != %d)",
+                seg, pos, v + sizeof(uint32_t) + JA_SEGMENT_SIZE - ve);
         break;
       }
       if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET, &cas)) {
@@ -1092,7 +1097,7 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
     v += sizeof(uint32_t) + element_size;
   }
   GRN_LOG(ctx, *seginfo ? GRN_LOG_WARNING : GRN_LOG_NOTICE,
-          "dseges[%d] = %d after defrag", seg, *seginfo);
+          "dseges[%d] = %d after defrag", seg, (*seginfo & ~SEG_MASK));
   GRN_IO_SEG_UNREF(ja->io, seg);
   return GRN_SUCCESS;
 }
@@ -1169,7 +1174,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
               element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
               cum += sizeof(uint32_t) + element_size;
               n_elements++;
-              s_elements += element_size;
+              s_elements += sizeof(uint32_t) + element_size;
             }
             v += sizeof(uint32_t) + element_size;
             /*
