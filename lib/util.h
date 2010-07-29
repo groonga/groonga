@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offset, int *limit);
+GRN_API grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offset, int *limit);
 
 grn_obj *grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 grn_obj *grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
