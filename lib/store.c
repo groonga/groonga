@@ -475,7 +475,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
 }
 
 grn_rc
-grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei)
+grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei, uint64_t *cas)
 {
   uint32_t lseg, *pseg, pos;
   grn_ja_einfo *einfo = NULL, eback;
@@ -499,6 +499,10 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei)
   GRN_IO_SEG_REF(ja->io, *pseg, einfo);
   if (!einfo) { goto exit; }
   eback = einfo[pos];
+  if (cas && *cas != *((uint64_t *)&eback)) {
+    ERR(GRN_CAS_ERROR, "cas failed (%d)", id);
+    goto exit;
+  }
   // smb_wmb();
   GRN_SET_64BIT(&einfo[pos], *ei);
   GRN_IO_SEG_UNREF(ja->io, *pseg);
@@ -666,7 +670,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
 
 grn_rc
 grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
-               void *value, uint32_t value_len, int flags)
+               void *value, uint32_t value_len, int flags, uint64_t *cas)
 {
   int rc;
   int64_t buf;
@@ -755,7 +759,13 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     ERR(GRN_INVALID_ARGUMENT, "grn_ja_put_raw called with illegal flags value");
     return ctx->rc;
   }
-  return grn_ja_replace(ctx, ja, id, &einfo);
+  if (grn_ja_replace(ctx, ja, id, &einfo, cas)) {
+    grn_rc rc = ctx->rc;
+    ctx->rc = GRN_SUCCESS;
+    grn_ja_free(ctx, ja, &einfo);
+    ctx->rc = rc;
+  }
+  return ctx->rc;
 }
 
 grn_rc
@@ -790,7 +800,7 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
     if (body) { memcpy((char *)iw.addr + sizeh, GRN_BULK_HEAD(body), sizev); }
     if (f) { memcpy((char *)iw.addr + sizeh + sizev, GRN_BULK_HEAD(&footer), sizef); }
     grn_io_win_unmap2(&iw);
-    rc = grn_ja_replace(ctx, ja, id, &einfo);
+    rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
   }
 exit :
   GRN_OBJ_FIN(ctx, &footer);
@@ -967,7 +977,7 @@ grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_
 #ifndef NO_ZLIB
 inline static grn_rc
 grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
-                void *value, uint32_t value_len, int flags)
+                void *value, uint32_t value_len, int flags, uint64_t *cas)
 {
   grn_rc rc;
   z_stream zstream;
@@ -1001,7 +1011,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return ctx->rc;
   }
   *(uint64_t *)zvalue = value_len;
-  rc = grn_ja_put_raw(ctx, ja, id, zvalue, zvalue_len + sizeof (uint64_t), flags);
+  rc = grn_ja_put_raw(ctx, ja, id, zvalue, zvalue_len + sizeof (uint64_t), flags, cas);
   GRN_FREE(zvalue);
   return rc;
 }
@@ -1010,7 +1020,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
 #ifndef NO_LZO
 inline static grn_rc
 grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
-               void *value, uint32_t value_len, int flags)
+               void *value, uint32_t value_len, int flags, uint64_t *cas)
 {
   grn_rc rc;
   void *lvalue, *lwork;
@@ -1025,7 +1035,7 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
   GRN_FREE(lwork);
   *(uint64_t *)lvalue = value_len;
-  rc = grn_ja_put_raw(ctx, ja, id, lvalue, lvalue_len + sizeof (uint64_t), flags);
+  rc = grn_ja_put_raw(ctx, ja, id, lvalue, lvalue_len + sizeof (uint64_t), flags, cas);
   GRN_FREE(lvalue);
   return rc;
 }
@@ -1037,15 +1047,15 @@ grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
 {
 #ifndef NO_ZLIB
   if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
-    return grn_ja_put_zlib(ctx, ja, id, value, value_len, flags);
+    return grn_ja_put_zlib(ctx, ja, id, value, value_len, flags, cas);
   }
 #endif /* NO_ZLIB */
 #ifndef NO_LZO
   if (ja->header->flags & GRN_OBJ_COMPRESS_LZO) {
-    return grn_ja_put_lzo(ctx, ja, id, value, value_len, flags);
+    return grn_ja_put_lzo(ctx, ja, id, value, value_len, flags, cas);
   }
 #endif /* NO_LZO */
-  return grn_ja_put_raw(ctx, ja, id, value, value_len, flags);
+  return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
 }
 
 static grn_rc
