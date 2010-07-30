@@ -18,8 +18,8 @@ INCLUDES =					\
 	-I$(top_srcdir)/lib			\
 	$(GROONGA_INCLUDEDIR)
 
+#        -DCUTTER_DISABLE_DEPRECATED
 AM_CFLAGS =						\
-        -DCUTTER_DISABLE_DEPRECATED			\
 	-DCUT_RELATIVE_PATH="\"lib\""			\
 	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"	\
 	$(GCUTTER_CFLAGS)
