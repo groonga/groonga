@@ -389,6 +389,45 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_geo_point_inspect_point(grn_ctx *ctx, grn_obj *buf, int point)
+{
+  GRN_TEXT_PUTS(ctx, buf, "(");
+  grn_text_itoa(ctx, buf, point / 1000 / 3600 % 3600);
+  GRN_TEXT_PUTS(ctx, buf, ", ");
+  grn_text_itoa(ctx, buf, point / 1000 / 60 % 60);
+  GRN_TEXT_PUTS(ctx, buf, ", ");
+  grn_text_itoa(ctx, buf, point / 1000 % 60);
+  GRN_TEXT_PUTS(ctx, buf, ", ");
+  grn_text_itoa(ctx, buf, point % 1000);
+  GRN_TEXT_PUTS(ctx, buf, ")");
+}
+
+static grn_rc
+grn_geo_point_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int latitude, longitude;
+
+  GRN_GEO_POINT_VALUE(obj, latitude, longitude);
+
+  GRN_TEXT_PUTS(ctx, buf, "[");
+  GRN_TEXT_PUTS(ctx, buf, "(");
+  grn_text_itoa(ctx, buf, latitude);
+  GRN_TEXT_PUTS(ctx, buf, ",");
+  grn_text_itoa(ctx, buf, longitude);
+  GRN_TEXT_PUTS(ctx, buf, ")");
+
+  GRN_TEXT_PUTS(ctx, buf, " (");
+  grn_geo_point_inspect_point(ctx, buf, latitude);
+  GRN_TEXT_PUTS(ctx, buf, ",");
+  grn_geo_point_inspect_point(ctx, buf, longitude);
+  GRN_TEXT_PUTS(ctx, buf, ")");
+
+  GRN_TEXT_PUTS(ctx, buf, "]");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_id id;
@@ -484,18 +523,25 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 
   switch (obj->header.type) {
   case GRN_BULK :
-    domain = grn_ctx_at(ctx, obj->header.domain);
-    if (domain) {
-      grn_id type = domain->header.type;
-      grn_obj_unlink(ctx, domain);
-      switch (type) {
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_NO_KEY :
-        grn_record_inspect(ctx, buffer, obj);
-        return buffer;
-      default :
-        break;
+    switch (obj->header.domain) {
+    case GRN_DB_TOKYO_GEO_POINT :
+    case GRN_DB_WGS84_GEO_POINT :
+      grn_geo_point_inspect(ctx, buffer, obj);
+      return buffer;
+    default :
+      domain = grn_ctx_at(ctx, obj->header.domain);
+      if (domain) {
+        grn_id type = domain->header.type;
+        grn_obj_unlink(ctx, domain);
+        switch (type) {
+        case GRN_TABLE_HASH_KEY :
+        case GRN_TABLE_PAT_KEY :
+        case GRN_TABLE_NO_KEY :
+          grn_record_inspect(ctx, buffer, obj);
+          return buffer;
+        default :
+          break;
+        }
       }
     }
     break;
