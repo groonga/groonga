@@ -47,3 +47,15 @@ version.sh
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/
+/apt/debian/pool/*/*/*/*/*.diff.gz
+/apt/debian/pool/*/*/*/*/*.tar.gz
+/apt/debian/pool/*/*/*/*/*.build
+/apt/debian/pool/*/*/*/*/*.changes
+/apt/debian/pool/*/*/*/*/*.deb
+/apt/debian/pool/*/*/*/*/*.dsc
+/apt/ubuntu/pool/*/*/*/*/*.diff.gz
+/apt/ubuntu/pool/*/*/*/*/*.tar.gz
+/apt/ubuntu/pool/*/*/*/*/*.build
+/apt/ubuntu/pool/*/*/*/*/*.changes
+/apt/ubuntu/pool/*/*/*/*/*.deb
+/apt/ubuntu/pool/*/*/*/*/*.dsc
