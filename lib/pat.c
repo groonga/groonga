@@ -1726,7 +1726,9 @@ set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
           }
         }
       } else {
-        push(c, id, ch);
+        if (PAT_LEN(node) * 16 > len || !(flags & GRN_CURSOR_GT)) {
+          push(c, id, ch);
+        }
       }
     }
     break;
@@ -2064,64 +2066,67 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
   c->curr_rec = GRN_ID_NIL;
   c->obj.header.domain = GRN_ID_NIL;
   if (flags & GRN_CURSOR_PREFIX) {
-    if (max_size) {
+    if (max && max_size) {
       if ((pat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
         set_cursor_common_prefix(ctx, pat, c, min_size, max, max_size, flags);
       } else {
         set_cursor_near(ctx, pat, c, min_size, max, flags);
       }
+      goto exit;
     } else {
-      set_cursor_prefix(ctx, pat, c, min, min_size, flags);
+      if (min && min_size) {
+        set_cursor_prefix(ctx, pat, c, min, min_size, flags);
+        goto exit;
+      }
+    }
+  }
+  if (flags & GRN_CURSOR_DESCENDING) {
+    if (min && min_size) {
+      set_cursor_ascend(ctx, pat, c, min, min_size, flags);
+      c->obj.header.flags = GRN_CURSOR_ASCENDING;
+      c->tail = grn_pat_cursor_next(ctx, c);
+      c->sp = 0;
+      if (!c->tail) { goto exit; }
+    }
+    if (max && max_size) {
+      set_cursor_descend(ctx, pat, c, max, max_size, flags);
+    } else {
+      PAT_AT(pat, 0, node);
+      if (!node) {
+        grn_pat_cursor_close(ctx, c);
+        return NULL;
+      }
+      if ((id = node->lr[1])) {
+        PAT_AT(pat, id, node);
+        if (node) {
+          int ch = PAT_CHK(node);
+          push(c, node->lr[0], ch);
+          push(c, node->lr[1], ch);
+        }
+      }
     }
   } else {
-    if (flags & GRN_CURSOR_DESCENDING) {
-      if (min) {
-        set_cursor_ascend(ctx, pat, c, min, min_size, flags);
-        c->obj.header.flags = GRN_CURSOR_ASCENDING;
-        c->tail = grn_pat_cursor_next(ctx, c);
-        c->sp = 0;
-        if (!c->tail) { goto exit; }
-      }
-      if (max) {
-        set_cursor_descend(ctx, pat, c, max, max_size, flags);
-      } else {
-        PAT_AT(pat, 0, node);
-        if (!node) {
-          grn_pat_cursor_close(ctx, c);
-          return NULL;
-        }
-        if ((id = node->lr[1])) {
-          PAT_AT(pat, id, node);
-          if (node) {
-            int ch = PAT_CHK(node);
-            push(c, node->lr[0], ch);
-            push(c, node->lr[1], ch);
-          }
-        }
-      }
+    if (max && max_size) {
+      set_cursor_descend(ctx, pat, c, max, max_size, flags);
+      c->obj.header.flags = GRN_CURSOR_DESCENDING;
+      c->tail = grn_pat_cursor_next(ctx, c);
+      c->sp = 0;
+      if (!c->tail) { goto exit; }
+    }
+    if (min && min_size) {
+      set_cursor_ascend(ctx, pat, c, min, min_size, flags);
     } else {
-      if (max) {
-        set_cursor_descend(ctx, pat, c, max, max_size, flags);
-        c->obj.header.flags = GRN_CURSOR_DESCENDING;
-        c->tail = grn_pat_cursor_next(ctx, c);
-        c->sp = 0;
-        if (!c->tail) { goto exit; }
+      PAT_AT(pat, 0, node);
+      if (!node) {
+        grn_pat_cursor_close(ctx, c);
+        return NULL;
       }
-      if (min) {
-        set_cursor_ascend(ctx, pat, c, min, min_size, flags);
-      } else {
-        PAT_AT(pat, 0, node);
-        if (!node) {
-          grn_pat_cursor_close(ctx, c);
-          return NULL;
-        }
-        if ((id = node->lr[1])) {
-          PAT_AT(pat, id, node);
-          if (node) {
-            int ch = PAT_CHK(node);
-            push(c, node->lr[1], ch);
-            push(c, node->lr[0], ch);
-          }
+      if ((id = node->lr[1])) {
+        PAT_AT(pat, id, node);
+        if (node) {
+          int ch = PAT_CHK(node);
+          push(c, node->lr[1], ch);
+          push(c, node->lr[0], ch);
         }
       }
     }
