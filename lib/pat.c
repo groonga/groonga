@@ -1713,16 +1713,20 @@ set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     if ((flags & GRN_CURSOR_SIZE_BY_BIT)
         ? !bitcmp(k, key, 0, key_size)
         : !memcmp(k, key, key_size)) {
-      if (flags & GRN_CURSOR_DESCENDING) {
-        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-          push(c, node->lr[0], ch);
+      if (c0 < ch) {
+        if (flags & GRN_CURSOR_DESCENDING) {
+          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
+            push(c, node->lr[0], ch);
+          }
+          push(c, node->lr[1], ch);
+        } else {
+          push(c, node->lr[1], ch);
+          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
+            push(c, node->lr[0], ch);
+          }
         }
-        push(c, node->lr[1], ch);
       } else {
-        push(c, node->lr[1], ch);
-        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-          push(c, node->lr[0], ch);
-        }
+        push(c, id, ch);
       }
     }
     break;
