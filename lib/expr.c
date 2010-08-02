@@ -4870,6 +4870,7 @@ get_identifier(grn_ctx *ctx, efs_info *q)
     }
   }
 done :
+  len = s - q->cur;
   switch (*q->cur) {
   case 'd' :
     if (len == 6 && !memcmp(q->cur, "delete", 6)) {
