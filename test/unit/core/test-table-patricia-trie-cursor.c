@@ -41,6 +41,8 @@
 
 void data_prefix_short_text(void);
 void test_prefix_short_text(gpointer data);
+void data_prefix_geo_point(void);
+void test_prefix_geo_point(gpointer data);
 void data_near_uint32(void);
 void test_near_uint32(gpointer data);
 void data_near_geo_point(void);
@@ -161,45 +163,20 @@ create_uint32_table(void)
 }
 
 static void
-create_geo_point_table(void)
+create_geo_point_table(const gchar *data)
 {
   const char *table_name = "GeoPointPat";
 
   assert_send_commands(
-    cut_take_printf("table_create %s TABLE_PAT_KEY UInt32", table_name));
+    cut_take_printf("table_create %s TABLE_PAT_KEY WGS84GeoPoint", table_name));
   assert_send_commands(
     cut_take_printf("load --table %s\n"
                     "[\n"
                     " [\"_key\"],\n"
-                    " [\"%s\"],"
-                    " [\"%s\"],"
-                    " [\"%s\"],"
-                    " [\"%s\"],"
-                    " [\"%s\"],"
-                    " [\"%s\"],"
-                    " [\"%s\"],"
-                    " [\"%s\"],"
-                    " [\"%s\"]"
+                    "%s"
                     "]",
                     table_name,
-                    TAKEN_POINT(1, 2, 3,
-                                4, 5, 6),
-                    TAKEN_POINT(1, 2, 3,
-                                7, 8, 9),
-                    TAKEN_POINT(7, 8, 9,
-                                4, 5, 6),
-                    TAKEN_POINT(89, 59, 59,
-                                179, 59, 59),
-                    TAKEN_POINT(89, 59, 59,
-                                179, -59, -59),
-                    TAKEN_POINT(88, 58, 58,
-                                178, 58, 58),
-                    TAKEN_POINT(-89, -59, -59,
-                                -179, -59, -59),
-                    TAKEN_POINT(-89, -59, -59,
-                                179, 59, 59),
-                    TAKEN_POINT(-88, -58, -58,
-                                -178, -58, -58)));
+                    data));
 
   table = grn_ctx_get(context, table_name, strlen(table_name));
 }
@@ -302,6 +279,291 @@ test_prefix_short_text(gpointer data)
 
     key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
     actual_keys = g_list_append(actual_keys, g_strndup(key, key_size));
+  }
+  gcut_take_list(actual_keys, g_free);
+
+  expected_keys = gcut_data_get_pointer(data, "expected");
+  gcut_assert_equal_list_string(expected_keys, actual_keys);
+}
+
+static void
+grn_gton(uint8_t *keybuf, const void *key, uint32_t size)
+{
+  int la = ((grn_geo_point *)key)->latitude;
+  int lo = ((grn_geo_point *)key)->longitude;
+  uint8_t *p = keybuf;
+  int i = 32;
+  while (i) {
+    i -= 4;
+    *p++ = ((((la >> i) & 8) << 4) + (((lo >> i) & 8) << 3) +
+            (((la >> i) & 4) << 3) + (((lo >> i) & 4) << 2) +
+            (((la >> i) & 2) << 2) + (((lo >> i) & 2) << 1) +
+            (((la >> i) & 1) << 1) + (((lo >> i) & 1) << 0));
+  }
+}
+
+static void
+grn_ntog(uint8_t *keybuf, uint8_t *key, uint32_t size)
+{
+  int la = 0, lo = 0;
+  uint8_t v, *p = key;
+  int i = 32;
+  while (size--) {
+    i -= 4;
+    v = *p++;
+    la += (((v & 128) >> 4) + ((v &  32) >> 3) +
+           ((v &   8) >> 2) + ((v &   2) >> 1)) << i;
+    lo += (((v &  64) >> 3) + ((v &  16) >> 2) +
+           ((v &   4) >> 1) + ((v &   1) >> 0)) << i;
+  }
+  ((grn_geo_point *)keybuf)->latitude = la;
+  ((grn_geo_point *)keybuf)->longitude = lo;
+}
+
+static const gchar *
+geo_byte_parse(const gchar *geo_byte_string)
+{
+    gint i = 0;
+    uint8_t geo_byte[sizeof(grn_geo_point)];
+    grn_geo_point geo_point;
+
+    while (geo_byte_string[0]) {
+      switch (geo_byte_string[0]) {
+      case '0':
+        geo_byte[i / 8] &= ~(1 << (7 - (i % 8)));
+        i++;
+        break;
+      case '1':
+        geo_byte[i / 8] |= 1 << (7 - (i % 8));
+        i++;
+        break;
+      default:
+        break;
+      }
+      geo_byte_string++;
+    }
+    grn_ntog((uint8_t *)(&geo_point), geo_byte, sizeof(grn_geo_point));
+    return cut_take_printf("%dx%d",
+                           geo_point.latitude,
+                           geo_point.longitude);
+}
+
+static GList *
+geo_byte_list_new_va_list(const gchar *value, va_list args)
+{
+  GList *list = NULL;
+
+  while (value) {
+    list = g_list_prepend(list, g_strdup(geo_byte_parse(value)));
+    value = va_arg(args, const gchar *);
+  }
+
+  return g_list_reverse(list);
+}
+
+static GList *
+geo_byte_list_new(const gchar *value, ...)
+{
+  GList *list = NULL;
+  va_list args;
+
+  va_start(args, value);
+  list = geo_byte_list_new_va_list(value, args);
+  va_end(args);
+
+  return list;
+}
+
+static const gchar *
+geo_byte_load_data(const gchar *value, ...)
+{
+  GString *data;
+  GList *list, *node;
+  va_list args;
+
+  va_start(args, value);
+  list = geo_byte_list_new_va_list(value, args);
+  va_end(args);
+
+  data = g_string_new(NULL);
+  for (node = list; node; node = g_list_next(node)) {
+    const gchar *point = node->data;
+    g_string_append_printf(data, "[\"%s\"]", point);
+    if (g_list_next(node)) {
+      g_string_append_printf(data, ",\n");
+    }
+  }
+  gcut_list_string_free(list);
+
+  return cut_take_string(g_string_free(data, FALSE));
+}
+
+void
+data_prefix_geo_point(void)
+{
+#define ADD_DATA(label, expected, min, min_size, offset, limit, flags)  \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_POINTER,                            \
+                 expected, gcut_list_string_free,                       \
+                 "min", G_TYPE_STRING, min,                             \
+                 "min-size", G_TYPE_UINT, min_size,                     \
+                 "offset", G_TYPE_INT, offset,                          \
+                 "limit", G_TYPE_INT, limit,                            \
+                 "flags", G_TYPE_INT, flags,                            \
+                 NULL)
+
+  ADD_DATA(
+    "bit - ascending",
+    gcut_list_string_new(
+      "00000000 00111111 01010000 00000000 01111101 00010000 00011101 00001111",
+      "00000000 00111111 01010000 00000001 00011110 01010001 01101001 00110000",
+      "00000000 00111111 01010000 00001101 01011101 01011011 01011001 01010011",
+      "00000000 00111111 01010000 00001111 00101011 00011111 00110011 00001001",
+      "00000000 00111111 01010000 00010010 00110001 00001000 00001010 00110011",
+      "00000000 00111111 01010000 00010010 00110001 00110111 01111000 01110000",
+      "00000000 00111111 01010000 00011000 01110000 00001011 00101110 01001010",
+      "00000000 00111111 01010000 00100000 00010111 01000111 00110100 00101010",
+      "00000000 00111111 01010000 00100010 00100111 01000011 00000010 01101001",
+      "00000000 00111111 01010000 00100010 00111011 01000000 00111000 01100100",
+      "00000000 00111111 01010000 00100011 00000001 00000111 01011100 01110011",
+      "00000000 00111111 01010000 00100011 00001010 00000000 00001101 00111010",
+      "00000000 00111111 01010000 00100011 01100100 01011000 00000111 01110010",
+      "00000000 00111111 01010000 00101101 00101000 00111111 01010110 00010110",
+      "00000000 00111111 01010000 00101101 01111100 01101100 00111000 01111001",
+      "00000000 00111111 01010000 00101110 01010011 00101001 00101001 00100011",
+      "00000000 00111111 01010000 00101110 01110010 00111001 00011011 01101010",
+      "00000000 00111111 01010000 00101111 00011000 01000110 00100101 01011110",
+      "00000000 00111111 01010000 00101111 01001010 01101000 01000100 01100011",
+      "00000000 00111111 01010000 00110000 01001010 01011100 01101010 00010001",
+      "00000000 00111111 01010000 00111000 01100100 01101011 01111100 01111011",
+      "00000000 00111111 01010000 00111001 00111101 00001001 00001011 01010011",
+      "00000000 00111111 01010000 00111010 01011111 00000010 00101001 01010000",
+      NULL),
+    "00000000 00111111 01010000 00000000 00000000 00000000 00000000 00000000",
+    26,
+    0, -1,
+    GRN_CURSOR_SIZE_BY_BIT);
+  ADD_DATA(
+    "bit - descending",
+    gcut_list_string_new(
+      "00000000 00111111 01010000 00111010 01011111 00000010 00101001 01010000",
+      "00000000 00111111 01010000 00111001 00111101 00001001 00001011 01010011",
+      "00000000 00111111 01010000 00111000 01100100 01101011 01111100 01111011",
+      "00000000 00111111 01010000 00110000 01001010 01011100 01101010 00010001",
+      "00000000 00111111 01010000 00101111 01001010 01101000 01000100 01100011",
+      "00000000 00111111 01010000 00101111 00011000 01000110 00100101 01011110",
+      "00000000 00111111 01010000 00101110 01110010 00111001 00011011 01101010",
+      "00000000 00111111 01010000 00101110 01010011 00101001 00101001 00100011",
+      "00000000 00111111 01010000 00101101 01111100 01101100 00111000 01111001",
+      "00000000 00111111 01010000 00101101 00101000 00111111 01010110 00010110",
+      "00000000 00111111 01010000 00100011 01100100 01011000 00000111 01110010",
+      "00000000 00111111 01010000 00100011 00001010 00000000 00001101 00111010",
+      "00000000 00111111 01010000 00100011 00000001 00000111 01011100 01110011",
+      "00000000 00111111 01010000 00100010 00111011 01000000 00111000 01100100",
+      "00000000 00111111 01010000 00100010 00100111 01000011 00000010 01101001",
+      "00000000 00111111 01010000 00100000 00010111 01000111 00110100 00101010",
+      "00000000 00111111 01010000 00011000 01110000 00001011 00101110 01001010",
+      "00000000 00111111 01010000 00010010 00110001 00110111 01111000 01110000",
+      "00000000 00111111 01010000 00010010 00110001 00001000 00001010 00110011",
+      "00000000 00111111 01010000 00001111 00101011 00011111 00110011 00001001",
+      "00000000 00111111 01010000 00001101 01011101 01011011 01011001 01010011",
+      "00000000 00111111 01010000 00000001 00011110 01010001 01101001 00110000",
+      "00000000 00111111 01010000 00000000 01111101 00010000 00011101 00001111",
+      NULL),
+    "00000000 00111111 01010000 00000000 00000000 00000000 00000000 00000000",
+    26,
+    0, -1,
+    GRN_CURSOR_SIZE_BY_BIT | GRN_CURSOR_DESCENDING);
+
+#undef ADD_DATA
+}
+
+void
+test_prefix_geo_point(gpointer data)
+{
+  grn_id id;
+  grn_obj min, min_string;
+  int offset, limit, flags;
+  unsigned min_size;
+  const GList *expected_keys;
+  GList *actual_keys = NULL;
+
+  create_geo_point_table(
+    geo_byte_load_data(
+      "00000000 00111111 01010000 00110000 01001010 01011100 01101010 00010001",
+      "00000000 00111111 01010000 00001101 01011101 01011011 01011001 01010011",
+      "00000000 00111111 01010000 00000001 00011110 01010001 01101001 00110000",
+      "00000000 00111111 01010000 00011000 01110000 00001011 00101110 01001010",
+      "00000000 00111111 01010000 00010010 00110001 00110111 01111000 01110000",
+      "00000000 00111111 01010000 00010010 00110001 00001000 00001010 00110011",
+      "00000000 00111111 01010000 00101110 01110010 00111001 00011011 01101010",
+      "00000000 00111111 01010000 00101101 00101000 00111111 01010110 00010110",
+      "00000000 00111111 01010000 00101111 01001010 01101000 01000100 01100011",
+      "00000000 00111111 01010000 00101111 00011000 01000110 00100101 01011110",
+      "00000000 00111111 01000101 01011001 01010110 00000111 00110100 01111111",
+      "00000000 00111111 01000101 01010010 01100101 01100110 00010111 01111110",
+      "00000000 00111111 01000101 01111111 01011011 01111101 00001001 01100001",
+      "00000000 00111111 01010000 00100011 00001010 00000000 00001101 00111010",
+      "00000000 00111111 01010000 00101110 01010011 00101001 00101001 00100011",
+      "00000000 00111111 01010000 00111010 01011111 00000010 00101001 01010000",
+      "00000000 00111111 01010000 00111001 00111101 00001001 00001011 01010011",
+      "00000000 00111111 01000101 01011100 00001100 01000001 01011010 00010011",
+      "00000000 00111111 01010000 00100011 00000001 00000111 01011100 01110011",
+      "00000000 00111111 01010000 00100011 01100100 01011000 00000111 01110010",
+      "00000000 00111111 01010000 00111000 01100100 01101011 01111100 01111011",
+      "00000000 00111111 01010000 00001111 00101011 00011111 00110011 00001001",
+      "00000000 00111111 01000101 01111011 01001011 01101011 00001001 00000001",
+      "00000000 00111111 01000101 01011010 00110100 00000010 01111010 00000000",
+      "00000000 00111111 01000101 01011011 00011010 00010111 00011000 00100000",
+      "00000000 00111111 01010000 00100000 00010111 01000111 00110100 00101010",
+      "00000000 00111111 01010000 00000000 01111101 00010000 00011101 00001111",
+      "00000000 00111111 01000101 01000100 01010010 00100100 01100011 00111011",
+      "00000000 00111111 01000101 01010001 00011100 01010110 00100110 00000110",
+      "00000000 00111111 01010000 00101101 01111100 01101100 00111000 01111001",
+      "00000000 00111111 01000101 01001101 00111110 00000101 00101010 01000101",
+      "00000000 00111111 01000101 01000100 01111100 01101011 01101111 00010101",
+      "00000000 00111111 01000101 01110111 01010100 01110100 01111000 01111000",
+      "00000000 00111111 01010000 00100010 00111011 01000000 00111000 01100100",
+      "00000000 00111111 01010000 00100010 00100111 01000011 00000010 01101001",
+      "00000000 00111111 01000101 01011100 00110110 00100010 00111000 01100001",
+      NULL));
+
+  GRN_TEXT_INIT(&min_string, 0);
+  GRN_TEXT_PUTS(context, &min_string,
+                geo_byte_parse(gcut_data_get_string(data, "min")));
+  GRN_WGS84_GEO_POINT_INIT(&min, 0);
+  grn_obj_cast(context, &min_string, &min, FALSE);
+  grn_obj_unlink(context, &min_string);
+
+  min_size = gcut_data_get_uint(data, "min-size");
+  offset = gcut_data_get_int(data, "offset");
+  limit = gcut_data_get_int(data, "limit");
+  flags = gcut_data_get_int(data, "flags");
+  cursor = grn_table_cursor_open(context, table,
+                                 GRN_BULK_HEAD(&min), min_size,
+                                 NULL, 0,
+                                 offset, limit,
+                                 flags | GRN_CURSOR_PREFIX);
+  grn_obj_unlink(context, &min);
+  grn_test_assert_context(context);
+  while ((id = grn_table_cursor_next(context, cursor))) {
+    grn_geo_point *key;
+    int i, j, key_size;
+    uint8_t encoded_key[sizeof(grn_geo_point)];
+    GString *geo_byte;
+
+    key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
+    grn_gton(encoded_key, key, key_size);
+    geo_byte = g_string_new(NULL);
+    for (i = 0; i < sizeof(grn_geo_point); i++) {
+      if (i != 0) {
+        g_string_append(geo_byte, " ");
+      }
+      for (j = 0; j < 8; j++) {
+        g_string_append_printf(geo_byte, "%d", (encoded_key[i] >> (7 - j)) & 1);
+      }
+    }
+    actual_keys = g_list_append(actual_keys, g_string_free(geo_byte, FALSE));
   }
   gcut_take_list(actual_keys, g_free);
 
@@ -468,7 +730,34 @@ test_near_geo_point(gpointer data)
   const GList *expected_keys;
   GList *actual_keys = NULL;
 
-  create_geo_point_table();
+  create_geo_point_table(
+    cut_take_printf(" [\"%s\"],"
+                    " [\"%s\"],"
+                    " [\"%s\"],"
+                    " [\"%s\"],"
+                    " [\"%s\"],"
+                    " [\"%s\"],"
+                    " [\"%s\"],"
+                    " [\"%s\"],"
+                    " [\"%s\"]",
+                    TAKEN_POINT(1, 2, 3,
+                                4, 5, 6),
+                    TAKEN_POINT(1, 2, 3,
+                                7, 8, 9),
+                    TAKEN_POINT(7, 8, 9,
+                                4, 5, 6),
+                    TAKEN_POINT(89, 59, 59,
+                                179, 59, 59),
+                    TAKEN_POINT(89, 59, 59,
+                                179, -59, -59),
+                    TAKEN_POINT(88, 58, 58,
+                                178, 58, 58),
+                    TAKEN_POINT(-89, -59, -59,
+                                -179, -59, -59),
+                    TAKEN_POINT(-89, -59, -59,
+                                179, 59, 59),
+                    TAKEN_POINT(-88, -58, -58,
+                                -178, -58, -58)));
 
   min_size = gcut_data_get_int(data, "min-size");
   GRN_TEXT_INIT(&max_string, 0);
