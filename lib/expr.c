@@ -4879,8 +4879,13 @@ done :
     }
     break;
   case 'f' :
-    if (len == 6 && !memcmp(q->cur, "false", 6)) {
+    if (len == 5 && !memcmp(q->cur, "false", 5)) {
+      grn_obj buf;
       PARSE(GRN_EXPR_TOKEN_BOOLEAN);
+      GRN_BOOL_INIT(&buf, 0);
+      GRN_BOOL_SET(ctx, &buf, 0);
+      grn_expr_append_const(ctx, q->e, &buf, GRN_OP_PUSH, 1);
+      GRN_OBJ_FIN(ctx, &buf);
       goto exit;
     }
     break;
@@ -4892,13 +4897,22 @@ done :
     break;
   case 'n' :
     if (len == 4 && !memcmp(q->cur, "null", 4)) {
+      grn_obj buf;
       PARSE(GRN_EXPR_TOKEN_NULL);
+      GRN_VOID_INIT(&buf);
+      grn_expr_append_const(ctx, q->e, &buf, GRN_OP_PUSH, 1);
+      GRN_OBJ_FIN(ctx, &buf);
       goto exit;
     }
     break;
   case 't' :
     if (len == 4 && !memcmp(q->cur, "true", 4)) {
+      grn_obj buf;
       PARSE(GRN_EXPR_TOKEN_BOOLEAN);
+      GRN_BOOL_INIT(&buf, 0);
+      GRN_BOOL_SET(ctx, &buf, 1);
+      grn_expr_append_const(ctx, q->e, &buf, GRN_OP_PUSH, 1);
+      GRN_OBJ_FIN(ctx, &buf);
       goto exit;
     }
     break;
