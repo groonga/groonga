@@ -31,6 +31,9 @@ void test_vector_int32(void);
 void test_vector_text(void);
 void test_vector_reference_id(void);
 void test_nonexistent_id(void);
+void test_tautology(void);
+void test_contradiction(void);
+void test_filter_null(void);
 void test_bigram_split_symbol_tokenizer(void);
 void test_nonexistent_table(void);
 
@@ -321,6 +324,64 @@ test_nonexistent_id(void)
                           send_command("select Sites "
                                        "--output_columns '_id _key' "
                                        "--filter '_id == 100'"));
+}
+
+void
+test_tautology(void)
+{
+  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
+                       "column_create Sites link COLUMN_SCALAR Sites\n"
+                       "load --table Sites\n"
+                       "[\n"
+                       "[\"_key\"],\n"
+                       "[\"groonga.org\"],\n"
+                       "[\"razil.jp\"]\n"
+                       "]");
+  cut_assert_equal_string("[[[2],"
+                          "[[\"_id\",\"UInt32\"],"
+                           "[\"_key\",\"ShortText\"]],"
+                           "[1,\"groonga.org\"],[2,\"razil.jp\"]]]",
+                          send_command("select Sites "
+                                       "--output_columns '_id _key' "
+                                       "--filter true"));
+}
+
+void
+test_contradiction(void)
+{
+  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
+                       "column_create Sites link COLUMN_SCALAR Sites\n"
+                       "load --table Sites\n"
+                       "[\n"
+                       "[\"_key\"],\n"
+                       "[\"groonga.org\"],\n"
+                       "[\"razil.jp\"]\n"
+                       "]");
+  cut_assert_equal_string("[[[0],"
+                          "[[\"_id\",\"UInt32\"],"
+                           "[\"_key\",\"ShortText\"]]]]",
+                          send_command("select Sites "
+                                       "--output_columns '_id _key' "
+                                       "--filter false"));
+}
+
+void
+test_null(void)
+{
+  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
+                       "column_create Sites link COLUMN_SCALAR Sites\n"
+                       "load --table Sites\n"
+                       "[\n"
+                       "[\"_key\"],\n"
+                       "[\"groonga.org\"],\n"
+                       "[\"razil.jp\"]\n"
+                       "]");
+  cut_assert_equal_string("[[[0],"
+                          "[[\"_id\",\"UInt32\"],"
+                           "[\"_key\",\"ShortText\"]]]]",
+                          send_command("select Sites "
+                                       "--output_columns '_id _key' "
+                                       "--filter null"));
 }
 
 void
