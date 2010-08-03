@@ -235,7 +235,7 @@ module HTTPSelectDrilldownTests
 <FIELD NAME="place">razil.jp</FIELD>
 <FIELD NAME="place.name">ブラジル</FIELD>
 <FIELD NAME="title">groongaリリース（前編）</FIELD>
-<FIELD NAME="person"></FIELD>
+<FIELD NAME="person">グニャラくん</FIELD>
 <FIELD NAME="date">20091218.0</FIELD>
 </HIT>
 <HIT NO="2">
@@ -243,7 +243,7 @@ module HTTPSelectDrilldownTests
 <FIELD NAME="place">shinjuku</FIELD>
 <FIELD NAME="place.name">新宿</FIELD>
 <FIELD NAME="title">groongaリリース（後編）</FIELD>
-<FIELD NAME="person"></FIELD>
+<FIELD NAME="person">グニャラくん</FIELD>
 <FIELD NAME="date">20091218.0</FIELD>
 </HIT>
 <HIT NO="3">
@@ -251,7 +251,7 @@ module HTTPSelectDrilldownTests
 <FIELD NAME="place">razil.jp</FIELD>
 <FIELD NAME="place.name">ブラジル</FIELD>
 <FIELD NAME="title">groonga（ぐるんが）解説・パート1</FIELD>
-<FIELD NAME="person"></FIELD>
+<FIELD NAME="person">morita</FIELD>
 <FIELD NAME="date">20091218.0</FIELD>
 </HIT>
 <HIT NO="4">
@@ -259,7 +259,7 @@ module HTTPSelectDrilldownTests
 <FIELD NAME="place">shinjuku</FIELD>
 <FIELD NAME="place.name">新宿</FIELD>
 <FIELD NAME="title">groonga（ぐるんが）解説・パート2</FIELD>
-<FIELD NAME="person"></FIELD>
+<FIELD NAME="person">yu</FIELD>
 <FIELD NAME="date">20091219.0</FIELD>
 </HIT>
 <HIT NO="5">
@@ -267,7 +267,7 @@ module HTTPSelectDrilldownTests
 <FIELD NAME="place">shinjuku</FIELD>
 <FIELD NAME="place.name">新宿</FIELD>
 <FIELD NAME="title">groonga（ぐるんが）解説・パート3</FIELD>
-<FIELD NAME="person"></FIELD>
+<FIELD NAME="person">yu</FIELD>
 <FIELD NAME="date">20091220.0</FIELD>
 </HIT>
 <HIT NO="6">
@@ -275,7 +275,7 @@ module HTTPSelectDrilldownTests
 <FIELD NAME="place">shinjuku</FIELD>
 <FIELD NAME="place.name">新宿</FIELD>
 <FIELD NAME="title">groonga（ぐるんが）解説・パート4</FIELD>
-<FIELD NAME="person"></FIELD>
+<FIELD NAME="person">yu</FIELD>
 <FIELD NAME="date">20091220.0</FIELD>
 </HIT>
 </RESULTSET>

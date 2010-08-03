@@ -760,6 +760,47 @@ EOF
                        :output_columns => "_id,_key,real_name,hp"})
   end
 
+  def test_xml_vector
+    table_create("Softwares",
+                 :flags => Table::HASH_KEY,
+                 :key_type => "ShortText")
+    column_create("Softwares", "tags", Column::VECTOR, "ShortText")
+    column_create("Softwares", "description", Column::SCALAR, "ShortText")
+    load("Softwares",
+         [[:_key, :tags, :description],
+          ["groonga",
+           ["full-text search", "C"],
+           "full-text search engine"],
+          ["Ruby",
+           ["language", "script", "fun"],
+           "An object oriented script language"]])
+
+    expected = <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="0" LIMIT="2" NHITS="2">
+<HIT NO="1">
+<FIELD NAME="_key">groonga</FIELD>
+<FIELD NAME="tags">full-text search, C</FIELD>
+<FIELD NAME="description">full-text search engine</FIELD>
+</HIT>
+<HIT NO="2">
+<FIELD NAME="_key">Ruby</FIELD>
+<FIELD NAME="tags">language, script, fun</FIELD>
+<FIELD NAME="description">An object oriented script language</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
+EOF
+    assert_select_xml(expected,
+                      {:table => "Softwares",
+                       :output_columns => "_key tags description"})
+  end
+
   def test_xml_with_offset
     create_users_table
     load_many_users
