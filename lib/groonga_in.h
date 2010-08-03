@@ -511,6 +511,43 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* WORDS_BIGENDIAN */
 #define grn_ntoh grn_hton
 
+#define grn_gton(keybuf,key,size)\
+{\
+  uint8_t *keybuf_ = keybuf;\
+  const void *key_ = key;\
+  int la = ((grn_geo_point *)key_)->latitude;\
+  int lo = ((grn_geo_point *)key_)->longitude;\
+  uint8_t *p = keybuf_;\
+  int i = 32;\
+  while (i) {\
+    i -= 4;\
+    *p++ = ((((la >> i) & 8) << 4) + (((lo >> i) & 8) << 3) +\
+            (((la >> i) & 4) << 3) + (((lo >> i) & 4) << 2) +\
+            (((la >> i) & 2) << 2) + (((lo >> i) & 2) << 1) +\
+            (((la >> i) & 1) << 1) + (((lo >> i) & 1) << 0));\
+  }\
+}
+
+#define grn_ntog(keybuf,key,size)\
+{\
+  uint8_t *keybuf_ = keybuf;\
+  uint8_t *key_ = key;\
+  uint32_t size_ = size;\
+  int la = 0, lo = 0;\
+  uint8_t v, *p = key_;\
+  int i = 32;\
+  while (size_--) {\
+    i -= 4;\
+    v = *p++;\
+    la += (((v & 128) >> 4) + ((v &  32) >> 3) +\
+           ((v &   8) >> 2) + ((v &   2) >> 1)) << i;\
+    lo += (((v &  64) >> 3) + ((v &  16) >> 2) +\
+           ((v &   4) >> 1) + ((v &   1) >> 0)) << i;\
+  }\
+  ((grn_geo_point *)keybuf_)->latitude = la;\
+  ((grn_geo_point *)keybuf_)->longitude = lo;\
+}
+
 #ifdef USE_FUTEX
 #include <linux/futex.h>
 #include <sys/syscall.h>

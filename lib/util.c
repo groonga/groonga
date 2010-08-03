@@ -400,6 +400,8 @@ grn_geo_point_inspect_point(grn_ctx *ctx, grn_obj *buf, int point)
   GRN_TEXT_PUTS(ctx, buf, ", ");
   grn_text_itoa(ctx, buf, point % 1000);
   GRN_TEXT_PUTS(ctx, buf, ")");
+
+  return GRN_SUCCESS;
 }
 
 static grn_rc
@@ -421,6 +423,26 @@ grn_geo_point_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   GRN_TEXT_PUTS(ctx, buf, ",");
   grn_geo_point_inspect_point(ctx, buf, longitude);
   GRN_TEXT_PUTS(ctx, buf, ")");
+
+  {
+    int i, j;
+    grn_geo_point point;
+    uint8_t encoded[sizeof(grn_geo_point)];
+
+    GRN_TEXT_PUTS(ctx, buf, " [");
+    point.latitude = latitude;
+    point.longitude = longitude;
+    grn_gton(encoded, &point, sizeof(grn_geo_point));
+    for (i = 0; i < sizeof(grn_geo_point); i++) {
+      if (i != 0) {
+        GRN_TEXT_PUTS(ctx, buf, " ");
+      }
+      for (j = 0; j < 8; j++) {
+        grn_text_itoa(ctx, buf, (encoded[i] >> (7 - j)) & 1);
+      }
+    }
+    GRN_TEXT_PUTS(ctx, buf, "]");
+  }
 
   GRN_TEXT_PUTS(ctx, buf, "]");
 

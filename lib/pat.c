@@ -679,40 +679,6 @@ chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lk
   }
 }
 
-static void
-grn_gton(uint8_t *keybuf, const void *key, uint32_t size)
-{
-  int la = ((grn_geo_point *)key)->latitude;
-  int lo = ((grn_geo_point *)key)->longitude;
-  uint8_t *p = keybuf;
-  int i = 32;
-  while (i) {
-    i -= 4;
-    *p++ = ((((la >> i) & 8) << 4) + (((lo >> i) & 8) << 3) +
-            (((la >> i) & 4) << 3) + (((lo >> i) & 4) << 2) +
-            (((la >> i) & 2) << 2) + (((lo >> i) & 2) << 1) +
-            (((la >> i) & 1) << 1) + (((lo >> i) & 1) << 0));
-  }
-}
-
-static void
-grn_ntog(uint8_t *keybuf, uint8_t *key, uint32_t size)
-{
-  int la = 0, lo = 0;
-  uint8_t v, *p = key;
-  int i = 32;
-  while (size--) {
-    i -= 4;
-    v = *p++;
-    la += (((v & 128) >> 4) + ((v &  32) >> 3) +
-           ((v &   8) >> 2) + ((v &   2) >> 1)) << i;
-    lo += (((v &  64) >> 3) + ((v &  16) >> 2) +
-           ((v &   4) >> 1) + ((v &   1) >> 0)) << i;
-  }
-  ((grn_geo_point *)keybuf)->latitude = la;
-  ((grn_geo_point *)keybuf)->longitude = lo;
-}
-
 #define MAX_FIXED_KEY_SIZE (sizeof(int64_t))
 
 #define KEY_NEEDS_CONVERT(pat,size) \
