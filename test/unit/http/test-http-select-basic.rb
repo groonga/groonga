@@ -773,14 +773,17 @@ EOF
            "full-text search engine"],
           ["Ruby",
            ["language", "script", "fun"],
-           "An object oriented script language"]])
+           "An object oriented script language"],
+         ["rroonga",
+          [],
+          "The Ruby bindings for groonga"]])
 
     expected = <<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <SEGMENTS>
 <SEGMENT>
 <RESULTPAGE>
-<RESULTSET OFFSET="0" LIMIT="2" NHITS="2">
+<RESULTSET OFFSET="0" LIMIT="3" NHITS="3">
 <HIT NO="1">
 <FIELD NAME="_key">groonga</FIELD>
 <FIELD NAME="tags">full-text search, C</FIELD>
@@ -790,6 +793,11 @@ EOF
 <FIELD NAME="_key">Ruby</FIELD>
 <FIELD NAME="tags">language, script, fun</FIELD>
 <FIELD NAME="description">An object oriented script language</FIELD>
+</HIT>
+<HIT NO="3">
+<FIELD NAME="_key">rroonga</FIELD>
+<FIELD NAME="tags"></FIELD>
+<FIELD NAME="description">The Ruby bindings for groonga</FIELD>
 </HIT>
 </RESULTSET>
 </RESULTPAGE>

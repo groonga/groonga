@@ -222,6 +222,19 @@ typedef enum {
   XML_PLACE_HIT
 } xml_place;
 
+static char *
+transform_xml_next_column(grn_obj *columns, int n)
+{
+  char *column = GRN_TEXT_VALUE(columns);
+  while (n--) {
+    while (*column) {
+      column++;
+    }
+    column++;
+  }
+  return column;
+}
+
 static void
 transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
 {
@@ -285,8 +298,12 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
             GRN_TEXT_PUTS(ctx, transformed, "<NAVIGATIONENTRY>");
           }
         } else if (EQUAL_NAME_P("VECTOR")) {
+          char *c = transform_xml_next_column(&columns, column_n++);
           in_vector = 1;
           first_vector_element = 1;
+          GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
+          GRN_TEXT_PUTS(ctx, transformed, c);
+          GRN_TEXT_PUTS(ctx, transformed, "\">");
         }
         break;
       case XML_END_ELEMENT :
@@ -318,43 +335,30 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
         } else {
           switch (place) {
           case XML_PLACE_HIT :
-            {
-              int i = column_n;
-              char *c = GRN_TEXT_VALUE(&columns);
-              if (!in_vector || first_vector_element) {
-                while (i--) {
-                  while (*c) {
-                    c++;
-                  }
-                  c++;
-                }
-              }
-              if (result_set_n == 0) {
-                if (!in_vector || first_vector_element) {
-                  GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
-                  GRN_TEXT_PUTS(ctx, transformed, c);
-                  GRN_TEXT_PUTS(ctx, transformed, "\">");
-                }
-                if (in_vector && !first_vector_element) {
-                  GRN_TEXT_PUTS(ctx, transformed, ", ");
-                }
-                GRN_TEXT_PUT(ctx, transformed,
-                             GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-                if (!in_vector) {
-                  GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
-                }
-              } else {
+            if (result_set_n == 0) {
+              if (!in_vector) {
+                char *c = transform_xml_next_column(&columns, column_n++);
+                GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
                 GRN_TEXT_PUTS(ctx, transformed, c);
-                GRN_TEXT_PUTS(ctx, transformed, "=\"");
-                GRN_TEXT_PUT(ctx, transformed,
-                             GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-                GRN_TEXT_PUTS(ctx, transformed, "\" ");
+                GRN_TEXT_PUTS(ctx, transformed, "\">");
               }
+              if (in_vector && !first_vector_element) {
+                GRN_TEXT_PUTS(ctx, transformed, ", ");
+              }
+              GRN_TEXT_PUT(ctx, transformed,
+                           GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+              if (!in_vector) {
+                GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
+              }
+            } else {
+              char *c = transform_xml_next_column(&columns, column_n++);
+              GRN_TEXT_PUTS(ctx, transformed, c);
+              GRN_TEXT_PUTS(ctx, transformed, "=\"");
+              GRN_TEXT_PUT(ctx, transformed,
+                           GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+              GRN_TEXT_PUTS(ctx, transformed, "\" ");
             }
-            if (!in_vector || first_vector_element) {
-              column_n++;
-              first_vector_element = 0;
-            }
+            first_vector_element = 0;
             break;
           default :
             if (EQUAL_NAME_P("NHITS")) {
