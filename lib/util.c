@@ -628,3 +628,14 @@ grn_p(grn_ctx *ctx, grn_obj *obj)
   printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
   grn_obj_unlink(ctx, &buffer);
 }
+
+void
+grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point)
+{
+  grn_obj obj;
+
+  GRN_WGS84_GEO_POINT_INIT(&obj, 0);
+  GRN_GEO_POINT_SET(ctx, &obj, point->latitude, point->longitude);
+  grn_p(ctx, &obj);
+  grn_obj_unlink(ctx, &obj);
+}
