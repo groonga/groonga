@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.2.2. check &mdash; groonga v0.7.4 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.7.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.7.4 documentation" href="../index.html" />
+    <link rel="up" title="3.2. 組み込みコマンド一覧" href="../commands.html" />
+    <link rel="next" title="3.2.3. clearlock" href="clearlock.html" />
+    <link rel="prev" title="3.2.1. cache_limit" href="cache_limit.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="clearlock.html" title="3.2.3. clearlock"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cache_limit.html" title="3.2.1. cache_limit"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">groonga v0.7.4 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" accesskey="U">3.2. 組み込みコマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="check">
+<h1>3.2.2. check<a class="headerlink" href="#check" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>3.2.2.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>check - オブジェクトの状態表示</p>
+</div>
+<div class="section" id="id2">
+<h2>3.2.2.2. 書式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>check obj
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>3.2.2.3. 説明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。</p>
+<p>checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定しています。デバッグ用のため、返値のフォーマットが安定しているということは保証されません。（フォーマットが変更される可能性が高い）</p>
+</div>
+<div class="section" id="id4">
+<h2>3.2.2.4. 引数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">obj</span></tt></p>
+<blockquote>
+状態を表示するオブジェクトの名前を指定します。</blockquote>
+</div>
+<div class="section" id="id5">
+<h2>3.2.2.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="json">
+<h3>3.2.2.5.1. json形式<a class="headerlink" href="#json" title="Permalink to this headline">¶</a></h3>
+<p>チェックするオブジェクトにより返される値が変わります。</p>
+<p>インデックスカラムの場合:</p>
+<div class="highlight-none"><div class="highlight"><pre>下記のような配列が出力されます。
+
+  [インデックスの状態, バッファの状態1, バッファの状態2, ...]
+
+``インデックスの状態``には下記の項目がハッシュ形式で出力されます。
+
+``flags``
+
+  指定されているフラグ値です。16進数で表現されています。
+
+``max sid``
+
+  セグメントのうち最も大きなIDです。
+
+``number of garbage segments``
+
+  ゴミセグメントの数です。
+
+``number of array segments``
+
+  配列セグメントの数です。
+
+``max id of array segment``
+
+  配列セグメントのうち最も大きなIDです。
+
+``number of buffer segments``
+
+  バッファセグメントの数です。
+
+``max id of buffer segment``
+
+  バッファセグメントのうち最も大きなIDです。
+
+``max id of physical segment in use``
+
+  使用中の論理セグメントのうち最も大きなIDです。
+
+``number of unmanaged segments``
+
+  管理されていないセグメントの数です。
+
+``total chunk size``
+
+  チャンクサイズの合計です。
+
+``max id of chunk segments in use``
+
+  使用中のチャンクセグメントのうち最も大きなIDです。
+
+``number of garbage chunk``
+
+  各チャンク毎のゴミの数です。
+
+``バッファの状態``には下記の項目がハッシュ形式で出力されます。
+
+``buffer id``
+
+  バッファIDです。
+
+``chunk size``
+
+  チャンクのサイズです。
+
+``buffer term``
+
+  バッファ内にある語の一覧です。各語の状態は以下のような配列となっています。
+
+    [語, バッファに登録されている語のID, 用語集に登録されている語のID, バッファ内でのサイズ, チャンク内でのサイズ]
+
+``buffer free``
+
+  バッファの空き容量です。
+
+``size in buffer``
+
+  バッファの使用量です。
+
+``nterms``
+
+  バッファ内にある語の数です。
+
+``nterms with chunk``
+
+  バッファ内にある語のうち、チャンクを使っている語の数です。
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>3.2.2.6. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>テーブルTermsのインデックスカラムnameの状態を表示します。:</p>
+<div class="highlight-none"><div class="highlight"><pre>check Terms.name
+[{&quot;flags&quot;:&quot;00008202&quot;,
+  &quot;max sid&quot;:1,
+  &quot;number of garbage segments&quot;:0,
+  &quot;number of array segments&quot;:1,
+  &quot;max id of array segment&quot;:1,
+  &quot;number of buffer segments&quot;:110,
+  &quot;max id of buffer segment&quot;:111,
+  &quot;max id of physical segment in use&quot;:111,
+  &quot;number of unmanaged segments&quot;:4294967185,
+  &quot;total chunk size&quot;:7470239,
+  &quot;max id of chunk segments in use&quot;:127,
+  &quot;number of garbage chunk&quot;:[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0]},
+ {&quot;buffer id&quot;:0,
+  &quot;chunk size&quot;:94392,
+  &quot;buffer term&quot;:[&quot;596&quot;,&quot;59777&quot;,&quot;6&quot;,...],
+  &quot;buffer free&quot;:152944,
+  &quot;size in buffer&quot;:7361,
+  &quot;nterms&quot;:237,
+  &quot;nterms with chunk&quot;:216,
+  &quot;buffer id&quot;:1,
+  &quot;chunk size&quot;:71236,
+  &quot;buffer term&quot;:[[&quot;に述&quot;,18149,18149,2,25,6,6],
+                 [&quot;に追&quot;,4505,4505,76,485,136,174],
+                 [&quot;に退&quot;,26568,26568,2,9,2,2],
+                 ...],
+  &quot;buffer free&quot;:120000,
+  &quot;size in buffer&quot;:11155,
+  &quot;nterms&quot;:121,
+  &quot;nterms with chunk&quot;:116},
+  {&quot;buffer id&quot;:1,
+   ...},
+  ...]
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.2.2. check</a><ul>
+<li><a class="reference internal" href="#id1">3.2.2.1. 名前</a></li>
+<li><a class="reference internal" href="#id2">3.2.2.2. 書式</a></li>
+<li><a class="reference internal" href="#id3">3.2.2.3. 説明</a></li>
+<li><a class="reference internal" href="#id4">3.2.2.4. 引数</a></li>
+<li><a class="reference internal" href="#id5">3.2.2.5. 返値</a><ul>
+<li><a class="reference internal" href="#json">3.2.2.5.1. json形式</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">3.2.2.6. 例</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cache_limit.html"
+                        title="previous chapter">3.2.1. cache_limit</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="clearlock.html"
+                        title="next chapter">3.2.3. clearlock</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/commands/check.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="clearlock.html" title="3.2.3. clearlock"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cache_limit.html" title="3.2.1. cache_limit"
+             >previous</a> |</li>
+        <li><a href="../index.html">groonga v0.7.4 documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >3. リファレンスマニュアル</a> &raquo;</li>
+          <li><a href="../commands.html" >3.2. 組み込みコマンド一覧</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+    </div>
+  </body>
+</html>
