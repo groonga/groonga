@@ -6653,6 +6653,49 @@ typedef struct
   int key_size;
 } mesh_entry;
 
+/* #define GEO_SORT_DEBUG */
+
+#ifdef GEO_SORT_DEBUG
+#include <stdio.h>
+
+static void
+inspect_mesh_entry(grn_ctx *ctx, mesh_entry *entries, int n)
+{
+  mesh_entry *entry;
+  grn_geo_point min, max;
+
+  entry = entries + n;
+  printf("mesh: %d:%d\n", n, entry->key_size);
+
+  printf("key: ");
+  grn_p_geo_point(ctx, &(entry->key));
+
+  compute_min_and_max(&(entry->key), entry->key_size, &min, &max);
+  printf("min: ");
+  grn_p_geo_point(ctx, &min);
+  printf("max: ");
+  grn_p_geo_point(ctx, &max);
+}
+
+static void
+inspect_tid(grn_ctx *ctx, grn_id tid, grn_geo_point *point,
+            double x, double y, double d)
+{
+  printf("tid: %d:%g (%g,%g)", tid, d, x, y);
+  grn_p_geo_point(ctx, point);
+}
+#else
+#  define inspect_mesh_entry(...)
+#  define inspect_tid(...)
+#endif
+
+typedef enum {
+  MESH_LEFT_TOP,
+  MESH_RIGHT_TOP,
+  MESH_RIGHT_BOTTOM,
+  MESH_LEFT_BOTTOM
+} mesh_position;
+
 static int
 grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   grn_pat *pat,
@@ -6669,26 +6712,61 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   int lat_diff, lng_diff;
   double lng1, lat1, lng2, lat2, x, y, d;
   geo_entry *ep, *p;
+  mesh_position position;
 
   lat1 = GEO_INT2RAD(base_point->latitude);
   lng1 = GEO_INT2RAD(base_point->longitude);
-  lat_diff = geo_max->latitude - geo_min->latitude;
-  lng_diff = geo_max->longitude - geo_min->longitude;
+  lat_diff = geo_max->latitude - geo_min->latitude + 1;
+  lng_diff = geo_max->longitude - geo_min->longitude + 1;
   if (base_point->latitude >= geo_min->latitude + lat_diff / 2) {
-    geo_base.latitude = geo_max->latitude;
+    geo_base.latitude = geo_max->latitude + 1;
     if (base_point->longitude >= geo_min->longitude + lng_diff / 2) {
-      geo_base.longitude = geo_max->longitude;
+      geo_base.longitude = geo_max->longitude + 1;
+      position = MESH_LEFT_BOTTOM;
     } else {
       geo_base.longitude = geo_min->longitude;
+      position = MESH_RIGHT_BOTTOM;
     }
   } else {
     geo_base.latitude = geo_min->latitude;
     if (base_point->longitude >= geo_min->longitude + lng_diff / 2) {
-      geo_base.longitude = geo_max->longitude;
+      geo_base.longitude = geo_max->longitude + 1;
+      position = MESH_LEFT_TOP;
     } else {
       geo_base.longitude = geo_min->longitude;
+      position = MESH_RIGHT_TOP;
     }
   }
+  /*
+    base_point: b
+    geo_min: i
+    geo_max: a
+    geo_base: x: must be at the left bottom in the top right mesh.
+
+    e.g.: base_point is at the left bottom mesh case:
+              +------+------+
+              |      |      |
+              |      |x     |
+             ^+------+------+
+             ||     a|      |
+    lng_diff || b    |      |
+            \/i------+------+
+              <------>
+              lat_diff
+
+    grn_min + lat_diff -> the right mesh.
+    grn_min + lng_diff -> the top mesh.
+   */
+#ifdef GEO_SORT_DEBUG
+  grn_p_geo_point(ctx, base_point);
+  printf("base: ");
+  grn_p_geo_point(ctx, &geo_base);
+  printf("min:  ");
+  grn_p_geo_point(ctx, geo_min);
+  printf("max:  ");
+  grn_p_geo_point(ctx, geo_max);
+  printf("diff: %d (%d, %d)\n", diff_bit, lat_diff, lng_diff);
+#endif
 
   n_meshes = 0;
 
@@ -6698,26 +6776,22 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   meshes[n_meshes].key_size = key_size_;\
   n_meshes++;
 
-  if (geo_base.latitude != geo_min->latitude ||
-      geo_base.longitude != geo_min->longitude) {
-    add_mesh(1, 1, diff_bit);
+  if (position != MESH_LEFT_TOP) {
+    add_mesh(0, -lng_diff, diff_bit);
   }
-  if (geo_base.latitude != geo_min->latitude ||
-      geo_base.longitude != geo_max->longitude) {
-    add_mesh(1, -lng_diff + 1, diff_bit);
+  if (position != MESH_RIGHT_TOP) {
+    add_mesh(0, 0, diff_bit);
   }
-  if (geo_base.latitude != geo_max->latitude ||
-      geo_base.longitude != geo_max->longitude) {
-    add_mesh(-lat_diff + 1, -lng_diff + 1, diff_bit);
+  if (position != MESH_RIGHT_BOTTOM) {
+    add_mesh(-lat_diff, 0, diff_bit);
   }
-  if (geo_base.latitude != geo_max->latitude ||
-      geo_base.longitude != geo_min->longitude) {
-    add_mesh(-lat_diff + 1, 1, diff_bit);
+  if (position != MESH_LEFT_BOTTOM) {
+    add_mesh(-lat_diff, -lng_diff, diff_bit);
   }
 
 #define add_sub_mesh(lat_diff_cmp,lng_diff_cmp,lat_diff_base,lng_diff_base)\
-  lat2 = GEO_INT2RAD(geo_base.latitude + lat_diff_cmp);\
-  lng2 = GEO_INT2RAD(geo_base.longitude + lng_diff_cmp);\
+  lat2 = GEO_INT2RAD(geo_base.latitude + (lat_diff_cmp));\
+  lng2 = GEO_INT2RAD(geo_base.longitude + (lng_diff_cmp));\
   x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);\
   y = (lat2 - lat1);\
   d = ((x * x) + (y * y));\
@@ -6725,41 +6799,59 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     add_mesh(lat_diff_base, lng_diff_base, diff_bit + 2);\
   }
 
-  add_sub_mesh(lat_diff + 1, -lng_diff / 2,
-               lat_diff + 1, -lng_diff);
-  add_sub_mesh(lat_diff + 1, 0,
-               lat_diff + 1, -lng_diff / 2);
-  add_sub_mesh(lat_diff + 1, 0,
-               lat_diff + 1, 0);
-  add_sub_mesh(lat_diff + 1, lng_diff / 2 + 1,
-               lat_diff + 1, lng_diff / 2 + 1);
+  /*
+    b: base_point
+    1-16: sub meshes. 1-16 are added order.
 
-  add_sub_mesh(lat_diff / 2 + 1, lng_diff + 1,
-               lat_diff / 2 + 1, lng_diff + 1);
-  add_sub_mesh(0, lng_diff + 1,
-               0, lng_diff + 1);
-  add_sub_mesh(0, lng_diff + 1,
-               -lat_diff / 2, lng_diff + 1);
-  add_sub_mesh(-lat_diff / 2, lng_diff + 1,
-               -lat_diff, lng_diff + 1);
+        +---+---+---+---+
+        | 1 | 2 | 3 | 4 |
+    +---+---+---+---+---+---+
+    |16 |       |       | 5 |
+    +---+       |       +---+
+    |15 |       |b      | 6 |
+    +---+-------+-------+---+
+    |14 |       |       | 7 |
+    +---+  base meshes  +---+
+    |13 |       |       | 8 |
+    +---+---+---+---+---+---+
+        |12 |11 |10 | 9 |
+        +---+---+---+---+
+   */
+  add_sub_mesh(lat_diff, -(lng_diff + 1) / 2 - 1,
+               lat_diff, -lng_diff);
+  add_sub_mesh(lat_diff, -1,
+               lat_diff, -(lng_diff + 1) / 2);
+  add_sub_mesh(lat_diff, 0,
+               lat_diff, 0);
+  add_sub_mesh(lat_diff, (lng_diff + 1) / 2,
+               lat_diff, (lng_diff + 1) / 2);
 
-  add_sub_mesh(-lat_diff, lng_diff / 2,
-               -lat_diff * 2, lng_diff / 2 + 1);
-  add_sub_mesh(-lat_diff, 0,
+  add_sub_mesh((lat_diff + 1) / 2, lng_diff,
+               (lat_diff + 1) / 2, lng_diff);
+  add_sub_mesh(0, lng_diff,
+               0, lng_diff);
+  add_sub_mesh(-1, lng_diff,
+               -(lat_diff + 1) / 2, lng_diff);
+  add_sub_mesh(-(lat_diff + 1) / 2 - 1, lng_diff,
+               -lat_diff, lng_diff);
+
+  add_sub_mesh(-lat_diff - 1, (lng_diff + 1) / 2,
+               -lat_diff * 2, (lng_diff + 1) / 2);
+  add_sub_mesh(-lat_diff - 1, 0,
                -lat_diff * 2, 0);
-  add_sub_mesh(-lat_diff, 0,
-               -lat_diff * 2, -lng_diff / 2);
-  add_sub_mesh(-lat_diff, -lng_diff / 2,
+  add_sub_mesh(-lat_diff - 1, -1,
+               -lat_diff * 2, -(lng_diff + 1) / 2);
+  add_sub_mesh(-lat_diff - 1, -(lng_diff + 1) / 2 - 1,
                -lat_diff * 2, -lng_diff);
 
-  add_sub_mesh(-lat_diff / 2, -lng_diff,
+  add_sub_mesh(-(lat_diff + 1) / 2 - 1, -lng_diff - 1,
                -lat_diff, -lng_diff * 2);
-  add_sub_mesh(0, -lng_diff,
-               -lat_diff / 2, -lng_diff * 2);
-  add_sub_mesh(0, -lng_diff,
+  add_sub_mesh(-1, -lng_diff - 1,
+               -(lat_diff + 1) / 2, -lng_diff * 2);
+  add_sub_mesh(0, -lng_diff - 1,
                0, -lng_diff * 2);
-  add_sub_mesh(lat_diff / 2 + 1, -lng_diff,
-               lat_diff / 2 + 1, -lng_diff * 2);
+  add_sub_mesh((lat_diff + 1) / 2, -lng_diff - 1,
+               (lat_diff + 1) / 2, -lng_diff * 2);
 
 #undef add_sub_mesh
 #undef add_mesh
@@ -6773,6 +6865,7 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                              NULL, 0,
                                              0, -1,
                                              GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
+    inspect_mesh_entry(ctx, meshes, n_meshes);
     if (pc) {
       while ((tid = grn_pat_cursor_next(ctx, pc))) {
         grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
@@ -6785,6 +6878,7 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
           x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
           y = (lat2 - lat1);
           d = ((x * x) + (y * y));
+          inspect_tid(ctx, tid, &pos, x, y, d);
           while ((posting = grn_ii_cursor_next(ctx, ic))) {
             grn_id rid = accessorp
               ? grn_table_get(ctx, table, &posting->rid, sizeof(grn_id))
