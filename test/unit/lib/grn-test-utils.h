@@ -33,6 +33,12 @@
 #define GRN_TEST_ENV_N_PROCESSES "GRN_TEST_N_PROCESSES"
 #define GRN_TEST_ENV_PROCESS_NUMBER "GRN_TEST_PROCESS_NUMBER"
 
+#define GRN_TEST_GEO_COORDINATE(hours, minutes, seconds)     \
+  ((hours) * 3600 + (minutes) * 60 + (seconds)) * 1000
+
+#define GRN_TEST_GEO_POINT_STRING(latitude, longitude) \
+  g_strdup_printf("%dx%d", latitude, longitude)
+
 typedef void (*grn_test_set_parameters_func) (void);
 
 const gchar *grn_rc_to_string              (grn_rc rc);

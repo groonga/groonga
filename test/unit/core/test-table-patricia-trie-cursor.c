@@ -25,12 +25,11 @@
 #include "../lib/grn-assertions.h"
 
 #define COORDINATE(hours, minutes, seconds) \
-  ((hours) * 3600 + (minutes) * 60 + (seconds)) * 1000
+  GRN_TEST_GEO_COORDINATE(hours, minutes, seconds)
 
 #define POINT(latitude_hours, latitude_minutes, latitude_seconds,       \
               longitude_hours, longitude_minutes, longitude_seconds)    \
-  g_strdup_printf(                                                      \
-    "%dx%d",                                                            \
+  GRN_TEST_GEO_POINT_STRING(                                            \
     COORDINATE(latitude_hours, latitude_minutes, latitude_seconds),     \
     COORDINATE(longitude_hours, longitude_minutes, longitude_seconds))
 
