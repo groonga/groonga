@@ -136,7 +136,7 @@ grn_exprを使って様々な検索クエリを表現することができます
  grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
  result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
 
-tableのcolumnの値がstringにmatchするレコードをresultに返します。
+tableのcolumnの値がstringを含むレコードをresultに返します。columnの値が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1のみがヒットします。
 
 
 検索例2
@@ -188,3 +188,16 @@ tableのcolumn1の値がstringにexactモードでmatchするレコードにつ�
  }
 
 tableのcolumn1の値がstringにexactモードでmatchするレコードについて得られるスコア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小さい場合は、partialモードで再度検索し、matchしたレコードについて得られるスコア値にscore2を積算してresultに追加します。
+
+検索例4
+-------
+
+ GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
+ grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+ grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
+ grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1);
+ grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
+ result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
+
+tableのcolumnの値がstringに含まれるレコードをresultに返します。
+columnの値が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみがヒットします。
