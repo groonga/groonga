@@ -22,6 +22,7 @@
 #include "../../lib/grn-assertions.h"
 
 void test_in_circle(void);
+void test_sort(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_but_white(void);
 void test_drilldown(void);
@@ -115,6 +116,36 @@ test_in_circle(void)
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer '_score=geo_distance(location, \"%s\")'",
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        distance,
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+}
+
+void
+test_sort(void)
+{
+  gdouble yurakucho_latitude = 35.67487;
+  gdouble yurakucho_longitude = 139.76352;
+  gint distance = 3 * 1000;
+
+  cut_assert_equal_string(
+    "[[[6],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"銀座 かずや\",795],"
+    "[\"たいやき神田達磨 八重洲店\",1079],"
+    "[\"たい焼き鉄次 大丸東京店\",1390],"
+    "[\"築地 さのきや\",1723],"
+    "[\"にしみや 甘味処\",2000],"
+    "[\"しげ田\",2272]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby 'geo_distance(location, \"%s\")' "
+        "--output_columns 'name, _score' "
+        "--filter 'geo_in_circle(location, \"%s\", %d)' "
+        "--scorer '_score=geo_distance(location, \"%s\")'",
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));

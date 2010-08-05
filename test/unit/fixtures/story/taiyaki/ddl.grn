@@ -1,5 +1,7 @@
 table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
 
+table_create Locations TABLE_PAT_KEY WGS84GeoPoint
+
 table_create Tags TABLE_PAT_KEY ShortText
 column_create Tags name COLUMN_SCALAR ShortText
 
@@ -19,4 +21,5 @@ column_create Shops categories COLUMN_VECTOR Categories
 column_create Shops area COLUMN_SCALAR Areas
 
 column_create Tags index COLUMN_INDEX Shops tags
+column_create Locations shop COLUMN_INDEX Shops location
 column_create Bigram name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Shops name
