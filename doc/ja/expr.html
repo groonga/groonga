@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.5. grn式 (grn_expr) &mdash; groonga v0.7.4 documentation</title>
+    <title>3.5. grn_expr &mdash; groonga v0.7.4 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -50,161 +50,27 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="grn-grn-expr">
-<h1>3.5. grn式 (grn_expr)<a class="headerlink" href="#grn-grn-expr" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="grn-expr">
+<h1>3.5. grn_expr<a class="headerlink" href="#grn-expr" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>3.5.1. 名前<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>grn式 - 検索条件やデータベースへの操作を表現する文字列の形式。(読み方:&#8221;ぐるんしき&#8221;)</p>
+<p>grn_expr - 検索条件やデータベースへの操作を表現するデータ構造(読み方:&#8221;ぐるんしき&#8221;)</p>
 </div>
 <div class="section" id="id2">
 <h2>3.5.2. 説明<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>grn式は、検索条件やデータベースへの操作を表現するために使用される文字列の形式です。</p>
-<p>selectやloadなどのいくつかの組込コマンドや、API関数grn_table_select()などで使用されます。grn式はquery形式とscript形式という2種類の方式で記述することができます。query形式は、多くのweb検索エンジンなどで検索フォームにユーザが指定可能なクエリ文字列の書式に合わせた形式です。script形式は、ECMAScriptの構文から式(expression)以下の構文要素を抜粋した形式になっており、文(statement)や制御構造などは表現できません。</p>
-<p>query形式のgrn式もscript形式のgrn式も、共通の中間形式に翻訳された上で処理されますので、処理速度や効率には差違はありません。記述できる処理の範囲はscript形式の方がquery形式より広くなっています。たとえば更新系の操作はscript形式のみで記述できます。</p>
-<p>DB-APIレイヤでは、異なる形式で記述された複数のgrn式を結合することも可能です。</p>
+<p>grn_exprは、検索条件やデータベースへの操作を表現するために使用されるデータ構造の形式です。</p>
+<p>データベースの中から特定の条件を満たすレコードを取り出すために、様々な条件をand,or,notなどの演算子で結合して自由に表現することができます。grn_exprは、一連のAPI関数を呼ぶことによって組み立てることができます。特定の文字列形式には依存していません。組み込みコマンドselectのqueryパラメータでは、検索エンジンのユーザがフォームで入力する文字列を直接受け取ることを想定して、文字列からgrn_exprを生成しています。また、多くの組み込みコマンドで共通に使用するために、ECMAScript形式の文字列からgrn_exprを生成するAPI関数grn_expr_parse()を用意しています。grn_expr_parseでパースできる文字列を特にscript形式のgrn_exprと呼びます。</p>
+<p>grn_exprを使うことによって非常に柔軟に検索条件を記述することができます。類似文書検索や近傍検索のような高度な検索もすべてgrn_exprによって記述できます。また、全文検索クエリにおいて、特定の文字列を含むレコードのスコアを細かく制御したり、検索結果数の多寡に応じてより検索漏れの少ないアルゴリズムで再検索するような機能も、grn_exprとgrn_table_select()API関数を組み合わせることによって自由に定義できます。</p>
 </div>
-<div class="section" id="id3">
-<h2>3.5.3. 例<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>query形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
-<blockquote>
-column1:hoge</blockquote>
-<p>script形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
-<blockquote>
-column1 == &#8220;hoge&#8221;</blockquote>
-</div>
-<div class="section" id="query">
-<h2>3.5.4. query形式<a class="headerlink" href="#query" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id4">
-<h3>3.5.4.1. 条件式<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-<p>以下の条件式が使用できます。</p>
-<dl class="docutils">
-<dt>文字列</dt>
-<dd>全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)</dd>
-<dt>&#8220;文字列&#8221;</dt>
-<dd>フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでいる)</dd>
-<dt>カラム名:値</dt>
-<dd>一致条件(カラム値 == 値)</dd>
-<dt>カラム名:!値</dt>
-<dd>不一致条件(カラム値 != 値)</dd>
-<dt>カラム名:&lt;値</dt>
-<dd>比較条件(カラム値 &lt; 値)</dd>
-<dt>カラム名:&gt;値</dt>
-<dd>比較条件(カラム値 &gt; 値)</dd>
-<dt>カラム名:&lt;=値</dt>
-<dd>比較条件(カラム値 &lt;= 値)</dd>
-<dt>カラム名:&gt;=値</dt>
-<dd>比較条件(カラム値 &gt;= 値)</dd>
-<dt>カラム名:&#64;文字列</dt>
-<dd>全文検索条件(カラム値が指定された文字列を含んでいる)</dd>
-<dt>カラム名:^文字列</dt>
-<dd>前方一致条件(カラム値が指定された文字列に前方一致する)</dd>
-<dt>カラム名:$文字列</dt>
-<dd>後方一致条件(カラム値が指定された文字列に後方一致する)</dd>
-</dl>
-</div>
-<div class="section" id="id5">
-<h3>3.5.4.2. 補助演算子<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
-<p>全文検索条件の挙動を制御する以下の演算子が指定できます。[#]_</p>
-<dl class="docutils">
-<dt>~文字列</dt>
-<dd>文字列を含んでいた場合は、そのレコードのスコアを下げます。</dd>
-<dt>&lt;文字列</dt>
-<dd>文字列を含んでいた場合に加算されるスコアの値を小さくします。</dd>
-<dt>&gt;文字列</dt>
-<dd>文字列を含んでいた場合に加算されるスコアの値を大きくします。</dd>
-<dt>文字列*</dt>
-<dd>文字列に前方一致する条件を示します。</dd>
-<dt>*S[数値]&#8221;文字列&#8221;</dt>
-<dd>文字列と関連する文書を検索します。文字列から抽出する特徴語の数を数値に指定します。</dd>
-<dt>*N[数値]&#8221;文字列&#8221;</dt>
-<dd>文字列に含まれる複数の語が、近傍に含まれる文書を検索します。近傍の範囲の上限となる語数を数値に指定します。N-gramの場合は、文字数を指定します。</dd>
-</dl>
-</div>
-<div class="section" id="id6">
-<h3>3.5.4.3. 結合演算子<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
-<p>複数の条件式を結合するために以下の演算子が使用できる。演算子を伴わずに複数の条件式が空白(&#8216; &#8216;)区切りで指定された場合は、デフォルトの結合演算子が指定されたものとみなされる。</p>
-<dl class="docutils">
-<dt>a OR b</dt>
-<dd>論理和(aとbといずれかの条件がマッチする)</dd>
-<dt>a + b</dt>
-<dd>論理積(aとbの両方がマッチする)</dd>
-<dt>a - b</dt>
-<dd>aにマッチし、bにはマッチしない</dd>
-<dt>( )</dt>
-<dd>複数の条件をまとめる</dd>
-</dl>
-</div>
-<div class="section" id="id7">
-<h3>3.5.4.4. プラグマ<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
-<p>query形式文字列の先頭に、処理方法を指定するプラグマを埋め込むことができます。[#]_</p>
-<p>プラグマは必ずクエリ文字列の冒頭に存在しなければなりません。(先頭に空白を入れてはいけません)</p>
-<p>一つのクエリに複数のプラグマを指定することができます。</p>
-<p>複数のプラグマを指定する場合は、間に空白を入れてはいけません。</p>
-<p>*E数値1[,数値2]</p>
-<blockquote>
-<p>検索結果の数が数値1よりも小さい場合、完全一致→非わかち書き→部分一致の順に自動的に検索処理方法を切り替えます。完全一致でヒットした文書と比べて非わかち書き一致、部分一致でヒットした文書には数値2分だけ小さいスコアを付与します。数値2を省略した場合は既定値(=2)と解釈されます。数値1に負の数を指定した場合は以下のように処理します。</p>
-<blockquote>
-<table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-1</span></kbd></td>
-<td>完全一致検索のみを行う</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-2</span></kbd></td>
-<td>非わかち書き検索のみを行う</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-3</span></kbd></td>
-<td>完全一致検索と非わかち書き検索のみを行う</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-4</span></kbd></td>
-<td>部分一致検索のみを行う</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-5</span></kbd></td>
-<td>完全一致検索と部分一致検索のみを行う</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-6</span></kbd></td>
-<td>非わかち書き検索と部分一致検索のみを行う</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-7</span></kbd></td>
-<td>完全一致検索,非わかち書き検索,部分一致検索の全てを行う</td></tr>
-</tbody>
-</table>
-</blockquote>
-<p>例:</p>
-<blockquote>
-<p>*E10,3</p>
-<blockquote>
-検索結果数が10件以下だった場合に検索処理方法を順次切り替え、スコアを3ずつ小さくします。</blockquote>
-</blockquote>
-</blockquote>
-<p>*D演算子</p>
-<blockquote>
-<p>結合演算子の既定値(演算子を省略した場合にどの演算を行うか)を指定します。指定できる演算子は、OR, +, - のいずれかです。</p>
-<p>例1:</p>
-<blockquote>
-*D+ abc def</blockquote>
-<p>abcとdefを両方含む文書を検索します。</p>
-<p>例2:</p>
-<blockquote>
-*DOR abc def</blockquote>
-<p>abcとdefのいずれかを含む文書を検索します。</p>
-</blockquote>
-<p>*W[数値[:重み][,数値[:重み]]...</p>
-<blockquote>
-数値で指定されたセクション番号のみを対象に検索します。セクションごとに検索スコアの倍数を指定することができます。重みは、省略された場合1となります。負の重みも指定することができます。</blockquote>
-</div>
-</div>
-<div class="section" id="script">
-<h2>3.5.5. script形式<a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h2>
-<p>ECMAScript風の構文で検索条件やレコードへの操作を記述します。[#]_</p>
+<div class="section" id="scriptgrn-expr">
+<h2>3.5.3. script形式のgrn_expr<a class="headerlink" href="#scriptgrn-expr" title="Permalink to this headline">¶</a></h2>
+<p>ECMAScript風の構文で検索条件やレコードへの操作を記述します。</p>
 <p>式中のIDENTIFIER(識別子)は、以下のいずれかを指します。</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">引数名:</th><td class="field-body">grn式が受け取る引数の名前</td>
+<tr class="field"><th class="field-name">引数名:</th><td class="field-body">grn_exprが受け取る引数の名前</td>
 </tr>
 <tr class="field"><th class="field-name">カラム名:</th><td class="field-body">操作対象としているレコードのカラム名</td>
 </tr>
@@ -212,25 +78,13 @@ column1 == &#8220;hoge&#8221;</blockquote>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="id3">
+<h2>3.5.4. 例<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>script形式でcolumn1の値が&#8217;hoge&#8217;に等しいという条件</p>
+<blockquote>
+column1 == &#8220;hoge&#8221;</blockquote>
 <p class="rubric">脚注</p>
-<table class="docutils footnote" frame="void" id="id8" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td>補助演算子はv1.0でサポートされます。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id9" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td>プラグマはv1.0でサポートされます。</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id10" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[3]</td><td>script形式のgrn式はv1.0でサポートされます。</td></tr>
-</tbody>
-</table>
 </div>
 </div>
 
@@ -242,18 +96,11 @@ column1 == &#8220;hoge&#8221;</blockquote>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">3.5. grn式 (grn_expr)</a><ul>
+<li><a class="reference internal" href="#">3.5. grn_expr</a><ul>
 <li><a class="reference internal" href="#id1">3.5.1. 名前</a></li>
 <li><a class="reference internal" href="#id2">3.5.2. 説明</a></li>
-<li><a class="reference internal" href="#id3">3.5.3. 例</a></li>
-<li><a class="reference internal" href="#query">3.5.4. query形式</a><ul>
-<li><a class="reference internal" href="#id4">3.5.4.1. 条件式</a></li>
-<li><a class="reference internal" href="#id5">3.5.4.2. 補助演算子</a></li>
-<li><a class="reference internal" href="#id6">3.5.4.3. 結合演算子</a></li>
-<li><a class="reference internal" href="#id7">3.5.4.4. プラグマ</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#script">3.5.5. script形式</a></li>
+<li><a class="reference internal" href="#scriptgrn-expr">3.5.3. script形式のgrn_expr</a></li>
+<li><a class="reference internal" href="#id3">3.5.4. 例</a></li>
 </ul>
 </li>
 </ul>
