@@ -189,7 +189,7 @@ grn_geo_distance3(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
       d = sqrt((x * x) + (y * y));
     }
     break;
-  case  GRN_DB_WGS84_GEO_POINT :
+  case GRN_DB_WGS84_GEO_POINT :
     {
       double lng1, lat1, lng2, lat2, p, q, r, m, n, x, y;
       if (point2->header.domain != domain) {
