@@ -79,6 +79,47 @@ grn_inspect_name(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_proc *proc = (grn_proc *)obj;
+  uint32_t i;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<proc:");
+  switch (proc->type) {
+  case GRN_PROC_TOKENIZER :
+    GRN_TEXT_PUTS(ctx, buf, "tokenizer");
+    break;
+  case GRN_PROC_COMMAND :
+    GRN_TEXT_PUTS(ctx, buf, "command");
+    break;
+  case GRN_PROC_FUNCTION :
+    GRN_TEXT_PUTS(ctx, buf, "function");
+    break;
+  case GRN_PROC_HOOK :
+    GRN_TEXT_PUTS(ctx, buf, "hook");
+    break;
+  }
+  GRN_TEXT_PUTS(ctx, buf, " ");
+
+  grn_inspect_name(ctx, buf, obj);
+  GRN_TEXT_PUTS(ctx, buf, " ");
+
+  GRN_TEXT_PUTS(ctx, buf, "arguments:[");
+  for (i = 0; i < proc->nvars; i++) {
+    grn_expr_var *var = proc->vars + i;
+    if (i != 0) {
+      GRN_TEXT_PUTS(ctx, buf, ", ");
+    }
+    GRN_TEXT_PUT(ctx, buf, var->name, var->name_size);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+
+  GRN_TEXT_PUTS(ctx, buf, ">");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   return grn_column_name_(ctx, obj, buf);
@@ -585,6 +626,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     break;
   case GRN_EXPR :
     grn_expr_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_PROC :
+    grn_proc_inspect(ctx, buffer, obj);
     return buffer;
   case GRN_ACCESSOR :
   case GRN_ACCESSOR_VIEW :
