@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.3. クエリの実現 &mdash; groonga v0.7.4 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.7.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="groonga v0.7.4 documentation" href="../index.html" />
+    <link rel="up" title="4. groonga開発者向け情報" href="../developer.html" />
+    <link rel="next" title="4.5. テスト方法" href="test.html" />
+    <link rel="prev" title="4.2. ドキュメント作成" href="document.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test.html" title="4.5. テスト方法"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="document.html" title="4.2. ドキュメント作成"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">groonga v0.7.4 documentation</a> &raquo;</li>
+          <li><a href="../developer.html" accesskey="U">4. groonga開発者向け情報</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1>4.3. クエリの実現<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのクエリの表現と実行に関して、groongaは複数の手段を用意しています。</p>
+<div class="section" id="id2">
+<h2>4.3.1. クエリ実行のためのインタフェース<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドインタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供しています。</p>
+<p>クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する形で用意されています。以下に低レイヤなインタフェースから順に説明します。</p>
+<div class="section" id="db-api">
+<h3>4.3.1.1. DB_API<a class="headerlink" href="#db-api" title="Permalink to this headline">¶</a></h3>
+<p>DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供します。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供します。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができます。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによって実現されています。</p>
+</div>
+<div class="section" id="grn-expr">
+<h3>4.3.1.2. grn_expr<a class="headerlink" href="#grn-expr" title="Permalink to this headline">¶</a></h3>
+<p>grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現するためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現することができます。grn_exprによって表現されたクエリを実行するためには、grn_table_select()関数を使用します。</p>
+</div>
+<div class="section" id="groonga">
+<h3>4.3.1.3. groonga実行ファイル<a class="headerlink" href="#groonga" title="Permalink to this headline">¶</a></h3>
+<p>groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマンドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザがC言語で定義した関数を新たなコマンドとしてgroonga実行ファイルに組み込むことができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈してDB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができます。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>4.3.2. grn_exprで表現できるクエリ<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算子で結合したものです。</p>
+<p>論理演算子は、以下の3種類があります。</p>
+<div class="highlight-none"><div class="highlight"><pre>&amp;&amp; (論理積)
+|| (論理和)
+!  (否定)
+</pre></div>
+</div>
+<p>関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな関係式として使うこともできます。</p>
+<div class="highlight-none"><div class="highlight"><pre>equal(==)
+not_equal(!=)
+less(&lt;)
+greater(&gt;)
+less_equal(&lt;=)
+greater_equal(&gt;=)
+match()
+near()
+similar()
+prefix()
+suffix()
+</pre></div>
+</div>
+</div>
+<div class="section" id="grn-table-select">
+<h2>4.3.3. grn_table_select()<a class="headerlink" href="#grn-table-select" title="Permalink to this headline">¶</a></h2>
+<p>grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使います。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映するかを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。</p>
+<div class="highlight-none"><div class="highlight"><pre>GRN_OP_OR
+GRN_OP_AND
+GRN_OP_BUT
+GRN_OP_ADJUST
+</pre></div>
+</div>
+<p>GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テーブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレコードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチするレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッチするレコードに対してスコア値の更新のみを行います。</p>
+<p>grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わせて可能な限り高速に指定されたクエリを実行しようとします。</p>
+</div>
+<div class="section" id="id4">
+<h2>4.3.4. 関係式<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係として表現します。いずれの関係式も、その関係が成り立ったときに評価されるcallback、コールバック関数に渡されるargとを引数として指定することができます。callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされます。主な関係式について説明します。</p>
+<div class="section" id="equal-v1-v2-arg-callback">
+<h3>4.3.4.1. equal(v1, v2, arg, callback)<a class="headerlink" href="#equal-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値とv2の値が等しいことを表します。</p>
+</div>
+<div class="section" id="not-equal-v1-v2-arg-callback">
+<h3>4.3.4.2. not_equal(v1, v2, arg, callback)<a class="headerlink" href="#not-equal-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値とv2の値が等しくないことを表します。</p>
+</div>
+<div class="section" id="less-v1-v2-arg-callback">
+<h3>4.3.4.3. less(v1, v2, arg, callback)<a class="headerlink" href="#less-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値がv2の値よりも小さいことを表します。</p>
+</div>
+<div class="section" id="greater-v1-v2-arg-callback">
+<h3>4.3.4.4. greater(v1, v2, arg, callback)<a class="headerlink" href="#greater-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値がv2の値よりも大きいことを表します。</p>
+</div>
+<div class="section" id="less-equal-v1-v2-arg-callback">
+<h3>4.3.4.5. less_equal(v1, v2, arg, callback)<a class="headerlink" href="#less-equal-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値がv2の値と等しいか小さいことを表します。</p>
+</div>
+<div class="section" id="greater-equal-v1-v2-arg-callback">
+<h3>4.3.4.6. greater_equal(v1, v2, arg, callback)<a class="headerlink" href="#greater-equal-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値がv2の値と等しいか大きいことを表します。</p>
+</div>
+<div class="section" id="match-v1-v2-mode-arg-callback">
+<h3>4.3.4.7. match(v1, v2, mode, arg, callback)<a class="headerlink" href="#match-v1-v2-mode-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されるとき、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれかを指定することができます。</p>
+<div class="highlight-none"><div class="highlight"><pre>EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致する(デフォルト)
+UNSPLIT: v2の値は要素に分解しない
+PREFIX: v1の値の要素がv2の値に前方一致する
+SUFFIX: v1の値の要素がv2の値に後方一致する
+PARTIAL: v1の値の要素がv2の値に中間一致する
+</pre></div>
+</div>
+</div>
+<div class="section" id="near-v1-v2-arg-callback">
+<h3>4.3.4.8. near(v1, v2, arg, callback)<a class="headerlink" href="#near-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配列を渡します)</p>
+</div>
+<div class="section" id="similar-v1-v2-arg-callback">
+<h3>4.3.4.9. similar(v1, v2, arg, callback)<a class="headerlink" href="#similar-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値とv2の値が類似していることを表します。</p>
+</div>
+<div class="section" id="prefix-v1-v2-arg-callback">
+<h3>4.3.4.10. prefix(v1, v2, arg, callback)<a class="headerlink" href="#prefix-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値がv2の値に対して前方一致することを表します。</p>
+</div>
+<div class="section" id="suffix-v1-v2-arg-callback">
+<h3>4.3.4.11. suffix(v1, v2, arg, callback)<a class="headerlink" href="#suffix-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
+<p>v1の値がv2の値に対して後方一致することを表します。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h1>4.4. クエリの実例<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
+<p>grn_exprを使って様々な検索クエリを表現することができます。</p>
+<div class="section" id="id6">
+<h2>4.4.1. 検索例1<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
+grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
+grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
+result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
+</pre></div>
+</div>
+<p>tableのcolumnの値がstringを含むレコードをresultに返します。columnの値が&#8217;needle in haystack&#8217;であるレコードr1と、columnの値が&#8217;haystack&#8217;であるレコードr2がtableに登録されていたとき、stringに&#8217;needle&#8217;を指定したなら、レコードr1のみがヒットします。</p>
+</div>
+<div class="section" id="id7">
+<h2>4.4.2. 検索例2<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
+grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1);
+grn_expr_append_op(ctx, query, GRN_OP_CALL, 5);
+result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
+grn_obj_close(ctx, query);
+GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
+grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, column2, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1);
+grn_expr_append_op(ctx, query, GRN_OP_CALL, 5);
+grn_table_select(ctx, table, query, result, GRN_OP_ADJUST);
+grn_obj_close(ctx, query);
+</pre></div>
+</div>
+<p>tableのcolumn1の値がstringにexactモードでmatchするレコードについて得られるスコア値にscore1を積算してresultにセットします。次に、resultにセットされたレコードのうち、column2の値がstringにexactモードでmatchするレコードについては、matchの結果得られたスコア値にscore2を積算したものを、元のスコア値に加えます。</p>
+</div>
+<div class="section" id="id8">
+<h2>4.4.3. 検索例3<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
+grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1);
+grn_expr_append_op(ctx, query, GRN_OP_CALL, 5);
+result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
+grn_obj_close(ctx, query);
+if (grn_table_size(ctx, result) &lt; t1) {
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
+  grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+  grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
+  grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
+  grn_expr_append_const(ctx, query, partial, GRN_OP_PUSH, 1);
+  grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1);
+  grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
+  grn_table_select(ctx, table, query, result, GRN_OP_OR);
+  grn_obj_close(ctx, query);
+}
+</pre></div>
+</div>
+<p>tableのcolumn1の値がstringにexactモードでmatchするレコードについて得られるスコア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小さい場合は、partialモードで再度検索し、matchしたレコードについて得られるスコア値にscore2を積算してresultに追加します。</p>
+</div>
+<div class="section" id="id9">
+<h2>4.4.4. 検索例4<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
+grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1);
+grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
+result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
+</pre></div>
+</div>
+<p>tableのcolumnの値がstringに含まれるレコードをresultに返します。
+columnの値が&#8217;needle&#8217;であるレコードr1と、columnの値が&#8217;haystack&#8217;であるレコードr2がtableに登録されていたとき、stringに&#8217;hay in haystack&#8217;を指定したなら、レコードr2のみがヒットします。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4.3. クエリの実現</a><ul>
+<li><a class="reference internal" href="#id2">4.3.1. クエリ実行のためのインタフェース</a><ul>
+<li><a class="reference internal" href="#db-api">4.3.1.1. DB_API</a></li>
+<li><a class="reference internal" href="#grn-expr">4.3.1.2. grn_expr</a></li>
+<li><a class="reference internal" href="#groonga">4.3.1.3. groonga実行ファイル</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">4.3.2. grn_exprで表現できるクエリ</a></li>
+<li><a class="reference internal" href="#grn-table-select">4.3.3. grn_table_select()</a></li>
+<li><a class="reference internal" href="#id4">4.3.4. 関係式</a><ul>
+<li><a class="reference internal" href="#equal-v1-v2-arg-callback">4.3.4.1. equal(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#not-equal-v1-v2-arg-callback">4.3.4.2. not_equal(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#less-v1-v2-arg-callback">4.3.4.3. less(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#greater-v1-v2-arg-callback">4.3.4.4. greater(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#less-equal-v1-v2-arg-callback">4.3.4.5. less_equal(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#greater-equal-v1-v2-arg-callback">4.3.4.6. greater_equal(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#match-v1-v2-mode-arg-callback">4.3.4.7. match(v1, v2, mode, arg, callback)</a></li>
+<li><a class="reference internal" href="#near-v1-v2-arg-callback">4.3.4.8. near(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#similar-v1-v2-arg-callback">4.3.4.9. similar(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#prefix-v1-v2-arg-callback">4.3.4.10. prefix(v1, v2, arg, callback)</a></li>
+<li><a class="reference internal" href="#suffix-v1-v2-arg-callback">4.3.4.11. suffix(v1, v2, arg, callback)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5">4.4. クエリの実例</a><ul>
+<li><a class="reference internal" href="#id6">4.4.1. 検索例1</a></li>
+<li><a class="reference internal" href="#id7">4.4.2. 検索例2</a></li>
+<li><a class="reference internal" href="#id8">4.4.3. 検索例3</a></li>
+<li><a class="reference internal" href="#id9">4.4.4. 検索例4</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="document.html"
+                        title="previous chapter">4.2. ドキュメント作成</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test.html"
+                        title="next chapter">4.5. テスト方法</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/developer/query.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test.html" title="4.5. テスト方法"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="document.html" title="4.2. ドキュメント作成"
+             >previous</a> |</li>
+        <li><a href="../index.html">groonga v0.7.4 documentation</a> &raquo;</li>
+          <li><a href="../developer.html" >4. groonga開発者向け情報</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2010, Brazil, Inc.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+    </div>
+  </body>
+</html>
