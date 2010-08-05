@@ -21,9 +21,27 @@
 #include "groonga_in.h"
 #endif /* GROONGA_IN_H */
 
+#include <math.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define GRN_GEO_RESOLUTION   3600000
+#define GRN_GEO_RADIOUS      6357303
+#define GRN_GEO_BES_C1       6334834
+#define GRN_GEO_BES_C2       6377397
+#define GRN_GEO_BES_C3       0.006674
+#define GRN_GEO_GRS_C1       6335439
+#define GRN_GEO_GRS_C2       6378137
+#define GRN_GEO_GRS_C3       0.006694
+#define GRN_GEO_INT2RAD(x)   ((M_PI / (GRN_GEO_RESOLUTION * 180)) * x)
+
+#define GRN_GEO_POINT_VALUE_RADIUS(obj,_latitude,_longitude) do {\
+  grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);\
+  _latitude = GRN_GEO_INT2RAD(_val->latitude);\
+  _longitude = GRN_GEO_INT2RAD(_val->longitude);\
+} while (0)
 
 unsigned grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
                            grn_obj *radius_or_point);
