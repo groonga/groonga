@@ -37,6 +37,7 @@ extern "C" {
 #define GRN_GEO_GRS_C3       0.006694
 #define GRN_GEO_INT2RAD(x)   ((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x))
 
+#define GRN_GEO_POINT_VALUE_RAW(obj) (grn_geo_point *)GRN_BULK_HEAD(obj)
 #define GRN_GEO_POINT_VALUE_RADIUS(obj,_latitude,_longitude) do {\
   grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);\
   _latitude = GRN_GEO_INT2RAD(_val->latitude);\
@@ -50,6 +51,10 @@ unsigned grn_geo_in_rectangle(grn_ctx *ctx, grn_obj *point,
 double grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
 double grn_geo_distance2(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
 double grn_geo_distance3(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
+double grn_geo_distance_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2);
+double grn_geo_distance2_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2);
+double grn_geo_distance3_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2,
+                             int c1, int c2, double c3);
 
 #ifdef __cplusplus
 }

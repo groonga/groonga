@@ -113,23 +113,68 @@ exit :
 }
 
 double
+grn_geo_distance_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2)
+{
+  double lng1, lat1, lng2, lat2, x, y;
+
+  lat1 = GRN_GEO_INT2RAD(point1->latitude);
+  lng1 = GRN_GEO_INT2RAD(point1->longitude);
+  lat2 = GRN_GEO_INT2RAD(point2->latitude);
+  lng2 = GRN_GEO_INT2RAD(point2->longitude);
+  x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+  y = (lat2 - lat1);
+  return sqrt((x * x) + (y * y)) * GRN_GEO_RADIOUS;
+}
+
+double
+grn_geo_distance2_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2)
+{
+  double lng1, lat1, lng2, lat2, x, y;
+
+  lat1 = GRN_GEO_INT2RAD(point1->latitude);
+  lng1 = GRN_GEO_INT2RAD(point1->longitude);
+  lat2 = GRN_GEO_INT2RAD(point2->latitude);
+  lng2 = GRN_GEO_INT2RAD(point2->longitude);
+  x = sin(fabs(lng2 - lng1) * 0.5);
+  y = sin(fabs(lat2 - lat1) * 0.5);
+  return asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GRN_GEO_RADIOUS;
+}
+
+double
+grn_geo_distance3_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2,
+                      int c1, int c2, double c3)
+{
+  double lng1, lat1, lng2, lat2, p, q, r, m, n, x, y;
+
+  lat1 = GRN_GEO_INT2RAD(point1->latitude);
+  lng1 = GRN_GEO_INT2RAD(point1->longitude);
+  lat2 = GRN_GEO_INT2RAD(point2->latitude);
+  lng2 = GRN_GEO_INT2RAD(point2->longitude);
+  p = (lat1 + lat2) * 0.5;
+  q = (1 - c3 * sin(p) * sin(p));
+  r = sqrt(q);
+  m = c1 / (q * r);
+  n = c2 / r;
+  x = n * cos(p) * fabs(lng1 - lng2);
+  y = m * fabs(lat1 - lat2);
+  return sqrt((x * x) + (y * y));
+}
+
+double
 grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
   grn_obj point2_;
   grn_id domain = point1->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
-    double lng1, lat1, lng2, lat2, x, y;
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
       if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
       point2 = &point2_;
     }
-    GRN_GEO_POINT_VALUE_RADIUS(point1, lat1, lng1);
-    GRN_GEO_POINT_VALUE_RADIUS(point2, lat2, lng2);
-    x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
-    y = (lat2 - lat1);
-    d = sqrt((x * x) + (y * y)) * GRN_GEO_RADIOUS;
+    d = grn_geo_distance_raw(ctx,
+                             GRN_GEO_POINT_VALUE_RAW(point1),
+                             GRN_GEO_POINT_VALUE_RAW(point2));
   } else {
     /* todo */
   }
@@ -144,17 +189,14 @@ grn_geo_distance2(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
   grn_obj point2_;
   grn_id domain = point1->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
-    double lng1, lat1, lng2, lat2, x, y;
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
       if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
       point2 = &point2_;
     }
-    GRN_GEO_POINT_VALUE_RADIUS(point1, lat1, lng1);
-    GRN_GEO_POINT_VALUE_RADIUS(point2, lat2, lng2);
-    x = sin(fabs(lng2 - lng1) * 0.5);
-    y = sin(fabs(lat2 - lat1) * 0.5);
-    d = asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GRN_GEO_RADIOUS;
+    d = grn_geo_distance2_raw(ctx,
+                              GRN_GEO_POINT_VALUE_RAW(point1),
+                              GRN_GEO_POINT_VALUE_RAW(point2));
   } else {
     /* todo */
   }
@@ -170,44 +212,26 @@ grn_geo_distance3(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
   grn_id domain = point1->header.domain;
   switch (domain) {
   case GRN_DB_TOKYO_GEO_POINT :
-    {
-      double lng1, lat1, lng2, lat2, p, q, r, m, n, x, y;
-      if (point2->header.domain != domain) {
-        GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
-        if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
-        point2 = &point2_;
-      }
-      GRN_GEO_POINT_VALUE_RADIUS(point1, lat1, lng1);
-      GRN_GEO_POINT_VALUE_RADIUS(point2, lat2, lng2);
-      p = (lat1 + lat2) * 0.5;
-      q = (1 - GRN_GEO_BES_C3 * sin(p) * sin(p));
-      r = sqrt(q);
-      m = GRN_GEO_BES_C1 / (q * r);
-      n = GRN_GEO_BES_C2 / r;
-      x = n * cos(p) * fabs(lng1 - lng2);
-      y = m * fabs(lat1 - lat2);
-      d = sqrt((x * x) + (y * y));
+    if (point2->header.domain != domain) {
+      GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
+      if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
+      point2 = &point2_;
     }
+    d = grn_geo_distance3_raw(ctx,
+                              GRN_GEO_POINT_VALUE_RAW(point1),
+                              GRN_GEO_POINT_VALUE_RAW(point2),
+                              GRN_GEO_BES_C1, GRN_GEO_BES_C2, GRN_GEO_BES_C3);
     break;
   case GRN_DB_WGS84_GEO_POINT :
-    {
-      double lng1, lat1, lng2, lat2, p, q, r, m, n, x, y;
-      if (point2->header.domain != domain) {
-        GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
-        if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
-        point2 = &point2_;
-      }
-      GRN_GEO_POINT_VALUE_RADIUS(point1, lat1, lng1);
-      GRN_GEO_POINT_VALUE_RADIUS(point2, lat2, lng2);
-      p = (lat1 + lat2) * 0.5;
-      q = (1 - GRN_GEO_GRS_C3 * sin(p) * sin(p));
-      r = sqrt(q);
-      m = GRN_GEO_GRS_C1 / (q * r);
-      n = GRN_GEO_GRS_C2 / r;
-      x = n * cos(p) * fabs(lng1 - lng2);
-      y = m * fabs(lat1 - lat2);
-      d = sqrt((x * x) + (y * y));
+    if (point2->header.domain != domain) {
+      GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
+      if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
+      point2 = &point2_;
     }
+    d = grn_geo_distance3_raw(ctx,
+                              GRN_GEO_POINT_VALUE_RAW(point1),
+                              GRN_GEO_POINT_VALUE_RAW(point2),
+                              GRN_GEO_GRS_C1, GRN_GEO_GRS_C2, GRN_GEO_GRS_C3);
     break;
   default :
     /* todo */
