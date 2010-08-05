@@ -23,6 +23,7 @@
 #include "token.h"
 #include "proc.h"
 #include "module.h"
+#include "geo.h"
 #include "util.h"
 #include <string.h>
 #include <float.h>
@@ -6583,13 +6584,11 @@ grn_table_sort_geo_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
   int i = 0, diff_bit_prev, diff_bit_current;
   grn_id tid;
   geo_entry *ep, *p;
-  double lng1, lat1, lng2, lat2, x, y, d;
+  double d;
   uint8_t geo_key_prev[sizeof(grn_geo_point)];
   uint8_t geo_key_curr[sizeof(grn_geo_point)];
   grn_geo_point point;
 
-  lng1 = GEO_INT2RAD(base_point->longitude);
-  lat1 = GEO_INT2RAD(base_point->latitude);
   *d_far = 0.0;
   grn_gton(geo_key_curr, base_point, sizeof(grn_geo_point));
   *diff_bit = sizeof(grn_geo_point) * 8;
@@ -6603,11 +6602,7 @@ grn_table_sort_geo_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
       grn_gton(geo_key_prev, &point, sizeof(grn_geo_point));
       grn_pat_get_key(ctx, pat, tid, &point, sizeof(grn_geo_point));
       grn_gton(geo_key_curr, &point, sizeof(grn_geo_point));
-      lng2 = GEO_INT2RAD(point.longitude);
-      lat2 = GEO_INT2RAD(point.latitude);
-      x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
-      y = (lat2 - lat1);
-      d = ((x * x) + (y * y));
+      d = grn_geo_distance_raw(ctx, base_point, &point);
 
       diff_bit_prev = diff_bit_current;
       diff_bit_current = compute_diff_bit(geo_key_curr, geo_key_prev);
@@ -6710,12 +6705,10 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   grn_geo_point geo_base;
   mesh_entry meshes[19];
   int lat_diff, lng_diff;
-  double lng1, lat1, lng2, lat2, x, y, d;
+  double d;
   geo_entry *ep, *p;
   mesh_position position;
 
-  lat1 = GEO_INT2RAD(base_point->latitude);
-  lng1 = GEO_INT2RAD(base_point->longitude);
   lat_diff = geo_max->latitude - geo_min->latitude + 1;
   lng_diff = geo_max->longitude - geo_min->longitude + 1;
   if (base_point->latitude >= geo_min->latitude + lat_diff / 2) {
@@ -6790,11 +6783,9 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
 #define add_sub_mesh(lat_diff_cmp,lng_diff_cmp,lat_diff_base,lng_diff_base)\
-  lat2 = GEO_INT2RAD(geo_base.latitude + (lat_diff_cmp));\
-  lng2 = GEO_INT2RAD(geo_base.longitude + (lng_diff_cmp));\
-  x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);\
-  y = (lat2 - lat1);\
-  d = ((x * x) + (y * y));\
+  meshes[n_meshes].key.latitude = geo_base.latitude + (lat_diff_cmp);\
+  meshes[n_meshes].key.longitude = geo_base.longitude + (lng_diff_cmp);\
+  d = grn_geo_distance_raw(ctx, base_point, &(meshes[n_meshes].key));\
   if (d < d_far) {\
     add_mesh(lat_diff_base, lng_diff_base, diff_bit + 2);\
   }
@@ -6873,11 +6864,7 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
           grn_geo_point pos;
           grn_ii_posting *posting;
           grn_pat_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
-          lng2 = GEO_INT2RAD(pos.longitude);
-          lat2 = GEO_INT2RAD(pos.latitude);
-          x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
-          y = (lat2 - lat1);
-          d = ((x * x) + (y * y));
+          d = grn_geo_distance_raw(ctx, base_point, &pos);
           inspect_tid(ctx, tid, &pos, x, y, d);
           while ((posting = grn_ii_cursor_next(ctx, ic))) {
             grn_id rid = accessorp
