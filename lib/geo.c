@@ -104,7 +104,7 @@ grn_geo_in_rectangle(grn_ctx *ctx, grn_obj *point,
     GRN_GEO_POINT_VALUE(top_left, lat1, lng1);
     GRN_GEO_POINT_VALUE(bottom_right, lat2, lng2);
     r = ((lng1 <= lng0) && (lng0 <= lng2) &&
-         (lat2 <= lat0) && (lat0 <= lat1));
+         (lat1 <= lat0) && (lat0 <= lat2));
   } else {
     /* todo */
   }
