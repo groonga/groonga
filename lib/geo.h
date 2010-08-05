@@ -35,7 +35,7 @@ extern "C" {
 #define GRN_GEO_GRS_C1       6335439
 #define GRN_GEO_GRS_C2       6378137
 #define GRN_GEO_GRS_C3       0.006694
-#define GRN_GEO_INT2RAD(x)   ((M_PI / (GRN_GEO_RESOLUTION * 180)) * x)
+#define GRN_GEO_INT2RAD(x)   ((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x))
 
 #define GRN_GEO_POINT_VALUE_RADIUS(obj,_latitude,_longitude) do {\
   grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);\
