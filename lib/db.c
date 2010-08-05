@@ -6577,9 +6577,7 @@ grn_table_sort_geo_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
                                     grn_pat *pat, geo_entry *entries,
                                     grn_pat_cursor *pc, int n, int accessorp,
                                     grn_geo_point *base_point,
-                                    double *d_far,
-                                    grn_geo_point *geo_min, grn_geo_point *geo_max,
-                                    int *diff_bit)
+                                    double *d_far, int *diff_bit)
 {
   int i = 0, diff_bit_prev, diff_bit_current;
   grn_id tid;
@@ -6636,8 +6634,6 @@ grn_table_sort_geo_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
       grn_ii_cursor_close(ctx, ic);
     }
   }
-
-  compute_min_and_max(base_point, *diff_bit, geo_min, geo_max);
 
   return i;
 }
@@ -6697,36 +6693,36 @@ grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   geo_entry *entries, int n_entries,
                                   int n, int accessorp,
                                   grn_geo_point *base_point,
-                                  double d_far,
-                                  grn_geo_point *geo_min, grn_geo_point *geo_max,
-                                  int diff_bit)
+                                  double d_far, int diff_bit)
 {
   int n_meshes;
-  grn_geo_point geo_base;
+  grn_geo_point geo_base, geo_min, geo_max;
   mesh_entry meshes[19];
   int lat_diff, lng_diff;
   double d;
   geo_entry *ep, *p;
   mesh_position position;
 
-  lat_diff = geo_max->latitude - geo_min->latitude + 1;
-  lng_diff = geo_max->longitude - geo_min->longitude + 1;
-  if (base_point->latitude >= geo_min->latitude + lat_diff / 2) {
-    geo_base.latitude = geo_max->latitude + 1;
-    if (base_point->longitude >= geo_min->longitude + lng_diff / 2) {
-      geo_base.longitude = geo_max->longitude + 1;
+  compute_min_and_max(base_point, diff_bit, &geo_min, &geo_max);
+
+  lat_diff = geo_max.latitude - geo_min.latitude + 1;
+  lng_diff = geo_max.longitude - geo_min.longitude + 1;
+  if (base_point->latitude >= geo_min.latitude + lat_diff / 2) {
+    geo_base.latitude = geo_max.latitude + 1;
+    if (base_point->longitude >= geo_min.longitude + lng_diff / 2) {
+      geo_base.longitude = geo_max.longitude + 1;
       position = MESH_LEFT_BOTTOM;
     } else {
-      geo_base.longitude = geo_min->longitude;
+      geo_base.longitude = geo_min.longitude;
       position = MESH_RIGHT_BOTTOM;
     }
   } else {
-    geo_base.latitude = geo_min->latitude;
-    if (base_point->longitude >= geo_min->longitude + lng_diff / 2) {
-      geo_base.longitude = geo_max->longitude + 1;
+    geo_base.latitude = geo_min.latitude;
+    if (base_point->longitude >= geo_min.longitude + lng_diff / 2) {
+      geo_base.longitude = geo_max.longitude + 1;
       position = MESH_LEFT_TOP;
     } else {
-      geo_base.longitude = geo_min->longitude;
+      geo_base.longitude = geo_min.longitude;
       position = MESH_RIGHT_TOP;
     }
   }
@@ -6931,23 +6927,19 @@ grn_table_sort_geo(grn_ctx *ctx, grn_obj *table, int offset, int limit,
           int n, diff_bit;
           double d_far;
           grn_id *v;
-          grn_geo_point *base_point, geo_min, geo_max;
+          grn_geo_point *base_point;
           geo_entry *ep;
 
           base_point = (grn_geo_point *)GRN_BULK_HEAD(arg);
           n = grn_table_sort_geo_detect_far_point(ctx, table, index, pat,
                                                   entries, pc, e, accessorp,
                                                   base_point,
-                                                  &d_far,
-                                                  &geo_min, &geo_max,
-                                                  &diff_bit);
+                                                  &d_far, &diff_bit);
           grn_pat_cursor_close(ctx, pc);
           if (diff_bit > 0) {
             n += grn_table_sort_geo_collect_points(ctx, table, index, pat,
                                                    entries, n, e, accessorp,
-                                                   base_point, d_far,
-                                                   &geo_min, &geo_max,
-                                                   diff_bit);
+                                                   base_point, d_far, diff_bit);
           }
           for (i = 0, ep = entries + offset; i < limit && ep < entries + n; i++, ep++) {
             if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
