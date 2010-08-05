@@ -20,6 +20,7 @@
 #include <string.h>
 #include <float.h>
 #include "ii.h"
+#include "geo.h"
 
 grn_obj *
 grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
@@ -3767,9 +3768,6 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     + (tv.tv_usec - ctx->impl->tv.tv_usec);\
   GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s(%d)", (intptr_t)ctx, et, msg, num);\
 }
-
-grn_rc grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
-                      grn_obj *res, grn_operator op);
 
 grn_obj *
 grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,

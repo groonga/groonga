@@ -66,6 +66,8 @@ void test_column_var_size(void);
 void test_column_index(void);
 void test_type(void);
 void test_record(void);
+void test_proc_command(void);
+void test_proc_function(void);
 
 static gchar *tmp_directory;
 
@@ -803,6 +805,34 @@ test_record(void)
                           "id:1 "
                           "key:\"groonga.org\" "
                           "name:\"groonga\""
+                          ">",
+                          inspected_string());
+}
+
+void
+test_proc_command(void)
+{
+  grn_obj *proc;
+
+  proc = get_object("column_remove");
+  inspected = grn_inspect(context, NULL, proc);
+  cut_assert_equal_string("#<proc:command "
+                          "column_remove "
+                          "arguments:[table, name]"
+                          ">",
+                          inspected_string());
+}
+
+void
+test_proc_function(void)
+{
+  grn_obj *proc;
+
+  proc = get_object("geo_distance");
+  inspected = grn_inspect(context, NULL, proc);
+  cut_assert_equal_string("#<proc:function "
+                          "geo_distance "
+                          "arguments:[]"
                           ">",
                           inspected_string());
 }
