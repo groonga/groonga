@@ -86,7 +86,7 @@ less(&lt;)
 greater(&gt;)
 less_equal(&lt;=)
 greater_equal(&gt;=)
-match()
+contain()
 near()
 similar()
 prefix()
@@ -133,8 +133,8 @@ GRN_OP_ADJUST
 <h3>4.3.4.6. greater_equal(v1, v2, arg, callback)<a class="headerlink" href="#greater-equal-v1-v2-arg-callback" title="Permalink to this headline">¶</a></h3>
 <p>v1の値がv2の値と等しいか大きいことを表します。</p>
 </div>
-<div class="section" id="match-v1-v2-mode-arg-callback">
-<h3>4.3.4.7. match(v1, v2, mode, arg, callback)<a class="headerlink" href="#match-v1-v2-mode-arg-callback" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="contain-v1-v2-mode-arg-callback">
+<h3>4.3.4.7. contain(v1, v2, mode, arg, callback)<a class="headerlink" href="#contain-v1-v2-mode-arg-callback" title="Permalink to this headline">¶</a></h3>
 <p>v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されるとき、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれかを指定することができます。</p>
 <div class="highlight-none"><div class="highlight"><pre>EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致する(デフォルト)
 UNSPLIT: v2の値は要素に分解しない
@@ -168,7 +168,7 @@ PARTIAL: v1の値の要素がv2の値に中間一致する
 <div class="section" id="id6">
 <h2>4.4.1. 検索例1<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
-grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
 grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
 grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
@@ -180,7 +180,7 @@ result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
 <div class="section" id="id7">
 <h2>4.4.2. 検索例2<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
-grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
 grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
@@ -189,7 +189,7 @@ grn_expr_append_op(ctx, query, GRN_OP_CALL, 5);
 result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
 grn_obj_close(ctx, query);
 GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
-grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
 grn_expr_append_obj(ctx, query, column2, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
@@ -199,12 +199,12 @@ grn_table_select(ctx, table, query, result, GRN_OP_ADJUST);
 grn_obj_close(ctx, query);
 </pre></div>
 </div>
-<p>tableのcolumn1の値がstringにexactモードでmatchするレコードについて得られるスコア値にscore1を積算してresultにセットします。次に、resultにセットされたレコードのうち、column2の値がstringにexactモードでmatchするレコードについては、matchの結果得られたスコア値にscore2を積算したものを、元のスコア値に加えます。</p>
+<p>tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるスコア値にscore1を積算してresultにセットします。次に、resultにセットされたレコードのうち、column2の値がstringにexactモードでヒットするレコードについては、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。</p>
 </div>
 <div class="section" id="id8">
 <h2>4.4.3. 検索例3<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
-grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
 grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
@@ -214,7 +214,7 @@ result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
 grn_obj_close(ctx, query);
 if (grn_table_size(ctx, result) &lt; t1) {
   GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
-  grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+  grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
   grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
   grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
   grn_expr_append_const(ctx, query, partial, GRN_OP_PUSH, 1);
@@ -225,12 +225,12 @@ if (grn_table_size(ctx, result) &lt; t1) {
 }
 </pre></div>
 </div>
-<p>tableのcolumn1の値がstringにexactモードでmatchするレコードについて得られるスコア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小さい場合は、partialモードで再度検索し、matchしたレコードについて得られるスコア値にscore2を積算してresultに追加します。</p>
+<p>tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるスコア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコア値にscore2を積算してresultに追加します。</p>
 </div>
 <div class="section" id="id9">
 <h2>4.4.4. 検索例4<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-none"><div class="highlight"><pre>GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
-grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
 grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
 grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1);
 grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
@@ -266,7 +266,7 @@ columnの値が&#8217;needle&#8217;であるレコードr1と、columnの値が&
 <li><a class="reference internal" href="#greater-v1-v2-arg-callback">4.3.4.4. greater(v1, v2, arg, callback)</a></li>
 <li><a class="reference internal" href="#less-equal-v1-v2-arg-callback">4.3.4.5. less_equal(v1, v2, arg, callback)</a></li>
 <li><a class="reference internal" href="#greater-equal-v1-v2-arg-callback">4.3.4.6. greater_equal(v1, v2, arg, callback)</a></li>
-<li><a class="reference internal" href="#match-v1-v2-mode-arg-callback">4.3.4.7. match(v1, v2, mode, arg, callback)</a></li>
+<li><a class="reference internal" href="#contain-v1-v2-mode-arg-callback">4.3.4.7. contain(v1, v2, mode, arg, callback)</a></li>
 <li><a class="reference internal" href="#near-v1-v2-arg-callback">4.3.4.8. near(v1, v2, arg, callback)</a></li>
 <li><a class="reference internal" href="#similar-v1-v2-arg-callback">4.3.4.9. similar(v1, v2, arg, callback)</a></li>
 <li><a class="reference internal" href="#prefix-v1-v2-arg-callback">4.3.4.10. prefix(v1, v2, arg, callback)</a></li>

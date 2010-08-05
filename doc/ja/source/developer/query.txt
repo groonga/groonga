@@ -48,7 +48,7 @@ grn_exprは代入や関数呼び出しのような様々な操作を表現でき
  greater(>)
  less_equal(<=)
  greater_equal(>=)
- match()
+ contain()
  near()
  similar()
  prefix()
@@ -98,7 +98,7 @@ greater_equal(v1, v2, arg, callback)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 v1の値がv2の値と等しいか大きいことを表します。
 
-match(v1, v2, mode, arg, callback)
+contain(v1, v2, mode, arg, callback)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されるとき、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれかを指定することができます。
 
@@ -136,7 +136,7 @@ grn_exprを使って様々な検索クエリを表現することができます
 ::
 
  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
- grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+ grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
  grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
  grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
@@ -150,7 +150,7 @@ tableのcolumnの値がstringを含むレコードをresultに返します。col
 ::
 
  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
- grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+ grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
  grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
@@ -159,7 +159,7 @@ tableのcolumnの値がstringを含むレコードをresultに返します。col
  result = grn_table_select(ctx, table, query, NULL, GRN_OP_OR);
  grn_obj_close(ctx, query);
  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
- grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+ grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
  grn_expr_append_obj(ctx, query, column2, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
@@ -168,14 +168,14 @@ tableのcolumnの値がstringを含むレコードをresultに返します。col
  grn_table_select(ctx, table, query, result, GRN_OP_ADJUST);
  grn_obj_close(ctx, query);
 
-tableのcolumn1の値がstringにexactモードでmatchするレコードについて得られるスコア値にscore1を積算してresultにセットします。次に、resultにセットされたレコードのうち、column2の値がstringにexactモードでmatchするレコードについては、matchの結果得られたスコア値にscore2を積算したものを、元のスコア値に加えます。
+tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるスコア値にscore1を積算してresultにセットします。次に、resultにセットされたレコードのうち、column2の値がstringにexactモードでヒットするレコードについては、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。
 
 検索例3
 -------
 ::
 
  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
- grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+ grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
  grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1);
@@ -185,7 +185,7 @@ tableのcolumn1の値がstringにexactモードでmatchするレコードにつ�
  grn_obj_close(ctx, query);
  if (grn_table_size(ctx, result) < t1) {
    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
-   grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+   grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
    grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);
    grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
    grn_expr_append_const(ctx, query, partial, GRN_OP_PUSH, 1);
@@ -195,14 +195,14 @@ tableのcolumn1の値がstringにexactモードでmatchするレコードにつ�
    grn_obj_close(ctx, query);
  }
 
-tableのcolumn1の値がstringにexactモードでmatchするレコードについて得られるスコア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小さい場合は、partialモードで再度検索し、matchしたレコードについて得られるスコア値にscore2を積算してresultに追加します。
+tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるスコア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコア値にscore2を積算してresultに追加します。
 
 検索例4
 -------
 ::
 
  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);
- grn_expr_append_obj(ctx, query, match, GRN_OP_PUSH, 1);
+ grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);
  grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);
  grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1);
  grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);
