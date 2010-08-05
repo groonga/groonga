@@ -146,7 +146,7 @@ test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void)
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'tags @ \"たいやき\"' "
-        "--scorer '_score=geo_distance(location, \"%s\")'",
+        "--scorer '_score=geo_distance2(location, \"%s\")'",
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
 }
 
@@ -161,8 +161,8 @@ test_in_circle_and_tag(void)
     "[[[3],"
     "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
     "[\"さざれ\",4110],"
-    "[\"広瀬屋\",4149],"
-    "[\"そばたいやき空\",4507]"
+    "[\"広瀬屋\",4150],"
+    "[\"そばたいやき空\",4524]"
     "]]",
     send_command(
       cut_take_printf(
@@ -170,7 +170,7 @@ test_in_circle_and_tag(void)
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
-        "--scorer '_score=geo_distance(location, \"%s\")'",
+        "--scorer '_score=geo_distance3(location, \"%s\")'",
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude),
         distance,
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude))));
@@ -256,7 +256,7 @@ test_drilldown(void)
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
-        "--scorer '_score=geo_distance(location, \"%s\")' "
+        "--scorer '_score=geo_distance2(location, \"%s\")' "
         "--drilldown 'tags categories area' "
         "--drilldown_output_columns '_key, name, _nsubrecs' "
         "--drilldown_sortby '_key'",
@@ -277,16 +277,16 @@ test_drilldown_with_broken_reference(void)
   cut_assert_equal_string(
     "[[[13],"
     "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
-    "[\"たいやき神田達磨 八重洲店\",1079],"
-    "[\"たい焼き鉄次 大丸東京店\",1390],"
-    "[\"築地 さのきや\",1723],"
-    "[\"にしみや 甘味処\",2000],"
-    "[\"しげ田\",2272],"
-    "[\"柳屋 たい焼き\",3686],"
-    "[\"根津のたいやき\",7812],"
-    "[\"尾長屋 錦糸町店\",8314],"
-    "[\"横浜 くりこ庵 浅草店\",8394],"
-    "[\"たいやきひいらぎ\",9242]],"
+    "[\"たいやき神田達磨 八重洲店\",1081],"
+    "[\"たい焼き鉄次 大丸東京店\",1395],"
+    "[\"築地 さのきや\",1725],"
+    "[\"にしみや 甘味処\",2007],"
+    "[\"しげ田\",2281],"
+    "[\"柳屋 たい焼き\",3698],"
+    "[\"根津のたいやき\",7813],"
+    "[\"尾長屋 錦糸町店\",8339],"
+    "[\"横浜 くりこ庵 浅草店\",8409],"
+    "[\"たいやきひいらぎ\",9273]],"
     "[[1],"
      "[[\"_key\",\"ShortText\"],"
       "[\"name\",\"ShortText\"],"
@@ -299,7 +299,7 @@ test_drilldown_with_broken_reference(void)
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
-        "--scorer '_score=geo_distance(location, \"%s\")' "
+        "--scorer '_score=geo_distance3(location, \"%s\")' "
         "--drilldown 'area' "
         "--drilldown_output_columns '_key, name, _nsubrecs' "
         "--drilldown_sortby '_key'",
