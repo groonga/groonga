@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2010 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2201,25 +2201,8 @@ func_geo_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   grn_obj *obj;
   double d = 0;
   if (nargs == 2) {
-    grn_obj *pos = args[0], *pos1 = args[1], pos1_;
-    grn_id domain = pos->header.domain;
-    if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
-      double lng0, lat0, lng1, lat1, x, y;
-      if (pos1->header.domain != domain) {
-        GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
-        if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
-        pos1 = &pos1_;
-      }
-      lng0 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos))->longitude);
-      lat0 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos))->latitude);
-      lng1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->longitude);
-      lat1 = GEO_INT2RAD(((grn_geo_point *)GRN_BULK_HEAD(pos1))->latitude);
-      x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
-      y = (lat1 - lat0);
-      d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
-    }
+    d = grn_geo_distance(ctx, args[0], args[1]);
   }
-exit :
   if ((obj = GRN_PROC_ALLOC(GRN_DB_FLOAT, 0))) {
     GRN_FLOAT_SET(ctx, obj, d);
   }
