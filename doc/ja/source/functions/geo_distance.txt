@@ -17,7 +17,7 @@ geo_distance - 指定した2点の距離を計算する
 説明
 ----
 
-groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、script形式のgrn式中で呼び出すことができます。
+groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、script形式のgrn_expr中で呼び出すことができます。
 
 geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距離(近似値)を求めます。
 geo_distance()の他に、距離計算アルゴリズムの異なる、geo_distance2()、geo_distance3()が使用できます。それぞれ、長方形近似、球面近似、ヒュベニの距離計算式によって距離を算出します。
