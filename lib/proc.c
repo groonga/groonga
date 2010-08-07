@@ -525,7 +525,6 @@ grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
   }
   switch (flags & GRN_OBJ_COMPRESS_MASK) {
   case GRN_OBJ_COMPRESS_NONE:
-    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_NONE");
     break;
   case GRN_OBJ_COMPRESS_ZLIB:
     GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_ZLIB");
