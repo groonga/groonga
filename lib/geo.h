@@ -46,6 +46,8 @@ extern "C" {
 
 grn_rc grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
                       grn_obj *res, grn_operator op);
+int grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
+                       grn_obj *result, grn_table_sort_key *keys, int n_keys);
 
 unsigned grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
                            grn_obj *radius_or_point);
