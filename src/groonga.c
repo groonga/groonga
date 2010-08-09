@@ -40,6 +40,10 @@
 #include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
 
+#ifdef HAVE_SYS_SYSCTL_H
+#include <sys/sysctl.h>
+#endif /* HAVE_SYS_SYSCTL_H */
+
 #ifndef USE_MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
@@ -1926,7 +1930,7 @@ enum {
   grn_logger_info_set(&grn_gctx, &info);\
 } while(0)
 
-uint32_t
+static uint32_t
 get_core_number(void)
 {
 #ifdef WIN32
@@ -1934,7 +1938,21 @@ get_core_number(void)
   GetSystemInfo(&sinfo);
   return sinfo.dwNumberOfProcessors;
 #else /* WIN32 */
+#  ifdef _SC_NPROCESSORS_CONF
   return sysconf(_SC_NPROCESSORS_CONF);
+#  else
+  int n_processors;
+  size_t length = sizeof(n_processors);
+  int mib[] = {CTL_HW, HW_NCPU};
+  if (sysctl(mib, sizeof(mib) / sizeof(mib[0]),
+             &n_processors, &length, NULL, 0) == 0 &&
+      length == sizeof(n_processors) &&
+      0 < n_processors) {
+    return n_processors;
+  } else {
+    return 1;
+  }
+#  endif /* _SC_NPROCESSORS_CONF */
 #endif /* WIN32 */
 }
 
