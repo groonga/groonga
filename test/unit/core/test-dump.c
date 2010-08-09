@@ -319,14 +319,14 @@ void
 data_column_create(void)
 {
   ADD_DATA("scalar",
-           "column_create Blog body COLUMN_SCALAR|COMPRESS_NONE Text\n",
+           "column_create Blog body COLUMN_SCALAR Text\n",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_SCALAR,
            "Text",
            NULL);
   ADD_DATA("vector",
-           "column_create Blog body COLUMN_VECTOR|COMPRESS_NONE Text\n",
+           "column_create Blog body COLUMN_VECTOR Text\n",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_VECTOR,
@@ -452,7 +452,7 @@ test_uvector_column(gconstpointer data)
   grn_obj_set_value(context, column, id, &uvector, GRN_OBJ_SET);
 
   expected = cut_take_printf("table_create Table TABLE_NO_KEY\n"
-                             "column_create Table Column COLUMN_VECTOR|COMPRESS_NONE %s\n"
+                             "column_create Table Column COLUMN_VECTOR %s\n"
                              "load --table Table\n"
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
@@ -499,7 +499,7 @@ test_vector_column(gconstpointer data)
   grn_obj_set_value(context, column, id, &vector, GRN_OBJ_SET);
 
   expected = cut_take_printf("table_create Table TABLE_NO_KEY\n"
-                             "column_create Table Column COLUMN_VECTOR|COMPRESS_NONE %s\n"
+                             "column_create Table Column COLUMN_VECTOR %s\n"
                              "load --table Table\n"
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
