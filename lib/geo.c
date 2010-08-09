@@ -22,16 +22,6 @@
 #include "db.h"
 #include "pat.h"
 
-#define GEO_RESOLUTION   3600000
-#define GEO_RADIOUS      6357303
-#define GEO_BES_C1       6334834
-#define GEO_BES_C2       6377397
-#define GEO_BES_C3       0.006674
-#define GEO_GRS_C1       6335439
-#define GEO_GRS_C2       6378137
-#define GEO_GRS_C3       0.006694
-#define GEO_INT2RAD(x)   ((M_PI / (GEO_RESOLUTION * 180)) * (x))
-
 typedef struct {
   grn_id id;
   double d;
