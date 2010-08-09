@@ -412,7 +412,7 @@ AC_ARG_ENABLE(benchmark,
   [AS_HELP_STRING([--disable-benchmark],
     [don't build benchmark programs.])],,
   [enable_benchmark="yes"])
-if test "x$enable_benchmark" == "xno"; then
+if test "x$enable_benchmark" = "xno"; then
   ac_benchmark_available="no"
 else
   m4_ifdef([AM_PATH_GLIB_2_0], [
