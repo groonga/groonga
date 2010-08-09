@@ -32,7 +32,7 @@
 #define _XOPEN_SOURCE 600
 #else
 #if !defined(__APPLE__) && !defined(__FreeBSD__)
-#define _XOPEN_SOURCE 500
+#define _XOPEN_SOURCE 520
 #endif
 #endif /* USE_AIO */
 
