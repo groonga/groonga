@@ -83,7 +83,7 @@ compute_min_and_max(grn_geo_point *base_point, int diff_bit,
 }
 
 static int
-grn_table_sort_geo_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                     grn_pat *pat, geo_entry *entries,
                                     grn_pat_cursor *pc, int n, int accessorp,
                                     grn_geo_point *base_point,
@@ -198,7 +198,7 @@ typedef enum {
 } mesh_position;
 
 static int
-grn_table_sort_geo_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   grn_pat *pat,
                                   geo_entry *entries, int n_entries,
                                   int n, int accessorp,
@@ -441,13 +441,13 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
           geo_entry *ep;
 
           base_point = (grn_geo_point *)GRN_BULK_HEAD(arg);
-          n = grn_table_sort_geo_detect_far_point(ctx, table, index, pat,
+          n = grn_geo_table_sort_detect_far_point(ctx, table, index, pat,
                                                   entries, pc, e, accessorp,
                                                   base_point,
                                                   &d_far, &diff_bit);
           grn_pat_cursor_close(ctx, pc);
           if (diff_bit > 0) {
-            n += grn_table_sort_geo_collect_points(ctx, table, index, pat,
+            n += grn_geo_table_sort_collect_points(ctx, table, index, pat,
                                                    entries, n, e, accessorp,
                                                    base_point, d_far, diff_bit);
           }
