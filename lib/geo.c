@@ -197,21 +197,17 @@ typedef enum {
   MESH_LEFT_BOTTOM
 } mesh_position;
 
+/* meshes should have 19 >= spaces.*/
 static int
-grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
-                                  grn_pat *pat,
-                                  geo_entry *entries, int n_entries,
-                                  int n, int accessorp,
-                                  grn_geo_point *base_point,
-                                  double d_far, int diff_bit)
+grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
+                              double d_far, int diff_bit,
+                              mesh_entry *meshes)
 {
-  int n_meshes;
-  grn_geo_point geo_base, geo_min, geo_max;
-  mesh_entry meshes[19];
-  int lat_diff, lng_diff;
   double d;
-  geo_entry *ep, *p;
+  int n_meshes;
+  int lat_diff, lng_diff;
   mesh_position position;
+  grn_geo_point geo_base, geo_min, geo_max;
 
   compute_min_and_max(base_point, diff_bit, &geo_min, &geo_max);
 
@@ -353,6 +349,24 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 #undef add_sub_mesh
 #undef add_mesh
 
+  return n_meshes;
+}
+
+static int
+grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                                  grn_pat *pat,
+                                  geo_entry *entries, int n_entries,
+                                  int n, int accessorp,
+                                  grn_geo_point *base_point,
+                                  double d_far, int diff_bit)
+{
+  int n_meshes;
+  mesh_entry meshes[19];
+  geo_entry *ep, *p;
+
+  n_meshes = grn_geo_get_meshes_for_circle(ctx, base_point, d_far, diff_bit,
+                                           meshes);
+
   ep = entries + n_entries;
   while (n_meshes--) {
     grn_id tid;
@@ -367,6 +381,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       while ((tid = grn_pat_cursor_next(ctx, pc))) {
         grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
         if (ic) {
+          double d;
           grn_geo_point pos;
           grn_ii_posting *posting;
           grn_pat_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
