@@ -4276,6 +4276,49 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
   return 0;
 }
 
+inline static int
+call_hook_for_build(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
+{
+  grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
+
+  if (hooks || obj->header.type == GRN_COLUMN_VAR_SIZE) {
+    grn_obj oldvalue;
+    GRN_TEXT_INIT(&oldvalue, 0);
+
+    if (hooks) {
+      // todo : grn_proc_ctx_open()
+      grn_obj id_, flags_;
+      grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
+      GRN_UINT32_INIT(&id_, 0);
+      GRN_UINT32_INIT(&flags_, 0);
+      GRN_UINT32_SET(ctx, &id_, id);
+      GRN_UINT32_SET(ctx, &flags_, flags);
+      while (hooks) {
+        grn_ctx_push(ctx, &id_);
+        grn_ctx_push(ctx, &oldvalue);
+        grn_ctx_push(ctx, value);
+        grn_ctx_push(ctx, &flags_);
+        pctx.caller = NULL;
+        pctx.currh = hooks;
+        if (hooks->proc) {
+          hooks->proc->funcs[PROC_INIT](ctx, 1, &obj, &pctx.user_data);
+        } else {
+          default_set_value_hook(ctx, 1, &obj, &pctx.user_data);
+        }
+        if (ctx->rc) {
+          grn_bulk_fin(ctx, &oldvalue);
+          return 1;
+        }
+        hooks = hooks->next;
+        pctx.offset++;
+      }
+    }
+    grn_obj_close(ctx, &oldvalue);
+  }
+  return 0;
+}
+
+
 grn_rc
 grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   grn_obj *value, int flags)
@@ -4828,6 +4871,46 @@ exit :
 }
 
 static void
+build_index(grn_ctx *ctx, grn_obj *obj)
+{
+
+  grn_table_cursor  *tc;
+  grn_obj   *src, *src_dom, **cp, **col, rv;
+  grn_id    id, *s;
+  int     i, ncol;
+
+  s = DB_OBJ(obj)->source;
+  src = grn_ctx_at(ctx, *s);
+  src_dom = grn_ctx_at(ctx, src->header.domain);
+  if (!src_dom) { ERR(GRN_INVALID_ARGUMENT, "domain invalid"); }
+
+  ncol = DB_OBJ(obj)->source_size / sizeof(grn_id);
+  col = GRN_MALLOC(ncol * sizeof(grn_obj));
+  cp = col;
+
+  for (i=0; i < ncol; i++, s++, col++) {
+    *col = grn_ctx_at(ctx, *s);
+    if (!*col) { ERR(GRN_INVALID_ARGUMENT, "source invalid, n=%d",i); }
+  }
+  col = cp;
+
+  tc = grn_table_cursor_open(ctx, src_dom, NULL, 0, NULL, 0,
+                             0, -1, GRN_CURSOR_BY_ID);
+
+  while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+    for (i = 0; i < ncol; i++, col++) {
+      GRN_TEXT_INIT(&rv, 0);
+      grn_obj_get_value(ctx, *col, id, &rv);
+      call_hook_for_build(ctx, *col, id, &rv, 0);
+      GRN_OBJ_FIN(ctx, &rv);
+    }
+    col = cp;
+  }
+
+  grn_table_cursor_close(ctx, tc);
+}
+
+static void
 update_source_hook(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id *s = DB_OBJ(obj)->source;
@@ -5050,6 +5133,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
 
         if (obj->header.type == GRN_COLUMN_INDEX) {
           update_source_hook(ctx, obj);
+          build_index(ctx, obj);
         }
 
       } else {
