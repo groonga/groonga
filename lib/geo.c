@@ -513,34 +513,34 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
   lat1 = GRN_GEO_INT2RAD(geo_point1->latitude);
   switch (pos2->header.domain) {
   case GRN_DB_INT32 :
-    d = GRN_INT32_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
+    d = GRN_INT32_VALUE(pos2) / (double)GRN_GEO_RADIUS;
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
+    d = d * d;
     break;
   case GRN_DB_UINT32 :
-    d = GRN_UINT32_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
+    d = GRN_UINT32_VALUE(pos2) / (double)GRN_GEO_RADIUS;
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
+    d = (d) * (d);
     break;
   case GRN_DB_INT64 :
-    d = GRN_INT64_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
+    d = GRN_INT64_VALUE(pos2) / (double)GRN_GEO_RADIUS;
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
+    d = d * d;
     break;
   case GRN_DB_UINT64 :
-    d = GRN_UINT64_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
+    d = GRN_UINT64_VALUE(pos2) / (double)GRN_GEO_RADIUS;
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
+    d = d * d;
     break;
   case GRN_DB_FLOAT :
-    d = GRN_FLOAT_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
+    d = GRN_FLOAT_VALUE(pos2) / (double)GRN_GEO_RADIUS;
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
+    d = d * d;
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
