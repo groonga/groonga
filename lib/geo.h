@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 #define GRN_GEO_RESOLUTION   3600000
-#define GRN_GEO_RADIOUS      6357303
+#define GRN_GEO_RADIUS       6357303
 #define GRN_GEO_BES_C1       6334834
 #define GRN_GEO_BES_C2       6377397
 #define GRN_GEO_BES_C3       0.006674

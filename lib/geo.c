@@ -514,33 +514,33 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
   switch (pos2->header.domain) {
   case GRN_DB_INT32 :
     d = GRN_INT32_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIOUS);
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIOUS) * (d / GRN_GEO_RADIOUS);
+    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
     break;
   case GRN_DB_UINT32 :
     d = GRN_UINT32_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIOUS);
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIOUS) * (d / GRN_GEO_RADIOUS);
+    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
     break;
   case GRN_DB_INT64 :
     d = GRN_INT64_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIOUS);
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIOUS) * (d / GRN_GEO_RADIOUS);
+    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
     break;
   case GRN_DB_UINT64 :
     d = GRN_UINT64_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIOUS);
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIOUS) * (d / GRN_GEO_RADIOUS);
+    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
     break;
   case GRN_DB_FLOAT :
     d = GRN_FLOAT_VALUE(pos2);
-    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIOUS);
+    geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d / GRN_GEO_RADIUS);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d / GRN_GEO_RADIOUS) * (d / GRN_GEO_RADIOUS);
+    d = (d / GRN_GEO_RADIUS) * (d / GRN_GEO_RADIUS);
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
@@ -629,19 +629,19 @@ grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
     d = (x * x) + (y * y);
     switch (radius_or_point->header.domain) {
     case GRN_DB_INT32 :
-      r = (sqrt(d) * GRN_GEO_RADIOUS) <= GRN_INT32_VALUE(radius_or_point);
+      r = (sqrt(d) * GRN_GEO_RADIUS) <= GRN_INT32_VALUE(radius_or_point);
       break;
     case GRN_DB_UINT32 :
-      r = (sqrt(d) * GRN_GEO_RADIOUS) <= GRN_UINT32_VALUE(radius_or_point);
+      r = (sqrt(d) * GRN_GEO_RADIUS) <= GRN_UINT32_VALUE(radius_or_point);
       break;
     case GRN_DB_INT64 :
-      r = (sqrt(d) * GRN_GEO_RADIOUS) <= GRN_INT64_VALUE(radius_or_point);
+      r = (sqrt(d) * GRN_GEO_RADIUS) <= GRN_INT64_VALUE(radius_or_point);
       break;
     case GRN_DB_UINT64 :
-      r = (sqrt(d) * GRN_GEO_RADIOUS) <= GRN_UINT64_VALUE(radius_or_point);
+      r = (sqrt(d) * GRN_GEO_RADIUS) <= GRN_UINT64_VALUE(radius_or_point);
       break;
     case GRN_DB_FLOAT :
-      r = (sqrt(d) * GRN_GEO_RADIOUS) <= GRN_FLOAT_VALUE(radius_or_point);
+      r = (sqrt(d) * GRN_GEO_RADIUS) <= GRN_FLOAT_VALUE(radius_or_point);
       break;
     case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
@@ -710,7 +710,7 @@ grn_geo_distance_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2)
   lng2 = GRN_GEO_INT2RAD(point2->longitude);
   x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
   y = (lat2 - lat1);
-  return sqrt((x * x) + (y * y)) * GRN_GEO_RADIOUS;
+  return sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
 }
 
 double
@@ -724,7 +724,7 @@ grn_geo_distance2_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2
   lng2 = GRN_GEO_INT2RAD(point2->longitude);
   x = sin(fabs(lng2 - lng1) * 0.5);
   y = sin(fabs(lat2 - lat1) * 0.5);
-  return asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GRN_GEO_RADIOUS;
+  return asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GRN_GEO_RADIUS;
 }
 
 double
