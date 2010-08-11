@@ -522,7 +522,7 @@ grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
     d = GRN_UINT32_VALUE(pos2) / (double)GRN_GEO_RADIUS;
     geo_point2.latitude = geo_point1->latitude + GRN_GEO_RAD2INT(d);
     geo_point2.longitude = geo_point1->longitude;
-    d = (d) * (d);
+    d = d * d;
     break;
   case GRN_DB_INT64 :
     d = GRN_INT64_VALUE(pos2) / (double)GRN_GEO_RADIUS;
