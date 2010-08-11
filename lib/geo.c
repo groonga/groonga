@@ -489,8 +489,8 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
 }
 
 grn_rc
-grn_geo_search(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
-               grn_obj *res, grn_operator op)
+grn_geo_search_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
+                         grn_obj *res, grn_operator op)
 {
   grn_id domain;
   double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;

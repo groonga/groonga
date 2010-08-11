@@ -3986,7 +3986,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               /* geo_in_circle only */
               if (si->flags & SCAN_ACCESSOR) {
               } else {
-                grn_geo_search(ctx, index, si->args, si->nargs, res, si->logical_op);
+                grn_geo_search_in_circle(ctx, index, si->args, si->nargs, res,
+                                         si->logical_op);
                 done++;
               }
               break;
