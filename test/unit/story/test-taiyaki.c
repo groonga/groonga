@@ -144,7 +144,7 @@ test_in_rectangle(void)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score' "
-        "--filter 'geo_in_rectangle(location, \"%s\", \"%s\") > 0' "
+        "--filter 'geo_in_rectangle(location, \"%s\", \"%s\")' "
         "--scorer '_score=geo_distance(location, \"%s\")'",
         grn_test_location_string(takada_no_baba_latitude,
                                  takada_no_baba_longitude),

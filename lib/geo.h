@@ -47,6 +47,8 @@ extern "C" {
 
 grn_rc grn_geo_search_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args,
                                 int nargs, grn_obj *res, grn_operator op);
+grn_rc grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args,
+                                   int nargs, grn_obj *res, grn_operator op);
 int grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                        grn_obj *result, grn_table_sort_key *keys, int n_keys);
 
@@ -54,6 +56,9 @@ unsigned grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
                            grn_obj *radius_or_point);
 unsigned grn_geo_in_rectangle(grn_ctx *ctx, grn_obj *point,
                               grn_obj *top_left, grn_obj *bottom_right);
+unsigned grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
+                                  grn_geo_point *top_left,
+                                  grn_geo_point *bottom_right);
 double grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
 double grn_geo_distance2(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
 double grn_geo_distance3(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);

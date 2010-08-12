@@ -3983,12 +3983,21 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               }
               break;
             case GRN_OP_CALL :
-              /* geo_in_circle only */
               if (si->flags & SCAN_ACCESSOR) {
               } else {
-                grn_geo_search_in_circle(ctx, index, si->args, si->nargs, res,
-                                         si->logical_op);
-                done++;
+                char buf[GRN_TABLE_MAX_KEY_SIZE];
+                int len = grn_obj_name(ctx, si->args[0], buf,
+                                       GRN_TABLE_MAX_KEY_SIZE);
+                /* geo_in_circle and geo_in_rectangle only */
+                if (len == 13 && !memcmp(buf, "geo_in_circle", 13)) {
+                  grn_geo_search_in_circle(ctx, index, si->args, si->nargs, res,
+                                           si->logical_op);
+                  done++;
+                } else if (len == 16 && !memcmp(buf, "geo_in_rectangle", 16)) {
+                  grn_geo_search_in_rectangle(ctx, index, si->args, si->nargs,
+                                              res, si->logical_op);
+                  done++;
+                }
               }
               break;
             default :
