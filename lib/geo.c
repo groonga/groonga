@@ -31,24 +31,16 @@ typedef struct {
 static int
 compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
 {
-  int i, diff_bit = 0;
+  int i, j, diff_bit = 0;
 
   for (i = 0; i < sizeof(grn_geo_point); i++) {
-    if (geo_key1[i] == geo_key2[i]) {
-      continue;
-    }
-
-    if ((geo_key1[i] & 0xc0) != (geo_key2[i] & 0xc0)) {
-      diff_bit = 0;
-      break;
-    } else if ((geo_key1[i] & 0x30) != (geo_key2[i] & 0x30)) {
-      diff_bit = 2;
-      break;
-    } else if ((geo_key1[i] & 0x0c) != (geo_key2[i] & 0x0c)) {
-      diff_bit = 4;
-      break;
-    } else if ((geo_key1[i] & 0x03) != (geo_key2[i] & 0x03)) {
-      diff_bit = 6;
+    if (geo_key1[i] != geo_key2[i]) {
+      for (j = 0; j < 8; j++) {
+        if ((geo_key1[i] & (1 << (7 - j))) != (geo_key2[i] & (1 << (7 - j)))) {
+          diff_bit = j + 1;
+          break;
+        }
+      }
       break;
     }
   }
@@ -120,6 +112,9 @@ grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
 
       diff_bit_prev = diff_bit_current;
       diff_bit_current = compute_diff_bit(geo_key_curr, geo_key_prev);
+      if ((diff_bit_current % 2) == 1) {
+        diff_bit_current--;
+      }
       if (diff_bit_current < diff_bit_prev && *diff_bit > diff_bit_current) {
         if (i == n) {
           break;
@@ -581,6 +576,9 @@ grn_geo_search_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
     grn_gton(geo_key1, geo_point1, sizeof(grn_geo_point));
     grn_gton(geo_key2, &geo_point2, sizeof(grn_geo_point));
     diff_bit = compute_diff_bit(geo_key1, geo_key2);
+    if ((diff_bit % 2) == 1) {
+      diff_bit--;
+    }
     n_meshes = grn_geo_get_meshes_for_circle(ctx, geo_point1,
                                              d_far, diff_bit, GRN_TRUE,
                                              meshes);
@@ -651,35 +649,38 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
     mesh_direction direction;
     int distance, latitude_distance, longitude_distance;
     int i, start, end, diff_bit;
-    grn_geo_point geo_point_base, geo_point_min, geo_point_max;
-    uint8_t geo_key1[sizeof(grn_geo_point)];
+    grn_geo_point *geo_point_input, geo_point_base, geo_point_min, geo_point_max;
+    uint8_t geo_key_input[sizeof(grn_geo_point)];
     uint8_t geo_key_base[sizeof(grn_geo_point)];
 
     latitude_distance = geo_point1->latitude - geo_point2->latitude;
     longitude_distance = geo_point2->longitude - geo_point1->longitude;
     if (latitude_distance > longitude_distance) {
       direction = MESH_LATITUDE;
-      distance = latitude_distance;
-      geo_point_base.latitude = geo_point1->latitude;
-      geo_point_base.longitude = geo_point1->longitude + distance;
-      end = geo_point2->latitude;
+      geo_point_input = geo_point2;
+      geo_point_base.latitude = geo_point2->latitude;
+      geo_point_base.longitude = geo_point2->longitude - longitude_distance;
     } else {
       direction = MESH_LONGITUDE;
-      distance = longitude_distance;
-      geo_point_base.latitude = geo_point1->latitude + distance;
+      geo_point_input = geo_point1;
+      geo_point_base.latitude = geo_point1->latitude + latitude_distance;
       geo_point_base.longitude = geo_point1->longitude;
-      end = geo_point2->longitude;
     }
-    grn_gton(geo_key1, geo_point1, sizeof(grn_geo_point));
+    grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
     grn_gton(geo_key_base, &geo_point_base, sizeof(grn_geo_point));
-    diff_bit = compute_diff_bit(geo_key1, geo_key_base);
-    compute_min_and_max(geo_point1, diff_bit + 2, &geo_point_min, &geo_point_max);
+    diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
+    compute_min_and_max(geo_point_input, diff_bit,
+                        &geo_point_min, &geo_point_max);
     if (direction == MESH_LATITUDE) {
-      start = geo_point_max.latitude;
+      start = geo_point2->latitude;
+      end = geo_point_max.latitude;
+      distance = geo_point_max.latitude - geo_point_min.latitude + 1;
     } else {
-      start = geo_point_max.longitude;
+      start = geo_point_min.longitude;
+      end = geo_point2->longitude;
+      distance = geo_point_max.longitude - geo_point_min.longitude + 1;
     }
-    memcpy(&geo_point_base, &geo_point_max, sizeof(grn_geo_point));
+    memcpy(&geo_point_base, &geo_point_min, sizeof(grn_geo_point));
 #ifdef GEO_DEBUG
     printf("direction: %s\n",
            direction == MESH_LATITUDE ? "latitude" : "longitude");
@@ -689,17 +690,15 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
     grn_p_geo_point(ctx, geo_point1);
     printf("bottom-right: ");
     grn_p_geo_point(ctx, geo_point2);
+    printf("start:    %10d\n", start);
+    printf("end:      %10d\n", end);
+    printf("distance: %10d\n", distance);
 #endif
 
     for (i = start; i < end + distance; i += distance) {
       grn_table_cursor *tc;
-      if (direction == MESH_LATITUDE) {
-        geo_point_base.latitude += direction;
-      } else {
-        geo_point_base.longitude += direction;
-      }
       tc = grn_table_cursor_open(ctx, pat,
-                                 &geo_point_base, diff_bit + 1,
+                                 &geo_point_base, diff_bit,
                                  NULL, 0,
                                  0, -1,
                                  GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
@@ -708,15 +707,19 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
         grn_id tid;
         grn_geo_point pos;
         while ((tid = grn_table_cursor_next(ctx, tc))) {
-          if (i == start || end < i) {
-            grn_table_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
-            if (!grn_geo_in_rectangle_raw(ctx, &pos, geo_point1, geo_point2)) {
-              continue;
-            }
+          grn_table_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
+          if (!grn_geo_in_rectangle_raw(ctx, &pos, geo_point1, geo_point2)) {
+            continue;
           }
+          inspect_tid(ctx, tid, &pos, 0);
           grn_ii_at(ctx, (grn_ii *)obj, tid, (grn_hash *)res, op);
         }
         grn_table_cursor_close(ctx, tc);
+      }
+      if (direction == MESH_LATITUDE) {
+        geo_point_base.latitude += distance;
+      } else {
+        geo_point_base.longitude += distance;
       }
     }
   }

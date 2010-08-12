@@ -22,7 +22,8 @@
 #include "../lib/grn-assertions.h"
 
 void test_in_circle(void);
-void test_in_rectangle(void);
+void test_in_rectangle_long_longitude(void);
+void test_in_rectangle_long_latitude(void);
 void test_sort(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_but_white(void);
@@ -123,7 +124,7 @@ test_in_circle(void)
 }
 
 void
-test_in_rectangle(void)
+test_in_rectangle_long_longitude(void)
 {
   gdouble takada_no_baba_latitude = 35.7121;
   gdouble takada_no_baba_longitude = 139.7038;
@@ -134,21 +135,53 @@ test_in_rectangle(void)
 
   cut_assert_equal_string(
     "[[[3],"
-    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
-    "[\"たいやき神田達磨 八重洲店\",3273],"
-    "[\"銀座 かずや\",3713],"
-    "[\"たい焼き鉄次 大丸東京店\",3732]"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
+     "[\"location\",\"WGS84GeoPoint\"]],"
+    "[\"たいやき神田達磨 八重洲店\",3273,\"130094061x505025099\"],"
+    "[\"銀座 かずや\",3713,\"130055008x504968095\"],"
+    "[\"たい焼き鉄次 大丸東京店\",3732,\"130089012x505045070\"]"
     "]]",
     send_command(
       cut_take_printf(
         "select Shops "
         "--sortby '+_score, +name' "
-        "--output_columns 'name, _score' "
+        "--output_columns 'name, _score, location' "
         "--filter 'geo_in_rectangle(location, \"%s\", \"%s\")' "
         "--scorer '_score=geo_distance(location, \"%s\")'",
         grn_test_location_string(takada_no_baba_latitude,
                                  takada_no_baba_longitude),
         grn_test_location_string(tsukiji_latitude, tsukiji_longitude),
+        grn_test_location_string(budoukan_latitude, budoukan_longitude))));
+}
+
+void
+test_in_rectangle_long_latitude(void)
+{
+  gdouble sugamo_latitude = 35.73360;
+  gdouble sugamo_longitude = 139.7394;
+  gdouble daiba_latitude = 35.62614;
+  gdouble daiba_longitude = 139.7714;
+  gdouble budoukan_latitude = 35.69328;
+  gdouble budoukan_longitude = 139.74968;
+
+  cut_assert_equal_string(
+    "[[[4],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
+     "[\"location\",\"WGS84GeoPoint\"]],"
+    "[\"たいやき神田達磨 八重洲店\",3273,\"130094061x505025099\"],"
+    "[\"銀座 かずや\",3713,\"130055008x504968095\"],"
+    "[\"根津のたいやき\",4754,\"130322053x504985073\"],"
+    "[\"築地 さのきや\",5244,\"130019020x505027021\"]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '+_score, +name' "
+        "--output_columns 'name, _score, location' "
+        "--filter 'geo_in_rectangle(location, \"%s\", \"%s\")' "
+        "--scorer '_score=geo_distance(location, \"%s\")'",
+        grn_test_location_string(sugamo_latitude, sugamo_longitude),
+        grn_test_location_string(daiba_latitude, daiba_longitude),
         grn_test_location_string(budoukan_latitude, budoukan_longitude))));
 }
 
