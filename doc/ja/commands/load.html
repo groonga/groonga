@@ -96,7 +96,7 @@
 指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行するscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された場合は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルトはtrue)</blockquote>
 <p><tt class="docutils literal"><span class="pre">input_type</span></tt></p>
 <blockquote>
-入力形式を、json,tsv,xmlのいずれかで指定します。 <a href="#id8"><span class="problematic" id="id9"><span id="id5"></span>[1]_</span></a></blockquote>
+入力形式を指定します。jsonのみに対応しています。</blockquote>
 <p>返値
 &#8212;</p>
 <div class="section" id="json">
@@ -109,16 +109,16 @@
 テーブルに登録されたレコードの件数が返されます。</blockquote>
 </div>
 </div>
-<div class="section" id="id6">
-<h2>3.2.11.5. 例<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>3.2.11.5. 例<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>テーブルEntryにレコードを登録します。:</p>
-<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --output_type json --values [{\&quot;_key\&quot;:\&quot;abandon\&quot;,\&quot;body\&quot;:\&quot;放棄する\&quot;}]
+<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --values [{\&quot;_key\&quot;:\&quot;abandon\&quot;,\&quot;body\&quot;:\&quot;放棄する\&quot;}]
 
 [1]
 </pre></div>
 </div>
 <p>標準入力からvaluesの値を与えます。:</p>
-<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json --output_type json
+<div class="highlight-none"><div class="highlight"><pre>load --table Entry --input_type json
 [
 {&quot;_key&quot;: &quot;abbreviate&quot;, &quot;body&quot;: &quot;短縮する&quot;}
 ]
@@ -127,8 +127,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="id7">
-<h2>3.2.11.6. 関連項目<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>3.2.11.6. 関連項目<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../expr.html"><em>grn_expr</em></a></p>
 </div>
 </div>
@@ -149,8 +149,8 @@
 <li><a class="reference internal" href="#json">3.2.11.4.1. json形式</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id6">3.2.11.5. 例</a></li>
-<li><a class="reference internal" href="#id7">3.2.11.6. 関連項目</a></li>
+<li><a class="reference internal" href="#id5">3.2.11.5. 例</a></li>
+<li><a class="reference internal" href="#id6">3.2.11.6. 関連項目</a></li>
 </ul>
 </li>
 </ul>

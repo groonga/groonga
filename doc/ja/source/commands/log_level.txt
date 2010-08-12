@@ -12,7 +12,7 @@ log_level - ログ出力レベルの設定
 ----
 ::
 
- log_level level [output_type]
+ log_level level
 
 説明
 ----

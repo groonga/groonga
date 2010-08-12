@@ -105,7 +105,7 @@ json形式
 
 テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義します。::
 
- define_selector entry_selector Entry --output_type json
+ define_selector entry_selector Entry
  [true]
 
 関連項目

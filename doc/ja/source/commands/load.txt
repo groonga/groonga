@@ -58,7 +58,7 @@ loadは、使用しているデータベースのテーブルにレコードを�
 
 ``input_type``
 
-  入力形式を、json,tsv,xmlのいずれかで指定します。 [1]_
+  入力形式を指定します。jsonのみに対応しています。
 
 返値
 ---
@@ -79,13 +79,13 @@ json形式
 
 テーブルEntryにレコードを登録します。::
 
- load --table Entry --input_type json --output_type json --values [{\"_key\":\"abandon\",\"body\":\"放棄する\"}]
+ load --table Entry --input_type json --values [{\"_key\":\"abandon\",\"body\":\"放棄する\"}]
 
  [1]
 
 標準入力からvaluesの値を与えます。::
 
- load --table Entry --input_type json --output_type json
+ load --table Entry --input_type json
  [
  {"_key": "abbreviate", "body": "短縮する"}
  ]

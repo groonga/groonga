@@ -6,13 +6,13 @@ add
 名前
 ----
 
-add - 一件のレコードの追加 [1]_
+add - 一件のレコードの追加
 
 書式
 ----
 ::
 
- add table [key [columns [values [output_columns [output_type]]]]]
+ add table [key [columns [values [output_columns]]]]
 
 説明
 ----
@@ -56,14 +56,10 @@ addは、使用しているデータベースのテーブルに１件のレコ�
 
   出力するカラム名のリストをカンマ(',')区切りで指定します。
 
-``output_type``
-
-  出力形式を、json,tsv,xmlのいずれかで指定します。
-
 返値
 ---
 
-以下のようなjson形式で値が返却されます。 [#]_
+以下のようなjson形式で値が返却されます。
 
 ::
 

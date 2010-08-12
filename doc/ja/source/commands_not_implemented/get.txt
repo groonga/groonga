@@ -12,7 +12,7 @@ get - 一件のレコードの値の取得
 ----
 ::
 
- get table [key [output_columns [output_type [id]]]]
+ get table [key [output_columns [id]]]
 
 説明
 ----
@@ -36,14 +36,10 @@ getは、使用しているデータベースのテーブルの中の１件の�
 
   出力するカラム名のリストをカンマ(',')区切りで指定します。
 
-``output_type``
-
-  出力形式を、json,tsv,xmlのいずれかで指定します。
-
 返値
 ---
 
-以下のようなjson形式で値が返却されます。 [#]_
+以下のようなjson形式で値が返却されます。
 
 ::
 

@@ -71,19 +71,20 @@
 <div class="section" id="id4">
 <h2>3.1.2.4. コマンド<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと同じコマンドが使用できます。</p>
-<p>スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定していました。:</p>
-<div class="highlight-none"><div class="highlight"><pre>形式1: コマンド名 値1 値2,..
-
-形式2: コマンド名 --引数名1 値1 --引数名2 値2,..
-</pre></div>
-</div>
+<p>コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊な引数である「output_type」があります。</p>
+<p>スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定します。</p>
+<blockquote>
+<p>形式1: コマンド名 値1 値2,..</p>
+<p>形式2: コマンド名 &#8211;引数名1 値1 &#8211;引数名2 値2,..</p>
+</blockquote>
+<p>形式1と形式2は混在させることができます。これらの形式では、output_typeという引数名を用いてoutput_typeを指定します。</p>
 <p>httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定します。:</p>
 <div class="highlight-none"><div class="highlight"><pre>形式: /d/コマンド名.output_type?引数名1=値1&amp;引数名2=値2&amp;...
 </pre></div>
 </div>
 <p>ただし、コマンド名、引数名、値はURLエンコードが必要です。</p>
-<p>output_typeにはjson, tsv, xmlが指定可能です。</p>
 <p>GETメソッドのみが使用可能です。</p>
+<p>output_typeにはjson, tsv, xmlが指定可能です。</p>
 </div>
 <div class="section" id="id5">
 <h2>3.1.2.5. 返値<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
