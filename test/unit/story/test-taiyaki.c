@@ -19,7 +19,7 @@
 #include <gcutter.h>
 #include <glib/gstdio.h>
 
-#include "../../lib/grn-assertions.h"
+#include "../lib/grn-assertions.h"
 
 void test_in_circle(void);
 void test_in_rectangle(void);
@@ -39,7 +39,7 @@ void
 cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
-                                   "taiyaki-geo",
+                                   "taiyaki",
                                    NULL);
 }
 

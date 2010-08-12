@@ -106,7 +106,6 @@ AC_CONFIG_FILES([Makefile
                  test/unit/fixtures/performance/Makefile
                  test/unit/fixtures/modules/Makefile
                  test/unit/fixtures/story/Makefile
-                 test/unit/fixtures/story/taiyaki/Makefile
                  test/unit/util/Makefile
                  test/unit/core/Makefile
                  test/unit/memcached/Makefile
