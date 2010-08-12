@@ -2069,26 +2069,7 @@ func_geo_in_rectangle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
   grn_obj *obj;
   unsigned char r = GRN_FALSE;
   if (nargs == 3) {
-    grn_obj *pos = args[0], *pos1 = args[1], *pos2 = args[2], pos1_, pos2_;
-    grn_geo_point *p, *p1, *p2;
-    grn_id domain = pos->header.domain;
-    if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
-      if (pos1->header.domain != domain) {
-        GRN_OBJ_INIT(&pos1_, GRN_BULK, 0, domain);
-        if (grn_obj_cast(ctx, pos1, &pos1_, 0)) { goto exit; }
-        pos1 = &pos1_;
-      }
-      if (pos2->header.domain != domain) {
-        GRN_OBJ_INIT(&pos2_, GRN_BULK, 0, domain);
-        if (grn_obj_cast(ctx, pos2, &pos2_, 0)) { goto exit; }
-        pos2 = &pos2_;
-      }
-      p = ((grn_geo_point *)GRN_BULK_HEAD(pos));
-      p1 = ((grn_geo_point *)GRN_BULK_HEAD(pos1));
-      p2 = ((grn_geo_point *)GRN_BULK_HEAD(pos2));
-      r = ((p1->longitude <= p->longitude) && (p->longitude <= p2->longitude) &&
-           (p1->latitude <= p->latitude) && (p->latitude <= p2->latitude));
-    }
+    r = grn_geo_in_rectangle(ctx, args[0], args[1], args[2]);
   }
 exit :
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
