@@ -38,6 +38,8 @@
   cut_take_string(POINT(latitude_hours, latitude_minutes, latitude_seconds, \
                         longitude_hours, longitude_minutes, longitude_seconds))
 
+void data_prefix_error(void);
+void test_prefix_error(gpointer data);
 void data_prefix_short_text(void);
 void test_prefix_short_text(gpointer data);
 void data_prefix_geo_point(void);
@@ -176,6 +178,53 @@ create_geo_point_table(const gchar *data)
                     data));
 
   table = grn_ctx_get(context, table_name, strlen(table_name));
+}
+
+void
+data_prefix_error(void)
+{
+#define ADD_DATA(label, rc, message, offset, limit)             \
+  gcut_add_datum(label,                                         \
+                 "rc", G_TYPE_UINT, rc,                         \
+                 "message", G_TYPE_STRING, message,             \
+                 "offset", G_TYPE_INT, offset,                  \
+                 "limit", G_TYPE_INT, limit,                    \
+                 NULL)
+
+  ADD_DATA("negative offset",
+           GRN_TOO_SMALL_OFFSET,
+           "can't use negative offset with GRN_CURSOR_PREFIX: -1",
+           -1, -1);
+  ADD_DATA("large offset",
+           GRN_TOO_LARGE_OFFSET,
+           "offset is rather than table size: offset:100, table_size:8",
+           100, -1);
+  ADD_DATA("negative limit",
+           GRN_TOO_SMALL_LIMIT,
+           "can't use small limit rather than -1 with GRN_CURSOR_PREFIX: -2",
+           0, -2);
+
+#undef ADD_DATA
+}
+
+void
+test_prefix_error(gpointer data)
+{
+  const gchar *min = "ab";
+  int offset, limit;
+
+  create_short_text_table();
+
+  offset = gcut_data_get_int(data, "offset");
+  limit = gcut_data_get_int(data, "limit");
+  cursor = grn_table_cursor_open(context, table,
+                                 min, strlen(min),
+                                 NULL, 0,
+                                 offset, limit,
+                                 GRN_CURSOR_PREFIX);
+  grn_test_assert_error(gcut_data_get_uint(data, "rc"),
+                        gcut_data_get_string(data, "message"),
+                        context);
 }
 
 void

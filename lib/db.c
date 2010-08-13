@@ -1776,12 +1776,34 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
 {
   grn_rc rc;
   grn_table_cursor *tc = NULL;
+  unsigned int table_size;
   if (!table) { return tc; }
   GRN_API_ENTER;
-  rc = grn_normalize_offset_and_limit(ctx, grn_table_size(ctx, table), &offset, &limit);
-  if (rc) {
-    ERR(rc, "grn_normalize_offset_and_limit failed");
+  table_size = grn_table_size(ctx, table);
+  if (flags & GRN_CURSOR_PREFIX) {
+    if (offset < 0) {
+      ERR(GRN_TOO_SMALL_OFFSET,
+          "can't use negative offset with GRN_CURSOR_PREFIX: %d", offset);
+    } else if (offset != 0 && offset >= table_size) {
+      ERR(GRN_TOO_LARGE_OFFSET,
+          "offset is rather than table size: offset:%d, table_size:%d",
+          offset, table_size);
+    } else {
+      if (limit < -1) {
+        ERR(GRN_TOO_SMALL_LIMIT,
+            "can't use small limit rather than -1 with GRN_CURSOR_PREFIX: %d",
+            limit);
+      } else if (limit == -1) {
+        limit = table_size;
+      }
+    }
   } else {
+    rc = grn_normalize_offset_and_limit(ctx, table_size, &offset, &limit);
+    if (rc) {
+      ERR(rc, "grn_normalize_offset_and_limit failed");
+    }
+  }
+  if (!ctx->rc) {
     switch (table->header.type) {
     case GRN_DB :
       tc = (grn_table_cursor *)grn_pat_cursor_open(ctx, ((grn_db *)table)->keys,

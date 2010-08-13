@@ -726,9 +726,15 @@ typedef grn_obj grn_table_cursor;
  *         GRN_CURSOR_BY_ID/GRN_CURSOR_BY_KEY/GRN_CURSOR_PREFIXの3フラグは、
  *         同時に指定することができない。
  * @offset: 該当する範囲のレコードのうち、
-            (0ベースで)offset番目からレコードを取り出す。
+ *          (0ベースで)offset番目からレコードを取り出す。
+ *
+ *         GRN_CURSOR_PREFIXを指定したときは負の数を指定する
+ *         ことはできない。
  * @limit: 該当する範囲のレコードのうち、limit件のみを取り出す。
  *         -1が指定された場合は、全件が指定されたものとみなす。
+ *
+ *         GRN_CURSOR_PREFIXを指定したときは-1より小さい負の
+ *         数を指定することはできない。
  *
  * tableに登録されているレコードを順番に取り出すためのカーソルを生成して返す。
  **/
