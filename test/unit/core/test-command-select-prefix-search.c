@@ -141,5 +141,5 @@ test_filter(void)
        "[3,\"groonga + Ruby\",\"rroonga\"],"
        "[4,\"search system\",\"ranguba\"]]]",
       send_command("select Bookmarks "
-                   "--filter \"site ^ 'r'\""));
+                   "--filter 'site @^ \"r\"'"));
 }
