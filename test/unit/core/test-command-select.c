@@ -36,6 +36,7 @@ void test_contradiction(void);
 void test_filter_null(void);
 void test_bigram_split_symbol_tokenizer(void);
 void test_nonexistent_table(void);
+void test_boolean(void);
 
 static gchar *tmp_directory;
 
@@ -420,4 +421,24 @@ test_nonexistent_table(void)
   grn_test_assert_error(GRN_INVALID_ARGUMENT,
                         "invalid table name: nonexistent",
                         context);
+}
+
+void
+test_boolean(void)
+{
+  assert_send_command("table_create Blogs TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Blogs public COLUMN_SCALAR Bool");
+
+  assert_send_command("load --table Blogs --columns '_key, public' \n"
+                      "[\n"
+                      " [\"groonga 1.0\", true],\n"
+                      " [\"groonga 2.0\", false]\n"
+                      "]");
+  cut_assert_equal_string("[[[1],"
+                           "[[\"_key\",\"ShortText\"],"
+                            "[\"public\",\"Bool\"]],"
+                           "[\"groonga 1.0\",true]]]",
+                          send_command("select Blogs "
+                                       "--output_columns _key,public "
+                                       "--filter public==true"));
 }
