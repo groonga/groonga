@@ -1132,6 +1132,7 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
   } else {
     if ((res = const_new(ctx, e))) {
       switch (obj->header.type) {
+      case GRN_VOID :
       case GRN_BULK :
       case GRN_UVECTOR :
         GRN_OBJ_INIT(res, obj->header.type, 0, obj->header.domain);
