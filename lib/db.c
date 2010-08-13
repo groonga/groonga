@@ -6035,6 +6035,7 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
 {
   int len = 0;
   char buf[GRN_TABLE_MAX_KEY_SIZE];
+  if (!obj) { return len; }
   GRN_API_ENTER;
   if (GRN_DB_OBJP(obj)) {
     if (DB_OBJ(obj)->id && DB_OBJ(obj)->id < GRN_ID_MAX) {
@@ -6050,6 +6051,39 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
         if (len && len <= buf_size) {
           memcpy(namebuf, p0, len);
         }
+      }
+    }
+  } else if (obj->header.type == GRN_ACCESSOR) {
+    const char *name = NULL;
+    grn_accessor *a;
+    for (a = (grn_accessor *)obj; a; a = a->next) {
+      switch (a->action) {
+      case GRN_ACCESSOR_GET_ID :
+        name = "_id";
+        break;
+      case GRN_ACCESSOR_GET_KEY :
+        name = "_key";
+        break;
+      case GRN_ACCESSOR_GET_VALUE :
+        name = "_value";
+        break;
+      case GRN_ACCESSOR_GET_SCORE :
+        name = "_score";
+        break;
+      case GRN_ACCESSOR_GET_NSUBRECS :
+        name = "_nsubrecs";
+        break;
+      case GRN_ACCESSOR_GET_COLUMN_VALUE :
+      case GRN_ACCESSOR_GET_DB_OBJ :
+      case GRN_ACCESSOR_LOOKUP :
+      case GRN_ACCESSOR_FUNCALL :
+        break;
+      }
+    }
+    if (name) {
+      len = strlen(name);
+      if (len <= buf_size) {
+        memcpy(namebuf, name, len);
       }
     }
   }

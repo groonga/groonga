@@ -46,7 +46,8 @@ noinst_LTLIBRARIES =				\
 	test-command-select-prefix-search.la	\
 	test-command-cache-limit.la		\
 	test-command-delete.la			\
-	test-geo.la
+	test-geo.la				\
+	test-accessor.la
 endif
 
 INCLUDES =			\
@@ -117,3 +118,4 @@ test_command_select_prefix_search_la_SOURCES	= test-command-select-prefix-search
 test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c
 test_command_delete_la_SOURCES		= test-command-delete.c
 test_geo_la_SOURCES			= test-geo.c
+test_accessor_la_SOURCES		= test-accessor.c
