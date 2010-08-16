@@ -350,7 +350,7 @@ class HTTPDefineSelectorDrilldownTest < HTTPSelectDrilldownTest
     name = "custom_select"
     response = get(command_path("define_selector",
                                 parameters.merge(:name => name)))
-    assert_response([success_status_response, [true]], response,
+    assert_response([success_status_response, true], response,
                     :content_type => "application/json")
     super(header, expected, {}, options.merge(:command => name), &block)
   end
