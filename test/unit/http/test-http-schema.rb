@@ -718,13 +718,13 @@ class HTTPSchemaTest < Test::Unit::TestCase
       books_name_column_id = column_create("books",
                                            "name",
                                            "COLUMN_VECTOR",
-                                           "Shorttext")
+                                           "ShortText")
       assert_column_list([[books_name_column_id,
                            "name",
                            "var",
-                           "column_vector|persistent",
+                           "COLUMN_VECTOR|PERSISTENT",
                            "books",
-                           "shorttext",
+                           "ShortText",
                            []]],
                          :table => "books")
     end
@@ -734,14 +734,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
       books_name_column_id = column_create("books",
                                            "name",
-                                           "column_index|with_weight",
-                                           "shorttext")
+                                           "COLUMN_INDEX|WITH_WEIGHT",
+                                           "ShortText")
       assert_column_list([[books_name_column_id,
                            "name",
                            "index",
-                           "column_index|with_weight|persistent",
+                           "COLUMN_INDEX|WITH_WEIGHT|PERSISTENT",
                            "books",
-                           "shorttext",
+                           "ShortText",
                            []]],
                          :table => "books")
     end
@@ -751,14 +751,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
       books_name_column_id = column_create("books",
                                            "name",
-                                           " column_index | with_weight ",
-                                           "shorttext")
+                                           " COLUMN_INDEX | WITH_WEIGHT ",
+                                           "ShortText")
       assert_column_list([[books_name_column_id,
                            "name",
                            "index",
-                           "column_index|with_weight|persistent",
+                           "COLUMN_INDEX|WITH_WEIGHT|PERSISTENT",
                            "books",
-                           "shorttext",
+                           "ShortText",
                            []]],
                          :table => "books")
     end
@@ -780,8 +780,6 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
     private
     def create_books_table
-      response = get(command_path(:table_create, :name => "books"))
-      assert_success_response(response, :content_type => "application/json")
       @books_table_id = table_create("books")
 
       assert_table_list([[@books_table_id,
