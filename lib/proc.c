@@ -342,9 +342,13 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_define_selector(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  uint32_t nvars;
+  uint32_t i, nvars;
   grn_expr_var *vars;
   grn_proc_get_info(ctx, user_data, &vars, &nvars, NULL);
+  for (i = 1; i < nvars; i++) {
+    GRN_TEXT_SET(ctx, &((vars + i)->value),
+                 GRN_TEXT_VALUE(VAR(i)), GRN_TEXT_LEN(VAR(i)));
+  }
   grn_proc_create(ctx,
                   GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
                   GRN_PROC_COMMAND, proc_select, NULL, NULL, nvars - 1, vars + 1);
