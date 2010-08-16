@@ -665,6 +665,7 @@ typedef grn_obj grn_table_cursor;
 #define GRN_CURSOR_BY_ID               (0x01<<3)
 #define GRN_CURSOR_PREFIX              (0x01<<4)
 #define GRN_CURSOR_SIZE_BY_BIT         (0x01<<5)
+#define GRN_CURSOR_RK                  (0x01<<6)
 
 /**
  * grn_table_cursor_open:

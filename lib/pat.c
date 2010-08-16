@@ -2006,6 +2006,9 @@ exit :
   return c;
 }
 
+static grn_rc set_cursor_rk(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
+                            const void *key, uint32_t key_size, int flags);
+
 grn_pat_cursor *
 grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
                     const void *min, uint32_t min_size,
@@ -2041,7 +2044,11 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
       goto exit;
     } else {
       if (min && min_size) {
-        set_cursor_prefix(ctx, pat, c, min, min_size, flags);
+        if (flags & GRN_CURSOR_RK) {
+          set_cursor_rk(ctx, pat, c, min, min_size, flags);
+        } else {
+          set_cursor_prefix(ctx, pat, c, min, min_size, flags);
+        }
         goto exit;
       }
     }
@@ -2370,7 +2377,7 @@ typedef struct {
   uint8_t attr;
 } rk_tree_node;
 
-uint16_t rk_str_idx[] = {
+static uint16_t rk_str_idx[] = {
   0x0003, 0x0006, 0x0009, 0x000c, 0x0012, 0x0015, 0x0018, 0x001e, 0x0024, 0x002a,
   0x0030, 0x0036, 0x003c, 0x0042, 0x0048, 0x004e, 0x0054, 0x005a, 0x0060, 0x0066,
   0x006c, 0x0072, 0x0078, 0x007e, 0x0084, 0x008a, 0x0090, 0x0096, 0x009c, 0x00a2,
@@ -2390,7 +2397,7 @@ uint16_t rk_str_idx[] = {
   0x02e8, 0x02eb, 0x02ee, 0x02f1, 0x02f4, 0x02f7, 0x02fa, 0x02fd, 0x0300, 0x0303,
   0x0309, 0x030c, 0x0312, 0x0318, 0x031e, 0x0324, 0x0327, 0x032a, 0x032d
 };
-char rk_str[] = {
+static char rk_str[] = {
   0xe3, 0x82, 0xa1, 0xe3, 0x82, 0xa2, 0xe3, 0x82, 0xa3, 0xe3, 0x82, 0xa4, 0xe3,
   0x82, 0xa4, 0xe3, 0x82, 0xa7, 0xe3, 0x82, 0xa5, 0xe3, 0x82, 0xa6, 0xe3, 0x82,
   0xa6, 0xe3, 0x82, 0xa2, 0xe3, 0x82, 0xa6, 0xe3, 0x82, 0xa3, 0xe3, 0x82, 0xa6,
@@ -2455,7 +2462,7 @@ char rk_str[] = {
   0x83, 0xb4, 0xe3, 0x82, 0xa7, 0xe3, 0x83, 0xb4, 0xe3, 0x82, 0xa9, 0xe3, 0x83,
   0xb5, 0xe3, 0x83, 0xb6, 0xe3, 0x83, 0xbc
 };
-uint16_t rk_tree_idx[] = {
+static uint16_t rk_tree_idx[] = {
   0x001b, 0x0022, 0x0025, 0x0028, 0x002d, 0x0030, 0x0039, 0x003b, 0x003c, 0x003f,
   0x0046, 0x0047, 0x004f, 0x0050, 0x0053, 0x005a, 0x005d, 0x0064, 0x0067, 0x006f,
   0x0070, 0x0073, 0x007a, 0x007f, 0x0086, 0x0089, 0x00a6, 0x00ac, 0x00b3, 0x00b6,
@@ -2463,7 +2470,7 @@ uint16_t rk_tree_idx[] = {
   0x00ed, 0x00f3, 0x00f5, 0x00ff, 0x0101, 0x0103, 0x0104, 0x0105, 0x0108, 0x010d,
   0x0114, 0x0118, 0x011a, 0x0159, 0x0175, 0x0178, 0x018e, 0x01a2
 };
-rk_tree_node rk_tree[] = {
+static rk_tree_node rk_tree[] = {
   {0x2d, 0x00, 0xb2, 0x01}, {0x61, 0x00, 0x01, 0x01}, {0x62, 0x01, 0xff, 0x01},
   {0x63, 0x03, 0xff, 0x01}, {0x64, 0x06, 0xff, 0x01}, {0x65, 0x00, 0x24, 0x01},
   {0x66, 0x0a, 0xff, 0x01}, {0x67, 0x0c, 0xff, 0x01}, {0x68, 0x0f, 0xff, 0x01},
@@ -2648,7 +2655,7 @@ rk_emit(rk_tree_node *node, char **str)
   }\
 }
 
-int
+static uint32_t
 rk_conv(const char *str, uint32_t str_len, char *buf, uint32_t buf_size)
 {
   uint32_t l;
@@ -2673,4 +2680,68 @@ rk_conv(const char *str, uint32_t str_len, char *buf, uint32_t buf_size)
     if (ic_ < ic) { RK_OUTPUT(ic_, ic - ic_); }
   }
   return oc - buf;
+}
+
+static pat_node *
+sub_search(grn_ctx *ctx, grn_pat *pat, grn_id id, int *c0, uint8_t *key, uint32_t key_len)
+{
+  uint32_t len = key_len * 16;
+  while (id) {
+    int ch;
+    pat_node *node;
+    PAT_AT(pat, id, node);
+    if (!node) { break; }
+    ch = PAT_CHK(node);
+    if (*c0 < ch && ch < len - 1) {
+      if (ch & 1) {
+        id = (ch + 1 < len) ? node->lr[1] : node->lr[0];
+      } else {
+        id = node->lr[nth_bit(key, ch, len)];
+      }
+      *c0 = ch;
+    } else {
+      const uint8_t *k = pat_node_get_key(ctx, pat, node);
+      return (k && key_len <= PAT_LEN(node) && !memcmp(k, key, key_len)) ? node : NULL;
+    }
+  }
+  return NULL;
+}
+
+static grn_rc
+set_cursor_rk(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
+                  const void *key, uint32_t key_len, int flags)
+{
+  int c0 = -1, ch;
+  uint32_t len, byte_len;
+  grn_id id;
+  pat_node *node;
+  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
+  if (flags & GRN_CURSOR_SIZE_BY_BIT) {
+    return GRN_OPERATION_NOT_SUPPORTED;
+  }
+  byte_len = rk_conv(key, key_len, keybuf, MAX_FIXED_KEY_SIZE);
+  len = byte_len * 16;
+  PAT_AT(pat, 0, node);
+  id = node->lr[1];
+  if ((node = sub_search(ctx, pat, id, &c0, keybuf, byte_len))) {
+    ch = PAT_CHK(node);
+    if (c0 < ch) {
+      if (flags & GRN_CURSOR_DESCENDING) {
+        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
+          push(c, node->lr[0], ch);
+        }
+        push(c, node->lr[1], ch);
+      } else {
+        push(c, node->lr[1], ch);
+        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
+          push(c, node->lr[0], ch);
+        }
+      }
+    } else {
+      if (PAT_LEN(node) * 16 > len || !(flags & GRN_CURSOR_GT)) {
+        push(c, id, ch);
+      }
+    }
+  }
+  return ctx->rc;
 }
