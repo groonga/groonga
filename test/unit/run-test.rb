@@ -11,47 +11,33 @@ base_dir = File.expand_path(ENV["BASE_DIR"] || File.dirname(__FILE__))
 test_lib_dir = File.expand_path(File.join(build_dir, "..", "lib"))
 FileUtils.mkdir_p(test_lib_dir)
 
-test_unit_dir = File.join(test_lib_dir, "test-unit-2.0.9")
+test_unit_dir = File.join(test_lib_dir, "test-unit-2.1.1")
 unless File.exist?(test_unit_dir)
   require "open-uri"
-  tgz_uri = "http://rubyforge.org/frs/download.php/70989/test-unit-2.0.9.tgz"
+  tgz_uri = "http://rubyforge.org/frs/download.php/71835/test-unit-2.1.1.tgz"
   tgz = File.join(build_dir, File.basename(tgz_uri))
   File.open(tgz, "wb") do |output|
     output.print(open(tgz_uri).read)
   end
   system("tar", "xfz", tgz, "-C", test_lib_dir)
 end
-
 $LOAD_PATH.unshift(File.join(test_unit_dir, "lib"))
+
+test_unit_notify_dir = File.join(test_lib_dir, "test-unit-notify-0.0.1")
+unless File.exist?(test_unit_notify_dir)
+  require "open-uri"
+  tgz_uri = "http://rubyforge.org/frs/download.php/71705/test-unit-notify-0.0.1.tgz"
+  tgz = File.join(build_dir, File.basename(tgz_uri))
+  File.open(tgz, "wb") do |output|
+    output.print(open(tgz_uri).read)
+  end
+  system("tar", "xfz", tgz, "-C", test_lib_dir)
+end
+$LOAD_PATH.unshift(File.join(test_unit_notify_dir, "lib"))
 
 require 'test/unit'
 require 'test/unit/version'
-
-if Test::Unit::VERSION < "2.1.0"
-  module Test::Unit::Assertions
-    def assert_path_exist(path, message=nil)
-      _wrap_assertion do
-        failure_message = build_message(message,
-                                        "<?> expected to exist",
-                                        path)
-        assert_block(failure_message) do
-          File.exist?(path)
-        end
-      end
-    end
-
-    def assert_path_not_exist(path, message=nil)
-      _wrap_assertion do
-        failure_message = build_message(message,
-                                        "<?> expected to not exist",
-                                        path)
-        assert_block(failure_message) do
-          not File.exist?(path)
-        end
-      end
-    end
-  end
-end
+require 'test/unit/notify'
 
 json_dir = File.join(test_lib_dir, "json-1.1.9")
 unless File.exist?(json_dir)
@@ -83,4 +69,5 @@ require 'groonga-http-test-utils'
 require 'groonga-local-gqtp-test-utils'
 
 ARGV.unshift("--exclude", "run-test.rb")
+ARGV.unshift("--notify")
 exit Test::Unit::AutoRunner.run(true, File.dirname($0))
