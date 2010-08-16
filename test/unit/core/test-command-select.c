@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2010 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ void test_unmatched_output_columns(void);
 void test_vector_int32(void);
 void test_vector_text(void);
 void test_vector_reference_id(void);
+void test_vector_int32_reference_key(void);
 void test_nonexistent_id(void);
 void test_tautology(void);
 void test_contradiction(void);
@@ -305,6 +306,40 @@ test_vector_reference_id(void)
                             "[\"text\",\"ShortText\"],"
                             "[\"authors\",\"Users\"]],"
                            "[1,\"groonga\",\"it is fast\",[1,2]]]]",
+                          send_command("select Comments"));
+}
+
+void
+test_vector_int32_reference_key(void)
+{
+  assert_send_command("table_create Users TABLE_HASH_KEY Int32");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  assert_send_command("table_create Comments TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Comments text COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Comments authors COLUMN_VECTOR Users");
+
+  cut_assert_equal_string("2",
+                          send_command("load --table Users\n"
+                                       "[\n"
+                                       "[\"_key\",\"name\"],\n"
+                                       "[1000,\"ryoqun\"],\n"
+                                       "[1001,\"hayamiz\"]\n"
+                                       "]"));
+
+  cut_assert_equal_string(
+    "1",
+    send_command("load --table Comments\n"
+                 "[\n"
+                 "[\"_key\",\"text\",\"authors\"],\n"
+                 "[\"groonga\",\"it is fast\",[1000,1001]]\n"
+                 "]"));
+
+  cut_assert_equal_string("[[[1],"
+                           "[[\"_id\",\"UInt32\"],"
+                            "[\"_key\",\"ShortText\"],"
+                            "[\"text\",\"ShortText\"],"
+                            "[\"authors\",\"Users\"]],"
+                           "[1,\"groonga\",\"it is fast\",[1000,1001]]]]",
                           send_command("select Comments"));
 }
 

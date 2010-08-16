@@ -3634,6 +3634,38 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   return res;
 }
 
+#define SRC2RECORD() {\
+  grn_obj *table = grn_ctx_at(ctx, dest->header.domain);\
+  if (GRN_OBJ_TABLEP(table)) {\
+    grn_obj *p_key = src;\
+    grn_id id;\
+    if (table->header.type != GRN_TABLE_NO_KEY) {\
+      grn_obj key;\
+      GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);\
+      if (src->header.domain != table->header.domain) {\
+        grn_obj_cast(ctx, src, &key, 1);\
+        p_key = &key;\
+      }\
+      if (GRN_BULK_VSIZE(p_key)) {\
+        id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)\
+                  : grn_table_get_by_key(ctx, table, p_key);\
+        if (id) { GRN_RECORD_SET(ctx, dest, id); }\
+      } else {\
+        GRN_RECORD_SET(ctx, dest, GRN_ID_NIL);\
+      }\
+      GRN_OBJ_FIN(ctx, &key);\
+    } else {\
+      grn_obj record_id;\
+      GRN_UINT32_INIT(&record_id, 0);\
+      grn_obj_cast(ctx, src, &record_id, 1);\
+      id = GRN_UINT32_VALUE(&record_id);\
+      if (id) { GRN_RECORD_SET(ctx, dest, id); }\
+    }\
+  } else {\
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;\
+  }\
+}
+
 #define NUM2DEST(getvalue,totext,tobool)\
   switch (dest->header.domain) {\
   case GRN_DB_BOOL :\
@@ -3675,15 +3707,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     totext(ctx, dest, getvalue(src));\
     break;\
   default :\
-    {\
-      grn_obj *domain = grn_ctx_at(ctx, dest->header.domain);\
-      if (domain && domain->header.type == GRN_TABLE_NO_KEY) {\
-        GRN_RECORD_SET(ctx, dest, getvalue(src));\
-      } else {\
-        rc = GRN_FUNCTION_NOT_IMPLEMENTED;\
-      }\
-      break;\
-    }\
+    SRC2RECORD();\
   }
 
 #define TEXT2DEST(type,tonum,setvalue) {\
@@ -3894,37 +3918,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
       }
       break;
     default :
-      {
-        grn_obj *table = grn_ctx_at(ctx, dest->header.domain);
-        if (GRN_OBJ_TABLEP(table)) {
-          grn_obj *p_key = src;
-          grn_id id;
-          if (table->header.type != GRN_TABLE_NO_KEY) {
-            grn_obj key;
-            GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
-            if (src->header.domain != table->header.domain) {
-              grn_obj_cast(ctx, src, &key, 1);
-              p_key = &key;
-            }
-            if (GRN_BULK_VSIZE(p_key)) {
-              id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)
-                        : grn_table_get_by_key(ctx, table, p_key);
-              if (id) { GRN_RECORD_SET(ctx, dest, id); }
-            } else {
-              GRN_RECORD_SET(ctx, dest, GRN_ID_NIL);
-            }
-            GRN_OBJ_FIN(ctx, &key);
-          } else {
-            grn_obj record_id;
-            GRN_UINT32_INIT(&record_id, 0);
-            grn_obj_cast(ctx, src, &record_id, 1);
-            id = GRN_UINT32_VALUE(&record_id);
-            if (id) { GRN_RECORD_SET(ctx, dest, id); }
-          }
-        } else {
-          rc = GRN_FUNCTION_NOT_IMPLEMENTED;
-        }
-      }
+      SRC2RECORD();
       break;
     }
     break;
