@@ -2621,9 +2621,9 @@ rk_lookup(uint8_t state, uint8_t code)
     uint16_t ne = rk_tree_idx[state];
     while (ns < ne) {
       uint16_t m = (ns + ne)>>1;
-      rk_tree_node *node = &rk_tree[m];
-      if (node->code == code) { return node; }
-      if (node->code < code) {
+      rk_tree_node *rn = &rk_tree[m];
+      if (rn->code == code) { return rn; }
+      if (rn->code < code) {
         ns = m + 1;
       } else {
         ne = m;
@@ -2634,12 +2634,12 @@ rk_lookup(uint8_t state, uint8_t code)
 }
 
 static uint32_t
-rk_emit(rk_tree_node *node, char **str)
+rk_emit(rk_tree_node *rn, char **str)
 {
-  if (node && node->emit != 0xff) {
-    uint16_t pos = node->emit ? rk_str_idx[node->emit - 1] :  0;
+  if (rn && rn->emit != 0xff) {
+    uint16_t pos = rn->emit ? rk_str_idx[rn->emit - 1] :  0;
     *str = &rk_str[pos];
-    return (uint32_t)(rk_str_idx[node->emit] - pos);
+    return (uint32_t)(rk_str_idx[rn->emit] - pos);
   } else {
     *str = NULL;
     return 0;
@@ -2656,92 +2656,134 @@ rk_emit(rk_tree_node *node, char **str)
 }
 
 static uint32_t
-rk_conv(const char *str, uint32_t str_len, char *buf, uint32_t buf_size)
+rk_conv(const char *str, uint32_t str_len, char *buf, uint32_t buf_size, uint8_t *statep)
 {
   uint32_t l;
   uint8_t state = 0;
-  rk_tree_node *node;
+  rk_tree_node *rn;
   char *e, *oc = buf, *oe = oc + buf_size;
   const uint8_t *ic = (uint8_t *)str, *ic_ = ic, *ie = ic + str_len;
   while (ic < ie) {
-    if ((node = rk_lookup(state, *ic))) {
+    if ((rn = rk_lookup(state, *ic))) {
       ic++;
-      if ((l = rk_emit(node, &e))) { RK_OUTPUT(e, l); }
-      state = node->next;
-    } else {
-      if (!state) { ic++; }
+      if ((l = rk_emit(rn, &e))) { RK_OUTPUT(e, l); }
+      state = rn->next;
+    } else {      if (!state) { ic++; }
       if (ic_ < ic) { RK_OUTPUT(ic_, ic - ic_); }
       state = 0;
     }
   }
-  if ((node = rk_lookup(state, 0))) {
-    if ((l = rk_emit(node, &e))) { RK_OUTPUT(e, l); }
+  if ((rn = rk_lookup(state, 0))) {
+    if ((l = rk_emit(rn, &e))) { RK_OUTPUT(e, l); }
   } else {
+#ifdef FLUSH_UNRESOLVED_INPUT
     if (ic_ < ic) { RK_OUTPUT(ic_, ic - ic_); }
+#endif /* FLUSH_UNRESOLVED_INPUT */
   }
+  *statep = state;
   return oc - buf;
 }
 
-static pat_node *
-sub_search(grn_ctx *ctx, grn_pat *pat, grn_id id, int *c0, uint8_t *key, uint32_t key_len)
+static grn_id
+sub_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
+           int *c0, uint8_t *key, uint32_t key_len)
 {
+  pat_node *pn;
   uint32_t len = key_len * 16;
-  while (id) {
+  PAT_AT(pat, id, pn);
+  while (pn) {
     int ch;
-    pat_node *node;
-    PAT_AT(pat, id, node);
-    if (!node) { break; }
-    ch = PAT_CHK(node);
+    ch = PAT_CHK(pn);
     if (*c0 < ch && ch < len - 1) {
+      grn_id id;
       if (ch & 1) {
-        id = (ch + 1 < len) ? node->lr[1] : node->lr[0];
+        id = (ch + 1 < len) ? pn->lr[1] : pn->lr[0];
       } else {
-        id = node->lr[nth_bit(key, ch, len)];
+        id = pn->lr[nth_bit(key, ch, len)];
       }
       *c0 = ch;
+      PAT_AT(pat, id, pn);
     } else {
-      const uint8_t *k = pat_node_get_key(ctx, pat, node);
-      return (k && key_len <= PAT_LEN(node) && !memcmp(k, key, key_len)) ? node : NULL;
+      const uint8_t *k = pat_node_get_key(ctx, pat, pn);
+      return (k && key_len <= PAT_LEN(pn) && !memcmp(k, key, key_len)) ? id : GRN_ID_NIL;
     }
   }
-  return NULL;
+  return GRN_ID_NIL;
+}
+
+static void
+search_push(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
+            uint8_t *key, uint32_t key_len, uint8_t state, grn_id id, int c0, int flags)
+{
+  if (state) {
+    int step;
+    uint16_t ns, ne;
+    if (flags & GRN_CURSOR_DESCENDING) {
+      ns = rk_tree_idx[state] - 1;
+      ne = rk_tree_idx[state - 1] - 1;
+      step = -1;
+    } else {
+      ns = rk_tree_idx[state - 1];
+      ne = rk_tree_idx[state];
+      step = 1;
+    }
+    for (; ns != ne; ns += step) {
+      rk_tree_node *rn = &rk_tree[ns];
+      if (rn->attr) {
+        char *e;
+        uint32_t l = rk_emit(rn, &e);
+        if (l) {
+          if (l + key_len <= GRN_TABLE_MAX_KEY_SIZE) {
+            int ch = c0;
+            grn_id i;
+            memcpy(key + key_len, e, l);
+            if ((i = sub_search(ctx, pat, id, &ch, key, key_len + l))) {
+              search_push(ctx, pat, c, key, key_len + l, rn->next, i, ch, flags);
+            }
+          }
+        } else {
+          search_push(ctx, pat, c, key, key_len, rn->next, id, c0, flags);
+        }
+      }
+    }
+  } else {
+    pat_node *pn;
+    PAT_AT(pat, id, pn);
+    if (pn) {
+      int ch = PAT_CHK(pn);
+      uint32_t len = key_len * 16;
+      if (c0 < ch) {
+        if (flags & GRN_CURSOR_DESCENDING) {
+          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) { push(c, pn->lr[0], ch); }
+          push(c, pn->lr[1], ch);
+        } else {
+          push(c, pn->lr[1], ch);
+          if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) { push(c, pn->lr[0], ch); }
+        }
+      } else {
+        if (PAT_LEN(pn) * 16 > len || !(flags & GRN_CURSOR_GT)) { push(c, id, ch); }
+      }
+    }
+  }
 }
 
 static grn_rc
 set_cursor_rk(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
                   const void *key, uint32_t key_len, int flags)
 {
-  int c0 = -1, ch;
-  uint32_t len, byte_len;
   grn_id id;
-  pat_node *node;
-  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  if (flags & GRN_CURSOR_SIZE_BY_BIT) {
-    return GRN_OPERATION_NOT_SUPPORTED;
-  }
-  byte_len = rk_conv(key, key_len, keybuf, MAX_FIXED_KEY_SIZE);
+  uint8_t state;
+  pat_node *pn;
+  int c0 = -1;
+  uint32_t len, byte_len;
+  uint8_t keybuf[GRN_TABLE_MAX_KEY_SIZE];
+  if (flags & GRN_CURSOR_SIZE_BY_BIT) { return GRN_OPERATION_NOT_SUPPORTED; }
+  byte_len = rk_conv(key, key_len, keybuf, GRN_TABLE_MAX_KEY_SIZE, &state);
   len = byte_len * 16;
-  PAT_AT(pat, 0, node);
-  id = node->lr[1];
-  if ((node = sub_search(ctx, pat, id, &c0, keybuf, byte_len))) {
-    ch = PAT_CHK(node);
-    if (c0 < ch) {
-      if (flags & GRN_CURSOR_DESCENDING) {
-        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-          push(c, node->lr[0], ch);
-        }
-        push(c, node->lr[1], ch);
-      } else {
-        push(c, node->lr[1], ch);
-        if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) {
-          push(c, node->lr[0], ch);
-        }
-      }
-    } else {
-      if (PAT_LEN(node) * 16 > len || !(flags & GRN_CURSOR_GT)) {
-        push(c, id, ch);
-      }
-    }
+  PAT_AT(pat, 0, pn);
+  id = pn->lr[1];
+  if ((id = sub_search(ctx, pat, id, &c0, keybuf, byte_len))) {
+    search_push(ctx, pat, c, keybuf, byte_len, state, id, c0, flags);
   }
   return ctx->rc;
 }
