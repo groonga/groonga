@@ -726,6 +726,15 @@ typedef grn_obj grn_table_cursor;
  *
  *         GRN_CURSOR_BY_ID/GRN_CURSOR_BY_KEY/GRN_CURSOR_PREFIXの3フラグは、
  *         同時に指定することができない。
+ *
+ *         GRN_OBJ_TABLE_PAT_KEYを指定して作ったテーブルで、
+ *         GRN_CURSOR_PREFIXとGRN_CURSOR_RKを指定すると、
+ *         半角小文字のアルファベット文字列から、それを旧JIS X 4063:2000規格に
+ *         従って全角カタカナに変換した文字列に前方一致する値をkeyとするレコードを
+ *         取り出す。GRN_ENC_UTF8のみをサポートしている。
+ *         GRN_CURSOR_ASCENDING/DESCENDINGは無効であり、レコードをkey値の昇降順で
+ *         取り出すことはできない。
+ *
  * @offset: 該当する範囲のレコードのうち、
  *          (0ベースで)offset番目からレコードを取り出す。
  *
