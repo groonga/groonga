@@ -2668,7 +2668,8 @@ rk_conv(const char *str, uint32_t str_len, char *buf, uint32_t buf_size, uint8_t
       ic++;
       if ((l = rk_emit(rn, &e))) { RK_OUTPUT(e, l); }
       state = rn->next;
-    } else {      if (!state) { ic++; }
+    } else {
+      if (!state) { ic++; }
       if (ic_ < ic) { RK_OUTPUT(ic_, ic - ic_); }
       state = 0;
     }
