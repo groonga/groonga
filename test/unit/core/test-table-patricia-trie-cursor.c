@@ -44,6 +44,8 @@ void data_prefix_short_text(void);
 void test_prefix_short_text(gpointer data);
 void data_prefix_geo_point(void);
 void test_prefix_geo_point(gpointer data);
+void data_prefix_rk(void);
+void test_prefix_rk(gpointer data);
 void data_near_uint32(void);
 void test_near_uint32(gpointer data);
 void data_common_prefix_search(void);
@@ -110,26 +112,29 @@ cut_teardown(void)
 }
 
 static void
-create_short_text_table(void)
+create_short_text_table(const GList *texts)
 {
-  const char *table_name = "ShortTextPat";
+  const gchar *table_name = "ShortTextPat";
+  GString *command;
+  const GList *node;
 
   assert_send_commands(
     cut_take_printf("table_create %s TABLE_PAT_KEY ShortText", table_name));
-  assert_send_commands(
-    cut_take_printf("load --table %s\n"
-                    "[\n"
-                    " [\"_key\"],\n"
-                    " [\"abra\"],"
-                    " [\"abracada\"],"
-                    " [\"abracadabra\"],"
-                    " [\"abubu\"],"
-                    " [\"あ\"],"
-                    " [\"ああ\"],"
-                    " [\"あああ\"],"
-                    " [\"い\"]"
-                    "]",
-                    table_name));
+
+  command = g_string_new(NULL);
+  g_string_append_printf(command, "load --table %s\n", table_name);
+  g_string_append(command, "[\n");
+  g_string_append(command, "  [\"_key\"],\n");
+  for (node = texts; node; node = g_list_next(node)) {
+    const gchar *text = node->data;
+    g_string_append_printf(command, "  [\"%s\"]", text);
+    if (g_list_next(node)) {
+      g_string_append(command, ",");
+    }
+    g_string_append(command, "\n");
+  }
+  g_string_append(command, "]");
+  assert_send_commands(cut_take_string(g_string_free(command, FALSE)));
 
   table = grn_ctx_get(context, table_name, strlen(table_name));
 }
@@ -213,7 +218,15 @@ test_prefix_error(gpointer data)
   const gchar *min = "ab";
   int offset, limit;
 
-  create_short_text_table();
+  create_short_text_table(gcut_take_new_list_string("abra",
+                                                    "abracada",
+                                                    "abracadabra",
+                                                    "abubu",
+                                                    "あ",
+                                                    "ああ",
+                                                    "あああ",
+                                                    "い",
+                                                    NULL));
 
   offset = gcut_data_get_int(data, "offset");
   limit = gcut_data_get_int(data, "limit");
@@ -307,7 +320,15 @@ test_prefix_short_text(gpointer data)
   const GList *expected_keys;
   GList *actual_keys = NULL;
 
-  create_short_text_table();
+  create_short_text_table(gcut_take_new_list_string("abra",
+                                                    "abracada",
+                                                    "abracadabra",
+                                                    "abubu",
+                                                    "あ",
+                                                    "ああ",
+                                                    "あああ",
+                                                    "い",
+                                                    NULL));
 
   min = gcut_data_get_string(data, "min");
   offset = gcut_data_get_int(data, "offset");
@@ -596,6 +617,109 @@ test_prefix_geo_point(gpointer data)
       }
     }
     actual_keys = g_list_append(actual_keys, g_string_free(geo_byte, FALSE));
+  }
+  gcut_take_list(actual_keys, g_free);
+
+  expected_keys = gcut_data_get_pointer(data, "expected");
+  gcut_assert_equal_list_string(expected_keys, actual_keys);
+}
+
+void
+data_prefix_rk(void)
+{
+#define ADD_DATA(label, expected, min, offset, limit, flags)            \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_POINTER,                            \
+                 expected, gcut_list_string_free,                       \
+                 "min", G_TYPE_STRING, min,                             \
+                 "offset", G_TYPE_INT, offset,                          \
+                 "limit", G_TYPE_INT, limit,                            \
+                 "flags", G_TYPE_INT, flags,                            \
+                 NULL)
+
+  ADD_DATA(
+    "roman - 1 - ascending",
+    gcut_list_string_new("カネソナエタ",
+                         "カノウ",
+                         "キノウ",
+                         "キョウカ",
+                         "クミコミ",
+                         "クミコム",
+                         "グルンガ",
+                         "ケンサク",
+                         "ケンサクヨウキュウ",
+                         "コウセイド",
+                         "コウソク",
+                         "コンパクト",
+                         NULL),
+    "k",
+    0, -1,
+    GRN_CURSOR_ASCENDING);
+
+#undef ADD_DATA
+}
+
+void
+test_prefix_rk(gpointer data)
+{
+  grn_id id;
+  const gchar *min;
+  int offset, limit, flags;
+  const GList *expected_keys;
+  GList *actual_keys = NULL;
+
+  create_short_text_table(
+    gcut_take_new_list_string("インデックス",
+                              "エヌグラム",
+                              "エンジン",
+                              "カネソナエタ",
+                              "カノウ",
+                              "キノウ",
+                              "キョウカ",
+                              "クミコミ",
+                              "クミコム",
+                              "グルンガ",
+                              "ケンサク",
+                              "ケンサクヨウキュウ",
+                              "ゲンゴ",
+                              "コウセイド",
+                              "コウソク",
+                              "コンパクト",
+                              "サクセイ",
+                              "ショリ",
+                              "ショリケイ",
+                              "ジッソウ",
+                              "ジュンスイ",
+                              "スクリプト",
+                              "セッケイ",
+                              "ゼンブン",
+                              "タイプ",
+                              "タンゴ",
+                              "ダイキボ",
+                              "テンチ",
+                              "ディービーエムエス",
+                              "トウ",
+                              "トクチョウ",
+                              "ブンショリョウ",
+                              "ヨウキュウ",
+                              NULL));
+
+  min = gcut_data_get_string(data, "min");
+  offset = gcut_data_get_int(data, "offset");
+  limit = gcut_data_get_int(data, "limit");
+  flags = gcut_data_get_int(data, "flags");
+  cursor = grn_table_cursor_open(context, table,
+                                 min, strlen(min),
+                                 NULL, 0,
+                                 offset, limit,
+                                 flags | GRN_CURSOR_PREFIX | GRN_CURSOR_RK);
+  grn_test_assert_context(context);
+  while ((id = grn_table_cursor_next(context, cursor))) {
+    gchar *key;
+    int key_size;
+
+    key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
+    actual_keys = g_list_append(actual_keys, g_strndup(key, key_size));
   }
   gcut_take_list(actual_keys, g_free);
 
@@ -893,7 +1017,15 @@ test_common_prefix_search(gpointer data)
   GList *actual_keys = NULL;
 
   cut_omit("crashed. Is it right usage?");
-  create_short_text_table();
+  create_short_text_table(gcut_take_new_list_string("abra",
+                                                    "abracada",
+                                                    "abracadabra",
+                                                    "abubu",
+                                                    "あ",
+                                                    "ああ",
+                                                    "あああ",
+                                                    "い",
+                                                    NULL));
 
   min_size = gcut_data_get_int(data, "min-size");
   max = gcut_data_get_string(data, "max");
