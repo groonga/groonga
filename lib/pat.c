@@ -2691,12 +2691,12 @@ sub_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
 {
   pat_node *pn;
   uint32_t len = key_len * 16;
+  if (!key_len) { return id; }
   PAT_AT(pat, id, pn);
   while (pn) {
     int ch;
     ch = PAT_CHK(pn);
     if (*c0 < ch && ch < len - 1) {
-      grn_id id;
       if (ch & 1) {
         id = (ch + 1 < len) ? pn->lr[1] : pn->lr[0];
       } else {
@@ -2720,13 +2720,13 @@ search_push(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     int step;
     uint16_t ns, ne;
     if (flags & GRN_CURSOR_DESCENDING) {
-      ns = rk_tree_idx[state] - 1;
-      ne = rk_tree_idx[state - 1] - 1;
-      step = -1;
-    } else {
       ns = rk_tree_idx[state - 1];
       ne = rk_tree_idx[state];
       step = 1;
+    } else {
+      ns = rk_tree_idx[state] - 1;
+      ne = rk_tree_idx[state - 1] - 1;
+      step = -1;
     }
     for (; ns != ne; ns += step) {
       rk_tree_node *rn = &rk_tree[ns];
