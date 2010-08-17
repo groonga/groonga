@@ -44,6 +44,7 @@ noinst_LTLIBRARIES =				\
 	test-command-select.la			\
 	test-command-select-sort.la		\
 	test-command-select-prefix-search.la	\
+	test-command-define-selector.la		\
 	test-command-cache-limit.la		\
 	test-command-delete.la			\
 	test-geo.la				\
@@ -115,6 +116,7 @@ test_command_column_list_la_SOURCES	= test-command-column-list.c
 test_command_select_la_SOURCES		= test-command-select.c
 test_command_select_sort_la_SOURCES	= test-command-select-sort.c
 test_command_select_prefix_search_la_SOURCES	= test-command-select-prefix-search.c
+test_command_define_selector_la_SOURCES	= test-command-define-selector.c
 test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c
 test_command_delete_la_SOURCES		= test-command-delete.c
 test_geo_la_SOURCES			= test-geo.c
