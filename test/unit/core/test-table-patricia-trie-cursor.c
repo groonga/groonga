@@ -625,7 +625,7 @@ data_prefix_rk(void)
                  NULL)
 
   ADD_DATA(
-    "roman - 1 - ascending",
+    "roman - 1byte - ascending",
     gcut_list_string_new("カネソナエタ",
                          "カノウ",
                          "キノウ",
@@ -640,6 +640,51 @@ data_prefix_rk(void)
                          "コンパクト",
                          NULL),
     "k",
+    0, -1,
+    GRN_CURSOR_ASCENDING);
+  ADD_DATA(
+    "ひらがな - ascending",
+    gcut_list_string_new("コウセイド",
+                         "コウソク",
+                         NULL),
+    "こう",
+    0, -1,
+    GRN_CURSOR_ASCENDING);
+  ADD_DATA(
+    "カタカナ - ascending",
+    gcut_list_string_new("コウセイド",
+                         "コウソク",
+                         NULL),
+    "コウ",
+    0, -1,
+    GRN_CURSOR_ASCENDING);
+  ADD_DATA(
+    "ひらがな and カタカナ - ascending",
+    gcut_list_string_new("コウセイド",
+                         "コウソク",
+                         NULL),
+    "こウ",
+    0, -1,
+    GRN_CURSOR_ASCENDING);
+  ADD_DATA(
+    "ッ - full - ascending",
+    gcut_list_string_new("インデックス",
+                         NULL),
+    "indekk",
+    0, -1,
+    GRN_CURSOR_ASCENDING);
+  ADD_DATA(
+    "ッ - half - ascending",
+    gcut_list_string_new("インデックス",
+                         NULL),
+    "indek",
+    0, -1,
+    GRN_CURSOR_ASCENDING);
+  ADD_DATA(
+    "ュ - ascending",
+    gcut_list_string_new("ヨウキュウ",
+                         NULL),
+    "youkyu",
     0, -1,
     GRN_CURSOR_ASCENDING);
 
