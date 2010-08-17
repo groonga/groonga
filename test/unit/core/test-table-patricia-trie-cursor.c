@@ -394,6 +394,7 @@ geo_byte_list_new_va_list(const gchar *value, va_list args)
   return g_list_reverse(list);
 }
 
+static const gchar *
 geo_byte_load_data(const gchar *value, ...)
 {
   GString *data;
