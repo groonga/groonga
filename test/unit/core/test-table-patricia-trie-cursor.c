@@ -615,7 +615,7 @@ void
 data_prefix_rk(void)
 {
 #define ADD_DATA(label, expected, min, offset, limit, flags)            \
-  gcut_add_datum(label,                                                 \
+  gcut_add_datum(label " - [" min "]",                                    \
                  "expected", G_TYPE_POINTER,                            \
                  expected, gcut_list_string_free,                       \
                  "min", G_TYPE_STRING, min,                             \
