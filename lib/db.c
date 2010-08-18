@@ -4889,40 +4889,41 @@ exit :
 static void
 build_index(grn_ctx *ctx, grn_obj *obj)
 {
-
+  int i, ncol;
+  grn_id id, *s;
   grn_table_cursor  *tc;
-  grn_obj   *src, *src_dom, **cp, **col, rv;
-  grn_id    id, *s;
-  int     i, ncol;
-
+  grn_obj *src, *src_dom, **cp, **col, rv;
   s = DB_OBJ(obj)->source;
   src = grn_ctx_at(ctx, *s);
-  src_dom = grn_ctx_at(ctx, src->header.domain);
+  if (GRN_OBJ_TABLEP(src)) {
+    src_dom = src;
+  } else {
+    src_dom = grn_ctx_at(ctx, src->header.domain);
+  }
   if (!src_dom) { ERR(GRN_INVALID_ARGUMENT, "domain invalid"); }
-
   ncol = DB_OBJ(obj)->source_size / sizeof(grn_id);
   col = GRN_MALLOC(ncol * sizeof(grn_obj));
   cp = col;
-
   for (i=0; i < ncol; i++, s++, col++) {
     *col = grn_ctx_at(ctx, *s);
     if (!*col) { ERR(GRN_INVALID_ARGUMENT, "source invalid, n=%d",i); }
   }
   col = cp;
-
-  tc = grn_table_cursor_open(ctx, src_dom, NULL, 0, NULL, 0,
-                             0, -1, GRN_CURSOR_BY_ID);
-
+  tc = grn_table_cursor_open(ctx, src_dom, NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_BY_ID);
+  GRN_TEXT_INIT(&rv, 0);
   while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
     for (i = 0; i < ncol; i++, col++) {
-      GRN_TEXT_INIT(&rv, 0);
-      grn_obj_get_value(ctx, *col, id, &rv);
+      GRN_BULK_REWIND(&rv);
+      if (GRN_OBJ_TABLEP(*col)) {
+        grn_table_get_key2(ctx, *col, id, &rv);
+      } else {
+        grn_obj_get_value(ctx, *col, id, &rv);
+      }
       call_hook_for_build(ctx, *col, id, &rv, 0);
-      GRN_OBJ_FIN(ctx, &rv);
     }
     col = cp;
   }
-
+  GRN_OBJ_FIN(ctx, &rv);
   grn_table_cursor_close(ctx, tc);
 }
 
