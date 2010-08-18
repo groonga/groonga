@@ -623,61 +623,54 @@ data_prefix_rk(void)
                  "limit", G_TYPE_INT, limit,                            \
                  NULL)
 
-  ADD_DATA(
-    "roman - 1byte",
-    gcut_list_string_new("カネソナエタ",
-                         "カノウ",
-                         "キノウ",
-                         "キョウカ",
-                         "クミコミ",
-                         "クミコム",
-                         "ケンサク",
-                         "ケンサクヨウキュウ",
-                         "コウセイド",
-                         "コウソク",
-                         "コンパクト",
-                         NULL),
-    "k",
-    0, -1);
-  ADD_DATA(
-    "ひらがな",
-    gcut_list_string_new("コウセイド",
-                         "コウソク",
-                         NULL),
-    "こう",
-    0, -1);
-  ADD_DATA(
-    "カタカナ",
-    gcut_list_string_new("コウセイド",
-                         "コウソク",
-                         NULL),
-    "コウ",
-    0, -1);
-  ADD_DATA(
-    "ひらがな and カタカナ",
-    gcut_list_string_new("コウセイド",
-                         "コウソク",
-                         NULL),
-    "こウ",
-    0, -1);
-  ADD_DATA(
-    "roman - ッ - full",
-    gcut_list_string_new("インデックス",
-                         NULL),
-    "indekk",
-    0, -1);
-  ADD_DATA(
-    "roman - ッ - half",
-    gcut_list_string_new("インデックス",
-                         NULL),
-    "indek",
-    0, -1);
-  ADD_DATA(
-    "roman - ュ",
-    gcut_list_string_new("ヨウキュウ",
-                         NULL),
-    "youkyu",
-    0, -1);
+  ADD_DATA("roman - 1byte",
+           gcut_list_string_new("カネソナエタ",
+                                "カノウ",
+                                "キノウ",
+                                "キョウカ",
+                                "クミコミ",
+                                "クミコム",
+                                "ケンサク",
+                                "ケンサクヨウキュウ",
+                                "コウセイド",
+                                "コウソク",
+                                "コンパクト",
+                                NULL),
+           "k",
+           0, -1);
+  ADD_DATA("ひらがな",
+           gcut_list_string_new("コウセイド",
+                                "コウソク",
+                                NULL),
+           "こう",
+           0, -1);
+  ADD_DATA("カタカナ",
+           gcut_list_string_new("コウセイド",
+                                "コウソク",
+                                NULL),
+           "コウ",
+           0, -1);
+  ADD_DATA("ひらがな and カタカナ",
+           gcut_list_string_new("コウセイド",
+                                "コウソク",
+                                NULL),
+           "こウ",
+           0, -1);
+  ADD_DATA("roman - ッ - full",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "indekk",
+           0, -1);
+  ADD_DATA("roman - ッ - half",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "indek",
+           0, -1);
+  ADD_DATA("roman - ュ",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "youkyu",
+           0, -1);
 
 #undef ADD_DATA
 }
