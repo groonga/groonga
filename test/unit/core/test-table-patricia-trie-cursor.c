@@ -753,12 +753,46 @@ data_prefix_rk_xyu(void)
            0, -1);
 }
 
+static void
+data_prefix_rk_offset_and_limit(void)
+{
+  ADD_DATA("offset",
+           gcut_list_string_new("キノウ",
+                                "キョウカ",
+                                "クミコミ",
+                                "クミコム",
+                                "ケンサクヨウキュウ",
+                                "コウセイド",
+                                "コウソク",
+                                "コンパクト",
+                                NULL),
+           "k",
+           3, -1);
+  ADD_DATA("limit",
+           gcut_list_string_new("カネソナエタ",
+                                "カノウ",
+                                "ケンサク",
+                                NULL),
+           "k",
+           0, 3);
+  ADD_DATA("offset - limit",
+           gcut_list_string_new("キノウ",
+                                "キョウカ",
+                                "ケンサクヨウキュウ",
+                                "コウセイド",
+                                "コウソク",
+                                NULL),
+           "k",
+           3, 5);
+}
+
 void
 data_prefix_rk(void)
 {
   data_prefix_rk_basic();
   data_prefix_rk_xtsu();
   data_prefix_rk_xyu();
+  data_prefix_rk_offset_and_limit();
 }
 #undef ADD_DATA
 
