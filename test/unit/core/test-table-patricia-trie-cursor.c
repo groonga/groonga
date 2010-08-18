@@ -614,18 +614,17 @@ test_prefix_geo_point(gpointer data)
 void
 data_prefix_rk(void)
 {
-#define ADD_DATA(label, expected, min, offset, limit, flags)            \
+#define ADD_DATA(label, expected, min, offset, limit)                   \
   gcut_add_datum(label " - [" min "]",                                  \
                  "expected", G_TYPE_POINTER,                            \
                  expected, gcut_list_string_free,                       \
                  "min", G_TYPE_STRING, min,                             \
                  "offset", G_TYPE_INT, offset,                          \
                  "limit", G_TYPE_INT, limit,                            \
-                 "flags", G_TYPE_INT, flags,                            \
                  NULL)
 
   ADD_DATA(
-    "roman - 1byte - ascending",
+    "roman - 1byte",
     gcut_list_string_new("カネソナエタ",
                          "カノウ",
                          "キノウ",
@@ -639,53 +638,46 @@ data_prefix_rk(void)
                          "コンパクト",
                          NULL),
     "k",
-    0, -1,
-    GRN_CURSOR_ASCENDING);
+    0, -1);
   ADD_DATA(
-    "ひらがな - ascending",
+    "ひらがな",
     gcut_list_string_new("コウセイド",
                          "コウソク",
                          NULL),
     "こう",
-    0, -1,
-    GRN_CURSOR_ASCENDING);
+    0, -1);
   ADD_DATA(
-    "カタカナ - ascending",
+    "カタカナ",
     gcut_list_string_new("コウセイド",
                          "コウソク",
                          NULL),
     "コウ",
-    0, -1,
-    GRN_CURSOR_ASCENDING);
+    0, -1);
   ADD_DATA(
-    "ひらがな and カタカナ - ascending",
+    "ひらがな and カタカナ",
     gcut_list_string_new("コウセイド",
                          "コウソク",
                          NULL),
     "こウ",
-    0, -1,
-    GRN_CURSOR_ASCENDING);
+    0, -1);
   ADD_DATA(
-    "ッ - full - ascending",
+    "roman - ッ - full",
     gcut_list_string_new("インデックス",
                          NULL),
     "indekk",
-    0, -1,
-    GRN_CURSOR_ASCENDING);
+    0, -1);
   ADD_DATA(
-    "ッ - half - ascending",
+    "roman - ッ - half",
     gcut_list_string_new("インデックス",
                          NULL),
     "indek",
-    0, -1,
-    GRN_CURSOR_ASCENDING);
+    0, -1);
   ADD_DATA(
-    "ュ - ascending",
+    "roman - ュ",
     gcut_list_string_new("ヨウキュウ",
                          NULL),
     "youkyu",
-    0, -1,
-    GRN_CURSOR_ASCENDING);
+    0, -1);
 
 #undef ADD_DATA
 }
@@ -695,7 +687,7 @@ test_prefix_rk(gpointer data)
 {
   grn_id id;
   const gchar *min;
-  int offset, limit, flags;
+  int offset, limit;
   const GList *expected_keys;
   GList *actual_keys = NULL;
 
@@ -738,12 +730,11 @@ test_prefix_rk(gpointer data)
   min = gcut_data_get_string(data, "min");
   offset = gcut_data_get_int(data, "offset");
   limit = gcut_data_get_int(data, "limit");
-  flags = gcut_data_get_int(data, "flags");
   cursor = grn_table_cursor_open(context, table,
                                  min, strlen(min),
                                  NULL, 0,
                                  offset, limit,
-                                 flags | GRN_CURSOR_PREFIX | GRN_CURSOR_RK);
+                                 GRN_CURSOR_PREFIX | GRN_CURSOR_RK);
   grn_test_assert_context(context);
   while ((id = grn_table_cursor_next(context, cursor))) {
     gchar *key;
