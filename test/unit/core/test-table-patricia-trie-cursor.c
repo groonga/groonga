@@ -786,6 +786,27 @@ data_prefix_rk_offset_and_limit(void)
            3, 5);
 }
 
+static void
+data_prefix_rk_no_match(void)
+{
+  ADD_DATA("roman - no match",
+           NULL,
+           "kumikomuy",
+           0, -1);
+  ADD_DATA("roman - upcase - no match",
+           NULL,
+           "K",
+           0, -1);
+  ADD_DATA("ひらがな - no match",
+           NULL,
+           "くみこむよ",
+           0, -1);
+  ADD_DATA("カタカナ - no match",
+           NULL,
+           "クミコムヨ",
+           0, -1);
+}
+
 void
 data_prefix_rk(void)
 {
@@ -793,6 +814,7 @@ data_prefix_rk(void)
   data_prefix_rk_xtsu();
   data_prefix_rk_xyu();
   data_prefix_rk_offset_and_limit();
+  data_prefix_rk_no_match();
 }
 #undef ADD_DATA
 
