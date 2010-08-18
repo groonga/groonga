@@ -611,9 +611,6 @@ test_prefix_geo_point(gpointer data)
   gcut_assert_equal_list_string(expected_keys, actual_keys);
 }
 
-void
-data_prefix_rk(void)
-{
 #define ADD_DATA(label, expected, min, offset, limit)                   \
   gcut_add_datum(label " - [" min "]",                                  \
                  "expected", G_TYPE_POINTER,                            \
@@ -623,6 +620,9 @@ data_prefix_rk(void)
                  "limit", G_TYPE_INT, limit,                            \
                  NULL)
 
+static void
+data_prefix_rk_basic(void)
+{
   ADD_DATA("roman - 1byte",
            gcut_list_string_new("カネソナエタ",
                                 "カノウ",
@@ -656,6 +656,11 @@ data_prefix_rk(void)
                                 NULL),
            "こウ",
            0, -1);
+}
+
+static void
+data_prefix_rk_xtsu(void)
+{
   ADD_DATA("roman - ッ - full",
            gcut_list_string_new("インデックス",
                                 NULL),
@@ -666,14 +671,96 @@ data_prefix_rk(void)
                                 NULL),
            "indek",
            0, -1);
-  ADD_DATA("roman - ュ",
+  ADD_DATA("roman - ック - half",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "indekk",
+           0, -1);
+  ADD_DATA("roman - xtu - half",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "indextu",
+           0, -1);
+  ADD_DATA("roman - xtsu - half",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "indextsu",
+           0, -1);
+  ADD_DATA("roman - ltu - half",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "indeltu",
+           0, -1);
+  ADD_DATA("roman - ltsu - half",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "indeltsu",
+           0, -1);
+  ADD_DATA("ひらがな - ッ",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "いんでっ",
+           0, -1);
+  ADD_DATA("カタカナ - ッ",
+           gcut_list_string_new("インデックス",
+                                NULL),
+           "インデッ",
+           0, -1);
+}
+
+static void
+data_prefix_rk_xyu(void)
+{
+  ADD_DATA("roman - ュ - full",
            gcut_list_string_new("ヨウキュウ",
                                 NULL),
            "youkyu",
            0, -1);
-
-#undef ADD_DATA
+  ADD_DATA("roman - ュ - x",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "youkix",
+           0, -1);
+  ADD_DATA("roman - ュ - xy",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "youkixy",
+           0, -1);
+  ADD_DATA("roman - ュ - xyu",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "youkixyu",
+           0, -1);
+  ADD_DATA("roman - ュ - ly",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "youkily",
+           0, -1);
+  ADD_DATA("roman - ュ - lyu",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "youkilyu",
+           0, -1);
+  ADD_DATA("ひらがな - ュ",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "ようきゅ",
+           0, -1);
+  ADD_DATA("カタカナ - ュ",
+           gcut_list_string_new("ヨウキュウ",
+                                NULL),
+           "ヨウキュ",
+           0, -1);
 }
+
+void
+data_prefix_rk(void)
+{
+  data_prefix_rk_basic();
+  data_prefix_rk_xtsu();
+  data_prefix_rk_xyu();
+}
+#undef ADD_DATA
 
 void
 test_prefix_rk(gpointer data)
