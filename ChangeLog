@@ -1,4 +1,597 @@
+2010-08-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: build_index() supports index for _key.
+
+2010-08-18 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac: Added new taiyaki directory to confiure.ac.
+
+ * configure.ac: Removed taiyaki directory from configure.ac.
+
+2010-08-13 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c: support 'null' literal in grn-expression.
+
+2010-08-16 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/Makefile.am, test/unit/core/test-command-dump.c,
+ test/unit/core/test-command-select.c: support integer key table vector load.
+
+2010-08-18 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add tests for no match
+ case.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add tests for
+ GRN_CURSOR_RK with offset and limit.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add more tests for xtsu
+ and lyu.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: remove needless indent.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: don't use
+ GRN_CURSOR_ASCENDING.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: don't care GRN_CURSOR_RK
+ order.
+
+2010-08-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Fixed missing static.
+
+ * groonga.h: Added comment about GRN_CURSOR_RK.
+
+2010-08-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: support "ltu", "ltsu" in set_cursor_rk().
+
+2010-08-17 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: cosmetic.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: show input in label.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: fix wrong expected
+ values.
+
+2010-08-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Fixed a bug in sub_search() cause wrong result when
+ GRN_CURSOR_RK assigned.
+
+2010-08-17 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add more tests for
+ GRN_CURSOR_RK.
+
+ * lib/pat.c: cosmetic.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: remove a needless
+ function.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: remove a needless
+ function.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add a test for prefix rk.
+
+2010-08-17 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Added search_push() to pat.c
+
+2010-08-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/pat.c: Added sub_search() to pat.c
+
+2010-08-16 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-schema.rb: fix charcter case.
+
+ * test/unit/http/test-http-schema.rb: remove compress_none.
+
+ * lib/proc.c, test/unit/core/Makefile.am,
+ test/unit/core/test-command-define-selector.c: re-enable define_selector.
+
+ * test/unit/http/test-http-select-drilldown.rb: remove [..] from [true] to
+ follow groonga changes.
+
+ * test/unit/gqtp/test-restore.rb: use name such as TABLE_HASH_KEY instead of
+ number such as 0.
+
+2010-08-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Added rk_conv() to pat.c
+
+2010-08-16 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/run-test.rb: update test-unit version and use test-unit-notify.
+
+2010-08-13 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: fix parameter and
+ expected data.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: fix expected data.
+
+ * groonga.h, lib/db.c, test/unit/core/test-table-patricia-trie-cursor.c:
+ don't accept negative offset and limit with GRN_CURSOR_PREFIX. #377
+
+ * test/unit/core/test-command-select-prefix-search.c: fix syntax in --filter.
+
+ * test/unit/core/test-command-select.c: add a test boolean literal in filter.
+ #402
+
+ * test/unit/core/test-accessor.c: add tests for grn_column_name() with
+ accessor.
+
+ * lib/db.c, test/unit/core/Makefile.am: grn_column_name() supports accessor.
+
+2010-08-12 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/searchindex.js, doc/ja/source/developer/query.txt: Fixed a too short
+ underline on documents.
+
+ * doc/ja/commands/define_selector.html, doc/ja/commands/load.html,
+ doc/ja/commands/log_level.html, doc/ja/commands/select.html,
+ doc/ja/http.html, doc/ja/searchindex.js,
+ doc/ja/source/commands/define_selector.txt, doc/ja/source/commands/load.txt,
+ doc/ja/source/commands/log_level.txt, doc/ja/source/commands/select.txt,
+ doc/ja/source/commands_not_implemented/add.txt,
+ doc/ja/source/commands_not_implemented/get.txt,
+ doc/ja/source/commands_not_implemented/set.txt, doc/ja/source/http.txt: Added
+ output_type description on documents.
+
+2010-08-12 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/geo.c, test/unit/story/test-taiyaki.c: work for long latitude
+ rectangle.
+
+ * lib/expr.c, lib/geo.c, lib/geo.h, test/unit/story/test-taiyaki.c: support
+ geo_in_rectangle() with index.
+
+ * lib/proc.c: remove a garbage.
+
+ * configure.ac, test/unit/story/Makefile.am,
+ test/unit/story/taiyaki/Makefile.am, test/unit/story/taiyaki/test-geo.c,
+ test/unit/story/test-taiyaki.c: test/unit/story/taiyaki/test-geo.c ->
+ test/unit/story/test-taiyaki.c.
+
+ * lib/proc.c, test/unit/story/taiyaki/test-geo.c: use grn_geo_in_rectangle().
+
+2010-08-11 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c, lib/geo.c, lib/geo.h: grn_geo_search() ->
+ grn_geo_search_in_circle().
+
+ * lib/geo.c: remove needless parentheses.
+
+ * lib/geo.c: remove duplicated codes.
+
+ * lib/geo.c, lib/geo.h: fix typos.
+
+ * lib/geo.c, lib/geo.h: fix geo search with index drops needed points.
+
+2010-08-10 Yutaro Shimamura <yu@irx.jp>
+
+ * lib/db.c: Exist datas load to index.
+
+2010-08-10 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/geo.c: split mesh detection logic.
+
+ * lib/geo.c: geo_in_rectangle() follows document behavior. #414
+
+2010-08-09 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/groonga_in.h: _XOPEN_SOURCE 500 -> 520 for EAI_* on NetBSD.  Suggested
+ by OBATA Akio. Thanks!!!
+
+ * lib/geo.c: grn_table_sort_geo_ -> grn_geo_table_sort_.
+
+ * lib/geo.c: remove needless macros.
+
+ * lib/db.c, lib/geo.c, lib/geo.h: move grn_table_sort_geo() to geo.c.
+
+ * test/unit/core/test-command-column-list.c, test/unit/core/test-dump.c:
+ follow COMPRESS_NONE remove change.
+
+ * configure.ac, src/groonga.c: use sysctl() for getting N CPU cores as
+ fallback.
+
+ * configure.ac: remove a needless '='.  Patch by OBATA Akio. Thanks!!!
+
+2010-08-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Stopped printing COMPRESS_NONE in proc_dump().
+
+2010-08-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/developer/query.html, doc/ja/searchindex.js,
+ doc/ja/source/developer/query.txt: Renamed match() to contain()
+
+ * doc/ja/developer/query.html: Added query.html
+
+ * doc/ja/genindex.html, doc/ja/searchindex.js,
+ doc/ja/source/developer/query.txt: update html
+
+2010-08-05 Kouhei Sutou <kou@clear-code.com>
+
+ * Makefile.am: use @am__include@ instead of $(am__include). #418
+
+ * lib/util.c, test/unit/core/test-inspect.c: inspect supports proc.
+
+ * lib/expr.c, lib/geo.c, lib/geo.h, lib/proc.c: move grn_geo_search() to
+ geo.c from proc.c.
+
+ * lib/proc.c: use grn_geo_distance2() and grn_geo_distance3().
+
+ * test/unit/core/Makefile.am,
+ test/unit/core/test-table-patricia-trie-cursor.c,
+ test/unit/core/test-table-patricia-trie-sort.c,
+ test/unit/core/test-table-sort-geo.c: rename to correct name.
+
+2010-08-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/commands/define_selector.html, doc/ja/commands/delete.html,
+ doc/ja/commands/load.html, doc/ja/commands/select.html,
+ doc/ja/developer.html, doc/ja/developer/document.html,
+ doc/ja/developer/test.html, doc/ja/expr.html, doc/ja/functions.html,
+ doc/ja/functions/geo_distance.html, doc/ja/functions/geo_in_circle.html,
+ doc/ja/functions/geo_in_rectangle.html, doc/ja/functions/now.html,
+ doc/ja/functions/rand.html, doc/ja/genindex.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/pseudo_column.html, doc/ja/reference.html,
+ doc/ja/searchindex.js: Updated html documents.
+
+2010-08-05 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/fixtures/story/taiyaki/ddl.grn,
+ test/unit/story/taiyaki/test-geo.c: add a test for sorting with index.
+
+ * lib/db.c: don't pass needless variables.
+
+ * lib/db.c: use grn_geo_distance_raw() for computing distance.
+
+ * lib/geo.c, lib/geo.h: add low level API for geo.
+
+ * lib/geo.h: add missing parentheses.
+
+2010-08-04 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: fix sub mesh selection on border case.
+
+2010-08-03 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: work geo search with index again.
+
+2010-07-28 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: search also missing small meshes.
+
+ * lib/db.c: improve sort accuracy with geo index.  This change complements
+ sort target points detected by near cursor with prefix cursors for arround
+ mesh.
+
+2010-08-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/developer/query.txt: Added more example.
+
+ * doc/ja/source/developer/query.txt: Added explanation of each function in
+ query.txt.
+
+2010-08-05 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/story/taiyaki/test-geo.c: use also geo_distance2() and
+ geo_distance3().
+
+ * lib/proc.c: use grn_geo_distance().
+
+ * lib/proc.c: use grn_geo_in_circle().
+
+ * lib/geo.c: revert grn_geo_in_rectangle() implementation change.  See #414.
+ After reverting this, the behavior isn't different from document.
+
+2010-08-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/expr.txt: Touched in some detail in expr.txt.
+
+2010-08-05 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/geo.c: remove a needless space.
+
+ * lib/geo.c, lib/geo.h: add GRN_GEO_POINT_VALUE_RADIUS() and use it.
+
+2010-08-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/commands/delete.txt, doc/ja/source/commands/load.txt,
+ doc/ja/source/commands/select.txt,
+ doc/ja/source/commands_not_implemented/add.txt,
+ doc/ja/source/commands_not_implemented/get.txt,
+ doc/ja/source/commands_not_implemented/set.txt,
+ doc/ja/source/developer/query.txt, doc/ja/source/expr.txt,
+ doc/ja/source/functions/geo_distance.txt,
+ doc/ja/source/functions/geo_in_circle.txt,
+ doc/ja/source/functions/geo_in_rectangle.txt,
+ doc/ja/source/functions/now.txt, doc/ja/source/functions/rand.txt,
+ doc/ja/source/http.txt: Updated documents.
+
+2010-08-05 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/geo.c, lib/geo.h: add GRN_ prefix to macros.
+
+ * test/unit/core/test-geo.c: add missing test file.
+
+2010-08-04 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/developer/query.txt: Added examples to query.txt.
+
+ * doc/ja/source/developer/query.txt: Added query.txt.
+
+2010-08-04 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/commands/defrag.html: Added html document for command defrag.
+
+2010-08-04 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/Makefile.am, lib/geo.c, lib/geo.h, test/unit/core/Makefile.am,
+ test/unit/core/test-table-patricia-trie-cursor.c,
+ test/unit/lib/grn-test-utils.h: split geo related functions to geo.[ch].
+
+ * lib/util.c, lib/util.h: add grn_p_geo_point().
+
+ * src/groonga.c, test/unit/http/test-http-select-basic.rb: support empty
+ vector transformation on XML output.
+
+2010-08-03 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * groonga.h: Changed API document for GRN_CURSOR_PREFIX flag.
+
+2010-08-03 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c, test/unit/http/test-http-select-basic.rb,
+ test/unit/http/test-http-select-drilldown.rb: support vector in XML output.
+
+2010-08-03 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/core/test-command-select.c: Added tests for --filter
+ true/false/null.
+
+2010-08-03 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/groonga_in.h, lib/pat.c, lib/util.c, test/unit/core/test-inspect.c,
+ test/unit/core/test-table-patricia-trie-cursor.c: show geo point encoded byte
+ string in inspection.
+
+2010-08-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add a test for patricia
+ trie prefix cursor with border different bit.
+
+2010-08-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/expr.c: support boolean value!
+
+ * lib/expr.c: Fixed wrong length count get_identifier().
+
+ * lib/pat.c: grn_pat_cursor_open() ignores GRN_CURSOR_PREFIX flag value when
+ both min_size and max_size are 0.
+
+ * lib/pat.c: Fixed a bug cause grn_pat_cursor_open() returns wrong result.
+
+2010-08-02 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/issues/html/blue-check.png, doc/issues/html/green-bar.png,
+ doc/issues/html/green-check.png,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.html,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.html,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.html,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.html,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.html,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.html,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.html,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.html,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.html,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.html,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.html,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.html,
+ ...e-41c02e541788d975e77e717e111db5305a8c3dd1.html,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.html,
+ ...e-44a8e2ec39e44e46fbb0be2e73b1250f7b21cc77.html,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.html,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.html,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.html,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.html,
+ ...e-5bbdf2428fdeeaaec9229211204ea89775eef83b.html,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.html,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.html,
+ ...e-690c05001ca0607d16d910a9be30aeb3799a402b.html,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.html,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.html,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.html,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.html,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.html,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.html,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.html,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.html,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.html,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.html,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.html,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.html,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.html,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.html,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.html,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.html,
+ ...e-a4d0fff53122fd0a48c91db4379a50b29ad6a55f.html,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.html,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.html,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.html,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.html,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.html,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.html,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.html,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.html,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.html,
+ ...e-c804446bb766b21c53313bc888a2bc93ddaec0aa.html,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.html,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.html,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.html,
+ ...e-df04c90c558d74906fd043ff0a58bd2d5fcda92c.html,
+ ...e-e01d14efd2ec42ee347c9e3544c043b2a7603849.html,
+ ...e-e778c364b737119a27abe17ea144ebb1f38d8033.html,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.html,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.html,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.html,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.html,
+ doc/issues/html/red-check.png, doc/issues/html/release-1.0.0.html,
+ doc/issues/html/release-1.1.0.html, doc/issues/html/style.css,
+ doc/issues/html/yellow-bar.png,
+ ...e-072a87e92a531f903d1c8c750ae487e857229311.yaml,
+ ...e-0813445b4e7e031705443c65de4e56490cfb5f68.yaml,
+ ...e-0a2d1af6cb802368d00cf11bdbb32d48088236d5.yaml,
+ ...e-0f43b98394b1b842bd693d4bb780d7ea840dc937.yaml,
+ ...e-12743ec6cb50faa98ba506825875a65cd4a5114b.yaml,
+ ...e-1cf831130aed9217f3dfdcab46991f86b0ec7dd0.yaml,
+ ...e-20d25689c0002e77f1882de7292bce7f3eb3f6a6.yaml,
+ ...e-2df85342183b3ce6cb20f1d819e4bfb42d3dae01.yaml,
+ ...e-35fb457d0882c0fa9c435907ee61db198ceef775.yaml,
+ ...e-3b21e4f8cd86799c1414bab1f1e6ef74c010a724.yaml,
+ ...e-3b74839bacab741757a7b1ab86c0bc91b69b8da2.yaml,
+ ...e-40ba77e1ab1d76f669ec8e158e04e97d6184d8e9.yaml,
+ ...e-41c02e541788d975e77e717e111db5305a8c3dd1.yaml,
+ ...e-434086e6e9e2d2a1f13020ebfbb8fd52e8d4238f.yaml,
+ ...e-44a8e2ec39e44e46fbb0be2e73b1250f7b21cc77.yaml,
+ ...e-46d1cf02cf0906b13fb978ae4782525b286c1786.yaml,
+ ...e-49ac44028aa53a91f58fd32ceba4250f770a137a.yaml,
+ ...e-573fb49da556afd28ef0488c08e63d47a810b8df.yaml,
+ ...e-5b85a190c07b49dc41d6f89b6ea74c5fe337747c.yaml,
+ ...e-5bbdf2428fdeeaaec9229211204ea89775eef83b.yaml,
+ ...e-66f39e8d340b7eebeac21833091c11f2fda90e37.yaml,
+ ...e-674b1e80bd19e722e2ad0043a92604578c03d4f1.yaml,
+ ...e-690c05001ca0607d16d910a9be30aeb3799a402b.yaml,
+ ...e-6aadc729f0e5ae5bd8605c0fb2895530e6d29ef7.yaml,
+ ...e-6be248a7a70304b17da9bbcd5a9dc164c5bb03df.yaml,
+ ...e-77ceadc4728c4172a84c260a338bd69cd9023fce.yaml,
+ ...e-78e6001e7b439198e24824fc162457b4d16cc78e.yaml,
+ ...e-7c318d952c773d59dd94ab050011b73ba5ff4976.yaml,
+ ...e-812e55ebc7b56fff62b27251840b235407e33a00.yaml,
+ ...e-838fcc87fc531198e38d15ffa19e4e129f974501.yaml,
+ ...e-8c369d9d08c51b104415897fe699aae5e84e88db.yaml,
+ ...e-90c72b2ccac2d1554ef2f193a543df5faa802e98.yaml,
+ ...e-917cb191e0a5a43718496e25d80708cb1b47b9ba.yaml,
+ ...e-95c0d618d8525e5754c053cbf7ff87246a6eb61d.yaml,
+ ...e-9821dba0218d9bf587eda9d38cbceb94130e3fb1.yaml,
+ ...e-984c333ac497a39f79ef9349ba086c9a4ac88f24.yaml,
+ ...e-99853725c11f5af0855fe4738b87ead3bcacacef.yaml,
+ ...e-9ed7ab3fc422ef7222cc69e34faa409e7e74c6b9.yaml,
+ ...e-a0c6017a26ab4aec78c9125591fc32637eb85065.yaml,
+ ...e-a4d0fff53122fd0a48c91db4379a50b29ad6a55f.yaml,
+ ...e-b2914a898cfdc757ae1445ed204c2afc2b05fcd4.yaml,
+ ...e-b2ddf2c9ace0d4f8abf36d2753362d7928649cd6.yaml,
+ ...e-b2e674f6417cb770870ca4b19357b26ab1ceab43.yaml,
+ ...e-b31861682a73fdcb023e9af6b43bd11b3129e36e.yaml,
+ ...e-b48d13598e802cc9db66a0137ba962893b3e54e4.yaml,
+ ...e-b57b6cddf696177f69335c07ad3f74dacbd86691.yaml,
+ ...e-b7cd4582011849edbfd75498a89c2b7d29cc8bca.yaml,
+ ...e-bccd6f0d7dca854657e5d40de27dea9a506bcd1b.yaml,
+ ...e-c74f3ebb757dc30c74d1813570beb6c1b253b961.yaml,
+ ...e-c804446bb766b21c53313bc888a2bc93ddaec0aa.yaml,
+ ...e-d13379ad94118460d57a7f4a9f799de3853642de.yaml,
+ ...e-d7619ec3de57c5878c7a447ace8b72c5814131d6.yaml,
+ ...e-db264aa4065cf1b83d5f6a5ba0c235b731263440.yaml,
+ ...e-df04c90c558d74906fd043ff0a58bd2d5fcda92c.yaml,
+ ...e-e01d14efd2ec42ee347c9e3544c043b2a7603849.yaml,
+ ...e-e778c364b737119a27abe17ea144ebb1f38d8033.yaml,
+ ...e-e8783b135ab85b44129399956560925bbeece2a8.yaml,
+ ...e-eb8f4de047412db96e3f2ce4a302e63c8e513a28.yaml,
+ ...e-edf53ced18e61dd42e7f73929325866ce6178f3e.yaml,
+ ...e-f072263568ed53f06ca9b6174b0bf80fbf656d7c.yaml, doc/issues/project.yaml,
+ doc/ja/_static/searchtools.js, doc/ja/characteristic.html,
+ doc/ja/commands.html, doc/ja/commands/cache_limit.html,
+ doc/ja/commands/clearlock.html, doc/ja/commands/column_create.html,
+ doc/ja/commands/column_list.html, doc/ja/commands/column_remove.html,
+ doc/ja/commands/define_selector.html, doc/ja/commands/delete.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/table_remove.html, doc/ja/commands/view_add.html,
+ doc/ja/developer.html, doc/ja/developer/com.html,
+ doc/ja/developer/document.html, doc/ja/developer/test.html,
+ doc/ja/execfile.html, doc/ja/expr.html, doc/ja/functions.html,
+ doc/ja/functions/geo_distance.html, doc/ja/functions/geo_in_circle.html,
+ doc/ja/functions/geo_in_rectangle.html, doc/ja/functions/now.html,
+ doc/ja/functions/rand.html, doc/ja/genindex.html, doc/ja/grnslap.html,
+ doc/ja/grntest.html, doc/ja/http.html, doc/ja/index.html,
+ doc/ja/process.html, doc/ja/pseudo_column.html, doc/ja/reference.html,
+ doc/ja/search.html, doc/ja/searchindex.js, doc/ja/tutorial.html,
+ doc/ja/tutorial/tutorial01.html, doc/ja/tutorial/tutorial02.html,
+ doc/ja/tutorial/tutorial03.html, doc/ja/tutorial/tutorial04.html,
+ doc/ja/tutorial/tutorial05.html, doc/ja/tutorial/tutorial06.html,
+ doc/ja/tutorial/tutorial07.html, doc/ja/tutorial/tutorial08.html,
+ doc/ja/tutorial/tutorial09.html, doc/ja/tutorial/tutorial10.html,
+ doc/ja/type.html: Removed issues.
+
+2010-08-02 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add a test for patricia
+ trie prefix cursor with a different prefix entry.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add a test for patricia
+ trie cursor with GRN_CURSOR_SIZE_BY_BIT.
+
+2010-07-30 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/util.c, test/unit/core/test-inspect.c: improve geo point inspection
+ format.
+
+ * test/unit/lib/Makefile.am: use disabled Cutter features.
+
+ * .gitignore: ignore debian package repository related files.
+
+ * apt/ubuntu/generate-karmic.conf, apt/ubuntu/generate-lucid.conf,
+ apt/ubuntu/release-karmic.conf, apt/ubuntu/release-lucid.conf: karmic ->
+ lucid.
+
+ * .gitignore: ignore debian package related files.
+
+ * .gitignore: ignore an auto generated file.
+
+ * apt/Makefile.am: karmic -> lucid.
+
+ * debian/changelog: add 0.7.4 entry.
+
+ * debian/patches/fix-mkdir-p.diff, debian/patches/series: remove a needless
+ patch.
+
 2010-07-29 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/source/conf.py: Requires Sphinx 1.0.1 for document generation.
+
+ * ChangeLog, configure.ac, doc/ja/characteristic.html, doc/ja/commands.html,
+ doc/ja/commands/cache_limit.html, doc/ja/commands/clearlock.html,
+ doc/ja/commands/column_create.html, doc/ja/commands/column_list.html,
+ doc/ja/commands/column_remove.html, doc/ja/commands/define_selector.html,
+ doc/ja/commands/delete.html, doc/ja/commands/load.html,
+ doc/ja/commands/log_level.html, doc/ja/commands/log_put.html,
+ doc/ja/commands/log_reopen.html, doc/ja/commands/quit.html,
+ doc/ja/commands/select.html, doc/ja/commands/shutdown.html,
+ doc/ja/commands/status.html, doc/ja/commands/table_create.html,
+ doc/ja/commands/table_list.html, doc/ja/commands/table_remove.html,
+ doc/ja/commands/view_add.html, doc/ja/developer.html,
+ doc/ja/developer/com.html, doc/ja/developer/document.html,
+ doc/ja/developer/test.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/functions/geo_distance.html,
+ doc/ja/functions/geo_in_circle.html, doc/ja/functions/geo_in_rectangle.html,
+ doc/ja/functions/now.html, doc/ja/functions/rand.html, doc/ja/genindex.html,
+ doc/ja/grnslap.html, doc/ja/grntest.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/process.html, doc/ja/pseudo_column.html,
+ doc/ja/reference.html, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/tutorial.html, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial09.html,
+ doc/ja/tutorial/tutorial10.html, doc/ja/type.html: release 0.7.4
 
  * doc/ja/commands.html, doc/ja/commands/delete.html,
  doc/ja/commands/load.html, doc/ja/commands/log_level.html,
