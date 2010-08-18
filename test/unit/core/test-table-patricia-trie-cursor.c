@@ -752,6 +752,7 @@ test_prefix_rk(gpointer data)
     key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
     actual_keys = g_list_append(actual_keys, g_strndup(key, key_size));
   }
+  actual_keys = g_list_sort(actual_keys, (GCompareFunc)strcmp);
   gcut_take_list(actual_keys, g_free);
 
   expected_keys = gcut_data_get_pointer(data, "expected");
