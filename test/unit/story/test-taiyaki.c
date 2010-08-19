@@ -104,19 +104,20 @@ test_in_circle(void)
 
   cut_assert_equal_string(
     "[[[6],"
-    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
-    "[\"銀座 かずや\",795],"
-    "[\"たいやき神田達磨 八重洲店\",1079],"
-    "[\"たい焼き鉄次 大丸東京店\",1390],"
-    "[\"築地 さのきや\",1723],"
-    "[\"にしみや 甘味処\",2000],"
-    "[\"しげ田\",2272]"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
+    "[\"location\",\"WGS84GeoPoint\"]],"
+    "[\"銀座 かずや\",795,\"130055008x504968095\"],"
+    "[\"たいやき神田達磨 八重洲店\",1079,\"130094061x505025099\"],"
+    "[\"たい焼き鉄次 大丸東京店\",1390,\"130089012x505045070\"],"
+    "[\"築地 さのきや\",1723,\"130019020x505027021\"],"
+    "[\"にしみや 甘味処\",2000,\"130038025x505066028\"],"
+    "[\"しげ田\",2272,\"130046026x505082073\"]"
     "]]",
     send_command(
       cut_take_printf(
         "select Shops "
         "--sortby '+_score, +name' "
-        "--output_columns 'name, _score' "
+        "--output_columns 'name, _score, location' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer '_score=geo_distance(location, \"%s\")'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
