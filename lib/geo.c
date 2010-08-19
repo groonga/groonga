@@ -28,6 +28,12 @@ typedef struct {
   double d;
 } geo_entry;
 
+typedef struct
+{
+  grn_geo_point key;
+  int key_size;
+} mesh_entry;
+
 static int
 compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
 {
@@ -80,81 +86,6 @@ compute_min_and_max(grn_geo_point *base_point, int diff_bit,
   grn_ntog((uint8_t *)geo_max, geo_key_max, sizeof(grn_geo_point));
 }
 
-static int
-grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index,
-                                    grn_pat *pat, geo_entry *entries,
-                                    grn_pat_cursor *pc, int n, int accessorp,
-                                    grn_geo_point *base_point,
-                                    double *d_far, int *diff_bit)
-{
-  int i = 0, diff_bit_prev, diff_bit_current;
-  grn_id tid;
-  geo_entry *ep, *p;
-  double d;
-  uint8_t geo_key_prev[sizeof(grn_geo_point)];
-  uint8_t geo_key_curr[sizeof(grn_geo_point)];
-  grn_geo_point point;
-
-  *d_far = 0.0;
-  grn_gton(geo_key_curr, base_point, sizeof(grn_geo_point));
-  *diff_bit = sizeof(grn_geo_point) * 8;
-  diff_bit_current = sizeof(grn_geo_point) * 8;
-  memcpy(&point, base_point, sizeof(grn_geo_point));
-  ep = entries;
-  while ((tid = grn_pat_cursor_next(ctx, pc))) {
-    grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
-    if (ic) {
-      grn_ii_posting *posting;
-      grn_gton(geo_key_prev, &point, sizeof(grn_geo_point));
-      grn_pat_get_key(ctx, pat, tid, &point, sizeof(grn_geo_point));
-      grn_gton(geo_key_curr, &point, sizeof(grn_geo_point));
-      d = grn_geo_distance_raw(ctx, base_point, &point);
-
-      diff_bit_prev = diff_bit_current;
-      diff_bit_current = compute_diff_bit(geo_key_curr, geo_key_prev);
-      if ((diff_bit_current % 2) == 1) {
-        diff_bit_current--;
-      }
-      if (diff_bit_current < diff_bit_prev && *diff_bit > diff_bit_current) {
-        if (i == n) {
-          break;
-        }
-        *diff_bit = diff_bit_current;
-      }
-
-      if (d > *d_far) {
-        *d_far = d;
-      }
-      while ((posting = grn_ii_cursor_next(ctx, ic))) {
-        grn_id rid = accessorp
-          ? grn_table_get(ctx, table, &posting->rid, sizeof(grn_id))
-          : posting->rid;
-        if (rid) {
-          for (p = ep; entries < p && p[-1].d > d; p--) {
-            p->id = p[-1].id;
-            p->d = p[-1].d;
-          }
-          p->id = rid;
-          p->d = d;
-          if (i < n) {
-            ep++;
-            i++;
-          }
-        }
-      }
-      grn_ii_cursor_close(ctx, ic);
-    }
-  }
-
-  return i;
-}
-
-typedef struct
-{
-  grn_geo_point key;
-  int key_size;
-} mesh_entry;
-
 /* #define GEO_DEBUG */
 
 #ifdef GEO_DEBUG
@@ -198,6 +129,82 @@ inspect_tid(grn_ctx *ctx, grn_id tid, grn_geo_point *point, double d)
 #  define inspect_tid(...)
 #endif
 
+static int
+grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                                    grn_pat *pat, geo_entry *entries,
+                                    grn_pat_cursor *pc, int n, int accessorp,
+                                    grn_geo_point *base_point,
+                                    double *d_far, int *diff_bit)
+{
+  int i = 0, diff_bit_prev, diff_bit_current;
+  grn_id tid;
+  geo_entry *ep, *p;
+  double d;
+  uint8_t geo_key_prev[sizeof(grn_geo_point)];
+  uint8_t geo_key_curr[sizeof(grn_geo_point)];
+  grn_geo_point point;
+
+  *d_far = 0.0;
+  grn_gton(geo_key_curr, base_point, sizeof(grn_geo_point));
+  *diff_bit = sizeof(grn_geo_point) * 8;
+  diff_bit_current = sizeof(grn_geo_point) * 8;
+  memcpy(&point, base_point, sizeof(grn_geo_point));
+  ep = entries;
+  inspect_mesh(ctx, &point, *diff_bit, -1);
+  while ((tid = grn_pat_cursor_next(ctx, pc))) {
+    grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
+    if (ic) {
+      grn_ii_posting *posting;
+      grn_gton(geo_key_prev, &point, sizeof(grn_geo_point));
+      grn_pat_get_key(ctx, pat, tid, &point, sizeof(grn_geo_point));
+      grn_gton(geo_key_curr, &point, sizeof(grn_geo_point));
+      d = grn_geo_distance_raw(ctx, base_point, &point);
+      inspect_tid(ctx, tid, &point, d);
+
+      diff_bit_prev = diff_bit_current;
+      diff_bit_current = compute_diff_bit(geo_key_curr, geo_key_prev);
+#ifdef GEO_DEBUG
+      printf("diff: %d:%d:%d\n", *diff_bit, diff_bit_prev, diff_bit_current);
+#endif
+      if ((diff_bit_current % 2) == 1) {
+        diff_bit_current--;
+      } else {
+        diff_bit_current -= 2;
+      }
+      if (diff_bit_current < diff_bit_prev && *diff_bit > diff_bit_current) {
+        if (i == n) {
+          break;
+        }
+        *diff_bit = diff_bit_current;
+      }
+
+      if (d > *d_far) {
+        *d_far = d;
+      }
+      while ((posting = grn_ii_cursor_next(ctx, ic))) {
+        grn_id rid = accessorp
+          ? grn_table_get(ctx, table, &posting->rid, sizeof(grn_id))
+          : posting->rid;
+        if (rid) {
+          for (p = ep; entries < p && p[-1].d > d; p--) {
+            p->id = p[-1].id;
+            p->d = p[-1].d;
+          }
+          p->id = rid;
+          p->d = d;
+          if (i < n) {
+            ep++;
+            i++;
+          }
+        }
+      }
+      grn_ii_cursor_close(ctx, ic);
+    }
+  }
+
+  return i;
+}
+
 typedef enum {
   MESH_LEFT_TOP,
   MESH_RIGHT_TOP,
@@ -207,8 +214,8 @@ typedef enum {
 
 /*
   meshes should have
-    19 >= spaces when include_base_point_hash == GRN_FALSE,
-    20 >= spaces when include_base_point_hash == GRN_TRUE.
+    51 >= spaces when include_base_point_hash == GRN_FALSE,
+    52 >= spaces when include_base_point_hash == GRN_TRUE.
 */
 static int
 grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
@@ -222,27 +229,23 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
   mesh_position position;
   grn_geo_point geo_base, geo_min, geo_max;
 
-  compute_min_and_max(base_point, diff_bit, &geo_min, &geo_max);
+  compute_min_and_max(base_point, diff_bit - 2, &geo_min, &geo_max);
 
-  lat_diff = geo_max.latitude - geo_min.latitude + 1;
-  lng_diff = geo_max.longitude - geo_min.longitude + 1;
-  if (base_point->latitude >= geo_min.latitude + lat_diff / 2) {
-    geo_base.latitude = geo_max.latitude + 1;
-    if (base_point->longitude >= geo_min.longitude + lng_diff / 2) {
-      geo_base.longitude = geo_max.longitude + 1;
-      position = MESH_LEFT_BOTTOM;
+  lat_diff = (geo_max.latitude - geo_min.latitude + 1) / 2;
+  lng_diff = (geo_max.longitude - geo_min.longitude + 1) / 2;
+  geo_base.latitude = geo_min.latitude + lat_diff;
+  geo_base.longitude = geo_min.longitude + lng_diff;
+  if (base_point->latitude >= geo_base.latitude) {
+    if (base_point->longitude >= geo_base.longitude) {
+      position = MESH_RIGHT_TOP;
     } else {
-      geo_base.longitude = geo_min.longitude;
-      position = MESH_RIGHT_BOTTOM;
+      position = MESH_LEFT_TOP;
     }
   } else {
-    geo_base.latitude = geo_min.latitude;
-    if (base_point->longitude >= geo_min.longitude + lng_diff / 2) {
-      geo_base.longitude = geo_max.longitude + 1;
-      position = MESH_LEFT_TOP;
+    if (base_point->longitude >= geo_base.longitude) {
+      position = MESH_RIGHT_BOTTOM;
     } else {
-      geo_base.longitude = geo_min.longitude;
-      position = MESH_RIGHT_TOP;
+      position = MESH_LEFT_BOTTOM;
     }
   }
   /*
@@ -253,10 +256,10 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
 
     e.g.: base_point is at the left bottom mesh case:
               +------+------+
-              |      |      |
+              |      |     a|
               |      |x     |
              ^+------+------+
-             ||     a|      |
+             ||      |      |
     lng_diff || b    |      |
             \/i------+------+
               <------>
@@ -274,6 +277,20 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
   printf("max:  ");
   grn_p_geo_point(ctx, &geo_max);
   printf("diff: %d (%d, %d)\n", diff_bit, lat_diff, lng_diff);
+  switch (position) {
+  case MESH_LEFT_TOP :
+    printf("position: left-top\n");
+    break;
+  case MESH_RIGHT_TOP :
+    printf("position: right-top\n");
+    break;
+  case MESH_RIGHT_BOTTOM :
+    printf("position: right-bottom\n");
+    break;
+  case MESH_LEFT_BOTTOM :
+    printf("position: left-bottom\n");
+    break;
+  }
 #endif
 
   n_meshes = 0;
@@ -297,69 +314,71 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
     add_mesh(-lat_diff, -lng_diff, diff_bit);
   }
 
-#define add_sub_mesh(lat_diff_cmp,lng_diff_cmp,lat_diff_base,lng_diff_base)\
-  meshes[n_meshes].key.latitude = geo_base.latitude + (lat_diff_cmp);\
-  meshes[n_meshes].key.longitude = geo_base.longitude + (lng_diff_cmp);\
-  d = grn_geo_distance_raw(ctx, base_point, &(meshes[n_meshes].key));\
-  if (d < d_far) {\
-    add_mesh(lat_diff_base, lng_diff_base, diff_bit + 2);\
-  }
-
   /*
     b: base_point
-    1-16: sub meshes. 1-16 are added order.
+    x: geo_base
+    0-47: sub meshes. 0-47 are added order.
 
-        +---+---+---+---+
-        | 1 | 2 | 3 | 4 |
-    +---+---+---+---+---+---+
-    |16 |       |       | 5 |
-    +---+       |       +---+
-    |15 |       |b      | 6 |
-    +---+-------+-------+---+
-    |14 |       |       | 7 |
-    +---+  base meshes  +---+
-    |13 |       |       | 8 |
-    +---+---+---+---+---+---+
-        |12 |11 |10 | 9 |
-        +---+---+---+---+
+  j: -4  -3  -2  -1  0   1   2   3
+    +---+---+---+---+---+---+---+---+
+    |40 |41 |42 |43 |44 |45 |46 |47 | 3
+    +---+---+---+---+---+---+---+---+
+    |32 |33 |34 |35 |36 |37 |38 |39 | 2
+    +---+---+---+---+---+---+---+---+
+    |28 |29 |  b    |       |30 |31 | 1
+    +---+---+       |       +---+---+
+    |24 |25 |       |x      |26 |27 | 0
+    +---+---+-------+-------+---+---+
+    |20 |21 |       |       |22 |23 | -1
+    +---+---+  base meshes  +---+---+
+    |16 |17 |       |       |18 |19 | -2
+    +---+---+---+---+---+---+---+---+
+    | 8 | 9 |10 |11 |12 |13 |14 |15 | -3
+    +---+---+---+---+---+---+---+---+
+    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | -4
+    +---+---+---+---+---+---+---+---+
+                                       i
   */
-  add_sub_mesh(lat_diff, -(lng_diff + 1) / 2 - 1,
-               lat_diff, -lng_diff);
-  add_sub_mesh(lat_diff, -1,
-               lat_diff, -(lng_diff + 1) / 2);
-  add_sub_mesh(lat_diff, 0,
-               lat_diff, 0);
-  add_sub_mesh(lat_diff, (lng_diff + 1) / 2,
-               lat_diff, (lng_diff + 1) / 2);
+  {
+    int i, j, lat, lat_min, lat_max, lng, lng_min, lng_max;
+    for (i = -4; i < 4; i++) {
+      lat_min = ((lat_diff + 1) / 2) * i;
+      lat_max = ((lat_diff + 1) / 2) * (i + 1) - 1;
+      for (j = -4; j < 4; j++) {
+        if (-3 < i && i < 2 && -3 < j && j < 2) {
+          continue;
+        }
+        lng_min = ((lng_diff + 1) / 2) * j;
+        lng_max = ((lng_diff + 1) / 2) * (j + 1) - 1;
+        if (base_point->latitude <= geo_base.latitude + lat_min) {
+          lat = geo_base.latitude + lat_min;
+        } else if (geo_base.latitude + lat_max < base_point->latitude) {
+          lat = geo_base.latitude + lat_max;
+        } else {
+          lat = base_point->latitude;
+        }
+        if (base_point->longitude <= geo_base.longitude + lng_min) {
+          lng = geo_base.longitude + lng_min;
+        } else if (geo_base.longitude + lng_max < base_point->longitude) {
+          lng = geo_base.longitude + lng_max;
+        } else {
+          lng = base_point->longitude;
+        }
+        meshes[n_meshes].key.latitude = lat;
+        meshes[n_meshes].key.longitude = lng;
+        d = grn_geo_distance_raw(ctx, base_point, &(meshes[n_meshes].key));
+        if (d < d_far) {
+#ifdef GEO_DEBUG
+          printf("sub-mesh: %d: ", (i + 4) * 8 + (j + 4));
+          grn_p_geo_point(ctx, &(meshes[n_meshes].key));
+#endif
+          meshes[n_meshes].key_size = diff_bit + 2;
+          n_meshes++;
+        }
+      }
+    }
+  }
 
-  add_sub_mesh((lat_diff + 1) / 2, lng_diff,
-               (lat_diff + 1) / 2, lng_diff);
-  add_sub_mesh(0, lng_diff,
-               0, lng_diff);
-  add_sub_mesh(-1, lng_diff,
-               -(lat_diff + 1) / 2, lng_diff);
-  add_sub_mesh(-(lat_diff + 1) / 2 - 1, lng_diff,
-               -lat_diff, lng_diff);
-
-  add_sub_mesh(-lat_diff - 1, (lng_diff + 1) / 2,
-               -lat_diff * 2, (lng_diff + 1) / 2);
-  add_sub_mesh(-lat_diff - 1, 0,
-               -lat_diff * 2, 0);
-  add_sub_mesh(-lat_diff - 1, -1,
-               -lat_diff * 2, -(lng_diff + 1) / 2);
-  add_sub_mesh(-lat_diff - 1, -(lng_diff + 1) / 2 - 1,
-               -lat_diff * 2, -lng_diff);
-
-  add_sub_mesh(-(lat_diff + 1) / 2 - 1, -lng_diff - 1,
-               -lat_diff, -lng_diff * 2);
-  add_sub_mesh(-1, -lng_diff - 1,
-               -(lat_diff + 1) / 2, -lng_diff * 2);
-  add_sub_mesh(0, -lng_diff - 1,
-               0, -lng_diff * 2);
-  add_sub_mesh((lat_diff + 1) / 2, -lng_diff - 1,
-               (lat_diff + 1) / 2, -lng_diff * 2);
-
-#undef add_sub_mesh
 #undef add_mesh
 
   return n_meshes;
@@ -374,7 +393,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   double d_far, int diff_bit)
 {
   int n_meshes;
-  mesh_entry meshes[19];
+  mesh_entry meshes[51];
   geo_entry *ep, *p;
 
   n_meshes = grn_geo_get_meshes_for_circle(ctx, base_point, d_far, diff_bit,
@@ -568,7 +587,7 @@ grn_geo_search_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
   {
     int n_meshes, diff_bit;
     double d_far;
-    mesh_entry meshes[20];
+    mesh_entry meshes[52];
     uint8_t geo_key1[sizeof(grn_geo_point)];
     uint8_t geo_key2[sizeof(grn_geo_point)];
 
@@ -576,6 +595,13 @@ grn_geo_search_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
     grn_gton(geo_key1, geo_point1, sizeof(grn_geo_point));
     grn_gton(geo_key2, &geo_point2, sizeof(grn_geo_point));
     diff_bit = compute_diff_bit(geo_key1, geo_key2);
+#ifdef GEO_DEBUG
+    printf("point1: ");
+    grn_p_geo_point(ctx, geo_point1);
+    printf("point2: ");
+    grn_p_geo_point(ctx, &geo_point2);
+    printf("diff:   %d\n", diff_bit);
+#endif
     if ((diff_bit % 2) == 1) {
       diff_bit--;
     }
