@@ -79,6 +79,7 @@ func_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                       unsigned int key_len;
                       char key[GRN_TABLE_MAX_KEY_SIZE];
                       grn_table_get_key(ctx, sorted, sid, &stid, sizeof(grn_id));
+                      grn_table_get_key(ctx, res, stid, &stid, sizeof(grn_id));
                       key_len = grn_table_get_key(ctx, table, stid, key, GRN_TABLE_MAX_KEY_SIZE);
                       GRN_OUTPUT_STR(key, key_len);
                     }
