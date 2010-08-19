@@ -26,6 +26,7 @@ void test_in_rectangle_long_longitude(void);
 void test_in_rectangle_long_latitude(void);
 void test_sort(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
+void test_in_circle_and_tag(void);
 void test_but_white(void);
 void test_drilldown(void);
 void test_drilldown_with_broken_reference(void);
