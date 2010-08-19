@@ -163,7 +163,7 @@ inspect_point (gint latitude, gint longitude)
 }
 
 void
-data_near_geo(void)
+data_near_geo_point(void)
 {
 #define ADD_DATA(label, expected, base, offset, limit)                  \
   gcut_add_datum(label,                                                 \
@@ -238,7 +238,7 @@ data_near_geo(void)
 }
 
 void
-test_near_geo(gpointer data)
+test_near_geo_point(gpointer data)
 {
   grn_id id;
   int offset, limit;
