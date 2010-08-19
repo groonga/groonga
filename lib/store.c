@@ -672,6 +672,28 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
 }
 
+static grn_rc
+set_value(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
+          grn_ja_einfo *einfo)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_io_win iw;
+  if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+      value_len >= ja->header->max_element_size) {
+    if ((rc = grn_ja_alloc(ctx, ja, id, value_len + sizeof(uint32_t), einfo, &iw))) {
+      return rc;
+    }
+    memcpy(iw.addr, value, value_len);
+    memset((byte *)iw.addr + value_len, 0, sizeof(uint32_t));
+    grn_io_win_unmap2(&iw);
+  } else {
+    if ((rc = grn_ja_alloc(ctx, ja, id, value_len, einfo, &iw))) { return rc; }
+    memcpy(iw.addr, value, value_len);
+    grn_io_win_unmap2(&iw);
+  }
+  return rc;
+}
+
 grn_rc
 grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
                void *value, uint32_t value_len, int flags, uint64_t *cas)
@@ -687,15 +709,46 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
-        if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) { return rc; }
-        memcpy(iw.addr, oldvalue, old_len);
-        memcpy((byte *)iw.addr + old_len, value, value_len);
+        if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+            old_len + value_len >= ja->header->max_element_size) {
+          if (old_len >= ja->header->max_element_size) {
+            byte *b = oldvalue;
+            uint32_t el = old_len - sizeof(uint32_t);
+            uint32_t pos = *((uint32_t *)(b + el));
+            GRN_ASSERT(pos < el);
+            if (el <= pos + value_len) {
+              uint32_t rest = el - pos;
+              memcpy(b + pos, value, rest);
+              memcpy(b, (byte *)value + rest, value_len - rest);
+              *((uint32_t *)(b + el)) = value_len - rest;
+            } else {
+              memcpy(b + pos, value, value_len);
+              *((uint32_t *)(b + el)) = pos + value_len;
+            }
+          } else {
+            if ((rc = grn_ja_alloc(ctx, ja, id,
+                                   value_len + old_len + sizeof(uint32_t),
+                                   &einfo, &iw))) {
+              grn_ja_unref(ctx, &jw);
+              return rc;
+            }
+            memcpy(iw.addr, oldvalue, old_len);
+            memcpy((byte *)iw.addr + old_len, value, value_len);
+            memset((byte *)iw.addr + old_len + value_len, 0, sizeof(uint32_t));
+            grn_io_win_unmap2(&iw);
+          }
+        } else {
+          if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) {
+            grn_ja_unref(ctx, &jw);
+            return rc;
+          }
+          memcpy(iw.addr, oldvalue, old_len);
+          memcpy((byte *)iw.addr + old_len, value, value_len);
+          grn_io_win_unmap2(&iw);
+        }
         grn_ja_unref(ctx, &jw);
-        grn_io_win_unmap2(&iw);
       } else {
-        if ((rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw))) { return rc; }
-        memcpy(iw.addr, value, value_len);
-        grn_io_win_unmap2(&iw);
+        set_value(ctx, ja, id, value, value_len, &einfo);
       }
     }
     break;
@@ -705,15 +758,46 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
-        if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) { return rc; }
-        memcpy(iw.addr, value, value_len);
-        memcpy((byte *)iw.addr + value_len, oldvalue, old_len);
+        if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+            old_len + value_len >= ja->header->max_element_size) {
+          if (old_len >= ja->header->max_element_size) {
+            byte *b = oldvalue;
+            uint32_t el = old_len - sizeof(uint32_t);
+            uint32_t pos = *((uint32_t *)(b + el));
+            GRN_ASSERT(pos < el);
+            if (pos < value_len) {
+              uint32_t rest = value_len - pos;
+              memcpy(b, (byte *)value + rest, pos);
+              memcpy(b + el - rest, value, rest);
+              *((uint32_t *)(b + el)) = el - rest;
+            } else {
+              memcpy(b + pos - value_len, value, value_len);
+              *((uint32_t *)(b + el)) = pos - value_len;
+            }
+          } else {
+            if ((rc = grn_ja_alloc(ctx, ja, id,
+                                   value_len + old_len + sizeof(uint32_t),
+                                   &einfo, &iw))) {
+              grn_ja_unref(ctx, &jw);
+              return rc;
+            }
+            memcpy(iw.addr, value, value_len);
+            memcpy((byte *)iw.addr + value_len, oldvalue, old_len);
+            memset((byte *)iw.addr + value_len + old_len, 0, sizeof(uint32_t));
+            grn_io_win_unmap2(&iw);
+          }
+        } else {
+          if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) {
+            grn_ja_unref(ctx, &jw);
+            return rc;
+          }
+          memcpy(iw.addr, value, value_len);
+          memcpy((byte *)iw.addr + value_len, oldvalue, old_len);
+          grn_io_win_unmap2(&iw);
+        }
         grn_ja_unref(ctx, &jw);
-        grn_io_win_unmap2(&iw);
       } else {
-        if ((rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw))) { return rc; }
-        memcpy(iw.addr, value, value_len);
-        grn_io_win_unmap2(&iw);
+        set_value(ctx, ja, id, value, value_len, &einfo);
       }
     }
     break;
@@ -751,10 +835,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     /* fallthru */
   case GRN_OBJ_SET :
     if (value_len) {
-      if ((rc = grn_ja_alloc(ctx, ja, id, value_len, &einfo, &iw))) { return rc; }
-      // printf("put id=%d, value_len=%d value=%p ei=%p(%d:%d)\n", id, value_len, buf, &einfo, einfo.pos, einfo.tail[0]);
-      memcpy(iw.addr, value, value_len);
-      grn_io_win_unmap2(&iw);
+      set_value(ctx, ja, id, value, value_len, &einfo);
     } else {
       memset(&einfo, 0, sizeof(grn_ja_einfo));
     }
@@ -991,7 +1072,17 @@ grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
     }
   }
   if ((v = grn_ja_ref(ctx, ja, id, &iw, &len))) {
-    grn_bulk_write(ctx, value, v, len);
+    if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+        len > ja->header->max_element_size) {
+      byte *b = v;
+      uint32_t el = len - sizeof(uint32_t);
+      uint32_t pos = *((uint32_t *)(b + el));
+      GRN_ASSERT(pos < el);
+      grn_bulk_write(ctx, value, b + pos, el - pos);
+      grn_bulk_write(ctx, value, b, pos);
+    } else {
+      grn_bulk_write(ctx, value, v, len);
+    }
     grn_ja_unref(ctx, &iw);
   }
 exit :
