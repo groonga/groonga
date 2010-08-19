@@ -214,8 +214,8 @@ typedef enum {
 
 /*
   meshes should have
-    51 >= spaces when include_base_point_hash == GRN_FALSE,
-    52 >= spaces when include_base_point_hash == GRN_TRUE.
+    86 >= spaces when include_base_point_hash == GRN_FALSE,
+    87 >= spaces when include_base_point_hash == GRN_TRUE.
 */
 static int
 grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
@@ -317,34 +317,39 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
   /*
     b: base_point
     x: geo_base
-    0-47: sub meshes. 0-47 are added order.
+    0-83: sub meshes. 0-83 are added order.
 
-  j: -4  -3  -2  -1  0   1   2   3
-    +---+---+---+---+---+---+---+---+
-    |40 |41 |42 |43 |44 |45 |46 |47 | 3
-    +---+---+---+---+---+---+---+---+
-    |32 |33 |34 |35 |36 |37 |38 |39 | 2
-    +---+---+---+---+---+---+---+---+
-    |28 |29 |  b    |       |30 |31 | 1
-    +---+---+       |       +---+---+
-    |24 |25 |       |x      |26 |27 | 0
-    +---+---+-------+-------+---+---+
-    |20 |21 |       |       |22 |23 | -1
-    +---+---+  base meshes  +---+---+
-    |16 |17 |       |       |18 |19 | -2
-    +---+---+---+---+---+---+---+---+
-    | 8 | 9 |10 |11 |12 |13 |14 |15 | -3
-    +---+---+---+---+---+---+---+---+
-    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | -4
-    +---+---+---+---+---+---+---+---+
-                                       i
+  j: -5  -4  -3  -2  -1   0   1   2   3   4
+    +---+---+---+---+---+---+---+---+---+---+
+    |74 |75 |76 |77 |78 |79 |80 |81 |82 |83 | 4
+    +---+---+---+---+---+---+---+---+---+---+
+    |64 |65 |66 |67 |68 |69 |70 |71 |72 |73 | 3
+    +---+---+---+---+---+---+---+---+---+---+
+    |54 |55 |56 |57 |58 |59 |60 |61 |62 |63 | 2
+    +---+---+---+---+---+---+---+---+---+---+
+    |48 |49 |50 |  b    |       |51 |52 |53 | 1
+    +---+---+---+       |       +---+---+---+
+    |42 |43 |44 |       |x      |45 |46 |47 | 0
+    +---+---+---+-------+-------+---+---+---+
+    |36 |37 |38 |       |       |39 |40 |41 | -1
+    +---+---+---+  base meshes  +---+---+---+
+    |30 |31 |32 |       |       |33 |34 |35 | -2
+    +---+---+---+---+---+---+---+---+---+---+
+    |20 |21 |22 |23 |24 |25 |26 |27 |28 |29 | -3
+    +---+---+---+---+---+---+---+---+---+---+
+    |10 |11 |12 |13 |14 |15 |16 |17 |18 |19 | -4
+    +---+---+---+---+---+---+---+---+---+---+
+    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | -5
+    +---+---+---+---+---+---+---+---+---+---+
+                                              i
   */
   {
-    int i, j, lat, lat_min, lat_max, lng, lng_min, lng_max;
-    for (i = -4; i < 4; i++) {
+    int i, j, n_sub_meshes, lat, lat_min, lat_max, lng, lng_min, lng_max;
+    n_sub_meshes = 0;
+    for (i = -5; i < 5; i++) {
       lat_min = ((lat_diff + 1) / 2) * i;
       lat_max = ((lat_diff + 1) / 2) * (i + 1) - 1;
-      for (j = -4; j < 4; j++) {
+      for (j = -5; j < 5; j++) {
         if (-3 < i && i < 2 && -3 < j && j < 2) {
           continue;
         }
@@ -369,12 +374,18 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
         d = grn_geo_distance_raw(ctx, base_point, &(meshes[n_meshes].key));
         if (d < d_far) {
 #ifdef GEO_DEBUG
-          printf("sub-mesh: %d: ", (i + 4) * 8 + (j + 4));
+          printf("sub-mesh: %d: (%d,%d): (%d,%d;%d,%d)\n",
+                 n_sub_meshes, base_point->latitude, base_point->longitude,
+                 geo_base.latitude + lat_min,
+                 geo_base.latitude + lat_max,
+                 geo_base.longitude + lng_min,
+                 geo_base.longitude + lng_max);
           grn_p_geo_point(ctx, &(meshes[n_meshes].key));
 #endif
           meshes[n_meshes].key_size = diff_bit + 2;
           n_meshes++;
         }
+        n_sub_meshes++;
       }
     }
   }
@@ -393,7 +404,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   double d_far, int diff_bit)
 {
   int n_meshes;
-  mesh_entry meshes[51];
+  mesh_entry meshes[86];
   geo_entry *ep, *p;
 
   n_meshes = grn_geo_get_meshes_for_circle(ctx, base_point, d_far, diff_bit,
@@ -587,7 +598,7 @@ grn_geo_search_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
   {
     int n_meshes, diff_bit;
     double d_far;
-    mesh_entry meshes[52];
+    mesh_entry meshes[87];
     uint8_t geo_key1[sizeof(grn_geo_point)];
     uint8_t geo_key2[sizeof(grn_geo_point)];
 
