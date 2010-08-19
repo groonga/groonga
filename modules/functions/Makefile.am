@@ -11,6 +11,7 @@ AM_LDFLAGS =					\
 LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
 
-function_modules_LTLIBRARIES = cast.la
+function_modules_LTLIBRARIES = cast.la suggest.la
 
 cast_la_SOURCES = cast.c
+suggest_la_SOURCES = suggest.c
