@@ -2123,6 +2123,47 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   return obj;
 }
 
+#define DIST(ox,oy) (dists[((lx + 1) * (oy)) + (ox)])
+
+static grn_obj *
+func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  int d = 0;
+  grn_obj *obj;
+  if (nargs == 2) {
+    uint32_t cx, lx, cy, ly, *dists;
+    char *px, *sx = GRN_TEXT_VALUE(args[0]), *ex = GRN_BULK_CURR(args[0]);
+    char *py, *sy = GRN_TEXT_VALUE(args[1]), *ey = GRN_BULK_CURR(args[1]);
+    for (px = sx, lx = 0; px < ex && (cx = grn_charlen(ctx, px, ex)); px += cx, lx++);
+    for (py = sy, ly = 0; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, ly++);
+    if ((dists = GRN_MALLOC((lx + 1) * (ly + 1) * sizeof(uint32_t)))) {
+      uint32_t x, y;
+      for (x = 0; x <= lx; x++) { DIST(x, 0) = x; }
+      for (y = 0; y <= ly; y++) { DIST(0, y) = y; }
+      for (x = 1, px = sx; x <= lx; x++, px += cx) {
+        cx = grn_charlen(ctx, px, ex);
+        for (y = 1, py = sy; y <= ly; y++, py += cy) {
+          cy = grn_charlen(ctx, py, ey);
+          if (cx == cy && !memcmp(px, py, cx)) {
+            DIST(x, y) = DIST(x - 1, y - 1);
+          } else {
+            uint32_t a = DIST(x - 1, y) + 1;
+            uint32_t b = DIST(x, y - 1) + 1;
+            uint32_t c = DIST(x - 1, y - 1) + 1;
+            DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
+          }
+        }
+      }
+      d = DIST(lx, ly);
+      GRN_FREE(dists);
+    }
+  }
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
+    GRN_UINT32_SET(ctx, obj, d);
+  }
+  return obj;
+}
+
 #define DEF_VAR(v,name_str) {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -2270,4 +2311,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_create(ctx, "geo_distance3", 13, GRN_PROC_FUNCTION,
                   func_geo_distance3, NULL, NULL, 0, NULL);
 
+  grn_proc_create(ctx, "edit_distance", 13, GRN_PROC_FUNCTION,
+                  func_edit_distance, NULL, NULL, 0, NULL);
 }
