@@ -978,6 +978,26 @@ grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_
   return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
 }
 
+grn_obj *
+grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
+{
+  void *v;
+  uint32_t len;
+  grn_io_win iw;
+  if (!value) {
+    if (!(value = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
+      ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_value failed");
+      goto exit;
+    }
+  }
+  if ((v = grn_ja_ref(ctx, ja, id, &iw, &len))) {
+    grn_bulk_write(ctx, value, v, len);
+    grn_ja_unref(ctx, &iw);
+  }
+exit :
+  return value;
+}
+
 #ifndef NO_ZLIB
 inline static grn_rc
 grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,

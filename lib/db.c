@@ -4663,37 +4663,22 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       {
         grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
         if (GRN_OBJ_TABLEP(lexicon)) {
-          grn_io_win jw;
-          void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
-          if (v) {
-            // todo : reduce copy
-            // todo : grn_vector_add_element when vector assigned
-            grn_bulk_write(ctx, value, v, len);
-            grn_ja_unref(ctx, &jw);
-          }
+          grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
           value->header.type = GRN_UVECTOR;
         } else {
           switch (value->header.type) {
           case GRN_VECTOR :
             {
-              grn_io_win jw;
-              void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
-              if (v) {
-                grn_vector_decode(ctx, value, v, len);
-                grn_ja_unref(ctx, &jw);
-              }
+              grn_obj v_;
+              GRN_TEXT_INIT(&v_, 0);
+              grn_ja_get_value(ctx, (grn_ja *)obj, id, &v_);
+              grn_vector_decode(ctx, value, GRN_TEXT_VALUE(&v_), GRN_TEXT_LEN(&v_));
+              GRN_OBJ_FIN(ctx, &v_);
             }
             break;
           case GRN_UVECTOR :
           case GRN_BULK :
-            {
-              grn_io_win jw;
-              void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
-              if (v) {
-                grn_bulk_write(ctx, value, v, len);
-                grn_ja_unref(ctx, &jw);
-              }
-            }
+            grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
             break;
           default :
             ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");
@@ -4703,17 +4688,8 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       }
       break;
     case GRN_OBJ_COLUMN_SCALAR :
-      {
-        grn_io_win jw;
-        void *v = grn_ja_ref(ctx, (grn_ja *)obj, id, &jw, &len);
-        value->header.type = GRN_BULK;
-        if (v) {
-          // todo : reduce copy
-          // todo : grn_vector_add_element when vector assigned
-          grn_bulk_write(ctx, value, v, len);
-          grn_ja_unref(ctx, &jw);
-        }
-      }
+      grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
+      value->header.type = GRN_BULK;
       break;
     default :
       ERR(GRN_FILE_CORRUPT, "invalid GRN_OBJ_COLUMN_TYPE");
