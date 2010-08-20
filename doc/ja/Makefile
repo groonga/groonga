@@ -31,10 +31,15 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
-html:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) .
+man:
+	$(SPHINXBUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
 	@echo
-	@echo "Build finished. The HTML pages are in current."
+	@echo "Build finished. The man pages are in $(BUILDDIR)/man."
+
+html:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

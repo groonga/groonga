@@ -255,3 +255,11 @@ pdf_language = 'ja'
 pdf_fit_mode = "shrink"
 pdf_inline_footnotes = True
 pdf_break_level = 2
+
+# -- Options for manual page output --------------------------------------------
+# One entry per manual page. List of tuples
+# (source start file, name, description, authors, manual section).
+man_pages = [
+    ('index', 'groonga', u'groonga documentation',
+     [u'groonga project'], 1)
+]
