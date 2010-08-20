@@ -97,6 +97,9 @@ AC_CONFIG_FILES([Makefile
                  data/Makefile
                  data/munin/Makefile
                  resource/Makefile
+                 doc/Makefile
+                 doc/ja/Makefile
+                 doc/ja/build/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile

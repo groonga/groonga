@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = 1.9.7
-SUBDIRS = lib modules src examples test apt data resource
+SUBDIRS = lib modules src examples test apt data resource doc
 #dist_data_DATA =
-EXTRA_DIST = bindings doc/ja version-gen.sh
+EXTRA_DIST = bindings version-gen.sh
 pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -15,14 +15,6 @@ version.sh: FORCE
 @am__include@ version.sh
 
 dist-hook:
-	rm -rf `find $(distdir) -name '*.loT'`
-	rm -rf `find $(distdir) -name '*.cache'`
-	rm -rf `find $(distdir) -name '*.bak'`
-	rm -rf `find $(distdir) -name '*.orig'`
-	find $(distdir)/doc/ja -type f | grep -Ev "/(README|.+\.(rd|js|html|css|png))$$" | xargs rm -f
-	rm -rf $(distdir)/doc/ja/_sources
-	rm -rf $(distdir)/doc/ja/build
-	rm -rf $(distdir)/doc/ja/source
 	echo "$(GROONGA_VERSION)" > $(distdir)/version
 
 benchmark:

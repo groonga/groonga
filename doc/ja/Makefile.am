@@ -1,0 +1,233 @@
+SUBDIRS = $(BUILDDIR)
+
+docdir = $(pkgdatadir)/doc
+doc_jadir = $(docdir)/ja
+
+# Makefile for Sphinx documentation
+#
+
+# You can set these variables from the command line.
+SPHINXOPTS    =
+SPHINXBUILD   = sphinx-build
+PAPER         =
+BUILDDIR      = build
+
+# Internal variables.
+PAPEROPT_a4     = -D latex_paper_size=a4
+PAPEROPT_letter = -D latex_paper_size=letter
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+
+.PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
+
+help:
+	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "  man       to make man files"
+	@echo "  html      to make standalone HTML files"
+	@echo "  dirhtml   to make HTML files named index.html in directories"
+	@echo "  pickle    to make pickle files"
+	@echo "  json      to make JSON files"
+	@echo "  htmlhelp  to make HTML files and a HTML help project"
+	@echo "  qthelp    to make HTML files and a qthelp project"
+	@echo "  latex     to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
+	@echo "  rdoc      to make RDoc files"
+	@echo "  changes   to make an overview of all changed/added/deprecated items"
+	@echo "  linkcheck to check all external links for integrity"
+	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
+
+clean:
+	-rm -rf $(BUILDDIR)/*
+
+man:
+	$(SPHINXBUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
+	@echo
+	@echo "Build finished. The man pages are in $(BUILDDIR)/man."
+
+html:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+dirhtml:
+	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
+
+pickle:
+	$(SPHINXBUILD) -b pickle $(ALLSPHINXOPTS) $(BUILDDIR)/pickle
+	@echo
+	@echo "Build finished; now you can process the pickle files."
+
+json:
+	$(SPHINXBUILD) -b json $(ALLSPHINXOPTS) $(BUILDDIR)/json
+	@echo
+	@echo "Build finished; now you can process the JSON files."
+
+htmlhelp:
+	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) $(BUILDDIR)/htmlhelp
+	@echo
+	@echo "Build finished; now you can run HTML Help Workshop with the" \
+	      ".hhp project file in $(BUILDDIR)/htmlhelp."
+
+qthelp:
+	$(SPHINXBUILD) -b qthelp $(ALLSPHINXOPTS) $(BUILDDIR)/qthelp
+	@echo
+	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
+	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/groonga.qhcp"
+	@echo "To view the help file:"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/groonga.qhc"
+
+latex:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	@echo
+	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
+	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
+	      "run these through (pdf)latex."
+
+rdoc:
+	$(SPHINXBUILD) -b rdoc $(ALLSPHINXOPTS) $(BUILDDIR)/rdoc
+	@echo
+	@echo "Build finished; the RDoc files are in $(BUILDDIR)/rdoc."
+
+changes:
+	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
+	@echo
+	@echo "The overview file is in $(BUILDDIR)/changes."
+
+linkcheck:
+	$(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
+	@echo
+	@echo "Link check complete; look for any errors in the above output " \
+	      "or in $(BUILDDIR)/linkcheck/output.txt."
+
+doctest:
+	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
+	@echo "Testing of doctests in the sources finished, look at the " \
+	      "results in $(BUILDDIR)/doctest/output.txt."
+
+pdf:
+	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) $(BUILDDIR)/pdf
+	@echo
+	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
+
+# find source -type f -not -name '*.pyc' | sort | sed -e 's,^,\t,g'
+nobase_dist_doc_ja_DATA =			\
+	source/__init__.py			\
+	source/characteristic.txt		\
+	source/commands.txt			\
+	source/commands/cache_limit.txt		\
+	source/commands/check.txt		\
+	source/commands/clearlock.txt		\
+	source/commands/column_create.txt	\
+	source/commands/column_list.txt		\
+	source/commands/column_remove.txt	\
+	source/commands/define_selector.txt	\
+	source/commands/defrag.txt		\
+	source/commands/delete.txt		\
+	source/commands/dump.txt		\
+	source/commands/load.txt		\
+	source/commands/log_level.txt		\
+	source/commands/log_put.txt		\
+	source/commands/log_reopen.txt		\
+	source/commands/quit.txt		\
+	source/commands/select.txt		\
+	source/commands/shutdown.txt		\
+	source/commands/status.txt		\
+	source/commands/table_create.txt	\
+	source/commands/table_list.txt		\
+	source/commands/table_remove.txt	\
+	source/commands/view_add.txt		\
+	source/commands_not_implemented/add.txt	\
+	source/commands_not_implemented/get.txt	\
+	source/commands_not_implemented/set.txt	\
+	source/conf.py				\
+	source/developer.txt			\
+	source/developer/com.txt		\
+	source/developer/document.txt		\
+	source/developer/query.txt		\
+	source/developer/test.txt		\
+	source/example/tutorial01-1.log		\
+	source/example/tutorial01-10.log	\
+	source/example/tutorial01-11.log	\
+	source/example/tutorial01-12.log	\
+	source/example/tutorial01-13.log	\
+	source/example/tutorial01-14.log	\
+	source/example/tutorial01-15.log	\
+	source/example/tutorial01-16.log	\
+	source/example/tutorial01-17.log	\
+	source/example/tutorial01-2.log		\
+	source/example/tutorial01-3.log		\
+	source/example/tutorial01-4.log		\
+	source/example/tutorial01-5.log		\
+	source/example/tutorial01-6.log		\
+	source/example/tutorial01-7.log		\
+	source/example/tutorial01-8.log		\
+	source/example/tutorial01-9.log		\
+	source/example/tutorial02-1.log		\
+	source/example/tutorial02-2.log		\
+	source/example/tutorial02-3.log		\
+	source/example/tutorial03-1.log		\
+	source/example/tutorial03-2.log		\
+	source/example/tutorial03-3.log		\
+	source/example/tutorial04-1.log		\
+	source/example/tutorial04-2.log		\
+	source/example/tutorial04-3.log		\
+	source/example/tutorial04-4.log		\
+	source/example/tutorial04-5.log		\
+	source/example/tutorial04-6.log		\
+	source/example/tutorial04-7.log		\
+	source/example/tutorial05-1.log		\
+	source/example/tutorial05-2.log		\
+	source/example/tutorial05-3.log		\
+	source/example/tutorial05-4.log		\
+	source/example/tutorial05-5.log		\
+	source/example/tutorial05-6.log		\
+	source/example/tutorial06-1.log		\
+	source/example/tutorial06-2.log		\
+	source/example/tutorial06-3.log		\
+	source/example/tutorial06-4.log		\
+	source/example/tutorial06-5.log		\
+	source/example/tutorial07-1.log		\
+	source/example/tutorial07-2.log		\
+	source/example/tutorial07-3.log		\
+	source/example/tutorial07-4.log		\
+	source/example/tutorial08-1.log		\
+	source/example/tutorial10-1.log		\
+	source/example/tutorial10-10.log	\
+	source/example/tutorial10-2.log		\
+	source/example/tutorial10-3.log		\
+	source/example/tutorial10-4.log		\
+	source/example/tutorial10-5.log		\
+	source/example/tutorial10-6.log		\
+	source/example/tutorial10-7.log		\
+	source/example/tutorial10-8.log		\
+	source/example/tutorial10-9.log		\
+	source/execfile.txt			\
+	source/expr.txt				\
+	source/functions.txt			\
+	source/functions/geo_distance.txt	\
+	source/functions/geo_in_circle.txt	\
+	source/functions/geo_in_rectangle.txt	\
+	source/functions/now.txt		\
+	source/functions/rand.txt		\
+	source/grnslap.txt			\
+	source/grntest.txt			\
+	source/http.txt				\
+	source/index.txt			\
+	source/process.txt			\
+	source/pseudo_column.txt		\
+	source/rdoc.py				\
+	source/reference.txt			\
+	source/tutorial.txt			\
+	source/tutorial/tutorial01.txt		\
+	source/tutorial/tutorial02.txt		\
+	source/tutorial/tutorial03.txt		\
+	source/tutorial/tutorial04.txt		\
+	source/tutorial/tutorial05.txt		\
+	source/tutorial/tutorial06.txt		\
+	source/tutorial/tutorial07.txt		\
+	source/tutorial/tutorial08.txt		\
+	source/tutorial/tutorial09.txt		\
+	source/tutorial/tutorial10.txt		\
+	source/type.txt				\
+	source/update_execution_example.py

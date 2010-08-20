@@ -37,10 +37,9 @@ Makefile.in
 version.sh
 /examples/kv
 /examples/index
-/doc/ja/.buildinfo
-/doc/ja/_sources/
-/doc/ja/_static/
-/doc/ja/build/
+/doc/ja/build/doctrees/
+/doc/ja/build/html/
+/doc/ja/build/rdoc/
 /doc/ja/modindex.html
 /doc/ja/objects.inv
 /lib/icudump
