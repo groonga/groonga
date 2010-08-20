@@ -214,6 +214,7 @@ nobase_dist_doc_ja_DATA =			\
 	source/grntest.txt			\
 	source/http.txt				\
 	source/index.txt			\
+	source/news.txt				\
 	source/process.txt			\
 	source/pseudo_column.txt		\
 	source/rdoc.py				\
