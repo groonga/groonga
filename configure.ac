@@ -96,6 +96,7 @@ AC_CONFIG_FILES([Makefile
                  apt/Makefile
                  data/Makefile
                  data/munin/Makefile
+                 resource/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
