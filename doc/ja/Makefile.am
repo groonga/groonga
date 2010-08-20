@@ -121,8 +121,17 @@ pdf:
 	@echo
 	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
 
-# find source -type f -not -name '*.pyc' | sort | sed -e 's,^,\t,g'
+dist_man1_MANS =				\
+	man/groonga.1
+
+$(dist_man1_MANS): man
+
 nobase_dist_doc_ja_DATA =			\
+	$(source_files)				\
+	$(html_files)
+
+# find source -type f -not -name '*.pyc' | sort | sed -e 's,^,\t,g'
+source_files =					\
 	source/__init__.py			\
 	source/characteristic.txt		\
 	source/commands.txt			\
@@ -244,13 +253,8 @@ nobase_dist_doc_ja_DATA =			\
 	source/type.txt				\
 	source/update_execution_example.py
 
-dist_man1_MANS =				\
-	man/groonga.1
-
-$(dist_man1_MANS): man
-
 # find html -type f | sort | sed -e 's,^,\t,g'
-nobase_dist_doc_ja_DATA =				\
+html_files =						\
 	html/.buildinfo					\
 	html/_sources/characteristic.txt		\
 	html/_sources/commands.txt			\
@@ -388,4 +392,4 @@ nobase_dist_doc_ja_DATA =				\
 	html/tutorial/tutorial10.html			\
 	html/type.html
 
-$(nobase_dist_doc_ja_DATA): html
+$(html_files): html
