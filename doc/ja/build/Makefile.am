@@ -1,11 +1,14 @@
 docdir = $(pkgdatadir)/doc
 doc_jadir = $(docdir)/ja
 
-html/.buildinfo:
-	$(MAKE) -C .. html
-
 man/groonga.1:
 	$(MAKE) -C .. man
+
+dist_man1_MANS =				\
+	man/groonga.1
+
+html/.buildinfo:
+	$(MAKE) -C .. html
 
 # find html -type f | sort | sed -e 's,^,\t,g'
 nobase_dist_doc_ja_DATA =				\
@@ -54,6 +57,7 @@ nobase_dist_doc_ja_DATA =				\
 	html/_sources/grntest.txt			\
 	html/_sources/http.txt				\
 	html/_sources/index.txt				\
+	html/_sources/news.txt				\
 	html/_sources/process.txt			\
 	html/_sources/pseudo_column.txt			\
 	html/_sources/reference.txt			\
@@ -125,6 +129,7 @@ nobase_dist_doc_ja_DATA =				\
 	html/grntest.html				\
 	html/http.html					\
 	html/index.html					\
+	html/news.html					\
 	html/objects.inv				\
 	html/process.html				\
 	html/pseudo_column.html				\
@@ -143,6 +148,3 @@ nobase_dist_doc_ja_DATA =				\
 	html/tutorial/tutorial09.html			\
 	html/tutorial/tutorial10.html			\
 	html/type.html
-
-dist_man1_MANS =				\
-	man/groonga.1
