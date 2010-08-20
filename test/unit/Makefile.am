@@ -8,7 +8,9 @@ SUBDIRS =		\
 	gqtp		\
 	story
 
+if WITH_UNIT_TEST
 TESTS = run-test.sh
+endif
 TESTS_ENVIRONMENT =				\
 	NO_MAKE=yes				\
 	BUILD_DIR="$(builddir)"			\

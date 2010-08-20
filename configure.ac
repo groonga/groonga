@@ -378,8 +378,8 @@ AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)
 ],
 [ac_cv_use_cutter="no"])
 
-AM_CONDITIONAL([WITH_CUTTER], [test "$ac_cv_use_cutter" != "no"])
-if test "$ac_cv_use_cutter" != "no"; then
+AM_CONDITIONAL([WITH_CUTTER], [test "$ac_cv_use_cutter" = "yes"])
+if test "$ac_cv_use_cutter" = "yes"; then
   AC_DEFINE(WITH_CUTTER, 1, [Define to 1 if you use Cutter])
 
   ac_cv_have_libmemcached=no
@@ -387,7 +387,7 @@ if test "$ac_cv_use_cutter" != "no"; then
                   [AC_CHECK_LIB(memcached, memcached_increment_with_initial,
                                 [ac_cv_have_libmemcached=yes])])
   AM_CONDITIONAL([WITH_LIBMEMCACHED],
-                 [test "$ac_cv_have_libmemcached" != "no"])
+                 [test "$ac_cv_have_libmemcached" = "yes"])
   if test "$ac_cv_have_libmemcached" = "yes"; then
     AC_DEFINE(WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
   fi
@@ -452,6 +452,10 @@ else
 fi
 AC_SUBST(RUBY)
 AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
+
+AM_CONDITIONAL([WITH_UNIT_TEST],
+               [test "$ac_cv_use_cutter" = "yes" -o \
+                     "$ac_cv_ruby_available" = "yes"])
 
 # libedit
 AC_ARG_WITH(libedit,
