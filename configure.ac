@@ -91,7 +91,7 @@ AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  modules/Makefile
                  modules/tokenizers/Makefile
-                 modules/functions/Makefile
+                 modules/suggest/Makefile
                  examples/Makefile
                  apt/Makefile
                  data/Makefile
@@ -575,8 +575,8 @@ AC_SUBST(modulesdir)
 tokenizer_modulesdir="\${modulesdir}/tokenizers"
 AC_SUBST(tokenizer_modulesdir)
 
-function_modulesdir="\${modulesdir}/functions"
-AC_SUBST(function_modulesdir)
+suggest_modulesdir="\${modulesdir}/suggest"
+AC_SUBST(suggest_modulesdir)
 
 AC_MSG_CHECKING(for the suffix of module shared libraries)
 shrext_cmds=$(./libtool --config | grep '^shrext_cmds=')

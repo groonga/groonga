@@ -1,3 +1,3 @@
 SUBDIRS =		\
 	tokenizers	\
-	functions
+	suggest
