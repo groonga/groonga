@@ -31,20 +31,20 @@ func_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_obj *col;
     if ((col = grn_obj_column(ctx, table, GRN_TEXT_VALUE(VAR(1)),
                               GRN_TEXT_LEN(VAR(1))))) {
-      grn_obj *index;
-      /* FIXME: support index selection */
-      if (grn_column_index(ctx, col, GRN_OP_PREFIX,
-                           &index, 1, NULL)) {
-        grn_table_cursor *cur;
-        if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
-                                         GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
-                                         NULL, 0,
-                                         0, -1,
-                                         GRN_CURSOR_PREFIX | GRN_CURSOR_RK))) {
-          grn_obj *res;
-          if ((res = grn_table_create(ctx, NULL, 0, NULL,
-                                       GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-            /* RK search */
+      grn_obj *res;
+      if ((res = grn_table_create(ctx, NULL, 0, NULL,
+                                   GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
+        /* RK search */
+        grn_obj *index;
+        /* FIXME: support index selection */
+        if (grn_column_index(ctx, col, GRN_OP_PREFIX,
+                             &index, 1, NULL)) {
+          grn_table_cursor *cur;
+          if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
+                                           GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
+                                           NULL, 0,
+                                           0, -1,
+                                           GRN_CURSOR_PREFIX | GRN_CURSOR_RK))) {
             grn_id id;
             while ((id = grn_table_cursor_next(ctx, cur))) {
               grn_ii_cursor *icur;
@@ -97,16 +97,16 @@ func_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                 ERR(GRN_UNKNOWN_ERROR, "cannot create temporary sort table.");
               }
             }
-            grn_obj_close(ctx, res);
+            grn_table_cursor_close(ctx, cur);
           } else {
-            ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
+            ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for pk.");
           }
-          grn_table_cursor_close(ctx, cur);
         } else {
-          ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for pk.");
+          ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix search.");
         }
+        grn_obj_close(ctx, res);
       } else {
-        ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix search.");
+        ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid column.");
