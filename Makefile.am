@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = 1.9.7
-SUBDIRS = lib modules src examples test apt data
+SUBDIRS = lib modules src examples test apt data resource
 #dist_data_DATA =
-EXTRA_DIST = bindings resource doc/ja version-gen.sh
+EXTRA_DIST = bindings doc/ja version-gen.sh
 pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -24,15 +24,6 @@ dist-hook:
 	rm -rf $(distdir)/doc/ja/build
 	rm -rf $(distdir)/doc/ja/source
 	echo "$(GROONGA_VERSION)" > $(distdir)/version
-
-install-data-local:
-	@$(NORMAL_INSTALL)
-	test -z "$(DESTDIR)$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	cp -R "$(srcdir)"/resource/* $(DESTDIR)$(pkgdatadir)
-
-uninstall-local:
-	@$(NORMAL_UNINSTALL)
-	rm -rf $(DESTDIR)$(pkgdatadir)
 
 benchmark:
 	cd test/benchmark && $(MAKE) $(AM_MAKEFLAGS) benchmark
