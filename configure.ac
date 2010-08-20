@@ -99,7 +99,6 @@ AC_CONFIG_FILES([Makefile
                  resource/Makefile
                  doc/Makefile
                  doc/ja/Makefile
-                 doc/ja/build/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile

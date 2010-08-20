@@ -37,10 +37,10 @@ Makefile.in
 version.sh
 /examples/kv
 /examples/index
-/doc/ja/build/doctrees/
-/doc/ja/build/html/
-/doc/ja/build/rdoc/
-/doc/ja/build/man/
+/doc/ja/doctrees/
+/doc/ja/html/
+/doc/ja/rdoc/
+/doc/ja/man/
 /lib/icudump
 /coverage
 /coverage.info
