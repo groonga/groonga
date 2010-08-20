@@ -15,7 +15,7 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
+.PHONY: help clean man html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -121,10 +121,16 @@ pdf:
 	@echo
 	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
 
+dist-hook:
+	@touch $(distdir)/man-build-stamp
+	@touch $(distdir)/html-build-stamp
+
 dist_man1_MANS =				\
 	man/groonga.1
 
-$(dist_man1_MANS): man
+$(dist_man1_MANS): man-build-stamp
+man-build-stamp:
+	$(MAKE) man
 
 nobase_dist_doc_ja_DATA =			\
 	$(source_files)				\
@@ -392,4 +398,6 @@ html_files =						\
 	html/tutorial/tutorial10.html			\
 	html/type.html
 
-$(html_files): html
+$(html_files): html-build-stamp
+html-build-stamp:
+	$(MAKE) html
