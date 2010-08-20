@@ -2,11 +2,13 @@ docdir = $(pkgdatadir)/doc
 doc_jadir = $(docdir)/ja
 
 html/_static/basic.css:
-	$(MAKE) -C $(srcdir)/.. html
+	$(MAKE) -C .. html
+
+man/groonga.1:
+	$(MAKE) -C .. man
 
 # find html -name '_sources' -prune -type f -o -type f -a -not -name '.buildinfo' | sort | sed -e 's,^,\t,g'
 nobase_dist_doc_ja_DATA =			\
-	html/_static/basic.css			\
 	html/_static/default.css		\
 	html/_static/doctools.js		\
 	html/_static/file.png			\
@@ -80,3 +82,6 @@ nobase_dist_doc_ja_DATA =			\
 	html/tutorial/tutorial09.html		\
 	html/tutorial/tutorial10.html		\
 	html/type.html
+
+dist_man1_MANS =				\
+	man/groonga.1
