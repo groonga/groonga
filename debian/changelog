@@ -1,3 +1,9 @@
+groonga (0.7.6) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Kouhei Sutou <kou@clear-code.com>  Thu, 19 Aug 2010 22:11:14 +0900
+
 groonga (0.7.4) unstable; urgency=low
 
   * New upstream release.

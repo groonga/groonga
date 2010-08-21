@@ -33,3 +33,13 @@ Description: An open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides 'groonga' command.
+
+Package: groonga-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}
+Description: Documentation of groonga.
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides documentation of groonga.

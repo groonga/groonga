@@ -6,7 +6,12 @@ include /usr/share/cdbs/1/class/autotools.mk
 
 DEB_INSTALL_DIRS_groonga =			\
 	/usr/bin				\
-	/usr/share/groonga
+	/usr/share/groonga			\
+	/usr/share/man/man1
+
+DEB_INSTALL_DOCS_groonga-doc =			\
+	doc/ja/html				\
+	doc/ja/source
 
 DEB_INSTALL_DIRS_libgroonga =			\
 	/usr/lib
@@ -19,6 +24,8 @@ install/groonga::
 	cp -ar debian/tmp/usr/bin/* debian/groonga/usr/bin/
 	cp -ar debian/tmp/usr/share/groonga/* \
 	  debian/groonga/usr/share/groonga/
+	cp -ar debian/tmp/usr/share/man/man1/* \
+	  debian/groonga/usr/share/man/man1/
 
 install/libgroonga::
 	cp -ar debian/tmp/usr/lib/libgroonga* debian/libgroonga/usr/lib/
