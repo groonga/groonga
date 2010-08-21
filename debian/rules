@@ -28,7 +28,7 @@ install/groonga::
 	  debian/groonga/usr/share/man/man1/
 
 install/libgroonga::
-	cp -ar debian/tmp/usr/lib/libgroonga* debian/libgroonga/usr/lib/
+	cp -ar debian/tmp/usr/lib/*groonga* debian/libgroonga/usr/lib/
 
 install/libgroonga-dev::
 	cp -ar debian/tmp/usr/include/groonga/* \
