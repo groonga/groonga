@@ -6,7 +6,6 @@ doc_jadir = $(docdir)/ja
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = .
 
@@ -121,6 +120,7 @@ pdf:
 	@echo
 	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
 
+if WITH_SPHINX
 dist-hook:
 	@touch $(distdir)/man-build-stamp
 	@touch $(distdir)/html-build-stamp
@@ -401,3 +401,4 @@ html_files =						\
 $(html_files): html-build-stamp
 html-build-stamp:
 	$(MAKE) html
+endif
