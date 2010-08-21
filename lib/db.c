@@ -2608,16 +2608,18 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_
   int n = 0;
   GRN_API_ENTER;
   if (GRN_OBJ_TABLEP(table) && !(DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT)) {
-    grn_obj bulk;
     grn_db *s = (grn_db *)DB_OBJ(table)->db;
-    GRN_TEXT_INIT(&bulk, 0);
-    grn_pat_get_key2(ctx, s->keys, DB_OBJ(table)->id, &bulk);
-    GRN_TEXT_PUTC(ctx, &bulk, GRN_DB_DELIMITER);
-    grn_bulk_write(ctx, &bulk, name, name_size);
-    grn_pat_prefix_search(ctx, s->keys, GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk),
-                          (grn_hash *)res);
-    grn_obj_close(ctx, &bulk);
-    n = grn_table_size(ctx, res);
+    if (s->keys) {
+      grn_obj bulk;
+      GRN_TEXT_INIT(&bulk, 0);
+      grn_pat_get_key2(ctx, s->keys, DB_OBJ(table)->id, &bulk);
+      GRN_TEXT_PUTC(ctx, &bulk, GRN_DB_DELIMITER);
+      grn_bulk_write(ctx, &bulk, name, name_size);
+      grn_pat_prefix_search(ctx, s->keys, GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk),
+                            (grn_hash *)res);
+      grn_obj_close(ctx, &bulk);
+      n = grn_table_size(ctx, res);
+    }
   }
   GRN_API_RETURN(n);
 }
