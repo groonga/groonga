@@ -61,3 +61,4 @@ version.sh
 /apt/ubuntu/pool/*/*/*/*/*.dsc
 /apt/ubuntu/dists/
 /apt/ubuntu/*.db
+/configure.lineno
