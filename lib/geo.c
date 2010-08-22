@@ -708,12 +708,12 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
                         &geo_point_min, &geo_point_max);
     if (direction == MESH_LATITUDE) {
       distance = geo_point_max.latitude - geo_point_min.latitude + 1;
-      start = geo_point2->latitude;
-      end = geo_point_max.latitude + distance;
+      start = geo_point_min.latitude;
+      end = geo_point1->latitude;
     } else {
       distance = geo_point_max.longitude - geo_point_min.longitude + 1;
       start = geo_point_min.longitude;
-      end = geo_point2->longitude + distance;
+      end = geo_point2->longitude;
     }
 #ifdef GEO_DEBUG
     printf("direction: %s\n",
