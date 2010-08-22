@@ -37,13 +37,13 @@ typedef struct
 static int
 compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
 {
-  int i, j, diff_bit = 0;
+  int i, j, diff_bit = 8;
 
   for (i = 0; i < sizeof(grn_geo_point); i++) {
     if (geo_key1[i] != geo_key2[i]) {
       for (j = 0; j < 8; j++) {
         if ((geo_key1[i] & (1 << (7 - j))) != (geo_key2[i] & (1 << (7 - j)))) {
-          diff_bit = j + 1;
+          diff_bit = j;
           break;
         }
       }
@@ -168,8 +168,6 @@ grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
 #endif
       if ((diff_bit_current % 2) == 1) {
         diff_bit_current--;
-      } else {
-        diff_bit_current -= 2;
       }
       if (diff_bit_current < diff_bit_prev && *diff_bit > diff_bit_current) {
         if (i == n) {
@@ -700,37 +698,46 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
     } else {
       direction = MESH_LONGITUDE;
       geo_point_input = geo_point1;
-      geo_point_base.latitude = geo_point1->latitude + latitude_distance;
+      geo_point_base.latitude = geo_point1->latitude - latitude_distance;
       geo_point_base.longitude = geo_point1->longitude;
     }
     grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
     grn_gton(geo_key_base, &geo_point_base, sizeof(grn_geo_point));
     diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
-    compute_min_and_max(geo_point_input, diff_bit,
+    compute_min_and_max(&geo_point_base, diff_bit,
                         &geo_point_min, &geo_point_max);
     if (direction == MESH_LATITUDE) {
-      start = geo_point2->latitude;
-      end = geo_point_max.latitude;
       distance = geo_point_max.latitude - geo_point_min.latitude + 1;
+      start = geo_point2->latitude;
+      end = geo_point_max.latitude + distance;
     } else {
-      start = geo_point_min.longitude;
-      end = geo_point2->longitude;
       distance = geo_point_max.longitude - geo_point_min.longitude + 1;
+      start = geo_point_min.longitude;
+      end = geo_point2->longitude + distance;
     }
-    memcpy(&geo_point_base, &geo_point_min, sizeof(grn_geo_point));
 #ifdef GEO_DEBUG
     printf("direction: %s\n",
            direction == MESH_LATITUDE ? "latitude" : "longitude");
     printf("base:         ");
     grn_p_geo_point(ctx, &geo_point_base);
+    printf("input:        ");
+    grn_p_geo_point(ctx, geo_point_input);
+    printf("min:          ");
+    grn_p_geo_point(ctx, &geo_point_min);
+    printf("max:          ");
+    grn_p_geo_point(ctx, &geo_point_max);
     printf("top-left:     ");
     grn_p_geo_point(ctx, geo_point1);
     printf("bottom-right: ");
     grn_p_geo_point(ctx, geo_point2);
-    printf("start:    %10d\n", start);
-    printf("end:      %10d\n", end);
-    printf("distance: %10d\n", distance);
+    printf("diff-bit:            %10d\n", diff_bit);
+    printf("start:               %10d\n", start);
+    printf("end:                 %10d\n", end);
+    printf("distance:            %10d\n", distance);
+    printf("distance(latitude):  %10d\n", latitude_distance);
+    printf("distance(longitude): %10d\n", longitude_distance);
 #endif
+    memcpy(&geo_point_base, &geo_point_min, sizeof(grn_geo_point));
 
     for (i = start; i < end + distance; i += distance) {
       grn_table_cursor *tc;
