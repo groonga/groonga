@@ -25,6 +25,7 @@
 
 void test_by_id(void);
 void test_by_key(void);
+void test_referenced_record(void);
 
 static gchar *tmp_directory;
 
@@ -55,10 +56,19 @@ static void
 setup_data(void)
 {
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("table_create Bookmarks TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Bookmarks user COLUMN_SCALAR Users");
+  assert_send_command("column_create Users bookmarks COLUMN_INDEX "
+                      "Bookmarks user");
   assert_send_command("load --table Users --columns '_key'\n"
                       "[\n"
                       "  [\"mori\"],\n"
                       "  [\"tapo\"]\n"
+                      "]");
+  assert_send_command("load --table Bookmarks --columns '_key, user'\n"
+                      "[\n"
+                      "  [\"http://groonga.org/\", \"yu\"],\n"
+                      "  [\"http://cutter.sourceforge.net/\", \"tasukuchan\"]\n"
                       "]");
 }
 
@@ -94,9 +104,11 @@ void
 test_by_id(void)
 {
   assert_send_command("delete Users --id 1");
-  cut_assert_equal_string("[[[1],"
+  cut_assert_equal_string("[[[3],"
                             "[[\"_key\",\"ShortText\"]],"
-                            "[\"tapo\"]]]",
+                            "[\"tapo\"],"
+                            "[\"yu\"],"
+                            "[\"tasukuchan\"]]]",
                           send_command("select Users "
                                        "--output_columns _key"));
 }
@@ -105,9 +117,28 @@ void
 test_by_delete(void)
 {
   assert_send_command("delete Users tapo");
-  cut_assert_equal_string("[[[1],"
+  cut_assert_equal_string("[[[3],"
                             "[[\"_key\",\"ShortText\"]],"
-                            "[\"mori\"]]]",
+                            "[\"mori\"],"
+                            "[\"yu\"],"
+                            "[\"tasukuchan\"]]]",
+                          send_command("select Users "
+                                       "--output_columns _key"));
+}
+
+void
+test_referenced_record(void)
+{
+  assert_send_command_error(GRN_OPERATION_NOT_PERMITTED,
+                            "undeletable record (Users:3) "
+                            "has value (bookmarks:1)",
+                            "delete Users yu");
+  cut_assert_equal_string("[[[4],"
+                            "[[\"_key\",\"ShortText\"]],"
+                            "[\"mori\"],"
+                            "[\"tapo\"],"
+                            "[\"yu\"],"
+                            "[\"tasukuchan\"]]]",
                           send_command("select Users "
                                        "--output_columns _key"));
 }

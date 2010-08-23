@@ -1207,9 +1207,20 @@ is_deletable(grn_ctx *ctx, grn_obj *table, grn_id id)
           grn_obj *col = grn_ctx_at(ctx, *key);
           if (col && col->header.type == GRN_COLUMN_INDEX &&
               (esize = grn_ii_estimate_size(ctx, (grn_ii *)col, id))) {
-            GRN_LOG(ctx, GRN_WARN, "undeletable record(%d:%d) has value (%d:%d)",
-                    DB_OBJ(table)->id, id, *key, esize);
+            int len;
+            char table_name[GRN_PAT_MAX_KEY_SIZE];
+            char column_name[GRN_PAT_MAX_KEY_SIZE];
+            len = grn_obj_name(ctx, table, table_name, GRN_PAT_MAX_KEY_SIZE);
+            table_name[len] = '\0';
+            len = grn_column_name(ctx, col, column_name, GRN_PAT_MAX_KEY_SIZE);
+            column_name[len] = '\0';
+            GRN_LOG(ctx, GRN_WARN,
+                    "undeletable record (%s:%d) has value (%s:%d)",
+                    table_name, id, column_name, esize);
             LOGTRACE(ctx, GRN_WARN);
+            ERR(GRN_OPERATION_NOT_PERMITTED,
+                "undeletable record (%s:%d) has value (%s:%d)",
+                table_name, id, column_name, esize);
             res = 0;
           }
         });

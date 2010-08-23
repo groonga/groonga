@@ -152,7 +152,7 @@
 
 #define grn_test_assert_send_command_error(context, expected_rc,        \
                                            expected_message, command,   \
-                                            ...)                        \
+                                           ...)                         \
   cut_trace_with_info_expression(                                       \
     cut_test_with_user_message(                                         \
       grn_test_assert_send_command_error_helper((context),              \

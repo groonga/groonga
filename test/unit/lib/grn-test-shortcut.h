@@ -32,6 +32,12 @@
       __VA_ARGS__),                                             \
     grn_assert_send_command(context, command))
 
+#define assert_send_command_error(expected_rc, expected_message,        \
+                                  command, ...)                         \
+  grn_test_assert_send_command_error(context,                           \
+                                     expected_rc, expected_message,     \
+                                     command, __VA_ARGS__)
+
 #define assert_send_commands(commands, ...)             \
   cut_trace_with_info_expression(                       \
     cut_test_with_user_message(                         \
