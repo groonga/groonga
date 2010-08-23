@@ -5569,6 +5569,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     }
   }
   grn_token_close(ctx, token);
+  grn_p(ctx, h);
   {
     grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0, -1, 0);
     if (!c) {
@@ -5606,6 +5607,8 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
       return GRN_NO_MEMORY_AVAILABLE;
     }
     grn_hash_sort(ctx, h, limit, sorted, &arg);
+    grn_p(ctx, h);
+    grn_p(ctx, sorted);
     /* todo support subrec
     rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
     */
