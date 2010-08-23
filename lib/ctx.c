@@ -204,6 +204,7 @@ grn_loader_init(grn_loader *loader)
   loader->table = NULL;
   loader->last = NULL;
   loader->ifexists = NULL;
+  loader->each = NULL;
   loader->values_size = 0;
   loader->nrecords = 0;
   loader->stat = GRN_LOADER_BEGIN;
@@ -219,6 +220,7 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   uint32_t i = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   if (ctx->impl->db) { while (i--) { grn_obj_unlink(ctx, *p++); } }
   if (loader->ifexists) { grn_obj_unlink(ctx, loader->ifexists); }
+  if (loader->each) { grn_obj_unlink(ctx, loader->each); }
   while (v < ve) { GRN_OBJ_FIN(ctx, v++); }
   GRN_OBJ_FIN(ctx, &loader->values);
   GRN_OBJ_FIN(ctx, &loader->level);

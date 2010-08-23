@@ -363,7 +363,8 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
            GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
            GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
            GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
-           GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)));
+           GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)),
+           GRN_TEXT_VALUE(VAR(5)), GRN_TEXT_LEN(VAR(5)));
   if (ctx->impl->loader.stat != GRN_LOADER_END) {
     grn_ctx_set_next_expr(ctx, grn_proc_get_info(ctx, user_data, NULL, NULL, NULL));
   } else {
@@ -2203,7 +2204,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "columns");
   DEF_VAR(vars[3], "ifexists");
   DEF_VAR(vars[4], "input_type");
-  DEF_COMMAND("load", proc_load, 5, vars);
+  DEF_VAR(vars[5], "each");
+  DEF_COMMAND("load", proc_load, 6, vars);
 
   DEF_COMMAND("status", proc_status, 0, vars);
 

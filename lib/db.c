@@ -7575,6 +7575,11 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
           }
           value = values_next(ctx, value);
         }
+        if (loader->each) {
+          grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->each, 0);
+          GRN_RECORD_SET(ctx, v, id);
+          grn_expr_exec(ctx, loader->each, 0);
+        }
         loader->nrecords++;
       } else {
         GRN_LOG(ctx, GRN_LOG_ERROR, "neither _key nor _id is assigned");
@@ -7886,7 +7891,8 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
          const char *table, unsigned table_len,
          const char *columns, unsigned columns_len,
          const char *values, unsigned values_len,
-         const char *ifexists, unsigned ifexists_len)
+         const char *ifexists, unsigned ifexists_len,
+         const char *each, unsigned each_len)
 {
   grn_loader *loader;
   if (!ctx || !ctx->impl) {
@@ -7930,6 +7936,15 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
       GRN_EXPR_CREATE_FOR_QUERY(ctx, loader->table, loader->ifexists, v);
       if (loader->ifexists && v) {
         grn_expr_parse(ctx, loader->ifexists, ifexists, ifexists_len,
+                       NULL, GRN_OP_EQUAL, GRN_OP_AND,
+                       GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
+      }
+    }
+    if (each && each_len) {
+      grn_obj *v;
+      GRN_EXPR_CREATE_FOR_QUERY(ctx, loader->table, loader->each, v);
+      if (loader->each && v) {
+        grn_expr_parse(ctx, loader->each, each, each_len,
                        NULL, GRN_OP_EQUAL, GRN_OP_AND,
                        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
