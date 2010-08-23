@@ -38,7 +38,7 @@ build_chroot()
     run_sudo debootstrap --arch $architecture $code_name $base_dir
 
     case $code_name in
-	lenny|unstable)
+	lenny|squeeze|unstable)
 	    run_sudo sed -i'' -e 's/us/jp/' $base_dir/etc/apt/sources.list
 	    ;;
 	*)
@@ -70,7 +70,7 @@ build()
     fi
 
     case ${code_name} in
-	lenny|unstable)
+	lenny|squeeze|unstable)
 	    distribution=debian
 	    component=main
 	    ;;

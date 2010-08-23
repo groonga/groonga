@@ -21,7 +21,7 @@ run()
 
 for code_name in ${CODES}; do
     case ${code_name} in
-	lenny|unstable)
+	lenny|squeeze|unstable)
 	    distribution=debian
 	    ;;
 	*)
