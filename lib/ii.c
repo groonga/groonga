@@ -5617,7 +5617,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     }
     for (j = 1; j <= limit; j++) {
       grn_array_get_value(ctx, sorted, j, &id);
-      grn_hash_get_key_value(ctx, h, id, (void **) &tp, sizeof(grn_id), (void **) &w1);
+      _grn_hash_get_key_value(ctx, h, id, (void **) &tp, (void **) &w1);
       if (!*tp || !(c = grn_ii_cursor_open(ctx, ii, *tp, GRN_ID_NIL, GRN_ID_MAX,
                                            rep
                                            ? ii->n_elements
