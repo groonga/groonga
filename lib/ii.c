@@ -5326,9 +5326,11 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
         ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, EX_NONE);
         break;
       case grn_token_done :
-        key = _grn_table_key(ctx, lexicon, tid, &size);
-        ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, ef & EX_PREFIX);
-        break;
+        if (tid) {
+          key = _grn_table_key(ctx, lexicon, tid, &size);
+          ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, ef & EX_PREFIX);
+          break;
+        } /* else fallthru */
       default :
         ti = token_info_open(ctx, lexicon, ii, (char *)token->curr,
                              token->curr_size, token->pos, ef & EX_PREFIX);

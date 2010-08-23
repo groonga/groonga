@@ -505,7 +505,9 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
         break;
       }
     }
-    if (tid == GRN_ID_NIL) { token->status = grn_token_not_found; }
+    if (tid == GRN_ID_NIL && token->status != grn_token_done) {
+      token->status = grn_token_not_found;
+    }
     token->pos++;
     break;
   }
