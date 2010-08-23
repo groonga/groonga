@@ -75,6 +75,7 @@ func_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           grn_select_optarg optarg;
           memset(&optarg, 0, sizeof(grn_select_optarg));
           optarg.mode = GRN_OP_SIMILAR;
+          optarg.similarity_threshold = 1048576;
 
           grn_ii_select(ctx, (grn_ii *)grn_ctx_get(ctx, CONST_STR_LEN("SuggestBigram.suggest_key")),
                         GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)), (grn_hash *)res, GRN_OP_OR, &optarg);
