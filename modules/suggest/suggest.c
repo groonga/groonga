@@ -174,7 +174,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 }
 
 static grn_obj *
-func_callback(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *obj;
   if (nargs == 5) {
@@ -208,8 +208,8 @@ grn_module_register_suggest(grn_ctx *ctx)
   grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND,
                   command_suggest, NULL, NULL, 3, vars);
 
-  grn_proc_create(ctx, CONST_STR_LEN("callback"), GRN_PROC_FUNCTION,
-                  func_callback, NULL, NULL, 0, NULL);
+  grn_proc_create(ctx, CONST_STR_LEN("suggest_preparer"), GRN_PROC_FUNCTION,
+                  func_suggest_preparer, NULL, NULL, 0, NULL);
   return ctx->rc;
 }
 

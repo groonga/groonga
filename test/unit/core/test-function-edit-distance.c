@@ -25,6 +25,8 @@
 
 void data_alphabet(void);
 void test_alphabet(gconstpointer data);
+void data_japanese(void);
+void test_japanese(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -140,6 +142,87 @@ test_alphabet(gconstpointer data)
                       "[\"tapa\"],\n"
                       "[\"tako\"],\n"
                       "[\"topo\"]\n"
+                      "]");
+
+  expected =
+      cut_take_printf("[[[8],"
+                      "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+                      "%s"
+                      "]]",
+                      gcut_data_get_string(data, "expected"));
+  command = cut_take_printf("select Users "
+                            "--output_columns name,_score "
+                            "--filter true "
+                            "--sortby _score,name "
+                            "--scorer '_score=edit_distance(name, \"%s\")'",
+                            gcut_data_get_string(data, "string"));
+
+  cut_assert_equal_string(expected, send_command(command));
+}
+
+void
+data_japanese(void)
+{
+#define ADD_DATUM(label, expected, string)              \
+    gcut_add_datum(label,                               \
+                   "expected", G_TYPE_STRING, expected, \
+                   "string", G_TYPE_STRING, string,     \
+                   NULL)
+
+    ADD_DATUM("same",
+              "[\"もり\",0],"
+              "[\"たこ\",2],"
+              "[\"たぱ\",2],"
+              "[\"たぽ\",2],"
+              "[\"とぽ\",2],"
+              "[\"ゆう\",2],"
+              "[\"たぽぽ\",3],"
+              "[\"グニャラくん\",6]",
+              "もり");
+
+    ADD_DATUM("long",
+              "[\"たぽ\",2],"
+              "[\"もり\",2],"
+              "[\"たこ\",3],"
+              "[\"たぱ\",3],"
+              "[\"たぽぽ\",3],"
+              "[\"とぽ\",3],"
+              "[\"ゆう\",4],"
+              "[\"グニャラくん\",6]",
+              "もりたぽ");
+
+    ADD_DATUM("short",
+              "[\"もり\",1],"
+              "[\"たこ\",2],"
+              "[\"たぱ\",2],"
+              "[\"たぽ\",2],"
+              "[\"とぽ\",2],"
+              "[\"ゆう\",2],"
+              "[\"たぽぽ\",3],"
+              "[\"グニャラくん\",6]",
+              "も");
+
+#undef ADD_DATUM
+}
+
+void
+test_japanese(gconstpointer data)
+{
+  const gchar *expected, *command;
+
+  assert_send_command("table_create Users TABLE_NO_KEY");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  assert_send_command("load --table Users\n"
+                      "[\n"
+                      "[\"name\"],\n"
+                      "[\"もり\"],\n"
+                      "[\"グニャラくん\"],\n"
+                      "[\"ゆう\"],\n"
+                      "[\"たぽ\"],\n"
+                      "[\"たぽぽ\"],\n"
+                      "[\"たぱ\"],\n"
+                      "[\"たこ\"],\n"
+                      "[\"とぽ\"]\n"
                       "]");
 
   expected =
