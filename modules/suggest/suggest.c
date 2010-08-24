@@ -23,7 +23,7 @@
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
 
 static grn_obj *
-func_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *table;
   if ((table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
@@ -145,7 +145,7 @@ grn_module_register_suggest(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[1].value, 0);
   GRN_TEXT_INIT(&vars[2].value, 0);
 
-  grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_FUNCTION, func_suggest, NULL, NULL, 3, vars);
+  grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND, command_suggest, NULL, NULL, 3, vars);
 
   return ctx->rc;
 }
