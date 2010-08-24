@@ -231,6 +231,7 @@ source_files =					\
 	source/execfile.txt			\
 	source/expr.txt				\
 	source/functions.txt			\
+	source/functions/edit_distance.txt	\
 	source/functions/geo_distance.txt	\
 	source/functions/geo_in_circle.txt	\
 	source/functions/geo_in_rectangle.txt	\
@@ -297,6 +298,7 @@ html_files =						\
 	html/_sources/execfile.txt			\
 	html/_sources/expr.txt				\
 	html/_sources/functions.txt			\
+	html/_sources/functions/edit_distance.txt	\
 	html/_sources/functions/geo_distance.txt	\
 	html/_sources/functions/geo_in_circle.txt	\
 	html/_sources/functions/geo_in_rectangle.txt	\
@@ -368,6 +370,7 @@ html_files =						\
 	html/execfile.html				\
 	html/expr.html					\
 	html/functions.html				\
+	html/functions/edit_distance.html		\
 	html/functions/geo_distance.html		\
 	html/functions/geo_in_circle.html		\
 	html/functions/geo_in_rectangle.html		\

@@ -8,6 +8,7 @@ if [ $# != 2 ]; then
     exit 1
 fi
 
+PROJECT_NAME=groonga
 ARCHITECTURES=$1
 CODES=$2
 
@@ -18,6 +19,89 @@ run()
 	echo "Failed $@"
 	exit 1
     fi
+}
+
+update_repository()
+{
+    distribution=$1
+    code_name=$2
+    component=$3
+
+    mkdir -p dists/${code_name}/${component}/binary-i386/
+    mkdir -p dists/${code_name}/${component}/binary-amd64/
+    mkdir -p dists/${code_name}/${component}/source/
+
+    cat <<EOF > dists/.htaccess
+Options +Indexes
+EOF
+
+    cat <<EOF > dists/${code_name}/${component}/binary-i386/Release
+Archive: ${code_name}
+Component: ${component}
+Origin: The ${PROJECT_NAME} project
+Label: The ${PROJECT_NAME} project
+Architecture: i386
+EOF
+
+    cat <<EOF > dists/${code_name}/${component}/binary-amd64/Release
+Archive: ${code_name}
+Component: ${component}
+Origin: The ${PROJECT_NAME} project
+Label: The ${PROJECT_NAME} project
+Architecture: amd64
+EOF
+
+    cat <<EOF > dists/${code_name}/${component}/source/Release
+Archive: ${code_name}
+Component: ${component}
+Origin: The ${PROJECT_NAME} project
+Label: The ${PROJECT_NAME} project
+Architecture: source
+EOF
+
+    cat <<EOF > generate-${code_name}.conf
+Dir::ArchiveDir ".";
+Dir::CacheDir ".";
+TreeDefault::Directory "pool/${code_name}/${component}";
+TreeDefault::SrcDirectory "pool/${code_name}/${component}";
+Default::Packages::Extensions ".deb";
+Default::Packages::Compress ". gzip bzip2";
+Default::Sources::Compress ". gzip bzip2";
+Default::Contents::Compress "gzip bzip2";
+
+BinDirectory "dists/${code_name}/${component}/binary-i386" {
+  Packages "dists/${code_name}/${component}/binary-i386/Packages";
+  Contents "dists/${code_name}/Contents-i386";
+  SrcPackages "dists/${code_name}/${component}/source/Sources";
+};
+
+BinDirectory "dists/${code_name}/${component}/binary-amd64" {
+  Packages "dists/${code_name}/${component}/binary-amd64/Packages";
+  Contents "dists/${code_name}/Contents-amd64";
+  SrcPackages "dists/${code_name}/${component}/source/Sources";
+};
+
+Tree "dists/${code_name}" {
+  Sections "${component}";
+  Architectures "i386 amd64 source";
+};
+EOF
+    apt-ftparchive generate generate-${code_name}.conf
+    rm -f dists/${code_name}/Release*
+    rm -f *.db
+
+    cat <<EOF > release-${code_name}.conf
+APT::FTPArchive::Release::Origin "The ${PROJECT_NAME} project";
+APT::FTPArchive::Release::Label "The ${PROJECT_NAME} project";
+APT::FTPArchive::Release::Architectures "i386 amd64";
+APT::FTPArchive::Release::Codename "${code_name}";
+APT::FTPArchive::Release::Suite "${code_name}";
+APT::FTPArchive::Release::Components "${component}";
+APT::FTPArchive::Release::Description "${PACKAGE_NAME} packages";
+EOF
+    apt-ftparchive -c release-${code_name}.conf \
+	release dists/${code_name} > /tmp/Release
+    mv /tmp/Release dists/${code_name}
 }
 
 for code_name in ${CODES}; do
@@ -32,16 +116,7 @@ for code_name in ${CODES}; do
 	    ;;
     esac
 
+    mkdir -p ${distribution}
     (cd ${distribution}
-	for architecture in ${ARCHITECTURES}; do
-	    mkdir -p dists/${code_name}/${component}/binary-${architecture}
-	    mkdir -p dists/${code_name}/${component}/source
-	done
-	rm -f *.db
-	apt-ftparchive generate generate-${code_name}.conf
-	rm -f dists/${code_name}/Release*
-	apt-ftparchive -c release-${code_name}.conf \
-	    release dists/${code_name} > /tmp/Release
-	mv /tmp/Release dists/${code_name}
-    );
+	update_repository $distribution $code_name $component)
 done

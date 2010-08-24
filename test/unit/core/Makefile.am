@@ -35,6 +35,7 @@ noinst_LTLIBRARIES =				\
 	test-view-operations.la			\
 	test-register.la			\
 	test-function-cast.la			\
+	test-function-edit-distance.la		\
 	test-store-ja.la			\
 	test-log.la				\
 	test-table-sort-key-from-str.la		\
@@ -108,6 +109,7 @@ test_view_la_SOURCES			= test-view.c
 test_view_operations_la_SOURCES		= test-view-operations.c
 test_register_la_SOURCES		= test-register.c
 test_function_cast_la_SOURCES		= test-function-cast.c
+test_function_edit_distance_la_SOURCES	= test-function-edit-distance.c
 test_store_ja_la_SOURCES		= test-store-ja.c
 test_log_la_SOURCES			= test-log.c
 test_table_sort_key_from_str_la_SOURCES	= test-table-sort-key-from-str.c
