@@ -57,6 +57,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
                   grn_ii_posting *p;
                   while ((p = grn_ii_cursor_next(ctx, icur))) {
                     grn_hash_add(ctx, (grn_hash *)res, &p->rid, sizeof(grn_id), NULL, NULL);
+                    /* FIXME: execute _score = score */
                   }
                   grn_ii_cursor_close(ctx, icur);
                 } else {
@@ -78,26 +79,72 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
           optarg.similarity_threshold = 1048576;
 
           grn_ii_select(ctx, (grn_ii *)grn_ctx_get(ctx, CONST_STR_LEN("SuggestBigram.suggest_key")),
-                        GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)), (grn_hash *)res, GRN_OP_OR, &optarg);
+                        GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
+                        (grn_hash *)res, GRN_OP_OR, &optarg);
+          {
+            /* exec _score = edit_distance(_key, "query string") for all records */
+            grn_obj *var;
+            grn_obj *expr;
+
+            GRN_EXPR_CREATE_FOR_QUERY(ctx, res, expr, var);
+            if (expr) {
+              grn_table_cursor *tc;
+
+              grn_expr_append_obj(ctx, expr,
+                                  grn_obj_column(ctx, res, CONST_STR_LEN("_score")),
+                                  GRN_OP_GET_VALUE, 1);
+              grn_expr_append_obj(ctx, expr,
+                                  grn_ctx_get(ctx, CONST_STR_LEN("edit_distance")),
+                                  GRN_OP_PUSH, 1);
+              grn_expr_append_obj(ctx, expr,
+                                  grn_obj_column(ctx, res, CONST_STR_LEN("_key")),
+                                  GRN_OP_GET_VALUE, 1);
+              grn_expr_append_const(ctx, expr, VAR(2), GRN_OP_PUSH, 1);
+              grn_expr_append_op(ctx, expr, GRN_OP_CALL, 2);
+              grn_expr_append_op(ctx, expr, GRN_OP_ASSIGN, 2);
+
+              if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
+                while (!grn_table_cursor_next_o(ctx, tc, var)) {
+                  grn_expr_exec(ctx, expr, 0);
+                }
+                grn_table_cursor_close(ctx, tc);
+              }
+              grn_expr_close(ctx, expr);
+            } else {
+              ERR(GRN_UNKNOWN_ERROR, "error on building expr. for calicurating edit distance");
+            }
+          }
 #endif
           /* sort */
           {
             uint32_t nkeys;
+            grn_obj *score_col;
             grn_table_sort_key *keys;
-            if ((keys = grn_table_sort_key_from_str(ctx, CONST_STR_LEN("-score"), res, &nkeys))) {
+            score_col = grn_obj_column(ctx, res, CONST_STR_LEN("_score"));
+            /* FIXME: use grn_table_sort instead */
+            if ((keys = grn_table_sort_key_from_str(ctx, CONST_STR_LEN("-_score"), res, &nkeys))) {
               grn_table_cursor *scur;
               /* TODO: support offset limit */
               grn_table_sort(ctx, res, 0, grn_table_size(ctx, res), sorted, keys, nkeys);
-              GRN_OUTPUT_ARRAY_OPEN("RESULT", -1);
+              GRN_OUTPUT_ARRAY_OPEN("RESULTS", -1);
               if ((scur = grn_table_cursor_open(ctx, sorted, NULL, 0, NULL, 0, 0, -1, 0))) {
                 grn_id id;
                 while ((id = grn_table_cursor_next(ctx, scur))) {
+                  grn_id res_id;
                   unsigned int key_len;
                   char key[GRN_TABLE_MAX_KEY_SIZE];
-                  grn_table_get_key(ctx, sorted, id, &id, sizeof(grn_id));
-                  grn_table_get_key(ctx, res, id, &id, sizeof(grn_id));
+                  grn_obj score_val;
+
+                  GRN_OUTPUT_ARRAY_OPEN("RESULT", 2);
+                  grn_table_get_key(ctx, sorted, id, &res_id, sizeof(grn_id));
+                  grn_table_get_key(ctx, res, res_id, &id, sizeof(grn_id));
                   key_len = grn_table_get_key(ctx, table, id, key, GRN_TABLE_MAX_KEY_SIZE);
                   GRN_OUTPUT_STR(key, key_len);
+
+                  GRN_INT32_INIT(&score_val, 0);
+                  grn_obj_get_value(ctx, score_col, res_id, &score_val);
+                  GRN_OUTPUT_INT32(GRN_INT32_VALUE(&score_val));
+                  GRN_OUTPUT_ARRAY_CLOSE();
                 }
                 grn_table_cursor_close(ctx, scur);
               } else {
