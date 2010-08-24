@@ -180,7 +180,8 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
         }
         break;
       case GRN_ENC_UTF8:
-        if (strcmp(dictionary->charset, "UTF-8") == 0) {
+        if (strcmp(dictionary->charset, "UTF-8") == 0 ||
+            strcmp(dictionary->charset, "utf8") == 0) {
           have_same_encoding_dictionary = 1;
         }
         break;
