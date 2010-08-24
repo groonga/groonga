@@ -12,7 +12,7 @@ pkgconfig_DATA = groonga.pc
 version.sh: FORCE
 	@$(SHELL_PATH) $(srcdir)/version-gen.sh
 
-@am__include@ version.sh
+@am__include@ $(srcdir)/version.sh
 
 dist-hook:
 	echo "$(GROONGA_VERSION)" > $(distdir)/version
