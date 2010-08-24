@@ -41,6 +41,12 @@ version.sh
 /doc/ja/html/
 /doc/ja/rdoc/
 /doc/ja/man/
+/doc/ja/.buildinfo
+/doc/ja/_sources/
+/doc/ja/_static/
+/doc/ja/build/
+/doc/ja/commands_not_implemented/
+/doc/ja/objects.inv
 /lib/icudump
 /coverage
 /coverage.info
