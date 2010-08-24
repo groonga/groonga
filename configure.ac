@@ -622,7 +622,9 @@ if test "$ac_sphinx_available" = "yes"; then
   fi
 fi
 AC_SUBST(SPHINX_BUILD)
-AM_CONDITIONAL([WITH_SPHINX], [test "$ac_sphinx_available" = "yes"])
+AM_CONDITIONAL([ENABLE_DOCUMENT],
+               [test "$ac_sphinx_available" = "yes" -o \
+                     -f "$srcdir/doc/ja/man-build-stamp"])
 AC_MSG_CHECKING([for sphinx availablity])
 AC_MSG_RESULT($ac_sphinx_available (sphinx-build=$SPHINX_BUILD version=$sphinx_build_version required=$sphinx_required_version))
 

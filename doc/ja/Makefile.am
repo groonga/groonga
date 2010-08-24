@@ -120,7 +120,7 @@ pdf:
 	@echo
 	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
 
-if WITH_SPHINX
+if ENABLE_DOCUMENT
 dist-hook:
 	@touch $(distdir)/man-build-stamp
 	@touch $(distdir)/html-build-stamp
