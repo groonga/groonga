@@ -126,6 +126,20 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   return NULL;
 }
 
+static grn_obj *
+func_callback(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *obj;
+  if (nargs == 5) {
+    grn_obj *id = args[0], *type = args[1];
+    grn_obj *item = args[2], *sequence = args[3], *time = args[4];
+  }
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
+    GRN_UINT32_SET(ctx, obj, 0);
+  }
+  return obj;
+}
+
 grn_rc
 grn_module_init_suggest(grn_ctx *ctx)
 {
@@ -144,9 +158,11 @@ grn_module_register_suggest(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[0].value, 0);
   GRN_TEXT_INIT(&vars[1].value, 0);
   GRN_TEXT_INIT(&vars[2].value, 0);
+  grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND,
+                  command_suggest, NULL, NULL, 3, vars);
 
-  grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND, command_suggest, NULL, NULL, 3, vars);
-
+  grn_proc_create(ctx, CONST_STR_LEN("callback"), GRN_PROC_FUNCTION,
+                  func_callback, NULL, NULL, 0, NULL);
   return ctx->rc;
 }
 
