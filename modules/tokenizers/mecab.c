@@ -175,13 +175,13 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
     for (; dictionary; dictionary = dictionary->next) {
       switch (encoding) {
       case GRN_ENC_EUC_JP:
-        if (strcmp(dictionary->charset, "EUC-JP") == 0) {
+        if (strcasecmp(dictionary->charset, "euc-jp") == 0) {
           have_same_encoding_dictionary = 1;
         }
         break;
       case GRN_ENC_UTF8:
-        if (strcmp(dictionary->charset, "UTF-8") == 0 ||
-            strcmp(dictionary->charset, "utf8") == 0) {
+        if (strcasecmp(dictionary->charset, "utf-8") == 0 ||
+            strcasecmp(dictionary->charset, "utf8") == 0) {
           have_same_encoding_dictionary = 1;
         }
         break;
