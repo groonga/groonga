@@ -854,6 +854,13 @@ grn_str_get_mime_type(grn_ctx *ctx, const char *p, const char *pe,
 #define EXPR_MISSING "expr_missing"
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
 
+static inline int
+command_proc_p(grn_obj *expr)
+{
+  return (expr->header.type == GRN_PROC &&
+          ((grn_proc *)expr)->type == GRN_PROC_COMMAND);
+}
+
 grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
 {
@@ -865,7 +872,8 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   v = GRN_TEXT_VALUE(&buf);
   grn_str_get_mime_type(ctx, v, GRN_BULK_CURR(&buf), &key_end, &filename_end);
   if ((GRN_TEXT_LEN(&buf) >= 2 && v[0] == 'd' && v[1] == '/') &&
-      (expr = grn_ctx_get(ctx, v + 2, key_end - (v + 2)))) {
+      (expr = grn_ctx_get(ctx, v + 2, key_end - (v + 2))) &&
+      command_proc_p(expr)) {
     while (p < e) {
       int l;
       GRN_BULK_REWIND(&buf);
@@ -948,7 +956,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
     }
   }
   ctx->impl->curr_expr = expr;
-  if (expr) {
+  if (expr && command_proc_p(expr)) {
     grn_expr_exec(ctx, expr, 0);
   } else {
     GRN_BULK_REWIND(&buf);
