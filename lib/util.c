@@ -216,6 +216,10 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     break;
   }
 
+  if (obj->header.flags & GRN_OBJ_RING_BUFFER) {
+    GRN_TEXT_PUTS(ctx, buf, " ring_buffer:true");
+  }
+
   return GRN_SUCCESS;
 }
 

@@ -1196,7 +1196,7 @@ ha_table(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
                 switch (*msg) {
                 case 'b' :
                 case 'B' :
-                  flags |= GRN_OBJ_WITH_BUFFER;
+                  flags |= GRN_OBJ_RING_BUFFER;
                   break;
                 case 'i' :
                 case 'I' :

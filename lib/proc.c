@@ -467,6 +467,9 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "WITH_POSITION", 13)) {
       flags |= GRN_OBJ_WITH_POSITION;
       nptr += 13;
+    } else if (!memcmp(nptr, "RING_BUFFER", 11)) {
+      flags |= GRN_OBJ_RING_BUFFER;
+      nptr += 11;
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s", end - nptr, nptr);
       return 0;

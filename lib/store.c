@@ -678,7 +678,7 @@ set_value(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
 {
   grn_rc rc = GRN_SUCCESS;
   grn_io_win iw;
-  if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+  if ((ja->header->flags & GRN_OBJ_RING_BUFFER) &&
       value_len >= ja->header->max_element_size) {
     if ((rc = grn_ja_alloc(ctx, ja, id, value_len + sizeof(uint32_t), einfo, &iw))) {
       return rc;
@@ -709,7 +709,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
-        if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+        if ((ja->header->flags & GRN_OBJ_RING_BUFFER) &&
             old_len + value_len >= ja->header->max_element_size) {
           if (old_len >= ja->header->max_element_size) {
             byte *b = oldvalue;
@@ -758,7 +758,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
-        if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+        if ((ja->header->flags & GRN_OBJ_RING_BUFFER) &&
             old_len + value_len >= ja->header->max_element_size) {
           if (old_len >= ja->header->max_element_size) {
             byte *b = oldvalue;
@@ -1072,7 +1072,7 @@ grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
     }
   }
   if ((v = grn_ja_ref(ctx, ja, id, &iw, &len))) {
-    if ((ja->header->flags & GRN_OBJ_WITH_BUFFER) &&
+    if ((ja->header->flags & GRN_OBJ_RING_BUFFER) &&
         len > ja->header->max_element_size) {
       byte *b = v;
       uint32_t el = len - sizeof(uint32_t);
