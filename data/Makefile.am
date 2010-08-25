@@ -1,5 +1,6 @@
 SUBDIRS =			\
 	munin
 
-dist_pkgdata_DATA =		\
+pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
+dist_pkgsysconf_DATA =		\
 	groonga.conf
