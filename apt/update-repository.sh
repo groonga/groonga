@@ -2,15 +2,15 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 2 ]; then
-    echo "Usage: $0 ARCHITECTURES CODES"
-    echo " e.g.: $0 'i386 amd64' 'lenny unstable hardy karmic'"
+if [ $# != 3 ]; then
+    echo "Usage: $0 PROJECT_NAME ARCHITECTURES CODES"
+    echo " e.g.: $0 mroonga 'i386 amd64' 'lenny unstable hardy karmic'"
     exit 1
 fi
 
-PROJECT_NAME=groonga
-ARCHITECTURES=$1
-CODES=$2
+PROJECT_NAME=$1
+ARCHITECTURES=$2
+CODES=$3
 
 run()
 {
@@ -27,6 +27,7 @@ update_repository()
     code_name=$2
     component=$3
 
+    rm -rf dists/${code_name}
     mkdir -p dists/${code_name}/${component}/binary-i386/
     mkdir -p dists/${code_name}/${component}/binary-amd64/
     mkdir -p dists/${code_name}/${component}/source/

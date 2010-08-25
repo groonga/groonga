@@ -14,7 +14,7 @@ remove-existing-packages:
 	done
 
 update:
-	./update-repository.sh '$(ARCHITECTURES)' '$(CODES)'
+	./update-repository.sh '$(PACKAGE_NAME)' '$(ARCHITECTURES)' '$(CODES)'
 
 sign:
 	./sign-repository.sh '$(CODES)'
