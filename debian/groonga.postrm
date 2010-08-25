@@ -1,0 +1,12 @@
+#! /bin/sh
+
+set -e
+
+if [ "$1" = "purge" ]; then
+        rm -f /var/run/milter-manager/*
+        dpkg-statoverride --remove /var/run/milter-manager
+        rm -f /var/spool/postfix/milter-manager/*
+        dpkg-statoverride --remove /var/spool/postfix/milter-manager
+fi
+
+#DEBHELPER#
