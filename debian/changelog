@@ -1,3 +1,9 @@
+groonga (0.7.6-2) unstable; urgency=low
+
+  * Split packages.
+
+ -- Kouhei Sutou <kou@clear-code.com>  Thu, 25 Aug 2010 22:11:14 +0900
+
 groonga (0.7.6) unstable; urgency=low
 
   * New upstream release.

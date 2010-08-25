@@ -13,8 +13,13 @@ remove-existing-packages:
 	    -path '*/.svn/*' \-type f -delete;		\
 	done
 
+download:
+	for distribution in $(DISTRIBUTIONS); do			\
+	  rsync -avz $(RSYNC_PATH)/$${distribution}/ $${distribution};	\
+	done
+
 update:
-	./update-repository.sh '$(ARCHITECTURES)' '$(CODES)'
+	./update-repository.sh '$(PACKAGE_NAME)' '$(ARCHITECTURES)' '$(CODES)'
 
 sign:
 	./sign-repository.sh '$(CODES)'

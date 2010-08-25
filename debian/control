@@ -43,3 +43,13 @@ Description: Documentation of groonga.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides documentation of groonga.
+
+Package: groonga-munin-plugins
+Section: net
+Architecture: any
+Depends: ${misc:Depends}, groonga (= ${binary:Version}), munin-node, ruby
+Description: munin-node plugins for groonga.
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides munin-node plugins to monitor groonga.
