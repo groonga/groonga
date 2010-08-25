@@ -62,15 +62,17 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
                   grn_ii_cursor_close(ctx, icur);
                 } else {
                   ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for index.");
-                  break;
+                  goto exit;
                 }
               }
               grn_table_cursor_close(ctx, cur);
             } else {
               ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for pk.");
+              goto exit;
             }
           } else {
             ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix search.");
+            goto exit;
           }
 #else
           grn_select_optarg optarg;
@@ -112,6 +114,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
               grn_expr_close(ctx, expr);
             } else {
               ERR(GRN_UNKNOWN_ERROR, "error on building expr. for calicurating edit distance");
+              goto exit;
             }
           }
 #endif
@@ -156,6 +159,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
               ERR(GRN_UNKNOWN_ERROR, "cannot sort.");
             }
           }
+exit:
           grn_obj_close(ctx, sorted);
         } else {
           ERR(GRN_UNKNOWN_ERROR, "cannot create temporary sort table.");
