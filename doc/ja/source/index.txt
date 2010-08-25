@@ -10,7 +10,6 @@ groonga ドキュメント
    :maxdepth: 3
    :numbered:
 
-   news
    characteristic
    tutorial
    reference
