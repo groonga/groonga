@@ -178,8 +178,22 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
 {
   grn_obj *obj;
   if (nargs == 5) {
-    grn_obj *id = args[0], *type = args[1];
-    grn_obj *item = args[2], *sequence = args[3], *time = args[4];
+    grn_obj buf, *item = args[2], *seq = args[3];
+    grn_id id = GRN_UINT32_VALUE(args[0]);
+    grn_id type = GRN_UINT32_VALUE(args[1]);
+    int64_t time = GRN_TIME_VALUE(args[4]);
+    grn_obj *items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(item));
+    grn_obj *freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
+    grn_obj *seqs = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(seq));
+    grn_obj *events = grn_obj_column(ctx, seqs, CONST_STR_LEN("events"));
+    GRN_UINT32_INIT(&buf, 0);
+    GRN_UINT32_SET(ctx, &buf, 1);
+    grn_obj_set_value(ctx, freq, GRN_RECORD_VALUE(item), &buf, GRN_OBJ_INCR);
+    GRN_OBJ_FIN(ctx, &buf);
+    GRN_RECORD_INIT(&buf, 0, grn_obj_get_range(ctx, events));
+    GRN_RECORD_SET(ctx, &buf, id);
+    grn_obj_set_value(ctx, events, GRN_RECORD_VALUE(seq), &buf, GRN_OBJ_APPEND);
+    GRN_OBJ_FIN(ctx, &buf);
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, 0);
