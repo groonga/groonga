@@ -2763,7 +2763,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     }
     break;
   case GRN_OBJ_COLUMN_VECTOR :
-    res = (grn_obj *)grn_ja_create(ctx, path, value_size * 16/*todo*/, flags);
+    res = (grn_obj *)grn_ja_create(ctx, path, value_size * 30/*todo*/, flags);
     //todo : zlib support
     break;
   case GRN_OBJ_COLUMN_INDEX :

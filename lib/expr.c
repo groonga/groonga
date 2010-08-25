@@ -3866,11 +3866,18 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                   }
                 }
               } else {
-                /* table ?? si->index.domain ? */
-                grn_id tid = grn_table_get(ctx, table,
-                                           GRN_BULK_HEAD(si->query),
-                                           GRN_BULK_VSIZE(si->query));
-                grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, si->logical_op);
+                grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
+                if (domain) {
+                  grn_id tid;
+                  if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
+                    tid = GRN_RECORD_VALUE(si->query);
+                  } else {
+                    tid = grn_table_get(ctx, domain,
+                                        GRN_BULK_HEAD(si->query),
+                                        GRN_BULK_VSIZE(si->query));
+                  }
+                  grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, si->logical_op);
+                }
                 grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
                 done++;
               }
