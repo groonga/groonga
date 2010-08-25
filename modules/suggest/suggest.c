@@ -60,9 +60,6 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
                     /* FIXME: execute _score = score */
                   }
                   grn_ii_cursor_close(ctx, icur);
-                } else {
-                  ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for index.");
-                  goto exit;
                 }
               }
               grn_table_cursor_close(ctx, cur);
