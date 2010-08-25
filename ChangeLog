@@ -1,3 +1,279 @@
+2010-08-25 Kouhei Sutou <kou@clear-code.com>
+
+ * debian/changelog: add 0.7.7 entry.
+
+ * doc/ja/source/commands/delete.txt,
+ doc/ja/source/functions/edit_distance.txt,
+ doc/ja/source/functions/geo_in_rectangle.txt, doc/ja/source/news.txt: add
+ 0.7.7 release note.
+
+ * doc/ja/source/index.txt: don't include news to documentation.
+
+2010-07-20 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c: support prefix search with query syntax.
+
+2010-08-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Removed unnecessary error handling in suggest.
+
+2010-08-25 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * modules/suggest/suggest.c: Improved error handling on suggest.c.
+
+2010-08-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/proc.c, lib/ql.c, lib/store.c, lib/util.c:
+ GRN_OBJ_RING_BUFFER appeared.
+
+ * modules/suggest/suggest.c: suggest_preparer() updates item.freq and
+ sequence.events.
+
+2010-08-25 Kouhei Sutou <kou@clear-code.com>
+
+ * apt/Makefile.am: add download target.
+
+ * debian/changelog, debian/control, debian/groonga-munin-plugin.conf,
+ debian/groonga-munin-plugins.postinst, debian/groonga-munin-plugins.postrm,
+ debian/groonga.default, debian/groonga.init, debian/groonga.logrotate,
+ debian/groonga.postinst, debian/groonga.postrm, debian/rules: split munin
+ package.
+
+ * data/Makefile.am: fix install place.
+
+ * data/Makefile.am: distribute groonga.conf.
+
+ * data/Makefile.am, data/groonga.conf: add default groonga.conf.
+
+ * apt/Makefile.am, apt/update-repository.sh: make project name customizable.
+
+2010-08-24 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * modules/suggest/suggest.c: Supported edit_distance on suggest command.
+
+2010-08-24 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-function-edit-distance.c: fix a typo.
+
+ * test/unit/core/test-function-edit-distance.c: add tests for edit_distance
+ with Japanese.
+
+2010-08-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Renamed callback to suggest_preparer.
+
+ * modules/suggest/suggest.c: Added func_callback().
+
+2010-08-24 Kouhei Sutou <kou@clear-code.com>
+
+ * .gitignore: ignore generated files.
+
+ * apt/debian/generate-lenny.conf, apt/debian/generate-unstable.conf,
+ apt/debian/release-lenny.conf, apt/debian/release-unstable.conf,
+ apt/ubuntu/generate-hardy.conf, apt/ubuntu/generate-lucid.conf,
+ apt/ubuntu/release-hardy.conf, apt/ubuntu/release-lucid.conf: remove *.conf.
+
+ * apt/update-repository.sh: auto-generate .conf files.
+
+ * doc/ja/Makefile.am: add edit_distance document.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-function-edit-distance.c:
+ add tests for edit distance.
+
+2010-08-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Fixed wrong function type.
+
+ * .gitignore: Added some stuffs to .gitignore
+
+ * doc/ja/source/functions/edit_distance.txt: Added edit_distance.txt
+
+2010-08-24 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, doc/ja/Makefile.am: make distriubted document installable.
+
+ * Makefile.am: add missing $(srcdir)/.
+
+ * modules/tokenizers/mecab.c: ignore encoding case.
+
+ * modules/tokenizers/mecab.c: accept 'utf8' as MeCab UTF-8 encoding string.
+
+2010-08-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c, lib/token.c: grn_token_next() override status to
+ 'grn_token_not_found' only when it's not 'grn_token_done'.
+
+ * modules/suggest/suggest.c: set similarity_threshold large enough.
+
+ * lib/ii.c: Fixed a bug in grn_ii_similar_search() which had caused segv.
+
+2010-08-23 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h, lib/ctx.c, lib/db.c, lib/proc.c, lib/ql.h: Added each parameter
+ to load command.
+
+2010-08-23 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/ii.c: Removed unused grn_p().
+
+ * lib/ii.c, modules/suggest/suggest.c: Added word correction for suggest
+ function.
+
+2010-08-23 Kouhei Sutou <kou@clear-code.com>
+
+ * apt/build-in-chroot.sh, apt/sign-repository.sh, apt/update-repository.sh:
+ support squeeze.
+
+ * apt/Makefile.am: create a package for squeeze.
+
+ * lib/db.c, test/unit/core/test-command-delete.c,
+ test/unit/lib/grn-assertions.h, test/unit/lib/grn-test-shortcut.h: report
+ error on failing to delete a record. #428
+
+2010-08-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/geo.c: fix geo_in_rectangle() end condition
+
+ * lib/geo.c: fix search leak in geo_in_rectangle.
+
+ * doc/ja/source/functions/geo_in_rectangle.txt: fix geo_in_rectangle()
+ example.
+
+ * configure.ac: revert '"$ac_cv_use_cutter" != "no" -> "$ac_cv_use_cutter" =
+ "yes"' change.
+
+ * doc/ja/Makefile.am: SPHINXBUILD -> SPHINX_BUILD.
+
+2010-08-22 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/db.c: Fixed inspect for tables with no column.
+
+2010-08-21 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, doc/ja/Makefile.am: check sphinx version.
+
+ * debian/rules: add missing modules.
+
+ * apt/Makefile.am: don't delete existence files.
+
+ * debian/changelog, debian/control, debian/rules: update debian related
+ files.
+
+ * .gitignore: ignore an auto-generated file.
+
+2010-08-20 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/Makefile.am: don't rebuild html and man on distribution.
+
+ * doc/ja/Makefile.am: also install source files.
+
+ * .gitignore, configure.ac, doc/ja/Makefile.am, doc/ja/build/Makefile.am: fix
+ document build dependencies.
+
+2010-08-20 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * modules/suggest/suggest.c: Swap sequences of conditions on suggest func.
+
+2010-08-20 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/Makefile.am, doc/ja/build/Makefile.am, doc/ja/source/index.txt,
+ doc/ja/source/news.txt: add a release note for 0.7.6.
+
+ * lib/db.h: add GRN_API to grn_proc_get_var_by_offset().
+
+ * doc/ja/build/Makefile.am: add missing files.
+
+ * .gitignore, doc/ja/build/Makefile.am: install groonga(1).
+
+ * .gitignore, Makefile.am, configure.ac, doc/Makefile.am, doc/ja/Makefile,
+ doc/ja/Makefile.am, doc/ja/build/Makefile.am: make generated HTML
+ installable.
+
+2010-08-20 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/Makefile, doc/ja/_static/basic.css, doc/ja/_static/default.css,
+ doc/ja/_static/doctools.js, doc/ja/_static/file.png,
+ doc/ja/_static/jquery.js, doc/ja/_static/minus.png, doc/ja/_static/plus.png,
+ doc/ja/_static/pygments.css, doc/ja/_static/searchtools.js,
+ doc/ja/characteristic.html, doc/ja/commands.html, doc/ja/commands/add.html,
+ doc/ja/commands/cache_limit.html, doc/ja/commands/check.html,
+ doc/ja/commands/clearlock.html, doc/ja/commands/column_create.html,
+ doc/ja/commands/column_list.html, doc/ja/commands/column_remove.html,
+ doc/ja/commands/define_selector.html, doc/ja/commands/defrag.html,
+ doc/ja/commands/delete.html, doc/ja/commands/dump.html,
+ doc/ja/commands/get.html, doc/ja/commands/load.html,
+ doc/ja/commands/log_level.html, doc/ja/commands/log_put.html,
+ doc/ja/commands/log_reopen.html, doc/ja/commands/quit.html,
+ doc/ja/commands/select.html, doc/ja/commands/set.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/table_remove.html, doc/ja/commands/view_add.html,
+ doc/ja/developer.html, doc/ja/developer/com.html,
+ doc/ja/developer/document.html, doc/ja/developer/query.html,
+ doc/ja/developer/test.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/functions/geo_distance.html,
+ doc/ja/functions/geo_in_circle.html, doc/ja/functions/geo_in_rectangle.html,
+ doc/ja/functions/now.html, doc/ja/functions/rand.html, doc/ja/genindex.html,
+ doc/ja/grnslap.html, doc/ja/grntest.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/process.html, doc/ja/pseudo_column.html,
+ doc/ja/reference.html, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/source/conf.py, doc/ja/tutorial.html, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial09.html,
+ doc/ja/tutorial/tutorial10.html, doc/ja/type.html: Added make man and changed
+ html output directory.
+
+2010-08-20 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * configure.ac, modules/Makefile.am, modules/functions/Makefile.am,
+ modules/functions/cast.c, modules/functions/suggest.c,
+ modules/suggest/Makefile.am, modules/suggest/suggest.c: Moved suggest.so to
+ suggest directory.
+
+2010-08-20 Kouhei Sutou <kou@clear-code.com>
+
+ * Makefile.am, configure.ac, resource/Makefile.am: install resource by
+ resource/Makefile.am instead of custom target.
+
+ * configure.ac, test/unit/Makefile.am: do nothing with 'make check' on unit
+ test unavailable environment.
+
+2010-08-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: Added edit_distance() function.
+
+2010-08-19 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * ChangeLog, configure.ac, doc/ja/characteristic.html, doc/ja/commands.html,
+ doc/ja/commands/cache_limit.html, doc/ja/commands/check.html,
+ doc/ja/commands/clearlock.html, doc/ja/commands/column_create.html,
+ doc/ja/commands/column_list.html, doc/ja/commands/column_remove.html,
+ doc/ja/commands/define_selector.html, doc/ja/commands/defrag.html,
+ doc/ja/commands/delete.html, doc/ja/commands/dump.html,
+ doc/ja/commands/load.html, doc/ja/commands/log_level.html,
+ doc/ja/commands/log_put.html, doc/ja/commands/log_reopen.html,
+ doc/ja/commands/quit.html, doc/ja/commands/select.html,
+ doc/ja/commands/shutdown.html, doc/ja/commands/status.html,
+ doc/ja/commands/table_create.html, doc/ja/commands/table_list.html,
+ doc/ja/commands/table_remove.html, doc/ja/commands/view_add.html,
+ doc/ja/developer.html, doc/ja/developer/com.html,
+ doc/ja/developer/document.html, doc/ja/developer/query.html,
+ doc/ja/developer/test.html, doc/ja/execfile.html, doc/ja/expr.html,
+ doc/ja/functions.html, doc/ja/functions/geo_distance.html,
+ doc/ja/functions/geo_in_circle.html, doc/ja/functions/geo_in_rectangle.html,
+ doc/ja/functions/now.html, doc/ja/functions/rand.html, doc/ja/genindex.html,
+ doc/ja/grnslap.html, doc/ja/grntest.html, doc/ja/http.html,
+ doc/ja/index.html, doc/ja/process.html, doc/ja/pseudo_column.html,
+ doc/ja/reference.html, doc/ja/search.html, doc/ja/searchindex.js,
+ doc/ja/tutorial.html, doc/ja/tutorial/tutorial01.html,
+ doc/ja/tutorial/tutorial02.html, doc/ja/tutorial/tutorial03.html,
+ doc/ja/tutorial/tutorial04.html, doc/ja/tutorial/tutorial05.html,
+ doc/ja/tutorial/tutorial06.html, doc/ja/tutorial/tutorial07.html,
+ doc/ja/tutorial/tutorial08.html, doc/ja/tutorial/tutorial09.html,
+ doc/ja/tutorial/tutorial10.html, doc/ja/type.html: release 0.7.6
+
 2010-08-19 Daijiro MORI <daijiro.mori@gmail.com>
 
  * modules/functions/suggest.c: Fixed missing grn_table_get_key() in suggest
