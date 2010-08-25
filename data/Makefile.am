@@ -1,5 +1,5 @@
 SUBDIRS =			\
 	munin
 
-pkgdata_DATA =			\
+dist_pkgdata_DATA =		\
 	groonga.conf
