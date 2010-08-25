@@ -725,6 +725,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
               memcpy(b + pos, value, value_len);
               *((uint32_t *)(b + el)) = pos + value_len;
             }
+            return ctx->rc;
           } else {
             if ((rc = grn_ja_alloc(ctx, ja, id,
                                    value_len + old_len + sizeof(uint32_t),
@@ -774,6 +775,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
               memcpy(b + pos - value_len, value, value_len);
               *((uint32_t *)(b + el)) = pos - value_len;
             }
+            return ctx->rc;
           } else {
             if ((rc = grn_ja_alloc(ctx, ja, id,
                                    value_len + old_len + sizeof(uint32_t),
