@@ -280,6 +280,62 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
   return obj;
 }
 
+static void
+suggest_sub(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int query_type)
+{
+  grn_id id = grn_table_get(ctx, table, GRN_TEXT_VALUE(query), GRN_TEXT_LEN(query));
+  if (id) {
+    grn_ii_cursor *c;
+    grn_obj *co = grn_obj_column(ctx, table, CONST_STR_LEN("co"));
+    grn_obj *pairs = grn_ctx_at(ctx, grn_obj_get_range(ctx, co));
+    grn_obj *items_freq = grn_obj_column(ctx, table, CONST_STR_LEN("freq"));
+    grn_obj *pairs_freq, *pairs_post = grn_obj_column(ctx, pairs, CONST_STR_LEN("post"));
+    switch (query_type) {
+    case 0 :
+      pairs_freq = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq0"));
+      break;
+    case 1 :
+      pairs_freq = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq1"));
+      break;
+    case 2 :
+      pairs_freq = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq2"));
+      break;
+    default :
+      return;
+    }
+    if ((c = grn_ii_cursor_open(ctx, (grn_ii *)co, id, GRN_ID_NIL, GRN_ID_MAX,
+                                ((grn_ii *)co)->n_elements - 1, 0))) {
+      grn_ii_posting *p;
+      grn_obj post, pair_freq, item_freq;
+      GRN_RECORD_INIT(&post, 0, grn_obj_id(ctx, table));
+      GRN_INT32_INIT(&pair_freq, 0);
+      GRN_INT32_INIT(&item_freq, 0);
+      while ((p = grn_ii_cursor_next(ctx, c))) {
+        grn_id post_id;
+        GRN_BULK_REWIND(&post);
+        GRN_BULK_REWIND(&pair_freq);
+        GRN_BULK_REWIND(&item_freq);
+        grn_obj_get_value(ctx, pairs_post, p->rid, &post);
+        grn_obj_get_value(ctx, pairs_freq, p->rid, &pair_freq);
+        post_id = GRN_RECORD_VALUE(&post);
+        grn_obj_get_value(ctx, items_freq, post_id, &item_freq);
+        if (GRN_INT32_VALUE(&pair_freq)) {
+          grn_rset_recinfo *ri;
+          uint32_t score = GRN_INT32_VALUE(&pair_freq) * 1000 / GRN_INT32_VALUE(&item_freq);
+          if (grn_hash_add(ctx, (grn_hash *)res,
+                           &post_id, sizeof(grn_id), (void **)&ri, NULL)) {
+            ri->score += score;
+          }
+        }
+      }
+      GRN_OBJ_FIN(ctx, &post);
+      GRN_OBJ_FIN(ctx, &pair_freq);
+      GRN_OBJ_FIN(ctx, &item_freq);
+      grn_ii_cursor_close(ctx, c);
+    }
+  }
+}
+
 grn_rc
 grn_module_init_suggest(grn_ctx *ctx)
 {
