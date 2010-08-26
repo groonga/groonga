@@ -42,7 +42,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
           if ((norm = grn_str_open(ctx, GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
                                    GRN_STR_NORMALIZE))) {
 #if 1
-            /* RK search */
+            /* RK search + prefix search */
             grn_obj *index;
             /* FIXME: support index selection */
             if (grn_column_index(ctx, col, GRN_OP_PREFIX,
@@ -70,6 +70,16 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
               } else {
                 ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for pk.");
                 goto exit;
+              }
+
+              if ((cur = grn_table_cursor_open(ctx, table,
+                                               GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
+                                               NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
+                grn_id id;
+                while ((id = grn_table_cursor_next(ctx, cur))) {
+                  grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id), NULL, NULL);
+                }
+                grn_table_cursor_close(ctx, cur);
               }
             } else {
               ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix search.");
