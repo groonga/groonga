@@ -1328,8 +1328,18 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2))) {
       ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
     } else if (GRN_TEXT_LEN(VAR(1))) {
-      rc = grn_table_delete(ctx, table, GRN_TEXT_VALUE(VAR(1)),
-                                        GRN_TEXT_LEN(VAR(1)));
+      grn_obj *p_key = VAR(1);
+      grn_obj key;
+      if (p_key->header.domain != table->header.domain) {
+        GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
+        grn_obj_cast(ctx, p_key, &key, GRN_FALSE);
+        p_key = &key;
+      }
+      rc = grn_table_delete(ctx, table,
+                            GRN_BULK_HEAD(p_key), GRN_BULK_VSIZE(p_key));
+      if (p_key == &key) {
+        GRN_OBJ_FIN(ctx, &key);
+      }
     } else if (GRN_TEXT_LEN(VAR(2))) {
       const char *end;
       grn_id id = grn_atoui(GRN_TEXT_VALUE(VAR(2)),
