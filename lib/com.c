@@ -626,7 +626,7 @@ grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *path, uint32_t path_len
 
 grn_rc
 grn_com_send(grn_ctx *ctx, grn_com *cs,
-             grn_com_header *header, char *body, uint32_t size, int flags)
+             grn_com_header *header, const char *body, uint32_t size, int flags)
 {
   ssize_t ret, whole_size = sizeof(grn_com_header) + size;
   header->size = htonl(size);
@@ -654,7 +654,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     msg.msg_flags = 0;
     msg_iov[0].iov_base = header;
     msg_iov[0].iov_len = sizeof(grn_com_header);
-    msg_iov[1].iov_base = body;
+    msg_iov[1].iov_base = (char *)body;
     msg_iov[1].iov_len = size;
     if ((ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL|flags)) == -1) {
       SERR("sendmsg");

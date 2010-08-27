@@ -196,7 +196,7 @@ GRN_API void grn_com_close_(grn_ctx *ctx, grn_com *com);
 GRN_API grn_rc grn_com_close(grn_ctx *ctx, grn_com *com);
 
 GRN_API grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
-                            grn_com_header *header, char *body, uint32_t size, int flags);
+                            grn_com_header *header, const char *body, uint32_t size, int flags);
 grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
 GRN_API grn_rc grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *path, uint32_t path_len, int flags);
 
