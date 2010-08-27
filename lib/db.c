@@ -6898,7 +6898,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
         if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
-        {
+        if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
           grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
           if (!lexicon) { continue; }
           grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer);
