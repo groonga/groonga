@@ -48,6 +48,8 @@ void data_prefix_rk(void);
 void test_prefix_rk(gpointer data);
 void data_near_uint32(void);
 void test_near_uint32(gpointer data);
+void data_near_geo_point(void);
+void test_near_geo_point(gpointer data);
 void data_common_prefix_search(void);
 void test_common_prefix_search(gpointer data);
 
