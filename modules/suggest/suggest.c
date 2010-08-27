@@ -171,6 +171,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
+    grn_id tid = GRN_ID_NIL;
     if (GRN_TEXT_LEN(query)) {
       grn_str *norm;
       grn_table_cursor *cur;
@@ -204,7 +205,9 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
         }
         grn_str_close(ctx, norm);
       }
-      if ((cur = grn_table_cursor_open(ctx, table, TEXT_VALUE_LEN(query),
+      tid = cooccur_search(ctx, table, query, res, COMPLETE);
+      if (!grn_table_size(ctx, res) &&
+          (cur = grn_table_cursor_open(ctx, table, TEXT_VALUE_LEN(query),
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, cur))) {
@@ -213,7 +216,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
         grn_table_cursor_close(ctx, cur);
       }
     }
-    output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, COMPLETE));
+    output(ctx, table, res, 10, tid);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -230,10 +233,11 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
       grn_obj *key, *index;
       if ((key = grn_obj_column(ctx, table, CONST_STR_LEN("_key")))) {
         if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
+#if 0
           grn_select_optarg optarg;
           memset(&optarg, 0, sizeof(grn_select_optarg));
           optarg.mode = GRN_OP_SIMILAR;
-          optarg.similarity_threshold = INT32_MAX;
+          optarg.similarity_threshold = 10;
           grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
                         (grn_hash *)res, GRN_OP_OR, &optarg);
           {
@@ -273,6 +277,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
                   "error on building expr. for calicurating edit distance");
             }
           }
+#endif
           grn_obj_unlink(ctx, index);
         }
         grn_obj_unlink(ctx, key);
