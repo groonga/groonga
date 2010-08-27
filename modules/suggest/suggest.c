@@ -53,7 +53,7 @@ grn_parse_suggest_types(const char *nptr, const char *end)
   return types;
 }
 
-static void
+static grn_id
 cooccur_search(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int query_type)
 {
   grn_id id = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
@@ -74,7 +74,7 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int q
       pairs_freq = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq2"));
       break;
     default :
-      return;
+      return id;
     }
     if ((c = grn_ii_cursor_open(ctx, (grn_ii *)co, id, GRN_ID_NIL, GRN_ID_MAX,
                                 ((grn_ii *)co)->n_elements - 1, 0))) {
@@ -111,10 +111,11 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int q
       grn_ii_cursor_close(ctx, c);
     }
   }
+  return id;
 }
 
 static void
-output(grn_ctx *ctx, grn_obj *table, grn_obj *res, int limit)
+output(grn_ctx *ctx, grn_obj *table, grn_obj *res, int limit, grn_id tid)
 {
   grn_obj *sorted;
   if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
@@ -126,7 +127,7 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, int limit)
     if ((keys = grn_table_sort_key_from_str(ctx, CONST_STR_LEN("_score"), res, &nkeys))) {
       grn_table_cursor *scur;
       /* TODO: support offset limit */
-      grn_table_sort(ctx, res, 0, limit, sorted, keys, nkeys);
+      grn_table_sort(ctx, res, 0, limit + 1, sorted, keys, nkeys);
       GRN_OUTPUT_ARRAY_OPEN("RESULTS", -1);
       if ((scur = grn_table_cursor_open(ctx, sorted, NULL, 0, NULL, 0, 0, -1, 0))) {
         grn_id id;
@@ -136,9 +137,10 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, int limit)
           char key[GRN_TABLE_MAX_KEY_SIZE];
           grn_obj score_val;
 
-          GRN_OUTPUT_ARRAY_OPEN("RESULT", 2);
           grn_table_get_key(ctx, sorted, id, &res_id, sizeof(grn_id));
           grn_table_get_key(ctx, res, res_id, &id, sizeof(grn_id));
+          if (id == tid) { continue; }
+          GRN_OUTPUT_ARRAY_OPEN("RESULT", 2);
           key_len = grn_table_get_key(ctx, table, id, key, GRN_TABLE_MAX_KEY_SIZE);
           GRN_OUTPUT_STR(key, key_len);
 
@@ -209,8 +211,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
       }
       grn_table_cursor_close(ctx, cur);
     }
-    cooccur_search(ctx, table, query, res, COMPLETE);
-    output(ctx, table, res, 10);
+    output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, COMPLETE));
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -273,8 +274,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
       }
       grn_obj_unlink(ctx, key);
     }
-    cooccur_search(ctx, table, query, res, CORRECT);
-    output(ctx, table, res, 10);
+    output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, CORRECT));
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -287,8 +287,7 @@ suggest(grn_ctx *ctx, grn_obj *table, grn_obj *query)
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    cooccur_search(ctx, table, query, res, SUGGEST);
-    output(ctx, table, res, 10);
+    output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, SUGGEST));
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
