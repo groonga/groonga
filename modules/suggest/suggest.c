@@ -301,15 +301,24 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_obj *table, *col;
   int types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
   if ((table = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
-    if (types & 1) {
+    GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
+    if (types & COMPLETE) {
       if ((col = grn_obj_column(ctx, table, TEXT_VALUE_LEN(VAR(2))))) {
+        GRN_OUTPUT_CSTR("COMPLETE");
         complete(ctx, table, col, VAR(3));
       } else {
         ERR(GRN_INVALID_ARGUMENT, "invalid column.");
       }
     }
-    if (types & 2) { correct(ctx, table, VAR(3)); }
-    if (types & 4) { suggest(ctx, table, VAR(3)); }
+    if (types & CORRECT) {
+      GRN_OUTPUT_CSTR("CORRECT");
+      correct(ctx, table, VAR(3));
+    }
+    if (types & SUGGEST) {
+      GRN_OUTPUT_CSTR("SUGGEST");
+      suggest(ctx, table, VAR(3));
+    }
+    GRN_OUTPUT_MAP_CLOSE();
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid table.");
   }
