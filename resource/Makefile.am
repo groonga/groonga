@@ -17,6 +17,7 @@ nobase_dist_pkgdata_DATA =							     \
 	admin_html/css/ui-lightness/images/ui-icons_ffffff_256x240.png		     \
 	admin_html/css/ui-lightness/jquery-ui-1.8.1.custom.css			     \
 	admin_html/images/groonga.png						     \
+	admin_html/images/loading.gif						     \
 	admin_html/index.html							     \
 	admin_html/js/jquery-1.4.2.min.js					     \
 	admin_html/js/jquery-ui-1.8.1.custom.min.js
