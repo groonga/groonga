@@ -26,6 +26,7 @@
 void test_by_id(void);
 void test_by_key(void);
 void test_referenced_record(void);
+void test_uint64(void);
 
 static gchar *tmp_directory;
 
@@ -142,3 +143,21 @@ test_referenced_record(void)
                           send_command("select Users "
                                        "--output_columns _key"));
 }
+
+void
+test_uint64(void)
+{
+  assert_send_command("table_create Students TABLE_HASH_KEY UInt64");
+  assert_send_command("load --table Students --columns '_key'\n"
+                      "[\n"
+                      "  [29],\n"
+                      "  [2929]\n"
+                      "]");
+  assert_send_command("delete Students 2929");
+  cut_assert_equal_string("[[[1],"
+                            "[[\"_key\",\"UInt64\"]],"
+                            "[29]]]",
+                          send_command("select Students "
+                                       "--output_columns _key"));
+}
+
