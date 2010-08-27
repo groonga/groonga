@@ -171,45 +171,47 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    grn_str *norm;
-    grn_table_cursor *cur;
-    if ((norm = grn_str_open(ctx, TEXT_VALUE_LEN(query), GRN_STR_NORMALIZE))) {
-      /* RK search + prefix search */
-      grn_obj *index;
-      /* FIXME: support index selection */
-      if (grn_column_index(ctx, col, GRN_OP_PREFIX, &index, 1, NULL)) {
-        if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
-                                         norm->norm, norm->norm_blen, NULL, 0, 0, -1,
-                                         GRN_CURSOR_PREFIX|GRN_CURSOR_RK))) {
-          grn_id id;
-          while ((id = grn_table_cursor_next(ctx, cur))) {
-            grn_ii_cursor *icur;
-            if ((icur = grn_ii_cursor_open(ctx, (grn_ii *)index, id,
-                                           GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
-              grn_ii_posting *p;
-              while ((p = grn_ii_cursor_next(ctx, icur))) {
-                grn_hash_add(ctx, (grn_hash *)res, &p->rid, sizeof(grn_id), NULL, NULL);
-                /* FIXME: execute _score = score */
+    if (GRN_TEXT_LEN(query)) {
+      grn_str *norm;
+      grn_table_cursor *cur;
+      if ((norm = grn_str_open(ctx, TEXT_VALUE_LEN(query), GRN_STR_NORMALIZE))) {
+        /* RK search + prefix search */
+        grn_obj *index;
+        /* FIXME: support index selection */
+        if (grn_column_index(ctx, col, GRN_OP_PREFIX, &index, 1, NULL)) {
+          if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
+                                           norm->norm, norm->norm_blen, NULL, 0, 0, -1,
+                                           GRN_CURSOR_PREFIX|GRN_CURSOR_RK))) {
+            grn_id id;
+            while ((id = grn_table_cursor_next(ctx, cur))) {
+              grn_ii_cursor *icur;
+              if ((icur = grn_ii_cursor_open(ctx, (grn_ii *)index, id,
+                                             GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
+                grn_ii_posting *p;
+                while ((p = grn_ii_cursor_next(ctx, icur))) {
+                  grn_hash_add(ctx, (grn_hash *)res, &p->rid, sizeof(grn_id), NULL, NULL);
+                  /* FIXME: execute _score = score */
+                }
+                grn_ii_cursor_close(ctx, icur);
               }
-              grn_ii_cursor_close(ctx, icur);
             }
+            grn_table_cursor_close(ctx, cur);
+          } else {
+            ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for pk.");
           }
-          grn_table_cursor_close(ctx, cur);
         } else {
-          ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for pk.");
+          ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix search.");
         }
-      } else {
-        ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix search.");
+        grn_str_close(ctx, norm);
       }
-      grn_str_close(ctx, norm);
-    }
-    if ((cur = grn_table_cursor_open(ctx, table, TEXT_VALUE_LEN(query),
-                                     NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
-      grn_id id;
-      while ((id = grn_table_cursor_next(ctx, cur))) {
-        grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id), NULL, NULL);
+      if ((cur = grn_table_cursor_open(ctx, table, TEXT_VALUE_LEN(query),
+                                       NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
+        grn_id id;
+        while ((id = grn_table_cursor_next(ctx, cur))) {
+          grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id), NULL, NULL);
+        }
+        grn_table_cursor_close(ctx, cur);
       }
-      grn_table_cursor_close(ctx, cur);
     }
     output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, COMPLETE));
     grn_obj_close(ctx, res);
@@ -224,55 +226,57 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    grn_obj *key, *index;
-    if ((key = grn_obj_column(ctx, table, CONST_STR_LEN("_key")))) {
-      if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
-        grn_select_optarg optarg;
-        memset(&optarg, 0, sizeof(grn_select_optarg));
-        optarg.mode = GRN_OP_SIMILAR;
-        optarg.similarity_threshold = INT32_MAX;
-        grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
-                      (grn_hash *)res, GRN_OP_OR, &optarg);
-        {
-          /* exec _score = edit_distance(_key, "query string") for all records */
-          grn_obj *var;
-          grn_obj *expr;
+    if (GRN_TEXT_LEN(query)) {
+      grn_obj *key, *index;
+      if ((key = grn_obj_column(ctx, table, CONST_STR_LEN("_key")))) {
+        if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
+          grn_select_optarg optarg;
+          memset(&optarg, 0, sizeof(grn_select_optarg));
+          optarg.mode = GRN_OP_SIMILAR;
+          optarg.similarity_threshold = INT32_MAX;
+          grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
+                        (grn_hash *)res, GRN_OP_OR, &optarg);
+          {
+            /* exec _score = edit_distance(_key, "query string") for all records */
+            grn_obj *var;
+            grn_obj *expr;
 
-          GRN_EXPR_CREATE_FOR_QUERY(ctx, res, expr, var);
-          if (expr) {
-            grn_table_cursor *tc;
-            grn_obj *score = grn_obj_column(ctx, res, CONST_STR_LEN("_score"));
-            grn_obj *key = grn_obj_column(ctx, res, CONST_STR_LEN("_key"));
-            grn_expr_append_obj(ctx, expr,
-                                score,
-                                GRN_OP_GET_VALUE, 1);
-            grn_expr_append_obj(ctx, expr,
-                                grn_ctx_get(ctx, CONST_STR_LEN("edit_distance")),
-                                GRN_OP_PUSH, 1);
-            grn_expr_append_obj(ctx, expr,
-                                key,
-                                GRN_OP_GET_VALUE, 1);
-            grn_expr_append_const(ctx, expr, query, GRN_OP_PUSH, 1);
-            grn_expr_append_op(ctx, expr, GRN_OP_CALL, 2);
-            grn_expr_append_op(ctx, expr, GRN_OP_ASSIGN, 2);
+            GRN_EXPR_CREATE_FOR_QUERY(ctx, res, expr, var);
+            if (expr) {
+              grn_table_cursor *tc;
+              grn_obj *score = grn_obj_column(ctx, res, CONST_STR_LEN("_score"));
+              grn_obj *key = grn_obj_column(ctx, res, CONST_STR_LEN("_key"));
+              grn_expr_append_obj(ctx, expr,
+                                  score,
+                                  GRN_OP_GET_VALUE, 1);
+              grn_expr_append_obj(ctx, expr,
+                                  grn_ctx_get(ctx, CONST_STR_LEN("edit_distance")),
+                                  GRN_OP_PUSH, 1);
+              grn_expr_append_obj(ctx, expr,
+                                  key,
+                                  GRN_OP_GET_VALUE, 1);
+              grn_expr_append_const(ctx, expr, query, GRN_OP_PUSH, 1);
+              grn_expr_append_op(ctx, expr, GRN_OP_CALL, 2);
+              grn_expr_append_op(ctx, expr, GRN_OP_ASSIGN, 2);
 
-            if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
-              while (!grn_table_cursor_next_o(ctx, tc, var)) {
-                grn_expr_exec(ctx, expr, 0);
+              if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
+                while (!grn_table_cursor_next_o(ctx, tc, var)) {
+                  grn_expr_exec(ctx, expr, 0);
+                }
+                grn_table_cursor_close(ctx, tc);
               }
-              grn_table_cursor_close(ctx, tc);
+              grn_obj_unlink(ctx, score);
+              grn_obj_unlink(ctx, key);
+              grn_obj_unlink(ctx, expr);
+            } else {
+              ERR(GRN_UNKNOWN_ERROR,
+                  "error on building expr. for calicurating edit distance");
             }
-            grn_obj_unlink(ctx, score);
-            grn_obj_unlink(ctx, key);
-            grn_obj_unlink(ctx, expr);
-          } else {
-            ERR(GRN_UNKNOWN_ERROR,
-                "error on building expr. for calicurating edit distance");
           }
+          grn_obj_unlink(ctx, index);
         }
-        grn_obj_unlink(ctx, index);
+        grn_obj_unlink(ctx, key);
       }
-      grn_obj_unlink(ctx, key);
     }
     output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, CORRECT));
     grn_obj_close(ctx, res);
@@ -303,18 +307,18 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
     GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
     if (types & COMPLETE) {
       if ((col = grn_obj_column(ctx, table, TEXT_VALUE_LEN(VAR(2))))) {
-        GRN_OUTPUT_CSTR("COMPLETE");
+        GRN_OUTPUT_CSTR("complete");
         complete(ctx, table, col, VAR(3));
       } else {
         ERR(GRN_INVALID_ARGUMENT, "invalid column.");
       }
     }
     if (types & CORRECT) {
-      GRN_OUTPUT_CSTR("CORRECT");
+      GRN_OUTPUT_CSTR("correct");
       correct(ctx, table, VAR(3));
     }
     if (types & SUGGEST) {
-      GRN_OUTPUT_CSTR("SUGGEST");
+      GRN_OUTPUT_CSTR("suggest");
       suggest(ctx, table, VAR(3));
     }
     GRN_OUTPUT_MAP_CLOSE();
