@@ -1353,7 +1353,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "unknown table name");
   }
-  GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_BOOL(!rc);
   return NULL;
 }
 
