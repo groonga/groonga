@@ -1,3 +1,9 @@
+groonga (1.0.0-1) lucid; urgency=low
+
+  * New upstream release.
+
+ -- Kouhei Sutou <kou@clear-code.com>  Sun, 29 Aug 2010 00:07:53 +0900
+
 groonga (0.7.7-1) lucid; urgency=low
 
   * New upstream release.
