@@ -1,4 +1,102 @@
+2010-08-29 Kouhei Sutou <kou@clear-code.com>
+
+ * debian/changelog: add 1.0.0-1 entry.
+
+ * configure.ac: 0.7.7 -> 1.0.0.
+
+ * doc/ja/source/commands/suggest.txt, doc/ja/source/news.txt: add 1.0.0
+ entry.
+
+2010-08-27 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: add missing declarations.
+
+2010-08-28 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Enhanced suggest command.
+
+2010-08-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: suggest command returns void result when invoked
+ with empty string.
+
+ * modules/suggest/suggest.c: suggest command doesn't return original string
+ anymore.
+
+ * resource/Makefile.am: Fixed missing loading.gif in Makefile.am
+
+2010-08-27 Yosuke Sekikawa <yosuke@razil.jp>
+
+ * resource/admin_html/images/loading.gif: add loading.gif
+
+2010-08-27 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/proc.c: delete command returns false when no corresponding record
+ found.
+
+ * lib/com.c, lib/com.h: Added const qualifier to the body argument of
+ grn_com_send().
+
+ * doc/ja/source/commands/suggest.txt, modules/suggest/suggest.c: suggest
+ command returns hash
+
+ * lib/db.c: Fixed missing type check.
+
+ * modules/suggest/suggest.c: Enhanced command_suggest
+
+2010-08-27 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-command-delete.c: delete command: support
+ record deletion with no text key table.  Reported by Itagaki Takahiro.
+ Thanks!!!
+
+2010-08-26 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/source/commands/suggest.txt, modules/suggest/suggest.c: Now command
+ suggest supports types parameter.
+
+ * doc/ja/source/commands/suggest.txt: Added suggest command document.
+
+2010-08-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Added suggest_sub().
+
+2010-08-26 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * modules/suggest/suggest.c: Added prefix search on suggest completion.
+
+ * modules/suggest/suggest.c: Normalized query with RK suggest.
+
+2010-08-26 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Enhanced func_suggest_preparer().
+
 2010-08-25 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-select.c: add a test for equal query with
+ index.
+
+ * apt/build-in-chroot.sh: use jp.archive.ubuntu.com if available.
+
+2010-08-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/expr.c: Fixed a bug in grn_table_select() causing
+ GRN_OP_EQUAL to not work correctly.
+
+2010-08-25 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ctx.c, test/unit/core/Makefile.am, test/unit/core/test-function.c:
+ don't call not command proc as command. #431
+
+ * autogen.sh: fix autotools execute order.
+
+2010-08-25 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/store.c: Fixed missing return in grn_ja_put_raw().
+
+2010-08-25 Kouhei Sutou <kou@clear-code.com>
+
+ * ChangeLog, configure.ac: release 0.7.7
 
  * debian/changelog: add 0.7.7 entry.
 
