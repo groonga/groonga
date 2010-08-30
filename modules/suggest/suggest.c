@@ -28,6 +28,15 @@
 #define CORRECT  2
 #define SUGGEST  4
 
+#define LAP(msg,num) {\
+  uint64_t et;\
+  grn_timeval tv;\
+  grn_timeval_now(ctx, &tv);\
+  et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC\
+    + (tv.tv_usec - ctx->impl->tv.tv_usec);\
+  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s(%d)", (intptr_t)ctx, et, msg, num);\
+}
+
 static int
 grn_parse_suggest_types(const char *nptr, const char *end)
 {
@@ -53,10 +62,10 @@ grn_parse_suggest_types(const char *nptr, const char *end)
   return types;
 }
 
-static grn_id
-cooccur_search(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int query_type)
+static uint32_t
+cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_type)
 {
-  grn_id id = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
+  uint32_t max_score = 0;
   if (id) {
     grn_ii_cursor *c;
     grn_obj *co = grn_obj_column(ctx, table, CONST_STR_LEN("co"));
@@ -74,7 +83,7 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int q
       pairs_freq = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq2"));
       break;
     default :
-      return id;
+      return max_score;
     }
     if ((c = grn_ii_cursor_open(ctx, (grn_ii *)co, id, GRN_ID_NIL, GRN_ID_MAX,
                                 ((grn_ii *)co)->n_elements - 1, 0))) {
@@ -98,6 +107,7 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int q
         if (pfreq && ifreq) {
           grn_rset_recinfo *ri;
           uint32_t score = 1000/pfreq;
+          if (max_score < pfreq) { max_score = pfreq; }
           /* put any formula if desired */
           if (grn_hash_add(ctx, (grn_hash *)res,
                            &post_id, sizeof(grn_id), (void **)&ri, NULL)) {
@@ -111,7 +121,7 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *res, int q
       grn_ii_cursor_close(ctx, c);
     }
   }
-  return id;
+  return max_score;
 }
 
 static void
@@ -171,7 +181,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    grn_id tid = GRN_ID_NIL;
+    grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
     if (GRN_TEXT_LEN(query)) {
       grn_str *norm;
       grn_table_cursor *cur;
@@ -205,7 +215,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
         }
         grn_str_close(ctx, norm);
       }
-      tid = cooccur_search(ctx, table, query, res, COMPLETE);
+      cooccur_search(ctx, table, tid, res, COMPLETE);
       if (!grn_table_size(ctx, res) &&
           (cur = grn_table_cursor_open(ctx, table, TEXT_VALUE_LEN(query),
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
@@ -229,17 +239,21 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    if (GRN_TEXT_LEN(query)) {
+    grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
+    uint32_t max_score = cooccur_search(ctx, table, tid, res, CORRECT);
+    LAP("cooccur", max_score);
+    if (GRN_TEXT_LEN(query) && max_score < 100) {
       grn_obj *key, *index;
       if ((key = grn_obj_column(ctx, table, CONST_STR_LEN("_key")))) {
         if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
-#if 0
           grn_select_optarg optarg;
           memset(&optarg, 0, sizeof(grn_select_optarg));
           optarg.mode = GRN_OP_SIMILAR;
-          optarg.similarity_threshold = 10;
+          optarg.similarity_threshold = 0;
           grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
-                        (grn_hash *)res, GRN_OP_OR, &optarg);
+                        (grn_hash *)res, GRN_OP_ADJUST, &optarg);
+          grn_obj_unlink(ctx, index);
+          LAP("similar", grn_table_size(ctx, res));
           {
             /* exec _score = edit_distance(_key, "query string") for all records */
             grn_obj *var;
@@ -277,13 +291,11 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
                   "error on building expr. for calicurating edit distance");
             }
           }
-#endif
-          grn_obj_unlink(ctx, index);
         }
         grn_obj_unlink(ctx, key);
       }
     }
-    output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, CORRECT));
+    output(ctx, table, res, 10, tid);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -296,7 +308,9 @@ suggest(grn_ctx *ctx, grn_obj *table, grn_obj *query)
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    output(ctx, table, res, 10, cooccur_search(ctx, table, query, res, SUGGEST));
+    grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
+    cooccur_search(ctx, table, tid, res, SUGGEST);
+    output(ctx, table, res, 10, tid);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
