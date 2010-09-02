@@ -70,3 +70,4 @@ version.sh
 /apt/ubuntu/*.db
 /apt/ubuntu/*.conf
 /configure.lineno
+/rpm/*/*.spec

@@ -94,6 +94,7 @@ AC_CONFIG_FILES([Makefile
                  modules/suggest/Makefile
                  examples/Makefile
                  apt/Makefile
+                 yum/Makefile
                  data/Makefile
                  data/munin/Makefile
                  resource/Makefile
@@ -682,7 +683,8 @@ AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
   [Default command line option configuration file.])
 
 AC_OUTPUT([
-  groonga.spec
+  rpm/centos/groonga.spec
+  rpm/fedora/groonga.spec
   groonga.pc
   ])
 

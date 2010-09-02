@@ -1,0 +1,6 @@
+intltool
+libtool
+gcc
+make
+libedit-devel
+mecab-devel

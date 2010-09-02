@@ -1,0 +1,92 @@
+Name:		groonga
+Version:	@VERSION@
+Release:	1%{?dist}
+Summary:	An Embeddable Fulltext Search Engine
+
+Group:		Applications/Text
+License:	LGPLv2
+URL:		http://groonga.org
+Source0:	http://groonga.org/files/groonga/groonga-@VERSION@.tar.gz
+
+BuildRequires:	mecab-devel
+BuildRequires:	libedit-devel
+# to avoid binary-or-shlib-defines-rpath, we need to regenerate
+# configure and libtool scripts
+BuildRequires:	autoconf, automake, libtool
+Requires:	mecab
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description
+Groonga is an embeddable full-text search engine library.  It can
+integrate with DBMS and scripting languages to enhance their search
+functionality.  It also provides a standalone data store server based
+on relational data model.
+
+%package libs
+Summary:	Runtime libraries for groonga
+Group:		System Environment/Libraries
+License:	LGPLv2
+
+%description libs
+This package contains the libraries for groonga
+
+%package devel
+Summary:	Libraries and header files for groonga
+Group:		Development/Libraries
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description devel
+Libraries and header files for groonga
+
+%prep
+%setup -q
+
+
+%build
+# to avoid binary-or-shlib-defines-rpath, we need to regenerate
+# configure and libtool scripts
+autoreconf -f -i
+%configure
+make %{?_smp_mflags}
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/functions/*.la
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/functions/*.a
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/tokenizers/*.la
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/tokenizers/*.a
+rm $RPM_BUILD_ROOT%{_libdir}/*.la
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%post libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/*
+
+%files libs
+%defattr(-,root,root,-)
+%doc README AUTHORS COPYING doc/*
+%{_libdir}/*.so.*
+%{_libdir}/groonga/modules/functions/*.so
+%{_libdir}/groonga/modules/tokenizers/*.so
+%{_datadir}/groonga/
+
+%files devel
+%defattr(-, root, root)
+%{_includedir}/groonga/*
+%{_libdir}/*.so
+%{_libdir}/*.a
+%{_libdir}/pkgconfig/groonga*.pc
+
+
+%changelog
+* Tue Aug 24 2010 Daiki Ueno <dueno@redhat.com> - 0.7.6-1
+- initial packaging for Fedora
