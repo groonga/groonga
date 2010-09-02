@@ -94,6 +94,9 @@ AC_CONFIG_FILES([Makefile
                  modules/suggest/Makefile
                  examples/Makefile
                  apt/Makefile
+                 rpm/Makefile
+                 rpm/centos/Makefile
+                 rpm/fedora/Makefile
                  yum/Makefile
                  data/Makefile
                  data/munin/Makefile
