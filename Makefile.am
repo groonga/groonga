@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = 1.9.7
 SUBDIRS = lib modules src examples test apt yum data resource doc
 #dist_data_DATA =
-EXTRA_DIST = bindings version-gen.sh
+EXTRA_DIST = bindings rpm version-gen.sh
 pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
