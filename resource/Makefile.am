@@ -20,4 +20,5 @@ nobase_dist_pkgdata_DATA =							     \
 	admin_html/images/loading.gif						     \
 	admin_html/index.html							     \
 	admin_html/js/jquery-1.4.2.min.js					     \
-	admin_html/js/jquery-ui-1.8.1.custom.min.js
+	admin_html/js/jquery-ui-1.8.1.custom.min.js				     \
+	admin_html/js/jquery.json-2.2.min.js
