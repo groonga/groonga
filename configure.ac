@@ -100,6 +100,9 @@ AC_CONFIG_FILES([Makefile
                  yum/Makefile
                  data/Makefile
                  data/munin/Makefile
+                 data/init.d/Makefile
+                 data/init.d/redhat/Makefile
+                 data/init.d/redhat/sysconfig/Makefile
                  resource/Makefile
                  doc/Makefile
                  doc/ja/Makefile
