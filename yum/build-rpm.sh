@@ -57,7 +57,7 @@ mkdir -p tmp
 cd tmp
 wget \$base/\$srpm
 rpm2cpio \$srpm | cpio -id
-mv \$srpm ~/dependencies/SRPMS/
+rm \$srpm
 mv *.spec ~/rpm/SPECS/
 mv * ~/rpm/SOURCES/
 cd ..
@@ -65,6 +65,7 @@ rm -rf tmp
 rpmbuild -ba rpm/SPECS/*.spec
 
 cp -p rpm/RPMS/*/*.rpm dependencies/RPMS/
+cp -p rpm/SRPMS/*.rpm dependencies/SRPMS/
 EOF
 
     run chmod +x $BUILD_SCRIPT
