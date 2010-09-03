@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = 1.9.7
-SUBDIRS = lib modules src examples test apt data resource doc
+SUBDIRS = lib modules src examples test apt rpm yum data resource doc
 #dist_data_DATA =
 EXTRA_DIST = bindings version-gen.sh
 pkginclude_HEADERS = groonga.h

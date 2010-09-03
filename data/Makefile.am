@@ -1,5 +1,6 @@
 SUBDIRS =			\
-	munin
+	munin			\
+	init.d
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 dist_pkgsysconf_DATA =		\

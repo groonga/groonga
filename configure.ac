@@ -94,8 +94,15 @@ AC_CONFIG_FILES([Makefile
                  modules/suggest/Makefile
                  examples/Makefile
                  apt/Makefile
+                 rpm/Makefile
+                 rpm/centos/Makefile
+                 rpm/fedora/Makefile
+                 yum/Makefile
                  data/Makefile
                  data/munin/Makefile
+                 data/init.d/Makefile
+                 data/init.d/redhat/Makefile
+                 data/init.d/redhat/sysconfig/Makefile
                  resource/Makefile
                  doc/Makefile
                  doc/ja/Makefile
@@ -674,6 +681,9 @@ AC_ARG_WITH(rsync-path,
             [RSYNC_PATH=""])
 AC_SUBST(RSYNC_PATH)
 
+pkgsysconfdir="\$(sysconfdir)/$PACKAGE_NAME"
+AC_SUBST(pkgsysconfdir)
+
 GRN_CONFIG_PATH="`
   test \"$prefix\" = NONE && prefix=
   eval echo ${sysconfdir}/groonga/groonga.conf
@@ -682,7 +692,8 @@ AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
   [Default command line option configuration file.])
 
 AC_OUTPUT([
-  groonga.spec
+  rpm/centos/groonga.spec
+  rpm/fedora/groonga.spec
   groonga.pc
   ])
 

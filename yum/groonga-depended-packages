@@ -1,0 +1,5 @@
+intltool
+libtool
+gcc
+make
+mecab-devel
