@@ -69,7 +69,6 @@ Munin plugins for groonga
 # to avoid binary-or-shlib-defines-rpath, we need to regenerate
 # configure and libtool scripts
 autoreconf -f -i
-%define optflags -O0
 %configure
 make %{?_smp_mflags}
 
