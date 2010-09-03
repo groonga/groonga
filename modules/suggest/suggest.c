@@ -62,10 +62,10 @@ grn_parse_suggest_types(const char *nptr, const char *end)
   return types;
 }
 
-static uint32_t
+static int32_t
 cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_type)
 {
-  uint32_t max_score = 0;
+  int32_t max_score = 0;
   if (id) {
     grn_ii_cursor *c;
     grn_obj *co = grn_obj_column(ctx, table, CONST_STR_LEN("co"));
@@ -106,7 +106,7 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_
         ifreq = GRN_INT32_VALUE(&item_freq);
         if (pfreq && ifreq) {
           grn_rset_recinfo *ri;
-          uint32_t score = pfreq;
+          int32_t score = pfreq;
           if (max_score < score) { max_score = score; }
           /* put any formula if desired */
           if (grn_hash_add(ctx, (grn_hash *)res,
@@ -205,7 +205,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
                                              GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
                 grn_ii_posting *p;
                 while ((p = grn_ii_cursor_next(ctx, icur))) {
-                  uint32_t score;
+                  int32_t score;
                   grn_rset_recinfo *ri;
                   grn_hash_add(ctx, (grn_hash *)res,
                                &p->rid, sizeof(grn_id), (void **)&ri, NULL);
@@ -234,7 +234,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, cur))) {
-          uint32_t score;
+          int32_t score;
           grn_rset_recinfo *ri;
           grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id), (void **)&ri, NULL);
           GRN_BULK_REWIND(&item_freq);
@@ -260,15 +260,15 @@ static void
 correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
 {
   grn_obj *res;
-  grn_obj *items_freq = grn_obj_column(ctx, table, CONST_STR_LEN("freq"));
+  grn_obj *items_freq2 = grn_obj_column(ctx, table, CONST_STR_LEN("freq2"));
   grn_obj *items_boost = grn_obj_column(ctx, table, CONST_STR_LEN("boost"));
-  grn_obj item_freq, item_boost;
-  GRN_INT32_INIT(&item_freq, 0);
+  grn_obj item_freq2, item_boost;
+  GRN_INT32_INIT(&item_freq2, 0);
   GRN_INT32_INIT(&item_boost, 0);
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
     grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
-    uint32_t max_score = cooccur_search(ctx, table, tid, res, CORRECT);
+    int32_t orig_score, max_score = cooccur_search(ctx, table, tid, res, CORRECT);
     LAP("cooccur", max_score);
     if (GRN_TEXT_LEN(query) && max_score < 100) {
       grn_obj *key, *index;
@@ -286,17 +286,17 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
             grn_hash_cursor *hc = grn_hash_cursor_open(ctx, (grn_hash *)res, NULL,
                                                        0, NULL, 0, 0, -1, 0);
             if (hc) {
-              uint32_t score;
+              int32_t score;
               grn_id *rp;
               grn_rset_recinfo *ri;
               while (grn_hash_cursor_next(ctx, hc)) {
                 if (grn_hash_cursor_get_key_value(ctx, hc, (void **)(&rp), NULL,
                                                   (void **)(&ri))) {
-                  GRN_BULK_REWIND(&item_freq);
+                  GRN_BULK_REWIND(&item_freq2);
                   GRN_BULK_REWIND(&item_boost);
-                  grn_obj_get_value(ctx, items_freq, *rp, &item_freq);
+                  grn_obj_get_value(ctx, items_freq2, *rp, &item_freq2);
                   grn_obj_get_value(ctx, items_boost, *rp, &item_boost);
-                  score = GRN_INT32_VALUE(&item_freq) + GRN_INT32_VALUE(&item_boost);
+                  score = (GRN_INT32_VALUE(&item_freq2) >> 4) + GRN_INT32_VALUE(&item_boost);
                   ri->score += score;
                   if (score < 100) { grn_hash_cursor_delete(ctx, hc, NULL); }
                 }
@@ -352,7 +352,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
   }
   GRN_OBJ_FIN(ctx, &item_boost);
-  GRN_OBJ_FIN(ctx, &item_freq);
+  GRN_OBJ_FIN(ctx, &item_freq2);
 }
 
 static void
@@ -416,6 +416,7 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
     if (post_event && post_item && seq) {
       grn_obj *items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[2]));
       grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
+      grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
       grn_obj *items_last = grn_obj_column(ctx, items, CONST_STR_LEN("last"));
       grn_obj *seqs = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[3]));
       grn_obj *seqs_events = grn_obj_column(ctx, seqs, CONST_STR_LEN("events"));
@@ -438,6 +439,7 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
         grn_id pid, tid, *ep, *es;
         grn_obj pre_type, pre_time, pre_item;
         uint64_t key, key_ = ((uint64_t)post_item) << 32;
+        grn_obj_set_value(ctx, items_freq2, post_item, &v1, GRN_OBJ_INCR);
         grn_obj_get_value(ctx, seqs_events, seq, &pre_events);
         ep = (grn_id *)GRN_BULK_CURR(&pre_events);
         es = (grn_id *)GRN_BULK_HEAD(&pre_events);
