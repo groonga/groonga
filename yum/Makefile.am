@@ -31,7 +31,7 @@ update:
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
 	  rsync -avz --exclude .gitignore			\
-	    $${distribution}/ $(SERVER_PATH)/$${distribution};	\
+	    $${distribution}/ $(RSYNC_PATH)/$${distribution};	\
 	done
 
 build: build-in-chroot build-repository-rpm
