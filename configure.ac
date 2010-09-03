@@ -681,6 +681,9 @@ AC_ARG_WITH(rsync-path,
             [RSYNC_PATH=""])
 AC_SUBST(RSYNC_PATH)
 
+pkgsysconfdir="\$(sysconfdir)/$PACKAGE_NAME"
+AC_SUBST(pkgsysconfdir)
+
 GRN_CONFIG_PATH="`
   test \"$prefix\" = NONE && prefix=
   eval echo ${sysconfdir}/groonga/groonga.conf
