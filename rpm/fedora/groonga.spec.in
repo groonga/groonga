@@ -83,10 +83,10 @@ rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.a
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
-mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
+install -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
     $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
-mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/sysconfig/groonga \
+install -m 644 $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/sysconfig/groonga \
     $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
 
 mv $RPM_BUILD_ROOT%{_datadir}/groonga/munin/ $RPM_BUILD_ROOT%{_datadir}/
@@ -143,8 +143,8 @@ if [ $1 -ge 1 ] ; then
 fi
 
 if [ $1 -eq 0 ]; then
-    /usr/sbin/userdel -r milter-manager || \
-        %logmsg "User \"milter-manager\" could not be deleted."
+    /usr/sbin/userdel -r groonga || \
+        %logmsg "User \"groonga\" could not be deleted."
 fi
 
 %postun libs -p /sbin/ldconfig
@@ -162,9 +162,9 @@ fi
 %defattr(-,root,root,-)
 %doc %{_datadir}/man/
 %config %{_sysconfdir}/groonga/
-%config %{_sysconfdir}/init.d/
-%config %{_sysconfdir}/sysconfig/
+%config %{_sysconfdir}/sysconfig/groonga
 %{_bindir}/*
+%{_sysconfdir}/init.d/*
 
 %files libs
 %defattr(-,root,root,-)
