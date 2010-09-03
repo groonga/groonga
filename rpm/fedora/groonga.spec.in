@@ -82,6 +82,13 @@ rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.la
 rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.a
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
+mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
+    $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
+mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/sysconfig/groonga \
+    $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
+
 mv $RPM_BUILD_ROOT%{_datadir}/groonga/munin/ $RPM_BUILD_ROOT%{_datadir}/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/
 cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
@@ -155,6 +162,8 @@ fi
 %defattr(-,root,root,-)
 %doc %{_datadir}/man/
 %config %{_sysconfdir}/groonga/
+%config %{_sysconfdir}/init.d/
+%config %{_sysconfdir}/sysconfig/
 %{_bindir}/*
 
 %files libs
