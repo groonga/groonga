@@ -71,3 +71,7 @@ version.sh
 /apt/ubuntu/*.conf
 /configure.lineno
 /rpm/*/*.spec
+/yum/groonga.repo
+/yum/RPM-GPG-KEY-groonga
+/yum/fedora/
+/yum/centos/

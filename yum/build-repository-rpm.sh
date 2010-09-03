@@ -47,7 +47,7 @@ for distribution in ${DISTRIBUTIONS}; do
     run cat <<EOR > $repo
 [groonga]
 name=groonga for $distribution_label \$releasever - \$basearch
-baseurl=http://groonga.sourceforge.net/$distribution/\$releasever/\$basearch/
+baseurl=http://packages.groonga.org/$distribution/\$releasever/\$basearch/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
