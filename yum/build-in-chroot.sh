@@ -114,6 +114,16 @@ build()
     run mkdir -p $source_pool_dir
     run cp -p $rpm_dir/*-${VERSION}* $binary_pool_dir
     run cp -p $srpm_dir/*-${VERSION}* $source_pool_dir
+
+    dependencies_dir=${build_user_dir}/dependencies
+    dependencies_rpm_dir=${dependencies_dir}/RPMS
+    dependencies_srpm_dir=${dependencies_dir}/SRPMS
+    if [ -d "${dependencies_rpm_dir}" ]; then
+	run cp -p ${dependencies_rpm_dir}/* $binary_pool_dir
+    fi
+    if [ -d "${dependencies_srpm_dir}" ]; then
+	run cp -p ${dependencies_srpm_dir}/* $source_pool_dir
+    fi
 }
 
 for architecture in $ARCHITECTURES; do

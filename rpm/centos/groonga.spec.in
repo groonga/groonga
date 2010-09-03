@@ -5,15 +5,11 @@ Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
 License:	LGPLv2
-URL:		http://groonga.org
+URL:		http://groonga.org/
 Source0:	http://groonga.org/files/groonga/groonga-@VERSION@.tar.gz
 
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
-BuildRequires:	libedit-devel
-# to avoid binary-or-shlib-defines-rpath, we need to regenerate
-# configure and libtool scripts
-BuildRequires:	autoconf, automake, libtool
-Requires:	mecab
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description
@@ -30,6 +26,13 @@ License:	LGPLv2
 %description libs
 This package contains the libraries for groonga
 
+%package doc
+Summary:	Documentation for groonga
+Group:		Documentation
+
+%description doc
+Documentation for groonga
+
 %package devel
 Summary:	Libraries and header files for groonga
 Group:		Development/Libraries
@@ -38,14 +41,30 @@ Requires:	%{name}-libs = %{version}-%{release}
 %description devel
 Libraries and header files for groonga
 
+%package tokenizer-mecab
+Summary:	MeCab tokenizer for groonga
+Group:		Applications/Text
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:       mecab
+
+%description tokenizer-mecab
+MeCab tokenizer for groonga
+
+%package munin-plugins
+Summary:	Munin plugins for groonga
+Group:		Applications/System
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:       munin-node
+
+%description munin-plugins
+Munin plugins for groonga
+
 %prep
 %setup -q
 
 
 %build
-# to avoid binary-or-shlib-defines-rpath, we need to regenerate
-# configure and libtool scripts
-autoreconf -f -i
+%define optflags -O0
 %configure
 make %{?_smp_mflags}
 
@@ -53,31 +72,104 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/functions/*.la
-rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/functions/*.a
-rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/tokenizers/*.la
-rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/tokenizers/*.a
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.la
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.a
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
+install -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
+    $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
+install -m 644 $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/sysconfig/groonga \
+    $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
+
+mv $RPM_BUILD_ROOT%{_datadir}/groonga/munin/ $RPM_BUILD_ROOT%{_datadir}/
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/
+cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
+[groonga_*]
+  user groonga
+  group groonga
+  env.PATH /usr/bin:/bin:/usr/local/bin
+  env.pid_file /var/run/groonga/groonga.pid
+  env.path /var/lib/groonga/db/db
+  env.host 127.0.0.1
+  env.port 10041
+  env.log_path /var/log/groonga/query.log
+EOC
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if ! /usr/bin/getent group groonga &>/dev/null; then
+    /usr/sbin/groupadd -r groonga || \
+        %logmsg "Unexpected error adding group \"groonga\". Aborting installation."
+fi
+if ! /usr/bin/id groonga &>/dev/null; then
+    /usr/sbin/useradd -r -s /sbin/nologin -c 'milter manager' \
+        -d %{_localstatedir}/lib/groonga --create-home \
+        -g groonga groonga || \
+        %logmsg "Unexpected error adding user \"groonga\". Aborting installation."
+fi
+
+%post
+/sbin/chkconfig --add groonga
+/bin/mkdir -p /var/run/groonga
+/bin/chown -R groonga:groonga /var/run/groonga
 
 %post libs -p /sbin/ldconfig
+
+%post munin-plugins
+/usr/sbin/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
+[ -f /var/lock/subsys/munin-node ] && \
+    /sbin/service munin-node restart > /dev/null 2>&1
+:
+
+%preun
+if [ $1 -eq 0 ] ; then
+    /sbin/service groonga stop > /dev/null 2>&1
+    /sbin/chkconfig --del groonga
+fi
+
+%postun
+if [ $1 -ge 1 ] ; then
+    /sbin/service groonga condrestart > /dev/null 2>&1
+fi
+
+if [ $1 -eq 0 ]; then
+    /usr/sbin/userdel -r groonga || \
+        %logmsg "User \"groonga\" could not be deleted."
+fi
+
 %postun libs -p /sbin/ldconfig
+
+%postun munin-plugins
+if [ $1 -eq 0 ]; then
+    rm %{_sysconfdir}/munin/plugins/groongar_* > /dev/null 2>&1
+    [ -f /var/lock/subsys/munin-node ] && \
+        /sbin/service munin-node restart > /dev/null 2>&1
+    :
+fi
+
 
 %files
 %defattr(-,root,root,-)
+%doc %{_datadir}/man/
+%config %{_sysconfdir}/groonga/
+%config %{_sysconfdir}/sysconfig/groonga
 %{_bindir}/*
+%{_sysconfdir}/init.d/*
 
 %files libs
 %defattr(-,root,root,-)
-%doc README AUTHORS COPYING doc/*
+%doc README AUTHORS COPYING
 %{_libdir}/*.so.*
-%{_libdir}/groonga/modules/functions/*.so
-%{_libdir}/groonga/modules/tokenizers/*.so
-%{_datadir}/groonga/
+%{_libdir}/groonga/modules/suggest/*.so
+%{_datadir}/groonga/admin_html/
+
+%files doc
+%defattr(-,root,root,-)
+%doc %{_datadir}/groonga/doc/
 
 %files devel
 %defattr(-, root, root)
@@ -86,7 +178,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/groonga*.pc
 
+%files tokenizer-mecab
+%defattr(-, root, root)
+%{_libdir}/groonga/modules/tokenizers/mecab.so
+
+%files munin-plugins
+%defattr(-, root, root)
+%{_datadir}/munin/
+%config %{_sysconfdir}/munin/plugin-conf.d/
 
 %changelog
+* Thu Sep 02 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.0-1
+- split packages.
+
 * Tue Aug 24 2010 Daiki Ueno <dueno@redhat.com> - 0.7.6-1
 - initial packaging for Fedora

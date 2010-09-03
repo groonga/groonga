@@ -27,6 +27,54 @@ if ! rpm -q ${distribution}-release > /dev/null 2>&1; then
 fi
 
 run yum update -y
+if [ "$distribution" = "centos" ] && ! rpm -q mecab-devel > /dev/null; then
+    run yum install -y wget libtool gcc make
+
+    cat <<EOF > $BUILD_SCRIPT
+#!/bin/sh
+
+base=http://download.fedoraproject.org/pub/fedora/linux/releases/13/Everything/source/SRPMS
+srpm=\$1
+
+if [ ! -f ~/.rpmmacros ]; then
+    cat <<EOM > ~/.rpmmacros
+%_topdir \$HOME/rpm
+EOM
+fi
+
+rm -rf rpm
+
+mkdir -p rpm/BUILD
+mkdir -p rpm/RPMS
+mkdir -p rpm/SRPMS
+mkdir -p rpm/SOURCES
+mkdir -p rpm/SPECS
+
+mkdir -p dependencies/RPMS
+mkdir -p dependencies/SRPMS
+
+mkdir -p tmp
+cd tmp
+wget \$base/\$srpm
+rpm2cpio \$srpm | cpio -id
+mv \$srpm ~/dependencies/SRPMS/
+mv *.spec ~/rpm/SPECS/
+mv * ~/rpm/SOURCES/
+cd ..
+rm -rf tmp
+rpmbuild -ba rpm/SPECS/*.spec
+
+cp -p rpm/RPMS/*/*.rpm dependencies/RPMS/
+EOF
+
+    run chmod +x $BUILD_SCRIPT
+    for rpm in mecab-0.98-1.fc12.src.rpm \
+               mecab-ipadic-2.7.0.20070801-3.fc13.1.src.rpm \
+               mecab-jumandic-5.1.20070304-4.fc12.src.rpm; do
+	run su - $USER_NAME $BUILD_SCRIPT $rpm
+	run rpm -Uvh /home/$USER_NAME/rpm/RPMS/*/*.rpm
+    done
+fi
 run yum install -y rpm-build tar ${DEPENDED_PACKAGES}
 run yum clean packages
 
@@ -43,6 +91,7 @@ if [ ! -f ~/.rpmmacros ]; then
 EOM
 fi
 
+rm -rf rpm
 mkdir -p rpm/SOURCES
 mkdir -p rpm/SPECS
 mkdir -p rpm/BUILD

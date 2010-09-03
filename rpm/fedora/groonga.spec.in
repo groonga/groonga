@@ -9,7 +9,6 @@ URL:		http://groonga.org/
 Source0:	http://groonga.org/files/groonga/groonga-@VERSION@.tar.gz
 
 BuildRequires:	mecab-devel
-BuildRequires:	libedit-devel
 # to avoid binary-or-shlib-defines-rpath, we need to regenerate
 # configure and libtool scripts
 BuildRequires:	autoconf, automake, libtool
