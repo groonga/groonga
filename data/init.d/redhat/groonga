@@ -36,21 +36,22 @@ if [ -f /etc/sysconfig/$name ]; then
 	. /etc/sysconfig/$name
 fi
 
-DAEMON_ARGS="-s"
+DAEMON_ARGS=""
+GROONGA_ARGS="-s"
 if [ -n "${PIDFILE}" ]; then
-	DAEMON_ARGS="${DAEMON_ARGS} --pid-path ${PIDFILE}"
+	GROONGA_ARGS="${GROONGA_ARGS} --pid-path ${PIDFILE}"
 fi
 if [ -n "${ADDRESS}" ]; then
-	DAEMON_ARGS="${DAEMON_ARGS} -a ${ADDRESS}"
+	GROONGA_ARGS="${GROONGA_ARGS} -a ${ADDRESS}"
 fi
 if [ -n "${LOG_PATH}" ]; then
-	DAEMON_ARGS="${DAEMON_ARGS} --log-path ${LOG_PATH}"
+	GROONGA_ARGS="${GROONGA_ARGS} --log-path ${LOG_PATH}"
 fi
 if [ -n "${QUERY_LOG_PATH}" ]; then
-	DAEMON_ARGS="${DAEMON_ARGS} --query-log-path ${QUERY_LOG_PATH}"
+	GROONGA_ARGS="${GROONGA_ARGS} --query-log-path ${QUERY_LOG_PATH}"
 fi
 if [ -n "${PROTOCOL}" ]; then
-	DAEMON_ARGS="${DAEMON_ARGS} --protocol ${PROTOCOL}"
+	GROONGA_ARGS="${GROONGA_ARGS} --protocol ${PROTOCOL}"
 fi
 if [ -n "${USER}" ]; then
 	if ! getent passwd | grep -q "^${USER}:"; then
@@ -61,16 +62,16 @@ if [ -n "${USER}" ]; then
 		mkdir -p `dirname ${PIDFILE}`
 		chown -R ${USER} `dirname ${PIDFILE}`
 	fi
-	DAEMON_ARGS="${DAEMON_ARGS} --user-name ${USER}"
+	DAEMON_ARGS="${DAEMON_ARGS} --user ${USER}"
 fi
 if [ -n "${GROUP}" ]; then
 	if ! getent group | grep -q "^${GROUP}:"; then
 		echo "$0: group for running $prog doesn't exist: ${GROUP}" >&2
 		exit 1
 	fi
-	DAEMON_ARGS="${DAEMON_ARGS} --group-name ${GROUP}"
+	DAEMON_ARGS="${DAEMON_ARGS} --group ${GROUP}"
 fi
-DAEMON_ARGS="${DAEMON_ARGS} ${OPTION_ARGS}"
+GROONGA_ARGS="${GROONGA_ARGS} ${OPTION_ARGS}"
 
 if [ -z "${DATABASE}" ]; then
 	echo "$0: DATABASE should not be empty" >&2
@@ -78,7 +79,7 @@ if [ -z "${DATABASE}" ]; then
 fi
 
 if [ -f "${DATABASE}" ]; then
-	DAEMON_ARGS="${DAEMON_ARGS} ${DATABASE}"
+	GROONGA_ARGS="${GROONGA_ARGS} ${DATABASE}"
 else
 	mkdir -p $(dirname ${DATABASE})
 	if [ -n "${USER}" ]; then
@@ -87,7 +88,7 @@ else
 	if [ -n "${GROUP}" ]; then
 		chgrp -R ${GROUP} $(dirname ${DATABASE})
 	fi
-	DAEMON_ARGS="${DAEMON_ARGS} -n ${DATABASE}"
+	GROONGA_ARGS="${GROONGA_ARGS} -n ${DATABASE}"
 fi
 
 RETVAL=0
@@ -95,7 +96,7 @@ RETVAL=0
 
 start() {
 	echo -n "Starting $name: "
-	daemon $groonga "$DAEMON_ARGS"
+	daemon "$DAEMON_ARGS" $groonga "$GROONGA_ARGS"
 	RETVAL=$?
 	echo
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
