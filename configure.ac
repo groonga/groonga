@@ -158,9 +158,9 @@ int main(int argc, char **argv)
 AC_ARG_WITH(log_path,
   [AS_HELP_STRING([--with-log-path=PATH],
     [specify groonga log path.])],
-  GROONGA_LOG_PATH="$withval",
-  GROONGA_LOG_PATH="/var/log/$PACKAGE_NAME/$PACKAGE_NAME.log")
-AC_DEFINE_UNQUOTED(GROONGA_LOG_PATH, "$GROONGA_LOG_PATH", "specified log directory")
+  groonga_log_path="$withval",
+  groonga_log_path="\$(localstatedir)/log/\$(PACKAGE_NAME)/\$(PACKAGE_NAME).log")
+AC_SUBST(groonga_log_path)
 
 # default encoding
 AC_ARG_WITH(default_encoding,
@@ -659,19 +659,9 @@ AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, ["$suffix"], "module suffix")
 # flags for compile groonga
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 CFLAGS="$CFLAGS -DMODULES_DIR=\\\"\"\$(modulesdir)\"\\\""
+CFLAGS="$CFLAGS -DGROONGA_LOG_PATH=\\\"\"\$(groonga_log_path)\"\\\""
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
-
-# flags for groonga-cfg
-#GROONGA_LIBDIR='-L${libdir}'
-#GROONGA_INCLUDEDIR="-I${includedir}/groonga"
-#GROONGA_CFLAGS=""
-#GROONGA_LIBS="-lgroonga $PTHREAD_LIBS"
-
-#AC_SUBST(GROONGA_LIBDIR)
-#AC_SUBST(GROONGA_INCLUDEDIR)
-#AC_SUBST(GROONGA_CFLAGS)
-#AC_SUBST(GROONGA_LIBS)
 
 # For Debian package release
 AC_ARG_WITH(rsync-path,
