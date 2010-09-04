@@ -307,7 +307,8 @@ test_time(void)
   g_time_val_from_iso8601("2010-05-31T11:50:29.29+0900", &g_time_value);
   time_value = grn_obj_open(context, GRN_BULK, 0, GRN_DB_TIME);
   GRN_TIME_SET(context, time_value,
-               g_time_value.tv_sec * G_USEC_PER_SEC + g_time_value.tv_usec);
+               (gint64)g_time_value.tv_sec * G_USEC_PER_SEC +
+               g_time_value.tv_usec);
   inspected = grn_inspect(context, NULL, time_value);
   cut_assert_equal_string(cut_take_printf("%ld.29", g_time_value.tv_sec),
                           inspected_string());
