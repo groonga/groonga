@@ -554,7 +554,7 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  int i;
+  int i = 0;
   grn_id *v, *ve;
   grn_obj record;
 
