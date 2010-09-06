@@ -192,6 +192,9 @@ fi
 %config %{_sysconfdir}/munin/plugin-conf.d/
 
 %changelog
+* Thu Sep 06 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.1-1
+- new upstream release.
+
 * Thu Sep 02 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.0-1
 - split packages.
 
