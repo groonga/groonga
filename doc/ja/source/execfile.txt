@@ -65,11 +65,11 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
    ヘルプメッセージを出力します。
 
-.. cmdoption:: --admin-html-path <path>
+.. cmdoption:: --document-root <path>
 
    httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定します。
 
-   デフォルトでは、データベースを管理するための汎用的なページに対応するファイルが/usr/share/groonga/admin_html以下にインストールされます。このディレクトリをadmin-html-pathオプションの値に指定して起動した場合、ウェブブラウザでhttp://hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツールを使用できます。
+   デフォルトでは、データベースを管理するための汎用的なページに対応するファイルが/usr/share/groonga/admin_html以下にインストールされます。このディレクトリをdocument-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツールを使用できます。
 
 .. cmdoption:: --protocol <protocol>
 
@@ -216,7 +216,7 @@ groonga実行ファイルを通してデータベースを操作する命令を�
 
 httpサーバとして起動します。::
 
-   % groonga -d -p 80 --protocol http --admin-html-path /usr/share/groonga/admin_html /tmp/hoge.db
+   % groonga -d -p 80 --protocol http --document-root /usr/share/groonga/admin_html /tmp/hoge.db
    %
 
 サーバに接続し、テーブル一覧を表示します。::

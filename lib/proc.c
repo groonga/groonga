@@ -34,7 +34,7 @@
 #endif
 
 /**** globals for procs ****/
-const char *grn_admin_html_path = NULL;
+const char *grn_document_root = NULL;
 
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
 
@@ -1010,33 +1010,33 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t plen;
   grn_obj *outbuf = ctx->impl->outbuf;
-  static int grn_admin_html_path_len = -1;
-  if (!grn_admin_html_path) { return NULL; }
-  if (grn_admin_html_path_len < 0) {
+  static int grn_document_root_len = -1;
+  if (!grn_document_root) { return NULL; }
+  if (grn_document_root_len < 0) {
     size_t l;
-    if ((l = strlen(grn_admin_html_path)) > PATH_MAX) {
+    if ((l = strlen(grn_document_root)) > PATH_MAX) {
       return NULL;
     }
-    grn_admin_html_path_len = (int)l;
-    if (l > 0 && grn_admin_html_path[l - 1] == PATH_SEPARATOR[0]) { grn_admin_html_path_len--; }
+    grn_document_root_len = (int)l;
+    if (l > 0 && grn_document_root[l - 1] == PATH_SEPARATOR[0]) { grn_document_root_len--; }
   }
-  if ((plen = GRN_TEXT_LEN(VAR(0))) + grn_admin_html_path_len < PATH_MAX) {
+  if ((plen = GRN_TEXT_LEN(VAR(0))) + grn_document_root_len < PATH_MAX) {
     char path[PATH_MAX];
-    memcpy(path, grn_admin_html_path, grn_admin_html_path_len);
-    path[grn_admin_html_path_len] = PATH_SEPARATOR[0];
+    memcpy(path, grn_document_root, grn_document_root_len);
+    path[grn_document_root_len] = PATH_SEPARATOR[0];
     grn_str_url_path_normalize(ctx,
                                GRN_TEXT_VALUE(VAR(0)),
                                GRN_TEXT_LEN(VAR(0)),
-                               path + grn_admin_html_path_len + 1,
-                               PATH_MAX - grn_admin_html_path_len - 1);
+                               path + grn_document_root_len + 1,
+                               PATH_MAX - grn_document_root_len - 1);
     grn_bulk_put_from_file(ctx, outbuf, path);
   } else {
     uint32_t abbrlen = 32;
     ERR(GRN_INVALID_ARGUMENT,
         "too long path name: <%s%c%.*s...> %u(%u)",
-        grn_admin_html_path, PATH_SEPARATOR[0],
+        grn_document_root, PATH_SEPARATOR[0],
         abbrlen < plen ? abbrlen : plen, GRN_TEXT_VALUE(VAR(0)),
-        plen + grn_admin_html_path_len, PATH_MAX);
+        plen + grn_document_root_len, PATH_MAX);
   }
   return NULL;
 }

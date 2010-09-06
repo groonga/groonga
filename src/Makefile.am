@@ -2,7 +2,7 @@ bin_PROGRAMS = groonga grntest
 noinst_PROGRAMS = grnslap
 
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) \
-            -DDEFAULT_ADMIN_HTML_PATH=\"$(pkgdatadir)/admin_html\"
+            -DDEFAULT_DOCUMENT_ROOT=\"$(pkgdatadir)/admin_html\"
 
 DEFAULT_INCLUDES = -I$(top_builddir) -I$(srcdir) -I$(top_srcdir) $(GROONGA_INCLUDEDIR)
 

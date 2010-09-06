@@ -97,7 +97,7 @@ usage(FILE *output)
           "  -i, --server-id <ip/hostname>:    server ID address (default: %s)\n"
           "  -t, --max-threads <max threads>:  max number of free threads (default: %d)\n"
           "  -h, --help:                       show usage\n"
-          "  --admin-html-path <path>:         specify admin html path\n"
+          "  --document-root <path>:           document root path\n"
           "  --protocol <protocol>:            server protocol to listen (default: gqtp)\n"
           "  --version:                        show groonga version\n"
           "  --log-path <path>:                specify log path\n"
@@ -2063,7 +2063,7 @@ main(int argc, char **argv)
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
     *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
-    *cache_limitstr = NULL;
+    *cache_limitstr = NULL, *admin_html_path = NULL;
   const char *config_path = NULL;
   const char *input_path = NULL;
   int r, i, mode = mode_alone;
@@ -2080,7 +2080,7 @@ main(int argc, char **argv)
     {'i', "server", NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
-    {'\0', "admin-html-path", NULL, 0, getopt_op_none},
+    {'\0', "admin-html-path", NULL, 0, getopt_op_none}, /* deprecated */
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
@@ -2090,6 +2090,7 @@ main(int argc, char **argv)
     {'\0', "show-config", NULL, mode_config, getopt_op_update},
     {'\0', "cache-limit", NULL, 0, getopt_op_none},
     {'\0', "file", NULL, 0, getopt_op_none},
+    {'\0', "document-root", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -2098,7 +2099,7 @@ main(int argc, char **argv)
   opts[4].arg = &listen_addressstr;
   opts[8].arg = &loglevel;
   opts[9].arg = &hostnamestr;
-  opts[12].arg = &grn_admin_html_path;
+  opts[12].arg = &admin_html_path; /* deprecated */
   opts[13].arg = &protocol;
   opts[15].arg = &grn_log_path;
   opts[16].arg = &grn_qlog_path;
@@ -2106,6 +2107,7 @@ main(int argc, char **argv)
   opts[18].arg = &config_path;
   opts[20].arg = &cache_limitstr;
   opts[21].arg = &input_path;
+  opts[22].arg = &grn_document_root;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -2181,8 +2183,12 @@ main(int argc, char **argv)
       break;
     }
   }
-  if (!grn_admin_html_path) {
-    grn_admin_html_path = DEFAULT_ADMIN_HTML_PATH;
+  if (!grn_document_root) {
+    if (admin_html_path) {
+      grn_document_root = admin_html_path;
+    } else {
+      grn_document_root = DEFAULT_DOCUMENT_ROOT;
+    }
   }
   if (protocol) {
     switch (*protocol) {
