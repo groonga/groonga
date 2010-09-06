@@ -166,8 +166,9 @@ show_version(void)
 #define BUFSIZE 0x1000000
 
 inline static int
-prompt(char *buf)
+prompt(grn_ctx *ctx, char *buf)
 {
+  static int the_first_read = GRN_TRUE;
   int len;
   if (!batchmode) {
 #ifdef HAVE_LIBEDIT
@@ -203,6 +204,15 @@ prompt(char *buf)
     } else {
       len = 0;
     }
+  }
+  if (the_first_read && len > 0) {
+    const char bom[] = {0xef, 0xbb, 0xbf};
+    if (GRN_CTX_GET_ENCODING(ctx) == GRN_ENC_UTF8 &&
+        len > 3 && !memcmp(buf, bom, 3)) {
+      memmove(buf, buf + 3, len - 3);
+      len -= 3;
+    }
+    the_first_read = GRN_FALSE;
   }
   return len;
 }
@@ -631,7 +641,7 @@ do_alone(int argc, char **argv)
       if (!rc) {
         char *buf = GRN_TEXT_VALUE(&text);
         int  len;
-        while ((len = prompt(buf))) {
+        while ((len = prompt(ctx, buf))) {
           uint32_t size = len - 1;
           grn_ctx_send(ctx, buf, size, 0);
           if (ctx->stat == GRN_CTX_QUIT) { break; }
@@ -715,7 +725,7 @@ g_client(int argc, char **argv)
         char *buf = GRN_TEXT_VALUE(&text);
         int   len;
         if (batchmode) { BATCHMODE(ctx); }
-        while ((len = prompt(buf))) {
+        while ((len = prompt(ctx, buf))) {
           uint32_t size = len - 1;
           grn_ctx_send(ctx, buf, size, 0);
           rc = ctx->rc;
