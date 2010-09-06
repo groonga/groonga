@@ -1,4 +1,89 @@
+2010-09-06 Kouhei Sutou <kou@clear-code.com>
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ add 1.0.1 release entry.
+
+ * doc/ja/source/news.txt: add 1.0.1 release note.
+
+ * src/groonga.c, test/unit/command/Makefile.am,
+ test/unit/command/test-bom.rb: work with UTF-8 BOM input. #448
+
+2010-09-04 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-inspect.c: suppress overflow.  Reported by OBATA Akio.
+ Thanks!!!
+
+ * configure.ac: use $(localstatedir) instead of /var for groonga log path.
+ Suggested by OBATA Akio. Thanks!!!
+
+ * lib/util.c: initialize variable.  Reported by OBATA Akio. Thanks!!!
+
+2010-09-03 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: uint32 -> int32 in cooccur_search().
+
+2010-09-03 Kouhei Sutou <kou@clear-code.com>
+
+ * yum/build-rpm.sh: use built SRPM.
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: remove
+ no-optimization flag.
+
+ * yum/Makefile.am: fix a typo.
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in,
+ yum/build-in-chroot.sh, yum/build-rpm.sh, yum/groonga-depended-packages:
+ support CentOS packages.
+
+ * data/init.d/redhat/groonga, rpm/fedora/groonga.spec.in: fix wrong options.
+
+ * data/init.d/redhat/groonga: fix daemon arguments.
+
+ * rpm/fedora/groonga.spec.in: support init script.
+
+ * configure.ac, data/init.d/redhat/Makefile.am,
+ data/init.d/redhat/sysconfig/Makefile.am: install init sciripts into
+ /etc/groonga/.
+
+ * configure.ac, data/Makefile.am, data/init.d/Makefile.am,
+ data/init.d/redhat/Makefile.am, data/init.d/redhat/groonga,
+ data/init.d/redhat/sysconfig/Makefile.am,
+ data/init.d/redhat/sysconfig/groonga: add init script for RedHat.
+
+ * .gitignore, yum/build-repository-rpm.sh: fix repository path.
+
+2010-09-02 Kouhei Sutou <kou@clear-code.com>
+
+ * Makefile.am, configure.ac, rpm/Makefile.am, rpm/centos/Makefile.am,
+ rpm/fedora/Makefile.am, rpm/fedora/groonga.spec.in: split Fedora packages.
+
+ * resource/admin_html/js/jquery.json-2.2.min.js: add missing jquery.json.
+
+ * apt/Makefile.am: cleanup.
+
+ * Makefile.am: put rpm/*/*.spec.in files into distributed files.
+
+ * .gitignore, Makefile.am, configure.ac, groonga.spec.in,
+ rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in, yum/Makefile.am,
+ yum/build-in-chroot.sh, yum/build-repository-rpm.sh, yum/build-rpm.sh,
+ yum/gpg-public-key.sh, yum/gpg-uid.sh, yum/groonga-depended-packages,
+ yum/groonga-repository.spec, yum/sign-rpm.sh, yum/update-repository.sh: add
+ yum related files.
+
+ * groonga.spec.in: rebase spec.in on Daiki Ueno version.
+ https://bugzilla.redhat.com/show_bug.cgi?id=626666
+
+ * resource/Makefile.am: add missing json JQuery plugin.
+
+2010-08-30 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Enhanced suggest command.
+
+ * modules/suggest/suggest.c: cooccur_search receives tid.
+
 2010-08-29 Kouhei Sutou <kou@clear-code.com>
+
+ * ChangeLog: release 1.0.0
 
  * debian/changelog: add 1.0.0-1 entry.
 
