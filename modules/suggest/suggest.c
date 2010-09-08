@@ -124,51 +124,43 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_
   return max_score;
 }
 
+#define DEFAULT_LIMIT           10
+#define DEFAULT_SORTBY          "-_score"
+#define DEFAULT_OUTPUT_COLUMNS  "_key,_score"
+
 static void
-output(grn_ctx *ctx, grn_obj *table, grn_obj *res, int limit, grn_id tid)
+output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
+       grn_obj *sortby, grn_obj *output_columns, int offset, int limit)
 {
   grn_obj *sorted;
   if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
     uint32_t nkeys;
-    grn_obj *score_col;
+    grn_obj_format format;
     grn_table_sort_key *keys;
-    score_col = grn_obj_column(ctx, res, CONST_STR_LEN("_score"));
-    /* FIXME: use grn_table_sort instead */
-    if ((keys = grn_table_sort_key_from_str(ctx, CONST_STR_LEN("-_score"), res, &nkeys))) {
-      grn_table_cursor *scur;
-      /* TODO: support offset limit */
-      grn_table_sort(ctx, res, 0, limit + 1, sorted, keys, nkeys);
-      GRN_OUTPUT_ARRAY_OPEN("RESULTS", -1);
-      if ((scur = grn_table_cursor_open(ctx, sorted, NULL, 0, NULL, 0, 0, -1, 0))) {
-        grn_id id;
-        while ((id = grn_table_cursor_next(ctx, scur))) {
-          grn_id res_id;
-          unsigned int key_len;
-          char key[GRN_TABLE_MAX_KEY_SIZE];
-          grn_obj score_val;
-
-          grn_table_get_key(ctx, sorted, id, &res_id, sizeof(grn_id));
-          grn_table_get_key(ctx, res, res_id, &id, sizeof(grn_id));
-          if (id == tid) { continue; }
-          GRN_OUTPUT_ARRAY_OPEN("RESULT", 2);
-          key_len = grn_table_get_key(ctx, table, id, key, GRN_TABLE_MAX_KEY_SIZE);
-          GRN_OUTPUT_STR(key, key_len);
-
-          GRN_INT32_INIT(&score_val, 0);
-          grn_obj_get_value(ctx, score_col, res_id, &score_val);
-          GRN_OUTPUT_INT32(GRN_INT32_VALUE(&score_val));
-          GRN_OUTPUT_ARRAY_CLOSE();
-        }
-        grn_table_cursor_close(ctx, scur);
-      } else {
-        ERR(GRN_UNKNOWN_ERROR, "cannot open sorted cursor.");
-      }
-      GRN_OUTPUT_ARRAY_CLOSE();
-      grn_table_sort_key_close(ctx, keys, nkeys);
-    } else {
-      ERR(GRN_UNKNOWN_ERROR, "cannot sort.");
+    const char *sortby_val = GRN_TEXT_VALUE(sortby);
+    unsigned sortby_len = GRN_TEXT_LEN(sortby);
+    const char *oc_val = GRN_TEXT_VALUE(output_columns);
+    unsigned oc_len = GRN_TEXT_LEN(output_columns);
+    if (!sortby_val || !sortby_len) {
+      sortby_val = DEFAULT_SORTBY;
+      sortby_len = sizeof(DEFAULT_SORTBY) - 1;
     }
-    grn_obj_unlink(ctx, score_col);
+    if (!oc_val || !oc_len) {
+      oc_val = DEFAULT_OUTPUT_COLUMNS;
+      oc_len = sizeof(DEFAULT_OUTPUT_COLUMNS) - 1;
+    }
+    if ((keys = grn_table_sort_key_from_str(ctx, sortby_val, sortby_len, res, &nkeys))) {
+      grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
+      LAP("sort", limit);
+      GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, res), 0, limit, offset);
+      format.flags =
+        GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+        GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+      grn_obj_columns(ctx, sorted, oc_val, oc_len, &format.columns);
+      GRN_OUTPUT_OBJ(sorted, &format);
+      GRN_OBJ_FORMAT_FIN(ctx, &format);
+      grn_table_sort_key_close(ctx, keys, nkeys);
+    }
     grn_obj_unlink(ctx, sorted);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary sort table.");
@@ -176,7 +168,8 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, int limit, grn_id tid)
 }
 
 static void
-complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
+complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query, grn_obj *sortby,
+         grn_obj *output_columns, int offset, int limit)
 {
   grn_obj *res;
   grn_obj *items_freq = grn_obj_column(ctx, table, CONST_STR_LEN("freq"));
@@ -247,7 +240,7 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
         grn_table_cursor_close(ctx, cur);
       }
     }
-    output(ctx, table, res, 10, tid);
+    output(ctx, table, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -257,7 +250,8 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query)
 }
 
 static void
-correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
+correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
+        grn_obj *output_columns, int offset, int limit)
 {
   grn_obj *res;
   grn_obj *items_freq2 = grn_obj_column(ctx, table, CONST_STR_LEN("freq2"));
@@ -346,7 +340,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
         grn_obj_unlink(ctx, key);
       }
     }
-    output(ctx, table, res, 10, tid);
+    output(ctx, table, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -356,14 +350,15 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query)
 }
 
 static void
-suggest(grn_ctx *ctx, grn_obj *table, grn_obj *query)
+suggest(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
+        grn_obj *output_columns, int offset, int limit)
 {
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
     grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
     cooccur_search(ctx, table, tid, res, SUGGEST);
-    output(ctx, table, res, 10, tid);
+    output(ctx, table, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -375,23 +370,29 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 {
   grn_obj *table, *col;
   int types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
+  int offset = GRN_TEXT_LEN(VAR(6))
+    ? grn_atoi(GRN_TEXT_VALUE(VAR(6)), GRN_BULK_CURR(VAR(6)), NULL)
+    : 0;
+  int limit = GRN_TEXT_LEN(VAR(7))
+    ? grn_atoi(GRN_TEXT_VALUE(VAR(7)), GRN_BULK_CURR(VAR(7)), NULL)
+    : DEFAULT_LIMIT;
   if ((table = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
     GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
     if (types & COMPLETE) {
       if ((col = grn_obj_column(ctx, table, TEXT_VALUE_LEN(VAR(2))))) {
         GRN_OUTPUT_CSTR("complete");
-        complete(ctx, table, col, VAR(3));
+        complete(ctx, table, col, VAR(3), VAR(4), VAR(5), offset, limit);
       } else {
         ERR(GRN_INVALID_ARGUMENT, "invalid column.");
       }
     }
     if (types & CORRECT) {
       GRN_OUTPUT_CSTR("correct");
-      correct(ctx, table, VAR(3));
+      correct(ctx, table, VAR(3), VAR(4), VAR(5), offset, limit);
     }
     if (types & SUGGEST) {
       GRN_OUTPUT_CSTR("suggest");
-      suggest(ctx, table, VAR(3));
+      suggest(ctx, table, VAR(3), VAR(4), VAR(5), offset, limit);
     }
     GRN_OUTPUT_MAP_CLOSE();
   } else {
@@ -518,14 +519,22 @@ grn_module_register_suggest(grn_ctx *ctx)
     {CONST_STR_LEN("types")},
     {CONST_STR_LEN("table")},
     {CONST_STR_LEN("column")},
-    {CONST_STR_LEN("query")}
+    {CONST_STR_LEN("query")},
+    {CONST_STR_LEN("sortby")},
+    {CONST_STR_LEN("output_columns")},
+    {CONST_STR_LEN("offset")},
+    {CONST_STR_LEN("limit")}
   };
   GRN_TEXT_INIT(&vars[0].value, 0);
   GRN_TEXT_INIT(&vars[1].value, 0);
   GRN_TEXT_INIT(&vars[2].value, 0);
   GRN_TEXT_INIT(&vars[3].value, 0);
+  GRN_TEXT_INIT(&vars[4].value, 0);
+  GRN_TEXT_INIT(&vars[5].value, 0);
+  GRN_TEXT_INIT(&vars[6].value, 0);
+  GRN_TEXT_INIT(&vars[7].value, 0);
   grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND,
-                  command_suggest, NULL, NULL, 4, vars);
+                  command_suggest, NULL, NULL, 8, vars);
 
   grn_proc_create(ctx, CONST_STR_LEN("suggest_preparer"), GRN_PROC_FUNCTION,
                   func_suggest_preparer, NULL, NULL, 0, NULL);
