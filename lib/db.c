@@ -3756,11 +3756,12 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
   }
 
+#define DEGREE_ACCURACY 10000000
+
 #define DEGREE2MSEC(degree)\
   (((int)degree * 60 * 60 * 1000) +\
-   (((int)(degree * 100) % 100) * 60 * 1000) +\
-   (((int)(degree * 10000) % 100) * 1000) +\
-   ((int)(degree * 10000000) % 1000))
+   (((int)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 / DEGREE_ACCURACY * 60 * 1000) +\
+   (((int)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 % DEGREE_ACCURACY * 60 / 10000))
 
 grn_rc
 grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
