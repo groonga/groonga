@@ -735,15 +735,14 @@ grn_test_view_collect_string(grn_ctx          *context,
 gint
 grn_test_coordinate_in_milliseconds(gdouble coordinate_in_degree)
 {
-  gint coordinate_in_milliseconds;
+  gint coordinate_in_milliseconds = 0;
+  gint accuracy = 10000000;
+  gint decimal_number;
 
-  coordinate_in_milliseconds = (gint)coordinate_in_degree * 60 * 60 * 1000;
-  coordinate_in_milliseconds +=
-    ((gint)(coordinate_in_degree * 100) % 100) * 60 * 1000;
-  coordinate_in_milliseconds +=
-    ((gint)(coordinate_in_degree * 10000) % 100) * 1000;
-  coordinate_in_milliseconds +=
-    ((gint)(coordinate_in_degree * 10000000) % 1000);
+  coordinate_in_milliseconds += (gint)coordinate_in_degree * 60 * 60 * 1000;
+  decimal_number = ((gint)(coordinate_in_degree * accuracy) % accuracy) * 60;
+  coordinate_in_milliseconds += decimal_number / accuracy * 60 * 1000;
+  coordinate_in_milliseconds += decimal_number % accuracy * 60 / 10000;
 
   return coordinate_in_milliseconds;
 }
@@ -751,10 +750,10 @@ grn_test_coordinate_in_milliseconds(gdouble coordinate_in_degree)
 gdouble
 grn_test_coordinate_in_degree(gint coordinate_in_milliseconds)
 {
-  gdouble coordinate_in_degree;
+  gdouble coordinate_in_degree = 0;
 
-  coordinate_in_degree = (coordinate_in_milliseconds % 1000) * 0.0000001;
-  coordinate_in_degree += coordinate_in_milliseconds / (gdouble)(1000 * 60 * 60);
+  coordinate_in_degree += (coordinate_in_milliseconds % 3600) * 0.0000001;
+  coordinate_in_degree += (coordinate_in_milliseconds / 3600.0) * 0.001;
 
   return coordinate_in_degree;
 }

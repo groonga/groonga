@@ -41,9 +41,9 @@ const char *grn_document_root = NULL;
 /**** procs ****/
 
 #define DEFAULT_LIMIT           10
-#define DEFAULT_OUTPUT_COLUMNS  "_id _key _value *"
+#define DEFAULT_OUTPUT_COLUMNS  "_id, _key, *"
 #define DEFAULT_DRILLDOWN_LIMIT           10
-#define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key _nsubrecs"
+#define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
 #define LAP(msg,num) {\
   uint64_t et;\

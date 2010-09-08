@@ -352,10 +352,10 @@ test_geo_point_tokyo(void)
   geo_point_tokyo = grn_obj_open(context, GRN_BULK, 0, GRN_DB_TOKYO_GEO_POINT);
   GRN_GEO_POINT_SET(context, geo_point_tokyo, takane_latitude, takane_longitude);
   inspected = grn_inspect(context, NULL, geo_point_tokyo);
-  cut_assert_equal_string("[(130194581,503802073) "
-                          "((36, 9, 54, 581),(139, 56, 42, 73)) "
-                          "[00000001 01111110 10100000 00011101 "
-                          "10010110 11100000 11010011 01100011]]",
+  cut_assert_equal_string("[(128503649,502431146) "
+                          "((35, 41, 43, 649),(139, 33, 51, 146)) "
+                          "[00000001 01111011 11011101 10000100 "
+                          "10110101 11111011 01101100 01000110]]",
                           inspected_string());
 }
 
@@ -370,10 +370,10 @@ test_geo_point_wgs84(void)
   geo_point_wgs84 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
   GRN_GEO_POINT_SET(context, geo_point_wgs84, takane_latitude, takane_longitude);
   inspected = grn_inspect(context, NULL, geo_point_wgs84);
-  cut_assert_equal_string("[(130226900,503769900) "
-                          "((36, 10, 26, 900),(139, 56, 9, 900)) "
-                          "[00000001 01111110 10100000 00011110 "
-                          "01010110 11001101 10100110 01110000]]",
+  cut_assert_equal_string("[(128515283,502419564) "
+                          "((35, 41, 55, 283),(139, 33, 39, 564)) "
+                          "[00000001 01111011 11011101 10000100 "
+                          "10111011 10100000 10110110 01011010]]",
                           inspected_string());
 }
 

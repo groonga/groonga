@@ -24,7 +24,7 @@ groongaのインストール前にMeCab (http://mecab.sourceforge.net/)をイン
 http://groonga.org/download/よりtar.gzファイルを取得し、
 インストール先の環境にファイルを展開して、 ::
 
- ./configure --prefix=/usr && make && sudo make install
+ ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
 
 のように実行することでインストールできます。
 

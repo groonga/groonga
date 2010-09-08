@@ -291,8 +291,8 @@ test_text_to_geo_point_in_degree(void)
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
   cast_text("35.6954581363924x139.564207350021");
   GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
-  cut_assert_equal_int(130194581, takane_latitude);
-  cut_assert_equal_int(503802073, takane_longitude);
+  cut_assert_equal_int(128503649, takane_latitude);
+  cut_assert_equal_int(502431146, takane_longitude);
 }
 
 void
@@ -303,8 +303,8 @@ test_text_to_geo_point_in_degree_comma(void)
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
   cast_text("35.6954581363924,139.564207350021");
   GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
-  cut_assert_equal_int(130194581, takane_latitude);
-  cut_assert_equal_int(503802073, takane_longitude);
+  cut_assert_equal_int(128503649, takane_latitude);
+  cut_assert_equal_int(502431146, takane_longitude);
 }
 
 void
@@ -324,7 +324,7 @@ test_text_to_geo_point_mixed(void)
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
   cast_text("35.6954581363924x503802073");
   GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
-  cut_assert_equal_int(130194581, takane_latitude);
+  cut_assert_equal_int(128503649, takane_latitude);
   cut_assert_equal_int(503802073, takane_longitude);
 }
 
@@ -336,7 +336,7 @@ test_text_to_geo_point_mixed_comma(void)
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
   cast_text("35.6954581363924,503802073");
   GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
-  cut_assert_equal_int(130194581, takane_latitude);
+  cut_assert_equal_int(128503649, takane_latitude);
   cut_assert_equal_int(503802073, takane_longitude);
 }
 
