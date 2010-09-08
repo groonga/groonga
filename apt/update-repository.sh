@@ -88,9 +88,10 @@ Tree "dists/${code_name}" {
 };
 EOF
     apt-ftparchive generate generate-${code_name}.conf
+    chmod 644 dists/${code_name}/Contents-*
+
     rm -f dists/${code_name}/Release*
     rm -f *.db
-
     cat <<EOF > release-${code_name}.conf
 APT::FTPArchive::Release::Origin "The ${PROJECT_NAME} project";
 APT::FTPArchive::Release::Label "The ${PROJECT_NAME} project";
