@@ -1,22 +1,22 @@
 (function($) {
-  $.lookup = function(input, options) {
+  $.lookup = function(input, source, columns) {
     var lastq;
     var $input = $(input).attr("autocomplete", "off");
-    setTimeout(lookup, options.delay);
+    setTimeout(lookup, 100);
     function lookup() {
       var q = $input.val();
       if (lastq != q) {
-        $.getJSON(options.source+"?callback=?",
+        $.getJSON(source+"?callback=?",
                   {query: q,
                    types: 'complete',
-                   table: options.table,
-                   column: options.column,
-                   limit: options.limit,
-                   output_columns: options.output},
+                   table: 'item',
+                   column: 'kana',
+                   limit: 25,
+                   output_columns: columns},
                   function(json) { displayItems(json[1]["complete"]); });
         lastq = q;
       }
-      setTimeout(lookup, options.delay);
+      setTimeout(lookup, 100);
     }
     function displayItems(items) {
       if (items && items.length > 2) {
@@ -43,16 +43,9 @@
       }
     }
   }
-  $.fn.lookup = function(source, options) {
-    if (!source) { return; }
-    options = options || {};
-    options.source = source;
-    options.limit = options.limit || 25;
-    options.delay = options.delay || 100;
-    options.table = options.table || "item";
-    options.column = options.column || "kana";
-    options.output = options.output || "_key,gene95_desc,edict_desc";
-    this.each(function() { new $.lookup(this, options); });
+  $.fn.lookup = function(source, columns) {
+    columns = columns || "_key,gene95_desc,edict_desc";
+    this.each(function() { new $.lookup(this, source, columns); });
     return this;
   };
 })(jQuery);

@@ -18,8 +18,7 @@
 <script type="text/javascript" src="js/dictionary.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-  var address = "http://" + location.host + "/d/suggest";
-  $(".search").lookup(address);
+  $(".search").lookup("http://" + location.host + "/d/suggest");
 });
 </script>
 <div id="result"></div>
