@@ -238,7 +238,7 @@ test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void)
     "[\"代官山たい焼き黒鯛\",4497],"
     "[\"たいやきひいらぎ\",4965],"
     "[\"たいやき工房白家 阿佐ヶ谷店\",5102],"
-    "[\"たいやき本舗 藤家 阿佐ヶ谷店\",5171]"
+    "[\"たいやき本舗 藤家 阿佐ヶ谷店\",5172]"
     "]]",
     send_command(
       cut_take_printf(

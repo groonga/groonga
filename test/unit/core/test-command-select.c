@@ -109,10 +109,9 @@ test_nil_column_reference_value(void)
   cut_assert_equal_string("[[[2],"
                           "[[\"_id\",\"UInt32\"],"
                            "[\"_key\",\"ShortText\"],"
-                           "[\"_value\",\"Int32\"],"
                            "[\"link\",\"Sites\"]],"
-                          "[1,\"groonga.org\",0,\"\"],"
-                          "[2,\"razil.jp\",0,\"\"]]]", actual);
+                          "[1,\"groonga.org\",\"\"],"
+                          "[2,\"razil.jp\",\"\"]]]", actual);
 }
 
 void

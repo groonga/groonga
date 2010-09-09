@@ -370,10 +370,10 @@ test_geo_point_wgs84(void)
   geo_point_wgs84 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
   GRN_GEO_POINT_SET(context, geo_point_wgs84, takane_latitude, takane_longitude);
   inspected = grn_inspect(context, NULL, geo_point_wgs84);
-  cut_assert_equal_string("[(128515283,502419564) "
-                          "((35, 41, 55, 283),(139, 33, 39, 564)) "
+  cut_assert_equal_string("[(128515284,502419564) "
+                          "((35, 41, 55, 284),(139, 33, 39, 564)) "
                           "[00000001 01111011 11011101 10000100 "
-                          "10111011 10100000 10110110 01011010]]",
+                          "10111011 10100000 10110110 01110000]]",
                           inspected_string());
 }
 
