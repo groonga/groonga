@@ -25,6 +25,20 @@ Description: Library files for groonga.
  .
  This package provides library files.
 
+Package: libgroonga-tokenizer-mecab
+Section: libs
+Architecture: any
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  libgroonga (= ${binary:Version}),
+  libmecab1
+Description: MeCab tokenizer for groonga.
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides MeCab tokenizer module.
+
 Package: groonga
 Section: database
 Architecture: any
