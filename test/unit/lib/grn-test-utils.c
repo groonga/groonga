@@ -750,12 +750,7 @@ grn_test_coordinate_in_milliseconds(gdouble coordinate_in_degree)
 gdouble
 grn_test_coordinate_in_degree(gint coordinate_in_milliseconds)
 {
-  gdouble coordinate_in_degree = 0;
-
-  coordinate_in_degree += (coordinate_in_milliseconds % 3600) * 0.0000001;
-  coordinate_in_degree += (coordinate_in_milliseconds / 3600.0) * 0.001;
-
-  return coordinate_in_degree;
+  return (coordinate_in_milliseconds / 3600.0) * 0.001;
 }
 
 const gchar *
