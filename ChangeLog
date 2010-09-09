@@ -1,4 +1,89 @@
+2010-09-09 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/Makefile.am, doc/ja/source/index.txt, doc/ja/source/install.txt: add
+ install document.
+
+ * doc/ja/source/commands/select.txt, doc/ja/source/news.txt: add 1.0.2 entry.
+
+2010-09-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * examples/dictionary/html/index.html,
+ examples/dictionary/html/js/dictionary.js: Trimmed examples/dictionary
+
+2010-09-09 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-define-selector.c,
+ test/unit/core/test-command-select.c: follow _value isn't shown by default
+ change.
+
+ * test/unit/core/test-inspect.c, test/unit/story/test-taiyaki.c: follow
+ geopoint conversion logic change.
+
+ * test/unit/lib/grn-test-utils.c: fix a milliseconds -> dgree geo point
+ conversion logic.
+
+ * examples/dictionary/readme.txt: fix a typo.
+
+2010-09-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * examples/dictionary/readme.txt: Fixed a typo.
+
+ * examples/dictionary/ddl.grn, examples/dictionary/edict/edict2grn.rb,
+ examples/dictionary/edict/edict_import.sh,
+ examples/dictionary/eijiro/eijiro2grn.rb,
+ examples/dictionary/eijiro/eijiro_import.sh,
+ examples/dictionary/gene95/gene2grn.rb,
+ examples/dictionary/gene95/gene_import.sh,
+ examples/dictionary/html/css/dictionary.css,
+ examples/dictionary/html/index.html,
+ examples/dictionary/html/js/dictionary.js,
+ examples/dictionary/html/js/jquery-1.4.2.min.js,
+ examples/dictionary/init_db.sh, examples/dictionary/jmdict/jmdict.rb,
+ examples/dictionary/readme.txt: Added an example for loading various
+ dictionaries.
+
+2010-09-08 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/tutorial/tutorial01.txt: add --localstatedir=/var for
+ suggested configure options.
+
+ * lib/db.c, test/unit/core/test-cast-basic.c, test/unit/core/test-inspect.c,
+ test/unit/fixtures/story/taiyaki/ddl.grn,
+ test/unit/fixtures/story/taiyaki/shops.grn, test/unit/lib/grn-test-utils.c,
+ test/unit/story/test-taiyaki.c: fix decimal geopoint parsing. #460
+
+ * doc/ja/source/commands/select.txt, lib/proc.c: remove _value from default
+ output_columns.
+
+ * doc/ja/source/commands/select.txt: add more missing ",".
+
+ * doc/ja/source/commands/select.txt: add missing ",".
+
+2010-09-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * modules/suggest/suggest.c: Added sortby, output_columns, offset and limit
+ parameters to suggest command. Number of results and column names is added to
+ result of suggest command.
+
+2010-09-07 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/fixtures/story/taiyaki/Makefile.am: add missing data.  Reported
+ by OBATA Akio. Thanks!!!
+
+ * test/unit/core/test-cast-basic.c: add tests for geo literal with ','
+ separator.
+
+ * apt/update-repository.sh: fix generated file permission.
+
+2010-09-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/execfile.txt, lib/proc.c, lib/proc.h, src/Makefile.am,
+ src/groonga.c: Renamed the name of an option of groonga command from
+ admin-html-path to document-root.
+
 2010-09-06 Kouhei Sutou <kou@clear-code.com>
+
+ * ChangeLog, configure.ac: release 1.0.1
 
  * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
  add 1.0.1 release entry.
