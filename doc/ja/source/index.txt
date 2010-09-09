@@ -11,6 +11,7 @@ groonga ドキュメント
    :numbered:
 
    characteristic
+   install
    tutorial
    reference
    developer

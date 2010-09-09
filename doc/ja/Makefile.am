@@ -241,6 +241,7 @@ source_files =					\
 	source/grntest.txt			\
 	source/http.txt				\
 	source/index.txt			\
+	source/install.txt			\
 	source/news.txt				\
 	source/process.txt			\
 	source/pseudo_column.txt		\

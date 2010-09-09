@@ -1,0 +1,114 @@
+.. highlightlang:: none
+
+インストール
+============
+
+それぞれの環境毎にインストール方法を説明します。
+
+Debian GNU/Linux lenny
+----------------------
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ lenny main
+  deb-src http://packages.groonga.org/debian/ lenny main
+
+インストール::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga libgroonga-dev
+
+Debian GNU/Linux squeeze
+------------------------
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ squeeze main
+  deb-src http://packages.groonga.org/debian/ squeeze main
+
+インストール::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga libgroonga-dev
+
+Debian GNU/Linux sid
+--------------------
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ unstable main
+  deb-src http://packages.groonga.org/debian/ unstable main
+
+インストール::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga libgroonga-dev
+
+Ubuntu 8.04 LTS Hardy Heron
+---------------------------
+
+注: Ubuntu本家のuniverseセクションもインストール対象としておくこと
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/ubuntu/ hardy universe
+  deb-src http://packages.groonga.org/ubuntu/ hardy universe
+
+インストール::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga libgroonga-dev
+
+Ubuntu 10.04 Lucid Lynx
+-----------------------
+
+注: Ubuntu本家のuniverseセクションもインストール対象としておくこと
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/ubuntu/ karmic universe
+  deb-src http://packages.groonga.org/ubuntu/ karmic universe
+
+インストール::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga libgroonga-dev
+
+CentOS 5
+--------
+
+インストール::
+
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
+  % sudo yum update
+  % sudo yum install -y groonga groonga-tokenizer-mecab groonga-devel
+
+Fedora 13
+---------
+
+インストール::
+
+  % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.0-0.noarch.rpm
+  % sudo yum update
+  % sudo yum install -y groonga groonga-tokenizer-mecab groonga-devel
+
+その他
+------
+
+形態素単位でトークナイズした全文検索索引を使用したい場合は、
+groongaのインストール前にMeCab
+(http://mecab.sourceforge.net/)をインストールしてください。
+
+http://groonga.org/download/よりtar.gzファイルを取得し、
+インストール先の環境にファイルを展開して、 ::
+
+ ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
+
+のように実行することでインストールできます。
+
+prefixは、インストール先を指定するパラメータです。prefixを指定しない場合には、/usr/localが指定されたものとみなします。LD_LIBRARY_PATHなどに詳しくない人は、上記のように/usrを指定することをお勧めします。
