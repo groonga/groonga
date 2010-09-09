@@ -89,7 +89,8 @@ test_table(void)
                        "[\"groonga.org\",0],\n"
                        "[\"razil.jp\",0]\n"
                        "]");
-  assert_send_commands("define_selector select_sites Sites");
+  assert_send_commands("define_selector select_sites Sites "
+                       "--output_columns \"_id, _key, _value, *\"");
   actual = send_command("select_sites");
   cut_assert_equal_string("[[[2],"
                           "[[\"_id\",\"UInt32\"],"
