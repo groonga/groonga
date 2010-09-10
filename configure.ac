@@ -135,7 +135,12 @@ AC_CONFIG_FILES([Makefile
 AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h pthread.h sys/resource.h)
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h sys/sysctl.h)
+AC_CHECK_HEADERS(time.h)
 AC_CHECK_FUNCS(localtime_r gmtime_r)
+AC_CHECK_LIB(rt, clock_gettime, [
+  RT_LIBS="-lrt"
+  AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [use clock_gettime])
+], [])
 AC_SYS_LARGEFILE
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
@@ -671,7 +676,7 @@ AC_SUBST(examples_dictionarydir)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 CFLAGS="$CFLAGS -DMODULES_DIR=\\\"\"\$(modulesdir)\"\\\""
 CFLAGS="$CFLAGS -DGROONGA_LOG_PATH=\\\"\"\$(groonga_log_path)\"\\\""
-LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
+LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $RT_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # For Debian package release

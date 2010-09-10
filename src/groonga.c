@@ -481,11 +481,11 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
       grn_timeval tv;
       grn_timeval_now(ctx, &tv);
       dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
       GRN_TEXT_PUTC(ctx, head, ',');
       grn_text_ftoa(ctx, head, dv);
       dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
       GRN_TEXT_PUTC(ctx, head, ',');
       grn_text_ftoa(ctx, head, dv);
     }
@@ -515,10 +515,10 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
       grn_timeval tv;
       grn_timeval_now(ctx, &tv);
       dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_usec / 1000000.0;
+      dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
       grn_text_ftoa(ctx, head, dv);
       dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+      dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
       GRN_TEXT_PUTC(ctx, head, '\t');
       grn_text_ftoa(ctx, head, dv);
     }
@@ -564,10 +564,10 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
           grn_timeval tv;
           grn_timeval_now(ctx, &tv);
           dv = ctx->impl->tv.tv_sec;
-          dv += ctx->impl->tv.tv_usec / 1000000.0;
+          dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
           grn_text_ftoa(ctx, head, dv);
           dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-          dv += (tv.tv_usec - ctx->impl->tv.tv_usec) / 1000000.0;
+          dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
           GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
           grn_text_ftoa(ctx, head, dv);
           GRN_TEXT_PUTS(ctx, head, "\">");

@@ -763,7 +763,7 @@ mk_const(grn_ctx *ctx, char *name, unsigned int len)
       if (cur >= name + len || *cur != '.') {
         QLERR("illegal time format '%s'", name);
       }
-      tv.tv_usec = grn_atoi(cur + 1, name + len, &cur);
+      tv.tv_nsec = grn_atoi(cur + 1, name + len, &cur);
       if (cur >= name + len || *cur != '>') {
         QLERR("illegal time format '%s'", name);
       }
@@ -1010,7 +1010,7 @@ grn_obj_inspect(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int flags)
       GRN_TEXT_PUTS(ctx, buf, "#:<");
       grn_text_itoa(ctx, buf, obj->u.tv.tv_sec);
       GRN_TEXT_PUTS(ctx, buf, ".");
-      grn_text_itoa(ctx, buf, obj->u.tv.tv_usec);
+      grn_text_itoa(ctx, buf, obj->u.tv.tv_nsec);
       GRN_TEXT_PUTC(ctx, buf, '>');
       break;
     case GRN_QUERY :
@@ -2245,7 +2245,7 @@ grn_ql_eval(grn_ctx *ctx, grn_cell *code, grn_cell *objs)
       if (x->u.tv.tv_sec != y->u.tv.tv_sec) {\
         r = (x->u.tv.tv_sec op y->u.tv.tv_sec);\
       } else {\
-        r = (x->u.tv.tv_usec op y->u.tv.tv_usec);\
+        r = (x->u.tv.tv_nsec op y->u.tv.tv_nsec);\
       }\
     } else {\
       QLERR("can't compare");\
@@ -2261,7 +2261,7 @@ grn_ql_eval(grn_ctx *ctx, grn_cell *code, grn_cell *objs)
   case GRN_CELL_TIME :\
     {\
       double dv= x->u.tv.tv_sec op y->u.tv.tv_sec;\
-      dv += (x->u.tv.tv_usec op y->u.tv.tv_usec) / 1000000.0;\
+      dv += (x->u.tv.tv_nsec op y->u.tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;\
       SETFLOAT(v, dv);\
     }\
     break;\
@@ -2271,7 +2271,7 @@ grn_ql_eval(grn_ctx *ctx, grn_cell *code, grn_cell *objs)
       int64_t sec = x->u.tv.tv_sec op IVALUE(y);\
       if (sec < INT32_MIN || INT32_MAX < sec) { QLERR("time val overflow"); }\
       tv.tv_sec = (int)sec;\
-      tv.tv_usec = x->u.tv.tv_usec;\
+      tv.tv_nsec = x->u.tv.tv_nsec;\
       SETTIME(v, &tv);\
     }\
     break;\
@@ -2279,17 +2279,17 @@ grn_ql_eval(grn_ctx *ctx, grn_cell *code, grn_cell *objs)
     {\
       grn_timeval tv;\
       double sec = x->u.tv.tv_sec op (int)FVALUE(y);\
-      int32_t usec = x->u.tv.tv_usec op (int)((FVALUE(y) - (int)FVALUE(y)) * 1000000);\
+      int32_t nsec = x->u.tv.tv_nsec op (int)((FVALUE(y) - (int)FVALUE(y)) * GRN_TIME_NSEC_PER_SEC);\
       if (sec < INT32_MIN || INT32_MAX < sec) { QLERR("time val overflow"); }\
       tv.tv_sec = (int)sec;\
-      if (usec < 0) {\
+      if (nsec < 0) {\
         tv.tv_sec--;\
-        usec += 1000000;\
-      } else if (usec >= 1000000) {\
+        nsec += GRN_TIME_NSEC_PER_SEC;\
+      } else if (nsec >= GRN_TIME_NSEC_PER_SEC) {\
         tv.tv_sec++;\
-        usec -= 1000000;\
+        nsec -= GRN_TIME_NSEC_PER_SEC;\
       }\
-      tv.tv_usec = usec;\
+      tv.tv_nsec = nsec;\
       SETTIME(v, &tv);\
     }\
     break;\
@@ -2565,7 +2565,7 @@ nf_neq(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
         if (x->u.tv.tv_sec != y->u.tv.tv_sec) {
           r = (x->u.tv.tv_sec == y->u.tv.tv_sec);
         } else {
-          r = (x->u.tv.tv_usec == y->u.tv.tv_usec);
+          r = (x->u.tv.tv_nsec == y->u.tv.tv_nsec);
         }
       } else {
         QLERR("can't compare");
@@ -2868,11 +2868,11 @@ nf_timestr(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     /* fallthru */
   case GRN_CELL_INT :
     tv.tv_sec = IVALUE(x);
-    tv.tv_usec = 0;
+    tv.tv_nsec = 0;
     break;
   case GRN_CELL_FLOAT :
     tv.tv_sec = (int32_t) FVALUE(x);
-    tv.tv_usec = (int32_t) ((FVALUE(x) - tv.tv_sec) * 1000000);
+    tv.tv_nsec = (int32_t) ((FVALUE(x) - tv.tv_sec) * GRN_TIME_NSEC_PER_SEC);
     break;
   case GRN_CELL_TIME :
     memcpy(&tv, &x->u.tv, sizeof(grn_timeval));
@@ -2900,7 +2900,7 @@ nf_tonumber(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
   case GRN_CELL_TIME :
     {
       double dv= x->u.tv.tv_sec;
-      dv += x->u.tv.tv_usec / 1000000.0;
+      dv += x->u.tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
       GRN_CELL_NEW(ctx, v);
       SETFLOAT(v, dv);
     }
@@ -2933,13 +2933,13 @@ nf_totime(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
     break;
   case GRN_CELL_INT :
     tv.tv_sec = (int32_t) IVALUE(x);
-    tv.tv_usec = 0;
+    tv.tv_nsec = 0;
     GRN_CELL_NEW(ctx, v);
     SETTIME(v, &tv);
     break;
   case GRN_CELL_FLOAT :
     tv.tv_sec = (int32_t) FVALUE(x);
-    tv.tv_usec = (int32_t) ((FVALUE(x) - tv.tv_sec) * 1000000);
+    tv.tv_nsec = (int32_t) ((FVALUE(x) - tv.tv_sec) * GRN_TIME_NSEC_PER_SEC);
     GRN_CELL_NEW(ctx, v);
     SETTIME(v, &tv);
     break;

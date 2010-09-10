@@ -614,7 +614,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
             v = (int32_t) FVALUE(cell);
             break;
           case GRN_CELL_TIME :
-            v = (int32_t) cell->u.tv.tv_usec;
+            v = (int32_t) cell->u.tv.tv_nsec / GRN_TIME_NSEC_PER_SEC * GRN_TIME_USEC_PER_SEC;
             break;
           }
           if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }}
@@ -638,7 +638,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
             v = (uint32_t) FVALUE(cell);
             break;
           case GRN_CELL_TIME :
-            v = (uint32_t) cell->u.tv.tv_usec;
+            v = (uint32_t) cell->u.tv.tv_nsec / GRN_TIME_NSEC_PER_SEC * GRN_TIME_USEC_PER_SEC;
             break;
           }
           if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }}
@@ -659,7 +659,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
             v = (int64_t) FVALUE(cell);
             break;
           case GRN_CELL_TIME :
-            v = (int32_t) cell->u.tv.tv_usec;
+            v = (int32_t) cell->u.tv.tv_nsec / GRN_TIME_NSEC_PER_SEC * GRN_TIME_USEC_PER_SEC;
             break;
           }
           if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }}
@@ -684,7 +684,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
             v = FVALUE(cell);
             break;
           case GRN_CELL_TIME :
-            v = ((double) cell->u.tv.tv_usec) / 1000000 + cell->u.tv.tv_sec;
+            v = ((double) cell->u.tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC + cell->u.tv.tv_sec;
             break;
           }
           if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }}
@@ -706,7 +706,7 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
                   if (cur >= str + len || *cur != '.') {
                     QLWARN("illegal time format '%s'", str);
                   }
-                  v.tv_usec = grn_atoi(cur + 1, str + len, &cur);
+                  v.tv_nsec = grn_atoi(cur + 1, str + len, &cur);
                   if (cur >= str + len || *cur != '>') {
                     QLWARN("illegal time format '%s'", str);
                   }
@@ -716,22 +716,22 @@ cell2obj(grn_ctx *ctx, grn_cell *cell, grn_obj *column, grn_obj *obj)
                   int len = cell->u.b.size;
                   STR2DBL(str, len, dval);
                   v.tv_sec = (int32_t) dval;
-                  v.tv_usec = (int32_t) ((dval - v.tv_sec) * 1000000);
+                  v.tv_nsec = (int32_t) ((dval - v.tv_sec) * GRN_TIME_NSEC_PER_SEC);
                 }
               }
             }
             break;
           case GRN_CELL_INT :
             v.tv_sec = (int32_t) IVALUE(cell);
-            v.tv_usec = 0;
+            v.tv_nsec = 0;
             break;
           case GRN_CELL_FLOAT :
             v.tv_sec = (int32_t) FVALUE(cell);
-            v.tv_usec = (int32_t) ((FVALUE(cell) - v.tv_sec) * 1000000);
+            v.tv_nsec = (int32_t) ((FVALUE(cell) - v.tv_sec) * GRN_TIME_NSEC_PER_SEC);
             break;
           case GRN_CELL_TIME :
             v.tv_sec = cell->u.tv.tv_sec;
-            v.tv_usec = cell->u.tv.tv_usec;
+            v.tv_nsec = cell->u.tv.tv_nsec;
             break;
           }
           if (!obj) { if (!(obj = grn_obj_open(ctx, GRN_BULK, 0, 0))) { return NULL; }}
@@ -2846,7 +2846,7 @@ disp_j(grn_ctx *ctx, grn_cell *obj, grn_obj *buf)
     case GRN_CELL_TIME :
       {
         double dv= obj->u.tv.tv_sec;
-        dv += obj->u.tv.tv_usec / 1000000.0;
+        dv += obj->u.tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
         grn_text_ftoa(ctx, buf, dv);
       }
       break;
@@ -3055,7 +3055,7 @@ disp_t(grn_ctx *ctx, grn_cell *obj, grn_obj *buf, int *f)
     case GRN_CELL_TIME :
       {
         double dv= obj->u.tv.tv_sec;
-        dv += obj->u.tv.tv_usec / 1000000.0;
+        dv += obj->u.tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
         grn_text_ftoa(ctx, buf, dv);
         *f = 1;
       }

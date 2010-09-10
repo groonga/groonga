@@ -386,7 +386,7 @@ GRN_VAR const char *grn_qlog_path;
 
 typedef struct {
   int32_t tv_sec;
-  int32_t tv_usec;
+  int32_t tv_nsec;
 } grn_timeval;
 
 extern grn_timeval grn_starttime;
@@ -397,6 +397,17 @@ extern grn_timeval grn_starttime;
 #ifndef GRN_TIMEVAL_STR_FORMAT
 #define GRN_TIMEVAL_STR_FORMAT "%04d-%02d-%02d %02d:%02d:%02d.%06d"
 #endif /* GRN_TIMEVAL_STR_FORMAT */
+#define GRN_TIME_NSEC_PER_SEC 1000000000
+#define GRN_TIME_NSEC_PER_SEC_F 1000000000.0
+
+#define LAP(prefix,format,...) {\
+  uint64_t et;\
+  grn_timeval tv;\
+  grn_timeval_now(ctx, &tv);\
+  et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC\
+    + (tv.tv_nsec - ctx->impl->tv.tv_nsec);\
+  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|" prefix "%015llu " format, (intptr_t)ctx, et, __VA_ARGS__);\
+}
 
 GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
 GRN_API grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);

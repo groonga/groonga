@@ -3761,15 +3761,6 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   return res;
 }
 
-#define LAP(msg,num) {\
-  uint64_t et;\
-  grn_timeval tv;\
-  grn_timeval_now(ctx, &tv);\
-  et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC\
-    + (tv.tv_usec - ctx->impl->tv.tv_usec);\
-  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s(%d)", (intptr_t)ctx, et, msg, num);\
-}
-
 grn_obj *
 grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                  grn_obj *res, grn_operator op)
@@ -4026,7 +4017,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           }
         }
         SI_FREE(si);
-        LAP("filter", grn_table_size(ctx, res));
+        LAP(":", "filter(%d)", grn_table_size(ctx, res));
       }
       GRN_OBJ_FIN(ctx, &res_stack);
       GRN_FREE(sis);

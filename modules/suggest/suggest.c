@@ -28,15 +28,6 @@
 #define CORRECT  2
 #define SUGGEST  4
 
-#define LAP(msg,num) {\
-  uint64_t et;\
-  grn_timeval tv;\
-  grn_timeval_now(ctx, &tv);\
-  et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_USEC_PER_SEC\
-    + (tv.tv_usec - ctx->impl->tv.tv_usec);\
-  GRN_LOG(ctx, GRN_LOG_NONE, "%08x|:%012llu %s(%d)", (intptr_t)ctx, et, msg, num);\
-}
-
 static int
 grn_parse_suggest_types(const char *nptr, const char *end)
 {
@@ -151,7 +142,7 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
     }
     if ((keys = grn_table_sort_key_from_str(ctx, sortby_val, sortby_len, res, &nkeys))) {
       grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
-      LAP("sort", limit);
+      LAP(":", "sort(%d)", limit);
       GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, res), 0, limit, offset);
       format.flags =
         GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
@@ -263,7 +254,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
     grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
     int32_t orig_score, max_score = cooccur_search(ctx, table, tid, res, CORRECT);
-    LAP("cooccur", max_score);
+    LAP(":", "cooccur(%d)", max_score);
     if (GRN_TEXT_LEN(query) && max_score < 100) {
       grn_obj *key, *index;
       if ((key = grn_obj_column(ctx, table, CONST_STR_LEN("_key")))) {
@@ -275,7 +266,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
           grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
                         (grn_hash *)res, GRN_OP_OR, &optarg);
           grn_obj_unlink(ctx, index);
-          LAP("similar", grn_table_size(ctx, res));
+          LAP(":", "similar(%d)", grn_table_size(ctx, res));
           {
             grn_hash_cursor *hc = grn_hash_cursor_open(ctx, (grn_hash *)res, NULL,
                                                        0, NULL, 0, 0, -1, 0);
@@ -298,7 +289,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
               grn_hash_cursor_close(ctx, hc);
             }
           }
-          LAP("filter", grn_table_size(ctx, res));
+          LAP(":", "filter(%d)", grn_table_size(ctx, res));
           {
             /* exec _score -= edit_distance(_key, "query string") for all records */
             grn_obj *var;
@@ -454,8 +445,8 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
           grn_obj_get_value(ctx, events_type, *ep, &pre_type);
           grn_obj_get_value(ctx, events_time, *ep, &pre_time);
           grn_obj_get_value(ctx, events_item, *ep, &pre_item);
-          if (GRN_TIME_VALUE(&pre_time) + 60000000 < post_time) {
-            r = (int)((post_time - GRN_TIME_VALUE(&pre_time))/1000000);
+          if (GRN_TIME_VALUE(&pre_time) + 60 * GRN_TIME_USEC_PER_SEC < post_time) {
+            r = (int)((post_time - GRN_TIME_VALUE(&pre_time))/GRN_TIME_USEC_PER_SEC);
             break;
           }
           key = key_ + GRN_RECORD_VALUE(&pre_item);
