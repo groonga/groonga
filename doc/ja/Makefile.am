@@ -284,6 +284,7 @@ html_files =						\
 	html/_sources/commands/select.txt		\
 	html/_sources/commands/shutdown.txt		\
 	html/_sources/commands/status.txt		\
+	html/_sources/commands/suggest.txt		\
 	html/_sources/commands/table_create.txt		\
 	html/_sources/commands/table_list.txt		\
 	html/_sources/commands/table_remove.txt		\
@@ -309,6 +310,7 @@ html_files =						\
 	html/_sources/grntest.txt			\
 	html/_sources/http.txt				\
 	html/_sources/index.txt				\
+	html/_sources/install.txt			\
 	html/_sources/news.txt				\
 	html/_sources/process.txt			\
 	html/_sources/pseudo_column.txt			\
@@ -356,6 +358,7 @@ html_files =						\
 	html/commands/select.html			\
 	html/commands/shutdown.html			\
 	html/commands/status.html			\
+	html/commands/suggest.html			\
 	html/commands/table_create.html			\
 	html/commands/table_list.html			\
 	html/commands/table_remove.html			\
@@ -382,6 +385,7 @@ html_files =						\
 	html/grntest.html				\
 	html/http.html					\
 	html/index.html					\
+	html/install.html				\
 	html/news.html					\
 	html/objects.inv				\
 	html/process.html				\
