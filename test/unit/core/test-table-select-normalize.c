@@ -73,8 +73,9 @@ setup_ddl(void)
   assert_send_command("table_create Terms "
                       "--flags TABLE_PAT_KEY|KEY_NORMALIZE "
                       "--key_type ShortText "
-                      "--default_tokenizer TokenBigram");
-  assert_send_command("column_create Terms comment_content COLUMN_INDEX "
+                      "--default_tokenizer TokenBigramSplitSymbol");
+  assert_send_command("column_create Terms comment_content "
+                      "COLUMN_INDEX|WITH_POSITION "
                       "Comments "
                       "--source content");
 }
@@ -180,7 +181,6 @@ query(const gchar *string)
 void
 test_japanese_parenthesis(void)
 {
-  cut_omit("token->uni_symbol should be customzable");
   cut_assert_not_null(grn_table_select(context, comments,
                                        query("content:@）は"),
                                        result, GRN_OP_OR));
@@ -207,6 +207,18 @@ test_bigram_end_with_space_and_single_char(void)
 {
   cut_assert_not_null(grn_table_select(context, comments,
                                        query("content:@\"ロボット 鉄\""),
+                                       result, GRN_OP_OR));
+  grn_test_assert_select(context,
+                         gcut_take_new_list_string("ロボ", NULL),
+                         result,
+                         "_key");
+}
+
+void
+test_bigram_pharase(void)
+{
+  cut_assert_not_null(grn_table_select(context, comments,
+                                       query("content:@ロボット"),
                                        result, GRN_OP_OR));
   grn_test_assert_select(context,
                          gcut_take_new_list_string("ロボ", NULL),
