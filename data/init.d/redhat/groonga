@@ -2,7 +2,7 @@
 #
 # /etc/rc.d/init.d/groonga
 #
-# chkconfig: 2345 80 20
+# chkconfig: - 80 20
 # description: A full-text search engine and column store.
 # processname: groonga
 # config: /etc/sysconfig/groonga
@@ -12,8 +12,8 @@
 # Provides:          groonga
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Required-Start:
-# Required-Stop:
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
 # Short-Description: groonga's init script
 # Description:       groonga is a full-text search engine and column store.
 ### END INIT INFO
