@@ -153,6 +153,20 @@ do_reload() {
     return 0
 }
 
+do_status() {
+    ARGS=""
+    if [ -n "${PROTOCOL}" ]; then
+	ARGS="${ARGS} --protocol ${PROTOCOL}"
+    fi
+    if [ -n "${ADDRESS}" ]; then
+	ARGS="${ARGS} -c ${ADDRESS}"
+    else
+	ARGS="${ARGS} -c localhost"
+    fi
+    $DAEMON $ARGS status
+    return $?
+}
+
 case "$1" in
     start)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
@@ -193,8 +207,11 @@ case "$1" in
 		;;
 	esac
 	;;
+    status)
+	do_status
+	;;
     *)
-	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload|status}" >&2
 	exit 3
 	;;
 esac
