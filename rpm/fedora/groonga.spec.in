@@ -47,7 +47,7 @@ Libraries and header files for groonga
 Summary:	MeCab tokenizer for groonga
 Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:       mecab
+Requires:	mecab
 
 %description tokenizer-mecab
 MeCab tokenizer for groonga
@@ -56,13 +56,13 @@ MeCab tokenizer for groonga
 Summary:	Munin plugins for groonga
 Group:		Applications/System
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:       munin-node
+Requires:	munin-node
 
 %description munin-plugins
 Munin plugins for groonga
 
 %prep
-%define optflags -O0
+# %define optflags -O0
 %setup -q
 
 
@@ -83,10 +83,10 @@ rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
 mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
-    $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
+	$RPM_BUILD_ROOT%{_sysconfdir}/init.d/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
 mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/sysconfig \
-    $RPM_BUILD_ROOT%{_sysconfdir}/
+	$RPM_BUILD_ROOT%{_sysconfdir}/
 
 rm -rf $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/
 
@@ -109,14 +109,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if ! /usr/bin/getent group groonga &>/dev/null; then
-    /usr/sbin/groupadd -r groonga || \
-        %logmsg "Unexpected error adding group \"groonga\". Aborting installation."
+	/usr/sbin/groupadd -r groonga || \
+		echo "Unexpected error adding group \"groonga\". Aborting installation."
 fi
 if ! /usr/bin/id groonga &>/dev/null; then
-    /usr/sbin/useradd -r -s /sbin/nologin -c 'milter manager' \
-        -d %{_localstatedir}/lib/groonga --create-home \
-        -g groonga groonga || \
-        %logmsg "Unexpected error adding user \"groonga\". Aborting installation."
+	/usr/sbin/useradd -r -s /sbin/nologin -c 'milter manager' \
+		-d %{_localstatedir}/lib/groonga --create-home \
+		-g groonga groonga || \
+		echo "Unexpected error adding user \"groonga\". Aborting installation."
 fi
 
 %post
@@ -129,33 +129,33 @@ fi
 %post munin-plugins
 /usr/sbin/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
 [ -f /var/lock/subsys/munin-node ] && \
-    /sbin/service munin-node restart > /dev/null 2>&1
+	/sbin/service munin-node restart > /dev/null 2>&1
 :
 
 %preun
 if [ $1 -eq 0 ] ; then
-    /sbin/service groonga stop > /dev/null 2>&1
-    /sbin/chkconfig --del groonga
+	/sbin/service groonga stop > /dev/null 2>&1
+	/sbin/chkconfig --del groonga
 fi
 
 %postun
 if [ $1 -ge 1 ] ; then
-    /sbin/service groonga condrestart > /dev/null 2>&1
+	/sbin/service groonga condrestart > /dev/null 2>&1
 fi
 
 if [ $1 -eq 0 ]; then
-    /usr/sbin/userdel -r groonga || \
-        %logmsg "User \"groonga\" could not be deleted."
+	/usr/sbin/userdel -r groonga || \
+		echo "User \"groonga\" could not be deleted."
 fi
 
 %postun libs -p /sbin/ldconfig
 
 %postun munin-plugins
 if [ $1 -eq 0 ]; then
-    rm %{_sysconfdir}/munin/plugins/groongar_* > /dev/null 2>&1
-    [ -f /var/lock/subsys/munin-node ] && \
-        /sbin/service munin-node restart > /dev/null 2>&1
-    :
+	rm %{_sysconfdir}/munin/plugins/groongar_* > /dev/null 2>&1
+	[ -f /var/lock/subsys/munin-node ] && \
+		/sbin/service munin-node restart > /dev/null 2>&1
+	:
 fi
 
 
