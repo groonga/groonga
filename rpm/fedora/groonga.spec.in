@@ -23,7 +23,6 @@ on relational data model.
 %package libs
 Summary:	Runtime libraries for groonga
 Group:		System Environment/Libraries
-License:	LGPLv2
 
 %description libs
 This package contains the libraries for groonga
