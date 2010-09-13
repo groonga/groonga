@@ -62,7 +62,7 @@ Requires:	munin-node
 Munin plugins for groonga
 
 %prep
-# %define optflags -O0
+#% define optflags -O0
 %setup -q
 
 
