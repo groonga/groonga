@@ -93,6 +93,11 @@ AC_CONFIG_FILES([Makefile
                  modules/tokenizers/Makefile
                  modules/suggest/Makefile
                  examples/Makefile
+                 examples/dictionary/Makefile
+                 examples/dictionary/edict/Makefile
+                 examples/dictionary/eijiro/Makefile
+                 examples/dictionary/gene95/Makefile
+                 examples/dictionary/jmdict/Makefile
                  apt/Makefile
                  rpm/Makefile
                  rpm/centos/Makefile
@@ -655,6 +660,12 @@ if test -z "$suffix"; then
 fi
 AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, ["$suffix"], "module suffix")
 
+# for examples
+examplesdir="\$(pkgdatadir)/examples"
+AC_SUBST(examplesdir)
+
+examples_dictionarydir="\$(examplesdir)/dictionary"
+AC_SUBST(examples_dictionarydir)
 
 # flags for compile groonga
 CFLAGS="$CFLAGS $OPT_CFLAGS "

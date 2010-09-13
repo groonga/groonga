@@ -1,3 +1,5 @@
+SUBDIRS = dictionary
+
 noinst_PROGRAMS = kv
 
 DEFAULT_INCLUDES = -I$(top_srcdir) $(GROONGA_INCLUDEDIR)
