@@ -12,6 +12,8 @@
 # Provides:          groonga
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
+# Required-Start:
+# Required-Stop:
 # Short-Description: groonga's init script
 # Description:       groonga is a full-text search engine and column store.
 ### END INIT INFO
@@ -131,6 +133,14 @@ restart() {
 	start
 }
 
+satus() {
+	ARGS=""
+	if [ -n "${PROTOCOL}" ]; then
+		ARGS="${ARGS} --protocol ${PROTOCOL}"
+	fi
+	$groonga $ARGS -c $ADDRESS status
+}
+
 case "$1" in
     start)
 	start
@@ -147,8 +157,11 @@ case "$1" in
     condrestart)
 	[ -f /var/lock/subsys/$prog ] && restart || :
 	;;
+    status)
+	status
+	;;
     *)
-	echo "Usage: $prog {start|stop|reload|restart|condrestart}"
+	echo "Usage: $prog {start|stop|reload|restart|condrestart|status}"
 	exit 1
 	;;
 esac
