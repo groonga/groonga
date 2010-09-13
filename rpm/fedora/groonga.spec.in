@@ -112,7 +112,7 @@ if ! /usr/bin/getent group groonga &>/dev/null; then
 		echo "Unexpected error adding group \"groonga\". Aborting installation."
 fi
 if ! /usr/bin/id groonga &>/dev/null; then
-	/usr/sbin/useradd -r -s /sbin/nologin -c 'milter manager' \
+	/usr/sbin/useradd -r -s /sbin/nologin -c 'groonga' \
 		-d %{_localstatedir}/lib/groonga --create-home \
 		-g groonga groonga || \
 		echo "Unexpected error adding user \"groonga\". Aborting installation."
