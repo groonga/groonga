@@ -106,6 +106,8 @@ usage(FILE *output)
           "  --config-path <path>:             specify config file path\n"
           "  --cache-limit <limit>:            specify the max number of cache data\n"
           "  --file <path>:                    read commands from specified file\n"
+          "  --default-command-version <version>:\n"
+          "                                    specify default command version\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -2063,7 +2065,7 @@ main(int argc, char **argv)
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
     *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
-    *cache_limitstr = NULL, *admin_html_path = NULL;
+    *cache_limitstr = NULL, *admin_html_path = NULL, *command_versionstr = NULL;
   const char *config_path = NULL;
   const char *input_path = NULL;
   int r, i, mode = mode_alone;
@@ -2091,6 +2093,7 @@ main(int argc, char **argv)
     {'\0', "cache-limit", NULL, 0, getopt_op_none},
     {'\0', "file", NULL, 0, getopt_op_none},
     {'\0', "document-root", NULL, 0, getopt_op_none},
+    {'\0', "default-command-version", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -2108,6 +2111,7 @@ main(int argc, char **argv)
   opts[20].arg = &cache_limitstr;
   opts[21].arg = &input_path;
   opts[22].arg = &grn_document_root;
+  opts[23].arg = &command_versionstr;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -2244,6 +2248,9 @@ main(int argc, char **argv)
 #endif
   if (grn_init()) { return -1; }
   grn_set_default_encoding(enc);
+  if (command_versionstr) {
+    grn_set_default_command_version(atoi(command_versionstr));
+  }
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
   grn_set_segv_handler();
   grn_set_int_handler();

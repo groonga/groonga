@@ -103,4 +103,11 @@ class OptionTest < Test::Unit::TestCase
   ensure
     FileUtils.rm_f(config_file)
   end
+
+  def test_default_command_version
+    result = JSON.parse(run_groonga("--default-command-version", "1",
+                                    "-n", @database_path,
+                                    "status"))
+    assert_equal(1, result[1]["command_version"])
+  end
 end
