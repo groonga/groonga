@@ -26,6 +26,7 @@
 
 void test_at_nonexistent(void);
 void test_dynamic_malloc_change(void);
+void test_command_version(void);
 
 static grn_ctx *context;
 static grn_obj *database;
@@ -106,4 +107,15 @@ test_dynamic_malloc_change(void)
     cut_assert_null(memory);
   }
 #endif
+}
+
+void
+test_command_version(void)
+{
+  cut_assert_equal_int(GRN_COMMAND_VERSION_MAX - 1,
+                       grn_get_default_command_version());
+
+  cut_assert_ensure_context();
+  cut_assert_equal_int(GRN_COMMAND_VERSION_MAX - 1,
+                       grn_ctx_get_command_version(context));
 }

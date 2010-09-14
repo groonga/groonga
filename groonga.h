@@ -126,6 +126,12 @@ typedef enum {
 } grn_encoding;
 
 typedef enum {
+  GRN_COMMAND_VERSION_DEFAULT = 0,
+  GRN_COMMAND_VERSION_1,
+  GRN_COMMAND_VERSION_MAX
+} grn_command_version;
+
+typedef enum {
   GRN_LOG_NONE = 0,
   GRN_LOG_EMERG,
   GRN_LOG_ALERT,
@@ -241,6 +247,37 @@ GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
 
 GRN_API const char *grn_get_version(void);
 GRN_API const char *grn_get_package(void);
+
+/**
+ * grn_get_default_command_version:
+ *
+ * デフォルトのcommand_versionを返します。
+ **/
+GRN_API grn_command_version grn_get_default_command_version(void);
+
+/**
+ * grn_set_default_command_version:
+ * @encoding: 変更後のデフォルトのcommand_versionを指定します。
+ *
+ * デフォルトのcommand_versionを変更します。
+ **/
+GRN_API grn_rc grn_set_default_command_version(grn_command_version version);
+
+/**
+ * grn_ctx_get_command_version:
+ *
+ * command_versionを返します。
+ **/
+GRN_API grn_command_version grn_ctx_get_command_version(grn_ctx *ctx);
+
+/**
+ * grn_ctx_set_command_version:
+ * @encoding: 変更後のcommand_versionを指定します。
+ *
+ * command_versionを変更します。
+ **/
+GRN_API grn_rc grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
+
 
 /* obj */
 

@@ -201,6 +201,9 @@ struct _grn_ctx_impl {
   grn_obj names;
   grn_obj levels;
 
+  /* command portion */
+  grn_command_version command_version;
+
   /* ql portion */
   uint32_t ncells;
   uint32_t seqno;

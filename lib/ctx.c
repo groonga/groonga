@@ -277,6 +277,12 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_TEXT_INIT(&ctx->impl->names, GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&ctx->impl->levels, GRN_OBJ_VECTOR);
 
+  if (ctx == &grn_gctx) {
+    ctx->impl->command_version = GRN_COMMAND_VERSION_MAX - 1;
+  } else {
+    ctx->impl->command_version = grn_get_default_command_version();
+  }
+
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;
   ctx->impl->dump = NIL;
@@ -705,6 +711,18 @@ grn_set_default_encoding(grn_encoding encoding)
   }
 }
 
+grn_command_version
+grn_get_default_command_version(void)
+{
+  return grn_ctx_get_command_version(&grn_gctx);
+}
+
+grn_rc
+grn_set_default_command_version(grn_command_version version)
+{
+  return grn_ctx_set_command_version(&grn_gctx, version);
+}
+
 static int alloc_count = 0;
 
 grn_rc
@@ -757,6 +775,34 @@ grn_ctx_close(grn_ctx *ctx)
   grn_rc rc = grn_ctx_fin(ctx);
   GRN_GFREE(ctx);
   return rc;
+}
+
+grn_command_version
+grn_ctx_get_command_version(grn_ctx *ctx)
+{
+  if (ctx->impl) {
+    return ctx->impl->command_version;
+  } else {
+    return GRN_COMMAND_VERSION_MAX - 1;
+  }
+}
+
+grn_rc
+grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version)
+{
+  switch (version) {
+  case GRN_COMMAND_VERSION_DEFAULT :
+    ctx->impl->command_version = GRN_COMMAND_VERSION_MAX - 1;
+    return GRN_SUCCESS;
+  default :
+    if (GRN_COMMAND_VERSION_DEFAULT < version &&
+        version < GRN_COMMAND_VERSION_MAX) {
+      ctx->impl->command_version = version;
+      return GRN_SUCCESS;
+    } else {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
 }
 
 grn_content_type
