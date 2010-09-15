@@ -140,6 +140,7 @@ nobase_dist_doc_ja_DATA =			\
 source_files =					\
 	source/__init__.py			\
 	source/characteristic.txt		\
+	source/command_version.txt		\
 	source/commands.txt			\
 	source/commands/cache_limit.txt		\
 	source/commands/check.txt		\
@@ -265,6 +266,7 @@ source_files =					\
 html_files =						\
 	html/.buildinfo					\
 	html/_sources/characteristic.txt		\
+	html/_sources/command_version.txt		\
 	html/_sources/commands.txt			\
 	html/_sources/commands/cache_limit.txt		\
 	html/_sources/commands/check.txt		\
@@ -339,6 +341,7 @@ html_files =						\
 	html/_static/sidebar.js				\
 	html/_static/underscore.js			\
 	html/characteristic.html			\
+	html/command_version.html			\
 	html/commands.html				\
 	html/commands/cache_limit.html			\
 	html/commands/check.html			\
