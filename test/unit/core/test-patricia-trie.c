@@ -44,11 +44,12 @@ void test_set_value(void);
 void test_set_value_with_null_value(void);
 void data_add_and_delete(void);
 void test_add_and_delete(gconstpointer data);
-void data_truncate(void);
-void test_truncate(gconstpointer data);
+void data_at(void);
+void test_at(gconstpointer data);
 
 static GArray *ids;
 static GList *expected_keys, *actual_keys;
+static grn_obj *database;
 
 void
 cut_setup(void)
@@ -785,4 +786,56 @@ test_truncate(gconstpointer data)
 
   grn_test_assert(grn_pat_truncate(context, trie));
   cut_assert_equal_uint(0, grn_pat_size(context, trie));
+}
+
+void
+data_at(void)
+{
+#define ADD_DATUM(label, commands)                      \
+  gcut_add_datum(label,                                 \
+                 "commands", G_TYPE_STRING, commands,   \
+                 NULL)
+
+  ADD_DATUM("Int32",
+            "table_create Pat TABLE_PAT_KEY Int32\n"
+            "load --table Pat\n"
+            "[{\"_key\": -29}]");
+  ADD_DATUM("UInt32",
+            "table_create Pat TABLE_PAT_KEY UInt32\n"
+            "load --table Pat\n"
+            "[{\"_key\": 29}]");
+  ADD_DATUM("GeoPoint",
+            "table_create Pat TABLE_PAT_KEY TokyoGeoPoint\n"
+            "load --table Pat\n"
+            "[{\"_key\": \"128467228x503222332\"}]");
+  ADD_DATUM("ShortText",
+            "table_create Pat TABLE_PAT_KEY ShortText\n"
+            "load --table Pat\n"
+            "[{\"_key\": \"niku\"}]");
+
+#undef ADD_DATUM
+}
+
+void
+test_at(gconstpointer data)
+{
+  grn_obj *pat;
+
+  cut_assert_open_context();
+
+  database = grn_db_create(context,
+                           cut_build_path(grn_test_get_tmp_dir(),
+                                          "patricia-trie.db",
+                                          NULL),
+                           NULL);
+  grn_test_assert_context(context);
+
+  assert_send_commands(gcut_data_get_string(data, "commands"));
+  pat = grn_ctx_get(context, "Pat", strlen("Pat"));
+  grn_test_assert_equal_id(context,
+                           1,
+                           grn_pat_at(context, (grn_pat *)pat, 1));
+  grn_test_assert_equal_id(context,
+                           0,
+                           grn_pat_at(context, (grn_pat *)pat, 2));
 }

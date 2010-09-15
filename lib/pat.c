@@ -793,15 +793,13 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   return r0;
 }
 
-grn_id
-grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void **value)
+inline static grn_id
+_grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void **value)
 {
   grn_id r;
   pat_node *rn;
   int c0 = -1, c;
   uint32_t len = key_size * 16;
-  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, rn);
   for (r = rn->lr[1]; r;) {
     PAT_AT(pat, r, rn);
@@ -831,6 +829,14 @@ grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void
     c0 = c;
   }
   return GRN_ID_NIL;
+}
+
+grn_id
+grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void **value)
+{
+  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
+  KEY_ENCODE(pat, keybuf, key, key_size);
+  return _grn_pat_get(ctx, pat, key, key_size, value);
 }
 
 grn_id
@@ -1427,7 +1433,7 @@ grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   uint32_t key_size;
   const char *key = _grn_pat_key(ctx, pat, id, &key_size);
-  if (id == grn_pat_get(ctx, pat, key, key_size, NULL)) { return id; }
+  if (id == _grn_pat_get(ctx, pat, key, key_size, NULL)) { return id; }
   return GRN_ID_NIL;
 }
 
