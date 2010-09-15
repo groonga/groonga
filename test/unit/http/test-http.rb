@@ -37,6 +37,12 @@ class HTTPTest < Test::Unit::TestCase
                  JSON.parse(response.body)[1].keys.sort)
   end
 
+  def test_status_command_version
+    response = get(command_path(:status, :command_version => 1))
+    assert_equal("application/json", response.content_type)
+    assert_equal(1, JSON.parse(response.body)[1]["command_version"])
+  end
+
   def test_quit
     response = get(command_path(:quit))
     assert_success_response(response,

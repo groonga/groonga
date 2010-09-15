@@ -26,8 +26,13 @@ class StatusTest < Test::Unit::TestCase
     teardown_local_database
   end
 
-  def test_status_exit_successfully
+  def test_exit_successfully
     output = run_groonga(@database_path, "status")
     assert_predicate($?, :success?)
+  end
+
+  def test_command_version
+    output = run_groonga(@database_path, "status", "--command_version", "1")
+    assert_equal(1, JSON.parse(output)[1]["command_version"])
   end
 end

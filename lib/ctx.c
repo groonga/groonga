@@ -909,10 +909,24 @@ grn_str_get_mime_type(grn_ctx *ctx, const char *p, const char *pe,
   }
 }
 
+static void
+get_command_version(grn_ctx *ctx, const char *p, const char *pe)
+{
+  grn_command_version version;
+  const char *rest;
+
+  version = grn_atoui(p, pe, &rest);
+  if (pe == rest) {
+    grn_ctx_set_command_version(ctx, version);
+  }
+}
+
 #define INDEX_HTML "index.html"
 #define OUTPUT_TYPE "output_type"
+#define COMMAND_VERSION "command_version"
 #define EXPR_MISSING "expr_missing"
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
+#define COMMAND_VERSION_LEN (sizeof(COMMAND_VERSION) - 1)
 
 static inline int
 command_proc_p(grn_obj *expr)
@@ -945,6 +959,11 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
         p = grn_text_cgidec(ctx, &buf, p, e, '&');
         v = GRN_TEXT_VALUE(&buf);
         get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
+      } else if (l == COMMAND_VERSION_LEN &&
+                 !memcmp(v, COMMAND_VERSION, COMMAND_VERSION_LEN)) {
+        GRN_BULK_REWIND(&buf);
+        p = grn_text_cgidec(ctx, &buf, p, e, '&');
+        get_command_version(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
       } else {
         if (!(val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
           val = &buf;
@@ -995,6 +1014,11 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
           v = GRN_TEXT_VALUE(&buf);
           get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
+        } else if (l == COMMAND_VERSION_LEN &&
+                   !memcmp(v, COMMAND_VERSION, COMMAND_VERSION_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+          get_command_version(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
         } else if (expr && (val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
