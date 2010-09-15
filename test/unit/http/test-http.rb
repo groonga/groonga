@@ -32,7 +32,7 @@ class HTTPTest < Test::Unit::TestCase
     response = get(command_path(:status))
     assert_equal("application/json", response.content_type)
     assert_equal(["alloc_count", "cache_hit_rate", "command_version",
-                  "max_command_version", "n_queries",
+                  "default_command_version", "max_command_version", "n_queries",
                   "starttime", "uptime", "version"],
                  JSON.parse(response.body)[1].keys.sort)
   end

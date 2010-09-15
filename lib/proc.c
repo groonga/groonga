@@ -375,7 +375,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_cache_statistics statistics;
   grn_timeval_now(ctx, &now);
   grn_cache_get_statistics(ctx, &statistics);
-  GRN_OUTPUT_MAP_OPEN("RESULT", 16);
+  GRN_OUTPUT_MAP_OPEN("RESULT", 18);
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
@@ -394,6 +394,8 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_CSTR("command_version");
   GRN_OUTPUT_INT32(grn_ctx_get_command_version(ctx));
+  GRN_OUTPUT_CSTR("default_command_version");
+  GRN_OUTPUT_INT32(grn_get_default_command_version());
   GRN_OUTPUT_CSTR("max_command_version");
   GRN_OUTPUT_INT32(GRN_COMMAND_VERSION_MAX - 1);
   GRN_OUTPUT_MAP_CLOSE();
