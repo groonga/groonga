@@ -3938,6 +3938,14 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
       break;
     }
     break;
+  case GRN_DB_TOKYO_GEO_POINT :
+  case GRN_DB_WGS84_GEO_POINT :
+    if (src->header.domain == dest->header.domain) {
+      GRN_TEXT_PUT(ctx, dest, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+    } else {
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    }
+    break;
   default :
     rc = GRN_FUNCTION_NOT_IMPLEMENTED;
     break;

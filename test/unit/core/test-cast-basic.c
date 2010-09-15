@@ -100,6 +100,9 @@ void test_uint64_to_uint64(void);
 void test_uint64_to_float(void);
 void test_uint64_to_time(void);
 
+void test_geo_point_to_geo_point_same(void);
+void test_geo_point_to_geo_point_different(void);
+
 static grn_logger_info *logger;
 static grn_ctx context;
 static grn_obj src, dest;
@@ -880,4 +883,30 @@ test_uint64_to_text(void)
   grn_obj_reinit(&context, &dest, GRN_DB_TEXT, 0);
   cast_uint64(2929);
   cut_assert_equal_string("2929", GRN_TEXT_VALUE(&dest));
+}
+
+void
+test_geo_point_to_geo_point_same(void)
+{
+  gint takane_latitude, takane_longitude;
+
+  grn_obj_reinit(&context, &src, GRN_DB_WGS84_GEO_POINT, 0);
+  GRN_GEO_POINT_SET(&context, &src, 130194581, 503802073);
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(130194581, takane_latitude);
+  cut_assert_equal_int(503802073, takane_longitude);
+}
+
+void
+test_geo_point_to_geo_point_different(void)
+{
+  grn_obj_reinit(&context, &src, GRN_DB_WGS84_GEO_POINT, 0);
+  GRN_GEO_POINT_SET(&context, &src, 130194581, 503802073);
+
+  grn_obj_reinit(&context, &dest, GRN_DB_TOKYO_GEO_POINT, 0);
+  grn_test_assert_equal_rc(GRN_FUNCTION_NOT_IMPLEMENTED,
+                           grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
