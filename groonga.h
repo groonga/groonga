@@ -128,6 +128,7 @@ typedef enum {
 typedef enum {
   GRN_COMMAND_VERSION_DEFAULT = 0,
   GRN_COMMAND_VERSION_1,
+  GRN_COMMAND_VERSION_2,
   GRN_COMMAND_VERSION_MAX
 } grn_command_version;
 
