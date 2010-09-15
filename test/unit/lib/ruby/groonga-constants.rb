@@ -84,6 +84,12 @@ module GroongaConstants
     SYNTAX_ERROR = -63
     RETRY_MAX = -64
     INCOMPATIBLE_FILE_FORMAT = -65
+    UPDATE_NOT_ALLOWED = -66
+    TOO_SMALL_OFFSET = -67
+    TOO_LARGE_OFFSET = -68
+    TOO_SMALL_LIMIT = -69
+    CAS_ERROR = -70
+    UNSUPPORTED_COMMAND_VERSION = -71
   end
 
   module Table

@@ -33,6 +33,13 @@ class StatusTest < Test::Unit::TestCase
 
   def test_command_version
     output = run_groonga(@database_path, "status", "--command_version", "1")
-    assert_equal(1, JSON.parse(output)[1]["command_version"])
+    rc, result = JSON.parse(output)
+    assert_equal(1, result["command_version"])
+  end
+
+  def test_unsupported_command_version
+    output = run_groonga(@database_path, "status", "--command_version", "10000")
+    rc, result = JSON.parse(output)
+    assert_equal(Result::UNSUPPORTED_COMMAND_VERSION, rc[0])
   end
 end

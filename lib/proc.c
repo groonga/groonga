@@ -397,7 +397,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_CSTR("default_command_version");
   GRN_OUTPUT_INT32(grn_get_default_command_version());
   GRN_OUTPUT_CSTR("max_command_version");
-  GRN_OUTPUT_INT32(GRN_COMMAND_VERSION_MAX - 1);
+  GRN_OUTPUT_INT32(GRN_COMMAND_VERSION_MAX);
   GRN_OUTPUT_MAP_CLOSE();
   return NULL;
 }
