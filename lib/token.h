@@ -70,11 +70,11 @@ extern grn_obj *grn_uvector_tokenizer;
 grn_rc grn_token_init(void);
 grn_rc grn_token_fin(void);
 
-grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
-                          size_t str_len, int add);
+GRN_API grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
+                                  size_t str_len, int add);
 
-grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
-grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);
+GRN_API grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
+GRN_API grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);
 
 grn_rc grn_db_init_mecab_tokenizer(grn_ctx *ctx);
 grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
