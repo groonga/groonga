@@ -129,13 +129,13 @@ typedef struct {
 
 typedef struct _grn_ii_cursor grn_ii_cursor;
 
-grn_ii_cursor *grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
-                                  grn_id min, grn_id max, int nelements, int flags);
+GRN_API grn_ii_cursor *grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
+                                          grn_id min, grn_id max, int nelements, int flags);
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);
 grn_rc grn_ii_cursor_openv2(grn_ii_cursor **cursors, int ncursors);
-grn_ii_posting *grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c);
+GRN_API grn_ii_posting *grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c);
 grn_ii_posting *grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c);
-grn_rc grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c);
+GRN_API grn_rc grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c);
 
 uint32_t grn_ii_max_section(grn_ii *ii);
 
@@ -172,8 +172,8 @@ grn_rc grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
                             grn_operator op, grn_select_optarg *optarg);
 grn_rc grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
                               grn_hash *s, grn_operator op, grn_select_optarg *optarg);
-grn_rc grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
-                     grn_hash *s, grn_operator op, grn_select_optarg *optarg);
+GRN_API grn_rc grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
+                             grn_hash *s, grn_operator op, grn_select_optarg *optarg);
 grn_rc grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
                   grn_hash *s, grn_operator op, grn_search_optarg *optarg);
 

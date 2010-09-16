@@ -4379,6 +4379,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           }
         }
         rc = grn_pat_set_value(ctx, (grn_pat *)obj, id, v, flags);
+        if (range != value->header.domain) {
+          grn_obj_close(ctx, &buf);
+        }
       }
       break;
     case GRN_TABLE_HASH_KEY :
@@ -4392,6 +4395,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           }
         }
         rc = grn_hash_set_value(ctx, (grn_hash *)obj, id, v, flags);
+        if (range != value->header.domain) {
+          grn_obj_close(ctx, &buf);
+        }
       }
       break;
     case GRN_TABLE_NO_KEY :
@@ -4405,6 +4411,9 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           }
         }
         rc = grn_array_set_value(ctx, (grn_array *)obj, id, v, flags);
+        if (range != value->header.domain) {
+          grn_obj_close(ctx, &buf);
+        }
       }
       break;
     case GRN_COLUMN_VAR_SIZE :
