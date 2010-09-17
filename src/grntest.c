@@ -1506,9 +1506,9 @@ get_sysinfo(const char *path, char *result, int olen)
   }
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%ldKBytes\n", vfsbuf.f_blocks * 4);
+    sprintf(tmpbuf, "%luKBytes\n", vfsbuf.f_blocks * 4);
   } else {
-    sprintf(tmpbuf, "  \"HDD\": \"%ldKBytes\",\n", vfsbuf.f_blocks * 4);
+    sprintf(tmpbuf, "  \"HDD\": \"%luKBytes\",\n", vfsbuf.f_blocks * 4);
   }
   strcat(result, tmpbuf);
 
