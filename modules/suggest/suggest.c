@@ -253,7 +253,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
     grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
-    int32_t orig_score, max_score = cooccur_search(ctx, table, tid, res, CORRECT);
+    int32_t max_score = cooccur_search(ctx, table, tid, res, CORRECT);
     LAP(":", "cooccur(%d)", max_score);
     if (GRN_TEXT_LEN(query) && max_score < 100) {
       grn_obj *key, *index;
