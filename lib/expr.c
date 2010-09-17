@@ -4472,6 +4472,8 @@ get_expr(grn_ctx *ctx, efs_info *q, grn_obj *column, grn_operator mode)
   return rc;
 }
 
+#define DISABLE_UNUSED_CODE 1
+#ifndef DISABLE_UNUSED_CODE
 static const char *
 get_weight_vector(grn_ctx *ctx, efs_info *query, const char *source)
 {
@@ -4582,6 +4584,7 @@ section_weight_cb(grn_ctx *ctx, grn_hash *r, const void *rid, int sid, void *arg
     return 0;
   }
 }
+#endif
 
 #include "ecmascript.h"
 #include "ecmascript.c"

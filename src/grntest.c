@@ -499,6 +499,8 @@ shutdown_server(void)
   return 0;
 }
 
+/* #define ENABLE_ERROR_REPORT 1 */
+#ifdef ENABLE_ERROR_REPORT
 static
 int
 error_command(grn_ctx *ctx, char *command, int task_id)
@@ -508,6 +510,7 @@ error_command(grn_ctx *ctx, char *command, int task_id)
   error_exit_in_thread(1);
   return 0;
 }
+#endif
 
 static
 int
@@ -1003,9 +1006,9 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
       grn_obj_close(ctx, &end_time);
       break;
     } else {
-/*
+#ifdef ENABLE_ERROR_REPORT
       error_command(ctx, command, task_id);
-*/
+#endif
     }
   } while ((flags & GRN_CTX_MORE));
 
