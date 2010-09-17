@@ -3845,9 +3845,9 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
           }
           GRN_OBJ_FIN(ctx, &buf);
         }
-        GRN_TIME_SET(ctx, dest, GRN_TIME_PACK((int64_t)v.tv_sec,
-                                              v.tv_nsec / GRN_TIME_NSEC_PER_SEC *
-                                              GRN_TIME_USEC_PER_SEC));
+        GRN_TIME_SET(ctx, dest,
+                     GRN_TIME_PACK((int64_t)v.tv_sec,
+                                   GRN_TIME_NSEC_TO_USEC(v.tv_nsec)));
       }
       break;
     case GRN_DB_INT64 :

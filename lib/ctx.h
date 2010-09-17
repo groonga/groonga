@@ -399,6 +399,9 @@ extern grn_timeval grn_starttime;
 #endif /* GRN_TIMEVAL_STR_FORMAT */
 #define GRN_TIME_NSEC_PER_SEC 1000000000
 #define GRN_TIME_NSEC_PER_SEC_F 1000000000.0
+#define GRN_TIME_NSEC_PER_USEC (GRN_TIME_NSEC_PER_SEC / GRN_TIME_USEC_PER_SEC)
+#define GRN_TIME_NSEC_TO_USEC(nsec) ((nsec) / GRN_TIME_NSEC_PER_USEC)
+#define GRN_TIME_USEC_TO_NSEC(usec) ((usec) * GRN_TIME_NSEC_PER_USEC)
 
 #define LAP(prefix,format,...) {\
   uint64_t et;\

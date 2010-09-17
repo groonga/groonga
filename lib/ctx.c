@@ -78,7 +78,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
   time(&t);
   _ftime(&tb);
   tv->tv_sec = (int32_t) t;
-  tv->tv_nsec = tb.millitm / 1000 * GRN_TIME_NSEC_PER_SEC;
+  tv->tv_nsec = tb.millitm * (GRN_TIME_NSEC_PER_SEC / 1000);
   return GRN_SUCCESS;
 #else /* WIN32 */
   struct timeval t;
@@ -86,7 +86,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
     SERR("gettimeofday");
   } else {
     tv->tv_sec = (int32_t) t.tv_sec;
-    tv->tv_nsec = t.tv_usec / GRN_TIME_USEC_PER_SEC * GRN_TIME_NSEC_PER_SEC;
+    tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(t.tv_usec);
   }
   return ctx->rc;
 #endif /* WIN32 */
@@ -99,8 +99,7 @@ grn_time_now(grn_ctx *ctx, grn_obj *obj)
   grn_timeval tv;
   grn_timeval_now(ctx, &tv);
   GRN_TIME_SET(ctx, obj, GRN_TIME_PACK(tv.tv_sec,
-                                      tv.tv_nsec / GRN_TIME_NSEC_PER_SEC *
-                                      GRN_TIME_USEC_PER_SEC));
+                                       GRN_TIME_NSEC_TO_USEC(tv.tv_nsec)));
 }
 
 grn_rc
@@ -170,8 +169,8 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
     uv *= 10;
     r2++;
   }
-  if (uv >= GRN_TIME_NSEC_PER_SEC) { return GRN_INVALID_ARGUMENT; }
-  tv->tv_nsec = uv;
+  if (uv >= GRN_TIME_USEC_PER_SEC) { return GRN_INVALID_ARGUMENT; }
+  tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(uv);
   return GRN_SUCCESS;
 }
 
