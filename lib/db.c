@@ -2098,6 +2098,57 @@ grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
   GRN_API_RETURN(obj);
 }
 
+typedef struct {
+  grn_db_obj obj;
+  grn_obj *index;
+  grn_table_cursor *tc;
+  grn_ii_cursor *iic;
+  grn_id tid;
+  grn_id rid_min;
+  grn_id rid_max;
+  int flags;
+} grn_index_cursor;
+
+grn_obj *
+grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc,
+                      grn_obj *index, grn_id rid_min, grn_id rid_max, int flags)
+{
+  grn_index_cursor *ic = NULL;
+  GRN_API_ENTER;
+  if (tc && (ic = GRN_MALLOCN(grn_index_cursor, 1))) {
+    ic->tc = tc;
+    ic->index = index;
+    ic->iic = NULL;
+    ic->tid = GRN_ID_NIL;
+    ic->rid_min = rid_min;
+    ic->rid_max = rid_max;
+    ic->flags = flags;
+    GRN_DB_OBJ_SET_TYPE(ic, GRN_CURSOR_COLUMN_INDEX);
+  }
+  GRN_API_RETURN((grn_obj *)ic);
+}
+
+grn_posting *
+grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
+{
+  grn_ii_posting *ip = NULL;
+  grn_index_cursor *ic = (grn_index_cursor *)c;
+  GRN_API_ENTER;
+  if (ic->iic) { ip = grn_ii_cursor_next(ctx, ic->iic); }
+  if (!ip) {
+    if ((ic->tid = grn_table_cursor_next(ctx, ic->tc))) {
+      grn_ii *ii = (grn_ii *)ic->index;
+      if (ic->iic) { grn_ii_cursor_close(ctx, ic->iic); }
+      if ((ic->iic = grn_ii_cursor_open(ctx, ii, ic->tid,
+                                        ic->rid_min, ic->rid_max,
+                                        ii->n_elements, ic->flags))) {
+        ip = grn_ii_cursor_next(ctx, ic->iic);
+      }
+    }
+  }
+  GRN_API_RETURN((grn_posting *)ip);
+}
+
 grn_rc
 grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_size,
                  grn_operator mode, grn_obj *res, grn_operator op)
@@ -5846,6 +5897,13 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_CURSOR_TABLE_VIEW :
       grn_view_cursor_close(ctx, (grn_view_cursor *)obj);
+      break;
+    case GRN_CURSOR_COLUMN_INDEX :
+      {
+        grn_index_cursor *ic = (grn_index_cursor *)obj;
+        if (ic->iic) { grn_ii_cursor_close(ctx, ic->iic); }
+        GRN_FREE(ic);
+      }
       break;
     case GRN_TYPE :
       GRN_FREE(obj);
