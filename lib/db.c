@@ -2146,6 +2146,7 @@ grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
       }
     }
   }
+  if (tid) { *tid = ic->tid; }
   GRN_API_RETURN((grn_posting *)ip);
 }
 
