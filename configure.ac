@@ -478,10 +478,10 @@ AM_CONDITIONAL([WITH_UNIT_TEST],
                      "$ac_cv_ruby_available" = "yes"])
 
 # libedit
-AC_ARG_WITH(libedit,
+AC_ARG_ENABLE(libedit,
   [AS_HELP_STRING([--disable-libedit],
     [use libedit for console. [default=auto-detect]])],
-  [enable_libedit="$withval"],
+  [enable_libedit="$enableval"],
   [enable_libedit="auto"])
 if test "x$enable_libedit" != "xno"; then
   PKG_CHECK_MODULES([LIBEDIT], [libedit >= 3.0],
