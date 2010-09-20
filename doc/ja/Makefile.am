@@ -160,6 +160,7 @@ source_files =					\
 	source/commands/select.txt		\
 	source/commands/shutdown.txt		\
 	source/commands/status.txt		\
+	source/commands/suggest.txt		\
 	source/commands/table_create.txt	\
 	source/commands/table_list.txt		\
 	source/commands/table_remove.txt	\
@@ -248,6 +249,7 @@ source_files =					\
 	source/pseudo_column.txt		\
 	source/rdoc.py				\
 	source/reference.txt			\
+	source/search.txt			\
 	source/tutorial.txt			\
 	source/tutorial/tutorial01.txt		\
 	source/tutorial/tutorial02.txt		\
@@ -317,6 +319,7 @@ html_files =						\
 	html/_sources/process.txt			\
 	html/_sources/pseudo_column.txt			\
 	html/_sources/reference.txt			\
+	html/_sources/search.txt			\
 	html/_sources/tutorial.txt			\
 	html/_sources/tutorial/tutorial01.txt		\
 	html/_sources/tutorial/tutorial02.txt		\
