@@ -1,3 +1,4 @@
+/* -*- c-basic-offset: 2 -*- */
 /* Copyright(C) 2010 Brazil
 
   This library is free software; you can redistribute it and/or
@@ -97,11 +98,13 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_
         ifreq = GRN_INT32_VALUE(&item_freq);
         if (pfreq && ifreq) {
           grn_rset_recinfo *ri;
+          void *value;
           int32_t score = pfreq;
           if (max_score < score) { max_score = score; }
           /* put any formula if desired */
           if (grn_hash_add(ctx, (grn_hash *)res,
-                           &post_id, sizeof(grn_id), (void **)&ri, NULL)) {
+                           &post_id, sizeof(grn_id), &value, NULL)) {
+            ri = value;
             ri->score += score;
           }
         }
@@ -191,8 +194,10 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query, grn_obj *so
                 while ((p = grn_ii_cursor_next(ctx, icur))) {
                   int32_t score;
                   grn_rset_recinfo *ri;
+                  void *value;
                   grn_hash_add(ctx, (grn_hash *)res,
-                               &p->rid, sizeof(grn_id), (void **)&ri, NULL);
+                               &p->rid, sizeof(grn_id), &value, NULL);
+                  ri = value;
                   GRN_BULK_REWIND(&item_freq);
                   GRN_BULK_REWIND(&item_boost);
                   grn_obj_get_value(ctx, items_freq, p->rid, &item_freq);
@@ -220,7 +225,9 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query, grn_obj *so
         while ((id = grn_table_cursor_next(ctx, cur))) {
           int32_t score;
           grn_rset_recinfo *ri;
-          grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id), (void **)&ri, NULL);
+          void *value;
+          grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id), &value, NULL);
+          ri = value;
           GRN_BULK_REWIND(&item_freq);
           GRN_BULK_REWIND(&item_boost);
           grn_obj_get_value(ctx, items_freq, id, &item_freq);
@@ -274,9 +281,11 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
               int32_t score;
               grn_id *rp;
               grn_rset_recinfo *ri;
+              void *key, *value;
               while (grn_hash_cursor_next(ctx, hc)) {
-                if (grn_hash_cursor_get_key_value(ctx, hc, (void **)(&rp), NULL,
-                                                  (void **)(&ri))) {
+                if (grn_hash_cursor_get_key_value(ctx, hc, &key, NULL, &value)) {
+                  rp = key;
+                  ri = value;
                   GRN_BULK_REWIND(&item_freq2);
                   GRN_BULK_REWIND(&item_boost);
                   grn_obj_get_value(ctx, items_freq2, *rp, &item_freq2);

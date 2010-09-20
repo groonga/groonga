@@ -75,3 +75,6 @@ version.sh
 /yum/RPM-GPG-KEY-groonga
 /yum/fedora/
 /yum/centos/
+/examples/dictionary/db/
+/examples/dictionary/*.gz
+/examples/dictionary/gene95-dictionary/
