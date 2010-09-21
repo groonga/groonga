@@ -323,6 +323,8 @@ html_files =						\
 	html/_sources/pseudo_column.txt						  \
 	html/_sources/reference.txt						  \
 	html/_sources/search.txt						  \
+	html/_sources/spec.txt							  \
+	html/_sources/spec/search.txt						  \
 	html/_sources/troubleshooting.txt					  \
 	html/_sources/troubleshooting/different_results_with_the_same_keyword.txt \
 	html/_sources/tutorial.txt						  \
@@ -404,6 +406,8 @@ html_files =						\
 	html/reference.html							  \
 	html/search.html							  \
 	html/searchindex.js							  \
+	html/spec.html								  \
+	html/spec/search.html							  \
 	html/troubleshooting.html						  \
 	html/troubleshooting/different_results_with_the_same_keyword.html	  \
 	html/tutorial.html							  \
