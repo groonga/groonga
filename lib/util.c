@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include "db.h"
 #include "pat.h"
+#include "ii.h"
 #include "util.h"
 
 grn_rc
@@ -289,6 +290,9 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   if (!have_flags) {
     GRN_TEXT_PUTS(ctx, buf, "NONE");
   }
+
+  GRN_TEXT_PUTS(ctx, buf, " elements:");
+  grn_ii_inspect_elements(ctx, (grn_ii *)obj, buf);
 
   GRN_TEXT_PUTS(ctx, buf, ">");
 

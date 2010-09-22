@@ -26,6 +26,7 @@
 #include "pat.h"
 #include "db.h"
 #include "output.h"
+#include "util.h"
 
 #define MAX_PSEG                 0x20000
 #define S_CHUNK                  (1 << GRN_II_W_CHUNK)
@@ -5999,3 +6000,72 @@ grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
     }
   }
 }
+
+void
+grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
+{
+  grn_obj key_buf;
+  char key[GRN_TABLE_MAX_KEY_SIZE];
+  int key_size;
+  int i = 0;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<");
+  key_size = grn_table_get_key(ctx, c->ii->lexicon, c->id,
+                               key, GRN_TABLE_MAX_KEY_SIZE);
+  GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, c->ii->lexicon->header.domain);
+  GRN_TEXT_SET(ctx, &key_buf, key, key_size);
+  grn_inspect(ctx, buf, &key_buf);
+  GRN_OBJ_FIN(ctx, &key_buf);
+
+  GRN_TEXT_PUTS(ctx, buf, " elements:[");
+  while (grn_ii_cursor_next(ctx, c)) {
+    grn_ii_posting *pos = c->post;
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, buf, ", ");
+    }
+    i++;
+    GRN_TEXT_PUTS(ctx, buf, "{rid:");
+    grn_text_lltoa(ctx, buf, pos->rid);
+    GRN_TEXT_PUTS(ctx, buf, ", sid:");
+    grn_text_lltoa(ctx, buf, pos->sid);
+    GRN_TEXT_PUTS(ctx, buf, ", pos:");
+    grn_text_lltoa(ctx, buf, pos->pos);
+    GRN_TEXT_PUTS(ctx, buf, ", tf:");
+    grn_text_lltoa(ctx, buf, pos->tf);
+    GRN_TEXT_PUTS(ctx, buf, ", weight:");
+    grn_text_lltoa(ctx, buf, pos->weight);
+    GRN_TEXT_PUTS(ctx, buf, ", rest:");
+    grn_text_lltoa(ctx, buf, pos->rest);
+    GRN_TEXT_PUTS(ctx, buf, "}");
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]>");
+}
+
+void
+grn_ii_inspect_elements(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
+{
+  grn_table_cursor *tc;
+  GRN_TEXT_PUTS(ctx, buf, "[");
+  if ((tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0, 0, -1,
+                                  GRN_CURSOR_ASCENDING))) {
+    int i = 0;
+    grn_id tid;
+    grn_ii_cursor *c;
+    while ((tid = grn_table_cursor_next(ctx, tc))) {
+      if (i > 0) {
+        GRN_TEXT_PUTS(ctx, buf, ",");
+      }
+      i++;
+      GRN_TEXT_PUTS(ctx, buf, "\n  ");
+      if ((c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
+                                  ii->n_elements,
+                                  GRN_OBJ_WITH_POSITION|GRN_OBJ_WITH_SECTION))) {
+        grn_ii_cursor_inspect(ctx, c, buf);
+        grn_ii_cursor_close(ctx, c);
+      }
+    }
+    grn_table_cursor_close(ctx, tc);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+}
+
