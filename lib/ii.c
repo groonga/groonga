@@ -2948,6 +2948,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   uint16_t n;
   int nterms_void = 0;
   int size_in_buffer = 0;
+  grn_obj buf;
   if (ii->header->binfo[seg] == NOT_ASSIGNED) {
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
@@ -2979,6 +2980,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   GRN_OUTPUT_CSTR("buffer term");
   GRN_OUTPUT_ARRAY_OPEN("TERMS", sb->header.nterms);
 
+  GRN_OBJ_INIT(&buf, GRN_BULK, 0, ii->lexicon->header.domain);
   for (bt = sb->terms, n = sb->header.nterms; n; n--, bt++) {
     grn_id tid, tid_;
     char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -2998,7 +3000,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     tid = (bt->tid & GRN_ID_MAX);
     key_size = grn_table_get_key(ctx, ii->lexicon, tid, key, GRN_TABLE_MAX_KEY_SIZE);
     tid_ = grn_table_get(ctx, ii->lexicon, key, key_size);
-    GRN_OUTPUT_STR(key, key_size);
+    GRN_TEXT_SET(ctx, &buf, key, key_size);
+    GRN_OUTPUT_OBJ(&buf, NULL);
     GRN_OUTPUT_INT64(bt->tid);
     GRN_OUTPUT_INT64(tid_);
     nextb = bt->pos_in_buffer;
@@ -3018,6 +3021,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
         GRN_B_DEC(nchunks, scp);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
           datavec_fin(ctx, rdv);
+          GRN_OBJ_FIN(ctx, &buf);
           return;
         }
         for (i = 0; i < nchunks; i++) {
@@ -3050,6 +3054,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     GRN_OUTPUT_ARRAY_CLOSE();
     if (cinfo) { GRN_FREE(cinfo); }
   }
+  GRN_OBJ_FIN(ctx, &buf);
+
   GRN_OUTPUT_ARRAY_CLOSE();
   GRN_OUTPUT_CSTR("buffer free");
   GRN_OUTPUT_INT64(sb->header.buffer_free);
