@@ -322,7 +322,6 @@ html_files =						\
 	html/_sources/process.txt						  \
 	html/_sources/pseudo_column.txt						  \
 	html/_sources/reference.txt						  \
-	html/_sources/search.txt						  \
 	html/_sources/spec.txt							  \
 	html/_sources/spec/search.txt						  \
 	html/_sources/troubleshooting.txt					  \
