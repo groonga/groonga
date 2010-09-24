@@ -4992,7 +4992,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         old_ = old;
         GRN_OBJ_INIT(&oldv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         oldv.u.v.body = old;
-        old = &oldv;;
+        old = &oldv;
         grn_vector_delimit(ctx, old, 0, GRN_ID_NIL);
         if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
       }
