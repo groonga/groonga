@@ -4561,6 +4561,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     case GRN_COLUMN_FIX_SIZE :
       {
         grn_obj buf, *value_ = value;
+        uint32_t element_size = ((grn_ra *)obj)->header->element_size;
         GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
         if (range != value->header.domain) {
           grn_obj_cast(ctx, value, &buf, 1);
@@ -4568,7 +4569,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           v = GRN_BULK_HEAD(&buf);
           s = GRN_BULK_VSIZE(&buf);
         }
-        if (((grn_ra *)obj)->header->element_size < s) {
+        if (element_size < s) {
           ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", s);
         } else {
           void *p = grn_ra_ref(ctx, (grn_ra *)obj, id);
@@ -4584,7 +4585,20 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
               grn_ra_unref(ctx, (grn_ra *)obj, id);
               goto exit;
             }
-            memcpy(p, v, s);
+            if (element_size != s) {
+              if (!s) {
+                memset(p, 0, element_size);
+              } else {
+                void *b;
+                if ((b = GRN_CALLOC(element_size))) {
+                  memcpy(b, v, s);
+                  memcpy(p, b, element_size);
+                  GRN_FREE(b);
+                }
+              }
+            } else {
+              memcpy(p, v, s);
+            }
             rc = GRN_SUCCESS;
             break;
           case GRN_OBJ_INCR :
