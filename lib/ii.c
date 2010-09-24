@@ -6001,6 +6001,190 @@ grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
   }
 }
 
+/* just for inspect */
+static grn_ii_posting *
+grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
+{
+  if (c->buf) {
+    for (;;) {
+      if (c->stat & CHUNK_USED) {
+        for (;;) {
+          if (c->crp < c->cdp + c->cdf) {
+            uint32_t dgap = *c->crp++;
+            c->pc.rid += dgap;
+            if (dgap) { c->pc.sid = 0; }
+            if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+              c->pc.sid += 1 + *c->csp++;
+            } else {
+              c->pc.sid = 1;
+            }
+            c->cpp += c->pc.rest;
+            c->pc.rest = c->pc.tf = 1 + *c->ctp++;
+            if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+              c->pc.weight = *c->cwp++;
+            } else {
+              c->pc.weight = 0;
+            }
+            c->pc.pos = 0;
+            /*
+            {
+              static int count = 0;
+              int tf = c->pc.tf, pos = 0, *pp = (int *)c->cpp;
+              grn_obj buf;
+              GRN_TEXT_INIT(&buf, 0);
+              grn_text_itoa(ctx, &buf, c->pc.rid);
+              GRN_TEXT_PUTC(ctx, &buf, ':');
+              grn_text_itoa(ctx, &buf, c->pc.sid);
+              GRN_TEXT_PUTC(ctx, &buf, ':');
+              grn_text_itoa(ctx, &buf, c->pc.tf);
+              GRN_TEXT_PUTC(ctx, &buf, '(');
+              while (tf--) {
+                pos += *pp++;
+                count++;
+                grn_text_itoa(ctx, &buf, pos);
+                if (tf) { GRN_TEXT_PUTC(ctx, &buf, ':'); }
+              }
+              GRN_TEXT_PUTC(ctx, &buf, ')');
+              GRN_TEXT_PUTC(ctx, &buf, '\0');
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "posting(%d):%s", count, GRN_TEXT_VALUE(&buf));
+              GRN_OBJ_FIN(ctx, &buf);
+            }
+            */
+          } else {
+            if (c->curr_chunk <= c->nchunks) {
+              if (c->curr_chunk == c->nchunks) {
+                if (c->cp < c->cpe) {
+                  grn_p_decv(ctx, c->cp, c->cpe - c->cp, c->rdv, c->ii->n_elements);
+                } else {
+                  c->pc.rid = 0;
+                  break;
+                }
+              } else {
+                uint8_t *cp;
+                grn_io_win iw;
+                uint32_t size = c->cinfo[c->curr_chunk].size;
+                if (size && (cp = WIN_MAP2(c->ii->chunk, ctx, &iw,
+                                           c->cinfo[c->curr_chunk].segno, 0,
+                                           size, grn_io_rdonly))) {
+                  grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
+                  grn_io_win_unmap2(&iw);
+                } else {
+                  c->pc.rid = 0;
+                  break;
+                }
+              }
+              {
+                int j = 0;
+                c->cdf = c->rdv[j].data_size;
+                c->crp = c->cdp = c->rdv[j++].data;
+                if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+                  c->csp = c->rdv[j++].data;
+                }
+                c->ctp = c->rdv[j++].data;
+                if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+                  c->cwp = c->rdv[j++].data;
+                }
+                c->cpp = c->rdv[j].data;
+              }
+              c->pc.rid = 0;
+              c->pc.sid = 0;
+              c->pc.rest = 0;
+              c->curr_chunk++;
+              continue;
+            } else {
+              c->pc.rid = 0;
+            }
+          }
+          break;
+        }
+      }
+      if (c->stat & BUFFER_USED) {
+        if (c->nextb) {
+          uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
+          buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
+          if (buffer_is_reused(ctx, c->ii, c)) {
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+            // todo : rewind;
+          }
+          c->bp = NEXT_ADDR(br);
+          GRN_B_DEC(c->pb.rid, c->bp);
+          if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+            GRN_B_DEC(c->pb.sid, c->bp);
+          } else {
+            c->pb.sid = 1;
+          }
+          if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
+            ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
+          }
+          c->nextb = br->step;
+          GRN_B_DEC(c->pb.tf, c->bp);
+          if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+            GRN_B_DEC(c->pb.weight, c->bp);
+          } else {
+            c->pb.weight = 0;
+          }
+          c->pb.rest = c->pb.tf;
+          c->pb.pos = 0;
+        } else {
+          c->pb.rid = 0;
+        }
+      }
+      if (c->pb.rid) {
+        if (c->pc.rid) {
+          if (c->pc.rid < c->pb.rid) {
+            c->stat = CHUNK_USED;
+            c->post = &c->pc;
+            break;
+          } else {
+            if (c->pb.rid < c->pc.rid) {
+              c->stat = BUFFER_USED;
+              c->post = &c->pb;
+              break;
+            } else {
+              if (c->pb.sid) {
+                if (c->pc.sid < c->pb.sid) {
+                  c->stat = CHUNK_USED;
+                  c->post = &c->pc;
+                  break;
+                } else {
+                  c->stat = BUFFER_USED;
+                  if (c->pb.sid == c->pc.sid) { c->stat |= CHUNK_USED; }
+                  c->post = &c->pb;
+                  break;
+                }
+              } else {
+                c->stat = CHUNK_USED;
+              }
+            }
+          }
+        } else {
+          c->stat = BUFFER_USED;
+          c->post = &c->pb;
+          break;
+        }
+      } else {
+        if (c->pc.rid) {
+          c->stat = CHUNK_USED;
+          c->post = &c->pc;
+          break;
+        } else {
+          c->post = NULL;
+          return NULL;
+        }
+      }
+    }
+  } else {
+    if (c->stat & SOLE_DOC_USED) {
+      c->post = NULL;
+      return NULL;
+    } else {
+      c->post = &c->pb;
+      c->stat |= SOLE_DOC_USED;
+    }
+  }
+  return c->post;
+}
+
 void
 grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
 {
@@ -6009,7 +6193,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
   int key_size;
   int i = 0;
 
-  GRN_TEXT_PUTS(ctx, buf, "#<");
+  GRN_TEXT_PUTS(ctx, buf, "  #<");
   key_size = grn_table_get_key(ctx, c->ii->lexicon, c->id,
                                key, GRN_TABLE_MAX_KEY_SIZE);
   GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, c->ii->lexicon->header.domain);
@@ -6017,14 +6201,20 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
   grn_inspect(ctx, buf, &key_buf);
   GRN_OBJ_FIN(ctx, &key_buf);
 
-  GRN_TEXT_PUTS(ctx, buf, " elements:[");
-  while (grn_ii_cursor_next(ctx, c)) {
+  GRN_TEXT_PUTS(ctx, buf, "\n    elements:[\n      ");
+  while (grn_ii_cursor_next_all(ctx, c)) {
     grn_ii_posting *pos = c->post;
     if (i > 0) {
-      GRN_TEXT_PUTS(ctx, buf, ", ");
+      GRN_TEXT_PUTS(ctx, buf, ",\n      ");
     }
     i++;
-    GRN_TEXT_PUTS(ctx, buf, "{rid:");
+    GRN_TEXT_PUTS(ctx, buf, "{status:");
+    if (pos->tf && pos->sid) {
+      GRN_TEXT_PUTS(ctx, buf, "available");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "garbage");
+    }
+    GRN_TEXT_PUTS(ctx, buf, ", rid:");
     grn_text_lltoa(ctx, buf, pos->rid);
     GRN_TEXT_PUTS(ctx, buf, ", sid:");
     grn_text_lltoa(ctx, buf, pos->sid);
@@ -6038,7 +6228,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
     grn_text_lltoa(ctx, buf, pos->rest);
     GRN_TEXT_PUTS(ctx, buf, "}");
   }
-  GRN_TEXT_PUTS(ctx, buf, "]>");
+  GRN_TEXT_PUTS(ctx, buf, "\n    ]\n  >");
 }
 
 void
@@ -6056,7 +6246,7 @@ grn_ii_inspect_elements(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
         GRN_TEXT_PUTS(ctx, buf, ",");
       }
       i++;
-      GRN_TEXT_PUTS(ctx, buf, "\n  ");
+      GRN_TEXT_PUTS(ctx, buf, "\n");
       if ((c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
                                   ii->n_elements,
                                   GRN_OBJ_WITH_POSITION|GRN_OBJ_WITH_SECTION))) {
