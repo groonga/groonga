@@ -765,8 +765,8 @@ test_column_index(void)
                           "Terms.Sites_key "
                           "range:Sites "
                           "sources:[Sites] "
-                          "flags:NONE"
-                          ">",
+                          "flags:NONE "
+                          "elements:[]>",
                           inspected_string());
 }
 
