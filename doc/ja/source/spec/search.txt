@@ -1,6 +1,6 @@
 .. highlightlang:: none
 
-.. _search:
+.. _spec_search:
 
 検索
 ====
