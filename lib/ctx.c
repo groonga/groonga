@@ -64,7 +64,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
 {
 #ifdef HAVE_CLOCK_GETTIME
   struct timespec t;
-  if (clock_gettime(CLOCK_MONOTONIC, &t)) {
+  if (clock_gettime(CLOCK_REALTIME, &t)) {
     SERR("clock_gettime");
   } else {
     tv->tv_sec = (int32_t) t.tv_sec;
