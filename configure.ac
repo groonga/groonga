@@ -484,13 +484,16 @@ AC_ARG_ENABLE(libedit,
   [enable_libedit="$enableval"],
   [enable_libedit="auto"])
 if test "x$enable_libedit" != "xno"; then
-  PKG_CHECK_MODULES([LIBEDIT], [libedit >= 3.0],
-    [LDFLAGS_SAVE="$LDFLAGS"
-     LDFLAGS="$LIBEDIT_LIBS $LDFLAGS"
-     AC_CHECK_LIB(edit, el_wline,
-       [libedit_available=yes],
-       [libedit_available=no])
-     LDFLAGS="$LDFLAGS_SAVE"],
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBEDIT], [libedit >= 3.0],
+      [LDFLAGS_SAVE="$LDFLAGS"
+       LDFLAGS="$LIBEDIT_LIBS $LDFLAGS"
+       AC_CHECK_LIB(edit, el_wline,
+         [libedit_available=yes],
+         [libedit_available=no])
+       LDFLAGS="$LDFLAGS_SAVE"],
+      [libedit_available=no])
+    ],
     [libedit_available=no])
   if test "x$libedit_available" = "xyes"; then
     AC_DEFINE(HAVE_LIBEDIT, [1], [Use libedit with multibyte support.])
