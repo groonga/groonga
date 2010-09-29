@@ -484,12 +484,12 @@ grn_ctx_fin(grn_ctx *ctx)
         }
       }
     }
+    CRITICAL_SECTION_FIN(ctx->impl->lock);
     {
       grn_io_mapinfo mi;
       mi.map = (void *)ctx->impl;
       grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     }
-    CRITICAL_SECTION_FIN(ctx->impl->lock);
   }
   ctx->stat = GRN_CTX_FIN;
   return rc;
