@@ -255,6 +255,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
   grn_ctx_impl_init_malloc(ctx);
 #endif
+#ifdef ENABLE_MEMORY_DEBUG
+  ctx->impl->alloc_info = NULL;
+#endif
   ctx->impl->encoding = ctx->encoding;
   ctx->impl->lifoseg = -1;
   ctx->impl->currseg = -1;
@@ -1879,6 +1882,79 @@ grn_strdup(grn_ctx *ctx, const char *string, const char* file, int line, const c
 }
 #endif
 
+#ifdef ENABLE_MEMORY_DEBUG
+inline static void
+grn_alloc_info_add(grn_ctx *ctx, void *address)
+{
+#  define N_TRACE_LEVEL 100
+  grn_alloc_info *new_alloc_info;
+  static void *trace[N_TRACE_LEVEL];
+  int i, n, rest;
+  char *backtrace_buffer;
+  char **symbols;
+
+  if (!ctx->impl) { return; }
+
+  new_alloc_info = malloc(sizeof(grn_alloc_info));
+  new_alloc_info->address = address;
+  new_alloc_info->freed = GRN_FALSE;
+  new_alloc_info->backtrace[0] = '\0';
+  backtrace_buffer = new_alloc_info->backtrace;
+  rest = sizeof(new_alloc_info->backtrace);
+
+  n = backtrace(trace, N_TRACE_LEVEL);
+  symbols = backtrace_symbols(trace, n);
+  if (symbols) {
+    for (i = 0; i < n; i++) {
+      int symbol_length;
+
+      symbol_length = strlen(symbols[i]);
+      if (symbol_length + 2 > rest) {
+        break;
+      }
+      memcpy(backtrace_buffer, symbols[i], symbol_length);
+      backtrace_buffer += symbol_length;
+      rest -= symbol_length;
+      backtrace_buffer[0] = '\n';
+      backtrace_buffer++;
+      rest--;
+      backtrace_buffer[0] = '\0';
+      rest--;
+    }
+    free(symbols);
+  }
+
+  new_alloc_info->next = ctx->impl->alloc_info;
+  ctx->impl->alloc_info = new_alloc_info;
+#  undef N_TRACE_LEVEL
+}
+
+inline static void
+grn_alloc_info_check(grn_ctx *ctx, void *address)
+{
+  grn_alloc_info *alloc_info;
+
+  if (!ctx->impl) { return; }
+
+  alloc_info = ctx->impl->alloc_info;
+  for (; alloc_info; alloc_info = alloc_info->next) {
+    if (alloc_info->address == address) {
+      if (alloc_info->freed) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "double free: (%p):\n%s",
+                alloc_info->address, alloc_info->backtrace);
+      } else {
+        alloc_info->freed = GRN_TRUE;
+      }
+      return;
+    }
+  }
+}
+#else
+#  define grn_alloc_info_add(ctx, address)
+#  define grn_alloc_info_check(ctx, address)
+#endif
+
 void *
 grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
 {
@@ -1887,11 +1963,13 @@ grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     void *res = malloc(size);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
+      grn_alloc_info_add(ctx, res);
     } else {
       if (!(res = malloc(size))) {
         MERR("malloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
+        grn_alloc_info_add(ctx, res);
       }
     }
     return res;
@@ -1906,11 +1984,13 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     void *res = calloc(size, 1);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
+      grn_alloc_info_add(ctx, res);
     } else {
       if (!(res = calloc(size, 1))) {
         MERR("calloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
+        grn_alloc_info_add(ctx, res);
       }
     }
     return res;
@@ -1921,6 +2001,7 @@ void
 grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func)
 {
   if (!ctx) { return; }
+  grn_alloc_info_check(ctx, ptr);
   {
     free(ptr);
     if (ptr) {
@@ -1943,9 +2024,13 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
         return NULL;
       }
     }
-    if (!ptr) { GRN_ADD_ALLOC_COUNT(1); }
+    if (!ptr) {
+      GRN_ADD_ALLOC_COUNT(1);
+      grn_alloc_info_add(ctx, res);
+    }
   } else {
     if (!ptr) { return NULL; }
+    grn_alloc_info_check(ctx, ptr);
     GRN_ADD_ALLOC_COUNT(-1);
 #if defined __FreeBSD__
     free(ptr);

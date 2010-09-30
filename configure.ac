@@ -291,6 +291,20 @@ if test "x$enable_dynamic_malloc_change" = "xyes"; then
             [Define to 1 if you enable dynamic malloc change])
 fi
 
+# memory debug
+AC_MSG_CHECKING([whether debug memory management])
+AC_ARG_ENABLE(memory-debug,
+  [AS_HELP_STRING([--enable-memory-debug],
+    [debug memory management. [default=no]])],
+  ,
+  [enable_memory_debug="no"])
+AC_MSG_RESULT([$enable_memory_debug])
+
+if test "x$enable_memory_debug" = "xyes"; then
+  AC_DEFINE(ENABLE_MEMORY_DEBUG, [1],
+            [Define to 1 if you enable debuging memory management])
+fi
+
 # epoll/kqueue/poll/select check
 AC_CHECK_HEADER(sys/epoll.h, [
   AC_CHECK_FUNC(epoll_create, [

@@ -162,6 +162,17 @@ typedef struct {
 #define GRN_STACK_SIZE 1024
 #define GRN_CTX_N_SEGMENTS 512
 
+#ifdef ENABLE_MEMORY_DEBUG
+typedef struct _grn_alloc_info grn_alloc_info;
+struct _grn_alloc_info
+{
+  void *address;
+  int freed;
+  char backtrace[4096];
+  grn_alloc_info *next;
+};
+#endif
+
 struct _grn_ctx_impl {
   grn_encoding encoding;
 
@@ -177,6 +188,11 @@ struct _grn_ctx_impl {
   grn_calloc_func calloc_func;
   grn_realloc_func realloc_func;
   grn_strdup_func strdup_func;
+#endif
+
+#ifdef ENABLE_MEMORY_DEBUG
+  /* memory debug portion */
+  grn_alloc_info *alloc_info;
 #endif
 
   /* qe portion */
