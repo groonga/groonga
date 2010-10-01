@@ -24,6 +24,7 @@
 void test_in_circle(void);
 void test_in_rectangle_long_longitude(void);
 void test_in_rectangle_long_latitude(void);
+void test_in_rectangle_over_border(void);
 void test_sort(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_in_circle_and_tag(void);
@@ -187,6 +188,23 @@ test_in_rectangle_long_latitude(void)
         grn_test_location_string(sugamo_latitude, sugamo_longitude),
         grn_test_location_string(daiba_latitude, daiba_longitude),
         grn_test_location_string(budoukan_latitude, budoukan_longitude))));
+}
+
+void
+test_in_rectangle_over_border(void)
+{
+  cut_omit("infinite loop");
+  cut_assert_equal_string(
+    "[[[0],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
+     "[\"location\",\"WGS84GeoPoint\"]],"
+    "]]",
+    send_command(
+        "select Shops "
+        "--sortby '+name' "
+        "--output_columns 'name, location' "
+        "--filter 'geo_in_rectangle(location, "
+        "\"35.73360x-139.7394\", \"-35.62614x139.7714\")'"));
 }
 
 void
