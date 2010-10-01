@@ -1980,10 +1980,10 @@ grn_alloc_info_check(void *address)
     }
   }
 }
-#else
+#else /* ENABLE_MEMORY_DEBUG */
 #  define grn_alloc_info_add(address)
 #  define grn_alloc_info_check(address)
-#endif
+#endif /* ENABLE_MEMORY_DEBUG */
 
 void *
 grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
