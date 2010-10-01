@@ -2661,14 +2661,13 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
         grn_id id = *((grn_id *)GRN_BULK_HEAD(obj));
         if (table && table->header.type != GRN_TABLE_NO_KEY) {
-          grn_obj *record = grn_ctx_at(ctx, id);
-          if (record) {
+          /* todo : temporal patch. grn_table_at() is kinda costful... */
+          if (grn_table_at(ctx, table, id)) {
             grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
             if (accessor) {
               grn_obj_get_value(ctx, accessor, id, &buf);
               grn_obj_unlink(ctx, accessor);
             }
-            grn_obj_unlink(ctx, record);
           }
           grn_text_otoj(ctx, bulk, &buf, format);
         } else {
