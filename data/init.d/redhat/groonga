@@ -133,7 +133,7 @@ restart() {
 	start
 }
 
-satus() {
+status() {
 	ARGS=""
 	if [ -n "${PROTOCOL}" ]; then
 		ARGS="${ARGS} --protocol ${PROTOCOL}"
