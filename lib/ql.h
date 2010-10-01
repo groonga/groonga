@@ -168,7 +168,8 @@ struct _grn_alloc_info
 {
   void *address;
   int freed;
-  char backtrace[4096];
+  char alloc_backtrace[4096];
+  char free_backtrace[4096];
   grn_alloc_info *next;
 };
 #endif
