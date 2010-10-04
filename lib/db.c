@@ -7103,9 +7103,15 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
           for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
             default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
             grn_obj *target = grn_ctx_at(ctx, data->target);
-            /* todo : data->section */
-            if (section) { *section = 0; }
             if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+            if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
+            {
+              grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
+              if (!lexicon) { continue; }
+              if (lexicon->header.type != GRN_TABLE_PAT_KEY) { continue; }
+              grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer);
+              if (tokenizer) { continue; }
+            }
             if (n < buf_size) {
               *ip++ = target;
             }
