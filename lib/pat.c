@@ -2002,7 +2002,7 @@ grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
       uint32_t key_size;
       const void *key = _grn_pat_key(ctx, pat, c->curr_rec, &key_size);
       c->curr_rec += dir;
-      if (grn_pat_get(ctx, pat, key, key_size, NULL) == c->curr_rec) {
+      if (_grn_pat_get(ctx, pat, key, key_size, NULL) == c->curr_rec) {
         offset--;
       }
     }
