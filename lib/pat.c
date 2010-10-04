@@ -972,7 +972,9 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
   grn_id r, r2 = GRN_ID_NIL;
   uint32_t len = key_size * 16;
   int c0 = -1, c;
+  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   if (!pat || !key || !(pat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) { return GRN_ID_NIL; }
+  KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, rn);
   for (r = rn->lr[1]; r;) {
     PAT_AT(pat, r, rn);
