@@ -146,7 +146,7 @@ fi
 
 %postun munin-plugins
 if [ $1 -eq 0 ]; then
-	rm %{_sysconfdir}/munin/plugins/groongar_* > /dev/null 2>&1
+	rm %{_sysconfdir}/munin/plugins/groonga_* > /dev/null 2>&1
 	[ -f /var/lock/subsys/munin-node ] && \
 		/sbin/service munin-node restart > /dev/null 2>&1
 	:
