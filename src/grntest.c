@@ -902,7 +902,8 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
           error_exit_in_thread(55);
         }
         if (logbuf[LOGBUF_LEN-2] != '\0') {
-          fprintf(stderr, "too long line input-log\n");
+          fprintf(stderr, "too long line input-log: <%s>: <%.*s>\n",
+                  command, LOGBUF_LEN - 2, logbuf);
           error_exit_in_thread(56);
         }
         loglen = strlen(logbuf);
@@ -987,7 +988,8 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
           error_exit_in_thread(55);
         }
         if (logbuf[LOGBUF_LEN-2] != '\0') {
-          fprintf(stderr, "too long line input-log\n");
+          fprintf(stderr, "too long line input-log: <%s>: <%.*s>\n",
+                  command, LOGBUF_LEN - 2, logbuf);
           error_exit_in_thread(56);
         }
         loglen = strlen(logbuf);
