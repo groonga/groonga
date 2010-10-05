@@ -58,9 +58,15 @@ setup_data(void)
 {
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
   assert_send_command("table_create Bookmarks TABLE_HASH_KEY ShortText");
+  assert_send_command("table_create Bigram TABLE_PAT_KEY ShortText "
+                      "--default_tokenizer TokenBigram");
+
   assert_send_command("column_create Bookmarks user COLUMN_SCALAR Users");
   assert_send_command("column_create Users bookmarks COLUMN_INDEX "
                       "Bookmarks user");
+  assert_send_command("column_create Bigram user COLUMN_INDEX|WITH_POSITION "
+                      "Users _key");
+
   assert_send_command("load --table Users --columns '_key'\n"
                       "[\n"
                       "  [\"mori\"],\n"
@@ -131,17 +137,17 @@ void
 test_referenced_record(void)
 {
   assert_send_command_error(GRN_OPERATION_NOT_PERMITTED,
-                            "undeletable record (Users:3) "
+                            "undeletable record (Users:4) "
                             "has value (bookmarks:1)",
-                            "delete Users yu");
-  cut_assert_equal_string("[[[4],"
+                            "delete Users tasukuchan");
+  cut_assert_equal_string("[[[2],"
                             "[[\"_key\",\"ShortText\"]],"
-                            "[\"mori\"],"
                             "[\"tapo\"],"
-                            "[\"yu\"],"
                             "[\"tasukuchan\"]]]",
                           send_command("select Users "
-                                       "--output_columns _key"));
+                                       "--output_columns _key "
+                                       "--match_columns \"_key\" "
+                                       "--query \"ta\""));
 }
 
 void
@@ -160,4 +166,3 @@ test_uint64(void)
                           send_command("select Students "
                                        "--output_columns _key"));
 }
-
