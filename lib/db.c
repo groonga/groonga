@@ -1240,13 +1240,9 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (table) {
-    if (key && key_size) {
-      rid = grn_table_get(ctx, table, key, key_size);
-    }
+    if (key && key_size) { rid = grn_table_get(ctx, table, key, key_size); }
     if (is_deletable(ctx, table, rid)) {
-      if (key && key_size) {
-        call_delete_hook(ctx, table, rid, key, key_size);
-      }
+      call_delete_hook(ctx, table, rid, key, key_size);
       switch (table->header.type) {
       case GRN_DB :
         /* todo : delete tables and columns from db */
