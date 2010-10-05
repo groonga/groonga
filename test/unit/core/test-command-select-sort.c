@@ -146,78 +146,78 @@ void
 test_int(void)
 {
   cut_assert_equal_string(
-      "[[[3],"
-       "[[\"_key\",\"ShortText\"],"
-        "[\"score\",\"Int32\"],"
-        "[\"age\",\"Int32\"]],"
-       "[\"qwik.jp/senna/FrontPageJ.html\",100,5],"
-       "[\"groonga.org\",100,2],"
-       "[\"2ch.net\",10,11]]]",
-      send_command("select Sites "
-                   "--sortby \"-score -age\" "
-                   "--output_columns \"_key score age\""));
+    "[[[3],"
+     "[[\"_key\",\"ShortText\"],"
+      "[\"score\",\"Int32\"],"
+      "[\"age\",\"Int32\"]],"
+     "[\"qwik.jp/senna/FrontPageJ.html\",100,5],"
+     "[\"groonga.org\",100,2],"
+     "[\"2ch.net\",10,11]]]",
+    send_command("select Sites "
+                 "--sortby \"-score -age\" "
+                 "--output_columns \"_key score age\""));
 }
 
 void
 test_drilldown(void)
 {
   cut_assert_equal_string(
-      "[[[5],"
-       "[[\"site._key\",\"ShortText\"],"
-        "[\"user._key\",\"ShortText\"],"
-        "[\"rank\",\"Int32\"]],"
-       "[\"groonga.org\",\"morita\",100],"
-       "[\"groonga.org\",\"gunyara-kun\",100],"
-       "[\"groonga.org\",\"yu\",50],"
-       "[\"2ch.net\",\"gunyara-kun\",0],"
-       "[\"2ch.net\",\"yu\",10]],"
-       "[[2],"
-        "[[\"_key\",\"ShortText\"],"
-         "[\"_nsubrecs\",\"Int32\"]],"
-        "[\"2ch.net\",2],"
-        "[\"groonga.org\",3]],"
-       "[[3],"
-        "[[\"_key\",\"ShortText\"],"
-         "[\"_nsubrecs\",\"Int32\"]],"
-        "[\"gunyara-kun\",2],"
-        "[\"morita\",1],"
-        "[\"yu\",2]],"
-       "[[4],"
-         "[[\"_key\",\"Int32\"],"
-          "[\"_nsubrecs\",\"Int32\"]],"
-        "[0,1],"
-        "[10,1],"
-        "[50,1],"
-        "[100,2]]]",
-      send_command("select Bookmarks "
-                   "--output_columns \"site._key user._key rank\" "
-                   "--sortby \"-site.score -site.age\" "
-                   "--drilldown \"site user rank\" "
-                   "--drilldown_output_columns \"_key _nsubrecs\" "
-                   "--drilldown_sortby \"_key\""));
+    "[[[5],"
+     "[[\"site._key\",\"ShortText\"],"
+      "[\"user._key\",\"ShortText\"],"
+      "[\"rank\",\"Int32\"]],"
+     "[\"groonga.org\",\"morita\",100],"
+     "[\"groonga.org\",\"gunyara-kun\",100],"
+     "[\"groonga.org\",\"yu\",50],"
+     "[\"2ch.net\",\"gunyara-kun\",0],"
+     "[\"2ch.net\",\"yu\",10]],"
+     "[[2],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_nsubrecs\",\"Int32\"]],"
+      "[\"2ch.net\",2],"
+      "[\"groonga.org\",3]],"
+     "[[3],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_nsubrecs\",\"Int32\"]],"
+      "[\"gunyara-kun\",2],"
+      "[\"morita\",1],"
+      "[\"yu\",2]],"
+     "[[4],"
+       "[[\"_key\",\"Int32\"],"
+        "[\"_nsubrecs\",\"Int32\"]],"
+      "[0,1],"
+      "[10,1],"
+      "[50,1],"
+      "[100,2]]]",
+    send_command("select Bookmarks "
+                 "--output_columns \"site._key user._key rank\" "
+                 "--sortby \"-site.score -site.age\" "
+                 "--drilldown \"site user rank\" "
+                 "--drilldown_output_columns \"_key _nsubrecs\" "
+                 "--drilldown_sortby \"_key\""));
 }
 
 void
 test_score_without_query(void)
 {
   cut_assert_equal_string(
-      "[]",
-      send_command("select Sites "
-                   "--sortby \"_score\" "
-                   "--output_columns \"_key\""));
+    "[]",
+    send_command("select Sites "
+                 "--sortby \"_score\" "
+                 "--output_columns \"_key\""));
 }
 
 void
 test_score_drilldown_without_query(void)
 {
   cut_assert_equal_string(
-      "[]",
-      send_command("select Bookmarks "
-                   "--sortby \"_score\" "
-                   "--output_columns \"site._key user._key\" "
-                   "--drilldown \"site user rank\" "
-                   "--drilldown_output_columns \"_key _nsubrecs\" "
-                   "--drilldown_sortby \"_key\""));
+    "[]",
+    send_command("select Bookmarks "
+                 "--sortby \"_score\" "
+                 "--output_columns \"site._key user._key\" "
+                 "--drilldown \"site user rank\" "
+                 "--drilldown_output_columns \"_key _nsubrecs\" "
+                 "--drilldown_sortby \"_key\""));
 }
 
 void
