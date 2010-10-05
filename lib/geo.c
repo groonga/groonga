@@ -688,6 +688,13 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
     uint8_t geo_key_input[sizeof(grn_geo_point)];
     uint8_t geo_key_base[sizeof(grn_geo_point)];
 
+    if (geo_point1->latitude < 0 || geo_point1->longitude < 0 ||
+        geo_point2->latitude < 0 || geo_point2->longitude < 0) {
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "geo_in_rectangle() with negative coordinate is not implemented.");
+      goto exit;
+    }
+
     latitude_distance = geo_point1->latitude - geo_point2->latitude;
     longitude_distance = geo_point2->longitude - geo_point1->longitude;
     if (latitude_distance > longitude_distance) {

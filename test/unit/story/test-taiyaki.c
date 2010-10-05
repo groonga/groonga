@@ -193,18 +193,16 @@ test_in_rectangle_long_latitude(void)
 void
 test_in_rectangle_over_border(void)
 {
-  cut_omit("infinite loop");
-  cut_assert_equal_string(
-    "[[[0],"
-    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
-     "[\"location\",\"WGS84GeoPoint\"]],"
-    "]]",
-    send_command(
-        "select Shops "
-        "--sortby '+name' "
-        "--output_columns 'name, location' "
-        "--filter 'geo_in_rectangle(location, "
-        "\"35.73360x-139.7394\", \"-35.62614x139.7714\")'"));
+  cut_assert_equal_string("[]",
+                          send_command(
+                            "select Shops "
+                            "--sortby '+name' "
+                            "--output_columns 'name, location' "
+                            "--filter 'geo_in_rectangle(location, "
+                            "\"35.73360x-139.7394\", \"-35.62614x139.7714\")'"));
+  grn_test_assert_error(GRN_FUNCTION_NOT_IMPLEMENTED,
+                        "geo_in_rectangle() with negative coordinate is not implemented.",
+                        context);
 }
 
 void
