@@ -154,8 +154,8 @@ test_int(void)
      "[\"groonga.org\",100,2],"
      "[\"2ch.net\",10,11]]]",
     send_command("select Sites "
-                 "--sortby \"-score -age\" "
-                 "--output_columns \"_key score age\""));
+                 "--sortby \"-score, -age\" "
+                 "--output_columns \"_key, score, age\""));
 }
 
 void
@@ -190,10 +190,10 @@ test_drilldown(void)
       "[50,1],"
       "[100,2]]]",
     send_command("select Bookmarks "
-                 "--output_columns \"site._key user._key rank\" "
-                 "--sortby \"-site.score -site.age\" "
-                 "--drilldown \"site user rank\" "
-                 "--drilldown_output_columns \"_key _nsubrecs\" "
+                 "--output_columns \"site._key, user._key, rank\" "
+                 "--sortby \"-site.score, -site.age\" "
+                 "--drilldown \"site, user, rank\" "
+                 "--drilldown_output_columns \"_key, _nsubrecs\" "
                  "--drilldown_sortby \"_key\""));
 }
 
@@ -214,9 +214,9 @@ test_score_drilldown_without_query(void)
     "[]",
     send_command("select Bookmarks "
                  "--sortby \"_score\" "
-                 "--output_columns \"site._key user._key\" "
+                 "--output_columns \"site._key, user._key\" "
                  "--drilldown \"site user rank\" "
-                 "--drilldown_output_columns \"_key _nsubrecs\" "
+                 "--drilldown_output_columns \"_key, _nsubrecs\" "
                  "--drilldown_sortby \"_key\""));
 }
 
