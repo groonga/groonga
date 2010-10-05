@@ -27,6 +27,7 @@ void test_int(void);
 void test_drilldown(void);
 void test_score_without_query(void);
 void test_score_drilldown_without_query(void);
+void test_index(void);
 
 static gchar *tmp_directory;
 
@@ -58,7 +59,8 @@ setup_ddl(void)
 {
   assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
                        "column_create Sites score COLUMN_SCALAR Int32\n"
-                       "column_create Sites age COLUMN_SCALAR Int32");
+                       "column_create Sites age COLUMN_SCALAR Int32\n"
+                       "column_create Sites description COLUMN_SCALAR ShortText");
 
   assert_send_commands("table_create Users TABLE_PAT_KEY ShortText\n"
                        "column_create Users name COLUMN_SCALAR ShortText");
@@ -70,6 +72,12 @@ setup_ddl(void)
 
   assert_send_commands("column_create Users bookmarks COLUMN_VECTOR Bookmarks "
                        "--source Bookmarks.user");
+
+  assert_send_commands("table_create Bigram TABLE_PAT_KEY ShortText "
+                       "--default_tokenizer TokenBigram\n"
+                       "column_create Bigram description "
+                       "COLUMN_INDEX|WITH_POSITION Sites description");
+
 }
 
 static void
@@ -77,10 +85,12 @@ setup_data(void)
 {
   assert_send_commands("load --table Sites\n"
                        "[\n"
-                       "[\"_key\", \"score\", \"age\"],\n"
-                       "[\"groonga.org\", 100, 2],\n"
-                       "[\"qwik.jp/senna/FrontPageJ.html\", 100, 5],\n"
-                       "[\"2ch.net\", 10, 11]\n"
+                       "[\"_key\", \"score\", \"age\", \"description\"],\n"
+                       "[\"groonga.org\", 100, 2, "
+                       "\"fulltext search engine and column store\"],\n"
+                       "[\"qwik.jp/senna/FrontPageJ.html\", 100, 5, "
+                       "\"embeddable fulltext search engine\"],\n"
+                       "[\"2ch.net\", 10, 11, \"BBS\"]\n"
                        "]");
 
   assert_send_commands("load --table Users\n"
@@ -208,4 +218,21 @@ test_score_drilldown_without_query(void)
                    "--drilldown \"site user rank\" "
                    "--drilldown_output_columns \"_key _nsubrecs\" "
                    "--drilldown_sortby \"_key\""));
+}
+
+void
+test_index(void)
+{
+  cut_assert_equal_string(
+    "[[[2],"
+      "[[\"_key\",\"ShortText\"],[\"description\",\"ShortText\"]],"
+       "[\"qwik.jp/senna/FrontPageJ.html\","
+        "\"embeddable fulltext search engine\"],"
+       "[\"groonga.org\","
+        "\"fulltext search engine and column store\"]]]",
+    send_command("select Sites "
+                 "--sortby \"description\" "
+                 "--output_columns \"_key, description\" "
+                 "--match_columns \"description\" "
+                 "--query \"fulltext\""));
 }
