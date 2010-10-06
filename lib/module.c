@@ -62,7 +62,7 @@ grn_module_path(grn_ctx *ctx, grn_id id)
 
 static grn_rc
 grn_module_initialize(grn_ctx *ctx, grn_module *module,
-                      grn_dl dl, const char *path)
+                      grn_dl dl, grn_id id, const char *path)
 {
   const char *base_name, *extension;
   char init_func_name[PATH_MAX];
@@ -109,6 +109,12 @@ grn_module_initialize(grn_ctx *ctx, grn_module *module,
         fin_func_name, module->fin_func ? "" : "not ");
   }
 
+  if (!ctx->rc) {
+    ctx->impl->module_path = path;
+    grn_module_init(ctx, id);
+    ctx->impl->module_path = NULL;
+  }
+
   return ctx->rc;
 }
 
@@ -128,7 +134,7 @@ grn_module_open(grn_ctx *ctx, const char *filename)
                            (void **)&module, NULL))) {
       *module = GRN_GMALLOCN(grn_module, 1);
       if (*module) {
-        if (grn_module_initialize(ctx, *module, dl, filename)) {
+        if (grn_module_initialize(ctx, *module, dl, id, filename)) {
           GRN_GFREE(*module);
           *module = NULL;
         }
@@ -300,10 +306,7 @@ grn_db_register(grn_ctx *ctx, const char *path)
 
     if (id) {
       ctx->impl->module_path = path;
-      ctx->rc = grn_module_init(ctx, id);
-      if (!ctx->rc) {
-        ctx->rc = grn_module_register(ctx, id);
-      }
+      ctx->rc = grn_module_register(ctx, id);
       ctx->impl->module_path = NULL;
       if (ctx->rc) {
         grn_module_close(ctx, id);
