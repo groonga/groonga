@@ -52,6 +52,8 @@ void data_near_geo_point(void);
 void test_near_geo_point(gpointer data);
 void data_common_prefix_search(void);
 void test_common_prefix_search(gpointer data);
+void data_by_id_encoded(void);
+void test_by_id_encoded(gpointer data);
 
 static gchar *tmp_directory;
 
@@ -173,9 +175,9 @@ create_geo_point_table(const gchar *data)
 {
   const char *table_name = "GeoPointPat";
 
-  assert_send_commands(
+  assert_send_command(
     cut_take_printf("table_create %s TABLE_PAT_KEY WGS84GeoPoint", table_name));
-  assert_send_commands(
+  assert_send_command(
     cut_take_printf("load --table %s\n"
                     "[\n"
                     " [\"_key\"],\n"
@@ -185,6 +187,22 @@ create_geo_point_table(const gchar *data)
                     data));
 
   table = grn_ctx_get(context, table_name, strlen(table_name));
+}
+
+static void
+cast_to_geo_point(grn_obj *geo_point, const gchar *geo_point_string)
+{
+  grn_obj geo_point_text;
+
+  if (!geo_point_string) {
+    return;
+  }
+
+  GRN_TEXT_INIT(&geo_point_text, 0);
+  GRN_TEXT_PUTS(context, &geo_point_text, geo_point_string);
+  GRN_WGS84_GEO_POINT_INIT(geo_point, 0);
+  grn_obj_cast(context, &geo_point_text, geo_point, FALSE);
+  grn_obj_unlink(context, &geo_point_text);
 }
 
 void
@@ -522,7 +540,7 @@ void
 test_prefix_geo_point(gpointer data)
 {
   grn_id id;
-  grn_obj min, min_string;
+  grn_obj min;
   int offset, limit, flags;
   unsigned min_size;
   const GList *expected_keys;
@@ -570,12 +588,7 @@ test_prefix_geo_point(gpointer data)
       "00000000 00111101 00000101 00111101 01110000 01001011 01110011 00101100",
       NULL));
 
-  GRN_TEXT_INIT(&min_string, 0);
-  GRN_TEXT_PUTS(context, &min_string,
-                geo_byte_parse(gcut_data_get_string(data, "min")));
-  GRN_WGS84_GEO_POINT_INIT(&min, 0);
-  grn_obj_cast(context, &min_string, &min, FALSE);
-  grn_obj_unlink(context, &min_string);
+  cast_to_geo_point(&min, geo_byte_parse(gcut_data_get_string(data, "min")));
 
   min_size = gcut_data_get_uint(data, "min-size");
   offset = gcut_data_get_int(data, "offset");
@@ -977,7 +990,7 @@ data_near_geo_point(void)
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_POINTER,                            \
                  expected, gcut_list_string_free,                       \
-                 "min-size", G_TYPE_INT, min_size,                      \
+                 "min-size", G_TYPE_UINT, min_size,                     \
                  "max", G_TYPE_STRING, max,                             \
                  "offset", G_TYPE_INT, offset,                          \
                  "limit", G_TYPE_INT, limit,                            \
@@ -1031,7 +1044,7 @@ test_near_geo_point(gpointer data)
 {
   grn_id id;
   int min_size, offset, limit, flags;
-  grn_obj max_string, max;
+  grn_obj max;
   const GList *expected_keys;
   GList *actual_keys = NULL;
 
@@ -1065,11 +1078,7 @@ test_near_geo_point(gpointer data)
                                 -178, -58, -58)));
 
   min_size = gcut_data_get_int(data, "min-size");
-  GRN_TEXT_INIT(&max_string, 0);
-  GRN_TEXT_PUTS(context, &max_string, gcut_data_get_string(data, "max"));
-  GRN_WGS84_GEO_POINT_INIT(&max, 0);
-  grn_obj_cast(context, &max_string, &max, FALSE);
-  grn_obj_unlink(context, &max_string);
+  cast_to_geo_point(&max, gcut_data_get_string(data, "max"));
   offset = gcut_data_get_int(data, "offset");
   limit = gcut_data_get_int(data, "limit");
   flags = gcut_data_get_int(data, "flags");
@@ -1205,6 +1214,122 @@ test_common_prefix_search(gpointer data)
 
     key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
     actual_keys = g_list_append(actual_keys, g_strndup(key, key_size));
+  }
+  gcut_take_list(actual_keys, g_free);
+
+  expected_keys = gcut_data_get_pointer(data, "expected");
+  gcut_assert_equal_list_string(expected_keys, actual_keys);
+}
+
+void
+data_by_id_encoded(void)
+{
+#define ADD_DATA(label, expected, min, min_size, max, max_size,         \
+                 offset, limit, flags)                                  \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_POINTER,                            \
+                 expected, gcut_list_string_free,                       \
+                 "min", G_TYPE_STRING, min,                             \
+                 "min-size", G_TYPE_UINT, min_size,                     \
+                 "max", G_TYPE_STRING, max,                             \
+                 "max-size", G_TYPE_UINT, max_size,                     \
+                 "offset", G_TYPE_INT, offset,                          \
+                 "limit", G_TYPE_INT, limit,                            \
+                 "flags", G_TYPE_INT, flags,                            \
+                 NULL)
+
+  ADD_DATA("ascending",
+           gcut_list_string_new("128592911x503145263",
+                                "128597458x502942345",
+                                "128572751x502866155",
+                                "128513714x503319780",
+                                "128320340x502334363",
+                                NULL),
+           NULL, 0,
+           NULL, 0,
+           0, -1,
+           0);
+  ADD_DATA("descending",
+           gcut_list_string_new("128320340x502334363",
+                                "128513714x503319780",
+                                "128572751x502866155",
+                                "128597458x502942345",
+                                "128592911x503145263",
+                                NULL),
+           NULL, 0,
+           NULL, 0,
+           0, -1,
+           GRN_CURSOR_DESCENDING);
+  ADD_DATA("ascending - offset",
+           gcut_list_string_new("128572751x502866155",
+                                "128513714x503319780",
+                                "128320340x502334363",
+                                NULL),
+           NULL, 0,
+           NULL, 0,
+           2, -1,
+           0);
+  ADD_DATA("descending - offset",
+           gcut_list_string_new("128572751x502866155",
+                                "128597458x502942345",
+                                "128592911x503145263",
+                                NULL),
+           NULL, 0,
+           NULL, 0,
+           2, -1,
+           GRN_CURSOR_DESCENDING);
+
+#undef ADD_DATA
+}
+
+void
+test_by_id_encoded(gpointer data)
+{
+  grn_id id;
+  grn_obj min, max;
+  unsigned min_size, max_size;
+  int offset, limit, flags;
+  const GList *expected_keys;
+  GList *actual_keys = NULL;
+
+  create_geo_point_table("[\"128592911x503145263\"],\n"
+                         "[\"128565076x502976128\"],\n"
+                         "[\"128597458x502942345\"],\n"
+                         "[\"128572751x502866155\"],\n"
+                         "[\"128521858x503341754\"],\n"
+                         "[\"128513714x503319780\"],\n"
+                         "[\"128534177x502693614\"],\n"
+                         "[\"128320340x502334363\"]\n");
+  assert_send_command("delete GeoPointPat \"128565076x502976128\"");
+  assert_send_command("delete GeoPointPat \"128521858x503341754\"");
+  assert_send_command("delete GeoPointPat \"128534177x502693614\"");
+
+  cast_to_geo_point(&min, gcut_data_get_string(data, "min"));
+  min_size = gcut_data_get_uint(data, "min-size");
+  cast_to_geo_point(&max, gcut_data_get_string(data, "max"));
+  max_size = gcut_data_get_uint(data, "max-size");
+  offset = gcut_data_get_int(data, "offset");
+  limit = gcut_data_get_int(data, "limit");
+  flags = gcut_data_get_int(data, "flags");
+  cursor = grn_table_cursor_open(context, table,
+                                 min_size > 0 ? GRN_BULK_HEAD(&min) : NULL,
+                                 min_size,
+                                 max_size > 0 ? GRN_BULK_HEAD(&max) : NULL,
+                                 max_size,
+                                 offset, limit,
+                                 flags | GRN_CURSOR_BY_ID);
+  grn_obj_unlink(context, &min);
+  grn_obj_unlink(context, &max);
+  grn_test_assert_context(context);
+  while ((id = grn_table_cursor_next(context, cursor))) {
+    grn_geo_point *key;
+    int key_size;
+
+    key_size = grn_table_cursor_get_key(context, cursor, (void **)&key);
+    actual_keys = g_list_append(actual_keys,
+                                g_strdup_printf("%dx%d",
+                                                key->latitude,
+                                                key->longitude));
   }
   gcut_take_list(actual_keys, g_free);
 
