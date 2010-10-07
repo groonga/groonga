@@ -183,8 +183,7 @@ fi
 %{_libdir}/groonga/modules/suggest/*.so
 %dir %{_libdir}/groonga/modules/tokenizers
 %dir %{_datadir}/groonga
-%{_datadir}/groonga/admin_html/
-%{_datadir}/groonga/examples/
+%{_datadir}/groonga/
 
 %files doc
 %defattr(-,root,root,-)
