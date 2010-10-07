@@ -3,3 +3,5 @@ libtool
 gcc
 make
 mecab-devel
+python2-devel
+php-devel
