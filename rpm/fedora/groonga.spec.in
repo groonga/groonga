@@ -138,10 +138,10 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.la
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
+mkdir -p $RPM_BUILD_ROOT%{_initddir}
 mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
 	$RPM_BUILD_ROOT%{_initddir}
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}
 mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/sysconfig \
 	$RPM_BUILD_ROOT%{_sysconfdir}/
 
