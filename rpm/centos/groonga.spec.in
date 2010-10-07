@@ -1,6 +1,8 @@
+%global _initddir %{_sysconfdir}/init.d/
+
 Name:		groonga
 Version:	@VERSION@
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -11,6 +13,11 @@ Source0:	http://groonga.org/files/groonga/groonga-@VERSION@.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
 Requires:	%{name}-libs = %{version}-%{release}
+Requires(pre):	shadow-utils
+Requires(post):	/sbin/chkconfig
+Requires(preun):	/sbin/chkconfig
+Requires(preun):	/sbin/service
+Requires(postun):	/sbin/service
 
 %description
 Groonga is an embeddable full-text search engine library.  It can
@@ -21,6 +28,9 @@ on relational data model.
 %package libs
 Summary:	Runtime libraries for groonga
 Group:		System Environment/Libraries
+License:	LGPLv2 and (MIT or GPLv2)
+Requires(post):	/sbin/ldconfig
+Requires(postun):	/sbin/ldconfig
 
 %description libs
 This package contains the libraries for groonga
@@ -28,6 +38,8 @@ This package contains the libraries for groonga
 %package doc
 Summary:	Documentation for groonga
 Group:		Documentation
+License:	LGPLv2 and BSD
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description doc
 Documentation for groonga
@@ -54,6 +66,9 @@ Summary:	Munin plugins for groonga
 Group:		Applications/System
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	munin-node
+Requires(post):	munin-node
+Requires(post):	/sbin/service
+Requires(postun):	/sbin/service
 
 %description munin-plugins
 Munin plugins for groonga
@@ -64,25 +79,32 @@ Munin plugins for groonga
 
 
 %build
-%configure
+%configure --disable-static
+sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 make %{?_smp_mflags}
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.la
-rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.a
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d/
+mkdir -p $RPM_BUILD_ROOT%{_initddir}
 mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
-	$RPM_BUILD_ROOT%{_sysconfdir}/init.d/
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/
+	$RPM_BUILD_ROOT%{_initddir}
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}
 mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/sysconfig \
 	$RPM_BUILD_ROOT%{_sysconfdir}/
 
 rm -rf $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/
+
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/groonga
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/groonga/db
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/groonga
+
+rm $RPM_BUILD_ROOT%{_datadir}/groonga/doc/ja/html/.buildinfo
 
 mv $RPM_BUILD_ROOT%{_datadir}/groonga/munin/ $RPM_BUILD_ROOT%{_datadir}/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/
@@ -90,109 +112,107 @@ cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
 [groonga_*]
   user groonga
   group groonga
-  env.PATH /usr/bin:/bin:/usr/local/bin
-  env.pid_file /var/run/groonga/groonga.pid
-  env.path /var/lib/groonga/db/db
+  env.PATH %{_bindir}
+  env.pid_file %{_localstatedir}/run/groonga/groonga.pid
+  env.path %{_localstatedir}/lib/groonga/db/db
   env.host 127.0.0.1
   env.port 10041
-  env.log_path /var/log/groonga/query.log
+  env.log_path %{_localstatedir}/log/groonga/query.log
 EOC
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if ! /usr/bin/getent group groonga &>/dev/null; then
-	/usr/sbin/groupadd -r groonga || \
-		echo "Unexpected error adding group \"groonga\". Aborting installation."
-fi
-if ! /usr/bin/id groonga &>/dev/null; then
-	/usr/sbin/useradd -r -s /sbin/nologin -c 'groonga' \
-		-d %{_localstatedir}/lib/groonga --create-home \
-		-g groonga groonga || \
-		echo "Unexpected error adding user \"groonga\". Aborting installation."
-fi
+getent group groonga >/dev/null || groupadd -r groonga
+getent passwd groonga >/dev/null || \
+       useradd -r -g groonga -d %{_localstatedir}/lib/groonga -s /sbin/nologin \
+	-c 'groonga' groonga
+exit 0
 
 %post
 /sbin/chkconfig --add groonga
-/bin/mkdir -p /var/run/groonga
-/bin/chown -R groonga:groonga /var/run/groonga
 
 %post libs -p /sbin/ldconfig
 
 %post munin-plugins
-/usr/sbin/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
-[ -f /var/lock/subsys/munin-node ] && \
+%{_sbindir}/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
+[ -f %{_localstatedir}/lock/subsys/munin-node ] && \
 	/sbin/service munin-node restart > /dev/null 2>&1
 :
 
 %preun
-if [ $1 -eq 0 ] ; then
-	/sbin/service groonga stop > /dev/null 2>&1
+if [ $1 = 0 ] ; then
+	/sbin/service groonga stop >/dev/null 2>&1 || :
 	/sbin/chkconfig --del groonga
 fi
 
 %postun
 if [ $1 -ge 1 ] ; then
-	/sbin/service groonga condrestart > /dev/null 2>&1
-fi
-
-if [ $1 -eq 0 ]; then
-	/usr/sbin/userdel -r groonga || \
-		echo "User \"groonga\" could not be deleted."
+	/sbin/service groonga condrestart >/dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
 
 %postun munin-plugins
 if [ $1 -eq 0 ]; then
-	rm %{_sysconfdir}/munin/plugins/groonga_* > /dev/null 2>&1
-	[ -f /var/lock/subsys/munin-node ] && \
-		/sbin/service munin-node restart > /dev/null 2>&1
+	[ -f %{_localstatedir}/lock/subsys/munin-node ] && \
+		/sbin/service munin-node restart >/dev/null 2>&1
 	:
 fi
 
 
 %files
 %defattr(-,root,root,-)
-%doc %{_datadir}/man/man1/*
+%{_datadir}/man/man1/*
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga
 %{_bindir}/*
-%{_sysconfdir}/init.d/*
+%{_initddir}/*
+%attr(0755,groonga,groonga) %dir %{_localstatedir}/run/%{name}
+%attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
+%attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
 
 %files libs
 %defattr(-,root,root,-)
 %doc README AUTHORS COPYING
 %{_libdir}/*.so.*
+%dir %{_libdir}/groonga
+%dir %{_libdir}/groonga/modules
+%dir %{_libdir}/groonga/modules/suggest
 %{_libdir}/groonga/modules/suggest/*.so
+%dir %{_libdir}/groonga/modules/tokenizers
+%dir %{_datadir}/groonga
 %{_datadir}/groonga/admin_html/
+%{_datadir}/groonga/examples/
 
 %files doc
 %defattr(-,root,root,-)
 %doc %{_datadir}/groonga/doc/
 
 %files devel
-%defattr(-, root, root)
-%{_includedir}/groonga/*
+%defattr(-,root,root,-)
+%{_includedir}/groonga/
 %{_libdir}/*.so
-%{_libdir}/*.a
 %{_libdir}/pkgconfig/groonga*.pc
 
 %files tokenizer-mecab
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %{_libdir}/groonga/modules/tokenizers/mecab.so
 
 %files munin-plugins
-%defattr(-, root, root)
-%{_datadir}/munin/
-%config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/
+%defattr(-,root,root,-)
+%{_datadir}/munin/plugins/*
+%config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Thu Oct 09 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.2-2
+- merge Fedora changes.
+
 * Thu Sep 09 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.2-1
 - new upstream release.
 
-* Thu Sep 06 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.1-1
+* Mon Sep 06 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.1-1
 - new upstream release.
 
 * Thu Sep 02 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.0-1
