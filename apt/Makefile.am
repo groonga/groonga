@@ -5,7 +5,7 @@ CODES = lenny squeeze unstable hardy lucid
 
 all:
 
-release: remove-existing-packages build update sign upload
+release: build update sign upload
 
 remove-existing-packages:
 	for distribution in $(DISTRIBUTIONS); do	\
