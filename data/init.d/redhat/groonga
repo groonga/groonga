@@ -10,7 +10,6 @@
 #
 ### BEGIN INIT INFO
 # Provides:          groonga
-# Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Required-Start:    $remote_fs
 # Required-Stop:     $remote_fs
@@ -51,13 +50,6 @@ if [ -n "${USER}" ]; then
 		chown -R ${USER} `dirname ${PIDFILE}`
 	fi
 	DAEMON_ARGS="${DAEMON_ARGS} --user ${USER}"
-fi
-if [ -n "${GROUP}" ]; then
-	if ! getent group | grep -q "^${GROUP}:"; then
-		echo "$0: group for running $prog doesn't exist: ${GROUP}" >&2
-		exit 1
-	fi
-	CGROUP_DAEMON="${CGROUP_DAEMON} ${GROUP}"
 fi
 
 if [ -n "${PIDFILE}" ]; then
