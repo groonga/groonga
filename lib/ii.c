@@ -5801,7 +5801,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
     grn_log("o=%d n=%d s=%d r=%d", ti->offset, ti->ntoken, ti->size, ti->rid);
   }
   */
-  GRN_LOG(ctx, GRN_LOG_INFO, "n=%d (%s)", n, string);
+  GRN_LOG(ctx, GRN_LOG_INFO, "n=%d (%.*s)", n, string_len, string);
   /* todo : array as result
   if (n == 1 && (*tis)->cursors->n_entries == 1 && op == GRN_OP_OR
       && !GRN_HASH_SIZE(s) && !s->garbages
@@ -5924,7 +5924,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
            grn_hash *s, grn_operator op, grn_search_optarg *optarg)
 {
   ERRCLR(ctx);
-  GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%s)", string);
+  GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%.*s)", string_len, string);
   {
     grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0};
     if (!s) { return GRN_INVALID_ARGUMENT; }
