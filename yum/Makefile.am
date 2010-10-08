@@ -4,7 +4,7 @@ CHROOT_BASE = /var/lib/chroot
 
 all:
 
-release: remove-existing-packages build sign update upload
+release: build sign update upload
 
 remove-existing-packages:
 	for distribution in $(DISTRIBUTIONS); do	\
