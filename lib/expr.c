@@ -21,6 +21,15 @@
 #include <float.h>
 #include "ii.h"
 #include "geo.h"
+#include "util.h"
+
+static inline int
+function_proc_p(grn_obj *expr)
+{
+  return (expr &&
+          expr->header.type == GRN_PROC &&
+          ((grn_proc *)expr)->type == GRN_PROC_FUNCTION);
+}
 
 grn_obj *
 grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
@@ -2199,6 +2208,28 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
               goto exit;
             }
             proc = sp[-offset];
+            if (!function_proc_p(proc)) {
+              grn_obj buffer;
+
+              GRN_TEXT_INIT(&buffer, 0);
+              switch (proc->header.type) {
+              case GRN_TABLE_HASH_KEY:
+              case GRN_TABLE_PAT_KEY:
+              case GRN_TABLE_NO_KEY:
+              case GRN_COLUMN_FIX_SIZE:
+              case GRN_COLUMN_VAR_SIZE:
+              case GRN_COLUMN_INDEX:
+                grn_inspect_name(ctx, &buffer, proc);
+                break;
+              default:
+                grn_inspect(ctx, &buffer, proc);
+                break;
+              }
+              ERR(GRN_INVALID_ARGUMENT, "invalid function: <%.*s>",
+                  GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+              GRN_OBJ_FIN(ctx, &buffer);
+              goto exit;
+            }
             WITH_SPSAVE({
               grn_proc_call(ctx, proc, code->nargs, expr);
             });
