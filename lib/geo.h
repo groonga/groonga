@@ -21,6 +21,9 @@
 #include "groonga_in.h"
 #endif /* GROONGA_IN_H */
 
+#ifdef WIN32
+#define _USE_MATH_DEFINES
+#endif
 #include <math.h>
 
 #ifdef __cplusplus
