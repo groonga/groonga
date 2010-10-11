@@ -90,7 +90,7 @@ grn_id grn_table_get_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_si
                        void **value);
 grn_id grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value, int *added);
-grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
+GRN_API grn_rc grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
                           grn_encoding *encoding, grn_obj **tokenizer);
 const char *_grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size);
 
