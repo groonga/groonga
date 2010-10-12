@@ -69,7 +69,11 @@
 
 #ifdef WIN32
 #  define GRN_API __declspec(dllexport)
+#ifdef GROONGA_MAIN
+#  define GRN_VAR __declspec(dllimport)
+#else
 #  define GRN_VAR __declspec(dllexport)
+#endif /* GROONGA_MAIN */
 #else
 #  define GRN_API
 #  define GRN_VAR extern
@@ -137,7 +141,7 @@
 
 #undef MSG_WAITALL
 #define MSG_WAITALL 0 /* before Vista, not supported... */
-#define PATH_SEPARATOR "\\"
+#define PATH_SEPARATOR "/"
 #define fpclassify _fpclass
 #define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
 #define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
