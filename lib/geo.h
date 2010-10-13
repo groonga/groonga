@@ -23,7 +23,7 @@
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES
-#endif
+#endif /* WIN32 */
 #include <math.h>
 
 #ifdef __cplusplus
