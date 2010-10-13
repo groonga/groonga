@@ -1166,7 +1166,10 @@ _grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size)
 {
   pat_node *node;
   PAT_AT(pat, id, node);
-  if (!node) { return NULL; }
+  if (!node) {
+    *key_size = 0;
+    return NULL;
+  }
   *key_size = PAT_LEN(node);
   return (const char *) pat_node_get_key(ctx, pat, node);
 }

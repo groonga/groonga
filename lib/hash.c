@@ -1322,9 +1322,15 @@ _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
   uint8_t res;
   entry_str *ee;
   BITMAP_AT(hash, id, res);
-  if (!res) { return NULL; }
+  if (!res) {
+    *key_size = 0;
+    return NULL;
+  }
   ENTRY_AT(hash, id, ee, 0);
-  if (!ee) { return NULL; }
+  if (!ee) {
+    *key_size = 0;
+    return NULL;
+  }
   *key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
   return get_key(ctx, hash, ee);
 }
