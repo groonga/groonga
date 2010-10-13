@@ -31,7 +31,7 @@ static grn_hash *grn_modules = NULL;
 #  define grn_dl_open_error_label  "LoadLibrary"
 #  define grn_dl_close(dl)         (FreeLibrary(dl) != 0)
 #  define grn_dl_close_error_label "FreeLibrary"
-#  define grn_dl_sym(dl, symbol)   GetProcAddress(dl, symbol)
+#  define grn_dl_sym(dl, symbol)   ((void *)GetProcAddress(dl, symbol))
 #  define grn_dl_sym_error_label   "GetProcAddress"
 #  define grn_dl_clear_error
 #else
