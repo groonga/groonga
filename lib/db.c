@@ -6433,9 +6433,17 @@ enum {
 };
 
 #define CMPNUM(type) {\
-  type va = *((type *)(ap));\
-  type vb = *((type *)(bp));\
-  if (va != vb) { return va > vb; }\
+  if (as) {\
+    if (bs) {\
+      type va = *((type *)(ap));\
+      type vb = *((type *)(bp));\
+      if (va != vb) { return va > vb; }\
+    } else {\
+      return 1;\
+    }\
+  } else {\
+    if (bs) { return 0; }\
+  }\
 }
 
 inline static int
@@ -6502,17 +6510,29 @@ compare_value(grn_ctx *ctx, sort_entry *a, sort_entry *b,
       CMPNUM(uint64_t);
       break;
     case KEY_FLOAT32 :
-      {
-        float va = *((float *)(ap));
-        float vb = *((float *)(bp));
-        if (va < vb || va > vb) { return va > vb; }
+      if (as) {
+        if (bs) {
+          float va = *((float *)(ap));
+          float vb = *((float *)(bp));
+          if (va < vb || va > vb) { return va > vb; }
+        } else {
+          return 1;
+        }
+      } else {
+        if (bs) { return 0; }
       }
       break;
     case KEY_FLOAT64 :
-      {
-        double va = *((double *)(ap));
-        double vb = *((double *)(bp));
-        if (va < vb || va > vb) { return va > vb; }
+      if (as) {
+        if (bs) {
+          double va = *((double *)(ap));
+          double vb = *((double *)(bp));
+          if (va < vb || va > vb) { return va > vb; }
+        } else {
+          return 1;
+        }
+      } else {
+        if (bs) { return 0; }
       }
       break;
     }
