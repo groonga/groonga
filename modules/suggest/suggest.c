@@ -505,6 +505,11 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
   return obj;
 }
 
+/* todo : should be replaced to simple macro call */
+GRN_API grn_rc grn_module_init_suggest(grn_ctx *ctx);
+GRN_API grn_rc grn_module_register_suggest(grn_ctx *ctx);
+GRN_API grn_rc grn_module_fin_suggest(grn_ctx *ctx);
+
 grn_rc
 grn_module_init_suggest(grn_ctx *ctx)
 {

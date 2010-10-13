@@ -200,6 +200,11 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
 #endif
 }
 
+/* todo : should be replaced to simple macro call */
+GRN_API grn_rc grn_module_init_mecab(grn_ctx *ctx);
+GRN_API grn_rc grn_module_register_mecab(grn_ctx *ctx);
+GRN_API grn_rc grn_module_fin_mecab(grn_ctx *ctx);
+
 grn_rc
 grn_module_init_mecab(grn_ctx *ctx)
 {
