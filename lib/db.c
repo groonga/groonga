@@ -2699,9 +2699,13 @@ _grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size)
   case GRN_TABLE_NO_KEY :
     {
       grn_array *a = (grn_array *)table;
-      if (a->obj.header.domain && a->value_size) {
+      const char *v;
+      if (a->obj.header.domain && a->value_size &&
+          (v = _grn_array_get_value(ctx, a, id))) {
         *key_size = a->value_size;
-        return _grn_array_get_value(ctx, a, id);
+        return v;
+      } else {
+        *key_size = 0;
       }
     }
     break;
