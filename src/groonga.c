@@ -1637,7 +1637,10 @@ g_worker(void *arg)
     nfthreads++;
     while (!(edge = (grn_edge *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
-      if (grn_gctx.stat == GRN_CTX_QUIT) { goto exit; }
+      if (grn_gctx.stat == GRN_CTX_QUIT) {
+        nfthreads--;
+        goto exit;
+      }
     }
     ctx = &edge->ctx;
     nfthreads--;
