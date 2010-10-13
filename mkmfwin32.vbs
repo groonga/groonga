@@ -1,7 +1,7 @@
 '---------------------------------------------------------------
 '  mkmfwin32.vbs
 '---------------------------------------------------------------
-option explicit 
+option explicit
 dim shell, strarch
 set shell = createobject("wscript.shell")
 strarch = shell.expandenvironmentstrings("%PROCESSOR_ARCHITECTURE%")
@@ -25,7 +25,7 @@ objs = array("com.obj", "ctx.obj", "db.obj", "hash.obj", "ii.obj", "io.obj", "nf
 dim fs
 set fs = wscript.createobject("scripting.filesystemobject")
 dim ts
-set ts = fs.opentextfile("configure.ac", 1) 
+set ts = fs.opentextfile("configure.ac", 1)
 
 'get version
 dim sline, sarray, package, version, slen
@@ -87,18 +87,18 @@ sub common_header()
   ts.write "        -DGROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD=""0"" \" + vbLf
   ts.write "        -DGROONGA_LOG_PATH=""\""c:\\groonga\\log\\groonga.log\"""" \" + vbLf
   ts.write "        -DDEFAULT_ADMIN_HTML_PATH=""\""c:\\groonga\\data\\admin_html\"""" \" + vbLf
-  ts.write "        -DPACKAGE=""\""" 
+  ts.write "        -DPACKAGE=""\"""
   ts.write package
   ts.write "\"""" \" + vbLf
-  ts.write "        -DPACKAGE_VERSION=""\""" 
+  ts.write "        -DPACKAGE_VERSION=""\"""
   ts.write version
   ts.write "\"""" \" + vbLf
   if make_lib = 1 then
-  ts.write "        -DGROONGA_VERSION=""\""" 
+  ts.write "        -DGROONGA_VERSION=""\"""
   ts.write revision
   ts.write "\"""" \" + vbLf
-  end if 
-  ts.write "        -DPACKAGE_STRING=""\""" 
+  end if
+  ts.write "        -DPACKAGE_STRING=""\"""
   ts.write version
   ts.write "\"""" " + vbLf
 
@@ -107,7 +107,7 @@ sub common_header()
 end sub
 
 'Makefile for lib
-set ts = fs.opentextfile("lib/Makefile.msvc", 2, True) 
+set ts = fs.opentextfile("lib/Makefile.msvc", 2, True)
 make_lib = 1
 common_header
 
@@ -136,7 +136,7 @@ ts.close
 msgbox "lib/Makefile.msvc updated"
 
 'Makefile for src
-set ts = fs.opentextfile("src\Makefile.msvc", 2, True) 
+set ts = fs.opentextfile("src\Makefile.msvc", 2, True)
 
 make_lib = 0
 common_header
