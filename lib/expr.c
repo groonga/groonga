@@ -1228,7 +1228,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   s1 = sp[-2];\
 }
 
-#define do_compare_sub_numeric(y,op) {\
+#define DO_COMPARE_SUB_NUMERIC(y,op) {\
   switch ((y)->header.domain) {\
   case GRN_DB_INT32 :\
     r = (x_ op GRN_INT32_VALUE(y));\
@@ -1254,7 +1254,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   }\
 }
 
-#define do_compare_sub(op) {\
+#define DO_COMPARE_SUB(op) {\
   switch (y->header.domain) {\
   case GRN_DB_SHORT_TEXT :\
   case GRN_DB_TEXT :\
@@ -1265,29 +1265,29 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
       if (grn_obj_cast(ctx, y, &y_, 0)) {\
         r = 0;\
       } else {\
-        do_compare_sub_numeric(&y_, op);\
+        DO_COMPARE_SUB_NUMERIC(&y_, op);\
       }\
       GRN_OBJ_FIN(ctx, &y_);\
     }\
     break;\
   default :\
-    do_compare_sub_numeric(y,op);\
+    DO_COMPARE_SUB_NUMERIC(y,op);\
     break;\
   }\
 }
 
-#define do_compare(x,y,r,op) {\
+#define DO_COMPARE(x,y,r,op) {\
   switch (x->header.domain) {\
   case GRN_DB_INT32 :\
     {\
       int32_t x_ = GRN_INT32_VALUE(x);\
-      do_compare_sub(op);\
+      DO_COMPARE_SUB(op);\
     }\
     break;\
   case GRN_DB_UINT32 :\
     {\
       uint32_t x_ = GRN_UINT32_VALUE(x);\
-      do_compare_sub(op);\
+      DO_COMPARE_SUB(op);\
     }\
     break;\
   case GRN_DB_TIME :\
@@ -1328,19 +1328,19 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   case GRN_DB_INT64 :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
-      do_compare_sub(op);\
+      DO_COMPARE_SUB(op);\
     }\
     break;\
   case GRN_DB_UINT64 :\
     {\
       uint64_t x_ = GRN_UINT64_VALUE(x);\
-      do_compare_sub(op);\
+      DO_COMPARE_SUB(op);\
     }\
     break;\
   case GRN_DB_FLOAT :\
     {\
       double x_ = GRN_FLOAT_VALUE(x);\
-      do_compare_sub(op);\
+      DO_COMPARE_SUB(op);\
     }\
     break;\
   case GRN_DB_SHORT_TEXT :\
@@ -1362,7 +1362,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     } else {\
       const char *q_ = GRN_TEXT_VALUE(x);\
       int x_ = grn_atoi(q_, q_ + GRN_TEXT_LEN(x), NULL);\
-      do_compare_sub(op);\
+      DO_COMPARE_SUB(op);\
     }\
     break;\
   default :\
@@ -2800,7 +2800,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           int r;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          do_compare(x, y, r, <);
+          DO_COMPARE(x, y, r, <);
           GRN_INT32_SET(ctx, res, r);
           res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
@@ -2812,7 +2812,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           int r;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          do_compare(x, y, r, >);
+          DO_COMPARE(x, y, r, >);
           GRN_INT32_SET(ctx, res, r);
           res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
@@ -2824,7 +2824,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           int r;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          do_compare(x, y, r, <=);
+          DO_COMPARE(x, y, r, <=);
           GRN_INT32_SET(ctx, res, r);
           res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
@@ -2836,7 +2836,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           int r;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          do_compare(x, y, r, >=);
+          DO_COMPARE(x, y, r, >=);
           GRN_INT32_SET(ctx, res, r);
           res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
