@@ -1886,7 +1886,7 @@ grn_fail_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length,
   if (grn_fail_malloc_check(length, file, line, func)) {
     return grn_mmap(ctx, fi, offset, length);
   } else {
-    MERR("fail_mmap(%zu,%d,%llu) (%s:%d@%s) <%zu>",
+    MERR("fail_mmap(%zu,%d,%" GRN_FMT_LLU ") (%s:%d@%s) <%zu>",
           length, fi ? fi->fd : 0, offset, file, line, func, mmap_size);
     return NULL;
   }

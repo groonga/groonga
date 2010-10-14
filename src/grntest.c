@@ -389,10 +389,10 @@ report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_ti
   start = start_time - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
   if (grntest_outtype == OUT_TSV) {
-    fprintf(grntest_logfp, "report\t%d\tload\t%lld\t%lld\t%s\n",
+    fprintf(grntest_logfp, "report\t%d\tload\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%s\n",
             task_id,  start, end, rettmp);
   } else {
-    fprintf(grntest_logfp, "[%d, \"load\", %lld, %lld, %s],\n",
+    fprintf(grntest_logfp, "[%d, \"load\", %" GRN_FMT_LLD ", %" GRN_FMT_LLD ", %s],\n",
             task_id,  start, end, rettmp);
   }
   fflush(grntest_logfp);
@@ -432,10 +432,10 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   clen = strlen(command);
   escape_command(command, clen, command_escaped, clen * 2);
   if (grntest_outtype == OUT_TSV) {
-    fprintf(grntest_logfp, "report\t%d\t%s\t%lld\t%lld\t%s\n",
+    fprintf(grntest_logfp, "report\t%d\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%s\n",
             task_id, command_escaped, start, end, rettmp);
   } else {
-    fprintf(grntest_logfp, "[%d, \"%s\", %lld, %lld, %s],\n",
+    fprintf(grntest_logfp, "[%d, \"%s\", %" GRN_FMT_LLD ", %" GRN_FMT_LLD ", %s],\n",
             task_id, command_escaped, start, end, rettmp);
   }
   fflush(grntest_logfp);
@@ -458,10 +458,10 @@ output_result_final(grn_ctx *ctx, int qnum)
   sec = self / (double)1000000;
   qps = (double)qnum / sec;
   if (grntest_outtype == OUT_TSV) {
-    fprintf(grntest_logfp, "total\t%lld\t%f\t%d\n", latency, qps, qnum);
+    fprintf(grntest_logfp, "total\t%" GRN_FMT_LLD "\t%f\t%d\n", latency, qps, qnum);
   } else {
     fprintf(grntest_logfp,
-           "{\"total\": %lld, \"qps\": %f, \"queries\": %d}]\n", latency, qps, qnum);
+           "{\"total\": %" GRN_FMT_LLD ", \"qps\": %f, \"queries\": %d}]\n", latency, qps, qnum);
   }
   grn_obj_close(ctx, &end_time);
   return 0;
@@ -1159,14 +1159,14 @@ worker_sub(intptr_t task_id)
     grntest_jobdone++;
     if (grntest_outtype == OUT_TSV) {
       sprintf(tmpbuf,
-              "job\t%s\t%lld\t%lld\t%f\t%lld\t%lld\t%d\n",
+              "job\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%f\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%d\n",
               grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
               grntest_job[grntest_task[task_id].job_id].min,
               grntest_job[grntest_task[task_id].job_id].max,
               grntest_job[grntest_task[task_id].job_id].qnum);
     } else {
       sprintf(tmpbuf,
-              "{\"job\": \"%s\", \"latency\": %lld, \"self\": %lld, \"qps\": %f, \"min\": %lld, \"max\": %lld, \"queries\": %d}",
+              "{\"job\": \"%s\", \"latency\": %" GRN_FMT_LLD ", \"self\": %" GRN_FMT_LLD ", \"qps\": %f, \"min\": %" GRN_FMT_LLD ", \"max\": %" GRN_FMT_LLD ", \"queries\": %d}",
               grntest_job[grntest_task[task_id].job_id].jobname, latency, self, qps,
               grntest_job[grntest_task[task_id].job_id].min,
               grntest_job[grntest_task[task_id].job_id].max,
@@ -3090,10 +3090,10 @@ main(int argc, char **argv)
   get_date(grntest_date, &sec);
 
   if (outdir) {
-    sprintf(log, "%s/%s-%s-%lld-%s.log", outdir, grntest_scriptname,
+    sprintf(log, "%s/%s-%s-%" GRN_FMT_LLD "-%s.log", outdir, grntest_scriptname,
             grntest_username, GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
   } else {
-    sprintf(log, "%s-%s-%lld-%s.log", grntest_scriptname,
+    sprintf(log, "%s-%s-%" GRN_FMT_LLD "-%s.log", grntest_scriptname,
             grntest_username, GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
   }
 
