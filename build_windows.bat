@@ -23,6 +23,18 @@ nmake -f Makefile.msvc clean
 nmake -f Makefile.msvc
 cd ..
 
+@rem build suggest
+cd modules\suggest
+nmake -f Makefile.msvc clean
+nmake -f Makefile.msvc
+cd ..\..
+
+@rem build mecab
+cd modules\tokenizers
+nmake -f Makefile.msvc clean
+nmake -f Makefile.msvc
+cd ..\..
+
 @set INCLUDE=%OLD_INCLUDE%
 @set LIB=%OLD_LIB%
 
