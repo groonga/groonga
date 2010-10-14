@@ -1228,8 +1228,8 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   s1 = sp[-2];\
 }
 
-#define do_compare_sub(op) {\
-  switch (y->header.domain) {\
+#define do_compare_sub_numeric(y,op) {\
+  switch ((y)->header.domain) {\
   case GRN_DB_INT32 :\
     r = (x_ op GRN_INT32_VALUE(y));\
     break;\
@@ -1248,17 +1248,30 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   case GRN_DB_FLOAT :\
     r = (x_ op GRN_FLOAT_VALUE(y));\
     break;\
+  default :\
+    r = 0;\
+    break;\
+  }\
+}
+
+#define do_compare_sub(op) {\
+  switch (y->header.domain) {\
   case GRN_DB_SHORT_TEXT :\
   case GRN_DB_TEXT :\
   case GRN_DB_LONG_TEXT :\
     {\
-      const char *p_ = GRN_TEXT_VALUE(y);\
-      int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
-      r = (x_ op i_);\
+      grn_obj y_;\
+      GRN_OBJ_INIT(&y_, GRN_BULK, 0, x->header.domain);\
+      if (grn_obj_cast(ctx, y, &y_, 0)) {\
+        r = 0;\
+      } else {\
+        do_compare_sub_numeric(&y_, op);\
+      }\
+      GRN_OBJ_FIN(ctx, &y_);\
     }\
     break;\
   default :\
-    r = 0;\
+    do_compare_sub_numeric(y,op);\
     break;\
   }\
 }
