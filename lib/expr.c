@@ -1371,7 +1371,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   }\
 }
 
-#define do_eq_sub {\
+#define DO_EQ_SUB {\
   switch (y->header.domain) {\
   case GRN_DB_INT32 :\
     r = (x_ == GRN_INT32_VALUE(y));\
@@ -1406,7 +1406,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   }\
 }\
 
-#define do_eq(x,y,r) {\
+#define DO_EQ(x,y,r) {\
   switch (x->header.domain) {\
   case GRN_DB_VOID :\
     r = 0;\
@@ -1414,19 +1414,19 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   case GRN_DB_INT32 :\
     {\
       int32_t x_ = GRN_INT32_VALUE(x);\
-      do_eq_sub;\
+      DO_EQ_SUB;\
     }\
     break;\
   case GRN_DB_UINT32 :\
     {\
       uint32_t x_ = GRN_UINT32_VALUE(x);\
-      do_eq_sub;\
+      DO_EQ_SUB;\
     }\
     break;\
   case GRN_DB_INT64 :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
-      do_eq_sub;\
+      DO_EQ_SUB;\
     }\
     break;\
   case GRN_DB_TIME :\
@@ -1467,7 +1467,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   case GRN_DB_UINT64 :\
     {\
       uint64_t x_ = GRN_UINT64_VALUE(x);\
-      do_eq_sub;\
+      DO_EQ_SUB;\
     }\
     break;\
   case GRN_DB_FLOAT :\
@@ -1514,7 +1514,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     } else {\
       const char *q_ = GRN_TEXT_VALUE(x);\
       int x_ = grn_atoi(q_, q_ + GRN_TEXT_LEN(x), NULL);\
-      do_eq_sub;\
+      DO_EQ_SUB;\
     }\
     break;\
   default :\
@@ -2751,7 +2751,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           int r;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          do_eq(x, y, r);
+          DO_EQ(x, y, r);
           GRN_INT32_SET(ctx, res, r);
           res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
@@ -2763,7 +2763,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           int r;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          do_eq(x, y, r);
+          DO_EQ(x, y, r);
           GRN_INT32_SET(ctx, res, 1 - r);
           res->header.type = GRN_BULK;
           res->header.domain = GRN_DB_INT32;
