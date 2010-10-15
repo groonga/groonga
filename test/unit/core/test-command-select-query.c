@@ -24,6 +24,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_int64_compare_over_int32(void);
+void test_int64_compare_float_literal(void);
 
 static gchar *tmp_directory;
 
@@ -91,4 +92,20 @@ test_int64_compare_over_int32(void)
        "[[\"_id\",\"UInt32\"],[\"int64\",\"Int64\"]],"
        "[1,344494643000000]]]",
     send_command("select Integers --query int64:<=344494643000000"));
+}
+
+void
+test_int64_compare_float_literal(void)
+{
+  assert_send_command("table_create Integers TABLE_NO_KEY");
+  assert_send_command("column_create Integers int64 COLUMN_SCALAR Int64");
+  assert_send_command("load --table Integers\n"
+                      "[\n"
+                      "{\"int64\":344494643000000}\n"
+                      "]");
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],[\"int64\",\"Int64\"]],"
+       "[1,344494643000000]]]",
+    send_command("select Integers --query int64:<=3.44494643e14"));
 }
