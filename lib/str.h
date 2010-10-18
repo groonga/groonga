@@ -62,6 +62,7 @@ int64_t grn_atoll(const char *nptr, const char *end, const char **rest);
 grn_rc grn_itoa(int i, char *p, char *end, char **rest);
 grn_rc grn_lltoa(int64_t i, char *p, char *end, char **rest);
 grn_rc grn_ulltoa(uint64_t i, char *p, char *end, char **rest);
+GRN_API grn_rc grn_aton(grn_ctx *ctx, const char *p, const char *end, const char **rest, grn_obj *res);
 const char *grn_enctostr(grn_encoding enc);
 grn_encoding grn_strtoenc(const char *str);
 
@@ -119,6 +120,9 @@ GRN_API grn_rc grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_OBJ_FORMAT_XML_ELEMENT_MASK             (0x01<<1)
 #define GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET        (0x00<<1)
 #define GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY  (0x01<<1)
+
+GRN_API grn_rc grn_text_aton(grn_ctx *ctx, const char *str, unsigned int strlen,
+                             grn_obj *res);
 
 #ifdef __cplusplus
 }

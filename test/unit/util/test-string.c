@@ -47,8 +47,11 @@ void data_text_otoj(void);
 void test_text_otoj(gconstpointer data);
 void data_str_len(void);
 void test_str_len(gconstpointer data);
+void data_aton(void);
+void test_aton(gconstpointer data);
 
 static grn_ctx context;
+static grn_obj buffer;
 
 static const gchar text_ja_utf8[] =
   "Groongaは組み込み型の全文検索エンジンです。DBMSやスクリプト言語処理系等に\n"
@@ -70,11 +73,13 @@ void
 setup (void)
 {
   grn_ctx_init(&context, GRN_CTX_USE_QL);
+  GRN_VOID_INIT(&buffer);
 }
 
 void
 teardown (void)
 {
+  GRN_OBJ_FIN(&context, &buffer);
   grn_ctx_fin(&context);
 }
 
@@ -790,4 +795,90 @@ test_str_len(gconstpointer data)
   result = grn_str_len(&context, input, encoding, &input_end);
   expected = gcut_data_get_size(data, "expected");
   cut_assert_equal_size(expected, result);
+}
+
+void
+data_aton(void)
+{
+#define ADD_DATUM(label, grn_type, g_type, expected, input)     \
+  gcut_add_datum(label " - " #expected,                         \
+                 "type", G_TYPE_INT, grn_type,                  \
+                 "expected", g_type, expected,                  \
+                 "input", G_TYPE_STRING, input,                 \
+                 NULL)
+
+  ADD_DATUM("int32",
+            GRN_DB_INT32,
+            G_TYPE_INT, 344494643,
+            "+344494643");
+  ADD_DATUM("int32 - negative",
+            GRN_DB_INT32,
+            G_TYPE_INT, -344494643,
+            "-344494643");
+  ADD_DATUM("uint32",
+            GRN_DB_UINT32,
+            G_TYPE_UINT, 2147483648,
+            "2147483648");
+  ADD_DATUM("int64",
+            GRN_DB_INT64,
+            G_TYPE_INT64, G_GINT64_CONSTANT(344494643000000),
+            "344494643000000");
+  ADD_DATUM("int64 - negative",
+            GRN_DB_INT64,
+            G_TYPE_INT64, G_GINT64_CONSTANT(-344494643000000),
+            "-344494643000000");
+  /* TODO: support uint64.
+  ADD_DATUM("uint64",
+            GRN_DB_UINT64,
+            G_TYPE_UINT64, G_GUINT64_CONSTANT(9223372036854775808),
+            "9223372036854775808");
+  */
+  ADD_DATUM("float",
+            GRN_DB_FLOAT,
+            G_TYPE_DOUBLE, 3.44494643e14,
+            "3.44494643e14");
+
+#undef ADD_DATUM
+}
+
+void
+test_aton(gconstpointer data)
+{
+  const gchar *input, *input_end, *rest;
+  grn_builtin_type type;
+  grn_rc rc;
+
+  type = gcut_data_get_int(data, "type");
+  input = gcut_data_get_string(data, "input");
+  input_end = strchr(input, '\0');
+  rc = grn_aton(&context, input, input_end, &rest, &buffer);
+  grn_test_assert(rc);
+  cut_assert_equal_string(input_end, rest);
+  cut_assert_equal_int(type, buffer.header.domain);
+  switch (type) {
+  case GRN_DB_INT32 :
+    cut_assert_equal_int(gcut_data_get_int(data, "expected"),
+                         GRN_INT32_VALUE(&buffer));
+    break;
+  case GRN_DB_UINT32 :
+    cut_assert_equal_uint(gcut_data_get_uint(data, "expected"),
+                          GRN_UINT32_VALUE(&buffer));
+    break;
+  case GRN_DB_INT64 :
+    gcut_assert_equal_int64(gcut_data_get_int64(data, "expected"),
+                            GRN_INT64_VALUE(&buffer));
+    break;
+  case GRN_DB_UINT64 :
+    gcut_assert_equal_uint64(gcut_data_get_uint64(data, "expected"),
+                             GRN_UINT64_VALUE(&buffer));
+    break;
+  case GRN_DB_FLOAT :
+    cut_assert_equal_double(gcut_data_get_double(data, "expected"),
+                            0.000001,
+                            GRN_FLOAT_VALUE(&buffer));
+    break;
+  default :
+    cut_error("unknown type: %d", type);
+    break;
+  }
 }

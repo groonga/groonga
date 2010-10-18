@@ -1713,6 +1713,58 @@ grn_ulltob32h(uint64_t i, char *p)
   return p;
 }
 
+grn_rc
+grn_aton(grn_ctx *ctx, const char *p, const char *end, const char **rest,
+         grn_obj *res)
+{
+  if (*p == '+') {
+    p++;
+  }
+
+  switch (*p) {
+  case '-' :
+  case '0' : case '1' : case '2' : case '3' : case '4' :
+  case '5' : case '6' : case '7' : case '8' : case '9' :
+    {
+      int64_t int64;
+      char rest_char;
+      int64 = grn_atoll(p, end, rest);
+      rest_char = **rest;
+      if (end == *rest) {
+        if ((int64_t)INT32_MIN <= int64 && int64 <= (int64_t)INT32_MAX) {
+          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
+          GRN_INT32_SET(ctx, res, int64);
+        } else if ((int64_t)INT32_MAX < int64 && int64 <= (int64_t)UINT32_MAX) {
+          grn_obj_reinit(ctx, res, GRN_DB_UINT32, 0);
+          GRN_UINT32_SET(ctx, res, int64);
+        } else {
+          grn_obj_reinit(ctx, res, GRN_DB_INT64, 0);
+          GRN_INT64_SET(ctx, res, int64);
+        }
+      } else if (rest_char == '.' || rest_char == 'e' || rest_char == 'E' ||
+                 (rest_char >= '0' && rest_char <= '9')) {
+        char *rest_float;
+        double d;
+        errno = 0;
+        d = strtod(p, &rest_float);
+        if (!errno && rest_float == end) {
+          grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);
+          GRN_FLOAT_SET(ctx, res, d);
+          *rest = rest_float;
+        } else {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    break;
+  default :
+    return GRN_INVALID_ARGUMENT;
+    break;
+  }
+
+  return GRN_SUCCESS;
+}
+
 int
 grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, int buf_size, const char **rest)
 {
