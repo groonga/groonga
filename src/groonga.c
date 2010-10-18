@@ -1484,7 +1484,10 @@ h_worker(void *arg)
     nfthreads++;
     while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
-      if (grn_gctx.stat == GRN_CTX_QUIT) { goto exit; }
+      if (grn_gctx.stat == GRN_CTX_QUIT) {
+        nfthreads--;
+        goto exit;
+      }
     }
     nfthreads--;
     MUTEX_UNLOCK(q_mutex);
