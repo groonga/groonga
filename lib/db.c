@@ -3785,13 +3785,13 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     setvalue(ctx, dest, i);\
   } else if (cur != str) {\
     const char *rest;\
+    grn_obj buf;\
+    GRN_VOID_INIT(&buf);\
     rc = grn_aton(ctx, str, str_end, &rest, &buf);\
     if (!rc) {\
-      grn_obj buf;\
-      GRN_VOID_INIT(&buf);\
-      grn_obj_cast(ctx, &buf, dest, addp);\
-      GRN_OBJ_FIN(ctx, &buf);\
+      rc = grn_obj_cast(ctx, &buf, dest, addp);\
     }\
+    GRN_OBJ_FIN(ctx, &buf);\
   } else {\
     rc = GRN_INVALID_ARGUMENT;\
   }\
