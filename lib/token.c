@@ -315,7 +315,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (tid && (len > 1 || r == p)) {
       if (r != p && pos + len - 1 <= token->tail) { continue; }
       p += strlen(key);
-      if (!*p && !token->add) { token->status = grn_token_done; }
+      if (!*p && token->mode == grn_token_get) { token->status = grn_token_done; }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
     if ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
@@ -389,7 +389,8 @@ grn_token_fin(void)
 }
 
 grn_token *
-grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len, int add)
+grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
+               grn_token_mode mode)
 {
   grn_token *token;
   grn_encoding encoding;
@@ -397,7 +398,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len, in
   if (grn_table_get_info(ctx, table, NULL, &encoding, &tokenizer)) { return NULL; }
   if (!(token = GRN_MALLOC(sizeof(grn_token)))) { return NULL; }
   token->table = table;
-  token->add = add;
+  token->mode = mode;
   token->encoding = encoding;
   token->tokenizer = tokenizer;
   token->orig = str;
@@ -445,12 +446,12 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       token->curr_size = GRN_TEXT_LEN(curr_);
       status = GRN_UINT32_VALUE(stat_);
       token->status = ((status & GRN_TOKEN_LAST) ||
-                       (!token->add && (status & GRN_TOKEN_REACH_END)))
+                       (token->mode == grn_token_get && (status & GRN_TOKEN_REACH_END)))
         ? grn_token_done : grn_token_doing;
       token->force_prefix = 0;
       if (status & GRN_TOKEN_UNMATURED) {
         if (status & GRN_TOKEN_OVERLAP) {
-          if (!token->add) { token->pos++; continue; }
+          if (token->mode == grn_token_get) { token->pos++; continue; }
         } else {
           if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
         }
@@ -460,7 +461,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       token->curr_size = token->orig_blen;
       token->status = grn_token_done;
     }
-    if (token->add) {
+    if (token->mode == grn_token_add) {
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
         if (grn_io_lock(ctx, ((grn_pat *)table)->io, 10000000)) {

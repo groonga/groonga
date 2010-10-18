@@ -37,6 +37,12 @@
 extern "C" {
 #endif
 
+typedef enum {
+  grn_token_get = 0,
+  grn_token_add,
+  grn_token_del
+} grn_token_mode;
+
 typedef struct {
   grn_obj *table;
   const unsigned char *orig;
@@ -44,7 +50,7 @@ typedef struct {
   uint32_t orig_blen;
   uint32_t curr_size;
   int32_t pos;
-  int32_t add;
+  grn_token_mode mode;
   uint8_t status;
   uint8_t force_prefix;
   grn_obj_flags table_flags;
@@ -71,7 +77,7 @@ grn_rc grn_token_init(void);
 grn_rc grn_token_fin(void);
 
 GRN_API grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
-                                  size_t str_len, int add);
+                                  size_t str_len, grn_token_mode mode);
 
 GRN_API grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
 GRN_API grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);
