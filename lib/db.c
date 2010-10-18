@@ -3784,20 +3784,14 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   if (cur == str_end) {\
     setvalue(ctx, dest, i);\
   } else if (cur != str) {\
-    double d;\
-    char *end;\
-    grn_obj buf;\
-    GRN_TEXT_INIT(&buf, 0);\
-    GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));\
-    GRN_TEXT_PUTC(ctx, &buf, '\0');\
-    errno = 0;\
-    d = strtod(GRN_TEXT_VALUE(&buf), &end);\
-    if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {\
-      setvalue(ctx, dest, d);\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
+    const char *rest;\
+    rc = grn_aton(ctx, str, str_end, &rest, &buf);\
+    if (!rc) {\
+      grn_obj buf;\
+      GRN_VOID_INIT(&buf);\
+      grn_obj_cast(ctx, &buf, dest, addp);\
+      GRN_OBJ_FIN(ctx, &buf);\
     }\
-    GRN_OBJ_FIN(ctx, &buf);\
   } else {\
     rc = GRN_INVALID_ARGUMENT;\
   }\
