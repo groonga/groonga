@@ -365,6 +365,12 @@ typedef int grn_cond;
 
 #endif /* WIN32 */
 
+#define GRN_TEST_YIELD() \
+  do { \
+  } while (0)
+
+#endif /* HAVE_PTHREAD_H */
+
 /* format string for printf */
 #ifdef WIN32
 #define GRN_FMT_LLD "I64d"
@@ -373,12 +379,6 @@ typedef int grn_cond;
 #define GRN_FMT_LLD "lld"
 #define GRN_FMT_LLU "llu"
 #endif /* WIN32 */
-
-#define GRN_TEST_YIELD() \
-  do { \
-  } while (0)
-
-#endif /* HAVE_PTHREAD_H */
 
 #ifdef __GNUC__
 
