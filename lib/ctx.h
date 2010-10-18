@@ -17,6 +17,10 @@
 #ifndef GRN_CTX_H
 #define GRN_CTX_H
 
+#ifndef GROONGA_IN_H
+#include "groonga_in.h"
+#endif /* GROONGA_IN_H */
+
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
