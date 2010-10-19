@@ -667,18 +667,6 @@ do_alone(int argc, char **argv)
   return rc;
 }
 
-#define BATCHMODE(ctx) do {\
-  int flags;\
-  unsigned int str_len;\
-  char *str, *query = "(batchmode #t)";\
-  grn_ctx_send(ctx, query, strlen(query), 0);\
-  do {\
-    if (grn_ctx_recv(ctx, &str, &str_len, &flags)) {\
-      fprintf(stderr, "grn_ctx_recv failed\n");\
-    }\
-  } while ((flags & GRN_CTX_MORE));\
-} while (0)
-
 static int
 c_output(grn_ctx *ctx)
 {
@@ -729,7 +717,6 @@ g_client(int argc, char **argv)
       if (!rc) {
         char *buf = GRN_TEXT_VALUE(&text);
         int   len;
-        if (batchmode) { BATCHMODE(ctx); }
         while ((len = prompt(ctx, buf))) {
           uint32_t size = len - 1;
           grn_ctx_send(ctx, buf, size, 0);
