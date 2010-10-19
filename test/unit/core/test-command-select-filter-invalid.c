@@ -97,7 +97,7 @@ test_no_operator_and_parentheses_column(void)
 {
   grn_test_assert_send_command_error(
     context,
-    GRN_SUCCESS,
+    GRN_INVALID_ARGUMENT,
     "invalid function: <\"groonga\">",
     "select Sites --filter \"_key != \\\"groonga\\\" ()\"");
 }

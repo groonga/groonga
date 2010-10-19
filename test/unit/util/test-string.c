@@ -817,7 +817,7 @@ data_aton(void)
             "-344494643");
   ADD_DATUM("uint32",
             GRN_DB_UINT32,
-            G_TYPE_UINT, 2147483648,
+            G_TYPE_UINT, (guint32)G_GUINT64_CONSTANT(2147483648),
             "2147483648");
   ADD_DATUM("int64",
             GRN_DB_INT64,
