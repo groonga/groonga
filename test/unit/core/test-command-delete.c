@@ -27,6 +27,7 @@ void test_by_id(void);
 void test_by_key(void);
 void test_referenced_record(void);
 void test_uint64(void);
+void test_last_token(void);
 
 static gchar *tmp_directory;
 
@@ -164,5 +165,26 @@ test_uint64(void)
                             "[[\"_key\",\"UInt64\"]],"
                             "[29]]]",
                           send_command("select Students "
+                                       "--output_columns _key"));
+}
+
+void
+test_last_token(void)
+{
+  cut_assert_equal_string("[[[2],"
+                            "[[\"_key\",\"ShortText\"]],"
+                            "[\"mori\"],"
+                            "[\"tapo\"]]]",
+                          send_command("select Users "
+                                       "--match_columns _key "
+                                       "--query o "
+                                       "--output_columns _key"));
+  assert_send_command("delete Users tapo");
+  cut_assert_equal_string("[[[1],"
+                            "[[\"_key\",\"ShortText\"]],"
+                            "[\"mori\"]]]",
+                          send_command("select Users "
+                                       "--match_columns _key "
+                                       "--query o "
                                        "--output_columns _key"));
 }
