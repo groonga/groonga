@@ -84,9 +84,6 @@
 #ifdef __GNUC__
 #  include <w32api.h>
 #  define WINVER WindowsXP
-#else
-#  pragma warning(disable: 4996)
-#  include <io.h>
 #endif
 
 #include <basetsd.h>
