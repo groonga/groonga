@@ -836,6 +836,34 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       break;
     case GRN_OP_CALL :
+      {
+        grn_obj *proc = NULL;
+        if (e->codes_curr - nargs > 0) {
+          proc = e->codes[e->codes_curr - nargs - 1].value;
+        }
+        if (proc && !function_proc_p(proc)) {
+          grn_obj buffer;
+
+          GRN_TEXT_INIT(&buffer, 0);
+          switch (proc->header.type) {
+          case GRN_TABLE_HASH_KEY:
+          case GRN_TABLE_PAT_KEY:
+          case GRN_TABLE_NO_KEY:
+          case GRN_COLUMN_FIX_SIZE:
+          case GRN_COLUMN_VAR_SIZE:
+          case GRN_COLUMN_INDEX:
+            grn_inspect_name(ctx, &buffer, proc);
+            break;
+          default:
+            grn_inspect(ctx, &buffer, proc);
+            break;
+          }
+          ERR(GRN_INVALID_ARGUMENT, "invalid function: <%.*s>",
+              GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+          goto exit;
+        }
+      }
       PUSH_CODE(e, op, obj, nargs, code);
       {
         int i = nargs;
@@ -2221,28 +2249,6 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
               goto exit;
             }
             proc = sp[-offset];
-            if (!function_proc_p(proc)) {
-              grn_obj buffer;
-
-              GRN_TEXT_INIT(&buffer, 0);
-              switch (proc->header.type) {
-              case GRN_TABLE_HASH_KEY:
-              case GRN_TABLE_PAT_KEY:
-              case GRN_TABLE_NO_KEY:
-              case GRN_COLUMN_FIX_SIZE:
-              case GRN_COLUMN_VAR_SIZE:
-              case GRN_COLUMN_INDEX:
-                grn_inspect_name(ctx, &buffer, proc);
-                break;
-              default:
-                grn_inspect(ctx, &buffer, proc);
-                break;
-              }
-              ERR(GRN_INVALID_ARGUMENT, "invalid function: <%.*s>",
-                  GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-              GRN_OBJ_FIN(ctx, &buffer);
-              goto exit;
-            }
             WITH_SPSAVE({
               grn_proc_call(ctx, proc, code->nargs, expr);
             });
