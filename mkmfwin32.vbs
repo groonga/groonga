@@ -16,6 +16,12 @@ LOG_PATH = "c:\\groonga\\log\\groonga.log"
 MECAB_LIB = "c:\program files\mecab\sdk\libmecab.lib"
 CONFIG_PATH ="c:\\groonga\\etc\\config"
 DOCUMENT_ROOT ="c:\\groonga\\data\\admin_html"
+
+'control warning
+dim no_warning
+no_warning = "/wd4819 /wd4127 /wd4706 /wd4100 /wd4057 /wd4244 /wd4204 /wd4389 /wd4146 /wd4305 /wd4018 /wd4047 /wd4013 /wd4245 /wd4701"
+
+
 'config options
 '
 dim use_debug, use_64bit, use_mecab, make_lib
@@ -63,9 +69,9 @@ sub common_header()
   ts.write "LINK=link.exe" + vbLf
   ts.write vbLf
   if use_debug = 1 then
-    ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi -I../" + vbLf
+    ts.write "CFLAGS = /nologo /Od /W4 /MT /Zi -I../ " + no_warning + vbLf
   else
-    ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi -I../" + vbLf
+    ts.write "CFLAGS = /nologo /Ox /W4 /MT /Zi -I../ " + no_warning + vbLf
   end if
 
   ts.write "LDFLAGS = /nologo "
@@ -207,9 +213,9 @@ ts.write "CC = cl.exe" + vbLf
 ts.write "LINK=link.exe" + vbLf
 ts.write vbLf
 if use_debug = 1 then
-  ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/" + vbLf
+  ts.write "CFLAGS = /nologo /Od /W4 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_warning + vbLf
 else
-  ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/" + vbLf
+  ts.write "CFLAGS = /nologo /Ox /W4 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_wwarning+ vbLf
 end if
 
 ts.write "LDFLAGS = /nologo "
@@ -266,9 +272,9 @@ ts.write "CC = cl.exe" + vbLf
 ts.write "LINK=link.exe" + vbLf
 ts.write vbLf
 if use_debug = 1 then
-  ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/" + vbLf
+  ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_warning + vbLf
 else
-  ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/" + vbLf
+  ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_warning + vbLf
 end if
 
 ts.write "LDFLAGS = /nologo "
