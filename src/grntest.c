@@ -41,6 +41,8 @@
 #include "lib/com.h"
 #include "lib/db.h"
 
+GRN_API grn_rc grn_text_fgets(grn_ctx *ctx, grn_obj *buf, FILE *fp);
+
 #ifdef WIN32
 #include <windows.h>
 #include <stddef.h>
