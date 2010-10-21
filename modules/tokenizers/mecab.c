@@ -184,6 +184,13 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
           have_same_encoding_dictionary = 1;
         }
         break;
+      case GRN_ENC_SJIS:
+        if (strcasecmp(dictionary->charset, "shift_jis") == 0 ||
+            strcasecmp(dictionary->charset, "shift-jis") == 0 ||
+            strcasecmp(dictionary->charset, "sjis") == 0) {
+          have_same_encoding_dictionary = 1;
+        }
+        break;
       default:
         break;
       }

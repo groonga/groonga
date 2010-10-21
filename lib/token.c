@@ -533,7 +533,14 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
 grn_rc
 grn_db_init_mecab_tokenizer(grn_ctx *ctx)
 {
-  return grn_db_register_by_name(ctx, "tokenizers/mecab");
+  switch (GRN_CTX_GET_ENCODING(ctx)) {
+  case GRN_ENC_EUC_JP :
+  case GRN_ENC_UTF8 :
+  case GRN_ENC_SJIS :
+    return grn_db_register_by_name(ctx, "tokenizers/mecab");
+  default :
+    return GRN_OPERATION_NOT_SUPPORTED;
+  }
 }
 
 #define DEF_TOKENIZER(name, init, next, fin, vars)\
