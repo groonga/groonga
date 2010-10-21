@@ -262,7 +262,7 @@ GRN_API grn_command_version grn_get_default_command_version(void);
 
 /**
  * grn_set_default_command_version:
- * @encoding: 変更後のデフォルトのcommand_versionを指定します。
+ * @version: 変更後のデフォルトのcommand_versionを指定します。
  *
  * デフォルトのcommand_versionを変更します。
  **/
@@ -277,7 +277,7 @@ GRN_API grn_command_version grn_ctx_get_command_version(grn_ctx *ctx);
 
 /**
  * grn_ctx_set_command_version:
- * @encoding: 変更後のcommand_versionを指定します。
+ * @version: 変更後のcommand_versionを指定します。
  *
  * command_versionを変更します。
  **/
