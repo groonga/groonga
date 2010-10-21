@@ -285,6 +285,12 @@ grn_ctx_impl_init(grn_ctx *ctx)
     ctx->impl->command_version = grn_get_default_command_version();
   }
 
+  if (ctx == &grn_gctx) {
+    ctx->impl->escalation_threshold = GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
+  } else {
+    ctx->impl->escalation_threshold = grn_get_default_query_escalation_threshold();
+  }
+
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;
   ctx->impl->dump = NIL;
@@ -725,6 +731,18 @@ grn_set_default_command_version(grn_command_version version)
   return grn_ctx_set_command_version(&grn_gctx, version);
 }
 
+long long int
+grn_get_default_query_escalation_threshold(void)
+{
+  return grn_ctx_get_query_escalation_threshold(&grn_gctx);
+}
+
+grn_rc
+grn_set_default_query_escalation_threshold(long long int threshold)
+{
+  return grn_ctx_set_query_escalation_threshold(&grn_gctx, threshold);
+}
+
 static int alloc_count = 0;
 
 grn_rc
@@ -805,6 +823,23 @@ grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version)
       return GRN_UNSUPPORTED_COMMAND_VERSION;
     }
   }
+}
+
+long long int
+grn_ctx_get_query_escalation_threshold(grn_ctx *ctx)
+{
+  if (ctx->impl) {
+    return ctx->impl->escalation_threshold;
+  } else {
+    return GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD;
+  }
+}
+
+grn_rc
+grn_ctx_set_query_escalation_threshold(grn_ctx *ctx, long long int threshold)
+{
+  ctx->impl->escalation_threshold = threshold;
+  return GRN_SUCCESS;
 }
 
 grn_content_type

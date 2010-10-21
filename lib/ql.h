@@ -221,6 +221,9 @@ struct _grn_ctx_impl {
   /* command portion */
   grn_command_version command_version;
 
+  /* query escalation portion */
+  int64_t escalation_threshold;
+
   /* ql portion */
   uint32_t ncells;
   uint32_t seqno;

@@ -283,6 +283,36 @@ GRN_API grn_command_version grn_ctx_get_command_version(grn_ctx *ctx);
  **/
 GRN_API grn_rc grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
 
+/**
+ * grn_ctx_get_query_escalation_threshold:
+ *
+ * クエリをエスカレーションする閾値を返します。
+ **/
+GRN_API long long int grn_ctx_get_query_escalation_threshold(grn_ctx *ctx);
+
+/**
+ * grn_ctx_set_query_escalation_threshold:
+ * @threshold: 変更後のクエリをエスカレーションする閾値を指定します。
+ *
+ * クエリをエスカレーションする閾値を変更します。
+ **/
+GRN_API grn_rc grn_ctx_set_query_escalation_threshold(grn_ctx *ctx, long long int threshold);
+
+/**
+ * grn_get_default_query_escalation_threshold:
+ *
+ * デフォルトのクエリをエスカレーションする閾値を返します。
+ **/
+GRN_API long long int grn_get_default_query_escalation_threshold(void);
+
+/**
+ * grn_set_default_query_escalation_threshold:
+ * @threshold: 変更後のデフォルトのクエリをエスカレーションする閾値を指定します。
+ *
+ * デフォルトのクエリをエスカレーションする閾値を変更します。
+ **/
+GRN_API grn_rc grn_set_default_query_escalation_threshold(long long int threshold);
+
 
 /* obj */
 
