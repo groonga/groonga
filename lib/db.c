@@ -5572,9 +5572,11 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size
     grn_db *s = (grn_db *)db;
     int added;
     if (!(id = grn_pat_add(ctx, s->keys, name, name_size, NULL, &added))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_pat_add failed");
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "grn_pat_add failed: <%.*s>", name_size, name);
     } else if (!added) {
-      ERR(GRN_INVALID_ARGUMENT, "already used name was assigned");
+      ERR(GRN_INVALID_ARGUMENT,
+          "already used name was assigned: <%.*s>", name_size, name);
       id = GRN_ID_NIL;
     }
   } else if (ctx->impl && ctx->impl->values) {
