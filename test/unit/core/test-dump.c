@@ -34,9 +34,6 @@ void test_uvector_column(gconstpointer data);
 void test_vector_column(gconstpointer data);
 void test_unsequantial_records_in_table_with_keys(void);
 
-static GCutEgg *egg = NULL;
-static GString *dumped = NULL, *error_output = NULL;
-
 static grn_logger_info *logger;
 static grn_ctx *context;
 static grn_obj *database;
@@ -68,10 +65,6 @@ remove_tmp_directory(void)
 void
 cut_setup(void)
 {
-  egg = NULL;
-  dumped = NULL;
-  error_output = NULL;
-
   logger = setup_grn_logger();
   context = g_new0(grn_ctx, 1);
   grn_ctx_init(context, 0);
@@ -91,77 +84,7 @@ cut_teardown(void)
   g_free(context);
   teardown_grn_logger(logger);
 
-  if (egg) {
-    g_object_unref(egg);
-  }
-
-  if (dumped) {
-    g_string_free(dumped, TRUE);
-  }
-
-  if (error_output) {
-    g_string_free(error_output, TRUE);
-  }
-
   remove_tmp_directory();
-}
-
-static void
-cb_output_received(GCutEgg *egg, gchar *chunk, guint64 size, gpointer user_data)
-{
-  g_string_append_len(dumped, chunk, size);
-}
-
-static void
-cb_error_received(GCutEgg *egg, gchar *chunk, guint64 size, gpointer user_data)
-{
-  g_string_append_len(error_output, chunk, size);
-}
-
-static const gchar *
-groonga_path(void)
-{
-  const gchar *path;
-
-  path = g_getenv("GROONGA");
-  if (path)
-    return path;
-
-  return GROONGA;
-}
-
-static void
-grn_test_assert_dump(const gchar *expected)
-{
-  GError *error = NULL;
-
-  dumped = g_string_new(NULL);
-  error_output = g_string_new(NULL);
-  egg = gcut_egg_new(groonga_path(),
-                     "-e", "utf8",
-                     database_path,
-                     "dump",
-                     NULL);
-  g_signal_connect(egg, "output-received",
-                   G_CALLBACK(cb_output_received), NULL);
-  g_signal_connect(egg, "error-received",
-                   G_CALLBACK(cb_error_received), NULL);
-
-  gcut_egg_hatch(egg, &error);
-  gcut_assert_error(error);
-  gcut_egg_wait(egg, 10000, &error);
-  gcut_assert_error(error);
-
-  fprintf(stderr, "%s", error_output->str);
-  cut_assert_equal_string(expected, dumped->str);
-
-  g_object_unref(egg);
-  egg = NULL;
-
-  g_string_free(dumped, TRUE);
-  g_string_free(error_output, TRUE);
-  dumped = NULL;
-  error_output = NULL;
 }
 
 static grn_obj *
@@ -221,25 +144,25 @@ static void
 data_hash_table_create(void)
 {
   ADD_DATA("hash",
-           "table_create Blog TABLE_HASH_KEY ShortText\n",
+           "table_create Blog TABLE_HASH_KEY ShortText",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY,
            "ShortText",
            NULL);
   ADD_DATA("hash - without key",
-           "table_create Blog TABLE_HASH_KEY\n",
+           "table_create Blog TABLE_HASH_KEY",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY,
            NULL,
            NULL);
   ADD_DATA("hash - key normalize",
-           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText\n",
+           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            NULL);
   ADD_DATA("hash - key normalize - value",
-           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText Int32\n",
+           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText Int32",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
@@ -250,7 +173,7 @@ static void
 data_patricia_trie_create(void)
 {
   ADD_DATA("patricia trie",
-           "table_create Blog TABLE_PAT_KEY ShortText\n",
+           "table_create Blog TABLE_PAT_KEY ShortText",
            "Blog",
            GRN_OBJ_TABLE_PAT_KEY,
            "ShortText",
@@ -261,13 +184,13 @@ static void
 data_array_create(void)
 {
   ADD_DATA("array",
-           "table_create Blog TABLE_NO_KEY\n",
+           "table_create Blog TABLE_NO_KEY",
            "Blog",
            GRN_OBJ_TABLE_NO_KEY,
            NULL,
            NULL);
   ADD_DATA("array with value",
-           "table_create Blog TABLE_NO_KEY --value_type Int32\n",
+           "table_create Blog TABLE_NO_KEY --value_type Int32",
            "Blog",
            GRN_OBJ_TABLE_NO_KEY,
            NULL,
@@ -278,7 +201,7 @@ static void
 data_view_create(void)
 {
   ADD_DATA("view",
-           "table_create Blog TABLE_VIEW\n",
+           "table_create Blog TABLE_VIEW",
            "Blog",
            GRN_OBJ_TABLE_VIEW,
            NULL,
@@ -302,7 +225,8 @@ test_table_create(gconstpointer data)
                gcut_data_get_uint(data, "flags"),
                gcut_data_get_string(data, "key_type_name"),
                gcut_data_get_string(data, "value_type_name"));
-  grn_test_assert_dump(gcut_data_get_string(data, "expected"));
+  cut_assert_equal_string(gcut_data_get_string(data, "expected"),
+                          send_command("dump"));
 }
 
 #define ADD_DATA(label, expected, table, name, flags, type_name, source)\
@@ -319,14 +243,14 @@ void
 data_column_create(void)
 {
   ADD_DATA("scalar",
-           "column_create Blog body COLUMN_SCALAR Text\n",
+           "column_create Blog body COLUMN_SCALAR Text",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_SCALAR,
            "Text",
            NULL);
   ADD_DATA("vector",
-           "column_create Blog body COLUMN_VECTOR Text\n",
+           "column_create Blog body COLUMN_VECTOR Text",
            "Blog",
            "body",
            GRN_OBJ_COLUMN_VECTOR,
@@ -346,7 +270,9 @@ test_column_create(gconstpointer data)
                 gcut_data_get_string(data, "type_name"),
                 gcut_data_get_string(data, "source"));
   expected = gcut_data_get_string(data, "expected");
-  grn_test_assert_dump(cut_take_printf("table_create Blog TABLE_HASH_KEY\n%s", expected));
+  cut_assert_equal_string(
+    cut_take_printf("table_create Blog TABLE_HASH_KEY\n%s", expected),
+    send_command("dump"));
 }
 
 #define ADD_DATA(label, expected, type_name, element_type,              \
@@ -457,10 +383,10 @@ test_uvector_column(gconstpointer data)
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
                              "[1,%s]\n"
-                             "]\n",
+                             "]",
                              type_name,
                              gcut_data_get_string(data, "expected"));
-  grn_test_assert_dump(expected);
+  cut_assert_equal_string(expected, send_command("dump"));
   GRN_OBJ_FIN(context, &uvector);
 }
 
@@ -504,10 +430,10 @@ test_vector_column(gconstpointer data)
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
                              "[1,%s]\n"
-                             "]\n",
+                             "]",
                              type_name,
                              gcut_data_get_string(data, "expected"));
-  grn_test_assert_dump(expected);
+  cut_assert_equal_string(expected, send_command("dump"));
   GRN_OBJ_FIN(context, &vector);
 }
 
@@ -531,14 +457,15 @@ test_unsequantial_records_in_table_with_keys(void)
   grn_table_delete_by_id(context, table, 3);
   grn_table_delete_by_id(context, table, 6);
 
-  grn_test_assert_dump("table_create Weekdays TABLE_HASH_KEY ShortText\n"
-                       "load --table Weekdays\n"
-                       "[\n"
-                       "[\"_key\"],\n"
-                       "[\"Sun\"],\n"
-                       "[\"Mon\"],\n"
-                       "[\"Wed\"],\n"
-                       "[\"Thu\"],\n"
-                       "[\"Sat\"]\n"
-                       "]\n");
+  cut_assert_equal_string("table_create Weekdays TABLE_HASH_KEY ShortText\n"
+                          "load --table Weekdays\n"
+                          "[\n"
+                          "[\"_key\"],\n"
+                          "[\"Sun\"],\n"
+                          "[\"Mon\"],\n"
+                          "[\"Wed\"],\n"
+                          "[\"Thu\"],\n"
+                          "[\"Sat\"]\n"
+                          "]",
+                          send_command("dump"));
 }
