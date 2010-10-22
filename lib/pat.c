@@ -1436,7 +1436,7 @@ grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   uint32_t key_size;
   const char *key = _grn_pat_key(ctx, pat, id, &key_size);
-  if (id == _grn_pat_get(ctx, pat, key, key_size, NULL)) { return id; }
+  if (key && (id == _grn_pat_get(ctx, pat, key, key_size, NULL))) { return id; }
   return GRN_ID_NIL;
 }
 
