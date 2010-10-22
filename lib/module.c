@@ -20,7 +20,6 @@
 #include "db.h"
 #include "module.h"
 #include "ql.h"
-#include "module.h"
 
 static grn_hash *grn_modules = NULL;
 
@@ -36,7 +35,7 @@ static grn_hash *grn_modules = NULL;
 #  define grn_dl_clear_error
 #else
 #  include <dlfcn.h>
-#  define grn_dl_open(filename)    dlopen(filename, RTLD_LAZY | RTLD_GLOBAL)
+#  define grn_dl_open(filename)    dlopen(filename, RTLD_LAZY | RTLD_LOCAL)
 #  define grn_dl_open_error_label  dlerror()
 #  define grn_dl_close(dl)         (dlclose(dl) == 0)
 #  define grn_dl_close_error_label dlerror()
@@ -58,35 +57,17 @@ grn_module_path(grn_ctx *ctx, grn_id id)
   return _grn_hash_key(ctx, grn_modules, id, &key_size);
 }
 
-#define GRN_MODULE_FUNC_PREFIX "grn_module_"
+#define GRN_MODULE_FUNC_PREFIX "grn_module_impl_"
 
 static grn_rc
 grn_module_initialize(grn_ctx *ctx, grn_module *module,
                       grn_dl dl, grn_id id, const char *path)
 {
-  const char *base_name, *extension;
-  char init_func_name[PATH_MAX];
-  char register_func_name[PATH_MAX];
-  char fin_func_name[PATH_MAX];
-
-  base_name = extension = path + strlen(path);
-  for (; path < base_name; base_name--) {
-    if (*base_name == '.') {
-      extension = base_name;
-    }
-    if (*base_name == PATH_SEPARATOR[0]) {
-      base_name++;
-      break;
-    }
-  }
-
   module->dl = dl;
 
 #define GET_SYMBOL(type)                                                \
-  strcpy(type ## _func_name, GRN_MODULE_FUNC_PREFIX #type "_");         \
-  strncat(type ## _func_name, base_name, extension - base_name);        \
   grn_dl_clear_error;                                                   \
-  module->type ## _func = grn_dl_sym(dl, type ## _func_name);           \
+  module->type ## _func = grn_dl_sym(dl, GRN_MODULE_FUNC_PREFIX #type); \
   if (!module->type ## _func) {                                         \
     const char *label;                                                  \
     label = grn_dl_sym_error_label;                                     \
@@ -104,9 +85,9 @@ grn_module_initialize(grn_ctx *ctx, grn_module *module,
         "init func (%s) %sfound, "
         "register func (%s) %sfound and "
         "fin func (%s) %sfound",
-        init_func_name, module->init_func ? "" : "not ",
-        register_func_name, module->register_func ? "" : "not ",
-        fin_func_name, module->fin_func ? "" : "not ");
+        GRN_MODULE_FUNC_PREFIX "init", module->init_func ? "" : "not ",
+        GRN_MODULE_FUNC_PREFIX "register", module->register_func ? "" : "not ",
+        GRN_MODULE_FUNC_PREFIX "fin", module->fin_func ? "" : "not ");
   }
 
   if (!ctx->rc) {
