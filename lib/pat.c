@@ -1165,13 +1165,19 @@ const char *
 _grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size)
 {
   pat_node *node;
+  uint8_t *key;
   PAT_AT(pat, id, node);
   if (!node) {
     *key_size = 0;
     return NULL;
   }
-  *key_size = PAT_LEN(node);
-  return (const char *) pat_node_get_key(ctx, pat, node);
+  key = pat_node_get_key(ctx, pat, node);
+  if (key) {
+    *key_size = PAT_LEN(node);
+  } else {
+    *key_size = 0;
+  }
+  return (const char *)key;
 }
 
 grn_rc

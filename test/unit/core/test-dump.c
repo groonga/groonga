@@ -33,6 +33,7 @@ void data_vector_column(void);
 void test_uvector_column(gconstpointer data);
 void test_vector_column(gconstpointer data);
 void test_unsequantial_records_in_table_with_keys(void);
+void test_nil_reference(void);
 
 static grn_logger_info *logger;
 static grn_ctx *context;
@@ -466,6 +467,44 @@ test_unsequantial_records_in_table_with_keys(void)
                           "[\"Wed\"],\n"
                           "[\"Thu\"],\n"
                           "[\"Sat\"]\n"
+                          "]",
+                          send_command("dump"));
+}
+
+void
+test_nil_reference(void)
+{
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("table_create Initials TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Users initial COLUMN_SCALAR Initials");
+
+  cut_assert_equal_string(
+    "2",
+    send_command("load --table Initials --columns '_key'\n"
+                 "[\n"
+                 "  [\"U\"],\n"
+                 "  [\"ア\"]\n"
+                 "]"));
+  cut_assert_equal_string(
+    "1",
+    send_command("load --table Users --columns '_key'\n"
+                 "[\n"
+                 "  [\"mori\"]\n"
+                 "]"));
+
+  cut_assert_equal_string("table_create Users TABLE_HASH_KEY ShortText\n"
+                          "table_create Initials TABLE_PAT_KEY ShortText\n"
+                          "column_create Users initial COLUMN_SCALAR Initials\n"
+                          "load --table Users\n"
+                          "[\n"
+                          "[\"_key\",\"initial\"],\n"
+                          "[\"mori\",\"\"]\n"
+                          "]\n"
+                          "load --table Initials\n"
+                          "[\n"
+                          "[\"_key\"],\n"
+                          "[\"U\"],\n"
+                          "[\"ア\"]\n"
                           "]",
                           send_command("dump"));
 }
