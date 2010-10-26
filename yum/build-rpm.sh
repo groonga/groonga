@@ -26,9 +26,13 @@ if ! rpm -q ${distribution}-release > /dev/null 2>&1; then
     run rpm -Uvh --force ${packages_dir}/ca-certificates-*.rpm
 fi
 
+if ! id $USER_NAME >/dev/null 2>&1; then
+    run useradd -m $USER_NAME
+fi
+
 run yum update -y
 if [ "$distribution" = "centos" ] && ! rpm -q mecab-devel > /dev/null; then
-    run yum install -y wget libtool gcc make
+    run yum install -y wget libtool gcc gcc-c++ make
 
     cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
@@ -78,10 +82,6 @@ EOF
 fi
 run yum install -y rpm-build tar ${DEPENDED_PACKAGES}
 run yum clean packages
-
-if ! id $USER_NAME >/dev/null 2>&1; then
-    run useradd -m $USER_NAME
-fi
 
 cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
