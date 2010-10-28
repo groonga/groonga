@@ -112,9 +112,9 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
    キャッシュ数の最大値を指定します。(デフォルトは100です)
 
-.. cmdoption:: --default-query-escalation-threshold <threshold>
+.. cmdoption:: --default-match-escalation-threshold <threshold>
 
-   クエリをエスカレーションする閾値を指定します。(デフォルトは0です)
+   検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
 
 引数
 ----

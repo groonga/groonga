@@ -5941,7 +5941,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "exact: %d", GRN_HASH_SIZE(s));
     if (op == GRN_OP_OR) {
-      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->escalation_threshold) {
+      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold) {
         arg.mode = GRN_OP_UNSPLIT;
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
           GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(2) failed !");
@@ -5949,7 +5949,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "unsplit: %d", GRN_HASH_SIZE(s));
       }
-      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->escalation_threshold) {
+      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold) {
         arg.mode = GRN_OP_PARTIAL;
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
           GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(3) failed !");
