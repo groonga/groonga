@@ -47,24 +47,8 @@ Debian GNU/Linux sid
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga libgroonga-dev
 
-Ubuntu 8.04 LTS Hardy Heron
+Ubuntu 10.04 LTS Lucid Lynx
 ---------------------------
-
-注: Ubuntu本家のuniverseセクションもインストール対象としておくこと
-
-/etc/apt/sources.list.d/groonga.list::
-
-  deb http://packages.groonga.org/ubuntu/ hardy universe
-  deb-src http://packages.groonga.org/ubuntu/ hardy universe
-
-インストール::
-
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
-  % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga libgroonga-dev
-
-Ubuntu 10.04 Lucid Lynx
------------------------
 
 注: Ubuntu本家のuniverseセクションもインストール対象としておくこと
 
@@ -72,6 +56,22 @@ Ubuntu 10.04 Lucid Lynx
 
   deb http://packages.groonga.org/ubuntu/ lucid universe
   deb-src http://packages.groonga.org/ubuntu/ lucid universe
+
+インストール::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga libgroonga-dev
+
+Ubuntu 10.10 Maverick Meerkat
+-----------------------------
+
+注: Ubuntu本家のuniverseセクションもインストール対象としておくこと
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/ubuntu/ maverick universe
+  deb-src http://packages.groonga.org/ubuntu/ maverick universe
 
 インストール::
 
