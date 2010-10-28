@@ -284,34 +284,42 @@ GRN_API grn_command_version grn_ctx_get_command_version(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
 
 /**
- * grn_ctx_get_query_escalation_threshold:
+ * grn_ctx_get_match_escalation_threshold:
  *
- * クエリをエスカレーションする閾値を返します。
+ * 検索の挙動をエスカレーションする閾値を返します。エスカレー
+ * ションの詳細は検索の仕様に関するドキュメントを参照してく
+ * ださい。
  **/
-GRN_API long long int grn_ctx_get_query_escalation_threshold(grn_ctx *ctx);
+GRN_API long long int grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
 
 /**
- * grn_ctx_set_query_escalation_threshold:
- * @threshold: 変更後のクエリをエスカレーションする閾値を指定します。
+ * grn_ctx_set_match_escalation_threshold:
+ * @threshold: 変更後の検索の挙動をエスカレーションする閾値を指定します。
  *
- * クエリをエスカレーションする閾値を変更します。
+ * 検索の挙動をエスカレーションする閾値を変更します。エスカレー
+ * ションの詳細は検索の仕様に関するドキュメントを参照してくだ
+ * さい。
  **/
-GRN_API grn_rc grn_ctx_set_query_escalation_threshold(grn_ctx *ctx, long long int threshold);
+GRN_API grn_rc grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long int threshold);
 
 /**
- * grn_get_default_query_escalation_threshold:
+ * grn_get_default_match_escalation_threshold:
  *
- * デフォルトのクエリをエスカレーションする閾値を返します。
+ * デフォルトの検索の挙動をエスカレーションする閾値を返します。
+ * エスカレーションの詳細は検索の仕様に関するドキュメントを参
+ * 照してください。
  **/
-GRN_API long long int grn_get_default_query_escalation_threshold(void);
+GRN_API long long int grn_get_default_match_escalation_threshold(void);
 
 /**
- * grn_set_default_query_escalation_threshold:
- * @threshold: 変更後のデフォルトのクエリをエスカレーションする閾値を指定します。
+ * grn_set_default_match_escalation_threshold:
+ * @threshold: 変更後のデフォルトの検索の挙動をエスカレーションする閾値を指定します。
  *
- * デフォルトのクエリをエスカレーションする閾値を変更します。
+ * デフォルトの検索の挙動をエスカレーションする閾値を変更しま
+ * す。エスカレーションの詳細は詳細は検索の仕様に関するドキュ
+ * メントを参照してください。
  **/
-GRN_API grn_rc grn_set_default_query_escalation_threshold(long long int threshold);
+GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
 
 
 /* obj */

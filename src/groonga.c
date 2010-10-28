@@ -111,8 +111,8 @@ usage(FILE *output)
           "  --file <path>:                    read commands from specified file\n"
           "  --default-command-version <version>:\n"
           "                                    specify default command version\n"
-          "  --default-query-escalation-threshold <threshold>:\n"
-          "                                    specify default query escalation threshold\n"
+          "  --default-match-escalation-threshold <threshold>:\n"
+          "                                    specify default match escalation threshold\n"
           "\n"
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
@@ -137,8 +137,8 @@ show_version(void)
 #endif
   printf("%s", GROONGA_DEFAULT_ENCODING);
 
-  printf(",query-escalation-threshold=%" GRN_FMT_LLD,
-         grn_get_default_query_escalation_threshold());
+  printf(",match-escalation-threshold=%" GRN_FMT_LLD,
+         grn_get_default_match_escalation_threshold());
 
 #ifndef NO_NFKC
   printf(",nfkc");
@@ -2066,7 +2066,7 @@ main(int argc, char **argv)
     *max_nfthreadsstr = NULL, *loglevel = NULL,
     *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
     *cache_limitstr = NULL, *admin_html_path = NULL, *command_versionstr = NULL,
-    *query_escalation_thresholdstr = NULL;
+    *match_escalation_thresholdstr = NULL;
   const char *config_path = NULL;
   const char *input_path = NULL;
   int r, i, mode = mode_alone;
@@ -2095,7 +2095,7 @@ main(int argc, char **argv)
     {'\0', "file", NULL, 0, getopt_op_none},
     {'\0', "document-root", NULL, 0, getopt_op_none},
     {'\0', "default-command-version", NULL, 0, getopt_op_none},
-    {'\0', "default-query-escalation-threshold", NULL, 0, getopt_op_none},
+    {'\0', "default-match-escalation-threshold", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
@@ -2114,7 +2114,7 @@ main(int argc, char **argv)
   opts[21].arg = &input_path;
   opts[22].arg = &grn_document_root;
   opts[23].arg = &command_versionstr;
-  opts[24].arg = &query_escalation_thresholdstr;
+  opts[24].arg = &match_escalation_thresholdstr;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -2254,17 +2254,17 @@ main(int argc, char **argv)
   if (command_versionstr) {
     grn_set_default_command_version(atoi(command_versionstr));
   }
-  if (query_escalation_thresholdstr) {
+  if (match_escalation_thresholdstr) {
     int64_t threshold;
     const char *end, *rest;
-    end = query_escalation_thresholdstr + strlen(query_escalation_thresholdstr);
-    threshold = grn_atoll(query_escalation_thresholdstr, end, &rest);
+    end = match_escalation_thresholdstr + strlen(match_escalation_thresholdstr);
+    threshold = grn_atoll(match_escalation_thresholdstr, end, &rest);
     if (end != rest) {
-      fprintf(stderr, "invalid default query escalation threshold: <%s>\n",
-              query_escalation_thresholdstr);
+      fprintf(stderr, "invalid default match escalation threshold: <%s>\n",
+              match_escalation_thresholdstr);
       return EXIT_FAILURE;
     }
-    grn_set_default_query_escalation_threshold(threshold);
+    grn_set_default_match_escalation_threshold(threshold);
   }
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
   grn_set_segv_handler();

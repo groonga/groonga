@@ -17,7 +17,7 @@ select - テーブルの中から条件にマッチするレコードを検索�
  select table [match_columns [query [filter [scorer [sortby [output_columns
               [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
               [drilldown_offset [drilldown_limit [cache
-              [query_escalation_threshold]]]]]]]]]]]]]]]
+              [match_escalation_threshold]]]]]]]]]]]]]]]
 
 説明
 ----
@@ -167,13 +167,13 @@ a - b
 
       検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。
 
-``query_escalation_threshold``
+``match_escalation_threshold``
 
-  クエリをエスカレーションするかどうかの閾値を設定します。デフォルト値は0です。デフォルト値は以下のいずれかの方法で設定できます。
+  検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0です。デフォルト値は以下のいずれかの方法で設定できます。
 
-    * configureの--with-query-escalation-thresholdオプション
-    * groongaコマンド起動時の--query-escalation-thresholdオプション
-    * 設定ファイル中のquery-escalation-threshold設定項目
+    * configureの--with-match-escalation-thresholdオプション
+    * groongaコマンド起動時の--match-escalation-thresholdオプション
+    * 設定ファイル中のmatch-escalation-threshold設定項目
 
   クエリのヒット件数が閾値を越えない場合は:ref:`spec_search` で説明している方法で検索方法をエスカレーションしてきます。
 

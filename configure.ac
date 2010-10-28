@@ -180,13 +180,13 @@ AC_ARG_WITH(default_encoding,
   GROONGA_DEFAULT_ENCODING="utf8")
 AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_ENCODING, "$GROONGA_DEFAULT_ENCODING", "specified default encoding")
 
-# default query escalation threshold
-AC_ARG_WITH(query_escalation_threshold,
-  [AS_HELP_STRING([--with-query-escalation-threshold=NUMBER],
-    [specify groonga default query escalation threshold])],
-  GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="$withval",
-  GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD="0")
-AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD, $GROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD, "specified query escalation threshold")
+# default match escalation threshold
+AC_ARG_WITH(match_escalation_threshold,
+  [AS_HELP_STRING([--with-match-escalation-threshold=NUMBER],
+    [specify groonga default match escalation threshold])],
+  GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD="$withval",
+  GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD="0")
+AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD, "specified match escalation threshold")
 
 AC_CHECK_LIB(m, log, [M_LIBS="-lm"], [AC_MSG_ERROR("No libm found")])
 AC_CHECK_LIB(pthread, pthread_mutex_init,
