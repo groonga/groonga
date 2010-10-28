@@ -70,8 +70,8 @@ Ubuntu 10.04 Lucid Lynx
 
 /etc/apt/sources.list.d/groonga.list::
 
-  deb http://packages.groonga.org/ubuntu/ karmic universe
-  deb-src http://packages.groonga.org/ubuntu/ karmic universe
+  deb http://packages.groonga.org/ubuntu/ lucid universe
+  deb-src http://packages.groonga.org/ubuntu/ lucid universe
 
 インストール::
 
