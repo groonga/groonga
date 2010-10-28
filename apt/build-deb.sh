@@ -18,6 +18,7 @@ run()
 }
 
 if [ ! -x /usr/bin/aptitude ]; then
+    run apt-get update
     run apt-get install -y aptitude
 fi
 run aptitude update -V -D
