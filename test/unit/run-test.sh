@@ -53,8 +53,8 @@ CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-file test-performance.so"
 
-GRN_MODULES_DIR="$top_dir/modules"
-export GRN_MODULES_DIR
+GRN_PLUGINS_DIR="$top_dir/plugins"
+export GRN_PLUGINS_DIR
 
 case `uname` in
     Darwin)

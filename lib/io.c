@@ -28,10 +28,9 @@
 
 #include "ctx.h"
 #include "io.h"
-#include "module.h"
+#include "plugin_in.h"
 #include "hash.h"
 #include "ql.h"
-#include "module.h"
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 
@@ -1389,7 +1388,7 @@ grn_expire_(grn_ctx *ctx, int count_thresh, uint32_t limit)
   uint32_t n = 0;
   grn_cell *obj;
   GRN_HASH_EACH(ctx, grn_gctx.impl->symbols, id, NULL, NULL, (void **) &obj, {
-    grn_module_close(ctx, id);
+    grn_plugin_close(ctx, id);
     n += grn_io_expire(ctx, (grn_io *) obj->u.p.value, count_thresh, limit);
     if (n >= limit) { break; }
   });

@@ -10,7 +10,7 @@ endif
 INCLUDES =			\
 	-I$(srcdir)		\
 	-I$(srcdir)/lib		\
-	-I$(top_srcdir)		\
+	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib	\
 	$(GROONGA_INCLUDEDIR)
 

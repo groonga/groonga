@@ -20,7 +20,7 @@
 #include "token.h"
 #include "ql.h"
 #include "pat.h"
-#include "module.h"
+#include "plugin_in.h"
 #include "snip.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -325,7 +325,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_TEXT_INIT(&ctx->impl->subbuf, 0);
   ctx->impl->edge = NULL;
   grn_loader_init(&ctx->impl->loader);
-  ctx->impl->module_path = NULL;
+  ctx->impl->plugin_path = NULL;
 }
 
 void
@@ -676,8 +676,8 @@ grn_init(void)
     GRN_LOG(ctx, GRN_LOG_ALERT, "io initialize failed (%d)", rc);
     return rc;
   }
-  if ((rc = grn_modules_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "modules initialize failed (%d)", rc);
+  if ((rc = grn_plugins_init())) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "plugins initialize failed (%d)", rc);
     return rc;
   }
   if ((rc = grn_token_init())) {
@@ -763,7 +763,7 @@ grn_fin(void)
   }
   grn_cache_fin();
   grn_token_fin();
-  grn_modules_fin();
+  grn_plugins_fin();
   grn_io_fin();
   grn_ctx_fin(ctx);
   grn_com_fin();

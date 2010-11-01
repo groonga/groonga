@@ -1,8 +1,7 @@
 AUTOMAKE_OPTIONS = 1.9.7
-SUBDIRS = lib modules src examples test apt rpm yum data resource doc
+SUBDIRS = include lib plugins src examples test apt rpm yum data resource doc
 #dist_data_DATA =
 EXTRA_DIST = bindings version-gen.sh
-pkginclude_HEADERS = groonga.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
@@ -27,6 +26,7 @@ win32-installer: all
 	cp -p $(builddir)/lib/.libs/*.dll dist/bin/
 	cp -p $(builddir)/lib/.libs/*.dll.a dist/lib/
 	cp -p $(builddir)/lib/.libs/libgroonga.dll.a dist/lib/groonga.lib
-	cp -p $(builddir)/groonga.h dist/include/
+	cp -p $(builddir)/include/groonga.h dist/include/
+	cp -rp $(builddir)/include/groonga/ dist/include/
 	nkf -Wsc $(builddir)/doc/ja/README > dist/doc/README.txt
 	makensis setup.nsi

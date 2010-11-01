@@ -22,7 +22,7 @@
 #include "ql.h"
 #include "token.h"
 #include "proc.h"
-#include "module.h"
+#include "plugin_in.h"
 #include "geo.h"
 #include "util.h"
 #include <string.h>
@@ -344,13 +344,13 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size, grn_proc_typ
   grn_id range;
   int added = 0;
   grn_obj *db;
-  const char *path = ctx->impl->module_path;
+  const char *path = ctx->impl->plugin_path;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
     ERR(GRN_INVALID_ARGUMENT, "db not initialized");
     return NULL;
   }
   GRN_API_ENTER;
-  range = path ? grn_module_get(ctx, path) : GRN_ID_NIL;
+  range = path ? grn_plugin_get(ctx, path) : GRN_ID_NIL;
   if (grn_db_check_name(ctx, name, name_size)) {
     GRN_DB_CHECK_NAME_ERR();
     GRN_API_RETURN(NULL);
@@ -5963,7 +5963,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         }
         GRN_REALLOC(p->vars, 0);
         grn_obj_close(ctx, &p->name_buf);
-        grn_module_close(ctx, p->obj.range);
+        grn_plugin_close(ctx, p->obj.range);
         GRN_FREE(obj);
         rc = GRN_SUCCESS;
       }
@@ -6107,7 +6107,7 @@ grn_obj_path(grn_ctx *ctx, grn_obj *obj)
   grn_io *io;
   char *path = NULL;
   if (obj->header.type == GRN_PROC) {
-    return grn_module_path(ctx, DB_OBJ(obj)->range);
+    return grn_plugin_path(ctx, DB_OBJ(obj)->range);
   }
   GRN_API_ENTER;
   io = grn_obj_io(obj);

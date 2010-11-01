@@ -14,8 +14,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef GRN_MODULE_IMPL_H
-#define GRN_MODULE_IMPL_H
+#ifndef GRN_PLUGIN_H
+#define GRN_PLUGIN_H
 
 #include "groonga.h"
 
@@ -23,22 +23,22 @@
 extern "C" {
 #endif
 
-#define GRN_MODULE_INIT grn_module_impl_init
-#define GRN_MODULE_REGISTER grn_module_impl_register
-#define GRN_MODULE_FIN grn_module_impl_fin
+#define GRN_PLUGIN_INIT grn_plugin_impl_init
+#define GRN_PLUGIN_REGISTER grn_plugin_impl_register
+#define GRN_PLUGIN_FIN grn_plugin_impl_fin
 
 #if defined(_WIN32) || defined(_WIN64)
-#  define GRN_MODULE_EXPORT __declspec(dllexpoert)
+#  define GRN_PLUGIN_EXPORT __declspec(dllexpoert)
 #else /* defined(_WIN32) || defined(_WIN64) */
-#  define GRN_MODULE_EXPORT
+#  define GRN_PLUGIN_EXPORT
 #endif /* defined(_WIN32) || defined(_WIN64) */
 
-GRN_MODULE_EXPORT grn_rc GRN_MODULE_INIT(grn_ctx *ctx);
-GRN_MODULE_EXPORT grn_rc GRN_MODULE_REGISTER(grn_ctx *ctx);
-GRN_MODULE_EXPORT grn_rc GRN_MODULE_FIN(grn_ctx *ctx);
+GRN_PLUGIN_EXPORT grn_rc GRN_PLUGIN_INIT(grn_ctx *ctx);
+GRN_PLUGIN_EXPORT grn_rc GRN_PLUGIN_REGISTER(grn_ctx *ctx);
+GRN_PLUGIN_EXPORT grn_rc GRN_PLUGIN_FIN(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GRN_MODULE_IMPL_H */
+#endif /* GRN_PLUGIN_H */

@@ -20,7 +20,7 @@
 #include "ii.h"
 #include "token.h"
 #include "output.h"
-#include "module_impl.h"
+#include <groonga/plugin.h>
 #include <string.h>
 
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
@@ -508,13 +508,13 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
 }
 
 grn_rc
-GRN_MODULE_INIT(grn_ctx *ctx)
+GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
   return GRN_SUCCESS;
 }
 
 grn_rc
-GRN_MODULE_REGISTER(grn_ctx *ctx)
+GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   /* TODO: offset/limit */
   grn_expr_var vars[] = {
@@ -544,7 +544,7 @@ GRN_MODULE_REGISTER(grn_ctx *ctx)
 }
 
 grn_rc
-GRN_MODULE_FIN(grn_ctx *ctx)
+GRN_PLUGIN_FIN(grn_ctx *ctx)
 {
   return GRN_SUCCESS;
 }

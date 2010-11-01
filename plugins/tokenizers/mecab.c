@@ -21,7 +21,8 @@
 #include <str.h>
 #include <token.h>
 
-#include <module_impl.h>
+#include <groonga.h>
+#include <groonga/plugin.h>
 
 #include <mecab.h>
 
@@ -209,7 +210,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
 }
 
 grn_rc
-GRN_MODULE_INIT(grn_ctx *ctx)
+GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
   sole_mecab = NULL;
   CRITICAL_SECTION_INIT(sole_mecab_lock);
@@ -220,7 +221,7 @@ GRN_MODULE_INIT(grn_ctx *ctx)
 }
 
 grn_rc
-GRN_MODULE_REGISTER(grn_ctx *ctx)
+GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   grn_obj *obj;
   grn_expr_var vars[] = {
@@ -240,7 +241,7 @@ GRN_MODULE_REGISTER(grn_ctx *ctx)
 }
 
 grn_rc
-GRN_MODULE_FIN(grn_ctx *ctx)
+GRN_PLUGIN_FIN(grn_ctx *ctx)
 {
   if (sole_mecab) {
     mecab_destroy(sole_mecab);

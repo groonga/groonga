@@ -25,7 +25,7 @@
 
 void test_register_function(void);
 
-static gchar *tmp_directory, *modules_dir, *modules_dir_env;
+static gchar *tmp_directory, *plugins_dir, *plugins_dir_env;
 
 static grn_ctx *context;
 static grn_obj *database;
@@ -51,15 +51,15 @@ remove_tmp_directory(void)
 }
 
 static void
-setup_modules_dir(void)
+setup_plugins_dir(void)
 {
-  modules_dir = g_build_filename(grn_test_get_build_dir(),
+  plugins_dir = g_build_filename(grn_test_get_build_dir(),
                                  "fixtures",
-                                 "modules",
+                                 "plugins",
                                  ".libs",
                                  NULL);
-  modules_dir_env = g_strdup(g_getenv("GRN_MODULES_DIR"));
-  g_setenv("GRN_MODULES_DIR", modules_dir, TRUE);
+  plugins_dir_env = g_strdup(g_getenv("GRN_PLUGINS_DIR"));
+  g_setenv("GRN_PLUGINS_DIR", plugins_dir, TRUE);
 }
 
 void
@@ -76,25 +76,25 @@ cut_setup(void)
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
 
-  setup_modules_dir();
+  setup_plugins_dir();
 }
 
 static void
-teardown_modules_dir(void)
+teardown_plugins_dir(void)
 {
-  if (modules_dir_env) {
-    g_setenv("GRN_MODULES_DIR", modules_dir_env, TRUE);
+  if (plugins_dir_env) {
+    g_setenv("GRN_PLUGINS_DIR", plugins_dir_env, TRUE);
   } else {
-    g_unsetenv("GRN_MODULES_DIR");
+    g_unsetenv("GRN_PLUGINS_DIR");
   }
-  g_free(modules_dir_env);
-  g_free(modules_dir);
+  g_free(plugins_dir_env);
+  g_free(plugins_dir);
 }
 
 void
 cut_teardown(void)
 {
-  teardown_modules_dir();
+  teardown_plugins_dir();
 
   if (context) {
     grn_ctx_fin(context);

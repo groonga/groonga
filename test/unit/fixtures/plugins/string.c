@@ -19,7 +19,7 @@
 #include <string.h>
 
 #include <str.h>
-#include <module_impl.h>
+#include <groonga/plugin.h>
 
 static grn_obj *
 func_str_len(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
@@ -45,13 +45,13 @@ func_str_len(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 grn_rc
-GRN_MODULE_INIT(grn_ctx *ctx)
+GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
   return GRN_SUCCESS;
 }
 
 grn_rc
-GRN_MODULE_REGISTER(grn_ctx *ctx)
+GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   grn_proc_create(ctx, "str_len", strlen("str_len"), GRN_PROC_FUNCTION,
                   func_str_len, NULL, NULL, 0, NULL);
@@ -60,7 +60,7 @@ GRN_MODULE_REGISTER(grn_ctx *ctx)
 }
 
 grn_rc
-GRN_MODULE_FIN(grn_ctx *ctx)
+GRN_PLUGIN_FIN(grn_ctx *ctx)
 {
   return GRN_SUCCESS;
 }

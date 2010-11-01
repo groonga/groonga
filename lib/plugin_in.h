@@ -14,8 +14,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef GRN_MODULE_H
-#define GRN_MODULE_H
+#ifndef GRN_PLUGIN_H
+#define GRN_PLUGIN_H
 
 #ifndef GROONGA_IN_H
 #include "groonga_in.h"
@@ -42,28 +42,28 @@ typedef void * grn_dl;
 typedef void * grn_dl_symbol;
 #endif
 
-typedef struct _grn_module grn_module;
+typedef struct _grn_plugin grn_plugin;
 
-struct _grn_module {
+struct _grn_plugin {
   grn_dl dl;
-  grn_module_func init_func;
-  grn_module_func register_func;
-  grn_module_func unregister_func;
-  grn_module_func fin_func;
+  grn_plugin_func init_func;
+  grn_plugin_func register_func;
+  grn_plugin_func unregister_func;
+  grn_plugin_func fin_func;
 };
 
-grn_rc grn_modules_init(void);
-grn_rc grn_modules_fin(void);
-grn_id grn_module_open(grn_ctx *ctx, const char *filename);
-grn_rc grn_module_close(grn_ctx *ctx, grn_id id);
-grn_rc grn_module_init(grn_ctx *ctx, grn_id id);
-grn_rc grn_module_register(grn_ctx *ctx, grn_id id);
-grn_rc grn_module_fin(grn_ctx *ctx, grn_id id);
-grn_id grn_module_get(grn_ctx *ctx, const char *filename);
-const char *grn_module_path(grn_ctx *ctx, grn_id id);
+grn_rc grn_plugins_init(void);
+grn_rc grn_plugins_fin(void);
+grn_id grn_plugin_open(grn_ctx *ctx, const char *filename);
+grn_rc grn_plugin_close(grn_ctx *ctx, grn_id id);
+grn_rc grn_plugin_init(grn_ctx *ctx, grn_id id);
+grn_rc grn_plugin_register(grn_ctx *ctx, grn_id id);
+grn_rc grn_plugin_fin(grn_ctx *ctx, grn_id id);
+grn_id grn_plugin_get(grn_ctx *ctx, const char *filename);
+const char *grn_plugin_path(grn_ctx *ctx, grn_id id);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GRN_MODULE_H */
+#endif /* GRN_PLUGIN_H */

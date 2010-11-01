@@ -589,7 +589,7 @@ typedef struct {
   grn_obj value;
 } grn_expr_var;
 
-typedef grn_rc (*grn_module_func)(grn_ctx *ctx);
+typedef grn_rc (*grn_plugin_func)(grn_ctx *ctx);
 
 typedef enum {
   GRN_PROC_TOKENIZER = 1,
