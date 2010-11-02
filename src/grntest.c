@@ -111,10 +111,8 @@ grn_obj *grntest_db = NULL;
 #define MAX_CON_JOB 10
 #define MAX_CON 64
 
-#define MAX_COMMAND 1000000
 #define BUF_LEN 1024
 #define MAX_PATH_LEN 256
-#define MAX_COMMAND_LEN 500000
 #define LOGBUF_LEN 5000000
 
 #define J_DO_LOCAL  1  /* do_local */
@@ -138,11 +136,6 @@ static char grntest_log_tmpbuf[LOGBUF_LEN];
 static int grntest_serverport;
 static const char *grntest_dbpath;
 
-struct commandtable {
-  char *command[MAX_COMMAND];
-  int num;
-};
-
 struct job {
   char jobname[BUF_LEN];
   char commandfile[BUF_LEN];
@@ -160,7 +153,7 @@ struct job {
 
 struct task {
   char *file;
-  struct commandtable *table;
+  grn_obj *commands;
   int jobtype;
   int ntimes;
   int qnum;
@@ -294,70 +287,46 @@ error_exit_in_thread(intptr_t code)
 }
 
 
-static
-int
-escape_command(char *in, int ilen,  char *out, int olen)
+static void
+escape_command(grn_ctx *ctx, char *in, int ilen, grn_obj *escaped_command)
 {
-  int i = 0, j = 0;
+  int i = 0;
 
   while (i < ilen) {
-    if (j >= olen) {
-      fprintf(stderr, "too many escape:%s\n", in);
-      exit(1);
-    }
-
     if ((in[i] == '\\') || (in[i] == '\"') || (in[i] == '/')) {
-      out[j] = 0x5C;
-      j++;
-      out[j] = in[i];
-      j++;
+      GRN_TEXT_PUTC(ctx, escaped_command, '\\');
+      GRN_TEXT_PUTC(ctx, escaped_command, in[i]);
       i++;
     } else {
       switch (in[i]) {
       case '\b':
-        out[j] = 0x5C;
-        j++;
-        out[j] = 'b';
+        GRN_TEXT_PUTS(ctx, escaped_command, "\\b");
         i++;
         break;
       case '\f':
-        out[j] = 0x5C;
-        j++;
-        out[j] = 'f';
-        j++;
+        GRN_TEXT_PUTS(ctx, escaped_command, "\\f");
         i++;
         break;
       case '\n':
-        out[j] = 0x5C;
-        j++;
-        out[j] = 'n';
-        j++;
+        GRN_TEXT_PUTS(ctx, escaped_command, "\\n");
         i++;
         break;
       case '\r':
-        out[j] = 0x5C;
-        j++;
-        out[j] = 'r';
-        j++;
+        GRN_TEXT_PUTS(ctx, escaped_command, "\\r");
         i++;
         break;
       case '\t':
-        out[j] = 0x5C;
-        j++;
-        out[j] = 't';
-        j++;
+        GRN_TEXT_PUTS(ctx, escaped_command, "\\t");
         i++;
         break;
       default:
-        out[j] = in[i];
-        j++;
+        GRN_TEXT_PUTC(ctx, escaped_command, in[i]);
         i++;
         break;
       }
     }
   }
-  out[j] = '\0';
-  return j;
+  GRN_TEXT_PUTC(ctx, escaped_command, '\0');
 }
 
 
@@ -409,7 +378,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   int i, len, clen;
   long long int start, end;
   char rettmp[BUF_LEN];
-  char command_escaped[MAX_COMMAND_LEN * 2];
+  grn_obj escaped_command;
 
   if ((ret[0] == '[') && (ret[1] == '[')) {
     i = 2;
@@ -432,15 +401,17 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   start = GRN_TIME_VALUE(start_time) - GRN_TIME_VALUE(&grntest_starttime);
   end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
   clen = strlen(command);
-  escape_command(command, clen, command_escaped, clen * 2);
+  GRN_TEXT_INIT(&escaped_command, 0);
+  escape_command(ctx, command, clen, &escaped_command);
   if (grntest_outtype == OUT_TSV) {
     fprintf(grntest_logfp, "report\t%d\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%s\n",
-            task_id, command_escaped, start, end, rettmp);
+            task_id, GRN_TEXT_VALUE(&escaped_command), start, end, rettmp);
   } else {
     fprintf(grntest_logfp, "[%d, \"%s\", %" GRN_FMT_LLD ", %" GRN_FMT_LLD ", %s],\n",
-            task_id, command_escaped, start, end, rettmp);
+            task_id, GRN_TEXT_VALUE(&escaped_command), start, end, rettmp);
   }
   fflush(grntest_logfp);
+  GRN_OBJ_FIN(ctx, &escaped_command);
   return 0;
 }
 
@@ -1051,7 +1022,7 @@ load_command_p(char *command)
 
 static
 int
-worker_sub(intptr_t task_id)
+worker_sub(grn_ctx *ctx, int task_id)
 {
   int i, load_mode, load_count;
   grn_obj end_time;
@@ -1066,34 +1037,32 @@ worker_sub(intptr_t task_id)
   for (i = 0; i < grntest_task[task_id].ntimes; i++) {
     if (grntest_task[task_id].file != NULL) {
       FILE *fp;
-      char tmpbuf[MAX_COMMAND_LEN];
+      grn_obj line;
       fp = fopen(grntest_task[task_id].file, "r");
       if (!fp) {
         fprintf(stderr, "Cannot open %s\n",grntest_task[task_id].file);
         error_exit_in_thread(1);
       }
-      tmpbuf[MAX_COMMAND_LEN-2] = '\0';
       load_mode = 0;
       load_count = 0;
       load_start = 0LL;
-      while (fgets(tmpbuf, MAX_COMMAND_LEN, fp) != NULL) {
-        if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
-          fprintf(stderr, "Too long commmand in %s\n",grntest_task[task_id].file);
-          error_exit_in_thread(1);
-        }
-        tmpbuf[strlen(tmpbuf)-1] = '\0';
-        if (comment_p(tmpbuf)) {
+      GRN_TEXT_INIT(&line, 0);
+      while (grn_text_fgets(ctx, &line, fp) == GRN_SUCCESS) {
+        if (GRN_TEXT_LEN(&line) == 0) {
+          GRN_BULK_REWIND(&line);
           continue;
         }
-        if (tmpbuf[0] == '\0') {
+        GRN_TEXT_PUTC(ctx, &line, '\0');
+        if (comment_p(GRN_TEXT_VALUE(&line))) {
+          GRN_BULK_REWIND(&line);
           continue;
         }
-        if (load_command_p(tmpbuf)) {
+        if (load_command_p(GRN_TEXT_VALUE(&line))) {
           load_mode = 1;
           load_count = 1;
         }
         if (load_mode == 1) {
-          if (do_load_command(&grntest_ctx[task_id], tmpbuf,
+          if (do_load_command(&grntest_ctx[task_id], GRN_TEXT_VALUE(&line),
                               grntest_task[task_id].jobtype,
                               task_id, &load_start)) {
             grntest_task[task_id].qnum += load_count;
@@ -1102,27 +1071,34 @@ worker_sub(intptr_t task_id)
             load_start = 0LL;
           }
           load_count++;
+          GRN_BULK_REWIND(&line);
           continue;
         }
-        do_command(&grntest_ctx[task_id], tmpbuf,
-                     grntest_task[task_id].jobtype,
-                     task_id);
+        do_command(&grntest_ctx[task_id], GRN_TEXT_VALUE(&line),
+                   grntest_task[task_id].jobtype,
+                   task_id);
         grntest_task[task_id].qnum++;
+        GRN_BULK_REWIND(&line);
       }
       fclose(fp);
     } else {
-      int line;
-      if (grntest_task[task_id].table == NULL) {
+      int i, n_commands;
+      grn_obj *commands;
+      commands = grntest_task[task_id].commands;
+      if (!commands) {
         error_exit_in_thread(1);
       }
       load_mode = 0;
-      for (line = 0; line < grntest_task[task_id].table->num; line++) {
-        if (load_command_p(grntest_task[task_id].table->command[line])) {
+      n_commands = GRN_BULK_VSIZE(commands) / sizeof(grn_obj *);
+      for (i = 0; i < n_commands; i++) {
+        grn_obj *command;
+        command = GRN_PTR_VALUE_AT(commands, i);
+        if (load_command_p(GRN_TEXT_VALUE(command))) {
           load_mode = 1;
         }
         if (load_mode == 1) {
           if (do_load_command(&grntest_ctx[task_id],
-                              grntest_task[task_id].table->command[line],
+                              GRN_TEXT_VALUE(command),
                               grntest_task[task_id].jobtype, task_id, &load_start)) {
             load_mode = 0;
             load_start = 0LL;
@@ -1131,7 +1107,7 @@ worker_sub(intptr_t task_id)
           continue;
         }
         do_command(&grntest_ctx[task_id],
-                   grntest_task[task_id].table->command[line],
+                   GRN_TEXT_VALUE(command),
                    grntest_task[task_id].jobtype, task_id);
         grntest_task[task_id].qnum++;
       }
@@ -1202,13 +1178,19 @@ worker_sub(intptr_t task_id)
   return 0;
 }
 
+typedef struct _grntest_worker {
+  grn_ctx *ctx;
+  int task_id;
+} grntest_worker;
+
 #ifdef WIN32
 static
 int
 __stdcall
 worker(void *val)
 {
-  worker_sub((intptr_t) val);
+  grntest_worker *worker = val;
+  worker_sub(worker->ctx, worker->task_id);
   return 0;
 }
 #else
@@ -1216,7 +1198,8 @@ static
 void *
 worker(void *val)
 {
-  worker_sub((intptr_t) val);
+  grntest_worker *worker = val;
+  worker_sub(worker->ctx, worker->task_id);
   return NULL;
 }
 #endif /* WIN32 */
@@ -1228,9 +1211,13 @@ thread_main(grn_ctx *ctx, int num)
   int  i;
   int  ret;
   HANDLE pthread[MAX_CON];
+  grntest_worker *workers[MAX_CON];
 
   for (i = 0; i < num; i++) {
-    pthread[i] = (HANDLE)_beginthreadex(NULL, 0, worker, (void *)i,
+    workers[i] = GRN_MALLOC(sizeof(workers[i]));
+    workers[i]->ctx = ctx;
+    workers[i]->task_id = i;
+    pthread[i] = (HANDLE)_beginthreadex(NULL, 0, worker, (void *)workers[i],
                                         0, NULL);
     if (pthread[i]== (HANDLE)0) {
        fprintf(stderr, "thread failed:%d\n", i);
@@ -1246,6 +1233,7 @@ thread_main(grn_ctx *ctx, int num)
 
   for (i = 0; i < num; i++) {
     CloseHandle(pthread[i]);
+    GRN_FREE(workers[i]);
   }
   return 0;
 }
@@ -1256,9 +1244,13 @@ thread_main(grn_ctx *ctx, int num)
   intptr_t i;
   int ret;
   pthread_t pthread[MAX_CON];
+  grntest_worker *workers[MAX_CON];
 
   for (i = 0; i < num; i++) {
-    ret = pthread_create(&pthread[i], NULL, worker, (void *)i);
+    workers[i] = GRN_MALLOC(sizeof(workers[i]));
+    workers[i]->ctx = ctx;
+    workers[i]->task_id = i;
+    ret = pthread_create(&pthread[i], NULL, worker, (void *)workers[i]);
     if (ret) {
       fprintf(stderr, "Cannot create thread:ret=%d\n", ret);
       error_exit_in_thread(1);
@@ -1267,6 +1259,7 @@ thread_main(grn_ctx *ctx, int num)
 
   for (i = 0; i < num; i++) {
     ret = pthread_join(pthread[i], NULL);
+    GRN_FREE(workers[i]);
     if (ret) {
       fprintf(stderr, "Cannot join thread:ret=%d\n", ret);
       error_exit_in_thread(1);
@@ -1883,16 +1876,15 @@ static
 int
 make_task_table(grn_ctx *ctx, int jobnum)
 {
-  int i, j, len, line;
+  int i, j;
   int tid = 0;
   FILE *fp;
-  struct commandtable *ctable = NULL;
-  char tmpbuf[MAX_COMMAND_LEN];
+  grn_obj *commands = NULL;
 
   for (i = 0; i < jobnum; i++) {
     if ((grntest_job[i].concurrency == 1) && (!grntest_onmemory_mode)) {
       grntest_task[tid].file = grntest_job[i].commandfile;
-      grntest_task[tid].table = NULL;
+      grntest_task[tid].commands = NULL;
       grntest_task[tid].ntimes = grntest_job[i].ntimes;
       grntest_task[tid].jobtype = grntest_job[i].jobtype;
       grntest_task[tid].job_id = i;
@@ -1900,10 +1892,13 @@ make_task_table(grn_ctx *ctx, int jobnum)
       continue;
     }
     for (j = 0; j < grntest_job[i].concurrency; j++) {
+      printf("wow: %d\n", j);
       if (j == 0) {
-        ctable = GRN_MALLOC(sizeof(struct commandtable));
-        if (!ctable) {
-          fprintf(stderr, "Cannot alloc commandtable\n");
+        grn_obj line;
+        GRN_TEXT_INIT(&line, 0);
+        commands = grn_obj_open(ctx, GRN_PVECTOR, 0, GRN_VOID);
+        if (!commands) {
+          fprintf(stderr, "Cannot alloc commands\n");
           error_exit(ctx, 1);
         }
         fp = fopen(grntest_job[i].commandfile, "r");
@@ -1912,43 +1907,32 @@ make_task_table(grn_ctx *ctx, int jobnum)
                    grntest_job[i].commandfile);
           error_exit(ctx, 1);
         }
-        line = 0;
-        tmpbuf[MAX_COMMAND_LEN-2] = '\0';
-        while (fgets(tmpbuf, MAX_COMMAND_LEN, fp) != NULL) {
-          if (tmpbuf[MAX_COMMAND_LEN-2] != '\0') {
-            tmpbuf[MAX_COMMAND_LEN-2] = '\0';
-            fprintf(stderr, "Too long command in %s\n",
-                   grntest_job[i].commandfile);
-            fprintf(stderr, "line =%d:%s\n", line + 1, tmpbuf);
-            error_exit(ctx, 1);
-          }
-          len = strlen(tmpbuf);
-          len--;
-          tmpbuf[len] = '\0';
-          if (comment_p(tmpbuf)) {
+        while (grn_text_fgets(ctx, &line, fp) == GRN_SUCCESS) {
+          grn_obj *command;
+          if (GRN_TEXT_LEN(&line) == 0) {
+            GRN_BULK_REWIND(&line);
             continue;
           }
-          if (tmpbuf[0] == '\0') {
+          GRN_TEXT_PUTC(ctx, &line, '\0');
+          if (comment_p(GRN_TEXT_VALUE(&line))) {
+            GRN_BULK_REWIND(&line);
             continue;
           }
-          ctable->command[line] = GRN_STRDUP(tmpbuf);
-          if (ctable->command[line] == NULL) {
-            fprintf(stderr, "Cannot alloc commandfile:%s\n",
-                    grntest_job[i].commandfile);
+          command = grn_obj_open(ctx, GRN_BULK, 0, GRN_VOID);
+          if (!command) {
+            fprintf(stderr, "Cannot alloc command: %s: %s\n",
+                    grntest_job[i].commandfile, GRN_TEXT_VALUE(&line));
+            GRN_OBJ_FIN(ctx, &line);
             error_exit(ctx, 1);
           }
-          ctable->num = line;
-          line++;
-          if (line >= MAX_COMMAND) {
-            fprintf(stderr, "Too many commands in %s\n",
-                   grntest_job[i].commandfile);
-            error_exit(ctx, 1);
-          }
+          GRN_TEXT_SET(ctx, command, GRN_TEXT_VALUE(&line), GRN_TEXT_LEN(&line));
+          GRN_PTR_PUT(ctx, commands, command);
+          GRN_BULK_REWIND(&line);
         }
-        ctable->num = line;
+        GRN_OBJ_FIN(ctx, &line);
       }
       grntest_task[tid].file = NULL;
-      grntest_task[tid].table = ctable;
+      grntest_task[tid].commands = commands;
       grntest_task[tid].ntimes = grntest_job[i].ntimes;
       grntest_task[tid].jobtype = grntest_job[i].jobtype;
       grntest_task[tid].job_id = i;
@@ -1965,8 +1949,10 @@ print_commandlist(int task_id)
 {
   int i;
 
-  for (i = 0; i < grntest_task[task_id].table->num; i++) {
-    printf("%s\n", grntest_task[task_id].table->command[i]);
+  for (i = 0; i < GRN_TEXT_LEN(grntest_task[task_id].commands); i++) {
+    grn_obj *command;
+    command = GRN_PTR_VALUE_AT(grntest_task[task_id].commands, i);
+    printf("%s\n", GRN_TEXT_VALUE(command));
   }
   return 0;
 }
@@ -1977,7 +1963,7 @@ static
 int
 do_jobs(grn_ctx *ctx, int jobnum, int line)
 {
-  int i, j, task_num, ret, qnum = 0,thread_num = 0;
+  int i, task_num, ret, qnum = 0,thread_num = 0;
 
   for (i = 0; i < jobnum; i++) {
 /*
@@ -2066,12 +2052,9 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
   i = 0;
   while (i < task_num) {
     int job_id;
-    if (grntest_task[i].table != NULL) {
+    if (grntest_task[i].commands) {
       job_id = grntest_task[i].job_id;
-      for (j = 0; j < grntest_task[i].table->num; j++) {
-        GRN_FREE(grntest_task[i].table->command[j]);
-      }
-      GRN_FREE(grntest_task[i].table);
+      GRN_OBJ_FIN(ctx, grntest_task[i].commands);
       while (job_id == grntest_task[i].job_id) {
         i++;
       }
