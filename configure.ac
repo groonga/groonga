@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([groonga],[1.0.2],[groonga@razil.jp])
+AC_INIT([groonga],[1.0.3],[groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
@@ -89,9 +89,11 @@ m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  lib/Makefile
-                 modules/Makefile
-                 modules/tokenizers/Makefile
-                 modules/suggest/Makefile
+                 include/Makefile
+                 include/groonga/Makefile
+                 plugins/Makefile
+                 plugins/tokenizers/Makefile
+                 plugins/suggest/Makefile
                  examples/Makefile
                  examples/dictionary/Makefile
                  examples/dictionary/edict/Makefile
@@ -119,7 +121,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/fixtures/inverted-index/Makefile
                  test/unit/fixtures/stress/Makefile
                  test/unit/fixtures/performance/Makefile
-                 test/unit/fixtures/modules/Makefile
+                 test/unit/fixtures/plugins/Makefile
                  test/unit/fixtures/story/Makefile
                  test/unit/fixtures/story/taiyaki/Makefile
                  test/unit/util/Makefile
@@ -662,25 +664,25 @@ AM_CONDITIONAL([ENABLE_DOCUMENT],
 AC_MSG_CHECKING([for sphinx availablity])
 AC_MSG_RESULT($ac_sphinx_available (sphinx-build=$SPHINX_BUILD version=$sphinx_build_version required=$sphinx_required_version))
 
-# modules check
-modulesdir="\${libdir}/\$(PACKAGE)/modules"
-AC_SUBST(modulesdir)
+# plugins check
+pluginsdir="\${libdir}/\$(PACKAGE)/plugins"
+AC_SUBST(pluginsdir)
 
-tokenizer_modulesdir="\${modulesdir}/tokenizers"
-AC_SUBST(tokenizer_modulesdir)
+tokenizer_pluginsdir="\${pluginsdir}/tokenizers"
+AC_SUBST(tokenizer_pluginsdir)
 
-suggest_modulesdir="\${modulesdir}/suggest"
-AC_SUBST(suggest_modulesdir)
+suggest_pluginsdir="\${pluginsdir}/suggest"
+AC_SUBST(suggest_pluginsdir)
 
-AC_MSG_CHECKING(for the suffix of module shared libraries)
+AC_MSG_CHECKING(for the suffix of plugin shared libraries)
 shrext_cmds=$(./libtool --config | grep '^shrext_cmds=')
 eval $shrext_cmds
-module=yes eval suffix="$shrext_cmds"
+plugin=yes eval suffix="$shrext_cmds"
 AC_MSG_RESULT($suffix)
 if test -z "$suffix"; then
-  AC_MSG_ERROR([can't detect module suffix])
+  AC_MSG_ERROR([can't detect plugin suffix])
 fi
-AC_DEFINE_UNQUOTED(GRN_MODULE_SUFFIX, ["$suffix"], "module suffix")
+AC_DEFINE_UNQUOTED(GRN_PLUGIN_SUFFIX, ["$suffix"], "plugin suffix")
 
 # for examples
 examplesdir="\$(pkgdatadir)/examples"
@@ -691,7 +693,7 @@ AC_SUBST(examples_dictionarydir)
 
 # flags for compile groonga
 CFLAGS="$CFLAGS $OPT_CFLAGS "
-CFLAGS="$CFLAGS -DMODULES_DIR=\\\"\"\$(modulesdir)\"\\\""
+CFLAGS="$CFLAGS -DPLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
 CFLAGS="$CFLAGS -DGROONGA_LOG_PATH=\\\"\"\$(groonga_log_path)\"\\\""
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $RT_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")

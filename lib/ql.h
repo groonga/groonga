@@ -209,8 +209,8 @@ struct _grn_ctx_impl {
   grn_edge *edge;
   grn_loader loader;
 
-  /* module portion */
-  const char *module_path;
+  /* plugin portion */
+  const char *plugin_path;
 
   /* output portion */
   grn_content_type output_type;

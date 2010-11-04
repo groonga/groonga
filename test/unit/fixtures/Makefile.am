@@ -2,7 +2,7 @@ SUBDIRS =					\
 	stress					\
 	performance				\
 	inverted-index				\
-	modules					\
+	plugins					\
 	story
 
 if WITH_CUTTER
@@ -13,7 +13,7 @@ endif
 INCLUDES =			\
 	-I$(srcdir)		\
 	-I$(srcdir)/../lib	\
-	-I$(top_srcdir)		\
+	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib	\
 	$(GROONGA_INCLUDEDIR)
 

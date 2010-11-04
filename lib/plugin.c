@@ -18,11 +18,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "db.h"
-#include "module.h"
+#include "plugin_in.h"
 #include "ql.h"
-#include "module.h"
 
-static grn_hash *grn_modules = NULL;
+static grn_hash *grn_plugins = NULL;
 
 #define PATHLEN(filename) (strlen(filename) + 1)
 
@@ -36,7 +35,7 @@ static grn_hash *grn_modules = NULL;
 #  define grn_dl_clear_error
 #else
 #  include <dlfcn.h>
-#  define grn_dl_open(filename)    dlopen(filename, RTLD_LAZY | RTLD_GLOBAL)
+#  define grn_dl_open(filename)    dlopen(filename, RTLD_LAZY | RTLD_LOCAL)
 #  define grn_dl_open_error_label  dlerror()
 #  define grn_dl_close(dl)         (dlclose(dl) == 0)
 #  define grn_dl_close_error_label dlerror()
@@ -46,48 +45,30 @@ static grn_hash *grn_modules = NULL;
 #endif
 
 grn_id
-grn_module_get(grn_ctx *ctx, const char *filename)
+grn_plugin_get(grn_ctx *ctx, const char *filename)
 {
-  return grn_hash_get(ctx, grn_modules, filename, PATHLEN(filename), NULL);
+  return grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename), NULL);
 }
 
 const char *
-grn_module_path(grn_ctx *ctx, grn_id id)
+grn_plugin_path(grn_ctx *ctx, grn_id id)
 {
   uint32_t key_size;
-  return _grn_hash_key(ctx, grn_modules, id, &key_size);
+  return _grn_hash_key(ctx, grn_plugins, id, &key_size);
 }
 
-#define GRN_MODULE_FUNC_PREFIX "grn_module_"
+#define GRN_PLUGIN_FUNC_PREFIX "grn_plugin_impl_"
 
 static grn_rc
-grn_module_initialize(grn_ctx *ctx, grn_module *module,
+grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
                       grn_dl dl, grn_id id, const char *path)
 {
-  const char *base_name, *extension;
-  char init_func_name[PATH_MAX];
-  char register_func_name[PATH_MAX];
-  char fin_func_name[PATH_MAX];
-
-  base_name = extension = path + strlen(path);
-  for (; path < base_name; base_name--) {
-    if (*base_name == '.') {
-      extension = base_name;
-    }
-    if (*base_name == PATH_SEPARATOR[0]) {
-      base_name++;
-      break;
-    }
-  }
-
-  module->dl = dl;
+  plugin->dl = dl;
 
 #define GET_SYMBOL(type)                                                \
-  strcpy(type ## _func_name, GRN_MODULE_FUNC_PREFIX #type "_");         \
-  strncat(type ## _func_name, base_name, extension - base_name);        \
   grn_dl_clear_error;                                                   \
-  module->type ## _func = grn_dl_sym(dl, type ## _func_name);           \
-  if (!module->type ## _func) {                                         \
+  plugin->type ## _func = grn_dl_sym(dl, GRN_PLUGIN_FUNC_PREFIX #type); \
+  if (!plugin->type ## _func) {                                         \
     const char *label;                                                  \
     label = grn_dl_sym_error_label;                                     \
     SERR(label);                                                        \
@@ -99,48 +80,48 @@ grn_module_initialize(grn_ctx *ctx, grn_module *module,
 
 #undef GET_SYMBOL
 
-  if (!module->init_func || !module->register_func || !module->fin_func) {
+  if (!plugin->init_func || !plugin->register_func || !plugin->fin_func) {
     ERR(GRN_INVALID_FORMAT,
         "init func (%s) %sfound, "
         "register func (%s) %sfound and "
         "fin func (%s) %sfound",
-        init_func_name, module->init_func ? "" : "not ",
-        register_func_name, module->register_func ? "" : "not ",
-        fin_func_name, module->fin_func ? "" : "not ");
+        GRN_PLUGIN_FUNC_PREFIX "init", plugin->init_func ? "" : "not ",
+        GRN_PLUGIN_FUNC_PREFIX "register", plugin->register_func ? "" : "not ",
+        GRN_PLUGIN_FUNC_PREFIX "fin", plugin->fin_func ? "" : "not ");
   }
 
   if (!ctx->rc) {
-    ctx->impl->module_path = path;
-    grn_module_init(ctx, id);
-    ctx->impl->module_path = NULL;
+    ctx->impl->plugin_path = path;
+    grn_plugin_init(ctx, id);
+    ctx->impl->plugin_path = NULL;
   }
 
   return ctx->rc;
 }
 
 grn_id
-grn_module_open(grn_ctx *ctx, const char *filename)
+grn_plugin_open(grn_ctx *ctx, const char *filename)
 {
   grn_id id;
   grn_dl dl;
-  grn_module **module;
+  grn_plugin **plugin;
 
-  if ((id = grn_hash_get(ctx, grn_modules, filename, PATHLEN(filename),
-                         (void **)&module))) {
+  if ((id = grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename),
+                         (void **)&plugin))) {
     return id;
   }
   if ((dl = grn_dl_open(filename))) {
-    if ((id = grn_hash_add(ctx, grn_modules, filename, PATHLEN(filename),
-                           (void **)&module, NULL))) {
-      *module = GRN_GMALLOCN(grn_module, 1);
-      if (*module) {
-        if (grn_module_initialize(ctx, *module, dl, id, filename)) {
-          GRN_GFREE(*module);
-          *module = NULL;
+    if ((id = grn_hash_add(ctx, grn_plugins, filename, PATHLEN(filename),
+                           (void **)&plugin, NULL))) {
+      *plugin = GRN_GMALLOCN(grn_plugin, 1);
+      if (*plugin) {
+        if (grn_plugin_initialize(ctx, *plugin, dl, id, filename)) {
+          GRN_GFREE(*plugin);
+          *plugin = NULL;
         }
       }
-      if (!*module) {
-        grn_hash_delete_by_id(ctx, grn_modules, id, NULL);
+      if (!*plugin) {
+        grn_hash_delete_by_id(ctx, grn_plugins, id, NULL);
         if (!grn_dl_close(dl)) {
           const char *label;
           label = grn_dl_close_error_label;
@@ -164,34 +145,34 @@ grn_module_open(grn_ctx *ctx, const char *filename)
 }
 
 grn_rc
-grn_module_close(grn_ctx *ctx, grn_id id)
+grn_plugin_close(grn_ctx *ctx, grn_id id)
 {
-  grn_module *module;
+  grn_plugin *plugin;
 
-  grn_module_fin(ctx, id);
-  if (!grn_hash_get_value(ctx, grn_modules, id, &module)) {
+  grn_plugin_fin(ctx, id);
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!grn_dl_close(module->dl)) {
+  if (!grn_dl_close(plugin->dl)) {
     const char *label;
     label = grn_dl_close_error_label;
     SERR(label);
   }
-  GRN_GFREE(module);
-  return grn_hash_delete_by_id(ctx, grn_modules, id, NULL);
+  GRN_GFREE(plugin);
+  return grn_hash_delete_by_id(ctx, grn_plugins, id, NULL);
 }
 
 void *
-grn_module_sym(grn_ctx *ctx, grn_id id, const char *symbol)
+grn_plugin_sym(grn_ctx *ctx, grn_id id, const char *symbol)
 {
-  grn_module *module;
+  grn_plugin *plugin;
   grn_dl_symbol func;
 
-  if (!grn_hash_get_value(ctx, grn_modules, id, &module)) {
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return NULL;
   }
   grn_dl_clear_error;
-  if (!(func = grn_dl_sym(module->dl, symbol))) {
+  if (!(func = grn_dl_sym(plugin->dl, symbol))) {
     const char *label;
     label = grn_dl_sym_error_label;
     SERR(label);
@@ -200,62 +181,62 @@ grn_module_sym(grn_ctx *ctx, grn_id id, const char *symbol)
 }
 
 grn_rc
-grn_module_init (grn_ctx *ctx, grn_id id)
+grn_plugin_init (grn_ctx *ctx, grn_id id)
 {
-  grn_module *module;
-  if (!grn_hash_get_value(ctx, grn_modules, id, &module)) {
+  grn_plugin *plugin;
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (module->init_func) {
-    return module->init_func(ctx);
+  if (plugin->init_func) {
+    return plugin->init_func(ctx);
   }
   return GRN_SUCCESS;
 }
 
 grn_rc
-grn_module_register (grn_ctx *ctx, grn_id id)
+grn_plugin_register (grn_ctx *ctx, grn_id id)
 {
-  grn_module *module;
-  if (!grn_hash_get_value(ctx, grn_modules, id, &module)) {
+  grn_plugin *plugin;
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (module->register_func) {
-    return module->register_func(ctx);
+  if (plugin->register_func) {
+    return plugin->register_func(ctx);
   }
   return GRN_SUCCESS;
 }
 
 grn_rc
-grn_module_fin(grn_ctx *ctx, grn_id id)
+grn_plugin_fin(grn_ctx *ctx, grn_id id)
 {
-  grn_module *module;
-  if (!grn_hash_get_value(ctx, grn_modules, id, &module)) {
+  grn_plugin *plugin;
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (module->fin_func) {
-    return module->fin_func(ctx);
+  if (plugin->fin_func) {
+    return plugin->fin_func(ctx);
   }
   return GRN_SUCCESS;
 }
 
 grn_rc
-grn_modules_init(void)
+grn_plugins_init(void)
 {
-  grn_modules = grn_hash_create(&grn_gctx, NULL, PATH_MAX, sizeof(grn_module *),
+  grn_plugins = grn_hash_create(&grn_gctx, NULL, PATH_MAX, sizeof(grn_plugin *),
                                 GRN_OBJ_KEY_VAR_SIZE);
-  if (!grn_modules) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (!grn_plugins) { return GRN_NO_MEMORY_AVAILABLE; }
   return GRN_SUCCESS;
 }
 
 grn_rc
-grn_modules_fin(void)
+grn_plugins_fin(void)
 {
   grn_ctx *ctx = &grn_gctx;
-  if (!grn_modules) { return GRN_INVALID_ARGUMENT; }
-  GRN_HASH_EACH(ctx, grn_modules, id, NULL, NULL, NULL, {
-      grn_module_close(ctx, id);
+  if (!grn_plugins) { return GRN_INVALID_ARGUMENT; }
+  GRN_HASH_EACH(ctx, grn_plugins, id, NULL, NULL, NULL, {
+      grn_plugin_close(ctx, id);
     });
-  return grn_hash_close(&grn_gctx, grn_modules);
+  return grn_hash_close(&grn_gctx, grn_plugins);
 }
 
 grn_rc
@@ -269,19 +250,19 @@ grn_db_register(grn_ctx *ctx, const char *path)
   }
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
-    FILE *module_file;
+    FILE *plugin_file;
     char complemented_path[PATH_MAX];
 
-    module_file = fopen(path, "r");
-    if (module_file) {
-      fclose(module_file);
-      id = grn_module_open(ctx, path);
+    plugin_file = fopen(path, "r");
+    if (plugin_file) {
+      fclose(plugin_file);
+      id = grn_plugin_open(ctx, path);
     } else {
       ctx->errlvl = GRN_OK;
       ctx->rc = GRN_SUCCESS;
       strcpy(complemented_path, path);
-      strcat(complemented_path, GRN_MODULE_SUFFIX);
-      id = grn_module_open(ctx, complemented_path);
+      strcat(complemented_path, GRN_PLUGIN_SUFFIX);
+      id = grn_plugin_open(ctx, complemented_path);
       if (id) {
         path = complemented_path;
       } else {
@@ -295,8 +276,8 @@ grn_db_register(grn_ctx *ctx, const char *path)
           strncat(complemented_path, path, base_name - path);
           strcat(complemented_path, "/.libs");
           strcat(complemented_path, base_name);
-          strcat(complemented_path, GRN_MODULE_SUFFIX);
-          id = grn_module_open(ctx, complemented_path);
+          strcat(complemented_path, GRN_PLUGIN_SUFFIX);
+          id = grn_plugin_open(ctx, complemented_path);
           if (id) {
             path = complemented_path;
           }
@@ -305,11 +286,11 @@ grn_db_register(grn_ctx *ctx, const char *path)
     }
 
     if (id) {
-      ctx->impl->module_path = path;
-      ctx->rc = grn_module_register(ctx, id);
-      ctx->impl->module_path = NULL;
+      ctx->impl->plugin_path = path;
+      ctx->rc = grn_plugin_register(ctx, id);
+      ctx->impl->plugin_path = NULL;
       if (ctx->rc) {
-        grn_module_close(ctx, id);
+        grn_plugin_close(ctx, id);
       }
     }
   } else {
@@ -321,16 +302,16 @@ grn_db_register(grn_ctx *ctx, const char *path)
 grn_rc
 grn_db_register_by_name(grn_ctx *ctx, const char *name)
 {
-  const char *modules_dir;
+  const char *plugins_dir;
   char dir_last_char;
   char path[PATH_MAX];
 
-  modules_dir = getenv("GRN_MODULES_DIR");
-  if (!modules_dir) {
-    modules_dir = MODULES_DIR;
+  plugins_dir = getenv("GRN_PLUGINS_DIR");
+  if (!plugins_dir) {
+    plugins_dir = PLUGINS_DIR;
   }
-  strcpy(path, modules_dir);
-  dir_last_char = modules_dir[strlen(modules_dir) - 1];
+  strcpy(path, plugins_dir);
+  dir_last_char = plugins_dir[strlen(plugins_dir) - 1];
   if (dir_last_char != PATH_SEPARATOR[0]) {
     strcat(path, PATH_SEPARATOR);
   }
