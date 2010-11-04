@@ -43,6 +43,8 @@ void data_less_than(void);
 void test_less_than(gconstpointer data);
 void data_less_than_or_equal(void);
 void test_less_than_or_equal(gconstpointer data);
+void data_equal_numeric(void);
+void test_equal_numeric(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -607,4 +609,55 @@ test_less_than_or_equal(gconstpointer data)
                  "--sortby -score "
                  "--output_columns _key,score "
                  "--filter 'score >= 4'"));
+}
+
+void
+data_equal_numeric(void)
+{
+#define ADD_DATA(type)                          \
+  gcut_add_datum(type,                          \
+                 "type", G_TYPE_STRING, type,   \
+                 NULL)
+
+  ADD_DATA("Int8");
+  ADD_DATA("UInt8");
+  ADD_DATA("Int16");
+  ADD_DATA("UInt16");
+  ADD_DATA("Int32");
+  ADD_DATA("UInt32");
+  ADD_DATA("Int64");
+  ADD_DATA("UInt64");
+
+#undef ADD_DATA
+}
+
+void
+test_equal_numeric(gconstpointer data)
+{
+  const gchar *type;
+
+  type = gcut_data_get_string(data, "type");
+
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  assert_send_command(
+    cut_take_printf("column_create Sites score COLUMN_SCALAR %s", type));
+
+  cut_assert_equal_string(
+    "3",
+    send_command("load --table Sites --columns '_key, score' \n"
+                 "[\n"
+                 " [\"groonga.org\", 5],\n"
+                 " [\"ruby-lang.org\", 4],\n"
+                 " [\"qwik.jp/senna/\", 3]\n"
+                 "]"));
+  cut_assert_equal_string(
+    cut_take_printf("[[[1],"
+                     "[[\"_key\",\"ShortText\"],"
+                      "[\"score\",\"%s\"]],"
+                     "[\"ruby-lang.org\",4]]]",
+                    type),
+    send_command("select Sites "
+                 "--sortby -score "
+                 "--output_columns _key,score "
+                 "--filter 'score == 4'"));
 }

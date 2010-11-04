@@ -1437,6 +1437,18 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
 
 #define DO_EQ_SUB {\
   switch (y->header.domain) {\
+  case GRN_DB_INT8 :\
+    r = (x_ == GRN_INT8_VALUE(y));\
+    break;\
+  case GRN_DB_UINT8 :\
+    r = (x_ == GRN_UINT8_VALUE(y));\
+    break;\
+  case GRN_DB_INT16 :\
+    r = (x_ == GRN_INT16_VALUE(y));\
+    break;\
+  case GRN_DB_UINT16 :\
+    r = (x_ == GRN_UINT16_VALUE(y));\
+    break;\
   case GRN_DB_INT32 :\
     r = (x_ == GRN_INT32_VALUE(y));\
     break;\
@@ -1474,6 +1486,30 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   switch (x->header.domain) {\
   case GRN_DB_VOID :\
     r = 0;\
+    break;\
+  case GRN_DB_INT8 :\
+    {\
+      int8_t x_ = GRN_INT8_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_UINT8 :\
+    {\
+      uint8_t x_ = GRN_UINT8_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_INT16 :\
+    {\
+      int16_t x_ = GRN_INT16_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_UINT16 :\
+    {\
+      uint16_t x_ = GRN_UINT16_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
     break;\
   case GRN_DB_INT32 :\
     {\
