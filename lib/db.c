@@ -299,7 +299,7 @@ grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
   }
   GRN_API_ENTER;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR();
+    GRN_DB_CHECK_NAME_ERR(name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
@@ -352,7 +352,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size, grn_proc_typ
   GRN_API_ENTER;
   range = path ? grn_plugin_get(ctx, path) : GRN_ID_NIL;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR();
+    GRN_DB_CHECK_NAME_ERR(name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
@@ -488,7 +488,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
   }
   GRN_API_ENTER;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR();
+    GRN_DB_CHECK_NAME_ERR(name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
@@ -2749,7 +2749,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:column_create %.*s %.*s", s, n, name_size, name);
   }
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR();
+    GRN_DB_CHECK_NAME_ERR(name, name_size);
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
@@ -2861,7 +2861,7 @@ grn_column_open(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR();
+    GRN_DB_CHECK_NAME_ERR(name, name_size);
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
@@ -6433,17 +6433,9 @@ enum {
 };
 
 #define CMPNUM(type) {\
-  if (as) {\
-    if (bs) {\
-      type va = *((type *)(ap));\
-      type vb = *((type *)(bp));\
-      if (va != vb) { return va > vb; }\
-    } else {\
-      return 1;\
-    }\
-  } else {\
-    if (bs) { return 0; }\
-  }\
+  type va = *((type *)(ap));\
+  type vb = *((type *)(bp));\
+  if (va != vb) { return va > vb; }\
 }
 
 inline static int
@@ -6510,29 +6502,17 @@ compare_value(grn_ctx *ctx, sort_entry *a, sort_entry *b,
       CMPNUM(uint64_t);
       break;
     case KEY_FLOAT32 :
-      if (as) {
-        if (bs) {
-          float va = *((float *)(ap));
-          float vb = *((float *)(bp));
-          if (va < vb || va > vb) { return va > vb; }
-        } else {
-          return 1;
-        }
-      } else {
-        if (bs) { return 0; }
+      {
+        float va = *((float *)(ap));
+        float vb = *((float *)(bp));
+        if (va < vb || va > vb) { return va > vb; }
       }
       break;
     case KEY_FLOAT64 :
-      if (as) {
-        if (bs) {
-          double va = *((double *)(ap));
-          double vb = *((double *)(bp));
-          if (va < vb || va > vb) { return va > vb; }
-        } else {
-          return 1;
-        }
-      } else {
-        if (bs) { return 0; }
+      {
+        double va = *((double *)(ap));
+        double vb = *((double *)(bp));
+        if (va < vb || va > vb) { return va > vb; }
       }
       break;
     }

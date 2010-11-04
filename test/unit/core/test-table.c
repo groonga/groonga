@@ -412,10 +412,12 @@ test_create_with_invalid_name(gpointer data)
                            NULL,
                            GRN_OBJ_TABLE_NO_KEY,
                            NULL, NULL);
-  grn_test_assert_error(GRN_INVALID_ARGUMENT,
-                        "name can't start with '_' and "
-                        "0-9, and contains only 0-9, A-Z, a-z, or _",
-                        context);
+  grn_test_assert_error(
+    GRN_INVALID_ARGUMENT,
+    cut_take_printf("name can't start with '_' and "
+                    "0-9, and contains only 0-9, A-Z, a-z, or _: <%s>",
+                    table_name),
+    context);
 }
 
 void

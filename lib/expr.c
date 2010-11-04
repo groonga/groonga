@@ -547,7 +547,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
   }
   GRN_API_ENTER;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR();
+    GRN_DB_CHECK_NAME_ERR(name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {

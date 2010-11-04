@@ -348,7 +348,7 @@ grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
 grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
 grn_rc grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size);
-#define GRN_DB_CHECK_NAME_ERR() ERR(GRN_INVALID_ARGUMENT, "name can't start with '%c' and 0-9, and contains only 0-9, A-Z, a-z, or _", GRN_DB_PSEUDO_COLUMN_PREFIX)
+#define GRN_DB_CHECK_NAME_ERR(name, name_size) ERR(GRN_INVALID_ARGUMENT, "name can't start with '%c' and 0-9, and contains only 0-9, A-Z, a-z, or _: <%.*s>", GRN_DB_PSEUDO_COLUMN_PREFIX, name_size, name)
 
 #define GRN_DB_P(s) ((s) && ((grn_db *)s)->obj.header.type == GRN_DB)
 #define GRN_DB_PERSISTENT_P(s) (((grn_db *)s)->specs)
