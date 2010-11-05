@@ -58,7 +58,7 @@ uint16_t grn_atoui16(const char *nptr, const char *end, const char **rest);
 GRN_API int grn_atoi(const char *nptr, const char *end, const char **rest);
 GRN_API unsigned int grn_atoui(const char *nptr, const char *end, const char **rest);
 unsigned int grn_htoui(const char *nptr, const char *end, const char **rest);
-int64_t grn_atoll(const char *nptr, const char *end, const char **rest);
+GRN_API int64_t grn_atoll(const char *nptr, const char *end, const char **rest);
 grn_rc grn_itoa(int i, char *p, char *end, char **rest);
 grn_rc grn_lltoa(int64_t i, char *p, char *end, char **rest);
 grn_rc grn_ulltoa(uint64_t i, char *p, char *end, char **rest);
