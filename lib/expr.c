@@ -547,7 +547,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
   }
   GRN_API_ENTER;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR();
+    GRN_DB_CHECK_NAME_ERR(name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
@@ -1258,6 +1258,18 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
 
 #define DO_COMPARE_SUB_NUMERIC(y,op) {\
   switch ((y)->header.domain) {\
+  case GRN_DB_INT8 :\
+    r = (x_ op GRN_INT8_VALUE(y));\
+    break;\
+  case GRN_DB_UINT8 :\
+    r = (x_ op GRN_UINT8_VALUE(y));\
+    break;\
+  case GRN_DB_INT16 :\
+    r = (x_ op GRN_INT16_VALUE(y));\
+    break;\
+  case GRN_DB_UINT16 :\
+    r = (x_ op GRN_UINT16_VALUE(y));\
+    break;\
   case GRN_DB_INT32 :\
     r = (x_ op GRN_INT32_VALUE(y));\
     break;\
@@ -1306,6 +1318,30 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
 
 #define DO_COMPARE(x,y,r,op) {\
   switch (x->header.domain) {\
+  case GRN_DB_INT8 :\
+    {\
+      int8_t x_ = GRN_INT8_VALUE(x);\
+      DO_COMPARE_SUB(op);\
+    }\
+    break;\
+  case GRN_DB_UINT8 :\
+    {\
+      uint8_t x_ = GRN_UINT8_VALUE(x);\
+      DO_COMPARE_SUB(op);\
+    }\
+    break;\
+  case GRN_DB_INT16 :\
+    {\
+      int16_t x_ = GRN_INT16_VALUE(x);\
+      DO_COMPARE_SUB(op);\
+    }\
+    break;\
+  case GRN_DB_UINT16 :\
+    {\
+      uint16_t x_ = GRN_UINT16_VALUE(x);\
+      DO_COMPARE_SUB(op);\
+    }\
+    break;\
   case GRN_DB_INT32 :\
     {\
       int32_t x_ = GRN_INT32_VALUE(x);\
