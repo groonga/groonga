@@ -25,7 +25,7 @@
 * 不正な関数呼び出しをチェックするようにした。#596
 * テキストから数値へのキャスト処理を強化。#612, #613
   （Itagaki Takahiroさんが報告）
-* クラインとモードでの--fileオプションのサポート。#578
+* クライアントモードでの--fileオプションのサポート。#578
 * :ref:`spec_search` の挙動を動的に変更する``--match-escalation-threashold``
   起動オプションと``--match_escalation_threshold``selectオプションを追加。 #628
 
