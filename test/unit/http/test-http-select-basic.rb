@@ -328,6 +328,19 @@ module HTTPSelectBasicTests
                   :n_hits => records.size)
   end
 
+  def test_sortby_with_invalid_key
+    create_user_id_table
+    records = register_users((0...10).to_a.shuffle)
+
+    response = get(command_path(:select,
+                                :table => "user_id",
+                                :sortby => "-_id,+_-key"))
+    assert_error_response(Result::INVALID_ARGUMENT,
+                          "invalid sort key: <_-key>(<-_id,+_-key>)",
+                          response,
+                          :content_type => "application/json")
+  end
+
   def test_offset
     create_user_id_table
     records = register_users

@@ -17,6 +17,7 @@
 
 require 'groonga-test-utils'
 require 'net/http'
+require 'cgi'
 require 'json'
 
 module GroongaHTTPTestUtils
@@ -53,7 +54,7 @@ module GroongaHTTPTestUtils
       if value.nil?
         nil
       else
-        "#{key}=#{URI.escape(value.to_s)}"
+        "#{key}=#{CGI.escape(value.to_s)}"
       end
     end.compact.join("&")
   end
