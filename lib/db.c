@@ -1940,6 +1940,12 @@ grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc)
     case GRN_CURSOR_TABLE_VIEW :
       id = grn_view_cursor_next(ctx, (grn_view_cursor *)tc);
       break;
+    case GRN_CURSOR_COLUMN_INDEX :
+      {
+        grn_posting *ip = grn_index_cursor_next(ctx, (grn_obj *)tc, NULL);
+        if (ip) { id = ip->rid; }
+      }
+      break;
     }
   }
   GRN_API_RETURN(id);
