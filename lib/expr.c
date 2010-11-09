@@ -2158,43 +2158,49 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                                  right_expression_check,\
                                                  text_operation)        \
 {                                                                       \
-  grn_obj *value, *casted_value, *variable_value, *var;                 \
+  grn_obj *value, *var, *res;                                           \
   if (code->value) {                                                    \
     value = code->value;                                                \
+    POP1ALLOC1(var, res);                                               \
   } else {                                                              \
-    POP1(value);                                                        \
+    POP2ALLOC1(var, value, res);                                        \
   }                                                                     \
-  value = GRN_OBJ_RESOLVE(ctx, value);                                  \
-  POP1(var);                                                            \
   if (var->header.type == GRN_PTR &&                                    \
       GRN_BULK_VSIZE(var) == (sizeof(grn_obj *) + sizeof(grn_id))) {    \
     grn_obj *col = GRN_PTR_VALUE(var);                                  \
     grn_id rid = *(grn_id *)(GRN_BULK_HEAD(var) + sizeof(grn_obj *));   \
+    grn_obj variable_value, casted_value;                               \
+    grn_id domain;                                                      \
                                                                         \
-    ALLOC1(res);                                                        \
-    ALLOC1(variable_value);                                             \
-    ALLOC1(casted_value);                                               \
-    grn_obj_reinit(ctx, variable_value, col->header.domain, 0);         \
-    grn_obj_get_value(ctx, col, rid, variable_value);                   \
+    value = GRN_OBJ_RESOLVE(ctx, value);                                \
                                                                         \
-    casted_value->header.type = GRN_BULK;                               \
-    casted_value->header.domain = variable_value->header.domain;        \
-    if (grn_obj_cast(ctx, value, casted_value, GRN_FALSE)) {            \
+    domain = grn_obj_get_range(ctx, col);                               \
+    GRN_OBJ_INIT(&variable_value, GRN_BULK, 0, domain);                 \
+    grn_obj_get_value(ctx, col, rid, &variable_value);                  \
+                                                                        \
+    GRN_OBJ_INIT(&casted_value, GRN_BULK, 0, domain);                   \
+    if (grn_obj_cast(ctx, value, &casted_value, GRN_FALSE)) {           \
       ERR(GRN_INVALID_ARGUMENT, "invalid value: string");               \
+      GRN_OBJ_FIN(ctx, &variable_value);                                \
+      GRN_OBJ_FIN(ctx, &casted_value);                                  \
+      POP1(res);                                                        \
       goto exit;                                                        \
     }                                                                   \
-    res->header.type = GRN_BULK;                                        \
-    res->header.domain = variable_value->header.domain;                 \
-    ARITHMETIC_OPERATION_DISPATCH(variable_value, casted_value, res,    \
+    grn_obj_reinit(ctx, res, domain, 0);                                \
+    ARITHMETIC_OPERATION_DISPATCH((&variable_value), (&casted_value),   \
+                                  res,                                  \
                                   integer32_operation,                  \
                                   integer64_operation,                  \
                                   float_operation,                      \
                                   left_expression_check,                \
                                   right_expression_check,               \
                                   text_operation,);                     \
-    POP1(casted_value);                                                 \
-    POP1(variable_value);                                               \
     grn_obj_set_value(ctx, col, rid, res, GRN_OBJ_SET);                 \
+    GRN_OBJ_FIN(ctx, (&variable_value));                                \
+    GRN_OBJ_FIN(ctx, (&casted_value));                                  \
+  } else {                                                              \
+    ERR(GRN_INVALID_ARGUMENT, "left hand expression isn't column.");    \
+    POP1(res);                                                          \
   }                                                                     \
 }
 

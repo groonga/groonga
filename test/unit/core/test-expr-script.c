@@ -584,6 +584,10 @@ data_arithmetic_operator_minus_assign(void)
             gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
             "size <= 9 && ((size -= \"4\") || 1) && size == 5");
 
+  ADD_DATUM("integer -= expression",
+            gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
+            "size <= 9 && ((size -= (3 + 1)) || 1) && size == 5");
+
   ADD_DATUM("float -= float",
             gcut_list_string_new("fuga fuga", "hoge hoge", NULL),
             "size_in_float <= 9.1 && "
