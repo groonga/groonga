@@ -472,3 +472,36 @@ test_weight_match(void)
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
 }
+
+void
+test_multi_geo_in_circle(void)
+{
+  gdouble yurakucho_latitude = 35.67487;
+  gdouble yurakucho_longitude = 139.76352;
+  gint distance = 3 * 1000;
+
+  cut_assert_equal_string(
+    "[[[1],"
+    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
+    "[\"たいやき神田達磨 八重洲店\",10030]"
+    "]]",
+    send_command(
+      cut_take_printf(
+        "select Shops "
+        "--sortby '-_score, +name' "
+        "--output_columns 'name, _score' "
+        "--match_columns 'name * 1000 || tags * 10000' "
+        "--query たいやき "
+        "--filter '"
+        "  (geo_in_circle(location1, \"%s\", %d) ||"
+        "   geo_in_circle(location2, \"%s\", %d) ||"
+        "   geo_in_circle(location3, \"%s\", %d))' "
+        "--scorer '_score = _score - geo_distance(location, \"%s\")'",
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        distance,
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        distance,
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        distance,
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+}
