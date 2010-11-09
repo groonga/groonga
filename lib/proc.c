@@ -984,18 +984,19 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
   if ((fd = open(path, O_RDONLY|O_NOFOLLOW)) == -1) {
     switch (errno) {
     case EACCES :
-      ERR(GRN_OPERATION_NOT_PERMITTED, "request is not allowed.");
+      ERR(GRN_OPERATION_NOT_PERMITTED, "request is not allowed: <%s>", path);
       break;
     case ENOENT :
-      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY, "no such file.");
+      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY, "no such file: <%s>", path);
       break;
 #ifndef WIN32
     case ELOOP :
-      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY, "symbolic link is not allowed.");
+      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+          "symbolic link is not allowed: <%s>", path);
       break;
 #endif /* WIN32 */
     default :
-      ERR(GRN_UNKNOWN_ERROR, "open() failed(errno: %d).", errno);
+      ERR(GRN_UNKNOWN_ERROR, "open() failed(errno: %d): <%s>", errno, path);
       break;
     }
     return 0;
@@ -1013,7 +1014,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
     }
     GRN_FREE(buf);
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "cannot stat file");
+    ERR(GRN_INVALID_ARGUMENT, "cannot stat file: <%s>", path);
   }
 exit :
   close(fd);
