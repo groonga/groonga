@@ -121,6 +121,9 @@ GRN_API grn_rc grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
 #define GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET        (0x00<<1)
 #define GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY  (0x01<<1)
 
+#include <stdio.h>
+GRN_API grn_rc grn_text_fgets(grn_ctx *ctx, grn_obj *buf, FILE *fp);
+
 #ifdef __cplusplus
 }
 #endif
