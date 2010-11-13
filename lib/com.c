@@ -973,7 +973,8 @@ exit :
   GRN_API_RETURN(ctx->rc);
 }
 
-grn_hash *grn_edges;
+
+grn_hash *grn_edges = NULL;
 void (*grn_dispatcher)(grn_ctx *ctx, grn_edge *edge);
 
 void
