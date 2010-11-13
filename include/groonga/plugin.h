@@ -28,7 +28,7 @@ extern "C" {
 #define GRN_PLUGIN_FIN grn_plugin_impl_fin
 
 #if defined(_WIN32) || defined(_WIN64)
-#  define GRN_PLUGIN_EXPORT __declspec(dllexpoert)
+#  define GRN_PLUGIN_EXPORT __declspec(dllexport)
 #else /* defined(_WIN32) || defined(_WIN64) */
 #  define GRN_PLUGIN_EXPORT
 #endif /* defined(_WIN32) || defined(_WIN64) */
