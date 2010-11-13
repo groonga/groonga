@@ -104,7 +104,7 @@ sub common_header()
   ts.write PLUGINS_DIR
   ts.write "\"""" \"  + vbLf
 
-  ts.write "        -DGROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD=""0"" \" + vbLf
+  ts.write "        -DGROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD=""0"" \" + vbLf
 
   ts.write "        -DGROONGA_LOG_PATH=""\"""
   ts.write LOG_PATH
