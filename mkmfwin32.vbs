@@ -8,9 +8,9 @@ strarch = shell.expandenvironmentstrings("%PROCESSOR_ARCHITECTURE%")
 msgbox strarch
 
 
-dim MODULES_DIR, MODULES_DIR2, INSTALL_DIR, LOG_PATH, MECAB_LIB, CONFIG_PATH,DOCUMENT_ROOT
-MODULES_DIR = "c:\\groonga\\modules"
-MODULES_DIR2 = "c:\groonga\modules"
+dim PLUGINS_DIR, PLUGINS_DIR2, INSTALL_DIR, LOG_PATH, MECAB_LIB, CONFIG_PATH,DOCUMENT_ROOT
+PLUGINS_DIR = "c:\\groonga\\plugins"
+PLUGINS_DIR2 = "c:\groonga\plugins"
 INSTALL_DIR = "c:\windows\system32"
 LOG_PATH = "c:\\groonga\\log\\groonga.log"
 MECAB_LIB = "c:\program files\mecab\sdk\libmecab.lib"
@@ -35,7 +35,7 @@ use_mecab = 1
 
 'object files
 dim objs
-objs = array("com.obj", "ctx.obj", "db.obj", "hash.obj", "ii.obj", "io.obj", "nfkc.obj", "pat.obj", "ql.obj", "query.obj", "scm.obj", "snip.obj", "store.obj", "str.obj", "token.obj", "proc.obj", "module.obj", "util.obj", "expr.obj",  "geo.obj", "output.obj")
+objs = array("com.obj", "ctx.obj", "db.obj", "hash.obj", "ii.obj", "io.obj", "nfkc.obj", "pat.obj", "ql.obj", "query.obj", "scm.obj", "snip.obj", "store.obj", "str.obj", "token.obj", "proc.obj", "plugin.obj", "util.obj", "expr.obj",  "geo.obj", "output.obj")
 
 dim fs
 set fs = wscript.createobject("scripting.filesystemobject")
@@ -99,9 +99,9 @@ sub common_header()
   ts.write "        -DNO_ZLIB \" + vbLf
   ts.write "        -DUSE_SELECT \" + vbLf
   ts.write "        -DGROONGA_DEFAULT_ENCODING=""\""utf-8\"""" \" + vbLf
-  ts.write "        -DGRN_MODULE_SUFFIX=""\"".dll\"""" \" + vbLf
-  ts.write "        -DMODULES_DIR=""\"""
-  ts.write MODULES_DIR
+  ts.write "        -DGRN_PLUGIN_SUFFIX=""\"".dll\"""" \" + vbLf
+  ts.write "        -DPLUGINS_DIR=""\"""
+  ts.write PLUGINS_DIR
   ts.write "\"""" \"  + vbLf
 
   ts.write "        -DGROONGA_DEFAULT_QUERY_ESCALATION_THRESHOLD=""0"" \" + vbLf
@@ -206,8 +206,8 @@ ts.write "        $(DEL) *.obj *.dll *.pdb *.exp  *.i" + vbLf
 ts.close
 msgbox "src/Makefile.msvc updated"
 
-'Makefile for modules\suggest
-set ts = fs.opentextfile("modules\suggest\Makefile.msvc", 2, True)
+'Makefile for plugins\suggest
+set ts = fs.opentextfile("plugins\suggest\Makefile.msvc", 2, True)
 ts.write "DEL = del" + vbLf
 ts.write "CC = cl.exe" + vbLf
 ts.write "LINK=link.exe" + vbLf
@@ -245,28 +245,28 @@ ts.write vbLf
 
 ts.write "install:" + vbLf
 ts.write "        if not exist "
-ts.write MODULES_DIR2
+ts.write PLUGINS_DIR2
 ts.write "\suggest "
 ts.write "md "
-ts.write MODULES_DIR2
+ts.write PLUGINS_DIR2
 ts.write "\suggest" + vblf
 
 ts.write "        copy suggest.dll "
-ts.write MODULES_DIR2
+ts.write PLUGINS_DIR2
 ts.write "\suggest" + vblf
 
 ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp  *.i" + vbLf
 
 ts.close
-msgbox "modules/suggest/Makefile.msvc updated"
+msgbox "plugins/suggest/Makefile.msvc updated"
 
-'Makefile for modules\tokenizers
+'Makefile for plugins\tokenizers
 if use_mecab = 0 then
   wscript.quit
 end if
 
-set ts = fs.opentextfile("modules\tokenizers\Makefile.msvc", 2, True)
+set ts = fs.opentextfile("plugins\tokenizers\Makefile.msvc", 2, True)
 ts.write "DEL = del" + vbLf
 ts.write "CC = cl.exe" + vbLf
 ts.write "LINK=link.exe" + vbLf
@@ -306,18 +306,18 @@ ts.write vbLf
 
 ts.write "install:" + vbLf
 ts.write "        if not exist "
-ts.write MODULES_DIR2
+ts.write PLUGINS_DIR2
 ts.write "\tokenizer "
 ts.write "md "
-ts.write MODULES_DIR2
+ts.write PLUGINS_DIR2
 ts.write "\tokenizer" + vblf
 
 ts.write "        copy mecab.dll "
-ts.write MODULES_DIR2
+ts.write PLUGINS_DIR2
 ts.write "\tokenizer" + vblf
 
 ts.write "clean:" + vbLf
 ts.write "        $(DEL) *.obj *.dll *.pdb *.exp  *.i" + vbLf
 
 ts.close
-msgbox "modules/tokenizers/Makefile.msvc updated"
+msgbox "plugins/tokenizers/Makefile.msvc updated"
