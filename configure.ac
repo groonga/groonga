@@ -558,7 +558,11 @@ if test "x$with_mecab" = "xyes"; then
   AC_ARG_WITH(mecab-config,
     [AS_HELP_STRING([--with-mecab-config=PATH],
       [set mecab-config location. [default=auto-detect]])],
-    [AC_CHECK_FILE("$withval", MECAB_CONFIG="$withval", MECAB_CONFIG=no)],
+    [if test "$cross_compiling" = "yes"; then
+       MECAB_CONFIG="$withval"
+     else
+       AC_CHECK_FILE("$withval", MECAB_CONFIG="$withval", MECAB_CONFIG=no)
+     fi],
     [AC_PATH_PROG(MECAB_CONFIG, mecab-config, no)])
   if test "x$MECAB_CONFIG" = "xno"; then
     with_mecab="no"
