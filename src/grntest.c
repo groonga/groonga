@@ -111,7 +111,6 @@ grn_obj *grntest_db = NULL;
 
 #define BUF_LEN 1024
 #define MAX_PATH_LEN 256
-#define LOGBUF_LEN 5000000
 
 #define J_DO_LOCAL  1  /* do_local */
 #define J_DO_GQTP   2  /* do_gqtp */
@@ -130,7 +129,6 @@ static char grntest_username[BUF_LEN];
 static char grntest_scriptname[BUF_LEN];
 static char grntest_date[BUF_LEN];
 static char grntest_serverhost[BUF_LEN];
-static char grntest_log_tmpbuf[LOGBUF_LEN];
 static int grntest_serverport;
 static const char *grntest_dbpath;
 
@@ -863,32 +861,28 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
         fflush(grntest_job[grntest_task[task_id].job_id].outputlog);
       }
       if (test_p(grntest_task[task_id].jobtype)) {
-        char logbuf[LOGBUF_LEN];
-        int loglen;
-        FILE *outfp = grntest_job[grntest_task[task_id].job_id].outputlog;
-        logbuf[LOGBUF_LEN-2] = '\0';
-        if (fgets(logbuf, LOGBUF_LEN,
-                  grntest_job[grntest_task[task_id].job_id].inputlog) == NULL) {
-          fprintf(stderr, "Cannot get input-log\n");
+        grn_obj log;
+        FILE *input;
+        FILE *output;
+        GRN_TEXT_INIT(&log, 0);
+        input = grntest_job[grntest_task[task_id].job_id].inputlog;
+        output = grntest_job[grntest_task[task_id].job_id].outputlog;
+        if (grn_text_fgets(ctx, &log, input)) {
+          GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
-        if (logbuf[LOGBUF_LEN-2] != '\0') {
-          fprintf(stderr, "too long line input-log: <%s>: <%.*s>\n",
-                  command, LOGBUF_LEN - 2, logbuf);
-          error_exit_in_thread(56);
-        }
-        loglen = strlen(logbuf);
-        loglen--;
-        logbuf[loglen] = '\0';
 
-        if (diff_result(logbuf, loglen, res, res_len)) {
-          fprintf(outfp, "DIFF:command:%s\n", command);
-          fprintf(outfp, "DIFF:result:");
-          fwrite(res, 1, res_len, outfp);
-          fputc('\n', outfp);
-          fprintf(outfp, "DIFF:expect:%s\n", logbuf);
-          fflush(outfp);
+        if (diff_result(GRN_TEXT_VALUE(&log), GRN_TEXT_LEN(&log),
+                        res, res_len)) {
+          fprintf(output, "DIFF:command:%s\n", command);
+          fprintf(output, "DIFF:result:");
+          fwrite(res, 1, res_len, output);
+          fputc('\n', output);
+          fprintf(output, "DIFF:expect:%.*s\n",
+                  GRN_TEXT_LEN(&log), GRN_TEXT_VALUE(&log));
+          fflush(output);
         }
+        GRN_OBJ_FIN(ctx, &log);
       }
       grn_obj_close(ctx, &end_time);
       ret = 1;
@@ -949,32 +943,28 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
         fflush(grntest_job[grntest_task[task_id].job_id].outputlog);
       }
       if (test_p(grntest_task[task_id].jobtype)) {
-        char logbuf[LOGBUF_LEN];
-        int loglen;
-        FILE *outfp = grntest_job[grntest_task[task_id].job_id].outputlog;
-        logbuf[LOGBUF_LEN-2] = '\0';
-        if (fgets(logbuf, LOGBUF_LEN,
-                  grntest_job[grntest_task[task_id].job_id].inputlog) == NULL) {
-          fprintf(stderr, "Cannot get inputlog\n");
+        grn_obj log;
+        FILE *input;
+        FILE *output;
+        GRN_TEXT_INIT(&log, 0);
+        input = grntest_job[grntest_task[task_id].job_id].inputlog;
+        output = grntest_job[grntest_task[task_id].job_id].outputlog;
+        if (!grn_text_fgets(ctx, &log, input)) {
+          GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
-        if (logbuf[LOGBUF_LEN-2] != '\0') {
-          fprintf(stderr, "too long line input-log: <%s>: <%.*s>\n",
-                  command, LOGBUF_LEN - 2, logbuf);
-          error_exit_in_thread(56);
-        }
-        loglen = strlen(logbuf);
-        loglen--;
-        logbuf[loglen] = '\0';
 
-        if (diff_result(logbuf, loglen, res, res_len)) {
-          fprintf(outfp, "DIFF:command:%s\n", command);
-          fprintf(outfp, "DIFF:result:");
-          fwrite(res, 1, res_len, outfp);
-          fputc('\n', outfp);
-          fprintf(outfp, "DIFF:expect:%s\n", logbuf);
-          fflush(outfp);
+        if (diff_result(GRN_TEXT_VALUE(&log), GRN_TEXT_LEN(&log),
+                        res, res_len)) {
+          fprintf(output, "DIFF:command:%s\n", command);
+          fprintf(output, "DIFF:result:");
+          fwrite(res, 1, res_len, output);
+          fputc('\n', output);
+          fprintf(output, "DIFF:expect:%.*s\n",
+                  GRN_TEXT_LEN(&log), GRN_TEXT_VALUE(&log));
+          fflush(output);
         }
+        GRN_OBJ_FIN(ctx, &log);
       }
       grn_obj_close(ctx, &end_time);
       break;
@@ -1020,7 +1010,7 @@ load_command_p(char *command)
 
 static
 int
-worker_sub(grn_ctx *ctx, int task_id)
+worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
 {
   int i, load_mode, load_count;
   grn_obj end_time;
@@ -1151,20 +1141,17 @@ worker_sub(grn_ctx *ctx, int task_id)
         strcat(tmpbuf, ",");
       }
     }
-    strcat(grntest_log_tmpbuf, tmpbuf);
-    if (grntest_log_tmpbuf[LOGBUF_LEN - 2] != '\0') {
-      error_exit_in_thread(1);
-    }
+    GRN_TEXT_PUTS(ctx, log, tmpbuf);
     if (grntest_jobdone == grntest_jobnum) {
       if (grntest_outtype == OUT_TSV) {
-        fprintf(grntest_logfp, "%s", grntest_log_tmpbuf);
+        fprintf(grntest_logfp, "%.*s", GRN_TEXT_LEN(log), GRN_TEXT_VALUE(log));
       } else {
         if (grntest_detail_on) {
           fseek(grntest_logfp, -2, SEEK_CUR);
           fprintf(grntest_logfp, "], \n");
         }
         fprintf(grntest_logfp, "\"summary\" :[");
-        fprintf(grntest_logfp, "%s", grntest_log_tmpbuf);
+        fprintf(grntest_logfp, "%.*s", GRN_TEXT_LEN(log), GRN_TEXT_VALUE(log));
         fprintf(grntest_logfp, "]");
       }
       fflush(grntest_logfp);
@@ -1178,6 +1165,7 @@ worker_sub(grn_ctx *ctx, int task_id)
 
 typedef struct _grntest_worker {
   grn_ctx *ctx;
+  grn_obj *log;
   int task_id;
 } grntest_worker;
 
@@ -1188,7 +1176,7 @@ __stdcall
 worker(void *val)
 {
   grntest_worker *worker = val;
-  worker_sub(worker->ctx, worker->task_id);
+  worker_sub(worker->ctx, worker->log, worker->task_id);
   return 0;
 }
 #else
@@ -1197,14 +1185,14 @@ void *
 worker(void *val)
 {
   grntest_worker *worker = val;
-  worker_sub(worker->ctx, worker->task_id);
+  worker_sub(worker->ctx, worker->log, worker->task_id);
   return NULL;
 }
 #endif /* WIN32 */
 
 #ifdef WIN32
 int
-thread_main(grn_ctx *ctx, int num)
+thread_main(grn_ctx *ctx, grn_obj *log, int num)
 {
   int  i;
   int  ret;
@@ -1214,6 +1202,7 @@ thread_main(grn_ctx *ctx, int num)
   for (i = 0; i < num; i++) {
     workers[i] = GRN_MALLOC(sizeof(workers[i]));
     workers[i]->ctx = ctx;
+    workers[i]->log = log;
     workers[i]->task_id = i;
     pthread[i] = (HANDLE)_beginthreadex(NULL, 0, worker, (void *)workers[i],
                                         0, NULL);
@@ -1237,7 +1226,7 @@ thread_main(grn_ctx *ctx, int num)
 }
 #else
 int
-thread_main(grn_ctx *ctx, int num)
+thread_main(grn_ctx *ctx, grn_obj *log, int num)
 {
   intptr_t i;
   int ret;
@@ -1247,6 +1236,7 @@ thread_main(grn_ctx *ctx, int num)
   for (i = 0; i < num; i++) {
     workers[i] = GRN_MALLOC(sizeof(workers[i]));
     workers[i]->ctx = ctx;
+    workers[i]->log = log;
     workers[i]->task_id = i;
     ret = pthread_create(&pthread[i], NULL, worker, (void *)workers[i]);
     if (ret) {
@@ -2032,9 +2022,12 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     fflush(grntest_logfp);
   }
 
-  grntest_log_tmpbuf[0] = '\0';
-  grntest_log_tmpbuf[LOGBUF_LEN-2] = '\0';
-  thread_main(ctx, task_num);
+  {
+    grn_obj log;
+    GRN_TEXT_INIT(&log, 0);
+    thread_main(ctx, &log, task_num);
+    GRN_OBJ_FIN(ctx, &log);
+  }
 
   for (i = 0; i < task_num; i++) {
     if (grntest_owndb[i]) {
