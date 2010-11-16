@@ -309,7 +309,7 @@ default_plugins_dir(void)
     DWORD dll_filename_size;
     dll_filename_size = GetModuleFileNameW(NULL, dll_filename, MAX_PATH);
     if (dll_filename_size == 0) {
-      win32_plugins_dir = GROONGA_PLUGINS_DIR;
+      win32_plugins_dir = GRN_PLUGINS_DIR;
     } else {
       char *plugins_dir;
       DWORD ansi_dll_filename_size;
@@ -317,10 +317,10 @@ default_plugins_dir(void)
         WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
                             NULL, 0, NULL, NULL);
       if (ansi_dll_filename_size == 0) {
-        win32_plugins_dir = GROONGA_PLUGINS_DIR;
+        win32_plugins_dir = GRN_PLUGINS_DIR;
       } else {
         char *path;
-        const char *relative_path = GROONGA_RELATIVE_PLUGINS_DIR;
+        const char *relative_path = GRN_RELATIVE_PLUGINS_DIR;
         plugins_dir = malloc(ansi_dll_filename_size +
                              strlen(relative_path));
         WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
@@ -355,7 +355,7 @@ default_plugins_dir(void)
   return win32_plugins_dir;
 }
 #else /* WIN32 */
-#  define default_plugins_dir() GROONGA_PLUGINS_DIR;
+#  define default_plugins_dir() GRN_PLUGINS_DIR;
 #endif /* WIN32 */
 
 grn_rc

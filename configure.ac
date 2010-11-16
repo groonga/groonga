@@ -170,25 +170,25 @@ int main(int argc, char **argv)
 AC_ARG_WITH(log_path,
   [AS_HELP_STRING([--with-log-path=PATH],
     [specify groonga log path.])],
-  groonga_log_path="$withval",
-  groonga_log_path="\$(localstatedir)/log/\$(PACKAGE_NAME)/\$(PACKAGE_NAME).log")
-AC_SUBST(groonga_log_path)
+  grn_log_path="$withval",
+  grn_log_path="\$(localstatedir)/log/\$(PACKAGE_NAME)/\$(PACKAGE_NAME).log")
+AC_SUBST(grn_log_path)
 
 # default encoding
 AC_ARG_WITH(default_encoding,
   [AS_HELP_STRING([--with-default-encoding=ENCODING],
     [specify groonga default encoding(euc/sjis/utf8/latin1/koi8r/none)])],
-  GROONGA_DEFAULT_ENCODING="$withval",
-  GROONGA_DEFAULT_ENCODING="utf8")
-AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_ENCODING, "$GROONGA_DEFAULT_ENCODING", "specified default encoding")
+  GRN_DEFAULT_ENCODING="$withval",
+  GRN_DEFAULT_ENCODING="utf8")
+AC_DEFINE_UNQUOTED(GRN_DEFAULT_ENCODING, "$GRN_DEFAULT_ENCODING", "specified default encoding")
 
 # default match escalation threshold
 AC_ARG_WITH(match_escalation_threshold,
   [AS_HELP_STRING([--with-match-escalation-threshold=NUMBER],
     [specify groonga default match escalation threshold])],
-  GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD="$withval",
-  GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD="0")
-AC_DEFINE_UNQUOTED(GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD, "specified match escalation threshold")
+  GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD="$withval",
+  GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD="0")
+AC_DEFINE_UNQUOTED(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, "specified match escalation threshold")
 
 AC_CHECK_LIB(m, log, [M_LIBS="-lm"], [AC_MSG_ERROR("No libm found")])
 AC_CHECK_LIB(pthread, pthread_mutex_init,
@@ -699,13 +699,13 @@ examples_dictionarydir="\$(examplesdir)/dictionary"
 AC_SUBST(examples_dictionarydir)
 
 # flags for compile groonga
-GROONGA_CFLAGS=""
-AC_SUBST(GROONGA_CFLAGS)
-GROONGA_DEFS=""
-GROONGA_DEFS="$GROONGA_DEFS -DGROONGA_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
-GROONGA_DEFS="$GROONGA_DEFS -DGROONGA_RELATIVE_PLUGINS_DIR=\\\"\"lib/\$(relative_pluginsdir)\"\\\""
-GROONGA_DEFS="$GROONGA_DEFS -DGROONGA_LOG_PATH=\\\"\"\$(groonga_log_path)\"\\\""
-AC_SUBST(GROONGA_DEFS)
+GRN_CFLAGS=""
+AC_SUBST(GRN_CFLAGS)
+GRN_DEFS=""
+GRN_DEFS="$GRN_DEFS -DGRN_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_PLUGINS_DIR=\\\"\"lib/\$(relative_pluginsdir)\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_LOG_PATH=\\\"\"\$(grn_log_path)\"\\\""
+AC_SUBST(GRN_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $RT_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")

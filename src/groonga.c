@@ -135,7 +135,7 @@ show_version(void)
 #ifdef HOST_CPU
   printf("%s,", HOST_CPU);
 #endif
-  printf("%s", GROONGA_DEFAULT_ENCODING);
+  printf("%s", GRN_DEFAULT_ENCODING);
 
   printf(",match-escalation-threshold=%" GRN_FMT_LLD,
          grn_get_default_match_escalation_threshold());

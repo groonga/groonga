@@ -287,7 +287,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   if (ctx == &grn_gctx) {
     ctx->impl->match_escalation_threshold =
-      GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD;
+      GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
   } else {
     ctx->impl->match_escalation_threshold =
       grn_get_default_match_escalation_threshold();
@@ -504,7 +504,7 @@ grn_ctx_fin(grn_ctx *ctx)
 }
 
 grn_timeval grn_starttime;
-const char *grn_log_path = GROONGA_LOG_PATH;
+const char *grn_log_path = GRN_LOG_PATH;
 const char *grn_qlog_path = NULL;
 
 static FILE *default_logger_fp = NULL;
@@ -604,7 +604,7 @@ grn_init(void)
   ctx->next = ctx;
   ctx->prev = ctx;
   grn_ctx_init(ctx, 0);
-  ctx->encoding = grn_strtoenc(GROONGA_DEFAULT_ENCODING);
+  ctx->encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
   grn_true = &grn_true_;
   grn_false = &grn_false_;
   grn_null = &grn_null_;
@@ -706,7 +706,7 @@ grn_set_default_encoding(grn_encoding encoding)
 {
   switch (encoding) {
   case GRN_ENC_DEFAULT :
-    grn_gctx.encoding = grn_strtoenc(GROONGA_DEFAULT_ENCODING);
+    grn_gctx.encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
     return GRN_SUCCESS;
   case GRN_ENC_NONE :
   case GRN_ENC_EUC_JP :
@@ -833,7 +833,7 @@ grn_ctx_get_match_escalation_threshold(grn_ctx *ctx)
   if (ctx->impl) {
     return ctx->impl->match_escalation_threshold;
   } else {
-    return GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD;
+    return GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
   }
 }
 

@@ -446,7 +446,7 @@ grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
   q->max_cells = max_cells;
   q->cur_cell = 0;
   q->cur_expr = 0;
-  q->escalation_threshold = GROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD;
+  q->escalation_threshold = GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
   q->escalation_decaystep = DEFAULT_DECAYSTEP;
   q->weight_offset = 0;
   q->opt.weight_vector = NULL;
