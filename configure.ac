@@ -696,9 +696,13 @@ examples_dictionarydir="\$(examplesdir)/dictionary"
 AC_SUBST(examples_dictionarydir)
 
 # flags for compile groonga
+GROONGA_CFLAGS=""
+AC_SUBST(GROONGA_CFLAGS)
+GROONGA_DEFS=""
+GROONGA_DEFS="$GROONGA_DEFS -DPLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
+GROONGA_DEFS="$GROONGA_DEFS -DGROONGA_LOG_PATH=\\\"\"\$(groonga_log_path)\"\\\""
+AC_SUBST(GROONGA_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
-CFLAGS="$CFLAGS -DPLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
-CFLAGS="$CFLAGS -DGROONGA_LOG_PATH=\\\"\"\$(groonga_log_path)\"\\\""
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $RT_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 

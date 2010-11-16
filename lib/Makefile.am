@@ -1,9 +1,9 @@
 lib_LTLIBRARIES = libgroonga.la
 
 include $(top_srcdir)/version.sh
-AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS)
+AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GROONGA_CFLAGS)
 DEFAULT_INCLUDES = -I$(top_builddir) -I$(top_srcdir)/include
-DEFS += -D_REENTRANT -DGROONGA_VERSION=\"$(GROONGA_VERSION)\"
+DEFS += -D_REENTRANT -DGROONGA_VERSION=\"$(GROONGA_VERSION)\" $(GROONGA_DEFS)
 
 libgroonga_la_SOURCES = io.c str.c nfkc.c snip.c query.c store.c com.c ql.c scm.c ctx.c hash.c db.c pat.c ii.c token.c proc.c expr.c util.c plugin.c output.c geo.c
 
