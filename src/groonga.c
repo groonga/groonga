@@ -2194,7 +2194,7 @@ main(int argc, char **argv)
     if (admin_html_path) {
       grn_document_root = admin_html_path;
     } else {
-      grn_document_root = DEFAULT_DOCUMENT_ROOT;
+      grn_document_root = GRN_DEFAULT_DOCUMENT_ROOT;
     }
   }
   if (protocol) {

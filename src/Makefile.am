@@ -2,7 +2,7 @@ bin_PROGRAMS = groonga grntest
 noinst_PROGRAMS = grnslap
 
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
-DEFS += $(GRN_CFLAGS) -DDEFAULT_DOCUMENT_ROOT=\"$(pkgdatadir)/admin_html\"
+DEFS += $(GRN_DEFS)
 
 AM_LDFLAGS = -no-undefined
 
