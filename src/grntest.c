@@ -879,7 +879,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
           fwrite(res, 1, res_len, output);
           fputc('\n', output);
           fprintf(output, "DIFF:expect:%.*s\n",
-                  GRN_TEXT_LEN(&log), GRN_TEXT_VALUE(&log));
+                  (int)GRN_TEXT_LEN(&log), GRN_TEXT_VALUE(&log));
           fflush(output);
         }
         GRN_OBJ_FIN(ctx, &log);
@@ -961,7 +961,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
           fwrite(res, 1, res_len, output);
           fputc('\n', output);
           fprintf(output, "DIFF:expect:%.*s\n",
-                  GRN_TEXT_LEN(&log), GRN_TEXT_VALUE(&log));
+                  (int)GRN_TEXT_LEN(&log), GRN_TEXT_VALUE(&log));
           fflush(output);
         }
         GRN_OBJ_FIN(ctx, &log);
@@ -1144,14 +1144,16 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
     GRN_TEXT_PUTS(ctx, log, tmpbuf);
     if (grntest_jobdone == grntest_jobnum) {
       if (grntest_outtype == OUT_TSV) {
-        fprintf(grntest_logfp, "%.*s", GRN_TEXT_LEN(log), GRN_TEXT_VALUE(log));
+        fprintf(grntest_logfp, "%.*s",
+                (int)GRN_TEXT_LEN(log), GRN_TEXT_VALUE(log));
       } else {
         if (grntest_detail_on) {
           fseek(grntest_logfp, -2, SEEK_CUR);
           fprintf(grntest_logfp, "], \n");
         }
         fprintf(grntest_logfp, "\"summary\" :[");
-        fprintf(grntest_logfp, "%.*s", GRN_TEXT_LEN(log), GRN_TEXT_VALUE(log));
+        fprintf(grntest_logfp, "%.*s",
+                (int)GRN_TEXT_LEN(log), GRN_TEXT_VALUE(log));
         fprintf(grntest_logfp, "]");
       }
       fflush(grntest_logfp);
