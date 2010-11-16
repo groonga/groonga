@@ -299,6 +299,65 @@ grn_db_register(grn_ctx *ctx, const char *path)
   GRN_API_RETURN(ctx->rc);
 }
 
+#ifdef WIN32
+static char *win32_plugins_dir = NULL;
+static const char *
+default_plugins_dir(void)
+{
+  if (!win32_plugins_dir) {
+    wchar_t dll_filename[MAX_PATH];
+    DWORD dll_filename_size;
+    dll_filename_size = GetModuleFileNameW(NULL, dll_filename, MAX_PATH);
+    if (dll_filename_size == 0) {
+      win32_plugins_dir = GROONGA_PLUGINS_DIR;
+    } else {
+      char *plugins_dir;
+      DWORD ansi_dll_filename_size;
+      ansi_dll_filename_size =
+        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
+                            NULL, 0, NULL, NULL);
+      if (ansi_dll_filename_size == 0) {
+        win32_plugins_dir = GROONGA_PLUGINS_DIR;
+      } else {
+        char *path;
+        const char *relative_path = GROONGA_RELATIVE_PLUGINS_DIR;
+        plugins_dir = malloc(ansi_dll_filename_size +
+                             strlen(relative_path));
+        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
+                            plugins_dir, ansi_dll_filename_size,
+                            NULL, NULL);
+        if ((path = strrchr(plugins_dir, '\\'))) {
+          *path = '\0';
+        }
+        path = strrchr(plugins_dir, '\\');
+        if (path && (strcasecmp(path + 1, "bin") == 0 ||
+                     strcasecmp(path + 1, "lib") == 0)) {
+          *path = '\0';
+        } else {
+          path = plugins_dir + strlen(plugins_dir);
+        }
+        *path = '\\';
+        path++;
+        while (*relative_path) {
+          if (*relative_path == '/') {
+            *path = '\\';
+          } else {
+            *path = *relative_path;
+          }
+          relative_path++;
+          path++;
+        }
+        *path = '\0';
+        win32_plugins_dir = plugins_dir;
+      }
+    }
+  }
+  return win32_plugins_dir;
+}
+#else /* WIN32 */
+#  define default_plugins_dir() GROONGA_PLUGINS_DIR;
+#endif /* WIN32 */
+
 grn_rc
 grn_db_register_by_name(grn_ctx *ctx, const char *name)
 {
@@ -308,7 +367,7 @@ grn_db_register_by_name(grn_ctx *ctx, const char *name)
 
   plugins_dir = getenv("GRN_PLUGINS_DIR");
   if (!plugins_dir) {
-    plugins_dir = PLUGINS_DIR;
+    plugins_dir = default_plugins_dir();
   }
   strcpy(path, plugins_dir);
   dir_last_char = plugins_dir[strlen(plugins_dir) - 1];

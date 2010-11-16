@@ -669,7 +669,10 @@ AC_MSG_CHECKING([for sphinx availablity])
 AC_MSG_RESULT($ac_sphinx_available (sphinx-build=$SPHINX_BUILD version=$sphinx_build_version required=$sphinx_required_version))
 
 # plugins check
-pluginsdir="\${libdir}/\$(PACKAGE)/plugins"
+relative_pluginsdir="\$(PACKAGE)/plugins"
+AC_SUBST(relative_pluginsdir)
+
+pluginsdir="\${libdir}/\$(relative_pluginsdir)"
 AC_SUBST(pluginsdir)
 
 tokenizer_pluginsdir="\${pluginsdir}/tokenizers"
@@ -699,7 +702,8 @@ AC_SUBST(examples_dictionarydir)
 GROONGA_CFLAGS=""
 AC_SUBST(GROONGA_CFLAGS)
 GROONGA_DEFS=""
-GROONGA_DEFS="$GROONGA_DEFS -DPLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
+GROONGA_DEFS="$GROONGA_DEFS -DGROONGA_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
+GROONGA_DEFS="$GROONGA_DEFS -DGROONGA_RELATIVE_PLUGINS_DIR=\\\"\"lib/\$(relative_pluginsdir)\"\\\""
 GROONGA_DEFS="$GROONGA_DEFS -DGROONGA_LOG_PATH=\\\"\"\$(groonga_log_path)\"\\\""
 AC_SUBST(GROONGA_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
