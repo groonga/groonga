@@ -1794,7 +1794,7 @@ set_cursor_common_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       if (!node0) { return GRN_FILE_CORRUPT; }
       if (!(k = pat_node_get_key(ctx, pat, node0))) { return GRN_FILE_CORRUPT; }
       {
-        uint32_t l = PAT_LEN(node);
+        uint32_t l = PAT_LEN(node0);
         if (memcmp(key, k, l)) { break; }
         if (min_size <= l) {
           push(c, id0, check);
