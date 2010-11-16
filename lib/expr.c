@@ -892,8 +892,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_EQUAL :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs) {
-        grn_id xd, yd;
-        grn_obj *x, *y;
+        grn_id xd, yd = GRN_ID_NIL;
+        grn_obj *x, *y = NULL;
         int i = nargs - 1;
         if (obj) {
           xd = GRN_OBJ_GET_DOMAIN(obj);
