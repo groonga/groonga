@@ -2832,7 +2832,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_EQUAL :
         {
-          int r;
+          int r = GRN_FALSE;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
           DO_EQ(x, y, r);
@@ -2844,7 +2844,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_NOT_EQUAL :
         {
-          int r;
+          int r = GRN_FALSE;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
           DO_EQ(x, y, r);
