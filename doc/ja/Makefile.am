@@ -8,11 +8,12 @@ doc_jadir = $(docdir)/ja
 SPHINXOPTS    =
 PAPER         =
 BUILDDIR      = .
+DOCTREES_BASE = $(BUILDDIR)/doctrees
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
 .PHONY: help clean man html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
@@ -32,7 +33,7 @@ help:
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
 
 clean-local:
-	-rm -rf $(BUILDDIR)/doctrees
+	-rm -rf $(DOCTREES_BASE)
 	-rm -rf $(BUILDDIR)/man
 	-rm -rf $(BUILDDIR)/html
 	-rm -rf $(BUILDDIR)/dirhtml
@@ -48,12 +49,12 @@ clean-local:
 	-rm -rf $(BUILDDIR)/pdf
 
 man:
-	$(SPHINX_BUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
+	$(SPHINX_BUILD) -d $(DOCTREES_BASE)/man -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
 	@echo
 	@echo "Build finished. The man pages are in $(BUILDDIR)/man."
 
 html:
-	$(SPHINX_BUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	$(SPHINX_BUILD) -d $(DOCTREES_BASE)/html -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
