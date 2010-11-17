@@ -32,7 +32,7 @@ help:
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
 
 clean-local:
-	-rm -rf $(BUILDDIR)/doctree
+	-rm -rf $(BUILDDIR)/doctrees
 	-rm -rf $(BUILDDIR)/man
 	-rm -rf $(BUILDDIR)/html
 	-rm -rf $(BUILDDIR)/dirhtml
