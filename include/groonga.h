@@ -674,6 +674,19 @@ GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
 GRN_API grn_id grn_table_get(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned key_size);
 
+
+/**
+ * grn_table_at:
+ * @table: 対象table
+ * @id: 検索id
+ *
+ * tableにidに対応するrecordが存在するか確認し、存在すれば指定されたIDを、
+ * 存在しなければGRN_ID_NILを返します。
+ * 注意: 実行には相応のコストがかかるのであまり頻繁に呼ばないようにして下さい。
+ **/
+GRN_API grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
+
+
 /**
  * grn_table_lcp_search:
  * @table: 対象table
