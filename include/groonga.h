@@ -487,6 +487,15 @@ GRN_API grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_opt
 GRN_API grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
 
 /**
+ * grn_db_touch:
+ * @db: 内容が変更されたdbを指定します。
+ *
+ * dbの内容の最終更新時刻を現在時刻にします。最終更新時刻は
+ * キャッシュが有効かどうかの判断などに利用されます。
+ **/
+GRN_API void grn_db_touch(grn_ctx *ctx, grn_obj *db);
+
+/**
  * grn_ctx_use:
  * @db: ctxが使用するdbを指定します。
  *
