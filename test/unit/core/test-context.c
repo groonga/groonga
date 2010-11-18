@@ -27,6 +27,8 @@
 void test_at_nonexistent(void);
 void test_dynamic_malloc_change(void);
 void test_command_version(void);
+void test_support_zlib(void);
+void test_support_lzo(void);
 
 static grn_ctx *context;
 static grn_obj *database;
@@ -118,4 +120,42 @@ test_command_version(void)
   cut_assert_ensure_context();
   cut_assert_equal_int(GRN_COMMAND_VERSION_MAX - 1,
                        grn_ctx_get_command_version(context));
+}
+
+void
+test_support_zlib(void)
+{
+  int support_p;
+  grn_obj grn_support_p;
+
+  cut_assert_ensure_context();
+  GRN_BOOL_INIT(&grn_support_p, 0);
+  grn_obj_get_info(context, NULL, GRN_INFO_SUPPORT_ZLIB, &grn_support_p);
+  support_p = GRN_BOOL_VALUE(&grn_support_p);
+  GRN_OBJ_FIN(context, &grn_support_p);
+
+#ifndef NO_ZLIB
+  cut_assert_true(support_p);
+#else
+  cut_assert_false(support_p);
+#endif
+}
+
+void
+test_support_lzo(void)
+{
+  int support_p;
+  grn_obj grn_support_p;
+
+  cut_assert_ensure_context();
+  GRN_BOOL_INIT(&grn_support_p, 0);
+  grn_obj_get_info(context, NULL, GRN_INFO_SUPPORT_LZO, &grn_support_p);
+  support_p = GRN_BOOL_VALUE(&grn_support_p);
+  GRN_OBJ_FIN(context, &grn_support_p);
+
+#ifndef NO_LZO
+  cut_assert_true(support_p);
+#else
+  cut_assert_false(support_p);
+#endif
 }

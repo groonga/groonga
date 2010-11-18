@@ -4900,64 +4900,91 @@ grn_obj *
 grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf)
 {
   GRN_API_ENTER;
-  if (!obj) {
-    ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
-    goto exit;
-  }
   switch (type) {
-  case GRN_INFO_ENCODING :
-    if (!valuebuf) {
-      if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
-        ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
-        goto exit;
-      }
-    }
-    {
-      grn_encoding enc;
-      switch (obj->header.type) {
-      case GRN_DB :
-        enc = ((grn_db *)obj)->keys->encoding;
-        grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
-        break;
-      case GRN_TABLE_PAT_KEY :
-        enc = ((grn_pat *)obj)->encoding;
-        grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
-        break;
-      case GRN_TABLE_HASH_KEY :
-        enc = ((grn_hash *)obj)->encoding;
-        grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
-        break;
-      default :
-        ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
-      }
-    }
-    break;
-  case GRN_INFO_SOURCE :
-    if (!valuebuf) {
-      if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
-        ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
-        goto exit;
-      }
-    }
-    if (!GRN_DB_OBJP(obj)) {
-      ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");
+  case GRN_INFO_SUPPORT_ZLIB :
+    if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "failed to open value buffer for GRN_INFO_ZLIB_SUPPORT");
       goto exit;
     }
-    grn_bulk_write(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
+#ifndef NO_ZLIB
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
+#else
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
+#endif
     break;
-  case GRN_INFO_DEFAULT_TOKENIZER :
-    switch (DB_OBJ(obj)->header.type) {
-    case GRN_TABLE_HASH_KEY :
-      valuebuf = ((grn_hash *)obj)->tokenizer;
-      break;
-    case GRN_TABLE_PAT_KEY :
-      valuebuf = ((grn_pat *)obj)->tokenizer;
-      break;
+  case GRN_INFO_SUPPORT_LZO :
+    if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "failed to open value buffer for GRN_INFO_LZO_SUPPORT");
+      goto exit;
     }
+#ifndef NO_LZO
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
+#else
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
+#endif
     break;
   default :
-    /* todo */
-    break;
+    if (!obj) {
+      ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+      goto exit;
+    }
+    switch (type) {
+    case GRN_INFO_ENCODING :
+      if (!valuebuf) {
+        if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
+          ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+          goto exit;
+        }
+      }
+      {
+        grn_encoding enc;
+        switch (obj->header.type) {
+        case GRN_DB :
+          enc = ((grn_db *)obj)->keys->encoding;
+          grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
+          break;
+        case GRN_TABLE_PAT_KEY :
+          enc = ((grn_pat *)obj)->encoding;
+          grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
+          break;
+        case GRN_TABLE_HASH_KEY :
+          enc = ((grn_hash *)obj)->encoding;
+          grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
+          break;
+        default :
+          ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+        }
+      }
+      break;
+    case GRN_INFO_SOURCE :
+      if (!valuebuf) {
+        if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
+          ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+          goto exit;
+        }
+      }
+      if (!GRN_DB_OBJP(obj)) {
+        ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");
+        goto exit;
+      }
+      grn_bulk_write(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
+      break;
+    case GRN_INFO_DEFAULT_TOKENIZER :
+      switch (DB_OBJ(obj)->header.type) {
+      case GRN_TABLE_HASH_KEY :
+        valuebuf = ((grn_hash *)obj)->tokenizer;
+        break;
+      case GRN_TABLE_PAT_KEY :
+        valuebuf = ((grn_pat *)obj)->tokenizer;
+        break;
+      }
+      break;
+    default :
+      /* todo */
+      break;
+    }
   }
 exit :
   GRN_API_RETURN(valuebuf);
