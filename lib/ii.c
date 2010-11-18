@@ -3302,15 +3302,14 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
   grn_table_cursor *tc = NULL;
   if (ii->lexicon->header.type == GRN_TABLE_PAT_KEY) {
-    if ((tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, key, key_size, 0, -1,
-                                    GRN_CURSOR_PREFIX))) {
-      if (!((grn_pat_cursor *)tc)->sp) {
-        grn_table_cursor_close(ctx, tc);
-        tc = NULL;
-      }
+    if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+      tc = grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0, 0, -1,
+                                 GRN_CURSOR_ASCENDING|GRN_CURSOR_GT);
+    } else {
+      tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, key, key_size, 0, -1,
+                                 GRN_CURSOR_PREFIX);
     }
-  }
-  if (!tc) {
+  } else {
     tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0, 0, -1,
                                GRN_CURSOR_ASCENDING);
   }
