@@ -554,7 +554,7 @@ open_socket(char *host, int port)
   }
   inaddr = *(u_long*)(servhost->h_addr_list[0]);
 
-  memset(&server, 0, sizeof(server));
+  memset(&server, 0, sizeof(struct sockaddr_in));
   server.sin_family = AF_INET;
   server.sin_port = htons(port);
   server.sin_addr = *(struct in_addr*)&inaddr;
@@ -564,7 +564,7 @@ open_socket(char *host, int port)
     fprintf(stderr, "socket error\n");
     return -1;
   }
-  ret = connect(sock, (struct sockaddr *)&server, sizeof(server));
+  ret = connect(sock, (struct sockaddr *)&server, sizeof(struct sockaddr_in));
   if (ret == -1) {
     fprintf(stderr, "connect error\n");
     return -1;
@@ -1202,7 +1202,7 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
   grntest_worker *workers[MAX_CON];
 
   for (i = 0; i < num; i++) {
-    workers[i] = GRN_MALLOC(sizeof(workers[i]));
+    workers[i] = GRN_MALLOC(sizeof(grntest_worker));
     workers[i]->ctx = ctx;
     workers[i]->log = log;
     workers[i]->task_id = i;
@@ -1236,7 +1236,7 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
   grntest_worker *workers[MAX_CON];
 
   for (i = 0; i < num; i++) {
-    workers[i] = GRN_MALLOC(sizeof(workers[i]));
+    workers[i] = GRN_MALLOC(sizeof(grntest_worker));
     workers[i]->ctx = ctx;
     workers[i]->log = log;
     workers[i]->task_id = i;
@@ -1344,7 +1344,7 @@ get_sysinfo(const char *path, char *result, int olen)
   }
   strcat(result, tmpbuf);
 
-  minfo.dwLength = sizeof(minfo);
+  minfo.dwLength = sizeof(MEMORYSTATUSEX);
   GlobalMemoryStatusEx(&minfo);
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "RAM\t%I64dMByte\n", minfo.ullTotalPhys/(1024*1024));
@@ -1361,7 +1361,7 @@ get_sysinfo(const char *path, char *result, int olen)
   }
   strcat(result, tmpbuf);
 
-  osinfo.dwOSVersionInfoSize = sizeof(osinfo); GetVersionEx(&osinfo);
+  osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); GetVersionEx(&osinfo);
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "Windows %d.%d\n", osinfo.dwMajorVersion, osinfo.dwMinorVersion);
   } else {
@@ -1561,8 +1561,8 @@ start_server(const char *dbpath, int r)
   sprintf(optbuf, "%d ", grntest_serverport);
   strcat(tmpbuf, optbuf);
   strcat(tmpbuf, dbpath);
-  memset(&si, 0, sizeof(si));
-  si.cb=sizeof(si);
+  memset(&si, 0, sizeof(STARTUPINFO));
+  si.cb=sizeof(STARTUPINFO);
   ret = CreateProcess(NULL, tmpbuf, NULL, NULL, FALSE,
 		      0, NULL, NULL, &si, &grntest_pi);
 
