@@ -1,5 +1,7 @@
 .. highlightlang:: none
 
+.. _grntest:
+
 grntest
 =======
 
