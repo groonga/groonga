@@ -1,3 +1,4 @@
+ACLOCAL_AMFLAGS = $$ACLOCAL_ARGS -I .
 AUTOMAKE_OPTIONS = 1.9.7
 SUBDIRS = include lib plugins src examples test apt rpm yum data resource doc
 #dist_data_DATA =
