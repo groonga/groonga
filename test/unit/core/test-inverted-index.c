@@ -49,9 +49,6 @@ static grn_obj *db;
 static grn_obj *type;
 static grn_obj *lexicon;
 static grn_ii *inverted_index;
-/*
-static grn_vgram *vgram;
-*/
 
 void
 cut_startup(void)
@@ -76,7 +73,7 @@ remove_tmp_directory(void)
 void
 cut_setup(void)
 {
-  gchar *table_path, *vgram_path;
+  gchar *table_path;
   const gchar *type_name, *table_name;
 
   cut_set_fixture_data_dir(grn_test_get_base_dir(),
@@ -116,12 +113,6 @@ cut_setup(void)
                    grn_ctx_at(context, GRN_DB_BIGRAM));
 
   g_free(table_path);
-
-  vgram_path = g_build_filename(tmp_directory, "vgram", NULL);
-/*
-  vgram = grn_vgram_create(vgram_path);
-*/
-  g_free(vgram_path);
 
   inverted_index = NULL;
 }
@@ -163,11 +154,6 @@ cut_teardown(void)
     grn_ctx_fin(context);
     g_free(context);
   }
-
-/*
-  if (vgram)
-    grn_vgram_close(vgram);
-*/
 
   if (path) {
     g_free(path);
