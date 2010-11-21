@@ -54,7 +54,7 @@ void
 cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
-                                   "test-inverted-index",
+                                   "inverted-index",
                                    NULL);
 }
 
