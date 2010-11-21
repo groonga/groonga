@@ -62,6 +62,7 @@ void
 cut_shutdown(void)
 {
   g_free(tmp_directory);
+  cut_remove_path(grn_test_get_tmp_dir(), NULL);
 }
 
 static void
