@@ -47,7 +47,7 @@ cut_shutdown(void)
 void
 cut_setup(void)
 {
-  setup_hash_common("hash");
+  setup_hash_common("hash-sort");
   keys = NULL;
   values = NULL;
   sort_result = NULL;

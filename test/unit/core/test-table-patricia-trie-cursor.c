@@ -73,6 +73,7 @@ void
 cut_shutdown(void)
 {
   g_free(tmp_directory);
+  cut_remove_path(grn_test_get_tmp_dir(), NULL);
 }
 
 static void
@@ -1119,31 +1120,21 @@ data_common_prefix_search(void)
                  "flags", G_TYPE_INT, flags,                            \
                  NULL)
 
-  ADD_DATA("alphabet - ascending",
-           gcut_list_string_new("abra", "abracada", "abracadabra", "abubu",
+  ADD_DATA("alphabet",
+           gcut_list_string_new("abracada", "abra",
                                 NULL),
-           0, "ab",
+           0, "abracada",
            0, -1,
            0);
-  ADD_DATA("alphabet - descending",
-           gcut_list_string_new("abubu", "abracadabra", "abracada", "abra",
+  ADD_DATA("alphabet - min size",
+           gcut_list_string_new("abracadabra", "abracada",
                                 NULL),
-           0, "ab",
+           5, "abracadabra",
            0, -1,
-           GRN_CURSOR_DESCENDING);
-  ADD_DATA("alphabet - ascending - min size",
-           gcut_list_string_new("abracada", "abracadabra", "abubu", NULL),
-           5, "ab",
-           0, -1,
-           GRN_CURSOR_GT);
-  ADD_DATA("alphabet - descending - greater than",
-           gcut_list_string_new("abubu", "abracadabra", "abracada", NULL),
-           5, "ab",
-           0, -1,
-           GRN_CURSOR_DESCENDING | GRN_CURSOR_GT);
+           0);
   ADD_DATA("alphabet - offset and limit",
-           gcut_list_string_new("abracadabra", NULL),
-           0, "ab",
+           gcut_list_string_new("abra", NULL),
+           0, "abracadabra",
            2, 1,
            0);
   ADD_DATA("no match",
@@ -1153,7 +1144,7 @@ data_common_prefix_search(void)
            0);
   ADD_DATA("no match - common prefix",
            NULL,
-           0, "abraura",
+           0, "aburaura",
            0, -1,
            0);
   ADD_DATA("empty key",
@@ -1186,7 +1177,6 @@ test_common_prefix_search(gpointer data)
   const GList *expected_keys;
   GList *actual_keys = NULL;
 
-  cut_omit("crashed. Is it right usage?");
   create_short_text_table(gcut_take_new_list_string("abra",
                                                     "abracada",
                                                     "abracadabra",
