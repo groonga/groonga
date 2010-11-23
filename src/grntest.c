@@ -171,8 +171,7 @@ static grn_obj *grntest_owndb[MAX_CON];
 
 grn_obj grntest_starttime, grntest_jobs_start;
 
-static
-int
+static int
 grntest_atoi(const char *str, const char *end, const char **rest)
 {
   while (grn_isspace(str, GRN_ENC_UTF8) == 1) {
@@ -181,8 +180,7 @@ grntest_atoi(const char *str, const char *end, const char **rest)
   return grn_atoi(str, end, rest);
 }
 
-static
-int
+static int
 out_p(int jobtype)
 {
   if (jobtype == J_OUT_LOCAL) {
@@ -197,8 +195,7 @@ out_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 test_p(int jobtype)
 {
   if (jobtype == J_TEST_LOCAL) {
@@ -213,8 +210,7 @@ test_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 report_p(int jobtype)
 {
   if (jobtype == J_REP_LOCAL) {
@@ -229,8 +225,7 @@ report_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 gqtp_p(int jobtype)
 {
   if (jobtype == J_DO_GQTP) {
@@ -248,8 +243,7 @@ gqtp_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 http_p(int jobtype)
 {
   if (jobtype == J_DO_HTTP) {
@@ -267,8 +261,7 @@ http_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 error_exit_in_thread(intptr_t code)
 {
   fprintf(stderr, "Fatal error! Check script file or database!\n");
@@ -328,8 +321,7 @@ escape_command(grn_ctx *ctx, char *in, int ilen, grn_obj *escaped_command)
 }
 
 
-static
-int
+static int
 report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time,
                     grn_obj *end_time)
 {
@@ -368,8 +360,7 @@ report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_ti
   return 0;
 }
 
-static
-int
+static int
 report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
                grn_obj *start_time, grn_obj *end_time)
 {
@@ -413,8 +404,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   return 0;
 }
 
-static
-int
+static int
 output_result_final(grn_ctx *ctx, int qnum)
 {
   grn_obj end_time;
@@ -438,8 +428,7 @@ output_result_final(grn_ctx *ctx, int qnum)
   return 0;
 }
 
-static
-int
+static int
 output_sysinfo(char *sysinfo)
 {
   if (grntest_outtype == OUT_TSV) {
@@ -452,8 +441,7 @@ output_sysinfo(char *sysinfo)
 
 /* #define ENABLE_ERROR_REPORT 1 */
 #ifdef ENABLE_ERROR_REPORT
-static
-int
+static int
 error_command(grn_ctx *ctx, char *command, int task_id)
 {
   fprintf(stderr, "error!:command=[%s] task_id = %d\n", command, task_id);
@@ -463,8 +451,7 @@ error_command(grn_ctx *ctx, char *command, int task_id)
 }
 #endif
 
-static
-int
+static int
 diff_result(char *expect, int elen, char *result, int rlen)
 {
   int i;
@@ -519,8 +506,7 @@ diff_result(char *expect, int elen, char *result, int rlen)
   return strncmp(e, r, strlen(e));
 }
 
-static
-socket_t
+static socket_t
 open_socket(char *host, int port)
 {
   socket_t sock;
@@ -554,8 +540,7 @@ open_socket(char *host, int port)
   return sock;
 }
 
-static
-int
+static int
 write_to_server(socket_t socket, char *buf)
 {
 #ifdef DEBUG_FTP
@@ -568,8 +553,7 @@ write_to_server(socket_t socket, char *buf)
 #define OUTPUT_TYPE "output_type"
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
 
-static
-void
+static void
 command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
 {
   char tok_type;
@@ -652,8 +636,7 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-static
-void
+static void
 command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
 {
   socket_t http_socket;
@@ -695,8 +678,7 @@ command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-static
-void
+static void
 command_send_ctx(grn_ctx *ctx, char *command, int type, int task_id)
 {
   grn_ctx_send(ctx, command, strlen(command), 0);
@@ -709,8 +691,7 @@ command_send_ctx(grn_ctx *ctx, char *command, int type, int task_id)
 */
 }
 
-static
-void
+static void
 command_send(grn_ctx *ctx, char *command, int type, int task_id)
 {
   if (http_p(type)) {
@@ -720,8 +701,7 @@ command_send(grn_ctx *ctx, char *command, int type, int task_id)
   }
 }
 
-static
-void
+static void
 command_recv_http(grn_ctx *ctx, int type, int task_id,
                   char **res, int *res_len, int *flags)
 {
@@ -768,8 +748,7 @@ command_recv_http(grn_ctx *ctx, int type, int task_id,
   grntest_task[task_id].http_socket = 0;
 }
 
-static
-void
+static void
 command_recv_ctx(grn_ctx *ctx, int type, int task_id,
                  char **res, int *res_len, int *flags)
 {
@@ -780,8 +759,7 @@ command_recv_ctx(grn_ctx *ctx, int type, int task_id,
   }
 }
 
-static
-void
+static void
 command_recv(grn_ctx *ctx, int type, int task_id,
              char **res, int *res_len, int *flags)
 {
@@ -792,8 +770,7 @@ command_recv(grn_ctx *ctx, int type, int task_id,
   }
 }
 
-static
-int
+static int
 shutdown_server(void)
 {
   char *res;
@@ -816,8 +793,7 @@ shutdown_server(void)
   return 0;
 }
 
-static
-int
+static int
 do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
                 long long int *load_start)
 {
@@ -903,8 +879,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
 }
 
 
-static
-int
+static int
 do_command(grn_ctx *ctx, char *command, int type, int task_id)
 {
   char *res;
@@ -986,8 +961,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
   return 0;
 }
 
-static
-int
+static int
 comment_p(char *command)
 {
   if (command[0] == '#') {
@@ -996,8 +970,7 @@ comment_p(char *command)
   return 0;
 }
 
-static
-int
+static int
 load_command_p(char *command)
 {
   int i = 0;
@@ -1014,8 +987,7 @@ load_command_p(char *command)
   return 0;
 }
 
-static
-int
+static int
 worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
 {
   int i, load_mode, load_count;
@@ -1178,8 +1150,7 @@ typedef struct _grntest_worker {
 } grntest_worker;
 
 #ifdef WIN32
-static
-int
+static int
 __stdcall
 worker(void *val)
 {
@@ -1188,8 +1159,7 @@ worker(void *val)
   return 0;
 }
 #else
-static
-void *
+static void *
 worker(void *val)
 {
   grntest_worker *worker = val;
@@ -1265,8 +1235,7 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
 }
 #endif
 
-static
-int
+static int
 error_exit(grn_ctx *ctx, int ret)
 {
   fflush(stderr);
@@ -1276,8 +1245,7 @@ error_exit(grn_ctx *ctx, int ret)
   exit(ret);
 }
 
-static
-int
+static int
 get_sysinfo(const char *path, char *result, int olen)
 {
   char tmpbuf[256];
@@ -1545,8 +1513,7 @@ get_sysinfo(const char *path, char *result, int olen)
   return 0;
 }
 
-static
-int
+static int
 start_server(const char *dbpath, int r)
 {
   int ret;
@@ -1608,8 +1575,7 @@ start_server(const char *dbpath, int r)
   return 0;
 }
 
-static
-int
+static int
 parse_line(char *buf, int start, int end, int num)
 {
   int i, j, error_flag = 0, out_or_test = 0;
@@ -1826,8 +1792,7 @@ parse_line(char *buf, int start, int end, int num)
   return 0;
 }
 
-static
-int
+static int
 get_jobs(grn_ctx *ctx, char *buf, int line)
 {
   int i, len, start, end, ret;
@@ -1875,8 +1840,7 @@ get_jobs(grn_ctx *ctx, char *buf, int line)
   return jnum;
 }
 
-static
-int
+static int
 make_task_table(grn_ctx *ctx, int jobnum)
 {
   int i, j;
@@ -1946,8 +1910,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
 }
 
 /*
-static
-int
+static int
 print_commandlist(int task_id)
 {
   int i;
@@ -1962,8 +1925,7 @@ print_commandlist(int task_id)
 */
 
 /* return num of query */
-static
-int
+static int
 do_jobs(grn_ctx *ctx, int jobnum, int line)
 {
   int i, task_num, ret, qnum = 0, thread_num = 0;
@@ -2090,8 +2052,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
 }
 
 /* return num of query */
-static
-int
+static int
 do_script(grn_ctx *ctx, const char *sfile)
 {
   int line = 0;
@@ -2143,8 +2104,7 @@ do_script(grn_ctx *ctx, const char *sfile)
   return qnum_total;
 }
 
-static
-int
+static int
 start_local(grn_ctx *ctx, const char *dbpath)
 {
   grntest_db = grn_db_open(ctx, dbpath);
@@ -2158,8 +2118,7 @@ start_local(grn_ctx *ctx, const char *dbpath)
   return 0;
 }
 
-static
-int
+static int
 check_server(grn_ctx *ctx)
 {
   int ret, retry = 0;
@@ -2190,8 +2149,7 @@ check_server(grn_ctx *ctx)
 #define MODE_PUT  3
 #define MODE_TIME 4
 
-static
-int
+static int
 check_response(char *buf)
 {
   if (buf[0] == '1') {
@@ -2206,8 +2164,7 @@ check_response(char *buf)
   return 0;
 }
 
-static
-int
+static int
 read_response(socket_t socket, char *buf)
 {
   int ret;
@@ -2223,8 +2180,7 @@ read_response(socket_t socket, char *buf)
   return ret;
 }
 
-static
-int
+static int
 put_file(socket_t socket, const char *filename)
 {
   FILE *fp;
@@ -2250,8 +2206,7 @@ put_file(socket_t socket, const char *filename)
   return size;
 }
 
-static
-int
+static int
 ftp_list(socket_t data_socket)
 {
   int ret;
@@ -2270,8 +2225,7 @@ ftp_list(socket_t data_socket)
   return 0;
 }
 
-static
-int
+static int
 get_file(socket_t socket, const char *filename, int size)
 {
   FILE *fp;
@@ -2302,8 +2256,7 @@ get_file(socket_t socket, const char *filename, int size)
   return size;
 }
 
-static
-int
+static int
 get_port(char *buf, char *host, int *port)
 {
   int ret,d1,d2,d3,d4,d5,d6;
@@ -2319,8 +2272,7 @@ get_port(char *buf, char *host, int *port)
   return 1;
 }
 
-static
-char *
+static char *
 get_ftp_date(char *buf)
 {
   while (*buf !=' ') {
@@ -2334,8 +2286,7 @@ get_ftp_date(char *buf)
   return buf;
 }
 
-static
-int
+static int
 get_size(char *buf)
 {
   int size;
@@ -2540,8 +2491,7 @@ exit:
 }
 
 /*
-static
-int
+static int
 ftp_main(int argc, char **argv)
 {
   char val[BUF_LEN];
@@ -2555,8 +2505,7 @@ ftp_main(int argc, char **argv)
 }
 */
 
-static
-int
+static int
 get_username(char *name, int maxlen)
 {
   char *env=NULL;
@@ -2576,8 +2525,7 @@ get_username(char *name, int maxlen)
   return 0;
 }
 
-static
-int
+static int
 get_date(char *date, time_t *sec)
 {
 #ifdef __GNUC__
@@ -2603,8 +2551,7 @@ get_date(char *date, time_t *sec)
   return 1;
 }
 
-static
-int
+static int
 get_scriptname(const char *path, char *name, char *suffix)
 {
   int slen = strlen(suffix);
@@ -2629,8 +2576,7 @@ get_scriptname(const char *path, char *name, char *suffix)
 }
 
 #ifdef WIN32
-static
-int
+static int
 get_tm_from_serverdate(char *serverdate, struct tm *tm)
 {
   int res;
@@ -2657,8 +2603,7 @@ get_tm_from_serverdate(char *serverdate, struct tm *tm)
 
 
 
-static
-int
+static int
 sync_sub(grn_ctx *ctx, const char *filename)
 {
   int ret;
@@ -2712,8 +2657,7 @@ sync_sub(grn_ctx *ctx, const char *filename)
   return 0;
 }
 
-static
-int
+static int
 cache_file(grn_ctx *ctx, char **flist, char *file, int fnum)
 {
   int i;
@@ -2732,8 +2676,7 @@ cache_file(grn_ctx *ctx, char **flist, char *file, int fnum)
   return fnum;
 }
 
-static
-int
+static int
 sync_datafile(grn_ctx *ctx, const char *sfile)
 {
   int line = 0;
@@ -2777,8 +2720,7 @@ printf("commandfile=[%s]:buf=%s\n", grntest_job[i].commandfile, buf);
   return fnum;
 }
 
-static
-int
+static int
 sync_script(grn_ctx *ctx, const char *filename)
 {
   int ret, filenum;
@@ -2794,8 +2736,7 @@ sync_script(grn_ctx *ctx, const char *filename)
   return 1;
 }
 
-static
-void
+static void
 usage(void)
 {
   fprintf(stderr,
@@ -2830,8 +2771,7 @@ enum {
 #define MODE_ONMEMORY  0x1000
 
 
-static
-int
+static int
 get_token(char *line, char *token, int maxlen, char **next)
 {
   int i = 0;
@@ -2888,8 +2828,7 @@ get_token(char *line, char *token, int maxlen, char **next)
 }
 
 /* SET_PORT and SET_HOST */
-static
-int
+static int
 check_script(const char *scrname)
 {
   FILE *fp;
@@ -2932,8 +2871,7 @@ check_script(const char *scrname)
 }
 
 #ifndef WIN32
-static
-void
+static void
 timeout(int sig)
 {
   fprintf(stderr, "timeout:groonga server cannot shutdown!!\n");
@@ -2941,8 +2879,7 @@ timeout(int sig)
   alarm(0);
 }
 
-static
-int
+static int
 setsigalarm(int sec)
 {
   int	ret;
