@@ -1169,7 +1169,7 @@ worker(void *val)
 #endif /* WIN32 */
 
 #ifdef WIN32
-int
+static int
 thread_main(grn_ctx *ctx, grn_obj *log, int num)
 {
   int  i;
@@ -1203,7 +1203,7 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
   return 0;
 }
 #else
-int
+static int
 thread_main(grn_ctx *ctx, grn_obj *log, int num)
 {
   intptr_t i;
