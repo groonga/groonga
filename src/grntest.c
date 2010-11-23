@@ -101,6 +101,7 @@ typedef int socket_t;
 static const char *groonga_path = "groonga";
 #endif /* WIN32 */
 
+static const char *groonga_protocol = "gqtp";
 char *grntest_osinfo;
 
 
@@ -449,26 +450,6 @@ output_sysinfo(char *sysinfo)
   return 0;
 }
 
-static
-int
-shutdown_server(void)
-{
-  char *res;
-  int flags, res_len;
-
-  if (grntest_remote_mode) {
-    return 0;
-  }
-  grn_ctx_send(&grntest_server_context, "shutdown", 8, 0);
-  if (grntest_server_context.rc) {
-    fprintf(stderr, "ctx_send:rc=%d\n", grntest_server_context.rc);
-    exit(1);
-  }
-  grn_ctx_recv(&grntest_server_context, &res, &res_len, &flags);
-
-  return 0;
-}
-
 /* #define ENABLE_ERROR_REPORT 1 */
 #ifdef ENABLE_ERROR_REPORT
 static
@@ -809,6 +790,30 @@ command_recv(grn_ctx *ctx, int type, int task_id,
   } else {
     command_recv_ctx(ctx, type, task_id, res, res_len, flags);
   }
+}
+
+static
+int
+shutdown_server(void)
+{
+  char *res;
+  int flags, res_len;
+  int job_type;
+  int task_id = 0;
+
+  if (grntest_remote_mode) {
+    return 0;
+  }
+  job_type = grntest_task[task_id].jobtype;
+  command_send(&grntest_server_context, "shutdown", job_type, task_id);
+  if (grntest_server_context.rc) {
+    fprintf(stderr, "ctx_send:rc=%d\n", grntest_server_context.rc);
+    exit(1);
+  }
+  command_recv(&grntest_server_context, job_type, task_id,
+               &res, &res_len, &flags);
+
+  return 0;
 }
 
 static
@@ -1557,8 +1562,9 @@ start_server(const char *dbpath, int r)
   }
 
   strcpy(tmpbuf, groonga_path);
-  strcat(tmpbuf, " -s ");
-  strcat(tmpbuf, "-p ");
+  strcat(tmpbuf, " -s --protocol ");
+  strcat(tmpbuf, groonga_protocol);
+  strcat(tmpbuf, " -p ");
   sprintf(optbuf, "%d ", grntest_serverport);
   strcat(tmpbuf, optbuf);
   strcat(tmpbuf, dbpath);
@@ -1582,7 +1588,10 @@ start_server(const char *dbpath, int r)
   }
   sprintf(optbuf, "%d", grntest_serverport);
   if (pid == 0) {
-    ret = execlp(groonga_path, groonga_path, "-s", "-p", optbuf,
+    ret = execlp(groonga_path, groonga_path,
+                 "-s",
+                 "--protocol", groonga_protocol,
+                 "-p", optbuf,
                  dbpath, (char*)NULL);
     if (ret == -1) {
       fprintf(stderr, "Cannot start groonga server: <%s>: errno=%d\n",
@@ -2801,8 +2810,10 @@ usage(void)
          "  --output-type <tsv/json>:  specify output-type (default: json)\n"
          "  --owndb:                   open dbs for each ctx\n"
          "  -p, --port <port number>:  server port number (default: %d)\n"
-         "  --groonga <groonga_path>:  groonga command path (default: %s)\n",
-          DEFAULT_DEST, DEFAULT_PORT, groonga_path);
+         "  --groonga <groonga_path>:  groonga command path (default: %s)\n"
+         "  --protocol <gqtp|http>:    groonga server protocol (default: %s)\n",
+          DEFAULT_DEST, DEFAULT_PORT,
+          groonga_path, groonga_protocol);
   exit(1);
 }
 
@@ -2971,6 +2982,7 @@ main(int argc, char **argv)
     {'\0', "onmemory", NULL, MODE_ONMEMORY, getopt_op_on},
     {'\0', "owndb", NULL, MODE_OWNDB, getopt_op_on},
     {'\0', "groonga", NULL, 0, getopt_op_none},
+    {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2979,6 +2991,7 @@ main(int argc, char **argv)
   opts[2].arg = &outdir;
   opts[3].arg = &outtype;
   opts[10].arg = &groonga_path;
+  opts[11].arg = &groonga_protocol;
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
@@ -3048,6 +3061,7 @@ main(int argc, char **argv)
 
   grn_ctx_init(&context, 0);
   grn_ctx_init(&grntest_server_context, 0);
+  grn_db_create(&grntest_server_context, NULL, NULL);
   grn_set_default_encoding(GRN_ENC_UTF8);
 
   if (!grntest_noftp_mode) {
@@ -3134,6 +3148,7 @@ exit:
   grn_obj_close(&context, &grntest_starttime);
   grn_obj_close(&context, grntest_db);
   grn_ctx_fin(&context);
+  grn_obj_close(&grntest_server_context, grn_ctx_db(&grntest_server_context));
   grn_ctx_fin(&grntest_server_context);
   grn_fin();
   return 0;

@@ -56,6 +56,10 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 
   groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマンドを探します。
 
+.. cmdoption:: --protocol <gqtp|http>
+
+  groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。
+
 引数
 ----
 
