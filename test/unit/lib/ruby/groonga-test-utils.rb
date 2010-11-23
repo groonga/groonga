@@ -145,13 +145,12 @@ module GroongaTestUtils
 
   LANG_ENVS = %w"LANG LC_ALL LC_CTYPE"
 
-  def invoke_groonga(*args)
+  def invoke_command(*args)
     options = args.last.is_a?(Hash) ? args.pop : {}
     input_data = options[:input] || ""
     capture_output = options[:capture_output]
     capture_output = true if capture_output.nil?
     capture_error = options[:capture_error]
-    @groonga ||= guess_groonga_path
     args = [args] unless args.kind_of?(Array)
     begin
       in_child, in_parent = IO.pipe
@@ -175,7 +174,7 @@ module GroongaTestUtils
           err_parent.close
         end
         Process.setrlimit(Process::RLIMIT_CORE, 0) rescue nil
-        exec(@groonga, *args)
+        exec(*args)
       end
       in_child.close
       out_child.close if capture_output
@@ -202,6 +201,12 @@ module GroongaTestUtils
       end
     end
     return stdout, stderr, status
+  end
+
+  def invoke_groonga(*args)
+    @groonga ||= guess_groonga_path
+    args.unshift(@groonga)
+    invoke_command(*args)
   end
 
   def assert_run_groonga(test_stdout, test_stderr, args, *rest)
