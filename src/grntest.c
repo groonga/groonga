@@ -91,13 +91,14 @@ FILE *grntest_logfp;
 typedef SOCKET socket_t;
 #define SOCKETERROR INVALID_SOCKET
 #define socketclose closesocket
-#define GROONGA_PATH "groonga.exe"
+static const char *groonga_path = "groonga.exe";
 PROCESS_INFORMATION grntest_pi;
 #else
 pid_t grntest_server_id = 0;
 typedef int socket_t;
 #define socketclose close
 #define SOCKETERROR -1
+static const char *groonga_path = "groonga";
 #endif /* WIN32 */
 
 char *grntest_osinfo;
@@ -1555,7 +1556,7 @@ start_server(const char *dbpath, int r)
     exit(1);
   }
 
-  strcpy(tmpbuf, GROONGA_PATH);
+  strcpy(tmpbuf, groonga_path);
   strcat(tmpbuf, " -s ");
   strcat(tmpbuf, "-p ");
   sprintf(optbuf, "%d ", grntest_serverport);
@@ -1567,7 +1568,8 @@ start_server(const char *dbpath, int r)
 		      0, NULL, NULL, &si, &grntest_pi);
 
   if (ret == 0) {
-    fprintf(stderr, "Cannot start groonga server:error=%d\n", GetLastError());
+    fprintf(stderr, "Cannot start groonga server: <%s>: error=%d\n",
+            groonga_path, GetLastError());
     exit(1);
   }
 
@@ -1580,9 +1582,11 @@ start_server(const char *dbpath, int r)
   }
   sprintf(optbuf, "%d", grntest_serverport);
   if (pid == 0) {
-    ret = execlp("groonga", "groonga", "-s", "-p", optbuf, dbpath, (char*)NULL);
+    ret = execlp(groonga_path, groonga_path, "-s", "-p", optbuf,
+                 dbpath, (char*)NULL);
     if (ret == -1) {
-      fprintf(stderr, "Cannot start groonga server:errno=%d\n", errno);
+      fprintf(stderr, "Cannot start groonga server: <%s>: errno=%d\n",
+              groonga_path, errno);
       exit(1);
     }
   }
@@ -2796,8 +2800,9 @@ usage(void)
          "  --onmemory:                load all commands into memory\n"
          "  --output-type <tsv/json>:  specify output-type (default: json)\n"
          "  --owndb:                   open dbs for each ctx\n"
-         "  -p, --port <port number>:  server port number (default: %d)\n",
-         DEFAULT_DEST, DEFAULT_PORT);
+         "  -p, --port <port number>:  server port number (default: %d)\n"
+         "  --groonga <groonga_path>:  groonga command path (default: %s)\n",
+          DEFAULT_DEST, DEFAULT_PORT, groonga_path);
   exit(1);
 }
 
@@ -2965,6 +2970,7 @@ main(int argc, char **argv)
     {'\0', "localonly", NULL, MODE_LOCALONLY, getopt_op_on},
     {'\0', "onmemory", NULL, MODE_ONMEMORY, getopt_op_on},
     {'\0', "owndb", NULL, MODE_OWNDB, getopt_op_on},
+    {'\0', "groonga", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2972,6 +2978,7 @@ main(int argc, char **argv)
   opts[1].arg = &portstr;
   opts[2].arg = &outdir;
   opts[3].arg = &outtype;
+  opts[10].arg = &groonga_path;
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
