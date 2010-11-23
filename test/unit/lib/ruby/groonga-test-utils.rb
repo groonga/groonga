@@ -68,6 +68,10 @@ module GroongaTestUtils
     File.expand_path(groonga)
   end
 
+  def groonga
+    @groonga ||= guess_groonga_path
+  end
+
   def guess_resource_dir
     File.join(guess_top_source_dir, "resource", "admin_html")
   end
@@ -91,7 +95,7 @@ module GroongaTestUtils
     arguments.concat(["--protocol", @protocol]) if @protocol
     arguments.concat(["-n", @database_path])
     @groonga_pid = fork do
-      exec(@groonga, *arguments)
+      exec(groonga, *arguments)
     end
 
     sleep 0.3 # wait for groonga server initialize
@@ -204,8 +208,7 @@ module GroongaTestUtils
   end
 
   def invoke_groonga(*args)
-    @groonga ||= guess_groonga_path
-    args.unshift(@groonga)
+    args.unshift(groonga)
     invoke_command(*args)
   end
 
