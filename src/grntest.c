@@ -850,7 +850,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
         GRN_TEXT_INIT(&log, 0);
         input = grntest_job[grntest_task[task_id].job_id].inputlog;
         output = grntest_job[grntest_task[task_id].job_id].outputlog;
-        if (grn_text_fgets(ctx, &log, input)) {
+        if (grn_text_fgets(ctx, &log, input) != GRN_SUCCESS) {
           GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
@@ -931,7 +931,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
         GRN_TEXT_INIT(&log, 0);
         input = grntest_job[grntest_task[task_id].job_id].inputlog;
         output = grntest_job[grntest_task[task_id].job_id].outputlog;
-        if (!grn_text_fgets(ctx, &log, input)) {
+        if (grn_text_fgets(ctx, &log, input) != GRN_SUCCESS) {
           GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
@@ -1015,6 +1015,9 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
       load_start = 0LL;
       GRN_TEXT_INIT(&line, 0);
       while (grn_text_fgets(ctx, &line, fp) == GRN_SUCCESS) {
+        if (GRN_TEXT_VALUE(&line)[GRN_TEXT_LEN(&line) - 1] == '\n') {
+          grn_bulk_truncate(ctx, &line, GRN_TEXT_LEN(&line) - 1);
+        }
         if (GRN_TEXT_LEN(&line) == 0) {
           GRN_BULK_REWIND(&line);
           continue;
@@ -1877,6 +1880,9 @@ make_task_table(grn_ctx *ctx, int jobnum)
         }
         while (grn_text_fgets(ctx, &line, fp) == GRN_SUCCESS) {
           grn_obj *command;
+          if (GRN_TEXT_VALUE(&line)[GRN_TEXT_LEN(&line) - 1] == '\n') {
+            grn_bulk_truncate(ctx, &line, GRN_TEXT_LEN(&line) - 1);
+          }
           if (GRN_TEXT_LEN(&line) == 0) {
             GRN_BULK_REWIND(&line);
             continue;
