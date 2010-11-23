@@ -1966,7 +1966,7 @@ static
 int
 do_jobs(grn_ctx *ctx, int jobnum, int line)
 {
-  int i, task_num, ret, qnum = 0,thread_num = 0;
+  int i, task_num, ret, qnum = 0, thread_num = 0;
 
   for (i = 0; i < jobnum; i++) {
 /*
