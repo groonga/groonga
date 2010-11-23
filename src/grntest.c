@@ -80,7 +80,7 @@ static int grntest_noftp_mode = 0;
 #define TMPFILE "_grntest.tmp"
 
 static grn_ctx grntest_server_context;
-FILE *grntest_logfp;
+static FILE *grntest_logfp;
 
 #define OS_LINUX64   "LINUX64"
 #define OS_LINUX32   "LINUX32"
@@ -92,9 +92,9 @@ typedef SOCKET socket_t;
 #define SOCKETERROR INVALID_SOCKET
 #define socketclose closesocket
 static const char *groonga_path = "groonga.exe";
-PROCESS_INFORMATION grntest_pi;
+static PROCESS_INFORMATION grntest_pi;
 #else
-pid_t grntest_server_id = 0;
+static pid_t grntest_server_id = 0;
 typedef int socket_t;
 #define socketclose close
 #define SOCKETERROR -1
@@ -102,11 +102,11 @@ static const char *groonga_path = "groonga";
 #endif /* WIN32 */
 
 static const char *groonga_protocol = "gqtp";
-char *grntest_osinfo;
+static char *grntest_osinfo;
 
 
 
-grn_obj *grntest_db = NULL;
+static grn_obj *grntest_db = NULL;
 
 #define MAX_CON_JOB 10
 #define MAX_CON 64
