@@ -264,7 +264,8 @@ http_p(int jobtype)
 static int
 error_exit_in_thread(intptr_t code)
 {
-  fprintf(stderr, "Fatal error! Check script file or database!\n");
+  fprintf(stderr,
+          "Fatal error! Check script file or database!: %ld\n", (long)code);
   fflush(stderr);
   CRITICAL_SECTION_ENTER(grntest_cs);
   grntest_stop_flag = 1;
