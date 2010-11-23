@@ -26,7 +26,7 @@ module GroongaTestUtils
   def setup_database_path
     base_dir = ENV["BUILD_DIR"] || ENV["BASE_DIR"]
     base_dir ||= File.join(File.dirname(__FILE__), "..", "..")
-    @tmp_base_dir = File.join(base_dir, "tmp")
+    @tmp_base_dir = File.join(File.expand_path(base_dir), "tmp")
     FileUtils.rm_rf(@tmp_base_dir)
     FileUtils.mkdir_p(@tmp_base_dir)
     @tmp_dir = Dir.mktmpdir("tmp", @tmp_base_dir)

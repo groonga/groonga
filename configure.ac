@@ -130,6 +130,7 @@ AC_CONFIG_FILES([Makefile
                  test/unit/http/Makefile
                  test/unit/gqtp/Makefile
                  test/unit/story/Makefile
+                 test/unit/grntest/Makefile
                  test/benchmark/Makefile
                  test/benchmark/lib/Makefile
                 ])
@@ -406,6 +407,10 @@ AC_SUBST(WINDOWS_LIBS)
 # groonga binary path
 GROONGA="\$(abs_top_builddir)/src/groonga"
 AC_SUBST(GROONGA)
+
+# grntest binary path
+GRNTEST="\$(abs_top_builddir)/src/grntest"
+AC_SUBST(GRNTEST)
 
 # check Cutter with GLib support if available
 REQUIRED_MINIMUM_CUTTER_VERSION=1.1.3
