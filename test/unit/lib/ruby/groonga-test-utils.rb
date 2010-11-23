@@ -24,15 +24,18 @@ module GroongaTestUtils
   include GroongaConstants
 
   def setup_database_path
-    @tmp_dir = Dir.mktmpdir("tmp", ENV["BUILD_DIR"])
-    FileUtils.rm_rf(@tmp_dir)
-    FileUtils.mkdir_p(@tmp_dir)
+    base_dir = ENV["BUILD_DIR"] || ENV["BASE_DIR"]
+    base_dir ||= File.join(File.dirname(__FILE__), "..", "..")
+    @tmp_base_dir = File.join(base_dir, "tmp")
+    FileUtils.rm_rf(@tmp_base_dir)
+    FileUtils.mkdir_p(@tmp_base_dir)
+    @tmp_dir = Dir.mktmpdir("tmp", @tmp_base_dir)
     @database_path = File.join(@tmp_dir, "database")
   end
 
   def teardown_database_path
-    @tmp_dir ||= nil
-    FileUtils.rm_rf(@tmp_dir) if @tmp_dir
+    @tmp_base_dir ||= nil
+    FileUtils.rm_rf(@tmp_base_dir) if @tmp_base_dir
   end
 
   def setup_server(protocol=nil)
