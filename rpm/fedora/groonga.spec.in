@@ -131,7 +131,7 @@ make %{?_smp_mflags}
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
-rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.la
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/plugins/*/*.la
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 mkdir -p $RPM_BUILD_ROOT%{_initddir}
@@ -227,10 +227,10 @@ fi
 %doc README AUTHORS COPYING
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
-%dir %{_libdir}/groonga/modules
-%dir %{_libdir}/groonga/modules/suggest
-%{_libdir}/groonga/modules/suggest/*.so
-%dir %{_libdir}/groonga/modules/tokenizers
+%dir %{_libdir}/groonga/plugins
+%dir %{_libdir}/groonga/plugins/suggest
+%{_libdir}/groonga/plugins/suggest/*.so
+%dir %{_libdir}/groonga/plugins/tokenizers
 %dir %{_datadir}/groonga
 %{_datadir}/groonga/
 
@@ -246,7 +246,7 @@ fi
 
 %files tokenizer-mecab
 %defattr(-,root,root,-)
-%{_libdir}/groonga/modules/tokenizers/mecab.so
+%{_libdir}/groonga/plugins/tokenizers/mecab.so
 
 %files munin-plugins
 %defattr(-,root,root,-)
