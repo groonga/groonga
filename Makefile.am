@@ -31,3 +31,6 @@ win32-installer: all
 	cp -rp $(builddir)/include/groonga/ dist/include/
 	nkf -Wsc $(builddir)/doc/ja/README > dist/doc/README.txt
 	makensis setup.nsi
+
+update-changelog:
+	(cd $(top_srcdir) && release/gitlog2changelog.py)
