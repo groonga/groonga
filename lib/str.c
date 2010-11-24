@@ -2194,6 +2194,21 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
       default :
         GRN_TEXT_PUTC(ctx, buf, *s);
       }
+    } else if (l == 3) {
+      if (*s == '\xe2' && *(s + 1) == '\x80') {
+        switch (*(s + 2)) {
+        case '\xa8': /* \u2028 */
+          grn_bulk_write(ctx, buf, "\\u2028", 6);
+          break;
+        case '\xa9': /* \u2029 */
+          grn_bulk_write(ctx, buf, "\\u2029", 6);
+          break;
+        default:
+          grn_bulk_write(ctx, buf, s, l);
+        }
+      } else {
+        grn_bulk_write(ctx, buf, s, l);
+      }
     } else {
       grn_bulk_write(ctx, buf, s, l);
     }
