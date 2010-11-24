@@ -76,7 +76,7 @@ build()
 
     case $distribution in
 	fedora)
-	    distribution_version=13
+	    distribution_version=14
 	    ;;
 	centos)
 	    distribution_version=5

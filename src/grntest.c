@@ -80,7 +80,7 @@ static int grntest_noftp_mode = 0;
 #define TMPFILE "_grntest.tmp"
 
 static grn_ctx grntest_server_context;
-FILE *grntest_logfp;
+static FILE *grntest_logfp;
 
 #define OS_LINUX64   "LINUX64"
 #define OS_LINUX32   "LINUX32"
@@ -91,20 +91,22 @@ FILE *grntest_logfp;
 typedef SOCKET socket_t;
 #define SOCKETERROR INVALID_SOCKET
 #define socketclose closesocket
-#define GROONGA_PATH "groonga.exe"
-PROCESS_INFORMATION grntest_pi;
+static const char *groonga_path = "groonga.exe";
+static PROCESS_INFORMATION grntest_pi;
 #else
-pid_t grntest_server_id = 0;
+static pid_t grntest_server_id = 0;
 typedef int socket_t;
 #define socketclose close
 #define SOCKETERROR -1
+static const char *groonga_path = "groonga";
 #endif /* WIN32 */
 
-char *grntest_osinfo;
+static const char *groonga_protocol = "gqtp";
+static char *grntest_osinfo;
 
 
 
-grn_obj *grntest_db = NULL;
+static grn_obj *grntest_db = NULL;
 
 #define MAX_CON_JOB 10
 #define MAX_CON 64
@@ -169,8 +171,7 @@ static grn_obj *grntest_owndb[MAX_CON];
 
 grn_obj grntest_starttime, grntest_jobs_start;
 
-static
-int
+static int
 grntest_atoi(const char *str, const char *end, const char **rest)
 {
   while (grn_isspace(str, GRN_ENC_UTF8) == 1) {
@@ -179,8 +180,7 @@ grntest_atoi(const char *str, const char *end, const char **rest)
   return grn_atoi(str, end, rest);
 }
 
-static
-int
+static int
 out_p(int jobtype)
 {
   if (jobtype == J_OUT_LOCAL) {
@@ -195,8 +195,7 @@ out_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 test_p(int jobtype)
 {
   if (jobtype == J_TEST_LOCAL) {
@@ -211,8 +210,7 @@ test_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 report_p(int jobtype)
 {
   if (jobtype == J_REP_LOCAL) {
@@ -227,8 +225,7 @@ report_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 gqtp_p(int jobtype)
 {
   if (jobtype == J_DO_GQTP) {
@@ -246,8 +243,7 @@ gqtp_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 http_p(int jobtype)
 {
   if (jobtype == J_DO_HTTP) {
@@ -265,11 +261,11 @@ http_p(int jobtype)
   return 0;
 }
 
-static
-int
+static int
 error_exit_in_thread(intptr_t code)
 {
-  fprintf(stderr, "Fatal error! Check script file or database!\n");
+  fprintf(stderr,
+          "Fatal error! Check script file or database!: %ld\n", (long)code);
   fflush(stderr);
   CRITICAL_SECTION_ENTER(grntest_cs);
   grntest_stop_flag = 1;
@@ -326,8 +322,7 @@ escape_command(grn_ctx *ctx, char *in, int ilen, grn_obj *escaped_command)
 }
 
 
-static
-int
+static int
 report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time,
                     grn_obj *end_time)
 {
@@ -366,8 +361,7 @@ report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_ti
   return 0;
 }
 
-static
-int
+static int
 report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
                grn_obj *start_time, grn_obj *end_time)
 {
@@ -411,8 +405,7 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   return 0;
 }
 
-static
-int
+static int
 output_result_final(grn_ctx *ctx, int qnum)
 {
   grn_obj end_time;
@@ -436,8 +429,7 @@ output_result_final(grn_ctx *ctx, int qnum)
   return 0;
 }
 
-static
-int
+static int
 output_sysinfo(char *sysinfo)
 {
   if (grntest_outtype == OUT_TSV) {
@@ -448,30 +440,9 @@ output_sysinfo(char *sysinfo)
   return 0;
 }
 
-static
-int
-shutdown_server(void)
-{
-  char *res;
-  int flags, res_len;
-
-  if (grntest_remote_mode) {
-    return 0;
-  }
-  grn_ctx_send(&grntest_server_context, "shutdown", 8, 0);
-  if (grntest_server_context.rc) {
-    fprintf(stderr, "ctx_send:rc=%d\n", grntest_server_context.rc);
-    exit(1);
-  }
-  grn_ctx_recv(&grntest_server_context, &res, &res_len, &flags);
-
-  return 0;
-}
-
 /* #define ENABLE_ERROR_REPORT 1 */
 #ifdef ENABLE_ERROR_REPORT
-static
-int
+static int
 error_command(grn_ctx *ctx, char *command, int task_id)
 {
   fprintf(stderr, "error!:command=[%s] task_id = %d\n", command, task_id);
@@ -481,8 +452,7 @@ error_command(grn_ctx *ctx, char *command, int task_id)
 }
 #endif
 
-static
-int
+static int
 diff_result(char *expect, int elen, char *result, int rlen)
 {
   int i;
@@ -537,8 +507,7 @@ diff_result(char *expect, int elen, char *result, int rlen)
   return strncmp(e, r, strlen(e));
 }
 
-static
-socket_t
+static socket_t
 open_socket(char *host, int port)
 {
   socket_t sock;
@@ -572,8 +541,7 @@ open_socket(char *host, int port)
   return sock;
 }
 
-static
-int
+static int
 write_to_server(socket_t socket, char *buf)
 {
 #ifdef DEBUG_FTP
@@ -586,8 +554,7 @@ write_to_server(socket_t socket, char *buf)
 #define OUTPUT_TYPE "output_type"
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
 
-static
-void
+static void
 command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
 {
   char tok_type;
@@ -670,8 +637,7 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-static
-void
+static void
 command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
 {
   socket_t http_socket;
@@ -713,8 +679,7 @@ command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-static
-void
+static void
 command_send_ctx(grn_ctx *ctx, char *command, int type, int task_id)
 {
   grn_ctx_send(ctx, command, strlen(command), 0);
@@ -727,8 +692,7 @@ command_send_ctx(grn_ctx *ctx, char *command, int type, int task_id)
 */
 }
 
-static
-void
+static void
 command_send(grn_ctx *ctx, char *command, int type, int task_id)
 {
   if (http_p(type)) {
@@ -738,8 +702,7 @@ command_send(grn_ctx *ctx, char *command, int type, int task_id)
   }
 }
 
-static
-void
+static void
 command_recv_http(grn_ctx *ctx, int type, int task_id,
                   char **res, int *res_len, int *flags)
 {
@@ -786,8 +749,7 @@ command_recv_http(grn_ctx *ctx, int type, int task_id,
   grntest_task[task_id].http_socket = 0;
 }
 
-static
-void
+static void
 command_recv_ctx(grn_ctx *ctx, int type, int task_id,
                  char **res, int *res_len, int *flags)
 {
@@ -798,8 +760,7 @@ command_recv_ctx(grn_ctx *ctx, int type, int task_id,
   }
 }
 
-static
-void
+static void
 command_recv(grn_ctx *ctx, int type, int task_id,
              char **res, int *res_len, int *flags)
 {
@@ -810,8 +771,30 @@ command_recv(grn_ctx *ctx, int type, int task_id,
   }
 }
 
-static
-int
+static int
+shutdown_server(void)
+{
+  char *res;
+  int flags, res_len;
+  int job_type;
+  int task_id = 0;
+
+  if (grntest_remote_mode) {
+    return 0;
+  }
+  job_type = grntest_task[task_id].jobtype;
+  command_send(&grntest_server_context, "shutdown", job_type, task_id);
+  if (grntest_server_context.rc) {
+    fprintf(stderr, "ctx_send:rc=%d\n", grntest_server_context.rc);
+    exit(1);
+  }
+  command_recv(&grntest_server_context, job_type, task_id,
+               &res, &res_len, &flags);
+
+  return 0;
+}
+
+static int
 do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
                 long long int *load_start)
 {
@@ -867,7 +850,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
         GRN_TEXT_INIT(&log, 0);
         input = grntest_job[grntest_task[task_id].job_id].inputlog;
         output = grntest_job[grntest_task[task_id].job_id].outputlog;
-        if (grn_text_fgets(ctx, &log, input)) {
+        if (grn_text_fgets(ctx, &log, input) != GRN_SUCCESS) {
           GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
@@ -897,8 +880,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
 }
 
 
-static
-int
+static int
 do_command(grn_ctx *ctx, char *command, int type, int task_id)
 {
   char *res;
@@ -949,7 +931,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
         GRN_TEXT_INIT(&log, 0);
         input = grntest_job[grntest_task[task_id].job_id].inputlog;
         output = grntest_job[grntest_task[task_id].job_id].outputlog;
-        if (!grn_text_fgets(ctx, &log, input)) {
+        if (grn_text_fgets(ctx, &log, input) != GRN_SUCCESS) {
           GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
@@ -980,8 +962,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
   return 0;
 }
 
-static
-int
+static int
 comment_p(char *command)
 {
   if (command[0] == '#') {
@@ -990,8 +971,7 @@ comment_p(char *command)
   return 0;
 }
 
-static
-int
+static int
 load_command_p(char *command)
 {
   int i = 0;
@@ -1008,8 +988,7 @@ load_command_p(char *command)
   return 0;
 }
 
-static
-int
+static int
 worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
 {
   int i, load_mode, load_count;
@@ -1036,6 +1015,9 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
       load_start = 0LL;
       GRN_TEXT_INIT(&line, 0);
       while (grn_text_fgets(ctx, &line, fp) == GRN_SUCCESS) {
+        if (GRN_TEXT_VALUE(&line)[GRN_TEXT_LEN(&line) - 1] == '\n') {
+          grn_bulk_truncate(ctx, &line, GRN_TEXT_LEN(&line) - 1);
+        }
         if (GRN_TEXT_LEN(&line) == 0) {
           GRN_BULK_REWIND(&line);
           continue;
@@ -1172,8 +1154,7 @@ typedef struct _grntest_worker {
 } grntest_worker;
 
 #ifdef WIN32
-static
-int
+static int
 __stdcall
 worker(void *val)
 {
@@ -1182,8 +1163,7 @@ worker(void *val)
   return 0;
 }
 #else
-static
-void *
+static void *
 worker(void *val)
 {
   grntest_worker *worker = val;
@@ -1193,7 +1173,7 @@ worker(void *val)
 #endif /* WIN32 */
 
 #ifdef WIN32
-int
+static int
 thread_main(grn_ctx *ctx, grn_obj *log, int num)
 {
   int  i;
@@ -1227,7 +1207,7 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
   return 0;
 }
 #else
-int
+static int
 thread_main(grn_ctx *ctx, grn_obj *log, int num)
 {
   intptr_t i;
@@ -1259,8 +1239,7 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
 }
 #endif
 
-static
-int
+static int
 error_exit(grn_ctx *ctx, int ret)
 {
   fflush(stderr);
@@ -1270,8 +1249,7 @@ error_exit(grn_ctx *ctx, int ret)
   exit(ret);
 }
 
-static
-int
+static int
 get_sysinfo(const char *path, char *result, int olen)
 {
   char tmpbuf[256];
@@ -1539,8 +1517,7 @@ get_sysinfo(const char *path, char *result, int olen)
   return 0;
 }
 
-static
-int
+static int
 start_server(const char *dbpath, int r)
 {
   int ret;
@@ -1555,9 +1532,10 @@ start_server(const char *dbpath, int r)
     exit(1);
   }
 
-  strcpy(tmpbuf, GROONGA_PATH);
-  strcat(tmpbuf, " -s ");
-  strcat(tmpbuf, "-p ");
+  strcpy(tmpbuf, groonga_path);
+  strcat(tmpbuf, " -s --protocol ");
+  strcat(tmpbuf, groonga_protocol);
+  strcat(tmpbuf, " -p ");
   sprintf(optbuf, "%d ", grntest_serverport);
   strcat(tmpbuf, optbuf);
   strcat(tmpbuf, dbpath);
@@ -1567,7 +1545,8 @@ start_server(const char *dbpath, int r)
 		      0, NULL, NULL, &si, &grntest_pi);
 
   if (ret == 0) {
-    fprintf(stderr, "Cannot start groonga server:error=%d\n", GetLastError());
+    fprintf(stderr, "Cannot start groonga server: <%s>: error=%d\n",
+            groonga_path, GetLastError());
     exit(1);
   }
 
@@ -1580,9 +1559,14 @@ start_server(const char *dbpath, int r)
   }
   sprintf(optbuf, "%d", grntest_serverport);
   if (pid == 0) {
-    ret = execlp("groonga", "groonga", "-s", "-p", optbuf, dbpath, (char*)NULL);
+    ret = execlp(groonga_path, groonga_path,
+                 "-s",
+                 "--protocol", groonga_protocol,
+                 "-p", optbuf,
+                 dbpath, (char*)NULL);
     if (ret == -1) {
-      fprintf(stderr, "Cannot start groonga server:errno=%d\n", errno);
+      fprintf(stderr, "Cannot start groonga server: <%s>: errno=%d\n",
+              groonga_path, errno);
       exit(1);
     }
   }
@@ -1595,8 +1579,7 @@ start_server(const char *dbpath, int r)
   return 0;
 }
 
-static
-int
+static int
 parse_line(char *buf, int start, int end, int num)
 {
   int i, j, error_flag = 0, out_or_test = 0;
@@ -1813,8 +1796,7 @@ parse_line(char *buf, int start, int end, int num)
   return 0;
 }
 
-static
-int
+static int
 get_jobs(grn_ctx *ctx, char *buf, int line)
 {
   int i, len, start, end, ret;
@@ -1862,8 +1844,7 @@ get_jobs(grn_ctx *ctx, char *buf, int line)
   return jnum;
 }
 
-static
-int
+static int
 make_task_table(grn_ctx *ctx, int jobnum)
 {
   int i, j;
@@ -1899,6 +1880,9 @@ make_task_table(grn_ctx *ctx, int jobnum)
         }
         while (grn_text_fgets(ctx, &line, fp) == GRN_SUCCESS) {
           grn_obj *command;
+          if (GRN_TEXT_VALUE(&line)[GRN_TEXT_LEN(&line) - 1] == '\n') {
+            grn_bulk_truncate(ctx, &line, GRN_TEXT_LEN(&line) - 1);
+          }
           if (GRN_TEXT_LEN(&line) == 0) {
             GRN_BULK_REWIND(&line);
             continue;
@@ -1933,8 +1917,7 @@ make_task_table(grn_ctx *ctx, int jobnum)
 }
 
 /*
-static
-int
+static int
 print_commandlist(int task_id)
 {
   int i;
@@ -1949,11 +1932,10 @@ print_commandlist(int task_id)
 */
 
 /* return num of query */
-static
-int
+static int
 do_jobs(grn_ctx *ctx, int jobnum, int line)
 {
-  int i, task_num, ret, qnum = 0,thread_num = 0;
+  int i, task_num, ret, qnum = 0, thread_num = 0;
 
   for (i = 0; i < jobnum; i++) {
 /*
@@ -2077,8 +2059,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
 }
 
 /* return num of query */
-static
-int
+static int
 do_script(grn_ctx *ctx, const char *sfile)
 {
   int line = 0;
@@ -2130,8 +2111,7 @@ do_script(grn_ctx *ctx, const char *sfile)
   return qnum_total;
 }
 
-static
-int
+static int
 start_local(grn_ctx *ctx, const char *dbpath)
 {
   grntest_db = grn_db_open(ctx, dbpath);
@@ -2145,8 +2125,7 @@ start_local(grn_ctx *ctx, const char *dbpath)
   return 0;
 }
 
-static
-int
+static int
 check_server(grn_ctx *ctx)
 {
   int ret, retry = 0;
@@ -2177,8 +2156,7 @@ check_server(grn_ctx *ctx)
 #define MODE_PUT  3
 #define MODE_TIME 4
 
-static
-int
+static int
 check_response(char *buf)
 {
   if (buf[0] == '1') {
@@ -2193,8 +2171,7 @@ check_response(char *buf)
   return 0;
 }
 
-static
-int
+static int
 read_response(socket_t socket, char *buf)
 {
   int ret;
@@ -2210,8 +2187,7 @@ read_response(socket_t socket, char *buf)
   return ret;
 }
 
-static
-int
+static int
 put_file(socket_t socket, const char *filename)
 {
   FILE *fp;
@@ -2237,8 +2213,7 @@ put_file(socket_t socket, const char *filename)
   return size;
 }
 
-static
-int
+static int
 ftp_list(socket_t data_socket)
 {
   int ret;
@@ -2257,8 +2232,7 @@ ftp_list(socket_t data_socket)
   return 0;
 }
 
-static
-int
+static int
 get_file(socket_t socket, const char *filename, int size)
 {
   FILE *fp;
@@ -2289,8 +2263,7 @@ get_file(socket_t socket, const char *filename, int size)
   return size;
 }
 
-static
-int
+static int
 get_port(char *buf, char *host, int *port)
 {
   int ret,d1,d2,d3,d4,d5,d6;
@@ -2306,8 +2279,7 @@ get_port(char *buf, char *host, int *port)
   return 1;
 }
 
-static
-char *
+static char *
 get_ftp_date(char *buf)
 {
   while (*buf !=' ') {
@@ -2321,8 +2293,7 @@ get_ftp_date(char *buf)
   return buf;
 }
 
-static
-int
+static int
 get_size(char *buf)
 {
   int size;
@@ -2527,8 +2498,7 @@ exit:
 }
 
 /*
-static
-int
+static int
 ftp_main(int argc, char **argv)
 {
   char val[BUF_LEN];
@@ -2542,8 +2512,7 @@ ftp_main(int argc, char **argv)
 }
 */
 
-static
-int
+static int
 get_username(char *name, int maxlen)
 {
   char *env=NULL;
@@ -2563,8 +2532,7 @@ get_username(char *name, int maxlen)
   return 0;
 }
 
-static
-int
+static int
 get_date(char *date, time_t *sec)
 {
 #ifdef __GNUC__
@@ -2590,8 +2558,7 @@ get_date(char *date, time_t *sec)
   return 1;
 }
 
-static
-int
+static int
 get_scriptname(const char *path, char *name, char *suffix)
 {
   int slen = strlen(suffix);
@@ -2616,8 +2583,7 @@ get_scriptname(const char *path, char *name, char *suffix)
 }
 
 #ifdef WIN32
-static
-int
+static int
 get_tm_from_serverdate(char *serverdate, struct tm *tm)
 {
   int res;
@@ -2644,8 +2610,7 @@ get_tm_from_serverdate(char *serverdate, struct tm *tm)
 
 
 
-static
-int
+static int
 sync_sub(grn_ctx *ctx, const char *filename)
 {
   int ret;
@@ -2699,8 +2664,7 @@ sync_sub(grn_ctx *ctx, const char *filename)
   return 0;
 }
 
-static
-int
+static int
 cache_file(grn_ctx *ctx, char **flist, char *file, int fnum)
 {
   int i;
@@ -2719,8 +2683,7 @@ cache_file(grn_ctx *ctx, char **flist, char *file, int fnum)
   return fnum;
 }
 
-static
-int
+static int
 sync_datafile(grn_ctx *ctx, const char *sfile)
 {
   int line = 0;
@@ -2764,8 +2727,7 @@ printf("commandfile=[%s]:buf=%s\n", grntest_job[i].commandfile, buf);
   return fnum;
 }
 
-static
-int
+static int
 sync_script(grn_ctx *ctx, const char *filename)
 {
   int ret, filenum;
@@ -2781,8 +2743,7 @@ sync_script(grn_ctx *ctx, const char *filename)
   return 1;
 }
 
-static
-void
+static void
 usage(void)
 {
   fprintf(stderr,
@@ -2796,8 +2757,11 @@ usage(void)
          "  --onmemory:                load all commands into memory\n"
          "  --output-type <tsv/json>:  specify output-type (default: json)\n"
          "  --owndb:                   open dbs for each ctx\n"
-         "  -p, --port <port number>:  server port number (default: %d)\n",
-         DEFAULT_DEST, DEFAULT_PORT);
+         "  -p, --port <port number>:  server port number (default: %d)\n"
+         "  --groonga <groonga_path>:  groonga command path (default: %s)\n"
+         "  --protocol <gqtp|http>:    groonga server protocol (default: %s)\n",
+          DEFAULT_DEST, DEFAULT_PORT,
+          groonga_path, groonga_protocol);
   exit(1);
 }
 
@@ -2814,8 +2778,7 @@ enum {
 #define MODE_ONMEMORY  0x1000
 
 
-static
-int
+static int
 get_token(char *line, char *token, int maxlen, char **next)
 {
   int i = 0;
@@ -2872,8 +2835,7 @@ get_token(char *line, char *token, int maxlen, char **next)
 }
 
 /* SET_PORT and SET_HOST */
-static
-int
+static int
 check_script(const char *scrname)
 {
   FILE *fp;
@@ -2916,8 +2878,7 @@ check_script(const char *scrname)
 }
 
 #ifndef WIN32
-static
-void
+static void
 timeout(int sig)
 {
   fprintf(stderr, "timeout:groonga server cannot shutdown!!\n");
@@ -2925,8 +2886,7 @@ timeout(int sig)
   alarm(0);
 }
 
-static
-int
+static int
 setsigalarm(int sec)
 {
   int	ret;
@@ -2965,6 +2925,8 @@ main(int argc, char **argv)
     {'\0', "localonly", NULL, MODE_LOCALONLY, getopt_op_on},
     {'\0', "onmemory", NULL, MODE_ONMEMORY, getopt_op_on},
     {'\0', "owndb", NULL, MODE_OWNDB, getopt_op_on},
+    {'\0', "groonga", NULL, 0, getopt_op_none},
+    {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2972,6 +2934,8 @@ main(int argc, char **argv)
   opts[1].arg = &portstr;
   opts[2].arg = &outdir;
   opts[3].arg = &outtype;
+  opts[10].arg = &groonga_path;
+  opts[11].arg = &groonga_protocol;
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
@@ -3041,6 +3005,7 @@ main(int argc, char **argv)
 
   grn_ctx_init(&context, 0);
   grn_ctx_init(&grntest_server_context, 0);
+  grn_db_create(&grntest_server_context, NULL, NULL);
   grn_set_default_encoding(GRN_ENC_UTF8);
 
   if (!grntest_noftp_mode) {
@@ -3127,6 +3092,7 @@ exit:
   grn_obj_close(&context, &grntest_starttime);
   grn_obj_close(&context, grntest_db);
   grn_ctx_fin(&context);
+  grn_obj_close(&grntest_server_context, grn_ctx_db(&grntest_server_context));
   grn_ctx_fin(&grntest_server_context);
   grn_fin();
   return 0;

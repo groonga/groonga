@@ -44,6 +44,7 @@ const char *grn_document_root = NULL;
 #define DEFAULT_OUTPUT_COLUMNS  "_id, _key, *"
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
+#define DUMP_COLUMNS            "_id, _key, _value, *"
 
 grn_rc
 grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
@@ -1615,8 +1616,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
 
   GRN_PTR_INIT(&columnbuf, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  grn_obj_columns(ctx, table, DEFAULT_OUTPUT_COLUMNS,
-                  strlen(DEFAULT_OUTPUT_COLUMNS), &columnbuf);
+  grn_obj_columns(ctx, table, DUMP_COLUMNS, strlen(DUMP_COLUMNS), &columnbuf);
   columns = (grn_obj **)GRN_BULK_HEAD(&columnbuf);
   ncolumns = GRN_BULK_VSIZE(&columnbuf)/sizeof(grn_obj *);
 

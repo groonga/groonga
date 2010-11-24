@@ -71,30 +71,30 @@ groonga実行ファイルやgroongaサーバを介して様々なコマンドを
 
 書式2において、空白や、記号「"'()\」のうちいずれかを含む値を指定したい場合は、シングルクォート(')かダブルクォート(")で値を囲みます。
 
-詳しくは、 :doc:`../execfile` のコマンドの項を参考にしてください。
+詳しくは、 :ref:`execfile` のコマンドの項を参考にしてください。
 
 主なコマンド
 ------------
 
- :doc:`../commands/status`
+ :ref:`status`
   groongaプロセスの状態を表示します。
- :doc:`../commands/table_list`
+ :ref:`table_list`
   DBに定義されているテーブルのリストを表示します。
- :doc:`../commands/column_list`
+ :ref:`column_list`
   テーブルに定義されているカラムのリストを表示します。
- :doc:`../commands/table_create`
+ :ref:`table_create`
   DBにテーブルを追加します。
- :doc:`../commands/column_create`
+ :ref:`column_create`
   テーブルにカラムを追加します。
- :doc:`../commands/select`
+ :ref:`select`
   テーブルに含まれるレコードを検索して表示します。
- :doc:`../commands/load`
+ :ref:`load`
   テーブルにレコードを挿入します。
 
 テーブルの作成
 --------------
 
-:doc:`../commands/table_create` コマンドを使用してテーブルを作成します。
+:ref:`table_create` コマンドを使用してテーブルを作成します。
 
 groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主キーには型と、その格納方法を指定する必要があります。
 
@@ -111,7 +111,7 @@ groongaでは、多くの場合テーブルを作成する際に主キーが必�
 検索
 ----
 
-:doc:`../commands/select` コマンドを用いて、テーブルの中身を表示することができます。
+:ref:`select` コマンドを用いて、テーブルの中身を表示することができます。
 
 .. groonga-command
 .. include:: ../example/tutorial01-3.log
@@ -124,7 +124,7 @@ table_createコマンドで作成したテーブルには、最初から'_id'/'_
 カラムの作成
 ------------
 
-:doc:`../commands/column_create` コマンドを用いて、カラムを作成することができます。
+:ref:`column_create` コマンドを用いて、カラムを作成することができます。
 
 ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しましょう。
 
@@ -170,7 +170,7 @@ Siteテーブルのtitleカラムを検索対象とする、'blog_title'とい�
 データのロード
 --------------
 
-:doc:`../commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。
+:ref:`load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。
 
 .. groonga-command
 .. include:: ../example/tutorial01-7.log

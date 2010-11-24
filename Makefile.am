@@ -31,3 +31,33 @@ win32-installer: all
 	cp -rp $(builddir)/include/groonga/ dist/include/
 	nkf -Wsc $(builddir)/doc/ja/README > dist/doc/README.txt
 	makensis setup.nsi
+
+update-changelog:
+	cd $(top_srcdir) && release/gitlog2changelog.py
+
+tag:
+	cd $(top_srcdir) && git tag v$(VERSION) -a -m 'groonga $(VERSION)!!!'
+
+update-latest-release:
+	@if test -z "$(OLD_RELEASE)"; then	\
+	  echo "\$$(OLD_RELEASE) is missing";	\
+	  exit 1;				\
+	fi
+	@if test -z "$(OLD_RELEASE_DATE)"; then		\
+	  echo "\$$(OLD_RELEASE_DATE) is missing";	\
+	  exit 1;					\
+	fi
+	@if test -z "$(NEW_RELEASE_DATE)"; then		\
+	  echo "\$$(NEW_RELEASE_DATE) is missing";	\
+	  exit 1;					\
+	fi
+	cd $(top_srcdir) && test -d "misc" ||					\
+	  svn export --force							\
+	  https://cutter.svn.sourceforge.net/svnroot/cutter/cutter/trunk/misc
+	cd $(top_srcdir) &&					\
+	  misc/update-latest-release.rb				\
+	  $(PACKAGE) $(OLD_RELEASE) $(OLD_RELEASE_DATE)		\
+	  $(VERSION) $(NEW_RELEASE_DATE)			\
+	  rpm/fedora/groonga.spec.in				\
+	  rpm/centos/groonga.spec.in				\
+	  debian/changelog
