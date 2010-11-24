@@ -629,26 +629,6 @@ s_output(grn_ctx *ctx, int flags, void *arg)
 }
 
 static int
-comment_p(const char *line, int length)
-{
-  const char *p, *e;
-
-  e = line + length;
-  for (p = line; p < e; p++) {
-    switch (*p) {
-    case '#' :
-      return GRN_TRUE;
-    case ' ' :
-    case '\t' :
-      break;
-    default :
-      return GRN_FALSE;
-    }
-  }
-  return GRN_FALSE;
-}
-
-static int
 do_alone(int argc, char **argv)
 {
   int rc = -1;
@@ -669,7 +649,6 @@ do_alone(int argc, char **argv)
         int  len;
         while ((len = prompt(ctx, buf))) {
           uint32_t size = len - 1;
-          if (comment_p(buf, len)) { continue; }
           grn_ctx_send(ctx, buf, size, 0);
           if (ctx->stat == GRN_CTX_QUIT) { break; }
         }
@@ -741,7 +720,6 @@ g_client(int argc, char **argv)
         int   len;
         while ((len = prompt(ctx, buf))) {
           uint32_t size = len - 1;
-          if (comment_p(buf, len)) { continue; }
           grn_ctx_send(ctx, buf, size, 0);
           rc = ctx->rc;
           if (rc) { break; }

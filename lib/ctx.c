@@ -1142,6 +1142,26 @@ grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
   return ctx->rc;
 }
 
+static int
+comment_command_p(const char *command, unsigned int length)
+{
+  const char *p, *e;
+
+  e = command + length;
+  for (p = command; p < e; p++) {
+    switch (*p) {
+    case '#' :
+      return GRN_TRUE;
+    case ' ' :
+    case '\t' :
+      break;
+    default :
+      return GRN_FALSE;
+    }
+  }
+  return GRN_FALSE;
+}
+
 unsigned int
 grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
 {
@@ -1167,7 +1187,8 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       goto exit;
     } else {
-      grn_obj *expr;
+      grn_obj *expr = NULL;
+      if (comment_command_p(str, str_len)) { goto output; };
       if (ctx->impl->qe_next) {
         grn_obj *val;
         expr = ctx->impl->qe_next;
@@ -1189,15 +1210,16 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         }
       }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
+      if (!ctx->impl->qe_next) {
+        LAP("<", "rc=%d", ctx->rc);
+      }
+    output :
       if (!ERRP(ctx, GRN_CRIT)) {
         if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
           ctx->impl->output(ctx, GRN_CTX_TAIL, ctx->impl->data.ptr);
         }
       }
       if (expr) { grn_expr_clear_vars(ctx, expr); }
-      if (!ctx->impl->qe_next) {
-        LAP("<", "rc=%d", ctx->rc);
-      }
       goto exit;
     }
   }
