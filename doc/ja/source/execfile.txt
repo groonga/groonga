@@ -1,5 +1,7 @@
 .. highlightlang:: none
 
+.. _execfile:
+
 groonga実行ファイル
 ===================
 

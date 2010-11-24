@@ -1,5 +1,7 @@
 .. highlightlang:: none
 
+.. _table_create:
+
 table_create
 ============
 
