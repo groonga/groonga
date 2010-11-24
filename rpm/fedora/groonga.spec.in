@@ -116,12 +116,12 @@ python setup.py build
 cd %{_builddir}/%{name}-%{version}/bindings/php
 sed -i.ldflags -e 's|PHP_ADD_LIBRARY_WITH_PATH(groonga, .*)|PHP_ADD_LIBRARY(groonga, GROONGA_SHARED_LIBADD)|' config.m4
 phpize
-CFLAGS="-I%{_builddir}/%{name}-%{version}/include %{optflags}"
+CFLAGS="%{optflags}"
 export CFLAGS
 LDFLAGS=-L%{_builddir}/%{name}-%{version}/lib/.libs
 export LDFLAGS
 # --with-groonga is only necessary to avoid error in configure
-%configure --disable-static --with-groonga=.
+%configure --disable-static --with-groonga=%{_builddir}/%{name}-%{version}
 make %{?_smp_mflags}
 
 
@@ -258,8 +258,7 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
-* Mon Nov 29 2010 Kouhei Sutou <kou@clear-code.com>
-- (1.0.4-0)
+* Mon Nov 29 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.4-0
 - new upstream release
 
 * Fri Oct 09 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.3-1
