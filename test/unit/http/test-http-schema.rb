@@ -199,7 +199,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_dot_name
     response = get(command_path(:table_create, :name => "mori.daijiro"))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "name can't start with '_' and 0-9, and contains only 0-9, A-Z, a-z, or _",
+                          "name can't start with '_' and 0-9, " +
+                          "and contains only 0-9, A-Z, a-z, or _: " +
+                          "<mori.daijiro>",
                           response,
                           :content_type => "application/json")
   end
@@ -207,7 +209,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_under_score_started_name
     response = get(command_path(:table_create, :name => "_mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "name can't start with '_' and 0-9, and contains only 0-9, A-Z, a-z, or _",
+                          "name can't start with '_' and 0-9, " +
+                          "and contains only 0-9, A-Z, a-z, or _: " +
+                          "<_mori>",
                           response,
                           :content_type => "application/json")
   end
@@ -220,7 +224,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_colon_name
     response = get(command_path(:table_create, :name => "daijiro:mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "name can't start with '_' and 0-9, and contains only 0-9, A-Z, a-z, or _",
+                          "name can't start with '_' and 0-9, " +
+                          "and contains only 0-9, A-Z, a-z, or _: " +
+                          "<daijiro:mori>",
                           response,
                           :content_type => "application/json")
   end
@@ -230,7 +236,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     assert_success_response(response, :content_type => "application/json")
     response = get(command_path(:table_create, :name => "daijiro"))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "already used name was assigned",
+                          "already used name was assigned: <daijiro>",
                           response,
                           :content_type => "application/json")
   end
