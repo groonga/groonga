@@ -18,10 +18,10 @@ DEB_INSTALL_DOCS_groonga-doc =			\
 	doc/ja/source
 
 DEB_INSTALL_DIRS_libgroonga =			\
-	/usr/lib/groonga/modules/suggest
+	/usr/lib/groonga/plugins/suggest
 
 DEB_INSTALL_DIRS_libgroonga-tokenizer-mecab =	\
-	/usr/lib/groonga/modules/tokenizers
+	/usr/lib/groonga/plugins/tokenizers
 
 DEB_INSTALL_DIRS_libgroonga-dev =		\
 	/usr/include/groonga			\
@@ -42,12 +42,12 @@ install/groonga::
 
 install/libgroonga::
 	cp -ar debian/tmp/usr/lib/libgroonga* debian/libgroonga/usr/lib/
-	cp -ar debian/tmp/usr/lib/groonga/modules/suggest \
-	  debian/libgroonga/usr/lib/groonga/modules/
+	cp -ar debian/tmp/usr/lib/groonga/plugins/suggest \
+	  debian/libgroonga/usr/lib/groonga/plugins/
 
 install/libgroonga-tokenizer-mecab::
-	cp -ar debian/tmp/usr/lib/groonga/modules/tokenizers/mecab* \
-	  debian/libgroonga-tokenizer-mecab/usr/lib/groonga/modules/tokenizers/
+	cp -ar debian/tmp/usr/lib/groonga/plugins/tokenizers/mecab* \
+	  debian/libgroonga-tokenizer-mecab/usr/lib/groonga/plugins/tokenizers/
 
 install/libgroonga-dev::
 	cp -ar debian/tmp/usr/include/groonga/* \
