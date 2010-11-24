@@ -114,13 +114,9 @@ python setup.py build
 
 # build php binding
 cd %{_builddir}/%{name}-%{version}/bindings/php
-mkdir -p include/groonga
-pushd include/groonga
-ln -sf %{_builddir}/%{name}-%{version}/groonga.h
-popd
 sed -i.ldflags -e 's|PHP_ADD_LIBRARY_WITH_PATH(groonga, .*)|PHP_ADD_LIBRARY(groonga, GROONGA_SHARED_LIBADD)|' config.m4
 phpize
-CFLAGS="-I. %{optflags}"
+CFLAGS="-I%{_builddir}/%{name}-%{version}/include %{optflags}"
 export CFLAGS
 LDFLAGS=-L%{_builddir}/%{name}-%{version}/lib/.libs
 export LDFLAGS
