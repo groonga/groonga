@@ -6,7 +6,8 @@ SUBDIRS =		\
 	memcached	\
 	http		\
 	gqtp		\
-	story
+	story		\
+	grntest
 
 if WITH_UNIT_TEST
 TESTS = run-test.sh
@@ -17,7 +18,8 @@ TESTS_ENVIRONMENT =				\
 	CUTTER="$(CUTTER)"			\
 	CUTTER_VERBOSE=yes			\
 	RUBY="$(RUBY)"				\
-	GROONGA="$(GROONGA)"
+	GROONGA="$(GROONGA)"			\
+	GRNTEST="$(GRNTEST)"
 
 if WITH_CUTTER
 noinst_LTLIBRARIES = suite-groonga-test.la

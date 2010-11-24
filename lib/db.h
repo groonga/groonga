@@ -81,7 +81,6 @@ grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
 grn_obj *grn_db_keys(grn_obj *s);
 
 uint32_t grn_db_lastmod(grn_obj *s);
-void grn_db_touch(grn_ctx *ctx, grn_obj *s);
 
 grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                grn_table_delete_optarg *optarg);

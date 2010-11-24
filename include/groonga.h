@@ -30,6 +30,7 @@ extern "C" {
 #endif /* GRN_API */
 
 typedef unsigned grn_id;
+typedef unsigned char grn_bool;
 
 #define GRN_ID_NIL                     (0x00)
 #define GRN_ID_MAX                     (0x3fffffff)
@@ -230,6 +231,15 @@ GRN_API grn_ctx *grn_ctx_open(int flags);
  * ctxの管理するメモリを解放し、使用を終了します。
  **/
 GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
+
+/**
+ * grn_ctx_set_finalizer:
+ * @ctx: 対象ctx
+ * @func: @ctxを破棄するときに呼ばれる関数
+ *
+ * @ctxを破棄するときに呼ばれる関数を設定する。
+ **/
+GRN_API grn_rc grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *func);
 
 /**
  * grn_get_default_encoding:
@@ -485,6 +495,15 @@ GRN_API grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_opt
  * 既存のdbを開く。
  **/
 GRN_API grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
+
+/**
+ * grn_db_touch:
+ * @db: 内容が変更されたdbを指定します。
+ *
+ * dbの内容の最終更新時刻を現在時刻にします。最終更新時刻は
+ * キャッシュが有効かどうかの判断などに利用されます。
+ **/
+GRN_API void grn_db_touch(grn_ctx *ctx, grn_obj *db);
 
 /**
  * grn_ctx_use:
@@ -1271,7 +1290,9 @@ typedef enum {
   GRN_INFO_CONFIG_PATH,
   */
   GRN_INFO_PARTIAL_MATCH_THRESHOLD,
-  GRN_INFO_II_SPLIT_THRESHOLD
+  GRN_INFO_II_SPLIT_THRESHOLD,
+  GRN_INFO_SUPPORT_ZLIB,
+  GRN_INFO_SUPPORT_LZO
 } grn_info_type;
 
 /**

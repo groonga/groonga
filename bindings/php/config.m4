@@ -5,8 +5,12 @@ PHP_ARG_WITH(groonga, whether groonga is available,[  --with-groonga[=DIR] With 
 if test "$PHP_GROONGA" != "no"; then
 
 
-  if test -r "$PHP_GROONGA/include/groonga/groonga.h"; then
+  if test -r "$PHP_GROONGA/include/groonga.h"; then
 	PHP_GROONGA_DIR="$PHP_GROONGA"
+	PHP_ADD_INCLUDE($PHP_GROONGA_DIR/include)
+  elif test -r "$PHP_GROONGA/include/groonga/groonga.h"; then
+	PHP_GROONGA_DIR="$PHP_GROONGA"
+	PHP_ADD_INCLUDE($PHP_GROONGA_DIR/include/groonga)
   else
 	AC_MSG_CHECKING(for groonga in default path)
 	for i in /usr /usr/local; do
@@ -19,13 +23,12 @@ if test "$PHP_GROONGA" != "no"; then
 	if test "x" = "x$PHP_GROONGA_DIR"; then
 	  AC_MSG_ERROR(not found)
 	fi
+	PHP_ADD_INCLUDE($PHP_GROONGA_DIR/include)
   fi
-
-  PHP_ADD_INCLUDE($PHP_GROONGA_DIR/include)
 
   export OLD_CPPFLAGS="$CPPFLAGS"
   export CPPFLAGS="$CPPFLAGS $INCLUDES -DHAVE_GROONGA"
-  AC_CHECK_HEADER([groonga/groonga.h], [], AC_MSG_ERROR('groonga/groonga.h' header not found))
+  AC_CHECK_HEADER([groonga.h], [], AC_MSG_ERROR('groonga.h' header not found))
   PHP_SUBST(GROONGA_SHARED_LIBADD)
 
 

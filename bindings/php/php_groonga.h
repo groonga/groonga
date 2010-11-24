@@ -28,7 +28,7 @@ extern "C" {
 #ifdef  __cplusplus
 } // extern "C" 
 #endif
-#include <groonga/groonga.h>
+#include <groonga.h>
 #ifdef  __cplusplus
 extern "C" {
 #endif

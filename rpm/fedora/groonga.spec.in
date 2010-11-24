@@ -105,12 +105,8 @@ make %{?_smp_mflags}
 # build python binding
 cd %{_builddir}/%{name}-%{version}/bindings/python/ql
 python setup.py config
-mkdir groonga
-cd groonga
-ln -sf %{_builddir}/%{name}-%{version}/groonga.h
-cd ..
 sed -i.cflags -e 's|^cflags =.*|cflags = []|' setup.py
-CFLAGS=-I.
+CFLAGS=-I%{_builddir}/%{name}-%{version}/include
 export CFLAGS
 LDFLAGS=-L%{_builddir}/%{name}-%{version}/lib/.libs
 export LDFLAGS
@@ -118,13 +114,9 @@ python setup.py build
 
 # build php binding
 cd %{_builddir}/%{name}-%{version}/bindings/php
-mkdir -p include/groonga
-pushd include/groonga
-ln -sf %{_builddir}/%{name}-%{version}/groonga.h
-popd
 sed -i.ldflags -e 's|PHP_ADD_LIBRARY_WITH_PATH(groonga, .*)|PHP_ADD_LIBRARY(groonga, GROONGA_SHARED_LIBADD)|' config.m4
 phpize
-CFLAGS="-I. %{optflags}"
+CFLAGS="-I%{_builddir}/%{name}-%{version}/include %{optflags}"
 export CFLAGS
 LDFLAGS=-L%{_builddir}/%{name}-%{version}/lib/.libs
 export LDFLAGS
@@ -135,7 +127,7 @@ make %{?_smp_mflags}
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
-rm $RPM_BUILD_ROOT%{_libdir}/groonga/modules/*/*.la
+rm $RPM_BUILD_ROOT%{_libdir}/groonga/plugins/*/*.la
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 mkdir -p $RPM_BUILD_ROOT%{_initddir}
@@ -231,10 +223,10 @@ fi
 %doc README AUTHORS COPYING
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
-%dir %{_libdir}/groonga/modules
-%dir %{_libdir}/groonga/modules/suggest
-%{_libdir}/groonga/modules/suggest/*.so
-%dir %{_libdir}/groonga/modules/tokenizers
+%dir %{_libdir}/groonga/plugins
+%dir %{_libdir}/groonga/plugins/suggest
+%{_libdir}/groonga/plugins/suggest/*.so
+%dir %{_libdir}/groonga/plugins/tokenizers
 %dir %{_datadir}/groonga
 %{_datadir}/groonga/
 
@@ -250,7 +242,7 @@ fi
 
 %files tokenizer-mecab
 %defattr(-,root,root,-)
-%{_libdir}/groonga/modules/tokenizers/mecab.so
+%{_libdir}/groonga/plugins/tokenizers/mecab.so
 
 %files munin-plugins
 %defattr(-,root,root,-)

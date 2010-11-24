@@ -87,7 +87,8 @@ class HTTPLoadTest < Test::Unit::TestCase
                    ["_key", "Int32"],
                    ["_value", "Int32"]],
                   [[1, 29, 10]],
-                  :table => "int_hash")
+                  :table => "int_hash",
+                  :output_columns => "_id, _key, _value, *")
   end
 
   def test_int_column_value

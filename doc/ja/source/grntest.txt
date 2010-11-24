@@ -1,5 +1,7 @@
 .. highlightlang:: none
 
+.. _grntest:
+
 grntest
 =======
 
@@ -49,6 +51,14 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 .. cmdoption:: --log-output-dir
 
   デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリです。このオプションを利用すると、任意のディレクトリに出力先を変更することができます。
+
+.. cmdoption:: --groonga <groonga_path>
+
+  groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマンドを探します。
+
+.. cmdoption:: --protocol <gqtp|http>
+
+  groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。
 
 引数
 ----

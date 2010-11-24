@@ -24,15 +24,18 @@ module GroongaTestUtils
   include GroongaConstants
 
   def setup_database_path
-    @tmp_dir = Dir.mktmpdir("tmp", ENV["BUILD_DIR"])
-    FileUtils.rm_rf(@tmp_dir)
-    FileUtils.mkdir_p(@tmp_dir)
+    base_dir = ENV["BUILD_DIR"] || ENV["BASE_DIR"]
+    base_dir ||= File.join(File.dirname(__FILE__), "..", "..")
+    @tmp_base_dir = File.join(File.expand_path(base_dir), "tmp")
+    FileUtils.rm_rf(@tmp_base_dir)
+    FileUtils.mkdir_p(@tmp_base_dir)
+    @tmp_dir = Dir.mktmpdir("tmp", @tmp_base_dir)
     @database_path = File.join(@tmp_dir, "database")
   end
 
   def teardown_database_path
-    @tmp_dir ||= nil
-    FileUtils.rm_rf(@tmp_dir) if @tmp_dir
+    @tmp_base_dir ||= nil
+    FileUtils.rm_rf(@tmp_base_dir) if @tmp_base_dir
   end
 
   def setup_server(protocol=nil)
@@ -68,6 +71,10 @@ module GroongaTestUtils
     File.expand_path(groonga)
   end
 
+  def groonga
+    @groonga ||= guess_groonga_path
+  end
+
   def guess_resource_dir
     File.join(guess_top_source_dir, "resource", "admin_html")
   end
@@ -91,7 +98,7 @@ module GroongaTestUtils
     arguments.concat(["--protocol", @protocol]) if @protocol
     arguments.concat(["-n", @database_path])
     @groonga_pid = fork do
-      exec(@groonga, *arguments)
+      exec(groonga, *arguments)
     end
 
     sleep 0.3 # wait for groonga server initialize
@@ -145,13 +152,17 @@ module GroongaTestUtils
 
   LANG_ENVS = %w"LANG LC_ALL LC_CTYPE"
 
-  def invoke_groonga(args, stdin_data="", capture_stdout=false, capture_stderr=false, opt={})
-    @groonga ||= guess_groonga_path
+  def invoke_command(*args)
+    options = args.last.is_a?(Hash) ? args.pop : {}
+    input_data = options[:input] || ""
+    capture_output = options[:capture_output]
+    capture_output = true if capture_output.nil?
+    capture_error = options[:capture_error]
     args = [args] unless args.kind_of?(Array)
     begin
       in_child, in_parent = IO.pipe
-      out_parent, out_child = IO.pipe if capture_stdout
-      err_parent, err_child = IO.pipe if capture_stderr
+      out_parent, out_child = IO.pipe if capture_output
+      err_parent, err_child = IO.pipe if capture_error
       pid = fork do
         c = "C"
         LANG_ENVS.each {|lc| ENV[lc] = c}
@@ -161,27 +172,28 @@ module GroongaTestUtils
         end
         STDIN.reopen(in_child)
         in_parent.close
-        if capture_stdout
+        if capture_output
           STDOUT.reopen(out_child)
           out_parent.close
         end
-        if capture_stderr
+        if capture_error
           STDERR.reopen(err_child)
           err_parent.close
         end
         Process.setrlimit(Process::RLIMIT_CORE, 0) rescue nil
-        exec(@groonga, *args)
+        exec(*args)
       end
       in_child.close
-      out_child.close if capture_stdout
-      err_child.close if capture_stderr
-      th_stdout = Thread.new { out_parent.read } if capture_stdout
-      th_stderr = Thread.new { err_parent.read } if capture_stderr
-      in_parent.write stdin_data.to_str
+      out_child.close if capture_output
+      err_child.close if capture_error
+      th_stdout = Thread.new { out_parent.read } if capture_output
+      th_stderr = Thread.new { err_parent.read } if capture_error
+      in_parent.write(input_data.to_str)
       in_parent.close
-      if (!capture_stdout || th_stdout.join(10)) && (!capture_stderr || th_stderr.join(10))
-        stdout = th_stdout.value if capture_stdout
-        stderr = th_stderr.value if capture_stderr
+      if (!capture_output || th_stdout.join(10)) &&
+          (!capture_error || th_stderr.join(10))
+        stdout = th_stdout.value if capture_output
+        stderr = th_stderr.value if capture_error
       else
         raise Timeout::Error
       end
@@ -198,19 +210,30 @@ module GroongaTestUtils
     return stdout, stderr, status
   end
 
+  def invoke_groonga(*args)
+    environment = args.first.is_a?(Hash) ? args.shift : {}
+    args.unshift(groonga)
+    args.unshift(environment)
+    invoke_command(*args)
+  end
+
   def assert_run_groonga(test_stdout, test_stderr, args, *rest)
     argnum = rest.size + 3
-    opt = (Hash === rest.last ? rest.pop : {})
+    options = (Hash === rest.last ? rest.pop : {})
     message = (rest.pop if String === rest.last)
     if String === rest.last
-      stdin = rest.pop
+      input = rest.pop
     else
-      stdin = opt.delete(:stdin) || ""
+      input = options.delete(:input) || ""
     end
     unless rest.empty?
       raise ArgumentError, "wrong number of arguments (#{argnum} for 3)"
     end
-    stdout, stderr, status = invoke_groonga(args, stdin, true, true, opt)
+    args = [args] unless args.is_a?(Array)
+    args << options.merge(:input => input,
+                          :capture_output => true,
+                          :capture_error => true)
+    stdout, stderr, status = invoke_groonga(*args)
     assert_not_predicate(status, :signaled?)
     if block_given?
       yield(stdout, stderr)

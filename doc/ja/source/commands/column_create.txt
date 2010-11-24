@@ -1,5 +1,7 @@
 .. highlightlang:: none
 
+.. _column_create:
+
 column_create
 =============
 

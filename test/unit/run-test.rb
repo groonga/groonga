@@ -67,6 +67,7 @@ $LOAD_PATH.unshift(File.join(base_dir, "lib", "ruby"))
 require 'groonga-test-utils'
 require 'groonga-http-test-utils'
 require 'groonga-local-gqtp-test-utils'
+require 'groonga-grntest-test-utils'
 
 ARGV.unshift("--exclude", "run-test.rb")
 ARGV.unshift("--notify")

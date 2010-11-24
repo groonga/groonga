@@ -293,6 +293,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
       grn_get_default_match_escalation_threshold();
   }
 
+  ctx->impl->finalizer = NULL;
+
   ctx->impl->phs = NIL;
   ctx->impl->code = NIL;
   ctx->impl->dump = NIL;
@@ -429,6 +431,9 @@ grn_ctx_fin(grn_ctx *ctx)
     CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (ctx->impl) {
+    if (ctx->impl->finalizer) {
+      ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
+    }
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->objects) {
       grn_cell *o;
@@ -501,6 +506,18 @@ grn_ctx_fin(grn_ctx *ctx)
   }
   ctx->stat = GRN_CTX_FIN;
   return rc;
+}
+
+grn_rc
+grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *finalizer)
+{
+  if (!ctx) { return GRN_INVALID_ARGUMENT; }
+  if (!ctx->impl) {
+    grn_ctx_impl_init(ctx);
+    if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
+  }
+  ctx->impl->finalizer = finalizer;
+  return GRN_SUCCESS;
 }
 
 grn_timeval grn_starttime;
