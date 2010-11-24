@@ -37,7 +37,7 @@ if [ "$distribution" = "centos" ] && ! rpm -q mecab-devel > /dev/null; then
     cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
 
-base=http://download.fedoraproject.org/pub/fedora/linux/releases/13/Everything/source/SRPMS
+base=http://download.fedoraproject.org/pub/fedora/linux/releases/14/Everything/source/SRPMS
 srpm=\$1
 
 if [ ! -f ~/.rpmmacros ]; then
