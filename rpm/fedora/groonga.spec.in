@@ -105,12 +105,8 @@ make %{?_smp_mflags}
 # build python binding
 cd %{_builddir}/%{name}-%{version}/bindings/python/ql
 python setup.py config
-mkdir groonga
-cd groonga
-ln -sf %{_builddir}/%{name}-%{version}/groonga.h
-cd ..
 sed -i.cflags -e 's|^cflags =.*|cflags = []|' setup.py
-CFLAGS=-I.
+CFLAGS=-I%{_builddir}/%{name}-%{version}/include
 export CFLAGS
 LDFLAGS=-L%{_builddir}/%{name}-%{version}/lib/.libs
 export LDFLAGS
