@@ -258,6 +258,10 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
+* Mon Nov 29 2010 Kouhei Sutou <kou@clear-code.com>
+- (1.0.4-0)
+- new upstream release
+
 * Fri Oct 09 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.3-1
 - new upstream release.
 
