@@ -30,6 +30,7 @@ extern "C" {
 #endif /* GRN_API */
 
 typedef unsigned grn_id;
+typedef unsigned char grn_bool;
 
 #define GRN_ID_NIL                     (0x00)
 #define GRN_ID_MAX                     (0x3fffffff)
