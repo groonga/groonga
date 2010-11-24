@@ -2880,7 +2880,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
     if (db) {
       uint32_t actual_chunk_size = 0;
       uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
-      if ((dc = GRN_MALLOC(max_dest_chunk_size))) {
+      if ((dc = GRN_MALLOC(max_dest_chunk_size * 2))) {
         if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
             (sc = WIN_MAP2(ii->chunk, ctx, &sw, scn, 0,
                            sb->header.chunk_size, grn_io_rdonly))) {
@@ -2890,6 +2890,10 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
           db->header.nterms = n;
           if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db, dc))) {
             actual_chunk_size = db->header.chunk_size;
+            if (actual_chunk_size >= max_dest_chunk_size) {
+              GRN_LOG(ctx, GRN_LOG_WARNING, "actual_chunk_size(%d) >= max_dest_chunk_size(%d)",
+                      actual_chunk_size, max_dest_chunk_size);
+            }
             if (!actual_chunk_size || !(rc = chunk_new(ctx, ii, &dcn, actual_chunk_size))) {
               db->header.chunk = actual_chunk_size ? dcn : NOT_ASSIGNED;
               fake_map2(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
@@ -3180,15 +3184,19 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
         uint32_t actual_db0_chunk_size = 0;
         uint32_t actual_db1_chunk_size = 0;
         uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
-        //        uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT * 2;
-        if ((dc0 = GRN_MALLOC(max_dest_chunk_size))) {
-          if ((dc1 = GRN_MALLOC(max_dest_chunk_size))) {
+        if ((dc0 = GRN_MALLOC(max_dest_chunk_size * 2))) {
+          if ((dc1 = GRN_MALLOC(max_dest_chunk_size * 2))) {
             if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
                 (sc = WIN_MAP2(ii->chunk, ctx, &sw, scn, 0,
                                sb->header.chunk_size, grn_io_rdonly))) {
               term_split(ctx, ii->lexicon, sb, db0, db1);
               if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db0, dc0))) {
                 actual_db0_chunk_size = db0->header.chunk_size;
+                if (actual_db0_chunk_size >= max_dest_chunk_size) {
+                  GRN_LOG(ctx, GRN_LOG_WARNING,
+                          "actual_db0_chunk_size(%d) >= max_dest_chunk_size(%d)",
+                          actual_db0_chunk_size, max_dest_chunk_size);
+                }
                 if (!actual_db0_chunk_size ||
                     !(rc = chunk_new(ctx, ii, &dcn0, actual_db0_chunk_size))) {
                   db0->header.chunk = actual_db0_chunk_size ? dcn0 : NOT_ASSIGNED;
@@ -3196,6 +3204,11 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                   if (!(rc = grn_io_win_unmap2(&dw0))) {
                     if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db1, dc1))) {
                       actual_db1_chunk_size = db1->header.chunk_size;
+                      if (actual_db1_chunk_size >= max_dest_chunk_size) {
+                        GRN_LOG(ctx, GRN_LOG_WARNING,
+                                "actual_db1_chunk_size(%d) >= max_dest_chunk_size(%d)",
+                                actual_db1_chunk_size, max_dest_chunk_size);
+                      }
                       if (!actual_db1_chunk_size ||
                           !(rc = chunk_new(ctx, ii, &dcn1, actual_db1_chunk_size))) {
                         fake_map2(ctx, ii->chunk, &dw1, dc1, dcn1, actual_db1_chunk_size);
