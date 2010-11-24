@@ -51,7 +51,6 @@ baseurl=http://packages.groonga.org/$distribution/\$releasever/\$basearch/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
-metadata_expire=7d
 EOR
     run tar cfz $rpm_base_dir/SOURCES/${PACKAGE}-repository.tar.gz \
 	-C ${script_base_dir} ${repo} RPM-GPG-KEY-${PACKAGE}
