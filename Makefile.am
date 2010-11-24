@@ -34,3 +34,6 @@ win32-installer: all
 
 update-changelog:
 	(cd $(top_srcdir) && release/gitlog2changelog.py)
+
+tag:
+	(cd $(top_srcdir) && git tag v$(VERSION) -a -m 'groonga $(VERSION)!!!')
