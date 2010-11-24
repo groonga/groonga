@@ -1,4 +1,888 @@
+2010-11-24 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, debian/changelog, rpm/centos/groonga.spec.in,
+ rpm/fedora/groonga.spec.in: 1.0.3 -> 1.0.4.
+
+ * apt/build-deb.sh: support no optimize build.
+
+2010-11-24 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/str.c: Added escaping rules for \u2028 \u2029.
+
+2010-11-24 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: add grn_bool C type to news. #713
+
+2010-11-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: malloc(max_dest_chunk_size * 2) in buffer_flush() #722
+
+ * include/groonga.h: Added grn_bool
+
+2010-11-24 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: add comment line support to news. #723
+
+ * bindings/php/config.m4: follow groonga.h path change.
+
+ * doc/ja/source/commands/column_create.txt,
+ doc/ja/source/commands/column_list.txt, doc/ja/source/commands/load.txt,
+ doc/ja/source/commands/status.txt, doc/ja/source/commands/table_create.txt,
+ doc/ja/source/commands/table_list.txt, doc/ja/source/execfile.txt,
+ doc/ja/source/tutorial/tutorial01.txt: use :ref: instead of :doc: for man.
+
+ * bindings/php/php_groonga.h, rpm/fedora/groonga.spec.in: fix groonga.h
+ include path in PHP bindings.
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: modules -> plugins.
+
+ * debian/control, debian/rules: module -> plugin.
+
+ * rpm/fedora/groonga.spec.in: follow groonga.h path change.
+
+ * bindings/python/ql/groongaql.c: fix include path.
+
+ * yum/build-in-chroot.sh: make Fedora target to 14.
+
+ * apt/Makefile.am, yum/Makefile.am: remove 32bit support.
+
+ * Makefile.am: cleanup.
+
+ * .gitignore, Makefile.am: add update-latest-release target.
+
+ * Makefile.am: remove needless sub shell.
+
+ * Makefile.am: add tag target.
+
+ * Makefile.am: add update-changelog target.
+
+ * release/gitlog2changelog.py: add gitlog2changelog.py.
+
+ * test/unit/http/test-http-load.rb: follow _value isn't output by default
+ change.
+
+ * lib/proc.c: also outputs _value column in dump command.
+
+ * test/unit/command/test-option.rb: cleanup.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: re-support environment variable
+ change.
+
+ * test/unit/http/test-http-schema.rb: follow error message improvement
+ changes.
+
+2010-11-23 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c: support comment line that matches /\A[ \t]*#/. #723
+
+ * test/unit/grntest/test-out-http.rb: add a test for test_http.
+
+ * src/grntest.c: fix grn_text_fgets() usage.
+
+ * src/grntest.c: report error code.
+
+ * src/grntest.c: add missing 'static'.
+
+ * src/grntest.c: add missing 'static'.
+
+ * src/grntest.c: don't add newline after 'static'.
+
+ * src/grntest.c: fix style.
+
+ * configure.ac, test/unit/Makefile.am, test/unit/grntest/Makefile.am,
+ test/unit/grntest/test-out-http.rb, test/unit/lib/ruby/Makefile.am,
+ test/unit/lib/ruby/groonga-grntest-test-utils.rb,
+ test/unit/lib/ruby/groonga-test-utils.rb, test/unit/run-test.rb: add a test
+ for grntest.
+
+ * doc/ja/source/grntest.txt, src/grntest.c: grntest supports auto test mode
+ in HTTP.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: create base temporary directory
+ on real temporary directory.
+
+ * doc/ja/source/grntest.txt, src/grntest.c: add --groonga option to grntest.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: cleanup.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: split shereable code.
+
+ * test/unit/lib/ruby/groonga-test-utils.rb: cleanup.
+
+2010-11-22 Kouhei Sutou <kou@clear-code.com>
+
+ * include/groonga.h, lib/ctx.c, lib/ql.h: support finalizer of grn_ctx. #719
+
+2010-11-21 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-inverted-index.c: remove a garbage.
+
+ * test/unit/core/test-hash-sort.c, test/unit/core/test-hash.h,
+ test/unit/core/test-table-patricia-trie-cursor.c: use different path for each
+ hash related test.
+
+ * test/unit/core/test-inverted-index.c: ensure removing tesmporary directory.
+
+ * test/unit/core/test-inverted-index.c: remove garbages.
+
+ * test/unit/story/test-taiyaki.c: fix expected result.
+
+ * Makefile.am: use ACLOCAL_ARGS in re-running aclocal automatically.
+
+2010-11-19 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/grntest.txt, doc/ja/source/news.txt: add a 1.0.4 entry.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: enable patricia trie
+ common prefix cursor.  Because this had been fixed in
+ 157badc1f53cf89aadcc8e2a49bbf799a7a17df5.
+
+2010-11-18 Kouhei Sutou <kou@clear-code.com>
+
+ * include/groonga.h, lib/db.h: export grn_db_touch(). #703
+
+ * include/groonga.h, lib/db.c, test/unit/core/test-context.c:
+ grn_obj_get_info() supports zlib and LZO availability. #686
+
+2010-11-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * include/groonga.h, lib/db.h: Exported grn_table_at()
+
+2010-11-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Use GRN_CURSOR_ASCENDING for GRN_OBJ_KEY_VAR_SIZE in
+ buffer_new().
+
+ * lib/ii.c: Modified behavior of buffer_new(). Try GRN_CURSOR_PREFIX and then
+ try GRN_CURSOR_ASCENDING unless corresponding records found.
+
+2010-11-18 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: fix a typo.
+
+ * doc/ja/source/news.txt: fix a typo.
+
+2010-11-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c: Use GRN_CURSOR_PREFIX in buffer_new() instead of
+ GRN_CURSOR_ASCENDING.
+
+ * src/grntest.c: Fixed wrong usage of sizeof. (sizeof of variable is not
+ preferable)
+
+2010-11-17 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/Makefile.am: split cache directory to support make -jX.
+
+ * doc/ja/Makefile.am: fix a typo.
+
+2010-11-16 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Fixed a bug in set_cursor_common_prefix() returns wrong result.
+
+2010-11-16 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c: suppress warnings.  expr.c:895: warning: ‘yd’ may be used
+ uninitialized in this function expr.c:896: warning: ‘y’ may be used
+ uninitialized in this function
+
+ * lib/expr.c: suppress aarnings.  expr.c:2835: warning: ‘r’ may be used
+ uninitialized in this function expr.c:2847: warning: ‘r’ may be used
+ uninitialized in this function
+
+ * configure.ac, src/Makefile.am, src/groonga.c: add GRN_* prefix.
+
+ * configure.ac, lib/Makefile.am, lib/ctx.c, lib/expr.c, lib/plugin.c,
+ lib/query.c, src/Makefile.am, src/groonga.c: GROONGA_* -> GRN_*.
+
+ * configure.ac, lib/plugin.c: support plugins search from relative path of
+ groonga DLL on Windows.
+
+ * configure.ac, lib/Makefile.am, src/Makefile.am: suppress warnings in CFLAGS
+ macro definitions.
+
+ * src/grntest.c: suppress warnings.
+
+2010-11-15 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: use grn_text_fgets() in grntest.c. #690
+
+ * configure.ac: believe mecab-config existense on cross compiling.
+
+2010-11-13 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/str.h: export grn_enctostr().
+
+ * include/groonga/plugin.h: fix a typo.
+
+ * lib/com.c: suppress a warnings on MinGW gcc by initialize with NULL.
+ com.c:976: warning: redundant redeclaration of ‘grn_edges’ com.h:244:
+ warning: previous declaration of ‘grn_edges’ was here
+
+ * mkmfwin32.vbs: query -> match.
+
+ * mkmfwin32.vbs: modules -> plugins.
+
+2010-11-11 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: remove needless grn_text_fgets() prototype.
+
+2010-11-05 Toshihisa <t2001@gol.com>
+
+ * lib/str.h: export grn_atoll
+
+2010-11-11 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/str.h: export grn_text_fgets() in str.h
+
+2010-11-09 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c, test/unit/core/test-expr-script.c: fix numeric operation and
+ assing with expression is broken. #669
+
+2010-11-09 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: grn_table_cursor_next() supports grn_index_cursor.
+
+2010-11-09 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c: add path to error message for file request via HTTP.
+
+ * test/unit/fixtures/story/taiyaki/ddl.grn,
+ test/unit/fixtures/story/taiyaki/shops.grn, test/unit/story/test-taiyaki.c:
+ add a test for geo_in_circle() and OR.
+
+ * test/unit/fixtures/story/taiyaki/shops.grn: format.
+
+2010-11-08 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http-select-basic.rb,
+ test/unit/lib/ruby/groonga-http-test-utils.rb: add a test for invalid sort
+ key in --sortby parameter.
+
+2010-11-04 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c, test/unit/core/test-command-select.c: do equal
+ Int8/UInt8/Int16/UInt16 explicitly. #660
+
+2010-11-07 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: fix a typo.  Reported by OBATA Akio. Thanks!!!
+
+2010-11-02 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: use grn_text_fgets() for read commands. #608
+
+2010-11-04 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c, test/unit/core/test-command-select.c: support compare
+ operations (>, >=, ...) in --filter.  Reported by @s3ki. Thanks!!!
+
+ * lib/db.c, lib/db.h, lib/expr.c, test/unit/core/test-table.c: show invalid
+ name on invalid name error.
+
+2010-11-02 Kouhei Sutou <kou@clear-code.com>
+
+ * include/Makefile.am, include/groonga/Makefile.am: add missing Makefile.am.
+ #624
+
+2010-11-01 Kouhei Sutou <kou@clear-code.com>
+
+ * Makefile.am, configure.ac, examples/Makefile.am, groonga.h,
+ include/groonga.h, include/groonga/plugin.h, lib/Makefile.am, lib/ctx.c,
+ lib/db.c, lib/io.c, lib/module.c, lib/module.h, lib/module_impl.h,
+ lib/plugin.c, lib/plugin_in.h, lib/ql.h, modules/Makefile.am,
+ modules/suggest/Makefile.am, modules/suggest/suggest.c,
+ modules/tokenizers/Makefile.am, modules/tokenizers/mecab.c,
+ plugins/Makefile.am, plugins/suggest/Makefile.am, plugins/suggest/suggest.c,
+ plugins/tokenizers/Makefile.am, plugins/tokenizers/mecab.c, src/Makefile.am,
+ test/benchmark/Makefile.am, test/unit/Makefile.am,
+ test/unit/core/Makefile.am, test/unit/core/test-register.c,
+ test/unit/fixtures/Makefile.am, test/unit/fixtures/modules/Makefile.am,
+ test/unit/fixtures/modules/string.c,
+ test/unit/fixtures/performance/Makefile.am,
+ test/unit/fixtures/plugins/Makefile.am, test/unit/fixtures/plugins/string.c,
+ test/unit/fixtures/stress/Makefile.am, test/unit/lib/Makefile.am,
+ test/unit/memcached/Makefile.am, test/unit/run-test.sh,
+ test/unit/story/Makefile.am, test/unit/util/Makefile.am: module -> plugin.
+ #624
+
+2010-10-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/Makefile.am, lib/module.c, lib/module_impl.h,
+ modules/suggest/suggest.c, modules/tokenizers/mecab.c,
+ test/unit/fixtures/modules/string.c: use the same name for all module
+ exported function. #624
+
+2010-10-28 Kouhei Sutou <kou@clear-code.com>
+
+ * yum/sign-rpm.sh: don't enter path phrase many times.
+
+ * apt/build-deb.sh: 'apt-get update' before 'apt-get install'.
+
+2010-10-20 Toshihisa <t2001@gol.com>
+
+ * mkmfwin32.vbs: disable some warnings in VC.
+
+2010-10-28 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: 1.0.2 -> 1.0.3.
+
+ * apt/Makefile.am: remove Hardy support and add Maverick support.
+
+ * doc/ja/source/news.txt: add match escalation threshold.
+
+ * configure.ac, doc/ja/source/commands/select.txt,
+ doc/ja/source/execfile.txt, .../different_results_with_the_same_keyword.txt,
+ groonga.h, lib/ctx.c, lib/expr.c, lib/ii.c, lib/proc.c, lib/ql.h,
+ lib/query.c, src/groonga.c: query escalation threshold -> match escalation
+ threshold.
+
+2010-10-21 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/execfile.txt: document --query-escalation-threshold. #628
+
+ * doc/ja/source/commands/select.txt, lib/proc.c: add
+ --query_escalation_threshold option to select command. #628
+
+ * groonga.h, lib/ctx.c, lib/ii.c, lib/ql.h, src/groonga.c: add
+ --default-query-escalation-threshold for dynamic threshold change. #628
+
+2010-10-28 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: update Ubuntu related changes.
+
+ * doc/ja/source/install.txt: support Maverick and drop Hardy.
+
+ * doc/ja/source/install.txt: fix a typo.  Reported by SHIMODA Hiroshi.
+ Thanks!!!
+
+2010-10-26 Kouhei Sutou <kou@clear-code.com>
+
+ * yum/build-rpm.sh: install missing gcc-c++ package.
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ 1.0.2 -> 1.0.3.
+
+ * doc/ja/source/news.txt: add 1.0.3 entry.
+
+ * doc/ja/source/troubleshooting.txt: add reference name.
+
+ * src/groonga.c: add NULL check.
+
+ * doc/ja/source/grntest.txt: remove needless ','.
+
+2010-10-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/pat.c, test/unit/core/test-dump.c: fix dump SEGV by orphan pat record
+ reference. #630
+
+2010-10-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Fixed a bug in grn_pat_at() cause segv when nonexistent id is
+ assigned.
+
+2010-10-22 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-dump.c: don't use external groonga command.
+
+2010-10-21 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/token.c, modules/tokenizers/mecab.c: don't register MeCab tokenizer on
+ Japanese encoding context. #555
+
+2010-10-22 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-function-cast.c: remove a
+ needless test.
+
+2010-10-21 Kouhei Sutou <kou@clear-code.com>
+
+ * groonga.h: fix typos.
+
+2010-10-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * src/grntest.c: Added grn_text_fgets() prototype to grntest.c
+
+2010-10-21 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: show invalid name in error message.
+
+2010-10-19 Toshihisa <t2001@gol.com>
+
+ * lib/groonga_in.h: defined UINT_MAX32 in VC.
+
+ * lib/groonga_in.h: Don't include io.h from groonga_in.h
+
+2010-10-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/str.c: Added grn_text_fgets().
+
+2010-10-19 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c: groonga works --file on client mode. #578
+
+ * test/unit/util/test-string.c: work on 32bit machine.
+
+ * lib/expr.c, .../unit/core/test-command-select-filter-invalid.c: check valid
+ function on compile. #596
+
+ * test/unit/core/test-command-delete.c: add a test for deleted record is
+ selected. #617
+
+2010-10-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ii.c, lib/token.c, lib/token.h: Fixed missing deleting index entries
+ which correspond to the last token.
+
+ * lib/ctx.h: Include groonga_in.h before HAVE_EXECINFO_H is used.
+
+ * lib/groonga_in.h: Fixed that GRN_FMT_LLD was not defined when
+ HAVE_PTHREAD_H is true.
+
+2010-10-18 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * src/groonga.c: Fixed missing decrement of nfthreads in h_worker().
+
+2010-10-18 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: fix variable declaration position.
+
+ * lib/str.h: remove a garbage.
+
+2010-10-06 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/module.c: call init function only once for each module. #567
+
+2010-10-15 Toshihisa <t2001@gol.com>
+
+ * modules/suggest/suggest.c: needs ctx.h in Win32(vc).
+
+ * modules/tokenizers/mecab.c: groonga_in.h is redundant in Win32(VC).
+
+ * build_windows.bat, mkmfwin32.vbs: refined build_windows.bat and
+ mkmfwin32.vbs
+
+ * lib/io.c, src/grntest.c: use GRN_FMT_LLD instead of lld.
+
+2010-10-18 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: use grn_aton() in grn_obj_cast(). #613
+
+ * lib/str.c, lib/str.h, test/unit/util/test-string.c: add grn_aton() that
+ parsing text as numeric. #613
+
+2010-10-15 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c: capitalize do_eq* macro names.
+
+ * test/unit/core/test-command-select-query.c: add a test for parsing float
+ literal in string. #612
+
+2010-10-14 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c: capitalize do_compare* macro names.
+
+ * lib/expr.c, test/unit/core/Makefile.am,
+ test/unit/core/test-command-select-query.c: cast text value instead of
+ parsing as 32 bit integer in comparing. #612  Reported by Itagaki Takahiro.
+ Thanks!!!
+
+2010-10-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Clear key_size in _grn_table_key() when the return value is NULL.
+
+ * lib/hash.c, lib/pat.c: Clear key_size when returning NULL.
+
+ * lib/db.c: FIxed a bug in grn_table_sort() causes segv when
+ grn_obj_get_value_() returns NULL.
+
+ * src/groonga.c: Fixed missing decrement of 'nfthreads' value.
+
+2010-10-13 Toshihisa <t2001@gol.com>
+
+ * install_windows.bat: add install_windows.bat
+
+2010-10-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/module.c: Cast return value of GetProcAddress() to void pointer.
+
+2010-10-12 Toshihisa <t2001@gol.com>
+
+ * lib/db.h, lib/str.h: add GRN_API for WIN32.
+
+2010-10-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/groonga_in.h: Added GRN_FMT_LLD and GRN_FMT_LLU
+
+ * modules/suggest/suggest.c, modules/tokenizers/mecab.c: Added GRN_API
+ declaration to each module function
+
+2010-10-13 Toshihisa <t2001@gol.com>
+
+ * lib/proc.h: delete duplicated "extern"
+
+2010-10-12 Toshihisa <t2001@gol.com>
+
+ * lib/proc.h: fixed. GRN_API -> GRN_VAR.
+
+ * src/groonga.c: defined GROONGA_MAIN for dllimport.
+
+ * lib/groonga_in.h: changed PATH_SEPARATOR in WIN32.
+
+2010-10-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/geo.h: Fixed missing comment
+
+2010-10-12 Toshihisa <t2001@gol.com>
+
+ * lib/geo.h: Win32 needs _USE_MATH_DEFINES.
+
+2010-10-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * build_windows.bat: Removed cr code from build_windows.bat
+
+2010-10-12 Toshihisa <t2001@gol.com>
+
+ * lib/Makefile.msvc, src/Makefile.msvc: removed old Makefile.msvc
+
+2010-10-13 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * mkmfwin32.vbs: delete trailing space from mkmfwin32.vbs
+
+2010-10-08 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c, test/unit/core/Makefile.am,
+ .../unit/core/test-command-select-filter-invalid.c: check function
+ availability. #596
+
+ * lib/ii.c: specify string length for ii debug log message.
+
+2010-10-07 Kouhei Sutou <kou@clear-code.com>
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: specify parent
+ directory.
+
+ * rpm/fedora/groonga.spec.in: use correct macro.
+
+ * yum/groonga-depended-packages: add php5-devel and python-devel.
+
+ * rpm/centos/groonga.spec.in: merge Fedora spec change.
+
+ * apt/Makefile.am, yum/Makefile.am: don't remove existing packages.
+
+ * rpm/fedora/groonga.spec.in: bump release version.
+
+2010-10-07 Daiki Ueno <ueno@unixuser.org>
+
+ * data/init.d/redhat/groonga, rpm/fedora/groonga.spec.in: update spec file
+ and initscript for Fedora
+
+2010-10-06 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/pat.c, test/unit/core/test-table-patricia-trie-cursor.c: work pat
+ cursor by ID with garbages. #538
+
+2010-09-29 t2001 <t2001@gol.com>
+
+ * lib/ctx.c: fixed a bug that causes GPF in WIN32 enviroment.
+
+2010-10-06 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: increase max expect line limit.
+
+ * test/unit/story/test-taiyaki.c: use correct assertion for select error.
+
+2010-10-05 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: increase log buffer length.
+
+2010-10-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/pat.c: Removed unnecessary KEY_ENCODE from grn_pat_lcp_search(). refs
+ #539
+
+2010-10-05 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c: show the problem position.
+
+2010-10-05 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Removed verbose check of (key && key_size).
+
+2010-10-05 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-command-delete.c: fix all delete operations
+ are failed. #541
+
+ * test/unit/core/test-command-select-sort.c: use ',' instead of ' ' for
+ output_columns and so on parameter.
+
+ * test/unit/core/test-command-select-sort.c: fix indent.
+
+ * test/unit/core/test-command-select-sort.c: add a test for sort by indexed
+ column. #571
+
+ * lib/geo.c, test/unit/story/test-taiyaki.c: mark geo_in_rectangle() with
+ negative coordinate not implemented. #563
+
+2010-10-04 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed returning wrong results when an accessor assigned to
+ grn_column_index().
+
+ * lib/pat.c: Fixed a bug grn_pat_cursor_open_by_id().
+
+ * lib/pat.c: Added KEY_ENCODE to grn_pat_lcp_search().
+
+2010-09-24 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: don't call hook for undeletable record.
+
+2010-10-04 Kouhei Sutou <kou@clear-code.com>
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: fix typos.
+
+2010-10-01 Daiki Ueno <ueno@unixuser.org>
+
+ * data/init.d/redhat/groonga, rpm/fedora/groonga.spec.in: Fix typo in init
+ script and simplify RPM spec.
+
+2010-10-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/str.c: Fixed a bug in grn_text_otoj(). grn_ctx_at() is inappropriate to
+ validate record id.
+
+ * lib/ctx.c: Fixed missing comment.
+
+2010-10-01 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/story/test-taiyaki.c: add a test for geo_in_rectangle() infinite
+ loop. #563
+
+ * lib/ctx.c, lib/ql.h: also collect backtrace on free().
+
+2010-09-30 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, lib/ctx.c, lib/expr.c, lib/ql.h: add memory management
+ debuging code.  It is only enabled when --enable-memory-debug option is
+ specified.
+
+ * lib/str.c: check invalid ID or not.
+
+2010-09-28 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: don't require pkg-config for libedit. #540
+
+2010-09-27 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * lib/ctx.c: Fixed grn_timeval_now() with HAVE_CLOCK_GETTIME.
+
+2010-09-27 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/index.txt, doc/ja/source/news.txt,
+ doc/ja/source/spec/search.txt,
+ .../different_results_with_the_same_keyword.txt: fix document links.
+
+2010-09-26 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-load.c: add a test for geo point index load.
+
+ * test/unit/core/test-inspect.c: follow index column inspection chagne.
+
+2010-09-24 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Clear the rest of value when new size is less than element size
+ in grn_obj_set_value. (Kouhei thx!)
+
+2010-09-24 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ii.c: ii inspector also shows unavailable entreies.
+
+ * lib/ii.c: remove a garbage ';'.
+
+ * doc/ja/source/spec.txt: reduce depth.
+
+2010-09-23 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/Makefile.am, doc/ja/source/spec.txt,
+ .../different_results_with_the_same_keyword.txt: add missing document.
+
+2010-09-22 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ii.c, lib/ii.h, lib/util.c: inspect supports ii deeply.
+
+ * lib/ii.c: format key value in 'check' command.
+
+2010-09-21 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/Makefile.am: fix path.
+
+ * doc/ja/Makefile.am, doc/ja/source/index.txt, doc/ja/source/search.txt,
+ doc/ja/source/spec/search.txt, doc/ja/source/troubleshooting.txt,
+ .../different_results_with_the_same_keyword.txt: fix markup.
+
+ * .../different_results_with_the_same_keyword.txt: fill search
+ troubleshooting case.
+
+ * doc/ja/source/index.txt, doc/ja/source/search.txt,
+ doc/ja/source/troubleshooting.txt,
+ .../different_results_with_the_same_keyword.txt: add a troubleshooting about
+ search. (just template)
+
+2010-09-20 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/Makefile.am: update Sphinx related file list.
+
+2010-09-20 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * doc/ja/source/search.txt: Added explanation of "exact match" to search.txt.
+
+2010-09-20 Kouhei Sutou <kou@clear-code.com>
+
+ * .gitignore, examples/dictionary/edict/edict_import.sh,
+ examples/dictionary/eijiro/eijiro_import.sh,
+ examples/dictionary/gene95/gene_import.sh: download dictionary automatically.
+
+ * modules/suggest/suggest.c: fix wrong variable usage.
+
+ * modules/suggest/suggest.c: suppress warnings.  Reported by MATSUU Takuto.
+ Thanks!!!
+
+ * modules/suggest/suggest.c: add style configuration for Emacs.
+
+2010-09-19 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c: Fixed missing setting tid.
+
+ * groonga.h, lib/db.c: Added grn_index_cursor_open() and
+ grn_index_cursor_next().
+
+2010-09-19 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: use AC_ARG_ENABLE instead of AC_ARG_WITH for
+ --disable-libedit.  Reported by MATSUU Takuto. Thanks!!!
+
+2010-09-17 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/search.txt: add a document about search. (paritally)
+
+ * doc/ja/source/tutorial/tutorial01.txt: use "語彙表".
+
+ * test/unit/fixtures/story/taiyaki/ddl.grn: fix a typo.
+
+ * src/grntest.c: fix print format type.
+
+ * modules/suggest/suggest.c: suppress a 'unused variable' warning.
+
+ * lib/expr.c, src/grntest.c: suppress 'defined but not used' warnings.
+
+ * lib/ctx.c, lib/ctx.h, lib/db.c: fix time usec overflow.
+
+2010-09-15 Kouhei Sutou <kou@clear-code.com>
+
+ * groonga.h, lib/ctx.c, lib/proc.c, test/unit/gqtp/test-status.rb,
+ test/unit/lib/ruby/groonga-constants.rb: check command version availability.
+
+ * doc/ja/Makefile.am, doc/ja/source/command_version.txt,
+ doc/ja/source/commands.txt, doc/ja/source/http.txt: add command_version
+ document.
+
+ * lib/ctx.c, test/unit/gqtp/test-status.rb, test/unit/http/test-http.rb:
+ allow command_version option.
+
+ * lib/proc.c, test/unit/http/test-http.rb: show also default command version.
+
+ * groonga.h: add GRN_COMMAND_VERSION_2.
+
+2010-09-14 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c, test/unit/http/test-http.rb: show command_version on status.
+
+ * src/groonga.c, test/unit/command/test-option.rb: add
+ --default-command-version option.
+
+ * groonga.h, lib/ctx.c, lib/ql.h, test/unit/core/test-context.c: add
+ command_version to context.
+
+2010-09-15 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/pat.c, test/unit/core/test-patricia-trie.c: grn_pat_at() can't detect
+ encoded key entry. #514
+
+ * lib/db.c, test/unit/core/test-cast-basic.c: support GeoPoint -> GeoPoint
+ cast. #515
+
+2010-09-10 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * configure.ac, lib/ctx.c, lib/ctx.h, lib/db.c, lib/expr.c, lib/proc.c,
+ lib/ql.c, lib/scm.c, modules/suggest/suggest.c, src/groonga.c: Boosted up
+ resolution of grn_timeval.
+
+2010-09-16 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.h, lib/ii.h, lib/output.h, lib/token.h: add missing GRN_API for
+ Windows.
+
+ * doc/ja/source/http.txt: --admin-html-path -> --document-root.
+
+2010-09-14 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: fix memory leaks.
+
+2010-09-13 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table-select-normalize.c: use TokenBigramSplitSymbol.
+ #225
+
+ * configure.ac, examples/Makefile.am, examples/dictionary/Makefile.am,
+ examples/dictionary/edict/Makefile.am,
+ examples/dictionary/eijiro/Makefile.am,
+ examples/dictionary/gene95/Makefile.am,
+ examples/dictionary/jmdict/Makefile.am: install dictionary example.
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: fix typos.
+ Reported by Daiki Ueno. Thanks!!!
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: remove duplicated
+ license tag.
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: fix syntax error.
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: use tab for
+ indentation.
+
+ * data/init.d/redhat/groonga: don't enable groonga service by default.
+
+ * rpm/fedora/groonga.spec.in: suppress some rpmlint errors and warnings.
+
+ * debian/groonga.init: support status command.
+
+ * debian/groonga.init: remove needless tasks from Required-Start and
+ Required-Stop.
+
+ * data/init.d/redhat/groonga: support status command.
+
+ * doc/ja/source/news.txt: fix typos.
+
+ * doc/ja/Makefile.am: add missing install document.
+
+2010-09-12 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/tutorial/tutorial01.txt: remove installation document.
+
+2010-09-10 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * groonga.h: Fixed wrong description about grn_table_cursor_open()
+
 2010-09-09 Kouhei Sutou <kou@clear-code.com>
+
+ * debian/control, debian/rules: split MeCab tokenizer as another package.
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ add 1.0.2 entry.
+
+ * ChangeLog, configure.ac: release 1.0.2
 
  * doc/ja/Makefile.am, doc/ja/source/index.txt, doc/ja/source/install.txt: add
  install document.
