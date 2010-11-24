@@ -211,7 +211,9 @@ module GroongaTestUtils
   end
 
   def invoke_groonga(*args)
+    environment = args.first.is_a?(Hash) ? args.shift : {}
     args.unshift(groonga)
+    args.unshift(environment)
     invoke_command(*args)
   end
 
@@ -227,7 +229,8 @@ module GroongaTestUtils
     unless rest.empty?
       raise ArgumentError, "wrong number of arguments (#{argnum} for 3)"
     end
-    args << options.merge(:input => stdin,
+    args = [args] unless args.is_a?(Array)
+    args << options.merge(:input => input,
                           :capture_output => true,
                           :capture_error => true)
     stdout, stderr, status = invoke_groonga(*args)
