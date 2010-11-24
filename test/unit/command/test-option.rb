@@ -56,7 +56,9 @@ class OptionTest < Test::Unit::TestCase
     %w[-e -l -a -p -i -t
        --admin-html-path --protocol --log-path
        --query-log-path --pid-path --config-path].each do |option|
-      status = assert_run_groonga("", /: option '#{option}' needs argument\.$/, option)
+      status = assert_run_groonga("",
+                                  /: option '#{option}' needs argument\.$/,
+                                  option)
       assert_not_predicate(status, :success?)
     end
   end
