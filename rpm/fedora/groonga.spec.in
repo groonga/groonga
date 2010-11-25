@@ -214,7 +214,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga
 %{_bindir}/*
 %{_initddir}/*
-%attr(0755,groonga,groonga) %dir %{_localstatedir}/run/%{name}
+%ghost %dir %{_localstatedir}/run/%{name}
 %attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
 
@@ -258,8 +258,11 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
-* Mon Nov 29 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.4-0
+* Mon Nov 29 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.4-1
 - new upstream release
+
+* Wed Nov 24 2010 Daiki Ueno <dueno@redhat.com> - 1.0.3-2
+- %%ghost /var/run/*.
 
 * Fri Oct 09 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.3-1
 - new upstream release.
