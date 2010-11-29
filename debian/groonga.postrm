@@ -3,10 +3,14 @@
 set -e
 
 if [ "$1" = "purge" ]; then
-        rm -f /var/run/milter-manager/*
-        dpkg-statoverride --remove /var/run/milter-manager
-        rm -f /var/spool/postfix/milter-manager/*
-        dpkg-statoverride --remove /var/spool/postfix/milter-manager
+        rm -f /var/run/groonga/*
+        dpkg-statoverride --remove /var/run/groonga
+        rm -f /var/lib/groonga/*
+        dpkg-statoverride --remove /var/lib/groonga
+        rm -f /etc/groonga/*
+        dpkg-statoverride --remove /etc/groonga
+        rm -f /var/log/groonga/*
+        dpkg-statoverride --remove /var/log/groonga
 fi
 
 #DEBHELPER#
