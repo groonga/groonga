@@ -812,6 +812,8 @@ grn_rc
 grn_ctx_close(grn_ctx *ctx)
 {
   grn_rc rc = grn_ctx_fin(ctx);
+  ctx->next->prev = ctx->prev;
+  ctx->prev->next = ctx->next;
   GRN_GFREE(ctx);
   return rc;
 }
