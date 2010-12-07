@@ -27,6 +27,7 @@
 
 void test_columns(void);
 void test_index_columns(void);
+void test_xml(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -172,4 +173,70 @@ test_index_columns(void)
                       grn_obj_id(context, get("Terms.Sites_key")),
                       database_path),
       send_command("column_list Terms"));
+}
+
+void
+test_xml(void)
+{
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users age COLUMN_SCALAR UInt32");
+  assert_send_command("column_create Users comment COLUMN_SCALAR Text");
+  cut_assert_equal_string(
+      cut_take_printf("<COLUMN_LIST>\n"
+                      "<HEADER>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>id</TEXT>\n"
+                      "<TEXT>UInt32</TEXT></PROPERTY>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>name</TEXT>\n"
+                      "<TEXT>ShortText</TEXT></PROPERTY>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>path</TEXT>\n"
+                      "<TEXT>ShortText</TEXT></PROPERTY>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>type</TEXT>\n"
+                      "<TEXT>ShortText</TEXT></PROPERTY>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>flags</TEXT>\n"
+                      "<TEXT>ShortText</TEXT></PROPERTY>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>domain</TEXT>\n"
+                      "<TEXT>ShortText</TEXT></PROPERTY>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>range</TEXT>\n"
+                      "<TEXT>ShortText</TEXT></PROPERTY>\n"
+                      "<PROPERTY>\n"
+                      "<TEXT>source</TEXT>\n"
+                      "<TEXT>ShortText</TEXT></PROPERTY></HEADER>\n"
+                      "<COLUMN>\n"
+                      "<INT>%u</INT>\n"
+                      "<TEXT>_key</TEXT>\n"
+                      "<TEXT></TEXT>\n"
+                      "<TEXT></TEXT>\n"
+                      "<TEXT>COLUMN_SCALAR</TEXT>\n"
+                      "<TEXT>Users</TEXT>\n"
+                      "<TEXT>ShortText</TEXT>\n"
+                      "<SOURCES></SOURCES></COLUMN>\n"
+                      "<COLUMN>\n"
+                      "<INT>%u</INT>\n"
+                      "<TEXT>comment</TEXT>\n"
+                      "<TEXT>%s.0000102</TEXT>\n"
+                      "<TEXT>var</TEXT>\n"
+                      "<TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>\n"
+                      "<TEXT>Users</TEXT>\n"
+                      "<TEXT>Text</TEXT>\n"
+                      "<SOURCES></SOURCES></COLUMN>\n"
+                      "<COLUMN>\n"
+                      "<INT>%u</INT>\n"
+                      "<TEXT>age</TEXT>\n"
+                      "<TEXT>%s.0000101</TEXT>\n"
+                      "<TEXT>fix</TEXT>\n"
+                      "<TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>\n"
+                      "<TEXT>Users</TEXT>\n"
+                      "<TEXT>UInt32</TEXT>\n"
+                      "<SOURCES></SOURCES></COLUMN></COLUMN_LIST>",
+                      grn_obj_id(context, get("Users")),
+                      grn_obj_id(context, get("Users.comment")), database_path,
+                      grn_obj_id(context, get("Users.age")), database_path),
+      send_command("column_list Users --output_type xml"));
 }

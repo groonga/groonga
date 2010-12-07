@@ -775,7 +775,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column)
   id = grn_obj_id(ctx, column);
   path = grn_obj_path(ctx, column);
   GRN_TEXT_INIT(&o, 0);
-  GRN_OUTPUT_ARRAY_OPEN("", 8);
+  GRN_OUTPUT_ARRAY_OPEN("COLUMN", 8);
   GRN_OUTPUT_INT64(id);
   column2name(ctx, column, &o);
   GRN_OUTPUT_OBJ(&o, NULL);
@@ -791,7 +791,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column)
     grn_db_obj *obj = (grn_db_obj *)column;
     grn_id *s = obj->source;
     int i = 0, n = obj->source_size / sizeof(grn_id);
-    GRN_OUTPUT_ARRAY_OPEN("", n);
+    GRN_OUTPUT_ARRAY_OPEN("SOURCES", n);
     for (i = 0; i < n; i++, s++) {
       objid2name(ctx, *s, &o);
       GRN_OUTPUT_OBJ(&o, NULL);
@@ -815,37 +815,37 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     grn_obj *col;
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-      GRN_OUTPUT_ARRAY_OPEN("", -1);
-      GRN_OUTPUT_ARRAY_OPEN("", 8);
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("COLUMN_LIST", -1);
+      GRN_OUTPUT_ARRAY_OPEN("HEADER", 8);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("id");
       GRN_OUTPUT_CSTR("UInt32");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("name");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("path");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("type");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("flags");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("domain");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("range");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
-      GRN_OUTPUT_ARRAY_OPEN("", 2);
+      GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("source");
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
@@ -856,7 +856,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         grn_id id;
         grn_obj buf;
         GRN_TEXT_INIT(&buf, 0);
-        GRN_OUTPUT_ARRAY_OPEN("", 8);
+        GRN_OUTPUT_ARRAY_OPEN("COLUMN", 8);
         id = grn_obj_id(ctx, table);
         GRN_OUTPUT_INT64(id);
         GRN_OUTPUT_CSTR(KEY_NAME);
@@ -868,7 +868,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         GRN_OUTPUT_STR(name_buf, name_len);
         objid2name(ctx, table->header.domain, &buf);
         GRN_OUTPUT_OBJ(&buf, NULL);
-        GRN_OUTPUT_ARRAY_OPEN("", 0);
+        GRN_OUTPUT_ARRAY_OPEN("SOURCES", 0);
         GRN_OUTPUT_ARRAY_CLOSE();
         GRN_OUTPUT_ARRAY_CLOSE();
         GRN_OBJ_FIN(ctx, &buf);
