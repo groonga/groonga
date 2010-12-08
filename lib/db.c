@@ -7597,7 +7597,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
         break;
       case GRN_TABLE_NO_KEY :
         if ((GRN_BULK_VSIZE(&loader->level)) > 0 &&
-            loader->key_offset != -1 && (ndata == 0 || ndata == ncols)) {
+            (ndata == 0 || ndata == ncols)) {
           id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
         } else if (!ncols) {
           while (ndata--) {
@@ -7606,7 +7606,6 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
             GRN_PTR_PUT(ctx, &loader->columns, col);
             value++;
           }
-          loader->key_offset = 0;
         }
         break;
       default :

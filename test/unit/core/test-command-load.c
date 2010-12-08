@@ -32,6 +32,7 @@ void data_null(void);
 void test_null(gconstpointer data);
 void test_index_geo_point(void);
 void test_nonexistent_columns(void);
+void test_no_key_table(void);
 
 static gchar *tmp_directory;
 
@@ -338,4 +339,19 @@ test_nonexistent_columns(void)
                                      "--columns nonexistent "
                                      "--values "
                                      "'[[\"nonexistent column value\"]]'");
+}
+
+void
+test_no_key_table(void)
+{
+  assert_send_command("table_create Users TABLE_NO_KEY");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
+  cut_assert_equal_string("2",
+                          send_command("load "
+                                       "--table Users "
+                                       "--columns 'name, desc' "
+                                       "--values "
+                                       "'[[\"mori\", \"the author of groonga\"],"
+                                       "[\"gunyara-kun\", \"co-author\"]]'"));
 }
