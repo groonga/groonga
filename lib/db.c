@@ -8034,6 +8034,31 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
   }
 }
 
+static grn_rc
+parse_load_columns(grn_ctx *ctx, grn_obj *table,
+                   const char *str, unsigned str_size, grn_obj *res)
+{
+  const char *p = (char *)str, *q, *r, *pe = p + str_size, *tokbuf[256];
+  while (p < pe) {
+    int i, n = tokenize(p, pe - p, tokbuf, 256, &q);
+    for (i = 0; i < n; i++) {
+      grn_obj *col;
+      r = tokbuf[i];
+      while (p < r && (' ' == *p || ',' == *p)) { p++; }
+      col = grn_obj_column(ctx, table, p, r - p);
+      if (!col) {
+        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>", r - p, p);
+        goto exit;
+      }
+      GRN_PTR_PUT(ctx, res, col);
+      p = r;
+    }
+    p = q;
+  }
+exit:
+  return ctx->rc;
+}
+
 static grn_com_addr *addr;
 
 grn_rc
@@ -8066,8 +8091,10 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
       grn_obj parsed_columns;
 
       GRN_PTR_INIT(&parsed_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      grn_obj_columns(ctx, loader->table, columns, columns_len,
-                      &parsed_columns);
+      if (parse_load_columns(ctx, loader->table, columns, columns_len,
+                             &parsed_columns)) {
+        goto exit;
+      }
       n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);
       for (i = 0; i < n_columns; i++) {
         grn_obj *column;
@@ -8115,5 +8142,6 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     // todo
     break;
   }
+exit:
   GRN_API_RETURN(ctx->rc);
 }

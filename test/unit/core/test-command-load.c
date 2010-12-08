@@ -31,6 +31,7 @@ void test_int32_key(void);
 void data_null(void);
 void test_null(gconstpointer data);
 void test_index_geo_point(void);
+void test_nonexistent_columns(void);
 
 static gchar *tmp_directory;
 
@@ -322,4 +323,19 @@ test_index_geo_point(void)
                           send_command(load_takane));
   cut_assert_equal_string(hit_result,
                           send_command(query));
+}
+
+void
+test_nonexistent_columns(void)
+{
+  assert_send_command("table_create Users TABLE_NO_KEY");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  grn_test_assert_send_command_error(context,
+                                     GRN_INVALID_ARGUMENT,
+                                     "nonexistent column: <nonexistent>",
+                                     "load "
+                                     "--table Users "
+                                     "--columns nonexistent "
+                                     "--values "
+                                     "'[[\"nonexistent column value\"]]'");
 }
