@@ -857,7 +857,16 @@ $PACKAGE_NAME $PACKAGE_VERSION configuration:
   CFLAGS:                ${CFLAGS}
   Libraries:             ${LIBS}
 
+Paths:
   Install path prefix:   ${prefix}
+
+Libraries:
+  ZeroMQ CFLAGS:         ${LIBZMQ_CFLAGS}
+  ZeroMQ LIBS:           ${LIBZMQ_LIBS}
+  libevent CFLAGS:       ${LIBEVENT_CFLAGS}
+  libevent LIBS:         ${LIBEVENT_LIBS}
+  MessagePack CFLAGS:    ${MESSAGE_PACK_CFLAGS}
+  MessagePack LIBS:      ${MESSAGE_PACK_LIBS}
 
 Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!
 "
