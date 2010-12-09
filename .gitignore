@@ -79,3 +79,5 @@ version.sh
 /examples/dictionary/*.gz
 /examples/dictionary/gene95-dictionary/
 /misc/
+/src/suggest/groonga-suggest-httpd
+/src/suggest/groonga-suggest-learner

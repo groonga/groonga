@@ -1,3 +1,5 @@
+SUBDIRS = suggest
+
 bin_PROGRAMS = groonga grntest
 noinst_PROGRAMS = grnslap
 

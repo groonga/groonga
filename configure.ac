@@ -88,6 +88,7 @@ m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
+                 src/suggest/Makefile
                  lib/Makefile
                  include/Makefile
                  include/groonga/Makefile
@@ -619,6 +620,115 @@ if test "x$enable_futex" != "xno"; then
 fi
 AC_MSG_CHECKING([whether enable futex])
 AC_MSG_RESULT($enable_futex)
+
+# ZeroMQ
+AC_ARG_ENABLE(zeromq,
+  [AS_HELP_STRING([--disable-zeromq],
+    [use ZeroMQ for suggestion. [default=auto-detect]])],
+  [enable_zeromq="$enableval"],
+  [enable_zeromq="auto"])
+if test "x$enable_zeromq" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBZMQ],
+                      [libzmq],
+                      [zeromq_available=yes],
+                      [zeromq_available=no])
+    ],
+    [zeromq_available=no])
+  if test "x$zeromq_available" = "xyes"; then
+    AC_DEFINE(HAVE_ZEROMQ, [1], [Define to 1 if ZeroMQ is available.])
+  else
+    if test "x$enable_zeromq" = "xyes"; then
+      AC_MSG_ERROR("No ZeroMQ found")
+    fi
+  fi
+fi
+
+# ZeroMQ
+AC_ARG_ENABLE(zeromq,
+  [AS_HELP_STRING([--disable-zeromq],
+    [Disable ZeroMQ used for suggestion. [default=auto-detect]])],
+  [enable_zeromq="$enableval"],
+  [enable_zeromq="auto"])
+if test "x$enable_zeromq" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBZMQ],
+                      [libzmq],
+                      [zeromq_available=yes],
+                      [zeromq_available=no])
+    ],
+    [zeromq_available=no])
+  if test "x$zeromq_available" = "xyes"; then
+    AC_DEFINE(HAVE_ZEROMQ, [1], [Define to 1 if ZeroMQ is available.])
+  else
+    if test "x$enable_zeromq" = "xyes"; then
+      AC_MSG_ERROR("No ZeroMQ found")
+    fi
+  fi
+fi
+
+# libevent
+AC_ARG_WITH(libevent,
+  [AS_HELP_STRING([--without-libevent],
+    [Disable libevent used for suggestion. [default=/usr]])],
+  [with_libevent="$withval"],
+  [with_libevent="/usr"])
+if test "x$enable_libevent" != "xno"; then
+  _SAVE_CFLAGS="$CFLAGS"
+  _SAVE_LDFLAGS="$LDFLAGS"
+  CFLAGS="$CFLAGS -I$with_libevent/include"
+  LDFLAGS="$LDFLAGS -L$with_libevent/lib"
+  AC_CHECK_LIB(event, event_init,
+               [libevent_available=yes],
+               [libevent_available=no])
+  CFLAGS="$_SAVE_CFLAGS"
+  LDFLAGS="$_SAVE_LDFLAGS"
+  if test "x$libevent_available" = "xyes"; then
+    AC_DEFINE(HAVE_LIBEVENT, [1], [Define to 1 if libevent is available.])
+    LIBEVENT_CFLAGS="-I$with_libevent/include"
+    LIBEVENT_LIBS="-L$with_libevent/lib -levent"
+  else
+    if test "x$with_libevent" = "xyes"; then
+      AC_MSG_ERROR("No libevent found")
+    fi
+  fi
+fi
+AC_SUBST(LIBEVENT_CFLAGS)
+AC_SUBST(LIBEVENT_LIBS)
+
+# MessagePack
+AC_ARG_WITH(message-pack,
+  [AS_HELP_STRING([--without-message-pack],
+    [Disable MessagePack used for suggestion. [default=/usr]])],
+  [with_message_pack="$withval"],
+  [with_message_pack="/usr"])
+if test "x$enable_message_pack" != "xno"; then
+  _SAVE_CFLAGS="$CFLAGS"
+  _SAVE_LDFLAGS="$LDFLAGS"
+  CFLAGS="$CFLAGS -I$with_message_pack/include"
+  LDFLAGS="$LDFLAGS -L$with_message_pack/lib"
+  AC_CHECK_LIB(event, event_init,
+               [message_pack_available=yes],
+               [message_pack_available=no])
+  CFLAGS="$_SAVE_CFLAGS"
+  LDFLAGS="$_SAVE_LDFLAGS"
+  if test "x$message_pack_available" = "xyes"; then
+    AC_DEFINE(HAVE_MESSAGE_PACK, [1], [Define to 1 if MessagePack is available.])
+    MESSAGE_PACK_CFLAGS="-I$with_message_pack/include"
+    MESSAGE_PACK_LIBS="-L$with_message_pack/lib -lmsgpack"
+  else
+    if test "x$with_message_pack" = "xyes"; then
+      AC_MSG_ERROR("No MessagePack found")
+    fi
+  fi
+fi
+AC_SUBST(MESSAGE_PACK_CFLAGS)
+AC_SUBST(MESSAGE_PACK_LIBS)
+
+AM_CONDITIONAL([ENABLE_SUGGEST_LEARNER],
+               [test "$zeromq_available" = "yes" -a \
+                     "$libevent_available" = "yes" -a \
+                     "$message_pack_available" = "yes"])
 
 # check sphinx-build for documentation
 ac_sphinx_available="no"

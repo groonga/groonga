@@ -1,0 +1,41 @@
+if ENABLE_SUGGEST_LEARNER
+bin_PROGRAMS = groonga-suggest-learner groonga-suggest-httpd
+noinst_LTLIBRARIES = libutil.la
+endif
+
+AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
+DEFS += $(GRN_DEFS)
+
+AM_LDFLAGS = -no-undefined
+
+DEFAULT_INCLUDES = 				\
+	-I$(top_builddir)			\
+	-I$(srcdir)				\
+	-I$(top_srcdir)/include			\
+	$(GROONGA_INCLUDEDIR)
+
+groonga_suggest_learner_SOURCES = groonga_suggest_learner.c
+groonga_suggest_learner_CFLAGS =		\
+	$(AM_CFLAGS)				\
+	$(LIBZMQ_CFLAGS)			\
+	$(MESSAGE_PACK_CFLAGS)
+groonga_suggest_learner_LDADD =			\
+	libutil.la				\
+	$(top_builddir)/lib/libgroonga.la	\
+	$(LIBZMQ_LIBS)				\
+	$(MESSAGE_PACK_LIBS)
+
+groonga_suggest_httpd_SOURCES = groonga_suggest_httpd.c
+groonga_suggest_httpd_CFLAGS =			\
+	$(AM_CFLAGS)				\
+	$(LIBEVENT_CFLAGS)			\
+	$(LIBZMQ_CFLAGS)			\
+	$(MESSAGE_PACK_CFLAGS)
+groonga_suggest_httpd_LDADD =			\
+	libutil.la				\
+	$(top_builddir)/lib/libgroonga.la	\
+	$(LIBEVENT_LIBS)			\
+	$(LIBZMQ_LIBS)				\
+	$(MESSAGE_PACK_LIBS)
+
+libutil_la_SOURCES = util.c
