@@ -673,7 +673,7 @@ AC_ARG_WITH(libevent,
     [Disable libevent used for suggestion. [default=/usr]])],
   [with_libevent="$withval"],
   [with_libevent="/usr"])
-if test "x$enable_libevent" != "xno"; then
+if test "x$with_libevent" != "xno"; then
   _SAVE_CFLAGS="$CFLAGS"
   _SAVE_LDFLAGS="$LDFLAGS"
   CFLAGS="$CFLAGS -I$with_libevent/include"
@@ -702,12 +702,12 @@ AC_ARG_WITH(message-pack,
     [Disable MessagePack used for suggestion. [default=/usr]])],
   [with_message_pack="$withval"],
   [with_message_pack="/usr"])
-if test "x$enable_message_pack" != "xno"; then
+if test "x$with_message_pack" != "xno"; then
   _SAVE_CFLAGS="$CFLAGS"
   _SAVE_LDFLAGS="$LDFLAGS"
   CFLAGS="$CFLAGS -I$with_message_pack/include"
   LDFLAGS="$LDFLAGS -L$with_message_pack/lib"
-  AC_CHECK_LIB(event, event_init,
+  AC_CHECK_LIB(msgpack, msgpack_version,
                [message_pack_available=yes],
                [message_pack_available=no])
   CFLAGS="$_SAVE_CFLAGS"
