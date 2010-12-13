@@ -47,6 +47,8 @@ grn_rc grn_ctx_close(grn_ctx *ctx);
 
 #define LISTEN_BACKLOG 756
 #define MIN_MAX_FDS 2048
+#define LOG_SPLIT_LINES 1000000
+#define MAX_THREADS 128 /* max 256 */
 
 typedef struct {
   grn_ctx *ctx;
@@ -54,9 +56,13 @@ typedef struct {
   void *zmq_sock;
   grn_obj cmd_buf;
   pthread_t thd;
+  uint32_t thread_id;
   struct event_base *base;
   struct evhttp *httpd;
   struct event pulse;
+  const char *log_path;
+  FILE *log_file;
+  uint32_t log_count;
 } thd_data;
 
 typedef struct {
@@ -231,6 +237,9 @@ log_send(struct evbuffer *res_buf, thd_data *thd, struct evkeyvalq *get_args)
 
 static void
 cleanup_httpd_thread(thd_data *thd) {
+  if (thd->log_file) {
+    fclose(thd->log_file);
+  }
   if (thd->httpd) {
     evhttp_free(thd->httpd);
   }
@@ -282,6 +291,37 @@ generic_handler(struct evhttp_request *req, void *arg)
     }
     evhttp_send_reply(req, HTTP_OK, "OK", res_buf);
     evbuffer_free(res_buf);
+    /* logging */
+    {
+      if (thd->log_path) {
+        if (!thd->log_file) {
+          time_t n;
+          struct tm *t_st;
+          char p[PATH_MAX + 1];
+
+          time(&n);
+          t_st = localtime(&n);
+
+          snprintf(p, PATH_MAX, "%s%04d%02d%02d%02d%02d%02d-%02d",
+            thd->log_path,
+            t_st->tm_year + 1900, t_st->tm_mon + 1, t_st->tm_mday,
+            t_st->tm_hour, t_st->tm_min, t_st->tm_sec, thd->thread_id);
+
+          if (!(thd->log_file = fopen(p, "a"))) {
+            print_error("cannot open log_file %s.", p);
+          } else {
+            thd->log_count = 0;
+          }
+        }
+        if (thd->log_file) {
+          fprintf(thd->log_file, "%s\n", req->uri);
+          if (++thd->log_count > LOG_SPLIT_LINES) {
+            fclose(thd->log_file);
+            thd->log_file = NULL;
+          }
+        }
+      }
+    }
   }
   evhttp_clear_headers(&args);
 }
@@ -493,15 +533,18 @@ recv_from_learner(void *arg)
 
 static int
 serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
-              const char *send_endpoint, const char *recv_endpoint)
+              const char *send_endpoint, const char *recv_endpoint,
+              const char *log_path)
 {
-  int i, nfd;
+  int nfd;
+  uint32_t i;
+  thd_data thds[nthreads];
+
   if ((nfd = bind_socket(port)) < 0) {
     print_error("cannot bind socket. please check port number with netstat.");
     return -1;
   }
 
-  thd_data thds[nthreads];
   for (i = 0; i < nthreads; i++) {
     memset(&thds[i], 0, sizeof(thds[i]));
     if (!(thds[i].base = event_init())) {
@@ -532,6 +575,8 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
             print_error("error in grn_db_open() on thread %d.", i);
           } else {
             GRN_TEXT_INIT(&(thds[i].cmd_buf), 0);
+            thds[i].log_path = log_path;
+            thds[i].thread_id = i;
             evhttp_set_gencb(thds[i].httpd, generic_handler, &thds[i]);
             evhttp_set_timeout(thds[i].httpd, 10);
             {
@@ -607,7 +652,8 @@ usage(FILE *output)
           "  -p <port number>   : http server port number (default: %d)\n"
           "  -c <thread number> : server thread number (default: %d)\n"
           "  -s <send endpoint> : send endpoint (ex. tcp://example.com:1234)\n"
-          "  -r <recv endpoint> : recv endpoint (ex. tcp://example.com:1235)\n",
+          "  -r <recv endpoint> : recv endpoint (ex. tcp://example.com:1235)\n"
+          "  -l <path prefix>   : log path prefix\n",
           DEFAULT_PORT, default_max_threads);
 }
 
@@ -615,14 +661,14 @@ int
 main(int argc, char **argv)
 {
   int port_no = DEFAULT_PORT;
-  const char *send_endpoint = NULL, *recv_endpoint = NULL;
+  const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_path = NULL;
 
   /* check environment */
   {
     struct rlimit rlim;
     if (!getrlimit(RLIMIT_NOFILE, &rlim)) {
       if (rlim.rlim_max < MIN_MAX_FDS) {
-        print_error("too small max fds. `ulimit -n`");
+        print_error("too small max fds. %d required.", MIN_MAX_FDS);
         return -1;
       }
       rlim.rlim_cur = rlim.rlim_cur;
@@ -636,13 +682,15 @@ main(int argc, char **argv)
   /* parse options */
   {
     int ch;
-    extern char *optarg;
-    extern int optind, opterr;
 
-    while ((ch = getopt(argc, argv, "c:p:s:r:")) != -1) {
+    while ((ch = getopt(argc, argv, "c:p:s:r:l:")) != -1) {
       switch(ch) {
       case 'c':
         default_max_threads = atoi(optarg);
+        if (default_max_threads > MAX_THREADS) {
+          print_error("too many threads. limit to %d.", MAX_THREADS);
+          default_max_threads = MAX_THREADS;
+        }
         break;
       case 'p':
         port_no = atoi(optarg);
@@ -652,6 +700,9 @@ main(int argc, char **argv)
         break;
       case 'r':
         recv_endpoint = optarg;
+        break;
+      case 'l':
+        log_path = optarg;
         break;
       }
     }
@@ -676,7 +727,8 @@ main(int argc, char **argv)
       signal(SIGINT, signal_handler);
       signal(SIGQUIT, signal_handler);
 
-      serve_threads(default_max_threads, port_no, argv[0], zmq_ctx, send_endpoint, recv_endpoint);
+      serve_threads(default_max_threads, port_no, argv[0], zmq_ctx,
+        send_endpoint, recv_endpoint, log_path);
       zmq_term(zmq_ctx);
     }
     grn_ctx_fin(&ctx);
