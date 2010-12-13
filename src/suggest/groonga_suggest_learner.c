@@ -319,6 +319,8 @@ send_to_httpd(void *arg)
       if (!(grn_ctx_init(&ctx, 0))) {
         if ((grn_db_open(&ctx, thd->db_path))) {
           while (loop) {
+            uint64_t hwm = 1;
+            zmq_setsockopt(zmq_send_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
             send_handler(zmq_send_sock, &ctx);
           }
         } else {
@@ -417,10 +419,10 @@ static void
 event_loop(msgpack_zone *mempool, void *zmq_sock, grn_ctx *ctx)
 {
   grn_obj buf;
-  GRN_TEXT_INIT(&buf, 0);
   zmq_pollitem_t items[] = {
     { zmq_sock, 0, ZMQ_POLLIN, 0}
   };
+  GRN_TEXT_INIT(&buf, 0);
   while (loop) {
     zmq_poll(items, 1, 10000);
     if (items[0].revents & ZMQ_POLLIN) { /* always true */
@@ -473,8 +475,6 @@ main(int argc, char **argv)
   /* parse options */
   {
     int ch;
-    extern char *optarg;
-    extern int optind, opterr;
 
     while ((ch = getopt(argc, argv, "r:s:")) != -1) {
       switch(ch) {
@@ -494,8 +494,9 @@ main(int argc, char **argv)
     usage(stderr);
   } else {
     grn_ctx *ctx;
-    grn_init();
     msgpack_zone *mempool;
+
+    grn_init();
 
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);

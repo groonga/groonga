@@ -564,6 +564,9 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
               print_error("cannot connect zmq_socket.");
               zmq_close(thds[i].zmq_sock);
               thds[i].zmq_sock = NULL;
+            } else {
+              uint64_t hwm = 1;
+              zmq_setsockopt(thds[i].zmq_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
             }
           } else {
             thds[i].zmq_sock = NULL;
