@@ -92,7 +92,7 @@ atouint64_t(const char *s)
 static int
 suggest_result(struct evbuffer *res_buf, const char *types, const char *query, const char *target_name, grn_obj *cmd_buf, grn_ctx *ctx)
 {
-  if (types && query) {
+  if (target_name && types && query) {
     GRN_BULK_REWIND(cmd_buf);
     GRN_TEXT_PUTS(ctx, cmd_buf, "/d/suggest?table=item_");
     grn_text_urlenc(ctx, cmd_buf, target_name, strlen(target_name));
