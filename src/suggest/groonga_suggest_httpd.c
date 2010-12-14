@@ -315,7 +315,7 @@ generic_handler(struct evhttp_request *req, void *arg)
         }
         if (thd->log_file) {
           fprintf(thd->log_file, "%s\n", req->uri);
-          if (++thd->log_count > LOG_SPLIT_LINES) {
+          if (++thd->log_count >= LOG_SPLIT_LINES) {
             fclose(thd->log_file);
             thd->log_file = NULL;
           }
