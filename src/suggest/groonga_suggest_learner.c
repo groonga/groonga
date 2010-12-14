@@ -24,6 +24,7 @@
 
 #define DEFAULT_RECV_ENDPOINT "tcp://*:1234"
 #define DEFAULT_SEND_ENDPOINT "tcp://*:1235"
+#define SEND_WAIT 1000 /* 0.001sec */
 
 int print_error(const char *format, ...);
 
@@ -233,6 +234,8 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
 
                 zmq_send_to_httpd(zmq_send_sock, sbuf.data, sbuf.size);
 
+                usleep(SEND_WAIT);
+
                 msgpack_sbuffer_destroy(&sbuf);
               }
               grn_table_cursor_close(ctx, tc);
@@ -297,6 +300,8 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
                 PACK_MAP_ITEM(freq2);
 
                 zmq_send_to_httpd(zmq_send_sock, sbuf.data, sbuf.size);
+
+                usleep(SEND_WAIT);
 
                 msgpack_sbuffer_destroy(&sbuf);
               }
