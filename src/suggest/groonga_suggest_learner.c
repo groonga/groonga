@@ -317,12 +317,14 @@ send_to_httpd(void *arg)
     if (!zmq_bind(zmq_send_sock, thd->send_endpoint)) {
       grn_ctx ctx;
       if (!(grn_ctx_init(&ctx, 0))) {
-        if ((grn_db_open(&ctx, thd->db_path))) {
+        grn_obj *db;
+        if ((db = grn_db_open(&ctx, thd->db_path))) {
           while (loop) {
             uint64_t hwm = 1;
             zmq_setsockopt(zmq_send_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
             send_handler(zmq_send_sock, &ctx);
           }
+          grn_obj_close(&ctx, db);
         } else {
           print_error("error in grn_db_open() on send thread.");
         }

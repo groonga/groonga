@@ -494,7 +494,7 @@ recv_from_learner(void *arg)
     if (!zmq_connect(zmq_recv_sock, thd->recv_endpoint)) {
       grn_ctx ctx;
       if (!grn_ctx_init(&ctx, 0)) {
-        if ((!grn_ctx_use(&ctx, db)/*grn_db_open(&ctx, thd->db_path)*/)) {
+        if ((!grn_ctx_use(&ctx, db))) {
           msgpack_zone *mempool;
           if ((mempool = msgpack_zone_new(MSGPACK_ZONE_CHUNK_SIZE))) {
             grn_obj cmd_buf;
@@ -573,8 +573,7 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
           }
           if (!(thds[i].ctx = grn_ctx_open(0))) {
             print_error("error in grn_ctx_open() on thread %d.", i);
-          } else if (grn_ctx_use(thds[i].ctx, db)
-/*!(thds[i].db = grn_db_open(thds[i].ctx, db_path))*/) {
+          } else if (grn_ctx_use(thds[i].ctx, db)) {
             print_error("error in grn_db_open() on thread %d.", i);
           } else {
             GRN_TEXT_INIT(&(thds[i].cmd_buf), 0);
@@ -720,19 +719,21 @@ main(int argc, char **argv)
     void *zmq_ctx;
     grn_init();
     grn_ctx_init(&ctx, 0);
-    if (!(db = grn_db_open(&ctx, argv[0]))) {
-      /* error! */
-    }
-    if (!(zmq_ctx = zmq_init(1))) {
-      print_error("cannot create zmq context.");
-    } else {
-      signal(SIGTERM, signal_handler);
-      signal(SIGINT, signal_handler);
-      signal(SIGQUIT, signal_handler);
+    if ((db = grn_db_open(&ctx, argv[0]))) {
+      if ((zmq_ctx = zmq_init(1))) {
+        signal(SIGTERM, signal_handler);
+        signal(SIGINT, signal_handler);
+        signal(SIGQUIT, signal_handler);
 
-      serve_threads(default_max_threads, port_no, argv[0], zmq_ctx,
-        send_endpoint, recv_endpoint, log_path);
-      zmq_term(zmq_ctx);
+        serve_threads(default_max_threads, port_no, argv[0], zmq_ctx,
+          send_endpoint, recv_endpoint, log_path);
+        zmq_term(zmq_ctx);
+      } else {
+        print_error("cannot create zmq context.");
+      }
+      grn_obj_close(&ctx, db);
+    } else {
+      print_error("cannot open db.");
     }
     grn_ctx_fin(&ctx);
     grn_fin();
