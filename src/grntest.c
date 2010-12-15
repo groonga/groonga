@@ -1050,6 +1050,7 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
         grntest_task[task_id].qnum++;
         GRN_BULK_REWIND(&line);
       }
+      GRN_OBJ_FIN(ctx, &line);
       fclose(fp);
     } else {
       int i, n_commands;
