@@ -25,6 +25,7 @@
 
 void test_int64_compare_over_int32(void);
 void test_int64_compare_float_literal(void);
+void test_int32_key_table_reference_compare(void);
 
 static gchar *tmp_directory;
 
@@ -109,3 +110,21 @@ test_int64_compare_float_literal(void)
        "[1,344494643000000]]]",
     send_command("select Integers --query int64:<=3.44494643e14"));
 }
+
+void
+test_int32_key_table_reference_compare(void)
+{
+  assert_send_command("table_create Users TABLE_NO_KEY");
+  assert_send_command("table_create IDs TABLE_HASH_KEY Int32");
+  assert_send_command("column_create Users id COLUMN_SCALAR IDs");
+  assert_send_command("load --table Users\n"
+                      "[\n"
+                      "{\"id\":29}\n"
+                      "]");
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],[\"id\",\"IDs\"]],"
+       "[1,29]]]",
+    send_command("select Users --query id:<30"));
+}
+
