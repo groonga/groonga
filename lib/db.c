@@ -6940,8 +6940,6 @@ deftype(grn_ctx *ctx, const char *name,
   return o;
 }
 
-#define N_RESERVED_TYPES      256
-
 grn_rc
 grn_db_init_builtin_types(grn_ctx *ctx)
 {
@@ -7017,7 +7015,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
     grn_obj_register(ctx, db, buf, 5);
   }
   grn_db_init_builtin_query(ctx);
-  for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < N_RESERVED_TYPES; id++) {
+  for (id = grn_pat_curr_id(ctx, ((grn_db *)db)->keys) + 1; id < GRN_N_RESERVED_TYPES; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);
   }

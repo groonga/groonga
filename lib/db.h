@@ -36,6 +36,8 @@ extern "C" {
 #define GRN_DB_DELIMITER            '.'
 #define GRN_DB_PSEUDO_COLUMN_PREFIX '_'
 
+#define GRN_N_RESERVED_TYPES 256
+
 typedef struct {
   int score;
   int n_subrecs;

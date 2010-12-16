@@ -1316,7 +1316,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   }\
 }
 
-#define DO_COMPARE(x,y,r,op) {\
+#define DO_COMPARE_BUILTIN(x,y,r,op) {\
   switch (x->header.domain) {\
   case GRN_DB_INT8 :\
     {\
@@ -1432,6 +1432,39 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   default :\
     r = 0;\
     break;\
+  }\
+}
+
+#define DO_COMPARE(x, y, r, op) {\
+  if (x->header.domain >= GRN_N_RESERVED_TYPES) {\
+    grn_obj *table;\
+    table = grn_ctx_at(ctx, x->header.domain);\
+    switch (table->header.type) {\
+    case GRN_TABLE_HASH_KEY :\
+    case GRN_TABLE_PAT_KEY :\
+      {\
+        grn_obj key;\
+        int length;\
+        GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);\
+        length = grn_table_get_key2(ctx, table, GRN_RECORD_VALUE(x), &key);\
+        if (length > 0) {\
+          grn_obj *x_original = x;\
+          x = &key;\
+          DO_COMPARE_BUILTIN((&key), y, r, op);\
+          x = x_original;\
+        } else {\
+          r = 0;\
+        }\
+        GRN_OBJ_FIN(ctx, &key);\
+      }\
+      break;\
+    default :\
+      r = 0;\
+      break;\
+    }\
+    grn_obj_unlink(ctx, table);\
+  } else {\
+    DO_COMPARE_BUILTIN(x, y, r, op);\
   }\
 }
 
