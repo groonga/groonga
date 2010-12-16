@@ -1,6 +1,7 @@
 if ENABLE_SUGGEST_LEARNER
 bin_PROGRAMS = groonga-suggest-learner groonga-suggest-httpd
 noinst_LTLIBRARIES = libutil.la
+EXTRA_DIST = create-dataset.sh
 endif
 
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
