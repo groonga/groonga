@@ -1,7 +1,9 @@
 if ENABLE_SUGGEST_LEARNER
-bin_PROGRAMS = groonga-suggest-learner groonga-suggest-httpd
+bin_PROGRAMS =					\
+	groonga-suggest-learner			\
+	groonga-suggest-httpd			\
+	groonga-suggest-create-dataset
 noinst_LTLIBRARIES = libutil.la
-EXTRA_DIST = create-dataset.sh
 endif
 
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
@@ -38,5 +40,11 @@ groonga_suggest_httpd_LDADD =			\
 	$(LIBEVENT_LIBS)			\
 	$(LIBZMQ_LIBS)				\
 	$(MESSAGE_PACK_LIBS)
+
+groonga_suggest_create_dataset_SOURCES = groonga_suggest_create_dataset.c
+groonga_suggest_create_dataset_CFLAGS =		\
+	$(AM_CFLAGS)
+groonga_suggest_create_dataset_LDADD =		\
+	$(top_builddir)/lib/libgroonga.la
 
 libutil_la_SOURCES = util.c
