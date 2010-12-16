@@ -1050,6 +1050,7 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
         grntest_task[task_id].qnum++;
         GRN_BULK_REWIND(&line);
       }
+      GRN_OBJ_FIN(ctx, &line);
       fclose(fp);
     } else {
       int i, n_commands;
@@ -1378,6 +1379,8 @@ get_sysinfo(const char *path, char *result, int olen)
   int ret;
   int cpunum = 0;
   int minfo = 0;
+  int unevictable = 0;
+  int mlocked = 0;
   char cpustring[256];
   struct utsname ubuf;
   struct statvfs vfsbuf;
@@ -1455,14 +1458,29 @@ get_sysinfo(const char *path, char *result, int olen)
     if (!strncmp(tmpbuf, "MemTotal:", 9)) {
       minfo = grntest_atoi(&tmpbuf[10], &tmpbuf[10] + 40, NULL);
     }
+    if (!strncmp(tmpbuf, "Unevictable:", 12)) {
+      unevictable = grntest_atoi(&tmpbuf[13], &tmpbuf[13] + 40, NULL);
+    }
+    if (!strncmp(tmpbuf, "Mlocked:", 8)) {
+      mlocked = grntest_atoi(&tmpbuf[9], &tmpbuf[9] + 40, NULL);
+    }
   }
   fclose(fp);
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%dMBytes\n", minfo/1024);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "%dMBytes_Unevictable\n", unevictable/1024);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "%dMBytes_Mlocked\n", mlocked/1024);
+    strcat(result, tmpbuf);
   } else {
     sprintf(tmpbuf, "  \"RAM\": \"%dMBytes\",\n", minfo/1024);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "  \"Unevictable\": \"%dMBytes\",\n", unevictable/1024);
+    strcat(result, tmpbuf);
+    sprintf(tmpbuf, "  \"Mlocked\": \"%dMBytes\",\n", mlocked/1024);
+    strcat(result, tmpbuf);
   }
-  strcat(result, tmpbuf);
 
   ret = statvfs(path, &vfsbuf);
   if (ret) {
