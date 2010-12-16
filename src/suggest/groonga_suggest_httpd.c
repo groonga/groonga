@@ -34,7 +34,7 @@
 #include <event.h>
 #include <evhttp.h>
 #include <msgpack.h>
-#include <groonga/groonga.h>
+#include <groonga.h>
 #include <pthread.h>
 
 #define DEFAULT_PORT 8080

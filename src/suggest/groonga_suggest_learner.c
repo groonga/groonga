@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <msgpack.h>
 #include <pthread.h>
-#include <groonga/groonga.h>
+#include <groonga.h>
 
 #define DEFAULT_RECV_ENDPOINT "tcp://*:1234"
 #define DEFAULT_SEND_ENDPOINT "tcp://*:1235"
