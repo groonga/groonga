@@ -251,35 +251,44 @@ grn_db_register(grn_ctx *ctx, const char *path)
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
     FILE *plugin_file;
-    char complemented_path[PATH_MAX];
+    char complemented_path[PATH_MAX], complemented_libs_path[PATH_MAX];
 
     plugin_file = fopen(path, "r");
     if (plugin_file) {
       fclose(plugin_file);
       id = grn_plugin_open(ctx, path);
     } else {
-      ctx->errlvl = GRN_OK;
-      ctx->rc = GRN_SUCCESS;
       strcpy(complemented_path, path);
       strcat(complemented_path, GRN_PLUGIN_SUFFIX);
-      id = grn_plugin_open(ctx, complemented_path);
-      if (id) {
-        path = complemented_path;
+      plugin_file = fopen(complemented_path, "r");
+      if (plugin_file) {
+        fclose(plugin_file);
+        id = grn_plugin_open(ctx, complemented_path);
+        if (id) {
+          path = complemented_path;
+        }
       } else {
         const char *base_name;
 
         base_name = strrchr(path, '/');
         if (base_name) {
-          ctx->errlvl = GRN_OK;
-          ctx->rc = GRN_SUCCESS;
-          complemented_path[0] = '\0';
-          strncat(complemented_path, path, base_name - path);
-          strcat(complemented_path, "/.libs");
-          strcat(complemented_path, base_name);
-          strcat(complemented_path, GRN_PLUGIN_SUFFIX);
-          id = grn_plugin_open(ctx, complemented_path);
-          if (id) {
-            path = complemented_path;
+          complemented_libs_path[0] = '\0';
+          strncat(complemented_libs_path, path, base_name - path);
+          strcat(complemented_libs_path, "/.libs");
+          strcat(complemented_libs_path, base_name);
+          strcat(complemented_libs_path, GRN_PLUGIN_SUFFIX);
+          plugin_file = fopen(complemented_path, "r");
+          if (plugin_file) {
+            fclose(plugin_file);
+            id = grn_plugin_open(ctx, complemented_libs_path);
+            if (id) {
+              path = complemented_libs_path;
+            }
+          } else {
+            ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+                "cannot open shared object file: "
+                "No such file or directory: <%s> and <%s>",
+                complemented_path, complemented_libs_path);
           }
         }
       }
