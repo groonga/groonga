@@ -624,29 +624,6 @@ AC_MSG_RESULT($enable_futex)
 # ZeroMQ
 AC_ARG_ENABLE(zeromq,
   [AS_HELP_STRING([--disable-zeromq],
-    [use ZeroMQ for suggestion. [default=auto-detect]])],
-  [enable_zeromq="$enableval"],
-  [enable_zeromq="auto"])
-if test "x$enable_zeromq" != "xno"; then
-  m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([LIBZMQ],
-                      [libzmq],
-                      [zeromq_available=yes],
-                      [zeromq_available=no])
-    ],
-    [zeromq_available=no])
-  if test "x$zeromq_available" = "xyes"; then
-    AC_DEFINE(HAVE_ZEROMQ, [1], [Define to 1 if ZeroMQ is available.])
-  else
-    if test "x$enable_zeromq" = "xyes"; then
-      AC_MSG_ERROR("No ZeroMQ found")
-    fi
-  fi
-fi
-
-# ZeroMQ
-AC_ARG_ENABLE(zeromq,
-  [AS_HELP_STRING([--disable-zeromq],
     [Disable ZeroMQ used for suggestion. [default=auto-detect]])],
   [enable_zeromq="$enableval"],
   [enable_zeromq="auto"])

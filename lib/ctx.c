@@ -400,6 +400,8 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   grn_gctx.next->prev = ctx;
   grn_gctx.next = ctx;
   CRITICAL_SECTION_LEAVE(grn_glock);
+  ctx->trace[0] = NULL;
+  ctx->errbuf[0] = '\0';
   return ctx->rc;
 }
 

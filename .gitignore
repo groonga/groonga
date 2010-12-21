@@ -81,3 +81,4 @@ version.sh
 /misc/
 /src/suggest/groonga-suggest-httpd
 /src/suggest/groonga-suggest-learner
+/src/suggest/groonga-suggest-create-dataset
