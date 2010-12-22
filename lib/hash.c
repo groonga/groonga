@@ -389,8 +389,11 @@ grn_rc
 grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
                        grn_table_delete_optarg *optarg)
 {
+  uint8_t res;
   grn_rc rc = GRN_SUCCESS;
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
+  ARRAY_BITMAP_AT(array, id, res);
+  if (!res) { rc = GRN_INVALID_ARGUMENT; goto exit; }
   /* lock */
   if (IO_ARRAYP(array)) {
     if (array->value_size >= sizeof(grn_id)) {
