@@ -23,6 +23,10 @@
 #define _GNU_SOURCE
 #endif /* __GNUC__ */
 
+#if defined(__NetBSD__) && !defined(_NETBSD_SOURCE)
+#define _NETBSD_SOURCE 1
+#endif /* defined(__NetBSD__) && !defined(_NETBSD_SOURCE) */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
