@@ -29,6 +29,7 @@ void test_referenced_record(void);
 void test_uint64(void);
 void test_last_token(void);
 void test_no_key_twice(void);
+void test_no_key_by_id(void);
 
 static gchar *tmp_directory;
 
@@ -209,6 +210,27 @@ test_no_key_twice(void)
                             "[\"title\",\"ShortText\"]],"
                            "[1,\"groonga\"],"
                            "[2,\"Ruby\"],"
+                           "[3,\"Cutter\"]]]",
+                          send_command("select Sites"));
+}
+
+void
+test_no_key_by_id(void)
+{
+  assert_send_command("table_create Sites TABLE_NO_KEY");
+  assert_send_command("column_create Sites title COLUMN_SCALAR ShortText");
+  cut_assert_equal_string("3",
+                          send_command("load --table Sites\n"
+                                       "[\n"
+                                       "{\"title\": \"groonga\"},\n"
+                                       "{\"title\": \"Ruby\"},\n"
+                                       "{\"title\": \"Cutter\"}\n"
+                                       "]"));
+  assert_send_command("delete Sites --id 2");
+  cut_assert_equal_string("[[[2],"
+                           "[[\"_id\",\"UInt32\"],"
+                            "[\"title\",\"ShortText\"]],"
+                           "[1,\"groonga\"],"
                            "[3,\"Cutter\"]]]",
                           send_command("select Sites"));
 }
