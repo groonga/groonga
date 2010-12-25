@@ -33,6 +33,7 @@ void test_null(gconstpointer data);
 void test_index_geo_point(void);
 void test_nonexistent_columns(void);
 void test_no_key_table(void);
+void test_two_bigram_indexes_to_key(void);
 
 static gchar *tmp_directory;
 
@@ -354,4 +355,45 @@ test_no_key_table(void)
                                        "--values "
                                        "'[[\"mori\", \"the author of groonga\"],"
                                        "[\"gunyara-kun\", \"co-author\"]]'"));
+}
+
+void
+test_two_bigram_indexes_to_key(void)
+{
+  cut_omit("crashed!!!");
+  assert_send_command("table_create Books TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Authors TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Bigram "
+                      "TABLE_PAT_KEY|KEY_NORMALIZE ShortText "
+                      "--default_tokenizer TokenBigram");
+  assert_send_command("table_create BigramLoose "
+                      "TABLE_PAT_KEY|KEY_NORMALIZE ShortText "
+                      "--default_tokenizer TokenBigramIgnoreBlankSplitSymbolAlphaDigit");
+  assert_send_command("column_create Books author COLUMN_SCALAR Authors");
+  assert_send_command("column_create Bigram author "
+                      "COLUMN_INDEX|WITH_POSITION Authors _key");
+  assert_send_command("column_create BigramLoose author "
+                      "COLUMN_INDEX|WITH_POSITION Authors _key");
+  cut_assert_equal_string(
+    "2",
+    send_command("load "
+                 "--table Books "
+                 "--columns '_key, author' "
+                 "--values "
+                 "'["
+                 "[\"The groonga book\", \"mori\"],"
+                 "[\"The first groonga\", \"morita\"]"
+                 "]'"));
+  cut_assert_equal_string(
+    "[[[2],"
+    "[[\"_key\",\"ShortText\"],"
+    "[\"author\",\"Authors\"],"
+    "[\"_score\",\"Int32\"]],"
+    "[\"The groonga book\",\"mori\",11],"
+    "[\"The first groonga\",\"morita\",1]]]",
+    send_command("select Books "
+                 "--match_columns "
+                 "'Bigram.author * 10 || BigramLoose.author * 1' "
+                 "--query 'mori' "
+                 "--output_columns '_key, author, _score'"));
 }
