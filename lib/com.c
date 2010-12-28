@@ -938,7 +938,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   ev->curr_edge_id.sid = 0;
   {
     int v = 1;
-    if (setsockopt(lfd, 6, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
+    if (setsockopt(lfd, SOL_TCP, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
       SERR("setsockopt");
       goto exit;
     }
