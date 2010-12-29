@@ -888,6 +888,7 @@ exit :
   grn_msg_close(ctx, (grn_obj *)msg);
   /* if not keep alive connection */
   grn_sock_close(fd);
+  grn_com_event_start_accept(ctx, msg->acceptor->ev);
 }
 
 enum {
