@@ -16,6 +16,12 @@ PATH=/usr/local/sbin:/usr/sbin:$PATH
 
 script_base_dir=`dirname $0`
 
+if test "$PARALLEL" = "yes"; then
+    parallel="yes"
+else
+    parallel="no"
+fi
+
 run()
 {
     "$@"
@@ -111,6 +117,14 @@ build()
 
 for architecture in $ARCHITECTURES; do
     for code_name in $CODES; do
-	build $architecture $code_name
+	if test "$parallel" = "yes"; then
+	    build $architecture $code_name &
+	else
+	    build $architecture $code_name
+	fi;
     done;
 done
+
+if test "$parallel" = "yes"; then
+    wait
+fi
