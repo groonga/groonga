@@ -409,7 +409,9 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (statistics.nfetches == 0) {
     GRN_OUTPUT_FLOAT(0.0);
   } else {
-    GRN_OUTPUT_FLOAT((double)statistics.nhits / (double)statistics.nfetches * 100.0);
+    double cache_hit_rate;
+    cache_hit_rate = (double)statistics.nhits / (double)statistics.nfetches;
+    GRN_OUTPUT_FLOAT(cache_hit_rate * 100.0);
   }
   GRN_OUTPUT_CSTR("command_version");
   GRN_OUTPUT_INT32(grn_ctx_get_command_version(ctx));
