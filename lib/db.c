@@ -7736,6 +7736,22 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   }
 }
 
+#define JSON_READ_OPEN_BRACKET() {\
+  GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);\
+  values_add(ctx, loader);\
+  loader->last->header.domain = OPEN_BRACKET;\
+  loader->stat = GRN_LOADER_TOKEN;\
+  str++;\
+}\
+
+#define JSON_READ_OPEN_BRACE() {\
+  GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);\
+  values_add(ctx, loader);\
+  loader->last->header.domain = OPEN_BRACE;\
+  loader->stat = GRN_LOADER_TOKEN;\
+  str++;\
+}\
+
 static void
 json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
 {
@@ -7747,9 +7763,29 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
     c = *str;
     switch (loader->stat) {
     case GRN_LOADER_BEGIN :
+      if ((len = grn_isspace(str, ctx->encoding))) {
+        str += len;
+        c = *str;
+        continue;
+      }
+      switch (c) {
+      case '[' :
+        JSON_READ_OPEN_BRACKET();
+        break;
+      case '{' :
+        JSON_READ_OPEN_BRACE();
+        break;
+      default :
+        ERR(GRN_INVALID_ARGUMENT,
+            "must be start with '[' or '{': <%.*s>", str_len, beg);
+        loader->stat = GRN_LOADER_END;
+        break;
+      }
+      break;
     case GRN_LOADER_TOKEN :
       if ((len = grn_isspace(str, ctx->encoding))) {
         str += len;
+        c = *str;
         continue;
       }
       switch (c) {
@@ -7759,18 +7795,10 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         str++;
         break;
       case '[' :
-        GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
-        values_add(ctx, loader);
-        loader->last->header.domain = OPEN_BRACKET;
-        loader->stat = GRN_LOADER_TOKEN;
-        str++;
+        JSON_READ_OPEN_BRACKET();
         break;
       case '{' :
-        GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);
-        values_add(ctx, loader);
-        loader->last->header.domain = OPEN_BRACE;
-        loader->stat = GRN_LOADER_TOKEN;
-        str++;
+        JSON_READ_OPEN_BRACE();
         break;
       case ':' :
         str++;
@@ -8030,6 +8058,9 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
     }
   }
 }
+
+#undef JSON_READ_OPEN_BRACKET
+#undef JSON_READ_OPEN_BRACE
 
 static grn_rc
 parse_load_columns(grn_ctx *ctx, grn_obj *table,
