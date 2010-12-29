@@ -423,7 +423,7 @@ test_invalid_start_with_symbol(void)
   cut_assert_equal_string(table_list_result, send_command("table_list"));
   grn_test_assert_send_command_error(context,
                                      GRN_INVALID_ARGUMENT,
-                                     "must be start with '[' or '{': <invalid>",
+                                     "JSON must start with '[' or '{': <invalid>",
                                      "load "
                                      "--table Authors "
                                      "--columns '_key' "

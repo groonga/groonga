@@ -7777,7 +7777,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned str_len)
         break;
       default :
         ERR(GRN_INVALID_ARGUMENT,
-            "must be start with '[' or '{': <%.*s>", str_len, beg);
+            "JSON must start with '[' or '{': <%.*s>", str_len, beg);
         loader->stat = GRN_LOADER_END;
         break;
       }
