@@ -41,7 +41,6 @@
 ++++
 
 * Tomita Masahiroさん
-* @s3kiさん
 * OBATA Akioさん
 
 1.0.4リリース - 2010/11/29
