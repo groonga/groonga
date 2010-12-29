@@ -277,7 +277,7 @@ grn_db_register(grn_ctx *ctx, const char *path)
           strcat(complemented_libs_path, "/.libs");
           strcat(complemented_libs_path, base_name);
           strcat(complemented_libs_path, GRN_PLUGIN_SUFFIX);
-          plugin_file = fopen(complemented_path, "r");
+          plugin_file = fopen(complemented_libs_path, "r");
           if (plugin_file) {
             fclose(plugin_file);
             id = grn_plugin_open(ctx, complemented_libs_path);
