@@ -403,9 +403,9 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
       if (!ee) { rc = GRN_INVALID_ARGUMENT; goto exit; }
       *((grn_id *)ee) = hh->garbages;
       hh->garbages = id;
-      (*array->n_entries)--;
-      (*array->n_garbages)++;
     }
+    (*array->n_entries)--;
+    (*array->n_garbages)++;
     GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
   } else {
     if (array->value_size >= sizeof(grn_id)) {
@@ -414,9 +414,9 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
       if (!ee) { rc = GRN_INVALID_ARGUMENT; goto exit; }
       *((grn_id *)ee) = array->garbages;
       array->garbages = id;
-      (*array->n_entries)--;
-      (*array->n_garbages)++;
     }
+    (*array->n_entries)--;
+    (*array->n_garbages)++;
     GRN_TINY_ARRAY_BIT_OFF(&array->bitmap, id);
   }
 exit :
