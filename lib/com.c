@@ -42,6 +42,14 @@
 #define PF_INET AF_INET
 #endif /* PF_INET */
 
+#ifndef SOL_TCP
+#  ifdef IPPROTO_TCP
+#    define SOL_TCP IPPROTO_TCP
+#  else
+#    define SOL_TCP 6
+#  endif /* IPPROTO_TCP */
+#endif /* SOL_TCP */
+
 #ifndef USE_MSG_MORE
 #define MSG_MORE     0
 #endif /* USE_MSG_MORE */
