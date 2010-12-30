@@ -2,7 +2,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	1%{?dist}
+Release:	0%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -205,6 +205,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Fri Dec 31 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.6-0
+- new upstream release
+
 * Wed Dec 29 2010 Kouhei Sutou <kou@clear-code.com> - 1.0.5-0
 - new upstream release.
 
