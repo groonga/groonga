@@ -1,4 +1,26 @@
+2010-12-31 Kouhei Sutou <kou@clear-code.com>
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ 1.0.5 -> 1.0.6.
+
+ * configure.ac: 1.0.5 -> 1.0.6.
+
+ * doc/ja/source/news.txt: add 1.0.6 entry.
+
+ * doc/ja/source/install.txt: update to the latest Fedora version.
+
+ * yum/sign-rpm.sh: sign in parallel.
+
+ * yum/gpg-uid.sh: always use 1c837f31 key.
+
+2010-12-30 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/com.c: define SOL_TCP as IPPROTO_TCP for *BSD.  Reported by OBATA Akio.
+ Thanks!!!
+
 2010-12-29 Kouhei Sutou <kou@clear-code.com>
+
+ * ChangeLog: update ChangeLog.
 
  * doc/ja/source/news.txt: add a #807 entry.
 
