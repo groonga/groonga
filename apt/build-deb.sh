@@ -42,7 +42,7 @@ cd build
 tar xfz ${PACKAGE}_${VERSION}.orig.tar.gz
 cd ${PACKAGE}-${VERSION}/
 cp -rp /tmp/${PACKAGE}-debian debian
-# DEB_BUILD_OPTIONS=noopt debuild -us -uc
+# export DEB_BUILD_OPTIONS=noopt
 debuild -us -uc
 EOF
 

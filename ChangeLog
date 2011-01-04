@@ -1,4 +1,233 @@
+2010-12-31 Kouhei Sutou <kou@clear-code.com>
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ 1.0.5 -> 1.0.6.
+
+ * configure.ac: 1.0.5 -> 1.0.6.
+
+ * doc/ja/source/news.txt: add 1.0.6 entry.
+
+ * doc/ja/source/install.txt: update to the latest Fedora version.
+
+ * yum/sign-rpm.sh: sign in parallel.
+
+ * yum/gpg-uid.sh: always use 1c837f31 key.
+
+2010-12-30 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/com.c: define SOL_TCP as IPPROTO_TCP for *BSD.  Reported by OBATA Akio.
+ Thanks!!!
+
+2010-12-29 Kouhei Sutou <kou@clear-code.com>
+
+ * ChangeLog: update ChangeLog.
+
+ * doc/ja/source/news.txt: add a #807 entry.
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ add 1.0.5 entry.
+
+ * yum/build-in-chroot.sh: support parallel build.
+
+ * apt/build-deb.sh: use export.
+
+ * apt/build-in-chroot.sh: support parallel build.
+
+ * configure.ac: 1.0.4 -> 1.0.5.
+
+2010-12-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, test/unit/core/test-command-load.c: fixed typo
+
+2010-12-29 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-command-load.c: add error check to JSON
+ reader. #807
+
+ * doc/ja/source/news.txt: remove needless copied line.
+
+ * doc/ja/source/news.txt: add 1.0.5 entry.
+
+ * lib/groonga_in.h: support DragonFly.  Reported by OBATA Akio. Thanks!!!
+
+ * lib/com.c, lib/com.h, src/groonga.c: stop accepting when no file descriptor
+ is remained. #802
+
+ * lib/plugin.c: fix a typo.
+
+ * lib/proc.c: fill in 80 columns.
+
+2010-12-29 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/hash.c: Fixed a bug in grn_array_delete_by_id().
+
+2010-12-17 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c, test/unit/core/Makefile.am,
+ test/unit/core/test-command-table-list.c: use meaningful tag name for
+ table_list output XML. #757
+
+2010-12-16 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, lib/db.h, lib/expr.c: support compare operation for hash/pat
+ table reference column. #776
+
+2010-12-20 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/plugin.c: improve error message on MeCab tokenizer init failure. #790
+
+2010-12-28 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/com.c: use SOL_TCP for socket level instead of 6.
+
+2010-12-26 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-load.c: add a test for two bigram indexes to
+ _key. #798
+
+2010-12-24 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-delete.c: add more test for NO_KEY delete. #794
+
+2010-12-23 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/groonga_in.h: define _NETBSD_SOURCE to 1 for NetBSD.  Patch by OBATA
+ Akio. Thanks!!!
+
+2010-12-22 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/hash.c: Fixed again grn_array_delete_by_id() Thanks to Masahiro Tomita!
+
+2010-12-21 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-delete.c: add a test for nonexisting ID
+ deleting breaks NO_KEY table. #794  Reported and patched by Masahiro Tomita.
+ Thanks!!!
+
+2010-12-21 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/hash.c: Fixed a bug in grn_array_delete_by_id() thanks to Masahiro
+ Tomita!
+
+2010-12-20 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ctx.c: initialize error buffer.
+
+2010-12-17 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: remove duplicated --enable-zermoq.
+
+2010-12-16 Kouhei Sutou <kou@clear-code.com>
+
+ * .gitignore, src/suggest/Makefile.am, src/suggest/create-dataset.sh,
+ src/suggest/groonga_suggest_create_dataset.c: implement create-dataset by C.
+ #768
+
+ * src/suggest/groonga_suggest_httpd.c, src/suggest/groonga_suggest_learner.c:
+ fix include path.
+
+2010-12-16 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/Makefile.am: Added create-dataset.sh to dist package.
+
+2010-12-15 brazil <brazil@brazil-desktop.(none)>
+
+ * src/grntest.c: output mlocked info in header. #737:
+
+ * src/grntest.c: Fixed memory leak in grntest.
+
+2010-12-15 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-select-query.c: add a test for compare
+ operation against reference column. #776
+
+2010-12-15 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/groonga_suggest_learner.c: Added weight for suggest
+ replication.
+
+2010-12-14 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/groonga_suggest_httpd.c: Fixed SEGV of suggest-httpd on absence
+ of target_name.
+
+ * src/suggest/groonga_suggest_httpd.c: Fixed suggest-httpd log splitting
+ count by one line.
+
+ * src/suggest/groonga_suggest_httpd.c, src/suggest/groonga_suggest_learner.c:
+ Changed DB handling strategy.
+
+2010-12-13 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/groonga_suggest_httpd.c, src/suggest/groonga_suggest_learner.c:
+ Limited queue size of httpd-learner connections.
+
+ * src/suggest/groonga_suggest_httpd.c: Added a logging function to
+ groonga-suggest-httpd.
+
+2010-12-09 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: show detected configurations at the end.
+
+ * configure.ac: fix typos.
+
+ * .gitignore, configure.ac, src/Makefile.am, src/suggest/Makefile,
+ src/suggest/Makefile.am, src/suggest/groonga_suggest_httpd.c,
+ src/suggest/groonga_suggest_learner.c, src/suggest/suggest-httpd.c,
+ src/suggest/suggest-learner.c: support 'make install' of suggest learner.
+ #767
+
+2010-12-08 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-command-load.c: fix that can't load no key
+ table data with [[...]] form. #750  Reported by Masahiro Tomita. Thanks!!!
+
+ * lib/db.c, test/unit/core/test-command-load.c: add nonexistent column check
+ to load's --columns. #751  Reported by Masahiro Tomita. Thanks!!!
+
+2010-12-07 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c, test/unit/core/test-command-column-list.c: name output arrays
+ by column_list. #748
+
 2010-11-24 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ctx.c, src/groonga.c, test/unit/command/Makefile.am,
+ test/unit/command/test-comment.rb: support comment line in grn commands. #723
+
+2010-12-08 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/create-dataset.sh: Added create-dataset.sh for suggest
+ learning.
+
+2010-12-07 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/Makefile, src/suggest/suggest-httpd.c,
+ src/suggest/suggest-learner.c, src/suggest/util.c: Added suggest learning
+ systems.
+
+2010-12-07 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/ctx.c: unlink ctx in grn_ctx_close().
+
+2010-11-29 Kouhei Sutou <kou@clear-code.com>
+
+ * debian/groonga.postrm: fix wrong override paths.
+
+2010-11-25 Kouhei Sutou <kou@clear-code.com>
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: merge "%%ghost
+ /var/run/*." by Daiki Ueno. Thanks!!!
+
+2010-11-24 Kouhei Sutou <kou@clear-code.com>
+
+ * yum/build-repository-rpm.sh: remove metadata cache.
+
+ * yum/build-rpm.sh: use Fedora 14 URL.
+
+ * rpm/fedora/groonga.spec.in: make PHP bindings buildable.
+
+ * ChangeLog: update ChangeLog.
 
  * configure.ac, debian/changelog, rpm/centos/groonga.spec.in,
  rpm/fedora/groonga.spec.in: 1.0.3 -> 1.0.4.

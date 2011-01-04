@@ -42,6 +42,14 @@
 #define PF_INET AF_INET
 #endif /* PF_INET */
 
+#ifndef SOL_TCP
+#  ifdef IPPROTO_TCP
+#    define SOL_TCP IPPROTO_TCP
+#  else
+#    define SOL_TCP 6
+#  endif /* IPPROTO_TCP */
+#endif /* SOL_TCP */
+
 #ifndef USE_MSG_MORE
 #define MSG_MORE     0
 #endif /* USE_MSG_MORE */
@@ -438,6 +446,44 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
   }
 }
 
+#define LISTEN_BACKLOG 0x1000
+
+grn_rc
+grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev)
+{
+  grn_com *com = ev->acceptor;
+
+  if (com->accepting) {return ctx->rc;}
+
+  GRN_API_ENTER;
+  if (!grn_com_event_mod(ctx, ev, com->fd, GRN_COM_POLLIN, NULL)) {
+    if (listen(com->fd, LISTEN_BACKLOG) == 0) {
+      com->accepting = GRN_TRUE;
+    } else {
+      SERR("listen - start accept");
+    }
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_com_event_stop_accept(grn_ctx *ctx, grn_com_event *ev)
+{
+  grn_com *com = ev->acceptor;
+
+  if (!com->accepting) {return ctx->rc;}
+
+  GRN_API_ENTER;
+  if (!grn_com_event_mod(ctx, ev, com->fd, 0, NULL)) {
+    if (listen(com->fd, 0) == 0) {
+      com->accepting = GRN_FALSE;
+    } else {
+      SERR("listen - disable accept");
+    }
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
 static void
 grn_com_receiver(grn_ctx *ctx, grn_com *com)
 {
@@ -447,7 +493,11 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
     grn_com *ncs;
     grn_sock fd = accept(com->fd, NULL, NULL);
     if (fd == -1) {
-      SERR("accept");
+      if (errno == EMFILE) {
+        grn_com_event_stop_accept(ctx, ev);
+      } else {
+        SERR("accept");
+      }
       return;
     }
     if (grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, (grn_com **)&ncs)) {
@@ -471,6 +521,7 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
       }
       msg->edge_id.sid = com->sid;
     }
+    msg->acceptor = ev->acceptor;
     ev->msg_handler(ctx, (grn_obj *)msg);
   }
 }
@@ -883,13 +934,15 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
 {
   grn_sock fd = com->fd;
   grn_com_event *ev = com->ev;
-  if (ev) { grn_com_event_del(ctx, ev, fd); }
+  if (ev) {
+    grn_com *acceptor = ev->acceptor;
+    grn_com_event_del(ctx, ev, fd);
+    if (acceptor) { grn_com_event_start_accept(ctx, ev); }
+  }
   if (!com->closed) { grn_com_close_(ctx, com); }
   if (!ev) { GRN_FREE(com); }
   return GRN_SUCCESS;
 }
-
-#define LISTEN_BACKLOG 0x1000
 
 grn_rc
 grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
@@ -967,6 +1020,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     if (!(cs = GRN_MALLOC(sizeof(grn_com)))) { goto exit; }
     cs->fd = lfd;
   }
+  cs->accepting = GRN_TRUE;
 exit :
   if (!cs) { grn_sock_close(lfd); }
   if (listen_address_info) { freeaddrinfo(listen_address_info); }

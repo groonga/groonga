@@ -34,8 +34,10 @@ void test_index_geo_point(void);
 void test_nonexistent_columns(void);
 void test_no_key_table(void);
 void test_two_bigram_indexes_to_key(void);
+void test_invalid_start_with_symbol(void);
 
 static gchar *tmp_directory;
+static const gchar *database_path;
 
 static grn_ctx *context;
 static grn_obj *database;
@@ -63,8 +65,6 @@ remove_tmp_directory(void)
 void
 cut_setup(void)
 {
-  const gchar *database_path;
-
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
 
@@ -396,4 +396,37 @@ test_two_bigram_indexes_to_key(void)
                  "'Bigram.author * 10 || BigramLoose.author * 1' "
                  "--query 'mori' "
                  "--output_columns '_key, author, _score'"));
+}
+
+void
+test_invalid_start_with_symbol(void)
+{
+  const gchar *table_list_result;
+
+  table_list_result =
+    cut_take_printf("["
+                    "[[\"id\",\"UInt32\"],"
+                     "[\"name\",\"ShortText\"],"
+                     "[\"path\",\"ShortText\"],"
+                     "[\"flags\",\"ShortText\"],"
+                     "[\"domain\",\"ShortText\"],"
+                     "[\"range\",\"ShortText\"]],"
+                    "[256,"
+                     "\"Authors\","
+                     "\"%s.0000100\","
+                     "\"TABLE_PAT_KEY|PERSISTENT\","
+                     "\"ShortText\","
+                     "\"null\"]]",
+                    database_path);
+
+  assert_send_command("table_create Authors TABLE_PAT_KEY ShortText");
+  cut_assert_equal_string(table_list_result, send_command("table_list"));
+  grn_test_assert_send_command_error(context,
+                                     GRN_INVALID_ARGUMENT,
+                                     "JSON must start with '[' or '{': <invalid>",
+                                     "load "
+                                     "--table Authors "
+                                     "--columns '_key' "
+                                     "--values 'invalid'");
+  cut_assert_equal_string(table_list_result, send_command("table_list"));
 }
