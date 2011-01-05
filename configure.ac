@@ -845,6 +845,7 @@ if test "x$with_mecab" = "xyes"; then
   echo "    LDFLAGS:             $MECAB_LDFLAGS"
   echo "    LIBS:                $MECAB_LIBS"
 fi
+echo
 
 echo "Libraries:"
 echo "  ZeroMQ:                $zeromq_available"
