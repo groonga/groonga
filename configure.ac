@@ -829,23 +829,38 @@ AC_OUTPUT([
   groonga.pc
   ])
 
-echo "
-$PACKAGE_NAME $PACKAGE_VERSION configuration:
------------------------
-  Compiler:              ${CC}
-  CFLAGS:                ${CFLAGS}
-  Libraries:             ${LIBS}
+echo "$PACKAGE_NAME $PACKAGE_VERSION configuration:"
+echo "-----------------------"
+echo "  Compiler:              ${CC}"
+echo "  CFLAGS:                ${CFLAGS}"
+echo "  Libraries:             ${LIBS}"
+echo
+echo "Paths:"
+echo "  Install path prefix:   ${prefix}"
+echo
+echo "Tokenizers:"
+echo "  MeCab:                 $with_mecab"
+if test "x$with_mecab" = "xyes"; then
+  echo "    CPPFLAGS:            $MECAB_CPPFLAGS"
+  echo "    LDFLAGS:             $MECAB_LDFLAGS"
+  echo "    LIBS:                $MECAB_LIBS"
+fi
 
-Paths:
-  Install path prefix:   ${prefix}
-
-Libraries:
-  ZeroMQ CFLAGS:         ${LIBZMQ_CFLAGS}
-  ZeroMQ LIBS:           ${LIBZMQ_LIBS}
-  libevent CFLAGS:       ${LIBEVENT_CFLAGS}
-  libevent LIBS:         ${LIBEVENT_LIBS}
-  MessagePack CFLAGS:    ${MESSAGE_PACK_CFLAGS}
-  MessagePack LIBS:      ${MESSAGE_PACK_LIBS}
-
-Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!
-"
+echo "Libraries:"
+echo "  ZeroMQ:                $zeromq_available"
+if test "x$zeromq_available" = "xyes"; then
+  echo "    CFLAGS:              ${LIBZMQ_CFLAGS}"
+  echo "    LIBS:                ${LIBZMQ_LIBS}"
+fi
+echo "  libevent:              $libevent_available"
+if test "x$libevent_available" = "xyes"; then
+  echo "    CFLAGS:              ${LIBEVENT_CFLAGS}"
+  echo "    LIBS:                ${LIBEVENT_LIBS}"
+fi
+echo "  MessagePack:           $message_pack_available"
+if test "x$message_pack_available" = "xyes"; then
+  echo "    CFLAGS:              ${MESSAGE_PACK_CFLAGS}"
+  echo "    LIBS:                ${MESSAGE_PACK_LIBS}"
+fi
+echo
+echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"
