@@ -85,10 +85,10 @@
 
 #ifdef WIN32
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(WINVER)
 #  include <w32api.h>
 #  define WINVER WindowsXP
-#endif
+#endif /* defined(__GNUC__) && !defined(WINVER) */
 
 #include <basetsd.h>
 #include <process.h>
