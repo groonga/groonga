@@ -778,7 +778,7 @@ AC_SUBST(suggest_pluginsdir)
 AC_MSG_CHECKING(for the suffix of plugin shared libraries)
 shrext_cmds=$(./libtool --config | grep '^shrext_cmds=')
 eval $shrext_cmds
-plugin=yes eval suffix="$shrext_cmds"
+module=yes eval suffix="$shrext_cmds"
 AC_MSG_RESULT($suffix)
 if test -z "$suffix"; then
   AC_MSG_ERROR([can't detect plugin suffix])
