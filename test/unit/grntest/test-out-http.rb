@@ -85,7 +85,7 @@ class GrnTestOutHTTPTest < Test::Unit::TestCase
   end
 
   def test_test_http_diff
-    command = 'select Shops --sortby _id --limit 3 --output_columns "name"'
+    command = 'select Shops --sortby _id --limit 5 --output_columns "name"'
     command_file = tempfile("command") do |file|
       file.puts(command)
     end
@@ -93,8 +93,8 @@ class GrnTestOutHTTPTest < Test::Unit::TestCase
       '[[0,1290511592.67556,0.00068249],' +
       '[[[36],' +
       '[["name","ShortText"]],' +
-      '["根津のたいやき"],' +
       '["たい焼 カタオカ"],' +
+      '["根津のたいやき"],' +
       '["そばたいやき空"],' +
       '["車"],' +
       '["広瀬屋"]]]]'
@@ -104,7 +104,9 @@ class GrnTestOutHTTPTest < Test::Unit::TestCase
       '[["name","ShortText"]],' +
       '["根津のたいやき"],' +
       '["たい焼 カタオカ"],' +
-      '["そばたいやき空"]]]]'
+      '["そばたいやき空"],' +
+      '["車"],' +
+      '["広瀬屋"]]]]'
     expected_file = tempfile("expected") do |file|
       file.puts(expected)
     end
