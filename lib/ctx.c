@@ -2142,10 +2142,10 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
     if (!ptr) { return NULL; }
     grn_alloc_info_check(ptr);
     GRN_ADD_ALLOC_COUNT(-1);
-#if defined __FreeBSD__
+#if defined(__FreeBSD__) || defined(__APPLE__)
     free(ptr);
     return NULL;
-#else /* __FreeBSD__ */
+#else /* defined(__FreeBSD__) || defined(__APPLE__) */
     res = realloc(ptr, size);
     if (res) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "realloc(%p,%zu)=%p (%s:%d) <%d>", ptr, size, res, file, line, alloc_count);
