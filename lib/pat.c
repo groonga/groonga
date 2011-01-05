@@ -748,7 +748,7 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   if (!key || !key_size) { return GRN_ID_NIL; }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
-    ERR(GRN_INVALID_ARGUMENT, "too long key");
+    ERR(GRN_INVALID_ARGUMENT, "too long key: (%u)", key_size);
     return GRN_ID_NIL;
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
