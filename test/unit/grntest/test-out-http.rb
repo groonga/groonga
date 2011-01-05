@@ -54,7 +54,7 @@ class GrnTestOutHTTPTest < Test::Unit::TestCase
                  [status[0], result])
   end
 
-  def test_test_http
+  def test_test_http_same
     command = 'select Shops --sortby _id --limit 5 --output_columns "name"'
     command_file = tempfile("command") do |file|
       file.puts(command)
@@ -78,12 +78,49 @@ class GrnTestOutHTTPTest < Test::Unit::TestCase
                                            "--groonga", groonga,
                                            "--protocol", "http",
                                            "--log-output-dir", @tmp_dir,
-                                           script_file.path, @database_path)
+                                           script_file.path,
+                                           @database_path)
+    assert_predicate(status, :success?, [output, error])
+    assert_equal("", File.read("#{expected_file.path}.diff"))
+  end
+
+  def test_test_http_diff
+    command = 'select Shops --sortby _id --limit 3 --output_columns "name"'
+    command_file = tempfile("command") do |file|
+      file.puts(command)
+    end
+    expected =
+      '[[0,1290511592.67556,0.00068249],' +
+      '[[[36],' +
+      '[["name","ShortText"]],' +
+      '["根津のたいやき"],' +
+      '["たい焼 カタオカ"],' +
+      '["そばたいやき空"],' +
+      '["車"],' +
+      '["広瀬屋"]]]]'
+    actual =
+      '[[0,1290511592.67556,0.00068249],' +
+      '[[[36],' +
+      '[["name","ShortText"]],' +
+      '["根津のたいやき"],' +
+      '["たい焼 カタオカ"],' +
+      '["そばたいやき空"]]]]'
+    expected_file = tempfile("expected") do |file|
+      file.puts(expected)
+    end
+    script_file = tempfile("script") do |file|
+      file.puts("test_http #{command_file.path} #{expected_file.path}")
+    end
+    output, error, status = invoke_grntest("--noftp",
+                                           "--groonga", groonga,
+                                           "--protocol", "http",
+                                           "--log-output-dir", @tmp_dir,
+                                           script_file.path,
+                                           @database_path)
     assert_predicate(status, :success?, [output, error])
     assert_equal("DIFF:command:#{command}\n" +
-                 "DIFF:result:#{normalize_result(expected)}\n" +
-                 "DIFF:expect:#{normalize_result(expected)}\n" +
-                 "\n",
+                 "DIFF:result:#{normalize_result(actual)}\n" +
+                 "DIFF:expect:#{normalize_result(expected)}\n",
                  normalize_result(File.read("#{expected_file.path}.diff")))
   end
 

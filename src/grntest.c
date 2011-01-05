@@ -452,59 +452,46 @@ error_command(grn_ctx *ctx, char *command, int task_id)
 }
 #endif
 
-static int
-diff_result(char *expect, int elen, char *result, int rlen)
+static void
+normalize_output(char *output, int length,
+                 char **normalized_output, int *normalized_length)
 {
   int i;
-  char *e = NULL, *r = NULL;
 
-  i = 0;
-  while(i < elen) {
-    if (!strncmp(&expect[i], "],", 2)) {
-      e = &expect[i] + 2;
+  *normalized_output = NULL;
+  *normalized_length = length;
+  for (i = 0; i < length; i++) {
+    if (!strncmp(output + i, "],", 2)) {
+      *normalized_output = output + i + 2;
+      *normalized_length -= i + 2;
       break;
     }
-    i++;
-  }
-  if (e == NULL) {
-/*
-    fputc('[', stderr);
-    fwrite(expect, 1, elen, stderr);
-    fputc(']', stderr);
-    fprintf(stderr, " is not groonga command output\n", );
-    return 1;
-*/
-    if (elen > 2 && strncmp(expect + elen - 2, "]]", 2)) {
-      e = expect + elen;
-    } else {
-      e = expect;
-    }
   }
 
-  i = 0;
-  while(i < rlen) {
-    if (!strncmp(&result[i], "],", 2)) {
-      r = &result[i] + 2;
-      break;
-    }
-    i++;
-  }
-  if (r == NULL) {
-/*
-    fputc('[', stderr);
-    fwrite(result, 1, rlen, stderr);
-    fputc(']', stderr);
-    fprintf(stderr, " is not groonga command output\n");
-    return 1;
-*/
-    if (rlen > 2 && strncmp(result + rlen - 2, "]]", 2)) {
-      r = result + rlen;
+  if (!*normalized_output) {
+    if (length > 2 && strncmp(output + length - 2, "]]", 2)) {
+      *normalized_output = output + length;
+      *normalized_length = 0;
     } else {
-      r = result;
+      *normalized_output = output;
     }
   }
+}
 
-  return strncmp(e, r, strlen(e));
+static grn_bool
+same_result_p(char *expect, int expected_length, char *result, int result_length)
+{
+  char *normalized_expected, *normalized_result;
+  int normalized_expected_length, normalized_result_length;
+
+  normalize_output(expect, expected_length,
+                   &normalized_expected, &normalized_expected_length);
+  normalize_output(result, result_length,
+                   &normalized_result, &normalized_result_length);
+
+  return((normalized_expected_length == normalized_result_length) &&
+         strncmp(normalized_expected, normalized_result,
+                 normalized_expected_length) == 0);
 }
 
 static socket_t
@@ -854,9 +841,12 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
           GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
+        if (GRN_TEXT_VALUE(&log)[GRN_TEXT_LEN(&log) - 1] == '\n') {
+          grn_bulk_truncate(ctx, &log, GRN_TEXT_LEN(&log) - 1);
+        }
 
-        if (diff_result(GRN_TEXT_VALUE(&log), GRN_TEXT_LEN(&log),
-                        res, res_len)) {
+        if (!same_result_p(GRN_TEXT_VALUE(&log), GRN_TEXT_LEN(&log),
+                           res, res_len)) {
           fprintf(output, "DIFF:command:%s\n", command);
           fprintf(output, "DIFF:result:");
           fwrite(res, 1, res_len, output);
@@ -935,9 +925,12 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
           GRN_LOG(ctx, GRN_ERROR, "Cannot get input-log");
           error_exit_in_thread(55);
         }
+        if (GRN_TEXT_VALUE(&log)[GRN_TEXT_LEN(&log) - 1] == '\n') {
+          grn_bulk_truncate(ctx, &log, GRN_TEXT_LEN(&log) - 1);
+        }
 
-        if (diff_result(GRN_TEXT_VALUE(&log), GRN_TEXT_LEN(&log),
-                        res, res_len)) {
+        if (!same_result_p(GRN_TEXT_VALUE(&log), GRN_TEXT_LEN(&log),
+                           res, res_len)) {
           fprintf(output, "DIFF:command:%s\n", command);
           fprintf(output, "DIFF:result:");
           fwrite(res, 1, res_len, output);
