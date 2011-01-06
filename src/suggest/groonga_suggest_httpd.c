@@ -229,7 +229,7 @@ log_send(struct evbuffer *res_buf, thd_data *thd, struct evkeyvalq *get_args)
       content_length += suggest_result(res_buf, types, query, target_name, &(thd->cmd_buf), thd->ctx) + 3;
       evbuffer_add(res_buf, ");", 2);
     } else {
-      content_length = suggest_result(res_buf, types, query, target_name, &(thd->cmd_buf), thd->ctx) + 3;
+      content_length = suggest_result(res_buf, types, query, target_name, &(thd->cmd_buf), thd->ctx);
     }
     return content_length;
   }
