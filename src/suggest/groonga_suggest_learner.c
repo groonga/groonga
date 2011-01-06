@@ -310,6 +310,7 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
         }
       }
     }
+    grn_table_cursor_close(ctx, cur);
   }
 }
 
@@ -324,9 +325,9 @@ send_to_httpd(void *arg)
       if (!(grn_ctx_init(&ctx, 0))) {
         grn_obj *db;
         if ((db = grn_db_open(&ctx, thd->db_path))) {
+          uint64_t hwm = 1;
+          zmq_setsockopt(zmq_send_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
           while (loop) {
-            uint64_t hwm = 1;
-            zmq_setsockopt(zmq_send_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
             send_handler(zmq_send_sock, &ctx);
           }
           grn_obj_close(&ctx, db);
