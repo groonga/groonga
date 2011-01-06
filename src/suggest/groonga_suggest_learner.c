@@ -305,9 +305,11 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
 
                 msgpack_sbuffer_destroy(&sbuf);
               }
+              grn_table_cursor_close(ctx, tc);
             }
           }
         }
+        grn_obj_unlink(ctx, table);
       }
     }
     grn_table_cursor_close(ctx, cur);
