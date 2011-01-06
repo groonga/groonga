@@ -647,7 +647,7 @@ static void
 usage(FILE *output)
 {
   fprintf(output,
-          "Usage: suggest-httpd [options...] db_path\n"
+          "Usage: groonga-suggest-httpd [options...] db_path\n"
           "db_path:\n"
           "  specify groonga database path which is used for suggestion.\n"
           "options:\n"

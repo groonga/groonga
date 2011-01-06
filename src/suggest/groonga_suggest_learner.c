@@ -460,7 +460,7 @@ static void
 usage(FILE *output)
 {
   fprintf(output,
-          "Usage: suggest-learner [options...] db_path\n"
+          "Usage: groonga-suggest-learner [options...] db_path\n"
           "options:\n"
           "  -r <recv endpoint>: recv endpoint (default: %s)\n"
           "  -s <send endpoint>: send endpoint (default: %s)\n",
