@@ -2,7 +2,7 @@
 
   % groonga -c
   > status
-  [[0,1280378896.10941,1.8e-05],{"alloc_count":463,"starttime":1280378807,"uptime":89,"version":"0.7.2-5-g2a77275"}]
+  [[0,1294292493.17513,3.4655e-05],{"alloc_count":466,"starttime":1294292404,"uptime":89,"version":"1.0.6-10-gba9df76","n_queries":105,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
   > ctrl-d
   %
   

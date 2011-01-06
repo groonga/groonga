@@ -1,13 +1,13 @@
 実行例 ::
 
   > column_create --table Site --name location --type WGS84GeoPoint
-  [[0,1280378886.97522,0.109348],true]
+  [[0,1294292484.17389,0.064924593],true]
   > load --table Site
   > [
   >  {"_key":"http://example.org/","location":"128452975x503157902"}
   >  {"_key":"http://example.net/","location":"128487316x502920929"},
   > ]
-  [[0,1280378887.28534,0.801067],2]
+  [[0,1294292484.43963,0.801132263],2]
   > select --table Site --query "_id:1 OR _id:2" --output_columns _key,location
-  [[0,1280378888.28703,0.000371],[[[2],[["_key","ShortText"],["location","WGS84GeoPoint"]],["http://example.org/","128452975x503157902"],["http://example.net/","128487316x502920929"]]]]
+  [[0,1294292485.44153,0.000398502],[[[2],[["_key","ShortText"],["location","WGS84GeoPoint"]],["http://example.org/","128452975x503157902"],["http://example.net/","128487316x502920929"]]]]
   

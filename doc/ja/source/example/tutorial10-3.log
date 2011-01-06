@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Users --query follower:@tasukuchan --output_columns _key,name
-  [[0,1280378873.4108,0.000311],[[[2],[["_key","ShortText"],["name","ShortText"]],["daijiro","hsiomaneki"],["OffGao","OffGao"]]]]
+  [[0,1294292470.81784,0.000305006],[[[2],[["_key","ShortText"],["name","ShortText"]],["daijiro","hsiomaneki"],["OffGao","OffGao"]]]]
   

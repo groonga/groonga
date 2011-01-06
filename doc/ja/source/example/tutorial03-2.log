@@ -1,10 +1,14 @@
 実行例 ::
 
   > column_create --table Site --name link --type Site
-  [[0,1280378825.80958,0.094424],true]
+  [[0,1294292421.88324,1.758091494],true]
+  [[0,1294292423.64139,0.096956537],true]
+  [[0,1294292423.73839,0.001444368],1]
+  [[0,1294292423.73987,0.000161184],[[[1],[["_id","UInt32"],["_key","ShortText"],["time","Time"],["string","ShortText"],["number","Int32"],["float","Float"]],[1,"sample",1234567890.0,"GROONGA",12345,42.195]]]]
+  [[0,1294292423.74005,0.057032974],true]
   > load --table Site
   > [{"_key":"http://example.org/","link":"http://example.net/"}]
-  [[0,1280378826.10477,0.200507],1]
+  [[0,1294292423.99784,0.200585743],1]
   > select --table Site --output_columns _key,title,link._key,link.title --query title:@this
-  [[0,1280378826.50595,0.000522],[[[1],[["_key","ShortText"],["title","ShortText"],["link._key","ShortText"],["link.title","ShortText"]],["http://example.org/","This is test record 1!","http://example.net/","test record 2."]]]]
+  [[0,1294292424.39909,0.000545272],[[[1],[["_key","ShortText"],["title","ShortText"],["link._key","ShortText"],["link.title","ShortText"]],["http://example.org/","This is test record 1!","http://example.net/","test record 2."]]]]
   

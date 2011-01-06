@@ -2,5 +2,5 @@
 
   % groonga /tmp/tutorial.db
   > status
-  [[0,1280378897.11968,1.8e-05],{"alloc_count":440,"starttime":1280378807,"uptime":90,"version":"0.7.2-5-g2a77275"}]
+  [[0,1294292494.18924,3.7116e-05],{"alloc_count":443,"starttime":1294292404,"uptime":90,"version":"1.0.6-10-gba9df76","n_queries":106,"cache_hit_rate":0.943396226415094,"command_version":1,"default_command_version":1,"max_command_version":2}]
   

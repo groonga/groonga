@@ -1,7 +1,7 @@
 実行例 ::
 
   > select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
-  [[0,1280378886.15944,0.000311],[[[3],[["_id","UInt32"],["_key","ShortText"]],[4,"http://example.net/afr"],[5,"http://example.org/aba"],[6,"http://example.com/rab"]]]]
+  [[0,1294292483.35765,0.000332343],[[[3],[["_id","UInt32"],["_key","ShortText"]],[4,"http://example.net/afr"],[5,"http://example.org/aba"],[6,"http://example.com/rab"]]]]
   > select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
-  [[0,1280378886.36174,0.000321],[[[5],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"],[2,"http://example.net/"],[7,"http://example.net/atv"],[8,"http://example.org/gat"],[9,"http://example.com/vdw"]]]]
+  [[0,1294292483.55992,0.000325242],[[[5],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"],[2,"http://example.net/"],[7,"http://example.net/atv"],[8,"http://example.org/gat"],[9,"http://example.com/vdw"]]]]
   

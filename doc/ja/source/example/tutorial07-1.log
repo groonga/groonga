@@ -1,22 +1,22 @@
 実行例 ::
 
   > table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1280378807.97095,0.074659],true]
+  [[0,1294292405.5139,0.046640501],true]
   > column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
-  [[0,1280378808.24637,0.058739],true]
+  [[0,1294292405.76135,0.05035077],true]
   > column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
-  [[0,1280378808.50589,0.074658],true]
+  [[0,1294292406.01251,0.049535938],true]
   > table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1280378808.78136,0.065557],true]
+  [[0,1294292406.2629,0.040450231],true]
   > column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
-  [[0,1280378809.04764,0.147413],true]
+  [[0,1294292406.50413,0.089260402],true]
   > column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
-  [[0,1280378809.39584,0.124963],true]
+  [[0,1294292406.7942,0.116405104],true]
   > load --table Blog1
   > [
   > {"_key":"grn1","title":"groonga test","message":"groonga message"},
   > {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
   > {"_key":"grn3","title":"groonga message","message":"none"}
   > ]
-  [[0,1280378809.72157,1.001442],3]
+  [[0,1294292407.11144,1.001433691],3]
   

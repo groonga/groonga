@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Site --query title:@test --output_columns _id,_score,title --sortby _score,_id
-  [[0,1280378903.95387,0.000427],[[[9],[["_id","UInt32"],["_score","Int32"],["title","ShortText"]],[1,1,"This is test record 1!"],[2,1,"test record 2."],[4,1,"test record four."],[3,2,"test test record three."],[8,2,"test test record eight."],[9,2,"test test record nine."],[5,3,"test test test record five."],[7,3,"test test test record seven."],[6,4,"test test test test record six."]]]]
+  [[0,1294292500.58351,0.000449563],[[[9],[["_id","UInt32"],["_score","Int32"],["title","ShortText"]],[1,1,"This is test record 1!"],[2,1,"test record 2."],[4,1,"test record four."],[3,2,"test test record three."],[8,2,"test test record eight."],[9,2,"test test record nine."],[5,3,"test test test record five."],[7,3,"test test test record seven."],[6,4,"test test test test record six."]]]]
   

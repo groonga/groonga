@@ -1,5 +1,5 @@
 実行例 ::
 
   > select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
-  [[0,1280378874.63511,0.000327],[[[1],[["favorites.posted_by","Users"],["favorites.comment","ShortText"]],[["daijiro","OffGao"],["マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。","@daijiro @tasukuchan 登録してみましたよー！"]]]]]
+  [[0,1294292472.04238,0.000320089],[[[1],[["favorites.posted_by","Users"],["favorites.comment","ShortText"]],[["daijiro","OffGao"],["マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。","@daijiro @tasukuchan 登録してみましたよー！"]]]]]
   

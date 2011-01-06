@@ -1,6 +1,8 @@
 .. highlightlang:: none
 
 .. groonga-include : tutorial05.txt
+.. groonga-command
+.. table_remove GeoIndex
 
 タグ検索・参照関係の逆引き
 ==========================
@@ -89,3 +91,19 @@ groongaはテーブル間の参照関係の逆引きを高速に行うための�
 .. select --table User --limit 0 --drilldown friends
 
 このように、テーブルの参照関係を逆にたどる検索ができました。
+
+インデックス付きジオサーチ
+--------------------------
+
+位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情報レコードを検索する場合に、検索速度が速くなります。
+
+.. groonga-command
+.. include:: ../ex/tutorial06-6.log
+.. table_create --name GeoIndex --flags TABLE_HASH_KEY --key_type WGS84GeoPoint
+.. column_create --table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source location
+.. load --table Site
+.. [
+..  {"_key":"http://example.org/","location":"128452975x503157902"}
+..  {"_key":"http://example.net/","location":"128487316x502920929"},
+.. ]
+.. select --table Site --filter 'geo_in_circle(location, "128515259x503187188", 5000)' --output_columns _key,location
