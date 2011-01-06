@@ -17,7 +17,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#define __USE_GNU
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "proc.h"
