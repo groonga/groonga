@@ -19,26 +19,9 @@
 #ifndef GROONGA_IN_H
 #define GROONGA_IN_H
 
-#ifdef __GNUC__
-#define _GNU_SOURCE
-#endif /* __GNUC__ */
-
-#if defined(__NetBSD__) && !defined(_NETBSD_SOURCE)
-#define _NETBSD_SOURCE 1
-#endif /* defined(__NetBSD__) && !defined(_NETBSD_SOURCE) */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
-
-#ifdef USE_AIO
-/* #define __USE_XOPEN2K 1 */
-#define _XOPEN_SOURCE 600
-#else
-#if !defined(__APPLE__) && !defined(__FreeBSD__) && !defined(__DragonFly__)
-#define _XOPEN_SOURCE 520
-#endif
-#endif /* USE_AIO */
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
