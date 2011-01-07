@@ -26,7 +26,7 @@
 
 * サジェスト機能用の学習プログラムを追加。
 * groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723
-* ref:`column_list` のXML出力対応。 #748
+* :ref:`column_list` のXML出力対応。 #748
 * 主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776
 * grntestがmlockの情報出力に対応。
 * NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）
@@ -37,19 +37,19 @@
 変更
 ++++
 
-* ref:`table_list` のXML出力のタグ名をより適切な名前に変更。 #757
+* :ref:`table_list` のXML出力のタグ名をより適切な名前に変更。 #757
 
 修正
 ++++
 
-* ref:`load` で存在しないカラムを--columnsで指定するとクラッシュする問題を修正。
+* :ref:`load` で存在しないカラムを--columnsで指定するとクラッシュする問題を修正。
   （Masahiro Tomitaさんが報告） #751
-* ref:`load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできない問題を修正。
+* :ref:`load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできない問題を修正。
   （Masahiro Tomitaさんが報告） #750
-* ref:`delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブルが壊れる
+* :ref:`delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブルが壊れる
   問題を修正。
   （Masahiro Tomitaさんがパッチ作成） #794
-* ref:`load` で不正なJSONを指定した場合にそれ以降コマンドを受け付けなくなる
+* :ref:`load` で不正なJSONを指定した場合にそれ以降コマンドを受け付けなくなる
   問題を修正。 #807
 
 感謝
@@ -136,7 +136,7 @@
 
 * grn_table_cursor_open()のドキュメントを修正。
 * メモリリークを修正。
-  * --disable-libeditオプションがヘルプメッセージと違う問題の修正。
+* --disable-libeditオプションがヘルプメッセージと違う問題の修正。
   （MATSUU Takutoさんが報告）
 * 警告を除去。（MATSUU Takutoさんが報告）
 * grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514
@@ -222,7 +222,7 @@
 
 * 指定したクエリに対する補完・修正・提案を行う :ref:`suggest` コマンドを追加。
 
-* :ref:`deelte` コマンドが失敗したらfalseを返すように変更。（Itagaki Takahiroさんが提案）
+* :ref:`delete` コマンドが失敗したらfalseを返すように変更。（Itagaki Takahiroさんが提案）
 
 修正
 ++++
