@@ -22,11 +22,11 @@
 #include <pthread.h>
 #include <groonga.h>
 
+#include "util.h"
+
 #define DEFAULT_RECV_ENDPOINT "tcp://*:1234"
 #define DEFAULT_SEND_ENDPOINT "tcp://*:1235"
 #define SEND_WAIT 1000 /* 0.001sec */
-
-int print_error(const char *format, ...);
 
 #define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
 
@@ -466,7 +466,8 @@ usage(FILE *output)
           "Usage: groonga-suggest-learner [options...] db_path\n"
           "options:\n"
           "  -r <recv endpoint>: recv endpoint (default: %s)\n"
-          "  -s <send endpoint>: send endpoint (default: %s)\n",
+          "  -s <send endpoint>: send endpoint (default: %s)\n"
+          "  -d                : daemonize\n",
           DEFAULT_RECV_ENDPOINT, DEFAULT_SEND_ENDPOINT);
 }
 
@@ -479,6 +480,7 @@ signal_handler(int sig)
 int
 main(int argc, char **argv)
 {
+  int daemon = 0;
   const char *recv_endpoint = DEFAULT_RECV_ENDPOINT,
              *send_endpoint = DEFAULT_SEND_ENDPOINT;
 
@@ -486,13 +488,16 @@ main(int argc, char **argv)
   {
     int ch;
 
-    while ((ch = getopt(argc, argv, "r:s:")) != -1) {
+    while ((ch = getopt(argc, argv, "r:s:d")) != -1) {
       switch(ch) {
       case 'r':
         recv_endpoint = optarg;
         break;
       case 's':
         send_endpoint = optarg;
+        break;
+      case 'd':
+        daemon = 1;
         break;
       }
     }
@@ -505,6 +510,10 @@ main(int argc, char **argv)
   } else {
     grn_ctx *ctx;
     msgpack_zone *mempool;
+
+    if (daemon) {
+      daemonize();
+    }
 
     grn_init();
 

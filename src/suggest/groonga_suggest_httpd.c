@@ -37,10 +37,11 @@
 #include <groonga.h>
 #include <pthread.h>
 
+#include "util.h"
+
 #define DEFAULT_PORT 8080
 #define DEFAULT_MAX_THREADS 8
 
-int print_error(const char *format, ...);
 grn_rc grn_ctx_close(grn_ctx *ctx);
 
 #define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
@@ -655,14 +656,15 @@ usage(FILE *output)
           "  -c <thread number> : server thread number (default: %d)\n"
           "  -s <send endpoint> : send endpoint (ex. tcp://example.com:1234)\n"
           "  -r <recv endpoint> : recv endpoint (ex. tcp://example.com:1235)\n"
-          "  -l <path prefix>   : log path prefix\n",
+          "  -l <path prefix>   : log path prefix\n"
+          "  -d                 : daemonize\n",
           DEFAULT_PORT, default_max_threads);
 }
 
 int
 main(int argc, char **argv)
 {
-  int port_no = DEFAULT_PORT;
+  int port_no = DEFAULT_PORT, daemon = 0;
   const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_path = NULL;
 
   /* check environment */
@@ -685,7 +687,7 @@ main(int argc, char **argv)
   {
     int ch;
 
-    while ((ch = getopt(argc, argv, "c:p:s:r:l:")) != -1) {
+    while ((ch = getopt(argc, argv, "c:p:s:r:l:d")) != -1) {
       switch(ch) {
       case 'c':
         default_max_threads = atoi(optarg);
@@ -706,6 +708,9 @@ main(int argc, char **argv)
       case 'l':
         log_path = optarg;
         break;
+      case 'd':
+        daemon = 1;
+        break;
       }
     }
     argc -= optind; argv += optind;
@@ -717,6 +722,11 @@ main(int argc, char **argv)
   } else {
     grn_ctx ctx;
     void *zmq_ctx;
+
+    if (daemon) {
+      daemonize();
+    }
+
     grn_init();
     grn_ctx_init(&ctx, 0);
     if ((db = grn_db_open(&ctx, argv[0]))) {
