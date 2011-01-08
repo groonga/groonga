@@ -98,7 +98,7 @@ groongaはテーブル間の参照関係の逆引きを高速に行うための�
 位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情報レコードを検索する場合に、検索速度が速くなります。
 
 .. groonga-command
-.. include:: ../ex/tutorial06-6.log
+.. include:: ../example/tutorial06-6.log
 .. table_create --name GeoIndex --flags TABLE_HASH_KEY --key_type WGS84GeoPoint
 .. column_create --table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source location
 .. load --table Site
