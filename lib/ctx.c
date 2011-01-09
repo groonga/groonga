@@ -277,10 +277,30 @@ grn_alloc_info_check(void *address)
     }
   }
 }
+
+inline static void
+grn_alloc_info_free(grn_ctx *ctx)
+{
+  grn_alloc_info *alloc_info;
+
+  if (!ctx) { return; }
+  if (!ctx->impl) { return; }
+
+  alloc_info = ctx->impl->alloc_info;
+  while (alloc_info) {
+    grn_alloc_info *current_alloc_info = alloc_info;
+    alloc_info = alloc_info->next;
+    current_alloc_info->next = NULL;
+    free(current_alloc_info);
+  }
+  ctx->impl->alloc_info = NULL;
+}
+
 #else /* ENABLE_MEMORY_DEBUG */
 #  define grn_alloc_info_add(address)
 #  define grn_alloc_info_check(address)
 #  define grn_alloc_info_dump(ctx)
+#  define grn_alloc_info_free(ctx)
 #endif /* ENABLE_MEMORY_DEBUG */
 
 #ifdef USE_FAIL_MALLOC
@@ -609,6 +629,7 @@ grn_ctx_fin(grn_ctx *ctx)
       }
     }
     grn_alloc_info_dump(ctx);
+    grn_alloc_info_free(ctx);
     CRITICAL_SECTION_FIN(ctx->impl->lock);
     {
       grn_io_mapinfo mi;
