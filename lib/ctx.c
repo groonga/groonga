@@ -174,6 +174,115 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   return GRN_SUCCESS;
 }
 
+#ifdef ENABLE_MEMORY_DEBUG
+inline static void
+grn_alloc_info_set_backtrace(char *buffer, size_t size)
+{
+#  define N_TRACE_LEVEL 100
+  static void *trace[N_TRACE_LEVEL];
+  char **symbols;
+  int i, n, rest;
+
+  rest = size;
+  n = backtrace(trace, N_TRACE_LEVEL);
+  symbols = backtrace_symbols(trace, n);
+  if (symbols) {
+    for (i = 0; i < n; i++) {
+      int symbol_length;
+
+      symbol_length = strlen(symbols[i]);
+      if (symbol_length + 2 > rest) {
+        break;
+      }
+      memcpy(buffer, symbols[i], symbol_length);
+      buffer += symbol_length;
+      rest -= symbol_length;
+      buffer[0] = '\n';
+      buffer++;
+      rest--;
+      buffer[0] = '\0';
+      rest--;
+    }
+    free(symbols);
+  }
+#  undef N_TRACE_LEVEL
+}
+
+inline static void
+grn_alloc_info_add(void *address)
+{
+  grn_ctx *ctx;
+  grn_alloc_info *new_alloc_info;
+
+  ctx = &grn_gctx;
+  if (!ctx->impl) { return; }
+
+  new_alloc_info = malloc(sizeof(grn_alloc_info));
+  new_alloc_info->address = address;
+  new_alloc_info->freed = GRN_FALSE;
+  new_alloc_info->alloc_backtrace[0] = '\0';
+  grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
+                               sizeof(new_alloc_info->alloc_backtrace));
+  new_alloc_info->next = ctx->impl->alloc_info;
+  ctx->impl->alloc_info = new_alloc_info;
+}
+
+inline static void
+grn_alloc_info_dump(grn_ctx *ctx)
+{
+  int i = 0;
+  grn_alloc_info *alloc_info;
+
+  if (!ctx) { return; }
+  if (!ctx->impl) { return; }
+
+  alloc_info = ctx->impl->alloc_info;
+  for (; alloc_info; alloc_info = alloc_info->next) {
+    if (alloc_info->freed) {
+      printf("address[%d][freed]: %p\n", i, alloc_info->address);
+    } else {
+      printf("address[%d][not-freed]: %p:\n%s",
+             i, alloc_info->address, alloc_info->alloc_backtrace);
+    }
+    i++;
+  }
+}
+
+inline static void
+grn_alloc_info_check(void *address)
+{
+  grn_ctx *ctx;
+  grn_alloc_info *alloc_info;
+
+  ctx = &grn_gctx;
+  if (!ctx->impl) { return; }
+  /* grn_alloc_info_dump(ctx); */
+
+  alloc_info = ctx->impl->alloc_info;
+  for (; alloc_info; alloc_info = alloc_info->next) {
+    if (alloc_info->address == address) {
+      if (alloc_info->freed) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "double free: (%p):\nalloc backtrace:\n%sfree backtrace:\n%s",
+                alloc_info->address,
+                alloc_info->alloc_backtrace,
+                alloc_info->free_backtrace);
+      } else {
+        alloc_info->freed = GRN_TRUE;
+        alloc_info->free_backtrace[0] = '\0';
+        grn_alloc_info_set_backtrace(alloc_info->free_backtrace,
+                                     sizeof(alloc_info->free_backtrace));
+      }
+      return;
+    }
+  }
+}
+#else /* ENABLE_MEMORY_DEBUG */
+#  define grn_alloc_info_add(address)
+#  define grn_alloc_info_check(address)
+#  define grn_alloc_info_dump(ctx)
+#endif /* ENABLE_MEMORY_DEBUG */
+
 #ifdef USE_FAIL_MALLOC
 int grn_fmalloc_prob = 0;
 char *grn_fmalloc_func = NULL;
@@ -499,6 +608,7 @@ grn_ctx_fin(grn_ctx *ctx)
         }
       }
     }
+    grn_alloc_info_dump(ctx);
     CRITICAL_SECTION_FIN(ctx->impl->lock);
     {
       grn_io_mapinfo mi;
@@ -1961,109 +2071,6 @@ grn_strdup(grn_ctx *ctx, const char *string, const char* file, int line, const c
   }
 }
 #endif
-
-#ifdef ENABLE_MEMORY_DEBUG
-inline static void
-grn_alloc_info_set_backtrace(char *buffer, size_t size)
-{
-#  define N_TRACE_LEVEL 100
-  static void *trace[N_TRACE_LEVEL];
-  char **symbols;
-  int i, n, rest;
-
-  rest = size;
-  n = backtrace(trace, N_TRACE_LEVEL);
-  symbols = backtrace_symbols(trace, n);
-  if (symbols) {
-    for (i = 0; i < n; i++) {
-      int symbol_length;
-
-      symbol_length = strlen(symbols[i]);
-      if (symbol_length + 2 > rest) {
-        break;
-      }
-      memcpy(buffer, symbols[i], symbol_length);
-      buffer += symbol_length;
-      rest -= symbol_length;
-      buffer[0] = '\n';
-      buffer++;
-      rest--;
-      buffer[0] = '\0';
-      rest--;
-    }
-    free(symbols);
-  }
-#  undef N_TRACE_LEVEL
-}
-
-inline static void
-grn_alloc_info_add(void *address)
-{
-  grn_ctx *ctx;
-  grn_alloc_info *new_alloc_info;
-
-  ctx = &grn_gctx;
-  if (!ctx->impl) { return; }
-
-  new_alloc_info = malloc(sizeof(grn_alloc_info));
-  new_alloc_info->address = address;
-  new_alloc_info->freed = GRN_FALSE;
-  new_alloc_info->alloc_backtrace[0] = '\0';
-  grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
-                               sizeof(new_alloc_info->alloc_backtrace));
-  new_alloc_info->next = ctx->impl->alloc_info;
-  ctx->impl->alloc_info = new_alloc_info;
-}
-
-inline static void
-grn_alloc_info_dump(grn_ctx *ctx)
-{
-  int i = 0;
-  grn_alloc_info *alloc_info;
-
-  if (!ctx) { return; }
-  if (!ctx->impl) { return; }
-
-  alloc_info = ctx->impl->alloc_info;
-  for (; alloc_info; alloc_info = alloc_info->next) {
-    printf("address[%d]: %p\n", i, alloc_info->address);
-    i++;
-  }
-}
-
-inline static void
-grn_alloc_info_check(void *address)
-{
-  grn_ctx *ctx;
-  grn_alloc_info *alloc_info;
-
-  ctx = &grn_gctx;
-  if (!ctx->impl) { return; }
-  /* grn_alloc_info_dump(ctx); */
-
-  alloc_info = ctx->impl->alloc_info;
-  for (; alloc_info; alloc_info = alloc_info->next) {
-    if (alloc_info->address == address) {
-      if (alloc_info->freed) {
-        GRN_LOG(ctx, GRN_LOG_WARNING,
-                "double free: (%p):\nalloc backtrace:\n%sfree backtrace:\n%s",
-                alloc_info->address,
-                alloc_info->alloc_backtrace,
-                alloc_info->free_backtrace);
-      } else {
-        alloc_info->freed = GRN_TRUE;
-        alloc_info->free_backtrace[0] = '\0';
-        grn_alloc_info_set_backtrace(alloc_info->free_backtrace,
-                                     sizeof(alloc_info->free_backtrace));
-      }
-      return;
-    }
-  }
-}
-#else /* ENABLE_MEMORY_DEBUG */
-#  define grn_alloc_info_add(address)
-#  define grn_alloc_info_check(address)
-#endif /* ENABLE_MEMORY_DEBUG */
 
 void *
 grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
