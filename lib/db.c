@@ -7459,6 +7459,20 @@ loader_add(grn_ctx *ctx, grn_obj *key)
   return id;
 }
 
+#define REPORT_CAST_ERROR(element) {\
+  grn_obj inspected;\
+  char range_name[GRN_TABLE_MAX_KEY_SIZE];\
+  int range_name_size;\
+  GRN_TEXT_INIT(&inspected, 0);\
+  grn_inspect(ctx, &inspected, element);\
+  range_name_size = grn_obj_name(ctx, range, range_name,\
+                                 GRN_TABLE_MAX_KEY_SIZE);\
+  ERR(GRN_ERROR, "failed to cast to <%.*s>: <%.*s>",\
+      range_name_size, range_name,\
+      GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));\
+  GRN_OBJ_FIN(ctx, &inspected);\
+}
+
 static void
 set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 {
@@ -7478,7 +7492,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
         GRN_RECORD_INIT(&record, 0, range_id);
         if (grn_obj_cast(ctx, element, &record, 1)) {
           cast_failed = GRN_TRUE;
-          ERR(GRN_ERROR, "bad syntax.");
+          REPORT_CAST_ERROR(element);
         }
         element = &record;
       }
@@ -7488,27 +7502,32 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       v = values_next(ctx, v);
     }
   } else {
-    if (((struct _grn_type *)grn_ctx_at(ctx, range_id))->obj.header.flags &
-        GRN_OBJ_KEY_VAR_SIZE) {
+    if (((struct _grn_type *)range)->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
       GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
       while (n--) {
         if (v->header.domain == GRN_DB_TEXT) {
+          grn_bool cast_failed = GRN_FALSE;
           grn_obj cast_element, *element = v;
           if (range_id != element->header.domain) {
             GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
-            grn_obj_cast(ctx, element, &cast_element, 1);
+            if (grn_obj_cast(ctx, element, &cast_element, 1)) {
+              cast_failed = GRN_TRUE;
+              REPORT_CAST_ERROR(element);
+            }
             element = &cast_element;
           }
-          grn_vector_add_element(ctx, &buf,
-                                 GRN_TEXT_VALUE(element),
-                                 GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
+          if (!cast_failed) {
+            grn_vector_add_element(ctx, &buf,
+                                   GRN_TEXT_VALUE(element),
+                                   GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
+          }
         } else {
           ERR(GRN_ERROR, "bad syntax.");
         }
         v = values_next(ctx, v);
       }
     } else {
-      grn_id value_size = ((grn_db_obj *)grn_ctx_at(ctx, range_id))->range;
+      grn_id value_size = ((grn_db_obj *)range)->range;
       GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, range_id);
       while (n--) {
         grn_bool cast_failed = GRN_FALSE;
@@ -7517,7 +7536,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
           if (grn_obj_cast(ctx, element, &cast_element, 1)) {
             cast_failed = GRN_TRUE;
-            ERR(GRN_ERROR, "bad syntax.");
+            REPORT_CAST_ERROR(element);
           }
           element = &cast_element;
         }
@@ -7531,6 +7550,8 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
   grn_obj_set_value(ctx, column, id, &buf, GRN_OBJ_SET);
   GRN_OBJ_FIN(ctx, &buf);
 }
+
+#undef REPORT_CAST_ERROR
 
 static inline int
 name_equal(const char *p, unsigned size, const char *name)
