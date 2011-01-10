@@ -7499,6 +7499,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       if (!cast_failed) {
         GRN_UINT32_PUT(ctx, &buf, GRN_RECORD_VALUE(element));
       }
+      if (element == &record) { GRN_OBJ_FIN(ctx, element); }
       v = values_next(ctx, v);
     }
   } else {
@@ -7521,6 +7522,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
                                    GRN_TEXT_VALUE(element),
                                    GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
           }
+          if (element == &casted_element) { GRN_OBJ_FIN(ctx, element); }
         } else {
           ERR(GRN_ERROR, "bad syntax.");
         }
@@ -7543,6 +7545,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
         if (!cast_failed) {
           grn_bulk_write(ctx, &buf, GRN_TEXT_VALUE(element), value_size);
         }
+        if (element == &casted_element) { GRN_OBJ_FIN(ctx, element); }
         v = values_next(ctx, v);
       }
     }
