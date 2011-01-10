@@ -70,7 +70,8 @@ command_files.each do |path|
         puts("result:")
         result.open
         puts(result.read)
-        exit(false)
+        next
+        # exit(false)
       end
       if options.show_result
         result.open
