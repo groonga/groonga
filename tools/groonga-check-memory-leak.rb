@@ -68,10 +68,12 @@ command_files.each do |path|
       log.open
       log.each_line do |log_line|
         case log_line
-        when /grn_fin\((\d+)\)/
+        when /grn_fin \((\d+)\)/
           n_unfreed_allocations = $1.to_i
-          puts("maybe memory leak: #{n_unfreed_allocations}: <#{command}>")
-          exit(false)
+          unless n_unfreed_allocations.zero?
+            puts("maybe memory leak: #{n_unfreed_allocations}: <#{command}>")
+            exit(false)
+          end
         end
       end
     end
