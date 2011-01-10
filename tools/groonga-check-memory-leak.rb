@@ -8,7 +8,7 @@ end
 require 'ostruct'
 require 'optparse'
 require 'tempfile'
-require 'stringio'
+require 'time'
 
 options = OpenStruct.new
 options.groonga = "groonga"
@@ -46,7 +46,7 @@ command_files.each do |path|
     file.each_line do |command|
       if options.report_progress
         i += 1
-        puts("#{i} commands done.") if (i % 1000).zero?
+        puts("#{Time.now.iso8601}: #{i} commands done.") if (i % 1000).zero?
       end
       command = command.chomp
       base_name = File.basename($0, ".*")
