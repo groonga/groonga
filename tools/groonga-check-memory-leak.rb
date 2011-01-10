@@ -46,7 +46,7 @@ command_files.each do |path|
     file.each_line do |command|
       if options.report_progress
         i += 1
-        puts("#{i} commands done.") if (i / 1000).zero?
+        puts("#{i} commands done.") if (i % 1000).zero?
       end
       command = command.chomp
       base_name = File.basename($0, ".*")
