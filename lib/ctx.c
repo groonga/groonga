@@ -204,6 +204,8 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
       rest--;
     }
     free(symbols);
+  } else {
+    buffer[0] = '\0';
   }
 #  undef N_TRACE_LEVEL
 }
@@ -220,11 +222,29 @@ grn_alloc_info_add(void *address)
   new_alloc_info = malloc(sizeof(grn_alloc_info));
   new_alloc_info->address = address;
   new_alloc_info->freed = GRN_FALSE;
-  new_alloc_info->alloc_backtrace[0] = '\0';
   grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
                                sizeof(new_alloc_info->alloc_backtrace));
   new_alloc_info->next = ctx->impl->alloc_info;
   ctx->impl->alloc_info = new_alloc_info;
+}
+
+inline static void
+grn_alloc_info_change(void *old_address, void *new_address)
+{
+  grn_ctx *ctx;
+  grn_alloc_info *alloc_info;
+
+  ctx = &grn_gctx;
+  if (!ctx->impl) { return; }
+
+  alloc_info = ctx->impl->alloc_info;
+  for (; alloc_info; alloc_info = alloc_info->next) {
+    if (alloc_info->address == old_address) {
+      alloc_info->address = new_address;
+      grn_alloc_info_set_backtrace(alloc_info->alloc_backtrace,
+                                   sizeof(alloc_info->alloc_backtrace));
+    }
+  }
 }
 
 inline static void
@@ -269,7 +289,6 @@ grn_alloc_info_check(void *address)
                 alloc_info->free_backtrace);
       } else {
         alloc_info->freed = GRN_TRUE;
-        alloc_info->free_backtrace[0] = '\0';
         grn_alloc_info_set_backtrace(alloc_info->free_backtrace,
                                      sizeof(alloc_info->free_backtrace));
       }
@@ -298,6 +317,7 @@ grn_alloc_info_free(grn_ctx *ctx)
 
 #else /* ENABLE_MEMORY_DEBUG */
 #  define grn_alloc_info_add(address)
+#  define grn_alloc_info_change(old_address, new_address)
 #  define grn_alloc_info_check(address)
 #  define grn_alloc_info_dump(ctx)
 #  define grn_alloc_info_free(ctx)
@@ -2162,7 +2182,9 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
         return NULL;
       }
     }
-    if (!ptr) {
+    if (ptr) {
+      grn_alloc_info_change(ptr, res);
+    } else {
       GRN_ADD_ALLOC_COUNT(1);
       grn_alloc_info_add(res);
     }
