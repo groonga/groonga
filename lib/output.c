@@ -866,6 +866,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         grn_output_obj(ctx, outbuf, output_type, &value, NULL);
       }
       grn_output_array_close(ctx, outbuf, output_type);
+      GRN_OBJ_FIN(ctx, &value);
     }
     break;
   case GRN_PVECTOR :
