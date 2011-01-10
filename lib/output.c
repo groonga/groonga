@@ -946,11 +946,12 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_output_array_close(ctx, outbuf, output_type);
     } else {
       int i;
-      grn_obj id, *column = grn_obj_column(ctx, obj, "_key", 4);
+      grn_obj *column = grn_obj_column(ctx, obj, "_key", 4);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    0, -1, GRN_CURSOR_ASCENDING);
       grn_output_array_open(ctx, outbuf, output_type, "HIT", -1);
       if (tc) {
+        grn_obj id;
         GRN_TEXT_INIT(&id, 0);
         for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
           /* todo:
@@ -960,6 +961,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           grn_obj_get_value_o(ctx, column, &id, &buf);
           grn_text_esc(ctx, outbuf, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
         }
+        GRN_OBJ_FIN(ctx, &id);
         grn_table_cursor_close(ctx, tc);
       }
       grn_output_array_close(ctx, outbuf, output_type);
