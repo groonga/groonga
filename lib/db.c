@@ -7507,14 +7507,14 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       while (n--) {
         if (v->header.domain == GRN_DB_TEXT) {
           grn_bool cast_failed = GRN_FALSE;
-          grn_obj cast_element, *element = v;
+          grn_obj casted_element, *element = v;
           if (range_id != element->header.domain) {
-            GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
-            if (grn_obj_cast(ctx, element, &cast_element, 1)) {
+            GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
+            if (grn_obj_cast(ctx, element, &casted_element, 1)) {
               cast_failed = GRN_TRUE;
               REPORT_CAST_ERROR(element);
             }
-            element = &cast_element;
+            element = &casted_element;
           }
           if (!cast_failed) {
             grn_vector_add_element(ctx, &buf,
@@ -7531,14 +7531,14 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, range_id);
       while (n--) {
         grn_bool cast_failed = GRN_FALSE;
-        grn_obj cast_element, *element = v;
+        grn_obj casted_element, *element = v;
         if (range_id != element->header.domain) {
-          GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
-          if (grn_obj_cast(ctx, element, &cast_element, 1)) {
+          GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
+          if (grn_obj_cast(ctx, element, &casted_element, 1)) {
             cast_failed = GRN_TRUE;
             REPORT_CAST_ERROR(element);
           }
-          element = &cast_element;
+          element = &casted_element;
         }
         if (!cast_failed) {
           grn_bulk_write(ctx, &buf, GRN_TEXT_VALUE(element), value_size);
