@@ -893,7 +893,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     if (format) {
       int i, j;
       int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
-      grn_obj id, **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+      grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
@@ -930,8 +930,9 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         }
         grn_output_array_close(ctx, outbuf, output_type);
       }
-      GRN_TEXT_INIT(&id, 0);
       if (tc) {
+        grn_obj id;
+        GRN_TEXT_INIT(&id, 0);
         for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
           grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
           for (j = 0; j < ncolumns; j++) {
@@ -939,6 +940,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           }
           grn_output_array_close(ctx, outbuf, output_type);
         }
+        GRN_OBJ_FIN(ctx, &id);
         grn_table_cursor_close(ctx, tc);
       }
       grn_output_array_close(ctx, outbuf, output_type);
