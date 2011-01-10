@@ -13,6 +13,7 @@ require 'stringio'
 options = OpenStruct.new
 options.groonga = "groonga"
 options.show_result = false
+options.report_progress = true
 
 option_parser = OptionParser.new do |parser|
   parser.banner += " DATABASE COMMAND_FILE1 ..."
@@ -26,6 +27,11 @@ option_parser = OptionParser.new do |parser|
             "Show result of command") do |boolean|
     options.show_result = boolean
   end
+
+  parser.on("--[no-]report-progress",
+            "Report progress") do |boolean|
+    options.report_progress = boolean
+  end
 end
 
 database, *command_files = option_parser.parse!(ARGV)
@@ -34,9 +40,14 @@ if database.nil?
   exit(false)
 end
 
+i = 0
 command_files.each do |path|
   File.open(path) do |file|
     file.each_line do |command|
+      if options.report_progress
+        i += 1
+        puts("#{i} commands done.") if (i / 1000).zero?
+      end
       command = command.chomp
       base_name = File.basename($0, ".*")
       log = Tempfile.new("#{base_name}-log")
