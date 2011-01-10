@@ -7472,12 +7472,12 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
   if (GRN_OBJ_TABLEP(range)) {
     GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, range_id);
     while (n--) {
-      int cast_failed = 0;
+      grn_bool cast_failed = GRN_FALSE;
       grn_obj record, *element = v;
       if (range_id != element->header.domain) {
         GRN_RECORD_INIT(&record, 0, range_id);
         if (grn_obj_cast(ctx, element, &record, 1)) {
-          cast_failed = 1;
+          cast_failed = GRN_TRUE;
           ERR(GRN_ERROR, "bad syntax.");
         }
         element = &record;
@@ -7511,12 +7511,12 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       grn_id value_size = ((grn_db_obj *)grn_ctx_at(ctx, range_id))->range;
       GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, range_id);
       while (n--) {
-        int cast_failed = 0;
+        grn_bool cast_failed = GRN_FALSE;
         grn_obj cast_element, *element = v;
         if (range_id != element->header.domain) {
           GRN_OBJ_INIT(&cast_element, GRN_BULK, 0, range_id);
           if (grn_obj_cast(ctx, element, &cast_element, 1)) {
-            cast_failed = 1;
+            cast_failed = GRN_TRUE;
             ERR(GRN_ERROR, "bad syntax.");
           }
           element = &cast_element;
