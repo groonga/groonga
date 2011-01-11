@@ -47,4 +47,4 @@ groonga_suggest_create_dataset_CFLAGS =		\
 groonga_suggest_create_dataset_LDADD =		\
 	$(top_builddir)/lib/libgroonga.la
 
-libutil_la_SOURCES = util.c
+libutil_la_SOURCES = util.c util.h
