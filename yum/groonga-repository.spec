@@ -27,10 +27,6 @@ groonga RPM repository configuration.
 %clean
 %{__rm} -rf %{buildroot}
 
-%post
-rpm -q gpg-pubkey-1c837f31-4a2b9c3f &>/dev/null || \
-    rpm --import %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
-
 %files
 %defattr(-, root, root, 0755)
 %doc *
