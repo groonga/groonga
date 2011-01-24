@@ -32,7 +32,7 @@ fi
 
 run yum update -y
 if [ "$distribution" = "centos" ] && ! rpm -q mecab-devel > /dev/null; then
-    run yum install -y wget libtool gcc gcc-c++ make
+    run yum install -y rpm-build wget libtool gcc gcc-c++ make
 
     cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh

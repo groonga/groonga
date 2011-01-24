@@ -3,5 +3,7 @@ libtool
 gcc
 make
 mecab-devel
+zeromq-devel
+libevent-devel
 python2-devel
 php-devel
