@@ -1,7 +1,15 @@
 Source: groonga
 Priority: optional
 Maintainer: Kouhei Sutou <kou@clear-code.com>
-Build-Depends: debhelper (>= 5), cdbs, autotools-dev, quilt, libmecab-dev
+Build-Depends:
+  debhelper (>= 5),
+  cdbs,
+  autotools-dev,
+  quilt,
+  libmsgpack-dev,
+  libzmq-dev,
+  libevent-dev,
+  libmecab-dev
 Standards-Version: 3.7.3
 Homepage: http://groonga.org/
 
@@ -37,7 +45,23 @@ Description: MeCab tokenizer for groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
- This package provides MeCab tokenizer plugin.
+ This package provides MeCab tokenizer.
+
+Package: libgroonga-plugin-suggest
+Section: libs
+Architecture: any
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  libmsgpack3,
+  libzmq0,
+  libevent-1.4-2,
+  libgroonga (= ${binary:Version})
+Description: Suggest plugin for groonga.
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides suggest plugin.
 
 Package: groonga
 Section: database

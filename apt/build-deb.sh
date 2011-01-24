@@ -24,6 +24,26 @@ fi
 run aptitude update -V -D
 run aptitude safe-upgrade -V -D -y
 
+run aptitude install -V -D -y ruby
+
+if aptitude show libmsgpack-dev > /dev/null 2>&1; then
+    DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libmsgpack-dev"
+else
+    ruby -i'' -ne 'print $_ unless /libmsgpack/' /tmp/${PACKAGE}-debian/control
+fi
+
+if aptitude show libzmq-dev > /dev/null 2>&1; then
+    DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libzmq-dev"
+else
+    ruby -i'' -ne 'print $_ unless /libzmq/' /tmp/${PACKAGE}-debian/control
+fi
+
+if aptitude show libevent-dev > /dev/null 2>&1; then
+    DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libevent-dev"
+else
+    ruby -i'' -ne 'print $_ unless /libevent/' /tmp/${PACKAGE}-debian/control
+fi
+
 run aptitude install -V -D -y devscripts ${DEPENDED_PACKAGES}
 run aptitude clean
 

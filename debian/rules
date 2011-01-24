@@ -18,6 +18,10 @@ DEB_INSTALL_DOCS_groonga-doc =			\
 	doc/ja/source
 
 DEB_INSTALL_DIRS_libgroonga =			\
+	/usr/lib/groonga/plugins
+
+DEB_INSTALL_DIRS_libgroonga-plugin-suggest =	\
+	/usr/bin				\
 	/usr/lib/groonga/plugins/suggest
 
 DEB_INSTALL_DIRS_libgroonga-tokenizer-mecab =	\
@@ -32,7 +36,8 @@ DEB_INSTALL_DIRS_groonga-munin-plugins =		\
 	/etc/munin/plugin-conf.d
 
 install/groonga::
-	cp -ar debian/tmp/usr/bin/* debian/groonga/usr/bin/
+	cp -ar debian/tmp/usr/bin/groonga debian/groonga/usr/bin/
+	cp -ar debian/tmp/usr/bin/grntest debian/groonga/usr/bin/
 	cp -ar debian/tmp/usr/share/groonga/admin_html/* \
 	  debian/groonga/usr/share/groonga/admin_html/
 	cp -ar debian/tmp/usr/share/man/man1/* \
@@ -42,8 +47,12 @@ install/groonga::
 
 install/libgroonga::
 	cp -ar debian/tmp/usr/lib/libgroonga* debian/libgroonga/usr/lib/
+
+install/libgroonga-plugin-suggest::
+	cp -ar debian/tmp/usr/bin/groonga-suggest-* \
+	  debian/libgroonga-plugin-suggest/usr/bin/
 	cp -ar debian/tmp/usr/lib/groonga/plugins/suggest \
-	  debian/libgroonga/usr/lib/groonga/plugins/
+	  debian/libgroonga-plugin-suggest/usr/lib/groonga/plugins/
 
 install/libgroonga-tokenizer-mecab::
 	cp -ar debian/tmp/usr/lib/groonga/plugins/tokenizers/mecab* \
