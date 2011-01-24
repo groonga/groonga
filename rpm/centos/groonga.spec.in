@@ -12,6 +12,9 @@ Source0:	http://groonga.org/files/groonga/groonga-@VERSION@.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
+#BuildRequires:	messagepack-devel
+#BuildRequires:	zeromq-devel
+#BuildRequires:	libevent-devel
 Requires:	%{name}-libs = %{version}-%{release}
 Requires(pre):	shadow-utils
 Requires(post):	/sbin/chkconfig
@@ -60,6 +63,17 @@ Requires:	mecab
 
 %description tokenizer-mecab
 MeCab tokenizer for groonga
+
+%package plugin-suggest
+Summary:	Suggest plugin for groonga
+Group:		Applications/Text
+Requires:	%{name}-libs = %{version}-%{release}
+#Requires:	messagepack
+#Requires:	zeromq
+#Requires:	libevent
+
+%description plugin-suggest
+Sugget plugin for groonga
 
 %package munin-plugins
 Summary:	Munin plugins for groonga
@@ -167,7 +181,8 @@ fi
 %{_datadir}/man/man1/*
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga
-%{_bindir}/*
+%{_bindir}/groonga
+%{_bindir}/grntest
 %{_initddir}/*
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
@@ -179,8 +194,6 @@ fi
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
 %dir %{_libdir}/groonga/plugins
-%dir %{_libdir}/groonga/plugins/suggest
-%{_libdir}/groonga/plugins/suggest/*.so
 %dir %{_libdir}/groonga/plugins/tokenizers
 %dir %{_datadir}/groonga
 %{_datadir}/groonga/
@@ -194,6 +207,12 @@ fi
 %{_includedir}/groonga/
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/groonga*.pc
+
+%files plugin-suggest
+%defattr(-,root,root,-)
+%{_bindir}/groonga-suggest-*
+%dir %{_libdir}/groonga/plugins
+%{_libdir}/groonga/plugins/suggest/suggest.so
 
 %files tokenizer-mecab
 %defattr(-,root,root,-)
