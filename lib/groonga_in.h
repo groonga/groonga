@@ -122,6 +122,8 @@
 #define close _close
 #define usleep(x) Sleep((x) / 1000)
 #define sleep(x) Sleep((x) * 1000)
+#define strcasecmp stricmp
+
 
 #ifdef __GNUC__
 #include <stdint.h>
