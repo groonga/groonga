@@ -6,10 +6,10 @@ cd src
 nmake -f Makefile.msvc install
 cd ..
 
-cd modules\suggest
+cd plugins\suggest
 nmake -f Makefile.msvc install
 cd ..\..
 
-cd modules\tokenizers
+cd plugins\tokenizers
 nmake -f Makefile.msvc install
 cd ..\..

@@ -8,7 +8,7 @@ strarch = shell.expandenvironmentstrings("%PROCESSOR_ARCHITECTURE%")
 msgbox strarch
 
 
-dim PLUGINS_DIR, PLUGINS_DIR2, INSTALL_DIR, LOG_PATH, MECAB_LIB, CONFIG_PATH,DOCUMENT_ROOT
+dim PLUGINS_DIR, PLUGINS_DIR2, INSTALL_DIR, LOG_PATH, MECAB_LIB, CONFIG_PATH,DOCUMENT_ROOT, RELATIVE_PLUGINS_DIR
 PLUGINS_DIR = "c:\\groonga\\plugins"
 PLUGINS_DIR2 = "c:\groonga\plugins"
 INSTALL_DIR = "c:\windows\system32"
@@ -16,6 +16,7 @@ LOG_PATH = "c:\\groonga\\log\\groonga.log"
 MECAB_LIB = "c:\program files\mecab\sdk\libmecab.lib"
 CONFIG_PATH ="c:\\groonga\\etc\\config"
 DOCUMENT_ROOT ="c:\\groonga\\data\\admin_html"
+RELATIVE_PLUGINS_DIR = "lib\\groonga\\plugins"
 
 'control warning
 dim no_warning
@@ -69,9 +70,9 @@ sub common_header()
   ts.write "LINK=link.exe" + vbLf
   ts.write vbLf
   if use_debug = 1 then
-    ts.write "CFLAGS = /nologo /Od /W4 /MT /Zi -I../ " + no_warning + vbLf
+    ts.write "CFLAGS = /nologo /Od /W4 /MT /Zi -I../include " + no_warning + vbLf
   else
-    ts.write "CFLAGS = /nologo /Ox /W4 /MT /Zi -I../ " + no_warning + vbLf
+    ts.write "CFLAGS = /nologo /Ox /W4 /MT /Zi -I../include " + no_warning + vbLf
   end if
 
   ts.write "LDFLAGS = /nologo "
@@ -98,15 +99,19 @@ sub common_header()
   ts.write "        -DNO_LZO \" + vbLf
   ts.write "        -DNO_ZLIB \" + vbLf
   ts.write "        -DUSE_SELECT \" + vbLf
-  ts.write "        -DGROONGA_DEFAULT_ENCODING=""\""utf-8\"""" \" + vbLf
+  ts.write "        -DGRN_DEFAULT_ENCODING=""\""utf-8\"""" \" + vbLf
   ts.write "        -DGRN_PLUGIN_SUFFIX=""\"".dll\"""" \" + vbLf
-  ts.write "        -DPLUGINS_DIR=""\"""
+  ts.write "        -DGRN_PLUGINS_DIR=""\"""
   ts.write PLUGINS_DIR
   ts.write "\"""" \"  + vbLf
 
-  ts.write "        -DGROONGA_DEFAULT_MATCH_ESCALATION_THRESHOLD=""0"" \" + vbLf
+  ts.write "        -DGRN_RELATIVE_PLUGINS_DIR=""\"""
+  ts.write RELATIVE_PLUGINS_DIR
+  ts.write "\"""" \"  + vbLf
 
-  ts.write "        -DGROONGA_LOG_PATH=""\"""
+  ts.write "        -DGRN_DEFAULT_MATCH_ESCALATION_THRESHOLD=""0"" \" + vbLf
+
+  ts.write "        -DGRN_LOG_PATH=""\"""
   ts.write LOG_PATH
   ts.write "\"""" \"  + vbLf
 
@@ -114,7 +119,7 @@ sub common_header()
   ts.write CONFIG_PATH
   ts.write "\"""" \"  + vbLf
 
-  ts.write "        -DDEFAULT_DOCUMENT_ROOT=""\"""
+  ts.write "        -DGRN_DEFAULT_DOCUMENT_ROOT=""\"""
   ts.write DOCUMENT_ROOT
   ts.write "\"""" \"  + vbLf
 
@@ -213,9 +218,9 @@ ts.write "CC = cl.exe" + vbLf
 ts.write "LINK=link.exe" + vbLf
 ts.write vbLf
 if use_debug = 1 then
-  ts.write "CFLAGS = /nologo /Od /W4 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_warning + vbLf
+  ts.write "CFLAGS = /nologo /Od /W4 /MT /Zi -DWIN32 -I../../include -I../../lib/ " + no_warning + vbLf
 else
-  ts.write "CFLAGS = /nologo /Ox /W4 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_wwarning+ vbLf
+  ts.write "CFLAGS = /nologo /Ox /W4 /MT /Zi -DWIN32 -I../../include -I../../lib/ " + no_wwarning+ vbLf
 end if
 
 ts.write "LDFLAGS = /nologo "
@@ -272,9 +277,9 @@ ts.write "CC = cl.exe" + vbLf
 ts.write "LINK=link.exe" + vbLf
 ts.write vbLf
 if use_debug = 1 then
-  ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_warning + vbLf
+  ts.write "CFLAGS = /nologo /Od /W3 /MT /Zi -DWIN32 -I../../include -I../../lib/ " + no_warning + vbLf
 else
-  ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi -DWIN32 -I../../ -I../../lib/ " + no_warning + vbLf
+  ts.write "CFLAGS = /nologo /Ox /W3 /MT /Zi -DWIN32 -I../../include -I../../lib/ " + no_warning + vbLf
 end if
 
 ts.write "LDFLAGS = /nologo "

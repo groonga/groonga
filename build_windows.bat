@@ -24,13 +24,13 @@ nmake -f Makefile.msvc
 cd ..
 
 @rem build suggest
-cd modules\suggest
+cd plugins\suggest
 nmake -f Makefile.msvc clean
 nmake -f Makefile.msvc
 cd ..\..
 
 @rem build mecab
-cd modules\tokenizers
+cd plugins\tokenizers
 nmake -f Makefile.msvc clean
 nmake -f Makefile.msvc
 cd ..\..
