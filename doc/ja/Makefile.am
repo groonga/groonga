@@ -121,6 +121,9 @@ pdf:
 	@echo
 	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
 
+update-examples:
+	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py
+
 if ENABLE_DOCUMENT
 dist-hook:
 	@touch $(distdir)/man-build-stamp
