@@ -161,7 +161,7 @@ grn_rc grn_com_init(void);
 void grn_com_fin(void);
 GRN_API grn_rc grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_size);
 GRN_API grn_rc grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev);
-grn_rc grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev);
+GRN_API grn_rc grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev);
 grn_rc grn_com_event_stop_accept(grn_ctx *ctx, grn_com_event *ev);
 grn_rc grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_com **com);
 grn_rc grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_com **com);
