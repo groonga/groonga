@@ -6,7 +6,9 @@ from select import select
 from sys import argv,stdout
 import os
 
-GROONGA_PATH = "groonga"
+GROONGA_PATH = os.environ.get("GROONGA")
+if GROONGA_PATH is None:
+  GROONGA_PATH = "groonga"
 DB_PATH = "/tmp/example.db"
 
 os.system('rm -rf %s*' % DB_PATH)
