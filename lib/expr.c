@@ -4775,7 +4775,6 @@ grn_expr_parser_open(grn_ctx *ctx)
 static grn_rc
 get_word_(grn_ctx *ctx, efs_info *q)
 {
-  grn_operator mode;
   const char *start = q->cur, *end;
   unsigned int len;
   for (end = q->cur;; ) {
@@ -4790,6 +4789,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
       break;
     }
     if (q->flags & GRN_EXPR_ALLOW_COLUMN && *end == GRN_QUERY_COLUMN) {
+      grn_operator mode;
       grn_obj *c = grn_obj_column(ctx, q->table, start, end - start);
       if (c && end + 1 < q->str_end) {
         //        efs_op op;
@@ -4856,8 +4856,8 @@ get_word_(grn_ctx *ctx, efs_info *q)
 
       return GRN_SUCCESS;
     } else if (*end == GRN_QUERY_PREFIX) {
-      mode = GRN_OP_PREFIX;
       q->cur = end + 1;
+      GRN_INT32_PUT(ctx, &q->mode_stack, GRN_OP_PREFIX);
       break;
     }
     end += len;
