@@ -1,0 +1,15 @@
+実行例 ::
+
+  > table_create --name GeoIndex --flags TABLE_HASH_KEY --key_type WGS84GeoPoint
+  [[0,1295945106.95941,0.042948258],true]
+  > column_create --table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source location
+  [[0,1295945107.20325,0.090239769],true]
+  > load --table Site
+  > [
+  >  {"_key":"http://example.org/","location":"128452975x503157902"}
+  >  {"_key":"http://example.net/","location":"128487316x502920929"},
+  > ]
+  [[0,1295945107.49464,0.801677814],2]
+  > select --table Site --filter 'geo_in_circle(location, "128515259x503187188", 5000)' --output_columns _key,location
+  [[0,1295945108.49712,0.000941181],[[[1],[["_key","ShortText"],["location","WGS84GeoPoint"]],["http://example.org/","128452975x503157902"]]]]
+  
