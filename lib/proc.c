@@ -1961,7 +1961,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
   if (!obj) {
     ERR(GRN_INVALID_ARGUMENT,
-        "no such object '%.*s>'", GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        "no such object: <%.*s>", GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     GRN_OUTPUT_BOOL(!ctx->rc);
   } else {
     switch (obj->header.type) {
