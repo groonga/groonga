@@ -1879,6 +1879,61 @@ dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
 }
 
 static void
+dump_selected_tables_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *tables)
+{
+  const char *p, *e;
+
+  p = GRN_TEXT_VALUE(tables);
+  e = p + GRN_TEXT_LEN(tables);
+  while (p < e) {
+    int len;
+    grn_obj *table;
+    const char *token, *token_e;
+
+    if ((len = grn_isspace(p, ctx->encoding))) {
+      p += len;
+      continue;
+    }
+
+    token = p;
+    if (!(('a' <= *p && *p <= 'z') ||
+          ('A' <= *p && *p <= 'Z') ||
+          (*p == '_'))) {
+      while (p < e && !grn_isspace(p, ctx->encoding)) {
+        p++;
+      }
+      GRN_LOG(ctx, GRN_LOG_WARNING, "invalid table name is ignored: <%.*s>\n",
+              p - token, token);
+      continue;
+    }
+    while (p < e &&
+           (('a' <= *p && *p <= 'z') ||
+            ('A' <= *p && *p <= 'Z') ||
+            ('0' <= *p && *p <= '9') ||
+            (*p == '_'))) {
+      p++;
+    }
+    token_e = p;
+    while (p < e && (len = grn_isspace(p, ctx->encoding))) {
+      p += len;
+      continue;
+    }
+    if (p < e && *p == ',') {
+      p++;
+    }
+
+    if ((table = grn_ctx_get(ctx, token, token_e - token))) {
+      dump_records(ctx, outbuf, table);
+      grn_obj_unlink(ctx, table);
+    } else {
+      GRN_LOG(ctx, GRN_LOG_WARNING,
+              "nonexistent table name is ignored: <%.*s>\n",
+              token_e - token, token);
+    }
+  }
+}
+
+static void
 dump_all_records(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
@@ -1908,7 +1963,11 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   /* To update index columns correctly, we first create the whole scheme, then
      load non-derivative records, while skipping records of index columns. That
      way, groonga will silently do the job of updating index columns for us. */
-  dump_all_records(ctx, outbuf);
+  if (GRN_TEXT_LEN(VAR(0)) > 0) {
+    dump_selected_tables_records(ctx, outbuf, VAR(0));
+  } else {
+    dump_all_records(ctx, outbuf);
+  }
 
   /* remove the last newline because another one will be added by the calller.
      maybe, the caller of proc functions currently doesn't consider the
@@ -2317,7 +2376,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "max");
   DEF_COMMAND("cache_limit", proc_cache_limit, 1, vars);
 
-  DEF_COMMAND("dump", proc_dump, 0, vars);
+  DEF_VAR(vars[0], "tables");
+  DEF_COMMAND("dump", proc_dump, 1, vars);
 
   DEF_VAR(vars[0], "path");
   DEF_COMMAND("register", proc_register, 1, vars);

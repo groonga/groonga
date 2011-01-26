@@ -12,7 +12,7 @@ dump - データベースのスキーマとデータを出力する
 ----
 ::
 
-  dump
+  dump [tables]
 
 説明
 ----
@@ -30,7 +30,9 @@ dumpが出力するフォーマットは直接groongaが解釈できるフォー
 引数
 ----
 
-ありません。
+``tables``
+
+  出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指定した場合は無視されます。
 
 返値
 ----
@@ -39,16 +41,15 @@ dumpが出力するフォーマットは直接groongaが解釈できるフォー
 
 例
 --
-::
 
-  dump
+データベース内のすべてのデータを出力::
 
+  > dump
   table_create LocalNames 48 ShortText
   table_create Entries 48 ShortText
   column_create Entries local_name 0 LocalNames
   column_create LocalNames Entries_local_name 2 Entries local_name
   ...
-
   load --table LocalNames
   [
   ["_key"],
@@ -57,6 +58,32 @@ dumpが出力するフォーマットは直接groongaが解釈できるフォー
   ...
   ]
   ...
+
+データベース内のスキーマと特定のテーブルのデータのみ出力::
+
+  > dump --tables Users,Sites
+  table_create Users TABLE_HASH_KEY ShortText
+  column_create Users name COLUMN_SCALAR ShortText
+  table_create Comments TABLE_PAT_KEY ShortText
+  column_create Comments text COLUMN_SCALAR ShortText
+  table_create Sites TABLE_NO_KEY
+  column_create Sites url COLUMN_SCALAR ShortText
+  load --table Users
+  [
+  ["_key"],
+  ["mori"],
+  ["yu"],
+  ...
+  ]
+  load --table Sites
+  [
+  ["_id","url"],
+  [1,"http://groonga.org/"],
+  [2,"http://qwik.jp/senna/"],
+  ...
+  ]
+
+
 
 
 

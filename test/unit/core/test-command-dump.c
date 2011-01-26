@@ -36,6 +36,7 @@ void test_vector_column(gconstpointer data);
 void test_unsequantial_records_in_table_with_keys(void);
 void test_nil_reference(void);
 void test_load_with_vector_int32_reference_key(void);
+void test_tables_argument(void);
 
 static gchar *tmp_directory;
 
@@ -533,4 +534,49 @@ test_load_with_vector_int32_reference_key(void)
 
   assert_send_commands(commands);
   cut_assert_equal_string(commands, send_command("dump"));
+}
+
+void
+test_tables_argument(void)
+{
+  const gchar *define_schema_commands =
+    "table_create users TABLE_HASH_KEY Int32\n"
+    "column_create users name COLUMN_SCALAR ShortText\n"
+    "table_create comments TABLE_PAT_KEY ShortText\n"
+    "column_create comments text COLUMN_SCALAR ShortText\n"
+    "table_create sites TABLE_NO_KEY\n"
+    "column_create sites url COLUMN_SCALAR ShortText\n"
+    "column_create comments author COLUMN_VECTOR users";
+  const gchar *load_users_commands =
+    "load --table users\n"
+    "[\n"
+    "[\"_key\",\"name\"],\n"
+    "[1000,\"ryoqun\"],\n"
+    "[1001,\"hayamiz\"]\n"
+    "]";
+  const gchar *load_comments_commands =
+    "load --table comments\n"
+    "[\n"
+    "[\"_key\",\"text\",\"author\"],\n"
+    "[\"groonga\",\"it is fast\",[1000,1001]]\n"
+    "]";
+  const gchar *load_sites_commands =
+    "load --table sites\n"
+    "[\n"
+    "[\"_id\",\"url\"],\n"
+    "[1,\"http://groonga.org/\"],\n"
+    "[2,\"http://qwik.jp/senna/\"]\n"
+    "]";
+
+  assert_send_commands(define_schema_commands);
+  assert_send_commands(load_users_commands);
+  assert_send_commands(load_comments_commands);
+  assert_send_commands(load_sites_commands);
+  cut_assert_equal_string(cut_take_printf("%s\n"
+                                          "%s\n"
+                                          "%s",
+                                          define_schema_commands,
+                                          load_users_commands,
+                                          load_sites_commands),
+                          send_command("dump --tables users,sites"));
 }
