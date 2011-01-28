@@ -1,6 +1,19 @@
 ACLOCAL_AMFLAGS = $$ACLOCAL_ARGS -I .
 AUTOMAKE_OPTIONS = 1.9.6
-SUBDIRS = include lib plugins src examples test apt rpm yum data resource doc
+SUBDIRS =					\
+	include					\
+	lib					\
+	plugins					\
+	src					\
+	examples				\
+	test					\
+	apt					\
+	rpm					\
+	yum					\
+	data					\
+	resource				\
+	tools					\
+	doc
 #dist_data_DATA =
 EXTRA_DIST = bindings version-gen.sh
 
