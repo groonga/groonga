@@ -196,9 +196,11 @@ AC_ARG_WITH(match_escalation_threshold,
 AC_DEFINE_UNQUOTED(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, "specified match escalation threshold")
 
 AC_CHECK_LIB(m, log, [M_LIBS="-lm"], [AC_MSG_ERROR("No libm found")])
-AC_CHECK_LIB(pthread, pthread_mutex_init,
-             [PTHREAD_LIBS="-lpthread"],
-             [test "$os_win32" != "yes" && AC_MSG_ERROR("No libpthread found")])
+if test "$os_win32" != "yes"; then
+  AC_CHECK_LIB(pthread, pthread_mutex_init,
+               [PTHREAD_LIBS="-lpthread"],
+               [AC_MSG_ERROR("No libpthread found")])
+fi
 AC_CHECK_LIB(nsl, gethostbyname, [NSL_LIBS="-lnsl"])
 AC_CHECK_LIB(socket, socket, [SOCKET_LIBS="-lsocket"])
 AC_CHECK_LIB(dl, dlopen, [NSL_LIBS="-ldl"])
