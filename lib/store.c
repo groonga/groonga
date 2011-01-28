@@ -508,6 +508,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei, uint64_t *
   eback = einfo[pos];
   if (cas && *cas != *((uint64_t *)&eback)) {
     ERR(GRN_CAS_ERROR, "cas failed (%d)", id);
+    GRN_IO_SEG_UNREF(ja->io, *pseg);
     goto exit;
   }
   // smb_wmb();
