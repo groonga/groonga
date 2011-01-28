@@ -122,7 +122,9 @@
 #define close _close
 #define usleep(x) Sleep((x) / 1000)
 #define sleep(x) Sleep((x) * 1000)
-#define strcasecmp stricmp
+#if !defined(strcasecmp)
+#  define strcasecmp stricmp
+#endif /* !defined(strcasecmp) */
 
 
 #ifdef __GNUC__
