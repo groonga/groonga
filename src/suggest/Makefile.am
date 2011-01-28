@@ -1,4 +1,7 @@
-bin_PROGRAMS =					\
+bin_PROGRAMS =
+
+if !PLATFORM_WIN32
+bin_PROGRAMS +=					\
 	groonga-suggest-create-dataset
 
 if ENABLE_SUGGEST_LEARNER
@@ -6,6 +9,8 @@ bin_PROGRAMS +=					\
 	groonga-suggest-learner			\
 	groonga-suggest-httpd
 noinst_LTLIBRARIES = libutil.la
+endif
+
 endif
 
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
