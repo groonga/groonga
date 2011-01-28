@@ -1,4 +1,234 @@
+2011-01-28 Kouhei Sutou <kou@clear-code.com>
+
+ * src/suggest/Makefile.am: disable suggest on Windows.
+
+ * lib/groonga_in.h: add twice strcasecmp() definition check.
+
+ * configure.ac: don't use pthread on Windows.
+
+2011-01-25 Toshihisa <t2001@gol.com>
+
+ * lib/groonga_in.h: define strcharcmp for Win32.
+
+ * build_windows.bat, install_windows.bat, mkmfwin32.vbs: updated build tools
+ in Win32(VC).
+
+ * lib/com.h: export grn_com_event_start_accept for Win32.
+
+2011-01-28 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: add 1.0.7 entry.
+
+ * Makefile.am, configure.ac, tools/Makefile.am: add
+ groonga-check-memory-leak.rb to distribution package.
+
+2011-01-27 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac, debian/changelog, rpm/centos/groonga.spec.in,
+ rpm/fedora/groonga.spec.in: 1.1.0 -> 1.0.7.
+
+2011-01-26 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/commands/dump.txt, lib/proc.c,
+ test/unit/core/test-command-dump.c: add 'tables' option to 'dump' command.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-command-dump.c,
+ test/unit/core/test-dump.c: move tests in test-dump.c to test-command-dump.c.
+
+ * lib/proc.c: fix message format.
+
+2011-01-25 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/example/tutorial06-6.log: add missing log.
+
+ * doc/ja/Makefile.am: add update-examples target.
+
+ * doc/ja/source/update_execution_example.py: make groonga path is specified
+ by environment variable.
+
+ * doc/ja/source/update_execution_example.py: make groonga without /usr/bin
+ available.
+
+ * apt/build-deb.sh, apt/groonga-depended-packages, debian/control,
+ debian/rules: add libgroonga-plugin-suggest package.
+
+ * yum/build-rpm.sh, yum/groonga-depended-packages: add missing packages.
+
+ * rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in: create
+ groonga-plugin-suggest package.
+
+2011-01-24 Kouhei Sutou <kou@clear-code.com>
+
+ * src/suggest/Makefile.am: always install groonga-suggest-create-dataset.
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ add 1.1.0 entry.
+
+2011-01-12 Kouhei Sutou <kou@clear-code.com>
+
+ * yum/groonga-repository.spec: don't install GPG key for RPM by hand.
+
+2011-01-11 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/Makefile.am: Added util.h to package.
+
+2011-01-10 Kouhei Sutou <kou@clear-code.com>
+
+ * tools/groonga-check-memory-leak.rb: don't stop on error.
+
+ * tools/groonga-check-memory-leak.rb: report also timestamp.
+
+ * tools/groonga-check-memory-leak.rb: fix a typo.
+
+ * tools/groonga-check-memory-leak.rb: add --report-progress option.
+
+ * lib/ctx.c: memory-debug: support memory allocation expansion by realloc.
+
+ * lib/output.c: reduce variable scope.
+
+ * lib/output.c: ensure fin temporary buffer.
+
+ * lib/output.c: fix a memory leak in vector value output.
+
+ * tools/groonga-check-memory-leak.rb: fix unfreed allocation detected code.
+
+ * tools/groonga-check-memory-leak.rb: add a tool to detect memory leak.
+
+ * lib/db.c: fix memory leak on loading.  Reported by Kenichi Aramaki.
+ Thanks!!!
+
+ * lib/db.c: improve variable name: cast_element -> casted_element.
+
+ * lib/db.c: report cast fail details on loading vector values.
+
+ * lib/db.c: use grn_bool.
+
+ * lib/ctx.c: free memory allocation status at the end.
+
+ * lib/ctx.c: report memory allocation status at the end with
+ --enable-memory-debug.
+
+2011-01-08 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/tutorial/tutorial06.txt: fix a path.
+
+2011-01-07 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: fix markup and typos.
+
+2011-01-07 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/groonga_suggest_httpd.c, src/suggest/groonga_suggest_learner.c,
+ src/suggest/util.c, src/suggest/util.h: Added daemonize function to suggest
+ learners.
+
+2011-01-06 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/groonga_suggest_learner.c: Fixed one more cursor leak on
+ suggest learner.
+
+ * src/suggest/groonga_suggest_learner.c: Fixed cursor leak on suggest
+ learner.
+
+ * src/suggest/groonga_suggest_httpd.c, src/suggest/groonga_suggest_learner.c:
+ Fixed execute file names.
+
+ * src/suggest/groonga_suggest_httpd.c: Fixed wrong content-length without
+ jsonp.
+
+2011-01-06 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/groonga_in.h, lib/proc.c: don't use _XXX_SOURCE and __USE_GNU.
+
+2011-01-06 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * doc/ja/source/tutorial/tutorial06.txt: Added index geo sort description.
+
+ * doc/ja/source/example/tutorial01-1.log,
+ doc/ja/source/example/tutorial01-10.log,
+ doc/ja/source/example/tutorial01-11.log,
+ doc/ja/source/example/tutorial01-12.log,
+ doc/ja/source/example/tutorial01-13.log,
+ doc/ja/source/example/tutorial01-14.log,
+ doc/ja/source/example/tutorial01-15.log,
+ doc/ja/source/example/tutorial01-16.log,
+ doc/ja/source/example/tutorial01-17.log,
+ doc/ja/source/example/tutorial01-2.log,
+ doc/ja/source/example/tutorial01-3.log,
+ doc/ja/source/example/tutorial01-4.log,
+ doc/ja/source/example/tutorial01-5.log,
+ doc/ja/source/example/tutorial01-6.log,
+ doc/ja/source/example/tutorial01-7.log,
+ doc/ja/source/example/tutorial01-8.log,
+ doc/ja/source/example/tutorial01-9.log,
+ doc/ja/source/example/tutorial02-1.log,
+ doc/ja/source/example/tutorial02-3.log,
+ doc/ja/source/example/tutorial03-1.log,
+ doc/ja/source/example/tutorial03-2.log,
+ doc/ja/source/example/tutorial03-3.log,
+ doc/ja/source/example/tutorial04-1.log,
+ doc/ja/source/example/tutorial04-2.log,
+ doc/ja/source/example/tutorial04-3.log,
+ doc/ja/source/example/tutorial04-4.log,
+ doc/ja/source/example/tutorial04-5.log,
+ doc/ja/source/example/tutorial04-6.log,
+ doc/ja/source/example/tutorial04-7.log,
+ doc/ja/source/example/tutorial05-1.log,
+ doc/ja/source/example/tutorial05-2.log,
+ doc/ja/source/example/tutorial05-3.log,
+ doc/ja/source/example/tutorial05-4.log,
+ doc/ja/source/example/tutorial05-5.log,
+ doc/ja/source/example/tutorial05-6.log,
+ doc/ja/source/example/tutorial06-1.log,
+ doc/ja/source/example/tutorial06-2.log,
+ doc/ja/source/example/tutorial06-3.log,
+ doc/ja/source/example/tutorial06-4.log,
+ doc/ja/source/example/tutorial06-5.log,
+ doc/ja/source/example/tutorial07-1.log,
+ doc/ja/source/example/tutorial07-2.log,
+ doc/ja/source/example/tutorial07-3.log,
+ doc/ja/source/example/tutorial07-4.log,
+ doc/ja/source/example/tutorial08-1.log,
+ doc/ja/source/example/tutorial10-1.log,
+ doc/ja/source/example/tutorial10-10.log,
+ doc/ja/source/example/tutorial10-2.log,
+ doc/ja/source/example/tutorial10-3.log,
+ doc/ja/source/example/tutorial10-4.log,
+ doc/ja/source/example/tutorial10-5.log,
+ doc/ja/source/example/tutorial10-6.log,
+ doc/ja/source/example/tutorial10-7.log,
+ doc/ja/source/example/tutorial10-8.log,
+ doc/ja/source/example/tutorial10-9.log,
+ doc/ja/source/tutorial/tutorial06.txt: Updated tutorial execution results.
+
+2011-01-05 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/groonga_in.h: define WINVER only if it isn't defined.
+ (amd64-mingw32msvc)
+
+ * test/unit/grntest/test-out-http.rb: use more meaningful test value.
+
+ * src/grntest.c, test/unit/grntest/test-out-http.rb: truncate the last new
+ line to compare correctly.
+
+ * lib/ctx.c: use free() instead of realloc(ptr, 0) on Mac OS X.
+
+ * configure.ac: fix pluin suffix detection on Mac OS X.  Reported by
+ ongaeshi. Thanks!!!
+
+ * lib/pat.c: show key size on long key error.
+
+ * configure.ac: add missing new line.
+
+ * configure.ac: show MeCab configuration result.
+
+2011-01-05 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * Makefile.am, configure.ac: Decrease required automake version (#508).
+
 2010-12-31 Kouhei Sutou <kou@clear-code.com>
+
+ * ChangeLog: update ChangeLog.
 
  * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
  1.0.5 -> 1.0.6.
