@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ void test_uint64(void);
 void test_last_token(void);
 void test_no_key_twice(void);
 void test_no_key_by_id(void);
+void test_corrupt_jagged_array(void);
 
 static gchar *tmp_directory;
 
@@ -233,4 +234,50 @@ test_no_key_by_id(void)
                            "[1,\"groonga\"],"
                            "[3,\"Cutter\"]]]",
                           send_command("select Sites"));
+}
+
+void
+test_corrupt_jagged_array(void)
+{
+  const gchar *text_65bytes =
+    "65bytes text "
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  const gchar *text_129bytes =
+    "129bytes text "
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+  assert_send_command("table_create Sites TABLE_NO_KEY");
+  assert_send_command("column_create Sites description COLUMN_SCALAR ShortText");
+  cut_assert_equal_string(
+    "1",
+    send_command(cut_take_printf("load --table Sites\n"
+                                 "[[\"description\"],\n"
+                                 "[\"%s\"]\n"
+                                 "]",
+                                 text_129bytes)));
+  assert_send_command("delete Sites --id 1");
+
+  cut_assert_equal_string(
+    "3",
+    send_command(cut_take_printf("load --table Sites\n"
+                                 "[[\"description\"],\n"
+                                 "[\"%s\"],\n"
+                                 "[\"%s\"],\n"
+                                 "[\"%s\"]"
+                                 "]",
+                                 text_65bytes,
+                                 text_65bytes,
+                                 text_129bytes)));
+  cut_assert_equal_string(
+    cut_take_printf("[[[3],"
+                    "[[\"_id\",\"UInt32\"],"
+                     "[\"description\",\"ShortText\"]],"
+                     "[2,\"%s\"],"
+                     "[3,\"%s\"],"
+                     "[4,\"%s\"]]]",
+                    text_65bytes,
+                    text_65bytes,
+                    text_129bytes),
+                    send_command("select Sites"));
 }
