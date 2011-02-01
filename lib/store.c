@@ -430,7 +430,10 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     SEGMENTS_AT(ja, seg) -= (aligned_size + sizeof(grn_id));
     if (SEGMENTS_AT(ja, seg) == SEG_SEQ) {
       /* reuse the segment */
-      SEGMENTS_AT(ja, seg) = 0;
+      SEGMENTS_OFF(ja, seg);
+      if (seg == ja->header->curr_seg) {
+        ja->header->curr_pos = JA_SEGMENT_SIZE;
+      }
     }
     GRN_IO_SEG_UNREF(ja->io, seg);
   } else {
@@ -849,7 +852,9 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (grn_ja_replace(ctx, ja, id, &einfo, cas)) {
     grn_rc rc = ctx->rc;
     ctx->rc = GRN_SUCCESS;
+    if (grn_io_lock(ctx, ja->io, 10000000)) { return ctx->rc; }
     grn_ja_free(ctx, ja, &einfo);
+    grn_io_unlock(ja->io);
     ctx->rc = rc;
   }
   return ctx->rc;
