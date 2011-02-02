@@ -164,6 +164,13 @@ delimit_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return delimited_init(ctx, table, user_data, " ", 1);
 }
 
+static grn_obj *
+delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *table = args[0];
+  return delimited_init(ctx, table, user_data, "", 1);
+}
+
 /* ngram tokenizer */
 
 typedef struct {
@@ -587,6 +594,7 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                 bigramisa_init, ngram_next, ngram_fin, vars);
   DEF_TOKENIZER("TokenBigramIgnoreBlankSplitSymbolAlphaDigit",
                 bigramisad_init, ngram_next, ngram_fin, vars);
-
+  DEF_TOKENIZER("TokenDelimitNull",
+                delimit_null_init, delimited_next, delimited_fin, vars);
   return GRN_SUCCESS;
 }
