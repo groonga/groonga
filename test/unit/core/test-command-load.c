@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ void test_nonexistent_columns(void);
 void test_no_key_table(void);
 void test_two_bigram_indexes_to_key(void);
 void test_invalid_start_with_symbol(void);
+void test_no_key_table_without_columns(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -429,4 +430,22 @@ test_invalid_start_with_symbol(void)
                                      "--columns '_key' "
                                      "--values 'invalid'");
   cut_assert_equal_string(table_list_result, send_command("table_list"));
+}
+
+void
+test_no_key_table_without_columns(void)
+{
+  cut_omit("crashed!!!");
+  assert_send_command("table_create Numbers TABLE_NO_KEY");
+  cut_assert_equal_string("0",
+                          send_command("load --table Numbers [\n"
+                                       "[1],\n"
+                                       "[2],\n"
+                                       "[3]\n"
+                                       "]"));
+  cut_assert_equal_string("[[[0],"
+                          "[[\"_id\",\"Int32\"]],"
+                          "]]",
+                          send_command("select Numbers"));
+
 }
