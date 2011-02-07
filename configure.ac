@@ -419,14 +419,13 @@ GRNTEST="\$(abs_top_builddir)/src/grntest"
 AC_SUBST(GRNTEST)
 
 # check Cutter with GLib support if available
-REQUIRED_MINIMUM_CUTTER_VERSION=1.1.3
-m4_ifdef([AC_CHECK_GCUTTER], [
-AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)
-],
-[ac_cv_use_cutter="no"])
+REQUIRED_MINIMUM_CUTTER_VERSION=1.1.6
+m4_ifdef([AC_CHECK_GCUTTER],
+         [AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)],
+         [cutter_use_cutter="no"])
 
-AM_CONDITIONAL([WITH_CUTTER], [test "$ac_cv_use_cutter" != "no"])
-if test "$ac_cv_use_cutter" != "no"; then
+AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" != "no"])
+if test "$cutter_use_cutter" != "no"; then
   AC_DEFINE(WITH_CUTTER, 1, [Define to 1 if you use Cutter])
 
   ac_cv_have_libmemcached=no
@@ -438,19 +437,8 @@ if test "$ac_cv_use_cutter" != "no"; then
   if test "$ac_cv_have_libmemcached" = "yes"; then
     AC_DEFINE(WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
   fi
-
-  m4_ifdef([AC_CHECK_SOUPCUTTER], [
-  AC_CHECK_SOUPCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)
-  ],
-  [ac_cv_use_soupcutter="no"])
-  AM_CONDITIONAL([WITH_SOUPCUTTER],
-                 [test "$ac_cv_use_soupcutter" = "yes"])
-  if test "$ac_cv_use_soupcutter" = "yes"; then
-    AC_DEFINE(WITH_SOUPCUTTER, 1, [Define to 1 if you use soupcutter])
-  fi
 else
   AM_CONDITIONAL([WITH_LIBMEMCACHED], false)
-  AM_CONDITIONAL([WITH_SOUPCUTTER], false)
 fi
 
 # check for benchmark
@@ -501,7 +489,7 @@ AC_SUBST(RUBY)
 AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
 
 AM_CONDITIONAL([WITH_UNIT_TEST],
-               [test "$ac_cv_use_cutter" != "no" -o \
+               [test "$cutter_use_cutter" != "no" -o \
                      "$ac_cv_ruby_available" = "yes"])
 
 # libedit
