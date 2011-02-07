@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -5818,7 +5818,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   break;
                 case GRN_PROC :
                   GET_PATH(spec, buffer, s, id);
-                  grn_db_register(ctx, buffer);
+                  grn_plugin_register_by_path(ctx, buffer);
                   break;
                 case GRN_EXPR :
                   {

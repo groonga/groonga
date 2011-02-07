@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2010 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -60,6 +60,45 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
 #define GRN_PLUGIN_FUNC_PREFIX "grn_plugin_impl_"
 
 static grn_rc
+grn_plugin_call_init (grn_ctx *ctx, grn_id id)
+{
+  grn_plugin *plugin;
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (plugin->init_func) {
+    return plugin->init_func(ctx);
+  }
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_plugin_call_register(grn_ctx *ctx, grn_id id)
+{
+  grn_plugin *plugin;
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (plugin->register_func) {
+    return plugin->register_func(ctx);
+  }
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_plugin_call_fin(grn_ctx *ctx, grn_id id)
+{
+  grn_plugin *plugin;
+  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (plugin->fin_func) {
+    return plugin->fin_func(ctx);
+  }
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
                       grn_dl dl, grn_id id, const char *path)
 {
@@ -92,7 +131,7 @@ grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
 
   if (!ctx->rc) {
     ctx->impl->plugin_path = path;
-    grn_plugin_init(ctx, id);
+    grn_plugin_call_init(ctx, id);
     ctx->impl->plugin_path = NULL;
   }
 
@@ -149,7 +188,7 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
 {
   grn_plugin *plugin;
 
-  grn_plugin_fin(ctx, id);
+  grn_plugin_call_fin(ctx, id);
   if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -181,45 +220,6 @@ grn_plugin_sym(grn_ctx *ctx, grn_id id, const char *symbol)
 }
 
 grn_rc
-grn_plugin_init (grn_ctx *ctx, grn_id id)
-{
-  grn_plugin *plugin;
-  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (plugin->init_func) {
-    return plugin->init_func(ctx);
-  }
-  return GRN_SUCCESS;
-}
-
-grn_rc
-grn_plugin_register (grn_ctx *ctx, grn_id id)
-{
-  grn_plugin *plugin;
-  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (plugin->register_func) {
-    return plugin->register_func(ctx);
-  }
-  return GRN_SUCCESS;
-}
-
-grn_rc
-grn_plugin_fin(grn_ctx *ctx, grn_id id)
-{
-  grn_plugin *plugin;
-  if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (plugin->fin_func) {
-    return plugin->fin_func(ctx);
-  }
-  return GRN_SUCCESS;
-}
-
-grn_rc
 grn_plugins_init(void)
 {
   grn_plugins = grn_hash_create(&grn_gctx, NULL, PATH_MAX, sizeof(grn_plugin *),
@@ -240,7 +240,7 @@ grn_plugins_fin(void)
 }
 
 grn_rc
-grn_db_register(grn_ctx *ctx, const char *path)
+grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 {
   grn_id id;
   grn_obj *db;
@@ -296,7 +296,7 @@ grn_db_register(grn_ctx *ctx, const char *path)
 
     if (id) {
       ctx->impl->plugin_path = path;
-      ctx->rc = grn_plugin_register(ctx, id);
+      ctx->rc = grn_plugin_call_register(ctx, id);
       ctx->impl->plugin_path = NULL;
       if (ctx->rc) {
         grn_plugin_close(ctx, id);
@@ -368,7 +368,7 @@ default_plugins_dir(void)
 #endif /* WIN32 */
 
 grn_rc
-grn_db_register_by_name(grn_ctx *ctx, const char *name)
+grn_plugin_register(grn_ctx *ctx, const char *name)
 {
   const char *plugins_dir;
   char dir_last_char;
@@ -384,5 +384,5 @@ grn_db_register_by_name(grn_ctx *ctx, const char *name)
     strcat(path, PATH_SEPARATOR);
   }
   strcat(path, name);
-  return grn_db_register(ctx, path);
+  return grn_plugin_register_by_path(ctx, path);
 }

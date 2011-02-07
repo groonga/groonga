@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -544,7 +544,7 @@ grn_db_init_mecab_tokenizer(grn_ctx *ctx)
   case GRN_ENC_EUC_JP :
   case GRN_ENC_UTF8 :
   case GRN_ENC_SJIS :
-    return grn_db_register_by_name(ctx, "tokenizers/mecab");
+    return grn_plugin_register(ctx, "tokenizers/mecab");
   default :
     return GRN_OPERATION_NOT_SUPPORTED;
   }

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2010 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2004,7 +2004,7 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (GRN_TEXT_LEN(VAR(0))) {
     const char *name;
     name = GRN_TEXT_VALUE(VAR(0));
-    grn_db_register_by_name(ctx, name);
+    grn_plugin_register(ctx, name);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "path is required");
   }
