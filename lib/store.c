@@ -25,12 +25,11 @@
 
 #define GRN_RA_SEGMENT_SIZE (1 << 22)
 
-grn_ra *
-grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
+static grn_ra *
+_grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_size)
 {
   grn_io *io;
   int max_segments, n_elm, w_elm;
-  grn_ra *ra = NULL;
   struct grn_ra_header *header;
   unsigned actual_size;
   if (element_size > GRN_RA_SEGMENT_SIZE) {
@@ -46,10 +45,6 @@ grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
   header = grn_io_header(io);
   grn_io_set_type(io, GRN_COLUMN_FIX_SIZE);
   header->element_size = actual_size;
-  if (!(ra = GRN_GMALLOC(sizeof(grn_ra)))) {
-    grn_io_close(ctx, io);
-    return NULL;
-  }
   n_elm = GRN_RA_SEGMENT_SIZE / header->element_size;
   for (w_elm = 22; (1 << w_elm) > n_elm; w_elm--);
   GRN_DB_OBJ_SET_TYPE(ra, GRN_COLUMN_FIX_SIZE);
@@ -57,6 +52,20 @@ grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
   ra->header = header;
   ra->element_mask =  n_elm - 1;
   ra->element_width = w_elm;
+  return ra;
+}
+
+grn_ra *
+grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
+{
+  grn_ra *ra = NULL;
+  if (!(ra = GRN_GMALLOC(sizeof(grn_ra)))) {
+    return NULL;
+  }
+  if (!_grn_ra_create(ctx, ra, path, element_size)) {
+    GRN_FREE(ra);
+    return NULL;
+  }
   return ra;
 }
 
@@ -112,6 +121,32 @@ grn_ra_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(ctx, path);
+}
+
+grn_rc
+grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
+{
+  grn_rc rc;
+  char *path;
+  unsigned int element_size;
+  if ((path = (char *)grn_io_path(ra->io)) && *path != '\0') {
+    if (!(path = GRN_STRDUP(path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  } else {
+    path = NULL;
+  }
+  element_size = ra->header->element_size;
+  if ((rc = grn_io_close(ctx, ra->io))) { goto exit; }
+  ra->io = NULL;
+  if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
+  if (!_grn_ra_create(ctx, ra, path, element_size)) {
+    rc = GRN_UNKNOWN_ERROR;
+  }
+exit:
+  if (path) { GRN_FREE(path); }
+  return rc;
 }
 
 void *
@@ -272,12 +307,12 @@ struct grn_ja_header {
 #define SEGMENTS_GINFO_ON(ja,seg,width) (SEGMENTS_AT(ja,seg) = SEG_GINFO|(width))
 #define SEGMENTS_OFF(ja,seg) (SEGMENTS_AT(ja,seg) = 0)
 
-grn_ja *
-grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uint32_t flags)
+static grn_ja *
+_grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
+               unsigned int max_element_size, uint32_t flags)
 {
   int i;
   grn_io *io;
-  grn_ja *ja = NULL;
   struct grn_ja_header *header;
   io = grn_io_create(ctx, path, sizeof(struct grn_ja_header),
                      JA_SEGMENT_SIZE, JA_N_DSEGMENTS, grn_io_auto,
@@ -288,16 +323,26 @@ grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uin
   header->curr_pos = JA_SEGMENT_SIZE;
   header->flags = flags;
   for (i = 0; i < JA_N_ESEGMENTS; i++) { header->esegs[i] = JA_ESEG_VOID; }
-  if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
-    grn_io_close(ctx, io);
-    return NULL;
-  }
   GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
   ja->io = io;
   ja->header = header;
   header->max_element_size = max_element_size;
   SEGMENTS_EINFO_ON(ja, 0, 0);
   header->esegs[0] = 0;
+  return ja;
+}
+
+grn_ja *
+grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uint32_t flags)
+{
+  grn_ja *ja = NULL;
+  if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
+    return NULL;
+  }
+  if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
+    GRN_FREE(ja);
+    return NULL;
+  }
   return ja;
 }
 
@@ -348,6 +393,34 @@ grn_ja_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(ctx, path);
+}
+
+grn_rc
+grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
+{
+  grn_rc rc;
+  char *path;
+  unsigned int max_element_size;
+  uint32_t flags;
+  if ((path = (char *)grn_io_path(ja->io)) && *path != '\0') {
+    if (!(path = GRN_STRDUP(path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  } else {
+    path = NULL;
+  }
+  max_element_size = ja->header->max_element_size;
+  flags = ja->header->flags;
+  if ((rc = grn_io_close(ctx, ja->io))) { goto exit; }
+  ja->io = NULL;
+  if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
+  if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
+    rc = GRN_UNKNOWN_ERROR;
+  }
+exit:
+  if (path) { GRN_FREE(path); }
+  return rc;
 }
 
 static void *

@@ -3389,12 +3389,11 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
 
 /* ii */
 
-grn_ii *
-grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
+static grn_ii *
+_grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uint32_t flags)
 {
   int i;
   grn_io *seg, *chunk;
-  grn_ii *ii;
   char path2[PATH_MAX];
   struct grn_ii_header *header;
   grn_obj_flags lflags;
@@ -3433,11 +3432,6 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
     header->free_chunks[i] = NOT_ASSIGNED;
     header->garbages[i] = NOT_ASSIGNED;
   }
-  if (!(ii = GRN_GMALLOC(sizeof(grn_ii)))) {
-    grn_io_close(ctx, seg);
-    grn_io_close(ctx, chunk);
-    return NULL;
-  }
   header->flags = flags;
   GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
   ii->seg = seg;
@@ -3453,6 +3447,20 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   return ii;
 }
 
+grn_ii *
+grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
+{
+  grn_ii *ii = NULL;
+  if (!(ii = GRN_GMALLOC(sizeof(grn_ii)))) {
+    return NULL;
+  }
+  if (!_grn_ii_create(ctx, ii, path, lexicon, flags)) {
+    GRN_FREE(ii);
+    return NULL;
+  }
+  return ii;
+}
+
 grn_rc
 grn_ii_remove(grn_ctx *ctx, const char *path)
 {
@@ -3463,6 +3471,46 @@ grn_ii_remove(grn_ctx *ctx, const char *path)
   snprintf(buffer, PATH_MAX, "%s.c", path);
   rc = grn_io_remove(ctx, buffer);
 exit :
+  return rc;
+}
+
+grn_rc
+grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
+{
+  grn_rc rc;
+  char *segpath, *chunkpath;
+  grn_obj *lexicon;
+  uint32_t flags;
+  if ((segpath = (char *)grn_io_path(ii->seg)) && *segpath != '\0') {
+    if (!(segpath = GRN_STRDUP(segpath))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    if ((chunkpath = (char *)grn_io_path(ii->chunk)) && *chunkpath != '\0') {
+      if (!(chunkpath = GRN_STRDUP(chunkpath))) {
+        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+    } else {
+      chunkpath = NULL;
+    }
+  } else {
+    segpath = NULL;
+  }
+  lexicon = ii->lexicon;
+  flags = ii->header->flags;
+  if ((rc = grn_io_close(ctx, ii->seg))) { goto exit; }
+  if ((rc = grn_io_close(ctx, ii->seg))) { goto exit; }
+  ii->seg = NULL;
+  ii->chunk = NULL;
+  if (segpath && (rc = grn_io_remove(ctx, segpath))) { goto exit; }
+  if (chunkpath && (rc = grn_io_remove(ctx, chunkpath))) { goto exit; }
+  if (!_grn_ii_create(ctx, ii, segpath, lexicon, flags)) {
+    rc = GRN_UNKNOWN_ERROR;
+  }
+exit:
+  if (segpath) { GRN_FREE(segpath); }
+  if (chunkpath) { GRN_FREE(chunkpath); }
   return rc;
 }
 
