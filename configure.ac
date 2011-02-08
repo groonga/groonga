@@ -424,8 +424,8 @@ m4_ifdef([AC_CHECK_GCUTTER],
          [AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)],
          [cutter_use_cutter="no"])
 
-AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" != "no"])
-if test "$cutter_use_cutter" != "no"; then
+AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" = "yes"])
+if test "$cutter_use_cutter" = "yes"; then
   AC_DEFINE(WITH_CUTTER, 1, [Define to 1 if you use Cutter])
 
   ac_cv_have_libmemcached=no
@@ -489,7 +489,7 @@ AC_SUBST(RUBY)
 AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
 
 AM_CONDITIONAL([WITH_UNIT_TEST],
-               [test "$cutter_use_cutter" != "no" -o \
+               [test "$cutter_use_cutter" = "yes" -o \
                      "$ac_cv_ruby_available" = "yes"])
 
 # libedit
