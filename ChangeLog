@@ -1,4 +1,80 @@
+2011-02-08 Kouhei Sutou <kou@clear-code.com>
+
+ * rpm/fedora/groonga.spec.in: don't require unused libraries.
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ 1.0.8 -> 1.1.0.
+
+ * doc/ja/source/news.txt: add 1.1.0 release entry.
+
+ * configure.ac: 1.0.8 -> 1.1.0.
+
+ * groonga.pc.in: add groonga_suggest_create_dataset variable.
+
+2011-02-07 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: require Cutter 1.1.6.
+
+ * test/unit/core/test-command-load.c: add a test for invalid load input
+ crash. #661
+
+2011-01-25 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/expr.c, test/unit/core/test-command-select-query.c: implement
+ "keyword*" syntax prefix search. #837.
+
+2011-02-07 Kouhei Sutou <kou@clear-code.com>
+
+ * include/groonga.h, lib/db.c, lib/plugin.c, lib/plugin_in.h, lib/proc.c,
+ lib/token.c: grn_db_register_by_name() -> grn_plugin_register(). #834
+
+2011-02-04 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/groonga_suggest_ddl.txt: Added a ddl documentation of suggest.
+
+2011-02-03 Kouhei Sutou <kou@clear-code.com>
+
+ * examples/dictionary/Makefile.am, examples/dictionary/edict/Makefile.am,
+ examples/dictionary/eijiro/Makefile.am,
+ examples/dictionary/gene95/Makefile.am,
+ examples/dictionary/jmdict/Makefile.am: use _SCRIPTS instead of _DATA.
+ Suggested by Daiki Ueno. Thanks!!!
+
+2011-02-02 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/ctx.c: fix nsec -> usec conversion for log timestamp.
+
+2011-02-02 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/token.c: Added a new tokenizer TokenDelimitNull.
+
+2011-02-02 Kouhei Sutou <kou@clear-code.com>
+
+ * Makefile.am: add a release process memo.
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ add 1.0.8 entry.
+
+ * configure.ac: 1.0.7 -> 1.0.8.
+
+ * doc/ja/source/news.txt: add 1.0.8 entry.
+
 2011-01-28 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/store.c: add missing GRN_IO_SEG_UNREF(). #846
+
+2011-02-01 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/store.c: Fixed the Bug #844.
+
+2011-01-29 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-command-delete.c: add a test for deleting breaks data.
+ #844
+
+2011-01-28 Kouhei Sutou <kou@clear-code.com>
+
+ * ChangeLog: update ChangeLog.
 
  * src/suggest/Makefile.am: disable suggest on Windows.
 
