@@ -4,6 +4,7 @@ bindir=@bindir@
 libdir=@libdir@
 includedir=@includedir@
 groonga=${bindir}/groonga@EXEEXT@
+groonga_suggest_create_dataset=${bindir}/groonga-suggest-create-dataset@EXEEXT@
 
 Name: Groonga
 Description: An Embeddable Fulltext Search Engine
