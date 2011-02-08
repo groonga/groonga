@@ -4,6 +4,12 @@ AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
+# for Autoconf 2.60 earlier.
+if test -z "${datarootdir}"; then
+   datarootdir="\${prefix}/share"
+   AC_SUBST(datarootdir)
+fi
+
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED(HOST_CPU, ["$host_cpu"], [host CPU])
 AC_DEFINE_UNQUOTED(HOST_OS, ["$host_os"], [host OS])
