@@ -5,6 +5,31 @@
 お知らせ
 ========
 
+1.1.0リリース - 2011/02/09
+--------------------------
+
+改良
+++++
+
+* TokenDelimitNullトークナイザーを追加。
+* プラグイン登録APIの名前を改良。
+  grn_db_register_by_name() -> grn_plugin_register() #834
+* :ref:`select` の--query内で前方一致検索構文"キーワード*"対応。 #837
+* groonga.pcにgroonga-suggest-create-datasetのパスが設定されている
+  groonga_suggest_create_dataset変数を追加。
+
+修正
+++++
+
+* ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。
+* サンプル内のスクリプトに実行属性がつかない問題を修正。
+  （Daiki Uenoさんが報告）
+
+感謝
+++++
+
+* Daiki Uenoさん
+
 1.0.8リリース - 2011/02/02
 --------------------------
 

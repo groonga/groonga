@@ -118,7 +118,7 @@ grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
   snprintf(buf, GRN_TIMEVAL_STR_SIZE - 1, GRN_TIMEVAL_STR_FORMAT,
            ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
            ltm->tm_hour, ltm->tm_min, ltm->tm_sec,
-           (int)(tv->tv_nsec / GRN_TIME_NSEC_PER_SEC * GRN_TIME_USEC_PER_SEC));
+           (int)(GRN_TIME_NSEC_TO_USEC(tv->tv_nsec)));
   buf[GRN_TIMEVAL_STR_SIZE - 1] = '\0';
   return ctx->rc;
 }

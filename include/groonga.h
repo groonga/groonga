@@ -1,4 +1,4 @@
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -586,8 +586,8 @@ GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
                                  grn_obj_flags flags, unsigned int size);
 
-GRN_API grn_rc grn_db_register(grn_ctx *ctx, const char *path);
-GRN_API grn_rc grn_db_register_by_name(grn_ctx *ctx, const char *name);
+GRN_API grn_rc grn_plugin_register(grn_ctx *ctx, const char *name);
+GRN_API grn_rc grn_plugin_register_by_path(grn_ctx *ctx, const char *path);
 
 /**
  * grn_proc_create:

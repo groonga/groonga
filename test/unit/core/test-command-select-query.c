@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright(C) 2010 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2010-2011 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
 void test_int64_compare_over_int32(void);
 void test_int64_compare_float_literal(void);
 void test_int32_key_table_reference_compare(void);
+void test_prefix_search(void);
 
 static gchar *tmp_directory;
 
@@ -126,5 +127,23 @@ test_int32_key_table_reference_compare(void)
        "[[\"_id\",\"UInt32\"],[\"id\",\"IDs\"]],"
        "[1,29]]]",
     send_command("select Users --query id:<30"));
+}
+
+void
+test_prefix_search(void)
+{
+  assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
+  assert_send_command("load --table Users\n"
+                      "[\n"
+                      "{\"_key\":\"mori\"},\n"
+                      "{\"_key\":\"morita\"},\n"
+                      "{\"_key\":\"mona\"}\n"
+                      "]");
+  cut_assert_equal_string(
+      "[[[2],"
+       "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"]],"
+       "[2,\"morita\"],"
+       "[1,\"mori\"]]]",
+    send_command("select Users --match_columns _key --query mor*"));
 }
 

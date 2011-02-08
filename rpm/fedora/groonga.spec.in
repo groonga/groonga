@@ -12,8 +12,8 @@ Source0:	http://groonga.org/files/groonga/groonga-%{version}.tar.gz
 
 BuildRequires:	mecab-devel
 #BuildRequires:	messagepack-devel
-BuildRequires:	zeromq-devel
-BuildRequires:	libevent-devel
+#BuildRequires:	zeromq-devel
+#BuildRequires:	libevent-devel
 BuildRequires:	python2-devel
 BuildRequires:	php-devel
 Requires:	%{name}-libs = %{version}-%{release}
@@ -70,8 +70,8 @@ Summary:	Suggest plugin for groonga
 Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
 #Requires:	messagepack
-Requires:	zeromq
-Requires:	libevent
+#Requires:	zeromq
+#Requires:	libevent
 
 %description plugin-suggest
 Sugget plugin for groonga
@@ -277,6 +277,9 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
+* Wed Feb 09 2011 Kouhei Sutou <kou@clear-code.com> - 1.1.0-0
+- new upstream release.
+
 * Wed Feb 02 2011 Kouhei Sutou <kou@clear-code.com> - 1.0.8-0
 - new upstream release.
 
