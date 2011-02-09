@@ -106,6 +106,13 @@ Mac OS X (MacPorts)
   % (echo; echo file://$HOME/groonga-macports) | sudo sh -c "cat >> /opt/local/etc/macports/sources.conf"
   % sudo port install groonga
 
+Mac OS X (Homebrew)
+-------------------
+
+インストール::
+
+  % brew install groonga
+
 その他
 ------
 
