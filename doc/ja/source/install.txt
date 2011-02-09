@@ -97,6 +97,15 @@ Fedora 14
   % sudo yum update
   % sudo yum install -y groonga groonga-tokenizer-mecab groonga-devel
 
+Mac OS X (MacPorts)
+-------------------
+
+インストール::
+
+  % git clone https://github.com/groonga/macports.git ~/groonga-macports
+  % (echo; echo file://$HOME/groonga-macports) | sudo sh -c "cat >> /opt/local/etc/macports/sources.conf"
+  % sudo port install groonga
+
 その他
 ------
 
