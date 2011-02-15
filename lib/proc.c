@@ -2286,7 +2286,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[13], "drilldown_offset");
   DEF_VAR(vars[14], "drilldown_limit");
   DEF_VAR(vars[15], "cache");
-  DEF_VAR(vars[16], "query_escalation_threshold");
+  DEF_VAR(vars[16], "match_escalation_threshold");
   DEF_COMMAND("define_selector", proc_define_selector, 17, vars);
   DEF_COMMAND("select", proc_select, 16, vars + 1);
 
