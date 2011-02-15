@@ -145,7 +145,7 @@ AC_CONFIG_FILES([Makefile
                  test/benchmark/lib/Makefile
                 ])
 
-AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h pthread.h sys/resource.h)
+AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h sys/resource.h)
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h sys/sysctl.h)
 AC_CHECK_HEADERS(time.h)
@@ -203,6 +203,7 @@ AC_DEFINE_UNQUOTED(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GRN_DEFAULT_MATCH_ES
 
 AC_CHECK_LIB(m, log, [M_LIBS="-lm"], [AC_MSG_ERROR("No libm found")])
 if test "$os_win32" != "yes"; then
+  AC_CHECK_HEADERS(pthread.h)
   AC_CHECK_LIB(pthread, pthread_mutex_init,
                [PTHREAD_LIBS="-lpthread"],
                [AC_MSG_ERROR("No libpthread found")])
