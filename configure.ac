@@ -42,8 +42,9 @@ AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
 AC_C_BIGENDIAN
 AC_PROG_CC
 AM_PROG_CC_C_O
-PKG_PROG_PKG_CONFIG([0.19])
-m4_pattern_allow(PKG_CONFIG_LIBDIR)
+m4_ifdef([PKG_PROG_PKG_CONFIG],
+         [PKG_PROG_PKG_CONFIG([0.19])
+          m4_pattern_allow(PKG_CONFIG_LIBDIR)])
 AC_DEFUN([CHECK_CFLAG], [
   old_CFLAGS=$CFLAGS
   CFLAGS="$CFLAGS $1 -Werror"
