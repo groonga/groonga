@@ -767,8 +767,8 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     grn_obj *expr = ctx->impl->curr_expr;
     grn_obj *jsonp_func = NULL;
     if (expr) {
-      expr = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
-                              strlen(JSON_CALLBACK_PARAM));
+      jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
+                                    strlen(JSON_CALLBACK_PARAM));
     }
     if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
       GRN_TEXT_PUT(ctx, &head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
