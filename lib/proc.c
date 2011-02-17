@@ -2003,6 +2003,7 @@ proc_register(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   if (GRN_TEXT_LEN(VAR(0))) {
     const char *name;
+    GRN_TEXT_PUTC(ctx, VAR(0), '\0');
     name = GRN_TEXT_VALUE(VAR(0));
     grn_plugin_register(ctx, name);
   } else {
