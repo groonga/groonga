@@ -27,11 +27,13 @@ DEFAULT_INCLUDES = 				\
 groonga_suggest_learner_SOURCES = groonga_suggest_learner.c
 groonga_suggest_learner_CFLAGS =		\
 	$(AM_CFLAGS)				\
+	$(LIBEVENT_CFLAGS)			\
 	$(LIBZMQ_CFLAGS)			\
 	$(MESSAGE_PACK_CFLAGS)
 groonga_suggest_learner_LDADD =			\
 	libutil.la				\
 	$(top_builddir)/lib/libgroonga.la	\
+	$(LIBEVENT_LIBS)			\
 	$(LIBZMQ_LIBS)				\
 	$(MESSAGE_PACK_LIBS)
 
@@ -55,3 +57,6 @@ groonga_suggest_create_dataset_LDADD =		\
 	$(top_builddir)/lib/libgroonga.la
 
 libutil_la_SOURCES = util.c util.h
+libutil_la_CFLAGS =			\
+	$(AM_CFLAGS)				\
+	$(LIBEVENT_CFLAGS)

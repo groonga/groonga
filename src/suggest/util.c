@@ -15,13 +15,17 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <stdio.h>
+#include <string.h>
+#include <stdint.h>
 #include <stdarg.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/queue.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#include "util.h"
 
 int
 print_error(const char *format, ...)
@@ -73,4 +77,61 @@ daemonize(void)
     }
   }
   return 1;
+}
+
+static uint64_t
+atouint64_t(const char *s)
+{
+  uint64_t r;
+  for (r = 0; *s; s++) {
+    r *= 10;
+    r += (*s - '0');
+  }
+  return r;
+}
+
+void
+parse_keyval(struct evkeyvalq *get_args,
+             const char **query, const char **types,
+             const char **client_id, const char **target_name,
+             const char **learn_target_name,
+             const char **callback,
+             uint64_t *millisec)
+{
+  struct evkeyval *get;
+
+  *query = *types = *client_id = *target_name =
+    *learn_target_name = *callback = NULL;
+  *millisec = 0;
+
+  TAILQ_FOREACH(get, get_args, next) {
+    switch(get->key[0]) {
+    case 'q':
+      *query = get->value;
+      break;
+    case 't':
+      /* TODO: check types */
+      *types = get->value;
+      break;
+    case 'i':
+      *client_id = get->value;
+    case 'c':
+      if (!strcmp(get->key, "callback")) {
+        *callback = get->value;
+      }
+      break;
+    case 's':
+      *millisec = atouint64_t(get->value);
+      break;
+    case 'n':
+      /* TODO: check target_name */
+      *target_name = get->value;
+      break;
+    case 'l':
+      *learn_target_name = get->value;
+      break;
+    default:
+      break;
+    }
+  }
 }

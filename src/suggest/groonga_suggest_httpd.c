@@ -79,17 +79,6 @@ static uint32_t default_max_threads = DEFAULT_MAX_THREADS;
 static volatile sig_atomic_t loop = 1;
 static grn_obj *db;
 
-static uint64_t
-atouint64_t(const char *s)
-{
-  uint64_t r;
-  for (r = 0; *s; s++) {
-    r *= 10;
-    r += (*s - '0');
-  }
-  return r;
-}
-
 static int
 suggest_result(struct evbuffer *res_buf, const char *types, const char *query, const char *target_name, grn_obj *cmd_buf, grn_ctx *ctx)
 {
@@ -121,42 +110,13 @@ suggest_result(struct evbuffer *res_buf, const char *types, const char *query, c
 static int
 log_send(struct evbuffer *res_buf, thd_data *thd, struct evkeyvalq *get_args)
 {
-  uint64_t millisec = 0;
-  const char *callback = NULL, *types = NULL, *query = NULL,
-             *client_id = NULL, *target_name = NULL,
-             *learn_target_name = NULL;
-  struct evkeyval *get;
+  uint64_t millisec;
+  const char *callback, *types, *query, *client_id, *target_name,
+             *learn_target_name;
 
-  TAILQ_FOREACH(get, get_args, next) {
-    switch(get->key[0]) {
-    case 't':
-      /* TODO: check types */
-      types = get->value;
-      break;
-    case 'i':
-      client_id = get->value;
-    case 'c':
-      if (!strcmp(get->key, "callback")) {
-        callback = get->value;
-      }
-      break;
-    case 'q':
-      query = get->value;
-      break;
-    case 's':
-      millisec = atouint64_t(get->value);
-      break;
-    case 'n':
-      /* TODO: check target_name */
-      target_name = get->value;
-      break;
-    case 'l':
-      learn_target_name = get->value;
-      break;
-    default:
-      break;
-    }
-  }
+  parse_keyval(get_args, &query, &types, &client_id, &target_name,
+               &learn_target_name, &callback, &millisec);
+
   /* send data to learn client */
   if (thd->zmq_sock && millisec && client_id && query && learn_target_name) {
     char c;

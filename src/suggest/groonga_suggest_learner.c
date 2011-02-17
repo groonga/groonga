@@ -24,6 +24,8 @@
 
 #include "util.h"
 
+#include <evhttp.h>
+
 #define DEFAULT_RECV_ENDPOINT "tcp://*:1234"
 #define DEFAULT_SEND_ENDPOINT "tcp://*:1235"
 #define SEND_WAIT 1000 /* 0.001sec */
@@ -79,6 +81,43 @@ load_to_groonga(grn_ctx *ctx,
     int flags;
     unsigned int res_len;
     grn_ctx_recv(ctx, &res, &res_len, &flags);
+  }
+}
+
+void
+load_to_multi_targets(grn_ctx *ctx,
+                      grn_obj *buf,
+                      const char *query, uint32_t query_len,
+                      const char *client_id, uint32_t client_id_len,
+                      const char *learn_target_names,
+                      uint32_t learn_target_names_len,
+                      uint64_t millisec,
+                      int submit)
+{
+  if (millisec && query && client_id && learn_target_names) {
+    unsigned int tn_len;
+    const char *tn, *tnp, *tne;
+    tn = tnp = learn_target_names;
+    tne = learn_target_names + learn_target_names_len;
+    while (tnp <= tne) {
+      if (tnp == tne || *tnp == '|') {
+        tn_len = tnp - tn;
+
+        /*
+        printf("sec: %llu query %.*s client_id: %.*s target: %.*s\n",
+          millisec,
+          query_len, query,
+          client_id_len, client_id,
+          tn_len, tn);
+        */
+        load_to_groonga(ctx, buf, query, query_len, client_id, client_id_len,
+                        tn, tn_len, millisec, submit);
+
+        tn = ++tnp;
+      } else {
+        tnp++;
+      }
+    }
   }
 }
 
@@ -397,36 +436,15 @@ handle_msg(msgpack_object *obj, grn_ctx *ctx, grn_obj *buf)
         }
       }
     }
-    if (millisec && query && client_id && learn_target_names) {
-      unsigned int tn_len;
-      const char *tn, *tnp, *tne;
-      tn = tnp = learn_target_names;
-      tne = learn_target_names + learn_target_names_len;
-      while (tnp <= tne) {
-        if (tnp == tne || *tnp == '|') {
-          tn_len = tnp - tn;
-
-          /*
-          printf("sec: %llu query %.*s client_id: %.*s target: %.*s\n",
-            millisec,
-            query_len, query,
-            client_id_len, client_id,
-            tn_len, tn);
-          */
-          load_to_groonga(ctx, buf, query, query_len, client_id, client_id_len,
-                          tn, tn_len, millisec, submit_flag);
-
-          tn = ++tnp;
-        } else {
-          tnp++;
-        }
-      }
-    }
+    load_to_multi_targets(ctx, buf, query, query_len,
+                          client_id, client_id_len,
+                          learn_target_names, learn_target_names_len,
+                          millisec, submit_flag);
   }
 }
 
 static void
-event_loop(msgpack_zone *mempool, void *zmq_sock, grn_ctx *ctx)
+recv_event_loop(msgpack_zone *mempool, void *zmq_sock, grn_ctx *ctx)
 {
   grn_obj buf;
   zmq_pollitem_t items[] = {
@@ -459,6 +477,51 @@ event_loop(msgpack_zone *mempool, void *zmq_sock, grn_ctx *ctx)
   grn_obj_unlink(ctx, &buf);
 }
 
+#define MAX_LOG_LENGTH 0x2000
+
+static void
+load_log(grn_ctx *ctx, const char *log_file_name)
+{
+  FILE *fp;
+  if ((fp = fopen(log_file_name, "r"))) {
+    grn_obj buf;
+    char line_buf[MAX_LOG_LENGTH];
+
+    GRN_TEXT_INIT(&buf, 0);
+    while (fgets(line_buf, MAX_LOG_LENGTH, fp)) {
+      if (strrchr(line_buf, '\n')) {
+        uint64_t millisec;
+        struct evkeyvalq get_args;
+        const char *callback, *types, *query, *client_id, *target_name,
+                   *learn_target_name;
+        {
+          char *uri = evhttp_decode_uri(line_buf);
+          evhttp_parse_query(uri, &get_args);
+          free(uri);
+        }
+        parse_keyval(&get_args, &query, &types, &client_id, &target_name,
+                     &learn_target_name, &callback, &millisec);
+
+        if (query && client_id && learn_target_name && millisec) {
+          load_to_multi_targets(ctx, &buf, query, strlen(query),
+                                client_id, strlen(client_id),
+                                learn_target_name, strlen(learn_target_name),
+                                millisec,
+                                types && !strcmp(types, "submit"));
+        }
+
+        evhttp_clear_headers(&get_args);
+      } else {
+        while (1) {
+          int c = fgetc(fp);
+          if (c == '\n' || c == EOF) { break; }
+        }
+      }
+    }
+    grn_obj_close(ctx, &buf);
+  }
+}
+
 static void
 usage(FILE *output)
 {
@@ -467,6 +530,7 @@ usage(FILE *output)
           "options:\n"
           "  -r <recv endpoint>: recv endpoint (default: %s)\n"
           "  -s <send endpoint>: send endpoint (default: %s)\n"
+          "  -l <logfile>      : load from log file of webserver.\n"
           "  -d                : daemonize\n",
           DEFAULT_RECV_ENDPOINT, DEFAULT_SEND_ENDPOINT);
 }
@@ -482,13 +546,14 @@ main(int argc, char **argv)
 {
   int daemon = 0;
   const char *recv_endpoint = DEFAULT_RECV_ENDPOINT,
-             *send_endpoint = DEFAULT_SEND_ENDPOINT;
+             *send_endpoint = DEFAULT_SEND_ENDPOINT,
+             *load_logfile_name = NULL;
 
   /* parse options */
   {
     int ch;
 
-    while ((ch = getopt(argc, argv, "r:s:d")) != -1) {
+    while ((ch = getopt(argc, argv, "r:s:dl:")) != -1) {
       switch(ch) {
       case 'r':
         recv_endpoint = optarg;
@@ -498,6 +563,9 @@ main(int argc, char **argv)
         break;
       case 'd':
         daemon = 1;
+        break;
+      case 'l':
+        load_logfile_name = optarg;
         break;
       }
     }
@@ -525,33 +593,39 @@ main(int argc, char **argv)
     if (!(grn_db_open(ctx, argv[0]))) {
       print_error("cannot open database.");
     } else {
-      if (!(mempool = msgpack_zone_new(MSGPACK_ZONE_CHUNK_SIZE))) {
-        print_error("cannot create msgpack zone.");
+      if (load_logfile_name) {
+        /* loading log mode */
+        load_log(ctx, load_logfile_name);
       } else {
-        void *zmq_ctx, *zmq_recv_sock;
-        if (!(zmq_ctx = zmq_init(1))) {
-          print_error("cannot create zmq context.");
+        /* zeromq/msgpack recv mode */
+        if (!(mempool = msgpack_zone_new(MSGPACK_ZONE_CHUNK_SIZE))) {
+          print_error("cannot create msgpack zone.");
         } else {
-          if (!(zmq_recv_sock = zmq_socket(zmq_ctx, ZMQ_SUB))) {
-            print_error("cannot create zmq_socket.");
-          } else if (zmq_bind(zmq_recv_sock, recv_endpoint)) {
-            print_error("cannot bind zmq_socket.");
+          void *zmq_ctx, *zmq_recv_sock;
+          if (!(zmq_ctx = zmq_init(1))) {
+            print_error("cannot create zmq context.");
           } else {
-            send_thd_data thd;
-            zmq_setsockopt(zmq_recv_sock, ZMQ_SUBSCRIBE, "", 0);
-            thd.db_path = argv[0];
-            thd.send_endpoint = send_endpoint;
-            thd.zmq_ctx = zmq_ctx;
+            if (!(zmq_recv_sock = zmq_socket(zmq_ctx, ZMQ_SUB))) {
+              print_error("cannot create zmq_socket.");
+            } else if (zmq_bind(zmq_recv_sock, recv_endpoint)) {
+              print_error("cannot bind zmq_socket.");
+            } else {
+              send_thd_data thd;
+              zmq_setsockopt(zmq_recv_sock, ZMQ_SUBSCRIBE, "", 0);
+              thd.db_path = argv[0];
+              thd.send_endpoint = send_endpoint;
+              thd.zmq_ctx = zmq_ctx;
 
-            if (pthread_create(&(thd.thd), NULL, send_to_httpd, &thd)) {
-              print_error("error in pthread_create() for sending datas.");
+              if (pthread_create(&(thd.thd), NULL, send_to_httpd, &thd)) {
+                print_error("error in pthread_create() for sending datas.");
+              }
+              recv_event_loop(mempool, zmq_recv_sock, ctx);
+              pthread_join(thd.thd, NULL);
             }
-            event_loop(mempool, zmq_recv_sock, ctx);
-            pthread_join(thd.thd, NULL);
+            zmq_term(zmq_ctx);
           }
-          zmq_term(zmq_ctx);
+          msgpack_zone_free(mempool);
         }
-        msgpack_zone_free(mempool);
       }
     }
     grn_obj_close(ctx, grn_ctx_db(ctx));
