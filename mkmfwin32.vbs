@@ -9,14 +9,14 @@ msgbox strarch
 
 
 dim PLUGINS_DIR, PLUGINS_DIR2, INSTALL_DIR, LOG_PATH, MECAB_LIB, CONFIG_PATH,DOCUMENT_ROOT, RELATIVE_PLUGINS_DIR
+INSTALL_DIR = "c:\groonga"
 PLUGINS_DIR = "c:\\groonga\\plugins"
 PLUGINS_DIR2 = "c:\groonga\plugins"
-INSTALL_DIR = "c:\windows\system32"
 LOG_PATH = "c:\\groonga\\log\\groonga.log"
 MECAB_LIB = "c:\program files\mecab\sdk\libmecab.lib"
 CONFIG_PATH ="c:\\groonga\\etc\\config"
 DOCUMENT_ROOT ="c:\\groonga\\data\\admin_html"
-RELATIVE_PLUGINS_DIR = "lib\\groonga\\plugins"
+RELATIVE_PLUGINS_DIR = "plugins"
 
 'control warning
 dim no_warning
