@@ -270,11 +270,11 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
       } else {
         const char *base_name;
 
-        base_name = strrchr(path, '/');
+        base_name = strrchr(path, PATH_SEPARATOR[0]);
         if (base_name) {
           complemented_libs_path[0] = '\0';
           strncat(complemented_libs_path, path, base_name - path);
-          strcat(complemented_libs_path, "/.libs");
+          strcat(complemented_libs_path, PATH_SEPARATOR ".libs");
           strcat(complemented_libs_path, base_name);
           strcat(complemented_libs_path, GRN_PLUGIN_SUFFIX);
           plugin_file = fopen(complemented_libs_path, "r");
@@ -363,8 +363,26 @@ default_plugins_dir(void)
   }
   return win32_plugins_dir;
 }
+
+static void
+normalize_path_separator(char *path)
+{
+  while (*path) {
+#ifdef __GNUC__
+    if (*path == '\\') {
+      *path = '/';
+    }
+#else  /* __GNUC__ */
+    if (*path == '/') {
+      *path = '\\';
+    }
+#endif /* __GNUC__ */
+    path++;
+  }
+}
 #else /* WIN32 */
 #  define default_plugins_dir() GRN_PLUGINS_DIR;
+#  define normalize_path_separator(path) path;
 #endif /* WIN32 */
 
 grn_rc
@@ -384,5 +402,6 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
     strcat(path, PATH_SEPARATOR);
   }
   strcat(path, name);
+  normalize_path_separator(path);
   return grn_plugin_register_by_path(ctx, path);
 }
