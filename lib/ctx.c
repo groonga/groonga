@@ -2388,9 +2388,8 @@ grn_ctx_log(grn_ctx *ctx, char *fmt, ...)
 {
   va_list argp;
   va_start(argp, fmt);
-  vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE - 1, fmt, argp);
+  vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, argp);
   va_end(argp);
-  ctx->errbuf[GRN_CTX_MSGSIZE - 1] = '\0';
 }
 
 void
