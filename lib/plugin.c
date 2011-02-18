@@ -365,24 +365,28 @@ default_plugins_dir(void)
 }
 
 static void
-normalize_path_separator(char *path)
+normalize_path_separator_in_path(char *path)
 {
-  while (*path) {
-#ifdef __GNUC__
+  for (; *path; path++) {
     if (*path == '\\') {
-      *path = '/';
+      *path = PATH_SEPARATOR[0];
     }
-#else  /* __GNUC__ */
-    if (*path == '/') {
-      *path = '\\';
+  }
+}
+
+static void
+normalize_path_separator_in_name(char *name)
+{
+  for (; *name; name++) {
+    if (*name == '/') {
+      *name = PATH_SEPARATOR[0];
     }
-#endif /* __GNUC__ */
-    path++;
   }
 }
 #else /* WIN32 */
 #  define default_plugins_dir() GRN_PLUGINS_DIR
-#  define normalize_path_separator(path)
+#  define normalize_path_separator_in_path(path)
+#  define normalize_path_separator_in_name(name)
 #endif /* WIN32 */
 
 grn_rc
@@ -391,6 +395,7 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
   const char *plugins_dir;
   char dir_last_char;
   char path[PATH_MAX];
+  char normalized_name[PATH_MAX];
   int name_length, max_name_length;
 
   plugins_dir = getenv("GRN_PLUGINS_DIR");
@@ -398,7 +403,9 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
     plugins_dir = default_plugins_dir();
   }
   strcpy(path, plugins_dir);
-  dir_last_char = plugins_dir[strlen(plugins_dir) - 1];
+  normalize_path_separator_in_path(path);
+
+  dir_last_char = plugins_dir[strlen(path) - 1];
   if (dir_last_char != PATH_SEPARATOR[0]) {
     strcat(path, PATH_SEPARATOR);
   }
@@ -412,7 +419,11 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
         path, name);
     return ctx->rc;
   }
-  strcat(path, name);
-  normalize_path_separator(path);
+
+  strcpy(normalized_name, name);
+  normalize_path_separator_in_name(normalized_name);
+
+  strcat(path, normalized_name);
+
   return grn_plugin_register_by_path(ctx, path);
 }
