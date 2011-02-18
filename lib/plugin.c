@@ -381,8 +381,8 @@ normalize_path_separator(char *path)
   }
 }
 #else /* WIN32 */
-#  define default_plugins_dir() GRN_PLUGINS_DIR;
-#  define normalize_path_separator(path) path;
+#  define default_plugins_dir() GRN_PLUGINS_DIR
+#  define normalize_path_separator(path)
 #endif /* WIN32 */
 
 grn_rc
