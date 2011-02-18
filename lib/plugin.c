@@ -391,6 +391,7 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
   const char *plugins_dir;
   char dir_last_char;
   char path[PATH_MAX];
+  int name_length, max_name_length;
 
   plugins_dir = getenv("GRN_PLUGINS_DIR");
   if (!plugins_dir) {
@@ -400,6 +401,16 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
   dir_last_char = plugins_dir[strlen(plugins_dir) - 1];
   if (dir_last_char != PATH_SEPARATOR[0]) {
     strcat(path, PATH_SEPARATOR);
+  }
+
+  name_length = strlen(name);
+  max_name_length = PATH_MAX - strlen(path) - 1;
+  if (name_length > max_name_length) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "plugin name is too long: %d (max: %d) <%s%s>",
+        name_length, max_name_length,
+        path, name);
+    return ctx->rc;
   }
   strcat(path, name);
   normalize_path_separator(path);
