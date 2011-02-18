@@ -70,9 +70,9 @@ sub common_header()
   ts.write "LINK=link.exe" + vbLf
   ts.write vbLf
   if use_debug = 1 then
-    ts.write "CFLAGS = /nologo /Od /W4 /MT /Zi -I../include " + no_warning + vbLf
+    ts.write "CFLAGS = /nologo /Od /W4 /MD /Zi -I../include " + no_warning + vbLf
   else
-    ts.write "CFLAGS = /nologo /Ox /W4 /MT /Zi -I../include " + no_warning + vbLf
+    ts.write "CFLAGS = /nologo /Ox /W4 /MD /Zi -I../include " + no_warning + vbLf
   end if
 
   ts.write "LDFLAGS = /nologo "
@@ -202,7 +202,7 @@ ts.write "        $(LINK) $(LDFLAGS) /out:$@.exe grntest.obj ../lib/libgroonga.l
 ts.write vbLf
 
 ts.write "install:" + vbLf
-ts.write "        copy groonga.exe "
+ts.write "        copy *.exe "
 ts.write INSTALL_DIR + vbLf
 
 ts.write "clean:" + vbLf
