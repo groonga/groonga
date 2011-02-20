@@ -63,4 +63,10 @@ class HTTPTest < Test::Unit::TestCase
       get(command_path(:shutdown))
     end
   end
+
+  def test_jsonp
+    response = get(command_path(:status, :callback => "func"))
+    assert_equal("application/json", response.content_type)
+    assert_match(/\Afunc\(.+\);\z/, response.body)
+  end
 end
