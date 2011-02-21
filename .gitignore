@@ -24,8 +24,9 @@
 /depcomp
 /dist
 /install-sh
-/libtool
+/libtool*
 /ltmain.sh
+/lt*.m4
 /missing
 /groonga.pc
 /groonga.spec
