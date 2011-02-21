@@ -1143,7 +1143,7 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
 
 typedef struct _grntest_worker {
   grn_ctx *ctx;
-  grn_obj *log;
+  grn_obj log;
   int task_id;
 } grntest_worker;
 
@@ -1153,7 +1153,7 @@ __stdcall
 worker(void *val)
 {
   grntest_worker *worker = val;
-  worker_sub(worker->ctx, worker->log, worker->task_id);
+  worker_sub(worker->ctx, &worker->log, worker->task_id);
   return 0;
 }
 #else
@@ -1161,14 +1161,14 @@ static void *
 worker(void *val)
 {
   grntest_worker *worker = val;
-  worker_sub(worker->ctx, worker->log, worker->task_id);
+  worker_sub(worker->ctx, &worker->log, worker->task_id);
   return NULL;
 }
 #endif /* WIN32 */
 
 #ifdef WIN32
 static int
-thread_main(grn_ctx *ctx, grn_obj *log, int num)
+thread_main(grn_ctx *ctx, int num)
 {
   int  i;
   int  ret;
@@ -1177,8 +1177,8 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
 
   for (i = 0; i < num; i++) {
     workers[i] = GRN_MALLOC(sizeof(grntest_worker));
-    workers[i]->ctx = ctx;
-    workers[i]->log = log;
+    workers[i]->ctx = &grntest_ctx[i];
+    GRN_TEXT_INIT(&workers[i]->log, 0);
     workers[i]->task_id = i;
     pthread[i] = (HANDLE)_beginthreadex(NULL, 0, worker, (void *)workers[i],
                                         0, NULL);
@@ -1196,13 +1196,14 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
 
   for (i = 0; i < num; i++) {
     CloseHandle(pthread[i]);
+    GRN_OBJ_FIN(workers[i]->ctx, &workers[i]->log);
     GRN_FREE(workers[i]);
   }
   return 0;
 }
 #else
 static int
-thread_main(grn_ctx *ctx, grn_obj *log, int num)
+thread_main(grn_ctx *ctx, int num)
 {
   intptr_t i;
   int ret;
@@ -1211,8 +1212,8 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
 
   for (i = 0; i < num; i++) {
     workers[i] = GRN_MALLOC(sizeof(grntest_worker));
-    workers[i]->ctx = ctx;
-    workers[i]->log = log;
+    workers[i]->ctx = &grntest_ctx[i];
+    GRN_TEXT_INIT(&workers[i]->log, 0);
     workers[i]->task_id = i;
     ret = pthread_create(&pthread[i], NULL, worker, (void *)workers[i]);
     if (ret) {
@@ -1223,6 +1224,7 @@ thread_main(grn_ctx *ctx, grn_obj *log, int num)
 
   for (i = 0; i < num; i++) {
     ret = pthread_join(pthread[i], NULL);
+    GRN_OBJ_FIN(workers[i]->ctx, &workers[i]->log);
     GRN_FREE(workers[i]);
     if (ret) {
       fprintf(stderr, "Cannot join thread:ret=%d\n", ret);
@@ -2016,12 +2018,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
     fflush(grntest_logfp);
   }
 
-  {
-    grn_obj log;
-    GRN_TEXT_INIT(&log, 0);
-    thread_main(ctx, &log, task_num);
-    GRN_OBJ_FIN(ctx, &log);
-  }
+  thread_main(ctx, task_num);
 
   for (i = 0; i < task_num; i++) {
     if (grntest_owndb[i]) {
