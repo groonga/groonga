@@ -1413,7 +1413,7 @@ get_sysinfo(const char *path, char *result, int olen)
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%s\n", cpustring);
   } else {
-    sprintf(tmpbuf, "  \"CPU\": %s\",\n", cpustring);
+    sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpustring);
   }
   strcat(result, tmpbuf);
 
