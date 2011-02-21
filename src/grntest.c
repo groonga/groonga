@@ -1874,7 +1874,6 @@ make_task_table(grn_ctx *ctx, int jobnum)
       continue;
     }
     for (j = 0; j < grntest_job[i].concurrency; j++) {
-      printf("wow: %d\n", j);
       if (j == 0) {
         grn_obj line;
         GRN_TEXT_INIT(&line, 0);
