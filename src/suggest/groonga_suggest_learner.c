@@ -21,6 +21,10 @@
 #include <msgpack.h>
 #include <pthread.h>
 #include <groonga.h>
+#include <inttypes.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #include "util.h"
 
@@ -104,7 +108,7 @@ load_to_multi_targets(grn_ctx *ctx,
         tn_len = tnp - tn;
 
         /*
-        printf("sec: %llu query %.*s client_id: %.*s target: %.*s\n",
+        printf("sec: %" PRIu64 " query %.*s client_id: %.*s target: %.*s\n",
           millisec,
           query_len, query,
           client_id_len, client_id,
@@ -477,49 +481,189 @@ recv_event_loop(msgpack_zone *mempool, void *zmq_sock, grn_ctx *ctx)
   grn_obj_unlink(ctx, &buf);
 }
 
+struct _suggest_log_file {
+  FILE *fp;
+  char *path;
+  uint64_t line;
+  /* datas from one line */
+  int submit;
+  char *query;
+  uint64_t millisec;
+  char *client_id;
+  char *learn_target_name;
+  /* link list */
+  struct _suggest_log_file *next;
+};
+typedef struct _suggest_log_file suggest_log_file;
+
+#if 0
+static void
+print_log_file_list(suggest_log_file *list)
+{
+  while (list) {
+    printf("fp:%p millisec:%" PRIu64 " next:%p\n",
+      list->fp, list->millisec, list->next);
+    list = list->next;
+  }
+}
+#endif
+
+static void
+free_log_line_data(suggest_log_file *l)
+{
+  if (l->query) {
+    free(l->query);
+    l->query = NULL;
+  }
+  if (l->client_id) {
+    free(l->client_id);
+    l->client_id = NULL;
+  }
+  if (l->learn_target_name) {
+    free(l->learn_target_name);
+    l->learn_target_name = NULL;
+  }
+}
+
 #define MAX_LOG_LENGTH 0x2000
 
 static void
-load_log(grn_ctx *ctx, const char *log_file_name)
+read_log_line(suggest_log_file **list)
 {
-  FILE *fp;
-  if ((fp = fopen(log_file_name, "r"))) {
-    grn_obj buf;
-    char line_buf[MAX_LOG_LENGTH];
-
-    GRN_TEXT_INIT(&buf, 0);
-    while (fgets(line_buf, MAX_LOG_LENGTH, fp)) {
-      if (strrchr(line_buf, '\n')) {
-        uint64_t millisec;
+  suggest_log_file *t = *list;
+  char line_buf[MAX_LOG_LENGTH];
+  while (1) {
+    free_log_line_data(t);
+    if (fgets(line_buf, MAX_LOG_LENGTH, t->fp)) {
+      char *eol;
+      t->line++;
+      if ((eol = strrchr(line_buf, '\n'))) {
+        const char *query, *types, *client_id, *learn_target_name;
         struct evkeyvalq get_args;
-        const char *callback, *types, *query, *client_id, *target_name,
-                   *learn_target_name;
-        {
-          char *uri = evhttp_decode_uri(line_buf);
-          evhttp_parse_query(uri, &get_args);
-          free(uri);
+        *eol = '\0';
+        evhttp_parse_query(line_buf, &get_args);
+        parse_keyval(&get_args, &query, &types, &client_id, NULL,
+                     &learn_target_name, NULL, &(t->millisec));
+        if (query && client_id && learn_target_name && t->millisec) {
+          t->query = evhttp_decode_uri(query);
+          t->submit = (types && !strcmp(types, "submit"));
+          t->client_id = evhttp_decode_uri(client_id);
+          t->learn_target_name = evhttp_decode_uri(learn_target_name);
+          evhttp_clear_headers(&get_args);
+          break;
         }
-        parse_keyval(&get_args, &query, &types, &client_id, &target_name,
-                     &learn_target_name, &callback, &millisec);
-
-        if (query && client_id && learn_target_name && millisec) {
-          load_to_multi_targets(ctx, &buf, query, strlen(query),
-                                client_id, strlen(client_id),
-                                learn_target_name, strlen(learn_target_name),
-                                millisec,
-                                types && !strcmp(types, "submit"));
-        }
-
+        print_error("invalid line path:%s line:%" PRIu64,
+          t->path, t->line);
         evhttp_clear_headers(&get_args);
       } else {
+        /* read until new line */
         while (1) {
-          int c = fgetc(fp);
+          int c = fgetc(t->fp);
           if (c == '\n' || c == EOF) { break; }
         }
       }
+    } else {
+      /* terminate reading log */
+      fclose(t->fp);
+      free(t->path);
+      *list = t->next;
+      free(t);
+      break;
     }
-    grn_obj_close(ctx, &buf);
   }
+}
+
+/* re-sorting by list->millisec asc with moving a head item. */
+static void
+sort_log_file_list(suggest_log_file **list)
+{
+  suggest_log_file *p, *target;
+  target = *list;
+  if (!target || !target->next || target->millisec < target->next->millisec) {
+    return;
+  }
+  *list = target->next;
+  for (p = *list; p; p = p->next) {
+    if (!p->next || target->millisec > p->next->millisec) {
+      target->next = p->next;
+      p->next = target;
+      return;
+    }
+  }
+}
+
+#define PATH_SEPARATOR '/'
+
+static suggest_log_file *
+gather_log_file(const char *dir_path, unsigned int dir_path_len)
+{
+  DIR *dir;
+  struct dirent *dirent;
+  char path[PATH_MAX + 1];
+  suggest_log_file *list = NULL;
+  if (!(dir = opendir(dir_path))) {
+    print_error("cannot open log directory.");
+    return NULL;
+  }
+  memcpy(path, dir_path, dir_path_len);
+  path[dir_path_len] = PATH_SEPARATOR;
+  while ((dirent = readdir(dir))) {
+    struct stat fstat;
+    unsigned int d_namlen, path_len;
+    if (*(dirent->d_name) == '.' && (
+      dirent->d_name[1] == '\0' ||
+        (dirent->d_name[1] == '.' && dirent->d_name[2] == '\0'))) {
+      continue;
+    }
+    d_namlen = strlen(dirent->d_name);
+    path_len = dir_path_len + 1 + d_namlen;
+    if (dir_path_len + d_namlen >= PATH_MAX) { continue; }
+    memcpy(path + dir_path_len + 1, dirent->d_name, d_namlen);
+    path[path_len] = '\0';
+    lstat(path, &fstat);
+    if (S_ISDIR(fstat.st_mode)) {
+      gather_log_file(path, path_len);
+    } else {
+      suggest_log_file *p = calloc(1, sizeof(suggest_log_file));
+      if (!(p->fp = fopen(path, "r"))) {
+        free(p);
+      } else {
+        if (list) {
+          p->next = list;
+        }
+        p->path = strdup(path);
+        list = p;
+        read_log_line(&list);
+        sort_log_file_list(&list);
+      }
+    }
+    /* print_log_file_list(list); */
+  }
+  return list;
+}
+
+static void
+load_log(grn_ctx *ctx, const char *log_dir_name)
+{
+  grn_obj buf;
+  suggest_log_file *list;
+  GRN_TEXT_INIT(&buf, 0);
+  list = gather_log_file(log_dir_name, strlen(log_dir_name));
+  while (list) {
+    /*
+    printf("file:%s line:%" PRIu64 " query:%s millisec:%" PRIu64 "\n",
+      list->path, list->line, list->query, list->millisec);
+    */
+    load_to_multi_targets(ctx, &buf,
+      list->query, strlen(list->query),
+      list->client_id, strlen(list->client_id),
+      list->learn_target_name, strlen(list->learn_target_name),
+      list->millisec,
+      list->submit);
+    read_log_line(&list);
+    sort_log_file_list(&list);
+  }
+  grn_obj_close(ctx, &buf);
 }
 
 static void
@@ -530,7 +674,7 @@ usage(FILE *output)
           "options:\n"
           "  -r <recv endpoint>: recv endpoint (default: %s)\n"
           "  -s <send endpoint>: send endpoint (default: %s)\n"
-          "  -l <logfile>      : load from log file of webserver.\n"
+          "  -l <log directory>: load from log files made on webserver.\n"
           "  -d                : daemonize\n",
           DEFAULT_RECV_ENDPOINT, DEFAULT_SEND_ENDPOINT);
 }

@@ -100,35 +100,52 @@ parse_keyval(struct evkeyvalq *get_args,
 {
   struct evkeyval *get;
 
-  *query = *types = *client_id = *target_name =
-    *learn_target_name = *callback = NULL;
-  *millisec = 0;
+  if (query) { *query = NULL; }
+  if (types) { *types = NULL; }
+  if (client_id) { *client_id = NULL; }
+  if (target_name) { *target_name = NULL; }
+  if (learn_target_name) { *learn_target_name = NULL; }
+  if (callback) { *callback = NULL; }
+  if (millisec) { *millisec = 0; }
 
   TAILQ_FOREACH(get, get_args, next) {
     switch(get->key[0]) {
     case 'q':
-      *query = get->value;
+      if (query) {
+        *query = get->value;
+      }
       break;
     case 't':
       /* TODO: check types */
-      *types = get->value;
+      if (types) {
+        *types = get->value;
+      }
       break;
     case 'i':
-      *client_id = get->value;
+      if (client_id) {
+        *client_id = get->value;
+      }
+      break;
     case 'c':
-      if (!strcmp(get->key, "callback")) {
+      if (!strcmp(get->key, "callback") && callback) {
         *callback = get->value;
       }
       break;
     case 's':
-      *millisec = atouint64_t(get->value);
+      if (millisec) {
+        *millisec = atouint64_t(get->value);
+      }
       break;
     case 'n':
       /* TODO: check target_name */
-      *target_name = get->value;
+      if (target_name) {
+        *target_name = get->value;
+      }
       break;
     case 'l':
-      *learn_target_name = get->value;
+      if (learn_target_name) {
+        *learn_target_name = get->value;
+      }
       break;
     default:
       break;
