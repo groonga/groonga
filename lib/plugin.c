@@ -161,7 +161,11 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
       }
       if (!*plugin) {
         grn_hash_delete_by_id(ctx, grn_plugins, id, NULL);
-        if (!grn_dl_close(dl)) {
+        if (grn_dl_close(dl)) {
+          /* Now, __FILE__ set in plugin is invalid. */
+          ctx->errline = 0;
+          ctx->errfile = NULL;
+        } else {
           const char *label;
           label = grn_dl_close_error_label;
           SERR(label);
