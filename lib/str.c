@@ -1886,9 +1886,12 @@ grn_rc
 grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
 {
   char *head;
+  unsigned int rounded_newsize;
   newsize += grn_bulk_margin_size + 1;
   if (GRN_BULK_OUTP(buf)) {
-    newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
+    rounded_newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
+    if (rounded_newsize < newsize) { return GRN_NOT_ENOUGH_SPACE; }
+    newsize = rounded_newsize;
     head = buf->u.b.head - (buf->u.b.head ? grn_bulk_margin_size : 0);
     if (!(head = GRN_REALLOC(head, newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
     buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
@@ -1896,7 +1899,9 @@ grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
     buf->u.b.tail = head + newsize;
   } else {
     if (newsize > GRN_BULK_BUFSIZE) {
-      newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
+      rounded_newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
+      if (rounded_newsize < newsize) { return GRN_NOT_ENOUGH_SPACE; }
+      newsize = rounded_newsize;
       if (!(head = GRN_MALLOC(newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
       memcpy(head, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf));
       buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
