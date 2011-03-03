@@ -57,14 +57,14 @@ grn_parse_suggest_types(const char *nptr, const char *end)
 }
 
 static int32_t
-cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_type)
+cooccur_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id id, grn_obj *res, int query_type)
 {
   int32_t max_score = 0;
   if (id) {
     grn_ii_cursor *c;
-    grn_obj *co = grn_obj_column(ctx, table, CONST_STR_LEN("co"));
+    grn_obj *co = grn_obj_column(ctx, items, CONST_STR_LEN("co"));
     grn_obj *pairs = grn_ctx_at(ctx, grn_obj_get_range(ctx, co));
-    grn_obj *items_freq = grn_obj_column(ctx, table, CONST_STR_LEN("freq"));
+    grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
     grn_obj *pairs_freq, *pairs_post = grn_obj_column(ctx, pairs, CONST_STR_LEN("post"));
     switch (query_type) {
     case COMPLETE :
@@ -82,23 +82,27 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_
     if ((c = grn_ii_cursor_open(ctx, (grn_ii *)co, id, GRN_ID_NIL, GRN_ID_MAX,
                                 ((grn_ii *)co)->n_elements - 1, 0))) {
       grn_ii_posting *p;
-      grn_obj post, pair_freq, item_freq;
-      GRN_RECORD_INIT(&post, 0, grn_obj_id(ctx, table));
+      grn_obj post, pair_freq, item_freq, item_boost;
+      GRN_RECORD_INIT(&post, 0, grn_obj_id(ctx, items));
       GRN_INT32_INIT(&pair_freq, 0);
       GRN_INT32_INIT(&item_freq, 0);
+      GRN_INT32_INIT(&item_boost, 0);
       while ((p = grn_ii_cursor_next(ctx, c))) {
         grn_id post_id;
-        int pfreq, ifreq;
+        int pfreq, ifreq, boost;
         GRN_BULK_REWIND(&post);
         GRN_BULK_REWIND(&pair_freq);
         GRN_BULK_REWIND(&item_freq);
+        GRN_BULK_REWIND(&item_boost);
         grn_obj_get_value(ctx, pairs_post, p->rid, &post);
         grn_obj_get_value(ctx, pairs_freq, p->rid, &pair_freq);
         post_id = GRN_RECORD_VALUE(&post);
         grn_obj_get_value(ctx, items_freq, post_id, &item_freq);
+        grn_obj_get_value(ctx, items_boost, post_id, &item_boost);
         pfreq = GRN_INT32_VALUE(&pair_freq);
         ifreq = GRN_INT32_VALUE(&item_freq);
-        if (pfreq && ifreq) {
+        boost = GRN_INT32_VALUE(&item_boost);
+        if (pfreq && ifreq && boost >= 0) {
           grn_rset_recinfo *ri;
           void *value;
           int32_t score = pfreq;
@@ -114,6 +118,7 @@ cooccur_search(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *res, int query_
       GRN_OBJ_FIN(ctx, &post);
       GRN_OBJ_FIN(ctx, &pair_freq);
       GRN_OBJ_FIN(ctx, &item_freq);
+      GRN_OBJ_FIN(ctx, &item_boost);
       grn_ii_cursor_close(ctx, c);
     }
   }
@@ -164,18 +169,18 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
 }
 
 static void
-complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query, grn_obj *sortby,
+complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
+         grn_obj *query, grn_obj *sortby,
          grn_obj *output_columns, int offset, int limit)
 {
   grn_obj *res;
-  grn_obj *items_freq = grn_obj_column(ctx, table, CONST_STR_LEN("freq"));
-  grn_obj *items_boost = grn_obj_column(ctx, table, CONST_STR_LEN("boost"));
+  grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
   grn_obj item_freq, item_boost;
   GRN_INT32_INIT(&item_freq, 0);
   GRN_INT32_INIT(&item_boost, 0);
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
-                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
+                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
+    grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
     if (GRN_TEXT_LEN(query)) {
       grn_str *norm;
       grn_table_cursor *cur;
@@ -194,18 +199,21 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query, grn_obj *so
                                              GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
                 grn_ii_posting *p;
                 while ((p = grn_ii_cursor_next(ctx, icur))) {
-                  int32_t score;
-                  grn_rset_recinfo *ri;
-                  void *value;
-                  grn_hash_add(ctx, (grn_hash *)res,
-                               &p->rid, sizeof(grn_id), &value, NULL);
-                  ri = value;
                   GRN_BULK_REWIND(&item_freq);
                   GRN_BULK_REWIND(&item_boost);
                   grn_obj_get_value(ctx, items_freq, p->rid, &item_freq);
                   grn_obj_get_value(ctx, items_boost, p->rid, &item_boost);
-                  score = GRN_INT32_VALUE(&item_freq) + GRN_INT32_VALUE(&item_boost);
-                  ri->score += score;
+                  if (GRN_INT32_VALUE(&item_boost) >= 0) {
+                    void *value;
+                    int32_t score;
+                    grn_rset_recinfo *ri;
+                    score = GRN_INT32_VALUE(&item_freq) +
+                            GRN_INT32_VALUE(&item_boost);
+                    grn_hash_add(ctx, (grn_hash *)res,
+                                 &p->rid, sizeof(grn_id), &value, NULL);
+                    ri = value;
+                    ri->score += score;
+                  }
                 }
                 grn_ii_cursor_close(ctx, icur);
               }
@@ -219,28 +227,32 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query, grn_obj *so
         }
         grn_str_close(ctx, norm);
       }
-      cooccur_search(ctx, table, tid, res, COMPLETE);
+      cooccur_search(ctx, items, items_boost, tid, res, COMPLETE);
       if (!grn_table_size(ctx, res) &&
-          (cur = grn_table_cursor_open(ctx, table, TEXT_VALUE_LEN(query),
+          (cur = grn_table_cursor_open(ctx, items, TEXT_VALUE_LEN(query),
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, cur))) {
-          int32_t score;
-          grn_rset_recinfo *ri;
-          void *value;
-          grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id), &value, NULL);
-          ri = value;
           GRN_BULK_REWIND(&item_freq);
           GRN_BULK_REWIND(&item_boost);
           grn_obj_get_value(ctx, items_freq, id, &item_freq);
           grn_obj_get_value(ctx, items_boost, id, &item_boost);
-          score = GRN_INT32_VALUE(&item_freq) + GRN_INT32_VALUE(&item_boost);
-          ri->score += score;
+          if (GRN_INT32_VALUE(&item_boost) >= 0) {
+            void *value;
+            int32_t score;
+            grn_rset_recinfo *ri;
+            grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id),
+                         &value, NULL);
+            score = GRN_INT32_VALUE(&item_freq) +
+                    GRN_INT32_VALUE(&item_boost);
+            ri = value;
+            ri->score += score;
+          }
         }
         grn_table_cursor_close(ctx, cur);
       }
     }
-    output(ctx, table, res, tid, sortby, output_columns, offset, limit);
+    output(ctx, items, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -250,23 +262,23 @@ complete(grn_ctx *ctx, grn_obj *table, grn_obj *col, grn_obj *query, grn_obj *so
 }
 
 static void
-correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
+correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
+        grn_obj *query, grn_obj *sortby,
         grn_obj *output_columns, int offset, int limit)
 {
   grn_obj *res;
-  grn_obj *items_freq2 = grn_obj_column(ctx, table, CONST_STR_LEN("freq2"));
-  grn_obj *items_boost = grn_obj_column(ctx, table, CONST_STR_LEN("boost"));
+  grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
   grn_obj item_freq2, item_boost;
   GRN_INT32_INIT(&item_freq2, 0);
   GRN_INT32_INIT(&item_boost, 0);
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
-                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
-    int32_t max_score = cooccur_search(ctx, table, tid, res, CORRECT);
+                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
+    grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
+    int32_t max_score = cooccur_search(ctx, items, items_boost, tid, res, CORRECT);
     LAP(":", "cooccur(%d)", max_score);
     if (GRN_TEXT_LEN(query) && max_score < 100) {
       grn_obj *key, *index;
-      if ((key = grn_obj_column(ctx, table, CONST_STR_LEN("_key")))) {
+      if ((key = grn_obj_column(ctx, items, CONST_STR_LEN("_key")))) {
         if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
           grn_select_optarg optarg;
           memset(&optarg, 0, sizeof(grn_select_optarg));
@@ -280,21 +292,26 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
             grn_hash_cursor *hc = grn_hash_cursor_open(ctx, (grn_hash *)res, NULL,
                                                        0, NULL, 0, 0, -1, 0);
             if (hc) {
-              int32_t score;
-              grn_id *rp;
-              grn_rset_recinfo *ri;
-              void *key, *value;
               while (grn_hash_cursor_next(ctx, hc)) {
+                void *key, *value;
                 if (grn_hash_cursor_get_key_value(ctx, hc, &key, NULL, &value)) {
+                  grn_id *rp;
                   rp = key;
-                  ri = value;
                   GRN_BULK_REWIND(&item_freq2);
                   GRN_BULK_REWIND(&item_boost);
                   grn_obj_get_value(ctx, items_freq2, *rp, &item_freq2);
                   grn_obj_get_value(ctx, items_boost, *rp, &item_boost);
-                  score = (GRN_INT32_VALUE(&item_freq2) >> 4) + GRN_INT32_VALUE(&item_boost);
-                  ri->score += score;
-                  if (score < 100) { grn_hash_cursor_delete(ctx, hc, NULL); }
+                  if (GRN_INT32_VALUE(&item_boost) >= 0) {
+                    int32_t score;
+                    grn_rset_recinfo *ri;
+                    score = (GRN_INT32_VALUE(&item_freq2) >> 4) +
+                            GRN_INT32_VALUE(&item_boost);
+                    ri = value;
+                    ri->score += score;
+                    if (score >= 100) { continue; }
+                  }
+                  /* score < 100 || item_boost < 0 */
+                  grn_hash_cursor_delete(ctx, hc, NULL);
                 }
               }
               grn_hash_cursor_close(ctx, hc);
@@ -342,7 +359,7 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
         grn_obj_unlink(ctx, key);
       }
     }
-    output(ctx, table, res, tid, sortby, output_columns, offset, limit);
+    output(ctx, items, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -352,15 +369,16 @@ correct(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
 }
 
 static void
-suggest(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
+suggest(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
+        grn_obj *query, grn_obj *sortby,
         grn_obj *output_columns, int offset, int limit)
 {
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
-                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-    grn_id tid = grn_table_get(ctx, table, TEXT_VALUE_LEN(query));
-    cooccur_search(ctx, table, tid, res, SUGGEST);
-    output(ctx, table, res, tid, sortby, output_columns, offset, limit);
+                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
+    grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
+    cooccur_search(ctx, items, items_boost, tid, res, SUGGEST);
+    output(ctx, items, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {
     ERR(GRN_UNKNOWN_ERROR, "cannot create temporary table.");
@@ -370,7 +388,7 @@ suggest(grn_ctx *ctx, grn_obj *table, grn_obj *query, grn_obj *sortby,
 static grn_obj *
 command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *table, *col;
+  grn_obj *items, *col, *items_boost;
   int types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
   int offset = GRN_TEXT_LEN(VAR(6))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(6)), GRN_BULK_CURR(VAR(6)), NULL)
@@ -378,23 +396,24 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   int limit = GRN_TEXT_LEN(VAR(7))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(7)), GRN_BULK_CURR(VAR(7)), NULL)
     : DEFAULT_LIMIT;
-  if ((table = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
+  if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1)))) &&
+      (items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
     GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
     if (types & COMPLETE) {
-      if ((col = grn_obj_column(ctx, table, TEXT_VALUE_LEN(VAR(2))))) {
+      if ((col = grn_obj_column(ctx, items, TEXT_VALUE_LEN(VAR(2))))) {
         GRN_OUTPUT_CSTR("complete");
-        complete(ctx, table, col, VAR(3), VAR(4), VAR(5), offset, limit);
+        complete(ctx, items, items_boost, col, VAR(3), VAR(4), VAR(5), offset, limit);
       } else {
         ERR(GRN_INVALID_ARGUMENT, "invalid column.");
       }
     }
     if (types & CORRECT) {
       GRN_OUTPUT_CSTR("correct");
-      correct(ctx, table, VAR(3), VAR(4), VAR(5), offset, limit);
+      correct(ctx, items, items_boost, VAR(3), VAR(4), VAR(5), offset, limit);
     }
     if (types & SUGGEST) {
       GRN_OUTPUT_CSTR("suggest");
-      suggest(ctx, table, VAR(3), VAR(4), VAR(5), offset, limit);
+      suggest(ctx, items, items_boost, VAR(3), VAR(4), VAR(5), offset, limit);
     }
     GRN_OUTPUT_MAP_CLOSE();
   } else {
