@@ -102,7 +102,7 @@ TokenMecabトークナイザーは事前に準備した辞書を用いてトー�
 
 この場合はスコアが11になっています。内訳は、Terms.blog_body索引（TokenMecabトークナイザーを使用）でマッチしたので10、Bigram.blog_body索引（TokenBigramトークナイザーを使用）でマッチしたので3、これらを合計して13になっています。このようにTokenMecabトークナイザーの重みを高くすることにより、検索ノイズが上位にくることを抑えつつ再現率を上げることができます。
 
-この例は日本語だったのですが、TokenBigramトークナイザーでよかったのですが、アルファベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があります。例えば、「楽しいbilliard」はTokenBigramトークナイザーでは
+この例は日本語だったのでTokenBigramトークナイザーでよかったのですが、アルファベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があります。例えば、「楽しいbilliard」はTokenBigramトークナイザーでは
 
   楽し / しい / billiard
 
