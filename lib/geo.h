@@ -41,6 +41,9 @@ extern "C" {
 #define GRN_GEO_INT2RAD(x)   ((int)((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x)))
 #define GRN_GEO_RAD2INT(x)   ((int)(((GRN_GEO_RESOLUTION * 180) / M_PI) * (x)))
 
+#define GRN_GEO_MAX_LATITUDE  1296000000 /* 360 * 60 * 60 * 1000 */
+#define GRN_GEO_MAX_LONGITUDE  648000000 /* 180 * 60 * 60 * 1000 */
+
 #define GRN_GEO_POINT_VALUE_RAW(obj) (grn_geo_point *)GRN_BULK_HEAD(obj)
 #define GRN_GEO_POINT_VALUE_RADIUS(obj,_latitude,_longitude) do {\
   grn_geo_point *_val = (grn_geo_point *)GRN_BULK_HEAD(obj);\
