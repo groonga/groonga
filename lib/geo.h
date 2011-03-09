@@ -38,8 +38,8 @@ extern "C" {
 #define GRN_GEO_GRS_C1       6335439
 #define GRN_GEO_GRS_C2       6378137
 #define GRN_GEO_GRS_C3       0.006694
-#define GRN_GEO_INT2RAD(x)   ((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x))
-#define GRN_GEO_RAD2INT(x)   (((GRN_GEO_RESOLUTION * 180) / M_PI) * (x))
+#define GRN_GEO_INT2RAD(x)   ((int)((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x)))
+#define GRN_GEO_RAD2INT(x)   ((int)(((GRN_GEO_RESOLUTION * 180) / M_PI) * (x)))
 
 #define GRN_GEO_POINT_VALUE_RAW(obj) (grn_geo_point *)GRN_BULK_HEAD(obj)
 #define GRN_GEO_POINT_VALUE_RADIUS(obj,_latitude,_longitude) do {\
