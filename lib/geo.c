@@ -753,6 +753,9 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
                                  NULL, 0,
                                  0, -1,
                                  GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
+#ifdef GEO_DEBUG
+      printf("i:                   %10d\n", i);
+#endif
       inspect_mesh(ctx, &geo_point_base, diff_bit, (i - start) / distance);
       if (tc) {
         grn_id tid;
