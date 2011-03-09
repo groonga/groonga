@@ -166,7 +166,7 @@ grn_test_hash_factory_ensure_context(GrnTestHashFactory *factory, GError **error
 
   priv->context = g_new0(grn_ctx, 1);
   result = grn_ctx_init(priv->context, priv->context_flags);
-  GRN_CTX_SET_ENCODING(priv->context, priv->encoding);
+  GRN_CTX_SET_ENCODING(priv->context, ((grn_encoding)priv->encoding));
   if (result != GRN_SUCCESS) {
     g_set_error(error,
                 GRN_TEST_HASH_FACTORY_ERROR,
@@ -208,7 +208,7 @@ grn_test_hash_factory_create(GrnTestHashFactory *factory, GError **error)
     return NULL;
 
   priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
-  GRN_CTX_SET_ENCODING(priv->context, priv->encoding);
+  GRN_CTX_SET_ENCODING(priv->context, (grn_encoding)(priv->encoding));
   priv->hash = grn_hash_create(priv->context, priv->path, priv->key_size,
                                priv->value_size, priv->flags);
   if (!priv->hash) {
