@@ -246,7 +246,6 @@ grn_plugins_fin(void)
 grn_rc
 grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 {
-  grn_id id;
   grn_obj *db;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
     ERR(GRN_INVALID_ARGUMENT, "db not initialized");
@@ -254,6 +253,7 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
   }
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
+    grn_id id = GRN_ID_NIL;
     FILE *plugin_file;
     char complemented_path[PATH_MAX], complemented_libs_path[PATH_MAX];
 
