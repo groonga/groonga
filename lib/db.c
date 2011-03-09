@@ -3873,9 +3873,9 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
 #define DEGREE_ACCURACY 10000000
 
 #define DEGREE2MSEC(degree)\
-  (((int)degree * 60 * 60 * 1000) +\
-   (((int)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 / DEGREE_ACCURACY * 60 * 1000) +\
-   (((int)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 % DEGREE_ACCURACY * 60 / 10000))
+  ((int)((int)(degree * 60 * 60 * 1000) +\
+         (((long)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 / DEGREE_ACCURACY * 60 * 1000) +\
+         (((long)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 % DEGREE_ACCURACY * 60 / 10000)))
 
 grn_rc
 grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
