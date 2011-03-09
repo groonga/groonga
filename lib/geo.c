@@ -705,6 +705,16 @@ grn_geo_search_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int narg
       goto exit;
     }
 
+    if (geo_point1->longitude >= GRN_GEO_MAX_LONGITUDE) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "geo_in_rectangle(): geo point1's longitude is too big: <%d>(max:%d): "
+          "(%d,%d) (%d,%d)",
+          GRN_GEO_MAX_LONGITUDE, geo_point1->longitude,
+          geo_point1->latitude, geo_point1->longitude,
+          geo_point2->latitude, geo_point2->longitude);
+      goto exit;
+    }
+
     latitude_distance = geo_point1->latitude - geo_point2->latitude;
     longitude_distance = geo_point2->longitude - geo_point1->longitude;
     if (latitude_distance > longitude_distance) {
