@@ -215,13 +215,13 @@ test_in_rectangle_over_latitude1(void)
     context,
     GRN_INVALID_ARGUMENT,
     "geo_in_rectangle(): geo point1's latitude is too big: "
-    "<1296000000>(max:1296000000): "
-    "(1296000000,505723679) (130508208,505954080",
+    "<324000000>(max:324000000): "
+    "(324000000,505723679) (130508208,505954080)",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
     "--filter "
-    "'geo_in_rectangle(location, \"360.0x139.7394\", \"35.62614x139.7714\")'");
+    "'geo_in_rectangle(location, \"90.0x139.7394\", \"35.62614x139.7714\")'");
 }
 
 void
@@ -247,13 +247,13 @@ test_in_rectangle_over_latitude2(void)
     context,
     GRN_INVALID_ARGUMENT,
     "geo_in_rectangle(): geo point2's latitude is too big: "
-    "<1296000000>(max:1296000000): "
-    "(131281920,505723679) (1296000000,505954080",
+    "<324000000>(max:324000000): "
+    "(131281920,505723679) (324000000,505954080)",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
     "--filter "
-    "'geo_in_rectangle(location, \"35.73360x139.7394\", \"360.0x139.7714\")'");
+    "'geo_in_rectangle(location, \"35.73360x139.7394\", \"90.0x139.7714\")'");
 }
 
 void

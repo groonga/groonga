@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2010 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,8 +41,8 @@ extern "C" {
 #define GRN_GEO_INT2RAD(x)   ((int)((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x)))
 #define GRN_GEO_RAD2INT(x)   ((int)(((GRN_GEO_RESOLUTION * 180) / M_PI) * (x)))
 
-#define GRN_GEO_MAX_LATITUDE  1296000000 /* 360 * 60 * 60 * 1000 */
-#define GRN_GEO_MAX_LONGITUDE  648000000 /* 180 * 60 * 60 * 1000 */
+#define GRN_GEO_MAX_LATITUDE  324000000 /*  90 * 60 * 60 * 1000 */
+#define GRN_GEO_MAX_LONGITUDE 648000000 /* 180 * 60 * 60 * 1000 */
 
 #define GRN_GEO_POINT_VALUE_RAW(obj) (grn_geo_point *)GRN_BULK_HEAD(obj)
 #define GRN_GEO_POINT_VALUE_RADIUS(obj,_latitude,_longitude) do {\
