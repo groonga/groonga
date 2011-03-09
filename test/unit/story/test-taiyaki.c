@@ -27,6 +27,8 @@ void test_in_rectangle_long_longitude(void);
 void test_in_rectangle_over_border(void);
 void test_in_rectangle_over_latitude1(void);
 void test_in_rectangle_over_longitude1(void);
+void test_in_rectangle_over_latitude2(void);
+void test_in_rectangle_over_longitude2(void);
 void test_sort(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_in_circle_and_tag(void);
@@ -236,6 +238,38 @@ test_in_rectangle_over_longitude1(void)
     "--output_columns 'name, location' "
     "--filter "
     "'geo_in_rectangle(location, \"35.73360x180.0\", \"35.62614x139.7714\")'");
+}
+
+void
+test_in_rectangle_over_latitude2(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "geo_in_rectangle(): geo point2's latitude is too big: "
+    "<1296000000>(max:1296000000): "
+    "(131281920,505723679) (1296000000,505954080",
+    "select Shops "
+    "--sortby '+name' "
+    "--output_columns 'name, location' "
+    "--filter "
+    "'geo_in_rectangle(location, \"35.73360x139.7394\", \"360.0x139.7714\")'");
+}
+
+void
+test_in_rectangle_over_longitude2(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "geo_in_rectangle(): geo point2's longitude is too big: "
+    "<648000000>(max:648000000): "
+    "(131281920,505723679) (130508208,648000000)",
+    "select Shops "
+    "--sortby '+name' "
+    "--output_columns 'name, location' "
+    "--filter "
+    "'geo_in_rectangle(location, \"35.73360x139.7394\", \"35.62614x180.0\")'");
 }
 
 void
