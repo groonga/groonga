@@ -38,7 +38,7 @@ extern "C" {
 #define GRN_GEO_GRS_C1       6335439
 #define GRN_GEO_GRS_C2       6378137
 #define GRN_GEO_GRS_C3       0.006694
-#define GRN_GEO_INT2RAD(x)   ((int)((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x)))
+#define GRN_GEO_INT2RAD(x)   ((M_PI / (GRN_GEO_RESOLUTION * 180)) * (x))
 #define GRN_GEO_RAD2INT(x)   ((int)(((GRN_GEO_RESOLUTION * 180) / M_PI) * (x)))
 
 #define GRN_GEO_MAX_LATITUDE  324000000 /*  90 * 60 * 60 * 1000 */
