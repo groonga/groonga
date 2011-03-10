@@ -737,10 +737,10 @@ grn_test_coordinate_in_milliseconds(gdouble coordinate_in_degree)
 {
   gint coordinate_in_milliseconds = 0;
   gint accuracy = 10000000;
-  gint decimal_number;
+  glong decimal_number;
 
   coordinate_in_milliseconds += (gint)coordinate_in_degree * 60 * 60 * 1000;
-  decimal_number = ((gint)(coordinate_in_degree * accuracy) % accuracy) * 60;
+  decimal_number = ((glong)(coordinate_in_degree * accuracy) % accuracy) * 60;
   coordinate_in_milliseconds += decimal_number / accuracy * 60 * 1000;
   coordinate_in_milliseconds += decimal_number % accuracy * 60 / 10000;
 
