@@ -182,6 +182,7 @@ teardown_trie_common(void)
   cut_assert_open_context();                    \
   trie_free();                                  \
   create_trie();                                \
+  grn_test_assert_context(context);             \
   cut_assert(trie);                             \
 } while (0)
 
