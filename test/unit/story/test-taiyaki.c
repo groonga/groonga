@@ -216,7 +216,7 @@ test_in_rectangle_over_latitude1(void)
     GRN_INVALID_ARGUMENT,
     "geo_in_rectangle(): geo point1's latitude is too big: "
     "<324000000>(max:324000000): "
-    "(324000000,505723679) (130508208,505954080)",
+    "(324000000,503061840) (128254104,503177040)",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
@@ -232,7 +232,7 @@ test_in_rectangle_over_longitude1(void)
     GRN_INVALID_ARGUMENT,
     "geo_in_rectangle(): geo point1's longitude is too big: "
     "<648000000>(max:648000000): "
-    "(131281920,648000000) (130508208,505954080)",
+    "(128640960,648000000) (128254104,503177040)",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
@@ -248,7 +248,7 @@ test_in_rectangle_over_latitude2(void)
     GRN_INVALID_ARGUMENT,
     "geo_in_rectangle(): geo point2's latitude is too big: "
     "<324000000>(max:324000000): "
-    "(131281920,505723679) (324000000,505954080)",
+    "(128640960,503061840) (324000000,503177040)",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
@@ -264,7 +264,7 @@ test_in_rectangle_over_longitude2(void)
     GRN_INVALID_ARGUMENT,
     "geo_in_rectangle(): geo point2's longitude is too big: "
     "<648000000>(max:648000000): "
-    "(131281920,505723679) (130508208,648000000)",
+    "(128640960,503061840) (128254104,648000000)",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
