@@ -551,7 +551,7 @@ test_multi_geo_in_circle(void)
   cut_assert_equal_string(
     "[[[1],"
     "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
-    "[\"たいやき神田達磨 八重洲店\",10030]"
+    "[\"たいやき神田達磨 八重洲店\",10032]"
     "]]",
     send_command(
       cut_take_printf(
