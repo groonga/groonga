@@ -3559,6 +3559,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name
         } else {
           if (!obj->header.domain) {
             // ERR(GRN_INVALID_ARGUMENT, "no such column: <%s>", name);
+            grn_obj_close(ctx, (grn_obj *)res);
             res = NULL;
             goto exit;
           }
