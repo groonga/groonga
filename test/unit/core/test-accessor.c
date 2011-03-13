@@ -115,5 +115,6 @@ test_column_name(gconstpointer data)
                             accessor_name, strlen(accessor_name));
   length = grn_column_name(context, accessor, name, sizeof(name));
   name[length] = '\0';
+  grn_obj_unlink(context, accessor);
   cut_assert_equal_string(accessor_name, name);
 }
