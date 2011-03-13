@@ -8214,6 +8214,7 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
         if (column->header.type == GRN_ACCESSOR &&
             ((grn_accessor *)column)->action == GRN_ACCESSOR_GET_KEY) {
           loader->key_offset = i;
+          grn_obj_unlink(ctx, column);
         } else {
           GRN_PTR_PUT(ctx, &loader->columns, column);
         }
