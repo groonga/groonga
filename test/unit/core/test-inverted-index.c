@@ -463,6 +463,8 @@ test_array_index(void)
   gchar *db_path, *name;
   grn_obj *users, *items, *checks, *checked;
 
+  grn_obj_close(context, db);
+
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
   db_path = g_build_filename(tmp_directory, "inverted-index", NULL);
@@ -505,6 +507,8 @@ test_scalar_index(void)
   gchar *db_path, *name;
   grn_obj *users, *items, *checks, *checked;
 
+  grn_obj_close(context, db);
+
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
   db_path = g_build_filename(tmp_directory, "inverted-index", NULL);
@@ -546,6 +550,8 @@ test_int_index(void)
 {
   gchar *db_path, *name;
   grn_obj *users, *items, *checks, *checked, *int_type;
+
+  grn_obj_close(context, db);
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
@@ -620,6 +626,7 @@ test_mroonga_index(void)
   mrn_dir = cut_build_path(tmp_directory, "mrn", NULL);
   g_mkdir_with_parents(mrn_dir, 0700);
 
+  grn_obj_close(context, db);
   db = grn_db_create(context,
                      cut_build_path(mrn_dir, "mroonga.grn", NULL),
                      NULL);
@@ -751,6 +758,7 @@ test_mroonga_index_score(void)
   mrn_dir = cut_build_path(tmp_directory, "mrn", NULL);
   g_mkdir_with_parents(mrn_dir, 0700);
 
+  grn_obj_close(context, db);
   db = grn_db_create(context,
                      cut_build_path(mrn_dir, "mroonga.grn", NULL),
                      NULL);
