@@ -71,10 +71,9 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
-  if (context) {
-    grn_ctx_fin(context);
-    g_free(context);
-  }
+  grn_obj_close(context, database);
+  grn_ctx_fin(context);
+  g_free(context);
 
   teardown_grn_logger(logger);
 
