@@ -34,6 +34,10 @@ void test_open_invalid_chunk_file(void);
 void test_open_with_null_lexicon(void);
 void test_crud(void);
 void test_array_index(void);
+void test_scalar_index(void);
+void test_int_index(void);
+void test_mroonga_index(void);
+void test_mroonga_index_score(void);
 
 #define TYPE_SIZE 1024
 
