@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -76,11 +76,17 @@ void
 cut_teardown(void)
 {
   if (context) {
+    if (database) {
+      grn_obj_close(context, database);
+    }
     grn_ctx_fin(context);
     g_free(context);
   }
 
   if (context2) {
+    if (database2) {
+      grn_obj_close(context2, database2);
+    }
     grn_ctx_fin(context2);
     g_free(context2);
   }
@@ -208,9 +214,9 @@ test_expire_cache_on_recreate(void)
   cut_assert_equal_string("[[[1],[[\"_key\",\"ShortText\"]],[\"groonga.org\"]]]",
                           send_command("select Sites --output_columns _key"));
   assert_send_command("table_remove Sites");
-  grn_obj_remove(context, database);
+  grn_obj_close(context, database);
 
-  database = grn_db_create(context, path, NULL);
+  database = grn_db_open(context, path);
   assert_send_command("table_create Sites 0 ShortText");
   cut_assert_equal_string("[[[0],[[\"_key\",\"ShortText\"]]]]",
                           send_command("select Sites --output_columns _key"));
@@ -264,7 +270,7 @@ test_expression_lifetime_over_database(void)
     grn_obj_unlink(context, &default_column);
     grn_expr_compile(context, expression);
 
-    grn_obj_remove(context, database);
+    grn_obj_close(context, database);
     database = NULL;
 
     remove_tmp_directory();
