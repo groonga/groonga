@@ -59,6 +59,7 @@ cut_setup(void)
   ids = NULL;
   expected_keys = NULL;
   actual_keys = NULL;
+  database = NULL;
 }
 
 static void
@@ -77,6 +78,8 @@ cut_teardown(void)
     gcut_list_string_free(expected_keys);
   if (actual_keys)
     gcut_list_string_free(actual_keys);
+  if (database)
+    grn_obj_close(context, database);
   teardown_trie_common();
 }
 
