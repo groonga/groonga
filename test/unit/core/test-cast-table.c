@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ void test_text_to_table(gconstpointer data);
 
 static grn_logger_info *logger;
 static grn_ctx context;
+static grn_obj *database;
 static grn_obj src, dest;
 
 static gchar *tmp_directory, *database_path;
@@ -43,12 +44,13 @@ setup_database(void)
                                    NULL);
 
   g_mkdir_with_parents(tmp_directory, 0700);
-  grn_db_create(&context, database_path, NULL);
+  database = grn_db_create(&context, database_path, NULL);
 }
 
 static void
 teardown_database(void)
 {
+  grn_obj_close(&context, database);
   cut_remove_path(tmp_directory, NULL);
   g_free(tmp_directory);
 }
