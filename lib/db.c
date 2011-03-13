@@ -7655,8 +7655,10 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
                 (name_equal(column_name, column_name_size, KEY_NAME) ||
                  name_equal(column_name, column_name_size, ID_NAME))) {
               if (loader->key_offset != -1) {
-                GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s at %d and %.*s at %i",
-                        GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value), loader->key_offset,
+                GRN_LOG(ctx, GRN_LOG_ERROR,
+                        "duplicated key columns: <%.*s> at %d and <%.*s> at %i",
+                        GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value),
+                        loader->key_offset,
                         column_name_size, column_name, i);
                 return;
               }
