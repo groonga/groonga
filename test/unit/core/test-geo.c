@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -117,10 +117,9 @@ cut_teardown(void)
 {
   teardown_values();
 
-  if (context) {
-    grn_ctx_fin(context);
-    g_free(context);
-  }
+  grn_obj_close(context, database);
+  grn_ctx_fin(context);
+  g_free(context);
 
   remove_tmp_directory();
 }
