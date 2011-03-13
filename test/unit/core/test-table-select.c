@@ -244,7 +244,7 @@ test_equal_indexed(void)
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
   GRN_TEXT_SETS(&context, &textbuf, "body");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_GET_VALUE, 2);
+  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_GET_VALUE, 1);
   GRN_TEXT_SETS(&context, &textbuf, "hoge");
   grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
@@ -574,7 +574,7 @@ test_match_without_index(void)
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
   GRN_TEXT_SETS(&context, &textbuf, "body");
   grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
-  grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
+  grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 1);
   GRN_TEXT_SETS(&context, &textbuf, "moge");
   grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_MATCH, 2);
