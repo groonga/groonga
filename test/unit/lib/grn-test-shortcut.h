@@ -30,7 +30,7 @@
     cut_test_with_user_message(                                 \
       grn_test_send_command((context), (command)),              \
       __VA_ARGS__),                                             \
-    grn_assert_send_command(context, command))
+    assert_send_command(context, command))
 
 #define assert_send_command_error(expected_rc, expected_message,        \
                                   command, ...)                         \
@@ -43,6 +43,6 @@
     cut_test_with_user_message(                         \
       grn_test_send_commands((context), (commands)),    \
       __VA_ARGS__),                                     \
-    grn_assert_send_commands(context, commands))
+    assert_send_commands(context, commands))
 
 #endif
