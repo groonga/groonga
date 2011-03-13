@@ -34,6 +34,9 @@ static grn_ctx *context;
 static grn_obj *database;
 static grn_obj *table;
 
+static unsigned n_keys;
+static grn_table_sort_key *keys;
+
 void
 cut_startup(void)
 {
@@ -71,12 +74,17 @@ cut_setup(void)
   assert_send_command("table_create Test TABLE_PAT_KEY ShortText");
   assert_send_command("column_create Test name COLUMN_SCALAR Text");
   table = get_object("Test");
+
+  n_keys = 0;
+  keys = NULL;
 }
 
 void
 cut_teardown(void)
 {
   if (context) {
+    if (keys)
+      grn_table_sort_key_close(context, keys, n_keys);
     grn_obj_unlink(context, database);
     grn_ctx_fin(context);
     g_free(context);
@@ -116,13 +124,13 @@ data_valid(void)
 void
 test_valid(gconstpointer data)
 {
-  unsigned i, nkeys;
+  unsigned i;
   const char *str = gcut_data_get_string(data, "keys");
-  grn_table_sort_key *keys = grn_table_sort_key_from_str(context, str, strlen(str),
-                                                         table, &nkeys);
+
+  keys = grn_table_sort_key_from_str(context, str, strlen(str), table, &n_keys);
   cut_assert_not_null(keys);
-  cut_assert_equal_uint(gcut_data_get_uint(data, "count"), nkeys);
-  for (i = 0; i < nkeys; ++i) {
+  cut_assert_equal_uint(gcut_data_get_uint(data, "count"), n_keys);
+  for (i = 0; i < n_keys; ++i) {
     cut_assert_not_null(keys[i].key);
   }
 }
