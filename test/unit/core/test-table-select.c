@@ -1,5 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
-/* Copyright(C) 2009 Brazil
+/*
+  Copyright(C) 2009  Brazil
+  Copyright(C) 2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -85,7 +87,7 @@ cut_teardown(void)
   if (cond)
     grn_obj_close(&context, cond);
 
-  grn_db_close(&context, database);
+  grn_obj_close(&context, database);
   grn_ctx_fin(&context);
   cut_remove_path(tmp_directory, NULL);
   g_free(path);
@@ -210,7 +212,7 @@ test_equal(void)
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
   GRN_TEXT_SETS(&context, &textbuf, "body");
   grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
-  grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
+  grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 1);
   GRN_TEXT_SETS(&context, &textbuf, "poyo moge hoge moge moge moge");
   grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
