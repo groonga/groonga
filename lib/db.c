@@ -162,8 +162,13 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   grn_id id;
   db_value *vp;
   grn_db *s = (grn_db *)db;
+  grn_bool ctx_used_db;
   if (!s) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
+  ctx_used_db = ctx->impl && ctx->impl->db == db;
+  if (ctx_used_db) {
+    grn_ctx_loader_clear(ctx);
+  }
   GRN_TINY_ARRAY_EACH(&s->values, 1, grn_pat_curr_id(ctx, s->keys), id, vp, {
     if (vp->ptr) { grn_obj_close(ctx, vp->ptr); }
   });
@@ -179,7 +184,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   CRITICAL_SECTION_FIN(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
   GRN_FREE(s);
-  if (ctx->impl && ctx->impl->db == db) {
+  if (ctx_used_db) {
     grn_cache_expire(-1);
     ctx->impl->db = NULL;
   }
