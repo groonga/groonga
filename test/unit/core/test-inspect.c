@@ -612,6 +612,8 @@ test_pvector_with_records(void)
   GRN_PTR_PUT(context, pvector, groonga);
   GRN_PTR_PUT(context, pvector, razil);
   inspected = grn_inspect(context, NULL, pvector);
+  grn_obj_unlink(context, groonga);
+  grn_obj_unlink(context, razil);
   cut_assert_equal_string("[\"groonga\",\"razil\"]", inspected_string());
 }
 
