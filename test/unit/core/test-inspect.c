@@ -662,8 +662,10 @@ test_accessor_column_name(gconstpointer data)
   object = get_object(table_name);
   accessor = grn_obj_column(context, object,
                             accessor_name, strlen(accessor_name));
+  grn_obj_unlink(context, object);
   cut_assert_not_null(accessor);
   inspected = grn_inspect(context, NULL, accessor);
+  grn_obj_unlink(context, accessor);
   cut_assert_equal_string(accessor_name, inspected_string());
 }
 
