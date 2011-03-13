@@ -90,9 +90,18 @@ test_atoi_padded(void)
 void
 test_urldec(void)
 {
-  grn_obj t;
-  const char *test_str1 = "/+test%20/u_hihi%00desu?yo-da:test";
-  GRN_TEXT_INIT(&t, 0);
-  grn_text_urldec(&context, &t, test_str1, test_str1 + strlen(test_str1), ':');
-  cut_assert_equal_memory("/+test /u_hihi\0desu?yo-da", 25, GRN_TEXT_VALUE(&t), GRN_TEXT_LEN(&t));
+  grn_obj decoded_url;
+  const gchar *dupped_deocded_url;
+  const gchar *url = "/+test%20/u_hihi%00desu?yo-da:test";
+
+  GRN_TEXT_INIT(&decoded_url, 0);
+  grn_text_urldec(&context,
+                  &decoded_url,
+                  url, url + strlen(url),
+                  ':');
+  dupped_deocded_url = cut_take_strndup(GRN_TEXT_VALUE(&decoded_url),
+                                        GRN_TEXT_LEN(&decoded_url));
+  grn_obj_unlink(&context, &decoded_url);
+  cut_assert_equal_string("/+test /u_hihi\0desu?yo-da",
+                          dupped_deocded_url);
 }
