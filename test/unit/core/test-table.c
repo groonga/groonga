@@ -98,6 +98,7 @@ test_array_set_data(void)
   gchar value[] = "sample value";
   grn_obj *record_value;
   grn_obj *retrieved_record_value;
+  const gchar *dupped_retrieved_record_value;
   gchar *value_type_name = "value_type";
   grn_obj *value_type;
 
@@ -113,9 +114,13 @@ test_array_set_data(void)
   grn_bulk_write(context, record_value, value, sizeof(value));
   grn_test_assert(grn_obj_set_value(context, table, record_id,
                                     record_value, GRN_OBJ_SET));
+  grn_obj_unlink(context, record_value);
 
   retrieved_record_value = grn_obj_get_value(context, table, record_id, NULL);
-  cut_assert_equal_string(value, GRN_BULK_HEAD(retrieved_record_value));
+  dupped_retrieved_record_value =
+    cut_take_strdup(GRN_BULK_HEAD(retrieved_record_value));
+  grn_obj_unlink(context, retrieved_record_value);
+  cut_assert_equal_string(value, dupped_retrieved_record_value);
 }
 
 void
