@@ -1,5 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
-/* Copyright(C) 2009 Brazil
+/*
+  Copyright(C) 2009  Brazil
+  Copyright(C) 2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +23,10 @@
 #include <gcutter.h>
 
 #include "../lib/grn-assertions.h"
+
+void test_time2rfc1123(void);
+void test_atoi_padded(void);
+void test_urldec(void);
 
 static grn_ctx context;
 
