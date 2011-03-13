@@ -55,10 +55,15 @@ cut_teardown(void)
 void
 test_time2rfc1123(void)
 {
-  grn_obj t;
-  GRN_TEXT_INIT(&t, 0);
-  grn_text_time2rfc1123(&context, &t, 1243433233);
-  cut_assert_equal_memory("Wed, 27 May 2009 14:07:13 GMT", 29, GRN_TEXT_VALUE(&t), GRN_TEXT_LEN(&t));
+  grn_obj rfc1123;
+  const gchar *dupped_rfc1123;
+
+  GRN_TEXT_INIT(&rfc1123, 0);
+  grn_text_time2rfc1123(&context, &rfc1123, 1243433233);
+  dupped_rfc1123 = cut_take_strndup(GRN_TEXT_VALUE(&rfc1123),
+                                    GRN_TEXT_LEN(&rfc1123));
+  grn_obj_unlink(&context, &rfc1123);
+  cut_assert_equal_string("Wed, 27 May 2009 14:07:13 GMT", dupped_rfc1123);
 }
 
 void
