@@ -712,6 +712,7 @@ test_accessor_dynamic_pseudo_column_name(gconstpointer data)
                             accessor_name, strlen(accessor_name));
   cut_assert_not_null(accessor);
   inspected = grn_inspect(context, NULL, accessor);
+  grn_obj_unlink(context, accessor);
   cut_assert_equal_string(accessor_name, inspected_string());
 }
 
