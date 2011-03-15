@@ -3824,7 +3824,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     GRN_UINT32_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_TIME :\
-    GRN_TIME_SET(ctx, dest, (long long int)(getvalue(src)) * GRN_TIME_USEC_PER_SEC);\
+    GRN_TIME_SET(ctx, dest, (long long int)(getvalue(src) * GRN_TIME_USEC_PER_SEC)); \
     break;\
   case GRN_DB_INT64 :\
     GRN_INT64_SET(ctx, dest, getvalue(src));\

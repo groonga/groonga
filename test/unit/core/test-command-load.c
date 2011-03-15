@@ -28,6 +28,7 @@ void attributes_bool(void);
 void data_bool(void);
 void test_bool(gconstpointer data);
 void test_int32_key(void);
+void test_time_float(void);
 void data_null(void);
 void test_null(gconstpointer data);
 void test_index_geo_point(void);
@@ -195,6 +196,24 @@ test_int32_key(void)
                           "[1,1,\"morita\"]"
                           "]]",
                           send_command("select Students"));
+}
+
+void
+test_time_float(void)
+{
+  assert_send_command("table_create Logs TABLE_NO_KEY");
+  assert_send_command("column_create Logs time_stamp COLUMN_SCALAR Time");
+  cut_assert_equal_string("1",
+                          send_command("load --table Logs\n"
+                                       "[{\"time_stamp\": 1295851581.41798}]"));
+  cut_assert_equal_string("[[[1],"
+                          "["
+                          "[\"_id\",\"UInt32\"],"
+                          "[\"time_stamp\",\"Time\"]"
+                          "],"
+                          "[1,1295851581.41798]"
+                          "]]",
+                          send_command("select Logs"));
 }
 
 void
