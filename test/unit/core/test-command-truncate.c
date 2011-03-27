@@ -94,7 +94,8 @@ test_no_columns(void)
        "[2,\"gunyara-kun\"],"
        "[3,\"yu\"]]]",
     send_command("select Users"));
-  assert_send_command("truncate Users");
+  cut_assert_equal_string("[true]",
+                          send_command("truncate Users"));
   cut_assert_equal_string(
       "[[[0],"
        "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"]]"
