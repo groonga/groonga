@@ -24,6 +24,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_no_columns(void);
+void test_have_columns(void);
 
 static gchar *tmp_directory;
 
@@ -99,6 +100,37 @@ test_no_columns(void)
   cut_assert_equal_string(
       "[[[0],"
        "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"]]"
+       "]]",
+    send_command("select Users"));
+}
+
+void
+test_have_columns(void)
+{
+  assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  assert_send_command("load --table Users\n"
+                      "[\n"
+                      "{\"_key\":\"mori\", \"name\":\"Daijiro MORI\"},\n"
+                      "{\"_key\":\"gunyara-kun\", \"name\":\"Tasuku SUENAGA\"},\n"
+                      "{\"_key\":\"yu\", \"name\":\"Yutaro Shimamura\"}\n"
+                      "]");
+  cut_assert_equal_string(
+      "[[[3],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"ShortText\"],"
+        "[\"name\",\"ShortText\"]],"
+       "[1,\"mori\",\"Daijiro MORI\"],"
+       "[2,\"gunyara-kun\",\"Tasuku SUENAGA\"],"
+       "[3,\"yu\",\"Yutaro Shimamura\"]]]",
+    send_command("select Users --sortby _id"));
+  cut_assert_equal_string("[true]",
+                          send_command("truncate Users"));
+  cut_assert_equal_string(
+      "[[[0],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"ShortText\"],"
+        "[\"name\",\"ShortText\"]]"
        "]]",
     send_command("select Users"));
 }
