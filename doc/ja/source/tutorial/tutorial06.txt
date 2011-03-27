@@ -99,7 +99,7 @@ groongaはテーブル間の参照関係の逆引きを高速に行うための�
 
 .. groonga-command
 .. include:: ../example/tutorial06-6.log
-.. table_create --name GeoIndex --flags TABLE_HASH_KEY --key_type WGS84GeoPoint
+.. table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
 .. column_create --table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source location
 .. load --table Site
 .. [
