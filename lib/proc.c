@@ -2119,6 +2119,43 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
+proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  int table_name_len = GRN_TEXT_LEN(VAR(0));
+  if (table_name_len == 0) {
+      ERR(GRN_INVALID_ARGUMENT, "table name is missing");
+  } else {
+    const char *table_name = GRN_TEXT_VALUE(VAR(0));
+    grn_obj *table = grn_ctx_get(ctx, table_name, table_name_len);
+    if (!table) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "no such table: <%.*s>", table_name, table_name_len);
+    } else {
+      switch (table->header.type) {
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_NO_KEY :
+        grn_table_truncate(ctx, table);
+        break;
+      default:
+        {
+          grn_obj buffer;
+          GRN_TEXT_INIT(&buffer, 0);
+          grn_inspect(ctx, &buffer, table);
+          ERR(GRN_INVALID_ARGUMENT,
+              "not a table object: %.*s",
+              GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+        }
+        break;
+      }
+    }
+  }
+  GRN_OUTPUT_BOOL(!ctx->rc);
+  return NULL;
+}
+
+static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
@@ -2385,6 +2422,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "obj");
   DEF_COMMAND("check", proc_check, 1, vars);
+
+  DEF_VAR(vars[0], "table");
+  DEF_COMMAND("truncate", proc_truncate, 1, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);

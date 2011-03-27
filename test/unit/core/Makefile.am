@@ -52,6 +52,7 @@ noinst_LTLIBRARIES =				\
 	test-command-cache-limit.la		\
 	test-command-delete.la			\
 	test-command-dump.la			\
+	test-command-truncate.la		\
 	test-geo.la				\
 	test-accessor.la
 endif
@@ -129,5 +130,6 @@ test_command_define_selector_la_SOURCES	= test-command-define-selector.c
 test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c
 test_command_delete_la_SOURCES		= test-command-delete.c
 test_command_dump_la_SOURCES		= test-command-dump.c
+test_command_truncate_la_SOURCES	= test-command-truncate.c
 test_geo_la_SOURCES			= test-geo.c
 test_accessor_la_SOURCES		= test-accessor.c
