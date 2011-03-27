@@ -110,4 +110,6 @@ groongaはテーブル間の参照関係の逆引きを高速に行うための�
 
 同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。
 
-.. TODO: 実例を書く。
+.. groonga-command
+.. include:: ../example/tutorial06-7.log
+.. select --table Site --filter 'geo_in_circle(location, "128515259x503187188", 50000)' --output_columns _key,location,_score --sortby '-geo_distance(location, "128515259x503187188")' --scorer '_score = geo_distance(location, "128515259x503187188")'
