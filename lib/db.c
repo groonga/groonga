@@ -7679,7 +7679,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
               col = grn_obj_column(ctx, loader->table,
                                    column_name, column_name_size);
               if (!col) {
-                ERR(GRN_ERROR, "couldn't get column: %.*s",
+                ERR(GRN_INVALID_ARGUMENT,
+                    "nonexistent column: <%.*s>",
                     column_name_size, column_name);
                 return;
               }
