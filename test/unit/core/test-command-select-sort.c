@@ -200,24 +200,28 @@ test_drilldown(void)
 void
 test_score_without_query(void)
 {
-  cut_assert_equal_string(
-    "[]",
-    send_command("select Sites "
-                 "--sortby \"_score\" "
-                 "--output_columns \"_key\""));
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "invalid sort key: <_score>(<_score>)",
+    "select Sites "
+    "--sortby \"_score\" "
+    "--output_columns \"_key\"");
 }
 
 void
 test_score_drilldown_without_query(void)
 {
-  cut_assert_equal_string(
-    "[]",
-    send_command("select Bookmarks "
-                 "--sortby \"_score\" "
-                 "--output_columns \"site._key, user._key\" "
-                 "--drilldown \"site user rank\" "
-                 "--drilldown_output_columns \"_key, _nsubrecs\" "
-                 "--drilldown_sortby \"_key\""));
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "invalid sort key: <_score>(<_score>)",
+    "select Bookmarks "
+    "--sortby \"_score\" "
+    "--output_columns \"site._key, user._key\" "
+    "--drilldown \"site user rank\" "
+    "--drilldown_output_columns \"_key, _nsubrecs\" "
+    "--drilldown_sortby \"_key\"");
 }
 
 void

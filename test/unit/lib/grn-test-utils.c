@@ -642,6 +642,9 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
     int flags = 0;
 
     send_id = grn_ctx_send(context, *lines, strlen(*lines), 0);
+    grn_test_assert_context(context,
+                            cut_message("<%s>:<%s>:<%s>",
+                                        *lines, command, result->str));
     receive_id = grn_ctx_recv(context, &command_result, &command_result_length,
                               &flags);
     cut_assert_equal_uint(send_id, receive_id);
