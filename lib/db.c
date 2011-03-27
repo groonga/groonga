@@ -3805,7 +3805,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   }\
 }
 
-#define NUM2DEST(getvalue,totext,tobool)\
+#define NUM2DEST(getvalue,totext,tobool,totime)\
   switch (dest->header.domain) {\
   case GRN_DB_BOOL :\
     tobool(ctx, dest, getvalue(src));\
@@ -3829,7 +3829,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     GRN_UINT32_SET(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_TIME :\
-    GRN_TIME_SET(ctx, dest, (long long int)(getvalue(src) * GRN_TIME_USEC_PER_SEC)); \
+    totime(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_INT64 :\
     GRN_INT64_SET(ctx, dest, getvalue(src));\
@@ -3876,6 +3876,11 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
   }
 
+#define NUM2TIME(ctx, dest, value)\
+  GRN_TIME_SET(ctx, dest, (long long int)(value) * GRN_TIME_USEC_PER_SEC);
+#define FLOAT2TIME(ctx, dest, value)\
+  GRN_TIME_SET(ctx, dest, (long long int)(value * GRN_TIME_USEC_PER_SEC));
+
 #define DEGREE_ACCURACY 10000000
 
 #define DEGREE2MSEC(degree)\
@@ -3889,34 +3894,34 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
   grn_rc rc = GRN_SUCCESS;
   switch (src->header.domain) {
   case GRN_DB_INT8 :
-    NUM2DEST(GRN_INT8_VALUE, grn_text_itoa, NUM2BOOL);
+    NUM2DEST(GRN_INT8_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_UINT8 :
-    NUM2DEST(GRN_UINT8_VALUE, grn_text_lltoa, NUM2BOOL);
+    NUM2DEST(GRN_UINT8_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_INT16 :
-    NUM2DEST(GRN_INT16_VALUE, grn_text_itoa, NUM2BOOL);
+    NUM2DEST(GRN_INT16_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_UINT16 :
-    NUM2DEST(GRN_UINT16_VALUE, grn_text_lltoa, NUM2BOOL);
+    NUM2DEST(GRN_UINT16_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_INT32 :
-    NUM2DEST(GRN_INT32_VALUE, grn_text_itoa, NUM2BOOL);
+    NUM2DEST(GRN_INT32_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_UINT32 :
-    NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa, NUM2BOOL);
+    NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_INT64 :
-    NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa, NUM2BOOL);
+    NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_TIME :
-    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa, NUM2BOOL);
+    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_UINT64 :
-    NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa, NUM2BOOL);
+    NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_FLOAT :
-    NUM2DEST(GRN_FLOAT_VALUE, grn_text_ftoa, FLOAT2BOOL);
+    NUM2DEST(GRN_FLOAT_VALUE, grn_text_ftoa, FLOAT2BOOL, FLOAT2TIME);
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
