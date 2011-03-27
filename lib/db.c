@@ -7696,10 +7696,29 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
         } else if (!ncols) {
           while (ndata--) {
-            col = grn_obj_column(ctx, loader->table,
-                                 GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-            GRN_PTR_PUT(ctx, &loader->columns, col);
-            value++;
+            if (value->header.domain == GRN_DB_TEXT) {
+              char *column_name = GRN_TEXT_VALUE(value);
+              unsigned column_name_size = GRN_TEXT_LEN(value);
+              col = grn_obj_column(ctx, loader->table,
+                                   column_name, column_name_size);
+              if (!col) {
+                ERR(GRN_INVALID_ARGUMENT,
+                    "nonexistent column: <%.*s>",
+                    column_name_size, column_name);
+                return;
+              }
+              GRN_PTR_PUT(ctx, &loader->columns, col);
+              value++;
+            } else {
+              grn_obj buffer;
+              GRN_TEXT_INIT(&buffer, 0);
+              grn_inspect(ctx, &buffer, value);
+              ERR(GRN_INVALID_ARGUMENT,
+                  "column name must be string: <%.*s>",
+                  GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+              GRN_OBJ_FIN(ctx, &buffer);
+              return;
+            }
           }
         }
         break;

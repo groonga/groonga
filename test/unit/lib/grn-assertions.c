@@ -346,7 +346,16 @@ grn_test_assert_send_command_error_helper (grn_ctx     *context,
                                            const gchar *expected_message_expression,
                                            const gchar *command_expression)
 {
-  grn_ctx_send(context, command, strlen(command), 0);
+  const gchar **lines;
+
+  lines = cut_take_string_array(g_strsplit(command, "\n", 0));
+  for (; *lines; lines++) {
+    grn_ctx_send(context, *lines, strlen(*lines), 0);
+    if (context->rc) {
+      break;
+    }
+  }
+
   if (context->rc == expected_rc &&
       cut_equal_string(expected_message, context->errbuf)) {
     gchar *command_result;

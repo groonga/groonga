@@ -455,17 +455,14 @@ test_invalid_start_with_symbol(void)
 void
 test_no_key_table_without_columns(void)
 {
-  cut_omit("crashed!!!");
   assert_send_command("table_create Numbers TABLE_NO_KEY");
-  cut_assert_equal_string("0",
-                          send_command("load --table Numbers [\n"
-                                       "[1],\n"
-                                       "[2],\n"
-                                       "[3]\n"
-                                       "]"));
-  cut_assert_equal_string("[[[0],"
-                          "[[\"_id\",\"Int32\"]],"
-                          "]]",
-                          send_command("select Numbers"));
-
+  grn_test_assert_send_command_error(context,
+                                     GRN_INVALID_ARGUMENT,
+                                     "column name must be string: <1>",
+                                     "load --table Numbers\n"
+                                     "[\n"
+                                     "[1],\n"
+                                     "[2],\n"
+                                     "[3]\n"
+                                     "]");
 }
