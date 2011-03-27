@@ -2122,7 +2122,6 @@ static grn_obj *
 proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int table_name_len = GRN_TEXT_LEN(VAR(0));
-  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   if (table_name_len == 0) {
       ERR(GRN_INVALID_ARGUMENT, "table name is missing");
   } else {
@@ -2153,7 +2152,6 @@ proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   }
   GRN_OUTPUT_BOOL(!ctx->rc);
-  GRN_OUTPUT_ARRAY_CLOSE();
   return NULL;
 }
 

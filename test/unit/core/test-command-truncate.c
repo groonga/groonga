@@ -95,7 +95,7 @@ test_no_columns(void)
        "[2,\"gunyara-kun\"],"
        "[3,\"yu\"]]]",
     send_command("select Users"));
-  cut_assert_equal_string("[true]",
+  cut_assert_equal_string("true",
                           send_command("truncate Users"));
   cut_assert_equal_string(
       "[[[0],"
@@ -124,7 +124,7 @@ test_have_columns(void)
        "[2,\"gunyara-kun\",\"Tasuku SUENAGA\"],"
        "[3,\"yu\",\"Yutaro Shimamura\"]]]",
     send_command("select Users --sortby _id"));
-  cut_assert_equal_string("[true]",
+  cut_assert_equal_string("true",
                           send_command("truncate Users"));
   cut_assert_equal_string(
       "[[[0],"
