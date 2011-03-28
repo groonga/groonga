@@ -14,10 +14,6 @@ export DH_OPTIONS
 
 # TODO: Remove the following codes.
 
-DEB_INSTALL_DIRS_libgroonga-plugin-suggest =	\
-	/usr/bin				\
-	/usr/lib/groonga/plugins/suggest
-
 DEB_INSTALL_DIRS_libgroonga-tokenizer-mecab =	\
 	/usr/lib/groonga/plugins/tokenizers
 
@@ -28,12 +24,6 @@ DEB_INSTALL_DIRS_libgroonga-dev =		\
 DEB_INSTALL_DIRS_groonga-munin-plugins =		\
 	/usr/share/munin/plugins			\
 	/etc/munin/plugin-conf.d
-
-install/libgroonga-plugin-suggest::
-	cp -ar debian/tmp/usr/bin/groonga-suggest-* \
-	  debian/libgroonga-plugin-suggest/usr/bin/
-	cp -ar debian/tmp/usr/lib/groonga/plugins/suggest \
-	  debian/libgroonga-plugin-suggest/usr/lib/groonga/plugins/
 
 install/libgroonga-tokenizer-mecab::
 	cp -ar debian/tmp/usr/lib/groonga/plugins/tokenizers/mecab* \
