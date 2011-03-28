@@ -1,7 +1,7 @@
 DISTRIBUTIONS = debian ubuntu
 CHROOT_BASE = /var/lib/chroot
 ARCHITECTURES = amd64
-CODES = lenny squeeze unstable lucid maverick
+CODES = squeeze wheezy unstable lucid maverick
 
 all:
 
