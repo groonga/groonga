@@ -44,7 +44,7 @@ build_chroot()
     run_sudo debootstrap --arch $architecture $code_name $base_dir
 
     case $code_name in
-	lenny|squeeze|unstable)
+	lenny|squeeze|wheezy|unstable)
 	    run_sudo sed -i'' -e 's/us/jp/' $base_dir/etc/apt/sources.list
 	    ;;
 	*)
