@@ -31,8 +31,8 @@ Description: A fulltext search engine. (meta-package for library use)
 Package: groonga-server
 Section: database
 Architecture: any
-Replaces: groonga (<< 1.1.0-1)
-Breaks: groonga (<< 1.1.0-1)
+Replaces: groonga (<< 1.2.0-1)
+Breaks: groonga (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -61,8 +61,8 @@ Description: Development files to use groonga as a library
 Package: libgroonga0
 Section: libs
 Architecture: any
-Replaces: libgroonga (<< 1.1.0-1)
-Breaks: libgroonga (<< 1.1.0-1)
+Replaces: libgroonga (<< 1.2.0-1)
+Breaks: libgroonga (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends}
@@ -75,8 +75,8 @@ Description: Library files for groonga.
 Package: groonga-tokenizer-mecab
 Section: libs
 Architecture: any
-Replaces: libgroonga-tokenizer-mecab (<< 1.1.0-1)
-Breaks: libgroonga-tokenizer-mecab (<< 1.1.0-1)
+Replaces: libgroonga-tokenizer-mecab (<< 1.2.0-1)
+Breaks: libgroonga-tokenizer-mecab (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -91,8 +91,8 @@ Description: MeCab tokenizer for groonga.
 Package: groonga-plugin-suggest
 Section: libs
 Architecture: any
-Replaces: libgroonga-plugin-suggest (<< 1.1.0-1)
-Breaks: libgroonga-plugin-suggest (<< 1.1.0-1)
+Replaces: libgroonga-plugin-suggest (<< 1.2.0-1)
+Breaks: libgroonga-plugin-suggest (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -109,8 +109,8 @@ Description: Suggest plugin for groonga.
 Package: groonga-bin
 Section: database
 Architecture: any
-Replaces: groonga (<< 1.1.0-1)
-Breaks: groonga (<< 1.1.0-1)
+Replaces: groonga (<< 1.2.0-1)
+Breaks: groonga (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
