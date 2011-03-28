@@ -2,15 +2,14 @@ Source: groonga
 Priority: optional
 Maintainer: Kouhei Sutou <kou@clear-code.com>
 Build-Depends:
-  debhelper (>= 5),
-  cdbs,
+  debhelper (>= 7.0.50),
+  quilt (>= 0.46-7~),
   autotools-dev,
-  quilt,
   libmsgpack-dev,
   libzmq-dev,
   libevent-dev,
   libmecab-dev
-Standards-Version: 3.7.3
+Standards-Version: 3.9.1
 Homepage: http://groonga.org/
 
 Package: libgroonga-dev
