@@ -23,8 +23,8 @@ Depends:
   groonga-bin (= ${binary:Version}),
   groonga-tokenizer-mecab (= ${binary:Version}),
   groonga-plugin-suggest (= ${binary:Version}),
-  groonga-doc (= ${binary:Version})
-Description: Groonga fulltext search engine. (meta-package)
+  groonga-doc (= ${source:Version})
+Description: An open-source fulltext search engine. (meta-package)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
