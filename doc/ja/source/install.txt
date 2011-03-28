@@ -7,22 +7,6 @@
 
 パッケージは64bit用バイナリのみ配布しています。32bit用バイナリは配布していないので注意してください。
 
-Debian GNU/Linux lenny
-----------------------
-
-注: amd64版のみ提供でi386版は未提供。
-
-/etc/apt/sources.list.d/groonga.list::
-
-  deb http://packages.groonga.org/debian/ lenny main
-  deb-src http://packages.groonga.org/debian/ lenny main
-
-インストール::
-
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
-  % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga libgroonga-dev
-
 Debian GNU/Linux squeeze
 ------------------------
 
@@ -32,6 +16,22 @@ Debian GNU/Linux squeeze
 
   deb http://packages.groonga.org/debian/ squeeze main
   deb-src http://packages.groonga.org/debian/ squeeze main
+
+インストール::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga libgroonga-dev
+
+Debian GNU/Linux wheezy
+-----------------------
+
+注: amd64版のみ提供でi386版は未提供。
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ wheezy main
+  deb-src http://packages.groonga.org/debian/ wheezy main
 
 インストール::
 
