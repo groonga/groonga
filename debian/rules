@@ -16,6 +16,7 @@ export DH_OPTIONS
 override_dh_auto_test:
 
 override_dh_install:
+	install -d debian/tmp/etc/munin/plugin-conf.d/
 	install -m 0644 debian/groonga-munin-plugin.conf \
-	  debian/groonga-munin-plugins/etc/munin/plugin-conf.d/groonga
+	  debian/tmp/etc/munin/plugin-conf.d/groonga
 	dh_install
