@@ -1,0 +1,3 @@
+/var/run/groonga                        \
+/var/log/groonga                        \
+/var/lib/groonga
