@@ -14,19 +14,9 @@ export DH_OPTIONS
 
 # TODO: Remove the following codes.
 
-DEB_INSTALL_DIRS_libgroonga-dev =		\
-	/usr/include/groonga			\
-	/usr/lib/pkgconfig
-
 DEB_INSTALL_DIRS_groonga-munin-plugins =		\
 	/usr/share/munin/plugins			\
 	/etc/munin/plugin-conf.d
-
-install/libgroonga-dev::
-	cp -ar debian/tmp/usr/include/groonga/* \
-	  debian/libgroonga-dev/usr/include/groonga/
-	cp -ar debian/tmp/usr/lib/pkgconfig/* \
-	  debian/libgroonga-dev/usr/lib/pkgconfig/
 
 install/groonga-munin-plugins::
 	cp -ar debian/groonga-munin-plugin.conf \
