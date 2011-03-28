@@ -5,7 +5,7 @@ set -e
 if [ "$1" = "purge" ]; then
         rm -f /var/run/groonga/*
         dpkg-statoverride --remove /var/run/groonga
-        rm -f /var/lib/groonga/*
+        rm -rf /var/lib/groonga/*
         dpkg-statoverride --remove /var/lib/groonga
         rm -f /etc/groonga/*
         dpkg-statoverride --remove /etc/groonga
