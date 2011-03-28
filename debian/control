@@ -14,8 +14,6 @@ Homepage: http://groonga.org/
 
 Package: groonga
 Section: database
-Replaces: groonga (<< 1.1.0-1)
-Breaks: groonga (<< 1.1.0-1)
 Architecture: any
 Depends:
   ${misc:Depends},
@@ -46,8 +44,8 @@ Description: Development files to use groonga as a library
 Package: libgroonga0
 Section: libs
 Architecture: any
-Replaces: libgroonga
-Breaks: libgroonga
+Replaces: libgroonga (<< 1.1.0-1)
+Breaks: libgroonga (<< 1.1.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends}
