@@ -36,13 +36,6 @@ upload: ensure-rsync-path
 	     dists pool $(RSYNC_PATH)/$${distribution});	\
 	done
 
-rsync:
-	for distribution in $(DISTRIBUTIONS); do			\
-	  (cd $${distribution};						\
-	   rsync -avz $(RSYNC_PATH)/$${distribution}/pool/ pool;	\
-	  );								\
-	done
-
 build:
 	./build-in-chroot.sh \
 	  $(PACKAGE) $(VERSION) $(CHROOT_BASE) \
