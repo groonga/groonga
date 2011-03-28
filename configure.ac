@@ -837,6 +837,7 @@ echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
 echo
+
 echo "Tokenizers:"
 echo "  MeCab:                 $with_mecab"
 if test "x$with_mecab" = "xyes"; then
@@ -863,4 +864,12 @@ if test "x$message_pack_available" = "xyes"; then
   echo "    LIBS:                ${MESSAGE_PACK_LIBS}"
 fi
 echo
+
+echo "Tools:"
+echo "  Sphinx:                 $ac_sphinx_available"
+if test "x$ac_sphinx_available" = "xyes"; then
+  echo "    sphinx-build:         $SPHINX_BUILD ($sphinx_build_version)"
+fi
+echo
+
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"
