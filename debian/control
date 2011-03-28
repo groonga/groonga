@@ -12,33 +12,60 @@ Build-Depends:
 Standards-Version: 3.9.1
 Homepage: http://groonga.org/
 
+Package: groonga
+Section: database
+Replaces: groonga (<< 1.1.0-1)
+Breaks: groonga (<< 1.1.0-1)
+Architecture: any
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  groonga-bin (= ${binary:Version}),
+  groonga-tokenizer-mecab (= ${binary:Version}),
+  groonga-plugin-suggest (= ${binary:Version}),
+  groonga-doc (= ${binary:Version})
+Description: Groonga fulltext search engine. (meta-package)
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package depends all groonga related package for convenience.
+
 Package: libgroonga-dev
 Section: libdevel
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libgroonga (= ${binary:Version})
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  libgroonga0 (= ${binary:Version})
 Description: Development files to use groonga as a library
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides header files to use groonga as a library.
 
-Package: libgroonga
+Package: libgroonga0
 Section: libs
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Replaces: libgroonga
+Breaks: libgroonga
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends}
 Description: Library files for groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides library files.
 
-Package: libgroonga-tokenizer-mecab
+Package: groonga-tokenizer-mecab
 Section: libs
 Architecture: any
+Replaces: libgroonga-tokenizer-mecab (<< 1.1.0-1)
+Breaks: libgroonga-tokenizer-mecab (<< 1.1.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
-  libgroonga (= ${binary:Version}),
+  libgroonga0 (= ${binary:Version}),
   libmecab1
 Description: MeCab tokenizer for groonga.
  Groonga is an open-source fulltext search engine and column store.
@@ -46,27 +73,35 @@ Description: MeCab tokenizer for groonga.
  .
  This package provides MeCab tokenizer.
 
-Package: libgroonga-plugin-suggest
+Package: groonga-plugin-suggest
 Section: libs
 Architecture: any
+Replaces: libgroonga-plugin-suggest (<< 1.1.0-1)
+Breaks: libgroonga-plugin-suggest (<< 1.1.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   libmsgpack3,
   libzmq0,
   libevent-1.4-2,
-  libgroonga (= ${binary:Version})
+  libgroonga0 (= ${binary:Version})
 Description: Suggest plugin for groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides suggest plugin.
 
-Package: groonga
+Package: groonga-bin
 Section: database
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libgroonga (= ${binary:Version})
-Description: An open-source fulltext search engine and column store.
+Replaces: groonga (<< 1.1.0-1)
+Breaks: groonga (<< 1.1.0-1)
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  libgroonga0 (= ${binary:Version})
+Description: Commands for gronga.
+ Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides 'groonga' command.
@@ -74,7 +109,8 @@ Description: An open-source fulltext search engine and column store.
 Package: groonga-doc
 Section: doc
 Architecture: all
-Depends: ${misc:Depends}
+Depends:
+  ${misc:Depends}
 Description: Documentation of groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
@@ -84,7 +120,11 @@ Description: Documentation of groonga.
 Package: groonga-munin-plugins
 Section: net
 Architecture: any
-Depends: ${misc:Depends}, groonga (= ${binary:Version}), munin-node, ruby
+Depends:
+  ${misc:Depends},
+  groonga-bin (= ${binary:Version}),
+  munin-node,
+  ruby
 Description: munin-node plugins for groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
