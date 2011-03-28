@@ -1,4 +1,5 @@
 Source: groonga
+Section: database
 Priority: optional
 Maintainer: Kouhei Sutou <kou@clear-code.com>
 Build-Depends:
