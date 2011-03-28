@@ -1,2 +1,2 @@
-/etc/munin/plugin-conf.d/*
-/usr/share/groonga/munin/plugins/*
+etc/munin/plugin-conf.d/*
+usr/share/groonga/munin/plugins/*

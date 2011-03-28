@@ -1,3 +1,3 @@
-/var/run/groonga                        \
-/var/log/groonga                        \
-/var/lib/groonga
+var/run/groonga
+var/log/groonga
+var/lib/groonga
