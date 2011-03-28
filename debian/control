@@ -37,8 +37,8 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   adduser,
-  groonga (= ${source:Version}),
-  groonga-munin-plugins (= ${source:Version})
+  groonga (= ${binary:Version}),
+  groonga-munin-plugins (= ${binary:Version})
 Description: A fulltext search engine. (meta-package for server use)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
