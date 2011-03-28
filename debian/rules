@@ -18,9 +18,6 @@ DEB_INSTALL_DOCS_groonga-doc =			\
 	doc/ja/html				\
 	doc/ja/source
 
-DEB_INSTALL_DIRS_libgroonga =			\
-	/usr/lib/groonga/plugins
-
 DEB_INSTALL_DIRS_libgroonga-plugin-suggest =	\
 	/usr/bin				\
 	/usr/lib/groonga/plugins/suggest
@@ -35,9 +32,6 @@ DEB_INSTALL_DIRS_libgroonga-dev =		\
 DEB_INSTALL_DIRS_groonga-munin-plugins =		\
 	/usr/share/munin/plugins			\
 	/etc/munin/plugin-conf.d
-
-install/libgroonga::
-	cp -ar debian/tmp/usr/lib/libgroonga* debian/libgroonga/usr/lib/
 
 install/libgroonga-plugin-suggest::
 	cp -ar debian/tmp/usr/bin/groonga-suggest-* \
