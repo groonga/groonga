@@ -12,6 +12,9 @@ export DH_OPTIONS
 # override_dh_auto_configure:
 #	dh_auto_configure -- --xxx=zzz
 
+# disable 'make check'.
+override_dh_auto_test:
+
 override_dh_install:
 	install -m 0644 debian/groonga-munin-plugin.conf \
 	  debian/groonga/etc/munin/plugin-conf.d/groonga
