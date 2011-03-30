@@ -30,7 +30,7 @@ update:
 
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
-	  rsync -avz --exclude .gitignore			\
+	  rsync -avz --delete --exclude .gitignore		\
 	    $${distribution}/ $(RSYNC_PATH)/$${distribution};	\
 	done
 

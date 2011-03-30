@@ -52,12 +52,12 @@ fi
 if [ -n "${PROTOCOL}" ]; then
     DAEMON_ARGS="${DAEMON_ARGS} --protocol ${PROTOCOL}"
 fi
+mkdir -p $(dirname ${PIDFILE})
 if [ -n "${USER}" ]; then
     if ! getent passwd | grep -q "^${USER}:"; then
 	echo "$0: user for running groonga doesn't exist: ${USER}" >&2
 	exit 1
     fi
-    mkdir -p $(dirname ${PIDFILE})
     chown -R ${USER} $(dirname ${PIDFILE})
     START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} --user ${USER}"
 fi

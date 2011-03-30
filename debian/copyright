@@ -14,7 +14,7 @@ Upstream Author(s):
 
 Copyright:
 
-    Copyright(C) 2009-2010 Brazil
+    Copyright(C) 2009-2011 Brazil
 
 License:
 
@@ -30,5 +30,5 @@ License:
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-The Debian packaging is (C) 2010, Kouhei Sutou <kou@clear-code.com> and
-is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+The Debian packaging is (C) 2011, Kouhei Sutou <kou@clear-code.com> and
+is licensed under the LGPL-2.1, see `/usr/share/common-licenses/LGPL-2.1'.

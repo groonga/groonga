@@ -1,3 +1,9 @@
+groonga (1.2.0-2) unstable; urgency=low
+
+  * libgronga-dev: add missing libgroonga.so.
+
+ -- Kouhei Sutou <kou@clear-code.com>  Tue, 29 Mar 2011 21:00:00 +0900
+
 groonga (1.2.0-1) unstable; urgency=low
 
   * New upstream release.

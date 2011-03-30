@@ -7,19 +7,16 @@
 export DH_OPTIONS
 
 %:
-	dh --with quilt $@
+	dh $@
 
 # override_dh_auto_configure:
 #	dh_auto_configure -- --xxx=zzz
 
-# TODO: Remove the following codes.
+# disable 'make check'.
+override_dh_auto_test:
 
-DEB_INSTALL_DIRS_groonga-munin-plugins =		\
-	/usr/share/munin/plugins			\
-	/etc/munin/plugin-conf.d
-
-install/groonga-munin-plugins::
-	cp -ar debian/groonga-munin-plugin.conf \
-	  debian/groonga-munin-plugins/etc/munin/plugin-conf.d/groonga
-	cp -ar debian/tmp/usr/share/groonga/munin/plugins/* \
-	  debian/groonga-munin-plugins/usr/share/munin/plugins/
+override_dh_install:
+	install -d debian/tmp/etc/munin/plugin-conf.d/
+	install -m 0644 debian/groonga-munin-plugin.conf \
+	  debian/tmp/etc/munin/plugin-conf.d/groonga
+	dh_install

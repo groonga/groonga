@@ -1,6 +1,4 @@
 debhelper
-cdbs
 autotools-dev
 pkg-config
-quilt
 libmecab-dev

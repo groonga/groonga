@@ -1,4 +1,426 @@
+2011-03-29 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/news.txt: add 1.2.0 entry.
+
+2011-03-28 Kouhei Sutou <kou@clear-code.com>
+
+ * yum/Makefile.am: [yum] delete needless files on uploading.
+
+ * apt/build-in-chroot.sh, apt/sign-repository.sh, apt/update-repository.sh:
+ [debian] support wheezy.
+
+ * doc/ja/source/install.txt: remove lenny install document and add wheezy's
+ one.
+
+ * apt/Makefile.am: [apt] remove needless task.
+
+ * apt/Makefile.am: [apt] delete needless files from server.
+
+ * debian/control: [debina][groonga-server] fix version.
+
+ * debian/control, debian/groonga-bin.default, debian/groonga-bin.dirs,
+ debian/groonga-bin.init, debian/groonga-bin.logrotate,
+ debian/groonga-bin.postinst, debian/groonga-bin.postrm,
+ debian/groonga-server.default, debian/groonga-server.dirs,
+ debian/groonga-server.init, debian/groonga-server.logrotate,
+ debian/groonga-server.postinst, debian/groonga-server.postrm: [debian] add
+ groonga-server package for convenience.
+
+ * debian/groonga-bin.postrm: [debian] remove databases on purge.
+
+ * lib/db.c: ignore MeCab tokenizer load error. fixes #893
+
+ * debian/control: [debian] fix wrong Replaces and Breaks tags.
+
+ * debian/groonga-bin.dirs, debian/groonga-bin.init: [debian] don't create
+ /var/run/groonga/ in package.
+
+ * debian/copyright: [debian] use the same license of groonga. LGPL-2.1.
+
+ * debian/control: [debian] don't start description with package name.
+
+ * debian/control: [debian] add missing section.
+
+ * debian/groonga-munin-plugins.dirs, debian/rules: [debian] fix installation
+ path.
+
+ * configure.ac: show sphinx-build version.
+
+ * debian/groonga-munin-plugins.dirs, debian/rules: [debian] install munin
+ configuration. refs #887
+
+ * debian/compat: [debian] add a missing 'compat'. refs #887
+
+ * debian/rules: [debian] don't run 'make check'. refs #887
+
+ * debian/groonga-bin.dirs, debian/groonga-bin.install,
+ debian/groonga-munin-plugins.install, debian/groonga-plugin-suggest.install,
+ debian/groonga-tokenizer-mecab.install, debian/libgroonga-dev.install,
+ debian/libgroonga0.dirs, debian/libgroonga0.install: [debian] remove the
+ first '/'.
+
+ * apt/groonga-depended-packages, debian/control, debian/rules: [debian] don't
+ use quilt. refs 887#
+
+ * apt/build-in-chroot.sh: add wheezy support.
+
+ * debian/source/format: [debian] add a required debian/source/format. refs
+ #887
+
+ * debian/groonga-munin-plugins.install, debian/rules: [groonga-munin-plugins]
+ use debhelper. refs #887
+
+ * debian/libgroonga-dev.install, debian/rules: [libgroonga-dev] use
+ debhelper. refs #887
+
+ * debian/groonga-tokenizer-mecab.install, debian/rules:
+ [groonga-tokenizer-mecab] use debhelper. refs #887
+
+ * debian/groonga-plugin-suggest.install, debian/rules:
+ [groonga-plugin-suggest] use debhelper. refs #887
+
+ * debian/groonga-doc.docs, debian/rules: [groonga-doc] use debhelper. refs
+ #887
+
+ * debian/groonga-bin.dirs: [groonga-bin] create directories.
+
+ * debian/libgroonga0.dirs, debian/libgroonga0.install, debian/rules: use
+ debhelper for libgroonga0.
+
+ * debian/groonga-bin.default, debian/groonga-bin.init,
+ debian/groonga-bin.install, debian/groonga-bin.logrotate,
+ debian/groonga-bin.postinst, debian/groonga-bin.postrm,
+ debian/groonga.default, debian/groonga.init, debian/groonga.logrotate,
+ debian/groonga.postinst, debian/groonga.postrm, debian/rules: follow groonga
+ -> groonga-bin change and use debhelper.
+
+ * debian/control: change package names.  groonga -> groonga-bin libgroonga ->
+ libgroonga0 libgroonga-tokenizer-mecab -> groonga-tokenizer-mecab
+ libgroonga-plugin-suggest -> groonga-plugin-suggest  (new) groonga
+ (meta-package)
+
+ * debian/control, debian/rules: drop cdbs and use the latest debhelper. refs
+ #887
+
+ * apt/Makefile.am: drop lenny support and add wheezy support.
+
+ * debian/changelog, rpm/centos/groonga.spec.in, rpm/fedora/groonga.spec.in:
+ add 1.2.0 entry for packages.
+
+ * configure.ac: 1.1.0 -> 1.2.0.
+
+ * test/unit/core/test-command-select-sort.c, test/unit/lib/grn-test-utils.c:
+ add error check on grn_ctx_send.
+
+ * lib/db.c: fix error code and improve error message.
+
+2011-03-27 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-table.c: disable grn_table_truncate() test again.  It
+ still crashes.
+
+ * lib/db.c, test/unit/core/test-command-load.c,
+ test/unit/lib/grn-assertions.c: add column name check. fixes #661
+
+ * test/unit/core/test-command-truncate.c: omit the known failed test. refs
+ #892
+
+ * lib/proc.c, test/unit/core/test-command-truncate.c: remove [...] from
+ truncate result.  Other commands, table_create, column_create and so on,
+ returns bare true/false. The truncate command uses the same format.  refs
+ #888
+
+ * test/unit/core/test-command-truncate.c: add a test for truncate with
+ columns. refs #891
+
+ * lib/proc.c, test/unit/core/test-command-truncate.c: truncate returns valid
+ JSON object.
+
+ * lib/db.c: fix overflow on int32/uint32 to time conversion. fixes #891
+
+ * test/unit/core/test-table.c: remove omission because truncate is
+ implemented.
+
+2011-03-13 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c: clear loader on db close. fixes #878
+
+2011-03-27 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c, test/unit/core/Makefile.am,
+ test/unit/core/test-command-truncate.c: add hidden truncate command. fixes
+ #888
+
+ * doc/ja/source/example/tutorial06-7.log,
+ doc/ja/source/tutorial/tutorial06.txt: add indexed geo search example into
+ tutorial. fixes #438
+
+ * doc/ja/source/tutorial/tutorial06.txt: geo index should be TABLE_PAT_KEY.
+
+ * doc/ja/source/commands/column_list.txt,
+ doc/ja/source/commands/table_list.txt: fix out-dated table_list document.
+
+ * doc/ja/source/commands/column_list.txt: fix column_list document markup.
+ fixes #758
+
+ * doc/ja/source/commands/column_list.txt: fix wrong column_list document.
+ fixes #758
+
+2011-03-25 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/Makefile.am, test/unit/core/test-command-select-filter.c:
+ add a test for prefix search in --filter.
+
+2011-03-15 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/db.c, test/unit/core/test-command-load.c: fix load drops msec info.
+ #880
+
+2011-03-13 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-database.c: close database.
+
+ * test/unit/core/test-table-sort-key-from-str.c: fix memory leaks.
+
+ * test/unit/core/test-inverted-index.c: fix memory leaks.
+
+ * test/unit/core/test-inverted-index.c: add declarations.
+
+ * test/unit/core/test-inverted-index.c: close database.
+
+ * test/unit/core/test-table-patricia-trie-cursor.c: close database.
+
+ * test/unit/core/test-accessor.c: fix a memory leak.
+
+ * test/unit/core/test-accessor.c: close database.
+
+ * lib/geo.c: fix a memory leak.
+
+ * test/unit/core/test-table-sort-geo.c: close database.
+
+ * test/unit/core/test-cast-table.c: close database.
+
+ * test/unit/core/test-table-hook.c: close database.
+
+ * test/unit/core/test-text.c: fix a memory leak.
+
+ * test/unit/core/test-text.c: fix a memory leak.
+
+ * test/unit/core/test-text.c: add declrations.
+
+ * test/unit/core/test-command-cache-limit.c: close database.
+
+ * test/unit/core/test-geo.c: close database.
+
+ * test/unit/core/test-log.c: close database.
+
+ * test/unit/core/test-patricia-trie.c: close database.
+
+ * test/unit/core/test-command-column-list.c: close database.
+
+ * lib/db.c: fix a memory leak when grn_obj_get_accessor() fails.
+
+ * test/unit/core/test-function-edit-distance.c: close database.
+
+ * test/unit/core/test-table-cursor.c: close database.
+
+ * test/unit/core/test-table-select.c: fix wrong OP_GET_VALUE n-args: 2 -> 1.
+ but is it OK???
+
+ * test/unit/core/test-table-select.c: fix wrong OP_GET_VALUE n-args. but is
+ it OK???
+
+ * test/unit/core/test-command-table-list.c: close database.
+
+ * lib/db.c: format error message.
+
+ * test/unit/core/test-plugin.c: clese database.
+
+ * test/unit/core/test-table.c: unlink no longer needed objects.
+
+ * test/unit/core/test-table.c: close database.
+
+ * test/unit/core/test-command-delete.c: close database.
+
+ * test/unit/core/test-inspect.c: unlink no longer needed object.
+
+ * test/unit/core/test-inspect.c: unlink no longer needed objects.
+
+ * test/unit/core/test-inspect.c: unlink allocated object.
+
+ * test/unit/core/test-inspect.c: clese database.
+
+ * test/unit/core/test-function.c: close database before fin context.
+
+ * lib/db.c: fix a memory leak.
+
+ * test/unit/core/test-command-load.c: close database.
+
+ * test/unit/lib/grn-test-shortcut.h: fix typos.
+
+2011-03-10 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/core/test-patricia-trie.h: check context before testing patricia
+ trie is created.
+
+ * lib/geo.c, test/unit/story/test-taiyaki.c: fix crash by passing same
+ locations to geo_in_rectangle().
+
+ * test/unit/fixtures/story/taiyaki/shops.grn, test/unit/story/test-taiyaki.c:
+ use meaningful value.
+
+ * test/unit/lib/grn-test-utils.c: avoid overflow.
+
+ * lib/db.c, test/unit/story/test-taiyaki.c: fix wrong cast positoin.
+
+ * lib/geo.h: revert wrong int cast.
+
+2011-03-09 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/geo.c, lib/geo.h, test/unit/story/test-taiyaki.c: fix long latitude
+ max.
+
+ * lib/geo.c, test/unit/story/test-taiyaki.c: add max latitude and longitude
+ value checks.
+
+ * lib/geo.c, test/unit/story/test-taiyaki.c: add a max longitude value check.
+
+ * lib/geo.c, lib/geo.h, test/unit/story/test-taiyaki.c: add a max latitude
+ check.
+
+ * lib/geo.h: cast in macro.
+
+ * test/unit/story/test-taiyaki.c: swap test function order.
+
+ * lib/db.c: reduce geo point convertion from degree to msec error.
+
+ * lib/geo.c: add more debug print.
+
+ * lib/plugin.c: suppress a warning.
+
+ * test/unit/lib/grn-test-hash-factory.c: cast GrnTestEncoding to grn_encoding
+ explicitly.
+
+2011-03-08 Kouhei Sutou <kou@clear-code.com>
+
+ * .../different_results_with_the_same_keyword.txt: fix a typo.
+
+2011-03-04 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * test/unit/grntest/Makefile.am: Fixed typo.
+
+2011-03-03 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * plugins/suggest/suggest.c, src/suggest/groonga_suggest_ddl.txt: Implemented
+ black list for suggest.
+
+2011-03-02 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/str.c: add bulk resize overflow check.
+
+2011-02-28 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/install.txt: add a note about only 64bit binaries are
+ distributing.
+
+2011-02-27 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/plugin.c: clear errline and errfile after grn_dl_close() is succeeded.
+ Reported by @tomotaka_ito. Thanks!!!
+
+ * lib/ctx.c: initialize error related variables in grn_ctx.  Reported by
+ @tomotaka_ito. Thanks!!!
+
+2011-02-25 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/groonga_suggest_learner.c, src/suggest/util.c: Added multi file
+ log reading to suggest learner.
+
+2011-02-21 Kouhei Sutou <kou@clear-code.com>
+
+ * src/grntest.c, test/unit/grntest/Makefile.am,
+ test/unit/grntest/test-gqtp.rb: use a grn_ctx per thread.
+
+ * src/grntest.c: add missing '"'.
+
+ * test/unit/grntest/Makefile.am, test/unit/grntest/test-http.rb,
+ test/unit/grntest/test-out-http.rb: fix test name.
+
+ * src/grntest.c: remove debug print.
+
+ * doc/ja/source/grntest.txt: fix markup.
+
+ * doc/ja/source/commands.txt, doc/ja/source/grntest.txt: fix markup.
+
+ * .gitignore: udpate ignore files.
+
+2011-02-20 Kouhei Sutou <kou@clear-code.com>
+
+ * test/unit/http/test-http.rb: add a test for JSONP support.
+
+2011-02-18 Toshihisa <t2001@gol.com>
+
+ * mkmfwin32.vbs: Use same c runtime dll.
+
+2011-02-18 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/plugin.c: split path separator normalization with path case and name
+ case.
+
+ * lib/plugin.c, test/unit/core/test-plugin.c: add resiter name length check.
+
+ * lib/plugin.c: remove needless macro value.
+
+ * lib/ctx.c: ensure using the last byte in error message buffer.
+
+ * test/unit/core/Makefile.am, test/unit/core/test-plugin.c,
+ test/unit/core/test-register.c: test-register -> test-plugin.
+
+2011-02-17 Toshihisa <t2001@gol.com>
+
+ * lib/proc.c: ensure null termination of plugin pathname.
+
+ * lib/plugin.c: normalize path_separator in Win32.
+
+ * mkmfwin32.vbs: change default install directory
+
+2011-02-17 Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>
+
+ * src/suggest/Makefile.am, src/suggest/groonga_suggest_httpd.c,
+ src/suggest/groonga_suggest_learner.c, src/suggest/util.c,
+ src/suggest/util.h: Added log load function to suggest learner.
+
+2011-02-17 Kouhei Sutou <kou@clear-code.com>
+
+ * src/groonga.c: fix JSONP support doesn't work.
+
+2011-02-16 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: don't require pkg-config for autogen.sh.
+
+ * configure.ac: don't check pthread.h on Windows.
+
+2011-02-15 Kouhei Sutou <kou@clear-code.com>
+
+ * lib/proc.c: fix a typo.
+
+2011-02-09 Kouhei Sutou <kou@clear-code.com>
+
+ * doc/ja/source/install.txt: add install document on Mac OS X with Homebrew.
+
+ * doc/ja/source/install.txt: add install document on Mac OS X with MacPorts.
+
+2011-02-08 Daijiro MORI <daijiro.mori@gmail.com>
+
+ * lib/db.c, lib/ii.c, lib/store.c: Added grn_table_truncate()
+
 2011-02-08 Kouhei Sutou <kou@clear-code.com>
+
+ * configure.ac: support Autoconf 2.60 earlier. #833
+
+ * configure.ac: fix build error on no Cutter.
+
+ * ChangeLog: update ChangeLog.
 
  * rpm/fedora/groonga.spec.in: don't require unused libraries.
 

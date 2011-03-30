@@ -108,7 +108,7 @@ EOF
 
 for code_name in ${CODES}; do
     case ${code_name} in
-	lenny|squeeze|unstable)
+	lenny|squeeze|wheezy|unstable)
 	    distribution=debian
 	    component=main
 	    ;;

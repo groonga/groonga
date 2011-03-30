@@ -30,17 +30,10 @@ sign:
 	./sign-repository.sh '$(CODES)'
 
 upload: ensure-rsync-path
-	for distribution in $(DISTRIBUTIONS); do			\
-	  (cd $${distribution};						\
-	   rsync -avz dists pool $(RSYNC_PATH)/$${distribution};	\
-	  );								\
-	done
-
-rsync:
-	for distribution in $(DISTRIBUTIONS); do			\
-	  (cd $${distribution};						\
-	   rsync -avz $(RSYNC_PATH)/$${distribution}/pool/ pool;	\
-	  );								\
+	for distribution in $(DISTRIBUTIONS); do		\
+	  (cd $${distribution};					\
+	   rsync -avz --delete					\
+	     dists pool $(RSYNC_PATH)/$${distribution});	\
 	done
 
 build:

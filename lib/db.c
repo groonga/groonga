@@ -136,7 +136,9 @@ grn_db_open(grn_ctx *ctx, const char *path)
           grn_ctx_use(ctx, (grn_obj *)s);
           grn_ctx_use(ctx_, (grn_obj *)s);
 #ifdef WITH_MECAB
-          grn_db_init_mecab_tokenizer(ctx);
+          if (grn_db_init_mecab_tokenizer(ctx)) {
+            ERRCLR(ctx);
+          }
 #endif
           grn_db_init_builtin_tokenizers(ctx);
           grn_db_init_builtin_query(ctx);
@@ -7075,6 +7077,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   }
 #ifdef WITH_MECAB
   if (grn_db_init_mecab_tokenizer(ctx)) {
+    ERRCLR(ctx);
 #endif
     grn_obj_register(ctx, db, "TokenMecab", 10);
 #ifdef WITH_MECAB
