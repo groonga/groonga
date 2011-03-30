@@ -147,6 +147,9 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
 
   if ((id = grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename),
                          (void **)&plugin))) {
+    if (plugin && *plugin) {
+      (*plugin)->refcount++;
+    }
     return id;
   }
   if ((dl = grn_dl_open(filename))) {
@@ -171,6 +174,8 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
           SERR(label);
         }
         id = GRN_ID_NIL;
+      } else {
+        (*plugin)->refcount = 1;
       }
     } else {
       if (!grn_dl_close(dl)) {
@@ -192,10 +197,11 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
 {
   grn_plugin *plugin;
 
-  grn_plugin_call_fin(ctx, id);
   if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return GRN_INVALID_ARGUMENT;
   }
+  if (--plugin->refcount) { return GRN_SUCCESS; }
+  grn_plugin_call_fin(ctx, id);
   if (!grn_dl_close(plugin->dl)) {
     const char *label;
     label = grn_dl_close_error_label;

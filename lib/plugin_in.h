@@ -50,6 +50,7 @@ struct _grn_plugin {
   grn_plugin_func register_func;
   grn_plugin_func unregister_func;
   grn_plugin_func fin_func;
+  int refcount;
 };
 
 grn_rc grn_plugins_init(void);
