@@ -27,6 +27,8 @@
 
 #include "util.h"
 
+#define DEFAULT_THRESHOLD 100
+
 int
 print_error(const char *format, ...)
 {
@@ -96,7 +98,8 @@ parse_keyval(struct evkeyvalq *get_args,
              const char **client_id, const char **target_name,
              const char **learn_target_name,
              const char **callback,
-             uint64_t *millisec)
+             uint64_t *millisec,
+             int *threshold)
 {
   struct evkeyval *get;
 
@@ -107,6 +110,7 @@ parse_keyval(struct evkeyvalq *get_args,
   if (learn_target_name) { *learn_target_name = NULL; }
   if (callback) { *callback = NULL; }
   if (millisec) { *millisec = 0; }
+  if (threshold) { *threshold = DEFAULT_THRESHOLD; }
 
   TAILQ_FOREACH(get, get_args, next) {
     switch(get->key[0]) {
@@ -145,6 +149,11 @@ parse_keyval(struct evkeyvalq *get_args,
     case 'l':
       if (learn_target_name) {
         *learn_target_name = get->value;
+      }
+      break;
+    case 'h':
+      if (threshold) {
+        *threshold = atoi(get->value);
       }
       break;
     default:
