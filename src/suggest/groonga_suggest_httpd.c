@@ -80,7 +80,9 @@ static volatile sig_atomic_t loop = 1;
 static grn_obj *db;
 
 static int
-suggest_result(struct evbuffer *res_buf, const char *types, const char *query, const char *target_name, int threshold, grn_obj *cmd_buf, grn_ctx *ctx)
+suggest_result(struct evbuffer *res_buf, const char *types, const char *query,
+               const char *target_name, int threshold, int limit,
+               grn_obj *cmd_buf, grn_ctx *ctx)
 {
   if (target_name && types && query) {
     GRN_BULK_REWIND(cmd_buf);
@@ -92,6 +94,8 @@ suggest_result(struct evbuffer *res_buf, const char *types, const char *query, c
     grn_text_urlenc(ctx, cmd_buf, query, strlen(query));
     GRN_TEXT_PUTS(ctx, cmd_buf, "&threshold=");
     grn_text_itoa(ctx, cmd_buf, threshold);
+    GRN_TEXT_PUTS(ctx, cmd_buf, "&limit=");
+    grn_text_itoa(ctx, cmd_buf, limit);
     {
       char *res;
       int flags;
@@ -112,13 +116,13 @@ suggest_result(struct evbuffer *res_buf, const char *types, const char *query, c
 static int
 log_send(struct evbuffer *res_buf, thd_data *thd, struct evkeyvalq *get_args)
 {
-  int threshold;
   uint64_t millisec;
+  int threshold, limit;
   const char *callback, *types, *query, *client_id, *target_name,
              *learn_target_name;
 
   parse_keyval(get_args, &query, &types, &client_id, &target_name,
-               &learn_target_name, &callback, &millisec, &threshold);
+               &learn_target_name, &callback, &millisec, &threshold, &limit);
 
   /* send data to learn client */
   if (thd->zmq_sock && millisec && client_id && query && learn_target_name) {
@@ -190,10 +194,12 @@ log_send(struct evbuffer *res_buf, thd_data *thd, struct evkeyvalq *get_args)
       content_length = strlen(callback);
       evbuffer_add(res_buf, callback, content_length);
       evbuffer_add(res_buf, "(", 1);
-      content_length += suggest_result(res_buf, types, query, target_name, threshold, &(thd->cmd_buf), thd->ctx) + 3;
+      content_length += suggest_result(res_buf, types, query, target_name,
+        threshold, limit, &(thd->cmd_buf), thd->ctx) + 3;
       evbuffer_add(res_buf, ");", 2);
     } else {
-      content_length = suggest_result(res_buf, types, query, target_name, threshold, &(thd->cmd_buf), thd->ctx);
+      content_length = suggest_result(res_buf, types, query, target_name,
+        threshold, limit, &(thd->cmd_buf), thd->ctx);
     }
     return content_length;
   }

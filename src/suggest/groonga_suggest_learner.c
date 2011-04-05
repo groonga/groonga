@@ -543,7 +543,7 @@ read_log_line(suggest_log_file **list)
         *eol = '\0';
         evhttp_parse_query(line_buf, &get_args);
         parse_keyval(&get_args, &query, &types, &client_id, NULL,
-                     &learn_target_name, NULL, &(t->millisec), NULL);
+                     &learn_target_name, NULL, &(t->millisec), NULL, NULL);
         if (query && client_id && learn_target_name && t->millisec) {
           t->query = evhttp_decode_uri(query);
           t->submit = (types && !strcmp(types, "submit"));

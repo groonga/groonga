@@ -99,7 +99,8 @@ parse_keyval(struct evkeyvalq *get_args,
              const char **learn_target_name,
              const char **callback,
              uint64_t *millisec,
-             int *threshold)
+             int *threshold,
+             int *limit)
 {
   struct evkeyval *get;
 
@@ -111,6 +112,7 @@ parse_keyval(struct evkeyvalq *get_args,
   if (callback) { *callback = NULL; }
   if (millisec) { *millisec = 0; }
   if (threshold) { *threshold = DEFAULT_THRESHOLD; }
+  if (limit) { *limit = -1; }
 
   TAILQ_FOREACH(get, get_args, next) {
     switch(get->key[0]) {
@@ -154,6 +156,11 @@ parse_keyval(struct evkeyvalq *get_args,
     case 'h':
       if (threshold) {
         *threshold = atoi(get->value);
+      }
+      break;
+    case 'm':
+      if (limit) {
+        *limit = atoi(get->value);
       }
       break;
     default:
