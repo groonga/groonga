@@ -48,6 +48,8 @@ Description: A fulltext search engine. (meta-package for server use)
 Package: libgroonga-dev
 Section: libdevel
 Architecture: any
+Replaces: libgroonga (<< 1.2.0-1)
+Breaks: libgroonga (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
