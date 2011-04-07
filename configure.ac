@@ -189,7 +189,7 @@ AC_SUBST(grn_log_path)
 # default encoding
 AC_ARG_WITH(default_encoding,
   [AS_HELP_STRING([--with-default-encoding=ENCODING],
-    [specify groonga default encoding(euc/sjis/utf8/latin1/koi8r/none)])],
+    [specify groonga default encoding(euc_jp/sjis/utf8/latin1/koi8r/none)])],
   GRN_DEFAULT_ENCODING="$withval",
   GRN_DEFAULT_ENCODING="utf8")
 AC_DEFINE_UNQUOTED(GRN_DEFAULT_ENCODING, "$GRN_DEFAULT_ENCODING", "specified default encoding")
