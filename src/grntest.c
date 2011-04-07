@@ -103,6 +103,7 @@ static const char *groonga_path = "groonga";
 
 static const char *groonga_protocol = "gqtp";
 static char *grntest_osinfo;
+static int grntest_sigint = 0;
 
 
 
@@ -1042,6 +1043,9 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
                    task_id);
         grntest_task[task_id].qnum++;
         GRN_BULK_REWIND(&line);
+        if (grntest_sigint) {
+          goto exit;
+        }
       }
       GRN_OBJ_FIN(ctx, &line);
       fclose(fp);
@@ -1074,10 +1078,14 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
                    GRN_TEXT_VALUE(command),
                    grntest_task[task_id].jobtype, task_id);
         grntest_task[task_id].qnum++;
+        if (grntest_sigint) {
+          goto exit;
+        }
       }
     }
   }
 
+exit:
   GRN_TIME_INIT(&end_time, 0);
   GRN_TIME_NOW(&grntest_ctx[task_id], &end_time);
   latency = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_starttime);
@@ -2082,6 +2090,9 @@ do_script(grn_ctx *ctx, const char *sfile)
   }
   buf[BUF_LEN-2] = '\0';
   while (fgets(buf, BUF_LEN, fp) != NULL) {
+    if (grntest_sigint ) {
+      break;
+    }
     line++;
     if (buf[BUF_LEN-2] != '\0') {
       fprintf(stderr, "Too long line in script file:%d\n", line);
@@ -2893,6 +2904,12 @@ timeout(int sig)
   alarm(0);
 }
 
+static void
+setexit(int sig)
+{
+  grntest_sigint = 1;
+}
+
 static int
 setsigalarm(int sec)
 {
@@ -2906,6 +2923,22 @@ setsigalarm(int sec)
   ret = sigaction(SIGALRM, &sig, NULL);
   if (ret == -1) {
     fprintf(stderr, "setsigalarm:errno= %d\n", errno);
+  }
+  return ret;
+}
+
+static int
+setsigint(void)
+{
+  int	ret;
+  struct sigaction sig;
+
+  sig.sa_handler = setexit;
+  sig.sa_flags = 0;
+  sigemptyset(&sig.sa_mask);
+  ret = sigaction(SIGINT, &sig, NULL);
+  if (ret == -1) {
+    fprintf(stderr, "setsigint:errno= %d\n", errno);
   }
   return ret;
 }
@@ -3056,6 +3089,9 @@ main(int argc, char **argv)
   get_sysinfo(dbname, sysinfo, BUF_LEN);
   output_sysinfo(sysinfo);
 
+#ifndef WIN32
+  setsigint();
+#endif /* WIN32 */
   qnum = do_script(&context, scrname);
   output_result_final(&context, qnum);
   fclose(grntest_logfp);
