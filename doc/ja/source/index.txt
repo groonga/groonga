@@ -17,6 +17,7 @@ groonga ドキュメント
    tutorial
    reference
    spec
+   limitations
    troubleshooting
    developer
 

@@ -219,6 +219,8 @@ source_files =					\
 	source/example/tutorial06-3.log						\
 	source/example/tutorial06-4.log						\
 	source/example/tutorial06-5.log						\
+	source/example/tutorial06-6.log						\
+	source/example/tutorial06-7.log						\
 	source/example/tutorial07-1.log						\
 	source/example/tutorial07-2.log						\
 	source/example/tutorial07-3.log						\
@@ -248,6 +250,7 @@ source_files =					\
 	source/http.txt								\
 	source/index.txt							\
 	source/install.txt							\
+	source/limitations.txt							\
 	source/news.txt								\
 	source/process.txt							\
 	source/pseudo_column.txt						\
@@ -272,7 +275,7 @@ source_files =					\
 	source/update_execution_example.py
 
 # find html -type f | sort | sed -e 's,^,\t,g'
-html_files =						\
+html_files =									  \
 	html/.buildinfo								  \
 	html/_sources/characteristic.txt					  \
 	html/_sources/command_version.txt					  \
@@ -322,6 +325,7 @@ html_files =						\
 	html/_sources/http.txt							  \
 	html/_sources/index.txt							  \
 	html/_sources/install.txt						  \
+	html/_sources/limitations.txt						  \
 	html/_sources/news.txt							  \
 	html/_sources/process.txt						  \
 	html/_sources/pseudo_column.txt						  \
@@ -402,6 +406,7 @@ html_files =						\
 	html/http.html								  \
 	html/index.html								  \
 	html/install.html							  \
+	html/limitations.html							  \
 	html/news.html								  \
 	html/objects.inv							  \
 	html/process.html							  \
