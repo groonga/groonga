@@ -11,7 +11,7 @@
 
 groongaでは、特定のカラム値で検索結果をグループ化することができます。これをドリルダウンと呼びます。
 
-Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCounteryテーブルとします。
+Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountryテーブルとします。
 
 .. groonga-command
 .. include:: ../example/tutorial05-1.log
