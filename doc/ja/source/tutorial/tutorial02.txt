@@ -23,7 +23,7 @@ groongaがデーモンモードで起動し、指定したポート番号でgroo
 
 実行例::
 
-  % groonga -d /var/tmp/hoge.db
+  % groonga -d /tmp/tutorial.db
   12345
   %
 
