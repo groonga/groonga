@@ -29,7 +29,7 @@
  column_create --table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
  column_create --table Users --name location_str --flags COLUMN_SCALAR --type ShortText
  column_create --table Users --name description --flags COLUMN_SCALAR --type ShortText
- column_create --table Users --name folowee --flags COLUMN_INDEX --type Users --source follower
+ column_create --table Users --name followee --flags COLUMN_INDEX --type Users --source follower
 
  column_create --table Comments --name comment --flags COLUMN_SCALAR --type ShortText
  column_create --table Comments --name last_modified --flags COLUMN_SCALAR --type Time
@@ -71,7 +71,7 @@ Usersテーブル
 ``description``
   ユーザーの自己紹介
 
-``folowee``
+``followee``
   Usersテーブルのfollowerカラムに対するインデックス。
   このインデックスを作ることで、あるユーザーをフォローしているユーザーを検索できるようになります。
 
@@ -255,7 +255,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
  column_create --table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
  column_create --table Users --name location_str --flags COLUMN_SCALAR --type ShortText
  column_create --table Users --name description --flags COLUMN_SCALAR --type ShortText
- column_create --table Users --name folowee --flags COLUMN_INDEX --type Users --source follower
+ column_create --table Users --name followee --flags COLUMN_INDEX --type Users --source follower
  
  column_create --table Comments --name comment --flags COLUMN_SCALAR --type ShortText
  column_create --table Comments --name last_modified --flags COLUMN_SCALAR --type Time
