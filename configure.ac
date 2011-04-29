@@ -48,14 +48,14 @@ m4_ifdef([PKG_PROG_PKG_CONFIG],
 AC_DEFUN([CHECK_CFLAG], [
   old_CFLAGS=$CFLAGS
   CFLAGS="$CFLAGS $1 -Werror"
-  AC_COMPILE_IFELSE([[
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #include <stdio.h>
 int main(int argc, char **argv)
 {
   printf("test cflags, argc:%d argv[0]:%s", argc, argv[0]);
   return 0;
 }
-    ]],
+    ])],
     [check_cflag=yes],
     [check_cflag=no])
   CFLAGS="$old_CFLAGS"
@@ -161,7 +161,7 @@ AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(off_t)
 
 AC_MSG_CHECKING([for fpclassify])
-AC_COMPILE_IFELSE([[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #define _ISOC99_SOURCE
 #include <math.h>
 
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 {
   return fpclassify (0.0);
 }
-    ]],
+    ])],
     [
       AC_MSG_RESULT(yes)
       AC_DEFINE(HAVE_FPCLASSIFY, [1], [use fpclassify])
@@ -371,7 +371,7 @@ fi
 
 # check MSG_MORE defined
 AC_MSG_CHECKING([whether MSG_MORE defined])
-AC_COMPILE_IFELSE([[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -379,7 +379,7 @@ int main(int argc, char **argv)
 {
   return MSG_MORE;
 }
-    ]],
+    ])],
     [
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_MSG_MORE, [1], [use MSG_MORE])
@@ -390,7 +390,7 @@ int main(int argc, char **argv)
 
 # check MSG_NOSIGNAL defined
 AC_MSG_CHECKING([whether MSG_NOSIGNAL defined])
-AC_COMPILE_IFELSE([[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -398,7 +398,7 @@ int main(int argc, char **argv)
 {
   return MSG_NOSIGNAL;
 }
-    ]],
+    ])],
     [
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_MSG_NOSIGNAL, [1], [use MSG_NOSIGNAL])
