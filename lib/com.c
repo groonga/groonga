@@ -686,13 +686,15 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
   if (size) {
 #ifdef WIN32
     WSABUF wsabufs[2];
-    wsabufs[0].buf = header;
+    DWORD n_sent;
+    wsabufs[0].buf = (char *)header;
     wsabufs[0].len = sizeof(grn_com_header);
-    wsabufs[1].buf = body;
+    wsabufs[1].buf = (char *)body;
     wsabufs[1].len = size;
-    if (WSASend(cs->fd, wsabufs, 2, &ret, 0, NULL, NULL) == SOCKET_ERROR) {
+    if (WSASend(cs->fd, wsabufs, 2, &n_sent, 0, NULL, NULL) == SOCKET_ERROR) {
       SERR("WSASend");
     }
+    ret = n_sent;
 #else /* WIN32 */
     struct iovec msg_iov[2];
     struct msghdr msg;
@@ -712,7 +714,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     }
 #endif /* WIN32 */
   } else {
-    if ((ret = send(cs->fd, header, whole_size, MSG_NOSIGNAL|flags)) == -1) {
+    if ((ret = send(cs->fd, (const void *)header, whole_size, MSG_NOSIGNAL|flags)) == -1) {
       SERR("send");
     }
   }
