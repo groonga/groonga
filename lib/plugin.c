@@ -20,6 +20,7 @@
 #include "db.h"
 #include "plugin_in.h"
 #include "ql.h"
+#include "util.h"
 
 static grn_hash *grn_plugins = NULL;
 
@@ -280,11 +281,11 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
       } else {
         const char *base_name;
 
-        base_name = strrchr(path, PATH_SEPARATOR[0]);
+        base_name = strrchr(path, '/');
         if (base_name) {
           complemented_libs_path[0] = '\0';
           strncat(complemented_libs_path, path, base_name - path);
-          strcat(complemented_libs_path, PATH_SEPARATOR ".libs");
+          strcat(complemented_libs_path, "/.libs");
           strcat(complemented_libs_path, base_name);
           strcat(complemented_libs_path, GRN_PLUGIN_SUFFIX);
           plugin_file = fopen(complemented_libs_path, "r");
@@ -324,79 +325,25 @@ static const char *
 default_plugins_dir(void)
 {
   if (!win32_plugins_dir) {
-    wchar_t dll_filename[MAX_PATH];
-    DWORD dll_filename_size;
-    dll_filename_size = GetModuleFileNameW(NULL, dll_filename, MAX_PATH);
-    if (dll_filename_size == 0) {
-      win32_plugins_dir = GRN_PLUGINS_DIR;
-    } else {
-      char *plugins_dir;
-      DWORD ansi_dll_filename_size;
-      ansi_dll_filename_size =
-        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
-                            NULL, 0, NULL, NULL);
-      if (ansi_dll_filename_size == 0) {
-        win32_plugins_dir = GRN_PLUGINS_DIR;
-      } else {
-        char *path;
-        const char *relative_path = GRN_RELATIVE_PLUGINS_DIR;
-        plugins_dir = malloc(ansi_dll_filename_size +
-                             strlen(relative_path));
-        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
-                            plugins_dir, ansi_dll_filename_size,
-                            NULL, NULL);
-        if ((path = strrchr(plugins_dir, '\\'))) {
-          *path = '\0';
-        }
-        path = strrchr(plugins_dir, '\\');
-        if (path && (strcasecmp(path + 1, "bin") == 0 ||
-                     strcasecmp(path + 1, "lib") == 0)) {
-          *path = '\0';
-        } else {
-          path = plugins_dir + strlen(plugins_dir);
-        }
-        *path = '\\';
-        path++;
-        while (*relative_path) {
-          if (*relative_path == '/') {
-            *path = '\\';
-          } else {
-            *path = *relative_path;
-          }
-          relative_path++;
-          path++;
-        }
-        *path = '\0';
-        win32_plugins_dir = plugins_dir;
-      }
-    }
+    const char *base_dir;
+    const char *relative_path = GRN_RELATIVE_PLUGINS_DIR;
+    char *plugins_dir;
+    char *path;
+    size_t base_dir_length;
+
+    base_dir = grn_win32_base_dir();
+    base_dir_length = strlen(base_dir);
+    plugins_dir = malloc(base_dir_length + strlen("/") + strlen(relative_path));
+    strcpy(plugins_dir, base_dir);
+    strcat(plugins_dir, "/");
+    strcat(plugins_dir, relative_path);
+    win32_plugins_dir = plugins_dir;
   }
   return win32_plugins_dir;
 }
 
-static void
-normalize_path_separator_in_path(char *path)
-{
-  for (; *path; path++) {
-    if (*path == '\\') {
-      *path = PATH_SEPARATOR[0];
-    }
-  }
-}
-
-static void
-normalize_path_separator_in_name(char *name)
-{
-  for (; *name; name++) {
-    if (*name == '/') {
-      *name = PATH_SEPARATOR[0];
-    }
-  }
-}
 #else /* WIN32 */
 #  define default_plugins_dir() GRN_PLUGINS_DIR
-#  define normalize_path_separator_in_path(path)
-#  define normalize_path_separator_in_name(name)
 #endif /* WIN32 */
 
 grn_rc
@@ -413,11 +360,10 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
     plugins_dir = default_plugins_dir();
   }
   strcpy(path, plugins_dir);
-  normalize_path_separator_in_path(path);
 
   dir_last_char = plugins_dir[strlen(path) - 1];
-  if (dir_last_char != PATH_SEPARATOR[0]) {
-    strcat(path, PATH_SEPARATOR);
+  if (dir_last_char != '/') {
+    strcat(path, "/");
   }
 
   name_length = strlen(name);
@@ -430,10 +376,7 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
     return ctx->rc;
   }
 
-  strcpy(normalized_name, name);
-  normalize_path_separator_in_name(normalized_name);
-
-  strcat(path, normalized_name);
+  strcat(path, name);
 
   return grn_plugin_register_by_path(ctx, path);
 }

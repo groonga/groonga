@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/* Copyright(C) 2010-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -691,3 +691,51 @@ grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point)
   grn_p(ctx, &obj);
   grn_obj_unlink(ctx, &obj);
 }
+
+#ifdef WIN32
+static char *win32_base_dir = NULL;
+const char *
+grn_win32_base_dir(void)
+{
+  if (!win32_base_dir) {
+    wchar_t dll_filename[MAX_PATH];
+    DWORD dll_filename_size;
+    dll_filename_size = GetModuleFileNameW(NULL, dll_filename, MAX_PATH);
+    if (dll_filename_size == 0) {
+      win32_base_dir = ".";
+    } else {
+      DWORD ansi_dll_filename_size;
+      ansi_dll_filename_size =
+        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
+                            NULL, 0, NULL, NULL);
+      if (ansi_dll_filename_size == 0) {
+        win32_base_dir = ".";
+      } else {
+        char *path;
+        win32_base_dir = malloc(ansi_dll_filename_size);
+        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
+                            win32_base_dir, ansi_dll_filename_size,
+                            NULL, NULL);
+        win32_base_dir[ansi_dll_filename_size] = '\0';
+        if ((path = strrchr(win32_base_dir, '\\'))) {
+          *path = '\0';
+        }
+        path = strrchr(win32_base_dir, '\\');
+        if (path && (strcasecmp(path + 1, "bin") == 0 ||
+                     strcasecmp(path + 1, "lib") == 0)) {
+          *path = '\0';
+        } else {
+          path = win32_base_dir + strlen(win32_base_dir);
+          *path = '\0';
+        }
+        for (path = win32_base_dir; *path; path++) {
+          if (*path == '\\') {
+            *path = '/';
+          }
+        }
+      }
+    }
+  }
+  return win32_base_dir;
+}
+#endif

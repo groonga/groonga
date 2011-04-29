@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/* Copyright(C) 2010-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,9 @@ grn_obj *grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 grn_obj *grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 void grn_p(grn_ctx *ctx, grn_obj *obj);
 void grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
+
+GRN_API const char *grn_win32_base_dir(void);
+GRN_API char *grn_path_separator_to_system(char *dest, char *groonga_path);
 
 #ifdef __cplusplus
 }

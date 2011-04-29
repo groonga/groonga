@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3219,9 +3219,9 @@ grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
       if (pc == p + 2 && *(p + 1) == '.') {
         /* '..' */
         if (b - buf >= 2) {
-          for (b -= 2; *b != PATH_SEPARATOR[0] && b >= buf; b--) {}
+          for (b -= 2; *b != '/' && b >= buf; b--) {}
         }
-        if (*b == PATH_SEPARATOR[0]) {
+        if (*b == '/') {
           b++;
           ERR(GRN_INVALID_ARGUMENT, "parent path doesn't exist.");
         }
@@ -3238,7 +3238,7 @@ grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
       b += pc - p;
       p = pc;
       if (p < pe && *pc == '/' && be > b) {
-        *b++ = PATH_SEPARATOR[0];
+        *b++ = '/';
         p++;
       }
     }

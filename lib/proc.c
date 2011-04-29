@@ -1037,12 +1037,12 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       return NULL;
     }
     grn_document_root_len = (int)l;
-    if (l > 0 && grn_document_root[l - 1] == PATH_SEPARATOR[0]) { grn_document_root_len--; }
+    if (l > 0 && grn_document_root[l - 1] == '/') { grn_document_root_len--; }
   }
   if ((plen = GRN_TEXT_LEN(VAR(0))) + grn_document_root_len < PATH_MAX) {
     char path[PATH_MAX];
     memcpy(path, grn_document_root, grn_document_root_len);
-    path[grn_document_root_len] = PATH_SEPARATOR[0];
+    path[grn_document_root_len] = '/';
     grn_str_url_path_normalize(ctx,
                                GRN_TEXT_VALUE(VAR(0)),
                                GRN_TEXT_LEN(VAR(0)),
@@ -1052,8 +1052,8 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     uint32_t abbrlen = 32;
     ERR(GRN_INVALID_ARGUMENT,
-        "too long path name: <%s%c%.*s...> %u(%u)",
-        grn_document_root, PATH_SEPARATOR[0],
+        "too long path name: <%s/%.*s...> %u(%u)",
+        grn_document_root,
         abbrlen < plen ? abbrlen : plen, GRN_TEXT_VALUE(VAR(0)),
         plen + grn_document_root_len, PATH_MAX);
   }

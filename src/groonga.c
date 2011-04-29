@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2010 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2059,6 +2059,20 @@ show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
   }
 }
 
+#ifdef WIN32
+static char win32_default_document_root[PATH_MAX];
+static char *
+default_document_root(void)
+{
+  strcpy(win32_default_document_root, grn_win32_base_dir());
+  strcat(win32_default_document_root, "/");
+  strcat(win32_default_document_root, GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT);
+  return win32_default_document_root;
+}
+#else
+#  define default_document_root() GRN_DEFAULT_DOCUMENT_ROOT
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -2195,7 +2209,7 @@ main(int argc, char **argv)
     if (admin_html_path) {
       grn_document_root = admin_html_path;
     } else {
-      grn_document_root = GRN_DEFAULT_DOCUMENT_ROOT;
+      grn_document_root = default_document_root();
     }
   }
   if (protocol) {

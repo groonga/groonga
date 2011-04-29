@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -146,7 +146,6 @@
 
 #undef MSG_WAITALL
 #define MSG_WAITALL 0 /* before Vista, not supported... */
-#define PATH_SEPARATOR "/"
 #define fpclassify _fpclass
 #define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
 #define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
@@ -186,7 +185,6 @@ typedef char int_least8_t;
 # ifndef UINT_LEAST8_MAX
 typedef unsigned char uint_least8_t;
 # endif /* UINT_LEAST8_MAX */
-# define PATH_SEPARATOR "/"
 typedef int grn_sock;
 # define grn_sock_close close
 # define CALLBACK
