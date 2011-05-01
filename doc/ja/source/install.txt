@@ -21,7 +21,7 @@ Debian GNU/Linux squeeze
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga libgroonga-dev
+  % sudo aptitude -V -D -y install groonga
 
 Debian GNU/Linux wheezy
 -----------------------
@@ -37,7 +37,7 @@ Debian GNU/Linux wheezy
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga libgroonga-dev
+  % sudo aptitude -V -D -y install groonga
 
 Debian GNU/Linux sid
 --------------------
@@ -53,7 +53,7 @@ Debian GNU/Linux sid
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga libgroonga-dev
+  % sudo aptitude -V -D -y install groonga
 
 Ubuntu 10.04 LTS Lucid Lynx
 ---------------------------
@@ -71,7 +71,7 @@ Ubuntu 10.04 LTS Lucid Lynx
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga libgroonga-dev
+  % sudo aptitude -V -D -y install groonga
 
 Ubuntu 11.04 Natty Narwhal
 --------------------------
@@ -89,7 +89,7 @@ Ubuntu 11.04 Natty Narwhal
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga libgroonga-dev
+  % sudo aptitude -V -D -y install groonga
 
 CentOS 5
 --------
