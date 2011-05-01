@@ -100,7 +100,7 @@ CentOS 5
 
   % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
   % sudo yum update
-  % sudo yum install -y groonga groonga-tokenizer-mecab groonga-devel
+  % sudo yum install -y groonga
 
 Fedora 14
 ---------
@@ -111,7 +111,7 @@ Fedora 14
 
   % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.0-0.noarch.rpm
   % sudo yum update
-  % sudo yum install -y groonga groonga-tokenizer-mecab groonga-devel
+  % sudo yum install -y groonga
 
 Mac OS X (MacPorts)
 -------------------
