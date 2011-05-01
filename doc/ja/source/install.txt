@@ -73,8 +73,8 @@ Ubuntu 10.04 LTS Lucid Lynx
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga libgroonga-dev
 
-Ubuntu 10.10 Maverick Meerkat
------------------------------
+Ubuntu 11.04 Natty Narwhal
+--------------------------
 
 注: amd64版のみ提供でi386版は未提供。
 
@@ -82,8 +82,8 @@ Ubuntu 10.10 Maverick Meerkat
 
 /etc/apt/sources.list.d/groonga.list::
 
-  deb http://packages.groonga.org/ubuntu/ maverick universe
-  deb-src http://packages.groonga.org/ubuntu/ maverick universe
+  deb http://packages.groonga.org/ubuntu/ natty universe
+  deb-src http://packages.groonga.org/ubuntu/ natty universe
 
 インストール::
 
