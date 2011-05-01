@@ -12,15 +12,14 @@ Source0:	http://groonga.org/files/groonga/groonga-@VERSION@.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-plugin-suggest = %{version}-%{release}
+Requires:	%{name}-tokenizer-mecab = %{version}-%{release}
+Requires:	%{name}-doc = %{version}-%{release}
 #BuildRequires:	messagepack-devel
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
-Requires:	%{name}-libs = %{version}-%{release}
-Requires(pre):	shadow-utils
-Requires(post):	/sbin/chkconfig
-Requires(preun):	/sbin/chkconfig
-Requires(preun):	/sbin/service
-Requires(postun):	/sbin/service
+Obsoletes:	%{name} < 1.2.2-0
 
 %description
 Groonga is an embeddable full-text search engine library.  It can
@@ -37,6 +36,22 @@ Requires(postun):	/sbin/ldconfig
 
 %description libs
 This package contains the libraries for groonga
+
+%package server
+Summary:	Groonga server
+Group:		Applications/Text
+License:	LGPLv2 and (MIT or GPLv2)
+Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-munin-plugins = %{version}-%{release}
+Requires(pre):	shadow-utils
+Requires(post):	/sbin/chkconfig
+Requires(preun):	/sbin/chkconfig
+Requires(preun):	/sbin/service
+Requires(postun):	/sbin/service
+Obsoletes:	%{name} < 1.2.2-0
+
+%description server
+This package contains the groonga server
 
 %package doc
 Summary:	Documentation for groonga
@@ -137,14 +152,14 @@ EOC
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
+%pre server
 getent group groonga >/dev/null || groupadd -r groonga
 getent passwd groonga >/dev/null || \
        useradd -r -g groonga -d %{_localstatedir}/lib/groonga -s /sbin/nologin \
 	-c 'groonga' groonga
 exit 0
 
-%post
+%post server
 /sbin/chkconfig --add groonga
 
 %post libs -p /sbin/ldconfig
@@ -155,13 +170,13 @@ exit 0
 	/sbin/service munin-node restart > /dev/null 2>&1
 :
 
-%preun
+%preun server
 if [ $1 = 0 ] ; then
 	/sbin/service groonga stop >/dev/null 2>&1 || :
 	/sbin/chkconfig --del groonga
 fi
 
-%postun
+%postun server
 if [ $1 -ge 1 ] ; then
 	/sbin/service groonga condrestart >/dev/null 2>&1 || :
 fi
@@ -179,14 +194,8 @@ fi
 %files
 %defattr(-,root,root,-)
 %{_datadir}/man/man1/*
-%config(noreplace) %{_sysconfdir}/groonga/
-%config(noreplace) %{_sysconfdir}/sysconfig/groonga
 %{_bindir}/groonga
 %{_bindir}/grntest
-%{_initddir}/*
-%ghost %dir %{_localstatedir}/run/%{name}
-%attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
-%attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
 
 %files libs
 %defattr(-,root,root,-)
@@ -197,6 +206,15 @@ fi
 %dir %{_libdir}/groonga/plugins/tokenizers
 %dir %{_datadir}/groonga
 %{_datadir}/groonga/
+
+%files server
+%defattr(-,root,root,-)
+%config(noreplace) %{_sysconfdir}/groonga/
+%config(noreplace) %{_sysconfdir}/sysconfig/groonga
+%{_initddir}/*
+%ghost %dir %{_localstatedir}/run/%{name}
+%attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
+%attr(0755,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
 
 %files doc
 %defattr(-,root,root,-)
@@ -224,6 +242,10 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Sun May 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.2-0
+- new upstream release.
+- split server files into groonga-server package.
+
 * Fri Apr 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.1-0
 - new upstream release.
 
