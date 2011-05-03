@@ -28,6 +28,7 @@ help:
 	@echo "  qthelp    to make HTML files and a qthelp project"
 	@echo "  latex     to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
 	@echo "  rdoc      to make RDoc files"
+	@echo "  textile   to make Textile files"
 	@echo "  changes   to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
@@ -43,6 +44,7 @@ clean-local:
 	-rm -rf $(BUILDDIR)/qthelp
 	-rm -rf $(BUILDDIR)/latex
 	-rm -rf $(BUILDDIR)/rdoc
+	-rm -rf $(BUILDDIR)/textile
 	-rm -rf $(BUILDDIR)/changes
 	-rm -rf $(BUILDDIR)/linkcheck
 	-rm -rf $(BUILDDIR)/doctest
@@ -99,6 +101,11 @@ rdoc:
 	$(SPHINX_BUILD) -b rdoc $(ALLSPHINXOPTS) $(BUILDDIR)/rdoc
 	@echo
 	@echo "Build finished; the RDoc files are in $(BUILDDIR)/rdoc."
+
+textile:
+	$(SPHINX_BUILD) -b textile $(ALLSPHINXOPTS) $(BUILDDIR)/textile
+	@echo
+	@echo "Build finished; the Textile files are in $(BUILDDIR)/textile."
 
 changes:
 	$(SPHINX_BUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
@@ -258,6 +265,7 @@ source_files =					\
 	source/reference.txt							\
 	source/spec.txt								\
 	source/spec/search.txt							\
+	source/textile.py							\
 	source/troubleshooting.txt						\
 	source/troubleshooting/different_results_with_the_same_keyword.txt	\
 	source/tutorial.txt							\

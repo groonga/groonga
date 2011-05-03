@@ -37,8 +37,9 @@ if parse_version(sphinx.__version__) < parse_version(SPHINX_VERSION_REQUIRED):
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-#extensions = ["source.rdoc"]
 extensions = []
+# extensions.append("source.rdoc")
+# extensions.append("source.textile")
 try:
   import rst2pdf
   if parse_version(rst2pdf.version) >= parse_version(RST2PDF_VERSION_REQUIRED):

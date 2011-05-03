@@ -42,6 +42,8 @@ version.sh
 /doc/ja/html/
 /doc/ja/rdoc/
 /doc/ja/man/
+/doc/ja/pickle/
+/doc/ja/textile/
 /doc/ja/.buildinfo
 /doc/ja/_sources/
 /doc/ja/_static/
