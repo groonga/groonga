@@ -18,6 +18,9 @@ nobase_dist_html_DATA =								\
 	admin/css/ui-lightness/images/ui-icons_ffd27a_256x240.png		\
 	admin/css/ui-lightness/images/ui-icons_ffffff_256x240.png		\
 	admin/css/ui-lightness/jquery-ui-1.8.1.custom.css			\
+	admin/favicon.ico							\
+	admin/favicon.png							\
+	admin/favicon.svg							\
 	admin/images/groonga.png						\
 	admin/images/loading.gif						\
 	admin/index.html							\
