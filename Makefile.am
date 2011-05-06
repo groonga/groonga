@@ -13,7 +13,6 @@ SUBDIRS =					\
 	rpm					\
 	yum					\
 	data					\
-	resource				\
 	tools					\
 	doc
 #dist_data_DATA =

@@ -1,4 +1,5 @@
 SUBDIRS =			\
+	html			\
 	munin			\
 	init.d
 

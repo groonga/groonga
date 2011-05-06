@@ -116,11 +116,11 @@ AC_CONFIG_FILES([Makefile
                  rpm/fedora/Makefile
                  yum/Makefile
                  data/Makefile
+                 data/html/Makefile
                  data/munin/Makefile
                  data/init.d/Makefile
                  data/init.d/redhat/Makefile
                  data/init.d/redhat/sysconfig/Makefile
-                 resource/Makefile
                  tools/Makefile
                  doc/Makefile
                  doc/ja/Makefile
@@ -798,8 +798,8 @@ GRN_DEFS=""
 GRN_DEFS="$GRN_DEFS -DGRN_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_PLUGINS_DIR=\\\"\"lib/\$(relative_pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_LOG_PATH=\\\"\"\$(grn_log_path)\"\\\""
-GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_DOCUMENT_ROOT=\\\"\"\$(pkgdatadir)/admin_html\"\\\""
-GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"share/\$(PACKAGE)/admin_html\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_DOCUMENT_ROOT=\\\"\"\$(pkgdatadir)/html/admin\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"share/\$(PACKAGE)/html/admin\"\\\""
 AC_SUBST(GRN_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $RT_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
