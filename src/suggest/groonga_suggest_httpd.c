@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010- Brazil
+/* Copyright(C) 2010-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,9 @@
 #include <groonga.h>
 #include <pthread.h>
 
+/* groonga origin headers */
+#include <str.h>
+
 #include "util.h"
 
 #define DEFAULT_PORT 8080
@@ -50,6 +53,16 @@ grn_rc grn_ctx_close(grn_ctx *ctx);
 #define MIN_MAX_FDS 2048
 #define LOG_SPLIT_LINES 1000000
 #define MAX_THREADS 128 /* max 256 */
+
+typedef enum {
+  run_mode_none = 0,
+  run_mode_daemon,
+  run_mode_usage,
+  run_mode_error
+} run_mode;
+
+#define RUN_MODE_MASK   0x007f
+
 
 typedef struct {
   grn_ctx *ctx;
@@ -634,78 +647,97 @@ int
 main(int argc, char **argv)
 {
   int port_no = DEFAULT_PORT, daemon = 0;
-  const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_path = NULL;
+  const char *max_threads_string = NULL, *port_string = NULL;
+  const char *address;
+  const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_base_path = NULL;
+  int n_processed_args, flags;
+  run_mode mode = run_mode_none;
 
-  /* check environment */
-  {
-    struct rlimit rlim;
-    if (!getrlimit(RLIMIT_NOFILE, &rlim)) {
-      if (rlim.rlim_max < MIN_MAX_FDS) {
-        print_error("too small max fds. %d required.", MIN_MAX_FDS);
-        return -1;
-      }
-      rlim.rlim_cur = rlim.rlim_cur;
-      setrlimit(RLIMIT_NOFILE, &rlim);
-    }
-  }
   if (!(default_max_threads = get_core_number())) {
     default_max_threads = DEFAULT_MAX_THREADS;
   }
 
   /* parse options */
   {
-    int ch;
+    static grn_str_getopt_opt opts[] = {
+      {'c', NULL, NULL, 0, getopt_op_none}, /* deprecated */
+      {'t', "max-threads", NULL, 0, getopt_op_none},
+      {'h', "help", NULL, run_mode_usage, getopt_op_update},
+      {'p', "port", NULL, 0, getopt_op_none},
+      {'a', "address", NULL, 0, getopt_op_none}, /* not supported yet */
+      {'s', "send-endpoint", NULL, 0, getopt_op_none},
+      {'r', "receive-endpoint", NULL, 0, getopt_op_none},
+      {'l', "log-base-path", NULL, 0, getopt_op_none},
+      {'d', "daemon", NULL, run_mode_daemon, getopt_op_update},
+      {'\0', NULL, NULL, 0, 0}
+    };
+    opts[0].arg = &max_threads_string;
+    opts[1].arg = &max_threads_string;
+    opts[3].arg = &port_string;
+    opts[4].arg = &address;
+    opts[5].arg = &send_endpoint;
+    opts[6].arg = &recv_endpoint;
+    opts[7].arg = &log_base_path;
 
-    while ((ch = getopt(argc, argv, "c:p:s:r:l:d")) != -1) {
-      switch(ch) {
-      case 'c':
-        default_max_threads = atoi(optarg);
-        if (default_max_threads > MAX_THREADS) {
-          print_error("too many threads. limit to %d.", MAX_THREADS);
-          default_max_threads = MAX_THREADS;
-        }
-        break;
-      case 'p':
-        port_no = atoi(optarg);
-        break;
-      case 's':
-        send_endpoint = optarg;
-        break;
-      case 'r':
-        recv_endpoint = optarg;
-        break;
-      case 'l':
-        log_path = optarg;
-        break;
-      case 'd':
-        daemon = 1;
-        break;
-      }
-    }
-    argc -= optind; argv += optind;
+    n_processed_args = grn_str_getopt(argc, argv, opts, &flags);
   }
 
   /* main */
-  if (argc != 1) {
+  mode = (flags & RUN_MODE_MASK);
+  if (n_processed_args < 0 ||
+      (argc - n_processed_args) != 1 ||
+      mode == run_mode_error) {
     usage(stderr);
+    return EXIT_FAILURE;
+  } else if (mode == run_mode_usage) {
+    usage(stdout);
+    return EXIT_SUCCESS;
   } else {
     grn_ctx ctx;
     void *zmq_ctx;
+    int max_threads;
 
-    if (daemon) {
+    if (max_threads_string) {
+      max_threads = atoi(max_threads_string);
+      if (max_threads > MAX_THREADS) {
+        print_error("too many threads. limit to %d.", MAX_THREADS);
+        max_threads = MAX_THREADS;
+      }
+    } else {
+      max_threads = default_max_threads;
+    }
+
+    if (port_string) {
+      port_no = atoi(port_string);
+    }
+
+    /* check environment */
+    {
+      struct rlimit rlim;
+      if (!getrlimit(RLIMIT_NOFILE, &rlim)) {
+        if (rlim.rlim_max < MIN_MAX_FDS) {
+          print_error("too small max fds. %d required.", MIN_MAX_FDS);
+          return -1;
+        }
+        rlim.rlim_cur = rlim.rlim_cur;
+        setrlimit(RLIMIT_NOFILE, &rlim);
+      }
+    }
+
+    if (mode == run_mode_daemon) {
       daemonize();
     }
 
     grn_init();
     grn_ctx_init(&ctx, 0);
-    if ((db = grn_db_open(&ctx, argv[0]))) {
+    if ((db = grn_db_open(&ctx, argv[n_processed_args]))) {
       if ((zmq_ctx = zmq_init(1))) {
         signal(SIGTERM, signal_handler);
         signal(SIGINT, signal_handler);
         signal(SIGQUIT, signal_handler);
 
-        serve_threads(default_max_threads, port_no, argv[0], zmq_ctx,
-          send_endpoint, recv_endpoint, log_path);
+        serve_threads(max_threads, port_no, argv[n_processed_args], zmq_ctx,
+                      send_endpoint, recv_endpoint, log_base_path);
         zmq_term(zmq_ctx);
       } else {
         print_error("cannot create zmq context.");

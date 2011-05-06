@@ -22,6 +22,7 @@ DEFAULT_INCLUDES = 				\
 	-I$(top_builddir)			\
 	-I$(srcdir)				\
 	-I$(top_srcdir)/include			\
+	-I$(top_srcdir)/lib			\
 	$(GROONGA_INCLUDEDIR)
 
 groonga_suggest_learner_SOURCES = groonga_suggest_learner.c
