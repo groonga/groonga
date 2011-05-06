@@ -3,6 +3,7 @@
 
 $KCODE = 'u'
 
+require 'English'
 require 'kconv'
 
 class String
@@ -35,12 +36,21 @@ puts <<END
 column_create item_dictionary edict_desc COLUMN_SCALAR ShortText
 column_create bigram item_dictionary_edict_desc COLUMN_INDEX|WITH_POSITION item_dictionary edict_desc
 load --table item_dictionary
-[["_key","edict_desc"],
+[["_key","edict_desc","kana"],
 END
 
 while !STDIN.eof?
   line = Kconv.toutf8(gets.strip)
   key, body = line.split('/', 2)
-  puts [key, body].to_json
+  key = key.strip
+  if /\s*\[(.+)\]\z/ =~ key
+    key = $PREMATCH
+    reading = $1
+    body = "[#{reading}] #{body}"
+    kana = NKF.nkf("-Ww --katakana", reading)
+  else
+    kana = NKF.nkf("-Ww --katakana", key)
+  end
+  puts [key, body, kana].to_json
 end
 puts ']'
