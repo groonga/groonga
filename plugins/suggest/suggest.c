@@ -404,31 +404,37 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   int threshold = GRN_TEXT_LEN(VAR(8))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(8)), GRN_BULK_CURR(VAR(8)), NULL)
     : DEFAULT_THRESHOLD;
-  if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1)))) &&
-      (items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
-    GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
-    if (types & COMPLETE) {
-      if ((col = grn_obj_column(ctx, items, TEXT_VALUE_LEN(VAR(2))))) {
-        GRN_OUTPUT_CSTR("complete");
-        complete(ctx, items, items_boost, col, VAR(3), VAR(4),
-                 VAR(5), offset, limit, threshold);
-      } else {
-        ERR(GRN_INVALID_ARGUMENT, "invalid column.");
+  if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
+    if ((items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
+      GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
+      if (types & COMPLETE) {
+        if ((col = grn_obj_column(ctx, items, TEXT_VALUE_LEN(VAR(2))))) {
+          GRN_OUTPUT_CSTR("complete");
+          complete(ctx, items, items_boost, col, VAR(3), VAR(4),
+                   VAR(5), offset, limit, threshold);
+        } else {
+          ERR(GRN_INVALID_ARGUMENT, "invalid column.");
+        }
       }
+      if (types & CORRECT) {
+        GRN_OUTPUT_CSTR("correct");
+        correct(ctx, items, items_boost, VAR(3), VAR(4),
+                VAR(5), offset, limit, threshold);
+      }
+      if (types & SUGGEST) {
+        GRN_OUTPUT_CSTR("suggest");
+        suggest(ctx, items, items_boost, VAR(3), VAR(4),
+                VAR(5), offset, limit, threshold);
+      }
+      GRN_OUTPUT_MAP_CLOSE();
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s.boost>",
+          GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
     }
-    if (types & CORRECT) {
-      GRN_OUTPUT_CSTR("correct");
-      correct(ctx, items, items_boost, VAR(3), VAR(4),
-              VAR(5), offset, limit, threshold);
-    }
-    if (types & SUGGEST) {
-      GRN_OUTPUT_CSTR("suggest");
-      suggest(ctx, items, items_boost, VAR(3), VAR(4),
-              VAR(5), offset, limit, threshold);
-    }
-    GRN_OUTPUT_MAP_CLOSE();
+    grn_obj_unlink(ctx, items);
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "invalid table.");
+    ERR(GRN_INVALID_ARGUMENT, "nonexistent table: <%.*s>",
+        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
   }
   return NULL;
 }
