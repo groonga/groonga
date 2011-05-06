@@ -33,15 +33,15 @@ class Array
 end
 
 puts <<END
-column_create item eijiro_trans COLUMN_SCALAR ShortText
-column_create item eijiro_exp COLUMN_SCALAR ShortText
-column_create item eijiro_level COLUMN_SCALAR Int32
-column_create item eijiro_memory COLUMN_SCALAR Int32
-column_create item eijiro_modify COLUMN_SCALAR Int32
-column_create item eijiro_pron COLUMN_SCALAR ShortText
-column_create item eijiro_filelink COLUMN_SCALAR ShortText
-column_create bigram item_eijiro_trans COLUMN_INDEX|WITH_POSITION item eijiro_trans
-load --table item
+column_create item_dictionary eijiro_trans COLUMN_SCALAR ShortText
+column_create item_dictionary eijiro_exp COLUMN_SCALAR ShortText
+column_create item_dictionary eijiro_level COLUMN_SCALAR Int32
+column_create item_dictionary eijiro_memory COLUMN_SCALAR Int32
+column_create item_dictionary eijiro_modify COLUMN_SCALAR Int32
+column_create item_dictionary eijiro_pron COLUMN_SCALAR ShortText
+column_create item_dictionary eijiro_filelink COLUMN_SCALAR ShortText
+column_create bigram item_dictionary_eijiro_trans COLUMN_INDEX|WITH_POSITION item_dictionary eijiro_trans
+load --table item_dictionary
 [["_key","norm","eijiro_trans","eijiro_exp","eijiro_level","eijiro_memory","eijiro_modify","eijiro_pron","eijiro_filelink","kana"],
 END
 

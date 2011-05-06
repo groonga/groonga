@@ -32,9 +32,9 @@ class Array
 end
 
 puts <<END
-column_create item gene95_desc COLUMN_SCALAR ShortText
-column_create bigram item_gene95_desc COLUMN_INDEX|WITH_POSITION item gene95_desc
-load --table item
+column_create item_dictionary gene95_desc COLUMN_SCALAR ShortText
+column_create bigram item_dictionary_gene95_desc COLUMN_INDEX|WITH_POSITION item_dictionary gene95_desc
+load --table item_dictionary
 [["_key","gene95_desc"],
 END
 

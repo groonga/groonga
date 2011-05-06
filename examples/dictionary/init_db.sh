@@ -5,6 +5,6 @@ if [ 1 != $# ]; then
   exit 1
 fi
 
-if groonga --file ddl.grn -n $1 > /dev/null; then
+if groonga-suggest-create-dataset $1 dictionary > /dev/null; then
   echo "db initialized."
 fi

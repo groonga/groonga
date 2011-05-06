@@ -9,7 +9,7 @@
         $.getJSON(source+"?callback=?",
                   {query: q,
                    types: 'complete',
-                   table: 'item',
+                   table: 'item_dictionary',
                    column: 'kana',
                    limit: 25,
                    output_columns: columns},

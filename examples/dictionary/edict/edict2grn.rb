@@ -32,9 +32,9 @@ class Array
 end
 
 puts <<END
-column_create item edict_desc COLUMN_SCALAR ShortText
-column_create bigram item_edict_desc COLUMN_INDEX|WITH_POSITION item edict_desc
-load --table item
+column_create item_dictionary edict_desc COLUMN_SCALAR ShortText
+column_create bigram item_dictionary_edict_desc COLUMN_INDEX|WITH_POSITION item_dictionary edict_desc
+load --table item_dictionary
 [["_key","edict_desc"],
 END
 
