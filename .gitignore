@@ -45,6 +45,7 @@ version.sh
 /doc/pickle/
 /doc/textile/
 /doc/pdf/
+/doc/pot/
 /doc/.buildinfo
 /doc/_sources/
 /doc/_static/

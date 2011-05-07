@@ -43,6 +43,7 @@ help:
 	@echo "  textile   to make Textile files"
 	@echo "  changes   to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck to check all external links for integrity"
+	@echo "  gettext   to make pot files"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
 
 clean-local:
@@ -123,6 +124,11 @@ changes: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
 	@echo
 	@echo "The overview file is in $(BUILDDIR)/changes."
+
+gettext: sphinx-ensure-updated
+	$(SPHINX_BUILD_COMMAND) -b gettext $(ALLSPHINXOPTS) $(BUILDDIR)/pot
+	@echo
+	@echo "Build finished; the pot files are in $(BUILDDIR)/pot."
 
 linkcheck: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
