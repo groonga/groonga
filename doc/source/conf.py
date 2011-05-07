@@ -11,7 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-SPHINX_VERSION_REQUIRED = "1.0.1"
+SPHINX_VERSION_REQUIRED = "1.0.8" # 1.1 is required.
 RST2PDF_VERSION_REQUIRED = "0.14.2"
 
 import re
@@ -73,8 +73,8 @@ copyright = u'2009-' + unicode(datetime.today().year) + ', Brazil, Inc'
 if os.environ.has_key('GROONGA_VERSION'):
   version_sh = 'GROONGA_VERSION=' + os.environ['GROONGA_VERSION']
 else:
-  os.system('../../../version-gen.sh')
-  version_sh = open(os.path.join(os.path.dirname(__file__), '../../../version.sh')).read()
+  os.system('../../version-gen.sh')
+  version_sh = open(os.path.join(os.path.dirname(__file__), '../../version.sh')).read()
 
 release_regex = re.compile(r'^GROONGA_VERSION=(?P<release>.*)$')
 # The full version, including alpha/beta/rc tags.

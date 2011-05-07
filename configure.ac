@@ -123,7 +123,6 @@ AC_CONFIG_FILES([Makefile
                  data/init.d/redhat/sysconfig/Makefile
                  tools/Makefile
                  doc/Makefile
-                 doc/ja/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
@@ -243,9 +242,6 @@ AC_ARG_ENABLE(uyield,
     [build for detecting race conditions. [default=no]])],
   ,
   [enable_uyield="no"])
-if test "x$enable_uyield" != "xno"; then
-  AC_DEFINE(USE_UYIELD, [1], [use uyield])
-fi
 AC_MSG_RESULT($enable_uyield)
 
 ## malloc
@@ -708,58 +704,24 @@ AM_CONDITIONAL([ENABLE_SUGGEST_LEARNER],
                      "$libevent_available" = "yes" -a \
                      "$message_pack_available" = "yes"])
 
-# check sphinx-build for documentation
-ac_sphinx_available="no"
-sphinx_required_version="1.0.1"
-sphinx_required_version_major=$(echo $sphinx_required_version | cut -d. -f1)
-sphinx_required_version_minor=$(echo $sphinx_required_version | cut -d. -f2)
-sphinx_required_version_micro=$(echo $sphinx_required_version | cut -d. -f3)
-AC_ARG_WITH([sphinx_build],
-            AS_HELP_STRING([--with-sphinx-build=PATH],
-                           [sphinx-build path (default: auto-detect)]),
-            [SPHINX_BUILD="$withval"])
-
-if test "$SPHINX_BUILD" = "no"; then
-  : # ignore
-elif test "$SPHINX_BUILD" = ""; then
-  AC_PATH_PROG(SPHINX_BUILD, sphinx-build, none)
-  if test "$SPHINX_BUILD" != "none"; then
-    ac_sphinx_available="yes"
-  fi
+# Sphinx
+AC_MSG_CHECKING([whether enable Shpinx])
+enable_sphinx="no"
+AC_ARG_ENABLE(sphinx,
+  [AS_HELP_STRING([--enable-shpinx],
+    [enable document generation by Sphinx. [default=no]])],,
+  [enable_sphinx="no"])
+if text "$enable_sphinx"; then
+  : # TODO check hg availability.
+fi
+if test "$enable_sphinx" = "yes" -o -f "$srcdir/doc/man-build-stamp"; then
+  enable_document=yes
 else
-  AC_CHECK_FILE([$SPHINX_BUILD],
-                [ac_sphinx_available="yes"],
-                [AC_MSG_WARN([$SPHINX_BUILD is not found. Disable document gerataion.])])
+  enable_document=no
 fi
-if test "$ac_sphinx_available" = "yes"; then
-  sphinx_build_version=$($SPHINX_BUILD 2>&1 | head -1 | $SED -e 's/^Sphinx v//')
-  sphinx_build_version_major=$(echo $sphinx_build_version | cut -d. -f1)
-  sphinx_build_version_minor=$(echo $sphinx_build_version | cut -d. -f2)
-  sphinx_build_version_micro=$(echo $sphinx_build_version | cut -d. -f3)
-  if test \
-       \( "$sphinx_build_version_major" -gt \
-             "$sphinx_required_version_major" \) -o \
-       \( "$sphinx_build_version_major" -eq \
-             "$sphinx_required_version_major" -a \
-          "$sphinx_build_version_minor" -gt \
-             "$sphinx_required_version_minor" \) -o \
-       \( "$sphinx_build_version_major" -eq \
-             "$sphinx_required_version_major" -a \
-          "$sphinx_build_version_minor" -eq \
-             "$sphinx_required_version_minor" -a \
-          "$sphinx_build_version_micro" -ge \
-             "$sphinx_required_version_micro" \); then
-    :
-  else
-    ac_sphinx_available="no"
-  fi
-fi
-AC_SUBST(SPHINX_BUILD)
 AM_CONDITIONAL([ENABLE_DOCUMENT],
-               [test "$ac_sphinx_available" = "yes" -o \
-                     -f "$srcdir/doc/ja/man-build-stamp"])
-AC_MSG_CHECKING([for sphinx availablity])
-AC_MSG_RESULT($ac_sphinx_available (sphinx-build=$SPHINX_BUILD version=$sphinx_build_version required=$sphinx_required_version))
+               [test "$enable_document" = "yes"])
+AC_MSG_RESULT($enable_sphinx)
 
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
@@ -834,6 +796,7 @@ echo "-----------------------"
 echo "  Compiler:              ${CC}"
 echo "  CFLAGS:                ${CFLAGS}"
 echo "  Libraries:             ${LIBS}"
+echo "  Documentation:         ${enable_document}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
@@ -867,10 +830,8 @@ fi
 echo
 
 echo "Tools:"
-echo "  Sphinx:                 $ac_sphinx_available"
-if test "x$ac_sphinx_available" = "xyes"; then
-  echo "    sphinx-build:         $SPHINX_BUILD ($sphinx_build_version)"
-fi
+echo "  Sphinx:                 $enable_sphinx"
+# echo "hg:  ${HG}"
 echo
 
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"
