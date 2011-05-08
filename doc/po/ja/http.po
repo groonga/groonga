@@ -1,0 +1,131 @@
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-09 00:36\n"
+"PO-Revision-Date: 2011-05-09 00:36+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../source/http.txt:18
+msgid "説明"
+msgstr ""
+
+#: ../source/http.txt:29
+msgid ""
+"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
+"な引数である「output_type」と「command_version」があります。"
+msgstr ""
+
+#: ../source/http.txt:27
+msgid ""
+"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
+"同じコマンドが使用できます。"
+msgstr ""
+
+#: ../source/http.txt:33
+msgid "形式1: コマンド名 値1 値2,.."
+msgstr ""
+
+#: ../source/http.txt:7
+msgid "名前"
+msgstr ""
+
+#: ../source/http.txt:15
+msgid ""
+"groonga -d --protocol http --document-root /usr/share/groonga/admin_html dest"
+msgstr ""
+
+#: ../source/http.txt:45
+msgid "GETメソッドのみが使用可能です。"
+msgstr ""
+
+#: ../source/http.txt:37
+msgid ""
+"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
+"数名を用いてoutput_typeを指定します。"
+msgstr ""
+
+#: ../source/http.txt:20
+msgid ""
+"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
+"可能になります。また、--document-root によって静的ページのパスを指定すると、"
+"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
+"す。"
+msgstr ""
+
+#: ../source/http.txt:25
+msgid "コマンド"
+msgstr ""
+
+#: ../source/http.txt:4
+msgid "http"
+msgstr ""
+
+#: ../source/http.txt:9
+msgid "groonga httpサービス"
+msgstr ""
+
+#: ../source/http.txt:41
+msgid "形式: /d/コマンド名.output_type?引数名1=値1&引数名2=値2&..."
+msgstr ""
+
+#: ../source/http.txt:43
+msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
+msgstr ""
+
+#: ../source/http.txt:52
+msgid "返値"
+msgstr ""
+
+#: ../source/http.txt:49
+msgid ""
+"command_versionはコマンドの仕様の互換性を指定します。詳細は :ref:"
+"`command_version` を参照してください。"
+msgstr ""
+
+#: ../source/http.txt:12
+msgid "書式"
+msgstr ""
+
+#: ../source/http.txt:54
+msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
+msgstr ""
+
+#: ../source/http.txt:22
+msgid ""
+"デフォルトでは/usr/share/groonga/admin_html配下に、データベース管理ツールとな"
+"るファイル群がインストールされますので、このパスを指定してgroongaサーバを起動"
+"し、ウェブブラウザでhttp://hostname:port/index.htmlにアクセスすると、管理ツー"
+"ルが使用可能になります。"
+msgstr ""
+
+#: ../source/http.txt:39
+msgid ""
+"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
+"す。::"
+msgstr ""
+
+#: ../source/http.txt:47
+msgid "output_typeにはjson, tsv, xmlが指定可能です。"
+msgstr ""
+
+#: ../source/http.txt:35
+msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
+msgstr ""
+
+#: ../source/http.txt:31
+msgid ""
+"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
+"す。"
+msgstr ""

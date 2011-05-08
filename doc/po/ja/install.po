@@ -1,0 +1,182 @@
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-09 00:36\n"
+"PO-Revision-Date: 2011-05-09 00:36+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../source/install.txt:135
+msgid ""
+"形態素単位でトークナイズした全文検索索引を使用したい場合は、 groongaのインス"
+"トール前にMeCab (http://mecab.sourceforge.net/)をインストールしてください。"
+msgstr ""
+
+#: ../source/install.txt:6
+msgid "それぞれの環境毎にインストール方法を説明します。"
+msgstr ""
+
+#: ../source/install.txt:112
+msgid ""
+"% sudo rpm -ivh http://packages.groonga.org/fedora/groonga-"
+"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
+msgstr ""
+
+#: ../source/install.txt:67
+msgid ""
+"deb http://packages.groonga.org/ubuntu/ lucid universe deb-src http://"
+"packages.groonga.org/ubuntu/ lucid universe"
+msgstr ""
+
+#: ../source/install.txt:43
+msgid "Debian GNU/Linux sid"
+msgstr ""
+
+#: ../source/install.txt:63 ../source/install.txt:81
+msgid "注: Ubuntu本家のuniverseセクションもインストール対象としておくこと"
+msgstr ""
+
+#: ../source/install.txt:126
+msgid "Mac OS X (Homebrew)"
+msgstr ""
+
+#: ../source/install.txt:146
+msgid ""
+"prefixは、インストール先を指定するパラメータです。prefixを指定しない場合に"
+"は、/usr/localが指定されたものとみなします。LD_LIBRARY_PATHなどに詳しくない人"
+"は、上記のように/usrを指定することをお勧めします。"
+msgstr ""
+
+#: ../source/install.txt:15 ../source/install.txt:31 ../source/install.txt:47
+#: ../source/install.txt:65 ../source/install.txt:83
+msgid "/etc/apt/sources.list.d/groonga.list::"
+msgstr ""
+
+#: ../source/install.txt:59
+msgid "Ubuntu 10.04 LTS Lucid Lynx"
+msgstr ""
+
+#: ../source/install.txt:144
+msgid "のように実行することでインストールできます。"
+msgstr ""
+
+#: ../source/install.txt:33
+msgid ""
+"deb http://packages.groonga.org/debian/ wheezy main deb-src http://packages."
+"groonga.org/debian/ wheezy main"
+msgstr ""
+
+#: ../source/install.txt:13 ../source/install.txt:29 ../source/install.txt:45
+#: ../source/install.txt:61 ../source/install.txt:79 ../source/install.txt:97
+#: ../source/install.txt:108
+msgid "注: amd64版のみ提供でi386版は未提供。"
+msgstr ""
+
+#: ../source/install.txt:22 ../source/install.txt:38 ../source/install.txt:54
+#: ../source/install.txt:72 ../source/install.txt:90
+msgid ""
+"% sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31 % "
+"sudo aptitude update % sudo aptitude -V -D -y install groonga"
+msgstr ""
+
+#: ../source/install.txt:20 ../source/install.txt:36 ../source/install.txt:52
+#: ../source/install.txt:70 ../source/install.txt:88 ../source/install.txt:99
+#: ../source/install.txt:110 ../source/install.txt:119
+#: ../source/install.txt:128
+msgid "インストール::"
+msgstr ""
+
+#: ../source/install.txt:95
+msgid "CentOS 5"
+msgstr ""
+
+#: ../source/install.txt:133
+msgid "その他"
+msgstr ""
+
+#: ../source/install.txt:139
+msgid ""
+"http://groonga.org/download/よりtar.gzファイルを取得し、 インストール先の環境"
+"にファイルを展開して、 ::"
+msgstr ""
+
+#: ../source/install.txt:117
+msgid "Mac OS X (MacPorts)"
+msgstr ""
+
+#: ../source/install.txt:11
+msgid "Debian GNU/Linux squeeze"
+msgstr ""
+
+#: ../source/install.txt:130
+msgid "% brew install groonga"
+msgstr ""
+
+#: ../source/install.txt:101
+msgid ""
+"% sudo rpm -ivh http://packages.groonga.org/centos/groonga-"
+"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
+msgstr ""
+
+#: ../source/install.txt:121
+msgid ""
+"% git clone https://github.com/groonga/macports.git ~/groonga-macports % "
+"(echo; echo file://$HOME/groonga-macports) | sudo sh -c \"cat >> /opt/local/"
+"etc/macports/sources.conf\" % sudo port install groonga"
+msgstr ""
+
+#: ../source/install.txt:85
+msgid ""
+"deb http://packages.groonga.org/ubuntu/ natty universe deb-src http://"
+"packages.groonga.org/ubuntu/ natty universe"
+msgstr ""
+
+#: ../source/install.txt:4
+msgid "インストール"
+msgstr ""
+
+#: ../source/install.txt:106
+msgid "Fedora 14"
+msgstr ""
+
+#: ../source/install.txt:8
+msgid ""
+"パッケージは64bit用バイナリのみ配布しています。32bit用バイナリは配布していな"
+"いので注意してください。"
+msgstr ""
+
+#: ../source/install.txt:49
+msgid ""
+"deb http://packages.groonga.org/debian/ unstable main deb-src http://"
+"packages.groonga.org/debian/ unstable main"
+msgstr ""
+
+#: ../source/install.txt:77
+msgid "Ubuntu 11.04 Natty Narwhal"
+msgstr ""
+
+#: ../source/install.txt:142
+msgid ""
+"./configure --prefix=/usr --localstatedir=/var && make && sudo make install"
+msgstr ""
+
+#: ../source/install.txt:17
+msgid ""
+"deb http://packages.groonga.org/debian/ squeeze main deb-src http://packages."
+"groonga.org/debian/ squeeze main"
+msgstr ""
+
+#: ../source/install.txt:27
+msgid "Debian GNU/Linux wheezy"
+msgstr ""
