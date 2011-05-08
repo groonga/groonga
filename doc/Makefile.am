@@ -149,6 +149,19 @@ pdf: sphinx-ensure-updated
 update-examples:
 	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py
 
+add-language: gettext
+	test -n "$(LANGUAGE)" ||			\
+	  (echo "run with LANGUAGE=\$${NEW_LANGUAGE}.";	\
+	   echo "e.g.: make add-language LANGUAGE=ja";	\
+           false)
+	mkdir -p $(srcdir)/po/$(LANGUAGE)
+	for pot in $(BUILDDIR)/pot/*.pot; do			\
+	  msginit						\
+	    --input "$$pot"					\
+	    --output $(srcdir)/po/$(LANGUAGE)/`basename \$$pot`	\
+	    --locale=$(LANGUAGE);				\
+	done
+
 if ENABLE_DOCUMENT
 dist-hook:
 	@touch $(distdir)/man-build-stamp
