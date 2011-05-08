@@ -253,10 +253,13 @@ pdf_documents = [
    u'groonga %s document' % (release,),
    u'groonga project')
 ]
+pdf_stylesheets = ['sphinx', 'kerning', 'a4']
 if 'language' in dir():
   pdf_language = language
-  pdf_stylesheets = ['sphinx', 'kerning', 'a4', 'styles/pdf/%s' % pdf_language]
-pdf_font_path = ['/usr/share/fonts']
+  pdf_stylesheets += ['styles/pdf/%s' % pdf_language]
+pdf_font_path = []
+for root, dirs, files in os.walk('/usr/share/fonts'):
+  pdf_font_path += map(lambda(dir): os.path.join(root, dir), dirs)
 pdf_fit_mode = "shrink"
 pdf_inline_footnotes = True
 pdf_break_level = 2
