@@ -253,9 +253,11 @@ pdf_documents = [
    u'groonga %s document' % (release,),
    u'groonga project')
 ]
-pdf_stylesheets = ['sphinx', 'kerning', 'a4', 'styles/pdf/ja']
+print dir()
+if 'language' in dir():
+  pdf_language = language
+  pdf_stylesheets = ['sphinx', 'kerning', 'a4', 'styles/pdf/%s' % pdf_language]
 pdf_font_path = ['/usr/share/fonts']
-pdf_language = 'ja'
 pdf_fit_mode = "shrink"
 pdf_inline_footnotes = True
 pdf_break_level = 2
