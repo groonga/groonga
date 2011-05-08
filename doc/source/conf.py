@@ -253,7 +253,6 @@ pdf_documents = [
    u'groonga %s document' % (release,),
    u'groonga project')
 ]
-print dir()
 if 'language' in dir():
   pdf_language = language
   pdf_stylesheets = ['sphinx', 'kerning', 'a4', 'styles/pdf/%s' % pdf_language]
