@@ -8,6 +8,7 @@ SPHINXOPTS    =
 PAPER         =
 BUILDDIR      = .
 DOCTREES_BASE = $(BUILDDIR)/doctrees
+LANGUAGES     = en ja
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -64,49 +65,121 @@ clean-local:
 	-rm -rf $(BUILDDIR)/pdf
 
 man: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -d $(DOCTREES_BASE)/man -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
+	for language in $(LANGUAGES); do				\
+	  $(SPHINX_BUILD_COMMAND)					\
+	    -Dlanguage=$$language					\
+	    -d $(DOCTREES_BASE)/man/$$language				\
+	    -b man							\
+	    $(ALLSPHINXOPTS)						\
+	    $(BUILDDIR)/man/$$language;					\
+	  echo "Build finished. "					\
+	       "The man pages are in $(BUILDDIR)/man/$${language}.";	\
+	done
 	@echo
 	@echo "Build finished. The man pages are in $(BUILDDIR)/man."
 
 html: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -d $(DOCTREES_BASE)/html -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	for language in $(LANGUAGES); do				\
+	  $(SPHINX_BUILD_COMMAND)					\
+	    -Dlanguage=$$language					\
+	    -d $(DOCTREES_BASE)/html/$$language				\
+	    -b html							\
+	    $(ALLSPHINXOPTS)						\
+	    $(BUILDDIR)/html/$$language;				\
+	  echo "Build finished. "					\
+	       "The HTML pages are in $(BUILDDIR)/html/$${language}.";	\
+	done
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
+	for language in $(LANGUAGES); do					\
+	  $(SPHINX_BUILD_COMMAND)						\
+	    -Dlanguage=$$language						\
+	    -d $(DOCTREES_BASE)/dirhtml/$$language				\
+	    -b dirhtml								\
+	    $(ALLSPHINXOPTS)							\
+            $(BUILDDIR)/dirhtml/$$language;					\
+	  echo "Build finished. "						\
+	       "The HTML pages are in $(BUILDDIR)/dirhtml/$${language}.";	\
+	done
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
 
 pickle: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b pickle $(ALLSPHINXOPTS) $(BUILDDIR)/pickle
+	for language in $(LANGUAGES); do					\
+	  $(SPHINX_BUILD_COMMAND)						\
+	    -Dlanguage=$$language						\
+	    -d $(DOCTREES_BASE)/pickle/$$language				\
+	    -b pickle								\
+	    $(ALLSPHINXOPTS)							\
+	    $(BUILDDIR)/pickle/$$language;					\
+	  echo "Build finished; "						\
+	       "now you can process the pickle files for $${language}.";	\
+	done
 	@echo
 	@echo "Build finished; now you can process the pickle files."
 
 json: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b json $(ALLSPHINXOPTS) $(BUILDDIR)/json
+	for language in $(LANGUAGES); do				\
+	  $(SPHINX_BUILD_COMMAND)					\
+	    -Dlanguage=$$language					\
+	    -d $(DOCTREES_BASE)/json/$$language				\
+	    -b json							\
+	    $(ALLSPHINXOPTS)						\
+	    $(BUILDDIR)/json/$$language;				\
+	  echo "Build finished; "					\
+	       "now you can process the JSON files for $${language}.";	\
+	done
 	@echo
 	@echo "Build finished; now you can process the JSON files."
 
 htmlhelp: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b htmlhelp $(ALLSPHINXOPTS) $(BUILDDIR)/htmlhelp
+	for language in $(LANGUAGES); do					\
+	  $(SPHINX_BUILD_COMMAND)						\
+	    -Dlanguage=$$language						\
+	    -d $(DOCTREES_BASE)/htmlhelp/$$language				\
+	    -b htmlhelp								\
+	    $(ALLSPHINXOPTS)							\
+	    $(BUILDDIR)/htmlhelp/$$language;					\
+	  echo "Build finished; now you can run HTML Help Workshop with the"	\
+	       ".hhp project file in $(BUILDDIR)/htmlhelp/$${language}.";	\
+	done
 	@echo
 	@echo "Build finished; now you can run HTML Help Workshop with the" \
 	      ".hhp project file in $(BUILDDIR)/htmlhelp."
 
 qthelp: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b qthelp $(ALLSPHINXOPTS) $(BUILDDIR)/qthelp
+	for language in $(LANGUAGES); do					\
+	  $(SPHINX_BUILD_COMMAND)						\
+	    -Dlanguage=$$language						\
+	    -d $(DOCTREES_BASE)/qthelp/$$language				\
+	    -b qthelp								\
+	    $(ALLSPHINXOPTS)							\
+	    $(BUILDDIR)/qthelp/$$language;					\
+	  echo "Build finished; "						\
+	       ".qhcp project file is $(BUILDDIR)/qthelp/$${language}.";	\
+	done
 	@echo
-	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
-	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
+	@echo "Build finished; now you can run 'qcollectiongenerator' with the" \
+	      ".qhcp project file in $(BUILDDIR)/qthelp/*/, like this:"
 	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/groonga.qhcp"
 	@echo "To view the help file:"
 	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/groonga.qhc"
 
 latex: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+	for language in $(LANGUAGES); do					\
+	  $(SPHINX_BUILD_COMMAND)						\
+	    -Dlanguage=$$language						\
+	    -d $(DOCTREES_BASE)/latex/$$language				\
+	    -b latex								\
+	    $(ALLSPHINXOPTS)							\
+	    $(BUILDDIR)/latex/$$language;					\
+	  echo "Build finished; "						\
+	       "the LaTeX files are in $(BUILDDIR)/latex/$${language}.";	\
+	done
 	@echo
-	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
+	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex/*/."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
 
@@ -142,7 +215,16 @@ doctest: sphinx-ensure-updated
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
 pdf: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b pdf $(ALLSPHINXOPTS) $(BUILDDIR)/pdf
+	for language in $(LANGUAGES); do				\
+	  $(SPHINX_BUILD_COMMAND)					\
+	    -Dlanguage=$$language					\
+	    -d $(DOCTREES_BASE)/pdf/$$language				\
+	    -b pdf							\
+	    $(ALLSPHINXOPTS)						\
+	    $(BUILDDIR)/pdf/$$language;					\
+	  echo "Build finished. "					\
+	       "The PDF files are in $(BUILDDIR)/pdf/$${language}.";	\
+	done
 	@echo
 	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
 
