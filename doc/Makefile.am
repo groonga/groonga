@@ -237,11 +237,12 @@ add-language: gettext
 	   echo "e.g.: make add-language LANGUAGE=ja";	\
            false)
 	mkdir -p $(srcdir)/po/$(LANGUAGE)
-	for pot in $(BUILDDIR)/pot/*.pot; do			\
-	  msginit						\
-	    --input "$$pot"					\
-	    --output $(srcdir)/po/$(LANGUAGE)/`basename \$$pot`	\
-	    --locale=$(LANGUAGE);				\
+	for pot in $(BUILDDIR)/pot/*.pot; do		\
+	  po=`basename \$$pot | sed s/pot/po/`;		\
+	  msginit					\
+	    --input "$$pot"				\
+	    --output $(srcdir)/po/$(LANGUAGE)/$${po}	\
+	    --locale=$(LANGUAGE);			\
 	done
 
 if ENABLE_DOCUMENT
