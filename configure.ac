@@ -711,7 +711,7 @@ AC_ARG_ENABLE(sphinx,
   [AS_HELP_STRING([--enable-shpinx],
     [enable document generation by Sphinx. [default=no]])],,
   [enable_sphinx="no"])
-if text "$enable_sphinx"; then
+if test "$enable_sphinx" = "yes"; then
   : # TODO check hg availability.
 fi
 if test "$enable_sphinx" = "yes" -o -f "$srcdir/doc/man-build-stamp"; then
