@@ -16,14 +16,14 @@ table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定する�
 .. groonga-command
 .. include:: ../example/tutorial08-1.log
 ..
-   table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
-   load --table PatPre
-   [
-   {"_key":"ひろゆき"},
-   {"_key":"まろゆき"},
-   {"_key":"ひろあき"}
-   ]
-   select --table PatPre --query _key:@ひろ
+.. table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
+.. load --table PatPre
+.. [
+.. {"_key":"ひろゆき"},
+.. {"_key":"まろゆき"},
+.. {"_key":"ひろあき"}
+.. ]
+.. select --table PatPre --query _key:@ひろ
 
 .. #主キーによる後方一致検索
 .. #------------------------
