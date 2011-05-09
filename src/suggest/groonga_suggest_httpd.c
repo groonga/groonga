@@ -74,7 +74,7 @@ typedef struct {
   struct event_base *base;
   struct evhttp *httpd;
   struct event pulse;
-  const char *log_path;
+  const char *log_base_path;
   FILE *log_file;
   uint32_t log_count;
 } thd_data;
@@ -276,7 +276,7 @@ generic_handler(struct evhttp_request *req, void *arg)
     evbuffer_free(res_buf);
     /* logging */
     {
-      if (thd->log_path) {
+      if (thd->log_base_path) {
         if (!thd->log_file) {
           time_t n;
           struct tm *t_st;
@@ -286,7 +286,7 @@ generic_handler(struct evhttp_request *req, void *arg)
           t_st = localtime(&n);
 
           snprintf(p, PATH_MAX, "%s%04d%02d%02d%02d%02d%02d-%02d",
-            thd->log_path,
+            thd->log_base_path,
             t_st->tm_year + 1900, t_st->tm_mon + 1, t_st->tm_mday,
             t_st->tm_hour, t_st->tm_min, t_st->tm_sec, thd->thread_id);
 
@@ -517,7 +517,7 @@ recv_from_learner(void *arg)
 static int
 serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
               const char *send_endpoint, const char *recv_endpoint,
-              const char *log_path)
+              const char *log_base_path)
 {
   int nfd;
   uint32_t i;
@@ -560,7 +560,7 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
             print_error("error in grn_db_open() on thread %d.", i);
           } else {
             GRN_TEXT_INIT(&(thds[i].cmd_buf), 0);
-            thds[i].log_path = log_path;
+            thds[i].log_base_path = log_base_path;
             thds[i].thread_id = i;
             evhttp_set_gencb(thds[i].httpd, generic_handler, &thds[i]);
             evhttp_set_timeout(thds[i].httpd, 10);
