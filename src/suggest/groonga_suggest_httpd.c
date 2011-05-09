@@ -56,12 +56,13 @@ grn_rc grn_ctx_close(grn_ctx *ctx);
 
 typedef enum {
   run_mode_none = 0,
-  run_mode_daemon,
   run_mode_usage,
+  run_mode_daemon,
   run_mode_error
 } run_mode;
 
-#define RUN_MODE_MASK   0x007f
+#define RUN_MODE_MASK                0x007f
+#define RUN_MODE_ENABLE_MAX_FD_CHECK 0x0080
 
 
 typedef struct {
@@ -650,7 +651,7 @@ main(int argc, char **argv)
   const char *max_threads_string = NULL, *port_string = NULL;
   const char *address;
   const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_base_path = NULL;
-  int n_processed_args, flags;
+  int n_processed_args, flags = RUN_MODE_ENABLE_MAX_FD_CHECK;
   run_mode mode = run_mode_none;
 
   if (!(default_max_threads = get_core_number())) {
@@ -669,6 +670,8 @@ main(int argc, char **argv)
       {'r', "receive-endpoint", NULL, 0, getopt_op_none},
       {'l', "log-base-path", NULL, 0, getopt_op_none},
       {'d', "daemon", NULL, run_mode_daemon, getopt_op_update},
+      {'\0', "disable-max-fd-check", NULL, RUN_MODE_ENABLE_MAX_FD_CHECK,
+       getopt_op_off},
       {'\0', NULL, NULL, 0, 0}
     };
     opts[0].arg = &max_threads_string;
@@ -711,8 +714,8 @@ main(int argc, char **argv)
       port_no = atoi(port_string);
     }
 
-    /* check environment */
-    {
+    if (flags & RUN_MODE_ENABLE_MAX_FD_CHECK) {
+      /* check environment */
       struct rlimit rlim;
       if (!getrlimit(RLIMIT_NOFILE, &rlim)) {
         if (rlim.rlim_max < MIN_MAX_FDS) {
