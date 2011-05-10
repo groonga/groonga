@@ -937,7 +937,7 @@ typedef struct {
 /**
  * grn_index_cursor_open
  * @tc: 対象cursor
- * @index: 対象cursor
+ * @index: 対象インデックスカラム
  * @rid_min: 出力するレコードidの下限
  * @rid_max: 出力するレコードidの上限
  *
