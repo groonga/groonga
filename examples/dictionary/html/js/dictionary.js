@@ -1,14 +1,15 @@
 function dictionarySource(url) {
     function displayItems(items) {
         var results = $("<dl />");
-        $.each(items, function(i, val) {
+        $.each(items,
+	       function(i, val) {
 		   results.append($("<dt />")
-			  .append($("<span />")
-			  .text(val[0])
-			  .click(function() {
-				     $(".search").val($(this).text());
-				     $("#search").submit();
-				 })));
+				  .append($("<span />")
+					  .text(val[0])
+					  .click(function() {
+						     $(".search").val($(this).text());
+						     $("#search").submit();
+						 })));
 		   results.append($("<dd />")
 				  .append($("<span />").text(val[1]))
 				  .append($("<span />").text(val[2]))
