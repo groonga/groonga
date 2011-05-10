@@ -630,18 +630,32 @@ get_core_number(void)
 static void
 usage(FILE *output)
 {
-  fprintf(output,
-          "Usage: groonga-suggest-httpd [options...] db_path\n"
-          "db_path:\n"
-          "  specify groonga database path which is used for suggestion.\n"
-          "options:\n"
-          "  -p <port number>   : http server port number (default: %d)\n"
-          "  -c <thread number> : server thread number (default: %d)\n"
-          "  -s <send endpoint> : send endpoint (ex. tcp://example.com:1234)\n"
-          "  -r <recv endpoint> : recv endpoint (ex. tcp://example.com:1235)\n"
-          "  -l <path prefix>   : log path prefix\n"
-          "  -d                 : daemonize\n",
-          DEFAULT_PORT, default_max_threads);
+  fprintf(
+    output,
+    "Usage: groonga-suggest-httpd [options...] db_path\n"
+    "db_path:\n"
+    "  specify groonga database path which is used for suggestion.\n"
+    "\n"
+    "options:\n"
+    "  -p, --port <port number>                  : http server port number\n"
+    "                                              (default: %d)\n"
+    /*
+    "  --address <ip/hostname>                   : server address to listen\n"
+    "                                              (default: %s)\n"
+    */
+    "  -c <thread number>                        : number of server threads\n"
+    "                                              (deprecated. use --n-threads)\n"
+    "  -t, --n-threads <thread number>           : number of server threads\n"
+    "                                              (default: %d)\n"
+    "  -s, --send-endpoint <send endpoint>       : send endpoint\n"
+    "                                              (ex. tcp://example.com:1234)\n"
+    "  -r, --receive-endpoint <receive endpoint> : receive endpoint\n"
+    "                                              (ex. tcp://example.com:1235)\n"
+    "  -l, --log-base-path <path prefix>         : log path prefix\n"
+    "  -d, --daemon                              : daemonize\n"
+    "  --disable-max-fd-check                    : disable max FD check on start\n"
+    "  -h, --help                                : show this message\n",
+    DEFAULT_PORT, default_max_threads);
 }
 
 int
@@ -662,10 +676,10 @@ main(int argc, char **argv)
   {
     static grn_str_getopt_opt opts[] = {
       {'c', NULL, NULL, 0, getopt_op_none}, /* deprecated */
-      {'t', "max-threads", NULL, 0, getopt_op_none},
+      {'t', "n-threads", NULL, 0, getopt_op_none},
       {'h', "help", NULL, run_mode_usage, getopt_op_update},
       {'p', "port", NULL, 0, getopt_op_none},
-      {'a', "address", NULL, 0, getopt_op_none}, /* not supported yet */
+      {'\0', "address", NULL, 0, getopt_op_none}, /* not supported yet */
       {'s', "send-endpoint", NULL, 0, getopt_op_none},
       {'r', "receive-endpoint", NULL, 0, getopt_op_none},
       {'l', "log-base-path", NULL, 0, getopt_op_none},
