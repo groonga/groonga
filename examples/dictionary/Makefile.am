@@ -5,7 +5,7 @@ SUBDIRS =					\
 	jmdict
 
 dist_examples_dictionary_SCRIPTS =		\
-	init_db.sh
+	init-db.sh
 
 nobase_dist_examples_dictionary_DATA =		\
 	readme.txt				\
