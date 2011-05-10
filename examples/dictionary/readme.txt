@@ -52,15 +52,15 @@ http://www.eijiro.jp/
 
 * EDICT
 
-edict.gzを取得し、edictディレクトリ配下で以下のように実行します。
+edictディレクトリ配下で以下のように実行します。 edict.gzは自動でダウンロードします。
 
- ./edict_import.sh データベースパス名 edict.gzのパス名
+ ./edict_import.sh データベースパス名
 
 * GENE95
 
-gene95.tar.gzを取得し、gene.txtを取り出したのちに、gene95ディレクトリ配下で下記のように実行します。
+gene95ディレクトリ配下で下記のように実行します。 gene95.tar.gzは自動でダウンロードします。
 
- ./gene_import.sh データベースパス名 gene.txtのパス名
+ ./gene_import.sh データベースパス名
 
 * 英辞郎
 
