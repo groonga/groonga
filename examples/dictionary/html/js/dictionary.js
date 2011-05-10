@@ -24,6 +24,38 @@ function dictionarySource(url) {
     var columns = "_key,gene95_desc,edict_desc";
     var xhr;
     function source(request, response) {
+	function onSuccess(data, status) {
+	    if (this.autocomplete_request != request_index) {
+		return;
+	    }
+	    var completions = data[1]["complete"];
+	    var items = [];
+	    if (completions && completions.length > 2) {
+		completions.shift();
+		completions.shift();
+		$.each(completions,
+		       function(i, item) {
+			   var key = item[0];
+			   items.push(key);
+			   if (items.length >= 3) {
+			       return false;
+			   }
+			   return true;
+		       });
+	    }
+	    if (completions.length > 0) {
+		displayItems(completions);
+	    }
+	    response(items);
+	}
+
+	function onError() {
+	    if (this.autocomplete_request != request_index) {
+		return;
+	    }
+	    response([]);
+	}
+
 	if (xhr) {
 	    xhr.abort();
 	}
@@ -39,35 +71,8 @@ function dictionarySource(url) {
 			 },
 			 dataType: "jsonp",
 			 autocomplete_request: ++request_index,
-			 success: function(data, status) {
-			     if (this.autocomplete_request != request_index) {
-				 return;
-			     }
-			     var completions = data[1]["complete"];
-			     var items = [];
-			     if (completions && completions.length > 2) {
-				 completions.shift();
-				 completions.shift();
-				 $.each(completions, function(i, item) {
-					    var key = item[0];
-					    items.push(key);
-					    if (items.length >= 3) {
-						return false;
-					    }
-					    return true;
-					});
-			     }
-			     if (completions.length > 0) {
-				 displayItems(completions);
-			     }
-			     response(items);
-			 },
-			 error: function() {
-			     if (this.autocomplete_request != request_index) {
-				 return;
-			     }
-			     response([]);
-			 }
+			 success: onSuccess,
+			 error: onError
 		     });
     };
 
