@@ -51,12 +51,18 @@
 #endif /* SOL_TCP */
 
 #ifndef USE_MSG_MORE
-#define MSG_MORE     0
+#  ifdef MSG_MORE
+#    undef MSG_MORE
+#  endif
+#  define MSG_MORE     0
 #endif /* USE_MSG_MORE */
 
 
 #ifndef USE_MSG_NOSIGNAL
-#define MSG_NOSIGNAL 0
+#  ifdef MSG_NOSIGNAL
+#    undef MSG_NOSIGNAL
+#  endif
+#  define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
 /******* grn_com_queue ********/
 

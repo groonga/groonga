@@ -48,7 +48,10 @@
 #endif /* HAVE_SYS_SYSCTL_H */
 
 #ifndef USE_MSG_NOSIGNAL
-#define MSG_NOSIGNAL 0
+#  ifdef MSG_NOSIGNAL
+#    undef MSG_NOSIGNAL
+#  endif
+#  define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
 
 #define DEFAULT_PORT 10041
