@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -29,14 +29,14 @@ class InvalidHTTPTest < Test::Unit::TestCase
   def test_root
     response = get("/")
     assert_equal("200", response.code)
-    path = File.join(@resource_dir, 'index.html')
+    path = File.join(document_root, 'index.html')
     assert_equal(utf8(File.read(path)), utf8(response.body))
   end
 
   def test_outside_html_outside_existent_inner_nonexistent
     relative_path = "../../Makefile.am"
-    assert_true(File.exist?(File.join(@resource_dir, relative_path)))
-    assert_false(File.exist?(File.join(@resource_dir,
+    assert_true(File.exist?(File.join(document_root, relative_path)))
+    assert_false(File.exist?(File.join(document_root,
                                        File.basename(relative_path))))
 
     response = get("/#{relative_path}")
@@ -45,8 +45,8 @@ class InvalidHTTPTest < Test::Unit::TestCase
 
   def test_outside_html_with_invalid_utf8
     relative_path = "../../Makefile.am"
-    assert_true(File.exist?(File.join(@resource_dir, relative_path)))
-    assert_false(File.exist?(File.join(@resource_dir,
+    assert_true(File.exist?(File.join(document_root, relative_path)))
+    assert_false(File.exist?(File.join(document_root,
                                        File.basename(relative_path))))
     invalid_relative_path = relative_path.gsub(/\//, "\xC0\x2F")
 
@@ -57,8 +57,8 @@ class InvalidHTTPTest < Test::Unit::TestCase
   def test_symbolic_link
     relative_path = "../../Makefile.am"
     relative_symbolic_link_path = "link"
-    path = File.join(@resource_dir, relative_symbolic_link_path)
-    symbolic_link_path = File.join(@resource_dir, relative_symbolic_link_path)
+    path = File.join(document_root, relative_symbolic_link_path)
+    symbolic_link_path = File.join(document_root, relative_symbolic_link_path)
     assert_false(File.exist?(symbolic_link_path))
 
     begin

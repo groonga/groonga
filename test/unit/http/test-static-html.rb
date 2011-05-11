@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,35 +28,35 @@ class StaticHTMLTest < Test::Unit::TestCase
 
   def test_normal
     response = get("/index.html")
-    assert_response(File.read(File.join(@resource_dir, "index.html")),
+    assert_response(File.read(File.join(document_root, "index.html")),
                     response,
                     :content_type => "text/html")
   end
 
   def test_with_fragment
     response = get("/index.html#anchor")
-    assert_response(File.read(File.join(@resource_dir, "index.html")),
+    assert_response(File.read(File.join(document_root, "index.html")),
                     response,
                     :content_type => "text/html")
   end
 
   def test_with_query
     response = get("/index.html?key=value")
-    assert_response(File.read(File.join(@resource_dir, "index.html")),
+    assert_response(File.read(File.join(document_root, "index.html")),
                     response,
                     :content_type => "text/html")
   end
 
   def test_with_query_and_fragment
     response = get("/index.html?key=value#anchor")
-    assert_response(File.read(File.join(@resource_dir, "index.html")),
+    assert_response(File.read(File.join(document_root, "index.html")),
                     response,
                     :content_type => "text/html")
   end
 
   def test_outside
     response = get("/../index.html")
-    assert_response(File.read(File.join(@resource_dir, "index.html")),
+    assert_response(File.read(File.join(document_root, "index.html")),
                     response,
                     :content_type => "text/html")
   end
