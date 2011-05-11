@@ -41,7 +41,7 @@ module GroongaTestUtils
   def setup_server(protocol=nil)
     setup_database_path
     @protocol = protocol
-    @address = "127.0.0.1"
+    @bind_address = "127.0.0.1"
     @port = 5454
     @encoding = "utf8"
     @user_object_start_id = 256
@@ -113,14 +113,14 @@ module GroongaTestUtils
     command_line = [
       groonga,
       "-s",
-      "-a", @address,
+      "--bind-address", @bind_address,
       "-p", @port.to_s,
       "-e", @encoding,
       "--document-root", document_root,
     ]
     command_line.concat(["--protocol", @protocol]) if @protocol
     command_line.concat(["-n", @database_path])
-    @groonga_pid = start_server_process(@address, @port, *command_line)
+    @groonga_pid = start_server_process(@bind_address, @port, *command_line)
   end
 
   def stop_server_process(pid)

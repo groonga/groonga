@@ -51,7 +51,7 @@ module GroongaHTTPTestUtils
   end
 
   def get(path)
-    Net::HTTP.start(@address, @port) do |http|
+    Net::HTTP.start(@bind_address, @port) do |http|
       http.get(path)
     end
   end
