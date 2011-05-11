@@ -28,9 +28,18 @@ module GroongaHTTPTestUtils
   end
 
   def teardown_server
-    begin
-      shutdown_server if @groonga_pid
-    rescue Timeout::Error
+    if @groonga_pid
+      begin
+        timeout(2) do
+          shutdown_server
+          begin
+            Process.waitpid(@groonga_pid)
+            @groonga_pid = nil
+          rescue Errno::ECHILD
+          end
+        end
+      rescue Timeout::Error
+      end
     end
     super
   end
