@@ -56,7 +56,7 @@
 #define DEFAULT_MAX_NFTHREADS 8
 #define MAX_CON 0x10000
 
-static char listen_address[HOST_NAME_MAX];
+static char bind_address[HOST_NAME_MAX];
 static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
 static int batchmode;
@@ -95,7 +95,7 @@ usage(FILE *output)
           "  -d:                               run in daemon mode\n"
           "  -e, --encoding <encoding>:        encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
           "  -l, --log-level <log level>:      log level\n"
-          "  -a, --address <ip/hostname>:      server address to listen (default: %s)\n"
+          "  --bind-address <ip/hostname>:     server address to bind (default: %s)\n"
           "  -p, --port <port number>:         server port number (default: %d)\n"
           "  -i, --server-id <ip/hostname>:    server ID address (default: %s)\n"
           "  -t, --max-threads <max threads>:  max number of free threads (default: %d)\n"
@@ -117,7 +117,7 @@ usage(FILE *output)
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
-          listen_address, DEFAULT_PORT, hostname,
+          bind_address, DEFAULT_PORT, hostname,
           default_max_nfthreads, DEFAULT_DEST);
 }
 
@@ -1556,7 +1556,7 @@ h_server(char *path)
       } else {
         ev.opaque = db;
         grn_edges_init(ctx, NULL);
-        if (!grn_com_sopen(ctx, &ev, listen_address, port, h_handler, he)) {
+        if (!grn_com_sopen(ctx, &ev, bind_address, port, h_handler, he)) {
           while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
             grn_edge *edge;
             while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
@@ -1605,7 +1605,7 @@ h_server(char *path)
           rc = 0;
         } else {
           fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
-                  listen_address, port, ctx->errbuf);
+                  bind_address, port, ctx->errbuf);
         }
         grn_edges_fin(ctx);
       }
@@ -1797,7 +1797,7 @@ g_server(char *path)
       } else {
         ev.opaque = db;
         grn_edges_init(ctx, dispatcher);
-        if (!grn_com_sopen(ctx, &ev, listen_address, port, g_handler, he)) {
+        if (!grn_com_sopen(ctx, &ev, bind_address, port, g_handler, he)) {
           while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
             grn_edge *edge;
             while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
@@ -1846,7 +1846,7 @@ g_server(char *path)
           rc = 0;
         } else {
           fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
-                  listen_address, port, ctx->errbuf);
+                  bind_address, port, ctx->errbuf);
         }
         grn_edges_fin(ctx);
       }
@@ -2079,7 +2079,7 @@ main(int argc, char **argv)
   grn_encoding enc = GRN_ENC_DEFAULT;
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
-    *listen_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
+    *bind_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
     *cache_limitstr = NULL, *admin_html_path = NULL, *command_versionstr = NULL,
     *match_escalation_thresholdstr = NULL;
   const char *config_path = NULL;
@@ -2090,7 +2090,9 @@ main(int argc, char **argv)
     {'e', "encoding", NULL, 0, getopt_op_none},
     {'t', "max-threads", NULL, 0, getopt_op_none},
     {'h', "help", NULL, mode_usage, getopt_op_update},
-    {'a', "address", NULL, 0, getopt_op_none},
+    {'a', "address", NULL, 0, getopt_op_none}, /* deprecated.
+                                                * Use --bind-address instead.
+                                                */
     {'c', NULL, NULL, mode_client, getopt_op_update},
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
     {'s', NULL, NULL, mode_server, getopt_op_update},
@@ -2098,7 +2100,10 @@ main(int argc, char **argv)
     {'i', "server", NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
-    {'\0', "admin-html-path", NULL, 0, getopt_op_none}, /* deprecated */
+    {'\0', "admin-html-path", NULL, 0, getopt_op_none}, /* deprecated.
+                                                         * Use --document-root
+                                                         * instead.
+                                                         */
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
@@ -2111,12 +2116,13 @@ main(int argc, char **argv)
     {'\0', "document-root", NULL, 0, getopt_op_none},
     {'\0', "default-command-version", NULL, 0, getopt_op_none},
     {'\0', "default-match-escalation-threshold", NULL, 0, getopt_op_none},
+    {'\0', "bind-address", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &portstr;
   opts[1].arg = &encstr;
   opts[2].arg = &max_nfthreadsstr;
-  opts[4].arg = &listen_addressstr;
+  opts[4].arg = &bind_addressstr; /* deprecated */
   opts[8].arg = &loglevel;
   opts[9].arg = &hostnamestr;
   opts[12].arg = &admin_html_path; /* deprecated */
@@ -2130,10 +2136,11 @@ main(int argc, char **argv)
   opts[22].arg = &grn_document_root;
   opts[23].arg = &command_versionstr;
   opts[24].arg = &match_escalation_thresholdstr;
+  opts[25].arg = &bind_addressstr;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
-  strcpy(listen_address, "0.0.0.0");
+  strcpy(bind_address, "0.0.0.0");
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
     usage(stderr);
@@ -2285,13 +2292,13 @@ main(int argc, char **argv)
   grn_set_segv_handler();
   grn_set_int_handler();
   grn_set_term_handler();
-  if (listen_addressstr) {
-    size_t listen_addresslen = strlen(listen_addressstr);
-    if (listen_addresslen > HOST_NAME_MAX - 1) {
-      memcpy(listen_address, listen_addressstr, HOST_NAME_MAX - 1);
-      listen_address[HOST_NAME_MAX - 1] = '\0';
+  if (bind_addressstr) {
+    size_t bind_addresslen = strlen(bind_addressstr);
+    if (bind_addresslen > HOST_NAME_MAX - 1) {
+      memcpy(bind_address, bind_addressstr, HOST_NAME_MAX - 1);
+      bind_address[HOST_NAME_MAX - 1] = '\0';
     } else {
-      strcpy(listen_address, listen_addressstr);
+      strcpy(bind_address, bind_addressstr);
     }
   }
   if (hostnamestr) {

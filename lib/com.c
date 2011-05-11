@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -948,28 +948,28 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
 
 grn_rc
 grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
-              const char *listen_address, int port, grn_msg_handler *func,
+              const char *bind_address, int port, grn_msg_handler *func,
               struct hostent *he)
 {
   grn_sock lfd;
   grn_com *cs = NULL;
   int getaddrinfo_result;
-  struct addrinfo *listen_address_info = NULL;
+  struct addrinfo *bind_address_info = NULL;
   char port_string[6]; /* ceil(log10(65535)) + 1 ('\0')*/
 
   GRN_API_ENTER;
-  if (!listen_address) {
-    listen_address = "0.0.0.0";
+  if (!bind_address) {
+    bind_address = "0.0.0.0";
   }
   snprintf(port_string, sizeof(port_string), "%d", port);
-  getaddrinfo_result = getaddrinfo(listen_address, port_string,
-                                   NULL, &listen_address_info);
+  getaddrinfo_result = getaddrinfo(bind_address, port_string,
+                                   NULL, &bind_address_info);
   if (getaddrinfo_result != 0) {
     switch (getaddrinfo_result) {
     case EAI_MEMORY:
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "getaddrinfo: <%s:%s>: %s",
-          listen_address, port_string, gai_strerror(getaddrinfo_result));
+          bind_address, port_string, gai_strerror(getaddrinfo_result));
       break;
 #ifdef EAI_SYSTEM
     case EAI_SYSTEM:
@@ -979,12 +979,12 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     default:
       ERR(GRN_INVALID_ARGUMENT,
           "getaddrinfo: <%s:%s>: %s",
-          listen_address, port_string, gai_strerror(getaddrinfo_result));
+          bind_address, port_string, gai_strerror(getaddrinfo_result));
       break;
     }
     goto exit;
   }
-  if ((lfd = socket(listen_address_info->ai_family, SOCK_STREAM, 0)) == -1) {
+  if ((lfd = socket(bind_address_info->ai_family, SOCK_STREAM, 0)) == -1) {
     SERR("socket");
     goto exit;
   }
@@ -1002,7 +1002,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
       goto exit;
     }
   }
-  if (bind(lfd, listen_address_info->ai_addr, listen_address_info->ai_addrlen) < 0) {
+  if (bind(lfd, bind_address_info->ai_addr, bind_address_info->ai_addrlen) < 0) {
     SERR("bind");
     goto exit;
   }
@@ -1025,7 +1025,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   cs->accepting = GRN_TRUE;
 exit :
   if (!cs) { grn_sock_close(lfd); }
-  if (listen_address_info) { freeaddrinfo(listen_address_info); }
+  if (bind_address_info) { freeaddrinfo(bind_address_info); }
   GRN_API_RETURN(ctx->rc);
 }
 
