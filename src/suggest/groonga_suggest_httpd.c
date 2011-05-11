@@ -679,7 +679,7 @@ main(int argc, char **argv)
       {'t', "n-threads", NULL, 0, getopt_op_none},
       {'h', "help", NULL, run_mode_usage, getopt_op_update},
       {'p', "port", NULL, 0, getopt_op_none},
-      {'\0', "address", NULL, 0, getopt_op_none}, /* not supported yet */
+      {'\0', "bind-address", NULL, 0, getopt_op_none}, /* not supported yet */
       {'s', "send-endpoint", NULL, 0, getopt_op_none},
       {'r', "receive-endpoint", NULL, 0, getopt_op_none},
       {'l', "log-base-path", NULL, 0, getopt_op_none},
