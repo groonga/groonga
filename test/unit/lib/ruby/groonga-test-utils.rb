@@ -41,7 +41,6 @@ module GroongaTestUtils
   def setup_server(protocol=nil)
     setup_database_path
     @protocol = protocol
-    @groonga = guess_groonga_path
     @resource_dir = guess_resource_dir
     @address = "127.0.0.1"
     @port = 5454
@@ -52,14 +51,8 @@ module GroongaTestUtils
 
   def teardown_server
     @groonga_pid ||= nil
-    if @groonga_pid
-      Process.kill(:TERM, @groonga_pid)
-      begin
-        Process.waitpid(@groonga_pid)
-      rescue Errno::ECHILD
-      end
-      @groonga_pid = nil
-    end
+    stop_server_process(@groonga_pid)
+    @groonga_pid = nil
 
     teardown_database_path
   end
@@ -89,33 +82,50 @@ module GroongaTestUtils
     File.expand_path(top_source_dir)
   end
 
-  def start_server
-    arguments = ["-s",
-                 "-a", @address,
-                 "-p", @port.to_s,
-                 "-e", @encoding,
-                 "--admin-html-path", @resource_dir]
-    arguments.concat(["--protocol", @protocol]) if @protocol
-    arguments.concat(["-n", @database_path])
-    @groonga_pid = fork do
-      exec(groonga, *arguments)
+  def start_server_process(address, port, *command_line)
+    pid = fork do
+      exec(*command_line)
     end
-
-    sleep 0.3 # wait for groonga server initialize
 
     begin
       timeout(1) do
         loop do
+          sleep 0.1
           begin
-            TCPSocket.new(@address, @port)
+            TCPSocket.new(address, port)
             break
           rescue SystemCallError
           end
         end
       end
     rescue
-      @groonga_pid = nil
+      stop_server_process(pid)
       raise
+    end
+
+    pid
+  end
+
+  def start_server
+    command_line = [
+      groonga,
+      "-s",
+      "-a", @address,
+      "-p", @port.to_s,
+      "-e", @encoding,
+      "--admin-html-path", @resource_dir
+    ]
+    command_line.concat(["--protocol", @protocol]) if @protocol
+    command_line.concat(["-n", @database_path])
+    @groonga_pid = start_server_process(@address, @port, *command_line)
+  end
+
+  def stop_server_process(pid)
+    return if pid.nil?
+    Process.kill(:TERM, pid)
+    begin
+      Process.waitpid(pid)
+    rescue Errno::ECHILD
     end
   end
 
