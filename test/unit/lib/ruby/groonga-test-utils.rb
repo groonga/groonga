@@ -41,7 +41,6 @@ module GroongaTestUtils
   def setup_server(protocol=nil)
     setup_database_path
     @protocol = protocol
-    @resource_dir = guess_resource_dir
     @address = "127.0.0.1"
     @port = 5454
     @encoding = "utf8"
@@ -68,8 +67,12 @@ module GroongaTestUtils
     @groonga ||= guess_groonga_path
   end
 
-  def guess_resource_dir
-    File.join(guess_top_source_dir, "resource", "admin_html")
+  def guess_document_root
+    File.join(guess_top_source_dir, "data", "html", "admin")
+  end
+
+  def document_root
+    @document_root ||= guess_document_root
   end
 
   def guess_top_source_dir
@@ -113,7 +116,7 @@ module GroongaTestUtils
       "-a", @address,
       "-p", @port.to_s,
       "-e", @encoding,
-      "--admin-html-path", @resource_dir
+      "--document-root", document_root,
     ]
     command_line.concat(["--protocol", @protocol]) if @protocol
     command_line.concat(["-n", @database_path])
