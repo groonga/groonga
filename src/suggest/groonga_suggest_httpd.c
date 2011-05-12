@@ -127,8 +127,9 @@ suggest_result(struct evbuffer *res_buf, const char *types, const char *query,
   }
 }
 
-static int
-log_send(struct evbuffer *res_buf, thd_data *thd, struct evkeyvalq *get_args)
+static void
+log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
+         thd_data *thd, struct evkeyvalq *get_args)
 {
   uint64_t millisec;
   int threshold, limit;
@@ -205,17 +206,27 @@ log_send(struct evbuffer *res_buf, thd_data *thd, struct evkeyvalq *get_args)
   {
     int content_length;
     if (callback) {
+      evhttp_add_header(output_headers,
+                        "Content-Type", "text/javascript; charset=UTF-8");
       content_length = strlen(callback);
       evbuffer_add(res_buf, callback, content_length);
       evbuffer_add(res_buf, "(", 1);
       content_length += suggest_result(res_buf, types, query, target_name,
-        threshold, limit, &(thd->cmd_buf), thd->ctx) + 3;
+                                       threshold, limit,
+                                       &(thd->cmd_buf), thd->ctx) + 3;
       evbuffer_add(res_buf, ");", 2);
     } else {
+      evhttp_add_header(output_headers,
+                        "Content-Type", "application/json; charset=UTF-8");
       content_length = suggest_result(res_buf, types, query, target_name,
-        threshold, limit, &(thd->cmd_buf), thd->ctx);
+                                      threshold, limit,
+                                      &(thd->cmd_buf), thd->ctx);
     }
-    return content_length;
+    if (content_length >= 0) {
+      char num_buf[16];
+      snprintf(num_buf, 16, "%d", content_length);
+      evhttp_add_header(output_headers, "Content-Length", num_buf);
+    }
   }
 }
 
@@ -261,18 +272,9 @@ generic_handler(struct evhttp_request *req, void *arg)
       err(1, "failed to create response buffer");
     }
 
-    evhttp_add_header(req->output_headers,
-      "Content-Type", "text/javascript; charset=UTF-8");
     evhttp_add_header(req->output_headers, "Connection", "close");
 
-    {
-      int content_length = log_send(res_buf, thd, &args);
-      if (content_length >= 0) {
-        char num_buf[16];
-        snprintf(num_buf, 16, "%d", content_length);
-        evhttp_add_header(req->output_headers, "Content-Length", num_buf);
-      }
-    }
+    log_send(req->output_headers, res_buf, thd, &args);
     evhttp_send_reply(req, HTTP_OK, "OK", res_buf);
     evbuffer_free(res_buf);
     /* logging */
