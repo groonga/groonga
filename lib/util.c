@@ -702,7 +702,7 @@ grn_win32_base_dir(void)
     const wchar_t *dll_filename = GRN_DLL_FILENAME;
     wchar_t absolute_dll_filename[MAX_PATH];
     DWORD absolute_dll_filename_size;
-    dll = GetModuleHandle(dll_filename);
+    dll = GetModuleHandleW(dll_filename);
     absolute_dll_filename_size = GetModuleFileNameW(dll,
                                                     absolute_dll_filename,
                                                     MAX_PATH);
