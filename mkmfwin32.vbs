@@ -101,6 +101,7 @@ sub common_header()
   ts.write "        -DUSE_SELECT \" + vbLf
   ts.write "        -DGRN_DEFAULT_ENCODING=""\""utf-8\"""" \" + vbLf
   ts.write "        -DGRN_PLUGIN_SUFFIX=""\"".dll\"""" \" + vbLf
+  ts.write "        -DGRN_DLL_FILENAME=""L\""libgroonga.dll\"""" \" + vbLf
   ts.write "        -DGRN_PLUGINS_DIR=""\"""
   ts.write PLUGINS_DIR
   ts.write "\"""" \"  + vbLf

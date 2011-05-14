@@ -95,6 +95,18 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
 
+LT_CURRENT=0
+LT_REVISION=0
+LT_AGE=0
+LT_VERSION_INFO="\$(LT_CURRENT):\$(LT_REVISION):\$(LT_AGE)"
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
+AC_SUBST(LT_VERSION_INFO)
+
+GRN_DLL_FILENAME="libgroonga-\$(LT_CURRENT).dll"
+AC_SUBST(GRN_DLL_FILENAME)
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/suggest/Makefile
@@ -757,6 +769,7 @@ AC_SUBST(examples_dictionarydir)
 GRN_CFLAGS=""
 AC_SUBST(GRN_CFLAGS)
 GRN_DEFS=""
+GRN_DEFS="$GRN_DEFS -DGRN_DLL_FILENAME=\\\"L\"\$(GRN_DLL_FILENAME)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_PLUGINS_DIR=\\\"\"lib/\$(relative_pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_LOG_PATH=\\\"\"\$(grn_log_path)\"\\\""

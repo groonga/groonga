@@ -698,22 +698,29 @@ const char *
 grn_win32_base_dir(void)
 {
   if (!win32_base_dir) {
-    wchar_t dll_filename[MAX_PATH];
-    DWORD dll_filename_size;
-    dll_filename_size = GetModuleFileNameW(NULL, dll_filename, MAX_PATH);
-    if (dll_filename_size == 0) {
+    HMODULE dll;
+    const wchar_t *dll_filename = GRN_DLL_FILENAME;
+    wchar_t absolute_dll_filename[MAX_PATH];
+    DWORD absolute_dll_filename_size;
+    dll = GetModuleHandle(dll_filename);
+    absolute_dll_filename_size = GetModuleFileNameW(dll,
+                                                    absolute_dll_filename,
+                                                    MAX_PATH);
+    if (absolute_dll_filename_size == 0) {
       win32_base_dir = ".";
     } else {
       DWORD ansi_dll_filename_size;
       ansi_dll_filename_size =
-        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
+        WideCharToMultiByte(CP_ACP, 0,
+                            absolute_dll_filename, absolute_dll_filename_size,
                             NULL, 0, NULL, NULL);
       if (ansi_dll_filename_size == 0) {
         win32_base_dir = ".";
       } else {
         char *path;
         win32_base_dir = malloc(ansi_dll_filename_size);
-        WideCharToMultiByte(CP_ACP, 0, dll_filename, dll_filename_size,
+        WideCharToMultiByte(CP_ACP, 0,
+                            absolute_dll_filename, absolute_dll_filename_size,
                             win32_base_dir, ansi_dll_filename_size,
                             NULL, NULL);
         win32_base_dir[ansi_dll_filename_size] = '\0';

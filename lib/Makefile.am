@@ -8,7 +8,7 @@ DEFS += -D_REENTRANT -DGROONGA_VERSION=\"$(GROONGA_VERSION)\" $(GRN_DEFS)
 libgroonga_la_SOURCES = io.c str.c nfkc.c snip.c query.c store.c com.c ql.c scm.c ctx.c hash.c db.c pat.c ii.c token.c proc.c expr.c util.c plugin.c output.c geo.c
 
 libgroonga_la_LDFLAGS =				\
-	-version-info 0:0:0			\
+	-version-info $(LT_VERSION_INFO)	\
 	-no-undefined				\
 	$(WINDOWS_LDFLAGS)
 
