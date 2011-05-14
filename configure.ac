@@ -769,7 +769,7 @@ AC_SUBST(examples_dictionarydir)
 GRN_CFLAGS=""
 AC_SUBST(GRN_CFLAGS)
 GRN_DEFS=""
-GRN_DEFS="$GRN_DEFS -DGRN_DLL_FILENAME=\\\"L\"\$(GRN_DLL_FILENAME)\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_DLL_FILENAME=\\L\"\"\$(GRN_DLL_FILENAME)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_PLUGINS_DIR=\\\"\"lib/\$(relative_pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_LOG_PATH=\\\"\"\$(grn_log_path)\"\\\""
