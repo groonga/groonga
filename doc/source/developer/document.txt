@@ -28,7 +28,7 @@ rst2pdfのインストール
 
 以下のようにしてインストールできます。::
 
- # eazy_install rst2pdf
+ # easy_install rst2pdf
 
 pdfの作成
 ^^^^^^^^^^^^^^^
