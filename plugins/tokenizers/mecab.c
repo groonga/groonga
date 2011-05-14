@@ -36,7 +36,12 @@ static grn_critical_section sole_mecab_lock;
   if (!sole_mecab) {\
     static char *argv[] = {"", "-Owakati"};\
     CRITICAL_SECTION_ENTER(sole_mecab_lock);\
-    if (!sole_mecab) { sole_mecab = mecab_new(2, argv); }\
+    if (!sole_mecab) {\
+      sole_mecab = mecab_new(2, argv);\
+      if (!sole_mecab) {\
+        strncpy(mecab_err, mecab_strerror(NULL), sizeof(mecab_err) - 1);\
+      }\
+    }\
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);\
   }\
 } while(0)
@@ -67,9 +72,11 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
   }
+  mecab_err[sizeof(mecab_err) - 1] = '\0';
   SOLE_MECAB_CONFIRM;
   if (!sole_mecab) {
-    ERR(GRN_TOKENIZER_ERROR, "mecab_new failed on grn_mecab_init");
+    ERR(GRN_TOKENIZER_ERROR,
+        "mecab_new failed on grn_mecab_init: %s", mecab_err);
     return NULL;
   }
   if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
@@ -85,7 +92,6 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
   len = token->nstr->norm_blen;
-  mecab_err[sizeof(mecab_err) - 1] = '\0';
   for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
     if(!(buf = GRN_MALLOC(bufsize + 1))) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
