@@ -250,6 +250,12 @@ grn_plugins_fin(void)
   return grn_hash_close(&grn_gctx, grn_plugins);
 }
 
+const char *
+grn_plugin_get_suffix(void)
+{
+  return GRN_PLUGIN_SUFFIX;
+}
+
 grn_rc
 grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 {
@@ -270,7 +276,7 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
       id = grn_plugin_open(ctx, path);
     } else {
       strcpy(complemented_path, path);
-      strcat(complemented_path, GRN_PLUGIN_SUFFIX);
+      strcat(complemented_path, grn_plugin_get_suffix());
       plugin_file = fopen(complemented_path, "r");
       if (plugin_file) {
         fclose(plugin_file);
@@ -287,7 +293,7 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
           strncat(complemented_libs_path, path, base_name - path);
           strcat(complemented_libs_path, "/.libs");
           strcat(complemented_libs_path, base_name);
-          strcat(complemented_libs_path, GRN_PLUGIN_SUFFIX);
+          strcat(complemented_libs_path, grn_plugin_get_suffix());
           plugin_file = fopen(complemented_libs_path, "r");
           if (plugin_file) {
             fclose(plugin_file);
@@ -321,8 +327,8 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 
 #ifdef WIN32
 static char *win32_plugins_dir = NULL;
-static const char *
-default_plugins_dir(void)
+const char *
+grn_plugin_get_system_plugins_dir(void)
 {
   if (!win32_plugins_dir) {
     const char *base_dir;
@@ -343,7 +349,11 @@ default_plugins_dir(void)
 }
 
 #else /* WIN32 */
-#  define default_plugins_dir() GRN_PLUGINS_DIR
+const char *
+grn_plugin_get_system_plugins_dir(void)
+{
+  return GRN_PLUGINS_DIR;
+}
 #endif /* WIN32 */
 
 grn_rc
@@ -360,7 +370,7 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
   } else {
     plugins_dir = getenv("GRN_PLUGINS_DIR");
     if (!plugins_dir) {
-      plugins_dir = default_plugins_dir();
+      plugins_dir = grn_plugin_get_system_plugins_dir();
     }
     strcpy(path, plugins_dir);
 

@@ -588,6 +588,8 @@ GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned name_s
 
 GRN_API grn_rc grn_plugin_register(grn_ctx *ctx, const char *name);
 GRN_API grn_rc grn_plugin_register_by_path(grn_ctx *ctx, const char *path);
+GRN_API const char *grn_plugin_get_system_plugins_dir(void);
+GRN_API const char *grn_plugin_get_suffix(void);
 
 /**
  * grn_proc_create:
