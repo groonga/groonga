@@ -25,6 +25,7 @@
 
 void test_register_function(void);
 void test_register_with_too_long_name(void);
+void test_register_by_absolute_path(void);
 
 static gchar *tmp_directory, *plugins_dir, *plugins_dir_env;
 
@@ -163,4 +164,17 @@ test_register_too_long_name(void)
                           1),
                     full_path),
     cut_take_printf("register %s", long_name->str));
+}
+
+void
+test_register_by_absolute_path(void)
+{
+  assert_send_command(cut_take_printf("register %s/string", plugins_dir));
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  assert_send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
+  cut_assert_equal_string("[[[1],[[\"_score\",\"Int32\"]],[11]]]",
+                          send_command("select Sites "
+                                       "--output_columns _score "
+                                       "--filter true "
+                                       "--scorer '_score=str_len(_key)'"));
 }

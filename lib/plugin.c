@@ -355,15 +355,19 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
   char normalized_name[PATH_MAX];
   int name_length, max_name_length;
 
-  plugins_dir = getenv("GRN_PLUGINS_DIR");
-  if (!plugins_dir) {
-    plugins_dir = default_plugins_dir();
-  }
-  strcpy(path, plugins_dir);
+  if (name[0] == '/') {
+    path[0] = '\0';
+  } else {
+    plugins_dir = getenv("GRN_PLUGINS_DIR");
+    if (!plugins_dir) {
+      plugins_dir = default_plugins_dir();
+    }
+    strcpy(path, plugins_dir);
 
-  dir_last_char = plugins_dir[strlen(path) - 1];
-  if (dir_last_char != '/') {
-    strcat(path, "/");
+    dir_last_char = plugins_dir[strlen(path) - 1];
+    if (dir_last_char != '/') {
+      strcat(path, "/");
+    }
   }
 
   name_length = strlen(name);
