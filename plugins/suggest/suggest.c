@@ -31,6 +31,13 @@
 #define CORRECT  2
 #define SUGGEST  4
 
+typedef enum {
+  GRN_SUGGEST_PREFIX_SEARCH_YES,
+  GRN_SUGGEST_PREFIX_SEARCH_NO,
+  GRN_SUGGEST_PREFIX_SEARCH_AUTO
+} grn_suggest_prefix_search_mode;
+
+
 static int
 grn_parse_suggest_types(const char *nptr, const char *end)
 {
@@ -174,7 +181,8 @@ static void
 complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
          grn_obj *query, grn_obj *sortby,
          grn_obj *output_columns, int offset, int limit,
-         int threshold)
+         int threshold,
+         grn_suggest_prefix_search_mode prefix_search_mode)
 {
   grn_obj *res;
   grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
@@ -231,7 +239,9 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
         grn_str_close(ctx, norm);
       }
       cooccur_search(ctx, items, items_boost, tid, res, COMPLETE, threshold);
-      if (!grn_table_size(ctx, res) &&
+      if (((prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_YES) ||
+           (prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_AUTO &&
+            !grn_table_size(ctx, res))) &&
           (cur = grn_table_cursor_open(ctx, items, TEXT_VALUE_LEN(query),
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
@@ -404,6 +414,17 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   int threshold = GRN_TEXT_LEN(VAR(8))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(8)), GRN_BULK_CURR(VAR(8)), NULL)
     : DEFAULT_THRESHOLD;
+  int prefix_search_len = GRN_TEXT_LEN(VAR(9));
+  grn_suggest_prefix_search_mode prefix_search_mode;
+  if (prefix_search_len == 3 &&
+      strncasecmp("yes", GRN_TEXT_VALUE(VAR(9)), 3) == 0) {
+    prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_YES;
+  } else if (prefix_search_len == 2 &&
+             strncasecmp("no", GRN_TEXT_VALUE(VAR(9)), 2) == 0) {
+    prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_NO;
+  } else {
+    prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_AUTO;
+  }
   if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
     if ((items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
       GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
@@ -411,7 +432,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
         if ((col = grn_obj_column(ctx, items, TEXT_VALUE_LEN(VAR(2))))) {
           GRN_OUTPUT_CSTR("complete");
           complete(ctx, items, items_boost, col, VAR(3), VAR(4),
-                   VAR(5), offset, limit, threshold);
+                   VAR(5), offset, limit, threshold, prefix_search_mode);
         } else {
           ERR(GRN_INVALID_ARGUMENT, "invalid column.");
         }
@@ -562,7 +583,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
     {CONST_STR_LEN("output_columns")},
     {CONST_STR_LEN("offset")},
     {CONST_STR_LEN("limit")},
-    {CONST_STR_LEN("threshold")}
+    {CONST_STR_LEN("threshold")},
+    {CONST_STR_LEN("prefix_search")}
   };
   GRN_TEXT_INIT(&vars[0].value, 0);
   GRN_TEXT_INIT(&vars[1].value, 0);
@@ -573,8 +595,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[6].value, 0);
   GRN_TEXT_INIT(&vars[7].value, 0);
   GRN_TEXT_INIT(&vars[8].value, 0);
+  GRN_TEXT_INIT(&vars[9].value, 0);
   grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND,
-                  command_suggest, NULL, NULL, 9, vars);
+                  command_suggest, NULL, NULL, 10, vars);
 
   grn_proc_create(ctx, CONST_STR_LEN("suggest_preparer"), GRN_PROC_FUNCTION,
                   func_suggest_preparer, NULL, NULL, 0, NULL);

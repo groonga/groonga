@@ -67,7 +67,8 @@ function dictionarySource(url) {
 			     table: 'item_dictionary',
 			     column: 'kana',
 			     limit: 25,
-			     output_columns: columns
+			     output_columns: columns,
+			     prefix_search: "yes"
 			 },
 			 dataType: "jsonp",
 			 autocomplete_request: ++request_index,
