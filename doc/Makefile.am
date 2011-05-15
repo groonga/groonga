@@ -238,11 +238,25 @@ add-language: gettext
            false)
 	mkdir -p $(srcdir)/po/$(LANGUAGE)
 	for pot in $(BUILDDIR)/pot/*.pot; do		\
-	  po=`basename \$$pot | sed s/pot/po/`;		\
+	  po=`basename $$pot | sed s/pot$$/po/`;		\
 	  msginit					\
 	    --input "$$pot"				\
 	    --output $(srcdir)/po/$(LANGUAGE)/$${po}	\
 	    --locale=$(LANGUAGE);			\
+	done
+
+update-po: gettext
+	for language in $(LANGUAGES); do				\
+	  test $${language} = "en" && continue;				\
+	  for po in $(srcdir)/po/$${language}/*.po; do			\
+	    pot=$(BUILDDIR)/pot/`basename $$po | sed s/po$$/pot/`;	\
+	    echo -n "updateing $${po}: ";				\
+	    msgmerge							\
+	      --update							\
+	      --sort-by-file						\
+	      $${po}							\
+	      $${pot};							\
+	  done;								\
 	done
 
 if ENABLE_DOCUMENT
