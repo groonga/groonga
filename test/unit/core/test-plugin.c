@@ -109,17 +109,11 @@ test_register_function(void)
 {
   assert_send_command("register string");
   assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
-  assert_send_command("table_create Terms "
-                      "TABLE_PAT_KEY|KEY_NORMALIZE ShortText " \
-                      "--default_tokenizer TokenBigram");
-  assert_send_command("column_create Terms Sites_key "
-                      "COLUMN_INDEX|WITH_POSITION Sites _key");
   assert_send_command("load '[[\"_key\"],[\"groonga.org\"]]' Sites");
   cut_assert_equal_string("[[[1],[[\"_score\",\"Int32\"]],[11]]]",
                           send_command("select Sites "
                                        "--output_columns _score "
-                                       "--match_columns _key "
-                                       "--query groonga "
+                                       "--filter true "
                                        "--scorer '_score=str_len(_key)'"));
 }
 
