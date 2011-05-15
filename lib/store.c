@@ -735,16 +735,19 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         vp->pos = 0;
       }
     }
-    grn_io_unlock(ja->io);
     EINFO_ENC(einfo, vp->seg, vp->pos, element_size);
     GRN_IO_SEG_REF(ja->io, vp->seg, addr);
-    if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
+    if (!addr) {
+      grn_io_unlock(ja->io);
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
     iw->segment = vp->seg;
     iw->addr = addr + vp->pos;
     if ((vp->pos += aligned_size) == JA_SEGMENT_SIZE) {
       vp->seg = 0;
       vp->pos = 0;
     }
+    grn_io_unlock(ja->io);
     return GRN_SUCCESS;
   }
 }
