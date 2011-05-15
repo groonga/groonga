@@ -7,43 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 00:36\n"
+"POT-Creation-Date: 2011-05-15 20:56\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../source/characteristic.txt:42
-msgid "Sennaの転置インデックス実装をさらに改良"
+#: ../source/characteristic.txt:4
+msgid "groongaの特徴"
 msgstr ""
 
-#: ../source/characteristic.txt:35
-msgid "ドリルダウンなどの集計系クエリを高速に実現"
-msgstr ""
-
-#: ../source/characteristic.txt:28
-msgid "複数プロセス・複数スレッドで共有できるストレージ"
-msgstr ""
-
-#: ../source/characteristic.txt:30
-msgid ""
-"groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができ"
-"ます。明示的なロックなどは必要ありません。"
-msgstr ""
-
-#: ../source/characteristic.txt:54
-msgid "自動クエリキャッシュ機構"
-msgstr ""
-
-#: ../source/characteristic.txt:39
-msgid ""
-"全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループ"
-"のレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向"
-"データベースを生かして、このような処理を高速に実行します。"
+#: ../source/characteristic.txt:7
+msgid "全文検索ライブラリSennaの後継"
 msgstr ""
 
 #: ../source/characteristic.txt:9
@@ -57,14 +36,21 @@ msgstr ""
 msgid "HTTPなどの複数プロトコルに対応したサーバ"
 msgstr ""
 
-#: ../source/characteristic.txt:25
+#: ../source/characteristic.txt:14
 msgid ""
-"より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なスト"
-"レージを実装しました。"
+"Sennaは、全文検索を行うアプリケーションで用いるための部品でした。groongaで"
+"は、全文検索サービスを行うためのサーバが存在します。groongaサーバは、HTTPや"
+"memcached binaryプロトコル、独自プロトコルであるgqtpを用いてクライアントと"
+"TCP/IP通信を行うことができます。よって、ライブラリをインストールできないレン"
+"タルサーバなどの環境でも利用しやすくなりました。"
 msgstr ""
 
-#: ../source/characteristic.txt:49
-msgid "位置情報（緯度・経度）検索"
+#: ../source/characteristic.txt:16
+msgid "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
+msgstr ""
+
+#: ../source/characteristic.txt:19
+msgid "高速なデータ更新"
 msgstr ""
 
 #: ../source/characteristic.txt:21
@@ -76,12 +62,6 @@ msgid ""
 "性能特性を生かすことができませんでした。"
 msgstr ""
 
-#: ../source/characteristic.txt:44
-msgid ""
-"groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、よ"
-"り高速かつ汎用的なものとなりました。"
-msgstr ""
-
 #: ../source/characteristic.txt:23
 msgid ""
 "たとえば、MyISAMではレコードが更新される際には、多くの場合テーブルロックが必"
@@ -89,23 +69,20 @@ msgid ""
 "も、MyISAMでのデータ更新がボトルネックとなってしまいます。"
 msgstr ""
 
-#: ../source/characteristic.txt:4
-msgid "groongaの特徴"
-msgstr ""
-
-#: ../source/characteristic.txt:19
-msgid "高速なデータ更新"
-msgstr ""
-
-#: ../source/characteristic.txt:37
+#: ../source/characteristic.txt:25
 msgid ""
-"groongaのストレージは、カラムごとにデータを保存するカラム指向データベースを採"
-"用しています。カラム指向データベースはOLAPなどの集計クエリを高速に実現するの"
-"に向いています。"
+"より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なスト"
+"レージを実装しました。"
 msgstr ""
 
-#: ../source/characteristic.txt:7
-msgid "全文検索ライブラリSennaの後継"
+#: ../source/characteristic.txt:28
+msgid "複数プロセス・複数スレッドで共有できるストレージ"
+msgstr ""
+
+#: ../source/characteristic.txt:30
+msgid ""
+"groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができ"
+"ます。明示的なロックなどは必要ありません。"
 msgstr ""
 
 #: ../source/characteristic.txt:32
@@ -115,20 +92,32 @@ msgid ""
 "MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。"
 msgstr ""
 
-#: ../source/characteristic.txt:51
-msgid ""
-"日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置"
-"情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計"
-"算可能です。"
+#: ../source/characteristic.txt:35
+msgid "ドリルダウンなどの集計系クエリを高速に実現"
 msgstr ""
 
-#: ../source/characteristic.txt:14
+#: ../source/characteristic.txt:37
 msgid ""
-"Sennaは、全文検索を行うアプリケーションで用いるための部品でした。groongaで"
-"は、全文検索サービスを行うためのサーバが存在します。groongaサーバは、HTTPや"
-"memcached binaryプロトコル、独自プロトコルであるgqtpを用いてクライアントと"
-"TCP/IP通信を行うことができます。よって、ライブラリをインストールできないレン"
-"タルサーバなどの環境でも利用しやすくなりました。"
+"groongaのストレージは、カラムごとにデータを保存するカラム指向データベースを採"
+"用しています。カラム指向データベースはOLAPなどの集計クエリを高速に実現するの"
+"に向いています。"
+msgstr ""
+
+#: ../source/characteristic.txt:39
+msgid ""
+"全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループ"
+"のレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向"
+"データベースを生かして、このような処理を高速に実行します。"
+msgstr ""
+
+#: ../source/characteristic.txt:42
+msgid "Sennaの転置インデックス実装をさらに改良"
+msgstr ""
+
+#: ../source/characteristic.txt:44
+msgid ""
+"groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、よ"
+"り高速かつ汎用的なものとなりました。"
 msgstr ""
 
 #: ../source/characteristic.txt:46
@@ -138,8 +127,19 @@ msgid ""
 "スを利用した高速な処理を行うことができます。"
 msgstr ""
 
-#: ../source/characteristic.txt:16
-msgid "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
+#: ../source/characteristic.txt:49
+msgid "位置情報（緯度・経度）検索"
+msgstr ""
+
+#: ../source/characteristic.txt:51
+msgid ""
+"日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置"
+"情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計"
+"算可能です。"
+msgstr ""
+
+#: ../source/characteristic.txt:54
+msgid "自動クエリキャッシュ機構"
 msgstr ""
 
 #: ../source/characteristic.txt:56

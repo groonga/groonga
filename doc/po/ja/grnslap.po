@@ -7,64 +7,50 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 00:36\n"
+"POT-Creation-Date: 2011-05-15 20:56\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../source/grnslap.txt:9
-msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
-msgstr ""
-
-#: ../source/grnslap.txt:36
-msgid "`http`"
-msgstr ""
-
-#: ../source/grnslap.txt:19
-msgid "説明"
-msgstr ""
-
-#: ../source/grnslap.txt:49
-msgid "引数"
-msgstr ""
-
-#: ../source/grnslap.txt:40
-msgid "`gqtp`"
-msgstr ""
-
-#: ../source/grnslap.txt:38
-msgid ""
-"httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式"
-"で標準入力に与えると、それらのパスに順次アクセスします。"
-msgstr ""
-
-#: ../source/grnslap.txt:53
-msgid ""
-"接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
-"ポート番号を指定しない場合には、10041が指定されたものとします。"
+#: ../source/grnslap.txt:4
+msgid "grnslap"
 msgstr ""
 
 #: ../source/grnslap.txt:7
 msgid "名前"
 msgstr ""
 
-#: ../source/grnslap.txt:4
-msgid "grnslap"
+#: ../source/grnslap.txt:9
+msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
 msgstr ""
 
-#: ../source/grnslap.txt:46
-msgid "リクエストの多重度を指定します。初期値は10です。"
+#: ../source/grnslap.txt:12
+msgid "書式"
+msgstr ""
+
+#: ../source/grnslap.txt:16
+msgid "grnslap [options] [dest]"
+msgstr ""
+
+#: ../source/grnslap.txt:19
+msgid "説明"
 msgstr ""
 
 #: ../source/grnslap.txt:21
 msgid ""
 "grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスを"
 "チェックするためのツールです。"
+msgstr ""
+
+#: ../source/grnslap.txt:23
+msgid ""
+"groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことが"
+"できます。また、リクエストの多重度を指定することができます。"
 msgstr ""
 
 #: ../source/grnslap.txt:25
@@ -74,30 +60,30 @@ msgid ""
 "ことができます。"
 msgstr ""
 
-#: ../source/grnslap.txt:62
-msgid ""
-"> yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041 "
-"2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000 "
-"2009-11-12 19:34:10.011208|end  : n=100 min=46 max=382 avg=0 qps=7992.966190 "
-"etime=0.012511"
-msgstr ""
-
 #: ../source/grnslap.txt:27
 msgid "現在は、make installしてもインストールは行われない。"
+msgstr ""
+
+#: ../source/grnslap.txt:30
+msgid "オプション"
 msgstr ""
 
 #: ../source/grnslap.txt:34
 msgid "リクエストのプロトコルを指定します。"
 msgstr ""
 
-#: ../source/grnslap.txt:56
-msgid "サンプル"
+#: ../source/grnslap.txt:36
+msgid "`http`"
 msgstr ""
 
-#: ../source/grnslap.txt:23
+#: ../source/grnslap.txt:38
 msgid ""
-"groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことが"
-"できます。また、リクエストの多重度を指定することができます。"
+"httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式"
+"で標準入力に与えると、それらのパスに順次アクセスします。"
+msgstr ""
+
+#: ../source/grnslap.txt:40
+msgid "`gqtp`"
 msgstr ""
 
 #: ../source/grnslap.txt:42
@@ -106,18 +92,32 @@ msgid ""
 "それらのリクエストを順次行います。"
 msgstr ""
 
-#: ../source/grnslap.txt:16
-msgid "grnslap [options] [dest]"
+#: ../source/grnslap.txt:46
+msgid "リクエストの多重度を指定します。初期値は10です。"
 msgstr ""
 
-#: ../source/grnslap.txt:12
-msgid "書式"
+#: ../source/grnslap.txt:49
+msgid "引数"
+msgstr ""
+
+#: ../source/grnslap.txt:53
+msgid ""
+"接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
+"ポート番号を指定しない場合には、10041が指定されたものとします。"
+msgstr ""
+
+#: ../source/grnslap.txt:56
+msgid "サンプル"
 msgstr ""
 
 #: ../source/grnslap.txt:58
 msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
 msgstr ""
 
-#: ../source/grnslap.txt:30
-msgid "オプション"
+#: ../source/grnslap.txt:62
+msgid ""
+"> yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041 "
+"2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000 "
+"2009-11-12 19:34:10.011208|end  : n=100 min=46 max=382 avg=0 qps=7992.966190 "
+"etime=0.012511"
 msgstr ""

@@ -1,3 +1,12 @@
+msgid "[[[件数], [[カラム名1,カラム型1],..], 検索結果1,..],..]"
+msgstr ""
+
+msgid "[[検索件数], [[カラム名1,カラム型1],..], 検索結果1,..]"
+msgstr ""
+
+msgid "[-]カラム名1, [-]カラム名2, [-]カラム名3, ..."
+msgstr ""
+
 # Japanese translations for 1.2.1 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
@@ -7,459 +16,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 00:36\n"
+"POT-Creation-Date: 2011-05-15 20:56\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../source/commands/column_create.txt:11
-msgid "column_create - カラムの追加"
+#: ../source/commands.txt:6
+msgid "コマンド"
 msgstr ""
 
-#: ../source/commands/column_create.txt:68
+#: ../source/commands.txt:8
 msgid ""
-"インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource"
-"引数に指定します。"
+"まず、すべてのコマンドに関係するコマンドバージョンについて説明します。その"
+"後、組み込みのコマンドを順に説明します。"
 msgstr ""
 
-#: ../source/commands/column_list.txt:42
-msgid "``カラム情報名n``"
-msgstr ""
-
-#: ../source/commands/column_create.txt:57
-msgid "ウェイト情報を格納するインデックスを作成します。"
-msgstr ""
-
-#: ../source/commands/table_create.txt:24
-msgid ""
-"table_createコマンドは、使用しているデータベースに対してテーブルを追加しま"
-"す。groongaには名前付きテーブルと名前なしテーブル、永続テーブルと一時テーブル"
-"がありますが、table_createコマンドでは、名前付きの永続テーブルのみが作成でき"
-"ます。テーブルはレコードの集合であり、全てのレコードは一意なIDを持ちます。ID"
-"はレコードを追加した順序に従って自動的に付与されます。"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:22
-msgid "log_reopenは、ログファイルを再読み込みします。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:72
-msgid "テーブル情報の型を出力します。"
-msgstr ""
-
-#: ../source/commands/dump.txt:22
-msgid ""
-"dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力しま"
-"す。dumpの結果は大きくなるため、主にコマンドラインから使うことを想定していま"
-"す。データベースのバックアップが主な利用方法です。"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:57
-msgid "脚注"
-msgstr ""
-
-#: ../source/commands/column_create.txt:92
-msgid ""
-"テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
-"型カラム、entry_bodyを作成します。::"
-msgstr ""
-
-#: ../source/commands/log_level.txt:9
-msgid "log_level - ログ出力レベルの設定"
-msgstr ""
-
-#: ../source/commands/column_create.txt:29
-#: ../source/commands/define_selector.txt:33 ../source/commands/delete.txt:29
-#: ../source/commands/load.txt:49 ../source/commands/select.txt:32
-#: ../source/commands/suggest.txt:47 ../source/commands/view_add.txt:31
-msgid "``table``"
-msgstr ""
-
-#: ../source/commands/select.txt:48
-msgid "カラム名1 * 重み1 || カラム名2 * 重み2"
-msgstr ""
-
-#: ../source/commands/defrag.txt:20
-msgid ""
-"groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:37
-msgid "テーブル名一覧が以下の形式で返却されます。::"
-msgstr ""
-
-#: ../source/commands/table_create.txt:112
-msgid ""
-"table_create Term --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --"
-"default_tokenizer TokenBigram [true]"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:65
-msgid ":doc:`log_level` :doc:`log_put`"
-msgstr ""
-
-#: ../source/commands/select.txt:152
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"するカラム名のリストをカンマ(',')区切りで指定します。"
-msgstr ""
-
-#: ../source/commands/table_create.txt:69
-msgid "組込のトークナイザとして、以下が準備されています。"
-msgstr ""
-
-#: ../source/commands/status.txt:11
-msgid "status - groongaプロセスの状態表示"
-msgstr ""
-
-#: ../source/commands/load.txt:33
-msgid "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
-msgstr ""
-
-#: ../source/commands/select.txt:212 ../source/commands/select.txt:234
-msgid "``カラム名n``"
-msgstr ""
-
-#: ../source/commands/load.txt:43
-msgid ""
-"対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に'_key'(主"
-"キーを示す疑似カラム名)が含まれていなければなりません。"
-msgstr ""
-
-#: ../source/commands/log_level.txt:58
-msgid "log_level warning [true]"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:51
-msgid "追加するselectorコマンドのscorer引数のデフォルト値を指定します。"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:22
-msgid ""
-"column_removeはテーブルに定義されているカラムを削除します。 また、付随するイ"
-"ンデックスも削除されます。[#]_"
-msgstr ""
-
-#: ../source/commands/table_create.txt:22
-msgid ""
-"groonga組込コマンドの一つであるtable_createについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/select.txt:191
-msgid ""
-"grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内"
-"容を示す 文字列が返されます。"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:51
-msgid "cache_limit 4 [100]"
-msgstr ""
-
-#: ../source/commands/select.txt:249
-msgid "テーブルEntryの全レコード・全カラムの値を出力します。::"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:9
-msgid "define_selector - 検索コマンドを定義"
-msgstr ""
-
-#: ../source/commands/select.txt:46
-msgid "複数のカラムを'||'で結合して指定することもできます。"
-msgstr ""
-
-#: ../source/commands/select.txt:230
-msgid "``件数``"
-msgstr ""
-
-#: ../source/commands/dump.txt:26
-msgid ""
-"% groonga original/db dump > dump.grn % mkdir backup % groonga -n backup/db "
-"< dump.grn"
-msgstr ""
-
-#: ../source/commands/load.txt:61
-msgid "``input_type``"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:24
-msgid ""
-"define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
-msgstr ""
-
-#: ../source/commands/table_remove.txt:20
-msgid ""
-"groonga組込コマンドの一つであるtable_removeについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/select.txt:77
-msgid "比較条件(カラム値 > 値)"
-msgstr ""
-
-#: ../source/commands/select.txt:89
-msgid "結合演算子"
-msgstr ""
-
-#: ../source/commands/suggest.txt:8
-msgid ""
-"** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブルが必"
-"要となります。 **"
-msgstr ""
-
-#: ../source/commands/load.txt:53
-msgid "``columns``"
-msgstr ""
-
-#: ../source/commands/column_list.txt:44
-msgid ""
-"``カラム情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容かを"
-"示す名前を出力します。 情報名は以下の通りです。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:46
-msgid "複数の値の配列を格納できるカラムを作成します。"
-msgstr ""
-
-#: ../source/commands/select.txt:50
-msgid ""
-"また、カラム名ではなく、検索に使用するインデックス名を指定することもできま"
-"す。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:41
-msgid "``テーブル情報名n``"
-msgstr ""
-
-#: ../source/commands/check.txt:29
-msgid "状態を表示するオブジェクトの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/shutdown.txt:9
-msgid "shutdown - サーバプロセスの停止"
-msgstr ""
-
-#: ../source/commands/log_put.txt:22
-msgid "log_putは、ログにmessageを出力します。"
-msgstr ""
-
-#: ../source/commands/suggest.txt:6
-msgid "suggest"
-msgstr ""
-
-#: ../source/commands/defrag.txt:39
-msgid ""
-"[フラグメンテーション解消を実行したセグメントの数]  ``フラグメンテーション解"
-"消を実行したセグメントの数``    フラグメンテーション解消を実行したセグメント"
-"の数を返す。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:48
-msgid "インデックス型のカラムを作成します。"
-msgstr ""
-
-#: ../source/commands/check.txt:22
-msgid ""
-"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
-"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
-"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
-"されません。（フォーマットが変更される可能性が高い）"
-msgstr ""
-
-#: ../source/commands/log_level.txt:29 ../source/commands/log_put.txt:29
-msgid "設定するログ出力レベルの値を以下のいずれかで指定します。"
-msgstr ""
-
-#: ../source/commands/delete.txt:17
-msgid "delete table [key [id]]"
-msgstr ""
-
-#: ../source/commands/column_create.txt:37
-msgid ""
-"ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダー"
-"スコア('_')で始まる名前は予約済みであり、使用できません。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:22
-msgid ""
-"groonga組込コマンドの一つであるcolumn_listについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:48
-msgid "開いているデータベースのロックをすべて解除する::"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:4
-msgid "define_selector"
-msgstr ""
-
-#: ../source/commands/load.txt:84
-msgid ""
-"load --table Entry --input_type json --values [{\\\"_key\\\":\\\"abandon\\\","
-"\\\"body\\\":\\\"放棄する\\\"}]  [1]"
-msgstr ""
-
-#: ../source/commands/view_add.txt:9
-msgid "view_add - view型のテーブルに要素となるテーブルを追加"
-msgstr ""
-
-#: ../source/commands/table_create.txt:33
-msgid ""
-"作成するテーブルの名前を指定します。nameはデータベース内で一意な、未定義の名"
-"前でなければなりません。組込型名・組込コマンド名・組込関数名は予約済みであ"
-"り、テーブル名には 使用できません。また、ピリオド('.'), コロン(':')を含む名前"
-"のテーブルは作成できません。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:30
-msgid "カラム情報を出力するテーブルの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:59
-msgid ""
-"既存のログファイル名と同じファイル名で、新たなログファイルが作成される。 今後"
-"のログは新たなログファイルに書き込まれる。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:6 ../source/commands/table_list.txt:17
-msgid "table_list"
-msgstr ""
-
-#: ../source/commands/column_list.txt:38
-msgid "カラム名一覧を以下の形式で返却します。::"
-msgstr ""
-
-#: ../source/commands/view_add.txt:4
-msgid "view_add"
-msgstr ""
-
-#: ../source/commands/load.txt:59
-msgid ""
-"指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行す"
-"るscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された場合"
-"は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルト"
-"はtrue)"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:63
-msgid "追加するselectorコマンドのoffset引数のデフォルト値を指定します。"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:15
-msgid "clearlock objname"
-msgstr ""
-
-#: ../source/commands/select.txt:156
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
-"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
-"よって算出される値が指定されたものとみなされます。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:11
-msgid "column_list - テーブルに定義されているカラムのリスト表示"
-msgstr ""
-
-#: ../source/commands/select.txt:222
-msgid ""
-"output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
-"力されます。"
-msgstr ""
-
-#: ../source/commands/select.txt:148
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
-"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
-"と同様に昇降順を指定できます。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:77 ../source/commands/select.txt:150
-msgid "``drilldown_output_columns``"
-msgstr ""
-
-#: ../source/commands/column_create.txt:62
-#: ../source/commands/column_list.txt:59
-msgid "``type``"
-msgstr ""
-
-#: ../source/commands/table_list.txt:24
-msgid "table_listは、DBに定義されているテーブルのリストを表示します。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:73 ../source/commands/select.txt:146
-msgid "``drilldown_sortby``"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:4
-msgid "clearlock"
-msgstr ""
-
-#: ../source/commands/table_create.txt:84
-msgid ""
-"形態素解析器mecabで解析した形態素をトークンとする。(mecabを組み込んだ場合のみ"
-"有効)"
-msgstr ""
-
-#: ../source/commands/load.txt:75
-msgid "``登録件数``"
-msgstr ""
-
-#: ../source/commands/select.txt:34
-msgid ""
-"検索対象のテーブルを指定します。存在しないテーブルを指定した場合はエラーにな"
-"ります。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:55 ../source/commands/table_list.txt:54
-msgid "``path``"
-msgstr ""
-
-#: ../source/commands/status.txt:58
-msgid "status {\"alloc_count\":104,  \"starttime\":1268213679,  \"uptime\":1}"
-msgstr ""
-
-#: ../source/commands/log_put.txt:40
-msgid "``message``"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:85 ../source/commands/select.txt:158
-msgid "``drilldown_limit``"
-msgstr ""
-
-#: ../source/commands/dump.txt:15
-msgid "dump [tables]"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:31 ../source/commands/delete.txt:41
-#: ../source/commands/load.txt:65
-msgid "返値 ---"
-msgstr ""
-
-#: ../source/commands/defrag.txt:55
-msgid "defrag Entry.body [30]"
-msgstr ""
-
-#: ../source/commands/suggest.txt:26
-msgid ""
-"補完とは、クエリの未入力・未変換部分を補うことです。修正とは、クエリ内のミス"
-"タイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候補と"
-"なるクエリを提案することです。"
-msgstr ""
-
-#: ../source/commands/log_level.txt:4
-msgid "log_level"
+#: ../source/commands/cache_limit.txt:4
+msgid "cache_limit"
 msgstr ""
 
 #: ../source/commands/cache_limit.txt:7 ../source/commands/check.txt:7
@@ -477,69 +55,8 @@ msgstr ""
 msgid "名前"
 msgstr ""
 
-#: ../source/commands/table_create.txt:17
-msgid "table_create name [flags [key_type [value_type [default_tokenizer]]]]"
-msgstr ""
-
-#: ../source/commands/log_put.txt:62
-msgid "log_put ERROR ****MESSAGE**** [true]"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:27
-msgid "``max``"
-msgstr ""
-
-#: ../source/commands/select.txt:183
-msgid "以下のようなjson形式で値が返却されます。"
-msgstr ""
-
-#: ../source/commands/select.txt:74
-msgid "比較条件(カラム値 < 値)"
-msgstr ""
-
-#: ../source/commands/suggest.txt:35
-msgid "``complete``"
-msgstr ""
-
-#: ../source/commands/select.txt:114
-msgid ""
-"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
-"します。"
-msgstr ""
-
-#: ../source/commands/defrag.txt:22
-msgid ""
-"defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
-"オブジェクトのフラグメンテーションを解消します。"
-msgstr ""
-
-#: ../source/commands.txt:6
-msgid "コマンド"
-msgstr ""
-
-#: ../source/commands/table_remove.txt:15
-msgid "table_remove table"
-msgstr ""
-
-#: ../source/commands/load.txt:31
-msgid ""
-"input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
-msgstr ""
-
-#: ../source/commands/load.txt:47
-msgid "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
-msgstr ""
-
-#: ../source/commands/select.txt:224
-msgid "``drilldown結果``"
-msgstr ""
-
-#: ../source/commands/select.txt:97
-msgid "論理積(aとbの両方がマッチする)"
-msgstr ""
-
-#: ../source/commands/select.txt:164
-msgid "クエリキャッシュに関する動作を設定します。"
+#: ../source/commands/cache_limit.txt:9
+msgid "cache_limit - cacheサイズの設定・取得"
 msgstr ""
 
 #: ../source/commands/cache_limit.txt:12 ../source/commands/check.txt:12
@@ -558,325 +75,8 @@ msgstr ""
 msgid "書式"
 msgstr ""
 
-#: ../source/commands/define_selector.txt:31
-msgid "定義するselectorコマンドの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/select.txt:172
-msgid ""
-"検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0で"
-"す。デフォルト値は以下のいずれかの方法で設定できます。"
-msgstr ""
-
-msgid "[-]カラム名1, [-]カラム名2, [-]カラム名3, ..."
-msgstr ""
-
-#: ../source/commands/dump.txt:9
-msgid "dump - データベースのスキーマとデータを出力する"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:106
-msgid ""
-"テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
-"す。::"
-msgstr ""
-
-#: ../source/commands/select.txt:244
-msgid ""
-"drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
-"条件に従って各レコードの値が出力されます。"
-msgstr ""
-
-#: ../source/commands/table_remove.txt:4
-msgid "table_remove"
-msgstr ""
-
-#: ../source/commands/load.txt:73
-msgid "[登録件数]"
-msgstr ""
-
-#: ../source/commands/column_list.txt:81
-msgid "カラム情報の型を出力します。"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:20
-msgid ""
-"groonga組込コマンドの一つであるcolumn_removeについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/suggest.txt:19
-msgid "suggest types table column query"
-msgstr ""
-
-#: ../source/commands/quit.txt:20
-msgid ""
-"groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/table_remove.txt:9
-msgid "table_remove - テーブルの削除"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:65 ../source/commands/select.txt:138
-msgid "``limit``"
-msgstr ""
-
-#: ../source/commands/select.txt:42
-msgid ""
-"カラム名の後ろに'* 数値'を指定することによって、そのカラムにヒットした際のス"
-"コアに積算される重みを指定することができます。"
-msgstr ""
-
-#: ../source/commands/suggest.txt:49
-msgid "基礎となるデータが格納されているテーブル名を指定します。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:44
-msgid "単一の値が格納できるカラムを作成します。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:73
-msgid "テーブルのkeyの型"
-msgstr ""
-
-#: ../source/commands/dump.txt:20
-msgid ""
-"groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/check.txt:20
-msgid ""
-"groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/check.txt:15
-msgid "check obj"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:34 ../source/commands/check.txt:32
-#: ../source/commands/column_create.txt:71
-#: ../source/commands/column_list.txt:33
-#: ../source/commands/column_remove.txt:35
-#: ../source/commands/define_selector.txt:90 ../source/commands/defrag.txt:32
-#: ../source/commands/dump.txt:38 ../source/commands/log_level.txt:41
-#: ../source/commands/log_put.txt:45 ../source/commands/log_reopen.txt:32
-#: ../source/commands/quit.txt:30 ../source/commands/select.txt:181
-#: ../source/commands/shutdown.txt:30 ../source/commands/status.txt:32
-#: ../source/commands/suggest.txt:60 ../source/commands/table_create.txt:89
-#: ../source/commands/table_list.txt:32 ../source/commands/table_remove.txt:31
-#: ../source/commands/view_add.txt:36
-msgid "返値"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:9
-msgid "clearlock - オブジェクトにセットされたロックを解除する"
-msgstr ""
-
-#: ../source/commands/suggest.txt:41
-msgid "修正を行います。"
-msgstr ""
-
-#: ../source/commands/table_create.txt:49
-msgid ""
-"複数のテーブルをまとめて操作するための仮想的なテーブル(view)を作成します。"
-msgstr ""
-
-#: ../source/commands/select.txt:132
-msgid ""
-"アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。ま"
-"たは、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, "
-"\\*')"
-msgstr ""
-
-#: ../source/commands/table_list.txt:64
-msgid "主キー値の属する型"
-msgstr ""
-
-#: ../source/commands/suggest.txt:24
-msgid "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
-msgstr ""
-
-#: ../source/commands/log_put.txt:9
-msgid "log_put - ログ出力"
-msgstr ""
-
-#: ../source/commands/select.txt:144
-msgid ""
-"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
-"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
-"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:55
-msgid "clearlock Entry.body [true]"
-msgstr ""
-
-#: ../source/commands/load.txt:90
-msgid ""
-"load --table Entry --input_type json [ {\"_key\": \"abbreviate\", \"body\": "
-"\"短縮する\"} ]  [1]"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:87
-msgid ""
-"追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。"
-msgstr ""
-
-msgid "[[検索件数], [[カラム名1,カラム型1],..], 検索結果1,..]"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:50
-msgid "clearlock [true]"
-msgstr ""
-
-#: ../source/commands/select.txt:218
-msgid ""
-"output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
-msgstr ""
-
-#: ../source/commands/load.txt:39
-msgid ""
-"[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
-"名2: カラム値2},..]"
-msgstr ""
-
-#: ../source/commands/select.txt:83
-msgid "比較条件(カラム値 >= 値)"
-msgstr ""
-
-#: ../source/commands/select.txt:162
-msgid "``cache``"
-msgstr ""
-
-#: ../source/commands/select.txt:140
-msgid ""
-"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
-"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
-"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
-"limit + 1 によって算出される値が指定されたものとみなされます。"
-msgstr ""
-
-#: ../source/commands/load.txt:51
-msgid "レコードを追加しようとするテーブルの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/select.txt:94
-msgid "論理和(aとbといずれかの条件がマッチする)"
-msgstr ""
-
-#: ../source/commands/suggest.txt:53
-msgid ""
-"基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されてい"
-"るカラム名を指定します。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:111
-#: ../source/commands/table_list.txt:104
-msgid "注: 実際は改行が入りません。"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:56
-msgid ""
-"ログファイルをmvなどで移動する。 ログはmvで移動された先のファイルに書き込まれ"
-"る。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:48
-msgid "テーブルオブジェクトに割り当てられたID"
-msgstr ""
-
-#: ../source/commands/column_list.txt:57
-msgid "カラム値を格納するファイル名"
-msgstr ""
-
-#: ../source/commands/select.txt:126
-msgid ""
-"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
-"す。'_score'を指定することでスコアでソートすることができます。query引数も"
-"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
-msgstr ""
-
-#: ../source/commands/select.txt:57
-msgid "条件式"
-msgstr ""
-
-#: ../source/commands/select.txt:194
-msgid "``処理開始時間``"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:54
-msgid "log_reopenを用いたログのローテーション"
-msgstr ""
-
-#: ../source/commands/defrag.txt:48
-msgid "開いているデータベースのフラグメンテーションを解消する::"
-msgstr ""
-
-#: ../source/commands/column_list.txt:83
-msgid "``カラム情報n``"
-msgstr ""
-
-#: ../source/commands/select.txt:242
-msgid "``ドリルダウン結果n``"
-msgstr ""
-
-#: ../source/commands/table_create.txt:55
-msgid ""
-"ハッシュ表型か、パトリシア木型のテーブルにおいて、主キー値を正規化した上で登"
-"録します。この値が指定されたテーブルではたとえば、主キー値'abc'と'ABC' は同一"
-"のレコードに対応するものとみなされます。"
-msgstr ""
-
-#: ../source/commands/dump.txt:35
-msgid ""
-"出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指"
-"定した場合は無視されます。"
-msgstr ""
-
-#: ../source/commands/suggest.txt:57
-msgid "補完・修正・提案の対象となるクエリを指定します。"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:4
-msgid "column_remove"
-msgstr ""
-
-#: ../source/commands/table_list.txt:43
-msgid ""
-"``テーブル情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容か"
-"を示す名前を出力します。 情報名は以下の通りです。"
-msgstr ""
-
-#: ../source/commands/select.txt:210
-msgid "検索件数が出力されます。"
-msgstr ""
-
-#: ../source/commands/status.txt:24
-msgid ""
-"statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセ"
-"スに対して使用することを想定しています。"
-msgstr ""
-
-#: ../source/commands/select.txt:59
-msgid "以下の条件式が使用できます。"
-msgstr ""
-
-#: ../source/commands/delete.txt:33
-msgid "``key``"
-msgstr ""
-
-#: ../source/commands/table_list.txt:76
-msgid ""
-"``テーブル情報名n`` で示された情報の配列を出力します。 情報の順序は ``テーブ"
-"ル情報名n`` の順序と同じです。"
+#: ../source/commands/cache_limit.txt:15
+msgid "cache_limit max"
 msgstr ""
 
 #: ../source/commands/cache_limit.txt:18 ../source/commands/check.txt:18
@@ -895,363 +95,6 @@ msgstr ""
 msgid "説明"
 msgstr ""
 
-#: ../source/commands/load.txt:24
-msgid ""
-"loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
-"新します。"
-msgstr ""
-
-#: ../source/commands/suggest.txt:13
-msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-msgstr ""
-
-#: ../source/commands/table_create.txt:78
-msgid "bigram(2文字の文字列要素をトークンとする)"
-msgstr ""
-
-#: ../source/commands/column_create.txt:22
-msgid ""
-"groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:41
-msgid ""
-"カラムの属性を表す以下の数値か、パイプ('|')で組み合わせたシンボル名を指定しま"
-"す。"
-msgstr ""
-
-#: ../source/commands/check.txt:9
-msgid "check - オブジェクトの状態表示"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:45 ../source/commands/select.txt:106
-msgid "``filter``"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:39 ../source/commands/column_create.txt:78
-#: ../source/commands/column_remove.txt:42
-#: ../source/commands/define_selector.txt:97 ../source/commands/delete.txt:49
-#: ../source/commands/log_level.txt:48 ../source/commands/log_put.txt:52
-#: ../source/commands/log_reopen.txt:39 ../source/commands/table_create.txt:96
-#: ../source/commands/table_remove.txt:38 ../source/commands/view_add.txt:43
-msgid ""
-"[成功かどうかのフラグ]  ``成功かどうかのフラグ``    エラーが生じなかった場合"
-"にはtrue、エラーが生じた場合にはfalseを返す。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:39
-msgid "[[[テーブル情報名1,テーブル情報型1],...], テーブル情報1,...]"
-msgstr ""
-
-#: ../source/commands/log_level.txt:22
-msgid "log_levelは、ログ出力レベルを設定します。"
-msgstr ""
-
-#: ../source/commands/load.txt:17
-msgid "load values table [columns [ifexists [input_type]]]"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:29 ../source/commands/quit.txt:27
-#: ../source/commands/quit.txt:32 ../source/commands/shutdown.txt:27
-#: ../source/commands/shutdown.txt:32 ../source/commands/status.txt:29
-#: ../source/commands/table_list.txt:29
-msgid "ありません。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:35
-msgid ""
-"作成するカラムの名前を指定します。カラム名は、テーブルの中で一意でなければな"
-"りません。"
-msgstr ""
-
-#: ../source/commands/delete.txt:58
-msgid "テーブルEntryからレコードを削除します。::"
-msgstr ""
-
-#: ../source/commands/table_list.txt:56
-msgid "テーブルのレコードを格納するファイル名"
-msgstr ""
-
-#: ../source/commands/select.txt:91
-msgid "複数の条件式を結合するために以下の演算子が使用できます。"
-msgstr ""
-
-#: ../source/commands/delete.txt:39
-msgid ""
-"レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
-"メータを指定してはいけません。"
-msgstr ""
-
-#: ../source/commands/suggest.txt:51
-msgid "``column``"
-msgstr ""
-
-#: ../source/commands/select.txt:216 ../source/commands/select.txt:238
-msgid "``カラム型n``"
-msgstr ""
-
-#: ../source/commands/select.txt:220
-msgid "``検索結果n``"
-msgstr ""
-
-#: ../source/commands/delete.txt:35
-msgid ""
-"削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパラ"
-"メータを指定しても無視されます(idパラメータを代わりに指定します)。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:85
-msgid ""
-"``カラム情報名n`` で示された情報の配列を出力します。 情報の順序は ``カラム情"
-"報名n`` の順序と同じです。"
-msgstr ""
-
-#: ../source/commands/select.txt:174
-msgid "configureの--with-match-escalation-thresholdオプション"
-msgstr ""
-
-#: ../source/commands/column_list.txt:6
-msgid "column_list"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:29
-#: ../source/commands/table_remove.txt:28
-msgid "削除対象のカラムが定義されているテーブルの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:32
-msgid "削除対象のカラム名を指定します。"
-msgstr ""
-
-msgid "[[[件数], [[カラム名1,カラム型1],..], 検索結果1,..],..]"
-msgstr ""
-
-#: ../source/commands/dump.txt:64
-msgid ""
-"> dump --tables Users,Sites table_create Users TABLE_HASH_KEY ShortText "
-"column_create Users name COLUMN_SCALAR ShortText table_create Comments "
-"TABLE_PAT_KEY ShortText column_create Comments text COLUMN_SCALAR ShortText "
-"table_create Sites TABLE_NO_KEY column_create Sites url COLUMN_SCALAR "
-"ShortText load --table Users [ [\"_key\"], [\"mori\"], [\"yu\"], ... ] load "
-"--table Sites [ [\"_id\",\"url\"], [1,\"http://groonga.org/\"], [2,\"http://"
-"qwik.jp/senna/\"], ... ]"
-msgstr ""
-
-#: ../source/commands/select.txt:103
-msgid "複数の条件をまとめる"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:9
-msgid "cache_limit - cacheサイズの設定・取得"
-msgstr ""
-
-#: ../source/commands/select.txt:189
-msgid "``リターンコード``"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:59
-msgid ""
-"追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。"
-msgstr ""
-
-#: ../source/commands/check.txt:130
-msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
-msgstr ""
-
-#: ../source/commands/column_list.txt:65
-msgid "カラムのflags属性"
-msgstr ""
-
-#: ../source/commands/load.txt:36
-msgid ""
-"[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
-"2,..],..]"
-msgstr ""
-
-#: ../source/commands/dump.txt:24
-msgid ""
-"dumpが出力するフォーマットは直接groongaが解釈できるフォーマットです。そのた"
-"め、以下のようにしてデータベースをコピーすることができます。::"
-msgstr ""
-
-#: ../source/commands/select.txt:65
-msgid ""
-"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
-"る)"
-msgstr ""
-
-#: ../source/commands/table_list.txt:60
-msgid "テーブルのflags属性"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:37 ../source/commands/select.txt:36
-msgid "``match_columns``"
-msgstr ""
-
-#: ../source/commands/check.txt:27
-msgid "``obj``"
-msgstr ""
-
-#: ../source/commands/column_create.txt:33
-#: ../source/commands/column_list.txt:51
-#: ../source/commands/define_selector.txt:29
-#: ../source/commands/table_create.txt:31 ../source/commands/table_list.txt:50
-msgid "``name``"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:20
-msgid ""
-"groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/select.txt:17
-msgid ""
-"select table [match_columns [query [filter [scorer [sortby "
-"[output_columns              [offset [limit [drilldown [drilldown_sortby "
-"[drilldown_output_columns              [drilldown_offset [drilldown_limit "
-"[cache              [match_escalation_threshold]]]]]]]]]]]]]]]"
-msgstr ""
-
-#: ../source/commands/shutdown.txt:20
-msgid ""
-"groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/suggest.txt:31
-msgid "``types``"
-msgstr ""
-
-#: ../source/commands/log_level.txt:27 ../source/commands/log_put.txt:27
-msgid "``level``"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:22
-msgid "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:9
-msgid "column_remove - テーブルに定義されているカラムの削除"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:4
-msgid "cache_limit"
-msgstr ""
-
-#: ../source/commands/select.txt:166
-msgid "``no``"
-msgstr ""
-
-#: ../source/commands/select.txt:160
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"を行うレコードの件数を指定します。デフォルト値は10です。実際には、"
-"drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが"
-"出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + "
-"drilldown_limit + 1 によって算出される値が指定されたものとみなされます。"
-msgstr ""
-
-#: ../source/commands/load.txt:22
-msgid ""
-"groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:47 ../source/commands/delete.txt:37
-#: ../source/commands/table_list.txt:46
-msgid "``id``"
-msgstr ""
-
-#: ../source/commands/select.txt:236
-msgid ""
-"drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
-"れます。"
-msgstr ""
-
-#: ../source/commands/quit.txt:22
-msgid ""
-"quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
-"groongaプロセスとの接続を切ります。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:108
-msgid "define_selector entry_selector Entry [true]"
-msgstr ""
-
-#: ../source/commands/table_create.txt:72
-msgid "空白で区切られた文字列をトークンとする"
-msgstr ""
-
-#: ../source/commands/select.txt:187
-msgid ""
-"[[リターンコード, 処理開始時間, 処理時間], [検索結果, ドリルダウン結果]]"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:15
-msgid "cache_limit max"
-msgstr ""
-
-#: ../source/commands/column_list.txt:17
-msgid "column_list table"
-msgstr ""
-
-#: ../source/commands/select.txt:108
-msgid "絞り込み条件をscript形式のgrn_expr文字列によって指定します。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:69
-msgid "カラムの値の属する型"
-msgstr ""
-
-#: ../source/commands/delete.txt:24
-msgid ""
-"deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:50
-msgid ""
-"インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追"
-"加の属 性を指定することができます。"
-msgstr ""
-
-#: ../source/commands/select.txt:124
-msgid ""
-"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
-"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
-"ない場合には昇順にソートします。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:52
-msgid "テーブル名"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:71
-msgid "追加するselectorコマンドのdrilldown引数のデフォルト値を指定します。"
-msgstr ""
-
-#: ../source/commands/dump.txt:62
-msgid "データベース内のスキーマと特定のテーブルのデータのみ出力::"
-msgstr ""
-
-#: ../source/commands/column_list.txt:53 ../source/commands/select.txt:40
-msgid "カラム名"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:58
-msgid ""
-"マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:39
-msgid "追加するselectorコマンドのmatch_columns引数のデフォルト値を指定します。"
-msgstr ""
-
 #: ../source/commands/cache_limit.txt:20
 msgid ""
 "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
@@ -1259,286 +102,8 @@ msgid ""
 "リクエストを送信することによって実行します。"
 msgstr ""
 
-#: ../source/commands/check.txt:132
-msgid ""
-"check Terms.name [{\"flags\":\"00008202\",   \"max sid\":1,   \"number of "
-"garbage segments\":0,   \"number of array segments\":1,   \"max id of array "
-"segment\":1,   \"number of buffer segments\":110,   \"max id of buffer "
-"segment\":111,   \"max id of physical segment in use\":111,   \"number of "
-"unmanaged segments\":4294967185,   \"total chunk size\":7470239,   \"max id "
-"of chunk segments in use\":127,   \"number of garbage chunk\":"
-"[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0]},  {\"buffer id\":0,   \"chunk size"
-"\":94392,   \"buffer term\":[\"596\",\"59777\",\"6\",...],   \"buffer free"
-"\":152944,   \"size in buffer\":7361,   \"nterms\":237,   \"nterms with chunk"
-"\":216,   \"buffer id\":1,   \"chunk size\":71236,   \"buffer term\":[[\"に述"
-"\",18149,18149,2,25,6,6],                  [\"に追"
-"\",4505,4505,76,485,136,174],                  [\"に退"
-"\",26568,26568,2,9,2,2],                  ...],   \"buffer free\":120000,   "
-"\"size in buffer\":11155,   \"nterms\":121,   \"nterms with chunk\":116},   "
-"{\"buffer id\":1,    ...},   ...]"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:29
-msgid ""
-"クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-"は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:59
-#: ../source/commands/define_selector.txt:112 ../source/commands/delete.txt:65
-#: ../source/commands/load.txt:98 ../source/commands/log_level.txt:62
-#: ../source/commands/log_put.txt:66 ../source/commands/log_reopen.txt:63
-#: ../source/commands/select.txt:256
-msgid "関連項目"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:20
-msgid ""
-"groonga組込コマンドの一つであるlog_reopenについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/delete.txt:31
-msgid "レコードを削除しようとするテーブルの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/quit.txt:9
-msgid "quit - セッション終了"
-msgstr ""
-
-#: ../source/commands/table_create.txt:61
-msgid "``value_type``"
-msgstr ""
-
-#: ../source/commands/dump.txt:4
-msgid "dump"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:114 ../source/commands/load.txt:100
-#: ../source/commands/select.txt:258
-msgid ":doc:`../expr`"
-msgstr ""
-
-#: ../source/commands/table_list.txt:70
-msgid "``テーブル情報型n``"
-msgstr ""
-
-#: ../source/commands.txt:8
-msgid ""
-"まず、すべてのコマンドに関係するコマンドバージョンについて説明します。その"
-"後、組み込みのコマンドを順に説明します。"
-msgstr ""
-
-#: ../source/commands/delete.txt:11
-msgid "delete - 一件のレコードの削除"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:58
-msgid "log_reopenコマンドを実行する。"
-msgstr ""
-
-#: ../source/commands/defrag.txt:53
-msgid "テーブル名 Entry のカラム body のフラグメンテーションを解消する::"
-msgstr ""
-
-#: ../source/commands/select.txt:80
-msgid "比較条件(カラム値 <= 値)"
-msgstr ""
-
-#: ../source/commands/dump.txt:47
-msgid ""
-"> dump table_create LocalNames 48 ShortText table_create Entries 48 "
-"ShortText column_create Entries local_name 0 LocalNames column_create "
-"LocalNames Entries_local_name 2 Entries local_name ... load --table "
-"LocalNames [ [\"_key\"], [\"Items\"], [\"BLT\"], ... ] ..."
-msgstr ""
-
-#: ../source/commands/log_put.txt:15
-msgid "log_put level message"
-msgstr ""
-
-#: ../source/commands/select.txt:170
-msgid "``match_escalation_threshold``"
-msgstr ""
-
-#: ../source/commands/shutdown.txt:22
-msgid "shutdownは、接続しているgroongaサーバプロセスを停止します。"
-msgstr ""
-
-#: ../source/commands/dump.txt:45
-msgid "データベース内のすべてのデータを出力::"
-msgstr ""
-
-#: ../source/commands/view_add.txt:20
-msgid ""
-"groonga組込コマンドの一つであるview_addについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/select.txt:232
-msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:66
-#: ../source/commands/column_list.txt:75
-msgid "``source``"
-msgstr ""
-
-#: ../source/commands/column_list.txt:77
-msgid "インデックスカラムのとき、インデックス対象カラム名の配列"
-msgstr ""
-
-#: ../source/commands/table_create.txt:59
-msgid ""
-"主キー値の型を指定します。主キー値を持つテーブルに限り有効です。型にはgroonga"
-"の組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指"
-"定することができます。"
-msgstr ""
-
-#: ../source/commands/select.txt:25
-msgid ""
-"groonga組込コマンドの一つであるselectについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/load.txt:6
-msgid "load"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:53 ../source/commands/select.txt:118
-msgid "``sortby``"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:75
-msgid ""
-"追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。"
-msgstr ""
-
-#: ../source/commands/view_add.txt:29
-msgid "テーブルを追加するview型のテーブルの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/load.txt:29
-msgid "``values``"
-msgstr ""
-
-#: ../source/commands/shutdown.txt:4 ../source/commands/shutdown.txt:15
-#: ../source/commands/shutdown.txt:38
-msgid "shutdown"
-msgstr ""
-
-#: ../source/commands/load.txt:63
-msgid "入力形式を指定します。jsonのみに対応しています。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:54
-msgid "段落情報を格納するインデックスを作成します。"
-msgstr ""
-
-#: ../source/commands/quit.txt:4 ../source/commands/quit.txt:15
-#: ../source/commands/quit.txt:38
-msgid "quit"
-msgstr ""
-
-#: ../source/commands/table_create.txt:46
-msgid ""
-"主キーを持たないテーブルを作成します。各レコードはIDのみによって特定すること"
-"ができます。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:71 ../source/commands/table_list.txt:66
-msgid "``range``"
-msgstr ""
-
-#: ../source/commands/select.txt:27
-msgid ""
-"selectは、使用しているデータベースのテーブルの中から条件にマッチするレコード"
-"を検索して出力します。"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:37
-msgid "json"
-msgstr ""
-
-#: ../source/commands/select.txt:200
-msgid "処理にかかった秒数を返します。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:31
-msgid "カラムを追加するテーブルの名前を指定します。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:15
-msgid ""
-"define_selector name table [match_columns [query [filter [scorer "
-"[sortby                 [output_columns [offset [limit [drilldown "
-"[drilldown_sortby                 [drilldown_output_columns "
-"[drilldown_offset [drilldown_limit]]]]]]]]]]]]]"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:29 ../source/commands/defrag.txt:29
-msgid ""
-"対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対"
-"象となります。"
-msgstr ""
-
-#: ../source/commands/table_create.txt:67
-msgid ""
-"作成するテーブルを語彙表として使用する場合、文字列を分割するトークナイザを指"
-"定します。"
-msgstr ""
-
-#: ../source/commands/column_list.txt:40
-msgid "[[[カラム情報名1,カラム情報型1],...], カラム情報1,...]"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:69 ../source/commands/select.txt:142
-msgid "``drilldown``"
-msgstr ""
-
-#: ../source/commands/table_remove.txt:22
-msgid ""
-"table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
-"ンデックスも再帰的に削除されます。"
-msgstr ""
-
-#: ../source/commands/log_level.txt:20
-msgid ""
-"groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:17
-msgid "column_create table name flags type [source]"
-msgstr ""
-
-#: ../source/commands/table_create.txt:63
-msgid ""
-"値の型を指定します。tableの値には固定長の型のみが指定できます。(可変長の値が"
-"必要な場合は別途カラムを作成します) 型にはgroongaの組込型か、同一データベース"
-"に定義済みのユーザ定義型、またはテーブルを指定することができます。(デフォルト"
-"はvalueなし)"
-msgstr ""
-
-#: ../source/commands/table_create.txt:43
-msgid ""
-"主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用した"
-"テーブルでは、主キー値に完全一致するレコード、前方一致するレコード、および最"
-"長共通接頭辞となるレコードを高速に検索することができます。また、キー値の昇降"
-"順でレコードを取り出したり、キー値の範囲での検索を行うことができます。また、"
-"flagsの値に64を加えることによって、後方一致検索も可能となります。"
-msgstr ""
-
-#: ../source/commands/table_create.txt:75
-msgid "unigram(1文字を1トークンとする)"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:47
-msgid "追加するselectorコマンドのfilter引数のデフォルト値を指定します。"
+#: ../source/commands/cache_limit.txt:22
+msgid "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 msgstr ""
 
 #: ../source/commands/cache_limit.txt:25 ../source/commands/check.txt:25
@@ -1557,69 +122,94 @@ msgstr ""
 msgid "引数"
 msgstr ""
 
-#: ../source/commands/log_put.txt:42
-msgid "出力する文字列を指定します。"
+#: ../source/commands/cache_limit.txt:27
+msgid "``max``"
 msgstr ""
 
-#: ../source/commands/select.txt:110
+#: ../source/commands/cache_limit.txt:29
 msgid ""
-"query引数とfilter引数をどちらも指定した場合は、両方の条件を満足するレコードの"
-"みがヒットします。どちらも指定しない場合は全件がヒットします。"
+"クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+"は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 msgstr ""
 
-#: ../source/commands/select.txt:168
+#: ../source/commands/cache_limit.txt:34 ../source/commands/check.txt:32
+#: ../source/commands/column_create.txt:71
+#: ../source/commands/column_list.txt:33
+#: ../source/commands/column_remove.txt:35
+#: ../source/commands/define_selector.txt:90 ../source/commands/defrag.txt:32
+#: ../source/commands/dump.txt:38 ../source/commands/log_level.txt:41
+#: ../source/commands/log_put.txt:45 ../source/commands/log_reopen.txt:32
+#: ../source/commands/quit.txt:30 ../source/commands/select.txt:181
+#: ../source/commands/shutdown.txt:30 ../source/commands/status.txt:32
+#: ../source/commands/suggest.txt:60 ../source/commands/table_create.txt:89
+#: ../source/commands/table_list.txt:32 ../source/commands/table_remove.txt:31
+#: ../source/commands/view_add.txt:36
+msgid "返値"
+msgstr ""
+
+#: ../source/commands/cache_limit.txt:37
+msgid "json"
+msgstr ""
+
+#: ../source/commands/cache_limit.txt:41
 msgid ""
-"検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
-"いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
-"ヒットするために、このパラメータは有効です。"
+"[以前の設定値]  ``以前の設定値``    すでに設定されていたクエリキャッシュの最"
+"大件数を返す。"
 msgstr ""
 
-#: ../source/commands/view_add.txt:33
-msgid "view型のテーブルに追加されるテーブルの名前を指定します。"
+#: ../source/commands/cache_limit.txt:48 ../source/commands/check.txt:128
+#: ../source/commands/clearlock.txt:46 ../source/commands/column_create.txt:85
+#: ../source/commands/column_list.txt:89
+#: ../source/commands/column_remove.txt:49
+#: ../source/commands/define_selector.txt:104 ../source/commands/defrag.txt:46
+#: ../source/commands/delete.txt:56 ../source/commands/dump.txt:43
+#: ../source/commands/load.txt:80 ../source/commands/log_level.txt:55
+#: ../source/commands/log_put.txt:59 ../source/commands/log_reopen.txt:46
+#: ../source/commands/quit.txt:35 ../source/commands/select.txt:247
+#: ../source/commands/shutdown.txt:35 ../source/commands/status.txt:54
+#: ../source/commands/table_create.txt:103
+#: ../source/commands/table_list.txt:80 ../source/commands/table_remove.txt:45
+#: ../source/commands/view_add.txt:50
+msgid "例"
 msgstr ""
 
-#: ../source/commands/column_create.txt:60
-msgid "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
+#: ../source/commands/cache_limit.txt:51
+msgid "cache_limit 4 [100]"
 msgstr ""
 
-#: ../source/commands/clearlock.txt:27 ../source/commands/defrag.txt:27
-msgid "``objname``"
+#: ../source/commands/check.txt:4
+msgid "check"
 msgstr ""
 
-#: ../source/commands/suggest.txt:33
+#: ../source/commands/check.txt:9
+msgid "check - オブジェクトの状態表示"
+msgstr ""
+
+#: ../source/commands/check.txt:15
+msgid "check obj"
+msgstr ""
+
+#: ../source/commands/check.txt:20
 msgid ""
-"補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で指定"
-"します(例: correct|suggest)"
-msgstr ""
-
-#: ../source/commands/table_create.txt:65
-msgid "``default_tokenizer``"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:57 ../source/commands/select.txt:128
-msgid "``output_columns``"
-msgstr ""
-
-#: ../source/commands/delete.txt:22
-msgid ""
-"groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+"groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
 
-#: ../source/commands/load.txt:57
-msgid "``ifexists``"
-msgstr ""
-
-#: ../source/commands/status.txt:6 ../source/commands/status.txt:17
-msgid "status"
-msgstr ""
-
-#: ../source/commands/select.txt:116
+#: ../source/commands/check.txt:22
 msgid ""
-"scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従っ"
-"て、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカ"
-"スタマイズできるようになります。"
+"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
+"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
+"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
+"されません。（フォーマットが変更される可能性が高い）"
+msgstr ""
+
+#: ../source/commands/check.txt:27
+msgid "``obj``"
+msgstr ""
+
+#: ../source/commands/check.txt:29
+msgid "状態を表示するオブジェクトの名前を指定します。"
 msgstr ""
 
 #: ../source/commands/check.txt:35 ../source/commands/clearlock.txt:35
@@ -1636,262 +226,12 @@ msgstr ""
 msgid "json形式"
 msgstr ""
 
-#: ../source/commands/table_list.txt:83
-msgid ""
-"table_list Entry  [[[\"id\", \"UInt32\"],   [\"name\",\"ShortText\"],   "
-"[\"path\",\"ShortText\"],   [\"flags\",\"ShortText\"],   [\"domain\", "
-"\"ShortText\"],   [\"range\",\"ShortText\"]],  [256,   \"Entry\",   \"test."
-"db.0000100\",   \"TABLE_HASH_KEY|PERSISTENT\",   \"ShortText\",   \"null"
-"\"],  [257,   \"Term\",   \"test.db.0000101\",   \"TABLE_PAT_KEY|"
-"KEY_NORMALIZE|PERSISTENT\",   \"ShortText\",   \"null\"]]"
-msgstr ""
-
-#: ../source/commands/select.txt:38
-msgid ""
-"query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定しま"
-"す。"
-msgstr ""
-
-#: ../source/commands/table_create.txt:40
-msgid ""
-"主キー値をハッシュ表で管理するテーブルを作成します。ハッシュ表を使用したテー"
-"ブルでは、主キー値に完全一致するレコードを高速に検索することができます。"
-msgstr ""
-
-#: ../source/commands/select.txt:202
-msgid "``検索結果``"
-msgstr ""
-
-#: ../source/commands/table_create.txt:57
-msgid "``key_type``"
-msgstr ""
-
-#: ../source/commands/check.txt:39
-msgid "インデックスカラムの場合::"
-msgstr ""
-
-#: ../source/commands/table_create.txt:6
-msgid "table_create"
-msgstr ""
-
-#: ../source/commands/column_list.txt:61
-msgid "スカラ型、ベクタ型、インデックス型の種別"
-msgstr ""
-
-#: ../source/commands/view_add.txt:22
-msgid "view_addは、view型のテーブルに要素となるテーブルを定義します。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:6
-msgid "column_create"
-msgstr ""
-
-#: ../source/commands/log_level.txt:15
-msgid "log_level level"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:43
-msgid "追加するselectorコマンドのquery引数のデフォルト値を指定します。"
-msgstr ""
-
-#: ../source/commands/select.txt:71
-msgid "不一致条件(カラム値 != 値)"
-msgstr ""
-
-#: ../source/commands/select.txt:226
-msgid "drilldown処理の結果が以下のように出力されます。::"
-msgstr ""
-
-#: ../source/commands/load.txt:55
-msgid ""
-"テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指"
-"定します。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:61 ../source/commands/select.txt:134
-msgid "``offset``"
-msgstr ""
-
-#: ../source/commands/load.txt:41
-msgid ""
-"形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
-"す。"
-msgstr ""
-
-#: ../source/commands/select.txt:208
-msgid "``検索件数``"
-msgstr ""
-
-#: ../source/commands/defrag.txt:4
-msgid "defrag"
-msgstr ""
-
-#: ../source/commands/suggest.txt:43
-msgid "``suggest``"
-msgstr ""
-
-#: ../source/commands/suggest.txt:45
-msgid "提案を行います。"
-msgstr ""
-
-#: ../source/commands/column_remove.txt:52
-#: ../source/commands/table_remove.txt:48
-msgid "column_remove Entry body  [true]"
-msgstr ""
-
-#: ../source/commands/load.txt:11
-msgid "load - データのロード"
-msgstr ""
-
-#: ../source/commands/clearlock.txt:61 ../source/commands/delete.txt:67
-msgid ":doc:`load`"
-msgstr ""
-
-#: ../source/commands/view_add.txt:52
-msgid "view_add Ventry Entry [true]"
-msgstr ""
-
-#: ../source/commands/column_create.txt:64
-msgid ""
-"値の型を指定します。groongaの組込型か、同一データベースに定義済みのユーザ定義"
-"型、定義済みのテーブルを指定することができます。"
-msgstr ""
-
-#: ../source/commands/select.txt:175
-msgid "groongaコマンド起動時の--match-escalation-thresholdオプション"
-msgstr ""
-
-#: ../source/commands/column_list.txt:79
-msgid "``カラム情報型n``"
-msgstr ""
-
-#: ../source/commands/suggest.txt:37
-msgid "補完を行います。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:81 ../source/commands/select.txt:154
-msgid "``drilldown_offset``"
-msgstr ""
-
-#: ../source/commands/load.txt:45
-msgid ""
-"values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの値"
-"を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要です"
-"が、標準入力から与える文字列はエスケープする必要がありません。"
-msgstr ""
-
 #: ../source/commands/check.txt:37
 msgid "チェックするオブジェクトにより返される値が変わります。"
 msgstr ""
 
-#: ../source/commands/log_reopen.txt:9
-msgid "log_reopen - ログファイルの再読み込み"
-msgstr ""
-
-#: ../source/commands/load.txt:88
-msgid "標準入力からvaluesの値を与えます。::"
-msgstr ""
-
-#: ../source/commands/table_list.txt:68
-msgid "valueが属する型"
-msgstr ""
-
-#: ../source/commands/select.txt:120
-msgid "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:4 ../source/commands/log_reopen.txt:15
-msgid "log_reopen"
-msgstr ""
-
-#: ../source/commands/dump.txt:33
-msgid "``tables``"
-msgstr ""
-
-#: ../source/commands/table_create.txt:107
-msgid "table_create Entry --key_type ShortText [true]"
-msgstr ""
-
-#: ../source/commands/defrag.txt:9
-msgid "defrag - オブジェクトにセットされたロックを解除する"
-msgstr ""
-
-#: ../source/commands/select.txt:251
-msgid ""
-"select Entry  [[[2],[[\"_id\", \"UInt32\"],[\"_key\",\"ShortText\"],[\"body"
-"\",\"ShortText\"]],[1,\"abandon\",\"放棄する\"],[2,\"abbreviate\",\"短縮する"
-"\"]]]"
-msgstr ""
-
-#: ../source/commands/table_create.txt:105
-msgid "ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。::"
-msgstr ""
-
-#: ../source/commands/column_create.txt:39
-#: ../source/commands/column_list.txt:63
-#: ../source/commands/table_create.txt:35 ../source/commands/table_list.txt:58
-msgid "``flags``"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:41
-msgid ""
-"[以前の設定値]  ``以前の設定値``    すでに設定されていたクエリキャッシュの最"
-"大件数を返す。"
-msgstr ""
-
-#: ../source/commands/select.txt:6
-msgid "select"
-msgstr ""
-
-#: ../source/commands/table_create.txt:52
-msgid ""
-"語彙表となるパトリシア木型のテーブルにおいて、後方一致検索を可能とします。"
-msgstr ""
-
-#: ../source/commands/column_create.txt:89
-msgid "column_create Entry body --type ShortText [true]"
-msgstr ""
-
-#: ../source/commands/select.txt:62
-msgid ""
-"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
-msgstr ""
-
-#: ../source/commands/select.txt:204
-msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
-msgstr ""
-
-#: ../source/commands/load.txt:82
-msgid "テーブルEntryにレコードを登録します。::"
-msgstr ""
-
-#: ../source/commands/select.txt:196
-msgid ""
-"処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返し"
-"ます。"
-msgstr ""
-
-#: ../source/commands/log_level.txt:64
-msgid ":doc:`log_put` :doc:`log_reopen`"
-msgstr ""
-
-#: ../source/commands/log_put.txt:68
-msgid ":doc:`log_level` :doc:`log_reopen`"
-msgstr ""
-
-#: ../source/commands/table_create.txt:110
-msgid ""
-"ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値"
-"は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場"
-"合には、バイグラムの索引を作成します。::"
-msgstr ""
-
-#: ../source/commands/column_list.txt:67 ../source/commands/table_list.txt:62
-msgid "``domain``"
-msgstr ""
-
-#: ../source/commands/select.txt:11
-msgid "select - テーブルの中から条件にマッチするレコードを検索して出力する"
+#: ../source/commands/check.txt:39
+msgid "インデックスカラムの場合::"
 msgstr ""
 
 #: ../source/commands/check.txt:41
@@ -1919,108 +259,125 @@ msgid ""
 "ち、チャンクを使っている語の数です。"
 msgstr ""
 
-#: ../source/commands/define_selector.txt:67
-msgid "追加するselectorコマンドのlimit引数のデフォルト値を指定します。"
+#: ../source/commands/check.txt:130
+msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
 msgstr ""
 
-#: ../source/commands/column_remove.txt:15
-msgid "column_remove table name"
-msgstr ""
-
-#: ../source/commands/cache_limit.txt:48 ../source/commands/check.txt:128
-#: ../source/commands/clearlock.txt:46 ../source/commands/column_create.txt:85
-#: ../source/commands/column_list.txt:89
-#: ../source/commands/column_remove.txt:49
-#: ../source/commands/define_selector.txt:104 ../source/commands/defrag.txt:46
-#: ../source/commands/delete.txt:56 ../source/commands/dump.txt:43
-#: ../source/commands/load.txt:80 ../source/commands/log_level.txt:55
-#: ../source/commands/log_put.txt:59 ../source/commands/log_reopen.txt:46
-#: ../source/commands/quit.txt:35 ../source/commands/select.txt:247
-#: ../source/commands/shutdown.txt:35 ../source/commands/status.txt:54
-#: ../source/commands/table_create.txt:103
-#: ../source/commands/table_list.txt:80 ../source/commands/table_remove.txt:45
-#: ../source/commands/view_add.txt:50
-msgid "例"
-msgstr ""
-
-#: ../source/commands/column_create.txt:87
-msgid "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
-msgstr ""
-
-#: ../source/commands/log_reopen.txt:24
-msgid "現在、デフォルトのログ関数を用いている場合のみに対応しています。"
-msgstr ""
-
-#: ../source/commands/table_list.txt:22
+#: ../source/commands/check.txt:132
 msgid ""
-"groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、"
+"check Terms.name [{\"flags\":\"00008202\",   \"max sid\":1,   \"number of "
+"garbage segments\":0,   \"number of array segments\":1,   \"max id of array "
+"segment\":1,   \"number of buffer segments\":110,   \"max id of buffer "
+"segment\":111,   \"max id of physical segment in use\":111,   \"number of "
+"unmanaged segments\":4294967185,   \"total chunk size\":7470239,   \"max id "
+"of chunk segments in use\":127,   \"number of garbage chunk\":"
+"[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0]},  {\"buffer id\":0,   \"chunk size"
+"\":94392,   \"buffer term\":[\"596\",\"59777\",\"6\",...],   \"buffer free"
+"\":152944,   \"size in buffer\":7361,   \"nterms\":237,   \"nterms with chunk"
+"\":216,   \"buffer id\":1,   \"chunk size\":71236,   \"buffer term\":[[\"に述"
+"\",18149,18149,2,25,6,6],                  [\"に追"
+"\",4505,4505,76,485,136,174],                  [\"に退"
+"\",26568,26568,2,9,2,2],                  ...],   \"buffer free\":120000,   "
+"\"size in buffer\":11155,   \"nterms\":121,   \"nterms with chunk\":116},   "
+"{\"buffer id\":1,    ...},   ...]"
+msgstr ""
+
+#: ../source/commands/clearlock.txt:4
+msgid "clearlock"
+msgstr ""
+
+#: ../source/commands/clearlock.txt:9
+msgid "clearlock - オブジェクトにセットされたロックを解除する"
+msgstr ""
+
+#: ../source/commands/clearlock.txt:15
+msgid "clearlock objname"
+msgstr ""
+
+#: ../source/commands/clearlock.txt:20
+msgid ""
+"groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
 
-#: ../source/commands/define_selector.txt:55
-msgid "追加するselectorコマンドのsortby引数のデフォルト値を指定します。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:49 ../source/commands/select.txt:112
-msgid "``scorer``"
-msgstr ""
-
-#: ../source/commands/column_create.txt:94
+#: ../source/commands/clearlock.txt:22
 msgid ""
-"column_create Term entry_body COLUMN_INDEX|WITH_POSITION Entry body [true]"
+"clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指"
+"定し、オブジェクトにかけられたロックを再帰的に解除します。"
 msgstr ""
 
-#: ../source/commands/log_reopen.txt:49
-msgid "log_reopen  [true]"
+#: ../source/commands/clearlock.txt:27 ../source/commands/defrag.txt:27
+msgid "``objname``"
 msgstr ""
 
-#: ../source/commands/table_create.txt:81
-msgid "trigram(3文字の文字列要素をトークンとする)"
-msgstr ""
-
-#: ../source/commands/table_list.txt:11
-msgid "table_list - DBに定義されているテーブルをリスト表示"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:22
+#: ../source/commands/clearlock.txt:29 ../source/commands/defrag.txt:29
 msgid ""
-"groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマン"
-"ドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-"にリクエストを送信することによって実行します。"
+"対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対"
+"象となります。"
 msgstr ""
 
-#: ../source/commands/defrag.txt:50
-msgid "defrag [300]"
+#: ../source/commands/clearlock.txt:31 ../source/commands/delete.txt:41
+#: ../source/commands/load.txt:65
+msgid "返値 ---"
 msgstr ""
 
-#: ../source/commands/column_list.txt:24
-msgid "column_listはテーブルに定義されているカラムをリスト表示します。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:35
-msgid "検索対象のテーブルを指定します。"
-msgstr ""
-
-#: ../source/commands/define_selector.txt:83
+#: ../source/commands/clearlock.txt:39 ../source/commands/column_create.txt:78
+#: ../source/commands/column_remove.txt:42
+#: ../source/commands/define_selector.txt:97 ../source/commands/delete.txt:49
+#: ../source/commands/log_level.txt:48 ../source/commands/log_put.txt:52
+#: ../source/commands/log_reopen.txt:39 ../source/commands/table_create.txt:96
+#: ../source/commands/table_remove.txt:38 ../source/commands/view_add.txt:43
 msgid ""
-"追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。"
+"[成功かどうかのフラグ]  ``成功かどうかのフラグ``    エラーが生じなかった場合"
+"にはtrue、エラーが生じた場合にはfalseを返す。"
 msgstr ""
 
-#: ../source/commands/suggest.txt:39
-msgid "``correct``"
+#: ../source/commands/clearlock.txt:48
+msgid "開いているデータベースのロックをすべて解除する::"
 msgstr ""
 
-#: ../source/commands/defrag.txt:15
-msgid "defrag objname threshold"
+#: ../source/commands/clearlock.txt:50
+msgid "clearlock [true]"
 msgstr ""
 
-#: ../source/commands/suggest.txt:67
+#: ../source/commands/clearlock.txt:53
+msgid "テーブル名 Entry のカラム body のロックを解除する::"
+msgstr ""
+
+#: ../source/commands/clearlock.txt:55
+msgid "clearlock Entry.body [true]"
+msgstr ""
+
+#: ../source/commands/clearlock.txt:59
+#: ../source/commands/define_selector.txt:112 ../source/commands/delete.txt:65
+#: ../source/commands/load.txt:98 ../source/commands/log_level.txt:62
+#: ../source/commands/log_put.txt:66 ../source/commands/log_reopen.txt:63
+#: ../source/commands/select.txt:256
+msgid "関連項目"
+msgstr ""
+
+#: ../source/commands/clearlock.txt:61 ../source/commands/delete.txt:67
+msgid ":doc:`load`"
+msgstr ""
+
+#: ../source/commands/column_create.txt:6
+msgid "column_create"
+msgstr ""
+
+#: ../source/commands/column_create.txt:11
+msgid "column_create - カラムの追加"
+msgstr ""
+
+#: ../source/commands/column_create.txt:17
+msgid "column_create table name flags type [source]"
+msgstr ""
+
+#: ../source/commands/column_create.txt:22
 msgid ""
-"{\"タイプ1\":[[\"候補1\", 候補1のスコア], [\"候補2\", 候補2のスコ"
-"ア], ...], ...}  ``タイプ``    types引数に指定した値。  ``候補``    補完・修"
-"正・提案の候補。  ``候補のスコア``    補完・修正・提案として優れたものほど高"
-"くなる数値。結果は、スコア順にソートされている。"
+"groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンド"
+"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
+"リクエストを送信することによって実行します。"
 msgstr ""
 
 #: ../source/commands/column_create.txt:24
@@ -2029,22 +386,229 @@ msgid ""
 "す。"
 msgstr ""
 
-#: ../source/commands/select.txt:100
-msgid "aにマッチし、bにはマッチしない"
+#: ../source/commands/column_create.txt:29
+#: ../source/commands/define_selector.txt:33 ../source/commands/delete.txt:29
+#: ../source/commands/load.txt:49 ../source/commands/select.txt:32
+#: ../source/commands/suggest.txt:47 ../source/commands/view_add.txt:31
+msgid "``table``"
 msgstr ""
 
-#: ../source/commands/delete.txt:60
-msgid "delete Entry abandon  [true]"
+#: ../source/commands/column_create.txt:31
+msgid "カラムを追加するテーブルの名前を指定します。"
 msgstr ""
 
-#: ../source/commands/select.txt:240
+#: ../source/commands/column_create.txt:33
+#: ../source/commands/column_list.txt:51
+#: ../source/commands/define_selector.txt:29
+#: ../source/commands/table_create.txt:31 ../source/commands/table_list.txt:50
+msgid "``name``"
+msgstr ""
+
+#: ../source/commands/column_create.txt:35
 msgid ""
-"drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
-"れます。"
+"作成するカラムの名前を指定します。カラム名は、テーブルの中で一意でなければな"
+"りません。"
 msgstr ""
 
-#: ../source/commands/clearlock.txt:53
-msgid "テーブル名 Entry のカラム body のロックを解除する::"
+#: ../source/commands/column_create.txt:37
+msgid ""
+"ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダー"
+"スコア('_')で始まる名前は予約済みであり、使用できません。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:39
+#: ../source/commands/column_list.txt:63
+#: ../source/commands/table_create.txt:35 ../source/commands/table_list.txt:58
+msgid "``flags``"
+msgstr ""
+
+#: ../source/commands/column_create.txt:41
+msgid ""
+"カラムの属性を表す以下の数値か、パイプ('|')で組み合わせたシンボル名を指定しま"
+"す。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:44
+msgid "単一の値が格納できるカラムを作成します。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:46
+msgid "複数の値の配列を格納できるカラムを作成します。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:48
+msgid "インデックス型のカラムを作成します。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:50
+msgid ""
+"インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追"
+"加の属 性を指定することができます。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:54
+msgid "段落情報を格納するインデックスを作成します。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:57
+msgid "ウェイト情報を格納するインデックスを作成します。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:60
+msgid "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:62
+#: ../source/commands/column_list.txt:59
+msgid "``type``"
+msgstr ""
+
+#: ../source/commands/column_create.txt:64
+msgid ""
+"値の型を指定します。groongaの組込型か、同一データベースに定義済みのユーザ定義"
+"型、定義済みのテーブルを指定することができます。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:66
+#: ../source/commands/column_list.txt:75
+msgid "``source``"
+msgstr ""
+
+#: ../source/commands/column_create.txt:68
+msgid ""
+"インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource"
+"引数に指定します。"
+msgstr ""
+
+#: ../source/commands/column_create.txt:87
+msgid "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
+msgstr ""
+
+#: ../source/commands/column_create.txt:89
+msgid "column_create Entry body --type ShortText [true]"
+msgstr ""
+
+#: ../source/commands/column_create.txt:92
+msgid ""
+"テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
+"型カラム、entry_bodyを作成します。::"
+msgstr ""
+
+#: ../source/commands/column_create.txt:94
+msgid ""
+"column_create Term entry_body COLUMN_INDEX|WITH_POSITION Entry body [true]"
+msgstr ""
+
+#: ../source/commands/column_list.txt:6
+msgid "column_list"
+msgstr ""
+
+#: ../source/commands/column_list.txt:11
+msgid "column_list - テーブルに定義されているカラムのリスト表示"
+msgstr ""
+
+#: ../source/commands/column_list.txt:17
+msgid "column_list table"
+msgstr ""
+
+#: ../source/commands/column_list.txt:22
+msgid ""
+"groonga組込コマンドの一つであるcolumn_listについて説明します。組込コマンド"
+"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
+"リクエストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/column_list.txt:24
+msgid "column_listはテーブルに定義されているカラムをリスト表示します。"
+msgstr ""
+
+#: ../source/commands/column_list.txt:30
+msgid "カラム情報を出力するテーブルの名前を指定します。"
+msgstr ""
+
+#: ../source/commands/column_list.txt:38
+msgid "カラム名一覧を以下の形式で返却します。::"
+msgstr ""
+
+#: ../source/commands/column_list.txt:40
+msgid "[[[カラム情報名1,カラム情報型1],...], カラム情報1,...]"
+msgstr ""
+
+#: ../source/commands/column_list.txt:42
+msgid "``カラム情報名n``"
+msgstr ""
+
+#: ../source/commands/column_list.txt:44
+msgid ""
+"``カラム情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容かを"
+"示す名前を出力します。 情報名は以下の通りです。"
+msgstr ""
+
+#: ../source/commands/column_list.txt:47 ../source/commands/delete.txt:37
+#: ../source/commands/table_list.txt:46
+msgid "``id``"
+msgstr ""
+
+#: ../source/commands/column_list.txt:49
+msgid "カラムオブジェクトに割り当てられたID"
+msgstr ""
+
+#: ../source/commands/column_list.txt:53 ../source/commands/select.txt:40
+msgid "カラム名"
+msgstr ""
+
+#: ../source/commands/column_list.txt:55 ../source/commands/table_list.txt:54
+msgid "``path``"
+msgstr ""
+
+#: ../source/commands/column_list.txt:57
+msgid "カラム値を格納するファイル名"
+msgstr ""
+
+#: ../source/commands/column_list.txt:61
+msgid "スカラ型、ベクタ型、インデックス型の種別"
+msgstr ""
+
+#: ../source/commands/column_list.txt:65
+msgid "カラムのflags属性"
+msgstr ""
+
+#: ../source/commands/column_list.txt:67 ../source/commands/table_list.txt:62
+msgid "``domain``"
+msgstr ""
+
+#: ../source/commands/column_list.txt:69
+msgid "カラムの値の属する型"
+msgstr ""
+
+#: ../source/commands/column_list.txt:71 ../source/commands/table_list.txt:66
+msgid "``range``"
+msgstr ""
+
+#: ../source/commands/column_list.txt:73
+msgid "テーブルのkeyの型"
+msgstr ""
+
+#: ../source/commands/column_list.txt:77
+msgid "インデックスカラムのとき、インデックス対象カラム名の配列"
+msgstr ""
+
+#: ../source/commands/column_list.txt:79
+msgid "``カラム情報型n``"
+msgstr ""
+
+#: ../source/commands/column_list.txt:81
+msgid "カラム情報の型を出力します。"
+msgstr ""
+
+#: ../source/commands/column_list.txt:83
+msgid "``カラム情報n``"
+msgstr ""
+
+#: ../source/commands/column_list.txt:85
+msgid ""
+"``カラム情報名n`` で示された情報の配列を出力します。 情報の順序は ``カラム情"
+"報名n`` の順序と同じです。"
 msgstr ""
 
 #: ../source/commands/column_list.txt:92
@@ -2057,43 +621,594 @@ msgid ""
 "\"Entry\",   \"ShortText\",   []]]"
 msgstr ""
 
-#: ../source/commands/log_level.txt:31 ../source/commands/log_put.txt:31
-msgid "EMERG ALERT CRIT error warning notice info debug"
+#: ../source/commands/column_list.txt:111
+#: ../source/commands/table_list.txt:104
+msgid "注: 実際は改行が入りません。"
 msgstr ""
 
-#: ../source/commands/select.txt:86
-msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
+#: ../source/commands/column_remove.txt:4
+msgid "column_remove"
 msgstr ""
 
-#: ../source/commands/select.txt:176
-msgid "設定ファイル中のmatch-escalation-threshold設定項目"
+#: ../source/commands/column_remove.txt:9
+msgid "column_remove - テーブルに定義されているカラムの削除"
 msgstr ""
 
-#: ../source/commands/select.txt:214
+#: ../source/commands/column_remove.txt:15
+msgid "column_remove table name"
+msgstr ""
+
+#: ../source/commands/column_remove.txt:20
 msgid ""
-"output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
+"groonga組込コマンドの一つであるcolumn_removeについて説明します。組込コマンド"
+"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
+"リクエストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/column_remove.txt:22
+msgid ""
+"column_removeはテーブルに定義されているカラムを削除します。 また、付随するイ"
+"ンデックスも削除されます。[#]_"
+msgstr ""
+
+#: ../source/commands/column_remove.txt:29
+#: ../source/commands/table_remove.txt:28
+msgid "削除対象のカラムが定義されているテーブルの名前を指定します。"
+msgstr ""
+
+#: ../source/commands/column_remove.txt:32
+msgid "削除対象のカラム名を指定します。"
+msgstr ""
+
+#: ../source/commands/column_remove.txt:52
+#: ../source/commands/table_remove.txt:48
+msgid "column_remove Entry body  [true]"
+msgstr ""
+
+#: ../source/commands/column_remove.txt:57
+msgid "脚注"
+msgstr ""
+
+#: ../source/commands/column_remove.txt:58
+msgid ""
+"マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:4
+msgid "define_selector"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:9
+msgid "define_selector - 検索コマンドを定義"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:15
+msgid ""
+"define_selector name table [match_columns [query [filter [scorer "
+"[sortby                 [output_columns [offset [limit [drilldown "
+"[drilldown_sortby                 [drilldown_output_columns "
+"[drilldown_offset [drilldown_limit]]]]]]]]]]]]]"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:22
+msgid ""
+"groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマン"
+"ドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+"にリクエストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:24
+msgid ""
+"define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:31
+msgid "定義するselectorコマンドの名前を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:35
+msgid "検索対象のテーブルを指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:37 ../source/commands/select.txt:36
+msgid "``match_columns``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:39
+msgid "追加するselectorコマンドのmatch_columns引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:41 ../source/commands/select.txt:52
+#: ../source/commands/suggest.txt:55
+msgid "``query``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:43
+msgid "追加するselectorコマンドのquery引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:45 ../source/commands/select.txt:106
+msgid "``filter``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:47
+msgid "追加するselectorコマンドのfilter引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:49 ../source/commands/select.txt:112
+msgid "``scorer``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:51
+msgid "追加するselectorコマンドのscorer引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:53 ../source/commands/select.txt:118
+msgid "``sortby``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:55
+msgid "追加するselectorコマンドのsortby引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:57 ../source/commands/select.txt:128
+msgid "``output_columns``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:59
+msgid ""
+"追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:61 ../source/commands/select.txt:134
+msgid "``offset``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:63
+msgid "追加するselectorコマンドのoffset引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:65 ../source/commands/select.txt:138
+msgid "``limit``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:67
+msgid "追加するselectorコマンドのlimit引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:69 ../source/commands/select.txt:142
+msgid "``drilldown``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:71
+msgid "追加するselectorコマンドのdrilldown引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:73 ../source/commands/select.txt:146
+msgid "``drilldown_sortby``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:75
+msgid ""
+"追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:77 ../source/commands/select.txt:150
+msgid "``drilldown_output_columns``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:79
+msgid ""
+"追加するselectorコマンドのdrilldown_output_columns引数のデフォルト値を指定し"
+"ます。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:81 ../source/commands/select.txt:154
+msgid "``drilldown_offset``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:83
+msgid ""
+"追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:85 ../source/commands/select.txt:158
+msgid "``drilldown_limit``"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:87
+msgid ""
+"追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:106
+msgid ""
+"テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
+"す。::"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:108
+msgid "define_selector entry_selector Entry [true]"
+msgstr ""
+
+#: ../source/commands/define_selector.txt:114 ../source/commands/load.txt:100
+#: ../source/commands/select.txt:258
+msgid ":doc:`../expr`"
+msgstr ""
+
+#: ../source/commands/defrag.txt:4
+msgid "defrag"
+msgstr ""
+
+#: ../source/commands/defrag.txt:9
+msgid "defrag - オブジェクトにセットされたロックを解除する"
+msgstr ""
+
+#: ../source/commands/defrag.txt:15
+msgid "defrag objname threshold"
+msgstr ""
+
+#: ../source/commands/defrag.txt:20
+msgid ""
+"groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/defrag.txt:22
+msgid ""
+"defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
+"オブジェクトのフラグメンテーションを解消します。"
+msgstr ""
+
+#: ../source/commands/defrag.txt:39
+msgid ""
+"[フラグメンテーション解消を実行したセグメントの数]  ``フラグメンテーション解"
+"消を実行したセグメントの数``    フラグメンテーション解消を実行したセグメント"
+"の数を返す。"
+msgstr ""
+
+#: ../source/commands/defrag.txt:48
+msgid "開いているデータベースのフラグメンテーションを解消する::"
+msgstr ""
+
+#: ../source/commands/defrag.txt:50
+msgid "defrag [300]"
+msgstr ""
+
+#: ../source/commands/defrag.txt:53
+msgid "テーブル名 Entry のカラム body のフラグメンテーションを解消する::"
+msgstr ""
+
+#: ../source/commands/defrag.txt:55
+msgid "defrag Entry.body [30]"
 msgstr ""
 
 #: ../source/commands/delete.txt:6
 msgid "delete"
 msgstr ""
 
-#: ../source/commands/view_add.txt:15
-msgid "view_add view table"
+#: ../source/commands/delete.txt:11
+msgid "delete - 一件のレコードの削除"
 msgstr ""
 
-#: ../source/commands/select.txt:178
+#: ../source/commands/delete.txt:17
+msgid "delete table [key [id]]"
+msgstr ""
+
+#: ../source/commands/delete.txt:22
 msgid ""
-"クエリのヒット件数が閾値を越えない場合は:ref:`spec_search` で説明している方法"
-"で検索方法をエスカレーションしてきます。"
+"groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
 msgstr ""
 
-#: ../source/commands/table_list.txt:74
-msgid "``テーブル情報n``"
+#: ../source/commands/delete.txt:24
+msgid ""
+"deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 msgstr ""
 
-#: ../source/commands/select.txt:68
-msgid "一致条件(カラム値 == 値)"
+#: ../source/commands/delete.txt:31
+msgid "レコードを削除しようとするテーブルの名前を指定します。"
+msgstr ""
+
+#: ../source/commands/delete.txt:33
+msgid "``key``"
+msgstr ""
+
+#: ../source/commands/delete.txt:35
+msgid ""
+"削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパラ"
+"メータを指定しても無視されます(idパラメータを代わりに指定します)。"
+msgstr ""
+
+#: ../source/commands/delete.txt:39
+msgid ""
+"レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
+"メータを指定してはいけません。"
+msgstr ""
+
+#: ../source/commands/delete.txt:58
+msgid "テーブルEntryからレコードを削除します。::"
+msgstr ""
+
+#: ../source/commands/delete.txt:60
+msgid "delete Entry abandon  [true]"
+msgstr ""
+
+#: ../source/commands/dump.txt:4
+msgid "dump"
+msgstr ""
+
+#: ../source/commands/dump.txt:9
+msgid "dump - データベースのスキーマとデータを出力する"
+msgstr ""
+
+#: ../source/commands/dump.txt:15
+msgid "dump [tables]"
+msgstr ""
+
+#: ../source/commands/dump.txt:20
+msgid ""
+"groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/dump.txt:22
+msgid ""
+"dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力しま"
+"す。dumpの結果は大きくなるため、主にコマンドラインから使うことを想定していま"
+"す。データベースのバックアップが主な利用方法です。"
+msgstr ""
+
+#: ../source/commands/dump.txt:24
+msgid ""
+"dumpが出力するフォーマットは直接groongaが解釈できるフォーマットです。そのた"
+"め、以下のようにしてデータベースをコピーすることができます。::"
+msgstr ""
+
+#: ../source/commands/dump.txt:26
+msgid ""
+"% groonga original/db dump > dump.grn % mkdir backup % groonga -n backup/db "
+"< dump.grn"
+msgstr ""
+
+#: ../source/commands/dump.txt:33
+msgid "``tables``"
+msgstr ""
+
+#: ../source/commands/dump.txt:35
+msgid ""
+"出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指"
+"定した場合は無視されます。"
+msgstr ""
+
+#: ../source/commands/dump.txt:40
+msgid ""
+"データベースのスキーマとデータをgroongaの組み込みコマンド呼び出し形式で出力し"
+"ます。output_type指定は無視されます。"
+msgstr ""
+
+#: ../source/commands/dump.txt:45
+msgid "データベース内のすべてのデータを出力::"
+msgstr ""
+
+#: ../source/commands/dump.txt:47
+msgid ""
+"> dump table_create LocalNames 48 ShortText table_create Entries 48 "
+"ShortText column_create Entries local_name 0 LocalNames column_create "
+"LocalNames Entries_local_name 2 Entries local_name ... load --table "
+"LocalNames [ [\"_key\"], [\"Items\"], [\"BLT\"], ... ] ..."
+msgstr ""
+
+#: ../source/commands/dump.txt:62
+msgid "データベース内のスキーマと特定のテーブルのデータのみ出力::"
+msgstr ""
+
+#: ../source/commands/dump.txt:64
+msgid ""
+"> dump --tables Users,Sites table_create Users TABLE_HASH_KEY ShortText "
+"column_create Users name COLUMN_SCALAR ShortText table_create Comments "
+"TABLE_PAT_KEY ShortText column_create Comments text COLUMN_SCALAR ShortText "
+"table_create Sites TABLE_NO_KEY column_create Sites url COLUMN_SCALAR "
+"ShortText load --table Users [ [\"_key\"], [\"mori\"], [\"yu\"], ... ] load "
+"--table Sites [ [\"_id\",\"url\"], [1,\"http://groonga.org/\"], [2,\"http://"
+"qwik.jp/senna/\"], ... ]"
+msgstr ""
+
+#: ../source/commands/load.txt:6
+msgid "load"
+msgstr ""
+
+#: ../source/commands/load.txt:11
+msgid "load - データのロード"
+msgstr ""
+
+#: ../source/commands/load.txt:17
+msgid "load values table [columns [ifexists [input_type]]]"
+msgstr ""
+
+#: ../source/commands/load.txt:22
+msgid ""
+"groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/load.txt:24
+msgid ""
+"loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
+"新します。"
+msgstr ""
+
+#: ../source/commands/load.txt:29
+msgid "``values``"
+msgstr ""
+
+#: ../source/commands/load.txt:31
+msgid ""
+"input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
+msgstr ""
+
+#: ../source/commands/load.txt:33
+msgid "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
+msgstr ""
+
+#: ../source/commands/load.txt:36
+msgid ""
+"[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
+"2,..],..]"
+msgstr ""
+
+#: ../source/commands/load.txt:39
+msgid ""
+"[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
+"名2: カラム値2},..]"
+msgstr ""
+
+#: ../source/commands/load.txt:41
+msgid ""
+"形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
+"す。"
+msgstr ""
+
+#: ../source/commands/load.txt:43
+msgid ""
+"対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に'_key'(主"
+"キーを示す疑似カラム名)が含まれていなければなりません。"
+msgstr ""
+
+#: ../source/commands/load.txt:45
+msgid ""
+"values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの値"
+"を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要です"
+"が、標準入力から与える文字列はエスケープする必要がありません。"
+msgstr ""
+
+#: ../source/commands/load.txt:47
+msgid "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
+msgstr ""
+
+#: ../source/commands/load.txt:51
+msgid "レコードを追加しようとするテーブルの名前を指定します。"
+msgstr ""
+
+#: ../source/commands/load.txt:53
+msgid "``columns``"
+msgstr ""
+
+#: ../source/commands/load.txt:55
+msgid ""
+"テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指"
+"定します。"
+msgstr ""
+
+#: ../source/commands/load.txt:57
+msgid "``ifexists``"
+msgstr ""
+
+#: ../source/commands/load.txt:59
+msgid ""
+"指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行す"
+"るscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された場合"
+"は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルト"
+"はtrue)"
+msgstr ""
+
+#: ../source/commands/load.txt:61
+msgid "``input_type``"
+msgstr ""
+
+#: ../source/commands/load.txt:63
+msgid "入力形式を指定します。jsonのみに対応しています。"
+msgstr ""
+
+#: ../source/commands/load.txt:73
+msgid "[登録件数]"
+msgstr ""
+
+#: ../source/commands/load.txt:75
+msgid "``登録件数``"
+msgstr ""
+
+#: ../source/commands/load.txt:77
+msgid "テーブルに登録されたレコードの件数が返されます。"
+msgstr ""
+
+#: ../source/commands/load.txt:82
+msgid "テーブルEntryにレコードを登録します。::"
+msgstr ""
+
+#: ../source/commands/load.txt:84
+msgid ""
+"load --table Entry --input_type json --values [{\\\"_key\\\":\\\"abandon\\\","
+"\\\"body\\\":\\\"放棄する\\\"}]  [1]"
+msgstr ""
+
+#: ../source/commands/load.txt:88
+msgid "標準入力からvaluesの値を与えます。::"
+msgstr ""
+
+#: ../source/commands/load.txt:90
+msgid ""
+"load --table Entry --input_type json [ {\"_key\": \"abbreviate\", \"body\": "
+"\"短縮する\"} ]  [1]"
+msgstr ""
+
+#: ../source/commands/log_level.txt:4
+msgid "log_level"
+msgstr ""
+
+#: ../source/commands/log_level.txt:9
+msgid "log_level - ログ出力レベルの設定"
+msgstr ""
+
+#: ../source/commands/log_level.txt:15
+msgid "log_level level"
+msgstr ""
+
+#: ../source/commands/log_level.txt:20
+msgid ""
+"groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/log_level.txt:22
+msgid "log_levelは、ログ出力レベルを設定します。"
+msgstr ""
+
+#: ../source/commands/log_level.txt:27 ../source/commands/log_put.txt:27
+msgid "``level``"
+msgstr ""
+
+#: ../source/commands/log_level.txt:29 ../source/commands/log_put.txt:29
+msgid "設定するログ出力レベルの値を以下のいずれかで指定します。"
+msgstr ""
+
+#: ../source/commands/log_level.txt:31 ../source/commands/log_put.txt:31
+msgid "EMERG ALERT CRIT error warning notice info debug"
+msgstr ""
+
+#: ../source/commands/log_level.txt:58
+msgid "log_level warning [true]"
+msgstr ""
+
+#: ../source/commands/log_level.txt:64
+msgid ":doc:`log_put` :doc:`log_reopen`"
+msgstr ""
+
+#: ../source/commands/log_put.txt:4
+msgid "log_put"
+msgstr ""
+
+#: ../source/commands/log_put.txt:9
+msgid "log_put - ログ出力"
+msgstr ""
+
+#: ../source/commands/log_put.txt:15
+msgid "log_put level message"
 msgstr ""
 
 #: ../source/commands/log_put.txt:20
@@ -2103,81 +1218,296 @@ msgid ""
 "エストを送信することによって実行します。"
 msgstr ""
 
-#: ../source/commands/log_put.txt:4
-msgid "log_put"
+#: ../source/commands/log_put.txt:22
+msgid "log_putは、ログにmessageを出力します。"
 msgstr ""
 
-#: ../source/commands/table_create.txt:37
+#: ../source/commands/log_put.txt:40
+msgid "``message``"
+msgstr ""
+
+#: ../source/commands/log_put.txt:42
+msgid "出力する文字列を指定します。"
+msgstr ""
+
+#: ../source/commands/log_put.txt:62
+msgid "log_put ERROR ****MESSAGE**** [true]"
+msgstr ""
+
+#: ../source/commands/log_put.txt:68
+msgid ":doc:`log_level` :doc:`log_reopen`"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:4 ../source/commands/log_reopen.txt:15
+msgid "log_reopen"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:9
+msgid "log_reopen - ログファイルの再読み込み"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:20
 msgid ""
-"作成するテーブルの属性を示す数値か、パイプ('|')で組み合わせたシンボル名を指定"
-"します。(デフォルト値は0(=\"TABLE_HASH_KEY\"))"
+"groonga組込コマンドの一つであるlog_reopenについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
 msgstr ""
 
-#: ../source/commands/view_add.txt:27
-msgid "``view``"
+#: ../source/commands/log_reopen.txt:22
+msgid "log_reopenは、ログファイルを再読み込みします。"
 msgstr ""
 
-#: ../source/commands/check.txt:4
-msgid "check"
+#: ../source/commands/log_reopen.txt:24
+msgid "現在、デフォルトのログ関数を用いている場合のみに対応しています。"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:29 ../source/commands/quit.txt:27
+#: ../source/commands/quit.txt:32 ../source/commands/shutdown.txt:27
+#: ../source/commands/shutdown.txt:32 ../source/commands/status.txt:29
+#: ../source/commands/table_list.txt:29
+msgid "ありません。"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:49
+msgid "log_reopen  [true]"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:54
+msgid "log_reopenを用いたログのローテーション"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:56
+msgid ""
+"ログファイルをmvなどで移動する。 ログはmvで移動された先のファイルに書き込まれ"
+"る。"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:58
+msgid "log_reopenコマンドを実行する。"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:59
+msgid ""
+"既存のログファイル名と同じファイル名で、新たなログファイルが作成される。 今後"
+"のログは新たなログファイルに書き込まれる。"
+msgstr ""
+
+#: ../source/commands/log_reopen.txt:65
+msgid ":doc:`log_level` :doc:`log_put`"
+msgstr ""
+
+#: ../source/commands/quit.txt:4 ../source/commands/quit.txt:15
+#: ../source/commands/quit.txt:38
+msgid "quit"
+msgstr ""
+
+#: ../source/commands/quit.txt:9
+msgid "quit - セッション終了"
+msgstr ""
+
+#: ../source/commands/quit.txt:20
+msgid ""
+"groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/quit.txt:22
+msgid ""
+"quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
+"groongaプロセスとの接続を切ります。"
+msgstr ""
+
+#: ../source/commands/select.txt:6
+msgid "select"
+msgstr ""
+
+#: ../source/commands/select.txt:11
+msgid "select - テーブルの中から条件にマッチするレコードを検索して出力する"
+msgstr ""
+
+#: ../source/commands/select.txt:17
+msgid ""
+"select table [match_columns [query [filter [scorer [sortby "
+"[output_columns              [offset [limit [drilldown [drilldown_sortby "
+"[drilldown_output_columns              [drilldown_offset [drilldown_limit "
+"[cache              [match_escalation_threshold]]]]]]]]]]]]]]]"
+msgstr ""
+
+#: ../source/commands/select.txt:25
+msgid ""
+"groonga組込コマンドの一つであるselectについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/select.txt:27
+msgid ""
+"selectは、使用しているデータベースのテーブルの中から条件にマッチするレコード"
+"を検索して出力します。"
+msgstr ""
+
+#: ../source/commands/select.txt:34
+msgid ""
+"検索対象のテーブルを指定します。存在しないテーブルを指定した場合はエラーにな"
+"ります。"
+msgstr ""
+
+#: ../source/commands/select.txt:38
+msgid ""
+"query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定しま"
+"す。"
+msgstr ""
+
+#: ../source/commands/select.txt:42
+msgid ""
+"カラム名の後ろに'* 数値'を指定することによって、そのカラムにヒットした際のス"
+"コアに積算される重みを指定することができます。"
 msgstr ""
 
 #: ../source/commands/select.txt:44
 msgid "カラム名 * 重み"
 msgstr ""
 
-#: ../source/commands/select.txt:130
-msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+#: ../source/commands/select.txt:46
+msgid "複数のカラムを'||'で結合して指定することもできます。"
 msgstr ""
 
-#: ../source/commands/table_create.txt:11
-msgid "table_create - テーブルの追加"
+#: ../source/commands/select.txt:48
+msgid "カラム名1 * 重み1 || カラム名2 * 重み2"
 msgstr ""
 
-#: ../source/commands/load.txt:77
-msgid "テーブルに登録されたレコードの件数が返されます。"
+#: ../source/commands/select.txt:50
+msgid ""
+"また、カラム名ではなく、検索に使用するインデックス名を指定することもできま"
+"す。"
 msgstr ""
 
 #: ../source/commands/select.txt:54
 msgid "以下の形式の文字列によって検索条件を指定します。"
 msgstr ""
 
-#: ../source/commands/define_selector.txt:41 ../source/commands/select.txt:52
-#: ../source/commands/suggest.txt:55
-msgid "``query``"
+#: ../source/commands/select.txt:57
+msgid "条件式"
 msgstr ""
 
-#: ../source/commands/table_create.txt:26
+#: ../source/commands/select.txt:59
+msgid "以下の条件式が使用できます。"
+msgstr ""
+
+#: ../source/commands/select.txt:62
 msgid ""
-"テーブルにカラムを追加する時にはcolumn_createコマンドを使用します。また、テー"
-"ブルを作成した時点でいくつかの疑似カラムが使用可能になっています。"
+"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
 msgstr ""
 
-#: ../source/commands/table_create.txt:86
+#: ../source/commands/select.txt:65
 msgid ""
-"トークナイザが指定されなかった場合は、対象の文字列を分割せずに語彙表に登録し"
-"ます。"
+"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
+"る)"
 msgstr ""
 
-#: ../source/commands/column_list.txt:49
-msgid "カラムオブジェクトに割り当てられたID"
+#: ../source/commands/select.txt:68
+msgid "一致条件(カラム値 == 値)"
 msgstr ""
 
-#: ../source/commands/define_selector.txt:79
+#: ../source/commands/select.txt:71
+msgid "不一致条件(カラム値 != 値)"
+msgstr ""
+
+#: ../source/commands/select.txt:74
+msgid "比較条件(カラム値 < 値)"
+msgstr ""
+
+#: ../source/commands/select.txt:77
+msgid "比較条件(カラム値 > 値)"
+msgstr ""
+
+#: ../source/commands/select.txt:80
+msgid "比較条件(カラム値 <= 値)"
+msgstr ""
+
+#: ../source/commands/select.txt:83
+msgid "比較条件(カラム値 >= 値)"
+msgstr ""
+
+#: ../source/commands/select.txt:86
+msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
+msgstr ""
+
+#: ../source/commands/select.txt:89
+msgid "結合演算子"
+msgstr ""
+
+#: ../source/commands/select.txt:91
+msgid "複数の条件式を結合するために以下の演算子が使用できます。"
+msgstr ""
+
+#: ../source/commands/select.txt:94
+msgid "論理和(aとbといずれかの条件がマッチする)"
+msgstr ""
+
+#: ../source/commands/select.txt:97
+msgid "論理積(aとbの両方がマッチする)"
+msgstr ""
+
+#: ../source/commands/select.txt:100
+msgid "aにマッチし、bにはマッチしない"
+msgstr ""
+
+#: ../source/commands/select.txt:103
+msgid "複数の条件をまとめる"
+msgstr ""
+
+#: ../source/commands/select.txt:108
+msgid "絞り込み条件をscript形式のgrn_expr文字列によって指定します。"
+msgstr ""
+
+#: ../source/commands/select.txt:110
 msgid ""
-"追加するselectorコマンドのdrilldown_output_columns引数のデフォルト値を指定し"
-"ます。"
+"query引数とfilter引数をどちらも指定した場合は、両方の条件を満足するレコードの"
+"みがヒットします。どちらも指定しない場合は全件がヒットします。"
 msgstr ""
 
-#: ../source/commands/dump.txt:40
+#: ../source/commands/select.txt:114
 msgid ""
-"データベースのスキーマとデータをgroongaの組み込みコマンド呼び出し形式で出力し"
-"ます。output_type指定は無視されます。"
+"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
+"します。"
 msgstr ""
 
-#: ../source/commands/clearlock.txt:22
+#: ../source/commands/select.txt:116
 msgid ""
-"clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指"
-"定し、オブジェクトにかけられたロックを再帰的に解除します。"
+"scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従っ"
+"て、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカ"
+"スタマイズできるようになります。"
+msgstr ""
+
+#: ../source/commands/select.txt:120
+msgid "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
+msgstr ""
+
+#: ../source/commands/select.txt:124
+msgid ""
+"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
+"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
+"ない場合には昇順にソートします。"
+msgstr ""
+
+#: ../source/commands/select.txt:126
+msgid ""
+"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
+"す。'_score'を指定することでスコアでソートすることができます。query引数も"
+"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+msgstr ""
+
+#: ../source/commands/select.txt:130
+msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+msgstr ""
+
+#: ../source/commands/select.txt:132
+msgid ""
+"アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。ま"
+"たは、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, "
+"\\*')"
 msgstr ""
 
 #: ../source/commands/select.txt:136
@@ -2187,8 +1517,254 @@ msgid ""
 "た件数 + offset によって算出される値が指定されたものとみなされます。"
 msgstr ""
 
+#: ../source/commands/select.txt:140
+msgid ""
+"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
+"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
+"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
+"limit + 1 によって算出される値が指定されたものとみなされます。"
+msgstr ""
+
+#: ../source/commands/select.txt:144
+msgid ""
+"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
+"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
+"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
+msgstr ""
+
+#: ../source/commands/select.txt:148
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
+"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
+"と同様に昇降順を指定できます。"
+msgstr ""
+
+#: ../source/commands/select.txt:152
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"するカラム名のリストをカンマ(',')区切りで指定します。"
+msgstr ""
+
+#: ../source/commands/select.txt:156
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
+"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
+"よって算出される値が指定されたものとみなされます。"
+msgstr ""
+
+#: ../source/commands/select.txt:160
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"を行うレコードの件数を指定します。デフォルト値は10です。実際には、"
+"drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが"
+"出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + "
+"drilldown_limit + 1 によって算出される値が指定されたものとみなされます。"
+msgstr ""
+
+#: ../source/commands/select.txt:162
+msgid "``cache``"
+msgstr ""
+
+#: ../source/commands/select.txt:164
+msgid "クエリキャッシュに関する動作を設定します。"
+msgstr ""
+
+#: ../source/commands/select.txt:166
+msgid "``no``"
+msgstr ""
+
+#: ../source/commands/select.txt:168
+msgid ""
+"検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
+"いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
+"ヒットするために、このパラメータは有効です。"
+msgstr ""
+
+#: ../source/commands/select.txt:170
+msgid "``match_escalation_threshold``"
+msgstr ""
+
+#: ../source/commands/select.txt:172
+msgid ""
+"検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0で"
+"す。デフォルト値は以下のいずれかの方法で設定できます。"
+msgstr ""
+
+#: ../source/commands/select.txt:174
+msgid "configureの--with-match-escalation-thresholdオプション"
+msgstr ""
+
+#: ../source/commands/select.txt:175
+msgid "groongaコマンド起動時の--match-escalation-thresholdオプション"
+msgstr ""
+
+#: ../source/commands/select.txt:176
+msgid "設定ファイル中のmatch-escalation-threshold設定項目"
+msgstr ""
+
+#: ../source/commands/select.txt:178
+msgid ""
+"クエリのヒット件数が閾値を越えない場合は:ref:`spec_search` で説明している方法"
+"で検索方法をエスカレーションしてきます。"
+msgstr ""
+
+#: ../source/commands/select.txt:183
+msgid "以下のようなjson形式で値が返却されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:187
+msgid ""
+"[[リターンコード, 処理開始時間, 処理時間], [検索結果, ドリルダウン結果]]"
+msgstr ""
+
+#: ../source/commands/select.txt:189
+msgid "``リターンコード``"
+msgstr ""
+
+#: ../source/commands/select.txt:191
+msgid ""
+"grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内"
+"容を示す 文字列が返されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:194
+msgid "``処理開始時間``"
+msgstr ""
+
+#: ../source/commands/select.txt:196
+msgid ""
+"処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返し"
+"ます。"
+msgstr ""
+
 #: ../source/commands/select.txt:198
 msgid "``処理時間``"
+msgstr ""
+
+#: ../source/commands/select.txt:200
+msgid "処理にかかった秒数を返します。"
+msgstr ""
+
+#: ../source/commands/select.txt:202
+msgid "``検索結果``"
+msgstr ""
+
+#: ../source/commands/select.txt:204
+msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
+msgstr ""
+
+#: ../source/commands/select.txt:208
+msgid "``検索件数``"
+msgstr ""
+
+#: ../source/commands/select.txt:210
+msgid "検索件数が出力されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:212 ../source/commands/select.txt:234
+msgid "``カラム名n``"
+msgstr ""
+
+#: ../source/commands/select.txt:214
+msgid ""
+"output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:216 ../source/commands/select.txt:238
+msgid "``カラム型n``"
+msgstr ""
+
+#: ../source/commands/select.txt:218
+msgid ""
+"output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:220
+msgid "``検索結果n``"
+msgstr ""
+
+#: ../source/commands/select.txt:222
+msgid ""
+"output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
+"力されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:224
+msgid "``drilldown結果``"
+msgstr ""
+
+#: ../source/commands/select.txt:226
+msgid "drilldown処理の結果が以下のように出力されます。::"
+msgstr ""
+
+#: ../source/commands/select.txt:230
+msgid "``件数``"
+msgstr ""
+
+#: ../source/commands/select.txt:232
+msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:236
+msgid ""
+"drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
+"れます。"
+msgstr ""
+
+#: ../source/commands/select.txt:240
+msgid ""
+"drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
+"れます。"
+msgstr ""
+
+#: ../source/commands/select.txt:242
+msgid "``ドリルダウン結果n``"
+msgstr ""
+
+#: ../source/commands/select.txt:244
+msgid ""
+"drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
+"条件に従って各レコードの値が出力されます。"
+msgstr ""
+
+#: ../source/commands/select.txt:249
+msgid "テーブルEntryの全レコード・全カラムの値を出力します。::"
+msgstr ""
+
+#: ../source/commands/select.txt:251
+msgid ""
+"select Entry  [[[2],[[\"_id\", \"UInt32\"],[\"_key\",\"ShortText\"],[\"body"
+"\",\"ShortText\"]],[1,\"abandon\",\"放棄する\"],[2,\"abbreviate\",\"短縮する"
+"\"]]]"
+msgstr ""
+
+#: ../source/commands/shutdown.txt:4 ../source/commands/shutdown.txt:15
+#: ../source/commands/shutdown.txt:38
+msgid "shutdown"
+msgstr ""
+
+#: ../source/commands/shutdown.txt:9
+msgid "shutdown - サーバプロセスの停止"
+msgstr ""
+
+#: ../source/commands/shutdown.txt:20
+msgid ""
+"groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/shutdown.txt:22
+msgid "shutdownは、接続しているgroongaサーバプロセスを停止します。"
+msgstr ""
+
+#: ../source/commands/status.txt:6 ../source/commands/status.txt:17
+msgid "status"
+msgstr ""
+
+#: ../source/commands/status.txt:11
+msgid "status - groongaプロセスの状態表示"
 msgstr ""
 
 #: ../source/commands/status.txt:22
@@ -2196,6 +1772,12 @@ msgid ""
 "groonga組込コマンドの一つであるstatusについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/status.txt:24
+msgid ""
+"statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセ"
+"スに対して使用することを想定しています。"
 msgstr ""
 
 #: ../source/commands/status.txt:39
@@ -2206,4 +1788,422 @@ msgid ""
 "定されていたならば、正確な値を返します。それ以外の場合は不正確な値を返す場合"
 "があります。  ``starttime``    groongaプロセスが起動した時刻のtvsec値を返しま"
 "す。  ``uptime``    groongaプロセスが起動してから経過した秒数を返します。"
+msgstr ""
+
+#: ../source/commands/status.txt:58
+msgid "status {\"alloc_count\":104,  \"starttime\":1268213679,  \"uptime\":1}"
+msgstr ""
+
+#: ../source/commands/suggest.txt:6
+msgid "suggest"
+msgstr ""
+
+#: ../source/commands/suggest.txt:8
+msgid ""
+"** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブルが必"
+"要となります。 **"
+msgstr ""
+
+#: ../source/commands/suggest.txt:13
+msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:19
+msgid "suggest types table column query"
+msgstr ""
+
+#: ../source/commands/suggest.txt:24
+msgid "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:26
+msgid ""
+"補完とは、クエリの未入力・未変換部分を補うことです。修正とは、クエリ内のミス"
+"タイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候補と"
+"なるクエリを提案することです。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:31
+msgid "``types``"
+msgstr ""
+
+#: ../source/commands/suggest.txt:33
+msgid ""
+"補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で指定"
+"します(例: correct|suggest)"
+msgstr ""
+
+#: ../source/commands/suggest.txt:35
+msgid "``complete``"
+msgstr ""
+
+#: ../source/commands/suggest.txt:37
+msgid "補完を行います。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:39
+msgid "``correct``"
+msgstr ""
+
+#: ../source/commands/suggest.txt:41
+msgid "修正を行います。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:43
+msgid "``suggest``"
+msgstr ""
+
+#: ../source/commands/suggest.txt:45
+msgid "提案を行います。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:49
+msgid "基礎となるデータが格納されているテーブル名を指定します。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:51
+msgid "``column``"
+msgstr ""
+
+#: ../source/commands/suggest.txt:53
+msgid ""
+"基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されてい"
+"るカラム名を指定します。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:57
+msgid "補完・修正・提案の対象となるクエリを指定します。"
+msgstr ""
+
+#: ../source/commands/suggest.txt:67
+msgid ""
+"{\"タイプ1\":[[\"候補1\", 候補1のスコア], [\"候補2\", 候補2のスコ"
+"ア], ...], ...}  ``タイプ``    types引数に指定した値。  ``候補``    補完・修"
+"正・提案の候補。  ``候補のスコア``    補完・修正・提案として優れたものほど高"
+"くなる数値。結果は、スコア順にソートされている。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:6
+msgid "table_create"
+msgstr ""
+
+#: ../source/commands/table_create.txt:11
+msgid "table_create - テーブルの追加"
+msgstr ""
+
+#: ../source/commands/table_create.txt:17
+msgid "table_create name [flags [key_type [value_type [default_tokenizer]]]]"
+msgstr ""
+
+#: ../source/commands/table_create.txt:22
+msgid ""
+"groonga組込コマンドの一つであるtable_createについて説明します。組込コマンド"
+"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
+"リクエストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:24
+msgid ""
+"table_createコマンドは、使用しているデータベースに対してテーブルを追加しま"
+"す。groongaには名前付きテーブルと名前なしテーブル、永続テーブルと一時テーブル"
+"がありますが、table_createコマンドでは、名前付きの永続テーブルのみが作成でき"
+"ます。テーブルはレコードの集合であり、全てのレコードは一意なIDを持ちます。ID"
+"はレコードを追加した順序に従って自動的に付与されます。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:26
+msgid ""
+"テーブルにカラムを追加する時にはcolumn_createコマンドを使用します。また、テー"
+"ブルを作成した時点でいくつかの疑似カラムが使用可能になっています。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:33
+msgid ""
+"作成するテーブルの名前を指定します。nameはデータベース内で一意な、未定義の名"
+"前でなければなりません。組込型名・組込コマンド名・組込関数名は予約済みであ"
+"り、テーブル名には 使用できません。また、ピリオド('.'), コロン(':')を含む名前"
+"のテーブルは作成できません。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:37
+msgid ""
+"作成するテーブルの属性を示す数値か、パイプ('|')で組み合わせたシンボル名を指定"
+"します。(デフォルト値は0(=\"TABLE_HASH_KEY\"))"
+msgstr ""
+
+#: ../source/commands/table_create.txt:40
+msgid ""
+"主キー値をハッシュ表で管理するテーブルを作成します。ハッシュ表を使用したテー"
+"ブルでは、主キー値に完全一致するレコードを高速に検索することができます。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:43
+msgid ""
+"主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用した"
+"テーブルでは、主キー値に完全一致するレコード、前方一致するレコード、および最"
+"長共通接頭辞となるレコードを高速に検索することができます。また、キー値の昇降"
+"順でレコードを取り出したり、キー値の範囲での検索を行うことができます。また、"
+"flagsの値に64を加えることによって、後方一致検索も可能となります。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:46
+msgid ""
+"主キーを持たないテーブルを作成します。各レコードはIDのみによって特定すること"
+"ができます。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:49
+msgid ""
+"複数のテーブルをまとめて操作するための仮想的なテーブル(view)を作成します。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:52
+msgid ""
+"語彙表となるパトリシア木型のテーブルにおいて、後方一致検索を可能とします。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:55
+msgid ""
+"ハッシュ表型か、パトリシア木型のテーブルにおいて、主キー値を正規化した上で登"
+"録します。この値が指定されたテーブルではたとえば、主キー値'abc'と'ABC' は同一"
+"のレコードに対応するものとみなされます。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:57
+msgid "``key_type``"
+msgstr ""
+
+#: ../source/commands/table_create.txt:59
+msgid ""
+"主キー値の型を指定します。主キー値を持つテーブルに限り有効です。型にはgroonga"
+"の組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指"
+"定することができます。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:61
+msgid "``value_type``"
+msgstr ""
+
+#: ../source/commands/table_create.txt:63
+msgid ""
+"値の型を指定します。tableの値には固定長の型のみが指定できます。(可変長の値が"
+"必要な場合は別途カラムを作成します) 型にはgroongaの組込型か、同一データベース"
+"に定義済みのユーザ定義型、またはテーブルを指定することができます。(デフォルト"
+"はvalueなし)"
+msgstr ""
+
+#: ../source/commands/table_create.txt:65
+msgid "``default_tokenizer``"
+msgstr ""
+
+#: ../source/commands/table_create.txt:67
+msgid ""
+"作成するテーブルを語彙表として使用する場合、文字列を分割するトークナイザを指"
+"定します。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:69
+msgid "組込のトークナイザとして、以下が準備されています。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:72
+msgid "空白で区切られた文字列をトークンとする"
+msgstr ""
+
+#: ../source/commands/table_create.txt:75
+msgid "unigram(1文字を1トークンとする)"
+msgstr ""
+
+#: ../source/commands/table_create.txt:78
+msgid "bigram(2文字の文字列要素をトークンとする)"
+msgstr ""
+
+#: ../source/commands/table_create.txt:81
+msgid "trigram(3文字の文字列要素をトークンとする)"
+msgstr ""
+
+#: ../source/commands/table_create.txt:84
+msgid ""
+"形態素解析器mecabで解析した形態素をトークンとする。(mecabを組み込んだ場合のみ"
+"有効)"
+msgstr ""
+
+#: ../source/commands/table_create.txt:86
+msgid ""
+"トークナイザが指定されなかった場合は、対象の文字列を分割せずに語彙表に登録し"
+"ます。"
+msgstr ""
+
+#: ../source/commands/table_create.txt:105
+msgid "ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。::"
+msgstr ""
+
+#: ../source/commands/table_create.txt:107
+msgid "table_create Entry --key_type ShortText [true]"
+msgstr ""
+
+#: ../source/commands/table_create.txt:110
+msgid ""
+"ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値"
+"は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場"
+"合には、バイグラムの索引を作成します。::"
+msgstr ""
+
+#: ../source/commands/table_create.txt:112
+msgid ""
+"table_create Term --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --"
+"default_tokenizer TokenBigram [true]"
+msgstr ""
+
+#: ../source/commands/table_list.txt:6 ../source/commands/table_list.txt:17
+msgid "table_list"
+msgstr ""
+
+#: ../source/commands/table_list.txt:11
+msgid "table_list - DBに定義されているテーブルをリスト表示"
+msgstr ""
+
+#: ../source/commands/table_list.txt:22
+msgid ""
+"groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/table_list.txt:24
+msgid "table_listは、DBに定義されているテーブルのリストを表示します。"
+msgstr ""
+
+#: ../source/commands/table_list.txt:37
+msgid "テーブル名一覧が以下の形式で返却されます。::"
+msgstr ""
+
+#: ../source/commands/table_list.txt:39
+msgid "[[[テーブル情報名1,テーブル情報型1],...], テーブル情報1,...]"
+msgstr ""
+
+#: ../source/commands/table_list.txt:41
+msgid "``テーブル情報名n``"
+msgstr ""
+
+#: ../source/commands/table_list.txt:43
+msgid ""
+"``テーブル情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容か"
+"を示す名前を出力します。 情報名は以下の通りです。"
+msgstr ""
+
+#: ../source/commands/table_list.txt:48
+msgid "テーブルオブジェクトに割り当てられたID"
+msgstr ""
+
+#: ../source/commands/table_list.txt:52
+msgid "テーブル名"
+msgstr ""
+
+#: ../source/commands/table_list.txt:56
+msgid "テーブルのレコードを格納するファイル名"
+msgstr ""
+
+#: ../source/commands/table_list.txt:60
+msgid "テーブルのflags属性"
+msgstr ""
+
+#: ../source/commands/table_list.txt:64
+msgid "主キー値の属する型"
+msgstr ""
+
+#: ../source/commands/table_list.txt:68
+msgid "valueが属する型"
+msgstr ""
+
+#: ../source/commands/table_list.txt:70
+msgid "``テーブル情報型n``"
+msgstr ""
+
+#: ../source/commands/table_list.txt:72
+msgid "テーブル情報の型を出力します。"
+msgstr ""
+
+#: ../source/commands/table_list.txt:74
+msgid "``テーブル情報n``"
+msgstr ""
+
+#: ../source/commands/table_list.txt:76
+msgid ""
+"``テーブル情報名n`` で示された情報の配列を出力します。 情報の順序は ``テーブ"
+"ル情報名n`` の順序と同じです。"
+msgstr ""
+
+#: ../source/commands/table_list.txt:83
+msgid ""
+"table_list Entry  [[[\"id\", \"UInt32\"],   [\"name\",\"ShortText\"],   "
+"[\"path\",\"ShortText\"],   [\"flags\",\"ShortText\"],   [\"domain\", "
+"\"ShortText\"],   [\"range\",\"ShortText\"]],  [256,   \"Entry\",   \"test."
+"db.0000100\",   \"TABLE_HASH_KEY|PERSISTENT\",   \"ShortText\",   \"null"
+"\"],  [257,   \"Term\",   \"test.db.0000101\",   \"TABLE_PAT_KEY|"
+"KEY_NORMALIZE|PERSISTENT\",   \"ShortText\",   \"null\"]]"
+msgstr ""
+
+#: ../source/commands/table_remove.txt:4
+msgid "table_remove"
+msgstr ""
+
+#: ../source/commands/table_remove.txt:9
+msgid "table_remove - テーブルの削除"
+msgstr ""
+
+#: ../source/commands/table_remove.txt:15
+msgid "table_remove table"
+msgstr ""
+
+#: ../source/commands/table_remove.txt:20
+msgid ""
+"groonga組込コマンドの一つであるtable_removeについて説明します。組込コマンド"
+"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
+"リクエストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/table_remove.txt:22
+msgid ""
+"table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
+"ンデックスも再帰的に削除されます。"
+msgstr ""
+
+#: ../source/commands/view_add.txt:4
+msgid "view_add"
+msgstr ""
+
+#: ../source/commands/view_add.txt:9
+msgid "view_add - view型のテーブルに要素となるテーブルを追加"
+msgstr ""
+
+#: ../source/commands/view_add.txt:15
+msgid "view_add view table"
+msgstr ""
+
+#: ../source/commands/view_add.txt:20
+msgid ""
+"groonga組込コマンドの一つであるview_addについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+#: ../source/commands/view_add.txt:22
+msgid "view_addは、view型のテーブルに要素となるテーブルを定義します。"
+msgstr ""
+
+#: ../source/commands/view_add.txt:27
+msgid "``view``"
+msgstr ""
+
+#: ../source/commands/view_add.txt:29
+msgid "テーブルを追加するview型のテーブルの名前を指定します。"
+msgstr ""
+
+#: ../source/commands/view_add.txt:33
+msgid "view型のテーブルに追加されるテーブルの名前を指定します。"
+msgstr ""
+
+#: ../source/commands/view_add.txt:52
+msgid "view_add Ventry Entry [true]"
 msgstr ""

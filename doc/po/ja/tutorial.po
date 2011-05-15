@@ -7,149 +7,241 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 00:36\n"
+"POT-Creation-Date: 2011-05-15 20:56\n"
 "PO-Revision-Date: 2011-05-09 00:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../source/tutorial/tutorial06.txt:12
+#: ../internal after padding source/example/tutorial02-2.log:72
+msgid "% groonga -c > shutdown %"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial02-1.log:50
 msgid ""
-"タグ検索はgroongaの転置インデックスというデータ構造を用いて高速に行われます。"
+"% groonga -c > status [[0,1294292493.17513,3.4655e-05],{\"alloc_count\":466,"
+"\"starttime\":1294292404,\"uptime\":89,\"version\":\"1.0.6-10-gba9df76\","
+"\"n_queries\":105,\"cache_hit_rate\":0.0,\"command_version\":1,"
+"\"default_command_version\":1,\"max_command_version\":2}] > ctrl-d %"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:84
-msgid "テーブルに定義されているカラムのリストを表示します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:98
-msgid "セキュリティ"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:291
-msgid "脚注"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:124
-msgid "Bigramテーブル"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:151
+#: ../internal after padding source/example/tutorial01-1.log:58
 msgid ""
-"この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
-"れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
-"してもらってかまいません。"
+"% groonga /tmp/tutorial.db > status [[0,1294292494.18924,3.7116e-05],"
+"{\"alloc_count\":443,\"starttime\":1294292404,\"uptime\":90,\"version\":"
+"\"1.0.6-10-gba9df76\",\"n_queries\":106,\"cache_hit_rate\":0.943396226415094,"
+"\"command_version\":1,\"default_command_version\":1,\"max_command_version"
+"\":2}]"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:482
+#: ../internal after padding source/example/tutorial08-1.log:21
 msgid ""
-"2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダ"
-"ウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒット"
-"していることがわかります。"
+">    table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText "
+"[[0,1294292412.30259,0.079878298],true] >    load --table PatPre >    [ >    "
+"{\"_key\":\"ひろゆき\"}, >    {\"_key\":\"まろゆき\"}, >    {\"_key\":\"ひろ"
+"あき\"} >    ] [[0,1294292412.58327,1.001299934],3] >    select --table "
+"PatPre --query _key:@ひろ [[0,1294292413.78527,0.000581025],[[[2],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"]],[3,\"ひろあき\"],[1,\"ひろゆき\"]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:82
-msgid "DBに定義されているテーブルのリストを表示します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:259
-msgid "limitパラメータには、検索結果を何件表示するのかを指定します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:88
-msgid "インデックスの重み"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:93
-msgid "このように、テーブルの参照関係を逆にたどる検索ができました。"
-msgstr ""
-
-#: ../source/tutorial/tutorial08.txt:7 ../source/tutorial/tutorial08.txt:12
-msgid "主キーによる前方一致検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:55
+#: ../internal after padding source/example/tutorial03-2.log:64
 msgid ""
-"column_createコマンドでカラムを作成するとき、--flagsオプションでCOLUMN_VECTOR"
-"フラグを指定すると、複数の値を配列で格納できるカラムが作成されます。"
+"> column_create --table Site --name link --type Site "
+"[[0,1294292421.88324,1.758091494],true] [[0,1294292423.64139,0.096956537],"
+"true] [[0,1294292423.73839,0.001444368],1] [[0,1294292423.73987,0.000161184],"
+"[[[1],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"time\",\"Time\"],"
+"[\"string\",\"ShortText\"],[\"number\",\"Int32\"],[\"float\",\"Float\"]],[1,"
+"\"sample\",1234567890.0,\"GROONGA\",12345,42.195]]]] "
+"[[0,1294292423.74005,0.057032974],true] > load --table Site > [{\"_key\":"
+"\"http://example.org/\",\"link\":\"http://example.net/\"}] "
+"[[0,1294292423.99784,0.200585743],1] > select --table Site --output_columns "
+"_key,title,link._key,link.title --query title:@this "
+"[[0,1294292424.39909,0.000545272],[[[1],[[\"_key\",\"ShortText\"],[\"title\","
+"\"ShortText\"],[\"link._key\",\"ShortText\"],[\"link.title\",\"ShortText\"]],"
+"[\"http://example.org/\",\"This is test record 1!\",\"http://example.net/\","
+"\"test record 2.\"]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:422
-msgid "キーワードでコメント検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:64
-msgid "HTTPによる通信"
-msgstr ""
-
-#: ../source/tutorial/tutorial09.txt:6
+#: ../internal after padding source/example/tutorial03-3.log:102
 msgid ""
-"groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語"
-"彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストッ"
-"プワードのフラグ、単語の重要度などを保持することができます。"
+"> column_create --table Site --name links --flags COLUMN_VECTOR --type Site "
+"[[0,1294292424.60248,0.062420461],true] > load --table Site > [{\"_key\":"
+"\"http://example.org/\",\"links\":[\"http://example.net/\",\"http://example."
+"org/\",\"http://example.com/\"]}] [[0,1294292424.86574,0.200708196],1] > "
+"select --table Site --output_columns _key,title,links._key,links.title --"
+"query title:@this [[0,1294292425.26717,0.000522302],[[[1],[[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"links._key\",\"ShortText\"],"
+"[\"links.title\",\"ShortText\"]],[\"http://example.org/\",\"This is test "
+"record 1!\",[\"http://example.net/\",\"http://example.org/\",\"http://"
+"example.com/\"],[\"test record 2.\",\"This is test record 1!\",\"test test "
+"record three.\"]]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:411
-msgid "GeoPointでコメント検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:32
+#: ../internal after padding source/example/tutorial04-4.log:105
 msgid ""
-"queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
-"レコードが結果として返ります。"
+"> column_create --table Site --name location --type WGS84GeoPoint "
+"[[0,1294292484.17389,0.064924593],true] > load --table Site > [ >  {\"_key\":"
+"\"http://example.org/\",\"location\":\"128452975x503157902\"} >  {\"_key\":"
+"\"http://example.net/\",\"location\":\"128487316x502920929\"}, > ] "
+"[[0,1294292484.43963,0.801132263],2] > select --table Site --query \"_id:1 "
+"OR _id:2\" --output_columns _key,location [[0,1294292485.44153,0.000398502],"
+"[[[2],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://"
+"example.org/\",\"128452975x503157902\"],[\"http://example.net/\","
+"\"128487316x502920929\"]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:201
+#: ../internal after padding source/example/tutorial01-4.log:158
 msgid ""
-"selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
-"ます。"
+"> column_create --table Site --name title --flags COLUMN_SCALAR --type "
+"ShortText [[0,1294292494.87523,0.073160479],true] > select --table Site "
+"[[0,1294292495.14923,0.000136609],[[[0],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:21 ../source/tutorial/tutorial01.txt:40
-#: ../source/tutorial/tutorial02.txt:16 ../source/tutorial/tutorial02.txt:35
-#: ../source/tutorial/tutorial02.txt:68
-msgid "書式 ::"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:65
-msgid "位置情報を用いた絞込・ソート"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial06-7.log:212
+#: ../internal after padding source/example/tutorial01-6.log:205
 msgid ""
-"> select --table Site --filter 'geo_in_circle(location, "
-"\"128515259x503187188\", 50000)' --output_columns _key,location,_score --"
-"sortby '-geo_distance(location, \"128515259x503187188\")' --scorer '_score = "
-"geo_distance(location, "
-"\"128515259x503187188\")' [[0,1301213651.42956,0.000757634],[[[2],[[\"_key\","
-"\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\",\"Int32\"]],"
-"[\"http://example.org/\",\"128452975x503157902\",2054],[\"http://example.net/"
-"\",\"128487316x502920929\",6720]]]]"
+"> column_create --table Terms --name blog_title --flags COLUMN_INDEX|"
+"WITH_POSITION --type Site --source title [[0,1294292495.6163,0.118577336],"
+"true]"
 msgstr ""
 
-#: ../source/tutorial/tutorial04.txt:101
-msgid "「ある地点から何m以内に存在する」といった絞込も可能です。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-3.log:136
+#: ../internal after padding source/example/tutorial01-7.log:225
 msgid ""
-"> select --table Site [[0,1294292494.67374,0.000159976],[[[0],[[\"_id\","
-"\"UInt32\"],[\"_key\",\"ShortText\"]]]]]"
+"> load --table Site > [ > {\"_key\":\"http://example.org/\",\"title\":\"This "
+"is test record 1!\"}, > {\"_key\":\"http://example.net/\",\"title\":\"test "
+"record 2.\"}, > {\"_key\":\"http://example.com/\",\"title\":\"test test "
+"record three.\"}, > {\"_key\":\"http://example.net/afr\",\"title\":\"test "
+"record four.\"}, > {\"_key\":\"http://example.org/aba\",\"title\":\"test "
+"test test record five.\"}, > {\"_key\":\"http://example.com/rab\",\"title\":"
+"\"test test test test record six.\"}, > {\"_key\":\"http://example.net/atv\","
+"\"title\":\"test test test record seven.\"}, > {\"_key\":\"http://example."
+"org/gat\",\"title\":\"test test record eight.\"}, > {\"_key\":\"http://"
+"example.com/vdw\",\"title\":\"test test record nine.\"}, > ] "
+"[[0,1294292495.93593,2.202904311],9]"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:419
+#: ../internal after padding source/example/tutorial07-2.log:73
 msgid ""
-"範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そし"
-"て、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタ"
-"グは「#groonga」が2つに「#travel」が1つ、投稿者は「グニャラくん」「OffGao」が"
-"それぞれ2件ずつであることがわかります。"
+"> select --table Blog1 --match_columns title||message --query groonga "
+"[[0,1294292408.31388,0.000823528],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
+"\"grn1\",\"groonga test\",\"groonga message\"],[3,\"grn3\",\"groonga message"
+"\",\"none\"],[2,\"grn2\",\"baseball result\",\"rakutan eggs 4 - 4 groonga "
+"moritars\"]]]] > select --table Blog1 --match_columns title||message --query "
+"message [[0,1294292408.5178,0.000566064],[[[2],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
+"\"grn3\",\"groonga message\",\"none\"],[1,\"grn1\",\"groonga test\","
+"\"groonga message\"]]]] > select --table Blog1 --match_columns title --query "
+"message [[0,1294292408.72074,0.0004798],[[[1],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
+"\"grn3\",\"groonga message\",\"none\"]]]]"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial04-2.log:39
+#: ../internal after padding source/example/tutorial07-4.log:136
+msgid ""
+"> select --table Blog2 --match_columns title||message --query groonga "
+"[[0,1294292411.49151,0.000575701],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
+"\"grn1\",\"groonga test\",\"groonga message\"],[2,\"grn2\",\"baseball result"
+"\",\"rakutan eggs 4 - 4 groonga moritars\"],[3,\"grn3\",\"groonga message\","
+"\"none\"]]]] > select --table Blog2 --match_columns title||message --query "
+"message [[0,1294292411.69532,0.000523916],[[[2],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
+"\"grn1\",\"groonga test\",\"groonga message\"],[3,\"grn3\",\"groonga message"
+"\",\"none\"]]]] > select --table Blog2 --match_columns title --query message "
+"[[0,1294292411.89825,0.000508446],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
+"\"grn3\",\"groonga message\",\"none\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-4.log:441
+msgid ""
+"> select --table Comments --filter 'geo_in_circle(location,"
+"\"127975798x502919856\",20000)' --output_columns posted_by.name,comment --"
+"drilldown hash_tags,posted_by [[0,1294292471.01995,0.000683663],[[[4],"
+"[[\"posted_by.name\",\"ShortText\"],[\"comment\",\"ShortText\"]],[\"OffGao\","
+"\"@daijiro @tasukuchan 登録してみましたよー！\"],[\"グニャラくん\",\"groonga"
+"なう #groonga\"],[\"グニャラくん\",\"groonga開発合宿のため羽田空港に来まし"
+"た！ #groonga #travel\"],[\"OffGao\",\"中野ブロードウェイなうなう\"]],[[2],"
+"[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga\",2],"
+"[\"travel\",1]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
+"[\"OffGao\",2],[\"tasukuchan\",2]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-5.log:459
+msgid ""
+"> select --table Comments --query comment:@なう --output_columns comment,"
+"_score [[0,1294292471.22683,0.000339904],[[[2],[[\"comment\",\"ShortText\"],"
+"[\"_score\",\"Int32\"]],[\"groongaなう #groonga\",1],[\"中野ブロードウェイな"
+"うなう\",2]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-6.log:476
+msgid ""
+"> select --table Comments --query comment:@羽田 --filter 'geo_in_circle"
+"(location,\"127975798x502919856\",20000)' --output_columns posted_by.name,"
+"comment --drilldown hash_tags,posted_by [[0,1294292471.42922,0.00063973],"
+"[[[1],[[\"posted_by.name\",\"ShortText\"],[\"comment\",\"ShortText\"]],[\"グ"
+"ニャラくん\",\"groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
+"\"]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga"
+"\",1],[\"travel\",1]],[[1],[[\"_key\",\"ShortText\"],[\"_nsubrecs\","
+"\"Int32\"]],[\"tasukuchan\",1]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-7.log:494
+msgid ""
+"> select --table Comments --query hash_tags:@groonga --output_columns "
+"posted_by.name,comment --drilldown posted_by "
+"[[0,1294292471.6339,0.000473975],[[[2],[[\"posted_by.name\",\"ShortText\"],"
+"[\"comment\",\"ShortText\"]],[\"グニャラくん\",\"groongaなう #groonga\"],"
+"[\"グニャラくん\",\"groonga開発合宿のため羽田空港に来ました！ #groonga "
+"#travel\"]],[[1],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
+"[\"tasukuchan\",2]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-8.log:511
+msgid ""
+"> select --table Comments --query posted_by:tasukuchan --output_columns "
+"comment --drilldown hash_tags [[0,1294292471.83804,0.000471649],[[[4],"
+"[[\"comment\",\"ShortText\"]],[\"初の書き込み。テストテスト。\"],[\"@daijiro "
+"ありがとう！\"],[\"groongaなう #groonga\"],[\"groonga開発合宿のため羽田空港に"
+"来ました！ #groonga #travel\"]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\"groonga\",2],[\"travel\",1]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial04-3.log:64
+msgid ""
+"> select --table Site --filter \"1\" --scorer \"_score = rand()\" --"
+"output_columns _id,_key,_score --sortby _score "
+"[[0,1294292483.76306,0.00050586],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"_score\",\"Int32\"]],[3,\"http://example.com/\",35005211],"
+"[9,\"http://example.com/vdw\",278722862],[5,\"http://example.org/aba"
+"\",294702567],[1,\"http://example.org/\",304089172],[7,\"http://example.net/"
+"atv\",336465782],[4,\"http://example.net/afr\",521595368],[8,\"http://"
+"example.org/gat\",861021530],[2,\"http://example.net/\",1303455736],[6,"
+"\"http://example.com/rab\",1726956429]]]] > select --table Site --filter "
+"\"1\" --scorer \"_score = rand()\" --output_columns _id,_key,_score --sortby "
+"_score [[0,1294292483.96835,0.000502458],[[[9],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"_score\",\"Int32\"]],[1,\"http://example.org/"
+"\",233665123],[3,\"http://example.com/\",468703135],[7,\"http://example.net/"
+"atv\",635723058],[4,\"http://example.net/afr\",1101513929],[9,\"http://"
+"example.com/vdw\",1125898167],[6,\"http://example.com/rab\",1315634022],[8,"
+"\"http://example.org/gat\",1369133069],[5,\"http://example.org/aba"
+"\",1801979802],[2,\"http://example.net/\",2145174067]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial04-1.log:20
+msgid ""
+"> select --table Site --filter \"_id <= 1\" --output_columns _id,_key "
+"[[0,1294292483.15552,0.000315671],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"]],[1,\"http://example.org/\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial04-2.log:39
 msgid ""
 "> select --table Site --filter \"_id >= 4 && _id <= 6\" --output_columns _id,"
 "_key [[0,1294292483.35765,0.000332343],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
@@ -162,45 +254,186 @@ msgid ""
 "example.com/vdw\"]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:284
+#: ../internal after padding source/example/tutorial06-7.log:212
 msgid ""
-"ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
-"カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
-"ラムの値でソートさせることができます。"
+"> select --table Site --filter 'geo_in_circle(location, "
+"\"128515259x503187188\", 50000)' --output_columns _key,location,_score --"
+"sortby '-geo_distance(location, \"128515259x503187188\")' --scorer '_score = "
+"geo_distance(location, "
+"\"128515259x503187188\")' [[0,1301213651.42956,0.000757634],[[[2],[[\"_key\","
+"\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\",\"Int32\"]],"
+"[\"http://example.org/\",\"128452975x503157902\",2054],[\"http://example.net/"
+"\",\"128487316x502920929\",6720]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:228
+#: ../internal after padding source/example/tutorial05-6.log:120
 msgid ""
-"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
-"に'this'という文字列が含まれているレコードを検索する、という意味です。"
+"> select --table Site --limit 0 --drilldown country --drilldown_sortby "
+"_nsubrecs --drilldown_limit 2 --drilldown_offset 2 "
+"[[0,1294292443.94881,0.000324308],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
+"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
+"[\"country\",\"SiteCountry\"]]],[[5],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\"usa\",2],[\"china\",2]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:66
-msgid "ユーザーの現在地（緯度経度座標）"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:8
-msgid "タグ検索・参照関係の逆引き"
-msgstr ""
-
-#: ../source/tutorial/tutorial05.txt:53
+#: ../internal after padding source/example/tutorial05-5.log:107
 msgid ""
-"ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順"
-"で並び替えることができます。"
+"> select --table Site --limit 0 --drilldown country --drilldown_sortby "
+"_nsubrecs [[0,1294292443.74477,0.000352156],[[[9],[[\"_id\",\"UInt32\"],"
+"[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"],[\"location\","
+"\"WGS84GeoPoint\"],[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\","
+"\"SiteDomain\"],[\"country\",\"SiteCountry\"]]],[[5],[[\"_key\",\"ShortText"
+"\"],[\"_nsubrecs\",\"Int32\"]],[\"brazil\",1],[\"korea\",1],[\"usa\",2],"
+"[\"china\",2],[\"japan\",3]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:88
-msgid "テーブルにカラムを追加します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:100
+#: ../internal after padding source/example/tutorial05-3.log:81
 msgid ""
-"groongaのネットワークサービスにはは認証機能がありません。誰でもデータベースの"
-"内容を閲覧・修正することができます。iptablesなどを用いて、アクセス元IPアドレ"
-"スを制限することを薦めます。"
+"> select --table Site --limit 0 --drilldown domain --"
+"drilldown_output_columns _id,_key,_nsubrecs [[0,1294292443.33582,0.00027157],"
+"[[[9],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
+"\"],[\"location\",\"WGS84GeoPoint\"],[\"links\",\"Site\"],[\"link\",\"Site"
+"\"],[\"domain\",\"SiteDomain\"],[\"country\",\"SiteCountry\"]]],[[3],[[\"_id"
+"\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[1,\".org"
+"\",3],[2,\".net\",3],[3,\".com\",3]]]]"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial01-15.log:395
+#: ../internal after padding source/example/tutorial05-2.log:68
+msgid ""
+"> select --table Site --limit 0 --drilldown domain "
+"[[0,1294292443.13172,0.000424923],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
+"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
+"[\"country\",\"SiteCountry\"]]],[[3],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\".org\",3],[\".net\",3],[\".com\",3]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial05-4.log:94
+msgid ""
+"> select --table Site --limit 0 --drilldown domain,country "
+"[[0,1294292443.53984,0.000373005],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
+"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
+"[\"country\",\"SiteCountry\"]]],[[3],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\".org\",3],[\".net\",3],[\".com\",3]],[[5],[[\"_key\","
+"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"japan\",3],[\"brazil\",1],[\"usa"
+"\",2],[\"korea\",1],[\"china\",2]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-12.log:330
+msgid ""
+"> select --table Site --match_columns title --query this "
+"[[0,1294292499.15359,0.000397943],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://example.org/\",\"This "
+"is test record 1!\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-14.log:371
+msgid ""
+"> select --table Site --offset 0 --limit 3 [[0,1294292499.56296,0.00011524],"
+"[[[9],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
+"\"]],[1,\"http://example.org/\",\"This is test record 1!\"],[2,\"http://"
+"example.net/\",\"test record 2.\"],[3,\"http://example.com/\",\"test test "
+"record three.\"]]]] > select --table Site --offset 3 --limit 3 "
+"[[0,1294292499.76592,0.000110122],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[4,\"http://example.net/afr\","
+"\"test record four.\"],[5,\"http://example.org/aba\",\"test test test record "
+"five.\"],[6,\"http://example.com/rab\",\"test test test test record six."
+"\"]]]] > select --table Site --offset 7 --limit 3 "
+"[[0,1294292499.96901,0.00010214],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[8,\"http://example.org/gat\","
+"\"test test record eight.\"],[9,\"http://example.com/vdw\",\"test test "
+"record nine.\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial04-7.log:166
+msgid ""
+"> select --table Site --output_columns _key,location --filter 'geo_in_circle"
+"(location, \"128515259x503187188\", 5000)' [[0,1294292486.0507,0.000333268],"
+"[[[1],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://"
+"example.org/\",\"128452975x503157902\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-13.log:348
+msgid ""
+"> select --table Site --output_columns _key,title,_score --query title:@test "
+"[[0,1294292499.35613,0.000371444],[[[9],[[\"_key\",\"ShortText\"],[\"title\","
+"\"ShortText\"],[\"_score\",\"Int32\"]],[\"http://example.org/\",\"This is "
+"test record 1!\",1],[\"http://example.net/\",\"test record 2.\",1],[\"http://"
+"example.com/\",\"test test record three.\",2],[\"http://example.net/afr\","
+"\"test record four.\",1],[\"http://example.org/aba\",\"test test test record "
+"five.\",3],[\"http://example.com/rab\",\"test test test test record six."
+"\",4],[\"http://example.net/atv\",\"test test test record seven.\",3],"
+"[\"http://example.org/gat\",\"test test record eight.\",2],[\"http://example."
+"com/vdw\",\"test test record nine.\",2]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial04-6.log:149
+msgid ""
+"> select --table Site --query \"_id:1 OR _id:2\" --output_columns _key,"
+"location,_score --scorer '_score = geo_distance(location, "
+"\"128515259x503187188\")' --sortby -_score [[0,1294292485.84748,0.000516522],"
+"[[[2],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\","
+"\"Int32\"]],[\"http://example.net/\",\"128487316x502920929\",6720],[\"http://"
+"example.org/\",\"128452975x503157902\",2054]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial04-5.log:134
+msgid ""
+"> select --table Site --query \"_id:1 OR _id:2\" --output_columns _key,"
+"location,_score --scorer '_score = geo_distance(location, "
+"\"128515259x503187188\")' [[0,1294292485.64428,0.00042649],[[[2],[[\"_key\","
+"\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\",\"Int32\"]],"
+"[\"http://example.org/\",\"128452975x503157902\",2054],[\"http://example.net/"
+"\",\"128487316x502920929\",6720]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-10.log:293
+msgid ""
+"> select --table Site --query \"_key:\\\"http://example.org/\\"
+"\"\" [[0,1294292498.74872,0.00031979],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://example.org/\",\"This "
+"is test record 1!\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-9.log:278
+msgid ""
+"> select --table Site --query _id:1 [[0,1294292498.54636,0.000363938],[[[1],"
+"[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,"
+"\"http://example.org/\",\"This is test record 1!\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-16.log:408
+msgid ""
+"> select --table Site --query title:@test --output_columns _id,_score,title "
+"--sortby _score [[0,1294292500.37864,0.000452891],[[[9],[[\"_id\","
+"\"UInt32\"],[\"_score\",\"Int32\"],[\"title\",\"ShortText\"]],[1,1,\"This is "
+"test record 1!\"],[2,1,\"test record 2.\"],[4,1,\"test record four.\"],[3,2,"
+"\"test test record three.\"],[9,2,\"test test record nine.\"],[8,2,\"test "
+"test record eight.\"],[7,3,\"test test test record seven.\"],[5,3,\"test "
+"test test record five.\"],[6,4,\"test test test test record six.\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-17.log:421
+msgid ""
+"> select --table Site --query title:@test --output_columns _id,_score,title "
+"--sortby _score,_id [[0,1294292500.58351,0.000449563],[[[9],[[\"_id\","
+"\"UInt32\"],[\"_score\",\"Int32\"],[\"title\",\"ShortText\"]],[1,1,\"This is "
+"test record 1!\"],[2,1,\"test record 2.\"],[4,1,\"test record four.\"],[3,2,"
+"\"test test record three.\"],[8,2,\"test test record eight.\"],[9,2,\"test "
+"test record nine.\"],[5,3,\"test test test record five.\"],[7,3,\"test test "
+"test record seven.\"],[6,4,\"test test test test record six.\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-11.log:311
+msgid ""
+"> select --table Site --query title:@this [[0,1294292498.95104,0.00032904],"
+"[[[1],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
+"\"]],[1,\"http://example.org/\",\"This is test record 1!\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-15.log:395
 msgid ""
 "> select --table Site --sortby -_id [[0,1294292500.17182,0.000239255],[[[9],"
 "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[9,"
@@ -213,15 +446,171 @@ msgid ""
 "\"test record 2.\"],[1,\"http://example.org/\",\"This is test record 1!\"]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial09.txt:4
-msgid "全文検索の語彙表に対する追加情報"
+#: ../internal after padding source/example/tutorial01-3.log:136
+msgid ""
+"> select --table Site [[0,1294292494.67374,0.000159976],[[[0],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"]]]]]"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:464
-msgid "ユーザーのお気に入りコメントを検索"
+#: ../internal after padding source/example/tutorial01-8.log:260
+msgid ""
+"> select --table Site [[0,1294292498.33981,0.000163623],[[[9],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://"
+"example.org/\",\"This is test record 1!\"],[2,\"http://example.net/\",\"test "
+"record 2.\"],[3,\"http://example.com/\",\"test test record three.\"],[4,"
+"\"http://example.net/afr\",\"test record four.\"],[5,\"http://example.org/aba"
+"\",\"test test test record five.\"],[6,\"http://example.com/rab\",\"test "
+"test test test record six.\"],[7,\"http://example.net/atv\",\"test test test "
+"record seven.\"],[8,\"http://example.org/gat\",\"test test record eight.\"],"
+"[9,\"http://example.com/vdw\",\"test test record nine.\"]]]]"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial05-1.log:21
+#: ../internal after padding source/example/tutorial06-5.log:164
+msgid ""
+"> select --table User --limit 0 --drilldown friends "
+"[[0,1294292527.18622,0.000269477],[[[6],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"username\",\"ShortText\"],[\"index_friends\",\"User\"],"
+"[\"friends\",\"User\"]]],[[6],[[\"_key\",\"ShortText\"],[\"_nsubrecs\","
+"\"Int32\"]],[\"taro\",3],[\"jiro\",3],[\"tomo\",5],[\"moritapo\",2],[\"ken"
+"\",3],[\"hana\",1]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial06-4.log:148
+msgid ""
+"> select --table User --query friends:@tomo --output_columns _key,username "
+"[[0,1294292526.78097,0.000456954],[[[5],[[\"_key\",\"ShortText\"],[\"username"
+"\",\"ShortText\"]],[\"ken\",\"健作\"],[\"taro\",\"ぐるんが太郎\"],[\"jiro\","
+"\"ぐるんが次郎\"],[\"moritapo\",\"森田\"],[\"hana\",\"花子\"]]]] > select --"
+"table User --query friends:@jiro --output_columns _key,username "
+"[[0,1294292526.9838,0.000304224],[[[3],[[\"_key\",\"ShortText\"],[\"username"
+"\",\"ShortText\"]],[\"ken\",\"健作\"],[\"taro\",\"ぐるんが太郎\"],[\"hana\","
+"\"花子\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-2.log:404
+msgid ""
+"> select --table Users --filter 'geo_in_circle(location,"
+"\"128484216x502919856\",5000)' --output_columns _key,name "
+"[[0,1294292470.6155,0.000343137],[[[2],[[\"_key\",\"ShortText\"],[\"name\","
+"\"ShortText\"]],[\"tasukuchan\",\"グニャラくん\"],[\"OffGao\",\"OffGao\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-1.log:385
+msgid ""
+"> select --table Users --match_columns name,location_str,description --query "
+"東京 --output_columns _key,name [[0,1294292470.41307,0.000532663],[[[2],"
+"[[\"_key\",\"ShortText\"],[\"name\",\"ShortText\"]],[\"tasukuchan\",\"グニャ"
+"ラくん\"],[\"OffGao\",\"OffGao\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-9.log:528
+msgid ""
+"> select --table Users --query _key:tasukuchan --output_columns favorites."
+"posted_by,favorites.comment [[0,1294292472.04238,0.000320089],[[[1],"
+"[[\"favorites.posted_by\",\"Users\"],[\"favorites.comment\",\"ShortText\"]],"
+"[[\"daijiro\",\"OffGao\"],[\"マイクロブログ作ってみました（甘栗むいちゃいまし"
+"た的な感じで）。\",\"@daijiro @tasukuchan 登録してみましたよー！\"]]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-3.log:423
+msgid ""
+"> select --table Users --query follower:@tasukuchan --output_columns _key,"
+"name [[0,1294292470.81784,0.000305006],[[[2],[[\"_key\",\"ShortText\"],"
+"[\"name\",\"ShortText\"]],[\"daijiro\",\"hsiomaneki\"],[\"OffGao\",\"OffGao"
+"\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial06-2.log:79
+msgid ""
+"> select --table Video --query tags:@Variety --output_columns _key,title "
+"[[0,1294292523.28874,0.000475294],[[[2],[[\"_key\",\"UInt32\"],[\"title\","
+"\"ShortText\"]],[2,\"Zenigata Kinjirou\"],[5,\"Hex Gone!\"]]]] > select --"
+"table Video --query tags:@Sports --output_columns _key,title "
+"[[0,1294292523.49078,0.000311404],[[[2],[[\"_key\",\"UInt32\"],[\"title\","
+"\"ShortText\"]],[1,\"Soccer 2010\"],[4,\"Moero!! Ultra Baseball\"]]]] > "
+"select --table Video --query tags:@Animation --output_columns _key,title "
+"[[0,1294292523.69268,0.000299391],[[[3],[[\"_key\",\"UInt32\"],[\"title\","
+"\"ShortText\"]],[6,\"Pikonyan 1\"],[7,\"Draw 8 Month\"],[8,\"K.O.\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial10-10.log:546
+msgid ""
+"> select Comments --filter 'last_modified<=1268802000' --output_columns "
+"posted_by.name,comment,last_modified --drilldown hash_tags,posted_by "
+"[[0,1294292472.24623,0.000634424],[[[5],[[\"posted_by.name\",\"ShortText\"],"
+"[\"comment\",\"ShortText\"],[\"last_modified\",\"Time\"]],[\"hsiomaneki\","
+"\"マイクロブログ作ってみました（甘栗むいちゃいました的な感じ"
+"で）。\",1268795100.0],[\"グニャラくん\",\"初の書き込み。テストテス"
+"ト。\",1268794800.0],[\"hsiomaneki\",\"@tasukuchan ようこそ!!!"
+"\",1268795100.0],[\"グニャラくん\",\"@daijiro ありがとう！\",1268798400.0],"
+"[\"グニャラくん\",\"groongaなう #groonga\",1268802000.0]],[[1],[[\"_key\","
+"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga\",1]],[[2],[[\"_key\","
+"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"daijiro\",2],[\"tasukuchan"
+"\",3]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial07-1.log:30
+msgid ""
+"> table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1294292405.5139,0.046640501],true] > column_create --table Blog1 --name "
+"title --flags COLUMN_SCALAR --type ShortText "
+"[[0,1294292405.76135,0.05035077],true] > column_create --table Blog1 --name "
+"message --flags COLUMN_SCALAR --type ShortText "
+"[[0,1294292406.01251,0.049535938],true] > table_create --name IndexBlog1 --"
+"flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer "
+"TokenBigram [[0,1294292406.2629,0.040450231],true] > column_create --table "
+"IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type "
+"Blog1 --source title [[0,1294292406.50413,0.089260402],true] > column_create "
+"--table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --"
+"type Blog1 --source message [[0,1294292406.7942,0.116405104],true] > load --"
+"table Blog1 > [ > {\"_key\":\"grn1\",\"title\":\"groonga test\",\"message\":"
+"\"groonga message\"}, > {\"_key\":\"grn2\",\"title\":\"baseball result\","
+"\"message\":\"rakutan eggs 4 - 4 groonga moritars\"}, > {\"_key\":\"grn3\","
+"\"title\":\"groonga message\",\"message\":\"none\"} > ] "
+"[[0,1294292407.11144,1.001433691],3]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial07-3.log:98
+msgid ""
+"> table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1294292408.92333,0.107518903],true] > column_create --table Blog2 --name "
+"title --flags COLUMN_SCALAR --type ShortText "
+"[[0,1294292409.23168,0.050369538],true] > column_create --table Blog2 --name "
+"message --flags COLUMN_SCALAR --type ShortText "
+"[[0,1294292409.48288,0.049530167],true] > table_create --name IndexBlog2 --"
+"flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer "
+"TokenBigram [[0,1294292409.73325,0.04885075],true] > column_create --table "
+"IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION "
+"--type Blog2 --source title,message [[0,1294292409.98288,0.105489516],true] "
+"> load --table Blog2 > [ > {\"_key\":\"grn1\",\"title\":\"groonga test\","
+"\"message\":\"groonga message\"}, > {\"_key\":\"grn2\",\"title\":\"baseball "
+"result\",\"message\":\"rakutan eggs 4 - 4 groonga moritars\"}, > {\"_key\":"
+"\"grn3\",\"title\":\"groonga message\",\"message\":\"none\"} > ] "
+"[[0,1294292410.28918,1.001414874],3]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial06-6.log:182
+msgid ""
+"> table_create --name GeoIndex --flags TABLE_HASH_KEY --key_type "
+"WGS84GeoPoint [[0,1295945106.95941,0.042948258],true] > column_create --"
+"table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source "
+"location [[0,1295945107.20325,0.090239769],true] > load --table Site > [ >  "
+"{\"_key\":\"http://example.org/\",\"location\":\"128452975x503157902\"} >  "
+"{\"_key\":\"http://example.net/\",\"location\":\"128487316x502920929\"}, > ] "
+"[[0,1295945107.49464,0.801677814],2] > select --table Site --filter "
+"'geo_in_circle(location, \"128515259x503187188\", 5000)' --output_columns "
+"_key,location [[0,1295945108.49712,0.000941181],[[[1],[[\"_key\",\"ShortText"
+"\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://example.org/\","
+"\"128452975x503157902\"]]]]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial01-2.log:120
+msgid ""
+"> table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1294292494.39228,0.080407899],true]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial05-1.log:21
 msgid ""
 "> table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText "
 "[[0,1294292439.68952,0.086450272],true] > table_create --name SiteCountry --"
@@ -243,10 +632,158 @@ msgid ""
 "[[0,1294292440.72776,2.203006717],9]"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:72
+#: ../internal after padding source/example/tutorial01-5.log:183
 msgid ""
-"書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合"
-"は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
+"> table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type "
+"ShortText --default_tokenizer TokenBigram [[0,1294292495.351,0.064287537],"
+"true]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial03-1.log:25
+msgid ""
+"> table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1294292421.12314,0.058638912],true] > column_create --table Type --name "
+"number --type Int32 [[0,1294292421.38263,0.049456503],true] > column_create "
+"--table Type --name float --type Float [[0,1294292421.63286,0.049592924],"
+"true] > column_create --table Type --name string --type ShortText > "
+"column_create --table Type --name time --type Time > load --table Type > "
+"[{\"_key\":\"sample\",\"number\":12345,\"float\":42.195,\"string\":\"GROONGA"
+"\",\"time\":1234567890.12}] > select --table Type"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial06-3.log:107
+msgid ""
+"> table_create --name User --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1294292523.89479,0.074787397],true] > column_create --table User --name "
+"username --flags COLUMN_SCALAR --type ShortText "
+"[[0,1294292524.1704,0.050363618],true] > column_create --table User --name "
+"friends --flags COLUMN_VECTOR --type User [[0,1294292524.42158,0.049597919],"
+"true] > column_create --table User --name index_friends --flags COLUMN_INDEX "
+"--type User --source friends [[0,1294292524.67201,0.104947934],true] > load "
+"--table User > [ > {\"_key\":\"ken\",\"username\":\"健作\",\"friends\":"
+"[\"taro\",\"jiro\",\"tomo\",\"moritapo\"]} > {\"_key\":\"moritapo\","
+"\"username\":\"森田\",\"friends\":[\"ken\",\"tomo\"]} > {\"_key\":\"taro\","
+"\"username\":\"ぐるんが太郎\",\"friends\":[\"jiro\",\"tomo\"]} > {\"_key\":"
+"\"jiro\",\"username\":\"ぐるんが次郎\",\"friends\":[\"taro\",\"tomo\"]} > "
+"{\"_key\":\"tomo\",\"username\":\"トモちゃん\",\"friends\":[\"ken\",\"hana"
+"\"]} > {\"_key\":\"hana\",\"username\":\"花子\",\"friends\":[\"ken\",\"taro"
+"\",\"jiro\",\"moritapo\",\"tomo\"]} > ] [[0,1294292524.97774,1.60223701],6]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial06-1.log:29
+msgid ""
+"> table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32 "
+"[[0,1294292519.76797,0.049499306],true] > table_create --name Tag --flags "
+"TABLE_HASH_KEY --key_type ShortText [[0,1294292520.01828,0.057850258],true] "
+"> column_create --table Video --name title --flags COLUMN_SCALAR --type "
+"ShortText [[0,1294292520.27693,0.050379447],true] > column_create --table "
+"Video --name tags --flags COLUMN_VECTOR --type Tag "
+"[[0,1294292520.52812,0.049635833],true] > column_create --table Tag --name "
+"index_tags --flags COLUMN_INDEX --type Video --source tags "
+"[[0,1294292520.77859,0.105692363],true] > load --table Video > [ > {\"_key"
+"\":1,\"title\":\"Soccer 2010\",\"tags\":[\"Sports\",\"Soccer\"]}, > {\"_key"
+"\":2,\"title\":\"Zenigata Kinjirou\",\"tags\":[\"Variety\",\"Money\"]}, > "
+"{\"_key\":3,\"title\":\"groonga Demo\",\"tags\":[\"IT\",\"Server\",\"groonga"
+"\"]}, > {\"_key\":4,\"title\":\"Moero!! Ultra Baseball\",\"tags\":[\"Sports"
+"\",\"Baseball\"]}, > {\"_key\":5,\"title\":\"Hex Gone!\",\"tags\":[\"Variety"
+"\",\"Quiz\"]}, > {\"_key\":6,\"title\":\"Pikonyan 1\",\"tags\":[\"Animation"
+"\",\"Pikonyan\"]}, > {\"_key\":7,\"title\":\"Draw 8 Month\",\"tags\":"
+"[\"Animation\",\"Raccoon\"]}, > {\"_key\":8,\"title\":\"K.O.\",\"tags\":"
+"[\"Animation\",\"Music\"]} > ] [[0,1294292521.0851,2.002679112],8]"
+msgstr ""
+
+#: ../internal after padding source/example/tutorial02-3.log:109
+msgid ""
+"http://[IPまたはホスト名]:[ポート番号]/d/status 実行される処理： > status "
+"[[0,1294292493.37913,2.8547e-05],{\"alloc_count\":466,\"starttime"
+"\":1294292404,\"uptime\":89,\"version\":\"1.0.6-10-gba9df76\",\"n_queries"
+"\":105,\"cache_hit_rate\":0.0,\"command_version\":1,\"default_command_version"
+"\":1,\"max_command_version\":2}]  http://[IPまたはホスト名]:[ポート番号]/d/"
+"select?table=Site&query=title:@this 実行される処理： > select --table Site --"
+"query title:@this [[0,1294292493.58185,6.4853e-05],[[[1],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://"
+"example.org/\",\"This is test record 1!\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial01-1.log:1 ../source/example/tutorial01-10.log:1
+#: ../source/example/tutorial01-11.log:1 ../source/example/tutorial01-12.log:1
+#: ../source/example/tutorial01-13.log:1 ../source/example/tutorial01-14.log:1
+#: ../source/example/tutorial01-15.log:1 ../source/example/tutorial01-16.log:1
+#: ../source/example/tutorial01-17.log:1 ../source/example/tutorial01-2.log:1
+#: ../source/example/tutorial01-3.log:1 ../source/example/tutorial01-4.log:1
+#: ../source/example/tutorial01-5.log:1 ../source/example/tutorial01-6.log:1
+#: ../source/example/tutorial01-7.log:1 ../source/example/tutorial01-8.log:1
+#: ../source/example/tutorial01-9.log:1 ../source/example/tutorial02-1.log:1
+#: ../source/example/tutorial02-2.log:1 ../source/example/tutorial02-3.log:1
+#: ../source/example/tutorial03-1.log:1 ../source/example/tutorial03-2.log:1
+#: ../source/example/tutorial03-3.log:1 ../source/example/tutorial04-1.log:1
+#: ../source/example/tutorial04-2.log:1 ../source/example/tutorial04-3.log:1
+#: ../source/example/tutorial04-4.log:1 ../source/example/tutorial04-5.log:1
+#: ../source/example/tutorial04-6.log:1 ../source/example/tutorial04-7.log:1
+#: ../source/example/tutorial05-1.log:1 ../source/example/tutorial05-2.log:1
+#: ../source/example/tutorial05-3.log:1 ../source/example/tutorial05-4.log:1
+#: ../source/example/tutorial05-5.log:1 ../source/example/tutorial05-6.log:1
+#: ../source/example/tutorial06-1.log:1 ../source/example/tutorial06-2.log:1
+#: ../source/example/tutorial06-3.log:1 ../source/example/tutorial06-4.log:1
+#: ../source/example/tutorial06-5.log:1 ../source/example/tutorial06-6.log:1
+#: ../source/example/tutorial06-7.log:1 ../source/example/tutorial07-1.log:1
+#: ../source/example/tutorial07-2.log:1 ../source/example/tutorial07-3.log:1
+#: ../source/example/tutorial07-4.log:1 ../source/example/tutorial08-1.log:1
+#: ../source/example/tutorial10-1.log:1 ../source/example/tutorial10-10.log:1
+#: ../source/example/tutorial10-2.log:1 ../source/example/tutorial10-3.log:1
+#: ../source/example/tutorial10-4.log:1 ../source/example/tutorial10-5.log:1
+#: ../source/example/tutorial10-6.log:1 ../source/example/tutorial10-7.log:1
+#: ../source/example/tutorial10-8.log:1 ../source/example/tutorial10-9.log:1
+msgid "実行例 ::"
+msgstr ""
+
+#: ../source/tutorial.txt:4
+msgid "チュートリアル"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:8
+msgid "基本的な操作"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:10
+msgid ""
+"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
+"する方法があります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:12
+msgid ""
+"本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:14
+msgid ""
+"groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続など"
+"の操作が行えます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:17
+msgid "DBの作成"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:19
+msgid ""
+"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
+"す。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:21 ../source/tutorial/tutorial01.txt:40
+#: ../source/tutorial/tutorial02.txt:16 ../source/tutorial/tutorial02.txt:35
+#: ../source/tutorial/tutorial02.txt:68
+msgid "書式 ::"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:23
+msgid "groonga -n データベースパス名"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:25
+msgid "-nオプションは、データベースを作ることを示します。"
 msgstr ""
 
 #: ../source/tutorial/tutorial01.txt:27
@@ -254,52 +791,27 @@ msgid ""
 "データベースパス名には、新しく作成するデータベースのフルパス名を指定します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial04.txt:103
+#: ../source/tutorial/tutorial01.txt:29
 msgid ""
-"filterパラメータにおいて、 :doc:`../functions/geo_in_circle` 関数を用いること"
-"により、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
+"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
+"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
+"ら抜けることができます。"
 msgstr ""
 
-#: ../source/tutorial/tutorial02.txt:88
-msgid "groonga [-p ポート番号] -d --protocol http DBパス名"
+#: ../source/tutorial/tutorial01.txt:31 ../source/tutorial/tutorial02.txt:24
+msgid "実行例::"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial07-2.log:73
-msgid ""
-"> select --table Blog1 --match_columns title||message --query groonga "
-"[[0,1294292408.31388,0.000823528],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
-"\"grn1\",\"groonga test\",\"groonga message\"],[3,\"grn3\",\"groonga message"
-"\",\"none\"],[2,\"grn2\",\"baseball result\",\"rakutan eggs 4 - 4 groonga "
-"moritars\"]]]] > select --table Blog1 --match_columns title||message --query "
-"message [[0,1294292408.5178,0.000566064],[[[2],[[\"_id\",\"UInt32\"],[\"_key"
-"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
-"\"grn3\",\"groonga message\",\"none\"],[1,\"grn1\",\"groonga test\","
-"\"groonga message\"]]]] > select --table Blog1 --match_columns title --query "
-"message [[0,1294292408.72074,0.0004798],[[[1],[[\"_id\",\"UInt32\"],[\"_key"
-"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
-"\"grn3\",\"groonga message\",\"none\"]]]]"
+#: ../source/tutorial/tutorial01.txt:33
+msgid "% groonga -n /tmp/tutorial.db > ctrl-d %"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial10-8.log:511
-msgid ""
-"> select --table Comments --query posted_by:tasukuchan --output_columns "
-"comment --drilldown hash_tags [[0,1294292471.83804,0.000471649],[[[4],"
-"[[\"comment\",\"ShortText\"]],[\"初の書き込み。テストテスト。\"],[\"@daijiro "
-"ありがとう！\"],[\"groongaなう #groonga\"],[\"groonga開発合宿のため羽田空港に"
-"来ました！ #groonga #travel\"]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
-"\",\"Int32\"]],[\"groonga\",2],[\"travel\",1]]]]"
+#: ../source/tutorial/tutorial01.txt:38
+msgid "DBの操作"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial05-5.log:107
-msgid ""
-"> select --table Site --limit 0 --drilldown country --drilldown_sortby "
-"_nsubrecs [[0,1294292443.74477,0.000352156],[[[9],[[\"_id\",\"UInt32\"],"
-"[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"],[\"location\","
-"\"WGS84GeoPoint\"],[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\","
-"\"SiteDomain\"],[\"country\",\"SiteCountry\"]]],[[5],[[\"_key\",\"ShortText"
-"\"],[\"_nsubrecs\",\"Int32\"]],[\"brazil\",1],[\"korea\",1],[\"usa\",2],"
-"[\"china\",2],[\"japan\",3]]]]"
+#: ../source/tutorial/tutorial01.txt:42
+msgid "groonga DBパス名 [コマンド]"
 msgstr ""
 
 #: ../source/tutorial/tutorial01.txt:44
@@ -308,54 +820,17 @@ msgid ""
 "実行結果を返します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:389
+#: ../source/tutorial/tutorial01.txt:47
 msgid ""
-"ここでは、 :doc:`tutorial04` で扱った、GeoPoint型のカラムで検索をします。 以"
-"下の例では、指定された位置から5000m以内にいるユーザーを検索しています。"
+"コマンドを指定しない場合には、対話モードに入ります。 対話モードでは、標準入力"
+"からコマンドを読み込み、順次実行します。 本チュートリアルでは、対話モードを主"
+"に使用します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:84
-msgid "コメントID"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:56
-msgid "参照関係の逆引き"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:471
-msgid "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:12
+#: ../source/tutorial/tutorial01.txt:51
 msgid ""
-"本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:207
-msgid ""
-"queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
-"う値が入っているレコードを検索する、という意味です。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial04-5.log:134
-msgid ""
-"> select --table Site --query \"_id:1 OR _id:2\" --output_columns _key,"
-"location,_score --scorer '_score = geo_distance(location, "
-"\"128515259x503187188\")' [[0,1294292485.64428,0.00042649],[[[2],[[\"_key\","
-"\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\",\"Int32\"]],"
-"[\"http://example.org/\",\"128452975x503157902\",2054],[\"http://example.net/"
-"\",\"128487316x502920929\",6720]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:465
-msgid "あるユーザーがお気に入りに入れているコメントを検索します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:292
-msgid ""
-"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
-"パラメータを利用することをができます。通常のカラムでの絞り込みには利用できま"
-"せん。"
+"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
+"の実行状態を返すコマンドです。"
 msgstr ""
 
 #: ../source/tutorial/tutorial01.txt:58
@@ -365,75 +840,415 @@ msgid ""
 "目の様子に、コマンドの実行結果が入ります。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial10-3.log:423
+#: ../source/tutorial/tutorial01.txt:61
+msgid "コマンド"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:63
 msgid ""
-"> select --table Users --query follower:@tasukuchan --output_columns _key,"
-"name [[0,1294292470.81784,0.000305006],[[[2],[[\"_key\",\"ShortText\"],"
-"[\"name\",\"ShortText\"]],[\"daijiro\",\"hsiomaneki\"],[\"OffGao\",\"OffGao"
-"\"]]]]"
+"groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
+"することができます。 コマンドは以下の書式のうちいずれかで与えることができま"
+"す。 ::"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:70
+msgid "書式1と2は混ぜて使うことができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:72
+msgid ""
+"書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合"
+"は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:74
+msgid ""
+"書式1: コマンド名 引数1 引数2 ..  書式2: コマンド名 --引数名1 値1 --引数名2 "
+"値2 .."
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:74
+msgid "詳しくは、 :ref:`execfile` のコマンドの項を参考にしてください。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:77
+msgid "主なコマンド"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:80
+msgid "groongaプロセスの状態を表示します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:82
+msgid "DBに定義されているテーブルのリストを表示します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:84
+msgid "テーブルに定義されているカラムのリストを表示します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:86
+msgid "DBにテーブルを追加します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:88
+msgid "テーブルにカラムを追加します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:90
+msgid "テーブルに含まれるレコードを検索して表示します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:92
+msgid "テーブルにレコードを挿入します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:95 ../source/tutorial/tutorial10.txt:15
+msgid "テーブルの作成"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:97
+msgid ":ref:`table_create` コマンドを使用してテーブルを作成します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:99
+msgid ""
+"groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主"
+"キーには型と、その格納方法を指定する必要があります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:101
+msgid ""
+"型については、のちのチュートリアルで触れます。データの種類をあらわしているも"
+"の、とイメージしてください。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:103
+msgid ""
+"主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まりま"
+"す。これも、のちのチュートリアルで触れます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:105
+msgid ""
+"ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'と"
+"いう名前のテーブルを作成します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:112 ../source/tutorial/tutorial10.txt:371
+msgid "検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:114
+msgid ""
+":ref:`select` コマンドを用いて、テーブルの中身を表示することができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:120
+msgid ""
+"selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は"
+"検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'とい"
+"う名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名"
+"前のカラムを示しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:122
+msgid ""
+"table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つの"
+"カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
+"す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
+"きません。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:125
+msgid "カラムの作成"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:127
+msgid ":ref:`column_create` コマンドを用いて、カラムを作成することができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:129
+msgid ""
+"ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しま"
+"しょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:136
+msgid "COLUMN_SCALARについては、通常のカラムであることを示しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:139
+msgid "全文検索用の語彙表の作成"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:141
+msgid ""
+"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:143
+msgid ""
+"全文検索を行う場合は、まず語彙表を作成する必要があります。 語彙表とは、文書の"
+"中にある単語が主キーとなるテーブルです。 ここでは、ShortText型の主キー値を持"
+"つ、'Terms'という名前のテーブルを作成しました。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:151
+msgid ""
+"この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
+"れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
+"してもらってかまいません。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:153
+msgid ""
+"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
+"格納し、各語彙を正規化して登録することを示しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:155
+msgid ""
+"実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の"
+"文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例で"
+"はTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデッ"
+"クス方式を選択しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:158
+msgid "全文検索用のインデックスカラムの作成"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:160
+msgid ""
+"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
+"語彙表にインデックス型のカラムを作成します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:166
+msgid ""
+"Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
+"ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
+"に、インデックス対象となるカラムをsourceに指定します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:168
+msgid ""
+"実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納する"
+"インデックス型のカラムであることを示しています。通常の全文検索インデックスで"
+"は、COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意"
+"味については、本チュートリアルでは触れません。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:171 ../source/tutorial/tutorial10.txt:139
+msgid "データのロード"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:173
+msgid ""
+":ref:`load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータを"
+"テーブルに格納します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:190
+msgid "selectコマンドで、データが入っていることを確認しましょう。"
 msgstr ""
 
 #: ../source/tutorial/tutorial01.txt:197
 msgid "データの検索"
 msgstr ""
 
-#: ../source/tutorial/tutorial06.txt:60
+#: ../source/tutorial/tutorial01.txt:199
 msgid ""
-"例えば、ソーシャルネットワーキングサイトにおける友人関係を逆引き検索すること"
-"ができます。"
+"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
+"れを用いて検索してみましょう。"
 msgstr ""
 
-#: ../source/tutorial/tutorial03.txt:72
+#: ../source/tutorial/tutorial01.txt:201
 msgid ""
-"このように、複数の参照関係が保存できました。また、output_columnsによって、複"
-"数の参照先のカラム値も表示させることができました。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:60
-msgid ""
-"を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:108
-msgid ""
-"Usersテーブルのfavoritesカラムに対するインデックス。 このインデックスを作るこ"
-"とで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになり"
+"selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
 "ます。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial06-6.log:182
+#: ../source/tutorial/tutorial01.txt:207
 msgid ""
-"> table_create --name GeoIndex --flags TABLE_HASH_KEY --key_type "
-"WGS84GeoPoint [[0,1295945106.95941,0.042948258],true] > column_create --"
-"table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source "
-"location [[0,1295945107.20325,0.090239769],true] > load --table Site > [ >  "
-"{\"_key\":\"http://example.org/\",\"location\":\"128452975x503157902\"} >  "
-"{\"_key\":\"http://example.net/\",\"location\":\"128487316x502920929\"}, > ] "
-"[[0,1295945107.49464,0.801677814],2] > select --table Site --filter "
-"'geo_in_circle(location, \"128515259x503187188\", 5000)' --output_columns "
-"_key,location [[0,1295945108.49712,0.000941181],[[[1],[[\"_key\",\"ShortText"
-"\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://example.org/\","
-"\"128452975x503157902\"]]]]"
+"queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
+"う値が入っているレコードを検索する、という意味です。"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:31 ../source/tutorial/tutorial02.txt:24
-msgid "実行例::"
+#: ../source/tutorial/tutorial01.txt:209
+msgid "_keyでも検索してみましょう。"
 msgstr ""
 
-#: ../source/tutorial/tutorial04.txt:93
+#: ../source/tutorial/tutorial01.txt:215
 msgid ""
-"この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
-"ようです。"
+"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
+"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
+"コードを検索する、という意味です。"
 msgstr ""
 
-#: ../source/tutorial/tutorial06.txt:87
+#: ../source/tutorial/tutorial01.txt:218
+msgid "全文検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:220
+msgid "queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:226
 msgid ""
-"さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみま"
-"しょう。"
+"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:63
-msgid "お気に入りのコメント一覧"
+#: ../source/tutorial/tutorial01.txt:228
+msgid ""
+"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
+"に'this'という文字列が含まれているレコードを検索する、という意味です。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:230
+msgid ""
+"selectコマンドには、match_columnsというパラメータが存在します。これを指定する"
+"と、query内にカラム名を指定しない条件があった場合、match_columnsで指定された"
+"カラムに対しての検索であることを示します。[1]_"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:232
+msgid ""
+"match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
+"ると、上記のクエリと同じ結果を得ることができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:239
+msgid "出力カラムの指定"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:241
+msgid ""
+"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
+"示するカラムを指定することが出来ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:243
+msgid "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:249
+msgid ""
+"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
+"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:253
+msgid "表示範囲指定"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:255
+msgid ""
+"selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
+"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
+"ページ分のみを表示したい場合に有効です。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:257
+msgid ""
+"offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
+"には、0を指定します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:259
+msgid "limitパラメータには、検索結果を何件表示するのかを指定します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:268
+msgid "並び替え"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:270
+msgid ""
+"selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
+"ことが出来ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:272
+msgid ""
+"sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
+"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
+"来ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:278
+msgid ""
+"出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
+"できます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:284
+msgid ""
+"ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
+"カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
+"ラムの値でソートさせることができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:291
+msgid "脚注"
+msgstr ""
+
+#: ../source/tutorial/tutorial01.txt:292
+msgid ""
+"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
+"パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
+"ん。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:6
+msgid "ネットワークを通じた利用"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:8
+msgid ""
+"groongaはネットワークを通じて利用することができます。groonga独自プロトコルも"
+"しくはHTTPのどちらかを選択してgroongaを起動することにより、groongaはネット"
+"ワーク接続を待ち受けます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:11
+msgid "groonga専用プロトコルによる通信"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:14
+msgid "groongaデーモンの起動"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:18
+msgid "groonga [-p ポート番号] -d DBパス名"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:20
+msgid ""
+"既存のデータベースのフルパス名をDBパス名に指定します。 groongaがデーモンモー"
+"ドで起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすること"
+"ができます。 (ポート番号を省略した場合は10041が使用されます)"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:26
+msgid "% groonga -d /tmp/tutorial.db 12345 %"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:30
+msgid "デーモンモードで起動後、プロセス番号が表示されます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:33
+msgid "groongaサーバへの接続"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:37
+msgid "groonga [-p ポート番号] -c [対象ホスト名またはIPアドレス]"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:39
+msgid "対象ホストで動作しているgroongaサーバに接続します。"
 msgstr ""
 
 #: ../source/tutorial/tutorial02.txt:41
@@ -442,24 +1257,369 @@ msgid ""
 "場合は10041ポートに対して接続します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:51
+#: ../source/tutorial/tutorial02.txt:43
 msgid ""
-"ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を"
-"格納するためのテーブルです。"
+"接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行し"
+"ます。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial10-5.log:459
+#: ../source/tutorial/tutorial02.txt:53
+msgid "groongaデーモンの終了"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:55
 msgid ""
-"> select --table Comments --query comment:@なう --output_columns comment,"
-"_score [[0,1294292471.22683,0.000339904],[[[2],[[\"comment\",\"ShortText\"],"
-"[\"_score\",\"Int32\"]],[\"groongaなう #groonga\",1],[\"中野ブロードウェイな"
-"うなう\",2]]]]"
+"groongaデーモンにshutdownコマンドを発行することにより、終了させることができま"
+"す。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:64
+msgid "HTTPによる通信"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:66
+msgid ""
+"groongaをHTTP経由で利用したい場合には、HTTPプロトコルモードで起動します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:72
+msgid ""
+"protocolオプションで、groongaが受け付けるプロトコルを指定できます。httpを指定"
+"すると、groongaはHTTPプロトコルでの通信を受け付けます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:75
+msgid "HTML管理ツール"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:77
+msgid ""
+"コマンド実行後、http://[IPアドレスまたはホスト名]:[ポート番号]/ というURLにブ"
+"ラウザからアクセスすると、HTML管理ツールが表示されます。ブラウザは、"
+"JavaScriptの実行が有効になっている必要があります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:80
+msgid "HTTPでのコマンド実行"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:82
+msgid ""
+"groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
+"にアクセスすると、コマンドを実行することが出来ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:84
+msgid ""
+"コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
+"値&オプション=値 …」という書式になります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:88
+msgid "groonga [-p ポート番号] -d --protocol http DBパス名"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:98
+msgid "セキュリティ"
+msgstr ""
+
+#: ../source/tutorial/tutorial02.txt:100
+msgid ""
+"groongaのネットワークサービスにはは認証機能がありません。誰でもデータベースの"
+"内容を閲覧・修正することができます。iptablesなどを用いて、アクセス元IPアドレ"
+"スを制限することを薦めます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:6
+msgid "さまざまな種類をもったデータの保存"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:8
+msgid "groongaでは、さまざまなデータを格納させることが出来ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:11
+msgid "データ型"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:13
+msgid ""
+"groongaでは、数値（整数・小数）や文字列や時刻や経緯度などの情報を格納すること"
+"ができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:15
+msgid ""
+"ここでは、Int32型のカラムに整数を格納、Float型のカラムに浮動小数点の小数を、"
+"ShortText型のカラムに文字列を、Time型のカラムに時間を格納する例を示します。経"
+"緯度の格納については、のちのチュートリアルで触れます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:17
+msgid "その他のデータ型の一覧は、 :doc:`../type` を参照してください。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:33
+msgid "テーブル型"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:35
+msgid "table_createで作成したテーブルを、カラムの型として使うことが出来ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:37
+msgid ""
+"また、output_columnsにおいて「.」を区切りとして、参照先のテーブルに存在するカ"
+"ラムを指定すると、指定したカラムの値を表示することができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:39
+msgid ""
+"ここでは、先のチュートリアルで作成したSiteテーブルに手を加え、どのサイトをリ"
+"ンクしているのかを保存してみましょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:41
+msgid ""
+"他のテーブルを参照するカラムにデータを入力する場合には、参照先のテーブルの"
+"_keyカラムの値を代入する必要があります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:50
+msgid ""
+"このように、linkカラムに他のサイトへの参照を保存することができました。また、"
+"参照先の_keyとtitleカラムの内容を表示することができました。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:53
+msgid "ベクターカラム"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:55
+msgid ""
+"column_createコマンドでカラムを作成するとき、--flagsオプションでCOLUMN_VECTOR"
+"フラグを指定すると、複数の値を配列で格納できるカラムが作成されます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:57
+msgid "テーブル型で配列を格納するカラムは、1対多の参照関係を表すのに有効です。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:59
+msgid ""
+"テーブル型のチュートリアルでは、Siteテーブルに手を加え、どのサイトをリンクし"
+"ているのかを保存しました。しかし、通常は1つのサイトから多くのサイトにリンクが"
+"張られています。複数のリンク情報を格納するために、複数の参照関係を保存するカ"
+"ラムを作成してみましょう。"
 msgstr ""
 
 #: ../source/tutorial/tutorial03.txt:61
 msgid ""
 "他のテーブルを参照するベクターカラムにデータを入力する場合には、参照先のテー"
 "ブルの_keyカラムの値の「配列」を代入する必要があります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial03.txt:72
+msgid ""
+"このように、複数の参照関係が保存できました。また、output_columnsによって、複"
+"数の参照先のカラム値も表示させることができました。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:6
+msgid "さまざまな検索条件の指定"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:8
+msgid ""
+"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
+"ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
+"きます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:11
+msgid "JavaScriptに似た文法での絞込・全文検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:13
+msgid ""
+"selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条"
+"件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメー"
+"タには、JavaScriptの式に似た文法で条件を指定する点です。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:19
+msgid "ここで、filterパラメータには"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:21
+msgid "_id <= 1"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:23
+msgid ""
+"という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
+"て得られます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:25
+msgid "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:32
+msgid ""
+"queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
+"レコードが結果として返ります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:35
+msgid "scorerを利用したソート"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:37
+msgid ""
+"selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
+"処理を行うためのパラメータです。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:40
+msgid ""
+"filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
+"とができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:48
+msgid ""
+"検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
+"カラムが付与されることをチュートリアル中ソートの項目で説明しました。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:50
+msgid "上記の実行例では、scorerパラメータに"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:52
+msgid "_score = rand()"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:54
+msgid ""
+"という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
+"文検索のスコアを乱数で上書きしています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:56
+msgid "sortbyパラメータには、"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:58
+msgid "_score"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:60
+msgid ""
+"を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:62
+msgid ""
+"よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
+"す。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:65
+msgid "位置情報を用いた絞込・ソート"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:67
+msgid ""
+"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
+"を用いて絞込やソートができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:69
+msgid ""
+"位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの"
+"型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存しま"
+"す。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:71
+msgid ""
+"経緯度をデータを入力するためには、\"緯度のミリ秒x経度のミリ秒\"という形式の文"
+"字列を代入する必要があります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:73
+msgid ""
+"ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみ"
+"ましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅"
+"は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列"
+"はそれぞれ\"128452975x503157902\"/\"128487316x502920929\"となります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:85
+msgid ""
+"scorerパラメータにおいて、 :doc:`../functions/geo_distance` 関数を用いること"
+"により、２点間の距離を計算することができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:87
+msgid ""
+"ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅"
+"の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、"
+"geo_distance関数に与える文字列は\"128515259x503187188\"となります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:93
+msgid ""
+"この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
+"ようです。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:95
+msgid "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:101
+msgid "「ある地点から何m以内に存在する」といった絞込も可能です。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:103
+msgid ""
+"filterパラメータにおいて、 :doc:`../functions/geo_in_circle` 関数を用いること"
+"により、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:105
+msgid "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial04.txt:111
+msgid ""
+"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
+"geo_in_rectangle` 関数も存在します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial05.txt:10
+msgid "ドリルダウン"
+msgstr ""
+
+#: ../source/tutorial/tutorial05.txt:12
+msgid ""
+"groongaでは、特定のカラム値で検索結果をグループ化することができます。これをド"
+"リルダウンと呼びます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial05.txt:14
+msgid ""
+"Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラム"
+"と、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名"
+"を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountryテーブルとし"
+"ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial05.txt:35
+msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
 msgstr ""
 
 #: ../source/tutorial/tutorial05.txt:41
@@ -470,24 +1630,6 @@ msgid ""
 "レコード数が入ります。"
 msgstr ""
 
-#: ../source/tutorial/tutorial07.txt:51
-msgid "複数のカラムにまたがったインデックスを付与する場合"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:11
-msgid "groonga専用プロトコルによる通信"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:278
-msgid ""
-"出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
-"できます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:114
-msgid "コメントのハッシュタグを一覧で保存するためのテーブルです。"
-msgstr ""
-
 #: ../source/tutorial/tutorial05.txt:47
 msgid ""
 "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対してド"
@@ -495,52 +1637,437 @@ msgid ""
 "す。"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:90
-msgid "テーブルに含まれるレコードを検索して表示します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:199
+#: ../source/tutorial/tutorial05.txt:53
 msgid ""
-"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
-"れを用いて検索してみましょう。"
+"ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順"
+"で並び替えることができます。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:434
+#: ../source/tutorial/tutorial05.txt:59
 msgid ""
-"今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filter"
-"の両方を使用した場合、両方の条件に一致するレコードがヒットします。"
+"ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラ"
+"メータと、drilldown_limitパラメータによって、offsetとlimitを指定することがで"
+"きます。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial07-4.log:136
+#: ../source/tutorial/tutorial05.txt:65
 msgid ""
-"> select --table Blog2 --match_columns title||message --query groonga "
-"[[0,1294292411.49151,0.000575701],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
-"\"grn1\",\"groonga test\",\"groonga message\"],[2,\"grn2\",\"baseball result"
-"\",\"rakutan eggs 4 - 4 groonga moritars\"],[3,\"grn3\",\"groonga message\","
-"\"none\"]]]] > select --table Blog2 --match_columns title||message --query "
-"message [[0,1294292411.69532,0.000523916],[[[2],[[\"_id\",\"UInt32\"],[\"_key"
-"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
-"\"grn1\",\"groonga test\",\"groonga message\"],[3,\"grn3\",\"groonga message"
-"\",\"none\"]]]] > select --table Blog2 --match_columns title --query message "
-"[[0,1294292411.89825,0.000508446],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
-"\"grn3\",\"groonga message\",\"none\"]]]]"
+"文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速で"
+"す。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文"
+"字列型を主キーとするテーブルを別途作成し、そのテーブルを型とするカラムを作成"
+"します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial03.txt:53
-msgid "ベクターカラム"
+#: ../source/tutorial/tutorial06.txt:8
+msgid "タグ検索・参照関係の逆引き"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial01-16.log:408
+#: ../source/tutorial/tutorial06.txt:10
 msgid ""
-"> select --table Site --query title:@test --output_columns _id,_score,title "
-"--sortby _score [[0,1294292500.37864,0.000452891],[[[9],[[\"_id\","
-"\"UInt32\"],[\"_score\",\"Int32\"],[\"title\",\"ShortText\"]],[1,1,\"This is "
-"test record 1!\"],[2,1,\"test record 2.\"],[4,1,\"test record four.\"],[3,2,"
-"\"test test record three.\"],[9,2,\"test test record nine.\"],[8,2,\"test "
-"test record eight.\"],[7,3,\"test test test record seven.\"],[5,3,\"test "
-"test test record five.\"],[6,4,\"test test test test record six.\"]]]]"
+"本チュートリアルで、groongaはカラム値として他のテーブルへの参照の配列を持つこ"
+"とができることを紹介いたしました。実は、テーブルへの参照の配列データを用いる"
+"ことによって、いわゆるタグ検索を行うことが可能となります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:12
+msgid ""
+"タグ検索はgroongaの転置インデックスというデータ構造を用いて高速に行われます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:15
+msgid "タグ検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:17
+msgid ""
+"動画共有サイトの検索エンジンを作ることを想定します。1つの動画には、その動画の"
+"特徴を表す、複数の語句が付与されています。「ある語句が付与されている動画の一"
+"覧を取得する」検索を行いたいとします。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:19
+msgid "実際に、動画情報のテーブルを作成し、検索をしてみましょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:21
+msgid ""
+"動画の情報を保存する、Videoテーブルを作成します。Videoテーブルでは、動画のタ"
+"イトルをtitleカラムに、動画のタグ情報をtagsカラムにTagテーブル型で複数格納し"
+"ています。 タグの情報を保存する、Tagテーブルを作成します。Tagテーブルでは、タ"
+"グ文字列を主キーに格納し、Videoテーブルのtagsカラムに対するインデックスを"
+"index_tagsカラムに格納しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:43
+msgid ""
+"インデックスカラムを作成すると、全文検索が高速に行えるようになります。イン"
+"デックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に"
+"更新されます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:45
+msgid "「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:53
+msgid ""
+"このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うこ"
+"とができました。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:56
+msgid "参照関係の逆引き"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:58
+msgid ""
+"groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与する"
+"ことができます。タグ検索は、その1例にすぎません。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:60
+msgid ""
+"例えば、ソーシャルネットワーキングサイトにおける友人関係を逆引き検索すること"
+"ができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:62
+msgid ""
+"以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納す"
+"るusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのイン"
+"デックスのindex_friendsカラムを追加しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:80
+msgid ""
+"指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:87
+msgid ""
+"さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみま"
+"しょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:93
+msgid "このように、テーブルの参照関係を逆にたどる検索ができました。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:96
+msgid "インデックス付きジオサーチ"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:98
+msgid ""
+"位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情"
+"報レコードを検索する場合に、検索速度が速くなります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial06.txt:111
+msgid ""
+"同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:10
+msgid "match_columnsパラメータ"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:13
+msgid "複数のカラムを対象とした全文検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:15
+msgid ""
+"groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、ブ"
+"ログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとし"
+"ましょう。「タイトルもしくは内容に特定の単語を含む」検索を行いたいとします。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:17
+msgid ""
+"この場合、2つのインデックス作成方式があります。1つは、それぞれのカラムに1つず"
+"つインデックスを付与する方式です。もう1つは、複数のカラムに対して1つのイン"
+"デックスを付与する方式です。groongaでは、どちらの形式のインデックスが存在して"
+"いる場合でも、同一の記法で全文検索を行うことができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:20
+msgid "カラムごとにインデックスを付与する場合"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:22
+msgid ""
+"Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のmessageカラムを追加し"
+"ています。 インデックス用のIndexBlog1テーブルも作り、titleカラムのインデック"
+"ス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、"
+"それぞれ1カラムごとに1つずつ追加しています。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:40
+msgid ""
+"match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索"
+"する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全"
+"文検索することができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:42
+msgid "実際に検索してみましょう。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:51
+msgid "複数のカラムにまたがったインデックスを付与する場合"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:53
+msgid ""
+"内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックス"
+"が共通になっており、インデックスカラムが1つしかありません。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:55
+msgid ""
+"共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの"
+"検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:72
+msgid "実際に検索してみましょう。結果は上の例と同じになります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:81
+msgid "インデックス名を指定した全文検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:83 ../source/tutorial/tutorial07.txt:90
+#: ../source/tutorial/tutorial08.txt:31
+msgid "執筆中です。"
+msgstr ""
+
+#: ../source/tutorial/tutorial07.txt:88
+msgid "インデックスの重み"
+msgstr ""
+
+#: ../source/tutorial/tutorial08.txt:7 ../source/tutorial/tutorial08.txt:12
+msgid "主キーによる前方一致検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial08.txt:9
+msgid ""
+"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
+"一致検索を行うことができます。また、追加のオプションを指定することにより、主"
+"キーの後方一致検索をも行うことができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial08.txt:14
+msgid ""
+"table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
+"による前方一致検索ができるようになります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial08.txt:29
+msgid "主キーによる後方一致検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial09.txt:4
+msgid "全文検索の語彙表に対する追加情報"
+msgstr ""
+
+#: ../source/tutorial/tutorial09.txt:6
+msgid ""
+"groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語"
+"彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストッ"
+"プワードのフラグ、単語の重要度などを保持することができます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial09.txt:8
+msgid "この項目については、現在執筆中です。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:10
+msgid "マイクロブログ検索システムの作成"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:12
+msgid ""
+"これまで学んだgroongaの機能を用いて、マイクロブログの検索システムを作成してみ"
+"ましょう。マイクロブログとは、Twitterのような短いメッセージを投稿するブログで"
+"す。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:17
+msgid "まずは、テーブルを作成します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:21
+msgid ""
+"table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText "
+"table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText "
+"table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText "
+"table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type "
+"ShortText --default_tokenizer TokenBigram  column_create --table Users --"
+"name name --flags COLUMN_SCALAR --type ShortText column_create --table Users "
+"--name follower --flags COLUMN_VECTOR --type Users column_create --table "
+"Users --name favorites --flags COLUMN_VECTOR --type Comments column_create --"
+"table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint "
+"column_create --table Users --name location_str --flags COLUMN_SCALAR --type "
+"ShortText column_create --table Users --name description --flags "
+"COLUMN_SCALAR --type ShortText column_create --table Users --name followee --"
+"flags COLUMN_INDEX --type Users --source follower  column_create --table "
+"Comments --name comment --flags COLUMN_SCALAR --type ShortText column_create "
+"--table Comments --name last_modified --flags COLUMN_SCALAR --type Time "
+"column_create --table Comments --name replied_to --flags COLUMN_SCALAR --"
+"type Comments column_create --table Comments --name replied_users --flags "
+"COLUMN_VECTOR --type Users column_create --table Comments --name hash_tags --"
+"flags COLUMN_VECTOR --type HashTags column_create --table Comments --name "
+"location --flags COLUMN_SCALAR --type WGS84GeoPoint column_create --table "
+"Comments --name posted_by --flags COLUMN_SCALAR --type Users column_create --"
+"table Comments --name favorited_by --flags COLUMN_INDEX --type Users --"
+"source favorites  column_create --table HashTags --name hash_index --flags "
+"COLUMN_INDEX --type Comments --source hash_tags  column_create --table "
+"Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --"
+"type Users --source name,location_str,description column_create --table "
+"Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type "
+"Comments --source comment"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:49
+msgid "Usersテーブル"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:51
+msgid ""
+"ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を"
+"格納するためのテーブルです。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:54
+msgid "ユーザーID"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:57
+msgid "ユーザー名"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:60
+msgid "フォローしているユーザーの一覧"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:63
+msgid "お気に入りのコメント一覧"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:66
+msgid "ユーザーの現在地（緯度経度座標）"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:69
+msgid "ユーザーの現在地（文字列）"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:72
+msgid "ユーザーの自己紹介"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:75
+msgid ""
+"Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
+"とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:79
+msgid "Commentsテーブル"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:81
+msgid ""
+"コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブ"
+"ルです。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:84
+msgid "コメントID"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:87
+msgid "コメント内容"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:90
+msgid "投稿日時"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:93
+msgid "返信元のコメント内容"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:96
+msgid "返信先のユーザーの一覧"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:99
+msgid "コメントのハッシュタグの一覧"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:102
+msgid "投稿場所(緯度経度座標のため)"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:105
+msgid "コメントを書いたユーザー"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:108
+msgid ""
+"Usersテーブルのfavoritesカラムに対するインデックス。 このインデックスを作るこ"
+"とで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになり"
+"ます。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:112
+msgid "HashTagsテーブル"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:114
+msgid "コメントのハッシュタグを一覧で保存するためのテーブルです。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:117
+msgid "ハッシュタグ"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:120
+msgid ""
+"「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
+"ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:124
+msgid "Bigramテーブル"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:126
+msgid ""
+"ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
+"るテーブルです。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:129
+msgid "単語"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:132
+msgid ""
+"ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
+"「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
+"います。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:136
+msgid "コメント内容「Comments.comment」のインデックス"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:141
+msgid "つづいて、テスト用データをロードします。"
 msgstr ""
 
 #: ../source/tutorial/tutorial10.txt:145
@@ -585,876 +2112,17 @@ msgid ""
 "\": \"128551935x502796434\",     \"posted_by\": \"OffGao\",   } ]"
 msgstr ""
 
-#: ../source/tutorial.txt:4
-msgid "チュートリアル"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial02-3.log:109
-msgid ""
-"http://[IPまたはホスト名]:[ポート番号]/d/status 実行される処理： > status "
-"[[0,1294292493.37913,2.8547e-05],{\"alloc_count\":466,\"starttime"
-"\":1294292404,\"uptime\":89,\"version\":\"1.0.6-10-gba9df76\",\"n_queries"
-"\":105,\"cache_hit_rate\":0.0,\"command_version\":1,\"default_command_version"
-"\":1,\"max_command_version\":2}]  http://[IPまたはホスト名]:[ポート番号]/d/"
-"select?table=Site&query=title:@this 実行される処理： > select --table Site --"
-"query title:@this [[0,1294292493.58185,6.4853e-05],[[[1],[[\"_id\","
-"\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://"
-"example.org/\",\"This is test record 1!\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial08.txt:9
-msgid ""
-"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
-"一致検索を行うことができます。また、追加のオプションを指定することにより、主"
-"キーの後方一致検索をも行うことができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:15
-msgid ""
-"ここでは、Int32型のカラムに整数を格納、Float型のカラムに浮動小数点の小数を、"
-"ShortText型のカラムに文字列を、Time型のカラムに時間を格納する例を示します。経"
-"緯度の格納については、のちのチュートリアルで触れます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:52
-msgid "_score = rand()"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:39
-msgid ""
-"ここでは、先のチュートリアルで作成したSiteテーブルに手を加え、どのサイトをリ"
-"ンクしているのかを保存してみましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:120
-msgid ""
-"selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は"
-"検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'とい"
-"う名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名"
-"前のカラムを示しています。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:97
-msgid ":ref:`table_create` コマンドを使用してテーブルを作成します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:21
-msgid ""
-"動画の情報を保存する、Videoテーブルを作成します。Videoテーブルでは、動画のタ"
-"イトルをtitleカラムに、動画のタグ情報をtagsカラムにTagテーブル型で複数格納し"
-"ています。 タグの情報を保存する、Tagテーブルを作成します。Tagテーブルでは、タ"
-"グ文字列を主キーに格納し、Videoテーブルのtagsカラムに対するインデックスを"
-"index_tagsカラムに格納しています。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:112
-msgid "HashTagsテーブル"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:37
-msgid "groonga [-p ポート番号] -c [対象ホスト名またはIPアドレス]"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:19
-msgid "ここで、filterパラメータには"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:83 ../source/tutorial/tutorial07.txt:90
-msgid "執筆中です。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:71
-msgid ""
-"経緯度をデータを入力するためには、\"緯度のミリ秒x経度のミリ秒\"という形式の文"
-"字列を代入する必要があります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:73
-msgid ""
-"ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみ"
-"ましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅"
-"は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列"
-"はそれぞれ\"128452975x503157902\"/\"128487316x502920929\"となります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:12
-msgid ""
-"これまで学んだgroongaの機能を用いて、マイクロブログの検索システムを作成してみ"
-"ましょう。マイクロブログとは、Twitterのような短いメッセージを投稿するブログで"
-"す。"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:98
-msgid ""
-"位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情"
-"報レコードを検索する場合に、検索速度が速くなります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:57
-msgid "テーブル型で配列を格納するカラムは、1対多の参照関係を表すのに有効です。"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:15
-msgid ""
-"groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、ブ"
-"ログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとし"
-"ましょう。「タイトルもしくは内容に特定の単語を含む」検索を行いたいとします。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:61
-msgid "コマンド"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:168
-msgid ""
-"実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納する"
-"インデックス型のカラムであることを示しています。通常の全文検索インデックスで"
-"は、COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意"
-"味については、本チュートリアルでは触れません。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:55
-msgid ""
-"groongaデーモンにshutdownコマンドを発行することにより、終了させることができま"
-"す。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:454
-msgid "ユーザーIDでコメント検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:48
-msgid ""
-"検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
-"カラムが付与されることをチュートリアル中ソートの項目で説明しました。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-17.log:421
-msgid ""
-"> select --table Site --query title:@test --output_columns _id,_score,title "
-"--sortby _score,_id [[0,1294292500.58351,0.000449563],[[[9],[[\"_id\","
-"\"UInt32\"],[\"_score\",\"Int32\"],[\"title\",\"ShortText\"]],[1,1,\"This is "
-"test record 1!\"],[2,1,\"test record 2.\"],[4,1,\"test record four.\"],[3,2,"
-"\"test test record three.\"],[8,2,\"test test record eight.\"],[9,2,\"test "
-"test record nine.\"],[5,3,\"test test test record five.\"],[7,3,\"test test "
-"test record seven.\"],[6,4,\"test test test test record six.\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:57
-msgid "ユーザー名"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:230
-msgid ""
-"selectコマンドには、match_columnsというパラメータが存在します。これを指定する"
-"と、query内にカラム名を指定しない条件があった場合、match_columnsで指定された"
-"カラムに対しての検索であることを示します。[1]_"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:105
-msgid "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial05.txt:12
-msgid ""
-"groongaでは、特定のカラム値で検索結果をグループ化することができます。これをド"
-"リルダウンと呼びます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:72
-msgid ""
-"protocolオプションで、groongaが受け付けるプロトコルを指定できます。httpを指定"
-"すると、groongaはHTTPプロトコルでの通信を受け付けます。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-7.log:225
-msgid ""
-"> load --table Site > [ > {\"_key\":\"http://example.org/\",\"title\":\"This "
-"is test record 1!\"}, > {\"_key\":\"http://example.net/\",\"title\":\"test "
-"record 2.\"}, > {\"_key\":\"http://example.com/\",\"title\":\"test test "
-"record three.\"}, > {\"_key\":\"http://example.net/afr\",\"title\":\"test "
-"record four.\"}, > {\"_key\":\"http://example.org/aba\",\"title\":\"test "
-"test test record five.\"}, > {\"_key\":\"http://example.com/rab\",\"title\":"
-"\"test test test test record six.\"}, > {\"_key\":\"http://example.net/atv\","
-"\"title\":\"test test test record seven.\"}, > {\"_key\":\"http://example."
-"org/gat\",\"title\":\"test test record eight.\"}, > {\"_key\":\"http://"
-"example.com/vdw\",\"title\":\"test test record nine.\"}, > ] "
-"[[0,1294292495.93593,2.202904311],9]"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial05-3.log:81
-msgid ""
-"> select --table Site --limit 0 --drilldown domain --"
-"drilldown_output_columns _id,_key,_nsubrecs [[0,1294292443.33582,0.00027157],"
-"[[[9],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
-"\"],[\"location\",\"WGS84GeoPoint\"],[\"links\",\"Site\"],[\"link\",\"Site"
-"\"],[\"domain\",\"SiteDomain\"],[\"country\",\"SiteCountry\"]]],[[3],[[\"_id"
-"\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[1,\".org"
-"\",3],[2,\".net\",3],[3,\".com\",3]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:17
-msgid "まずは、テーブルを作成します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial08.txt:14
-msgid ""
-"table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
-"による前方一致検索ができるようになります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:17
-msgid ""
-"この場合、2つのインデックス作成方式があります。1つは、それぞれのカラムに1つず"
-"つインデックスを付与する方式です。もう1つは、複数のカラムに対して1つのイン"
-"デックスを付与する方式です。groongaでは、どちらの形式のインデックスが存在して"
-"いる場合でも、同一の記法で全文検索を行うことができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:33
-msgid "groongaサーバへの接続"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:75
-msgid ""
-"Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
-"とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-11.log:311
-msgid ""
-"> select --table Site --query title:@this [[0,1294292498.95104,0.00032904],"
-"[[[1],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
-"\"]],[1,\"http://example.org/\",\"This is test record 1!\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:43
-msgid ""
-"接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行し"
-"ます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:10
-msgid ""
-"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
-"する方法があります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:54
-msgid ""
-"という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
-"文検索のスコアを乱数で上書きしています。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:141
-msgid ""
-"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:54
-msgid "ユーザーID"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:102
-msgid "投稿場所(緯度経度座標のため)"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:129
-msgid ""
-"ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しま"
-"しょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:255
-msgid ""
-"selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
-"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
-"ページ分のみを表示したい場合に有効です。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-2.log:120
-msgid ""
-"> table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText "
-"[[0,1294292494.39228,0.080407899],true]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:474
-msgid "投稿時間でコメント検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:23
-msgid ""
-"という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
-"て得られます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:6
-msgid "さまざまな種類をもったデータの保存"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:49
-msgid "Usersテーブル"
-msgstr ""
-
-#: ../source/tutorial/tutorial05.txt:14
-msgid ""
-"Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラム"
-"と、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名"
-"を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountryテーブルとし"
-"ます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:53
-msgid "groongaデーモンの終了"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:105
-msgid ""
-"ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'と"
-"いう名前のテーブルを作成します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:87
-msgid "コメント内容"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:399
-msgid "あるユーザーをフォローしているユーザーの検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:111
-msgid ""
-"同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:143
-msgid ""
-"全文検索を行う場合は、まず語彙表を作成する必要があります。 語彙表とは、文書の"
-"中にある単語が主キーとなるテーブルです。 ここでは、ShortText型の主キー値を持"
-"つ、'Terms'という名前のテーブルを作成しました。"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:55
-msgid ""
-"共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの"
-"検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:59
-msgid ""
-"テーブル型のチュートリアルでは、Siteテーブルに手を加え、どのサイトをリンクし"
-"ているのかを保存しました。しかし、通常は1つのサイトから多くのサイトにリンクが"
-"張られています。複数のリンク情報を格納するために、複数の参照関係を保存するカ"
-"ラムを作成してみましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:430
-msgid ""
-"「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。ま"
-"た、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できま"
-"す。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:69
-msgid "ユーザーの現在地（文字列）"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:22
-msgid ""
-"Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のmessageカラムを追加し"
-"ています。 インデックス用のIndexBlog1テーブルも作り、titleカラムのインデック"
-"ス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、"
-"それぞれ1カラムごとに1つずつ追加しています。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:101
-msgid ""
-"型については、のちのチュートリアルで触れます。データの種類をあらわしているも"
-"の、とイメージしてください。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:241
-msgid ""
-"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
-"示するカラムを指定することが出来ます。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-5.log:183
-msgid ""
-"> table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type "
-"ShortText --default_tokenizer TokenBigram [[0,1294292495.351,0.064287537],"
-"true]"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-10.log:293
-msgid ""
-"> select --table Site --query \"_key:\\\"http://example.org/\\"
-"\"\" [[0,1294292498.74872,0.00031979],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://example.org/\",\"This "
-"is test record 1!\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:42
-msgid "groonga DBパス名 [コマンド]"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial10-1.log:385
-msgid ""
-"> select --table Users --match_columns name,location_str,description --query "
-"東京 --output_columns _key,name [[0,1294292470.41307,0.000532663],[[[2],"
-"[[\"_key\",\"ShortText\"],[\"name\",\"ShortText\"]],[\"tasukuchan\",\"グニャ"
-"ラくん\"],[\"OffGao\",\"OffGao\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:72
-msgid "実際に検索してみましょう。結果は上の例と同じになります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial05.txt:10
-msgid "ドリルダウン"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:8
-msgid ""
-"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
-"ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
-"きます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:95 ../source/tutorial/tutorial10.txt:15
-msgid "テーブルの作成"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:190
-msgid "selectコマンドで、データが入っていることを確認しましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:53
-msgid ""
-"このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うこ"
-"とができました。"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:62
-msgid ""
-"以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納す"
-"るusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのイン"
-"デックスのindex_friendsカラムを追加しています。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial02-1.log:50
-msgid ""
-"% groonga -c > status [[0,1294292493.17513,3.4655e-05],{\"alloc_count\":466,"
-"\"starttime\":1294292404,\"uptime\":89,\"version\":\"1.0.6-10-gba9df76\","
-"\"n_queries\":105,\"cache_hit_rate\":0.0,\"command_version\":1,"
-"\"default_command_version\":1,\"max_command_version\":2}] > ctrl-d %"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:38
-msgid "DBの操作"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-8.log:260
-msgid ""
-"> select --table Site [[0,1294292498.33981,0.000163623],[[[9],[[\"_id\","
-"\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://"
-"example.org/\",\"This is test record 1!\"],[2,\"http://example.net/\",\"test "
-"record 2.\"],[3,\"http://example.com/\",\"test test record three.\"],[4,"
-"\"http://example.net/afr\",\"test record four.\"],[5,\"http://example.org/aba"
-"\",\"test test test record five.\"],[6,\"http://example.com/rab\",\"test "
-"test test test record six.\"],[7,\"http://example.net/atv\",\"test test test "
-"record seven.\"],[8,\"http://example.org/gat\",\"test test record eight.\"],"
-"[9,\"http://example.com/vdw\",\"test test record nine.\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:226
-msgid ""
-"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:39
-msgid "対象ホストで動作しているgroongaサーバに接続します。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial10-10.log:546
-msgid ""
-"> select Comments --filter 'last_modified<=1268802000' --output_columns "
-"posted_by.name,comment,last_modified --drilldown hash_tags,posted_by "
-"[[0,1294292472.24623,0.000634424],[[[5],[[\"posted_by.name\",\"ShortText\"],"
-"[\"comment\",\"ShortText\"],[\"last_modified\",\"Time\"]],[\"hsiomaneki\","
-"\"マイクロブログ作ってみました（甘栗むいちゃいました的な感じ"
-"で）。\",1268795100.0],[\"グニャラくん\",\"初の書き込み。テストテス"
-"ト。\",1268794800.0],[\"hsiomaneki\",\"@tasukuchan ようこそ!!!"
-"\",1268795100.0],[\"グニャラくん\",\"@daijiro ありがとう！\",1268798400.0],"
-"[\"グニャラくん\",\"groongaなう #groonga\",1268802000.0]],[[1],[[\"_key\","
-"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga\",1]],[[2],[[\"_key\","
-"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"daijiro\",2],[\"tasukuchan"
-"\",3]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:433
-msgid "GeoPointとキーワードでコメント検索"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial03-2.log:64
-msgid ""
-"> column_create --table Site --name link --type Site "
-"[[0,1294292421.88324,1.758091494],true] [[0,1294292423.64139,0.096956537],"
-"true] [[0,1294292423.73839,0.001444368],1] [[0,1294292423.73987,0.000161184],"
-"[[[1],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"time\",\"Time\"],"
-"[\"string\",\"ShortText\"],[\"number\",\"Int32\"],[\"float\",\"Float\"]],[1,"
-"\"sample\",1234567890.0,\"GROONGA\",12345,42.195]]]] "
-"[[0,1294292423.74005,0.057032974],true] > load --table Site > [{\"_key\":"
-"\"http://example.org/\",\"link\":\"http://example.net/\"}] "
-"[[0,1294292423.99784,0.200585743],1] > select --table Site --output_columns "
-"_key,title,link._key,link.title --query title:@this "
-"[[0,1294292424.39909,0.000545272],[[[1],[[\"_key\",\"ShortText\"],[\"title\","
-"\"ShortText\"],[\"link._key\",\"ShortText\"],[\"link.title\",\"ShortText\"]],"
-"[\"http://example.org/\",\"This is test record 1!\",\"http://example.net/\","
-"\"test record 2.\"]]]]"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial04-1.log:20
-msgid ""
-"> select --table Site --filter \"_id <= 1\" --output_columns _id,_key "
-"[[0,1294292483.15552,0.000315671],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"]],[1,\"http://example.org/\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial05.txt:35
-msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:99
-msgid "コメントのハッシュタグの一覧"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:67
-msgid ""
-"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
-"を用いて絞込やソートができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:74
-msgid ""
-"書式1: コマンド名 引数1 引数2 ..  書式2: コマンド名 --引数名1 値1 --引数名2 "
-"値2 .."
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:43
-msgid ""
-"インデックスカラムを作成すると、全文検索が高速に行えるようになります。イン"
-"デックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に"
-"更新されます。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial04-3.log:64
-msgid ""
-"> select --table Site --filter \"1\" --scorer \"_score = rand()\" --"
-"output_columns _id,_key,_score --sortby _score "
-"[[0,1294292483.76306,0.00050586],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"_score\",\"Int32\"]],[3,\"http://example.com/\",35005211],"
-"[9,\"http://example.com/vdw\",278722862],[5,\"http://example.org/aba"
-"\",294702567],[1,\"http://example.org/\",304089172],[7,\"http://example.net/"
-"atv\",336465782],[4,\"http://example.net/afr\",521595368],[8,\"http://"
-"example.org/gat\",861021530],[2,\"http://example.net/\",1303455736],[6,"
-"\"http://example.com/rab\",1726956429]]]] > select --table Site --filter "
-"\"1\" --scorer \"_score = rand()\" --output_columns _id,_key,_score --sortby "
-"_score [[0,1294292483.96835,0.000502458],[[[9],[[\"_id\",\"UInt32\"],[\"_key"
-"\",\"ShortText\"],[\"_score\",\"Int32\"]],[1,\"http://example.org/"
-"\",233665123],[3,\"http://example.com/\",468703135],[7,\"http://example.net/"
-"atv\",635723058],[4,\"http://example.net/afr\",1101513929],[9,\"http://"
-"example.com/vdw\",1125898167],[6,\"http://example.com/rab\",1315634022],[8,"
-"\"http://example.org/gat\",1369133069],[5,\"http://example.org/aba"
-"\",1801979802],[2,\"http://example.net/\",2145174067]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:6
-msgid "ネットワークを通じた利用"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:21
-msgid "_id <= 1"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:10
-msgid "マイクロブログ検索システムの作成"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:253
-msgid "表示範囲指定"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:461
-msgid ""
-"「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグ"
-"でドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに"
-"「#travel」が1つあることがわかります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial09.txt:8
-msgid "この項目については、現在執筆中です。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-9.log:278
-msgid ""
-"> select --table Site --query _id:1 [[0,1294292498.54636,0.000363938],[[[1],"
-"[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,"
-"\"http://example.org/\",\"This is test record 1!\"]]]]"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial06-3.log:107
-msgid ""
-"> table_create --name User --flags TABLE_HASH_KEY --key_type ShortText "
-"[[0,1294292523.89479,0.074787397],true] > column_create --table User --name "
-"username --flags COLUMN_SCALAR --type ShortText "
-"[[0,1294292524.1704,0.050363618],true] > column_create --table User --name "
-"friends --flags COLUMN_VECTOR --type User [[0,1294292524.42158,0.049597919],"
-"true] > column_create --table User --name index_friends --flags COLUMN_INDEX "
-"--type User --source friends [[0,1294292524.67201,0.104947934],true] > load "
-"--table User > [ > {\"_key\":\"ken\",\"username\":\"健作\",\"friends\":"
-"[\"taro\",\"jiro\",\"tomo\",\"moritapo\"]} > {\"_key\":\"moritapo\","
-"\"username\":\"森田\",\"friends\":[\"ken\",\"tomo\"]} > {\"_key\":\"taro\","
-"\"username\":\"ぐるんが太郎\",\"friends\":[\"jiro\",\"tomo\"]} > {\"_key\":"
-"\"jiro\",\"username\":\"ぐるんが次郎\",\"friends\":[\"taro\",\"tomo\"]} > "
-"{\"_key\":\"tomo\",\"username\":\"トモちゃん\",\"friends\":[\"ken\",\"hana"
-"\"]} > {\"_key\":\"hana\",\"username\":\"花子\",\"friends\":[\"ken\",\"taro"
-"\",\"jiro\",\"moritapo\",\"tomo\"]} > ] [[0,1294292524.97774,1.60223701],6]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:444
-msgid ""
-"あるハッシュタグのついているコメントを検索します。 これも、 :doc:"
-"`tutorial06` で扱った、参照関係の逆引きを使います。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:8
-msgid "基本的な操作"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial05-2.log:68
-msgid ""
-"> select --table Site --limit 0 --drilldown domain "
-"[[0,1294292443.13172,0.000424923],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
-"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
-"[\"country\",\"SiteCountry\"]]],[[3],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
-"\",\"Int32\"]],[\".org\",3],[\".net\",3],[\".com\",3]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:455
-msgid "あるユーザーが投稿したコメントを検索します。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial10-9.log:528
-msgid ""
-"> select --table Users --query _key:tasukuchan --output_columns favorites."
-"posted_by,favorites.comment [[0,1294292472.04238,0.000320089],[[[1],"
-"[[\"favorites.posted_by\",\"Users\"],[\"favorites.comment\",\"ShortText\"]],"
-"[[\"daijiro\",\"OffGao\"],[\"マイクロブログ作ってみました（甘栗むいちゃいまし"
-"た的な感じで）。\",\"@daijiro @tasukuchan 登録してみましたよー！\"]]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:220
-msgid "queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:18
-msgid "groonga [-p ポート番号] -d DBパス名"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:82
-msgid ""
-"groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
-"にアクセスすると、コマンドを実行することが出来ます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:86
-msgid "DBにテーブルを追加します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:50
-msgid ""
-"このように、linkカラムに他のサイトへの参照を保存することができました。また、"
-"参照先の_keyとtitleカラムの内容を表示することができました。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial10-7.log:494
-msgid ""
-"> select --table Comments --query hash_tags:@groonga --output_columns "
-"posted_by.name,comment --drilldown posted_by "
-"[[0,1294292471.6339,0.000473975],[[[2],[[\"posted_by.name\",\"ShortText\"],"
-"[\"comment\",\"ShortText\"]],[\"グニャラくん\",\"groongaなう #groonga\"],"
-"[\"グニャラくん\",\"groonga開発合宿のため羽田空港に来ました！ #groonga "
-"#travel\"]],[[1],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
-"[\"tasukuchan\",2]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:40
-msgid ""
-"match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索"
-"する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全"
-"文検索することができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:79
-msgid "Commentsテーブル"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:14
-msgid ""
-"groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続など"
-"の操作が行えます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:75
-msgid "HTML管理ツール"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:268
-msgid "並び替え"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:166
-msgid ""
-"Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
-"ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
-"に、インデックス対象となるカラムをsourceに指定します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:387
-msgid "GeoPointでユーザー検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:17
-msgid "その他のデータ型の一覧は、 :doc:`../type` を参照してください。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:215
-msgid ""
-"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
-"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
-"コードを検索する、という意味です。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:77
-msgid "主なコマンド"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:257
-msgid ""
-"offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
-"には、0を指定します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:141
-msgid "つづいて、テスト用データをロードします。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:37
+#: ../source/tutorial/tutorial10.txt:239
 msgid ""
-"また、output_columnsにおいて「.」を区切りとして、参照先のテーブルに存在するカ"
-"ラムを指定すると、指定したカラムの値を表示することができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:373
-msgid "それでは、実際に検索をしてみましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:111
-msgid ""
-"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
-"geo_in_rectangle` 関数も存在します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:62
-msgid ""
-"よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
-"す。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:19
-msgid ""
-"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
-"す。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:423
-msgid ""
-"あるキーワードを含むコメントを検索します。 さらに、 :doc:`tutorial04` で扱っ"
-"た、スコア値_scoreも出してみましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:84
-msgid ""
-"コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
-"値&オプション=値 …」という書式になります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:408
-msgid ""
-"「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしまし"
-"た。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:155
-msgid ""
-"実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の"
-"文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例で"
-"はTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデッ"
-"クス方式を選択しています。"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:20
-msgid "カラムごとにインデックスを付与する場合"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:171 ../source/tutorial/tutorial10.txt:139
-msgid "データのロード"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:8
-msgid "groongaでは、さまざまなデータを格納させることが出来ます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:23
-msgid "groonga -n データベースパス名"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:377
-msgid ""
-"ここでは、 :doc:`tutorial07` で扱った、複数カラムを対象とした検索を行いま"
-"す。 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:451
-msgid ""
-"#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダ"
-"ウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:384
-msgid ""
-"「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラく"
-"ん」と「OffGao」がヒットしました。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:96
-msgid "返信先のユーザーの一覧"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:112 ../source/tutorial/tutorial10.txt:371
-msgid "検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:93
-msgid "返信元のコメント内容"
+"Usersテーブルのfollowerカラムとfavoritesカラム、そしてCommentsテーブルの"
+"replied_usersカラムは、ベクターカラムです。そのため、これらのカラムは配列で値"
+"を指定します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:173
+#: ../source/tutorial/tutorial10.txt:241
 msgid ""
-":ref:`load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータを"
-"テーブルに格納します。"
+"Usersテーブルのlocationカラムと、Commentsテーブルのlocationカラムは、GeoPoint"
+"型です。この型での値の指定は、\"[緯度]x[経度]\"と記述して指定します。"
 msgstr ""
 
 #: ../source/tutorial/tutorial10.txt:243
@@ -1465,97 +2133,34 @@ msgid ""
 "に文字列からキャストされ、マイクロ秒数の値が格納されます。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial01-12.log:330
-msgid ""
-"> select --table Site --match_columns title --query this "
-"[[0,1294292499.15359,0.000397943],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://example.org/\",\"This "
-"is test record 1!\"]]]]"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-1.log:58
-msgid ""
-"% groonga /tmp/tutorial.db > status [[0,1294292494.18924,3.7116e-05],"
-"{\"alloc_count\":443,\"starttime\":1294292404,\"uptime\":90,\"version\":"
-"\"1.0.6-10-gba9df76\",\"n_queries\":106,\"cache_hit_rate\":0.943396226415094,"
-"\"command_version\":1,\"default_command_version\":1,\"max_command_version"
-"\":2}]"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-4.log:158
-msgid ""
-"> column_create --table Site --name title --flags COLUMN_SCALAR --type "
-"ShortText [[0,1294292494.87523,0.073160479],true] > select --table Site "
-"[[0,1294292495.14923,0.000136609],[[[0],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"]]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:13
-msgid ""
-"selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条"
-"件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメー"
-"タには、JavaScriptの式に似た文法で条件を指定する点です。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial03-3.log:102
-msgid ""
-"> column_create --table Site --name links --flags COLUMN_VECTOR --type Site "
-"[[0,1294292424.60248,0.062420461],true] > load --table Site > [{\"_key\":"
-"\"http://example.org/\",\"links\":[\"http://example.net/\",\"http://example."
-"org/\",\"http://example.com/\"]}] [[0,1294292424.86574,0.200708196],1] > "
-"select --table Site --output_columns _key,title,links._key,links.title --"
-"query title:@this [[0,1294292425.26717,0.000522302],[[[1],[[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"],[\"links._key\",\"ShortText\"],"
-"[\"links.title\",\"ShortText\"]],[\"http://example.org/\",\"This is test "
-"record 1!\",[\"http://example.net/\",\"http://example.org/\",\"http://"
-"example.com/\"],[\"test record 2.\",\"This is test record 1!\",\"test test "
-"record three.\"]]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:125
-msgid "カラムの作成"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:50
-msgid "上記の実行例では、scorerパラメータに"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:239
-msgid "出力カラムの指定"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:69
-msgid ""
-"位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの"
-"型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存しま"
-"す。"
+#: ../source/tutorial/tutorial10.txt:373
+msgid "それでは、実際に検索をしてみましょう。"
 msgstr ""
 
 #: ../source/tutorial/tutorial10.txt:376
 msgid "キーワードでユーザー検索"
 msgstr ""
 
-#: ../source/tutorial/tutorial03.txt:13
+#: ../source/tutorial/tutorial10.txt:377
 msgid ""
-"groongaでは、数値（整数・小数）や文字列や時刻や経緯度などの情報を格納すること"
-"ができます。"
+"ここでは、 :doc:`tutorial07` で扱った、複数カラムを対象とした検索を行いま"
+"す。 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。"
 msgstr ""
 
-#: ../source/tutorial/tutorial06.txt:10
+#: ../source/tutorial/tutorial10.txt:384
 msgid ""
-"本チュートリアルで、groongaはカラム値として他のテーブルへの参照の配列を持つこ"
-"とができることを紹介いたしました。実は、テーブルへの参照の配列データを用いる"
-"ことによって、いわゆるタグ検索を行うことが可能となります。"
+"「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラく"
+"ん」と「OffGao」がヒットしました。"
 msgstr ""
 
-#: ../source/tutorial/tutorial04.txt:85
-msgid ""
-"scorerパラメータにおいて、 :doc:`../functions/geo_distance` 関数を用いること"
-"により、２点間の距離を計算することができます。"
+#: ../source/tutorial/tutorial10.txt:387
+msgid "GeoPointでユーザー検索"
 msgstr ""
 
-#: ../source/tutorial/tutorial06.txt:19
-msgid "実際に、動画情報のテーブルを作成し、検索をしてみましょう。"
+#: ../source/tutorial/tutorial10.txt:389
+msgid ""
+"ここでは、 :doc:`tutorial04` で扱った、GeoPoint型のカラムで検索をします。 以"
+"下の例では、指定された位置から5000m以内にいるユーザーを検索しています。"
 msgstr ""
 
 #: ../source/tutorial/tutorial10.txt:396
@@ -1564,188 +2169,24 @@ msgid ""
 "「OffGao」がヒットしました。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial06-1.log:29
+#: ../source/tutorial/tutorial10.txt:399
+msgid "あるユーザーをフォローしているユーザーの検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:401
 msgid ""
-"> table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32 "
-"[[0,1294292519.76797,0.049499306],true] > table_create --name Tag --flags "
-"TABLE_HASH_KEY --key_type ShortText [[0,1294292520.01828,0.057850258],true] "
-"> column_create --table Video --name title --flags COLUMN_SCALAR --type "
-"ShortText [[0,1294292520.27693,0.050379447],true] > column_create --table "
-"Video --name tags --flags COLUMN_VECTOR --type Tag "
-"[[0,1294292520.52812,0.049635833],true] > column_create --table Tag --name "
-"index_tags --flags COLUMN_INDEX --type Video --source tags "
-"[[0,1294292520.77859,0.105692363],true] > load --table Video > [ > {\"_key"
-"\":1,\"title\":\"Soccer 2010\",\"tags\":[\"Sports\",\"Soccer\"]}, > {\"_key"
-"\":2,\"title\":\"Zenigata Kinjirou\",\"tags\":[\"Variety\",\"Money\"]}, > "
-"{\"_key\":3,\"title\":\"groonga Demo\",\"tags\":[\"IT\",\"Server\",\"groonga"
-"\"]}, > {\"_key\":4,\"title\":\"Moero!! Ultra Baseball\",\"tags\":[\"Sports"
-"\",\"Baseball\"]}, > {\"_key\":5,\"title\":\"Hex Gone!\",\"tags\":[\"Variety"
-"\",\"Quiz\"]}, > {\"_key\":6,\"title\":\"Pikonyan 1\",\"tags\":[\"Animation"
-"\",\"Pikonyan\"]}, > {\"_key\":7,\"title\":\"Draw 8 Month\",\"tags\":"
-"[\"Animation\",\"Raccoon\"]}, > {\"_key\":8,\"title\":\"K.O.\",\"tags\":"
-"[\"Animation\",\"Music\"]} > ] [[0,1294292521.0851,2.002679112],8]"
+"ここでは、 :doc:`tutorial06` で扱った、参照関係の逆引きをします。 以下の例で"
+"は、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
 msgstr ""
 
-#: ../source/tutorial/tutorial06.txt:15
-msgid "タグ検索"
-msgstr ""
-
-#: ../source/example/tutorial01-1.log:1 ../source/example/tutorial01-2.log:1
-#: ../source/example/tutorial01-3.log:1 ../source/example/tutorial01-4.log:1
-#: ../source/example/tutorial01-5.log:1 ../source/example/tutorial01-6.log:1
-#: ../source/example/tutorial01-7.log:1 ../source/example/tutorial01-8.log:1
-#: ../source/example/tutorial01-9.log:1 ../source/example/tutorial01-10.log:1
-#: ../source/example/tutorial01-11.log:1 ../source/example/tutorial01-12.log:1
-#: ../source/example/tutorial01-13.log:1 ../source/example/tutorial01-14.log:1
-#: ../source/example/tutorial01-15.log:1 ../source/example/tutorial01-16.log:1
-#: ../source/example/tutorial01-17.log:1 ../source/example/tutorial02-1.log:1
-#: ../source/example/tutorial02-2.log:1 ../source/example/tutorial02-3.log:1
-#: ../source/example/tutorial03-1.log:1 ../source/example/tutorial03-2.log:1
-#: ../source/example/tutorial03-3.log:1 ../source/example/tutorial04-1.log:1
-#: ../source/example/tutorial04-2.log:1 ../source/example/tutorial04-3.log:1
-#: ../source/example/tutorial04-4.log:1 ../source/example/tutorial04-5.log:1
-#: ../source/example/tutorial04-6.log:1 ../source/example/tutorial04-7.log:1
-#: ../source/example/tutorial05-1.log:1 ../source/example/tutorial05-2.log:1
-#: ../source/example/tutorial05-3.log:1 ../source/example/tutorial05-4.log:1
-#: ../source/example/tutorial05-5.log:1 ../source/example/tutorial05-6.log:1
-#: ../source/example/tutorial06-1.log:1 ../source/example/tutorial06-2.log:1
-#: ../source/example/tutorial06-3.log:1 ../source/example/tutorial06-4.log:1
-#: ../source/example/tutorial06-5.log:1 ../source/example/tutorial06-6.log:1
-#: ../source/example/tutorial06-7.log:1 ../source/example/tutorial07-1.log:1
-#: ../source/example/tutorial07-2.log:1 ../source/example/tutorial07-3.log:1
-#: ../source/example/tutorial07-4.log:1 ../source/example/tutorial08-1.log:1
-#: ../source/example/tutorial10-1.log:1 ../source/example/tutorial10-2.log:1
-#: ../source/example/tutorial10-3.log:1 ../source/example/tutorial10-4.log:1
-#: ../source/example/tutorial10-5.log:1 ../source/example/tutorial10-6.log:1
-#: ../source/example/tutorial10-7.log:1 ../source/example/tutorial10-8.log:1
-#: ../source/example/tutorial10-9.log:1 ../source/example/tutorial10-10.log:1
-msgid "実行例 ::"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:81
-msgid "インデックス名を指定した全文検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:37
+#: ../source/tutorial/tutorial10.txt:408
 msgid ""
-"selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
-"処理を行うためのパラメータです。"
+"「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしまし"
+"た。"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:270
-msgid ""
-"selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
-"ことが出来ます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:139
-msgid "全文検索用の語彙表の作成"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial05-6.log:120
-msgid ""
-"> select --table Site --limit 0 --drilldown country --drilldown_sortby "
-"_nsubrecs --drilldown_limit 2 --drilldown_offset 2 "
-"[[0,1294292443.94881,0.000324308],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
-"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
-"[\"country\",\"SiteCountry\"]]],[[5],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
-"\",\"Int32\"]],[\"usa\",2],[\"china\",2]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:127
-msgid ":ref:`column_create` コマンドを用いて、カラムを作成することができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:440
-msgid ""
-"両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返っ"
-"てきており、「グニャラくん」のコメント1件であることがわかります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:35
-msgid "table_createで作成したテーブルを、カラムの型として使うことが出来ます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:58
-msgid "_score"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:80
-msgid "groongaプロセスの状態を表示します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:72
-msgid "ユーザーの自己紹介"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:272
-msgid ""
-"sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
-"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
-"来ます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:8
-msgid ""
-"groongaはネットワークを通じて利用することができます。groonga独自プロトコルも"
-"しくはHTTPのどちらかを選択してgroongaを起動することにより、groongaはネット"
-"ワーク接続を待ち受けます。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial04-7.log:166
-msgid ""
-"> select --table Site --output_columns _key,location --filter 'geo_in_circle"
-"(location, \"128515259x503187188\", 5000)' [[0,1294292486.0507,0.000333268],"
-"[[[1],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://"
-"example.org/\",\"128452975x503157902\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:11
-msgid "JavaScriptに似た文法での絞込・全文検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:243
-msgid "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial02-2.log:72
-msgid "% groonga -c > shutdown %"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial03-1.log:25
-msgid ""
-"> table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText "
-"[[0,1294292421.12314,0.058638912],true] > column_create --table Type --name "
-"number --type Int32 [[0,1294292421.38263,0.049456503],true] > column_create "
-"--table Type --name float --type Float [[0,1294292421.63286,0.049592924],"
-"true] > column_create --table Type --name string --type ShortText > "
-"column_create --table Type --name time --type Time > load --table Type > "
-"[{\"_key\":\"sample\",\"number\":12345,\"float\":42.195,\"string\":\"GROONGA"
-"\",\"time\":1234567890.12}] > select --table Type"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:20
-msgid ""
-"既存のデータベースのフルパス名をDBパス名に指定します。 groongaがデーモンモー"
-"ドで起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすること"
-"ができます。 (ポート番号を省略した場合は10041が使用されます)"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:42
-msgid "実際に検索してみましょう。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial05-4.log:94
-msgid ""
-"> select --table Site --limit 0 --drilldown domain,country "
-"[[0,1294292443.53984,0.000373005],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
-"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
-"[\"country\",\"SiteCountry\"]]],[[3],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
-"\",\"Int32\"]],[\".org\",3],[\".net\",3],[\".com\",3]],[[5],[[\"_key\","
-"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"japan\",3],[\"brazil\",1],[\"usa"
-"\",2],[\"korea\",1],[\"china\",2]]]]"
+#: ../source/tutorial/tutorial10.txt:411
+msgid "GeoPointでコメント検索"
 msgstr ""
 
 #: ../source/tutorial/tutorial10.txt:412
@@ -1755,299 +2196,92 @@ msgid ""
 "ユーザー別・ハッシュタグ別のカウントを出します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial07.txt:10
-msgid "match_columnsパラメータ"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:70
-msgid "書式1と2は混ぜて使うことができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:25
-msgid "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:136
-msgid "コメント内容「Comments.comment」のインデックス"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial08-1.log:21
+#: ../source/tutorial/tutorial10.txt:419
 msgid ""
-">    table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText "
-"[[0,1294292412.30259,0.079878298],true] >    load --table PatPre >    [ >    "
-"{\"_key\":\"ひろゆき\"}, >    {\"_key\":\"まろゆき\"}, >    {\"_key\":\"ひろ"
-"あき\"} >    ] [[0,1294292412.58327,1.001299934],3] >    select --table "
-"PatPre --query _key:@ひろ [[0,1294292413.78527,0.000581025],[[[2],[[\"_id\","
-"\"UInt32\"],[\"_key\",\"ShortText\"]],[3,\"ひろあき\"],[1,\"ひろゆき\"]]]]"
+"範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そし"
+"て、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタ"
+"グは「#groonga」が2つに「#travel」が1つ、投稿者は「グニャラくん」「OffGao」が"
+"それぞれ2件ずつであることがわかります。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial10-4.log:441
+#: ../source/tutorial/tutorial10.txt:422
+msgid "キーワードでコメント検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:423
 msgid ""
-"> select --table Comments --filter 'geo_in_circle(location,"
-"\"127975798x502919856\",20000)' --output_columns posted_by.name,comment --"
-"drilldown hash_tags,posted_by [[0,1294292471.01995,0.000683663],[[[4],"
-"[[\"posted_by.name\",\"ShortText\"],[\"comment\",\"ShortText\"]],[\"OffGao\","
-"\"@daijiro @tasukuchan 登録してみましたよー！\"],[\"グニャラくん\",\"groonga"
-"なう #groonga\"],[\"グニャラくん\",\"groonga開発合宿のため羽田空港に来まし"
-"た！ #groonga #travel\"],[\"OffGao\",\"中野ブロードウェイなうなう\"]],[[2],"
-"[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga\",2],"
-"[\"travel\",1]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
-"[\"OffGao\",2],[\"tasukuchan\",2]]]]"
+"あるキーワードを含むコメントを検索します。 さらに、 :doc:`tutorial04` で扱っ"
+"た、スコア値_scoreも出してみましょう。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:129
-msgid "単語"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:232
+#: ../source/tutorial/tutorial10.txt:430
 msgid ""
-"match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
-"ると、上記のクエリと同じ結果を得ることができます。"
+"「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。ま"
+"た、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できま"
+"す。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial01-6.log:205
+#: ../source/tutorial/tutorial10.txt:433
+msgid "GeoPointとキーワードでコメント検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:434
 msgid ""
-"> column_create --table Terms --name blog_title --flags COLUMN_INDEX|"
-"WITH_POSITION --type Site --source title [[0,1294292495.6163,0.118577336],"
-"true]"
+"今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filter"
+"の両方を使用した場合、両方の条件に一致するレコードがヒットします。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial10-2.log:404
+#: ../source/tutorial/tutorial10.txt:440
 msgid ""
-"> select --table Users --filter 'geo_in_circle(location,"
-"\"128484216x502919856\",5000)' --output_columns _key,name "
-"[[0,1294292470.6155,0.000343137],[[[2],[[\"_key\",\"ShortText\"],[\"name\","
-"\"ShortText\"]],[\"tasukuchan\",\"グニャラくん\"],[\"OffGao\",\"OffGao\"]]]]"
+"両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返っ"
+"てきており、「グニャラくん」のコメント1件であることがわかります。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial01-14.log:371
+#: ../source/tutorial/tutorial10.txt:443
+msgid "ハッシュタグでコメント検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:444
 msgid ""
-"> select --table Site --offset 0 --limit 3 [[0,1294292499.56296,0.00011524],"
-"[[[9],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
-"\"]],[1,\"http://example.org/\",\"This is test record 1!\"],[2,\"http://"
-"example.net/\",\"test record 2.\"],[3,\"http://example.com/\",\"test test "
-"record three.\"]]]] > select --table Site --offset 3 --limit 3 "
-"[[0,1294292499.76592,0.000110122],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"]],[4,\"http://example.net/afr\","
-"\"test record four.\"],[5,\"http://example.org/aba\",\"test test test record "
-"five.\"],[6,\"http://example.com/rab\",\"test test test test record six."
-"\"]]]] > select --table Site --offset 7 --limit 3 "
-"[[0,1294292499.96901,0.00010214],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"title\",\"ShortText\"]],[8,\"http://example.org/gat\","
-"\"test test record eight.\"],[9,\"http://example.com/vdw\",\"test test "
-"record nine.\"]]]]"
+"あるハッシュタグのついているコメントを検索します。 これも、 :doc:"
+"`tutorial06` で扱った、参照関係の逆引きを使います。"
 msgstr ""
 
-#: ../source/tutorial/tutorial06.txt:45
-msgid "「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial06-4.log:148
+#: ../source/tutorial/tutorial10.txt:451
 msgid ""
-"> select --table User --query friends:@tomo --output_columns _key,username "
-"[[0,1294292526.78097,0.000456954],[[[5],[[\"_key\",\"ShortText\"],[\"username"
-"\",\"ShortText\"]],[\"ken\",\"健作\"],[\"taro\",\"ぐるんが太郎\"],[\"jiro\","
-"\"ぐるんが次郎\"],[\"moritapo\",\"森田\"],[\"hana\",\"花子\"]]]] > select --"
-"table User --query friends:@jiro --output_columns _key,username "
-"[[0,1294292526.9838,0.000304224],[[[3],[[\"_key\",\"ShortText\"],[\"username"
-"\",\"ShortText\"]],[\"ken\",\"健作\"],[\"taro\",\"ぐるんが太郎\"],[\"hana\","
-"\"花子\"]]]]"
+"#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダ"
+"ウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。"
 msgstr ""
 
-#: ../internal padding after source/example/tutorial04-4.log:105
+#: ../source/tutorial/tutorial10.txt:454
+msgid "ユーザーIDでコメント検索"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:455
+msgid "あるユーザーが投稿したコメントを検索します。"
+msgstr ""
+
+#: ../source/tutorial/tutorial10.txt:461
 msgid ""
-"> column_create --table Site --name location --type WGS84GeoPoint "
-"[[0,1294292484.17389,0.064924593],true] > load --table Site > [ >  {\"_key\":"
-"\"http://example.org/\",\"location\":\"128452975x503157902\"} >  {\"_key\":"
-"\"http://example.net/\",\"location\":\"128487316x502920929\"}, > ] "
-"[[0,1294292484.43963,0.801132263],2] > select --table Site --query \"_id:1 "
-"OR _id:2\" --output_columns _key,location [[0,1294292485.44153,0.000398502],"
-"[[[2],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://"
-"example.org/\",\"128452975x503157902\"],[\"http://example.net/\","
-"\"128487316x502920929\"]]]]"
+"「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグ"
+"でドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに"
+"「#travel」が1つあることがわかります。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:120
-msgid ""
-"「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
-"ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
+#: ../source/tutorial/tutorial10.txt:464
+msgid "ユーザーのお気に入りコメントを検索"
 msgstr ""
 
-#: ../source/tutorial/tutorial06.txt:17
-msgid ""
-"動画共有サイトの検索エンジンを作ることを想定します。1つの動画には、その動画の"
-"特徴を表す、複数の語句が付与されています。「ある語句が付与されている動画の一"
-"覧を取得する」検索を行いたいとします。"
+#: ../source/tutorial/tutorial10.txt:465
+msgid "あるユーザーがお気に入りに入れているコメントを検索します。"
 msgstr ""
 
-#: ../source/tutorial/tutorial02.txt:26
-msgid "% groonga -d /tmp/tutorial.db 12345 %"
+#: ../source/tutorial/tutorial10.txt:471
+msgid "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
 msgstr ""
 
-#: ../source/tutorial/tutorial01.txt:218
-msgid "全文検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:29
-msgid ""
-"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
-"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
-"ら抜けることができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:401
-msgid ""
-"ここでは、 :doc:`tutorial06` で扱った、参照関係の逆引きをします。 以下の例で"
-"は、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:87
-msgid ""
-"ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅"
-"の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、"
-"geo_distance関数に与える文字列は\"128515259x503187188\"となります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:35
-msgid "scorerを利用したソート"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:58
-msgid ""
-"groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与する"
-"ことができます。タグ検索は、その1例にすぎません。"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:40
-msgid ""
-"filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
-"とができます。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial06-5.log:164
-msgid ""
-"> select --table User --limit 0 --drilldown friends "
-"[[0,1294292527.18622,0.000269477],[[[6],[[\"_id\",\"UInt32\"],[\"_key\","
-"\"ShortText\"],[\"username\",\"ShortText\"],[\"index_friends\",\"User\"],"
-"[\"friends\",\"User\"]]],[[6],[[\"_key\",\"ShortText\"],[\"_nsubrecs\","
-"\"Int32\"]],[\"taro\",3],[\"jiro\",3],[\"tomo\",5],[\"moritapo\",2],[\"ken"
-"\",3],[\"hana\",1]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:66
-msgid ""
-"groongaをHTTP経由で利用したい場合には、HTTPプロトコルモードで起動します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:47
-msgid ""
-"コマンドを指定しない場合には、対話モードに入ります。 対話モードでは、標準入力"
-"からコマンドを読み込み、順次実行します。 本チュートリアルでは、対話モードを主"
-"に使用します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial05.txt:65
-msgid ""
-"文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速で"
-"す。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文"
-"字列型を主キーとするテーブルを別途作成し、そのテーブルを型とするカラムを作成"
-"します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:92
-msgid "テーブルにレコードを挿入します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:239
-msgid ""
-"Usersテーブルのfollowerカラムとfavoritesカラム、そしてCommentsテーブルの"
-"replied_usersカラムは、ベクターカラムです。そのため、これらのカラムは配列で値"
-"を指定します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:74
-msgid "詳しくは、 :ref:`execfile` のコマンドの項を参考にしてください。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:25
-msgid "-nオプションは、データベースを作ることを示します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:241
-msgid ""
-"Usersテーブルのlocationカラムと、Commentsテーブルのlocationカラムは、GeoPoint"
-"型です。この型での値の指定は、\"[緯度]x[経度]\"と記述して指定します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:14
-msgid "groongaデーモンの起動"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:117
-msgid "ハッシュタグ"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial07-1.log:30
-msgid ""
-"> table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText "
-"[[0,1294292405.5139,0.046640501],true] > column_create --table Blog1 --name "
-"title --flags COLUMN_SCALAR --type ShortText "
-"[[0,1294292405.76135,0.05035077],true] > column_create --table Blog1 --name "
-"message --flags COLUMN_SCALAR --type ShortText "
-"[[0,1294292406.01251,0.049535938],true] > table_create --name IndexBlog1 --"
-"flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer "
-"TokenBigram [[0,1294292406.2629,0.040450231],true] > column_create --table "
-"IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type "
-"Blog1 --source title [[0,1294292406.50413,0.089260402],true] > column_create "
-"--table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --"
-"type Blog1 --source message [[0,1294292406.7942,0.116405104],true] > load --"
-"table Blog1 > [ > {\"_key\":\"grn1\",\"title\":\"groonga test\",\"message\":"
-"\"groonga message\"}, > {\"_key\":\"grn2\",\"title\":\"baseball result\","
-"\"message\":\"rakutan eggs 4 - 4 groonga moritars\"}, > {\"_key\":\"grn3\","
-"\"title\":\"groonga message\",\"message\":\"none\"} > ] "
-"[[0,1294292407.11144,1.001433691],3]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:99
-msgid ""
-"groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主"
-"キーには型と、その格納方法を指定する必要があります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:51
-msgid ""
-"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
-"の実行状態を返すコマンドです。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial04-6.log:149
-msgid ""
-"> select --table Site --query \"_id:1 OR _id:2\" --output_columns _key,"
-"location,_score --scorer '_score = geo_distance(location, "
-"\"128515259x503187188\")' --sortby -_score [[0,1294292485.84748,0.000516522],"
-"[[[2],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\","
-"\"Int32\"]],[\"http://example.net/\",\"128487316x502920929\",6720],[\"http://"
-"example.org/\",\"128452975x503157902\",2054]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:103
-msgid ""
-"主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まりま"
-"す。これも、のちのチュートリアルで触れます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:77
-msgid ""
-"コマンド実行後、http://[IPアドレスまたはホスト名]:[ポート番号]/ というURLにブ"
-"ラウザからアクセスすると、HTML管理ツールが表示されます。ブラウザは、"
-"JavaScriptの実行が有効になっている必要があります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:132
-msgid ""
-"ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
-"「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
-"います。"
+#: ../source/tutorial/tutorial10.txt:474
+msgid "投稿時間でコメント検索"
 msgstr ""
 
 #: ../source/tutorial/tutorial10.txt:475
@@ -2057,238 +2291,9 @@ msgid ""
 "す。"
 msgstr ""
 
-#: ../source/tutorial/tutorial10.txt:126
+#: ../source/tutorial/tutorial10.txt:482
 msgid ""
-"ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
-"るテーブルです。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:153
-msgid ""
-"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
-"格納し、各語彙を正規化して登録することを示しています。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial01-13.log:348
-msgid ""
-"> select --table Site --output_columns _key,title,_score --query title:@test "
-"[[0,1294292499.35613,0.000371444],[[[9],[[\"_key\",\"ShortText\"],[\"title\","
-"\"ShortText\"],[\"_score\",\"Int32\"]],[\"http://example.org/\",\"This is "
-"test record 1!\",1],[\"http://example.net/\",\"test record 2.\",1],[\"http://"
-"example.com/\",\"test test record three.\",2],[\"http://example.net/afr\","
-"\"test record four.\",1],[\"http://example.org/aba\",\"test test test record "
-"five.\",3],[\"http://example.com/rab\",\"test test test test record six."
-"\",4],[\"http://example.net/atv\",\"test test test record seven.\",3],"
-"[\"http://example.org/gat\",\"test test record eight.\",2],[\"http://example."
-"com/vdw\",\"test test record nine.\",2]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial05.txt:59
-msgid ""
-"ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラ"
-"メータと、drilldown_limitパラメータによって、offsetとlimitを指定することがで"
-"きます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:136
-msgid "COLUMN_SCALARについては、通常のカラムであることを示しています。"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:80
-msgid ""
-"指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:158
-msgid "全文検索用のインデックスカラムの作成"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:30
-msgid "デーモンモードで起動後、プロセス番号が表示されます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial02.txt:80
-msgid "HTTPでのコマンド実行"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:95
-msgid "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:60
-msgid "フォローしているユーザーの一覧"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:41
-msgid ""
-"他のテーブルを参照するカラムにデータを入力する場合には、参照先のテーブルの"
-"_keyカラムの値を代入する必要があります。"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial06-2.log:79
-msgid ""
-"> select --table Video --query tags:@Variety --output_columns _key,title "
-"[[0,1294292523.28874,0.000475294],[[[2],[[\"_key\",\"UInt32\"],[\"title\","
-"\"ShortText\"]],[2,\"Zenigata Kinjirou\"],[5,\"Hex Gone!\"]]]] > select --"
-"table Video --query tags:@Sports --output_columns _key,title "
-"[[0,1294292523.49078,0.000311404],[[[2],[[\"_key\",\"UInt32\"],[\"title\","
-"\"ShortText\"]],[1,\"Soccer 2010\"],[4,\"Moero!! Ultra Baseball\"]]]] > "
-"select --table Video --query tags:@Animation --output_columns _key,title "
-"[[0,1294292523.69268,0.000299391],[[[3],[[\"_key\",\"UInt32\"],[\"title\","
-"\"ShortText\"]],[6,\"Pikonyan 1\"],[7,\"Draw 8 Month\"],[8,\"K.O.\"]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:160
-msgid ""
-"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
-"語彙表にインデックス型のカラムを作成します。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:105
-msgid "コメントを書いたユーザー"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:17
-msgid "DBの作成"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:53
-msgid ""
-"内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックス"
-"が共通になっており、インデックスカラムが1つしかありません。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:249
-msgid ""
-"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
-"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:33
-msgid "テーブル型"
-msgstr ""
-
-#: ../source/tutorial/tutorial07.txt:13
-msgid "複数のカラムを対象とした全文検索"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial10-6.log:476
-msgid ""
-"> select --table Comments --query comment:@羽田 --filter 'geo_in_circle"
-"(location,\"127975798x502919856\",20000)' --output_columns posted_by.name,"
-"comment --drilldown hash_tags,posted_by [[0,1294292471.42922,0.00063973],"
-"[[[1],[[\"posted_by.name\",\"ShortText\"],[\"comment\",\"ShortText\"]],[\"グ"
-"ニャラくん\",\"groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
-"\"]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga"
-"\",1],[\"travel\",1]],[[1],[[\"_key\",\"ShortText\"],[\"_nsubrecs\","
-"\"Int32\"]],[\"tasukuchan\",1]]]]"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:114
-msgid ""
-":ref:`select` コマンドを用いて、テーブルの中身を表示することができます。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:33
-msgid "% groonga -n /tmp/tutorial.db > ctrl-d %"
-msgstr ""
-
-#: ../source/tutorial/tutorial03.txt:11
-msgid "データ型"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:443
-msgid "ハッシュタグでコメント検索"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:90
-msgid "投稿日時"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:56
-msgid "sortbyパラメータには、"
-msgstr ""
-
-#: ../source/tutorial/tutorial04.txt:6
-msgid "さまざまな検索条件の指定"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:209
-msgid "_keyでも検索してみましょう。"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:63
-msgid ""
-"groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
-"することができます。 コマンドは以下の書式のうちいずれかで与えることができま"
-"す。 ::"
-msgstr ""
-
-#: ../source/tutorial/tutorial01.txt:122
-msgid ""
-"table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つの"
-"カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
-"す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
-"きません。"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:21
-msgid ""
-"table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText "
-"table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText "
-"table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText "
-"table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type "
-"ShortText --default_tokenizer TokenBigram  column_create --table Users --"
-"name name --flags COLUMN_SCALAR --type ShortText column_create --table Users "
-"--name follower --flags COLUMN_VECTOR --type Users column_create --table "
-"Users --name favorites --flags COLUMN_VECTOR --type Comments column_create --"
-"table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint "
-"column_create --table Users --name location_str --flags COLUMN_SCALAR --type "
-"ShortText column_create --table Users --name description --flags "
-"COLUMN_SCALAR --type ShortText column_create --table Users --name followee --"
-"flags COLUMN_INDEX --type Users --source follower  column_create --table "
-"Comments --name comment --flags COLUMN_SCALAR --type ShortText column_create "
-"--table Comments --name last_modified --flags COLUMN_SCALAR --type Time "
-"column_create --table Comments --name replied_to --flags COLUMN_SCALAR --"
-"type Comments column_create --table Comments --name replied_users --flags "
-"COLUMN_VECTOR --type Users column_create --table Comments --name hash_tags --"
-"flags COLUMN_VECTOR --type HashTags column_create --table Comments --name "
-"location --flags COLUMN_SCALAR --type WGS84GeoPoint column_create --table "
-"Comments --name posted_by --flags COLUMN_SCALAR --type Users column_create --"
-"table Comments --name favorited_by --flags COLUMN_INDEX --type Users --"
-"source favorites  column_create --table HashTags --name hash_index --flags "
-"COLUMN_INDEX --type Comments --source hash_tags  column_create --table "
-"Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --"
-"type Users --source name,location_str,description column_create --table "
-"Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type "
-"Comments --source comment"
-msgstr ""
-
-#: ../source/tutorial/tutorial06.txt:96
-msgid "インデックス付きジオサーチ"
-msgstr ""
-
-#: ../internal padding after source/example/tutorial07-3.log:98
-msgid ""
-"> table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText "
-"[[0,1294292408.92333,0.107518903],true] > column_create --table Blog2 --name "
-"title --flags COLUMN_SCALAR --type ShortText "
-"[[0,1294292409.23168,0.050369538],true] > column_create --table Blog2 --name "
-"message --flags COLUMN_SCALAR --type ShortText "
-"[[0,1294292409.48288,0.049530167],true] > table_create --name IndexBlog2 --"
-"flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer "
-"TokenBigram [[0,1294292409.73325,0.04885075],true] > column_create --table "
-"IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION "
-"--type Blog2 --source title,message [[0,1294292409.98288,0.105489516],true] "
-"> load --table Blog2 > [ > {\"_key\":\"grn1\",\"title\":\"groonga test\","
-"\"message\":\"groonga message\"}, > {\"_key\":\"grn2\",\"title\":\"baseball "
-"result\",\"message\":\"rakutan eggs 4 - 4 groonga moritars\"}, > {\"_key\":"
-"\"grn3\",\"title\":\"groonga message\",\"message\":\"none\"} > ] "
-"[[0,1294292410.28918,1.001414874],3]"
-msgstr ""
-
-#: ../source/tutorial/tutorial10.txt:81
-msgid ""
-"コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブ"
-"ルです。"
+"2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダ"
+"ウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒット"
+"していることがわかります。"
 msgstr ""
