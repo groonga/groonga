@@ -238,7 +238,7 @@ add-language: gettext
            false)
 	mkdir -p $(srcdir)/po/$(LANGUAGE)
 	for pot in $(BUILDDIR)/pot/*.pot; do		\
-	  po=`basename $$pot | sed s/pot$$/po/`;		\
+	  po=`basename $$pot | sed s/pot$$/po/`;	\
 	  msginit					\
 	    --input "$$pot"				\
 	    --output $(srcdir)/po/$(LANGUAGE)/$${po}	\
@@ -256,7 +256,18 @@ update-po: gettext
 	      --sort-by-file						\
 	      $${po}							\
 	      $${pot};							\
-	  done;								\
+	  done
+
+create-mo:
+	for language in $(LANGUAGES); do		\
+	  test $${language} = "en" && continue;		\
+	  for po in $(srcdir)/po/$${language}/*.po; do	\
+	    mo=`basename $${po} | sed s/po$$/mo/`;	\
+	    mo=locale/$${language}/LC_MESSAGES/$${mo};	\
+	    echo "creating $${mo}";			\
+	    mkdir -p `dirname $${mo}`;			\
+	    msgfmt -o $${mo} $${po};			\
+	  done;						\
 	done
 
 if ENABLE_DOCUMENT
