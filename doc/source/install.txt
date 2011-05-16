@@ -3,21 +3,21 @@
 Install
 =======
 
-それぞれの環境毎にインストール方法を説明します。
+We will explain of how to install Groonga for each environments.
 
-パッケージは64bit用バイナリのみ配布しています。32bit用バイナリは配布していないので注意してください。
+The packages for 64-bit binary are only distributed. Please attention not to distributing others for 32-bit binaly.
 
 Debian GNU/Linux squeeze
 ------------------------
 
-注: amd64版のみ提供でi386版は未提供。
+ATTENTION: We only distribute the package for amd64.
 
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/debian/ squeeze main
   deb-src http://packages.groonga.org/debian/ squeeze main
 
-インストール::
+Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
@@ -26,14 +26,14 @@ Debian GNU/Linux squeeze
 Debian GNU/Linux wheezy
 -----------------------
 
-注: amd64版のみ提供でi386版は未提供。
+ATTENTION: We only distribute the package for amd64.
 
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/debian/ wheezy main
   deb-src http://packages.groonga.org/debian/ wheezy main
 
-インストール::
+Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
@@ -42,14 +42,14 @@ Debian GNU/Linux wheezy
 Debian GNU/Linux sid
 --------------------
 
-注: amd64版のみ提供でi386版は未提供。
+ATTENTION: We only distribute the package for amd64.
 
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/debian/ unstable main
   deb-src http://packages.groonga.org/debian/ unstable main
 
-インストール::
+Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
@@ -58,16 +58,16 @@ Debian GNU/Linux sid
 Ubuntu 10.04 LTS Lucid Lynx
 ---------------------------
 
-注: amd64版のみ提供でi386版は未提供。
+ATTENTION: We only distribute the package for amd64.
 
-注: Ubuntu本家のuniverseセクションもインストール対象としておくこと
+ATTENTION: You should specify universe section of Ubuntu for installing by add file(ex. below-mentioned).
 
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/ubuntu/ lucid universe
   deb-src http://packages.groonga.org/ubuntu/ lucid universe
 
-インストール::
+Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
@@ -76,16 +76,16 @@ Ubuntu 10.04 LTS Lucid Lynx
 Ubuntu 11.04 Natty Narwhal
 --------------------------
 
-注: amd64版のみ提供でi386版は未提供。
+ATTENTION: We only distribute the package for amd64.
 
-注: Ubuntu本家のuniverseセクションもインストール対象としておくこと
+ATTENTION: You should specify universe section of Ubuntu for installing by add file(ex. below-mentioned).
 
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/ubuntu/ natty universe
   deb-src http://packages.groonga.org/ubuntu/ natty universe
 
-インストール::
+Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
@@ -94,9 +94,9 @@ Ubuntu 11.04 Natty Narwhal
 CentOS 5
 --------
 
-注: amd64版のみ提供でi386版は未提供。
+ATTENTION: We only distribute the package for amd64.
 
-インストール::
+Install::
 
   % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
   % sudo yum update
@@ -105,9 +105,9 @@ CentOS 5
 Fedora 14
 ---------
 
-注: amd64版のみ提供でi386版は未提供。
+ATTENTION: We only distribute the package for amd64.
 
-インストール::
+Install::
 
   % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.0-0.noarch.rpm
   % sudo yum update
@@ -116,7 +116,7 @@ Fedora 14
 Mac OS X (MacPorts)
 -------------------
 
-インストール::
+Install::
 
   % git clone https://github.com/groonga/macports.git ~/groonga-macports
   % (echo; echo file://$HOME/groonga-macports) | sudo sh -c "cat >> /opt/local/etc/macports/sources.conf"
@@ -125,22 +125,20 @@ Mac OS X (MacPorts)
 Mac OS X (Homebrew)
 -------------------
 
-インストール::
+Install::
 
   % brew install groonga
 
-その他
+Others
 ------
 
-形態素単位でトークナイズした全文検索索引を使用したい場合は、
-groongaのインストール前にMeCab
-(http://mecab.sourceforge.net/)をインストールしてください。
+If you will use indexes of tokenizing of each morpheme for full-text search, you should install MeCab(http://mecab.sourceforge.net/) before you install groonga.
 
-http://groonga.org/download/よりtar.gzファイルを取得し、
-インストール先の環境にファイルを展開して、 ::
+After, you should download tar.gz-file from this site(http://groonga.org/download/) for installing groonga.
+You should unzip this file in place to install, and run commands below-mentioned. ::
 
  ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
 
-のように実行することでインストールできます。
-
-prefixは、インストール先を指定するパラメータです。prefixを指定しない場合には、/usr/localが指定されたものとみなします。LD_LIBRARY_PATHなどに詳しくない人は、上記のように/usrを指定することをお勧めします。
+The "prefix" option is the paramater for specified place to install.
+If you won't specify the option, "/usr/local" is specified.
+Please specify "/usr" for this option if you don't know environment variables(LD_LIBRARY_PATH and so on) well.
