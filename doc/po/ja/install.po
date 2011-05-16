@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-15 20:56\n"
-"PO-Revision-Date: 2011-05-09 00:36+0900\n"
+"POT-Creation-Date: 2011-05-16 13:11\n"
+"PO-Revision-Date: 2011-05-16 13:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../source/install.txt:4
-msgid "インストール"
-msgstr ""
+msgid "Install"
+msgstr "インストール"
 
 #: ../source/install.txt:6
 msgid "それぞれの環境毎にインストール方法を説明します。"
