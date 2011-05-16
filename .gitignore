@@ -53,6 +53,7 @@ version.sh
 /doc/commands_not_implemented/
 /doc/objects.inv
 /doc/sphinx/
+/doc/locale/
 /lib/icudump
 /coverage
 /coverage.info
