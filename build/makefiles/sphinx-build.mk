@@ -1,4 +1,4 @@
-DOC_LANGUAGES = en ja
+LOCALES = en ja
 
 # You can set these variables from the command line.
 DOCTREES_BASE = doctrees

@@ -42,7 +42,7 @@ man: sphinx-ensure-updated man/groonga.1
 
 man/groonga.1: $(source_files)
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/man		\
 	  -b man				\
 	  $(ALLSPHINXOPTS)			\
@@ -52,7 +52,7 @@ html: sphinx-ensure-updated html/index.html
 
 html/index.html: $(source_files)
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)html		\
 	  -b html				\
 	  $(ALLSPHINXOPTS)			\
@@ -62,7 +62,7 @@ dirhtml: sphinx-ensure-updated dirhtml/index.html
 
 dirhtml/index.html: $(source_files)
 	$(SPHINX_BUILD_COMMAND)				\
-	  -Dlanguage=$(DOC_LANGUAGE)			\
+	  -Dlanguage=$(LOCALE)				\
 	  -d $(DOCTREES_BASE)/dirhtml			\
 	  -b dirhtml					\
 	  $(ALLSPHINXOPTS)				\
@@ -72,7 +72,7 @@ pickle: sphinx-ensure-updated pickle/index.fpickle
 
 pickle/index.fpickle: $(source_files)
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/pickle		\
 	  -b pickle				\
 	  $(ALLSPHINXOPTS)			\
@@ -82,7 +82,7 @@ json: sphinx-ensure-updated json/index.fjson
 
 json/index.fjson: $(source_files)
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/json		\
 	  -b json				\
 	  $(ALLSPHINXOPTS)			\
@@ -92,7 +92,7 @@ htmlhelp: sphinx-ensure-updated htmlhelp/index.html
 
 htmlhelp/index.html: $(source_files)
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/htmlhelp		\
 	  -b htmlhelp				\
 	  $(ALLSPHINXOPTS)			\
@@ -100,7 +100,7 @@ htmlhelp/index.html: $(source_files)
 
 qthelp: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/qthelp		\
 	  -b qthelp				\
 	  $(ALLSPHINXOPTS)			\
@@ -114,7 +114,7 @@ qthelp: sphinx-ensure-updated
 
 latex: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/latex		\
 	  -b latex				\
 	  $(ALLSPHINXOPTS)			\
@@ -126,7 +126,7 @@ latex: sphinx-ensure-updated
 
 rdoc: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/rdoc		\
 	  -b rdoc				\
 	  $(ALLSPHINXOPTS)			\
@@ -134,7 +134,7 @@ rdoc: sphinx-ensure-updated
 
 textile: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/textile		\
 	  -b textile				\
 	  $(ALLSPHINXOPTS)			\
@@ -142,7 +142,7 @@ textile: sphinx-ensure-updated
 
 changes: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/changes		\
 	  -b changes				\
 	  $(ALLSPHINXOPTS)			\
@@ -152,7 +152,7 @@ linkcheck: sphinx-ensure-updated linkcheck/output.txt
 
 linkcheck/output.txt: $(source_files)
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/linkcheck		\
 	  -b linkcheck				\
 	  $(ALLSPHINXOPTS)			\
@@ -160,7 +160,7 @@ linkcheck/output.txt: $(source_files)
 
 doctest: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/doctest		\
 	  -b doctest				\
 	  $(ALLSPHINXOPTS)			\
@@ -168,7 +168,7 @@ doctest: sphinx-ensure-updated
 
 pdf: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/pdf		\
 	  -b pdf				\
 	  $(ALLSPHINXOPTS)			\

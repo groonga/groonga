@@ -10,25 +10,25 @@ update-examples:
 gettext: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND) -b gettext $(ALLSPHINXOPTS) pot
 
-add-language: gettext
-	test -n "$(LANGUAGE)" ||			\
-	  (echo "run with LANGUAGE=\$${NEW_LANGUAGE}.";	\
-	   echo "e.g.: make add-language LANGUAGE=ja";	\
+add-locale: gettext
+	test -n "$(LOCALE)" ||				\
+	  (echo "run with LOCALE=\$${NEW_LOCALE}.";	\
+	   echo "e.g.: make add-locale LOCALE=ja";	\
            false)
-	mkdir -p $(srcdir)/locale/$(LANGUAGE)/LC_MESSAGE
+	mkdir -p $(srcdir)/locale/$(LOCALE)/LC_MESSAGE
 	for pot in pot/*.pot; do					\
 	  po=`basename $$pot | sed s/pot$$/po/`;			\
 	  msginit							\
 	    --input "$$pot"						\
-	    --output $(srcdir)/locale/$(LANGUAGE)/LC_MESSAGE/$${po}	\
-	    --locale=$(LANGUAGE);					\
+	    --output $(srcdir)/locale/$(LOCALE)/LC_MESSAGE/$${po}	\
+	    --locale=$(LOCALE);						\
 	done
 
 update-po: gettext
-	for language in $(LANGUAGES); do				\
-	  test $${language} = "en" && continue;				\
-	  for po in $(srcdir)/locale/$${language}/LC_MESSAGES/*.po; do	\
-	    pot=$(BUILDDIR)/pot/`basename $$po | sed s/po$$/pot/`;	\
+	for locale in $(LOCALES); do				\
+	  test $${locale} = "en" && continue;				\
+	  for po in $(srcdir)/locale/$${locale}/LC_MESSAGES/*.po; do	\
+	    pot=pot/`basename $$po | sed s/po$$/pot/`;			\
 	    echo -n "updateing $${po}: ";				\
 	    msgmerge							\
 	      --update							\
@@ -39,11 +39,11 @@ update-po: gettext
 	done
 
 create-mo:
-	for language in $(LANGUAGES); do				\
-	  test $${language} = "en" && continue;				\
-	  for po in $(srcdir)/locale/$${language}/LC_MESSAGES/*.po; do	\
+	for locale in $(LOCALES); do				\
+	  test $${locale} = "en" && continue;				\
+	  for po in $(srcdir)/locale/$${locale}/LC_MESSAGES/*.po; do	\
 	    mo=`basename $${po} | sed s/po$$/mo/`;			\
-	    mo=locale/$${language}/LC_MESSAGES/$${mo};			\
+	    mo=locale/$${locale}/LC_MESSAGES/$${mo};			\
 	    echo "creating $${mo}";					\
 	    mkdir -p `dirname $${mo}`;					\
 	    msgfmt -o $${mo} $${po};					\
