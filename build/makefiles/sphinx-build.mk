@@ -1,5 +1,15 @@
+DOC_LANGUAGES = en ja
+
+# You can set these variables from the command line.
+DOCTREES_BASE = doctrees
+
 SPHINXOPTS    =
 PAPER         =
+
+# Internal variables.
+PAPEROPT_a4     = -D latex_paper_size=a4
+PAPEROPT_letter = -D latex_paper_size=letter
+ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(abs_top_srcdir)/doc/source
 
 SPHINX_DIR = $(abs_top_builddir)/doc/sphinx
 SPHINX_BUILD = $(SPHINX_DIR)/sphinx-build.py

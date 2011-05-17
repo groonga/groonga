@@ -1,14 +1,5 @@
 include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
 
-# You can set these variables from the command line.
-DOCTREES_BASE = doctrees
-DOC_LANGUAGES = en ja
-
-# Internal variables.
-PAPEROPT_a4     = -D latex_paper_size=a4
-PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(abs_top_srcdir)/doc/source
-
 .PHONY: help clean man html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
 help:
@@ -50,21 +41,21 @@ clean-local: clean-doctree
 man: sphinx-ensure-updated man/groonga.1
 
 man/groonga.1: $(source_files)
-	$(SPHINX_BUILD_COMMAND)				\
-	  -Dlanguage=$(DOC_LANGUAGE)			\
-	  -d $(DOCTREES_BASE)/man	\
-	  -b man					\
-	  $(ALLSPHINXOPTS)				\
+	$(SPHINX_BUILD_COMMAND)			\
+	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -d $(DOCTREES_BASE)/man		\
+	  -b man				\
+	  $(ALLSPHINXOPTS)			\
 	  man
 
 html: sphinx-ensure-updated html/index.html
 
 html/index.html: $(source_files)
-	$(SPHINX_BUILD_COMMAND)				\
-	  -Dlanguage=$(DOC_LANGUAGE)			\
-	  -d $(DOCTREES_BASE)html	\
-	  -b html					\
-	  $(ALLSPHINXOPTS)				\
+	$(SPHINX_BUILD_COMMAND)			\
+	  -Dlanguage=$(DOC_LANGUAGE)		\
+	  -d $(DOCTREES_BASE)html		\
+	  -b html				\
+	  $(ALLSPHINXOPTS)			\
 	  html
 
 dirhtml: sphinx-ensure-updated dirhtml/index.html

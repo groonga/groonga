@@ -2,30 +2,32 @@ SUBDIRS = ja
 
 docdir = $(pkgdatadir)/doc
 
+include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
+
 update-examples:
 	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py
 
 gettext: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b gettext $(ALLSPHINXOPTS) $(BUILDDIR)/pot
+	$(SPHINX_BUILD_COMMAND) -b gettext $(ALLSPHINXOPTS) pot
 
 add-language: gettext
 	test -n "$(LANGUAGE)" ||			\
 	  (echo "run with LANGUAGE=\$${NEW_LANGUAGE}.";	\
 	   echo "e.g.: make add-language LANGUAGE=ja";	\
            false)
-	mkdir -p $(srcdir)/po/$(LANGUAGE)
-	for pot in $(BUILDDIR)/pot/*.pot; do		\
-	  po=`basename $$pot | sed s/pot$$/po/`;	\
-	  msginit					\
-	    --input "$$pot"				\
-	    --output $(srcdir)/po/$(LANGUAGE)/$${po}	\
-	    --locale=$(LANGUAGE);			\
+	mkdir -p $(srcdir)/locale/$(LANGUAGE)/LC_MESSAGE
+	for pot in pot/*.pot; do					\
+	  po=`basename $$pot | sed s/pot$$/po/`;			\
+	  msginit							\
+	    --input "$$pot"						\
+	    --output $(srcdir)/locale/$(LANGUAGE)/LC_MESSAGE/$${po}	\
+	    --locale=$(LANGUAGE);					\
 	done
 
 update-po: gettext
 	for language in $(LANGUAGES); do				\
 	  test $${language} = "en" && continue;				\
-	  for po in $(srcdir)/po/$${language}/*.po; do			\
+	  for po in $(srcdir)/locale/$${language}/LC_MESSAGES/*.po; do	\
 	    pot=$(BUILDDIR)/pot/`basename $$po | sed s/po$$/pot/`;	\
 	    echo -n "updateing $${po}: ";				\
 	    msgmerge							\
@@ -33,18 +35,19 @@ update-po: gettext
 	      --sort-by-file						\
 	      $${po}							\
 	      $${pot};							\
-	  done
+	  done;								\
+	done
 
 create-mo:
-	for language in $(LANGUAGES); do		\
-	  test $${language} = "en" && continue;		\
-	  for po in $(srcdir)/po/$${language}/*.po; do	\
-	    mo=`basename $${po} | sed s/po$$/mo/`;	\
-	    mo=locale/$${language}/LC_MESSAGES/$${mo};	\
-	    echo "creating $${mo}";			\
-	    mkdir -p `dirname $${mo}`;			\
-	    msgfmt -o $${mo} $${po};			\
-	  done;						\
+	for language in $(LANGUAGES); do				\
+	  test $${language} = "en" && continue;				\
+	  for po in $(srcdir)/locale/$${language}/LC_MESSAGES/*.po; do	\
+	    mo=`basename $${po} | sed s/po$$/mo/`;			\
+	    mo=locale/$${language}/LC_MESSAGES/$${mo};			\
+	    echo "creating $${mo}";					\
+	    mkdir -p `dirname $${mo}`;					\
+	    msgfmt -o $${mo} $${po};					\
+	  done;								\
 	done
 	$(MAKE) clean-doctree
 
