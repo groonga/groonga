@@ -135,6 +135,7 @@ AC_CONFIG_FILES([Makefile
                  data/init.d/redhat/sysconfig/Makefile
                  tools/Makefile
                  doc/Makefile
+                 doc/ja/Makefile
                  test/Makefile
                  test/unit/Makefile
                  test/unit/lib/Makefile
