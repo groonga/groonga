@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-05-16 16:54\n"
-"PO-Revision-Date: 2011-05-16 17:04+0900\n"
+"PO-Revision-Date: 2011-05-17 11:05+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -40,7 +40,6 @@ msgstr "Debian GNU/Linux squeeze"
 #: ../source/install.txt:13 ../source/install.txt:29 ../source/install.txt:45
 #: ../source/install.txt:61 ../source/install.txt:79 ../source/install.txt:97
 #: ../source/install.txt:108
-#, fuzzy
 msgid "ATTENTION: We only distribute the package for amd64."
 msgstr "注: amd64版のみ提供でi386版は未提供。"
 
@@ -59,7 +58,6 @@ msgstr ""
 #: ../source/install.txt:70 ../source/install.txt:88 ../source/install.txt:99
 #: ../source/install.txt:110 ../source/install.txt:119
 #: ../source/install.txt:128
-#, fuzzy
 msgid "Install::"
 msgstr "インストール::"
 
@@ -185,9 +183,3 @@ msgid ""
 "usr\" for this option if you don't know environment variables"
 "(LD_LIBRARY_PATH and so on) well."
 msgstr "prefixは、インストール先を指定するパラメータです。prefixを指定しない場合には、/usr/localが指定されたものとみなします。LD_LIBRARY_PATHなどに詳しくない人は、上記のように/usrを指定することをお勧めします。"
-
-#, fuzzy
-#~ msgid ""
-#~ "ATTENTION: We only distribute the package for amd64. 注: amd64版のみ提供で"
-#~ "i386版は未提供。"
-#~ msgstr "注: amd64版のみ提供でi386版は未提供。"
