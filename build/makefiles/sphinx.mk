@@ -1,4 +1,4 @@
-include $(abs_topsrcdir)/build/makefiles/shpinx-build.mk
+include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
 
 # You can set these variables from the command line.
 DOCTREES_BASE = doctrees
