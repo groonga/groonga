@@ -171,7 +171,7 @@ msgid ""
 "After, you should download tar.gz-file from this site(http://groonga.org/"
 "download/) for installing groonga. You should unzip this file in place to "
 "install, and run commands below-mentioned. ::"
-msgstr "http://groonga.org/download/よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、"
+msgstr "http://groonga.org/download/よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、以下のように実行することでインストールできます。::"
 
 #: ../source/install.txt:140
 msgid ""
