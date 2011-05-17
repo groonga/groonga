@@ -15,7 +15,7 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: sphinx-ensure-updated help clean man html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
+.PHONY: sphinx-ensure-updated help clean man html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest update-po create-mo
 
 SPHINX_BUILD = sphinx/sphinx-build.py
 SPHINX_BUILD_COMMAND = PYTHONPATH="$(abs_builddir)/sphinx:$$PYTHONPATH" python $(SPHINX_BUILD)
@@ -47,7 +47,10 @@ help:
 	@echo "  gettext   to make pot files"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
 
-clean-local:
+clean-doctree:
+	-rm -rf $(DOCTREES_BASE)
+
+clean-local: clean-doctree
 	-rm -rf $(DOCTREES_BASE)
 	-rm -rf $(BUILDDIR)/man
 	-rm -rf $(BUILDDIR)/html
@@ -269,6 +272,7 @@ create-mo:
 	    msgfmt -o $${mo} $${po};			\
 	  done;						\
 	done
+	$(MAKE) clean-doctree
 
 if ENABLE_DOCUMENT
 dist-hook:
