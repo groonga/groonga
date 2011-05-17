@@ -1,0 +1,376 @@
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-15 20:56\n"
+"PO-Revision-Date: 2011-05-09 00:36+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../source/functions.txt:4
+msgid "組み込み関数一覧"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:6
+msgid "edit_distance"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:9
+#: ../source/functions/geo_distance.txt:7
+#: ../source/functions/geo_in_circle.txt:7
+#: ../source/functions/geo_in_rectangle.txt:9 ../source/functions/now.txt:7
+#: ../source/functions/rand.txt:7
+msgid "名前"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:11
+msgid "edit_distance - 指定した2つの文字列の編集距離を計算する"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:14
+#: ../source/functions/geo_distance.txt:12
+#: ../source/functions/geo_in_circle.txt:12
+#: ../source/functions/geo_in_rectangle.txt:14 ../source/functions/now.txt:12
+#: ../source/functions/rand.txt:12
+msgid "書式"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:17
+msgid "edit_distance(string1, string2)"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:20
+#: ../source/functions/geo_distance.txt:18
+#: ../source/functions/geo_in_circle.txt:18
+#: ../source/functions/geo_in_rectangle.txt:20 ../source/functions/now.txt:18
+#: ../source/functions/rand.txt:18
+msgid "説明"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:22
+msgid ""
+"groonga組込関数の一つであるedit_distanceについて説明します。組込関数は、"
+"script形式のgrn_expr中で呼び出すことができます。"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:24
+msgid ""
+"edit_distance() 関数は、string1に指定した文字列とstring2に指定した文字列の間"
+"の編集距離を求めます。"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:27
+#: ../source/functions/geo_distance.txt:26
+#: ../source/functions/geo_in_circle.txt:25
+#: ../source/functions/geo_in_rectangle.txt:27 ../source/functions/rand.txt:25
+msgid "引数"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:29
+msgid "``string1``"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:31
+msgid "文字列を指定します"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:33
+msgid "``string2``"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:35
+msgid "もうひとつの文字列を指定します"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:39
+#: ../source/functions/geo_distance.txt:38
+#: ../source/functions/geo_in_circle.txt:41
+#: ../source/functions/geo_in_rectangle.txt:42 ../source/functions/now.txt:25
+#: ../source/functions/rand.txt:32
+msgid "返値"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:41
+msgid "指定した2つ文字列の編集距離をUint32型の値として返します。"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:44
+#: ../source/functions/geo_distance.txt:43
+#: ../source/functions/geo_in_circle.txt:46
+#: ../source/functions/geo_in_rectangle.txt:47 ../source/functions/now.txt:30
+#: ../source/functions/rand.txt:37
+msgid "例"
+msgstr ""
+
+#: ../source/functions/edit_distance.txt:47
+msgid "edit_distance(title, \"hoge\") 1"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:4
+msgid "geo_distance"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:9
+msgid "geo_distance - 指定した2点の距離を計算する"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:15
+msgid "geo_distance(point1, point2)"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:20
+msgid ""
+"groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、script"
+"形式のgrn_expr中で呼び出すことができます。"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:22
+msgid ""
+"geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距離"
+"(近似値)を求めます。 geo_distance()の他に、距離計算アルゴリズムの異なる、"
+"geo_distance2()、geo_distance3()が使用できます。それぞれ、長方形近似、球面近"
+"似、ヒュベニの距離計算式によって距離を算出します。"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:28
+msgid "``point1``"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:30
+msgid ""
+"距離を求める2点のうち一つを指定します。GeoPoint型の値を指定できます。 [#]_"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:32
+msgid "``point2``"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:34
+msgid ""
+"距離を求める2点のうちもう一つを指定します。GeoPoint型の値、あるいは座標を示す"
+"文字列を指定できます。"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:40
+msgid "指定した2点の距離をFloat型の値(単位:メートル)として返します。"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:46
+msgid "geo_distance(pos, \"150x150\") 100"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:50
+#: ../source/functions/geo_in_circle.txt:53
+#: ../source/functions/geo_in_rectangle.txt:54
+msgid "脚注"
+msgstr ""
+
+#: ../source/functions/geo_distance.txt:51
+#: ../source/functions/geo_in_circle.txt:54
+#: ../source/functions/geo_in_rectangle.txt:55
+msgid ""
+"TokyoGeoPoint(日本測地系座標)かWGS84GeoPoint(世界測地系座標)のいずれかを指定"
+"できます。"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:4
+msgid "geo_in_circle"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:9
+msgid "geo_in_circle - 座標が円の範囲内に存在するかどうかを調べます。"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:15
+msgid "geo_in_circle(point, center, radious_or_point)"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:20
+msgid ""
+"groonga組込関数の一つであるgeo_in_circleについて説明します。組込関数は、"
+"script形式のgrn_expr中で呼び出すことができます。"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:22
+msgid ""
+"geo_in_circle() 関数は、pointに指定した座標が、centerに指定した座標を中心とす"
+"る円の範囲内にあるかどうかを調べます。"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:27
+#: ../source/functions/geo_in_rectangle.txt:29
+msgid "``point``"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:29
+msgid ""
+"円の範囲内に存在するかどうかを調べる座標を指定します。Point型の値を指定できま"
+"す。 [#]_"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:31
+msgid "``center``"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:33
+msgid ""
+"円の中心となる座標を指定します。Point型の値、あるいは座標を示す文字列を指定で"
+"きます。"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:35
+msgid "``radious_or_point``"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:37
+msgid ""
+"円の半径を指定します。数値を指定した場合には、半径(単位:メートル)が指定された"
+"ものとみなします。 Point型の値、あるいは座標を示す文字列を指定した場合は、円"
+"周上の点の一つの座標が指定されたものとみなします。"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:43
+msgid "pointに指定した座標が円の範囲内にあるかどうかをBool型の値で返します。"
+msgstr ""
+
+#: ../source/functions/geo_in_circle.txt:49
+msgid "geo_in_circle(pos, \"100x100\", 100) true"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:6
+msgid "geo_in_rectangle"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:11
+msgid "geo_in_rectangle - 座標が矩形の範囲内に存在するかどうかを調べます。"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:17
+msgid "geo_in_rectangle(point, top_left, bottom_right)"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:22
+msgid ""
+"groonga組込関数の一つであるgeo_in_rectangleについて説明します。組込関数は、"
+"script形式のgrn_expr中で呼び出すことができます。"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:24
+msgid ""
+"geo_in_rectangle() 関数は、pointに指定した座標が、top_leftとbottom_rightがな"
+"す矩形の範囲内にあるかどうかを調べます。"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:31
+msgid ""
+"矩形の範囲内に存在するかどうかを調べる座標を指定します。Point型の値を指定でき"
+"ます。 [#]_"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:33
+msgid "``top_left``"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:35
+msgid ""
+"矩形の左上隅となる座標を指定します。Point型の値、あるいは座標を示す文字列を指"
+"定できます。"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:37
+msgid "``bottom_right``"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:39
+msgid ""
+"矩形の右下隅となる座標を指定します。Point型の値、あるいは座標を示す文字列を指"
+"定できます。"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:44
+msgid "pointに指定した座標が矩形の範囲内にあるかどうかをBool型の値で返します。"
+msgstr ""
+
+#: ../source/functions/geo_in_rectangle.txt:50
+msgid "geo_in_rectangle(pos, \"150x100\", \"100x150\") true"
+msgstr ""
+
+#: ../source/functions/now.txt:4
+msgid "now"
+msgstr ""
+
+#: ../source/functions/now.txt:9
+msgid "now - 現在時刻を返す"
+msgstr ""
+
+#: ../source/functions/now.txt:15
+msgid "now()"
+msgstr ""
+
+#: ../source/functions/now.txt:20
+msgid ""
+"groonga組込関数の一つであるnowについて説明します。組込関数は、script形式の"
+"grn_expr中で呼び出すことができます。"
+msgstr ""
+
+#: ../source/functions/now.txt:22
+msgid "now() 関数は現在時刻に対応するTime型の値を返します。"
+msgstr ""
+
+#: ../source/functions/now.txt:27
+msgid "現在時刻に対応するTime型のオブジェクトを返します。"
+msgstr ""
+
+#: ../source/functions/now.txt:33
+msgid "now() 1256791194.55541"
+msgstr ""
+
+#: ../source/functions/rand.txt:4
+msgid "rand"
+msgstr ""
+
+#: ../source/functions/rand.txt:9
+msgid "rand - 乱数を生成する"
+msgstr ""
+
+#: ../source/functions/rand.txt:15
+msgid "rand([max])"
+msgstr ""
+
+#: ../source/functions/rand.txt:20
+msgid ""
+"groonga組込関数の一つであるrandについて説明します。組込関数は、script形式の"
+"grn_expr中で呼び出すことができます。"
+msgstr ""
+
+#: ../source/functions/rand.txt:22
+msgid "rand() 関数は 0 から max の間の疑似乱数整数を返します。"
+msgstr ""
+
+#: ../source/functions/rand.txt:27
+msgid "``max``"
+msgstr ""
+
+#: ../source/functions/rand.txt:29
+msgid ""
+"返値の最大値を指定します。省略した場合は RAND_MAX が指定されたものとみなされ"
+"ます。"
+msgstr ""
+
+#: ../source/functions/rand.txt:34
+msgid "0 と max の間の数を表すInt32型の値を返します。"
+msgstr ""
+
+#: ../source/functions/rand.txt:40
+msgid "rand(10) 3"
+msgstr ""

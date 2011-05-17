@@ -53,7 +53,7 @@ version.sh
 /doc/pot/
 /doc/commands_not_implemented/
 /doc/sphinx/
-/doc/locale/
+/doc/locale/*/LC_MESSAGES/*.mo
 /lib/icudump
 /coverage
 /coverage.info
