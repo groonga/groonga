@@ -38,6 +38,8 @@ Makefile.in
 version.sh
 /examples/kv
 /examples/index
+/doc/*-stamp
+/doc/locale/*/*-stamp
 /doc/locale/*/doctrees/
 /doc/locale/*/html/
 /doc/locale/*/dirhtml/
