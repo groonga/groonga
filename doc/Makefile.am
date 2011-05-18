@@ -8,31 +8,6 @@ include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
 update-examples:
 	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py
 
-# find pot -type f -name '*.pot' | sort | sed -e 's,^,\t,g'
-pot_files =					\
-	pot/characteristic.pot			\
-	pot/command_version.pot			\
-	pot/commands.pot			\
-	pot/commands_not_implemented.pot	\
-	pot/developer.pot			\
-	pot/execfile.pot			\
-	pot/expr.pot				\
-	pot/functions.pot			\
-	pot/grnslap.pot				\
-	pot/grntest.pot				\
-	pot/http.pot				\
-	pot/index.pot				\
-	pot/install.pot				\
-	pot/limitations.pot			\
-	pot/news.pot				\
-	pot/process.pot				\
-	pot/pseudo_column.pot			\
-	pot/reference.pot			\
-	pot/spec.pot				\
-	pot/troubleshooting.pot			\
-	pot/tutorial.pot			\
-	pot/type.pot
-
 if ENABLE_DOCUMENT
 dist-hook:
 	@touch $(distdir)/man-build-stamp
