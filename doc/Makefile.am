@@ -39,19 +39,6 @@ update-po: gettext
 	  done;								\
 	done
 
-create-mo:
-	for locale in $(LOCALES); do				\
-	  test $${locale} = "en" && continue;				\
-	  for po in $(srcdir)/locale/$${locale}/LC_MESSAGES/*.po; do	\
-	    mo=`basename $${po} | sed s/po$$/mo/`;			\
-	    mo=locale/$${locale}/LC_MESSAGES/$${mo};			\
-	    echo "creating $${mo}";					\
-	    mkdir -p `dirname $${mo}`;					\
-	    msgfmt -o $${mo} $${po};					\
-	  done;								\
-	done
-	$(MAKE) clean-doctree
-
 # find pot -type f -name '*.pot' | sort | sed -e 's,^,\t,g'
 pot_files =					\
 	pot/characteristic.pot			\
