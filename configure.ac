@@ -864,8 +864,8 @@ fi
 echo
 
 echo "Tools:"
-# echo "  Sphinx:                 ${enable_sphinx}"
-echo "  hg:                     ${HG}"
+# echo "  Sphinx:                ${enable_sphinx}"
+echo "  hg:                    ${HG}"
 echo
 
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"
