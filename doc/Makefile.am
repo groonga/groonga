@@ -1,4 +1,5 @@
-SUBDIRS = ja
+SUBDIRS =					\
+	locale
 
 docdir = $(pkgdatadir)/doc
 

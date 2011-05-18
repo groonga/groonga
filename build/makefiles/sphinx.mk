@@ -1,4 +1,10 @@
+include $(abs_top_srcdir)/build/makefiles/locale.mk
 include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
+include $(abs_top_srcdir)/build/makefiles/gettext-files.mk
+
+document_source_files =				\
+	$(source_fiele)				\
+	$(mo_files_relative_from_locale_dir)
 
 .PHONY: help clean man html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
@@ -40,7 +46,7 @@ clean-local: clean-doctree
 
 man: sphinx-ensure-updated man/groonga.1
 
-man/groonga.1: $(source_files)
+man/groonga.1: $(document_source_files)
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/man		\
@@ -48,9 +54,10 @@ man/groonga.1: $(source_files)
 	  $(ALLSPHINXOPTS)			\
 	  man
 
-html: sphinx-ensure-updated html/index.html
+html: generate-html
+generate-html: sphinx-ensure-updated html/index.html
 
-html/index.html: $(source_files)
+html/index.html: $(document_source_files)
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/html		\
@@ -60,7 +67,7 @@ html/index.html: $(source_files)
 
 dirhtml: sphinx-ensure-updated dirhtml/index.html
 
-dirhtml/index.html: $(source_files)
+dirhtml/index.html: $(document_source_files)
 	$(SPHINX_BUILD_COMMAND)				\
 	  -Dlanguage=$(LOCALE)				\
 	  -d $(DOCTREES_BASE)/dirhtml			\
@@ -70,7 +77,7 @@ dirhtml/index.html: $(source_files)
 
 pickle: sphinx-ensure-updated pickle/index.fpickle
 
-pickle/index.fpickle: $(source_files)
+pickle/index.fpickle: $(document_source_files)
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/pickle		\
@@ -80,7 +87,7 @@ pickle/index.fpickle: $(source_files)
 
 json: sphinx-ensure-updated json/index.fjson
 
-json/index.fjson: $(source_files)
+json/index.fjson: $(document_source_files)
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/json		\
@@ -90,7 +97,7 @@ json/index.fjson: $(source_files)
 
 htmlhelp: sphinx-ensure-updated htmlhelp/index.html
 
-htmlhelp/index.html: $(source_files)
+htmlhelp/index.html: $(document_source_files)
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/htmlhelp		\
@@ -150,7 +157,7 @@ changes: sphinx-ensure-updated
 
 linkcheck: sphinx-ensure-updated linkcheck/output.txt
 
-linkcheck/output.txt: $(source_files)
+linkcheck/output.txt: $(document_source_files)
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/linkcheck		\
