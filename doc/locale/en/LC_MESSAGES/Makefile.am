@@ -1,3 +1,3 @@
 LOCALE = en
 
-include $(abs_top_srcdir)/build/makefiles/gettext.mk
+include $(abs_top_srcdir)/build/makefiles/gettext.am
