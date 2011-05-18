@@ -8,9 +8,6 @@ include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
 update-examples:
 	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py
 
-gettext: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -b gettext $(ALLSPHINXOPTS) pot
-
 add-locale: gettext
 	test -n "$(LOCALE)" ||				\
 	  (echo "run with LOCALE=\$${NEW_LOCALE}.";	\
@@ -23,20 +20,6 @@ add-locale: gettext
 	    --input "$$pot"						\
 	    --output $(srcdir)/locale/$(LOCALE)/LC_MESSAGE/$${po}	\
 	    --locale=$(LOCALE);						\
-	done
-
-update-po: gettext
-	for locale in $(LOCALES); do				\
-	  test $${locale} = "en" && continue;				\
-	  for po in $(srcdir)/locale/$${locale}/LC_MESSAGES/*.po; do	\
-	    pot=pot/`basename $$po | sed s/po$$/pot/`;			\
-	    echo -n "updateing $${po}: ";				\
-	    msgmerge							\
-	      --update							\
-	      --sort-by-file						\
-	      $${po}							\
-	      $${pot};							\
-	  done;								\
 	done
 
 # find pot -type f -name '*.pot' | sort | sed -e 's,^,\t,g'

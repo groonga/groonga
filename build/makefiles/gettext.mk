@@ -1,14 +1,25 @@
 include $(abs_top_srcdir)/build/makefiles/gettext-files.mk
+include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
 
-.PHONY: update
+.PHONY: gettext update build
 
-all: update
+all: build
 
-.SUFFIXES: .po .mo
+.SUFFIXES: .pot .po .mo
+.pot.po:
+	msgmerge --quiet --update --sort-by-file $@ $<
 .po.mo:
 	msgfmt -o $@ $<
 
-update: $(mo_files)
+update: pot-build-stamp $(po_files)
+build: $(mo_files)
 
-html: update
-pdf: update
+html: build
+pdf: build
+
+gettext: sphinx-ensure-updated
+	$(SPHINX_BUILD_COMMAND) -d doctrees -b gettext $(ALLSPHINXOPTS) .
+
+pot-build-stamp: $(source_files)
+	$(MAKE) gettext
+	@touch $@
