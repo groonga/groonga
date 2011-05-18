@@ -2,7 +2,7 @@ AC_PREREQ(2.59)
 AC_INIT([groonga],[1.2.1],[groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+AM_INIT_AUTOMAKE(tar-pax)
 
 # for Autoconf 2.60 earlier.
 if test -z "${datarootdir}"; then
