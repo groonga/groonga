@@ -109,6 +109,8 @@ AC_SUBST(GRN_DLL_FILENAME)
 
 AC_CONFIG_FILES([
   Makefile
+  build/Makefile
+  build/makefiles/Makefile
   src/Makefile
   src/suggest/Makefile
   lib/Makefile
