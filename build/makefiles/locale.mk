@@ -1,1 +1,0 @@
-LOCALES = en ja

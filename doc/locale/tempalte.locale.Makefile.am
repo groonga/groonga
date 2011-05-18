@@ -1,5 +1,5 @@
 SUBDIRS = LC_MESSAGES
 
-LOCALE = ja
+LOCALE = %LOCALE%
 
 include $(top_srcdir)/build/makefiles/sphinx.mk
