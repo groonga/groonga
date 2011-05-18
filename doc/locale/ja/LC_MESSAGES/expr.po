@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-15 20:56\n"
+"POT-Creation-Date: 2011-05-18 12:45\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -26,31 +26,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../source/expr.txt:4
+#: ../../../source/expr.txt:4
 msgid "grn_expr"
 msgstr ""
 
-#: ../source/expr.txt:7
+#: ../../../source/expr.txt:7
 msgid "名前"
 msgstr ""
 
-#: ../source/expr.txt:9
+#: ../../../source/expr.txt:9
 msgid ""
 "grn_expr - 検索条件やデータベースへの操作を表現するデータ構造(読み方:\"ぐるん"
 "しき\")"
 msgstr ""
 
-#: ../source/expr.txt:12
+#: ../../../source/expr.txt:12
 msgid "説明"
 msgstr ""
 
-#: ../source/expr.txt:14
+#: ../../../source/expr.txt:14
 msgid ""
 "grn_exprは、検索条件やデータベースへの操作を表現するために使用されるデータ構"
 "造の形式です。"
 msgstr ""
 
-#: ../source/expr.txt:16
+#: ../../../source/expr.txt:16
 msgid ""
 "データベースの中から特定の条件を満たすレコードを取り出すために、様々な条件を"
 "and,or,notなどの演算子で結合して自由に表現することができます。grn_exprは、一"
@@ -63,7 +63,7 @@ msgid ""
 "びます。"
 msgstr ""
 
-#: ../source/expr.txt:18
+#: ../../../source/expr.txt:18
 msgid ""
 "grn_exprを使うことによって非常に柔軟に検索条件を記述することができます。類似"
 "文書検索や近傍検索のような高度な検索もすべてgrn_exprによって記述できます。ま"
@@ -73,42 +73,42 @@ msgid ""
 "に定義できます。"
 msgstr ""
 
-#: ../source/expr.txt:21
+#: ../../../source/expr.txt:21
 msgid "script形式のgrn_expr"
 msgstr ""
 
-#: ../source/expr.txt:23
+#: ../../../source/expr.txt:23
 msgid "ECMAScript風の構文で検索条件やレコードへの操作を記述します。"
 msgstr ""
 
-#: ../source/expr.txt:25
+#: ../../../source/expr.txt:25
 msgid "式中のIDENTIFIER(識別子)は、以下のいずれかを指します。"
 msgstr ""
 
-#: ../source/expr.txt:28
+#: ../../../source/expr.txt:28
 msgid "grn_exprが受け取る引数の名前"
 msgstr ""
 
-#: ../source/expr.txt:31
+#: ../../../source/expr.txt:31
 msgid "操作対象としているレコードのカラム名"
 msgstr ""
 
-#: ../source/expr.txt:34
+#: ../../../source/expr.txt:34
 msgid "データベースに定義された型・テーブル・関数の名前"
 msgstr ""
 
-#: ../source/expr.txt:37
+#: ../../../source/expr.txt:37
 msgid "例"
 msgstr ""
 
-#: ../source/expr.txt:39
+#: ../../../source/expr.txt:39
 msgid "script形式でcolumn1の値が'hoge'に等しいという条件"
 msgstr ""
 
-#: ../source/expr.txt:41
+#: ../../../source/expr.txt:41
 msgid "column1 == \"hoge\""
 msgstr ""
 
-#: ../source/expr.txt:43
+#: ../../../source/expr.txt:43
 msgid "脚注"
 msgstr ""

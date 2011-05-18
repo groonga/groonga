@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-15 20:56\n"
+"POT-Creation-Date: 2011-05-18 12:45\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../source/command_version.txt:6
+#: ../../../source/command_version.txt:6
 msgid "コマンドバージョン"
 msgstr ""
 
-#: ../source/command_version.txt:9
+#: ../../../source/command_version.txt:9
 msgid "概要"
 msgstr ""
 
-#: ../source/command_version.txt:11
+#: ../../../source/command_version.txt:11
 msgid ""
 "groonga1.1からコマンドバージョンという概念が導入されます。コマンドバージョン"
 "は、selectやloadなどのgroongaのコマンドの仕様の互換性を表します。groongaパッ"
@@ -35,7 +35,7 @@ msgid ""
 "す。"
 msgstr ""
 
-#: ../source/command_version.txt:13
+#: ../../../source/command_version.txt:13
 msgid ""
 "あるバージョンのgroongaは、二つのコマンドバージョンを同時にサポートするように"
 "なります。 使用するコマンドバージョンは、groongaを起動する際のコマンドライン"
@@ -44,7 +44,7 @@ msgid ""
 "パラメータを与えることによっても指定することができます。"
 msgstr ""
 
-#: ../source/command_version.txt:16
+#: ../../../source/command_version.txt:16
 msgid ""
 "コマンドバージョンは1からはじまり、更新されるたびに1ずつ大きくなります。現状"
 "のgroongaのコマンドの仕様はcommand-version 1という扱いになります。次回提供す"
@@ -52,43 +52,43 @@ msgid ""
 "ります。"
 msgstr ""
 
-#: ../source/command_version.txt:19
+#: ../../../source/command_version.txt:19
 msgid "バージョンの位置づけ"
 msgstr ""
 
-#: ../source/command_version.txt:21
+#: ../../../source/command_version.txt:21
 msgid ""
 "あるバージョンのgroongaにおいてサポートされるコマンドバージョンは、develop, "
 "stable,deprecatedのいずれかの位置づけとなります。"
 msgstr ""
 
-#: ../source/command_version.txt:24
+#: ../../../source/command_version.txt:24
 msgid "まだ開発中であり、仕様が変更される可能性があります。"
 msgstr ""
 
-#: ../source/command_version.txt:27
+#: ../../../source/command_version.txt:27
 msgid ""
 "使用可能であり仕様も安定しています。その時点で使用することが推奨されます。"
 msgstr ""
 
-#: ../source/command_version.txt:30
+#: ../../../source/command_version.txt:30
 msgid ""
 "使用可能であり仕様も安定していますが、廃止予定であり使用が推奨されません。"
 msgstr ""
 
-#: ../source/command_version.txt:32
+#: ../../../source/command_version.txt:32
 msgid ""
 "あるバージョンのgroongaがサポートする二つのコマンドバージョンのうち、いずれか"
 "一つが必ずstableの位置づけとなります。残りの一つは、developないしdeprecatedと"
 "なります。"
 msgstr ""
 
-#: ../source/command_version.txt:34
+#: ../../../source/command_version.txt:34
 msgid ""
 "たとえば下記のようにgroongaのサポートするコマンドバージョンは推移します。::"
 msgstr ""
 
-#: ../source/command_version.txt:36
+#: ../../../source/command_version.txt:36
 msgid ""
 "groonga1.1: command-version1=stable     command-version2=develop groonga1.2: "
 "command-version1=deprecated command-version2=stable groonga1.3: command-"
@@ -97,7 +97,7 @@ msgid ""
 "version3=stable     command-version4=develop"
 msgstr ""
 
-#: ../source/command_version.txt:42
+#: ../../../source/command_version.txt:42
 msgid ""
 "あるコマンドバージョンははじめにdevelop扱いとしてリリースされ、やがてstableに"
 "移行します。 その後二世代経過するとそのコマンドバージョンはdeprecated扱いとな"
@@ -105,14 +105,14 @@ msgid ""
 "ンドバージョンはサポート対象外となります。"
 msgstr ""
 
-#: ../source/command_version.txt:45
+#: ../../../source/command_version.txt:45
 msgid ""
 "default-commnad-versionパラメータやcommand_versionパラメータを指定せずに"
 "groongaコマンドを実行した際には、その時点でstableであるコマンドバージョンが指"
 "定されたものとみなします。"
 msgstr ""
 
-#: ../source/command_version.txt:47
+#: ../../../source/command_version.txt:47
 msgid ""
 "groongaプロセス起動時に、default-command-versionパラメータにstable扱いでない"
 "コマンドバージョンを指定した場合には、警告メッセージがログファイルに出力され"
@@ -120,35 +120,36 @@ msgid ""
 "り、プロセスは速やかに停止します。"
 msgstr ""
 
-#: ../source/command_version.txt:50
+#: ../../../source/command_version.txt:50
 msgid "コマンドバージョンの指定方法"
 msgstr ""
 
-#: ../source/command_version.txt:52
+#: ../../../source/command_version.txt:52
 msgid ""
 "コマンドバージョンの指定方法はgroonga実行モジュールの引数として指定する方法と"
 "各コマンドの引数として指定する方法があります。"
 msgstr ""
 
-#: ../source/command_version.txt:55
+#: ../../../source/command_version.txt:55
 msgid "default-command-versionパラメータ"
 msgstr ""
 
-#: ../source/command_version.txt:57
+#: ../../../source/command_version.txt:57
 msgid ""
 "groonga実行モジュールの引数としてdefault-command-versionパラメータを指定でき"
 "ます。 (configファイルの中に指定することも可能です)"
 msgstr ""
 
-#: ../source/command_version.txt:60 ../source/command_version.txt:71
+#: ../../../source/command_version.txt:60
+#: ../../../source/command_version.txt:71
 msgid "実行例::"
 msgstr ""
 
-#: ../source/command_version.txt:62
+#: ../../../source/command_version.txt:62
 msgid "groonga --default-command-version 1"
 msgstr ""
 
-#: ../source/command_version.txt:64
+#: ../../../source/command_version.txt:64
 msgid ""
 "そのプロセスで実行するすべてのコマンドについて、デフォルトのコマンドバージョ"
 "ンとして指定されたバージョンを使用します。指定されたコマンドバージョンが"
@@ -159,20 +160,20 @@ msgid ""
 "速やかに終了します。"
 msgstr ""
 
-#: ../source/command_version.txt:67
+#: ../../../source/command_version.txt:67
 msgid "command_versionパラメータ"
 msgstr ""
 
-#: ../source/command_version.txt:69
+#: ../../../source/command_version.txt:69
 msgid ""
 "select,loadなどのすべてのgroongaコマンドにcommand_versionが指定できます。"
 msgstr ""
 
-#: ../source/command_version.txt:73
+#: ../../../source/command_version.txt:73
 msgid "select --command_version 1 --table tablename"
 msgstr ""
 
-#: ../source/command_version.txt:75
+#: ../../../source/command_version.txt:75
 msgid ""
 "指定されたコマンドバージョンでコマンドを実行します。指定されたコマンドバー"
 "ジョンがサポート対象外であった場合にはエラーが返されます。command-versionが指"
