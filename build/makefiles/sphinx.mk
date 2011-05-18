@@ -53,7 +53,7 @@ html: sphinx-ensure-updated html/index.html
 html/index.html: $(source_files)
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
-	  -d $(DOCTREES_BASE)html		\
+	  -d $(DOCTREES_BASE)/html		\
 	  -b html				\
 	  $(ALLSPHINXOPTS)			\
 	  html
