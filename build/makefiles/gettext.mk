@@ -20,6 +20,12 @@ pdf: build
 gettext: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND) -d doctrees -b gettext $(ALLSPHINXOPTS) .
 
+init: gettext
+	for po in $(po_files); do						\
+	  pot=`basename $${po} | sed -e 's,po$$,pot,g'`;			\
+	  msginit --input=$${pot} --output-file=$${po} --locale=$(LOCALE);	\
+	done
+
 pot-build-stamp: $(source_files)
 	$(MAKE) gettext
 	@touch $@
