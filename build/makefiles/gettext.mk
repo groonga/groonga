@@ -1,6 +1,10 @@
 include $(abs_top_srcdir)/build/makefiles/gettext-files.mk
 include $(abs_top_srcdir)/build/makefiles/sphinx-build.mk
 
+EXTRA_DIST +=					\
+	$(po_files)				\
+	$(mo_files)
+
 .PHONY: gettext update build
 
 all: build

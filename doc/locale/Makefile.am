@@ -24,3 +24,7 @@ add:
               a \ \ doc\/locale\/$(LOCALE)\/LC_MESSAGES\/Makefile"	\
 	  $(top_srcdir)/configure.ac
 
+man:
+	for dir in $(SUBDIRS); do		\
+	  (cd $${dir} && $(MAKE) man);		\
+	done
