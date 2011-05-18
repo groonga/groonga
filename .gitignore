@@ -53,6 +53,7 @@ version.sh
 /doc/locale/*/LC_MESSAGES/*.mo
 /doc/locale/*/LC_MESSAGES/*.pot
 /doc/locale/*/LC_MESSAGES/doctrees/
+/doc/locale/*/LC_MESSAGES/pot-build-stamp
 /doc/pot/
 /doc/commands_not_implemented/
 /doc/sphinx/

@@ -1,0 +1,841 @@
+# English translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-18 15:15\n"
+"PO-Revision-Date: 2011-05-18 15:16+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../../source/developer/document.txt:22
+#: ../../../source/developer/document.txt:34
+msgid "pdfの作成"
+msgstr "pdfの作成"
+
+#: ../../../source/developer/query.txt:91
+msgid "v1の値がv2の値よりも大きいことを表します。"
+msgstr "v1の値がv2の値よりも大きいことを表します。"
+
+#: ../../../source/developer/com.txt:12
+msgid "workerはthreadと１対１対応。"
+msgstr "workerはthreadと１対１対応。"
+
+#: ../../../source/developer/document.txt:27
+msgid "rst2pdfのインストール"
+msgstr "rst2pdfのインストール"
+
+#: ../../../source/developer/com.txt:9
+msgid "comがedgeを作る。"
+msgstr "comがedgeを作る。"
+
+#: ../../../source/developer/query.txt:152
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); result = grn_table_select(ctx, table, query, "
+"NULL, GRN_OP_OR); grn_obj_close(ctx, query); GRN_EXPR_CREATE_FOR_QUERY(ctx, "
+"table, query, var); grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, "
+"1); grn_expr_append_obj(ctx, query, column2, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); grn_table_select(ctx, table, query, result, "
+"GRN_OP_ADJUST); grn_obj_close(ctx, query);"
+msgstr ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); result = grn_table_select(ctx, table, query, "
+"NULL, GRN_OP_OR); grn_obj_close(ctx, query); GRN_EXPR_CREATE_FOR_QUERY(ctx, "
+"table, query, var); grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, "
+"1); grn_expr_append_obj(ctx, query, column2, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); grn_table_select(ctx, table, query, result, "
+"GRN_OP_ADJUST); grn_obj_close(ctx, query);"
+
+#: ../../../source/developer/query.txt:103
+msgid ""
+"v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
+"き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
+"かを指定することができます。"
+msgstr ""
+"v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
+"き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
+"かを指定することができます。"
+
+#: ../../../source/developer/test.txt:27
+msgid "clangのインストール"
+msgstr "clangのインストール"
+
+#: ../../../source/developer/test.txt:12
+msgid "groongaは、テストのフレームワークとして Cutter_ を用いています。"
+msgstr "groongaは、テストのフレームワークとして Cutter_ を用いています。"
+
+#: ../../../source/developer/document.txt:36
+msgid "以下のコマンドでpdfが作成されます。::"
+msgstr "以下のコマンドでpdfが作成されます。::"
+
+#: ../../../source/developer/query.txt:75
+msgid ""
+"関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
+"として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
+"callback、コールバック関数に渡されるargとを引数として指定することができます。"
+"callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
+"ます。主な関係式について説明します。"
+msgstr ""
+"関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
+"として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
+"callback、コールバック関数に渡されるargとを引数として指定することができます。"
+"callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
+"ます。主な関係式について説明します。"
+
+#: ../../../source/developer/test.txt:75
+msgid "特定のテストファイルのみテストする"
+msgstr "特定のテストファイルのみテストする"
+
+#: ../../../source/developer/query.txt:45
+msgid ""
+"equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
+"contain() near() similar() prefix() suffix()"
+msgstr ""
+"equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
+"contain() near() similar() prefix() suffix()"
+
+#: ../../../source/developer/test.txt:110
+msgid ""
+"% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
+"scan_build make -j4"
+msgstr ""
+"% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
+"scan_build make -j4"
+
+#: ../../../source/developer/com.txt:14
+msgid "workerは、１つのedgeと結びつくことができる。"
+msgstr "workerは、１つのedgeと結びつくことができる。"
+
+#: ../../../source/developer/test.txt:31
+msgid "% sudo aptitude install -y clang"
+msgstr "% sudo aptitude install -y clang"
+
+#: ../../../source/developer/query.txt:126
+msgid "suffix(v1, v2, arg, callback)"
+msgstr "suffix(v1, v2, arg, callback)"
+
+#: ../../../source/developer/query.txt:198
+msgid ""
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
+"さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
+"ア値にscore2を積算してresultに追加します。"
+msgstr ""
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
+"さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
+"ア値にscore2を積算してresultに追加します。"
+
+#: ../../../source/developer/test.txt:95
+msgid "デバッガ上でのテスト実行"
+msgstr "デバッガ上でのテスト実行"
+
+#: ../../../source/developer/test.txt:52
+msgid "make coverage"
+msgstr "make coverage"
+
+#: ../../../source/developer/com.txt:11
+msgid "edgeはctxを含む。"
+msgstr "edgeはctxを含む。"
+
+#: ../../../source/developer/query.txt:70
+msgid ""
+"grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
+"せて可能な限り高速に指定されたクエリを実行しようとします。"
+msgstr ""
+"grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
+"せて可能な限り高速に指定されたクエリを実行しようとします。"
+
+#: ../../../source/developer/query.txt:38
+msgid "&& (論理積) || (論理和) !  (否定)"
+msgstr "&& (論理積) || (論理和) !  (否定)"
+
+#: ../../../source/developer.txt:4
+msgid "groonga開発者向け情報"
+msgstr "groonga開発者向け情報"
+
+#: ../../../source/developer/query.txt:11
+msgid ""
+"groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
+"ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
+"います。"
+msgstr ""
+"groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
+"ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
+"います。"
+
+#: ../../../source/developer/document.txt:29
+msgid "以下のようにしてインストールできます。::"
+msgstr "以下のようにしてインストールできます。::"
+
+#: ../../../source/developer/document.txt:11
+msgid "# aptitude install python-setuptools # easy_install -U sphinx"
+msgstr "# aptitude install python-setuptools # easy_install -U sphinx"
+
+#: ../../../source/developer/document.txt:7
+msgid "Sphinxのインストール"
+msgstr "Sphinxのインストール"
+
+#: ../../../source/developer/query.txt:28
+msgid ""
+"groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
+"ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
+"がC言語で定義した関数を新たなコマンドとしてgroonga実行ファイルに組み込むこと"
+"ができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解"
+"釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈して"
+"DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
+"す。"
+msgstr ""
+"groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
+"ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
+"がC言語で定義した関数を新たなコマンドとしてgroonga実行ファイルに組み込むこと"
+"ができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解"
+"釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈して"
+"DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
+"す。"
+
+#: ../../../source/developer/test.txt:92
+msgid "% CUTTER_CHECK_LEAK=yes make check"
+msgstr "% CUTTER_CHECK_LEAK=yes make check"
+
+#: ../../../source/developer/query.txt:102
+msgid "contain(v1, v2, mode, arg, callback)"
+msgstr "contain(v1, v2, mode, arg, callback)"
+
+#: ../../../source/developer/test.txt:20
+msgid "lcovのインストール"
+msgstr "lcovのインストール"
+
+#: ../../../source/developer/query.txt:98
+msgid "greater_equal(v1, v2, arg, callback)"
+msgstr "greater_equal(v1, v2, arg, callback)"
+
+#: ../../../source/developer/test.txt:10
+msgid "Cutterのインストール"
+msgstr "Cutterのインストール"
+
+#: ../../../source/developer/document.txt:31
+msgid "# easy_install rst2pdf"
+msgstr "# easy_install rst2pdf"
+
+#: ../../../source/developer/query.txt:107
+msgid ""
+"EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
+"る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
+"に前方一致する SUFFIX: v1の値の要素がv2の値に後方一致する PARTIAL: v1の値の要"
+"素がv2の値に中間一致する"
+msgstr ""
+"EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
+"る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
+"に前方一致する SUFFIX: v1の値の要素がv2の値に後方一致する PARTIAL: v1の値の要"
+"素がv2の値に中間一致する"
+
+#: ../../../source/developer/query.txt:87
+msgid "v1の値がv2の値よりも小さいことを表します。"
+msgstr "v1の値がv2の値よりも小さいことを表します。"
+
+#: ../../../source/developer/query.txt:171
+msgid ""
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。次に、resultにセットされたレ"
+"コードのうち、column2の値がstringにexactモードでヒットするレコードについて"
+"は、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。"
+msgstr ""
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。次に、resultにセットされたレ"
+"コードのうち、column2の値がstringにexactモードでヒットするレコードについて"
+"は、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。"
+
+#: ../../../source/developer/com.txt:13
+msgid "workerは上限が個定数。"
+msgstr "workerは上限が個定数。"
+
+#: ../../../source/developer/query.txt:6
+msgid ""
+"groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
+"り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
+"エリの表現と実行に関して、groongaは複数の手段を用意しています。"
+msgstr ""
+"groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
+"り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
+"エリの表現と実行に関して、groongaは複数の手段を用意しています。"
+
+#: ../../../source/developer/test.txt:114
+msgid "configureは１度のみ実行する必要があります。"
+msgstr "configureは１度のみ実行する必要があります。"
+
+#: ../../../source/developer/test.txt:81
+msgid "% ./run-test.sh -t test_string"
+msgstr "% ./run-test.sh -t test_string"
+
+#: ../../../source/developer/query.txt:18
+msgid ""
+"DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
+"す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
+"す。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができま"
+"す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
+"て実現されています。"
+msgstr ""
+"DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
+"す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
+"す。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができま"
+"す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
+"て実現されています。"
+
+#: ../../../source/developer/com.txt:17
+msgid ""
+"msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
+"ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
+"る。"
+msgstr ""
+"msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
+"ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
+"る。"
+
+#: ../../../source/developer/query.txt:99
+msgid "v1の値がv2の値と等しいか大きいことを表します。"
+msgstr "v1の値がv2の値と等しいか大きいことを表します。"
+
+#: ../../../source/developer/document.txt:38
+msgid "% make pdf"
+msgstr "% make pdf"
+
+#: ../../../source/developer/query.txt:82
+msgid "not_equal(v1, v2, arg, callback)"
+msgstr "not_equal(v1, v2, arg, callback)"
+
+#: ../../../source/developer/query.txt:73
+msgid "関係式"
+msgstr "関係式"
+
+#: ../../../source/developer/document.txt:4
+msgid "ドキュメント作成"
+msgstr "ドキュメント作成"
+
+#: ../../../source/developer/query.txt:211
+msgid ""
+"tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
+"が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
+"登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
+"ヒットします。"
+msgstr ""
+"tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
+"が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
+"登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
+"ヒットします。"
+
+#: ../../../source/developer/document.txt:17
+msgid "以下のコマンドでhtmlが作成されます。::"
+msgstr "以下のコマンドでhtmlが作成されます。::"
+
+#: ../../../source/developer/test.txt:66
+msgid "特定のテスト関数のみテストする"
+msgstr "特定のテスト関数のみテストする"
+
+#: ../../../source/developer/query.txt:115
+msgid ""
+"v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
+"列を渡します)"
+msgstr ""
+"v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
+"列を渡します)"
+
+#: ../../../source/developer/test.txt:103
+msgid "% CUTTER_DEBUG=yes make check"
+msgstr "% CUTTER_DEBUG=yes make check"
+
+#: ../../../source/developer/query.txt:33
+msgid ""
+"grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
+"クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
+"要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
+"子で結合したものです。"
+msgstr ""
+"grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
+"クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
+"要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
+"子で結合したものです。"
+
+#: ../../../source/developer/query.txt:90
+msgid "greater(v1, v2, arg, callback)"
+msgstr "greater(v1, v2, arg, callback)"
+
+#: ../../../source/developer/query.txt:42
+msgid ""
+"関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
+"関係式として使うこともできます。 ::"
+msgstr ""
+"関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
+"関係式として使うこともできます。 ::"
+
+#: ../../../source/developer/test.txt:61
+msgid "様々なテスト"
+msgstr "様々なテスト"
+
+#: ../../../source/developer/test.txt:77
+msgid ""
+"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
+"す。"
+msgstr ""
+"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
+"す。"
+
+#: ../../../source/developer/test.txt:72
+msgid "% ./run-test.sh -n test_text_otoj"
+msgstr "% ./run-test.sh -n test_text_otoj"
+
+#: ../../../source/developer/test.txt:88 ../../../source/developer/test.txt:99
+msgid "run-test.shのみならず、make checkでも利用可能です。"
+msgstr "run-test.shのみならず、make checkでも利用可能です。"
+
+#: ../../../source/developer/query.txt:16
+msgid "DB_API"
+msgstr "DB_API"
+
+#: ../../../source/developer/query.txt:9
+msgid "クエリ実行のためのインタフェース"
+msgstr "クエリ実行のためのインタフェース"
+
+#: ../../../source/developer/query.txt:95
+msgid "v1の値がv2の値と等しいか小さいことを表します。"
+msgstr "v1の値がv2の値と等しいか小さいことを表します。"
+
+#: ../../../source/developer/query.txt:145
+msgid ""
+"tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
+"が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
+"ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
+"みがヒットします。"
+msgstr ""
+"tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
+"が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
+"ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
+"みがヒットします。"
+
+#: ../../../source/developer/test.txt:24
+msgid "% sudo aptitude install -y lcov"
+msgstr "% sudo aptitude install -y lcov"
+
+#: ../../../source/developer/com.txt:2
+msgid "groonga 通信アーキテクチャ"
+msgstr "groonga 通信アーキテクチャ"
+
+#: ../../../source/developer/query.txt:119
+msgid "v1の値とv2の値が類似していることを表します。"
+msgstr "v1の値とv2の値が類似していることを表します。"
+
+#: ../../../source/developer/com.txt:5
+msgid "gqtpでのアーキテクチャ"
+msgstr "gqtpでのアーキテクチャ"
+
+#: ../../../source/developer/query.txt:127
+msgid "v1の値がv2の値に対して後方一致することを表します。"
+msgstr "v1の値がv2の値に対して後方一致することを表します。"
+
+#: ../../../source/developer/query.txt:63
+msgid "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
+msgstr "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
+
+#: ../../../source/developer/query.txt:122
+msgid "prefix(v1, v2, arg, callback)"
+msgstr "prefix(v1, v2, arg, callback)"
+
+#: ../../../source/developer/test.txt:56
+msgid ""
+"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
+"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
+"トされるようになっていることを心がけてください。"
+msgstr ""
+"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
+"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
+"トされるようになっていることを心がけてください。"
+
+#: ../../../source/developer/query.txt:123
+msgid "v1の値がv2の値に対して前方一致することを表します。"
+msgstr "v1の値がv2の値に対して前方一致することを表します。"
+
+#: ../../../source/developer/test.txt:4
+msgid "テスト方法"
+msgstr "テスト方法"
+
+#: ../../../source/developer/query.txt:130
+msgid "クエリの実例"
+msgstr "クエリの実例"
+
+#: ../../../source/developer/query.txt:138
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
+msgstr ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
+
+#: ../../../source/developer/document.txt:15
+msgid "htmlの作成"
+msgstr "htmlの作成"
+
+#: ../../../source/developer/query.txt:201
+msgid "検索例4"
+msgstr "検索例4"
+
+#: ../../../source/developer/query.txt:174
+msgid "検索例3"
+msgstr "検索例3"
+
+#: ../../../source/developer/query.txt:149
+msgid "検索例2"
+msgstr "検索例2"
+
+#: ../../../source/developer/query.txt:135
+msgid "検索例1"
+msgstr "検索例1"
+
+#: ../../../source/developer/test.txt:43 ../../../source/developer/test.txt:50
+msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
+msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
+
+#: ../../../source/developer/query.txt:60
+msgid ""
+"grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
+"ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
+"納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
+"かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
+msgstr ""
+"grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
+"ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
+"納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
+"かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
+
+#: ../../../source/developer/query.txt:23
+msgid ""
+"grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
+"るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
+"ることができます。grn_exprによって表現されたクエリを実行するためには、"
+"grn_table_select()関数を使用します。"
+msgstr ""
+"grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
+"るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
+"ることができます。grn_exprによって表現されたクエリを実行するためには、"
+"grn_table_select()関数を使用します。"
+
+#: ../../../source/developer/test.txt:84
+msgid "不正メモリアクセス・メモリリーク検出"
+msgstr "不正メモリアクセス・メモリリーク検出"
+
+#: ../../../source/developer/test.txt:58
+msgid ""
+"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
+"バーしている部分を増やすことも重要です。"
+msgstr ""
+"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
+"バーしている部分を増やすことも重要です。"
+
+#: ../../../source/developer/query.txt:177
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); result = grn_table_select(ctx, table, query, "
+"NULL, GRN_OP_OR); grn_obj_close(ctx, query); if (grn_table_size(ctx, result) "
+"< t1) {   GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);   "
+"grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);   "
+"grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, partial, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1);   "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);   grn_table_select(ctx, "
+"table, query, result, GRN_OP_OR);   grn_obj_close(ctx, query); }"
+msgstr ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); result = grn_table_select(ctx, table, query, "
+"NULL, GRN_OP_OR); grn_obj_close(ctx, query); if (grn_table_size(ctx, result) "
+"< t1) {   GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);   "
+"grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);   "
+"grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, partial, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1);   "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);   grn_table_select(ctx, "
+"table, query, result, GRN_OP_OR);   grn_obj_close(ctx, query); }"
+
+#: ../../../source/developer/query.txt:86
+msgid "less(v1, v2, arg, callback)"
+msgstr "less(v1, v2, arg, callback)"
+
+#: ../../../source/developer/test.txt:29
+msgid ""
+"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
+"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+msgstr ""
+"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
+"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+
+#: ../../../source/developer/query.txt:114
+msgid "near(v1, v2, arg, callback)"
+msgstr "near(v1, v2, arg, callback)"
+
+#: ../../../source/developer/query.txt:79
+msgid "v1の値とv2の値が等しいことを表します。"
+msgstr "v1の値とv2の値が等しいことを表します。"
+
+#: ../../../source/developer/test.txt:54
+msgid ""
+"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
+"す。"
+msgstr ""
+"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
+"す。"
+
+#: ../../../source/developer/query.txt:21
+msgid "grn_expr"
+msgstr "grn_expr"
+
+#: ../../../source/developer/com.txt:10
+msgid "edgeは接続と１対１対応。"
+msgstr "edgeは接続と１対１対応。"
+
+#: ../../../source/developer/test.txt:68
+msgid ""
+"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
+msgstr ""
+"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
+
+#: ../../../source/developer/query.txt:78
+msgid "equal(v1, v2, arg, callback)"
+msgstr "equal(v1, v2, arg, callback)"
+
+#: ../../../source/developer/test.txt:41
+msgid "テストの動作"
+msgstr "テストの動作"
+
+#: ../../../source/developer/test.txt:70 ../../../source/developer/test.txt:79
+#: ../../../source/developer/test.txt:90
+#: ../../../source/developer/test.txt:101
+msgid "実行例::"
+msgstr "実行例::"
+
+#: ../../../source/developer/query.txt:83
+msgid "v1の値とv2の値が等しくないことを表します。"
+msgstr "v1の値とv2の値が等しくないことを表します。"
+
+#: ../../../source/developer/test.txt:108
+msgid ""
+"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
+"いうディレクトリに解析結果のhtmlが出力されます。::"
+msgstr ""
+"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
+"いうディレクトリに解析結果のhtmlが出力されます。::"
+
+#: ../../../source/developer/query.txt:132
+msgid "grn_exprを使って様々な検索クエリを表現することができます。"
+msgstr "grn_exprを使って様々な検索クエリを表現することができます。"
+
+#: ../../../source/developer/document.txt:9
+msgid ""
+"groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
+"以下のように導入します。::"
+msgstr ""
+"groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
+"以下のように導入します。::"
+
+#: ../../../source/developer/test.txt:97
+msgid ""
+"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
+"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
+msgstr ""
+"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
+"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
+
+#: ../../../source/developer/test.txt:7
+msgid "テスト環境の構築"
+msgstr "テスト環境の構築"
+
+#: ../../../source/developer/test.txt:36
+msgid ""
+"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
+"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
+"トールできます。::"
+msgstr ""
+"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
+"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
+"トールできます。::"
+
+#: ../../../source/developer/query.txt:31
+msgid "grn_exprで表現できるクエリ"
+msgstr "grn_exprで表現できるクエリ"
+
+#: ../../../source/developer/test.txt:22
+msgid ""
+"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
+"以下のようにしてインストールできます。::"
+msgstr ""
+"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
+"以下のようにしてインストールできます。::"
+
+#: ../../../source/developer/query.txt:204
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, "
+"GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
+msgstr ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, "
+"GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
+
+#: ../../../source/developer/query.txt:94
+msgid "less_equal(v1, v2, arg, callback)"
+msgstr "less_equal(v1, v2, arg, callback)"
+
+#: ../../../source/developer/document.txt:19
+msgid "% make html"
+msgstr "% make html"
+
+#: ../../../source/developer/test.txt:45
+msgid "make check"
+msgstr "make check"
+
+#: ../../../source/developer/document.txt:24
+msgid ""
+"groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
+"(IPA Gothic/IPAexGothic)が必要となります。"
+msgstr ""
+"groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
+"(IPA Gothic/IPAexGothic)が必要となります。"
+
+#: ../../../source/developer/query.txt:4
+msgid "クエリの実現"
+msgstr "クエリの実現"
+
+#: ../../../source/developer/test.txt:48
+msgid "カバレッジ情報"
+msgstr "カバレッジ情報"
+
+#: ../../../source/developer/test.txt:34
+msgid "libmemcachedのインストール"
+msgstr "libmemcachedのインストール"
+
+#: ../../../source/developer/com.txt:16
+msgid "edgeごとにqueueを持つ。"
+msgstr "edgeごとにqueueを持つ。"
+
+#: ../../../source/developer/query.txt:68
+msgid ""
+"GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
+"ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
+"意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレ"
+"コードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチす"
+"るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
+"チするレコードに対してスコア値の更新のみを行います。"
+msgstr ""
+"GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
+"ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
+"意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレ"
+"コードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチす"
+"るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
+"チするレコードに対してスコア値の更新のみを行います。"
+
+#: ../../../source/developer/test.txt:63
+msgid ""
+"テストは、test/unitディレクトリにおいて、./run-test.shを実行することによって"
+"も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
+"sh --helpを実行しヘルプをご覧ください。"
+msgstr ""
+"テストは、test/unitディレクトリにおいて、./run-test.shを実行することによって"
+"も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
+"sh --helpを実行しヘルプをご覧ください。"
+
+#: ../../../source/developer/query.txt:118
+msgid "similar(v1, v2, arg, callback)"
+msgstr "similar(v1, v2, arg, callback)"
+
+#: ../../../source/developer/test.txt:86
+msgid ""
+"環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
+"スやメモリリークを検出しつつ、テストを動作させることができます。"
+msgstr ""
+"環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
+"スやメモリリークを検出しつつ、テストを動作させることができます。"
+
+#: ../../../source/developer/query.txt:58
+msgid "grn_table_select()"
+msgstr "grn_table_select()"
+
+#: ../../../source/developer/test.txt:14
+msgid ""
+"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
+"覧下さい。"
+msgstr ""
+"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
+"覧下さい。"
+
+#: ../../../source/developer/test.txt:38
+msgid "% sudo aptitude install -y libmemcached-dev"
+msgstr "% sudo aptitude install -y libmemcached-dev"
+
+#: ../../../source/developer/com.txt:8
+msgid "comは1スレッド。"
+msgstr "comは1スレッド。"
+
+#: ../../../source/developer/com.txt:7
+msgid "comが外部からの接続を受け付ける。"
+msgstr "comが外部からの接続を受け付ける。"
+
+#: ../../../source/developer/query.txt:13
+msgid ""
+"クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
+"形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
+msgstr ""
+"クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
+"形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
+
+#: ../../../source/developer/query.txt:26
+msgid "groonga実行ファイル"
+msgstr "groonga実行ファイル"
+
+#: ../../../source/developer/test.txt:106
+msgid "静的解析"
+msgstr "静的解析"
+
+#: ../../../source/developer/query.txt:35
+msgid "論理演算子は、以下の3種類があります。 ::"
+msgstr "論理演算子は、以下の3種類があります。 ::"
