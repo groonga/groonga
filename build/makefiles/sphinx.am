@@ -2,7 +2,7 @@ NULL =
 
 doc_localedir = $(docdir)/$(LOCALE)
 
-all: html man
+all:
 
 include $(abs_top_srcdir)/build/makefiles/sphinx-build.am
 include $(abs_top_srcdir)/build/makefiles/gettext-files.am

@@ -7,7 +7,7 @@ EXTRA_DIST +=					\
 
 .PHONY: gettext update build
 
-all: build
+all:
 
 .SUFFIXES: .pot .po .mo
 .pot.po:
@@ -19,6 +19,7 @@ update: pot-build-stamp $(po_files)
 build: $(mo_files)
 
 html: build
+man: build
 pdf: build
 
 gettext: sphinx-ensure-updated
