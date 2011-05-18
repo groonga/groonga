@@ -15,6 +15,11 @@ man:
 	  (cd $${dir} && $(MAKE) man);		\
 	done
 
+pdf:
+	for dir in $(SUBDIRS); do		\
+	  (cd $${dir} && $(MAKE) pdf);		\
+	done
+
 if ENABLE_DOCUMENT
 dist-hook: html man
 	@touch $(distdir)/build-stamp
