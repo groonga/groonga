@@ -17,9 +17,9 @@ add:
 	  -e 's,^SUBDIRS =,SUBDIRS = \\\n\t$(LOCALE),'	\
 	  $(srcdir)/Makefile.am
 	sed -i''							\
-	  -e "\,doc/locale/ja/LC_MESSAGES/Makefile,			\
+	  -e "\,doc/locale/Makefile,					\
               a \ \ doc\/locale\/$(LOCALE)\/Makefile"			\
-	  -e "\,doc/locale/ja/LC_MESSAGES/Makefile,			\
+	  -e "\,doc/locale/Makefile,					\
               a \ \ doc\/locale\/$(LOCALE)\/LC_MESSAGES\/Makefile"	\
 	  $(top_srcdir)/configure.ac
 
