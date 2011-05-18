@@ -11,9 +11,56 @@ document_source_files =				\
 	$(source_files)				\
 	$(mo_files_relative_from_locale_dir)
 
-.PHONY: help clean
+EXTRA_DIST =					\
+	html-build-stamp			\
+	man-build-stamp
+
+man_files =					\
+	man/groonga.1
+
+generated_files =				\
+	doctrees				\
+	man					\
+	man-build-stamp				\
+	html					\
+	html-build-stamp			\
+	pdf					\
+	pdf-build-stamp				\
+	dirhtml					\
+	dirhtml-build-stamp			\
+	pickle					\
+	pikcle-build-stamp			\
+	json					\
+	json-build-stamp			\
+	htmlhelp				\
+	htmlhelp-build-stamp			\
+	qthelp					\
+	qthelp-build-stamp			\
+	latex					\
+	latex-build-stamp			\
+	changes					\
+	changes-build-stamp			\
+	linkcheck				\
+	linkcheck-build-stamp			\
+	doctest
+
+maintainer-clean: maintainer-clean-local
+maintainer-clean-local:
+	rm -rf -- $(generated_files)
+
+.PHONY: help
 .PHONY: man generate-man
-.PHONY: html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
+.PHONY: html generate-html
+.PHONY: pdf generate-pdf
+.PHONY: dirhtml generate-dirhtml
+.PHONY: pickle generate-pickle
+.PHONY: json generate-json
+.PHONY: htmlhelp generate-htmlhelp
+.PHONY: qthelp generate-qthelp
+.PHONY: latex generate-latex
+.PHONY: changes generate-changes
+.PHONY: linkcheck generate-linkcheck
+.PHONY: doctest
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -30,26 +77,6 @@ help:
 	@echo "  changes   to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
-
-clean-doctree:
-	-rm -rf $(DOCTREES_BASE)
-
-clean-local: clean-doctree
-	-rm -rf $(DOCTREES_BASE)
-	-rm -rf man
-	-rm -rf html
-	-rm -rf dirhtml
-	-rm -rf pickle
-	-rm -rf json
-	-rm -rf htmlhelp
-	-rm -rf qthelp
-	-rm -rf latex
-	-rm -rf rdoc
-	-rm -rf textile
-	-rm -rf changes
-	-rm -rf linkcheck
-	-rm -rf doctest
-	-rm -rf pdf
 
 man: generate-man
 generate-man: man-build-stamp
@@ -75,6 +102,18 @@ html-build-stamp: $(document_source_files)
 	  html
 	@touch $@
 
+pdf: generate-pdf
+generate-pdf: pdf-build-stamp
+pdf-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
+	$(SPHINX_BUILD_COMMAND)			\
+	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)/pdf		\
+	  -b pdf				\
+	  $(ALLSPHINXOPTS)			\
+	  pdf
+	@touch $@
+
 dirhtml: generate-dirhtml
 generate-dirhtml: dirhtml-build-stamp
 dirhtml-build-stamp: $(document_source_files)
@@ -87,95 +126,121 @@ dirhtml-build-stamp: $(document_source_files)
           dirhtml
 	@touch $@
 
-pickle: sphinx-ensure-updated pickle/index.fpickle
-
-pickle/index.fpickle: $(document_source_files)
+pickle: generate-pickle
+generate-pickle: pickle-build-stamp
+pickle-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/pickle		\
 	  -b pickle				\
 	  $(ALLSPHINXOPTS)			\
 	  pickle
+	@touch $@
 
-json: sphinx-ensure-updated json/index.fjson
-
-json/index.fjson: $(document_source_files)
+json: generate-json
+generate-json: json-build-stamp
+json-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/json		\
 	  -b json				\
 	  $(ALLSPHINXOPTS)			\
 	  json
+	@touch $@
 
-htmlhelp: sphinx-ensure-updated htmlhelp/index.html
-
-htmlhelp/index.html: $(document_source_files)
+htmlhelp: generate-htmlhelp
+generate-htmlhelp: htmlhelp-build-stamp
+htmlhelp-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/htmlhelp		\
 	  -b htmlhelp				\
 	  $(ALLSPHINXOPTS)			\
 	  htmlhelp
+	@touch $@
 
-qthelp: sphinx-ensure-updated
+qthelp: generate-qthelp
+generate-qthelp: qthelp-build-stamp
+qthelp-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/qthelp		\
 	  -b qthelp				\
 	  $(ALLSPHINXOPTS)			\
 	  qthelp
-	@echo
 	@echo "Build finished; now you can run 'qcollectiongenerator' with the" \
 	      ".qhcp project file in qthelp/*/, like this:"
 	@echo "# qcollectiongenerator qthelp/groonga.qhcp"
 	@echo "To view the help file:"
 	@echo "# assistant -collectionFile qthelp/groonga.qhc"
+	@touch $@
 
-latex: sphinx-ensure-updated
+latex: generate-latex
+generate-latex: latex-build-stamp
+latex-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/latex		\
 	  -b latex				\
 	  $(ALLSPHINXOPTS)			\
 	  latex
-	@echo
 	@echo "Build finished; the LaTeX files are in latex/*/."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
+	@touch $@
 
-rdoc: sphinx-ensure-updated
+rdoc: generate-rdoc
+generate-rdoc: rdoc-build-stamp
+rdoc-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/rdoc		\
 	  -b rdoc				\
 	  $(ALLSPHINXOPTS)			\
 	  rdoc
+	@touch $@
 
-textile: sphinx-ensure-updated
+textile: generate-textile
+generate-textile: textile-build-stamp
+textile-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/textile		\
 	  -b textile				\
 	  $(ALLSPHINXOPTS)			\
 	  textile
+	@touch $@
 
-changes: sphinx-ensure-updated
+changes: generate-changes
+generate-changes: changes-build-stamp
+changes-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/changes		\
 	  -b changes				\
 	  $(ALLSPHINXOPTS)			\
 	  changes
+	@touch $@
 
-linkcheck: sphinx-ensure-updated linkcheck/output.txt
-
-linkcheck/output.txt: $(document_source_files)
+linkcheck: generate-linkcheck
+generate-linkcheck: linkcheck-build-stamp
+linkcheck-build-stamp: $(document_source_files)
+	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
 	  -d $(DOCTREES_BASE)/linkcheck		\
 	  -b linkcheck				\
 	  $(ALLSPHINXOPTS)			\
 	  linkcheck
+	@touch $@
 
 doctest: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
@@ -184,21 +249,6 @@ doctest: sphinx-ensure-updated
 	  -b doctest				\
 	  $(ALLSPHINXOPTS)			\
 	  doctest
-
-pdf: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND)			\
-	  -Dlanguage=$(LOCALE)			\
-	  -d $(DOCTREES_BASE)/pdf		\
-	  -b pdf				\
-	  $(ALLSPHINXOPTS)			\
-	  pdf
-
-EXTRA_DIST =					\
-	html-build-stamp			\
-	man-build-stamp
-
-man_files =					\
-	man/groonga.1
 
 if ENABLE_DOCUMENT
 nobase_dist_doc_locale_DATA =			\
