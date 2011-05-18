@@ -137,6 +137,8 @@ AC_CONFIG_FILES([
   tools/Makefile
   doc/Makefile
   doc/locale/Makefile
+  doc/locale/en/Makefile
+  doc/locale/en/LC_MESSAGES/Makefile
   doc/locale/ja/Makefile
   doc/locale/ja/LC_MESSAGES/Makefile
   test/Makefile
