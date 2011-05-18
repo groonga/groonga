@@ -1,5 +1,8 @@
-update: $(mo_files)
+.PHONY: update
 
+all: update
+
+.SUFFIXES: .po .mo
 .po.mo:
 	msgfmt -o $@ $<
 
@@ -55,3 +58,5 @@ mo_files = \
 	tutorial.mo \
 	type.mo \
 	$(NULL)
+
+update: $(mo_files)
