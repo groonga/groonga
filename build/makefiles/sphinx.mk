@@ -23,20 +23,20 @@ clean-doctree:
 
 clean-local: clean-doctree
 	-rm -rf $(DOCTREES_BASE)
-	-rm -rf $(BUILDDIR)/man
-	-rm -rf $(BUILDDIR)/html
-	-rm -rf $(BUILDDIR)/dirhtml
-	-rm -rf $(BUILDDIR)/pickle
-	-rm -rf $(BUILDDIR)/json
-	-rm -rf $(BUILDDIR)/htmlhelp
-	-rm -rf $(BUILDDIR)/qthelp
-	-rm -rf $(BUILDDIR)/latex
-	-rm -rf $(BUILDDIR)/rdoc
-	-rm -rf $(BUILDDIR)/textile
-	-rm -rf $(BUILDDIR)/changes
-	-rm -rf $(BUILDDIR)/linkcheck
-	-rm -rf $(BUILDDIR)/doctest
-	-rm -rf $(BUILDDIR)/pdf
+	-rm -rf man
+	-rm -rf html
+	-rm -rf dirhtml
+	-rm -rf pickle
+	-rm -rf json
+	-rm -rf htmlhelp
+	-rm -rf qthelp
+	-rm -rf latex
+	-rm -rf rdoc
+	-rm -rf textile
+	-rm -rf changes
+	-rm -rf linkcheck
+	-rm -rf doctest
+	-rm -rf pdf
 
 man: sphinx-ensure-updated man/groonga.1
 
