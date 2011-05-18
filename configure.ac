@@ -722,24 +722,37 @@ AM_CONDITIONAL([ENABLE_SUGGEST_LEARNER],
                      "$libevent_available" = "yes" -a \
                      "$message_pack_available" = "yes"])
 
-# Sphinx
-AC_MSG_CHECKING([whether enable Shpinx])
-enable_sphinx="no"
-AC_ARG_ENABLE(sphinx,
-  [AS_HELP_STRING([--enable-shpinx],
-    [enable document generation by Sphinx. [default=no]])],,
-  [enable_sphinx="no"])
-if test "$enable_sphinx" = "yes"; then
-  : # TODO check hg availability.
+# Document
+AC_MSG_CHECKING([whether enable document])
+AC_ARG_ENABLE(document,
+  [AS_HELP_STRING([--enable-document],
+    [enable document generation by Sphinx. [default=auto]])],
+  [enable_document="$enableval"],
+  [enable_document="auto"])
+AC_MSG_RESULT($enable_document)
+
+if test x"$enable_document" != x"no"; then
+  AC_PATH_PROG(HG, hg, none)
+  if ! test -f "$srcdir/doc/build-stamp"; then
+    if test x"$HG" = x"none"; then
+      if test x"$enable_document" = x"yes"; then
+        AC_MSG_ERROR("No hg found")
+      fi
+    fi
+  fi
+  enable_document="yes"
 fi
-if test "$enable_sphinx" = "yes" -o -f "$srcdir/doc/man-build-stamp"; then
-  enable_document=yes
+AC_SUBST(HG)
+
+if test x"$enable_document" = x"yes"; then
+  available_document=yes
 else
-  enable_document=no
+  available_document=no
 fi
 AM_CONDITIONAL([ENABLE_DOCUMENT],
-               [test "$enable_document" = "yes"])
-AC_MSG_RESULT($enable_sphinx)
+               [test "${available_document}" = "yes"])
+AC_MSG_CHECKING([whether document available])
+AC_MSG_RESULT($available_document)
 
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
@@ -815,7 +828,7 @@ echo "-----------------------"
 echo "  Compiler:              ${CC}"
 echo "  CFLAGS:                ${CFLAGS}"
 echo "  Libraries:             ${LIBS}"
-echo "  Documentation:         ${enable_document}"
+echo "  Documentation:         ${available_document}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
@@ -849,8 +862,8 @@ fi
 echo
 
 echo "Tools:"
-echo "  Sphinx:                 $enable_sphinx"
-# echo "hg:  ${HG}"
+# echo "  Sphinx:                 ${enable_sphinx}"
+echo "  hg:                     ${HG}"
 echo
 
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"

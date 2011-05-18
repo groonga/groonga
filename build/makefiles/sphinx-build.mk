@@ -20,7 +20,7 @@ $(SPHINX_BUILD):
 
 sphinx-ensure-updated: $(SPHINX_BUILD)
 	if ! $(SPHINX_BUILD_COMMAND) 2>&1 | head -1 | grep v1.1 -q > /dev/null; then					\
-	    hg pull $(SPHINX_DIR);						\
+	  $(HG) pull $(SPHINX_DIR);						\
 	fi
 
 
