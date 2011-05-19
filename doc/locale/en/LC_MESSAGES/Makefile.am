@@ -1,3 +1,4 @@
 LOCALE = en
 
-include $(abs_top_srcdir)/build/makefiles/gettext.am
+include $(top_srcdir)/build/makefiles/LC_MESSAGES.am
+

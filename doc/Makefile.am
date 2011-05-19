@@ -1,11 +1,9 @@
 SUBDIRS =					\
 	locale
 
-NULL =
-
 all:
 
-include $(abs_top_srcdir)/build/makefiles/sphinx-build.am
+include $(top_srcdir)/build/makefiles/sphinx-build.am
 
 update-examples:
 	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py

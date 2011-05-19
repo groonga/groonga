@@ -1,5 +1,3 @@
-NULL =
-
 # (cd ../../doc; echo "po_files = \\"; find pot -type f -name '*.pot' | sort | sed -e 's,^pot/,\t,g' -e 's,pot$,po \\,'; echo -n "\t\$(NULL)")
 po_files =					\
 	characteristic.po			\

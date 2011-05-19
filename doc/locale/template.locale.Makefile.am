@@ -1,8 +1,9 @@
-SUBDIRS = LC_MESSAGES
-
 LOCALE = %LOCALE%
 
-include $(top_srcdir)/build/makefiles/sphinx.am
+include $(top_srcdir)/build/makefiles/locale.am
 
+if ENABLE_DOCUMENT
 %LOCALE%_man1dir = $(mandir)/%LOCALE%/man1
 dist_%LOCALE%_man1_DATA = $(man_files)
+endif
+

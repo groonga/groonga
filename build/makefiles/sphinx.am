@@ -1,19 +1,24 @@
-NULL =
+include $(top_srcdir)/build/makefiles/sphinx-build.am
+include $(top_srcdir)/build/makefiles/gettext-files.am
 
 doc_localedir = $(docdir)/$(LOCALE)
 
-all:
+if ENABLE_DOCUMENT
+BUILT_SOURCES += $(required_build_stamps)
 
-include $(abs_top_srcdir)/build/makefiles/sphinx-build.am
-include $(abs_top_srcdir)/build/makefiles/gettext-files.am
+nobase_dist_doc_locale_DATA =			\
+	$(html_files)
+endif
 
 document_source_files =				\
 	$(source_files)				\
 	$(mo_files_relative_from_locale_dir)
 
-EXTRA_DIST =					\
+required_build_stamps =				\
 	html-build-stamp			\
 	man-build-stamp
+
+EXTRA_DIST += $(required_build_stamps)
 
 man_files =					\
 	man/groonga.1
@@ -250,10 +255,6 @@ doctest: sphinx-ensure-updated
 	  $(ALLSPHINXOPTS)			\
 	  doctest
 
-if ENABLE_DOCUMENT
-nobase_dist_doc_locale_DATA =			\
-	$(html_files)
-
 # (cd ../../doc/locale/en; echo "html_files = \\"; find html -type f | sort | sed -e 's,^,\t,' -e 's,$, \\,'; echo "\t\$(NULL)")
 html_files = \
 	html/.buildinfo \
@@ -420,4 +421,3 @@ html_files = \
 	html/tutorial/tutorial10.html \
 	html/type.html \
 	$(NULL)
-endif

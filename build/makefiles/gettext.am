@@ -1,15 +1,19 @@
-include $(abs_top_srcdir)/build/makefiles/gettext-files.am
-include $(abs_top_srcdir)/build/makefiles/sphinx-build.am
+include $(top_srcdir)/build/makefiles/gettext-files.am
+include $(top_srcdir)/build/makefiles/sphinx-build.am
+
+BUILT_SOURCES +=				\
+	$(mo_files)
 
 EXTRA_DIST +=					\
 	$(po_files)				\
 	$(mo_files)
 
+SUFFIXES += .pot .po .mo
+
 .PHONY: gettext update build
 
 all:
 
-.SUFFIXES: .pot .po .mo
 .pot.po:
 	msgmerge --quiet --update --sort-by-file $@ $<
 .po.mo:

@@ -1,0 +1,6 @@
+SUBDIRS = LC_MESSAGES
+
+BUILT_SOURCES =
+EXTRA_DIST =
+
+include $(top_srcdir)/build/makefiles/sphinx.am
