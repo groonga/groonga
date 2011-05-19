@@ -731,28 +731,27 @@ AC_ARG_ENABLE(document,
   [enable_document="auto"])
 AC_MSG_RESULT($enable_document)
 
+document_available=no
 if test x"$enable_document" != x"no"; then
   AC_PATH_PROG(HG, hg, none)
-  if ! test -f "$srcdir/doc/build-stamp"; then
+  if test -f "$srcdir/doc/build-stamp"; then
+    document_available=yes
+  else
     if test x"$HG" = x"none"; then
       if test x"$enable_document" = x"yes"; then
         AC_MSG_ERROR("No hg found")
       fi
+    else
+      document_available=yes
     fi
   fi
-  enable_document="yes"
 fi
 AC_SUBST(HG)
 
-if test x"$enable_document" = x"yes"; then
-  available_document=yes
-else
-  available_document=no
-fi
 AM_CONDITIONAL([ENABLE_DOCUMENT],
-               [test "${available_document}" = "yes"])
+               [test "${document_available}" = "yes"])
 AC_MSG_CHECKING([whether document available])
-AC_MSG_RESULT($available_document)
+AC_MSG_RESULT($document_available)
 
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
@@ -828,7 +827,7 @@ echo "-----------------------"
 echo "  Compiler:              ${CC}"
 echo "  CFLAGS:                ${CFLAGS}"
 echo "  Libraries:             ${LIBS}"
-echo "  Documentation:         ${available_document}"
+echo "  Documentation:         ${document_available}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
