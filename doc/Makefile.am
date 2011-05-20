@@ -18,6 +18,9 @@ pdf:
 	  (cd $${dir} && $(MAKE) pdf);		\
 	done
 
+EXTRA_DIST =					\
+	$(relative_theme_files)
+
 if ENABLE_DOCUMENT
 dist-hook: html man
 	@touch $(distdir)/build-stamp
@@ -163,4 +166,11 @@ relative_source_files = \
 	source/tutorial/tutorial10.txt \
 	source/type.txt \
 	source/update_execution_example.py \
+	$(NULL)
+
+# (echo "relative_theme_files = \\"; find themes -type f | sort | sed -e 's,^,\t,' -e 's,$, \\,'; echo "\t\$(NULL)")
+relative_theme_files = \
+	themes/groonga/layout.html \
+	themes/groonga/static/groonga.css_t \
+	themes/groonga/theme.conf \
 	$(NULL)
