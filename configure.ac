@@ -798,6 +798,14 @@ CFLAGS="$CFLAGS $OPT_CFLAGS "
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $RT_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
+# For groonga.org
+AC_ARG_WITH(groonga-github-com-path,
+            [AS_HELP_STRING([--with-groonga-github-com-path=PATH],
+            [specify groonga.github.com path to update groonga.org.])],
+            [GROONGA_GITHUB_COM_PATH="$withval"],
+            [GROONGA_GITHUB_COM_PATH=""])
+AC_SUBST(GROONGA_GITHUB_COM_PATH)
+
 # For Debian package release
 AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],

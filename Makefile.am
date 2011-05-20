@@ -75,3 +75,16 @@ update-latest-release:
 	  rpm/fedora/groonga.spec.in				\
 	  rpm/centos/groonga.spec.in				\
 	  debian/changelog
+
+update-document:
+	@if test -z "$(GROONGA_GITHUB_COM_PATH)"; then			\
+	  echo "\$$(GROONGA_GITHUB_COM_PATH) is missing";		\
+	  echo "add --with-groonga-github-com-path in configure";	\
+	  exit 1;							\
+	fi
+	rm -rf tmp-doc
+	mkdir tmp-doc
+	(cd doc && $(MAKE) install docdir=$(abs_srcdir)/tmp-doc/install)
+	ruby $(srcdir)/tools/prepare-sphinx-html.rb tmp-doc/install tmp-doc/dist
+	rm -rf $(GROONGA_GITHUB_COM_PATH)/docs
+	mv tmp-doc/dist $(GROONGA_GITHUB_COM_PATH)/docs
