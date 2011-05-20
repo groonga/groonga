@@ -333,7 +333,9 @@ html_files = \
 	html/_static/doctools.js \
 	html/_static/down-pressed.png \
 	html/_static/down.png \
+	html/_static/favicon.ico \
 	html/_static/file.png \
+	html/_static/groonga.css \
 	html/_static/jquery.js \
 	html/_static/minus.png \
 	html/_static/plus.png \

@@ -53,6 +53,9 @@ source_files = \
 	$(top_srcdir)/doc/source/commands/table_list.txt \
 	$(top_srcdir)/doc/source/commands/table_remove.txt \
 	$(top_srcdir)/doc/source/commands/view_add.txt \
+	$(top_srcdir)/doc/source/commands_not_implemented/add.txt \
+	$(top_srcdir)/doc/source/commands_not_implemented/get.txt \
+	$(top_srcdir)/doc/source/commands_not_implemented/set.txt \
 	$(top_srcdir)/doc/source/conf.py \
 	$(top_srcdir)/doc/source/developer.txt \
 	$(top_srcdir)/doc/source/developer/com.txt \
@@ -156,6 +159,7 @@ source_files = \
 	$(top_srcdir)/doc/source/type.txt \
 	$(top_srcdir)/doc/source/update_execution_example.py \
 	$(top_srcdir)/doc/themes/groonga/layout.html \
+	$(top_srcdir)/doc/themes/groonga/static/favicon.ico \
 	$(top_srcdir)/doc/themes/groonga/static/groonga.css_t \
 	$(top_srcdir)/doc/themes/groonga/theme.conf \
 	$(NULL)
