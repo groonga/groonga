@@ -40,11 +40,7 @@ end
 
 locale_dirs.each do |locale_dir|
   locale_source_dir = source_dir + locale_dir + "html"
-  if locale_dir.to_s == "en"
-    locale_dest_dir = dest_dir
-  else
-    locale_dest_dir = dest_dir + locale_dir
-  end
+  locale_dest_dir = dest_dir + locale_dir
   locale_source_dir.find do |source_path|
     relative_path = source_path.relative_path_from(locale_source_dir)
     dest_path = locale_dest_dir + relative_path
@@ -60,7 +56,12 @@ locale_dirs.each do |locale_dir|
         end
         FileUtils.touch(dest_path, :mtime => source_path.mtime)
       else
-        FileUtils.cp(source_path, dest_path, :preserve => true)
+        case source_path.basename.to_s
+        when ".buildinfo"
+          # ignore
+        else
+          FileUtils.cp(source_path, dest_path, :preserve => true)
+        end
       end
     end
   end

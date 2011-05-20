@@ -87,4 +87,11 @@ update-document:
 	(cd doc && $(MAKE) install docdir=$(abs_srcdir)/tmp-doc/install)
 	ruby $(srcdir)/tools/prepare-sphinx-html.rb tmp-doc/install tmp-doc/dist
 	rm -rf $(GROONGA_GITHUB_COM_PATH)/docs
-	mv tmp-doc/dist $(GROONGA_GITHUB_COM_PATH)/docs
+	mv tmp-doc/dist/en $(GROONGA_GITHUB_COM_PATH)/docs
+	for locale in `cd tmp-doc/dist; echo *`; do		\
+	  dest_base_dir=$(GROONGA_GITHUB_COM_PATH)/$${locale};	\
+	  mkdir -p $${dest_base_dir};				\
+	  dest_dir=$${dest_base_dir}/docs;			\
+	  rm -rf $${dest_dir};					\
+	  mv tmp-doc/dist/$${locale} $${dest_dir};		\
+	done
