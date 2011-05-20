@@ -9,3 +9,13 @@
 #}
 {% extends "default/layout.html" %}
 {% set favicon = "favicon.ico" %}
+
+{% block rootrellink %}
+{%- if language != "en" %}
+  <li class="other-language"><a href="{{ pathto('../../en/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/us.png', 1) }}" alt="英語"></a></li>
+{%- endif %}
+{%- if language != "ja" %}
+  <li class="other-language"><a href="{{ pathto('../../ja/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/jp.png', 1) }}" alt="日本語"></a></li>
+{%- endif %}
+  {{ super() }}
+{% endblock %}

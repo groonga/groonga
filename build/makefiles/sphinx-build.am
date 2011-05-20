@@ -11,7 +11,7 @@ ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(abs_top_srcdir)/doc/sourc
 
 SPHINX_DIR = $(abs_top_builddir)/doc/sphinx
 SPHINX_BUILD = $(SPHINX_DIR)/sphinx-build.py
-SPHINX_BUILD_COMMAND = PYTHONPATH="$(SPHINX_DIR):$$PYTHONPATH" python $(SPHINX_BUILD)
+SPHINX_BUILD_COMMAND = LOCALE="$(LOCALE)" PYTHONPATH="$(SPHINX_DIR):$$PYTHONPATH" python $(SPHINX_BUILD)
 
 .PHONY: sphinx-ensure-updated
 
