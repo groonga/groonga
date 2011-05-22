@@ -137,6 +137,9 @@ source_files = \
 	$(top_srcdir)/doc/source/install.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
 	$(top_srcdir)/doc/source/news.txt \
+	$(top_srcdir)/doc/source/news/0.x.txt \
+	$(top_srcdir)/doc/source/news/1.0.x.txt \
+	$(top_srcdir)/doc/source/news/1.1.x.txt \
 	$(top_srcdir)/doc/source/process.txt \
 	$(top_srcdir)/doc/source/pseudo_column.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
@@ -162,5 +165,7 @@ source_files = \
 	$(top_srcdir)/doc/themes/groonga/layout.html \
 	$(top_srcdir)/doc/themes/groonga/static/favicon.ico \
 	$(top_srcdir)/doc/themes/groonga/static/groonga.css_t \
+	$(top_srcdir)/doc/themes/groonga/static/jp.png \
+	$(top_srcdir)/doc/themes/groonga/static/us.png \
 	$(top_srcdir)/doc/themes/groonga/theme.conf \
 	$(NULL)
