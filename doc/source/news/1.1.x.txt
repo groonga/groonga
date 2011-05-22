@@ -1,3 +1,5 @@
+.. -*- rst -*-
+
 .. highlightlang:: none
 
 バージョン1.1.xのお知らせ

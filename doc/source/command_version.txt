@@ -1,3 +1,5 @@
+.. -*- rst -*-
+
 .. highlightlang:: none
 
 .. _command_version:

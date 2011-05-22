@@ -1,3 +1,5 @@
+.. -*- rst -*-
+
 .. highlightlang:: none
 
 .. _different_results_with_the_same_keyword:

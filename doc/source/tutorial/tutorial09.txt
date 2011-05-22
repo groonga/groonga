@@ -1,3 +1,5 @@
+.. -*- rst -*-
+
 .. highlightlang:: none
 
 全文検索の語彙表に対する追加情報
