@@ -7,24 +7,39 @@ end
 
 require 'pathname'
 
-def fix_link(text, extension)
-  send("fix_#{extension}_link", text)
+def fix_link(text, extension, locale)
+  send("fix_#{extension}_link", text, locale)
 end
 
 def fix_link_path(text)
   text.gsub(/\b_(sources|static)\b/, '\1')
 end
 
-def fix_html_link(html)
+def fix_locale_link(url, locale)
+  url.gsub(/\A((?:\.\.\/){2,})([a-z]{2})\/html\//) do
+    relative_base_path = $1
+    link_locale = $2
+    if locale == "en"
+      relative_base_path = relative_base_path.gsub(/\A\.\.\//, '')
+    end
+    if link_locale != "en"
+      relative_base_path += "#{link_locale}/"
+    end
+    "#{relative_base_path}docs/"
+  end
+end
+
+def fix_html_link(html, locale)
   html.gsub(/(href|src)="(.+?)"/) do
     attribute = $1
     link = $2
     link = fix_link_path(link)
+    link = fix_locale_link(link, locale)
     "#{attribute}=\"#{link}\""
   end
 end
 
-def fix_js_link(js)
+def fix_js_link(js, locale)
   fix_link_path(js)
 end
 
@@ -39,6 +54,7 @@ source_dir.each_entry do |top_level_path|
 end
 
 locale_dirs.each do |locale_dir|
+  locale = locale_dir.to_s
   locale_source_dir = source_dir + locale_dir + "html"
   locale_dest_dir = dest_dir + locale_dir
   locale_source_dir.find do |source_path|
@@ -50,7 +66,8 @@ locale_dirs.each do |locale_dir|
       case source_path.extname
       when ".html", ".js"
         content = source_path.read
-        content = fix_link(content, source_path.extname.gsub(/\A\./, ''))
+        extension = source_path.extname.gsub(/\A\./, '')
+        content = fix_link(content, extension, locale)
         dest_path.open("wb") do |dest|
           dest.print(content.strip)
         end
