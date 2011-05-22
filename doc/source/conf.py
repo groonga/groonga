@@ -17,6 +17,7 @@ RST2PDF_VERSION_REQUIRED = "0.14.2"
 import re
 import sphinx
 import sys, os
+import gettext
 from datetime import datetime
 from pkg_resources import parse_version
 
@@ -94,6 +95,13 @@ locale_dirs = ["../locale"]
 # for a list of supported languages.
 language = os.environ['LOCALE']
 
+locale_dir = os.path.dirname(__file__) + "/../locale"
+try:
+  catalog = gettext.Catalog("conf", localedir=locale_dir, languages=[language])
+  _ = catalog.gettext
+except:
+  _ = lambda msgid: msgid
+
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
 #today = ''
@@ -155,7 +163,9 @@ html_theme_path = ["../themes"]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title_format = unicode(_("%(project)s v%(release)s documentation"), "utf-8")
+html_title = html_title_format % {"project": project,
+                                  "release": unicode(release, "utf-8")}
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -224,7 +234,7 @@ htmlhelp_basename = 'groongadoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'groonga.tex', u'groonga Documentation',
+  ('index', 'groonga.tex', unicode(_('groonga documentation'), "utf-8"),
    u'Brazil, Inc', 'manual'),
 ]
 
@@ -249,8 +259,8 @@ latex_documents = [
 pdf_documents = [
   ('index',
    u'groonga-%s' % (release,),
-   u'groonga %s document' % (release,),
-   u'groonga project')
+   html_title,
+   unicode(_('groonga project'), "utf-8"))
 ]
 pdf_stylesheets = ['sphinx', 'kerning', 'a4']
 if 'language' in dir():
@@ -267,6 +277,6 @@ pdf_break_level = 2
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'groonga', u'groonga documentation',
+    ('index', 'groonga', unicode(_('groonga documentation'), "utf-8"),
      [u'groonga project'], 1)
 ]

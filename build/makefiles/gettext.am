@@ -28,12 +28,17 @@ pdf: build
 
 gettext: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND) -d doctrees -b gettext $(ALLSPHINXOPTS) .
+	xgettext --language Python --output conf.pot ../../../source/conf.py
 
 init: gettext
 	for po in $(po_files); do						\
 	  pot=`basename $${po} | sed -e 's,po$$,pot,g'`;			\
+	  test "$FORCE_INIT" != "yes" -o -f $${po} && continue;			\
 	  msginit --input=$${pot} --output-file=$${po} --locale=$(LOCALE);	\
 	done
+
+reinit:
+	$(MAKE) FORCE_INIT=yes init
 
 pot-build-stamp: $(source_files)
 	$(MAKE) gettext

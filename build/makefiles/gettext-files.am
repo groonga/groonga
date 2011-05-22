@@ -1,34 +1,35 @@
-# (cd ../../doc; echo "po_files = \\"; find pot -type f -name '*.pot' | sort | sed -e 's,^pot/,\t,g' -e 's,pot$,po \\,'; echo -n "\t\$(NULL)")
-po_files =					\
-	characteristic.po			\
-	command_version.po			\
-	commands.po				\
-	commands_not_implemented.po		\
-	developer.po				\
-	execfile.po				\
-	expr.po					\
-	functions.po				\
-	grnslap.po				\
-	grntest.po				\
-	http.po					\
-	index.po				\
-	install.po				\
-	limitations.po				\
-	news.po					\
-	process.po				\
-	pseudo_column.po			\
-	reference.po				\
-	spec.po					\
-	troubleshooting.po			\
-	tutorial.po				\
-	type.po
+# (cd ../../doc/locale/en/LC_MESSAGES; echo "po_files = \\"; find . -type f -name '*.pot' | sort | sed -e 's,^\./,\t,g' -e 's,pot$,po \\,'; echo -n "\t\$(NULL)")
+po_files = \
+	characteristic.po \
+	command_version.po \
+	commands.po \
+	conf.po \
+	developer.po \
+	execfile.po \
+	expr.po \
+	functions.po \
+	grnslap.po \
+	grntest.po \
+	http.po \
+	index.po \
+	install.po \
+	limitations.po \
+	news.po \
+	process.po \
+	pseudo_column.po \
+	reference.po \
+	spec.po \
+	troubleshooting.po \
+	tutorial.po \
+	type.po \
+	$(NULL)
 
-# (cd ../../doc; echo "mo_files = \\"; find pot -type f -name '*.pot' | sort | sed -e 's,^pot/,\t,g' -e 's,pot$,mo \\,'; echo -n "\t\$(NULL)")
+# (cd ../../doc/locale/en/LC_MESSAGES; echo "mo_files = \\"; find . -type f -name '*.pot' | sort | sed -e 's,^\./,\t,g' -e 's,pot$,mo \\,'; echo -n "\t\$(NULL)")
 mo_files = \
 	characteristic.mo \
 	command_version.mo \
 	commands.mo \
-	commands_not_implemented.mo \
+	conf.mo \
 	developer.mo \
 	execfile.mo \
 	expr.mo \
@@ -49,12 +50,12 @@ mo_files = \
 	type.mo \
 	$(NULL)
 
-# (cd ../../doc; echo "mo_files_relative_from_locale_dir = \\"; find pot -type f -name '*.pot' | sort | sed -e 's,^pot/,\tLC_MESSAGES/,g' -e 's,pot$,mo \\,'; echo -n "\t\$(NULL)")
+# (cd ../../doc/locale/en; echo "mo_files_relative_from_locale_dir = \\"; find LC_MESSAGES -type f -name '*.pot' | sort | sed -e 's,^,\t,g' -e 's,pot$,mo \\,'; echo -n "\t\$(NULL)")
 mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/characteristic.mo \
 	LC_MESSAGES/command_version.mo \
 	LC_MESSAGES/commands.mo \
-	LC_MESSAGES/commands_not_implemented.mo \
+	LC_MESSAGES/conf.mo \
 	LC_MESSAGES/developer.mo \
 	LC_MESSAGES/execfile.mo \
 	LC_MESSAGES/expr.mo \

@@ -5,9 +5,10 @@ SPHINXOPTS    =
 PAPER         =
 
 # Internal variables.
+SOURCE_DIR      = $(abs_top_srcdir)/doc/source
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(abs_top_srcdir)/doc/source
+ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(SOURCE_DIR)
 
 SPHINX_DIR = $(abs_top_builddir)/doc/sphinx
 SPHINX_BUILD = $(SPHINX_DIR)/sphinx-build.py
