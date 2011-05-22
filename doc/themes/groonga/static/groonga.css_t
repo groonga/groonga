@@ -11,4 +11,15 @@
 
 @import url("default.css");
 
-/* -- page layout ----------------------------------------------------------- */
+div.related li.other-languages {
+    position: relative;
+    display: list-item;
+}
+
+div.related li.other-languages ul.other-languages {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 10px;
+    right: 230px;
+}

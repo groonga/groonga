@@ -11,11 +11,15 @@
 {% set favicon = "favicon.ico" %}
 
 {% block rootrellink %}
+  <li class="other-languages">
+    <ul class="other-languages">
 {%- if language != "en" %}
-  <li class="other-language"><a href="{{ pathto('../../en/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/us.png', 1) }}" alt="英語"></a></li>
+      <li class="other-language"><a href="{{ pathto('../../en/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/us.png', 1) }}" alt="English"></a></li>
 {%- endif %}
 {%- if language != "ja" %}
-  <li class="other-language"><a href="{{ pathto('../../ja/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/jp.png', 1) }}" alt="日本語"></a></li>
+      <li class="other-language"><a href="{{ pathto('../../ja/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/jp.png', 1) }}" alt="日本語"></a></li>
 {%- endif %}
+    </ul>
+  </li>
   {{ super() }}
 {% endblock %}
