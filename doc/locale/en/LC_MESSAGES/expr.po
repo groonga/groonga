@@ -1,3 +1,12 @@
+msgid "型名・関数名・テーブル名"
+msgstr "型名・関数名・テーブル名"
+
+msgid "引数名"
+msgstr "引数名"
+
+msgid "カラム名"
+msgstr "カラム名"
+
 # English translations for 1.2.1 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
@@ -7,18 +16,35 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-18 15:15\n"
+"POT-Creation-Date: 2011-05-22 22:49\n"
 "PO-Revision-Date: 2011-05-18 15:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "カラム名"
-msgstr "カラム名"
+#: ../../../source/expr.txt:4
+msgid "grn_expr"
+msgstr "grn_expr"
+
+#: ../../../source/expr.txt:7
+msgid "名前"
+msgstr "名前"
+
+#: ../../../source/expr.txt:9
+msgid ""
+"grn_expr - 検索条件やデータベースへの操作を表現するデータ構造(読み方:\"ぐるん"
+"しき\")"
+msgstr ""
+"grn_expr - 検索条件やデータベースへの操作を表現するデータ構造(読み方:\"ぐるん"
+"しき\")"
+
+#: ../../../source/expr.txt:12
+msgid "説明"
+msgstr "説明"
 
 #: ../../../source/expr.txt:14
 msgid ""
@@ -27,44 +53,6 @@ msgid ""
 msgstr ""
 "grn_exprは、検索条件やデータベースへの操作を表現するために使用されるデータ構"
 "造の形式です。"
-
-msgid "引数名"
-msgstr "引数名"
-
-#: ../../../source/expr.txt:39
-msgid "script形式でcolumn1の値が'hoge'に等しいという条件"
-msgstr "script形式でcolumn1の値が'hoge'に等しいという条件"
-
-msgid "型名・関数名・テーブル名"
-msgstr "型名・関数名・テーブル名"
-
-#: ../../../source/expr.txt:7
-msgid "名前"
-msgstr "名前"
-
-#: ../../../source/expr.txt:41
-msgid "column1 == \"hoge\""
-msgstr "column1 == \"hoge\""
-
-#: ../../../source/expr.txt:37
-msgid "例"
-msgstr "例"
-
-#: ../../../source/expr.txt:23
-msgid "ECMAScript風の構文で検索条件やレコードへの操作を記述します。"
-msgstr "ECMAScript風の構文で検索条件やレコードへの操作を記述します。"
-
-#: ../../../source/expr.txt:21
-msgid "script形式のgrn_expr"
-msgstr "script形式のgrn_expr"
-
-#: ../../../source/expr.txt:31
-msgid "操作対象としているレコードのカラム名"
-msgstr "操作対象としているレコードのカラム名"
-
-#: ../../../source/expr.txt:12
-msgid "説明"
-msgstr "説明"
 
 #: ../../../source/expr.txt:16
 msgid ""
@@ -88,26 +76,6 @@ msgstr ""
 "しています。grn_expr_parseでパースできる文字列を特にscript形式のgrn_exprと呼"
 "びます。"
 
-#: ../../../source/expr.txt:4
-msgid "grn_expr"
-msgstr "grn_expr"
-
-#: ../../../source/expr.txt:34
-msgid "データベースに定義された型・テーブル・関数の名前"
-msgstr "データベースに定義された型・テーブル・関数の名前"
-
-#: ../../../source/expr.txt:43
-msgid "脚注"
-msgstr "脚注"
-
-#: ../../../source/expr.txt:25
-msgid "式中のIDENTIFIER(識別子)は、以下のいずれかを指します。"
-msgstr "式中のIDENTIFIER(識別子)は、以下のいずれかを指します。"
-
-#: ../../../source/expr.txt:28
-msgid "grn_exprが受け取る引数の名前"
-msgstr "grn_exprが受け取る引数の名前"
-
 #: ../../../source/expr.txt:18
 msgid ""
 "grn_exprを使うことによって非常に柔軟に検索条件を記述することができます。類似"
@@ -124,10 +92,42 @@ msgstr ""
 "うな機能も、grn_exprとgrn_table_select()API関数を組み合わせることによって自由"
 "に定義できます。"
 
-#: ../../../source/expr.txt:9
-msgid ""
-"grn_expr - 検索条件やデータベースへの操作を表現するデータ構造(読み方:\"ぐるん"
-"しき\")"
-msgstr ""
-"grn_expr - 検索条件やデータベースへの操作を表現するデータ構造(読み方:\"ぐるん"
-"しき\")"
+#: ../../../source/expr.txt:21
+msgid "script形式のgrn_expr"
+msgstr "script形式のgrn_expr"
+
+#: ../../../source/expr.txt:23
+msgid "ECMAScript風の構文で検索条件やレコードへの操作を記述します。"
+msgstr "ECMAScript風の構文で検索条件やレコードへの操作を記述します。"
+
+#: ../../../source/expr.txt:25
+msgid "式中のIDENTIFIER(識別子)は、以下のいずれかを指します。"
+msgstr "式中のIDENTIFIER(識別子)は、以下のいずれかを指します。"
+
+#: ../../../source/expr.txt:28
+msgid "grn_exprが受け取る引数の名前"
+msgstr "grn_exprが受け取る引数の名前"
+
+#: ../../../source/expr.txt:31
+msgid "操作対象としているレコードのカラム名"
+msgstr "操作対象としているレコードのカラム名"
+
+#: ../../../source/expr.txt:34
+msgid "データベースに定義された型・テーブル・関数の名前"
+msgstr "データベースに定義された型・テーブル・関数の名前"
+
+#: ../../../source/expr.txt:37
+msgid "例"
+msgstr "例"
+
+#: ../../../source/expr.txt:39
+msgid "script形式でcolumn1の値が'hoge'に等しいという条件"
+msgstr "script形式でcolumn1の値が'hoge'に等しいという条件"
+
+#: ../../../source/expr.txt:41
+msgid "column1 == \"hoge\""
+msgstr "column1 == \"hoge\""
+
+#: ../../../source/expr.txt:43
+msgid "脚注"
+msgstr "脚注"

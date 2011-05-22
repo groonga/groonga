@@ -7,35 +7,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-18 15:15\n"
+"POT-Creation-Date: 2011-05-22 22:49\n"
 "PO-Revision-Date: 2011-05-18 15:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/execfile.txt:98
-msgid ""
-"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
-"ます。::"
-msgstr ""
-"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
-"ます。::"
+#: ../../../source/execfile.txt:6
+msgid "groonga実行ファイル"
+msgstr "groonga実行ファイル"
 
-#: ../../../source/execfile.txt:214
-msgid "% groonga /tmp/hoge.db table_create Table 0 ShortText [[0]] %"
-msgstr "% groonga /tmp/hoge.db table_create Table 0 ShortText [[0]] %"
+#: ../../../source/execfile.txt:9
+msgid "名前"
+msgstr "名前"
 
-#: ../../../source/execfile.txt:209
-msgid "% groonga -n /tmp/hoge.db quit %"
-msgstr "% groonga -n /tmp/hoge.db quit %"
+#: ../../../source/execfile.txt:11
+msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
+msgstr "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
 
-#: ../../../source/execfile.txt:177
-msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
-msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
+#: ../../../source/execfile.txt:14
+msgid "書式"
+msgstr "書式"
+
+#: ../../../source/execfile.txt:18
+msgid "groonga [options] [dest] [command [args]]"
+msgstr "groonga [options] [dest] [command [args]]"
+
+#: ../../../source/execfile.txt:21
+msgid "説明"
+msgstr "説明"
 
 #: ../../../source/execfile.txt:23
 msgid ""
@@ -49,53 +53,79 @@ msgstr ""
 "を通して操作することができます。このマニュアルページでは、groonga実行ファイル"
 "の使い方について説明します。"
 
-#: ../../../source/execfile.txt:21
-msgid "説明"
-msgstr "説明"
+#: ../../../source/execfile.txt:27
+msgid "オプション"
+msgstr "オプション"
 
-#: ../../../source/execfile.txt:86
+#: ../../../source/execfile.txt:31
+msgid "新たなデータベースを作成します。"
+msgstr "新たなデータベースを作成します。"
+
+#: ../../../source/execfile.txt:35
+msgid "クライアントモードで実行します。"
+msgstr "クライアントモードで実行します。"
+
+#: ../../../source/execfile.txt:39
+msgid "サーバモードで実行します。"
+msgstr "サーバモードで実行します。"
+
+#: ../../../source/execfile.txt:43
+msgid "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+msgstr "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+
+#: ../../../source/execfile.txt:47
 msgid ""
-"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
-"ん)"
+"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
+"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
+"定できます。"
 msgstr ""
-"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
-"ん)"
+"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
+"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
+"定できます。"
 
-#: ../../../source/execfile.txt:162
-msgid "テーブルに定義されているカラムのリストを表示します。"
-msgstr "テーブルに定義されているカラムのリストを表示します。"
-
-#: ../../../source/execfile.txt:156
-msgid "groongaプロセスの状態を表示します。"
-msgstr "groongaプロセスの状態を表示します。"
-
-#: ../../../source/execfile.txt:230
+#: ../../../source/execfile.txt:51
 msgid ""
-"% groonga -c localhost table_list [[0],[[\"id\",\"name\",\"path\",\"flags\","
-"\"domain\"],[256,\"Table\",\"/tmp/hoge.db.0000100\",49152,14]]] %"
+"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
+"が出力されます。"
 msgstr ""
-"% groonga -c localhost table_list [[0],[[\"id\",\"name\",\"path\",\"flags\","
-"\"domain\"],[256,\"Table\",\"/tmp/hoge.db.0000100\",49152,14]]] %"
+"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
+"が出力されます。"
 
-#: ../../../source/execfile.txt:122
-msgid "引数"
-msgstr "引数"
-
-#: ../../../source/execfile.txt:11
-msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
-msgstr "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
-
-#: ../../../source/execfile.txt:218
-msgid "サーバを起動します。::"
-msgstr "サーバを起動します。::"
-
-#: ../../../source/execfile.txt:82
+#: ../../../source/execfile.txt:55
 msgid ""
-"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
-"groonga.logです)"
+"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
+"(デフォルトは`hostname`の返すホスト名)"
 msgstr ""
-"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
-"groonga.logです)"
+"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
+"(デフォルトは`hostname`の返すホスト名)"
+
+#: ../../../source/execfile.txt:59
+msgid ""
+"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
+"トは10041番)"
+msgstr ""
+"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
+"トは10041番)"
+
+#: ../../../source/execfile.txt:64
+msgid ""
+"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
+"ます。(デフォルトは`hostname`の返すホスト名)"
+msgstr ""
+"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
+"ます。(デフォルトは`hostname`の返すホスト名)"
+
+#: ../../../source/execfile.txt:68
+msgid "ヘルプメッセージを出力します。"
+msgstr "ヘルプメッセージを出力します。"
+
+#: ../../../source/execfile.txt:72
+msgid ""
+"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
+"します。"
+msgstr ""
+"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
+"します。"
 
 #: ../../../source/execfile.txt:74
 msgid ""
@@ -111,95 +141,45 @@ msgstr ""
 "hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
 "ルを使用できます。"
 
-#: ../../../source/execfile.txt:180
-msgid "テーブルにレコードを挿入します。"
-msgstr "テーブルにレコードを挿入します。"
-
-#: ../../../source/execfile.txt:51
-msgid ""
-"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
-"が出力されます。"
-msgstr ""
-"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
-"が出力されます。"
-
-#: ../../../source/execfile.txt:68
-msgid "ヘルプメッセージを出力します。"
-msgstr "ヘルプメッセージを出力します。"
-
-#: ../../../source/execfile.txt:168
-msgid "テーブルにカラムを追加します。"
-msgstr "テーブルにカラムを追加します。"
-
-#: ../../../source/execfile.txt:223
-msgid "httpサーバとして起動します。::"
-msgstr "httpサーバとして起動します。::"
-
-#: ../../../source/execfile.txt:132
-msgid ""
-"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
-"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
-"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
-"ます。"
-msgstr ""
-"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
-"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
-"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
-"ます。"
-
 #: ../../../source/execfile.txt:78
 msgid "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
 msgstr "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
 
-#: ../../../source/execfile.txt:115
-msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
-msgstr "キャッシュ数の最大値を指定します。(デフォルトは100です)"
-
-#: ../../../source/execfile.txt:126
-msgid "使用するデータベースのパス名を指定します。"
-msgstr "使用するデータベースのパス名を指定します。"
-
-#: ../../../source/execfile.txt:55
+#: ../../../source/execfile.txt:82
 msgid ""
-"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
-"(デフォルトは`hostname`の返すホスト名)"
+"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
+"groonga.logです)"
 msgstr ""
-"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
-"(デフォルトは`hostname`の返すホスト名)"
+"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
+"groonga.logです)"
 
-#: ../../../source/execfile.txt:9
-msgid "名前"
-msgstr "名前"
-
-#: ../../../source/execfile.txt:47
+#: ../../../source/execfile.txt:86
 msgid ""
-"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
-"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
-"定できます。"
+"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
+"ん)"
 msgstr ""
-"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
-"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
-"定できます。"
+"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
+"ん)"
 
-#: ../../../source/execfile.txt:205
-msgid "例"
-msgstr "例"
+#: ../../../source/execfile.txt:90
+msgid ""
+"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
+"です)"
+msgstr ""
+"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
+"です)"
 
-#: ../../../source/execfile.txt:189
-msgid "データベースとのセッションを終了します。"
-msgstr "データベースとのセッションを終了します。"
+#: ../../../source/execfile.txt:94
+msgid "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+msgstr "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
 
-#: ../../../source/execfile.txt:186
-msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
-msgstr "検索条件をカスタマイズした新たな検索コマンドを定義します。"
-
-#: ../../../source/execfile.txt:220
-msgid "% groonga -d /tmp/hoge.db %"
-msgstr "% groonga -d /tmp/hoge.db %"
-
-#: ../../../source/execfile.txt:212
-msgid "作成済みのデータベースにテーブルを定義します。::"
-msgstr "作成済みのデータベースにテーブルを定義します。::"
+#: ../../../source/execfile.txt:98
+msgid ""
+"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
+"ます。::"
+msgstr ""
+"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
+"ます。::"
 
 #: ../../../source/execfile.txt:100
 msgid ""
@@ -215,13 +195,83 @@ msgstr ""
 "ン名と同じものが使える。 # 例えば、'--pid-path'に対応するキーは'pid-path'。 "
 "# ただし、キーが'config-path'のオプションは無視される。"
 
+#: ../../../source/execfile.txt:115
+msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+msgstr "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+
+#: ../../../source/execfile.txt:119
+msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+msgstr "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+
+#: ../../../source/execfile.txt:122
+msgid "引数"
+msgstr "引数"
+
+#: ../../../source/execfile.txt:126
+msgid "使用するデータベースのパス名を指定します。"
+msgstr "使用するデータベースのパス名を指定します。"
+
+#: ../../../source/execfile.txt:128
+msgid ""
+"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
+"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
+"とします。"
+msgstr ""
+"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
+"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
+"とします。"
+
+#: ../../../source/execfile.txt:132
+msgid ""
+"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
+"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
+"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
+"ます。"
+msgstr ""
+"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
+"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
+"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
+"ます。"
+
+#: ../../../source/execfile.txt:135
+msgid "コマンド"
+msgstr "コマンド"
+
+#: ../../../source/execfile.txt:137
+msgid ""
+"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
+"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
+"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
+"す。"
+msgstr ""
+"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
+"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
+"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
+"す。"
+
 #: ../../../source/execfile.txt:140
 msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
 msgstr "引数は以下の2種類の方法のいずれかで指定することができます。::"
 
-#: ../../../source/execfile.txt:192
-msgid "サーバ(デーモン)プロセスを停止します。"
-msgstr "サーバ(デーモン)プロセスを停止します。"
+#: ../../../source/execfile.txt:142
+msgid ""
+"形式1: コマンド名 値1 値2,..  形式2: コマンド名 --引数名1 値1 --引数名2 値"
+"2,.."
+msgstr ""
+"形式1: コマンド名 値1 値2,..  形式2: コマンド名 --引数名1 値1 --引数名2 値"
+"2,.."
+
+#: ../../../source/execfile.txt:146
+msgid ""
+"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
+"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
+"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
+"を指定することが可能で、途中の引数の指定を省略することもできます。"
+msgstr ""
+"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
+"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
+"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
+"を指定することが可能で、途中の引数の指定を省略することもできます。"
 
 #: ../../../source/execfile.txt:148
 msgid ""
@@ -241,53 +291,109 @@ msgstr ""
 "バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュ"
 "を指定します。"
 
-#: ../../../source/execfile.txt:135
-msgid "コマンド"
-msgstr "コマンド"
+#: ../../../source/execfile.txt:151
+msgid "組み込みコマンド"
+msgstr "組み込みコマンド"
 
-#: ../../../source/execfile.txt:43
-msgid "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
-msgstr "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+#: ../../../source/execfile.txt:153
+msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
+msgstr "以下のコマンドは組み込みコマンドとして予め定義されています。"
 
-#: ../../../source/execfile.txt:198
-msgid "ログ出力を行います。"
-msgstr "ログ出力を行います。"
+#: ../../../source/execfile.txt:156
+msgid "groongaプロセスの状態を表示します。"
+msgstr "groongaプロセスの状態を表示します。"
 
-#: ../../../source/execfile.txt:94
-msgid "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
-msgstr "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+#: ../../../source/execfile.txt:159
+msgid "DBに定義されているテーブルのリストを表示します。"
+msgstr "DBに定義されているテーブルのリストを表示します。"
+
+#: ../../../source/execfile.txt:162
+msgid "テーブルに定義されているカラムのリストを表示します。"
+msgstr "テーブルに定義されているカラムのリストを表示します。"
+
+#: ../../../source/execfile.txt:165
+msgid "DBにテーブルを追加します。"
+msgstr "DBにテーブルを追加します。"
+
+#: ../../../source/execfile.txt:168
+msgid "テーブルにカラムを追加します。"
+msgstr "テーブルにカラムを追加します。"
+
+#: ../../../source/execfile.txt:171
+msgid "DBに定義されているテーブルを削除します。"
+msgstr "DBに定義されているテーブルを削除します。"
+
+#: ../../../source/execfile.txt:174
+msgid "テーブルに定義されているカラムを削除します。"
+msgstr "テーブルに定義されているカラムを削除します。"
+
+#: ../../../source/execfile.txt:177
+msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
+msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
+
+#: ../../../source/execfile.txt:180
+msgid "テーブルにレコードを挿入します。"
+msgstr "テーブルにレコードを挿入します。"
 
 #: ../../../source/execfile.txt:183
 msgid "テーブルに含まれるレコードを検索して表示します。"
 msgstr "テーブルに含まれるレコードを検索して表示します。"
 
+#: ../../../source/execfile.txt:186
+msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+msgstr "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+
+#: ../../../source/execfile.txt:189
+msgid "データベースとのセッションを終了します。"
+msgstr "データベースとのセッションを終了します。"
+
+#: ../../../source/execfile.txt:192
+msgid "サーバ(デーモン)プロセスを停止します。"
+msgstr "サーバ(デーモン)プロセスを停止します。"
+
+#: ../../../source/execfile.txt:195
+msgid "ログ出力レベルを設定します。"
+msgstr "ログ出力レベルを設定します。"
+
+#: ../../../source/execfile.txt:198
+msgid "ログ出力を行います。"
+msgstr "ログ出力を行います。"
+
+#: ../../../source/execfile.txt:201
+msgid "ロックを解除します。"
+msgstr "ロックを解除します。"
+
+#: ../../../source/execfile.txt:205
+msgid "例"
+msgstr "例"
+
 #: ../../../source/execfile.txt:207
 msgid "新しいデータベースを作成します。::"
 msgstr "新しいデータベースを作成します。::"
 
-#: ../../../source/execfile.txt:228
-msgid "サーバに接続し、テーブル一覧を表示します。::"
-msgstr "サーバに接続し、テーブル一覧を表示します。::"
+#: ../../../source/execfile.txt:209
+msgid "% groonga -n /tmp/hoge.db quit %"
+msgstr "% groonga -n /tmp/hoge.db quit %"
 
-#: ../../../source/execfile.txt:142
-msgid ""
-"形式1: コマンド名 値1 値2,..  形式2: コマンド名 --引数名1 値1 --引数名2 値"
-"2,.."
-msgstr ""
-"形式1: コマンド名 値1 値2,..  形式2: コマンド名 --引数名1 値1 --引数名2 値"
-"2,.."
+#: ../../../source/execfile.txt:212
+msgid "作成済みのデータベースにテーブルを定義します。::"
+msgstr "作成済みのデータベースにテーブルを定義します。::"
 
-#: ../../../source/execfile.txt:137
-msgid ""
-"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
-"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
-"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
-"す。"
-msgstr ""
-"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
-"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
-"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
-"す。"
+#: ../../../source/execfile.txt:214
+msgid "% groonga /tmp/hoge.db table_create Table 0 ShortText [[0]] %"
+msgstr "% groonga /tmp/hoge.db table_create Table 0 ShortText [[0]] %"
+
+#: ../../../source/execfile.txt:218
+msgid "サーバを起動します。::"
+msgstr "サーバを起動します。::"
+
+#: ../../../source/execfile.txt:220
+msgid "% groonga -d /tmp/hoge.db %"
+msgstr "% groonga -d /tmp/hoge.db %"
+
+#: ../../../source/execfile.txt:223
+msgid "httpサーバとして起動します。::"
+msgstr "httpサーバとして起動します。::"
 
 #: ../../../source/execfile.txt:225
 msgid ""
@@ -297,120 +403,14 @@ msgstr ""
 "% groonga -d -p 80 --protocol http --document-root /usr/share/groonga/"
 "admin_html /tmp/hoge.db %"
 
-#: ../../../source/execfile.txt:151
-msgid "組み込みコマンド"
-msgstr "組み込みコマンド"
+#: ../../../source/execfile.txt:228
+msgid "サーバに接続し、テーブル一覧を表示します。::"
+msgstr "サーバに接続し、テーブル一覧を表示します。::"
 
-#: ../../../source/execfile.txt:64
+#: ../../../source/execfile.txt:230
 msgid ""
-"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
-"ます。(デフォルトは`hostname`の返すホスト名)"
+"% groonga -c localhost table_list [[0],[[\"id\",\"name\",\"path\",\"flags\","
+"\"domain\"],[256,\"Table\",\"/tmp/hoge.db.0000100\",49152,14]]] %"
 msgstr ""
-"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
-"ます。(デフォルトは`hostname`の返すホスト名)"
-
-#: ../../../source/execfile.txt:90
-msgid ""
-"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
-"です)"
-msgstr ""
-"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
-"です)"
-
-#: ../../../source/execfile.txt:146
-msgid ""
-"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
-"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
-"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
-"を指定することが可能で、途中の引数の指定を省略することもできます。"
-msgstr ""
-"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
-"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
-"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
-"を指定することが可能で、途中の引数の指定を省略することもできます。"
-
-#: ../../../source/execfile.txt:18
-msgid "groonga [options] [dest] [command [args]]"
-msgstr "groonga [options] [dest] [command [args]]"
-
-#: ../../../source/execfile.txt:39
-msgid "サーバモードで実行します。"
-msgstr "サーバモードで実行します。"
-
-#: ../../../source/execfile.txt:165
-msgid "DBにテーブルを追加します。"
-msgstr "DBにテーブルを追加します。"
-
-#: ../../../source/execfile.txt:119
-msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
-msgstr "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
-
-#: ../../../source/execfile.txt:201
-msgid "ロックを解除します。"
-msgstr "ロックを解除します。"
-
-#: ../../../source/execfile.txt:14
-msgid "書式"
-msgstr "書式"
-
-#: ../../../source/execfile.txt:159
-msgid "DBに定義されているテーブルのリストを表示します。"
-msgstr "DBに定義されているテーブルのリストを表示します。"
-
-#: ../../../source/execfile.txt:59
-msgid ""
-"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
-"トは10041番)"
-msgstr ""
-"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
-"トは10041番)"
-
-#: ../../../source/execfile.txt:128
-msgid ""
-"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
-"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
-"とします。"
-msgstr ""
-"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
-"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
-"とします。"
-
-#: ../../../source/execfile.txt:153
-msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
-msgstr "以下のコマンドは組み込みコマンドとして予め定義されています。"
-
-#: ../../../source/execfile.txt:6
-msgid "groonga実行ファイル"
-msgstr "groonga実行ファイル"
-
-#: ../../../source/execfile.txt:72
-msgid ""
-"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
-"します。"
-msgstr ""
-"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
-"します。"
-
-#: ../../../source/execfile.txt:195
-msgid "ログ出力レベルを設定します。"
-msgstr "ログ出力レベルを設定します。"
-
-#: ../../../source/execfile.txt:171
-msgid "DBに定義されているテーブルを削除します。"
-msgstr "DBに定義されているテーブルを削除します。"
-
-#: ../../../source/execfile.txt:35
-msgid "クライアントモードで実行します。"
-msgstr "クライアントモードで実行します。"
-
-#: ../../../source/execfile.txt:174
-msgid "テーブルに定義されているカラムを削除します。"
-msgstr "テーブルに定義されているカラムを削除します。"
-
-#: ../../../source/execfile.txt:31
-msgid "新たなデータベースを作成します。"
-msgstr "新たなデータベースを作成します。"
-
-#: ../../../source/execfile.txt:27
-msgid "オプション"
-msgstr "オプション"
+"% groonga -c localhost table_list [[0],[[\"id\",\"name\",\"path\",\"flags\","
+"\"domain\"],[256,\"Table\",\"/tmp/hoge.db.0000100\",49152,14]]] %"

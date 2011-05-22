@@ -1,3 +1,6 @@
+msgid "groonga < コマンドファイル > 出力ファイル"
+msgstr "groonga < コマンドファイル > 出力ファイル"
+
 # English translations for 1.2.1 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
@@ -7,15 +10,455 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-18 15:15\n"
+"POT-Creation-Date: 2011-05-22 22:49\n"
 "PO-Revision-Date: 2011-05-18 15:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../../source/grntest.txt:6
+msgid "grntest"
+msgstr "grntest"
+
+#: ../../../source/grntest.txt:9
+msgid "名前"
+msgstr "名前"
+
+#: ../../../source/grntest.txt:11
+msgid "grntest - groongaテストプログラム"
+msgstr "grntest - groongaテストプログラム"
+
+#: ../../../source/grntest.txt:14
+msgid "書式"
+msgstr "書式"
+
+#: ../../../source/grntest.txt:18
+msgid "grntest  [options...] [script] [db]"
+msgstr "grntest  [options...] [script] [db]"
+
+#: ../../../source/grntest.txt:21
+msgid "説明"
+msgstr "説明"
+
+#: ../../../source/grntest.txt:23
+msgid "grntestは、groonga汎用テストツールです。"
+msgstr "grntestは、groonga汎用テストツールです。"
+
+#: ../../../source/grntest.txt:25
+msgid ""
+"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
+"用する場合の動作確認や実行速度測定が可能です。"
+msgstr ""
+"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
+"用する場合の動作確認や実行速度測定が可能です。"
+
+#: ../../../source/grntest.txt:27
+msgid ""
+"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
+"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
+"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
+msgstr ""
+"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
+"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
+"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
+
+#: ../../../source/grntest.txt:29
+msgid ""
+"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
+"れません。"
+msgstr ""
+"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
+"れません。"
+
+#: ../../../source/grntest.txt:32
+msgid "オプション"
+msgstr "オプション"
+
+#: ../../../source/grntest.txt:35
+msgid ""
+"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
+"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
+"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
+"動して接続します。"
+msgstr ""
+"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
+"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
+"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
+"動して接続します。"
+
+#: ../../../source/grntest.txt:40
+msgid ""
+"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
+"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
+"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
+"ください。"
+msgstr ""
+"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
+"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
+"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
+"ください。"
+
+#: ../../../source/grntest.txt:45
+msgid "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
+msgstr "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
+
+#: ../../../source/grntest.txt:49
+msgid ""
+"通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイ"
+"ルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないよう"
+"になります。存在しないスクリプトファイルを指定した場合、エラーとなることに注"
+"意してください。"
+msgstr ""
+"通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイ"
+"ルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないよう"
+"になります。存在しないスクリプトファイルを指定した場合、エラーとなることに注"
+"意してください。"
+
+#: ../../../source/grntest.txt:53
+msgid ""
+"デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリで"
+"す。このオプションを利用すると、任意のディレクトリに出力先を変更することがで"
+"きます。"
+msgstr ""
+"デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリで"
+"す。このオプションを利用すると、任意のディレクトリに出力先を変更することがで"
+"きます。"
+
+#: ../../../source/grntest.txt:57
+msgid ""
+"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
+"ドを探します。"
+msgstr ""
+"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
+"ドを探します。"
+
+#: ../../../source/grntest.txt:61
+msgid ""
+"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
+msgstr ""
+"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
+
+#: ../../../source/grntest.txt:64
+msgid "引数"
+msgstr "引数"
+
+#: ../../../source/grntest.txt:68
+msgid ""
+"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
+"す。拡張子は.scrです。"
+msgstr ""
+"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
+"す。拡張子は.scrです。"
+
+#: ../../../source/grntest.txt:72
+msgid ""
+"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
+"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
+"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
+"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
+"ることに注意してください。"
+msgstr ""
+"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
+"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
+"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
+"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
+"ることに注意してください。"
+
+#: ../../../source/grntest.txt:76
+msgid "使い方"
+msgstr "使い方"
+
+#: ../../../source/grntest.txt:77
+msgid "まず、シェル上(Windowsならコマンドプロンプト上)で::"
+msgstr "まず、シェル上(Windowsならコマンドプロンプト上)で::"
+
+#: ../../../source/grntest.txt:79
+msgid "grntest test.scr 任意のDB名"
+msgstr "grntest test.scr 任意のDB名"
+
+#: ../../../source/grntest.txt:81
+msgid "とタイプしてください。もしgrntestが正常に動作すれば、::"
+msgstr "とタイプしてください。もしgrntestが正常に動作すれば、::"
+
+#: ../../../source/grntest.txt:83
+msgid "test-ユーザ名-数字.log"
+msgstr "test-ユーザ名-数字.log"
+
+#: ../../../source/grntest.txt:85
+msgid ""
+"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
+"ラブルシューティング」の章を参照してください。"
+msgstr ""
+"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
+"ラブルシューティング」の章を参照してください。"
+
+#: ../../../source/grntest.txt:89
+msgid "スクリプトファイル"
+msgstr "スクリプトファイル"
+
+#: ../../../source/grntest.txt:91
+msgid ""
+"スクリプトファイルは、grntest命令を記述したテキストファイルです。 \";\"セミコ"
+"ロンを利用して、一行に複数のgrntest命令を記述することができます。一行に複数の"
+"grntest命令がある場合、各命令は並列に実行されます。 \"#\"で始まる行はコメント"
+"として扱われます。"
+msgstr ""
+"スクリプトファイルは、grntest命令を記述したテキストファイルです。 \";\"セミコ"
+"ロンを利用して、一行に複数のgrntest命令を記述することができます。一行に複数の"
+"grntest命令がある場合、各命令は並列に実行されます。 \"#\"で始まる行はコメント"
+"として扱われます。"
+
+#: ../../../source/grntest.txt:98
+msgid "grntest命令"
+msgstr "grntest命令"
+
+#: ../../../source/grntest.txt:100
+msgid "現在サポートされているgrntest命令は以下の8つです。"
+msgstr "現在サポートされているgrntest命令は以下の8つです。"
+
+#: ../../../source/grntest.txt:102
+msgid "do_local コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "do_local コマンドファイル [スレッド数] [繰り返し数]"
+
+#: ../../../source/grntest.txt:104
+msgid ""
+"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
+"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
+"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
+"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
+"ル 1 [繰り返し数]と明示的に指定してください。"
+msgstr ""
+"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
+"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
+"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
+"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
+"ル 1 [繰り返し数]と明示的に指定してください。"
+
+#: ../../../source/grntest.txt:106
+msgid "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
+
+#: ../../../source/grntest.txt:108
+msgid ""
+"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
+"do_localの場合と同じです。"
+msgstr ""
+"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
+"do_localの場合と同じです。"
+
+#: ../../../source/grntest.txt:110
+msgid "rep_local コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "rep_local コマンドファイル [スレッド数] [繰り返し数]"
+
+#: ../../../source/grntest.txt:112
+msgid "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
+msgstr "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
+
+#: ../../../source/grntest.txt:114
+msgid "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
+
+#: ../../../source/grntest.txt:116
+msgid ""
+"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
+"数や繰り返し数の意味はdo_localと 同じです。"
+msgstr ""
+"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
+"数や繰り返し数の意味はdo_localと 同じです。"
+
+#: ../../../source/grntest.txt:118
+msgid "out_local コマンドファイル 入力ファイル名"
+msgstr "out_local コマンドファイル 入力ファイル名"
+
+#: ../../../source/grntest.txt:120
+msgid ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
+"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
+"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
+"のものです。grntestではコメントが利用できる以外、::"
+msgstr ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
+"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
+"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
+"のものです。grntestではコメントが利用できる以外、::"
+
+#: ../../../source/grntest.txt:124
+msgid "とした場合と同じです。"
+msgstr "とした場合と同じです。"
+
+#: ../../../source/grntest.txt:126
+msgid "out_gqtp コマンドファイル 出力ファイル名"
+msgstr "out_gqtp コマンドファイル 出力ファイル名"
+
+#: ../../../source/grntest.txt:128
+msgid ""
+"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
+"す。"
+msgstr ""
+"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
+"す。"
+
+#: ../../../source/grntest.txt:131
+msgid ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
+"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
+"diffというファイルに書きだします。"
+msgstr ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
+"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
+"diffというファイルに書きだします。"
+
+#: ../../../source/grntest.txt:135
+msgid "コマンドファイル"
+msgstr "コマンドファイル"
+
+#: ../../../source/grntest.txt:137
+msgid ""
+"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
+"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :ref:"
+"`commands` を参照してください。"
+msgstr ""
+"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
+"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :ref:"
+"`commands` を参照してください。"
+
+#: ../../../source/grntest.txt:140
+msgid "サンプル"
+msgstr "サンプル"
+
+#: ../../../source/grntest.txt:142
+msgid "スクリプトファイルのサンプルです。::"
+msgstr "スクリプトファイルのサンプルです。::"
+
+#: ../../../source/grntest.txt:144
+msgid ""
+"# sample script rep_local test.ddl do_local test.load; do_gqtp test.select "
+"10 10; do_local test.status 10"
+msgstr ""
+"# sample script rep_local test.ddl do_local test.load; do_gqtp test.select "
+"10 10; do_local test.status 10"
+
+#: ../../../source/grntest.txt:150
+msgid "上記の意味は以下のとおりです。"
+msgstr "上記の意味は以下のとおりです。"
+
+#: ../../../source/grntest.txt:153
+msgid "コメント行。"
+msgstr "コメント行。"
+
+#: ../../../source/grntest.txt:155
+msgid "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
+msgstr "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
+
+#: ../../../source/grntest.txt:157
+msgid ""
+"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
+"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
+"令を実行する場合に付与しても問題ありません。)"
+msgstr ""
+"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
+"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
+"令を実行する場合に付与しても問題ありません。)"
+
+#: ../../../source/grntest.txt:159
+msgid ""
+"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
+"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
+"test.statusというコマンドファイルを10個のスレッドで実行する。"
+msgstr ""
+"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
+"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
+"test.statusというコマンドファイルを10個のスレッドで実行する。"
+
+#: ../../../source/grntest.txt:162
+msgid "特殊命令"
+msgstr "特殊命令"
+
+#: ../../../source/grntest.txt:164
+msgid ""
+"スクリプトファイルのコメント行には特殊コマンドを埋め込むことが可能です。現在"
+"サポートされている特殊命令は以下の二つです。"
+msgstr ""
+"スクリプトファイルのコメント行には特殊コマンドを埋め込むことが可能です。現在"
+"サポートされている特殊命令は以下の二つです。"
+
+#: ../../../source/grntest.txt:167
+msgid ""
+"-i, --hostオプションと同等の機能です。コマンドラインオプションに指定したIPア"
+"ドレス/ホスト名と、SET_HOSTで指定したIPアドレス/ホスト名が異なる場合、またコ"
+"マンドラインオプションを指定しなかった場合にもSET_HOSTが優先されます。"
+"SET_HOSTを利用した場合、サーバが自動的には起動されないのもコマンドラインオプ"
+"ションで指定した場合と同様です。"
+msgstr ""
+"-i, --hostオプションと同等の機能です。コマンドラインオプションに指定したIPア"
+"ドレス/ホスト名と、SET_HOSTで指定したIPアドレス/ホスト名が異なる場合、またコ"
+"マンドラインオプションを指定しなかった場合にもSET_HOSTが優先されます。"
+"SET_HOSTを利用した場合、サーバが自動的には起動されないのもコマンドラインオプ"
+"ションで指定した場合と同様です。"
+
+#: ../../../source/grntest.txt:170
+msgid ""
+"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
+"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
+"ンを指定しなかった場合にもSET_PORTが優先されます。"
+msgstr ""
+"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
+"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
+"ンを指定しなかった場合にもSET_PORTが優先されます。"
+
+#: ../../../source/grntest.txt:173
+msgid ""
+"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
+"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
+msgstr ""
+"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
+"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
+
+#: ../../../source/grntest.txt:175
+msgid "例えば、"
+msgstr "例えば、"
+
+#: ../../../source/grntest.txt:179
+msgid "$ ./grntest --port 20010 test.scr testdb"
+msgstr "$ ./grntest --port 20010 test.scr testdb"
+
+#: ../../../source/grntest.txt:181
+msgid "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
+msgstr "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
+
+#: ../../../source/grntest.txt:185
+msgid ""
+"#SET_PORT 10900 rep_local test.ddl do_local test.load; rep_gqtp test.select "
+"10 10; rep_local test.status 10 #SET_PORT 10400"
+msgstr ""
+"#SET_PORT 10900 rep_local test.ddl do_local test.load; rep_gqtp test.select "
+"10 10; rep_local test.status 10 #SET_PORT 10400"
+
+#: ../../../source/grntest.txt:191
+msgid ""
+"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
+msgstr ""
+"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
+
+#: ../../../source/grntest.txt:195
+msgid "grntest実行結果"
+msgstr "grntest実行結果"
+
+#: ../../../source/grntest.txt:197
+msgid ""
+"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
+"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
+"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
+"式のテキストです。"
+msgstr ""
+"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
+"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
+"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
+"式のテキストです。"
 
 #: ../../../source/grntest.txt:202
 msgid ""
@@ -93,87 +536,29 @@ msgstr ""
 "\": 762519, \"qps\": 1967.164097, \"min\": 73, \"max\": 135631, \"queries\": "
 "15 00}]}, {\"total\": 915408, \"qps\": 1718.359464, \"queries\": 1573}]"
 
-#: ../../../source/grntest.txt:102
-msgid "do_local コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "do_local コマンドファイル [スレッド数] [繰り返し数]"
-
-#: ../../../source/grntest.txt:185
-msgid ""
-"#SET_PORT 10900 rep_local test.ddl do_local test.load; rep_gqtp test.select "
-"10 10; rep_local test.status 10 #SET_PORT 10400"
-msgstr ""
-"#SET_PORT 10900 rep_local test.ddl do_local test.load; rep_gqtp test.select "
-"10 10; rep_local test.status 10 #SET_PORT 10400"
-
 #: ../../../source/grntest.txt:255
 msgid "制限事項"
 msgstr "制限事項"
 
-#: ../../../source/grntest.txt:100
-msgid "現在サポートされているgrntest命令は以下の8つです。"
-msgstr "現在サポートされているgrntest命令は以下の8つです。"
+#: ../../../source/grntest.txt:257
+msgid ""
+"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
+"ド数の合計は最大64までに制限されます。"
+msgstr ""
+"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
+"ド数の合計は最大64までに制限されます。"
 
-#: ../../../source/grntest.txt:21
-msgid "説明"
-msgstr "説明"
+#: ../../../source/grntest.txt:259
+msgid "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
+msgstr "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
+
+#: ../../../source/grntest.txt:263
+msgid "トラブルシューティング"
+msgstr "トラブルシューティング"
 
 #: ../../../source/grntest.txt:265
 msgid "もし、grntestが正常に動作しない場合、まず以下を確認してください。"
 msgstr "もし、grntestが正常に動作しない場合、まず以下を確認してください。"
-
-#: ../../../source/grntest.txt:64
-msgid "引数"
-msgstr "引数"
-
-#: ../../../source/grntest.txt:271
-msgid ""
-"指定したDBが適切か？ grntestは、引数で指定したDBの中身はチェックしません。も"
-"し指定されたDBが存在しなければ自動的にDBを作成しますが、もしファイルとして存"
-"在する場合は中身に関わらず動作を続けてしまい、結果が異常になる可能性がありま"
-"す。"
-msgstr ""
-"指定したDBが適切か？ grntestは、引数で指定したDBの中身はチェックしません。も"
-"し指定されたDBが存在しなければ自動的にDBを作成しますが、もしファイルとして存"
-"在する場合は中身に関わらず動作を続けてしまい、結果が異常になる可能性がありま"
-"す。"
-
-#: ../../../source/grntest.txt:76
-msgid "使い方"
-msgstr "使い方"
-
-#: ../../../source/grntest.txt:81
-msgid "とタイプしてください。もしgrntestが正常に動作すれば、::"
-msgstr "とタイプしてください。もしgrntestが正常に動作すれば、::"
-
-#: ../../../source/grntest.txt:6
-msgid "grntest"
-msgstr "grntest"
-
-#: ../../../source/grntest.txt:126
-msgid "out_gqtp コマンドファイル 出力ファイル名"
-msgstr "out_gqtp コマンドファイル 出力ファイル名"
-
-#: ../../../source/grntest.txt:170
-msgid ""
-"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
-"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
-"ンを指定しなかった場合にもSET_PORTが優先されます。"
-msgstr ""
-"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
-"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
-"ンを指定しなかった場合にもSET_PORTが優先されます。"
-
-#: ../../../source/grntest.txt:120
-msgid ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
-"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
-"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
-"のものです。grntestではコメントが利用できる以外、::"
-msgstr ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
-"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
-"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
-"のものです。grntestではコメントが利用できる以外、::"
 
 #: ../../../source/grntest.txt:267
 msgid ""
@@ -184,139 +569,6 @@ msgstr ""
 "インターネットに接続しているか？　--noftp モードを指定しない限り、grntestは動"
 "作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、"
 "grntestは正常に動作しません。"
-
-#: ../../../source/grntest.txt:57
-msgid ""
-"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
-"ドを探します。"
-msgstr ""
-"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
-"ドを探します。"
-
-#: ../../../source/grntest.txt:259
-msgid "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
-msgstr "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
-
-#: ../../../source/grntest.txt:25
-msgid ""
-"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
-"用する場合の動作確認や実行速度測定が可能です。"
-msgstr ""
-"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
-"用する場合の動作確認や実行速度測定が可能です。"
-
-#: ../../../source/grntest.txt:124
-msgid "とした場合と同じです。"
-msgstr "とした場合と同じです。"
-
-#: ../../../source/grntest.txt:175
-msgid "例えば、"
-msgstr "例えば、"
-
-#: ../../../source/grntest.txt:179
-msgid "$ ./grntest --port 20010 test.scr testdb"
-msgstr "$ ./grntest --port 20010 test.scr testdb"
-
-#: ../../../source/grntest.txt:27
-msgid ""
-"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
-"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
-"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
-msgstr ""
-"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
-"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
-"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
-
-#: ../../../source/grntest.txt:9
-msgid "名前"
-msgstr "名前"
-
-#: ../../../source/grntest.txt:135
-msgid "コマンドファイル"
-msgstr "コマンドファイル"
-
-msgid "groonga < コマンドファイル > 出力ファイル"
-msgstr "groonga < コマンドファイル > 出力ファイル"
-
-#: ../../../source/grntest.txt:104
-msgid ""
-"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
-"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
-"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
-"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
-"ル 1 [繰り返し数]と明示的に指定してください。"
-msgstr ""
-"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
-"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
-"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
-"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
-"ル 1 [繰り返し数]と明示的に指定してください。"
-
-#: ../../../source/grntest.txt:116
-msgid ""
-"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
-"数や繰り返し数の意味はdo_localと 同じです。"
-msgstr ""
-"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
-"数や繰り返し数の意味はdo_localと 同じです。"
-
-#: ../../../source/grntest.txt:144
-msgid ""
-"# sample script rep_local test.ddl do_local test.load; do_gqtp test.select "
-"10 10; do_local test.status 10"
-msgstr ""
-"# sample script rep_local test.ddl do_local test.load; do_gqtp test.select "
-"10 10; do_local test.status 10"
-
-#: ../../../source/grntest.txt:173
-msgid ""
-"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
-"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
-msgstr ""
-"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
-"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
-
-#: ../../../source/grntest.txt:72
-msgid ""
-"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
-"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
-"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
-"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
-"ることに注意してください。"
-msgstr ""
-"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
-"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
-"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
-"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
-"ることに注意してください。"
-
-#: ../../../source/grntest.txt:150
-msgid "上記の意味は以下のとおりです。"
-msgstr "上記の意味は以下のとおりです。"
-
-#: ../../../source/grntest.txt:18
-msgid "grntest  [options...] [script] [db]"
-msgstr "grntest  [options...] [script] [db]"
-
-#: ../../../source/grntest.txt:29
-msgid ""
-"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
-"れません。"
-msgstr ""
-"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
-"れません。"
-
-#: ../../../source/grntest.txt:77
-msgid "まず、シェル上(Windowsならコマンドプロンプト上)で::"
-msgstr "まず、シェル上(Windowsならコマンドプロンプト上)で::"
-
-#: ../../../source/grntest.txt:257
-msgid ""
-"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
-"ド数の合計は最大64までに制限されます。"
-msgstr ""
-"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
-"ド数の合計は最大64までに制限されます。"
 
 #: ../../../source/grntest.txt:269
 msgid ""
@@ -330,41 +582,17 @@ msgstr ""
 "すでにgroongaサーバが動作している場合、grntestは正常に動作しない可能性があり"
 "ます。"
 
-#: ../../../source/grntest.txt:53
+#: ../../../source/grntest.txt:271
 msgid ""
-"デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリで"
-"す。このオプションを利用すると、任意のディレクトリに出力先を変更することがで"
-"きます。"
+"指定したDBが適切か？ grntestは、引数で指定したDBの中身はチェックしません。も"
+"し指定されたDBが存在しなければ自動的にDBを作成しますが、もしファイルとして存"
+"在する場合は中身に関わらず動作を続けてしまい、結果が異常になる可能性がありま"
+"す。"
 msgstr ""
-"デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリで"
-"す。このオプションを利用すると、任意のディレクトリに出力先を変更することがで"
-"きます。"
-
-#: ../../../source/grntest.txt:155
-msgid "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
-msgstr "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
-
-#: ../../../source/grntest.txt:118
-msgid "out_local コマンドファイル 入力ファイル名"
-msgstr "out_local コマンドファイル 入力ファイル名"
-
-#: ../../../source/grntest.txt:142
-msgid "スクリプトファイルのサンプルです。::"
-msgstr "スクリプトファイルのサンプルです。::"
-
-#: ../../../source/grntest.txt:159
-msgid ""
-"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
-"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
-"test.statusというコマンドファイルを10個のスレッドで実行する。"
-msgstr ""
-"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
-"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
-"test.statusというコマンドファイルを10個のスレッドで実行する。"
-
-#: ../../../source/grntest.txt:110
-msgid "rep_local コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "rep_local コマンドファイル [スレッド数] [繰り返し数]"
+"指定したDBが適切か？ grntestは、引数で指定したDBの中身はチェックしません。も"
+"し指定されたDBが存在しなければ自動的にDBを作成しますが、もしファイルとして存"
+"在する場合は中身に関わらず動作を続けてしまい、結果が異常になる可能性がありま"
+"す。"
 
 #: ../../../source/grntest.txt:273
 msgid ""
@@ -373,231 +601,3 @@ msgid ""
 msgstr ""
 "以上の原因でなければ、問題はgrntestかgroongaにあります。ご報告をお願いしま"
 "す。"
-
-#: ../../../source/grntest.txt:131
-msgid ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
-"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
-"diffというファイルに書きだします。"
-msgstr ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
-"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
-"diffというファイルに書きだします。"
-
-#: ../../../source/grntest.txt:45
-msgid "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
-msgstr "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
-
-#: ../../../source/grntest.txt:128
-msgid ""
-"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
-"す。"
-msgstr ""
-"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
-"す。"
-
-#: ../../../source/grntest.txt:108
-msgid ""
-"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
-"do_localの場合と同じです。"
-msgstr ""
-"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
-"do_localの場合と同じです。"
-
-#: ../../../source/grntest.txt:140
-msgid "サンプル"
-msgstr "サンプル"
-
-#: ../../../source/grntest.txt:89
-msgid "スクリプトファイル"
-msgstr "スクリプトファイル"
-
-#: ../../../source/grntest.txt:40
-msgid ""
-"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
-"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
-"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
-"ください。"
-msgstr ""
-"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
-"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
-"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
-"ください。"
-
-#: ../../../source/grntest.txt:114
-msgid "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-
-#: ../../../source/grntest.txt:11
-msgid "grntest - groongaテストプログラム"
-msgstr "grntest - groongaテストプログラム"
-
-#: ../../../source/grntest.txt:191
-msgid ""
-"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
-msgstr ""
-"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
-
-#: ../../../source/grntest.txt:197
-msgid ""
-"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
-"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
-"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
-"式のテキストです。"
-msgstr ""
-"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
-"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
-"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
-"式のテキストです。"
-
-#: ../../../source/grntest.txt:49
-msgid ""
-"通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイ"
-"ルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないよう"
-"になります。存在しないスクリプトファイルを指定した場合、エラーとなることに注"
-"意してください。"
-msgstr ""
-"通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイ"
-"ルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないよう"
-"になります。存在しないスクリプトファイルを指定した場合、エラーとなることに注"
-"意してください。"
-
-#: ../../../source/grntest.txt:98
-msgid "grntest命令"
-msgstr "grntest命令"
-
-#: ../../../source/grntest.txt:263
-msgid "トラブルシューティング"
-msgstr "トラブルシューティング"
-
-#: ../../../source/grntest.txt:14
-msgid "書式"
-msgstr "書式"
-
-#: ../../../source/grntest.txt:83
-msgid "test-ユーザ名-数字.log"
-msgstr "test-ユーザ名-数字.log"
-
-#: ../../../source/grntest.txt:153
-msgid "コメント行。"
-msgstr "コメント行。"
-
-#: ../../../source/grntest.txt:157
-msgid ""
-"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
-"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
-"令を実行する場合に付与しても問題ありません。)"
-msgstr ""
-"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
-"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
-"令を実行する場合に付与しても問題ありません。)"
-
-#: ../../../source/grntest.txt:91
-msgid ""
-"スクリプトファイルは、grntest命令を記述したテキストファイルです。 \";\"セミコ"
-"ロンを利用して、一行に複数のgrntest命令を記述することができます。一行に複数の"
-"grntest命令がある場合、各命令は並列に実行されます。 \"#\"で始まる行はコメント"
-"として扱われます。"
-msgstr ""
-"スクリプトファイルは、grntest命令を記述したテキストファイルです。 \";\"セミコ"
-"ロンを利用して、一行に複数のgrntest命令を記述することができます。一行に複数の"
-"grntest命令がある場合、各命令は並列に実行されます。 \"#\"で始まる行はコメント"
-"として扱われます。"
-
-#: ../../../source/grntest.txt:61
-msgid ""
-"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
-msgstr ""
-"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
-
-#: ../../../source/grntest.txt:79
-msgid "grntest test.scr 任意のDB名"
-msgstr "grntest test.scr 任意のDB名"
-
-#: ../../../source/grntest.txt:181
-msgid "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
-msgstr "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
-
-#: ../../../source/grntest.txt:164
-msgid ""
-"スクリプトファイルのコメント行には特殊コマンドを埋め込むことが可能です。現在"
-"サポートされている特殊命令は以下の二つです。"
-msgstr ""
-"スクリプトファイルのコメント行には特殊コマンドを埋め込むことが可能です。現在"
-"サポートされている特殊命令は以下の二つです。"
-
-#: ../../../source/grntest.txt:68
-msgid ""
-"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
-"す。拡張子は.scrです。"
-msgstr ""
-"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
-"す。拡張子は.scrです。"
-
-#: ../../../source/grntest.txt:23
-msgid "grntestは、groonga汎用テストツールです。"
-msgstr "grntestは、groonga汎用テストツールです。"
-
-#: ../../../source/grntest.txt:85
-msgid ""
-"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
-"ラブルシューティング」の章を参照してください。"
-msgstr ""
-"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
-"ラブルシューティング」の章を参照してください。"
-
-#: ../../../source/grntest.txt:106
-msgid "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-
-#: ../../../source/grntest.txt:195
-msgid "grntest実行結果"
-msgstr "grntest実行結果"
-
-#: ../../../source/grntest.txt:35
-msgid ""
-"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
-"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
-"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
-"動して接続します。"
-msgstr ""
-"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
-"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
-"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
-"動して接続します。"
-
-#: ../../../source/grntest.txt:162
-msgid "特殊命令"
-msgstr "特殊命令"
-
-#: ../../../source/grntest.txt:167
-msgid ""
-"-i, --hostオプションと同等の機能です。コマンドラインオプションに指定したIPア"
-"ドレス/ホスト名と、SET_HOSTで指定したIPアドレス/ホスト名が異なる場合、またコ"
-"マンドラインオプションを指定しなかった場合にもSET_HOSTが優先されます。"
-"SET_HOSTを利用した場合、サーバが自動的には起動されないのもコマンドラインオプ"
-"ションで指定した場合と同様です。"
-msgstr ""
-"-i, --hostオプションと同等の機能です。コマンドラインオプションに指定したIPア"
-"ドレス/ホスト名と、SET_HOSTで指定したIPアドレス/ホスト名が異なる場合、またコ"
-"マンドラインオプションを指定しなかった場合にもSET_HOSTが優先されます。"
-"SET_HOSTを利用した場合、サーバが自動的には起動されないのもコマンドラインオプ"
-"ションで指定した場合と同様です。"
-
-#: ../../../source/grntest.txt:112
-msgid "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
-msgstr "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
-
-#: ../../../source/grntest.txt:137
-msgid ""
-"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
-"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :ref:"
-"`commands` を参照してください。"
-msgstr ""
-"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
-"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :ref:"
-"`commands` を参照してください。"
-
-#: ../../../source/grntest.txt:32
-msgid "オプション"
-msgstr "オプション"
