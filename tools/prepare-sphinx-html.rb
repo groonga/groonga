@@ -19,6 +19,7 @@ def fix_locale_link(url, locale)
   url.gsub(/\A((?:\.\.\/){2,})([a-z]{2})\/html\//) do
     relative_base_path = $1
     link_locale = $2
+    close_quote = $3
     if locale == "en"
       relative_base_path = relative_base_path.gsub(/\A\.\.\//, '')
     end
@@ -30,12 +31,18 @@ def fix_locale_link(url, locale)
 end
 
 def fix_html_link(html, locale)
-  html.gsub(/(href|src)="(.+?)"/) do
+  html = html.gsub(/(href|src)="(.+?)"/) do
     attribute = $1
     link = $2
     link = fix_link_path(link)
     link = fix_locale_link(link, locale)
     "#{attribute}=\"#{link}\""
+  end
+  html.gsub(/(id="top-link" href=)"(.+?)"/) do
+    prefix = $1
+    top_path = $2
+    top_path = "." if top_path == "#"
+    "#{prefix}\"#{top_path}/../\""
   end
 end
 
