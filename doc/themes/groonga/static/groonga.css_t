@@ -1,3 +1,4 @@
+/* -*- css -*- */
 /*
  * groonga.css_t
  * ~~~~~~~~~~~~~
@@ -11,15 +12,78 @@
 
 @import url("default.css");
 
-div.related li.other-languages {
+div.header h1.title
+{
+    background: white url(logo.png) no-repeat;
+    background-position: 60px 10px;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0.1em 0.1em 0.1em rgb(200, 200, 200);
+    margin: 0;
+    padding-top: 10px;
+    height: 90px;
+}
+
+div.header h1.title a,
+div.header h1.title a:link,
+div.header h1.title a:visited
+{
+    color: black;
+    text-decoration: none;
+}
+
+div.header h1.title span
+{
+    display: block;
+    padding-left: 320px;
+    margin-bottom: 2px;
+    margin-right: 150px;
+}
+
+div.header h1.title span.title,
+div.header h1.title span.title-separator
+{
+    display: none;
+}
+
+div.header h1.title span.title-short-description
+{
+    padding-top: 10px;
+}
+
+div.header h1.title span.title-catch-phrase
+{
+    padding-bottom: 20px;
+}
+
+div.related
+{
+    border-bottom: 1px solid #992e1d;
+}
+
+div.related li.other-languages
+{
     position: relative;
     display: list-item;
 }
 
-div.related li.other-languages ul.other-languages {
+div.related li.other-languages ul.other-languages
+{
     margin: 0;
     padding: 0;
     position: absolute;
     top: 10px;
     right: 230px;
+}
+
+div.document
+{
+    position: relative;
+}
+
+div.sphinxsidebar
+{
+    position: absolute;
+    top: 0;
 }
