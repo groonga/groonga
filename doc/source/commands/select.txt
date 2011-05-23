@@ -2,8 +2,6 @@
 
 .. highlightlang:: none
 
-.. _select:
-
 select
 ======
 
@@ -177,7 +175,7 @@ a - b
     * groongaコマンド起動時の--match-escalation-thresholdオプション
     * 設定ファイル中のmatch-escalation-threshold設定項目
 
-  クエリのヒット件数が閾値を越えない場合は:ref:`spec_search` で説明している方法で検索方法をエスカレーションしてきます。
+  クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方法で検索方法をエスカレーションしてきます。
 
 返値
 ----

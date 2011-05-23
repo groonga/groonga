@@ -2,8 +2,6 @@
 
 .. highlightlang:: none
 
-.. _suggest:
-
 suggest
 =======
 

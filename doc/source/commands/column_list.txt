@@ -2,8 +2,6 @@
 
 .. highlightlang:: none
 
-.. _column_list:
-
 column_list
 ===========
 

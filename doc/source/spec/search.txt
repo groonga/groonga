@@ -2,12 +2,10 @@
 
 .. highlightlang:: none
 
-.. _spec_search:
-
 検索
 ====
 
-:ref:`select` コマンドがqueryパラメータを使ってどのように検索するのかを説明します。
+:doc:`/commands/select` コマンドがqueryパラメータを使ってどのように検索するのかを説明します。
 
 検索の挙動
 ----------

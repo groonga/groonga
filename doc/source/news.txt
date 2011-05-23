@@ -2,8 +2,6 @@
 
 .. highlightlang:: none
 
-.. _news:
-
 お知らせ
 ========
 
@@ -60,14 +58,14 @@
 * MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。
   （@tomotaka_itoさんが報告）
 * [非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。
-* :ref:`geo_in_rectangle` の ``top_left`` と
+* :doc:`/functions/geo_in_rectangle` の ``top_left`` と
   ``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。
 * メモリリークを修正。
 * 小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880
-* :ref:`column_list` のドキュメントを修正。 #758
-* :ref:`table_list` のドキュメントを修正。
-* :ref:`load` で_valueを指定するとメモリリークする問題を修正。 #878
-* :ref:`load` でクラッシュする問題を修正。 #661
+* :doc:`/commands/column_list` のドキュメントを修正。 #758
+* :doc:`/commands/table_list` のドキュメントを修正。
+* :doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878
+* :doc:`/commands/load` でクラッシュする問題を修正。 #661
 
 実験的
 ++++++

@@ -2,8 +2,6 @@
 
 .. highlightlang:: none
 
-.. _edit_distance:
-
 edit_distance
 =============
 

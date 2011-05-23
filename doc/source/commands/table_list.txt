@@ -2,8 +2,6 @@
 
 .. highlightlang:: none
 
-.. _table_list:
-
 table_list
 ==========
 

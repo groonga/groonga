@@ -8,7 +8,7 @@
 groonga ドキュメント
 ====================
 
-* :ref:`news`
+* :doc:`news`
 
 .. toctree::
    :maxdepth: 3
