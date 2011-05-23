@@ -4,7 +4,8 @@ include $(top_srcdir)/build/makefiles/gettext-files.am
 doc_localedir = $(docdir)/$(LOCALE)
 
 if ENABLE_DOCUMENT
-all: $(required_build_stamps)
+$(html_files): html-build-stamp
+$(man_files): man-build-stamp
 
 nobase_dist_doc_locale_DATA =			\
 	$(html_files)
