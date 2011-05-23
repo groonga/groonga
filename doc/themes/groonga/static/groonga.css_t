@@ -60,6 +60,7 @@ div.header h1.title span.title-catch-phrase
 div.related
 {
     border-bottom: 1px solid #992e1d;
+    font-weight: bold;
 }
 
 div.related li.other-languages
