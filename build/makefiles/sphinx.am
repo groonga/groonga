@@ -306,6 +306,9 @@ html_files = \
 	html/_sources/install.txt \
 	html/_sources/limitations.txt \
 	html/_sources/news.txt \
+	html/_sources/news/0.x.txt \
+	html/_sources/news/1.0.x.txt \
+	html/_sources/news/1.1.x.txt \
 	html/_sources/process.txt \
 	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
@@ -339,6 +342,7 @@ html_files = \
 	html/_static/groonga.css \
 	html/_static/jp.png \
 	html/_static/jquery.js \
+	html/_static/logo.png \
 	html/_static/minus.png \
 	html/_static/plus.png \
 	html/_static/pygments.css \
@@ -397,6 +401,9 @@ html_files = \
 	html/install.html \
 	html/limitations.html \
 	html/news.html \
+	html/news/0.x.html \
+	html/news/1.0.x.html \
+	html/news/1.1.x.html \
 	html/objects.inv \
 	html/process.html \
 	html/pseudo_column.html \
