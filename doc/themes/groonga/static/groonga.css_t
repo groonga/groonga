@@ -12,6 +12,28 @@
 
 @import url("default.css");
 
+a:link,
+div.sphinxsidebar a:link
+{
+    color: #992e1d;
+}
+
+a:visited,
+div.sphinxsidebar a:visited
+{
+    color: #f6872e;
+}
+
+a:active,
+div.sphinxsidebar a:active,
+a:hover,
+div.sphinxsidebar a:hover
+{
+    color: #fff;
+    background-color: #992e1d;
+    text-decoration: none;
+}
+
 div.header h1.title
 {
     background: white url(logo.png) no-repeat;
@@ -93,4 +115,55 @@ div.sphinxsidebar
 {
     position: absolute;
     top: 0;
+    font-size: smaller;
+}
+
+div.sphinxsidebar h3
+{
+    color: #fff;
+    background: url(menu-header.png) right top no-repeat;
+    margin: 0 0 0.5em 0;
+    padding: 0.5em 0 0.2em 0.5em;
+    font-weight: bold;
+}
+
+div.sphinxsidebar h3 a:link,
+div.sphinxsidebar h3 a:visited
+{
+    color: #fff;
+}
+
+div.sphinxsidebar h4:before
+{
+    content: ">> ";
+    color: #53aa24;
+}
+
+div.sphinxsidebar ul,
+div.sphinxsidebar ul ul
+{
+    list-style-type: none;
+}
+
+div.sphinxsidebar li ul
+{
+    margin-top: 4px;
+}
+
+div.sphinxsidebar li ul li
+{
+    margin-bottom: 4px;
+}
+
+div.sphinxsidebar p.topless:before,
+div.sphinxsidebar ul li:before
+{
+    content: "> ";
+    font-weight: bold;
+    color: #2fa52f;
+}
+
+div.footer
+{
+    background: url(footer-bar.png) repeat-x scroll center top;
 }
