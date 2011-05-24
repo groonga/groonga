@@ -111,7 +111,8 @@ div.body h6
     font-weight: bold;
 }
 
-div.body p
+div.body p,
+div.body dl
 {
     padding-left: 20px;
     padding-right: 20px;

@@ -16,6 +16,7 @@ groonga ドキュメント
 
    characteristic
    install
+   community
    tutorial
    reference
    spec

@@ -1,0 +1,19 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Community
+=========
+
+There are some places for sharing groonga information.
+We welcome you to join our community.
+
+Mailing List
+------------
+
+There are mailing lists for discussion about groonga.
+
+For Japanese developers
+  `groonga-dev@lists.sourceforge.jp`_
+
+.. _groonga-dev@lists.sourceforge.jp: http://lists.sourceforge.jp/mailman/listinfo/groonga-dev
