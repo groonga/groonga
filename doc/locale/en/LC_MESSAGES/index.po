@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-22 22:49\n"
+"POT-Creation-Date: 2011-05-24 18:19\n"
 "PO-Revision-Date: 2011-05-18 15:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -17,22 +17,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/index.txt:7
+#: ../../../source/index.txt:9
 msgid "groonga ドキュメント"
 msgstr "groonga ドキュメント"
 
-#: ../../../source/index.txt:9
-msgid ":ref:`news`"
+#: ../../../source/index.txt:11
+#, fuzzy
+msgid ":doc:`news`"
 msgstr ":ref:`news`"
 
-#: ../../../source/index.txt:24
+#: ../../../source/index.txt:27
 msgid ":ref:`genindex`"
 msgstr ":ref:`genindex`"
 
-#: ../../../source/index.txt:25
+#: ../../../source/index.txt:28
 msgid ":ref:`modindex`"
 msgstr ":ref:`modindex`"
 
-#: ../../../source/index.txt:26
+#: ../../../source/index.txt:29
 msgid ":ref:`search`"
 msgstr ":ref:`search`"

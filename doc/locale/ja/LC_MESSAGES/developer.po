@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-18 12:45\n"
+"POT-Creation-Date: 2011-05-24 18:26\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -17,155 +17,155 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../../../source/developer.txt:4
+#: ../../../source/developer.txt:6
 msgid "groonga開発者向け情報"
 msgstr ""
 
-#: ../../../source/developer/com.txt:2
+#: ../../../source/developer/com.txt:4
 msgid "groonga 通信アーキテクチャ"
 msgstr ""
 
-#: ../../../source/developer/com.txt:5
+#: ../../../source/developer/com.txt:7
 msgid "gqtpでのアーキテクチャ"
 msgstr ""
 
-#: ../../../source/developer/com.txt:7
+#: ../../../source/developer/com.txt:9
 msgid "comが外部からの接続を受け付ける。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:8
+#: ../../../source/developer/com.txt:10
 msgid "comは1スレッド。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:9
+#: ../../../source/developer/com.txt:11
 msgid "comがedgeを作る。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:10
+#: ../../../source/developer/com.txt:12
 msgid "edgeは接続と１対１対応。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:11
+#: ../../../source/developer/com.txt:13
 msgid "edgeはctxを含む。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:12
+#: ../../../source/developer/com.txt:14
 msgid "workerはthreadと１対１対応。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:13
+#: ../../../source/developer/com.txt:15
 msgid "workerは上限が個定数。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:14
+#: ../../../source/developer/com.txt:16
 msgid "workerは、１つのedgeと結びつくことができる。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:16
+#: ../../../source/developer/com.txt:18
 msgid "edgeごとにqueueを持つ。"
 msgstr ""
 
-#: ../../../source/developer/com.txt:17
+#: ../../../source/developer/com.txt:19
 msgid ""
 "msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
 "ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
 "る。"
 msgstr ""
 
-#: ../../../source/developer/document.txt:4
+#: ../../../source/developer/document.txt:6
 msgid "ドキュメント作成"
 msgstr ""
 
-#: ../../../source/developer/document.txt:7
+#: ../../../source/developer/document.txt:9
 msgid "Sphinxのインストール"
 msgstr ""
 
-#: ../../../source/developer/document.txt:9
+#: ../../../source/developer/document.txt:11
 msgid ""
 "groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
 "以下のように導入します。::"
 msgstr ""
 
-#: ../../../source/developer/document.txt:11
+#: ../../../source/developer/document.txt:13
 msgid "# aptitude install python-setuptools # easy_install -U sphinx"
 msgstr ""
 
-#: ../../../source/developer/document.txt:15
+#: ../../../source/developer/document.txt:17
 msgid "htmlの作成"
 msgstr ""
 
-#: ../../../source/developer/document.txt:17
+#: ../../../source/developer/document.txt:19
 msgid "以下のコマンドでhtmlが作成されます。::"
 msgstr ""
 
-#: ../../../source/developer/document.txt:19
+#: ../../../source/developer/document.txt:21
 msgid "% make html"
 msgstr ""
 
-#: ../../../source/developer/document.txt:22
-#: ../../../source/developer/document.txt:34
+#: ../../../source/developer/document.txt:24
+#: ../../../source/developer/document.txt:36
 msgid "pdfの作成"
 msgstr ""
 
-#: ../../../source/developer/document.txt:24
+#: ../../../source/developer/document.txt:26
 msgid ""
 "groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
 "(IPA Gothic/IPAexGothic)が必要となります。"
 msgstr ""
 
-#: ../../../source/developer/document.txt:27
+#: ../../../source/developer/document.txt:29
 msgid "rst2pdfのインストール"
 msgstr ""
 
-#: ../../../source/developer/document.txt:29
+#: ../../../source/developer/document.txt:31
 msgid "以下のようにしてインストールできます。::"
 msgstr ""
 
-#: ../../../source/developer/document.txt:31
+#: ../../../source/developer/document.txt:33
 msgid "# easy_install rst2pdf"
 msgstr ""
 
-#: ../../../source/developer/document.txt:36
+#: ../../../source/developer/document.txt:38
 msgid "以下のコマンドでpdfが作成されます。::"
 msgstr ""
 
-#: ../../../source/developer/document.txt:38
+#: ../../../source/developer/document.txt:40
 msgid "% make pdf"
 msgstr ""
 
-#: ../../../source/developer/query.txt:4
+#: ../../../source/developer/query.txt:6
 msgid "クエリの実現"
 msgstr ""
 
-#: ../../../source/developer/query.txt:6
+#: ../../../source/developer/query.txt:8
 msgid ""
 "groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
 "り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
 "エリの表現と実行に関して、groongaは複数の手段を用意しています。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:9
+#: ../../../source/developer/query.txt:11
 msgid "クエリ実行のためのインタフェース"
 msgstr ""
 
-#: ../../../source/developer/query.txt:11
+#: ../../../source/developer/query.txt:13
 msgid ""
 "groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
 "ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
 "います。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:13
+#: ../../../source/developer/query.txt:15
 msgid ""
 "クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
 "形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:16
+#: ../../../source/developer/query.txt:18
 msgid "DB_API"
 msgstr ""
 
-#: ../../../source/developer/query.txt:18
+#: ../../../source/developer/query.txt:20
 msgid ""
 "DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
 "す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
@@ -174,11 +174,11 @@ msgid ""
 "て実現されています。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:21
+#: ../../../source/developer/query.txt:23
 msgid "grn_expr"
 msgstr ""
 
-#: ../../../source/developer/query.txt:23
+#: ../../../source/developer/query.txt:25
 msgid ""
 "grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
 "るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
@@ -186,11 +186,11 @@ msgid ""
 "grn_table_select()関数を使用します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:26
+#: ../../../source/developer/query.txt:28
 msgid "groonga実行ファイル"
 msgstr ""
 
-#: ../../../source/developer/query.txt:28
+#: ../../../source/developer/query.txt:30
 msgid ""
 "groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
 "ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
@@ -201,11 +201,11 @@ msgid ""
 "す。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:31
+#: ../../../source/developer/query.txt:33
 msgid "grn_exprで表現できるクエリ"
 msgstr ""
 
-#: ../../../source/developer/query.txt:33
+#: ../../../source/developer/query.txt:35
 msgid ""
 "grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
 "クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
@@ -213,31 +213,31 @@ msgid ""
 "子で結合したものです。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:35
+#: ../../../source/developer/query.txt:37
 msgid "論理演算子は、以下の3種類があります。 ::"
 msgstr ""
 
-#: ../../../source/developer/query.txt:38
+#: ../../../source/developer/query.txt:40
 msgid "&& (論理積) || (論理和) !  (否定)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:42
+#: ../../../source/developer/query.txt:44
 msgid ""
 "関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
 "関係式として使うこともできます。 ::"
 msgstr ""
 
-#: ../../../source/developer/query.txt:45
+#: ../../../source/developer/query.txt:47
 msgid ""
 "equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
 "contain() near() similar() prefix() suffix()"
 msgstr ""
 
-#: ../../../source/developer/query.txt:58
+#: ../../../source/developer/query.txt:60
 msgid "grn_table_select()"
 msgstr ""
 
-#: ../../../source/developer/query.txt:60
+#: ../../../source/developer/query.txt:62
 msgid ""
 "grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
 "ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
@@ -245,11 +245,11 @@ msgid ""
 "かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
 msgstr ""
 
-#: ../../../source/developer/query.txt:63
+#: ../../../source/developer/query.txt:65
 msgid "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
 msgstr ""
 
-#: ../../../source/developer/query.txt:68
+#: ../../../source/developer/query.txt:70
 msgid ""
 "GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
 "ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
@@ -259,17 +259,17 @@ msgid ""
 "チするレコードに対してスコア値の更新のみを行います。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:70
+#: ../../../source/developer/query.txt:72
 msgid ""
 "grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
 "せて可能な限り高速に指定されたクエリを実行しようとします。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:73
+#: ../../../source/developer/query.txt:75
 msgid "関係式"
 msgstr ""
 
-#: ../../../source/developer/query.txt:75
+#: ../../../source/developer/query.txt:77
 msgid ""
 "関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
 "として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
@@ -278,66 +278,66 @@ msgid ""
 "ます。主な関係式について説明します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:78
+#: ../../../source/developer/query.txt:80
 msgid "equal(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:79
+#: ../../../source/developer/query.txt:81
 msgid "v1の値とv2の値が等しいことを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:82
+#: ../../../source/developer/query.txt:84
 msgid "not_equal(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:83
+#: ../../../source/developer/query.txt:85
 msgid "v1の値とv2の値が等しくないことを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:86
+#: ../../../source/developer/query.txt:88
 msgid "less(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:87
+#: ../../../source/developer/query.txt:89
 msgid "v1の値がv2の値よりも小さいことを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:90
+#: ../../../source/developer/query.txt:92
 msgid "greater(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:91
+#: ../../../source/developer/query.txt:93
 msgid "v1の値がv2の値よりも大きいことを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:94
+#: ../../../source/developer/query.txt:96
 msgid "less_equal(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:95
+#: ../../../source/developer/query.txt:97
 msgid "v1の値がv2の値と等しいか小さいことを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:98
+#: ../../../source/developer/query.txt:100
 msgid "greater_equal(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:99
+#: ../../../source/developer/query.txt:101
 msgid "v1の値がv2の値と等しいか大きいことを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:102
+#: ../../../source/developer/query.txt:104
 msgid "contain(v1, v2, mode, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:103
+#: ../../../source/developer/query.txt:105
 msgid ""
 "v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
 "き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
 "かを指定することができます。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:107
+#: ../../../source/developer/query.txt:109
 msgid ""
 "EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
 "る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
@@ -345,53 +345,53 @@ msgid ""
 "素がv2の値に中間一致する"
 msgstr ""
 
-#: ../../../source/developer/query.txt:114
+#: ../../../source/developer/query.txt:116
 msgid "near(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:115
+#: ../../../source/developer/query.txt:117
 msgid ""
 "v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
 "列を渡します)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:118
+#: ../../../source/developer/query.txt:120
 msgid "similar(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:119
+#: ../../../source/developer/query.txt:121
 msgid "v1の値とv2の値が類似していることを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:122
+#: ../../../source/developer/query.txt:124
 msgid "prefix(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:123
+#: ../../../source/developer/query.txt:125
 msgid "v1の値がv2の値に対して前方一致することを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:126
+#: ../../../source/developer/query.txt:128
 msgid "suffix(v1, v2, arg, callback)"
 msgstr ""
 
-#: ../../../source/developer/query.txt:127
+#: ../../../source/developer/query.txt:129
 msgid "v1の値がv2の値に対して後方一致することを表します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:130
+#: ../../../source/developer/query.txt:132
 msgid "クエリの実例"
 msgstr ""
 
-#: ../../../source/developer/query.txt:132
+#: ../../../source/developer/query.txt:134
 msgid "grn_exprを使って様々な検索クエリを表現することができます。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:135
+#: ../../../source/developer/query.txt:137
 msgid "検索例1"
 msgstr ""
 
-#: ../../../source/developer/query.txt:138
+#: ../../../source/developer/query.txt:140
 msgid ""
 "GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
 "query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
@@ -400,7 +400,7 @@ msgid ""
 "(ctx, table, query, NULL, GRN_OP_OR);"
 msgstr ""
 
-#: ../../../source/developer/query.txt:145
+#: ../../../source/developer/query.txt:147
 msgid ""
 "tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
 "が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
@@ -408,11 +408,11 @@ msgid ""
 "みがヒットします。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:149
+#: ../../../source/developer/query.txt:151
 msgid "検索例2"
 msgstr ""
 
-#: ../../../source/developer/query.txt:152
+#: ../../../source/developer/query.txt:154
 msgid ""
 "GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
 "query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
@@ -430,7 +430,7 @@ msgid ""
 "GRN_OP_ADJUST); grn_obj_close(ctx, query);"
 msgstr ""
 
-#: ../../../source/developer/query.txt:171
+#: ../../../source/developer/query.txt:173
 msgid ""
 "tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
 "コア値にscore1を積算してresultにセットします。次に、resultにセットされたレ"
@@ -438,11 +438,11 @@ msgid ""
 "は、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:174
+#: ../../../source/developer/query.txt:176
 msgid "検索例3"
 msgstr ""
 
-#: ../../../source/developer/query.txt:177
+#: ../../../source/developer/query.txt:179
 msgid ""
 "GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
 "query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
@@ -461,7 +461,7 @@ msgid ""
 "table, query, result, GRN_OP_OR);   grn_obj_close(ctx, query); }"
 msgstr ""
 
-#: ../../../source/developer/query.txt:198
+#: ../../../source/developer/query.txt:200
 msgid ""
 "tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
 "コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
@@ -469,11 +469,11 @@ msgid ""
 "ア値にscore2を積算してresultに追加します。"
 msgstr ""
 
-#: ../../../source/developer/query.txt:201
+#: ../../../source/developer/query.txt:203
 msgid "検索例4"
 msgstr ""
 
-#: ../../../source/developer/query.txt:204
+#: ../../../source/developer/query.txt:206
 msgid ""
 "GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
 "query, contain, GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, "
@@ -482,7 +482,7 @@ msgid ""
 "(ctx, table, query, NULL, GRN_OP_OR);"
 msgstr ""
 
-#: ../../../source/developer/query.txt:211
+#: ../../../source/developer/query.txt:213
 msgid ""
 "tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
 "が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
@@ -490,202 +490,203 @@ msgid ""
 "ヒットします。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:4
+#: ../../../source/developer/test.txt:6
 msgid "テスト方法"
 msgstr ""
 
-#: ../../../source/developer/test.txt:7
+#: ../../../source/developer/test.txt:9
 msgid "テスト環境の構築"
 msgstr ""
 
-#: ../../../source/developer/test.txt:10
+#: ../../../source/developer/test.txt:12
 msgid "Cutterのインストール"
 msgstr ""
 
-#: ../../../source/developer/test.txt:12
+#: ../../../source/developer/test.txt:14
 msgid "groongaは、テストのフレームワークとして Cutter_ を用いています。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:14
+#: ../../../source/developer/test.txt:16
 msgid ""
 "Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
 "覧下さい。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:20
+#: ../../../source/developer/test.txt:22
 msgid "lcovのインストール"
 msgstr ""
 
-#: ../../../source/developer/test.txt:22
+#: ../../../source/developer/test.txt:24
 msgid ""
 "カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
 "以下のようにしてインストールできます。::"
 msgstr ""
 
-#: ../../../source/developer/test.txt:24
+#: ../../../source/developer/test.txt:26
 msgid "% sudo aptitude install -y lcov"
 msgstr ""
 
-#: ../../../source/developer/test.txt:27
+#: ../../../source/developer/test.txt:29
 msgid "clangのインストール"
 msgstr ""
 
-#: ../../../source/developer/test.txt:29
+#: ../../../source/developer/test.txt:31
 msgid ""
 "ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
 "があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
 msgstr ""
 
-#: ../../../source/developer/test.txt:31
+#: ../../../source/developer/test.txt:33
 msgid "% sudo aptitude install -y clang"
 msgstr ""
 
-#: ../../../source/developer/test.txt:34
+#: ../../../source/developer/test.txt:36
 msgid "libmemcachedのインストール"
 msgstr ""
 
-#: ../../../source/developer/test.txt:36
+#: ../../../source/developer/test.txt:38
 msgid ""
 "memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
 "が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
 "トールできます。::"
 msgstr ""
 
-#: ../../../source/developer/test.txt:38
+#: ../../../source/developer/test.txt:40
 msgid "% sudo aptitude install -y libmemcached-dev"
 msgstr ""
 
-#: ../../../source/developer/test.txt:41
+#: ../../../source/developer/test.txt:43
 msgid "テストの動作"
 msgstr ""
 
-#: ../../../source/developer/test.txt:43 ../../../source/developer/test.txt:50
+#: ../../../source/developer/test.txt:45 ../../../source/developer/test.txt:52
 msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 msgstr ""
 
-#: ../../../source/developer/test.txt:45
+#: ../../../source/developer/test.txt:47
 msgid "make check"
 msgstr ""
 
-#: ../../../source/developer/test.txt:48
+#: ../../../source/developer/test.txt:50
 msgid "カバレッジ情報"
 msgstr ""
 
-#: ../../../source/developer/test.txt:52
+#: ../../../source/developer/test.txt:54
 msgid "make coverage"
 msgstr ""
 
-#: ../../../source/developer/test.txt:54
+#: ../../../source/developer/test.txt:56
 msgid ""
 "すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
 "す。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:56
+#: ../../../source/developer/test.txt:58
 msgid ""
 "カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
 "関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
 "トされるようになっていることを心がけてください。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:58
+#: ../../../source/developer/test.txt:60
 msgid ""
 "テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
 "バーしている部分を増やすことも重要です。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:61
+#: ../../../source/developer/test.txt:63
 msgid "様々なテスト"
 msgstr ""
 
-#: ../../../source/developer/test.txt:63
+#: ../../../source/developer/test.txt:65
 msgid ""
 "テストは、test/unitディレクトリにおいて、./run-test.shを実行することによって"
 "も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
 "sh --helpを実行しヘルプをご覧ください。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:66
+#: ../../../source/developer/test.txt:68
 msgid "特定のテスト関数のみテストする"
 msgstr ""
 
-#: ../../../source/developer/test.txt:68
+#: ../../../source/developer/test.txt:70
 msgid ""
 "特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:70 ../../../source/developer/test.txt:79
-#: ../../../source/developer/test.txt:90
-#: ../../../source/developer/test.txt:101
+#: ../../../source/developer/test.txt:72 ../../../source/developer/test.txt:81
+#: ../../../source/developer/test.txt:92
+#: ../../../source/developer/test.txt:103
 msgid "実行例::"
 msgstr ""
 
-#: ../../../source/developer/test.txt:72
+#: ../../../source/developer/test.txt:74
 msgid "% ./run-test.sh -n test_text_otoj"
 msgstr ""
 
-#: ../../../source/developer/test.txt:75
+#: ../../../source/developer/test.txt:77
 msgid "特定のテストファイルのみテストする"
 msgstr ""
 
-#: ../../../source/developer/test.txt:77
+#: ../../../source/developer/test.txt:79
 msgid ""
 "特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
 "す。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:81
+#: ../../../source/developer/test.txt:83
 msgid "% ./run-test.sh -t test_string"
 msgstr ""
 
-#: ../../../source/developer/test.txt:84
+#: ../../../source/developer/test.txt:86
 msgid "不正メモリアクセス・メモリリーク検出"
 msgstr ""
 
-#: ../../../source/developer/test.txt:86
+#: ../../../source/developer/test.txt:88
 msgid ""
 "環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
 "スやメモリリークを検出しつつ、テストを動作させることができます。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:88 ../../../source/developer/test.txt:99
+#: ../../../source/developer/test.txt:90
+#: ../../../source/developer/test.txt:101
 msgid "run-test.shのみならず、make checkでも利用可能です。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:92
+#: ../../../source/developer/test.txt:94
 msgid "% CUTTER_CHECK_LEAK=yes make check"
 msgstr ""
 
-#: ../../../source/developer/test.txt:95
+#: ../../../source/developer/test.txt:97
 msgid "デバッガ上でのテスト実行"
 msgstr ""
 
-#: ../../../source/developer/test.txt:97
+#: ../../../source/developer/test.txt:99
 msgid ""
 "環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
 "行されます。gdb上でrunを行うと、テストの実行が開始されます。"
 msgstr ""
 
-#: ../../../source/developer/test.txt:103
+#: ../../../source/developer/test.txt:105
 msgid "% CUTTER_DEBUG=yes make check"
 msgstr ""
 
-#: ../../../source/developer/test.txt:106
+#: ../../../source/developer/test.txt:108
 msgid "静的解析"
 msgstr ""
 
-#: ../../../source/developer/test.txt:108
+#: ../../../source/developer/test.txt:110
 msgid ""
 "scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
 "いうディレクトリに解析結果のhtmlが出力されます。::"
 msgstr ""
 
-#: ../../../source/developer/test.txt:110
+#: ../../../source/developer/test.txt:112
 msgid ""
 "% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
 "scan_build make -j4"
 msgstr ""
 
-#: ../../../source/developer/test.txt:114
+#: ../../../source/developer/test.txt:116
 msgid "configureは１度のみ実行する必要があります。"
 msgstr ""

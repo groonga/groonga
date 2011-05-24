@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-22 22:49\n"
+"POT-Creation-Date: 2011-05-24 18:19\n"
 "PO-Revision-Date: 2011-05-18 15:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -17,6 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/process.txt:4
+#: ../../../source/process.txt:6
 msgid "実行環境"
 msgstr "実行環境"
