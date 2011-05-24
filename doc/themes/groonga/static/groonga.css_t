@@ -13,13 +13,13 @@
 @import url("default.css");
 
 a:link,
-div.sphinxsidebar a:link
+div.sphinxsidebar a:link,
+div.sphinxsidebar a:visited
 {
     color: #992e1d;
 }
 
-a:visited,
-div.sphinxsidebar a:visited
+a:visited
 {
     color: #f6872e;
 }
@@ -87,6 +87,34 @@ div.header h1.title span.title-catch-phrase
 div.body
 {
     background-color: #fff5e5;
+    padding: 0;
+    padding-bottom: 20px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6
+{
+    margin: 0;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative;
+    border-bottom: 2px solid #992e1d;
+    color: #992e1d;
+    font-weight: bold;
+}
+
+div.body p
+{
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 div.related
@@ -132,8 +160,8 @@ div.sphinxsidebar h3
 {
     color: #fff;
     background: url(menu-header.png) right top no-repeat;
-    margin: 0 0 0.5em 0;
-    padding: 0.5em 0 0.2em 0.5em;
+    margin: 0 0 10px 0;
+    padding: 10px 0 5px 10px;
     font-weight: bold;
 }
 
@@ -141,6 +169,11 @@ div.sphinxsidebar h3 a:link,
 div.sphinxsidebar h3 a:visited
 {
     color: #fff;
+}
+
+div.sphinxsidebar h4
+{
+    font-size: small;
 }
 
 div.sphinxsidebar h4:before
