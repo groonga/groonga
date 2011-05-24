@@ -339,11 +339,15 @@ html_files = \
 	html/_static/down.png \
 	html/_static/favicon.ico \
 	html/_static/file.png \
+	html/_static/footer-bar.png \
 	html/_static/groonga.css \
+	html/_static/header-background.png \
 	html/_static/jp.png \
 	html/_static/jquery.js \
 	html/_static/logo.png \
+	html/_static/menu-header.png \
 	html/_static/minus.png \
+	html/_static/navigation-bar.png \
 	html/_static/plus.png \
 	html/_static/pygments.css \
 	html/_static/searchtools.js \
