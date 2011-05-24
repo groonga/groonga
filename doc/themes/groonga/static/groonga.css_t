@@ -34,9 +34,14 @@ div.sphinxsidebar a:hover
     text-decoration: none;
 }
 
+div.header
+{
+    background: url(header-background.png) repeat-y #ffe9c7;
+}
+
 div.header h1.title
 {
-    background: white url(logo.png) no-repeat;
+    background: url(logo.png) no-repeat;
     background-position: 60px 10px;
     font-family: sans-serif;
     font-size: 12px;
