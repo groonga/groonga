@@ -285,6 +285,7 @@ html_files = \
 	html/_sources/commands/table_list.txt \
 	html/_sources/commands/table_remove.txt \
 	html/_sources/commands/view_add.txt \
+	html/_sources/community.txt \
 	html/_sources/developer.txt \
 	html/_sources/developer/com.txt \
 	html/_sources/developer/document.txt \
@@ -383,6 +384,7 @@ html_files = \
 	html/commands/table_list.html \
 	html/commands/table_remove.html \
 	html/commands/view_add.html \
+	html/community.html \
 	html/developer.html \
 	html/developer/com.html \
 	html/developer/document.html \
