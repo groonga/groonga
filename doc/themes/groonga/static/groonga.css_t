@@ -81,7 +81,7 @@ div.related li.other-languages ul.other-languages
     padding: 0;
     position: absolute;
     top: 10px;
-    right: 230px;
+    right: {{ theme_sidebarwidth|toint }}px;
 }
 
 div.document
