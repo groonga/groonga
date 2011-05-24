@@ -84,6 +84,11 @@ div.header h1.title span.title-catch-phrase
     padding-bottom: 20px;
 }
 
+div.body
+{
+    background-color: #fff5e5;
+}
+
 div.related
 {
     border-bottom: 1px solid #992e1d;
