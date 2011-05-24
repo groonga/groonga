@@ -33,7 +33,7 @@ gettext: sphinx-ensure-updated
 init: gettext
 	for po in $(po_files); do						\
 	  pot=`basename $${po} | sed -e 's,po$$,pot,g'`;			\
-	  test "$FORCE_INIT" != "yes" -o -f $${po} && continue;			\
+	  test "$(FORCE_INIT)" != "yes" -o -f $${po} && continue;		\
 	  msginit --input=$${pot} --output-file=$${po} --locale=$(LOCALE);	\
 	done
 
