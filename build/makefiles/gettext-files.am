@@ -3,6 +3,7 @@ po_files = \
 	characteristic.po \
 	command_version.po \
 	commands.po \
+	community.po \
 	conf.po \
 	developer.po \
 	execfile.po \
@@ -29,6 +30,7 @@ mo_files = \
 	characteristic.mo \
 	command_version.mo \
 	commands.mo \
+	community.mo \
 	conf.mo \
 	developer.mo \
 	execfile.mo \
@@ -55,6 +57,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/characteristic.mo \
 	LC_MESSAGES/command_version.mo \
 	LC_MESSAGES/commands.mo \
+	LC_MESSAGES/community.mo \
 	LC_MESSAGES/conf.mo \
 	LC_MESSAGES/developer.mo \
 	LC_MESSAGES/execfile.mo \
