@@ -10,7 +10,29 @@
 {% extends "default/layout.html" %}
 {% set favicon = "favicon.ico" %}
 
+{% block extraheader %}
+  <meta property="fb:page_id" content="201193596592346" />
+  <meta property="fb:admins" content="kouhei.sutou" />
+  <meta property="og:type" content="product" />
+  <meta property="og:image" content="http://groonga.org/images/groonga.png" />
+  <meta property="og:site_name" content="groonga" />
+  <script src="http://connect.facebook.net/ja_JP/all.js"></script>
+
+  <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+       appId  : null,
+       status : true, // check login status
+       cookie : true, // enable cookies to allow the server to access the session
+       xfbml  : true  // parse XFBML
+    });
+  };
+  </script>
+  {{ super() }}
+{% endblock %}
+
 {% block header %}
+<div id="fb-root"></div>
 <div class="header">
   <h1 class="title">
     <a id="top-link" href="{{ pathto('index.html', 1) }}">
@@ -20,20 +42,23 @@
       <span class="title-catch-phrase">It lets you write high-performance applications that requires fulltext search.</span>
     </a>
   </h1>
-</div>
-  {{ super() }}
-{% endblock %}
 
-{% block rootrellink %}
-  <li class="other-languages">
-    <ul class="other-languages">
+  <div class="facebook-buttons">
+    <fb:like href="http://www.facebook.com/pages/groonga/201193596592346"
+             layout="standard"
+             width="250"></fb:like>
+  </div>
+
+  <div class="other-language-links">
+    <ul>
 {%- if language != "en" %}
-      <li class="other-language"><a href="{{ pathto('../../en/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/us.png', 1) }}" alt="English"></a></li>
+      <li><a href="{{ pathto('../../en/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/us.png', 1) }}" alt="English"></a></li>
 {%- endif %}
 {%- if language != "ja" %}
-      <li class="other-language"><a href="{{ pathto('../../ja/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/jp.png', 1) }}" alt="日本語"></a></li>
+      <li><a href="{{ pathto('../../ja/html/', 1) }}{{ pathto(pagename, 0, '.') }}"><img src="{{ pathto('_static/jp.png', 1) }}" alt="日本語"></a></li>
 {%- endif %}
     </ul>
-  </li>
+  </div>
+</div>
   {{ super() }}
 {% endblock %}

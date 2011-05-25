@@ -36,20 +36,21 @@ div.sphinxsidebar a:hover
 
 div.header
 {
-    background: url(header-background.png) repeat-y #ffe9c7;
+    /* background: url(header-background.png) repeat-y #ffe9c7; */
 }
 
 div.header h1.title
 {
     background: url(logo.png) no-repeat;
-    background-position: 60px 10px;
+    background-position: 60px 20px;
     font-family: sans-serif;
     font-size: 12px;
     font-weight: bold;
     text-shadow: 0.1em 0.1em 0.1em rgb(200, 200, 200);
     margin: 0;
-    padding-top: 10px;
-    height: 90px;
+    margin-right: 320px;
+    padding: 0px;
+    height: 115px;
 }
 
 div.header h1.title a,
@@ -60,12 +61,17 @@ div.header h1.title a:visited
     text-decoration: none;
 }
 
+header h1.title a
+{
+    display: block;
+    height: 115px;
+}
+
 div.header h1.title span
 {
     display: block;
-    padding-left: 320px;
+    padding-left: 310px;
     margin-bottom: 2px;
-    margin-right: 150px;
 }
 
 div.header h1.title span.title,
@@ -76,12 +82,47 @@ div.header h1.title span.title-separator
 
 div.header h1.title span.title-short-description
 {
-    padding-top: 10px;
+    padding-top: 30px;
 }
 
-div.header h1.title span.title-catch-phrase
+div.header div.facebook-buttons
 {
-    padding-bottom: 20px;
+    position: absolute;
+    top: 30px;
+    right: 10px;
+    border: #992e1d 2px solid;
+    background-color: white;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    width: 280px;
+    height: 60px;
+}
+
+div.header div.other-language-links
+{
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    /* width: 50px; */
+}
+
+div.header div.other-language-links ul,
+div.header div.other-language-links li
+{
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+div.bodywrapper
+{
+    background-color: #fff5e5;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 div.body
@@ -89,9 +130,6 @@ div.body
     background-color: #fff5e5;
     padding: 0;
     padding-bottom: 20px;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-bottom: 10px;
 }
 
 div.body h1,
@@ -130,21 +168,6 @@ div.related ul
     padding-left: 60px;
 }
 
-div.related li.other-languages
-{
-    position: relative;
-    display: list-item;
-}
-
-div.related li.other-languages ul.other-languages
-{
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 10px;
-    right: {{ theme_sidebarwidth|toint }}px;
-}
-
 div.document
 {
     position: relative;
@@ -155,6 +178,11 @@ div.sphinxsidebar
     position: absolute;
     top: 0;
     font-size: smaller;
+}
+
+div.sphinxsidebarwrapper
+{
+    padding-right: 0;
 }
 
 div.sphinxsidebar h3
