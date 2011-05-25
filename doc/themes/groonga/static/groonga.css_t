@@ -235,7 +235,7 @@ div.sphinxsidebar ul li:before
     color: #2fa52f;
 }
 
-div.sphinxsidebar div#searchbox
+div.sphinxsidebar p.searchtip
 {
     margin-right: 10px;
 }
