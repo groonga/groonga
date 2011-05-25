@@ -149,7 +149,7 @@ div.body h6
     padding-left: 20px;
     padding-right: 20px;
     position: relative;
-    border-bottom: 2px solid #992e1d;
+    border-bottom: 1px solid #992e1d;
     color: #992e1d;
     font-weight: bold;
 }
