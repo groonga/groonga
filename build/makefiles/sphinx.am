@@ -56,7 +56,7 @@ maintainer-clean-local:
 
 .PHONY: help
 .PHONY: man generate-man
-.PHONY: html generate-html
+.PHONY: html generate-html clean-html
 .PHONY: pdf generate-pdf
 .PHONY: dirhtml generate-dirhtml
 .PHONY: pickle generate-pickle
@@ -107,6 +107,8 @@ html-build-stamp: $(document_source_files)
 	  $(ALLSPHINXOPTS)			\
 	  html
 	@touch $@
+clean-html:
+	@rm -rf html-build-stamp $(DOCTREES_BASE)/html html
 
 pdf: generate-pdf
 generate-pdf: pdf-build-stamp

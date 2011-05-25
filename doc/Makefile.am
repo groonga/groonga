@@ -8,14 +8,9 @@ include $(top_srcdir)/build/makefiles/sphinx-build.am
 update-examples:
 	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py
 
-man:
+man pdf clean-html:
 	for dir in $(SUBDIRS); do		\
-	  (cd $${dir} && $(MAKE) man);		\
-	done
-
-pdf:
-	for dir in $(SUBDIRS); do		\
-	  (cd $${dir} && $(MAKE) pdf);		\
+	  (cd $${dir} && $(MAKE) $@);		\
 	done
 
 EXTRA_DIST =					\

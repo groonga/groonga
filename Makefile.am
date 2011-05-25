@@ -84,6 +84,7 @@ update-document:
 	fi
 	rm -rf tmp-doc
 	mkdir tmp-doc
+	(cd doc && $(MAKE) clean-html)
 	(cd doc && $(MAKE) install docdir=$(abs_srcdir)/tmp-doc/install)
 	ruby $(srcdir)/tools/prepare-sphinx-html.rb tmp-doc/install tmp-doc/dist
 	rm -rf $(GROONGA_GITHUB_COM_PATH)/docs
