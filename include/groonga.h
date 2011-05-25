@@ -1342,6 +1342,16 @@ GRN_API grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
 GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                         grn_info_type type, grn_obj *value);
 
+/**
+ * c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
+ *
+ * Check whether groonga built-in object.
+ *
+ * :param ctx: context
+ * :param obj: target object
+ * :retype: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
+ **/
+GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 
 /**
  * grn_obj_get_value:

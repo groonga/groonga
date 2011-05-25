@@ -54,7 +54,8 @@ noinst_LTLIBRARIES =				\
 	test-command-dump.la			\
 	test-command-truncate.la		\
 	test-geo.la				\
-	test-accessor.la
+	test-accessor.la			\
+	test-object.la
 endif
 
 INCLUDES =			\
@@ -133,3 +134,4 @@ test_command_dump_la_SOURCES		= test-command-dump.c
 test_command_truncate_la_SOURCES	= test-command-truncate.c
 test_geo_la_SOURCES			= test-geo.c
 test_accessor_la_SOURCES		= test-accessor.c
+test_object_la_SOURCES			= test-object.c
