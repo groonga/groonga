@@ -58,10 +58,11 @@ div.header h1.title a:link,
 div.header h1.title a:visited
 {
     color: black;
+    background-color: transparent;
     text-decoration: none;
 }
 
-header h1.title a
+div.header h1.title a
 {
     display: block;
     height: 115px;
