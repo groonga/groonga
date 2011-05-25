@@ -235,6 +235,11 @@ div.sphinxsidebar ul li:before
     color: #2fa52f;
 }
 
+div.sphinxsidebar div#searchbox
+{
+    margin-right: 10px;
+}
+
 div.footer
 {
     background: url(footer-bar.png) repeat-x scroll center top;
