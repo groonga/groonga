@@ -56,8 +56,8 @@ noinst_LTLIBRARIES =				\
 	test-command-dump.la			\
 	test-command-truncate.la		\
 	test-geo.la				\
-	test-accessor.la
-#	test-object.la
+	test-accessor.la			\
+	test-object.la
 endif
 
 INCLUDES =			\
