@@ -8248,7 +8248,12 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
   }
   if (table && table_len) {
     grn_ctx_loader_clear(ctx);
+    loader->input_type = input_type;
     loader->table = grn_ctx_get(ctx, table, table_len);
+    if (!loader->table) {
+      ERR(GRN_INVALID_ARGUMENT, "nonexistent table: <%.*s>", table_len, table);
+      goto exit;
+    }
     if (loader->table && columns && columns_len) {
       int i, n_columns;
       grn_obj parsed_columns;
@@ -8290,7 +8295,6 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
                        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
     }
-    loader->input_type = input_type;
   } else {
     input_type = loader->input_type;
   }

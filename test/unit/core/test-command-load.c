@@ -37,6 +37,7 @@ void test_no_key_table(void);
 void test_two_bigram_indexes_to_key(void);
 void test_invalid_start_with_symbol(void);
 void test_no_key_table_without_columns(void);
+void test_invalid_table_name(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -464,5 +465,17 @@ test_no_key_table_without_columns(void)
                                      "[1],\n"
                                      "[2],\n"
                                      "[3]\n"
+                                     "]");
+}
+
+void
+test_invalid_table_name(void)
+{
+  grn_test_assert_send_command_error(context,
+                                     GRN_INVALID_ARGUMENT,
+                                     "nonexistent table: <Users>",
+                                     "load --table Users\n"
+                                     "[\n"
+                                     "[\"_key\": \"alice\"]\n"
                                      "]");
 }
