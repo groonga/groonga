@@ -810,7 +810,7 @@ AC_SUBST(GROONGA_GITHUB_COM_PATH)
 # For Debian package release
 AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],
-            [specify rsync path to upload groonga Debian packages.])],
+            [specify rsync path to upload groonga packages.])],
             [RSYNC_PATH="$withval"],
             [RSYNC_PATH=""])
 AC_SUBST(RSYNC_PATH)
