@@ -1,0 +1,4 @@
+SUBDIRS =					\
+	apt					\
+	rpm					\
+	yum

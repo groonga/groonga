@@ -9,9 +9,7 @@ SUBDIRS =					\
 	src					\
 	examples				\
 	test					\
-	apt					\
-	rpm					\
-	yum					\
+	packages				\
 	data					\
 	tools					\
 	doc
@@ -72,9 +70,9 @@ update-latest-release:
 	  misc/update-latest-release.rb				\
 	  $(PACKAGE) $(OLD_RELEASE) $(OLD_RELEASE_DATE)		\
 	  $(VERSION) $(NEW_RELEASE_DATE)			\
-	  rpm/fedora/groonga.spec.in				\
-	  rpm/centos/groonga.spec.in				\
-	  debian/changelog
+	  packages/rpm/fedora/groonga.spec.in			\
+	  packages/rpm/centos/groonga.spec.in			\
+	  packages/debian/changelog
 
 update-document:
 	@if test -z "$(GROONGA_GITHUB_COM_PATH)"; then			\

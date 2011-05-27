@@ -34,7 +34,12 @@ upload: ensure-rsync-path
 	    $${distribution}/ $(RSYNC_PATH)/$${distribution};	\
 	done
 
-build: build-in-chroot build-repository-rpm
+build: source build-in-chroot build-repository-rpm
+
+source: ../$(PACKAGE)-$(VERSION).tar.gz
+
+../$(PACKAGE)-$(VERSION).tar.gz:
+	ln -s $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz ../
 
 build-in-chroot:
 	./build-in-chroot.sh			\
