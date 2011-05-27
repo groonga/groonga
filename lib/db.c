@@ -306,7 +306,7 @@ grn_type_create(grn_ctx *ctx, const char *name, unsigned name_size,
   }
   GRN_API_ENTER;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR(name, name_size);
+    GRN_DB_CHECK_NAME_ERR("[type][create]", name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
@@ -359,7 +359,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned name_size, grn_proc_typ
   GRN_API_ENTER;
   range = path ? grn_plugin_get(ctx, path) : GRN_ID_NIL;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR(name, name_size);
+    GRN_DB_CHECK_NAME_ERR("[proc][create]", name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
@@ -495,7 +495,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
   }
   GRN_API_ENTER;
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR(name, name_size);
+    GRN_DB_CHECK_NAME_ERR("[table][create]", name, name_size);
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
@@ -2822,7 +2822,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:column_create %.*s %.*s", s, n, name_size, name);
   }
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR(name, name_size);
+    GRN_DB_CHECK_NAME_ERR("[column][create]", name, name_size);
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
@@ -2934,7 +2934,7 @@ grn_column_open(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
   if (grn_db_check_name(ctx, name, name_size)) {
-    GRN_DB_CHECK_NAME_ERR(name, name_size);
+    GRN_DB_CHECK_NAME_ERR("[column][open]", name, name_size);
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
