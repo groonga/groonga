@@ -2,4 +2,5 @@ SUBDIRS =					\
 	apt					\
 	rpm					\
 	yum					\
-	source
+	source					\
+	windows

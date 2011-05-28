@@ -130,6 +130,7 @@ AC_CONFIG_FILES([
   packages/rpm/fedora/Makefile
   packages/yum/Makefile
   packages/source/Makefile
+  packages/windows/Makefile
   data/Makefile
   data/html/Makefile
   data/munin/Makefile
