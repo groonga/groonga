@@ -37,7 +37,7 @@ if [ "$distribution" = "centos" ] && ! rpm -q mecab-devel > /dev/null; then
     cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
 
-base=http://download.fedoraproject.org/pub/fedora/linux/releases/14/Everything/source/SRPMS
+base=http://download.fedoraproject.org/pub/fedora/linux/releases/15/Everything/source/SRPMS
 srpm=\$1
 
 if [ ! -f ~/.rpmmacros ]; then
@@ -73,9 +73,9 @@ cp -p rpm/SRPMS/*.rpm dependencies/SRPMS/
 EOF
 
     run chmod +x $BUILD_SCRIPT
-    for rpm in mecab-0.98-1.fc12.src.rpm \
-               mecab-ipadic-2.7.0.20070801-3.fc13.1.src.rpm \
-               mecab-jumandic-5.1.20070304-4.fc12.src.rpm; do
+    for rpm in mecab-0.98-1.fc15.src.rpm \
+               mecab-ipadic-2.7.0.20070801-4.fc15.1.src.rpm \
+               mecab-jumandic-5.1.20070304-5.fc15.src.rpm; do
 	run su - $USER_NAME $BUILD_SCRIPT $rpm
 	run rpm -Uvh /home/$USER_NAME/rpm/RPMS/*/*.rpm
     done
