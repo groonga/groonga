@@ -12,7 +12,9 @@ The packages for 64-bit binary are only distributed. Please attention not to dis
 Debian GNU/Linux squeeze
 ------------------------
 
-ATTENTION: We only distribute the package for amd64.
+.. note::
+
+   We only distribute the package for amd64.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -28,7 +30,9 @@ Install::
 Debian GNU/Linux wheezy
 -----------------------
 
-ATTENTION: We only distribute the package for amd64.
+.. note::
+
+   We only distribute the package for amd64.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -44,7 +48,9 @@ Install::
 Debian GNU/Linux sid
 --------------------
 
-ATTENTION: We only distribute the package for amd64.
+.. note::
+
+   We only distribute the package for amd64.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -60,9 +66,14 @@ Install::
 Ubuntu 10.04 LTS Lucid Lynx
 ---------------------------
 
-ATTENTION: We only distribute the package for amd64.
+.. note::
 
-ATTENTION: You should specify universe section of Ubuntu for installing by add file(ex. below-mentioned).
+   We only distribute the package for amd64.
+
+.. note::
+
+   You should specify universe section of Ubuntu for
+   installing by add file(ex. below-mentioned).
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -78,9 +89,14 @@ Install::
 Ubuntu 11.04 Natty Narwhal
 --------------------------
 
-ATTENTION: We only distribute the package for amd64.
+.. note::
 
-ATTENTION: You should specify universe section of Ubuntu for installing by add file(ex. below-mentioned).
+   We only distribute the package for amd64.
+
+.. note::
+
+   You should specify universe section of Ubuntu for
+   installing by add file(ex. below-mentioned).
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -96,7 +112,9 @@ Install::
 CentOS 5
 --------
 
-ATTENTION: We only distribute the package for amd64.
+.. note::
+
+   We only distribute the package for amd64.
 
 Install::
 
@@ -107,7 +125,9 @@ Install::
 Fedora 14
 ---------
 
-ATTENTION: We only distribute the package for amd64.
+.. note::
+
+   We only distribute the package for amd64.
 
 Install::
 
@@ -134,7 +154,9 @@ Install::
 Windows
 -------
 
-ATTENTION: We only distribute the package for x64.
+.. note::
+
+   We only distribute the package for x64.
 
 You just download zip-file from
 `packages.groonga.org/windows/`_ and extract it. We
