@@ -40,8 +40,8 @@ def fix_html_link(html, language)
   end
   html.gsub(/(id="top-link" href=)"(.+?)"/) do
     prefix = $1
-    top_path = $2.gsub(/index\.html\z/, '../')
-    top_path = "./" if top_path == "#"
+    top_path = $2.gsub(/\/index\.html\z/, '../')
+    top_path = "./" if ["index.html", "#"].include?(top_path)
     "#{prefix}\"#{top_path}../\""
   end
 end
