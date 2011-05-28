@@ -65,7 +65,7 @@ div.header h1.title a:visited
 div.header h1.title a
 {
     display: block;
-    height: 115px;
+    height: 125px;
 }
 
 div.header h1.title span
