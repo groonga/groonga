@@ -172,8 +172,6 @@ mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/groonga
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/groonga/db
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/groonga
 
-rm $RPM_BUILD_ROOT%{_datadir}/groonga/doc/ja/html/.buildinfo
-
 mv $RPM_BUILD_ROOT%{_datadir}/groonga/munin/ $RPM_BUILD_ROOT%{_datadir}/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/
 cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
@@ -263,7 +261,7 @@ fi
 
 %files doc
 %defattr(-,root,root,-)
-%doc %{_datadir}/groonga/doc/
+%doc %{_datadir}/doc/groonga/
 
 %files devel
 %defattr(-,root,root,-)
