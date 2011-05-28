@@ -52,11 +52,12 @@ groongaのデータベースは、groonga実行ファイルかCライブラリ�
 
 .. cmdoption:: -a, --address <ip/hostname>
 
-   :deprecated: 1.2.2: Use :option:`--bind-address` instead.
+   .. deprecated:: 1.2.2
+      Use :option:`--bind-address` instead.
 
 .. cmdoption:: --bind-address <ip/hostname>
 
-   :since: 1.2.2.
+   .. versionadded:: 1.2.2
 
    サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。(デフォルトは `hostname` の返すホスト名)
 
