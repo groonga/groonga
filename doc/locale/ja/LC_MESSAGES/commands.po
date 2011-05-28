@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:26\n"
+"POT-Creation-Date: 2011-05-28 14:31\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -171,6 +171,7 @@ msgstr ""
 #: ../../../source/commands/column_remove.txt:37
 #: ../../../source/commands/define_selector.txt:92
 #: ../../../source/commands/defrag.txt:34 ../../../source/commands/dump.txt:40
+#: ../../../source/commands/load.txt:66
 #: ../../../source/commands/log_level.txt:43
 #: ../../../source/commands/log_put.txt:47
 #: ../../../source/commands/log_reopen.txt:34
@@ -266,7 +267,7 @@ msgstr ""
 #: ../../../source/commands/column_remove.txt:40
 #: ../../../source/commands/define_selector.txt:95
 #: ../../../source/commands/defrag.txt:37
-#: ../../../source/commands/delete.txt:45 ../../../source/commands/load.txt:69
+#: ../../../source/commands/delete.txt:45
 #: ../../../source/commands/log_level.txt:46
 #: ../../../source/commands/log_put.txt:50
 #: ../../../source/commands/log_reopen.txt:37
@@ -373,7 +374,7 @@ msgid ""
 msgstr ""
 
 #: ../../../source/commands/clearlock.txt:33
-#: ../../../source/commands/delete.txt:41 ../../../source/commands/load.txt:65
+#: ../../../source/commands/delete.txt:41
 msgid "返値 ---"
 msgstr ""
 
@@ -1207,7 +1208,11 @@ msgid "``input_type``"
 msgstr ""
 
 #: ../../../source/commands/load.txt:63
-msgid "入力形式を指定します。jsonのみに対応しています。"
+msgid "入力形式を指定します。JSONのみに対応しています。"
+msgstr ""
+
+#: ../../../source/commands/load.txt:69
+msgid "JSON形式"
 msgstr ""
 
 #: ../../../source/commands/load.txt:73

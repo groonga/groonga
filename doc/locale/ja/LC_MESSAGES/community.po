@@ -7,15 +7,31 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:26\n"
+"POT-Creation-Date: 2011-05-28 14:31\n"
 "PO-Revision-Date: 2011-05-24 18:31+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../../source/community.txt:6
+msgid "Community"
+msgstr "コミュニティ"
+
+#: ../../../source/community.txt:8
+msgid ""
+"There are some places for sharing groonga information. We welcome you to "
+"join our community."
+msgstr ""
+"groongaに関する情報を共有するための場所がいくつかあります。あなたの参加をお待"
+"ちしています！"
+
+#: ../../../source/community.txt:12
+msgid "Mailing List"
+msgstr "メーリングリスト"
 
 #: ../../../source/community.txt:14
 msgid "There are mailing lists for discussion about groonga."
@@ -24,17 +40,3 @@ msgstr "groongaに関する話題を扱うメーリングリストがありま�
 #: ../../../source/community.txt:17
 msgid "`groonga-dev@lists.sourceforge.jp`_"
 msgstr ""
-
-#: ../../../source/community.txt:8
-msgid ""
-"There are some places for sharing groonga information. We welcome you to "
-"join our community."
-msgstr "groongaに関する情報を共有するための場所がいくつかあります。あなたの参加をお待ちしています！"
-
-#: ../../../source/community.txt:6
-msgid "Community"
-msgstr "コミュニティ"
-
-#: ../../../source/community.txt:12
-msgid "Mailing List"
-msgstr "メーリングリスト"
