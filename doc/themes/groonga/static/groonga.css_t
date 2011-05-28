@@ -159,6 +159,7 @@ div.related
     border-bottom: 1px solid #992e1d;
     font-weight: bold;
     background: #f6872e url(navigation-bar.png) no-repeat;
+    line-height: 36px;
 }
 
 div.related ul
