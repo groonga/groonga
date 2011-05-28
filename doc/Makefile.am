@@ -59,12 +59,16 @@ relative_source_files = \
 	source/commands_not_implemented/add.txt \
 	source/commands_not_implemented/get.txt \
 	source/commands_not_implemented/set.txt \
+	source/community.txt \
 	source/conf.py \
-	source/developer.txt \
-	source/developer/com.txt \
-	source/developer/document.txt \
-	source/developer/query.txt \
-	source/developer/test.txt \
+	source/contribution.txt \
+	source/contribution/development.txt \
+	source/contribution/development/com.txt \
+	source/contribution/development/document.txt \
+	source/contribution/development/query.txt \
+	source/contribution/development/test.txt \
+	source/contribution/documentation.txt \
+	source/contribution/report.txt \
 	source/example/tutorial01-1.log \
 	source/example/tutorial01-10.log \
 	source/example/tutorial01-11.log \
@@ -139,6 +143,9 @@ relative_source_files = \
 	source/install.txt \
 	source/limitations.txt \
 	source/news.txt \
+	source/news/0.x.txt \
+	source/news/1.0.x.txt \
+	source/news/1.1.x.txt \
 	source/process.txt \
 	source/pseudo_column.txt \
 	source/rdoc.py \
@@ -166,6 +173,14 @@ relative_source_files = \
 # (echo "relative_theme_files = \\"; find themes -type f | sort | sed -e 's,^,\t,' -e 's,$, \\,'; echo "\t\$(NULL)")
 relative_theme_files = \
 	themes/groonga/layout.html \
+	themes/groonga/static/favicon.ico \
+	themes/groonga/static/footer-bar.png \
 	themes/groonga/static/groonga.css_t \
+	themes/groonga/static/header-background.png \
+	themes/groonga/static/jp.png \
+	themes/groonga/static/logo.png \
+	themes/groonga/static/menu-header.png \
+	themes/groonga/static/navigation-bar.png \
+	themes/groonga/static/us.png \
 	themes/groonga/theme.conf \
 	$(NULL)
