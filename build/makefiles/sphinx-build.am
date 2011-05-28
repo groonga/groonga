@@ -57,12 +57,16 @@ source_files = \
 	$(top_srcdir)/doc/source/commands_not_implemented/add.txt \
 	$(top_srcdir)/doc/source/commands_not_implemented/get.txt \
 	$(top_srcdir)/doc/source/commands_not_implemented/set.txt \
+	$(top_srcdir)/doc/source/community.txt \
 	$(top_srcdir)/doc/source/conf.py \
-	$(top_srcdir)/doc/source/developer.txt \
-	$(top_srcdir)/doc/source/developer/com.txt \
-	$(top_srcdir)/doc/source/developer/document.txt \
-	$(top_srcdir)/doc/source/developer/query.txt \
-	$(top_srcdir)/doc/source/developer/test.txt \
+	$(top_srcdir)/doc/source/contribution.txt \
+	$(top_srcdir)/doc/source/contribution/development.txt \
+	$(top_srcdir)/doc/source/contribution/development/com.txt \
+	$(top_srcdir)/doc/source/contribution/development/document.txt \
+	$(top_srcdir)/doc/source/contribution/development/query.txt \
+	$(top_srcdir)/doc/source/contribution/development/test.txt \
+	$(top_srcdir)/doc/source/contribution/documentation.txt \
+	$(top_srcdir)/doc/source/contribution/report.txt \
 	$(top_srcdir)/doc/source/example/tutorial01-1.log \
 	$(top_srcdir)/doc/source/example/tutorial01-10.log \
 	$(top_srcdir)/doc/source/example/tutorial01-11.log \
@@ -164,8 +168,13 @@ source_files = \
 	$(top_srcdir)/doc/source/update_execution_example.py \
 	$(top_srcdir)/doc/themes/groonga/layout.html \
 	$(top_srcdir)/doc/themes/groonga/static/favicon.ico \
+	$(top_srcdir)/doc/themes/groonga/static/footer-bar.png \
 	$(top_srcdir)/doc/themes/groonga/static/groonga.css_t \
+	$(top_srcdir)/doc/themes/groonga/static/header-background.png \
 	$(top_srcdir)/doc/themes/groonga/static/jp.png \
+	$(top_srcdir)/doc/themes/groonga/static/logo.png \
+	$(top_srcdir)/doc/themes/groonga/static/menu-header.png \
+	$(top_srcdir)/doc/themes/groonga/static/navigation-bar.png \
 	$(top_srcdir)/doc/themes/groonga/static/us.png \
 	$(top_srcdir)/doc/themes/groonga/theme.conf \
 	$(NULL)

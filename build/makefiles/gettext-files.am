@@ -5,7 +5,7 @@ po_files = \
 	commands.po \
 	community.po \
 	conf.po \
-	developer.po \
+	contribution.po \
 	execfile.po \
 	expr.po \
 	functions.po \
@@ -32,7 +32,7 @@ mo_files = \
 	commands.mo \
 	community.mo \
 	conf.mo \
-	developer.mo \
+	contribution.mo \
 	execfile.mo \
 	expr.mo \
 	functions.mo \
@@ -59,7 +59,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/commands.mo \
 	LC_MESSAGES/community.mo \
 	LC_MESSAGES/conf.mo \
-	LC_MESSAGES/developer.mo \
+	LC_MESSAGES/contribution.mo \
 	LC_MESSAGES/execfile.mo \
 	LC_MESSAGES/expr.mo \
 	LC_MESSAGES/functions.mo \

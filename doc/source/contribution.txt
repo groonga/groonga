@@ -1,0 +1,25 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+How to contribute to groonga
+============================
+
+There are some topics for contributing to groonga. They are
+use, introduction, bug report, development and
+documentation.
+
+Use:
+  Please read this document.
+Introduction:
+  Please talk your friends about groonga.
+Bug report, development and documentation:
+  We describe about them in section.
+
+.. toctree::
+   :maxdepth: 3
+   :numbered:
+
+   contribution/report
+   contribution/development
+   contribution/documentation

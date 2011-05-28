@@ -9,4 +9,4 @@ groonga開発者向け情報
    :maxdepth: 1
    :glob:
 
-   developer/*
+   development/*

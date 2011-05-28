@@ -22,7 +22,7 @@ groonga ドキュメント
    spec
    limitations
    troubleshooting
-   developer
+   contribution
 
 * :ref:`genindex`
 * :ref:`modindex`

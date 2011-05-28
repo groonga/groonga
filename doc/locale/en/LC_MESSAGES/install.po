@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:19\n"
+"POT-Creation-Date: 2011-05-29 00:56\n"
 "PO-Revision-Date: 2011-05-18 15:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -37,20 +37,21 @@ msgstr ""
 msgid "Debian GNU/Linux squeeze"
 msgstr "Debian GNU/Linux squeeze"
 
-#: ../../../source/install.txt:15 ../../../source/install.txt:31
-#: ../../../source/install.txt:47 ../../../source/install.txt:63
-#: ../../../source/install.txt:81 ../../../source/install.txt:99
-#: ../../../source/install.txt:110
-msgid "ATTENTION: We only distribute the package for amd64."
+#: ../../../source/install.txt:17 ../../../source/install.txt:35
+#: ../../../source/install.txt:53 ../../../source/install.txt:71
+#: ../../../source/install.txt:94 ../../../source/install.txt:117
+#: ../../../source/install.txt:130
+#, fuzzy
+msgid "We only distribute the package for amd64."
 msgstr "ATTENTION: We only distribute the package for amd64."
 
-#: ../../../source/install.txt:17 ../../../source/install.txt:33
-#: ../../../source/install.txt:49 ../../../source/install.txt:67
-#: ../../../source/install.txt:85
+#: ../../../source/install.txt:19 ../../../source/install.txt:37
+#: ../../../source/install.txt:55 ../../../source/install.txt:78
+#: ../../../source/install.txt:101
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr "/etc/apt/sources.list.d/groonga.list::"
 
-#: ../../../source/install.txt:19
+#: ../../../source/install.txt:21
 msgid ""
 "deb http://packages.groonga.org/debian/ squeeze main deb-src http://packages."
 "groonga.org/debian/ squeeze main"
@@ -58,17 +59,17 @@ msgstr ""
 "deb http://packages.groonga.org/debian/ squeeze main deb-src http://packages."
 "groonga.org/debian/ squeeze main"
 
-#: ../../../source/install.txt:22 ../../../source/install.txt:38
-#: ../../../source/install.txt:54 ../../../source/install.txt:72
-#: ../../../source/install.txt:90 ../../../source/install.txt:101
-#: ../../../source/install.txt:112 ../../../source/install.txt:121
-#: ../../../source/install.txt:130
+#: ../../../source/install.txt:24 ../../../source/install.txt:42
+#: ../../../source/install.txt:60 ../../../source/install.txt:83
+#: ../../../source/install.txt:106 ../../../source/install.txt:119
+#: ../../../source/install.txt:132 ../../../source/install.txt:141
+#: ../../../source/install.txt:150
 msgid "Install::"
 msgstr "Install::"
 
-#: ../../../source/install.txt:24 ../../../source/install.txt:40
-#: ../../../source/install.txt:56 ../../../source/install.txt:74
-#: ../../../source/install.txt:92
+#: ../../../source/install.txt:26 ../../../source/install.txt:44
+#: ../../../source/install.txt:62 ../../../source/install.txt:85
+#: ../../../source/install.txt:108
 msgid ""
 "% sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31 % "
 "sudo aptitude update % sudo aptitude -V -D -y install groonga"
@@ -76,11 +77,11 @@ msgstr ""
 "% sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31 % "
 "sudo aptitude update % sudo aptitude -V -D -y install groonga"
 
-#: ../../../source/install.txt:29
+#: ../../../source/install.txt:31
 msgid "Debian GNU/Linux wheezy"
 msgstr "Debian GNU/Linux wheezy"
 
-#: ../../../source/install.txt:35
+#: ../../../source/install.txt:39
 msgid ""
 "deb http://packages.groonga.org/debian/ wheezy main deb-src http://packages."
 "groonga.org/debian/ wheezy main"
@@ -88,11 +89,11 @@ msgstr ""
 "deb http://packages.groonga.org/debian/ wheezy main deb-src http://packages."
 "groonga.org/debian/ wheezy main"
 
-#: ../../../source/install.txt:45
+#: ../../../source/install.txt:49
 msgid "Debian GNU/Linux sid"
 msgstr "Debian GNU/Linux sid"
 
-#: ../../../source/install.txt:51
+#: ../../../source/install.txt:57
 msgid ""
 "deb http://packages.groonga.org/debian/ unstable main deb-src http://"
 "packages.groonga.org/debian/ unstable main"
@@ -100,19 +101,20 @@ msgstr ""
 "deb http://packages.groonga.org/debian/ unstable main deb-src http://"
 "packages.groonga.org/debian/ unstable main"
 
-#: ../../../source/install.txt:61
+#: ../../../source/install.txt:67
 msgid "Ubuntu 10.04 LTS Lucid Lynx"
 msgstr "Ubuntu 10.04 LTS Lucid Lynx"
 
-#: ../../../source/install.txt:65 ../../../source/install.txt:83
+#: ../../../source/install.txt:75 ../../../source/install.txt:98
+#, fuzzy
 msgid ""
-"ATTENTION: You should specify universe section of Ubuntu for installing by "
-"add file(ex. below-mentioned)."
+"You should specify universe section of Ubuntu for installing by add file(ex. "
+"below-mentioned)."
 msgstr ""
 "ATTENTION: You should specify universe section of Ubuntu for installing by "
 "add file(ex. below-mentioned)."
 
-#: ../../../source/install.txt:69
+#: ../../../source/install.txt:80
 msgid ""
 "deb http://packages.groonga.org/ubuntu/ lucid universe deb-src http://"
 "packages.groonga.org/ubuntu/ lucid universe"
@@ -120,11 +122,11 @@ msgstr ""
 "deb http://packages.groonga.org/ubuntu/ lucid universe deb-src http://"
 "packages.groonga.org/ubuntu/ lucid universe"
 
-#: ../../../source/install.txt:79
+#: ../../../source/install.txt:90
 msgid "Ubuntu 11.04 Natty Narwhal"
 msgstr "Ubuntu 11.04 Natty Narwhal"
 
-#: ../../../source/install.txt:87
+#: ../../../source/install.txt:103
 msgid ""
 "deb http://packages.groonga.org/ubuntu/ natty universe deb-src http://"
 "packages.groonga.org/ubuntu/ natty universe"
@@ -132,11 +134,11 @@ msgstr ""
 "deb http://packages.groonga.org/ubuntu/ natty universe deb-src http://"
 "packages.groonga.org/ubuntu/ natty universe"
 
-#: ../../../source/install.txt:97
+#: ../../../source/install.txt:113
 msgid "CentOS 5"
 msgstr "CentOS 5"
 
-#: ../../../source/install.txt:103
+#: ../../../source/install.txt:121
 msgid ""
 "% sudo rpm -ivh http://packages.groonga.org/centos/groonga-"
 "repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
@@ -144,11 +146,11 @@ msgstr ""
 "% sudo rpm -ivh http://packages.groonga.org/centos/groonga-"
 "repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
 
-#: ../../../source/install.txt:108
+#: ../../../source/install.txt:126
 msgid "Fedora 14"
 msgstr "Fedora 14"
 
-#: ../../../source/install.txt:114
+#: ../../../source/install.txt:134
 msgid ""
 "% sudo rpm -ivh http://packages.groonga.org/fedora/groonga-"
 "repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
@@ -156,11 +158,11 @@ msgstr ""
 "% sudo rpm -ivh http://packages.groonga.org/fedora/groonga-"
 "repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
 
-#: ../../../source/install.txt:119
+#: ../../../source/install.txt:139
 msgid "Mac OS X (MacPorts)"
 msgstr "Mac OS X (MacPorts)"
 
-#: ../../../source/install.txt:123
+#: ../../../source/install.txt:143
 msgid ""
 "% git clone https://github.com/groonga/macports.git ~/groonga-macports % "
 "(echo; echo file://$HOME/groonga-macports) | sudo sh -c \"cat >> /opt/local/"
@@ -170,45 +172,61 @@ msgstr ""
 "(echo; echo file://$HOME/groonga-macports) | sudo sh -c \"cat >> /opt/local/"
 "etc/macports/sources.conf\" % sudo port install groonga"
 
-#: ../../../source/install.txt:128
+#: ../../../source/install.txt:148
 msgid "Mac OS X (Homebrew)"
 msgstr "Mac OS X (Homebrew)"
 
-#: ../../../source/install.txt:132
+#: ../../../source/install.txt:152
 msgid "% brew install groonga"
 msgstr "% brew install groonga"
 
-#: ../../../source/install.txt:135
+#: ../../../source/install.txt:155
+msgid "Windows"
+msgstr ""
+
+#: ../../../source/install.txt:159
+#, fuzzy
+msgid "We only distribute the package for x64."
+msgstr "ATTENTION: We only distribute the package for amd64."
+
+#: ../../../source/install.txt:161
+msgid ""
+"You just download zip-file from `packages.groonga.org/windows/`_ and extract "
+"it. We doesn't distribute installer for now. Sorry."
+msgstr ""
+
+#: ../../../source/install.txt:168
 msgid "Others"
 msgstr "Others"
 
-#: ../../../source/install.txt:137
+#: ../../../source/install.txt:170
+#, fuzzy
 msgid ""
 "If you will use indexes of tokenizing of each morpheme for full-text search, "
-"you should install MeCab(http://mecab.sourceforge.net/) before you install "
-"groonga."
+"you should install MeCab_ before you install groonga."
 msgstr ""
 "If you will use indexes of tokenizing of each morpheme for full-text search, "
 "you should install MeCab(http://mecab.sourceforge.net/) before you install "
 "groonga."
 
-#: ../../../source/install.txt:139
+#: ../../../source/install.txt:173
+#, fuzzy
 msgid ""
-"After, you should download tar.gz-file from this site(http://groonga.org/"
-"download/) for installing groonga. You should unzip this file in place to "
-"install, and run commands below-mentioned. ::"
+"After, you should download tar.gz-file from `packages.groonga.org/source/`_ "
+"for installing groonga. You should extract this file in place to install, "
+"and run commands below-mentioned. ::"
 msgstr ""
 "After, you should download tar.gz-file from this site(http://groonga.org/"
 "download/) for installing groonga. You should unzip this file in place to "
 "install, and run commands below-mentioned. ::"
 
-#: ../../../source/install.txt:142
+#: ../../../source/install.txt:178
 msgid ""
 "./configure --prefix=/usr --localstatedir=/var && make && sudo make install"
 msgstr ""
 "./configure --prefix=/usr --localstatedir=/var && make && sudo make install"
 
-#: ../../../source/install.txt:144
+#: ../../../source/install.txt:180
 msgid ""
 "The \"prefix\" option is the paramater for specified place to install. If "
 "you won't specify the option, \"/usr/local\" is specified. Please specify \"/"

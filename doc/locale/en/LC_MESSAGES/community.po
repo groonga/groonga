@@ -7,23 +7,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:19\n"
+"POT-Creation-Date: 2011-05-29 00:56\n"
 "PO-Revision-Date: 2011-05-24 18:19+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/community.txt:14
-msgid "There are mailing lists for discussion about groonga."
-msgstr "There are mailing lists for discussion about groonga."
-
-#: ../../../source/community.txt:17
-msgid "`groonga-dev@lists.sourceforge.jp`_"
-msgstr "`groonga-dev@lists.sourceforge.jp`_"
+#: ../../../source/community.txt:6
+msgid "Community"
+msgstr "Community"
 
 #: ../../../source/community.txt:8
 msgid ""
@@ -33,10 +29,14 @@ msgstr ""
 "There are some places for sharing groonga information. We welcome you to "
 "join our community."
 
-#: ../../../source/community.txt:6
-msgid "Community"
-msgstr "Community"
-
 #: ../../../source/community.txt:12
 msgid "Mailing List"
 msgstr "Mailing List"
+
+#: ../../../source/community.txt:14
+msgid "There are mailing lists for discussion about groonga."
+msgstr "There are mailing lists for discussion about groonga."
+
+#: ../../../source/community.txt:17
+msgid "`groonga-dev@lists.sourceforge.jp`_"
+msgstr "`groonga-dev@lists.sourceforge.jp`_"
