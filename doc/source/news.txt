@@ -5,18 +5,54 @@
 お知らせ
 ========
 
+.. _release-1-2-2:
+
+Release 1.2.2 - 2011/05/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added packages for Ubuntu 11.04 Natty Narwhal.
+* Removed packages for Ubuntu 10.10 Maverick Meerkat.
+* RPM: Split server related packages to groonga-server package.
+* suggest: Added target object name into error messages.
+* document: Started English support. (not completed yet.)
+* groonga-suggest-httpd: Added --disable-max-fd-check option.
+* groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`.
+* groonga-suggest-httpd: Renamed --address option to --bind-address.
+* Changed admin HTML install directory to
+  $PREFIX/share/groonga/admin_html/ to $PREFIX/share/groonga/html/admin/.
+* groonga-suggest-httpd: Used "application/json" for JSON response
+  instead of "text/javascript".
+* Windows: Used DLL relative path instead of executable file
+  relative path.
+* MeCab: Added error message from MeCab on MeCab initialize error.
+* suggest: Added prefix_search parameter to suggest
+  command. #909
+* plugin: Added grn_plugin_get_system_plugins_dir() and
+  grn_plugin_get_suffix() API.
+* Added grn_obj_is_builtin() API.
+* :doc:`/commands/load`: Added table name check. #934
+* Showed invalid name context in error message. #935
+
+Fixes
+^^^^^
+
+* Fixed a data breaking bug on multi process update. #890
+
 1.2.1リリース - 2011/04/29
 --------------------------
 
 改良
-++++
+^^^^
 
 * suggestコマンドにthresholdパラメーターを追加。#895
 * suggestのHTTPサーバにlimitパラメーターを追加。#899
 * grntest: SIGINTでの中断に対応。
 
 修正
-++++
+^^^^
 
 * 同時に複数のデータベースを開いているとき、1つでもデータベー
   スを閉じると関連するプラグインも閉じられてしまう問題を修正。 #894
@@ -25,7 +61,7 @@
 * チュートリアル中のtypoを修正。（moozさんが修正）
 
 感謝
-++++
+^^^^
 
 * ICHII Takashiさん
 * moozさん
@@ -34,7 +70,7 @@
 --------------------------
 
 改良
-++++
+^^^^
 
 * MacPortsでのインストールドキュメントを追加。
 * Homebrewでのインストールドキュメントを追加。
@@ -50,7 +86,7 @@
   だし、ログには残る。 #893
 
 修正
-++++
+^^^^
 
 * autoconf 2.59環境において、ファイルシステムのルート直下に
   groongaディレクトリを作成しようとする問題を修正。 #833
@@ -68,13 +104,13 @@
 * :doc:`/commands/load` でクラッシュする問題を修正。 #661
 
 実験的
-++++++
+^^^^^^
 
 * grn_table_truncate()を追加。（実験的。問題あり）
 * truncateコマンドを追加。（実験的。問題あり） #888
 
 感謝
-++++
+^^^^
 
 * @tomotaka_itoさん
 
