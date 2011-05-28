@@ -50,6 +50,9 @@ generated_files =				\
 	linkcheck-build-stamp			\
 	doctest
 
+$(mo_files_relative_from_locale_dir):
+	cd LC_MESSAGES && $(MAKE) `basename $@`
+
 maintainer-clean: maintainer-clean-local
 maintainer-clean-local:
 	rm -rf -- $(generated_files)
