@@ -189,8 +189,9 @@ div.sphinxsidebar h3
     color: #fff;
     background: url(menu-header.png) right top no-repeat;
     margin: 0 0 10px 0;
-    padding: 7px 0 7px 10px;
-    font-size: 15px;
+    padding: 0;
+    padding-left: 10px;
+    line-height: 36px;
     font-weight: bold;
 }
 
