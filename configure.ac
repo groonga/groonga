@@ -129,6 +129,7 @@ AC_CONFIG_FILES([
   packages/rpm/centos/Makefile
   packages/rpm/fedora/Makefile
   packages/yum/Makefile
+  packages/source/Makefile
   data/Makefile
   data/html/Makefile
   data/munin/Makefile

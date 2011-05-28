@@ -1,4 +1,5 @@
 SUBDIRS =					\
 	apt					\
 	rpm					\
-	yum
+	yum					\
+	source

@@ -86,6 +86,7 @@ version.sh
 /packages/yum/RPM-GPG-KEY-groonga
 /packages/yum/fedora/
 /packages/yum/centos/
+/packages/source/files/
 /examples/dictionary/db/
 /examples/dictionary/*.gz
 /examples/dictionary/gene95-dictionary/
