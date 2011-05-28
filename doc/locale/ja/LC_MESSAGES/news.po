@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-28 14:42\n"
-"PO-Revision-Date: 2011-05-28 14:43+0900\n"
+"POT-Creation-Date: 2011-05-28 14:45\n"
+"PO-Revision-Date: 2011-05-28 14:45+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../../../source/news.txt:6
-msgid "お知らせ"
-msgstr ""
+msgid "News"
+msgstr "お知らせ"
 
 #: ../../../source/news.txt:11
 msgid "Release 1.2.2 - 2011/05/29"

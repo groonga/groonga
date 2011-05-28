@@ -2,8 +2,8 @@
 
 .. highlightlang:: none
 
-お知らせ
-========
+News
+====
 
 .. _release-1-2-2:
 
