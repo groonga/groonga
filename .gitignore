@@ -88,6 +88,7 @@ version.sh
 /packages/yum/centos/
 /packages/source/files/
 /packages/windows/files/
+/packages/*.tar.gz
 /examples/dictionary/db/
 /examples/dictionary/*.gz
 /examples/dictionary/gene95-dictionary/
