@@ -22,7 +22,8 @@ Improvements
 * groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`.
 * groonga-suggest-httpd: Renamed --address option to --bind-address.
 * Changed admin HTML install directory to
-  $PREFIX/share/groonga/admin_html/ to $PREFIX/share/groonga/html/admin/.
+  $PREFIX/share/groonga/html/admin/ from
+  $PREFIX/share/groonga/admin_html/.
 * groonga-suggest-httpd: Used "application/json" for JSON response
   instead of "text/javascript".
 * Windows: Used DLL relative path instead of executable file
