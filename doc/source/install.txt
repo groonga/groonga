@@ -134,13 +134,19 @@ Install::
 Others
 ------
 
-If you will use indexes of tokenizing of each morpheme for full-text search, you should install MeCab(http://mecab.sourceforge.net/) before you install groonga.
+If you will use indexes of tokenizing of each morpheme for
+full-text search, you should install MeCab_ before you install groonga.
 
-After, you should download tar.gz-file from this site(http://groonga.org/download/) for installing groonga.
-You should unzip this file in place to install, and run commands below-mentioned. ::
+After, you should download tar.gz-file from
+packages.groonga.org_ for installing groonga. You should
+extract this file in place to install, and run commands
+below-mentioned. ::
 
  ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
 
 The "prefix" option is the paramater for specified place to install.
 If you won't specify the option, "/usr/local" is specified.
 Please specify "/usr" for this option if you don't know environment variables(LD_LIBRARY_PATH and so on) well.
+
+.. _MeCab: http://mecab.sourceforge.net/
+.. _packages.groonga.org: http://packages.groonga.org/source/groonga/
