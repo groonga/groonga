@@ -14,10 +14,14 @@
 <div class="header">
   <h1 class="title">
     <a id="top-link" href="{{ pathto('index.html', 1) }}">
-      <span class="title">groonga</span>
-      <span class="title-separator">-</span>
-      <span class="title-short-description">An open-source fulltext search engine and column store.</span>
-      <span class="title-catch-phrase">It lets you write high-performance applications that requires fulltext search.</span>
+      <span class="project">groonga</span>
+      <span class="separator">-</span>
+{%- if language == "en" %}
+      <span class="description">An open-source fulltext search engine and column store.</span>
+{%- endif %}
+{%- if language == "ja" %}
+      <span class="description">オープンソースのカラムストア機能付き全文検索エンジン</span>
+{%- endif %}
     </a>
   </h1>
 

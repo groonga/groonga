@@ -75,13 +75,13 @@ div.header h1.title span
     margin-bottom: 2px;
 }
 
-div.header h1.title span.title,
-div.header h1.title span.title-separator
+div.header h1.title span.project,
+div.header h1.title span.separator
 {
     display: none;
 }
 
-div.header h1.title span.title-short-description
+div.header h1.title span.description
 {
     padding-top: 30px;
 }
