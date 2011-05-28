@@ -98,16 +98,16 @@ for line in fin:
         i = 0
         commit = ""
         while i < len(commitLine):
-            if len(commitLine) < i + 78:
-                commit = commit.rstrip() + "\n " + commitLine[i:len(commitLine)]
+            if len(commitLine) < i + 71:
+                commit = commit.rstrip() + "\n\t" + commitLine[i:len(commitLine)]
                 break
-            index = commitLine.rfind(' ', i, i+78)
+            index = commitLine.rfind(' ', i, i+71)
             if index > i:
-                commit = commit.rstrip() + "\n " + commitLine[i:index]
+                commit = commit.rstrip() + "\n\t" + commitLine[i:index]
                 i = index+1
             else:
-                commit = commit.rstrip() + "\n " + commitLine[i:78]
-                i = i+79
+                commit = commit.rstrip() + "\n\t" + commitLine[i:71]
+                i = i+72
 
         # Write out the commit line
         fout.write(commit.rstrip() + "\n")
