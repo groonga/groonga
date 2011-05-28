@@ -97,7 +97,7 @@ def insert_facebook_html_buttons(html)
     <div class="facebook-buttons">
       <fb:like href="http://www.facebook.com/pages/groonga/201193596592346"
                layout="standard"
-               width="250"></fb:like>
+               width="290"></fb:like>
     </div>
     #{$1}
     HTML
