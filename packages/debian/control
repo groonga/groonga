@@ -135,7 +135,7 @@ Description: Documentation of groonga.
  This package provides documentation of groonga.
 
 Package: groonga-examples
-Section: devel
+Section: database
 Architecture: any
 Depends:
   ${misc:Depends},
