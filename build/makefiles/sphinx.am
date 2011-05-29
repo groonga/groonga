@@ -96,6 +96,7 @@ man-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)/man		\
 	  -b man				\
 	  $(ALLSPHINXOPTS)			\
 	  man
@@ -107,6 +108,7 @@ html-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)/html		\
 	  -b html				\
 	  $(ALLSPHINXOPTS)			\
 	  html
@@ -120,6 +122,7 @@ pdf-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)/pdf		\
 	  -b pdf				\
 	  $(ALLSPHINXOPTS)			\
 	  pdf
@@ -131,6 +134,7 @@ dirhtml-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)				\
 	  -Dlanguage=$(LOCALE)				\
+	  -d $(DOCTREES_BASE)dirhtml		\
 	  -b dirhtml					\
 	  $(ALLSPHINXOPTS)				\
           dirhtml
@@ -142,6 +146,7 @@ pickle-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)pickle		\
 	  -b pickle				\
 	  $(ALLSPHINXOPTS)			\
 	  pickle
@@ -153,6 +158,7 @@ json-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)json		\
 	  -b json				\
 	  $(ALLSPHINXOPTS)			\
 	  json
@@ -164,6 +170,7 @@ htmlhelp-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)htmlhelp		\
 	  -b htmlhelp				\
 	  $(ALLSPHINXOPTS)			\
 	  htmlhelp
@@ -175,6 +182,7 @@ qthelp-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)qthelp		\
 	  -b qthelp				\
 	  $(ALLSPHINXOPTS)			\
 	  qthelp
@@ -191,6 +199,7 @@ latex-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)latex		\
 	  -b latex				\
 	  $(ALLSPHINXOPTS)			\
 	  latex
@@ -205,6 +214,7 @@ rdoc-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)rdoc		\
 	  -b rdoc				\
 	  $(ALLSPHINXOPTS)			\
 	  rdoc
@@ -216,6 +226,7 @@ textile-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)textile		\
 	  -b textile				\
 	  $(ALLSPHINXOPTS)			\
 	  textile
@@ -227,6 +238,7 @@ changes-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)changes		\
 	  -b changes				\
 	  $(ALLSPHINXOPTS)			\
 	  changes
@@ -238,6 +250,7 @@ linkcheck-build-stamp: $(document_source_files)
 	$(MAKE) sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)linkcheck		\
 	  -b linkcheck				\
 	  $(ALLSPHINXOPTS)			\
 	  linkcheck
@@ -246,6 +259,7 @@ linkcheck-build-stamp: $(document_source_files)
 doctest: sphinx-ensure-updated
 	$(SPHINX_BUILD_COMMAND)			\
 	  -Dlanguage=$(LOCALE)			\
+	  -d $(DOCTREES_BASE)doctest		\
 	  -b doctest				\
 	  $(ALLSPHINXOPTS)			\
 	  doctest
