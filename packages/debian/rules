@@ -19,4 +19,6 @@ override_dh_install:
 	install -d debian/tmp/etc/munin/plugin-conf.d/
 	install -m 0644 debian/groonga-munin-plugin.conf \
 	  debian/tmp/etc/munin/plugin-conf.d/groonga
+	mv debian/tmp/usr/share/doc/groonga/ \
+	  debian/tmp/usr/share/doc/groonga-doc/
 	dh_install
