@@ -5,25 +5,12 @@
 How to contribute in documentation topics
 =========================================
 
-I18N
-----
-
-We only had documentation in Japanese.  We start to support
-I18N documentation. We'll use English as base language and
-translate English into other languages such as
-Japanese. We'll put documentations into doc/source/ and
-process them by Sphinx_.
+We use Sphinx_ for documentation tool.
 
 .. _Sphinx: http://sphinx.pocoo.org/
 
-But we still use Japanese in doc/source/ for now. We need to
-translate Japanese documentation in doc/source/ into
-English. We welcome to you help us by translating
-documentation.
+.. toctree::
+   :maxdepth: 1
+   :glob:
 
-C API
------
-
-We still have C API documentation in include/groonga.h. But
-we want to move them into doc/source/c-api/. We welcome to
-you help us by moving C API documentation.
+   documentation/*

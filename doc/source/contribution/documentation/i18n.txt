@@ -1,0 +1,184 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+I18N
+====
+
+We only had documentation in Japanese.  We start to support
+I18N documentation by gettext based `Sphinx I18N feature`_.
+We'll use English as base language and translate
+English into other languages such as Japanese. We'll put
+all documentations into doc/source/ and process them by
+Sphinx.
+
+.. _Sphinx I18N feature: http://sphinx.pocoo.org/latest/intl.html
+
+But we still use Japanese in doc/source/ for now. We need to
+translate Japanese documentation in doc/source/ into
+English. We welcome to you help us by translating
+documentation.
+
+Translation flow
+----------------
+
+After doc/source/\*.txt are updated, we can start translation.
+
+Here is a translation flow:
+
+1. Clone groonga repository.
+2. Update .po files.
+3. Edit .po files.
+4. Generate HTML files.
+5. Confirm HTML output.
+6. Repeat 2.-4. until you get good result.
+7. Send your works to us!
+
+Here are command lines to do the above flow. Following
+sections describes details.
+
+::
+
+  # Please fork https://github.com/groonga/groonga on GitHub
+  % git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
+  % ./autogen.sh
+  % ./configure
+  % cd doc/locale/${LANGUAGE}/LC_MESSAGES # ${LANGUAGE} is language code such as 'ja'.
+  % make update # *.po are updated
+  % editor *.po # translate *.po # you can use your favorite editor
+  % cd ..
+  % make html
+  % browser html/index.html # confirm translation
+  % git add LC_MESSAGES/*.po
+  % git commit
+  % git push
+
+How to clone groonga repository
+-------------------------------
+
+First, please fork groonga repository easily on GiHub. You
+just access https://github.com/groonga/groonga and press
+`Fork` button. Now you can pull your groonga repository::
+
+  % git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
+
+Then you need to configure your cloned repository::
+
+  % cd groonga
+  % ./autogen.sh
+  % ./configure
+
+The above steps are just needed at the first setup.
+
+If you have troubles on the above steps, you can use source
+files available on http://packages.groonga.org/source/groonga/ .
+
+How to update .po files
+-----------------------
+
+You can update .po files by running `make update` on
+doc/locale/${LANGUAGE}/LC_MESSAGES. (Please substitute
+`${LANGUAGE}` with your language code such as 'ja'.)::
+
+  % cd doc/locale/ja/LC_MESSAGES
+  % make update
+
+How to edit .po
+---------------
+
+There are some tools to edit .po files. .po files are just
+text. So you can use your favorite editor. Here is a
+specialized editor for .po file edit list.
+
+Emacs's po-mode_
+  It is bundled in gettext.
+
+Poedit_
+  It is a .po editor and works on many platform.
+
+gted
+  It is also a .po editor and is implemented as Eclipse plugin.
+
+.. _po-mode: http://www.gnu.org/s/hello/manual/gettext/PO-Mode.html
+.. _Poedit: http://www.poedit.net/
+.. _gted: http://www.gted.org/
+
+How to generate HTML files
+--------------------------
+
+You can generate HTML files with updated .po files by
+running `make html` on doc/locale/${LANGUAGE}. (Please
+substitute `${LANGUAGE}` with your language code such as
+'ja'.)::
+
+  % cd doc/locale/ja/
+  % make update
+
+.. note::
+
+   .mo files are updated automatically by `make update`. So
+   you don't care about .mo files.
+
+How to confirm HTML output
+--------------------------
+
+HTML files are generated in
+doc/locale/${LANGUAGE}/html/. (Please substitute
+`${LANGUAGE}` with your language code such as 'ja'.) You can
+confirm HTML output by your favorite editor::
+
+  % firefox doc/locale/ja/html/index.html
+
+How to send your works
+----------------------
+
+We can receive your works via pull request on GitHub or
+E-mail attachment patch or .po files themselves.
+
+How to send pull request
+++++++++++++++++++++++++
+
+Here are command lines to send pull request::
+
+  % git add doc/locale/ja/LC_MESSAGES/*.po
+  % git commit
+  % git push
+
+Now you can send pull request on GitHub. You just access
+your repository page on GitHub and press `Pull Request`
+button.
+
+.. seealso:: `Help.GitHub - Sending pull requests`_.
+
+.. _Help.GitHub - Sending pull requests: http://help.github.com/pull-requests/
+
+How to send patch
++++++++++++++++++
+
+Here are command lines to create patch::
+
+  % git add doc/locale/ja/LC_MESSAGES/*.po
+  % git commit
+  % git format-patch origin/master
+
+You can find 000X-YYY.patch files in the current
+directory. Please send those files to us!
+
+How to send .po files
++++++++++++++++++++++
+
+Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please
+substitute `${LANGUAGE}` with your language code such as
+'ja'.) and send it to us! We extract and merge them to the
+groonga repository.
+
+How to add new language
+-----------------------
+
+Here are command lines to add new translation language::
+
+  % cd doc/locale
+  % make add LOCALE=${LANGUAGE} # specify your language code such as 'de'.
+
+Please substitute `${LANGUAGE}` with your language code such
+as 'ja'.

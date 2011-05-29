@@ -14,7 +14,7 @@ Use:
 Introduction:
   Please talk your friends about groonga.
 Bug report, development and documentation:
-  We describe about them in section.
+  We describe about them in this section.
 
 .. toctree::
    :maxdepth: 3
