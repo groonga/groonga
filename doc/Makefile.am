@@ -68,6 +68,8 @@ relative_source_files = \
 	source/contribution/development/query.txt \
 	source/contribution/development/test.txt \
 	source/contribution/documentation.txt \
+	source/contribution/documentation/c-api.txt \
+	source/contribution/documentation/i18n.txt \
 	source/contribution/report.txt \
 	source/example/tutorial01-1.log \
 	source/example/tutorial01-10.log \
