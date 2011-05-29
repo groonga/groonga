@@ -211,6 +211,9 @@ html_static_path = ['static']
 # If true, links to the reST sources are added to the pages.
 #html_show_sourcelink = True
 
+# If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
+html_show_sphinx = False
+
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
