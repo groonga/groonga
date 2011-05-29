@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-29 00:56\n"
-"PO-Revision-Date: 2011-05-18 15:16+0900\n"
+"POT-Creation-Date: 2011-05-29 12:26\n"
+"PO-Revision-Date: 2011-05-29 12:28+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -147,8 +147,8 @@ msgstr ""
 "repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
 
 #: ../../../source/install.txt:126
-msgid "Fedora 14"
-msgstr "Fedora 14"
+msgid "Fedora 15"
+msgstr ""
 
 #: ../../../source/install.txt:134
 msgid ""

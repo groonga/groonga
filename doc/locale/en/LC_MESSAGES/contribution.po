@@ -1,3 +1,6 @@
+msgid "See also"
+msgstr ""
+
 # English translations for 1.2.1 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
@@ -7,35 +10,509 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-29 00:56\n"
+"POT-Creation-Date: 2011-05-29 12:26\n"
 "PO-Revision-Date: 2011-05-29 00:56+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/contribution/development/com.txt:15
-msgid "workerは上限が個定数。"
-msgstr "workerは上限が個定数。"
+#: ../../../source/contribution.txt:6
+msgid "How to contribute to groonga"
+msgstr "How to contribute to groonga"
 
-#: ../../../source/contribution/development/query.txt:93
-msgid "v1の値がv2の値よりも大きいことを表します。"
-msgstr "v1の値がv2の値よりも大きいことを表します。"
+#: ../../../source/contribution.txt:8
+msgid ""
+"There are some topics for contributing to groonga. They are use, "
+"introduction, bug report, development and documentation."
+msgstr ""
+"There are some topics for contributing to groonga. They are use, "
+"introduction, bug report, development and documentation."
+
+#: ../../../source/contribution.txt:13
+msgid "Please read this document."
+msgstr "Please read this document."
+
+#: ../../../source/contribution.txt:15
+msgid "Please talk your friends about groonga."
+msgstr "Please talk your friends about groonga."
+
+#: ../../../source/contribution.txt:17
+#, fuzzy
+msgid "We describe about them in this section."
+msgstr "We describe about them in section."
+
+#: ../../../source/contribution/development.txt:6
+msgid "groonga開発者向け情報"
+msgstr "groonga開発者向け情報"
+
+#: ../../../source/contribution/development/com.txt:4
+msgid "groonga 通信アーキテクチャ"
+msgstr "groonga 通信アーキテクチャ"
+
+#: ../../../source/contribution/development/com.txt:7
+msgid "gqtpでのアーキテクチャ"
+msgstr "gqtpでのアーキテクチャ"
+
+#: ../../../source/contribution/development/com.txt:9
+msgid "comが外部からの接続を受け付ける。"
+msgstr "comが外部からの接続を受け付ける。"
+
+#: ../../../source/contribution/development/com.txt:10
+msgid "comは1スレッド。"
+msgstr "comは1スレッド。"
+
+#: ../../../source/contribution/development/com.txt:11
+msgid "comがedgeを作る。"
+msgstr "comがedgeを作る。"
+
+#: ../../../source/contribution/development/com.txt:12
+msgid "edgeは接続と１対１対応。"
+msgstr "edgeは接続と１対１対応。"
+
+#: ../../../source/contribution/development/com.txt:13
+msgid "edgeはctxを含む。"
+msgstr "edgeはctxを含む。"
 
 #: ../../../source/contribution/development/com.txt:14
 msgid "workerはthreadと１対１対応。"
 msgstr "workerはthreadと１対１対応。"
 
+#: ../../../source/contribution/development/com.txt:15
+msgid "workerは上限が個定数。"
+msgstr "workerは上限が個定数。"
+
+#: ../../../source/contribution/development/com.txt:16
+msgid "workerは、１つのedgeと結びつくことができる。"
+msgstr "workerは、１つのedgeと結びつくことができる。"
+
+#: ../../../source/contribution/development/com.txt:18
+msgid "edgeごとにqueueを持つ。"
+msgstr "edgeごとにqueueを持つ。"
+
+#: ../../../source/contribution/development/com.txt:19
+msgid ""
+"msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
+"ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
+"る。"
+msgstr ""
+"msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
+"ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
+"る。"
+
+#: ../../../source/contribution/development/document.txt:6
+msgid "ドキュメント作成"
+msgstr "ドキュメント作成"
+
+#: ../../../source/contribution/development/document.txt:9
+msgid "Sphinxのインストール"
+msgstr "Sphinxのインストール"
+
+#: ../../../source/contribution/development/document.txt:11
+msgid ""
+"groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
+"以下のように導入します。::"
+msgstr ""
+"groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
+"以下のように導入します。::"
+
+#: ../../../source/contribution/development/document.txt:13
+msgid "# aptitude install python-setuptools # easy_install -U sphinx"
+msgstr "# aptitude install python-setuptools # easy_install -U sphinx"
+
+#: ../../../source/contribution/development/document.txt:17
+msgid "htmlの作成"
+msgstr "htmlの作成"
+
+#: ../../../source/contribution/development/document.txt:19
+msgid "以下のコマンドでhtmlが作成されます。::"
+msgstr "以下のコマンドでhtmlが作成されます。::"
+
+#: ../../../source/contribution/development/document.txt:21
+msgid "% make html"
+msgstr "% make html"
+
+#: ../../../source/contribution/development/document.txt:24
+#: ../../../source/contribution/development/document.txt:36
+msgid "pdfの作成"
+msgstr "pdfの作成"
+
+#: ../../../source/contribution/development/document.txt:26
+msgid ""
+"groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
+"(IPA Gothic/IPAexGothic)が必要となります。"
+msgstr ""
+"groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
+"(IPA Gothic/IPAexGothic)が必要となります。"
+
 #: ../../../source/contribution/development/document.txt:29
 msgid "rst2pdfのインストール"
 msgstr "rst2pdfのインストール"
 
-#: ../../../source/contribution/development/com.txt:11
-msgid "comがedgeを作る。"
-msgstr "comがedgeを作る。"
+#: ../../../source/contribution/development/document.txt:31
+msgid "以下のようにしてインストールできます。::"
+msgstr "以下のようにしてインストールできます。::"
+
+#: ../../../source/contribution/development/document.txt:33
+msgid "# easy_install rst2pdf"
+msgstr "# easy_install rst2pdf"
+
+#: ../../../source/contribution/development/document.txt:38
+msgid "以下のコマンドでpdfが作成されます。::"
+msgstr "以下のコマンドでpdfが作成されます。::"
+
+#: ../../../source/contribution/development/document.txt:40
+msgid "% make pdf"
+msgstr "% make pdf"
+
+#: ../../../source/contribution/development/query.txt:6
+msgid "クエリの実現"
+msgstr "クエリの実現"
+
+#: ../../../source/contribution/development/query.txt:8
+msgid ""
+"groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
+"り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
+"エリの表現と実行に関して、groongaは複数の手段を用意しています。"
+msgstr ""
+"groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
+"り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
+"エリの表現と実行に関して、groongaは複数の手段を用意しています。"
+
+#: ../../../source/contribution/development/query.txt:11
+msgid "クエリ実行のためのインタフェース"
+msgstr "クエリ実行のためのインタフェース"
+
+#: ../../../source/contribution/development/query.txt:13
+msgid ""
+"groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
+"ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
+"います。"
+msgstr ""
+"groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
+"ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
+"います。"
+
+#: ../../../source/contribution/development/query.txt:15
+msgid ""
+"クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
+"形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
+msgstr ""
+"クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
+"形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
+
+#: ../../../source/contribution/development/query.txt:18
+msgid "DB_API"
+msgstr "DB_API"
+
+#: ../../../source/contribution/development/query.txt:20
+msgid ""
+"DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
+"す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
+"す。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができま"
+"す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
+"て実現されています。"
+msgstr ""
+"DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
+"す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
+"す。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができま"
+"す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
+"て実現されています。"
+
+#: ../../../source/contribution/development/query.txt:23
+msgid "grn_expr"
+msgstr "grn_expr"
+
+#: ../../../source/contribution/development/query.txt:25
+msgid ""
+"grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
+"るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
+"ることができます。grn_exprによって表現されたクエリを実行するためには、"
+"grn_table_select()関数を使用します。"
+msgstr ""
+"grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
+"るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
+"ることができます。grn_exprによって表現されたクエリを実行するためには、"
+"grn_table_select()関数を使用します。"
+
+#: ../../../source/contribution/development/query.txt:28
+msgid "groonga実行ファイル"
+msgstr "groonga実行ファイル"
+
+#: ../../../source/contribution/development/query.txt:30
+msgid ""
+"groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
+"ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
+"がC言語で定義した関数を新たなコマンドとしてgroonga実行ファイルに組み込むこと"
+"ができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解"
+"釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈して"
+"DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
+"す。"
+msgstr ""
+"groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
+"ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
+"がC言語で定義した関数を新たなコマンドとしてgroonga実行ファイルに組み込むこと"
+"ができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解"
+"釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈して"
+"DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
+"す。"
+
+#: ../../../source/contribution/development/query.txt:33
+msgid "grn_exprで表現できるクエリ"
+msgstr "grn_exprで表現できるクエリ"
+
+#: ../../../source/contribution/development/query.txt:35
+msgid ""
+"grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
+"クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
+"要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
+"子で結合したものです。"
+msgstr ""
+"grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
+"クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
+"要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
+"子で結合したものです。"
+
+#: ../../../source/contribution/development/query.txt:37
+msgid "論理演算子は、以下の3種類があります。 ::"
+msgstr "論理演算子は、以下の3種類があります。 ::"
+
+#: ../../../source/contribution/development/query.txt:40
+msgid "&& (論理積) || (論理和) !  (否定)"
+msgstr "&& (論理積) || (論理和) !  (否定)"
+
+#: ../../../source/contribution/development/query.txt:44
+msgid ""
+"関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
+"関係式として使うこともできます。 ::"
+msgstr ""
+"関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
+"関係式として使うこともできます。 ::"
+
+#: ../../../source/contribution/development/query.txt:47
+msgid ""
+"equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
+"contain() near() similar() prefix() suffix()"
+msgstr ""
+"equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
+"contain() near() similar() prefix() suffix()"
+
+#: ../../../source/contribution/development/query.txt:60
+msgid "grn_table_select()"
+msgstr "grn_table_select()"
+
+#: ../../../source/contribution/development/query.txt:62
+msgid ""
+"grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
+"ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
+"納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
+"かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
+msgstr ""
+"grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
+"ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
+"納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
+"かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
+
+#: ../../../source/contribution/development/query.txt:65
+msgid "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
+msgstr "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
+
+#: ../../../source/contribution/development/query.txt:70
+msgid ""
+"GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
+"ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
+"意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレ"
+"コードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチす"
+"るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
+"チするレコードに対してスコア値の更新のみを行います。"
+msgstr ""
+"GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
+"ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
+"意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレ"
+"コードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチす"
+"るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
+"チするレコードに対してスコア値の更新のみを行います。"
+
+#: ../../../source/contribution/development/query.txt:72
+msgid ""
+"grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
+"せて可能な限り高速に指定されたクエリを実行しようとします。"
+msgstr ""
+"grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
+"せて可能な限り高速に指定されたクエリを実行しようとします。"
+
+#: ../../../source/contribution/development/query.txt:75
+msgid "関係式"
+msgstr "関係式"
+
+#: ../../../source/contribution/development/query.txt:77
+msgid ""
+"関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
+"として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
+"callback、コールバック関数に渡されるargとを引数として指定することができます。"
+"callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
+"ます。主な関係式について説明します。"
+msgstr ""
+"関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
+"として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
+"callback、コールバック関数に渡されるargとを引数として指定することができます。"
+"callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
+"ます。主な関係式について説明します。"
+
+#: ../../../source/contribution/development/query.txt:80
+msgid "equal(v1, v2, arg, callback)"
+msgstr "equal(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:81
+msgid "v1の値とv2の値が等しいことを表します。"
+msgstr "v1の値とv2の値が等しいことを表します。"
+
+#: ../../../source/contribution/development/query.txt:84
+msgid "not_equal(v1, v2, arg, callback)"
+msgstr "not_equal(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:85
+msgid "v1の値とv2の値が等しくないことを表します。"
+msgstr "v1の値とv2の値が等しくないことを表します。"
+
+#: ../../../source/contribution/development/query.txt:88
+msgid "less(v1, v2, arg, callback)"
+msgstr "less(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:89
+msgid "v1の値がv2の値よりも小さいことを表します。"
+msgstr "v1の値がv2の値よりも小さいことを表します。"
+
+#: ../../../source/contribution/development/query.txt:92
+msgid "greater(v1, v2, arg, callback)"
+msgstr "greater(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:93
+msgid "v1の値がv2の値よりも大きいことを表します。"
+msgstr "v1の値がv2の値よりも大きいことを表します。"
+
+#: ../../../source/contribution/development/query.txt:96
+msgid "less_equal(v1, v2, arg, callback)"
+msgstr "less_equal(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:97
+msgid "v1の値がv2の値と等しいか小さいことを表します。"
+msgstr "v1の値がv2の値と等しいか小さいことを表します。"
+
+#: ../../../source/contribution/development/query.txt:100
+msgid "greater_equal(v1, v2, arg, callback)"
+msgstr "greater_equal(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:101
+msgid "v1の値がv2の値と等しいか大きいことを表します。"
+msgstr "v1の値がv2の値と等しいか大きいことを表します。"
+
+#: ../../../source/contribution/development/query.txt:104
+msgid "contain(v1, v2, mode, arg, callback)"
+msgstr "contain(v1, v2, mode, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:105
+msgid ""
+"v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
+"き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
+"かを指定することができます。"
+msgstr ""
+"v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
+"き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
+"かを指定することができます。"
+
+#: ../../../source/contribution/development/query.txt:109
+msgid ""
+"EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
+"る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
+"に前方一致する SUFFIX: v1の値の要素がv2の値に後方一致する PARTIAL: v1の値の要"
+"素がv2の値に中間一致する"
+msgstr ""
+"EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
+"る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
+"に前方一致する SUFFIX: v1の値の要素がv2の値に後方一致する PARTIAL: v1の値の要"
+"素がv2の値に中間一致する"
+
+#: ../../../source/contribution/development/query.txt:116
+msgid "near(v1, v2, arg, callback)"
+msgstr "near(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:117
+msgid ""
+"v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
+"列を渡します)"
+msgstr ""
+"v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
+"列を渡します)"
+
+#: ../../../source/contribution/development/query.txt:120
+msgid "similar(v1, v2, arg, callback)"
+msgstr "similar(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:121
+msgid "v1の値とv2の値が類似していることを表します。"
+msgstr "v1の値とv2の値が類似していることを表します。"
+
+#: ../../../source/contribution/development/query.txt:124
+msgid "prefix(v1, v2, arg, callback)"
+msgstr "prefix(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:125
+msgid "v1の値がv2の値に対して前方一致することを表します。"
+msgstr "v1の値がv2の値に対して前方一致することを表します。"
+
+#: ../../../source/contribution/development/query.txt:128
+msgid "suffix(v1, v2, arg, callback)"
+msgstr "suffix(v1, v2, arg, callback)"
+
+#: ../../../source/contribution/development/query.txt:129
+msgid "v1の値がv2の値に対して後方一致することを表します。"
+msgstr "v1の値がv2の値に対して後方一致することを表します。"
+
+#: ../../../source/contribution/development/query.txt:132
+msgid "クエリの実例"
+msgstr "クエリの実例"
+
+#: ../../../source/contribution/development/query.txt:134
+msgid "grn_exprを使って様々な検索クエリを表現することができます。"
+msgstr "grn_exprを使って様々な検索クエリを表現することができます。"
+
+#: ../../../source/contribution/development/query.txt:137
+msgid "検索例1"
+msgstr "検索例1"
+
+#: ../../../source/contribution/development/query.txt:140
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
+msgstr ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
+
+#: ../../../source/contribution/development/query.txt:147
+msgid ""
+"tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
+"が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
+"ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
+"みがヒットします。"
+msgstr ""
+"tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
+"が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
+"ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
+"みがヒットします。"
+
+#: ../../../source/contribution/development/query.txt:151
+msgid "検索例2"
+msgstr "検索例2"
 
 #: ../../../source/contribution/development/query.txt:154
 msgid ""
@@ -69,206 +546,6 @@ msgstr ""
 "(ctx, query, GRN_OP_CALL, 5); grn_table_select(ctx, table, query, result, "
 "GRN_OP_ADJUST); grn_obj_close(ctx, query);"
 
-#: ../../../source/contribution/development/query.txt:105
-msgid ""
-"v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
-"き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
-"かを指定することができます。"
-msgstr ""
-"v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
-"き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
-"かを指定することができます。"
-
-#: ../../../source/contribution/development/test.txt:29
-msgid "clangのインストール"
-msgstr "clangのインストール"
-
-#: ../../../source/contribution/development/test.txt:14
-msgid "groongaは、テストのフレームワークとして Cutter_ を用いています。"
-msgstr "groongaは、テストのフレームワークとして Cutter_ を用いています。"
-
-#: ../../../source/contribution/development/document.txt:38
-msgid "以下のコマンドでpdfが作成されます。::"
-msgstr "以下のコマンドでpdfが作成されます。::"
-
-#: ../../../source/contribution/development/query.txt:77
-msgid ""
-"関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
-"として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
-"callback、コールバック関数に渡されるargとを引数として指定することができます。"
-"callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
-"ます。主な関係式について説明します。"
-msgstr ""
-"関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
-"として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
-"callback、コールバック関数に渡されるargとを引数として指定することができます。"
-"callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
-"ます。主な関係式について説明します。"
-
-#: ../../../source/contribution/development/test.txt:77
-msgid "特定のテストファイルのみテストする"
-msgstr "特定のテストファイルのみテストする"
-
-#: ../../../source/contribution/development/query.txt:47
-msgid ""
-"equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
-"contain() near() similar() prefix() suffix()"
-msgstr ""
-"equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
-"contain() near() similar() prefix() suffix()"
-
-#: ../../../source/contribution/development/test.txt:112
-msgid ""
-"% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
-"scan_build make -j4"
-msgstr ""
-"% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
-"scan_build make -j4"
-
-#: ../../../source/contribution/development/com.txt:16
-msgid "workerは、１つのedgeと結びつくことができる。"
-msgstr "workerは、１つのedgeと結びつくことができる。"
-
-#: ../../../source/contribution/development/test.txt:33
-msgid "% sudo aptitude install -y clang"
-msgstr "% sudo aptitude install -y clang"
-
-#: ../../../source/contribution/development/query.txt:128
-msgid "suffix(v1, v2, arg, callback)"
-msgstr "suffix(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/query.txt:200
-msgid ""
-"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
-"コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
-"さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
-"ア値にscore2を積算してresultに追加します。"
-msgstr ""
-"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
-"コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
-"さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
-"ア値にscore2を積算してresultに追加します。"
-
-#: ../../../source/contribution/development/test.txt:97
-msgid "デバッガ上でのテスト実行"
-msgstr "デバッガ上でのテスト実行"
-
-#: ../../../source/contribution/development/test.txt:54
-msgid "make coverage"
-msgstr "make coverage"
-
-#: ../../../source/contribution/development/com.txt:13
-msgid "edgeはctxを含む。"
-msgstr "edgeはctxを含む。"
-
-#: ../../../source/contribution/development/query.txt:18
-msgid "DB_API"
-msgstr "DB_API"
-
-#: ../../../source/contribution/development/query.txt:72
-msgid ""
-"grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
-"せて可能な限り高速に指定されたクエリを実行しようとします。"
-msgstr ""
-"grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
-"せて可能な限り高速に指定されたクエリを実行しようとします。"
-
-#: ../../../source/contribution/development/query.txt:40
-msgid "&& (論理積) || (論理和) !  (否定)"
-msgstr "&& (論理積) || (論理和) !  (否定)"
-
-#: ../../../source/contribution/development.txt:6
-msgid "groonga開発者向け情報"
-msgstr "groonga開発者向け情報"
-
-#: ../../../source/contribution/documentation.txt:25
-msgid "C API"
-msgstr "C API"
-
-#: ../../../source/contribution/development/query.txt:13
-msgid ""
-"groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
-"ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
-"います。"
-msgstr ""
-"groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
-"ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
-"います。"
-
-#: ../../../source/contribution/development/document.txt:31
-msgid "以下のようにしてインストールできます。::"
-msgstr "以下のようにしてインストールできます。::"
-
-#: ../../../source/contribution/development/document.txt:13
-msgid "# aptitude install python-setuptools # easy_install -U sphinx"
-msgstr "# aptitude install python-setuptools # easy_install -U sphinx"
-
-#: ../../../source/contribution/development/document.txt:9
-msgid "Sphinxのインストール"
-msgstr "Sphinxのインストール"
-
-#: ../../../source/contribution/development/query.txt:30
-msgid ""
-"groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
-"ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
-"がC言語で定義した関数を新たなコマンドとしてgroonga実行ファイルに組み込むこと"
-"ができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解"
-"釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈して"
-"DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
-"す。"
-msgstr ""
-"groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
-"ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
-"がC言語で定義した関数を新たなコマンドとしてgroonga実行ファイルに組み込むこと"
-"ができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解"
-"釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈して"
-"DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
-"す。"
-
-#: ../../../source/contribution/documentation.txt:9
-msgid "I18N"
-msgstr "I18N"
-
-#: ../../../source/contribution/development/test.txt:94
-msgid "% CUTTER_CHECK_LEAK=yes make check"
-msgstr "% CUTTER_CHECK_LEAK=yes make check"
-
-#: ../../../source/contribution/development/query.txt:104
-msgid "contain(v1, v2, mode, arg, callback)"
-msgstr "contain(v1, v2, mode, arg, callback)"
-
-#: ../../../source/contribution/development/test.txt:22
-msgid "lcovのインストール"
-msgstr "lcovのインストール"
-
-#: ../../../source/contribution/development/query.txt:100
-msgid "greater_equal(v1, v2, arg, callback)"
-msgstr "greater_equal(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/test.txt:12
-msgid "Cutterのインストール"
-msgstr "Cutterのインストール"
-
-#: ../../../source/contribution/development/document.txt:33
-msgid "# easy_install rst2pdf"
-msgstr "# easy_install rst2pdf"
-
-#: ../../../source/contribution/development/query.txt:109
-msgid ""
-"EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
-"る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
-"に前方一致する SUFFIX: v1の値の要素がv2の値に後方一致する PARTIAL: v1の値の要"
-"素がv2の値に中間一致する"
-msgstr ""
-"EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
-"る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
-"に前方一致する SUFFIX: v1の値の要素がv2の値に後方一致する PARTIAL: v1の値の要"
-"素がv2の値に中間一致する"
-
-#: ../../../source/contribution/development/query.txt:89
-msgid "v1の値がv2の値よりも小さいことを表します。"
-msgstr "v1の値がv2の値よりも小さいことを表します。"
-
 #: ../../../source/contribution/development/query.txt:173
 msgid ""
 "tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
@@ -281,340 +558,9 @@ msgstr ""
 "コードのうち、column2の値がstringにexactモードでヒットするレコードについて"
 "は、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。"
 
-#: ../../../source/contribution/development/query.txt:8
-msgid ""
-"groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
-"り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
-"エリの表現と実行に関して、groongaは複数の手段を用意しています。"
-msgstr ""
-"groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
-"り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
-"エリの表現と実行に関して、groongaは複数の手段を用意しています。"
-
-#: ../../../source/contribution/development/test.txt:116
-msgid "configureは１度のみ実行する必要があります。"
-msgstr "configureは１度のみ実行する必要があります。"
-
-#: ../../../source/contribution/development/test.txt:83
-msgid "% ./run-test.sh -t test_string"
-msgstr "% ./run-test.sh -t test_string"
-
-#: ../../../source/contribution/development/query.txt:20
-msgid ""
-"DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
-"す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
-"す。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができま"
-"す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
-"て実現されています。"
-msgstr ""
-"DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
-"す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
-"す。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができま"
-"す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
-"て実現されています。"
-
-#: ../../../source/contribution.txt:13
-msgid "Please read this document."
-msgstr "Please read this document."
-
-#: ../../../source/contribution/development/com.txt:19
-msgid ""
-"msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
-"ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
-"る。"
-msgstr ""
-"msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
-"ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
-"る。"
-
-#: ../../../source/contribution/development/query.txt:101
-msgid "v1の値がv2の値と等しいか大きいことを表します。"
-msgstr "v1の値がv2の値と等しいか大きいことを表します。"
-
-#: ../../../source/contribution/development/document.txt:40
-msgid "% make pdf"
-msgstr "% make pdf"
-
-#: ../../../source/contribution/development/query.txt:84
-msgid "not_equal(v1, v2, arg, callback)"
-msgstr "not_equal(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/query.txt:75
-msgid "関係式"
-msgstr "関係式"
-
-#: ../../../source/contribution/development/document.txt:6
-msgid "ドキュメント作成"
-msgstr "ドキュメント作成"
-
-#: ../../../source/contribution/development/query.txt:213
-msgid ""
-"tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
-"が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
-"登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
-"ヒットします。"
-msgstr ""
-"tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
-"が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
-"登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
-"ヒットします。"
-
-#: ../../../source/contribution/development/document.txt:19
-msgid "以下のコマンドでhtmlが作成されます。::"
-msgstr "以下のコマンドでhtmlが作成されます。::"
-
-#: ../../../source/contribution/development/test.txt:68
-msgid "特定のテスト関数のみテストする"
-msgstr "特定のテスト関数のみテストする"
-
-#: ../../../source/contribution/development/document.txt:24
-#: ../../../source/contribution/development/document.txt:36
-msgid "pdfの作成"
-msgstr "pdfの作成"
-
-#: ../../../source/contribution/development/query.txt:117
-msgid ""
-"v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
-"列を渡します)"
-msgstr ""
-"v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
-"列を渡します)"
-
-#: ../../../source/contribution/development/test.txt:105
-msgid "% CUTTER_DEBUG=yes make check"
-msgstr "% CUTTER_DEBUG=yes make check"
-
-#: ../../../source/contribution/development/query.txt:35
-msgid ""
-"grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
-"クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
-"要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
-"子で結合したものです。"
-msgstr ""
-"grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
-"クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
-"要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
-"子で結合したものです。"
-
-#: ../../../source/contribution/development/query.txt:92
-msgid "greater(v1, v2, arg, callback)"
-msgstr "greater(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/query.txt:44
-msgid ""
-"関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
-"関係式として使うこともできます。 ::"
-msgstr ""
-"関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
-"関係式として使うこともできます。 ::"
-
-#: ../../../source/contribution/development/test.txt:63
-msgid "様々なテスト"
-msgstr "様々なテスト"
-
-#: ../../../source/contribution.txt:8
-msgid ""
-"There are some topics for contributing to groonga. They are use, "
-"introduction, bug report, development and documentation."
-msgstr ""
-"There are some topics for contributing to groonga. They are use, "
-"introduction, bug report, development and documentation."
-
-#: ../../../source/contribution/development/test.txt:79
-msgid ""
-"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
-"す。"
-msgstr ""
-"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
-"す。"
-
-#: ../../../source/contribution/development/test.txt:74
-msgid "% ./run-test.sh -n test_text_otoj"
-msgstr "% ./run-test.sh -n test_text_otoj"
-
-#: ../../../source/contribution/development/test.txt:90
-#: ../../../source/contribution/development/test.txt:101
-msgid "run-test.shのみならず、make checkでも利用可能です。"
-msgstr "run-test.shのみならず、make checkでも利用可能です。"
-
-#: ../../../source/contribution.txt:15
-msgid "Please talk your friends about groonga."
-msgstr "Please talk your friends about groonga."
-
-#: ../../../source/contribution/development/query.txt:11
-msgid "クエリ実行のためのインタフェース"
-msgstr "クエリ実行のためのインタフェース"
-
-#: ../../../source/contribution/development/query.txt:97
-msgid "v1の値がv2の値と等しいか小さいことを表します。"
-msgstr "v1の値がv2の値と等しいか小さいことを表します。"
-
-#: ../../../source/contribution/development/query.txt:147
-msgid ""
-"tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
-"が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
-"ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
-"みがヒットします。"
-msgstr ""
-"tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
-"が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
-"ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
-"みがヒットします。"
-
-#: ../../../source/contribution/development/test.txt:26
-msgid "% sudo aptitude install -y lcov"
-msgstr "% sudo aptitude install -y lcov"
-
-#: ../../../source/contribution/development/com.txt:4
-msgid "groonga 通信アーキテクチャ"
-msgstr "groonga 通信アーキテクチャ"
-
-#: ../../../source/contribution/development/query.txt:121
-msgid "v1の値とv2の値が類似していることを表します。"
-msgstr "v1の値とv2の値が類似していることを表します。"
-
-#: ../../../source/contribution/development/com.txt:7
-msgid "gqtpでのアーキテクチャ"
-msgstr "gqtpでのアーキテクチャ"
-
-#: ../../../source/contribution/development/query.txt:129
-msgid "v1の値がv2の値に対して後方一致することを表します。"
-msgstr "v1の値がv2の値に対して後方一致することを表します。"
-
-#: ../../../source/contribution/development/query.txt:65
-msgid "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
-msgstr "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
-
-#: ../../../source/contribution.txt:17
-msgid "We describe about them in section."
-msgstr "We describe about them in section."
-
-#: ../../../source/contribution/development/query.txt:124
-msgid "prefix(v1, v2, arg, callback)"
-msgstr "prefix(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/documentation.txt:11
-msgid ""
-"We only had documentation in Japanese.  We start to support I18N "
-"documentation. We'll use English as base language and translate English into "
-"other languages such as Japanese. We'll put documentations into doc/source/ "
-"and process them by Sphinx_."
-msgstr ""
-"We only had documentation in Japanese.  We start to support I18N "
-"documentation. We'll use English as base language and translate English into "
-"other languages such as Japanese. We'll put documentations into doc/source/ "
-"and process them by Sphinx_."
-
-#: ../../../source/contribution/development/test.txt:58
-msgid ""
-"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
-"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
-"トされるようになっていることを心がけてください。"
-msgstr ""
-"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
-"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
-"トされるようになっていることを心がけてください。"
-
-#: ../../../source/contribution/development/query.txt:125
-msgid "v1の値がv2の値に対して前方一致することを表します。"
-msgstr "v1の値がv2の値に対して前方一致することを表します。"
-
-#: ../../../source/contribution/development/test.txt:6
-msgid "テスト方法"
-msgstr "テスト方法"
-
-#: ../../../source/contribution/documentation.txt:6
-msgid "How to contribute documentation"
-msgstr "How to contribute documentation"
-
-#: ../../../source/contribution/development/query.txt:132
-msgid "クエリの実例"
-msgstr "クエリの実例"
-
-#: ../../../source/contribution/development/query.txt:140
-msgid ""
-"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
-"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
-"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
-"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
-"(ctx, table, query, NULL, GRN_OP_OR);"
-msgstr ""
-"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
-"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
-"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
-"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
-"(ctx, table, query, NULL, GRN_OP_OR);"
-
-#: ../../../source/contribution/development/document.txt:17
-msgid "htmlの作成"
-msgstr "htmlの作成"
-
-#: ../../../source/contribution/development/query.txt:203
-msgid "検索例4"
-msgstr "検索例4"
-
-#: ../../../source/contribution/development/query.txt:6
-msgid "クエリの実現"
-msgstr "クエリの実現"
-
-#: ../../../source/contribution/development/query.txt:151
-msgid "検索例2"
-msgstr "検索例2"
-
-#: ../../../source/contribution/development/query.txt:137
-msgid "検索例1"
-msgstr "検索例1"
-
-#: ../../../source/contribution/development/test.txt:45
-#: ../../../source/contribution/development/test.txt:52
-msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
-msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
-
-#: ../../../source/contribution/development/query.txt:62
-msgid ""
-"grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
-"ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
-"納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
-"かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
-msgstr ""
-"grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
-"ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
-"納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
-"かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
-
-#: ../../../source/contribution/development/query.txt:25
-msgid ""
-"grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
-"るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
-"ることができます。grn_exprによって表現されたクエリを実行するためには、"
-"grn_table_select()関数を使用します。"
-msgstr ""
-"grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
-"るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
-"ることができます。grn_exprによって表現されたクエリを実行するためには、"
-"grn_table_select()関数を使用します。"
-
-#: ../../../source/contribution/development/test.txt:86
-msgid "不正メモリアクセス・メモリリーク検出"
-msgstr "不正メモリアクセス・メモリリーク検出"
-
-#: ../../../source/contribution/development/test.txt:60
-msgid ""
-"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
-"バーしている部分を増やすことも重要です。"
-msgstr ""
-"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
-"バーしている部分を増やすことも重要です。"
-
-#: ../../../source/contribution/report.txt:8
-msgid ""
-"We have two issue tracking systems, Redmine_ and `GitHub issue tracker`_. "
-"Redmine is for Japanese and GitHub issue tracker is for English. You can use "
-"both of them to report a bug."
-msgstr ""
-"We have two issue tracking systems, Redmine_ and `GitHub issue tracker`_. "
-"Redmine is for Japanese and GitHub issue tracker is for English. You can use "
-"both of them to report a bug."
+#: ../../../source/contribution/development/query.txt:176
+msgid "検索例3"
+msgstr "検索例3"
 
 #: ../../../source/contribution/development/query.txt:179
 msgid ""
@@ -650,138 +596,21 @@ msgstr ""
 "grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);   grn_table_select(ctx, "
 "table, query, result, GRN_OP_OR);   grn_obj_close(ctx, query); }"
 
-#: ../../../source/contribution/development/query.txt:88
-msgid "less(v1, v2, arg, callback)"
-msgstr "less(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/test.txt:31
+#: ../../../source/contribution/development/query.txt:200
 msgid ""
-"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
-"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
+"さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
+"ア値にscore2を積算してresultに追加します。"
 msgstr ""
-"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
-"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
+"さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
+"ア値にscore2を積算してresultに追加します。"
 
-#: ../../../source/contribution/development/query.txt:116
-msgid "near(v1, v2, arg, callback)"
-msgstr "near(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/query.txt:81
-msgid "v1の値とv2の値が等しいことを表します。"
-msgstr "v1の値とv2の値が等しいことを表します。"
-
-#: ../../../source/contribution/report.txt:6
-msgid "How to report a bug"
-msgstr "How to report a bug"
-
-#: ../../../source/contribution/development/test.txt:56
-msgid ""
-"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
-"す。"
-msgstr ""
-"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
-"す。"
-
-#: ../../../source/contribution/development/query.txt:23
-msgid "grn_expr"
-msgstr "grn_expr"
-
-#: ../../../source/contribution.txt:6
-msgid "How to contribute to groonga"
-msgstr "How to contribute to groonga"
-
-#: ../../../source/contribution/development/com.txt:12
-msgid "edgeは接続と１対１対応。"
-msgstr "edgeは接続と１対１対応。"
-
-#: ../../../source/contribution/development/test.txt:70
-msgid ""
-"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
-msgstr ""
-"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
-
-#: ../../../source/contribution/development/query.txt:80
-msgid "equal(v1, v2, arg, callback)"
-msgstr "equal(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/test.txt:43
-msgid "テストの動作"
-msgstr "テストの動作"
-
-#: ../../../source/contribution/documentation.txt:27
-msgid ""
-"We still have C API documentation in include/groonga.h. But we want to move "
-"them into doc/source/c-api/. We welcome to you help us by moving C API "
-"documentation."
-msgstr ""
-"We still have C API documentation in include/groonga.h. But we want to move "
-"them into doc/source/c-api/. We welcome to you help us by moving C API "
-"documentation."
-
-#: ../../../source/contribution/development/test.txt:72
-#: ../../../source/contribution/development/test.txt:81
-#: ../../../source/contribution/development/test.txt:92
-#: ../../../source/contribution/development/test.txt:103
-msgid "実行例::"
-msgstr "実行例::"
-
-#: ../../../source/contribution/development/query.txt:85
-msgid "v1の値とv2の値が等しくないことを表します。"
-msgstr "v1の値とv2の値が等しくないことを表します。"
-
-#: ../../../source/contribution/development/test.txt:110
-msgid ""
-"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
-"いうディレクトリに解析結果のhtmlが出力されます。::"
-msgstr ""
-"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
-"いうディレクトリに解析結果のhtmlが出力されます。::"
-
-#: ../../../source/contribution/development/query.txt:134
-msgid "grn_exprを使って様々な検索クエリを表現することができます。"
-msgstr "grn_exprを使って様々な検索クエリを表現することができます。"
-
-#: ../../../source/contribution/development/document.txt:11
-msgid ""
-"groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
-"以下のように導入します。::"
-msgstr ""
-"groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
-"以下のように導入します。::"
-
-#: ../../../source/contribution/development/test.txt:99
-msgid ""
-"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
-"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
-msgstr ""
-"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
-"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
-
-#: ../../../source/contribution/development/test.txt:9
-msgid "テスト環境の構築"
-msgstr "テスト環境の構築"
-
-#: ../../../source/contribution/development/test.txt:38
-msgid ""
-"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
-"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
-"トールできます。::"
-msgstr ""
-"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
-"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
-"トールできます。::"
-
-#: ../../../source/contribution/development/query.txt:33
-msgid "grn_exprで表現できるクエリ"
-msgstr "grn_exprで表現できるクエリ"
-
-#: ../../../source/contribution/development/test.txt:24
-msgid ""
-"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
-"以下のようにしてインストールできます。::"
-msgstr ""
-"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
-"以下のようにしてインストールできます。::"
+#: ../../../source/contribution/development/query.txt:203
+msgid "検索例4"
+msgstr "検索例4"
 
 #: ../../../source/contribution/development/query.txt:206
 msgid ""
@@ -797,57 +626,142 @@ msgstr ""
 "grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
 "(ctx, table, query, NULL, GRN_OP_OR);"
 
-#: ../../../source/contribution/development/query.txt:96
-msgid "less_equal(v1, v2, arg, callback)"
-msgstr "less_equal(v1, v2, arg, callback)"
-
-#: ../../../source/contribution/development/document.txt:21
-msgid "% make html"
-msgstr "% make html"
-
-#: ../../../source/contribution/development/test.txt:47
-msgid "make check"
-msgstr "make check"
-
-#: ../../../source/contribution/development/document.txt:26
+#: ../../../source/contribution/development/query.txt:213
 msgid ""
-"groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
-"(IPA Gothic/IPAexGothic)が必要となります。"
+"tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
+"が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
+"登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
+"ヒットします。"
 msgstr ""
-"groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
-"(IPA Gothic/IPAexGothic)が必要となります。"
+"tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
+"が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
+"登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
+"ヒットします。"
 
-#: ../../../source/contribution/development/query.txt:176
-msgid "検索例3"
-msgstr "検索例3"
+#: ../../../source/contribution/development/test.txt:6
+msgid "テスト方法"
+msgstr "テスト方法"
 
-#: ../../../source/contribution/development/test.txt:50
-msgid "カバレッジ情報"
-msgstr "カバレッジ情報"
+#: ../../../source/contribution/development/test.txt:9
+msgid "テスト環境の構築"
+msgstr "テスト環境の構築"
+
+#: ../../../source/contribution/development/test.txt:12
+msgid "Cutterのインストール"
+msgstr "Cutterのインストール"
+
+#: ../../../source/contribution/development/test.txt:14
+msgid "groongaは、テストのフレームワークとして Cutter_ を用いています。"
+msgstr "groongaは、テストのフレームワークとして Cutter_ を用いています。"
+
+#: ../../../source/contribution/development/test.txt:16
+msgid ""
+"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
+"覧下さい。"
+msgstr ""
+"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
+"覧下さい。"
+
+#: ../../../source/contribution/development/test.txt:22
+msgid "lcovのインストール"
+msgstr "lcovのインストール"
+
+#: ../../../source/contribution/development/test.txt:24
+msgid ""
+"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
+"以下のようにしてインストールできます。::"
+msgstr ""
+"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
+"以下のようにしてインストールできます。::"
+
+#: ../../../source/contribution/development/test.txt:26
+msgid "% sudo aptitude install -y lcov"
+msgstr "% sudo aptitude install -y lcov"
+
+#: ../../../source/contribution/development/test.txt:29
+msgid "clangのインストール"
+msgstr "clangのインストール"
+
+#: ../../../source/contribution/development/test.txt:31
+msgid ""
+"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
+"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+msgstr ""
+"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
+"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+
+#: ../../../source/contribution/development/test.txt:33
+msgid "% sudo aptitude install -y clang"
+msgstr "% sudo aptitude install -y clang"
 
 #: ../../../source/contribution/development/test.txt:36
 msgid "libmemcachedのインストール"
 msgstr "libmemcachedのインストール"
 
-#: ../../../source/contribution/development/com.txt:18
-msgid "edgeごとにqueueを持つ。"
-msgstr "edgeごとにqueueを持つ。"
-
-#: ../../../source/contribution/development/query.txt:70
+#: ../../../source/contribution/development/test.txt:38
 msgid ""
-"GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
-"ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
-"意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレ"
-"コードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチす"
-"るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
-"チするレコードに対してスコア値の更新のみを行います。"
+"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
+"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
+"トールできます。::"
 msgstr ""
-"GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
-"ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
-"意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレ"
-"コードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチす"
-"るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
-"チするレコードに対してスコア値の更新のみを行います。"
+"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
+"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
+"トールできます。::"
+
+#: ../../../source/contribution/development/test.txt:40
+msgid "% sudo aptitude install -y libmemcached-dev"
+msgstr "% sudo aptitude install -y libmemcached-dev"
+
+#: ../../../source/contribution/development/test.txt:43
+msgid "テストの動作"
+msgstr "テストの動作"
+
+#: ../../../source/contribution/development/test.txt:45
+#: ../../../source/contribution/development/test.txt:52
+msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
+msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
+
+#: ../../../source/contribution/development/test.txt:47
+msgid "make check"
+msgstr "make check"
+
+#: ../../../source/contribution/development/test.txt:50
+msgid "カバレッジ情報"
+msgstr "カバレッジ情報"
+
+#: ../../../source/contribution/development/test.txt:54
+msgid "make coverage"
+msgstr "make coverage"
+
+#: ../../../source/contribution/development/test.txt:56
+msgid ""
+"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
+"す。"
+msgstr ""
+"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
+"す。"
+
+#: ../../../source/contribution/development/test.txt:58
+msgid ""
+"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
+"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
+"トされるようになっていることを心がけてください。"
+msgstr ""
+"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
+"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
+"トされるようになっていることを心がけてください。"
+
+#: ../../../source/contribution/development/test.txt:60
+msgid ""
+"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
+"バーしている部分を増やすことも重要です。"
+msgstr ""
+"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
+"バーしている部分を増やすことも重要です。"
+
+#: ../../../source/contribution/development/test.txt:63
+msgid "様々なテスト"
+msgstr "様々なテスト"
 
 #: ../../../source/contribution/development/test.txt:65
 msgid ""
@@ -859,9 +773,46 @@ msgstr ""
 "も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
 "sh --helpを実行しヘルプをご覧ください。"
 
-#: ../../../source/contribution/development/query.txt:120
-msgid "similar(v1, v2, arg, callback)"
-msgstr "similar(v1, v2, arg, callback)"
+#: ../../../source/contribution/development/test.txt:68
+msgid "特定のテスト関数のみテストする"
+msgstr "特定のテスト関数のみテストする"
+
+#: ../../../source/contribution/development/test.txt:70
+msgid ""
+"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
+msgstr ""
+"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
+
+#: ../../../source/contribution/development/test.txt:72
+#: ../../../source/contribution/development/test.txt:81
+#: ../../../source/contribution/development/test.txt:92
+#: ../../../source/contribution/development/test.txt:103
+msgid "実行例::"
+msgstr "実行例::"
+
+#: ../../../source/contribution/development/test.txt:74
+msgid "% ./run-test.sh -n test_text_otoj"
+msgstr "% ./run-test.sh -n test_text_otoj"
+
+#: ../../../source/contribution/development/test.txt:77
+msgid "特定のテストファイルのみテストする"
+msgstr "特定のテストファイルのみテストする"
+
+#: ../../../source/contribution/development/test.txt:79
+msgid ""
+"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
+"す。"
+msgstr ""
+"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
+"す。"
+
+#: ../../../source/contribution/development/test.txt:83
+msgid "% ./run-test.sh -t test_string"
+msgstr "% ./run-test.sh -t test_string"
+
+#: ../../../source/contribution/development/test.txt:86
+msgid "不正メモリアクセス・メモリリーク検出"
+msgstr "不正メモリアクセス・メモリリーク検出"
 
 #: ../../../source/contribution/development/test.txt:88
 msgid ""
@@ -871,56 +822,362 @@ msgstr ""
 "環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
 "スやメモリリークを検出しつつ、テストを動作させることができます。"
 
-#: ../../../source/contribution/documentation.txt:19
+#: ../../../source/contribution/development/test.txt:90
+#: ../../../source/contribution/development/test.txt:101
+msgid "run-test.shのみならず、make checkでも利用可能です。"
+msgstr "run-test.shのみならず、make checkでも利用可能です。"
+
+#: ../../../source/contribution/development/test.txt:94
+msgid "% CUTTER_CHECK_LEAK=yes make check"
+msgstr "% CUTTER_CHECK_LEAK=yes make check"
+
+#: ../../../source/contribution/development/test.txt:97
+msgid "デバッガ上でのテスト実行"
+msgstr "デバッガ上でのテスト実行"
+
+#: ../../../source/contribution/development/test.txt:99
 msgid ""
-"But we still use Japanese in doc/source/ for now. We need to translate "
-"Japanese documentation in doc/source/ into English. We welcome to you help "
-"us by translating documentation."
+"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
+"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
 msgstr ""
-"But we still use Japanese in doc/source/ for now. We need to translate "
-"Japanese documentation in doc/source/ into English. We welcome to you help "
-"us by translating documentation."
+"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
+"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
 
-#: ../../../source/contribution/development/query.txt:60
-msgid "grn_table_select()"
-msgstr "grn_table_select()"
-
-#: ../../../source/contribution/development/test.txt:16
-msgid ""
-"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
-"覧下さい。"
-msgstr ""
-"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
-"覧下さい。"
-
-#: ../../../source/contribution/development/test.txt:40
-msgid "% sudo aptitude install -y libmemcached-dev"
-msgstr "% sudo aptitude install -y libmemcached-dev"
-
-#: ../../../source/contribution/development/com.txt:10
-msgid "comは1スレッド。"
-msgstr "comは1スレッド。"
-
-#: ../../../source/contribution/development/com.txt:9
-msgid "comが外部からの接続を受け付ける。"
-msgstr "comが外部からの接続を受け付ける。"
-
-#: ../../../source/contribution/development/query.txt:15
-msgid ""
-"クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
-"形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
-msgstr ""
-"クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
-"形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
-
-#: ../../../source/contribution/development/query.txt:28
-msgid "groonga実行ファイル"
-msgstr "groonga実行ファイル"
+#: ../../../source/contribution/development/test.txt:105
+msgid "% CUTTER_DEBUG=yes make check"
+msgstr "% CUTTER_DEBUG=yes make check"
 
 #: ../../../source/contribution/development/test.txt:108
 msgid "静的解析"
 msgstr "静的解析"
 
-#: ../../../source/contribution/development/query.txt:37
-msgid "論理演算子は、以下の3種類があります。 ::"
-msgstr "論理演算子は、以下の3種類があります。 ::"
+#: ../../../source/contribution/development/test.txt:110
+msgid ""
+"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
+"いうディレクトリに解析結果のhtmlが出力されます。::"
+msgstr ""
+"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
+"いうディレクトリに解析結果のhtmlが出力されます。::"
+
+#: ../../../source/contribution/development/test.txt:112
+msgid ""
+"% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
+"scan_build make -j4"
+msgstr ""
+"% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
+"scan_build make -j4"
+
+#: ../../../source/contribution/development/test.txt:116
+msgid "configureは１度のみ実行する必要があります。"
+msgstr "configureは１度のみ実行する必要があります。"
+
+#: ../../../source/contribution/documentation.txt:6
+#, fuzzy
+msgid "How to contribute in documentation topics"
+msgstr "How to contribute documentation"
+
+#: ../../../source/contribution/documentation.txt:8
+msgid "We use Sphinx_ for documentation tool."
+msgstr ""
+
+#: ../../../source/contribution/documentation/c-api.txt:6
+msgid "C API"
+msgstr "C API"
+
+#: ../../../source/contribution/documentation/c-api.txt:8
+#, fuzzy
+msgid ""
+"We still have C API documentation in include/groonga.h. But we want to move "
+"them into doc/source/c-api/*.txt. We welcome to you help us by moving C API "
+"documentation."
+msgstr ""
+"We still have C API documentation in include/groonga.h. But we want to move "
+"them into doc/source/c-api/. We welcome to you help us by moving C API "
+"documentation."
+
+#: ../../../source/contribution/documentation/c-api.txt:12
+msgid "We will use `the C domain markup`_ of Sphinx."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:6
+msgid "I18N"
+msgstr "I18N"
+
+#: ../../../source/contribution/documentation/i18n.txt:8
+#, fuzzy
+msgid ""
+"We only had documentation in Japanese.  We start to support I18N "
+"documentation by gettext based `Sphinx I18N feature`_. We'll use English as "
+"base language and translate English into other languages such as Japanese. "
+"We'll put all documentations into doc/source/ and process them by Sphinx."
+msgstr ""
+"We only had documentation in Japanese.  We start to support I18N "
+"documentation. We'll use English as base language and translate English into "
+"other languages such as Japanese. We'll put documentations into doc/source/ "
+"and process them by Sphinx_."
+
+#: ../../../source/contribution/documentation/i18n.txt:17
+msgid ""
+"But we still use Japanese in doc/source/ for now. We need to translate "
+"Japanese documentation in doc/source/ into English. We welcome to you help "
+"us by translating documentation."
+msgstr ""
+"But we still use Japanese in doc/source/ for now. We need to translate "
+"Japanese documentation in doc/source/ into English. We welcome to you help "
+"us by translating documentation."
+
+#: ../../../source/contribution/documentation/i18n.txt:23
+msgid "Translation flow"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:25
+msgid "After doc/source/\\*.txt are updated, we can start translation."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:27
+msgid "Here is a translation flow:"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:29
+msgid "Clone groonga repository."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:30
+msgid "Update .po files."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:31
+msgid "Edit .po files."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:32
+msgid "Generate HTML files."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:33
+msgid "Confirm HTML output."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:34
+msgid "Repeat 2.-4. until you get good result."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:35
+msgid "Send your works to us!"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:37
+msgid ""
+"Here are command lines to do the above flow. Following sections describes "
+"details."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:42
+msgid ""
+"# Please fork https://github.com/groonga/groonga on GitHub % git clone "
+"https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git % ./autogen.sh % ./"
+"configure % cd doc/locale/${LANGUAGE}/LC_MESSAGES # ${LANGUAGE} is language "
+"code such as 'ja'. % make update # *.po are updated % editor *.po # "
+"translate *.po # you can use your favorite editor % cd .. % make html % "
+"browser html/index.html # confirm translation % git add LC_MESSAGES/*.po % "
+"git commit % git push"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:57
+#, fuzzy
+msgid "How to clone groonga repository"
+msgstr "How to contribute to groonga"
+
+#: ../../../source/contribution/documentation/i18n.txt:59
+msgid ""
+"First, please fork groonga repository easily on GiHub. You just access "
+"https://github.com/groonga/groonga and press `Fork` button. Now you can pull "
+"your groonga repository::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:63
+msgid "% git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:65
+msgid "Then you need to configure your cloned repository::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:67
+msgid "% cd groonga % ./autogen.sh % ./configure"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:71
+msgid "The above steps are just needed at the first setup."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:73
+msgid ""
+"If you have troubles on the above steps, you can use source files available "
+"on http://packages.groonga.org/source/groonga/ ."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:77
+msgid "How to update .po files"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:79
+msgid ""
+"You can update .po files by running `make update` on doc/locale/${LANGUAGE}/"
+"LC_MESSAGES. (Please substitute `${LANGUAGE}` with your language code such "
+"as 'ja'.)::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:83
+msgid "% cd doc/locale/ja/LC_MESSAGES % make update"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:87
+msgid "How to edit .po"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:89
+msgid ""
+"There are some tools to edit .po files. .po files are just text. So you can "
+"use your favorite editor. Here is a specialized editor for .po file edit "
+"list."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:94
+msgid "It is bundled in gettext."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:97
+msgid "It is a .po editor and works on many platform."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:100
+msgid "It is also a .po editor and is implemented as Eclipse plugin."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:107
+msgid "How to generate HTML files"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:109
+msgid ""
+"You can generate HTML files with updated .po files by running `make html` on "
+"doc/locale/${LANGUAGE}. (Please substitute `${LANGUAGE}` with your language "
+"code such as 'ja'.)::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:114
+msgid "% cd doc/locale/ja/ % make update"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:119
+msgid ""
+".mo files are updated automatically by `make update`. So you don't care "
+"about .mo files."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:123
+msgid "How to confirm HTML output"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:125
+msgid ""
+"HTML files are generated in doc/locale/${LANGUAGE}/html/. (Please substitute "
+"`${LANGUAGE}` with your language code such as 'ja'.) You can confirm HTML "
+"output by your favorite editor::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:130
+msgid "% firefox doc/locale/ja/html/index.html"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:133
+msgid "How to send your works"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:135
+msgid ""
+"We can receive your works via pull request on GitHub or E-mail attachment "
+"patch or .po files themselves."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:139
+msgid "How to send pull request"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:141
+msgid "Here are command lines to send pull request::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:143
+msgid "% git add doc/locale/ja/LC_MESSAGES/*.po % git commit % git push"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:147
+msgid ""
+"Now you can send pull request on GitHub. You just access your repository "
+"page on GitHub and press `Pull Request` button."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:156
+msgid "How to send patch"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:158
+msgid "Here are command lines to create patch::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:160
+msgid ""
+"% git add doc/locale/ja/LC_MESSAGES/*.po % git commit % git format-patch "
+"origin/master"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:164
+msgid ""
+"You can find 000X-YYY.patch files in the current directory. Please send "
+"those files to us!"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:168
+msgid "How to send .po files"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:170
+msgid ""
+"Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please substitute `"
+"${LANGUAGE}` with your language code such as 'ja'.) and send it to us! We "
+"extract and merge them to the groonga repository."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:176
+msgid "How to add new language"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:178
+msgid "Here are command lines to add new translation language::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:180
+msgid ""
+"% cd doc/locale % make add LOCALE=${LANGUAGE} # specify your language code "
+"such as 'de'."
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:183
+msgid "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
+msgstr ""
+
+#: ../../../source/contribution/report.txt:6
+msgid "How to report a bug"
+msgstr "How to report a bug"
+
+#: ../../../source/contribution/report.txt:8
+msgid ""
+"We have two issue tracking systems, Redmine_ and `GitHub issue tracker`_. "
+"Redmine is for Japanese and GitHub issue tracker is for English. You can use "
+"both of them to report a bug."
+msgstr ""
+"We have two issue tracking systems, Redmine_ and `GitHub issue tracker`_. "
+"Redmine is for Japanese and GitHub issue tracker is for English. You can use "
+"both of them to report a bug."
