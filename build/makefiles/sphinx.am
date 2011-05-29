@@ -26,6 +26,7 @@ man_files =					\
 	man/groonga.1
 
 generated_files =				\
+	$(DOCTREES_BASE)			\
 	man					\
 	man-build-stamp				\
 	html					\
@@ -294,11 +295,16 @@ html_files = \
 	html/_sources/commands/table_remove.txt \
 	html/_sources/commands/view_add.txt \
 	html/_sources/community.txt \
-	html/_sources/developer.txt \
-	html/_sources/developer/com.txt \
-	html/_sources/developer/document.txt \
-	html/_sources/developer/query.txt \
-	html/_sources/developer/test.txt \
+	html/_sources/contribution.txt \
+	html/_sources/contribution/development.txt \
+	html/_sources/contribution/development/com.txt \
+	html/_sources/contribution/development/document.txt \
+	html/_sources/contribution/development/query.txt \
+	html/_sources/contribution/development/test.txt \
+	html/_sources/contribution/documentation.txt \
+	html/_sources/contribution/documentation/c-api.txt \
+	html/_sources/contribution/documentation/i18n.txt \
+	html/_sources/contribution/report.txt \
 	html/_sources/execfile.txt \
 	html/_sources/expr.txt \
 	html/_sources/functions.txt \
@@ -393,11 +399,16 @@ html_files = \
 	html/commands/table_remove.html \
 	html/commands/view_add.html \
 	html/community.html \
-	html/developer.html \
-	html/developer/com.html \
-	html/developer/document.html \
-	html/developer/query.html \
-	html/developer/test.html \
+	html/contribution.html \
+	html/contribution/development.html \
+	html/contribution/development/com.html \
+	html/contribution/development/document.html \
+	html/contribution/development/query.html \
+	html/contribution/development/test.html \
+	html/contribution/documentation.html \
+	html/contribution/documentation/c-api.html \
+	html/contribution/documentation/i18n.html \
+	html/contribution/report.html \
 	html/execfile.html \
 	html/expr.html \
 	html/functions.html \
