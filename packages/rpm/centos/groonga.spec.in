@@ -218,8 +218,8 @@ fi
 
 %files doc
 %defattr(-,root,root,-)
-+%doc README AUTHORS COPYING
-+%doc groonga-doc/*
+%doc README AUTHORS COPYING
+%doc groonga-doc/*
 
 %files devel
 %defattr(-,root,root,-)
