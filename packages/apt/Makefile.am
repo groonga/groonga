@@ -1,7 +1,7 @@
 DISTRIBUTIONS = debian ubuntu
 CHROOT_BASE = /var/lib/chroot
 ARCHITECTURES = amd64
-CODES = squeeze wheezy unstable lucid maverick natty
+CODES = squeeze wheezy unstable lucid natty
 
 all:
 
