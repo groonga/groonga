@@ -56,9 +56,9 @@ sections describes details.
 How to clone groonga repository
 -------------------------------
 
-First, please fork groonga repository easily on GiHub. You
+First, please fork groonga repository on GitHub. You
 just access https://github.com/groonga/groonga and press
-`Fork` button. Now you can pull your groonga repository::
+`Fork` button. Now you can clone your groonga repository::
 
   % git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
 
@@ -112,11 +112,11 @@ substitute `${LANGUAGE}` with your language code such as
 'ja'.)::
 
   % cd doc/locale/ja/
-  % make update
+  % make html
 
 .. note::
 
-   .mo files are updated automatically by `make update`. So
+   .mo files are updated automatically by `make html`. So
    you don't care about .mo files.
 
 How to confirm HTML output
@@ -125,7 +125,7 @@ How to confirm HTML output
 HTML files are generated in
 doc/locale/${LANGUAGE}/html/. (Please substitute
 `${LANGUAGE}` with your language code such as 'ja'.) You can
-confirm HTML output by your favorite editor::
+confirm HTML output by your favorite browser::
 
   % firefox doc/locale/ja/html/index.html
 
@@ -164,6 +164,8 @@ Here are command lines to create patch::
 You can find 000X-YYY.patch files in the current
 directory. Please send those files to us!
 
+.. seealso:: :doc:`/community` describes our contact information.
+
 How to send .po files
 +++++++++++++++++++++
 
@@ -171,6 +173,8 @@ Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please
 substitute `${LANGUAGE}` with your language code such as
 'ja'.) and send it to us! We extract and merge them to the
 groonga repository.
+
+.. seealso:: :doc:`/community` describes our contact information.
 
 How to add new language
 -----------------------
@@ -182,3 +186,7 @@ Here are command lines to add new translation language::
 
 Please substitute `${LANGUAGE}` with your language code such
 as 'ja'.
+
+.. seealso:: `Codes for the Representation of Names of Languages`_.
+
+.. _Codes for the Representation of Names of Languages: http://www.loc.gov/standards/iso639-2/php/English_list.php

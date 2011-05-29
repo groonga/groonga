@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-28 16:26\n"
+"POT-Creation-Date: 2011-05-29 12:28\n"
 "PO-Revision-Date: 2011-05-28 16:26+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -129,7 +129,8 @@ msgid ""
 msgstr ""
 
 #: ../../../source/install.txt:126
-msgid "Fedora 14"
+#, fuzzy
+msgid "Fedora 15"
 msgstr "Fedora 14"
 
 #: ../../../source/install.txt:134

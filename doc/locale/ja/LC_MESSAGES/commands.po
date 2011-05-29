@@ -1,12 +1,3 @@
-msgid "[[[件数], [[カラム名1,カラム型1],..], 検索結果1,..],..]"
-msgstr ""
-
-msgid "[[検索件数], [[カラム名1,カラム型1],..], 検索結果1,..]"
-msgstr ""
-
-msgid "[-]カラム名1, [-]カラム名2, [-]カラム名3, ..."
-msgstr ""
-
 # Japanese translations for 1.2.1 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
@@ -16,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-28 14:31\n"
+"POT-Creation-Date: 2011-05-29 13:49\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -2308,4 +2299,16 @@ msgstr ""
 
 #: ../../../source/commands/view_add.txt:54
 msgid "view_add Ventry Entry [true]"
+msgstr ""
+
+#: sphinx-built-in-message:0
+msgid "[-]カラム名1, [-]カラム名2, [-]カラム名3, ..."
+msgstr ""
+
+#: sphinx-built-in-message:0
+msgid "[[[件数], [[カラム名1,カラム型1],..], 検索結果1,..],..]"
+msgstr ""
+
+#: sphinx-built-in-message:0
+msgid "[[検索件数], [[カラム名1,カラム型1],..], 検索結果1,..]"
 msgstr ""

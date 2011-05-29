@@ -5,9 +5,9 @@
 How to contribute to groonga
 ============================
 
-There are some topics for contributing to groonga. They are
-use, introduction, bug report, development and
-documentation.
+We are welcome to you contribute the groonga project. There
+are many ways to contribute such as use, introduction, bug
+report, development and documentation.
 
 Use:
   Please read this document.
