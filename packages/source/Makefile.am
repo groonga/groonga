@@ -16,4 +16,4 @@ upload: ensure-rsync-path files/$(PACKAGE)-$(VERSION).tar.gz
 
 files/$(PACKAGE)-$(VERSION).tar.gz: $(top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
 	mkdir -p files
-	cp -p $@ $>
+	cp -p $< $@
