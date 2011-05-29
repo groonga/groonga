@@ -1,5 +1,7 @@
 usr/bin/groonga
 usr/bin/grntest
-usr/share/groonga/admin_html/*
+usr/share/groonga/examples/*
+usr/share/groonga/html/*
 usr/share/man/man1/*
+usr/share/man/*/man1/*
 etc/groonga/*
