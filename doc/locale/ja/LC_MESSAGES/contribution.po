@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-05-29 13:49\n"
-"PO-Revision-Date: 2011-05-29 13:52+0900\n"
+"PO-Revision-Date: 2011-05-29 14:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../../source/contribution.txt:6
 msgid "How to contribute to groonga"
-msgstr "groongaへの貢献方法"
+msgstr "groongaへのコントリビュート方法"
 
 #: ../../../source/contribution.txt:8
 msgid ""
