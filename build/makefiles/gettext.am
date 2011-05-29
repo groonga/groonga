@@ -27,7 +27,7 @@ man: build
 pdf: build
 
 gettext: sphinx-ensure-updated
-	$(SPHINX_BUILD_COMMAND) -d doctrees -b gettext $(ALLSPHINXOPTS) .
+	$(SPHINX_BUILD_COMMAND) -b gettext $(ALLSPHINXOPTS) .
 	xgettext --language Python --output conf.pot ../../../source/conf.py
 
 init: gettext

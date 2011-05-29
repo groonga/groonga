@@ -25,6 +25,33 @@ po_files = \
 	type.po \
 	$(NULL)
 
+# (cd ../../doc/locale/en; echo "po_files_relative_from_locale_dir = \\"; find LC_MESSAGES -type f -name '*.pot' | sort | sed -e 's,^,\t,g' -e 's,pot$,po \\,'; echo -n "\t\$(NULL)")
+po_files_relative_from_locale_dir = \
+	LC_MESSAGES/characteristic.po \
+	LC_MESSAGES/command_version.po \
+	LC_MESSAGES/commands.po \
+	LC_MESSAGES/community.po \
+	LC_MESSAGES/conf.po \
+	LC_MESSAGES/contribution.po \
+	LC_MESSAGES/execfile.po \
+	LC_MESSAGES/expr.po \
+	LC_MESSAGES/functions.po \
+	LC_MESSAGES/grnslap.po \
+	LC_MESSAGES/grntest.po \
+	LC_MESSAGES/http.po \
+	LC_MESSAGES/index.po \
+	LC_MESSAGES/install.po \
+	LC_MESSAGES/limitations.po \
+	LC_MESSAGES/news.po \
+	LC_MESSAGES/process.po \
+	LC_MESSAGES/pseudo_column.po \
+	LC_MESSAGES/reference.po \
+	LC_MESSAGES/spec.po \
+	LC_MESSAGES/troubleshooting.po \
+	LC_MESSAGES/tutorial.po \
+	LC_MESSAGES/type.po \
+	$(NULL)
+
 # (cd ../../doc/locale/en/LC_MESSAGES; echo "mo_files = \\"; find . -type f -name '*.pot' | sort | sed -e 's,^\./,\t,g' -e 's,pot$,mo \\,'; echo -n "\t\$(NULL)")
 mo_files = \
 	characteristic.mo \

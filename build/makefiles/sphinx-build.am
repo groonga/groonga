@@ -1,6 +1,4 @@
 # You can set these variables from the command line.
-DOCTREES_BASE = doctrees
-
 SPHINXOPTS    =
 PAPER         =
 
@@ -8,7 +6,7 @@ PAPER         =
 SOURCE_DIR      = $(abs_top_srcdir)/doc/source
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) $(SOURCE_DIR)
+ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) -E $(SPHINXOPTS) $(SOURCE_DIR)
 
 SPHINX_DIR = $(abs_top_builddir)/doc/sphinx
 SPHINX_BUILD = $(SPHINX_DIR)/sphinx-build.py
@@ -66,6 +64,8 @@ source_files = \
 	$(top_srcdir)/doc/source/contribution/development/query.txt \
 	$(top_srcdir)/doc/source/contribution/development/test.txt \
 	$(top_srcdir)/doc/source/contribution/documentation.txt \
+	$(top_srcdir)/doc/source/contribution/documentation/c-api.txt \
+	$(top_srcdir)/doc/source/contribution/documentation/i18n.txt \
 	$(top_srcdir)/doc/source/contribution/report.txt \
 	$(top_srcdir)/doc/source/example/tutorial01-1.log \
 	$(top_srcdir)/doc/source/example/tutorial01-10.log \
