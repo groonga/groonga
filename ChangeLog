@@ -1,4 +1,118 @@
+2011-05-29 Kouhei Sutou <kou@clear-code.com>
+
+	* doc/Makefile.am: [doc] add missing files.
+
+	* build/makefiles/sphinx.am: [build] update generated HTML files.
+
+	* doc/locale/ja/LC_MESSAGES/contribution.po: [doc][ja] improve.
+
+	* doc/locale/ja/LC_MESSAGES/commands.po,
+	doc/locale/ja/LC_MESSAGES/contribution.po,
+	doc/locale/ja/LC_MESSAGES/expr.po,
+	doc/locale/ja/LC_MESSAGES/grntest.po,
+	doc/locale/ja/LC_MESSAGES/install.po, doc/source/contribution.txt,
+	doc/source/contribution/documentation/c-api.txt,
+	doc/source/contribution/documentation/i18n.txt: [doc] update
+	contribution documents.
+
+	* build/makefiles/gettext.am, build/makefiles/sphinx-build.am,
+	build/makefiles/sphinx.am: [build][doc] re-add doctree related
+	options.
+
+	* build/makefiles/gettext-files.am, build/makefiles/gettext.am,
+	build/makefiles/sphinx-build.am, build/makefiles/sphinx.am: [doc] fix
+	dependencies on doc/local/${LANGUAGE}/ directory.
+
+	* doc/locale/en/LC_MESSAGES/contribution.po,
+	doc/locale/en/LC_MESSAGES/install.po: [doc][en] update po.
+
+	* doc/source/contribution.txt,
+	doc/source/contribution/documentation.txt,
+	doc/source/contribution/documentation/c-api.txt,
+	doc/source/contribution/documentation/i18n.txt: [doc] add more
+	information about I18N.
+
+	* packages/rpm/centos/groonga.spec.in: [rpm][centos] remove garbages.
+
+	* packages/apt/Makefile.am: [ubuntu] remove maverick support.
+
+	* doc/source/install.txt: [doc] Fedora 14 -> 15.
+
+	* packages/rpm/centos/groonga.spec.in,
+	packages/rpm/fedora/groonga.spec.in: [rpm] install documents into
+	correct location.
+
+	* packages/debian/groonga-doc.install,
+	packages/debian/groonga-doc.links, packages/debian/rules: [debian]
+	install documents to /usr/share/doc/groogna-doc/.
+
+	* packages/debian/control, packages/debian/groonga-doc.links: [debian]
+	use packaged jQuery.
+
+	* packages/debian/groonga-bin.install: [debian] remove duplicated
+	files.
+
+	* packages/debian/control: [debian] fix examples section.
+
+	* packages/debian/control, packages/debian/groonga-examples.install:
+	[debian] split examples package.
+
+	* packages/debian/groonga-bin.install: [debian] follow directory
+	structure changes.
+
+	* packages/debian/groonga-doc.docs,
+	packages/debian/groonga-doc.install: [debian][doc] use installed
+	document.
+
+	* packages/debian/control: [debian] fix
+	description-synopsis-starts-with-article warning.
+
+	* packages/rpm/centos/groonga.spec.in,
+	packages/rpm/fedora/groonga.spec.in: [rpm] add missing man in
+	Japanese.
+
+	* packages/rpm/centos/groonga.spec.in,
+	packages/rpm/fedora/groonga.spec.in: [rpm] follow document directory
+	change.
+
+	* build/makefiles/sphinx.am: [doc] add convenience target for 'make
+	dist'.
+
+	* doc/locale/ja/LC_MESSAGES/contribution.po: [doc][ja] add missing po.
+
+	* doc/Makefile.am: add missing files.
+
+	* build/makefiles/gettext-files.am, build/makefiles/sphinx-build.am,
+	doc/locale/en/LC_MESSAGES/characteristic.po,
+	doc/locale/en/LC_MESSAGES/commands.po,
+	doc/locale/en/LC_MESSAGES/community.po,
+	doc/locale/en/LC_MESSAGES/contribution.po,
+	doc/locale/en/LC_MESSAGES/execfile.po,
+	doc/locale/en/LC_MESSAGES/install.po,
+	doc/locale/en/LC_MESSAGES/news.po, doc/source/contribution.txt,
+	doc/source/contribution/development.txt,
+	doc/source/contribution/development/com.txt,
+	doc/source/contribution/development/document.txt,
+	doc/source/contribution/development/query.txt,
+	doc/source/contribution/development/test.txt,
+	doc/source/contribution/documentation.txt,
+	doc/source/contribution/report.txt, doc/source/developer.txt,
+	doc/source/developer/com.txt, doc/source/developer/document.txt,
+	doc/source/developer/query.txt, doc/source/developer/test.txt,
+	doc/source/index.txt: [doc] add contribution page.
+
+	* .gitignore: update ignore files.
+
 2011-05-28 Kouhei Sutou <kou@clear-code.com>
+
+	* packages/yum/build-in-chroot.sh, packages/yum/build-rpm.sh: [yum]
+	use Fedora 15.
+
+	* : update ChangeLog.
+
+	* packages/debian/changelog: add 1.2.2 entry.
+
+	* release/gitlog2changelog.py: [ChangeLog] use tab instead of a space.
 
 	* doc/locale/ja/LC_MESSAGES/install.po, doc/source/install.txt: [doc]
 	use 'note' markup.
