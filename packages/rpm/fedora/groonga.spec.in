@@ -58,7 +58,6 @@ This package contains the groonga server
 Summary:	Documentation for groonga
 Group:		Documentation
 License:	LGPLv2 and BSD
-Requires:	%{name}-libs = %{version}-%{release}
 
 %description doc
 Documentation for groonga
@@ -158,6 +157,8 @@ make %{?_smp_mflags}
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm $RPM_BUILD_ROOT%{_libdir}/groonga/plugins/*/*.la
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
+
+mv $RPM_BUILD_ROOT%{_datadir}/doc/groonga groonga-doc
 
 mkdir -p $RPM_BUILD_ROOT%{_initddir}
 mv $RPM_BUILD_ROOT%{_sysconfdir}/groonga/init.d/redhat/groonga \
@@ -262,7 +263,8 @@ fi
 
 %files doc
 %defattr(-,root,root,-)
-%doc %{_datadir}/doc/groonga/
+%doc README AUTHORS COPYING
+%doc groonga-doc/*
 
 %files devel
 %defattr(-,root,root,-)
