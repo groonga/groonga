@@ -37,6 +37,7 @@ void test_no_key_table(void);
 void test_two_bigram_indexes_to_key(void);
 void test_invalid_start_with_symbol(void);
 void test_no_key_table_without_columns(void);
+void test_nonexistent_table_name(void);
 void test_invalid_table_name(void);
 
 static gchar *tmp_directory;
@@ -469,7 +470,7 @@ test_no_key_table_without_columns(void)
 }
 
 void
-test_invalid_table_name(void)
+test_nonexistent_table_name(void)
 {
   grn_test_assert_send_command_error(context,
                                      GRN_INVALID_ARGUMENT,
@@ -478,4 +479,18 @@ test_invalid_table_name(void)
                                      "[\n"
                                      "[\"_key\": \"alice\"]\n"
                                      "]");
+}
+
+void
+test_invalid_table_name(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][load]: name can't start with '_' and 0-9, "
+    "and contains only 0-9, A-Z, a-z, or _: <_Users>",
+    "load --table _Users\n"
+    "[\n"
+    "[\"_key\": \"alice\"]\n"
+    "]");
 }

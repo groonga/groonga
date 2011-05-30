@@ -8249,6 +8249,10 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
   if (table && table_len) {
     grn_ctx_loader_clear(ctx);
     loader->input_type = input_type;
+    if (grn_db_check_name(ctx, table, table_len)) {
+      GRN_DB_CHECK_NAME_ERR("[table][load]", table, table_len);
+      goto exit;
+    }
     loader->table = grn_ctx_get(ctx, table, table_len);
     if (!loader->table) {
       ERR(GRN_INVALID_ARGUMENT, "nonexistent table: <%.*s>", table_len, table);
