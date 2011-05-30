@@ -61,33 +61,37 @@ current_statistics = {}
 statistics = []
 ARGF.each_line do |line|
   case line
-  when /\A(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)\.(\d+)\|(.+?)\|>/
+  when /\A(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)\.(\d+)\|(.+?)\|([>:<])/
     year, month, day, hour, minutes, seconds, micro_seconds =
       $1, $2, $3, $4, $5, $6, $7
     context_id = $8
-    command = $POSTMATCH.strip
-    start_time = Time.local(year, month, day, hour, minutes, seconds,
-                            micro_seconds)
-    statistic = Statistic.new(context_id)
-    statistic.start_time = start_time
-    statistic.command = command
-    current_statistics[context_id] = statistic
-  when /\A\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d+\|(.+?)\|:(\d+) /
-    context_id = $1
-    elapsed = $2
-    label = $POSTMATCH.strip
-    statistic = current_statistics[context_id]
-    next if statistic.nil?
-    statistic.trace << [elapsed.to_i, label]
-  when /\A\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d+\|(.+?)\|<(\d+) rc=(\d+)/
-    context_id = $1
-    elapsed = $2
-    return_code = $3
-    statistic = current_statistics.delete(context_id)
-    next if statistic.nil?
-    statistic.elapsed = elapsed.to_i
-    statistic.return_code = return_code.to_i
-    statistics << statistic
+    type = $9
+    rest = $POSTMATCH.strip
+    case type
+    when ">"
+      start_time = Time.local(year, month, day, hour, minutes, seconds,
+                              micro_seconds)
+      statistic = Statistic.new(context_id)
+      statistic.start_time = start_time
+      statistic.command = rest
+      current_statistics[context_id] = statistic
+    when ":"
+      next unless /\A(\d+) / =~ rest
+      elapsed = $1
+      label = $POSTMATCH.strip
+      statistic = current_statistics[context_id]
+      next if statistic.nil?
+      statistic.trace << [elapsed.to_i, label]
+    when "<"
+      next unless /\A(\d+) rc=(\d+)/ =~ rest
+      elapsed = $1
+      return_code = $2
+      statistic = current_statistics.delete(context_id)
+      next if statistic.nil?
+      statistic.elapsed = elapsed.to_i
+      statistic.return_code = return_code.to_i
+      statistics << statistic
+    end
   end
 end
 
