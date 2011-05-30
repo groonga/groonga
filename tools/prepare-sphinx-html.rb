@@ -77,6 +77,8 @@ def insert_facebook_html_header(html, language)
       });
     };
     </script>
+
+    <link rel="stylesheet" href="/css/sphinx.css" type="text/css" />
   </head>
     HTML
   end

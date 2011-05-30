@@ -65,7 +65,10 @@ div.header h1.title a:visited
 div.header h1.title a
 {
     display: block;
-    height: 125px;
+    height: 105px;
+    position: relative;
+    top: 20px;
+    left: 0;
 }
 
 div.header h1.title span
@@ -83,13 +86,13 @@ div.header h1.title span.separator
 
 div.header h1.title span.description
 {
-    padding-top: 30px;
+    padding-top: 10px;
 }
 
 div.header div.facebook-buttons
 {
     position: absolute;
-    top: 30px;
+    top: 10px;
     right: 10px;
     border: #992e1d 2px solid;
     background-color: white;
@@ -99,7 +102,7 @@ div.header div.facebook-buttons
     padding-top: 10px;
     padding-left: 10px;
     width: 320px;
-    height: 70px;
+    height: 90px;
 }
 
 div.header div.other-language-links
