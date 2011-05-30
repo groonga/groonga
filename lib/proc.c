@@ -1246,8 +1246,8 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data, grn_obj **ta
 
   key_text = GRN_TEXT_VALUE(VAR(1));
   key_length = GRN_TEXT_LEN(VAR(1));
-  id_text = GRN_TEXT_VALUE(VAR(4));
-  id_length = GRN_TEXT_LEN(VAR(4));
+  id_text = GRN_TEXT_VALUE(VAR(3));
+  id_length = GRN_TEXT_LEN(VAR(3));
   switch ((*table)->header.type) {
   case GRN_TABLE_NO_KEY:
     if (key_length) {
