@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010  Nobuyoshi Nakada <nakada@clear-code.com>
+# Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -63,10 +64,11 @@ class OptionTest < Test::Unit::TestCase
     end
   end
 
+  # FIXME: This test is too dirty. It should be split.
   def test_config_path
     test_options = %W[
       port=1.1.1.1 encoding=none encoding=euc-jp
-      max-threads=12345 address=localhost
+      max-threads=12345 bind-address=localhost
       log-level=1 server=localhost
     ]
     config_file = File.join(@tmp_dir, "test-option.config")
@@ -81,25 +83,29 @@ class OptionTest < Test::Unit::TestCase
                                 [CONFIG_ENV, "--config-path=#{config_file}"])
     assert_predicate(status, :success?)
 
-    default_config = run_groonga("--show-config")
+    default_config = run_groonga("--show-config").split(/\n/)
 
     test_options.each do |opt|
-      status = assert_run_groonga([opt, default_config].join("\n"),
+      status = assert_run_groonga(([opt] + default_config).sort.join("\n"),
                                   "",
                                   [CONFIG_ENV,
                                    "--#{opt}",
                                    "--config-path=#{config_file}",
-                                   "--show-config"])
+                                   "--show-config"]) do |stdout, stderr|
+        [stdout.split(/\n/).sort.join("\n"), stderr]
+      end
       assert_predicate(status, :success?)
     end
 
     test_options.each do |opt|
       open(config_file, "w") {|f| f.puts opt}
-      status = assert_run_groonga([opt, default_config].join("\n"),
+      status = assert_run_groonga(([opt] + default_config).sort.join("\n"),
                                   "",
                                   [CONFIG_ENV,
                                    "--config-path=#{config_file}",
-                                   "--show-config"])
+                                   "--show-config"]) do |stdout, stderr|
+        [stdout.split(/\n/).sort.join("\n"), stderr]
+      end
       assert_predicate(status, :success?)
     end
   ensure

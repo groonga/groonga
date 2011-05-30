@@ -248,20 +248,17 @@ module GroongaTestUtils
                           :capture_error => true)
     stdout, stderr, status = invoke_groonga(*args)
     assert_not_predicate(status, :signaled?)
-    if block_given?
-      yield(stdout, stderr)
+    stdout, stderr = yield(stdout, stderr) if block_given?
+    if test_stderr.is_a?(Regexp)
+      assert_match(test_stderr, stderr, message)
     else
-      if test_stderr.is_a?(Regexp)
-        assert_match(test_stderr, stderr, message)
-      else
-        assert_equal(test_stderr, stderr, message)
-      end
-      if test_stdout.is_a?(Regexp)
-        assert_match(test_stdout, stdout, message)
-      else
-        assert_equal(test_stdout, stdout, message)
-      end
-      status
+      assert_equal(test_stderr, stderr, message)
     end
+    if test_stdout.is_a?(Regexp)
+      assert_match(test_stdout, stdout, message)
+    else
+      assert_equal(test_stdout, stdout, message)
+    end
+    status
   end
 end
