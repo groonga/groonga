@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -199,6 +199,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_dot_name
     response = get(command_path(:table_create, :name => "mori.daijiro"))
     assert_error_response(Result::INVALID_ARGUMENT,
+                          "[table][create]: " +
                           "name can't start with '_' and 0-9, " +
                           "and contains only 0-9, A-Z, a-z, or _: " +
                           "<mori.daijiro>",
@@ -209,6 +210,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_under_score_started_name
     response = get(command_path(:table_create, :name => "_mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
+                          "[table][create]: " +
                           "name can't start with '_' and 0-9, " +
                           "and contains only 0-9, A-Z, a-z, or _: " +
                           "<_mori>",
@@ -224,6 +226,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_with_colon_name
     response = get(command_path(:table_create, :name => "daijiro:mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
+                          "[table][create]: " +
                           "name can't start with '_' and 0-9, " +
                           "and contains only 0-9, A-Z, a-z, or _: " +
                           "<daijiro:mori>",
