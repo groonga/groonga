@@ -5,9 +5,17 @@ require 'ostruct'
 require 'optparse'
 
 options = OpenStruct.new
+options.n_entries = 10
 
 option_parser = OptionParser.new do |parser|
   parser.banner += " LOG1 ..."
+
+  parser.on("-n", "--n-entries=N",
+            Integer,
+            "Show top N entries",
+            "(#{options.n_entries})") do |n|
+    options.n_entries = n
+  end
 end
 
 option_parser.parse!(ARGV)
@@ -99,8 +107,9 @@ elapsed_sorted_statistics = statistics.sort_by do |statistic|
   -statistic.elapsed
 end
 
-elapsed_sorted_statistics[0, 10].each_with_index do |statistic, i|
-  puts "%2d) %s" % [i + 1, statistic.label]
+digit = Math.log10(options.n_entries).truncate + 1
+elapsed_sorted_statistics[0, options.n_entries].each_with_index do |statistic, i|
+  puts "%*d) %s" % [digit, i + 1, statistic.label]
   statistic.each_trace_report do |report|
     puts "   #{report}"
   end
