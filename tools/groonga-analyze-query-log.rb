@@ -6,6 +6,7 @@ require 'optparse'
 
 options = OpenStruct.new
 options.n_entries = 10
+options.order = "-elapsed"
 
 option_parser = OptionParser.new do |parser|
   parser.banner += " LOG1 ..."
@@ -15,6 +16,15 @@ option_parser = OptionParser.new do |parser|
             "Show top N entries",
             "(#{options.n_entries})") do |n|
     options.n_entries = n
+  end
+
+  available_orders = ["elapsed", "-elapsed", "start-time", "-start-time"]
+  parser.on("--order=ORDER",
+            available_orders,
+            "Sort by ORDER",
+            "available values: [#{available_orders.join(', ')}]",
+            "(#{options.order})") do |order|
+    options.order = order
   end
 end
 
@@ -122,7 +132,7 @@ class QueryLogReporter
   attr_accessor :n_entries
   def initialize(statistics)
     @statistics = statistics
-    @order = :elapsed
+    @order = "-elapsed"
     @n_entries = 10
     @sorted_statistics = nil
   end
@@ -147,9 +157,17 @@ class QueryLogReporter
   private
   def sorter
     case @order
-    when :elapsed
+    when "elapsed"
       lambda do |statistic|
         -statistic.elapsed
+      end
+    when "-elapsed"
+      lambda do |statistic|
+        -statistic.elapsed
+      end
+    when "-start-time"
+      lambda do |statistic|
+        -statistic.start_time
       end
     else
       lambda do |statistic|
@@ -176,5 +194,6 @@ parser = QueryLogParser.new
 parser.parse(ARGF)
 
 reporter = ConsoleQueryLogReporter.new(parser.statistics)
+reporter.order = options.order
 reporter.n_entries = options.n_entries
 reporter.report
