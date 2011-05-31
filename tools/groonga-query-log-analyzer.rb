@@ -69,7 +69,10 @@ class GroongaQueryLogAnaylzer
           key, value = parameter_string.split(/\=/, 2)
           parameters[key] = CGI.unescape(value)
         end
-        new(name.gsub(/\A\/d\//, ''), parameters)
+        name = name.gsub(/\A\/d\//, '')
+        name, output_type = name.split(/\./, 2)
+        parameters["output_type"] = output_type if output_type
+        new(name, parameters)
       end
     end
 
@@ -77,6 +80,12 @@ class GroongaQueryLogAnaylzer
     def initialize(name, parameters)
       @name = name
       @parameters = parameters
+    end
+
+    def ==(other)
+      other.is_a?(self.class) and
+        @name == other.name and
+        @parameters == other.parameters
     end
   end
 

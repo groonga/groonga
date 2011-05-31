@@ -63,6 +63,7 @@ $LOAD_PATH.unshift(File.join(json_dir, "lib"))
 
 
 $LOAD_PATH.unshift(File.join(base_dir, "lib", "ruby"))
+$LOAD_PATH.unshift(File.expand_path(File.join(base_dir, "..", "..", "tools")))
 
 require 'groonga-test-utils'
 require 'groonga-http-test-utils'
