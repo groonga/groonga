@@ -97,11 +97,11 @@ class Statistic
   end
 
   def label
-    "[%s-%s (%g)](%d): %s" % [format_time(start_time),
-                              format_time(end_time),
-                              nano_seconds_to_seconds(elapsed),
-                              return_code,
-                              raw_command]
+    "[%s-%s (%8.8f)](%d): %s" % [format_time(start_time),
+                                 format_time(end_time),
+                                 nano_seconds_to_seconds(elapsed),
+                                 return_code,
+                                 raw_command]
   end
 
   def each_trace_report
@@ -134,8 +134,6 @@ class Statistic
     case label
     when /\Afilter\(/
       "#{label} <#{@select_command.filters[i]}>"
-    when /\Aselect\(/
-      label
     when /\Asort\(/
       "#{label} <#{@select_command.sortby}>"
     when /\Aoutput\(/
