@@ -411,7 +411,7 @@ extern grn_timeval grn_starttime;
   uint64_t et;\
   grn_timeval tv;\
   grn_timeval_now(ctx, &tv);\
-  et = (tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC\
+  et = (uint64_t)(tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC\
     + (tv.tv_nsec - ctx->impl->tv.tv_nsec);\
   GRN_LOG(ctx, GRN_LOG_NONE, "%08x|" prefix "%015llu " format, (intptr_t)ctx, et, __VA_ARGS__);\
 }
