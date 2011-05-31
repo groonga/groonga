@@ -65,53 +65,116 @@ class Statistic
   end
 end
 
-current_statistics = {}
-statistics = []
-ARGF.each_line do |line|
-  case line
-  when /\A(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)\.(\d+)\|(.+?)\|([>:<])/
-    year, month, day, hour, minutes, seconds, micro_seconds =
-      $1, $2, $3, $4, $5, $6, $7
-    context_id = $8
-    type = $9
-    rest = $POSTMATCH.strip
+class QueryLogParser
+  attr_reader :statistics
+  def initialize
+    @statistics = []
+  end
+
+  def parse(input)
+    current_statistics = {}
+    input.each_line do |line|
+      case line
+      when /\A(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)\.(\d+)\|(.+?)\|([>:<])/
+        year, month, day, hour, minutes, seconds, micro_seconds =
+          $1, $2, $3, $4, $5, $6, $7
+        context_id = $8
+        type = $9
+        rest = $POSTMATCH.strip
+        time_stamp = Time.local(year, month, day, hour, minutes, seconds,
+                                micro_seconds)
+        parse_line(current_statistics, time_stamp, context_id, type, rest)
+      end
+    end
+  end
+
+  private
+  def parse_line(current_statistics, time_stamp, context_id, type, rest)
     case type
     when ">"
-      start_time = Time.local(year, month, day, hour, minutes, seconds,
-                              micro_seconds)
       statistic = Statistic.new(context_id)
-      statistic.start_time = start_time
+      statistic.start_time = time_stamp
       statistic.command = rest
       current_statistics[context_id] = statistic
     when ":"
-      next unless /\A(\d+) / =~ rest
+      return unless /\A(\d+) / =~ rest
       elapsed = $1
       label = $POSTMATCH.strip
       statistic = current_statistics[context_id]
-      next if statistic.nil?
+      return if statistic.nil?
       statistic.trace << [elapsed.to_i, label]
     when "<"
-      next unless /\A(\d+) rc=(\d+)/ =~ rest
+      return unless /\A(\d+) rc=(\d+)/ =~ rest
       elapsed = $1
       return_code = $2
       statistic = current_statistics.delete(context_id)
-      next if statistic.nil?
+      return if statistic.nil?
       statistic.elapsed = elapsed.to_i
       statistic.return_code = return_code.to_i
-      statistics << statistic
+      @statistics << statistic
     end
   end
 end
 
-elapsed_sorted_statistics = statistics.sort_by do |statistic|
-  -statistic.elapsed
+class QueryLogReporter
+  include Enumerable
+
+  attr_accessor :n_entries
+  def initialize(statistics)
+    @statistics = statistics
+    @order = :elapsed
+    @n_entries = 10
+    @sorted_statistics = nil
+  end
+
+  def order=(order)
+    return if @order == order
+    @order = order
+    @sorted_statistics = nil
+  end
+
+  def sorted_statistics
+    @sorted_statistics ||= @statistics.sort_by(&sorter)
+  end
+
+  def each
+    sorted_statistics.each_with_index do |statistic, i|
+      break if i >= @n_entries
+      yield statistic
+    end
+  end
+
+  private
+  def sorter
+    case @order
+    when :elapsed
+      lambda do |statistic|
+        -statistic.elapsed
+      end
+    else
+      lambda do |statistic|
+        statistic.start_time
+      end
+    end
+  end
 end
 
-digit = Math.log10(options.n_entries).truncate + 1
-elapsed_sorted_statistics[0, options.n_entries].each_with_index do |statistic, i|
-  puts "%*d) %s" % [digit, i + 1, statistic.label]
-  statistic.each_trace_report do |report|
-    puts "   #{report}"
+class ConsoleQueryLogReporter < QueryLogReporter
+  def report
+    digit = Math.log10(n_entries).truncate + 1
+    each_with_index do |statistic, i|
+      puts "%*d) %s" % [digit, i + 1, statistic.label]
+      statistic.each_trace_report do |report|
+        puts "   #{report}"
+      end
+      puts
+    end
   end
-  puts
 end
+
+parser = QueryLogParser.new
+parser.parse(ARGF)
+
+reporter = ConsoleQueryLogReporter.new(parser.statistics)
+reporter.n_entries = options.n_entries
+reporter.report
