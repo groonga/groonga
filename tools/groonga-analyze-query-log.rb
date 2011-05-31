@@ -3,6 +3,7 @@
 require 'English'
 require 'ostruct'
 require 'optparse'
+require 'cgi'
 
 options = OpenStruct.new
 options.n_entries = 10
@@ -30,16 +31,65 @@ end
 
 option_parser.parse!(ARGV)
 
+class Command
+  class << self
+    def parse(command_path)
+      name, parameters_string = command_path.split(/\?/, 2)
+      parameters = {}
+      parameters_string.split(/&/).each do |parameter_string|
+        key, value = parameter_string.split(/\=/, 2)
+        parameters[key] = CGI.unescape(value)
+      end
+      new(name.gsub(/\A\/d\//, ''), parameters)
+    end
+  end
+
+  attr_reader :name, :parameters
+  def initialize(name, parameters)
+    @name = name
+    @parameters = parameters
+  end
+end
+
+class SelectCommand < Command
+  def sortby
+    @parameters["sortby"]
+  end
+
+  def filters
+    @parameters["filter"].split(/(?:&&|&!|\|\|)/)
+  end
+
+  def output_columns
+    @parameters["output_columns"]
+  end
+end
+
 class Statistic
-  attr_reader :context_id
-  attr_accessor :start_time, :command, :trace, :elapsed, :return_code
+  attr_reader :context_id, :start_time, :raw_command
+  attr_reader :trace, :elapsed, :return_code
   def initialize(context_id)
     @context_id = context_id
     @start_time = nil
     @command = nil
+    @raw_command = nil
     @trace = []
     @elapsed = nil
     @return_code = 0
+  end
+
+  def start(start_time, command)
+    @start_time = start_time
+    @raw_command = command
+  end
+
+  def finish(elapsed, return_code)
+    @elapsed = elapsed
+    @return_code = return_code
+  end
+
+  def command
+    @command ||= Command.parse(@raw_command)
   end
 
   def end_time
@@ -51,18 +101,24 @@ class Statistic
                               format_time(end_time),
                               nano_seconds_to_seconds(elapsed),
                               return_code,
-                              command]
+                              raw_command]
   end
 
   def each_trace_report
     previous_elapsed = 0
+    ensure_parse_command
     @trace.each_with_index do |(trace_elapsed, trace_label), i|
       relative_elapsed = trace_elapsed - previous_elapsed
       previous_elapsed = trace_elapsed
+      trace_label = format_trace_label(trace_label, i) if select_command?
       yield " %2d) %8.8f: %s" % [i + 1,
                                  nano_seconds_to_seconds(relative_elapsed),
                                  trace_label]
     end
+  end
+
+  def select_command?
+    command.name == "select"
   end
 
   private
@@ -72,6 +128,26 @@ class Statistic
 
   def nano_seconds_to_seconds(nano_seconds)
     nano_seconds / 1000.0 / 1000.0 / 1000.0
+  end
+
+  def format_trace_label(label, i)
+    case label
+    when /\Afilter\(/
+      "#{label} <#{@select_command.filters[i]}>"
+    when /\Aselect\(/
+      label
+    when /\Asort\(/
+      "#{label} <#{@select_command.sortby}>"
+    when /\Aoutput\(/
+      "#{label} <#{@select_command.output_columns}>"
+    else
+      label
+    end
+  end
+
+  def ensure_parse_command
+    return unless select_command?
+    @select_command = SelectCommand.parse(@raw_command)
   end
 end
 
@@ -103,8 +179,7 @@ class QueryLogParser
     case type
     when ">"
       statistic = Statistic.new(context_id)
-      statistic.start_time = time_stamp
-      statistic.command = rest
+      statistic.start(time_stamp, rest)
       current_statistics[context_id] = statistic
     when ":"
       return unless /\A(\d+) / =~ rest
@@ -119,8 +194,7 @@ class QueryLogParser
       return_code = $2
       statistic = current_statistics.delete(context_id)
       return if statistic.nil?
-      statistic.elapsed = elapsed.to_i
-      statistic.return_code = return_code.to_i
+      statistic.finish(elapsed.to_i, return_code.to_i)
       @statistics << statistic
     end
   end
@@ -182,8 +256,14 @@ class ConsoleQueryLogReporter < QueryLogReporter
     digit = Math.log10(n_entries).truncate + 1
     each_with_index do |statistic, i|
       puts "%*d) %s" % [digit, i + 1, statistic.label]
+      command = statistic.command
+      puts "  name: <#{command.name}>"
+      puts "  parameters:"
+      command.parameters.each do |key, value|
+        puts "    <#{key}>: <#{value}>"
+      end
       statistic.each_trace_report do |report|
-        puts "   #{report}"
+        puts report
       end
       puts
     end
