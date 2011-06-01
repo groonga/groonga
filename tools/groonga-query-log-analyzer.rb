@@ -182,16 +182,22 @@ class GroongaQueryLogAnaylzer
       @start_time + elapsed_in_seconds
     end
 
-    def each_trace_report
+    def each_trace_info
       previous_elapsed = 0
       ensure_parse_command
       @trace.each_with_index do |(trace_elapsed, trace_label), i|
         relative_elapsed = trace_elapsed - previous_elapsed
         previous_elapsed = trace_elapsed
-        trace_label = format_trace_label(trace_label, i) if select_command?
-        yield " %2d) %8.8f: %s" % [i + 1,
-                                   nano_seconds_to_seconds(relative_elapsed),
-                                   trace_label]
+        trace_info = {
+          :i => i,
+          :elapsed => trace_elapsed,
+          :elapsed_in_seconds => nano_seconds_to_seconds(trace_elapsed),
+          :relative_elapsed => relative_elapsed,
+          :relative_elapsed_in_seconds => nano_seconds_to_seconds(relative_elapsed),
+          :label => trace_label,
+          :context => trace_context(trace_label, i),
+        }
+        yield trace_info
       end
     end
 
@@ -204,16 +210,16 @@ class GroongaQueryLogAnaylzer
       nano_seconds / 1000.0 / 1000.0 / 1000.0
     end
 
-    def format_trace_label(label, i)
+    def trace_context(label, i)
       case label
       when /\Afilter\(/
-        "#{label} <#{@select_command.conditions[i]}>"
+        @select_command.conditions[i]
       when /\Asort\(/
-        "#{label} <#{@select_command.sortby}>"
+        @select_command.sortby
       when /\Ascore\(/
-        "#{label} <#{@select_command.scorer}>"
+        @select_command.scorer
       when /\Aoutput\(/
-        "#{label} <#{@select_command.output_columns}>"
+        @select_command.output_columns
       else
         label
       end
@@ -443,8 +449,9 @@ class GroongaQueryLogAnaylzer
       @output = $stdout
       @reset_color = Color.new("reset")
       @color_schema = {
-        :elapsed => {:foreground => :white, :background => :red},
+        :elapsed => {:foreground => :white, :background => :green},
         :time => {:foreground => :white, :background => :cyan},
+        :slow => {:foreground => :white, :background => :red},
       }
     end
 
@@ -467,8 +474,23 @@ class GroongaQueryLogAnaylzer
             command.parameters.each do |key, value|
               output.puts "    <#{key}>: <#{value}>"
             end
-            statistic.each_trace_report do |report|
-              output.puts report
+            statistic.each_trace_info do |info|
+              relative_elapsed_in_seconds = info[:relative_elapsed_in_seconds]
+              formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
+              if slow?(relative_elapsed_in_seconds)
+                formatted_elapsed = colorize(formatted_elapsed, :slow)
+              end
+              trace_report = " %2d) %s: %s" % [info[:i] + 1,
+                                               formatted_elapsed,
+                                               info[:label]]
+              context = info[:context]
+              if context
+                if slow?(relative_elapsed_in_seconds)
+                  context = colorize(context, :slow)
+                end
+                trace_report << " " << context
+              end
+              output.puts trace_report
             end
             output.puts
           end
@@ -531,6 +553,10 @@ class GroongaQueryLogAnaylzer
         color += Color.new(options[:background].to_s, :foreground => false)
       end
       "%s%s%s" % [color.escape_sequence, text, @reset_color.escape_sequence]
+    end
+
+    def slow?(elapsed)
+      elapsed >= 0.05
     end
   end
 end
