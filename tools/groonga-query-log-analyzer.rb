@@ -100,6 +100,10 @@ class GroongaQueryLogAnaylzer
       @parameters["sortby"]
     end
 
+    def scorer
+      @parameters["scorer"]
+    end
+
     def conditions
       @parameters["filter"].split(/(?:&&|&!|\|\|)/).collect do |condition|
         condition = condition.strip
@@ -185,6 +189,8 @@ class GroongaQueryLogAnaylzer
         "#{label} <#{@select_command.conditions[i]}>"
       when /\Asort\(/
         "#{label} <#{@select_command.sortby}>"
+      when /\Ascore\(/
+        "#{label} <#{@select_command.scorer}>"
       when /\Aoutput\(/
         "#{label} <#{@select_command.output_columns}>"
       else

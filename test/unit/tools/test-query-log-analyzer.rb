@@ -33,10 +33,10 @@ module QueryLogAalyzerTest
     end
   end
 
-  class CommandParseTest < Test::Unit::TestCase
+  class SelectCommandParseTest < Test::Unit::TestCase
     include CommandParseTestUtils
 
-    def test_simple
+    def test_parameters
       select = parse("/d/select.json",
                      :table => "Users",
                      :filter => "age<=30")
@@ -46,12 +46,20 @@ module QueryLogAalyzerTest
                            "output_type" => "json"),
                    select)
     end
+
+    def test_scorer
+      select = parse("/d/select.json",
+                     :table => "Users",
+                     :filter => "age<=30",
+                     :scorer => "_score = random()")
+      assert_equal("_score = random()", select.scorer)
+    end
   end
 
-  class SelectCommandFilterParseTest < Test::Unit::TestCase
+  class SelectCommandParseFilterTest < Test::Unit::TestCase
     include CommandParseTestUtils
 
-    def test_simple
+    def test_parenthesis
       filter = 'geo_in_rectangle(location,' +
                                 '"35.73360x139.7394","62614x139.7714") && ' +
                '((type == "たいやき" || type == "和菓子")) && ' +
