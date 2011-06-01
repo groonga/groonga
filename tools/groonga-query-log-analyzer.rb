@@ -38,6 +38,7 @@ class GroongaQueryLogAnaylzer
     @options[:order] = "-elapsed"
     @options[:color] = :auto
     @options[:output] = "-"
+    @options[:slow_threshold] = 0.05
 
     @option_parser = OptionParser.new do |parser|
       parser.banner += " LOG1 ..."
@@ -83,6 +84,13 @@ class GroongaQueryLogAnaylzer
                 "'-' PATH means standard output.",
                 "(#{@options[:output]})") do |output|
         @options[:output] = output
+      end
+
+      parser.on("--slow-threshold=THRESHOLD",
+                Float,
+                "Use THRESHOLD to detect slow operations.",
+                "(#{@options[:slow_threshold]})") do |threshold|
+        @options[:slow_threshold] = threshold
       end
     end
   end
@@ -296,17 +304,19 @@ class GroongaQueryLogAnaylzer
   class QueryLogReporter
     include Enumerable
 
-    attr_accessor :n_entries
+    attr_accessor :n_entries, :slow_threshold
     def initialize(statistics)
       @statistics = statistics
       @order = "-elapsed"
       @n_entries = 10
+      @slow_threshold = 0.05
       @sorted_statistics = nil
     end
 
     def apply_options(options)
-      self.order = options[:order]
-      self.n_entries = options[:n_entries]
+      self.order = options[:order] || @order
+      self.n_entries = options[:n_entries] || @n_entries
+      self.slow_threshold = options[:slow_threshold] || @slow_threshold
     end
 
     def order=(order)
@@ -346,6 +356,10 @@ class GroongaQueryLogAnaylzer
           statistic.start_time
         end
       end
+    end
+
+    def slow?(elapsed)
+      elapsed >= @slow_threshold
     end
   end
 
@@ -553,10 +567,6 @@ class GroongaQueryLogAnaylzer
         color += Color.new(options[:background].to_s, :foreground => false)
       end
       "%s%s%s" % [color.escape_sequence, text, @reset_color.escape_sequence]
-    end
-
-    def slow?(elapsed)
-      elapsed >= 0.05
     end
   end
 end
