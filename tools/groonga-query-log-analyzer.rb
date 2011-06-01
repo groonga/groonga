@@ -88,7 +88,7 @@ class GroongaQueryLogAnaylzer
 
       parser.on("--slow-threshold=THRESHOLD",
                 Float,
-                "Use THRESHOLD to detect slow operations.",
+                "Use THRESHOLD seconds to detect slow operations.",
                 "(#{@options[:slow_threshold]})") do |threshold|
         @options[:slow_threshold] = threshold
       end
