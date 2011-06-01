@@ -174,16 +174,12 @@ class GroongaQueryLogAnaylzer
       @command ||= Command.parse(@raw_command)
     end
 
-    def end_time
-      @start_time + nano_seconds_to_seconds(@elapsed)
+    def elapsed_in_seconds
+      nano_seconds_to_seconds(@elapsed)
     end
 
-    def label
-      "[%s-%s (%8.8f)](%d): %s" % [format_time(start_time),
-                                   format_time(end_time),
-                                   nano_seconds_to_seconds(elapsed),
-                                   return_code,
-                                   raw_command]
+    def end_time
+      @start_time + elapsed_in_seconds
     end
 
     def each_trace_report
@@ -204,10 +200,6 @@ class GroongaQueryLogAnaylzer
     end
 
     private
-    def format_time(time)
-      time.strftime("%Y-%m-%d %H:%M:%S.%u")
-    end
-
     def nano_seconds_to_seconds(nano_seconds)
       nano_seconds / 1000.0 / 1000.0 / 1000.0
     end
@@ -352,10 +344,108 @@ class GroongaQueryLogAnaylzer
   end
 
   class ConsoleQueryLogReporter < QueryLogReporter
+    class Color
+      NAMES = ["black", "red", "green", "yellow",
+               "blue", "magenta", "cyan", "white"]
+
+      attr_reader :name
+      def initialize(name, options={})
+        @name = name
+        @foreground = options[:foreground]
+        @foreground = true if @foreground.nil?
+        @intensity = options[:intensity]
+        @bold = options[:bold]
+        @italic = options[:italic]
+        @underline = options[:underline]
+      end
+
+      def foreground?
+        @foreground
+      end
+
+      def intensity?
+        @intensity
+      end
+
+      def bold?
+        @bold
+      end
+
+      def italic?
+        @italic
+      end
+
+      def underline?
+        @underline
+      end
+
+      def ==(other)
+        self.class === other and
+          [name, foreground?, intensity?,
+           bold?, italic?, underline?] ==
+          [other.name, other.foreground?, other.intensity?,
+           other.bold?, other.italic?, other.underline?]
+      end
+
+      def sequence
+        sequence = []
+        if @name == "none"
+        elsif @name == "reset"
+          sequence << "0"
+        else
+          foreground_parameter = foreground? ? 3 : 4
+          foreground_parameter += 6 if intensity?
+          sequence << "#{foreground_parameter}#{NAMES.index(@name)}"
+        end
+        sequence << "1" if bold?
+        sequence << "3" if italic?
+        sequence << "4" if underline?
+        sequence
+      end
+
+      def escape_sequence
+        "\e[#{sequence.join(';')}m"
+      end
+
+      def +(other)
+        MixColor.new([self, other])
+      end
+    end
+
+    class MixColor
+      attr_reader :colors
+      def initialize(colors)
+        @colors = colors
+      end
+
+      def sequence
+        @colors.inject([]) do |result, color|
+          result + color.sequence
+        end
+      end
+
+      def escape_sequence
+        "\e[#{sequence.join(';')}m"
+      end
+
+      def +(other)
+        self.class.new([self, other])
+      end
+
+      def ==(other)
+        self.class === other and colors == other.colors
+      end
+    end
+
     def initialize(statistics)
       super
       @color = :auto
       @output = $stdout
+      @reset_color = Color.new("reset")
+      @color_schema = {
+        :elapsed => {:foreground => :white, :background => :red},
+        :time => {:foreground => :white, :background => :cyan},
+      }
     end
 
     def apply_options(options)
@@ -367,20 +457,21 @@ class GroongaQueryLogAnaylzer
 
     def report
       setup_output do |output|
-        @color = guess_color_availability(output) if @color == :auto
-        digit = Math.log10(n_entries).truncate + 1
-        each_with_index do |statistic, i|
-          output.puts "%*d) %s" % [digit, i + 1, statistic.label]
-          command = statistic.command
-          output.puts "  name: <#{command.name}>"
-          output.puts "  parameters:"
-          command.parameters.each do |key, value|
-            output.puts "    <#{key}>: <#{value}>"
+        setup_color(output) do
+          digit = Math.log10(n_entries).truncate + 1
+          each_with_index do |statistic, i|
+            output.puts "%*d) %s" % [digit, i + 1, format_heading(statistic)]
+            command = statistic.command
+            output.puts "  name: <#{command.name}>"
+            output.puts "  parameters:"
+            command.parameters.each do |key, value|
+              output.puts "    <#{key}>: <#{value}>"
+            end
+            statistic.each_trace_report do |report|
+              output.puts report
+            end
+            output.puts
           end
-          statistic.each_trace_report do |report|
-            output.puts report
-          end
-          output.puts
         end
       end
     end
@@ -405,6 +496,41 @@ class GroongaQueryLogAnaylzer
       else
         yield(@output)
       end
+    end
+
+    def setup_color(output)
+      color = @color
+      @color = guess_color_availability(output) if @color == :auto
+      yield
+    ensure
+      @color = color
+    end
+
+    def format_heading(statistic)
+      formatted_elapsed = colorize("%8.8f" % statistic.elapsed_in_seconds,
+                                   :elapsed)
+      "[%s-%s (%s)](%d): %s" % [format_time(statistic.start_time),
+                                format_time(statistic.end_time),
+                                formatted_elapsed,
+                                statistic.return_code,
+                                statistic.raw_command]
+    end
+
+    def format_time(time)
+      colorize(time.strftime("%Y-%m-%d %H:%M:%S.%u"), :time)
+    end
+
+    def colorize(text, schema_name)
+      return text unless @color
+      options = @color_schema[schema_name]
+      color = Color.new("none")
+      if options[:foreground]
+        color += Color.new(options[:foreground].to_s, :bold => true)
+      end
+      if options[:background]
+        color += Color.new(options[:background].to_s, :foreground => false)
+      end
+      "%s%s%s" % [color.escape_sequence, text, @reset_color.escape_sequence]
     end
   end
 end
