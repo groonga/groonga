@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'English'
-require 'ostruct'
 require 'optparse'
 require 'cgi'
 require 'thread'
@@ -28,16 +27,15 @@ class GroongaQueryLogAnaylzer
     end
 
     reporter = ConsoleQueryLogReporter.new(parser.statistics)
-    reporter.order = @options.order
-    reporter.n_entries = @options.n_entries
+    reporter.apply_options(@options)
     reporter.report
   end
 
   private
   def setup_options
-    @options = OpenStruct.new
-    @options.n_entries = 10
-    @options.order = "-elapsed"
+    @options = {}
+    @options[:n_entries] = 10
+    @options[:order] = "-elapsed"
 
     @option_parser = OptionParser.new do |parser|
       parser.banner += " LOG1 ..."
@@ -45,8 +43,8 @@ class GroongaQueryLogAnaylzer
       parser.on("-n", "--n-entries=N",
                 Integer,
                 "Show top N entries",
-                "(#{@options.n_entries})") do |n|
-        @options.n_entries = n
+                "(#{@options[:n_entries]})") do |n|
+        @options[:n_entries] = n
       end
 
       available_orders = ["elapsed", "-elapsed", "start-time", "-start-time"]
@@ -54,8 +52,8 @@ class GroongaQueryLogAnaylzer
                 available_orders,
                 "Sort by ORDER",
                 "available values: [#{available_orders.join(', ')}]",
-                "(#{@options.order})") do |order|
-        @options.order = order
+                "(#{@options[:order]})") do |order|
+        @options[:order] = order
       end
     end
   end
@@ -187,6 +185,12 @@ class GroongaQueryLogAnaylzer
     end
   end
 
+  class SizedStatistics < Array
+    def initialize(size)
+      @size = size
+    end
+  end
+
   class QueryLogParser
     attr_reader :statistics
     def initialize
@@ -252,6 +256,11 @@ class GroongaQueryLogAnaylzer
       @order = "-elapsed"
       @n_entries = 10
       @sorted_statistics = nil
+    end
+
+    def apply_options(options)
+      self.order = options[:order]
+      self.n_entries = options[:n_entries]
     end
 
     def order=(order)
