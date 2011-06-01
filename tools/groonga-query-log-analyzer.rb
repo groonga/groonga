@@ -482,37 +482,45 @@ class GroongaQueryLogAnaylzer
           digit = Math.log10(n_entries).truncate + 1
           each_with_index do |statistic, i|
             output.puts "%*d) %s" % [digit, i + 1, format_heading(statistic)]
-            command = statistic.command
-            output.puts "  name: <#{command.name}>"
-            output.puts "  parameters:"
-            command.parameters.each do |key, value|
-              output.puts "    <#{key}>: <#{value}>"
-            end
-            statistic.each_trace_info do |info|
-              relative_elapsed_in_seconds = info[:relative_elapsed_in_seconds]
-              formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
-              if slow?(relative_elapsed_in_seconds)
-                formatted_elapsed = colorize(formatted_elapsed, :slow)
-              end
-              trace_report = " %2d) %s: %s" % [info[:i] + 1,
-                                               formatted_elapsed,
-                                               info[:label]]
-              context = info[:context]
-              if context
-                if slow?(relative_elapsed_in_seconds)
-                  context = colorize(context, :slow)
-                end
-                trace_report << " " << context
-              end
-              output.puts trace_report
-            end
-            output.puts
+            report_parameters(output, statistic)
+            report_trace(output, statistic)
           end
         end
       end
     end
 
     private
+    def report_parameters(output, statistic)
+      command = statistic.command
+      output.puts "  name: <#{command.name}>"
+      output.puts "  parameters:"
+      command.parameters.each do |key, value|
+        output.puts "    <#{key}>: <#{value}>"
+      end
+    end
+
+    def report_trace(output, statistic)
+      statistic.each_trace_info do |info|
+        relative_elapsed_in_seconds = info[:relative_elapsed_in_seconds]
+        formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
+        if slow?(relative_elapsed_in_seconds)
+          formatted_elapsed = colorize(formatted_elapsed, :slow)
+        end
+        trace_report = " %2d) %s: %s" % [info[:i] + 1,
+                                         formatted_elapsed,
+                                         info[:label]]
+        context = info[:context]
+        if context
+          if slow?(relative_elapsed_in_seconds)
+            context = colorize(context, :slow)
+          end
+          trace_report << " " << context
+        end
+        output.puts trace_report
+      end
+      output.puts
+    end
+
     def guess_color_availability(output)
       return false unless output.tty?
       case ENV["TERM"]
