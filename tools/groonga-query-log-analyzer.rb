@@ -36,6 +36,8 @@ class GroongaQueryLogAnaylzer
     @options = {}
     @options[:n_entries] = 10
     @options[:order] = "-elapsed"
+    @options[:color] = :auto
+    @options[:output] = "-"
 
     @option_parser = OptionParser.new do |parser|
       parser.banner += " LOG1 ..."
@@ -54,6 +56,33 @@ class GroongaQueryLogAnaylzer
                 "available values: [#{available_orders.join(', ')}]",
                 "(#{@options[:order]})") do |order|
         @options[:order] = order
+      end
+
+      color_options = [
+        [:auto, :auto],
+        ["-", false],
+        ["no", false],
+        ["false", false],
+        ["+", true],
+        ["yes", true],
+        ["true", true],
+      ]
+      parser.on("--[no-]color=[auto]",
+                color_options,
+                "Enable color output",
+                "(#{@options[:color]})") do |color|
+        if color.nil?
+          @options[:color] = true
+        else
+          @options[:color] = color
+        end
+      end
+
+      parser.on("--output=PATH",
+                "Output to PATH.",
+                "'-' PATH means standard output.",
+                "(#{@options[:output]})") do |output|
+        @options[:output] = output
       end
     end
   end
@@ -323,20 +352,58 @@ class GroongaQueryLogAnaylzer
   end
 
   class ConsoleQueryLogReporter < QueryLogReporter
+    def initialize(statistics)
+      super
+      @color = :auto
+      @output = $stdout
+    end
+
+    def apply_options(options)
+      super
+      @color = options[:color] || @color
+      @output = options[:output] || @output
+      @output = $stdout if @output == "-"
+    end
+
     def report
-      digit = Math.log10(n_entries).truncate + 1
-      each_with_index do |statistic, i|
-        puts "%*d) %s" % [digit, i + 1, statistic.label]
-        command = statistic.command
-        puts "  name: <#{command.name}>"
-        puts "  parameters:"
-        command.parameters.each do |key, value|
-          puts "    <#{key}>: <#{value}>"
+      setup_output do |output|
+        @color = guess_color_availability(output) if @color == :auto
+        digit = Math.log10(n_entries).truncate + 1
+        each_with_index do |statistic, i|
+          output.puts "%*d) %s" % [digit, i + 1, statistic.label]
+          command = statistic.command
+          output.puts "  name: <#{command.name}>"
+          output.puts "  parameters:"
+          command.parameters.each do |key, value|
+            output.puts "    <#{key}>: <#{value}>"
+          end
+          statistic.each_trace_report do |report|
+            output.puts report
+          end
+          output.puts
         end
-        statistic.each_trace_report do |report|
-          puts report
+      end
+    end
+
+    private
+    def guess_color_availability(output)
+      return false unless output.tty?
+      case ENV["TERM"]
+      when /term(?:-color)?\z/, "screen"
+        true
+      else
+        return true if ENV["EMACS"] == "t"
+        false
+      end
+    end
+
+    def setup_output
+      if @output.is_a?(String)
+        File.open(@output, "w") do |output|
+          yield(output)
         end
-        puts
+      else
+        yield(@output)
       end
     end
   end
