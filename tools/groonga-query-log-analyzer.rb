@@ -60,6 +60,11 @@ class GroongaQueryLogAnaylzer
 
   class Command
     class << self
+      @@registered_commands = {}
+      def register(name, klass)
+        @@registered_commands[name] = klass
+      end
+
       def parse(command_path)
         name, parameters_string = command_path.split(/\?/, 2)
         parameters = {}
@@ -70,7 +75,8 @@ class GroongaQueryLogAnaylzer
         name = name.gsub(/\A\/d\//, '')
         name, output_type = name.split(/\./, 2)
         parameters["output_type"] = output_type if output_type
-        new(name, parameters)
+        command_class = @@registered_commands[name] || self
+        command_class.new(name, parameters)
       end
     end
 
@@ -88,12 +94,19 @@ class GroongaQueryLogAnaylzer
   end
 
   class SelectCommand < Command
+    register("select", self)
+
     def sortby
       @parameters["sortby"]
     end
 
-    def filters
-      @parameters["filter"].split(/(?:&&|&!|\|\|)/)
+    def conditions
+      @parameters["filter"].split(/(?:&&|&!|\|\|)/).collect do |condition|
+        condition = condition.strip
+        condition = condition.gsub(/\A[\s\(]*/, '')
+        condition = condition.gsub(/[\s\)]*\z/, '') unless /\(/ =~ condition
+        condition
+      end
     end
 
     def output_columns
@@ -169,7 +182,7 @@ class GroongaQueryLogAnaylzer
     def format_trace_label(label, i)
       case label
       when /\Afilter\(/
-        "#{label} <#{@select_command.filters[i]}>"
+        "#{label} <#{@select_command.conditions[i]}>"
       when /\Asort\(/
         "#{label} <#{@select_command.sortby}>"
       when /\Aoutput\(/

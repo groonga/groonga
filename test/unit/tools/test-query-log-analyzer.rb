@@ -18,23 +18,55 @@
 require "groonga-query-log-analyzer"
 
 module QueryLogAalyzerTest
+  module CommandParseTestUtils
+    private
+    def command(name, parameters)
+      GroongaQueryLogAnaylzer::Command.new(name, parameters)
+    end
+
+    def parse(command_path, parameters)
+      path = "#{command_path}?"
+      path << parameters.collect do |key, value|
+        [CGI.escape(key.to_s), CGI.escape(value.to_s)].join("=")
+      end.join("&")
+      GroongaQueryLogAnaylzer::Command.parse(path)
+    end
+  end
+
   class CommandParseTest < Test::Unit::TestCase
+    include CommandParseTestUtils
+
     def test_simple
-      select = parse("/d/select.json?table=Users&filter=age<=30")
+      select = parse("/d/select.json",
+                     :table => "Users",
+                     :filter => "age<=30")
       assert_equal(command("select",
                            "table" => "Users",
                            "filter" => "age<=30",
                            "output_type" => "json"),
                    select)
     end
+  end
 
-    private
-    def command(name, parameters)
-      GroongaQueryLogAnaylzer::Command.new(name, parameters)
-    end
+  class SelectCommandFilterParseTest < Test::Unit::TestCase
+    include CommandParseTestUtils
 
-    def parse(command_path)
-      GroongaQueryLogAnaylzer::Command.parse(command_path)
+    def test_simple
+      filter = 'geo_in_rectangle(location,' +
+                                '"35.73360x139.7394","62614x139.7714") && ' +
+               '((type == "たいやき" || type == "和菓子")) && ' +
+               'keyword @ "たいやき" &! keyword @ "白" &! keyword @ "養殖"'
+      select = parse("/d/select.json",
+                     :table => "Users",
+                     :filter => filter)
+      assert_equal(['geo_in_rectangle(location,' +
+                                     '"35.73360x139.7394","62614x139.7714")',
+                     'type == "たいやき"',
+                     'type == "和菓子"',
+                     'keyword @ "たいやき"',
+                     'keyword @ "白"',
+                     'keyword @ "養殖"'],
+                   select.conditions)
     end
   end
 end
