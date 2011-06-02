@@ -16,6 +16,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 require "groonga-query-log-analyzer"
+require "stringio"
 
 module QueryLogAalyzerTest
   module CommandParseTestUtils
@@ -75,6 +76,41 @@ module QueryLogAalyzerTest
                      'keyword @ "白"',
                      'keyword @ "養殖"'],
                    select.conditions)
+    end
+  end
+
+  class StatisticStepParseTest < Test::Unit::TestCase
+    def setup
+      @parser = GroongaQueryLogAnaylzer::QueryLogParser.new
+    end
+
+    def test_name
+      @parser.parse(StringIO.new(log))
+      steps = []
+      @parser.statistics.first.each_step_info do |info|
+        steps << [info[:name], info[:context]]
+      end
+      expected = [
+        ["filter", "filter"],
+        ["filter", "filter"],
+        ["select", "select"],
+        ["sort", "sort"],
+        ["output", "output"],
+      ]
+      assert_equal(expected, steps)
+    end
+
+    private
+    def log
+      <<-EOL
+2011-06-02 14:28:52.951973|28027ba0|>/d/select.join?table=Entries&filter=local_name+%40+%22gsub%22+%26%26+description+%40+%22string%22&sortby=_score&output_columns=_key
+2011-06-02 14:28:52.953499|28027ba0|:000000001523131 filter(15)
+2011-06-02 14:28:52.954335|28027ba0|:000000002362555 filter(13)
+2011-06-02 14:28:52.954381|28027ba0|:000000002408669 select(13)
+2011-06-02 14:28:52.954528|28027ba0|:000000002555263 sort(10)
+2011-06-02 14:28:52.954821|28027ba0|:000000002847858 output(10)
+2011-06-02 14:28:52.954958|28027ba0|<000000002985581 rc=0
+EOL
     end
   end
 end

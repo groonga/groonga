@@ -213,17 +213,17 @@ class GroongaQueryLogAnaylzer
     def each_step_info
       previous_elapsed = 0
       ensure_parse_command
-      @step.each_with_index do |(step_elapsed, step_label), i|
-        relative_elapsed = step_elapsed - previous_elapsed
-        previous_elapsed = step_elapsed
+      @step.each_with_index do |step, i|
+        relative_elapsed = step[:elapsed] - previous_elapsed
+        previous_elapsed = step[:elapsed]
         step_info = {
           :i => i,
-          :elapsed => step_elapsed,
-          :elapsed_in_seconds => nano_seconds_to_seconds(step_elapsed),
+          :elapsed => step[:elapsed],
+          :elapsed_in_seconds => nano_seconds_to_seconds(step[:elapsed]),
           :relative_elapsed => relative_elapsed,
           :relative_elapsed_in_seconds => nano_seconds_to_seconds(relative_elapsed),
-          :label => step_label,
-          :context => step_context(step_label, i),
+          :name => step[:name],
+          :context => step_context(step[:name], i),
         }
         yield step_info
       end
@@ -303,12 +303,17 @@ class GroongaQueryLogAnaylzer
         statistic.start(time_stamp, rest)
         current_statistics[context_id] = statistic
       when ":"
-        return unless /\A(\d+) / =~ rest
+        return unless /\A(\d+) (.+)\((\d+)\)/ =~ rest
         elapsed = $1
-        label = $POSTMATCH.strip
+        name = $2
+        n_records = $3.to_i
         statistic = current_statistics[context_id]
         return if statistic.nil?
-        statistic.step << [elapsed.to_i, label]
+        statistic.step << {
+          :elapsed => elapsed.to_i,
+          :name => name,
+          :n_records => n_records,
+        }
       when "<"
         return unless /\A(\d+) rc=(\d+)/ =~ rest
         elapsed = $1
@@ -543,7 +548,7 @@ class GroongaQueryLogAnaylzer
         end
         step_report = " %2d) %s: %s" % [info[:i] + 1,
                                          formatted_elapsed,
-                                         info[:label]]
+                                         info[:name]]
         context = info[:context]
         if context
           if slow?(relative_elapsed_in_seconds)
@@ -637,7 +642,7 @@ class GroongaQueryLogAnaylzer
       steps = []
       statistic.each_step_info do |info|
         step = {}
-        step["name"] = info[:label]
+        step["name"] = info[:name]
         step["relative_elapsed"] = info[:relative_elapsed_in_seconds]
         step["context"] = info[:context]
         steps << step
