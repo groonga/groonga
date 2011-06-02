@@ -26,7 +26,7 @@ class GroongaQueryLogAnaylzer
       thread.join
     end
 
-    reporter = ConsoleQueryLogReporter.new(parser.statistics)
+    reporter = create_reporter(parser.statistics)
     reporter.apply_options(@options)
     reporter.report
   end
@@ -39,6 +39,7 @@ class GroongaQueryLogAnaylzer
     @options[:color] = :auto
     @options[:output] = "-"
     @options[:slow_threshold] = 0.05
+    @options[:reporter] = "console"
 
     @option_parser = OptionParser.new do |parser|
       parser.banner += " LOG1 ..."
@@ -91,6 +92,25 @@ class GroongaQueryLogAnaylzer
                 "Use THRESHOLD seconds to detect slow operations.",
                 "(#{@options[:slow_threshold]})") do |threshold|
         @options[:slow_threshold] = threshold
+      end
+
+      available_reporters = ["console", "json"]
+      parser.on("--reporter=REPORTER",
+                available_reporters,
+                "Reports statistics by REPORTER.",
+                "available values: [#{available_reporters.join(', ')}]",
+                "(#{@options[:reporter]})") do |reporter|
+        @options[:reporter] = reporter
+      end
+    end
+
+    def create_reporter(statistics)
+      case @options[:reporter]
+      when "json"
+        require 'json'
+        JSONQueryLogReporter.new(statistics)
+      else
+        ConsoleQueryLogReporter.new(statistics)
       end
     end
   end
@@ -304,12 +324,14 @@ class GroongaQueryLogAnaylzer
   class QueryLogReporter
     include Enumerable
 
+    attr_reader :output
     attr_accessor :n_entries, :slow_threshold
     def initialize(statistics)
       @statistics = statistics
       @order = "-elapsed"
       @n_entries = 10
       @slow_threshold = 0.05
+      @output = $stdout
       @sorted_statistics = nil
     end
 
@@ -317,12 +339,18 @@ class GroongaQueryLogAnaylzer
       self.order = options[:order] || @order
       self.n_entries = options[:n_entries] || @n_entries
       self.slow_threshold = options[:slow_threshold] || @slow_threshold
+      self.output = options[:output] || @output
     end
 
     def order=(order)
       return if @order == order
       @order = order
       @sorted_statistics = nil
+    end
+
+    def output=(output)
+      @output = output
+      @output = $stdout if @output == "-"
     end
 
     def sorted_statistics
@@ -360,6 +388,16 @@ class GroongaQueryLogAnaylzer
 
     def slow?(elapsed)
       elapsed >= @slow_threshold
+    end
+
+    def setup_output
+      if @output.is_a?(String)
+        File.open(@output, "w") do |output|
+          yield(output)
+        end
+      else
+        yield(@output)
+      end
     end
   end
 
@@ -460,7 +498,6 @@ class GroongaQueryLogAnaylzer
     def initialize(statistics)
       super
       @color = :auto
-      @output = $stdout
       @reset_color = Color.new("reset")
       @color_schema = {
         :elapsed => {:foreground => :white, :background => :green},
@@ -472,8 +509,6 @@ class GroongaQueryLogAnaylzer
     def apply_options(options)
       super
       @color = options[:color] || @color
-      @output = options[:output] || @output
-      @output = $stdout if @output == "-"
     end
 
     def report
@@ -532,16 +567,6 @@ class GroongaQueryLogAnaylzer
       end
     end
 
-    def setup_output
-      if @output.is_a?(String)
-        File.open(@output, "w") do |output|
-          yield(output)
-        end
-      else
-        yield(@output)
-      end
-    end
-
     def setup_color(output)
       color = @color
       @color = guess_color_availability(output) if @color == :auto
@@ -575,6 +600,50 @@ class GroongaQueryLogAnaylzer
         color += Color.new(options[:background].to_s, :foreground => false)
       end
       "%s%s%s" % [color.escape_sequence, text, @reset_color.escape_sequence]
+    end
+  end
+
+  class JSONQueryLogReporter < QueryLogReporter
+    def report
+      setup_output do |output|
+        output.print("[")
+        each_with_index do |statistic, i|
+          output.print(",") if i > 0
+          output.print("\n")
+          output.print(format_statistic(statistic))
+        end
+        output.puts
+        output.puts("]")
+      end
+    end
+
+    private
+    def format_statistic(statistic)
+      data = {
+        "start_time" => statistic.start_time.to_i,
+        "end_time" => statistic.end_time.to_i,
+        "elapsed" => statistic.elapsed_in_seconds,
+        "return_code" => statistic.return_code,
+        "raw_command" => statistic.raw_command,
+      }
+      command = statistic.command
+      parameters = command.parameters.collect do |key, value|
+        {"key" => key, "value" => value}
+      end
+      data["command"] = {
+        "name" => command.name,
+        "parameters" => parameters,
+      }
+      steps = []
+      statistic.each_trace_info do |info|
+        step = {}
+        step["name"] = info[:label]
+        step["relative_elapsed"] = info[:relative_elapsed_in_seconds]
+        step["context"] = info[:context]
+        steps << step
+      end
+      data["steps"] = steps
+      JSON.generate(data)
     end
   end
 end
