@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -80,10 +80,6 @@ module QueryLogAalyzerTest
   end
 
   class StatisticStepParseTest < Test::Unit::TestCase
-    def setup
-      @parser = GroongaQueryLogAnaylzer::QueryLogParser.new
-    end
-
     def test_context
       steps = statistics.first.steps.collect do |step|
         [step[:name], step[:context]]
@@ -126,7 +122,10 @@ EOL
     end
 
     def statistics
-      @parser.parse(StringIO.new(log))
+      statistics = GroongaQueryLogAnaylzer::SizedStatistics.new(100, "-elapsed")
+      parser = GroongaQueryLogAnaylzer::QueryLogParser.new(statistics)
+      parser.parse(StringIO.new(log))
+      statistics
     end
   end
 end

@@ -13,20 +13,15 @@ class GroongaQueryLogAnaylzer
   def run(argv=nil)
     log_paths = @option_parser.parse!(argv || ARGV)
 
-    parser = QueryLogParser.new
-    threads = []
+    statistics = SizedStatistics.new(@options[:n_entries], @options[:order])
+    parser = QueryLogParser.new(statistics)
     log_paths.each do |log_path|
-      threads << Thread.new do
-        File.open(log_path) do |log|
-          parser.parse(log)
-        end
+      File.open(log_path) do |log|
+        parser.parse(log)
       end
     end
-    threads.each do |thread|
-      thread.join
-    end
 
-    reporter = create_reporter(parser.statistics)
+    reporter = create_reporter(statistics)
     reporter.apply_options(@options)
     reporter.report
   end
@@ -273,20 +268,59 @@ class GroongaQueryLogAnaylzer
   end
 
   class SizedStatistics < Array
-    def initialize(size)
+    def initialize(size, order)
       @size = size
+      @order = order
+      @sorter = sorter
+    end
+
+    def <<(other)
+      if size < @size - 1
+        super(other)
+      elsif size == @size - 1
+        super(other)
+        sort_by!(&@sorter)
+      else
+        if @sorter.call(other) < @sorter.call(last)
+          super(other)
+          sort_by!(&@sorter)
+          pop
+        end
+      end
+      self
+    end
+
+    private
+    def sorter
+      case @order
+      when "elapsed"
+        lambda do |statistic|
+          -statistic.elapsed
+        end
+      when "-elapsed"
+        lambda do |statistic|
+          -statistic.elapsed
+        end
+      when "-start-time"
+        lambda do |statistic|
+          -statistic.start_time
+        end
+      else
+        lambda do |statistic|
+          statistic.start_time
+        end
+      end
     end
   end
 
   class QueryLogParser
     attr_reader :statistics
-    def initialize
+    def initialize(statistics)
       @mutex = Mutex.new
-      @statistics = []
+      @statistics = statistics
     end
 
     def parse(input)
-      statistics = []
       current_statistics = {}
       input.each_line do |line|
         case line
@@ -299,11 +333,8 @@ class GroongaQueryLogAnaylzer
           time_stamp = Time.local(year, month, day, hour, minutes, seconds,
                                   micro_seconds)
           parse_line(statistics, current_statistics,
-                time_stamp, context_id, type, rest)
+                     time_stamp, context_id, type, rest)
         end
-      end
-      @mutex.synchronize do
-        @statistics.concat(statistics)
       end
     end
 
@@ -344,24 +375,15 @@ class GroongaQueryLogAnaylzer
     attr_accessor :n_entries, :slow_threshold
     def initialize(statistics)
       @statistics = statistics
-      @order = "-elapsed"
       @n_entries = 10
       @slow_threshold = 0.05
       @output = $stdout
-      @sorted_statistics = nil
     end
 
     def apply_options(options)
-      self.order = options[:order] || @order
       self.n_entries = options[:n_entries] || @n_entries
       self.slow_threshold = options[:slow_threshold] || @slow_threshold
       self.output = options[:output] || @output
-    end
-
-    def order=(order)
-      return if @order == order
-      @order = order
-      @sorted_statistics = nil
     end
 
     def output=(output)
@@ -369,39 +391,13 @@ class GroongaQueryLogAnaylzer
       @output = $stdout if @output == "-"
     end
 
-    def sorted_statistics
-      @sorted_statistics ||= @statistics.sort_by(&sorter)
-    end
-
     def each
-      sorted_statistics.each_with_index do |statistic, i|
-        break if i >= @n_entries
+      @statistics.each do |statistic|
         yield statistic
       end
     end
 
     private
-    def sorter
-      case @order
-      when "elapsed"
-        lambda do |statistic|
-          -statistic.elapsed
-        end
-      when "-elapsed"
-        lambda do |statistic|
-          -statistic.elapsed
-        end
-      when "-start-time"
-        lambda do |statistic|
-          -statistic.start_time
-        end
-      else
-        lambda do |statistic|
-          statistic.start_time
-        end
-      end
-    end
-
     def slow?(elapsed)
       elapsed >= @slow_threshold
     end
