@@ -165,6 +165,10 @@ class GroongaQueryLogAnaylzer
       end
     end
 
+    def drilldowns
+      @drilldowns ||= (@parameters["drilldown"] || "").split(/\s*,\s*/)
+    end
+
     def output_columns
       @parameters["output_columns"]
     end
@@ -208,6 +212,10 @@ class GroongaQueryLogAnaylzer
     def each_step
       previous_elapsed = 0
       ensure_parse_command
+      step_context_context = {
+        :filter_index => 0,
+        :drilldown_index => 0,
+      }
       @steps.each_with_index do |step, i|
         relative_elapsed = step[:elapsed] - previous_elapsed
         previous_elapsed = step[:elapsed]
@@ -218,7 +226,7 @@ class GroongaQueryLogAnaylzer
           :relative_elapsed => relative_elapsed,
           :relative_elapsed_in_seconds => nano_seconds_to_seconds(relative_elapsed),
           :name => step[:name],
-          :context => step_context(step[:name], i),
+          :context => step_context(step[:name], step_context_context),
           :n_records => step[:n_records],
         }
         yield parsed_step
@@ -246,16 +254,22 @@ class GroongaQueryLogAnaylzer
       nano_seconds / 1000.0 / 1000.0 / 1000.0
     end
 
-    def step_context(label, i)
+    def step_context(label, context)
       case label
       when "filter"
-        @select_command.conditions[i]
+        index = context[:filter_index]
+        context[:filter_index] += 1
+        @select_command.conditions[index]
       when "sort"
         @select_command.sortby
       when "score"
         @select_command.scorer
       when "output"
         @select_command.output_columns
+      when "drilldown"
+        index = context[:drilldown_index]
+        context[:drilldown_index] += 1
+        @select_command.drilldowns[index]
       else
         nil
       end
