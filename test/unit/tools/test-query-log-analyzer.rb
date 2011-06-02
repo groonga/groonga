@@ -91,11 +91,11 @@ module QueryLogAalyzerTest
         steps << [step[:name], step[:context]]
       end
       expected = [
-        ["filter", "filter"],
-        ["filter", "filter"],
-        ["select", "select"],
-        ["sort", "sort"],
-        ["output", "output"],
+        ["filter", "local_name @ \"gsub\""],
+        ["filter", "description @ \"string\""],
+        ["select", nil],
+        ["sort", "_score"],
+        ["output", "_key"],
       ]
       assert_equal(expected, steps)
     end

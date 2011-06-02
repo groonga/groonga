@@ -240,16 +240,16 @@ class GroongaQueryLogAnaylzer
 
     def step_context(label, i)
       case label
-      when /\Afilter\(/
+      when "filter"
         @select_command.conditions[i]
-      when /\Asort\(/
+      when "sort"
         @select_command.sortby
-      when /\Ascore\(/
+      when "score"
         @select_command.scorer
-      when /\Aoutput\(/
+      when "output"
         @select_command.output_columns
       else
-        label
+        nil
       end
     end
 
