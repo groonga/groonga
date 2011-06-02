@@ -655,13 +655,13 @@ class GroongaQueryLogAnaylzer
         "end_time" => statistic.end_time.to_i,
         "elapsed" => statistic.elapsed_in_seconds,
         "return_code" => statistic.return_code,
-        "raw_command" => statistic.raw_command,
       }
       command = statistic.command
       parameters = command.parameters.collect do |key, value|
         {"key" => key, "value" => value}
       end
       data["command"] = {
+        "raw" => statistic.raw_command,
         "name" => command.name,
         "parameters" => parameters,
       }
