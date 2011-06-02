@@ -84,11 +84,9 @@ module QueryLogAalyzerTest
       @parser = GroongaQueryLogAnaylzer::QueryLogParser.new
     end
 
-    def test_name
-      @parser.parse(StringIO.new(log))
-      steps = []
-      @parser.statistics.first.each_step do |step|
-        steps << [step[:name], step[:context]]
+    def test_context
+      steps = statistics.first.steps.collect do |step|
+        [step[:name], step[:context]]
       end
       expected = [
         ["filter", "local_name @ \"gsub\""],
@@ -96,6 +94,20 @@ module QueryLogAalyzerTest
         ["select", nil],
         ["sort", "_score"],
         ["output", "_key"],
+      ]
+      assert_equal(expected, steps)
+    end
+
+    def test_n_records
+      steps = statistics.first.steps.collect do |step|
+        [step[:name], step[:n_records]]
+      end
+      expected = [
+        ["filter", 15],
+        ["filter", 13],
+        ["select", 13],
+        ["sort", 10],
+        ["output", 10],
       ]
       assert_equal(expected, steps)
     end
@@ -111,6 +123,10 @@ module QueryLogAalyzerTest
 2011-06-02 14:28:52.954821|28027ba0|:000000002847858 output(10)
 2011-06-02 14:28:52.954958|28027ba0|<000000002985581 rc=0
 EOL
+    end
+
+    def statistics
+      @parser.parse(StringIO.new(log))
     end
   end
 end

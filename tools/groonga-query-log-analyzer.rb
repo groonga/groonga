@@ -177,7 +177,7 @@ class GroongaQueryLogAnaylzer
 
   class Statistic
     attr_reader :context_id, :start_time, :raw_command
-    attr_reader :steps, :elapsed, :return_code
+    attr_reader :elapsed, :return_code
     def initialize(context_id)
       @context_id = context_id
       @start_time = nil
@@ -224,9 +224,22 @@ class GroongaQueryLogAnaylzer
           :relative_elapsed_in_seconds => nano_seconds_to_seconds(relative_elapsed),
           :name => step[:name],
           :context => step_context(step[:name], i),
+          :n_records => step[:n_records],
         }
         yield parsed_step
       end
+    end
+
+    def add_step(step)
+      @steps << step
+    end
+
+    def steps
+      _steps = []
+      each_step do |step|
+        _steps << step
+      end
+      _steps
     end
 
     def select_command?
@@ -309,11 +322,9 @@ class GroongaQueryLogAnaylzer
         n_records = $3.to_i
         statistic = current_statistics[context_id]
         return if statistic.nil?
-        statistic.steps << {
-          :elapsed => elapsed.to_i,
-          :name => name,
-          :n_records => n_records,
-        }
+        statistic.add_step(:name => name,
+                           :elapsed => elapsed.to_i,
+                           :n_records => n_records)
       when "<"
         return unless /\A(\d+) rc=(\d+)/ =~ rest
         elapsed = $1
@@ -546,9 +557,14 @@ class GroongaQueryLogAnaylzer
         if slow?(relative_elapsed_in_seconds)
           formatted_elapsed = colorize(formatted_elapsed, :slow)
         end
-        step_report = " %2d) %s: %s" % [step[:i] + 1,
-                                         formatted_elapsed,
-                                         step[:name]]
+        step_report = " %2d) %s: %10s" % [step[:i] + 1,
+                                          formatted_elapsed,
+                                          step[:name]]
+        if step[:n_records]
+          step_report << "(%6d)" % step[:n_records]
+        else
+          step_report << "(%6s)" % ""
+        end
         context = step[:context]
         if context
           if slow?(relative_elapsed_in_seconds)
