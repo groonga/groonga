@@ -13,13 +13,20 @@ class GroongaQueryLogAnaylzer
   def run(argv=nil)
     log_paths = @option_parser.parse!(argv || ARGV)
 
+    dynamic_sort = @options[:dynamic_sort]
     statistics = SizedStatistics.new(@options[:n_entries], @options[:order])
-    parser = QueryLogParser.new(statistics)
+    if dynamic_sort
+      parser = QueryLogParser.new(statistics)
+    else
+      full_statistics = []
+      parser = QueryLogParser.new(full_statistics)
+    end
     log_paths.each do |log_path|
       File.open(log_path) do |log|
         parser.parse(log)
       end
     end
+    statistics.replace(full_statistics) unless dynamic_sort
 
     reporter = create_reporter(statistics)
     reporter.apply_options(@options)
@@ -35,6 +42,7 @@ class GroongaQueryLogAnaylzer
     @options[:output] = "-"
     @options[:slow_threshold] = 0.05
     @options[:reporter] = "console"
+    @options[:dynamic_sort] = true
 
     @option_parser = OptionParser.new do |parser|
       parser.banner += " LOG1 ..."
@@ -96,6 +104,13 @@ class GroongaQueryLogAnaylzer
                 "available values: [#{available_reporters.join(', ')}]",
                 "(#{@options[:reporter]})") do |reporter|
         @options[:reporter] = reporter
+      end
+
+      parser.on("--[no-]dynamic-sort",
+                "Sorts dynamically.",
+                "Memory and CPU usage reduced for large query log.",
+                "(#{@options[:dynamic_sort]})") do |sort|
+        @options[:dynamic_sort] = sort
       end
     end
 
@@ -302,6 +317,12 @@ class GroongaQueryLogAnaylzer
         end
       end
       self
+    end
+
+    def replace(other)
+      super(other)
+      sort_by!(&@sorter)
+      super(self[0, @size])
     end
 
     private
