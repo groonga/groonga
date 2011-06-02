@@ -87,8 +87,8 @@ module QueryLogAalyzerTest
     def test_name
       @parser.parse(StringIO.new(log))
       steps = []
-      @parser.statistics.first.each_step_info do |info|
-        steps << [info[:name], info[:context]]
+      @parser.statistics.first.each_step do |step|
+        steps << [step[:name], step[:context]]
       end
       expected = [
         ["filter", "filter"],

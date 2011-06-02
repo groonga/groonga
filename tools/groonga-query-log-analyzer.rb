@@ -177,13 +177,13 @@ class GroongaQueryLogAnaylzer
 
   class Statistic
     attr_reader :context_id, :start_time, :raw_command
-    attr_reader :step, :elapsed, :return_code
+    attr_reader :steps, :elapsed, :return_code
     def initialize(context_id)
       @context_id = context_id
       @start_time = nil
       @command = nil
       @raw_command = nil
-      @step = []
+      @steps = []
       @elapsed = nil
       @return_code = 0
     end
@@ -210,13 +210,13 @@ class GroongaQueryLogAnaylzer
       @start_time + elapsed_in_seconds
     end
 
-    def each_step_info
+    def each_step
       previous_elapsed = 0
       ensure_parse_command
-      @step.each_with_index do |step, i|
+      @steps.each_with_index do |step, i|
         relative_elapsed = step[:elapsed] - previous_elapsed
         previous_elapsed = step[:elapsed]
-        step_info = {
+        parsed_step = {
           :i => i,
           :elapsed => step[:elapsed],
           :elapsed_in_seconds => nano_seconds_to_seconds(step[:elapsed]),
@@ -225,7 +225,7 @@ class GroongaQueryLogAnaylzer
           :name => step[:name],
           :context => step_context(step[:name], i),
         }
-        yield step_info
+        yield parsed_step
       end
     end
 
@@ -309,7 +309,7 @@ class GroongaQueryLogAnaylzer
         n_records = $3.to_i
         statistic = current_statistics[context_id]
         return if statistic.nil?
-        statistic.step << {
+        statistic.steps << {
           :elapsed => elapsed.to_i,
           :name => name,
           :n_records => n_records,
@@ -523,7 +523,7 @@ class GroongaQueryLogAnaylzer
           each_with_index do |statistic, i|
             output.puts "%*d) %s" % [digit, i + 1, format_heading(statistic)]
             report_parameters(output, statistic)
-            report_step(output, statistic)
+            report_steps(output, statistic)
           end
         end
       end
@@ -539,24 +539,24 @@ class GroongaQueryLogAnaylzer
       end
     end
 
-    def report_step(output, statistic)
-      statistic.each_step_info do |info|
-        relative_elapsed_in_seconds = info[:relative_elapsed_in_seconds]
+    def report_steps(output, statistic)
+      statistic.each_step do |step|
+        relative_elapsed_in_seconds = step[:relative_elapsed_in_seconds]
         formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
         if slow?(relative_elapsed_in_seconds)
           formatted_elapsed = colorize(formatted_elapsed, :slow)
         end
-        step_report = " %2d) %s: %s" % [info[:i] + 1,
+        step_report = " %2d) %s: %s" % [step[:i] + 1,
                                          formatted_elapsed,
-                                         info[:name]]
-        context = info[:context]
+                                         step[:name]]
+        context = step[:context]
         if context
           if slow?(relative_elapsed_in_seconds)
             context = colorize(context, :slow)
           end
           step_report << " " << context
         end
-        output.puts step_report
+        output.puts(step_report)
       end
       output.puts
     end
@@ -640,12 +640,12 @@ class GroongaQueryLogAnaylzer
         "parameters" => parameters,
       }
       steps = []
-      statistic.each_step_info do |info|
-        step = {}
-        step["name"] = info[:name]
-        step["relative_elapsed"] = info[:relative_elapsed_in_seconds]
-        step["context"] = info[:context]
-        steps << step
+      statistic.each_step do |step|
+        step_data = {}
+        step_data["name"] = step[:name]
+        step_data["relative_elapsed"] = step[:relative_elapsed_in_seconds]
+        step_data["context"] = step[:context]
+        steps << step_data
       end
       data["steps"] = steps
       JSON.generate(data)
