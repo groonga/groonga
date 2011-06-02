@@ -177,13 +177,13 @@ class GroongaQueryLogAnaylzer
 
   class Statistic
     attr_reader :context_id, :start_time, :raw_command
-    attr_reader :trace, :elapsed, :return_code
+    attr_reader :step, :elapsed, :return_code
     def initialize(context_id)
       @context_id = context_id
       @start_time = nil
       @command = nil
       @raw_command = nil
-      @trace = []
+      @step = []
       @elapsed = nil
       @return_code = 0
     end
@@ -210,22 +210,22 @@ class GroongaQueryLogAnaylzer
       @start_time + elapsed_in_seconds
     end
 
-    def each_trace_info
+    def each_step_info
       previous_elapsed = 0
       ensure_parse_command
-      @trace.each_with_index do |(trace_elapsed, trace_label), i|
-        relative_elapsed = trace_elapsed - previous_elapsed
-        previous_elapsed = trace_elapsed
-        trace_info = {
+      @step.each_with_index do |(step_elapsed, step_label), i|
+        relative_elapsed = step_elapsed - previous_elapsed
+        previous_elapsed = step_elapsed
+        step_info = {
           :i => i,
-          :elapsed => trace_elapsed,
-          :elapsed_in_seconds => nano_seconds_to_seconds(trace_elapsed),
+          :elapsed => step_elapsed,
+          :elapsed_in_seconds => nano_seconds_to_seconds(step_elapsed),
           :relative_elapsed => relative_elapsed,
           :relative_elapsed_in_seconds => nano_seconds_to_seconds(relative_elapsed),
-          :label => trace_label,
-          :context => trace_context(trace_label, i),
+          :label => step_label,
+          :context => step_context(step_label, i),
         }
-        yield trace_info
+        yield step_info
       end
     end
 
@@ -238,7 +238,7 @@ class GroongaQueryLogAnaylzer
       nano_seconds / 1000.0 / 1000.0 / 1000.0
     end
 
-    def trace_context(label, i)
+    def step_context(label, i)
       case label
       when /\Afilter\(/
         @select_command.conditions[i]
@@ -308,7 +308,7 @@ class GroongaQueryLogAnaylzer
         label = $POSTMATCH.strip
         statistic = current_statistics[context_id]
         return if statistic.nil?
-        statistic.trace << [elapsed.to_i, label]
+        statistic.step << [elapsed.to_i, label]
       when "<"
         return unless /\A(\d+) rc=(\d+)/ =~ rest
         elapsed = $1
@@ -518,7 +518,7 @@ class GroongaQueryLogAnaylzer
           each_with_index do |statistic, i|
             output.puts "%*d) %s" % [digit, i + 1, format_heading(statistic)]
             report_parameters(output, statistic)
-            report_trace(output, statistic)
+            report_step(output, statistic)
           end
         end
       end
@@ -534,14 +534,14 @@ class GroongaQueryLogAnaylzer
       end
     end
 
-    def report_trace(output, statistic)
-      statistic.each_trace_info do |info|
+    def report_step(output, statistic)
+      statistic.each_step_info do |info|
         relative_elapsed_in_seconds = info[:relative_elapsed_in_seconds]
         formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
         if slow?(relative_elapsed_in_seconds)
           formatted_elapsed = colorize(formatted_elapsed, :slow)
         end
-        trace_report = " %2d) %s: %s" % [info[:i] + 1,
+        step_report = " %2d) %s: %s" % [info[:i] + 1,
                                          formatted_elapsed,
                                          info[:label]]
         context = info[:context]
@@ -549,9 +549,9 @@ class GroongaQueryLogAnaylzer
           if slow?(relative_elapsed_in_seconds)
             context = colorize(context, :slow)
           end
-          trace_report << " " << context
+          step_report << " " << context
         end
-        output.puts trace_report
+        output.puts step_report
       end
       output.puts
     end
@@ -635,7 +635,7 @@ class GroongaQueryLogAnaylzer
         "parameters" => parameters,
       }
       steps = []
-      statistic.each_trace_info do |info|
+      statistic.each_step_info do |info|
         step = {}
         step["name"] = info[:label]
         step["relative_elapsed"] = info[:relative_elapsed_in_seconds]
