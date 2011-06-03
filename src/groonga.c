@@ -174,11 +174,12 @@ show_version(void)
 
 #define BUFSIZE 0x1000000
 
-inline static int
-prompt(grn_ctx *ctx, char *buf)
+inline static grn_rc
+prompt(grn_ctx *ctx, grn_obj *buf)
 {
   static int the_first_read = GRN_TRUE;
   int len;
+  grn_rc rc;
   if (!batchmode) {
 #ifdef HAVE_LIBEDIT
     const wchar_t *es;
@@ -201,29 +202,27 @@ prompt(grn_ctx *ctx, char *buf)
     }
 #else
     fprintf(stderr, "> ");
-    if (fgets(buf, BUFSIZE, stdin)) {
-      len = strlen(buf);
-    } else {
-      len = 0;
-    }
+    rc = grn_text_fgets(ctx, buf, stdin);
 #endif
   } else {
-    if (fgets(buf, BUFSIZE, stdin)) {
-      len = strlen(buf);
-    } else {
-      len = 0;
-    }
+    rc = grn_text_fgets(ctx, buf, stdin);
   }
   if (the_first_read && len > 0) {
     const char bom[] = {0xef, 0xbb, 0xbf};
     if (GRN_CTX_GET_ENCODING(ctx) == GRN_ENC_UTF8 &&
-        len > 3 && !memcmp(buf, bom, 3)) {
-      memmove(buf, buf + 3, len - 3);
-      len -= 3;
+        GRN_TEXT_LEN(buf) > 3 && !memcmp(GRN_TEXT_VALUE(buf), bom, 3)) {
+      grn_obj buf_without_bom;
+      GRN_TEXT_INIT(&buf_without_bom, 0);
+      GRN_TEXT_PUT(ctx, &buf_without_bom,
+                   GRN_TEXT_VALUE(buf) + 3, GRN_TEXT_LEN(buf) - 3);
+      GRN_TEXT_SET(ctx, buf,
+                   GRN_TEXT_VALUE(&buf_without_bom),
+                   GRN_TEXT_LEN(&buf_without_bom));
+      grn_obj_unlink(ctx, &buf_without_bom);
     }
     the_first_read = GRN_FALSE;
   }
-  return len;
+  return rc;
 }
 
 typedef enum {
@@ -646,19 +645,11 @@ do_alone(int argc, char **argv)
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
-      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
-      if (!rc) {
-        char *buf = GRN_TEXT_VALUE(&text);
-        int  len;
-        while ((len = prompt(ctx, buf))) {
-          uint32_t size = len - 1;
-          grn_ctx_send(ctx, buf, size, 0);
-          if (ctx->stat == GRN_CTX_QUIT) { break; }
-        }
-        rc = ctx->rc;
-      } else {
-        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
+      while (prompt(ctx, &text) != GRN_END_OF_DATA) {
+        grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1, 0);
+        if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
+      rc = ctx->rc;
       grn_obj_unlink(ctx, &text);
     } else {
       rc = grn_ctx_sendv(ctx, argc, argv, 0);
@@ -717,20 +708,12 @@ g_client(int argc, char **argv)
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
-      rc = grn_bulk_reserve(ctx, &text, BUFSIZE);
-      if (!rc) {
-        char *buf = GRN_TEXT_VALUE(&text);
-        int   len;
-        while ((len = prompt(ctx, buf))) {
-          uint32_t size = len - 1;
-          grn_ctx_send(ctx, buf, size, 0);
-          rc = ctx->rc;
-          if (rc) { break; }
-          if (c_output(ctx)) { goto exit; }
-          if (ctx->stat == GRN_CTX_QUIT) { break; }
-        }
-      } else {
-        fprintf(stderr, "grn_bulk_reserve() failed (%d): %d\n", BUFSIZE, rc);
+      while (prompt(ctx, &text) != GRN_END_OF_DATA) {
+        grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1, 0);
+        rc = ctx->rc;
+        if (rc) { break; }
+        if (c_output(ctx)) { goto exit; }
+        if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
       grn_obj_unlink(ctx, &text);
     } else {
