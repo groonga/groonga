@@ -674,6 +674,7 @@ do_alone(int argc, char **argv)
         GRN_TEXT_PUT(ctx, &command,
                      GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1);
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1, 0);
+        GRN_BULK_REWIND(&text);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
       rc = ctx->rc;
@@ -738,6 +739,7 @@ g_client(int argc, char **argv)
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1, 0);
+        GRN_BULK_REWIND(&text);
         rc = ctx->rc;
         if (rc) { break; }
         if (c_output(ctx)) { goto exit; }
