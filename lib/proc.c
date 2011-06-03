@@ -647,8 +647,13 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
                                           GRN_BULK_CURR(VAR(2)));
     if (ctx->rc) { goto exit; }
   }
-  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
-                      GRN_TEXT_LEN(VAR(0)));
+  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[column][create]: table doesn't exist: <%.*s>",
+        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0))) ;
+    goto exit;
+  }
   type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
                      GRN_TEXT_LEN(VAR(3)));
   if (GRN_TEXT_LEN(VAR(1))) { flags |= GRN_OBJ_PERSISTENT; }

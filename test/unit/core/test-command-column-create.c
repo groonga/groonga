@@ -24,6 +24,7 @@
 #include <str.h>
 
 void test_invalid_name(void);
+void test_nonexistent_table(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -86,4 +87,14 @@ test_invalid_name(void)
     "[column][create]: name can't start with '_' and 0-9, "
     "and contains only 0-9, A-Z, a-z, or _: <_name>",
     "column_create Users _name COLUMN_SCALAR ShortText");
+}
+
+void
+test_nonexistent_table(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[column][create]: table doesn't exist: <Users>",
+    "column_create Users name COLUMN_SCALAR ShortText");
 }

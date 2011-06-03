@@ -2802,7 +2802,11 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   char fullname[GRN_PAT_MAX_KEY_SIZE];
   char buffer[PATH_MAX];
   GRN_API_ENTER;
-  if (!table || !type || !name || !name_size) {
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT, "[column][create]: table is missing");
+    goto exit;
+  }
+  if (!type || !name || !name_size) {
     ERR(GRN_INVALID_ARGUMENT, "missing type or name");
     goto exit;
   }
