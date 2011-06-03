@@ -501,6 +501,7 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
       GRN_TEXT_PUTC(ctx, head, ',');
       grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
       if (ctx->errfunc && ctx->errfile) {
+        grn_obj *command;
         /* TODO: output backtrace */
         GRN_TEXT_PUTS(ctx, head, ",[[");
         grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
@@ -508,6 +509,10 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
         GRN_TEXT_PUTC(ctx, head, ',');
         grn_text_itoa(ctx, head, ctx->errline);
+        if ((command = GRN_CTX_USER_DATA(ctx)->ptr)) {
+          GRN_TEXT_PUTC(ctx, head, ',');
+          grn_text_esc(ctx, head, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+        }
         GRN_TEXT_PUTS(ctx, head, "]]");
       }
     }
@@ -612,6 +617,7 @@ s_output(grn_ctx *ctx, int flags, void *arg)
 {
   if (ctx && ctx->impl && (flags & GRN_CTX_TAIL)) {
     grn_obj *buf = ctx->impl->outbuf;
+    grn_obj *command;
     if (GRN_TEXT_LEN(buf) || ctx->rc) {
       FILE * stream = (FILE *) arg;
       grn_obj head, foot;
@@ -627,6 +633,8 @@ s_output(grn_ctx *ctx, int flags, void *arg)
       GRN_OBJ_FIN(ctx, &head);
       GRN_OBJ_FIN(ctx, &foot);
     }
+    command = GRN_CTX_USER_DATA(ctx)->ptr;
+    GRN_BULK_REWIND(command);
   }
 }
 
@@ -641,11 +649,16 @@ do_alone(int argc, char **argv)
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
+    grn_obj command;
+    GRN_TEXT_INIT(&command, 0);
+    GRN_CTX_USER_DATA(ctx)->ptr = &command;
     grn_ctx_recv_handler_set(ctx, s_output, stdout);
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
+        GRN_TEXT_PUT(ctx, &command,
+                     GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1);
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1, 0);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
@@ -654,6 +667,7 @@ do_alone(int argc, char **argv)
     } else {
       rc = grn_ctx_sendv(ctx, argc, argv, 0);
     }
+    grn_obj_unlink(ctx, &command);
     grn_obj_close(ctx, db);
   } else {
     fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
