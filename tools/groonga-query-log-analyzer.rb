@@ -407,16 +407,14 @@ class GroongaQueryLogAnaylzer
     include Enumerable
 
     attr_reader :output
-    attr_accessor :n_entries, :slow_threshold
+    attr_accessor :slow_threshold
     def initialize(statistics)
       @statistics = statistics
-      @n_entries = 10
       @slow_threshold = 0.05
       @output = $stdout
     end
 
     def apply_options(options)
-      self.n_entries = options[:n_entries] || @n_entries
       self.slow_threshold = options[:slow_threshold] || @slow_threshold
       self.output = options[:output] || @output
     end
@@ -561,7 +559,7 @@ class GroongaQueryLogAnaylzer
     def report
       setup_output do |output|
         setup_color(output) do
-          digit = Math.log10(n_entries).truncate + 1
+          digit = Math.log10(@statistics.size).truncate + 1
           each_with_index do |statistic, i|
             output.puts "%*d) %s" % [digit, i + 1, format_heading(statistic)]
             report_parameters(output, statistic)
