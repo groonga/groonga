@@ -13,9 +13,14 @@ class GroongaQueryLogAnaylzer
   def run(argv=nil)
     log_paths = @option_parser.parse!(argv || ARGV)
 
+    stream = @options[:stream]
     dynamic_sort = @options[:dynamic_sort]
     statistics = SizedStatistics.new(@options[:n_entries], @options[:order])
-    if dynamic_sort
+    if stream
+      streamer = Streamer.new(create_reporter(statistics))
+      streamer.start
+      parser = QueryLogParser.new(streamer)
+    elsif dynamic_sort
       parser = QueryLogParser.new(statistics)
     else
       full_statistics = []
@@ -25,6 +30,10 @@ class GroongaQueryLogAnaylzer
       File.open(log_path) do |log|
         parser.parse(log)
       end
+    end
+    if stream
+      streamer.finish
+      return
     end
     statistics.replace(full_statistics) unless dynamic_sort
 
@@ -43,6 +52,7 @@ class GroongaQueryLogAnaylzer
     @options[:slow_threshold] = 0.05
     @options[:reporter] = "console"
     @options[:dynamic_sort] = true
+    @options[:stream] = false
 
     @option_parser = OptionParser.new do |parser|
       parser.banner += " LOG1 ..."
@@ -112,6 +122,13 @@ class GroongaQueryLogAnaylzer
                 "(#{@options[:dynamic_sort]})") do |sort|
         @options[:dynamic_sort] = sort
       end
+
+      parser.on("--[no-]stream",
+                "Outputs analyzed query on the fly.",
+                "NOTE: --n-entries and --order are ignored.",
+                "(#{@options[:stream]})") do |stream|
+        @options[:stream] = stream
+      end
     end
 
     def create_reporter(statistics)
@@ -121,6 +138,16 @@ class GroongaQueryLogAnaylzer
         JSONQueryLogReporter.new(statistics)
       else
         ConsoleQueryLogReporter.new(statistics)
+      end
+    end
+
+    def create_stream_reporter
+      case @options[:reporter]
+      when "json"
+        require 'json'
+        StreamJSONQueryLogReporter.new
+      else
+        StreamConsoleQueryLogReporter.new
       end
     end
   end
@@ -403,6 +430,24 @@ class GroongaQueryLogAnaylzer
     end
   end
 
+  class Streamer
+    def initialize(reporter)
+      @reporter = reporter
+    end
+
+    def start
+      @reporter.start
+    end
+
+    def <<(statistic)
+      @reporter.report_statistic(statistic)
+    end
+
+    def finish
+      @reporter.finish
+    end
+  end
+
   class QueryLogReporter
     include Enumerable
 
@@ -436,13 +481,17 @@ class GroongaQueryLogAnaylzer
     end
 
     def setup_output
+      original_output = @output
       if @output.is_a?(String)
         File.open(@output, "w") do |output|
-          yield(output)
+          @output = output
+          yield(@output)
         end
       else
         yield(@output)
       end
+    ensure
+      @output = original_output
     end
   end
 
@@ -556,17 +605,35 @@ class GroongaQueryLogAnaylzer
       @color = options[:color] || @color
     end
 
+    def start
+      @index = 0
+      if @statistics.size.zero?
+        @digit = 1
+      else
+        @digit = Math.log10(@statistics.size).truncate + 1
+      end
+    end
+
     def report
       setup_output do |output|
         setup_color(output) do
-          digit = Math.log10(@statistics.size).truncate + 1
-          each_with_index do |statistic, i|
-            output.puts "%*d) %s" % [digit, i + 1, format_heading(statistic)]
-            report_parameters(output, statistic)
-            report_steps(output, statistic)
+          start
+          each do |statistic|
+            report_statistic(statistic)
           end
+          finish
         end
       end
+    end
+
+    def finish
+    end
+
+    def report_statistic(statistic)
+      @index += 1
+      @output.puts "%*d) %s" % [@digit, @index, format_heading(statistic)]
+      report_parameters(@output, statistic)
+      report_steps(@output, statistic)
     end
 
     private
@@ -654,17 +721,31 @@ class GroongaQueryLogAnaylzer
   end
 
   class JSONQueryLogReporter < QueryLogReporter
+    def start
+      @index = 0
+      @output.print("[")
+    end
+
     def report
-      setup_output do |output|
-        output.print("[")
-        each_with_index do |statistic, i|
-          output.print(",") if i > 0
-          output.print("\n")
-          output.print(format_statistic(statistic))
+      setup_output do
+        start
+        each do |statistic|
+          report_statistic(statistic)
         end
-        output.puts
-        output.puts("]")
+        finish
       end
+    end
+
+    def finish
+      @output.puts
+      @output.puts("]")
+    end
+
+    def report_statistic(statistic)
+      @output.print(",") if @index > 0
+      @output.print("\n")
+      @output.print(format_statistic(statistic))
+      @index += 1
     end
 
     private
