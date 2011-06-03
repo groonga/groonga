@@ -63,12 +63,14 @@ static char bind_address[HOST_NAME_MAX];
 static char hostname[HOST_NAME_MAX];
 static int port = DEFAULT_PORT;
 static int batchmode;
+static int number_of_lines = 0;
 static int newdb;
 static int useql;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
 static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
-static const char *pidfile_path;
+static const char *pidfile_path = NULL;
+static const char *input_path = NULL;
 
 #ifdef HAVE_LIBEDIT
 #include <locale.h>
@@ -206,6 +208,9 @@ prompt(grn_ctx *ctx, grn_obj *buf)
 #endif
   } else {
     rc = grn_text_fgets(ctx, buf, stdin);
+    if (rc != GRN_END_OF_DATA) {
+      number_of_lines++;
+    }
   }
   if (the_first_read && len > 0) {
     const char bom[] = {0xef, 0xbb, 0xbf};
@@ -510,6 +515,15 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         GRN_TEXT_PUTC(ctx, head, ',');
         grn_text_itoa(ctx, head, ctx->errline);
         if ((command = GRN_CTX_USER_DATA(ctx)->ptr)) {
+          GRN_TEXT_PUTC(ctx, head, ',');
+          if (input_path) {
+            grn_text_esc(ctx, head, input_path, strlen(input_path));
+          } else {
+            const char *stdin_name = "(stdin)";
+            grn_text_esc(ctx, head, stdin_name, strlen(stdin_name));
+          }
+          GRN_TEXT_PUTC(ctx, head, ',');
+          grn_text_itoa(ctx, head, number_of_lines);
           GRN_TEXT_PUTC(ctx, head, ',');
           grn_text_esc(ctx, head, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
         }
@@ -2086,7 +2100,6 @@ main(int argc, char **argv)
     *cache_limitstr = NULL, *admin_html_path = NULL, *command_versionstr = NULL,
     *match_escalation_thresholdstr = NULL;
   const char *config_path = NULL;
-  const char *input_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, getopt_op_none},
