@@ -1,3 +1,3 @@
 EXTRA_DIST =					\
-	groonga-check-memory-leak.rb		\
+	groonga-memory-leak-checker.rb		\
 	prepare-sphinx-html.rb
