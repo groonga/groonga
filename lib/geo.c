@@ -824,11 +824,11 @@ exit :
   return ctx->rc;
 }
 
-unsigned
+grn_bool
 grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
                   grn_obj *radius_or_point)
 {
-  unsigned r = GRN_FALSE;
+  grn_bool r = GRN_FALSE;
   grn_obj center_, radius_or_point_;
   grn_id domain = point->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
@@ -884,7 +884,7 @@ exit :
   return r;
 }
 
-unsigned
+grn_bool
 grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
                          grn_geo_point *top_left, grn_geo_point *bottom_right)
 {
@@ -894,11 +894,11 @@ grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
             (point->latitude <= top_left->latitude));
 }
 
-unsigned
+grn_bool
 grn_geo_in_rectangle(grn_ctx *ctx, grn_obj *point,
                      grn_obj *top_left, grn_obj *bottom_right)
 {
-  unsigned r = GRN_FALSE;
+  grn_bool r = GRN_FALSE;
   grn_obj top_left_, bottom_right_;
   grn_id domain = point->header.domain;
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
