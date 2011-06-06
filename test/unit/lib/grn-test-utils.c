@@ -444,6 +444,24 @@ grn_long_path_new(const gchar *base_path, gssize max_size)
   return long_path;
 }
 
+GString *
+grn_long_name_new(gssize max_size)
+{
+  GString *long_name;
+
+  long_name = g_string_new(NULL);
+  while (long_name->len < max_size) {
+    g_string_append(long_name, "aaaaaaaaaa");
+    g_string_append(long_name, "bbbbbbbbbb");
+    g_string_append(long_name, "cccccccccc");
+    g_string_append(long_name, "dddddddddd");
+    g_string_append(long_name, "eeeeeeeeee");
+  }
+  g_string_set_size(long_name, max_size);
+
+  return long_name;
+}
+
 GList *
 grn_test_pat_cursor_get_keys(grn_ctx *context, grn_table_cursor *cursor)
 {

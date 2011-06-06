@@ -63,6 +63,7 @@ void         teardown_grn_logger           (grn_logger_info  *logger);
 
 GString     *grn_long_path_new             (const gchar      *base_path,
                                             gssize            max_size);
+GString     *grn_long_name_new             (gssize            max_size);
 
 GList       *grn_test_pat_cursor_get_keys  (grn_ctx          *context,
                                             grn_table_cursor *cursor);

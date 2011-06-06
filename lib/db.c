@@ -2817,17 +2817,25 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   db = DB_OBJ(table)->db;
   s = (grn_db *)db;
   if (!GRN_DB_P(s)) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
+    int table_name_len;
+    char table_name[GRN_PAT_MAX_KEY_SIZE];
+    table_name_len = grn_obj_name(ctx, table, table_name, GRN_PAT_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[column][create]: invalid db assigned: <%.*s>.<%.*s>",
+        table_name_len, table_name, name_size, name);
     goto exit;
   }
   if (DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT) {
-    ERR(GRN_INVALID_ARGUMENT, "temporary table doesn't support column");
+    ERR(GRN_INVALID_ARGUMENT,
+        "[column][create]: temporary table doesn't support column: <%.*s>",
+        name_size, name);
     goto exit;
   }
   {
     uint32_t s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(table)->id, &s);
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:column_create %.*s %.*s", s, n, name_size, name);
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "DDL:column_create %.*s %.*s", s, n, name_size, name);
   }
   if (grn_db_check_name(ctx, name, name_size)) {
     GRN_DB_CHECK_NAME_ERR("[column][create]", name, name_size);
@@ -2837,7 +2845,11 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     int len = grn_pat_get_key(ctx, s->keys, domain,
                               fullname, GRN_PAT_MAX_KEY_SIZE);
     if (name_size + 1 + len > GRN_PAT_MAX_KEY_SIZE) {
-      ERR(GRN_INVALID_ARGUMENT, "too long column name");
+      ERR(GRN_INVALID_ARGUMENT,
+          "[column][create]: too long column name: required name_size(%d) < %d"
+          ": <%.*s>.<%.*s>",
+          name_size, GRN_PAT_MAX_KEY_SIZE - 1 - len,
+          len, fullname, name_size, name);
       goto exit;
     }
     fullname[len] = GRN_DB_DELIMITER;

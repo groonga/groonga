@@ -25,6 +25,7 @@
 
 void test_invalid_name(void);
 void test_missing_name(void);
+void test_too_long_name(void);
 void test_nonexistent_table(void);
 void test_nonexistent_type(void);
 
@@ -100,6 +101,28 @@ test_missing_name(void)
     GRN_INVALID_ARGUMENT,
     "[column][create]: name is missing",
     "column_create Users --flags COLUMN_SCALAR --type ShortText");
+}
+
+void
+test_too_long_name(void)
+{
+  GString *command, *long_name;
+
+  long_name = grn_long_name_new(4096 - strlen("Users"));
+  gcut_take_string(long_name);
+  command = gcut_take_new_string("");
+  g_string_printf(command,
+                  "column_create Users %s COLUMN_SCALAR ShortText",
+                  long_name->str);
+
+  assert_send_command("table_create Users");
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[column][create]: too long column name"
+    ": required name_size(4091) < 4090"
+    ": <Users>.<aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeee",
+    command->str);
 }
 
 void
