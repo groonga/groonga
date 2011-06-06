@@ -2856,7 +2856,8 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     memcpy(fullname + len + 1, name, name_size);
     name_size += len + 1;
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "todo : not supported yet");
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[column][create]: [todo]: table-less column isn't supported yet");
     goto exit;
   }
   range = DB_OBJ(type)->id;
@@ -2889,7 +2890,14 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         gen_pathname(s->keys->io->path, buffer, id);
         path = buffer;
       } else {
-        ERR(GRN_INVALID_ARGUMENT, "path not assigned for persistent table");
+        int table_name_len;
+        char table_name[GRN_PAT_MAX_KEY_SIZE];
+        table_name_len = grn_obj_name(ctx, table, table_name,
+                                      GRN_PAT_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[column][create]: path not assigned for persistent column"
+            ": <%.*s>.<%.*s>",
+            table_name_len, table_name, name_size, name);
         goto exit;
       }
     } else {
@@ -2897,7 +2905,14 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     }
   } else {
     if (path) {
-      ERR(GRN_INVALID_ARGUMENT, "path assigned for temporary table");
+      int table_name_len;
+      char table_name[GRN_PAT_MAX_KEY_SIZE];
+      table_name_len = grn_obj_name(ctx, table, table_name,
+                                    GRN_PAT_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[column][create]: path assigned for temporary column"
+          ": <%.*s>.<%.*s>",
+          table_name_len, table_name, name_size, name);
       goto exit;
     }
   }
