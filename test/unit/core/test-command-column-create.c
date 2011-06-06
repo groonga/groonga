@@ -24,6 +24,7 @@
 #include <str.h>
 
 void test_invalid_name(void);
+void test_missing_name(void);
 void test_nonexistent_table(void);
 void test_nonexistent_type(void);
 
@@ -88,6 +89,17 @@ test_invalid_name(void)
     "[column][create]: name can't start with '_' and 0-9, "
     "and contains only 0-9, A-Z, a-z, or _: <_name>",
     "column_create Users _name COLUMN_SCALAR ShortText");
+}
+
+void
+test_missing_name(void)
+{
+  assert_send_command("table_create Users");
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[column][create]: name is missing",
+    "column_create Users --flags COLUMN_SCALAR --type ShortText");
 }
 
 void

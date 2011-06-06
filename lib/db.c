@@ -2811,7 +2811,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
   if (!name || !name_size) {
-    ERR(GRN_INVALID_ARGUMENT, "missing type or name");
+    ERR(GRN_INVALID_ARGUMENT, "[column][create]: name is missing");
     goto exit;
   }
   db = DB_OBJ(table)->db;

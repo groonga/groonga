@@ -662,7 +662,12 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
         GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3))) ;
     goto exit;
   }
-  if (GRN_TEXT_LEN(VAR(1))) { flags |= GRN_OBJ_PERSISTENT; }
+  if (GRN_TEXT_LEN(VAR(1))) {
+    flags |= GRN_OBJ_PERSISTENT;
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "[column][create]: name is missing");
+    goto exit;
+  }
   column = grn_column_create(ctx, table,
                              GRN_TEXT_VALUE(VAR(1)),
                              GRN_TEXT_LEN(VAR(1)),
