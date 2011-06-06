@@ -4,6 +4,7 @@ require 'English'
 require 'optparse'
 require 'cgi'
 require 'thread'
+require 'shellwords'
 
 class GroongaQueryLogAnaylzer
   def initialize
@@ -159,8 +160,17 @@ class GroongaQueryLogAnaylzer
         @@registered_commands[name] = klass
       end
 
-      def parse(command_path)
-        name, parameters_string = command_path.split(/\?/, 2)
+      def parse(input)
+        if input.start_with?("/d/")
+          parse_uri_path(input)
+        else
+          parse_command_line(input)
+        end
+      end
+
+      private
+      def parse_uri_path(path)
+        name, parameters_string = path.split(/\?/, 2)
         parameters = {}
         parameters_string.split(/&/).each do |parameter_string|
           key, value = parameter_string.split(/\=/, 2)
@@ -169,6 +179,16 @@ class GroongaQueryLogAnaylzer
         name = name.gsub(/\A\/d\//, '')
         name, output_type = name.split(/\./, 2)
         parameters["output_type"] = output_type if output_type
+        command_class = @@registered_commands[name] || self
+        command_class.new(name, parameters)
+      end
+
+      def parse_command_line(command_line)
+        name, *options = Shellwords.shellwords(command_line)
+        parameters = {}
+        options.each_slice(2) do |key, value|
+          parameters[key.gsub(/\A--/, '')] = value
+        end
         command_class = @@registered_commands[name] || self
         command_class.new(name, parameters)
       end

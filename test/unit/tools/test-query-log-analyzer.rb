@@ -25,20 +25,47 @@ module QueryLogAalyzerTest
       GroongaQueryLogAnaylzer::Command.new(name, parameters)
     end
 
-    def parse(command_path, parameters)
-      path = "#{command_path}?"
+    def parse_http_path(command, parameters)
+      path = "/d/#{command}.json?"
       path << parameters.collect do |key, value|
         [CGI.escape(key.to_s), CGI.escape(value.to_s)].join("=")
       end.join("&")
       GroongaQueryLogAnaylzer::Command.parse(path)
     end
+
+    def parse_command_line(command, parameters)
+      command_line = "#{command} --output_type json"
+      parameters.each do |key, value|
+        if /"| / =~ value
+          escaped_value = '"' + value.gsub(/"/, '\"') + '"'
+        else
+          escaped_value = value
+        end
+        command_line << " --#{key} #{escaped_value}"
+      end
+      GroongaQueryLogAnaylzer::Command.parse(command_line)
+    end
   end
 
-  class SelectCommandParseTest < Test::Unit::TestCase
+  module HTTPCommandParseTestUtils
+    private
+    def parse(command, parameters)
+      parse_http_path(command, parameters)
+    end
+  end
+
+  module CommandLineCommandParseTestUtils
+    private
+    def parse(command, parameters)
+      parse_command_line(command, parameters)
+    end
+  end
+
+  module SelectCommandParseTests
     include CommandParseTestUtils
 
     def test_parameters
-      select = parse("/d/select.json",
+      select = parse("select",
                      :table => "Users",
                      :filter => "age<=30")
       assert_equal(command("select",
@@ -49,7 +76,7 @@ module QueryLogAalyzerTest
     end
 
     def test_scorer
-      select = parse("/d/select.json",
+      select = parse("select",
                      :table => "Users",
                      :filter => "age<=30",
                      :scorer => "_score = random()")
@@ -57,7 +84,7 @@ module QueryLogAalyzerTest
     end
   end
 
-  class SelectCommandParseFilterTest < Test::Unit::TestCase
+  module SelectCommandParseFilterTests
     include CommandParseTestUtils
 
     def test_parenthesis
@@ -65,7 +92,7 @@ module QueryLogAalyzerTest
                                 '"35.73360x139.7394","62614x139.7714") && ' +
                '((type == "たいやき" || type == "和菓子")) && ' +
                'keyword @ "たいやき" &! keyword @ "白" &! keyword @ "養殖"'
-      select = parse("/d/select.json",
+      select = parse("select",
                      :table => "Users",
                      :filter => filter)
       assert_equal(['geo_in_rectangle(location,' +
@@ -77,6 +104,18 @@ module QueryLogAalyzerTest
                      'keyword @ "養殖"'],
                    select.conditions)
     end
+  end
+
+  class HTTPSelectCommandParseTest < Test::Unit::TestCase
+    include SelectCommandParseTests
+    include SelectCommandParseFilterTests
+    include HTTPCommandParseTestUtils
+  end
+
+  class CommandLineSelecCommandParseTest < Test::Unit::TestCase
+    include SelectCommandParseTests
+    include SelectCommandParseFilterTests
+    include CommandLineCommandParseTestUtils
   end
 
   class StatisticStepParseTest < Test::Unit::TestCase
