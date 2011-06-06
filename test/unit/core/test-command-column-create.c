@@ -25,6 +25,7 @@
 
 void test_invalid_name(void);
 void test_nonexistent_table(void);
+void test_nonexistent_type(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -97,4 +98,15 @@ test_nonexistent_table(void)
     GRN_INVALID_ARGUMENT,
     "[column][create]: table doesn't exist: <Users>",
     "column_create Users name COLUMN_SCALAR ShortText");
+}
+
+void
+test_nonexistent_type(void)
+{
+  assert_send_command("table_create Users");
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[column][create]: type doesn't exist: <VeryShortText>",
+    "column_create Users name COLUMN_SCALAR VeryShortText");
 }

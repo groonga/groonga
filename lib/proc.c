@@ -638,7 +638,7 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 static grn_obj *
 proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *column, *table, *type;
+  grn_obj *column, *table = NULL, *type = NULL;
   const char *rest;
   grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(VAR(2)),
                                  GRN_BULK_CURR(VAR(2)), &rest);
@@ -656,6 +656,12 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   }
   type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
                      GRN_TEXT_LEN(VAR(3)));
+  if (!type) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[column][create]: type doesn't exist: <%.*s>",
+        GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3))) ;
+    goto exit;
+  }
   if (GRN_TEXT_LEN(VAR(1))) { flags |= GRN_OBJ_PERSISTENT; }
   column = grn_column_create(ctx, table,
                              GRN_TEXT_VALUE(VAR(1)),
@@ -693,6 +699,8 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   }
 exit:
   GRN_OUTPUT_BOOL(!ctx->rc);
+  if (table) { grn_obj_unlink(ctx, table); }
+  if (type) { grn_obj_unlink(ctx, type); }
   return NULL;
 }
 
