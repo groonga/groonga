@@ -792,12 +792,12 @@ class GroongaQueryLogAnaylzer
         n_operations = operation_statistics[:n_operations]
         operation = operation_statistics[:represent_operation]
         parameters = [total_elapsed,
-                      total_elapsed / @statistics.total_elapsed % 100,
+                      total_elapsed / @statistics.total_elapsed * 100,
                       n_operations,
-                      n_operations / @statistics.slow_operations.size.to_f % 100,
+                      n_operations / @statistics.slow_operations.size.to_f * 100,
                       operation[:name],
                       operation[:context]]
-        @output.puts(" [%10.6f](%3.2f%%) [%3d](%3.2f%%) %8s: %s" % parameters)
+        @output.puts(" [%10.6f](%4.2f%%) [%3d](%4.2f%%) %8s: %s" % parameters)
       end
     end
 
