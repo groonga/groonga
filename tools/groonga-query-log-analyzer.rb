@@ -374,6 +374,7 @@ class GroongaQueryLogAnaylzer
       @slow_operations = []
       @slow_responses = []
       @total_elapsed = 0
+      @collect_slow_statistics = true
     end
 
     def order=(new_order)
@@ -386,6 +387,7 @@ class GroongaQueryLogAnaylzer
       self.order = options[:order]
       @slow_operation_threshold = options[:slow_operation_threshold]
       @slow_response_threshold = options[:slow_response_threshold]
+      @collect_slow_statistics = options[:report_summary]
     end
 
     def <<(statistic)
@@ -461,6 +463,7 @@ class GroongaQueryLogAnaylzer
       @last_time = [@last_time, statistic.end_time].max
       @n_responses += 1
       @total_elapsed += statistic.elapsed_in_seconds
+      return unless @collect_slow_statistics
       if slow?(statistic)
         @slow_responses << statistic
         if statistic.select_command?
