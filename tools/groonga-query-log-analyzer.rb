@@ -16,7 +16,8 @@ class GroongaQueryLogAnaylzer
 
     stream = @options[:stream]
     dynamic_sort = @options[:dynamic_sort]
-    statistics = SizedStatistics.new(@options[:n_entries], @options[:order])
+    statistics = SizedStatistics.new
+    statistics.apply_options(@options)
     if stream
       streamer = Streamer.new(create_reporter(statistics))
       streamer.start
@@ -50,10 +51,12 @@ class GroongaQueryLogAnaylzer
     @options[:order] = "-elapsed"
     @options[:color] = :auto
     @options[:output] = "-"
-    @options[:slow_threshold] = 0.05
+    @options[:slow_operation_threshold] = 0.05
+    @options[:slow_response_threshold] = 0.1
     @options[:reporter] = "console"
     @options[:dynamic_sort] = true
     @options[:stream] = false
+    @options[:report_summary] = true
 
     @option_parser = OptionParser.new do |parser|
       parser.banner += " LOG1 ..."
@@ -101,11 +104,18 @@ class GroongaQueryLogAnaylzer
         @options[:output] = output
       end
 
-      parser.on("--slow-threshold=THRESHOLD",
+      parser.on("--slow-operation-threshold=THRESHOLD",
                 Float,
                 "Use THRESHOLD seconds to detect slow operations.",
-                "(#{@options[:slow_threshold]})") do |threshold|
-        @options[:slow_threshold] = threshold
+                "(#{@options[:slow_operation_threshold]})") do |threshold|
+        @options[:slow_operation_threshold] = threshold
+      end
+
+      parser.on("--slow-response-threshold=THRESHOLD",
+                Float,
+                "Use THRESHOLD seconds to detect slow operations.",
+                "(#{@options[:sloq_response_threshold]})") do |threshold|
+        @options[:sloq_response_threshold] = threshold
       end
 
       available_reporters = ["console", "json"]
@@ -129,6 +139,12 @@ class GroongaQueryLogAnaylzer
                 "NOTE: --n-entries and --order are ignored.",
                 "(#{@options[:stream]})") do |stream|
         @options[:stream] = stream
+      end
+
+      parser.on("--[no-]report-summary",
+                "Reports summary at the end.",
+                "(#{@options[:report_summary]})") do |report_summary|
+        @options[:report_summary] = report_summary
       end
     end
 
@@ -244,7 +260,7 @@ class GroongaQueryLogAnaylzer
       @start_time = nil
       @command = nil
       @raw_command = nil
-      @steps = []
+      @operations = []
       @elapsed = nil
       @return_code = 0
     end
@@ -271,40 +287,41 @@ class GroongaQueryLogAnaylzer
       @start_time + elapsed_in_seconds
     end
 
-    def each_step
+    def each_operation
       previous_elapsed = 0
       ensure_parse_command
-      step_context_context = {
+      operation_context_context = {
         :filter_index => 0,
         :drilldown_index => 0,
       }
-      @steps.each_with_index do |step, i|
-        relative_elapsed = step[:elapsed] - previous_elapsed
-        previous_elapsed = step[:elapsed]
-        parsed_step = {
+      @operations.each_with_index do |operation, i|
+        relative_elapsed = operation[:elapsed] - previous_elapsed
+        previous_elapsed = operation[:elapsed]
+        parsed_operation = {
           :i => i,
-          :elapsed => step[:elapsed],
-          :elapsed_in_seconds => nano_seconds_to_seconds(step[:elapsed]),
+          :elapsed => operation[:elapsed],
+          :elapsed_in_seconds => nano_seconds_to_seconds(operation[:elapsed]),
           :relative_elapsed => relative_elapsed,
           :relative_elapsed_in_seconds => nano_seconds_to_seconds(relative_elapsed),
-          :name => step[:name],
-          :context => step_context(step[:name], step_context_context),
-          :n_records => step[:n_records],
+          :name => operation[:name],
+          :context => operation_context(operation[:name],
+                                        operation_context_context),
+          :n_records => operation[:n_records],
         }
-        yield parsed_step
+        yield parsed_operation
       end
     end
 
-    def add_step(step)
-      @steps << step
+    def add_operation(operation)
+      @operations << operation
     end
 
-    def steps
-      _steps = []
-      each_step do |step|
-        _steps << step
+    def operations
+      _operations = []
+      each_operation do |operation|
+        _operations << operation
       end
-      _steps
+      _operations
     end
 
     def select_command?
@@ -316,7 +333,7 @@ class GroongaQueryLogAnaylzer
       nano_seconds / 1000.0 / 1000.0 / 1000.0
     end
 
-    def step_context(label, context)
+    def operation_context(label, context)
       case label
       when "filter"
         index = context[:filter_index]
@@ -344,21 +361,43 @@ class GroongaQueryLogAnaylzer
   end
 
   class SizedStatistics < Array
-    def initialize(size, order)
-      @size = size
-      @order = order
-      @sorter = sorter
+    attr_reader :n_responses, :slow_operations, :slow_responses, :total_elapsed
+    attr_accessor :slow_operation_threshold, :slow_response_threshold
+    def initialize
+      @max_size = 10
+      self.order = "-elapsed"
+      @slow_operation_threshold = 0.05
+      @slow_response_threshold = 0.1
+      @start_time = nil
+      @last_time = nil
+      @n_responses = 0
+      @slow_operations = []
+      @slow_responses = []
+      @total_elapsed = 0
     end
 
-    def <<(other)
-      if size < @size - 1
-        super(other)
-      elsif size == @size - 1
-        super(other)
+    def order=(new_order)
+      @order = new_order
+      @sorter = create_sorter
+    end
+
+    def apply_options(options)
+      @max_size = options[:n_entries]
+      self.order = options[:order]
+      @slow_operation_threshold = options[:slow_operation_threshold]
+      @slow_response_threshold = options[:slow_response_threshold]
+    end
+
+    def <<(statistic)
+      update_statistic(statistic)
+      if size < @max_size - 1
+        super(statistic)
+      elsif size == @max_size - 1
+        super(statistic)
         sort_by!(&@sorter)
       else
-        if @sorter.call(other) < @sorter.call(last)
-          super(other)
+        if @sorter.call(statistic) < @sorter.call(last)
+          super(statistic)
           sort_by!(&@sorter)
           pop
         end
@@ -369,19 +408,40 @@ class GroongaQueryLogAnaylzer
     def replace(other)
       super(other)
       sort_by!(&@sorter)
-      super(self[0, @size])
+      super(self[0, @max_size])
+    end
+
+    def responses_per_second
+      _period = period
+      if _period.zero?
+        0
+      else
+        @n_responses.to_f / _period
+      end
+    end
+
+    def slow_response_ratio
+      (@slow_responses.size.to_f / @n_responses) * 100
+    end
+
+    def period
+      if @start_time and @last_time
+        @last_time - @start_time
+      else
+        0
+      end
     end
 
     private
-    def sorter
+    def create_sorter
       case @order
-      when "elapsed"
-        lambda do |statistic|
-          -statistic.elapsed
-        end
       when "-elapsed"
         lambda do |statistic|
           -statistic.elapsed
+        end
+      when "elapsed"
+        lambda do |statistic|
+          statistic.elapsed
         end
       when "-start-time"
         lambda do |statistic|
@@ -392,6 +452,29 @@ class GroongaQueryLogAnaylzer
           statistic.start_time
         end
       end
+    end
+
+    def update_statistic(statistic)
+      @start_time ||= statistic.start_time
+      @start_time = [@start_time, statistic.start_time].min
+      @last_time ||= statistic.end_time
+      @last_time = [@last_time, statistic.end_time].max
+      @n_responses += 1
+      @total_elapsed += statistic.elapsed_in_seconds
+      if slow?(statistic)
+        @slow_responses << statistic
+        if statistic.select_command?
+          statistic.each_operation do |operation|
+            if operation[:relative_elapsed_in_seconds] >= @slow_operation_threshold
+              @slow_operations << operation
+            end
+          end
+        end
+      end
+    end
+
+    def slow?(statistic)
+      statistic.elapsed_in_seconds >= @slow_response_threshold
     end
   end
 
@@ -435,9 +518,9 @@ class GroongaQueryLogAnaylzer
         n_records = $3.to_i
         statistic = current_statistics[context_id]
         return if statistic.nil?
-        statistic.add_step(:name => name,
-                           :elapsed => elapsed.to_i,
-                           :n_records => n_records)
+        statistic.add_operation(:name => name,
+                                :elapsed => elapsed.to_i,
+                                :n_records => n_records)
       when "<"
         return unless /\A(\d+) rc=(\d+)/ =~ rest
         elapsed = $1
@@ -473,15 +556,20 @@ class GroongaQueryLogAnaylzer
 
     attr_reader :output
     attr_accessor :slow_threshold
+    attr_accessor :report_summary
     def initialize(statistics)
       @statistics = statistics
       @slow_threshold = 0.05
+      @report_summary = true
       @output = $stdout
     end
 
     def apply_options(options)
       self.slow_threshold = options[:slow_threshold] || @slow_threshold
       self.output = options[:output] || @output
+      if options.has_key?(:report_summary)
+        self.report_summary = options[:report_summary]
+      end
     end
 
     def output=(output)
@@ -495,9 +583,26 @@ class GroongaQueryLogAnaylzer
       end
     end
 
+    def report
+      setup do
+        each do |statistic|
+          report_statistic(statistic)
+        end
+        report_summary
+      end
+    end
+
     private
     def slow?(elapsed)
       elapsed >= @slow_threshold
+    end
+
+    def setup
+      setup_output do
+        start
+        yield
+        finish
+      end
     end
 
     def setup_output
@@ -625,6 +730,13 @@ class GroongaQueryLogAnaylzer
       @color = options[:color] || @color
     end
 
+    def report_statistic(statistic)
+      @index += 1
+      @output.puts "%*d) %s" % [@digit, @index, format_heading(statistic)]
+      report_parameters(@output, statistic)
+      report_operations(@output, statistic)
+    end
+
     def start
       @index = 0
       if @statistics.size.zero?
@@ -634,29 +746,61 @@ class GroongaQueryLogAnaylzer
       end
     end
 
-    def report
-      setup_output do |output|
-        setup_color(output) do
-          start
-          each do |statistic|
-            report_statistic(statistic)
-          end
-          finish
+    def finish
+    end
+
+    private
+    def setup
+      super do
+        setup_color do
+          yield
         end
       end
     end
 
-    def finish
+    def report_summary
+      @output.puts("Summary:")
+      @output.puts("  # of responses      : #{@statistics.n_responses}")
+      @output.puts("  # of slow responses : #{@statistics.slow_responses.size}")
+      @output.puts("  responses/sec       : #{@statistics.responses_per_second}")
+      @output.puts("  slow response ratio : #{@statistics.slow_response_ratio}")
+      @output.puts("  total response time : #{@statistics.total_elapsed}")
+      report_slow_operations
     end
 
-    def report_statistic(statistic)
-      @index += 1
-      @output.puts "%*d) %s" % [@digit, @index, format_heading(statistic)]
-      report_parameters(@output, statistic)
-      report_steps(@output, statistic)
+    def report_slow_operations
+      @output.puts("Slow Operations")
+      grouped_operations = @statistics.slow_operations.group_by do |operation|
+        operation[:context]
+      end
+      operation_statistics = grouped_operations.collect do |context, operations|
+        total_elapsed = operations.inject(0) do |previous, operation|
+          previous + operation[:relative_elapsed_in_seconds]
+        end
+        {
+          :total_elapsed => total_elapsed,
+          :n_operations => operations.size,
+          :represent_operation => operations.first
+        }
+      end
+      sorted_operation_statistics = operation_statistics.sort_by do |operation_statistic|
+        -operation_statistic[:total_elapsed]
+      end
+
+      sorted_operation_statistics.each do |operation_statistics|
+        total_elapsed = operation_statistics[:total_elapsed]
+        n_operations = operation_statistics[:n_operations]
+        operation = operation_statistics[:represent_operation]
+        parameters = [total_elapsed,
+                      total_elapsed / @statistics.total_elapsed % 100,
+                      n_operations,
+                      n_operations / @statistics.slow_operations.size.to_f % 100,
+                      operation[:name],
+                      operation[:context]]
+        @output.puts(" [%10.6f](%3.2f%%) [%3d](%3.2f%%) %8s: %s" % parameters)
+      end
     end
 
-    private
     def report_parameters(output, statistic)
       command = statistic.command
       output.puts "  name: <#{command.name}>"
@@ -666,29 +810,29 @@ class GroongaQueryLogAnaylzer
       end
     end
 
-    def report_steps(output, statistic)
-      statistic.each_step do |step|
-        relative_elapsed_in_seconds = step[:relative_elapsed_in_seconds]
+    def report_operations(output, statistic)
+      statistic.each_operation do |operation|
+        relative_elapsed_in_seconds = operation[:relative_elapsed_in_seconds]
         formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
         if slow?(relative_elapsed_in_seconds)
           formatted_elapsed = colorize(formatted_elapsed, :slow)
         end
-        step_report = " %2d) %s: %10s" % [step[:i] + 1,
-                                          formatted_elapsed,
-                                          step[:name]]
-        if step[:n_records]
-          step_report << "(%6d)" % step[:n_records]
+        operation_report = " %2d) %s: %10s" % [operation[:i] + 1,
+                                               formatted_elapsed,
+                                               operation[:name]]
+        if operation[:n_records]
+          operation_report << "(%6d)" % operation[:n_records]
         else
-          step_report << "(%6s)" % ""
+          operation_report << "(%6s)" % ""
         end
-        context = step[:context]
+        context = operation[:context]
         if context
           if slow?(relative_elapsed_in_seconds)
             context = colorize(context, :slow)
           end
-          step_report << " " << context
+          operation_report << " " << context
         end
-        output.puts(step_report)
+        output.puts(operation_report)
       end
       output.puts
     end
@@ -704,9 +848,9 @@ class GroongaQueryLogAnaylzer
       end
     end
 
-    def setup_color(output)
+    def setup_color
       color = @color
-      @color = guess_color_availability(output) if @color == :auto
+      @color = guess_color_availability(@output) if @color == :auto
       yield
     ensure
       @color = color
@@ -741,31 +885,21 @@ class GroongaQueryLogAnaylzer
   end
 
   class JSONQueryLogReporter < QueryLogReporter
-    def start
-      @index = 0
-      @output.print("[")
-    end
-
-    def report
-      setup_output do
-        start
-        each do |statistic|
-          report_statistic(statistic)
-        end
-        finish
-      end
-    end
-
-    def finish
-      @output.puts
-      @output.puts("]")
-    end
-
     def report_statistic(statistic)
       @output.print(",") if @index > 0
       @output.print("\n")
       @output.print(format_statistic(statistic))
       @index += 1
+    end
+
+    def start
+      @index = 0
+      @output.print("[")
+    end
+
+    def finish
+      @output.puts
+      @output.puts("]")
     end
 
     private
@@ -785,15 +919,15 @@ class GroongaQueryLogAnaylzer
         "name" => command.name,
         "parameters" => parameters,
       }
-      steps = []
-      statistic.each_step do |step|
-        step_data = {}
-        step_data["name"] = step[:name]
-        step_data["relative_elapsed"] = step[:relative_elapsed_in_seconds]
-        step_data["context"] = step[:context]
-        steps << step_data
+      operations = []
+      statistic.each_operation do |operation|
+        operation_data = {}
+        operation_data["name"] = operation[:name]
+        operation_data["relative_elapsed"] = operation[:relative_elapsed_in_seconds]
+        operation_data["context"] = operation[:context]
+        operations << operation_data
       end
-      data["steps"] = steps
+      data["operations"] = operations
       JSON.generate(data)
     end
   end
