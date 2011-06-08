@@ -227,6 +227,14 @@ prompt(grn_ctx *ctx, grn_obj *buf)
     }
     the_first_read = GRN_FALSE;
   }
+  if (GRN_TEXT_LEN(buf) > 0 &&
+      GRN_TEXT_VALUE(buf)[GRN_TEXT_LEN(buf) - 1] == '\n') {
+    grn_bulk_truncate(ctx, buf, GRN_TEXT_LEN(buf) - 1);
+  }
+  if (GRN_TEXT_LEN(buf) > 0 &&
+      GRN_TEXT_VALUE(buf)[GRN_TEXT_LEN(buf) - 1] == '\r') {
+    grn_bulk_truncate(ctx, buf, GRN_TEXT_LEN(buf) - 1);
+  }
   return rc;
 }
 
@@ -671,9 +679,8 @@ do_alone(int argc, char **argv)
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
-        GRN_TEXT_PUT(ctx, &command,
-                     GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1);
-        grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1, 0);
+        GRN_TEXT_PUT(ctx, &command, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text));
+        grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         GRN_BULK_REWIND(&text);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
@@ -738,7 +745,7 @@ g_client(int argc, char **argv)
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
-        grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text) - 1, 0);
+        grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         GRN_BULK_REWIND(&text);
         rc = ctx->rc;
         if (rc) { break; }
