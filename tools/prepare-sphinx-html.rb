@@ -56,8 +56,6 @@ LANGUAGE_TO_LOCALE = {
 }
 
 def insert_facebook_html_header(html, language)
-  locale = LANGUAGE_TO_LOCALE[language]
-  raise "unknown locale for language #{language.inspect}" if locale.nil?
   html.gsub(/<\/head>/) do
     <<-HTML
     <meta property="fb:page_id" content="201193596592346" />
@@ -65,18 +63,6 @@ def insert_facebook_html_header(html, language)
     <meta property="og:type" content="product" />
     <meta property="og:image" content="http://groonga.org/images/groonga.png" />
     <meta property="og:site_name" content="groonga" />
-    <script src="http://connect.facebook.net/#{locale}/all.js"></script>
-
-    <script>
-    window.fbAsyncInit = function() {
-      FB.init({
-         appId  : null,
-         status : true, // check login status
-         cookie : true, // enable cookies to allow the server to access the session
-         xfbml  : true  // parse XFBML
-      });
-    };
-    </script>
 
     <link rel="stylesheet" href="/css/sphinx.css" type="text/css" />
   </head>
@@ -106,10 +92,33 @@ def insert_facebook_html_buttons(html)
   end
 end
 
+def insert_facebook_html_footer(html, language)
+  locale = LANGUAGE_TO_LOCALE[language]
+  raise "unknown locale for language #{language.inspect}" if locale.nil?
+  html.gsub(/<\/body>/) do
+    <<-HTML
+    <script src="http://connect.facebook.net/#{locale}/all.js"></script>
+
+    <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+         appId  : null,
+         status : true, // check login status
+         cookie : true, // enable cookies to allow the server to access the session
+         xfbml  : true  // parse XFBML
+      });
+    };
+    </script>
+  </body>
+    HTML
+  end
+end
+
 def insert_facebook_html(html, language)
-  html = insert_facebook_html_header(html, language)
+  html = insert_facebook_html_header(html)
   html = insert_facebook_html_fb_root(html)
   html = insert_facebook_html_buttons(html)
+  html = insert_facebook_html_footer(html, language)
   html
 end
 
