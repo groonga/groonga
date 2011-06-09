@@ -55,7 +55,7 @@ LANGUAGE_TO_LOCALE = {
   "en" => "en_US",
 }
 
-def insert_facebook_html_header(html, language)
+def insert_facebook_html_header(html)
   html.gsub(/<\/head>/) do
     <<-HTML
     <meta property="fb:page_id" content="201193596592346" />
