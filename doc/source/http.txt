@@ -14,14 +14,14 @@ groonga httpサービス
 ----
 ::
 
- groonga -d --protocol http --document-root /usr/share/groonga/admin_html dest
+ groonga -d --protocol http DB_PATH
 
 説明
 ----
 
 groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信可能になります。また、--document-root によって静的ページのパスを指定すると、httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力します。
 
-デフォルトでは/usr/share/groonga/admin_html配下に、データベース管理ツールとなるファイル群がインストールされますので、このパスを指定してgroongaサーバを起動し、ウェブブラウザでhttp://hostname:port/index.htmlにアクセスすると、管理ツールが使用可能になります。
+groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--document-rootを指定しない場合は管理ツールがインストールされているパスが指定されたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスすると、管理ツールを利用できます。
 
 コマンド
 --------
