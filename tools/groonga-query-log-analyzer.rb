@@ -5,6 +5,7 @@ require 'optparse'
 require 'cgi'
 require 'thread'
 require 'shellwords'
+require 'time'
 
 class GroongaQueryLogAnaylzer
   def initialize
@@ -362,6 +363,7 @@ class GroongaQueryLogAnaylzer
 
   class SizedStatistics < Array
     attr_reader :n_responses, :slow_operations, :slow_responses, :total_elapsed
+    attr_reader :start_time, :last_time
     attr_accessor :slow_operation_threshold, :slow_response_threshold
     def initialize
       @max_size = 10
@@ -766,13 +768,17 @@ class GroongaQueryLogAnaylzer
       @output.puts("  # of responses      : #{@statistics.n_responses}")
       @output.puts("  # of slow responses : #{@statistics.slow_responses.size}")
       @output.puts("  responses/sec       : #{@statistics.responses_per_second}")
-      @output.puts("  slow response ratio : #{@statistics.slow_response_ratio}")
+      @output.puts("  start time          : #{@statistics.start_time.iso8601}")
+      @output.puts("  last time           : #{@statistics.last_time.iso8601}")
+      @output.puts("  period(sec)         : #{@statistics.period}")
+      slow_response_ratio = @statistics.slow_response_ratio
+      @output.puts("  slow response ratio : %5.3f%%" % slow_response_ratio)
       @output.puts("  total response time : #{@statistics.total_elapsed}")
       report_slow_operations
     end
 
     def report_slow_operations
-      @output.puts("Slow Operations")
+      @output.puts("  Slow Operations:")
       grouped_operations = @statistics.slow_operations.group_by do |operation|
         operation[:context]
       end
@@ -800,7 +806,7 @@ class GroongaQueryLogAnaylzer
                       n_operations / @statistics.slow_operations.size.to_f * 100,
                       operation[:name],
                       operation[:context]]
-        @output.puts(" [%10.6f](%4.2f%%) [%3d](%4.2f%%) %8s: %s" % parameters)
+        @output.puts("    [%10.6f](%5.2f%%) [%3d](%5.2f%%) %9s: %s" % parameters)
       end
     end
 
