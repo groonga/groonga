@@ -1065,12 +1065,15 @@ class GroongaQueryLogAnaylzer
       summary_html = erb(<<-EOH, __LINE__ + 1, binding)
     <h2>Summary</h2>
     <div class="summary">
-      <h2>Metrices</h2>
+      <h3>Analyze Parameters</h3>
       <dl>
         <dt>slow response threshold</dt>
         <dd><%= h(@statistics.slow_response_threshold) %>sec</dd>
         <dt>slow operation threshold</dt>
         <dd><%= h(@statistics.slow_operation_threshold) %>sec</dd>
+      </dl>
+      <h3>Metrices</h3>
+      <dl>
         <dt># of responses</dt>
         <dd><%= h(@statistics.n_responses) %></dd>
         <dt># of slow responses</dt>
@@ -1088,7 +1091,7 @@ class GroongaQueryLogAnaylzer
         <dt>total response time</dt>
         <dd><%= h(@statistics.total_elapsed) %>sec</dd>
       </dl>
-      <h2>Slow Operations</h2>
+      <h3>Slow Operations</h3>
       <ol>
 <% @statistics.slow_operations.each do |grouped_operation| %>
         <li>
@@ -1174,6 +1177,7 @@ span.slow
     </style>
   </head>
   <body>
+    <h1>groonga query analyzer</h1>
       EOH
     end
 
@@ -1186,14 +1190,6 @@ span.slow
 
     def statistics_header
       erb(<<-EOH, __LINE__ + 1)
-    <h1>groonga query analyzer</h1>
-    <h2>Analyze Parameters</h2>
-    <dl>
-      <dt>slow response threshold</dt>
-      <dd><%= h(@statistics.slow_response_threshold) %>sec</dd>
-      <dt>slow operation threshold</dt>
-      <dd><%= h(@statistics.slow_operation_threshold) %>sec</dd>
-    </dl>
     <h2>Slow Queries</h2>
     <div>
       EOH
