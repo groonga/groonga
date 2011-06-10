@@ -696,6 +696,10 @@ class GroongaQueryLogAnaylzer
     ensure
       @output = original_output
     end
+
+    def write(*args)
+      @output.write(*args)
+    end
   end
 
   class ConsoleQueryLogReporter < QueryLogReporter
@@ -810,9 +814,9 @@ class GroongaQueryLogAnaylzer
 
     def report_statistic(statistic)
       @index += 1
-      @output.puts "%*d) %s" % [@digit, @index, format_heading(statistic)]
-      report_parameters(@output, statistic)
-      report_operations(@output, statistic)
+      write("%*d) %s" % [@digit, @index, format_heading(statistic)])
+      report_parameters(statistic)
+      report_operations(statistic)
     end
 
     def start
@@ -837,21 +841,24 @@ class GroongaQueryLogAnaylzer
     end
 
     def report_summary
-      @output.puts("Summary:")
-      @output.puts("  # of responses      : #{@statistics.n_responses}")
-      @output.puts("  # of slow responses : #{@statistics.n_slow_responses}")
-      @output.puts("  responses/sec       : #{@statistics.responses_per_second}")
-      @output.puts("  start time          : #{@statistics.start_time.iso8601}")
-      @output.puts("  last time           : #{@statistics.last_time.iso8601}")
-      @output.puts("  period(sec)         : #{@statistics.period}")
+      write("Summary:\n")
+      write("  Threshold:\n")
+      write("    slow response     : #{@statistics.slow_response_threshold}\n")
+      write("    slow operation    : #{@statistics.slow_operation_threshold}\n")
+      write("  # of responses      : #{@statistics.n_responses}\n")
+      write("  # of slow responses : #{@statistics.n_slow_responses}\n")
+      write("  responses/sec       : #{@statistics.responses_per_second}\n")
+      write("  start time          : #{@statistics.start_time.iso8601}\n")
+      write("  last time           : #{@statistics.last_time.iso8601}\n")
+      write("  period(sec)         : #{@statistics.period}\n")
       slow_response_ratio = @statistics.slow_response_ratio
-      @output.puts("  slow response ratio : %5.3f%%" % slow_response_ratio)
-      @output.puts("  total response time : #{@statistics.total_elapsed}")
+      write("  slow response ratio : %5.3f%%\n" % slow_response_ratio)
+      write("  total response time : #{@statistics.total_elapsed}\n")
       report_slow_operations
     end
 
     def report_slow_operations
-      @output.puts("  Slow Operations:")
+      write("  Slow Operations:\n")
       total_elapsed_digit = nil
       total_elapsed_decimal_digit = 6
       n_operations_digit = nil
@@ -869,20 +876,20 @@ class GroongaQueryLogAnaylzer
                       n_operations / @statistics.n_slow_operations.to_f * 100,
                       grouped_operation[:name],
                       grouped_operation[:context]]
-        @output.puts("    [%*.*f](%5.2f%%) [%*d](%5.2f%%) %9s: %s" % parameters)
+        write("    [%*.*f](%5.2f%%) [%*d](%5.2f%%) %9s: %s\n" % parameters)
       end
     end
 
-    def report_parameters(output, statistic)
+    def report_parameters(statistic)
       command = statistic.command
-      output.puts "  name: <#{command.name}>"
-      output.puts "  parameters:"
+      write("  name: <#{command.name}>\n")
+      write("  parameters:\n")
       command.parameters.each do |key, value|
-        output.puts "    <#{key}>: <#{value}>"
+        write("    <#{key}>: <#{value}>\n")
       end
     end
 
-    def report_operations(output, statistic)
+    def report_operations(statistic)
       statistic.each_operation do |operation|
         relative_elapsed_in_seconds = operation[:relative_elapsed_in_seconds]
         formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
@@ -904,9 +911,9 @@ class GroongaQueryLogAnaylzer
           end
           operation_report << " " << context
         end
-        output.puts(operation_report)
+              write("#{operation_report}\n")
       end
-      output.puts
+      write("\n")
     end
 
     def guess_color_availability(output)
@@ -958,20 +965,20 @@ class GroongaQueryLogAnaylzer
 
   class JSONQueryLogReporter < QueryLogReporter
     def report_statistic(statistic)
-      @output.print(",") if @index > 0
-      @output.print("\n")
-      @output.print(format_statistic(statistic))
+      write(",") if @index > 0
+      write("\n")
+      write(format_statistic(statistic))
       @index += 1
     end
 
     def start
       @index = 0
-      @output.print("[")
+      write("[")
     end
 
     def finish
-      @output.puts
-      @output.puts("]")
+      write("\n")
+      write("]\n")
     end
 
     private
