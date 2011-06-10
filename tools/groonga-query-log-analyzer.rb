@@ -52,8 +52,8 @@ class GroongaQueryLogAnaylzer
     @options[:order] = "-elapsed"
     @options[:color] = :auto
     @options[:output] = "-"
-    @options[:slow_operation_threshold] = 0.05
-    @options[:slow_response_threshold] = 0.1
+    @options[:slow_operation_threshold] = 0.1
+    @options[:slow_response_threshold] = 0.2
     @options[:reporter] = "console"
     @options[:dynamic_sort] = true
     @options[:stream] = false
@@ -361,20 +361,80 @@ class GroongaQueryLogAnaylzer
     end
   end
 
+  class SizedGroupedOperations < Array
+    def initialize
+      @max_size = 10
+      @sorter = create_sorter
+    end
+
+    def apply_options(options)
+      @max_size = options[:n_entries]
+    end
+
+    def each
+      i = 0
+      super do |grouped_operation|
+        break if i >= @max_size
+        i += 1
+        yield(grouped_operation)
+      end
+    end
+
+    def <<(operation)
+      each do |grouped_operation|
+        if grouped_operation[:name] == operation[:name] and
+            grouped_operation[:context] == operation[:context]
+          elapsed = operation[:relative_elapsed_in_seconds]
+          grouped_operation[:total_elapsed] += elapsed
+          grouped_operation[:n_operations] += 1
+          return self
+        end
+      end
+
+      grouped_operation = {
+        :name => operation[:name],
+        :context => operation[:context],
+        :n_operations => 1,
+        :total_elapsed => operation[:relative_elapsed_in_seconds],
+      }
+      buffer_size = @max_size * 100
+      if size < buffer_size
+        super(grouped_operation)
+        sort_by!(&@sorter)
+      else
+        if @sorter.call(grouped_operation) < @sorter.call(last)
+          super(grouped_operation)
+          sort_by!(&@sorter)
+          pop
+        end
+      end
+      self
+    end
+
+    private
+    def create_sorter
+      lambda do |grouped_operation|
+        -grouped_operation[:total_elapsed]
+      end
+    end
+  end
+
   class SizedStatistics < Array
-    attr_reader :n_responses, :slow_operations, :slow_responses, :total_elapsed
+    attr_reader :n_responses, :n_slow_responses, :n_slow_operations
+    attr_reader :slow_operations, :total_elapsed
     attr_reader :start_time, :last_time
     attr_accessor :slow_operation_threshold, :slow_response_threshold
     def initialize
       @max_size = 10
       self.order = "-elapsed"
-      @slow_operation_threshold = 0.05
-      @slow_response_threshold = 0.1
+      @slow_operation_threshold = 0.1
+      @slow_response_threshold = 0.2
       @start_time = nil
       @last_time = nil
       @n_responses = 0
-      @slow_operations = []
-      @slow_responses = []
+      @n_slow_responses = 0
+      @n_slow_operations = 0
+      @slow_operations = SizedGroupedOperations.new
       @total_elapsed = 0
       @collect_slow_statistics = true
     end
@@ -390,13 +450,12 @@ class GroongaQueryLogAnaylzer
       @slow_operation_threshold = options[:slow_operation_threshold]
       @slow_response_threshold = options[:slow_response_threshold]
       @collect_slow_statistics = options[:report_summary]
+      @slow_operations.apply_options(options)
     end
 
     def <<(statistic)
       update_statistic(statistic)
-      if size < @max_size - 1
-        super(statistic)
-      elsif size == @max_size - 1
+      if size < @max_size
         super(statistic)
         sort_by!(&@sorter)
       else
@@ -425,7 +484,7 @@ class GroongaQueryLogAnaylzer
     end
 
     def slow_response_ratio
-      (@slow_responses.size.to_f / @n_responses) * 100
+      (@n_slow_responses.to_f / @n_responses) * 100
     end
 
     def period
@@ -467,12 +526,13 @@ class GroongaQueryLogAnaylzer
       @total_elapsed += statistic.elapsed_in_seconds
       return unless @collect_slow_statistics
       if slow?(statistic)
-        @slow_responses << statistic
+        @n_slow_responses += 1
         if statistic.select_command?
           statistic.each_operation do |operation|
-            if operation[:relative_elapsed_in_seconds] >= @slow_operation_threshold
-              @slow_operations << operation
-            end
+            relative_elapsed_in_seconds = operation[:relative_elapsed_in_seconds]
+            next unless relative_elapsed_in_seconds >= @slow_operation_threshold
+            @n_slow_operations += 1
+            @slow_operations << operation
           end
         end
       end
@@ -766,7 +826,7 @@ class GroongaQueryLogAnaylzer
     def report_summary
       @output.puts("Summary:")
       @output.puts("  # of responses      : #{@statistics.n_responses}")
-      @output.puts("  # of slow responses : #{@statistics.slow_responses.size}")
+      @output.puts("  # of slow responses : #{@statistics.n_slow_responses}")
       @output.puts("  responses/sec       : #{@statistics.responses_per_second}")
       @output.puts("  start time          : #{@statistics.start_time.iso8601}")
       @output.puts("  last time           : #{@statistics.last_time.iso8601}")
@@ -779,34 +839,24 @@ class GroongaQueryLogAnaylzer
 
     def report_slow_operations
       @output.puts("  Slow Operations:")
-      grouped_operations = @statistics.slow_operations.group_by do |operation|
-        operation[:context]
-      end
-      operation_statistics = grouped_operations.collect do |context, operations|
-        total_elapsed = operations.inject(0) do |previous, operation|
-          previous + operation[:relative_elapsed_in_seconds]
-        end
-        {
-          :total_elapsed => total_elapsed,
-          :n_operations => operations.size,
-          :represent_operation => operations.first
-        }
-      end
-      sorted_operation_statistics = operation_statistics.sort_by do |operation_statistic|
-        -operation_statistic[:total_elapsed]
-      end
-
-      sorted_operation_statistics.each do |operation_statistics|
-        total_elapsed = operation_statistics[:total_elapsed]
-        n_operations = operation_statistics[:n_operations]
-        operation = operation_statistics[:represent_operation]
-        parameters = [total_elapsed,
+      total_elapsed_digit = nil
+      total_elapsed_decimal_digit = 6
+      n_operations_digit = nil
+      @statistics.slow_operations.each do |grouped_operation|
+        total_elapsed = grouped_operation[:total_elapsed]
+        total_elapsed_digit ||= Math.log10(total_elapsed).truncate + 1
+        n_operations = grouped_operation[:n_operations]
+        n_operations_digit ||= Math.log10(n_operations).truncate + 1
+        parameters = [total_elapsed_digit + 1 + total_elapsed_decimal_digit,
+                      total_elapsed_decimal_digit,
+                      total_elapsed,
                       total_elapsed / @statistics.total_elapsed * 100,
+                      n_operations_digit,
                       n_operations,
-                      n_operations / @statistics.slow_operations.size.to_f * 100,
-                      operation[:name],
-                      operation[:context]]
-        @output.puts("    [%10.6f](%5.2f%%) [%3d](%5.2f%%) %9s: %s" % parameters)
+                      n_operations / @statistics.n_slow_operations.to_f * 100,
+                      grouped_operation[:name],
+                      grouped_operation[:context]]
+        @output.puts("    [%*.*f](%5.2f%%) [%*d](%5.2f%%) %9s: %s" % parameters)
       end
     end
 
