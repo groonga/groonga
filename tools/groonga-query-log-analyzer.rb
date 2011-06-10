@@ -424,6 +424,7 @@ class GroongaQueryLogAnaylzer
           elapsed = operation[:relative_elapsed_in_seconds]
           grouped_operation[:total_elapsed] += elapsed
           grouped_operation[:n_operations] += 1
+          replace(sort_by(&@sorter))
           return self
         end
       end
@@ -443,7 +444,7 @@ class GroongaQueryLogAnaylzer
           super(grouped_operation)
           sorted_operations = sort_by(&@sorter)
           sorted_operations.pop
-          replace(sorted_other)
+          replace(sorted_operations)
         end
       end
       self
@@ -536,6 +537,18 @@ class GroongaQueryLogAnaylzer
         @last_time - @start_time
       else
         0
+      end
+    end
+
+    def each_slow_operation
+      @slow_operations.each do |grouped_operation|
+        total_elapsed = grouped_operation[:total_elapsed]
+        n_operations = grouped_operation[:n_operations]
+        ratios = {
+          :total_elapsed_ratio => total_elapsed / @total_elapsed * 100,
+          :n_operations_ratio => n_operations / @n_slow_operations.to_f * 100,
+        }
+        yield(grouped_operation.merge(ratios))
       end
     end
 
@@ -892,7 +905,7 @@ class GroongaQueryLogAnaylzer
       total_elapsed_digit = nil
       total_elapsed_decimal_digit = 6
       n_operations_digit = nil
-      @statistics.slow_operations.each do |grouped_operation|
+      @statistics.each_slow_operation do |grouped_operation|
         total_elapsed = grouped_operation[:total_elapsed]
         total_elapsed_digit ||= Math.log10(total_elapsed).truncate + 1
         n_operations = grouped_operation[:n_operations]
@@ -900,10 +913,10 @@ class GroongaQueryLogAnaylzer
         parameters = [total_elapsed_digit + 1 + total_elapsed_decimal_digit,
                       total_elapsed_decimal_digit,
                       total_elapsed,
-                      total_elapsed / @statistics.total_elapsed * 100,
+                      grouped_operation[:total_elapsed_ratio],
                       n_operations_digit,
                       n_operations,
-                      n_operations / @statistics.n_slow_operations.to_f * 100,
+                      grouped_operation[:n_operations_ratio],
                       grouped_operation[:name],
                       grouped_operation[:context]]
         write("    [%*.*f](%5.2f%%) [%*d](%5.2f%%) %9s: %s\n" % parameters)
@@ -1168,6 +1181,18 @@ div.statistics
 {
   clear: both;
 }
+
+td.elapsed,
+td.ratio,
+td.n
+{
+  text-align: right;
+}
+
+td.name
+{
+  text-align: center;
+}
     </style>
   </head>
   <body>
@@ -1261,18 +1286,36 @@ div.statistics
       erb(<<-EOH, __LINE__ + 1)
       <div class="statistics">
         <h3>Slow Operations</h3>
-        <ol>
-<% @statistics.slow_operations.each do |grouped_operation| %>
-          <li>
-            [<%= format_elapsed(grouped_operation[:total_elapsed]) %>]
-            (<%= h("%5.2f" % (grouped_operation[:total_elapsed] / @statistics.total_elapsed * 100)) %>%)
-            [<%= grouped_operation[:n_operations] %>]
-            (<%= h("%5.2f" % (grouped_operation[:n_operations] / @statistics.n_slow_operations.to_f * 100)) %>%)
-            <%= span({:class => "name"}, h(grouped_operation[:name])) %>:
-            <%= span({:class => "context"}, h(grouped_operation[:context])) %>
-          </li>
+        <table class="slow-operations">
+          <tr>
+            <th>total elapsed(sec)</th>
+            <th>total elapsed(%)</th>
+            <th># of operations</th>
+            <th># of operations(%)</th>
+            <th>operation name</th>
+            <th>context</th>
+          </tr>
+<% @statistics.each_slow_operation do |grouped_operation| %>
+          <tr>
+            <td class="elapsed">
+              <%= format_elapsed(grouped_operation[:total_elapsed]) %>
+            </td>
+            <td class="ratio">
+              <%= format_ratio(grouped_operation[:total_elapsed_ratio]) %>
+            </td>
+            <td class="n">
+              <%= h(grouped_operation[:n_operations]) %>
+            </td>
+            <td class="ratio">
+              <%= format_ratio(grouped_operation[:n_operations_ratio]) %>
+            </td>
+            <td class="name"><%= h(grouped_operation[:name]) %></td>
+            <td class="context">
+              <%= format_context(grouped_operation[:context]) %>
+            </td>
+          </tr>
 <% end %>
-        </ol>
+        </table>
       </div>
       EOH
     end
@@ -1287,6 +1330,14 @@ div.statistics
         formatted_elapsed = span({:class => "slow"}, formatted_elapsed)
       end
       formatted_elapsed
+    end
+
+    def format_ratio(ratio)
+      h("%5.2f%%" % ratio)
+    end
+
+    def format_context(context)
+      h(context).gsub(/,/, ",<wbr />")
     end
 
     def tag(name, attributes, content)
