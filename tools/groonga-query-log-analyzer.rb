@@ -654,7 +654,6 @@ class GroongaQueryLogAnaylzer
     include Enumerable
 
     attr_reader :output
-    attr_accessor :report_summary
     def initialize(statistics)
       @statistics = statistics
       @report_summary = true
@@ -663,8 +662,8 @@ class GroongaQueryLogAnaylzer
 
     def apply_options(options)
       self.output = options[:output] || @output
-      if options.has_key?(:report_summary)
-        self.report_summary = options[:report_summary]
+      unless options[:report_summary].nil?
+        @report_summary = options[:report_summary]
       end
     end
 
@@ -681,8 +680,8 @@ class GroongaQueryLogAnaylzer
 
     def report
       setup do
+        report_summary if @report_summary
         report_statistics
-        report_summary
       end
     end
 
@@ -997,6 +996,10 @@ class GroongaQueryLogAnaylzer
       write("]\n")
     end
 
+    def report_summary
+      # TODO
+    end
+
     private
     def format_statistic(statistic)
       data = {
@@ -1043,6 +1046,10 @@ class GroongaQueryLogAnaylzer
 
     def finish
       write(footer)
+    end
+
+    def report_summary
+      # TODO
     end
 
     def report_statistics
