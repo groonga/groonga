@@ -295,7 +295,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
     if (taintable) { grn_db_touch(ctx, DB_OBJ(table_)->db); }
     grn_obj_unlink(ctx, table_);
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "invalid table name: %.*s", table_len, table);
+    ERR(GRN_INVALID_ARGUMENT, "invalid table name: <%.*s>", table_len, table);
   }
   if (match_escalation_threshold_len) {
     grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
