@@ -865,8 +865,8 @@ class GroongaQueryLogAnaylzer
       write("  # of responses      : #{@statistics.n_responses}\n")
       write("  # of slow responses : #{@statistics.n_slow_responses}\n")
       write("  responses/sec       : #{@statistics.responses_per_second}\n")
-      write("  start time          : #{@statistics.start_time.iso8601}\n")
-      write("  last time           : #{@statistics.last_time.iso8601}\n")
+      write("  start time          : #{format_time(@statistics.start_time)}\n")
+      write("  last time           : #{format_time(@statistics.last_time)}\n")
       write("  period(sec)         : #{@statistics.period}\n")
       slow_response_ratio = @statistics.slow_response_ratio
       write("  slow response ratio : %5.3f%%\n" % slow_response_ratio)
@@ -1049,7 +1049,48 @@ class GroongaQueryLogAnaylzer
     end
 
     def report_summary
-      # TODO
+      summary_html = erb(<<-EOH, __LINE__ + 1, binding)
+    <h2>Summary</h2>
+    <div class="summary">
+      <h2>Metrices</h2>
+      <dl>
+        <dt>slow response threshold</dt>
+        <dd><%= h(@statistics.slow_response_threshold) %>sec</dd>
+        <dt>slow operation threshold</dt>
+        <dd><%= h(@statistics.slow_operation_threshold) %>sec</dd>
+        <dt># of responses</dt>
+        <dd><%= h(@statistics.n_responses) %></dd>
+        <dt># of slow responses</dt>
+        <dd><%= h(@statistics.n_slow_responses) %></dd>
+        <dt>responses/sec</dt>
+        <dd><%= h(@statistics.responses_per_second) %></dd>
+        <dt>start time</dt>
+        <dd><%= format_time(@statistics.start_time) %></dd>
+        <dt>last time</dt>
+        <dd><%= format_time(@statistics.last_time) %></dd>
+        <dt>period</dt>
+        <dd><%= h(@statistics.period) %>sec</dd>
+        <dt>slow response ratio</dt>
+        <dd><%= h(@statistics.slow_response_ratio) %>%</dd>
+        <dt>total response time</dt>
+        <dd><%= h(@statistics.total_elapsed) %>sec</dd>
+      </dl>
+      <h2>Slow Operations</h2>
+      <ol>
+<% @statistics.slow_operations.each do |grouped_operation| %>
+        <li>
+          [<%= format_elapsed(grouped_operation[:total_elapsed]) %>]
+          (<%= h("%5.2f" % (grouped_operation[:total_elapsed] / @statistics.total_elapsed * 100)) %>%)
+          [<%= grouped_operation[:n_operations] %>]
+          (<%= h("%5.2f" % (grouped_operation[:n_operations] / @statistics.n_slow_operations.to_f * 100)) %>%)
+          <%= span({:class => "name"}, h(grouped_operation[:name])) %>:
+          <%= span({:class => "context"}, h(grouped_operation[:context])) %>
+        </li>
+<% end %>
+      </ol>
+    </div>
+      EOH
+      write(summary_html)
     end
 
     def report_statistics
@@ -1132,7 +1173,7 @@ span.slow
 
     def statistics_header
       erb(<<-EOH, __LINE__ + 1)
-    <h1>groonga query naalyzer</h1>
+    <h1>groonga query analyzer</h1>
     <h2>Analyze Parameters</h2>
     <dl>
       <dt>slow response threshold</dt>
