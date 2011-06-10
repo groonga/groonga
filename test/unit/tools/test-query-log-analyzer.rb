@@ -118,10 +118,10 @@ module QueryLogAalyzerTest
     include CommandLineCommandParseTestUtils
   end
 
-  class StatisticStepParseTest < Test::Unit::TestCase
+  class StatisticOperationParseTest < Test::Unit::TestCase
     def test_context
-      steps = statistics.first.steps.collect do |step|
-        [step[:name], step[:context]]
+      operations = statistics.first.operations.collect do |operation|
+        [operation[:name], operation[:context]]
       end
       expected = [
         ["filter", "local_name @ \"gsub\""],
@@ -132,12 +132,12 @@ module QueryLogAalyzerTest
         ["drilldown", "name"],
         ["drilldown", "class"],
       ]
-      assert_equal(expected, steps)
+      assert_equal(expected, operations)
     end
 
     def test_n_records
-      steps = statistics.first.steps.collect do |step|
-        [step[:name], step[:n_records]]
+      operations = statistics.first.operations.collect do |operation|
+        [operation[:name], operation[:n_records]]
       end
       expected = [
         ["filter", 15],
@@ -148,7 +148,7 @@ module QueryLogAalyzerTest
         ["drilldown", 3],
         ["drilldown", 2],
       ]
-      assert_equal(expected, steps)
+      assert_equal(expected, operations)
     end
 
     private
@@ -167,7 +167,9 @@ EOL
     end
 
     def statistics
-      statistics = GroongaQueryLogAnaylzer::SizedStatistics.new(100, "-elapsed")
+      statistics = GroongaQueryLogAnaylzer::SizedStatistics.new
+      statistics.apply_options(:n_entries => 100,
+                               :order => "-elapsed")
       parser = GroongaQueryLogAnaylzer::QueryLogParser.new(statistics)
       parser.parse(StringIO.new(log))
       statistics

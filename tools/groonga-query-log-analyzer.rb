@@ -482,11 +482,15 @@ class GroongaQueryLogAnaylzer
     end
 
     def apply_options(options)
-      @max_size = options[:n_entries]
-      self.order = options[:order]
-      @slow_operation_threshold = options[:slow_operation_threshold]
-      @slow_response_threshold = options[:slow_response_threshold]
-      @collect_slow_statistics = options[:report_summary]
+      @max_size = options[:n_entries] || @max_size
+      self.order = options[:order] || @order
+      @slow_operation_threshold =
+        options[:slow_operation_threshold] || @slow_operation_threshold
+      @slow_response_threshold =
+        options[:slow_response_threshold] || @slow_response_threshold
+      unless options[:report_summary].nil?
+        @collect_slow_statistics = options[:report_summary]
+      end
       @slow_operations.apply_options(options)
     end
 
