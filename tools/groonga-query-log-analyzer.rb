@@ -6,8 +6,15 @@ require 'cgi'
 require 'thread'
 require 'shellwords'
 require 'time'
+require 'erb'
 
 class GroongaQueryLogAnaylzer
+  class Error < StandardError
+  end
+
+  class UnsupportedReporter < Error
+  end
+
   def initialize
     setup_options
   end
@@ -119,7 +126,7 @@ class GroongaQueryLogAnaylzer
         @options[:sloq_response_threshold] = threshold
       end
 
-      available_reporters = ["console", "json"]
+      available_reporters = ["console", "json", "html"]
       parser.on("--reporter=REPORTER",
                 available_reporters,
                 "Reports statistics by REPORTER.",
@@ -154,6 +161,8 @@ class GroongaQueryLogAnaylzer
       when "json"
         require 'json'
         JSONQueryLogReporter.new(statistics)
+      when "html"
+        HTMLQueryLogReporter.new(statistics)
       else
         ConsoleQueryLogReporter.new(statistics)
       end
@@ -164,6 +173,8 @@ class GroongaQueryLogAnaylzer
       when "json"
         require 'json'
         StreamJSONQueryLogReporter.new
+      when "html"
+        raise UnsupportedReporter, "HTML reporter doesn't support --stream."
       else
         StreamConsoleQueryLogReporter.new
       end
@@ -264,6 +275,7 @@ class GroongaQueryLogAnaylzer
   class Statistic
     attr_reader :context_id, :start_time, :raw_command
     attr_reader :elapsed, :return_code
+    attr_accessor :slow_operation_threshold, :slow_response_threshold
     def initialize(context_id)
       @context_id = context_id
       @start_time = nil
@@ -272,6 +284,8 @@ class GroongaQueryLogAnaylzer
       @operations = []
       @elapsed = nil
       @return_code = 0
+      @slow_operation_threshold = 0.1
+      @slow_response_threshold = 0.2
     end
 
     def start(start_time, command)
@@ -296,6 +310,10 @@ class GroongaQueryLogAnaylzer
       @start_time + elapsed_in_seconds
     end
 
+    def slow?
+      elapsed_in_seconds >= @slow_response_threshold
+    end
+
     def each_operation
       previous_elapsed = 0
       ensure_parse_command
@@ -305,17 +323,19 @@ class GroongaQueryLogAnaylzer
       }
       @operations.each_with_index do |operation, i|
         relative_elapsed = operation[:elapsed] - previous_elapsed
+        relative_elapsed_in_seconds = nano_seconds_to_seconds(relative_elapsed)
         previous_elapsed = operation[:elapsed]
         parsed_operation = {
           :i => i,
           :elapsed => operation[:elapsed],
           :elapsed_in_seconds => nano_seconds_to_seconds(operation[:elapsed]),
           :relative_elapsed => relative_elapsed,
-          :relative_elapsed_in_seconds => nano_seconds_to_seconds(relative_elapsed),
+          :relative_elapsed_in_seconds => relative_elapsed_in_seconds,
           :name => operation[:name],
           :context => operation_context(operation[:name],
                                         operation_context_context),
           :n_records => operation[:n_records],
+          :slow? => slow_operation?(relative_elapsed_in_seconds),
         }
         yield parsed_operation
       end
@@ -371,6 +391,10 @@ class GroongaQueryLogAnaylzer
     def ensure_parse_command
       return unless select_command?
       @select_command = SelectCommand.parse(@raw_command)
+    end
+
+    def slow_operation?(elapsed)
+      elapsed >= @slow_operation_threshold
     end
   end
 
@@ -531,6 +555,8 @@ class GroongaQueryLogAnaylzer
     end
 
     def update_statistic(statistic)
+      statistic.slow_response_threshold = @slow_response_threshold
+      statistic.slow_operation_threshold = @slow_operation_threshold
       @start_time ||= statistic.start_time
       @start_time = [@start_time, statistic.start_time].min
       @last_time ||= statistic.end_time
@@ -538,21 +564,16 @@ class GroongaQueryLogAnaylzer
       @n_responses += 1
       @total_elapsed += statistic.elapsed_in_seconds
       return unless @collect_slow_statistics
-      if slow?(statistic)
+      if statistic.slow?
         @n_slow_responses += 1
         if statistic.select_command?
           statistic.each_operation do |operation|
-            relative_elapsed_in_seconds = operation[:relative_elapsed_in_seconds]
-            next unless relative_elapsed_in_seconds >= @slow_operation_threshold
+            next unless operation[:slow?]
             @n_slow_operations += 1
             @slow_operations << operation
           end
         end
       end
-    end
-
-    def slow?(statistic)
-      statistic.elapsed_in_seconds >= @slow_response_threshold
     end
   end
 
@@ -633,17 +654,14 @@ class GroongaQueryLogAnaylzer
     include Enumerable
 
     attr_reader :output
-    attr_accessor :slow_threshold
     attr_accessor :report_summary
     def initialize(statistics)
       @statistics = statistics
-      @slow_threshold = 0.05
       @report_summary = true
       @output = $stdout
     end
 
     def apply_options(options)
-      self.slow_threshold = options[:slow_threshold] || @slow_threshold
       self.output = options[:output] || @output
       if options.has_key?(:report_summary)
         self.report_summary = options[:report_summary]
@@ -663,18 +681,18 @@ class GroongaQueryLogAnaylzer
 
     def report
       setup do
-        each do |statistic|
-          report_statistic(statistic)
-        end
+        report_statistics
         report_summary
       end
     end
 
-    private
-    def slow?(elapsed)
-      elapsed >= @slow_threshold
+    def report_statistics
+      each do |statistic|
+        report_statistic(statistic)
+      end
     end
 
+    private
     def setup
       setup_output do
         start
@@ -893,7 +911,7 @@ class GroongaQueryLogAnaylzer
       statistic.each_operation do |operation|
         relative_elapsed_in_seconds = operation[:relative_elapsed_in_seconds]
         formatted_elapsed = "%8.8f" % relative_elapsed_in_seconds
-        if slow?(relative_elapsed_in_seconds)
+        if operation[:slow?]
           formatted_elapsed = colorize(formatted_elapsed, :slow)
         end
         operation_report = " %2d) %s: %10s" % [operation[:i] + 1,
@@ -906,12 +924,10 @@ class GroongaQueryLogAnaylzer
         end
         context = operation[:context]
         if context
-          if slow?(relative_elapsed_in_seconds)
-            context = colorize(context, :slow)
-          end
+          context = colorize(context, :slow) if operation[:slow?]
           operation_report << " " << context
         end
-              write("#{operation_report}\n")
+        write("#{operation_report}\n")
       end
       write("\n")
     end
@@ -1010,9 +1026,164 @@ class GroongaQueryLogAnaylzer
       JSON.generate(data)
     end
   end
+
+  class HTMLQueryLogReporter < QueryLogReporter
+    include ERB::Util
+
+    def report_statistic(statistic)
+      write(",") if @index > 0
+      write("\n")
+      write(format_statistic(statistic))
+      @index += 1
+    end
+
+    def start
+      write(header)
+    end
+
+    def finish
+      write(footer)
+    end
+
+    def report_statistics
+      write(statistics_header)
+      super
+      write(statistics_footer)
+    end
+
+    def report_statistic(statistic)
+      command = statistic.command
+      statistic_html = erb(<<-EOH, __LINE__ + 1, binding)
+      <div class="statistic-heading">
+        <h3>Command</h3>
+        <div class="metrics">
+          [<%= format_time(statistic.start_time) %>
+           -
+           <%= format_time(statistic.end_time) %>
+           (<%= format_elapsed(statistic.elapsed_in_seconds,
+                               :slow? => statistic.slow?) %>)]
+          (<%= span({:class => "return-code"}, h(statistic.return_code)) %>)
+        </div>
+        <%= div({:class => "raw-command"}, h(statistic.raw_command)) %>
+      </div>
+      <div class="statistic-parameters">
+        <h3>Parameters</h3>
+        <dl>
+          <dt>name</dt>
+          <dd><%= h(command.name) %></dd>
+<% command.parameters.each do |key, value| %>
+          <dt><%= h(key) %></dt>
+          <dd><%= h(value) %></dd>
+<% end %>
+         </dl>
+      </div>
+      <div class="statistic-operations">
+        <h3>Operations</h3>
+        <ol>
+<% statistic.each_operation do |operation| %>
+          <li>
+            <%= format_elapsed(operation[:relative_elapsed_in_seconds],
+                               :slow? => operation[:slow?]) %>:
+            <%= span({:class => "name"}, h(operation[:name])) %>:
+            <%= span({:class => "context"}, h(operation[:context])) %>
+          </li>
+<% end %>
+        </ol>
+      </div>
+      EOH
+      write(statistic_html)
+    end
+
+    private
+    def erb(content, line, _binding=nil)
+      _erb = ERB.new(content, nil, "<>")
+      eval(_erb.src, _binding || binding, __FILE__, line)
+    end
+
+    def header
+      erb(<<-EOH, __LINE__ + 1)
+<html>
+  <head>
+    <title>groonga query analyzer</title>
+    <style>
+span.slow
+{
+  color: red;
+}
+    </style>
+  </head>
+  <body>
+      EOH
+    end
+
+    def footer
+      erb(<<-EOH, __LINE__ + 1)
+  </body>
+</html>
+      EOH
+    end
+
+    def statistics_header
+      erb(<<-EOH, __LINE__ + 1)
+    <h1>groonga query naalyzer</h1>
+    <h2>Analyze Parameters</h2>
+    <dl>
+      <dt>slow response threshold</dt>
+      <dd><%= h(@statistics.slow_response_threshold) %>sec</dd>
+      <dt>slow operation threshold</dt>
+      <dd><%= h(@statistics.slow_operation_threshold) %>sec</dd>
+    </dl>
+    <h2>Slow Queries</h2>
+    <div>
+      EOH
+    end
+
+    def statistics_footer
+      erb(<<-EOH, __LINE__ + 1)
+    </div>
+      EOH
+    end
+
+    def format_time(time)
+      span({:class => "time"}, h(time.strftime("%Y-%m-%d %H:%M:%S.%u")))
+    end
+
+    def format_elapsed(elapsed, options={})
+      formatted_elapsed = span({:class => "elapsed"}, h("%8.8f" % elapsed))
+      if options[:slow?]
+        formatted_elapsed = span({:class => "slow"}, formatted_elapsed)
+      end
+      formatted_elapsed
+    end
+
+    def tag(name, attributes, content)
+      html = "<#{name}"
+      html_attributes = attributes.collect do |key, value|
+        "#{h(key)}=\"#{h(value)}\""
+      end
+      html << " #{html_attributes.join(' ')}" unless attributes.empty?
+      html << ">"
+      html << content
+      html << "</#{name}>"
+      html
+    end
+
+    def span(attributes, content)
+      tag("span", attributes, content)
+    end
+
+    def div(attributes, content)
+      tag("div", attributes, content)
+    end
+  end
 end
 
 if __FILE__ == $0
   analyzer = GroongaQueryLogAnaylzer.new
-  analyzer.run
+  begin
+    analyzer.run
+  rescue GroongaQueryLogAnaylzer::Error
+    $stderr.puts($!.message)
+    exit(false)
+  end
 end
