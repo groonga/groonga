@@ -306,7 +306,7 @@ class GroongaQueryLogAnaylzer
       nano_seconds_to_seconds(@elapsed)
     end
 
-    def end_time
+    def last_time
       @start_time + elapsed_in_seconds
     end
 
@@ -559,8 +559,8 @@ class GroongaQueryLogAnaylzer
       statistic.slow_operation_threshold = @slow_operation_threshold
       @start_time ||= statistic.start_time
       @start_time = [@start_time, statistic.start_time].min
-      @last_time ||= statistic.end_time
-      @last_time = [@last_time, statistic.end_time].max
+      @last_time ||= statistic.last_time
+      @last_time = [@last_time, statistic.last_time].max
       @n_responses += 1
       @total_elapsed += statistic.elapsed_in_seconds
       return unless @collect_slow_statistics
@@ -829,6 +829,12 @@ class GroongaQueryLogAnaylzer
       @color = options[:color] || @color
     end
 
+    def report_statistics
+      write("\n")
+      write("Slow Queries:\n")
+      super
+    end
+
     def report_statistic(statistic)
       @index += 1
       write("%*d) %s" % [@digit, @index, format_heading(statistic)])
@@ -954,7 +960,7 @@ class GroongaQueryLogAnaylzer
       formatted_elapsed = colorize("%8.8f" % statistic.elapsed_in_seconds,
                                    :elapsed)
       "[%s-%s (%s)](%d): %s" % [format_time(statistic.start_time),
-                                format_time(statistic.end_time),
+                                format_time(statistic.last_time),
                                 formatted_elapsed,
                                 statistic.return_code,
                                 statistic.raw_command]
@@ -1004,7 +1010,7 @@ class GroongaQueryLogAnaylzer
     def format_statistic(statistic)
       data = {
         "start_time" => statistic.start_time.to_i,
-        "end_time" => statistic.end_time.to_i,
+        "last_time" => statistic.last_time.to_i,
         "elapsed" => statistic.elapsed_in_seconds,
         "return_code" => statistic.return_code,
       }
@@ -1107,7 +1113,7 @@ class GroongaQueryLogAnaylzer
         <div class="metrics">
           [<%= format_time(statistic.start_time) %>
            -
-           <%= format_time(statistic.end_time) %>
+           <%= format_time(statistic.last_time) %>
            (<%= format_elapsed(statistic.elapsed_in_seconds,
                                :slow? => statistic.slow?) %>)]
           (<%= span({:class => "return-code"}, h(statistic.return_code)) %>)
