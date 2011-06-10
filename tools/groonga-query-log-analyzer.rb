@@ -437,12 +437,13 @@ class GroongaQueryLogAnaylzer
       buffer_size = @max_size * 100
       if size < buffer_size
         super(grouped_operation)
-        sort_by!(&@sorter)
+        replace(sort_by(&@sorter))
       else
         if @sorter.call(grouped_operation) < @sorter.call(last)
           super(grouped_operation)
-          sort_by!(&@sorter)
-          pop
+          sorted_operations = sort_by(&@sorter)
+          sorted_operations.pop
+          replace(sorted_other)
         end
       end
       self
@@ -498,21 +499,23 @@ class GroongaQueryLogAnaylzer
       update_statistic(statistic)
       if size < @max_size
         super(statistic)
-        sort_by!(&@sorter)
+        replace(self)
       else
         if @sorter.call(statistic) < @sorter.call(last)
           super(statistic)
-          sort_by!(&@sorter)
-          pop
+          replace(self)
         end
       end
       self
     end
 
     def replace(other)
-      super(other)
-      sort_by!(&@sorter)
-      super(self[0, @max_size])
+      sorted_other = other.sort_by(&@sorter)
+      if sorted_other.size > @max_size
+        super(sorted_other[0, @max_size])
+      else
+        super(sorted_other)
+      end
     end
 
     def responses_per_second
