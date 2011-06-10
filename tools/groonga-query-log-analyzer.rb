@@ -235,8 +235,16 @@ class GroongaQueryLogAnaylzer
       @parameters["scorer"]
     end
 
+    def query
+      @parameters["query"]
+    end
+
+    def filter
+      @parameters["filter"]
+    end
+
     def conditions
-      @parameters["filter"].split(/(?:&&|&!|\|\|)/).collect do |condition|
+      @conditions ||= filter.split(/(?:&&|&!|\|\|)/).collect do |condition|
         condition = condition.strip
         condition = condition.gsub(/\A[\s\(]*/, '')
         condition = condition.gsub(/[\s\)]*\z/, '') unless /\(/ =~ condition
@@ -337,9 +345,14 @@ class GroongaQueryLogAnaylzer
     def operation_context(label, context)
       case label
       when "filter"
-        index = context[:filter_index]
-        context[:filter_index] += 1
-        @select_command.conditions[index]
+        if @select_command.query and context[:query_used].nil?
+          context[:query_used] = true
+          "query: #{@select_command.query}"
+        else
+          index = context[:filter_index]
+          context[:filter_index] += 1
+          @select_command.conditions[index]
+        end
       when "sort"
         @select_command.sortby
       when "score"
