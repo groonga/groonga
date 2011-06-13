@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2127,7 +2127,8 @@ grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
       grn_alloc_info_add(res);
     } else {
       if (!(res = malloc(size))) {
-        MERR("malloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
+        MERR("malloc fail (%zu)=%p (%s:%d) <%d>",
+             size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res);
