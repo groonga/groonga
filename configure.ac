@@ -174,8 +174,7 @@ AC_CHECK_FUNCS(localtime_r gmtime_r)
 BACKTRACE_LIBS=
 AC_CHECK_FUNCS(backtrace,
  [],
- [AC_CHECK_LIB([execinfo],
-   [backtrace],
+ [AC_CHECK_LIB([execinfo], [backtrace],
    [BACKTRACE_LIBS="-lexecinfo"
     AC_DEFINE(HAVE_BACKTRACE,
       [1],
