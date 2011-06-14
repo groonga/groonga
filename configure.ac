@@ -170,7 +170,19 @@ AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h sys/r
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h sys/sysctl.h)
 AC_CHECK_HEADERS(time.h)
-AC_CHECK_FUNCS(localtime_r gmtime_r backtrace)
+AC_CHECK_FUNCS(localtime_r gmtime_r)
+BACKTRACE_LIBS=
+AC_CHECK_FUNCS(backtrace,
+ [],
+ [AC_CHECK_LIB([backtrace],
+   [execinfo],
+   [BACKTRACE_LIBS="-lexecinfo"
+    AC_DEFINE(HAVE_BACKTRACE,
+      [1],
+      [Define to 1 if you have the `backtrace' function.])
+   ])
+ ])
+AC_SUBST(BACKTRACE_LIBS)
 AC_CHECK_LIB(rt, clock_gettime, [
   RT_LIBS="-lrt"
   AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [use clock_gettime])
@@ -798,7 +810,8 @@ GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_DOCUMENT_ROOT=\\\"\"\$(pkgdatadir)/html/admin\
 GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"share/\$(PACKAGE)/html/admin\"\\\""
 AC_SUBST(GRN_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
-LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $RT_LIBS $PTHREAD_LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
+LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $BACKTRACE_LIBS $RT_LIBS $PTHREAD_LIBS"
+LIBS="$LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # For groonga.org
