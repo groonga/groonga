@@ -100,14 +100,12 @@ def insert_facebook_html_footer(html, language)
     <script src="http://connect.facebook.net/#{locale}/all.js"></script>
 
     <script>
-    window.fbAsyncInit = function() {
       FB.init({
          appId  : null,
          status : true, // check login status
          cookie : true, // enable cookies to allow the server to access the session
          xfbml  : true  // parse XFBML
       });
-    };
     </script>
   </body>
     HTML
