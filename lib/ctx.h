@@ -90,15 +90,15 @@ extern "C" {
   grn_gctx.rc = GRN_SUCCESS;\
 } while (0)
 
-#ifdef HAVE_EXECINFO_H
+#ifdef HAVE_BACKTRACE
 #define BACKTRACE(ctx) ((ctx)->ntrace = (unsigned char)backtrace((ctx)->trace, 16))
-#else /* HAVE_EXECINFO_H */
+#else /* HAVE_BACKTRACE */
 #define BACKTRACE(ctx)
-#endif /* HAVE_EXECINFO_H */
+#endif /* HAVE_BACKTRACE */
 
 GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 
-#ifdef HAVE_EXECINFO_H
+#ifdef HAVE_BACKTRACE
 #define LOGTRACE(ctx,lvl) {\
   int i;\
   char **p;\
@@ -115,9 +115,9 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
   GRN_LOG((ctx), lvl, "%s", GRN_BULK_HEAD(&buf));\
   grn_obj_close((ctx), &buf);\
 }
-#else  /* HAVE_EXECINFO_H */
+#else  /* HAVE_BACKTRACE */
 #define LOGTRACE(ctx,msg)
-#endif /* HAVE_EXECINFO_H */
+#endif /* HAVE_BACKTRACE */
 
 #define ERRSET(ctx,lvl,r,...) do {\
   grn_ctx *ctx_ = (grn_ctx *)ctx;\

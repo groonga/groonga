@@ -2499,7 +2499,7 @@ segv_handler(int signal_number, siginfo_t *info, void *context)
   segv_received = 1;
 
   GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
-#ifdef HAVE_EXECINFO_H
+#ifdef HAVE_BACKTRACE
 #  define N_TRACE_LEVEL 1024
   {
     static void *trace[N_TRACE_LEVEL];
@@ -2514,9 +2514,9 @@ segv_handler(int signal_number, siginfo_t *info, void *context)
       free(symbols);
     }
   }
-#else
+#else /* HAVE_BACKTRACE */
   GRN_LOG(ctx, GRN_LOG_CRIT, "backtrace() isn't available.");
-#endif
+#endif /* HAVE_BACKTRACE */
   GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
   abort();
 }
