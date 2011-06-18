@@ -806,8 +806,12 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, 
       {
         grn_dat *dat = (grn_dat *)table;
         WITH_NORMALIZE(dat, key, key_size, {
-          /* FIXME: lock is not supported yet */
-          id = grn_dat_add(ctx, dat, key, key_size, NULL, &added_);
+          if (grn_io_lock(ctx, dat->io, 10000000)) {
+            id = GRN_ID_NIL;
+          } else {
+            id = grn_dat_add(ctx, dat, key, key_size, NULL, &added_);
+            grn_io_unlock(dat->io);
+          }
         });
         if (added) { *added = added_; }
       }

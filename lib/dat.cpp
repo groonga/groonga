@@ -92,14 +92,6 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   }
 */
 
-/*
-  dat->handle = grn::dat::Trie::open(path);
-  if (dat->handle == NULL) {
-    GRN_FREE(dat);
-    return NULL;
-  }
-*/
-
 grn_dat *
 grn_dat_open(grn_ctx *ctx, const char *path)
 {
@@ -141,19 +133,91 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
 
 grn_id
 grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
-                   unsigned int key_size, void **value) {
-  return GRN_ID_NIL;
+            unsigned int key_size, void **value)
+{
+  grn_id id = GRN_ID_NIL;
+  if (dat->header->file_id) {
+    if (!dat->handle || (dat->file_id != dat->header->file_id)) {
+      char buffer[PATH_MAX];
+      gen_pathname(grn_io_path(dat->io), buffer, dat->header->file_id);
+      /* LOCK */
+      grn_dat_handle handle = dat->handle;
+      dat->handle = grn::dat::Trie::open(buffer);
+      dat->file_id = dat->header->file_id;
+      /* UNLOCK */
+      /* should be deleted after enough interval */
+      if (handle) {
+        delete static_cast<grn::dat::Trie *>(handle);
+      }
+    }
+    grn::dat::Key k;
+    if (static_cast<grn::dat::Trie *>(dat->handle)->search(key, key_size, &k)) {
+      id = k.id();
+    }
+  }
+  return id;
 }
 
 grn_id
 grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
-                   unsigned int key_size, void **value, int *added) {
-  return GRN_ID_NIL;
+            unsigned int key_size, void **value, int *added)
+{
+  grn_id id = GRN_ID_NIL;
+  int file_id = dat->header->file_id;
+  if (!dat->header->file_id) {
+    const char *path = grn_io_path(dat->io);
+    file_id++;
+    if (path && *path) {
+      char buffer[PATH_MAX];
+      gen_pathname(path, buffer, file_id);
+      dat->handle = grn::dat::Trie::open(buffer);
+    } else {
+      dat->handle = grn::dat::Trie::open(NULL);
+    }
+    dat->file_id = dat->header->file_id = file_id;
+  }
+  if (!dat->handle || (dat->file_id != dat->header->file_id)) {
+    char buffer[PATH_MAX];
+    gen_pathname(grn_io_path(dat->io), buffer, file_id);
+    /* LOCK */
+    grn_dat_handle handle = dat->handle;
+    dat->handle = grn::dat::Trie::open(buffer);
+    dat->file_id = file_id;
+    /* UNLOCK */
+    /* should be deleted after enough interval */
+    if (handle) {
+      delete static_cast<grn::dat::Trie *>(handle);
+    }
+  }
+  grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
+  if (trie == NULL) { goto exit; }
+  try {
+    grn::dat::Key k;
+    bool res = trie->insert(key, key_size, &k);
+    id = k.id();
+    if (added) { *added = (int)res; }
+  } catch (const grn::dat::Exception &ex) {
+    char buffer[PATH_MAX];
+    gen_pathname(grn_io_path(dat->io), buffer, ++file_id);
+    /* LOCK */
+    grn::dat::Trie *new_trie = grn::dat::Trie::create(*trie, buffer, trie->file_size() * 2);
+    dat->handle = new_trie;
+    dat->file_id = file_id;
+    /* UNLOCK */
+    /* should be deleted after enough interval */
+    if (new_trie == NULL) { goto exit; }
+    delete trie;
+    grn::dat::Key k;
+    bool res = new_trie->insert(key, key_size, &k);
+    id = k.id();
+  }
+exit :
+  return id;
 }
 
 int
-grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id,
-                    void *keybuf, int bufsize) {
+grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize)
+{
   return 0;
 }
 
@@ -172,9 +236,9 @@ grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 
 grn_dat_cursor *
 grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
-                                    const void *min, unsigned int min_size,
-                                    const void *max, unsigned int max_size,
-                                    int offset, int limit, int flags)
+                    const void *min, unsigned int min_size,
+                    const void *max, unsigned int max_size,
+                    int offset, int limit, int flags)
 {
   return NULL;
 }
