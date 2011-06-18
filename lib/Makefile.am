@@ -1,3 +1,5 @@
+SUBDIRS = dat
+
 lib_LTLIBRARIES = libgroonga.la
 
 include $(top_srcdir)/version.sh
@@ -11,6 +13,9 @@ libgroonga_la_LDFLAGS =				\
 	-version-info $(LT_VERSION_INFO)	\
 	-no-undefined				\
 	$(WINDOWS_LDFLAGS)
+
+libgroonga_la_LIBADD =				\
+	dat/libgrndat.la
 
 noinst_HEADERS = com.h io.h ql.h nfkc.h groonga_in.h snip.h store.h str.h ctx.h hash.h db.h pat.h dat.h ii.h token.h proc.h util.h plugin_in.h output.h geo.h
 
