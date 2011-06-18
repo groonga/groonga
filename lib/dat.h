@@ -33,13 +33,11 @@ typedef struct _grn_dat_cursor grn_dat_cursor;
 
 struct _grn_dat {
   grn_db_obj obj;
-  grn_dat_handle handle;
-//  grn_db_obj obj;
   grn_io *io;
   struct grn_dat_header *header;
+  uint32_t file_id;
   grn_encoding encoding;
-//  uint32_t key_size;
-//  uint32_t value_size;
+  grn_dat_handle handle;
   grn_obj *tokenizer;
 };
 
@@ -47,19 +45,13 @@ struct grn_dat_header {
   uint32_t flags;
   grn_encoding encoding;
   grn_id tokenizer;
+  uint32_t file_id;
 };
 
 struct _grn_dat_cursor {
   grn_db_obj obj;
   grn_id curr_rec;
   grn_dat *dat;
-//  grn_ctx *ctx;
-//  unsigned int size;
-//  unsigned int sp;
-//  grn_id tail;
-//  unsigned int rest;
-//  grn_dat_cursor_entry *ss;
-//  uint8_t curr_key[GRN_TABLE_MAX_KEY_SIZE];
 };
 
 GRN_API grn_dat *grn_dat_create(grn_ctx *ctx, const char *path, unsigned int key_size,

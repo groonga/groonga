@@ -113,6 +113,7 @@ AC_CONFIG_FILES([
   src/Makefile
   src/suggest/Makefile
   lib/Makefile
+  lib/dat/Makefile
   include/Makefile
   include/groonga/Makefile
   plugins/Makefile
