@@ -1,7 +1,7 @@
-#ifndef GRN_DAT_CHECK_H
-#define GRN_DAT_CHECK_H
+#ifndef GRN_DAT_CHECK_HPP_
+#define GRN_DAT_CHECK_HPP_
 
-#include "./common.h"
+#include "./dat.hpp"
 
 namespace grn {
 namespace dat {
@@ -139,4 +139,4 @@ class Check {
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_CHECK_H
+#endif  // GRN_DAT_CHECK_HPP_

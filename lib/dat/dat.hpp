@@ -1,5 +1,5 @@
-#ifndef GRN_DAT_COMMON_H
-#define GRN_DAT_COMMON_H
+#ifndef GRN_DAT_COMMON_HPP_
+#define GRN_DAT_COMMON_HPP_
 
 #ifndef _MSC_VER
  #include <stdint.h>
@@ -143,4 +143,4 @@ DA_DEFINE_ERROR(SizeError);
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_COMMON_H
+#endif  // GRN_DAT_COMMON_HPP_

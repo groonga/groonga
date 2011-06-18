@@ -1,7 +1,7 @@
-#ifndef GRN_DAT_BASE_H
-#define GRN_DAT_BASE_H
+#ifndef GRN_DAT_BASE_HPP_
+#define GRN_DAT_BASE_HPP_
 
-#include "./common.h"
+#include "./dat.hpp"
 
 namespace grn {
 namespace dat {
@@ -51,4 +51,4 @@ class Base {
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_BASE_H
+#endif  // GRN_DAT_BASE_HPP_

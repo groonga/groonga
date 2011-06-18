@@ -1,7 +1,7 @@
-#ifndef GRN_DAT_HEADER_H
-#define GRN_DAT_HEADER_H
+#ifndef GRN_DAT_HPP_EADER_HPP_
+#define GRN_DAT_HPP_EADER_HPP_
 
-#include "./common.h"
+#include "./dat.hpp"
 
 namespace grn {
 namespace dat {
@@ -104,4 +104,4 @@ class Header {
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_HEADER_H
+#endif  // GRN_DAT_HPP_EADER_HPP_

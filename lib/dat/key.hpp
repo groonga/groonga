@@ -1,7 +1,7 @@
-#ifndef GRN_DAT_KEY_H
-#define GRN_DAT_KEY_H
+#ifndef GRN_DAT_KEY_HPP_
+#define GRN_DAT_KEY_HPP_
 
-#include "./common.h"
+#include "./dat.hpp"
 
 namespace grn {
 namespace dat {
@@ -42,4 +42,4 @@ class Key {
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_KEY_H
+#endif  // GRN_DAT_KEY_HPP_

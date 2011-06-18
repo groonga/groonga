@@ -1,11 +1,11 @@
-#ifndef GRN_DAT_TRIE_H
-#define GRN_DAT_TRIE_H
+#ifndef GRN_DAT_TRIE_HPP_
+#define GRN_DAT_TRIE_HPP_
 
-#include "./header.h"
-#include "./node.h"
-#include "./block.h"
-#include "./key-info.h"
-#include "./key.h"
+#include "./header.hpp"
+#include "./node.hpp"
+#include "./block.hpp"
+#include "./key-info.hpp"
+#include "./key.hpp"
 
 namespace grn {
 namespace dat {
@@ -220,4 +220,4 @@ class Trie {
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_TRIE_H
+#endif  // GRN_DAT_TRIE_HPP_

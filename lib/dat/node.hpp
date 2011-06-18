@@ -1,8 +1,8 @@
-#ifndef GRN_DAT_NODE_H
-#define GRN_DAT_NODE_H
+#ifndef GRN_DAT_NODE_HPP_
+#define GRN_DAT_NODE_HPP_
 
-#include "./base.h"
-#include "./check.h"
+#include "./base.hpp"
+#include "./check.hpp"
 
 namespace grn {
 namespace dat {
@@ -108,4 +108,4 @@ class Node {
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_NODE_H
+#endif  // GRN_DAT_NODE_HPP_

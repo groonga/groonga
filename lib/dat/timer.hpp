@@ -1,7 +1,7 @@
-#ifndef DA_TIMER_H_
-#define DA_TIMER_H_
+#ifndef DA_TIMER_HPP_
+#define DA_TIMER_HPP_
 
-#include "./common.h"
+#include "./dat.hpp"
 
 #include <sys/time.h>
 
@@ -36,4 +36,4 @@ class Timer {
 
 }  // namespace da
 
-#endif  // DA_TIMER_H_
+#endif  // DA_TIMER_HPP_

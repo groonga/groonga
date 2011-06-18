@@ -1,7 +1,7 @@
-#ifndef DA_USAGE_H_
-#define DA_USAGE_H_
+#ifndef DA_USAGE_HPP_
+#define DA_USAGE_HPP_
 
-#include "./common.h"
+#include "./dat.hpp"
 
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -43,4 +43,4 @@ class Usage {
 
 }  // namespace da
 
-#endif  // DA_USAGE_H_
+#endif  // DA_USAGE_HPP_
