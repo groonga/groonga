@@ -258,18 +258,45 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
                     const void *max, unsigned int max_size,
                     int offset, int limit, int flags)
 {
-  return NULL;
+  grn_dat_cursor *dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
+  if (dc) {
+    // Cursor is now an abstract type;
+    // dc->cursor = new grn::dat::Cursor;
+    if (dc->cursor) {
+      dc->dat = dat;
+      /* open stuff */
+    } else {
+      GRN_FREE(dc);
+      dc = NULL;
+    }
+  }
+  return dc;
 }
 
 grn_id
 grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
 {
-  return GRN_ID_NIL;
+  grn_id id = GRN_ID_NIL;
+  if (c && c->cursor) {
+    grn::dat::Key k;
+    grn::dat::Cursor *cursor = static_cast<grn::dat::Cursor *>(c->cursor);
+    if (cursor->next(&k)) {
+      id = c->curr_rec = k.id();
+    } else {
+      c->curr_rec = GRN_ID_NIL;
+    }
+  }
+  return id;
 }
 
 void
 grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
 {
+  if (c && c->cursor) {
+    grn::dat::Cursor *cursor = static_cast<grn::dat::Cursor *>(c->cursor);
+    delete cursor;
+    GRN_FREE(c);
+  }
 }
 
 int
@@ -281,7 +308,15 @@ grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key)
 grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
 {
-  return 0;
+  grn_id id = GRN_ID_NIL;
+  if (dat && dat->header->file_id) {
+    grn_dat_confirm_handle(ctx, dat);
+    grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
+    if (trie) {
+      id = trie->num_keys();
+    }
+  }
+  return id;
 }
 
 const char *

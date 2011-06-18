@@ -50,8 +50,9 @@ struct grn_dat_header {
 
 struct _grn_dat_cursor {
   grn_db_obj obj;
-  grn_id curr_rec;
   grn_dat *dat;
+  void *cursor;
+  grn_id curr_rec;
 };
 
 GRN_API grn_dat *grn_dat_create(grn_ctx *ctx, const char *path, unsigned int key_size,

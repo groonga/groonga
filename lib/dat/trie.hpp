@@ -6,6 +6,7 @@
 #include "block.hpp"
 #include "key-info.hpp"
 #include "key.hpp"
+#include "cursor.hpp"
 
 namespace grn {
 namespace dat {
