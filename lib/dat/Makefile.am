@@ -9,6 +9,7 @@ noinst_HEADERS =				\
 	base.hpp				\
 	block.hpp				\
 	check.hpp				\
+	cursor.hpp				\
 	dat.hpp					\
 	header.hpp				\
 	key-info.hpp				\
