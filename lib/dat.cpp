@@ -14,7 +14,6 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "groonga_in.h"
 #include "dat.h"
 #include "util.h"
 
@@ -42,16 +41,19 @@ class Trie {
 
 extern "C" {
 
-static void grn_dat_init(grn_dat *dat) {
+static void
+grn_dat_init(grn_dat *dat) {
   dat->handle = NULL;
 }
 
-static void grn_dat_end(grn_dat *dat) {
+static void
+grn_dat_end(grn_dat *dat) {
   delete static_cast<grn::dat::Trie *>(dat->handle);
   dat->handle = NULL;
 }
 
-grn_dat *grn_dat_create(grn_ctx *ctx, const char *path, unsigned int,
+grn_dat *
+grn_dat_create(grn_ctx *ctx, const char *path, unsigned int,
                         unsigned int, unsigned int) {
   grn_dat *dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (dat == NULL) {
@@ -66,7 +68,8 @@ grn_dat *grn_dat_create(grn_ctx *ctx, const char *path, unsigned int,
   return dat;
 }
 
-grn_dat *grn_dat_open(grn_ctx *ctx, const char *path) {
+grn_dat *
+grn_dat_open(grn_ctx *ctx, const char *path) {
   grn_dat *dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (dat == NULL) {
     return NULL;
@@ -80,58 +83,87 @@ grn_dat *grn_dat_open(grn_ctx *ctx, const char *path) {
   return dat;
 }
 
-grn_rc grn_dat_close(grn_ctx *ctx, grn_dat *dat) {
+grn_rc
+grn_dat_close(grn_ctx *ctx, grn_dat *dat) {
   grn_dat_end(dat);
   GRN_FREE(dat);
   return GRN_SUCCESS;
 }
 
-grn_rc grn_dat_remove(grn_ctx *ctx, const char *path) {
+grn_rc
+grn_dat_remove(grn_ctx *ctx, const char *path) {
   return GRN_SUCCESS;
 }
 
-grn_id grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
+grn_id
+grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
                    unsigned int key_size, void **value) {
   return GRN_ID_NIL;
 }
 
-grn_id grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
+grn_id
+grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
                    unsigned int key_size, void **value, int *added) {
   return GRN_ID_NIL;
 }
 
-int grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id,
+int
+grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id,
                     void *keybuf, int bufsize) {
   return 0;
 }
 
-unsigned int grn_dat_size(grn_ctx *ctx, grn_dat *dat) {
+int
+grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
+{
+  return 0;
+}
+
+unsigned int
+grn_dat_size(grn_ctx *ctx, grn_dat *dat)
+{
   if (dat == NULL) {
     return GRN_INVALID_ARGUMENT;
   }
   return static_cast<grn::dat::Trie *>(dat->handle)->num_keys();
 }
 
-grn_dat_cursor *grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
+grn_dat_cursor *
+grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
                                     const void *min, unsigned int min_size,
                                     const void *max, unsigned int max_size,
-                                    int offset, int limit, int flags) {
+                                    int offset, int limit, int flags)
+{
   return NULL;
 }
 
-grn_id grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c) {
+grn_id
+grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
+{
   return GRN_ID_NIL;
 }
 
-void grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c) {
+void
+grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
+{
 }
 
-int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key) {
+int
+grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key)
+{
   return 0;
 }
 
-grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat) {
+grn_id
+grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
+{
   return 0;
+}
+
+const char *
+_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
+{
+  return NULL;
 }
 
 }  // extern "C"

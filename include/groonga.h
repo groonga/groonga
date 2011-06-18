@@ -339,6 +339,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_OBJ_TABLE_TYPE_MASK        (0x07)
 #define GRN_OBJ_TABLE_HASH_KEY         (0x00)
 #define GRN_OBJ_TABLE_PAT_KEY          (0x01)
+#define GRN_OBJ_TABLE_DAT_KEY          (0x02)
 #define GRN_OBJ_TABLE_NO_KEY           (0x03)
 #define GRN_OBJ_TABLE_VIEW             (0x04)
 
@@ -401,6 +402,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_PATSNIP                    (0x0c)
 #define GRN_CURSOR_TABLE_HASH_KEY      (0x10)
 #define GRN_CURSOR_TABLE_PAT_KEY       (0x11)
+#define GRN_CURSOR_TABLE_DAT_KEY       (0x12)
 #define GRN_CURSOR_TABLE_NO_KEY        (0x13)
 #define GRN_CURSOR_TABLE_VIEW          (0x14)
 #define GRN_CURSOR_COLUMN_INDEX        (0x18)
@@ -409,6 +411,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_EXPR                       (0x22)
 #define GRN_TABLE_HASH_KEY             (0x30)
 #define GRN_TABLE_PAT_KEY              (0x31)
+#define GRN_TABLE_DAT_KEY              (0x32)
 #define GRN_TABLE_NO_KEY               (0x33)
 #define GRN_TABLE_VIEW                 (0x34)
 #define GRN_DB                         (0x37)

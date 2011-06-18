@@ -438,6 +438,9 @@ grn_parse_table_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "TABLE_PAT_KEY", 13)) {
       flags |= GRN_OBJ_TABLE_PAT_KEY;
       nptr += 13;
+    } else if (!memcmp(nptr, "TABLE_DAT_KEY", 13)) {
+      flags |= GRN_OBJ_TABLE_DAT_KEY;
+      nptr += 13;
     } else if (!memcmp(nptr, "TABLE_NO_KEY", 12)) {
       flags |= GRN_OBJ_TABLE_NO_KEY;
       nptr += 12;
@@ -506,6 +509,9 @@ grn_table_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
     break;
   case GRN_OBJ_TABLE_PAT_KEY:
     GRN_TEXT_PUTS(ctx, buf, "TABLE_PAT_KEY");
+    break;
+  case GRN_OBJ_TABLE_DAT_KEY:
+    GRN_TEXT_PUTS(ctx, buf, "TABLE_DAT_KEY");
     break;
   case GRN_OBJ_TABLE_NO_KEY:
     GRN_TEXT_PUTS(ctx, buf, "TABLE_NO_KEY");
@@ -924,6 +930,7 @@ print_tableinfo(grn_ctx *ctx, grn_obj *table)
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
   case GRN_TABLE_VIEW:
     break;
@@ -1292,6 +1299,7 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data, grn_obj **ta
     break;
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_VIEW:
     if (key_length && id_length) {
       ERR(GRN_INVALID_ARGUMENT,
@@ -1450,6 +1458,7 @@ dump_index_column_sources(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
       if (i) { GRN_TEXT_PUTC(ctx, outbuf, ','); }
       switch (source->header.type) {
       case GRN_TABLE_PAT_KEY:
+      case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_HASH_KEY:
       case GRN_TABLE_VIEW:
         GRN_TEXT_PUTS(ctx, outbuf, "_key");
@@ -1541,6 +1550,7 @@ reference_column_p(grn_ctx *ctx, grn_obj *column)
   switch (range->header.type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
   case GRN_TABLE_VIEW:
     return GRN_TRUE;
@@ -1614,6 +1624,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
     break;
   case GRN_TABLE_VIEW:
@@ -1649,7 +1660,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_BULK_REWIND(&column_name);
     grn_column_name_(ctx, columns[i], &column_name);
     if (((table->header.type == GRN_TABLE_HASH_KEY ||
-          table->header.type == GRN_TABLE_PAT_KEY) &&
+          table->header.type == GRN_TABLE_PAT_KEY ||
+          table->header.type == GRN_TABLE_DAT_KEY) &&
          GRN_TEXT_LEN(&column_name) == 3 &&
          !memcmp(GRN_TEXT_VALUE(&column_name), "_id", 3)) ||
         (table->header.type == GRN_TABLE_NO_KEY &&
@@ -1791,6 +1803,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
     domain = grn_ctx_at(ctx, table->header.domain);
     if (domain) {
       default_flags |= domain->header.flags;
@@ -1869,6 +1882,7 @@ dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
         switch (object->header.type) {
         case GRN_TABLE_HASH_KEY:
         case GRN_TABLE_PAT_KEY:
+        case GRN_TABLE_DAT_KEY:
         case GRN_TABLE_NO_KEY:
         case GRN_TABLE_VIEW:
           dump_table(ctx, outbuf, object, &pending_columns);
@@ -2049,6 +2063,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     case GRN_TABLE_PAT_KEY :
       grn_pat_check(ctx, (grn_pat *)obj);
       break;
+    case GRN_TABLE_DAT_KEY :
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_NO_KEY :
     case GRN_COLUMN_FIX_SIZE :
@@ -2150,8 +2165,9 @@ proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           "no such table: <%.*s>", table_name, table_name_len);
     } else {
       switch (table->header.type) {
-      case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
       case GRN_TABLE_NO_KEY :
         grn_table_truncate(ctx, table);
         break;

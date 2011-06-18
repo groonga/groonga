@@ -20,7 +20,9 @@
 #define GROONGA_IN_H
 
 #ifdef __GNUC__
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif /* _GNU_SOURCE */
 #endif /* __GNUC__ */
 
 #if defined(__NetBSD__) && !defined(_NETBSD_SOURCE)
