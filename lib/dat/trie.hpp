@@ -1,11 +1,11 @@
 #ifndef GRN_DAT_TRIE_HPP_
 #define GRN_DAT_TRIE_HPP_
 
-#include "./header.hpp"
-#include "./node.hpp"
-#include "./block.hpp"
-#include "./key-info.hpp"
-#include "./key.hpp"
+#include "header.hpp"
+#include "node.hpp"
+#include "block.hpp"
+#include "key-info.hpp"
+#include "key.hpp"
 
 namespace grn {
 namespace dat {
