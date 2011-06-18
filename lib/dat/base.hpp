@@ -1,7 +1,7 @@
 #ifndef GRN_DAT_BASE_HPP_
 #define GRN_DAT_BASE_HPP_
 
-#include "./dat.hpp"
+#include "dat.hpp"
 
 namespace grn {
 namespace dat {

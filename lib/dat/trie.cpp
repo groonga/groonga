@@ -1,4 +1,4 @@
-#include "./trie.hpp"
+#include "trie.hpp"
 
 #include <fcntl.h>
 #include <sys/mman.h>

@@ -1,7 +1,7 @@
 #ifndef DA_USAGE_HPP_
 #define DA_USAGE_HPP_
 
-#include "./dat.hpp"
+#include "dat.hpp"
 
 #include <sys/time.h>
 #include <sys/resource.h>

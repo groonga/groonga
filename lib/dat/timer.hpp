@@ -1,7 +1,7 @@
 #ifndef DA_TIMER_HPP_
 #define DA_TIMER_HPP_
 
-#include "./dat.hpp"
+#include "dat.hpp"
 
 #include <sys/time.h>
 

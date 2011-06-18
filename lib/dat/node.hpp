@@ -1,8 +1,8 @@
 #ifndef GRN_DAT_NODE_HPP_
 #define GRN_DAT_NODE_HPP_
 
-#include "./base.hpp"
-#include "./check.hpp"
+#include "base.hpp"
+#include "check.hpp"
 
 namespace grn {
 namespace dat {
