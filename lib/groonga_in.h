@@ -40,6 +40,10 @@
 #endif
 #endif /* USE_AIO */
 
+#ifdef __cplusplus
+#define __STDC_LIMIT_MACROS
+#endif
+
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */

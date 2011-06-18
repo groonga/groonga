@@ -40,6 +40,7 @@ AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
 
 AC_C_BIGENDIAN
+AC_PROG_CXX
 AC_PROG_CC
 AM_PROG_CC_C_O
 m4_ifdef([PKG_PROG_PKG_CONFIG],
