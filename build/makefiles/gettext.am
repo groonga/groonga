@@ -31,8 +31,8 @@ gettext: sphinx-ensure-updated
 	xgettext --language Python --output conf.pot ../../../source/conf.py
 
 init: gettext
-	for po in $(po_files); do						\
-	  pot=`basename $${po} | sed -e 's,po$$,pot,g'`;			\
+	for pot in *.pot; do							\
+	  po=`basename $${pot} | sed -e 's,pot$$,po,g'`;			\
 	  test "$(FORCE_INIT)" = "yes" -o ! -f $${po} &&			\
 	    msginit --input=$${pot} --output-file=$${po} --locale=$(LOCALE);	\
 	  :;									\
