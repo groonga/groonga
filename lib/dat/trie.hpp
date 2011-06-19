@@ -61,6 +61,20 @@ class Trie {
     return insert_from_root(static_cast<const UInt8 *>(ptr), length, key);
   }
 
+  const Node &ith_node(UInt32 i) const {
+    DA_DEBUG_THROW_IF(i >= num_nodes());
+    return nodes_[i];
+  }
+  const Block &ith_block(UInt32 i) const {
+    DA_DEBUG_THROW_IF(i >= num_blocks());
+    return blocks_[i];
+  }
+  const KeyInfo &ith_key_info(UInt32 i) const {
+    DA_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
+    DA_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET));
+    return key_infos_[i - KEY_ID_OFFSET];
+  }
+
   const Header &header() const {
     return *header_;
   }
@@ -184,20 +198,6 @@ class Trie {
   void set_block_level(UInt32 block_id,
                        UInt32 level);
   void clear_block_level(UInt32 block_id);
-
-  const Node &ith_node(UInt32 i) const {
-    DA_DEBUG_THROW_IF(i >= num_nodes());
-    return nodes_[i];
-  }
-  const Block &ith_block(UInt32 i) const {
-    DA_DEBUG_THROW_IF(i >= num_blocks());
-    return blocks_[i];
-  }
-  const KeyInfo &ith_key_info(UInt32 i) const {
-    DA_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
-    DA_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET));
-    return key_infos_[i - KEY_ID_OFFSET];
-  }
 
   Node &ith_node(UInt32 i) {
     DA_DEBUG_THROW_IF(i >= num_nodes());
