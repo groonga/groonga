@@ -21,11 +21,13 @@
 #include "dat.h"
 #include "util.h"
 #include "dat/trie.hpp"
+#include "dat/common-prefix-search-cursor.hpp"
 
 extern "C" {
 
 static void
 grn_dat_init(grn_dat *dat) {
+  GRN_DB_OBJ_SET_TYPE(dat, GRN_TABLE_DAT_KEY);
   dat->io = NULL;
   dat->header = NULL;
   dat->file_id = 0;
@@ -260,8 +262,58 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
 {
   grn_dat_cursor *dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
   if (dc) {
-    // Cursor is now an abstract type;
-    // dc->cursor = new grn::dat::Cursor;
+    dc->cursor = NULL;
+    GRN_DB_OBJ_SET_TYPE(dc, GRN_CURSOR_TABLE_DAT_KEY);
+    if ((flags & GRN_CURSOR_BY_ID)) {
+      // Cursor is now an abstract type;
+      // dc->cursor = new grn::dat::Cursor;
+      /* todo */
+    } else {
+      if ((flags & GRN_CURSOR_PREFIX)) {
+        if (max && max_size) {
+          if ((dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
+            grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
+            grn::dat::CommonPrefixSearchCursor *cursor;
+            cursor = new grn::dat::CommonPrefixSearchCursor;
+            cursor->open(*trie, max, min_size, max_size, offset, limit);
+            dc->cursor = cursor;
+          } else {
+            /* todo: near */
+          }
+        } else {
+          if (min && min_size) {
+            if (flags & GRN_CURSOR_RK) {
+              /* todo: rk search */
+            } else {
+              /* todo: prefix */
+            }
+          }
+        }
+      } else {
+        // Cursor is now an abstract type;
+        // dc->cursor = new grn::dat::Cursor;
+        /* todo */
+      }
+    }
+    if (flags & GRN_CURSOR_DESCENDING) {
+      if (min && min_size) {
+        /* todo */
+      }
+      if (max && max_size) {
+        /* todo */
+      } else {
+        /* todo */
+      }
+    } else {
+      if (max && max_size) {
+        /* todo */
+      }
+      if (min && min_size) {
+        /* todo */
+      } else {
+        /* todo */
+      }
+    }
     if (dc->cursor) {
       dc->dat = dat;
       /* open stuff */
