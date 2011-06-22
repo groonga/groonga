@@ -10,7 +10,8 @@ void CommonPrefixSearchCursor::open(const Trie &trie,
                                     UInt32 min_length,
                                     UInt32 max_length,
                                     UInt32 offset,
-                                    UInt32 limit) {
+                                    UInt32 limit,
+                                    bool is_ascending) {
   GRN_DAT_PARAM_ERROR_IF((ptr == NULL) && (max_length != 0));
   GRN_DAT_PARAM_ERROR_IF(min_length > max_length);
 
@@ -19,6 +20,7 @@ void CommonPrefixSearchCursor::open(const Trie &trie,
   trie_ = &trie;
   buf_.clear();
   count_ = 0;
+  is_ascending_ = is_ascending;
   if ((limit == 0) || (offset > (max_length - min_length))) {
     return;
   }
@@ -85,13 +87,18 @@ void CommonPrefixSearchCursor::close() {
   trie_ = NULL;
   buf_.clear();
   count_ = 0;
+  is_ascending_ = false;
 }
 
 bool CommonPrefixSearchCursor::next(Key *key) {
   if (count_ >= buf_.size()) {
     return false;
   }
-  trie_->ith_key(buf_[count_++], key);
+  if (is_ascending_) {
+    trie_->ith_key(buf_[count_++], key);
+  } else {
+    trie_->ith_key(buf_[buf_.size() - ++count_], key);
+  }
   return true;
 }
 

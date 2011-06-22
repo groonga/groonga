@@ -18,7 +18,7 @@ class Header {
         max_num_blocks_(0),
         key_buf_size_(0),
         entries_() {
-    for (int i = 0; i <= MAX_BLOCK_LEVEL; ++i) {
+    for (UInt32 i = 0; i <= MAX_BLOCK_LEVEL; ++i) {
       entries_[i] = INVALID_ENTRY;
     }
   }

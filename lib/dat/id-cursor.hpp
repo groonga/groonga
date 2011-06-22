@@ -44,8 +44,6 @@ class IdCursor : public Cursor {
             bool ignores_min = false,
             bool ignores_max = false);
 
-  static const UInt32 INVALID_KEY_ID = 0;
-
   // Disallows copy and assignment.
   IdCursor(const IdCursor &);
   IdCursor &operator=(const IdCursor &);

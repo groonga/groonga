@@ -14,7 +14,8 @@ class CommonPrefixSearchCursor : public Cursor {
   CommonPrefixSearchCursor()
       : trie_(NULL),
         buf_(),
-        count_(0) {}
+        count_(0),
+        is_ascending_(false) {}
   ~CommonPrefixSearchCursor() {}
 
   void open(const Trie &trie,
@@ -22,7 +23,8 @@ class CommonPrefixSearchCursor : public Cursor {
             UInt32 min_length,
             UInt32 max_length,
             UInt32 offset,
-            UInt32 limit);
+            UInt32 limit,
+            bool is_ascending = false);
 
   void close();
 
@@ -32,6 +34,7 @@ class CommonPrefixSearchCursor : public Cursor {
   const Trie *trie_;
   std::vector<UInt32> buf_;
   UInt32 count_;
+  bool is_ascending_;
 
   // Disallows copy and assignment.
   CommonPrefixSearchCursor(const CommonPrefixSearchCursor &);

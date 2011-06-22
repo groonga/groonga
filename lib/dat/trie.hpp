@@ -13,15 +13,6 @@ namespace dat {
 
 class Trie {
  public:
-  static const UInt32 DEFAULT_FILE_SIZE          = 1U << 20;
-  static const double DEFAULT_NUM_NODES_PER_KEY  = 4.0;
-  static const double DEFAULT_AVERAGE_KEY_LENGTH = 16.0;
-
-  static const UInt32 MAX_NUM_NODES    = (UInt32)MAX_NODE_ID + 1;
-  static const UInt32 MAX_NUM_BLOCKS   = (UInt32)MAX_BLOCK_ID + 1;
-  static const UInt32 MAX_NUM_KEYS     = (UInt32)MAX_KEY_ID + 1;
-  static const UInt32 MAX_KEY_BUF_SIZE = 0xFFFFFFFFU;
-
   Trie();
   ~Trie();
 

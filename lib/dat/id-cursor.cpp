@@ -43,8 +43,8 @@ bool IdCursor::next(Key *key) {
   if (cur_ == end_) {
     return false;
   }
-  cur_ += step_;
   trie_->ith_key(cur_, key);
+  cur_ += step_;
   return true;
 }
 
@@ -68,19 +68,27 @@ void IdCursor::open(const Trie &trie,
     --max_id;
   }
 
-  // Overflow and underflow...
+  if (max_id < min_id) {
+    return;
+  }
+  const UInt32 diff = max_id - min_id;
+  if (diff < offset) {
+    return;
+  }
+  if (limit > (diff - offset)) {
+    limit = diff - offset + 1;
+  }
+
   if (is_ascending) {
     min_id += offset;
-    max_id -= limit;
-    ++max_id;
+    max_id = min_id + limit;
     if (min_id < max_id) {
       cur_ = min_id;
       end_ = max_id;
     }
   } else {
-    min_id += limit;
     max_id -= offset;
-    --min_id;
+    min_id = max_id - limit;
     if (min_id < max_id) {
       cur_ = max_id;
       end_ = min_id;
