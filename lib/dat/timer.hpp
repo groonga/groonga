@@ -1,11 +1,12 @@
-#ifndef DA_TIMER_HPP_
-#define DA_TIMER_HPP_
+#ifndef GRN_DAT_TIMER_HPP_
+#define GRN_DAT_TIMER_HPP_
 
 #include "dat.hpp"
 
 #include <sys/time.h>
 
-namespace da {
+namespace grn {
+namespace dat {
 
 class Timer {
  public:
@@ -34,6 +35,7 @@ class Timer {
   Timer &operator=(const Timer &);
 };
 
-}  // namespace da
+}  // namespace dat
+}  // namespace grn
 
-#endif  // DA_TIMER_HPP_
+#endif  // GRN_DAT_TIMER_HPP_

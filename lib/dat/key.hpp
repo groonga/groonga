@@ -9,7 +9,7 @@ namespace dat {
 class Key {
  public:
   const char &operator[](UInt32 i) const {
-    DA_DEBUG_THROW_IF(i > length_);
+    GRN_DAT_DEBUG_THROW_IF(i > length_);
     return ptr_[i];
   }
 

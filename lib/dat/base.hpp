@@ -22,11 +22,11 @@ class Base {
     return (base_ & IS_TERMINAL_FLAG) == IS_TERMINAL_FLAG;
   }
   UInt32 offset() const {
-    DA_DEBUG_THROW_IF(is_terminal());
+    GRN_DAT_DEBUG_THROW_IF(is_terminal());
     return base_;
   }
   UInt32 key_id() const {
-    DA_DEBUG_THROW_IF(!is_terminal());
+    GRN_DAT_DEBUG_THROW_IF(!is_terminal());
     return base_ & ~IS_TERMINAL_FLAG;
   }
 
@@ -34,11 +34,11 @@ class Base {
     base_ = x;
   }
   void set_offset(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > MAX_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_OFFSET);
     base_ = x;
   }
   void set_key_id(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > MAX_KEY_ID);
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_KEY_ID);
     base_ = IS_TERMINAL_FLAG | x;
   }
 

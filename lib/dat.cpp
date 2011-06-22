@@ -129,7 +129,9 @@ grn_dat_confirm_handle(grn_ctx *ctx, grn_dat *dat)
     gen_pathname(grn_io_path(dat->io), buffer, file_id);
     /* LOCK */
     grn_dat_handle handle = dat->handle;
-    dat->handle = grn::dat::Trie::open(buffer);
+    grn::dat::Trie *new_trie = new grn::dat::Trie;
+    new_trie->open(buffer);
+    dat->handle = new_trie;
     dat->file_id = file_id;
     /* UNLOCK */
     /* should be deleted after enough interval */
@@ -167,9 +169,13 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       if (path && *path) {
         char buffer[PATH_MAX];
         gen_pathname(path, buffer, file_id);
-        dat->handle = grn::dat::Trie::open(buffer);
+        grn::dat::Trie *new_trie = new grn::dat::Trie;
+        new_trie->open(buffer);
+        dat->handle = new_trie;
       } else {
-        dat->handle = grn::dat::Trie::open(NULL);
+        grn::dat::Trie *new_trie = new grn::dat::Trie;
+        new_trie->open(NULL);
+        dat->handle = new_trie;
       }
       dat->file_id = dat->header->file_id = file_id;
     }
@@ -185,7 +191,8 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       char buffer[PATH_MAX];
       gen_pathname(grn_io_path(dat->io), buffer, ++file_id);
       /* LOCK */
-      grn::dat::Trie *new_trie = grn::dat::Trie::create(*trie, buffer, trie->file_size() * 2);
+      grn::dat::Trie *new_trie = new grn::dat::Trie;
+      new_trie->create(*trie, buffer, trie->file_size() * 2);
       dat->handle = new_trie;
       dat->file_id = file_id;
       /* UNLOCK */

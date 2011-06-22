@@ -15,15 +15,15 @@ class Node {
     return base_;
   }
   bool is_terminal() const {
-    DA_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
     return base_.is_terminal();
   }
   UInt32 offset() const {
-    DA_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
     return base_.offset();
   }
   UInt32 key_id() const {
-    DA_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
     return base_.key_id();
   }
 
@@ -56,15 +56,15 @@ class Node {
   }
 
   void set_base(Base x) {
-    DA_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
     base_ = x;
   }
   void set_offset(UInt32 x) {
-    DA_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
     base_.set_offset(x);
   }
   void set_key_id(UInt32 x) {
-    DA_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
     base_.set_key_id(x);
   }
 
@@ -78,19 +78,19 @@ class Node {
     check_.set_except_is_offset(x);
   }
   void set_is_phantom(bool x) {
-    DA_DEBUG_THROW_IF(base_.offset() != INVALID_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(base_.offset() != INVALID_OFFSET);
     check_.set_is_phantom(x);
   }
   void set_next(UInt32 x) {
-    DA_DEBUG_THROW_IF(base_.offset() != INVALID_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(base_.offset() != INVALID_OFFSET);
     check_.set_next(x);
   }
   void set_prev(UInt32 x) {
-    DA_DEBUG_THROW_IF(base_.offset() != INVALID_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(base_.offset() != INVALID_OFFSET);
     check_.set_prev(x);
   }
   void set_label(UInt32 x) {
-    DA_DEBUG_THROW_IF(offset() != INVALID_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(offset() != INVALID_OFFSET);
     check_.set_label(x);
   }
   void set_child(UInt32 x) {

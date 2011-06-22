@@ -22,29 +22,29 @@ class Trie {
   static const UInt32 MAX_NUM_KEYS     = (UInt32)MAX_KEY_ID + 1;
   static const UInt32 MAX_KEY_BUF_SIZE = 0xFFFFFFFFU;
 
+  Trie();
   ~Trie();
 
-  static Trie *create(const char *file_name = NULL,
-                      UInt64 file_size = 0,
-                      UInt32 max_num_keys = 0,
-                      double num_nodes_per_key = 0.0,
-                      double average_key_length = 0.0);
+  void create(const char *file_name = NULL,
+              UInt64 file_size = 0,
+              UInt32 max_num_keys = 0,
+              double num_nodes_per_key = 0.0,
+              double average_key_length = 0.0);
 
-  static Trie *create(const Trie &src_trie,
-                      const char *file_name = NULL,
-                      UInt64 file_size = 0,
-                      UInt32 max_num_keys = 0,
-                      double num_nodes_per_key = 0.0,
-                      double average_key_length = 0.0);
+  void create(const Trie &src_trie,
+              const char *file_name = NULL,
+              UInt64 file_size = 0,
+              UInt32 max_num_keys = 0,
+              double num_nodes_per_key = 0.0,
+              double average_key_length = 0.0);
 
-  static Trie *open(const char *file_name);
-
-//  void close();
+  void open(const char *file_name);
+  void close();
 
   void ith_key(UInt32 key_id, Key *key) const {
-    DA_DEBUG_THROW_IF(key_id < KEY_ID_OFFSET);
-    DA_DEBUG_THROW_IF(key_id >= (num_keys() + KEY_ID_OFFSET));
-    DA_DEBUG_THROW_IF(key == NULL);
+    GRN_DAT_DEBUG_THROW_IF(key_id < KEY_ID_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(key_id >= (num_keys() + KEY_ID_OFFSET));
+    GRN_DAT_DEBUG_THROW_IF(key == NULL);
 
     key->set_ptr(key_buf_ + ith_key_info(key_id).offset());
     key->set_length(ith_key_info(key_id + 1).offset()
@@ -53,25 +53,25 @@ class Trie {
   }
 
   bool search(const void *ptr, UInt32 length, Key *key = NULL) const {
-    DA_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
+    GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
     return search_from_root(static_cast<const UInt8 *>(ptr), length, key);
   }
   bool insert(const void *ptr, UInt32 length, Key *key = NULL) {
-    DA_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
+    GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
     return insert_from_root(static_cast<const UInt8 *>(ptr), length, key);
   }
 
   const Node &ith_node(UInt32 i) const {
-    DA_DEBUG_THROW_IF(i >= num_nodes());
+    GRN_DAT_DEBUG_THROW_IF(i >= num_nodes());
     return nodes_[i];
   }
   const Block &ith_block(UInt32 i) const {
-    DA_DEBUG_THROW_IF(i >= num_blocks());
+    GRN_DAT_DEBUG_THROW_IF(i >= num_blocks());
     return blocks_[i];
   }
   const KeyInfo &ith_key_info(UInt32 i) const {
-    DA_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
-    DA_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET));
+    GRN_DAT_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET));
     return key_infos_[i - KEY_ID_OFFSET];
   }
 
@@ -126,8 +126,6 @@ class Trie {
   Block *blocks_;
   KeyInfo *key_infos_;
   char *key_buf_;
-
-  Trie();
 
   void create_file(const char *file_name,
                    UInt64 file_size,
@@ -200,16 +198,16 @@ class Trie {
   void clear_block_level(UInt32 block_id);
 
   Node &ith_node(UInt32 i) {
-    DA_DEBUG_THROW_IF(i >= num_nodes());
+    GRN_DAT_DEBUG_THROW_IF(i >= num_nodes());
     return nodes_[i];
   }
   Block &ith_block(UInt32 i) {
-    DA_DEBUG_THROW_IF(i >= num_blocks());
+    GRN_DAT_DEBUG_THROW_IF(i >= num_blocks());
     return blocks_[i];
   }
   KeyInfo &ith_key_info(UInt32 i) {
-    DA_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
-    DA_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET + 1));
+    GRN_DAT_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
+    GRN_DAT_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET + 1));
     return key_infos_[i - KEY_ID_OFFSET];
   }
 

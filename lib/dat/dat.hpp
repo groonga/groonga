@@ -84,7 +84,7 @@ class Exception : public std::exception {
   const char *what_;
 };
 
-#define DA_DEFINE_ERROR(error_type) \
+#define GRN_DAT_DEFINE_ERROR(error_type) \
     class error_type : public Exception { \
      public: \
       error_type() throw() \
@@ -101,43 +101,43 @@ class Exception : public std::exception {
       } \
     }
 
-DA_DEFINE_ERROR(ParamError);
-DA_DEFINE_ERROR(IOError);
-DA_DEFINE_ERROR(MemoryError);
-DA_DEFINE_ERROR(SizeError);
+GRN_DAT_DEFINE_ERROR(ParamError);
+GRN_DAT_DEFINE_ERROR(IOError);
+GRN_DAT_DEFINE_ERROR(MemoryError);
+GRN_DAT_DEFINE_ERROR(SizeError);
 
-#undef DA_DEFINE_ERROR
+#undef GRN_DAT_DEFINE_ERROR
 
-#define DA_INT_TO_STR(value) \
+#define GRN_DAT_INT_TO_STR(value) \
     #value
-#define DA_LINE_TO_STR(line) \
-    DA_INT_TO_STR(line)
-#define DA_LINE_STR \
-    DA_LINE_TO_STR(__LINE__)
+#define GRN_DAT_LINE_TO_STR(line) \
+    GRN_DAT_INT_TO_STR(line)
+#define GRN_DAT_LINE_STR \
+    GRN_DAT_LINE_TO_STR(__LINE__)
 
-#define DA_THROW(exception, what) \
-    (throw exception(__FILE__ ":" DA_LINE_STR ": " what))
-#define DA_THROW_IF(cond) \
-    (void)((!(cond)) || (DA_THROW(grn::dat::Exception, #cond), 0))
+#define GRN_DAT_THROW(exception, what) \
+    (throw exception(__FILE__ ":" GRN_DAT_LINE_STR ": " what))
+#define GRN_DAT_THROW_IF(cond) \
+    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::Exception, #cond), 0))
 
-#define DA_PARAM_ERROR_IF(cond) \
-    (void)((!(cond)) || (DA_THROW(grn::dat::ParamError, #cond), 0))
-#define DA_IO_ERROR_IF(cond) \
-    (void)((!(cond)) || (DA_THROW(grn::dat::IOError, #cond), 0))
-#define DA_MEMORY_ERROR_IF(cond) \
-    (void)((!(cond)) || (DA_THROW(grn::dat::MemoryError, #cond), 0))
-#define DA_SIZE_ERROR_IF(cond) \
-    (void)((!(cond)) || (DA_THROW(grn::dat::SizeError, #cond), 0))
+#define GRN_DAT_PARAM_ERROR_IF(cond) \
+    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::ParamError, #cond), 0))
+#define GRN_DAT_IO_ERROR_IF(cond) \
+    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::IOError, #cond), 0))
+#define GRN_DAT_MEMORY_ERROR_IF(cond) \
+    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::MemoryError, #cond), 0))
+#define GRN_DAT_SIZE_ERROR_IF(cond) \
+    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::SizeError, #cond), 0))
 
 #ifdef _DEBUG
- #define DA_DEBUG_THROW_IF(cond) \
-     DA_THROW_IF(cond)
- #define DA_DEBUG_LOG(var) \
-     (std::clog << __FILE__ ":" DA_LINE_STR ": " #var ": " \
+ #define GRN_DAT_DEBUG_THROW_IF(cond) \
+     GRN_DAT_THROW_IF(cond)
+ #define GRN_DAT_DEBUG_LOG(var) \
+     (std::clog << __FILE__ ":" GRN_DAT_LINE_STR ": " #var ": " \
                 << (var) << std::endl)
 #else  // _DEBUG
- #define DA_DEBUG_THROW_IF(cond)
- #define DA_DEBUG_LOG(var)
+ #define GRN_DAT_DEBUG_THROW_IF(cond)
+ #define GRN_DAT_DEBUG_LOG(var)
 #endif  // _DEBUG
 
 }  // namespace dat

@@ -28,7 +28,7 @@ class Check {
   }
 
   UInt32 except_is_offset() const {
-    DA_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
     return check_ & ~IS_OFFSET_FLAG;
   }
 
@@ -40,11 +40,11 @@ class Check {
   }
 
   UInt32 next() const {
-    DA_DEBUG_THROW_IF(!is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(!is_phantom());
     return (check_ >> NEXT_SHIFT) & BLOCK_MASK;
   }
   UInt32 prev() const {
-    DA_DEBUG_THROW_IF(!is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(!is_phantom());
     return (check_ >> PREV_SHIFT) & BLOCK_MASK;
   }
 
@@ -69,17 +69,17 @@ class Check {
 
   void set_is_offset(bool x) {
     if (x) {
-      DA_DEBUG_THROW_IF(is_offset());
+      GRN_DAT_DEBUG_THROW_IF(is_offset());
       check_ |= IS_OFFSET_FLAG;
     } else {
-      DA_DEBUG_THROW_IF(!is_offset());
+      GRN_DAT_DEBUG_THROW_IF(!is_offset());
       check_ &= ~IS_OFFSET_FLAG;
     }
   }
 
   void set_except_is_offset(UInt32 x) {
-    DA_DEBUG_THROW_IF(is_phantom());
-    DA_DEBUG_THROW_IF((x & IS_OFFSET_FLAG) == IS_OFFSET_FLAG);
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF((x & IS_OFFSET_FLAG) == IS_OFFSET_FLAG);
     check_ = (check_ & IS_OFFSET_FLAG) | x;
   }
 
@@ -87,41 +87,41 @@ class Check {
   // with an invalid label when it becomes a non-phantom node.
   void set_is_phantom(bool x) {
     if (x) {
-      DA_DEBUG_THROW_IF(is_phantom());
+      GRN_DAT_DEBUG_THROW_IF(is_phantom());
       check_ |= IS_PHANTOM_FLAG;
     } else {
-      DA_DEBUG_THROW_IF(!is_phantom());
+      GRN_DAT_DEBUG_THROW_IF(!is_phantom());
       check_ = (check_ & IS_OFFSET_FLAG) | (INVALID_LABEL << CHILD_SHIFT) |
           (INVALID_LABEL << SIBLING_SHIFT) | INVALID_LABEL;
     }
   }
 
   void set_next(UInt32 x) {
-    DA_DEBUG_THROW_IF(!is_phantom());
-    DA_DEBUG_THROW_IF(x > BLOCK_MASK);
+    GRN_DAT_DEBUG_THROW_IF(!is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(x > BLOCK_MASK);
     check_ = (check_ & ~(BLOCK_MASK << NEXT_SHIFT)) | (x << NEXT_SHIFT);
   }
   void set_prev(UInt32 x) {
-    DA_DEBUG_THROW_IF(!is_phantom());
-    DA_DEBUG_THROW_IF(x > BLOCK_MASK);
+    GRN_DAT_DEBUG_THROW_IF(!is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(x > BLOCK_MASK);
     check_ = (check_ & ~(BLOCK_MASK << PREV_SHIFT)) | (x << PREV_SHIFT);
   }
 
   void set_label(UInt32 x) {
-    DA_DEBUG_THROW_IF(is_phantom());
-    DA_DEBUG_THROW_IF(x > MAX_LABEL);
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_LABEL);
     check_ = (check_ & ~LABEL_MASK) | x;
   }
 
   void set_child(UInt32 x) {
-    DA_DEBUG_THROW_IF(is_phantom());
-    DA_DEBUG_THROW_IF(x > MAX_LABEL);
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_LABEL);
     check_ = (check_ & ~(LABEL_MASK << CHILD_SHIFT)) | (x << CHILD_SHIFT);
   }
   void set_sibling(UInt32 x) {
-    DA_DEBUG_THROW_IF(is_phantom());
-    DA_DEBUG_THROW_IF(label() > MAX_LABEL);
-    DA_DEBUG_THROW_IF((sibling() != INVALID_LABEL) && (x == INVALID_LABEL));
+    GRN_DAT_DEBUG_THROW_IF(is_phantom());
+    GRN_DAT_DEBUG_THROW_IF(label() > MAX_LABEL);
+    GRN_DAT_DEBUG_THROW_IF((sibling() != INVALID_LABEL) && (x == INVALID_LABEL));
     check_ = (check_ & ~(LABEL_MASK << SIBLING_SHIFT)) | (x << SIBLING_SHIFT);
   }
 

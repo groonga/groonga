@@ -1,12 +1,13 @@
-#ifndef DA_USAGE_HPP_
-#define DA_USAGE_HPP_
+#ifndef GRN_DAT_USAGE_HPP_
+#define GRN_DAT_USAGE_HPP_
 
 #include "dat.hpp"
 
 #include <sys/time.h>
 #include <sys/resource.h>
 
-namespace da {
+namespace grn {
+namespace dat {
 
 class Usage {
  public:
@@ -41,6 +42,7 @@ class Usage {
   struct rusage usage_;
 };
 
-}  // namespace da
+}  // namespace dat
+}  // namespace grn
 
-#endif  // DA_USAGE_HPP_
+#endif  // GRN_DAT_USAGE_HPP_

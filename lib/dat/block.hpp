@@ -36,31 +36,31 @@ class Block {
   }
 
   void set_next(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > MAX_BLOCK_ID);
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_BLOCK_ID);
     next_ = (next_ & BLOCK_MASK) | (x * BLOCK_SIZE);
   }
   void set_prev(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > MAX_BLOCK_ID);
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_BLOCK_ID);
     prev_ = (prev_ & BLOCK_MASK) | (x * BLOCK_SIZE);
   }
 
   void set_level(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > MAX_BLOCK_LEVEL);
-    DA_DEBUG_THROW_IF(x > BLOCK_MASK);
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_BLOCK_LEVEL);
+    GRN_DAT_DEBUG_THROW_IF(x > BLOCK_MASK);
     next_ = (next_ & ~BLOCK_MASK) | x;
   }
   void set_fail_count(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > MAX_FAIL_COUNT);
-    DA_DEBUG_THROW_IF(x > BLOCK_MASK);
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_FAIL_COUNT);
+    GRN_DAT_DEBUG_THROW_IF(x > BLOCK_MASK);
     prev_ = (prev_ & ~BLOCK_MASK) | x;
   }
 
   void set_first_phantom(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > BLOCK_MASK);
+    GRN_DAT_DEBUG_THROW_IF(x > BLOCK_MASK);
     first_phantom_ = (UInt16)x;
   }
   void set_num_phantoms(UInt32 x) {
-    DA_DEBUG_THROW_IF(x > BLOCK_SIZE);
+    GRN_DAT_DEBUG_THROW_IF(x > BLOCK_SIZE);
     num_phantoms_ = (UInt16)x;
   }
 

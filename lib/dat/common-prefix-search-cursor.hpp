@@ -22,7 +22,7 @@ class CommonPrefixSearchCursor : public Cursor {
             UInt32 min_length,
             UInt32 max_length,
             UInt32 offset,
-            UInt32 max_count);
+            UInt32 limit);
 
   void close();
 

@@ -11,6 +11,9 @@ class Cursor {
   Cursor() {}
   virtual ~Cursor() {}
 
+//  virtual void open(const CursorQuery &query) = 0;
+//  virtual void close() = 0;
+
   virtual bool next(Key *key) = 0;
 
  private:

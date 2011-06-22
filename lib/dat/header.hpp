@@ -54,7 +54,7 @@ class Header {
     return key_buf_size_;
   }
   UInt32 ith_entry(UInt32 i) const {
-    DA_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
+    GRN_DAT_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
     return entries_[i];
   }
 
@@ -84,8 +84,8 @@ class Header {
   }
   void set_ith_entry(UInt32 i,
                      UInt32 x) {
-    DA_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
-    DA_DEBUG_THROW_IF((x != INVALID_ENTRY) && (x >= num_blocks()));
+    GRN_DAT_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
+    GRN_DAT_DEBUG_THROW_IF((x != INVALID_ENTRY) && (x >= num_blocks()));
     entries_[i] = x;
   }
 
