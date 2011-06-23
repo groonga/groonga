@@ -26,6 +26,12 @@ class Header {
   UInt64 file_size() const {
     return file_size_;
   }
+  UInt32 min_key_id() const {
+    return MIN_KEY_ID;
+  }
+  UInt32 max_key_id() const {
+    return num_keys();
+  }
   UInt32 num_keys() const {
     return num_keys_;
   }
@@ -82,8 +88,7 @@ class Header {
   void set_key_buf_size(UInt32 x) {
     key_buf_size_ = x;
   }
-  void set_ith_entry(UInt32 i,
-                     UInt32 x) {
+  void set_ith_entry(UInt32 i, UInt32 x) {
     GRN_DAT_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
     GRN_DAT_DEBUG_THROW_IF((x != INVALID_ENTRY) && (x >= num_blocks()));
     entries_[i] = x;

@@ -12,9 +12,13 @@ class Cursor {
   virtual ~Cursor() {}
 
 //  virtual void open(const CursorQuery &query) = 0;
-//  virtual void close() = 0;
+  virtual void close() = 0;
 
   virtual bool next(Key *key) = 0;
+
+  virtual UInt32 offset() const = 0;
+  virtual UInt32 limit() const = 0;
+  virtual UInt32 flags() const = 0;
 
  private:
   // Disallows copy and assignment.

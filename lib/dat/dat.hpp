@@ -43,46 +43,76 @@ const UInt32 UINT32_MAX = static_cast<UInt32>(0xFFFFFFFFU);
 const UInt64 UINT64_MAX = static_cast<UInt64>(0xFFFFFFFFFFFFFFFFULL);
 #endif  // UINT64_MAX
 
-// The special label attached to a terminal node.
-const UInt16 TERMINAL_LABEL = 0x100;
-const UInt32 LABEL_MASK = 0x1FF;
-const UInt32 BLOCK_MASK = 0x1FF;
-
-const UInt32 BLOCK_SIZE = 0x200;
-
-const UInt32 ROOT_NODE_ID = 0;
-const UInt32 KEY_ID_OFFSET = 1;
-
+// If a key is a prefix of another key, such a key is associated with a special
+// terminal node which has TERMINAL_LABEL.
+const UInt16 TERMINAL_LABEL  = 0x100;
+const UInt16 MIN_LABEL       = '\0';
 const UInt16 MAX_LABEL       = TERMINAL_LABEL;
+const UInt32 INVALID_LABEL   = 0x1FF;
+const UInt32 LABEL_MASK      = 0x1FF;
+
+// The MSB of BASE is used to represent whether the node is a terminal node or
+// not and the other 31 bits represent the offset to its child nodes. So, the
+// maximum number of nodes is also limited to 2^31.
+const UInt32 ROOT_NODE_ID    = 0;
 const UInt32 MAX_NODE_ID     = 0x7FFFFFFF;
-const UInt32 MAX_BLOCK_ID    = MAX_NODE_ID / BLOCK_SIZE;
+const UInt32 MAX_NUM_NODES   = MAX_NODE_ID + 1;
+const UInt32 INVALID_NODE_ID = MAX_NODE_ID + 1;
+
 const UInt32 MAX_OFFSET      = MAX_NODE_ID;
-const UInt32 MAX_KEY_ID      = MAX_NODE_ID;
-const UInt32 MAX_KEY_LENGTH  = 0x7FFF;
+const UInt32 INVALID_OFFSET  = 0;
+
+const UInt32 BLOCK_SIZE      = 0x200;
+const UInt32 BLOCK_MASK      = 0x1FF;
+const UInt32 MAX_BLOCK_ID    = MAX_NODE_ID / BLOCK_SIZE;
+const UInt32 MAX_NUM_BLOCKS  = MAX_BLOCK_ID + 1;
 
 // The level of a block is incremented when find_offset() has failed to find
-// a good offset in that block MAX_FAIL_COUNT times.
+// a good offset MAX_FAIL_COUNT times in that block.
 const UInt32 MAX_FAIL_COUNT  = 4;
 
 // The maximum number of blocks tested in each call of find_offset().
 const UInt32 MAX_BLOCK_COUNT = 16;
+
 // A higher level block has less phantom nodes.
 const UInt32 MAX_BLOCK_LEVEL = 5;
 
-const UInt32 INVALID_LABEL   = 0x1FF;
-const UInt32 INVALID_OFFSET  = 0;
 const UInt32 INVALID_ENTRY   = 0x7FFFFFFF;
-const UInt32 INVALID_NODE_ID = MAX_NODE_ID + 1;
+
+const UInt32 MIN_KEY_ID      = 1;
+const UInt32 MAX_KEY_ID      = MAX_NODE_ID;
 const UInt32 INVALID_KEY_ID  = 0;
 
-const UInt32 DEFAULT_FILE_SIZE          = 1U << 20;
+const UInt32 MAX_KEY_LENGTH  = 0x7FFF;
+const UInt32 MAX_NUM_KEYS    = MAX_KEY_ID + 1;
+
+const UInt64 DEFAULT_FILE_SIZE          = 1 << 20;
 const double DEFAULT_NUM_NODES_PER_KEY  = 4.0;
 const double DEFAULT_AVERAGE_KEY_LENGTH = 16.0;
+const UInt32 MAX_KEY_BUF_SIZE           = 0xFFFFFFFFU;
 
-const UInt32 MAX_NUM_NODES    = MAX_NODE_ID + 1;
-const UInt32 MAX_NUM_BLOCKS   = MAX_BLOCK_ID + 1;
-const UInt32 MAX_NUM_KEYS     = MAX_KEY_ID + 1;
-const UInt32 MAX_KEY_BUF_SIZE = 0xFFFFFFFFU;
+const UInt32 ID_RANGE_CURSOR      = 0x00001;
+const UInt32 KEY_RANGE_CURSOR     = 0x00002;
+const UInt32 COMMON_PREFIX_CURSOR = 0x00004;
+const UInt32 PREDICTIVE_CURSOR    = 0x00008;
+const UInt32 CURSOR_TYPE_MASK   = 0x000FF;
+
+const UInt32 ASCENDING_CURSOR     = 0x00100;
+const UInt32 DESCENDING_CURSOR    = 0x00200;
+const UInt32 CURSOR_ORDER_MASK    = 0x00F00;
+
+const UInt32 EXCEPT_LOWER_BOUND   = 0x01000;
+const UInt32 EXCEPT_UPPER_BOUND   = 0x02000;
+const UInt32 EXCEPT_EXACT_MATCH   = 0x04000;
+const UInt32 CURSOR_OPTIONS_MASK  = 0xFF000;
+
+// To be determined...
+//enum ErrorCode {
+//  PARAM_ERROR  = -1,
+//  IO_ERROR     = -2,
+//  MEMORY_ERROR = -3,
+//  SIZE_ERROR   = -4
+//};
 
 class Exception : public std::exception {
  public:

@@ -32,9 +32,11 @@ class Trie {
   void open(const char *file_name);
   void close();
 
+  void swap(Trie *trie);
+
   void ith_key(UInt32 key_id, Key *key) const {
-    GRN_DAT_DEBUG_THROW_IF(key_id < KEY_ID_OFFSET);
-    GRN_DAT_DEBUG_THROW_IF(key_id >= (num_keys() + KEY_ID_OFFSET));
+    GRN_DAT_DEBUG_THROW_IF(key_id < min_key_id());
+    GRN_DAT_DEBUG_THROW_IF(key_id > max_key_id());
     GRN_DAT_DEBUG_THROW_IF(key == NULL);
 
     key->set_ptr(key_buf_ + ith_key_info(key_id).offset());
@@ -61,9 +63,9 @@ class Trie {
     return blocks_[i];
   }
   const KeyInfo &ith_key_info(UInt32 i) const {
-    GRN_DAT_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
-    GRN_DAT_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET));
-    return key_infos_[i - KEY_ID_OFFSET];
+    GRN_DAT_DEBUG_THROW_IF(i < min_key_id());
+    GRN_DAT_DEBUG_THROW_IF(i > (max_key_id() + 1));
+    return key_infos_[i - MIN_KEY_ID];
   }
 
   const Header &header() const {
@@ -85,6 +87,12 @@ class Trie {
   }
   UInt32 num_keys() const {
     return header_->num_keys();
+  }
+  UInt32 min_key_id() const {
+    return header_->min_key_id();
+  }
+  UInt32 max_key_id() const {
+    return header_->max_key_id();
   }
   UInt32 max_num_keys() const {
     return header_->max_num_keys();
@@ -197,9 +205,9 @@ class Trie {
     return blocks_[i];
   }
   KeyInfo &ith_key_info(UInt32 i) {
-    GRN_DAT_DEBUG_THROW_IF(i < KEY_ID_OFFSET);
-    GRN_DAT_DEBUG_THROW_IF(i > (num_keys() + KEY_ID_OFFSET + 1));
-    return key_infos_[i - KEY_ID_OFFSET];
+    GRN_DAT_DEBUG_THROW_IF(i < min_key_id());
+    GRN_DAT_DEBUG_THROW_IF(i > (max_key_id() + 2));
+    return key_infos_[i - MIN_KEY_ID];
   }
 
   // Disallows copy and assignment.

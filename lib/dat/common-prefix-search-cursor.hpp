@@ -11,30 +11,45 @@ namespace dat {
 
 class CommonPrefixSearchCursor : public Cursor {
  public:
-  CommonPrefixSearchCursor()
-      : trie_(NULL),
-        buf_(),
-        count_(0),
-        is_ascending_(false) {}
-  ~CommonPrefixSearchCursor() {}
+  CommonPrefixSearchCursor();
+  ~CommonPrefixSearchCursor();
 
   void open(const Trie &trie,
             const void *ptr,
             UInt32 min_length,
             UInt32 max_length,
-            UInt32 offset,
-            UInt32 limit,
-            bool is_ascending = false);
+            UInt32 offset = 0,
+            UInt32 limit = UINT32_MAX,
+            UInt32 flags = 0);
 
   void close();
 
   bool next(Key *key);
 
+  UInt32 offset() const {
+    return offset_;
+  }
+  UInt32 limit() const {
+    return limit_;
+  }
+  UInt32 flags() const {
+    return flags_;
+  }
+
  private:
   const Trie *trie_;
+  UInt32 offset_;
+  UInt32 limit_;
+  UInt32 flags_;
+
   std::vector<UInt32> buf_;
   UInt32 count_;
-  bool is_ascending_;
+
+  UInt32 fix_flags(UInt32 flags) const;
+  CommonPrefixSearchCursor(const Trie &trie,
+                           UInt32 offset, UInt32 limit, UInt32 flags);
+  void init(const UInt8 *ptr, UInt32 min_length, UInt32 max_length);
+  void swap(CommonPrefixSearchCursor *cursor);
 
   // Disallows copy and assignment.
   CommonPrefixSearchCursor(const CommonPrefixSearchCursor &);

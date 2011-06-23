@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <cstring>
 #include <new>
 
@@ -49,8 +50,10 @@ void Trie::create(const char *file_name,
     GRN_DAT_PARAM_ERROR_IF(max_num_keys > MAX_NUM_KEYS);
   }
 
-  create_file(file_name, file_size, max_num_keys,
-              num_nodes_per_key, average_key_length);
+  Trie new_trie;
+  new_trie.create_file(file_name, file_size, max_num_keys,
+                       num_nodes_per_key, average_key_length);
+  new_trie.swap(this);
 }
 
 void Trie::create(const Trie &trie,
@@ -90,17 +93,21 @@ void Trie::create(const Trie &trie,
     GRN_DAT_PARAM_ERROR_IF(max_num_keys > MAX_KEY_ID);
   }
 
-  create_file(file_name, file_size, max_num_keys,
-              num_nodes_per_key, average_key_length);
+  Trie new_trie;
+  new_trie.create_file(file_name, file_size, max_num_keys,
+                       num_nodes_per_key, average_key_length);
   if (trie.num_keys() != 0) {
-    build_from_trie(trie);
+    new_trie.build_from_trie(trie);
   }
+  new_trie.swap(this);
 }
 
 void Trie::open(const char *file_name) {
   GRN_DAT_PARAM_ERROR_IF(file_name == NULL);
 
-  open_file(file_name);
+  Trie new_trie;
+  new_trie.open_file(file_name);
+  new_trie.swap(this);
 }
 
 void Trie::close() {
@@ -112,6 +119,14 @@ void Trie::close() {
   blocks_ = NULL;
   key_infos_ = NULL;
   key_buf_ = NULL;
+}
+
+void Trie::swap(Trie *trie) {
+  std::swap(header_, trie->header_);
+  std::swap(nodes_, trie->nodes_);
+  std::swap(blocks_, trie->blocks_);
+  std::swap(key_infos_, trie->key_infos_);
+  std::swap(key_buf_, trie->key_buf_);
 }
 
 void Trie::create_file(const char *file_name,
@@ -211,7 +226,7 @@ void Trie::create_file(const char *file_name,
 
   reserve_node(ROOT_NODE_ID);
   ith_node(INVALID_OFFSET).set_is_offset(true);
-  ith_key_info(KEY_ID_OFFSET).set_offset(0);
+  ith_key_info(MIN_KEY_ID).set_offset(0);
 }
 
 void Trie::open_file(const char *file_name) {
@@ -264,7 +279,7 @@ void Trie::build_from_trie(const Trie &trie) {
   std::memcpy(key_infos_, trie.key_infos_,
               sizeof(KeyInfo) * (num_keys() + 1));
   std::memcpy(key_buf_, trie.key_buf_,
-              ith_key_info(num_keys() + KEY_ID_OFFSET).offset());
+              ith_key_info(max_key_id() + 1).offset());
   build_from_trie(trie, ROOT_NODE_ID, ROOT_NODE_ID);
 }
 
@@ -354,8 +369,8 @@ bool Trie::search_from_terminal(const UInt8 *ptr,
                                 UInt32 key_id,
                                 UInt32 i) const {
   GRN_DAT_DEBUG_THROW_IF(i > length);
-  GRN_DAT_DEBUG_THROW_IF(key_id < KEY_ID_OFFSET);
-  GRN_DAT_DEBUG_THROW_IF(key_id >= (num_keys() + KEY_ID_OFFSET));
+  GRN_DAT_DEBUG_THROW_IF(key_id < min_key_id());
+  GRN_DAT_DEBUG_THROW_IF(key_id > max_key_id());
 
   const UInt32 key_length = ith_key_info(key_id + 1).offset()
       - ith_key_info(key_id).offset();
@@ -450,7 +465,7 @@ bool Trie::insert_from_terminal(const UInt8 *ptr,
   }
 
   GRN_DAT_SIZE_ERROR_IF(num_keys() >= max_num_keys());
-  key_id = num_keys() + KEY_ID_OFFSET;
+  key_id = max_key_id() + 1;
 
   const UInt32 key_offset = ith_key_info(key_id).offset();
   GRN_DAT_SIZE_ERROR_IF(length > (key_buf_size() - key_offset));
@@ -484,7 +499,7 @@ bool Trie::insert_from_nonterminal(const UInt8 *ptr,
   GRN_DAT_DEBUG_THROW_IF(i > length);
 
   GRN_DAT_SIZE_ERROR_IF(num_keys() >= max_num_keys());
-  const UInt32 key_id = num_keys() + KEY_ID_OFFSET;
+  const UInt32 key_id = max_key_id() + 1;
 
   const UInt32 key_offset = ith_key_info(key_id).offset();
   GRN_DAT_SIZE_ERROR_IF(length > (key_buf_size() - key_offset));
@@ -602,7 +617,8 @@ UInt32 Trie::separate(const UInt8 *ptr,
   ith_node(offset).set_is_offset(true);
   ith_node(node_id).set_offset(offset);
 
-  if ((labels[0] == TERMINAL_LABEL) || (labels[0] < labels[1])) {
+  if ((labels[0] == TERMINAL_LABEL) ||
+      ((labels[1] != TERMINAL_LABEL) && (labels[0] < labels[1]))) {
     ith_node(node_id).set_child(labels[0]);
     ith_node(offset ^ labels[0]).set_sibling(labels[1]);
   } else {
