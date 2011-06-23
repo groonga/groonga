@@ -1,13 +1,13 @@
 実行例 ::
 
   > table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1294292439.68952,0.086450272],true]
+  [[0,1308821014.79373,0.08400713],true]
   > table_create --name SiteCountry --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1294292439.97679,0.049583906],true]
+  [[0,1308821015.07862,0.039604105],true]
   > column_create --table Site --name domain --flags COLUMN_SCALAR --type SiteDomain
-  [[0,1294292440.22716,0.04950764],true]
+  [[0,1308821015.31978,0.038851776],true]
   > column_create --table Site --name country --flags COLUMN_SCALAR --type SiteCountry
-  [[0,1294292440.47743,0.049554444],true]
+  [[0,1308821015.56016,0.038916093],true]
   > load --table Site
   > [
   > {"_key":"http://example.org/","domain":".org","country":"japan"},
@@ -20,5 +20,5 @@
   > {"_key":"http://example.org/gat","domain":".org","country":"usa"},
   > {"_key":"http://example.com/vdw","domain":".com","country":"japan"}
   > ]
-  [[0,1294292440.72776,2.203006717],9]
+  [[0,1308821015.80061,2.21225519],9]
   

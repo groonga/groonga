@@ -1,14 +1,14 @@
 実行例 ::
 
-  >    table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
-  [[0,1294292412.30259,0.079878298],true]
-  >    load --table PatPre
-  >    [
-  >    {"_key":"ひろゆき"},
-  >    {"_key":"まろゆき"},
-  >    {"_key":"ひろあき"}
-  >    ]
-  [[0,1294292412.58327,1.001299934],3]
-  >    select --table PatPre --query _key:@ひろ
-  [[0,1294292413.78527,0.000581025],[[[2],[["_id","UInt32"],["_key","ShortText"]],[3,"ひろあき"],[1,"ひろゆき"]]]]
+  > table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+  [[0,1308820996.96716,0.044653865],true]
+  > load --table PatPrefix
+  > [
+  > {"_key":"ひろゆき"},
+  > {"_key":"まろゆき"},
+  > {"_key":"ひろあき"}
+  > ]
+  [[0,1308820997.21348,1.005917803],3]
+  > select --table PatPrefix --query _key:@ひろ
+  [[0,1308820998.42103,0.000401963],[[[2],[["_id","UInt32"],["_key","ShortText"]],[3,"ひろあき"],[1,"ひろゆき"]]]]
   

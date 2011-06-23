@@ -1,0 +1,18 @@
+実行例 ::
+
+  > table_create --name PatSuffix --flags TABLE_PAT_KEY|KEY_WITH_SIS --key_type ShortText
+  [[0,1308820998.62409,0.056108533],true]
+  > column_create --table PatSuffix --name original --type Bool
+  [[0,1308820998.8819,0.038650376],true]
+  > load --table PatSuffix
+  > [
+  > {"_key":"ひろゆき","original":true},
+  > {"_key":"まろゆき","original":true},
+  > {"_key":"ひろあき","original":true}
+  > ]
+  [[0,1308820999.12224,1.0055318],3]
+  > select --table PatSuffix --query _key:@ゆき
+  [[0,1308821000.32928,0.000440379],[[[4],[["_id","UInt32"],["_key","ShortText"],["original","Bool"]],[1,"ひろゆき",true],[5,"まろゆき",true],[3,"ゆき",false],[2,"ろゆき",false]]]]
+  > select --table PatSuffix --query "_key:@ゆき original:true"
+  [[0,1308821000.5325,0.000412256],[[[2],[["_id","UInt32"],["_key","ShortText"],["original","Bool"]],[1,"ひろゆき",true],[5,"まろゆき",true]]]]
+  

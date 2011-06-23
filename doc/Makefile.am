@@ -119,6 +119,7 @@ relative_source_files = \
 	source/example/tutorial07-3.log \
 	source/example/tutorial07-4.log \
 	source/example/tutorial08-1.log \
+	source/example/tutorial08-2.log \
 	source/example/tutorial10-1.log \
 	source/example/tutorial10-10.log \
 	source/example/tutorial10-2.log \

@@ -3,10 +3,10 @@
   http://[IPまたはホスト名]:[ポート番号]/d/status
   実行される処理：
   > status
-  [[0,1294292493.37913,2.8547e-05],{"alloc_count":466,"starttime":1294292404,"uptime":89,"version":"1.0.6-10-gba9df76","n_queries":105,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
+  [[0,1308820929.085,4.9675e-05],{"alloc_count":548,"starttime":1308820641,"uptime":288,"version":"1.2.2-104-gf48051d","n_queries":375,"cache_hit_rate":0.533333333333333,"command_version":1,"default_command_version":1,"max_command_version":2}]
   
   http://[IPまたはホスト名]:[ポート番号]/d/select?table=Site&query=title:@this
   実行される処理：
   > select --table Site --query title:@this
-  [[0,1294292493.58185,6.4853e-05],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+  [[0,1308820929.28709,6.8668e-05],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
   

@@ -117,6 +117,7 @@ source_files = \
 	$(top_srcdir)/doc/source/example/tutorial07-3.log \
 	$(top_srcdir)/doc/source/example/tutorial07-4.log \
 	$(top_srcdir)/doc/source/example/tutorial08-1.log \
+	$(top_srcdir)/doc/source/example/tutorial08-2.log \
 	$(top_srcdir)/doc/source/example/tutorial10-1.log \
 	$(top_srcdir)/doc/source/example/tutorial10-10.log \
 	$(top_srcdir)/doc/source/example/tutorial10-2.log \

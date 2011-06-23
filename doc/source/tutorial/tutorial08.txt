@@ -3,7 +3,8 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. table_remove PatPre
+.. table_remove PatPrefix
+.. table_remove PatSuffix
 
 主キーによる前方一致検索
 ========================
@@ -18,40 +19,34 @@ table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定する�
 .. groonga-command
 .. include:: ../example/tutorial08-1.log
 ..
-.. table_create --name PatPre --flags TABLE_PAT_KEY --key_type ShortText
-.. load --table PatPre
+.. table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+.. load --table PatPrefix
 .. [
 .. {"_key":"ひろゆき"},
 .. {"_key":"まろゆき"},
 .. {"_key":"ひろあき"}
 .. ]
-.. select --table PatPre --query _key:@ひろ
+.. select --table PatPrefix --query _key:@ひろ
 
 主キーによる後方一致検索
 ------------------------
 
-執筆中です。
+table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定することで、主キーによる前方一致検索・後方一致検索の両方が可能となります。
 
-.. #table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定することで、主キーによる前方一致検索・後方一致検索の両方が可能となります。
-.. #
-.. #KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードまで追加されてしまいます。カラムに
-.. #
-.. #そのレコードとの区別をつけるためにflagカラムを追加しています。
-.. #
-.. #実行例 ::
-.. #
-.. # > table_create --name PatSuf --flags TABLE_PAT_KEY|KEY_WITH_SIS --key_type ShortText
-.. # [[0,1270635931.03862,0.00379]]
-.. # > column_create --table PatSuf --name original --type UInt8
-.. # [[0,1270635969.35514,0.013933]]
-.. # > load --table PatSuf
-.. # > [
-.. # > {"_key":"ひろゆき","original":1},
-.. # > {"_key":"まろゆき","original":1},
-.. # > {"_key":"ひろあき","original":1}
-.. # > ]
-.. # [[0,1270635973.61015,0.062957],3]
-.. # > select --table PatSuf --query _key:@ゆき
-.. # [[0,1270635977.04008,0.000461],[[[4],[["_id","UInt32"],["_key","ShortText"],["original","UInt8"]],[1,"ひろゆき",1],[5,"まろゆき",1],[3,"ゆき",0],[2,"ろゆき",0]]]]
-.. # > select --table PatSuf --query "_key:@ゆき + original:1"
-.. # [[0,1270636044.85414,0.000443],[[[2],[["_id","UInt32"],["_key","ShortText"],["original","UInt8"]],[1,"ひろゆき",1],[5,"まろゆき",1]]]]
+KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、一工夫必要になります。
+
+例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元のレコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが ``true`` も検索条件に加えます。
+
+.. groonga-command
+.. include:: ../example/tutorial08-2.log
+..
+.. table_create --name PatSuffix --flags TABLE_PAT_KEY|KEY_WITH_SIS --key_type ShortText
+.. column_create --table PatSuffix --name original --type Bool
+.. load --table PatSuffix
+.. [
+.. {"_key":"ひろゆき","original":true},
+.. {"_key":"まろゆき","original":true},
+.. {"_key":"ひろあき","original":true}
+.. ]
+.. select --table PatSuffix --query _key:@ゆき
+.. select --table PatSuffix --query "_key:@ゆき original:true"
