@@ -1,15 +1,15 @@
 実行例 ::
 
   > table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
-  [[0,1294292519.76797,0.049499306],true]
+  [[-22,1308820912.80154,0.000455314,"already used name was assigned: <Video>",[["grn_obj_register","db.c",5938,"(stdin)",1274,"table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32"]]],false]
   > table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1294292520.01828,0.057850258],true]
+  [[-22,1308820913.00517,0.00046206,"already used name was assigned: <Tag>",[["grn_obj_register","db.c",5938,"(stdin)",1275,"table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText"]]],false]
   > column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
-  [[0,1294292520.27693,0.050379447],true]
+  [[-22,1308820913.20848,0.000212757,"already used name was assigned: <Video.title>",[["grn_obj_register","db.c",5938,"(stdin)",1276,"column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText"]]],false]
   > column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
-  [[0,1294292520.52812,0.049635833],true]
+  [[-22,1308820913.41095,0.000428695,"already used name was assigned: <Video.tags>",[["grn_obj_register","db.c",5938,"(stdin)",1277,"column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag"]]],false]
   > column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
-  [[0,1294292520.77859,0.105692363],true]
+  [[-22,1308820913.61454,0.00024036,"already used name was assigned: <Tag.index_tags>",[["grn_obj_register","db.c",5938,"(stdin)",1278,"column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags"]]],false]
   > load --table Video
   > [
   > {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
@@ -21,5 +21,5 @@
   > {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
   > {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
   > ]
-  [[0,1294292521.0851,2.002679112],8]
+  [[0,1308820913.81791,2.009808857],8]
   

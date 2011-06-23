@@ -1,9 +1,9 @@
 実行例 ::
 
   > select --table Blog1 --match_columns title||message --query groonga
-  [[0,1294292408.31388,0.000823528],[[[3],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[1,"grn1","groonga test","groonga message"],[3,"grn3","groonga message","none"],[2,"grn2","baseball result","rakutan eggs 4 - 4 groonga moritars"]]]]
+  [[0,1308820992.85475,0.000567046],[[[3],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[1,"grn1","groonga test","groonga message"],[3,"grn3","groonga message","none"],[2,"grn2","baseball result","rakutan eggs 4 - 4 groonga moritars"]]]]
   > select --table Blog1 --match_columns title||message --query message
-  [[0,1294292408.5178,0.000566064],[[[2],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[3,"grn3","groonga message","none"],[1,"grn1","groonga test","groonga message"]]]]
+  [[0,1308820993.05879,0.000509674],[[[2],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[3,"grn3","groonga message","none"],[1,"grn1","groonga test","groonga message"]]]]
   > select --table Blog1 --match_columns title --query message
-  [[0,1294292408.72074,0.0004798],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[3,"grn3","groonga message","none"]]]]
+  [[0,1308820993.26226,0.000493886],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["message","ShortText"]],[3,"grn3","groonga message","none"]]]]
   

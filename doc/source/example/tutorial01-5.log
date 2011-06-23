@@ -1,5 +1,5 @@
 実行例 ::
 
   > table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1294292495.351,0.064287537],true]
+  [[0,1308820931.02058,0.054235759],true]
   
