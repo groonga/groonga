@@ -139,18 +139,23 @@ bool PredictiveSearchCursor::ascending_next(Key *key) {
   while (!buf_.empty()) {
     const UInt32 node_id = buf_.back();
     buf_.pop_back();
-    push_next_nodes(node_id);
 
-    const Base base = trie_->ith_node(node_id).base();
-    if (base.is_terminal()) {
+    const Node node = trie_->ith_node(node_id);
+    if (node.sibling() != INVALID_LABEL) {
+      buf_.push_back(node_id ^ node.label() ^ node.sibling());
+    }
+
+    if (node.is_terminal()) {
       Key temp_key;
-      trie_->ith_key(base.key_id(), &temp_key);
+      trie_->ith_key(node.key_id(), &temp_key);
       if (temp_key.length() >= min_length_) {
         if (cur_++ >= offset_) {
           *key = temp_key;
           return true;
         }
       }
+    } else if (node.child() != INVALID_LABEL) {
+      buf_.push_back(node.offset() ^ node.child());
     }
   }
   return false;
@@ -184,19 +189,6 @@ bool PredictiveSearchCursor::descending_next(Key *key) {
     }
   }
   return false;
-}
-
-
-void PredictiveSearchCursor::push_next_nodes(UInt32 node_id) {
-  if (trie_->ith_node(node_id).sibling() != INVALID_LABEL) {
-    buf_.push_back(node_id ^ trie_->ith_node(node_id).label()
-        ^ trie_->ith_node(node_id).sibling());
-  }
-
-  if (trie_->ith_node(node_id).child() != INVALID_LABEL) {
-    buf_.push_back(trie_->ith_node(node_id).offset()
-        ^ trie_->ith_node(node_id).child());
-  }
 }
 
 }  // namespace grn

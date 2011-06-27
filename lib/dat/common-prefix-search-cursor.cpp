@@ -96,21 +96,6 @@ void CommonPrefixSearchCursor::init(const UInt8 *ptr,
   UInt32 node_id = ROOT_NODE_ID;
   UInt32 skip_count = 0;
   for (UInt32 i = 0; i < max_length; ++i) {
-    if (trie_->ith_node(node_id).child() == TERMINAL_LABEL) {
-      if (i >= min_length) {
-        if (skip_count < offset_) {
-          ++skip_count;
-        } else {
-          const UInt32 terminal =
-              trie_->ith_node(node_id).offset() ^ TERMINAL_LABEL;
-          buf_.push_back(trie_->ith_node(terminal).key_id());
-          if (buf_.size() >= limit_) {
-            return;
-          }
-        }
-      }
-    }
-
     const Base base = trie_->ith_node(node_id).base();
     if (base.is_terminal()) {
       Key key;
@@ -124,6 +109,20 @@ void CommonPrefixSearchCursor::init(const UInt8 *ptr,
         }
       }
       return;
+    }
+
+    if (trie_->ith_node(node_id).child() == TERMINAL_LABEL) {
+      if (i >= min_length) {
+        if (skip_count < offset_) {
+          ++skip_count;
+        } else {
+          const UInt32 terminal = base.offset() ^ TERMINAL_LABEL;
+          buf_.push_back(trie_->ith_node(terminal).key_id());
+          if (buf_.size() >= limit_) {
+            return;
+          }
+        }
+      }
     }
 
     node_id = base.offset() ^ ptr[i];

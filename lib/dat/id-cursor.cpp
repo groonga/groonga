@@ -98,7 +98,8 @@ UInt32 IdCursor::fix_flags(UInt32 flags) const {
   return flags;
 }
 
-IdCursor::IdCursor(const Trie &trie, UInt32 offset, UInt32 limit, UInt32 flags)
+IdCursor::IdCursor(const Trie &trie,
+                   UInt32 offset, UInt32 limit, UInt32 flags)
     : trie_(&trie),
       offset_(offset),
       limit_(limit),

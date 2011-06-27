@@ -54,7 +54,6 @@ class PredictiveSearchCursor : public Cursor {
 
   bool ascending_next(Key *key);
   bool descending_next(Key *key);
-  void push_next_nodes(UInt32 node_id);
 
   static const UInt32 POST_ORDER_FLAG = 0x80000000U;
 
