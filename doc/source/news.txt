@@ -5,6 +5,32 @@
 News
 ====
 
+.. _release-1-2-3:
+
+Release 1.2.3 - 2011/06/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added invalid table name check. #912
+* Added groonga-query-log-analyzer.rb that analyze query log.
+* groonga command shows failed command on error.
+* groonga command shows file name and line no on error.
+* Improved error message of :doc:`column_create`. #952
+* Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)
+
+Fixes
+^^^^^
+
+* fix get command crash. (Reported by OBATA Akio)
+* fix elapsed time overflow in query log. #944
+
+Thanks
+^^^^^^
+
+* OBATA Akio
+
 .. _release-1-2-2:
 
 Release 1.2.2 - 2011/05/29
