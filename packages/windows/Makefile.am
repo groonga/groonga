@@ -1,6 +1,9 @@
+SUBDIRS = patches
+EXTRA_DIST = Rakefile
+
 all:
 
-release: upload
+release: build upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\
@@ -13,3 +16,13 @@ download: ensure-rsync-path
 
 upload: ensure-rsync-path
 	rsync -avz --delete files/ $(RSYNC_PATH)/windows/groonga
+
+build: source
+	$(RUBY) -S rake build VERSION=$(VERSION) SOURCE=$(SOURCE)
+
+SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
+
+source: $(SOURCE)
+
+$(SOURCE):
+	ln -s $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz ../

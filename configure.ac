@@ -133,6 +133,7 @@ AC_CONFIG_FILES([
   packages/yum/Makefile
   packages/source/Makefile
   packages/windows/Makefile
+  packages/windows/patches/Makefile
   data/Makefile
   data/html/Makefile
   data/munin/Makefile

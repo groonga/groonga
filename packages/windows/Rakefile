@@ -1,0 +1,152 @@
+# -*- coding: utf-8; mode: ruby -*-
+#
+# Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License version 2.1 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+require 'pathname'
+
+base_dir = Pathname.new(__FILE__).dirname
+
+groonga_win32_i386_p = ENV["GROONGA32"] == "yes"
+groonga_version = ENV["VERSION"]
+groonga_source = Pathname.new(ENV["SOURCE"]).expand_path
+
+dist_dir = Pathname.new("dist")
+binary_dir = base_dir + dist_dir
+
+patches_dir = (base_dir + "patches").expand_path
+if groonga_win32_i386_p
+  host = "i586-mingw32msvc"
+  mecab_patches = []
+else
+  host = "x86_64-w64-mingw32"
+  mecab_patches = [
+    "mecab-0.98-mingw-w64.diff",
+    "mecab-0.98-not-use-locale-on-mingw.diff",
+  ]
+end
+
+namespace :build do
+  desc "Build MeCab and install it into #{dist_dir}."
+  task(:mecab) do
+    tmp_dir = "tmp/mecab"
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    require 'open-uri'
+    mecab_version = "0.98"
+    mecab_base = "mecab-#{mecab_version}"
+    mecab_tar_gz = "#{mecab_base}.tar.gz"
+    mecab_tar_gz_url = "http://sourceforge.net/projects/mecab/files/mecab/#{mecab_version}/#{mecab_tar_gz}/download"
+    Dir.chdir(tmp_dir) do
+      open(mecab_tar_gz_url) do |downloaded_tar_gz|
+        File.open(mecab_tar_gz, "wb") do |tar_gz|
+          tar_gz.print(downloaded_tar_gz.read)
+        end
+      end
+      sh("tar", "xzf", mecab_tar_gz) or exit(false)
+    end
+    Dir.chdir(File.join(tmp_dir, mecab_base)) do
+      mecab_patches.each do |patch|
+        sh("patch -p1 < #{patches_dir + patch}")
+      end
+      sh("./configure",
+         "--prefix=#{binary_dir}",
+         "--host=#{host}") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
+
+      mecab_rc_path = binary_dir + "etc" + "mecabrc"
+      win32_mecab_rc_path = binary_dir + "bin" + "mecabrc"
+      mv(mecab_rc_path, win32_mecab_rc_path)
+
+      mecab_files_dir = dist_dir + "mecab"
+      mkdir_p(mecab_files_dir)
+      files = ["AUTHORS", "BSD", "COPYING", "GPL", "LGPL"]
+      cp(files, mecab_files_dir)
+    end
+  end
+
+  task(:mecab_dict) do
+    tmp_dir = Pathname.new("tmp/mecab_dict")
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    require 'open-uri'
+    naist_jdic_base = "mecab-naist-jdic-0.6.3-20100801"
+    naist_jdic_tar_gz = "#{naist_jdic_base}.tar.gz"
+    naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
+    tmp_dir.chdir do
+      open(naist_jdic_tar_gz_url) do |downloaded_tar_gz|
+        File.open(naist_jdic_tar_gz, "wb") do |tar_gz|
+          tar_gz.print(downloaded_tar_gz.read)
+        end
+      end
+      sh("tar", "xzf", naist_jdic_tar_gz) or exit(false)
+    end
+    (tmp_dir + naist_jdic_base).chdir do
+      sh("./configure",
+         "--with-dicdir=#{binary_dir}/share/mecab/dic/naist-jdic",
+         "--with-charset=utf-8") or exit(false)
+      sh("make", "-j8") or exit(false)
+      sh("make", "install-data") or exit(false)
+
+      naist_jdic_files_dir = dist_dir + "mecab-naist-jdic"
+      mkdir_p(naist_jdic_files_dir)
+      files = ["AUTHORS", "COPYING"]
+      cp(files, naist_jdic_files_dir)
+    end
+    dictionary_dir = '$(rcpath)\..\share\mecab\dic\naist-jdic'
+    mecab_rc_path = binary_dir + "bin" + "mecabrc"
+    mecab_rc_content = mecab_rc_path.read
+    File.open(mecab_rc_path, "w") do |mecab_rc|
+      mecab_rc.print(mecab_rc_content.gsub(/^dicdir\s*=.+$/,
+                                           "dicdir = #{dictionary_dir}"))
+    end
+  end
+
+  desc "Build groonga and install it into #{dist_dir}/."
+  task(:groonga) do
+    tmp_dir = Pathname.new("tmp/groonga")
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", groonga_source.to_s) or exit(false)
+    end
+    (tmp_dir + "groonga-#{groonga_version}").chdir do
+      sh("./autogen.sh") or exit(false)
+      mecab_config = binary_dir + "bin" + "mecab-config"
+      args = ["./configure",
+              "--prefix=#{binary_dir}",
+              "--host=#{host}",
+              "--without-cutter",
+              "--disable-benchmark"]
+      if mecab_config.exist?
+        args << "--with-mecab-config=#{mecab_config}"
+      else
+        args << "--without-mecab"
+      end
+      sh(*args) or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
+
+      groonga_files_dir = dist_dir + "groonga"
+      mkdir_p(groonga_files_dir)
+      files = ["AUTHORS", "COPYING"]
+      cp(files, groonga_files_dir)
+    end
+  end
+end
+
+desc "Build MeCab and groonga and install them into #{dist_dir}/."
+task(:build => ["build:mecab", "build:mecab_dict", "build:groonga"])
