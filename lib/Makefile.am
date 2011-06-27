@@ -55,6 +55,7 @@ noinst_HEADERS = 				\
 	plugin_in.h				\
 	proc.h					\
 	ql.h					\
+	snip.h					\
 	store.h					\
 	str.h					\
 	token.h					\
