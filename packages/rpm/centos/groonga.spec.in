@@ -69,6 +69,14 @@ Requires:	%{name}-libs = %{version}-%{release}
 %description devel
 Libraries and header files for groonga
 
+%package tools
+Summary:	Tools for groonga
+Group:		Development/Tools
+Requires:	ruby
+
+%description tools
+Tools for groonga
+
 %package tokenizer-mecab
 Summary:	MeCab tokenizer for groonga
 Group:		Applications/Text
@@ -227,6 +235,10 @@ fi
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/groonga*.pc
 
+%files tools
+%defattr(-,root,root,-)
+%{_bindir}/groonga-query-log-analyzer
+
 %files plugin-suggest
 %defattr(-,root,root,-)
 %{_bindir}/groonga-suggest-*
@@ -243,6 +255,10 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Wed Jun 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.3-0
+- new upstream release.
+- add a new groong-tools package.
+
 * Sun May 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.2-0
 - new upstream release.
 - split server files into groonga-server package.
