@@ -10,7 +10,7 @@ KeyCursor::KeyCursor()
     : trie_(NULL),
       offset_(0),
       limit_(UINT32_MAX),
-      flags_(PREDICTIVE_CURSOR),
+      flags_(KEY_RANGE_CURSOR),
       buf_(),
       count_(0),
       max_count_(0),
@@ -21,7 +21,6 @@ KeyCursor::KeyCursor()
 KeyCursor::~KeyCursor() {
   close();
 }
-
 
 void KeyCursor::open(const Trie &trie,
                      const void *min_ptr, UInt32 min_length,
@@ -43,7 +42,7 @@ void KeyCursor::close() {
   trie_ = NULL;
   offset_ = 0;
   limit_ = UINT32_MAX;
-  flags_ = PREDICTIVE_CURSOR;
+  flags_ = KEY_RANGE_CURSOR;
   buf_.clear();
   count_ = 0;
   max_count_ = 0;
@@ -70,8 +69,8 @@ bool KeyCursor::next(Key *key) {
 UInt32 KeyCursor::fix_flags(UInt32 flags) const {
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
   GRN_DAT_PARAM_ERROR_IF((cursor_type != 0) &&
-                         (cursor_type != PREDICTIVE_CURSOR));
-  flags |= PREDICTIVE_CURSOR;
+                         (cursor_type != KEY_RANGE_CURSOR));
+  flags |= KEY_RANGE_CURSOR;
 
   const UInt32 cursor_order = flags & CURSOR_ORDER_MASK;
   GRN_DAT_PARAM_ERROR_IF((cursor_order != 0) &&

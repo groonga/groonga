@@ -4,6 +4,7 @@ DEFS += -D_REENTRANT $(GRN_DEFS)
 
 libgrndat_la_SOURCES =				\
 	common-prefix-search-cursor.cpp		\
+	cursor-factory.cpp			\
 	id-cursor.cpp				\
 	key-cursor.cpp				\
 	predictive-search-cursor.cpp		\
@@ -14,6 +15,7 @@ noinst_HEADERS =				\
 	block.hpp				\
 	check.hpp				\
 	common-prefix-search-cursor.hpp		\
+	cursor-factory.hpp			\
 	cursor.hpp				\
 	dat.hpp					\
 	header.hpp				\
