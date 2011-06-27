@@ -34,8 +34,8 @@ msgid "Added invalid table name check. #912"
 msgstr "不正なテーブル名チェックを追加。#912"
 
 #: ../../../source/news.txt:17
-msgid "Added groonga-query-log-analyzer.rb that analyze query log."
-msgstr "クエリログを解析するgroonga-query-log-analyzer.rbを追加。"
+msgid "Added groonga-query-log-analyzer that analyze query log."
+msgstr "クエリログを解析するgroonga-query-log-analyzerを追加。"
 
 #: ../../../source/news.txt:18
 msgid "groonga command shows failed command on error."

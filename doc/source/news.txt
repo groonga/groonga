@@ -14,7 +14,7 @@ Improvements
 ^^^^^^^^^^^^
 
 * Added invalid table name check. #912
-* Added groonga-query-log-analyzer.rb that analyze query log.
+* Added groonga-query-log-analyzer that analyze query log.
 * groonga command shows failed command on error.
 * groonga command shows file name and line no on error.
 * Improved error message of :doc:`column_create`. #952
