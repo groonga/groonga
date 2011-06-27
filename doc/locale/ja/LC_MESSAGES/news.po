@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-28 14:45\n"
-"PO-Revision-Date: 2011-05-28 14:45+0900\n"
+"POT-Creation-Date: 2011-06-27 16:35\n"
+"PO-Revision-Date: 2011-06-27 16:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22,49 +22,97 @@ msgid "News"
 msgstr "お知らせ"
 
 #: ../../../source/news.txt:11
-msgid "Release 1.2.2 - 2011/05/29"
-msgstr "1.2.2リリース - 2011/05/29"
+msgid "Release 1.2.3 - 2011/06/29"
+msgstr "1.2.3リリース - 2011/05/29"
 
-#: ../../../source/news.txt:14
+#: ../../../source/news.txt:14 ../../../source/news.txt:40
 msgid "Improvements"
 msgstr "改良"
 
 #: ../../../source/news.txt:16
+msgid "Added invalid table name check. #912"
+msgstr "不正なテーブル名チェックを追加。#912"
+
+#: ../../../source/news.txt:17
+msgid "Added groonga-query-log-analyzer.rb that analyze query log."
+msgstr "クエリログを解析するgroonga-query-log-analyzer.rbを追加。"
+
+#: ../../../source/news.txt:18
+msgid "groonga command shows failed command on error."
+msgstr "groongaコマンドのエラー時に失敗したコマンドを表示するようになった。"
+
+#: ../../../source/news.txt:19
+msgid "groonga command shows file name and line no on error."
+msgstr "groongaコマンドのエラー時にファイル名と行番号を表示するようになった。"
+
+#: ../../../source/news.txt:20
+msgid "Improved error message of :doc:`column_create`. #952"
+msgstr ":doc:`column_create` のエラーメッセージを改善。#952"
+
+#: ../../../source/news.txt:21
+msgid "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
+msgstr "GRN_OBJ_TABLE_DAT_KEY（ダブル配列トライ）テーブルを追加。（実験的）"
+
+#: ../../../source/news.txt:24 ../../../source/news.txt:67
+msgid "Fixes"
+msgstr "修正"
+
+#: ../../../source/news.txt:26
+msgid "fix get command crash. (Reported by OBATA Akio)"
+msgstr "getコマンドでクラッシュする問題を修正。（おばたさんが報告）"
+
+#: ../../../source/news.txt:27
+msgid "fix elapsed time overflow in query log. #944"
+msgstr "クエリログで経過時間がオーバーフローする問題を修正。#944"
+
+#: ../../../source/news.txt:30
+msgid "Thanks"
+msgstr "感謝"
+
+#: ../../../source/news.txt:32
+msgid "OBATA Akio"
+msgstr "おばたさん"
+
+#: ../../../source/news.txt:37
+msgid "Release 1.2.2 - 2011/05/29"
+msgstr "1.2.2リリース - 2011/05/29"
+
+#: ../../../source/news.txt:42
 msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
 msgstr "Ubuntu 11.04 Natty Narwhalのパッケージを追加。"
 
-#: ../../../source/news.txt:17
+#: ../../../source/news.txt:43
 msgid "Removed packages for Ubuntu 10.10 Maverick Meerkat."
 msgstr "Ubuntu 10.10 Maverick Meerkatのパッケージを削除。"
 
-#: ../../../source/news.txt:18
+#: ../../../source/news.txt:44
 msgid "RPM: Split server related packages to groonga-server package."
 msgstr "RPM: サーバー関連のパッケージをgroonga-serverパッケージに分割。"
 
-#: ../../../source/news.txt:19
+#: ../../../source/news.txt:45
 msgid "suggest: Added target object name into error messages."
 msgstr "suggest: エラーメッセージに対象オブジェクト名を加えるようにした。"
 
-#: ../../../source/news.txt:20
+#: ../../../source/news.txt:46
 msgid "document: Started English support. (not completed yet.)"
 msgstr "ドキュメント: 英語のサポートを開始。（ただし、まだ不完全。）"
 
-#: ../../../source/news.txt:21
+#: ../../../source/news.txt:47
 msgid "groonga-suggest-httpd: Added --disable-max-fd-check option."
 msgstr "groonga-suggest-httpd: --disable-max-fd-checkオプションを追加。"
 
-#: ../../../source/news.txt:22
+#: ../../../source/news.txt:48
 msgid ""
 "groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`."
 msgstr ""
 "groonga: :option:`--address <-a>` オプションを :option:`--bind-address` に改"
 "名。"
 
-#: ../../../source/news.txt:23
+#: ../../../source/news.txt:49
 msgid "groonga-suggest-httpd: Renamed --address option to --bind-address."
 msgstr "groonga-suggest-httpd: --address オプションを --bind-address に改名。"
 
-#: ../../../source/news.txt:24
+#: ../../../source/news.txt:50
 msgid ""
 "Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
 "from $PREFIX/share/groonga/admin_html/."
@@ -72,7 +120,7 @@ msgstr ""
 "管理用HTMLのインストールディレクトリを$PREFIX/share/groonga/admin_html/から"
 "$PREFIX/share/groonga/html/admin/へ変更。"
 
-#: ../../../source/news.txt:27
+#: ../../../source/news.txt:53
 msgid ""
 "groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
 "of \"text/javascript\"."
@@ -80,24 +128,24 @@ msgstr ""
 "groonga-suggest-httpd: JSONレスポンス時には\"text/javascript\"ではなく"
 "\"application/json\"を使うようにした。"
 
-#: ../../../source/news.txt:29
+#: ../../../source/news.txt:55
 msgid ""
 "Windows: Used DLL relative path instead of executable file relative path."
 msgstr ""
 "Windows: 実行ファイルからの相対パスではなく、DLLからの相対パスを使うようにし"
 "た。"
 
-#: ../../../source/news.txt:31
+#: ../../../source/news.txt:57
 msgid "MeCab: Added error message from MeCab on MeCab initialize error."
 msgstr ""
 "MeCab: MeCab初期化時のMeCabのエラーメッセージもgroongaのエラーメッセージに加"
 "えるようにした。"
 
-#: ../../../source/news.txt:32
+#: ../../../source/news.txt:58
 msgid "suggest: Added prefix_search parameter to suggest command. #909"
 msgstr "suggest: suggestコマンドにprefix_searchパラメータを追加。"
 
-#: ../../../source/news.txt:34
+#: ../../../source/news.txt:60
 msgid ""
 "plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
 "() API."
@@ -105,35 +153,31 @@ msgstr ""
 "plugin: grn_plugin_get_system_plugins_dir()とgrn_plugin_get_suffix() APIを追"
 "加。"
 
-#: ../../../source/news.txt:36
+#: ../../../source/news.txt:62
 msgid "Added grn_obj_is_builtin() API."
 msgstr "grn_obj_is_builtin() APIを追加。"
 
-#: ../../../source/news.txt:37
+#: ../../../source/news.txt:63
 msgid ":doc:`/commands/load`: Added table name check. #934"
 msgstr ":doc:`/commands/load`: テーブル名をチェックするようにした。 #934"
 
-#: ../../../source/news.txt:38
+#: ../../../source/news.txt:64
 msgid "Showed invalid name context in error message. #935"
 msgstr ""
 "不正な名前が指定された時のエラーメッセージにどこで指定されたかの情報を含める"
 "ようにした。 #935"
 
-#: ../../../source/news.txt:41
-msgid "Fixes"
-msgstr "修正"
-
-#: ../../../source/news.txt:43
+#: ../../../source/news.txt:69
 msgid "Fixed a data breaking bug on multi process update. #890"
 msgstr ""
 "マルチプロセスでデータを更新した場合にShortText型などの可変長データが壊れる問"
 "題を修正。 #890"
 
-#: ../../../source/news.txt:46
+#: ../../../source/news.txt:72
 msgid "1.2.1リリース - 2011/04/29"
 msgstr ""
 
-#: ../../../source/news.txt:49 ../../../source/news.txt:74
+#: ../../../source/news.txt:75 ../../../source/news.txt:100
 #: ../../../source/news/0.x.txt:12 ../../../source/news/0.x.txt:39
 #: ../../../source/news/1.0.x.txt:27 ../../../source/news/1.0.x.txt:75
 #: ../../../source/news/1.0.x.txt:115 ../../../source/news/1.0.x.txt:156
@@ -142,19 +186,19 @@ msgstr ""
 msgid "改良"
 msgstr ""
 
-#: ../../../source/news.txt:51
+#: ../../../source/news.txt:77
 msgid "suggestコマンドにthresholdパラメーターを追加。#895"
 msgstr ""
 
-#: ../../../source/news.txt:52
+#: ../../../source/news.txt:78
 msgid "suggestのHTTPサーバにlimitパラメーターを追加。#899"
 msgstr ""
 
-#: ../../../source/news.txt:53
+#: ../../../source/news.txt:79
 msgid "grntest: SIGINTでの中断に対応。"
 msgstr ""
 
-#: ../../../source/news.txt:56 ../../../source/news.txt:90
+#: ../../../source/news.txt:82 ../../../source/news.txt:116
 #: ../../../source/news/0.x.txt:27 ../../../source/news/0.x.txt:115
 #: ../../../source/news/1.0.x.txt:12 ../../../source/news/1.0.x.txt:41
 #: ../../../source/news/1.0.x.txt:62 ../../../source/news/1.0.x.txt:93
@@ -164,23 +208,23 @@ msgstr ""
 msgid "修正"
 msgstr ""
 
-#: ../../../source/news.txt:58
+#: ../../../source/news.txt:84
 msgid ""
 "同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
 "するプラグインも閉じられてしまう問題を修正。 #894"
 msgstr ""
 
-#: ../../../source/news.txt:60
+#: ../../../source/news.txt:86
 msgid ""
 "configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
 "修正。（ICHII Takashiさんが報告）"
 msgstr ""
 
-#: ../../../source/news.txt:62
+#: ../../../source/news.txt:88
 msgid "チュートリアル中のtypoを修正。（moozさんが修正）"
 msgstr ""
 
-#: ../../../source/news.txt:65 ../../../source/news.txt:114
+#: ../../../source/news.txt:91 ../../../source/news.txt:140
 #: ../../../source/news/0.x.txt:124 ../../../source/news/1.0.x.txt:19
 #: ../../../source/news/1.0.x.txt:53 ../../../source/news/1.0.x.txt:67
 #: ../../../source/news/1.0.x.txt:106 ../../../source/news/1.0.x.txt:146
@@ -190,130 +234,130 @@ msgstr ""
 msgid "感謝"
 msgstr ""
 
-#: ../../../source/news.txt:67
+#: ../../../source/news.txt:93
 msgid "ICHII Takashiさん"
 msgstr ""
 
-#: ../../../source/news.txt:68
+#: ../../../source/news.txt:94
 msgid "moozさん"
 msgstr ""
 
-#: ../../../source/news.txt:71
+#: ../../../source/news.txt:97
 msgid "1.2.0リリース - 2011/03/29"
 msgstr ""
 
-#: ../../../source/news.txt:76
+#: ../../../source/news.txt:102
 msgid "MacPortsでのインストールドキュメントを追加。"
 msgstr ""
 
-#: ../../../source/news.txt:77
+#: ../../../source/news.txt:103
 msgid "Homebrewでのインストールドキュメントを追加。"
 msgstr ""
 
-#: ../../../source/news.txt:78
+#: ../../../source/news.txt:104
 msgid "WindowsではMinGWでもpthreadを使わないようにした。"
 msgstr ""
 
-#: ../../../source/news.txt:79
+#: ../../../source/news.txt:105
 msgid "オーバーフローチェックを強化。"
 msgstr ""
 
-#: ../../../source/news.txt:80
+#: ../../../source/news.txt:106
 msgid "位置情報の入力値チェックを強化。"
 msgstr ""
 
-#: ../../../source/news.txt:81
+#: ../../../source/news.txt:107
 msgid "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
 msgstr ""
 
-#: ../../../source/news.txt:82
+#: ../../../source/news.txt:108
 msgid "Debian GNU/Linux wheezyのパッケージを追加。"
 msgstr ""
 
-#: ../../../source/news.txt:83
+#: ../../../source/news.txt:109
 msgid "Debian GNU/Linux lennyのパッケージを削除。"
 msgstr ""
 
-#: ../../../source/news.txt:84
+#: ../../../source/news.txt:110
 msgid ""
 "Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
 "り。 #887"
 msgstr ""
 
-#: ../../../source/news.txt:86
+#: ../../../source/news.txt:112
 msgid ""
 "MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
 "る。 #893"
 msgstr ""
 
-#: ../../../source/news.txt:92
+#: ../../../source/news.txt:118
 msgid ""
 "autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
 "を作成しようとする問題を修正。 #833"
 msgstr ""
 
-#: ../../../source/news.txt:94
+#: ../../../source/news.txt:120
 msgid "JSONPが動作しなくなっていた問題を修正。"
 msgstr ""
 
-#: ../../../source/news.txt:95
+#: ../../../source/news.txt:121
 msgid ""
 "MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
 "（@tomotaka_itoさんが報告）"
 msgstr ""
 
-#: ../../../source/news.txt:97
+#: ../../../source/news.txt:123
 msgid "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
 msgstr ""
 
-#: ../../../source/news.txt:98
+#: ../../../source/news.txt:124
 msgid ""
 ":doc:`/functions/geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ"
 "位置を指定するとクラッシュする問題を修正。"
 msgstr ""
 
-#: ../../../source/news.txt:100 ../../../source/news/1.0.x.txt:188
+#: ../../../source/news.txt:126 ../../../source/news/1.0.x.txt:188
 msgid "メモリリークを修正。"
 msgstr ""
 
-#: ../../../source/news.txt:101
+#: ../../../source/news.txt:127
 msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
 msgstr ""
 
-#: ../../../source/news.txt:102
+#: ../../../source/news.txt:128
 msgid ":doc:`/commands/column_list` のドキュメントを修正。 #758"
 msgstr ""
 
-#: ../../../source/news.txt:103
+#: ../../../source/news.txt:129
 msgid ":doc:`/commands/table_list` のドキュメントを修正。"
 msgstr ""
 
-#: ../../../source/news.txt:104
+#: ../../../source/news.txt:130
 msgid ""
 ":doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878"
 msgstr ""
 
-#: ../../../source/news.txt:105
+#: ../../../source/news.txt:131
 msgid ":doc:`/commands/load` でクラッシュする問題を修正。 #661"
 msgstr ""
 
-#: ../../../source/news.txt:108
+#: ../../../source/news.txt:134
 msgid "実験的"
 msgstr ""
 
-#: ../../../source/news.txt:110
+#: ../../../source/news.txt:136
 msgid "grn_table_truncate()を追加。（実験的。問題あり）"
 msgstr ""
 
-#: ../../../source/news.txt:111
+#: ../../../source/news.txt:137
 msgid "truncateコマンドを追加。（実験的。問題あり） #888"
 msgstr ""
 
-#: ../../../source/news.txt:116
+#: ../../../source/news.txt:142
 msgid "@tomotaka_itoさん"
 msgstr ""
 
-#: ../../../source/news.txt:119
+#: ../../../source/news.txt:145
 msgid "過去のリリース"
 msgstr ""
 
