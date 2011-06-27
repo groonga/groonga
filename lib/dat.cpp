@@ -39,7 +39,9 @@ grn_dat_init(grn_dat *dat) {
 static void
 grn_dat_end(grn_dat *dat) {
   if (dat->handle) {
+#ifndef WIN32
     delete static_cast<grn::dat::Trie *>(dat->handle);
+#endif
     dat->handle = NULL;
   }
 }
@@ -62,7 +64,9 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
                uint32_t value_size, uint32_t flags)
 {
   char path2[PATH_MAX];
-  grn_dat *dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
+  grn_dat *dat = NULL;
+#ifndef WIN32
+  dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (dat) {
     grn_dat_init(dat);
     if ((dat->io = grn_io_create(ctx, path, sizeof(struct grn_dat_header),
@@ -76,13 +80,16 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
     GRN_FREE(dat);
     dat = NULL;
   }
+#endif
   return dat;
 }
 
 grn_dat *
 grn_dat_open(grn_ctx *ctx, const char *path)
 {
-  grn_dat *dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
+  grn_dat *dat = NULL;
+#ifndef WIN32
+  dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (dat) {
     grn_dat_init(dat);
     if ((dat->io = grn_io_open(ctx, path, grn_io_auto))) {
@@ -98,6 +105,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
     GRN_FREE(dat);
     dat = NULL;
   }
+#endif
   return dat;
 }
 
@@ -123,6 +131,7 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
 static void
 grn_dat_confirm_handle(grn_ctx *ctx, grn_dat *dat)
 {
+#ifndef WIN32
   int file_id = dat->header->file_id;
   if (!dat->handle || (dat->file_id != file_id)) {
     char buffer[PATH_MAX];
@@ -139,6 +148,7 @@ grn_dat_confirm_handle(grn_ctx *ctx, grn_dat *dat)
       delete static_cast<grn::dat::Trie *>(handle);
     }
   }
+#endif
 }
 
 grn_id
@@ -146,6 +156,7 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **value)
 {
   grn_id id = GRN_ID_NIL;
+#ifndef WIN32
   if (dat && dat->header->file_id) {
     grn_dat_confirm_handle(ctx, dat);
     grn::dat::Key k;
@@ -153,6 +164,7 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
       id = k.id();
     }
   }
+#endif
   return id;
 }
 
@@ -161,6 +173,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **value, int *added)
 {
   grn_id id = GRN_ID_NIL;
+#ifndef WIN32
   if (dat) {
     int file_id = dat->header->file_id;
     if (!dat->header->file_id) {
@@ -204,6 +217,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       id = k.id();
     }
   }
+#endif
 exit :
   return id;
 }
@@ -212,6 +226,7 @@ int
 grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize)
 {
   int len = 0;
+#ifndef WIN32
   if (dat && dat->header->file_id) {
     try {
       grn::dat::Key k;
@@ -226,6 +241,7 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
       len = 0;
     }
   }
+#endif
   return len;
 }
 
@@ -233,6 +249,7 @@ int
 grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 {
   int len = 0;
+#ifndef WIN32
   if (dat && dat->header->file_id) {
     try {
       grn::dat::Key k;
@@ -251,14 +268,19 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
       len = 0;
     }
   }
+#endif
   return len;
 }
 
 unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 {
-  if (!dat || !dat->handle) { return 0; }
-  return static_cast<grn::dat::Trie *>(dat->handle)->num_keys();
+#ifndef WIN32
+  if (dat && dat->handle) {
+    return static_cast<grn::dat::Trie *>(dat->handle)->num_keys();
+  }
+#endif
+  return 0;
 }
 
 grn_dat_cursor *
@@ -267,7 +289,9 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
                     const void *max, unsigned int max_size,
                     int offset, int limit, int flags)
 {
-  grn_dat_cursor *dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
+  grn_dat_cursor *dc = NULL;
+#ifndef WIN32
+  dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
   if (dc) {
     dc->cursor = NULL;
     GRN_DB_OBJ_SET_TYPE(dc, GRN_CURSOR_TABLE_DAT_KEY);
@@ -329,6 +353,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
       dc = NULL;
     }
   }
+#endif
   return dc;
 }
 
@@ -336,6 +361,7 @@ grn_id
 grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
 {
   grn_id id = GRN_ID_NIL;
+#ifndef WIN32
   if (c && c->cursor) {
     grn::dat::Key k;
     grn::dat::Cursor *cursor = static_cast<grn::dat::Cursor *>(c->cursor);
@@ -345,17 +371,20 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
       c->curr_rec = GRN_ID_NIL;
     }
   }
+#endif
   return id;
 }
 
 void
 grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
 {
+#ifndef WIN32
   if (c && c->cursor) {
     grn::dat::Cursor *cursor = static_cast<grn::dat::Cursor *>(c->cursor);
     delete cursor;
     GRN_FREE(c);
   }
+#endif
 }
 
 int
@@ -368,6 +397,7 @@ grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
 {
   grn_id id = GRN_ID_NIL;
+#ifndef WIN32
   if (dat && dat->header->file_id) {
     grn_dat_confirm_handle(ctx, dat);
     grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
@@ -375,6 +405,7 @@ grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
       id = trie->num_keys();
     }
   }
+#endif
   return id;
 }
 
@@ -382,6 +413,7 @@ const char *
 _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
 {
   const char *key = NULL;
+#ifndef WIN32
   if (dat && dat->header->file_id) {
     try {
       grn::dat::Key k;
@@ -394,6 +426,7 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
       key = NULL;
     }
   }
+#endif
   return key;
 }
 

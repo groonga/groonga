@@ -1,6 +1,7 @@
-noinst_LTLIBRARIES = libgrndat.la
-
 DEFS += -D_REENTRANT $(GRN_DEFS)
+
+if !OS_WIN32
+noinst_LTLIBRARIES = libgrndat.la
 
 libgrndat_la_SOURCES =				\
 	common-prefix-search-cursor.cpp		\
@@ -28,5 +29,6 @@ noinst_HEADERS =				\
 	timer.hpp				\
 	trie.hpp				\
 	usage.hpp
+endif
 
 CLEANFILES = *.gcno *.gcda
