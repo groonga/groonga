@@ -529,7 +529,11 @@ class GroongaQueryLogAnaylzer
     end
 
     def slow_response_ratio
-      (@n_slow_responses.to_f / @n_responses) * 100
+      if @n_responses.zero?
+        0
+      else
+        (@n_slow_responses.to_f / @n_responses) * 100
+      end
     end
 
     def period
@@ -987,7 +991,12 @@ class GroongaQueryLogAnaylzer
     end
 
     def format_time(time)
-      colorize(time.strftime("%Y-%m-%d %H:%M:%S.%u"), :time)
+      if time.nil?
+        formatted_time = "NaN"
+      else
+        formatted_time = time.strftime("%Y-%m-%d %H:%M:%S.%u")
+      end
+      colorize(formatted_time, :time)
     end
 
     def colorize(text, schema_name)
