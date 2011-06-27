@@ -41,7 +41,7 @@ end
 namespace :build do
   desc "Build MeCab and install it into #{dist_dir}."
   task(:mecab) do
-    tmp_dir = "tmp/mecab"
+    tmp_dir = Pathname.new("tmp/mecab")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     require 'open-uri'
@@ -57,7 +57,7 @@ namespace :build do
       end
       sh("tar", "xzf", mecab_tar_gz) or exit(false)
     end
-    Dir.chdir(File.join(tmp_dir, mecab_base)) do
+    Dir.chdir(tmp_dir + mecab_base) do
       mecab_patches.each do |patch|
         sh("patch -p1 < #{patches_dir + patch}")
       end
@@ -86,7 +86,7 @@ namespace :build do
     naist_jdic_base = "mecab-naist-jdic-0.6.3-20100801"
     naist_jdic_tar_gz = "#{naist_jdic_base}.tar.gz"
     naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
-    tmp_dir.chdir do
+    Dir.chdir(tmp_dir) do
       open(naist_jdic_tar_gz_url) do |downloaded_tar_gz|
         File.open(naist_jdic_tar_gz, "wb") do |tar_gz|
           tar_gz.print(downloaded_tar_gz.read)
@@ -94,7 +94,7 @@ namespace :build do
       end
       sh("tar", "xzf", naist_jdic_tar_gz) or exit(false)
     end
-    (tmp_dir + naist_jdic_base).chdir do
+    Dir.chdir(tmp_dir + naist_jdic_base) do
       sh("./configure",
          "--with-dicdir=#{binary_dir}/share/mecab/dic/naist-jdic",
          "--with-charset=utf-8") or exit(false)
@@ -123,8 +123,7 @@ namespace :build do
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", groonga_source.to_s) or exit(false)
     end
-    (tmp_dir + "groonga-#{groonga_version}").chdir do
-      sh("./autogen.sh") or exit(false)
+    Dir.chdir(tmp_dir + "groonga-#{groonga_version}") do
       mecab_config = binary_dir + "bin" + "mecab-config"
       args = ["./configure",
               "--prefix=#{binary_dir}",
