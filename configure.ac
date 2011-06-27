@@ -888,6 +888,8 @@ echo
 echo "Tools:"
 # echo "  Sphinx:                ${enable_sphinx}"
 echo "  hg:                    ${HG}"
+echo "  Ruby:                  ${RUBY}"
+echo "  Cutter:                ${CUTTER}"
 echo
 
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"
