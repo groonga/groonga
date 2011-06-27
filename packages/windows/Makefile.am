@@ -20,6 +20,9 @@ upload: ensure-rsync-path
 build: source
 	$(RUBY) -S rake build VERSION=$(VERSION) SOURCE=$(SOURCE)
 
+build-groonga: source
+	$(RUBY) -S rake build:groonga VERSION=$(VERSION) SOURCE=$(SOURCE)
+
 SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
 
 source: $(SOURCE)
