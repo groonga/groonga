@@ -82,7 +82,7 @@
 #ifdef GROONGA_MAIN
 #  define GRN_VAR __declspec(dllimport)
 #else
-#  define GRN_VAR __declspec(dllexport)
+#  define GRN_VAR __declspec(dllexport) extern
 #endif /* GROONGA_MAIN */
 #else
 #  define GRN_API
